@@ -1,13 +1,13 @@
 package harnessutil
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/jsonsplit"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
@@ -108,7 +108,7 @@ func newSourceMapSpanWriter(sourceMapRecorder *writerAggregator, sourceMap *sour
 	sourceMapRecorder.WriteLineF("sourceRoot: %s", sourceMap.SourceRoot)
 	sourceMapRecorder.WriteLineF("sources: %s", strings.Join(sourceMap.Sources, ","))
 	if len(sourceMap.SourcesContent) > 0 {
-		content, err := json.Marshal(sourceMap.SourcesContent)
+		content, err := jsonsplit.Marshal(sourceMap.SourcesContent)
 		if err != nil {
 			panic(err)
 		}

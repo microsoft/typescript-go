@@ -16,6 +16,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/jsonsplit"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -101,7 +102,7 @@ func ToReader(r io.Reader) Reader {
 }
 
 func (w *lspWriter) Write(msg *lsproto.Message) error {
-	data, err := json.Marshal(msg)
+	data, err := jsonsplit.Marshal(msg)
 	if err != nil {
 		return fmt.Errorf("failed to marshal message: %w", err)
 	}

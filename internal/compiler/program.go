@@ -2,7 +2,6 @@ package compiler
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"maps"
 	"slices"
@@ -15,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/jsonsplit"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
@@ -467,7 +467,7 @@ func (p *Program) verifyCompilerOptions() {
 				relative = "./" + relative
 			}
 			suggestion := tspath.CombinePaths(relative, "*")
-			useInstead = fmt.Sprintf(`"paths": {"*": %s}`, core.Must(json.Marshal(suggestion)))
+			useInstead = fmt.Sprintf(`"paths": {"*": %s}`, core.Must(jsonsplit.Marshal(suggestion)))
 		}
 		createRemovedOptionDiagnostic("baseUrl", "", useInstead)
 	}

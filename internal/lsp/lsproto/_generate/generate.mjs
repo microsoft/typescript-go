@@ -350,8 +350,9 @@ function generateCode() {
     writeLine("package lsproto");
     writeLine("");
     writeLine(`import (`);
-    writeLine(`\t"encoding/json"`);
     writeLine(`\t"fmt"`);
+    writeLine("");
+    writeLine(`\t"github.com/go-json-experiment/jsonsplit"`);
     writeLine(`)`);
     writeLine("");
     writeLine("// Meta model version " + model.metaData.version);
@@ -458,7 +459,7 @@ function generateCode() {
         // Add custom JSON unmarshaling
         writeLine(`func (e *${enumeration.name}) UnmarshalJSON(data []byte) error {`);
         writeLine(`\tvar v ${baseType}`);
-        writeLine(`\tif err := json.Unmarshal(data, &v); err != nil {`);
+        writeLine(`\tif err := jsonsplit.Unmarshal(data, &v); err != nil {`);
         writeLine(`\t\treturn err`);
         writeLine(`\t}`);
         writeLine(`\t*e = ${enumeration.name}(v)`);
@@ -571,7 +572,7 @@ function generateCode() {
         writeLine("");
         for (const entry of fieldEntries) {
             writeLine(`\tif o.${entry.fieldName} != nil {`);
-            writeLine(`\t\treturn json.Marshal(*o.${entry.fieldName})`);
+            writeLine(`\t\treturn jsonsplit.Marshal(*o.${entry.fieldName})`);
             writeLine(`\t}`);
         }
 
@@ -585,7 +586,7 @@ function generateCode() {
 
         for (const entry of fieldEntries) {
             writeLine(`\tvar v${entry.fieldName} ${entry.typeName}`);
-            writeLine(`\tif err := json.Unmarshal(data, &v${entry.fieldName}); err == nil {`);
+            writeLine(`\tif err := jsonsplit.Unmarshal(data, &v${entry.fieldName}); err == nil {`);
             writeLine(`\t\to.${entry.fieldName} = &v${entry.fieldName}`);
             writeLine(`\t\treturn nil`);
             writeLine(`\t}`);

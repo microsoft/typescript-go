@@ -1,11 +1,11 @@
 package sourcemap
 
 import (
-	"encoding/json"
 	"errors"
 	"slices"
 	"strings"
 
+	"github.com/microsoft/typescript-go/internal/jsonsplit"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -335,7 +335,7 @@ func (gen *Generator) RawSourceMap() *RawSourceMap {
 
 // Gets the string representation of the source map
 func (gen *Generator) String() string {
-	buf, err := json.Marshal(gen.RawSourceMap())
+	buf, err := jsonsplit.Marshal(gen.RawSourceMap())
 	if err != nil {
 		panic(err.Error())
 	}

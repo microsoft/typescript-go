@@ -12,6 +12,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/jsonsplit"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
@@ -331,7 +332,7 @@ func (s *Server) writeBin(payload []byte) error {
 func (s *Server) call(method string, payload any) ([]byte, error) {
 	s.callbackMu.Lock()
 	defer s.callbackMu.Unlock()
-	jsonPayload, err := json.Marshal(payload)
+	jsonPayload, err := jsonsplit.Marshal(payload)
 	if err != nil {
 		return nil, err
 	}

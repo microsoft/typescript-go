@@ -3,6 +3,8 @@ package lsproto
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/microsoft/typescript-go/internal/jsonsplit"
 )
 
 type DocumentUri string // !!!
@@ -28,7 +30,7 @@ func (n Nullable[T]) MarshalJSON() ([]byte, error) {
 	if n.Null {
 		return []byte(`null`), nil
 	}
-	return json.Marshal(n.Value)
+	return jsonsplit.Marshal(n.Value)
 }
 
 func (n *Nullable[T]) UnmarshalJSON(data []byte) error {

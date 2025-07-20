@@ -3,8 +3,9 @@
 package lsproto
 
 import (
-	"encoding/json"
 	"fmt"
+
+	"github.com/microsoft/typescript-go/internal/jsonsplit"
 )
 
 // Meta model version 3.17.0
@@ -5581,7 +5582,7 @@ const (
 
 func (e *SemanticTokenTypes) UnmarshalJSON(data []byte) error {
 	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = SemanticTokenTypes(v)
@@ -5610,7 +5611,7 @@ const (
 
 func (e *SemanticTokenModifiers) UnmarshalJSON(data []byte) error {
 	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = SemanticTokenModifiers(v)
@@ -5633,7 +5634,7 @@ const (
 
 func (e *DocumentDiagnosticReportKind) UnmarshalJSON(data []byte) error {
 	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = DocumentDiagnosticReportKind(v)
@@ -5657,7 +5658,7 @@ const (
 
 func (e *ErrorCodes) UnmarshalJSON(data []byte) error {
 	var v int32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = ErrorCodes(v)
@@ -5696,7 +5697,7 @@ const (
 
 func (e *LSPErrorCodes) UnmarshalJSON(data []byte) error {
 	var v int32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = LSPErrorCodes(v)
@@ -5717,7 +5718,7 @@ const (
 
 func (e *FoldingRangeKind) UnmarshalJSON(data []byte) error {
 	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = FoldingRangeKind(v)
@@ -5758,7 +5759,7 @@ const (
 
 func (e *SymbolKind) UnmarshalJSON(data []byte) error {
 	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = SymbolKind(v)
@@ -5777,7 +5778,7 @@ const (
 
 func (e *SymbolTag) UnmarshalJSON(data []byte) error {
 	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = SymbolTag(v)
@@ -5804,7 +5805,7 @@ const (
 
 func (e *UniquenessLevel) UnmarshalJSON(data []byte) error {
 	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = UniquenessLevel(v)
@@ -5828,7 +5829,7 @@ const (
 
 func (e *MonikerKind) UnmarshalJSON(data []byte) error {
 	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = MonikerKind(v)
@@ -5849,7 +5850,7 @@ const (
 
 func (e *InlayHintKind) UnmarshalJSON(data []byte) error {
 	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = InlayHintKind(v)
@@ -5878,7 +5879,7 @@ const (
 
 func (e *MessageType) UnmarshalJSON(data []byte) error {
 	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = MessageType(v)
@@ -5903,7 +5904,7 @@ const (
 
 func (e *TextDocumentSyncKind) UnmarshalJSON(data []byte) error {
 	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = TextDocumentSyncKind(v)
@@ -5925,7 +5926,7 @@ const (
 
 func (e *TextDocumentSaveReason) UnmarshalJSON(data []byte) error {
 	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = TextDocumentSaveReason(v)
@@ -5965,7 +5966,7 @@ const (
 
 func (e *CompletionItemKind) UnmarshalJSON(data []byte) error {
 	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = CompletionItemKind(v)
@@ -5985,7 +5986,7 @@ const (
 
 func (e *CompletionItemTag) UnmarshalJSON(data []byte) error {
 	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = CompletionItemTag(v)
@@ -6012,7 +6013,7 @@ const (
 
 func (e *InsertTextFormat) UnmarshalJSON(data []byte) error {
 	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = InsertTextFormat(v)
@@ -6044,7 +6045,7 @@ const (
 
 func (e *InsertTextMode) UnmarshalJSON(data []byte) error {
 	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = InsertTextMode(v)
@@ -6065,7 +6066,7 @@ const (
 
 func (e *DocumentHighlightKind) UnmarshalJSON(data []byte) error {
 	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = DocumentHighlightKind(v)
@@ -6147,7 +6148,7 @@ const (
 
 func (e *CodeActionKind) UnmarshalJSON(data []byte) error {
 	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = CodeActionKind(v)
@@ -6166,7 +6167,7 @@ const (
 
 func (e *CodeActionTag) UnmarshalJSON(data []byte) error {
 	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = CodeActionTag(v)
@@ -6186,7 +6187,7 @@ const (
 
 func (e *TraceValue) UnmarshalJSON(data []byte) error {
 	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = TraceValue(v)
@@ -6209,7 +6210,7 @@ const (
 
 func (e *MarkupKind) UnmarshalJSON(data []byte) error {
 	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = MarkupKind(v)
@@ -6296,7 +6297,7 @@ const (
 
 func (e *LanguageKind) UnmarshalJSON(data []byte) error {
 	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = LanguageKind(v)
@@ -6319,7 +6320,7 @@ const (
 
 func (e *InlineCompletionTriggerKind) UnmarshalJSON(data []byte) error {
 	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = InlineCompletionTriggerKind(v)
@@ -6349,7 +6350,7 @@ const (
 
 func (e *PositionEncodingKind) UnmarshalJSON(data []byte) error {
 	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = PositionEncodingKind(v)
@@ -6370,7 +6371,7 @@ const (
 
 func (e *FileChangeType) UnmarshalJSON(data []byte) error {
 	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = FileChangeType(v)
@@ -6390,7 +6391,7 @@ const (
 
 func (e *WatchKind) UnmarshalJSON(data []byte) error {
 	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = WatchKind(v)
@@ -6413,7 +6414,7 @@ const (
 
 func (e *DiagnosticSeverity) UnmarshalJSON(data []byte) error {
 	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = DiagnosticSeverity(v)
@@ -6439,7 +6440,7 @@ const (
 
 func (e *DiagnosticTag) UnmarshalJSON(data []byte) error {
 	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = DiagnosticTag(v)
@@ -6462,7 +6463,7 @@ const (
 
 func (e *CompletionTriggerKind) UnmarshalJSON(data []byte) error {
 	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = CompletionTriggerKind(v)
@@ -6488,7 +6489,7 @@ const (
 
 func (e *ApplyKind) UnmarshalJSON(data []byte) error {
 	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = ApplyKind(v)
@@ -6511,7 +6512,7 @@ const (
 
 func (e *SignatureHelpTriggerKind) UnmarshalJSON(data []byte) error {
 	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = SignatureHelpTriggerKind(v)
@@ -6535,7 +6536,7 @@ const (
 
 func (e *CodeActionTriggerKind) UnmarshalJSON(data []byte) error {
 	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = CodeActionTriggerKind(v)
@@ -6557,7 +6558,7 @@ const (
 
 func (e *FileOperationPatternKind) UnmarshalJSON(data []byte) error {
 	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = FileOperationPatternKind(v)
@@ -6578,7 +6579,7 @@ const (
 
 func (e *NotebookCellKind) UnmarshalJSON(data []byte) error {
 	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = NotebookCellKind(v)
@@ -6598,7 +6599,7 @@ const (
 
 func (e *ResourceOperationKind) UnmarshalJSON(data []byte) error {
 	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = ResourceOperationKind(v)
@@ -6625,7 +6626,7 @@ const (
 
 func (e *FailureHandlingKind) UnmarshalJSON(data []byte) error {
 	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = FailureHandlingKind(v)
@@ -6642,7 +6643,7 @@ const (
 
 func (e *PrepareSupportDefaultBehavior) UnmarshalJSON(data []byte) error {
 	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = PrepareSupportDefaultBehavior(v)
@@ -6657,7 +6658,7 @@ const (
 
 func (e *TokenFormat) UnmarshalJSON(data []byte) error {
 	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
+	if err := jsonsplit.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	*e = TokenFormat(v)
@@ -7396,10 +7397,10 @@ func (o LocationOrLocations) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of LocationOrLocations is set", o.Location != nil, o.Locations != nil)
 
 	if o.Location != nil {
-		return json.Marshal(*o.Location)
+		return jsonsplit.Marshal(*o.Location)
 	}
 	if o.Locations != nil {
-		return json.Marshal(*o.Locations)
+		return jsonsplit.Marshal(*o.Locations)
 	}
 	panic("unreachable")
 }
@@ -7407,12 +7408,12 @@ func (o LocationOrLocations) MarshalJSON() ([]byte, error) {
 func (o *LocationOrLocations) UnmarshalJSON(data []byte) error {
 	*o = LocationOrLocations{}
 	var vLocation Location
-	if err := json.Unmarshal(data, &vLocation); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vLocation); err == nil {
 		o.Location = &vLocation
 		return nil
 	}
 	var vLocations []Location
-	if err := json.Unmarshal(data, &vLocations); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vLocations); err == nil {
 		o.Locations = &vLocations
 		return nil
 	}
@@ -7429,13 +7430,13 @@ func (o InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpres
 	assertOnlyOne("more than one element of InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression is set", o.InlineValueText != nil, o.InlineValueVariableLookup != nil, o.InlineValueEvaluatableExpression != nil)
 
 	if o.InlineValueText != nil {
-		return json.Marshal(*o.InlineValueText)
+		return jsonsplit.Marshal(*o.InlineValueText)
 	}
 	if o.InlineValueVariableLookup != nil {
-		return json.Marshal(*o.InlineValueVariableLookup)
+		return jsonsplit.Marshal(*o.InlineValueVariableLookup)
 	}
 	if o.InlineValueEvaluatableExpression != nil {
-		return json.Marshal(*o.InlineValueEvaluatableExpression)
+		return jsonsplit.Marshal(*o.InlineValueEvaluatableExpression)
 	}
 	panic("unreachable")
 }
@@ -7443,17 +7444,17 @@ func (o InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpres
 func (o *InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression) UnmarshalJSON(data []byte) error {
 	*o = InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression{}
 	var vInlineValueText InlineValueText
-	if err := json.Unmarshal(data, &vInlineValueText); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vInlineValueText); err == nil {
 		o.InlineValueText = &vInlineValueText
 		return nil
 	}
 	var vInlineValueVariableLookup InlineValueVariableLookup
-	if err := json.Unmarshal(data, &vInlineValueVariableLookup); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vInlineValueVariableLookup); err == nil {
 		o.InlineValueVariableLookup = &vInlineValueVariableLookup
 		return nil
 	}
 	var vInlineValueEvaluatableExpression InlineValueEvaluatableExpression
-	if err := json.Unmarshal(data, &vInlineValueEvaluatableExpression); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vInlineValueEvaluatableExpression); err == nil {
 		o.InlineValueEvaluatableExpression = &vInlineValueEvaluatableExpression
 		return nil
 	}
@@ -7469,10 +7470,10 @@ func (o RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticR
 	assertOnlyOne("more than one element of RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport is set", o.RelatedFullDocumentDiagnosticReport != nil, o.RelatedUnchangedDocumentDiagnosticReport != nil)
 
 	if o.RelatedFullDocumentDiagnosticReport != nil {
-		return json.Marshal(*o.RelatedFullDocumentDiagnosticReport)
+		return jsonsplit.Marshal(*o.RelatedFullDocumentDiagnosticReport)
 	}
 	if o.RelatedUnchangedDocumentDiagnosticReport != nil {
-		return json.Marshal(*o.RelatedUnchangedDocumentDiagnosticReport)
+		return jsonsplit.Marshal(*o.RelatedUnchangedDocumentDiagnosticReport)
 	}
 	panic("unreachable")
 }
@@ -7480,12 +7481,12 @@ func (o RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticR
 func (o *RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
 	*o = RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport{}
 	var vRelatedFullDocumentDiagnosticReport RelatedFullDocumentDiagnosticReport
-	if err := json.Unmarshal(data, &vRelatedFullDocumentDiagnosticReport); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vRelatedFullDocumentDiagnosticReport); err == nil {
 		o.RelatedFullDocumentDiagnosticReport = &vRelatedFullDocumentDiagnosticReport
 		return nil
 	}
 	var vRelatedUnchangedDocumentDiagnosticReport RelatedUnchangedDocumentDiagnosticReport
-	if err := json.Unmarshal(data, &vRelatedUnchangedDocumentDiagnosticReport); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vRelatedUnchangedDocumentDiagnosticReport); err == nil {
 		o.RelatedUnchangedDocumentDiagnosticReport = &vRelatedUnchangedDocumentDiagnosticReport
 		return nil
 	}
@@ -7502,13 +7503,13 @@ func (o RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior) MarshalJS
 	assertOnlyOne("more than one element of RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior is set", o.Range != nil, o.PrepareRenamePlaceholder != nil, o.PrepareRenameDefaultBehavior != nil)
 
 	if o.Range != nil {
-		return json.Marshal(*o.Range)
+		return jsonsplit.Marshal(*o.Range)
 	}
 	if o.PrepareRenamePlaceholder != nil {
-		return json.Marshal(*o.PrepareRenamePlaceholder)
+		return jsonsplit.Marshal(*o.PrepareRenamePlaceholder)
 	}
 	if o.PrepareRenameDefaultBehavior != nil {
-		return json.Marshal(*o.PrepareRenameDefaultBehavior)
+		return jsonsplit.Marshal(*o.PrepareRenameDefaultBehavior)
 	}
 	panic("unreachable")
 }
@@ -7516,17 +7517,17 @@ func (o RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior) MarshalJS
 func (o *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior) UnmarshalJSON(data []byte) error {
 	*o = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior{}
 	var vRange Range
-	if err := json.Unmarshal(data, &vRange); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vRange); err == nil {
 		o.Range = &vRange
 		return nil
 	}
 	var vPrepareRenamePlaceholder PrepareRenamePlaceholder
-	if err := json.Unmarshal(data, &vPrepareRenamePlaceholder); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vPrepareRenamePlaceholder); err == nil {
 		o.PrepareRenamePlaceholder = &vPrepareRenamePlaceholder
 		return nil
 	}
 	var vPrepareRenameDefaultBehavior PrepareRenameDefaultBehavior
-	if err := json.Unmarshal(data, &vPrepareRenameDefaultBehavior); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vPrepareRenameDefaultBehavior); err == nil {
 		o.PrepareRenameDefaultBehavior = &vPrepareRenameDefaultBehavior
 		return nil
 	}
@@ -7542,10 +7543,10 @@ func (o IntegerOrString) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of IntegerOrString is set", o.Integer != nil, o.String != nil)
 
 	if o.Integer != nil {
-		return json.Marshal(*o.Integer)
+		return jsonsplit.Marshal(*o.Integer)
 	}
 	if o.String != nil {
-		return json.Marshal(*o.String)
+		return jsonsplit.Marshal(*o.String)
 	}
 	panic("unreachable")
 }
@@ -7553,12 +7554,12 @@ func (o IntegerOrString) MarshalJSON() ([]byte, error) {
 func (o *IntegerOrString) UnmarshalJSON(data []byte) error {
 	*o = IntegerOrString{}
 	var vInteger int32
-	if err := json.Unmarshal(data, &vInteger); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vInteger); err == nil {
 		o.Integer = &vInteger
 		return nil
 	}
 	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
 		return nil
 	}
@@ -7574,10 +7575,10 @@ func (o WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnos
 	assertOnlyOne("more than one element of WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport is set", o.WorkspaceFullDocumentDiagnosticReport != nil, o.WorkspaceUnchangedDocumentDiagnosticReport != nil)
 
 	if o.WorkspaceFullDocumentDiagnosticReport != nil {
-		return json.Marshal(*o.WorkspaceFullDocumentDiagnosticReport)
+		return jsonsplit.Marshal(*o.WorkspaceFullDocumentDiagnosticReport)
 	}
 	if o.WorkspaceUnchangedDocumentDiagnosticReport != nil {
-		return json.Marshal(*o.WorkspaceUnchangedDocumentDiagnosticReport)
+		return jsonsplit.Marshal(*o.WorkspaceUnchangedDocumentDiagnosticReport)
 	}
 	panic("unreachable")
 }
@@ -7585,12 +7586,12 @@ func (o WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnos
 func (o *WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
 	*o = WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport{}
 	var vWorkspaceFullDocumentDiagnosticReport WorkspaceFullDocumentDiagnosticReport
-	if err := json.Unmarshal(data, &vWorkspaceFullDocumentDiagnosticReport); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vWorkspaceFullDocumentDiagnosticReport); err == nil {
 		o.WorkspaceFullDocumentDiagnosticReport = &vWorkspaceFullDocumentDiagnosticReport
 		return nil
 	}
 	var vWorkspaceUnchangedDocumentDiagnosticReport WorkspaceUnchangedDocumentDiagnosticReport
-	if err := json.Unmarshal(data, &vWorkspaceUnchangedDocumentDiagnosticReport); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vWorkspaceUnchangedDocumentDiagnosticReport); err == nil {
 		o.WorkspaceUnchangedDocumentDiagnosticReport = &vWorkspaceUnchangedDocumentDiagnosticReport
 		return nil
 	}
@@ -7606,10 +7607,10 @@ func (o TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument
 	assertOnlyOne("more than one element of TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument is set", o.TextDocumentContentChangePartial != nil, o.TextDocumentContentChangeWholeDocument != nil)
 
 	if o.TextDocumentContentChangePartial != nil {
-		return json.Marshal(*o.TextDocumentContentChangePartial)
+		return jsonsplit.Marshal(*o.TextDocumentContentChangePartial)
 	}
 	if o.TextDocumentContentChangeWholeDocument != nil {
-		return json.Marshal(*o.TextDocumentContentChangeWholeDocument)
+		return jsonsplit.Marshal(*o.TextDocumentContentChangeWholeDocument)
 	}
 	panic("unreachable")
 }
@@ -7617,12 +7618,12 @@ func (o TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument
 func (o *TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument) UnmarshalJSON(data []byte) error {
 	*o = TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument{}
 	var vTextDocumentContentChangePartial TextDocumentContentChangePartial
-	if err := json.Unmarshal(data, &vTextDocumentContentChangePartial); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vTextDocumentContentChangePartial); err == nil {
 		o.TextDocumentContentChangePartial = &vTextDocumentContentChangePartial
 		return nil
 	}
 	var vTextDocumentContentChangeWholeDocument TextDocumentContentChangeWholeDocument
-	if err := json.Unmarshal(data, &vTextDocumentContentChangeWholeDocument); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vTextDocumentContentChangeWholeDocument); err == nil {
 		o.TextDocumentContentChangeWholeDocument = &vTextDocumentContentChangeWholeDocument
 		return nil
 	}
@@ -7638,10 +7639,10 @@ func (o StringOrMarkedStringWithLanguage) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of StringOrMarkedStringWithLanguage is set", o.String != nil, o.MarkedStringWithLanguage != nil)
 
 	if o.String != nil {
-		return json.Marshal(*o.String)
+		return jsonsplit.Marshal(*o.String)
 	}
 	if o.MarkedStringWithLanguage != nil {
-		return json.Marshal(*o.MarkedStringWithLanguage)
+		return jsonsplit.Marshal(*o.MarkedStringWithLanguage)
 	}
 	panic("unreachable")
 }
@@ -7649,12 +7650,12 @@ func (o StringOrMarkedStringWithLanguage) MarshalJSON() ([]byte, error) {
 func (o *StringOrMarkedStringWithLanguage) UnmarshalJSON(data []byte) error {
 	*o = StringOrMarkedStringWithLanguage{}
 	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
 		return nil
 	}
 	var vMarkedStringWithLanguage MarkedStringWithLanguage
-	if err := json.Unmarshal(data, &vMarkedStringWithLanguage); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vMarkedStringWithLanguage); err == nil {
 		o.MarkedStringWithLanguage = &vMarkedStringWithLanguage
 		return nil
 	}
@@ -7670,10 +7671,10 @@ func (o TextDocumentFilterOrNotebookCellTextDocumentFilter) MarshalJSON() ([]byt
 	assertOnlyOne("more than one element of TextDocumentFilterOrNotebookCellTextDocumentFilter is set", o.TextDocumentFilter != nil, o.NotebookCellTextDocumentFilter != nil)
 
 	if o.TextDocumentFilter != nil {
-		return json.Marshal(*o.TextDocumentFilter)
+		return jsonsplit.Marshal(*o.TextDocumentFilter)
 	}
 	if o.NotebookCellTextDocumentFilter != nil {
-		return json.Marshal(*o.NotebookCellTextDocumentFilter)
+		return jsonsplit.Marshal(*o.NotebookCellTextDocumentFilter)
 	}
 	panic("unreachable")
 }
@@ -7681,12 +7682,12 @@ func (o TextDocumentFilterOrNotebookCellTextDocumentFilter) MarshalJSON() ([]byt
 func (o *TextDocumentFilterOrNotebookCellTextDocumentFilter) UnmarshalJSON(data []byte) error {
 	*o = TextDocumentFilterOrNotebookCellTextDocumentFilter{}
 	var vTextDocumentFilter TextDocumentFilter
-	if err := json.Unmarshal(data, &vTextDocumentFilter); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vTextDocumentFilter); err == nil {
 		o.TextDocumentFilter = &vTextDocumentFilter
 		return nil
 	}
 	var vNotebookCellTextDocumentFilter NotebookCellTextDocumentFilter
-	if err := json.Unmarshal(data, &vNotebookCellTextDocumentFilter); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vNotebookCellTextDocumentFilter); err == nil {
 		o.NotebookCellTextDocumentFilter = &vNotebookCellTextDocumentFilter
 		return nil
 	}
@@ -7702,10 +7703,10 @@ func (o PatternOrRelativePattern) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of PatternOrRelativePattern is set", o.Pattern != nil, o.RelativePattern != nil)
 
 	if o.Pattern != nil {
-		return json.Marshal(*o.Pattern)
+		return jsonsplit.Marshal(*o.Pattern)
 	}
 	if o.RelativePattern != nil {
-		return json.Marshal(*o.RelativePattern)
+		return jsonsplit.Marshal(*o.RelativePattern)
 	}
 	panic("unreachable")
 }
@@ -7713,12 +7714,12 @@ func (o PatternOrRelativePattern) MarshalJSON() ([]byte, error) {
 func (o *PatternOrRelativePattern) UnmarshalJSON(data []byte) error {
 	*o = PatternOrRelativePattern{}
 	var vPattern Pattern
-	if err := json.Unmarshal(data, &vPattern); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vPattern); err == nil {
 		o.Pattern = &vPattern
 		return nil
 	}
 	var vRelativePattern RelativePattern
-	if err := json.Unmarshal(data, &vRelativePattern); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vRelativePattern); err == nil {
 		o.RelativePattern = &vRelativePattern
 		return nil
 	}
@@ -7735,13 +7736,13 @@ func (o TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilter
 	assertOnlyOne("more than one element of TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern is set", o.TextDocumentFilterLanguage != nil, o.TextDocumentFilterScheme != nil, o.TextDocumentFilterPattern != nil)
 
 	if o.TextDocumentFilterLanguage != nil {
-		return json.Marshal(*o.TextDocumentFilterLanguage)
+		return jsonsplit.Marshal(*o.TextDocumentFilterLanguage)
 	}
 	if o.TextDocumentFilterScheme != nil {
-		return json.Marshal(*o.TextDocumentFilterScheme)
+		return jsonsplit.Marshal(*o.TextDocumentFilterScheme)
 	}
 	if o.TextDocumentFilterPattern != nil {
-		return json.Marshal(*o.TextDocumentFilterPattern)
+		return jsonsplit.Marshal(*o.TextDocumentFilterPattern)
 	}
 	panic("unreachable")
 }
@@ -7749,17 +7750,17 @@ func (o TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilter
 func (o *TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern) UnmarshalJSON(data []byte) error {
 	*o = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern{}
 	var vTextDocumentFilterLanguage TextDocumentFilterLanguage
-	if err := json.Unmarshal(data, &vTextDocumentFilterLanguage); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vTextDocumentFilterLanguage); err == nil {
 		o.TextDocumentFilterLanguage = &vTextDocumentFilterLanguage
 		return nil
 	}
 	var vTextDocumentFilterScheme TextDocumentFilterScheme
-	if err := json.Unmarshal(data, &vTextDocumentFilterScheme); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vTextDocumentFilterScheme); err == nil {
 		o.TextDocumentFilterScheme = &vTextDocumentFilterScheme
 		return nil
 	}
 	var vTextDocumentFilterPattern TextDocumentFilterPattern
-	if err := json.Unmarshal(data, &vTextDocumentFilterPattern); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vTextDocumentFilterPattern); err == nil {
 		o.TextDocumentFilterPattern = &vTextDocumentFilterPattern
 		return nil
 	}
@@ -7776,13 +7777,13 @@ func (o NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebo
 	assertOnlyOne("more than one element of NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern is set", o.NotebookDocumentFilterNotebookType != nil, o.NotebookDocumentFilterScheme != nil, o.NotebookDocumentFilterPattern != nil)
 
 	if o.NotebookDocumentFilterNotebookType != nil {
-		return json.Marshal(*o.NotebookDocumentFilterNotebookType)
+		return jsonsplit.Marshal(*o.NotebookDocumentFilterNotebookType)
 	}
 	if o.NotebookDocumentFilterScheme != nil {
-		return json.Marshal(*o.NotebookDocumentFilterScheme)
+		return jsonsplit.Marshal(*o.NotebookDocumentFilterScheme)
 	}
 	if o.NotebookDocumentFilterPattern != nil {
-		return json.Marshal(*o.NotebookDocumentFilterPattern)
+		return jsonsplit.Marshal(*o.NotebookDocumentFilterPattern)
 	}
 	panic("unreachable")
 }
@@ -7790,17 +7791,17 @@ func (o NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebo
 func (o *NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern) UnmarshalJSON(data []byte) error {
 	*o = NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern{}
 	var vNotebookDocumentFilterNotebookType NotebookDocumentFilterNotebookType
-	if err := json.Unmarshal(data, &vNotebookDocumentFilterNotebookType); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vNotebookDocumentFilterNotebookType); err == nil {
 		o.NotebookDocumentFilterNotebookType = &vNotebookDocumentFilterNotebookType
 		return nil
 	}
 	var vNotebookDocumentFilterScheme NotebookDocumentFilterScheme
-	if err := json.Unmarshal(data, &vNotebookDocumentFilterScheme); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vNotebookDocumentFilterScheme); err == nil {
 		o.NotebookDocumentFilterScheme = &vNotebookDocumentFilterScheme
 		return nil
 	}
 	var vNotebookDocumentFilterPattern NotebookDocumentFilterPattern
-	if err := json.Unmarshal(data, &vNotebookDocumentFilterPattern); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vNotebookDocumentFilterPattern); err == nil {
 		o.NotebookDocumentFilterPattern = &vNotebookDocumentFilterPattern
 		return nil
 	}
@@ -7818,16 +7819,16 @@ func (o TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) MarshalJSON() ([]b
 	assertOnlyOne("more than one element of TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile is set", o.TextDocumentEdit != nil, o.CreateFile != nil, o.RenameFile != nil, o.DeleteFile != nil)
 
 	if o.TextDocumentEdit != nil {
-		return json.Marshal(*o.TextDocumentEdit)
+		return jsonsplit.Marshal(*o.TextDocumentEdit)
 	}
 	if o.CreateFile != nil {
-		return json.Marshal(*o.CreateFile)
+		return jsonsplit.Marshal(*o.CreateFile)
 	}
 	if o.RenameFile != nil {
-		return json.Marshal(*o.RenameFile)
+		return jsonsplit.Marshal(*o.RenameFile)
 	}
 	if o.DeleteFile != nil {
-		return json.Marshal(*o.DeleteFile)
+		return jsonsplit.Marshal(*o.DeleteFile)
 	}
 	panic("unreachable")
 }
@@ -7835,22 +7836,22 @@ func (o TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) MarshalJSON() ([]b
 func (o *TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) UnmarshalJSON(data []byte) error {
 	*o = TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile{}
 	var vTextDocumentEdit TextDocumentEdit
-	if err := json.Unmarshal(data, &vTextDocumentEdit); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vTextDocumentEdit); err == nil {
 		o.TextDocumentEdit = &vTextDocumentEdit
 		return nil
 	}
 	var vCreateFile CreateFile
-	if err := json.Unmarshal(data, &vCreateFile); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vCreateFile); err == nil {
 		o.CreateFile = &vCreateFile
 		return nil
 	}
 	var vRenameFile RenameFile
-	if err := json.Unmarshal(data, &vRenameFile); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vRenameFile); err == nil {
 		o.RenameFile = &vRenameFile
 		return nil
 	}
 	var vDeleteFile DeleteFile
-	if err := json.Unmarshal(data, &vDeleteFile); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vDeleteFile); err == nil {
 		o.DeleteFile = &vDeleteFile
 		return nil
 	}
@@ -7866,10 +7867,10 @@ func (o StringOrInlayHintLabelParts) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of StringOrInlayHintLabelParts is set", o.String != nil, o.InlayHintLabelParts != nil)
 
 	if o.String != nil {
-		return json.Marshal(*o.String)
+		return jsonsplit.Marshal(*o.String)
 	}
 	if o.InlayHintLabelParts != nil {
-		return json.Marshal(*o.InlayHintLabelParts)
+		return jsonsplit.Marshal(*o.InlayHintLabelParts)
 	}
 	panic("unreachable")
 }
@@ -7877,12 +7878,12 @@ func (o StringOrInlayHintLabelParts) MarshalJSON() ([]byte, error) {
 func (o *StringOrInlayHintLabelParts) UnmarshalJSON(data []byte) error {
 	*o = StringOrInlayHintLabelParts{}
 	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
 		return nil
 	}
 	var vInlayHintLabelParts []*InlayHintLabelPart
-	if err := json.Unmarshal(data, &vInlayHintLabelParts); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vInlayHintLabelParts); err == nil {
 		o.InlayHintLabelParts = &vInlayHintLabelParts
 		return nil
 	}
@@ -7898,10 +7899,10 @@ func (o StringOrMarkupContent) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of StringOrMarkupContent is set", o.String != nil, o.MarkupContent != nil)
 
 	if o.String != nil {
-		return json.Marshal(*o.String)
+		return jsonsplit.Marshal(*o.String)
 	}
 	if o.MarkupContent != nil {
-		return json.Marshal(*o.MarkupContent)
+		return jsonsplit.Marshal(*o.MarkupContent)
 	}
 	panic("unreachable")
 }
@@ -7909,12 +7910,12 @@ func (o StringOrMarkupContent) MarshalJSON() ([]byte, error) {
 func (o *StringOrMarkupContent) UnmarshalJSON(data []byte) error {
 	*o = StringOrMarkupContent{}
 	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
 		return nil
 	}
 	var vMarkupContent MarkupContent
-	if err := json.Unmarshal(data, &vMarkupContent); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vMarkupContent); err == nil {
 		o.MarkupContent = &vMarkupContent
 		return nil
 	}
@@ -7930,10 +7931,10 @@ func (o FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) Marshal
 	assertOnlyOne("more than one element of FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport is set", o.FullDocumentDiagnosticReport != nil, o.UnchangedDocumentDiagnosticReport != nil)
 
 	if o.FullDocumentDiagnosticReport != nil {
-		return json.Marshal(*o.FullDocumentDiagnosticReport)
+		return jsonsplit.Marshal(*o.FullDocumentDiagnosticReport)
 	}
 	if o.UnchangedDocumentDiagnosticReport != nil {
-		return json.Marshal(*o.UnchangedDocumentDiagnosticReport)
+		return jsonsplit.Marshal(*o.UnchangedDocumentDiagnosticReport)
 	}
 	panic("unreachable")
 }
@@ -7941,12 +7942,12 @@ func (o FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) Marshal
 func (o *FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
 	*o = FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{}
 	var vFullDocumentDiagnosticReport FullDocumentDiagnosticReport
-	if err := json.Unmarshal(data, &vFullDocumentDiagnosticReport); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vFullDocumentDiagnosticReport); err == nil {
 		o.FullDocumentDiagnosticReport = &vFullDocumentDiagnosticReport
 		return nil
 	}
 	var vUnchangedDocumentDiagnosticReport UnchangedDocumentDiagnosticReport
-	if err := json.Unmarshal(data, &vUnchangedDocumentDiagnosticReport); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vUnchangedDocumentDiagnosticReport); err == nil {
 		o.UnchangedDocumentDiagnosticReport = &vUnchangedDocumentDiagnosticReport
 		return nil
 	}
@@ -7962,10 +7963,10 @@ func (o StringOrStringValue) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of StringOrStringValue is set", o.String != nil, o.StringValue != nil)
 
 	if o.String != nil {
-		return json.Marshal(*o.String)
+		return jsonsplit.Marshal(*o.String)
 	}
 	if o.StringValue != nil {
-		return json.Marshal(*o.StringValue)
+		return jsonsplit.Marshal(*o.StringValue)
 	}
 	panic("unreachable")
 }
@@ -7973,12 +7974,12 @@ func (o StringOrStringValue) MarshalJSON() ([]byte, error) {
 func (o *StringOrStringValue) UnmarshalJSON(data []byte) error {
 	*o = StringOrStringValue{}
 	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
 		return nil
 	}
 	var vStringValue StringValue
-	if err := json.Unmarshal(data, &vStringValue); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vStringValue); err == nil {
 		o.StringValue = &vStringValue
 		return nil
 	}
@@ -7994,10 +7995,10 @@ func (o StringOrStrings) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of StringOrStrings is set", o.String != nil, o.Strings != nil)
 
 	if o.String != nil {
-		return json.Marshal(*o.String)
+		return jsonsplit.Marshal(*o.String)
 	}
 	if o.Strings != nil {
-		return json.Marshal(*o.Strings)
+		return jsonsplit.Marshal(*o.Strings)
 	}
 	panic("unreachable")
 }
@@ -8005,12 +8006,12 @@ func (o StringOrStrings) MarshalJSON() ([]byte, error) {
 func (o *StringOrStrings) UnmarshalJSON(data []byte) error {
 	*o = StringOrStrings{}
 	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
 		return nil
 	}
 	var vStrings []string
-	if err := json.Unmarshal(data, &vStrings); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vStrings); err == nil {
 		o.Strings = &vStrings
 		return nil
 	}
@@ -8026,10 +8027,10 @@ func (o TextEditOrInsertReplaceEdit) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of TextEditOrInsertReplaceEdit is set", o.TextEdit != nil, o.InsertReplaceEdit != nil)
 
 	if o.TextEdit != nil {
-		return json.Marshal(*o.TextEdit)
+		return jsonsplit.Marshal(*o.TextEdit)
 	}
 	if o.InsertReplaceEdit != nil {
-		return json.Marshal(*o.InsertReplaceEdit)
+		return jsonsplit.Marshal(*o.InsertReplaceEdit)
 	}
 	panic("unreachable")
 }
@@ -8037,12 +8038,12 @@ func (o TextEditOrInsertReplaceEdit) MarshalJSON() ([]byte, error) {
 func (o *TextEditOrInsertReplaceEdit) UnmarshalJSON(data []byte) error {
 	*o = TextEditOrInsertReplaceEdit{}
 	var vTextEdit TextEdit
-	if err := json.Unmarshal(data, &vTextEdit); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vTextEdit); err == nil {
 		o.TextEdit = &vTextEdit
 		return nil
 	}
 	var vInsertReplaceEdit InsertReplaceEdit
-	if err := json.Unmarshal(data, &vInsertReplaceEdit); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vInsertReplaceEdit); err == nil {
 		o.InsertReplaceEdit = &vInsertReplaceEdit
 		return nil
 	}
@@ -8059,13 +8060,13 @@ func (o MarkupContentOrMarkedStringOrMarkedStrings) MarshalJSON() ([]byte, error
 	assertOnlyOne("more than one element of MarkupContentOrMarkedStringOrMarkedStrings is set", o.MarkupContent != nil, o.MarkedString != nil, o.MarkedStrings != nil)
 
 	if o.MarkupContent != nil {
-		return json.Marshal(*o.MarkupContent)
+		return jsonsplit.Marshal(*o.MarkupContent)
 	}
 	if o.MarkedString != nil {
-		return json.Marshal(*o.MarkedString)
+		return jsonsplit.Marshal(*o.MarkedString)
 	}
 	if o.MarkedStrings != nil {
-		return json.Marshal(*o.MarkedStrings)
+		return jsonsplit.Marshal(*o.MarkedStrings)
 	}
 	panic("unreachable")
 }
@@ -8073,17 +8074,17 @@ func (o MarkupContentOrMarkedStringOrMarkedStrings) MarshalJSON() ([]byte, error
 func (o *MarkupContentOrMarkedStringOrMarkedStrings) UnmarshalJSON(data []byte) error {
 	*o = MarkupContentOrMarkedStringOrMarkedStrings{}
 	var vMarkupContent MarkupContent
-	if err := json.Unmarshal(data, &vMarkupContent); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vMarkupContent); err == nil {
 		o.MarkupContent = &vMarkupContent
 		return nil
 	}
 	var vMarkedString MarkedString
-	if err := json.Unmarshal(data, &vMarkedString); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vMarkedString); err == nil {
 		o.MarkedString = &vMarkedString
 		return nil
 	}
 	var vMarkedStrings []MarkedString
-	if err := json.Unmarshal(data, &vMarkedStrings); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vMarkedStrings); err == nil {
 		o.MarkedStrings = &vMarkedStrings
 		return nil
 	}
@@ -8099,10 +8100,10 @@ func (o LocationOrLocationUriOnly) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of LocationOrLocationUriOnly is set", o.Location != nil, o.LocationUriOnly != nil)
 
 	if o.Location != nil {
-		return json.Marshal(*o.Location)
+		return jsonsplit.Marshal(*o.Location)
 	}
 	if o.LocationUriOnly != nil {
-		return json.Marshal(*o.LocationUriOnly)
+		return jsonsplit.Marshal(*o.LocationUriOnly)
 	}
 	panic("unreachable")
 }
@@ -8110,12 +8111,12 @@ func (o LocationOrLocationUriOnly) MarshalJSON() ([]byte, error) {
 func (o *LocationOrLocationUriOnly) UnmarshalJSON(data []byte) error {
 	*o = LocationOrLocationUriOnly{}
 	var vLocation Location
-	if err := json.Unmarshal(data, &vLocation); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vLocation); err == nil {
 		o.Location = &vLocation
 		return nil
 	}
 	var vLocationUriOnly LocationUriOnly
-	if err := json.Unmarshal(data, &vLocationUriOnly); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vLocationUriOnly); err == nil {
 		o.LocationUriOnly = &vLocationUriOnly
 		return nil
 	}
@@ -8131,10 +8132,10 @@ func (o BooleanOrEmptyObject) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of BooleanOrEmptyObject is set", o.Boolean != nil, o.EmptyObject != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.EmptyObject != nil {
-		return json.Marshal(*o.EmptyObject)
+		return jsonsplit.Marshal(*o.EmptyObject)
 	}
 	panic("unreachable")
 }
@@ -8142,12 +8143,12 @@ func (o BooleanOrEmptyObject) MarshalJSON() ([]byte, error) {
 func (o *BooleanOrEmptyObject) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrEmptyObject{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vEmptyObject struct{}
-	if err := json.Unmarshal(data, &vEmptyObject); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vEmptyObject); err == nil {
 		o.EmptyObject = &vEmptyObject
 		return nil
 	}
@@ -8163,10 +8164,10 @@ func (o BooleanOrSemanticTokensFullDelta) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of BooleanOrSemanticTokensFullDelta is set", o.Boolean != nil, o.SemanticTokensFullDelta != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.SemanticTokensFullDelta != nil {
-		return json.Marshal(*o.SemanticTokensFullDelta)
+		return jsonsplit.Marshal(*o.SemanticTokensFullDelta)
 	}
 	panic("unreachable")
 }
@@ -8174,12 +8175,12 @@ func (o BooleanOrSemanticTokensFullDelta) MarshalJSON() ([]byte, error) {
 func (o *BooleanOrSemanticTokensFullDelta) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrSemanticTokensFullDelta{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vSemanticTokensFullDelta SemanticTokensFullDelta
-	if err := json.Unmarshal(data, &vSemanticTokensFullDelta); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vSemanticTokensFullDelta); err == nil {
 		o.SemanticTokensFullDelta = &vSemanticTokensFullDelta
 		return nil
 	}
@@ -8196,13 +8197,13 @@ func (o TextEditOrAnnotatedTextEditOrSnippetTextEdit) MarshalJSON() ([]byte, err
 	assertOnlyOne("more than one element of TextEditOrAnnotatedTextEditOrSnippetTextEdit is set", o.TextEdit != nil, o.AnnotatedTextEdit != nil, o.SnippetTextEdit != nil)
 
 	if o.TextEdit != nil {
-		return json.Marshal(*o.TextEdit)
+		return jsonsplit.Marshal(*o.TextEdit)
 	}
 	if o.AnnotatedTextEdit != nil {
-		return json.Marshal(*o.AnnotatedTextEdit)
+		return jsonsplit.Marshal(*o.AnnotatedTextEdit)
 	}
 	if o.SnippetTextEdit != nil {
-		return json.Marshal(*o.SnippetTextEdit)
+		return jsonsplit.Marshal(*o.SnippetTextEdit)
 	}
 	panic("unreachable")
 }
@@ -8210,17 +8211,17 @@ func (o TextEditOrAnnotatedTextEditOrSnippetTextEdit) MarshalJSON() ([]byte, err
 func (o *TextEditOrAnnotatedTextEditOrSnippetTextEdit) UnmarshalJSON(data []byte) error {
 	*o = TextEditOrAnnotatedTextEditOrSnippetTextEdit{}
 	var vTextEdit TextEdit
-	if err := json.Unmarshal(data, &vTextEdit); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vTextEdit); err == nil {
 		o.TextEdit = &vTextEdit
 		return nil
 	}
 	var vAnnotatedTextEdit AnnotatedTextEdit
-	if err := json.Unmarshal(data, &vAnnotatedTextEdit); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vAnnotatedTextEdit); err == nil {
 		o.AnnotatedTextEdit = &vAnnotatedTextEdit
 		return nil
 	}
 	var vSnippetTextEdit SnippetTextEdit
-	if err := json.Unmarshal(data, &vSnippetTextEdit); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vSnippetTextEdit); err == nil {
 		o.SnippetTextEdit = &vSnippetTextEdit
 		return nil
 	}
@@ -8236,10 +8237,10 @@ func (o NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells) Mar
 	assertOnlyOne("more than one element of NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells is set", o.NotebookDocumentFilterWithNotebook != nil, o.NotebookDocumentFilterWithCells != nil)
 
 	if o.NotebookDocumentFilterWithNotebook != nil {
-		return json.Marshal(*o.NotebookDocumentFilterWithNotebook)
+		return jsonsplit.Marshal(*o.NotebookDocumentFilterWithNotebook)
 	}
 	if o.NotebookDocumentFilterWithCells != nil {
-		return json.Marshal(*o.NotebookDocumentFilterWithCells)
+		return jsonsplit.Marshal(*o.NotebookDocumentFilterWithCells)
 	}
 	panic("unreachable")
 }
@@ -8247,12 +8248,12 @@ func (o NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells) Mar
 func (o *NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells) UnmarshalJSON(data []byte) error {
 	*o = NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells{}
 	var vNotebookDocumentFilterWithNotebook NotebookDocumentFilterWithNotebook
-	if err := json.Unmarshal(data, &vNotebookDocumentFilterWithNotebook); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vNotebookDocumentFilterWithNotebook); err == nil {
 		o.NotebookDocumentFilterWithNotebook = &vNotebookDocumentFilterWithNotebook
 		return nil
 	}
 	var vNotebookDocumentFilterWithCells NotebookDocumentFilterWithCells
-	if err := json.Unmarshal(data, &vNotebookDocumentFilterWithCells); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vNotebookDocumentFilterWithCells); err == nil {
 		o.NotebookDocumentFilterWithCells = &vNotebookDocumentFilterWithCells
 		return nil
 	}
@@ -8268,10 +8269,10 @@ func (o TextDocumentSyncOptionsOrTextDocumentSyncKind) MarshalJSON() ([]byte, er
 	assertOnlyOne("more than one element of TextDocumentSyncOptionsOrTextDocumentSyncKind is set", o.TextDocumentSyncOptions != nil, o.TextDocumentSyncKind != nil)
 
 	if o.TextDocumentSyncOptions != nil {
-		return json.Marshal(*o.TextDocumentSyncOptions)
+		return jsonsplit.Marshal(*o.TextDocumentSyncOptions)
 	}
 	if o.TextDocumentSyncKind != nil {
-		return json.Marshal(*o.TextDocumentSyncKind)
+		return jsonsplit.Marshal(*o.TextDocumentSyncKind)
 	}
 	panic("unreachable")
 }
@@ -8279,12 +8280,12 @@ func (o TextDocumentSyncOptionsOrTextDocumentSyncKind) MarshalJSON() ([]byte, er
 func (o *TextDocumentSyncOptionsOrTextDocumentSyncKind) UnmarshalJSON(data []byte) error {
 	*o = TextDocumentSyncOptionsOrTextDocumentSyncKind{}
 	var vTextDocumentSyncOptions TextDocumentSyncOptions
-	if err := json.Unmarshal(data, &vTextDocumentSyncOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vTextDocumentSyncOptions); err == nil {
 		o.TextDocumentSyncOptions = &vTextDocumentSyncOptions
 		return nil
 	}
 	var vTextDocumentSyncKind TextDocumentSyncKind
-	if err := json.Unmarshal(data, &vTextDocumentSyncKind); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vTextDocumentSyncKind); err == nil {
 		o.TextDocumentSyncKind = &vTextDocumentSyncKind
 		return nil
 	}
@@ -8300,10 +8301,10 @@ func (o NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions) Ma
 	assertOnlyOne("more than one element of NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions is set", o.NotebookDocumentSyncOptions != nil, o.NotebookDocumentSyncRegistrationOptions != nil)
 
 	if o.NotebookDocumentSyncOptions != nil {
-		return json.Marshal(*o.NotebookDocumentSyncOptions)
+		return jsonsplit.Marshal(*o.NotebookDocumentSyncOptions)
 	}
 	if o.NotebookDocumentSyncRegistrationOptions != nil {
-		return json.Marshal(*o.NotebookDocumentSyncRegistrationOptions)
+		return jsonsplit.Marshal(*o.NotebookDocumentSyncRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -8311,12 +8312,12 @@ func (o NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions) Ma
 func (o *NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions{}
 	var vNotebookDocumentSyncOptions NotebookDocumentSyncOptions
-	if err := json.Unmarshal(data, &vNotebookDocumentSyncOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vNotebookDocumentSyncOptions); err == nil {
 		o.NotebookDocumentSyncOptions = &vNotebookDocumentSyncOptions
 		return nil
 	}
 	var vNotebookDocumentSyncRegistrationOptions NotebookDocumentSyncRegistrationOptions
-	if err := json.Unmarshal(data, &vNotebookDocumentSyncRegistrationOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vNotebookDocumentSyncRegistrationOptions); err == nil {
 		o.NotebookDocumentSyncRegistrationOptions = &vNotebookDocumentSyncRegistrationOptions
 		return nil
 	}
@@ -8332,10 +8333,10 @@ func (o BooleanOrHoverOptions) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of BooleanOrHoverOptions is set", o.Boolean != nil, o.HoverOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.HoverOptions != nil {
-		return json.Marshal(*o.HoverOptions)
+		return jsonsplit.Marshal(*o.HoverOptions)
 	}
 	panic("unreachable")
 }
@@ -8343,12 +8344,12 @@ func (o BooleanOrHoverOptions) MarshalJSON() ([]byte, error) {
 func (o *BooleanOrHoverOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrHoverOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vHoverOptions HoverOptions
-	if err := json.Unmarshal(data, &vHoverOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vHoverOptions); err == nil {
 		o.HoverOptions = &vHoverOptions
 		return nil
 	}
@@ -8365,13 +8366,13 @@ func (o BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) MarshalJSON
 	assertOnlyOne("more than one element of BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions is set", o.Boolean != nil, o.DeclarationOptions != nil, o.DeclarationRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.DeclarationOptions != nil {
-		return json.Marshal(*o.DeclarationOptions)
+		return jsonsplit.Marshal(*o.DeclarationOptions)
 	}
 	if o.DeclarationRegistrationOptions != nil {
-		return json.Marshal(*o.DeclarationRegistrationOptions)
+		return jsonsplit.Marshal(*o.DeclarationRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -8379,17 +8380,17 @@ func (o BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) MarshalJSON
 func (o *BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vDeclarationOptions DeclarationOptions
-	if err := json.Unmarshal(data, &vDeclarationOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vDeclarationOptions); err == nil {
 		o.DeclarationOptions = &vDeclarationOptions
 		return nil
 	}
 	var vDeclarationRegistrationOptions DeclarationRegistrationOptions
-	if err := json.Unmarshal(data, &vDeclarationRegistrationOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vDeclarationRegistrationOptions); err == nil {
 		o.DeclarationRegistrationOptions = &vDeclarationRegistrationOptions
 		return nil
 	}
@@ -8405,10 +8406,10 @@ func (o BooleanOrDefinitionOptions) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of BooleanOrDefinitionOptions is set", o.Boolean != nil, o.DefinitionOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.DefinitionOptions != nil {
-		return json.Marshal(*o.DefinitionOptions)
+		return jsonsplit.Marshal(*o.DefinitionOptions)
 	}
 	panic("unreachable")
 }
@@ -8416,12 +8417,12 @@ func (o BooleanOrDefinitionOptions) MarshalJSON() ([]byte, error) {
 func (o *BooleanOrDefinitionOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDefinitionOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vDefinitionOptions DefinitionOptions
-	if err := json.Unmarshal(data, &vDefinitionOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vDefinitionOptions); err == nil {
 		o.DefinitionOptions = &vDefinitionOptions
 		return nil
 	}
@@ -8438,13 +8439,13 @@ func (o BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) Marsh
 	assertOnlyOne("more than one element of BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions is set", o.Boolean != nil, o.TypeDefinitionOptions != nil, o.TypeDefinitionRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.TypeDefinitionOptions != nil {
-		return json.Marshal(*o.TypeDefinitionOptions)
+		return jsonsplit.Marshal(*o.TypeDefinitionOptions)
 	}
 	if o.TypeDefinitionRegistrationOptions != nil {
-		return json.Marshal(*o.TypeDefinitionRegistrationOptions)
+		return jsonsplit.Marshal(*o.TypeDefinitionRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -8452,17 +8453,17 @@ func (o BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) Marsh
 func (o *BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vTypeDefinitionOptions TypeDefinitionOptions
-	if err := json.Unmarshal(data, &vTypeDefinitionOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vTypeDefinitionOptions); err == nil {
 		o.TypeDefinitionOptions = &vTypeDefinitionOptions
 		return nil
 	}
 	var vTypeDefinitionRegistrationOptions TypeDefinitionRegistrationOptions
-	if err := json.Unmarshal(data, &vTypeDefinitionRegistrationOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vTypeDefinitionRegistrationOptions); err == nil {
 		o.TypeDefinitionRegistrationOptions = &vTypeDefinitionRegistrationOptions
 		return nil
 	}
@@ -8479,13 +8480,13 @@ func (o BooleanOrImplementationOptionsOrImplementationRegistrationOptions) Marsh
 	assertOnlyOne("more than one element of BooleanOrImplementationOptionsOrImplementationRegistrationOptions is set", o.Boolean != nil, o.ImplementationOptions != nil, o.ImplementationRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.ImplementationOptions != nil {
-		return json.Marshal(*o.ImplementationOptions)
+		return jsonsplit.Marshal(*o.ImplementationOptions)
 	}
 	if o.ImplementationRegistrationOptions != nil {
-		return json.Marshal(*o.ImplementationRegistrationOptions)
+		return jsonsplit.Marshal(*o.ImplementationRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -8493,17 +8494,17 @@ func (o BooleanOrImplementationOptionsOrImplementationRegistrationOptions) Marsh
 func (o *BooleanOrImplementationOptionsOrImplementationRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrImplementationOptionsOrImplementationRegistrationOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vImplementationOptions ImplementationOptions
-	if err := json.Unmarshal(data, &vImplementationOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vImplementationOptions); err == nil {
 		o.ImplementationOptions = &vImplementationOptions
 		return nil
 	}
 	var vImplementationRegistrationOptions ImplementationRegistrationOptions
-	if err := json.Unmarshal(data, &vImplementationRegistrationOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vImplementationRegistrationOptions); err == nil {
 		o.ImplementationRegistrationOptions = &vImplementationRegistrationOptions
 		return nil
 	}
@@ -8519,10 +8520,10 @@ func (o BooleanOrReferenceOptions) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of BooleanOrReferenceOptions is set", o.Boolean != nil, o.ReferenceOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.ReferenceOptions != nil {
-		return json.Marshal(*o.ReferenceOptions)
+		return jsonsplit.Marshal(*o.ReferenceOptions)
 	}
 	panic("unreachable")
 }
@@ -8530,12 +8531,12 @@ func (o BooleanOrReferenceOptions) MarshalJSON() ([]byte, error) {
 func (o *BooleanOrReferenceOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrReferenceOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vReferenceOptions ReferenceOptions
-	if err := json.Unmarshal(data, &vReferenceOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vReferenceOptions); err == nil {
 		o.ReferenceOptions = &vReferenceOptions
 		return nil
 	}
@@ -8551,10 +8552,10 @@ func (o BooleanOrDocumentHighlightOptions) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of BooleanOrDocumentHighlightOptions is set", o.Boolean != nil, o.DocumentHighlightOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.DocumentHighlightOptions != nil {
-		return json.Marshal(*o.DocumentHighlightOptions)
+		return jsonsplit.Marshal(*o.DocumentHighlightOptions)
 	}
 	panic("unreachable")
 }
@@ -8562,12 +8563,12 @@ func (o BooleanOrDocumentHighlightOptions) MarshalJSON() ([]byte, error) {
 func (o *BooleanOrDocumentHighlightOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDocumentHighlightOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vDocumentHighlightOptions DocumentHighlightOptions
-	if err := json.Unmarshal(data, &vDocumentHighlightOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vDocumentHighlightOptions); err == nil {
 		o.DocumentHighlightOptions = &vDocumentHighlightOptions
 		return nil
 	}
@@ -8583,10 +8584,10 @@ func (o BooleanOrDocumentSymbolOptions) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of BooleanOrDocumentSymbolOptions is set", o.Boolean != nil, o.DocumentSymbolOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.DocumentSymbolOptions != nil {
-		return json.Marshal(*o.DocumentSymbolOptions)
+		return jsonsplit.Marshal(*o.DocumentSymbolOptions)
 	}
 	panic("unreachable")
 }
@@ -8594,12 +8595,12 @@ func (o BooleanOrDocumentSymbolOptions) MarshalJSON() ([]byte, error) {
 func (o *BooleanOrDocumentSymbolOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDocumentSymbolOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vDocumentSymbolOptions DocumentSymbolOptions
-	if err := json.Unmarshal(data, &vDocumentSymbolOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vDocumentSymbolOptions); err == nil {
 		o.DocumentSymbolOptions = &vDocumentSymbolOptions
 		return nil
 	}
@@ -8615,10 +8616,10 @@ func (o BooleanOrCodeActionOptions) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of BooleanOrCodeActionOptions is set", o.Boolean != nil, o.CodeActionOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.CodeActionOptions != nil {
-		return json.Marshal(*o.CodeActionOptions)
+		return jsonsplit.Marshal(*o.CodeActionOptions)
 	}
 	panic("unreachable")
 }
@@ -8626,12 +8627,12 @@ func (o BooleanOrCodeActionOptions) MarshalJSON() ([]byte, error) {
 func (o *BooleanOrCodeActionOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrCodeActionOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vCodeActionOptions CodeActionOptions
-	if err := json.Unmarshal(data, &vCodeActionOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vCodeActionOptions); err == nil {
 		o.CodeActionOptions = &vCodeActionOptions
 		return nil
 	}
@@ -8648,13 +8649,13 @@ func (o BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) Marshal
 	assertOnlyOne("more than one element of BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions is set", o.Boolean != nil, o.DocumentColorOptions != nil, o.DocumentColorRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.DocumentColorOptions != nil {
-		return json.Marshal(*o.DocumentColorOptions)
+		return jsonsplit.Marshal(*o.DocumentColorOptions)
 	}
 	if o.DocumentColorRegistrationOptions != nil {
-		return json.Marshal(*o.DocumentColorRegistrationOptions)
+		return jsonsplit.Marshal(*o.DocumentColorRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -8662,17 +8663,17 @@ func (o BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) Marshal
 func (o *BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vDocumentColorOptions DocumentColorOptions
-	if err := json.Unmarshal(data, &vDocumentColorOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vDocumentColorOptions); err == nil {
 		o.DocumentColorOptions = &vDocumentColorOptions
 		return nil
 	}
 	var vDocumentColorRegistrationOptions DocumentColorRegistrationOptions
-	if err := json.Unmarshal(data, &vDocumentColorRegistrationOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vDocumentColorRegistrationOptions); err == nil {
 		o.DocumentColorRegistrationOptions = &vDocumentColorRegistrationOptions
 		return nil
 	}
@@ -8688,10 +8689,10 @@ func (o BooleanOrWorkspaceSymbolOptions) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of BooleanOrWorkspaceSymbolOptions is set", o.Boolean != nil, o.WorkspaceSymbolOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.WorkspaceSymbolOptions != nil {
-		return json.Marshal(*o.WorkspaceSymbolOptions)
+		return jsonsplit.Marshal(*o.WorkspaceSymbolOptions)
 	}
 	panic("unreachable")
 }
@@ -8699,12 +8700,12 @@ func (o BooleanOrWorkspaceSymbolOptions) MarshalJSON() ([]byte, error) {
 func (o *BooleanOrWorkspaceSymbolOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrWorkspaceSymbolOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vWorkspaceSymbolOptions WorkspaceSymbolOptions
-	if err := json.Unmarshal(data, &vWorkspaceSymbolOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vWorkspaceSymbolOptions); err == nil {
 		o.WorkspaceSymbolOptions = &vWorkspaceSymbolOptions
 		return nil
 	}
@@ -8720,10 +8721,10 @@ func (o BooleanOrDocumentFormattingOptions) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of BooleanOrDocumentFormattingOptions is set", o.Boolean != nil, o.DocumentFormattingOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.DocumentFormattingOptions != nil {
-		return json.Marshal(*o.DocumentFormattingOptions)
+		return jsonsplit.Marshal(*o.DocumentFormattingOptions)
 	}
 	panic("unreachable")
 }
@@ -8731,12 +8732,12 @@ func (o BooleanOrDocumentFormattingOptions) MarshalJSON() ([]byte, error) {
 func (o *BooleanOrDocumentFormattingOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDocumentFormattingOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vDocumentFormattingOptions DocumentFormattingOptions
-	if err := json.Unmarshal(data, &vDocumentFormattingOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vDocumentFormattingOptions); err == nil {
 		o.DocumentFormattingOptions = &vDocumentFormattingOptions
 		return nil
 	}
@@ -8752,10 +8753,10 @@ func (o BooleanOrDocumentRangeFormattingOptions) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of BooleanOrDocumentRangeFormattingOptions is set", o.Boolean != nil, o.DocumentRangeFormattingOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.DocumentRangeFormattingOptions != nil {
-		return json.Marshal(*o.DocumentRangeFormattingOptions)
+		return jsonsplit.Marshal(*o.DocumentRangeFormattingOptions)
 	}
 	panic("unreachable")
 }
@@ -8763,12 +8764,12 @@ func (o BooleanOrDocumentRangeFormattingOptions) MarshalJSON() ([]byte, error) {
 func (o *BooleanOrDocumentRangeFormattingOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDocumentRangeFormattingOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vDocumentRangeFormattingOptions DocumentRangeFormattingOptions
-	if err := json.Unmarshal(data, &vDocumentRangeFormattingOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vDocumentRangeFormattingOptions); err == nil {
 		o.DocumentRangeFormattingOptions = &vDocumentRangeFormattingOptions
 		return nil
 	}
@@ -8784,10 +8785,10 @@ func (o BooleanOrRenameOptions) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of BooleanOrRenameOptions is set", o.Boolean != nil, o.RenameOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.RenameOptions != nil {
-		return json.Marshal(*o.RenameOptions)
+		return jsonsplit.Marshal(*o.RenameOptions)
 	}
 	panic("unreachable")
 }
@@ -8795,12 +8796,12 @@ func (o BooleanOrRenameOptions) MarshalJSON() ([]byte, error) {
 func (o *BooleanOrRenameOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrRenameOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vRenameOptions RenameOptions
-	if err := json.Unmarshal(data, &vRenameOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vRenameOptions); err == nil {
 		o.RenameOptions = &vRenameOptions
 		return nil
 	}
@@ -8817,13 +8818,13 @@ func (o BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) MarshalJS
 	assertOnlyOne("more than one element of BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions is set", o.Boolean != nil, o.FoldingRangeOptions != nil, o.FoldingRangeRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.FoldingRangeOptions != nil {
-		return json.Marshal(*o.FoldingRangeOptions)
+		return jsonsplit.Marshal(*o.FoldingRangeOptions)
 	}
 	if o.FoldingRangeRegistrationOptions != nil {
-		return json.Marshal(*o.FoldingRangeRegistrationOptions)
+		return jsonsplit.Marshal(*o.FoldingRangeRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -8831,17 +8832,17 @@ func (o BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) MarshalJS
 func (o *BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vFoldingRangeOptions FoldingRangeOptions
-	if err := json.Unmarshal(data, &vFoldingRangeOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vFoldingRangeOptions); err == nil {
 		o.FoldingRangeOptions = &vFoldingRangeOptions
 		return nil
 	}
 	var vFoldingRangeRegistrationOptions FoldingRangeRegistrationOptions
-	if err := json.Unmarshal(data, &vFoldingRangeRegistrationOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vFoldingRangeRegistrationOptions); err == nil {
 		o.FoldingRangeRegistrationOptions = &vFoldingRangeRegistrationOptions
 		return nil
 	}
@@ -8858,13 +8859,13 @@ func (o BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) Marsh
 	assertOnlyOne("more than one element of BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions is set", o.Boolean != nil, o.SelectionRangeOptions != nil, o.SelectionRangeRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.SelectionRangeOptions != nil {
-		return json.Marshal(*o.SelectionRangeOptions)
+		return jsonsplit.Marshal(*o.SelectionRangeOptions)
 	}
 	if o.SelectionRangeRegistrationOptions != nil {
-		return json.Marshal(*o.SelectionRangeRegistrationOptions)
+		return jsonsplit.Marshal(*o.SelectionRangeRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -8872,17 +8873,17 @@ func (o BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) Marsh
 func (o *BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vSelectionRangeOptions SelectionRangeOptions
-	if err := json.Unmarshal(data, &vSelectionRangeOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vSelectionRangeOptions); err == nil {
 		o.SelectionRangeOptions = &vSelectionRangeOptions
 		return nil
 	}
 	var vSelectionRangeRegistrationOptions SelectionRangeRegistrationOptions
-	if err := json.Unmarshal(data, &vSelectionRangeRegistrationOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vSelectionRangeRegistrationOptions); err == nil {
 		o.SelectionRangeRegistrationOptions = &vSelectionRangeRegistrationOptions
 		return nil
 	}
@@ -8899,13 +8900,13 @@ func (o BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) Marshal
 	assertOnlyOne("more than one element of BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions is set", o.Boolean != nil, o.CallHierarchyOptions != nil, o.CallHierarchyRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.CallHierarchyOptions != nil {
-		return json.Marshal(*o.CallHierarchyOptions)
+		return jsonsplit.Marshal(*o.CallHierarchyOptions)
 	}
 	if o.CallHierarchyRegistrationOptions != nil {
-		return json.Marshal(*o.CallHierarchyRegistrationOptions)
+		return jsonsplit.Marshal(*o.CallHierarchyRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -8913,17 +8914,17 @@ func (o BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) Marshal
 func (o *BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vCallHierarchyOptions CallHierarchyOptions
-	if err := json.Unmarshal(data, &vCallHierarchyOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vCallHierarchyOptions); err == nil {
 		o.CallHierarchyOptions = &vCallHierarchyOptions
 		return nil
 	}
 	var vCallHierarchyRegistrationOptions CallHierarchyRegistrationOptions
-	if err := json.Unmarshal(data, &vCallHierarchyRegistrationOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vCallHierarchyRegistrationOptions); err == nil {
 		o.CallHierarchyRegistrationOptions = &vCallHierarchyRegistrationOptions
 		return nil
 	}
@@ -8940,13 +8941,13 @@ func (o BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOption
 	assertOnlyOne("more than one element of BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions is set", o.Boolean != nil, o.LinkedEditingRangeOptions != nil, o.LinkedEditingRangeRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.LinkedEditingRangeOptions != nil {
-		return json.Marshal(*o.LinkedEditingRangeOptions)
+		return jsonsplit.Marshal(*o.LinkedEditingRangeOptions)
 	}
 	if o.LinkedEditingRangeRegistrationOptions != nil {
-		return json.Marshal(*o.LinkedEditingRangeRegistrationOptions)
+		return jsonsplit.Marshal(*o.LinkedEditingRangeRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -8954,17 +8955,17 @@ func (o BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOption
 func (o *BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vLinkedEditingRangeOptions LinkedEditingRangeOptions
-	if err := json.Unmarshal(data, &vLinkedEditingRangeOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vLinkedEditingRangeOptions); err == nil {
 		o.LinkedEditingRangeOptions = &vLinkedEditingRangeOptions
 		return nil
 	}
 	var vLinkedEditingRangeRegistrationOptions LinkedEditingRangeRegistrationOptions
-	if err := json.Unmarshal(data, &vLinkedEditingRangeRegistrationOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vLinkedEditingRangeRegistrationOptions); err == nil {
 		o.LinkedEditingRangeRegistrationOptions = &vLinkedEditingRangeRegistrationOptions
 		return nil
 	}
@@ -8980,10 +8981,10 @@ func (o SemanticTokensOptionsOrSemanticTokensRegistrationOptions) MarshalJSON() 
 	assertOnlyOne("more than one element of SemanticTokensOptionsOrSemanticTokensRegistrationOptions is set", o.SemanticTokensOptions != nil, o.SemanticTokensRegistrationOptions != nil)
 
 	if o.SemanticTokensOptions != nil {
-		return json.Marshal(*o.SemanticTokensOptions)
+		return jsonsplit.Marshal(*o.SemanticTokensOptions)
 	}
 	if o.SemanticTokensRegistrationOptions != nil {
-		return json.Marshal(*o.SemanticTokensRegistrationOptions)
+		return jsonsplit.Marshal(*o.SemanticTokensRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -8991,12 +8992,12 @@ func (o SemanticTokensOptionsOrSemanticTokensRegistrationOptions) MarshalJSON() 
 func (o *SemanticTokensOptionsOrSemanticTokensRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = SemanticTokensOptionsOrSemanticTokensRegistrationOptions{}
 	var vSemanticTokensOptions SemanticTokensOptions
-	if err := json.Unmarshal(data, &vSemanticTokensOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vSemanticTokensOptions); err == nil {
 		o.SemanticTokensOptions = &vSemanticTokensOptions
 		return nil
 	}
 	var vSemanticTokensRegistrationOptions SemanticTokensRegistrationOptions
-	if err := json.Unmarshal(data, &vSemanticTokensRegistrationOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vSemanticTokensRegistrationOptions); err == nil {
 		o.SemanticTokensRegistrationOptions = &vSemanticTokensRegistrationOptions
 		return nil
 	}
@@ -9013,13 +9014,13 @@ func (o BooleanOrMonikerOptionsOrMonikerRegistrationOptions) MarshalJSON() ([]by
 	assertOnlyOne("more than one element of BooleanOrMonikerOptionsOrMonikerRegistrationOptions is set", o.Boolean != nil, o.MonikerOptions != nil, o.MonikerRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.MonikerOptions != nil {
-		return json.Marshal(*o.MonikerOptions)
+		return jsonsplit.Marshal(*o.MonikerOptions)
 	}
 	if o.MonikerRegistrationOptions != nil {
-		return json.Marshal(*o.MonikerRegistrationOptions)
+		return jsonsplit.Marshal(*o.MonikerRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -9027,17 +9028,17 @@ func (o BooleanOrMonikerOptionsOrMonikerRegistrationOptions) MarshalJSON() ([]by
 func (o *BooleanOrMonikerOptionsOrMonikerRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrMonikerOptionsOrMonikerRegistrationOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vMonikerOptions MonikerOptions
-	if err := json.Unmarshal(data, &vMonikerOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vMonikerOptions); err == nil {
 		o.MonikerOptions = &vMonikerOptions
 		return nil
 	}
 	var vMonikerRegistrationOptions MonikerRegistrationOptions
-	if err := json.Unmarshal(data, &vMonikerRegistrationOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vMonikerRegistrationOptions); err == nil {
 		o.MonikerRegistrationOptions = &vMonikerRegistrationOptions
 		return nil
 	}
@@ -9054,13 +9055,13 @@ func (o BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) Marshal
 	assertOnlyOne("more than one element of BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions is set", o.Boolean != nil, o.TypeHierarchyOptions != nil, o.TypeHierarchyRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.TypeHierarchyOptions != nil {
-		return json.Marshal(*o.TypeHierarchyOptions)
+		return jsonsplit.Marshal(*o.TypeHierarchyOptions)
 	}
 	if o.TypeHierarchyRegistrationOptions != nil {
-		return json.Marshal(*o.TypeHierarchyRegistrationOptions)
+		return jsonsplit.Marshal(*o.TypeHierarchyRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -9068,17 +9069,17 @@ func (o BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) Marshal
 func (o *BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vTypeHierarchyOptions TypeHierarchyOptions
-	if err := json.Unmarshal(data, &vTypeHierarchyOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vTypeHierarchyOptions); err == nil {
 		o.TypeHierarchyOptions = &vTypeHierarchyOptions
 		return nil
 	}
 	var vTypeHierarchyRegistrationOptions TypeHierarchyRegistrationOptions
-	if err := json.Unmarshal(data, &vTypeHierarchyRegistrationOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vTypeHierarchyRegistrationOptions); err == nil {
 		o.TypeHierarchyRegistrationOptions = &vTypeHierarchyRegistrationOptions
 		return nil
 	}
@@ -9095,13 +9096,13 @@ func (o BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) MarshalJSON
 	assertOnlyOne("more than one element of BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions is set", o.Boolean != nil, o.InlineValueOptions != nil, o.InlineValueRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.InlineValueOptions != nil {
-		return json.Marshal(*o.InlineValueOptions)
+		return jsonsplit.Marshal(*o.InlineValueOptions)
 	}
 	if o.InlineValueRegistrationOptions != nil {
-		return json.Marshal(*o.InlineValueRegistrationOptions)
+		return jsonsplit.Marshal(*o.InlineValueRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -9109,17 +9110,17 @@ func (o BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) MarshalJSON
 func (o *BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vInlineValueOptions InlineValueOptions
-	if err := json.Unmarshal(data, &vInlineValueOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vInlineValueOptions); err == nil {
 		o.InlineValueOptions = &vInlineValueOptions
 		return nil
 	}
 	var vInlineValueRegistrationOptions InlineValueRegistrationOptions
-	if err := json.Unmarshal(data, &vInlineValueRegistrationOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vInlineValueRegistrationOptions); err == nil {
 		o.InlineValueRegistrationOptions = &vInlineValueRegistrationOptions
 		return nil
 	}
@@ -9136,13 +9137,13 @@ func (o BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) MarshalJSON() (
 	assertOnlyOne("more than one element of BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions is set", o.Boolean != nil, o.InlayHintOptions != nil, o.InlayHintRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.InlayHintOptions != nil {
-		return json.Marshal(*o.InlayHintOptions)
+		return jsonsplit.Marshal(*o.InlayHintOptions)
 	}
 	if o.InlayHintRegistrationOptions != nil {
-		return json.Marshal(*o.InlayHintRegistrationOptions)
+		return jsonsplit.Marshal(*o.InlayHintRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -9150,17 +9151,17 @@ func (o BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) MarshalJSON() (
 func (o *BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vInlayHintOptions InlayHintOptions
-	if err := json.Unmarshal(data, &vInlayHintOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vInlayHintOptions); err == nil {
 		o.InlayHintOptions = &vInlayHintOptions
 		return nil
 	}
 	var vInlayHintRegistrationOptions InlayHintRegistrationOptions
-	if err := json.Unmarshal(data, &vInlayHintRegistrationOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vInlayHintRegistrationOptions); err == nil {
 		o.InlayHintRegistrationOptions = &vInlayHintRegistrationOptions
 		return nil
 	}
@@ -9176,10 +9177,10 @@ func (o DiagnosticOptionsOrDiagnosticRegistrationOptions) MarshalJSON() ([]byte,
 	assertOnlyOne("more than one element of DiagnosticOptionsOrDiagnosticRegistrationOptions is set", o.DiagnosticOptions != nil, o.DiagnosticRegistrationOptions != nil)
 
 	if o.DiagnosticOptions != nil {
-		return json.Marshal(*o.DiagnosticOptions)
+		return jsonsplit.Marshal(*o.DiagnosticOptions)
 	}
 	if o.DiagnosticRegistrationOptions != nil {
-		return json.Marshal(*o.DiagnosticRegistrationOptions)
+		return jsonsplit.Marshal(*o.DiagnosticRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -9187,12 +9188,12 @@ func (o DiagnosticOptionsOrDiagnosticRegistrationOptions) MarshalJSON() ([]byte,
 func (o *DiagnosticOptionsOrDiagnosticRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = DiagnosticOptionsOrDiagnosticRegistrationOptions{}
 	var vDiagnosticOptions DiagnosticOptions
-	if err := json.Unmarshal(data, &vDiagnosticOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vDiagnosticOptions); err == nil {
 		o.DiagnosticOptions = &vDiagnosticOptions
 		return nil
 	}
 	var vDiagnosticRegistrationOptions DiagnosticRegistrationOptions
-	if err := json.Unmarshal(data, &vDiagnosticRegistrationOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vDiagnosticRegistrationOptions); err == nil {
 		o.DiagnosticRegistrationOptions = &vDiagnosticRegistrationOptions
 		return nil
 	}
@@ -9208,10 +9209,10 @@ func (o BooleanOrInlineCompletionOptions) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of BooleanOrInlineCompletionOptions is set", o.Boolean != nil, o.InlineCompletionOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.InlineCompletionOptions != nil {
-		return json.Marshal(*o.InlineCompletionOptions)
+		return jsonsplit.Marshal(*o.InlineCompletionOptions)
 	}
 	panic("unreachable")
 }
@@ -9219,12 +9220,12 @@ func (o BooleanOrInlineCompletionOptions) MarshalJSON() ([]byte, error) {
 func (o *BooleanOrInlineCompletionOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrInlineCompletionOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vInlineCompletionOptions InlineCompletionOptions
-	if err := json.Unmarshal(data, &vInlineCompletionOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vInlineCompletionOptions); err == nil {
 		o.InlineCompletionOptions = &vInlineCompletionOptions
 		return nil
 	}
@@ -9240,10 +9241,10 @@ func (o RangeOrEditRangeWithInsertReplace) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of RangeOrEditRangeWithInsertReplace is set", o.Range != nil, o.EditRangeWithInsertReplace != nil)
 
 	if o.Range != nil {
-		return json.Marshal(*o.Range)
+		return jsonsplit.Marshal(*o.Range)
 	}
 	if o.EditRangeWithInsertReplace != nil {
-		return json.Marshal(*o.EditRangeWithInsertReplace)
+		return jsonsplit.Marshal(*o.EditRangeWithInsertReplace)
 	}
 	panic("unreachable")
 }
@@ -9251,12 +9252,12 @@ func (o RangeOrEditRangeWithInsertReplace) MarshalJSON() ([]byte, error) {
 func (o *RangeOrEditRangeWithInsertReplace) UnmarshalJSON(data []byte) error {
 	*o = RangeOrEditRangeWithInsertReplace{}
 	var vRange Range
-	if err := json.Unmarshal(data, &vRange); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vRange); err == nil {
 		o.Range = &vRange
 		return nil
 	}
 	var vEditRangeWithInsertReplace EditRangeWithInsertReplace
-	if err := json.Unmarshal(data, &vEditRangeWithInsertReplace); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vEditRangeWithInsertReplace); err == nil {
 		o.EditRangeWithInsertReplace = &vEditRangeWithInsertReplace
 		return nil
 	}
@@ -9272,10 +9273,10 @@ func (o StringOrNotebookDocumentFilter) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of StringOrNotebookDocumentFilter is set", o.String != nil, o.NotebookDocumentFilter != nil)
 
 	if o.String != nil {
-		return json.Marshal(*o.String)
+		return jsonsplit.Marshal(*o.String)
 	}
 	if o.NotebookDocumentFilter != nil {
-		return json.Marshal(*o.NotebookDocumentFilter)
+		return jsonsplit.Marshal(*o.NotebookDocumentFilter)
 	}
 	panic("unreachable")
 }
@@ -9283,12 +9284,12 @@ func (o StringOrNotebookDocumentFilter) MarshalJSON() ([]byte, error) {
 func (o *StringOrNotebookDocumentFilter) UnmarshalJSON(data []byte) error {
 	*o = StringOrNotebookDocumentFilter{}
 	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
 		return nil
 	}
 	var vNotebookDocumentFilter NotebookDocumentFilter
-	if err := json.Unmarshal(data, &vNotebookDocumentFilter); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vNotebookDocumentFilter); err == nil {
 		o.NotebookDocumentFilter = &vNotebookDocumentFilter
 		return nil
 	}
@@ -9304,10 +9305,10 @@ func (o BooleanOrSaveOptions) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of BooleanOrSaveOptions is set", o.Boolean != nil, o.SaveOptions != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.SaveOptions != nil {
-		return json.Marshal(*o.SaveOptions)
+		return jsonsplit.Marshal(*o.SaveOptions)
 	}
 	panic("unreachable")
 }
@@ -9315,12 +9316,12 @@ func (o BooleanOrSaveOptions) MarshalJSON() ([]byte, error) {
 func (o *BooleanOrSaveOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrSaveOptions{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vSaveOptions SaveOptions
-	if err := json.Unmarshal(data, &vSaveOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vSaveOptions); err == nil {
 		o.SaveOptions = &vSaveOptions
 		return nil
 	}
@@ -9336,10 +9337,10 @@ func (o TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions) Mars
 	assertOnlyOne("more than one element of TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions is set", o.TextDocumentContentOptions != nil, o.TextDocumentContentRegistrationOptions != nil)
 
 	if o.TextDocumentContentOptions != nil {
-		return json.Marshal(*o.TextDocumentContentOptions)
+		return jsonsplit.Marshal(*o.TextDocumentContentOptions)
 	}
 	if o.TextDocumentContentRegistrationOptions != nil {
-		return json.Marshal(*o.TextDocumentContentRegistrationOptions)
+		return jsonsplit.Marshal(*o.TextDocumentContentRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -9347,12 +9348,12 @@ func (o TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions) Mars
 func (o *TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions{}
 	var vTextDocumentContentOptions TextDocumentContentOptions
-	if err := json.Unmarshal(data, &vTextDocumentContentOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vTextDocumentContentOptions); err == nil {
 		o.TextDocumentContentOptions = &vTextDocumentContentOptions
 		return nil
 	}
 	var vTextDocumentContentRegistrationOptions TextDocumentContentRegistrationOptions
-	if err := json.Unmarshal(data, &vTextDocumentContentRegistrationOptions); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vTextDocumentContentRegistrationOptions); err == nil {
 		o.TextDocumentContentRegistrationOptions = &vTextDocumentContentRegistrationOptions
 		return nil
 	}
@@ -9368,10 +9369,10 @@ func (o StringOrTuple) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of StringOrTuple is set", o.String != nil, o.Tuple != nil)
 
 	if o.String != nil {
-		return json.Marshal(*o.String)
+		return jsonsplit.Marshal(*o.String)
 	}
 	if o.Tuple != nil {
-		return json.Marshal(*o.Tuple)
+		return jsonsplit.Marshal(*o.Tuple)
 	}
 	panic("unreachable")
 }
@@ -9379,12 +9380,12 @@ func (o StringOrTuple) MarshalJSON() ([]byte, error) {
 func (o *StringOrTuple) UnmarshalJSON(data []byte) error {
 	*o = StringOrTuple{}
 	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
 		return nil
 	}
 	var vTuple [2]uint32
-	if err := json.Unmarshal(data, &vTuple); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vTuple); err == nil {
 		o.Tuple = &vTuple
 		return nil
 	}
@@ -9400,10 +9401,10 @@ func (o StringOrBoolean) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of StringOrBoolean is set", o.String != nil, o.Boolean != nil)
 
 	if o.String != nil {
-		return json.Marshal(*o.String)
+		return jsonsplit.Marshal(*o.String)
 	}
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	panic("unreachable")
 }
@@ -9411,12 +9412,12 @@ func (o StringOrBoolean) MarshalJSON() ([]byte, error) {
 func (o *StringOrBoolean) UnmarshalJSON(data []byte) error {
 	*o = StringOrBoolean{}
 	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
 		return nil
 	}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
@@ -9432,10 +9433,10 @@ func (o WorkspaceFolderOrURI) MarshalJSON() ([]byte, error) {
 	assertOnlyOne("more than one element of WorkspaceFolderOrURI is set", o.WorkspaceFolder != nil, o.URI != nil)
 
 	if o.WorkspaceFolder != nil {
-		return json.Marshal(*o.WorkspaceFolder)
+		return jsonsplit.Marshal(*o.WorkspaceFolder)
 	}
 	if o.URI != nil {
-		return json.Marshal(*o.URI)
+		return jsonsplit.Marshal(*o.URI)
 	}
 	panic("unreachable")
 }
@@ -9443,12 +9444,12 @@ func (o WorkspaceFolderOrURI) MarshalJSON() ([]byte, error) {
 func (o *WorkspaceFolderOrURI) UnmarshalJSON(data []byte) error {
 	*o = WorkspaceFolderOrURI{}
 	var vWorkspaceFolder WorkspaceFolder
-	if err := json.Unmarshal(data, &vWorkspaceFolder); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vWorkspaceFolder); err == nil {
 		o.WorkspaceFolder = &vWorkspaceFolder
 		return nil
 	}
 	var vURI URI
-	if err := json.Unmarshal(data, &vURI); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vURI); err == nil {
 		o.URI = &vURI
 		return nil
 	}
@@ -9464,10 +9465,10 @@ func (o BooleanOrClientSemanticTokensRequestFullDelta) MarshalJSON() ([]byte, er
 	assertOnlyOne("more than one element of BooleanOrClientSemanticTokensRequestFullDelta is set", o.Boolean != nil, o.ClientSemanticTokensRequestFullDelta != nil)
 
 	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
+		return jsonsplit.Marshal(*o.Boolean)
 	}
 	if o.ClientSemanticTokensRequestFullDelta != nil {
-		return json.Marshal(*o.ClientSemanticTokensRequestFullDelta)
+		return jsonsplit.Marshal(*o.ClientSemanticTokensRequestFullDelta)
 	}
 	panic("unreachable")
 }
@@ -9475,12 +9476,12 @@ func (o BooleanOrClientSemanticTokensRequestFullDelta) MarshalJSON() ([]byte, er
 func (o *BooleanOrClientSemanticTokensRequestFullDelta) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrClientSemanticTokensRequestFullDelta{}
 	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
 		return nil
 	}
 	var vClientSemanticTokensRequestFullDelta ClientSemanticTokensRequestFullDelta
-	if err := json.Unmarshal(data, &vClientSemanticTokensRequestFullDelta); err == nil {
+	if err := jsonsplit.Unmarshal(data, &vClientSemanticTokensRequestFullDelta); err == nil {
 		o.ClientSemanticTokensRequestFullDelta = &vClientSemanticTokensRequestFullDelta
 		return nil
 	}

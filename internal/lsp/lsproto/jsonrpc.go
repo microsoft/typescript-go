@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+
+	"github.com/microsoft/typescript-go/internal/jsonsplit"
 )
 
 type JSONRPCVersion struct{}
@@ -49,9 +51,9 @@ func (id *ID) String() string {
 
 func (id *ID) MarshalJSON() ([]byte, error) {
 	if id.str != "" {
-		return json.Marshal(id.str)
+		return jsonsplit.Marshal(id.str)
 	}
-	return json.Marshal(id.int)
+	return jsonsplit.Marshal(id.int)
 }
 
 func (id *ID) UnmarshalJSON(data []byte) error {
@@ -146,7 +148,7 @@ func (m *Message) UnmarshalJSON(data []byte) error {
 }
 
 func (m *Message) MarshalJSON() ([]byte, error) {
-	return json.Marshal(m.msg)
+	return jsonsplit.Marshal(m.msg)
 }
 
 func NewNotificationMessage(method Method, params any) *RequestMessage {
@@ -226,7 +228,7 @@ func (r *ResponseError) String() string {
 	if r == nil {
 		return ""
 	}
-	data, err := json.Marshal(r.Data)
+	data, err := jsonsplit.Marshal(r.Data)
 	if err != nil {
 		return fmt.Sprintf("[%d]: %s\n%v", r.Code, r.Message, data)
 	}

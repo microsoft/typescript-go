@@ -19,6 +19,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
+	"github.com/microsoft/typescript-go/internal/jsonsplit"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/lsutil"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -4631,7 +4632,7 @@ func (l *LanguageService) ResolveCompletionItem(
 }
 
 func GetCompletionItemData(item *lsproto.CompletionItem) (*itemData, error) {
-	bytes, err := json.Marshal(item.Data)
+	bytes, err := jsonsplit.Marshal(item.Data)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal completion item data: %w", err)
 	}

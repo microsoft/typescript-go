@@ -1,8 +1,8 @@
 package packagejson
 
 import (
-	json2 "github.com/go-json-experiment/json"
 	"github.com/go-json-experiment/json/jsontext"
+	"github.com/microsoft/typescript-go/internal/jsonsplit"
 )
 
 type HeaderFields struct {
@@ -36,7 +36,7 @@ type Fields struct {
 
 func Parse(data []byte) (Fields, error) {
 	var f Fields
-	if err := json2.Unmarshal(data, &f, jsontext.AllowDuplicateNames(true)); err != nil {
+	if err := jsonsplit.Unmarshal(data, &f, jsontext.AllowDuplicateNames(true)); err != nil {
 		return Fields{}, err
 	}
 	return f, nil

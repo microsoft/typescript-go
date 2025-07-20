@@ -1,10 +1,13 @@
 module github.com/microsoft/typescript-go
 
-go 1.24.0
+go 1.24.2
+
+toolchain go1.24.5
 
 require (
 	github.com/dlclark/regexp2 v1.11.5
-	github.com/go-json-experiment/json v0.0.0-20250517221953-25912455fbc8
+	github.com/go-json-experiment/json v0.0.0-20250714165856-be8212f5270d
+	github.com/go-json-experiment/jsonsplit v0.0.0-20250714181532-42b0eff03f8e
 	github.com/google/go-cmp v0.7.0
 	github.com/peter-evans/patience v0.3.0
 	golang.org/x/sync v0.15.0
