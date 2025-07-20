@@ -113,13 +113,13 @@ func readRawMessages(p string) map[int]*diagnosticMessage {
 		return nil
 	}
 
-	codeToNessage := make(map[int]*diagnosticMessage, len(rawMessages))
+	codeToMessage := make(map[int]*diagnosticMessage, len(rawMessages))
 	for k, m := range rawMessages {
 		m.key = k
-		codeToNessage[m.Code] = m
+		codeToMessage[m.Code] = m
 	}
 
-	return codeToNessage
+	return codeToMessage
 }
 
 var (
