@@ -109,7 +109,7 @@ Regardless of strictness, it still makes parameters optional when used in a `@pa
 
 ### JSDoc Tags
 
-1. `@type` tags no longer apply to function declarations, and now contextually type functionn expressions instead of applying directly. So this annotation no longer does anything:
+1. `@type` tags no longer apply to function declarations, and now contextually type function expressions instead of applying directly. So this annotation no longer does anything:
 
 ```js
 
