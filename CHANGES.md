@@ -286,7 +286,7 @@ exports.x = theRealExport
 
 This exports `x: undefined` not `x: typeof theRealExport`.
 
-3. Type info for `module` shows a property with name of an instead of `exports`:
+3. Type info for `module` shows a property with name of the export instead of `exports`:
 
 ```js
 module.exports = singleIdentifier
