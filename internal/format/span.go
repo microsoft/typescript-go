@@ -954,23 +954,12 @@ func (w *formatSpanWorker) indentMultilineComment(commentRange core.TextRange, i
 			nonWhitespaceCharacter, nonWhitespaceColumn = findFirstNonWhitespaceCharacterAndColumn(parts[i].Pos(), parts[i].End(), w.sourceFile, w.formattingContext.Options)
 		}
 
-		// Check if the first non-whitespace character is '*' (comment continuation)
-		// If so, we should only replace the whitespace before the '*', not the '*' itself
-		charactersToReplace := nonWhitespaceCharacter
-		if nonWhitespaceCharacter > 0 && startLinePos+nonWhitespaceCharacter < len(w.sourceFile.Text()) {
-			firstNonWhitespaceChar := w.sourceFile.Text()[startLinePos+nonWhitespaceCharacter]
-			if firstNonWhitespaceChar == '*' {
-				// Only replace whitespace before the '*', not the '*' itself
-				charactersToReplace = nonWhitespaceCharacter - 1
-			}
-		}
-
 		newIndentation := nonWhitespaceColumn + delta
 		if newIndentation > 0 {
 			indentationString := getIndentationString(newIndentation, w.formattingContext.Options)
-			w.recordReplace(startLinePos, charactersToReplace, indentationString)
+			w.recordReplace(startLinePos, nonWhitespaceCharacter, indentationString)
 		} else {
-			w.recordDelete(startLinePos, charactersToReplace)
+			w.recordDelete(startLinePos, nonWhitespaceCharacter)
 		}
 
 		startLine++
