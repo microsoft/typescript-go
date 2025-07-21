@@ -87,24 +87,18 @@ func (l *LanguageService) GetSignatureHelpItems(
 		return nil
 	}
 
-	// Check if position is actually within the applicable range
-	// Fix for issue where signature help is shown after closing parenthesis
-	argRange := argumentInfo.argumentsRange
-	if position < argRange.Pos() || position > argRange.End() {
-		return nil
-	}
-
 	// cancellationToken.throwIfCancellationRequested();
 
 	// Extra syntactic and semantic filtering of signature help
 	candidateInfo := getCandidateOrTypeInfo(argumentInfo, typeChecker, sourceFile, startingToken, onlyUseSyntacticOwners)
 	// cancellationToken.throwIfCancellationRequested();
 
-	// if (!candidateInfo) { !!!
-	// 	// We didn't have any sig help items produced by the TS compiler.  If this is a JS
-	// 	// file, then see if we can figure out anything better.
-	// 	return isSourceFileJS(sourceFile) ? createJSSignatureHelpItems(argumentInfo, program, cancellationToken) : undefined;
-	// }
+	if candidateInfo == nil {
+		// We didn't have any sig help items produced by the TS compiler.  If this is a JS
+		// file, then see if we can figure out anything better.
+		// return isSourceFileJS(sourceFile) ? createJSSignatureHelpItems(argumentInfo, program, cancellationToken) : undefined;
+		return nil
+	}
 
 	// return typeChecker.runWithCancellationToken(cancellationToken, typeChecker =>
 	if candidateInfo.candidateInfo != nil {
@@ -520,7 +514,9 @@ type CandidateOrTypeInfo struct {
 
 func getCandidateOrTypeInfo(info *argumentListInfo, c *checker.Checker, sourceFile *ast.SourceFile, startingToken *ast.Node, onlyUseSyntacticOwners bool) *CandidateOrTypeInfo {
 	if info.invocation.callInvocation != nil {
-		if onlyUseSyntacticOwners && !isSyntacticOwner(startingToken, info.invocation.callInvocation.node, sourceFile) {
+		// Apply syntactic owner check when explicitly requested, or for critical cases like after closing tokens
+		shouldCheckSyntacticOwner := onlyUseSyntacticOwners || startingToken.Kind == ast.KindCloseParenToken
+		if shouldCheckSyntacticOwner && !isSyntacticOwner(startingToken, info.invocation.callInvocation.node, sourceFile) {
 			return nil
 		}
 		resolvedSignature, candidates := checker.GetResolvedSignatureForSignatureHelp(info.invocation.callInvocation.node, info.argumentCount, c)
@@ -569,19 +565,23 @@ func isSyntacticOwner(startingToken *ast.Node, node *ast.Node, sourceFile *ast.S
 	if !ast.IsCallOrNewExpression(node) {
 		return false
 	}
-	invocationChildren := getTokensFromNode(node, sourceFile)
+	invocationChildren := getASTChildren(node)
 	switch startingToken.Kind {
 	case ast.KindOpenParenToken:
 		return containsNode(invocationChildren, startingToken)
 	case ast.KindCommaToken:
-		return containsNode(invocationChildren, startingToken)
-		// !!!
-		// const containingList = findContainingList(startingToken);
-		// return !!containingList && contains(invocationChildren, containingList);
+		containingList := findContainingList(startingToken, sourceFile)
+		return containingList != nil && containsNodeList(invocationChildren, containingList)
 	case ast.KindLessThanToken:
 		return containsPrecedingToken(startingToken, sourceFile, node.AsCallExpression().Expression)
+	case ast.KindCloseParenToken:
+		// If we're at a close paren token, only provide signature help if we're inside the token,
+		// not after it. This prevents signature help from showing after the function call ends.
+		return containsNode(invocationChildren, startingToken)
 	default:
-		return false
+		// For other token types (like string literals, identifiers, etc.), check if they are
+		// contained within the invocation node (i.e., they are arguments or part of arguments)
+		return containsNode(invocationChildren, startingToken)
 	}
 }
 
@@ -609,14 +609,6 @@ func getContainingArgumentInfo(node *ast.Node, sourceFile *ast.SourceFile, check
 		// If the node is not a subspan of its parent, this is a big problem.
 		// There have been crashes that might be caused by this violation.
 		// Debug.assert(rangeContainsRange(n.parent, n), "Not a subspan", () => `Child: ${Debug.formatSyntaxKind(n.kind)}, parent: ${Debug.formatSyntaxKind(n.parent.kind)}`);
-		
-		// Special case: if we're at a close paren token and the position is after its end, 
-		// don't provide signature help. This handles the case where the cursor is right 
-		// after the closing parenthesis
-		if n.Kind == ast.KindCloseParenToken && position >= n.End() {
-			continue
-		}
-		
 		argumentInfo := getImmediatelyContainingArgumentOrContextualParameterInfo(n, position, sourceFile, checker)
 		if argumentInfo != nil {
 			return argumentInfo
@@ -1055,6 +1047,18 @@ func countBinaryExpressionParameters(b *ast.BinaryExpression) int {
 	return 2
 }
 
+func getASTChildren(node *ast.Node) []*ast.Node {
+	if node == nil {
+		return nil
+	}
+	children := []*ast.Node{}
+	node.VisitEachChild(ast.NewNodeVisitor(func(n *ast.Node) *ast.Node {
+		children = append(children, n)
+		return n
+	}, nil, ast.NodeVisitorHooks{}))
+	return children
+}
+
 func getTokensFromNode(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
 	if node == nil {
 		return nil
@@ -1101,6 +1105,19 @@ func getTokenFromNodeList(nodeList *ast.NodeList, nodeListParent *ast.Node, sour
 func containsNode(nodes []*ast.Node, node *ast.Node) bool {
 	for i := range nodes {
 		if nodes[i] == node {
+			return true
+		}
+	}
+	return false
+}
+
+func containsNodeList(nodes []*ast.Node, nodeList *ast.NodeList) bool {
+	if nodeList == nil {
+		return false
+	}
+	// Check if any of the nodes has the same range as the NodeList
+	for i := range nodes {
+		if nodes[i].Pos() == nodeList.Pos() && nodes[i].End() == nodeList.End() {
 			return true
 		}
 	}
