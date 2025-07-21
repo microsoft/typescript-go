@@ -40,8 +40,12 @@ func (v *jsDiagnosticsVisitor) walkNodeForJSDiagnosticsWorker(node *ast.Node) bo
 		return false
 	}
 
-	// Check for question tokens (optional markers) - these are always illegal in JS
+	// Check for question tokens (optional markers) - but exclude ternary operators
 	if node.Kind == ast.KindQuestionToken {
+		// Skip if this is part of a conditional expression (ternary operator) - valid in JS
+		if parent.Kind == ast.KindConditionalExpression {
+			return false
+		}
 		// Skip if this is in an object literal method which already gets a grammar error
 		if parent.Kind == ast.KindMethodDeclaration && parent.Parent.Kind == ast.KindObjectLiteralExpression {
 			return false
