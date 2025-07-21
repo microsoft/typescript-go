@@ -953,7 +953,6 @@ func (w *formatSpanWorker) indentMultilineComment(commentRange core.TextRange, i
 		if i != 0 {
 			nonWhitespaceCharacter, nonWhitespaceColumn = findFirstNonWhitespaceCharacterAndColumn(parts[i].Pos(), parts[i].End(), w.sourceFile, w.formattingContext.Options)
 		}
-
 		newIndentation := nonWhitespaceColumn + delta
 		if newIndentation > 0 {
 			indentationString := getIndentationString(newIndentation, w.formattingContext.Options)
