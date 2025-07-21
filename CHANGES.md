@@ -48,6 +48,18 @@ function f(x) { return x; }
 f(); // Still allowed
 ```
 
+2. Strada's JS-specific rules for inferring type arguments no apply in Corsa.
+
+Inferred type arguments may change. For example:
+
+```js
+/** @type {any} */
+var x = { a: 1, b: 2 };
+var entries = Object.entries(x);
+```
+In Strada, `entries: Array<[string, any]>`.
+In Corsa it has type `Array<[string, unknown]>`, the same as in TypeScript.
+
 ### JSDoc Types
 
 1. JSDoc variadic types are now only synonyms for array types.
@@ -81,6 +93,18 @@ Must now be written as
 /** @param {...number} ns */
 function sum(...ns) {}
 ```
+
+3. The postfix `=` type no longer adds `undefined` even when `strictNullChecks` is off:
+
+```js
+/** @param {number=} x */
+function f(x) {
+    return x;
+}
+```
+
+will now have `x?: number` not `x?: number | undefined` with `strictNullChecks` off.
+Regardless of strictness, it still makes parameters optional when used in a `@param` tag.
 
 
 ### JSDoc Tags
@@ -144,6 +168,42 @@ They must be moved outside the class to use them outside the class.
 
 Corsa ignores `@class` and `@constructor`.
 This makes a difference on a function without this-property assignments or associated prototype-function assignments.
+
+6. `@param` tags now apply to at most one function.
+
+If they're in a place where they could apply to multiple functions, they apply only to the first one.
+If you have `"strict": true`, you will see a noImplicitAny error on the now-untyped parameters.
+
+```js
+/** @param {number} x */
+var f = x => x, g = x => x;
+```
+
+7. Optional marking on parameter names now makes the parameter both optional and undefined:
+
+```js
+/** @param {number} [x] */
+function f(x) {
+    return x;
+}
+```
+
+This behaves the same as Typescript's `x?: number` syntax. 
+Strada makes the parameter optional but does not add `undefined` to the type.
+
+8. Type assertions with `@type` tags now prevent narrowing of the type.
+
+```js
+/** @param {C | undefined} cu */
+function f(cu) {
+    if (/** @type {any} */ (cu).undeclaredProperty) {
+        cu // still has type C | undefined
+    }
+}
+```
+
+In Strada, `cu` incorrectly narrows to `C` inside the `if` block, unlike with TS assertion syntax.
+In Corsa, the behaviour is the same between TS and JS.
 
 ### Expandos
 

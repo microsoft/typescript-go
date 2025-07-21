@@ -20,5 +20,9 @@ conformance/callOfPropertylessConstructorFunction.types.diff
 conformance/callWithMissingVoidUndefinedUnknownAnyInJs(strict=false).errors.txt.diff
 conformance/checkExportsObjectAssignProperty.errors.txt.diff
 conformance/checkExportsObjectAssignProperty.types.diff
+conformance/checkJsdocOnEndOfFile.types.diff
+conformance/checkJsdocParamOnVariableDeclaredFunctionExpression.errors.txt.diff
+conformance/checkJsdocParamOnVariableDeclaredFunctionExpression.types.diff
+conformance/checkParamTag1.types.diff
 conformance/node10Alternateresult_noTypes.errors.txt.diff
 conformance/node10AlternateResult_noResolution.errors.txt.diff
