@@ -338,10 +338,9 @@ func computeModuleSpecifiers(
 
 	for _, modulePath := range modulePaths {
 		var specifier string
-		// Try to generate a node module specifier for all paths, not just those marked IsInNodeModules
-		// This handles symlinked packages where the real path doesn't contain node_modules
-		// but a package name can still be determined
-		specifier = tryGetModuleNameAsNodeModule(modulePath, info, importingSourceFile, host, compilerOptions, userPreferences /*packageNameOnly*/, false, options.OverrideImportMode)
+		if modulePath.IsInNodeModules {
+			specifier = tryGetModuleNameAsNodeModule(modulePath, info, importingSourceFile, host, compilerOptions, userPreferences /*packageNameOnly*/, false, options.OverrideImportMode)
+		}
 		if len(specifier) > 0 && !(forAutoImport && isExcludedByRegex(specifier, preferences.excludeRegexes)) {
 			nodeModulesSpecifiers = append(nodeModulesSpecifiers, specifier)
 			if modulePath.IsRedirect {
@@ -634,50 +633,6 @@ func tryGetModuleNameFromRootDirs(
 	return processEnding(shortest, allowedEndings, compilerOptions, host)
 }
 
-func tryGetPackageNameForSymlinkedFile(fileName string, info Info, host ModuleSpecifierGenerationHost) string {
-	// Look for package.json in the file's directory or parent directories
-	currentDir := tspath.GetDirectoryPath(fileName)
-	for len(currentDir) > 0 {
-		packageJsonPath := tspath.CombinePaths(currentDir, "package.json")
-		if host.FileExists(packageJsonPath) {
-			packageInfo := host.GetPackageJsonInfo(packageJsonPath)
-			if packageInfo != nil && packageInfo.GetContents() != nil {
-				packageName, ok := packageInfo.GetContents().Name.GetValue()
-				if ok && len(packageName) > 0 {
-					// Check if this package can be resolved from the importing source directory
-					// by looking for a symlink in node_modules
-					if canResolveAsPackage(packageName, info.SourceDirectory, host) {
-						return packageName
-					}
-				}
-			}
-		}
-		parentDir := tspath.GetDirectoryPath(currentDir)
-		if parentDir == currentDir {
-			break
-		}
-		currentDir = parentDir
-	}
-	return ""
-}
-
-func canResolveAsPackage(packageName string, importingDir string, host ModuleSpecifierGenerationHost) bool {
-	// Walk up from importing directory looking for node_modules that contains this package
-	currentDir := importingDir
-	for len(currentDir) > 0 {
-		nodeModulesPath := tspath.CombinePaths(currentDir, "node_modules", packageName)
-		if host.FileExists(tspath.CombinePaths(nodeModulesPath, "package.json")) {
-			return true
-		}
-		parentDir := tspath.GetDirectoryPath(currentDir)
-		if parentDir == currentDir {
-			break
-		}
-		currentDir = parentDir
-	}
-	return false
-}
-
 func tryGetModuleNameAsNodeModule(
 	pathObj ModulePath,
 	info Info,
@@ -690,9 +645,7 @@ func tryGetModuleNameAsNodeModule(
 ) string {
 	parts := getNodeModulePathParts(pathObj.FileName)
 	if parts == nil {
-		// For symlinked packages, the real path may not contain node_modules
-		// Try to infer package name by looking for package.json
-		return tryGetPackageNameForSymlinkedFile(pathObj.FileName, info, host)
+		return ""
 	}
 
 	// Simplify the full file path to something that can be resolved by Node.
