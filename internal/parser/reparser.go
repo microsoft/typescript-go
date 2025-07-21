@@ -297,7 +297,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 			if param.Type == nil && tag.AsJSDocTypeTag().TypeExpression != nil {
 				param.Type = p.reparseJSDocTypeLiteral(tag.AsJSDocTypeTag().TypeExpression.Type())
 			}
-			p.finishMutatedNode(param.AsNode())
+			p.finishMutatedNode(parent)
 		case ast.KindCommonJSExport:
 			export := parent.AsCommonJSExport()
 			if export.Type == nil && tag.AsJSDocTypeTag().TypeExpression != nil {
