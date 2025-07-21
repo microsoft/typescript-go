@@ -249,7 +249,8 @@ out/jsDeclarationsReactComponents1.d.ts(3,15): error TS2503: Cannot find namespa
 out/jsDeclarationsReactComponents2.d.ts(1,19): error TS2307: Cannot find module 'react' or its corresponding type declarations.
 out/jsDeclarationsReactComponents3.d.ts(10,7): error TS2503: Cannot find namespace 'JSX'.
 out/jsDeclarationsReactComponents4.d.ts(4,9): error TS2503: Cannot find namespace 'JSX'.
-out/jsDeclarationsReactComponents5.d.ts(3,5): error TS2503: Cannot find namespace 'JSX'.
+out/jsDeclarationsReactComponents5.d.ts(1,23): error TS2307: Cannot find module 'prop-types' or its corresponding type declarations.
+out/jsDeclarationsReactComponents5.d.ts(4,5): error TS2503: Cannot find namespace 'JSX'.
 
 
 ==== out/jsDeclarationsReactComponents1.d.ts (2 errors) ====
