@@ -1,0 +1,60 @@
+/src/b.js(5,26): error TS8010: Type annotations can only be used in TypeScript files.
+/src/b.js(8,27): error TS8010: Type annotations can only be used in TypeScript files.
+/src/b.js(11,27): error TS8010: Type annotations can only be used in TypeScript files.
+/src/b.js(14,27): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+==== /src/node_modules/@types/node/index.d.ts (0 errors) ====
+    /// <reference path="events.d.ts" />
+==== /src/node_modules/@types/node/events.d.ts (0 errors) ====
+    declare module "events" {
+        namespace EventEmitter {
+            class EventEmitter {
+                constructor();
+            }
+        }
+        export = EventEmitter;
+    }
+    declare module "nestNamespaceModule" {
+        namespace a1.a2 {
+            class d { }
+        }
+    
+        namespace a1.a2.n3 {
+            class c { }
+        }
+        export = a1.a2;
+    }
+    declare module "renameModule" {
+        namespace a.b {
+            class c { }
+        }
+        import d = a.b;
+        export = d;
+    }
+    
+==== /src/b.js (4 errors) ====
+    import { EventEmitter } from 'events';
+    import { n3, d } from 'nestNamespaceModule';
+    import { c } from 'renameModule';
+    
+    export class Foo extends EventEmitter {
+                             ~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+    }
+    
+    export class Foo2 extends n3.c {
+                              ~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+    }
+    
+    export class Foo3 extends d {
+                              ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+    }
+    
+    export class Foo4 extends c {
+                              ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+    
+    }

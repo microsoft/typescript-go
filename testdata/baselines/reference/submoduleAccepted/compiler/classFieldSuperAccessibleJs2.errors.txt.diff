@@ -1,0 +1,34 @@
+--- old.classFieldSuperAccessibleJs2.errors.txt
++++ new.classFieldSuperAccessibleJs2.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++index.js(12,17): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== index.js (1 errors) ====
++    class C {
++      constructor() {
++        this.foo = () => {
++          console.log("called arrow");
++        };
++      }
++      foo() {
++        console.log("called method");
++      }
++    }
++    
++    class D extends C {
++                    ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++      foo() {
++        console.log("SUPER:");
++        super.foo();
++        console.log("THIS:");
++        this.foo();
++      }
++    }
++    
++    const obj = new D();
++    obj.foo();
++    D.prototype.foo.call(obj);
++    

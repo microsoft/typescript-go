@@ -3,11 +3,15 @@
 @@= skipped -0, +0 lines =@@
 -bug24730.js(11,14): error TS2339: Property 'doesNotExist' does not exist on type 'C'.
 -bug24730.js(12,26): error TS2339: Property 'doesntExistEither' does not exist on type 'number'.
+-
+-
+-==== bug24730.js (2 errors) ====
 +bug24730.js(1,5): error TS7022: 'UI' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
 +bug24730.js(7,1): error TS7022: 'context' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
-
-
- ==== bug24730.js (2 errors) ====
++bug24730.js(9,17): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== bug24730.js (3 errors) ====
      var UI = {}
 +        ~~
 +!!! error TS7022: 'UI' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
@@ -21,6 +25,8 @@
 +!!! error TS7022: 'context' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
      
      class C extends UI.TreeElement {
++                    ~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
          onpopulate() {
              this.doesNotExist
 -                 ~~~~~~~~~~~~

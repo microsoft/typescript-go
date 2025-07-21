@@ -1,0 +1,30 @@
+--- old.override_js1.errors.txt
++++ new.override_js1.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++a.js(6,17): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== a.js (1 errors) ====
++    class B {
++        foo (v) {}
++        fooo (v) {}
++    }
++    
++    class D extends B {
++                    ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++        foo (v) {}
++        /** @override */
++        fooo (v) {}
++        /** @override */
++        bar(v) {}
++    }
++    
++    class C {
++        foo () {}
++        /** @override */
++        fooo (v) {}
++        /** @override */
++        bar(v) {}
++    }

@@ -1,0 +1,33 @@
+/a.js(7,17): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+==== /a.js (1 errors) ====
+    class A {
+    	get arguments() {
+    		return { bar: {} };
+    	}
+    }
+    
+    class B extends A {
+                    ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+    	/**
+    	 * Constructor
+    	 *
+    	 * @param {object} [foo={}]
+    	 */
+    	constructor(foo = {}) {
+    		super();
+    
+    		/**
+    		 * @type object
+    		 */
+    		this.foo = foo;
+    
+    		/**
+    		 * @type object
+    		 */
+    		this.bar = super.arguments.foo;
+    	}
+    }
+    

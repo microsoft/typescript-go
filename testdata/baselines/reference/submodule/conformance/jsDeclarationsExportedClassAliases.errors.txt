@@ -1,0 +1,23 @@
+utils/errors.js(1,26): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+==== utils/index.js (0 errors) ====
+    // issue arises here on compilation
+    const errors = require("./errors");
+    
+    module.exports = {
+        errors
+    };
+==== utils/errors.js (1 errors) ====
+    class FancyError extends Error {
+                             ~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+        constructor(status) {
+            super(`error with status ${status}`);
+        }
+    }
+    
+    module.exports = {
+        FancyError
+    };
+    

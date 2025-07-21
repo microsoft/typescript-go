@@ -60,10 +60,41 @@ func (v *jsDiagnosticsVisitor) walkNodeForJSDiagnosticsWorker(node *ast.Node) bo
 		return false
 	}
 
-	// Check for type nodes - these are always illegal in JS
-	if ast.IsTypeNode(node) {
+	// Check for specific TypeScript-only constructs
+	switch node.Kind {
+	// Type nodes that are always illegal in JS (but exclude some that are valid as literals/expressions)
+	case ast.KindAnyKeyword, ast.KindUnknownKeyword, ast.KindNumberKeyword, ast.KindBigIntKeyword,
+		ast.KindStringKeyword, ast.KindBooleanKeyword, ast.KindSymbolKeyword, ast.KindObjectKeyword,
+		ast.KindNeverKeyword, ast.KindIntrinsicKeyword:
 		v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.Type_annotations_can_only_be_used_in_TypeScript_files))
 		return false
+	case ast.KindVoidKeyword:
+		// Only flag void when not used as void expression
+		if parent.Kind != ast.KindVoidExpression {
+			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.Type_annotations_can_only_be_used_in_TypeScript_files))
+			return false
+		}
+	case ast.KindNullKeyword, ast.KindUndefinedKeyword:
+		// Only flag null/undefined when used in type context, not as literal values
+		if ast.IsPartOfTypeNode(node) {
+			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.Type_annotations_can_only_be_used_in_TypeScript_files))
+			return false
+		}
+	case ast.KindExpressionWithTypeArguments:
+		// Only flag when it's actually part of a type expression (implements clause), not extends clause
+		if ast.IsPartOfTypeNode(node) {
+			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.Type_annotations_can_only_be_used_in_TypeScript_files))
+			return false
+		}
+	}
+	
+	// Check for type nodes in the type node range
+	if node.Kind >= ast.KindFirstTypeNode && node.Kind <= ast.KindLastTypeNode {
+		// Skip ExpressionWithTypeArguments as it's handled above
+		if node.Kind != ast.KindExpressionWithTypeArguments {
+			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.Type_annotations_can_only_be_used_in_TypeScript_files))
+			return false
+		}
 	}
 
 	// Check node-specific constructs
@@ -242,8 +273,14 @@ func (v *jsDiagnosticsVisitor) getTypeArguments(node *ast.Node) *ast.NodeList {
 
 	var typeArguments *ast.NodeList
 	
-	// Use the built-in TypeArgumentList() method for supported nodes
-	if ast.IsCallLikeExpression(node) || node.Kind == ast.KindExpressionWithTypeArguments {
+	// Handle specific node types that can have type arguments
+	switch node.Kind {
+	case ast.KindCallExpression, ast.KindNewExpression, ast.KindTaggedTemplateExpression,
+		 ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
+		if ast.IsCallLikeExpression(node) {
+			typeArguments = node.TypeArgumentList()
+		}
+	case ast.KindExpressionWithTypeArguments:
 		typeArguments = node.TypeArgumentList()
 	}
 

@@ -1,0 +1,80 @@
+--- old.plainJSGrammarErrors.errors.txt
++++ new.plainJSGrammarErrors.errors.txt
+@@= skipped -20, +20 lines =@@
+ plainJSGrammarErrors.js(38,18): error TS1053: A 'set' accessor cannot have rest parameter.
+ plainJSGrammarErrors.js(41,5): error TS18006: Classes may not have a field named 'constructor'.
+ plainJSGrammarErrors.js(43,1): error TS1211: A class declaration without the 'default' modifier must have a name.
++plainJSGrammarErrors.js(46,23): error TS8010: Type annotations can only be used in TypeScript files.
+ plainJSGrammarErrors.js(46,25): error TS1172: 'extends' clause already seen.
++plainJSGrammarErrors.js(46,33): error TS8010: Type annotations can only be used in TypeScript files.
++plainJSGrammarErrors.js(47,23): error TS8010: Type annotations can only be used in TypeScript files.
+ plainJSGrammarErrors.js(47,25): error TS1174: Classes can only extend a single class.
++plainJSGrammarErrors.js(47,25): error TS8010: Type annotations can only be used in TypeScript files.
++plainJSGrammarErrors.js(47,27): error TS8010: Type annotations can only be used in TypeScript files.
+ plainJSGrammarErrors.js(49,1): error TS18016: Private identifiers are not allowed outside class bodies.
+ plainJSGrammarErrors.js(50,6): error TS18016: Private identifiers are not allowed outside class bodies.
+ plainJSGrammarErrors.js(51,9): error TS18013: Property '#m' is not accessible outside class 'C' because it has a private identifier.
+@@= skipped -45, +50 lines =@@
+ plainJSGrammarErrors.js(105,5): error TS18016: Private identifiers are not allowed outside class bodies.
+ plainJSGrammarErrors.js(106,5): error TS1042: 'export' modifier cannot be used here.
+ plainJSGrammarErrors.js(108,25): error TS1162: An object member cannot be declared optional.
++plainJSGrammarErrors.js(108,25): error TS8009: The '?' modifier can only be used in TypeScript files.
+ plainJSGrammarErrors.js(109,6): error TS1162: An object member cannot be declared optional.
+-plainJSGrammarErrors.js(109,6): error TS8009: The '?' modifier can only be used in TypeScript files.
+ plainJSGrammarErrors.js(110,15): error TS1255: A definite assignment assertion '!' is not permitted in this context.
++plainJSGrammarErrors.js(110,15): error TS8009: The '!' modifier can only be used in TypeScript files.
+ plainJSGrammarErrors.js(111,19): error TS1255: A definite assignment assertion '!' is not permitted in this context.
+ plainJSGrammarErrors.js(114,16): error TS1312: Did you mean to use a ':'? An '=' can only follow a property name when the containing object literal is part of a destructuring pattern.
+ plainJSGrammarErrors.js(116,24): error TS1009: Trailing comma not allowed.
+@@= skipped -36, +37 lines =@@
+ plainJSGrammarErrors.js(205,36): error TS1325: Argument of dynamic import cannot be spread element.
+
+
+-==== plainJSGrammarErrors.js (102 errors) ====
++==== plainJSGrammarErrors.js (108 errors) ====
+     class C {
+         // #private mistakes
+         q = #unbound
+@@= skipped -93, +93 lines =@@
+         missingName = true
+     }
+     class Doubler extends C extends C { }
++                          ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+                             ~~~~~~~
+ !!! error TS1172: 'extends' clause already seen.
++                                    ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+     class Trebler extends C,C,C { }
++                          ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+                             ~
+ !!! error TS1174: Classes can only extend a single class.
++                            ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++                              ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+     // #private mistakes
+     #unrelated
+     ~~~~~~~~~~
+@@= skipped -152, +162 lines =@@
+         cantHaveQuestionMark?: 1,
+                             ~
+ !!! error TS1162: An object member cannot be declared optional.
+-        m?() { return 12 },
+-         ~
+-!!! error TS1162: An object member cannot be declared optional.
+-         ~
++                            ~
+ !!! error TS8009: The '?' modifier can only be used in TypeScript files.
++        m?() { return 12 },
++         ~
++!!! error TS1162: An object member cannot be declared optional.
+         definitely!,
+                   ~
+ !!! error TS1255: A definite assignment assertion '!' is not permitted in this context.
++                  ~
++!!! error TS8009: The '!' modifier can only be used in TypeScript files.
+         definiteMethod!() { return 13 },
+                       ~
+ !!! error TS1255: A definite assignment assertion '!' is not permitted in this context.

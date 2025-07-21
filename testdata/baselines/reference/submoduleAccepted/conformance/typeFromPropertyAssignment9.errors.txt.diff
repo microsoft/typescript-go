@@ -2,10 +2,11 @@
 +++ new.typeFromPropertyAssignment9.errors.txt
 @@= skipped -0, +0 lines =@@
 -<no content>
++a.js(22,27): error TS8009: The '?' modifier can only be used in TypeScript files.
 +a.js(33,16): error TS2304: Cannot find name 'global'.
 +
 +
-+==== a.js (1 errors) ====
++==== a.js (2 errors) ====
 +    var my = my || {};
 +    /** @param {number} n */
 +    my.method = function(n) {
@@ -28,6 +29,8 @@
 +     */
 +    my.predicate.sort = my.predicate.sort || function (first, second) {
 +        return first > second ? first : second;
++                              ~
++!!! error TS8009: The '?' modifier can only be used in TypeScript files.
 +    }
 +    my.predicate.type = class {
 +        m() { return 101; }

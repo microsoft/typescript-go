@@ -1,7 +1,8 @@
 /b.js(4,15): error TS8023: JSDoc '@augments A' does not match the 'extends B' clause.
+/b.js(5,17): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== /b.js (1 errors) ====
+==== /b.js (2 errors) ====
     class A {}
     class B {}
     
@@ -9,4 +10,6 @@
                   ~
 !!! error TS8023: JSDoc '@augments A' does not match the 'extends B' clause.
     class C extends B {}
+                    ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     

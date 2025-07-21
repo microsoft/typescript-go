@@ -1,0 +1,32 @@
+--- old.thisPropertyAssignmentInherited.errors.txt
++++ new.thisPropertyAssignmentInherited.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++thisPropertyAssignmentInherited.js(11,34): error TS8010: Type annotations can only be used in TypeScript files.
++thisPropertyAssignmentInherited.js(12,34): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== thisPropertyAssignmentInherited.js (2 errors) ====
++    export class Element {
++      /**
++       * @returns {String}
++       */
++      get textContent() {
++        return  ''
++      }
++      set textContent(x) {}
++      cloneNode() { return this}
++    }
++    export class HTMLElement extends Element {}
++                                     ~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++    export class TextElement extends HTMLElement {
++                                     ~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++      get innerHTML() { return this.textContent; }
++      set innerHTML(html) { this.textContent = html; }
++      toString() {
++      }
++    }
++    
++    

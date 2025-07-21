@@ -1,0 +1,34 @@
+--- old.fillInMissingTypeArgsOnJSConstructCalls.errors.txt
++++ new.fillInMissingTypeArgsOnJSConstructCalls.errors.txt
+@@= skipped -3, +3 lines =@@
+ BaseB.js(3,14): error TS8010: Type annotations can only be used in TypeScript files.
+ BaseB.js(4,25): error TS2304: Cannot find name 'Class'.
+ BaseB.js(4,25): error TS8010: Type annotations can only be used in TypeScript files.
+-SubB.js(3,41): error TS8011: Type arguments can only be used in TypeScript files.
++SubA.js(2,35): error TS8010: Type annotations can only be used in TypeScript files.
++SubB.js(3,35): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+ ==== BaseA.js (0 errors) ====
+     export default class BaseA {
+     }
+-==== SubA.js (0 errors) ====
++==== SubA.js (1 errors) ====
+     import BaseA from './BaseA';
+     export default class SubA extends BaseA {
++                                      ~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+     }
+ ==== BaseB.js (6 errors) ====
+     import BaseA from './BaseA';
+@@= skipped -34, +37 lines =@@
+     import SubA from './SubA';
+     import BaseB from './BaseB';
+     export default class SubB extends BaseB<SubA> {
+-                                            ~~~~
+-!!! error TS8011: Type arguments can only be used in TypeScript files.
++                                      ~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+         constructor() {
+             super(SubA);
+         }

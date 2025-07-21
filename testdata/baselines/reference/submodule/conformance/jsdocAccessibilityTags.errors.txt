@@ -1,4 +1,6 @@
+jsdocAccessibilityTag.js(48,17): error TS8010: Type annotations can only be used in TypeScript files.
 jsdocAccessibilityTag.js(50,14): error TS2341: Property 'priv' is private and only accessible within class 'A'.
+jsdocAccessibilityTag.js(53,17): error TS8010: Type annotations can only be used in TypeScript files.
 jsdocAccessibilityTag.js(55,14): error TS2341: Property 'priv2' is private and only accessible within class 'C'.
 jsdocAccessibilityTag.js(58,9): error TS2341: Property 'priv' is private and only accessible within class 'A'.
 jsdocAccessibilityTag.js(58,24): error TS2445: Property 'prot' is protected and only accessible within class 'A' and its subclasses.
@@ -10,7 +12,7 @@ jsdocAccessibilityTag.js(61,9): error TS2341: Property 'priv2' is private and on
 jsdocAccessibilityTag.js(61,25): error TS2445: Property 'prot2' is protected and only accessible within class 'C' and its subclasses.
 
 
-==== jsdocAccessibilityTag.js (10 errors) ====
+==== jsdocAccessibilityTag.js (12 errors) ====
     class A {
         /**
          * Ap docs
@@ -59,6 +61,8 @@ jsdocAccessibilityTag.js(61,25): error TS2445: Property 'prot2' is protected and
         h() { return this.priv2 }
     }
     class B extends A {
+                    ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         m() {
             this.priv + this.prot + this.pub
                  ~~~~
@@ -66,6 +70,8 @@ jsdocAccessibilityTag.js(61,25): error TS2445: Property 'prot2' is protected and
         }
     }
     class D extends C {
+                    ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         n() {
             this.priv2 + this.prot2 + this.pub2
                  ~~~~~

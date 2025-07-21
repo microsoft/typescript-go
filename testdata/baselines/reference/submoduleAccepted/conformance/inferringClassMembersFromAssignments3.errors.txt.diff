@@ -1,0 +1,21 @@
+--- old.inferringClassMembersFromAssignments3.errors.txt
++++ new.inferringClassMembersFromAssignments3.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++a.js(6,23): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== a.js (1 errors) ====
++    class Base {
++        constructor() {
++            this.p = 1
++        }
++    }
++    class Derived extends Base {
++                          ~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++        m() {
++            this.p = 1
++        }
++    }
++    

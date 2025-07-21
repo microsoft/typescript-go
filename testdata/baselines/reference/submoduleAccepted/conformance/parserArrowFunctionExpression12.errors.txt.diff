@@ -1,0 +1,22 @@
+--- old.parserArrowFunctionExpression12.errors.txt
++++ new.parserArrowFunctionExpression12.errors.txt
+@@= skipped -0, +0 lines =@@
+ fileJs.js(1,1): error TS2304: Cannot find name 'a'.
++fileJs.js(1,3): error TS8009: The '?' modifier can only be used in TypeScript files.
+ fileJs.js(1,13): error TS2304: Cannot find name 'c'.
+ fileJs.js(1,22): error TS2304: Cannot find name 'e'.
+ fileTs.ts(1,1): error TS2304: Cannot find name 'a'.
+@@= skipped -5, +6 lines =@@
+ fileTs.ts(1,22): error TS2304: Cannot find name 'e'.
+
+
+-==== fileJs.js (3 errors) ====
++==== fileJs.js (4 errors) ====
+     a ? (b) => (c): d => e // Legal JS
+     ~
+ !!! error TS2304: Cannot find name 'a'.
++      ~
++!!! error TS8009: The '?' modifier can only be used in TypeScript files.
+                 ~
+ !!! error TS2304: Cannot find name 'c'.
+                          ~

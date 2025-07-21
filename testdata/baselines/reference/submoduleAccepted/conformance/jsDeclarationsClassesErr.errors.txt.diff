@@ -1,0 +1,220 @@
+--- old.jsDeclarationsClassesErr.errors.txt
++++ new.jsDeclarationsClassesErr.errors.txt
+@@= skipped -0, +0 lines =@@
+ index.js(4,16): error TS8004: Type parameter declarations can only be used in TypeScript files.
+ index.js(5,12): error TS8010: Type annotations can only be used in TypeScript files.
+ index.js(8,16): error TS8004: Type parameter declarations can only be used in TypeScript files.
+-index.js(8,29): error TS8011: Type arguments can only be used in TypeScript files.
++index.js(8,27): error TS8010: Type annotations can only be used in TypeScript files.
+ index.js(9,12): error TS8010: Type annotations can only be used in TypeScript files.
+ index.js(13,11): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(13,20): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(16,24): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(18,24): error TS8010: Type annotations can only be used in TypeScript files.
+ index.js(19,11): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(19,20): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(22,24): error TS8010: Type annotations can only be used in TypeScript files.
+ index.js(23,11): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(23,20): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(26,24): error TS8010: Type annotations can only be used in TypeScript files.
+ index.js(27,11): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(27,20): error TS8010: Type annotations can only be used in TypeScript files.
+ index.js(28,11): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(28,20): error TS8010: Type annotations can only be used in TypeScript files.
+ index.js(32,11): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(32,20): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(35,24): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(38,24): error TS8010: Type annotations can only be used in TypeScript files.
+ index.js(39,11): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(39,20): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(42,24): error TS8010: Type annotations can only be used in TypeScript files.
+ index.js(43,11): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(43,20): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(46,24): error TS8010: Type annotations can only be used in TypeScript files.
+ index.js(47,11): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(47,20): error TS8010: Type annotations can only be used in TypeScript files.
+ index.js(48,11): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(48,20): error TS8010: Type annotations can only be used in TypeScript files.
+ index.js(52,11): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(52,20): error TS8010: Type annotations can only be used in TypeScript files.
+ index.js(53,11): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(53,20): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(56,24): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(58,25): error TS8010: Type annotations can only be used in TypeScript files.
+ index.js(59,11): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(59,20): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(62,25): error TS8010: Type annotations can only be used in TypeScript files.
+ index.js(63,11): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(63,20): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(66,25): error TS8010: Type annotations can only be used in TypeScript files.
+ index.js(67,11): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(67,20): error TS8010: Type annotations can only be used in TypeScript files.
+ index.js(68,11): error TS8010: Type annotations can only be used in TypeScript files.
+-
+-
+-==== index.js (21 errors) ====
++index.js(68,20): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== index.js (49 errors) ====
+     // Pretty much all of this should be an error, (since index signatures and generics are forbidden in js),
+     // but we should be able to synthesize declarations from the symbols regardless
+     
+@@= skipped -35, +63 lines =@@
+     export class N<U> extends M<U> {
+                    ~
+ !!! error TS8004: Type parameter declarations can only be used in TypeScript files.
+-                                ~
+-!!! error TS8011: Type arguments can only be used in TypeScript files.
++                              ~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+         other: U;
+                ~
+ !!! error TS8010: Type annotations can only be used in TypeScript files.
+@@= skipped -11, +11 lines =@@
+         [idx: string]: string;
+               ~~~~~~
+ !!! error TS8010: Type annotations can only be used in TypeScript files.
++                       ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+     }
+     
+     export class P extends O {}
++                           ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+     
+     export class Q extends O {
++                           ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+         [idx: string]: "ok";
+               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++                       ~~~~
+ !!! error TS8010: Type annotations can only be used in TypeScript files.
+     }
+     
+     export class R extends O {
++                           ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+         [idx: number]: "ok";
+               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++                       ~~~~
+ !!! error TS8010: Type annotations can only be used in TypeScript files.
+     }
+     
+     export class S extends O {
++                           ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+         [idx: string]: "ok";
+               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++                       ~~~~
+ !!! error TS8010: Type annotations can only be used in TypeScript files.
+         [idx: number]: never;
+               ~~~~~~
+ !!! error TS8010: Type annotations can only be used in TypeScript files.
++                       ~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+     }
+     
+     export class T {
+         [idx: number]: string;
+               ~~~~~~
+ !!! error TS8010: Type annotations can only be used in TypeScript files.
++                       ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+     }
+     
+     export class U extends T {}
++                           ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+     
+     
+     export class V extends T {
++                           ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+         [idx: string]: string;
+               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++                       ~~~~~~
+ !!! error TS8010: Type annotations can only be used in TypeScript files.
+     }
+     
+     export class W extends T {
++                           ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+         [idx: number]: "ok";
+               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++                       ~~~~
+ !!! error TS8010: Type annotations can only be used in TypeScript files.
+     }
+     
+     export class X extends T {
++                           ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+         [idx: string]: string;
+               ~~~~~~
+ !!! error TS8010: Type annotations can only be used in TypeScript files.
++                       ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+         [idx: number]: "ok";
+               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++                       ~~~~
+ !!! error TS8010: Type annotations can only be used in TypeScript files.
+     }
+     
+@@= skipped -59, +95 lines =@@
+         [idx: string]: {x: number};
+               ~~~~~~
+ !!! error TS8010: Type annotations can only be used in TypeScript files.
++                       ~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+         [idx: number]: {x: number, y: number};
+               ~~~~~~
+ !!! error TS8010: Type annotations can only be used in TypeScript files.
++                       ~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+     }
+     
+     export class Z extends Y {}
++                           ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+     
+     export class AA extends Y {
++                            ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+         [idx: string]: {x: number, y: number};
+               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++                       ~~~~~~~~~~~~~~~~~~~~~~
+ !!! error TS8010: Type annotations can only be used in TypeScript files.
+     }
+     
+     export class BB extends Y {
++                            ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+         [idx: number]: {x: 0, y: 0};
+               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++                       ~~~~~~~~~~~~
+ !!! error TS8010: Type annotations can only be used in TypeScript files.
+     }
+     
+     export class CC extends Y {
++                            ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+         [idx: string]: {x: number, y: number};
+               ~~~~~~
+ !!! error TS8010: Type annotations can only be used in TypeScript files.
++                       ~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+         [idx: number]: {x: 0, y: 0};
+               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++                       ~~~~~~~~~~~~
+ !!! error TS8010: Type annotations can only be used in TypeScript files.
+     }
+     

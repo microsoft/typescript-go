@@ -1,0 +1,12 @@
+bug25101.js(5,18): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+==== bug25101.js (1 errors) ====
+    /**
+     * @template T
+     * @extends {Set<T>} Should prefer this Set<T>, not the Set in the heritage clause
+     */
+    class My extends Set {}
+                     ~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+    

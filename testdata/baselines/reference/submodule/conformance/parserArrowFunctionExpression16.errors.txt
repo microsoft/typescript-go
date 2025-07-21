@@ -1,8 +1,14 @@
+fileJs.js(1,6): error TS8009: The '?' modifier can only be used in TypeScript files.
+fileJs.js(1,14): error TS8009: The '?' modifier can only be used in TypeScript files.
 fileJs.js(1,25): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== fileJs.js (1 errors) ====
+==== fileJs.js (3 errors) ====
     true ? false ? (param): string => param : null : null // Not legal JS; "Unexpected token ':'" at last colon
+         ~
+!!! error TS8009: The '?' modifier can only be used in TypeScript files.
+                 ~
+!!! error TS8009: The '?' modifier can only be used in TypeScript files.
                             ~~~~~~
 !!! error TS8010: Type annotations can only be used in TypeScript files.
     

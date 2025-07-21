@@ -1,0 +1,28 @@
+--- old.javascriptThisAssignmentInStaticBlock.errors.txt
++++ new.javascriptThisAssignmentInStaticBlock.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++/src/a.js(10,29): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== /src/a.js (1 errors) ====
++    class Thing {
++        static {
++            this.doSomething = () => {};
++        }
++    }
++    
++    Thing.doSomething();
++    
++    // GH#46468
++    class ElementsArray extends Array {
++                                ~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++        static {
++            const superisArray = super.isArray;
++            const customIsArray = (arg)=> superisArray(arg);
++            this.isArray = customIsArray;
++        }
++    }
++    
++    ElementsArray.isArray(new ElementsArray());

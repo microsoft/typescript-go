@@ -1,0 +1,21 @@
+--- old.jsDeclarationsExportDoubleAssignmentInClosure.errors.txt
++++ new.jsDeclarationsExportDoubleAssignmentInClosure.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++index.js(4,28): error TS8009: The '?' modifier can only be used in TypeScript files.
++
++
++==== index.js (1 errors) ====
++    // @ts-nocheck
++    function foo() {
++        module.exports = exports = function (o) {
++            return (o == null) ? create(base) : defineProperties(Object(o), descriptors);
++                               ~
++!!! error TS8009: The '?' modifier can only be used in TypeScript files.
++        };
++        const m = function () {
++            // I have no idea what to put here
++        }
++        exports.methods = m;
++    }
++    

@@ -1,8 +1,11 @@
+a.js(9,17): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(15,17): error TS8010: Type annotations can only be used in TypeScript files.
 a.js(23,18): error TS2339: Property 'identifier' does not exist on type 'Module'.
 a.js(24,18): error TS2339: Property 'size' does not exist on type 'Module'.
+a.js(26,28): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== a.js (2 errors) ====
+==== a.js (5 errors) ====
     class B {
         constructor () {
             this.n = 1
@@ -12,12 +15,16 @@ a.js(24,18): error TS2339: Property 'size' does not exist on type 'Module'.
     }
     
     class C extends B { }
+                    ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     
     // this override should be fine (even if it's a little odd)
     C.prototype.foo = function() {
     }
     
     class D extends B { }
+                    ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     D.prototype.foo = () =>  {
         this.n = 'not checked, so no error'
     }
@@ -33,6 +40,8 @@ a.js(24,18): error TS2339: Property 'size' does not exist on type 'Module'.
 !!! error TS2339: Property 'size' does not exist on type 'Module'.
     
     class NormalModule extends Module {
+                               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         identifier() {
             return 'normal'
         }

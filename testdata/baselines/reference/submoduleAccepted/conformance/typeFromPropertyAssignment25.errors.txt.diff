@@ -3,9 +3,10 @@
 @@= skipped -0, +0 lines =@@
 -<no content>
 +bug24703.js(7,8): error TS2506: 'O' is referenced directly or indirectly in its own base expression.
++bug24703.js(7,26): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
-+==== bug24703.js (1 errors) ====
++==== bug24703.js (2 errors) ====
 +    var Common = {};
 +    Common.I = class {
 +        constructor() {
@@ -15,6 +16,8 @@
 +    Common.O = class extends Common.I {
 +           ~
 +!!! error TS2506: 'O' is referenced directly or indirectly in its own base expression.
++                             ~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +        constructor() {
 +            super()
 +            this.o = 2

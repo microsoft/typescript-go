@@ -1,0 +1,36 @@
+foo.js(12,17): error TS8010: Type annotations can only be used in TypeScript files.
+foo.js(22,17): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+==== foo.js (2 errors) ====
+    /**
+     * @constructor
+     */
+    class A {
+        constructor() {}
+    }
+    
+    /**
+     * @extends {A}
+     * @constructor
+     */
+    class B extends A {
+                    ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+        constructor() {
+            super();
+        }
+    }
+    
+    /**
+     * @extends { A }
+     * @constructor
+     */
+    class C extends A {
+                    ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+        constructor() {
+            super();
+        }
+    }
+    

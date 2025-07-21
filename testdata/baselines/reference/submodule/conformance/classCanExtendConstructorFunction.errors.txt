@@ -1,8 +1,13 @@
+first.js(10,19): error TS8009: The '?' modifier can only be used in TypeScript files.
+first.js(16,47): error TS8009: The '?' modifier can only be used in TypeScript files.
 first.js(21,19): error TS2507: Type '{ (numberOxen: number): void; circle: (wagons: any) => any; }' is not a constructor function type.
+first.js(21,19): error TS8010: Type annotations can only be used in TypeScript files.
 first.js(27,21): error TS8020: JSDoc types can only be used inside documentation comments.
 first.js(44,4): error TS2339: Property 'numberOxen' does not exist on type 'Sql'.
 first.js(47,24): error TS2507: Type '(numberEaten: number) => void' is not a constructor function type.
+first.js(47,24): error TS8010: Type annotations can only be used in TypeScript files.
 generic.js(9,23): error TS2507: Type '<T>(flavour: T) => void' is not a constructor function type.
+generic.js(9,23): error TS8010: Type annotations can only be used in TypeScript files.
 generic.js(11,21): error TS2339: Property 'flavour' does not exist on type 'Chowder'.
 generic.js(17,27): error TS2554: Expected 0 arguments, but got 1.
 generic.js(18,9): error TS2339: Property 'flavour' does not exist on type 'Chowder'.
@@ -12,7 +17,7 @@ second.ts(14,25): error TS2507: Type '{ (numberOxen: number): void; circle: (wag
 second.ts(26,3): error TS2339: Property 'numberOxen' does not exist on type 'Conestoga'.
 
 
-==== first.js (4 errors) ====
+==== first.js (8 errors) ====
     /**
      * @constructor
      * @param {number} numberOxen
@@ -23,12 +28,16 @@ second.ts(26,3): error TS2339: Property 'numberOxen' does not exist on type 'Con
     /** @param {Wagon[]=} wagons */
     Wagon.circle = function (wagons) {
         return wagons ? wagons.length : 3.14;
+                      ~
+!!! error TS8009: The '?' modifier can only be used in TypeScript files.
     }
     /** @param {*[]=} supplies - *[]= is my favourite type */
     Wagon.prototype.load = function (supplies) {
     }
     /** @param {*[]=} supplies - Yep, still a great type */
     Wagon.prototype.weight = supplies => supplies ? supplies.length : -1
+                                                  ~
+!!! error TS8009: The '?' modifier can only be used in TypeScript files.
     Wagon.prototype.speed = function () {
         return this.numberOxen / this.weight()
     }
@@ -36,6 +45,8 @@ second.ts(26,3): error TS2339: Property 'numberOxen' does not exist on type 'Con
     class Sql extends Wagon {
                       ~~~~~
 !!! error TS2507: Type '{ (numberOxen: number): void; circle: (wagons: any) => any; }' is not a constructor function type.
+                      ~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         constructor() {
             super(); // error: not enough arguments
             this.foonly = 12
@@ -68,6 +79,8 @@ second.ts(26,3): error TS2339: Property 'numberOxen' does not exist on type 'Con
     class Drakkhen extends Dragon {
                            ~~~~~~
 !!! error TS2507: Type '(numberEaten: number) => void' is not a constructor function type.
+                           ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     
     }
     
@@ -105,7 +118,7 @@ second.ts(26,3): error TS2339: Property 'numberOxen' does not exist on type 'Con
       ~~~~~~~~~~
 !!! error TS2339: Property 'numberOxen' does not exist on type 'Conestoga'.
     
-==== generic.js (5 errors) ====
+==== generic.js (6 errors) ====
     /**
      * @template T
      * @param {T} flavour
@@ -117,6 +130,8 @@ second.ts(26,3): error TS2339: Property 'numberOxen' does not exist on type 'Con
     class Chowder extends Soup {
                           ~~~~
 !!! error TS2507: Type '<T>(flavour: T) => void' is not a constructor function type.
+                          ~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         log() {
             return this.flavour
                         ~~~~~~~

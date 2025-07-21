@@ -1,4 +1,5 @@
 b.js(4,31): error TS2352: Conversion of type 'number' to type 'string' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+b.js(20,27): error TS8010: Type annotations can only be used in TypeScript files.
 b.js(45,36): error TS2741: Property 'p' is missing in type 'SomeOther' but required in type 'SomeBase'.
 b.js(49,42): error TS2739: Type 'SomeOther' is missing the following properties from type 'SomeDerived': p, x
 b.js(51,38): error TS2741: Property 'q' is missing in type 'SomeDerived' but required in type 'SomeOther'.
@@ -13,7 +14,7 @@ b.js(67,8): error TS2454: Variable 'numOrStr' is used before being assigned.
 ==== a.ts (0 errors) ====
     var W: string;
     
-==== b.js (9 errors) ====
+==== b.js (10 errors) ====
     // @ts-check
     var W = /** @type {string} */(/** @type {*} */ (4));
     
@@ -36,6 +37,8 @@ b.js(67,8): error TS2454: Variable 'numOrStr' is used before being assigned.
         }
     }
     class SomeDerived extends SomeBase {
+                              ~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         constructor() {
             super();
             this.x = 42;
