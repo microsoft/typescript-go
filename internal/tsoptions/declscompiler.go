@@ -226,6 +226,12 @@ var optionsForCompiler = []*CommandLineOption{
 		Description: diagnostics.Run_in_single_threaded_mode,
 	},
 	{
+		Name:        "concurrency",
+		Kind:        CommandLineOptionTypeString,
+		Category:    diagnostics.Command_line_Options,
+		Description: diagnostics.Specify_how_much_concurrency_will_be_used,
+	},
+	{
 		Name:        "pprofDir",
 		Kind:        CommandLineOptionTypeString,
 		isFilePath:  true,
