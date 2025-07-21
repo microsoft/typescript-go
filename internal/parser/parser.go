@@ -66,18 +66,19 @@ type Parser struct {
 	hasDeprecatedTag            bool
 	hasParseError               bool
 
-	identifiers             map[string]string
-	identifierCount         int
-	notParenthesizedArrow   collections.Set[int]
-	nodeSlicePool           core.Pool[*ast.Node]
-	stringSlicePool         core.Pool[string]
-	jsdocCache              map[*ast.Node][]*ast.Node
-	possibleAwaitSpans      []int
-	jsdocCommentsSpace      []string
-	jsdocCommentRangesSpace []ast.CommentRange
-	jsdocTagCommentsSpace   []string
-	reparseList             []*ast.Node
-	commonJSModuleIndicator *ast.Node
+	identifiers                map[string]string
+	identifierCount            int
+	notParenthesizedArrow      collections.Set[int]
+	nodeSlicePool              core.Pool[*ast.Node]
+	stringSlicePool            core.Pool[string]
+	jsdocCache                 map[*ast.Node][]*ast.Node
+	possibleAwaitSpans         []int
+	jsdocCommentsSpace         []string
+	jsdocCommentRangesSpace    []ast.CommentRange
+	jsdocTagCommentsSpace      []string
+	jsdocTagCommentsPartsSpace []*ast.Node
+	reparseList                []*ast.Node
+	commonJSModuleIndicator    *ast.Node
 
 	currentParent        *ast.Node
 	setParentFromContext ast.Visitor
@@ -510,9 +511,7 @@ func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser
 		}
 	}
 	p.parsingContexts = saveParsingContexts
-	slice := p.nodeSlicePool.NewSlice(len(list))
-	copy(slice, list)
-	return slice
+	return p.nodeSlicePool.Clone(list)
 }
 
 func (p *Parser) parseList(kind ParsingContext, parseElement func(p *Parser) *ast.Node) *ast.NodeList {
@@ -576,9 +575,7 @@ func (p *Parser) parseDelimitedList(kind ParsingContext, parseElement func(p *Pa
 		}
 	}
 	p.parsingContexts = saveParsingContexts
-	slice := p.nodeSlicePool.NewSlice(len(list))
-	copy(slice, list)
-	return p.newNodeList(core.NewTextRange(pos, p.nodePos()), slice)
+	return p.newNodeList(core.NewTextRange(pos, p.nodePos()), p.nodeSlicePool.Clone(list))
 }
 
 // Return a non-nil (but possibly empty) NodeList if parsing was successful, or nil if opening token wasn't found
@@ -2538,12 +2535,12 @@ func (p *Parser) parseUnionOrIntersectionType(operator ast.Kind, parseConstituen
 		typeNode = parseConstituentType(p)
 	}
 	if p.token == operator || hasLeadingOperator {
-		types := p.nodeSlicePool.NewSlice(2)[:1]
+		types := make([]*ast.Node, 1, 8)
 		types[0] = typeNode
 		for p.parseOptional(operator) {
 			types = append(types, p.parseFunctionOrConstructorTypeToError(isUnionType, parseConstituentType))
 		}
-		typeNode = p.createUnionOrIntersectionTypeNode(operator, p.newNodeList(core.NewTextRange(pos, p.nodePos()), types))
+		typeNode = p.createUnionOrIntersectionTypeNode(operator, p.newNodeList(core.NewTextRange(pos, p.nodePos()), p.nodeSlicePool.Clone(types)))
 		p.finishNode(typeNode, pos)
 	}
 	return typeNode
@@ -3845,9 +3842,7 @@ func (p *Parser) parseModifiersEx(allowDecorators bool, permitConstAsModifier bo
 		}
 	}
 	if len(list) != 0 {
-		nodes := p.nodeSlicePool.NewSlice(len(list))
-		copy(nodes, list)
-		return p.newModifierList(core.NewTextRange(pos, p.nodePos()), nodes)
+		return p.newModifierList(core.NewTextRange(pos, p.nodePos()), p.nodeSlicePool.Clone(list))
 	}
 	return nil
 }
@@ -6342,16 +6337,26 @@ func (p *Parser) isUsingDeclaration() bool {
 	// 'using' always starts a lexical declaration if followed by an identifier. We also eagerly parse
 	// |ObjectBindingPattern| so that we can report a grammar error during check. We don't parse out
 	// |ArrayBindingPattern| since it potentially conflicts with element access (i.e., `using[x]`).
-	return p.lookAhead((*Parser).nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLine)
+	return p.lookAhead(func(p *Parser) bool {
+		return p.nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLine( /*disallowOf*/ false)
+	})
 }
 
-func (p *Parser) nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLine() bool {
+func (p *Parser) nextTokenIsEqualsOrSemicolonOrColonToken() bool {
 	p.nextToken()
+	return p.token == ast.KindEqualsToken || p.token == ast.KindSemicolonToken || p.token == ast.KindColonToken
+}
+
+func (p *Parser) nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLine(disallowOf bool) bool {
+	p.nextToken()
+	if disallowOf && p.token == ast.KindOfKeyword {
+		return p.lookAhead((*Parser).nextTokenIsEqualsOrSemicolonOrColonToken)
+	}
 	return p.isBindingIdentifier() || p.token == ast.KindOpenBraceToken && !p.hasPrecedingLineBreak()
 }
 
 func (p *Parser) nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLineDisallowOf() bool {
-	return p.nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLine() && p.token != ast.KindOfKeyword
+	return p.nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLine( /*disallowOf*/ true)
 }
 
 func (p *Parser) isAwaitUsingDeclaration() bool {
@@ -6359,7 +6364,7 @@ func (p *Parser) isAwaitUsingDeclaration() bool {
 }
 
 func (p *Parser) nextIsUsingKeywordThenBindingIdentifierOrStartOfObjectDestructuringOnSameLine() bool {
-	return p.nextToken() == ast.KindUsingKeyword && p.nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLine()
+	return p.nextToken() == ast.KindUsingKeyword && p.nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLine( /*disallowOf*/ false)
 }
 
 func (p *Parser) nextTokenIsTokenStringLiteral() bool {

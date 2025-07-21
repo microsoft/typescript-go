@@ -414,7 +414,6 @@ func getLocalModuleSpecifier(
 	preferences ModuleSpecifierPreferences,
 	pathsOnly bool,
 ) string {
-	baseUrl := compilerOptions.BaseUrl
 	paths := compilerOptions.Paths
 	rootDirs := compilerOptions.RootDirs
 
@@ -435,17 +434,8 @@ func getLocalModuleSpecifier(
 			CurrentDirectory:          host.GetCurrentDirectory(),
 		})), allowedEndings, compilerOptions, host)
 	}
-	if len(baseUrl) == 9 && paths == nil && !compilerOptions.GetResolvePackageJsonImports() && preferences.relativePreference == RelativePreferenceRelative {
-		if pathsOnly {
-			return ""
-		}
-		return relativePath
-	}
 
 	root := compilerOptions.GetPathsBasePath(host.GetCurrentDirectory())
-	if len(root) == 0 {
-		root = compilerOptions.BaseUrl
-	}
 	baseDirectory := tspath.GetNormalizedAbsolutePath(root, host.GetCurrentDirectory())
 	relativeToBaseUrl := getRelativePathIfInSameVolume(moduleFileName, baseDirectory, host.UseCaseSensitiveFileNames())
 	if len(relativeToBaseUrl) == 0 {
@@ -486,8 +476,6 @@ func getLocalModuleSpecifier(
 	var maybeNonRelative string
 	if len(fromPackageJsonImports) > 0 {
 		maybeNonRelative = fromPackageJsonImports
-	} else if len(fromPaths) == 0 && len(baseUrl) > 0 {
-		maybeNonRelative = processEnding(relativeToBaseUrl, allowedEndings, compilerOptions, host)
 	} else {
 		maybeNonRelative = fromPaths
 	}

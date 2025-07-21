@@ -26,7 +26,6 @@ func (b *NodeBuilder) enterContext(enclosingDeclaration *ast.Node, flags nodebui
 		enclosingDeclaration:     enclosingDeclaration,
 		enclosingFile:            ast.GetSourceFileOfNode(enclosingDeclaration),
 		inferTypeParameters:      make([]*Type, 0),
-		visitedTypes:             make(map[TypeId]bool),
 		symbolDepth:              make(map[CompositeSymbolIdentity]int),
 		trackedSymbols:           make([]*TrackedSymbolArgs, 0),
 		reverseMappedStack:       make([]*ast.Symbol, 0),
@@ -170,6 +169,6 @@ func NewNodeBuilder(ch *Checker, e *printer.EmitContext) *NodeBuilder {
 	return &NodeBuilder{impl: impl, ctxStack: make([]*NodeBuilderContext, 0, 1), host: ch.program}
 }
 
-func (c *Checker) GetDiagnosticNodeBuilder() *NodeBuilder {
-	return c.nodeBuilder
+func (c *Checker) getNodeBuilder() *NodeBuilder {
+	return NewNodeBuilder(c, printer.NewEmitContext())
 }
