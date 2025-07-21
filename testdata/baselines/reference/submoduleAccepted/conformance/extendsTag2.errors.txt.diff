@@ -6,19 +6,24 @@
 -
 -!!! error TS8022: JSDoc '@extends' is not attached to a class.
 -==== foo.js (0 errors) ====
-+foo.js(15,17): error TS8010: Type annotations can only be used in TypeScript files.
-+
-+
-+==== foo.js (1 errors) ====
-     /**
-      * @constructor
-      */
-@@= skipped -17, +16 lines =@@
-      * @constructor
-      */
-     class B extends A {
-+                    ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-         constructor() {
-             super();
-         }
+-    /**
+-     * @constructor
+-     */
+-    class A {
+-        constructor() {}
+-    }
+-    
+-    /**
+-     * @extends {A}
+-     */
+-    
+-    /**
+-     * @constructor
+-     */
+-    class B extends A {
+-        constructor() {
+-            super();
+-        }
+-    }
+-    
++<no content>

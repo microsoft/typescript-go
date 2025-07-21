@@ -76,18 +76,26 @@ func (v *jsDiagnosticsVisitor) walkNodeForJSDiagnosticsWorker(node *ast.Node) bo
 		}
 	case ast.KindNullKeyword, ast.KindUndefinedKeyword:
 		// Only flag null/undefined when used in type context, not as literal values
-		if ast.IsPartOfTypeNode(node) {
+		// Check if this is actually used as a type annotation by examining the parent context
+		if v.isUsedAsTypeAnnotation(node) {
 			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.Type_annotations_can_only_be_used_in_TypeScript_files))
 			return false
 		}
 	case ast.KindExpressionWithTypeArguments:
-		// Only flag when it's actually part of a type expression (implements clause), not extends clause
+		// In heritage clauses, flag as type annotation error if it has type arguments
+		if parent.Kind == ast.KindHeritageClause &&
+			node.AsExpressionWithTypeArguments() != nil &&
+			node.AsExpressionWithTypeArguments().TypeArguments != nil {
+			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.Type_annotations_can_only_be_used_in_TypeScript_files))
+			return false
+		}
+		// Use the standard type node check for other cases (e.g., implements clauses)
 		if ast.IsPartOfTypeNode(node) {
 			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.Type_annotations_can_only_be_used_in_TypeScript_files))
 			return false
 		}
 	}
-	
+
 	// Check for type nodes in the type node range
 	if node.Kind >= ast.KindFirstTypeNode && node.Kind <= ast.KindLastTypeNode {
 		// Skip ExpressionWithTypeArguments as it's handled above
@@ -199,7 +207,6 @@ func (v *jsDiagnosticsVisitor) walkNodeForJSDiagnosticsWorker(node *ast.Node) bo
 	return false
 }
 
-
 // isSignatureDeclaration checks if a node is a signature declaration (function without body)
 func (v *jsDiagnosticsVisitor) isSignatureDeclaration(node *ast.Node) bool {
 	switch node.Kind {
@@ -237,7 +244,7 @@ func (v *jsDiagnosticsVisitor) getTypeParameters(node *ast.Node) *ast.NodeList {
 	}
 
 	var typeParameters *ast.NodeList
-	
+
 	// Try class-like nodes first
 	if classLike := node.ClassLikeData(); classLike != nil {
 		typeParameters = classLike.TypeParameters
@@ -272,11 +279,11 @@ func (v *jsDiagnosticsVisitor) getTypeArguments(node *ast.Node) *ast.NodeList {
 	}
 
 	var typeArguments *ast.NodeList
-	
+
 	// Handle specific node types that can have type arguments
 	switch node.Kind {
 	case ast.KindCallExpression, ast.KindNewExpression, ast.KindTaggedTemplateExpression,
-		 ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
+		ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
 		if ast.IsCallLikeExpression(node) {
 			typeArguments = node.TypeArgumentList()
 		}
@@ -384,6 +391,60 @@ func (v *jsDiagnosticsVisitor) checkModifier(modifier *ast.Node, isConstValid bo
 	case ast.KindStaticKeyword, ast.KindExportKeyword, ast.KindDefaultKeyword, ast.KindAccessorKeyword:
 		// These are valid in JavaScript
 	}
+}
+
+// isUsedAsTypeAnnotation checks if a node is used as a type annotation rather than a literal value
+func (v *jsDiagnosticsVisitor) isUsedAsTypeAnnotation(node *ast.Node) bool {
+	parent := node.Parent
+	if parent == nil {
+		return false
+	}
+
+	// Check parent context to determine if this is a type annotation
+	switch parent.Kind {
+	case ast.KindUnionType, ast.KindIntersectionType, ast.KindConditionalType,
+		ast.KindMappedType, ast.KindIndexedAccessType, ast.KindTypeReference,
+		ast.KindTypePredicate, ast.KindTypeOperator, ast.KindInferType:
+		return true
+	case ast.KindParameter:
+		// Check if this is the type annotation of a parameter
+		if param := parent.AsParameterDeclaration(); param != nil && param.Type == node {
+			return true
+		}
+	case ast.KindVariableDeclaration:
+		// Check if this is the type annotation of a variable
+		if varDecl := parent.AsVariableDeclaration(); varDecl != nil && varDecl.Type == node {
+			return true
+		}
+	case ast.KindPropertyDeclaration:
+		// Check if this is the type annotation of a property
+		if propDecl := parent.AsPropertyDeclaration(); propDecl != nil && propDecl.Type == node {
+			return true
+		}
+	case ast.KindMethodDeclaration, ast.KindFunctionDeclaration, ast.KindArrowFunction, ast.KindFunctionExpression:
+		// Check if this is the return type annotation
+		if fnLike := parent.FunctionLikeData(); fnLike != nil && fnLike.Type == node {
+			return true
+		}
+	case ast.KindTypeAssertionExpression:
+		// Check if this is the type in a type assertion
+		if typeAssertion := parent.AsTypeAssertion(); typeAssertion != nil && typeAssertion.Type == node {
+			return true
+		}
+	case ast.KindAsExpression:
+		// Check if this is the type in an 'as' expression
+		if asExpression := parent.AsAsExpression(); asExpression != nil && asExpression.Type == node {
+			return true
+		}
+	case ast.KindSatisfiesExpression:
+		// Check if this is the type in a 'satisfies' expression
+		if satisfiesExpression := parent.AsSatisfiesExpression(); satisfiesExpression != nil && satisfiesExpression.Type == node {
+			return true
+		}
+	}
+
+	// If none of the above type annotation contexts match, this is likely a literal value
+	return false
 }
 
 // createDiagnosticForNode creates a diagnostic for a specific node

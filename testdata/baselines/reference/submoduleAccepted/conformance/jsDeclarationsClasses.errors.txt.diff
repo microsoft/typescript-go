@@ -2,15 +2,10 @@
 +++ new.jsDeclarationsClasses.errors.txt
 @@= skipped -0, +0 lines =@@
 -<no content>
-+index.js(147,24): error TS8010: Type annotations can only be used in TypeScript files.
-+index.js(149,24): error TS8010: Type annotations can only be used in TypeScript files.
-+index.js(159,24): error TS8010: Type annotations can only be used in TypeScript files.
 +index.js(173,24): error TS8010: Type annotations can only be used in TypeScript files.
-+index.js(185,35): error TS8010: Type annotations can only be used in TypeScript files.
-+index.js(191,37): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
-+==== index.js (6 errors) ====
++==== index.js (1 errors) ====
 +    export class A {}
 +    
 +    export class B {
@@ -158,12 +153,8 @@
 +    }
 +    
 +    export class L extends K {}
-+                           ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    
 +    export class M extends null {
-+                           ~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +        constructor() {
 +            this.prop = 12;
 +        }
@@ -174,8 +165,6 @@
 +     * @template T
 +     */
 +    export class N extends L {
-+                           ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +        /**
 +         * @param {T} param 
 +         */
@@ -204,16 +193,12 @@
 +    var x = /** @type {*} */(null);
 +    
 +    export class VariableBase extends x {}
-+                                      ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    
 +    export class HasStatics {
 +        static staticMethod() {}
 +    }
 +    
 +    export class ExtendsStatics extends HasStatics {
-+                                        ~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +        static also() {}
 +    }
 +    

@@ -8,13 +8,11 @@
 +first.js(10,19): error TS8009: The '?' modifier can only be used in TypeScript files.
 +first.js(16,47): error TS8009: The '?' modifier can only be used in TypeScript files.
 +first.js(21,19): error TS2507: Type '{ (numberOxen: number): void; circle: (wagons: any) => any; }' is not a constructor function type.
-+first.js(21,19): error TS8010: Type annotations can only be used in TypeScript files.
 +first.js(27,21): error TS8020: JSDoc types can only be used inside documentation comments.
 +first.js(44,4): error TS2339: Property 'numberOxen' does not exist on type 'Sql'.
  first.js(47,24): error TS2507: Type '(numberEaten: number) => void' is not a constructor function type.
 -generic.js(19,19): error TS2554: Expected 1 arguments, but got 0.
 -generic.js(20,32): error TS2345: Argument of type 'number' is not assignable to parameter of type '{ claim: "ignorant" | "malicious"; }'.
-+first.js(47,24): error TS8010: Type annotations can only be used in TypeScript files.
 +generic.js(9,23): error TS2507: Type '<T>(flavour: T) => void' is not a constructor function type.
 +generic.js(9,23): error TS8010: Type annotations can only be used in TypeScript files.
 +generic.js(11,21): error TS2339: Property 'flavour' does not exist on type 'Chowder'.
@@ -36,11 +34,11 @@
 +second.ts(26,3): error TS2339: Property 'numberOxen' does not exist on type 'Conestoga'.
 +
 +
-+==== first.js (8 errors) ====
++==== first.js (6 errors) ====
      /**
       * @constructor
       * @param {number} numberOxen
-@@= skipped -25, +27 lines =@@
+@@= skipped -25, +25 lines =@@
      /** @param {Wagon[]=} wagons */
      Wagon.circle = function (wagons) {
          return wagons ? wagons.length : 3.14;
@@ -61,8 +59,6 @@
      class Sql extends Wagon {
 +                      ~~~~~
 +!!! error TS2507: Type '{ (numberOxen: number): void; circle: (wagons: any) => any; }' is not a constructor function type.
-+                      ~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
          constructor() {
              super(); // error: not enough arguments
 -            ~~~~~
@@ -85,7 +81,7 @@
              if (format === "xmlolololol") {
                  throw new Error("please do not use XML. It was a joke.");
              }
-@@= skipped -41, +44 lines =@@
+@@= skipped -41, +42 lines =@@
      }
      var db = new Sql();
      db.numberOxen = db.foonly
@@ -94,14 +90,7 @@
      
      // error, can't extend a TS constructor function
      class Drakkhen extends Dragon {
-                            ~~~~~~
- !!! error TS2507: Type '(numberEaten: number) => void' is not a constructor function type.
-+                           ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-     
-     }
-     
-@@= skipped -25, +29 lines =@@
+@@= skipped -25, +27 lines =@@
      }
      // ok
      class Conestoga extends Wagon {

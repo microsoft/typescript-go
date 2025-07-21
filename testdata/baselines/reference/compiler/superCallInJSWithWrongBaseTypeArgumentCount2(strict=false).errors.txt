@@ -1,6 +1,5 @@
 error TS5055: Cannot write file 'b.js' because it would overwrite input file.
   Adding a tsconfig.json file will help organize projects that contain both TypeScript and JavaScript files. Learn more at https://aka.ms/tsconfig.
-b.js(4,25): error TS8010: Type annotations can only be used in TypeScript files.
 b.js(11,25): error TS8010: Type annotations can only be used in TypeScript files.
 b.js(18,25): error TS8010: Type annotations can only be used in TypeScript files.
 
@@ -10,13 +9,11 @@ b.js(18,25): error TS8010: Type annotations can only be used in TypeScript files
 ==== a.ts (0 errors) ====
     export class A<T> {}
     
-==== b.js (3 errors) ====
+==== b.js (2 errors) ====
     import { A } from './a.js';
     
     /** @extends {A} */
     export class B1 extends A {
-                            ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
         constructor() {
             super();
         }

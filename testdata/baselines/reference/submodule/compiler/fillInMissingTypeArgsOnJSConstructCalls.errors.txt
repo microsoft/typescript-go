@@ -4,18 +4,15 @@ BaseB.js(3,14): error TS2304: Cannot find name 'Class'.
 BaseB.js(3,14): error TS8010: Type annotations can only be used in TypeScript files.
 BaseB.js(4,25): error TS2304: Cannot find name 'Class'.
 BaseB.js(4,25): error TS8010: Type annotations can only be used in TypeScript files.
-SubA.js(2,35): error TS8010: Type annotations can only be used in TypeScript files.
 SubB.js(3,35): error TS8010: Type annotations can only be used in TypeScript files.
 
 
 ==== BaseA.js (0 errors) ====
     export default class BaseA {
     }
-==== SubA.js (1 errors) ====
+==== SubA.js (0 errors) ====
     import BaseA from './BaseA';
     export default class SubA extends BaseA {
-                                      ~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     }
 ==== BaseB.js (6 errors) ====
     import BaseA from './BaseA';

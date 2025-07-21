@@ -15,7 +15,6 @@
 -    Type 'string | number' is not assignable to type 'number'.
 -      Type 'string' is not assignable to type 'number'.
 +b.js(4,31): error TS2352: Conversion of type 'number' to type 'string' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
-+b.js(20,27): error TS8010: Type annotations can only be used in TypeScript files.
 +b.js(45,36): error TS2741: Property 'p' is missing in type 'SomeOther' but required in type 'SomeBase'.
 +b.js(49,42): error TS2739: Type 'SomeOther' is missing the following properties from type 'SomeDerived': p, x
 +b.js(51,38): error TS2741: Property 'q' is missing in type 'SomeDerived' but required in type 'SomeOther'.
@@ -23,7 +22,13 @@
  b.js(66,15): error TS1228: A type predicate is only allowed in return type position for functions and methods.
  b.js(66,38): error TS2454: Variable 'numOrStr' is used before being assigned.
  b.js(67,2): error TS2322: Type 'string | number' is not assignable to type 'string'.
-@@= skipped -25, +18 lines =@@
+@@= skipped -20, +12 lines =@@
+ ==== a.ts (0 errors) ====
+     var W: string;
+     
+-==== b.js (10 errors) ====
++==== b.js (9 errors) ====
+     // @ts-check
      var W = /** @type {string} */(/** @type {*} */ (4));
      
      var W = /** @type {string} */(4); // Error
@@ -32,16 +37,7 @@
  !!! error TS2352: Conversion of type 'number' to type 'string' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
      
      /** @type {*} */
-@@= skipped -18, +18 lines =@@
-         }
-     }
-     class SomeDerived extends SomeBase {
-+                              ~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-         constructor() {
-             super();
-             this.x = 42;
-@@= skipped -25, +27 lines =@@
+@@= skipped -48, +48 lines =@@
      someBase = /** @type {SomeBase} */(someDerived);
      someBase = /** @type {SomeBase} */(someBase);
      someBase = /** @type {SomeBase} */(someOther); // Error

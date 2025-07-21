@@ -21,13 +21,8 @@ plainJSGrammarErrors.js(37,9): error TS1049: A 'set' accessor must have exactly 
 plainJSGrammarErrors.js(38,18): error TS1053: A 'set' accessor cannot have rest parameter.
 plainJSGrammarErrors.js(41,5): error TS18006: Classes may not have a field named 'constructor'.
 plainJSGrammarErrors.js(43,1): error TS1211: A class declaration without the 'default' modifier must have a name.
-plainJSGrammarErrors.js(46,23): error TS8010: Type annotations can only be used in TypeScript files.
 plainJSGrammarErrors.js(46,25): error TS1172: 'extends' clause already seen.
-plainJSGrammarErrors.js(46,33): error TS8010: Type annotations can only be used in TypeScript files.
-plainJSGrammarErrors.js(47,23): error TS8010: Type annotations can only be used in TypeScript files.
 plainJSGrammarErrors.js(47,25): error TS1174: Classes can only extend a single class.
-plainJSGrammarErrors.js(47,25): error TS8010: Type annotations can only be used in TypeScript files.
-plainJSGrammarErrors.js(47,27): error TS8010: Type annotations can only be used in TypeScript files.
 plainJSGrammarErrors.js(49,1): error TS18016: Private identifiers are not allowed outside class bodies.
 plainJSGrammarErrors.js(50,6): error TS18016: Private identifiers are not allowed outside class bodies.
 plainJSGrammarErrors.js(51,9): error TS18013: Property '#m' is not accessible outside class 'C' because it has a private identifier.
@@ -108,7 +103,7 @@ plainJSGrammarErrors.js(204,30): message TS1450: Dynamic imports can only accept
 plainJSGrammarErrors.js(205,36): error TS1325: Argument of dynamic import cannot be spread element.
 
 
-==== plainJSGrammarErrors.js (108 errors) ====
+==== plainJSGrammarErrors.js (103 errors) ====
     class C {
         // #private mistakes
         q = #unbound
@@ -201,21 +196,11 @@ plainJSGrammarErrors.js(205,36): error TS1325: Argument of dynamic import cannot
         missingName = true
     }
     class Doubler extends C extends C { }
-                          ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                             ~~~~~~~
 !!! error TS1172: 'extends' clause already seen.
-                                    ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     class Trebler extends C,C,C { }
-                          ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                             ~
 !!! error TS1174: Classes can only extend a single class.
-                            ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
-                              ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     // #private mistakes
     #unrelated
     ~~~~~~~~~~

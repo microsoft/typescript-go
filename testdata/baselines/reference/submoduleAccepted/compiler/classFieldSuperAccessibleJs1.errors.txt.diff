@@ -2,21 +2,21 @@
 +++ new.classFieldSuperAccessibleJs1.errors.txt
 @@= skipped -0, +0 lines =@@
 -index.js(9,23): error TS2565: Property 'blah2' is used before being assigned.
-+index.js(6,17): error TS8010: Type annotations can only be used in TypeScript files.
-
-
- ==== index.js (1 errors) ====
-@@= skipped -7, +7 lines =@@
-     C.blah2 = 456;
-     
-     class D extends C {
-+                    ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-       static {
-         console.log(super.blah1);
-         console.log(super.blah2);
+-
+-
+-==== index.js (1 errors) ====
+-    class C {
+-      static blah1 = 123;
+-    }
+-    C.blah2 = 456;
+-    
+-    class D extends C {
+-      static {
+-        console.log(super.blah1);
+-        console.log(super.blah2);
 -                          ~~~~~
 -!!! error TS2565: Property 'blah2' is used before being assigned.
-       }
-     }
-     
+-      }
+-    }
+-    
++<no content>

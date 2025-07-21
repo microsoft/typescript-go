@@ -1,4 +1,3 @@
-index.js(3,21): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(3,21): error TS8026: Expected Foo<T> type arguments; provide these with an '@extends' tag.
 
 
@@ -6,12 +5,10 @@ index.js(3,21): error TS8026: Expected Foo<T> type arguments; provide these with
     export declare class Foo<T> {
         prop: T;
     }
-==== index.js (2 errors) ====
+==== index.js (1 errors) ====
     import {Foo} from "./somelib";
     
     class MyFoo extends Foo {
-                        ~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                         ~~~
 !!! error TS8026: Expected Foo<T> type arguments; provide these with an '@extends' tag.
         constructor() {
