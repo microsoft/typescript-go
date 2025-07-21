@@ -54,6 +54,87 @@ func GetModuleSpecifiers(
 	return result
 }
 
+func tryGetModuleNameFromSymlinkedPackage(
+	pathObj ModulePath,
+	info Info,
+	importingSourceFile SourceFileForSpecifierGeneration,
+	host ModuleSpecifierGenerationHost,
+	options *core.CompilerOptions,
+	userPreferences UserPreferences,
+	packageNameOnly bool,
+) string {
+	// Check if this file is part of a package by looking for package.json
+	realPath := pathObj.FileName
+	currentDir := tspath.GetDirectoryPath(realPath)
+
+	// Walk up to find package.json
+	for len(currentDir) > 0 {
+		packageJsonPath := tspath.CombinePaths(currentDir, "package.json")
+		if host.FileExists(packageJsonPath) {
+			packageInfo := host.GetPackageJsonInfo(packageJsonPath)
+			if packageInfo != nil && packageInfo.GetContents() != nil {
+				packageNameVal, hasName := packageInfo.GetContents().Name.GetValue()
+				if hasName && len(packageNameVal) > 0 {
+					// Found a package - now check if it's accessible from a node_modules directory
+					// by looking for a symlink in node_modules that points to this package
+					symlinkPath := findSymlinkToPackage(packageNameVal, currentDir, info.SourceDirectory, host)
+					if len(symlinkPath) > 0 {
+						// Found a symlink - construct the module path through node_modules
+						relativePathInPackage := tspath.GetRelativePathFromDirectory(currentDir, realPath, tspath.ComparePathsOptions{UseCaseSensitiveFileNames: host.UseCaseSensitiveFileNames()})
+						nodeModulesPath := tspath.CombinePaths(symlinkPath, relativePathInPackage)
+
+						// Create a new ModulePath with the node_modules path and try again
+						nodeModulesModulePath := ModulePath{
+							FileName:        nodeModulesPath,
+							IsInNodeModules: true,
+							IsRedirect:      pathObj.IsRedirect,
+						}
+
+						// Recursively call tryGetModuleNameAsNodeModule with the node_modules path
+						return tryGetModuleNameAsNodeModule(nodeModulesModulePath, info, importingSourceFile, host, options, userPreferences, packageNameOnly, core.ResolutionModeNone)
+					}
+				}
+			}
+			break
+		}
+
+		parentDir := tspath.GetDirectoryPath(currentDir)
+		if parentDir == currentDir {
+			break
+		}
+		currentDir = parentDir
+	}
+
+	return ""
+}
+
+func findSymlinkToPackage(packageName string, packageRealDir string, importingDir string, host ModuleSpecifierGenerationHost) string {
+	// Walk up from importing directory looking for node_modules
+	currentDir := importingDir
+	for len(currentDir) > 0 {
+		nodeModulesPath := tspath.CombinePaths(currentDir, "node_modules", packageName)
+		packageJsonPath := tspath.CombinePaths(nodeModulesPath, "package.json")
+		if host.FileExists(packageJsonPath) {
+			// Found the package in node_modules - check if it's the same package
+			packageInfo := host.GetPackageJsonInfo(packageJsonPath)
+			if packageInfo != nil && packageInfo.GetContents() != nil {
+				foundPackageName, hasName := packageInfo.GetContents().Name.GetValue()
+				if hasName && foundPackageName == packageName {
+					return nodeModulesPath
+				}
+			}
+		}
+
+		parentDir := tspath.GetDirectoryPath(currentDir)
+		if parentDir == currentDir {
+			break
+		}
+		currentDir = parentDir
+	}
+
+	return ""
+}
+
 func tryGetModuleNameFromAmbientModule(moduleSymbol *ast.Symbol, checker CheckerShape) string {
 	for _, decl := range moduleSymbol.Declarations {
 		if isNonGlobalAmbientModule(decl) && (!ast.IsModuleAugmentationExternal(decl) || !tspath.IsExternalModuleNameRelative(decl.Name().AsStringLiteral().Text)) {
@@ -337,10 +418,10 @@ func computeModuleSpecifiers(
 	var relativeSpecifiers []string
 
 	for _, modulePath := range modulePaths {
-		var specifier string
-		if modulePath.IsInNodeModules {
-			specifier = tryGetModuleNameAsNodeModule(modulePath, info, importingSourceFile, host, compilerOptions, userPreferences /*packageNameOnly*/, false, options.OverrideImportMode)
-		}
+		// Always try to get a node module specifier first, regardless of IsInNodeModules flag
+		// This handles symlinked packages where the real path doesn't contain node_modules
+		// but the file can still be addressed as a package
+		specifier := tryGetModuleNameAsNodeModule(modulePath, info, importingSourceFile, host, compilerOptions, userPreferences /*packageNameOnly*/, false, options.OverrideImportMode)
 		if len(specifier) > 0 && !(forAutoImport && isExcludedByRegex(specifier, preferences.excludeRegexes)) {
 			nodeModulesSpecifiers = append(nodeModulesSpecifiers, specifier)
 			if modulePath.IsRedirect {
@@ -645,7 +726,9 @@ func tryGetModuleNameAsNodeModule(
 ) string {
 	parts := getNodeModulePathParts(pathObj.FileName)
 	if parts == nil {
-		return ""
+		// For symlinked packages, the real path may not contain node_modules
+		// Try to check if this file is part of a package that can be accessed via node_modules
+		return tryGetModuleNameFromSymlinkedPackage(pathObj, info, importingSourceFile, host, options, userPreferences, packageNameOnly)
 	}
 
 	// Simplify the full file path to something that can be resolved by Node.
