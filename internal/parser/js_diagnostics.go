@@ -40,34 +40,30 @@ func (v *jsDiagnosticsVisitor) walkNodeForJSDiagnosticsWorker(node *ast.Node) bo
 		return false
 	}
 
-	// Handle specific parent-child relationships first
-	switch parent.Kind {
-	case ast.KindParameter, ast.KindPropertyDeclaration, ast.KindMethodDeclaration:
-		// Check for question token (optional markers)
-		if parent.Kind == ast.KindParameter && parent.AsParameterDeclaration() != nil && parent.AsParameterDeclaration().QuestionToken == node {
-			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, scanner.TokenToString(node.Kind)))
+	// Check for question tokens (optional markers) - these are always illegal in JS
+	if node.Kind == ast.KindQuestionToken {
+		// Skip if this is in an object literal method which already gets a grammar error
+		if parent.Kind == ast.KindMethodDeclaration && parent.Parent.Kind == ast.KindObjectLiteralExpression {
 			return false
 		}
-		if parent.Kind == ast.KindPropertyDeclaration && parent.AsPropertyDeclaration() != nil && parent.AsPropertyDeclaration().PostfixToken == node {
-			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, scanner.TokenToString(node.Kind)))
+		v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, scanner.TokenToString(node.Kind)))
+		return false
+	}
+
+	// Check for exclamation tokens (definite assignment assertions) - these are always illegal in JS
+	if node.Kind == ast.KindExclamationToken {
+		// Skip if this is in an object literal method which already gets a grammar error
+		if parent.Kind == ast.KindMethodDeclaration && parent.Parent.Kind == ast.KindObjectLiteralExpression {
 			return false
 		}
-		if parent.Kind == ast.KindMethodDeclaration && parent.AsMethodDeclaration() != nil && parent.AsMethodDeclaration().PostfixToken == node {
-			if node.Kind == ast.KindExclamationToken && parent.Parent.Kind == ast.KindObjectLiteralExpression {
-				// This already gets a grammar error.
-				return false
-			}
-			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, scanner.TokenToString(node.Kind)))
-			return false
-		}
-		fallthrough
-	case ast.KindConstructor, ast.KindGetAccessor, ast.KindSetAccessor,
-		ast.KindFunctionExpression, ast.KindFunctionDeclaration, ast.KindArrowFunction, ast.KindVariableDeclaration:
-		// Check for type annotations
-		if v.isTypeAnnotation(parent, node) {
-			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.Type_annotations_can_only_be_used_in_TypeScript_files))
-			return false
-		}
+		v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, scanner.TokenToString(node.Kind)))
+		return false
+	}
+
+	// Check for type nodes - these are always illegal in JS
+	if ast.IsTypeNode(node) {
+		v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.Type_annotations_can_only_be_used_in_TypeScript_files))
+		return false
 	}
 
 	// Check node-specific constructs
@@ -172,32 +168,6 @@ func (v *jsDiagnosticsVisitor) walkNodeForJSDiagnosticsWorker(node *ast.Node) bo
 	return false
 }
 
-// isTypeAnnotation checks if a node is a type annotation in relation to its parent
-func (v *jsDiagnosticsVisitor) isTypeAnnotation(parent *ast.Node, node *ast.Node) bool {
-	switch parent.Kind {
-	case ast.KindFunctionDeclaration:
-		return parent.AsFunctionDeclaration() != nil && parent.AsFunctionDeclaration().Type == node
-	case ast.KindFunctionExpression:
-		return parent.AsFunctionExpression() != nil && parent.AsFunctionExpression().Type == node
-	case ast.KindArrowFunction:
-		return parent.AsArrowFunction() != nil && parent.AsArrowFunction().Type == node
-	case ast.KindMethodDeclaration:
-		return parent.AsMethodDeclaration() != nil && parent.AsMethodDeclaration().Type == node
-	case ast.KindGetAccessor:
-		return parent.AsGetAccessorDeclaration() != nil && parent.AsGetAccessorDeclaration().Type == node
-	case ast.KindSetAccessor:
-		return parent.AsSetAccessorDeclaration() != nil && parent.AsSetAccessorDeclaration().Type == node
-	case ast.KindConstructor:
-		return parent.AsConstructorDeclaration() != nil && parent.AsConstructorDeclaration().Type == node
-	case ast.KindVariableDeclaration:
-		return parent.AsVariableDeclaration() != nil && parent.AsVariableDeclaration().Type == node
-	case ast.KindParameter:
-		return parent.AsParameterDeclaration() != nil && parent.AsParameterDeclaration().Type == node
-	case ast.KindPropertyDeclaration:
-		return parent.AsPropertyDeclaration() != nil && parent.AsPropertyDeclaration().Type == node
-	}
-	return false
-}
 
 // isSignatureDeclaration checks if a node is a signature declaration (function without body)
 func (v *jsDiagnosticsVisitor) isSignatureDeclaration(node *ast.Node) bool {
@@ -214,11 +184,6 @@ func (v *jsDiagnosticsVisitor) isSignatureDeclaration(node *ast.Node) bool {
 
 // checkTypeParametersAndModifiers checks for type parameters, type arguments, and modifiers
 func (v *jsDiagnosticsVisitor) checkTypeParametersAndModifiers(node *ast.Node) {
-	// Bail out early if this node has NodeFlagsReparsed
-	if node.Flags&ast.NodeFlagsReparsed != 0 {
-		return
-	}
-
 	// Check type parameters
 	if typeParams := v.getTypeParameters(node); typeParams != nil {
 		v.diagnostics = append(v.diagnostics, v.createDiagnosticForNodeList(typeParams, diagnostics.Type_parameter_declarations_can_only_be_used_in_TypeScript_files))
@@ -241,45 +206,13 @@ func (v *jsDiagnosticsVisitor) getTypeParameters(node *ast.Node) *ast.NodeList {
 	}
 
 	var typeParameters *ast.NodeList
-	switch node.Kind {
-	case ast.KindClassDeclaration:
-		if node.AsClassDeclaration() != nil {
-			typeParameters = node.AsClassDeclaration().TypeParameters
-		}
-	case ast.KindClassExpression:
-		if node.AsClassExpression() != nil {
-			typeParameters = node.AsClassExpression().TypeParameters
-		}
-	case ast.KindMethodDeclaration:
-		if node.AsMethodDeclaration() != nil {
-			typeParameters = node.AsMethodDeclaration().TypeParameters
-		}
-	case ast.KindConstructor:
-		if node.AsConstructorDeclaration() != nil {
-			typeParameters = node.AsConstructorDeclaration().TypeParameters
-		}
-	case ast.KindGetAccessor:
-		if node.AsGetAccessorDeclaration() != nil {
-			typeParameters = node.AsGetAccessorDeclaration().TypeParameters
-		}
-	case ast.KindSetAccessor:
-		if node.AsSetAccessorDeclaration() != nil {
-			typeParameters = node.AsSetAccessorDeclaration().TypeParameters
-		}
-	case ast.KindFunctionExpression:
-		if node.AsFunctionExpression() != nil {
-			typeParameters = node.AsFunctionExpression().TypeParameters
-		}
-	case ast.KindFunctionDeclaration:
-		if node.AsFunctionDeclaration() != nil {
-			typeParameters = node.AsFunctionDeclaration().TypeParameters
-		}
-	case ast.KindArrowFunction:
-		if node.AsArrowFunction() != nil {
-			typeParameters = node.AsArrowFunction().TypeParameters
-		}
-	default:
-		return nil
+	
+	// Try class-like nodes first
+	if classLike := node.ClassLikeData(); classLike != nil {
+		typeParameters = classLike.TypeParameters
+	} else if funcLike := node.FunctionLikeData(); funcLike != nil {
+		// Try function-like nodes
+		typeParameters = funcLike.TypeParameters
 	}
 
 	if typeParameters == nil {
@@ -287,13 +220,12 @@ func (v *jsDiagnosticsVisitor) getTypeParameters(node *ast.Node) *ast.NodeList {
 	}
 
 	// Check if all type parameters are reparsed (JSDoc originated)
-	for _, tp := range typeParameters.Nodes {
-		if tp.Flags&ast.NodeFlagsReparsed == 0 {
-			return typeParameters // Found a non-reparsed type parameter, so return the type parameters
-		}
+	// Only check the first one since the reparser only sets type parameters if there are none already
+	if len(typeParameters.Nodes) > 0 && typeParameters.Nodes[0].Flags&ast.NodeFlagsReparsed != 0 {
+		return nil // All type parameters are reparsed (JSDoc originated), so this is valid in JS
 	}
 
-	return nil // All type parameters are reparsed (JSDoc originated), so this is valid in JS
+	return typeParameters // Found non-reparsed type parameters
 }
 
 // hasTypeParameters checks if a node has type parameters
@@ -309,31 +241,10 @@ func (v *jsDiagnosticsVisitor) getTypeArguments(node *ast.Node) *ast.NodeList {
 	}
 
 	var typeArguments *ast.NodeList
-	switch node.Kind {
-	case ast.KindCallExpression:
-		if node.AsCallExpression() != nil {
-			typeArguments = node.AsCallExpression().TypeArguments
-		}
-	case ast.KindNewExpression:
-		if node.AsNewExpression() != nil {
-			typeArguments = node.AsNewExpression().TypeArguments
-		}
-	case ast.KindExpressionWithTypeArguments:
-		if node.AsExpressionWithTypeArguments() != nil {
-			typeArguments = node.AsExpressionWithTypeArguments().TypeArguments
-		}
-	case ast.KindJsxSelfClosingElement:
-		if node.AsJsxSelfClosingElement() != nil {
-			typeArguments = node.AsJsxSelfClosingElement().TypeArguments
-		}
-	case ast.KindJsxOpeningElement:
-		if node.AsJsxOpeningElement() != nil {
-			typeArguments = node.AsJsxOpeningElement().TypeArguments
-		}
-	case ast.KindTaggedTemplateExpression:
-		if node.AsTaggedTemplateExpression() != nil {
-			typeArguments = node.AsTaggedTemplateExpression().TypeArguments
-		}
+	
+	// Use the built-in TypeArgumentList() method for supported nodes
+	if ast.IsCallLikeExpression(node) || node.Kind == ast.KindExpressionWithTypeArguments {
+		typeArguments = node.TypeArgumentList()
 	}
 
 	if typeArguments == nil {
@@ -341,97 +252,31 @@ func (v *jsDiagnosticsVisitor) getTypeArguments(node *ast.Node) *ast.NodeList {
 	}
 
 	// Check if all type arguments are reparsed (JSDoc originated)
-	for _, ta := range typeArguments.Nodes {
-		if ta.Flags&ast.NodeFlagsReparsed == 0 {
-			return typeArguments // Found a non-reparsed type argument, so return the type arguments
-		}
+	// Only check the first one since the reparser only sets type arguments if there are none already
+	if len(typeArguments.Nodes) > 0 && typeArguments.Nodes[0].Flags&ast.NodeFlagsReparsed != 0 {
+		return nil // All type arguments are reparsed (JSDoc originated), so this is valid in JS
 	}
 
-	return nil // All type arguments are reparsed (JSDoc originated), so this is valid in JS
-}
-
-// hasTypeArguments checks if a node has type arguments
-func (v *jsDiagnosticsVisitor) hasTypeArguments(node *ast.Node) bool {
-	// Bail out early if this node has NodeFlagsReparsed
-	if node.Flags&ast.NodeFlagsReparsed != 0 {
-		return false
-	}
-
-	var typeArguments *ast.NodeList
-	switch node.Kind {
-	case ast.KindCallExpression:
-		if node.AsCallExpression() != nil {
-			typeArguments = node.AsCallExpression().TypeArguments
-		}
-	case ast.KindNewExpression:
-		if node.AsNewExpression() != nil {
-			typeArguments = node.AsNewExpression().TypeArguments
-		}
-	case ast.KindExpressionWithTypeArguments:
-		if node.AsExpressionWithTypeArguments() != nil {
-			typeArguments = node.AsExpressionWithTypeArguments().TypeArguments
-		}
-	case ast.KindJsxSelfClosingElement:
-		if node.AsJsxSelfClosingElement() != nil {
-			typeArguments = node.AsJsxSelfClosingElement().TypeArguments
-		}
-	case ast.KindJsxOpeningElement:
-		if node.AsJsxOpeningElement() != nil {
-			typeArguments = node.AsJsxOpeningElement().TypeArguments
-		}
-	case ast.KindTaggedTemplateExpression:
-		if node.AsTaggedTemplateExpression() != nil {
-			typeArguments = node.AsTaggedTemplateExpression().TypeArguments
-		}
-	}
-
-	if typeArguments == nil {
-		return false
-	}
-
-	// Check if all type arguments are reparsed (JSDoc originated)
-	for _, ta := range typeArguments.Nodes {
-		if ta.Flags&ast.NodeFlagsReparsed == 0 {
-			return true // Found a non-reparsed type argument, so this is a TypeScript-only construct
-		}
-	}
-
-	return false // All type arguments are reparsed (JSDoc originated), so this is valid in JS
+	return typeArguments // Found non-reparsed type arguments
 }
 
 // checkModifiers checks for TypeScript-only modifiers on various declaration types
 func (v *jsDiagnosticsVisitor) checkModifiers(node *ast.Node) {
-	// Bail out early if this node has NodeFlagsReparsed
-	if node.Flags&ast.NodeFlagsReparsed != 0 {
+	modifiers := node.Modifiers()
+	if modifiers == nil {
 		return
 	}
 
-	// Check for TypeScript-only modifiers on various declaration types
+	// Handle different types of nodes with different modifier rules
 	switch node.Kind {
 	case ast.KindVariableStatement:
-		if node.AsVariableStatement() != nil && node.AsVariableStatement().Modifiers() != nil {
-			v.checkModifierList(node.AsVariableStatement().Modifiers(), true)
-		}
+		v.checkModifierList(modifiers, true) // const is valid for variable statements
 	case ast.KindPropertyDeclaration:
-		if node.AsPropertyDeclaration() != nil && node.AsPropertyDeclaration().Modifiers() != nil {
-			v.checkPropertyModifiers(node.AsPropertyDeclaration().Modifiers())
-		}
+		v.checkPropertyModifiers(modifiers)
 	case ast.KindParameter:
-		if node.AsParameterDeclaration() != nil && node.AsParameterDeclaration().Modifiers() != nil {
-			v.checkParameterModifiers(node.AsParameterDeclaration().Modifiers())
-		}
-	case ast.KindClassDeclaration:
-		if node.AsClassDeclaration() != nil && node.AsClassDeclaration().Modifiers() != nil {
-			v.checkModifierList(node.AsClassDeclaration().Modifiers(), false)
-		}
-	case ast.KindMethodDeclaration:
-		if node.AsMethodDeclaration() != nil && node.AsMethodDeclaration().Modifiers() != nil {
-			v.checkModifierList(node.AsMethodDeclaration().Modifiers(), false)
-		}
-	case ast.KindFunctionDeclaration:
-		if node.AsFunctionDeclaration() != nil && node.AsFunctionDeclaration().Modifiers() != nil {
-			v.checkModifierList(node.AsFunctionDeclaration().Modifiers(), false)
-		}
+		v.checkParameterModifiers(modifiers)
+	default:
+		v.checkModifierList(modifiers, false) // const is not valid for other declarations
 	}
 }
 
@@ -442,7 +287,7 @@ func (v *jsDiagnosticsVisitor) checkModifierList(modifiers *ast.ModifierList, is
 	}
 
 	for _, modifier := range modifiers.Nodes {
-		// Bail out early if this modifier has NodeFlagsReparsed
+		// Skip reparsed modifiers (from JSDoc) but continue checking others
 		if modifier.Flags&ast.NodeFlagsReparsed != 0 {
 			continue
 		}
@@ -457,7 +302,7 @@ func (v *jsDiagnosticsVisitor) checkPropertyModifiers(modifiers *ast.ModifierLis
 	}
 
 	for _, modifier := range modifiers.Nodes {
-		// Bail out early if this modifier has NodeFlagsReparsed
+		// Skip reparsed modifiers (from JSDoc) but continue checking others
 		if modifier.Flags&ast.NodeFlagsReparsed != 0 {
 			continue
 		}
@@ -480,7 +325,7 @@ func (v *jsDiagnosticsVisitor) checkParameterModifiers(modifiers *ast.ModifierLi
 	}
 
 	for _, modifier := range modifiers.Nodes {
-		// Bail out early if this modifier has NodeFlagsReparsed
+		// Skip reparsed modifiers (from JSDoc) but continue checking others
 		if modifier.Flags&ast.NodeFlagsReparsed != 0 {
 			continue
 		}
