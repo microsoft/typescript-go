@@ -48,7 +48,7 @@ function f(x) { return x; }
 f(); // Still allowed
 ```
 
-2. Strada's JS-specific rules for inferring type arguments no apply in Corsa.
+2. Strada's JS-specific rules for inferring type arguments no longer apply in Corsa.
 
 Inferred type arguments may change. For example:
 
