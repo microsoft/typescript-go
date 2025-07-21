@@ -91,17 +91,17 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 				}
 				sys.baselineFSwithDiff(baselineBuilder)
 
-				var incrementalProgram *incremental.Program
+				var editIncrementalProgram *incremental.Program
 				if watcher == nil {
-					incrementalProgram, watcher = test.executeCommand(sys, baselineBuilder, commandLineArgs)
+					editIncrementalProgram, watcher = test.executeCommand(sys, baselineBuilder, commandLineArgs)
 				} else {
 					watcher.DoCycle()
 				}
 				sys.serializeState(baselineBuilder)
-				sys.baselineProgram(baselineBuilder, incrementalProgram, watcher)
+				sys.baselineProgram(baselineBuilder, editIncrementalProgram, watcher)
 			})
 			wg.Queue(func() {
-				// !!! Compute build with all the edits
+				// Compute build with all the edits
 				nonIncrementalSys = newTestSys(test.files, test.cwd)
 				for i := range index + 1 {
 					if test.edits[i].edit != nil {
