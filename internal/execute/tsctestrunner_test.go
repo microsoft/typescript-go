@@ -61,7 +61,6 @@ func (test *tscInput) executeCommand(sys *testSys, baselineBuilder *strings.Buil
 
 func (test *tscInput) run(t *testing.T, scenario string) {
 	t.Helper()
-	// !!! sheetal TODO :: add incremental correctness
 	t.Run(test.subScenario+" tsc baseline", func(t *testing.T) {
 		t.Parallel()
 		// initial test tsc compile

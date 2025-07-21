@@ -117,7 +117,7 @@ func (t *toSnapshot) setFileInfoAndEmitSignatures() {
 
 func (t *toSnapshot) setReferencedMap() {
 	for _, entry := range t.buildInfo.ReferencedMap {
-		t.snapshot.referencedMap.Add(t.toFilePath(entry.FileId), t.toFilePathSet(entry.FileIdListId))
+		t.snapshot.referencedMap.Set(t.toFilePath(entry.FileId), t.toFilePathSet(entry.FileIdListId))
 	}
 }
 

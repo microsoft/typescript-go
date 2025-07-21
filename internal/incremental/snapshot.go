@@ -190,7 +190,7 @@ type snapshot struct {
 	fileInfos map[tspath.Path]*fileInfo
 	options   *core.CompilerOptions
 	//  Contains the map of ReferencedSet=Referenced files of the file if module emit is enabled
-	referencedMap collections.ManyToManyMap[tspath.Path, tspath.Path]
+	referencedMap collections.ManyToManySet[tspath.Path, tspath.Path]
 	// Cache of semantic diagnostics for files with their Path being the key
 	semanticDiagnosticsPerFile map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName
 	// Cache of dts emit diagnostics for files with their Path being the key
@@ -368,7 +368,7 @@ func newSnapshotForProgram(program *compiler.Program, oldProgram *Program, hashW
 		var signature string
 		newReferences := getReferencedFiles(program, file)
 		if newReferences != nil {
-			snapshot.referencedMap.Add(file.Path(), newReferences)
+			snapshot.referencedMap.Set(file.Path(), newReferences)
 		}
 		if oldProgram != nil {
 			if oldFileInfo, ok := oldProgram.snapshot.fileInfos[file.Path()]; ok {
