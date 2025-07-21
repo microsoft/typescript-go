@@ -34,7 +34,7 @@ var _ compiler.AnyProgram = (*Program)(nil)
 
 func NewProgram(program *compiler.Program, oldProgram *Program, testing bool) *Program {
 	incrementalProgram := &Program{
-		snapshot: newSnapshotForProgram(program, oldProgram),
+		snapshot: newSnapshotForProgram(program, oldProgram, testing),
 		program:  program,
 	}
 

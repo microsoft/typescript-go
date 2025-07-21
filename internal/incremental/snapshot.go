@@ -2,7 +2,10 @@ package incremental
 
 import (
 	"context"
+	"crypto/sha256"
+	"fmt"
 	"maps"
+	"strings"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -213,6 +216,9 @@ type snapshot struct {
 	allFilesExcludingDefaultLibraryFileOnce sync.Once
 	//  Cache of all files excluding default library file for the current program
 	allFilesExcludingDefaultLibraryFile []*ast.SourceFile
+
+	// Used with testing to add text of hash for better comparison
+	hashWithText bool
 }
 
 func (s *snapshot) createEmitSignaturesMap() {
@@ -257,7 +263,58 @@ func (s *snapshot) getAllFilesExcludingDefaultLibraryFile(program *compiler.Prog
 	return s.allFilesExcludingDefaultLibraryFile
 }
 
-func newSnapshotForProgram(program *compiler.Program, oldProgram *Program) *snapshot {
+func getTextHandlingSourceMapForSignature(text string, data *compiler.WriteFileData) string {
+	if data.SourceMapUrlPos != -1 {
+		return text[:data.SourceMapUrlPos]
+	}
+	return text
+}
+
+func (s *snapshot) computeSignatureWithDiagnostics(file *ast.SourceFile, text string, data *compiler.WriteFileData) string {
+	var builder strings.Builder
+	builder.WriteString(getTextHandlingSourceMapForSignature(text, data))
+	for _, diag := range data.Diagnostics {
+		diagnosticToStringBuilder(diag, file, &builder)
+	}
+	return s.computeHash(builder.String())
+}
+
+func diagnosticToStringBuilder(diagnostic *ast.Diagnostic, file *ast.SourceFile, builder *strings.Builder) string {
+	if diagnostic == nil {
+		return ""
+	}
+	builder.WriteString("\n")
+	if diagnostic.File() != file {
+		builder.WriteString(tspath.EnsurePathIsNonModuleName(tspath.GetRelativePathFromDirectory(
+			tspath.GetDirectoryPath(string(file.Path())),
+			string(diagnostic.File().Path()),
+			tspath.ComparePathsOptions{},
+		)))
+	}
+	if diagnostic.File() != nil {
+		builder.WriteString(fmt.Sprintf("(%d,%d): ", diagnostic.Pos(), diagnostic.Len()))
+	}
+	builder.WriteString(diagnostic.Category().Name())
+	builder.WriteString(fmt.Sprintf("%d: ", diagnostic.Code()))
+	builder.WriteString(diagnostic.Message())
+	for _, chain := range diagnostic.MessageChain() {
+		diagnosticToStringBuilder(chain, file, builder)
+	}
+	for _, info := range diagnostic.RelatedInformation() {
+		diagnosticToStringBuilder(info, file, builder)
+	}
+	return builder.String()
+}
+
+func (s *snapshot) computeHash(text string) string {
+	hash := fmt.Sprintf("%x", sha256.Sum256([]byte(text)))
+	if s.hashWithText {
+		hash += "-" + text
+	}
+	return hash
+}
+
+func newSnapshotForProgram(program *compiler.Program, oldProgram *Program, hashWithText bool) *snapshot {
 	if oldProgram != nil && oldProgram.program == program {
 		return oldProgram.snapshot
 	}
@@ -265,6 +322,7 @@ func newSnapshotForProgram(program *compiler.Program, oldProgram *Program) *snap
 	snapshot := &snapshot{
 		options:                    program.Options(),
 		semanticDiagnosticsPerFile: make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName, len(files)),
+		hashWithText:               hashWithText,
 	}
 	if oldProgram != nil && snapshot.options.Composite.IsTrue() {
 		snapshot.latestChangedDtsFile = oldProgram.snapshot.latestChangedDtsFile
@@ -304,7 +362,7 @@ func newSnapshotForProgram(program *compiler.Program, oldProgram *Program) *snap
 		snapshot.options.SkipDefaultLibCheck.IsTrue() == oldProgram.snapshot.options.SkipDefaultLibCheck.IsTrue()
 	snapshot.fileInfos = make(map[tspath.Path]*fileInfo, len(files))
 	for _, file := range files {
-		version := computeHash(file.Text())
+		version := snapshot.computeHash(file.Text())
 		impliedNodeFormat := program.GetSourceFileMetaData(file.Path()).ImpliedNodeFormat
 		affectsGlobalScope := fileAffectsGlobalScope(file)
 		var signature string

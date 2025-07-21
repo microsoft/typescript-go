@@ -151,7 +151,7 @@ func (h *emitFilesHandler) getEmitOptions(options compiler.EmitOptions) compiler
 				var emitSignature string
 				info := h.program.snapshot.fileInfos[options.TargetSourceFile.Path()]
 				if info.signature == info.version {
-					signature := computeSignatureWithDiagnostics(options.TargetSourceFile, text, data)
+					signature := h.program.snapshot.computeSignatureWithDiagnostics(options.TargetSourceFile, text, data)
 					// With d.ts diagnostics they are also part of the signature so emitSignature will be different from it since its just hash of d.ts
 					if len(data.Diagnostics) == 0 {
 						emitSignature = signature
@@ -193,7 +193,7 @@ func (h *emitFilesHandler) skipDtsOutputOfComposite(file *ast.SourceFile, output
 		}
 	}
 	if newSignature == "" {
-		newSignature = computeHash(getTextHandlingSourceMapForSignature(text, data))
+		newSignature = h.program.snapshot.computeHash(getTextHandlingSourceMapForSignature(text, data))
 	}
 	// Dont write dts files if they didn't change
 	if newSignature == oldSignature {

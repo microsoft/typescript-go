@@ -71,7 +71,7 @@ declare const console: { log(msg: any): void; };
 (React.createElement(Component, null, React.createElement("div", null), React.createElement("div", null)));
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./index.tsx"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"cbfe2ae7fcc8b0f6fb65b0cfded75399938c02edb19173808c499187b76be6cb","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"jsx":3,"module":99,"strict":true},"semanticDiagnosticsPerFile":[[2,[{"pos":265,"end":274,"code":2769,"category":1,"message":"No overload matches this call.","messageChain":[{"pos":265,"end":274,"code":2770,"category":1,"message":"The last overload gave the following error.","messageChain":[{"pos":265,"end":274,"code":2322,"category":1,"message":"Type '{ children: any[]; }' is not assignable to type '{ children?: number | undefined; }'.","messageChain":[{"pos":265,"end":274,"code":2326,"category":1,"message":"Types of property 'children' are incompatible.","messageChain":[{"pos":265,"end":274,"code":2322,"category":1,"message":"Type 'any[]' is not assignable to type 'number'."}]}]}]}],"relatedInformation":[{"pos":217,"end":226,"code":2771,"category":1,"message":"The last overload is declared here."}]}]]]}
+{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./index.tsx"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"cbfe2ae7fcc8b0f6fb65b0cfded75399938c02edb19173808c499187b76be6cb-declare namespace JSX {\n    interface ElementChildrenAttribute { children: {}; }\n    interface IntrinsicElements { div: {} }\n}\n\ndeclare var React: any;\n\ndeclare function Component(props: never): any;\ndeclare function Component(props: { children?: number }): any;\n(\u003cComponent\u003e\n    \u003cdiv /\u003e\n    \u003cdiv /\u003e\n\u003c/Component\u003e)","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"jsx":3,"module":99,"strict":true},"semanticDiagnosticsPerFile":[[2,[{"pos":265,"end":274,"code":2769,"category":1,"message":"No overload matches this call.","messageChain":[{"pos":265,"end":274,"code":2770,"category":1,"message":"The last overload gave the following error.","messageChain":[{"pos":265,"end":274,"code":2322,"category":1,"message":"Type '{ children: any[]; }' is not assignable to type '{ children?: number | undefined; }'.","messageChain":[{"pos":265,"end":274,"code":2326,"category":1,"message":"Types of property 'children' are incompatible.","messageChain":[{"pos":265,"end":274,"code":2322,"category":1,"message":"Type 'any[]' is not assignable to type 'number'."}]}]}]}],"relatedInformation":[{"pos":217,"end":226,"code":2771,"category":1,"message":"The last overload is declared here."}]}]]]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -82,24 +82,24 @@ declare const console: { log(msg: any): void; };
   "fileInfos": [
     {
       "fileName": "../../tslibs/TS/Lib/lib.d.ts",
-      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
-      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
+      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./index.tsx",
-      "version": "cbfe2ae7fcc8b0f6fb65b0cfded75399938c02edb19173808c499187b76be6cb",
-      "signature": "cbfe2ae7fcc8b0f6fb65b0cfded75399938c02edb19173808c499187b76be6cb",
+      "version": "cbfe2ae7fcc8b0f6fb65b0cfded75399938c02edb19173808c499187b76be6cb-declare namespace JSX {\n    interface ElementChildrenAttribute { children: {}; }\n    interface IntrinsicElements { div: {} }\n}\n\ndeclare var React: any;\n\ndeclare function Component(props: never): any;\ndeclare function Component(props: { children?: number }): any;\n(\u003cComponent\u003e\n    \u003cdiv /\u003e\n    \u003cdiv /\u003e\n\u003c/Component\u003e)",
+      "signature": "cbfe2ae7fcc8b0f6fb65b0cfded75399938c02edb19173808c499187b76be6cb-declare namespace JSX {\n    interface ElementChildrenAttribute { children: {}; }\n    interface IntrinsicElements { div: {} }\n}\n\ndeclare var React: any;\n\ndeclare function Component(props: never): any;\ndeclare function Component(props: { children?: number }): any;\n(\u003cComponent\u003e\n    \u003cdiv /\u003e\n    \u003cdiv /\u003e\n\u003c/Component\u003e)",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "cbfe2ae7fcc8b0f6fb65b0cfded75399938c02edb19173808c499187b76be6cb",
+        "version": "cbfe2ae7fcc8b0f6fb65b0cfded75399938c02edb19173808c499187b76be6cb-declare namespace JSX {\n    interface ElementChildrenAttribute { children: {}; }\n    interface IntrinsicElements { div: {} }\n}\n\ndeclare var React: any;\n\ndeclare function Component(props: never): any;\ndeclare function Component(props: { children?: number }): any;\n(\u003cComponent\u003e\n    \u003cdiv /\u003e\n    \u003cdiv /\u003e\n\u003c/Component\u003e)",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
@@ -169,7 +169,7 @@ declare const console: { log(msg: any): void; };
       ]
     ]
   ],
-  "size": 1181
+  "size": 2252
 }
 
 SemanticDiagnostics::

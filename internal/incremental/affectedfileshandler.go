@@ -2,11 +2,8 @@ package incremental
 
 import (
 	"context"
-	"crypto/sha256"
-	"fmt"
 	"maps"
 	"slices"
-	"strings"
 	"sync"
 	"sync/atomic"
 
@@ -71,7 +68,7 @@ func (h *affectedFilesHandler) computeDtsSignature(file *ast.SourceFile) string 
 			if !tspath.IsDeclarationFileName(fileName) {
 				panic("File extension for signature expected to be dts, got : " + fileName)
 			}
-			signature = computeSignatureWithDiagnostics(file, text, data)
+			signature = h.program.snapshot.computeSignatureWithDiagnostics(file, text, data)
 			return nil
 		},
 	})
@@ -393,51 +390,4 @@ func collectAllAffectedFiles(ctx context.Context, program *Program) {
 
 	// Update the snapshot with the new state
 	handler.updateSnapshot()
-}
-
-func getTextHandlingSourceMapForSignature(text string, data *compiler.WriteFileData) string {
-	if data.SourceMapUrlPos != -1 {
-		return text[:data.SourceMapUrlPos]
-	}
-	return text
-}
-
-func computeSignatureWithDiagnostics(file *ast.SourceFile, text string, data *compiler.WriteFileData) string {
-	var builder strings.Builder
-	builder.WriteString(getTextHandlingSourceMapForSignature(text, data))
-	for _, diag := range data.Diagnostics {
-		diagnosticToStringBuilder(diag, file, &builder)
-	}
-	return computeHash(builder.String())
-}
-
-func diagnosticToStringBuilder(diagnostic *ast.Diagnostic, file *ast.SourceFile, builder *strings.Builder) string {
-	if diagnostic == nil {
-		return ""
-	}
-	builder.WriteString("\n")
-	if diagnostic.File() != file {
-		builder.WriteString(tspath.EnsurePathIsNonModuleName(tspath.GetRelativePathFromDirectory(
-			tspath.GetDirectoryPath(string(file.Path())),
-			string(diagnostic.File().Path()),
-			tspath.ComparePathsOptions{},
-		)))
-	}
-	if diagnostic.File() != nil {
-		builder.WriteString(fmt.Sprintf("(%d,%d): ", diagnostic.Pos(), diagnostic.Len()))
-	}
-	builder.WriteString(diagnostic.Category().Name())
-	builder.WriteString(fmt.Sprintf("%d: ", diagnostic.Code()))
-	builder.WriteString(diagnostic.Message())
-	for _, chain := range diagnostic.MessageChain() {
-		diagnosticToStringBuilder(chain, file, builder)
-	}
-	for _, info := range diagnostic.RelatedInformation() {
-		diagnosticToStringBuilder(info, file, builder)
-	}
-	return builder.String()
-}
-
-func computeHash(text string) string {
-	return fmt.Sprintf("%x", sha256.Sum256([]byte(text)))
 }

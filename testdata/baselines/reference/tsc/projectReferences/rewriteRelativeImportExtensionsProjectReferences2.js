@@ -66,7 +66,7 @@ export {};
 Object.defineProperty(exports, "__esModule", { value: true });
 
 //// [/home/src/workspaces/solution/dist/services/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","fileNames":["../../../../tslibs/TS/Lib/lib.esnext.full.d.ts","../compiler/parser.d.ts","../../src/services/services.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e","affectsGlobalScope":true,"impliedNodeFormat":1},"2e29cd9a98755c46896f7a2d56524db2d6d96b248e36db46de14c30bf47c8d05",{"version":"407537635fda1a543a422ecdd456c1402aaa2083cde5acfb4eb424ab02fc0612","signature":"8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true,"module":199,"outDir":"..","rewriteRelativeImportExtensions":true,"rootDir":"../../src"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./services.d.ts"}
+{"version":"FakeTSVersion","fileNames":["../../../../tslibs/TS/Lib/lib.esnext.full.d.ts","../compiler/parser.d.ts","../../src/services/services.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"2e29cd9a98755c46896f7a2d56524db2d6d96b248e36db46de14c30bf47c8d05-export {};",{"version":"407537635fda1a543a422ecdd456c1402aaa2083cde5acfb4eb424ab02fc0612-import {} from \"../compiler/parser.ts\";","signature":"8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881-export {};\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true,"module":199,"outDir":"..","rewriteRelativeImportExtensions":true,"rootDir":"../../src"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./services.d.ts"}
 //// [/home/src/workspaces/solution/dist/services/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -78,30 +78,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
   "fileInfos": [
     {
       "fileName": "../../../../tslibs/TS/Lib/lib.esnext.full.d.ts",
-      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
-      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
+      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "../compiler/parser.d.ts",
-      "version": "2e29cd9a98755c46896f7a2d56524db2d6d96b248e36db46de14c30bf47c8d05",
-      "signature": "2e29cd9a98755c46896f7a2d56524db2d6d96b248e36db46de14c30bf47c8d05",
+      "version": "2e29cd9a98755c46896f7a2d56524db2d6d96b248e36db46de14c30bf47c8d05-export {};",
+      "signature": "2e29cd9a98755c46896f7a2d56524db2d6d96b248e36db46de14c30bf47c8d05-export {};",
       "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "../../src/services/services.ts",
-      "version": "407537635fda1a543a422ecdd456c1402aaa2083cde5acfb4eb424ab02fc0612",
-      "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+      "version": "407537635fda1a543a422ecdd456c1402aaa2083cde5acfb4eb424ab02fc0612-import {} from \"../compiler/parser.ts\";",
+      "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881-export {};\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "407537635fda1a543a422ecdd456c1402aaa2083cde5acfb4eb424ab02fc0612",
-        "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+        "version": "407537635fda1a543a422ecdd456c1402aaa2083cde5acfb4eb424ab02fc0612-import {} from \"../compiler/parser.ts\";",
+        "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881-export {};\n",
         "impliedNodeFormat": 1
       }
     }
@@ -124,7 +124,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
     ]
   },
   "latestChangedDtsFile": "./services.d.ts",
-  "size": 739
+  "size": 1510
 }
 
 SemanticDiagnostics::

@@ -83,7 +83,7 @@ const b_1 = require("./b");
 exports.d = b_1.b;
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0","signature":"0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff","impliedNodeFormat":1},{"version":"32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c","signature":"ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94","impliedNodeFormat":1},{"version":"35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28","signature":"24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058","impliedNodeFormat":1},{"version":"d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe","signature":"a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5","impliedNodeFormat":1}],"fileIdsList":[[2],[3]],"options":{"composite":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./d.d.ts"}
+{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0-export const a = 10;const aLocal = 10;","signature":"0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n","impliedNodeFormat":1},{"version":"32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;","signature":"ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n","impliedNodeFormat":1},{"version":"35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;","signature":"24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n","impliedNodeFormat":1},{"version":"d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;","signature":"a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n","impliedNodeFormat":1}],"fileIdsList":[[2],[3]],"options":{"composite":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./d.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -97,57 +97,57 @@ exports.d = b_1.b;
   "fileInfos": [
     {
       "fileName": "../../tslibs/TS/Lib/lib.d.ts",
-      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
-      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
+      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./a.ts",
-      "version": "96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0",
-      "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff",
+      "version": "96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0-export const a = 10;const aLocal = 10;",
+      "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0",
-        "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff",
+        "version": "96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0-export const a = 10;const aLocal = 10;",
+        "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./b.ts",
-      "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c",
-      "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94",
+      "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;",
+      "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c",
-        "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94",
+        "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;",
+        "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./c.ts",
-      "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28",
-      "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058",
+      "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;",
+      "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28",
-        "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058",
+        "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;",
+        "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./d.ts",
-      "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe",
-      "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5",
+      "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;",
+      "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe",
-        "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5",
+        "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;",
+        "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n",
         "impliedNodeFormat": 1
       }
     }
@@ -172,7 +172,7 @@ exports.d = b_1.b;
     ]
   },
   "latestChangedDtsFile": "./d.d.ts",
-  "size": 1086
+  "size": 2085
 }
 
 SemanticDiagnostics::
@@ -230,7 +230,7 @@ exports.d = b_1.b;
 //// [/home/src/workspaces/project/d.js.map] *new* 
 {"version":3,"file":"d.js","sourceRoot":"","sources":["d.ts"],"names":[],"mappings":";;;AAAA,2BAAwB;AAAa,QAAA,CAAC,GAAG,KAAC,CAAC"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0","signature":"0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff","impliedNodeFormat":1},{"version":"32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c","signature":"ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94","impliedNodeFormat":1},{"version":"35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28","signature":"24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058","impliedNodeFormat":1},{"version":"d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe","signature":"a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5","impliedNodeFormat":1}],"fileIdsList":[[2],[3]],"options":{"composite":true,"sourceMap":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./d.d.ts"}
+{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0-export const a = 10;const aLocal = 10;","signature":"0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n","impliedNodeFormat":1},{"version":"32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;","signature":"ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n","impliedNodeFormat":1},{"version":"35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;","signature":"24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n","impliedNodeFormat":1},{"version":"d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;","signature":"a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n","impliedNodeFormat":1}],"fileIdsList":[[2],[3]],"options":{"composite":true,"sourceMap":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./d.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -244,57 +244,57 @@ exports.d = b_1.b;
   "fileInfos": [
     {
       "fileName": "../../tslibs/TS/Lib/lib.d.ts",
-      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
-      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
+      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./a.ts",
-      "version": "96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0",
-      "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff",
+      "version": "96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0-export const a = 10;const aLocal = 10;",
+      "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0",
-        "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff",
+        "version": "96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0-export const a = 10;const aLocal = 10;",
+        "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./b.ts",
-      "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c",
-      "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94",
+      "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;",
+      "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c",
-        "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94",
+        "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;",
+        "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./c.ts",
-      "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28",
-      "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058",
+      "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;",
+      "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28",
-        "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058",
+        "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;",
+        "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./d.ts",
-      "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe",
-      "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5",
+      "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;",
+      "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe",
-        "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5",
+        "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;",
+        "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n",
         "impliedNodeFormat": 1
       }
     }
@@ -320,7 +320,7 @@ exports.d = b_1.b;
     ]
   },
   "latestChangedDtsFile": "./d.d.ts",
-  "size": 1103
+  "size": 2102
 }
 
 SemanticDiagnostics::
@@ -361,7 +361,7 @@ const b_1 = require("./b");
 exports.d = b_1.b;
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0","signature":"0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff","impliedNodeFormat":1},{"version":"32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c","signature":"ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94","impliedNodeFormat":1},{"version":"35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28","signature":"24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058","impliedNodeFormat":1},{"version":"d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe","signature":"a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5","impliedNodeFormat":1}],"fileIdsList":[[2],[3]],"options":{"composite":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./d.d.ts"}
+{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0-export const a = 10;const aLocal = 10;","signature":"0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n","impliedNodeFormat":1},{"version":"32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;","signature":"ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n","impliedNodeFormat":1},{"version":"35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;","signature":"24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n","impliedNodeFormat":1},{"version":"d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;","signature":"a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n","impliedNodeFormat":1}],"fileIdsList":[[2],[3]],"options":{"composite":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./d.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -375,57 +375,57 @@ exports.d = b_1.b;
   "fileInfos": [
     {
       "fileName": "../../tslibs/TS/Lib/lib.d.ts",
-      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
-      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
+      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./a.ts",
-      "version": "96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0",
-      "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff",
+      "version": "96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0-export const a = 10;const aLocal = 10;",
+      "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0",
-        "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff",
+        "version": "96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0-export const a = 10;const aLocal = 10;",
+        "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./b.ts",
-      "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c",
-      "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94",
+      "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;",
+      "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c",
-        "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94",
+        "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;",
+        "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./c.ts",
-      "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28",
-      "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058",
+      "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;",
+      "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28",
-        "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058",
+        "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;",
+        "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./d.ts",
-      "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe",
-      "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5",
+      "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;",
+      "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe",
-        "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5",
+        "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;",
+        "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n",
         "impliedNodeFormat": 1
       }
     }
@@ -450,7 +450,7 @@ exports.d = b_1.b;
     ]
   },
   "latestChangedDtsFile": "./d.d.ts",
-  "size": 1086
+  "size": 2085
 }
 
 SemanticDiagnostics::
@@ -503,7 +503,7 @@ export declare const d = 10;
 //// [/home/src/workspaces/project/d.d.ts.map] *new* 
 {"version":3,"file":"d.d.ts","sourceRoot":"","sources":["d.ts"],"names":[],"mappings":"AAAwB,eAAO,MAAM,CAAC,KAAI,CAAC"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0","signature":"0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff","impliedNodeFormat":1},{"version":"32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c","signature":"ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94","impliedNodeFormat":1},{"version":"35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28","signature":"24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058","impliedNodeFormat":1},{"version":"d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe","signature":"a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5","impliedNodeFormat":1}],"fileIdsList":[[2],[3]],"options":{"composite":true,"declaration":true,"declarationMap":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./d.d.ts"}
+{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0-export const a = 10;const aLocal = 10;","signature":"0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n","impliedNodeFormat":1},{"version":"32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;","signature":"ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n","impliedNodeFormat":1},{"version":"35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;","signature":"24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n","impliedNodeFormat":1},{"version":"d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;","signature":"a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n","impliedNodeFormat":1}],"fileIdsList":[[2],[3]],"options":{"composite":true,"declaration":true,"declarationMap":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./d.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -517,57 +517,57 @@ export declare const d = 10;
   "fileInfos": [
     {
       "fileName": "../../tslibs/TS/Lib/lib.d.ts",
-      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
-      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
+      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./a.ts",
-      "version": "96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0",
-      "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff",
+      "version": "96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0-export const a = 10;const aLocal = 10;",
+      "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0",
-        "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff",
+        "version": "96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0-export const a = 10;const aLocal = 10;",
+        "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./b.ts",
-      "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c",
-      "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94",
+      "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;",
+      "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c",
-        "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94",
+        "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;",
+        "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./c.ts",
-      "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28",
-      "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058",
+      "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;",
+      "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28",
-        "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058",
+        "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;",
+        "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./d.ts",
-      "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe",
-      "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5",
+      "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;",
+      "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe",
-        "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5",
+        "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;",
+        "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n",
         "impliedNodeFormat": 1
       }
     }
@@ -594,7 +594,7 @@ export declare const d = 10;
     ]
   },
   "latestChangedDtsFile": "./d.d.ts",
-  "size": 1127
+  "size": 2126
 }
 
 SemanticDiagnostics::
@@ -619,7 +619,7 @@ export declare const c = 10;
 export declare const d = 10;
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0","signature":"0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff","impliedNodeFormat":1},{"version":"32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c","signature":"ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94","impliedNodeFormat":1},{"version":"35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28","signature":"24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058","impliedNodeFormat":1},{"version":"d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe","signature":"a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5","impliedNodeFormat":1}],"fileIdsList":[[2],[3]],"options":{"composite":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./d.d.ts"}
+{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0-export const a = 10;const aLocal = 10;","signature":"0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n","impliedNodeFormat":1},{"version":"32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;","signature":"ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n","impliedNodeFormat":1},{"version":"35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;","signature":"24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n","impliedNodeFormat":1},{"version":"d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;","signature":"a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n","impliedNodeFormat":1}],"fileIdsList":[[2],[3]],"options":{"composite":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./d.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -633,57 +633,57 @@ export declare const d = 10;
   "fileInfos": [
     {
       "fileName": "../../tslibs/TS/Lib/lib.d.ts",
-      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
-      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
+      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./a.ts",
-      "version": "96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0",
-      "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff",
+      "version": "96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0-export const a = 10;const aLocal = 10;",
+      "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0",
-        "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff",
+        "version": "96a22151ab87189568fe787d7ca9a7901c65d3d9789f77588629bfb0c01886c0-export const a = 10;const aLocal = 10;",
+        "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./b.ts",
-      "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c",
-      "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94",
+      "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;",
+      "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c",
-        "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94",
+        "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;",
+        "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./c.ts",
-      "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28",
-      "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058",
+      "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;",
+      "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28",
-        "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058",
+        "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;",
+        "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./d.ts",
-      "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe",
-      "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5",
+      "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;",
+      "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe",
-        "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5",
+        "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;",
+        "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n",
         "impliedNodeFormat": 1
       }
     }
@@ -708,7 +708,7 @@ export declare const d = 10;
     ]
   },
   "latestChangedDtsFile": "./d.d.ts",
-  "size": 1086
+  "size": 2085
 }
 
 SemanticDiagnostics::
@@ -750,7 +750,7 @@ exports.a = 10;
 const aLocal = 100;
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8","signature":"0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff","impliedNodeFormat":1},{"version":"32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c","signature":"ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94","impliedNodeFormat":1},{"version":"35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28","signature":"24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058","impliedNodeFormat":1},{"version":"d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe","signature":"a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5","impliedNodeFormat":1}],"fileIdsList":[[2],[3]],"options":{"composite":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./d.d.ts"}
+{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8-export const a = 10;const aLocal = 100;","signature":"0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n","impliedNodeFormat":1},{"version":"32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;","signature":"ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n","impliedNodeFormat":1},{"version":"35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;","signature":"24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n","impliedNodeFormat":1},{"version":"d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;","signature":"a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n","impliedNodeFormat":1}],"fileIdsList":[[2],[3]],"options":{"composite":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./d.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -764,57 +764,57 @@ const aLocal = 100;
   "fileInfos": [
     {
       "fileName": "../../tslibs/TS/Lib/lib.d.ts",
-      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
-      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
+      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./a.ts",
-      "version": "cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8",
-      "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff",
+      "version": "cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8-export const a = 10;const aLocal = 100;",
+      "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8",
-        "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff",
+        "version": "cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8-export const a = 10;const aLocal = 100;",
+        "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./b.ts",
-      "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c",
-      "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94",
+      "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;",
+      "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c",
-        "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94",
+        "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;",
+        "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./c.ts",
-      "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28",
-      "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058",
+      "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;",
+      "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28",
-        "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058",
+        "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;",
+        "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./d.ts",
-      "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe",
-      "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5",
+      "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;",
+      "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe",
-        "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5",
+        "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;",
+        "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n",
         "impliedNodeFormat": 1
       }
     }
@@ -839,7 +839,7 @@ const aLocal = 100;
     ]
   },
   "latestChangedDtsFile": "./d.d.ts",
-  "size": 1086
+  "size": 2086
 }
 
 SemanticDiagnostics::
@@ -892,7 +892,7 @@ const b_1 = require("./b");
 exports.d = b_1.b;
 //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImQudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7O0FBQUEsMkJBQXdCO0FBQWEsUUFBQSxDQUFDLEdBQUcsS0FBQyxDQUFDIn0=
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8","signature":"0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff","impliedNodeFormat":1},{"version":"32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c","signature":"ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94","impliedNodeFormat":1},{"version":"35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28","signature":"24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058","impliedNodeFormat":1},{"version":"d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe","signature":"a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5","impliedNodeFormat":1}],"fileIdsList":[[2],[3]],"options":{"composite":true,"inlineSourceMap":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./d.d.ts"}
+{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8-export const a = 10;const aLocal = 100;","signature":"0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n","impliedNodeFormat":1},{"version":"32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;","signature":"ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n","impliedNodeFormat":1},{"version":"35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;","signature":"24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n","impliedNodeFormat":1},{"version":"d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;","signature":"a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n","impliedNodeFormat":1}],"fileIdsList":[[2],[3]],"options":{"composite":true,"inlineSourceMap":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./d.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -906,57 +906,57 @@ exports.d = b_1.b;
   "fileInfos": [
     {
       "fileName": "../../tslibs/TS/Lib/lib.d.ts",
-      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
-      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
+      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./a.ts",
-      "version": "cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8",
-      "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff",
+      "version": "cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8-export const a = 10;const aLocal = 100;",
+      "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8",
-        "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff",
+        "version": "cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8-export const a = 10;const aLocal = 100;",
+        "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./b.ts",
-      "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c",
-      "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94",
+      "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;",
+      "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c",
-        "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94",
+        "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;",
+        "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./c.ts",
-      "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28",
-      "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058",
+      "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;",
+      "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28",
-        "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058",
+        "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;",
+        "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./d.ts",
-      "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe",
-      "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5",
+      "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;",
+      "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe",
-        "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5",
+        "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;",
+        "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n",
         "impliedNodeFormat": 1
       }
     }
@@ -982,7 +982,7 @@ exports.d = b_1.b;
     ]
   },
   "latestChangedDtsFile": "./d.d.ts",
-  "size": 1109
+  "size": 2109
 }
 
 SemanticDiagnostics::
@@ -1028,7 +1028,7 @@ exports.d = b_1.b;
 //# sourceMappingURL=d.js.map
 //// [/home/src/workspaces/project/d.js.map] *modified time*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8","signature":"0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff","impliedNodeFormat":1},{"version":"32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c","signature":"ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94","impliedNodeFormat":1},{"version":"35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28","signature":"24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058","impliedNodeFormat":1},{"version":"d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe","signature":"a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5","impliedNodeFormat":1}],"fileIdsList":[[2],[3]],"options":{"composite":true,"sourceMap":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./d.d.ts"}
+{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8-export const a = 10;const aLocal = 100;","signature":"0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n","impliedNodeFormat":1},{"version":"32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;","signature":"ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n","impliedNodeFormat":1},{"version":"35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;","signature":"24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n","impliedNodeFormat":1},{"version":"d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;","signature":"a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n","impliedNodeFormat":1}],"fileIdsList":[[2],[3]],"options":{"composite":true,"sourceMap":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./d.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -1042,57 +1042,57 @@ exports.d = b_1.b;
   "fileInfos": [
     {
       "fileName": "../../tslibs/TS/Lib/lib.d.ts",
-      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
-      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
+      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./a.ts",
-      "version": "cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8",
-      "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff",
+      "version": "cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8-export const a = 10;const aLocal = 100;",
+      "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8",
-        "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff",
+        "version": "cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8-export const a = 10;const aLocal = 100;",
+        "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./b.ts",
-      "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c",
-      "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94",
+      "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;",
+      "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c",
-        "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94",
+        "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;",
+        "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./c.ts",
-      "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28",
-      "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058",
+      "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;",
+      "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28",
-        "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058",
+        "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;",
+        "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./d.ts",
-      "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe",
-      "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5",
+      "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;",
+      "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe",
-        "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5",
+        "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;",
+        "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n",
         "impliedNodeFormat": 1
       }
     }
@@ -1118,7 +1118,7 @@ exports.d = b_1.b;
     ]
   },
   "latestChangedDtsFile": "./d.d.ts",
-  "size": 1103
+  "size": 2103
 }
 
 SemanticDiagnostics::
@@ -1181,7 +1181,7 @@ const b_1 = require("./b");
 exports.d = b_1.b;
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8","signature":"0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff","impliedNodeFormat":1},{"version":"32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c","signature":"ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94","impliedNodeFormat":1},{"version":"35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28","signature":"24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058","impliedNodeFormat":1},{"version":"d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe","signature":"a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5","impliedNodeFormat":1}],"fileIdsList":[[2],[3]],"options":{"composite":true,"declarationMap":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./d.d.ts"}
+{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8-export const a = 10;const aLocal = 100;","signature":"0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n","impliedNodeFormat":1},{"version":"32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;","signature":"ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n","impliedNodeFormat":1},{"version":"35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;","signature":"24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n","impliedNodeFormat":1},{"version":"d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;","signature":"a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n","impliedNodeFormat":1}],"fileIdsList":[[2],[3]],"options":{"composite":true,"declarationMap":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./d.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -1195,57 +1195,57 @@ exports.d = b_1.b;
   "fileInfos": [
     {
       "fileName": "../../tslibs/TS/Lib/lib.d.ts",
-      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
-      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
+      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./a.ts",
-      "version": "cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8",
-      "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff",
+      "version": "cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8-export const a = 10;const aLocal = 100;",
+      "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8",
-        "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff",
+        "version": "cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8-export const a = 10;const aLocal = 100;",
+        "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./b.ts",
-      "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c",
-      "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94",
+      "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;",
+      "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c",
-        "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94",
+        "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;",
+        "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./c.ts",
-      "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28",
-      "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058",
+      "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;",
+      "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28",
-        "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058",
+        "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;",
+        "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./d.ts",
-      "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe",
-      "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5",
+      "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;",
+      "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe",
-        "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5",
+        "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;",
+        "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n",
         "impliedNodeFormat": 1
       }
     }
@@ -1271,7 +1271,7 @@ exports.d = b_1.b;
     ]
   },
   "latestChangedDtsFile": "./d.d.ts",
-  "size": 1108
+  "size": 2108
 }
 
 SemanticDiagnostics::
@@ -1316,7 +1316,7 @@ exports.d = b_1.b;
 //# sourceMappingURL=d.js.map
 //// [/home/src/workspaces/project/d.js.map] *modified time*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8","signature":"0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff","impliedNodeFormat":1},{"version":"32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c","signature":"ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94","impliedNodeFormat":1},{"version":"35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28","signature":"24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058","impliedNodeFormat":1},{"version":"d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe","signature":"a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5","impliedNodeFormat":1}],"fileIdsList":[[2],[3]],"options":{"composite":true,"declarationMap":true,"sourceMap":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./d.d.ts"}
+{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8-export const a = 10;const aLocal = 100;","signature":"0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n","impliedNodeFormat":1},{"version":"32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;","signature":"ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n","impliedNodeFormat":1},{"version":"35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;","signature":"24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n","impliedNodeFormat":1},{"version":"d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;","signature":"a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n","impliedNodeFormat":1}],"fileIdsList":[[2],[3]],"options":{"composite":true,"declarationMap":true,"sourceMap":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./d.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -1330,57 +1330,57 @@ exports.d = b_1.b;
   "fileInfos": [
     {
       "fileName": "../../tslibs/TS/Lib/lib.d.ts",
-      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
-      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+      "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
+      "signature": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e",
+        "version": "7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./a.ts",
-      "version": "cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8",
-      "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff",
+      "version": "cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8-export const a = 10;const aLocal = 100;",
+      "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8",
-        "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff",
+        "version": "cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8-export const a = 10;const aLocal = 100;",
+        "signature": "0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./b.ts",
-      "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c",
-      "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94",
+      "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;",
+      "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c",
-        "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94",
+        "version": "32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;",
+        "signature": "ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./c.ts",
-      "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28",
-      "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058",
+      "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;",
+      "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28",
-        "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058",
+        "version": "35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;",
+        "signature": "24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./d.ts",
-      "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe",
-      "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5",
+      "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;",
+      "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe",
-        "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5",
+        "version": "d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;",
+        "signature": "a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n",
         "impliedNodeFormat": 1
       }
     }
@@ -1407,7 +1407,7 @@ exports.d = b_1.b;
     ]
   },
   "latestChangedDtsFile": "./d.d.ts",
-  "size": 1125
+  "size": 2125
 }
 
 SemanticDiagnostics::
