@@ -173,6 +173,16 @@ func getTokenAtPosition(
 				left = tokenEnd
 				scanner.Scan()
 			}
+			// Scan EOF token if we are at the end of the file.
+			if ast.IsSourceFile(current) {
+				token := scanner.Token()
+				tokenFullStart := scanner.TokenFullStart()
+				tokenStart := core.IfElse(allowPositionInLeadingTrivia, tokenFullStart, scanner.TokenStart())
+				tokenEnd := scanner.TokenEnd()
+				if tokenStart <= position && position <= tokenEnd {
+					return sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current)
+				}
+			}
 			return current
 		}
 		current = next
