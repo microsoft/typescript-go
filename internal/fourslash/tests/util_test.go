@@ -13409,7 +13409,7 @@ var completionFunctionMembers = []fourslash.CompletionsExpectedItem{
 	},
 	&lsproto.CompletionItem{
 		Label: "arguments",
-		Kind:  ptrTo(lsproto.CompletionItemKindProperty),
+		Kind:  ptrTo(lsproto.CompletionItemKindField),
 	},
 	&lsproto.CompletionItem{
 		Label: "bind",
@@ -13421,11 +13421,11 @@ var completionFunctionMembers = []fourslash.CompletionsExpectedItem{
 	},
 	&lsproto.CompletionItem{
 		Label: "caller",
-		Kind:  ptrTo(lsproto.CompletionItemKindProperty),
+		Kind:  ptrTo(lsproto.CompletionItemKindField),
 	},
 	&lsproto.CompletionItem{
 		Label: "length",
-		Kind:  ptrTo(lsproto.CompletionItemKindProperty),
+		Kind:  ptrTo(lsproto.CompletionItemKindField),
 	},
 	&lsproto.CompletionItem{
 		Label: "toString",
