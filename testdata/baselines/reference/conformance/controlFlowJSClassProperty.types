@@ -19,9 +19,9 @@ export class C {
 
       this.position = position;
 >this.position = position : [number, number]
->this.position : [number, number] | undefined
+>this.position : any
 >this : this
->position : [number, number] | undefined
+>position : any
 >position : [number, number]
     }
   }

@@ -26219,7 +26219,8 @@ func (c *Checker) isAssignmentToReadonlyEntity(expr *ast.Node, symbol *ast.Symbo
 }
 
 func (c *Checker) isThisPropertyAccessInConstructor(node *ast.Node, prop *ast.Symbol) bool {
-	return isThisProperty(node) && c.isAutoTypedProperty(prop) && ast.GetThisContainer(node, true /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/) == c.getDeclaringConstructor(prop)
+	kind, _ := c.isConstructorDeclaredThisProperty(prop)
+	return (kind == thisAssignmentDeclarationConstructor || isThisProperty(node) && c.isAutoTypedProperty(prop)) && ast.GetThisContainer(node, true /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/) == c.getDeclaringConstructor(prop)
 }
 
 func (c *Checker) isAutoTypedProperty(symbol *ast.Symbol) bool {
