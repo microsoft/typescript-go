@@ -399,6 +399,31 @@ function generateCode() {
 
         writeLine("}");
         writeLine("");
+
+        // Generate UnmarshalJSON method for structure validation
+        const requiredProps = structure.properties?.filter(p => !p.optional) || [];
+        if (requiredProps.length > 0) {
+            writeLine(`func (s *${structure.name}) UnmarshalJSON(data []byte) error {`);
+            writeLine(`\t// Check required keys`);
+            writeLine(`\tkeys, err := getJSONKeys(data)`);
+            writeLine(`\tif err != nil {`);
+            writeLine(`\t\treturn err`);
+            writeLine(`\t}`);
+            writeLine(``);
+
+            for (const prop of requiredProps) {
+                writeLine(`\tif _, ok := keys["${prop.name}"]; !ok {`);
+                writeLine(`\t\treturn fmt.Errorf("required key '${prop.name}' is missing")`);
+                writeLine(`\t}`);
+            }
+
+            writeLine(``);
+            writeLine(`\t// Use type alias to avoid infinite recursion`);
+            writeLine(`\ttype ${structure.name}Alias ${structure.name}`);
+            writeLine(`\treturn json.Unmarshal(data, (*${structure.name}Alias)(s))`);
+            writeLine(`}`);
+            writeLine("");
+        }
     }
 
     // Generate enumerations

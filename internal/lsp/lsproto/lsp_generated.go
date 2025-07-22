@@ -25,6 +25,25 @@ type Location struct {
 	Range Range `json:"range"`
 }
 
+func (s *Location) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["uri"]; !ok {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type LocationAlias Location
+	return json.Unmarshal(data, (*LocationAlias)(s))
+}
+
 type ImplementationRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	ImplementationOptions
@@ -53,15 +72,66 @@ type WorkspaceFolder struct {
 	Name string `json:"name"`
 }
 
+func (s *WorkspaceFolder) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["uri"]; !ok {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
+	if _, ok := keys["name"]; !ok {
+		return fmt.Errorf("required key 'name' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type WorkspaceFolderAlias WorkspaceFolder
+	return json.Unmarshal(data, (*WorkspaceFolderAlias)(s))
+}
+
 // The parameters of a `workspace/didChangeWorkspaceFolders` notification.
 type DidChangeWorkspaceFoldersParams struct {
 	// The actual workspace folder change event.
 	Event *WorkspaceFoldersChangeEvent `json:"event"`
 }
 
+func (s *DidChangeWorkspaceFoldersParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["event"]; !ok {
+		return fmt.Errorf("required key 'event' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DidChangeWorkspaceFoldersParamsAlias DidChangeWorkspaceFoldersParams
+	return json.Unmarshal(data, (*DidChangeWorkspaceFoldersParamsAlias)(s))
+}
+
 // The parameters of a configuration request.
 type ConfigurationParams struct {
 	Items []*ConfigurationItem `json:"items"`
+}
+
+func (s *ConfigurationParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["items"]; !ok {
+		return fmt.Errorf("required key 'items' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ConfigurationParamsAlias ConfigurationParams
+	return json.Unmarshal(data, (*ConfigurationParamsAlias)(s))
 }
 
 // Parameters for a DocumentColorRequest.
@@ -73,6 +143,22 @@ type DocumentColorParams struct {
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
+func (s *DocumentColorParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DocumentColorParamsAlias DocumentColorParams
+	return json.Unmarshal(data, (*DocumentColorParamsAlias)(s))
+}
+
 // Represents a color range from a document.
 type ColorInformation struct {
 	// The range in the document where this color appears.
@@ -80,6 +166,25 @@ type ColorInformation struct {
 
 	// The actual color value for this color range.
 	Color Color `json:"color"`
+}
+
+func (s *ColorInformation) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+	if _, ok := keys["color"]; !ok {
+		return fmt.Errorf("required key 'color' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ColorInformationAlias ColorInformation
+	return json.Unmarshal(data, (*ColorInformationAlias)(s))
 }
 
 type DocumentColorRegistrationOptions struct {
@@ -103,6 +208,28 @@ type ColorPresentationParams struct {
 	Range Range `json:"range"`
 }
 
+func (s *ColorPresentationParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if _, ok := keys["color"]; !ok {
+		return fmt.Errorf("required key 'color' is missing")
+	}
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ColorPresentationParamsAlias ColorPresentationParams
+	return json.Unmarshal(data, (*ColorPresentationParamsAlias)(s))
+}
+
 type ColorPresentation struct {
 	// The label of this color presentation. It will be shown on the color
 	// picker header. By default this is also the text that is inserted when selecting
@@ -119,6 +246,22 @@ type ColorPresentation struct {
 	AdditionalTextEdits *[]*TextEdit `json:"additionalTextEdits,omitempty"`
 }
 
+func (s *ColorPresentation) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["label"]; !ok {
+		return fmt.Errorf("required key 'label' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ColorPresentationAlias ColorPresentation
+	return json.Unmarshal(data, (*ColorPresentationAlias)(s))
+}
+
 type WorkDoneProgressOptions struct {
 	WorkDoneProgress *bool `json:"workDoneProgress,omitempty"`
 }
@@ -130,6 +273,22 @@ type TextDocumentRegistrationOptions struct {
 	DocumentSelector Nullable[DocumentSelector] `json:"documentSelector"`
 }
 
+func (s *TextDocumentRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["documentSelector"]; !ok {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type TextDocumentRegistrationOptionsAlias TextDocumentRegistrationOptions
+	return json.Unmarshal(data, (*TextDocumentRegistrationOptionsAlias)(s))
+}
+
 // Parameters for a FoldingRangeRequest.
 type FoldingRangeParams struct {
 	WorkDoneProgressParams
@@ -137,6 +296,22 @@ type FoldingRangeParams struct {
 
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
+}
+
+func (s *FoldingRangeParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type FoldingRangeParamsAlias FoldingRangeParams
+	return json.Unmarshal(data, (*FoldingRangeParamsAlias)(s))
 }
 
 // Represents a folding range. To be valid, start and end line must be bigger than zero and smaller
@@ -169,6 +344,25 @@ type FoldingRange struct {
 	CollapsedText *string `json:"collapsedText,omitempty"`
 }
 
+func (s *FoldingRange) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["startLine"]; !ok {
+		return fmt.Errorf("required key 'startLine' is missing")
+	}
+	if _, ok := keys["endLine"]; !ok {
+		return fmt.Errorf("required key 'endLine' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type FoldingRangeAlias FoldingRange
+	return json.Unmarshal(data, (*FoldingRangeAlias)(s))
+}
+
 type FoldingRangeRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	FoldingRangeOptions
@@ -199,6 +393,25 @@ type SelectionRangeParams struct {
 	Positions []Position `json:"positions"`
 }
 
+func (s *SelectionRangeParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if _, ok := keys["positions"]; !ok {
+		return fmt.Errorf("required key 'positions' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type SelectionRangeParamsAlias SelectionRangeParams
+	return json.Unmarshal(data, (*SelectionRangeParamsAlias)(s))
+}
+
 // A selection range represents a part of a selection hierarchy. A selection range
 // may have a parent selection range that contains it.
 type SelectionRange struct {
@@ -207,6 +420,22 @@ type SelectionRange struct {
 
 	// The parent selection range containing this range. Therefore `parent.range` must contain `this.range`.
 	Parent *SelectionRange `json:"parent,omitempty"`
+}
+
+func (s *SelectionRange) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type SelectionRangeAlias SelectionRange
+	return json.Unmarshal(data, (*SelectionRangeAlias)(s))
 }
 
 type SelectionRangeRegistrationOptions struct {
@@ -220,9 +449,41 @@ type WorkDoneProgressCreateParams struct {
 	Token ProgressToken `json:"token"`
 }
 
+func (s *WorkDoneProgressCreateParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["token"]; !ok {
+		return fmt.Errorf("required key 'token' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type WorkDoneProgressCreateParamsAlias WorkDoneProgressCreateParams
+	return json.Unmarshal(data, (*WorkDoneProgressCreateParamsAlias)(s))
+}
+
 type WorkDoneProgressCancelParams struct {
 	// The token to be used to report progress.
 	Token ProgressToken `json:"token"`
+}
+
+func (s *WorkDoneProgressCancelParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["token"]; !ok {
+		return fmt.Errorf("required key 'token' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type WorkDoneProgressCancelParamsAlias WorkDoneProgressCancelParams
+	return json.Unmarshal(data, (*WorkDoneProgressCancelParamsAlias)(s))
 }
 
 // The parameter of a `textDocument/prepareCallHierarchy` request.
@@ -265,6 +526,34 @@ type CallHierarchyItem struct {
 	Data *any `json:"data,omitempty"`
 }
 
+func (s *CallHierarchyItem) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["name"]; !ok {
+		return fmt.Errorf("required key 'name' is missing")
+	}
+	if _, ok := keys["kind"]; !ok {
+		return fmt.Errorf("required key 'kind' is missing")
+	}
+	if _, ok := keys["uri"]; !ok {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+	if _, ok := keys["selectionRange"]; !ok {
+		return fmt.Errorf("required key 'selectionRange' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type CallHierarchyItemAlias CallHierarchyItem
+	return json.Unmarshal(data, (*CallHierarchyItemAlias)(s))
+}
+
 // Call hierarchy options used during static or dynamic registration.
 //
 // Since: 3.16.0
@@ -284,6 +573,22 @@ type CallHierarchyIncomingCallsParams struct {
 	Item *CallHierarchyItem `json:"item"`
 }
 
+func (s *CallHierarchyIncomingCallsParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["item"]; !ok {
+		return fmt.Errorf("required key 'item' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type CallHierarchyIncomingCallsParamsAlias CallHierarchyIncomingCallsParams
+	return json.Unmarshal(data, (*CallHierarchyIncomingCallsParamsAlias)(s))
+}
+
 // Represents an incoming call, e.g. a caller of a method or constructor.
 //
 // Since: 3.16.0
@@ -296,6 +601,25 @@ type CallHierarchyIncomingCall struct {
 	FromRanges []Range `json:"fromRanges"`
 }
 
+func (s *CallHierarchyIncomingCall) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["from"]; !ok {
+		return fmt.Errorf("required key 'from' is missing")
+	}
+	if _, ok := keys["fromRanges"]; !ok {
+		return fmt.Errorf("required key 'fromRanges' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type CallHierarchyIncomingCallAlias CallHierarchyIncomingCall
+	return json.Unmarshal(data, (*CallHierarchyIncomingCallAlias)(s))
+}
+
 // The parameter of a `callHierarchy/outgoingCalls` request.
 //
 // Since: 3.16.0
@@ -304,6 +628,22 @@ type CallHierarchyOutgoingCallsParams struct {
 	PartialResultParams
 
 	Item *CallHierarchyItem `json:"item"`
+}
+
+func (s *CallHierarchyOutgoingCallsParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["item"]; !ok {
+		return fmt.Errorf("required key 'item' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type CallHierarchyOutgoingCallsParamsAlias CallHierarchyOutgoingCallsParams
+	return json.Unmarshal(data, (*CallHierarchyOutgoingCallsParamsAlias)(s))
 }
 
 // Represents an outgoing call, e.g. calling a getter from a method or a method from a constructor etc.
@@ -319,6 +659,25 @@ type CallHierarchyOutgoingCall struct {
 	FromRanges []Range `json:"fromRanges"`
 }
 
+func (s *CallHierarchyOutgoingCall) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["to"]; !ok {
+		return fmt.Errorf("required key 'to' is missing")
+	}
+	if _, ok := keys["fromRanges"]; !ok {
+		return fmt.Errorf("required key 'fromRanges' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type CallHierarchyOutgoingCallAlias CallHierarchyOutgoingCall
+	return json.Unmarshal(data, (*CallHierarchyOutgoingCallAlias)(s))
+}
+
 // Since: 3.16.0
 type SemanticTokensParams struct {
 	WorkDoneProgressParams
@@ -326,6 +685,22 @@ type SemanticTokensParams struct {
 
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
+}
+
+func (s *SemanticTokensParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type SemanticTokensParamsAlias SemanticTokensParams
+	return json.Unmarshal(data, (*SemanticTokensParamsAlias)(s))
 }
 
 // Since: 3.16.0
@@ -340,9 +715,41 @@ type SemanticTokens struct {
 	Data []uint32 `json:"data"`
 }
 
+func (s *SemanticTokens) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["data"]; !ok {
+		return fmt.Errorf("required key 'data' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type SemanticTokensAlias SemanticTokens
+	return json.Unmarshal(data, (*SemanticTokensAlias)(s))
+}
+
 // Since: 3.16.0
 type SemanticTokensPartialResult struct {
 	Data []uint32 `json:"data"`
+}
+
+func (s *SemanticTokensPartialResult) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["data"]; !ok {
+		return fmt.Errorf("required key 'data' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type SemanticTokensPartialResultAlias SemanticTokensPartialResult
+	return json.Unmarshal(data, (*SemanticTokensPartialResultAlias)(s))
 }
 
 // Since: 3.16.0
@@ -365,6 +772,25 @@ type SemanticTokensDeltaParams struct {
 	PreviousResultId string `json:"previousResultId"`
 }
 
+func (s *SemanticTokensDeltaParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if _, ok := keys["previousResultId"]; !ok {
+		return fmt.Errorf("required key 'previousResultId' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type SemanticTokensDeltaParamsAlias SemanticTokensDeltaParams
+	return json.Unmarshal(data, (*SemanticTokensDeltaParamsAlias)(s))
+}
+
 // Since: 3.16.0
 type SemanticTokensDelta struct {
 	ResultId *string `json:"resultId,omitempty"`
@@ -373,9 +799,41 @@ type SemanticTokensDelta struct {
 	Edits []*SemanticTokensEdit `json:"edits"`
 }
 
+func (s *SemanticTokensDelta) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["edits"]; !ok {
+		return fmt.Errorf("required key 'edits' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type SemanticTokensDeltaAlias SemanticTokensDelta
+	return json.Unmarshal(data, (*SemanticTokensDeltaAlias)(s))
+}
+
 // Since: 3.16.0
 type SemanticTokensDeltaPartialResult struct {
 	Edits []*SemanticTokensEdit `json:"edits"`
+}
+
+func (s *SemanticTokensDeltaPartialResult) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["edits"]; !ok {
+		return fmt.Errorf("required key 'edits' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type SemanticTokensDeltaPartialResultAlias SemanticTokensDeltaPartialResult
+	return json.Unmarshal(data, (*SemanticTokensDeltaPartialResultAlias)(s))
 }
 
 // Since: 3.16.0
@@ -388,6 +846,25 @@ type SemanticTokensRangeParams struct {
 
 	// The range the semantic tokens are requested for.
 	Range Range `json:"range"`
+}
+
+func (s *SemanticTokensRangeParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type SemanticTokensRangeParamsAlias SemanticTokensRangeParams
+	return json.Unmarshal(data, (*SemanticTokensRangeParamsAlias)(s))
 }
 
 // Params to show a resource in the UI.
@@ -415,12 +892,44 @@ type ShowDocumentParams struct {
 	Selection *Range `json:"selection,omitempty"`
 }
 
+func (s *ShowDocumentParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["uri"]; !ok {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ShowDocumentParamsAlias ShowDocumentParams
+	return json.Unmarshal(data, (*ShowDocumentParamsAlias)(s))
+}
+
 // The result of a showDocument request.
 //
 // Since: 3.16.0
 type ShowDocumentResult struct {
 	// A boolean indicating if the show was successful.
 	Success bool `json:"success"`
+}
+
+func (s *ShowDocumentResult) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["success"]; !ok {
+		return fmt.Errorf("required key 'success' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ShowDocumentResultAlias ShowDocumentResult
+	return json.Unmarshal(data, (*ShowDocumentResultAlias)(s))
 }
 
 type LinkedEditingRangeParams struct {
@@ -442,6 +951,22 @@ type LinkedEditingRanges struct {
 	WordPattern *string `json:"wordPattern,omitempty"`
 }
 
+func (s *LinkedEditingRanges) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["ranges"]; !ok {
+		return fmt.Errorf("required key 'ranges' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type LinkedEditingRangesAlias LinkedEditingRanges
+	return json.Unmarshal(data, (*LinkedEditingRangesAlias)(s))
+}
+
 type LinkedEditingRangeRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	LinkedEditingRangeOptions
@@ -455,6 +980,22 @@ type LinkedEditingRangeRegistrationOptions struct {
 type CreateFilesParams struct {
 	// An array of all files/folders created in this operation.
 	Files []*FileCreate `json:"files"`
+}
+
+func (s *CreateFilesParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["files"]; !ok {
+		return fmt.Errorf("required key 'files' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type CreateFilesParamsAlias CreateFilesParams
+	return json.Unmarshal(data, (*CreateFilesParamsAlias)(s))
 }
 
 // A workspace edit represents changes to many resources managed in the workspace. The edit
@@ -502,6 +1043,22 @@ type FileOperationRegistrationOptions struct {
 	Filters []*FileOperationFilter `json:"filters"`
 }
 
+func (s *FileOperationRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["filters"]; !ok {
+		return fmt.Errorf("required key 'filters' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type FileOperationRegistrationOptionsAlias FileOperationRegistrationOptions
+	return json.Unmarshal(data, (*FileOperationRegistrationOptionsAlias)(s))
+}
+
 // The parameters sent in notifications/requests for user-initiated renames of
 // files.
 //
@@ -512,6 +1069,22 @@ type RenameFilesParams struct {
 	Files []*FileRename `json:"files"`
 }
 
+func (s *RenameFilesParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["files"]; !ok {
+		return fmt.Errorf("required key 'files' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type RenameFilesParamsAlias RenameFilesParams
+	return json.Unmarshal(data, (*RenameFilesParamsAlias)(s))
+}
+
 // The parameters sent in notifications/requests for user-initiated deletes of
 // files.
 //
@@ -519,6 +1092,22 @@ type RenameFilesParams struct {
 type DeleteFilesParams struct {
 	// An array of all files/folders deleted in this operation.
 	Files []*FileDelete `json:"files"`
+}
+
+func (s *DeleteFilesParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["files"]; !ok {
+		return fmt.Errorf("required key 'files' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DeleteFilesParamsAlias DeleteFilesParams
+	return json.Unmarshal(data, (*DeleteFilesParamsAlias)(s))
 }
 
 type MonikerParams struct {
@@ -543,6 +1132,28 @@ type Moniker struct {
 
 	// The moniker kind if known.
 	Kind *MonikerKind `json:"kind,omitempty"`
+}
+
+func (s *Moniker) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["scheme"]; !ok {
+		return fmt.Errorf("required key 'scheme' is missing")
+	}
+	if _, ok := keys["identifier"]; !ok {
+		return fmt.Errorf("required key 'identifier' is missing")
+	}
+	if _, ok := keys["unique"]; !ok {
+		return fmt.Errorf("required key 'unique' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type MonikerAlias Moniker
+	return json.Unmarshal(data, (*MonikerAlias)(s))
 }
 
 type MonikerRegistrationOptions struct {
@@ -591,6 +1202,34 @@ type TypeHierarchyItem struct {
 	Data *any `json:"data,omitempty"`
 }
 
+func (s *TypeHierarchyItem) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["name"]; !ok {
+		return fmt.Errorf("required key 'name' is missing")
+	}
+	if _, ok := keys["kind"]; !ok {
+		return fmt.Errorf("required key 'kind' is missing")
+	}
+	if _, ok := keys["uri"]; !ok {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+	if _, ok := keys["selectionRange"]; !ok {
+		return fmt.Errorf("required key 'selectionRange' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type TypeHierarchyItemAlias TypeHierarchyItem
+	return json.Unmarshal(data, (*TypeHierarchyItemAlias)(s))
+}
+
 // Type hierarchy options used during static or dynamic registration.
 //
 // Since: 3.17.0
@@ -610,6 +1249,22 @@ type TypeHierarchySupertypesParams struct {
 	Item *TypeHierarchyItem `json:"item"`
 }
 
+func (s *TypeHierarchySupertypesParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["item"]; !ok {
+		return fmt.Errorf("required key 'item' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type TypeHierarchySupertypesParamsAlias TypeHierarchySupertypesParams
+	return json.Unmarshal(data, (*TypeHierarchySupertypesParamsAlias)(s))
+}
+
 // The parameter of a `typeHierarchy/subtypes` request.
 //
 // Since: 3.17.0
@@ -618,6 +1273,22 @@ type TypeHierarchySubtypesParams struct {
 	PartialResultParams
 
 	Item *TypeHierarchyItem `json:"item"`
+}
+
+func (s *TypeHierarchySubtypesParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["item"]; !ok {
+		return fmt.Errorf("required key 'item' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type TypeHierarchySubtypesParamsAlias TypeHierarchySubtypesParams
+	return json.Unmarshal(data, (*TypeHierarchySubtypesParamsAlias)(s))
 }
 
 // A parameter literal used in inline value requests.
@@ -635,6 +1306,28 @@ type InlineValueParams struct {
 	// Additional information about the context in which inline values were
 	// requested.
 	Context *InlineValueContext `json:"context"`
+}
+
+func (s *InlineValueParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+	if _, ok := keys["context"]; !ok {
+		return fmt.Errorf("required key 'context' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type InlineValueParamsAlias InlineValueParams
+	return json.Unmarshal(data, (*InlineValueParamsAlias)(s))
 }
 
 // Inline value options used during static or dynamic registration.
@@ -657,6 +1350,25 @@ type InlayHintParams struct {
 
 	// The document range for which inlay hints should be computed.
 	Range Range `json:"range"`
+}
+
+func (s *InlayHintParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type InlayHintParamsAlias InlayHintParams
+	return json.Unmarshal(data, (*InlayHintParamsAlias)(s))
 }
 
 // Inlay hint information.
@@ -708,6 +1420,25 @@ type InlayHint struct {
 	Data *any `json:"data,omitempty"`
 }
 
+func (s *InlayHint) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["position"]; !ok {
+		return fmt.Errorf("required key 'position' is missing")
+	}
+	if _, ok := keys["label"]; !ok {
+		return fmt.Errorf("required key 'label' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type InlayHintAlias InlayHint
+	return json.Unmarshal(data, (*InlayHintAlias)(s))
+}
+
 // Inlay hint options used during static or dynamic registration.
 //
 // Since: 3.17.0
@@ -734,6 +1465,22 @@ type DocumentDiagnosticParams struct {
 	PreviousResultId *string `json:"previousResultId,omitempty"`
 }
 
+func (s *DocumentDiagnosticParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DocumentDiagnosticParamsAlias DocumentDiagnosticParams
+	return json.Unmarshal(data, (*DocumentDiagnosticParamsAlias)(s))
+}
+
 // A partial result for a document diagnostic report.
 //
 // Since: 3.17.0
@@ -741,11 +1488,43 @@ type DocumentDiagnosticReportPartialResult struct {
 	RelatedDocuments map[DocumentUri]FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments"`
 }
 
+func (s *DocumentDiagnosticReportPartialResult) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["relatedDocuments"]; !ok {
+		return fmt.Errorf("required key 'relatedDocuments' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DocumentDiagnosticReportPartialResultAlias DocumentDiagnosticReportPartialResult
+	return json.Unmarshal(data, (*DocumentDiagnosticReportPartialResultAlias)(s))
+}
+
 // Cancellation data returned from a diagnostic request.
 //
 // Since: 3.17.0
 type DiagnosticServerCancellationData struct {
 	RetriggerRequest bool `json:"retriggerRequest"`
+}
+
+func (s *DiagnosticServerCancellationData) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["retriggerRequest"]; !ok {
+		return fmt.Errorf("required key 'retriggerRequest' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DiagnosticServerCancellationDataAlias DiagnosticServerCancellationData
+	return json.Unmarshal(data, (*DiagnosticServerCancellationDataAlias)(s))
 }
 
 // Diagnostic registration options.
@@ -772,6 +1551,22 @@ type WorkspaceDiagnosticParams struct {
 	PreviousResultIds []PreviousResultId `json:"previousResultIds"`
 }
 
+func (s *WorkspaceDiagnosticParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["previousResultIds"]; !ok {
+		return fmt.Errorf("required key 'previousResultIds' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type WorkspaceDiagnosticParamsAlias WorkspaceDiagnosticParams
+	return json.Unmarshal(data, (*WorkspaceDiagnosticParamsAlias)(s))
+}
+
 // A workspace diagnostic report.
 //
 // Since: 3.17.0
@@ -779,11 +1574,43 @@ type WorkspaceDiagnosticReport struct {
 	Items []WorkspaceDocumentDiagnosticReport `json:"items"`
 }
 
+func (s *WorkspaceDiagnosticReport) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["items"]; !ok {
+		return fmt.Errorf("required key 'items' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type WorkspaceDiagnosticReportAlias WorkspaceDiagnosticReport
+	return json.Unmarshal(data, (*WorkspaceDiagnosticReportAlias)(s))
+}
+
 // A partial result for a workspace diagnostic report.
 //
 // Since: 3.17.0
 type WorkspaceDiagnosticReportPartialResult struct {
 	Items []WorkspaceDocumentDiagnosticReport `json:"items"`
+}
+
+func (s *WorkspaceDiagnosticReportPartialResult) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["items"]; !ok {
+		return fmt.Errorf("required key 'items' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type WorkspaceDiagnosticReportPartialResultAlias WorkspaceDiagnosticReportPartialResult
+	return json.Unmarshal(data, (*WorkspaceDiagnosticReportPartialResultAlias)(s))
 }
 
 // The params sent in an open notebook document notification.
@@ -796,6 +1623,25 @@ type DidOpenNotebookDocumentParams struct {
 	// The text documents that represent the content
 	// of a notebook cell.
 	CellTextDocuments []*TextDocumentItem `json:"cellTextDocuments"`
+}
+
+func (s *DidOpenNotebookDocumentParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["notebookDocument"]; !ok {
+		return fmt.Errorf("required key 'notebookDocument' is missing")
+	}
+	if _, ok := keys["cellTextDocuments"]; !ok {
+		return fmt.Errorf("required key 'cellTextDocuments' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DidOpenNotebookDocumentParamsAlias DidOpenNotebookDocumentParams
+	return json.Unmarshal(data, (*DidOpenNotebookDocumentParamsAlias)(s))
 }
 
 // Registration options specific to a notebook.
@@ -832,12 +1678,47 @@ type DidChangeNotebookDocumentParams struct {
 	Change *NotebookDocumentChangeEvent `json:"change"`
 }
 
+func (s *DidChangeNotebookDocumentParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["notebookDocument"]; !ok {
+		return fmt.Errorf("required key 'notebookDocument' is missing")
+	}
+	if _, ok := keys["change"]; !ok {
+		return fmt.Errorf("required key 'change' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DidChangeNotebookDocumentParamsAlias DidChangeNotebookDocumentParams
+	return json.Unmarshal(data, (*DidChangeNotebookDocumentParamsAlias)(s))
+}
+
 // The params sent in a save notebook document notification.
 //
 // Since: 3.17.0
 type DidSaveNotebookDocumentParams struct {
 	// The notebook document that got saved.
 	NotebookDocument NotebookDocumentIdentifier `json:"notebookDocument"`
+}
+
+func (s *DidSaveNotebookDocumentParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["notebookDocument"]; !ok {
+		return fmt.Errorf("required key 'notebookDocument' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DidSaveNotebookDocumentParamsAlias DidSaveNotebookDocumentParams
+	return json.Unmarshal(data, (*DidSaveNotebookDocumentParamsAlias)(s))
 }
 
 // The params sent in a close notebook document notification.
@@ -850,6 +1731,25 @@ type DidCloseNotebookDocumentParams struct {
 	// The text documents that represent the content
 	// of a notebook cell that got closed.
 	CellTextDocuments []TextDocumentIdentifier `json:"cellTextDocuments"`
+}
+
+func (s *DidCloseNotebookDocumentParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["notebookDocument"]; !ok {
+		return fmt.Errorf("required key 'notebookDocument' is missing")
+	}
+	if _, ok := keys["cellTextDocuments"]; !ok {
+		return fmt.Errorf("required key 'cellTextDocuments' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DidCloseNotebookDocumentParamsAlias DidCloseNotebookDocumentParams
+	return json.Unmarshal(data, (*DidCloseNotebookDocumentParamsAlias)(s))
 }
 
 // A parameter literal used in inline completion requests.
@@ -866,6 +1766,22 @@ type InlineCompletionParams struct {
 	Context *InlineCompletionContext `json:"context"`
 }
 
+func (s *InlineCompletionParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["context"]; !ok {
+		return fmt.Errorf("required key 'context' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type InlineCompletionParamsAlias InlineCompletionParams
+	return json.Unmarshal(data, (*InlineCompletionParamsAlias)(s))
+}
+
 // Represents a collection of items to be presented in the editor.
 //
 // Since: 3.18.0
@@ -874,6 +1790,22 @@ type InlineCompletionParams struct {
 type InlineCompletionList struct {
 	// The inline completion items
 	Items []*InlineCompletionItem `json:"items"`
+}
+
+func (s *InlineCompletionList) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["items"]; !ok {
+		return fmt.Errorf("required key 'items' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type InlineCompletionListAlias InlineCompletionList
+	return json.Unmarshal(data, (*InlineCompletionListAlias)(s))
 }
 
 // An inline completion item represents a text snippet that is proposed inline to complete text that is being typed.
@@ -893,6 +1825,22 @@ type InlineCompletionItem struct {
 
 	// An optional Command that is executed *after* inserting this completion.
 	Command *Command `json:"command,omitempty"`
+}
+
+func (s *InlineCompletionItem) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["insertText"]; !ok {
+		return fmt.Errorf("required key 'insertText' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type InlineCompletionItemAlias InlineCompletionItem
+	return json.Unmarshal(data, (*InlineCompletionItemAlias)(s))
 }
 
 // Inline completion options used during static or dynamic registration.
@@ -916,6 +1864,22 @@ type TextDocumentContentParams struct {
 	Uri DocumentUri `json:"uri"`
 }
 
+func (s *TextDocumentContentParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["uri"]; !ok {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type TextDocumentContentParamsAlias TextDocumentContentParams
+	return json.Unmarshal(data, (*TextDocumentContentParamsAlias)(s))
+}
+
 // Result of the `workspace/textDocumentContent` request.
 //
 // Since: 3.18.0
@@ -927,6 +1891,22 @@ type TextDocumentContentResult struct {
 	// from the returned content due to whitespace and line ending
 	// normalizations done on the client
 	Text string `json:"text"`
+}
+
+func (s *TextDocumentContentResult) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["text"]; !ok {
+		return fmt.Errorf("required key 'text' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type TextDocumentContentResultAlias TextDocumentContentResult
+	return json.Unmarshal(data, (*TextDocumentContentResultAlias)(s))
 }
 
 // Text document content provider registration options.
@@ -949,12 +1929,60 @@ type TextDocumentContentRefreshParams struct {
 	Uri DocumentUri `json:"uri"`
 }
 
+func (s *TextDocumentContentRefreshParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["uri"]; !ok {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type TextDocumentContentRefreshParamsAlias TextDocumentContentRefreshParams
+	return json.Unmarshal(data, (*TextDocumentContentRefreshParamsAlias)(s))
+}
+
 type RegistrationParams struct {
 	Registrations []*Registration `json:"registrations"`
 }
 
+func (s *RegistrationParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["registrations"]; !ok {
+		return fmt.Errorf("required key 'registrations' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type RegistrationParamsAlias RegistrationParams
+	return json.Unmarshal(data, (*RegistrationParamsAlias)(s))
+}
+
 type UnregistrationParams struct {
 	Unregisterations []*Unregistration `json:"unregisterations"`
+}
+
+func (s *UnregistrationParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["unregisterations"]; !ok {
+		return fmt.Errorf("required key 'unregisterations' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type UnregistrationParamsAlias UnregistrationParams
+	return json.Unmarshal(data, (*UnregistrationParamsAlias)(s))
 }
 
 type InitializeParams struct {
@@ -973,6 +2001,22 @@ type InitializeResult struct {
 	ServerInfo *ServerInfo `json:"serverInfo,omitempty"`
 }
 
+func (s *InitializeResult) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["capabilities"]; !ok {
+		return fmt.Errorf("required key 'capabilities' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type InitializeResultAlias InitializeResult
+	return json.Unmarshal(data, (*InitializeResultAlias)(s))
+}
+
 // The data type of the ResponseError if the
 // initialize request fails.
 type InitializeError struct {
@@ -983,12 +2027,44 @@ type InitializeError struct {
 	Retry bool `json:"retry"`
 }
 
+func (s *InitializeError) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["retry"]; !ok {
+		return fmt.Errorf("required key 'retry' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type InitializeErrorAlias InitializeError
+	return json.Unmarshal(data, (*InitializeErrorAlias)(s))
+}
+
 type InitializedParams struct{}
 
 // The parameters of a change configuration notification.
 type DidChangeConfigurationParams struct {
 	// The actual changed settings
 	Settings any `json:"settings"`
+}
+
+func (s *DidChangeConfigurationParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["settings"]; !ok {
+		return fmt.Errorf("required key 'settings' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DidChangeConfigurationParamsAlias DidChangeConfigurationParams
+	return json.Unmarshal(data, (*DidChangeConfigurationParamsAlias)(s))
 }
 
 type DidChangeConfigurationRegistrationOptions struct {
@@ -1004,6 +2080,25 @@ type ShowMessageParams struct {
 	Message string `json:"message"`
 }
 
+func (s *ShowMessageParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["type"]; !ok {
+		return fmt.Errorf("required key 'type' is missing")
+	}
+	if _, ok := keys["message"]; !ok {
+		return fmt.Errorf("required key 'message' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ShowMessageParamsAlias ShowMessageParams
+	return json.Unmarshal(data, (*ShowMessageParamsAlias)(s))
+}
+
 type ShowMessageRequestParams struct {
 	// The message type. See MessageType
 	Type MessageType `json:"type"`
@@ -1015,9 +2110,44 @@ type ShowMessageRequestParams struct {
 	Actions *[]*MessageActionItem `json:"actions,omitempty"`
 }
 
+func (s *ShowMessageRequestParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["type"]; !ok {
+		return fmt.Errorf("required key 'type' is missing")
+	}
+	if _, ok := keys["message"]; !ok {
+		return fmt.Errorf("required key 'message' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ShowMessageRequestParamsAlias ShowMessageRequestParams
+	return json.Unmarshal(data, (*ShowMessageRequestParamsAlias)(s))
+}
+
 type MessageActionItem struct {
 	// A short title like 'Retry', 'Open Log' etc.
 	Title string `json:"title"`
+}
+
+func (s *MessageActionItem) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["title"]; !ok {
+		return fmt.Errorf("required key 'title' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type MessageActionItemAlias MessageActionItem
+	return json.Unmarshal(data, (*MessageActionItemAlias)(s))
 }
 
 // The log message parameters.
@@ -1029,10 +2159,45 @@ type LogMessageParams struct {
 	Message string `json:"message"`
 }
 
+func (s *LogMessageParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["type"]; !ok {
+		return fmt.Errorf("required key 'type' is missing")
+	}
+	if _, ok := keys["message"]; !ok {
+		return fmt.Errorf("required key 'message' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type LogMessageParamsAlias LogMessageParams
+	return json.Unmarshal(data, (*LogMessageParamsAlias)(s))
+}
+
 // The parameters sent in an open text document notification
 type DidOpenTextDocumentParams struct {
 	// The document that was opened.
 	TextDocument *TextDocumentItem `json:"textDocument"`
+}
+
+func (s *DidOpenTextDocumentParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DidOpenTextDocumentParamsAlias DidOpenTextDocumentParams
+	return json.Unmarshal(data, (*DidOpenTextDocumentParamsAlias)(s))
 }
 
 // The change text document notification's parameters.
@@ -1056,6 +2221,25 @@ type DidChangeTextDocumentParams struct {
 	ContentChanges []TextDocumentContentChangeEvent `json:"contentChanges"`
 }
 
+func (s *DidChangeTextDocumentParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if _, ok := keys["contentChanges"]; !ok {
+		return fmt.Errorf("required key 'contentChanges' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DidChangeTextDocumentParamsAlias DidChangeTextDocumentParams
+	return json.Unmarshal(data, (*DidChangeTextDocumentParamsAlias)(s))
+}
+
 // Describe options to be used when registered for text document change events.
 type TextDocumentChangeRegistrationOptions struct {
 	TextDocumentRegistrationOptions
@@ -1064,10 +2248,42 @@ type TextDocumentChangeRegistrationOptions struct {
 	SyncKind TextDocumentSyncKind `json:"syncKind"`
 }
 
+func (s *TextDocumentChangeRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["syncKind"]; !ok {
+		return fmt.Errorf("required key 'syncKind' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type TextDocumentChangeRegistrationOptionsAlias TextDocumentChangeRegistrationOptions
+	return json.Unmarshal(data, (*TextDocumentChangeRegistrationOptionsAlias)(s))
+}
+
 // The parameters sent in a close text document notification
 type DidCloseTextDocumentParams struct {
 	// The document that was closed.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
+}
+
+func (s *DidCloseTextDocumentParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DidCloseTextDocumentParamsAlias DidCloseTextDocumentParams
+	return json.Unmarshal(data, (*DidCloseTextDocumentParamsAlias)(s))
 }
 
 // The parameters sent in a save text document notification
@@ -1078,6 +2294,22 @@ type DidSaveTextDocumentParams struct {
 	// Optional the content when saved. Depends on the includeText value
 	// when the save notification was requested.
 	Text *string `json:"text,omitempty"`
+}
+
+func (s *DidSaveTextDocumentParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DidSaveTextDocumentParamsAlias DidSaveTextDocumentParams
+	return json.Unmarshal(data, (*DidSaveTextDocumentParamsAlias)(s))
 }
 
 // Save registration options.
@@ -1095,6 +2327,25 @@ type WillSaveTextDocumentParams struct {
 	Reason TextDocumentSaveReason `json:"reason"`
 }
 
+func (s *WillSaveTextDocumentParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if _, ok := keys["reason"]; !ok {
+		return fmt.Errorf("required key 'reason' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type WillSaveTextDocumentParamsAlias WillSaveTextDocumentParams
+	return json.Unmarshal(data, (*WillSaveTextDocumentParamsAlias)(s))
+}
+
 // A text edit applicable to a text document.
 type TextEdit struct {
 	// The range of the text document to be manipulated. To insert
@@ -1106,16 +2357,67 @@ type TextEdit struct {
 	NewText string `json:"newText"`
 }
 
+func (s *TextEdit) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+	if _, ok := keys["newText"]; !ok {
+		return fmt.Errorf("required key 'newText' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type TextEditAlias TextEdit
+	return json.Unmarshal(data, (*TextEditAlias)(s))
+}
+
 // The watched files change notification's parameters.
 type DidChangeWatchedFilesParams struct {
 	// The actual file events.
 	Changes []*FileEvent `json:"changes"`
 }
 
+func (s *DidChangeWatchedFilesParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["changes"]; !ok {
+		return fmt.Errorf("required key 'changes' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DidChangeWatchedFilesParamsAlias DidChangeWatchedFilesParams
+	return json.Unmarshal(data, (*DidChangeWatchedFilesParamsAlias)(s))
+}
+
 // Describe options to be used when registered for text document change events.
 type DidChangeWatchedFilesRegistrationOptions struct {
 	// The watchers to register.
 	Watchers []*FileSystemWatcher `json:"watchers"`
+}
+
+func (s *DidChangeWatchedFilesRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["watchers"]; !ok {
+		return fmt.Errorf("required key 'watchers' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DidChangeWatchedFilesRegistrationOptionsAlias DidChangeWatchedFilesRegistrationOptions
+	return json.Unmarshal(data, (*DidChangeWatchedFilesRegistrationOptionsAlias)(s))
 }
 
 // The publish diagnostic notification's parameters.
@@ -1130,6 +2432,25 @@ type PublishDiagnosticsParams struct {
 
 	// An array of diagnostic information items.
 	Diagnostics []*Diagnostic `json:"diagnostics"`
+}
+
+func (s *PublishDiagnosticsParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["uri"]; !ok {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
+	if _, ok := keys["diagnostics"]; !ok {
+		return fmt.Errorf("required key 'diagnostics' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type PublishDiagnosticsParamsAlias PublishDiagnosticsParams
+	return json.Unmarshal(data, (*PublishDiagnosticsParamsAlias)(s))
 }
 
 // Completion parameters
@@ -1284,6 +2605,22 @@ type CompletionItem struct {
 	Data *any `json:"data,omitempty"`
 }
 
+func (s *CompletionItem) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["label"]; !ok {
+		return fmt.Errorf("required key 'label' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type CompletionItemAlias CompletionItem
+	return json.Unmarshal(data, (*CompletionItemAlias)(s))
+}
+
 // Represents a collection of items to be presented
 // in the editor.
 type CompletionList struct {
@@ -1333,6 +2670,25 @@ type CompletionList struct {
 	Items []*CompletionItem `json:"items"`
 }
 
+func (s *CompletionList) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["isIncomplete"]; !ok {
+		return fmt.Errorf("required key 'isIncomplete' is missing")
+	}
+	if _, ok := keys["items"]; !ok {
+		return fmt.Errorf("required key 'items' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type CompletionListAlias CompletionList
+	return json.Unmarshal(data, (*CompletionListAlias)(s))
+}
+
 // Registration options for a CompletionRequest.
 type CompletionRegistrationOptions struct {
 	TextDocumentRegistrationOptions
@@ -1353,6 +2709,22 @@ type Hover struct {
 	// An optional range inside the text document that is used to
 	// visualize the hover, e.g. by changing the background color.
 	Range *Range `json:"range,omitempty"`
+}
+
+func (s *Hover) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["contents"]; !ok {
+		return fmt.Errorf("required key 'contents' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type HoverAlias Hover
+	return json.Unmarshal(data, (*HoverAlias)(s))
 }
 
 // Registration options for a HoverRequest.
@@ -1410,6 +2782,22 @@ type SignatureHelp struct {
 	ActiveParameter *Nullable[uint32] `json:"activeParameter,omitempty"`
 }
 
+func (s *SignatureHelp) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["signatures"]; !ok {
+		return fmt.Errorf("required key 'signatures' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type SignatureHelpAlias SignatureHelp
+	return json.Unmarshal(data, (*SignatureHelpAlias)(s))
+}
+
 // Registration options for a SignatureHelpRequest.
 type SignatureHelpRegistrationOptions struct {
 	TextDocumentRegistrationOptions
@@ -1438,6 +2826,22 @@ type ReferenceParams struct {
 	Context *ReferenceContext `json:"context"`
 }
 
+func (s *ReferenceParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["context"]; !ok {
+		return fmt.Errorf("required key 'context' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ReferenceParamsAlias ReferenceParams
+	return json.Unmarshal(data, (*ReferenceParamsAlias)(s))
+}
+
 // Registration options for a ReferencesRequest.
 type ReferenceRegistrationOptions struct {
 	TextDocumentRegistrationOptions
@@ -1462,6 +2866,22 @@ type DocumentHighlight struct {
 	Kind *DocumentHighlightKind `json:"kind,omitempty"`
 }
 
+func (s *DocumentHighlight) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DocumentHighlightAlias DocumentHighlight
+	return json.Unmarshal(data, (*DocumentHighlightAlias)(s))
+}
+
 // Registration options for a DocumentHighlightRequest.
 type DocumentHighlightRegistrationOptions struct {
 	TextDocumentRegistrationOptions
@@ -1475,6 +2895,22 @@ type DocumentSymbolParams struct {
 
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
+}
+
+func (s *DocumentSymbolParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DocumentSymbolParamsAlias DocumentSymbolParams
+	return json.Unmarshal(data, (*DocumentSymbolParamsAlias)(s))
 }
 
 // Represents information about programming constructs like variables, classes,
@@ -1497,6 +2933,22 @@ type SymbolInformation struct {
 	// syntax tree. It can therefore not be used to re-construct a hierarchy of
 	// the symbols.
 	Location Location `json:"location"`
+}
+
+func (s *SymbolInformation) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["location"]; !ok {
+		return fmt.Errorf("required key 'location' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type SymbolInformationAlias SymbolInformation
+	return json.Unmarshal(data, (*SymbolInformationAlias)(s))
 }
 
 // Represents programming constructs like variables, classes, interfaces etc.
@@ -1537,6 +2989,31 @@ type DocumentSymbol struct {
 	Children *[]*DocumentSymbol `json:"children,omitempty"`
 }
 
+func (s *DocumentSymbol) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["name"]; !ok {
+		return fmt.Errorf("required key 'name' is missing")
+	}
+	if _, ok := keys["kind"]; !ok {
+		return fmt.Errorf("required key 'kind' is missing")
+	}
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+	if _, ok := keys["selectionRange"]; !ok {
+		return fmt.Errorf("required key 'selectionRange' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DocumentSymbolAlias DocumentSymbol
+	return json.Unmarshal(data, (*DocumentSymbolAlias)(s))
+}
+
 // Registration options for a DocumentSymbolRequest.
 type DocumentSymbolRegistrationOptions struct {
 	TextDocumentRegistrationOptions
@@ -1556,6 +3033,28 @@ type CodeActionParams struct {
 
 	// Context carrying additional information.
 	Context *CodeActionContext `json:"context"`
+}
+
+func (s *CodeActionParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+	if _, ok := keys["context"]; !ok {
+		return fmt.Errorf("required key 'context' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type CodeActionParamsAlias CodeActionParams
+	return json.Unmarshal(data, (*CodeActionParamsAlias)(s))
 }
 
 // Represents a reference to a command. Provides a title which
@@ -1579,6 +3078,25 @@ type Command struct {
 	// Arguments that the command handler should be
 	// invoked with.
 	Arguments *[]any `json:"arguments,omitempty"`
+}
+
+func (s *Command) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["title"]; !ok {
+		return fmt.Errorf("required key 'title' is missing")
+	}
+	if _, ok := keys["command"]; !ok {
+		return fmt.Errorf("required key 'command' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type CommandAlias Command
+	return json.Unmarshal(data, (*CommandAlias)(s))
 }
 
 // A code action represents a change that can be performed in code, e.g. to fix a problem or
@@ -1643,6 +3161,22 @@ type CodeAction struct {
 	Tags *[]CodeActionTag `json:"tags,omitempty"`
 }
 
+func (s *CodeAction) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["title"]; !ok {
+		return fmt.Errorf("required key 'title' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type CodeActionAlias CodeAction
+	return json.Unmarshal(data, (*CodeActionAlias)(s))
+}
+
 // Registration options for a CodeActionRequest.
 type CodeActionRegistrationOptions struct {
 	TextDocumentRegistrationOptions
@@ -1665,6 +3199,22 @@ type WorkspaceSymbolParams struct {
 	Query string `json:"query"`
 }
 
+func (s *WorkspaceSymbolParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["query"]; !ok {
+		return fmt.Errorf("required key 'query' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type WorkspaceSymbolParamsAlias WorkspaceSymbolParams
+	return json.Unmarshal(data, (*WorkspaceSymbolParamsAlias)(s))
+}
+
 // A special workspace symbol that supports locations without a range.
 //
 // See also SymbolInformation.
@@ -1685,6 +3235,22 @@ type WorkspaceSymbol struct {
 	Data *any `json:"data,omitempty"`
 }
 
+func (s *WorkspaceSymbol) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["location"]; !ok {
+		return fmt.Errorf("required key 'location' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type WorkspaceSymbolAlias WorkspaceSymbol
+	return json.Unmarshal(data, (*WorkspaceSymbolAlias)(s))
+}
+
 // Registration options for a WorkspaceSymbolRequest.
 type WorkspaceSymbolRegistrationOptions struct {
 	WorkspaceSymbolOptions
@@ -1697,6 +3263,22 @@ type CodeLensParams struct {
 
 	// The document to request code lens for.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
+}
+
+func (s *CodeLensParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type CodeLensParamsAlias CodeLensParams
+	return json.Unmarshal(data, (*CodeLensParamsAlias)(s))
 }
 
 // A code lens represents a command that should be shown along with
@@ -1716,6 +3298,22 @@ type CodeLens struct {
 	Data *any `json:"data,omitempty"`
 }
 
+func (s *CodeLens) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type CodeLensAlias CodeLens
+	return json.Unmarshal(data, (*CodeLensAlias)(s))
+}
+
 // Registration options for a CodeLensRequest.
 type CodeLensRegistrationOptions struct {
 	TextDocumentRegistrationOptions
@@ -1729,6 +3327,22 @@ type DocumentLinkParams struct {
 
 	// The document to provide document links for.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
+}
+
+func (s *DocumentLinkParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DocumentLinkParamsAlias DocumentLinkParams
+	return json.Unmarshal(data, (*DocumentLinkParamsAlias)(s))
 }
 
 // A document link is a range in a text document that links to an internal or external resource, like another
@@ -1754,6 +3368,22 @@ type DocumentLink struct {
 	Data *any `json:"data,omitempty"`
 }
 
+func (s *DocumentLink) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DocumentLinkAlias DocumentLink
+	return json.Unmarshal(data, (*DocumentLinkAlias)(s))
+}
+
 // Registration options for a DocumentLinkRequest.
 type DocumentLinkRegistrationOptions struct {
 	TextDocumentRegistrationOptions
@@ -1769,6 +3399,25 @@ type DocumentFormattingParams struct {
 
 	// The format options.
 	Options *FormattingOptions `json:"options"`
+}
+
+func (s *DocumentFormattingParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if _, ok := keys["options"]; !ok {
+		return fmt.Errorf("required key 'options' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DocumentFormattingParamsAlias DocumentFormattingParams
+	return json.Unmarshal(data, (*DocumentFormattingParamsAlias)(s))
 }
 
 // Registration options for a DocumentFormattingRequest.
@@ -1789,6 +3438,28 @@ type DocumentRangeFormattingParams struct {
 
 	// The format options
 	Options *FormattingOptions `json:"options"`
+}
+
+func (s *DocumentRangeFormattingParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+	if _, ok := keys["options"]; !ok {
+		return fmt.Errorf("required key 'options' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DocumentRangeFormattingParamsAlias DocumentRangeFormattingParams
+	return json.Unmarshal(data, (*DocumentRangeFormattingParamsAlias)(s))
 }
 
 // Registration options for a DocumentRangeFormattingRequest.
@@ -1815,6 +3486,28 @@ type DocumentRangesFormattingParams struct {
 	Options *FormattingOptions `json:"options"`
 }
 
+func (s *DocumentRangesFormattingParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if _, ok := keys["ranges"]; !ok {
+		return fmt.Errorf("required key 'ranges' is missing")
+	}
+	if _, ok := keys["options"]; !ok {
+		return fmt.Errorf("required key 'options' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DocumentRangesFormattingParamsAlias DocumentRangesFormattingParams
+	return json.Unmarshal(data, (*DocumentRangesFormattingParamsAlias)(s))
+}
+
 // The parameters of a DocumentOnTypeFormattingRequest.
 type DocumentOnTypeFormattingParams struct {
 	// The document to format.
@@ -1833,6 +3526,31 @@ type DocumentOnTypeFormattingParams struct {
 
 	// The formatting options.
 	Options *FormattingOptions `json:"options"`
+}
+
+func (s *DocumentOnTypeFormattingParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if _, ok := keys["position"]; !ok {
+		return fmt.Errorf("required key 'position' is missing")
+	}
+	if _, ok := keys["ch"]; !ok {
+		return fmt.Errorf("required key 'ch' is missing")
+	}
+	if _, ok := keys["options"]; !ok {
+		return fmt.Errorf("required key 'options' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DocumentOnTypeFormattingParamsAlias DocumentOnTypeFormattingParams
+	return json.Unmarshal(data, (*DocumentOnTypeFormattingParamsAlias)(s))
 }
 
 // Registration options for a DocumentOnTypeFormattingRequest.
@@ -1857,6 +3575,28 @@ type RenameParams struct {
 	NewName string `json:"newName"`
 }
 
+func (s *RenameParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if _, ok := keys["position"]; !ok {
+		return fmt.Errorf("required key 'position' is missing")
+	}
+	if _, ok := keys["newName"]; !ok {
+		return fmt.Errorf("required key 'newName' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type RenameParamsAlias RenameParams
+	return json.Unmarshal(data, (*RenameParamsAlias)(s))
+}
+
 // Registration options for a RenameRequest.
 type RenameRegistrationOptions struct {
 	TextDocumentRegistrationOptions
@@ -1877,6 +3617,22 @@ type ExecuteCommandParams struct {
 
 	// Arguments that the command should be invoked with.
 	Arguments *[]any `json:"arguments,omitempty"`
+}
+
+func (s *ExecuteCommandParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["command"]; !ok {
+		return fmt.Errorf("required key 'command' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ExecuteCommandParamsAlias ExecuteCommandParams
+	return json.Unmarshal(data, (*ExecuteCommandParamsAlias)(s))
 }
 
 // Registration options for a ExecuteCommandRequest.
@@ -1902,6 +3658,22 @@ type ApplyWorkspaceEditParams struct {
 	Metadata *WorkspaceEditMetadata `json:"metadata,omitempty"`
 }
 
+func (s *ApplyWorkspaceEditParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["edit"]; !ok {
+		return fmt.Errorf("required key 'edit' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ApplyWorkspaceEditParamsAlias ApplyWorkspaceEditParams
+	return json.Unmarshal(data, (*ApplyWorkspaceEditParamsAlias)(s))
+}
+
 // The result returned from the apply workspace edit request.
 //
 // Since: 3.17 renamed from ApplyWorkspaceEditResponse
@@ -1918,6 +3690,22 @@ type ApplyWorkspaceEditResult struct {
 	// contain the index of the change that failed. This property is only available
 	// if the client signals a `failureHandlingStrategy` in its client capabilities.
 	FailedChange *uint32 `json:"failedChange,omitempty"`
+}
+
+func (s *ApplyWorkspaceEditResult) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["applied"]; !ok {
+		return fmt.Errorf("required key 'applied' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ApplyWorkspaceEditResultAlias ApplyWorkspaceEditResult
+	return json.Unmarshal(data, (*ApplyWorkspaceEditResultAlias)(s))
 }
 
 type WorkDoneProgressBegin struct {
@@ -1950,6 +3738,25 @@ type WorkDoneProgressBegin struct {
 	Percentage *uint32 `json:"percentage,omitempty"`
 }
 
+func (s *WorkDoneProgressBegin) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["kind"]; !ok {
+		return fmt.Errorf("required key 'kind' is missing")
+	}
+	if _, ok := keys["title"]; !ok {
+		return fmt.Errorf("required key 'title' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type WorkDoneProgressBeginAlias WorkDoneProgressBegin
+	return json.Unmarshal(data, (*WorkDoneProgressBeginAlias)(s))
+}
+
 type WorkDoneProgressReport struct {
 	Kind StringLiteralReport `json:"kind"`
 
@@ -1975,6 +3782,22 @@ type WorkDoneProgressReport struct {
 	Percentage *uint32 `json:"percentage,omitempty"`
 }
 
+func (s *WorkDoneProgressReport) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["kind"]; !ok {
+		return fmt.Errorf("required key 'kind' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type WorkDoneProgressReportAlias WorkDoneProgressReport
+	return json.Unmarshal(data, (*WorkDoneProgressReportAlias)(s))
+}
+
 type WorkDoneProgressEnd struct {
 	Kind StringLiteralEnd `json:"kind"`
 
@@ -1983,8 +3806,40 @@ type WorkDoneProgressEnd struct {
 	Message *string `json:"message,omitempty"`
 }
 
+func (s *WorkDoneProgressEnd) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["kind"]; !ok {
+		return fmt.Errorf("required key 'kind' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type WorkDoneProgressEndAlias WorkDoneProgressEnd
+	return json.Unmarshal(data, (*WorkDoneProgressEndAlias)(s))
+}
+
 type SetTraceParams struct {
 	Value TraceValue `json:"value"`
+}
+
+func (s *SetTraceParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["value"]; !ok {
+		return fmt.Errorf("required key 'value' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type SetTraceParamsAlias SetTraceParams
+	return json.Unmarshal(data, (*SetTraceParamsAlias)(s))
 }
 
 type LogTraceParams struct {
@@ -1993,9 +3848,41 @@ type LogTraceParams struct {
 	Verbose *string `json:"verbose,omitempty"`
 }
 
+func (s *LogTraceParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["message"]; !ok {
+		return fmt.Errorf("required key 'message' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type LogTraceParamsAlias LogTraceParams
+	return json.Unmarshal(data, (*LogTraceParamsAlias)(s))
+}
+
 type CancelParams struct {
 	// The request id to cancel.
 	Id IntegerOrString `json:"id"`
+}
+
+func (s *CancelParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["id"]; !ok {
+		return fmt.Errorf("required key 'id' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type CancelParamsAlias CancelParams
+	return json.Unmarshal(data, (*CancelParamsAlias)(s))
 }
 
 type ProgressParams struct {
@@ -2006,6 +3893,25 @@ type ProgressParams struct {
 	Value any `json:"value"`
 }
 
+func (s *ProgressParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["token"]; !ok {
+		return fmt.Errorf("required key 'token' is missing")
+	}
+	if _, ok := keys["value"]; !ok {
+		return fmt.Errorf("required key 'value' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ProgressParamsAlias ProgressParams
+	return json.Unmarshal(data, (*ProgressParamsAlias)(s))
+}
+
 // A parameter literal used in requests to pass a text document and a position inside that
 // document.
 type TextDocumentPositionParams struct {
@@ -2014,6 +3920,25 @@ type TextDocumentPositionParams struct {
 
 	// The position inside the text document.
 	Position Position `json:"position"`
+}
+
+func (s *TextDocumentPositionParams) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if _, ok := keys["position"]; !ok {
+		return fmt.Errorf("required key 'position' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type TextDocumentPositionParamsAlias TextDocumentPositionParams
+	return json.Unmarshal(data, (*TextDocumentPositionParamsAlias)(s))
 }
 
 type WorkDoneProgressParams struct {
@@ -2049,6 +3974,28 @@ type LocationLink struct {
 	TargetSelectionRange Range `json:"targetSelectionRange"`
 }
 
+func (s *LocationLink) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["targetUri"]; !ok {
+		return fmt.Errorf("required key 'targetUri' is missing")
+	}
+	if _, ok := keys["targetRange"]; !ok {
+		return fmt.Errorf("required key 'targetRange' is missing")
+	}
+	if _, ok := keys["targetSelectionRange"]; !ok {
+		return fmt.Errorf("required key 'targetSelectionRange' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type LocationLinkAlias LocationLink
+	return json.Unmarshal(data, (*LocationLinkAlias)(s))
+}
+
 // A range in a text document expressed as (zero-based) start and end positions.
 //
 // If you want to specify a range that contains a line including the line ending
@@ -2068,6 +4015,25 @@ type Range struct {
 
 	// The range's end position.
 	End Position `json:"end"`
+}
+
+func (s *Range) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["start"]; !ok {
+		return fmt.Errorf("required key 'start' is missing")
+	}
+	if _, ok := keys["end"]; !ok {
+		return fmt.Errorf("required key 'end' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type RangeAlias Range
+	return json.Unmarshal(data, (*RangeAlias)(s))
 }
 
 type ImplementationOptions struct {
@@ -2095,6 +4061,25 @@ type WorkspaceFoldersChangeEvent struct {
 	Removed []*WorkspaceFolder `json:"removed"`
 }
 
+func (s *WorkspaceFoldersChangeEvent) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["added"]; !ok {
+		return fmt.Errorf("required key 'added' is missing")
+	}
+	if _, ok := keys["removed"]; !ok {
+		return fmt.Errorf("required key 'removed' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type WorkspaceFoldersChangeEventAlias WorkspaceFoldersChangeEvent
+	return json.Unmarshal(data, (*WorkspaceFoldersChangeEventAlias)(s))
+}
+
 type ConfigurationItem struct {
 	// The scope to get the configuration section for.
 	ScopeUri *URI `json:"scopeUri,omitempty"`
@@ -2107,6 +4092,22 @@ type ConfigurationItem struct {
 type TextDocumentIdentifier struct {
 	// The text document's uri.
 	Uri DocumentUri `json:"uri"`
+}
+
+func (s *TextDocumentIdentifier) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["uri"]; !ok {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type TextDocumentIdentifierAlias TextDocumentIdentifier
+	return json.Unmarshal(data, (*TextDocumentIdentifierAlias)(s))
 }
 
 // Represents a color in RGBA space.
@@ -2122,6 +4123,31 @@ type Color struct {
 
 	// The alpha component of this color in the range [0-1].
 	Alpha float64 `json:"alpha"`
+}
+
+func (s *Color) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["red"]; !ok {
+		return fmt.Errorf("required key 'red' is missing")
+	}
+	if _, ok := keys["green"]; !ok {
+		return fmt.Errorf("required key 'green' is missing")
+	}
+	if _, ok := keys["blue"]; !ok {
+		return fmt.Errorf("required key 'blue' is missing")
+	}
+	if _, ok := keys["alpha"]; !ok {
+		return fmt.Errorf("required key 'alpha' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ColorAlias Color
+	return json.Unmarshal(data, (*ColorAlias)(s))
 }
 
 type DocumentColorOptions struct {
@@ -2174,6 +4200,25 @@ type Position struct {
 	Character uint32 `json:"character"`
 }
 
+func (s *Position) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["line"]; !ok {
+		return fmt.Errorf("required key 'line' is missing")
+	}
+	if _, ok := keys["character"]; !ok {
+		return fmt.Errorf("required key 'character' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type PositionAlias Position
+	return json.Unmarshal(data, (*PositionAlias)(s))
+}
+
 type SelectionRangeOptions struct {
 	WorkDoneProgressOptions
 }
@@ -2200,6 +4245,22 @@ type SemanticTokensOptions struct {
 	Full *BooleanOrSemanticTokensFullDelta `json:"full,omitempty"`
 }
 
+func (s *SemanticTokensOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["legend"]; !ok {
+		return fmt.Errorf("required key 'legend' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type SemanticTokensOptionsAlias SemanticTokensOptions
+	return json.Unmarshal(data, (*SemanticTokensOptionsAlias)(s))
+}
+
 // Since: 3.16.0
 type SemanticTokensEdit struct {
 	// The start offset of the edit.
@@ -2212,6 +4273,25 @@ type SemanticTokensEdit struct {
 	Data *[]uint32 `json:"data,omitempty"`
 }
 
+func (s *SemanticTokensEdit) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["start"]; !ok {
+		return fmt.Errorf("required key 'start' is missing")
+	}
+	if _, ok := keys["deleteCount"]; !ok {
+		return fmt.Errorf("required key 'deleteCount' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type SemanticTokensEditAlias SemanticTokensEdit
+	return json.Unmarshal(data, (*SemanticTokensEditAlias)(s))
+}
+
 type LinkedEditingRangeOptions struct {
 	WorkDoneProgressOptions
 }
@@ -2222,6 +4302,22 @@ type LinkedEditingRangeOptions struct {
 type FileCreate struct {
 	// A file:// URI for the location of the file/folder being created.
 	Uri string `json:"uri"`
+}
+
+func (s *FileCreate) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["uri"]; !ok {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type FileCreateAlias FileCreate
+	return json.Unmarshal(data, (*FileCreateAlias)(s))
 }
 
 // Describes textual changes on a text document. A TextDocumentEdit describes all changes
@@ -2242,6 +4338,25 @@ type TextDocumentEdit struct {
 	Edits []TextEditOrAnnotatedTextEditOrSnippetTextEdit `json:"edits"`
 }
 
+func (s *TextDocumentEdit) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["textDocument"]; !ok {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if _, ok := keys["edits"]; !ok {
+		return fmt.Errorf("required key 'edits' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type TextDocumentEditAlias TextDocumentEdit
+	return json.Unmarshal(data, (*TextDocumentEditAlias)(s))
+}
+
 // Create file operation.
 type CreateFile struct {
 	ResourceOperation
@@ -2254,6 +4369,25 @@ type CreateFile struct {
 
 	// Additional options
 	Options *CreateFileOptions `json:"options,omitempty"`
+}
+
+func (s *CreateFile) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["kind"]; !ok {
+		return fmt.Errorf("required key 'kind' is missing")
+	}
+	if _, ok := keys["uri"]; !ok {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type CreateFileAlias CreateFile
+	return json.Unmarshal(data, (*CreateFileAlias)(s))
 }
 
 // Rename file operation
@@ -2273,6 +4407,28 @@ type RenameFile struct {
 	Options *RenameFileOptions `json:"options,omitempty"`
 }
 
+func (s *RenameFile) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["kind"]; !ok {
+		return fmt.Errorf("required key 'kind' is missing")
+	}
+	if _, ok := keys["oldUri"]; !ok {
+		return fmt.Errorf("required key 'oldUri' is missing")
+	}
+	if _, ok := keys["newUri"]; !ok {
+		return fmt.Errorf("required key 'newUri' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type RenameFileAlias RenameFile
+	return json.Unmarshal(data, (*RenameFileAlias)(s))
+}
+
 // Delete file operation
 type DeleteFile struct {
 	ResourceOperation
@@ -2285,6 +4441,25 @@ type DeleteFile struct {
 
 	// Delete options.
 	Options *DeleteFileOptions `json:"options,omitempty"`
+}
+
+func (s *DeleteFile) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["kind"]; !ok {
+		return fmt.Errorf("required key 'kind' is missing")
+	}
+	if _, ok := keys["uri"]; !ok {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DeleteFileAlias DeleteFile
+	return json.Unmarshal(data, (*DeleteFileAlias)(s))
 }
 
 // Additional information that describes document changes.
@@ -2304,6 +4479,22 @@ type ChangeAnnotation struct {
 	Description *string `json:"description,omitempty"`
 }
 
+func (s *ChangeAnnotation) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["label"]; !ok {
+		return fmt.Errorf("required key 'label' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ChangeAnnotationAlias ChangeAnnotation
+	return json.Unmarshal(data, (*ChangeAnnotationAlias)(s))
+}
+
 // A filter to describe in which file operation requests or notifications
 // the server is interested in receiving.
 //
@@ -2314,6 +4505,22 @@ type FileOperationFilter struct {
 
 	// The actual file operation pattern.
 	Pattern *FileOperationPattern `json:"pattern"`
+}
+
+func (s *FileOperationFilter) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["pattern"]; !ok {
+		return fmt.Errorf("required key 'pattern' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type FileOperationFilterAlias FileOperationFilter
+	return json.Unmarshal(data, (*FileOperationFilterAlias)(s))
 }
 
 // Represents information on a file/folder rename.
@@ -2327,12 +4534,47 @@ type FileRename struct {
 	NewUri string `json:"newUri"`
 }
 
+func (s *FileRename) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["oldUri"]; !ok {
+		return fmt.Errorf("required key 'oldUri' is missing")
+	}
+	if _, ok := keys["newUri"]; !ok {
+		return fmt.Errorf("required key 'newUri' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type FileRenameAlias FileRename
+	return json.Unmarshal(data, (*FileRenameAlias)(s))
+}
+
 // Represents information on a file/folder delete.
 //
 // Since: 3.16.0
 type FileDelete struct {
 	// A file:// URI for the location of the file/folder being deleted.
 	Uri string `json:"uri"`
+}
+
+func (s *FileDelete) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["uri"]; !ok {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type FileDeleteAlias FileDelete
+	return json.Unmarshal(data, (*FileDeleteAlias)(s))
 }
 
 type MonikerOptions struct {
@@ -2356,6 +4598,25 @@ type InlineValueContext struct {
 	StoppedLocation Range `json:"stoppedLocation"`
 }
 
+func (s *InlineValueContext) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["frameId"]; !ok {
+		return fmt.Errorf("required key 'frameId' is missing")
+	}
+	if _, ok := keys["stoppedLocation"]; !ok {
+		return fmt.Errorf("required key 'stoppedLocation' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type InlineValueContextAlias InlineValueContext
+	return json.Unmarshal(data, (*InlineValueContextAlias)(s))
+}
+
 // Provide inline value as text.
 //
 // Since: 3.17.0
@@ -2365,6 +4626,25 @@ type InlineValueText struct {
 
 	// The text of the inline value.
 	Text string `json:"text"`
+}
+
+func (s *InlineValueText) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+	if _, ok := keys["text"]; !ok {
+		return fmt.Errorf("required key 'text' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type InlineValueTextAlias InlineValueText
+	return json.Unmarshal(data, (*InlineValueTextAlias)(s))
 }
 
 // Provide inline value through a variable lookup.
@@ -2384,6 +4664,25 @@ type InlineValueVariableLookup struct {
 	CaseSensitiveLookup bool `json:"caseSensitiveLookup"`
 }
 
+func (s *InlineValueVariableLookup) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+	if _, ok := keys["caseSensitiveLookup"]; !ok {
+		return fmt.Errorf("required key 'caseSensitiveLookup' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type InlineValueVariableLookupAlias InlineValueVariableLookup
+	return json.Unmarshal(data, (*InlineValueVariableLookupAlias)(s))
+}
+
 // Provide an inline value through an expression evaluation.
 // If only a range is specified, the expression will be extracted from the underlying document.
 // An optional expression can be used to override the extracted expression.
@@ -2396,6 +4695,22 @@ type InlineValueEvaluatableExpression struct {
 
 	// If specified the expression overrides the extracted expression.
 	Expression *string `json:"expression,omitempty"`
+}
+
+func (s *InlineValueEvaluatableExpression) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type InlineValueEvaluatableExpressionAlias InlineValueEvaluatableExpression
+	return json.Unmarshal(data, (*InlineValueEvaluatableExpressionAlias)(s))
 }
 
 // Inline value options used during static registration.
@@ -2438,6 +4753,22 @@ type InlayHintLabelPart struct {
 	Command *Command `json:"command,omitempty"`
 }
 
+func (s *InlayHintLabelPart) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["value"]; !ok {
+		return fmt.Errorf("required key 'value' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type InlayHintLabelPartAlias InlayHintLabelPart
+	return json.Unmarshal(data, (*InlayHintLabelPartAlias)(s))
+}
+
 // A `MarkupContent` literal represents a string value which content is interpreted base on its
 // kind flag. Currently the protocol supports `plaintext` and `markdown` as markup kinds.
 //
@@ -2468,6 +4799,25 @@ type MarkupContent struct {
 
 	// The content itself
 	Value string `json:"value"`
+}
+
+func (s *MarkupContent) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["kind"]; !ok {
+		return fmt.Errorf("required key 'kind' is missing")
+	}
+	if _, ok := keys["value"]; !ok {
+		return fmt.Errorf("required key 'value' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type MarkupContentAlias MarkupContent
+	return json.Unmarshal(data, (*MarkupContentAlias)(s))
 }
 
 // Inlay hint options used during static registration.
@@ -2529,6 +4879,25 @@ type FullDocumentDiagnosticReport struct {
 	Items []*Diagnostic `json:"items"`
 }
 
+func (s *FullDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["kind"]; !ok {
+		return fmt.Errorf("required key 'kind' is missing")
+	}
+	if _, ok := keys["items"]; !ok {
+		return fmt.Errorf("required key 'items' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type FullDocumentDiagnosticReportAlias FullDocumentDiagnosticReport
+	return json.Unmarshal(data, (*FullDocumentDiagnosticReportAlias)(s))
+}
+
 // A diagnostic report indicating that the last returned
 // report is still accurate.
 //
@@ -2543,6 +4912,25 @@ type UnchangedDocumentDiagnosticReport struct {
 	// A result id which will be sent on the next
 	// diagnostic request for the same document.
 	ResultId string `json:"resultId"`
+}
+
+func (s *UnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["kind"]; !ok {
+		return fmt.Errorf("required key 'kind' is missing")
+	}
+	if _, ok := keys["resultId"]; !ok {
+		return fmt.Errorf("required key 'resultId' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type UnchangedDocumentDiagnosticReportAlias UnchangedDocumentDiagnosticReport
+	return json.Unmarshal(data, (*UnchangedDocumentDiagnosticReportAlias)(s))
 }
 
 // Diagnostic options.
@@ -2565,6 +4953,25 @@ type DiagnosticOptions struct {
 	WorkspaceDiagnostics bool `json:"workspaceDiagnostics"`
 }
 
+func (s *DiagnosticOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["interFileDependencies"]; !ok {
+		return fmt.Errorf("required key 'interFileDependencies' is missing")
+	}
+	if _, ok := keys["workspaceDiagnostics"]; !ok {
+		return fmt.Errorf("required key 'workspaceDiagnostics' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DiagnosticOptionsAlias DiagnosticOptions
+	return json.Unmarshal(data, (*DiagnosticOptionsAlias)(s))
+}
+
 // A previous result id in a workspace pull request.
 //
 // Since: 3.17.0
@@ -2575,6 +4982,25 @@ type PreviousResultId struct {
 
 	// The value of the previous result id.
 	Value string `json:"value"`
+}
+
+func (s *PreviousResultId) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["uri"]; !ok {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
+	if _, ok := keys["value"]; !ok {
+		return fmt.Errorf("required key 'value' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type PreviousResultIdAlias PreviousResultId
+	return json.Unmarshal(data, (*PreviousResultIdAlias)(s))
 }
 
 // A notebook document.
@@ -2601,6 +5027,31 @@ type NotebookDocument struct {
 	Cells []*NotebookCell `json:"cells"`
 }
 
+func (s *NotebookDocument) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["uri"]; !ok {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
+	if _, ok := keys["notebookType"]; !ok {
+		return fmt.Errorf("required key 'notebookType' is missing")
+	}
+	if _, ok := keys["version"]; !ok {
+		return fmt.Errorf("required key 'version' is missing")
+	}
+	if _, ok := keys["cells"]; !ok {
+		return fmt.Errorf("required key 'cells' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type NotebookDocumentAlias NotebookDocument
+	return json.Unmarshal(data, (*NotebookDocumentAlias)(s))
+}
+
 // An item to transfer a text document from the client to the
 // server.
 type TextDocumentItem struct {
@@ -2616,6 +5067,31 @@ type TextDocumentItem struct {
 
 	// The content of the opened text document.
 	Text string `json:"text"`
+}
+
+func (s *TextDocumentItem) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["uri"]; !ok {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
+	if _, ok := keys["languageId"]; !ok {
+		return fmt.Errorf("required key 'languageId' is missing")
+	}
+	if _, ok := keys["version"]; !ok {
+		return fmt.Errorf("required key 'version' is missing")
+	}
+	if _, ok := keys["text"]; !ok {
+		return fmt.Errorf("required key 'text' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type TextDocumentItemAlias TextDocumentItem
+	return json.Unmarshal(data, (*TextDocumentItemAlias)(s))
 }
 
 // Options specific to a notebook plus its cells
@@ -2640,6 +5116,22 @@ type NotebookDocumentSyncOptions struct {
 	Save *bool `json:"save,omitempty"`
 }
 
+func (s *NotebookDocumentSyncOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["notebookSelector"]; !ok {
+		return fmt.Errorf("required key 'notebookSelector' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type NotebookDocumentSyncOptionsAlias NotebookDocumentSyncOptions
+	return json.Unmarshal(data, (*NotebookDocumentSyncOptionsAlias)(s))
+}
+
 // A versioned notebook document identifier.
 //
 // Since: 3.17.0
@@ -2649,6 +5141,25 @@ type VersionedNotebookDocumentIdentifier struct {
 
 	// The notebook document's uri.
 	Uri URI `json:"uri"`
+}
+
+func (s *VersionedNotebookDocumentIdentifier) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["version"]; !ok {
+		return fmt.Errorf("required key 'version' is missing")
+	}
+	if _, ok := keys["uri"]; !ok {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type VersionedNotebookDocumentIdentifierAlias VersionedNotebookDocumentIdentifier
+	return json.Unmarshal(data, (*VersionedNotebookDocumentIdentifierAlias)(s))
 }
 
 // A change event for a notebook document.
@@ -2672,6 +5183,22 @@ type NotebookDocumentIdentifier struct {
 	Uri URI `json:"uri"`
 }
 
+func (s *NotebookDocumentIdentifier) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["uri"]; !ok {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type NotebookDocumentIdentifierAlias NotebookDocumentIdentifier
+	return json.Unmarshal(data, (*NotebookDocumentIdentifierAlias)(s))
+}
+
 // Provides information about the context in which an inline completion was requested.
 //
 // Since: 3.18.0
@@ -2683,6 +5210,22 @@ type InlineCompletionContext struct {
 
 	// Provides information about the currently selected item in the autocomplete widget if it is visible.
 	SelectedCompletionInfo *SelectedCompletionInfo `json:"selectedCompletionInfo,omitempty"`
+}
+
+func (s *InlineCompletionContext) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["triggerKind"]; !ok {
+		return fmt.Errorf("required key 'triggerKind' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type InlineCompletionContextAlias InlineCompletionContext
+	return json.Unmarshal(data, (*InlineCompletionContextAlias)(s))
 }
 
 // A string value used as a snippet is a template which allows to insert text
@@ -2704,6 +5247,25 @@ type StringValue struct {
 	Value string `json:"value"`
 }
 
+func (s *StringValue) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["kind"]; !ok {
+		return fmt.Errorf("required key 'kind' is missing")
+	}
+	if _, ok := keys["value"]; !ok {
+		return fmt.Errorf("required key 'value' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type StringValueAlias StringValue
+	return json.Unmarshal(data, (*StringValueAlias)(s))
+}
+
 // Inline completion options used during static registration.
 //
 // Since: 3.18.0
@@ -2723,6 +5285,22 @@ type TextDocumentContentOptions struct {
 	Schemes []string `json:"schemes"`
 }
 
+func (s *TextDocumentContentOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["schemes"]; !ok {
+		return fmt.Errorf("required key 'schemes' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type TextDocumentContentOptionsAlias TextDocumentContentOptions
+	return json.Unmarshal(data, (*TextDocumentContentOptionsAlias)(s))
+}
+
 // General parameters to register for a notification or to register a provider.
 type Registration struct {
 	// The id used to register the request. The id can be used to deregister
@@ -2736,6 +5314,25 @@ type Registration struct {
 	RegisterOptions *any `json:"registerOptions,omitempty"`
 }
 
+func (s *Registration) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["id"]; !ok {
+		return fmt.Errorf("required key 'id' is missing")
+	}
+	if _, ok := keys["method"]; !ok {
+		return fmt.Errorf("required key 'method' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type RegistrationAlias Registration
+	return json.Unmarshal(data, (*RegistrationAlias)(s))
+}
+
 // General parameters to unregister a request or notification.
 type Unregistration struct {
 	// The id used to unregister the request or notification. Usually an id
@@ -2744,6 +5341,25 @@ type Unregistration struct {
 
 	// The method to unregister for.
 	Method string `json:"method"`
+}
+
+func (s *Unregistration) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["id"]; !ok {
+		return fmt.Errorf("required key 'id' is missing")
+	}
+	if _, ok := keys["method"]; !ok {
+		return fmt.Errorf("required key 'method' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type UnregistrationAlias Unregistration
+	return json.Unmarshal(data, (*UnregistrationAlias)(s))
 }
 
 // The initialize parameters
@@ -2793,6 +5409,28 @@ type InitializeParamsBase struct {
 
 	// The initial trace setting. If omitted trace is disabled ('off').
 	Trace *TraceValue `json:"trace,omitempty"`
+}
+
+func (s *InitializeParamsBase) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["processId"]; !ok {
+		return fmt.Errorf("required key 'processId' is missing")
+	}
+	if _, ok := keys["rootUri"]; !ok {
+		return fmt.Errorf("required key 'rootUri' is missing")
+	}
+	if _, ok := keys["capabilities"]; !ok {
+		return fmt.Errorf("required key 'capabilities' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type InitializeParamsBaseAlias InitializeParamsBase
+	return json.Unmarshal(data, (*InitializeParamsBaseAlias)(s))
 }
 
 type WorkspaceFoldersInitializeParams struct {
@@ -2967,12 +5605,44 @@ type ServerInfo struct {
 	Version *string `json:"version,omitempty"`
 }
 
+func (s *ServerInfo) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["name"]; !ok {
+		return fmt.Errorf("required key 'name' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ServerInfoAlias ServerInfo
+	return json.Unmarshal(data, (*ServerInfoAlias)(s))
+}
+
 // A text document identifier to denote a specific version of a text document.
 type VersionedTextDocumentIdentifier struct {
 	TextDocumentIdentifier
 
 	// The version number of this document.
 	Version int32 `json:"version"`
+}
+
+func (s *VersionedTextDocumentIdentifier) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["version"]; !ok {
+		return fmt.Errorf("required key 'version' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type VersionedTextDocumentIdentifierAlias VersionedTextDocumentIdentifier
+	return json.Unmarshal(data, (*VersionedTextDocumentIdentifierAlias)(s))
 }
 
 // Save options.
@@ -2990,6 +5660,25 @@ type FileEvent struct {
 	Type FileChangeType `json:"type"`
 }
 
+func (s *FileEvent) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["uri"]; !ok {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
+	if _, ok := keys["type"]; !ok {
+		return fmt.Errorf("required key 'type' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type FileEventAlias FileEvent
+	return json.Unmarshal(data, (*FileEventAlias)(s))
+}
+
 type FileSystemWatcher struct {
 	// The glob pattern to watch. See pattern for more detail.
 	//
@@ -3000,6 +5689,22 @@ type FileSystemWatcher struct {
 	// to WatchKind.Create | WatchKind.Change | WatchKind.Delete
 	// which is 7.
 	Kind *WatchKind `json:"kind,omitempty"`
+}
+
+func (s *FileSystemWatcher) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["globPattern"]; !ok {
+		return fmt.Errorf("required key 'globPattern' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type FileSystemWatcherAlias FileSystemWatcher
+	return json.Unmarshal(data, (*FileSystemWatcherAlias)(s))
 }
 
 // Represents a diagnostic, such as a compiler error or warning. Diagnostic objects
@@ -3046,6 +5751,25 @@ type Diagnostic struct {
 	Data *any `json:"data,omitempty"`
 }
 
+func (s *Diagnostic) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+	if _, ok := keys["message"]; !ok {
+		return fmt.Errorf("required key 'message' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DiagnosticAlias Diagnostic
+	return json.Unmarshal(data, (*DiagnosticAlias)(s))
+}
+
 // Contains additional information about the context in which a completion request is triggered.
 type CompletionContext struct {
 	// How the completion was triggered.
@@ -3054,6 +5778,22 @@ type CompletionContext struct {
 	// The trigger character (a single character) that has trigger code complete.
 	// Is undefined if `triggerKind !== CompletionTriggerKind.TriggerCharacter`
 	TriggerCharacter *string `json:"triggerCharacter,omitempty"`
+}
+
+func (s *CompletionContext) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["triggerKind"]; !ok {
+		return fmt.Errorf("required key 'triggerKind' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type CompletionContextAlias CompletionContext
+	return json.Unmarshal(data, (*CompletionContextAlias)(s))
 }
 
 // Additional details for a completion item label.
@@ -3081,6 +5821,28 @@ type InsertReplaceEdit struct {
 
 	// The range if the replace is requested.
 	Replace Range `json:"replace"`
+}
+
+func (s *InsertReplaceEdit) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["newText"]; !ok {
+		return fmt.Errorf("required key 'newText' is missing")
+	}
+	if _, ok := keys["insert"]; !ok {
+		return fmt.Errorf("required key 'insert' is missing")
+	}
+	if _, ok := keys["replace"]; !ok {
+		return fmt.Errorf("required key 'replace' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type InsertReplaceEditAlias InsertReplaceEdit
+	return json.Unmarshal(data, (*InsertReplaceEditAlias)(s))
 }
 
 // In many cases the items of an actual completion result share the same
@@ -3250,6 +6012,25 @@ type SignatureHelpContext struct {
 	ActiveSignatureHelp *SignatureHelp `json:"activeSignatureHelp,omitempty"`
 }
 
+func (s *SignatureHelpContext) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["triggerKind"]; !ok {
+		return fmt.Errorf("required key 'triggerKind' is missing")
+	}
+	if _, ok := keys["isRetrigger"]; !ok {
+		return fmt.Errorf("required key 'isRetrigger' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type SignatureHelpContextAlias SignatureHelpContext
+	return json.Unmarshal(data, (*SignatureHelpContextAlias)(s))
+}
+
 // Represents the signature of something callable. A signature
 // can have a label, like a function-name, a doc-comment, and
 // a set of parameters.
@@ -3277,6 +6058,22 @@ type SignatureInformation struct {
 	//
 	// Since: 3.16.0
 	ActiveParameter *Nullable[uint32] `json:"activeParameter,omitempty"`
+}
+
+func (s *SignatureInformation) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["label"]; !ok {
+		return fmt.Errorf("required key 'label' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type SignatureInformationAlias SignatureInformation
+	return json.Unmarshal(data, (*SignatureInformationAlias)(s))
 }
 
 // Server Capabilities for a SignatureHelpRequest.
@@ -3307,6 +6104,22 @@ type ReferenceContext struct {
 	IncludeDeclaration bool `json:"includeDeclaration"`
 }
 
+func (s *ReferenceContext) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["includeDeclaration"]; !ok {
+		return fmt.Errorf("required key 'includeDeclaration' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ReferenceContextAlias ReferenceContext
+	return json.Unmarshal(data, (*ReferenceContextAlias)(s))
+}
+
 // Reference options.
 type ReferenceOptions struct {
 	WorkDoneProgressOptions
@@ -3335,6 +6148,25 @@ type BaseSymbolInformation struct {
 	// if necessary). It can't be used to re-infer a hierarchy for the document
 	// symbols.
 	ContainerName *string `json:"containerName,omitempty"`
+}
+
+func (s *BaseSymbolInformation) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["name"]; !ok {
+		return fmt.Errorf("required key 'name' is missing")
+	}
+	if _, ok := keys["kind"]; !ok {
+		return fmt.Errorf("required key 'kind' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type BaseSymbolInformationAlias BaseSymbolInformation
+	return json.Unmarshal(data, (*BaseSymbolInformationAlias)(s))
 }
 
 // Provider options for a DocumentSymbolRequest.
@@ -3370,6 +6202,22 @@ type CodeActionContext struct {
 	TriggerKind *CodeActionTriggerKind `json:"triggerKind,omitempty"`
 }
 
+func (s *CodeActionContext) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["diagnostics"]; !ok {
+		return fmt.Errorf("required key 'diagnostics' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type CodeActionContextAlias CodeActionContext
+	return json.Unmarshal(data, (*CodeActionContextAlias)(s))
+}
+
 // Captures why the code action is currently disabled.
 //
 // Since: 3.18.0
@@ -3378,6 +6226,22 @@ type CodeActionDisabled struct {
 	//
 	// This is displayed in the code actions UI.
 	Reason string `json:"reason"`
+}
+
+func (s *CodeActionDisabled) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["reason"]; !ok {
+		return fmt.Errorf("required key 'reason' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type CodeActionDisabledAlias CodeActionDisabled
+	return json.Unmarshal(data, (*CodeActionDisabledAlias)(s))
 }
 
 // Provider options for a CodeActionRequest.
@@ -3420,6 +6284,22 @@ type CodeActionOptions struct {
 // Since: 3.18.0
 type LocationUriOnly struct {
 	Uri DocumentUri `json:"uri"`
+}
+
+func (s *LocationUriOnly) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["uri"]; !ok {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type LocationUriOnlyAlias LocationUriOnly
+	return json.Unmarshal(data, (*LocationUriOnlyAlias)(s))
 }
 
 // Server capabilities for a WorkspaceSymbolRequest.
@@ -3473,6 +6353,25 @@ type FormattingOptions struct {
 	TrimFinalNewlines *bool `json:"trimFinalNewlines,omitempty"`
 }
 
+func (s *FormattingOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["tabSize"]; !ok {
+		return fmt.Errorf("required key 'tabSize' is missing")
+	}
+	if _, ok := keys["insertSpaces"]; !ok {
+		return fmt.Errorf("required key 'insertSpaces' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type FormattingOptionsAlias FormattingOptions
+	return json.Unmarshal(data, (*FormattingOptionsAlias)(s))
+}
+
 // Provider options for a DocumentFormattingRequest.
 type DocumentFormattingOptions struct {
 	WorkDoneProgressOptions
@@ -3499,6 +6398,22 @@ type DocumentOnTypeFormattingOptions struct {
 	MoreTriggerCharacter *[]string `json:"moreTriggerCharacter,omitempty"`
 }
 
+func (s *DocumentOnTypeFormattingOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["firstTriggerCharacter"]; !ok {
+		return fmt.Errorf("required key 'firstTriggerCharacter' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DocumentOnTypeFormattingOptionsAlias DocumentOnTypeFormattingOptions
+	return json.Unmarshal(data, (*DocumentOnTypeFormattingOptionsAlias)(s))
+}
+
 // Provider options for a RenameRequest.
 type RenameOptions struct {
 	WorkDoneProgressOptions
@@ -3516,9 +6431,44 @@ type PrepareRenamePlaceholder struct {
 	Placeholder string `json:"placeholder"`
 }
 
+func (s *PrepareRenamePlaceholder) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+	if _, ok := keys["placeholder"]; !ok {
+		return fmt.Errorf("required key 'placeholder' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type PrepareRenamePlaceholderAlias PrepareRenamePlaceholder
+	return json.Unmarshal(data, (*PrepareRenamePlaceholderAlias)(s))
+}
+
 // Since: 3.18.0
 type PrepareRenameDefaultBehavior struct {
 	DefaultBehavior bool `json:"defaultBehavior"`
+}
+
+func (s *PrepareRenameDefaultBehavior) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["defaultBehavior"]; !ok {
+		return fmt.Errorf("required key 'defaultBehavior' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type PrepareRenameDefaultBehaviorAlias PrepareRenameDefaultBehavior
+	return json.Unmarshal(data, (*PrepareRenameDefaultBehaviorAlias)(s))
 }
 
 // The server capabilities of a ExecuteCommandRequest.
@@ -3527,6 +6477,22 @@ type ExecuteCommandOptions struct {
 
 	// The commands to be executed on the server
 	Commands []string `json:"commands"`
+}
+
+func (s *ExecuteCommandOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["commands"]; !ok {
+		return fmt.Errorf("required key 'commands' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ExecuteCommandOptionsAlias ExecuteCommandOptions
+	return json.Unmarshal(data, (*ExecuteCommandOptionsAlias)(s))
 }
 
 // Additional data about a workspace edit.
@@ -3546,6 +6512,25 @@ type SemanticTokensLegend struct {
 
 	// The token modifiers a server uses.
 	TokenModifiers []string `json:"tokenModifiers"`
+}
+
+func (s *SemanticTokensLegend) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["tokenTypes"]; !ok {
+		return fmt.Errorf("required key 'tokenTypes' is missing")
+	}
+	if _, ok := keys["tokenModifiers"]; !ok {
+		return fmt.Errorf("required key 'tokenModifiers' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type SemanticTokensLegendAlias SemanticTokensLegend
+	return json.Unmarshal(data, (*SemanticTokensLegendAlias)(s))
 }
 
 // Semantic tokens options to support deltas for full documents
@@ -3568,6 +6553,22 @@ type OptionalVersionedTextDocumentIdentifier struct {
 	Version Nullable[int32] `json:"version"`
 }
 
+func (s *OptionalVersionedTextDocumentIdentifier) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["version"]; !ok {
+		return fmt.Errorf("required key 'version' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type OptionalVersionedTextDocumentIdentifierAlias OptionalVersionedTextDocumentIdentifier
+	return json.Unmarshal(data, (*OptionalVersionedTextDocumentIdentifierAlias)(s))
+}
+
 // A special text edit with an additional change annotation.
 //
 // Since: 3.16.0.
@@ -3576,6 +6577,22 @@ type AnnotatedTextEdit struct {
 
 	// The actual identifier of the change annotation
 	AnnotationId ChangeAnnotationIdentifier `json:"annotationId"`
+}
+
+func (s *AnnotatedTextEdit) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["annotationId"]; !ok {
+		return fmt.Errorf("required key 'annotationId' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type AnnotatedTextEditAlias AnnotatedTextEdit
+	return json.Unmarshal(data, (*AnnotatedTextEditAlias)(s))
 }
 
 // An interactive text edit.
@@ -3594,6 +6611,25 @@ type SnippetTextEdit struct {
 	AnnotationId *ChangeAnnotationIdentifier `json:"annotationId,omitempty"`
 }
 
+func (s *SnippetTextEdit) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+	if _, ok := keys["snippet"]; !ok {
+		return fmt.Errorf("required key 'snippet' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type SnippetTextEditAlias SnippetTextEdit
+	return json.Unmarshal(data, (*SnippetTextEditAlias)(s))
+}
+
 // A generic resource operation.
 type ResourceOperation struct {
 	// The resource operation kind.
@@ -3603,6 +6639,22 @@ type ResourceOperation struct {
 	//
 	// Since: 3.16.0
 	AnnotationId *ChangeAnnotationIdentifier `json:"annotationId,omitempty"`
+}
+
+func (s *ResourceOperation) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["kind"]; !ok {
+		return fmt.Errorf("required key 'kind' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ResourceOperationAlias ResourceOperation
+	return json.Unmarshal(data, (*ResourceOperationAlias)(s))
 }
 
 // Options to create a file.
@@ -3655,6 +6707,22 @@ type FileOperationPattern struct {
 	Options *FileOperationPatternOptions `json:"options,omitempty"`
 }
 
+func (s *FileOperationPattern) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["glob"]; !ok {
+		return fmt.Errorf("required key 'glob' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type FileOperationPatternAlias FileOperationPattern
+	return json.Unmarshal(data, (*FileOperationPatternAlias)(s))
+}
+
 // A full document diagnostic report for a workspace diagnostic result.
 //
 // Since: 3.17.0
@@ -3669,6 +6737,25 @@ type WorkspaceFullDocumentDiagnosticReport struct {
 	Version Nullable[int32] `json:"version"`
 }
 
+func (s *WorkspaceFullDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["uri"]; !ok {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
+	if _, ok := keys["version"]; !ok {
+		return fmt.Errorf("required key 'version' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type WorkspaceFullDocumentDiagnosticReportAlias WorkspaceFullDocumentDiagnosticReport
+	return json.Unmarshal(data, (*WorkspaceFullDocumentDiagnosticReportAlias)(s))
+}
+
 // An unchanged document diagnostic report for a workspace diagnostic result.
 //
 // Since: 3.17.0
@@ -3681,6 +6768,25 @@ type WorkspaceUnchangedDocumentDiagnosticReport struct {
 	// The version number for which the diagnostics are reported.
 	// If the document is not marked as open `null` can be provided.
 	Version Nullable[int32] `json:"version"`
+}
+
+func (s *WorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["uri"]; !ok {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
+	if _, ok := keys["version"]; !ok {
+		return fmt.Errorf("required key 'version' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type WorkspaceUnchangedDocumentDiagnosticReportAlias WorkspaceUnchangedDocumentDiagnosticReport
+	return json.Unmarshal(data, (*WorkspaceUnchangedDocumentDiagnosticReportAlias)(s))
 }
 
 // A notebook cell.
@@ -3708,6 +6814,25 @@ type NotebookCell struct {
 	ExecutionSummary *ExecutionSummary `json:"executionSummary,omitempty"`
 }
 
+func (s *NotebookCell) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["kind"]; !ok {
+		return fmt.Errorf("required key 'kind' is missing")
+	}
+	if _, ok := keys["document"]; !ok {
+		return fmt.Errorf("required key 'document' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type NotebookCellAlias NotebookCell
+	return json.Unmarshal(data, (*NotebookCellAlias)(s))
+}
+
 // Since: 3.18.0
 type NotebookDocumentFilterWithNotebook struct {
 	// The notebook to be synced If a string
@@ -3719,6 +6844,22 @@ type NotebookDocumentFilterWithNotebook struct {
 	Cells *[]*NotebookCellLanguage `json:"cells,omitempty"`
 }
 
+func (s *NotebookDocumentFilterWithNotebook) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["notebook"]; !ok {
+		return fmt.Errorf("required key 'notebook' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type NotebookDocumentFilterWithNotebookAlias NotebookDocumentFilterWithNotebook
+	return json.Unmarshal(data, (*NotebookDocumentFilterWithNotebookAlias)(s))
+}
+
 // Since: 3.18.0
 type NotebookDocumentFilterWithCells struct {
 	// The notebook to be synced If a string
@@ -3728,6 +6869,22 @@ type NotebookDocumentFilterWithCells struct {
 
 	// The cells of the matching notebook to be synced.
 	Cells []*NotebookCellLanguage `json:"cells"`
+}
+
+func (s *NotebookDocumentFilterWithCells) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["cells"]; !ok {
+		return fmt.Errorf("required key 'cells' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type NotebookDocumentFilterWithCellsAlias NotebookDocumentFilterWithCells
+	return json.Unmarshal(data, (*NotebookDocumentFilterWithCellsAlias)(s))
 }
 
 // Cell changes to a notebook document.
@@ -3759,6 +6916,25 @@ type SelectedCompletionInfo struct {
 	Text string `json:"text"`
 }
 
+func (s *SelectedCompletionInfo) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+	if _, ok := keys["text"]; !ok {
+		return fmt.Errorf("required key 'text' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type SelectedCompletionInfoAlias SelectedCompletionInfo
+	return json.Unmarshal(data, (*SelectedCompletionInfoAlias)(s))
+}
+
 // Information about the client
 //
 // Since: 3.15.0
@@ -3770,6 +6946,22 @@ type ClientInfo struct {
 
 	// The client's version as defined by the client.
 	Version *string `json:"version,omitempty"`
+}
+
+func (s *ClientInfo) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["name"]; !ok {
+		return fmt.Errorf("required key 'name' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ClientInfoAlias ClientInfo
+	return json.Unmarshal(data, (*ClientInfoAlias)(s))
 }
 
 // Defines the capabilities provided by the client.
@@ -3855,10 +7047,45 @@ type TextDocumentContentChangePartial struct {
 	Text string `json:"text"`
 }
 
+func (s *TextDocumentContentChangePartial) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["range"]; !ok {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+	if _, ok := keys["text"]; !ok {
+		return fmt.Errorf("required key 'text' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type TextDocumentContentChangePartialAlias TextDocumentContentChangePartial
+	return json.Unmarshal(data, (*TextDocumentContentChangePartialAlias)(s))
+}
+
 // Since: 3.18.0
 type TextDocumentContentChangeWholeDocument struct {
 	// The new text of the whole document.
 	Text string `json:"text"`
+}
+
+func (s *TextDocumentContentChangeWholeDocument) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["text"]; !ok {
+		return fmt.Errorf("required key 'text' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type TextDocumentContentChangeWholeDocumentAlias TextDocumentContentChangeWholeDocument
+	return json.Unmarshal(data, (*TextDocumentContentChangeWholeDocumentAlias)(s))
 }
 
 // Structure to capture a description for an error code.
@@ -3867,6 +7094,22 @@ type TextDocumentContentChangeWholeDocument struct {
 type CodeDescription struct {
 	// An URI to open with more information about the diagnostic error.
 	Href URI `json:"href"`
+}
+
+func (s *CodeDescription) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["href"]; !ok {
+		return fmt.Errorf("required key 'href' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type CodeDescriptionAlias CodeDescription
+	return json.Unmarshal(data, (*CodeDescriptionAlias)(s))
 }
 
 // Represents a related message and source code location for a diagnostic. This should be
@@ -3880,6 +7123,25 @@ type DiagnosticRelatedInformation struct {
 	Message string `json:"message"`
 }
 
+func (s *DiagnosticRelatedInformation) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["location"]; !ok {
+		return fmt.Errorf("required key 'location' is missing")
+	}
+	if _, ok := keys["message"]; !ok {
+		return fmt.Errorf("required key 'message' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type DiagnosticRelatedInformationAlias DiagnosticRelatedInformation
+	return json.Unmarshal(data, (*DiagnosticRelatedInformationAlias)(s))
+}
+
 // Edit range variant that includes ranges for insert and replace operations.
 //
 // Since: 3.18.0
@@ -3887,6 +7149,25 @@ type EditRangeWithInsertReplace struct {
 	Insert Range `json:"insert"`
 
 	Replace Range `json:"replace"`
+}
+
+func (s *EditRangeWithInsertReplace) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["insert"]; !ok {
+		return fmt.Errorf("required key 'insert' is missing")
+	}
+	if _, ok := keys["replace"]; !ok {
+		return fmt.Errorf("required key 'replace' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type EditRangeWithInsertReplaceAlias EditRangeWithInsertReplace
+	return json.Unmarshal(data, (*EditRangeWithInsertReplaceAlias)(s))
 }
 
 // Since: 3.18.0
@@ -3906,6 +7187,25 @@ type MarkedStringWithLanguage struct {
 	Language string `json:"language"`
 
 	Value string `json:"value"`
+}
+
+func (s *MarkedStringWithLanguage) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["language"]; !ok {
+		return fmt.Errorf("required key 'language' is missing")
+	}
+	if _, ok := keys["value"]; !ok {
+		return fmt.Errorf("required key 'value' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type MarkedStringWithLanguageAlias MarkedStringWithLanguage
+	return json.Unmarshal(data, (*MarkedStringWithLanguageAlias)(s))
 }
 
 // Represents a parameter of a callable-signature. A parameter can
@@ -3930,6 +7230,22 @@ type ParameterInformation struct {
 	Documentation *StringOrMarkupContent `json:"documentation,omitempty"`
 }
 
+func (s *ParameterInformation) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["label"]; !ok {
+		return fmt.Errorf("required key 'label' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ParameterInformationAlias ParameterInformation
+	return json.Unmarshal(data, (*ParameterInformationAlias)(s))
+}
+
 // Documentation for a class of code actions.
 //
 // Since: 3.18.0
@@ -3949,6 +7265,25 @@ type CodeActionKindDocumentation struct {
 	Command *Command `json:"command"`
 }
 
+func (s *CodeActionKindDocumentation) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["kind"]; !ok {
+		return fmt.Errorf("required key 'kind' is missing")
+	}
+	if _, ok := keys["command"]; !ok {
+		return fmt.Errorf("required key 'command' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type CodeActionKindDocumentationAlias CodeActionKindDocumentation
+	return json.Unmarshal(data, (*CodeActionKindDocumentationAlias)(s))
+}
+
 // A notebook cell text document filter denotes a cell text
 // document by different properties.
 //
@@ -3965,6 +7300,22 @@ type NotebookCellTextDocumentFilter struct {
 	// Will be matched against the language id of the
 	// notebook cell document. '*' matches every language.
 	Language *string `json:"language,omitempty"`
+}
+
+func (s *NotebookCellTextDocumentFilter) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["notebook"]; !ok {
+		return fmt.Errorf("required key 'notebook' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type NotebookCellTextDocumentFilterAlias NotebookCellTextDocumentFilter
+	return json.Unmarshal(data, (*NotebookCellTextDocumentFilterAlias)(s))
 }
 
 // Matching options for the file operation pattern.
@@ -3986,9 +7337,41 @@ type ExecutionSummary struct {
 	Success *bool `json:"success,omitempty"`
 }
 
+func (s *ExecutionSummary) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["executionOrder"]; !ok {
+		return fmt.Errorf("required key 'executionOrder' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ExecutionSummaryAlias ExecutionSummary
+	return json.Unmarshal(data, (*ExecutionSummaryAlias)(s))
+}
+
 // Since: 3.18.0
 type NotebookCellLanguage struct {
 	Language string `json:"language"`
+}
+
+func (s *NotebookCellLanguage) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["language"]; !ok {
+		return fmt.Errorf("required key 'language' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type NotebookCellLanguageAlias NotebookCellLanguage
+	return json.Unmarshal(data, (*NotebookCellLanguageAlias)(s))
 }
 
 // Structural changes to cells in a notebook document.
@@ -4005,6 +7388,22 @@ type NotebookDocumentCellChangeStructure struct {
 	DidClose *[]TextDocumentIdentifier `json:"didClose,omitempty"`
 }
 
+func (s *NotebookDocumentCellChangeStructure) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["array"]; !ok {
+		return fmt.Errorf("required key 'array' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type NotebookDocumentCellChangeStructureAlias NotebookDocumentCellChangeStructure
+	return json.Unmarshal(data, (*NotebookDocumentCellChangeStructureAlias)(s))
+}
+
 // Content changes to a cell in a notebook document.
 //
 // Since: 3.18.0
@@ -4012,6 +7411,25 @@ type NotebookDocumentCellContentChanges struct {
 	Document VersionedTextDocumentIdentifier `json:"document"`
 
 	Changes []TextDocumentContentChangeEvent `json:"changes"`
+}
+
+func (s *NotebookDocumentCellContentChanges) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["document"]; !ok {
+		return fmt.Errorf("required key 'document' is missing")
+	}
+	if _, ok := keys["changes"]; !ok {
+		return fmt.Errorf("required key 'changes' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type NotebookDocumentCellContentChangesAlias NotebookDocumentCellContentChanges
+	return json.Unmarshal(data, (*NotebookDocumentCellContentChangesAlias)(s))
 }
 
 // Workspace specific client capabilities.
@@ -4240,6 +7658,22 @@ type NotebookDocumentClientCapabilities struct {
 	Synchronization *NotebookDocumentSyncClientCapabilities `json:"synchronization"`
 }
 
+func (s *NotebookDocumentClientCapabilities) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["synchronization"]; !ok {
+		return fmt.Errorf("required key 'synchronization' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type NotebookDocumentClientCapabilitiesAlias NotebookDocumentClientCapabilities
+	return json.Unmarshal(data, (*NotebookDocumentClientCapabilitiesAlias)(s))
+}
+
 type WindowClientCapabilities struct {
 	// It indicates whether the client supports server initiated
 	// progress using the `window/workDoneProgress/create` request.
@@ -4357,6 +7791,25 @@ type RelativePattern struct {
 	Pattern Pattern `json:"pattern"`
 }
 
+func (s *RelativePattern) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["baseUri"]; !ok {
+		return fmt.Errorf("required key 'baseUri' is missing")
+	}
+	if _, ok := keys["pattern"]; !ok {
+		return fmt.Errorf("required key 'pattern' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type RelativePatternAlias RelativePattern
+	return json.Unmarshal(data, (*RelativePatternAlias)(s))
+}
+
 // A document filter where `language` is required field.
 //
 // Since: 3.18.0
@@ -4373,6 +7826,22 @@ type TextDocumentFilterLanguage struct {
 	// relative patterns depends on the client capability
 	// `textDocuments.filters.relativePatternSupport`.
 	Pattern *GlobPattern `json:"pattern,omitempty"`
+}
+
+func (s *TextDocumentFilterLanguage) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["language"]; !ok {
+		return fmt.Errorf("required key 'language' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type TextDocumentFilterLanguageAlias TextDocumentFilterLanguage
+	return json.Unmarshal(data, (*TextDocumentFilterLanguageAlias)(s))
 }
 
 // A document filter where `scheme` is required field.
@@ -4393,6 +7862,22 @@ type TextDocumentFilterScheme struct {
 	Pattern *GlobPattern `json:"pattern,omitempty"`
 }
 
+func (s *TextDocumentFilterScheme) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["scheme"]; !ok {
+		return fmt.Errorf("required key 'scheme' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type TextDocumentFilterSchemeAlias TextDocumentFilterScheme
+	return json.Unmarshal(data, (*TextDocumentFilterSchemeAlias)(s))
+}
+
 // A document filter where `pattern` is required field.
 //
 // Since: 3.18.0
@@ -4411,6 +7896,22 @@ type TextDocumentFilterPattern struct {
 	Pattern GlobPattern `json:"pattern"`
 }
 
+func (s *TextDocumentFilterPattern) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["pattern"]; !ok {
+		return fmt.Errorf("required key 'pattern' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type TextDocumentFilterPatternAlias TextDocumentFilterPattern
+	return json.Unmarshal(data, (*TextDocumentFilterPatternAlias)(s))
+}
+
 // A notebook document filter where `notebookType` is required field.
 //
 // Since: 3.18.0
@@ -4423,6 +7924,22 @@ type NotebookDocumentFilterNotebookType struct {
 
 	// A glob pattern.
 	Pattern *GlobPattern `json:"pattern,omitempty"`
+}
+
+func (s *NotebookDocumentFilterNotebookType) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["notebookType"]; !ok {
+		return fmt.Errorf("required key 'notebookType' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type NotebookDocumentFilterNotebookTypeAlias NotebookDocumentFilterNotebookType
+	return json.Unmarshal(data, (*NotebookDocumentFilterNotebookTypeAlias)(s))
 }
 
 // A notebook document filter where `scheme` is required field.
@@ -4439,6 +7956,22 @@ type NotebookDocumentFilterScheme struct {
 	Pattern *GlobPattern `json:"pattern,omitempty"`
 }
 
+func (s *NotebookDocumentFilterScheme) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["scheme"]; !ok {
+		return fmt.Errorf("required key 'scheme' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type NotebookDocumentFilterSchemeAlias NotebookDocumentFilterScheme
+	return json.Unmarshal(data, (*NotebookDocumentFilterSchemeAlias)(s))
+}
+
 // A notebook document filter where `pattern` is required field.
 //
 // Since: 3.18.0
@@ -4451,6 +7984,22 @@ type NotebookDocumentFilterPattern struct {
 
 	// A glob pattern.
 	Pattern GlobPattern `json:"pattern"`
+}
+
+func (s *NotebookDocumentFilterPattern) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["pattern"]; !ok {
+		return fmt.Errorf("required key 'pattern' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type NotebookDocumentFilterPatternAlias NotebookDocumentFilterPattern
+	return json.Unmarshal(data, (*NotebookDocumentFilterPatternAlias)(s))
 }
 
 // A change describing how to move a `NotebookCell`
@@ -4466,6 +8015,25 @@ type NotebookCellArrayChange struct {
 
 	// The new cells, if any
 	Cells *[]*NotebookCell `json:"cells,omitempty"`
+}
+
+func (s *NotebookCellArrayChange) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["start"]; !ok {
+		return fmt.Errorf("required key 'start' is missing")
+	}
+	if _, ok := keys["deleteCount"]; !ok {
+		return fmt.Errorf("required key 'deleteCount' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type NotebookCellArrayChangeAlias NotebookCellArrayChange
+	return json.Unmarshal(data, (*NotebookCellArrayChangeAlias)(s))
 }
 
 type WorkspaceEditClientCapabilities struct {
@@ -5099,6 +8667,31 @@ type SemanticTokensClientCapabilities struct {
 	AugmentsSyntaxTokens *bool `json:"augmentsSyntaxTokens,omitempty"`
 }
 
+func (s *SemanticTokensClientCapabilities) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["requests"]; !ok {
+		return fmt.Errorf("required key 'requests' is missing")
+	}
+	if _, ok := keys["tokenTypes"]; !ok {
+		return fmt.Errorf("required key 'tokenTypes' is missing")
+	}
+	if _, ok := keys["tokenModifiers"]; !ok {
+		return fmt.Errorf("required key 'tokenModifiers' is missing")
+	}
+	if _, ok := keys["formats"]; !ok {
+		return fmt.Errorf("required key 'formats' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type SemanticTokensClientCapabilitiesAlias SemanticTokensClientCapabilities
+	return json.Unmarshal(data, (*SemanticTokensClientCapabilitiesAlias)(s))
+}
+
 // Client capabilities for the linked editing range request.
 //
 // Since: 3.16.0
@@ -5201,6 +8794,22 @@ type ShowDocumentClientCapabilities struct {
 	Support bool `json:"support"`
 }
 
+func (s *ShowDocumentClientCapabilities) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["support"]; !ok {
+		return fmt.Errorf("required key 'support' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ShowDocumentClientCapabilitiesAlias ShowDocumentClientCapabilities
+	return json.Unmarshal(data, (*ShowDocumentClientCapabilitiesAlias)(s))
+}
+
 // Since: 3.18.0
 type StaleRequestSupportOptions struct {
 	// The client will actively cancel the request.
@@ -5212,6 +8821,25 @@ type StaleRequestSupportOptions struct {
 	RetryOnContentModified []string `json:"retryOnContentModified"`
 }
 
+func (s *StaleRequestSupportOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["cancel"]; !ok {
+		return fmt.Errorf("required key 'cancel' is missing")
+	}
+	if _, ok := keys["retryOnContentModified"]; !ok {
+		return fmt.Errorf("required key 'retryOnContentModified' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type StaleRequestSupportOptionsAlias StaleRequestSupportOptions
+	return json.Unmarshal(data, (*StaleRequestSupportOptionsAlias)(s))
+}
+
 // Client capabilities specific to regular expressions.
 //
 // Since: 3.16.0
@@ -5221,6 +8849,22 @@ type RegularExpressionsClientCapabilities struct {
 
 	// The engine's version.
 	Version *string `json:"version,omitempty"`
+}
+
+func (s *RegularExpressionsClientCapabilities) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["engine"]; !ok {
+		return fmt.Errorf("required key 'engine' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type RegularExpressionsClientCapabilitiesAlias RegularExpressionsClientCapabilities
+	return json.Unmarshal(data, (*RegularExpressionsClientCapabilitiesAlias)(s))
 }
 
 // Client capabilities specific to the used markdown parser.
@@ -5238,6 +8882,22 @@ type MarkdownClientCapabilities struct {
 	//
 	// Since: 3.17.0
 	AllowedTags *[]string `json:"allowedTags,omitempty"`
+}
+
+func (s *MarkdownClientCapabilities) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["parser"]; !ok {
+		return fmt.Errorf("required key 'parser' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type MarkdownClientCapabilitiesAlias MarkdownClientCapabilities
+	return json.Unmarshal(data, (*MarkdownClientCapabilitiesAlias)(s))
 }
 
 // Since: 3.18.0
@@ -5267,11 +8927,43 @@ type ClientSymbolTagOptions struct {
 	ValueSet []SymbolTag `json:"valueSet"`
 }
 
+func (s *ClientSymbolTagOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["valueSet"]; !ok {
+		return fmt.Errorf("required key 'valueSet' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ClientSymbolTagOptionsAlias ClientSymbolTagOptions
+	return json.Unmarshal(data, (*ClientSymbolTagOptionsAlias)(s))
+}
+
 // Since: 3.18.0
 type ClientSymbolResolveOptions struct {
 	// The properties that a client can resolve lazily. Usually
 	// `location.range`
 	Properties []string `json:"properties"`
+}
+
+func (s *ClientSymbolResolveOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["properties"]; !ok {
+		return fmt.Errorf("required key 'properties' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ClientSymbolResolveOptionsAlias ClientSymbolResolveOptions
+	return json.Unmarshal(data, (*ClientSymbolResolveOptionsAlias)(s))
 }
 
 // Since: 3.18.0
@@ -5406,10 +9098,42 @@ type ClientCodeActionLiteralOptions struct {
 	CodeActionKind *ClientCodeActionKindOptions `json:"codeActionKind"`
 }
 
+func (s *ClientCodeActionLiteralOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["codeActionKind"]; !ok {
+		return fmt.Errorf("required key 'codeActionKind' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ClientCodeActionLiteralOptionsAlias ClientCodeActionLiteralOptions
+	return json.Unmarshal(data, (*ClientCodeActionLiteralOptionsAlias)(s))
+}
+
 // Since: 3.18.0
 type ClientCodeActionResolveOptions struct {
 	// The properties that a client can resolve lazily.
 	Properties []string `json:"properties"`
+}
+
+func (s *ClientCodeActionResolveOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["properties"]; !ok {
+		return fmt.Errorf("required key 'properties' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ClientCodeActionResolveOptionsAlias ClientCodeActionResolveOptions
+	return json.Unmarshal(data, (*ClientCodeActionResolveOptionsAlias)(s))
 }
 
 // Since: 3.18.0 - proposed
@@ -5418,10 +9142,42 @@ type CodeActionTagOptions struct {
 	ValueSet []CodeActionTag `json:"valueSet"`
 }
 
+func (s *CodeActionTagOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["valueSet"]; !ok {
+		return fmt.Errorf("required key 'valueSet' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type CodeActionTagOptionsAlias CodeActionTagOptions
+	return json.Unmarshal(data, (*CodeActionTagOptionsAlias)(s))
+}
+
 // Since: 3.18.0
 type ClientCodeLensResolveOptions struct {
 	// The properties that a client can resolve lazily.
 	Properties []string `json:"properties"`
+}
+
+func (s *ClientCodeLensResolveOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["properties"]; !ok {
+		return fmt.Errorf("required key 'properties' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ClientCodeLensResolveOptionsAlias ClientCodeLensResolveOptions
+	return json.Unmarshal(data, (*ClientCodeLensResolveOptionsAlias)(s))
 }
 
 // Since: 3.18.0
@@ -5483,6 +9239,22 @@ type ClientInlayHintResolveOptions struct {
 	Properties []string `json:"properties"`
 }
 
+func (s *ClientInlayHintResolveOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["properties"]; !ok {
+		return fmt.Errorf("required key 'properties' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ClientInlayHintResolveOptionsAlias ClientInlayHintResolveOptions
+	return json.Unmarshal(data, (*ClientInlayHintResolveOptionsAlias)(s))
+}
+
 // Since: 3.18.0
 type ClientShowMessageActionItemOptions struct {
 	// Whether the client supports additional attributes which
@@ -5497,15 +9269,63 @@ type CompletionItemTagOptions struct {
 	ValueSet []CompletionItemTag `json:"valueSet"`
 }
 
+func (s *CompletionItemTagOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["valueSet"]; !ok {
+		return fmt.Errorf("required key 'valueSet' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type CompletionItemTagOptionsAlias CompletionItemTagOptions
+	return json.Unmarshal(data, (*CompletionItemTagOptionsAlias)(s))
+}
+
 // Since: 3.18.0
 type ClientCompletionItemResolveOptions struct {
 	// The properties that a client can resolve lazily.
 	Properties []string `json:"properties"`
 }
 
+func (s *ClientCompletionItemResolveOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["properties"]; !ok {
+		return fmt.Errorf("required key 'properties' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ClientCompletionItemResolveOptionsAlias ClientCompletionItemResolveOptions
+	return json.Unmarshal(data, (*ClientCompletionItemResolveOptionsAlias)(s))
+}
+
 // Since: 3.18.0
 type ClientCompletionItemInsertTextModeOptions struct {
 	ValueSet []InsertTextMode `json:"valueSet"`
+}
+
+func (s *ClientCompletionItemInsertTextModeOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["valueSet"]; !ok {
+		return fmt.Errorf("required key 'valueSet' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ClientCompletionItemInsertTextModeOptionsAlias ClientCompletionItemInsertTextModeOptions
+	return json.Unmarshal(data, (*ClientCompletionItemInsertTextModeOptionsAlias)(s))
 }
 
 // Since: 3.18.0
@@ -5526,10 +9346,42 @@ type ClientCodeActionKindOptions struct {
 	ValueSet []CodeActionKind `json:"valueSet"`
 }
 
+func (s *ClientCodeActionKindOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["valueSet"]; !ok {
+		return fmt.Errorf("required key 'valueSet' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ClientCodeActionKindOptionsAlias ClientCodeActionKindOptions
+	return json.Unmarshal(data, (*ClientCodeActionKindOptionsAlias)(s))
+}
+
 // Since: 3.18.0
 type ClientDiagnosticsTagOptions struct {
 	// The tags supported by the client.
 	ValueSet []DiagnosticTag `json:"valueSet"`
+}
+
+func (s *ClientDiagnosticsTagOptions) UnmarshalJSON(data []byte) error {
+	// Check required keys
+	keys, err := getJSONKeys(data)
+	if err != nil {
+		return err
+	}
+
+	if _, ok := keys["valueSet"]; !ok {
+		return fmt.Errorf("required key 'valueSet' is missing")
+	}
+
+	// Use type alias to avoid infinite recursion
+	type ClientDiagnosticsTagOptionsAlias ClientDiagnosticsTagOptions
+	return json.Unmarshal(data, (*ClientDiagnosticsTagOptionsAlias)(s))
 }
 
 // Since: 3.18.0
