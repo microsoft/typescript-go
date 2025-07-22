@@ -10908,7 +10908,9 @@ func (c *Checker) getControlFlowContainer(node *ast.Node) *ast.Node {
 func (c *Checker) getFlowTypeOfProperty(reference *ast.Node, prop *ast.Symbol) *Type {
 	initialType := c.undefinedType
 	if prop != nil && prop.ValueDeclaration != nil && (!c.isAutoTypedProperty(prop) || prop.ValueDeclaration.ModifierFlags()&ast.ModifierFlagsAmbient != 0) {
-		initialType = c.getTypeOfPropertyInBaseClass(prop)
+		if baseType := c.getTypeOfPropertyInBaseClass(prop); baseType != nil {
+			initialType = baseType
+		}
 	}
 	return c.getFlowTypeOfReferenceEx(reference, c.autoType, initialType, nil, nil)
 }

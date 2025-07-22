@@ -46,9 +46,9 @@ class X extends Test {
 
             this.test = new options.test();
 >this.test = new options.test() : import("./Test.js").default
->this.test : any
+>this.test : import("./Test.js").default | undefined
 >this : this
->test : any
+>test : import("./Test.js").default | undefined
 >new options.test() : import("./Test.js").default
 >options.test : typeof import("./Test.js").default
 >options : Options
