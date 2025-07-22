@@ -39,9 +39,13 @@ func (s *Location) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type LocationAlias Location
-	return json.Unmarshal(data, (*LocationAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Uri   DocumentUri `json:"uri"`
+		Range Range       `json:"range"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type ImplementationRegistrationOptions struct {
@@ -86,9 +90,13 @@ func (s *WorkspaceFolder) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'name' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type WorkspaceFolderAlias WorkspaceFolder
-	return json.Unmarshal(data, (*WorkspaceFolderAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Uri  URI    `json:"uri"`
+		Name string `json:"name"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameters of a `workspace/didChangeWorkspaceFolders` notification.
@@ -108,9 +116,12 @@ func (s *DidChangeWorkspaceFoldersParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'event' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DidChangeWorkspaceFoldersParamsAlias DidChangeWorkspaceFoldersParams
-	return json.Unmarshal(data, (*DidChangeWorkspaceFoldersParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Event *WorkspaceFoldersChangeEvent `json:"event"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameters of a configuration request.
@@ -129,9 +140,12 @@ func (s *ConfigurationParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'items' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ConfigurationParamsAlias ConfigurationParams
-	return json.Unmarshal(data, (*ConfigurationParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Items []*ConfigurationItem `json:"items"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Parameters for a DocumentColorRequest.
@@ -154,9 +168,15 @@ func (s *DocumentColorParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DocumentColorParamsAlias DocumentColorParams
-	return json.Unmarshal(data, (*DocumentColorParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+		PartialResultParams
+
+		TextDocument TextDocumentIdentifier `json:"textDocument"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Represents a color range from a document.
@@ -182,9 +202,13 @@ func (s *ColorInformation) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'color' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ColorInformationAlias ColorInformation
-	return json.Unmarshal(data, (*ColorInformationAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Range Range `json:"range"`
+		Color Color `json:"color"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type DocumentColorRegistrationOptions struct {
@@ -225,9 +249,17 @@ func (s *ColorPresentationParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ColorPresentationParamsAlias ColorPresentationParams
-	return json.Unmarshal(data, (*ColorPresentationParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+		PartialResultParams
+
+		TextDocument TextDocumentIdentifier `json:"textDocument"`
+		Color        Color                  `json:"color"`
+		Range        Range                  `json:"range"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type ColorPresentation struct {
@@ -257,9 +289,14 @@ func (s *ColorPresentation) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'label' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ColorPresentationAlias ColorPresentation
-	return json.Unmarshal(data, (*ColorPresentationAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Label               string       `json:"label"`
+		TextEdit            *TextEdit    `json:"textEdit,omitempty"`
+		AdditionalTextEdits *[]*TextEdit `json:"additionalTextEdits,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type WorkDoneProgressOptions struct {
@@ -284,9 +321,12 @@ func (s *TextDocumentRegistrationOptions) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type TextDocumentRegistrationOptionsAlias TextDocumentRegistrationOptions
-	return json.Unmarshal(data, (*TextDocumentRegistrationOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector Nullable[DocumentSelector] `json:"documentSelector"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Parameters for a FoldingRangeRequest.
@@ -309,9 +349,15 @@ func (s *FoldingRangeParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type FoldingRangeParamsAlias FoldingRangeParams
-	return json.Unmarshal(data, (*FoldingRangeParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+		PartialResultParams
+
+		TextDocument TextDocumentIdentifier `json:"textDocument"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Represents a folding range. To be valid, start and end line must be bigger than zero and smaller
@@ -358,9 +404,17 @@ func (s *FoldingRange) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'endLine' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type FoldingRangeAlias FoldingRange
-	return json.Unmarshal(data, (*FoldingRangeAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		StartLine      uint32            `json:"startLine"`
+		StartCharacter *uint32           `json:"startCharacter,omitempty"`
+		EndLine        uint32            `json:"endLine"`
+		EndCharacter   *uint32           `json:"endCharacter,omitempty"`
+		Kind           *FoldingRangeKind `json:"kind,omitempty"`
+		CollapsedText  *string           `json:"collapsedText,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type FoldingRangeRegistrationOptions struct {
@@ -407,9 +461,16 @@ func (s *SelectionRangeParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'positions' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type SelectionRangeParamsAlias SelectionRangeParams
-	return json.Unmarshal(data, (*SelectionRangeParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+		PartialResultParams
+
+		TextDocument TextDocumentIdentifier `json:"textDocument"`
+		Positions    []Position             `json:"positions"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A selection range represents a part of a selection hierarchy. A selection range
@@ -433,9 +494,13 @@ func (s *SelectionRange) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type SelectionRangeAlias SelectionRange
-	return json.Unmarshal(data, (*SelectionRangeAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Range  Range           `json:"range"`
+		Parent *SelectionRange `json:"parent,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type SelectionRangeRegistrationOptions struct {
@@ -460,9 +525,12 @@ func (s *WorkDoneProgressCreateParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'token' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type WorkDoneProgressCreateParamsAlias WorkDoneProgressCreateParams
-	return json.Unmarshal(data, (*WorkDoneProgressCreateParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Token ProgressToken `json:"token"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type WorkDoneProgressCancelParams struct {
@@ -481,9 +549,12 @@ func (s *WorkDoneProgressCancelParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'token' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type WorkDoneProgressCancelParamsAlias WorkDoneProgressCancelParams
-	return json.Unmarshal(data, (*WorkDoneProgressCancelParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Token ProgressToken `json:"token"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameter of a `textDocument/prepareCallHierarchy` request.
@@ -549,9 +620,19 @@ func (s *CallHierarchyItem) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'selectionRange' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type CallHierarchyItemAlias CallHierarchyItem
-	return json.Unmarshal(data, (*CallHierarchyItemAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Name           string       `json:"name"`
+		Kind           SymbolKind   `json:"kind"`
+		Tags           *[]SymbolTag `json:"tags,omitempty"`
+		Detail         *string      `json:"detail,omitempty"`
+		Uri            DocumentUri  `json:"uri"`
+		Range          Range        `json:"range"`
+		SelectionRange Range        `json:"selectionRange"`
+		Data           *any         `json:"data,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Call hierarchy options used during static or dynamic registration.
@@ -584,9 +665,15 @@ func (s *CallHierarchyIncomingCallsParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'item' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type CallHierarchyIncomingCallsParamsAlias CallHierarchyIncomingCallsParams
-	return json.Unmarshal(data, (*CallHierarchyIncomingCallsParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+		PartialResultParams
+
+		Item *CallHierarchyItem `json:"item"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Represents an incoming call, e.g. a caller of a method or constructor.
@@ -615,9 +702,13 @@ func (s *CallHierarchyIncomingCall) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'fromRanges' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type CallHierarchyIncomingCallAlias CallHierarchyIncomingCall
-	return json.Unmarshal(data, (*CallHierarchyIncomingCallAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		From       *CallHierarchyItem `json:"from"`
+		FromRanges []Range            `json:"fromRanges"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameter of a `callHierarchy/outgoingCalls` request.
@@ -641,9 +732,15 @@ func (s *CallHierarchyOutgoingCallsParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'item' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type CallHierarchyOutgoingCallsParamsAlias CallHierarchyOutgoingCallsParams
-	return json.Unmarshal(data, (*CallHierarchyOutgoingCallsParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+		PartialResultParams
+
+		Item *CallHierarchyItem `json:"item"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Represents an outgoing call, e.g. calling a getter from a method or a method from a constructor etc.
@@ -673,9 +770,13 @@ func (s *CallHierarchyOutgoingCall) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'fromRanges' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type CallHierarchyOutgoingCallAlias CallHierarchyOutgoingCall
-	return json.Unmarshal(data, (*CallHierarchyOutgoingCallAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		To         *CallHierarchyItem `json:"to"`
+		FromRanges []Range            `json:"fromRanges"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.16.0
@@ -698,9 +799,15 @@ func (s *SemanticTokensParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type SemanticTokensParamsAlias SemanticTokensParams
-	return json.Unmarshal(data, (*SemanticTokensParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+		PartialResultParams
+
+		TextDocument TextDocumentIdentifier `json:"textDocument"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.16.0
@@ -726,9 +833,13 @@ func (s *SemanticTokens) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'data' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type SemanticTokensAlias SemanticTokens
-	return json.Unmarshal(data, (*SemanticTokensAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		ResultId *string  `json:"resultId,omitempty"`
+		Data     []uint32 `json:"data"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.16.0
@@ -747,9 +858,12 @@ func (s *SemanticTokensPartialResult) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'data' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type SemanticTokensPartialResultAlias SemanticTokensPartialResult
-	return json.Unmarshal(data, (*SemanticTokensPartialResultAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Data []uint32 `json:"data"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.16.0
@@ -786,9 +900,16 @@ func (s *SemanticTokensDeltaParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'previousResultId' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type SemanticTokensDeltaParamsAlias SemanticTokensDeltaParams
-	return json.Unmarshal(data, (*SemanticTokensDeltaParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+		PartialResultParams
+
+		TextDocument     TextDocumentIdentifier `json:"textDocument"`
+		PreviousResultId string                 `json:"previousResultId"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.16.0
@@ -810,9 +931,13 @@ func (s *SemanticTokensDelta) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'edits' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type SemanticTokensDeltaAlias SemanticTokensDelta
-	return json.Unmarshal(data, (*SemanticTokensDeltaAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		ResultId *string               `json:"resultId,omitempty"`
+		Edits    []*SemanticTokensEdit `json:"edits"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.16.0
@@ -831,9 +956,12 @@ func (s *SemanticTokensDeltaPartialResult) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'edits' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type SemanticTokensDeltaPartialResultAlias SemanticTokensDeltaPartialResult
-	return json.Unmarshal(data, (*SemanticTokensDeltaPartialResultAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Edits []*SemanticTokensEdit `json:"edits"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.16.0
@@ -862,9 +990,16 @@ func (s *SemanticTokensRangeParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type SemanticTokensRangeParamsAlias SemanticTokensRangeParams
-	return json.Unmarshal(data, (*SemanticTokensRangeParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+		PartialResultParams
+
+		TextDocument TextDocumentIdentifier `json:"textDocument"`
+		Range        Range                  `json:"range"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Params to show a resource in the UI.
@@ -903,9 +1038,15 @@ func (s *ShowDocumentParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ShowDocumentParamsAlias ShowDocumentParams
-	return json.Unmarshal(data, (*ShowDocumentParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Uri       URI    `json:"uri"`
+		External  *bool  `json:"external,omitempty"`
+		TakeFocus *bool  `json:"takeFocus,omitempty"`
+		Selection *Range `json:"selection,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The result of a showDocument request.
@@ -927,9 +1068,12 @@ func (s *ShowDocumentResult) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'success' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ShowDocumentResultAlias ShowDocumentResult
-	return json.Unmarshal(data, (*ShowDocumentResultAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Success bool `json:"success"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type LinkedEditingRangeParams struct {
@@ -962,9 +1106,13 @@ func (s *LinkedEditingRanges) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'ranges' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type LinkedEditingRangesAlias LinkedEditingRanges
-	return json.Unmarshal(data, (*LinkedEditingRangesAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Ranges      []Range `json:"ranges"`
+		WordPattern *string `json:"wordPattern,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type LinkedEditingRangeRegistrationOptions struct {
@@ -993,9 +1141,12 @@ func (s *CreateFilesParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'files' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type CreateFilesParamsAlias CreateFilesParams
-	return json.Unmarshal(data, (*CreateFilesParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Files []*FileCreate `json:"files"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A workspace edit represents changes to many resources managed in the workspace. The edit
@@ -1054,9 +1205,12 @@ func (s *FileOperationRegistrationOptions) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'filters' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type FileOperationRegistrationOptionsAlias FileOperationRegistrationOptions
-	return json.Unmarshal(data, (*FileOperationRegistrationOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Filters []*FileOperationFilter `json:"filters"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameters sent in notifications/requests for user-initiated renames of
@@ -1080,9 +1234,12 @@ func (s *RenameFilesParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'files' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type RenameFilesParamsAlias RenameFilesParams
-	return json.Unmarshal(data, (*RenameFilesParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Files []*FileRename `json:"files"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameters sent in notifications/requests for user-initiated deletes of
@@ -1105,9 +1262,12 @@ func (s *DeleteFilesParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'files' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DeleteFilesParamsAlias DeleteFilesParams
-	return json.Unmarshal(data, (*DeleteFilesParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Files []*FileDelete `json:"files"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type MonikerParams struct {
@@ -1151,9 +1311,15 @@ func (s *Moniker) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'unique' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type MonikerAlias Moniker
-	return json.Unmarshal(data, (*MonikerAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Scheme     string          `json:"scheme"`
+		Identifier string          `json:"identifier"`
+		Unique     UniquenessLevel `json:"unique"`
+		Kind       *MonikerKind    `json:"kind,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type MonikerRegistrationOptions struct {
@@ -1225,9 +1391,19 @@ func (s *TypeHierarchyItem) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'selectionRange' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type TypeHierarchyItemAlias TypeHierarchyItem
-	return json.Unmarshal(data, (*TypeHierarchyItemAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Name           string       `json:"name"`
+		Kind           SymbolKind   `json:"kind"`
+		Tags           *[]SymbolTag `json:"tags,omitempty"`
+		Detail         *string      `json:"detail,omitempty"`
+		Uri            DocumentUri  `json:"uri"`
+		Range          Range        `json:"range"`
+		SelectionRange Range        `json:"selectionRange"`
+		Data           *any         `json:"data,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Type hierarchy options used during static or dynamic registration.
@@ -1260,9 +1436,15 @@ func (s *TypeHierarchySupertypesParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'item' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type TypeHierarchySupertypesParamsAlias TypeHierarchySupertypesParams
-	return json.Unmarshal(data, (*TypeHierarchySupertypesParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+		PartialResultParams
+
+		Item *TypeHierarchyItem `json:"item"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameter of a `typeHierarchy/subtypes` request.
@@ -1286,9 +1468,15 @@ func (s *TypeHierarchySubtypesParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'item' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type TypeHierarchySubtypesParamsAlias TypeHierarchySubtypesParams
-	return json.Unmarshal(data, (*TypeHierarchySubtypesParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+		PartialResultParams
+
+		Item *TypeHierarchyItem `json:"item"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A parameter literal used in inline value requests.
@@ -1325,9 +1513,16 @@ func (s *InlineValueParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'context' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type InlineValueParamsAlias InlineValueParams
-	return json.Unmarshal(data, (*InlineValueParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+
+		TextDocument TextDocumentIdentifier `json:"textDocument"`
+		Range        Range                  `json:"range"`
+		Context      *InlineValueContext    `json:"context"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Inline value options used during static or dynamic registration.
@@ -1366,9 +1561,15 @@ func (s *InlayHintParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type InlayHintParamsAlias InlayHintParams
-	return json.Unmarshal(data, (*InlayHintParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+
+		TextDocument TextDocumentIdentifier `json:"textDocument"`
+		Range        Range                  `json:"range"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Inlay hint information.
@@ -1434,9 +1635,19 @@ func (s *InlayHint) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'label' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type InlayHintAlias InlayHint
-	return json.Unmarshal(data, (*InlayHintAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Position     Position                    `json:"position"`
+		Label        StringOrInlayHintLabelParts `json:"label"`
+		Kind         *InlayHintKind              `json:"kind,omitempty"`
+		TextEdits    *[]*TextEdit                `json:"textEdits,omitempty"`
+		Tooltip      *StringOrMarkupContent      `json:"tooltip,omitempty"`
+		PaddingLeft  *bool                       `json:"paddingLeft,omitempty"`
+		PaddingRight *bool                       `json:"paddingRight,omitempty"`
+		Data         *any                        `json:"data,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Inlay hint options used during static or dynamic registration.
@@ -1476,9 +1687,17 @@ func (s *DocumentDiagnosticParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DocumentDiagnosticParamsAlias DocumentDiagnosticParams
-	return json.Unmarshal(data, (*DocumentDiagnosticParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+		PartialResultParams
+
+		TextDocument     TextDocumentIdentifier `json:"textDocument"`
+		Identifier       *string                `json:"identifier,omitempty"`
+		PreviousResultId *string                `json:"previousResultId,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A partial result for a document diagnostic report.
@@ -1499,9 +1718,12 @@ func (s *DocumentDiagnosticReportPartialResult) UnmarshalJSON(data []byte) error
 		return fmt.Errorf("required key 'relatedDocuments' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DocumentDiagnosticReportPartialResultAlias DocumentDiagnosticReportPartialResult
-	return json.Unmarshal(data, (*DocumentDiagnosticReportPartialResultAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		RelatedDocuments map[DocumentUri]FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Cancellation data returned from a diagnostic request.
@@ -1522,9 +1744,12 @@ func (s *DiagnosticServerCancellationData) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'retriggerRequest' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DiagnosticServerCancellationDataAlias DiagnosticServerCancellationData
-	return json.Unmarshal(data, (*DiagnosticServerCancellationDataAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		RetriggerRequest bool `json:"retriggerRequest"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Diagnostic registration options.
@@ -1562,9 +1787,16 @@ func (s *WorkspaceDiagnosticParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'previousResultIds' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type WorkspaceDiagnosticParamsAlias WorkspaceDiagnosticParams
-	return json.Unmarshal(data, (*WorkspaceDiagnosticParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+		PartialResultParams
+
+		Identifier        *string            `json:"identifier,omitempty"`
+		PreviousResultIds []PreviousResultId `json:"previousResultIds"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A workspace diagnostic report.
@@ -1585,9 +1817,12 @@ func (s *WorkspaceDiagnosticReport) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'items' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type WorkspaceDiagnosticReportAlias WorkspaceDiagnosticReport
-	return json.Unmarshal(data, (*WorkspaceDiagnosticReportAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Items []WorkspaceDocumentDiagnosticReport `json:"items"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A partial result for a workspace diagnostic report.
@@ -1608,9 +1843,12 @@ func (s *WorkspaceDiagnosticReportPartialResult) UnmarshalJSON(data []byte) erro
 		return fmt.Errorf("required key 'items' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type WorkspaceDiagnosticReportPartialResultAlias WorkspaceDiagnosticReportPartialResult
-	return json.Unmarshal(data, (*WorkspaceDiagnosticReportPartialResultAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Items []WorkspaceDocumentDiagnosticReport `json:"items"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The params sent in an open notebook document notification.
@@ -1639,9 +1877,13 @@ func (s *DidOpenNotebookDocumentParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'cellTextDocuments' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DidOpenNotebookDocumentParamsAlias DidOpenNotebookDocumentParams
-	return json.Unmarshal(data, (*DidOpenNotebookDocumentParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		NotebookDocument  *NotebookDocument   `json:"notebookDocument"`
+		CellTextDocuments []*TextDocumentItem `json:"cellTextDocuments"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Registration options specific to a notebook.
@@ -1692,9 +1934,13 @@ func (s *DidChangeNotebookDocumentParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'change' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DidChangeNotebookDocumentParamsAlias DidChangeNotebookDocumentParams
-	return json.Unmarshal(data, (*DidChangeNotebookDocumentParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		NotebookDocument VersionedNotebookDocumentIdentifier `json:"notebookDocument"`
+		Change           *NotebookDocumentChangeEvent        `json:"change"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The params sent in a save notebook document notification.
@@ -1716,9 +1962,12 @@ func (s *DidSaveNotebookDocumentParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'notebookDocument' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DidSaveNotebookDocumentParamsAlias DidSaveNotebookDocumentParams
-	return json.Unmarshal(data, (*DidSaveNotebookDocumentParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		NotebookDocument NotebookDocumentIdentifier `json:"notebookDocument"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The params sent in a close notebook document notification.
@@ -1747,9 +1996,13 @@ func (s *DidCloseNotebookDocumentParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'cellTextDocuments' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DidCloseNotebookDocumentParamsAlias DidCloseNotebookDocumentParams
-	return json.Unmarshal(data, (*DidCloseNotebookDocumentParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		NotebookDocument  NotebookDocumentIdentifier `json:"notebookDocument"`
+		CellTextDocuments []TextDocumentIdentifier   `json:"cellTextDocuments"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A parameter literal used in inline completion requests.
@@ -1777,9 +2030,15 @@ func (s *InlineCompletionParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'context' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type InlineCompletionParamsAlias InlineCompletionParams
-	return json.Unmarshal(data, (*InlineCompletionParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocumentPositionParams
+		WorkDoneProgressParams
+
+		Context *InlineCompletionContext `json:"context"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Represents a collection of items to be presented in the editor.
@@ -1803,9 +2062,12 @@ func (s *InlineCompletionList) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'items' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type InlineCompletionListAlias InlineCompletionList
-	return json.Unmarshal(data, (*InlineCompletionListAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Items []*InlineCompletionItem `json:"items"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // An inline completion item represents a text snippet that is proposed inline to complete text that is being typed.
@@ -1838,9 +2100,15 @@ func (s *InlineCompletionItem) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'insertText' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type InlineCompletionItemAlias InlineCompletionItem
-	return json.Unmarshal(data, (*InlineCompletionItemAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		InsertText StringOrStringValue `json:"insertText"`
+		FilterText *string             `json:"filterText,omitempty"`
+		Range      *Range              `json:"range,omitempty"`
+		Command    *Command            `json:"command,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Inline completion options used during static or dynamic registration.
@@ -1875,9 +2143,12 @@ func (s *TextDocumentContentParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type TextDocumentContentParamsAlias TextDocumentContentParams
-	return json.Unmarshal(data, (*TextDocumentContentParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Uri DocumentUri `json:"uri"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Result of the `workspace/textDocumentContent` request.
@@ -1904,9 +2175,12 @@ func (s *TextDocumentContentResult) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'text' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type TextDocumentContentResultAlias TextDocumentContentResult
-	return json.Unmarshal(data, (*TextDocumentContentResultAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Text string `json:"text"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Text document content provider registration options.
@@ -1940,9 +2214,12 @@ func (s *TextDocumentContentRefreshParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type TextDocumentContentRefreshParamsAlias TextDocumentContentRefreshParams
-	return json.Unmarshal(data, (*TextDocumentContentRefreshParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Uri DocumentUri `json:"uri"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type RegistrationParams struct {
@@ -1960,9 +2237,12 @@ func (s *RegistrationParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'registrations' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type RegistrationParamsAlias RegistrationParams
-	return json.Unmarshal(data, (*RegistrationParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Registrations []*Registration `json:"registrations"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type UnregistrationParams struct {
@@ -1980,9 +2260,12 @@ func (s *UnregistrationParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'unregisterations' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type UnregistrationParamsAlias UnregistrationParams
-	return json.Unmarshal(data, (*UnregistrationParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Unregisterations []*Unregistration `json:"unregisterations"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type InitializeParams struct {
@@ -2012,9 +2295,13 @@ func (s *InitializeResult) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'capabilities' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type InitializeResultAlias InitializeResult
-	return json.Unmarshal(data, (*InitializeResultAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Capabilities *ServerCapabilities `json:"capabilities"`
+		ServerInfo   *ServerInfo         `json:"serverInfo,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The data type of the ResponseError if the
@@ -2038,9 +2325,12 @@ func (s *InitializeError) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'retry' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type InitializeErrorAlias InitializeError
-	return json.Unmarshal(data, (*InitializeErrorAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Retry bool `json:"retry"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type InitializedParams struct{}
@@ -2062,9 +2352,12 @@ func (s *DidChangeConfigurationParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'settings' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DidChangeConfigurationParamsAlias DidChangeConfigurationParams
-	return json.Unmarshal(data, (*DidChangeConfigurationParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Settings any `json:"settings"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type DidChangeConfigurationRegistrationOptions struct {
@@ -2094,9 +2387,13 @@ func (s *ShowMessageParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'message' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ShowMessageParamsAlias ShowMessageParams
-	return json.Unmarshal(data, (*ShowMessageParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Type    MessageType `json:"type"`
+		Message string      `json:"message"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type ShowMessageRequestParams struct {
@@ -2124,9 +2421,14 @@ func (s *ShowMessageRequestParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'message' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ShowMessageRequestParamsAlias ShowMessageRequestParams
-	return json.Unmarshal(data, (*ShowMessageRequestParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Type    MessageType           `json:"type"`
+		Message string                `json:"message"`
+		Actions *[]*MessageActionItem `json:"actions,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type MessageActionItem struct {
@@ -2145,9 +2447,12 @@ func (s *MessageActionItem) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'title' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type MessageActionItemAlias MessageActionItem
-	return json.Unmarshal(data, (*MessageActionItemAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Title string `json:"title"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The log message parameters.
@@ -2173,9 +2478,13 @@ func (s *LogMessageParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'message' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type LogMessageParamsAlias LogMessageParams
-	return json.Unmarshal(data, (*LogMessageParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Type    MessageType `json:"type"`
+		Message string      `json:"message"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameters sent in an open text document notification
@@ -2195,9 +2504,12 @@ func (s *DidOpenTextDocumentParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DidOpenTextDocumentParamsAlias DidOpenTextDocumentParams
-	return json.Unmarshal(data, (*DidOpenTextDocumentParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocument *TextDocumentItem `json:"textDocument"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The change text document notification's parameters.
@@ -2235,9 +2547,13 @@ func (s *DidChangeTextDocumentParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'contentChanges' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DidChangeTextDocumentParamsAlias DidChangeTextDocumentParams
-	return json.Unmarshal(data, (*DidChangeTextDocumentParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocument   VersionedTextDocumentIdentifier  `json:"textDocument"`
+		ContentChanges []TextDocumentContentChangeEvent `json:"contentChanges"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Describe options to be used when registered for text document change events.
@@ -2259,9 +2575,14 @@ func (s *TextDocumentChangeRegistrationOptions) UnmarshalJSON(data []byte) error
 		return fmt.Errorf("required key 'syncKind' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type TextDocumentChangeRegistrationOptionsAlias TextDocumentChangeRegistrationOptions
-	return json.Unmarshal(data, (*TextDocumentChangeRegistrationOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocumentRegistrationOptions
+
+		SyncKind TextDocumentSyncKind `json:"syncKind"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameters sent in a close text document notification
@@ -2281,9 +2602,12 @@ func (s *DidCloseTextDocumentParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DidCloseTextDocumentParamsAlias DidCloseTextDocumentParams
-	return json.Unmarshal(data, (*DidCloseTextDocumentParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocument TextDocumentIdentifier `json:"textDocument"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameters sent in a save text document notification
@@ -2307,9 +2631,13 @@ func (s *DidSaveTextDocumentParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DidSaveTextDocumentParamsAlias DidSaveTextDocumentParams
-	return json.Unmarshal(data, (*DidSaveTextDocumentParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocument TextDocumentIdentifier `json:"textDocument"`
+		Text         *string                `json:"text,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Save registration options.
@@ -2341,9 +2669,13 @@ func (s *WillSaveTextDocumentParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'reason' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type WillSaveTextDocumentParamsAlias WillSaveTextDocumentParams
-	return json.Unmarshal(data, (*WillSaveTextDocumentParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocument TextDocumentIdentifier `json:"textDocument"`
+		Reason       TextDocumentSaveReason `json:"reason"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A text edit applicable to a text document.
@@ -2371,9 +2703,13 @@ func (s *TextEdit) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'newText' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type TextEditAlias TextEdit
-	return json.Unmarshal(data, (*TextEditAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Range   Range  `json:"range"`
+		NewText string `json:"newText"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The watched files change notification's parameters.
@@ -2393,9 +2729,12 @@ func (s *DidChangeWatchedFilesParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'changes' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DidChangeWatchedFilesParamsAlias DidChangeWatchedFilesParams
-	return json.Unmarshal(data, (*DidChangeWatchedFilesParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Changes []*FileEvent `json:"changes"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Describe options to be used when registered for text document change events.
@@ -2415,9 +2754,12 @@ func (s *DidChangeWatchedFilesRegistrationOptions) UnmarshalJSON(data []byte) er
 		return fmt.Errorf("required key 'watchers' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DidChangeWatchedFilesRegistrationOptionsAlias DidChangeWatchedFilesRegistrationOptions
-	return json.Unmarshal(data, (*DidChangeWatchedFilesRegistrationOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Watchers []*FileSystemWatcher `json:"watchers"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The publish diagnostic notification's parameters.
@@ -2448,9 +2790,14 @@ func (s *PublishDiagnosticsParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'diagnostics' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type PublishDiagnosticsParamsAlias PublishDiagnosticsParams
-	return json.Unmarshal(data, (*PublishDiagnosticsParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Uri         DocumentUri   `json:"uri"`
+		Version     *int32        `json:"version,omitempty"`
+		Diagnostics []*Diagnostic `json:"diagnostics"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Completion parameters
@@ -2616,9 +2963,30 @@ func (s *CompletionItem) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'label' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type CompletionItemAlias CompletionItem
-	return json.Unmarshal(data, (*CompletionItemAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Label               string                       `json:"label"`
+		LabelDetails        *CompletionItemLabelDetails  `json:"labelDetails,omitempty"`
+		Kind                *CompletionItemKind          `json:"kind,omitempty"`
+		Tags                *[]CompletionItemTag         `json:"tags,omitempty"`
+		Detail              *string                      `json:"detail,omitempty"`
+		Documentation       *StringOrMarkupContent       `json:"documentation,omitempty"`
+		Deprecated          *bool                        `json:"deprecated,omitempty"`
+		Preselect           *bool                        `json:"preselect,omitempty"`
+		SortText            *string                      `json:"sortText,omitempty"`
+		FilterText          *string                      `json:"filterText,omitempty"`
+		InsertText          *string                      `json:"insertText,omitempty"`
+		InsertTextFormat    *InsertTextFormat            `json:"insertTextFormat,omitempty"`
+		InsertTextMode      *InsertTextMode              `json:"insertTextMode,omitempty"`
+		TextEdit            *TextEditOrInsertReplaceEdit `json:"textEdit,omitempty"`
+		TextEditText        *string                      `json:"textEditText,omitempty"`
+		AdditionalTextEdits *[]*TextEdit                 `json:"additionalTextEdits,omitempty"`
+		CommitCharacters    *[]string                    `json:"commitCharacters,omitempty"`
+		Command             *Command                     `json:"command,omitempty"`
+		Data                *any                         `json:"data,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Represents a collection of items to be presented
@@ -2684,9 +3052,15 @@ func (s *CompletionList) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'items' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type CompletionListAlias CompletionList
-	return json.Unmarshal(data, (*CompletionListAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		IsIncomplete bool                      `json:"isIncomplete"`
+		ItemDefaults *CompletionItemDefaults   `json:"itemDefaults,omitempty"`
+		ApplyKind    *CompletionItemApplyKinds `json:"applyKind,omitempty"`
+		Items        []*CompletionItem         `json:"items"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Registration options for a CompletionRequest.
@@ -2722,9 +3096,13 @@ func (s *Hover) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'contents' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type HoverAlias Hover
-	return json.Unmarshal(data, (*HoverAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Contents MarkupContentOrMarkedStringOrMarkedStrings `json:"contents"`
+		Range    *Range                                     `json:"range,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Registration options for a HoverRequest.
@@ -2793,9 +3171,14 @@ func (s *SignatureHelp) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'signatures' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type SignatureHelpAlias SignatureHelp
-	return json.Unmarshal(data, (*SignatureHelpAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Signatures      []*SignatureInformation `json:"signatures"`
+		ActiveSignature *uint32                 `json:"activeSignature,omitempty"`
+		ActiveParameter *Nullable[uint32]       `json:"activeParameter,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Registration options for a SignatureHelpRequest.
@@ -2837,9 +3220,16 @@ func (s *ReferenceParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'context' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ReferenceParamsAlias ReferenceParams
-	return json.Unmarshal(data, (*ReferenceParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocumentPositionParams
+		WorkDoneProgressParams
+		PartialResultParams
+
+		Context *ReferenceContext `json:"context"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Registration options for a ReferencesRequest.
@@ -2877,9 +3267,13 @@ func (s *DocumentHighlight) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DocumentHighlightAlias DocumentHighlight
-	return json.Unmarshal(data, (*DocumentHighlightAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Range Range                  `json:"range"`
+		Kind  *DocumentHighlightKind `json:"kind,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Registration options for a DocumentHighlightRequest.
@@ -2908,9 +3302,15 @@ func (s *DocumentSymbolParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DocumentSymbolParamsAlias DocumentSymbolParams
-	return json.Unmarshal(data, (*DocumentSymbolParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+		PartialResultParams
+
+		TextDocument TextDocumentIdentifier `json:"textDocument"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Represents information about programming constructs like variables, classes,
@@ -2946,9 +3346,15 @@ func (s *SymbolInformation) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'location' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type SymbolInformationAlias SymbolInformation
-	return json.Unmarshal(data, (*SymbolInformationAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		BaseSymbolInformation
+
+		Deprecated *bool    `json:"deprecated,omitempty"`
+		Location   Location `json:"location"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Represents programming constructs like variables, classes, interfaces etc.
@@ -3009,9 +3415,19 @@ func (s *DocumentSymbol) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'selectionRange' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DocumentSymbolAlias DocumentSymbol
-	return json.Unmarshal(data, (*DocumentSymbolAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Name           string             `json:"name"`
+		Detail         *string            `json:"detail,omitempty"`
+		Kind           SymbolKind         `json:"kind"`
+		Tags           *[]SymbolTag       `json:"tags,omitempty"`
+		Deprecated     *bool              `json:"deprecated,omitempty"`
+		Range          Range              `json:"range"`
+		SelectionRange Range              `json:"selectionRange"`
+		Children       *[]*DocumentSymbol `json:"children,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Registration options for a DocumentSymbolRequest.
@@ -3052,9 +3468,17 @@ func (s *CodeActionParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'context' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type CodeActionParamsAlias CodeActionParams
-	return json.Unmarshal(data, (*CodeActionParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+		PartialResultParams
+
+		TextDocument TextDocumentIdentifier `json:"textDocument"`
+		Range        Range                  `json:"range"`
+		Context      *CodeActionContext     `json:"context"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Represents a reference to a command. Provides a title which
@@ -3094,9 +3518,15 @@ func (s *Command) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'command' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type CommandAlias Command
-	return json.Unmarshal(data, (*CommandAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Title     string  `json:"title"`
+		Tooltip   *string `json:"tooltip,omitempty"`
+		Command   string  `json:"command"`
+		Arguments *[]any  `json:"arguments,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A code action represents a change that can be performed in code, e.g. to fix a problem or
@@ -3172,9 +3602,20 @@ func (s *CodeAction) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'title' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type CodeActionAlias CodeAction
-	return json.Unmarshal(data, (*CodeActionAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Title       string              `json:"title"`
+		Kind        *CodeActionKind     `json:"kind,omitempty"`
+		Diagnostics *[]*Diagnostic      `json:"diagnostics,omitempty"`
+		IsPreferred *bool               `json:"isPreferred,omitempty"`
+		Disabled    *CodeActionDisabled `json:"disabled,omitempty"`
+		Edit        *WorkspaceEdit      `json:"edit,omitempty"`
+		Command     *Command            `json:"command,omitempty"`
+		Data        *any                `json:"data,omitempty"`
+		Tags        *[]CodeActionTag    `json:"tags,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Registration options for a CodeActionRequest.
@@ -3210,9 +3651,15 @@ func (s *WorkspaceSymbolParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'query' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type WorkspaceSymbolParamsAlias WorkspaceSymbolParams
-	return json.Unmarshal(data, (*WorkspaceSymbolParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+		PartialResultParams
+
+		Query string `json:"query"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A special workspace symbol that supports locations without a range.
@@ -3246,9 +3693,15 @@ func (s *WorkspaceSymbol) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'location' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type WorkspaceSymbolAlias WorkspaceSymbol
-	return json.Unmarshal(data, (*WorkspaceSymbolAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		BaseSymbolInformation
+
+		Location LocationOrLocationUriOnly `json:"location"`
+		Data     *any                      `json:"data,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Registration options for a WorkspaceSymbolRequest.
@@ -3276,9 +3729,15 @@ func (s *CodeLensParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type CodeLensParamsAlias CodeLensParams
-	return json.Unmarshal(data, (*CodeLensParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+		PartialResultParams
+
+		TextDocument TextDocumentIdentifier `json:"textDocument"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A code lens represents a command that should be shown along with
@@ -3309,9 +3768,14 @@ func (s *CodeLens) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type CodeLensAlias CodeLens
-	return json.Unmarshal(data, (*CodeLensAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Range   Range    `json:"range"`
+		Command *Command `json:"command,omitempty"`
+		Data    *any     `json:"data,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Registration options for a CodeLensRequest.
@@ -3340,9 +3804,15 @@ func (s *DocumentLinkParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DocumentLinkParamsAlias DocumentLinkParams
-	return json.Unmarshal(data, (*DocumentLinkParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+		PartialResultParams
+
+		TextDocument TextDocumentIdentifier `json:"textDocument"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A document link is a range in a text document that links to an internal or external resource, like another
@@ -3379,9 +3849,15 @@ func (s *DocumentLink) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DocumentLinkAlias DocumentLink
-	return json.Unmarshal(data, (*DocumentLinkAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Range   Range   `json:"range"`
+		Target  *URI    `json:"target,omitempty"`
+		Tooltip *string `json:"tooltip,omitempty"`
+		Data    *any    `json:"data,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Registration options for a DocumentLinkRequest.
@@ -3415,9 +3891,15 @@ func (s *DocumentFormattingParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'options' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DocumentFormattingParamsAlias DocumentFormattingParams
-	return json.Unmarshal(data, (*DocumentFormattingParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+
+		TextDocument TextDocumentIdentifier `json:"textDocument"`
+		Options      *FormattingOptions     `json:"options"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Registration options for a DocumentFormattingRequest.
@@ -3457,9 +3939,16 @@ func (s *DocumentRangeFormattingParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'options' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DocumentRangeFormattingParamsAlias DocumentRangeFormattingParams
-	return json.Unmarshal(data, (*DocumentRangeFormattingParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+
+		TextDocument TextDocumentIdentifier `json:"textDocument"`
+		Range        Range                  `json:"range"`
+		Options      *FormattingOptions     `json:"options"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Registration options for a DocumentRangeFormattingRequest.
@@ -3503,9 +3992,16 @@ func (s *DocumentRangesFormattingParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'options' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DocumentRangesFormattingParamsAlias DocumentRangesFormattingParams
-	return json.Unmarshal(data, (*DocumentRangesFormattingParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+
+		TextDocument TextDocumentIdentifier `json:"textDocument"`
+		Ranges       []Range                `json:"ranges"`
+		Options      *FormattingOptions     `json:"options"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameters of a DocumentOnTypeFormattingRequest.
@@ -3548,9 +4044,15 @@ func (s *DocumentOnTypeFormattingParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'options' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DocumentOnTypeFormattingParamsAlias DocumentOnTypeFormattingParams
-	return json.Unmarshal(data, (*DocumentOnTypeFormattingParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocument TextDocumentIdentifier `json:"textDocument"`
+		Position     Position               `json:"position"`
+		Ch           string                 `json:"ch"`
+		Options      *FormattingOptions     `json:"options"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Registration options for a DocumentOnTypeFormattingRequest.
@@ -3592,9 +4094,16 @@ func (s *RenameParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'newName' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type RenameParamsAlias RenameParams
-	return json.Unmarshal(data, (*RenameParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+
+		TextDocument TextDocumentIdentifier `json:"textDocument"`
+		Position     Position               `json:"position"`
+		NewName      string                 `json:"newName"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Registration options for a RenameRequest.
@@ -3630,9 +4139,15 @@ func (s *ExecuteCommandParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'command' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ExecuteCommandParamsAlias ExecuteCommandParams
-	return json.Unmarshal(data, (*ExecuteCommandParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+
+		Command   string `json:"command"`
+		Arguments *[]any `json:"arguments,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Registration options for a ExecuteCommandRequest.
@@ -3669,9 +4184,14 @@ func (s *ApplyWorkspaceEditParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'edit' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ApplyWorkspaceEditParamsAlias ApplyWorkspaceEditParams
-	return json.Unmarshal(data, (*ApplyWorkspaceEditParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Label    *string                `json:"label,omitempty"`
+		Edit     *WorkspaceEdit         `json:"edit"`
+		Metadata *WorkspaceEditMetadata `json:"metadata,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The result returned from the apply workspace edit request.
@@ -3703,9 +4223,14 @@ func (s *ApplyWorkspaceEditResult) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'applied' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ApplyWorkspaceEditResultAlias ApplyWorkspaceEditResult
-	return json.Unmarshal(data, (*ApplyWorkspaceEditResultAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Applied       bool    `json:"applied"`
+		FailureReason *string `json:"failureReason,omitempty"`
+		FailedChange  *uint32 `json:"failedChange,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type WorkDoneProgressBegin struct {
@@ -3752,9 +4277,16 @@ func (s *WorkDoneProgressBegin) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'title' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type WorkDoneProgressBeginAlias WorkDoneProgressBegin
-	return json.Unmarshal(data, (*WorkDoneProgressBeginAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Kind        StringLiteralBegin `json:"kind"`
+		Title       string             `json:"title"`
+		Cancellable *bool              `json:"cancellable,omitempty"`
+		Message     *string            `json:"message,omitempty"`
+		Percentage  *uint32            `json:"percentage,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type WorkDoneProgressReport struct {
@@ -3793,9 +4325,15 @@ func (s *WorkDoneProgressReport) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type WorkDoneProgressReportAlias WorkDoneProgressReport
-	return json.Unmarshal(data, (*WorkDoneProgressReportAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Kind        StringLiteralReport `json:"kind"`
+		Cancellable *bool               `json:"cancellable,omitempty"`
+		Message     *string             `json:"message,omitempty"`
+		Percentage  *uint32             `json:"percentage,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type WorkDoneProgressEnd struct {
@@ -3817,9 +4355,13 @@ func (s *WorkDoneProgressEnd) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type WorkDoneProgressEndAlias WorkDoneProgressEnd
-	return json.Unmarshal(data, (*WorkDoneProgressEndAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Kind    StringLiteralEnd `json:"kind"`
+		Message *string          `json:"message,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type SetTraceParams struct {
@@ -3837,9 +4379,12 @@ func (s *SetTraceParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'value' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type SetTraceParamsAlias SetTraceParams
-	return json.Unmarshal(data, (*SetTraceParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Value TraceValue `json:"value"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type LogTraceParams struct {
@@ -3859,9 +4404,13 @@ func (s *LogTraceParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'message' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type LogTraceParamsAlias LogTraceParams
-	return json.Unmarshal(data, (*LogTraceParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Message string  `json:"message"`
+		Verbose *string `json:"verbose,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type CancelParams struct {
@@ -3880,9 +4429,12 @@ func (s *CancelParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'id' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type CancelParamsAlias CancelParams
-	return json.Unmarshal(data, (*CancelParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Id IntegerOrString `json:"id"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type ProgressParams struct {
@@ -3907,9 +4459,13 @@ func (s *ProgressParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'value' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ProgressParamsAlias ProgressParams
-	return json.Unmarshal(data, (*ProgressParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Token ProgressToken `json:"token"`
+		Value any           `json:"value"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A parameter literal used in requests to pass a text document and a position inside that
@@ -3936,9 +4492,13 @@ func (s *TextDocumentPositionParams) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'position' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type TextDocumentPositionParamsAlias TextDocumentPositionParams
-	return json.Unmarshal(data, (*TextDocumentPositionParamsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocument TextDocumentIdentifier `json:"textDocument"`
+		Position     Position               `json:"position"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type WorkDoneProgressParams struct {
@@ -3991,9 +4551,15 @@ func (s *LocationLink) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'targetSelectionRange' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type LocationLinkAlias LocationLink
-	return json.Unmarshal(data, (*LocationLinkAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		OriginSelectionRange *Range      `json:"originSelectionRange,omitempty"`
+		TargetUri            DocumentUri `json:"targetUri"`
+		TargetRange          Range       `json:"targetRange"`
+		TargetSelectionRange Range       `json:"targetSelectionRange"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A range in a text document expressed as (zero-based) start and end positions.
@@ -4031,9 +4597,13 @@ func (s *Range) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'end' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type RangeAlias Range
-	return json.Unmarshal(data, (*RangeAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Start Position `json:"start"`
+		End   Position `json:"end"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type ImplementationOptions struct {
@@ -4075,9 +4645,13 @@ func (s *WorkspaceFoldersChangeEvent) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'removed' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type WorkspaceFoldersChangeEventAlias WorkspaceFoldersChangeEvent
-	return json.Unmarshal(data, (*WorkspaceFoldersChangeEventAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Added   []*WorkspaceFolder `json:"added"`
+		Removed []*WorkspaceFolder `json:"removed"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type ConfigurationItem struct {
@@ -4105,9 +4679,12 @@ func (s *TextDocumentIdentifier) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type TextDocumentIdentifierAlias TextDocumentIdentifier
-	return json.Unmarshal(data, (*TextDocumentIdentifierAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Uri DocumentUri `json:"uri"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Represents a color in RGBA space.
@@ -4145,9 +4722,15 @@ func (s *Color) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'alpha' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ColorAlias Color
-	return json.Unmarshal(data, (*ColorAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Red   float64 `json:"red"`
+		Green float64 `json:"green"`
+		Blue  float64 `json:"blue"`
+		Alpha float64 `json:"alpha"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type DocumentColorOptions struct {
@@ -4214,9 +4797,13 @@ func (s *Position) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'character' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type PositionAlias Position
-	return json.Unmarshal(data, (*PositionAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Line      uint32 `json:"line"`
+		Character uint32 `json:"character"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type SelectionRangeOptions struct {
@@ -4256,9 +4843,16 @@ func (s *SemanticTokensOptions) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'legend' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type SemanticTokensOptionsAlias SemanticTokensOptions
-	return json.Unmarshal(data, (*SemanticTokensOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressOptions
+
+		Legend *SemanticTokensLegend             `json:"legend"`
+		Range  *BooleanOrEmptyObject             `json:"range,omitempty"`
+		Full   *BooleanOrSemanticTokensFullDelta `json:"full,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.16.0
@@ -4287,9 +4881,14 @@ func (s *SemanticTokensEdit) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'deleteCount' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type SemanticTokensEditAlias SemanticTokensEdit
-	return json.Unmarshal(data, (*SemanticTokensEditAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Start       uint32    `json:"start"`
+		DeleteCount uint32    `json:"deleteCount"`
+		Data        *[]uint32 `json:"data,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type LinkedEditingRangeOptions struct {
@@ -4315,9 +4914,12 @@ func (s *FileCreate) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type FileCreateAlias FileCreate
-	return json.Unmarshal(data, (*FileCreateAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Uri string `json:"uri"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Describes textual changes on a text document. A TextDocumentEdit describes all changes
@@ -4352,9 +4954,13 @@ func (s *TextDocumentEdit) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'edits' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type TextDocumentEditAlias TextDocumentEdit
-	return json.Unmarshal(data, (*TextDocumentEditAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocument OptionalVersionedTextDocumentIdentifier        `json:"textDocument"`
+		Edits        []TextEditOrAnnotatedTextEditOrSnippetTextEdit `json:"edits"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Create file operation.
@@ -4385,9 +4991,16 @@ func (s *CreateFile) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type CreateFileAlias CreateFile
-	return json.Unmarshal(data, (*CreateFileAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		ResourceOperation
+
+		Kind    StringLiteralCreate `json:"kind"`
+		Uri     DocumentUri         `json:"uri"`
+		Options *CreateFileOptions  `json:"options,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Rename file operation
@@ -4424,9 +5037,17 @@ func (s *RenameFile) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'newUri' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type RenameFileAlias RenameFile
-	return json.Unmarshal(data, (*RenameFileAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		ResourceOperation
+
+		Kind    StringLiteralRename `json:"kind"`
+		OldUri  DocumentUri         `json:"oldUri"`
+		NewUri  DocumentUri         `json:"newUri"`
+		Options *RenameFileOptions  `json:"options,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Delete file operation
@@ -4457,9 +5078,16 @@ func (s *DeleteFile) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DeleteFileAlias DeleteFile
-	return json.Unmarshal(data, (*DeleteFileAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		ResourceOperation
+
+		Kind    StringLiteralDelete `json:"kind"`
+		Uri     DocumentUri         `json:"uri"`
+		Options *DeleteFileOptions  `json:"options,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Additional information that describes document changes.
@@ -4490,9 +5118,14 @@ func (s *ChangeAnnotation) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'label' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ChangeAnnotationAlias ChangeAnnotation
-	return json.Unmarshal(data, (*ChangeAnnotationAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Label             string  `json:"label"`
+		NeedsConfirmation *bool   `json:"needsConfirmation,omitempty"`
+		Description       *string `json:"description,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A filter to describe in which file operation requests or notifications
@@ -4518,9 +5151,13 @@ func (s *FileOperationFilter) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'pattern' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type FileOperationFilterAlias FileOperationFilter
-	return json.Unmarshal(data, (*FileOperationFilterAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Scheme  *string               `json:"scheme,omitempty"`
+		Pattern *FileOperationPattern `json:"pattern"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Represents information on a file/folder rename.
@@ -4548,9 +5185,13 @@ func (s *FileRename) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'newUri' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type FileRenameAlias FileRename
-	return json.Unmarshal(data, (*FileRenameAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		OldUri string `json:"oldUri"`
+		NewUri string `json:"newUri"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Represents information on a file/folder delete.
@@ -4572,9 +5213,12 @@ func (s *FileDelete) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type FileDeleteAlias FileDelete
-	return json.Unmarshal(data, (*FileDeleteAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Uri string `json:"uri"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type MonikerOptions struct {
@@ -4612,9 +5256,13 @@ func (s *InlineValueContext) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'stoppedLocation' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type InlineValueContextAlias InlineValueContext
-	return json.Unmarshal(data, (*InlineValueContextAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		FrameId         int32 `json:"frameId"`
+		StoppedLocation Range `json:"stoppedLocation"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Provide inline value as text.
@@ -4642,9 +5290,13 @@ func (s *InlineValueText) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'text' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type InlineValueTextAlias InlineValueText
-	return json.Unmarshal(data, (*InlineValueTextAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Range Range  `json:"range"`
+		Text  string `json:"text"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Provide inline value through a variable lookup.
@@ -4678,9 +5330,14 @@ func (s *InlineValueVariableLookup) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'caseSensitiveLookup' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type InlineValueVariableLookupAlias InlineValueVariableLookup
-	return json.Unmarshal(data, (*InlineValueVariableLookupAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Range               Range   `json:"range"`
+		VariableName        *string `json:"variableName,omitempty"`
+		CaseSensitiveLookup bool    `json:"caseSensitiveLookup"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Provide an inline value through an expression evaluation.
@@ -4708,9 +5365,13 @@ func (s *InlineValueEvaluatableExpression) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type InlineValueEvaluatableExpressionAlias InlineValueEvaluatableExpression
-	return json.Unmarshal(data, (*InlineValueEvaluatableExpressionAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Range      Range   `json:"range"`
+		Expression *string `json:"expression,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Inline value options used during static registration.
@@ -4764,9 +5425,15 @@ func (s *InlayHintLabelPart) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'value' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type InlayHintLabelPartAlias InlayHintLabelPart
-	return json.Unmarshal(data, (*InlayHintLabelPartAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Value    string                 `json:"value"`
+		Tooltip  *StringOrMarkupContent `json:"tooltip,omitempty"`
+		Location *Location              `json:"location,omitempty"`
+		Command  *Command               `json:"command,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A `MarkupContent` literal represents a string value which content is interpreted base on its
@@ -4815,9 +5482,13 @@ func (s *MarkupContent) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'value' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type MarkupContentAlias MarkupContent
-	return json.Unmarshal(data, (*MarkupContentAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Kind  MarkupKind `json:"kind"`
+		Value string     `json:"value"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Inlay hint options used during static registration.
@@ -4893,9 +5564,14 @@ func (s *FullDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'items' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type FullDocumentDiagnosticReportAlias FullDocumentDiagnosticReport
-	return json.Unmarshal(data, (*FullDocumentDiagnosticReportAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Kind     StringLiteralFull `json:"kind"`
+		ResultId *string           `json:"resultId,omitempty"`
+		Items    []*Diagnostic     `json:"items"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A diagnostic report indicating that the last returned
@@ -4928,9 +5604,13 @@ func (s *UnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'resultId' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type UnchangedDocumentDiagnosticReportAlias UnchangedDocumentDiagnosticReport
-	return json.Unmarshal(data, (*UnchangedDocumentDiagnosticReportAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Kind     StringLiteralUnchanged `json:"kind"`
+		ResultId string                 `json:"resultId"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Diagnostic options.
@@ -4967,9 +5647,16 @@ func (s *DiagnosticOptions) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'workspaceDiagnostics' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DiagnosticOptionsAlias DiagnosticOptions
-	return json.Unmarshal(data, (*DiagnosticOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressOptions
+
+		Identifier            *string `json:"identifier,omitempty"`
+		InterFileDependencies bool    `json:"interFileDependencies"`
+		WorkspaceDiagnostics  bool    `json:"workspaceDiagnostics"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A previous result id in a workspace pull request.
@@ -4998,9 +5685,13 @@ func (s *PreviousResultId) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'value' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type PreviousResultIdAlias PreviousResultId
-	return json.Unmarshal(data, (*PreviousResultIdAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Uri   DocumentUri `json:"uri"`
+		Value string      `json:"value"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A notebook document.
@@ -5047,9 +5738,16 @@ func (s *NotebookDocument) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'cells' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type NotebookDocumentAlias NotebookDocument
-	return json.Unmarshal(data, (*NotebookDocumentAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Uri          URI             `json:"uri"`
+		NotebookType string          `json:"notebookType"`
+		Version      int32           `json:"version"`
+		Metadata     *map[string]any `json:"metadata,omitempty"`
+		Cells        []*NotebookCell `json:"cells"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // An item to transfer a text document from the client to the
@@ -5089,9 +5787,15 @@ func (s *TextDocumentItem) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'text' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type TextDocumentItemAlias TextDocumentItem
-	return json.Unmarshal(data, (*TextDocumentItemAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Uri        DocumentUri  `json:"uri"`
+		LanguageId LanguageKind `json:"languageId"`
+		Version    int32        `json:"version"`
+		Text       string       `json:"text"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Options specific to a notebook plus its cells
@@ -5127,9 +5831,13 @@ func (s *NotebookDocumentSyncOptions) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'notebookSelector' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type NotebookDocumentSyncOptionsAlias NotebookDocumentSyncOptions
-	return json.Unmarshal(data, (*NotebookDocumentSyncOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		NotebookSelector []NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells `json:"notebookSelector"`
+		Save             *bool                                                                 `json:"save,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A versioned notebook document identifier.
@@ -5157,9 +5865,13 @@ func (s *VersionedNotebookDocumentIdentifier) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type VersionedNotebookDocumentIdentifierAlias VersionedNotebookDocumentIdentifier
-	return json.Unmarshal(data, (*VersionedNotebookDocumentIdentifierAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Version int32 `json:"version"`
+		Uri     URI   `json:"uri"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A change event for a notebook document.
@@ -5194,9 +5906,12 @@ func (s *NotebookDocumentIdentifier) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type NotebookDocumentIdentifierAlias NotebookDocumentIdentifier
-	return json.Unmarshal(data, (*NotebookDocumentIdentifierAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Uri URI `json:"uri"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Provides information about the context in which an inline completion was requested.
@@ -5223,9 +5938,13 @@ func (s *InlineCompletionContext) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'triggerKind' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type InlineCompletionContextAlias InlineCompletionContext
-	return json.Unmarshal(data, (*InlineCompletionContextAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TriggerKind            InlineCompletionTriggerKind `json:"triggerKind"`
+		SelectedCompletionInfo *SelectedCompletionInfo     `json:"selectedCompletionInfo,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A string value used as a snippet is a template which allows to insert text
@@ -5261,9 +5980,13 @@ func (s *StringValue) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'value' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type StringValueAlias StringValue
-	return json.Unmarshal(data, (*StringValueAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Kind  StringLiteralSnippet `json:"kind"`
+		Value string               `json:"value"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Inline completion options used during static registration.
@@ -5296,9 +6019,12 @@ func (s *TextDocumentContentOptions) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'schemes' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type TextDocumentContentOptionsAlias TextDocumentContentOptions
-	return json.Unmarshal(data, (*TextDocumentContentOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Schemes []string `json:"schemes"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // General parameters to register for a notification or to register a provider.
@@ -5328,9 +6054,14 @@ func (s *Registration) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'method' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type RegistrationAlias Registration
-	return json.Unmarshal(data, (*RegistrationAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Id              string `json:"id"`
+		Method          string `json:"method"`
+		RegisterOptions *any   `json:"registerOptions,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // General parameters to unregister a request or notification.
@@ -5357,9 +6088,13 @@ func (s *Unregistration) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'method' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type UnregistrationAlias Unregistration
-	return json.Unmarshal(data, (*UnregistrationAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Id     string `json:"id"`
+		Method string `json:"method"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The initialize parameters
@@ -5428,9 +6163,21 @@ func (s *InitializeParamsBase) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'capabilities' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type InitializeParamsBaseAlias InitializeParamsBase
-	return json.Unmarshal(data, (*InitializeParamsBaseAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressParams
+
+		ProcessId             Nullable[int32]       `json:"processId"`
+		ClientInfo            *ClientInfo           `json:"clientInfo,omitempty"`
+		Locale                *string               `json:"locale,omitempty"`
+		RootPath              *Nullable[string]     `json:"rootPath,omitempty"`
+		RootUri               Nullable[DocumentUri] `json:"rootUri"`
+		Capabilities          *ClientCapabilities   `json:"capabilities"`
+		InitializationOptions *any                  `json:"initializationOptions,omitempty"`
+		Trace                 *TraceValue           `json:"trace,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type WorkspaceFoldersInitializeParams struct {
@@ -5616,9 +6363,13 @@ func (s *ServerInfo) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'name' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ServerInfoAlias ServerInfo
-	return json.Unmarshal(data, (*ServerInfoAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Name    string  `json:"name"`
+		Version *string `json:"version,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A text document identifier to denote a specific version of a text document.
@@ -5640,9 +6391,14 @@ func (s *VersionedTextDocumentIdentifier) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'version' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type VersionedTextDocumentIdentifierAlias VersionedTextDocumentIdentifier
-	return json.Unmarshal(data, (*VersionedTextDocumentIdentifierAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocumentIdentifier
+
+		Version int32 `json:"version"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Save options.
@@ -5674,9 +6430,13 @@ func (s *FileEvent) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'type' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type FileEventAlias FileEvent
-	return json.Unmarshal(data, (*FileEventAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Uri  DocumentUri    `json:"uri"`
+		Type FileChangeType `json:"type"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type FileSystemWatcher struct {
@@ -5702,9 +6462,13 @@ func (s *FileSystemWatcher) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'globPattern' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type FileSystemWatcherAlias FileSystemWatcher
-	return json.Unmarshal(data, (*FileSystemWatcherAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		GlobPattern GlobPattern `json:"globPattern"`
+		Kind        *WatchKind  `json:"kind,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Represents a diagnostic, such as a compiler error or warning. Diagnostic objects
@@ -5765,9 +6529,20 @@ func (s *Diagnostic) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'message' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DiagnosticAlias Diagnostic
-	return json.Unmarshal(data, (*DiagnosticAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Range              Range                            `json:"range"`
+		Severity           *DiagnosticSeverity              `json:"severity,omitempty"`
+		Code               *IntegerOrString                 `json:"code,omitempty"`
+		CodeDescription    *CodeDescription                 `json:"codeDescription,omitempty"`
+		Source             *string                          `json:"source,omitempty"`
+		Message            string                           `json:"message"`
+		Tags               *[]DiagnosticTag                 `json:"tags,omitempty"`
+		RelatedInformation *[]*DiagnosticRelatedInformation `json:"relatedInformation,omitempty"`
+		Data               *any                             `json:"data,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Contains additional information about the context in which a completion request is triggered.
@@ -5791,9 +6566,13 @@ func (s *CompletionContext) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'triggerKind' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type CompletionContextAlias CompletionContext
-	return json.Unmarshal(data, (*CompletionContextAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TriggerKind      CompletionTriggerKind `json:"triggerKind"`
+		TriggerCharacter *string               `json:"triggerCharacter,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Additional details for a completion item label.
@@ -5840,9 +6619,14 @@ func (s *InsertReplaceEdit) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'replace' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type InsertReplaceEditAlias InsertReplaceEdit
-	return json.Unmarshal(data, (*InsertReplaceEditAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		NewText string `json:"newText"`
+		Insert  Range  `json:"insert"`
+		Replace Range  `json:"replace"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // In many cases the items of an actual completion result share the same
@@ -6026,9 +6810,15 @@ func (s *SignatureHelpContext) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'isRetrigger' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type SignatureHelpContextAlias SignatureHelpContext
-	return json.Unmarshal(data, (*SignatureHelpContextAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TriggerKind         SignatureHelpTriggerKind `json:"triggerKind"`
+		TriggerCharacter    *string                  `json:"triggerCharacter,omitempty"`
+		IsRetrigger         bool                     `json:"isRetrigger"`
+		ActiveSignatureHelp *SignatureHelp           `json:"activeSignatureHelp,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Represents the signature of something callable. A signature
@@ -6071,9 +6861,15 @@ func (s *SignatureInformation) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'label' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type SignatureInformationAlias SignatureInformation
-	return json.Unmarshal(data, (*SignatureInformationAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Label           string                   `json:"label"`
+		Documentation   *StringOrMarkupContent   `json:"documentation,omitempty"`
+		Parameters      *[]*ParameterInformation `json:"parameters,omitempty"`
+		ActiveParameter *Nullable[uint32]        `json:"activeParameter,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Server Capabilities for a SignatureHelpRequest.
@@ -6115,9 +6911,12 @@ func (s *ReferenceContext) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'includeDeclaration' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ReferenceContextAlias ReferenceContext
-	return json.Unmarshal(data, (*ReferenceContextAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		IncludeDeclaration bool `json:"includeDeclaration"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Reference options.
@@ -6164,9 +6963,15 @@ func (s *BaseSymbolInformation) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type BaseSymbolInformationAlias BaseSymbolInformation
-	return json.Unmarshal(data, (*BaseSymbolInformationAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Name          string       `json:"name"`
+		Kind          SymbolKind   `json:"kind"`
+		Tags          *[]SymbolTag `json:"tags,omitempty"`
+		ContainerName *string      `json:"containerName,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Provider options for a DocumentSymbolRequest.
@@ -6213,9 +7018,14 @@ func (s *CodeActionContext) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'diagnostics' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type CodeActionContextAlias CodeActionContext
-	return json.Unmarshal(data, (*CodeActionContextAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Diagnostics []*Diagnostic          `json:"diagnostics"`
+		Only        *[]CodeActionKind      `json:"only,omitempty"`
+		TriggerKind *CodeActionTriggerKind `json:"triggerKind,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Captures why the code action is currently disabled.
@@ -6239,9 +7049,12 @@ func (s *CodeActionDisabled) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'reason' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type CodeActionDisabledAlias CodeActionDisabled
-	return json.Unmarshal(data, (*CodeActionDisabledAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Reason string `json:"reason"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Provider options for a CodeActionRequest.
@@ -6297,9 +7110,12 @@ func (s *LocationUriOnly) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type LocationUriOnlyAlias LocationUriOnly
-	return json.Unmarshal(data, (*LocationUriOnlyAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Uri DocumentUri `json:"uri"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Server capabilities for a WorkspaceSymbolRequest.
@@ -6367,9 +7183,16 @@ func (s *FormattingOptions) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'insertSpaces' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type FormattingOptionsAlias FormattingOptions
-	return json.Unmarshal(data, (*FormattingOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TabSize                uint32 `json:"tabSize"`
+		InsertSpaces           bool   `json:"insertSpaces"`
+		TrimTrailingWhitespace *bool  `json:"trimTrailingWhitespace,omitempty"`
+		InsertFinalNewline     *bool  `json:"insertFinalNewline,omitempty"`
+		TrimFinalNewlines      *bool  `json:"trimFinalNewlines,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Provider options for a DocumentFormattingRequest.
@@ -6409,9 +7232,13 @@ func (s *DocumentOnTypeFormattingOptions) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'firstTriggerCharacter' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DocumentOnTypeFormattingOptionsAlias DocumentOnTypeFormattingOptions
-	return json.Unmarshal(data, (*DocumentOnTypeFormattingOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		FirstTriggerCharacter string    `json:"firstTriggerCharacter"`
+		MoreTriggerCharacter  *[]string `json:"moreTriggerCharacter,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Provider options for a RenameRequest.
@@ -6445,9 +7272,13 @@ func (s *PrepareRenamePlaceholder) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'placeholder' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type PrepareRenamePlaceholderAlias PrepareRenamePlaceholder
-	return json.Unmarshal(data, (*PrepareRenamePlaceholderAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Range       Range  `json:"range"`
+		Placeholder string `json:"placeholder"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.18.0
@@ -6466,9 +7297,12 @@ func (s *PrepareRenameDefaultBehavior) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'defaultBehavior' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type PrepareRenameDefaultBehaviorAlias PrepareRenameDefaultBehavior
-	return json.Unmarshal(data, (*PrepareRenameDefaultBehaviorAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DefaultBehavior bool `json:"defaultBehavior"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The server capabilities of a ExecuteCommandRequest.
@@ -6490,9 +7324,14 @@ func (s *ExecuteCommandOptions) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'commands' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ExecuteCommandOptionsAlias ExecuteCommandOptions
-	return json.Unmarshal(data, (*ExecuteCommandOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgressOptions
+
+		Commands []string `json:"commands"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Additional data about a workspace edit.
@@ -6528,9 +7367,13 @@ func (s *SemanticTokensLegend) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'tokenModifiers' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type SemanticTokensLegendAlias SemanticTokensLegend
-	return json.Unmarshal(data, (*SemanticTokensLegendAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TokenTypes     []string `json:"tokenTypes"`
+		TokenModifiers []string `json:"tokenModifiers"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Semantic tokens options to support deltas for full documents
@@ -6564,9 +7407,14 @@ func (s *OptionalVersionedTextDocumentIdentifier) UnmarshalJSON(data []byte) err
 		return fmt.Errorf("required key 'version' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type OptionalVersionedTextDocumentIdentifierAlias OptionalVersionedTextDocumentIdentifier
-	return json.Unmarshal(data, (*OptionalVersionedTextDocumentIdentifierAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocumentIdentifier
+
+		Version Nullable[int32] `json:"version"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A special text edit with an additional change annotation.
@@ -6590,9 +7438,14 @@ func (s *AnnotatedTextEdit) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'annotationId' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type AnnotatedTextEditAlias AnnotatedTextEdit
-	return json.Unmarshal(data, (*AnnotatedTextEditAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextEdit
+
+		AnnotationId ChangeAnnotationIdentifier `json:"annotationId"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // An interactive text edit.
@@ -6625,9 +7478,14 @@ func (s *SnippetTextEdit) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'snippet' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type SnippetTextEditAlias SnippetTextEdit
-	return json.Unmarshal(data, (*SnippetTextEditAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Range        Range                       `json:"range"`
+		Snippet      *StringValue                `json:"snippet"`
+		AnnotationId *ChangeAnnotationIdentifier `json:"annotationId,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A generic resource operation.
@@ -6652,9 +7510,13 @@ func (s *ResourceOperation) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ResourceOperationAlias ResourceOperation
-	return json.Unmarshal(data, (*ResourceOperationAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Kind         string                      `json:"kind"`
+		AnnotationId *ChangeAnnotationIdentifier `json:"annotationId,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Options to create a file.
@@ -6718,9 +7580,14 @@ func (s *FileOperationPattern) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'glob' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type FileOperationPatternAlias FileOperationPattern
-	return json.Unmarshal(data, (*FileOperationPatternAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Glob    string                       `json:"glob"`
+		Matches *FileOperationPatternKind    `json:"matches,omitempty"`
+		Options *FileOperationPatternOptions `json:"options,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A full document diagnostic report for a workspace diagnostic result.
@@ -6751,9 +7618,15 @@ func (s *WorkspaceFullDocumentDiagnosticReport) UnmarshalJSON(data []byte) error
 		return fmt.Errorf("required key 'version' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type WorkspaceFullDocumentDiagnosticReportAlias WorkspaceFullDocumentDiagnosticReport
-	return json.Unmarshal(data, (*WorkspaceFullDocumentDiagnosticReportAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		FullDocumentDiagnosticReport
+
+		Uri     DocumentUri     `json:"uri"`
+		Version Nullable[int32] `json:"version"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // An unchanged document diagnostic report for a workspace diagnostic result.
@@ -6784,9 +7657,15 @@ func (s *WorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) 
 		return fmt.Errorf("required key 'version' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type WorkspaceUnchangedDocumentDiagnosticReportAlias WorkspaceUnchangedDocumentDiagnosticReport
-	return json.Unmarshal(data, (*WorkspaceUnchangedDocumentDiagnosticReportAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		UnchangedDocumentDiagnosticReport
+
+		Uri     DocumentUri     `json:"uri"`
+		Version Nullable[int32] `json:"version"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A notebook cell.
@@ -6828,9 +7707,15 @@ func (s *NotebookCell) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'document' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type NotebookCellAlias NotebookCell
-	return json.Unmarshal(data, (*NotebookCellAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Kind             NotebookCellKind  `json:"kind"`
+		Document         DocumentUri       `json:"document"`
+		Metadata         *map[string]any   `json:"metadata,omitempty"`
+		ExecutionSummary *ExecutionSummary `json:"executionSummary,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.18.0
@@ -6855,9 +7740,13 @@ func (s *NotebookDocumentFilterWithNotebook) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'notebook' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type NotebookDocumentFilterWithNotebookAlias NotebookDocumentFilterWithNotebook
-	return json.Unmarshal(data, (*NotebookDocumentFilterWithNotebookAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Notebook StringOrNotebookDocumentFilter `json:"notebook"`
+		Cells    *[]*NotebookCellLanguage       `json:"cells,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.18.0
@@ -6882,9 +7771,13 @@ func (s *NotebookDocumentFilterWithCells) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'cells' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type NotebookDocumentFilterWithCellsAlias NotebookDocumentFilterWithCells
-	return json.Unmarshal(data, (*NotebookDocumentFilterWithCellsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Notebook *StringOrNotebookDocumentFilter `json:"notebook,omitempty"`
+		Cells    []*NotebookCellLanguage         `json:"cells"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Cell changes to a notebook document.
@@ -6930,9 +7823,13 @@ func (s *SelectedCompletionInfo) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'text' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type SelectedCompletionInfoAlias SelectedCompletionInfo
-	return json.Unmarshal(data, (*SelectedCompletionInfoAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Range Range  `json:"range"`
+		Text  string `json:"text"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Information about the client
@@ -6959,9 +7856,13 @@ func (s *ClientInfo) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'name' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ClientInfoAlias ClientInfo
-	return json.Unmarshal(data, (*ClientInfoAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Name    string  `json:"name"`
+		Version *string `json:"version,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Defines the capabilities provided by the client.
@@ -7061,9 +7962,14 @@ func (s *TextDocumentContentChangePartial) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'text' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type TextDocumentContentChangePartialAlias TextDocumentContentChangePartial
-	return json.Unmarshal(data, (*TextDocumentContentChangePartialAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Range       Range   `json:"range"`
+		RangeLength *uint32 `json:"rangeLength,omitempty"`
+		Text        string  `json:"text"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.18.0
@@ -7083,9 +7989,12 @@ func (s *TextDocumentContentChangeWholeDocument) UnmarshalJSON(data []byte) erro
 		return fmt.Errorf("required key 'text' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type TextDocumentContentChangeWholeDocumentAlias TextDocumentContentChangeWholeDocument
-	return json.Unmarshal(data, (*TextDocumentContentChangeWholeDocumentAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Text string `json:"text"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Structure to capture a description for an error code.
@@ -7107,9 +8016,12 @@ func (s *CodeDescription) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'href' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type CodeDescriptionAlias CodeDescription
-	return json.Unmarshal(data, (*CodeDescriptionAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Href URI `json:"href"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Represents a related message and source code location for a diagnostic. This should be
@@ -7137,9 +8049,13 @@ func (s *DiagnosticRelatedInformation) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'message' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type DiagnosticRelatedInformationAlias DiagnosticRelatedInformation
-	return json.Unmarshal(data, (*DiagnosticRelatedInformationAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Location Location `json:"location"`
+		Message  string   `json:"message"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Edit range variant that includes ranges for insert and replace operations.
@@ -7165,9 +8081,13 @@ func (s *EditRangeWithInsertReplace) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'replace' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type EditRangeWithInsertReplaceAlias EditRangeWithInsertReplace
-	return json.Unmarshal(data, (*EditRangeWithInsertReplaceAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Insert  Range `json:"insert"`
+		Replace Range `json:"replace"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.18.0
@@ -7203,9 +8123,13 @@ func (s *MarkedStringWithLanguage) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'value' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type MarkedStringWithLanguageAlias MarkedStringWithLanguage
-	return json.Unmarshal(data, (*MarkedStringWithLanguageAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Language string `json:"language"`
+		Value    string `json:"value"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Represents a parameter of a callable-signature. A parameter can
@@ -7241,9 +8165,13 @@ func (s *ParameterInformation) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'label' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ParameterInformationAlias ParameterInformation
-	return json.Unmarshal(data, (*ParameterInformationAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Label         StringOrTuple          `json:"label"`
+		Documentation *StringOrMarkupContent `json:"documentation,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Documentation for a class of code actions.
@@ -7279,9 +8207,13 @@ func (s *CodeActionKindDocumentation) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'command' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type CodeActionKindDocumentationAlias CodeActionKindDocumentation
-	return json.Unmarshal(data, (*CodeActionKindDocumentationAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Kind    CodeActionKind `json:"kind"`
+		Command *Command       `json:"command"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A notebook cell text document filter denotes a cell text
@@ -7313,9 +8245,13 @@ func (s *NotebookCellTextDocumentFilter) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'notebook' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type NotebookCellTextDocumentFilterAlias NotebookCellTextDocumentFilter
-	return json.Unmarshal(data, (*NotebookCellTextDocumentFilterAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Notebook StringOrNotebookDocumentFilter `json:"notebook"`
+		Language *string                        `json:"language,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Matching options for the file operation pattern.
@@ -7348,9 +8284,13 @@ func (s *ExecutionSummary) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'executionOrder' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ExecutionSummaryAlias ExecutionSummary
-	return json.Unmarshal(data, (*ExecutionSummaryAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		ExecutionOrder uint32 `json:"executionOrder"`
+		Success        *bool  `json:"success,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.18.0
@@ -7369,9 +8309,12 @@ func (s *NotebookCellLanguage) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'language' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type NotebookCellLanguageAlias NotebookCellLanguage
-	return json.Unmarshal(data, (*NotebookCellLanguageAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Language string `json:"language"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Structural changes to cells in a notebook document.
@@ -7399,9 +8342,14 @@ func (s *NotebookDocumentCellChangeStructure) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'array' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type NotebookDocumentCellChangeStructureAlias NotebookDocumentCellChangeStructure
-	return json.Unmarshal(data, (*NotebookDocumentCellChangeStructureAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Array    *NotebookCellArrayChange  `json:"array"`
+		DidOpen  *[]*TextDocumentItem      `json:"didOpen,omitempty"`
+		DidClose *[]TextDocumentIdentifier `json:"didClose,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Content changes to a cell in a notebook document.
@@ -7427,9 +8375,13 @@ func (s *NotebookDocumentCellContentChanges) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'changes' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type NotebookDocumentCellContentChangesAlias NotebookDocumentCellContentChanges
-	return json.Unmarshal(data, (*NotebookDocumentCellContentChangesAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Document VersionedTextDocumentIdentifier  `json:"document"`
+		Changes  []TextDocumentContentChangeEvent `json:"changes"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Workspace specific client capabilities.
@@ -7669,9 +8621,12 @@ func (s *NotebookDocumentClientCapabilities) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'synchronization' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type NotebookDocumentClientCapabilitiesAlias NotebookDocumentClientCapabilities
-	return json.Unmarshal(data, (*NotebookDocumentClientCapabilitiesAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Synchronization *NotebookDocumentSyncClientCapabilities `json:"synchronization"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type WindowClientCapabilities struct {
@@ -7805,9 +8760,13 @@ func (s *RelativePattern) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'pattern' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type RelativePatternAlias RelativePattern
-	return json.Unmarshal(data, (*RelativePatternAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		BaseUri WorkspaceFolderOrURI `json:"baseUri"`
+		Pattern Pattern              `json:"pattern"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A document filter where `language` is required field.
@@ -7839,9 +8798,14 @@ func (s *TextDocumentFilterLanguage) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'language' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type TextDocumentFilterLanguageAlias TextDocumentFilterLanguage
-	return json.Unmarshal(data, (*TextDocumentFilterLanguageAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Language string       `json:"language"`
+		Scheme   *string      `json:"scheme,omitempty"`
+		Pattern  *GlobPattern `json:"pattern,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A document filter where `scheme` is required field.
@@ -7873,9 +8837,14 @@ func (s *TextDocumentFilterScheme) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'scheme' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type TextDocumentFilterSchemeAlias TextDocumentFilterScheme
-	return json.Unmarshal(data, (*TextDocumentFilterSchemeAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Language *string      `json:"language,omitempty"`
+		Scheme   string       `json:"scheme"`
+		Pattern  *GlobPattern `json:"pattern,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A document filter where `pattern` is required field.
@@ -7907,9 +8876,14 @@ func (s *TextDocumentFilterPattern) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'pattern' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type TextDocumentFilterPatternAlias TextDocumentFilterPattern
-	return json.Unmarshal(data, (*TextDocumentFilterPatternAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Language *string     `json:"language,omitempty"`
+		Scheme   *string     `json:"scheme,omitempty"`
+		Pattern  GlobPattern `json:"pattern"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A notebook document filter where `notebookType` is required field.
@@ -7937,9 +8911,14 @@ func (s *NotebookDocumentFilterNotebookType) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'notebookType' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type NotebookDocumentFilterNotebookTypeAlias NotebookDocumentFilterNotebookType
-	return json.Unmarshal(data, (*NotebookDocumentFilterNotebookTypeAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		NotebookType string       `json:"notebookType"`
+		Scheme       *string      `json:"scheme,omitempty"`
+		Pattern      *GlobPattern `json:"pattern,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A notebook document filter where `scheme` is required field.
@@ -7967,9 +8946,14 @@ func (s *NotebookDocumentFilterScheme) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'scheme' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type NotebookDocumentFilterSchemeAlias NotebookDocumentFilterScheme
-	return json.Unmarshal(data, (*NotebookDocumentFilterSchemeAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		NotebookType *string      `json:"notebookType,omitempty"`
+		Scheme       string       `json:"scheme"`
+		Pattern      *GlobPattern `json:"pattern,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A notebook document filter where `pattern` is required field.
@@ -7997,9 +8981,14 @@ func (s *NotebookDocumentFilterPattern) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'pattern' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type NotebookDocumentFilterPatternAlias NotebookDocumentFilterPattern
-	return json.Unmarshal(data, (*NotebookDocumentFilterPatternAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		NotebookType *string     `json:"notebookType,omitempty"`
+		Scheme       *string     `json:"scheme,omitempty"`
+		Pattern      GlobPattern `json:"pattern"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A change describing how to move a `NotebookCell`
@@ -8031,9 +9020,14 @@ func (s *NotebookCellArrayChange) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'deleteCount' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type NotebookCellArrayChangeAlias NotebookCellArrayChange
-	return json.Unmarshal(data, (*NotebookCellArrayChangeAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Start       uint32           `json:"start"`
+		DeleteCount uint32           `json:"deleteCount"`
+		Cells       *[]*NotebookCell `json:"cells,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type WorkspaceEditClientCapabilities struct {
@@ -8687,9 +9681,20 @@ func (s *SemanticTokensClientCapabilities) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'formats' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type SemanticTokensClientCapabilitiesAlias SemanticTokensClientCapabilities
-	return json.Unmarshal(data, (*SemanticTokensClientCapabilitiesAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DynamicRegistration     *bool                               `json:"dynamicRegistration,omitempty"`
+		Requests                *ClientSemanticTokensRequestOptions `json:"requests"`
+		TokenTypes              []string                            `json:"tokenTypes"`
+		TokenModifiers          []string                            `json:"tokenModifiers"`
+		Formats                 []TokenFormat                       `json:"formats"`
+		OverlappingTokenSupport *bool                               `json:"overlappingTokenSupport,omitempty"`
+		MultilineTokenSupport   *bool                               `json:"multilineTokenSupport,omitempty"`
+		ServerCancelSupport     *bool                               `json:"serverCancelSupport,omitempty"`
+		AugmentsSyntaxTokens    *bool                               `json:"augmentsSyntaxTokens,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Client capabilities for the linked editing range request.
@@ -8805,9 +9810,12 @@ func (s *ShowDocumentClientCapabilities) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'support' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ShowDocumentClientCapabilitiesAlias ShowDocumentClientCapabilities
-	return json.Unmarshal(data, (*ShowDocumentClientCapabilitiesAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Support bool `json:"support"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.18.0
@@ -8835,9 +9843,13 @@ func (s *StaleRequestSupportOptions) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'retryOnContentModified' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type StaleRequestSupportOptionsAlias StaleRequestSupportOptions
-	return json.Unmarshal(data, (*StaleRequestSupportOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Cancel                 bool     `json:"cancel"`
+		RetryOnContentModified []string `json:"retryOnContentModified"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Client capabilities specific to regular expressions.
@@ -8862,9 +9874,13 @@ func (s *RegularExpressionsClientCapabilities) UnmarshalJSON(data []byte) error 
 		return fmt.Errorf("required key 'engine' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type RegularExpressionsClientCapabilitiesAlias RegularExpressionsClientCapabilities
-	return json.Unmarshal(data, (*RegularExpressionsClientCapabilitiesAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Engine  RegularExpressionEngineKind `json:"engine"`
+		Version *string                     `json:"version,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Client capabilities specific to the used markdown parser.
@@ -8895,9 +9911,14 @@ func (s *MarkdownClientCapabilities) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'parser' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type MarkdownClientCapabilitiesAlias MarkdownClientCapabilities
-	return json.Unmarshal(data, (*MarkdownClientCapabilitiesAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Parser      string    `json:"parser"`
+		Version     *string   `json:"version,omitempty"`
+		AllowedTags *[]string `json:"allowedTags,omitempty"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.18.0
@@ -8938,9 +9959,12 @@ func (s *ClientSymbolTagOptions) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'valueSet' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ClientSymbolTagOptionsAlias ClientSymbolTagOptions
-	return json.Unmarshal(data, (*ClientSymbolTagOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		ValueSet []SymbolTag `json:"valueSet"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.18.0
@@ -8961,9 +9985,12 @@ func (s *ClientSymbolResolveOptions) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'properties' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ClientSymbolResolveOptionsAlias ClientSymbolResolveOptions
-	return json.Unmarshal(data, (*ClientSymbolResolveOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Properties []string `json:"properties"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.18.0
@@ -9109,9 +10136,12 @@ func (s *ClientCodeActionLiteralOptions) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'codeActionKind' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ClientCodeActionLiteralOptionsAlias ClientCodeActionLiteralOptions
-	return json.Unmarshal(data, (*ClientCodeActionLiteralOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		CodeActionKind *ClientCodeActionKindOptions `json:"codeActionKind"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.18.0
@@ -9131,9 +10161,12 @@ func (s *ClientCodeActionResolveOptions) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'properties' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ClientCodeActionResolveOptionsAlias ClientCodeActionResolveOptions
-	return json.Unmarshal(data, (*ClientCodeActionResolveOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Properties []string `json:"properties"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.18.0 - proposed
@@ -9153,9 +10186,12 @@ func (s *CodeActionTagOptions) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'valueSet' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type CodeActionTagOptionsAlias CodeActionTagOptions
-	return json.Unmarshal(data, (*CodeActionTagOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		ValueSet []CodeActionTag `json:"valueSet"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.18.0
@@ -9175,9 +10211,12 @@ func (s *ClientCodeLensResolveOptions) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'properties' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ClientCodeLensResolveOptionsAlias ClientCodeLensResolveOptions
-	return json.Unmarshal(data, (*ClientCodeLensResolveOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Properties []string `json:"properties"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.18.0
@@ -9250,9 +10289,12 @@ func (s *ClientInlayHintResolveOptions) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'properties' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ClientInlayHintResolveOptionsAlias ClientInlayHintResolveOptions
-	return json.Unmarshal(data, (*ClientInlayHintResolveOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Properties []string `json:"properties"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.18.0
@@ -9280,9 +10322,12 @@ func (s *CompletionItemTagOptions) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'valueSet' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type CompletionItemTagOptionsAlias CompletionItemTagOptions
-	return json.Unmarshal(data, (*CompletionItemTagOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		ValueSet []CompletionItemTag `json:"valueSet"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.18.0
@@ -9302,9 +10347,12 @@ func (s *ClientCompletionItemResolveOptions) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'properties' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ClientCompletionItemResolveOptionsAlias ClientCompletionItemResolveOptions
-	return json.Unmarshal(data, (*ClientCompletionItemResolveOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Properties []string `json:"properties"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.18.0
@@ -9323,9 +10371,12 @@ func (s *ClientCompletionItemInsertTextModeOptions) UnmarshalJSON(data []byte) e
 		return fmt.Errorf("required key 'valueSet' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ClientCompletionItemInsertTextModeOptionsAlias ClientCompletionItemInsertTextModeOptions
-	return json.Unmarshal(data, (*ClientCompletionItemInsertTextModeOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		ValueSet []InsertTextMode `json:"valueSet"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.18.0
@@ -9357,9 +10408,12 @@ func (s *ClientCodeActionKindOptions) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'valueSet' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ClientCodeActionKindOptionsAlias ClientCodeActionKindOptions
-	return json.Unmarshal(data, (*ClientCodeActionKindOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		ValueSet []CodeActionKind `json:"valueSet"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.18.0
@@ -9379,9 +10433,12 @@ func (s *ClientDiagnosticsTagOptions) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("required key 'valueSet' is missing")
 	}
 
-	// Use type alias to avoid infinite recursion
-	type ClientDiagnosticsTagOptionsAlias ClientDiagnosticsTagOptions
-	return json.Unmarshal(data, (*ClientDiagnosticsTagOptionsAlias)(s))
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		ValueSet []DiagnosticTag `json:"valueSet"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.18.0

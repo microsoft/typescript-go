@@ -361,43 +361,61 @@ function generateCode() {
     writeLine("// Structures\n");
 
     for (const structure of model.structures) {
-        write(formatDocumentation(structure.documentation));
-
-        writeLine(`type ${structure.name} struct {`); // Embed extended types and mixins
-        for (const e of structure.extends || []) {
-            if (e.kind !== "reference") {
-                throw new Error(`Unexpected extends kind: ${e.kind}`);
+        /**
+         * @param {string} name
+         * @param {boolean} includeDocumentation
+         */
+        function generateStructFields(name, includeDocumentation) {
+            if (includeDocumentation) {
+                write(formatDocumentation(structure.documentation));
             }
-            writeLine(`\t${e.name}`);
-        }
 
-        for (const m of structure.mixins || []) {
-            if (m.kind !== "reference") {
-                throw new Error(`Unexpected mixin kind: ${m.kind}`);
+            writeLine(`type ${name} struct {`);
+
+            // Embed extended types and mixins
+            for (const e of structure.extends || []) {
+                if (e.kind !== "reference") {
+                    throw new Error(`Unexpected extends kind: ${e.kind}`);
+                }
+                writeLine(`\t${e.name}`);
             }
-            writeLine(`\t${m.name}`);
-        }
 
-        // Insert a blank line after embeds if there were any
-        if (
-            (structure.extends && structure.extends.length > 0) ||
-            (structure.mixins && structure.mixins.length > 0)
-        ) {
+            for (const m of structure.mixins || []) {
+                if (m.kind !== "reference") {
+                    throw new Error(`Unexpected mixin kind: ${m.kind}`);
+                }
+                writeLine(`\t${m.name}`);
+            }
+
+            // Insert a blank line after embeds if there were any
+            if (
+                (structure.extends && structure.extends.length > 0) ||
+                (structure.mixins && structure.mixins.length > 0)
+            ) {
+                writeLine("");
+            }
+
+            // Then properties
+            for (const prop of structure.properties) {
+                if (includeDocumentation) {
+                    write(formatDocumentation(prop.documentation));
+                }
+
+                const type = resolveType(prop.type);
+                const goType = prop.optional || type.needsPointer ? `*${type.name}` : type.name;
+
+                writeLine(`\t${titleCase(prop.name)} ${goType} \`json:"${prop.name}${prop.optional ? ",omitempty" : ""}"\``);
+
+                if (includeDocumentation) {
+                    writeLine("");
+                }
+            }
+
+            writeLine("}");
             writeLine("");
         }
 
-        // Then properties
-        for (const prop of structure.properties) {
-            write(formatDocumentation(prop.documentation));
-
-            const type = resolveType(prop.type);
-            const goType = prop.optional || type.needsPointer ? `*${type.name}` : type.name;
-
-            writeLine(`\t${titleCase(prop.name)} ${goType} \`json:"${prop.name}${prop.optional ? ",omitempty" : ""}"\``);
-            writeLine("");
-        }
-
-        writeLine("}");
+        generateStructFields(structure.name, true);
         writeLine("");
 
         // Generate UnmarshalJSON method for structure validation
@@ -418,9 +436,9 @@ function generateCode() {
             }
 
             writeLine(``);
-            writeLine(`\t// Use type alias to avoid infinite recursion`);
-            writeLine(`\ttype ${structure.name}Alias ${structure.name}`);
-            writeLine(`\treturn json.Unmarshal(data, (*${structure.name}Alias)(s))`);
+            writeLine(`\t// Redeclare the struct to prevent infinite recursion`);
+            generateStructFields("temp", false);
+            writeLine(`\treturn json.Unmarshal(data, (*temp)(s))`);
             writeLine(`}`);
             writeLine("");
         }
