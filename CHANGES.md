@@ -109,7 +109,10 @@ Must now be written as
 function sum(...ns) {}
 ```
 
-#### The postfix `=` type no longer adds `undefined` even when `strictNullChecks` is off:
+#### The postfix `=` type no longer adds `undefined` even when `strictNullChecks` is off
+
+This is a bug in Strada: it adds `undefined` to the type even when `strictNullChecks` is off.
+This bug is fixed in Corsa.
 
 ```js
 /** @param {number=} x */
@@ -301,13 +304,13 @@ exports.x = theRealExport
 
 This exports `x: undefined` not `x: typeof theRealExport`.
 
-#### Type info for `module` shows a property with name of the export instead of `exports`:
+#### Hover for `module` shows a property with name of the export instead of `exports`:
 
 ```js
 module.exports = singleIdentifier
 ```
 
-results in `module: { singleIdentifier: any }`
+shows a hover type like `module: { singleIdentifier: any }`
 
 #### Property access on `require` no longer imports a single property from a module:
 
