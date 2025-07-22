@@ -182,15 +182,48 @@ func (b *projectCollectionBuilder) DidDeleteFiles(uris []lsproto.DocumentUri) {
 		result := b.configFileRegistryBuilder.DidDeleteFile(path)
 		maps.Copy(b.projectsAffectedByConfigChanges, result.affectedProjects)
 		maps.Copy(b.filesAffectedByConfigChanges, result.affectedFiles)
+		if result.IsEmpty() {
+			b.forEachProject(func(entry dirty.Value[*Project]) bool {
+				entry.ChangeIf(
+					func(p *Project) bool { return p.containsFile(path) },
+					func(p *Project) {
+						p.dirty = true
+						p.dirtyFilePath = ""
+					},
+				)
+				return true
+			})
+			b.markFileChanged(path)
+		}
 	}
 }
 
+// DidCreateFiles is only called when file watching is enabled.
 func (b *projectCollectionBuilder) DidCreateFiles(uris []lsproto.DocumentUri) {
 	for _, uri := range uris {
+		fileName := uri.FileName()
 		path := uri.Path(b.fs.fs.UseCaseSensitiveFileNames())
-		result := b.configFileRegistryBuilder.DidCreateFile(path)
+		result := b.configFileRegistryBuilder.DidCreateFile(fileName, path)
 		maps.Copy(b.projectsAffectedByConfigChanges, result.affectedProjects)
 		maps.Copy(b.filesAffectedByConfigChanges, result.affectedFiles)
+		b.forEachProject(func(entry dirty.Value[*Project]) bool {
+			entry.ChangeIf(
+				func(p *Project) bool {
+					if _, ok := p.failedLookupsWatch.input[path]; ok {
+						return true
+					}
+					if _, ok := p.affectingLocationsWatch.input[path]; ok {
+						return true
+					}
+					return false
+				},
+				func(p *Project) {
+					p.dirty = true
+					p.dirtyFilePath = ""
+				},
+			)
+			return true
+		})
 	}
 }
 
@@ -200,7 +233,9 @@ func (b *projectCollectionBuilder) DidChangeFiles(uris []lsproto.DocumentUri) {
 		result := b.configFileRegistryBuilder.DidChangeFile(path)
 		maps.Copy(b.projectsAffectedByConfigChanges, result.affectedProjects)
 		maps.Copy(b.filesAffectedByConfigChanges, result.affectedFiles)
-		b.markFileChanged(path)
+		if result.IsEmpty() {
+			b.markFileChanged(path)
+		}
 	}
 }
 
@@ -545,8 +580,11 @@ func (b *projectCollectionBuilder) updateInferredProject(rootFileNames []string)
 	return b.updateProgram(b.inferredProject)
 }
 
+// updateProgram updates the program for the given project entry if necessary. It returns
+// a boolean indicating whether the update could have caused any structure-affecting changes.
 func (b *projectCollectionBuilder) updateProgram(entry dirty.Value[*Project]) bool {
 	var updateProgram bool
+	var filesChanged bool
 	entry.Locked(func(entry dirty.Value[*Project]) {
 		if entry.Value().Kind == KindConfigured {
 			commandLine := b.configFileRegistryBuilder.acquireConfigForProject(entry.Value().configFileName, entry.Value().configFilePath, entry.Value())
@@ -565,9 +603,18 @@ func (b *projectCollectionBuilder) updateProgram(entry dirty.Value[*Project]) bo
 		if updateProgram {
 			entry.Change(func(project *Project) {
 				project.host = newCompilerHost(project.currentDirectory, project, b)
-				newProgram, checkerPool := project.CreateProgram()
-				project.Program = newProgram
-				project.checkerPool = checkerPool
+				result := project.CreateProgram()
+				project.Program = result.Program
+				project.checkerPool = result.CheckerPool
+				if !result.Cloned {
+					filesChanged = true
+					project.ProgramStructureVersion++
+					if b.sessionOptions.WatchEnabled {
+						failedLookupsWatch, affectingLocationsWatch := project.CloneWatchers()
+						project.failedLookupsWatch = failedLookupsWatch
+						project.affectingLocationsWatch = affectingLocationsWatch
+					}
+				}
 				// !!! unthread context
 				project.LanguageService = ls.NewLanguageService(b.ctx, project)
 				project.dirty = false
@@ -576,7 +623,7 @@ func (b *projectCollectionBuilder) updateProgram(entry dirty.Value[*Project]) bo
 			delete(b.projectsAffectedByConfigChanges, entry.Value().configFilePath)
 		}
 	})
-	return updateProgram
+	return filesChanged
 }
 
 func (b *projectCollectionBuilder) markFileChanged(path tspath.Path) {

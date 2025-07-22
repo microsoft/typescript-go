@@ -94,7 +94,6 @@ func (s *Session) DidCloseFile(ctx context.Context, uri lsproto.DocumentUri) {
 		URI:  uri,
 		Hash: s.fs.getFile(uri.FileName()).Hash(),
 	})
-	// !!! immediate update if file does not exist
 }
 
 func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, version int32, changes []lsproto.TextDocumentContentChangeEvent) {

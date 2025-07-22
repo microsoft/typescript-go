@@ -3,9 +3,11 @@ package projectv2
 import (
 	"fmt"
 	"maps"
+	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/dirty"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -99,9 +101,9 @@ func (c *configFileRegistryBuilder) reloadIfNeeded(entry *configFileEntry, fileN
 	case PendingReloadFileNames:
 		entry.commandLine = tsoptions.ReloadFileNamesOfParsedCommandLine(entry.commandLine, c.fs.fs)
 	case PendingReloadFull:
-		newCommandLine, _ := tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, c, c)
-		c.updateExtendingConfigs(path, newCommandLine, entry.commandLine)
-		entry.commandLine = newCommandLine
+		entry.commandLine, _ = tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, c, c)
+		c.updateExtendingConfigs(path, entry.commandLine, entry.commandLine)
+		c.updateRootFilesWatch(fileName, entry)
 	default:
 		return
 	}
@@ -114,10 +116,7 @@ func (c *configFileRegistryBuilder) updateExtendingConfigs(extendingConfigPath t
 		for _, extendedConfig := range newCommandLine.ExtendedSourceFiles() {
 			extendedConfigPath := c.fs.toPath(extendedConfig)
 			newExtendedConfigPaths.Add(extendedConfigPath)
-			entry, loaded := c.configs.LoadOrStore(extendedConfigPath, &configFileEntry{
-				pendingReload:    PendingReloadFull,
-				retainingConfigs: map[tspath.Path]struct{}{extendingConfigPath: {}},
-			})
+			entry, loaded := c.configs.LoadOrStore(extendedConfigPath, newExtendedConfigFileEntry(extendingConfigPath))
 			if loaded {
 				entry.ChangeIf(
 					func(config *configFileEntry) bool {
@@ -155,12 +154,34 @@ func (c *configFileRegistryBuilder) updateExtendingConfigs(extendingConfigPath t
 	}
 }
 
+func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry *configFileEntry) {
+	if entry.rootFilesWatch == nil {
+		return
+	}
+
+	wildcardGlobs := entry.commandLine.WildcardDirectories()
+	rootFileGlobs := make([]string, 0, len(wildcardGlobs)+1+len(entry.commandLine.ExtendedSourceFiles()))
+	rootFileGlobs = append(rootFileGlobs, fileName)
+	for _, extendedConfig := range entry.commandLine.ExtendedSourceFiles() {
+		rootFileGlobs = append(rootFileGlobs, extendedConfig)
+	}
+	for dir, recursive := range wildcardGlobs {
+		rootFileGlobs = append(rootFileGlobs, fmt.Sprintf("%s/%s", tspath.NormalizePath(dir), core.IfElse(recursive, recursiveFileGlobPattern, fileGlobPattern)))
+	}
+	for _, fileName := range entry.commandLine.LiteralFileNames() {
+		rootFileGlobs = append(rootFileGlobs, fileName)
+	}
+
+	slices.Sort(rootFileGlobs)
+	entry.rootFilesWatch = entry.rootFilesWatch.Clone(rootFileGlobs)
+}
+
 // acquireConfigForProject loads a config file entry from the cache, or parses it if not already
 // cached, then adds the project (if provided) to `retainingProjects` to keep it alive
 // in the cache. Each `acquireConfigForProject` call that passes a `project` should be accompanied
 // by an eventual `releaseConfigForProject` call with the same project.
 func (c *configFileRegistryBuilder) acquireConfigForProject(fileName string, path tspath.Path, project *Project) *tsoptions.ParsedCommandLine {
-	entry, _ := c.configs.LoadOrStore(path, &configFileEntry{pendingReload: PendingReloadFull})
+	entry, _ := c.configs.LoadOrStore(path, newConfigFileEntry())
 	var needsRetainProject bool
 	entry.ChangeIf(
 		func(config *configFileEntry) bool {
@@ -186,7 +207,7 @@ func (c *configFileRegistryBuilder) acquireConfigForProject(fileName string, pat
 // Each `acquireConfigForOpenFile` call that passes an `openFilePath`
 // should be accompanied by an eventual `releaseConfigForOpenFile` call with the same open file.
 func (c *configFileRegistryBuilder) acquireConfigForOpenFile(configFileName string, configFilePath tspath.Path, openFilePath tspath.Path) *tsoptions.ParsedCommandLine {
-	entry, _ := c.configs.LoadOrStore(configFilePath, &configFileEntry{pendingReload: PendingReloadFull})
+	entry, _ := c.configs.LoadOrStore(configFilePath, newConfigFileEntry())
 	var needsRetainOpenFile bool
 	entry.ChangeIf(
 		func(config *configFileEntry) bool {
@@ -246,12 +267,26 @@ type changeFileResult struct {
 	affectedFiles    map[tspath.Path]struct{}
 }
 
+func (r changeFileResult) IsEmpty() bool {
+	return len(r.affectedProjects) == 0 && len(r.affectedFiles) == 0
+}
+
 func (c *configFileRegistryBuilder) DidChangeFile(path tspath.Path) changeFileResult {
 	return c.handlePossibleConfigChange(path, lsproto.FileChangeTypeChanged)
 }
 
-func (c *configFileRegistryBuilder) DidCreateFile(path tspath.Path) changeFileResult {
-	return c.handlePossibleConfigChange(path, lsproto.FileChangeTypeCreated)
+func (c *configFileRegistryBuilder) DidCreateFile(fileName string, path tspath.Path) changeFileResult {
+	result := c.handlePossibleConfigChange(path, lsproto.FileChangeTypeCreated)
+	if result.IsEmpty() {
+		affectedProjects := c.handlePossibleRootFileCreation(fileName, path)
+		if affectedProjects != nil {
+			if result.affectedProjects == nil {
+				result.affectedProjects = make(map[tspath.Path]struct{})
+			}
+			maps.Copy(result.affectedProjects, affectedProjects)
+		}
+	}
+	return result
 }
 
 func (c *configFileRegistryBuilder) DidDeleteFile(path tspath.Path) changeFileResult {
@@ -277,7 +312,8 @@ func (c *configFileRegistryBuilder) handlePossibleConfigChange(path tspath.Path,
 	var affectedFiles map[tspath.Path]struct{}
 	if changeKind != lsproto.FileChangeTypeChanged {
 		directoryPath := path.GetDirectoryPath()
-		if tspath.GetBaseFileName(string(path)) == "tsconfig.json" || tspath.GetBaseFileName(string(path)) == "jsconfig.json" {
+		baseName := tspath.GetBaseFileName(string(path))
+		if baseName == "tsconfig.json" || baseName == "jsconfig.json" {
 			c.configFileNames.Range(func(entry *dirty.MapEntry[tspath.Path, *configFileNames]) bool {
 				if directoryPath.ContainsPath(entry.Key()) {
 					if affectedFiles == nil {
@@ -307,6 +343,26 @@ func (c *configFileRegistryBuilder) handleConfigChange(entry dirty.Value[*config
 		affectedProjects = maps.Clone(entry.Value().retainingProjects)
 	}
 
+	return affectedProjects
+}
+
+func (c *configFileRegistryBuilder) handlePossibleRootFileCreation(fileName string, path tspath.Path) map[tspath.Path]struct{} {
+	var affectedProjects map[tspath.Path]struct{}
+	c.configs.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *configFileEntry]) bool {
+		entry.ChangeIf(
+			func(config *configFileEntry) bool {
+				return config.commandLine != nil && config.pendingReload == PendingReloadNone && config.commandLine.MatchesFileName(fileName)
+			},
+			func(config *configFileEntry) {
+				config.pendingReload = PendingReloadFileNames
+				if affectedProjects == nil {
+					affectedProjects = make(map[tspath.Path]struct{})
+				}
+				maps.Copy(affectedProjects, config.retainingProjects)
+			},
+		)
+		return true
+	})
 	return affectedProjects
 }
 

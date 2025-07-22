@@ -267,8 +267,9 @@ func (fs *overlayFS) processChanges(changes []FileChange) FileChangeSummary {
 		}
 
 		if events.watchChanged {
-			result.Changed.Add(uri)
-			if o != nil && o.MatchesDiskText() {
+			if o == nil {
+				result.Changed.Add(uri)
+			} else if o != nil && o.MatchesDiskText() {
 				o = newOverlay(o.FileName(), o.Content(), o.Version(), o.kind)
 				o.matchesDiskText = false
 				newOverlays[path] = o
@@ -309,11 +310,11 @@ func (fs *overlayFS) processChanges(changes []FileChange) FileChangeSummary {
 			newOverlays[path] = o
 		}
 
-		if events.created {
+		if events.created && o == nil {
 			result.Created.Add(uri)
 		}
 
-		if events.deleted {
+		if events.deleted && o == nil {
 			result.Deleted.Add(uri)
 		}
 	}

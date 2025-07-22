@@ -41,10 +41,14 @@ type Project struct {
 	dirty         bool
 	dirtyFilePath tspath.Path
 
-	host            *compilerHost
-	CommandLine     *tsoptions.ParsedCommandLine
-	Program         *compiler.Program
-	LanguageService *ls.LanguageService
+	host                    *compilerHost
+	CommandLine             *tsoptions.ParsedCommandLine
+	Program                 *compiler.Program
+	LanguageService         *ls.LanguageService
+	ProgramStructureVersion int
+
+	failedLookupsWatch      *watchedFiles[map[tspath.Path]string]
+	affectingLocationsWatch *watchedFiles[map[tspath.Path]string]
 
 	checkerPool *project.CheckerPool
 }
@@ -54,7 +58,20 @@ func NewConfiguredProject(
 	configFilePath tspath.Path,
 	builder *projectCollectionBuilder,
 ) *Project {
-	return NewProject(configFileName, KindConfigured, tspath.GetDirectoryPath(configFileName), builder)
+	p := NewProject(configFileName, KindConfigured, tspath.GetDirectoryPath(configFileName), builder)
+	if builder.sessionOptions.WatchEnabled {
+		p.failedLookupsWatch = newWatchedFiles(
+			"failed lookups",
+			lsproto.WatchKindCreate,
+			createResolutionLookupGlobMapper(p.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
+		)
+		p.affectingLocationsWatch = newWatchedFiles(
+			"affecting locations",
+			lsproto.WatchKindCreate,
+			createResolutionLookupGlobMapper(p.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
+		)
+	}
+	return p
 }
 
 func NewInferredProject(
@@ -150,16 +167,26 @@ func (p *Project) Clone() *Project {
 		dirty:         p.dirty,
 		dirtyFilePath: p.dirtyFilePath,
 
-		host:            p.host,
-		CommandLine:     p.CommandLine,
-		Program:         p.Program,
-		LanguageService: p.LanguageService,
+		host:                    p.host,
+		CommandLine:             p.CommandLine,
+		Program:                 p.Program,
+		LanguageService:         p.LanguageService,
+		ProgramStructureVersion: p.ProgramStructureVersion,
+
+		failedLookupsWatch:      p.failedLookupsWatch,
+		affectingLocationsWatch: p.affectingLocationsWatch,
 
 		checkerPool: p.checkerPool,
 	}
 }
 
-func (p *Project) CreateProgram() (*compiler.Program, *project.CheckerPool) {
+type CreateProgramResult struct {
+	Program     *compiler.Program
+	Cloned      bool
+	CheckerPool *project.CheckerPool
+}
+
+func (p *Project) CreateProgram() CreateProgramResult {
 	var programCloned bool
 	var checkerPool *project.CheckerPool
 	var newProgram *compiler.Program
@@ -190,9 +217,27 @@ func (p *Project) CreateProgram() (*compiler.Program, *project.CheckerPool) {
 		)
 	}
 
-	return newProgram, checkerPool
+	return CreateProgramResult{
+		Program:     newProgram,
+		Cloned:      programCloned,
+		CheckerPool: checkerPool,
+	}
+}
+
+func (p *Project) CloneWatchers() (failedLookupsWatch *watchedFiles[map[tspath.Path]string], affectingLocationsWatch *watchedFiles[map[tspath.Path]string]) {
+	failedLookups := make(map[tspath.Path]string)
+	affectingLocations := make(map[tspath.Path]string)
+	extractLookups(p.toPath, failedLookups, affectingLocations, p.Program.GetResolvedModules())
+	extractLookups(p.toPath, failedLookups, affectingLocations, p.Program.GetResolvedTypeReferenceDirectives())
+	failedLookupsWatch = p.failedLookupsWatch.Clone(failedLookups)
+	affectingLocationsWatch = p.affectingLocationsWatch.Clone(affectingLocations)
+	return failedLookupsWatch, affectingLocationsWatch
 }
 
 func (p *Project) log(msg string) {
 	// !!!
+}
+
+func (p *Project) toPath(fileName string) tspath.Path {
+	return tspath.ToPath(fileName, p.currentDirectory, p.host.FS().UseCaseSensitiveFileNames())
 }

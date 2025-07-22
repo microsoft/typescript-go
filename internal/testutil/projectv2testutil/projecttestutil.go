@@ -19,7 +19,7 @@ func Setup(files map[string]any) (*projectv2.Session, vfs.FS) {
 		DefaultLibraryPath: bundled.LibPath(),
 		TypingsLocation:    TestTypingsLocation,
 		PositionEncoding:   lsproto.PositionEncodingKindUTF8,
-		WatchEnabled:       false,
+		WatchEnabled:       true,
 		LoggingEnabled:     true,
 	}, fs)
 	return session, fs

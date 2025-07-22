@@ -36,6 +36,7 @@ type FileChangeSummary struct {
 	Closed  map[lsproto.DocumentUri][sha256.Size]byte
 	Changed collections.Set[lsproto.DocumentUri]
 	Saved   collections.Set[lsproto.DocumentUri]
+	// Only set when file watching is enabled
 	Created collections.Set[lsproto.DocumentUri]
 	Deleted collections.Set[lsproto.DocumentUri]
 }

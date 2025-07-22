@@ -3,6 +3,8 @@ package projectv2
 import (
 	"maps"
 
+	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -38,6 +40,22 @@ type configFileEntry struct {
 	// or may not also be used directly by a project, so it's possible that
 	// when this is set, no other fields will be used.
 	retainingConfigs map[tspath.Path]struct{}
+	// rootFilesWatch is a watch for the root files of this config file.
+	rootFilesWatch *watchedFiles[[]string]
+}
+
+func newConfigFileEntry() *configFileEntry {
+	return &configFileEntry{
+		pendingReload:  PendingReloadFull,
+		rootFilesWatch: newWatchedFiles("root files", lsproto.WatchKindCreate, core.Identity),
+	}
+}
+
+func newExtendedConfigFileEntry(extendingConfigPath tspath.Path) *configFileEntry {
+	return &configFileEntry{
+		pendingReload:    PendingReloadFull,
+		retainingConfigs: map[tspath.Path]struct{}{extendingConfigPath: {}},
+	}
 }
 
 func (e *configFileEntry) Clone() *configFileEntry {
@@ -49,6 +67,7 @@ func (e *configFileEntry) Clone() *configFileEntry {
 		retainingProjects:  maps.Clone(e.retainingProjects),
 		retainingOpenFiles: maps.Clone(e.retainingOpenFiles),
 		retainingConfigs:   maps.Clone(e.retainingConfigs),
+		rootFilesWatch:     e.rootFilesWatch,
 	}
 }
 
