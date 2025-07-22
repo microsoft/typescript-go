@@ -3,6 +3,8 @@ package lsproto
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/go-json-experiment/json/jsontext"
 )
 
 type DocumentUri string // !!!
@@ -73,4 +75,24 @@ func assertOnlyOne(message string, values ...bool) {
 	if count != 1 {
 		panic(message)
 	}
+}
+
+type nothing struct{}
+
+func (nothing) UnmarshalJSON(data []byte) error {
+	return nil
+}
+
+func (nothing) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	return dec.SkipValue()
+}
+
+type jsonKeys map[string]nothing
+
+func getJSONKeys(b []byte) (jsonKeys, error) {
+	var m jsonKeys
+	if err := json.Unmarshal(b, &m); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal JSON keys: %w", err)
+	}
+	return m, nil
 }
