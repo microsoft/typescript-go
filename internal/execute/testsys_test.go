@@ -181,10 +181,10 @@ func (s *testSys) baselineProgram(baseline *strings.Builder, program *incrementa
 	}
 
 	baseline.WriteString("SemanticDiagnostics::\n")
-	semanticDiagnostics, diagnosticsFromOldProgram, updatedSignatureKinds := program.GetTestingData(program.GetProgram())
+	testingData := program.GetTestingData(program.GetProgram())
 	for _, file := range program.GetProgram().GetSourceFiles() {
-		if diagnostics, ok := semanticDiagnostics[file.Path()]; ok {
-			if oldDiagnostics, ok := diagnosticsFromOldProgram[file.Path()]; !ok || oldDiagnostics != diagnostics {
+		if diagnostics, ok := testingData.SemanticDiagnosticsPerFile[file.Path()]; ok {
+			if oldDiagnostics, ok := testingData.OldProgramSemanticDiagnosticsPerFile[file.Path()]; !ok || oldDiagnostics != diagnostics {
 				baseline.WriteString("*refresh*    " + file.FileName() + "\n")
 			}
 		} else {
@@ -195,7 +195,7 @@ func (s *testSys) baselineProgram(baseline *strings.Builder, program *incrementa
 	// Write signature updates
 	baseline.WriteString("Signatures::\n")
 	for _, file := range program.GetProgram().GetSourceFiles() {
-		if kind, loaded := updatedSignatureKinds.Load(file.Path()); loaded {
+		if kind, ok := testingData.UpdatedSignatureKinds[file.Path()]; ok {
 			switch kind {
 			case incremental.SignatureUpdateKindComputedDts:
 				baseline.WriteString("(computed .d.ts) " + file.FileName() + "\n")

@@ -1,6 +1,8 @@
 package compiler
 
 import (
+	"sync"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -23,10 +25,11 @@ type CompilerHost interface {
 var _ CompilerHost = (*compilerHost)(nil)
 
 type compilerHost struct {
-	currentDirectory    string
-	fs                  vfs.FS
-	defaultLibraryPath  string
-	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]
+	currentDirectory        string
+	fs                      vfs.FS
+	defaultLibraryPath      string
+	extendedConfigCache     *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]
+	extendedConfigCacheOnce sync.Once
 }
 
 func NewCachedFSCompilerHost(
@@ -77,9 +80,11 @@ func (h *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.Sourc
 }
 
 func (h *compilerHost) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
-	if h.extendedConfigCache == nil {
-		h.extendedConfigCache = &collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]{}
-	}
+	h.extendedConfigCacheOnce.Do(func() {
+		if h.extendedConfigCache == nil {
+			h.extendedConfigCache = &collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]{}
+		}
+	})
 	commandLine, _ := tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, h, h.extendedConfigCache)
 	return commandLine
 }

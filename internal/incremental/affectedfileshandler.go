@@ -336,7 +336,7 @@ func (h *affectedFilesHandler) updateSnapshot() {
 	})
 	if h.updatedSignatureKinds != nil {
 		h.updatedSignatureKinds.Range(func(filePath tspath.Path, kind SignatureUpdateKind) bool {
-			h.program.updatedSignatureKinds.Store(filePath, kind)
+			h.program.updatedSignatureKinds[filePath] = kind
 			return true
 		})
 	}

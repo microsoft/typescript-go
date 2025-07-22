@@ -9,7 +9,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/execute"
-	"github.com/microsoft/typescript-go/internal/incremental"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -37,10 +36,10 @@ type tscInput struct {
 	edits           []*testTscEdit
 }
 
-func (test *tscInput) executeCommand(sys *testSys, baselineBuilder *strings.Builder, commandLineArgs []string) (*incremental.Program, *execute.Watcher) {
+func (test *tscInput) executeCommand(sys *testSys, baselineBuilder *strings.Builder, commandLineArgs []string) execute.CommandLineResult {
 	fmt.Fprint(baselineBuilder, "tsgo ", strings.Join(commandLineArgs, " "), "\n")
-	exit, incrementalProgram, watcher := execute.CommandLine(sys, commandLineArgs, true)
-	switch exit {
+	result := execute.CommandLine(sys, commandLineArgs, true)
+	switch result.Status {
 	case execute.ExitStatusSuccess:
 		baselineBuilder.WriteString("ExitStatus:: Success")
 	case execute.ExitStatusDiagnosticsPresent_OutputsSkipped:
@@ -54,9 +53,9 @@ func (test *tscInput) executeCommand(sys *testSys, baselineBuilder *strings.Buil
 	case execute.ExitStatusNotImplemented:
 		baselineBuilder.WriteString("ExitStatus:: NotImplemented")
 	default:
-		panic(fmt.Sprintf("UnknownExitStatus %d", exit))
+		panic(fmt.Sprintf("UnknownExitStatus %d", result.Status))
 	}
-	return incrementalProgram, watcher
+	return result
 }
 
 func (test *tscInput) run(t *testing.T, scenario string) {
@@ -75,9 +74,9 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 			"\nInput::\n",
 		)
 		sys.baselineFSwithDiff(baselineBuilder)
-		incrementalProgram, watcher := test.executeCommand(sys, baselineBuilder, test.commandLineArgs)
+		result := test.executeCommand(sys, baselineBuilder, test.commandLineArgs)
 		sys.serializeState(baselineBuilder)
-		sys.baselineProgram(baselineBuilder, incrementalProgram, watcher)
+		sys.baselineProgram(baselineBuilder, result.IncrementalProgram, result.Watcher)
 
 		for index, do := range test.edits {
 			sys.clearOutput()
@@ -91,14 +90,14 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 				}
 				sys.baselineFSwithDiff(baselineBuilder)
 
-				var editIncrementalProgram *incremental.Program
-				if watcher == nil {
-					editIncrementalProgram, watcher = test.executeCommand(sys, baselineBuilder, commandLineArgs)
+				var editResult execute.CommandLineResult
+				if result.Watcher == nil {
+					editResult = test.executeCommand(sys, baselineBuilder, commandLineArgs)
 				} else {
-					watcher.DoCycle()
+					result.Watcher.DoCycle()
 				}
 				sys.serializeState(baselineBuilder)
-				sys.baselineProgram(baselineBuilder, editIncrementalProgram, watcher)
+				sys.baselineProgram(baselineBuilder, editResult.IncrementalProgram, result.Watcher)
 			})
 			wg.Queue(func() {
 				// Compute build with all the edits
@@ -127,7 +126,7 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 func getDiffForIncremental(incrementalSys *testSys, nonIncrementalSys *testSys) string {
 	var diffBuilder strings.Builder
 
-	nonIncrementalOutputs := nonIncrementalSys.testFs().writtenFiles.ToArray()
+	nonIncrementalOutputs := nonIncrementalSys.testFs().writtenFiles.ToSlice()
 	slices.Sort(nonIncrementalOutputs)
 	for _, nonIncrementalOutput := range nonIncrementalOutputs {
 		if tspath.FileExtensionIs(nonIncrementalOutput, tspath.ExtensionTsBuildInfo) ||

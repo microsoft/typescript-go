@@ -65,15 +65,7 @@ func (s *Set[T]) Equals(other *Set[T]) bool {
 	if s == nil || other == nil {
 		return false
 	}
-	if s.Len() != other.Len() {
-		return false
-	}
-	for key := range s.M {
-		if !other.Has(key) {
-			return false
-		}
-	}
-	return true
+	return maps.Equal(s.M, other.M)
 }
 
 func NewSetFromItems[T comparable](items ...T) *Set[T] {

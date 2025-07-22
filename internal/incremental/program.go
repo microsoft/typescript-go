@@ -7,7 +7,6 @@ import (
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
@@ -27,10 +26,10 @@ type Program struct {
 	snapshot                   *snapshot
 	program                    *compiler.Program
 	semanticDiagnosticsPerFile map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName
-	updatedSignatureKinds      *collections.SyncMap[tspath.Path, SignatureUpdateKind]
+	updatedSignatureKinds      map[tspath.Path]SignatureUpdateKind
 }
 
-var _ compiler.AnyProgram = (*Program)(nil)
+var _ compiler.ProgramLike = (*Program)(nil)
 
 func NewProgram(program *compiler.Program, oldProgram *Program, testing bool) *Program {
 	incrementalProgram := &Program{
@@ -42,108 +41,118 @@ func NewProgram(program *compiler.Program, oldProgram *Program, testing bool) *P
 		if oldProgram != nil {
 			incrementalProgram.semanticDiagnosticsPerFile = oldProgram.snapshot.semanticDiagnosticsPerFile
 		}
-		incrementalProgram.updatedSignatureKinds = &collections.SyncMap[tspath.Path, SignatureUpdateKind]{}
+		incrementalProgram.updatedSignatureKinds = make(map[tspath.Path]SignatureUpdateKind)
 	}
 	return incrementalProgram
 }
 
-func (h *Program) GetTestingData(program *compiler.Program) (map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName, map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName, *collections.SyncMap[tspath.Path, SignatureUpdateKind]) {
-	return h.snapshot.semanticDiagnosticsPerFile, h.semanticDiagnosticsPerFile, h.updatedSignatureKinds
+type TestingData struct {
+	SemanticDiagnosticsPerFile           map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName
+	OldProgramSemanticDiagnosticsPerFile map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName
+	UpdatedSignatureKinds                map[tspath.Path]SignatureUpdateKind
 }
 
-func (h *Program) panicIfNoProgram(method string) {
-	if h.program == nil {
+func (p *Program) GetTestingData(program *compiler.Program) TestingData {
+	return TestingData{
+		SemanticDiagnosticsPerFile:           p.snapshot.semanticDiagnosticsPerFile,
+		OldProgramSemanticDiagnosticsPerFile: p.semanticDiagnosticsPerFile,
+		UpdatedSignatureKinds:                p.updatedSignatureKinds,
+	}
+}
+
+func (p *Program) panicIfNoProgram(method string) {
+	if p.program == nil {
 		panic(method + ": should not be called without program")
 	}
 }
 
-func (h *Program) GetProgram() *compiler.Program {
-	h.panicIfNoProgram("GetProgram")
-	return h.program
+func (p *Program) GetProgram() *compiler.Program {
+	p.panicIfNoProgram("GetProgram")
+	return p.program
 }
 
 // Options implements compiler.AnyProgram interface.
-func (h *Program) Options() *core.CompilerOptions {
-	return h.snapshot.options
+func (p *Program) Options() *core.CompilerOptions {
+	return p.snapshot.options
 }
 
 // GetSourceFiles implements compiler.AnyProgram interface.
-func (h *Program) GetSourceFiles() []*ast.SourceFile {
-	h.panicIfNoProgram("GetSourceFiles")
-	return h.program.GetSourceFiles()
+func (p *Program) GetSourceFiles() []*ast.SourceFile {
+	p.panicIfNoProgram("GetSourceFiles")
+	return p.program.GetSourceFiles()
 }
 
 // GetConfigFileParsingDiagnostics implements compiler.AnyProgram interface.
-func (h *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
-	h.panicIfNoProgram("GetConfigFileParsingDiagnostics")
-	return h.program.GetConfigFileParsingDiagnostics()
+func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
+	p.panicIfNoProgram("GetConfigFileParsingDiagnostics")
+	return p.program.GetConfigFileParsingDiagnostics()
 }
 
 // GetSyntacticDiagnostics implements compiler.AnyProgram interface.
-func (h *Program) GetSyntacticDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
-	h.panicIfNoProgram("GetSyntacticDiagnostics")
-	return h.program.GetSyntacticDiagnostics(ctx, file)
+func (p *Program) GetSyntacticDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
+	p.panicIfNoProgram("GetSyntacticDiagnostics")
+	return p.program.GetSyntacticDiagnostics(ctx, file)
 }
 
 // GetBindDiagnostics implements compiler.AnyProgram interface.
-func (h *Program) GetBindDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
-	h.panicIfNoProgram("GetBindDiagnostics")
-	return h.program.GetBindDiagnostics(ctx, file)
+func (p *Program) GetBindDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
+	p.panicIfNoProgram("GetBindDiagnostics")
+	return p.program.GetBindDiagnostics(ctx, file)
 }
 
 // GetOptionsDiagnostics implements compiler.AnyProgram interface.
-func (h *Program) GetOptionsDiagnostics(ctx context.Context) []*ast.Diagnostic {
-	h.panicIfNoProgram("GetOptionsDiagnostics")
-	return h.program.GetOptionsDiagnostics(ctx)
+func (p *Program) GetOptionsDiagnostics(ctx context.Context) []*ast.Diagnostic {
+	p.panicIfNoProgram("GetOptionsDiagnostics")
+	return p.program.GetOptionsDiagnostics(ctx)
 }
 
-func (h *Program) GetProgramDiagnostics() []*ast.Diagnostic {
-	h.panicIfNoProgram("GetProgramDiagnostics")
-	return h.program.GetProgramDiagnostics()
+func (p *Program) GetProgramDiagnostics() []*ast.Diagnostic {
+	p.panicIfNoProgram("GetProgramDiagnostics")
+	return p.program.GetProgramDiagnostics()
 }
 
-func (h *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
-	h.panicIfNoProgram("GetGlobalDiagnostics")
-	return h.program.GetGlobalDiagnostics(ctx)
+func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
+	p.panicIfNoProgram("GetGlobalDiagnostics")
+	return p.program.GetGlobalDiagnostics(ctx)
 }
 
 // GetSemanticDiagnostics implements compiler.AnyProgram interface.
-func (h *Program) GetSemanticDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
-	h.panicIfNoProgram("GetSemanticDiagnostics")
-	if h.snapshot.options.NoCheck.IsTrue() {
+func (p *Program) GetSemanticDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
+	p.panicIfNoProgram("GetSemanticDiagnostics")
+	if p.snapshot.options.NoCheck.IsTrue() {
 		return nil
 	}
 
 	// Ensure all the diagnsotics are cached
-	h.collectSemanticDiagnosticsOfAffectedFiles(ctx, file)
+	p.collectSemanticDiagnosticsOfAffectedFiles(ctx, file)
 	if ctx.Err() != nil {
 		return nil
 	}
 
 	// Return result from cache
 	if file != nil {
-		cachedDiagnostics, ok := h.snapshot.semanticDiagnosticsPerFile[file.Path()]
+		cachedDiagnostics, ok := p.snapshot.semanticDiagnosticsPerFile[file.Path()]
 		if !ok {
 			panic("After handling all the affected files, there shouldnt be more changes")
 		}
-		return compiler.FilterNoEmitSemanticDiagnostics(cachedDiagnostics.getDiagnostics(h.program, file), h.snapshot.options)
+		return compiler.FilterNoEmitSemanticDiagnostics(cachedDiagnostics.getDiagnostics(p.program, file), p.snapshot.options)
 	}
 
 	var diagnostics []*ast.Diagnostic
-	for _, file := range h.program.GetSourceFiles() {
-		cachedDiagnostics, ok := h.snapshot.semanticDiagnosticsPerFile[file.Path()]
+	for _, file := range p.program.GetSourceFiles() {
+		cachedDiagnostics, ok := p.snapshot.semanticDiagnosticsPerFile[file.Path()]
 		if !ok {
 			panic("After handling all the affected files, there shouldnt be more changes")
 		}
-		diagnostics = append(diagnostics, compiler.FilterNoEmitSemanticDiagnostics(cachedDiagnostics.getDiagnostics(h.program, file), h.snapshot.options)...)
+		diagnostics = append(diagnostics, compiler.FilterNoEmitSemanticDiagnostics(cachedDiagnostics.getDiagnostics(p.program, file), p.snapshot.options)...)
 	}
 	return diagnostics
 }
 
 // GetDeclarationDiagnostics implements compiler.AnyProgram interface.
-func (h *Program) GetDeclarationDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
-	h.panicIfNoProgram("GetDeclarationDiagnostics")
-	result := emitFiles(ctx, h, compiler.EmitOptions{
+func (p *Program) GetDeclarationDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
+	p.panicIfNoProgram("GetDeclarationDiagnostics")
+	result := emitFiles(ctx, p, compiler.EmitOptions{
 		TargetSourceFile: file,
 	}, true)
 	if result != nil {
@@ -153,14 +162,14 @@ func (h *Program) GetDeclarationDiagnostics(ctx context.Context, file *ast.Sourc
 }
 
 // GetModeForUsageLocation implements compiler.AnyProgram interface.
-func (h *Program) Emit(ctx context.Context, options compiler.EmitOptions) *compiler.EmitResult {
-	h.panicIfNoProgram("Emit")
+func (p *Program) Emit(ctx context.Context, options compiler.EmitOptions) *compiler.EmitResult {
+	p.panicIfNoProgram("Emit")
 
 	var result *compiler.EmitResult
-	if h.snapshot.options.NoEmit.IsTrue() {
+	if p.snapshot.options.NoEmit.IsTrue() {
 		result = &compiler.EmitResult{EmitSkipped: true}
 	} else {
-		result = compiler.HandleNoEmitOnError(ctx, h, options.TargetSourceFile)
+		result = compiler.HandleNoEmitOnError(ctx, p, options.TargetSourceFile)
 		if ctx.Err() != nil {
 			return nil
 		}
@@ -171,46 +180,46 @@ func (h *Program) Emit(ctx context.Context, options compiler.EmitOptions) *compi
 		}
 
 		// Emit buildInfo and combine result
-		buildInfoResult := h.emitBuildInfo(ctx, options)
+		buildInfoResult := p.emitBuildInfo(ctx, options)
 		if buildInfoResult != nil && buildInfoResult.EmittedFiles != nil {
 			result.Diagnostics = append(result.Diagnostics, buildInfoResult.Diagnostics...)
 			result.EmittedFiles = append(result.EmittedFiles, buildInfoResult.EmittedFiles...)
 		}
 		return result
 	}
-	return emitFiles(ctx, h, options, false)
+	return emitFiles(ctx, p, options, false)
 }
 
 // Handle affected files and cache the semantic diagnostics for all of them or the file asked for
-func (h *Program) collectSemanticDiagnosticsOfAffectedFiles(ctx context.Context, file *ast.SourceFile) {
+func (p *Program) collectSemanticDiagnosticsOfAffectedFiles(ctx context.Context, file *ast.SourceFile) {
 	// Get all affected files
-	collectAllAffectedFiles(ctx, h)
+	collectAllAffectedFiles(ctx, p)
 	if ctx.Err() != nil {
 		return
 	}
 
-	if len(h.snapshot.semanticDiagnosticsPerFile) == len(h.program.GetSourceFiles()) {
+	if len(p.snapshot.semanticDiagnosticsPerFile) == len(p.program.GetSourceFiles()) {
 		// If we have all the files,
 		return
 	}
 
 	var affectedFiles []*ast.SourceFile
 	if file != nil {
-		_, ok := h.snapshot.semanticDiagnosticsPerFile[file.Path()]
+		_, ok := p.snapshot.semanticDiagnosticsPerFile[file.Path()]
 		if ok {
 			return
 		}
 		affectedFiles = []*ast.SourceFile{file}
 	} else {
-		for _, file := range h.program.GetSourceFiles() {
-			if _, ok := h.snapshot.semanticDiagnosticsPerFile[file.Path()]; !ok {
+		for _, file := range p.program.GetSourceFiles() {
+			if _, ok := p.snapshot.semanticDiagnosticsPerFile[file.Path()]; !ok {
 				affectedFiles = append(affectedFiles, file)
 			}
 		}
 	}
 
 	// Get their diagnostics and cache them
-	diagnosticsPerFile := h.program.GetSemanticDiagnosticsNoFilter(ctx, affectedFiles)
+	diagnosticsPerFile := p.program.GetSemanticDiagnosticsNoFilter(ctx, affectedFiles)
 	// commit changes if no err
 	if ctx.Err() != nil {
 		return
@@ -218,35 +227,35 @@ func (h *Program) collectSemanticDiagnosticsOfAffectedFiles(ctx context.Context,
 
 	// Commit changes to snapshot
 	for file, diagnostics := range diagnosticsPerFile {
-		h.snapshot.semanticDiagnosticsPerFile[file.Path()] = &diagnosticsOrBuildInfoDiagnosticsWithFileName{diagnostics: diagnostics}
+		p.snapshot.semanticDiagnosticsPerFile[file.Path()] = &diagnosticsOrBuildInfoDiagnosticsWithFileName{diagnostics: diagnostics}
 	}
-	if len(h.snapshot.semanticDiagnosticsPerFile) == len(h.program.GetSourceFiles()) && h.snapshot.checkPending && !h.snapshot.options.NoCheck.IsTrue() {
-		h.snapshot.checkPending = false
+	if len(p.snapshot.semanticDiagnosticsPerFile) == len(p.program.GetSourceFiles()) && p.snapshot.checkPending && !p.snapshot.options.NoCheck.IsTrue() {
+		p.snapshot.checkPending = false
 	}
-	h.snapshot.buildInfoEmitPending = true
+	p.snapshot.buildInfoEmitPending = true
 }
 
-func (h *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOptions) *compiler.EmitResult {
-	buildInfoFileName := outputpaths.GetBuildInfoFileName(h.snapshot.options, tspath.ComparePathsOptions{
-		CurrentDirectory:          h.program.GetCurrentDirectory(),
-		UseCaseSensitiveFileNames: h.program.UseCaseSensitiveFileNames(),
+func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOptions) *compiler.EmitResult {
+	buildInfoFileName := outputpaths.GetBuildInfoFileName(p.snapshot.options, tspath.ComparePathsOptions{
+		CurrentDirectory:          p.program.GetCurrentDirectory(),
+		UseCaseSensitiveFileNames: p.program.UseCaseSensitiveFileNames(),
 	})
 	if buildInfoFileName == "" {
 		return nil
 	}
-	if h.snapshot.hasErrors == core.TSUnknown {
-		h.snapshot.hasErrors = h.ensureHasErrorsForState(ctx, h.program)
-		if h.snapshot.hasErrors != h.snapshot.hasErrorsFromOldState {
-			h.snapshot.buildInfoEmitPending = true
+	if p.snapshot.hasErrors == core.TSUnknown {
+		p.snapshot.hasErrors = p.ensureHasErrorsForState(ctx, p.program)
+		if p.snapshot.hasErrors != p.snapshot.hasErrorsFromOldState {
+			p.snapshot.buildInfoEmitPending = true
 		}
 	}
-	if !h.snapshot.buildInfoEmitPending {
+	if !p.snapshot.buildInfoEmitPending {
 		return nil
 	}
 	if ctx.Err() != nil {
 		return nil
 	}
-	buildInfo := snapshotToBuildInfo(h.snapshot, h.program, buildInfoFileName)
+	buildInfo := snapshotToBuildInfo(p.snapshot, p.program, buildInfoFileName)
 	text, err := json.Marshal(buildInfo)
 	if err != nil {
 		panic(fmt.Sprintf("Failed to marshal build info: %v", err))
@@ -256,7 +265,7 @@ func (h *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOption
 			BuildInfo: &buildInfo,
 		})
 	} else {
-		err = h.program.Host().FS().WriteFile(buildInfoFileName, string(text), false)
+		err = p.program.Host().FS().WriteFile(buildInfoFileName, string(text), false)
 	}
 	if err != nil {
 		return &compiler.EmitResult{
@@ -266,10 +275,10 @@ func (h *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOption
 			},
 		}
 	}
-	h.snapshot.buildInfoEmitPending = false
+	p.snapshot.buildInfoEmitPending = false
 
 	var emittedFiles []string
-	if h.snapshot.options.ListEmittedFiles.IsTrue() {
+	if p.snapshot.options.ListEmittedFiles.IsTrue() {
 		emittedFiles = []string{buildInfoFileName}
 	}
 	return &compiler.EmitResult{
@@ -278,19 +287,19 @@ func (h *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOption
 	}
 }
 
-func (h *Program) ensureHasErrorsForState(ctx context.Context, program *compiler.Program) core.Tristate {
+func (p *Program) ensureHasErrorsForState(ctx context.Context, program *compiler.Program) core.Tristate {
 	// Check semantic and emit diagnostics first as we dont need to ask program about it
 	if slices.ContainsFunc(program.GetSourceFiles(), func(file *ast.SourceFile) bool {
-		semanticDiagnostics := h.snapshot.semanticDiagnosticsPerFile[file.Path()]
+		semanticDiagnostics := p.snapshot.semanticDiagnosticsPerFile[file.Path()]
 		if semanticDiagnostics == nil {
 			// Missing semantic diagnostics in cache will be encoded in incremental buildInfo
-			return h.snapshot.options.IsIncremental()
+			return p.snapshot.options.IsIncremental()
 		}
 		if len(semanticDiagnostics.diagnostics) > 0 || len(semanticDiagnostics.buildInfoDiagnostics) > 0 {
 			// cached semantic diagnostics will be encoded in buildInfo
 			return true
 		}
-		if _, ok := h.snapshot.emitDiagnosticsPerFile[file.Path()]; ok {
+		if _, ok := p.snapshot.emitDiagnosticsPerFile[file.Path()]; ok {
 			// emit diagnostics will be encoded in buildInfo;
 			return true
 		}
@@ -298,7 +307,7 @@ func (h *Program) ensureHasErrorsForState(ctx context.Context, program *compiler
 	}) {
 		// Because semantic diagnostics are recorded in buildInfo, we dont need to encode hasErrors in incremental buildInfo
 		// But encode as errors in non incremental buildInfo
-		return core.IfElse(h.snapshot.options.IsIncremental(), core.TSFalse, core.TSTrue)
+		return core.IfElse(p.snapshot.options.IsIncremental(), core.TSFalse, core.TSTrue)
 	}
 	if len(program.GetConfigFileParsingDiagnostics()) > 0 ||
 		len(program.GetSyntacticDiagnostics(ctx, nil)) > 0 ||

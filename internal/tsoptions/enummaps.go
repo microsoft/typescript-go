@@ -217,7 +217,6 @@ var targetToLibMap = map[core.ScriptTarget]string{
 	core.ScriptTargetES2015: "lib.es6.d.ts", // We don't use lib.es2015.full.d.ts due to breaking change.
 }
 
-// Used for test to add the files
 func TargetToLibMap() map[core.ScriptTarget]string {
 	return targetToLibMap
 }

@@ -1292,6 +1292,99 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 	}))
 }
 
+func CombineEmitResults(results []*EmitResult) *EmitResult {
+	result := &EmitResult{}
+	for _, emitResult := range results {
+		if emitResult == nil {
+			continue // Skip nil results
+		}
+		if emitResult.EmitSkipped {
+			result.EmitSkipped = true
+		}
+		result.Diagnostics = append(result.Diagnostics, emitResult.Diagnostics...)
+		if emitResult.EmittedFiles != nil {
+			result.EmittedFiles = append(result.EmittedFiles, emitResult.EmittedFiles...)
+		}
+		if emitResult.SourceMaps != nil {
+			result.SourceMaps = append(result.SourceMaps, emitResult.SourceMaps...)
+		}
+	}
+	return result
+}
+
+type ProgramLike interface {
+	Options() *core.CompilerOptions
+	GetSourceFiles() []*ast.SourceFile
+	GetConfigFileParsingDiagnostics() []*ast.Diagnostic
+	GetSyntacticDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic
+	GetBindDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic
+	GetOptionsDiagnostics(ctx context.Context) []*ast.Diagnostic
+	GetProgramDiagnostics() []*ast.Diagnostic
+	GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic
+	GetSemanticDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic
+	GetDeclarationDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic
+	Emit(ctx context.Context, options EmitOptions) *EmitResult
+}
+
+func HandleNoEmitOnError(ctx context.Context, program ProgramLike, file *ast.SourceFile) *EmitResult {
+	if !program.Options().NoEmitOnError.IsTrue() {
+		return nil // No emit on error is not set, so we can proceed with emitting
+	}
+
+	diagnostics := GetDiagnosticsOfAnyProgram(
+		ctx,
+		program,
+		file,
+		true,
+		program.GetBindDiagnostics,
+		program.GetSemanticDiagnostics,
+	)
+	if len(diagnostics) == 0 {
+		return nil // No diagnostics, so we can proceed with emitting
+	}
+	return &EmitResult{
+		Diagnostics: diagnostics,
+		EmitSkipped: true,
+	}
+}
+
+func GetDiagnosticsOfAnyProgram(
+	ctx context.Context,
+	program ProgramLike,
+	file *ast.SourceFile,
+	skipNoEmitCheckForDtsDiagnostics bool,
+	getBindDiagnostics func(context.Context, *ast.SourceFile) []*ast.Diagnostic,
+	getSemanticDiagnostics func(context.Context, *ast.SourceFile) []*ast.Diagnostic,
+) []*ast.Diagnostic {
+	allDiagnostics := slices.Clip(program.GetConfigFileParsingDiagnostics())
+	configFileParsingDiagnosticsLength := len(allDiagnostics)
+
+	allDiagnostics = append(allDiagnostics, program.GetSyntacticDiagnostics(ctx, file)...)
+	allDiagnostics = append(allDiagnostics, program.GetProgramDiagnostics()...)
+
+	if len(allDiagnostics) == configFileParsingDiagnosticsLength {
+		// Options diagnostics include global diagnostics (even though we collect them separately),
+		// and global diagnostics create checkers, which then bind all of the files. Do this binding
+		// early so we can track the time.
+		getBindDiagnostics(ctx, file)
+
+		allDiagnostics = append(allDiagnostics, program.GetOptionsDiagnostics(ctx)...)
+
+		if program.Options().ListFilesOnly.IsFalseOrUnknown() {
+			allDiagnostics = append(allDiagnostics, program.GetGlobalDiagnostics(ctx)...)
+
+			if len(allDiagnostics) == configFileParsingDiagnosticsLength {
+				allDiagnostics = append(allDiagnostics, getSemanticDiagnostics(ctx, file)...)
+			}
+
+			if (skipNoEmitCheckForDtsDiagnostics || program.Options().NoEmit.IsTrue()) && program.Options().GetEmitDeclarations() && len(allDiagnostics) == configFileParsingDiagnosticsLength {
+				allDiagnostics = append(allDiagnostics, program.GetDeclarationDiagnostics(ctx, file)...)
+			}
+		}
+	}
+	return allDiagnostics
+}
+
 func (p *Program) toPath(filename string) tspath.Path {
 	return tspath.ToPath(filename, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
 }

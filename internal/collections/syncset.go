@@ -23,7 +23,7 @@ func (s *SyncSet[T]) Range(fn func(key T) bool) {
 	})
 }
 
-func (s *SyncSet[T]) ToArray() []T {
+func (s *SyncSet[T]) ToSlice() []T {
 	var arr []T
 	arr = make([]T, 0, s.m.Size())
 	s.m.Range(func(key T, value struct{}) bool {

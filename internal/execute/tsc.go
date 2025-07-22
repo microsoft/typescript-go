@@ -41,14 +41,20 @@ func applyBulkEdits(text string, edits []core.TextChange) string {
 	return b.String()
 }
 
-func CommandLine(sys System, commandLineArgs []string, testing bool) (ExitStatus, *incremental.Program, *Watcher) {
+type CommandLineResult struct {
+	Status             ExitStatus
+	IncrementalProgram *incremental.Program
+	Watcher            *Watcher
+}
+
+func CommandLine(sys System, commandLineArgs []string, testing bool) CommandLineResult {
 	if len(commandLineArgs) > 0 {
 		// !!! build mode
 		switch strings.ToLower(commandLineArgs[0]) {
 		case "-b", "--b", "-build", "--build":
 			fmt.Fprintln(sys.Writer(), "Build mode is currently unsupported.")
 			sys.EndWrite()
-			return ExitStatusNotImplemented, nil, nil
+			return CommandLineResult{Status: ExitStatusNotImplemented}
 			// case "-f":
 			// 	return fmtMain(sys, commandLineArgs[1], commandLineArgs[1])
 		}
@@ -83,7 +89,7 @@ func fmtMain(sys System, input, output string) ExitStatus {
 	return ExitStatusSuccess
 }
 
-func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testing bool) (ExitStatus, *incremental.Program, *Watcher) {
+func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testing bool) CommandLineResult {
 	configFileName := ""
 	reportDiagnostic := createDiagnosticReporter(sys, commandLine.CompilerOptions())
 	// if commandLine.Options().Locale != nil
@@ -92,7 +98,7 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testin
 		for _, e := range commandLine.Errors {
 			reportDiagnostic(e)
 		}
-		return ExitStatusDiagnosticsPresent_OutputsSkipped, nil, nil
+		return CommandLineResult{Status: ExitStatusDiagnosticsPresent_OutputsSkipped}
 	}
 
 	if pprofDir := commandLine.CompilerOptions().PprofDir; pprofDir != "" {
@@ -102,28 +108,28 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testin
 	}
 
 	if commandLine.CompilerOptions().Init.IsTrue() {
-		return ExitStatusNotImplemented, nil, nil
+		return CommandLineResult{Status: ExitStatusNotImplemented}
 	}
 
 	if commandLine.CompilerOptions().Version.IsTrue() {
 		printVersion(sys)
-		return ExitStatusSuccess, nil, nil
+		return CommandLineResult{Status: ExitStatusSuccess}
 	}
 
 	if commandLine.CompilerOptions().Help.IsTrue() || commandLine.CompilerOptions().All.IsTrue() {
 		printHelp(sys, commandLine)
-		return ExitStatusSuccess, nil, nil
+		return CommandLineResult{Status: ExitStatusSuccess}
 	}
 
 	if commandLine.CompilerOptions().Watch.IsTrue() && commandLine.CompilerOptions().ListFilesOnly.IsTrue() {
 		reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Options_0_and_1_cannot_be_combined, "watch", "listFilesOnly"))
-		return ExitStatusDiagnosticsPresent_OutputsSkipped, nil, nil
+		return CommandLineResult{Status: ExitStatusDiagnosticsPresent_OutputsSkipped}
 	}
 
 	if commandLine.CompilerOptions().Project != "" {
 		if len(commandLine.FileNames()) != 0 {
 			reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Option_project_cannot_be_mixed_with_source_files_on_a_command_line))
-			return ExitStatusDiagnosticsPresent_OutputsSkipped, nil, nil
+			return CommandLineResult{Status: ExitStatusDiagnosticsPresent_OutputsSkipped}
 		}
 
 		fileOrDirectory := tspath.NormalizePath(commandLine.CompilerOptions().Project)
@@ -131,13 +137,13 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testin
 			configFileName = tspath.CombinePaths(fileOrDirectory, "tsconfig.json")
 			if !sys.FS().FileExists(configFileName) {
 				reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Cannot_find_a_tsconfig_json_file_at_the_current_directory_Colon_0, configFileName))
-				return ExitStatusDiagnosticsPresent_OutputsSkipped, nil, nil
+				return CommandLineResult{Status: ExitStatusDiagnosticsPresent_OutputsSkipped}
 			}
 		} else {
 			configFileName = fileOrDirectory
 			if !sys.FS().FileExists(configFileName) {
 				reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.The_specified_path_does_not_exist_Colon_0, fileOrDirectory))
-				return ExitStatusDiagnosticsPresent_OutputsSkipped, nil, nil
+				return CommandLineResult{Status: ExitStatusDiagnosticsPresent_OutputsSkipped}
 			}
 		}
 	} else if len(commandLine.FileNames()) == 0 {
@@ -152,7 +158,7 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testin
 			printVersion(sys)
 			printHelp(sys, commandLine)
 		}
-		return ExitStatusDiagnosticsPresent_OutputsSkipped, nil, nil
+		return CommandLineResult{Status: ExitStatusDiagnosticsPresent_OutputsSkipped}
 	}
 
 	// !!! convert to options with absolute paths is usually done here, but for ease of implementation, it's done in `tsoptions.ParseCommandLine()`
@@ -169,7 +175,7 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testin
 			for _, e := range errors {
 				reportDiagnostic(e)
 			}
-			return ExitStatusDiagnosticsPresent_OutputsGenerated, nil, nil
+			return CommandLineResult{Status: ExitStatusDiagnosticsPresent_OutputsGenerated}
 		}
 		configForCompilation = configParseResult
 		// Updater to reflect pretty
@@ -178,14 +184,14 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testin
 
 	if compilerOptionsFromCommandLine.ShowConfig.IsTrue() {
 		showConfig(sys, configForCompilation.CompilerOptions())
-		return ExitStatusSuccess, nil, nil
+		return CommandLineResult{Status: ExitStatusSuccess}
 	}
 	if configForCompilation.CompilerOptions().Watch.IsTrue() {
 		watcher := createWatcher(sys, configForCompilation, reportDiagnostic, testing)
 		watcher.start()
-		return ExitStatusSuccess, nil, watcher
+		return CommandLineResult{Status: ExitStatusSuccess, Watcher: watcher}
 	} else if configForCompilation.CompilerOptions().IsIncremental() {
-		exitStatus, program := performIncrementalCompilation(
+		return performIncrementalCompilation(
 			sys,
 			configForCompilation,
 			reportDiagnostic,
@@ -193,7 +199,6 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testin
 			configTime,
 			testing,
 		)
-		return exitStatus, program, nil
 	}
 	return performCompilation(
 		sys,
@@ -201,7 +206,7 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testin
 		reportDiagnostic,
 		&extendedConfigCache,
 		configTime,
-	), nil, nil
+	)
 }
 
 func findConfigFile(searchPath string, fileExists func(string) bool, configName string) string {
@@ -225,7 +230,7 @@ func performIncrementalCompilation(
 	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
 	configTime time.Duration,
 	testing bool,
-) (ExitStatus, *incremental.Program) {
+) CommandLineResult {
 	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache)
 	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host))
 	// todo: cache, statistics, tracing
@@ -237,15 +242,18 @@ func performIncrementalCompilation(
 	})
 	parseTime := sys.Now().Sub(parseStart)
 	incrementalProgram := incremental.NewProgram(program, oldProgram, testing)
-	return emitAndReportStatistics(
-		sys,
-		incrementalProgram,
-		incrementalProgram.GetProgram,
-		config,
-		reportDiagnostic,
-		configTime,
-		parseTime,
-	), incrementalProgram
+	return CommandLineResult{
+		Status: emitAndReportStatistics(
+			sys,
+			incrementalProgram,
+			incrementalProgram.GetProgram(),
+			config,
+			reportDiagnostic,
+			configTime,
+			parseTime,
+		),
+		IncrementalProgram: incrementalProgram,
+	}
 }
 
 func performCompilation(
@@ -254,7 +262,7 @@ func performCompilation(
 	reportDiagnostic diagnosticReporter,
 	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
 	configTime time.Duration,
-) ExitStatus {
+) CommandLineResult {
 	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache)
 	// todo: cache, statistics, tracing
 	parseStart := sys.Now()
@@ -264,29 +272,29 @@ func performCompilation(
 		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
 	})
 	parseTime := sys.Now().Sub(parseStart)
-	return emitAndReportStatistics(
-		sys,
-		program,
-		func() *compiler.Program {
-			return program
-		},
-		config,
-		reportDiagnostic,
-		configTime,
-		parseTime,
-	)
+	return CommandLineResult{
+		Status: emitAndReportStatistics(
+			sys,
+			program,
+			program,
+			config,
+			reportDiagnostic,
+			configTime,
+			parseTime,
+		),
+	}
 }
 
 func emitAndReportStatistics(
 	sys System,
-	program compiler.AnyProgram,
-	getCoreProgram func() *compiler.Program,
+	programLike compiler.ProgramLike,
+	program *compiler.Program,
 	config *tsoptions.ParsedCommandLine,
 	reportDiagnostic diagnosticReporter,
 	configTime time.Duration,
 	parseTime time.Duration,
 ) ExitStatus {
-	result := emitFilesAndReportErrors(sys, program, reportDiagnostic)
+	result := emitFilesAndReportErrors(sys, programLike, reportDiagnostic)
 	if result.status != ExitStatusSuccess {
 		// compile exited early
 		return result.status
@@ -303,7 +311,7 @@ func emitAndReportStatistics(
 		runtime.GC()
 		runtime.ReadMemStats(&memStats)
 
-		reportStatistics(sys, getCoreProgram(), result, &memStats)
+		reportStatistics(sys, program, result, &memStats)
 	}
 
 	if result.emitResult.EmitSkipped && len(result.diagnostics) > 0 {
@@ -328,7 +336,7 @@ type compileAndEmitResult struct {
 
 func emitFilesAndReportErrors(
 	sys System,
-	program compiler.AnyProgram,
+	program compiler.ProgramLike,
 	reportDiagnostic diagnosticReporter,
 ) (result compileAndEmitResult) {
 	ctx := context.Background()
@@ -338,16 +346,20 @@ func emitFilesAndReportErrors(
 		program,
 		nil,
 		false,
-		func(name string, start bool, startTime time.Time) time.Time {
-			if !start {
-				switch name {
-				case "bind":
-					result.bindTime = sys.Now().Sub(startTime)
-				case "check":
-					result.checkTime = sys.Now().Sub(startTime)
-				}
-			}
-			return sys.Now()
+		func(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
+			// Options diagnostics include global diagnostics (even though we collect them separately),
+			// and global diagnostics create checkers, which then bind all of the files. Do this binding
+			// early so we can track the time.
+			bindStart := sys.Now()
+			diags := program.GetBindDiagnostics(ctx, file)
+			result.bindTime = sys.Now().Sub(bindStart)
+			return diags
+		},
+		func(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
+			checkStart := sys.Now()
+			diags := program.GetSemanticDiagnostics(ctx, file)
+			result.checkTime = sys.Now().Sub(checkStart)
+			return diags
 		},
 	)
 
@@ -391,7 +403,7 @@ func showConfig(sys System, config *core.CompilerOptions) {
 	enc.Encode(config) //nolint:errcheck,errchkjson
 }
 
-func listFiles(sys System, program compiler.AnyProgram) {
+func listFiles(sys System, program compiler.ProgramLike) {
 	options := program.Options()
 	// !!! explainFiles
 	if options.ListFiles.IsTrue() || options.ListFilesOnly.IsTrue() {

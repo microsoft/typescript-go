@@ -218,7 +218,7 @@ func (h *emitFilesHandler) updateSnapshot() []*compiler.EmitResult {
 		info := h.program.snapshot.fileInfos[file]
 		info.signature = signature
 		if h.program.updatedSignatureKinds != nil {
-			h.program.updatedSignatureKinds.Store(file, SignatureUpdateKindStoredAtEmit)
+			h.program.updatedSignatureKinds[file] = SignatureUpdateKindStoredAtEmit
 		}
 		h.program.snapshot.buildInfoEmitPending = true
 		return true
@@ -231,7 +231,7 @@ func (h *emitFilesHandler) updateSnapshot() []*compiler.EmitResult {
 		h.program.snapshot.buildInfoEmitPending = true
 		return true
 	})
-	latestChangedDtsFiles := h.latestChangedDtsFiles.ToArray()
+	latestChangedDtsFiles := h.latestChangedDtsFiles.ToSlice()
 	slices.Sort(latestChangedDtsFiles)
 	if latestChangedDtsFile := core.LastOrNil(latestChangedDtsFiles); latestChangedDtsFile != "" {
 		h.program.snapshot.latestChangedDtsFile = latestChangedDtsFile
