@@ -8,6 +8,8 @@ import (
 )
 
 func TestUnmarshalCompletionItem(t *testing.T) {
+	t.Parallel()
+
 	const message = `{
     "label": "pageXOffset",
     "insertTextFormat": 1,
