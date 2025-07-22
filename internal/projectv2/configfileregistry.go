@@ -41,13 +41,13 @@ type configFileEntry struct {
 	// when this is set, no other fields will be used.
 	retainingConfigs map[tspath.Path]struct{}
 	// rootFilesWatch is a watch for the root files of this config file.
-	rootFilesWatch *watchedFiles[[]string]
+	rootFilesWatch *WatchedFiles[[]string]
 }
 
 func newConfigFileEntry() *configFileEntry {
 	return &configFileEntry{
 		pendingReload:  PendingReloadFull,
-		rootFilesWatch: newWatchedFiles("root files", lsproto.WatchKindCreate, core.Identity),
+		rootFilesWatch: NewWatchedFiles("root files", lsproto.WatchKindCreate, core.Identity),
 	}
 }
 

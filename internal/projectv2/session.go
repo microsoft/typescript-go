@@ -24,6 +24,7 @@ type SessionOptions struct {
 type Session struct {
 	options                            SessionOptions
 	toPath                             func(string) tspath.Path
+	client                             Client
 	fs                                 *overlayFS
 	parseCache                         *parseCache
 	extendedConfigCache                *extendedConfigCache
@@ -37,7 +38,7 @@ type Session struct {
 	pendingFileChanges   []FileChange
 }
 
-func NewSession(options SessionOptions, fs vfs.FS) *Session {
+func NewSession(options SessionOptions, fs vfs.FS, client Client) *Session {
 	currentDirectory := options.CurrentDirectory
 	useCaseSensitiveFileNames := fs.UseCaseSensitiveFileNames()
 	toPath := func(fileName string) tspath.Path {
@@ -53,6 +54,7 @@ func NewSession(options SessionOptions, fs vfs.FS) *Session {
 	return &Session{
 		options:             options,
 		toPath:              toPath,
+		client:              client,
 		fs:                  overlayFS,
 		parseCache:          parseCache,
 		extendedConfigCache: extendedConfigCache,
@@ -203,7 +205,76 @@ func (s *Session) UpdateSnapshot(ctx context.Context, change SnapshotChange) *Sn
 	if shouldDispose {
 		oldSnapshot.dispose(s)
 	}
+	go func() {
+		if s.options.WatchEnabled {
+			if err := s.updateWatches(ctx, oldSnapshot, newSnapshot); err != nil {
+				// !!! log the error
+			}
+		}
+	}()
 	return newSnapshot
+}
+
+func updateWatch[T any](ctx context.Context, client Client, oldWatcher, newWatcher *WatchedFiles[T]) []error {
+	var errors []error
+	if newWatcher != nil {
+		id, watchers := newWatcher.Watchers()
+		if err := client.WatchFiles(ctx, id, watchers); err != nil {
+			errors = append(errors, err)
+		}
+	}
+	if oldWatcher != nil {
+		if err := client.UnwatchFiles(ctx, oldWatcher.ID()); err != nil {
+			errors = append(errors, err)
+		}
+	}
+	return errors
+}
+
+func (s *Session) updateWatches(ctx context.Context, oldSnapshot *Snapshot, newSnapshot *Snapshot) error {
+	var errors []error
+	core.DiffMapsFunc(
+		oldSnapshot.ConfigFileRegistry.configs,
+		newSnapshot.ConfigFileRegistry.configs,
+		func(a, b *configFileEntry) bool {
+			return a.rootFilesWatch.ID() == b.rootFilesWatch.ID()
+		},
+		func(_ tspath.Path, addedEntry *configFileEntry) {
+			errors = append(errors, updateWatch(ctx, s.client, nil, addedEntry.rootFilesWatch)...)
+		},
+		func(_ tspath.Path, removedEntry *configFileEntry) {
+			errors = append(errors, updateWatch(ctx, s.client, removedEntry.rootFilesWatch, nil)...)
+		},
+		func(_ tspath.Path, oldEntry, newEntry *configFileEntry) {
+			errors = append(errors, updateWatch(ctx, s.client, oldEntry.rootFilesWatch, newEntry.rootFilesWatch)...)
+		},
+	)
+
+	core.DiffMaps(
+		oldSnapshot.ProjectCollection.configuredProjects,
+		newSnapshot.ProjectCollection.configuredProjects,
+		func(_ tspath.Path, addedProject *Project) {
+			errors = append(errors, updateWatch(ctx, s.client, nil, addedProject.affectingLocationsWatch)...)
+			errors = append(errors, updateWatch(ctx, s.client, nil, addedProject.failedLookupsWatch)...)
+		},
+		func(_ tspath.Path, removedProject *Project) {
+			errors = append(errors, updateWatch(ctx, s.client, removedProject.affectingLocationsWatch, nil)...)
+			errors = append(errors, updateWatch(ctx, s.client, removedProject.failedLookupsWatch, nil)...)
+		},
+		func(_ tspath.Path, oldProject, newProject *Project) {
+			if oldProject.affectingLocationsWatch.ID() != newProject.affectingLocationsWatch.ID() {
+				errors = append(errors, updateWatch(ctx, s.client, oldProject.affectingLocationsWatch, newProject.affectingLocationsWatch)...)
+			}
+			if oldProject.failedLookupsWatch.ID() != newProject.failedLookupsWatch.ID() {
+				errors = append(errors, updateWatch(ctx, s.client, oldProject.failedLookupsWatch, newProject.failedLookupsWatch)...)
+			}
+		},
+	)
+
+	if len(errors) > 0 {
+		return fmt.Errorf("errors updating watches: %v", errors)
+	}
+	return nil
 }
 
 func (s *Session) Close() {

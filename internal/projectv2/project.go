@@ -47,8 +47,8 @@ type Project struct {
 	LanguageService         *ls.LanguageService
 	ProgramStructureVersion int
 
-	failedLookupsWatch      *watchedFiles[map[tspath.Path]string]
-	affectingLocationsWatch *watchedFiles[map[tspath.Path]string]
+	failedLookupsWatch      *WatchedFiles[map[tspath.Path]string]
+	affectingLocationsWatch *WatchedFiles[map[tspath.Path]string]
 
 	checkerPool *project.CheckerPool
 }
@@ -58,20 +58,7 @@ func NewConfiguredProject(
 	configFilePath tspath.Path,
 	builder *projectCollectionBuilder,
 ) *Project {
-	p := NewProject(configFileName, KindConfigured, tspath.GetDirectoryPath(configFileName), builder)
-	if builder.sessionOptions.WatchEnabled {
-		p.failedLookupsWatch = newWatchedFiles(
-			"failed lookups",
-			lsproto.WatchKindCreate,
-			createResolutionLookupGlobMapper(p.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
-		)
-		p.affectingLocationsWatch = newWatchedFiles(
-			"affecting locations",
-			lsproto.WatchKindCreate,
-			createResolutionLookupGlobMapper(p.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
-		)
-	}
-	return p
+	return NewProject(configFileName, KindConfigured, tspath.GetDirectoryPath(configFileName), builder)
 }
 
 func NewInferredProject(
@@ -127,6 +114,18 @@ func NewProject(
 	)
 	project.host = host
 	project.configFilePath = tspath.ToPath(configFileName, currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames())
+	if builder.sessionOptions.WatchEnabled {
+		project.failedLookupsWatch = NewWatchedFiles(
+			"failed lookups",
+			lsproto.WatchKindCreate,
+			createResolutionLookupGlobMapper(project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
+		)
+		project.affectingLocationsWatch = NewWatchedFiles(
+			"affecting locations",
+			lsproto.WatchKindCreate,
+			createResolutionLookupGlobMapper(project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
+		)
+	}
 	return project
 }
 
@@ -224,7 +223,7 @@ func (p *Project) CreateProgram() CreateProgramResult {
 	}
 }
 
-func (p *Project) CloneWatchers() (failedLookupsWatch *watchedFiles[map[tspath.Path]string], affectingLocationsWatch *watchedFiles[map[tspath.Path]string]) {
+func (p *Project) CloneWatchers() (failedLookupsWatch *WatchedFiles[map[tspath.Path]string], affectingLocationsWatch *WatchedFiles[map[tspath.Path]string]) {
 	failedLookups := make(map[tspath.Path]string)
 	affectingLocations := make(map[tspath.Path]string)
 	extractLookups(p.toPath, failedLookups, affectingLocations, p.Program.GetResolvedModules())

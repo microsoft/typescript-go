@@ -1,11 +1,14 @@
 package projectv2
 
 import (
+	"fmt"
 	"slices"
 	"strings"
 	"sync"
+	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -16,49 +19,74 @@ const (
 	recursiveFileGlobPattern = "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json}"
 )
 
-type watchedFiles[T any] struct {
+type WatcherID string
+
+var watcherID atomic.Uint64
+
+type WatchedFiles[T any] struct {
 	name         string
 	watchKind    lsproto.WatchKind
 	computeGlobs func(input T) []string
 
-	prevGlobs []string
-
-	input            T
-	computeGlobsOnce sync.Once
-	globs            []string
+	input               T
+	computeWatchersOnce sync.Once
+	watchers            []*lsproto.FileSystemWatcher
+	id                  uint64
 }
 
-func newWatchedFiles[T any](name string, watchKind lsproto.WatchKind, computeGlobs func(input T) []string) *watchedFiles[T] {
-	return &watchedFiles[T]{
+func NewWatchedFiles[T any](name string, watchKind lsproto.WatchKind, computeGlobs func(input T) []string) *WatchedFiles[T] {
+	return &WatchedFiles[T]{
+		id:           watcherID.Add(1),
 		name:         name,
 		watchKind:    watchKind,
 		computeGlobs: computeGlobs,
 	}
 }
 
-func (w *watchedFiles[T]) Globs() []string {
-	w.computeGlobsOnce.Do(func() {
-		var zero T
-		w.globs = w.computeGlobs(w.input)
-		w.input = zero
+func (w *WatchedFiles[T]) Watchers() (WatcherID, []*lsproto.FileSystemWatcher) {
+	w.computeWatchersOnce.Do(func() {
+		newWatchers := core.Map(w.computeGlobs(w.input), func(glob string) *lsproto.FileSystemWatcher {
+			return &lsproto.FileSystemWatcher{
+				GlobPattern: lsproto.GlobPattern{
+					Pattern: &glob,
+				},
+				Kind: &w.watchKind,
+			}
+		})
+		if !slices.EqualFunc(w.watchers, newWatchers, func(a, b *lsproto.FileSystemWatcher) bool {
+			return a.GlobPattern.Pattern == b.GlobPattern.Pattern
+		}) {
+			w.watchers = newWatchers
+			w.id = watcherID.Add(1)
+		}
 	})
-	return w.globs
+	return WatcherID(fmt.Sprintf("%s watcher %d", w.name, w.id)), w.watchers
 }
 
-func (w *watchedFiles[T]) Name() string {
+func (w *WatchedFiles[T]) ID() WatcherID {
+	if w == nil {
+		return ""
+	}
+	id, _ := w.Watchers()
+	return id
+}
+
+func (w *WatchedFiles[T]) Name() string {
 	return w.name
 }
 
-func (w *watchedFiles[T]) WatchKind() lsproto.WatchKind {
+func (w *WatchedFiles[T]) WatchKind() lsproto.WatchKind {
 	return w.watchKind
 }
 
-func (w *watchedFiles[T]) Clone(input T) *watchedFiles[T] {
-	return &watchedFiles[T]{
-		name:      w.name,
-		watchKind: w.watchKind,
-		prevGlobs: w.prevGlobs,
-		input:     input,
+func (w *WatchedFiles[T]) Clone(input T) *WatchedFiles[T] {
+	return &WatchedFiles[T]{
+		name:         w.name,
+		watchKind:    w.watchKind,
+		computeGlobs: w.computeGlobs,
+		input:        input,
+		watchers:     w.watchers,
+		id:           w.id,
 	}
 }
 
@@ -315,11 +343,11 @@ func ptrTo[T any](v T) *T {
 	return &v
 }
 
-type ResolutionWithLookupLocations interface {
+type resolutionWithLookupLocations interface {
 	GetLookupLocations() *module.LookupLocations
 }
 
-func extractLookups[T ResolutionWithLookupLocations](
+func extractLookups[T resolutionWithLookupLocations](
 	projectToPath func(string) tspath.Path,
 	failedLookups map[tspath.Path]string,
 	affectingLocations map[tspath.Path]string,

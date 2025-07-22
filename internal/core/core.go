@@ -585,3 +585,29 @@ func ConcatenateSeq[T any](seqs ...iter.Seq[T]) iter.Seq[T] {
 		}
 	}
 }
+
+func comparableValuesEqual[T comparable](a, b T) bool {
+	return a == b
+}
+
+func DiffMaps[K comparable, V comparable](m1 map[K]V, m2 map[K]V, onAdded func(K, V), onRemoved func(K, V), onChanged func(K, V, V)) {
+	DiffMapsFunc(m1, m2, comparableValuesEqual, onAdded, onRemoved, onChanged)
+}
+
+func DiffMapsFunc[K comparable, V any](m1 map[K]V, m2 map[K]V, equalValues func(V, V) bool, onAdded func(K, V), onRemoved func(K, V), onChanged func(K, V, V)) {
+	for k, v1 := range m1 {
+		if v2, ok := m2[k]; ok {
+			if !equalValues(v1, v2) {
+				onChanged(k, v1, v2)
+			}
+		} else {
+			onRemoved(k, v1)
+		}
+	}
+
+	for k, v2 := range m2 {
+		if _, ok := m1[k]; !ok {
+			onAdded(k, v2)
+		}
+	}
+}

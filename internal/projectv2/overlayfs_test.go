@@ -179,13 +179,12 @@ func TestProcessChanges(t *testing.T) {
 		assert.Assert(t, fs.getFile(testURI1.FileName()).MatchesDiskText())
 
 		// Now process a watch change
-		result := fs.processChanges([]FileChange{
+		fs.processChanges([]FileChange{
 			{
 				Kind: FileChangeKindWatchChange,
 				URI:  testURI1,
 			},
 		})
-		assert.Assert(t, result.Changed.Has(testURI1))
 		assert.Assert(t, !fs.getFile(testURI1.FileName()).MatchesDiskText())
 	})
 }

@@ -169,7 +169,9 @@ func (b *projectCollectionBuilder) DidOpenFile(uri lsproto.DocumentUri) {
 
 	for projectPath := range toRemoveProjects.Keys() {
 		if !openFileResult.retain.Has(projectPath) {
-			b.deleteProject(projectPath)
+			if p, ok := b.configuredProjects.Load(projectPath); ok {
+				b.deleteProject(p)
+			}
 		}
 	}
 	b.updateInferredProject(inferredProjectFiles)
@@ -268,7 +270,7 @@ func (b *projectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri) {
 	fileName := uri.FileName()
 	path := b.toPath(fileName)
 	if result := b.findDefaultProject(fileName, path); result != nil {
-		hasChanges = b.updateProgram(result)
+		hasChanges = b.updateProgram(result) || hasChanges
 		if result.Value() != nil {
 			return
 		}
@@ -591,7 +593,7 @@ func (b *projectCollectionBuilder) updateProgram(entry dirty.Value[*Project]) bo
 			if entry.Value().CommandLine != commandLine {
 				updateProgram = true
 				if commandLine == nil {
-					entry.Delete()
+					b.deleteProject(entry)
 					return
 				}
 				entry.Change(func(p *Project) { p.CommandLine = commandLine })
@@ -642,16 +644,15 @@ func (b *projectCollectionBuilder) markFileChanged(path tspath.Path) {
 	})
 }
 
-func (b *projectCollectionBuilder) deleteProject(path tspath.Path) {
-	if project, ok := b.configuredProjects.Load(path); ok {
-		if program := project.Value().Program; program != nil {
-			program.ForEachResolvedProjectReference(func(referencePath tspath.Path, config *tsoptions.ParsedCommandLine) {
-				b.configFileRegistryBuilder.releaseConfigForProject(referencePath, path)
-			})
-		}
-		if project.Value().Kind == KindConfigured {
-			b.configFileRegistryBuilder.releaseConfigForProject(path, path)
-		}
-		project.Delete()
+func (b *projectCollectionBuilder) deleteProject(project dirty.Value[*Project]) {
+	projectPath := project.Value().configFilePath
+	if program := project.Value().Program; program != nil {
+		program.ForEachResolvedProjectReference(func(referencePath tspath.Path, config *tsoptions.ParsedCommandLine) {
+			b.configFileRegistryBuilder.releaseConfigForProject(referencePath, projectPath)
+		})
 	}
+	if project.Value().Kind == KindConfigured {
+		b.configFileRegistryBuilder.releaseConfigForProject(projectPath, projectPath)
+	}
+	project.Delete()
 }

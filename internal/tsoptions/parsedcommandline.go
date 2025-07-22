@@ -175,7 +175,7 @@ func (p *ParsedCommandLine) WildcardDirectories() map[string]bool {
 
 // Normalized file names explicitly specified in `files`
 func (p *ParsedCommandLine) LiteralFileNames() []string {
-	if p.ConfigFile != nil {
+	if p != nil && p.ConfigFile != nil {
 		return p.FileNames()[0:len(p.ConfigFile.configFileSpecs.validatedFilesSpec)]
 	}
 	return nil

@@ -35,7 +35,7 @@ func TestWatch(t *testing.T) {
 
 		t.Run("change open file", func(t *testing.T) {
 			t.Parallel()
-			session, fs := projectv2testutil.Setup(defaultFiles)
+			session, utils := projectv2testutil.Setup(defaultFiles)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 1, defaultFiles["/home/projects/TS/p1/src/x.ts"].(string), lsproto.LanguageKindTypeScript)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, defaultFiles["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
@@ -43,7 +43,7 @@ func TestWatch(t *testing.T) {
 			assert.NilError(t, err)
 			programBefore := lsBefore.GetProgram()
 
-			err = fs.WriteFile("/home/projects/TS/p1/src/x.ts", `export const x = 2;`, false)
+			err = utils.FS().WriteFile("/home/projects/TS/p1/src/x.ts", `export const x = 2;`, false)
 			assert.NilError(t, err)
 
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -61,14 +61,14 @@ func TestWatch(t *testing.T) {
 
 		t.Run("change closed program file", func(t *testing.T) {
 			t.Parallel()
-			session, fs := projectv2testutil.Setup(defaultFiles)
+			session, utils := projectv2testutil.Setup(defaultFiles)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, defaultFiles["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 			lsBefore, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
 			programBefore := lsBefore.GetProgram()
 
-			err = fs.WriteFile("/home/projects/TS/p1/src/x.ts", `export const x = 2;`, false)
+			err = utils.FS().WriteFile("/home/projects/TS/p1/src/x.ts", `export const x = 2;`, false)
 			assert.NilError(t, err)
 
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -98,7 +98,7 @@ func TestWatch(t *testing.T) {
 				let y: number = x;`,
 			}
 
-			session, fs := projectv2testutil.Setup(files)
+			session, utils := projectv2testutil.Setup(files)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
@@ -107,7 +107,7 @@ func TestWatch(t *testing.T) {
 			// Should have 0 errors with strict: false
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
 
-			err = fs.WriteFile("/home/projects/TS/p1/tsconfig.json", `{
+			err = utils.FS().WriteFile("/home/projects/TS/p1/tsconfig.json", `{
 			"compilerOptions": {
 				"noLib": false,
 				"strict": true
@@ -141,7 +141,7 @@ func TestWatch(t *testing.T) {
 				"/home/projects/TS/p1/src/x.ts":     `export declare const x: number | undefined;`,
 				"/home/projects/TS/p1/src/index.ts": `import { x } from "./x";`,
 			}
-			session, fs := projectv2testutil.Setup(files)
+			session, utils := projectv2testutil.Setup(files)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
@@ -149,7 +149,7 @@ func TestWatch(t *testing.T) {
 			program := ls.GetProgram()
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
 
-			err = fs.Remove("/home/projects/TS/p1/src/x.ts")
+			err = utils.FS().Remove("/home/projects/TS/p1/src/x.ts")
 			assert.NilError(t, err)
 
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -178,7 +178,7 @@ func TestWatch(t *testing.T) {
 				"/home/projects/TS/p1/src/index.ts": `let x = 2;`,
 				"/home/projects/TS/p1/src/x.ts":     `let y = x;`,
 			}
-			session, fs := projectv2testutil.Setup(files)
+			session, utils := projectv2testutil.Setup(files)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 1, files["/home/projects/TS/p1/src/x.ts"].(string), lsproto.LanguageKindTypeScript)
 
 			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/x.ts")
@@ -186,7 +186,7 @@ func TestWatch(t *testing.T) {
 			program := ls.GetProgram()
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/x.ts"))), 0)
 
-			err = fs.Remove("/home/projects/TS/p1/src/index.ts")
+			err = utils.FS().Remove("/home/projects/TS/p1/src/index.ts")
 			assert.NilError(t, err)
 
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -213,7 +213,7 @@ func TestWatch(t *testing.T) {
 			}`,
 				"/home/projects/TS/p1/src/index.ts": `import { y } from "./y";`,
 			}
-			session, fs := projectv2testutil.Setup(files)
+			session, utils := projectv2testutil.Setup(files)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
@@ -224,7 +224,7 @@ func TestWatch(t *testing.T) {
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
 
 			// Add the missing file
-			err = fs.WriteFile("/home/projects/TS/p1/src/y.ts", `export const y = 1;`, false)
+			err = utils.FS().WriteFile("/home/projects/TS/p1/src/y.ts", `export const y = 1;`, false)
 			assert.NilError(t, err)
 
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -253,7 +253,7 @@ func TestWatch(t *testing.T) {
 			}`,
 				"/home/projects/TS/p1/src/index.ts": `import { z } from "./z";`,
 			}
-			session, fs := projectv2testutil.Setup(files)
+			session, utils := projectv2testutil.Setup(files)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
@@ -264,7 +264,7 @@ func TestWatch(t *testing.T) {
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
 
 			// Add a new file through failed lookup watch
-			err = fs.WriteFile("/home/projects/TS/p1/src/z.ts", `export const z = 1;`, false)
+			err = utils.FS().WriteFile("/home/projects/TS/p1/src/z.ts", `export const z = 1;`, false)
 			assert.NilError(t, err)
 
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
@@ -293,7 +293,7 @@ func TestWatch(t *testing.T) {
 			}`,
 				"/home/projects/TS/p1/src/index.ts": `a;`,
 			}
-			session, fs := projectv2testutil.Setup(files)
+			session, utils := projectv2testutil.Setup(files)
 			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 			ls, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
@@ -304,7 +304,7 @@ func TestWatch(t *testing.T) {
 			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
 
 			// Add a new file through wildcard watch
-			err = fs.WriteFile("/home/projects/TS/p1/src/a.ts", `const a = 1;`, false)
+			err = utils.FS().WriteFile("/home/projects/TS/p1/src/a.ts", `const a = 1;`, false)
 			assert.NilError(t, err)
 
 			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{

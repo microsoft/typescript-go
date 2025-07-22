@@ -67,7 +67,7 @@ type ProjectV2Server struct {
 
 	watchEnabled bool
 	watcherID    atomic.Uint32
-	watchers     collections.SyncSet[project.WatcherHandle]
+	watchers     collections.SyncSet[projectv2.WatcherID]
 
 	logger  *project.Logger
 	session *projectv2.Session
@@ -105,7 +105,7 @@ func (s *ProjectV2Server) Trace(msg string) {
 }
 
 // Client implements project.ServiceHost.
-func (s *ProjectV2Server) Client() project.Client {
+func (s *ProjectV2Server) Client() projectv2.Client {
 	if !s.watchEnabled {
 		return nil
 	}
@@ -113,12 +113,11 @@ func (s *ProjectV2Server) Client() project.Client {
 }
 
 // WatchFiles implements project.Client.
-func (s *ProjectV2Server) WatchFiles(ctx context.Context, watchers []*lsproto.FileSystemWatcher) (project.WatcherHandle, error) {
-	watcherId := fmt.Sprintf("watcher-%d", s.watcherID.Add(1))
+func (s *ProjectV2Server) WatchFiles(ctx context.Context, id projectv2.WatcherID, watchers []*lsproto.FileSystemWatcher) error {
 	_, err := s.sendRequest(ctx, lsproto.MethodClientRegisterCapability, &lsproto.RegistrationParams{
 		Registrations: []*lsproto.Registration{
 			{
-				Id:     watcherId,
+				Id:     string(id),
 				Method: string(lsproto.MethodWorkspaceDidChangeWatchedFiles),
 				RegisterOptions: ptrTo(any(lsproto.DidChangeWatchedFilesRegistrationOptions{
 					Watchers: watchers,
@@ -127,21 +126,20 @@ func (s *ProjectV2Server) WatchFiles(ctx context.Context, watchers []*lsproto.Fi
 		},
 	})
 	if err != nil {
-		return "", fmt.Errorf("failed to register file watcher: %w", err)
+		return fmt.Errorf("failed to register file watcher: %w", err)
 	}
 
-	handle := project.WatcherHandle(watcherId)
-	s.watchers.Add(handle)
-	return handle, nil
+	s.watchers.Add(id)
+	return nil
 }
 
 // UnwatchFiles implements project.Client.
-func (s *ProjectV2Server) UnwatchFiles(ctx context.Context, handle project.WatcherHandle) error {
-	if s.watchers.Has(handle) {
+func (s *ProjectV2Server) UnwatchFiles(ctx context.Context, id projectv2.WatcherID) error {
+	if s.watchers.Has(id) {
 		_, err := s.sendRequest(ctx, lsproto.MethodClientUnregisterCapability, &lsproto.UnregistrationParams{
 			Unregisterations: []*lsproto.Unregistration{
 				{
-					Id:     string(handle),
+					Id:     string(id),
 					Method: string(lsproto.MethodWorkspaceDidChangeWatchedFiles),
 				},
 			},
@@ -150,11 +148,11 @@ func (s *ProjectV2Server) UnwatchFiles(ctx context.Context, handle project.Watch
 			return fmt.Errorf("failed to unregister file watcher: %w", err)
 		}
 
-		s.watchers.Delete(handle)
+		s.watchers.Delete(id)
 		return nil
 	}
 
-	return fmt.Errorf("no file watcher exists with ID %s", handle)
+	return fmt.Errorf("no file watcher exists with ID %s", id)
 }
 
 // RefreshDiagnostics implements project.Client.
@@ -500,7 +498,7 @@ func (s *ProjectV2Server) handleInitialized(ctx context.Context, req *lsproto.Re
 		TypingsLocation:    s.typingsLocation,
 		PositionEncoding:   s.positionEncoding,
 		WatchEnabled:       s.watchEnabled,
-	}, s.fs)
+	}, s.fs, s.Client())
 
 	return nil
 }

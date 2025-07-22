@@ -30,10 +30,10 @@ func TestConfigFileChanges(t *testing.T) {
 
 	t.Run("should update program options on config file change", func(t *testing.T) {
 		t.Parallel()
-		session, fs := projectv2testutil.Setup(files)
+		session, utils := projectv2testutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-		fs.WriteFile("/src/tsconfig.json", `{"extends": "../tsconfig.base.json", "compilerOptions": {"target": "esnext"}, "references": [{"path": "../utils"}]}`, false /*writeByteOrderMark*/)
+		utils.FS().WriteFile("/src/tsconfig.json", `{"extends": "../tsconfig.base.json", "compilerOptions": {"target": "esnext"}, "references": [{"path": "../utils"}]}`, false /*writeByteOrderMark*/)
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
 				Uri:  lsproto.DocumentUri("file:///src/tsconfig.json"),
@@ -48,10 +48,10 @@ func TestConfigFileChanges(t *testing.T) {
 
 	t.Run("should update project on extended config file change", func(t *testing.T) {
 		t.Parallel()
-		session, fs := projectv2testutil.Setup(files)
+		session, utils := projectv2testutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-		fs.WriteFile("/tsconfig.base.json", `{"compilerOptions": {"strict": false}}`, false /*writeByteOrderMark*/)
+		utils.FS().WriteFile("/tsconfig.base.json", `{"compilerOptions": {"strict": false}}`, false /*writeByteOrderMark*/)
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
 				Uri:  lsproto.DocumentUri("file:///tsconfig.base.json"),
@@ -66,12 +66,12 @@ func TestConfigFileChanges(t *testing.T) {
 
 	t.Run("should update project on referenced config file change", func(t *testing.T) {
 		t.Parallel()
-		session, fs := projectv2testutil.Setup(files)
+		session, utils := projectv2testutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 		snapshotBefore, release := session.Snapshot()
 		defer release()
 
-		fs.WriteFile("/utils/tsconfig.json", `{"compilerOptions": {"composite": true, "target": "esnext"}}`, false /*writeByteOrderMark*/)
+		utils.FS().WriteFile("/utils/tsconfig.json", `{"compilerOptions": {"composite": true, "target": "esnext"}}`, false /*writeByteOrderMark*/)
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
 				Uri:  lsproto.DocumentUri("file:///utils/tsconfig.json"),
@@ -88,10 +88,10 @@ func TestConfigFileChanges(t *testing.T) {
 
 	t.Run("should close project on config file deletion", func(t *testing.T) {
 		t.Parallel()
-		session, fs := projectv2testutil.Setup(files)
+		session, utils := projectv2testutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-		fs.Remove("/src/tsconfig.json")
+		utils.FS().Remove("/src/tsconfig.json")
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
 				Uri:  lsproto.DocumentUri("file:///src/tsconfig.json"),
@@ -109,10 +109,10 @@ func TestConfigFileChanges(t *testing.T) {
 
 	t.Run("config file creation then deletion", func(t *testing.T) {
 		t.Parallel()
-		session, fs := projectv2testutil.Setup(files)
+		session, utils := projectv2testutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/subfolder/foo.ts", 1, files["/src/subfolder/foo.ts"].(string), lsproto.LanguageKindTypeScript)
 
-		fs.WriteFile("/src/subfolder/tsconfig.json", `{}`, false /*writeByteOrderMark*/)
+		utils.FS().WriteFile("/src/subfolder/tsconfig.json", `{}`, false /*writeByteOrderMark*/)
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
 				Uri:  lsproto.DocumentUri("file:///src/subfolder/tsconfig.json"),
@@ -127,7 +127,7 @@ func TestConfigFileChanges(t *testing.T) {
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 2)
 		assert.Equal(t, snapshot.GetDefaultProject(lsproto.DocumentUri("file:///src/subfolder/foo.ts")).Name(), "/src/subfolder/tsconfig.json")
 
-		fs.Remove("/src/subfolder/tsconfig.json")
+		utils.FS().Remove("/src/subfolder/tsconfig.json")
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
 				Uri:  lsproto.DocumentUri("file:///src/subfolder/tsconfig.json"),
