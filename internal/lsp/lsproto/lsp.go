@@ -77,26 +77,18 @@ func assertOnlyOne(message string, values ...bool) {
 	}
 }
 
-type nothing struct{}
+func ptrTo[T any](v T) *T {
+	return &v
+}
 
-func (nothing) UnmarshalJSON(data []byte) error {
+type requiredProp bool
+
+func (v *requiredProp) UnmarshalJSON(data []byte) error {
+	*v = true
 	return nil
 }
 
-func (nothing) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+func (v *requiredProp) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	*v = true
 	return dec.SkipValue()
-}
-
-type jsonKeys map[string]nothing
-
-func getJSONKeys(b []byte) (jsonKeys, error) {
-	var m jsonKeys
-	if err := json.Unmarshal(b, &m); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal JSON keys: %w", err)
-	}
-	return m, nil
-}
-
-func ptrTo[T any](v T) *T {
-	return &v
 }

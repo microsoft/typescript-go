@@ -422,17 +422,25 @@ function generateCode() {
         const requiredProps = structure.properties?.filter(p => !p.optional) || [];
         if (requiredProps.length > 0) {
             writeLine(`func (s *${structure.name}) UnmarshalJSON(data []byte) error {`);
-            writeLine(`\t// Check required keys`);
-            writeLine(`\tkeys, err := getJSONKeys(data)`);
-            writeLine(`\tif err != nil {`);
+            writeLine(`\t// Check required props`);
+            writeLine(`\ttype requiredProps struct {`);
+            for (const prop of requiredProps) {
+                writeLine(`\t\t${titleCase(prop.name)} requiredProp \`json:"${prop.name}"\``);
+            }
+            writeLine(`}`);
+            writeLine("");
+
+            writeLine(`\tvar keys requiredProps`);
+            writeLine(`\tif err := json.Unmarshal(data, &keys); err != nil {`);
             writeLine(`\t\treturn err`);
             writeLine(`\t}`);
-            writeLine(``);
+            writeLine("");
 
+            // writeLine(`\t// Check for missing required keys`);
             for (const prop of requiredProps) {
-                writeLine(`\tif _, ok := keys["${prop.name}"]; !ok {`);
+                writeLine(`if !keys.${titleCase(prop.name)} {`);
                 writeLine(`\t\treturn fmt.Errorf("required key '${prop.name}' is missing")`);
-                writeLine(`\t}`);
+                writeLine(`}`);
             }
 
             writeLine(``);

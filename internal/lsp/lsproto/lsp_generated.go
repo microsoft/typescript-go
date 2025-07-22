@@ -26,16 +26,21 @@ type Location struct {
 }
 
 func (s *Location) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Uri   requiredProp `json:"uri"`
+		Range requiredProp `json:"range"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["uri"]; !ok {
+	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
@@ -77,16 +82,21 @@ type WorkspaceFolder struct {
 }
 
 func (s *WorkspaceFolder) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Uri  requiredProp `json:"uri"`
+		Name requiredProp `json:"name"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["uri"]; !ok {
+	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if _, ok := keys["name"]; !ok {
+	if !keys.Name {
 		return fmt.Errorf("required key 'name' is missing")
 	}
 
@@ -106,13 +116,17 @@ type DidChangeWorkspaceFoldersParams struct {
 }
 
 func (s *DidChangeWorkspaceFoldersParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Event requiredProp `json:"event"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["event"]; !ok {
+	if !keys.Event {
 		return fmt.Errorf("required key 'event' is missing")
 	}
 
@@ -130,13 +144,17 @@ type ConfigurationParams struct {
 }
 
 func (s *ConfigurationParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Items requiredProp `json:"items"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["items"]; !ok {
+	if !keys.Items {
 		return fmt.Errorf("required key 'items' is missing")
 	}
 
@@ -158,13 +176,17 @@ type DocumentColorParams struct {
 }
 
 func (s *DocumentColorParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
@@ -189,16 +211,21 @@ type ColorInformation struct {
 }
 
 func (s *ColorInformation) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Range requiredProp `json:"range"`
+		Color requiredProp `json:"color"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if _, ok := keys["color"]; !ok {
+	if !keys.Color {
 		return fmt.Errorf("required key 'color' is missing")
 	}
 
@@ -233,19 +260,25 @@ type ColorPresentationParams struct {
 }
 
 func (s *ColorPresentationParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Color        requiredProp `json:"color"`
+		Range        requiredProp `json:"range"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if _, ok := keys["color"]; !ok {
+	if !keys.Color {
 		return fmt.Errorf("required key 'color' is missing")
 	}
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
@@ -279,13 +312,17 @@ type ColorPresentation struct {
 }
 
 func (s *ColorPresentation) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Label requiredProp `json:"label"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["label"]; !ok {
+	if !keys.Label {
 		return fmt.Errorf("required key 'label' is missing")
 	}
 
@@ -311,13 +348,17 @@ type TextDocumentRegistrationOptions struct {
 }
 
 func (s *TextDocumentRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["documentSelector"]; !ok {
+	if !keys.DocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
@@ -339,13 +380,17 @@ type FoldingRangeParams struct {
 }
 
 func (s *FoldingRangeParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
@@ -391,16 +436,21 @@ type FoldingRange struct {
 }
 
 func (s *FoldingRange) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		StartLine requiredProp `json:"startLine"`
+		EndLine   requiredProp `json:"endLine"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["startLine"]; !ok {
+	if !keys.StartLine {
 		return fmt.Errorf("required key 'startLine' is missing")
 	}
-	if _, ok := keys["endLine"]; !ok {
+	if !keys.EndLine {
 		return fmt.Errorf("required key 'endLine' is missing")
 	}
 
@@ -448,16 +498,21 @@ type SelectionRangeParams struct {
 }
 
 func (s *SelectionRangeParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Positions    requiredProp `json:"positions"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if _, ok := keys["positions"]; !ok {
+	if !keys.Positions {
 		return fmt.Errorf("required key 'positions' is missing")
 	}
 
@@ -484,13 +539,17 @@ type SelectionRange struct {
 }
 
 func (s *SelectionRange) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Range requiredProp `json:"range"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
@@ -515,13 +574,17 @@ type WorkDoneProgressCreateParams struct {
 }
 
 func (s *WorkDoneProgressCreateParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Token requiredProp `json:"token"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["token"]; !ok {
+	if !keys.Token {
 		return fmt.Errorf("required key 'token' is missing")
 	}
 
@@ -539,13 +602,17 @@ type WorkDoneProgressCancelParams struct {
 }
 
 func (s *WorkDoneProgressCancelParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Token requiredProp `json:"token"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["token"]; !ok {
+	if !keys.Token {
 		return fmt.Errorf("required key 'token' is missing")
 	}
 
@@ -598,25 +665,33 @@ type CallHierarchyItem struct {
 }
 
 func (s *CallHierarchyItem) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Name           requiredProp `json:"name"`
+		Kind           requiredProp `json:"kind"`
+		Uri            requiredProp `json:"uri"`
+		Range          requiredProp `json:"range"`
+		SelectionRange requiredProp `json:"selectionRange"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["name"]; !ok {
+	if !keys.Name {
 		return fmt.Errorf("required key 'name' is missing")
 	}
-	if _, ok := keys["kind"]; !ok {
+	if !keys.Kind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if _, ok := keys["uri"]; !ok {
+	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if _, ok := keys["selectionRange"]; !ok {
+	if !keys.SelectionRange {
 		return fmt.Errorf("required key 'selectionRange' is missing")
 	}
 
@@ -655,13 +730,17 @@ type CallHierarchyIncomingCallsParams struct {
 }
 
 func (s *CallHierarchyIncomingCallsParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Item requiredProp `json:"item"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["item"]; !ok {
+	if !keys.Item {
 		return fmt.Errorf("required key 'item' is missing")
 	}
 
@@ -689,16 +768,21 @@ type CallHierarchyIncomingCall struct {
 }
 
 func (s *CallHierarchyIncomingCall) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		From       requiredProp `json:"from"`
+		FromRanges requiredProp `json:"fromRanges"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["from"]; !ok {
+	if !keys.From {
 		return fmt.Errorf("required key 'from' is missing")
 	}
-	if _, ok := keys["fromRanges"]; !ok {
+	if !keys.FromRanges {
 		return fmt.Errorf("required key 'fromRanges' is missing")
 	}
 
@@ -722,13 +806,17 @@ type CallHierarchyOutgoingCallsParams struct {
 }
 
 func (s *CallHierarchyOutgoingCallsParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Item requiredProp `json:"item"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["item"]; !ok {
+	if !keys.Item {
 		return fmt.Errorf("required key 'item' is missing")
 	}
 
@@ -757,16 +845,21 @@ type CallHierarchyOutgoingCall struct {
 }
 
 func (s *CallHierarchyOutgoingCall) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		To         requiredProp `json:"to"`
+		FromRanges requiredProp `json:"fromRanges"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["to"]; !ok {
+	if !keys.To {
 		return fmt.Errorf("required key 'to' is missing")
 	}
-	if _, ok := keys["fromRanges"]; !ok {
+	if !keys.FromRanges {
 		return fmt.Errorf("required key 'fromRanges' is missing")
 	}
 
@@ -789,13 +882,17 @@ type SemanticTokensParams struct {
 }
 
 func (s *SemanticTokensParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
@@ -823,13 +920,17 @@ type SemanticTokens struct {
 }
 
 func (s *SemanticTokens) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Data requiredProp `json:"data"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["data"]; !ok {
+	if !keys.Data {
 		return fmt.Errorf("required key 'data' is missing")
 	}
 
@@ -848,13 +949,17 @@ type SemanticTokensPartialResult struct {
 }
 
 func (s *SemanticTokensPartialResult) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Data requiredProp `json:"data"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["data"]; !ok {
+	if !keys.Data {
 		return fmt.Errorf("required key 'data' is missing")
 	}
 
@@ -887,16 +992,21 @@ type SemanticTokensDeltaParams struct {
 }
 
 func (s *SemanticTokensDeltaParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument     requiredProp `json:"textDocument"`
+		PreviousResultId requiredProp `json:"previousResultId"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if _, ok := keys["previousResultId"]; !ok {
+	if !keys.PreviousResultId {
 		return fmt.Errorf("required key 'previousResultId' is missing")
 	}
 
@@ -921,13 +1031,17 @@ type SemanticTokensDelta struct {
 }
 
 func (s *SemanticTokensDelta) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Edits requiredProp `json:"edits"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["edits"]; !ok {
+	if !keys.Edits {
 		return fmt.Errorf("required key 'edits' is missing")
 	}
 
@@ -946,13 +1060,17 @@ type SemanticTokensDeltaPartialResult struct {
 }
 
 func (s *SemanticTokensDeltaPartialResult) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Edits requiredProp `json:"edits"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["edits"]; !ok {
+	if !keys.Edits {
 		return fmt.Errorf("required key 'edits' is missing")
 	}
 
@@ -977,16 +1095,21 @@ type SemanticTokensRangeParams struct {
 }
 
 func (s *SemanticTokensRangeParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Range        requiredProp `json:"range"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
@@ -1028,13 +1151,17 @@ type ShowDocumentParams struct {
 }
 
 func (s *ShowDocumentParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Uri requiredProp `json:"uri"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["uri"]; !ok {
+	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
@@ -1058,13 +1185,17 @@ type ShowDocumentResult struct {
 }
 
 func (s *ShowDocumentResult) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Success requiredProp `json:"success"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["success"]; !ok {
+	if !keys.Success {
 		return fmt.Errorf("required key 'success' is missing")
 	}
 
@@ -1096,13 +1227,17 @@ type LinkedEditingRanges struct {
 }
 
 func (s *LinkedEditingRanges) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Ranges requiredProp `json:"ranges"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["ranges"]; !ok {
+	if !keys.Ranges {
 		return fmt.Errorf("required key 'ranges' is missing")
 	}
 
@@ -1131,13 +1266,17 @@ type CreateFilesParams struct {
 }
 
 func (s *CreateFilesParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Files requiredProp `json:"files"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["files"]; !ok {
+	if !keys.Files {
 		return fmt.Errorf("required key 'files' is missing")
 	}
 
@@ -1195,13 +1334,17 @@ type FileOperationRegistrationOptions struct {
 }
 
 func (s *FileOperationRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Filters requiredProp `json:"filters"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["filters"]; !ok {
+	if !keys.Filters {
 		return fmt.Errorf("required key 'filters' is missing")
 	}
 
@@ -1224,13 +1367,17 @@ type RenameFilesParams struct {
 }
 
 func (s *RenameFilesParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Files requiredProp `json:"files"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["files"]; !ok {
+	if !keys.Files {
 		return fmt.Errorf("required key 'files' is missing")
 	}
 
@@ -1252,13 +1399,17 @@ type DeleteFilesParams struct {
 }
 
 func (s *DeleteFilesParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Files requiredProp `json:"files"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["files"]; !ok {
+	if !keys.Files {
 		return fmt.Errorf("required key 'files' is missing")
 	}
 
@@ -1295,19 +1446,25 @@ type Moniker struct {
 }
 
 func (s *Moniker) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Scheme     requiredProp `json:"scheme"`
+		Identifier requiredProp `json:"identifier"`
+		Unique     requiredProp `json:"unique"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["scheme"]; !ok {
+	if !keys.Scheme {
 		return fmt.Errorf("required key 'scheme' is missing")
 	}
-	if _, ok := keys["identifier"]; !ok {
+	if !keys.Identifier {
 		return fmt.Errorf("required key 'identifier' is missing")
 	}
-	if _, ok := keys["unique"]; !ok {
+	if !keys.Unique {
 		return fmt.Errorf("required key 'unique' is missing")
 	}
 
@@ -1369,25 +1526,33 @@ type TypeHierarchyItem struct {
 }
 
 func (s *TypeHierarchyItem) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Name           requiredProp `json:"name"`
+		Kind           requiredProp `json:"kind"`
+		Uri            requiredProp `json:"uri"`
+		Range          requiredProp `json:"range"`
+		SelectionRange requiredProp `json:"selectionRange"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["name"]; !ok {
+	if !keys.Name {
 		return fmt.Errorf("required key 'name' is missing")
 	}
-	if _, ok := keys["kind"]; !ok {
+	if !keys.Kind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if _, ok := keys["uri"]; !ok {
+	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if _, ok := keys["selectionRange"]; !ok {
+	if !keys.SelectionRange {
 		return fmt.Errorf("required key 'selectionRange' is missing")
 	}
 
@@ -1426,13 +1591,17 @@ type TypeHierarchySupertypesParams struct {
 }
 
 func (s *TypeHierarchySupertypesParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Item requiredProp `json:"item"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["item"]; !ok {
+	if !keys.Item {
 		return fmt.Errorf("required key 'item' is missing")
 	}
 
@@ -1458,13 +1627,17 @@ type TypeHierarchySubtypesParams struct {
 }
 
 func (s *TypeHierarchySubtypesParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Item requiredProp `json:"item"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["item"]; !ok {
+	if !keys.Item {
 		return fmt.Errorf("required key 'item' is missing")
 	}
 
@@ -1497,19 +1670,25 @@ type InlineValueParams struct {
 }
 
 func (s *InlineValueParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Range        requiredProp `json:"range"`
+		Context      requiredProp `json:"context"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if _, ok := keys["context"]; !ok {
+	if !keys.Context {
 		return fmt.Errorf("required key 'context' is missing")
 	}
 
@@ -1548,16 +1727,21 @@ type InlayHintParams struct {
 }
 
 func (s *InlayHintParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Range        requiredProp `json:"range"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
@@ -1622,16 +1806,21 @@ type InlayHint struct {
 }
 
 func (s *InlayHint) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Position requiredProp `json:"position"`
+		Label    requiredProp `json:"label"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["position"]; !ok {
+	if !keys.Position {
 		return fmt.Errorf("required key 'position' is missing")
 	}
-	if _, ok := keys["label"]; !ok {
+	if !keys.Label {
 		return fmt.Errorf("required key 'label' is missing")
 	}
 
@@ -1677,13 +1866,17 @@ type DocumentDiagnosticParams struct {
 }
 
 func (s *DocumentDiagnosticParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
@@ -1708,13 +1901,17 @@ type DocumentDiagnosticReportPartialResult struct {
 }
 
 func (s *DocumentDiagnosticReportPartialResult) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		RelatedDocuments requiredProp `json:"relatedDocuments"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["relatedDocuments"]; !ok {
+	if !keys.RelatedDocuments {
 		return fmt.Errorf("required key 'relatedDocuments' is missing")
 	}
 
@@ -1734,13 +1931,17 @@ type DiagnosticServerCancellationData struct {
 }
 
 func (s *DiagnosticServerCancellationData) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		RetriggerRequest requiredProp `json:"retriggerRequest"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["retriggerRequest"]; !ok {
+	if !keys.RetriggerRequest {
 		return fmt.Errorf("required key 'retriggerRequest' is missing")
 	}
 
@@ -1777,13 +1978,17 @@ type WorkspaceDiagnosticParams struct {
 }
 
 func (s *WorkspaceDiagnosticParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		PreviousResultIds requiredProp `json:"previousResultIds"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["previousResultIds"]; !ok {
+	if !keys.PreviousResultIds {
 		return fmt.Errorf("required key 'previousResultIds' is missing")
 	}
 
@@ -1807,13 +2012,17 @@ type WorkspaceDiagnosticReport struct {
 }
 
 func (s *WorkspaceDiagnosticReport) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Items requiredProp `json:"items"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["items"]; !ok {
+	if !keys.Items {
 		return fmt.Errorf("required key 'items' is missing")
 	}
 
@@ -1833,13 +2042,17 @@ type WorkspaceDiagnosticReportPartialResult struct {
 }
 
 func (s *WorkspaceDiagnosticReportPartialResult) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Items requiredProp `json:"items"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["items"]; !ok {
+	if !keys.Items {
 		return fmt.Errorf("required key 'items' is missing")
 	}
 
@@ -1864,16 +2077,21 @@ type DidOpenNotebookDocumentParams struct {
 }
 
 func (s *DidOpenNotebookDocumentParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		NotebookDocument  requiredProp `json:"notebookDocument"`
+		CellTextDocuments requiredProp `json:"cellTextDocuments"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["notebookDocument"]; !ok {
+	if !keys.NotebookDocument {
 		return fmt.Errorf("required key 'notebookDocument' is missing")
 	}
-	if _, ok := keys["cellTextDocuments"]; !ok {
+	if !keys.CellTextDocuments {
 		return fmt.Errorf("required key 'cellTextDocuments' is missing")
 	}
 
@@ -1921,16 +2139,21 @@ type DidChangeNotebookDocumentParams struct {
 }
 
 func (s *DidChangeNotebookDocumentParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		NotebookDocument requiredProp `json:"notebookDocument"`
+		Change           requiredProp `json:"change"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["notebookDocument"]; !ok {
+	if !keys.NotebookDocument {
 		return fmt.Errorf("required key 'notebookDocument' is missing")
 	}
-	if _, ok := keys["change"]; !ok {
+	if !keys.Change {
 		return fmt.Errorf("required key 'change' is missing")
 	}
 
@@ -1952,13 +2175,17 @@ type DidSaveNotebookDocumentParams struct {
 }
 
 func (s *DidSaveNotebookDocumentParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		NotebookDocument requiredProp `json:"notebookDocument"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["notebookDocument"]; !ok {
+	if !keys.NotebookDocument {
 		return fmt.Errorf("required key 'notebookDocument' is missing")
 	}
 
@@ -1983,16 +2210,21 @@ type DidCloseNotebookDocumentParams struct {
 }
 
 func (s *DidCloseNotebookDocumentParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		NotebookDocument  requiredProp `json:"notebookDocument"`
+		CellTextDocuments requiredProp `json:"cellTextDocuments"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["notebookDocument"]; !ok {
+	if !keys.NotebookDocument {
 		return fmt.Errorf("required key 'notebookDocument' is missing")
 	}
-	if _, ok := keys["cellTextDocuments"]; !ok {
+	if !keys.CellTextDocuments {
 		return fmt.Errorf("required key 'cellTextDocuments' is missing")
 	}
 
@@ -2020,13 +2252,17 @@ type InlineCompletionParams struct {
 }
 
 func (s *InlineCompletionParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Context requiredProp `json:"context"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["context"]; !ok {
+	if !keys.Context {
 		return fmt.Errorf("required key 'context' is missing")
 	}
 
@@ -2052,13 +2288,17 @@ type InlineCompletionList struct {
 }
 
 func (s *InlineCompletionList) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Items requiredProp `json:"items"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["items"]; !ok {
+	if !keys.Items {
 		return fmt.Errorf("required key 'items' is missing")
 	}
 
@@ -2090,13 +2330,17 @@ type InlineCompletionItem struct {
 }
 
 func (s *InlineCompletionItem) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		InsertText requiredProp `json:"insertText"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["insertText"]; !ok {
+	if !keys.InsertText {
 		return fmt.Errorf("required key 'insertText' is missing")
 	}
 
@@ -2133,13 +2377,17 @@ type TextDocumentContentParams struct {
 }
 
 func (s *TextDocumentContentParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Uri requiredProp `json:"uri"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["uri"]; !ok {
+	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
@@ -2165,13 +2413,17 @@ type TextDocumentContentResult struct {
 }
 
 func (s *TextDocumentContentResult) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Text requiredProp `json:"text"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["text"]; !ok {
+	if !keys.Text {
 		return fmt.Errorf("required key 'text' is missing")
 	}
 
@@ -2204,13 +2456,17 @@ type TextDocumentContentRefreshParams struct {
 }
 
 func (s *TextDocumentContentRefreshParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Uri requiredProp `json:"uri"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["uri"]; !ok {
+	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
@@ -2227,13 +2483,17 @@ type RegistrationParams struct {
 }
 
 func (s *RegistrationParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Registrations requiredProp `json:"registrations"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["registrations"]; !ok {
+	if !keys.Registrations {
 		return fmt.Errorf("required key 'registrations' is missing")
 	}
 
@@ -2250,13 +2510,17 @@ type UnregistrationParams struct {
 }
 
 func (s *UnregistrationParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Unregisterations requiredProp `json:"unregisterations"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["unregisterations"]; !ok {
+	if !keys.Unregisterations {
 		return fmt.Errorf("required key 'unregisterations' is missing")
 	}
 
@@ -2285,13 +2549,17 @@ type InitializeResult struct {
 }
 
 func (s *InitializeResult) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Capabilities requiredProp `json:"capabilities"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["capabilities"]; !ok {
+	if !keys.Capabilities {
 		return fmt.Errorf("required key 'capabilities' is missing")
 	}
 
@@ -2315,13 +2583,17 @@ type InitializeError struct {
 }
 
 func (s *InitializeError) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Retry requiredProp `json:"retry"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["retry"]; !ok {
+	if !keys.Retry {
 		return fmt.Errorf("required key 'retry' is missing")
 	}
 
@@ -2342,13 +2614,17 @@ type DidChangeConfigurationParams struct {
 }
 
 func (s *DidChangeConfigurationParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Settings requiredProp `json:"settings"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["settings"]; !ok {
+	if !keys.Settings {
 		return fmt.Errorf("required key 'settings' is missing")
 	}
 
@@ -2374,16 +2650,21 @@ type ShowMessageParams struct {
 }
 
 func (s *ShowMessageParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Type    requiredProp `json:"type"`
+		Message requiredProp `json:"message"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["type"]; !ok {
+	if !keys.Type {
 		return fmt.Errorf("required key 'type' is missing")
 	}
-	if _, ok := keys["message"]; !ok {
+	if !keys.Message {
 		return fmt.Errorf("required key 'message' is missing")
 	}
 
@@ -2408,16 +2689,21 @@ type ShowMessageRequestParams struct {
 }
 
 func (s *ShowMessageRequestParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Type    requiredProp `json:"type"`
+		Message requiredProp `json:"message"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["type"]; !ok {
+	if !keys.Type {
 		return fmt.Errorf("required key 'type' is missing")
 	}
-	if _, ok := keys["message"]; !ok {
+	if !keys.Message {
 		return fmt.Errorf("required key 'message' is missing")
 	}
 
@@ -2437,13 +2723,17 @@ type MessageActionItem struct {
 }
 
 func (s *MessageActionItem) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Title requiredProp `json:"title"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["title"]; !ok {
+	if !keys.Title {
 		return fmt.Errorf("required key 'title' is missing")
 	}
 
@@ -2465,16 +2755,21 @@ type LogMessageParams struct {
 }
 
 func (s *LogMessageParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Type    requiredProp `json:"type"`
+		Message requiredProp `json:"message"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["type"]; !ok {
+	if !keys.Type {
 		return fmt.Errorf("required key 'type' is missing")
 	}
-	if _, ok := keys["message"]; !ok {
+	if !keys.Message {
 		return fmt.Errorf("required key 'message' is missing")
 	}
 
@@ -2494,13 +2789,17 @@ type DidOpenTextDocumentParams struct {
 }
 
 func (s *DidOpenTextDocumentParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
@@ -2534,16 +2833,21 @@ type DidChangeTextDocumentParams struct {
 }
 
 func (s *DidChangeTextDocumentParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument   requiredProp `json:"textDocument"`
+		ContentChanges requiredProp `json:"contentChanges"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if _, ok := keys["contentChanges"]; !ok {
+	if !keys.ContentChanges {
 		return fmt.Errorf("required key 'contentChanges' is missing")
 	}
 
@@ -2565,13 +2869,17 @@ type TextDocumentChangeRegistrationOptions struct {
 }
 
 func (s *TextDocumentChangeRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		SyncKind requiredProp `json:"syncKind"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["syncKind"]; !ok {
+	if !keys.SyncKind {
 		return fmt.Errorf("required key 'syncKind' is missing")
 	}
 
@@ -2592,13 +2900,17 @@ type DidCloseTextDocumentParams struct {
 }
 
 func (s *DidCloseTextDocumentParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
@@ -2621,13 +2933,17 @@ type DidSaveTextDocumentParams struct {
 }
 
 func (s *DidSaveTextDocumentParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
@@ -2656,16 +2972,21 @@ type WillSaveTextDocumentParams struct {
 }
 
 func (s *WillSaveTextDocumentParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Reason       requiredProp `json:"reason"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if _, ok := keys["reason"]; !ok {
+	if !keys.Reason {
 		return fmt.Errorf("required key 'reason' is missing")
 	}
 
@@ -2690,16 +3011,21 @@ type TextEdit struct {
 }
 
 func (s *TextEdit) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Range   requiredProp `json:"range"`
+		NewText requiredProp `json:"newText"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if _, ok := keys["newText"]; !ok {
+	if !keys.NewText {
 		return fmt.Errorf("required key 'newText' is missing")
 	}
 
@@ -2719,13 +3045,17 @@ type DidChangeWatchedFilesParams struct {
 }
 
 func (s *DidChangeWatchedFilesParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Changes requiredProp `json:"changes"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["changes"]; !ok {
+	if !keys.Changes {
 		return fmt.Errorf("required key 'changes' is missing")
 	}
 
@@ -2744,13 +3074,17 @@ type DidChangeWatchedFilesRegistrationOptions struct {
 }
 
 func (s *DidChangeWatchedFilesRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Watchers requiredProp `json:"watchers"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["watchers"]; !ok {
+	if !keys.Watchers {
 		return fmt.Errorf("required key 'watchers' is missing")
 	}
 
@@ -2777,16 +3111,21 @@ type PublishDiagnosticsParams struct {
 }
 
 func (s *PublishDiagnosticsParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Uri         requiredProp `json:"uri"`
+		Diagnostics requiredProp `json:"diagnostics"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["uri"]; !ok {
+	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if _, ok := keys["diagnostics"]; !ok {
+	if !keys.Diagnostics {
 		return fmt.Errorf("required key 'diagnostics' is missing")
 	}
 
@@ -2953,13 +3292,17 @@ type CompletionItem struct {
 }
 
 func (s *CompletionItem) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Label requiredProp `json:"label"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["label"]; !ok {
+	if !keys.Label {
 		return fmt.Errorf("required key 'label' is missing")
 	}
 
@@ -3039,16 +3382,21 @@ type CompletionList struct {
 }
 
 func (s *CompletionList) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		IsIncomplete requiredProp `json:"isIncomplete"`
+		Items        requiredProp `json:"items"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["isIncomplete"]; !ok {
+	if !keys.IsIncomplete {
 		return fmt.Errorf("required key 'isIncomplete' is missing")
 	}
-	if _, ok := keys["items"]; !ok {
+	if !keys.Items {
 		return fmt.Errorf("required key 'items' is missing")
 	}
 
@@ -3086,13 +3434,17 @@ type Hover struct {
 }
 
 func (s *Hover) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Contents requiredProp `json:"contents"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["contents"]; !ok {
+	if !keys.Contents {
 		return fmt.Errorf("required key 'contents' is missing")
 	}
 
@@ -3161,13 +3513,17 @@ type SignatureHelp struct {
 }
 
 func (s *SignatureHelp) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Signatures requiredProp `json:"signatures"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["signatures"]; !ok {
+	if !keys.Signatures {
 		return fmt.Errorf("required key 'signatures' is missing")
 	}
 
@@ -3210,13 +3566,17 @@ type ReferenceParams struct {
 }
 
 func (s *ReferenceParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Context requiredProp `json:"context"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["context"]; !ok {
+	if !keys.Context {
 		return fmt.Errorf("required key 'context' is missing")
 	}
 
@@ -3257,13 +3617,17 @@ type DocumentHighlight struct {
 }
 
 func (s *DocumentHighlight) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Range requiredProp `json:"range"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
@@ -3292,13 +3656,17 @@ type DocumentSymbolParams struct {
 }
 
 func (s *DocumentSymbolParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
@@ -3336,13 +3704,17 @@ type SymbolInformation struct {
 }
 
 func (s *SymbolInformation) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Location requiredProp `json:"location"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["location"]; !ok {
+	if !keys.Location {
 		return fmt.Errorf("required key 'location' is missing")
 	}
 
@@ -3396,22 +3768,29 @@ type DocumentSymbol struct {
 }
 
 func (s *DocumentSymbol) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Name           requiredProp `json:"name"`
+		Kind           requiredProp `json:"kind"`
+		Range          requiredProp `json:"range"`
+		SelectionRange requiredProp `json:"selectionRange"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["name"]; !ok {
+	if !keys.Name {
 		return fmt.Errorf("required key 'name' is missing")
 	}
-	if _, ok := keys["kind"]; !ok {
+	if !keys.Kind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if _, ok := keys["selectionRange"]; !ok {
+	if !keys.SelectionRange {
 		return fmt.Errorf("required key 'selectionRange' is missing")
 	}
 
@@ -3452,19 +3831,25 @@ type CodeActionParams struct {
 }
 
 func (s *CodeActionParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Range        requiredProp `json:"range"`
+		Context      requiredProp `json:"context"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if _, ok := keys["context"]; !ok {
+	if !keys.Context {
 		return fmt.Errorf("required key 'context' is missing")
 	}
 
@@ -3505,16 +3890,21 @@ type Command struct {
 }
 
 func (s *Command) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Title   requiredProp `json:"title"`
+		Command requiredProp `json:"command"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["title"]; !ok {
+	if !keys.Title {
 		return fmt.Errorf("required key 'title' is missing")
 	}
-	if _, ok := keys["command"]; !ok {
+	if !keys.Command {
 		return fmt.Errorf("required key 'command' is missing")
 	}
 
@@ -3592,13 +3982,17 @@ type CodeAction struct {
 }
 
 func (s *CodeAction) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Title requiredProp `json:"title"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["title"]; !ok {
+	if !keys.Title {
 		return fmt.Errorf("required key 'title' is missing")
 	}
 
@@ -3641,13 +4035,17 @@ type WorkspaceSymbolParams struct {
 }
 
 func (s *WorkspaceSymbolParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Query requiredProp `json:"query"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["query"]; !ok {
+	if !keys.Query {
 		return fmt.Errorf("required key 'query' is missing")
 	}
 
@@ -3683,13 +4081,17 @@ type WorkspaceSymbol struct {
 }
 
 func (s *WorkspaceSymbol) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Location requiredProp `json:"location"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["location"]; !ok {
+	if !keys.Location {
 		return fmt.Errorf("required key 'location' is missing")
 	}
 
@@ -3719,13 +4121,17 @@ type CodeLensParams struct {
 }
 
 func (s *CodeLensParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
@@ -3758,13 +4164,17 @@ type CodeLens struct {
 }
 
 func (s *CodeLens) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Range requiredProp `json:"range"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
@@ -3794,13 +4204,17 @@ type DocumentLinkParams struct {
 }
 
 func (s *DocumentLinkParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
@@ -3839,13 +4253,17 @@ type DocumentLink struct {
 }
 
 func (s *DocumentLink) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Range requiredProp `json:"range"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
@@ -3878,16 +4296,21 @@ type DocumentFormattingParams struct {
 }
 
 func (s *DocumentFormattingParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Options      requiredProp `json:"options"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if _, ok := keys["options"]; !ok {
+	if !keys.Options {
 		return fmt.Errorf("required key 'options' is missing")
 	}
 
@@ -3923,19 +4346,25 @@ type DocumentRangeFormattingParams struct {
 }
 
 func (s *DocumentRangeFormattingParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Range        requiredProp `json:"range"`
+		Options      requiredProp `json:"options"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if _, ok := keys["options"]; !ok {
+	if !keys.Options {
 		return fmt.Errorf("required key 'options' is missing")
 	}
 
@@ -3976,19 +4405,25 @@ type DocumentRangesFormattingParams struct {
 }
 
 func (s *DocumentRangesFormattingParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Ranges       requiredProp `json:"ranges"`
+		Options      requiredProp `json:"options"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if _, ok := keys["ranges"]; !ok {
+	if !keys.Ranges {
 		return fmt.Errorf("required key 'ranges' is missing")
 	}
-	if _, ok := keys["options"]; !ok {
+	if !keys.Options {
 		return fmt.Errorf("required key 'options' is missing")
 	}
 
@@ -4025,22 +4460,29 @@ type DocumentOnTypeFormattingParams struct {
 }
 
 func (s *DocumentOnTypeFormattingParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Position     requiredProp `json:"position"`
+		Ch           requiredProp `json:"ch"`
+		Options      requiredProp `json:"options"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if _, ok := keys["position"]; !ok {
+	if !keys.Position {
 		return fmt.Errorf("required key 'position' is missing")
 	}
-	if _, ok := keys["ch"]; !ok {
+	if !keys.Ch {
 		return fmt.Errorf("required key 'ch' is missing")
 	}
-	if _, ok := keys["options"]; !ok {
+	if !keys.Options {
 		return fmt.Errorf("required key 'options' is missing")
 	}
 
@@ -4078,19 +4520,25 @@ type RenameParams struct {
 }
 
 func (s *RenameParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Position     requiredProp `json:"position"`
+		NewName      requiredProp `json:"newName"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if _, ok := keys["position"]; !ok {
+	if !keys.Position {
 		return fmt.Errorf("required key 'position' is missing")
 	}
-	if _, ok := keys["newName"]; !ok {
+	if !keys.NewName {
 		return fmt.Errorf("required key 'newName' is missing")
 	}
 
@@ -4129,13 +4577,17 @@ type ExecuteCommandParams struct {
 }
 
 func (s *ExecuteCommandParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Command requiredProp `json:"command"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["command"]; !ok {
+	if !keys.Command {
 		return fmt.Errorf("required key 'command' is missing")
 	}
 
@@ -4174,13 +4626,17 @@ type ApplyWorkspaceEditParams struct {
 }
 
 func (s *ApplyWorkspaceEditParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Edit requiredProp `json:"edit"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["edit"]; !ok {
+	if !keys.Edit {
 		return fmt.Errorf("required key 'edit' is missing")
 	}
 
@@ -4213,13 +4669,17 @@ type ApplyWorkspaceEditResult struct {
 }
 
 func (s *ApplyWorkspaceEditResult) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Applied requiredProp `json:"applied"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["applied"]; !ok {
+	if !keys.Applied {
 		return fmt.Errorf("required key 'applied' is missing")
 	}
 
@@ -4264,16 +4724,21 @@ type WorkDoneProgressBegin struct {
 }
 
 func (s *WorkDoneProgressBegin) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Kind  requiredProp `json:"kind"`
+		Title requiredProp `json:"title"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["kind"]; !ok {
+	if !keys.Kind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if _, ok := keys["title"]; !ok {
+	if !keys.Title {
 		return fmt.Errorf("required key 'title' is missing")
 	}
 
@@ -4315,13 +4780,17 @@ type WorkDoneProgressReport struct {
 }
 
 func (s *WorkDoneProgressReport) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Kind requiredProp `json:"kind"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["kind"]; !ok {
+	if !keys.Kind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
 
@@ -4345,13 +4814,17 @@ type WorkDoneProgressEnd struct {
 }
 
 func (s *WorkDoneProgressEnd) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Kind requiredProp `json:"kind"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["kind"]; !ok {
+	if !keys.Kind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
 
@@ -4369,13 +4842,17 @@ type SetTraceParams struct {
 }
 
 func (s *SetTraceParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Value requiredProp `json:"value"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["value"]; !ok {
+	if !keys.Value {
 		return fmt.Errorf("required key 'value' is missing")
 	}
 
@@ -4394,13 +4871,17 @@ type LogTraceParams struct {
 }
 
 func (s *LogTraceParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Message requiredProp `json:"message"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["message"]; !ok {
+	if !keys.Message {
 		return fmt.Errorf("required key 'message' is missing")
 	}
 
@@ -4419,13 +4900,17 @@ type CancelParams struct {
 }
 
 func (s *CancelParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Id requiredProp `json:"id"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["id"]; !ok {
+	if !keys.Id {
 		return fmt.Errorf("required key 'id' is missing")
 	}
 
@@ -4446,16 +4931,21 @@ type ProgressParams struct {
 }
 
 func (s *ProgressParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Token requiredProp `json:"token"`
+		Value requiredProp `json:"value"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["token"]; !ok {
+	if !keys.Token {
 		return fmt.Errorf("required key 'token' is missing")
 	}
-	if _, ok := keys["value"]; !ok {
+	if !keys.Value {
 		return fmt.Errorf("required key 'value' is missing")
 	}
 
@@ -4479,16 +4969,21 @@ type TextDocumentPositionParams struct {
 }
 
 func (s *TextDocumentPositionParams) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Position     requiredProp `json:"position"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if _, ok := keys["position"]; !ok {
+	if !keys.Position {
 		return fmt.Errorf("required key 'position' is missing")
 	}
 
@@ -4535,19 +5030,25 @@ type LocationLink struct {
 }
 
 func (s *LocationLink) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TargetUri            requiredProp `json:"targetUri"`
+		TargetRange          requiredProp `json:"targetRange"`
+		TargetSelectionRange requiredProp `json:"targetSelectionRange"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["targetUri"]; !ok {
+	if !keys.TargetUri {
 		return fmt.Errorf("required key 'targetUri' is missing")
 	}
-	if _, ok := keys["targetRange"]; !ok {
+	if !keys.TargetRange {
 		return fmt.Errorf("required key 'targetRange' is missing")
 	}
-	if _, ok := keys["targetSelectionRange"]; !ok {
+	if !keys.TargetSelectionRange {
 		return fmt.Errorf("required key 'targetSelectionRange' is missing")
 	}
 
@@ -4584,16 +5085,21 @@ type Range struct {
 }
 
 func (s *Range) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Start requiredProp `json:"start"`
+		End   requiredProp `json:"end"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["start"]; !ok {
+	if !keys.Start {
 		return fmt.Errorf("required key 'start' is missing")
 	}
-	if _, ok := keys["end"]; !ok {
+	if !keys.End {
 		return fmt.Errorf("required key 'end' is missing")
 	}
 
@@ -4632,16 +5138,21 @@ type WorkspaceFoldersChangeEvent struct {
 }
 
 func (s *WorkspaceFoldersChangeEvent) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Added   requiredProp `json:"added"`
+		Removed requiredProp `json:"removed"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["added"]; !ok {
+	if !keys.Added {
 		return fmt.Errorf("required key 'added' is missing")
 	}
-	if _, ok := keys["removed"]; !ok {
+	if !keys.Removed {
 		return fmt.Errorf("required key 'removed' is missing")
 	}
 
@@ -4669,13 +5180,17 @@ type TextDocumentIdentifier struct {
 }
 
 func (s *TextDocumentIdentifier) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Uri requiredProp `json:"uri"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["uri"]; !ok {
+	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
@@ -4703,22 +5218,29 @@ type Color struct {
 }
 
 func (s *Color) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Red   requiredProp `json:"red"`
+		Green requiredProp `json:"green"`
+		Blue  requiredProp `json:"blue"`
+		Alpha requiredProp `json:"alpha"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["red"]; !ok {
+	if !keys.Red {
 		return fmt.Errorf("required key 'red' is missing")
 	}
-	if _, ok := keys["green"]; !ok {
+	if !keys.Green {
 		return fmt.Errorf("required key 'green' is missing")
 	}
-	if _, ok := keys["blue"]; !ok {
+	if !keys.Blue {
 		return fmt.Errorf("required key 'blue' is missing")
 	}
-	if _, ok := keys["alpha"]; !ok {
+	if !keys.Alpha {
 		return fmt.Errorf("required key 'alpha' is missing")
 	}
 
@@ -4784,16 +5306,21 @@ type Position struct {
 }
 
 func (s *Position) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Line      requiredProp `json:"line"`
+		Character requiredProp `json:"character"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["line"]; !ok {
+	if !keys.Line {
 		return fmt.Errorf("required key 'line' is missing")
 	}
-	if _, ok := keys["character"]; !ok {
+	if !keys.Character {
 		return fmt.Errorf("required key 'character' is missing")
 	}
 
@@ -4833,13 +5360,17 @@ type SemanticTokensOptions struct {
 }
 
 func (s *SemanticTokensOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Legend requiredProp `json:"legend"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["legend"]; !ok {
+	if !keys.Legend {
 		return fmt.Errorf("required key 'legend' is missing")
 	}
 
@@ -4868,16 +5399,21 @@ type SemanticTokensEdit struct {
 }
 
 func (s *SemanticTokensEdit) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Start       requiredProp `json:"start"`
+		DeleteCount requiredProp `json:"deleteCount"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["start"]; !ok {
+	if !keys.Start {
 		return fmt.Errorf("required key 'start' is missing")
 	}
-	if _, ok := keys["deleteCount"]; !ok {
+	if !keys.DeleteCount {
 		return fmt.Errorf("required key 'deleteCount' is missing")
 	}
 
@@ -4904,13 +5440,17 @@ type FileCreate struct {
 }
 
 func (s *FileCreate) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Uri requiredProp `json:"uri"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["uri"]; !ok {
+	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
@@ -4941,16 +5481,21 @@ type TextDocumentEdit struct {
 }
 
 func (s *TextDocumentEdit) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Edits        requiredProp `json:"edits"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["textDocument"]; !ok {
+	if !keys.TextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if _, ok := keys["edits"]; !ok {
+	if !keys.Edits {
 		return fmt.Errorf("required key 'edits' is missing")
 	}
 
@@ -4978,16 +5523,21 @@ type CreateFile struct {
 }
 
 func (s *CreateFile) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Kind requiredProp `json:"kind"`
+		Uri  requiredProp `json:"uri"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["kind"]; !ok {
+	if !keys.Kind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if _, ok := keys["uri"]; !ok {
+	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
@@ -5021,19 +5571,25 @@ type RenameFile struct {
 }
 
 func (s *RenameFile) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Kind   requiredProp `json:"kind"`
+		OldUri requiredProp `json:"oldUri"`
+		NewUri requiredProp `json:"newUri"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["kind"]; !ok {
+	if !keys.Kind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if _, ok := keys["oldUri"]; !ok {
+	if !keys.OldUri {
 		return fmt.Errorf("required key 'oldUri' is missing")
 	}
-	if _, ok := keys["newUri"]; !ok {
+	if !keys.NewUri {
 		return fmt.Errorf("required key 'newUri' is missing")
 	}
 
@@ -5065,16 +5621,21 @@ type DeleteFile struct {
 }
 
 func (s *DeleteFile) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Kind requiredProp `json:"kind"`
+		Uri  requiredProp `json:"uri"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["kind"]; !ok {
+	if !keys.Kind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if _, ok := keys["uri"]; !ok {
+	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
@@ -5108,13 +5669,17 @@ type ChangeAnnotation struct {
 }
 
 func (s *ChangeAnnotation) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Label requiredProp `json:"label"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["label"]; !ok {
+	if !keys.Label {
 		return fmt.Errorf("required key 'label' is missing")
 	}
 
@@ -5141,13 +5706,17 @@ type FileOperationFilter struct {
 }
 
 func (s *FileOperationFilter) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Pattern requiredProp `json:"pattern"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["pattern"]; !ok {
+	if !keys.Pattern {
 		return fmt.Errorf("required key 'pattern' is missing")
 	}
 
@@ -5172,16 +5741,21 @@ type FileRename struct {
 }
 
 func (s *FileRename) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		OldUri requiredProp `json:"oldUri"`
+		NewUri requiredProp `json:"newUri"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["oldUri"]; !ok {
+	if !keys.OldUri {
 		return fmt.Errorf("required key 'oldUri' is missing")
 	}
-	if _, ok := keys["newUri"]; !ok {
+	if !keys.NewUri {
 		return fmt.Errorf("required key 'newUri' is missing")
 	}
 
@@ -5203,13 +5777,17 @@ type FileDelete struct {
 }
 
 func (s *FileDelete) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Uri requiredProp `json:"uri"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["uri"]; !ok {
+	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
@@ -5243,16 +5821,21 @@ type InlineValueContext struct {
 }
 
 func (s *InlineValueContext) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		FrameId         requiredProp `json:"frameId"`
+		StoppedLocation requiredProp `json:"stoppedLocation"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["frameId"]; !ok {
+	if !keys.FrameId {
 		return fmt.Errorf("required key 'frameId' is missing")
 	}
-	if _, ok := keys["stoppedLocation"]; !ok {
+	if !keys.StoppedLocation {
 		return fmt.Errorf("required key 'stoppedLocation' is missing")
 	}
 
@@ -5277,16 +5860,21 @@ type InlineValueText struct {
 }
 
 func (s *InlineValueText) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Range requiredProp `json:"range"`
+		Text  requiredProp `json:"text"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if _, ok := keys["text"]; !ok {
+	if !keys.Text {
 		return fmt.Errorf("required key 'text' is missing")
 	}
 
@@ -5317,16 +5905,21 @@ type InlineValueVariableLookup struct {
 }
 
 func (s *InlineValueVariableLookup) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Range               requiredProp `json:"range"`
+		CaseSensitiveLookup requiredProp `json:"caseSensitiveLookup"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if _, ok := keys["caseSensitiveLookup"]; !ok {
+	if !keys.CaseSensitiveLookup {
 		return fmt.Errorf("required key 'caseSensitiveLookup' is missing")
 	}
 
@@ -5355,13 +5948,17 @@ type InlineValueEvaluatableExpression struct {
 }
 
 func (s *InlineValueEvaluatableExpression) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Range requiredProp `json:"range"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
@@ -5415,13 +6012,17 @@ type InlayHintLabelPart struct {
 }
 
 func (s *InlayHintLabelPart) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Value requiredProp `json:"value"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["value"]; !ok {
+	if !keys.Value {
 		return fmt.Errorf("required key 'value' is missing")
 	}
 
@@ -5469,16 +6070,21 @@ type MarkupContent struct {
 }
 
 func (s *MarkupContent) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Kind  requiredProp `json:"kind"`
+		Value requiredProp `json:"value"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["kind"]; !ok {
+	if !keys.Kind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if _, ok := keys["value"]; !ok {
+	if !keys.Value {
 		return fmt.Errorf("required key 'value' is missing")
 	}
 
@@ -5551,16 +6157,21 @@ type FullDocumentDiagnosticReport struct {
 }
 
 func (s *FullDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Kind  requiredProp `json:"kind"`
+		Items requiredProp `json:"items"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["kind"]; !ok {
+	if !keys.Kind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if _, ok := keys["items"]; !ok {
+	if !keys.Items {
 		return fmt.Errorf("required key 'items' is missing")
 	}
 
@@ -5591,16 +6202,21 @@ type UnchangedDocumentDiagnosticReport struct {
 }
 
 func (s *UnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Kind     requiredProp `json:"kind"`
+		ResultId requiredProp `json:"resultId"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["kind"]; !ok {
+	if !keys.Kind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if _, ok := keys["resultId"]; !ok {
+	if !keys.ResultId {
 		return fmt.Errorf("required key 'resultId' is missing")
 	}
 
@@ -5634,16 +6250,21 @@ type DiagnosticOptions struct {
 }
 
 func (s *DiagnosticOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		InterFileDependencies requiredProp `json:"interFileDependencies"`
+		WorkspaceDiagnostics  requiredProp `json:"workspaceDiagnostics"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["interFileDependencies"]; !ok {
+	if !keys.InterFileDependencies {
 		return fmt.Errorf("required key 'interFileDependencies' is missing")
 	}
-	if _, ok := keys["workspaceDiagnostics"]; !ok {
+	if !keys.WorkspaceDiagnostics {
 		return fmt.Errorf("required key 'workspaceDiagnostics' is missing")
 	}
 
@@ -5672,16 +6293,21 @@ type PreviousResultId struct {
 }
 
 func (s *PreviousResultId) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Uri   requiredProp `json:"uri"`
+		Value requiredProp `json:"value"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["uri"]; !ok {
+	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if _, ok := keys["value"]; !ok {
+	if !keys.Value {
 		return fmt.Errorf("required key 'value' is missing")
 	}
 
@@ -5719,22 +6345,29 @@ type NotebookDocument struct {
 }
 
 func (s *NotebookDocument) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Uri          requiredProp `json:"uri"`
+		NotebookType requiredProp `json:"notebookType"`
+		Version      requiredProp `json:"version"`
+		Cells        requiredProp `json:"cells"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["uri"]; !ok {
+	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if _, ok := keys["notebookType"]; !ok {
+	if !keys.NotebookType {
 		return fmt.Errorf("required key 'notebookType' is missing")
 	}
-	if _, ok := keys["version"]; !ok {
+	if !keys.Version {
 		return fmt.Errorf("required key 'version' is missing")
 	}
-	if _, ok := keys["cells"]; !ok {
+	if !keys.Cells {
 		return fmt.Errorf("required key 'cells' is missing")
 	}
 
@@ -5768,22 +6401,29 @@ type TextDocumentItem struct {
 }
 
 func (s *TextDocumentItem) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Uri        requiredProp `json:"uri"`
+		LanguageId requiredProp `json:"languageId"`
+		Version    requiredProp `json:"version"`
+		Text       requiredProp `json:"text"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["uri"]; !ok {
+	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if _, ok := keys["languageId"]; !ok {
+	if !keys.LanguageId {
 		return fmt.Errorf("required key 'languageId' is missing")
 	}
-	if _, ok := keys["version"]; !ok {
+	if !keys.Version {
 		return fmt.Errorf("required key 'version' is missing")
 	}
-	if _, ok := keys["text"]; !ok {
+	if !keys.Text {
 		return fmt.Errorf("required key 'text' is missing")
 	}
 
@@ -5821,13 +6461,17 @@ type NotebookDocumentSyncOptions struct {
 }
 
 func (s *NotebookDocumentSyncOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		NotebookSelector requiredProp `json:"notebookSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["notebookSelector"]; !ok {
+	if !keys.NotebookSelector {
 		return fmt.Errorf("required key 'notebookSelector' is missing")
 	}
 
@@ -5852,16 +6496,21 @@ type VersionedNotebookDocumentIdentifier struct {
 }
 
 func (s *VersionedNotebookDocumentIdentifier) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Version requiredProp `json:"version"`
+		Uri     requiredProp `json:"uri"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["version"]; !ok {
+	if !keys.Version {
 		return fmt.Errorf("required key 'version' is missing")
 	}
-	if _, ok := keys["uri"]; !ok {
+	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
@@ -5896,13 +6545,17 @@ type NotebookDocumentIdentifier struct {
 }
 
 func (s *NotebookDocumentIdentifier) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Uri requiredProp `json:"uri"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["uri"]; !ok {
+	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
@@ -5928,13 +6581,17 @@ type InlineCompletionContext struct {
 }
 
 func (s *InlineCompletionContext) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TriggerKind requiredProp `json:"triggerKind"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["triggerKind"]; !ok {
+	if !keys.TriggerKind {
 		return fmt.Errorf("required key 'triggerKind' is missing")
 	}
 
@@ -5967,16 +6624,21 @@ type StringValue struct {
 }
 
 func (s *StringValue) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Kind  requiredProp `json:"kind"`
+		Value requiredProp `json:"value"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["kind"]; !ok {
+	if !keys.Kind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if _, ok := keys["value"]; !ok {
+	if !keys.Value {
 		return fmt.Errorf("required key 'value' is missing")
 	}
 
@@ -6009,13 +6671,17 @@ type TextDocumentContentOptions struct {
 }
 
 func (s *TextDocumentContentOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Schemes requiredProp `json:"schemes"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["schemes"]; !ok {
+	if !keys.Schemes {
 		return fmt.Errorf("required key 'schemes' is missing")
 	}
 
@@ -6041,16 +6707,21 @@ type Registration struct {
 }
 
 func (s *Registration) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Id     requiredProp `json:"id"`
+		Method requiredProp `json:"method"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["id"]; !ok {
+	if !keys.Id {
 		return fmt.Errorf("required key 'id' is missing")
 	}
-	if _, ok := keys["method"]; !ok {
+	if !keys.Method {
 		return fmt.Errorf("required key 'method' is missing")
 	}
 
@@ -6075,16 +6746,21 @@ type Unregistration struct {
 }
 
 func (s *Unregistration) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Id     requiredProp `json:"id"`
+		Method requiredProp `json:"method"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["id"]; !ok {
+	if !keys.Id {
 		return fmt.Errorf("required key 'id' is missing")
 	}
-	if _, ok := keys["method"]; !ok {
+	if !keys.Method {
 		return fmt.Errorf("required key 'method' is missing")
 	}
 
@@ -6147,19 +6823,25 @@ type InitializeParamsBase struct {
 }
 
 func (s *InitializeParamsBase) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		ProcessId    requiredProp `json:"processId"`
+		RootUri      requiredProp `json:"rootUri"`
+		Capabilities requiredProp `json:"capabilities"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["processId"]; !ok {
+	if !keys.ProcessId {
 		return fmt.Errorf("required key 'processId' is missing")
 	}
-	if _, ok := keys["rootUri"]; !ok {
+	if !keys.RootUri {
 		return fmt.Errorf("required key 'rootUri' is missing")
 	}
-	if _, ok := keys["capabilities"]; !ok {
+	if !keys.Capabilities {
 		return fmt.Errorf("required key 'capabilities' is missing")
 	}
 
@@ -6353,13 +7035,17 @@ type ServerInfo struct {
 }
 
 func (s *ServerInfo) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Name requiredProp `json:"name"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["name"]; !ok {
+	if !keys.Name {
 		return fmt.Errorf("required key 'name' is missing")
 	}
 
@@ -6381,13 +7067,17 @@ type VersionedTextDocumentIdentifier struct {
 }
 
 func (s *VersionedTextDocumentIdentifier) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Version requiredProp `json:"version"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["version"]; !ok {
+	if !keys.Version {
 		return fmt.Errorf("required key 'version' is missing")
 	}
 
@@ -6417,16 +7107,21 @@ type FileEvent struct {
 }
 
 func (s *FileEvent) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Uri  requiredProp `json:"uri"`
+		Type requiredProp `json:"type"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["uri"]; !ok {
+	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if _, ok := keys["type"]; !ok {
+	if !keys.Type {
 		return fmt.Errorf("required key 'type' is missing")
 	}
 
@@ -6452,13 +7147,17 @@ type FileSystemWatcher struct {
 }
 
 func (s *FileSystemWatcher) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		GlobPattern requiredProp `json:"globPattern"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["globPattern"]; !ok {
+	if !keys.GlobPattern {
 		return fmt.Errorf("required key 'globPattern' is missing")
 	}
 
@@ -6516,16 +7215,21 @@ type Diagnostic struct {
 }
 
 func (s *Diagnostic) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Range   requiredProp `json:"range"`
+		Message requiredProp `json:"message"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if _, ok := keys["message"]; !ok {
+	if !keys.Message {
 		return fmt.Errorf("required key 'message' is missing")
 	}
 
@@ -6556,13 +7260,17 @@ type CompletionContext struct {
 }
 
 func (s *CompletionContext) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TriggerKind requiredProp `json:"triggerKind"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["triggerKind"]; !ok {
+	if !keys.TriggerKind {
 		return fmt.Errorf("required key 'triggerKind' is missing")
 	}
 
@@ -6603,19 +7311,25 @@ type InsertReplaceEdit struct {
 }
 
 func (s *InsertReplaceEdit) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		NewText requiredProp `json:"newText"`
+		Insert  requiredProp `json:"insert"`
+		Replace requiredProp `json:"replace"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["newText"]; !ok {
+	if !keys.NewText {
 		return fmt.Errorf("required key 'newText' is missing")
 	}
-	if _, ok := keys["insert"]; !ok {
+	if !keys.Insert {
 		return fmt.Errorf("required key 'insert' is missing")
 	}
-	if _, ok := keys["replace"]; !ok {
+	if !keys.Replace {
 		return fmt.Errorf("required key 'replace' is missing")
 	}
 
@@ -6797,16 +7511,21 @@ type SignatureHelpContext struct {
 }
 
 func (s *SignatureHelpContext) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TriggerKind requiredProp `json:"triggerKind"`
+		IsRetrigger requiredProp `json:"isRetrigger"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["triggerKind"]; !ok {
+	if !keys.TriggerKind {
 		return fmt.Errorf("required key 'triggerKind' is missing")
 	}
-	if _, ok := keys["isRetrigger"]; !ok {
+	if !keys.IsRetrigger {
 		return fmt.Errorf("required key 'isRetrigger' is missing")
 	}
 
@@ -6851,13 +7570,17 @@ type SignatureInformation struct {
 }
 
 func (s *SignatureInformation) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Label requiredProp `json:"label"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["label"]; !ok {
+	if !keys.Label {
 		return fmt.Errorf("required key 'label' is missing")
 	}
 
@@ -6901,13 +7624,17 @@ type ReferenceContext struct {
 }
 
 func (s *ReferenceContext) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		IncludeDeclaration requiredProp `json:"includeDeclaration"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["includeDeclaration"]; !ok {
+	if !keys.IncludeDeclaration {
 		return fmt.Errorf("required key 'includeDeclaration' is missing")
 	}
 
@@ -6950,16 +7677,21 @@ type BaseSymbolInformation struct {
 }
 
 func (s *BaseSymbolInformation) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Name requiredProp `json:"name"`
+		Kind requiredProp `json:"kind"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["name"]; !ok {
+	if !keys.Name {
 		return fmt.Errorf("required key 'name' is missing")
 	}
-	if _, ok := keys["kind"]; !ok {
+	if !keys.Kind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
 
@@ -7008,13 +7740,17 @@ type CodeActionContext struct {
 }
 
 func (s *CodeActionContext) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Diagnostics requiredProp `json:"diagnostics"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["diagnostics"]; !ok {
+	if !keys.Diagnostics {
 		return fmt.Errorf("required key 'diagnostics' is missing")
 	}
 
@@ -7039,13 +7775,17 @@ type CodeActionDisabled struct {
 }
 
 func (s *CodeActionDisabled) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Reason requiredProp `json:"reason"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["reason"]; !ok {
+	if !keys.Reason {
 		return fmt.Errorf("required key 'reason' is missing")
 	}
 
@@ -7100,13 +7840,17 @@ type LocationUriOnly struct {
 }
 
 func (s *LocationUriOnly) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Uri requiredProp `json:"uri"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["uri"]; !ok {
+	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
@@ -7170,16 +7914,21 @@ type FormattingOptions struct {
 }
 
 func (s *FormattingOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TabSize      requiredProp `json:"tabSize"`
+		InsertSpaces requiredProp `json:"insertSpaces"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["tabSize"]; !ok {
+	if !keys.TabSize {
 		return fmt.Errorf("required key 'tabSize' is missing")
 	}
-	if _, ok := keys["insertSpaces"]; !ok {
+	if !keys.InsertSpaces {
 		return fmt.Errorf("required key 'insertSpaces' is missing")
 	}
 
@@ -7222,13 +7971,17 @@ type DocumentOnTypeFormattingOptions struct {
 }
 
 func (s *DocumentOnTypeFormattingOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		FirstTriggerCharacter requiredProp `json:"firstTriggerCharacter"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["firstTriggerCharacter"]; !ok {
+	if !keys.FirstTriggerCharacter {
 		return fmt.Errorf("required key 'firstTriggerCharacter' is missing")
 	}
 
@@ -7259,16 +8012,21 @@ type PrepareRenamePlaceholder struct {
 }
 
 func (s *PrepareRenamePlaceholder) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Range       requiredProp `json:"range"`
+		Placeholder requiredProp `json:"placeholder"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if _, ok := keys["placeholder"]; !ok {
+	if !keys.Placeholder {
 		return fmt.Errorf("required key 'placeholder' is missing")
 	}
 
@@ -7287,13 +8045,17 @@ type PrepareRenameDefaultBehavior struct {
 }
 
 func (s *PrepareRenameDefaultBehavior) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		DefaultBehavior requiredProp `json:"defaultBehavior"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["defaultBehavior"]; !ok {
+	if !keys.DefaultBehavior {
 		return fmt.Errorf("required key 'defaultBehavior' is missing")
 	}
 
@@ -7314,13 +8076,17 @@ type ExecuteCommandOptions struct {
 }
 
 func (s *ExecuteCommandOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Commands requiredProp `json:"commands"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["commands"]; !ok {
+	if !keys.Commands {
 		return fmt.Errorf("required key 'commands' is missing")
 	}
 
@@ -7354,16 +8120,21 @@ type SemanticTokensLegend struct {
 }
 
 func (s *SemanticTokensLegend) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		TokenTypes     requiredProp `json:"tokenTypes"`
+		TokenModifiers requiredProp `json:"tokenModifiers"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["tokenTypes"]; !ok {
+	if !keys.TokenTypes {
 		return fmt.Errorf("required key 'tokenTypes' is missing")
 	}
-	if _, ok := keys["tokenModifiers"]; !ok {
+	if !keys.TokenModifiers {
 		return fmt.Errorf("required key 'tokenModifiers' is missing")
 	}
 
@@ -7397,13 +8168,17 @@ type OptionalVersionedTextDocumentIdentifier struct {
 }
 
 func (s *OptionalVersionedTextDocumentIdentifier) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Version requiredProp `json:"version"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["version"]; !ok {
+	if !keys.Version {
 		return fmt.Errorf("required key 'version' is missing")
 	}
 
@@ -7428,13 +8203,17 @@ type AnnotatedTextEdit struct {
 }
 
 func (s *AnnotatedTextEdit) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		AnnotationId requiredProp `json:"annotationId"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["annotationId"]; !ok {
+	if !keys.AnnotationId {
 		return fmt.Errorf("required key 'annotationId' is missing")
 	}
 
@@ -7465,16 +8244,21 @@ type SnippetTextEdit struct {
 }
 
 func (s *SnippetTextEdit) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Range   requiredProp `json:"range"`
+		Snippet requiredProp `json:"snippet"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if _, ok := keys["snippet"]; !ok {
+	if !keys.Snippet {
 		return fmt.Errorf("required key 'snippet' is missing")
 	}
 
@@ -7500,13 +8284,17 @@ type ResourceOperation struct {
 }
 
 func (s *ResourceOperation) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Kind requiredProp `json:"kind"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["kind"]; !ok {
+	if !keys.Kind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
 
@@ -7570,13 +8358,17 @@ type FileOperationPattern struct {
 }
 
 func (s *FileOperationPattern) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Glob requiredProp `json:"glob"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["glob"]; !ok {
+	if !keys.Glob {
 		return fmt.Errorf("required key 'glob' is missing")
 	}
 
@@ -7605,16 +8397,21 @@ type WorkspaceFullDocumentDiagnosticReport struct {
 }
 
 func (s *WorkspaceFullDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Uri     requiredProp `json:"uri"`
+		Version requiredProp `json:"version"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["uri"]; !ok {
+	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if _, ok := keys["version"]; !ok {
+	if !keys.Version {
 		return fmt.Errorf("required key 'version' is missing")
 	}
 
@@ -7644,16 +8441,21 @@ type WorkspaceUnchangedDocumentDiagnosticReport struct {
 }
 
 func (s *WorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Uri     requiredProp `json:"uri"`
+		Version requiredProp `json:"version"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["uri"]; !ok {
+	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if _, ok := keys["version"]; !ok {
+	if !keys.Version {
 		return fmt.Errorf("required key 'version' is missing")
 	}
 
@@ -7694,16 +8496,21 @@ type NotebookCell struct {
 }
 
 func (s *NotebookCell) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Kind     requiredProp `json:"kind"`
+		Document requiredProp `json:"document"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["kind"]; !ok {
+	if !keys.Kind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if _, ok := keys["document"]; !ok {
+	if !keys.Document {
 		return fmt.Errorf("required key 'document' is missing")
 	}
 
@@ -7730,13 +8537,17 @@ type NotebookDocumentFilterWithNotebook struct {
 }
 
 func (s *NotebookDocumentFilterWithNotebook) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Notebook requiredProp `json:"notebook"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["notebook"]; !ok {
+	if !keys.Notebook {
 		return fmt.Errorf("required key 'notebook' is missing")
 	}
 
@@ -7761,13 +8572,17 @@ type NotebookDocumentFilterWithCells struct {
 }
 
 func (s *NotebookDocumentFilterWithCells) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Cells requiredProp `json:"cells"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["cells"]; !ok {
+	if !keys.Cells {
 		return fmt.Errorf("required key 'cells' is missing")
 	}
 
@@ -7810,16 +8625,21 @@ type SelectedCompletionInfo struct {
 }
 
 func (s *SelectedCompletionInfo) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Range requiredProp `json:"range"`
+		Text  requiredProp `json:"text"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if _, ok := keys["text"]; !ok {
+	if !keys.Text {
 		return fmt.Errorf("required key 'text' is missing")
 	}
 
@@ -7846,13 +8666,17 @@ type ClientInfo struct {
 }
 
 func (s *ClientInfo) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Name requiredProp `json:"name"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["name"]; !ok {
+	if !keys.Name {
 		return fmt.Errorf("required key 'name' is missing")
 	}
 
@@ -7949,16 +8773,21 @@ type TextDocumentContentChangePartial struct {
 }
 
 func (s *TextDocumentContentChangePartial) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Range requiredProp `json:"range"`
+		Text  requiredProp `json:"text"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["range"]; !ok {
+	if !keys.Range {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if _, ok := keys["text"]; !ok {
+	if !keys.Text {
 		return fmt.Errorf("required key 'text' is missing")
 	}
 
@@ -7979,13 +8808,17 @@ type TextDocumentContentChangeWholeDocument struct {
 }
 
 func (s *TextDocumentContentChangeWholeDocument) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Text requiredProp `json:"text"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["text"]; !ok {
+	if !keys.Text {
 		return fmt.Errorf("required key 'text' is missing")
 	}
 
@@ -8006,13 +8839,17 @@ type CodeDescription struct {
 }
 
 func (s *CodeDescription) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Href requiredProp `json:"href"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["href"]; !ok {
+	if !keys.Href {
 		return fmt.Errorf("required key 'href' is missing")
 	}
 
@@ -8036,16 +8873,21 @@ type DiagnosticRelatedInformation struct {
 }
 
 func (s *DiagnosticRelatedInformation) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Location requiredProp `json:"location"`
+		Message  requiredProp `json:"message"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["location"]; !ok {
+	if !keys.Location {
 		return fmt.Errorf("required key 'location' is missing")
 	}
-	if _, ok := keys["message"]; !ok {
+	if !keys.Message {
 		return fmt.Errorf("required key 'message' is missing")
 	}
 
@@ -8068,16 +8910,21 @@ type EditRangeWithInsertReplace struct {
 }
 
 func (s *EditRangeWithInsertReplace) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Insert  requiredProp `json:"insert"`
+		Replace requiredProp `json:"replace"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["insert"]; !ok {
+	if !keys.Insert {
 		return fmt.Errorf("required key 'insert' is missing")
 	}
-	if _, ok := keys["replace"]; !ok {
+	if !keys.Replace {
 		return fmt.Errorf("required key 'replace' is missing")
 	}
 
@@ -8110,16 +8957,21 @@ type MarkedStringWithLanguage struct {
 }
 
 func (s *MarkedStringWithLanguage) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Language requiredProp `json:"language"`
+		Value    requiredProp `json:"value"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["language"]; !ok {
+	if !keys.Language {
 		return fmt.Errorf("required key 'language' is missing")
 	}
-	if _, ok := keys["value"]; !ok {
+	if !keys.Value {
 		return fmt.Errorf("required key 'value' is missing")
 	}
 
@@ -8155,13 +9007,17 @@ type ParameterInformation struct {
 }
 
 func (s *ParameterInformation) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Label requiredProp `json:"label"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["label"]; !ok {
+	if !keys.Label {
 		return fmt.Errorf("required key 'label' is missing")
 	}
 
@@ -8194,16 +9050,21 @@ type CodeActionKindDocumentation struct {
 }
 
 func (s *CodeActionKindDocumentation) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Kind    requiredProp `json:"kind"`
+		Command requiredProp `json:"command"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["kind"]; !ok {
+	if !keys.Kind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if _, ok := keys["command"]; !ok {
+	if !keys.Command {
 		return fmt.Errorf("required key 'command' is missing")
 	}
 
@@ -8235,13 +9096,17 @@ type NotebookCellTextDocumentFilter struct {
 }
 
 func (s *NotebookCellTextDocumentFilter) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Notebook requiredProp `json:"notebook"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["notebook"]; !ok {
+	if !keys.Notebook {
 		return fmt.Errorf("required key 'notebook' is missing")
 	}
 
@@ -8274,13 +9139,17 @@ type ExecutionSummary struct {
 }
 
 func (s *ExecutionSummary) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		ExecutionOrder requiredProp `json:"executionOrder"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["executionOrder"]; !ok {
+	if !keys.ExecutionOrder {
 		return fmt.Errorf("required key 'executionOrder' is missing")
 	}
 
@@ -8299,13 +9168,17 @@ type NotebookCellLanguage struct {
 }
 
 func (s *NotebookCellLanguage) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Language requiredProp `json:"language"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["language"]; !ok {
+	if !keys.Language {
 		return fmt.Errorf("required key 'language' is missing")
 	}
 
@@ -8332,13 +9205,17 @@ type NotebookDocumentCellChangeStructure struct {
 }
 
 func (s *NotebookDocumentCellChangeStructure) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Array requiredProp `json:"array"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["array"]; !ok {
+	if !keys.Array {
 		return fmt.Errorf("required key 'array' is missing")
 	}
 
@@ -8362,16 +9239,21 @@ type NotebookDocumentCellContentChanges struct {
 }
 
 func (s *NotebookDocumentCellContentChanges) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Document requiredProp `json:"document"`
+		Changes  requiredProp `json:"changes"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["document"]; !ok {
+	if !keys.Document {
 		return fmt.Errorf("required key 'document' is missing")
 	}
-	if _, ok := keys["changes"]; !ok {
+	if !keys.Changes {
 		return fmt.Errorf("required key 'changes' is missing")
 	}
 
@@ -8611,13 +9493,17 @@ type NotebookDocumentClientCapabilities struct {
 }
 
 func (s *NotebookDocumentClientCapabilities) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Synchronization requiredProp `json:"synchronization"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["synchronization"]; !ok {
+	if !keys.Synchronization {
 		return fmt.Errorf("required key 'synchronization' is missing")
 	}
 
@@ -8747,16 +9633,21 @@ type RelativePattern struct {
 }
 
 func (s *RelativePattern) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		BaseUri requiredProp `json:"baseUri"`
+		Pattern requiredProp `json:"pattern"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["baseUri"]; !ok {
+	if !keys.BaseUri {
 		return fmt.Errorf("required key 'baseUri' is missing")
 	}
-	if _, ok := keys["pattern"]; !ok {
+	if !keys.Pattern {
 		return fmt.Errorf("required key 'pattern' is missing")
 	}
 
@@ -8788,13 +9679,17 @@ type TextDocumentFilterLanguage struct {
 }
 
 func (s *TextDocumentFilterLanguage) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Language requiredProp `json:"language"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["language"]; !ok {
+	if !keys.Language {
 		return fmt.Errorf("required key 'language' is missing")
 	}
 
@@ -8827,13 +9722,17 @@ type TextDocumentFilterScheme struct {
 }
 
 func (s *TextDocumentFilterScheme) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Scheme requiredProp `json:"scheme"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["scheme"]; !ok {
+	if !keys.Scheme {
 		return fmt.Errorf("required key 'scheme' is missing")
 	}
 
@@ -8866,13 +9765,17 @@ type TextDocumentFilterPattern struct {
 }
 
 func (s *TextDocumentFilterPattern) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Pattern requiredProp `json:"pattern"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["pattern"]; !ok {
+	if !keys.Pattern {
 		return fmt.Errorf("required key 'pattern' is missing")
 	}
 
@@ -8901,13 +9804,17 @@ type NotebookDocumentFilterNotebookType struct {
 }
 
 func (s *NotebookDocumentFilterNotebookType) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		NotebookType requiredProp `json:"notebookType"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["notebookType"]; !ok {
+	if !keys.NotebookType {
 		return fmt.Errorf("required key 'notebookType' is missing")
 	}
 
@@ -8936,13 +9843,17 @@ type NotebookDocumentFilterScheme struct {
 }
 
 func (s *NotebookDocumentFilterScheme) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Scheme requiredProp `json:"scheme"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["scheme"]; !ok {
+	if !keys.Scheme {
 		return fmt.Errorf("required key 'scheme' is missing")
 	}
 
@@ -8971,13 +9882,17 @@ type NotebookDocumentFilterPattern struct {
 }
 
 func (s *NotebookDocumentFilterPattern) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Pattern requiredProp `json:"pattern"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["pattern"]; !ok {
+	if !keys.Pattern {
 		return fmt.Errorf("required key 'pattern' is missing")
 	}
 
@@ -9007,16 +9922,21 @@ type NotebookCellArrayChange struct {
 }
 
 func (s *NotebookCellArrayChange) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Start       requiredProp `json:"start"`
+		DeleteCount requiredProp `json:"deleteCount"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["start"]; !ok {
+	if !keys.Start {
 		return fmt.Errorf("required key 'start' is missing")
 	}
-	if _, ok := keys["deleteCount"]; !ok {
+	if !keys.DeleteCount {
 		return fmt.Errorf("required key 'deleteCount' is missing")
 	}
 
@@ -9662,22 +10582,29 @@ type SemanticTokensClientCapabilities struct {
 }
 
 func (s *SemanticTokensClientCapabilities) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Requests       requiredProp `json:"requests"`
+		TokenTypes     requiredProp `json:"tokenTypes"`
+		TokenModifiers requiredProp `json:"tokenModifiers"`
+		Formats        requiredProp `json:"formats"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["requests"]; !ok {
+	if !keys.Requests {
 		return fmt.Errorf("required key 'requests' is missing")
 	}
-	if _, ok := keys["tokenTypes"]; !ok {
+	if !keys.TokenTypes {
 		return fmt.Errorf("required key 'tokenTypes' is missing")
 	}
-	if _, ok := keys["tokenModifiers"]; !ok {
+	if !keys.TokenModifiers {
 		return fmt.Errorf("required key 'tokenModifiers' is missing")
 	}
-	if _, ok := keys["formats"]; !ok {
+	if !keys.Formats {
 		return fmt.Errorf("required key 'formats' is missing")
 	}
 
@@ -9800,13 +10727,17 @@ type ShowDocumentClientCapabilities struct {
 }
 
 func (s *ShowDocumentClientCapabilities) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Support requiredProp `json:"support"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["support"]; !ok {
+	if !keys.Support {
 		return fmt.Errorf("required key 'support' is missing")
 	}
 
@@ -9830,16 +10761,21 @@ type StaleRequestSupportOptions struct {
 }
 
 func (s *StaleRequestSupportOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Cancel                 requiredProp `json:"cancel"`
+		RetryOnContentModified requiredProp `json:"retryOnContentModified"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["cancel"]; !ok {
+	if !keys.Cancel {
 		return fmt.Errorf("required key 'cancel' is missing")
 	}
-	if _, ok := keys["retryOnContentModified"]; !ok {
+	if !keys.RetryOnContentModified {
 		return fmt.Errorf("required key 'retryOnContentModified' is missing")
 	}
 
@@ -9864,13 +10800,17 @@ type RegularExpressionsClientCapabilities struct {
 }
 
 func (s *RegularExpressionsClientCapabilities) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Engine requiredProp `json:"engine"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["engine"]; !ok {
+	if !keys.Engine {
 		return fmt.Errorf("required key 'engine' is missing")
 	}
 
@@ -9901,13 +10841,17 @@ type MarkdownClientCapabilities struct {
 }
 
 func (s *MarkdownClientCapabilities) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Parser requiredProp `json:"parser"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["parser"]; !ok {
+	if !keys.Parser {
 		return fmt.Errorf("required key 'parser' is missing")
 	}
 
@@ -9949,13 +10893,17 @@ type ClientSymbolTagOptions struct {
 }
 
 func (s *ClientSymbolTagOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		ValueSet requiredProp `json:"valueSet"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["valueSet"]; !ok {
+	if !keys.ValueSet {
 		return fmt.Errorf("required key 'valueSet' is missing")
 	}
 
@@ -9975,13 +10923,17 @@ type ClientSymbolResolveOptions struct {
 }
 
 func (s *ClientSymbolResolveOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Properties requiredProp `json:"properties"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["properties"]; !ok {
+	if !keys.Properties {
 		return fmt.Errorf("required key 'properties' is missing")
 	}
 
@@ -10126,13 +11078,17 @@ type ClientCodeActionLiteralOptions struct {
 }
 
 func (s *ClientCodeActionLiteralOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		CodeActionKind requiredProp `json:"codeActionKind"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["codeActionKind"]; !ok {
+	if !keys.CodeActionKind {
 		return fmt.Errorf("required key 'codeActionKind' is missing")
 	}
 
@@ -10151,13 +11107,17 @@ type ClientCodeActionResolveOptions struct {
 }
 
 func (s *ClientCodeActionResolveOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Properties requiredProp `json:"properties"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["properties"]; !ok {
+	if !keys.Properties {
 		return fmt.Errorf("required key 'properties' is missing")
 	}
 
@@ -10176,13 +11136,17 @@ type CodeActionTagOptions struct {
 }
 
 func (s *CodeActionTagOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		ValueSet requiredProp `json:"valueSet"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["valueSet"]; !ok {
+	if !keys.ValueSet {
 		return fmt.Errorf("required key 'valueSet' is missing")
 	}
 
@@ -10201,13 +11165,17 @@ type ClientCodeLensResolveOptions struct {
 }
 
 func (s *ClientCodeLensResolveOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Properties requiredProp `json:"properties"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["properties"]; !ok {
+	if !keys.Properties {
 		return fmt.Errorf("required key 'properties' is missing")
 	}
 
@@ -10279,13 +11247,17 @@ type ClientInlayHintResolveOptions struct {
 }
 
 func (s *ClientInlayHintResolveOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Properties requiredProp `json:"properties"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["properties"]; !ok {
+	if !keys.Properties {
 		return fmt.Errorf("required key 'properties' is missing")
 	}
 
@@ -10312,13 +11284,17 @@ type CompletionItemTagOptions struct {
 }
 
 func (s *CompletionItemTagOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		ValueSet requiredProp `json:"valueSet"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["valueSet"]; !ok {
+	if !keys.ValueSet {
 		return fmt.Errorf("required key 'valueSet' is missing")
 	}
 
@@ -10337,13 +11313,17 @@ type ClientCompletionItemResolveOptions struct {
 }
 
 func (s *ClientCompletionItemResolveOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		Properties requiredProp `json:"properties"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["properties"]; !ok {
+	if !keys.Properties {
 		return fmt.Errorf("required key 'properties' is missing")
 	}
 
@@ -10361,13 +11341,17 @@ type ClientCompletionItemInsertTextModeOptions struct {
 }
 
 func (s *ClientCompletionItemInsertTextModeOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		ValueSet requiredProp `json:"valueSet"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["valueSet"]; !ok {
+	if !keys.ValueSet {
 		return fmt.Errorf("required key 'valueSet' is missing")
 	}
 
@@ -10398,13 +11382,17 @@ type ClientCodeActionKindOptions struct {
 }
 
 func (s *ClientCodeActionKindOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		ValueSet requiredProp `json:"valueSet"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["valueSet"]; !ok {
+	if !keys.ValueSet {
 		return fmt.Errorf("required key 'valueSet' is missing")
 	}
 
@@ -10423,13 +11411,17 @@ type ClientDiagnosticsTagOptions struct {
 }
 
 func (s *ClientDiagnosticsTagOptions) UnmarshalJSON(data []byte) error {
-	// Check required keys
-	keys, err := getJSONKeys(data)
-	if err != nil {
+	// Check required props
+	type requiredProps struct {
+		ValueSet requiredProp `json:"valueSet"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
 		return err
 	}
 
-	if _, ok := keys["valueSet"]; !ok {
+	if !keys.ValueSet {
 		return fmt.Errorf("required key 'valueSet' is missing")
 	}
 
