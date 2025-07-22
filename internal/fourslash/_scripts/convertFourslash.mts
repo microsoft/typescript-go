@@ -150,6 +150,9 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                 case "baselineFindAllReferences":
                     // `verify.baselineFindAllReferences(...)`
                     return [parseBaselineFindAllReferencesArgs(callExpression.arguments)];
+                case "baselineGetDefinitionAtPosition":
+                    // `verify.baselineGetDefinitionAtPosition(...)`
+                    return [parseBaselineGoToDefinitionArgs(callExpression.arguments)];
             }
         }
         // `goTo....`
@@ -668,6 +671,27 @@ function parseBaselineFindAllReferencesArgs(args: readonly ts.Expression[]): Ver
     };
 }
 
+function parseBaselineGoToDefinitionArgs(args: readonly ts.Expression[]): VerifyBaselineGoToDefinitionCmd {
+    const newArgs = [];
+    for (const arg of args) {
+        if (ts.isStringLiteral(arg)) {
+            newArgs.push(getGoStringLiteral(arg.text));
+        }
+        else if (arg.getText() === "...test.ranges()") {
+            return {
+                kind: "verifyBaselineGoToDefinition",
+                markers: [],
+                ranges: true,
+            };
+        }
+    }
+
+    return {
+        kind: "verifyBaselineGoToDefinition",
+        markers: newArgs,
+    };
+}
+
 function parseKind(expr: ts.Expression): string | undefined {
     if (!ts.isStringLiteral(expr)) {
         console.error(`Expected string literal for kind, got ${expr.getText()}`);
@@ -809,6 +833,13 @@ interface VerifyBaselineFindAllReferencesCmd {
     ranges?: boolean;
 }
 
+interface VerifyBaselineGoToDefinitionCmd {
+    kind: "verifyBaselineGoToDefinition";
+    markers: string[];
+    ranges?: boolean;
+}
+
+
 interface GoToCmd {
     kind: "goTo";
     // !!! `selectRange` and `rangeStart` require parsing variables and `test.ranges()[n]`
@@ -821,7 +852,7 @@ interface EditCmd {
     goStatement: string;
 }
 
-type Cmd = VerifyCompletionsCmd | VerifyBaselineFindAllReferencesCmd | GoToCmd | EditCmd;
+type Cmd = VerifyCompletionsCmd | VerifyBaselineFindAllReferencesCmd | VerifyBaselineGoToDefinitionCmd | GoToCmd | EditCmd;
 
 function generateVerifyCompletions({ marker, args, isNewIdentifierLocation }: VerifyCompletionsCmd): string {
     let expectedList: string;
@@ -857,6 +888,13 @@ function generateBaselineFindAllReferences({ markers, ranges }: VerifyBaselineFi
     return `f.VerifyBaselineFindAllReferences(t, ${markers.join(", ")})`;
 }
 
+function generateBaselineGoToDefinition({ markers, ranges }: VerifyBaselineGoToDefinitionCmd): string {
+    if (ranges || markers.length === 0) {
+        return `f.VerifyBaselineGoToDefinition(t)`;
+    }
+    return `f.VerifyBaselineGoToDefinition(t, ${markers.join(", ")})`;
+}
+
 function generateGoToCommand({ funcName, args }: GoToCmd): string {
     const funcNameCapitalized = funcName.charAt(0).toUpperCase() + funcName.slice(1);
     return `f.GoTo${funcNameCapitalized}(t, ${args.join(", ")})`;
@@ -868,12 +906,15 @@ function generateCmd(cmd: Cmd): string {
             return generateVerifyCompletions(cmd as VerifyCompletionsCmd);
         case "verifyBaselineFindAllReferences":
             return generateBaselineFindAllReferences(cmd as VerifyBaselineFindAllReferencesCmd);
+        case "verifyBaselineGoToDefinition":
+            return generateBaselineGoToDefinition(cmd as VerifyBaselineGoToDefinitionCmd);
         case "goTo":
             return generateGoToCommand(cmd as GoToCmd);
         case "edit":
             return cmd.goStatement;
         default:
-            throw new Error(`Unknown command kind: ${cmd}`);
+            let neverCommand: never = cmd;
+            throw new Error(`Unknown command kind: ${neverCommand as Cmd["kind"]}`);
     }
 }
 
