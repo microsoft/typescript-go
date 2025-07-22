@@ -31,7 +31,8 @@ Corsa no longer parses the following JSDoc tags with a specific node type. They 
 
 ## Checker
 
-1. When `"strict": false`, Corsa no longer allows omitting arguments for parameters with type `undefined`, `unknown`, or `any`:
+### Miscellaneous
+#### When `"strict": false`, Corsa no longer allows omitting arguments for parameters with type `undefined`, `unknown`, or `any`:
 
 
 ```js
@@ -48,7 +49,7 @@ function f(x) { return x; }
 f(); // Still allowed
 ```
 
-2. Strada's JS-specific rules for inferring type arguments no longer apply in Corsa.
+#### Strada's JS-specific rules for inferring type arguments no longer apply in Corsa.
 
 Inferred type arguments may change. For example:
 
@@ -60,9 +61,23 @@ var entries = Object.entries(x);
 In Strada, `entries: Array<[string, any]>`.
 In Corsa it has type `Array<[string, unknown]>`, the same as in TypeScript.
 
+#### Values are no longer resolved as types in JSDoc type positions.
+
+```js
+/** @typedef {FORWARD | BACKWARD} Direction */
+const FORWARD = 1, BACKWARD = 2;
+```
+
+Must now use `typeof` the same way TS does:
+
+```js
+/** @typedef {typeof FORWARD | typeof BACKWARD} Direction */
+const FORWARD = 1, BACKWARD = 2;
+```
+
 ### JSDoc Types
 
-1. JSDoc variadic types are now only synonyms for array types.
+#### JSDoc variadic types are now only synonyms for array types.
 
 ```js
 /** @param {...number} ns */
@@ -80,7 +95,7 @@ function sum(...ns) {}
 They have no other semantics.
 
 
-2. A variadic type on a parameter no longer makes it a rest parameter. The parameter must use standard rest syntax.
+#### A variadic type on a parameter no longer makes it a rest parameter. The parameter must use standard rest syntax.
 
 ```js
 /** @param {...number} ns */
@@ -94,7 +109,7 @@ Must now be written as
 function sum(...ns) {}
 ```
 
-3. The postfix `=` type no longer adds `undefined` even when `strictNullChecks` is off:
+#### The postfix `=` type no longer adds `undefined` even when `strictNullChecks` is off:
 
 ```js
 /** @param {number=} x */
@@ -109,7 +124,7 @@ Regardless of strictness, it still makes parameters optional when used in a `@pa
 
 ### JSDoc Tags
 
-1. `@type` tags no longer apply to function declarations, and now contextually type function expressions instead of applying directly. So this annotation no longer does anything:
+#### `@type` tags no longer apply to function declarations, and now contextually type function expressions instead of applying directly. So this annotation no longer does anything:
 
 ```js
 
@@ -132,7 +147,7 @@ const assert = check => {
 
 A number of things change slightly because of differences between type annotation and contextual typing.
 
-2. `asserts` annotation for an arrow function must be on the declaring variable, not on the arrow itself. This no longer works:
+#### `asserts` annotation for an arrow function must be on the declaring variable, not on the arrow itself. This no longer works:
 
 ```js
 /**
@@ -159,17 +174,17 @@ const foo = (a) => {
 
 This is identical to the Typescript rule.
 
-3. Error messages on async functions that incorrectly return non-Promises now use the same error as TS.
+#### Error messages on async functions that incorrectly return non-Promises now use the same error as TS.
 
-4. `@typedef` and `@callback` in a class body are no longer accessible outside the class. 
+#### `@typedef` and `@callback` in a class body are no longer accessible outside the class. 
 They must be moved outside the class to use them outside the class.
 
-5. `@class` or `@constructor` does not make a function into a constructor function.
+#### `@class` or `@constructor` does not make a function into a constructor function.
 
 Corsa ignores `@class` and `@constructor`.
 This makes a difference on a function without this-property assignments or associated prototype-function assignments.
 
-6. `@param` tags now apply to at most one function.
+#### `@param` tags now apply to at most one function.
 
 If they're in a place where they could apply to multiple functions, they apply only to the first one.
 If you have `"strict": true`, you will see a noImplicitAny error on the now-untyped parameters.
@@ -179,7 +194,7 @@ If you have `"strict": true`, you will see a noImplicitAny error on the now-unty
 var f = x => x, g = x => x;
 ```
 
-7. Optional marking on parameter names now makes the parameter both optional and undefined:
+#### Optional marking on parameter names now makes the parameter both optional and undefined:
 
 ```js
 /** @param {number} [x] */
@@ -191,7 +206,7 @@ function f(x) {
 This behaves the same as Typescript's `x?: number` syntax. 
 Strada makes the parameter optional but does not add `undefined` to the type.
 
-8. Type assertions with `@type` tags now prevent narrowing of the type.
+#### Type assertions with `@type` tags now prevent narrowing of the type.
 
 ```js
 /** @param {C | undefined} cu */
@@ -207,7 +222,7 @@ In Corsa, the behaviour is the same between TS and JS.
 
 ### Expandos
 
-1. Expando assignments of `void 0` are no longer ignored as a special case:
+#### Expando assignments of `void 0` are no longer ignored as a special case:
 
 ```js
 var o = {}
@@ -216,7 +231,7 @@ o.y = void 0
 
 creates a property `y: undefined` on `o` (which will widen to `y: any` if strictNullChecks is off).
 
-2. A this-property expression with a type annotation in the constructor no longer creates a property:
+#### A this-property expression with a type annotation in the constructor no longer creates a property:
 
 ```js
 class SharedClass {
@@ -242,7 +257,7 @@ class SharedClass2 {
 }
 ```
 
-3. Assigning an object literal to the `prototype` property of a function no longer makes it a constructor function:
+#### Assigning an object literal to the `prototype` property of a function no longer makes it a constructor function:
 
 ```js
 function Foo() {}
@@ -268,7 +283,7 @@ Although classes are a much better way to write this code.
 
 ### CommonJS
 
-1. Chained exports no longer work:
+#### Chained exports no longer work:
 
 ```js
 exports.x = exports.y = 12
@@ -276,7 +291,7 @@ exports.x = exports.y = 12
 
 Now only exports `x`, not `y` as well.
 
-2. Exporting `void 0` is no longer ignored as a special case:
+#### Exporting `void 0` is no longer ignored as a special case:
 
 ```js
 exports.x = void 0
@@ -286,7 +301,7 @@ exports.x = theRealExport
 
 This exports `x: undefined` not `x: typeof theRealExport`.
 
-3. Type info for `module` shows a property with name of the export instead of `exports`:
+#### Type info for `module` shows a property with name of the export instead of `exports`:
 
 ```js
 module.exports = singleIdentifier
@@ -294,7 +309,7 @@ module.exports = singleIdentifier
 
 results in `module: { singleIdentifier: any }`
 
-4. Property access on `require` no longer imports a single property from a module:
+#### Property access on `require` no longer imports a single property from a module:
 
 ```js
 const x = require("y").x
@@ -306,7 +321,7 @@ If you can't configure your package to use ESM syntax, you can use destructuring
 const { x } = require("y")
 ```
 
-5. `Object.defineProperty` on `exports` no longer creates an export:
+#### `Object.defineProperty` on `exports` no longer creates an export:
 
 ```js
 Object.defineProperty(exports, "x", { value: 12 })
