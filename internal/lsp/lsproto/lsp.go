@@ -96,3 +96,7 @@ func getJSONKeys(b []byte) (jsonKeys, error) {
 	}
 	return m, nil
 }
+
+func ptrTo[T any](v T) *T {
+	return &v
+}
