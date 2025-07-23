@@ -65,6 +65,8 @@ function resolveType(type: Type): GoType {
                     return { name: "DocumentUri", needsPointer: false };
                 case "decimal":
                     return { name: "float64", needsPointer: false };
+                case "null":
+                    return { name: "any", needsPointer: false };
                 default:
                     throw new Error(`Unsupported base type: ${type.name}`);
             }
@@ -211,6 +213,11 @@ function handleOrType(orType: OrType): GoType {
             (type.element.kind === "reference" || type.element.kind === "base")
         ) {
             return `${titleCase(type.element.name)}s`;
+        }
+        else if (type.kind === "array") {
+            // Handle more complex array types
+            const elementType = resolveType(type.element);
+            return `${elementType.name}Array`;
         }
         else if (type.kind === "literal" && type.value.properties.length === 0) {
             return "EmptyObject";
@@ -578,6 +585,22 @@ function generateCode() {
     }
     writeLine(")");
     writeLine("");
+
+    // Generate request response types
+    writeLine("// Request response types");
+    writeLine("");
+
+    for (const request of model.requests) {
+        const methodName = methodNameIdentifier(request.method);
+        const responseTypeName = `${methodName}Response`;
+
+        writeLine(`// ${request.method} response type`);
+        const resultType = resolveType(request.result);
+        const goType = resultType.needsPointer ? `*${resultType.name}` : resultType.name;
+
+        writeLine(`type ${responseTypeName} = ${goType}`);
+        writeLine("");
+    }
 
     // Generate union types
     writeLine("// Union types\n");
