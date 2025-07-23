@@ -34,7 +34,7 @@ interface GoType {
 interface TypeInfo {
     types: Map<string, GoType>;
     literalTypes: Map<string, string>;
-    unionTypes: Map<string, { name: string; type: Type; }[]>;
+    unionTypes: Map<string, { name: string; type: Type; containedNull: boolean; }[]>;
 }
 
 const typeInfo: TypeInfo = {
@@ -183,29 +183,23 @@ function handleOrType(orType: OrType): GoType {
 
     // Check for nullable types (OR with null)
     const nullIndex = types.findIndex(item => item.kind === "base" && item.name === "null");
+    const containedNull = nullIndex !== -1;
 
-    // If it's nullable and only has one other type
-    if (nullIndex !== -1) {
-        if (types.length !== 2) {
-            throw new Error("Expected exactly two items in OR type for null handling: " + JSON.stringify(types));
-        }
-
-        const otherType = types[1 - nullIndex];
-        const resolvedType = resolveType(otherType);
-
-        // Use Nullable[T] instead of pointer for null union with one other type
-        return {
-            name: `Nullable[${resolvedType.name}]`,
-            needsPointer: false,
-        };
+    // If it's nullable, remove the null type from the list
+    let nonNullTypes = types;
+    if (containedNull) {
+        nonNullTypes = types.filter((_, i) => i !== nullIndex);
     }
 
-    // If only one type remains after filtering null
-    if (types.length === 1) {
-        return resolveType(types[0]);
+    // If no types remain after filtering null, this shouldn't happen
+    if (nonNullTypes.length === 0) {
+        throw new Error("Union type with only null is not supported: " + JSON.stringify(types));
     }
 
-    const memberNames = types.map(type => {
+    // Even if only one type remains after filtering null, we still need to create a union type
+    // to preserve the nullable behavior (all fields nil = null)
+
+    const memberNames = nonNullTypes.map(type => {
         if (type.kind === "reference") {
             return type.name;
         }
@@ -229,8 +223,18 @@ function handleOrType(orType: OrType): GoType {
         }
     });
 
-    const unionTypeName = memberNames.join("Or");
-    const union = memberNames.map((name, i) => ({ name, type: types[i] }));
+    // Create union type name: if the original had null, add "OrNull" suffix to avoid name collisions
+    let unionTypeName;
+    if (containedNull && nonNullTypes.length === 1) {
+        // Single type that was originally nullable (T | null)
+        unionTypeName = `${memberNames[0]}OrNull`;
+    }
+    else {
+        // Multiple types, use regular "Or" joining
+        unionTypeName = memberNames.join("Or");
+    }
+
+    const union = memberNames.map((name, i) => ({ name, type: nonNullTypes[i], containedNull }));
 
     typeInfo.unionTypes.set(unionTypeName, union);
 
@@ -603,8 +607,12 @@ function generateCode() {
         // Marshal method
         writeLine(`func (o ${name}) MarshalJSON() ([]byte, error) {`);
 
-        // Create assertion to ensure only one field is set at a time
-        write(`\tassertOnlyOne("more than one element of ${name} is set", `);
+        // Determine if this union contained null (check if any member has containedNull = true)
+        const unionContainedNull = members.some(member => member.containedNull);
+        const assertionFunc = unionContainedNull ? "assertAtMostOne" : "assertOnlyOne";
+
+        // Create assertion to ensure at most one field is set at a time
+        write(`\t${assertionFunc}("more than one element of ${name} is set", `);
 
         // Write the assertion conditions
         for (let i = 0; i < fieldEntries.length; i++) {
@@ -613,19 +621,37 @@ function generateCode() {
         }
         writeLine(`)`);
         writeLine("");
+
         for (const entry of fieldEntries) {
             writeLine(`\tif o.${entry.fieldName} != nil {`);
             writeLine(`\t\treturn json.Marshal(*o.${entry.fieldName})`);
             writeLine(`\t}`);
         }
 
-        writeLine(`\tpanic("unreachable")`);
+        // If all fields are nil, marshal as null (only for unions that can contain null)
+        if (unionContainedNull) {
+            writeLine(`\t// All fields are nil, represent as null`);
+            writeLine(`\treturn []byte("null"), nil`);
+        }
+        else {
+            writeLine(`\tpanic("unreachable")`);
+        }
         writeLine(`}`);
         writeLine("");
 
         // Unmarshal method
         writeLine(`func (o *${name}) UnmarshalJSON(data []byte) error {`);
         writeLine(`\t*o = ${name}{}`);
+        writeLine("");
+
+        // Handle null case only for unions that can contain null
+        if (unionContainedNull) {
+            writeLine(`\t// Handle null case`);
+            writeLine(`\tif string(data) == "null" {`);
+            writeLine(`\t\treturn nil`);
+            writeLine(`\t}`);
+            writeLine("");
+        }
 
         for (const entry of fieldEntries) {
             writeLine(`\tvar v${entry.fieldName} ${entry.typeName}`);

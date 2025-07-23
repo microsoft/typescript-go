@@ -344,7 +344,7 @@ type WorkDoneProgressOptions struct {
 type TextDocumentRegistrationOptions struct {
 	// A document selector to identify the scope of the registration. If set to null
 	// the document selector provided on the client side will be used.
-	DocumentSelector Nullable[DocumentSelector] `json:"documentSelector"`
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
 }
 
 func (s *TextDocumentRegistrationOptions) UnmarshalJSON(data []byte) error {
@@ -364,7 +364,7 @@ func (s *TextDocumentRegistrationOptions) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		DocumentSelector Nullable[DocumentSelector] `json:"documentSelector"`
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -3509,7 +3509,7 @@ type SignatureHelp struct {
 	// In future version of the protocol this property might become
 	// mandatory (but still nullable) to better express the active parameter if
 	// the active signature does have any.
-	ActiveParameter *Nullable[uint32] `json:"activeParameter,omitempty"`
+	ActiveParameter *UintegerOrNull `json:"activeParameter,omitempty"`
 }
 
 func (s *SignatureHelp) UnmarshalJSON(data []byte) error {
@@ -3531,7 +3531,7 @@ func (s *SignatureHelp) UnmarshalJSON(data []byte) error {
 	type temp struct {
 		Signatures      []*SignatureInformation `json:"signatures"`
 		ActiveSignature *uint32                 `json:"activeSignature,omitempty"`
-		ActiveParameter *Nullable[uint32]       `json:"activeParameter,omitempty"`
+		ActiveParameter *UintegerOrNull         `json:"activeParameter,omitempty"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -6782,7 +6782,7 @@ type InitializeParamsBase struct {
 	//
 	// Is `null` if the process has not been started by another process.
 	// If the parent process is not alive then the server should exit.
-	ProcessId Nullable[int32] `json:"processId"`
+	ProcessId IntegerOrNull `json:"processId"`
 
 	// Information about the client
 	//
@@ -6803,14 +6803,14 @@ type InitializeParamsBase struct {
 	// if no folder is open.
 	//
 	// Deprecated: in favour of rootUri.
-	RootPath *Nullable[string] `json:"rootPath,omitempty"`
+	RootPath *StringOrNull `json:"rootPath,omitempty"`
 
 	// The rootUri of the workspace. Is null if no
 	// folder is open. If both `rootPath` and `rootUri` are set
 	// `rootUri` wins.
 	//
 	// Deprecated: in favour of workspaceFolders.
-	RootUri Nullable[DocumentUri] `json:"rootUri"`
+	RootUri DocumentUriOrNull `json:"rootUri"`
 
 	// The capabilities provided by the client (editor or tool)
 	Capabilities *ClientCapabilities `json:"capabilities"`
@@ -6849,14 +6849,14 @@ func (s *InitializeParamsBase) UnmarshalJSON(data []byte) error {
 	type temp struct {
 		WorkDoneProgressParams
 
-		ProcessId             Nullable[int32]       `json:"processId"`
-		ClientInfo            *ClientInfo           `json:"clientInfo,omitempty"`
-		Locale                *string               `json:"locale,omitempty"`
-		RootPath              *Nullable[string]     `json:"rootPath,omitempty"`
-		RootUri               Nullable[DocumentUri] `json:"rootUri"`
-		Capabilities          *ClientCapabilities   `json:"capabilities"`
-		InitializationOptions *any                  `json:"initializationOptions,omitempty"`
-		Trace                 *TraceValue           `json:"trace,omitempty"`
+		ProcessId             IntegerOrNull       `json:"processId"`
+		ClientInfo            *ClientInfo         `json:"clientInfo,omitempty"`
+		Locale                *string             `json:"locale,omitempty"`
+		RootPath              *StringOrNull       `json:"rootPath,omitempty"`
+		RootUri               DocumentUriOrNull   `json:"rootUri"`
+		Capabilities          *ClientCapabilities `json:"capabilities"`
+		InitializationOptions *any                `json:"initializationOptions,omitempty"`
+		Trace                 *TraceValue         `json:"trace,omitempty"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -6870,7 +6870,7 @@ type WorkspaceFoldersInitializeParams struct {
 	// configured.
 	//
 	// Since: 3.6.0
-	WorkspaceFolders *Nullable[[]*WorkspaceFolder] `json:"workspaceFolders,omitempty"`
+	WorkspaceFolders *WorkspaceFoldersOrNull `json:"workspaceFolders,omitempty"`
 }
 
 // Defines the capabilities provided by a language
@@ -7566,7 +7566,7 @@ type SignatureInformation struct {
 	// `SignatureHelp.activeParameter`.
 	//
 	// Since: 3.16.0
-	ActiveParameter *Nullable[uint32] `json:"activeParameter,omitempty"`
+	ActiveParameter *UintegerOrNull `json:"activeParameter,omitempty"`
 }
 
 func (s *SignatureInformation) UnmarshalJSON(data []byte) error {
@@ -7589,7 +7589,7 @@ func (s *SignatureInformation) UnmarshalJSON(data []byte) error {
 		Label           string                   `json:"label"`
 		Documentation   *StringOrMarkupContent   `json:"documentation,omitempty"`
 		Parameters      *[]*ParameterInformation `json:"parameters,omitempty"`
-		ActiveParameter *Nullable[uint32]        `json:"activeParameter,omitempty"`
+		ActiveParameter *UintegerOrNull          `json:"activeParameter,omitempty"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -8164,7 +8164,7 @@ type OptionalVersionedTextDocumentIdentifier struct {
 	// (the server has not received an open notification before) the server can send
 	// `null` to indicate that the version is unknown and the content on disk is the
 	// truth (as specified with document content ownership).
-	Version Nullable[int32] `json:"version"`
+	Version IntegerOrNull `json:"version"`
 }
 
 func (s *OptionalVersionedTextDocumentIdentifier) UnmarshalJSON(data []byte) error {
@@ -8186,7 +8186,7 @@ func (s *OptionalVersionedTextDocumentIdentifier) UnmarshalJSON(data []byte) err
 	type temp struct {
 		TextDocumentIdentifier
 
-		Version Nullable[int32] `json:"version"`
+		Version IntegerOrNull `json:"version"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -8393,7 +8393,7 @@ type WorkspaceFullDocumentDiagnosticReport struct {
 
 	// The version number for which the diagnostics are reported.
 	// If the document is not marked as open `null` can be provided.
-	Version Nullable[int32] `json:"version"`
+	Version IntegerOrNull `json:"version"`
 }
 
 func (s *WorkspaceFullDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
@@ -8419,8 +8419,8 @@ func (s *WorkspaceFullDocumentDiagnosticReport) UnmarshalJSON(data []byte) error
 	type temp struct {
 		FullDocumentDiagnosticReport
 
-		Uri     DocumentUri     `json:"uri"`
-		Version Nullable[int32] `json:"version"`
+		Uri     DocumentUri   `json:"uri"`
+		Version IntegerOrNull `json:"version"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -8437,7 +8437,7 @@ type WorkspaceUnchangedDocumentDiagnosticReport struct {
 
 	// The version number for which the diagnostics are reported.
 	// If the document is not marked as open `null` can be provided.
-	Version Nullable[int32] `json:"version"`
+	Version IntegerOrNull `json:"version"`
 }
 
 func (s *WorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
@@ -8463,8 +8463,8 @@ func (s *WorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) 
 	type temp struct {
 		UnchangedDocumentDiagnosticReport
 
-		Uri     DocumentUri     `json:"uri"`
-		Version Nullable[int32] `json:"version"`
+		Uri     DocumentUri   `json:"uri"`
+		Version IntegerOrNull `json:"version"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -13307,6 +13307,7 @@ func (o LocationOrLocations) MarshalJSON() ([]byte, error) {
 
 func (o *LocationOrLocations) UnmarshalJSON(data []byte) error {
 	*o = LocationOrLocations{}
+
 	var vLocation Location
 	if err := json.Unmarshal(data, &vLocation); err == nil {
 		o.Location = &vLocation
@@ -13343,6 +13344,7 @@ func (o InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpres
 
 func (o *InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression) UnmarshalJSON(data []byte) error {
 	*o = InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression{}
+
 	var vInlineValueText InlineValueText
 	if err := json.Unmarshal(data, &vInlineValueText); err == nil {
 		o.InlineValueText = &vInlineValueText
@@ -13380,6 +13382,7 @@ func (o RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticR
 
 func (o *RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
 	*o = RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport{}
+
 	var vRelatedFullDocumentDiagnosticReport RelatedFullDocumentDiagnosticReport
 	if err := json.Unmarshal(data, &vRelatedFullDocumentDiagnosticReport); err == nil {
 		o.RelatedFullDocumentDiagnosticReport = &vRelatedFullDocumentDiagnosticReport
@@ -13416,6 +13419,7 @@ func (o RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior) MarshalJS
 
 func (o *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior) UnmarshalJSON(data []byte) error {
 	*o = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior{}
+
 	var vRange Range
 	if err := json.Unmarshal(data, &vRange); err == nil {
 		o.Range = &vRange
@@ -13453,6 +13457,7 @@ func (o IntegerOrString) MarshalJSON() ([]byte, error) {
 
 func (o *IntegerOrString) UnmarshalJSON(data []byte) error {
 	*o = IntegerOrString{}
+
 	var vInteger int32
 	if err := json.Unmarshal(data, &vInteger); err == nil {
 		o.Integer = &vInteger
@@ -13485,6 +13490,7 @@ func (o WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnos
 
 func (o *WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
 	*o = WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport{}
+
 	var vWorkspaceFullDocumentDiagnosticReport WorkspaceFullDocumentDiagnosticReport
 	if err := json.Unmarshal(data, &vWorkspaceFullDocumentDiagnosticReport); err == nil {
 		o.WorkspaceFullDocumentDiagnosticReport = &vWorkspaceFullDocumentDiagnosticReport
@@ -13517,6 +13523,7 @@ func (o TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument
 
 func (o *TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument) UnmarshalJSON(data []byte) error {
 	*o = TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument{}
+
 	var vTextDocumentContentChangePartial TextDocumentContentChangePartial
 	if err := json.Unmarshal(data, &vTextDocumentContentChangePartial); err == nil {
 		o.TextDocumentContentChangePartial = &vTextDocumentContentChangePartial
@@ -13549,6 +13556,7 @@ func (o StringOrMarkedStringWithLanguage) MarshalJSON() ([]byte, error) {
 
 func (o *StringOrMarkedStringWithLanguage) UnmarshalJSON(data []byte) error {
 	*o = StringOrMarkedStringWithLanguage{}
+
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
@@ -13589,6 +13597,7 @@ func (o TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilter
 
 func (o *TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter) UnmarshalJSON(data []byte) error {
 	*o = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter{}
+
 	var vTextDocumentFilterLanguage TextDocumentFilterLanguage
 	if err := json.Unmarshal(data, &vTextDocumentFilterLanguage); err == nil {
 		o.TextDocumentFilterLanguage = &vTextDocumentFilterLanguage
@@ -13631,6 +13640,7 @@ func (o PatternOrRelativePattern) MarshalJSON() ([]byte, error) {
 
 func (o *PatternOrRelativePattern) UnmarshalJSON(data []byte) error {
 	*o = PatternOrRelativePattern{}
+
 	var vPattern Pattern
 	if err := json.Unmarshal(data, &vPattern); err == nil {
 		o.Pattern = &vPattern
@@ -13667,6 +13677,7 @@ func (o TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilter
 
 func (o *TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern) UnmarshalJSON(data []byte) error {
 	*o = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern{}
+
 	var vTextDocumentFilterLanguage TextDocumentFilterLanguage
 	if err := json.Unmarshal(data, &vTextDocumentFilterLanguage); err == nil {
 		o.TextDocumentFilterLanguage = &vTextDocumentFilterLanguage
@@ -13708,6 +13719,7 @@ func (o NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebo
 
 func (o *NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern) UnmarshalJSON(data []byte) error {
 	*o = NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern{}
+
 	var vNotebookDocumentFilterNotebookType NotebookDocumentFilterNotebookType
 	if err := json.Unmarshal(data, &vNotebookDocumentFilterNotebookType); err == nil {
 		o.NotebookDocumentFilterNotebookType = &vNotebookDocumentFilterNotebookType
@@ -13724,6 +13736,36 @@ func (o *NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNoteb
 		return nil
 	}
 	return fmt.Errorf("invalid NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern: %s", data)
+}
+
+type DocumentSelectorOrNull struct {
+	DocumentSelector *DocumentSelector
+}
+
+func (o DocumentSelectorOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of DocumentSelectorOrNull is set", o.DocumentSelector != nil)
+
+	if o.DocumentSelector != nil {
+		return json.Marshal(*o.DocumentSelector)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *DocumentSelectorOrNull) UnmarshalJSON(data []byte) error {
+	*o = DocumentSelectorOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vDocumentSelector DocumentSelector
+	if err := json.Unmarshal(data, &vDocumentSelector); err == nil {
+		o.DocumentSelector = &vDocumentSelector
+		return nil
+	}
+	return fmt.Errorf("invalid DocumentSelectorOrNull: %s", data)
 }
 
 type TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile struct {
@@ -13753,6 +13795,7 @@ func (o TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) MarshalJSON() ([]b
 
 func (o *TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) UnmarshalJSON(data []byte) error {
 	*o = TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile{}
+
 	var vTextDocumentEdit TextDocumentEdit
 	if err := json.Unmarshal(data, &vTextDocumentEdit); err == nil {
 		o.TextDocumentEdit = &vTextDocumentEdit
@@ -13795,6 +13838,7 @@ func (o StringOrInlayHintLabelParts) MarshalJSON() ([]byte, error) {
 
 func (o *StringOrInlayHintLabelParts) UnmarshalJSON(data []byte) error {
 	*o = StringOrInlayHintLabelParts{}
+
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
@@ -13827,6 +13871,7 @@ func (o StringOrMarkupContent) MarshalJSON() ([]byte, error) {
 
 func (o *StringOrMarkupContent) UnmarshalJSON(data []byte) error {
 	*o = StringOrMarkupContent{}
+
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
@@ -13859,6 +13904,7 @@ func (o FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) Marshal
 
 func (o *FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
 	*o = FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{}
+
 	var vFullDocumentDiagnosticReport FullDocumentDiagnosticReport
 	if err := json.Unmarshal(data, &vFullDocumentDiagnosticReport); err == nil {
 		o.FullDocumentDiagnosticReport = &vFullDocumentDiagnosticReport
@@ -13891,6 +13937,7 @@ func (o StringOrStringValue) MarshalJSON() ([]byte, error) {
 
 func (o *StringOrStringValue) UnmarshalJSON(data []byte) error {
 	*o = StringOrStringValue{}
+
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
@@ -13923,6 +13970,7 @@ func (o StringOrStrings) MarshalJSON() ([]byte, error) {
 
 func (o *StringOrStrings) UnmarshalJSON(data []byte) error {
 	*o = StringOrStrings{}
+
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
@@ -13955,6 +14003,7 @@ func (o TextEditOrInsertReplaceEdit) MarshalJSON() ([]byte, error) {
 
 func (o *TextEditOrInsertReplaceEdit) UnmarshalJSON(data []byte) error {
 	*o = TextEditOrInsertReplaceEdit{}
+
 	var vTextEdit TextEdit
 	if err := json.Unmarshal(data, &vTextEdit); err == nil {
 		o.TextEdit = &vTextEdit
@@ -13995,6 +14044,7 @@ func (o MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings) MarshalJ
 
 func (o *MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings) UnmarshalJSON(data []byte) error {
 	*o = MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings{}
+
 	var vMarkupContent MarkupContent
 	if err := json.Unmarshal(data, &vMarkupContent); err == nil {
 		o.MarkupContent = &vMarkupContent
@@ -14018,6 +14068,36 @@ func (o *MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings) Unmarsh
 	return fmt.Errorf("invalid MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings: %s", data)
 }
 
+type UintegerOrNull struct {
+	Uinteger *uint32
+}
+
+func (o UintegerOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of UintegerOrNull is set", o.Uinteger != nil)
+
+	if o.Uinteger != nil {
+		return json.Marshal(*o.Uinteger)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *UintegerOrNull) UnmarshalJSON(data []byte) error {
+	*o = UintegerOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vUinteger uint32
+	if err := json.Unmarshal(data, &vUinteger); err == nil {
+		o.Uinteger = &vUinteger
+		return nil
+	}
+	return fmt.Errorf("invalid UintegerOrNull: %s", data)
+}
+
 type LocationOrLocationUriOnly struct {
 	Location        *Location
 	LocationUriOnly *LocationUriOnly
@@ -14037,6 +14117,7 @@ func (o LocationOrLocationUriOnly) MarshalJSON() ([]byte, error) {
 
 func (o *LocationOrLocationUriOnly) UnmarshalJSON(data []byte) error {
 	*o = LocationOrLocationUriOnly{}
+
 	var vLocation Location
 	if err := json.Unmarshal(data, &vLocation); err == nil {
 		o.Location = &vLocation
@@ -14069,6 +14150,7 @@ func (o BooleanOrEmptyObject) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrEmptyObject) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrEmptyObject{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14101,6 +14183,7 @@ func (o BooleanOrSemanticTokensFullDelta) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrSemanticTokensFullDelta) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrSemanticTokensFullDelta{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14137,6 +14220,7 @@ func (o TextEditOrAnnotatedTextEditOrSnippetTextEdit) MarshalJSON() ([]byte, err
 
 func (o *TextEditOrAnnotatedTextEditOrSnippetTextEdit) UnmarshalJSON(data []byte) error {
 	*o = TextEditOrAnnotatedTextEditOrSnippetTextEdit{}
+
 	var vTextEdit TextEdit
 	if err := json.Unmarshal(data, &vTextEdit); err == nil {
 		o.TextEdit = &vTextEdit
@@ -14174,6 +14258,7 @@ func (o NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells) Mar
 
 func (o *NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells) UnmarshalJSON(data []byte) error {
 	*o = NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells{}
+
 	var vNotebookDocumentFilterWithNotebook NotebookDocumentFilterWithNotebook
 	if err := json.Unmarshal(data, &vNotebookDocumentFilterWithNotebook); err == nil {
 		o.NotebookDocumentFilterWithNotebook = &vNotebookDocumentFilterWithNotebook
@@ -14185,6 +14270,126 @@ func (o *NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells) Un
 		return nil
 	}
 	return fmt.Errorf("invalid NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells: %s", data)
+}
+
+type IntegerOrNull struct {
+	Integer *int32
+}
+
+func (o IntegerOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of IntegerOrNull is set", o.Integer != nil)
+
+	if o.Integer != nil {
+		return json.Marshal(*o.Integer)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *IntegerOrNull) UnmarshalJSON(data []byte) error {
+	*o = IntegerOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vInteger int32
+	if err := json.Unmarshal(data, &vInteger); err == nil {
+		o.Integer = &vInteger
+		return nil
+	}
+	return fmt.Errorf("invalid IntegerOrNull: %s", data)
+}
+
+type StringOrNull struct {
+	String *string
+}
+
+func (o StringOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of StringOrNull is set", o.String != nil)
+
+	if o.String != nil {
+		return json.Marshal(*o.String)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *StringOrNull) UnmarshalJSON(data []byte) error {
+	*o = StringOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vString string
+	if err := json.Unmarshal(data, &vString); err == nil {
+		o.String = &vString
+		return nil
+	}
+	return fmt.Errorf("invalid StringOrNull: %s", data)
+}
+
+type DocumentUriOrNull struct {
+	DocumentUri *DocumentUri
+}
+
+func (o DocumentUriOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of DocumentUriOrNull is set", o.DocumentUri != nil)
+
+	if o.DocumentUri != nil {
+		return json.Marshal(*o.DocumentUri)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *DocumentUriOrNull) UnmarshalJSON(data []byte) error {
+	*o = DocumentUriOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vDocumentUri DocumentUri
+	if err := json.Unmarshal(data, &vDocumentUri); err == nil {
+		o.DocumentUri = &vDocumentUri
+		return nil
+	}
+	return fmt.Errorf("invalid DocumentUriOrNull: %s", data)
+}
+
+type WorkspaceFoldersOrNull struct {
+	WorkspaceFolders *[]*WorkspaceFolder
+}
+
+func (o WorkspaceFoldersOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of WorkspaceFoldersOrNull is set", o.WorkspaceFolders != nil)
+
+	if o.WorkspaceFolders != nil {
+		return json.Marshal(*o.WorkspaceFolders)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *WorkspaceFoldersOrNull) UnmarshalJSON(data []byte) error {
+	*o = WorkspaceFoldersOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vWorkspaceFolders []*WorkspaceFolder
+	if err := json.Unmarshal(data, &vWorkspaceFolders); err == nil {
+		o.WorkspaceFolders = &vWorkspaceFolders
+		return nil
+	}
+	return fmt.Errorf("invalid WorkspaceFoldersOrNull: %s", data)
 }
 
 type TextDocumentSyncOptionsOrTextDocumentSyncKind struct {
@@ -14206,6 +14411,7 @@ func (o TextDocumentSyncOptionsOrTextDocumentSyncKind) MarshalJSON() ([]byte, er
 
 func (o *TextDocumentSyncOptionsOrTextDocumentSyncKind) UnmarshalJSON(data []byte) error {
 	*o = TextDocumentSyncOptionsOrTextDocumentSyncKind{}
+
 	var vTextDocumentSyncOptions TextDocumentSyncOptions
 	if err := json.Unmarshal(data, &vTextDocumentSyncOptions); err == nil {
 		o.TextDocumentSyncOptions = &vTextDocumentSyncOptions
@@ -14238,6 +14444,7 @@ func (o NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions) Ma
 
 func (o *NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions{}
+
 	var vNotebookDocumentSyncOptions NotebookDocumentSyncOptions
 	if err := json.Unmarshal(data, &vNotebookDocumentSyncOptions); err == nil {
 		o.NotebookDocumentSyncOptions = &vNotebookDocumentSyncOptions
@@ -14270,6 +14477,7 @@ func (o BooleanOrHoverOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrHoverOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrHoverOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14306,6 +14514,7 @@ func (o BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) MarshalJSON
 
 func (o *BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14343,6 +14552,7 @@ func (o BooleanOrDefinitionOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrDefinitionOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDefinitionOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14379,6 +14589,7 @@ func (o BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) Marsh
 
 func (o *BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14420,6 +14631,7 @@ func (o BooleanOrImplementationOptionsOrImplementationRegistrationOptions) Marsh
 
 func (o *BooleanOrImplementationOptionsOrImplementationRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrImplementationOptionsOrImplementationRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14457,6 +14669,7 @@ func (o BooleanOrReferenceOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrReferenceOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrReferenceOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14489,6 +14702,7 @@ func (o BooleanOrDocumentHighlightOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrDocumentHighlightOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDocumentHighlightOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14521,6 +14735,7 @@ func (o BooleanOrDocumentSymbolOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrDocumentSymbolOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDocumentSymbolOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14553,6 +14768,7 @@ func (o BooleanOrCodeActionOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrCodeActionOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrCodeActionOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14589,6 +14805,7 @@ func (o BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) Marshal
 
 func (o *BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14626,6 +14843,7 @@ func (o BooleanOrWorkspaceSymbolOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrWorkspaceSymbolOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrWorkspaceSymbolOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14658,6 +14876,7 @@ func (o BooleanOrDocumentFormattingOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrDocumentFormattingOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDocumentFormattingOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14690,6 +14909,7 @@ func (o BooleanOrDocumentRangeFormattingOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrDocumentRangeFormattingOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDocumentRangeFormattingOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14722,6 +14942,7 @@ func (o BooleanOrRenameOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrRenameOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrRenameOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14758,6 +14979,7 @@ func (o BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) MarshalJS
 
 func (o *BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14799,6 +15021,7 @@ func (o BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) Marsh
 
 func (o *BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14840,6 +15063,7 @@ func (o BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) Marshal
 
 func (o *BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14881,6 +15105,7 @@ func (o BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOption
 
 func (o *BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14918,6 +15143,7 @@ func (o SemanticTokensOptionsOrSemanticTokensRegistrationOptions) MarshalJSON() 
 
 func (o *SemanticTokensOptionsOrSemanticTokensRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = SemanticTokensOptionsOrSemanticTokensRegistrationOptions{}
+
 	var vSemanticTokensOptions SemanticTokensOptions
 	if err := json.Unmarshal(data, &vSemanticTokensOptions); err == nil {
 		o.SemanticTokensOptions = &vSemanticTokensOptions
@@ -14954,6 +15180,7 @@ func (o BooleanOrMonikerOptionsOrMonikerRegistrationOptions) MarshalJSON() ([]by
 
 func (o *BooleanOrMonikerOptionsOrMonikerRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrMonikerOptionsOrMonikerRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14995,6 +15222,7 @@ func (o BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) Marshal
 
 func (o *BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -15036,6 +15264,7 @@ func (o BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) MarshalJSON
 
 func (o *BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -15077,6 +15306,7 @@ func (o BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) MarshalJSON() (
 
 func (o *BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -15114,6 +15344,7 @@ func (o DiagnosticOptionsOrDiagnosticRegistrationOptions) MarshalJSON() ([]byte,
 
 func (o *DiagnosticOptionsOrDiagnosticRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = DiagnosticOptionsOrDiagnosticRegistrationOptions{}
+
 	var vDiagnosticOptions DiagnosticOptions
 	if err := json.Unmarshal(data, &vDiagnosticOptions); err == nil {
 		o.DiagnosticOptions = &vDiagnosticOptions
@@ -15146,6 +15377,7 @@ func (o BooleanOrInlineCompletionOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrInlineCompletionOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrInlineCompletionOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -15178,6 +15410,7 @@ func (o RangeOrEditRangeWithInsertReplace) MarshalJSON() ([]byte, error) {
 
 func (o *RangeOrEditRangeWithInsertReplace) UnmarshalJSON(data []byte) error {
 	*o = RangeOrEditRangeWithInsertReplace{}
+
 	var vRange Range
 	if err := json.Unmarshal(data, &vRange); err == nil {
 		o.Range = &vRange
@@ -15218,6 +15451,7 @@ func (o StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterScheme
 
 func (o *StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern) UnmarshalJSON(data []byte) error {
 	*o = StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern{}
+
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
@@ -15260,6 +15494,7 @@ func (o BooleanOrSaveOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrSaveOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrSaveOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -15292,6 +15527,7 @@ func (o TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions) Mars
 
 func (o *TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions{}
+
 	var vTextDocumentContentOptions TextDocumentContentOptions
 	if err := json.Unmarshal(data, &vTextDocumentContentOptions); err == nil {
 		o.TextDocumentContentOptions = &vTextDocumentContentOptions
@@ -15324,6 +15560,7 @@ func (o StringOrTuple) MarshalJSON() ([]byte, error) {
 
 func (o *StringOrTuple) UnmarshalJSON(data []byte) error {
 	*o = StringOrTuple{}
+
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
@@ -15356,6 +15593,7 @@ func (o StringOrBoolean) MarshalJSON() ([]byte, error) {
 
 func (o *StringOrBoolean) UnmarshalJSON(data []byte) error {
 	*o = StringOrBoolean{}
+
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
@@ -15388,6 +15626,7 @@ func (o WorkspaceFolderOrURI) MarshalJSON() ([]byte, error) {
 
 func (o *WorkspaceFolderOrURI) UnmarshalJSON(data []byte) error {
 	*o = WorkspaceFolderOrURI{}
+
 	var vWorkspaceFolder WorkspaceFolder
 	if err := json.Unmarshal(data, &vWorkspaceFolder); err == nil {
 		o.WorkspaceFolder = &vWorkspaceFolder
@@ -15420,6 +15659,7 @@ func (o BooleanOrClientSemanticTokensRequestFullDelta) MarshalJSON() ([]byte, er
 
 func (o *BooleanOrClientSemanticTokensRequestFullDelta) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrClientSemanticTokensRequestFullDelta{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
