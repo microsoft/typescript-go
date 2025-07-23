@@ -865,7 +865,6 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 
 		result := resMsg.AsResponse().Result
 		if resultAsLocOrLocations, ok := result.(*lsproto.LocationOrLocations); ok {
-
 			var resultAsLocations []*lsproto.Location
 			if resultAsLocOrLocations != nil {
 				if resultAsLocOrLocations.Locations != nil {
