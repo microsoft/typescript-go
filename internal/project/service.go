@@ -224,7 +224,7 @@ func (s *Service) OpenFile(fileName string, fileContent string, scriptKind core.
 	s.printProjects()
 }
 
-func (s *Service) ChangeFile(document lsproto.VersionedTextDocumentIdentifier, changes []lsproto.TextDocumentContentChangeEvent) error {
+func (s *Service) ChangeFile(document lsproto.VersionedTextDocumentIdentifier, changes []lsproto.TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument) error {
 	fileName := ls.DocumentURIToFileName(document.Uri)
 	path := s.toPath(fileName)
 	scriptInfo := s.documentStore.GetScriptInfoByPath(path)

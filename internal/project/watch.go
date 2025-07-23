@@ -76,7 +76,7 @@ func (w *watchedFiles[T]) update(ctx context.Context, newData T) {
 	watchers := make([]*lsproto.FileSystemWatcher, 0, len(newGlobs))
 	for _, glob := range newGlobs {
 		watchers = append(watchers, &lsproto.FileSystemWatcher{
-			GlobPattern: lsproto.GlobPattern{
+			GlobPattern: lsproto.PatternOrRelativePattern{
 				Pattern: &glob,
 			},
 			Kind: &w.watchKind,

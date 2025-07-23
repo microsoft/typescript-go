@@ -22,7 +22,7 @@ func TestDefinition(t *testing.T) {
 	testCases := []struct {
 		title    string
 		input    string
-		expected map[string]lsproto.Definition
+		expected map[string]lsproto.LocationOrLocationsOrDefinitionLinksOrNull
 	}{
 		{
 			title: "localFunction",
@@ -30,7 +30,7 @@ func TestDefinition(t *testing.T) {
 // @filename: index.ts
 function localFunction() { }
 /*localFunction*/localFunction();`,
-			expected: map[string]lsproto.Definition{
+			expected: map[string]lsproto.LocationOrLocationsOrDefinitionLinksOrNull{
 				"localFunction": {
 					Locations: &[]lsproto.Location{{
 						Uri:   ls.FileNameToDocumentURI("/index.ts"),
@@ -49,7 +49,7 @@ function localFunction() { }
 	}
 }
 
-func runDefinitionTest(t *testing.T, input string, expected map[string]lsproto.Definition) {
+func runDefinitionTest(t *testing.T, input string, expected map[string]lsproto.LocationOrLocationsOrDefinitionLinksOrNull) {
 	testData := fourslash.ParseTestData(t, input, "/mainFile.ts")
 	file := testData.Files[0].FileName()
 	markerPositions := testData.MarkerPositions

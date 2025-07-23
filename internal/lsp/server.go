@@ -655,7 +655,7 @@ func (s *Server) handleDocumentDiagnostic(ctx context.Context, req *lsproto.Requ
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
 	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
-	diagnostics, err := languageService.GetDocumentDiagnostics(ctx, params.TextDocument.Uri)
+	diagnostics, err := languageService.ProvideDiagnostics(ctx, params.TextDocument.Uri)
 	if err != nil {
 		return err
 	}
