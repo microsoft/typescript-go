@@ -282,7 +282,7 @@ func (s *snapshot) computeSignatureWithDiagnostics(file *ast.SourceFile, text st
 
 func diagnosticToStringBuilder(diagnostic *ast.Diagnostic, file *ast.SourceFile, builder *strings.Builder) {
 	if diagnostic == nil {
-		return ""
+		return
 	}
 	builder.WriteString("\n")
 	if diagnostic.File() != file {
@@ -304,7 +304,6 @@ func diagnosticToStringBuilder(diagnostic *ast.Diagnostic, file *ast.SourceFile,
 	for _, info := range diagnostic.RelatedInformation() {
 		diagnosticToStringBuilder(info, file, builder)
 	}
-	return builder.String()
 }
 
 func (s *snapshot) computeHash(text string) string {
