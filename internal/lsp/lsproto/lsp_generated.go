@@ -13156,40 +13156,40 @@ const (
 // Request response types
 
 // textDocument/implementation response type
-type TextDocumentImplementationResponse = LocationOrLocationsOrDefinitionLinksOrNull
+type ImplementationResponse = LocationOrLocationsOrDefinitionLinksOrNull
 
 // textDocument/typeDefinition response type
-type TextDocumentTypeDefinitionResponse = LocationOrLocationsOrDefinitionLinksOrNull
+type TypeDefinitionResponse = LocationOrLocationsOrDefinitionLinksOrNull
 
 // workspace/workspaceFolders response type
-type WorkspaceWorkspaceFoldersResponse = WorkspaceFoldersOrNull
+type WorkspaceFoldersResponse = WorkspaceFoldersOrNull
 
 // workspace/configuration response type
-type WorkspaceConfigurationResponse = []any
+type ConfigurationResponse = []any
 
 // textDocument/documentColor response type
-type TextDocumentDocumentColorResponse = []*ColorInformation
+type DocumentColorResponse = []*ColorInformation
 
 // textDocument/colorPresentation response type
-type TextDocumentColorPresentationResponse = []*ColorPresentation
+type ColorPresentationResponse = []*ColorPresentation
 
 // textDocument/foldingRange response type
-type TextDocumentFoldingRangeResponse = FoldingRangesOrNull
+type FoldingRangeResponse = FoldingRangesOrNull
 
 // workspace/foldingRange/refresh response type
-type WorkspaceFoldingRangeRefreshResponse = any
+type FoldingRangeRefreshResponse = any
 
 // textDocument/declaration response type
-type TextDocumentDeclarationResponse = LocationOrLocationsOrDeclarationLinksOrNull
+type DeclarationResponse = LocationOrLocationsOrDeclarationLinksOrNull
 
 // textDocument/selectionRange response type
-type TextDocumentSelectionRangeResponse = SelectionRangesOrNull
+type SelectionRangeResponse = SelectionRangesOrNull
 
 // window/workDoneProgress/create response type
-type WindowWorkDoneProgressCreateResponse = any
+type WorkDoneProgressCreateResponse = any
 
 // textDocument/prepareCallHierarchy response type
-type TextDocumentPrepareCallHierarchyResponse = CallHierarchyItemsOrNull
+type CallHierarchyPrepareResponse = CallHierarchyItemsOrNull
 
 // callHierarchy/incomingCalls response type
 type CallHierarchyIncomingCallsResponse = CallHierarchyIncomingCallsOrNull
@@ -13198,37 +13198,37 @@ type CallHierarchyIncomingCallsResponse = CallHierarchyIncomingCallsOrNull
 type CallHierarchyOutgoingCallsResponse = CallHierarchyOutgoingCallsOrNull
 
 // textDocument/semanticTokens/full response type
-type TextDocumentSemanticTokensFullResponse = SemanticTokensOrNull
+type SemanticTokensResponse = SemanticTokensOrNull
 
 // textDocument/semanticTokens/full/delta response type
-type TextDocumentSemanticTokensFullDeltaResponse = SemanticTokensOrSemanticTokensDeltaOrNull
+type SemanticTokensDeltaResponse = SemanticTokensOrSemanticTokensDeltaOrNull
 
 // textDocument/semanticTokens/range response type
-type TextDocumentSemanticTokensRangeResponse = SemanticTokensOrNull
+type SemanticTokensRangeResponse = SemanticTokensOrNull
 
 // workspace/semanticTokens/refresh response type
-type WorkspaceSemanticTokensRefreshResponse = any
+type SemanticTokensRefreshResponse = any
 
 // window/showDocument response type
-type WindowShowDocumentResponse = *ShowDocumentResult
+type ShowDocumentResponse = *ShowDocumentResult
 
 // textDocument/linkedEditingRange response type
-type TextDocumentLinkedEditingRangeResponse = LinkedEditingRangesOrNull
+type LinkedEditingRangeResponse = LinkedEditingRangesOrNull
 
 // workspace/willCreateFiles response type
-type WorkspaceWillCreateFilesResponse = WorkspaceEditOrNull
+type WillCreateFilesResponse = WorkspaceEditOrNull
 
 // workspace/willRenameFiles response type
-type WorkspaceWillRenameFilesResponse = WorkspaceEditOrNull
+type WillRenameFilesResponse = WorkspaceEditOrNull
 
 // workspace/willDeleteFiles response type
-type WorkspaceWillDeleteFilesResponse = WorkspaceEditOrNull
+type WillDeleteFilesResponse = WorkspaceEditOrNull
 
 // textDocument/moniker response type
-type TextDocumentMonikerResponse = MonikersOrNull
+type MonikerResponse = MonikersOrNull
 
 // textDocument/prepareTypeHierarchy response type
-type TextDocumentPrepareTypeHierarchyResponse = TypeHierarchyItemsOrNull
+type TypeHierarchyPrepareResponse = TypeHierarchyItemsOrNull
 
 // typeHierarchy/supertypes response type
 type TypeHierarchySupertypesResponse = TypeHierarchyItemsOrNull
@@ -13237,43 +13237,43 @@ type TypeHierarchySupertypesResponse = TypeHierarchyItemsOrNull
 type TypeHierarchySubtypesResponse = TypeHierarchyItemsOrNull
 
 // textDocument/inlineValue response type
-type TextDocumentInlineValueResponse = InlineValuesOrNull
+type InlineValueResponse = InlineValuesOrNull
 
 // workspace/inlineValue/refresh response type
-type WorkspaceInlineValueRefreshResponse = any
+type InlineValueRefreshResponse = any
 
 // textDocument/inlayHint response type
-type TextDocumentInlayHintResponse = InlayHintsOrNull
+type InlayHintResponse = InlayHintsOrNull
 
 // inlayHint/resolve response type
 type InlayHintResolveResponse = *InlayHint
 
 // workspace/inlayHint/refresh response type
-type WorkspaceInlayHintRefreshResponse = any
+type InlayHintRefreshResponse = any
 
 // textDocument/diagnostic response type
-type TextDocumentDiagnosticResponse = RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport
+type DocumentDiagnosticResponse = RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport
 
 // workspace/diagnostic response type
 type WorkspaceDiagnosticResponse = *WorkspaceDiagnosticReport
 
 // workspace/diagnostic/refresh response type
-type WorkspaceDiagnosticRefreshResponse = any
+type DiagnosticRefreshResponse = any
 
 // textDocument/inlineCompletion response type
-type TextDocumentInlineCompletionResponse = InlineCompletionListOrInlineCompletionItemsOrNull
+type InlineCompletionResponse = InlineCompletionListOrInlineCompletionItemsOrNull
 
 // workspace/textDocumentContent response type
-type WorkspaceTextDocumentContentResponse = *TextDocumentContentResult
+type TextDocumentContentResponse = *TextDocumentContentResult
 
 // workspace/textDocumentContent/refresh response type
-type WorkspaceTextDocumentContentRefreshResponse = any
+type TextDocumentContentRefreshResponse = any
 
 // client/registerCapability response type
-type ClientRegisterCapabilityResponse = any
+type RegistrationResponse = any
 
 // client/unregisterCapability response type
-type ClientUnregisterCapabilityResponse = any
+type UnregistrationResponse = any
 
 // initialize response type
 type InitializeResponse = *InitializeResult
@@ -13282,37 +13282,37 @@ type InitializeResponse = *InitializeResult
 type ShutdownResponse = any
 
 // window/showMessageRequest response type
-type WindowShowMessageRequestResponse = MessageActionItemOrNull
+type ShowMessageResponse = MessageActionItemOrNull
 
 // textDocument/willSaveWaitUntil response type
-type TextDocumentWillSaveWaitUntilResponse = TextEditsOrNull
+type WillSaveTextDocumentWaitUntilResponse = TextEditsOrNull
 
 // textDocument/completion response type
-type TextDocumentCompletionResponse = CompletionItemsOrCompletionListOrNull
+type CompletionResponse = CompletionItemsOrCompletionListOrNull
 
 // completionItem/resolve response type
-type CompletionItemResolveResponse = *CompletionItem
+type CompletionResolveResponse = *CompletionItem
 
 // textDocument/hover response type
-type TextDocumentHoverResponse = HoverOrNull
+type HoverResponse = HoverOrNull
 
 // textDocument/signatureHelp response type
-type TextDocumentSignatureHelpResponse = SignatureHelpOrNull
+type SignatureHelpResponse = SignatureHelpOrNull
 
 // textDocument/definition response type
-type TextDocumentDefinitionResponse = LocationOrLocationsOrDefinitionLinksOrNull
+type DefinitionResponse = LocationOrLocationsOrDefinitionLinksOrNull
 
 // textDocument/references response type
-type TextDocumentReferencesResponse = LocationsOrNull
+type ReferencesResponse = LocationsOrNull
 
 // textDocument/documentHighlight response type
-type TextDocumentDocumentHighlightResponse = DocumentHighlightsOrNull
+type DocumentHighlightResponse = DocumentHighlightsOrNull
 
 // textDocument/documentSymbol response type
-type TextDocumentDocumentSymbolResponse = SymbolInformationsOrDocumentSymbolsOrNull
+type DocumentSymbolResponse = SymbolInformationsOrDocumentSymbolsOrNull
 
 // textDocument/codeAction response type
-type TextDocumentCodeActionResponse = CommandOrCodeActionArrayOrNull
+type CodeActionResponse = CommandOrCodeActionArrayOrNull
 
 // codeAction/resolve response type
 type CodeActionResolveResponse = *CodeAction
@@ -13324,43 +13324,43 @@ type WorkspaceSymbolResponse = SymbolInformationsOrWorkspaceSymbolsOrNull
 type WorkspaceSymbolResolveResponse = *WorkspaceSymbol
 
 // textDocument/codeLens response type
-type TextDocumentCodeLensResponse = CodeLenssOrNull
+type CodeLensResponse = CodeLenssOrNull
 
 // codeLens/resolve response type
 type CodeLensResolveResponse = *CodeLens
 
 // workspace/codeLens/refresh response type
-type WorkspaceCodeLensRefreshResponse = any
+type CodeLensRefreshResponse = any
 
 // textDocument/documentLink response type
-type TextDocumentDocumentLinkResponse = DocumentLinksOrNull
+type DocumentLinkResponse = DocumentLinksOrNull
 
 // documentLink/resolve response type
 type DocumentLinkResolveResponse = *DocumentLink
 
 // textDocument/formatting response type
-type TextDocumentFormattingResponse = TextEditsOrNull
+type DocumentFormattingResponse = TextEditsOrNull
 
 // textDocument/rangeFormatting response type
-type TextDocumentRangeFormattingResponse = TextEditsOrNull
+type DocumentRangeFormattingResponse = TextEditsOrNull
 
 // textDocument/rangesFormatting response type
-type TextDocumentRangesFormattingResponse = TextEditsOrNull
+type DocumentRangesFormattingResponse = TextEditsOrNull
 
 // textDocument/onTypeFormatting response type
-type TextDocumentOnTypeFormattingResponse = TextEditsOrNull
+type DocumentOnTypeFormattingResponse = TextEditsOrNull
 
 // textDocument/rename response type
-type TextDocumentRenameResponse = WorkspaceEditOrNull
+type RenameResponse = WorkspaceEditOrNull
 
 // textDocument/prepareRename response type
-type TextDocumentPrepareRenameResponse = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull
+type PrepareRenameResponse = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull
 
 // workspace/executeCommand response type
-type WorkspaceExecuteCommandResponse = LSPAnyOrNull
+type ExecuteCommandResponse = LSPAnyOrNull
 
 // workspace/applyEdit response type
-type WorkspaceApplyEditResponse = *ApplyWorkspaceEditResult
+type ApplyWorkspaceEditResponse = *ApplyWorkspaceEditResult
 
 // Union types
 

@@ -575,8 +575,14 @@ function generateCode() {
     writeLine("");
 
     for (const request of model.requests) {
-        const methodName = methodNameIdentifier(request.method);
-        const responseTypeName = `${methodName}Response`;
+        let responseTypeName;
+        if (request.typeName && request.typeName.endsWith("Request")) {
+            responseTypeName = request.typeName.replace(/Request$/, "Response");
+        }
+        else {
+            const methodName = methodNameIdentifier(request.method);
+            responseTypeName = `${methodName}Response`;
+        }
 
         writeLine(`// ${request.method} response type`);
         const resultType = resolveType(request.result);
