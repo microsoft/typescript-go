@@ -2,6 +2,7 @@ package incremental
 
 import (
 	"context"
+	"encoding/hex"
 	"fmt"
 	"hash/fnv"
 	"maps"
@@ -309,7 +310,7 @@ func diagnosticToStringBuilder(diagnostic *ast.Diagnostic, file *ast.SourceFile,
 func (s *snapshot) computeHash(text string) string {
 	hasher := fnv.New128a()
 	hasher.Write([]byte(text))
-	hash := fmt.Sprintf("%x", hasher.Sum(nil))
+	hash := hex.EncodeToString(hasher.Sum(nil))
 	if s.hashWithText {
 		hash += "-" + text
 	}
