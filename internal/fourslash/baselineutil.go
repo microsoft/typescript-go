@@ -64,8 +64,9 @@ func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedLo
 			return nil
 		}
 
-		locations := groupedLocations.Get(ls.FileNameToDocumentURI(path))
-		if len(locations) == 0 {
+		fileName := ls.FileNameToDocumentURI(path)
+		locations := groupedLocations.Get(fileName)
+		if len(locations) == 0 && (options.marker == nil || options.marker.FileName() != path) {
 			return nil
 		}
 
