@@ -1,0 +1,56 @@
+// === goToDefinition ===
+// === /goToDefinitionDifferentFile_Definition.ts ===
+
+// var [|remoteVariable|];
+// function remoteFunction() { }
+// class remoteClass { }
+// interface remoteInterface{ }
+// module remoteModule{ export var foo = 1;}
+
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionDifferentFile_Definition.ts ===
+
+// var remoteVariable;
+// function [|remoteFunction|]() { }
+// class remoteClass { }
+// interface remoteInterface{ }
+// module remoteModule{ export var foo = 1;}
+
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionDifferentFile_Definition.ts ===
+
+// var remoteVariable;
+// function remoteFunction() { }
+// class [|remoteClass|] { }
+// interface remoteInterface{ }
+// module remoteModule{ export var foo = 1;}
+
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionDifferentFile_Definition.ts ===
+
+// var remoteVariable;
+// function remoteFunction() { }
+// class remoteClass { }
+// interface [|remoteInterface|]{ }
+// module remoteModule{ export var foo = 1;}
+
+
+
+
+// === goToDefinition ===
+// === /goToDefinitionDifferentFile_Definition.ts ===
+
+// var remoteVariable;
+// function remoteFunction() { }
+// class remoteClass { }
+// interface remoteInterface{ }
+// module [|remoteModule|]{ export var foo = 1;}
