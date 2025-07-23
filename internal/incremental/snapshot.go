@@ -2,8 +2,8 @@ package incremental
 
 import (
 	"context"
-	"crypto/sha256"
 	"fmt"
+	"hash/fnv"
 	"maps"
 	"strings"
 	"sync"
@@ -307,7 +307,9 @@ func diagnosticToStringBuilder(diagnostic *ast.Diagnostic, file *ast.SourceFile,
 }
 
 func (s *snapshot) computeHash(text string) string {
-	hash := fmt.Sprintf("%x", sha256.Sum256([]byte(text)))
+	hasher := fnv.New128a()
+	hasher.Write([]byte(text))
+	hash := fmt.Sprintf("%x", hasher.Sum(nil))
 	if s.hashWithText {
 		hash += "-" + text
 	}
