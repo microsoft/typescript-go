@@ -195,7 +195,7 @@ func getDeclarationEmitExtensionForPath(fileName string) string {
 }
 
 func GetBuildInfoFileName(options *core.CompilerOptions, opts tspath.ComparePathsOptions) string {
-	if !options.IsIncremental() && !options.TscBuild.IsTrue() {
+	if !options.IsIncremental() && !options.Build.IsTrue() {
 		return ""
 	}
 	if options.TsBuildInfoFile != "" {

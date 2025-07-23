@@ -202,14 +202,7 @@ func (p *ParsedCommandLine) ProjectReferences() []*core.ProjectReference {
 
 func (p *ParsedCommandLine) ResolvedProjectReferencePaths() []string {
 	p.resolvedProjectReferencePathsOnce.Do(func() {
-		if p.ParsedConfig.ProjectReferences == nil {
-			return
-		}
-		resolvedProjectReferencePaths := make([]string, 0, len(p.ParsedConfig.ProjectReferences))
-		for _, ref := range p.ParsedConfig.ProjectReferences {
-			resolvedProjectReferencePaths = append(resolvedProjectReferencePaths, core.ResolveProjectReferencePath(ref))
-		}
-		p.resolvedProjectReferencePaths = resolvedProjectReferencePaths
+		p.resolvedProjectReferencePaths = core.Map(p.ParsedConfig.ProjectReferences, core.ResolveProjectReferencePath)
 	})
 	return p.resolvedProjectReferencePaths
 }

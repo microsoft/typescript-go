@@ -10,7 +10,7 @@ import (
 
 var OptionsDeclarations = slices.Concat(commonOptionsWithBuild, optionsForCompiler)
 
-var optionsForCompiler = []*CommandLineOption{
+var commonOptionsWithBuild = []*CommandLineOption{
 	//******* commandOptionsWithoutBuild *******
 	{
 		Name:                     "help",
@@ -235,7 +235,7 @@ var optionsForCompiler = []*CommandLineOption{
 	},
 }
 
-var commonOptionsWithBuild = []*CommandLineOption{
+var optionsForCompiler = []*CommandLineOption{
 	//******* commandOptionsWithoutBuild *******
 
 	// CommandLine only options
