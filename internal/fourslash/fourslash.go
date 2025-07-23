@@ -865,14 +865,16 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 
 		result := resMsg.AsResponse().Result
 		if resultAsLocOrLocations, ok := result.(*lsproto.LocationOrLocations); ok {
-			var resultAsLocations []*lsproto.Location
 
-			if resultAsLocOrLocations.Locations != nil {
-				resultAsLocations = core.Map(*resultAsLocOrLocations.Locations, func(loc lsproto.Location) *lsproto.Location {
-					return &loc
-				})
-			} else {
-				resultAsLocations = []*lsproto.Location{resultAsLocOrLocations.Location}
+			var resultAsLocations []*lsproto.Location
+			if resultAsLocOrLocations != nil {
+				if resultAsLocOrLocations.Locations != nil {
+					resultAsLocations = core.Map(*resultAsLocOrLocations.Locations, func(loc lsproto.Location) *lsproto.Location {
+						return &loc
+					})
+				} else {
+					resultAsLocations = []*lsproto.Location{resultAsLocOrLocations.Location}
+				}
 			}
 
 			f.baseline.addResult("goToDefinition", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
