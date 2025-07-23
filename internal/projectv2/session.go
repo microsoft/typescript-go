@@ -25,6 +25,7 @@ type Session struct {
 	options                            SessionOptions
 	toPath                             func(string) tspath.Path
 	client                             Client
+	logger                             Logger
 	fs                                 *overlayFS
 	parseCache                         *parseCache
 	extendedConfigCache                *extendedConfigCache
@@ -38,7 +39,7 @@ type Session struct {
 	pendingFileChanges   []FileChange
 }
 
-func NewSession(options SessionOptions, fs vfs.FS, client Client) *Session {
+func NewSession(options SessionOptions, fs vfs.FS, client Client, logger Logger) *Session {
 	currentDirectory := options.CurrentDirectory
 	useCaseSensitiveFileNames := fs.UseCaseSensitiveFileNames()
 	toPath := func(fileName string) tspath.Path {
@@ -55,6 +56,7 @@ func NewSession(options SessionOptions, fs vfs.FS, client Client) *Session {
 		options:             options,
 		toPath:              toPath,
 		client:              client,
+		logger:              logger,
 		fs:                  overlayFS,
 		parseCache:          parseCache,
 		extendedConfigCache: extendedConfigCache,
@@ -206,21 +208,36 @@ func (s *Session) UpdateSnapshot(ctx context.Context, change SnapshotChange) *Sn
 		oldSnapshot.dispose(s)
 	}
 	go func() {
+		if s.options.LoggingEnabled {
+			newSnapshot.builderLogs.WriteLogs(s.logger)
+			s.logger.Log("")
+		}
 		if s.options.WatchEnabled {
-			if err := s.updateWatches(ctx, oldSnapshot, newSnapshot); err != nil {
-				// !!! log the error
+			if err := s.updateWatches(oldSnapshot, newSnapshot); err != nil && s.options.LoggingEnabled {
+				s.logger.Log(err)
 			}
 		}
 	}()
 	return newSnapshot
 }
 
-func updateWatch[T any](ctx context.Context, client Client, oldWatcher, newWatcher *WatchedFiles[T]) []error {
+func updateWatch[T any](ctx context.Context, client Client, logger Logger, oldWatcher, newWatcher *WatchedFiles[T]) []error {
 	var errors []error
 	if newWatcher != nil {
 		if id, watchers := newWatcher.Watchers(); len(watchers) > 0 {
 			if err := client.WatchFiles(ctx, id, watchers); err != nil {
 				errors = append(errors, err)
+			}
+			if logger != nil {
+				if oldWatcher == nil {
+					logger.Log(fmt.Sprintf("Added new watch: %s", id))
+				} else {
+					logger.Log(fmt.Sprintf("Updated watch: %s", id))
+				}
+				for _, watcher := range watchers {
+					logger.Log(fmt.Sprintf("\t%s", *watcher.GlobPattern.Pattern))
+				}
+				logger.Log("")
 			}
 		}
 	}
@@ -229,13 +246,17 @@ func updateWatch[T any](ctx context.Context, client Client, oldWatcher, newWatch
 			if err := client.UnwatchFiles(ctx, id); err != nil {
 				errors = append(errors, err)
 			}
+			if logger != nil && newWatcher == nil {
+				logger.Log(fmt.Sprintf("Removed watch: %s", id))
+			}
 		}
 	}
 	return errors
 }
 
-func (s *Session) updateWatches(ctx context.Context, oldSnapshot *Snapshot, newSnapshot *Snapshot) error {
+func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) error {
 	var errors []error
+	ctx := context.Background()
 	core.DiffMapsFunc(
 		oldSnapshot.ConfigFileRegistry.configs,
 		newSnapshot.ConfigFileRegistry.configs,
@@ -243,13 +264,13 @@ func (s *Session) updateWatches(ctx context.Context, oldSnapshot *Snapshot, newS
 			return a.rootFilesWatch.ID() == b.rootFilesWatch.ID()
 		},
 		func(_ tspath.Path, addedEntry *configFileEntry) {
-			errors = append(errors, updateWatch(ctx, s.client, nil, addedEntry.rootFilesWatch)...)
+			errors = append(errors, updateWatch(ctx, s.client, s.logger, nil, addedEntry.rootFilesWatch)...)
 		},
 		func(_ tspath.Path, removedEntry *configFileEntry) {
-			errors = append(errors, updateWatch(ctx, s.client, removedEntry.rootFilesWatch, nil)...)
+			errors = append(errors, updateWatch(ctx, s.client, s.logger, removedEntry.rootFilesWatch, nil)...)
 		},
 		func(_ tspath.Path, oldEntry, newEntry *configFileEntry) {
-			errors = append(errors, updateWatch(ctx, s.client, oldEntry.rootFilesWatch, newEntry.rootFilesWatch)...)
+			errors = append(errors, updateWatch(ctx, s.client, s.logger, oldEntry.rootFilesWatch, newEntry.rootFilesWatch)...)
 		},
 	)
 
@@ -257,19 +278,19 @@ func (s *Session) updateWatches(ctx context.Context, oldSnapshot *Snapshot, newS
 		oldSnapshot.ProjectCollection.configuredProjects,
 		newSnapshot.ProjectCollection.configuredProjects,
 		func(_ tspath.Path, addedProject *Project) {
-			errors = append(errors, updateWatch(ctx, s.client, nil, addedProject.affectingLocationsWatch)...)
-			errors = append(errors, updateWatch(ctx, s.client, nil, addedProject.failedLookupsWatch)...)
+			errors = append(errors, updateWatch(ctx, s.client, s.logger, nil, addedProject.affectingLocationsWatch)...)
+			errors = append(errors, updateWatch(ctx, s.client, s.logger, nil, addedProject.failedLookupsWatch)...)
 		},
 		func(_ tspath.Path, removedProject *Project) {
-			errors = append(errors, updateWatch(ctx, s.client, removedProject.affectingLocationsWatch, nil)...)
-			errors = append(errors, updateWatch(ctx, s.client, removedProject.failedLookupsWatch, nil)...)
+			errors = append(errors, updateWatch(ctx, s.client, s.logger, removedProject.affectingLocationsWatch, nil)...)
+			errors = append(errors, updateWatch(ctx, s.client, s.logger, removedProject.failedLookupsWatch, nil)...)
 		},
 		func(_ tspath.Path, oldProject, newProject *Project) {
 			if oldProject.affectingLocationsWatch.ID() != newProject.affectingLocationsWatch.ID() {
-				errors = append(errors, updateWatch(ctx, s.client, oldProject.affectingLocationsWatch, newProject.affectingLocationsWatch)...)
+				errors = append(errors, updateWatch(ctx, s.client, s.logger, oldProject.affectingLocationsWatch, newProject.affectingLocationsWatch)...)
 			}
 			if oldProject.failedLookupsWatch.ID() != newProject.failedLookupsWatch.ID() {
-				errors = append(errors, updateWatch(ctx, s.client, oldProject.failedLookupsWatch, newProject.failedLookupsWatch)...)
+				errors = append(errors, updateWatch(ctx, s.client, s.logger, oldProject.failedLookupsWatch, newProject.failedLookupsWatch)...)
 			}
 		},
 	)

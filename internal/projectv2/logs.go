@@ -82,6 +82,9 @@ func NewLogCollector(name string) (*logCollector, func()) {
 }
 
 func (c *logCollector) Log(message string) {
+	if c == nil {
+		return
+	}
 	log := newLog(nil, message)
 	c.dispatcher.Dispatch(func() {
 		c.logs = append(c.logs, log)
@@ -89,17 +92,43 @@ func (c *logCollector) Log(message string) {
 }
 
 func (c *logCollector) Logf(format string, args ...any) {
+	if c == nil {
+		return
+	}
 	log := newLog(nil, fmt.Sprintf(format, args...))
 	c.dispatcher.Dispatch(func() {
 		c.logs = append(c.logs, log)
 	})
 }
 
-func (c *logCollector) Fork(name string, message string) *logCollector {
-	child := &logCollector{name: name, dispatcher: c.dispatcher}
+func (c *logCollector) Fork(message string) *logCollector {
+	if c == nil {
+		return nil
+	}
+	child := &logCollector{dispatcher: c.dispatcher}
 	log := newLog(child, message)
 	c.dispatcher.Dispatch(func() {
 		c.logs = append(c.logs, log)
 	})
 	return child
+}
+
+type Logger interface {
+	Log(msg ...any)
+}
+
+func (c *logCollector) WriteLogs(logger Logger) {
+	logger.Log(fmt.Sprintf("======== %s ========", c.name))
+	c.writeLogsRecursive(logger, "")
+}
+
+func (c *logCollector) writeLogsRecursive(logger Logger, indent string) {
+	for _, log := range c.logs {
+		if log.child == nil || len(log.child.logs) > 0 {
+			logger.Log(indent, "[", log.time.Format("15:04:05.000"), "] ", log.message)
+			if log.child != nil {
+				log.child.writeLogsRecursive(logger, indent+"\t")
+			}
+		}
+	}
 }

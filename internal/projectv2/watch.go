@@ -54,7 +54,7 @@ func (w *WatchedFiles[T]) Watchers() (WatcherID, []*lsproto.FileSystemWatcher) {
 			}
 		})
 		if !slices.EqualFunc(w.watchers, newWatchers, func(a, b *lsproto.FileSystemWatcher) bool {
-			return a.GlobPattern.Pattern == b.GlobPattern.Pattern
+			return *a.GlobPattern.Pattern == *b.GlobPattern.Pattern
 		}) {
 			w.watchers = newWatchers
 			w.id = watcherID.Add(1)
@@ -132,6 +132,7 @@ func createResolutionLookupGlobMapper(currentDirectory string, useCaseSensitiveF
 			}
 		}
 
+		slices.Sort(globs)
 		return globs
 	}
 }

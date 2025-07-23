@@ -25,8 +25,8 @@ func TestRefCountingCaches(t *testing.T) {
 			TypingsLocation:    "/home/src/Library/Caches/typescript",
 			PositionEncoding:   lsproto.PositionEncodingKindUTF8,
 			WatchEnabled:       false,
-			LoggingEnabled:     true,
-		}, fs, nil)
+			LoggingEnabled:     false,
+		}, fs, nil, nil)
 		return session
 	}
 

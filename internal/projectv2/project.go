@@ -1,6 +1,8 @@
 package projectv2
 
 import (
+	"fmt"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -12,6 +14,9 @@ import (
 )
 
 const inferredProjectName = "/dev/null/inferredProject"
+
+//go:generate go tool golang.org/x/tools/cmd/stringer -type=Kind -trimprefix=Kind -output=project_stringer_generated.go
+//go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w project_stringer_generated.go
 
 type Kind int
 
@@ -57,8 +62,9 @@ func NewConfiguredProject(
 	configFileName string,
 	configFilePath tspath.Path,
 	builder *projectCollectionBuilder,
+	logger *logCollector,
 ) *Project {
-	return NewProject(configFileName, KindConfigured, tspath.GetDirectoryPath(configFileName), builder)
+	return NewProject(configFileName, KindConfigured, tspath.GetDirectoryPath(configFileName), builder, logger)
 }
 
 func NewInferredProject(
@@ -66,8 +72,9 @@ func NewInferredProject(
 	compilerOptions *core.CompilerOptions,
 	rootFileNames []string,
 	builder *projectCollectionBuilder,
+	logger *logCollector,
 ) *Project {
-	p := NewProject(inferredProjectName, KindInferred, currentDirectory, builder)
+	p := NewProject(inferredProjectName, KindInferred, currentDirectory, builder, logger)
 	if compilerOptions == nil {
 		compilerOptions = &core.CompilerOptions{
 			AllowJs:                    core.TSTrue,
@@ -100,7 +107,11 @@ func NewProject(
 	kind Kind,
 	currentDirectory string,
 	builder *projectCollectionBuilder,
+	logger *logCollector,
 ) *Project {
+	if logger != nil {
+		logger.Log(fmt.Sprintf("Creating %sProject: %s, currentDirectory: %s", kind.String(), configFileName, currentDirectory))
+	}
 	project := &Project{
 		configFileName:   configFileName,
 		Kind:             kind,
@@ -116,12 +127,12 @@ func NewProject(
 	project.configFilePath = tspath.ToPath(configFileName, currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames())
 	if builder.sessionOptions.WatchEnabled {
 		project.failedLookupsWatch = NewWatchedFiles(
-			"failed lookups",
+			fmt.Sprintf("failed lookups for %s", configFileName),
 			lsproto.WatchKindCreate,
 			createResolutionLookupGlobMapper(project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
 		)
 		project.affectingLocationsWatch = NewWatchedFiles(
-			"affecting locations",
+			fmt.Sprintf("affecting locations for %s", configFileName),
 			lsproto.WatchKindCreate,
 			createResolutionLookupGlobMapper(project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
 		)

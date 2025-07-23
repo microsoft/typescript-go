@@ -33,6 +33,7 @@ func NewProjectV2Server(opts ServerOptions) *ProjectV2Server {
 		stderr:                opts.Err,
 		requestQueue:          make(chan *lsproto.RequestMessage, 100),
 		outgoingQueue:         make(chan *lsproto.Message, 100),
+		logQueue:              make(chan string, 100),
 		pendingClientRequests: make(map[lsproto.ID]pendingClientRequest),
 		pendingServerRequests: make(map[lsproto.ID]chan *lsproto.ResponseMessage),
 		cwd:                   opts.Cwd,
@@ -52,6 +53,7 @@ type ProjectV2Server struct {
 	clientSeq               atomic.Int32
 	requestQueue            chan *lsproto.RequestMessage
 	outgoingQueue           chan *lsproto.Message
+	logQueue                chan string
 	pendingClientRequests   map[lsproto.ID]pendingClientRequest
 	pendingClientRequestsMu sync.Mutex
 	pendingServerRequests   map[lsproto.ID]chan *lsproto.ResponseMessage
@@ -69,7 +71,6 @@ type ProjectV2Server struct {
 	watcherID    atomic.Uint32
 	watchers     collections.SyncSet[projectv2.WatcherID]
 
-	logger  *project.Logger
 	session *projectv2.Session
 
 	// enables tests to share a cache of parsed source files
@@ -172,6 +173,7 @@ func (s *ProjectV2Server) Run() error {
 	g, ctx := errgroup.WithContext(ctx)
 	g.Go(func() error { return s.dispatchLoop(ctx) })
 	g.Go(func() error { return s.writeLoop(ctx) })
+	g.Go(func() error { return s.logLoop(ctx) })
 
 	// Don't run readLoop in the group, as it blocks on stdin read and cannot be cancelled.
 	readLoopErr := make(chan error, 1)
@@ -310,6 +312,19 @@ func (s *ProjectV2Server) writeLoop(ctx context.Context) error {
 		case msg := <-s.outgoingQueue:
 			if err := s.w.Write(msg); err != nil {
 				return fmt.Errorf("failed to write message: %w", err)
+			}
+		}
+	}
+}
+
+func (s *ProjectV2Server) logLoop(ctx context.Context) error {
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case logMessage := <-s.logQueue:
+			if _, err := fmt.Fprintln(s.stderr, logMessage); err != nil {
+				return fmt.Errorf("failed to write log message: %w", err)
 			}
 		}
 	}
@@ -491,14 +506,14 @@ func (s *ProjectV2Server) handleInitialized(ctx context.Context, req *lsproto.Re
 		s.watchEnabled = true
 	}
 
-	s.logger = project.NewLogger([]io.Writer{s.stderr}, "" /*file*/, project.LogLevelVerbose)
 	s.session = projectv2.NewSession(projectv2.SessionOptions{
 		CurrentDirectory:   s.cwd,
 		DefaultLibraryPath: s.defaultLibraryPath,
 		TypingsLocation:    s.typingsLocation,
 		PositionEncoding:   s.positionEncoding,
 		WatchEnabled:       s.watchEnabled,
-	}, s.fs, s.Client())
+		LoggingEnabled:     true,
+	}, s.fs, s.Client(), s)
 
 	return nil
 }
@@ -727,6 +742,7 @@ func (s *ProjectV2Server) handleDocumentOnTypeFormat(ctx context.Context, req *l
 	return nil
 }
 
+// Log implements projectv2.Logger interface
 func (s *ProjectV2Server) Log(msg ...any) {
-	fmt.Fprintln(s.stderr, msg...)
+	s.logQueue <- fmt.Sprint(msg...)
 }

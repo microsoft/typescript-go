@@ -84,8 +84,8 @@ func Setup(files map[string]any) (*projectv2.Session, *SessionUtils) {
 		TypingsLocation:    TestTypingsLocation,
 		PositionEncoding:   lsproto.PositionEncodingKindUTF8,
 		WatchEnabled:       true,
-		LoggingEnabled:     true,
-	}, fs, clientMock)
+		LoggingEnabled:     false,
+	}, fs, clientMock, nil)
 
 	return session, sessionHandle
 }

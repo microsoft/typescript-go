@@ -26,6 +26,7 @@ type configFileRegistryBuilder struct {
 	fs                  *overlayFS
 	extendedConfigCache *extendedConfigCache
 	sessionOptions      *SessionOptions
+	logger              *logCollector
 
 	base            *ConfigFileRegistry
 	configs         *dirty.SyncMap[tspath.Path, *configFileEntry]
@@ -37,12 +38,14 @@ func newConfigFileRegistryBuilder(
 	oldConfigFileRegistry *ConfigFileRegistry,
 	extendedConfigCache *extendedConfigCache,
 	sessionOptions *SessionOptions,
+	logger *logCollector,
 ) *configFileRegistryBuilder {
 	return &configFileRegistryBuilder{
 		fs:                  fs,
 		base:                oldConfigFileRegistry,
 		sessionOptions:      sessionOptions,
 		extendedConfigCache: extendedConfigCache,
+		logger:              logger,
 
 		configs:         dirty.NewSyncMap(oldConfigFileRegistry.configs, nil),
 		configFileNames: dirty.NewMap(oldConfigFileRegistry.configFileNames),
@@ -99,8 +102,14 @@ func (c *configFileRegistryBuilder) findOrAcquireConfigForOpenFile(
 func (c *configFileRegistryBuilder) reloadIfNeeded(entry *configFileEntry, fileName string, path tspath.Path) {
 	switch entry.pendingReload {
 	case PendingReloadFileNames:
+		if c.logger != nil {
+			c.logger.Log(fmt.Sprintf("Reloading file names for config: %s", fileName))
+		}
 		entry.commandLine = tsoptions.ReloadFileNamesOfParsedCommandLine(entry.commandLine, c.fs.fs)
 	case PendingReloadFull:
+		if c.logger != nil {
+			c.logger.Log(fmt.Sprintf("Loading config file: %s", fileName))
+		}
 		entry.commandLine, _ = tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, c, c)
 		c.updateExtendingConfigs(path, entry.commandLine, entry.commandLine)
 		c.updateRootFilesWatch(fileName, entry)
@@ -181,7 +190,7 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 // in the cache. Each `acquireConfigForProject` call that passes a `project` should be accompanied
 // by an eventual `releaseConfigForProject` call with the same project.
 func (c *configFileRegistryBuilder) acquireConfigForProject(fileName string, path tspath.Path, project *Project) *tsoptions.ParsedCommandLine {
-	entry, _ := c.configs.LoadOrStore(path, newConfigFileEntry())
+	entry, _ := c.configs.LoadOrStore(path, newConfigFileEntry(fileName))
 	var needsRetainProject bool
 	entry.ChangeIf(
 		func(config *configFileEntry) bool {
@@ -207,7 +216,7 @@ func (c *configFileRegistryBuilder) acquireConfigForProject(fileName string, pat
 // Each `acquireConfigForOpenFile` call that passes an `openFilePath`
 // should be accompanied by an eventual `releaseConfigForOpenFile` call with the same open file.
 func (c *configFileRegistryBuilder) acquireConfigForOpenFile(configFileName string, configFilePath tspath.Path, openFilePath tspath.Path) *tsoptions.ParsedCommandLine {
-	entry, _ := c.configs.LoadOrStore(configFilePath, newConfigFileEntry())
+	entry, _ := c.configs.LoadOrStore(configFilePath, newConfigFileEntry(configFileName))
 	var needsRetainOpenFile bool
 	entry.ChangeIf(
 		func(config *configFileEntry) bool {

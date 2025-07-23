@@ -6,6 +6,7 @@ import (
 	"maps"
 	"slices"
 	"sync/atomic"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -105,6 +106,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, session *Se
 		defer close()
 	}
 
+	start := time.Now()
 	fs := newSnapshotFS(session.fs.fs, session.fs.overlays, session.fs.positionEncoding, s.toPath)
 	compilerOptionsForInferredProjects := s.compilerOptionsForInferredProjects
 	if change.compilerOptionsForInferredProjects != nil {
@@ -121,23 +123,22 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, session *Se
 		s.sessionOptions,
 		session.parseCache,
 		session.extendedConfigCache,
-		logger,
 	)
 
 	for file, hash := range change.fileChanges.Closed {
-		projectCollectionBuilder.DidCloseFile(file, hash)
+		projectCollectionBuilder.DidCloseFile(file, hash, logger.Fork("DidCloseFile"))
 	}
 
-	projectCollectionBuilder.DidDeleteFiles(slices.Collect(maps.Keys(change.fileChanges.Deleted.M)))
-	projectCollectionBuilder.DidCreateFiles(slices.Collect(maps.Keys(change.fileChanges.Created.M)))
-	projectCollectionBuilder.DidChangeFiles(slices.Collect(maps.Keys(change.fileChanges.Changed.M)))
+	projectCollectionBuilder.DidDeleteFiles(slices.Collect(maps.Keys(change.fileChanges.Deleted.M)), logger.Fork("DidDeleteFiles"))
+	projectCollectionBuilder.DidCreateFiles(slices.Collect(maps.Keys(change.fileChanges.Created.M)), logger.Fork("DidCreateFiles"))
+	projectCollectionBuilder.DidChangeFiles(slices.Collect(maps.Keys(change.fileChanges.Changed.M)), logger.Fork("DidChangeFiles"))
 
 	if change.fileChanges.Opened != "" {
-		projectCollectionBuilder.DidOpenFile(change.fileChanges.Opened)
+		projectCollectionBuilder.DidOpenFile(change.fileChanges.Opened, logger.Fork("DidOpenFile"))
 	}
 
 	for _, uri := range change.requestedURIs {
-		projectCollectionBuilder.DidRequestFile(uri)
+		projectCollectionBuilder.DidRequestFile(uri, logger.Fork("DidRequestFile"))
 	}
 
 	newSnapshot := NewSnapshot(
@@ -152,6 +153,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, session *Se
 
 	newSnapshot.parentId = s.id
 	newSnapshot.ProjectCollection, newSnapshot.ConfigFileRegistry = projectCollectionBuilder.Finalize()
+	newSnapshot.builderLogs = logger
 
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
 		if project.Program != nil {
@@ -173,6 +175,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, session *Se
 		}
 	}
 
+	logger.Logf("Finished cloning snapshot %d into snapshot %d in %v", s.id, newSnapshot.id, time.Since(start))
 	return newSnapshot
 }
 

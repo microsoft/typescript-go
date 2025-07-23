@@ -1,6 +1,7 @@
 package projectv2
 
 import (
+	"fmt"
 	"maps"
 
 	"github.com/microsoft/typescript-go/internal/core"
@@ -44,10 +45,14 @@ type configFileEntry struct {
 	rootFilesWatch *WatchedFiles[[]string]
 }
 
-func newConfigFileEntry() *configFileEntry {
+func newConfigFileEntry(fileName string) *configFileEntry {
 	return &configFileEntry{
-		pendingReload:  PendingReloadFull,
-		rootFilesWatch: NewWatchedFiles("root files", lsproto.WatchKindCreate, core.Identity),
+		pendingReload: PendingReloadFull,
+		rootFilesWatch: NewWatchedFiles(
+			fmt.Sprintf("root files for %s", fileName),
+			lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
+			core.Identity,
+		),
 	}
 }
 
