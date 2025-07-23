@@ -139,7 +139,7 @@ Output::
 
 Found 1 error in a.ts[90m:1[0m
 
-//// [/home/src/workspaces/project/a.js] *modified time*
+//// [/home/src/workspaces/project/a.js] *rewrite with same content*
 
 SemanticDiagnostics::
 Signatures::

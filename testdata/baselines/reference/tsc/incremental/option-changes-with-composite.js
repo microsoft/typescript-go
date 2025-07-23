@@ -1010,7 +1010,7 @@ exports.b = void 0;
 exports.b = 10;
 const bLocal = 10;
 //# sourceMappingURL=b.js.map
-//// [/home/src/workspaces/project/b.js.map] *modified time*
+//// [/home/src/workspaces/project/b.js.map] *rewrite with same content*
 //// [/home/src/workspaces/project/c.js] *modified* 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -1018,7 +1018,7 @@ exports.c = void 0;
 const a_1 = require("./a");
 exports.c = a_1.a;
 //# sourceMappingURL=c.js.map
-//// [/home/src/workspaces/project/c.js.map] *modified time*
+//// [/home/src/workspaces/project/c.js.map] *rewrite with same content*
 //// [/home/src/workspaces/project/d.js] *modified* 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -1026,7 +1026,7 @@ exports.d = void 0;
 const b_1 = require("./b");
 exports.d = b_1.b;
 //# sourceMappingURL=d.js.map
-//// [/home/src/workspaces/project/d.js.map] *modified time*
+//// [/home/src/workspaces/project/d.js.map] *rewrite with same content*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
 {"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8-export const a = 10;const aLocal = 100;","signature":"0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n","impliedNodeFormat":1},{"version":"32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;","signature":"ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n","impliedNodeFormat":1},{"version":"35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;","signature":"24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n","impliedNodeFormat":1},{"version":"d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;","signature":"a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n","impliedNodeFormat":1}],"fileIdsList":[[2],[3]],"options":{"composite":true,"sourceMap":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./d.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
@@ -1139,7 +1139,7 @@ Output::
 //// [/home/src/workspaces/project/a.d.ts] *modified* 
 export declare const a = 10;
 //# sourceMappingURL=a.d.ts.map
-//// [/home/src/workspaces/project/a.d.ts.map] *modified time*
+//// [/home/src/workspaces/project/a.d.ts.map] *rewrite with same content*
 //// [/home/src/workspaces/project/a.js] *modified* 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -1150,7 +1150,7 @@ const aLocal = 100;
 //// [/home/src/workspaces/project/b.d.ts] *modified* 
 export declare const b = 10;
 //# sourceMappingURL=b.d.ts.map
-//// [/home/src/workspaces/project/b.d.ts.map] *modified time*
+//// [/home/src/workspaces/project/b.d.ts.map] *rewrite with same content*
 //// [/home/src/workspaces/project/b.js] *modified* 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -1161,7 +1161,7 @@ const bLocal = 10;
 //// [/home/src/workspaces/project/c.d.ts] *modified* 
 export declare const c = 10;
 //# sourceMappingURL=c.d.ts.map
-//// [/home/src/workspaces/project/c.d.ts.map] *modified time*
+//// [/home/src/workspaces/project/c.d.ts.map] *rewrite with same content*
 //// [/home/src/workspaces/project/c.js] *modified* 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -1172,7 +1172,7 @@ exports.c = a_1.a;
 //// [/home/src/workspaces/project/d.d.ts] *modified* 
 export declare const d = 10;
 //# sourceMappingURL=d.d.ts.map
-//// [/home/src/workspaces/project/d.d.ts.map] *modified time*
+//// [/home/src/workspaces/project/d.d.ts.map] *rewrite with same content*
 //// [/home/src/workspaces/project/d.js] *modified* 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -1290,7 +1290,7 @@ exports.a = void 0;
 exports.a = 10;
 const aLocal = 100;
 //# sourceMappingURL=a.js.map
-//// [/home/src/workspaces/project/a.js.map] *modified time*
+//// [/home/src/workspaces/project/a.js.map] *rewrite with same content*
 //// [/home/src/workspaces/project/b.js] *modified* 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -1298,7 +1298,7 @@ exports.b = void 0;
 exports.b = 10;
 const bLocal = 10;
 //# sourceMappingURL=b.js.map
-//// [/home/src/workspaces/project/b.js.map] *modified time*
+//// [/home/src/workspaces/project/b.js.map] *rewrite with same content*
 //// [/home/src/workspaces/project/c.js] *modified* 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -1306,7 +1306,7 @@ exports.c = void 0;
 const a_1 = require("./a");
 exports.c = a_1.a;
 //# sourceMappingURL=c.js.map
-//// [/home/src/workspaces/project/c.js.map] *modified time*
+//// [/home/src/workspaces/project/c.js.map] *rewrite with same content*
 //// [/home/src/workspaces/project/d.js] *modified* 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -1314,7 +1314,7 @@ exports.d = void 0;
 const b_1 = require("./b");
 exports.d = b_1.b;
 //# sourceMappingURL=d.js.map
-//// [/home/src/workspaces/project/d.js.map] *modified time*
+//// [/home/src/workspaces/project/d.js.map] *rewrite with same content*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
 {"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./a.ts","./b.ts","./c.ts","./d.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e-/// \u003creference no-default-lib=\"true\"/\u003e\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array\u003cT\u003e { length: number; [n: number]: T; }\ninterface ReadonlyArray\u003cT\u003e {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"cbaad6c0b570d95cb0de11d496cbcd960ddb6152b5de5556b85c9ea4b534aef8-export const a = 10;const aLocal = 100;","signature":"0294d0461fc808c98674b1a1a77c26cc9b2958e26ddda58d3e9ee7b806b1d8ff-export declare const a = 10;\n","impliedNodeFormat":1},{"version":"32fe266f005e277f5202e590b14e89cb739c383bde7023723c733cd6ea51078c-export const b = 10;const bLocal = 10;","signature":"ba43aba9e71b3a4d220f005a5c1ec7f11ca438d3f3638626d9f13d0fa36cef94-export declare const b = 10;\n","impliedNodeFormat":1},{"version":"35c02fa2cf84a9292fe046276ac7aaee79b6335851c67de7218b84d604624c28-import { a } from \"./a\";export const c = a;","signature":"24f027dec9d58d543081d86b05f3c4eb7b97eaf877bbb857a5091eb542bbd058-export declare const c = 10;\n","impliedNodeFormat":1},{"version":"d7d9eaee18bfcd1d2fe8ea902607b6dc29457bfe9ef7c2f0a86ac101074b64fe-import { b } from \"./b\";export const d = b;","signature":"a7d8244d51b9b6a74f3b3e19a8ebe49786ee8736039a7c03ddb43448a17e7bf5-export declare const d = 10;\n","impliedNodeFormat":1}],"fileIdsList":[[2],[3]],"options":{"composite":true,"declarationMap":true,"sourceMap":true},"referencedMap":[[4,1],[5,2]],"latestChangedDtsFile":"./d.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 

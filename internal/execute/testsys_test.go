@@ -80,8 +80,8 @@ func newTestSys(fileOrFolderList FileMap, cwd string) *testSys {
 }
 
 type diffEntry struct {
-	content string
-	modTime time.Time
+	content   string
+	isWritten bool
 }
 
 type snapshot struct {
@@ -237,6 +237,7 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 	// todo: baselines the entire fs, possibly doesn't correctly diff all cases of emitted files, since emit isn't fully implemented and doesn't always emit the same way as strada
 	snap := map[string]*diffEntry{}
 
+	testFs := s.testFs()
 	err := s.fsFromFileMap().WalkDir("/", func(path string, d vfs.DirEntry, e error) error {
 		if e != nil {
 			return e
@@ -250,11 +251,7 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 		if !ok {
 			return nil
 		}
-		fileInfo, err := d.Info()
-		if err != nil {
-			return nil
-		}
-		newEntry := &diffEntry{content: newContents, modTime: fileInfo.ModTime()}
+		newEntry := &diffEntry{content: newContents, isWritten: testFs.writtenFiles.Has(path)}
 		snap[path] = newEntry
 		s.reportFSEntryDiff(baseline, newEntry, path)
 
@@ -284,6 +281,7 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 		defaultLibs: &defaultLibs,
 	}
 	fmt.Fprintln(baseline)
+	testFs.writtenFiles = collections.SyncSet[string]{} // Reset written files after baseline
 }
 
 func (s *testSys) reportFSEntryDiff(baseline io.Writer, newDirContent *diffEntry, path string) {
@@ -302,8 +300,8 @@ func (s *testSys) reportFSEntryDiff(baseline io.Writer, newDirContent *diffEntry
 		fmt.Fprint(baseline, "//// [", path, "] *deleted*\n")
 	} else if newDirContent.content != oldDirContent.content {
 		fmt.Fprint(baseline, "//// [", path, "] *modified* \n", newDirContent.content, "\n")
-	} else if !newDirContent.modTime.Equal(oldDirContent.modTime) {
-		fmt.Fprint(baseline, "//// [", path, "] *modified time*\n")
+	} else if newDirContent.isWritten {
+		fmt.Fprint(baseline, "//// [", path, "] *rewrite with same content*\n")
 	} else if defaultLibs != nil && defaultLibs.Has(path) && s.testFs().defaultLibs != nil && !s.testFs().defaultLibs.Has(path) {
 		// Lib file that was read
 		fmt.Fprint(baseline, "//// [", path, "] *Lib*\n", newDirContent.content, "\n")
