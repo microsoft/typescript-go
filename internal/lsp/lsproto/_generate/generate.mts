@@ -225,7 +225,7 @@ function handleOrType(orType: OrType): GoType {
 
     // Create union type name: if the original had null, add "OrNull" suffix to avoid name collisions
     let unionTypeName;
-    if (containedNull && nonNullTypes.length === 1) {
+    if (containedNull) {
         // Single type that was originally nullable (T | null)
         unionTypeName = `${memberNames[0]}OrNull`;
     }
