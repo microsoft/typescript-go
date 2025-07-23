@@ -280,7 +280,7 @@ func (s *snapshot) computeSignatureWithDiagnostics(file *ast.SourceFile, text st
 	return s.computeHash(builder.String())
 }
 
-func diagnosticToStringBuilder(diagnostic *ast.Diagnostic, file *ast.SourceFile, builder *strings.Builder) string {
+func diagnosticToStringBuilder(diagnostic *ast.Diagnostic, file *ast.SourceFile, builder *strings.Builder) {
 	if diagnostic == nil {
 		return ""
 	}
