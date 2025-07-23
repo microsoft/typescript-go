@@ -150,7 +150,7 @@ function resolveType(type: Type): GoType {
 }
 
 function flattenOrTypes(types: Type[]): Type[] {
-    const flattened: Type[] = [];
+    const flattened = new Set<Type>();
 
     for (const rawType of types) {
         let type = rawType;
@@ -165,14 +165,16 @@ function flattenOrTypes(types: Type[]): Type[] {
 
         if (type.kind === "or") {
             // Recursively flatten OR types
-            flattened.push(...flattenOrTypes(type.items));
+            for (const subType of flattenOrTypes(type.items)) {
+                flattened.add(subType);
+            }
         }
         else {
-            flattened.push(rawType);
+            flattened.add(rawType);
         }
     }
 
-    return flattened;
+    return Array.from(flattened);
 }
 
 function handleOrType(orType: OrType): GoType {
