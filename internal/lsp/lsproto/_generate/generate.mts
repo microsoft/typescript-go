@@ -35,12 +35,14 @@ interface TypeInfo {
     types: Map<string, GoType>;
     literalTypes: Map<string, string>;
     unionTypes: Map<string, { name: string; type: Type; containedNull: boolean; }[]>;
+    typeAliasMap: Map<string, Type>;
 }
 
 const typeInfo: TypeInfo = {
     types: new Map(),
     literalTypes: new Map(),
     unionTypes: new Map(),
+    typeAliasMap: new Map(),
 };
 
 function titleCase(s: string) {
@@ -75,6 +77,12 @@ function resolveType(type: Type): GoType {
             const typeAliasOverride = typeAliasOverrides.get(type.name);
             if (typeAliasOverride) {
                 return typeAliasOverride;
+            }
+
+            // Check if this is a type alias that resolves to a union type
+            const aliasedType = typeInfo.typeAliasMap.get(type.name);
+            if (aliasedType) {
+                return resolveType(aliasedType);
             }
 
             let refType = typeInfo.types.get(type.name);
@@ -159,9 +167,9 @@ function flattenOrTypes(types: Type[]): Type[] {
 
         // Dereference reference types that point to OR types
         if (rawType.kind === "reference") {
-            const typeAlias = model.typeAliases.find(alias => alias.name === rawType.name);
-            if (typeAlias && typeAlias.type.kind === "or") {
-                type = typeAlias.type;
+            const aliasedType = typeInfo.typeAliasMap.get(rawType.name);
+            if (aliasedType && aliasedType.kind === "or") {
+                type = aliasedType;
             }
         }
 
@@ -230,15 +238,9 @@ function handleOrType(orType: OrType): GoType {
         }
     });
 
-    // Create union type name: if the original had null, add "OrNull" suffix to avoid name collisions
-    let unionTypeName;
+    let unionTypeName = memberNames.join("Or");
     if (containedNull) {
-        // Single type that was originally nullable (T | null)
-        unionTypeName = `${memberNames[0]}OrNull`;
-    }
-    else {
-        // Multiple types, use regular "Or" joining
-        unionTypeName = memberNames.join("Or");
+        unionTypeName += "OrNull";
     }
 
     const union = memberNames.map((name, i) => ({ name, type: nonNullTypes[i], containedNull }));
@@ -296,11 +298,8 @@ function collectTypeDefinitions() {
             continue;
         }
 
-        const resolvedType = resolveType(typeAlias.type);
-        typeInfo.types.set(typeAlias.name, {
-            name: typeAlias.name,
-            needsPointer: resolvedType.needsPointer,
-        });
+        // Store the alias mapping so we can resolve it later
+        typeInfo.typeAliasMap.set(typeAlias.name, typeAlias.type);
     }
 }
 
@@ -520,21 +519,6 @@ function generateCode() {
         writeLine(`\t*e = ${enumeration.name}(v)`);
         writeLine(`\treturn nil`);
         writeLine(`}`);
-        writeLine("");
-    }
-
-    // Generate type aliases
-    writeLine("// Type aliases\n");
-
-    for (const typeAlias of model.typeAliases) {
-        if (typeAliasOverrides.has(typeAlias.name)) {
-            continue;
-        }
-
-        write(formatDocumentation(typeAlias.documentation));
-
-        const resolvedType = resolveType(typeAlias.type);
-        writeLine(`type ${typeAlias.name} = ${resolvedType.name}`);
         writeLine("");
     }
 

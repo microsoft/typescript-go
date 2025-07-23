@@ -570,7 +570,7 @@ type SelectionRangeRegistrationOptions struct {
 
 type WorkDoneProgressCreateParams struct {
 	// The token to be used to report progress.
-	Token ProgressToken `json:"token"`
+	Token IntegerOrString `json:"token"`
 }
 
 func (s *WorkDoneProgressCreateParams) UnmarshalJSON(data []byte) error {
@@ -590,7 +590,7 @@ func (s *WorkDoneProgressCreateParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Token ProgressToken `json:"token"`
+		Token IntegerOrString `json:"token"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -598,7 +598,7 @@ func (s *WorkDoneProgressCreateParams) UnmarshalJSON(data []byte) error {
 
 type WorkDoneProgressCancelParams struct {
 	// The token to be used to report progress.
-	Token ProgressToken `json:"token"`
+	Token IntegerOrString `json:"token"`
 }
 
 func (s *WorkDoneProgressCancelParams) UnmarshalJSON(data []byte) error {
@@ -618,7 +618,7 @@ func (s *WorkDoneProgressCancelParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Token ProgressToken `json:"token"`
+		Token IntegerOrString `json:"token"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -1322,7 +1322,7 @@ type WorkspaceEdit struct {
 	// Whether clients honor this property depends on the client capability `workspace.changeAnnotationSupport`.
 	//
 	// Since: 3.16.0
-	ChangeAnnotations *map[ChangeAnnotationIdentifier]*ChangeAnnotation `json:"changeAnnotations,omitempty"`
+	ChangeAnnotations *map[string]*ChangeAnnotation `json:"changeAnnotations,omitempty"`
 }
 
 // The options to register for file operations.
@@ -2008,7 +2008,7 @@ func (s *WorkspaceDiagnosticParams) UnmarshalJSON(data []byte) error {
 //
 // Since: 3.17.0
 type WorkspaceDiagnosticReport struct {
-	Items []WorkspaceDocumentDiagnosticReport `json:"items"`
+	Items []WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport `json:"items"`
 }
 
 func (s *WorkspaceDiagnosticReport) UnmarshalJSON(data []byte) error {
@@ -2028,7 +2028,7 @@ func (s *WorkspaceDiagnosticReport) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Items []WorkspaceDocumentDiagnosticReport `json:"items"`
+		Items []WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport `json:"items"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -2038,7 +2038,7 @@ func (s *WorkspaceDiagnosticReport) UnmarshalJSON(data []byte) error {
 //
 // Since: 3.17.0
 type WorkspaceDiagnosticReportPartialResult struct {
-	Items []WorkspaceDocumentDiagnosticReport `json:"items"`
+	Items []WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport `json:"items"`
 }
 
 func (s *WorkspaceDiagnosticReportPartialResult) UnmarshalJSON(data []byte) error {
@@ -2058,7 +2058,7 @@ func (s *WorkspaceDiagnosticReportPartialResult) UnmarshalJSON(data []byte) erro
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Items []WorkspaceDocumentDiagnosticReport `json:"items"`
+		Items []WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport `json:"items"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -2829,7 +2829,7 @@ type DidChangeTextDocumentParams struct {
 	// - apply the 'textDocument/didChange' notifications in the order you receive them.
 	// - apply the `TextDocumentContentChangeEvent`s in a single notification in the order
 	//   you receive them.
-	ContentChanges []TextDocumentContentChangeEvent `json:"contentChanges"`
+	ContentChanges []TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument `json:"contentChanges"`
 }
 
 func (s *DidChangeTextDocumentParams) UnmarshalJSON(data []byte) error {
@@ -2853,8 +2853,8 @@ func (s *DidChangeTextDocumentParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		TextDocument   VersionedTextDocumentIdentifier  `json:"textDocument"`
-		ContentChanges []TextDocumentContentChangeEvent `json:"contentChanges"`
+		TextDocument   VersionedTextDocumentIdentifier                                            `json:"textDocument"`
+		ContentChanges []TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument `json:"contentChanges"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -4924,7 +4924,7 @@ func (s *CancelParams) UnmarshalJSON(data []byte) error {
 
 type ProgressParams struct {
 	// The progress token provided by the client or server.
-	Token ProgressToken `json:"token"`
+	Token IntegerOrString `json:"token"`
 
 	// The progress data.
 	Value any `json:"value"`
@@ -4951,8 +4951,8 @@ func (s *ProgressParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Token ProgressToken `json:"token"`
-		Value any           `json:"value"`
+		Token IntegerOrString `json:"token"`
+		Value any             `json:"value"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -4998,13 +4998,13 @@ func (s *TextDocumentPositionParams) UnmarshalJSON(data []byte) error {
 
 type WorkDoneProgressParams struct {
 	// An optional token that a server can use to report work done progress.
-	WorkDoneToken *ProgressToken `json:"workDoneToken,omitempty"`
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitempty"`
 }
 
 type PartialResultParams struct {
 	// An optional token that a server can use to report partial results (e.g. streaming) to
 	// the client.
-	PartialResultToken *ProgressToken `json:"partialResultToken,omitempty"`
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitempty"`
 }
 
 // Represents the connection of two locations. Provides additional metadata over normal locations,
@@ -7138,7 +7138,7 @@ type FileSystemWatcher struct {
 	// The glob pattern to watch. See pattern for more detail.
 	//
 	// Since: 3.17.0 support for relative patterns.
-	GlobPattern GlobPattern `json:"globPattern"`
+	GlobPattern PatternOrRelativePattern `json:"globPattern"`
 
 	// The kind of events of interest. If omitted it defaults
 	// to WatchKind.Create | WatchKind.Change | WatchKind.Delete
@@ -7163,8 +7163,8 @@ func (s *FileSystemWatcher) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		GlobPattern GlobPattern `json:"globPattern"`
-		Kind        *WatchKind  `json:"kind,omitempty"`
+		GlobPattern PatternOrRelativePattern `json:"globPattern"`
+		Kind        *WatchKind               `json:"kind,omitempty"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -8199,7 +8199,7 @@ type AnnotatedTextEdit struct {
 	TextEdit
 
 	// The actual identifier of the change annotation
-	AnnotationId ChangeAnnotationIdentifier `json:"annotationId"`
+	AnnotationId string `json:"annotationId"`
 }
 
 func (s *AnnotatedTextEdit) UnmarshalJSON(data []byte) error {
@@ -8221,7 +8221,7 @@ func (s *AnnotatedTextEdit) UnmarshalJSON(data []byte) error {
 	type temp struct {
 		TextEdit
 
-		AnnotationId ChangeAnnotationIdentifier `json:"annotationId"`
+		AnnotationId string `json:"annotationId"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -8240,7 +8240,7 @@ type SnippetTextEdit struct {
 	Snippet *StringValue `json:"snippet"`
 
 	// The actual identifier of the snippet edit.
-	AnnotationId *ChangeAnnotationIdentifier `json:"annotationId,omitempty"`
+	AnnotationId *string `json:"annotationId,omitempty"`
 }
 
 func (s *SnippetTextEdit) UnmarshalJSON(data []byte) error {
@@ -8264,9 +8264,9 @@ func (s *SnippetTextEdit) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Range        Range                       `json:"range"`
-		Snippet      *StringValue                `json:"snippet"`
-		AnnotationId *ChangeAnnotationIdentifier `json:"annotationId,omitempty"`
+		Range        Range        `json:"range"`
+		Snippet      *StringValue `json:"snippet"`
+		AnnotationId *string      `json:"annotationId,omitempty"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -8280,7 +8280,7 @@ type ResourceOperation struct {
 	// An optional annotation identifier describing the operation.
 	//
 	// Since: 3.16.0
-	AnnotationId *ChangeAnnotationIdentifier `json:"annotationId,omitempty"`
+	AnnotationId *string `json:"annotationId,omitempty"`
 }
 
 func (s *ResourceOperation) UnmarshalJSON(data []byte) error {
@@ -8300,8 +8300,8 @@ func (s *ResourceOperation) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Kind         string                      `json:"kind"`
-		AnnotationId *ChangeAnnotationIdentifier `json:"annotationId,omitempty"`
+		Kind         string  `json:"kind"`
+		AnnotationId *string `json:"annotationId,omitempty"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -9235,7 +9235,7 @@ func (s *NotebookDocumentCellChangeStructure) UnmarshalJSON(data []byte) error {
 type NotebookDocumentCellContentChanges struct {
 	Document VersionedTextDocumentIdentifier `json:"document"`
 
-	Changes []TextDocumentContentChangeEvent `json:"changes"`
+	Changes []TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument `json:"changes"`
 }
 
 func (s *NotebookDocumentCellContentChanges) UnmarshalJSON(data []byte) error {
@@ -9259,8 +9259,8 @@ func (s *NotebookDocumentCellContentChanges) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Document VersionedTextDocumentIdentifier  `json:"document"`
-		Changes  []TextDocumentContentChangeEvent `json:"changes"`
+		Document VersionedTextDocumentIdentifier                                            `json:"document"`
+		Changes  []TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument `json:"changes"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -9629,7 +9629,7 @@ type RelativePattern struct {
 	BaseUri WorkspaceFolderOrURI `json:"baseUri"`
 
 	// The actual glob pattern;
-	Pattern Pattern `json:"pattern"`
+	Pattern string `json:"pattern"`
 }
 
 func (s *RelativePattern) UnmarshalJSON(data []byte) error {
@@ -9654,7 +9654,7 @@ func (s *RelativePattern) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		BaseUri WorkspaceFolderOrURI `json:"baseUri"`
-		Pattern Pattern              `json:"pattern"`
+		Pattern string               `json:"pattern"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -9675,7 +9675,7 @@ type TextDocumentFilterLanguage struct {
 	// Since: 3.18.0 - support for relative patterns. Whether clients support
 	// relative patterns depends on the client capability
 	// `textDocuments.filters.relativePatternSupport`.
-	Pattern *GlobPattern `json:"pattern,omitempty"`
+	Pattern *PatternOrRelativePattern `json:"pattern,omitempty"`
 }
 
 func (s *TextDocumentFilterLanguage) UnmarshalJSON(data []byte) error {
@@ -9695,9 +9695,9 @@ func (s *TextDocumentFilterLanguage) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Language string       `json:"language"`
-		Scheme   *string      `json:"scheme,omitempty"`
-		Pattern  *GlobPattern `json:"pattern,omitempty"`
+		Language string                    `json:"language"`
+		Scheme   *string                   `json:"scheme,omitempty"`
+		Pattern  *PatternOrRelativePattern `json:"pattern,omitempty"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -9718,7 +9718,7 @@ type TextDocumentFilterScheme struct {
 	// Since: 3.18.0 - support for relative patterns. Whether clients support
 	// relative patterns depends on the client capability
 	// `textDocuments.filters.relativePatternSupport`.
-	Pattern *GlobPattern `json:"pattern,omitempty"`
+	Pattern *PatternOrRelativePattern `json:"pattern,omitempty"`
 }
 
 func (s *TextDocumentFilterScheme) UnmarshalJSON(data []byte) error {
@@ -9738,9 +9738,9 @@ func (s *TextDocumentFilterScheme) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Language *string      `json:"language,omitempty"`
-		Scheme   string       `json:"scheme"`
-		Pattern  *GlobPattern `json:"pattern,omitempty"`
+		Language *string                   `json:"language,omitempty"`
+		Scheme   string                    `json:"scheme"`
+		Pattern  *PatternOrRelativePattern `json:"pattern,omitempty"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -9761,7 +9761,7 @@ type TextDocumentFilterPattern struct {
 	// Since: 3.18.0 - support for relative patterns. Whether clients support
 	// relative patterns depends on the client capability
 	// `textDocuments.filters.relativePatternSupport`.
-	Pattern GlobPattern `json:"pattern"`
+	Pattern PatternOrRelativePattern `json:"pattern"`
 }
 
 func (s *TextDocumentFilterPattern) UnmarshalJSON(data []byte) error {
@@ -9781,9 +9781,9 @@ func (s *TextDocumentFilterPattern) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Language *string     `json:"language,omitempty"`
-		Scheme   *string     `json:"scheme,omitempty"`
-		Pattern  GlobPattern `json:"pattern"`
+		Language *string                  `json:"language,omitempty"`
+		Scheme   *string                  `json:"scheme,omitempty"`
+		Pattern  PatternOrRelativePattern `json:"pattern"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -9800,7 +9800,7 @@ type NotebookDocumentFilterNotebookType struct {
 	Scheme *string `json:"scheme,omitempty"`
 
 	// A glob pattern.
-	Pattern *GlobPattern `json:"pattern,omitempty"`
+	Pattern *PatternOrRelativePattern `json:"pattern,omitempty"`
 }
 
 func (s *NotebookDocumentFilterNotebookType) UnmarshalJSON(data []byte) error {
@@ -9820,9 +9820,9 @@ func (s *NotebookDocumentFilterNotebookType) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		NotebookType string       `json:"notebookType"`
-		Scheme       *string      `json:"scheme,omitempty"`
-		Pattern      *GlobPattern `json:"pattern,omitempty"`
+		NotebookType string                    `json:"notebookType"`
+		Scheme       *string                   `json:"scheme,omitempty"`
+		Pattern      *PatternOrRelativePattern `json:"pattern,omitempty"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -9839,7 +9839,7 @@ type NotebookDocumentFilterScheme struct {
 	Scheme string `json:"scheme"`
 
 	// A glob pattern.
-	Pattern *GlobPattern `json:"pattern,omitempty"`
+	Pattern *PatternOrRelativePattern `json:"pattern,omitempty"`
 }
 
 func (s *NotebookDocumentFilterScheme) UnmarshalJSON(data []byte) error {
@@ -9859,9 +9859,9 @@ func (s *NotebookDocumentFilterScheme) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		NotebookType *string      `json:"notebookType,omitempty"`
-		Scheme       string       `json:"scheme"`
-		Pattern      *GlobPattern `json:"pattern,omitempty"`
+		NotebookType *string                   `json:"notebookType,omitempty"`
+		Scheme       string                    `json:"scheme"`
+		Pattern      *PatternOrRelativePattern `json:"pattern,omitempty"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -9878,7 +9878,7 @@ type NotebookDocumentFilterPattern struct {
 	Scheme *string `json:"scheme,omitempty"`
 
 	// A glob pattern.
-	Pattern GlobPattern `json:"pattern"`
+	Pattern PatternOrRelativePattern `json:"pattern"`
 }
 
 func (s *NotebookDocumentFilterPattern) UnmarshalJSON(data []byte) error {
@@ -9898,9 +9898,9 @@ func (s *NotebookDocumentFilterPattern) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		NotebookType *string     `json:"notebookType,omitempty"`
-		Scheme       *string     `json:"scheme,omitempty"`
-		Pattern      GlobPattern `json:"pattern"`
+		NotebookType *string                  `json:"notebookType,omitempty"`
+		Scheme       *string                  `json:"scheme,omitempty"`
+		Pattern      PatternOrRelativePattern `json:"pattern"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -10793,7 +10793,7 @@ func (s *StaleRequestSupportOptions) UnmarshalJSON(data []byte) error {
 // Since: 3.16.0
 type RegularExpressionsClientCapabilities struct {
 	// The engine's name.
-	Engine RegularExpressionEngineKind `json:"engine"`
+	Engine string `json:"engine"`
 
 	// The engine's version.
 	Version *string `json:"version,omitempty"`
@@ -10816,8 +10816,8 @@ func (s *RegularExpressionsClientCapabilities) UnmarshalJSON(data []byte) error 
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Engine  RegularExpressionEngineKind `json:"engine"`
-		Version *string                     `json:"version,omitempty"`
+		Engine  string  `json:"engine"`
+		Version *string `json:"version,omitempty"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -12565,139 +12565,6 @@ func (e *TokenFormat) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// Type aliases
-
-// The definition of a symbol represented as one or many locations.
-// For most programming languages there is only one location at which a symbol is
-// defined.
-//
-// Servers should prefer returning `DefinitionLink` over `Definition` if supported
-// by the client.
-type Definition = LocationOrLocations
-
-// Information about where a symbol is defined.
-//
-// Provides additional metadata over normal location definitions, including the range of
-// the defining symbol
-type DefinitionLink = LocationLink
-
-// The declaration of a symbol representation as one or many locations.
-type Declaration = LocationOrLocations
-
-// Information about where a symbol is declared.
-//
-// Provides additional metadata over normal location declarations, including the range of
-// the declaring symbol.
-//
-// Servers should prefer returning `DeclarationLink` over `Declaration` if supported
-// by the client.
-type DeclarationLink = LocationLink
-
-// Inline value information can be provided by different means:
-// - directly as a text value (class InlineValueText).
-// - as a name to use for a variable lookup (class InlineValueVariableLookup)
-// - as an evaluatable expression (class InlineValueEvaluatableExpression)
-// The InlineValue types combines all inline value types into one type.
-//
-// Since: 3.17.0
-type InlineValue = InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression
-
-// The result of a document diagnostic pull request. A report can
-// either be a full report containing all diagnostics for the
-// requested document or an unchanged report indicating that nothing
-// has changed in terms of diagnostics in comparison to the last
-// pull request.
-//
-// Since: 3.17.0
-type DocumentDiagnosticReport = RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport
-
-type PrepareRenameResult = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior
-
-// A document selector is the combination of one or many document filters.
-//
-// @sample `let sel:DocumentSelector = [{ language: 'typescript' }, { language: 'json', pattern: '**∕tsconfig.json' }]`;
-//
-// The use of a string as a document filter is deprecated @since 3.16.0.
-type DocumentSelector = []DocumentFilter
-
-type ProgressToken = IntegerOrString
-
-// An identifier to refer to a change annotation stored with a workspace edit.
-type ChangeAnnotationIdentifier = string
-
-// A workspace diagnostic document report.
-//
-// Since: 3.17.0
-type WorkspaceDocumentDiagnosticReport = WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport
-
-// An event describing a change to a text document. If only a text is provided
-// it is considered to be the full content of the document.
-type TextDocumentContentChangeEvent = TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument
-
-// MarkedString can be used to render human readable text. It is either a markdown string
-// or a code-block that provides a language and a code snippet. The language identifier
-// is semantically equal to the optional language identifier in fenced code blocks in GitHub
-// issues. See https://help.github.com/articles/creating-and-highlighting-code-blocks/#syntax-highlighting
-//
-// The pair of a language and a value is an equivalent to markdown:
-// ```${language}
-// ${value}
-// ```
-//
-// Note that markdown strings will be sanitized - that means html will be escaped.
-//
-// Deprecated: use MarkupContent instead.
-type MarkedString = StringOrMarkedStringWithLanguage
-
-// A document filter describes a top level text document or
-// a notebook cell document.
-//
-// Since: 3.17.0 - support for NotebookCellTextDocumentFilter.
-type DocumentFilter = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter
-
-// The glob pattern. Either a string pattern or a relative pattern.
-//
-// Since: 3.17.0
-type GlobPattern = PatternOrRelativePattern
-
-// A document filter denotes a document by different properties like
-// the language, the scheme of
-// its resource, or a glob-pattern that is applied to the path.
-//
-// Glob patterns can have the following syntax:
-// - `*` to match one or more characters in a path segment
-// - `?` to match on one character in a path segment
-// - `**` to match any number of path segments, including none
-// - `{}` to group sub patterns into an OR expression. (e.g. `**​/*.{ts,js}` matches all TypeScript and JavaScript files)
-// - `[]` to declare a range of characters to match in a path segment (e.g., `example.[0-9]` to match on `example.0`, `example.1`, …)
-// - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
-//
-// @sample A language filter that applies to typescript files on disk: `{ language: 'typescript', scheme: 'file' }`
-// @sample A language filter that applies to all package.json paths: `{ language: 'json', pattern: '**package.json' }`
-//
-// Since: 3.17.0
-type TextDocumentFilter = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern
-
-// A notebook document filter denotes a notebook document by
-// different properties. The properties will be match
-// against the notebook's URI (same as with documents)
-//
-// Since: 3.17.0
-type NotebookDocumentFilter = NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern
-
-// The glob pattern to watch relative to the base path. Glob patterns can have the following syntax:
-// - `*` to match one or more characters in a path segment
-// - `?` to match on one character in a path segment
-// - `**` to match any number of path segments, including none
-// - `{}` to group conditions (e.g. `**​/*.{ts,js}` matches all TypeScript and JavaScript files)
-// - `[]` to declare a range of characters to match in a path segment (e.g., `example.[0-9]` to match on `example.0`, `example.1`, …)
-// - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
-//
-// Since: 3.17.0
-type Pattern = string
-
-type RegularExpressionEngineKind = string
-
 func unmarshalParams(method Method, data []byte) (any, error) {
 	switch method {
 	case MethodTextDocumentImplementation:
@@ -13289,10 +13156,10 @@ const (
 // Request response types
 
 // textDocument/implementation response type
-type TextDocumentImplementationResponse = LocationOrNull
+type TextDocumentImplementationResponse = LocationOrLocationsOrDefinitionLinksOrNull
 
 // textDocument/typeDefinition response type
-type TextDocumentTypeDefinitionResponse = LocationOrNull
+type TextDocumentTypeDefinitionResponse = LocationOrLocationsOrDefinitionLinksOrNull
 
 // workspace/workspaceFolders response type
 type WorkspaceWorkspaceFoldersResponse = WorkspaceFoldersOrNull
@@ -13313,7 +13180,7 @@ type TextDocumentFoldingRangeResponse = FoldingRangesOrNull
 type WorkspaceFoldingRangeRefreshResponse = any
 
 // textDocument/declaration response type
-type TextDocumentDeclarationResponse = LocationOrNull
+type TextDocumentDeclarationResponse = LocationOrLocationsOrDeclarationLinksOrNull
 
 // textDocument/selectionRange response type
 type TextDocumentSelectionRangeResponse = SelectionRangesOrNull
@@ -13334,7 +13201,7 @@ type CallHierarchyOutgoingCallsResponse = CallHierarchyOutgoingCallsOrNull
 type TextDocumentSemanticTokensFullResponse = SemanticTokensOrNull
 
 // textDocument/semanticTokens/full/delta response type
-type TextDocumentSemanticTokensFullDeltaResponse = SemanticTokensOrNull
+type TextDocumentSemanticTokensFullDeltaResponse = SemanticTokensOrSemanticTokensDeltaOrNull
 
 // textDocument/semanticTokens/range response type
 type TextDocumentSemanticTokensRangeResponse = SemanticTokensOrNull
@@ -13385,7 +13252,7 @@ type InlayHintResolveResponse = *InlayHint
 type WorkspaceInlayHintRefreshResponse = any
 
 // textDocument/diagnostic response type
-type TextDocumentDiagnosticResponse = DocumentDiagnosticReport
+type TextDocumentDiagnosticResponse = RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport
 
 // workspace/diagnostic response type
 type WorkspaceDiagnosticResponse = *WorkspaceDiagnosticReport
@@ -13394,7 +13261,7 @@ type WorkspaceDiagnosticResponse = *WorkspaceDiagnosticReport
 type WorkspaceDiagnosticRefreshResponse = any
 
 // textDocument/inlineCompletion response type
-type TextDocumentInlineCompletionResponse = InlineCompletionListOrNull
+type TextDocumentInlineCompletionResponse = InlineCompletionListOrInlineCompletionItemsOrNull
 
 // workspace/textDocumentContent response type
 type WorkspaceTextDocumentContentResponse = *TextDocumentContentResult
@@ -13421,7 +13288,7 @@ type WindowShowMessageRequestResponse = MessageActionItemOrNull
 type TextDocumentWillSaveWaitUntilResponse = TextEditsOrNull
 
 // textDocument/completion response type
-type TextDocumentCompletionResponse = CompletionItemsOrNull
+type TextDocumentCompletionResponse = CompletionItemsOrCompletionListOrNull
 
 // completionItem/resolve response type
 type CompletionItemResolveResponse = *CompletionItem
@@ -13433,7 +13300,7 @@ type TextDocumentHoverResponse = HoverOrNull
 type TextDocumentSignatureHelpResponse = SignatureHelpOrNull
 
 // textDocument/definition response type
-type TextDocumentDefinitionResponse = LocationOrNull
+type TextDocumentDefinitionResponse = LocationOrLocationsOrDefinitionLinksOrNull
 
 // textDocument/references response type
 type TextDocumentReferencesResponse = LocationsOrNull
@@ -13442,7 +13309,7 @@ type TextDocumentReferencesResponse = LocationsOrNull
 type TextDocumentDocumentHighlightResponse = DocumentHighlightsOrNull
 
 // textDocument/documentSymbol response type
-type TextDocumentDocumentSymbolResponse = SymbolInformationsOrNull
+type TextDocumentDocumentSymbolResponse = SymbolInformationsOrDocumentSymbolsOrNull
 
 // textDocument/codeAction response type
 type TextDocumentCodeActionResponse = CommandOrCodeActionArrayOrNull
@@ -13451,7 +13318,7 @@ type TextDocumentCodeActionResponse = CommandOrCodeActionArrayOrNull
 type CodeActionResolveResponse = *CodeAction
 
 // workspace/symbol response type
-type WorkspaceSymbolResponse = SymbolInformationsOrNull
+type WorkspaceSymbolResponse = SymbolInformationsOrWorkspaceSymbolsOrNull
 
 // workspaceSymbol/resolve response type
 type WorkspaceSymbolResolveResponse = *WorkspaceSymbol
@@ -13487,164 +13354,44 @@ type TextDocumentOnTypeFormattingResponse = TextEditsOrNull
 type TextDocumentRenameResponse = WorkspaceEditOrNull
 
 // textDocument/prepareRename response type
-type TextDocumentPrepareRenameResponse = RangeOrNull
+type TextDocumentPrepareRenameResponse = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull
 
 // workspace/executeCommand response type
-type WorkspaceExecuteCommandResponse = LSPObjectOrNull
+type WorkspaceExecuteCommandResponse = LSPAnyOrNull
 
 // workspace/applyEdit response type
 type WorkspaceApplyEditResponse = *ApplyWorkspaceEditResult
 
 // Union types
 
-type LocationOrLocations struct {
-	Location  *Location
-	Locations *[]Location
+type DocumentSelectorOrNull struct {
+	DocumentSelector *[]TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter
 }
 
-func (o LocationOrLocations) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of LocationOrLocations is set", o.Location != nil, o.Locations != nil)
+func (o DocumentSelectorOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of DocumentSelectorOrNull is set", o.DocumentSelector != nil)
 
-	if o.Location != nil {
-		return json.Marshal(*o.Location)
+	if o.DocumentSelector != nil {
+		return json.Marshal(*o.DocumentSelector)
 	}
-	if o.Locations != nil {
-		return json.Marshal(*o.Locations)
-	}
-	panic("unreachable")
+	// All fields are nil, represent as null
+	return []byte("null"), nil
 }
 
-func (o *LocationOrLocations) UnmarshalJSON(data []byte) error {
-	*o = LocationOrLocations{}
+func (o *DocumentSelectorOrNull) UnmarshalJSON(data []byte) error {
+	*o = DocumentSelectorOrNull{}
 
-	var vLocation Location
-	if err := json.Unmarshal(data, &vLocation); err == nil {
-		o.Location = &vLocation
+	// Handle null case
+	if string(data) == "null" {
 		return nil
 	}
-	var vLocations []Location
-	if err := json.Unmarshal(data, &vLocations); err == nil {
-		o.Locations = &vLocations
+
+	var vDocumentSelector []TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter
+	if err := json.Unmarshal(data, &vDocumentSelector); err == nil {
+		o.DocumentSelector = &vDocumentSelector
 		return nil
 	}
-	return fmt.Errorf("invalid LocationOrLocations: %s", data)
-}
-
-type InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression struct {
-	InlineValueText                  *InlineValueText
-	InlineValueVariableLookup        *InlineValueVariableLookup
-	InlineValueEvaluatableExpression *InlineValueEvaluatableExpression
-}
-
-func (o InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression is set", o.InlineValueText != nil, o.InlineValueVariableLookup != nil, o.InlineValueEvaluatableExpression != nil)
-
-	if o.InlineValueText != nil {
-		return json.Marshal(*o.InlineValueText)
-	}
-	if o.InlineValueVariableLookup != nil {
-		return json.Marshal(*o.InlineValueVariableLookup)
-	}
-	if o.InlineValueEvaluatableExpression != nil {
-		return json.Marshal(*o.InlineValueEvaluatableExpression)
-	}
-	panic("unreachable")
-}
-
-func (o *InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression) UnmarshalJSON(data []byte) error {
-	*o = InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression{}
-
-	var vInlineValueText InlineValueText
-	if err := json.Unmarshal(data, &vInlineValueText); err == nil {
-		o.InlineValueText = &vInlineValueText
-		return nil
-	}
-	var vInlineValueVariableLookup InlineValueVariableLookup
-	if err := json.Unmarshal(data, &vInlineValueVariableLookup); err == nil {
-		o.InlineValueVariableLookup = &vInlineValueVariableLookup
-		return nil
-	}
-	var vInlineValueEvaluatableExpression InlineValueEvaluatableExpression
-	if err := json.Unmarshal(data, &vInlineValueEvaluatableExpression); err == nil {
-		o.InlineValueEvaluatableExpression = &vInlineValueEvaluatableExpression
-		return nil
-	}
-	return fmt.Errorf("invalid InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression: %s", data)
-}
-
-type RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport struct {
-	RelatedFullDocumentDiagnosticReport      *RelatedFullDocumentDiagnosticReport
-	RelatedUnchangedDocumentDiagnosticReport *RelatedUnchangedDocumentDiagnosticReport
-}
-
-func (o RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport is set", o.RelatedFullDocumentDiagnosticReport != nil, o.RelatedUnchangedDocumentDiagnosticReport != nil)
-
-	if o.RelatedFullDocumentDiagnosticReport != nil {
-		return json.Marshal(*o.RelatedFullDocumentDiagnosticReport)
-	}
-	if o.RelatedUnchangedDocumentDiagnosticReport != nil {
-		return json.Marshal(*o.RelatedUnchangedDocumentDiagnosticReport)
-	}
-	panic("unreachable")
-}
-
-func (o *RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
-	*o = RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport{}
-
-	var vRelatedFullDocumentDiagnosticReport RelatedFullDocumentDiagnosticReport
-	if err := json.Unmarshal(data, &vRelatedFullDocumentDiagnosticReport); err == nil {
-		o.RelatedFullDocumentDiagnosticReport = &vRelatedFullDocumentDiagnosticReport
-		return nil
-	}
-	var vRelatedUnchangedDocumentDiagnosticReport RelatedUnchangedDocumentDiagnosticReport
-	if err := json.Unmarshal(data, &vRelatedUnchangedDocumentDiagnosticReport); err == nil {
-		o.RelatedUnchangedDocumentDiagnosticReport = &vRelatedUnchangedDocumentDiagnosticReport
-		return nil
-	}
-	return fmt.Errorf("invalid RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport: %s", data)
-}
-
-type RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior struct {
-	Range                        *Range
-	PrepareRenamePlaceholder     *PrepareRenamePlaceholder
-	PrepareRenameDefaultBehavior *PrepareRenameDefaultBehavior
-}
-
-func (o RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior is set", o.Range != nil, o.PrepareRenamePlaceholder != nil, o.PrepareRenameDefaultBehavior != nil)
-
-	if o.Range != nil {
-		return json.Marshal(*o.Range)
-	}
-	if o.PrepareRenamePlaceholder != nil {
-		return json.Marshal(*o.PrepareRenamePlaceholder)
-	}
-	if o.PrepareRenameDefaultBehavior != nil {
-		return json.Marshal(*o.PrepareRenameDefaultBehavior)
-	}
-	panic("unreachable")
-}
-
-func (o *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior) UnmarshalJSON(data []byte) error {
-	*o = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior{}
-
-	var vRange Range
-	if err := json.Unmarshal(data, &vRange); err == nil {
-		o.Range = &vRange
-		return nil
-	}
-	var vPrepareRenamePlaceholder PrepareRenamePlaceholder
-	if err := json.Unmarshal(data, &vPrepareRenamePlaceholder); err == nil {
-		o.PrepareRenamePlaceholder = &vPrepareRenamePlaceholder
-		return nil
-	}
-	var vPrepareRenameDefaultBehavior PrepareRenameDefaultBehavior
-	if err := json.Unmarshal(data, &vPrepareRenameDefaultBehavior); err == nil {
-		o.PrepareRenameDefaultBehavior = &vPrepareRenameDefaultBehavior
-		return nil
-	}
-	return fmt.Errorf("invalid RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior: %s", data)
+	return fmt.Errorf("invalid DocumentSelectorOrNull: %s", data)
 }
 
 type IntegerOrString struct {
@@ -13678,303 +13425,6 @@ func (o *IntegerOrString) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 	return fmt.Errorf("invalid IntegerOrString: %s", data)
-}
-
-type WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport struct {
-	WorkspaceFullDocumentDiagnosticReport      *WorkspaceFullDocumentDiagnosticReport
-	WorkspaceUnchangedDocumentDiagnosticReport *WorkspaceUnchangedDocumentDiagnosticReport
-}
-
-func (o WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport is set", o.WorkspaceFullDocumentDiagnosticReport != nil, o.WorkspaceUnchangedDocumentDiagnosticReport != nil)
-
-	if o.WorkspaceFullDocumentDiagnosticReport != nil {
-		return json.Marshal(*o.WorkspaceFullDocumentDiagnosticReport)
-	}
-	if o.WorkspaceUnchangedDocumentDiagnosticReport != nil {
-		return json.Marshal(*o.WorkspaceUnchangedDocumentDiagnosticReport)
-	}
-	panic("unreachable")
-}
-
-func (o *WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
-	*o = WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport{}
-
-	var vWorkspaceFullDocumentDiagnosticReport WorkspaceFullDocumentDiagnosticReport
-	if err := json.Unmarshal(data, &vWorkspaceFullDocumentDiagnosticReport); err == nil {
-		o.WorkspaceFullDocumentDiagnosticReport = &vWorkspaceFullDocumentDiagnosticReport
-		return nil
-	}
-	var vWorkspaceUnchangedDocumentDiagnosticReport WorkspaceUnchangedDocumentDiagnosticReport
-	if err := json.Unmarshal(data, &vWorkspaceUnchangedDocumentDiagnosticReport); err == nil {
-		o.WorkspaceUnchangedDocumentDiagnosticReport = &vWorkspaceUnchangedDocumentDiagnosticReport
-		return nil
-	}
-	return fmt.Errorf("invalid WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport: %s", data)
-}
-
-type TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument struct {
-	TextDocumentContentChangePartial       *TextDocumentContentChangePartial
-	TextDocumentContentChangeWholeDocument *TextDocumentContentChangeWholeDocument
-}
-
-func (o TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument is set", o.TextDocumentContentChangePartial != nil, o.TextDocumentContentChangeWholeDocument != nil)
-
-	if o.TextDocumentContentChangePartial != nil {
-		return json.Marshal(*o.TextDocumentContentChangePartial)
-	}
-	if o.TextDocumentContentChangeWholeDocument != nil {
-		return json.Marshal(*o.TextDocumentContentChangeWholeDocument)
-	}
-	panic("unreachable")
-}
-
-func (o *TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument) UnmarshalJSON(data []byte) error {
-	*o = TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument{}
-
-	var vTextDocumentContentChangePartial TextDocumentContentChangePartial
-	if err := json.Unmarshal(data, &vTextDocumentContentChangePartial); err == nil {
-		o.TextDocumentContentChangePartial = &vTextDocumentContentChangePartial
-		return nil
-	}
-	var vTextDocumentContentChangeWholeDocument TextDocumentContentChangeWholeDocument
-	if err := json.Unmarshal(data, &vTextDocumentContentChangeWholeDocument); err == nil {
-		o.TextDocumentContentChangeWholeDocument = &vTextDocumentContentChangeWholeDocument
-		return nil
-	}
-	return fmt.Errorf("invalid TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument: %s", data)
-}
-
-type StringOrMarkedStringWithLanguage struct {
-	String                   *string
-	MarkedStringWithLanguage *MarkedStringWithLanguage
-}
-
-func (o StringOrMarkedStringWithLanguage) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of StringOrMarkedStringWithLanguage is set", o.String != nil, o.MarkedStringWithLanguage != nil)
-
-	if o.String != nil {
-		return json.Marshal(*o.String)
-	}
-	if o.MarkedStringWithLanguage != nil {
-		return json.Marshal(*o.MarkedStringWithLanguage)
-	}
-	panic("unreachable")
-}
-
-func (o *StringOrMarkedStringWithLanguage) UnmarshalJSON(data []byte) error {
-	*o = StringOrMarkedStringWithLanguage{}
-
-	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
-		o.String = &vString
-		return nil
-	}
-	var vMarkedStringWithLanguage MarkedStringWithLanguage
-	if err := json.Unmarshal(data, &vMarkedStringWithLanguage); err == nil {
-		o.MarkedStringWithLanguage = &vMarkedStringWithLanguage
-		return nil
-	}
-	return fmt.Errorf("invalid StringOrMarkedStringWithLanguage: %s", data)
-}
-
-type TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter struct {
-	TextDocumentFilterLanguage     *TextDocumentFilterLanguage
-	TextDocumentFilterScheme       *TextDocumentFilterScheme
-	TextDocumentFilterPattern      *TextDocumentFilterPattern
-	NotebookCellTextDocumentFilter *NotebookCellTextDocumentFilter
-}
-
-func (o TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter is set", o.TextDocumentFilterLanguage != nil, o.TextDocumentFilterScheme != nil, o.TextDocumentFilterPattern != nil, o.NotebookCellTextDocumentFilter != nil)
-
-	if o.TextDocumentFilterLanguage != nil {
-		return json.Marshal(*o.TextDocumentFilterLanguage)
-	}
-	if o.TextDocumentFilterScheme != nil {
-		return json.Marshal(*o.TextDocumentFilterScheme)
-	}
-	if o.TextDocumentFilterPattern != nil {
-		return json.Marshal(*o.TextDocumentFilterPattern)
-	}
-	if o.NotebookCellTextDocumentFilter != nil {
-		return json.Marshal(*o.NotebookCellTextDocumentFilter)
-	}
-	panic("unreachable")
-}
-
-func (o *TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter) UnmarshalJSON(data []byte) error {
-	*o = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter{}
-
-	var vTextDocumentFilterLanguage TextDocumentFilterLanguage
-	if err := json.Unmarshal(data, &vTextDocumentFilterLanguage); err == nil {
-		o.TextDocumentFilterLanguage = &vTextDocumentFilterLanguage
-		return nil
-	}
-	var vTextDocumentFilterScheme TextDocumentFilterScheme
-	if err := json.Unmarshal(data, &vTextDocumentFilterScheme); err == nil {
-		o.TextDocumentFilterScheme = &vTextDocumentFilterScheme
-		return nil
-	}
-	var vTextDocumentFilterPattern TextDocumentFilterPattern
-	if err := json.Unmarshal(data, &vTextDocumentFilterPattern); err == nil {
-		o.TextDocumentFilterPattern = &vTextDocumentFilterPattern
-		return nil
-	}
-	var vNotebookCellTextDocumentFilter NotebookCellTextDocumentFilter
-	if err := json.Unmarshal(data, &vNotebookCellTextDocumentFilter); err == nil {
-		o.NotebookCellTextDocumentFilter = &vNotebookCellTextDocumentFilter
-		return nil
-	}
-	return fmt.Errorf("invalid TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter: %s", data)
-}
-
-type PatternOrRelativePattern struct {
-	Pattern         *Pattern
-	RelativePattern *RelativePattern
-}
-
-func (o PatternOrRelativePattern) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of PatternOrRelativePattern is set", o.Pattern != nil, o.RelativePattern != nil)
-
-	if o.Pattern != nil {
-		return json.Marshal(*o.Pattern)
-	}
-	if o.RelativePattern != nil {
-		return json.Marshal(*o.RelativePattern)
-	}
-	panic("unreachable")
-}
-
-func (o *PatternOrRelativePattern) UnmarshalJSON(data []byte) error {
-	*o = PatternOrRelativePattern{}
-
-	var vPattern Pattern
-	if err := json.Unmarshal(data, &vPattern); err == nil {
-		o.Pattern = &vPattern
-		return nil
-	}
-	var vRelativePattern RelativePattern
-	if err := json.Unmarshal(data, &vRelativePattern); err == nil {
-		o.RelativePattern = &vRelativePattern
-		return nil
-	}
-	return fmt.Errorf("invalid PatternOrRelativePattern: %s", data)
-}
-
-type TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern struct {
-	TextDocumentFilterLanguage *TextDocumentFilterLanguage
-	TextDocumentFilterScheme   *TextDocumentFilterScheme
-	TextDocumentFilterPattern  *TextDocumentFilterPattern
-}
-
-func (o TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern is set", o.TextDocumentFilterLanguage != nil, o.TextDocumentFilterScheme != nil, o.TextDocumentFilterPattern != nil)
-
-	if o.TextDocumentFilterLanguage != nil {
-		return json.Marshal(*o.TextDocumentFilterLanguage)
-	}
-	if o.TextDocumentFilterScheme != nil {
-		return json.Marshal(*o.TextDocumentFilterScheme)
-	}
-	if o.TextDocumentFilterPattern != nil {
-		return json.Marshal(*o.TextDocumentFilterPattern)
-	}
-	panic("unreachable")
-}
-
-func (o *TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern) UnmarshalJSON(data []byte) error {
-	*o = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern{}
-
-	var vTextDocumentFilterLanguage TextDocumentFilterLanguage
-	if err := json.Unmarshal(data, &vTextDocumentFilterLanguage); err == nil {
-		o.TextDocumentFilterLanguage = &vTextDocumentFilterLanguage
-		return nil
-	}
-	var vTextDocumentFilterScheme TextDocumentFilterScheme
-	if err := json.Unmarshal(data, &vTextDocumentFilterScheme); err == nil {
-		o.TextDocumentFilterScheme = &vTextDocumentFilterScheme
-		return nil
-	}
-	var vTextDocumentFilterPattern TextDocumentFilterPattern
-	if err := json.Unmarshal(data, &vTextDocumentFilterPattern); err == nil {
-		o.TextDocumentFilterPattern = &vTextDocumentFilterPattern
-		return nil
-	}
-	return fmt.Errorf("invalid TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern: %s", data)
-}
-
-type NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern struct {
-	NotebookDocumentFilterNotebookType *NotebookDocumentFilterNotebookType
-	NotebookDocumentFilterScheme       *NotebookDocumentFilterScheme
-	NotebookDocumentFilterPattern      *NotebookDocumentFilterPattern
-}
-
-func (o NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern is set", o.NotebookDocumentFilterNotebookType != nil, o.NotebookDocumentFilterScheme != nil, o.NotebookDocumentFilterPattern != nil)
-
-	if o.NotebookDocumentFilterNotebookType != nil {
-		return json.Marshal(*o.NotebookDocumentFilterNotebookType)
-	}
-	if o.NotebookDocumentFilterScheme != nil {
-		return json.Marshal(*o.NotebookDocumentFilterScheme)
-	}
-	if o.NotebookDocumentFilterPattern != nil {
-		return json.Marshal(*o.NotebookDocumentFilterPattern)
-	}
-	panic("unreachable")
-}
-
-func (o *NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern) UnmarshalJSON(data []byte) error {
-	*o = NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern{}
-
-	var vNotebookDocumentFilterNotebookType NotebookDocumentFilterNotebookType
-	if err := json.Unmarshal(data, &vNotebookDocumentFilterNotebookType); err == nil {
-		o.NotebookDocumentFilterNotebookType = &vNotebookDocumentFilterNotebookType
-		return nil
-	}
-	var vNotebookDocumentFilterScheme NotebookDocumentFilterScheme
-	if err := json.Unmarshal(data, &vNotebookDocumentFilterScheme); err == nil {
-		o.NotebookDocumentFilterScheme = &vNotebookDocumentFilterScheme
-		return nil
-	}
-	var vNotebookDocumentFilterPattern NotebookDocumentFilterPattern
-	if err := json.Unmarshal(data, &vNotebookDocumentFilterPattern); err == nil {
-		o.NotebookDocumentFilterPattern = &vNotebookDocumentFilterPattern
-		return nil
-	}
-	return fmt.Errorf("invalid NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern: %s", data)
-}
-
-type DocumentSelectorOrNull struct {
-	DocumentSelector *DocumentSelector
-}
-
-func (o DocumentSelectorOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of DocumentSelectorOrNull is set", o.DocumentSelector != nil)
-
-	if o.DocumentSelector != nil {
-		return json.Marshal(*o.DocumentSelector)
-	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
-}
-
-func (o *DocumentSelectorOrNull) UnmarshalJSON(data []byte) error {
-	*o = DocumentSelectorOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vDocumentSelector DocumentSelector
-	if err := json.Unmarshal(data, &vDocumentSelector); err == nil {
-		o.DocumentSelector = &vDocumentSelector
-		return nil
-	}
-	return fmt.Errorf("invalid DocumentSelectorOrNull: %s", data)
 }
 
 type TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile struct {
@@ -14127,6 +13577,39 @@ func (o *FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) Unmars
 	return fmt.Errorf("invalid FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport: %s", data)
 }
 
+type WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport struct {
+	WorkspaceFullDocumentDiagnosticReport      *WorkspaceFullDocumentDiagnosticReport
+	WorkspaceUnchangedDocumentDiagnosticReport *WorkspaceUnchangedDocumentDiagnosticReport
+}
+
+func (o WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport is set", o.WorkspaceFullDocumentDiagnosticReport != nil, o.WorkspaceUnchangedDocumentDiagnosticReport != nil)
+
+	if o.WorkspaceFullDocumentDiagnosticReport != nil {
+		return json.Marshal(*o.WorkspaceFullDocumentDiagnosticReport)
+	}
+	if o.WorkspaceUnchangedDocumentDiagnosticReport != nil {
+		return json.Marshal(*o.WorkspaceUnchangedDocumentDiagnosticReport)
+	}
+	panic("unreachable")
+}
+
+func (o *WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+	*o = WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport{}
+
+	var vWorkspaceFullDocumentDiagnosticReport WorkspaceFullDocumentDiagnosticReport
+	if err := json.Unmarshal(data, &vWorkspaceFullDocumentDiagnosticReport); err == nil {
+		o.WorkspaceFullDocumentDiagnosticReport = &vWorkspaceFullDocumentDiagnosticReport
+		return nil
+	}
+	var vWorkspaceUnchangedDocumentDiagnosticReport WorkspaceUnchangedDocumentDiagnosticReport
+	if err := json.Unmarshal(data, &vWorkspaceUnchangedDocumentDiagnosticReport); err == nil {
+		o.WorkspaceUnchangedDocumentDiagnosticReport = &vWorkspaceUnchangedDocumentDiagnosticReport
+		return nil
+	}
+	return fmt.Errorf("invalid WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport: %s", data)
+}
+
 type StringOrStringValue struct {
 	String      *string
 	StringValue *StringValue
@@ -14193,6 +13676,39 @@ func (o *StringOrStrings) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid StringOrStrings: %s", data)
 }
 
+type TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument struct {
+	TextDocumentContentChangePartial       *TextDocumentContentChangePartial
+	TextDocumentContentChangeWholeDocument *TextDocumentContentChangeWholeDocument
+}
+
+func (o TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument is set", o.TextDocumentContentChangePartial != nil, o.TextDocumentContentChangeWholeDocument != nil)
+
+	if o.TextDocumentContentChangePartial != nil {
+		return json.Marshal(*o.TextDocumentContentChangePartial)
+	}
+	if o.TextDocumentContentChangeWholeDocument != nil {
+		return json.Marshal(*o.TextDocumentContentChangeWholeDocument)
+	}
+	panic("unreachable")
+}
+
+func (o *TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument) UnmarshalJSON(data []byte) error {
+	*o = TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument{}
+
+	var vTextDocumentContentChangePartial TextDocumentContentChangePartial
+	if err := json.Unmarshal(data, &vTextDocumentContentChangePartial); err == nil {
+		o.TextDocumentContentChangePartial = &vTextDocumentContentChangePartial
+		return nil
+	}
+	var vTextDocumentContentChangeWholeDocument TextDocumentContentChangeWholeDocument
+	if err := json.Unmarshal(data, &vTextDocumentContentChangeWholeDocument); err == nil {
+		o.TextDocumentContentChangeWholeDocument = &vTextDocumentContentChangeWholeDocument
+		return nil
+	}
+	return fmt.Errorf("invalid TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument: %s", data)
+}
+
 type TextEditOrInsertReplaceEdit struct {
 	TextEdit          *TextEdit
 	InsertReplaceEdit *InsertReplaceEdit
@@ -14230,7 +13746,7 @@ type MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings struct {
 	MarkupContent            *MarkupContent
 	String                   *string
 	MarkedStringWithLanguage *MarkedStringWithLanguage
-	MarkedStrings            *[]MarkedString
+	MarkedStrings            *[]StringOrMarkedStringWithLanguage
 }
 
 func (o MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings) MarshalJSON() ([]byte, error) {
@@ -14269,7 +13785,7 @@ func (o *MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings) Unmarsh
 		o.MarkedStringWithLanguage = &vMarkedStringWithLanguage
 		return nil
 	}
-	var vMarkedStrings []MarkedString
+	var vMarkedStrings []StringOrMarkedStringWithLanguage
 	if err := json.Unmarshal(data, &vMarkedStrings); err == nil {
 		o.MarkedStrings = &vMarkedStrings
 		return nil
@@ -15600,6 +15116,39 @@ func (o *BooleanOrInlineCompletionOptions) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid BooleanOrInlineCompletionOptions: %s", data)
 }
 
+type PatternOrRelativePattern struct {
+	Pattern         *string
+	RelativePattern *RelativePattern
+}
+
+func (o PatternOrRelativePattern) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of PatternOrRelativePattern is set", o.Pattern != nil, o.RelativePattern != nil)
+
+	if o.Pattern != nil {
+		return json.Marshal(*o.Pattern)
+	}
+	if o.RelativePattern != nil {
+		return json.Marshal(*o.RelativePattern)
+	}
+	panic("unreachable")
+}
+
+func (o *PatternOrRelativePattern) UnmarshalJSON(data []byte) error {
+	*o = PatternOrRelativePattern{}
+
+	var vPattern string
+	if err := json.Unmarshal(data, &vPattern); err == nil {
+		o.Pattern = &vPattern
+		return nil
+	}
+	var vRelativePattern RelativePattern
+	if err := json.Unmarshal(data, &vRelativePattern); err == nil {
+		o.RelativePattern = &vRelativePattern
+		return nil
+	}
+	return fmt.Errorf("invalid PatternOrRelativePattern: %s", data)
+}
+
 type RangeOrEditRangeWithInsertReplace struct {
 	Range                      *Range
 	EditRangeWithInsertReplace *EditRangeWithInsertReplace
@@ -15882,14 +15431,14 @@ func (o *BooleanOrClientSemanticTokensRequestFullDelta) UnmarshalJSON(data []byt
 	return fmt.Errorf("invalid BooleanOrClientSemanticTokensRequestFullDelta: %s", data)
 }
 
-type LocationOrNull struct {
+type LocationOrLocationsOrDefinitionLinksOrNull struct {
 	Location        *Location
 	Locations       *[]Location
-	DefinitionLinks *[]*DefinitionLink
+	DefinitionLinks *[]*LocationLink
 }
 
-func (o LocationOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of LocationOrNull is set", o.Location != nil, o.Locations != nil, o.DefinitionLinks != nil)
+func (o LocationOrLocationsOrDefinitionLinksOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of LocationOrLocationsOrDefinitionLinksOrNull is set", o.Location != nil, o.Locations != nil, o.DefinitionLinks != nil)
 
 	if o.Location != nil {
 		return json.Marshal(*o.Location)
@@ -15904,8 +15453,8 @@ func (o LocationOrNull) MarshalJSON() ([]byte, error) {
 	return []byte("null"), nil
 }
 
-func (o *LocationOrNull) UnmarshalJSON(data []byte) error {
-	*o = LocationOrNull{}
+func (o *LocationOrLocationsOrDefinitionLinksOrNull) UnmarshalJSON(data []byte) error {
+	*o = LocationOrLocationsOrDefinitionLinksOrNull{}
 
 	// Handle null case
 	if string(data) == "null" {
@@ -15922,12 +15471,12 @@ func (o *LocationOrNull) UnmarshalJSON(data []byte) error {
 		o.Locations = &vLocations
 		return nil
 	}
-	var vDefinitionLinks []*DefinitionLink
+	var vDefinitionLinks []*LocationLink
 	if err := json.Unmarshal(data, &vDefinitionLinks); err == nil {
 		o.DefinitionLinks = &vDefinitionLinks
 		return nil
 	}
-	return fmt.Errorf("invalid LocationOrNull: %s", data)
+	return fmt.Errorf("invalid LocationOrLocationsOrDefinitionLinksOrNull: %s", data)
 }
 
 type FoldingRangesOrNull struct {
@@ -15958,6 +15507,54 @@ func (o *FoldingRangesOrNull) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 	return fmt.Errorf("invalid FoldingRangesOrNull: %s", data)
+}
+
+type LocationOrLocationsOrDeclarationLinksOrNull struct {
+	Location         *Location
+	Locations        *[]Location
+	DeclarationLinks *[]*LocationLink
+}
+
+func (o LocationOrLocationsOrDeclarationLinksOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of LocationOrLocationsOrDeclarationLinksOrNull is set", o.Location != nil, o.Locations != nil, o.DeclarationLinks != nil)
+
+	if o.Location != nil {
+		return json.Marshal(*o.Location)
+	}
+	if o.Locations != nil {
+		return json.Marshal(*o.Locations)
+	}
+	if o.DeclarationLinks != nil {
+		return json.Marshal(*o.DeclarationLinks)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *LocationOrLocationsOrDeclarationLinksOrNull) UnmarshalJSON(data []byte) error {
+	*o = LocationOrLocationsOrDeclarationLinksOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vLocation Location
+	if err := json.Unmarshal(data, &vLocation); err == nil {
+		o.Location = &vLocation
+		return nil
+	}
+	var vLocations []Location
+	if err := json.Unmarshal(data, &vLocations); err == nil {
+		o.Locations = &vLocations
+		return nil
+	}
+	var vDeclarationLinks []*LocationLink
+	if err := json.Unmarshal(data, &vDeclarationLinks); err == nil {
+		o.DeclarationLinks = &vDeclarationLinks
+		return nil
+	}
+	return fmt.Errorf("invalid LocationOrLocationsOrDeclarationLinksOrNull: %s", data)
 }
 
 type SelectionRangesOrNull struct {
@@ -16110,6 +15707,45 @@ func (o *SemanticTokensOrNull) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid SemanticTokensOrNull: %s", data)
 }
 
+type SemanticTokensOrSemanticTokensDeltaOrNull struct {
+	SemanticTokens      *SemanticTokens
+	SemanticTokensDelta *SemanticTokensDelta
+}
+
+func (o SemanticTokensOrSemanticTokensDeltaOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of SemanticTokensOrSemanticTokensDeltaOrNull is set", o.SemanticTokens != nil, o.SemanticTokensDelta != nil)
+
+	if o.SemanticTokens != nil {
+		return json.Marshal(*o.SemanticTokens)
+	}
+	if o.SemanticTokensDelta != nil {
+		return json.Marshal(*o.SemanticTokensDelta)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *SemanticTokensOrSemanticTokensDeltaOrNull) UnmarshalJSON(data []byte) error {
+	*o = SemanticTokensOrSemanticTokensDeltaOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vSemanticTokens SemanticTokens
+	if err := json.Unmarshal(data, &vSemanticTokens); err == nil {
+		o.SemanticTokens = &vSemanticTokens
+		return nil
+	}
+	var vSemanticTokensDelta SemanticTokensDelta
+	if err := json.Unmarshal(data, &vSemanticTokensDelta); err == nil {
+		o.SemanticTokensDelta = &vSemanticTokensDelta
+		return nil
+	}
+	return fmt.Errorf("invalid SemanticTokensOrSemanticTokensDeltaOrNull: %s", data)
+}
+
 type LinkedEditingRangesOrNull struct {
 	LinkedEditingRanges *LinkedEditingRanges
 }
@@ -16231,7 +15867,7 @@ func (o *TypeHierarchyItemsOrNull) UnmarshalJSON(data []byte) error {
 }
 
 type InlineValuesOrNull struct {
-	InlineValues *[]InlineValue
+	InlineValues *[]InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression
 }
 
 func (o InlineValuesOrNull) MarshalJSON() ([]byte, error) {
@@ -16252,7 +15888,7 @@ func (o *InlineValuesOrNull) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
-	var vInlineValues []InlineValue
+	var vInlineValues []InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression
 	if err := json.Unmarshal(data, &vInlineValues); err == nil {
 		o.InlineValues = &vInlineValues
 		return nil
@@ -16290,13 +15926,46 @@ func (o *InlayHintsOrNull) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid InlayHintsOrNull: %s", data)
 }
 
-type InlineCompletionListOrNull struct {
+type RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport struct {
+	RelatedFullDocumentDiagnosticReport      *RelatedFullDocumentDiagnosticReport
+	RelatedUnchangedDocumentDiagnosticReport *RelatedUnchangedDocumentDiagnosticReport
+}
+
+func (o RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport is set", o.RelatedFullDocumentDiagnosticReport != nil, o.RelatedUnchangedDocumentDiagnosticReport != nil)
+
+	if o.RelatedFullDocumentDiagnosticReport != nil {
+		return json.Marshal(*o.RelatedFullDocumentDiagnosticReport)
+	}
+	if o.RelatedUnchangedDocumentDiagnosticReport != nil {
+		return json.Marshal(*o.RelatedUnchangedDocumentDiagnosticReport)
+	}
+	panic("unreachable")
+}
+
+func (o *RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+	*o = RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport{}
+
+	var vRelatedFullDocumentDiagnosticReport RelatedFullDocumentDiagnosticReport
+	if err := json.Unmarshal(data, &vRelatedFullDocumentDiagnosticReport); err == nil {
+		o.RelatedFullDocumentDiagnosticReport = &vRelatedFullDocumentDiagnosticReport
+		return nil
+	}
+	var vRelatedUnchangedDocumentDiagnosticReport RelatedUnchangedDocumentDiagnosticReport
+	if err := json.Unmarshal(data, &vRelatedUnchangedDocumentDiagnosticReport); err == nil {
+		o.RelatedUnchangedDocumentDiagnosticReport = &vRelatedUnchangedDocumentDiagnosticReport
+		return nil
+	}
+	return fmt.Errorf("invalid RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport: %s", data)
+}
+
+type InlineCompletionListOrInlineCompletionItemsOrNull struct {
 	InlineCompletionList  *InlineCompletionList
 	InlineCompletionItems *[]*InlineCompletionItem
 }
 
-func (o InlineCompletionListOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of InlineCompletionListOrNull is set", o.InlineCompletionList != nil, o.InlineCompletionItems != nil)
+func (o InlineCompletionListOrInlineCompletionItemsOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of InlineCompletionListOrInlineCompletionItemsOrNull is set", o.InlineCompletionList != nil, o.InlineCompletionItems != nil)
 
 	if o.InlineCompletionList != nil {
 		return json.Marshal(*o.InlineCompletionList)
@@ -16308,8 +15977,8 @@ func (o InlineCompletionListOrNull) MarshalJSON() ([]byte, error) {
 	return []byte("null"), nil
 }
 
-func (o *InlineCompletionListOrNull) UnmarshalJSON(data []byte) error {
-	*o = InlineCompletionListOrNull{}
+func (o *InlineCompletionListOrInlineCompletionItemsOrNull) UnmarshalJSON(data []byte) error {
+	*o = InlineCompletionListOrInlineCompletionItemsOrNull{}
 
 	// Handle null case
 	if string(data) == "null" {
@@ -16326,7 +15995,7 @@ func (o *InlineCompletionListOrNull) UnmarshalJSON(data []byte) error {
 		o.InlineCompletionItems = &vInlineCompletionItems
 		return nil
 	}
-	return fmt.Errorf("invalid InlineCompletionListOrNull: %s", data)
+	return fmt.Errorf("invalid InlineCompletionListOrInlineCompletionItemsOrNull: %s", data)
 }
 
 type MessageActionItemOrNull struct {
@@ -16389,13 +16058,13 @@ func (o *TextEditsOrNull) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid TextEditsOrNull: %s", data)
 }
 
-type CompletionItemsOrNull struct {
+type CompletionItemsOrCompletionListOrNull struct {
 	CompletionItems *[]*CompletionItem
 	CompletionList  *CompletionList
 }
 
-func (o CompletionItemsOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of CompletionItemsOrNull is set", o.CompletionItems != nil, o.CompletionList != nil)
+func (o CompletionItemsOrCompletionListOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of CompletionItemsOrCompletionListOrNull is set", o.CompletionItems != nil, o.CompletionList != nil)
 
 	if o.CompletionItems != nil {
 		return json.Marshal(*o.CompletionItems)
@@ -16407,8 +16076,8 @@ func (o CompletionItemsOrNull) MarshalJSON() ([]byte, error) {
 	return []byte("null"), nil
 }
 
-func (o *CompletionItemsOrNull) UnmarshalJSON(data []byte) error {
-	*o = CompletionItemsOrNull{}
+func (o *CompletionItemsOrCompletionListOrNull) UnmarshalJSON(data []byte) error {
+	*o = CompletionItemsOrCompletionListOrNull{}
 
 	// Handle null case
 	if string(data) == "null" {
@@ -16425,7 +16094,7 @@ func (o *CompletionItemsOrNull) UnmarshalJSON(data []byte) error {
 		o.CompletionList = &vCompletionList
 		return nil
 	}
-	return fmt.Errorf("invalid CompletionItemsOrNull: %s", data)
+	return fmt.Errorf("invalid CompletionItemsOrCompletionListOrNull: %s", data)
 }
 
 type HoverOrNull struct {
@@ -16548,26 +16217,26 @@ func (o *DocumentHighlightsOrNull) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid DocumentHighlightsOrNull: %s", data)
 }
 
-type SymbolInformationsOrNull struct {
+type SymbolInformationsOrDocumentSymbolsOrNull struct {
 	SymbolInformations *[]*SymbolInformation
-	WorkspaceSymbols   *[]*WorkspaceSymbol
+	DocumentSymbols    *[]*DocumentSymbol
 }
 
-func (o SymbolInformationsOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of SymbolInformationsOrNull is set", o.SymbolInformations != nil, o.WorkspaceSymbols != nil)
+func (o SymbolInformationsOrDocumentSymbolsOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of SymbolInformationsOrDocumentSymbolsOrNull is set", o.SymbolInformations != nil, o.DocumentSymbols != nil)
 
 	if o.SymbolInformations != nil {
 		return json.Marshal(*o.SymbolInformations)
 	}
-	if o.WorkspaceSymbols != nil {
-		return json.Marshal(*o.WorkspaceSymbols)
+	if o.DocumentSymbols != nil {
+		return json.Marshal(*o.DocumentSymbols)
 	}
 	// All fields are nil, represent as null
 	return []byte("null"), nil
 }
 
-func (o *SymbolInformationsOrNull) UnmarshalJSON(data []byte) error {
-	*o = SymbolInformationsOrNull{}
+func (o *SymbolInformationsOrDocumentSymbolsOrNull) UnmarshalJSON(data []byte) error {
+	*o = SymbolInformationsOrDocumentSymbolsOrNull{}
 
 	// Handle null case
 	if string(data) == "null" {
@@ -16579,12 +16248,12 @@ func (o *SymbolInformationsOrNull) UnmarshalJSON(data []byte) error {
 		o.SymbolInformations = &vSymbolInformations
 		return nil
 	}
-	var vWorkspaceSymbols []*WorkspaceSymbol
-	if err := json.Unmarshal(data, &vWorkspaceSymbols); err == nil {
-		o.WorkspaceSymbols = &vWorkspaceSymbols
+	var vDocumentSymbols []*DocumentSymbol
+	if err := json.Unmarshal(data, &vDocumentSymbols); err == nil {
+		o.DocumentSymbols = &vDocumentSymbols
 		return nil
 	}
-	return fmt.Errorf("invalid SymbolInformationsOrNull: %s", data)
+	return fmt.Errorf("invalid SymbolInformationsOrDocumentSymbolsOrNull: %s", data)
 }
 
 type CommandOrCodeAction struct {
@@ -16650,6 +16319,45 @@ func (o *CommandOrCodeActionArrayOrNull) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid CommandOrCodeActionArrayOrNull: %s", data)
 }
 
+type SymbolInformationsOrWorkspaceSymbolsOrNull struct {
+	SymbolInformations *[]*SymbolInformation
+	WorkspaceSymbols   *[]*WorkspaceSymbol
+}
+
+func (o SymbolInformationsOrWorkspaceSymbolsOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of SymbolInformationsOrWorkspaceSymbolsOrNull is set", o.SymbolInformations != nil, o.WorkspaceSymbols != nil)
+
+	if o.SymbolInformations != nil {
+		return json.Marshal(*o.SymbolInformations)
+	}
+	if o.WorkspaceSymbols != nil {
+		return json.Marshal(*o.WorkspaceSymbols)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *SymbolInformationsOrWorkspaceSymbolsOrNull) UnmarshalJSON(data []byte) error {
+	*o = SymbolInformationsOrWorkspaceSymbolsOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vSymbolInformations []*SymbolInformation
+	if err := json.Unmarshal(data, &vSymbolInformations); err == nil {
+		o.SymbolInformations = &vSymbolInformations
+		return nil
+	}
+	var vWorkspaceSymbols []*WorkspaceSymbol
+	if err := json.Unmarshal(data, &vWorkspaceSymbols); err == nil {
+		o.WorkspaceSymbols = &vWorkspaceSymbols
+		return nil
+	}
+	return fmt.Errorf("invalid SymbolInformationsOrWorkspaceSymbolsOrNull: %s", data)
+}
+
 type CodeLenssOrNull struct {
 	CodeLenss *[]*CodeLens
 }
@@ -16710,14 +16418,14 @@ func (o *DocumentLinksOrNull) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid DocumentLinksOrNull: %s", data)
 }
 
-type RangeOrNull struct {
+type RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull struct {
 	Range                        *Range
 	PrepareRenamePlaceholder     *PrepareRenamePlaceholder
 	PrepareRenameDefaultBehavior *PrepareRenameDefaultBehavior
 }
 
-func (o RangeOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of RangeOrNull is set", o.Range != nil, o.PrepareRenamePlaceholder != nil, o.PrepareRenameDefaultBehavior != nil)
+func (o RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull is set", o.Range != nil, o.PrepareRenamePlaceholder != nil, o.PrepareRenameDefaultBehavior != nil)
 
 	if o.Range != nil {
 		return json.Marshal(*o.Range)
@@ -16732,8 +16440,8 @@ func (o RangeOrNull) MarshalJSON() ([]byte, error) {
 	return []byte("null"), nil
 }
 
-func (o *RangeOrNull) UnmarshalJSON(data []byte) error {
-	*o = RangeOrNull{}
+func (o *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull) UnmarshalJSON(data []byte) error {
+	*o = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull{}
 
 	// Handle null case
 	if string(data) == "null" {
@@ -16755,100 +16463,163 @@ func (o *RangeOrNull) UnmarshalJSON(data []byte) error {
 		o.PrepareRenameDefaultBehavior = &vPrepareRenameDefaultBehavior
 		return nil
 	}
-	return fmt.Errorf("invalid RangeOrNull: %s", data)
+	return fmt.Errorf("invalid RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull: %s", data)
 }
 
-type LSPObjectOrNull struct {
-	LSPObject *map[string]any
-	LSPArray  *[]any
-	String    *string
-	Integer   *int32
-	Uinteger  *uint32
-	Decimal   *float64
-	Boolean   *bool
-	Null      *any
+type LSPAnyOrNull struct {
+	LSPAny *any
 }
 
-func (o LSPObjectOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of LSPObjectOrNull is set", o.LSPObject != nil, o.LSPArray != nil, o.String != nil, o.Integer != nil, o.Uinteger != nil, o.Decimal != nil, o.Boolean != nil, o.Null != nil)
+func (o LSPAnyOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of LSPAnyOrNull is set", o.LSPAny != nil)
 
-	if o.LSPObject != nil {
-		return json.Marshal(*o.LSPObject)
-	}
-	if o.LSPArray != nil {
-		return json.Marshal(*o.LSPArray)
-	}
-	if o.String != nil {
-		return json.Marshal(*o.String)
-	}
-	if o.Integer != nil {
-		return json.Marshal(*o.Integer)
-	}
-	if o.Uinteger != nil {
-		return json.Marshal(*o.Uinteger)
-	}
-	if o.Decimal != nil {
-		return json.Marshal(*o.Decimal)
-	}
-	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
-	}
-	if o.Null != nil {
-		return json.Marshal(*o.Null)
+	if o.LSPAny != nil {
+		return json.Marshal(*o.LSPAny)
 	}
 	// All fields are nil, represent as null
 	return []byte("null"), nil
 }
 
-func (o *LSPObjectOrNull) UnmarshalJSON(data []byte) error {
-	*o = LSPObjectOrNull{}
+func (o *LSPAnyOrNull) UnmarshalJSON(data []byte) error {
+	*o = LSPAnyOrNull{}
 
 	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
 
-	var vLSPObject map[string]any
-	if err := json.Unmarshal(data, &vLSPObject); err == nil {
-		o.LSPObject = &vLSPObject
+	var vLSPAny any
+	if err := json.Unmarshal(data, &vLSPAny); err == nil {
+		o.LSPAny = &vLSPAny
 		return nil
 	}
-	var vLSPArray []any
-	if err := json.Unmarshal(data, &vLSPArray); err == nil {
-		o.LSPArray = &vLSPArray
+	return fmt.Errorf("invalid LSPAnyOrNull: %s", data)
+}
+
+type TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter struct {
+	TextDocumentFilterLanguage     *TextDocumentFilterLanguage
+	TextDocumentFilterScheme       *TextDocumentFilterScheme
+	TextDocumentFilterPattern      *TextDocumentFilterPattern
+	NotebookCellTextDocumentFilter *NotebookCellTextDocumentFilter
+}
+
+func (o TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter is set", o.TextDocumentFilterLanguage != nil, o.TextDocumentFilterScheme != nil, o.TextDocumentFilterPattern != nil, o.NotebookCellTextDocumentFilter != nil)
+
+	if o.TextDocumentFilterLanguage != nil {
+		return json.Marshal(*o.TextDocumentFilterLanguage)
+	}
+	if o.TextDocumentFilterScheme != nil {
+		return json.Marshal(*o.TextDocumentFilterScheme)
+	}
+	if o.TextDocumentFilterPattern != nil {
+		return json.Marshal(*o.TextDocumentFilterPattern)
+	}
+	if o.NotebookCellTextDocumentFilter != nil {
+		return json.Marshal(*o.NotebookCellTextDocumentFilter)
+	}
+	panic("unreachable")
+}
+
+func (o *TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter) UnmarshalJSON(data []byte) error {
+	*o = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter{}
+
+	var vTextDocumentFilterLanguage TextDocumentFilterLanguage
+	if err := json.Unmarshal(data, &vTextDocumentFilterLanguage); err == nil {
+		o.TextDocumentFilterLanguage = &vTextDocumentFilterLanguage
 		return nil
 	}
+	var vTextDocumentFilterScheme TextDocumentFilterScheme
+	if err := json.Unmarshal(data, &vTextDocumentFilterScheme); err == nil {
+		o.TextDocumentFilterScheme = &vTextDocumentFilterScheme
+		return nil
+	}
+	var vTextDocumentFilterPattern TextDocumentFilterPattern
+	if err := json.Unmarshal(data, &vTextDocumentFilterPattern); err == nil {
+		o.TextDocumentFilterPattern = &vTextDocumentFilterPattern
+		return nil
+	}
+	var vNotebookCellTextDocumentFilter NotebookCellTextDocumentFilter
+	if err := json.Unmarshal(data, &vNotebookCellTextDocumentFilter); err == nil {
+		o.NotebookCellTextDocumentFilter = &vNotebookCellTextDocumentFilter
+		return nil
+	}
+	return fmt.Errorf("invalid TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter: %s", data)
+}
+
+type StringOrMarkedStringWithLanguage struct {
+	String                   *string
+	MarkedStringWithLanguage *MarkedStringWithLanguage
+}
+
+func (o StringOrMarkedStringWithLanguage) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of StringOrMarkedStringWithLanguage is set", o.String != nil, o.MarkedStringWithLanguage != nil)
+
+	if o.String != nil {
+		return json.Marshal(*o.String)
+	}
+	if o.MarkedStringWithLanguage != nil {
+		return json.Marshal(*o.MarkedStringWithLanguage)
+	}
+	panic("unreachable")
+}
+
+func (o *StringOrMarkedStringWithLanguage) UnmarshalJSON(data []byte) error {
+	*o = StringOrMarkedStringWithLanguage{}
+
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
 		return nil
 	}
-	var vInteger int32
-	if err := json.Unmarshal(data, &vInteger); err == nil {
-		o.Integer = &vInteger
+	var vMarkedStringWithLanguage MarkedStringWithLanguage
+	if err := json.Unmarshal(data, &vMarkedStringWithLanguage); err == nil {
+		o.MarkedStringWithLanguage = &vMarkedStringWithLanguage
 		return nil
 	}
-	var vUinteger uint32
-	if err := json.Unmarshal(data, &vUinteger); err == nil {
-		o.Uinteger = &vUinteger
+	return fmt.Errorf("invalid StringOrMarkedStringWithLanguage: %s", data)
+}
+
+type InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression struct {
+	InlineValueText                  *InlineValueText
+	InlineValueVariableLookup        *InlineValueVariableLookup
+	InlineValueEvaluatableExpression *InlineValueEvaluatableExpression
+}
+
+func (o InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression is set", o.InlineValueText != nil, o.InlineValueVariableLookup != nil, o.InlineValueEvaluatableExpression != nil)
+
+	if o.InlineValueText != nil {
+		return json.Marshal(*o.InlineValueText)
+	}
+	if o.InlineValueVariableLookup != nil {
+		return json.Marshal(*o.InlineValueVariableLookup)
+	}
+	if o.InlineValueEvaluatableExpression != nil {
+		return json.Marshal(*o.InlineValueEvaluatableExpression)
+	}
+	panic("unreachable")
+}
+
+func (o *InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression) UnmarshalJSON(data []byte) error {
+	*o = InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression{}
+
+	var vInlineValueText InlineValueText
+	if err := json.Unmarshal(data, &vInlineValueText); err == nil {
+		o.InlineValueText = &vInlineValueText
 		return nil
 	}
-	var vDecimal float64
-	if err := json.Unmarshal(data, &vDecimal); err == nil {
-		o.Decimal = &vDecimal
+	var vInlineValueVariableLookup InlineValueVariableLookup
+	if err := json.Unmarshal(data, &vInlineValueVariableLookup); err == nil {
+		o.InlineValueVariableLookup = &vInlineValueVariableLookup
 		return nil
 	}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
+	var vInlineValueEvaluatableExpression InlineValueEvaluatableExpression
+	if err := json.Unmarshal(data, &vInlineValueEvaluatableExpression); err == nil {
+		o.InlineValueEvaluatableExpression = &vInlineValueEvaluatableExpression
 		return nil
 	}
-	var vNull any
-	if err := json.Unmarshal(data, &vNull); err == nil {
-		o.Null = &vNull
-		return nil
-	}
-	return fmt.Errorf("invalid LSPObjectOrNull: %s", data)
+	return fmt.Errorf("invalid InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression: %s", data)
 }
 
 // Literal types
