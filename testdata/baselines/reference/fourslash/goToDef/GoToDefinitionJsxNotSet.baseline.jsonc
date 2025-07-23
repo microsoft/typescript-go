@@ -1,13 +1,13 @@
 // === goToDefinition ===
-// === /bar.jsx ===
-
-// import Foo from './foo';
-// const a = </*GO TO DEFINITION*/Foo />
-
-
 // === /foo.jsx ===
 
 // const [|Foo|] = () => (
 //     <div>foo</div>
 // );
 // export default Foo;
+
+
+// === /bar.jsx ===
+
+// import Foo from './foo';
+// const a = </*GO TO DEFINITION*/Foo />

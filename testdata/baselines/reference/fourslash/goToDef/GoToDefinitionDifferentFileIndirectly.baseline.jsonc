@@ -1,13 +1,4 @@
 // === goToDefinition ===
-// === /Definition.ts ===
-
-// /*GO TO DEFINITION*/rem2Var = 1;
-// rem2Fn();
-// var rem2foo = new rem2Cls();
-// class rem2fooCls implements rem2Int { }
-// var rem2fooVar = rem2Mod.foo;
-
-
 // === /Remote2.ts ===
 
 // var [|rem2Var|];
@@ -17,18 +8,18 @@
 // module rem2Mod { export var foo; }
 
 
-
-
-// === goToDefinition ===
 // === /Definition.ts ===
 
-// rem2Var = 1;
-// /*GO TO DEFINITION*/rem2Fn();
+// /*GO TO DEFINITION*/rem2Var = 1;
+// rem2Fn();
 // var rem2foo = new rem2Cls();
 // class rem2fooCls implements rem2Int { }
 // var rem2fooVar = rem2Mod.foo;
 
 
+
+
+// === goToDefinition ===
 // === /Remote2.ts ===
 
 // var rem2Var;
@@ -38,18 +29,18 @@
 // module rem2Mod { export var foo; }
 
 
-
-
-// === goToDefinition ===
 // === /Definition.ts ===
 
 // rem2Var = 1;
-// rem2Fn();
-// var rem2foo = new /*GO TO DEFINITION*/rem2Cls();
+// /*GO TO DEFINITION*/rem2Fn();
+// var rem2foo = new rem2Cls();
 // class rem2fooCls implements rem2Int { }
 // var rem2fooVar = rem2Mod.foo;
 
 
+
+
+// === goToDefinition ===
 // === /Remote2.ts ===
 
 // var rem2Var;
@@ -59,18 +50,18 @@
 // module rem2Mod { export var foo; }
 
 
-
-
-// === goToDefinition ===
 // === /Definition.ts ===
 
 // rem2Var = 1;
 // rem2Fn();
-// var rem2foo = new rem2Cls();
-// class rem2fooCls implements /*GO TO DEFINITION*/rem2Int { }
+// var rem2foo = new /*GO TO DEFINITION*/rem2Cls();
+// class rem2fooCls implements rem2Int { }
 // var rem2fooVar = rem2Mod.foo;
 
 
+
+
+// === goToDefinition ===
 // === /Remote2.ts ===
 
 // var rem2Var;
@@ -80,18 +71,18 @@
 // module rem2Mod { export var foo; }
 
 
-
-
-// === goToDefinition ===
 // === /Definition.ts ===
 
 // rem2Var = 1;
 // rem2Fn();
 // var rem2foo = new rem2Cls();
-// class rem2fooCls implements rem2Int { }
-// var rem2fooVar = /*GO TO DEFINITION*/rem2Mod.foo;
+// class rem2fooCls implements /*GO TO DEFINITION*/rem2Int { }
+// var rem2fooVar = rem2Mod.foo;
 
 
+
+
+// === goToDefinition ===
 // === /Remote2.ts ===
 
 // var rem2Var;
@@ -99,3 +90,12 @@
 // class rem2Cls { }
 // interface rem2Int{}
 // module [|rem2Mod|] { export var foo; }
+
+
+// === /Definition.ts ===
+
+// rem2Var = 1;
+// rem2Fn();
+// var rem2foo = new rem2Cls();
+// class rem2fooCls implements rem2Int { }
+// var rem2fooVar = /*GO TO DEFINITION*/rem2Mod.foo;

@@ -1,4 +1,9 @@
 // === goToDefinition ===
+// === /b.ts ===
+
+// export interface [|A|] { }
+
+
 // === /a.js ===
 
 // /**
@@ -9,8 +14,3 @@
 //  * @param { A/*GO TO DEFINITION*/ } a
 //  */
 // function f(a) {}
-
-
-// === /b.ts ===
-
-// export interface [|A|] { }

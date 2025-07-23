@@ -1,24 +1,24 @@
 // === goToDefinition ===
+// === /Definition.ts ===
+
+// class [|c|] { }
+
+
 // === /Consumption.ts ===
 
 //  var n = new /*GO TO DEFINITION*/c();
 //  var n = new c();
 
 
+
+
+// === goToDefinition ===
 // === /Definition.ts ===
 
 // class [|c|] { }
 
 
-
-
-// === goToDefinition ===
 // === /Consumption.ts ===
 
 //  var n = new c();
 //  var n = new c/*GO TO DEFINITION*/();
-
-
-// === /Definition.ts ===
-
-// class [|c|] { }
