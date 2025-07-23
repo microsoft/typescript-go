@@ -150,8 +150,12 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                 case "baselineFindAllReferences":
                     // `verify.baselineFindAllReferences(...)`
                     return [parseBaselineFindAllReferencesArgs(callExpression.arguments)];
+                case "baselineGoToDefinition":
                 case "baselineGetDefinitionAtPosition":
-                    // `verify.baselineGetDefinitionAtPosition(...)`
+                    // Both of these take the same arguments, but differ in that...
+                    //  - `verify.baselineGoToDefinition(...)` called getDefinitionAndBoundSpan
+                    //  - `verify.baselineGetDefinitionAtPosition(...)` called getDefinitionAtPosition
+                    // LSP doesn't have two separate commands though. It's unclear how we would model bound spans though.
                     return [parseBaselineGoToDefinitionArgs(callExpression.arguments)];
             }
         }
