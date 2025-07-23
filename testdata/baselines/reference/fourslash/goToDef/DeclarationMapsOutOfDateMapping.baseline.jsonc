@@ -1,4 +1,9 @@
 // === goToDefinition ===
+// === /home/src/workspaces/project/index.ts ===
+
+// import { Foo/*GO TO DEFINITION*/ } from "a";
+
+
 // === /home/src/workspaces/project/node_modules/a/dist/index.d.ts ===
 
 // export declare class [|Foo|] {
