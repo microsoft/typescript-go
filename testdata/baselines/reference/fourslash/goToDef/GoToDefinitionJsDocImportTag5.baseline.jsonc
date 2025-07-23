@@ -1,0 +1,16 @@
+// === goToDefinition ===
+// === /a.js ===
+
+// /**
+//  * @import { A } from "./b";
+//  */
+// 
+// /**
+//  * @param { A/*GO TO DEFINITION*/ } a
+//  */
+// function f(a) {}
+
+
+// === /b.ts ===
+
+// export interface [|A|] { }

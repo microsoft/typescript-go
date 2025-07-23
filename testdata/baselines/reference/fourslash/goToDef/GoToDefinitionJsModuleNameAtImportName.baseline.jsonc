@@ -1,0 +1,68 @@
+// === goToDefinition ===
+// === /bar.js ===
+
+// const /*GO TO DEFINITION*/BlahModule = require("./foo.js");
+// new BlahModule.Blah()
+
+
+// === /foo.js ===
+
+//  [|function notExported() { }
+//  class Blah {
+//     abc = 123;
+//  }
+//  module.exports.Blah = Blah;|]
+
+
+
+
+// === goToDefinition ===
+// === /bar.js ===
+
+// const BlahModule = require("./foo.js");
+// new /*GO TO DEFINITION*/BlahModule.Blah()
+
+
+// === /foo.js ===
+
+//  [|function notExported() { }
+//  class Blah {
+//     abc = 123;
+//  }
+//  module.exports.Blah = Blah;|]
+
+
+
+
+// === goToDefinition ===
+// === /barTs.ts ===
+
+// import /*GO TO DEFINITION*/BlahModule = require("./foo.js");
+// new BlahModule.Blah()
+
+
+// === /foo.js ===
+
+//  [|function notExported() { }
+//  class Blah {
+//     abc = 123;
+//  }
+//  module.exports.Blah = Blah;|]
+
+
+
+
+// === goToDefinition ===
+// === /barTs.ts ===
+
+// import BlahModule = require("./foo.js");
+// new /*GO TO DEFINITION*/BlahModule.Blah()
+
+
+// === /foo.js ===
+
+//  [|function notExported() { }
+//  class Blah {
+//     abc = 123;
+//  }
+//  module.exports.Blah = Blah;|]

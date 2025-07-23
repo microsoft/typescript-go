@@ -1,0 +1,11 @@
+// === goToDefinition ===
+// === /index.js ===
+
+// const { Util } = require('./reexport');
+// new Util/*GO TO DEFINITION*/()
+
+
+// === /reexport.js ===
+
+// const { Util } = require('./util');
+// module.exports = { [|Util|] };
