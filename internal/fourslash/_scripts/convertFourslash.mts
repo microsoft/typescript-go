@@ -843,7 +843,6 @@ interface VerifyBaselineGoToDefinitionCmd {
     ranges?: boolean;
 }
 
-
 interface GoToCmd {
     kind: "goTo";
     // !!! `selectRange` and `rangeStart` require parsing variables and `test.ranges()[n]`
