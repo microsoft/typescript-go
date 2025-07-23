@@ -149,8 +149,35 @@ function resolveType(type: Type): GoType {
     }
 }
 
+function flattenOrTypes(types: Type[]): Type[] {
+    const flattened: Type[] = [];
+
+    for (const rawType of types) {
+        let type = rawType;
+
+        // Dereference reference types that point to OR types
+        if (rawType.kind === "reference") {
+            const typeAlias = model.typeAliases.find(alias => alias.name === rawType.name);
+            if (typeAlias && typeAlias.type.kind === "or") {
+                type = typeAlias.type;
+            }
+        }
+
+        if (type.kind === "or") {
+            // Recursively flatten OR types
+            flattened.push(...flattenOrTypes(type.items));
+        }
+        else {
+            flattened.push(rawType);
+        }
+    }
+
+    return flattened;
+}
+
 function handleOrType(orType: OrType): GoType {
-    const types = orType.items;
+    // First, flatten any nested OR types
+    const types = flattenOrTypes(orType.items);
 
     // Check for nullable types (OR with null)
     const nullIndex = types.findIndex(item => item.kind === "base" && item.name === "null");

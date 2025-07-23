@@ -3426,7 +3426,7 @@ type HoverParams struct {
 // The result of a hover request.
 type Hover struct {
 	// The hover's content
-	Contents MarkupContentOrMarkedStringOrMarkedStrings `json:"contents"`
+	Contents MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings `json:"contents"`
 
 	// An optional range inside the text document that is used to
 	// visualize the hover, e.g. by changing the background color.
@@ -3450,8 +3450,8 @@ func (s *Hover) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Contents MarkupContentOrMarkedStringOrMarkedStrings `json:"contents"`
-		Range    *Range                                     `json:"range,omitempty"`
+		Contents MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings `json:"contents"`
+		Range    *Range                                                         `json:"range,omitempty"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -8530,7 +8530,7 @@ type NotebookDocumentFilterWithNotebook struct {
 	// The notebook to be synced If a string
 	// value is provided it matches against the
 	// notebook type. '*' matches every notebook.
-	Notebook StringOrNotebookDocumentFilter `json:"notebook"`
+	Notebook StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern `json:"notebook"`
 
 	// The cells of the matching notebook to be synced.
 	Cells *[]*NotebookCellLanguage `json:"cells,omitempty"`
@@ -8553,8 +8553,8 @@ func (s *NotebookDocumentFilterWithNotebook) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Notebook StringOrNotebookDocumentFilter `json:"notebook"`
-		Cells    *[]*NotebookCellLanguage       `json:"cells,omitempty"`
+		Notebook StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern `json:"notebook"`
+		Cells    *[]*NotebookCellLanguage                                                                                `json:"cells,omitempty"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -8565,7 +8565,7 @@ type NotebookDocumentFilterWithCells struct {
 	// The notebook to be synced If a string
 	// value is provided it matches against the
 	// notebook type. '*' matches every notebook.
-	Notebook *StringOrNotebookDocumentFilter `json:"notebook,omitempty"`
+	Notebook *StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern `json:"notebook,omitempty"`
 
 	// The cells of the matching notebook to be synced.
 	Cells []*NotebookCellLanguage `json:"cells"`
@@ -8588,8 +8588,8 @@ func (s *NotebookDocumentFilterWithCells) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Notebook *StringOrNotebookDocumentFilter `json:"notebook,omitempty"`
-		Cells    []*NotebookCellLanguage         `json:"cells"`
+		Notebook *StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern `json:"notebook,omitempty"`
+		Cells    []*NotebookCellLanguage                                                                                  `json:"cells"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -9086,7 +9086,7 @@ type NotebookCellTextDocumentFilter struct {
 	// containing the notebook cell. If a string
 	// value is provided it matches against the
 	// notebook type. '*' matches every notebook.
-	Notebook StringOrNotebookDocumentFilter `json:"notebook"`
+	Notebook StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern `json:"notebook"`
 
 	// A language id like `python`.
 	//
@@ -9112,8 +9112,8 @@ func (s *NotebookCellTextDocumentFilter) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Notebook StringOrNotebookDocumentFilter `json:"notebook"`
-		Language *string                        `json:"language,omitempty"`
+		Notebook StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern `json:"notebook"`
+		Language *string                                                                                                 `json:"language,omitempty"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -12653,7 +12653,7 @@ type MarkedString = StringOrMarkedStringWithLanguage
 // a notebook cell document.
 //
 // Since: 3.17.0 - support for NotebookCellTextDocumentFilter.
-type DocumentFilter = TextDocumentFilterOrNotebookCellTextDocumentFilter
+type DocumentFilter = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter
 
 // The glob pattern. Either a string pattern or a relative pattern.
 //
@@ -13562,16 +13562,24 @@ func (o *StringOrMarkedStringWithLanguage) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid StringOrMarkedStringWithLanguage: %s", data)
 }
 
-type TextDocumentFilterOrNotebookCellTextDocumentFilter struct {
-	TextDocumentFilter             *TextDocumentFilter
+type TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter struct {
+	TextDocumentFilterLanguage     *TextDocumentFilterLanguage
+	TextDocumentFilterScheme       *TextDocumentFilterScheme
+	TextDocumentFilterPattern      *TextDocumentFilterPattern
 	NotebookCellTextDocumentFilter *NotebookCellTextDocumentFilter
 }
 
-func (o TextDocumentFilterOrNotebookCellTextDocumentFilter) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of TextDocumentFilterOrNotebookCellTextDocumentFilter is set", o.TextDocumentFilter != nil, o.NotebookCellTextDocumentFilter != nil)
+func (o TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter is set", o.TextDocumentFilterLanguage != nil, o.TextDocumentFilterScheme != nil, o.TextDocumentFilterPattern != nil, o.NotebookCellTextDocumentFilter != nil)
 
-	if o.TextDocumentFilter != nil {
-		return json.Marshal(*o.TextDocumentFilter)
+	if o.TextDocumentFilterLanguage != nil {
+		return json.Marshal(*o.TextDocumentFilterLanguage)
+	}
+	if o.TextDocumentFilterScheme != nil {
+		return json.Marshal(*o.TextDocumentFilterScheme)
+	}
+	if o.TextDocumentFilterPattern != nil {
+		return json.Marshal(*o.TextDocumentFilterPattern)
 	}
 	if o.NotebookCellTextDocumentFilter != nil {
 		return json.Marshal(*o.NotebookCellTextDocumentFilter)
@@ -13579,11 +13587,21 @@ func (o TextDocumentFilterOrNotebookCellTextDocumentFilter) MarshalJSON() ([]byt
 	panic("unreachable")
 }
 
-func (o *TextDocumentFilterOrNotebookCellTextDocumentFilter) UnmarshalJSON(data []byte) error {
-	*o = TextDocumentFilterOrNotebookCellTextDocumentFilter{}
-	var vTextDocumentFilter TextDocumentFilter
-	if err := json.Unmarshal(data, &vTextDocumentFilter); err == nil {
-		o.TextDocumentFilter = &vTextDocumentFilter
+func (o *TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter) UnmarshalJSON(data []byte) error {
+	*o = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter{}
+	var vTextDocumentFilterLanguage TextDocumentFilterLanguage
+	if err := json.Unmarshal(data, &vTextDocumentFilterLanguage); err == nil {
+		o.TextDocumentFilterLanguage = &vTextDocumentFilterLanguage
+		return nil
+	}
+	var vTextDocumentFilterScheme TextDocumentFilterScheme
+	if err := json.Unmarshal(data, &vTextDocumentFilterScheme); err == nil {
+		o.TextDocumentFilterScheme = &vTextDocumentFilterScheme
+		return nil
+	}
+	var vTextDocumentFilterPattern TextDocumentFilterPattern
+	if err := json.Unmarshal(data, &vTextDocumentFilterPattern); err == nil {
+		o.TextDocumentFilterPattern = &vTextDocumentFilterPattern
 		return nil
 	}
 	var vNotebookCellTextDocumentFilter NotebookCellTextDocumentFilter
@@ -13591,7 +13609,7 @@ func (o *TextDocumentFilterOrNotebookCellTextDocumentFilter) UnmarshalJSON(data 
 		o.NotebookCellTextDocumentFilter = &vNotebookCellTextDocumentFilter
 		return nil
 	}
-	return fmt.Errorf("invalid TextDocumentFilterOrNotebookCellTextDocumentFilter: %s", data)
+	return fmt.Errorf("invalid TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter: %s", data)
 }
 
 type PatternOrRelativePattern struct {
@@ -13950,20 +13968,24 @@ func (o *TextEditOrInsertReplaceEdit) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid TextEditOrInsertReplaceEdit: %s", data)
 }
 
-type MarkupContentOrMarkedStringOrMarkedStrings struct {
-	MarkupContent *MarkupContent
-	MarkedString  *MarkedString
-	MarkedStrings *[]MarkedString
+type MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings struct {
+	MarkupContent            *MarkupContent
+	String                   *string
+	MarkedStringWithLanguage *MarkedStringWithLanguage
+	MarkedStrings            *[]MarkedString
 }
 
-func (o MarkupContentOrMarkedStringOrMarkedStrings) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of MarkupContentOrMarkedStringOrMarkedStrings is set", o.MarkupContent != nil, o.MarkedString != nil, o.MarkedStrings != nil)
+func (o MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings is set", o.MarkupContent != nil, o.String != nil, o.MarkedStringWithLanguage != nil, o.MarkedStrings != nil)
 
 	if o.MarkupContent != nil {
 		return json.Marshal(*o.MarkupContent)
 	}
-	if o.MarkedString != nil {
-		return json.Marshal(*o.MarkedString)
+	if o.String != nil {
+		return json.Marshal(*o.String)
+	}
+	if o.MarkedStringWithLanguage != nil {
+		return json.Marshal(*o.MarkedStringWithLanguage)
 	}
 	if o.MarkedStrings != nil {
 		return json.Marshal(*o.MarkedStrings)
@@ -13971,16 +13993,21 @@ func (o MarkupContentOrMarkedStringOrMarkedStrings) MarshalJSON() ([]byte, error
 	panic("unreachable")
 }
 
-func (o *MarkupContentOrMarkedStringOrMarkedStrings) UnmarshalJSON(data []byte) error {
-	*o = MarkupContentOrMarkedStringOrMarkedStrings{}
+func (o *MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings) UnmarshalJSON(data []byte) error {
+	*o = MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings{}
 	var vMarkupContent MarkupContent
 	if err := json.Unmarshal(data, &vMarkupContent); err == nil {
 		o.MarkupContent = &vMarkupContent
 		return nil
 	}
-	var vMarkedString MarkedString
-	if err := json.Unmarshal(data, &vMarkedString); err == nil {
-		o.MarkedString = &vMarkedString
+	var vString string
+	if err := json.Unmarshal(data, &vString); err == nil {
+		o.String = &vString
+		return nil
+	}
+	var vMarkedStringWithLanguage MarkedStringWithLanguage
+	if err := json.Unmarshal(data, &vMarkedStringWithLanguage); err == nil {
+		o.MarkedStringWithLanguage = &vMarkedStringWithLanguage
 		return nil
 	}
 	var vMarkedStrings []MarkedString
@@ -13988,7 +14015,7 @@ func (o *MarkupContentOrMarkedStringOrMarkedStrings) UnmarshalJSON(data []byte) 
 		o.MarkedStrings = &vMarkedStrings
 		return nil
 	}
-	return fmt.Errorf("invalid MarkupContentOrMarkedStringOrMarkedStrings: %s", data)
+	return fmt.Errorf("invalid MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings: %s", data)
 }
 
 type LocationOrLocationUriOnly struct {
@@ -15164,36 +15191,54 @@ func (o *RangeOrEditRangeWithInsertReplace) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid RangeOrEditRangeWithInsertReplace: %s", data)
 }
 
-type StringOrNotebookDocumentFilter struct {
-	String                 *string
-	NotebookDocumentFilter *NotebookDocumentFilter
+type StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern struct {
+	String                             *string
+	NotebookDocumentFilterNotebookType *NotebookDocumentFilterNotebookType
+	NotebookDocumentFilterScheme       *NotebookDocumentFilterScheme
+	NotebookDocumentFilterPattern      *NotebookDocumentFilterPattern
 }
 
-func (o StringOrNotebookDocumentFilter) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of StringOrNotebookDocumentFilter is set", o.String != nil, o.NotebookDocumentFilter != nil)
+func (o StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern is set", o.String != nil, o.NotebookDocumentFilterNotebookType != nil, o.NotebookDocumentFilterScheme != nil, o.NotebookDocumentFilterPattern != nil)
 
 	if o.String != nil {
 		return json.Marshal(*o.String)
 	}
-	if o.NotebookDocumentFilter != nil {
-		return json.Marshal(*o.NotebookDocumentFilter)
+	if o.NotebookDocumentFilterNotebookType != nil {
+		return json.Marshal(*o.NotebookDocumentFilterNotebookType)
+	}
+	if o.NotebookDocumentFilterScheme != nil {
+		return json.Marshal(*o.NotebookDocumentFilterScheme)
+	}
+	if o.NotebookDocumentFilterPattern != nil {
+		return json.Marshal(*o.NotebookDocumentFilterPattern)
 	}
 	panic("unreachable")
 }
 
-func (o *StringOrNotebookDocumentFilter) UnmarshalJSON(data []byte) error {
-	*o = StringOrNotebookDocumentFilter{}
+func (o *StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern) UnmarshalJSON(data []byte) error {
+	*o = StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern{}
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
 		return nil
 	}
-	var vNotebookDocumentFilter NotebookDocumentFilter
-	if err := json.Unmarshal(data, &vNotebookDocumentFilter); err == nil {
-		o.NotebookDocumentFilter = &vNotebookDocumentFilter
+	var vNotebookDocumentFilterNotebookType NotebookDocumentFilterNotebookType
+	if err := json.Unmarshal(data, &vNotebookDocumentFilterNotebookType); err == nil {
+		o.NotebookDocumentFilterNotebookType = &vNotebookDocumentFilterNotebookType
 		return nil
 	}
-	return fmt.Errorf("invalid StringOrNotebookDocumentFilter: %s", data)
+	var vNotebookDocumentFilterScheme NotebookDocumentFilterScheme
+	if err := json.Unmarshal(data, &vNotebookDocumentFilterScheme); err == nil {
+		o.NotebookDocumentFilterScheme = &vNotebookDocumentFilterScheme
+		return nil
+	}
+	var vNotebookDocumentFilterPattern NotebookDocumentFilterPattern
+	if err := json.Unmarshal(data, &vNotebookDocumentFilterPattern); err == nil {
+		o.NotebookDocumentFilterPattern = &vNotebookDocumentFilterPattern
+		return nil
+	}
+	return fmt.Errorf("invalid StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern: %s", data)
 }
 
 type BooleanOrSaveOptions struct {
