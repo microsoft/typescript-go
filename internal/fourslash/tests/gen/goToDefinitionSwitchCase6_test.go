@@ -9,7 +9,7 @@ import (
 
 func TestGoToDefinitionSwitchCase6(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `export default { [|/*a*/case|] };
 [|/*b*/default|];
