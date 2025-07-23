@@ -269,7 +269,33 @@ func TestProjectReferencesProgram(t *testing.T) {
 		assert.Assert(t, barFile != nil)
 	})
 
-	// !!! one more test after watch events are implemented
+	t.Run("when new file is added to referenced project", func(t *testing.T) {
+		t.Parallel()
+		files := filesForReferencedProjectProgram(false)
+		session, utils := projectv2testutil.Setup(files)
+		uri := lsproto.DocumentUri("file:///user/username/projects/myproject/main/main.ts")
+		session.DidOpenFile(context.Background(), uri, 1, files["/user/username/projects/myproject/main/main.ts"].(string), lsproto.LanguageKindTypeScript)
+		snapshot, release := session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
+		programBefore := snapshot.ProjectCollection.Projects()[0].Program
+
+		err := utils.FS().WriteFile("/user/username/projects/myproject/dependency/fns2.ts", `export const x = 2;`, false)
+		assert.NilError(t, err)
+		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+			{
+				Type: lsproto.FileChangeTypeCreated,
+				Uri:  "file:///user/username/projects/myproject/dependency/fns2.ts",
+			},
+		})
+
+		_, err = session.GetLanguageService(context.Background(), uri)
+		assert.NilError(t, err)
+		snapshot, release = session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
+		assert.Check(t, snapshot.ProjectCollection.Projects()[0].Program != programBefore)
+	})
 }
 
 func filesForReferencedProjectProgram(disableSourceOfProjectReferenceRedirect bool) map[string]any {

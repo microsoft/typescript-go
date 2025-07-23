@@ -218,14 +218,17 @@ func (s *Session) UpdateSnapshot(ctx context.Context, change SnapshotChange) *Sn
 func updateWatch[T any](ctx context.Context, client Client, oldWatcher, newWatcher *WatchedFiles[T]) []error {
 	var errors []error
 	if newWatcher != nil {
-		id, watchers := newWatcher.Watchers()
-		if err := client.WatchFiles(ctx, id, watchers); err != nil {
-			errors = append(errors, err)
+		if id, watchers := newWatcher.Watchers(); len(watchers) > 0 {
+			if err := client.WatchFiles(ctx, id, watchers); err != nil {
+				errors = append(errors, err)
+			}
 		}
 	}
 	if oldWatcher != nil {
-		if err := client.UnwatchFiles(ctx, oldWatcher.ID()); err != nil {
-			errors = append(errors, err)
+		if id, watchers := oldWatcher.Watchers(); len(watchers) > 0 {
+			if err := client.UnwatchFiles(ctx, id); err != nil {
+				errors = append(errors, err)
+			}
 		}
 	}
 	return errors

@@ -123,7 +123,7 @@ func (b *projectCollectionBuilder) DidCloseFile(uri lsproto.DocumentUri, hash [s
 	fileName := uri.FileName()
 	path := b.toPath(fileName)
 	fh := b.fs.getFile(fileName)
-	if fh != nil && fh.Hash() != hash {
+	if fh == nil || fh.Hash() != hash {
 		b.forEachProject(func(entry dirty.Value[*Project]) bool {
 			b.markFileChanged(path)
 			return true
@@ -139,9 +139,6 @@ func (b *projectCollectionBuilder) DidCloseFile(uri lsproto.DocumentUri, hash [s
 		}
 	}
 	b.configFileRegistryBuilder.DidCloseFile(path)
-	if fh == nil {
-		// !!! handleDeletedFile
-	}
 }
 
 func (b *projectCollectionBuilder) DidOpenFile(uri lsproto.DocumentUri) {
