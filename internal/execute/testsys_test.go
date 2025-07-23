@@ -80,8 +80,8 @@ func newTestSys(fileOrFolderList FileMap, cwd string) *testSys {
 }
 
 type diffEntry struct {
-	content  string
-	fileInfo fs.FileInfo
+	content string
+	modTime time.Time
 }
 
 type snapshot struct {
@@ -254,7 +254,7 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 		if err != nil {
 			return nil
 		}
-		newEntry := &diffEntry{content: newContents, fileInfo: fileInfo}
+		newEntry := &diffEntry{content: newContents, modTime: fileInfo.ModTime()}
 		snap[path] = newEntry
 		s.reportFSEntryDiff(baseline, newEntry, path)
 
@@ -302,7 +302,7 @@ func (s *testSys) reportFSEntryDiff(baseline io.Writer, newDirContent *diffEntry
 		fmt.Fprint(baseline, "//// [", path, "] *deleted*\n")
 	} else if newDirContent.content != oldDirContent.content {
 		fmt.Fprint(baseline, "//// [", path, "] *modified* \n", newDirContent.content, "\n")
-	} else if newDirContent.fileInfo.ModTime() != oldDirContent.fileInfo.ModTime() {
+	} else if !newDirContent.modTime.Equal(oldDirContent.modTime) {
 		fmt.Fprint(baseline, "//// [", path, "] *modified time*\n")
 	} else if defaultLibs != nil && defaultLibs.Has(path) && s.testFs().defaultLibs != nil && !s.testFs().defaultLibs.Has(path) {
 		// Lib file that was read
