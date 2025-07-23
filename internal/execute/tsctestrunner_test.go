@@ -160,13 +160,21 @@ func getDiffForIncremental(incrementalSys *testSys, nonIncrementalSys *testSys) 
 func (test *tscInput) getBaselineSubFolder() string {
 	commandName := "tsc"
 	if slices.ContainsFunc(test.commandLineArgs, func(arg string) bool {
-		return arg == "--build" || arg == "-b"
+		switch arg {
+		case "-b", "--b", "-build", "--build":
+			return true
+		}
+		return false
 	}) {
 		commandName = "tsbuild"
 	}
 	w := ""
 	if slices.ContainsFunc(test.commandLineArgs, func(arg string) bool {
-		return arg == "--watch" || arg == "-w"
+		switch arg {
+		case "-w", "--w", "-watch", "--watch":
+			return true
+		}
+		return false
 	}) {
 		w = "Watch"
 	}
