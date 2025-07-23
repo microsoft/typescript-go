@@ -203,6 +203,26 @@ func printEasyHelp(sys System, simpleOptions []*tsoptions.CommandLineOption) {
 	sys.EndWrite()
 }
 
+func printBuildHelp(sys System, buildOptions []*tsoptions.CommandLineOption) {
+	var output []string
+	output = append(output, getHeader(sys, diagnostics.X_tsc_Colon_The_TypeScript_Compiler.Format()+" - "+diagnostics.Version_0.Format(core.Version()))...)
+	output = append(output, generateSectionOptionsOutput(
+		sys,
+		diagnostics.BUILD_OPTIONS.Format(),
+		core.Filter(buildOptions, func(option *tsoptions.CommandLineOption) bool {
+			return option != &tsoptions.TscBuildOption
+		}),
+		false,
+		nil, // !!! locale formatMessage(Diagnostics.Using_build_b_will_make_tsc_behave_more_like_a_build_orchestrator_than_a_compiler_This_is_used_to_trigger_building_composite_projects_which_you_can_learn_more_about_at_0, "https://aka.ms/tsc-composite-builds")),
+		nil,
+	)...)
+
+	for _, chunk := range output {
+		fmt.Fprint(sys.Writer(), chunk)
+	}
+	sys.EndWrite()
+}
+
 func generateSectionOptionsOutput(
 	sys System,
 	sectionName string,

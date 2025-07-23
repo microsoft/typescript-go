@@ -52,9 +52,7 @@ func CommandLine(sys System, commandLineArgs []string, testing bool) CommandLine
 		// !!! build mode
 		switch strings.ToLower(commandLineArgs[0]) {
 		case "-b", "--b", "-build", "--build":
-			fmt.Fprintln(sys.Writer(), "Build mode is currently unsupported.")
-			sys.EndWrite()
-			return CommandLineResult{Status: ExitStatusNotImplemented}
+			return tscBuildCompilation(sys, tsoptions.ParseBuildCommandLine(commandLineArgs, sys), testing)
 			// case "-f":
 			// 	return fmtMain(sys, commandLineArgs[1], commandLineArgs[1])
 		}
@@ -87,6 +85,79 @@ func fmtMain(sys System, input, output string) ExitStatus {
 		return ExitStatusNotImplemented
 	}
 	return ExitStatusSuccess
+}
+
+func tscBuildCompilation(sys System, buildCommand *tsoptions.ParsedBuildCommandLine, testing bool) CommandLineResult {
+	reportDiagnostic := createDiagnosticReporter(sys, buildCommand.CompilerOptions)
+
+	// if (buildOptions.locale) {
+	//     validateLocaleAndSetLanguage(buildOptions.locale, sys, errors);
+	// }
+
+	if len(buildCommand.Errors) > 0 {
+		for _, err := range buildCommand.Errors {
+			reportDiagnostic(err)
+		}
+		return CommandLineResult{Status: ExitStatusDiagnosticsPresent_OutputsSkipped}
+	}
+
+	if buildCommand.CompilerOptions.Help.IsTrue() {
+		printVersion(sys)
+		printBuildHelp(sys, tsoptions.BuildOpts)
+		return CommandLineResult{Status: ExitStatusSuccess}
+	}
+
+	// if (buildOptions.watch) {
+	//     if (reportWatchModeWithoutSysSupport(sys, reportDiagnostic)) return;
+	//     const buildHost = createSolutionBuilderWithWatchHost(
+	//         sys,
+	//         /*createProgram*/ undefined,
+	//         reportDiagnostic,
+	//         createBuilderStatusReporter(sys, shouldBePretty(sys, buildOptions)),
+	//         createWatchStatusReporter(sys, buildOptions),
+	//     );
+	//     buildHost.jsDocParsingMode = defaultJSDocParsingMode;
+	//     const solutionPerformance = enableSolutionPerformance(sys, buildOptions);
+	//     updateSolutionBuilderHost(sys, cb, buildHost, solutionPerformance);
+	//     const onWatchStatusChange = buildHost.onWatchStatusChange;
+	//     let reportBuildStatistics = false;
+	//     buildHost.onWatchStatusChange = (d, newLine, options, errorCount) => {
+	//         onWatchStatusChange?.(d, newLine, options, errorCount);
+	//         if (
+	//             reportBuildStatistics && (
+	//                 d.code === Diagnostics.Found_0_errors_Watching_for_file_changes.code ||
+	//                 d.code === Diagnostics.Found_1_error_Watching_for_file_changes.code
+	//             )
+	//         ) {
+	//             reportSolutionBuilderTimes(builder, solutionPerformance);
+	//         }
+	//     };
+	//     const builder = createSolutionBuilderWithWatch(buildHost, projects, buildOptions, watchOptions);
+	//     builder.build();
+	//     reportSolutionBuilderTimes(builder, solutionPerformance);
+	//     reportBuildStatistics = true;
+	//     return builder;
+	// }
+
+	// const buildHost = createSolutionBuilderHost(
+	//     sys,
+	//     /*createProgram*/ undefined,
+	//     reportDiagnostic,
+	//     createBuilderStatusReporter(sys, shouldBePretty(sys, buildOptions)),
+	//     createReportErrorSummary(sys, buildOptions),
+	// );
+	// buildHost.jsDocParsingMode = defaultJSDocParsingMode;
+	// const solutionPerformance = enableSolutionPerformance(sys, buildOptions);
+	// updateSolutionBuilderHost(sys, cb, buildHost, solutionPerformance);
+	// const builder = createSolutionBuilder(buildHost, projects, buildOptions);
+	// const exitStatus = buildOptions.clean ? builder.clean() : builder.build();
+	// reportSolutionBuilderTimes(builder, solutionPerformance);
+	// dumpTracingLegend(); // Will no-op if there hasn't been any tracing
+	// return sys.exit(exitStatus);
+
+	fmt.Fprintln(sys.Writer(), "Build mode is currently unsupported.")
+	sys.EndWrite()
+	return CommandLineResult{Status: ExitStatusNotImplemented}
 }
 
 func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testing bool) CommandLineResult {
