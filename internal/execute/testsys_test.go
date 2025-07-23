@@ -238,6 +238,7 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 	snap := map[string]*diffEntry{}
 
 	testFs := s.testFs()
+	diffs := map[string]string{}
 	err := s.fsFromFileMap().WalkDir("/", func(path string, d vfs.DirEntry, e error) error {
 		if e != nil {
 			return e
@@ -253,7 +254,7 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 		}
 		newEntry := &diffEntry{content: newContents, isWritten: testFs.writtenFiles.Has(path)}
 		snap[path] = newEntry
-		s.reportFSEntryDiff(baseline, newEntry, path)
+		s.addFsEntryDiff(diffs, newEntry, path)
 
 		return nil
 	})
@@ -265,7 +266,7 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 			_, ok := s.fsFromFileMap().ReadFile(path)
 			if !ok {
 				// report deleted
-				s.reportFSEntryDiff(baseline, nil, path)
+				s.addFsEntryDiff(diffs, nil, path)
 			}
 		}
 	}
@@ -280,11 +281,16 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 		snap:        snap,
 		defaultLibs: &defaultLibs,
 	}
+	diffKeys := slices.Collect(maps.Keys(diffs))
+	slices.Sort(diffKeys)
+	for _, path := range diffKeys {
+		fmt.Fprint(baseline, "//// ["+path+"] ", diffs[path], "\n")
+	}
 	fmt.Fprintln(baseline)
 	testFs.writtenFiles = collections.SyncSet[string]{} // Reset written files after baseline
 }
 
-func (s *testSys) reportFSEntryDiff(baseline io.Writer, newDirContent *diffEntry, path string) {
+func (s *testSys) addFsEntryDiff(diffs map[string]string, newDirContent *diffEntry, path string) {
 	var oldDirContent *diffEntry
 	var defaultLibs *collections.SyncSet[string]
 	if s.serializedDiff != nil {
@@ -294,17 +300,17 @@ func (s *testSys) reportFSEntryDiff(baseline io.Writer, newDirContent *diffEntry
 	// todo handle more cases of fs changes
 	if oldDirContent == nil {
 		if s.testFs().defaultLibs == nil || !s.testFs().defaultLibs.Has(path) {
-			fmt.Fprint(baseline, "//// [", path, "] *new* \n", newDirContent.content, "\n")
+			diffs[path] = "*new* \n" + newDirContent.content
 		}
 	} else if newDirContent == nil {
-		fmt.Fprint(baseline, "//// [", path, "] *deleted*\n")
+		diffs[path] = "*deleted*"
 	} else if newDirContent.content != oldDirContent.content {
-		fmt.Fprint(baseline, "//// [", path, "] *modified* \n", newDirContent.content, "\n")
+		diffs[path] = "*modified* \n" + newDirContent.content
 	} else if newDirContent.isWritten {
-		fmt.Fprint(baseline, "//// [", path, "] *rewrite with same content*\n")
+		diffs[path] = "*rewrite with same content*"
 	} else if defaultLibs != nil && defaultLibs.Has(path) && s.testFs().defaultLibs != nil && !s.testFs().defaultLibs.Has(path) {
 		// Lib file that was read
-		fmt.Fprint(baseline, "//// [", path, "] *Lib*\n", newDirContent.content, "\n")
+		diffs[path] = "*Lib*\n" + newDirContent.content
 	}
 }
 
