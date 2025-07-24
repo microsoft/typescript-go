@@ -463,7 +463,7 @@ func (s *Server) sendResponse(resp *lsproto.ResponseMessage) {
 }
 
 func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.RequestMessage) error {
-	if handler := handlers[req.Method]; handler != nil {
+	if handler := handlers()[req.Method]; handler != nil {
 		return handler(s, ctx, req)
 	}
 	s.Log("unknown method", req.Method)
@@ -473,37 +473,41 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 	return nil
 }
 
-var handlers = map[lsproto.Method]func(*Server, context.Context, *lsproto.RequestMessage) error{}
+type handlerMap map[lsproto.Method]func(*Server, context.Context, *lsproto.RequestMessage) error
 
-func init() {
-	registerRequestHandler(lsproto.InitializeInfo, (*Server).handleInitialize)
-	registerNotificationHandler(lsproto.InitializedInfo, (*Server).handleInitialized)
-	registerRequestHandler(lsproto.ShutdownInfo, (*Server).handleShutdown)
-	registerNotificationHandler(lsproto.ExitInfo, (*Server).handleExit)
+var handlers = sync.OnceValue(func() handlerMap {
+	handlers := make(handlerMap)
 
-	registerNotificationHandler(lsproto.TextDocumentDidOpenInfo, (*Server).handleDidOpen)
-	registerNotificationHandler(lsproto.TextDocumentDidChangeInfo, (*Server).handleDidChange)
-	registerNotificationHandler(lsproto.TextDocumentDidSaveInfo, (*Server).handleDidSave)
-	registerNotificationHandler(lsproto.TextDocumentDidCloseInfo, (*Server).handleDidClose)
-	registerNotificationHandler(lsproto.WorkspaceDidChangeWatchedFilesInfo, (*Server).handleDidChangeWatchedFiles)
+	registerRequestHandler(handlers, lsproto.InitializeInfo, (*Server).handleInitialize)
+	registerNotificationHandler(handlers, lsproto.InitializedInfo, (*Server).handleInitialized)
+	registerRequestHandler(handlers, lsproto.ShutdownInfo, (*Server).handleShutdown)
+	registerNotificationHandler(handlers, lsproto.ExitInfo, (*Server).handleExit)
 
-	registerRequestHandler(lsproto.TextDocumentDiagnosticInfo, (*Server).handleDocumentDiagnostic)
-	registerRequestHandler(lsproto.TextDocumentHoverInfo, (*Server).handleHover)
-	registerRequestHandler(lsproto.TextDocumentDefinitionInfo, (*Server).handleDefinition)
-	registerRequestHandler(lsproto.TextDocumentTypeDefinitionInfo, (*Server).handleTypeDefinition)
-	registerRequestHandler(lsproto.TextDocumentCompletionInfo, (*Server).handleCompletion)
-	registerRequestHandler(lsproto.TextDocumentReferencesInfo, (*Server).handleReferences)
-	registerRequestHandler(lsproto.TextDocumentImplementationInfo, (*Server).handleImplementations)
-	registerRequestHandler(lsproto.TextDocumentSignatureHelpInfo, (*Server).handleSignatureHelp)
-	registerRequestHandler(lsproto.TextDocumentFormattingInfo, (*Server).handleDocumentFormat)
-	registerRequestHandler(lsproto.TextDocumentRangeFormattingInfo, (*Server).handleDocumentRangeFormat)
-	registerRequestHandler(lsproto.TextDocumentOnTypeFormattingInfo, (*Server).handleDocumentOnTypeFormat)
-	registerRequestHandler(lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
-	registerRequestHandler(lsproto.TextDocumentDocumentSymbolInfo, (*Server).handleDocumentSymbol)
-	registerRequestHandler(lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
-}
+	registerNotificationHandler(handlers, lsproto.TextDocumentDidOpenInfo, (*Server).handleDidOpen)
+	registerNotificationHandler(handlers, lsproto.TextDocumentDidChangeInfo, (*Server).handleDidChange)
+	registerNotificationHandler(handlers, lsproto.TextDocumentDidSaveInfo, (*Server).handleDidSave)
+	registerNotificationHandler(handlers, lsproto.TextDocumentDidCloseInfo, (*Server).handleDidClose)
+	registerNotificationHandler(handlers, lsproto.WorkspaceDidChangeWatchedFilesInfo, (*Server).handleDidChangeWatchedFiles)
 
-func registerNotificationHandler[Req any](info lsproto.NotificationInfo[Req], fn func(*Server, context.Context, Req) error) {
+	registerRequestHandler(handlers, lsproto.TextDocumentDiagnosticInfo, (*Server).handleDocumentDiagnostic)
+	registerRequestHandler(handlers, lsproto.TextDocumentHoverInfo, (*Server).handleHover)
+	registerRequestHandler(handlers, lsproto.TextDocumentDefinitionInfo, (*Server).handleDefinition)
+	registerRequestHandler(handlers, lsproto.TextDocumentTypeDefinitionInfo, (*Server).handleTypeDefinition)
+	registerRequestHandler(handlers, lsproto.TextDocumentCompletionInfo, (*Server).handleCompletion)
+	registerRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*Server).handleReferences)
+	registerRequestHandler(handlers, lsproto.TextDocumentImplementationInfo, (*Server).handleImplementations)
+	registerRequestHandler(handlers, lsproto.TextDocumentSignatureHelpInfo, (*Server).handleSignatureHelp)
+	registerRequestHandler(handlers, lsproto.TextDocumentFormattingInfo, (*Server).handleDocumentFormat)
+	registerRequestHandler(handlers, lsproto.TextDocumentRangeFormattingInfo, (*Server).handleDocumentRangeFormat)
+	registerRequestHandler(handlers, lsproto.TextDocumentOnTypeFormattingInfo, (*Server).handleDocumentOnTypeFormat)
+	registerRequestHandler(handlers, lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
+	registerRequestHandler(handlers, lsproto.TextDocumentDocumentSymbolInfo, (*Server).handleDocumentSymbol)
+	registerRequestHandler(handlers, lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
+
+	return handlers
+})
+
+func registerNotificationHandler[Req any](handlers handlerMap, info lsproto.NotificationInfo[Req], fn func(*Server, context.Context, Req) error) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
 		params := req.Params.(Req)
 		if err := fn(s, ctx, params); err != nil {
@@ -513,7 +517,7 @@ func registerNotificationHandler[Req any](info lsproto.NotificationInfo[Req], fn
 	}
 }
 
-func registerRequestHandler[Req, Resp any](info lsproto.RequestInfo[Req, Resp], fn func(*Server, context.Context, Req) (Resp, error)) {
+func registerRequestHandler[Req, Resp any](handlers handlerMap, info lsproto.RequestInfo[Req, Resp], fn func(*Server, context.Context, Req) (Resp, error)) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
 		params := req.Params.(Req)
 		resp, err := fn(s, ctx, params)
