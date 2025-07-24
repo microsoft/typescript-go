@@ -128,14 +128,10 @@ func newNodeEntryWithKind(node *ast.Node, kind entryKind) *referenceEntry {
 
 func newNodeEntry(node *ast.Node) *referenceEntry {
 	// creates nodeEntry with `kind == entryKindNode`
-	n := node
-	if node != nil && node.Name() != nil {
-		n = node.Name()
-	}
 	return &referenceEntry{
 		kind:    entryKindNode,
-		node:    node,
-		context: getContextNodeForNodeEntry(n),
+		node:    core.OrElse(node.Name(), node),
+		context: getContextNodeForNodeEntry(node),
 	}
 }
 
@@ -400,7 +396,7 @@ func getSymbolScope(symbol *ast.Symbol) *ast.Node {
 
 // === functions on (*ls) ===
 
-func (l *LanguageService) ProvideReferences(params *lsproto.ReferenceParams) []*lsproto.Location {
+func (l *LanguageService) ProvideReferences(params *lsproto.ReferenceParams) []lsproto.Location {
 	// `findReferencedSymbols` except only computes the information needed to return reference locations
 	program, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, params.Position))
@@ -410,22 +406,53 @@ func (l *LanguageService) ProvideReferences(params *lsproto.ReferenceParams) []*
 
 	symbolsAndEntries := l.getReferencedSymbolsForNode(position, node, program, program.GetSourceFiles(), options, nil)
 
-	return core.FlatMap(symbolsAndEntries, l.convertSymbolAndEntryToLocation)
+	return core.FlatMap(symbolsAndEntries, l.convertSymbolAndEntriesToLocations)
+}
+
+func (l *LanguageService) ProvideImplementations(params *lsproto.ImplementationParams) []lsproto.Location {
+	program, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
+	position := int(l.converters.LineAndCharacterToPosition(sourceFile, params.Position))
+	node := astnav.GetTouchingPropertyName(sourceFile, position)
+
+	var seenNodes collections.Set[*ast.Node]
+	var entries []*referenceEntry
+	queue := l.getImplementationReferenceEntries(program, node, position)
+	for len(queue) != 0 {
+		entry := queue[0]
+		queue = queue[1:]
+		if !seenNodes.Has(entry.node) {
+			seenNodes.Add(entry.node)
+			entries = append(entries, entry)
+			queue = append(queue, l.getImplementationReferenceEntries(program, entry.node, entry.node.Pos())...)
+		}
+	}
+
+	return l.convertEntriesToLocations(entries)
+}
+
+func (l *LanguageService) getImplementationReferenceEntries(program *compiler.Program, node *ast.Node, position int) []*referenceEntry {
+	options := refOptions{use: referenceUseReferences, implementations: true}
+	symbolsAndEntries := l.getReferencedSymbolsForNode(position, node, program, program.GetSourceFiles(), options, nil)
+	return core.FlatMap(symbolsAndEntries, func(s *SymbolAndEntries) []*referenceEntry { return s.references })
 }
 
 // == functions for conversions ==
-func (l *LanguageService) convertSymbolAndEntryToLocation(s *SymbolAndEntries) []*lsproto.Location {
-	var locations []*lsproto.Location
-	for _, ref := range s.references {
-		if ref.textRange == nil {
-			sourceFile := ast.GetSourceFileOfNode(ref.node)
-			ref.textRange = l.createLspRangeFromNode(ref.node, ast.GetSourceFileOfNode(ref.node))
-			ref.fileName = sourceFile.FileName()
+func (l *LanguageService) convertSymbolAndEntriesToLocations(s *SymbolAndEntries) []lsproto.Location {
+	return l.convertEntriesToLocations(s.references)
+}
+
+func (l *LanguageService) convertEntriesToLocations(entries []*referenceEntry) []lsproto.Location {
+	locations := make([]lsproto.Location, len(entries))
+	for i, entry := range entries {
+		if entry.textRange == nil {
+			sourceFile := ast.GetSourceFileOfNode(entry.node)
+			entry.textRange = l.getRangeOfNode(entry.node, sourceFile, nil /*endNode*/)
+			entry.fileName = sourceFile.FileName()
 		}
-		locations = append(locations, &lsproto.Location{
-			Uri:   FileNameToDocumentURI(ref.fileName),
-			Range: *ref.textRange,
-		})
+		locations[i] = lsproto.Location{
+			Uri:   FileNameToDocumentURI(entry.fileName),
+			Range: *entry.textRange,
+		}
 	}
 	return locations
 }
@@ -640,7 +667,7 @@ func getReferencedSymbolsSpecial(node *ast.Node, sourceFiles []*ast.SourceFile) 
 
 	if isLabelOfLabeledStatement(node) {
 		// it is a label definition and not a target, search within the parent labeledStatement
-		return getLabelReferencesInNode(node.Parent, node.AsIdentifier())
+		return getLabelReferencesInNode(node.Parent, node)
 	}
 
 	if isThis(node) {
@@ -654,9 +681,9 @@ func getReferencedSymbolsSpecial(node *ast.Node, sourceFiles []*ast.SourceFile) 
 	return nil
 }
 
-func getLabelReferencesInNode(container *ast.Node, targetLabel *ast.Identifier) []*SymbolAndEntries {
+func getLabelReferencesInNode(container *ast.Node, targetLabel *ast.Node) []*SymbolAndEntries {
 	sourceFile := ast.GetSourceFileOfNode(container)
-	labelName := targetLabel.Text
+	labelName := targetLabel.Text()
 	references := core.MapNonNil(getPossibleSymbolReferenceNodes(sourceFile, labelName, container), func(node *ast.Node) *referenceEntry {
 		// Only pick labels that are either the target label, or have a target that is the target label
 		if node == targetLabel.AsNode() || (isJumpStatementTarget(node) && getTargetLabel(node, labelName) == targetLabel) {
@@ -664,7 +691,7 @@ func getLabelReferencesInNode(container *ast.Node, targetLabel *ast.Identifier) 
 		}
 		return nil
 	})
-	return []*SymbolAndEntries{NewSymbolAndEntries(definitionKindLabel, targetLabel.AsNode(), nil, references)}
+	return []*SymbolAndEntries{NewSymbolAndEntries(definitionKindLabel, targetLabel, nil, references)}
 }
 
 func getReferencesForThisKeyword(thisOrSuperKeyword *ast.Node, sourceFiles []*ast.SourceFile) []*SymbolAndEntries {

@@ -11,7 +11,7 @@ import (
 
 func TestMemberListErrorRecovery(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Foo { static fun() { }; }
 
@@ -25,7 +25,12 @@ Foo./**/;
 			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Includes: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextLocalDeclarationPriority)), Label: "fun"}},
+			Includes: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label:    "fun",
+					SortText: ptrTo(string(ls.SortTextLocalDeclarationPriority)),
+				},
+			},
 		},
 	})
 }

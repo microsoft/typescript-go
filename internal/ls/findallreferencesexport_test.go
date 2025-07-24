@@ -13,11 +13,11 @@ func (l *LanguageService) GetExpectedReferenceFromMarker(fileName string, pos in
 	node := astnav.GetTouchingPropertyName(sourceFile, pos)
 	return &lsproto.Location{
 		Uri:   FileNameToDocumentURI(fileName),
-		Range: *l.createLspRangeFromNode(node, sourceFile),
+		Range: *l.getRangeOfNode(node, sourceFile, nil /*endNode*/),
 	}
 }
 
-func (l *LanguageService) TestProvideReferences(fileName string, pos int) []*lsproto.Location {
+func (l *LanguageService) TestProvideReferences(fileName string, pos int) []lsproto.Location {
 	_, sourceFile := l.tryGetProgramAndFile(fileName)
 	lsPos := l.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(pos))
 	return l.ProvideReferences(&lsproto.ReferenceParams{

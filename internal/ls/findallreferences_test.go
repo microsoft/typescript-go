@@ -23,7 +23,7 @@ func runFindReferencesTest(t *testing.T, input string, expectedLocations map[str
 	// for each marker location, calculate the expected ref location ahead of time so we don't have to re-calculate each location for every reference call
 	allExpectedLocations := map[lsproto.Location]string{}
 	for _, expectedRange := range testData.Ranges {
-		allExpectedLocations[*service.GetExpectedReferenceFromMarker(expectedRange.FileName, expectedRange.Position)] = *expectedRange.Name
+		allExpectedLocations[*service.GetExpectedReferenceFromMarker(expectedRange.FileName(), expectedRange.Position)] = *expectedRange.Name
 	}
 
 	for requestMarkerName, expectedSet := range expectedLocations {
@@ -32,11 +32,11 @@ func runFindReferencesTest(t *testing.T, input string, expectedLocations map[str
 			t.Fatalf("No marker found for '%s'", requestMarkerName)
 		}
 
-		referencesResult := service.TestProvideReferences(marker.FileName, marker.Position)
+		referencesResult := service.TestProvideReferences(marker.FileName(), marker.Position)
 		libReference := 0
 
 		for _, loc := range referencesResult {
-			if name, ok := allExpectedLocations[*loc]; ok {
+			if name, ok := allExpectedLocations[loc]; ok {
 				// check if returned ref location is in this request's expected set
 				assert.Assert(t, expectedSet.Has(name), "Reference to '%s' not expected when find all references requested at %s", name, requestMarkerName)
 			} else if strings.Contains(string(loc.Uri), "//bundled") && strings.Contains(string(loc.Uri), "//libs") {
@@ -239,6 +239,19 @@ class C extends [|/*3*/Base|] { }`,
 			expectedLocations: map[string]*collections.Set[string]{
 				"2": collections.NewSetFromItems("2", "3"),
 				"3": collections.NewSetFromItems("2", "3"),
+			},
+		},
+		{
+			title: "findAllRefsTrivia",
+			input: `export interface A {
+    /** Comment */
+    [|/*m1*/method|](): string;
+    /** Comment */
+    [|/*m2*/method|](format: string): string;
+}`,
+			expectedLocations: map[string]*collections.Set[string]{
+				"m1": collections.NewSetFromItems("m1", "m2"),
+				"m2": collections.NewSetFromItems("m1", "m2"),
 			},
 		},
 	}

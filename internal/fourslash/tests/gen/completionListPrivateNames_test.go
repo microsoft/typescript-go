@@ -9,7 +9,7 @@ import (
 
 func TestCompletionListPrivateNames(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Foo {
     #x;
@@ -42,7 +42,11 @@ new Foo()./*4*/`
 			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Unsorted: []fourslash.CompletionsExpectedItem{"#z", "t", "y"},
+			Unsorted: []fourslash.CompletionsExpectedItem{
+				"#z",
+				"t",
+				"y",
+			},
 		},
 	})
 	f.VerifyCompletions(t, "2", &fourslash.CompletionsExpectedList{
@@ -52,7 +56,11 @@ new Foo()./*4*/`
 			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Unsorted: []fourslash.CompletionsExpectedItem{"#z", "#u", "v"},
+			Unsorted: []fourslash.CompletionsExpectedItem{
+				"#z",
+				"#u",
+				"v",
+			},
 		},
 	})
 	f.VerifyCompletions(t, "3", &fourslash.CompletionsExpectedList{
@@ -62,7 +70,11 @@ new Foo()./*4*/`
 			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Unsorted: []fourslash.CompletionsExpectedItem{"#z", "t", "y"},
+			Unsorted: []fourslash.CompletionsExpectedItem{
+				"#z",
+				"t",
+				"y",
+			},
 		},
 	})
 	f.VerifyCompletions(t, "4", &fourslash.CompletionsExpectedList{
@@ -72,7 +84,9 @@ new Foo()./*4*/`
 			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Exact: []fourslash.CompletionsExpectedItem{"y"},
+			Exact: []fourslash.CompletionsExpectedItem{
+				"y",
+			},
 		},
 	})
 }

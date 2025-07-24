@@ -247,14 +247,11 @@ jobs:
 
       - run: npx hereby generate
 
-      - run: node ./internal/lsp/lsproto/_generate/fetchModel.mjs
-      - run: node ./internal/lsp/lsproto/_generate/generate.mjs
+      - run: node --experimental-strip-types ./internal/lsp/lsproto/_generate/fetchModel.mts
+      - run: node --experimental-strip-types ./internal/lsp/lsproto/_generate/generate.mts
 
-      - name: Remove all converted fourslash tests
-        run: rm -rf internal/fourslash/tests/gen
-
-      - name: Regenerate fourslash tests
-        run: npm run convertfourslash
+      - name: Regenerate fourslash tests and update failing test list
+        run: npm run updatefailing
 
       - run: git add .
       - run: git diff --staged --exit-code --stat
