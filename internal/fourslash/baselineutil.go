@@ -49,11 +49,16 @@ type baselineFourslashLocationsOptions struct {
 	additionalSpan                *lsproto.Location
 }
 
-func (f *FourslashTest) getBaselineForLocationsWithFileContents(spans []*lsproto.Location, options baselineFourslashLocationsOptions) string {
-	return f.getBaselineForGroupedLocationsWithFileContents(collections.GroupBy(spans, func(span *lsproto.Location) lsproto.DocumentUri { return span.Uri }), options)
+func (f *FourslashTest) getBaselineForLocationsWithFileContents(spans []lsproto.Location, options baselineFourslashLocationsOptions) string {
+	return f.getBaselineForGroupedLocationsWithFileContents(collections.GroupBy(spans, func(span lsproto.Location) lsproto.DocumentUri { return span.Uri }), options)
 }
 
-func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedLocations *collections.MultiMap[lsproto.DocumentUri, *lsproto.Location], options baselineFourslashLocationsOptions) string {
+func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedLocations *collections.MultiMap[lsproto.DocumentUri, lsproto.Location], options baselineFourslashLocationsOptions) string {
+	// We must always print the file containing the marker,
+	// but don't want to print it twice at the end if it already
+	// found in a file with ranges.
+	foundMarker := false
+
 	baselineEntries := []string{}
 	err := f.vfs.WalkDir("/", func(path string, d vfs.DirEntry, e error) error {
 		if e != nil {
@@ -64,19 +69,25 @@ func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedLo
 			return nil
 		}
 
-		locations := groupedLocations.Get(ls.FileNameToDocumentURI(path))
+		fileName := ls.FileNameToDocumentURI(path)
+		locations := groupedLocations.Get(fileName)
 		if len(locations) == 0 {
 			return nil
 		}
 
 		content, ok := f.vfs.ReadFile(path)
 		if !ok {
+			// !!! error?
 			return nil
 		}
 
-		documentSpans := core.Map(locations, func(location *lsproto.Location) *documentSpan {
+		if options.marker != nil && options.marker.FileName() == path {
+			foundMarker = true
+		}
+
+		documentSpans := core.Map(locations, func(location lsproto.Location) *documentSpan {
 			return &documentSpan{
-				Location: *location,
+				Location: location,
 			}
 		})
 		baselineEntries = append(baselineEntries, f.getBaselineContentForFile(path, content, documentSpans, nil, options))
@@ -86,7 +97,15 @@ func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedLo
 	if err != nil && !errors.Is(err, fs.ErrNotExist) {
 		panic("walkdir error during fourslash baseline: " + err.Error())
 	}
-	// !!! foundMarker
+
+	if !foundMarker && options.marker != nil {
+		// If we didn't find the marker in any file, we need to add it.
+		markerFileName := options.marker.FileName()
+		if content, ok := f.vfs.ReadFile(markerFileName); ok {
+			baselineEntries = append(baselineEntries, f.getBaselineContentForFile(markerFileName, content, nil, nil, options))
+		}
+	}
+
 	// !!! foundAdditionalSpan
 	// !!! skipDocumentContainingOnlyMarker
 

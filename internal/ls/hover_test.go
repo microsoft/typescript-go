@@ -42,7 +42,7 @@ function myFunction() {
 /*marker*/myFunction();`,
 			expected: map[string]*lsproto.Hover{
 				"marker": {
-					Contents: lsproto.MarkupContentOrMarkedStringOrMarkedStrings{
+					Contents: lsproto.MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings{
 						MarkupContent: &lsproto.MarkupContent{
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "```tsx\nfunction myFunction(): string\n```\nA function with JSDoc links that previously caused panic\n`console.log` and `Array.from` and `Object.keys`",
@@ -65,7 +65,7 @@ function /*marker*/myFunction(param) {
 myFunction();`,
 			expected: map[string]*lsproto.Hover{
 				"marker": {
-					Contents: lsproto.MarkupContentOrMarkedStringOrMarkedStrings{
+					Contents: lsproto.MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings{
 						MarkupContent: &lsproto.MarkupContent{
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "```tsx\nfunction myFunction(param: string): string\n```\n\n\n*@param* `param` - the greatest of days\n",
@@ -88,7 +88,7 @@ function myFunction(param) {
 /*marker*/myFunction();`,
 			expected: map[string]*lsproto.Hover{
 				"marker": {
-					Contents: lsproto.MarkupContentOrMarkedStringOrMarkedStrings{
+					Contents: lsproto.MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings{
 						MarkupContent: &lsproto.MarkupContent{
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "```tsx\nfunction myFunction(param: string): string\n```\n\n\n*@param* `param` - the greatest of days\n",
@@ -111,7 +111,7 @@ function myFunction(/*marker*/param) {
 myFunction();`,
 			expected: map[string]*lsproto.Hover{
 				"marker": {
-					Contents: lsproto.MarkupContentOrMarkedStringOrMarkedStrings{
+					Contents: lsproto.MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings{
 						MarkupContent: &lsproto.MarkupContent{
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "```tsx\n(parameter) param: string\n```\n- the greatest of days\n",
@@ -171,7 +171,7 @@ func runHoverTest(t *testing.T, input string, expected map[string]*lsproto.Hover
 			assert.Assert(t, result == nil)
 		} else {
 			assert.Assert(t, result != nil)
-			assert.DeepEqual(t, *result, *expectedResult)
+			assert.DeepEqual(t, result, expectedResult)
 		}
 	}
 }

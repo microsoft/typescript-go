@@ -588,7 +588,6 @@ type Checker struct {
 	wasCanceled                                 bool
 	arrayVariances                              []VarianceFlags
 	globals                                     ast.SymbolTable
-	globalSymbols                               []*ast.Symbol
 	evaluate                                    evaluator.Evaluator
 	stringLiteralTypes                          map[string]*Type
 	numberLiteralTypes                          map[jsnum.Number]*Type
@@ -755,7 +754,6 @@ type Checker struct {
 	typeResolutions                             []TypeResolution
 	resolutionStart                             int
 	inVarianceComputation                       bool
-	suggestionCount                             int
 	apparentArgumentCount                       *int
 	lastGetCombinedNodeFlagsNode                *ast.Node
 	lastGetCombinedNodeFlagsResult              ast.NodeFlags
@@ -855,6 +853,8 @@ type Checker struct {
 	packagesMap                                 map[string]bool
 	activeMappers                               []*TypeMapper
 	activeTypeMappersCaches                     []map[string]*Type
+	ambientModulesOnce                          sync.Once
+	ambientModules                              []*ast.Symbol
 }
 
 func NewChecker(program Program) *Checker {
@@ -1518,27 +1518,22 @@ func (c *Checker) onFailedToResolveSymbol(errorLocation *ast.Node, name string, 
 	suggestedLib := c.getSuggestedLibForNonExistentName(name)
 	if suggestedLib != "" {
 		c.error(errorLocation, nameNotFoundMessage, name, suggestedLib)
-		c.suggestionCount++
 		return
 	}
 	// Then spelling suggestions
-	if c.suggestionCount < 10 {
-		suggestion := c.getSuggestedSymbolForNonexistentSymbol(errorLocation, name, meaning)
-		if suggestion != nil && !(suggestion.ValueDeclaration != nil && ast.IsAmbientModule(suggestion.ValueDeclaration) && ast.IsGlobalScopeAugmentation(suggestion.ValueDeclaration)) {
-			suggestionName := c.symbolToString(suggestion)
-			message := core.IfElse(meaning == ast.SymbolFlagsNamespace, diagnostics.Cannot_find_namespace_0_Did_you_mean_1, diagnostics.Cannot_find_name_0_Did_you_mean_1)
-			diagnostic := NewDiagnosticForNode(errorLocation, message, name, suggestionName)
-			if suggestion.ValueDeclaration != nil {
-				diagnostic.AddRelatedInfo(NewDiagnosticForNode(suggestion.ValueDeclaration, diagnostics.X_0_is_declared_here, suggestionName))
-			}
-			c.diagnostics.Add(diagnostic)
-			c.suggestionCount++
-			return
+	suggestion := c.getSuggestedSymbolForNonexistentSymbol(errorLocation, name, meaning)
+	if suggestion != nil && !(suggestion.ValueDeclaration != nil && ast.IsAmbientModule(suggestion.ValueDeclaration) && ast.IsGlobalScopeAugmentation(suggestion.ValueDeclaration)) {
+		suggestionName := c.symbolToString(suggestion)
+		message := core.IfElse(meaning == ast.SymbolFlagsNamespace, diagnostics.Cannot_find_namespace_0_Did_you_mean_1, diagnostics.Cannot_find_name_0_Did_you_mean_1)
+		diagnostic := NewDiagnosticForNode(errorLocation, message, name, suggestionName)
+		if suggestion.ValueDeclaration != nil {
+			diagnostic.AddRelatedInfo(NewDiagnosticForNode(suggestion.ValueDeclaration, diagnostics.X_0_is_declared_here, suggestionName))
 		}
+		c.diagnostics.Add(diagnostic)
+		return
 	}
 	// And then fall back to unspecified "not found"
 	c.error(errorLocation, nameNotFoundMessage, name)
-	c.suggestionCount++
 }
 
 func (c *Checker) checkAndReportErrorForUsingTypeAsNamespace(errorLocation *ast.Node, name string, meaning ast.SymbolFlags) bool {
@@ -2092,7 +2087,7 @@ func (c *Checker) getSymbol(symbols ast.SymbolTable, name string, meaning ast.Sy
 }
 
 func (c *Checker) CheckSourceFile(ctx context.Context, sourceFile *ast.SourceFile) {
-	if SkipTypeChecking(sourceFile, c.compilerOptions, c.program) {
+	if SkipTypeChecking(sourceFile, c.compilerOptions, c.program, false) {
 		return
 	}
 	c.checkSourceFile(ctx, sourceFile)
@@ -6992,7 +6987,7 @@ func (c *Checker) getQuickTypeOfExpression(node *ast.Node) *Type {
 
 func (c *Checker) getReturnTypeOfSingleNonGenericCallSignature(funcType *Type) *Type {
 	signature := c.getSingleCallSignature(funcType)
-	if signature != nil && signature.typeParameters == nil {
+	if signature != nil && len(signature.typeParameters) == 0 {
 		return c.getReturnTypeOfSignature(signature)
 	}
 	return nil
@@ -9126,7 +9121,7 @@ func (c *Checker) inferTypeArguments(node *ast.Node, signature *Signature, args 
 					// Above, the type of the 'value' parameter is inferred to be 'A'.
 					contextualSignature := c.getSingleCallSignature(instantiatedType)
 					var inferenceSourceType *Type
-					if contextualSignature != nil && contextualSignature.typeParameters != nil {
+					if contextualSignature != nil && len(contextualSignature.typeParameters) != 0 {
 						inferenceSourceType = c.getOrCreateTypeFromSignature(c.getSignatureInstantiationWithoutFillingInTypeArguments(contextualSignature, contextualSignature.typeParameters), nil)
 					} else {
 						inferenceSourceType = instantiatedType
@@ -9387,7 +9382,7 @@ func (c *Checker) addImplementationSuccessElaboration(s *CallState, failed *Sign
 				candidate := c.getSignatureFromDeclaration(implementation)
 				localState := *s
 				localState.candidates = []*Signature{candidate}
-				localState.isSingleNonGenericCandidate = candidate.typeParameters == nil
+				localState.isSingleNonGenericCandidate = len(candidate.typeParameters) == 0
 				if c.chooseOverload(&localState, c.assignableRelation) != nil {
 					diagnostic.AddRelatedInfo(NewDiagnosticForNode(implementation, diagnostics.The_call_would_have_succeeded_against_this_implementation_but_implementation_signatures_of_overloads_are_not_externally_visible))
 				}
@@ -9954,8 +9949,8 @@ func (c *Checker) isAritySmaller(signature *Signature, target *ast.Node) bool {
 }
 
 func (c *Checker) assignContextualParameterTypes(sig *Signature, context *Signature) {
-	if context.typeParameters != nil {
-		if sig.typeParameters != nil {
+	if len(context.typeParameters) != 0 {
+		if len(sig.typeParameters) != 0 {
 			// This signature has already has a contextual inference performed and cached on it
 			return
 		}
@@ -10076,7 +10071,7 @@ func (c *Checker) checkCollisionWithRequireExportsInGeneratedCode(node *ast.Node
 	parent := ast.GetDeclarationContainer(node)
 	if ast.IsSourceFile(parent) && ast.IsExternalOrCommonJSModule(parent.AsSourceFile()) {
 		// If the declaration happens to be in external module, report error that require and exports are reserved keywords
-		c.error(name, diagnostics.Duplicate_identifier_0_Compiler_reserves_name_1_in_top_level_scope_of_a_module, scanner.DeclarationNameToString(name), scanner.DeclarationNameToString(name))
+		c.errorSkippedOnNoEmit(name, diagnostics.Duplicate_identifier_0_Compiler_reserves_name_1_in_top_level_scope_of_a_module, scanner.DeclarationNameToString(name), scanner.DeclarationNameToString(name))
 	}
 }
 
@@ -13330,6 +13325,12 @@ func (c *Checker) error(location *ast.Node, message *diagnostics.Message, args .
 	return diagnostic
 }
 
+func (c *Checker) errorSkippedOnNoEmit(location *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
+	diagnostic := c.error(location, message, args...)
+	diagnostic.SetSkippedOnNoEmit()
+	return diagnostic
+}
+
 func (c *Checker) errorOrSuggestion(isError bool, location *ast.Node, message *diagnostics.Message, args ...any) {
 	c.addErrorOrSuggestion(isError, NewDiagnosticForNode(location, message, args...))
 }
@@ -14813,6 +14814,17 @@ func (c *Checker) tryFindAmbientModule(moduleName string, withAugmentations bool
 		return c.getMergedSymbol(symbol)
 	}
 	return symbol
+}
+
+func (c *Checker) GetAmbientModules() []*ast.Symbol {
+	c.ambientModulesOnce.Do(func() {
+		for sym, global := range c.globals {
+			if strings.HasPrefix(sym, "\"") && strings.HasSuffix(sym, "\"") {
+				c.ambientModules = append(c.ambientModules, global)
+			}
+		}
+	})
+	return c.ambientModules
 }
 
 func (c *Checker) resolveExternalModuleSymbol(moduleSymbol *ast.Symbol, dontResolveAlias bool) *ast.Symbol {
@@ -18364,9 +18376,8 @@ func (c *Checker) getInstantiatedConstructorsForTypeArguments(t *Type, typeArgum
 
 func (c *Checker) getConstructorsForTypeArguments(t *Type, typeArgumentNodes []*ast.Node, location *ast.Node) []*Signature {
 	typeArgCount := len(typeArgumentNodes)
-	isJavaScript := ast.IsInJSFile(location)
 	return core.Filter(c.getSignaturesOfType(t, SignatureKindConstruct), func(sig *Signature) bool {
-		return isJavaScript || typeArgCount >= c.getMinTypeArgumentCount(sig.typeParameters) && typeArgCount <= len(sig.typeParameters)
+		return typeArgCount >= c.getMinTypeArgumentCount(sig.typeParameters) && typeArgCount <= len(sig.typeParameters)
 	})
 }
 
@@ -20190,8 +20201,8 @@ func (c *Checker) getUnionSignatures(signatureLists [][]*Signature) []*Signature
 			if !core.Same(signatures, masterList) {
 				signature := signatures[0]
 				// Debug.assert(signature, "getUnionSignatures bails early on empty signature lists and should not have empty lists on second pass")
-				if signature.typeParameters != nil && core.Some(results, func(s *Signature) bool {
-					return s.typeParameters != nil && !c.compareTypeParametersIdentical(signature.typeParameters, s.typeParameters)
+				if len(signature.typeParameters) != 0 && core.Some(results, func(s *Signature) bool {
+					return len(s.typeParameters) != 0 && !c.compareTypeParametersIdentical(signature.typeParameters, s.typeParameters)
 				}) {
 					results = nil
 				} else {
