@@ -230,8 +230,8 @@ func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCap
 	params := &lsproto.InitializeParams{}
 	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
 	// !!! check for errors?
-	sendRequest(t, f, lsproto.InitializeMapping, params)
-	sendNotification(t, f, lsproto.InitializedMapping, &lsproto.InitializedParams{})
+	sendRequest(t, f, lsproto.InitializeInfo, params)
+	sendNotification(t, f, lsproto.InitializedInfo, &lsproto.InitializedParams{})
 }
 
 var (
@@ -267,7 +267,7 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	return &capabilitiesWithDefaults
 }
 
-func sendRequest[Req, Resp any](t *testing.T, f *FourslashTest, mapping lsproto.RequestToResponseMapping[Req, Resp], params Req) (*lsproto.Message, Resp, bool) {
+func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, mapping lsproto.RequestInfo[Params, Resp], params Params) (*lsproto.Message, Resp, bool) {
 	id := f.nextID()
 	req := lsproto.NewRequestMessage(
 		mapping.Method,
@@ -283,9 +283,9 @@ func sendRequest[Req, Resp any](t *testing.T, f *FourslashTest, mapping lsproto.
 	return resp, result, ok
 }
 
-func sendNotification[Req any](t *testing.T, f *FourslashTest, mapping lsproto.NotificationMapping[Req], params Req) {
+func sendNotification[Params any](t *testing.T, f *FourslashTest, info lsproto.NotificationInfo[Params], params Params) {
 	notification := lsproto.NewNotificationMessage(
-		mapping.Method,
+		info.Method,
 		params,
 	)
 	f.writeMsg(t, notification.Message())
@@ -435,7 +435,7 @@ func (f *FourslashTest) openFile(t *testing.T, filename string) {
 		t.Fatalf("File %s not found in test data", filename)
 	}
 	f.activeFilename = filename
-	sendNotification(t, f, lsproto.TextDocumentDidOpenMapping, &lsproto.DidOpenTextDocumentParams{
+	sendNotification(t, f, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
 		TextDocument: &lsproto.TextDocumentItem{
 			Uri:        ls.FileNameToDocumentURI(filename),
 			LanguageId: getLanguageKind(filename),
@@ -549,7 +549,7 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *Completi
 		TextDocumentPositionParams: f.currentTextDocumentPositionParams(),
 		Context:                    &lsproto.CompletionContext{},
 	}
-	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentCompletionMapping, params)
+	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentCompletionInfo, params)
 	if resMsg == nil {
 		t.Fatalf(prefix+"Nil response received for completion request", f.lastKnownMarkerName)
 	}
@@ -734,7 +734,7 @@ var completionIgnoreOpts = cmp.FilterPath(
 
 func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual *lsproto.CompletionItem, expected *lsproto.CompletionItem) {
 	if expected.Detail != nil || expected.Documentation != nil {
-		resMsg, result, resultOk := sendRequest(t, f, lsproto.CompletionItemResolveMapping, actual)
+		resMsg, result, resultOk := sendRequest(t, f, lsproto.CompletionItemResolveInfo, actual)
 		if resMsg == nil {
 			t.Fatal(prefix + "Expected non-nil response for completion item resolve, got nil")
 		}
@@ -800,7 +800,7 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 			TextDocumentPositionParams: f.currentTextDocumentPositionParams(),
 			Context:                    &lsproto.ReferenceContext{},
 		}
-		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentReferencesMapping, params)
+		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentReferencesInfo, params)
 		if resMsg == nil {
 			if f.lastKnownMarkerName == nil {
 				t.Fatalf("Nil response received for references request at pos %v", f.currentCaretPosition)
@@ -855,7 +855,7 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 			TextDocumentPositionParams: f.currentTextDocumentPositionParams(),
 		}
 
-		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentDefinitionMapping, params)
+		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentDefinitionInfo, params)
 		if resMsg == nil {
 			if f.lastKnownMarkerName == nil {
 				t.Fatalf("Nil response received for definition request at pos %v", f.currentCaretPosition)
@@ -1059,7 +1059,7 @@ func (f *FourslashTest) editScript(t *testing.T, fileName string, start int, end
 	if err != nil {
 		panic(fmt.Sprintf("Failed to write file %s: %v", fileName, err))
 	}
-	sendNotification(t, f, lsproto.TextDocumentDidChangeMapping, &lsproto.DidChangeTextDocumentParams{
+	sendNotification(t, f, lsproto.TextDocumentDidChangeInfo, &lsproto.DidChangeTextDocumentParams{
 		TextDocument: lsproto.VersionedTextDocumentIdentifier{
 			TextDocumentIdentifier: lsproto.TextDocumentIdentifier{
 				Uri: ls.FileNameToDocumentURI(fileName),

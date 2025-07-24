@@ -476,34 +476,34 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 var handlers = map[lsproto.Method]func(*Server, context.Context, *lsproto.RequestMessage) error{}
 
 func init() {
-	registerRequestHandler(lsproto.InitializeMapping, (*Server).handleInitialize)
-	registerNotificationHandler(lsproto.InitializedMapping, (*Server).handleInitialized)
-	registerRequestHandler(lsproto.ShutdownMapping, (*Server).handleShutdown)
-	registerNotificationHandler(lsproto.ExitMapping, (*Server).handleExit)
+	registerRequestHandler(lsproto.InitializeInfo, (*Server).handleInitialize)
+	registerNotificationHandler(lsproto.InitializedInfo, (*Server).handleInitialized)
+	registerRequestHandler(lsproto.ShutdownInfo, (*Server).handleShutdown)
+	registerNotificationHandler(lsproto.ExitInfo, (*Server).handleExit)
 
-	registerNotificationHandler(lsproto.TextDocumentDidOpenMapping, (*Server).handleDidOpen)
-	registerNotificationHandler(lsproto.TextDocumentDidChangeMapping, (*Server).handleDidChange)
-	registerNotificationHandler(lsproto.TextDocumentDidSaveMapping, (*Server).handleDidSave)
-	registerNotificationHandler(lsproto.TextDocumentDidCloseMapping, (*Server).handleDidClose)
-	registerNotificationHandler(lsproto.WorkspaceDidChangeWatchedFilesMapping, (*Server).handleDidChangeWatchedFiles)
+	registerNotificationHandler(lsproto.TextDocumentDidOpenInfo, (*Server).handleDidOpen)
+	registerNotificationHandler(lsproto.TextDocumentDidChangeInfo, (*Server).handleDidChange)
+	registerNotificationHandler(lsproto.TextDocumentDidSaveInfo, (*Server).handleDidSave)
+	registerNotificationHandler(lsproto.TextDocumentDidCloseInfo, (*Server).handleDidClose)
+	registerNotificationHandler(lsproto.WorkspaceDidChangeWatchedFilesInfo, (*Server).handleDidChangeWatchedFiles)
 
-	registerRequestHandler(lsproto.TextDocumentDiagnosticMapping, (*Server).handleDocumentDiagnostic)
-	registerRequestHandler(lsproto.TextDocumentHoverMapping, (*Server).handleHover)
-	registerRequestHandler(lsproto.TextDocumentDefinitionMapping, (*Server).handleDefinition)
-	registerRequestHandler(lsproto.TextDocumentTypeDefinitionMapping, (*Server).handleTypeDefinition)
-	registerRequestHandler(lsproto.TextDocumentCompletionMapping, (*Server).handleCompletion)
-	registerRequestHandler(lsproto.TextDocumentReferencesMapping, (*Server).handleReferences)
-	registerRequestHandler(lsproto.TextDocumentImplementationMapping, (*Server).handleImplementations)
-	registerRequestHandler(lsproto.TextDocumentSignatureHelpMapping, (*Server).handleSignatureHelp)
-	registerRequestHandler(lsproto.TextDocumentFormattingMapping, (*Server).handleDocumentFormat)
-	registerRequestHandler(lsproto.TextDocumentRangeFormattingMapping, (*Server).handleDocumentRangeFormat)
-	registerRequestHandler(lsproto.TextDocumentOnTypeFormattingMapping, (*Server).handleDocumentOnTypeFormat)
-	registerRequestHandler(lsproto.WorkspaceSymbolMapping, (*Server).handleWorkspaceSymbol)
-	registerRequestHandler(lsproto.TextDocumentDocumentSymbolMapping, (*Server).handleDocumentSymbol)
-	registerRequestHandler(lsproto.CompletionItemResolveMapping, (*Server).handleCompletionItemResolve)
+	registerRequestHandler(lsproto.TextDocumentDiagnosticInfo, (*Server).handleDocumentDiagnostic)
+	registerRequestHandler(lsproto.TextDocumentHoverInfo, (*Server).handleHover)
+	registerRequestHandler(lsproto.TextDocumentDefinitionInfo, (*Server).handleDefinition)
+	registerRequestHandler(lsproto.TextDocumentTypeDefinitionInfo, (*Server).handleTypeDefinition)
+	registerRequestHandler(lsproto.TextDocumentCompletionInfo, (*Server).handleCompletion)
+	registerRequestHandler(lsproto.TextDocumentReferencesInfo, (*Server).handleReferences)
+	registerRequestHandler(lsproto.TextDocumentImplementationInfo, (*Server).handleImplementations)
+	registerRequestHandler(lsproto.TextDocumentSignatureHelpInfo, (*Server).handleSignatureHelp)
+	registerRequestHandler(lsproto.TextDocumentFormattingInfo, (*Server).handleDocumentFormat)
+	registerRequestHandler(lsproto.TextDocumentRangeFormattingInfo, (*Server).handleDocumentRangeFormat)
+	registerRequestHandler(lsproto.TextDocumentOnTypeFormattingInfo, (*Server).handleDocumentOnTypeFormat)
+	registerRequestHandler(lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
+	registerRequestHandler(lsproto.TextDocumentDocumentSymbolInfo, (*Server).handleDocumentSymbol)
+	registerRequestHandler(lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
 }
 
-func registerNotificationHandler[Req any](info lsproto.NotificationMapping[Req], fn func(*Server, context.Context, Req) error) {
+func registerNotificationHandler[Req any](info lsproto.NotificationInfo[Req], fn func(*Server, context.Context, Req) error) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
 		params := req.Params.(Req)
 		if err := fn(s, ctx, params); err != nil {
@@ -513,7 +513,7 @@ func registerNotificationHandler[Req any](info lsproto.NotificationMapping[Req],
 	}
 }
 
-func registerRequestHandler[Req, Resp any](info lsproto.RequestToResponseMapping[Req, Resp], fn func(*Server, context.Context, Req) (Resp, error)) {
+func registerRequestHandler[Req, Resp any](info lsproto.RequestInfo[Req, Resp], fn func(*Server, context.Context, Req) (Resp, error)) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
 		params := req.Params.(Req)
 		resp, err := fn(s, ctx, params)

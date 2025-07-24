@@ -615,12 +615,12 @@ function generateCode() {
         const paramType = request.params ? resolveType(request.params) : undefined;
         const paramGoType = paramType ? (paramType.needsPointer ? `*${paramType.name}` : paramType.name) : "any";
 
-        writeLine(`// Type mapping for \`${request.method}\``);
+        writeLine(`// Type mapping info for \`${request.method}\``);
         if (responseTypeName) {
-            writeLine(`var ${methodName}Mapping = RequestToResponseMapping[${paramGoType}, ${responseTypeName}]{Method: Method${methodName}}`);
+            writeLine(`var ${methodName}Info = RequestInfo[${paramGoType}, ${responseTypeName}]{Method: Method${methodName}}`);
         }
         else {
-            writeLine(`var ${methodName}Mapping = NotificationMapping[${paramGoType}]{Method: Method${methodName}}`);
+            writeLine(`var ${methodName}Info = NotificationInfo[${paramGoType}]{Method: Method${methodName}}`);
         }
 
         writeLine("");

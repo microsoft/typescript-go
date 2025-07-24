@@ -78,13 +78,13 @@ func (v *requiredProp) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 
 // Inspired by https://www.youtube.com/watch?v=dab3I-HcTVk
 
-type RequestToResponseMapping[Req, Resp any] struct {
-	_      [0]Req
+type RequestInfo[Params, Resp any] struct {
+	_      [0]Params
 	_      [0]Resp
 	Method Method
 }
 
-type NotificationMapping[Req any] struct {
-	_      [0]Req
+type NotificationInfo[Params any] struct {
+	_      [0]Params
 	Method Method
 }
