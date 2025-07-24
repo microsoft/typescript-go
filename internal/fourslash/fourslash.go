@@ -414,6 +414,10 @@ func (f *FourslashTest) Markers() []*Marker {
 	return f.testData.Markers
 }
 
+func (f *FourslashTest) MarkerNames() []string {
+	return slices.Collect(maps.Keys(f.testData.MarkerPositions))
+}
+
 func (f *FourslashTest) Ranges() []*RangeMarker {
 	return f.testData.Ranges
 }
