@@ -477,10 +477,10 @@ var handlers = map[lsproto.Method]func(*Server, context.Context, *lsproto.Reques
 
 func init() {
 	registerRequestHandler(lsproto.InitializeMapping, (*Server).handleInitialize)
+	registerNotificationHandler(lsproto.InitializedMapping, (*Server).handleInitialized)
 	registerRequestHandler(lsproto.ShutdownMapping, (*Server).handleShutdown)
 	registerNotificationHandler(lsproto.ExitMapping, (*Server).handleExit)
 
-	registerNotificationHandler(lsproto.InitializedMapping, (*Server).handleInitialized)
 	registerNotificationHandler(lsproto.TextDocumentDidOpenMapping, (*Server).handleDidOpen)
 	registerNotificationHandler(lsproto.TextDocumentDidChangeMapping, (*Server).handleDidChange)
 	registerNotificationHandler(lsproto.TextDocumentDidSaveMapping, (*Server).handleDidSave)
