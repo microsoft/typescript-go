@@ -36,6 +36,7 @@ type FourslashTest struct {
 
 	testData *TestData // !!! consolidate test files from test data and script info
 	baseline *baselineFromTest
+	baselineCleanupRegistered bool
 
 	scriptInfos map[string]*scriptInfo
 	converters  *ls.Converters
@@ -776,20 +777,32 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 ) {
 	referenceLocations := f.lookupMarkersOrGetRanges(t, markers)
 
-	if f.baseline != nil {
-		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
-	} else {
+	baselineName := "findAllRef/" + strings.TrimPrefix(t.Name(), "Test")
+	
+	// Initialize baseline if this is the first baseline call for this type in the test
+	if f.baseline == nil || f.baseline.baselineName != baselineName {
+		// If there's an existing baseline with different name, finish it first
+		if f.baseline != nil {
+			baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
+		}
+		
 		f.baseline = &baselineFromTest{
 			content:      &strings.Builder{},
-			baselineName: "findAllRef/" + strings.TrimPrefix(t.Name(), "Test"),
+			baselineName: baselineName,
 			ext:          ".baseline.jsonc",
 		}
 	}
-
-	// empty baseline after test completes
-	defer func() {
-		f.baseline = nil
-	}()
+	
+	// Register cleanup only once per test
+	if !f.baselineCleanupRegistered {
+		f.baselineCleanupRegistered = true
+		t.Cleanup(func() {
+			if f.baseline != nil {
+				baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
+				f.baseline = nil
+			}
+		})
+	}
 
 	for _, markerOrRange := range referenceLocations {
 		// worker in `baselineEachMarkerOrRange`
@@ -822,8 +835,6 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 			}
 		}
 	}
-
-	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
 }
 
 func (f *FourslashTest) VerifyBaselineGoToDefinition(
@@ -832,20 +843,32 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 ) {
 	referenceLocations := f.lookupMarkersOrGetRanges(t, markers)
 
-	if f.baseline != nil {
-		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
-	} else {
+	baselineName := "goToDef/" + strings.TrimPrefix(t.Name(), "Test")
+	
+	// Initialize baseline if this is the first baseline call for this type in the test
+	if f.baseline == nil || f.baseline.baselineName != baselineName {
+		// If there's an existing baseline with different name, finish it first
+		if f.baseline != nil {
+			baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
+		}
+		
 		f.baseline = &baselineFromTest{
 			content:      &strings.Builder{},
-			baselineName: "goToDef/" + strings.TrimPrefix(t.Name(), "Test"),
+			baselineName: baselineName,
 			ext:          ".baseline.jsonc",
 		}
 	}
-
-	// empty baseline after test completes
-	defer func() {
-		f.baseline = nil
-	}()
+	
+	// Register cleanup only once per test
+	if !f.baselineCleanupRegistered {
+		f.baselineCleanupRegistered = true
+		t.Cleanup(func() {
+			if f.baseline != nil {
+				baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
+				f.baseline = nil
+			}
+		})
+	}
 
 	for _, markerOrRange := range referenceLocations {
 		// worker in `baselineEachMarkerOrRange`
@@ -888,8 +911,6 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 			}
 		}
 	}
-
-	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
 }
 
 // Collects all named markers if provided, or defaults to anonymous ranges
