@@ -471,45 +471,45 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 		return io.EOF
 
 	case lsproto.MethodInitialized:
-		return handleNotification(s, ctx, req, lsproto.InitializedHandler, (*Server).handleInitialized)
+		return handleNotification(s, ctx, req, lsproto.InitializedMapping, (*Server).handleInitialized)
 	case lsproto.MethodTextDocumentDidOpen:
-		return handleNotification(s, ctx, req, lsproto.TextDocumentDidOpenHandler, (*Server).handleDidOpen)
+		return handleNotification(s, ctx, req, lsproto.TextDocumentDidOpenMapping, (*Server).handleDidOpen)
 	case lsproto.MethodTextDocumentDidChange:
-		return handleNotification(s, ctx, req, lsproto.TextDocumentDidChangeHandler, (*Server).handleDidChange)
+		return handleNotification(s, ctx, req, lsproto.TextDocumentDidChangeMapping, (*Server).handleDidChange)
 	case lsproto.MethodTextDocumentDidSave:
-		return handleNotification(s, ctx, req, lsproto.TextDocumentDidSaveHandler, (*Server).handleDidSave)
+		return handleNotification(s, ctx, req, lsproto.TextDocumentDidSaveMapping, (*Server).handleDidSave)
 	case lsproto.MethodTextDocumentDidClose:
-		return handleNotification(s, ctx, req, lsproto.TextDocumentDidCloseHandler, (*Server).handleDidClose)
+		return handleNotification(s, ctx, req, lsproto.TextDocumentDidCloseMapping, (*Server).handleDidClose)
 	case lsproto.MethodWorkspaceDidChangeWatchedFiles:
-		return handleNotification(s, ctx, req, lsproto.WorkspaceDidChangeWatchedFilesHandler, (*Server).handleDidChangeWatchedFiles)
+		return handleNotification(s, ctx, req, lsproto.WorkspaceDidChangeWatchedFilesMapping, (*Server).handleDidChangeWatchedFiles)
 	case lsproto.MethodTextDocumentDiagnostic:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentDiagnosticHandler, (*Server).handleDocumentDiagnostic)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentDiagnosticMapping, (*Server).handleDocumentDiagnostic)
 	case lsproto.MethodTextDocumentHover:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentHoverHandler, (*Server).handleHover)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentHoverMapping, (*Server).handleHover)
 	case lsproto.MethodTextDocumentDefinition:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentDefinitionHandler, (*Server).handleDefinition)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentDefinitionMapping, (*Server).handleDefinition)
 	case lsproto.MethodTextDocumentTypeDefinition:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentTypeDefinitionHandler, (*Server).handleTypeDefinition)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentTypeDefinitionMapping, (*Server).handleTypeDefinition)
 	case lsproto.MethodTextDocumentCompletion:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentCompletionHandler, (*Server).handleCompletion)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentCompletionMapping, (*Server).handleCompletion)
 	case lsproto.MethodTextDocumentReferences:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentReferencesHandler, (*Server).handleReferences)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentReferencesMapping, (*Server).handleReferences)
 	case lsproto.MethodTextDocumentImplementation:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentImplementationHandler, (*Server).handleImplementations)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentImplementationMapping, (*Server).handleImplementations)
 	case lsproto.MethodTextDocumentSignatureHelp:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentSignatureHelpHandler, (*Server).handleSignatureHelp)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentSignatureHelpMapping, (*Server).handleSignatureHelp)
 	case lsproto.MethodTextDocumentFormatting:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentFormattingHandler, (*Server).handleDocumentFormat)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentFormattingMapping, (*Server).handleDocumentFormat)
 	case lsproto.MethodTextDocumentRangeFormatting:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentRangeFormattingHandler, (*Server).handleDocumentRangeFormat)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentRangeFormattingMapping, (*Server).handleDocumentRangeFormat)
 	case lsproto.MethodTextDocumentOnTypeFormatting:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentOnTypeFormattingHandler, (*Server).handleDocumentOnTypeFormat)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentOnTypeFormattingMapping, (*Server).handleDocumentOnTypeFormat)
 	case lsproto.MethodWorkspaceSymbol:
-		return handleWithSingleResponse(s, ctx, req, lsproto.WorkspaceSymbolHandler, (*Server).handleWorkspaceSymbol)
+		return handleWithSingleResponse(s, ctx, req, lsproto.WorkspaceSymbolMapping, (*Server).handleWorkspaceSymbol)
 	case lsproto.MethodTextDocumentDocumentSymbol:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentDocumentSymbolHandler, (*Server).handleDocumentSymbol)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentDocumentSymbolMapping, (*Server).handleDocumentSymbol)
 	case lsproto.MethodCompletionItemResolve:
-		return handleWithSingleResponse(s, ctx, req, lsproto.CompletionItemResolveHandler, (*Server).handleCompletionItemResolve)
+		return handleWithSingleResponse(s, ctx, req, lsproto.CompletionItemResolveMapping, (*Server).handleCompletionItemResolve)
 
 	default:
 		s.Log("unknown method", req.Method)

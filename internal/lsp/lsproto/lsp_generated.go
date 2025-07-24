@@ -13158,399 +13158,399 @@ const (
 // textDocument/implementation response type
 type ImplementationResponse = *LocationOrLocationsOrDefinitionLinks
 
-var TextDocumentImplementationHandler = RequestToResponseMapping[*ImplementationParams, ImplementationResponse]{Method: MethodTextDocumentImplementation}
+var TextDocumentImplementationMapping = RequestToResponseMapping[*ImplementationParams, ImplementationResponse]{Method: MethodTextDocumentImplementation}
 
 // textDocument/typeDefinition response type
 type TypeDefinitionResponse = *LocationOrLocationsOrDefinitionLinks
 
-var TextDocumentTypeDefinitionHandler = RequestToResponseMapping[*TypeDefinitionParams, TypeDefinitionResponse]{Method: MethodTextDocumentTypeDefinition}
+var TextDocumentTypeDefinitionMapping = RequestToResponseMapping[*TypeDefinitionParams, TypeDefinitionResponse]{Method: MethodTextDocumentTypeDefinition}
 
 // workspace/workspaceFolders response type
 type WorkspaceFoldersResponse = *[]*WorkspaceFolder
 
-var WorkspaceWorkspaceFoldersHandler = RequestToResponseMapping[any, WorkspaceFoldersResponse]{Method: MethodWorkspaceWorkspaceFolders}
+var WorkspaceWorkspaceFoldersMapping = RequestToResponseMapping[any, WorkspaceFoldersResponse]{Method: MethodWorkspaceWorkspaceFolders}
 
 // workspace/configuration response type
 type ConfigurationResponse = []any
 
-var WorkspaceConfigurationHandler = RequestToResponseMapping[*ConfigurationParams, ConfigurationResponse]{Method: MethodWorkspaceConfiguration}
+var WorkspaceConfigurationMapping = RequestToResponseMapping[*ConfigurationParams, ConfigurationResponse]{Method: MethodWorkspaceConfiguration}
 
 // textDocument/documentColor response type
 type DocumentColorResponse = []*ColorInformation
 
-var TextDocumentDocumentColorHandler = RequestToResponseMapping[*DocumentColorParams, DocumentColorResponse]{Method: MethodTextDocumentDocumentColor}
+var TextDocumentDocumentColorMapping = RequestToResponseMapping[*DocumentColorParams, DocumentColorResponse]{Method: MethodTextDocumentDocumentColor}
 
 // textDocument/colorPresentation response type
 type ColorPresentationResponse = []*ColorPresentation
 
-var TextDocumentColorPresentationHandler = RequestToResponseMapping[*ColorPresentationParams, ColorPresentationResponse]{Method: MethodTextDocumentColorPresentation}
+var TextDocumentColorPresentationMapping = RequestToResponseMapping[*ColorPresentationParams, ColorPresentationResponse]{Method: MethodTextDocumentColorPresentation}
 
 // textDocument/foldingRange response type
 type FoldingRangeResponse = *[]*FoldingRange
 
-var TextDocumentFoldingRangeHandler = RequestToResponseMapping[*FoldingRangeParams, FoldingRangeResponse]{Method: MethodTextDocumentFoldingRange}
+var TextDocumentFoldingRangeMapping = RequestToResponseMapping[*FoldingRangeParams, FoldingRangeResponse]{Method: MethodTextDocumentFoldingRange}
 
 // workspace/foldingRange/refresh response type
 type FoldingRangeRefreshResponse = any
 
-var WorkspaceFoldingRangeRefreshHandler = RequestToResponseMapping[any, FoldingRangeRefreshResponse]{Method: MethodWorkspaceFoldingRangeRefresh}
+var WorkspaceFoldingRangeRefreshMapping = RequestToResponseMapping[any, FoldingRangeRefreshResponse]{Method: MethodWorkspaceFoldingRangeRefresh}
 
 // textDocument/declaration response type
 type DeclarationResponse = *LocationOrLocationsOrDeclarationLinks
 
-var TextDocumentDeclarationHandler = RequestToResponseMapping[*DeclarationParams, DeclarationResponse]{Method: MethodTextDocumentDeclaration}
+var TextDocumentDeclarationMapping = RequestToResponseMapping[*DeclarationParams, DeclarationResponse]{Method: MethodTextDocumentDeclaration}
 
 // textDocument/selectionRange response type
 type SelectionRangeResponse = *[]*SelectionRange
 
-var TextDocumentSelectionRangeHandler = RequestToResponseMapping[*SelectionRangeParams, SelectionRangeResponse]{Method: MethodTextDocumentSelectionRange}
+var TextDocumentSelectionRangeMapping = RequestToResponseMapping[*SelectionRangeParams, SelectionRangeResponse]{Method: MethodTextDocumentSelectionRange}
 
 // window/workDoneProgress/create response type
 type WorkDoneProgressCreateResponse = any
 
-var WindowWorkDoneProgressCreateHandler = RequestToResponseMapping[*WorkDoneProgressCreateParams, WorkDoneProgressCreateResponse]{Method: MethodWindowWorkDoneProgressCreate}
+var WindowWorkDoneProgressCreateMapping = RequestToResponseMapping[*WorkDoneProgressCreateParams, WorkDoneProgressCreateResponse]{Method: MethodWindowWorkDoneProgressCreate}
 
 // textDocument/prepareCallHierarchy response type
 type CallHierarchyPrepareResponse = *[]*CallHierarchyItem
 
-var TextDocumentPrepareCallHierarchyHandler = RequestToResponseMapping[*CallHierarchyPrepareParams, CallHierarchyPrepareResponse]{Method: MethodTextDocumentPrepareCallHierarchy}
+var TextDocumentPrepareCallHierarchyMapping = RequestToResponseMapping[*CallHierarchyPrepareParams, CallHierarchyPrepareResponse]{Method: MethodTextDocumentPrepareCallHierarchy}
 
 // callHierarchy/incomingCalls response type
 type CallHierarchyIncomingCallsResponse = *[]*CallHierarchyIncomingCall
 
-var CallHierarchyIncomingCallsHandler = RequestToResponseMapping[*CallHierarchyIncomingCallsParams, CallHierarchyIncomingCallsResponse]{Method: MethodCallHierarchyIncomingCalls}
+var CallHierarchyIncomingCallsMapping = RequestToResponseMapping[*CallHierarchyIncomingCallsParams, CallHierarchyIncomingCallsResponse]{Method: MethodCallHierarchyIncomingCalls}
 
 // callHierarchy/outgoingCalls response type
 type CallHierarchyOutgoingCallsResponse = *[]*CallHierarchyOutgoingCall
 
-var CallHierarchyOutgoingCallsHandler = RequestToResponseMapping[*CallHierarchyOutgoingCallsParams, CallHierarchyOutgoingCallsResponse]{Method: MethodCallHierarchyOutgoingCalls}
+var CallHierarchyOutgoingCallsMapping = RequestToResponseMapping[*CallHierarchyOutgoingCallsParams, CallHierarchyOutgoingCallsResponse]{Method: MethodCallHierarchyOutgoingCalls}
 
 // textDocument/semanticTokens/full response type
 type SemanticTokensResponse = *SemanticTokens
 
-var TextDocumentSemanticTokensFullHandler = RequestToResponseMapping[*SemanticTokensParams, SemanticTokensResponse]{Method: MethodTextDocumentSemanticTokensFull}
+var TextDocumentSemanticTokensFullMapping = RequestToResponseMapping[*SemanticTokensParams, SemanticTokensResponse]{Method: MethodTextDocumentSemanticTokensFull}
 
 // textDocument/semanticTokens/full/delta response type
 type SemanticTokensDeltaResponse = *SemanticTokensOrSemanticTokensDelta
 
-var TextDocumentSemanticTokensFullDeltaHandler = RequestToResponseMapping[*SemanticTokensDeltaParams, SemanticTokensDeltaResponse]{Method: MethodTextDocumentSemanticTokensFullDelta}
+var TextDocumentSemanticTokensFullDeltaMapping = RequestToResponseMapping[*SemanticTokensDeltaParams, SemanticTokensDeltaResponse]{Method: MethodTextDocumentSemanticTokensFullDelta}
 
 // textDocument/semanticTokens/range response type
 type SemanticTokensRangeResponse = *SemanticTokens
 
-var TextDocumentSemanticTokensRangeHandler = RequestToResponseMapping[*SemanticTokensRangeParams, SemanticTokensRangeResponse]{Method: MethodTextDocumentSemanticTokensRange}
+var TextDocumentSemanticTokensRangeMapping = RequestToResponseMapping[*SemanticTokensRangeParams, SemanticTokensRangeResponse]{Method: MethodTextDocumentSemanticTokensRange}
 
 // workspace/semanticTokens/refresh response type
 type SemanticTokensRefreshResponse = any
 
-var WorkspaceSemanticTokensRefreshHandler = RequestToResponseMapping[any, SemanticTokensRefreshResponse]{Method: MethodWorkspaceSemanticTokensRefresh}
+var WorkspaceSemanticTokensRefreshMapping = RequestToResponseMapping[any, SemanticTokensRefreshResponse]{Method: MethodWorkspaceSemanticTokensRefresh}
 
 // window/showDocument response type
 type ShowDocumentResponse = *ShowDocumentResult
 
-var WindowShowDocumentHandler = RequestToResponseMapping[*ShowDocumentParams, ShowDocumentResponse]{Method: MethodWindowShowDocument}
+var WindowShowDocumentMapping = RequestToResponseMapping[*ShowDocumentParams, ShowDocumentResponse]{Method: MethodWindowShowDocument}
 
 // textDocument/linkedEditingRange response type
 type LinkedEditingRangeResponse = *LinkedEditingRanges
 
-var TextDocumentLinkedEditingRangeHandler = RequestToResponseMapping[*LinkedEditingRangeParams, LinkedEditingRangeResponse]{Method: MethodTextDocumentLinkedEditingRange}
+var TextDocumentLinkedEditingRangeMapping = RequestToResponseMapping[*LinkedEditingRangeParams, LinkedEditingRangeResponse]{Method: MethodTextDocumentLinkedEditingRange}
 
 // workspace/willCreateFiles response type
 type WillCreateFilesResponse = *WorkspaceEdit
 
-var WorkspaceWillCreateFilesHandler = RequestToResponseMapping[*CreateFilesParams, WillCreateFilesResponse]{Method: MethodWorkspaceWillCreateFiles}
+var WorkspaceWillCreateFilesMapping = RequestToResponseMapping[*CreateFilesParams, WillCreateFilesResponse]{Method: MethodWorkspaceWillCreateFiles}
 
 // workspace/willRenameFiles response type
 type WillRenameFilesResponse = *WorkspaceEdit
 
-var WorkspaceWillRenameFilesHandler = RequestToResponseMapping[*RenameFilesParams, WillRenameFilesResponse]{Method: MethodWorkspaceWillRenameFiles}
+var WorkspaceWillRenameFilesMapping = RequestToResponseMapping[*RenameFilesParams, WillRenameFilesResponse]{Method: MethodWorkspaceWillRenameFiles}
 
 // workspace/willDeleteFiles response type
 type WillDeleteFilesResponse = *WorkspaceEdit
 
-var WorkspaceWillDeleteFilesHandler = RequestToResponseMapping[*DeleteFilesParams, WillDeleteFilesResponse]{Method: MethodWorkspaceWillDeleteFiles}
+var WorkspaceWillDeleteFilesMapping = RequestToResponseMapping[*DeleteFilesParams, WillDeleteFilesResponse]{Method: MethodWorkspaceWillDeleteFiles}
 
 // textDocument/moniker response type
 type MonikerResponse = *[]*Moniker
 
-var TextDocumentMonikerHandler = RequestToResponseMapping[*MonikerParams, MonikerResponse]{Method: MethodTextDocumentMoniker}
+var TextDocumentMonikerMapping = RequestToResponseMapping[*MonikerParams, MonikerResponse]{Method: MethodTextDocumentMoniker}
 
 // textDocument/prepareTypeHierarchy response type
 type TypeHierarchyPrepareResponse = *[]*TypeHierarchyItem
 
-var TextDocumentPrepareTypeHierarchyHandler = RequestToResponseMapping[*TypeHierarchyPrepareParams, TypeHierarchyPrepareResponse]{Method: MethodTextDocumentPrepareTypeHierarchy}
+var TextDocumentPrepareTypeHierarchyMapping = RequestToResponseMapping[*TypeHierarchyPrepareParams, TypeHierarchyPrepareResponse]{Method: MethodTextDocumentPrepareTypeHierarchy}
 
 // typeHierarchy/supertypes response type
 type TypeHierarchySupertypesResponse = *[]*TypeHierarchyItem
 
-var TypeHierarchySupertypesHandler = RequestToResponseMapping[*TypeHierarchySupertypesParams, TypeHierarchySupertypesResponse]{Method: MethodTypeHierarchySupertypes}
+var TypeHierarchySupertypesMapping = RequestToResponseMapping[*TypeHierarchySupertypesParams, TypeHierarchySupertypesResponse]{Method: MethodTypeHierarchySupertypes}
 
 // typeHierarchy/subtypes response type
 type TypeHierarchySubtypesResponse = *[]*TypeHierarchyItem
 
-var TypeHierarchySubtypesHandler = RequestToResponseMapping[*TypeHierarchySubtypesParams, TypeHierarchySubtypesResponse]{Method: MethodTypeHierarchySubtypes}
+var TypeHierarchySubtypesMapping = RequestToResponseMapping[*TypeHierarchySubtypesParams, TypeHierarchySubtypesResponse]{Method: MethodTypeHierarchySubtypes}
 
 // textDocument/inlineValue response type
 type InlineValueResponse = *[]InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression
 
-var TextDocumentInlineValueHandler = RequestToResponseMapping[*InlineValueParams, InlineValueResponse]{Method: MethodTextDocumentInlineValue}
+var TextDocumentInlineValueMapping = RequestToResponseMapping[*InlineValueParams, InlineValueResponse]{Method: MethodTextDocumentInlineValue}
 
 // workspace/inlineValue/refresh response type
 type InlineValueRefreshResponse = any
 
-var WorkspaceInlineValueRefreshHandler = RequestToResponseMapping[any, InlineValueRefreshResponse]{Method: MethodWorkspaceInlineValueRefresh}
+var WorkspaceInlineValueRefreshMapping = RequestToResponseMapping[any, InlineValueRefreshResponse]{Method: MethodWorkspaceInlineValueRefresh}
 
 // textDocument/inlayHint response type
 type InlayHintResponse = *[]*InlayHint
 
-var TextDocumentInlayHintHandler = RequestToResponseMapping[*InlayHintParams, InlayHintResponse]{Method: MethodTextDocumentInlayHint}
+var TextDocumentInlayHintMapping = RequestToResponseMapping[*InlayHintParams, InlayHintResponse]{Method: MethodTextDocumentInlayHint}
 
 // inlayHint/resolve response type
 type InlayHintResolveResponse = *InlayHint
 
-var InlayHintResolveHandler = RequestToResponseMapping[*InlayHint, InlayHintResolveResponse]{Method: MethodInlayHintResolve}
+var InlayHintResolveMapping = RequestToResponseMapping[*InlayHint, InlayHintResolveResponse]{Method: MethodInlayHintResolve}
 
 // workspace/inlayHint/refresh response type
 type InlayHintRefreshResponse = any
 
-var WorkspaceInlayHintRefreshHandler = RequestToResponseMapping[any, InlayHintRefreshResponse]{Method: MethodWorkspaceInlayHintRefresh}
+var WorkspaceInlayHintRefreshMapping = RequestToResponseMapping[any, InlayHintRefreshResponse]{Method: MethodWorkspaceInlayHintRefresh}
 
 // textDocument/diagnostic response type
 type DocumentDiagnosticResponse = RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport
 
-var TextDocumentDiagnosticHandler = RequestToResponseMapping[*DocumentDiagnosticParams, DocumentDiagnosticResponse]{Method: MethodTextDocumentDiagnostic}
+var TextDocumentDiagnosticMapping = RequestToResponseMapping[*DocumentDiagnosticParams, DocumentDiagnosticResponse]{Method: MethodTextDocumentDiagnostic}
 
 // workspace/diagnostic response type
 type WorkspaceDiagnosticResponse = *WorkspaceDiagnosticReport
 
-var WorkspaceDiagnosticHandler = RequestToResponseMapping[*WorkspaceDiagnosticParams, WorkspaceDiagnosticResponse]{Method: MethodWorkspaceDiagnostic}
+var WorkspaceDiagnosticMapping = RequestToResponseMapping[*WorkspaceDiagnosticParams, WorkspaceDiagnosticResponse]{Method: MethodWorkspaceDiagnostic}
 
 // workspace/diagnostic/refresh response type
 type DiagnosticRefreshResponse = any
 
-var WorkspaceDiagnosticRefreshHandler = RequestToResponseMapping[any, DiagnosticRefreshResponse]{Method: MethodWorkspaceDiagnosticRefresh}
+var WorkspaceDiagnosticRefreshMapping = RequestToResponseMapping[any, DiagnosticRefreshResponse]{Method: MethodWorkspaceDiagnosticRefresh}
 
 // textDocument/inlineCompletion response type
 type InlineCompletionResponse = *InlineCompletionListOrInlineCompletionItems
 
-var TextDocumentInlineCompletionHandler = RequestToResponseMapping[*InlineCompletionParams, InlineCompletionResponse]{Method: MethodTextDocumentInlineCompletion}
+var TextDocumentInlineCompletionMapping = RequestToResponseMapping[*InlineCompletionParams, InlineCompletionResponse]{Method: MethodTextDocumentInlineCompletion}
 
 // workspace/textDocumentContent response type
 type TextDocumentContentResponse = *TextDocumentContentResult
 
-var WorkspaceTextDocumentContentHandler = RequestToResponseMapping[*TextDocumentContentParams, TextDocumentContentResponse]{Method: MethodWorkspaceTextDocumentContent}
+var WorkspaceTextDocumentContentMapping = RequestToResponseMapping[*TextDocumentContentParams, TextDocumentContentResponse]{Method: MethodWorkspaceTextDocumentContent}
 
 // workspace/textDocumentContent/refresh response type
 type TextDocumentContentRefreshResponse = any
 
-var WorkspaceTextDocumentContentRefreshHandler = RequestToResponseMapping[*TextDocumentContentRefreshParams, TextDocumentContentRefreshResponse]{Method: MethodWorkspaceTextDocumentContentRefresh}
+var WorkspaceTextDocumentContentRefreshMapping = RequestToResponseMapping[*TextDocumentContentRefreshParams, TextDocumentContentRefreshResponse]{Method: MethodWorkspaceTextDocumentContentRefresh}
 
 // client/registerCapability response type
 type RegistrationResponse = any
 
-var ClientRegisterCapabilityHandler = RequestToResponseMapping[*RegistrationParams, RegistrationResponse]{Method: MethodClientRegisterCapability}
+var ClientRegisterCapabilityMapping = RequestToResponseMapping[*RegistrationParams, RegistrationResponse]{Method: MethodClientRegisterCapability}
 
 // client/unregisterCapability response type
 type UnregistrationResponse = any
 
-var ClientUnregisterCapabilityHandler = RequestToResponseMapping[*UnregistrationParams, UnregistrationResponse]{Method: MethodClientUnregisterCapability}
+var ClientUnregisterCapabilityMapping = RequestToResponseMapping[*UnregistrationParams, UnregistrationResponse]{Method: MethodClientUnregisterCapability}
 
 // initialize response type
 type InitializeResponse = *InitializeResult
 
-var InitializeHandler = RequestToResponseMapping[*InitializeParams, InitializeResponse]{Method: MethodInitialize}
+var InitializeMapping = RequestToResponseMapping[*InitializeParams, InitializeResponse]{Method: MethodInitialize}
 
 // shutdown response type
 type ShutdownResponse = any
 
-var ShutdownHandler = RequestToResponseMapping[any, ShutdownResponse]{Method: MethodShutdown}
+var ShutdownMapping = RequestToResponseMapping[any, ShutdownResponse]{Method: MethodShutdown}
 
 // window/showMessageRequest response type
 type ShowMessageResponse = *MessageActionItem
 
-var WindowShowMessageRequestHandler = RequestToResponseMapping[*ShowMessageRequestParams, ShowMessageResponse]{Method: MethodWindowShowMessageRequest}
+var WindowShowMessageRequestMapping = RequestToResponseMapping[*ShowMessageRequestParams, ShowMessageResponse]{Method: MethodWindowShowMessageRequest}
 
 // textDocument/willSaveWaitUntil response type
 type WillSaveTextDocumentWaitUntilResponse = *[]*TextEdit
 
-var TextDocumentWillSaveWaitUntilHandler = RequestToResponseMapping[*WillSaveTextDocumentParams, WillSaveTextDocumentWaitUntilResponse]{Method: MethodTextDocumentWillSaveWaitUntil}
+var TextDocumentWillSaveWaitUntilMapping = RequestToResponseMapping[*WillSaveTextDocumentParams, WillSaveTextDocumentWaitUntilResponse]{Method: MethodTextDocumentWillSaveWaitUntil}
 
 // textDocument/completion response type
 type CompletionResponse = *CompletionItemsOrCompletionList
 
-var TextDocumentCompletionHandler = RequestToResponseMapping[*CompletionParams, CompletionResponse]{Method: MethodTextDocumentCompletion}
+var TextDocumentCompletionMapping = RequestToResponseMapping[*CompletionParams, CompletionResponse]{Method: MethodTextDocumentCompletion}
 
 // completionItem/resolve response type
 type CompletionResolveResponse = *CompletionItem
 
-var CompletionItemResolveHandler = RequestToResponseMapping[*CompletionItem, CompletionResolveResponse]{Method: MethodCompletionItemResolve}
+var CompletionItemResolveMapping = RequestToResponseMapping[*CompletionItem, CompletionResolveResponse]{Method: MethodCompletionItemResolve}
 
 // textDocument/hover response type
 type HoverResponse = *Hover
 
-var TextDocumentHoverHandler = RequestToResponseMapping[*HoverParams, HoverResponse]{Method: MethodTextDocumentHover}
+var TextDocumentHoverMapping = RequestToResponseMapping[*HoverParams, HoverResponse]{Method: MethodTextDocumentHover}
 
 // textDocument/signatureHelp response type
 type SignatureHelpResponse = *SignatureHelp
 
-var TextDocumentSignatureHelpHandler = RequestToResponseMapping[*SignatureHelpParams, SignatureHelpResponse]{Method: MethodTextDocumentSignatureHelp}
+var TextDocumentSignatureHelpMapping = RequestToResponseMapping[*SignatureHelpParams, SignatureHelpResponse]{Method: MethodTextDocumentSignatureHelp}
 
 // textDocument/definition response type
 type DefinitionResponse = *LocationOrLocationsOrDefinitionLinks
 
-var TextDocumentDefinitionHandler = RequestToResponseMapping[*DefinitionParams, DefinitionResponse]{Method: MethodTextDocumentDefinition}
+var TextDocumentDefinitionMapping = RequestToResponseMapping[*DefinitionParams, DefinitionResponse]{Method: MethodTextDocumentDefinition}
 
 // textDocument/references response type
 type ReferencesResponse = *[]Location
 
-var TextDocumentReferencesHandler = RequestToResponseMapping[*ReferenceParams, ReferencesResponse]{Method: MethodTextDocumentReferences}
+var TextDocumentReferencesMapping = RequestToResponseMapping[*ReferenceParams, ReferencesResponse]{Method: MethodTextDocumentReferences}
 
 // textDocument/documentHighlight response type
 type DocumentHighlightResponse = *[]*DocumentHighlight
 
-var TextDocumentDocumentHighlightHandler = RequestToResponseMapping[*DocumentHighlightParams, DocumentHighlightResponse]{Method: MethodTextDocumentDocumentHighlight}
+var TextDocumentDocumentHighlightMapping = RequestToResponseMapping[*DocumentHighlightParams, DocumentHighlightResponse]{Method: MethodTextDocumentDocumentHighlight}
 
 // textDocument/documentSymbol response type
 type DocumentSymbolResponse = *SymbolInformationsOrDocumentSymbols
 
-var TextDocumentDocumentSymbolHandler = RequestToResponseMapping[*DocumentSymbolParams, DocumentSymbolResponse]{Method: MethodTextDocumentDocumentSymbol}
+var TextDocumentDocumentSymbolMapping = RequestToResponseMapping[*DocumentSymbolParams, DocumentSymbolResponse]{Method: MethodTextDocumentDocumentSymbol}
 
 // textDocument/codeAction response type
 type CodeActionResponse = *[]CommandOrCodeAction
 
-var TextDocumentCodeActionHandler = RequestToResponseMapping[*CodeActionParams, CodeActionResponse]{Method: MethodTextDocumentCodeAction}
+var TextDocumentCodeActionMapping = RequestToResponseMapping[*CodeActionParams, CodeActionResponse]{Method: MethodTextDocumentCodeAction}
 
 // codeAction/resolve response type
 type CodeActionResolveResponse = *CodeAction
 
-var CodeActionResolveHandler = RequestToResponseMapping[*CodeAction, CodeActionResolveResponse]{Method: MethodCodeActionResolve}
+var CodeActionResolveMapping = RequestToResponseMapping[*CodeAction, CodeActionResolveResponse]{Method: MethodCodeActionResolve}
 
 // workspace/symbol response type
 type WorkspaceSymbolResponse = *SymbolInformationsOrWorkspaceSymbols
 
-var WorkspaceSymbolHandler = RequestToResponseMapping[*WorkspaceSymbolParams, WorkspaceSymbolResponse]{Method: MethodWorkspaceSymbol}
+var WorkspaceSymbolMapping = RequestToResponseMapping[*WorkspaceSymbolParams, WorkspaceSymbolResponse]{Method: MethodWorkspaceSymbol}
 
 // workspaceSymbol/resolve response type
 type WorkspaceSymbolResolveResponse = *WorkspaceSymbol
 
-var WorkspaceSymbolResolveHandler = RequestToResponseMapping[*WorkspaceSymbol, WorkspaceSymbolResolveResponse]{Method: MethodWorkspaceSymbolResolve}
+var WorkspaceSymbolResolveMapping = RequestToResponseMapping[*WorkspaceSymbol, WorkspaceSymbolResolveResponse]{Method: MethodWorkspaceSymbolResolve}
 
 // textDocument/codeLens response type
 type CodeLensResponse = *[]*CodeLens
 
-var TextDocumentCodeLensHandler = RequestToResponseMapping[*CodeLensParams, CodeLensResponse]{Method: MethodTextDocumentCodeLens}
+var TextDocumentCodeLensMapping = RequestToResponseMapping[*CodeLensParams, CodeLensResponse]{Method: MethodTextDocumentCodeLens}
 
 // codeLens/resolve response type
 type CodeLensResolveResponse = *CodeLens
 
-var CodeLensResolveHandler = RequestToResponseMapping[*CodeLens, CodeLensResolveResponse]{Method: MethodCodeLensResolve}
+var CodeLensResolveMapping = RequestToResponseMapping[*CodeLens, CodeLensResolveResponse]{Method: MethodCodeLensResolve}
 
 // workspace/codeLens/refresh response type
 type CodeLensRefreshResponse = any
 
-var WorkspaceCodeLensRefreshHandler = RequestToResponseMapping[any, CodeLensRefreshResponse]{Method: MethodWorkspaceCodeLensRefresh}
+var WorkspaceCodeLensRefreshMapping = RequestToResponseMapping[any, CodeLensRefreshResponse]{Method: MethodWorkspaceCodeLensRefresh}
 
 // textDocument/documentLink response type
 type DocumentLinkResponse = *[]*DocumentLink
 
-var TextDocumentDocumentLinkHandler = RequestToResponseMapping[*DocumentLinkParams, DocumentLinkResponse]{Method: MethodTextDocumentDocumentLink}
+var TextDocumentDocumentLinkMapping = RequestToResponseMapping[*DocumentLinkParams, DocumentLinkResponse]{Method: MethodTextDocumentDocumentLink}
 
 // documentLink/resolve response type
 type DocumentLinkResolveResponse = *DocumentLink
 
-var DocumentLinkResolveHandler = RequestToResponseMapping[*DocumentLink, DocumentLinkResolveResponse]{Method: MethodDocumentLinkResolve}
+var DocumentLinkResolveMapping = RequestToResponseMapping[*DocumentLink, DocumentLinkResolveResponse]{Method: MethodDocumentLinkResolve}
 
 // textDocument/formatting response type
 type DocumentFormattingResponse = *[]*TextEdit
 
-var TextDocumentFormattingHandler = RequestToResponseMapping[*DocumentFormattingParams, DocumentFormattingResponse]{Method: MethodTextDocumentFormatting}
+var TextDocumentFormattingMapping = RequestToResponseMapping[*DocumentFormattingParams, DocumentFormattingResponse]{Method: MethodTextDocumentFormatting}
 
 // textDocument/rangeFormatting response type
 type DocumentRangeFormattingResponse = *[]*TextEdit
 
-var TextDocumentRangeFormattingHandler = RequestToResponseMapping[*DocumentRangeFormattingParams, DocumentRangeFormattingResponse]{Method: MethodTextDocumentRangeFormatting}
+var TextDocumentRangeFormattingMapping = RequestToResponseMapping[*DocumentRangeFormattingParams, DocumentRangeFormattingResponse]{Method: MethodTextDocumentRangeFormatting}
 
 // textDocument/rangesFormatting response type
 type DocumentRangesFormattingResponse = *[]*TextEdit
 
-var TextDocumentRangesFormattingHandler = RequestToResponseMapping[*DocumentRangesFormattingParams, DocumentRangesFormattingResponse]{Method: MethodTextDocumentRangesFormatting}
+var TextDocumentRangesFormattingMapping = RequestToResponseMapping[*DocumentRangesFormattingParams, DocumentRangesFormattingResponse]{Method: MethodTextDocumentRangesFormatting}
 
 // textDocument/onTypeFormatting response type
 type DocumentOnTypeFormattingResponse = *[]*TextEdit
 
-var TextDocumentOnTypeFormattingHandler = RequestToResponseMapping[*DocumentOnTypeFormattingParams, DocumentOnTypeFormattingResponse]{Method: MethodTextDocumentOnTypeFormatting}
+var TextDocumentOnTypeFormattingMapping = RequestToResponseMapping[*DocumentOnTypeFormattingParams, DocumentOnTypeFormattingResponse]{Method: MethodTextDocumentOnTypeFormatting}
 
 // textDocument/rename response type
 type RenameResponse = *WorkspaceEdit
 
-var TextDocumentRenameHandler = RequestToResponseMapping[*RenameParams, RenameResponse]{Method: MethodTextDocumentRename}
+var TextDocumentRenameMapping = RequestToResponseMapping[*RenameParams, RenameResponse]{Method: MethodTextDocumentRename}
 
 // textDocument/prepareRename response type
 type PrepareRenameResponse = *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior
 
-var TextDocumentPrepareRenameHandler = RequestToResponseMapping[*PrepareRenameParams, PrepareRenameResponse]{Method: MethodTextDocumentPrepareRename}
+var TextDocumentPrepareRenameMapping = RequestToResponseMapping[*PrepareRenameParams, PrepareRenameResponse]{Method: MethodTextDocumentPrepareRename}
 
 // workspace/executeCommand response type
 type ExecuteCommandResponse = *any
 
-var WorkspaceExecuteCommandHandler = RequestToResponseMapping[*ExecuteCommandParams, ExecuteCommandResponse]{Method: MethodWorkspaceExecuteCommand}
+var WorkspaceExecuteCommandMapping = RequestToResponseMapping[*ExecuteCommandParams, ExecuteCommandResponse]{Method: MethodWorkspaceExecuteCommand}
 
 // workspace/applyEdit response type
 type ApplyWorkspaceEditResponse = *ApplyWorkspaceEditResult
 
-var WorkspaceApplyEditHandler = RequestToResponseMapping[*ApplyWorkspaceEditParams, ApplyWorkspaceEditResponse]{Method: MethodWorkspaceApplyEdit}
+var WorkspaceApplyEditMapping = RequestToResponseMapping[*ApplyWorkspaceEditParams, ApplyWorkspaceEditResponse]{Method: MethodWorkspaceApplyEdit}
 
-var WorkspaceDidChangeWorkspaceFoldersHandler = NotificationMapping[*DidChangeWorkspaceFoldersParams]{Method: MethodWorkspaceDidChangeWorkspaceFolders}
+var WorkspaceDidChangeWorkspaceFoldersMapping = NotificationMapping[*DidChangeWorkspaceFoldersParams]{Method: MethodWorkspaceDidChangeWorkspaceFolders}
 
-var WindowWorkDoneProgressCancelHandler = NotificationMapping[*WorkDoneProgressCancelParams]{Method: MethodWindowWorkDoneProgressCancel}
+var WindowWorkDoneProgressCancelMapping = NotificationMapping[*WorkDoneProgressCancelParams]{Method: MethodWindowWorkDoneProgressCancel}
 
-var WorkspaceDidCreateFilesHandler = NotificationMapping[*CreateFilesParams]{Method: MethodWorkspaceDidCreateFiles}
+var WorkspaceDidCreateFilesMapping = NotificationMapping[*CreateFilesParams]{Method: MethodWorkspaceDidCreateFiles}
 
-var WorkspaceDidRenameFilesHandler = NotificationMapping[*RenameFilesParams]{Method: MethodWorkspaceDidRenameFiles}
+var WorkspaceDidRenameFilesMapping = NotificationMapping[*RenameFilesParams]{Method: MethodWorkspaceDidRenameFiles}
 
-var WorkspaceDidDeleteFilesHandler = NotificationMapping[*DeleteFilesParams]{Method: MethodWorkspaceDidDeleteFiles}
+var WorkspaceDidDeleteFilesMapping = NotificationMapping[*DeleteFilesParams]{Method: MethodWorkspaceDidDeleteFiles}
 
-var NotebookDocumentDidOpenHandler = NotificationMapping[*DidOpenNotebookDocumentParams]{Method: MethodNotebookDocumentDidOpen}
+var NotebookDocumentDidOpenMapping = NotificationMapping[*DidOpenNotebookDocumentParams]{Method: MethodNotebookDocumentDidOpen}
 
-var NotebookDocumentDidChangeHandler = NotificationMapping[*DidChangeNotebookDocumentParams]{Method: MethodNotebookDocumentDidChange}
+var NotebookDocumentDidChangeMapping = NotificationMapping[*DidChangeNotebookDocumentParams]{Method: MethodNotebookDocumentDidChange}
 
-var NotebookDocumentDidSaveHandler = NotificationMapping[*DidSaveNotebookDocumentParams]{Method: MethodNotebookDocumentDidSave}
+var NotebookDocumentDidSaveMapping = NotificationMapping[*DidSaveNotebookDocumentParams]{Method: MethodNotebookDocumentDidSave}
 
-var NotebookDocumentDidCloseHandler = NotificationMapping[*DidCloseNotebookDocumentParams]{Method: MethodNotebookDocumentDidClose}
+var NotebookDocumentDidCloseMapping = NotificationMapping[*DidCloseNotebookDocumentParams]{Method: MethodNotebookDocumentDidClose}
 
-var InitializedHandler = NotificationMapping[*InitializedParams]{Method: MethodInitialized}
+var InitializedMapping = NotificationMapping[*InitializedParams]{Method: MethodInitialized}
 
-var ExitHandler = NotificationMapping[any]{Method: MethodExit}
+var ExitMapping = NotificationMapping[any]{Method: MethodExit}
 
-var WorkspaceDidChangeConfigurationHandler = NotificationMapping[*DidChangeConfigurationParams]{Method: MethodWorkspaceDidChangeConfiguration}
+var WorkspaceDidChangeConfigurationMapping = NotificationMapping[*DidChangeConfigurationParams]{Method: MethodWorkspaceDidChangeConfiguration}
 
-var WindowShowMessageHandler = NotificationMapping[*ShowMessageParams]{Method: MethodWindowShowMessage}
+var WindowShowMessageMapping = NotificationMapping[*ShowMessageParams]{Method: MethodWindowShowMessage}
 
-var WindowLogMessageHandler = NotificationMapping[*LogMessageParams]{Method: MethodWindowLogMessage}
+var WindowLogMessageMapping = NotificationMapping[*LogMessageParams]{Method: MethodWindowLogMessage}
 
-var TelemetryEventHandler = NotificationMapping[any]{Method: MethodTelemetryEvent}
+var TelemetryEventMapping = NotificationMapping[any]{Method: MethodTelemetryEvent}
 
-var TextDocumentDidOpenHandler = NotificationMapping[*DidOpenTextDocumentParams]{Method: MethodTextDocumentDidOpen}
+var TextDocumentDidOpenMapping = NotificationMapping[*DidOpenTextDocumentParams]{Method: MethodTextDocumentDidOpen}
 
-var TextDocumentDidChangeHandler = NotificationMapping[*DidChangeTextDocumentParams]{Method: MethodTextDocumentDidChange}
+var TextDocumentDidChangeMapping = NotificationMapping[*DidChangeTextDocumentParams]{Method: MethodTextDocumentDidChange}
 
-var TextDocumentDidCloseHandler = NotificationMapping[*DidCloseTextDocumentParams]{Method: MethodTextDocumentDidClose}
+var TextDocumentDidCloseMapping = NotificationMapping[*DidCloseTextDocumentParams]{Method: MethodTextDocumentDidClose}
 
-var TextDocumentDidSaveHandler = NotificationMapping[*DidSaveTextDocumentParams]{Method: MethodTextDocumentDidSave}
+var TextDocumentDidSaveMapping = NotificationMapping[*DidSaveTextDocumentParams]{Method: MethodTextDocumentDidSave}
 
-var TextDocumentWillSaveHandler = NotificationMapping[*WillSaveTextDocumentParams]{Method: MethodTextDocumentWillSave}
+var TextDocumentWillSaveMapping = NotificationMapping[*WillSaveTextDocumentParams]{Method: MethodTextDocumentWillSave}
 
-var WorkspaceDidChangeWatchedFilesHandler = NotificationMapping[*DidChangeWatchedFilesParams]{Method: MethodWorkspaceDidChangeWatchedFiles}
+var WorkspaceDidChangeWatchedFilesMapping = NotificationMapping[*DidChangeWatchedFilesParams]{Method: MethodWorkspaceDidChangeWatchedFiles}
 
-var TextDocumentPublishDiagnosticsHandler = NotificationMapping[*PublishDiagnosticsParams]{Method: MethodTextDocumentPublishDiagnostics}
+var TextDocumentPublishDiagnosticsMapping = NotificationMapping[*PublishDiagnosticsParams]{Method: MethodTextDocumentPublishDiagnostics}
 
-var SetTraceHandler = NotificationMapping[*SetTraceParams]{Method: MethodSetTrace}
+var SetTraceMapping = NotificationMapping[*SetTraceParams]{Method: MethodSetTrace}
 
-var LogTraceHandler = NotificationMapping[*LogTraceParams]{Method: MethodLogTrace}
+var LogTraceMapping = NotificationMapping[*LogTraceParams]{Method: MethodLogTrace}
 
-var CancelRequestHandler = NotificationMapping[*CancelParams]{Method: MethodCancelRequest}
+var CancelRequestMapping = NotificationMapping[*CancelParams]{Method: MethodCancelRequest}
 
-var ProgressHandler = NotificationMapping[*ProgressParams]{Method: MethodProgress}
+var ProgressMapping = NotificationMapping[*ProgressParams]{Method: MethodProgress}
 
 // Union types
 
