@@ -24,6 +24,9 @@ function getFailingTests(): Set<string> {
 }
 
 function getManualTests(): Set<string> {
+    if (!fs.existsSync(manualTestsPath)) {
+        return new Set();
+    }
     const manualTestsList = fs.readFileSync(manualTestsPath, "utf-8").split("\n").map(line => line.trim()).filter(line => line.length > 0);
     return new Set(manualTestsList);
 }
@@ -73,10 +76,8 @@ function parseTypeScriptFiles(failingTests: Set<string>, manualTests: Set<string
                     return;
                 }
                 const testContent = generateGoTest(failingTests, test);
-                if (testContent) {
-                    const testPath = path.join(outputDir, `${test.name}_test.go`);
-                    fs.writeFileSync(testPath, testContent, "utf-8");
-                }
+                const testPath = path.join(outputDir, `${test.name}_test.go`);
+                fs.writeFileSync(testPath, testContent, "utf-8");
             }
         }
     });
