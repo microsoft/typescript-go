@@ -27,7 +27,7 @@ func (l *LanguageService) ProvideDiagnostics(ctx context.Context, uri lsproto.Do
 	}
 
 	return lsproto.RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{
-		RelatedFullDocumentDiagnosticReport: &lsproto.RelatedFullDocumentDiagnosticReport{
+		FullDocumentDiagnosticReport: &lsproto.RelatedFullDocumentDiagnosticReport{
 			FullDocumentDiagnosticReport: lsproto.FullDocumentDiagnosticReport{
 				Items: toLSPDiagnostics(l.converters, diagnostics...),
 			},

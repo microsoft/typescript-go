@@ -556,7 +556,7 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *Completi
 	if !resultOk {
 		t.Fatalf(prefix+"Unexpected response type for completion request: %T", resMsg.AsResponse().Result)
 	}
-	f.verifyCompletionsResult(t, f.currentCaretPosition, result.CompletionList, expected, prefix)
+	f.verifyCompletionsResult(t, f.currentCaretPosition, result.List, expected, prefix)
 }
 
 func (f *FourslashTest) verifyCompletionsResult(
@@ -1068,7 +1068,7 @@ func (f *FourslashTest) editScript(t *testing.T, fileName string, start int, end
 		},
 		ContentChanges: []lsproto.TextDocumentContentChangePartialOrWholeDocument{
 			{
-				TextDocumentContentChangePartial: &lsproto.TextDocumentContentChangePartial{
+				Partial: &lsproto.TextDocumentContentChangePartial{
 					Range: changeRange,
 					Text:  newText,
 				},

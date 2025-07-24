@@ -209,7 +209,7 @@ function handleOrType(orType: OrType, nullToPointer: boolean | undefined): GoTyp
     // Even if only one type remains after filtering null, we still need to create a union type
     // to preserve the nullable behavior (all fields nil = null)
 
-    const memberNames = nonNullTypes.map(type => {
+    let memberNames = nonNullTypes.map(type => {
         if (type.kind === "reference") {
             return type.name;
         }
@@ -301,8 +301,9 @@ function handleOrType(orType: OrType, nullToPointer: boolean | undefined): GoTyp
 
     if (commonPrefix.length > 0) {
         const trimmedMemberNames = memberNames.map(name => name.slice(commonPrefix.length));
-        if (!trimmedMemberNames.some(name => name === "s")) {
+        if (trimmedMemberNames.every(name => name)) {
             unionTypeName = commonPrefix + trimmedMemberNames.join("Or");
+            memberNames = trimmedMemberNames;
         }
         else {
             unionTypeName = memberNames.join("Or");

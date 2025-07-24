@@ -2317,7 +2317,7 @@ func (s *InlineCompletionList) UnmarshalJSON(data []byte) error {
 // Proposed.
 type InlineCompletionItem struct {
 	// The text to replace the range with. Must be set.
-	InsertText StringOrValue `json:"insertText"`
+	InsertText StringOrStringValue `json:"insertText"`
 
 	// A text that is used to decide if this inline completion should be shown. When `falsy` the InlineCompletionItem.insertText is used.
 	FilterText *string `json:"filterText,omitempty"`
@@ -2346,10 +2346,10 @@ func (s *InlineCompletionItem) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		InsertText StringOrValue `json:"insertText"`
-		FilterText *string       `json:"filterText,omitempty"`
-		Range      *Range        `json:"range,omitempty"`
-		Command    *Command      `json:"command,omitempty"`
+		InsertText StringOrStringValue `json:"insertText"`
+		FilterText *string             `json:"filterText,omitempty"`
+		Range      *Range              `json:"range,omitempty"`
+		Command    *Command            `json:"command,omitempty"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -4073,7 +4073,7 @@ type WorkspaceSymbol struct {
 	// capability `workspace.symbol.resolveSupport`.
 	//
 	// See SymbolInformation#location for more details.
-	Location LocationOrUriOnly `json:"location"`
+	Location LocationOrLocationUriOnly `json:"location"`
 
 	// A data entry field that is preserved on a workspace symbol between a
 	// workspace symbol request and a workspace symbol resolve request.
@@ -4099,8 +4099,8 @@ func (s *WorkspaceSymbol) UnmarshalJSON(data []byte) error {
 	type temp struct {
 		BaseSymbolInformation
 
-		Location LocationOrUriOnly `json:"location"`
-		Data     *any              `json:"data,omitempty"`
+		Location LocationOrLocationUriOnly `json:"location"`
+		Data     *any                      `json:"data,omitempty"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -13246,7 +13246,7 @@ type SemanticTokensResponse = *SemanticTokens
 var TextDocumentSemanticTokensFullInfo = RequestInfo[*SemanticTokensParams, SemanticTokensResponse]{Method: MethodTextDocumentSemanticTokensFull}
 
 // Response type for `textDocument/semanticTokens/full/delta`
-type SemanticTokensDeltaResponse = *SemanticTokensOrDelta
+type SemanticTokensDeltaResponse = *SemanticTokensOrSemanticTokensDelta
 
 // Type mapping info for `textDocument/semanticTokens/full/delta`
 var TextDocumentSemanticTokensFullDeltaInfo = RequestInfo[*SemanticTokensDeltaParams, SemanticTokensDeltaResponse]{Method: MethodTextDocumentSemanticTokensFullDelta}
@@ -13863,18 +13863,18 @@ func (o *FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) Unmars
 }
 
 type WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport struct {
-	WorkspaceFullDocumentDiagnosticReport      *WorkspaceFullDocumentDiagnosticReport
-	WorkspaceUnchangedDocumentDiagnosticReport *WorkspaceUnchangedDocumentDiagnosticReport
+	FullDocumentDiagnosticReport      *WorkspaceFullDocumentDiagnosticReport
+	UnchangedDocumentDiagnosticReport *WorkspaceUnchangedDocumentDiagnosticReport
 }
 
 func (o WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport is set", o.WorkspaceFullDocumentDiagnosticReport != nil, o.WorkspaceUnchangedDocumentDiagnosticReport != nil)
+	assertOnlyOne("more than one element of WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport is set", o.FullDocumentDiagnosticReport != nil, o.UnchangedDocumentDiagnosticReport != nil)
 
-	if o.WorkspaceFullDocumentDiagnosticReport != nil {
-		return json.Marshal(*o.WorkspaceFullDocumentDiagnosticReport)
+	if o.FullDocumentDiagnosticReport != nil {
+		return json.Marshal(*o.FullDocumentDiagnosticReport)
 	}
-	if o.WorkspaceUnchangedDocumentDiagnosticReport != nil {
-		return json.Marshal(*o.WorkspaceUnchangedDocumentDiagnosticReport)
+	if o.UnchangedDocumentDiagnosticReport != nil {
+		return json.Marshal(*o.UnchangedDocumentDiagnosticReport)
 	}
 	panic("unreachable")
 }
@@ -13882,26 +13882,26 @@ func (o WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport
 func (o *WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
 	*o = WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{}
 
-	var vWorkspaceFullDocumentDiagnosticReport WorkspaceFullDocumentDiagnosticReport
-	if err := json.Unmarshal(data, &vWorkspaceFullDocumentDiagnosticReport); err == nil {
-		o.WorkspaceFullDocumentDiagnosticReport = &vWorkspaceFullDocumentDiagnosticReport
+	var vFullDocumentDiagnosticReport WorkspaceFullDocumentDiagnosticReport
+	if err := json.Unmarshal(data, &vFullDocumentDiagnosticReport); err == nil {
+		o.FullDocumentDiagnosticReport = &vFullDocumentDiagnosticReport
 		return nil
 	}
-	var vWorkspaceUnchangedDocumentDiagnosticReport WorkspaceUnchangedDocumentDiagnosticReport
-	if err := json.Unmarshal(data, &vWorkspaceUnchangedDocumentDiagnosticReport); err == nil {
-		o.WorkspaceUnchangedDocumentDiagnosticReport = &vWorkspaceUnchangedDocumentDiagnosticReport
+	var vUnchangedDocumentDiagnosticReport WorkspaceUnchangedDocumentDiagnosticReport
+	if err := json.Unmarshal(data, &vUnchangedDocumentDiagnosticReport); err == nil {
+		o.UnchangedDocumentDiagnosticReport = &vUnchangedDocumentDiagnosticReport
 		return nil
 	}
 	return fmt.Errorf("invalid WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport: %s", data)
 }
 
-type StringOrValue struct {
+type StringOrStringValue struct {
 	String      *string
 	StringValue *StringValue
 }
 
-func (o StringOrValue) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of StringOrValue is set", o.String != nil, o.StringValue != nil)
+func (o StringOrStringValue) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of StringOrStringValue is set", o.String != nil, o.StringValue != nil)
 
 	if o.String != nil {
 		return json.Marshal(*o.String)
@@ -13912,8 +13912,8 @@ func (o StringOrValue) MarshalJSON() ([]byte, error) {
 	panic("unreachable")
 }
 
-func (o *StringOrValue) UnmarshalJSON(data []byte) error {
-	*o = StringOrValue{}
+func (o *StringOrStringValue) UnmarshalJSON(data []byte) error {
+	*o = StringOrStringValue{}
 
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
@@ -13925,7 +13925,7 @@ func (o *StringOrValue) UnmarshalJSON(data []byte) error {
 		o.StringValue = &vStringValue
 		return nil
 	}
-	return fmt.Errorf("invalid StringOrValue: %s", data)
+	return fmt.Errorf("invalid StringOrStringValue: %s", data)
 }
 
 type StringOrStrings struct {
@@ -13962,18 +13962,18 @@ func (o *StringOrStrings) UnmarshalJSON(data []byte) error {
 }
 
 type TextDocumentContentChangePartialOrWholeDocument struct {
-	TextDocumentContentChangePartial       *TextDocumentContentChangePartial
-	TextDocumentContentChangeWholeDocument *TextDocumentContentChangeWholeDocument
+	Partial       *TextDocumentContentChangePartial
+	WholeDocument *TextDocumentContentChangeWholeDocument
 }
 
 func (o TextDocumentContentChangePartialOrWholeDocument) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of TextDocumentContentChangePartialOrWholeDocument is set", o.TextDocumentContentChangePartial != nil, o.TextDocumentContentChangeWholeDocument != nil)
+	assertOnlyOne("more than one element of TextDocumentContentChangePartialOrWholeDocument is set", o.Partial != nil, o.WholeDocument != nil)
 
-	if o.TextDocumentContentChangePartial != nil {
-		return json.Marshal(*o.TextDocumentContentChangePartial)
+	if o.Partial != nil {
+		return json.Marshal(*o.Partial)
 	}
-	if o.TextDocumentContentChangeWholeDocument != nil {
-		return json.Marshal(*o.TextDocumentContentChangeWholeDocument)
+	if o.WholeDocument != nil {
+		return json.Marshal(*o.WholeDocument)
 	}
 	panic("unreachable")
 }
@@ -13981,14 +13981,14 @@ func (o TextDocumentContentChangePartialOrWholeDocument) MarshalJSON() ([]byte, 
 func (o *TextDocumentContentChangePartialOrWholeDocument) UnmarshalJSON(data []byte) error {
 	*o = TextDocumentContentChangePartialOrWholeDocument{}
 
-	var vTextDocumentContentChangePartial TextDocumentContentChangePartial
-	if err := json.Unmarshal(data, &vTextDocumentContentChangePartial); err == nil {
-		o.TextDocumentContentChangePartial = &vTextDocumentContentChangePartial
+	var vPartial TextDocumentContentChangePartial
+	if err := json.Unmarshal(data, &vPartial); err == nil {
+		o.Partial = &vPartial
 		return nil
 	}
-	var vTextDocumentContentChangeWholeDocument TextDocumentContentChangeWholeDocument
-	if err := json.Unmarshal(data, &vTextDocumentContentChangeWholeDocument); err == nil {
-		o.TextDocumentContentChangeWholeDocument = &vTextDocumentContentChangeWholeDocument
+	var vWholeDocument TextDocumentContentChangeWholeDocument
+	if err := json.Unmarshal(data, &vWholeDocument); err == nil {
+		o.WholeDocument = &vWholeDocument
 		return nil
 	}
 	return fmt.Errorf("invalid TextDocumentContentChangePartialOrWholeDocument: %s", data)
@@ -14108,13 +14108,13 @@ func (o *UintegerOrNull) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid UintegerOrNull: %s", data)
 }
 
-type LocationOrUriOnly struct {
+type LocationOrLocationUriOnly struct {
 	Location        *Location
 	LocationUriOnly *LocationUriOnly
 }
 
-func (o LocationOrUriOnly) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of LocationOrUriOnly is set", o.Location != nil, o.LocationUriOnly != nil)
+func (o LocationOrLocationUriOnly) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of LocationOrLocationUriOnly is set", o.Location != nil, o.LocationUriOnly != nil)
 
 	if o.Location != nil {
 		return json.Marshal(*o.Location)
@@ -14125,8 +14125,8 @@ func (o LocationOrUriOnly) MarshalJSON() ([]byte, error) {
 	panic("unreachable")
 }
 
-func (o *LocationOrUriOnly) UnmarshalJSON(data []byte) error {
-	*o = LocationOrUriOnly{}
+func (o *LocationOrLocationUriOnly) UnmarshalJSON(data []byte) error {
+	*o = LocationOrLocationUriOnly{}
 
 	var vLocation Location
 	if err := json.Unmarshal(data, &vLocation); err == nil {
@@ -14138,7 +14138,7 @@ func (o *LocationOrUriOnly) UnmarshalJSON(data []byte) error {
 		o.LocationUriOnly = &vLocationUriOnly
 		return nil
 	}
-	return fmt.Errorf("invalid LocationOrUriOnly: %s", data)
+	return fmt.Errorf("invalid LocationOrLocationUriOnly: %s", data)
 }
 
 type BooleanOrEmptyObject struct {
@@ -14250,18 +14250,18 @@ func (o *TextEditOrAnnotatedTextEditOrSnippetTextEdit) UnmarshalJSON(data []byte
 }
 
 type NotebookDocumentFilterWithNotebookOrCells struct {
-	NotebookDocumentFilterWithNotebook *NotebookDocumentFilterWithNotebook
-	NotebookDocumentFilterWithCells    *NotebookDocumentFilterWithCells
+	Notebook *NotebookDocumentFilterWithNotebook
+	Cells    *NotebookDocumentFilterWithCells
 }
 
 func (o NotebookDocumentFilterWithNotebookOrCells) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of NotebookDocumentFilterWithNotebookOrCells is set", o.NotebookDocumentFilterWithNotebook != nil, o.NotebookDocumentFilterWithCells != nil)
+	assertOnlyOne("more than one element of NotebookDocumentFilterWithNotebookOrCells is set", o.Notebook != nil, o.Cells != nil)
 
-	if o.NotebookDocumentFilterWithNotebook != nil {
-		return json.Marshal(*o.NotebookDocumentFilterWithNotebook)
+	if o.Notebook != nil {
+		return json.Marshal(*o.Notebook)
 	}
-	if o.NotebookDocumentFilterWithCells != nil {
-		return json.Marshal(*o.NotebookDocumentFilterWithCells)
+	if o.Cells != nil {
+		return json.Marshal(*o.Cells)
 	}
 	panic("unreachable")
 }
@@ -14269,14 +14269,14 @@ func (o NotebookDocumentFilterWithNotebookOrCells) MarshalJSON() ([]byte, error)
 func (o *NotebookDocumentFilterWithNotebookOrCells) UnmarshalJSON(data []byte) error {
 	*o = NotebookDocumentFilterWithNotebookOrCells{}
 
-	var vNotebookDocumentFilterWithNotebook NotebookDocumentFilterWithNotebook
-	if err := json.Unmarshal(data, &vNotebookDocumentFilterWithNotebook); err == nil {
-		o.NotebookDocumentFilterWithNotebook = &vNotebookDocumentFilterWithNotebook
+	var vNotebook NotebookDocumentFilterWithNotebook
+	if err := json.Unmarshal(data, &vNotebook); err == nil {
+		o.Notebook = &vNotebook
 		return nil
 	}
-	var vNotebookDocumentFilterWithCells NotebookDocumentFilterWithCells
-	if err := json.Unmarshal(data, &vNotebookDocumentFilterWithCells); err == nil {
-		o.NotebookDocumentFilterWithCells = &vNotebookDocumentFilterWithCells
+	var vCells NotebookDocumentFilterWithCells
+	if err := json.Unmarshal(data, &vCells); err == nil {
+		o.Cells = &vCells
 		return nil
 	}
 	return fmt.Errorf("invalid NotebookDocumentFilterWithNotebookOrCells: %s", data)
@@ -14403,18 +14403,18 @@ func (o *WorkspaceFoldersOrNull) UnmarshalJSON(data []byte) error {
 }
 
 type TextDocumentSyncOptionsOrKind struct {
-	TextDocumentSyncOptions *TextDocumentSyncOptions
-	TextDocumentSyncKind    *TextDocumentSyncKind
+	Options *TextDocumentSyncOptions
+	Kind    *TextDocumentSyncKind
 }
 
 func (o TextDocumentSyncOptionsOrKind) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of TextDocumentSyncOptionsOrKind is set", o.TextDocumentSyncOptions != nil, o.TextDocumentSyncKind != nil)
+	assertOnlyOne("more than one element of TextDocumentSyncOptionsOrKind is set", o.Options != nil, o.Kind != nil)
 
-	if o.TextDocumentSyncOptions != nil {
-		return json.Marshal(*o.TextDocumentSyncOptions)
+	if o.Options != nil {
+		return json.Marshal(*o.Options)
 	}
-	if o.TextDocumentSyncKind != nil {
-		return json.Marshal(*o.TextDocumentSyncKind)
+	if o.Kind != nil {
+		return json.Marshal(*o.Kind)
 	}
 	panic("unreachable")
 }
@@ -14422,32 +14422,32 @@ func (o TextDocumentSyncOptionsOrKind) MarshalJSON() ([]byte, error) {
 func (o *TextDocumentSyncOptionsOrKind) UnmarshalJSON(data []byte) error {
 	*o = TextDocumentSyncOptionsOrKind{}
 
-	var vTextDocumentSyncOptions TextDocumentSyncOptions
-	if err := json.Unmarshal(data, &vTextDocumentSyncOptions); err == nil {
-		o.TextDocumentSyncOptions = &vTextDocumentSyncOptions
+	var vOptions TextDocumentSyncOptions
+	if err := json.Unmarshal(data, &vOptions); err == nil {
+		o.Options = &vOptions
 		return nil
 	}
-	var vTextDocumentSyncKind TextDocumentSyncKind
-	if err := json.Unmarshal(data, &vTextDocumentSyncKind); err == nil {
-		o.TextDocumentSyncKind = &vTextDocumentSyncKind
+	var vKind TextDocumentSyncKind
+	if err := json.Unmarshal(data, &vKind); err == nil {
+		o.Kind = &vKind
 		return nil
 	}
 	return fmt.Errorf("invalid TextDocumentSyncOptionsOrKind: %s", data)
 }
 
 type NotebookDocumentSyncOptionsOrRegistrationOptions struct {
-	NotebookDocumentSyncOptions             *NotebookDocumentSyncOptions
-	NotebookDocumentSyncRegistrationOptions *NotebookDocumentSyncRegistrationOptions
+	Options             *NotebookDocumentSyncOptions
+	RegistrationOptions *NotebookDocumentSyncRegistrationOptions
 }
 
 func (o NotebookDocumentSyncOptionsOrRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of NotebookDocumentSyncOptionsOrRegistrationOptions is set", o.NotebookDocumentSyncOptions != nil, o.NotebookDocumentSyncRegistrationOptions != nil)
+	assertOnlyOne("more than one element of NotebookDocumentSyncOptionsOrRegistrationOptions is set", o.Options != nil, o.RegistrationOptions != nil)
 
-	if o.NotebookDocumentSyncOptions != nil {
-		return json.Marshal(*o.NotebookDocumentSyncOptions)
+	if o.Options != nil {
+		return json.Marshal(*o.Options)
 	}
-	if o.NotebookDocumentSyncRegistrationOptions != nil {
-		return json.Marshal(*o.NotebookDocumentSyncRegistrationOptions)
+	if o.RegistrationOptions != nil {
+		return json.Marshal(*o.RegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -14455,14 +14455,14 @@ func (o NotebookDocumentSyncOptionsOrRegistrationOptions) MarshalJSON() ([]byte,
 func (o *NotebookDocumentSyncOptionsOrRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = NotebookDocumentSyncOptionsOrRegistrationOptions{}
 
-	var vNotebookDocumentSyncOptions NotebookDocumentSyncOptions
-	if err := json.Unmarshal(data, &vNotebookDocumentSyncOptions); err == nil {
-		o.NotebookDocumentSyncOptions = &vNotebookDocumentSyncOptions
+	var vOptions NotebookDocumentSyncOptions
+	if err := json.Unmarshal(data, &vOptions); err == nil {
+		o.Options = &vOptions
 		return nil
 	}
-	var vNotebookDocumentSyncRegistrationOptions NotebookDocumentSyncRegistrationOptions
-	if err := json.Unmarshal(data, &vNotebookDocumentSyncRegistrationOptions); err == nil {
-		o.NotebookDocumentSyncRegistrationOptions = &vNotebookDocumentSyncRegistrationOptions
+	var vRegistrationOptions NotebookDocumentSyncRegistrationOptions
+	if err := json.Unmarshal(data, &vRegistrationOptions); err == nil {
+		o.RegistrationOptions = &vRegistrationOptions
 		return nil
 	}
 	return fmt.Errorf("invalid NotebookDocumentSyncOptionsOrRegistrationOptions: %s", data)
@@ -15135,18 +15135,18 @@ func (o *BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptio
 }
 
 type SemanticTokensOptionsOrRegistrationOptions struct {
-	SemanticTokensOptions             *SemanticTokensOptions
-	SemanticTokensRegistrationOptions *SemanticTokensRegistrationOptions
+	Options             *SemanticTokensOptions
+	RegistrationOptions *SemanticTokensRegistrationOptions
 }
 
 func (o SemanticTokensOptionsOrRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of SemanticTokensOptionsOrRegistrationOptions is set", o.SemanticTokensOptions != nil, o.SemanticTokensRegistrationOptions != nil)
+	assertOnlyOne("more than one element of SemanticTokensOptionsOrRegistrationOptions is set", o.Options != nil, o.RegistrationOptions != nil)
 
-	if o.SemanticTokensOptions != nil {
-		return json.Marshal(*o.SemanticTokensOptions)
+	if o.Options != nil {
+		return json.Marshal(*o.Options)
 	}
-	if o.SemanticTokensRegistrationOptions != nil {
-		return json.Marshal(*o.SemanticTokensRegistrationOptions)
+	if o.RegistrationOptions != nil {
+		return json.Marshal(*o.RegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -15154,14 +15154,14 @@ func (o SemanticTokensOptionsOrRegistrationOptions) MarshalJSON() ([]byte, error
 func (o *SemanticTokensOptionsOrRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = SemanticTokensOptionsOrRegistrationOptions{}
 
-	var vSemanticTokensOptions SemanticTokensOptions
-	if err := json.Unmarshal(data, &vSemanticTokensOptions); err == nil {
-		o.SemanticTokensOptions = &vSemanticTokensOptions
+	var vOptions SemanticTokensOptions
+	if err := json.Unmarshal(data, &vOptions); err == nil {
+		o.Options = &vOptions
 		return nil
 	}
-	var vSemanticTokensRegistrationOptions SemanticTokensRegistrationOptions
-	if err := json.Unmarshal(data, &vSemanticTokensRegistrationOptions); err == nil {
-		o.SemanticTokensRegistrationOptions = &vSemanticTokensRegistrationOptions
+	var vRegistrationOptions SemanticTokensRegistrationOptions
+	if err := json.Unmarshal(data, &vRegistrationOptions); err == nil {
+		o.RegistrationOptions = &vRegistrationOptions
 		return nil
 	}
 	return fmt.Errorf("invalid SemanticTokensOptionsOrRegistrationOptions: %s", data)
@@ -15336,18 +15336,18 @@ func (o *BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) UnmarshalJSON(
 }
 
 type DiagnosticOptionsOrRegistrationOptions struct {
-	DiagnosticOptions             *DiagnosticOptions
-	DiagnosticRegistrationOptions *DiagnosticRegistrationOptions
+	Options             *DiagnosticOptions
+	RegistrationOptions *DiagnosticRegistrationOptions
 }
 
 func (o DiagnosticOptionsOrRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of DiagnosticOptionsOrRegistrationOptions is set", o.DiagnosticOptions != nil, o.DiagnosticRegistrationOptions != nil)
+	assertOnlyOne("more than one element of DiagnosticOptionsOrRegistrationOptions is set", o.Options != nil, o.RegistrationOptions != nil)
 
-	if o.DiagnosticOptions != nil {
-		return json.Marshal(*o.DiagnosticOptions)
+	if o.Options != nil {
+		return json.Marshal(*o.Options)
 	}
-	if o.DiagnosticRegistrationOptions != nil {
-		return json.Marshal(*o.DiagnosticRegistrationOptions)
+	if o.RegistrationOptions != nil {
+		return json.Marshal(*o.RegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -15355,14 +15355,14 @@ func (o DiagnosticOptionsOrRegistrationOptions) MarshalJSON() ([]byte, error) {
 func (o *DiagnosticOptionsOrRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = DiagnosticOptionsOrRegistrationOptions{}
 
-	var vDiagnosticOptions DiagnosticOptions
-	if err := json.Unmarshal(data, &vDiagnosticOptions); err == nil {
-		o.DiagnosticOptions = &vDiagnosticOptions
+	var vOptions DiagnosticOptions
+	if err := json.Unmarshal(data, &vOptions); err == nil {
+		o.Options = &vOptions
 		return nil
 	}
-	var vDiagnosticRegistrationOptions DiagnosticRegistrationOptions
-	if err := json.Unmarshal(data, &vDiagnosticRegistrationOptions); err == nil {
-		o.DiagnosticRegistrationOptions = &vDiagnosticRegistrationOptions
+	var vRegistrationOptions DiagnosticRegistrationOptions
+	if err := json.Unmarshal(data, &vRegistrationOptions); err == nil {
+		o.RegistrationOptions = &vRegistrationOptions
 		return nil
 	}
 	return fmt.Errorf("invalid DiagnosticOptionsOrRegistrationOptions: %s", data)
@@ -15552,18 +15552,18 @@ func (o *BooleanOrSaveOptions) UnmarshalJSON(data []byte) error {
 }
 
 type TextDocumentContentOptionsOrRegistrationOptions struct {
-	TextDocumentContentOptions             *TextDocumentContentOptions
-	TextDocumentContentRegistrationOptions *TextDocumentContentRegistrationOptions
+	Options             *TextDocumentContentOptions
+	RegistrationOptions *TextDocumentContentRegistrationOptions
 }
 
 func (o TextDocumentContentOptionsOrRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of TextDocumentContentOptionsOrRegistrationOptions is set", o.TextDocumentContentOptions != nil, o.TextDocumentContentRegistrationOptions != nil)
+	assertOnlyOne("more than one element of TextDocumentContentOptionsOrRegistrationOptions is set", o.Options != nil, o.RegistrationOptions != nil)
 
-	if o.TextDocumentContentOptions != nil {
-		return json.Marshal(*o.TextDocumentContentOptions)
+	if o.Options != nil {
+		return json.Marshal(*o.Options)
 	}
-	if o.TextDocumentContentRegistrationOptions != nil {
-		return json.Marshal(*o.TextDocumentContentRegistrationOptions)
+	if o.RegistrationOptions != nil {
+		return json.Marshal(*o.RegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -15571,14 +15571,14 @@ func (o TextDocumentContentOptionsOrRegistrationOptions) MarshalJSON() ([]byte, 
 func (o *TextDocumentContentOptionsOrRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = TextDocumentContentOptionsOrRegistrationOptions{}
 
-	var vTextDocumentContentOptions TextDocumentContentOptions
-	if err := json.Unmarshal(data, &vTextDocumentContentOptions); err == nil {
-		o.TextDocumentContentOptions = &vTextDocumentContentOptions
+	var vOptions TextDocumentContentOptions
+	if err := json.Unmarshal(data, &vOptions); err == nil {
+		o.Options = &vOptions
 		return nil
 	}
-	var vTextDocumentContentRegistrationOptions TextDocumentContentRegistrationOptions
-	if err := json.Unmarshal(data, &vTextDocumentContentRegistrationOptions); err == nil {
-		o.TextDocumentContentRegistrationOptions = &vTextDocumentContentRegistrationOptions
+	var vRegistrationOptions TextDocumentContentRegistrationOptions
+	if err := json.Unmarshal(data, &vRegistrationOptions); err == nil {
+		o.RegistrationOptions = &vRegistrationOptions
 		return nil
 	}
 	return fmt.Errorf("invalid TextDocumentContentOptionsOrRegistrationOptions: %s", data)
@@ -15800,13 +15800,13 @@ func (o *LocationOrLocationsOrDeclarationLinks) UnmarshalJSON(data []byte) error
 	return fmt.Errorf("invalid LocationOrLocationsOrDeclarationLinks: %s", data)
 }
 
-type SemanticTokensOrDelta struct {
+type SemanticTokensOrSemanticTokensDelta struct {
 	SemanticTokens      *SemanticTokens
 	SemanticTokensDelta *SemanticTokensDelta
 }
 
-func (o SemanticTokensOrDelta) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of SemanticTokensOrDelta is set", o.SemanticTokens != nil, o.SemanticTokensDelta != nil)
+func (o SemanticTokensOrSemanticTokensDelta) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of SemanticTokensOrSemanticTokensDelta is set", o.SemanticTokens != nil, o.SemanticTokensDelta != nil)
 
 	if o.SemanticTokens != nil {
 		return json.Marshal(*o.SemanticTokens)
@@ -15817,8 +15817,8 @@ func (o SemanticTokensOrDelta) MarshalJSON() ([]byte, error) {
 	panic("unreachable")
 }
 
-func (o *SemanticTokensOrDelta) UnmarshalJSON(data []byte) error {
-	*o = SemanticTokensOrDelta{}
+func (o *SemanticTokensOrSemanticTokensDelta) UnmarshalJSON(data []byte) error {
+	*o = SemanticTokensOrSemanticTokensDelta{}
 
 	var vSemanticTokens SemanticTokens
 	if err := json.Unmarshal(data, &vSemanticTokens); err == nil {
@@ -15830,26 +15830,26 @@ func (o *SemanticTokensOrDelta) UnmarshalJSON(data []byte) error {
 		o.SemanticTokensDelta = &vSemanticTokensDelta
 		return nil
 	}
-	return fmt.Errorf("invalid SemanticTokensOrDelta: %s", data)
+	return fmt.Errorf("invalid SemanticTokensOrSemanticTokensDelta: %s", data)
 }
 
 type InlineValueTextOrVariableLookupOrEvaluatableExpression struct {
-	InlineValueText                  *InlineValueText
-	InlineValueVariableLookup        *InlineValueVariableLookup
-	InlineValueEvaluatableExpression *InlineValueEvaluatableExpression
+	Text                  *InlineValueText
+	VariableLookup        *InlineValueVariableLookup
+	EvaluatableExpression *InlineValueEvaluatableExpression
 }
 
 func (o InlineValueTextOrVariableLookupOrEvaluatableExpression) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of InlineValueTextOrVariableLookupOrEvaluatableExpression is set", o.InlineValueText != nil, o.InlineValueVariableLookup != nil, o.InlineValueEvaluatableExpression != nil)
+	assertOnlyOne("more than one element of InlineValueTextOrVariableLookupOrEvaluatableExpression is set", o.Text != nil, o.VariableLookup != nil, o.EvaluatableExpression != nil)
 
-	if o.InlineValueText != nil {
-		return json.Marshal(*o.InlineValueText)
+	if o.Text != nil {
+		return json.Marshal(*o.Text)
 	}
-	if o.InlineValueVariableLookup != nil {
-		return json.Marshal(*o.InlineValueVariableLookup)
+	if o.VariableLookup != nil {
+		return json.Marshal(*o.VariableLookup)
 	}
-	if o.InlineValueEvaluatableExpression != nil {
-		return json.Marshal(*o.InlineValueEvaluatableExpression)
+	if o.EvaluatableExpression != nil {
+		return json.Marshal(*o.EvaluatableExpression)
 	}
 	panic("unreachable")
 }
@@ -15857,37 +15857,37 @@ func (o InlineValueTextOrVariableLookupOrEvaluatableExpression) MarshalJSON() ([
 func (o *InlineValueTextOrVariableLookupOrEvaluatableExpression) UnmarshalJSON(data []byte) error {
 	*o = InlineValueTextOrVariableLookupOrEvaluatableExpression{}
 
-	var vInlineValueText InlineValueText
-	if err := json.Unmarshal(data, &vInlineValueText); err == nil {
-		o.InlineValueText = &vInlineValueText
+	var vText InlineValueText
+	if err := json.Unmarshal(data, &vText); err == nil {
+		o.Text = &vText
 		return nil
 	}
-	var vInlineValueVariableLookup InlineValueVariableLookup
-	if err := json.Unmarshal(data, &vInlineValueVariableLookup); err == nil {
-		o.InlineValueVariableLookup = &vInlineValueVariableLookup
+	var vVariableLookup InlineValueVariableLookup
+	if err := json.Unmarshal(data, &vVariableLookup); err == nil {
+		o.VariableLookup = &vVariableLookup
 		return nil
 	}
-	var vInlineValueEvaluatableExpression InlineValueEvaluatableExpression
-	if err := json.Unmarshal(data, &vInlineValueEvaluatableExpression); err == nil {
-		o.InlineValueEvaluatableExpression = &vInlineValueEvaluatableExpression
+	var vEvaluatableExpression InlineValueEvaluatableExpression
+	if err := json.Unmarshal(data, &vEvaluatableExpression); err == nil {
+		o.EvaluatableExpression = &vEvaluatableExpression
 		return nil
 	}
 	return fmt.Errorf("invalid InlineValueTextOrVariableLookupOrEvaluatableExpression: %s", data)
 }
 
 type RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport struct {
-	RelatedFullDocumentDiagnosticReport      *RelatedFullDocumentDiagnosticReport
-	RelatedUnchangedDocumentDiagnosticReport *RelatedUnchangedDocumentDiagnosticReport
+	FullDocumentDiagnosticReport      *RelatedFullDocumentDiagnosticReport
+	UnchangedDocumentDiagnosticReport *RelatedUnchangedDocumentDiagnosticReport
 }
 
 func (o RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport is set", o.RelatedFullDocumentDiagnosticReport != nil, o.RelatedUnchangedDocumentDiagnosticReport != nil)
+	assertOnlyOne("more than one element of RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport is set", o.FullDocumentDiagnosticReport != nil, o.UnchangedDocumentDiagnosticReport != nil)
 
-	if o.RelatedFullDocumentDiagnosticReport != nil {
-		return json.Marshal(*o.RelatedFullDocumentDiagnosticReport)
+	if o.FullDocumentDiagnosticReport != nil {
+		return json.Marshal(*o.FullDocumentDiagnosticReport)
 	}
-	if o.RelatedUnchangedDocumentDiagnosticReport != nil {
-		return json.Marshal(*o.RelatedUnchangedDocumentDiagnosticReport)
+	if o.UnchangedDocumentDiagnosticReport != nil {
+		return json.Marshal(*o.UnchangedDocumentDiagnosticReport)
 	}
 	panic("unreachable")
 }
@@ -15895,32 +15895,32 @@ func (o RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) 
 func (o *RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
 	*o = RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{}
 
-	var vRelatedFullDocumentDiagnosticReport RelatedFullDocumentDiagnosticReport
-	if err := json.Unmarshal(data, &vRelatedFullDocumentDiagnosticReport); err == nil {
-		o.RelatedFullDocumentDiagnosticReport = &vRelatedFullDocumentDiagnosticReport
+	var vFullDocumentDiagnosticReport RelatedFullDocumentDiagnosticReport
+	if err := json.Unmarshal(data, &vFullDocumentDiagnosticReport); err == nil {
+		o.FullDocumentDiagnosticReport = &vFullDocumentDiagnosticReport
 		return nil
 	}
-	var vRelatedUnchangedDocumentDiagnosticReport RelatedUnchangedDocumentDiagnosticReport
-	if err := json.Unmarshal(data, &vRelatedUnchangedDocumentDiagnosticReport); err == nil {
-		o.RelatedUnchangedDocumentDiagnosticReport = &vRelatedUnchangedDocumentDiagnosticReport
+	var vUnchangedDocumentDiagnosticReport RelatedUnchangedDocumentDiagnosticReport
+	if err := json.Unmarshal(data, &vUnchangedDocumentDiagnosticReport); err == nil {
+		o.UnchangedDocumentDiagnosticReport = &vUnchangedDocumentDiagnosticReport
 		return nil
 	}
 	return fmt.Errorf("invalid RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport: %s", data)
 }
 
 type InlineCompletionListOrItems struct {
-	InlineCompletionList  *InlineCompletionList
-	InlineCompletionItems *[]*InlineCompletionItem
+	List  *InlineCompletionList
+	Items *[]*InlineCompletionItem
 }
 
 func (o InlineCompletionListOrItems) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of InlineCompletionListOrItems is set", o.InlineCompletionList != nil, o.InlineCompletionItems != nil)
+	assertOnlyOne("more than one element of InlineCompletionListOrItems is set", o.List != nil, o.Items != nil)
 
-	if o.InlineCompletionList != nil {
-		return json.Marshal(*o.InlineCompletionList)
+	if o.List != nil {
+		return json.Marshal(*o.List)
 	}
-	if o.InlineCompletionItems != nil {
-		return json.Marshal(*o.InlineCompletionItems)
+	if o.Items != nil {
+		return json.Marshal(*o.Items)
 	}
 	panic("unreachable")
 }
@@ -15928,32 +15928,32 @@ func (o InlineCompletionListOrItems) MarshalJSON() ([]byte, error) {
 func (o *InlineCompletionListOrItems) UnmarshalJSON(data []byte) error {
 	*o = InlineCompletionListOrItems{}
 
-	var vInlineCompletionList InlineCompletionList
-	if err := json.Unmarshal(data, &vInlineCompletionList); err == nil {
-		o.InlineCompletionList = &vInlineCompletionList
+	var vList InlineCompletionList
+	if err := json.Unmarshal(data, &vList); err == nil {
+		o.List = &vList
 		return nil
 	}
-	var vInlineCompletionItems []*InlineCompletionItem
-	if err := json.Unmarshal(data, &vInlineCompletionItems); err == nil {
-		o.InlineCompletionItems = &vInlineCompletionItems
+	var vItems []*InlineCompletionItem
+	if err := json.Unmarshal(data, &vItems); err == nil {
+		o.Items = &vItems
 		return nil
 	}
 	return fmt.Errorf("invalid InlineCompletionListOrItems: %s", data)
 }
 
 type CompletionItemsOrList struct {
-	CompletionItems *[]*CompletionItem
-	CompletionList  *CompletionList
+	Items *[]*CompletionItem
+	List  *CompletionList
 }
 
 func (o CompletionItemsOrList) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of CompletionItemsOrList is set", o.CompletionItems != nil, o.CompletionList != nil)
+	assertOnlyOne("more than one element of CompletionItemsOrList is set", o.Items != nil, o.List != nil)
 
-	if o.CompletionItems != nil {
-		return json.Marshal(*o.CompletionItems)
+	if o.Items != nil {
+		return json.Marshal(*o.Items)
 	}
-	if o.CompletionList != nil {
-		return json.Marshal(*o.CompletionList)
+	if o.List != nil {
+		return json.Marshal(*o.List)
 	}
 	panic("unreachable")
 }
@@ -15961,14 +15961,14 @@ func (o CompletionItemsOrList) MarshalJSON() ([]byte, error) {
 func (o *CompletionItemsOrList) UnmarshalJSON(data []byte) error {
 	*o = CompletionItemsOrList{}
 
-	var vCompletionItems []*CompletionItem
-	if err := json.Unmarshal(data, &vCompletionItems); err == nil {
-		o.CompletionItems = &vCompletionItems
+	var vItems []*CompletionItem
+	if err := json.Unmarshal(data, &vItems); err == nil {
+		o.Items = &vItems
 		return nil
 	}
-	var vCompletionList CompletionList
-	if err := json.Unmarshal(data, &vCompletionList); err == nil {
-		o.CompletionList = &vCompletionList
+	var vList CompletionList
+	if err := json.Unmarshal(data, &vList); err == nil {
+		o.List = &vList
 		return nil
 	}
 	return fmt.Errorf("invalid CompletionItemsOrList: %s", data)
