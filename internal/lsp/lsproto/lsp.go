@@ -78,12 +78,12 @@ func (v *requiredProp) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 
 // Inspired by https://www.youtube.com/watch?v=dab3I-HcTVk
 
-type HandlerType[Req, Resp any] struct {
+type RequestToResponse[Req, Resp any] struct {
 	_      [0]Req
 	_      [0]Resp
 	Method Method
 }
 
-func Handle[Req, Resp any](endpoint HandlerType[Req, Resp], req Req, fn func(Req) (Resp, error)) (Resp, error) {
+func Handle[Req, Resp any](endpoint RequestToResponse[Req, Resp], req Req, fn func(Req) (Resp, error)) (Resp, error) {
 	return fn(req)
 }

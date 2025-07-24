@@ -653,12 +653,12 @@ func (s *Server) handleDidChangeWatchedFiles(ctx context.Context, req *lsproto.R
 func handleWithSingleResponse[Req, Resp any](
 	s *Server,
 	ctx context.Context,
-	handlerType lsproto.HandlerType[Req, Resp],
+	info lsproto.RequestToResponse[Req, Resp],
 	req *lsproto.RequestMessage,
 	fn func(*Server, context.Context, Req) (Resp, error),
 ) error {
-	if req.Method != handlerType.Method {
-		panic(fmt.Sprintf("expected method %s, got %s", handlerType.Method, req.Method))
+	if req.Method != info.Method {
+		panic(fmt.Sprintf("expected method %s, got %s", info.Method, req.Method))
 	}
 	params := req.Params.(Req)
 	resp, err := fn(s, ctx, params)
