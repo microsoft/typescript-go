@@ -49,11 +49,11 @@ type baselineFourslashLocationsOptions struct {
 	additionalSpan                *lsproto.Location
 }
 
-func (f *FourslashTest) getBaselineForLocationsWithFileContents(spans []*lsproto.Location, options baselineFourslashLocationsOptions) string {
-	return f.getBaselineForGroupedLocationsWithFileContents(collections.GroupBy(spans, func(span *lsproto.Location) lsproto.DocumentUri { return span.Uri }), options)
+func (f *FourslashTest) getBaselineForLocationsWithFileContents(spans []lsproto.Location, options baselineFourslashLocationsOptions) string {
+	return f.getBaselineForGroupedLocationsWithFileContents(collections.GroupBy(spans, func(span lsproto.Location) lsproto.DocumentUri { return span.Uri }), options)
 }
 
-func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedLocations *collections.MultiMap[lsproto.DocumentUri, *lsproto.Location], options baselineFourslashLocationsOptions) string {
+func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedLocations *collections.MultiMap[lsproto.DocumentUri, lsproto.Location], options baselineFourslashLocationsOptions) string {
 	baselineEntries := []string{}
 	err := f.vfs.WalkDir("/", func(path string, d vfs.DirEntry, e error) error {
 		if e != nil {
@@ -74,9 +74,9 @@ func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedLo
 			return nil
 		}
 
-		documentSpans := core.Map(locations, func(location *lsproto.Location) *documentSpan {
+		documentSpans := core.Map(locations, func(location lsproto.Location) *documentSpan {
 			return &documentSpan{
-				Location: *location,
+				Location: location,
 			}
 		})
 		baselineEntries = append(baselineEntries, f.getBaselineContentForFile(path, content, documentSpans, nil, options))

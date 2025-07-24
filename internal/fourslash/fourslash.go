@@ -550,10 +550,10 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *Completi
 	}
 	result := resMsg.AsResponse().Result
 	switch result := result.(type) {
-	case *lsproto.CompletionList:
-		f.verifyCompletionsResult(t, f.currentCaretPosition, result, expected, prefix)
+	case *lsproto.CompletionItemsOrCompletionList:
+		f.verifyCompletionsResult(t, f.currentCaretPosition, result.CompletionList, expected, prefix)
 	default:
-		t.Fatalf(prefix+"Unexpected response type for completion request: %v", result)
+		t.Fatalf(prefix+"Unexpected response type for completion request: %T", result)
 	}
 }
 
@@ -818,17 +818,17 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 				t.Fatalf("Nil response received for references request at marker '%s'", *f.lastKnownMarkerName)
 			}
 		}
-		result := resMsg.AsResponse().Result
-		if result, ok := result.([]*lsproto.Location); ok {
-			f.baseline.addResult("findAllReferences", f.getBaselineForLocationsWithFileContents(result, baselineFourslashLocationsOptions{
+		anyResult := resMsg.AsResponse().Result
+		if result, ok := anyResult.(*[]lsproto.Location); ok {
+			f.baseline.addResult("findAllReferences", f.getBaselineForLocationsWithFileContents(*result, baselineFourslashLocationsOptions{
 				marker:     markerOrRange.GetMarker(),
 				markerName: "/*FIND ALL REFS*/",
 			}))
 		} else {
 			if f.lastKnownMarkerName == nil {
-				t.Fatalf("Unexpected references response type at pos %v: %T", f.currentCaretPosition, result)
+				t.Fatalf("Unexpected references response type at pos %v: %T", f.currentCaretPosition, anyResult)
 			} else {
-				t.Fatalf("Unexpected references response type at marker '%s': %T", *f.lastKnownMarkerName, result)
+				t.Fatalf("Unexpected references response type at marker '%s': %T", *f.lastKnownMarkerName, anyResult)
 			}
 		}
 	}
