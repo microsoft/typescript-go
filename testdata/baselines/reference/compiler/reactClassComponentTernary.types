@@ -1,0 +1,73 @@
+//// [tests/cases/compiler/reactClassComponentTernary.tsx] ////
+
+=== reactClassComponentTernary.tsx ===
+/// <reference path="react16.d.ts" />
+
+import { Component } from "react";
+>Component : typeof Component
+
+type PropsTest = Readonly<{
+>PropsTest : Readonly<{ test: string; }>
+
+  test: string,
+>test : string
+
+}>;
+
+class X extends Component<PropsTest, { yo: string }> {
+>X : X
+>Component : Component<Readonly<{ test: string; }>, { yo: string; }, any>
+>yo : string
+
+  static defaultProps = {
+>defaultProps : { test: string; }
+>{    test: "x",  } : { test: string; }
+
+    test: "x",
+>test : string
+>"x" : "x"
+
+  };
+
+  render() {
+>render : () => string
+
+    return "test";
+>"test" : "test"
+  }
+}
+
+class Y extends Component<PropsTest, { hey: string }> {
+>Y : Y
+>Component : Component<Readonly<{ test: string; }>, { hey: string; }, any>
+>hey : string
+
+  render() {
+>render : () => string
+
+    return "test";
+>"test" : "test"
+  }
+}
+
+const XorY = Math.random() > 0.5 ? X : Y;
+>XorY : typeof X | typeof Y
+>Math.random() > 0.5 ? X : Y : typeof X | typeof Y
+>Math.random() > 0.5 : boolean
+>Math.random() : number
+>Math.random : () => number
+>Math : Math
+>random : () => number
+>0.5 : 0.5
+>X : typeof X
+>Y : typeof Y
+
+function z() {
+>z : () => JSX.Element
+
+  return <XorY test="test" />;
+><XorY test="test" /> : JSX.Element
+>XorY : typeof X | typeof Y
+>test : string
+}
+

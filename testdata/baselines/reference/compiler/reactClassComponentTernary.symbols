@@ -1,0 +1,67 @@
+//// [tests/cases/compiler/reactClassComponentTernary.tsx] ////
+
+=== reactClassComponentTernary.tsx ===
+/// <reference path="react16.d.ts" />
+
+import { Component } from "react";
+>Component : Symbol(Component, Decl(reactClassComponentTernary.tsx, 2, 8))
+
+type PropsTest = Readonly<{
+>PropsTest : Symbol(PropsTest, Decl(reactClassComponentTernary.tsx, 2, 34))
+>Readonly : Symbol(Readonly, Decl(lib.es5.d.ts, --, --))
+
+  test: string,
+>test : Symbol(test, Decl(reactClassComponentTernary.tsx, 4, 27))
+
+}>;
+
+class X extends Component<PropsTest, { yo: string }> {
+>X : Symbol(X, Decl(reactClassComponentTernary.tsx, 6, 3))
+>Component : Symbol(Component, Decl(reactClassComponentTernary.tsx, 2, 8))
+>PropsTest : Symbol(PropsTest, Decl(reactClassComponentTernary.tsx, 2, 34))
+>yo : Symbol(yo, Decl(reactClassComponentTernary.tsx, 8, 38))
+
+  static defaultProps = {
+>defaultProps : Symbol(defaultProps, Decl(reactClassComponentTernary.tsx, 8, 54))
+
+    test: "x",
+>test : Symbol(test, Decl(reactClassComponentTernary.tsx, 9, 25))
+
+  };
+
+  render() {
+>render : Symbol(render, Decl(reactClassComponentTernary.tsx, 11, 4))
+
+    return "test";
+  }
+}
+
+class Y extends Component<PropsTest, { hey: string }> {
+>Y : Symbol(Y, Decl(reactClassComponentTernary.tsx, 16, 1))
+>Component : Symbol(Component, Decl(reactClassComponentTernary.tsx, 2, 8))
+>PropsTest : Symbol(PropsTest, Decl(reactClassComponentTernary.tsx, 2, 34))
+>hey : Symbol(hey, Decl(reactClassComponentTernary.tsx, 18, 38))
+
+  render() {
+>render : Symbol(render, Decl(reactClassComponentTernary.tsx, 18, 55))
+
+    return "test";
+  }
+}
+
+const XorY = Math.random() > 0.5 ? X : Y;
+>XorY : Symbol(XorY, Decl(reactClassComponentTernary.tsx, 24, 5))
+>Math.random : Symbol(random, Decl(lib.es5.d.ts, --, --))
+>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>random : Symbol(random, Decl(lib.es5.d.ts, --, --))
+>X : Symbol(X, Decl(reactClassComponentTernary.tsx, 6, 3))
+>Y : Symbol(Y, Decl(reactClassComponentTernary.tsx, 16, 1))
+
+function z() {
+>z : Symbol(z, Decl(reactClassComponentTernary.tsx, 24, 41))
+
+  return <XorY test="test" />;
+>XorY : Symbol(XorY, Decl(reactClassComponentTernary.tsx, 24, 5))
+>test : Symbol(test, Decl(reactClassComponentTernary.tsx, 27, 14))
+}
+

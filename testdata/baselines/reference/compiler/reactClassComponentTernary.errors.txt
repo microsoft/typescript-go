@@ -1,0 +1,36 @@
+reactClassComponentTernary.tsx(28,11): error TS2604: JSX element type 'XorY' does not have any construct or call signatures.
+
+
+==== reactClassComponentTernary.tsx (1 errors) ====
+    /// <reference path="/.lib/react16.d.ts" />
+    
+    import { Component } from "react";
+    
+    type PropsTest = Readonly<{
+      test: string,
+    }>;
+    
+    class X extends Component<PropsTest, { yo: string }> {
+      static defaultProps = {
+        test: "x",
+      };
+    
+      render() {
+        return "test";
+      }
+    }
+    
+    class Y extends Component<PropsTest, { hey: string }> {
+      render() {
+        return "test";
+      }
+    }
+    
+    const XorY = Math.random() > 0.5 ? X : Y;
+    
+    function z() {
+      return <XorY test="test" />;
+              ~~~~
+!!! error TS2604: JSX element type 'XorY' does not have any construct or call signatures.
+    }
+    
