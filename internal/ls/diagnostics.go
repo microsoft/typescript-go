@@ -10,7 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
-func (l *LanguageService) ProvideDiagnostics(ctx context.Context, uri lsproto.DocumentUri) (lsproto.FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport, error) {
+func (l *LanguageService) ProvideDiagnostics(ctx context.Context, uri lsproto.DocumentUri) (lsproto.DocumentDiagnosticResponse, error) {
 	program, file := l.getProgramAndFile(uri)
 
 	diagnostics := make([][]*ast.Diagnostic, 0, 3)
@@ -26,9 +26,11 @@ func (l *LanguageService) ProvideDiagnostics(ctx context.Context, uri lsproto.Do
 		}
 	}
 
-	return lsproto.FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{
-		FullDocumentDiagnosticReport: &lsproto.FullDocumentDiagnosticReport{
-			Items: toLSPDiagnostics(l.converters, diagnostics...),
+	return lsproto.RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport{
+		RelatedFullDocumentDiagnosticReport: &lsproto.RelatedFullDocumentDiagnosticReport{
+			FullDocumentDiagnosticReport: lsproto.FullDocumentDiagnosticReport{
+				Items: toLSPDiagnostics(l.converters, diagnostics...),
+			},
 		},
 	}, nil
 }

@@ -49,7 +49,7 @@ function titleCase(s: string) {
     return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-function resolveType(type: Type): GoType {
+function resolveType(type: Type, nullToPointer?: boolean): GoType {
     switch (type.kind) {
         case "base":
             switch (type.name) {
@@ -151,7 +151,7 @@ function resolveType(type: Type): GoType {
             throw new Error("Unexpected non-empty literal object: " + JSON.stringify(type.value));
 
         case "or": {
-            return handleOrType(type);
+            return handleOrType(type, nullToPointer);
         }
 
         default:
@@ -187,13 +187,13 @@ function flattenOrTypes(types: Type[]): Type[] {
     return Array.from(flattened);
 }
 
-function handleOrType(orType: OrType): GoType {
+function handleOrType(orType: OrType, nullToPointer: boolean | undefined): GoType {
     // First, flatten any nested OR types
     const types = flattenOrTypes(orType.items);
 
     // Check for nullable types (OR with null)
     const nullIndex = types.findIndex(item => item.kind === "base" && item.name === "null");
-    const containedNull = nullIndex !== -1;
+    let containedNull = nullIndex !== -1;
 
     // If it's nullable, remove the null type from the list
     let nonNullTypes = types;
@@ -238,9 +238,22 @@ function handleOrType(orType: OrType): GoType {
         }
     });
 
+    const needsPointer = containedNull && !!nullToPointer;
+
+    if (needsPointer && nonNullTypes.length === 1) {
+        const name = resolveType(nonNullTypes[0], true).name;
+        return {
+            name,
+            needsPointer: true,
+        };
+    }
+
     let unionTypeName = memberNames.join("Or");
-    if (containedNull) {
+    if (containedNull && !nullToPointer) {
         unionTypeName += "OrNull";
+    }
+    else {
+        containedNull = false;
     }
 
     const union = memberNames.map((name, i) => ({ name, type: nonNullTypes[i], containedNull }));
@@ -249,7 +262,7 @@ function handleOrType(orType: OrType): GoType {
 
     return {
         name: unionTypeName,
-        needsPointer: false,
+        needsPointer,
     };
 }
 
@@ -575,21 +588,34 @@ function generateCode() {
     writeLine("");
 
     for (const request of model.requests) {
+        const methodName = methodNameIdentifier(request.method);
+
         let responseTypeName;
         if (request.typeName && request.typeName.endsWith("Request")) {
             responseTypeName = request.typeName.replace(/Request$/, "Response");
         }
         else {
-            const methodName = methodNameIdentifier(request.method);
             responseTypeName = `${methodName}Response`;
         }
 
         writeLine(`// ${request.method} response type`);
-        const resultType = resolveType(request.result);
+        const resultType = resolveType(request.result, /*nullToPointer*/ true);
         const goType = resultType.needsPointer ? `*${resultType.name}` : resultType.name;
 
         writeLine(`type ${responseTypeName} = ${goType}`);
         writeLine("");
+
+        if (request.messageDirection !== "serverToClient") {
+            if (Array.isArray(request.params)) {
+                throw new Error("Unexpected request params for " + methodName + ": " + JSON.stringify(request.params));
+            }
+
+            const paramType = request.params ? resolveType(request.params) : undefined;
+            const paramGoType = paramType ? (paramType.needsPointer ? `*${paramType.name}` : paramType.name) : "any";
+
+            writeLine(`var ${methodName}Handler = HandlerType[${paramGoType}, ${responseTypeName}]{Method: Method${methodName}}`);
+            writeLine("");
+        }
     }
 
     // Generate union types

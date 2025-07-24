@@ -13156,13 +13156,17 @@ const (
 // Request response types
 
 // textDocument/implementation response type
-type ImplementationResponse = LocationOrLocationsOrDefinitionLinksOrNull
+type ImplementationResponse = *LocationOrLocationsOrDefinitionLinks
+
+var TextDocumentImplementationHandler = HandlerType[*ImplementationParams, ImplementationResponse]{Method: MethodTextDocumentImplementation}
 
 // textDocument/typeDefinition response type
-type TypeDefinitionResponse = LocationOrLocationsOrDefinitionLinksOrNull
+type TypeDefinitionResponse = *LocationOrLocationsOrDefinitionLinks
+
+var TextDocumentTypeDefinitionHandler = HandlerType[*TypeDefinitionParams, TypeDefinitionResponse]{Method: MethodTextDocumentTypeDefinition}
 
 // workspace/workspaceFolders response type
-type WorkspaceFoldersResponse = WorkspaceFoldersOrNull
+type WorkspaceFoldersResponse = *[]*WorkspaceFolder
 
 // workspace/configuration response type
 type ConfigurationResponse = []any
@@ -13170,41 +13174,63 @@ type ConfigurationResponse = []any
 // textDocument/documentColor response type
 type DocumentColorResponse = []*ColorInformation
 
+var TextDocumentDocumentColorHandler = HandlerType[*DocumentColorParams, DocumentColorResponse]{Method: MethodTextDocumentDocumentColor}
+
 // textDocument/colorPresentation response type
 type ColorPresentationResponse = []*ColorPresentation
 
+var TextDocumentColorPresentationHandler = HandlerType[*ColorPresentationParams, ColorPresentationResponse]{Method: MethodTextDocumentColorPresentation}
+
 // textDocument/foldingRange response type
-type FoldingRangeResponse = FoldingRangesOrNull
+type FoldingRangeResponse = *[]*FoldingRange
+
+var TextDocumentFoldingRangeHandler = HandlerType[*FoldingRangeParams, FoldingRangeResponse]{Method: MethodTextDocumentFoldingRange}
 
 // workspace/foldingRange/refresh response type
 type FoldingRangeRefreshResponse = any
 
 // textDocument/declaration response type
-type DeclarationResponse = LocationOrLocationsOrDeclarationLinksOrNull
+type DeclarationResponse = *LocationOrLocationsOrDeclarationLinks
+
+var TextDocumentDeclarationHandler = HandlerType[*DeclarationParams, DeclarationResponse]{Method: MethodTextDocumentDeclaration}
 
 // textDocument/selectionRange response type
-type SelectionRangeResponse = SelectionRangesOrNull
+type SelectionRangeResponse = *[]*SelectionRange
+
+var TextDocumentSelectionRangeHandler = HandlerType[*SelectionRangeParams, SelectionRangeResponse]{Method: MethodTextDocumentSelectionRange}
 
 // window/workDoneProgress/create response type
 type WorkDoneProgressCreateResponse = any
 
 // textDocument/prepareCallHierarchy response type
-type CallHierarchyPrepareResponse = CallHierarchyItemsOrNull
+type CallHierarchyPrepareResponse = *[]*CallHierarchyItem
+
+var TextDocumentPrepareCallHierarchyHandler = HandlerType[*CallHierarchyPrepareParams, CallHierarchyPrepareResponse]{Method: MethodTextDocumentPrepareCallHierarchy}
 
 // callHierarchy/incomingCalls response type
-type CallHierarchyIncomingCallsResponse = CallHierarchyIncomingCallsOrNull
+type CallHierarchyIncomingCallsResponse = *[]*CallHierarchyIncomingCall
+
+var CallHierarchyIncomingCallsHandler = HandlerType[*CallHierarchyIncomingCallsParams, CallHierarchyIncomingCallsResponse]{Method: MethodCallHierarchyIncomingCalls}
 
 // callHierarchy/outgoingCalls response type
-type CallHierarchyOutgoingCallsResponse = CallHierarchyOutgoingCallsOrNull
+type CallHierarchyOutgoingCallsResponse = *[]*CallHierarchyOutgoingCall
+
+var CallHierarchyOutgoingCallsHandler = HandlerType[*CallHierarchyOutgoingCallsParams, CallHierarchyOutgoingCallsResponse]{Method: MethodCallHierarchyOutgoingCalls}
 
 // textDocument/semanticTokens/full response type
-type SemanticTokensResponse = SemanticTokensOrNull
+type SemanticTokensResponse = *SemanticTokens
+
+var TextDocumentSemanticTokensFullHandler = HandlerType[*SemanticTokensParams, SemanticTokensResponse]{Method: MethodTextDocumentSemanticTokensFull}
 
 // textDocument/semanticTokens/full/delta response type
-type SemanticTokensDeltaResponse = SemanticTokensOrSemanticTokensDeltaOrNull
+type SemanticTokensDeltaResponse = *SemanticTokensOrSemanticTokensDelta
+
+var TextDocumentSemanticTokensFullDeltaHandler = HandlerType[*SemanticTokensDeltaParams, SemanticTokensDeltaResponse]{Method: MethodTextDocumentSemanticTokensFullDelta}
 
 // textDocument/semanticTokens/range response type
-type SemanticTokensRangeResponse = SemanticTokensOrNull
+type SemanticTokensRangeResponse = *SemanticTokens
+
+var TextDocumentSemanticTokensRangeHandler = HandlerType[*SemanticTokensRangeParams, SemanticTokensRangeResponse]{Method: MethodTextDocumentSemanticTokensRange}
 
 // workspace/semanticTokens/refresh response type
 type SemanticTokensRefreshResponse = any
@@ -13213,40 +13239,62 @@ type SemanticTokensRefreshResponse = any
 type ShowDocumentResponse = *ShowDocumentResult
 
 // textDocument/linkedEditingRange response type
-type LinkedEditingRangeResponse = LinkedEditingRangesOrNull
+type LinkedEditingRangeResponse = *LinkedEditingRanges
+
+var TextDocumentLinkedEditingRangeHandler = HandlerType[*LinkedEditingRangeParams, LinkedEditingRangeResponse]{Method: MethodTextDocumentLinkedEditingRange}
 
 // workspace/willCreateFiles response type
-type WillCreateFilesResponse = WorkspaceEditOrNull
+type WillCreateFilesResponse = *WorkspaceEdit
+
+var WorkspaceWillCreateFilesHandler = HandlerType[*CreateFilesParams, WillCreateFilesResponse]{Method: MethodWorkspaceWillCreateFiles}
 
 // workspace/willRenameFiles response type
-type WillRenameFilesResponse = WorkspaceEditOrNull
+type WillRenameFilesResponse = *WorkspaceEdit
+
+var WorkspaceWillRenameFilesHandler = HandlerType[*RenameFilesParams, WillRenameFilesResponse]{Method: MethodWorkspaceWillRenameFiles}
 
 // workspace/willDeleteFiles response type
-type WillDeleteFilesResponse = WorkspaceEditOrNull
+type WillDeleteFilesResponse = *WorkspaceEdit
+
+var WorkspaceWillDeleteFilesHandler = HandlerType[*DeleteFilesParams, WillDeleteFilesResponse]{Method: MethodWorkspaceWillDeleteFiles}
 
 // textDocument/moniker response type
-type MonikerResponse = MonikersOrNull
+type MonikerResponse = *[]*Moniker
+
+var TextDocumentMonikerHandler = HandlerType[*MonikerParams, MonikerResponse]{Method: MethodTextDocumentMoniker}
 
 // textDocument/prepareTypeHierarchy response type
-type TypeHierarchyPrepareResponse = TypeHierarchyItemsOrNull
+type TypeHierarchyPrepareResponse = *[]*TypeHierarchyItem
+
+var TextDocumentPrepareTypeHierarchyHandler = HandlerType[*TypeHierarchyPrepareParams, TypeHierarchyPrepareResponse]{Method: MethodTextDocumentPrepareTypeHierarchy}
 
 // typeHierarchy/supertypes response type
-type TypeHierarchySupertypesResponse = TypeHierarchyItemsOrNull
+type TypeHierarchySupertypesResponse = *[]*TypeHierarchyItem
+
+var TypeHierarchySupertypesHandler = HandlerType[*TypeHierarchySupertypesParams, TypeHierarchySupertypesResponse]{Method: MethodTypeHierarchySupertypes}
 
 // typeHierarchy/subtypes response type
-type TypeHierarchySubtypesResponse = TypeHierarchyItemsOrNull
+type TypeHierarchySubtypesResponse = *[]*TypeHierarchyItem
+
+var TypeHierarchySubtypesHandler = HandlerType[*TypeHierarchySubtypesParams, TypeHierarchySubtypesResponse]{Method: MethodTypeHierarchySubtypes}
 
 // textDocument/inlineValue response type
-type InlineValueResponse = InlineValuesOrNull
+type InlineValueResponse = *[]InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression
+
+var TextDocumentInlineValueHandler = HandlerType[*InlineValueParams, InlineValueResponse]{Method: MethodTextDocumentInlineValue}
 
 // workspace/inlineValue/refresh response type
 type InlineValueRefreshResponse = any
 
 // textDocument/inlayHint response type
-type InlayHintResponse = InlayHintsOrNull
+type InlayHintResponse = *[]*InlayHint
+
+var TextDocumentInlayHintHandler = HandlerType[*InlayHintParams, InlayHintResponse]{Method: MethodTextDocumentInlayHint}
 
 // inlayHint/resolve response type
 type InlayHintResolveResponse = *InlayHint
+
+var InlayHintResolveHandler = HandlerType[*InlayHint, InlayHintResolveResponse]{Method: MethodInlayHintResolve}
 
 // workspace/inlayHint/refresh response type
 type InlayHintRefreshResponse = any
@@ -13254,17 +13302,25 @@ type InlayHintRefreshResponse = any
 // textDocument/diagnostic response type
 type DocumentDiagnosticResponse = RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport
 
+var TextDocumentDiagnosticHandler = HandlerType[*DocumentDiagnosticParams, DocumentDiagnosticResponse]{Method: MethodTextDocumentDiagnostic}
+
 // workspace/diagnostic response type
 type WorkspaceDiagnosticResponse = *WorkspaceDiagnosticReport
+
+var WorkspaceDiagnosticHandler = HandlerType[*WorkspaceDiagnosticParams, WorkspaceDiagnosticResponse]{Method: MethodWorkspaceDiagnostic}
 
 // workspace/diagnostic/refresh response type
 type DiagnosticRefreshResponse = any
 
 // textDocument/inlineCompletion response type
-type InlineCompletionResponse = InlineCompletionListOrInlineCompletionItemsOrNull
+type InlineCompletionResponse = *InlineCompletionListOrInlineCompletionItems
+
+var TextDocumentInlineCompletionHandler = HandlerType[*InlineCompletionParams, InlineCompletionResponse]{Method: MethodTextDocumentInlineCompletion}
 
 // workspace/textDocumentContent response type
 type TextDocumentContentResponse = *TextDocumentContentResult
+
+var WorkspaceTextDocumentContentHandler = HandlerType[*TextDocumentContentParams, TextDocumentContentResponse]{Method: MethodWorkspaceTextDocumentContent}
 
 // workspace/textDocumentContent/refresh response type
 type TextDocumentContentRefreshResponse = any
@@ -13278,86 +13334,138 @@ type UnregistrationResponse = any
 // initialize response type
 type InitializeResponse = *InitializeResult
 
+var InitializeHandler = HandlerType[*InitializeParams, InitializeResponse]{Method: MethodInitialize}
+
 // shutdown response type
 type ShutdownResponse = any
 
+var ShutdownHandler = HandlerType[any, ShutdownResponse]{Method: MethodShutdown}
+
 // window/showMessageRequest response type
-type ShowMessageResponse = MessageActionItemOrNull
+type ShowMessageResponse = *MessageActionItem
 
 // textDocument/willSaveWaitUntil response type
-type WillSaveTextDocumentWaitUntilResponse = TextEditsOrNull
+type WillSaveTextDocumentWaitUntilResponse = *[]*TextEdit
+
+var TextDocumentWillSaveWaitUntilHandler = HandlerType[*WillSaveTextDocumentParams, WillSaveTextDocumentWaitUntilResponse]{Method: MethodTextDocumentWillSaveWaitUntil}
 
 // textDocument/completion response type
-type CompletionResponse = CompletionItemsOrCompletionListOrNull
+type CompletionResponse = *CompletionItemsOrCompletionList
+
+var TextDocumentCompletionHandler = HandlerType[*CompletionParams, CompletionResponse]{Method: MethodTextDocumentCompletion}
 
 // completionItem/resolve response type
 type CompletionResolveResponse = *CompletionItem
 
+var CompletionItemResolveHandler = HandlerType[*CompletionItem, CompletionResolveResponse]{Method: MethodCompletionItemResolve}
+
 // textDocument/hover response type
-type HoverResponse = HoverOrNull
+type HoverResponse = *Hover
+
+var TextDocumentHoverHandler = HandlerType[*HoverParams, HoverResponse]{Method: MethodTextDocumentHover}
 
 // textDocument/signatureHelp response type
-type SignatureHelpResponse = SignatureHelpOrNull
+type SignatureHelpResponse = *SignatureHelp
+
+var TextDocumentSignatureHelpHandler = HandlerType[*SignatureHelpParams, SignatureHelpResponse]{Method: MethodTextDocumentSignatureHelp}
 
 // textDocument/definition response type
-type DefinitionResponse = LocationOrLocationsOrDefinitionLinksOrNull
+type DefinitionResponse = *LocationOrLocationsOrDefinitionLinks
+
+var TextDocumentDefinitionHandler = HandlerType[*DefinitionParams, DefinitionResponse]{Method: MethodTextDocumentDefinition}
 
 // textDocument/references response type
-type ReferencesResponse = LocationsOrNull
+type ReferencesResponse = *[]Location
+
+var TextDocumentReferencesHandler = HandlerType[*ReferenceParams, ReferencesResponse]{Method: MethodTextDocumentReferences}
 
 // textDocument/documentHighlight response type
-type DocumentHighlightResponse = DocumentHighlightsOrNull
+type DocumentHighlightResponse = *[]*DocumentHighlight
+
+var TextDocumentDocumentHighlightHandler = HandlerType[*DocumentHighlightParams, DocumentHighlightResponse]{Method: MethodTextDocumentDocumentHighlight}
 
 // textDocument/documentSymbol response type
-type DocumentSymbolResponse = SymbolInformationsOrDocumentSymbolsOrNull
+type DocumentSymbolResponse = *SymbolInformationsOrDocumentSymbols
+
+var TextDocumentDocumentSymbolHandler = HandlerType[*DocumentSymbolParams, DocumentSymbolResponse]{Method: MethodTextDocumentDocumentSymbol}
 
 // textDocument/codeAction response type
-type CodeActionResponse = CommandOrCodeActionArrayOrNull
+type CodeActionResponse = *[]CommandOrCodeAction
+
+var TextDocumentCodeActionHandler = HandlerType[*CodeActionParams, CodeActionResponse]{Method: MethodTextDocumentCodeAction}
 
 // codeAction/resolve response type
 type CodeActionResolveResponse = *CodeAction
 
+var CodeActionResolveHandler = HandlerType[*CodeAction, CodeActionResolveResponse]{Method: MethodCodeActionResolve}
+
 // workspace/symbol response type
-type WorkspaceSymbolResponse = SymbolInformationsOrWorkspaceSymbolsOrNull
+type WorkspaceSymbolResponse = *SymbolInformationsOrWorkspaceSymbols
+
+var WorkspaceSymbolHandler = HandlerType[*WorkspaceSymbolParams, WorkspaceSymbolResponse]{Method: MethodWorkspaceSymbol}
 
 // workspaceSymbol/resolve response type
 type WorkspaceSymbolResolveResponse = *WorkspaceSymbol
 
+var WorkspaceSymbolResolveHandler = HandlerType[*WorkspaceSymbol, WorkspaceSymbolResolveResponse]{Method: MethodWorkspaceSymbolResolve}
+
 // textDocument/codeLens response type
-type CodeLensResponse = CodeLenssOrNull
+type CodeLensResponse = *[]*CodeLens
+
+var TextDocumentCodeLensHandler = HandlerType[*CodeLensParams, CodeLensResponse]{Method: MethodTextDocumentCodeLens}
 
 // codeLens/resolve response type
 type CodeLensResolveResponse = *CodeLens
+
+var CodeLensResolveHandler = HandlerType[*CodeLens, CodeLensResolveResponse]{Method: MethodCodeLensResolve}
 
 // workspace/codeLens/refresh response type
 type CodeLensRefreshResponse = any
 
 // textDocument/documentLink response type
-type DocumentLinkResponse = DocumentLinksOrNull
+type DocumentLinkResponse = *[]*DocumentLink
+
+var TextDocumentDocumentLinkHandler = HandlerType[*DocumentLinkParams, DocumentLinkResponse]{Method: MethodTextDocumentDocumentLink}
 
 // documentLink/resolve response type
 type DocumentLinkResolveResponse = *DocumentLink
 
+var DocumentLinkResolveHandler = HandlerType[*DocumentLink, DocumentLinkResolveResponse]{Method: MethodDocumentLinkResolve}
+
 // textDocument/formatting response type
-type DocumentFormattingResponse = TextEditsOrNull
+type DocumentFormattingResponse = *[]*TextEdit
+
+var TextDocumentFormattingHandler = HandlerType[*DocumentFormattingParams, DocumentFormattingResponse]{Method: MethodTextDocumentFormatting}
 
 // textDocument/rangeFormatting response type
-type DocumentRangeFormattingResponse = TextEditsOrNull
+type DocumentRangeFormattingResponse = *[]*TextEdit
+
+var TextDocumentRangeFormattingHandler = HandlerType[*DocumentRangeFormattingParams, DocumentRangeFormattingResponse]{Method: MethodTextDocumentRangeFormatting}
 
 // textDocument/rangesFormatting response type
-type DocumentRangesFormattingResponse = TextEditsOrNull
+type DocumentRangesFormattingResponse = *[]*TextEdit
+
+var TextDocumentRangesFormattingHandler = HandlerType[*DocumentRangesFormattingParams, DocumentRangesFormattingResponse]{Method: MethodTextDocumentRangesFormatting}
 
 // textDocument/onTypeFormatting response type
-type DocumentOnTypeFormattingResponse = TextEditsOrNull
+type DocumentOnTypeFormattingResponse = *[]*TextEdit
+
+var TextDocumentOnTypeFormattingHandler = HandlerType[*DocumentOnTypeFormattingParams, DocumentOnTypeFormattingResponse]{Method: MethodTextDocumentOnTypeFormatting}
 
 // textDocument/rename response type
-type RenameResponse = WorkspaceEditOrNull
+type RenameResponse = *WorkspaceEdit
+
+var TextDocumentRenameHandler = HandlerType[*RenameParams, RenameResponse]{Method: MethodTextDocumentRename}
 
 // textDocument/prepareRename response type
-type PrepareRenameResponse = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull
+type PrepareRenameResponse = *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior
+
+var TextDocumentPrepareRenameHandler = HandlerType[*PrepareRenameParams, PrepareRenameResponse]{Method: MethodTextDocumentPrepareRename}
 
 // workspace/executeCommand response type
-type ExecuteCommandResponse = LSPAnyOrNull
+type ExecuteCommandResponse = *any
+
+var WorkspaceExecuteCommandHandler = HandlerType[*ExecuteCommandParams, ExecuteCommandResponse]{Method: MethodWorkspaceExecuteCommand}
 
 // workspace/applyEdit response type
 type ApplyWorkspaceEditResponse = *ApplyWorkspaceEditResult
@@ -15431,14 +15539,14 @@ func (o *BooleanOrClientSemanticTokensRequestFullDelta) UnmarshalJSON(data []byt
 	return fmt.Errorf("invalid BooleanOrClientSemanticTokensRequestFullDelta: %s", data)
 }
 
-type LocationOrLocationsOrDefinitionLinksOrNull struct {
+type LocationOrLocationsOrDefinitionLinks struct {
 	Location        *Location
 	Locations       *[]Location
 	DefinitionLinks *[]*LocationLink
 }
 
-func (o LocationOrLocationsOrDefinitionLinksOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of LocationOrLocationsOrDefinitionLinksOrNull is set", o.Location != nil, o.Locations != nil, o.DefinitionLinks != nil)
+func (o LocationOrLocationsOrDefinitionLinks) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of LocationOrLocationsOrDefinitionLinks is set", o.Location != nil, o.Locations != nil, o.DefinitionLinks != nil)
 
 	if o.Location != nil {
 		return json.Marshal(*o.Location)
@@ -15449,17 +15557,11 @@ func (o LocationOrLocationsOrDefinitionLinksOrNull) MarshalJSON() ([]byte, error
 	if o.DefinitionLinks != nil {
 		return json.Marshal(*o.DefinitionLinks)
 	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
-func (o *LocationOrLocationsOrDefinitionLinksOrNull) UnmarshalJSON(data []byte) error {
-	*o = LocationOrLocationsOrDefinitionLinksOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
+func (o *LocationOrLocationsOrDefinitionLinks) UnmarshalJSON(data []byte) error {
+	*o = LocationOrLocationsOrDefinitionLinks{}
 
 	var vLocation Location
 	if err := json.Unmarshal(data, &vLocation); err == nil {
@@ -15476,47 +15578,17 @@ func (o *LocationOrLocationsOrDefinitionLinksOrNull) UnmarshalJSON(data []byte) 
 		o.DefinitionLinks = &vDefinitionLinks
 		return nil
 	}
-	return fmt.Errorf("invalid LocationOrLocationsOrDefinitionLinksOrNull: %s", data)
+	return fmt.Errorf("invalid LocationOrLocationsOrDefinitionLinks: %s", data)
 }
 
-type FoldingRangesOrNull struct {
-	FoldingRanges *[]*FoldingRange
-}
-
-func (o FoldingRangesOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of FoldingRangesOrNull is set", o.FoldingRanges != nil)
-
-	if o.FoldingRanges != nil {
-		return json.Marshal(*o.FoldingRanges)
-	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
-}
-
-func (o *FoldingRangesOrNull) UnmarshalJSON(data []byte) error {
-	*o = FoldingRangesOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vFoldingRanges []*FoldingRange
-	if err := json.Unmarshal(data, &vFoldingRanges); err == nil {
-		o.FoldingRanges = &vFoldingRanges
-		return nil
-	}
-	return fmt.Errorf("invalid FoldingRangesOrNull: %s", data)
-}
-
-type LocationOrLocationsOrDeclarationLinksOrNull struct {
+type LocationOrLocationsOrDeclarationLinks struct {
 	Location         *Location
 	Locations        *[]Location
 	DeclarationLinks *[]*LocationLink
 }
 
-func (o LocationOrLocationsOrDeclarationLinksOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of LocationOrLocationsOrDeclarationLinksOrNull is set", o.Location != nil, o.Locations != nil, o.DeclarationLinks != nil)
+func (o LocationOrLocationsOrDeclarationLinks) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of LocationOrLocationsOrDeclarationLinks is set", o.Location != nil, o.Locations != nil, o.DeclarationLinks != nil)
 
 	if o.Location != nil {
 		return json.Marshal(*o.Location)
@@ -15527,17 +15599,11 @@ func (o LocationOrLocationsOrDeclarationLinksOrNull) MarshalJSON() ([]byte, erro
 	if o.DeclarationLinks != nil {
 		return json.Marshal(*o.DeclarationLinks)
 	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
-func (o *LocationOrLocationsOrDeclarationLinksOrNull) UnmarshalJSON(data []byte) error {
-	*o = LocationOrLocationsOrDeclarationLinksOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
+func (o *LocationOrLocationsOrDeclarationLinks) UnmarshalJSON(data []byte) error {
+	*o = LocationOrLocationsOrDeclarationLinks{}
 
 	var vLocation Location
 	if err := json.Unmarshal(data, &vLocation); err == nil {
@@ -15554,166 +15620,16 @@ func (o *LocationOrLocationsOrDeclarationLinksOrNull) UnmarshalJSON(data []byte)
 		o.DeclarationLinks = &vDeclarationLinks
 		return nil
 	}
-	return fmt.Errorf("invalid LocationOrLocationsOrDeclarationLinksOrNull: %s", data)
+	return fmt.Errorf("invalid LocationOrLocationsOrDeclarationLinks: %s", data)
 }
 
-type SelectionRangesOrNull struct {
-	SelectionRanges *[]*SelectionRange
-}
-
-func (o SelectionRangesOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of SelectionRangesOrNull is set", o.SelectionRanges != nil)
-
-	if o.SelectionRanges != nil {
-		return json.Marshal(*o.SelectionRanges)
-	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
-}
-
-func (o *SelectionRangesOrNull) UnmarshalJSON(data []byte) error {
-	*o = SelectionRangesOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vSelectionRanges []*SelectionRange
-	if err := json.Unmarshal(data, &vSelectionRanges); err == nil {
-		o.SelectionRanges = &vSelectionRanges
-		return nil
-	}
-	return fmt.Errorf("invalid SelectionRangesOrNull: %s", data)
-}
-
-type CallHierarchyItemsOrNull struct {
-	CallHierarchyItems *[]*CallHierarchyItem
-}
-
-func (o CallHierarchyItemsOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of CallHierarchyItemsOrNull is set", o.CallHierarchyItems != nil)
-
-	if o.CallHierarchyItems != nil {
-		return json.Marshal(*o.CallHierarchyItems)
-	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
-}
-
-func (o *CallHierarchyItemsOrNull) UnmarshalJSON(data []byte) error {
-	*o = CallHierarchyItemsOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vCallHierarchyItems []*CallHierarchyItem
-	if err := json.Unmarshal(data, &vCallHierarchyItems); err == nil {
-		o.CallHierarchyItems = &vCallHierarchyItems
-		return nil
-	}
-	return fmt.Errorf("invalid CallHierarchyItemsOrNull: %s", data)
-}
-
-type CallHierarchyIncomingCallsOrNull struct {
-	CallHierarchyIncomingCalls *[]*CallHierarchyIncomingCall
-}
-
-func (o CallHierarchyIncomingCallsOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of CallHierarchyIncomingCallsOrNull is set", o.CallHierarchyIncomingCalls != nil)
-
-	if o.CallHierarchyIncomingCalls != nil {
-		return json.Marshal(*o.CallHierarchyIncomingCalls)
-	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
-}
-
-func (o *CallHierarchyIncomingCallsOrNull) UnmarshalJSON(data []byte) error {
-	*o = CallHierarchyIncomingCallsOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vCallHierarchyIncomingCalls []*CallHierarchyIncomingCall
-	if err := json.Unmarshal(data, &vCallHierarchyIncomingCalls); err == nil {
-		o.CallHierarchyIncomingCalls = &vCallHierarchyIncomingCalls
-		return nil
-	}
-	return fmt.Errorf("invalid CallHierarchyIncomingCallsOrNull: %s", data)
-}
-
-type CallHierarchyOutgoingCallsOrNull struct {
-	CallHierarchyOutgoingCalls *[]*CallHierarchyOutgoingCall
-}
-
-func (o CallHierarchyOutgoingCallsOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of CallHierarchyOutgoingCallsOrNull is set", o.CallHierarchyOutgoingCalls != nil)
-
-	if o.CallHierarchyOutgoingCalls != nil {
-		return json.Marshal(*o.CallHierarchyOutgoingCalls)
-	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
-}
-
-func (o *CallHierarchyOutgoingCallsOrNull) UnmarshalJSON(data []byte) error {
-	*o = CallHierarchyOutgoingCallsOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vCallHierarchyOutgoingCalls []*CallHierarchyOutgoingCall
-	if err := json.Unmarshal(data, &vCallHierarchyOutgoingCalls); err == nil {
-		o.CallHierarchyOutgoingCalls = &vCallHierarchyOutgoingCalls
-		return nil
-	}
-	return fmt.Errorf("invalid CallHierarchyOutgoingCallsOrNull: %s", data)
-}
-
-type SemanticTokensOrNull struct {
-	SemanticTokens *SemanticTokens
-}
-
-func (o SemanticTokensOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of SemanticTokensOrNull is set", o.SemanticTokens != nil)
-
-	if o.SemanticTokens != nil {
-		return json.Marshal(*o.SemanticTokens)
-	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
-}
-
-func (o *SemanticTokensOrNull) UnmarshalJSON(data []byte) error {
-	*o = SemanticTokensOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vSemanticTokens SemanticTokens
-	if err := json.Unmarshal(data, &vSemanticTokens); err == nil {
-		o.SemanticTokens = &vSemanticTokens
-		return nil
-	}
-	return fmt.Errorf("invalid SemanticTokensOrNull: %s", data)
-}
-
-type SemanticTokensOrSemanticTokensDeltaOrNull struct {
+type SemanticTokensOrSemanticTokensDelta struct {
 	SemanticTokens      *SemanticTokens
 	SemanticTokensDelta *SemanticTokensDelta
 }
 
-func (o SemanticTokensOrSemanticTokensDeltaOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of SemanticTokensOrSemanticTokensDeltaOrNull is set", o.SemanticTokens != nil, o.SemanticTokensDelta != nil)
+func (o SemanticTokensOrSemanticTokensDelta) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of SemanticTokensOrSemanticTokensDelta is set", o.SemanticTokens != nil, o.SemanticTokensDelta != nil)
 
 	if o.SemanticTokens != nil {
 		return json.Marshal(*o.SemanticTokens)
@@ -15721,17 +15637,11 @@ func (o SemanticTokensOrSemanticTokensDeltaOrNull) MarshalJSON() ([]byte, error)
 	if o.SemanticTokensDelta != nil {
 		return json.Marshal(*o.SemanticTokensDelta)
 	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
-func (o *SemanticTokensOrSemanticTokensDeltaOrNull) UnmarshalJSON(data []byte) error {
-	*o = SemanticTokensOrSemanticTokensDeltaOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
+func (o *SemanticTokensOrSemanticTokensDelta) UnmarshalJSON(data []byte) error {
+	*o = SemanticTokensOrSemanticTokensDelta{}
 
 	var vSemanticTokens SemanticTokens
 	if err := json.Unmarshal(data, &vSemanticTokens); err == nil {
@@ -15743,187 +15653,49 @@ func (o *SemanticTokensOrSemanticTokensDeltaOrNull) UnmarshalJSON(data []byte) e
 		o.SemanticTokensDelta = &vSemanticTokensDelta
 		return nil
 	}
-	return fmt.Errorf("invalid SemanticTokensOrSemanticTokensDeltaOrNull: %s", data)
+	return fmt.Errorf("invalid SemanticTokensOrSemanticTokensDelta: %s", data)
 }
 
-type LinkedEditingRangesOrNull struct {
-	LinkedEditingRanges *LinkedEditingRanges
+type InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression struct {
+	InlineValueText                  *InlineValueText
+	InlineValueVariableLookup        *InlineValueVariableLookup
+	InlineValueEvaluatableExpression *InlineValueEvaluatableExpression
 }
 
-func (o LinkedEditingRangesOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of LinkedEditingRangesOrNull is set", o.LinkedEditingRanges != nil)
+func (o InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression is set", o.InlineValueText != nil, o.InlineValueVariableLookup != nil, o.InlineValueEvaluatableExpression != nil)
 
-	if o.LinkedEditingRanges != nil {
-		return json.Marshal(*o.LinkedEditingRanges)
+	if o.InlineValueText != nil {
+		return json.Marshal(*o.InlineValueText)
 	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
+	if o.InlineValueVariableLookup != nil {
+		return json.Marshal(*o.InlineValueVariableLookup)
+	}
+	if o.InlineValueEvaluatableExpression != nil {
+		return json.Marshal(*o.InlineValueEvaluatableExpression)
+	}
+	panic("unreachable")
 }
 
-func (o *LinkedEditingRangesOrNull) UnmarshalJSON(data []byte) error {
-	*o = LinkedEditingRangesOrNull{}
+func (o *InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression) UnmarshalJSON(data []byte) error {
+	*o = InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression{}
 
-	// Handle null case
-	if string(data) == "null" {
+	var vInlineValueText InlineValueText
+	if err := json.Unmarshal(data, &vInlineValueText); err == nil {
+		o.InlineValueText = &vInlineValueText
 		return nil
 	}
-
-	var vLinkedEditingRanges LinkedEditingRanges
-	if err := json.Unmarshal(data, &vLinkedEditingRanges); err == nil {
-		o.LinkedEditingRanges = &vLinkedEditingRanges
+	var vInlineValueVariableLookup InlineValueVariableLookup
+	if err := json.Unmarshal(data, &vInlineValueVariableLookup); err == nil {
+		o.InlineValueVariableLookup = &vInlineValueVariableLookup
 		return nil
 	}
-	return fmt.Errorf("invalid LinkedEditingRangesOrNull: %s", data)
-}
-
-type WorkspaceEditOrNull struct {
-	WorkspaceEdit *WorkspaceEdit
-}
-
-func (o WorkspaceEditOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of WorkspaceEditOrNull is set", o.WorkspaceEdit != nil)
-
-	if o.WorkspaceEdit != nil {
-		return json.Marshal(*o.WorkspaceEdit)
-	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
-}
-
-func (o *WorkspaceEditOrNull) UnmarshalJSON(data []byte) error {
-	*o = WorkspaceEditOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
+	var vInlineValueEvaluatableExpression InlineValueEvaluatableExpression
+	if err := json.Unmarshal(data, &vInlineValueEvaluatableExpression); err == nil {
+		o.InlineValueEvaluatableExpression = &vInlineValueEvaluatableExpression
 		return nil
 	}
-
-	var vWorkspaceEdit WorkspaceEdit
-	if err := json.Unmarshal(data, &vWorkspaceEdit); err == nil {
-		o.WorkspaceEdit = &vWorkspaceEdit
-		return nil
-	}
-	return fmt.Errorf("invalid WorkspaceEditOrNull: %s", data)
-}
-
-type MonikersOrNull struct {
-	Monikers *[]*Moniker
-}
-
-func (o MonikersOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of MonikersOrNull is set", o.Monikers != nil)
-
-	if o.Monikers != nil {
-		return json.Marshal(*o.Monikers)
-	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
-}
-
-func (o *MonikersOrNull) UnmarshalJSON(data []byte) error {
-	*o = MonikersOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vMonikers []*Moniker
-	if err := json.Unmarshal(data, &vMonikers); err == nil {
-		o.Monikers = &vMonikers
-		return nil
-	}
-	return fmt.Errorf("invalid MonikersOrNull: %s", data)
-}
-
-type TypeHierarchyItemsOrNull struct {
-	TypeHierarchyItems *[]*TypeHierarchyItem
-}
-
-func (o TypeHierarchyItemsOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of TypeHierarchyItemsOrNull is set", o.TypeHierarchyItems != nil)
-
-	if o.TypeHierarchyItems != nil {
-		return json.Marshal(*o.TypeHierarchyItems)
-	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
-}
-
-func (o *TypeHierarchyItemsOrNull) UnmarshalJSON(data []byte) error {
-	*o = TypeHierarchyItemsOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vTypeHierarchyItems []*TypeHierarchyItem
-	if err := json.Unmarshal(data, &vTypeHierarchyItems); err == nil {
-		o.TypeHierarchyItems = &vTypeHierarchyItems
-		return nil
-	}
-	return fmt.Errorf("invalid TypeHierarchyItemsOrNull: %s", data)
-}
-
-type InlineValuesOrNull struct {
-	InlineValues *[]InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression
-}
-
-func (o InlineValuesOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of InlineValuesOrNull is set", o.InlineValues != nil)
-
-	if o.InlineValues != nil {
-		return json.Marshal(*o.InlineValues)
-	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
-}
-
-func (o *InlineValuesOrNull) UnmarshalJSON(data []byte) error {
-	*o = InlineValuesOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vInlineValues []InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression
-	if err := json.Unmarshal(data, &vInlineValues); err == nil {
-		o.InlineValues = &vInlineValues
-		return nil
-	}
-	return fmt.Errorf("invalid InlineValuesOrNull: %s", data)
-}
-
-type InlayHintsOrNull struct {
-	InlayHints *[]*InlayHint
-}
-
-func (o InlayHintsOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of InlayHintsOrNull is set", o.InlayHints != nil)
-
-	if o.InlayHints != nil {
-		return json.Marshal(*o.InlayHints)
-	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
-}
-
-func (o *InlayHintsOrNull) UnmarshalJSON(data []byte) error {
-	*o = InlayHintsOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vInlayHints []*InlayHint
-	if err := json.Unmarshal(data, &vInlayHints); err == nil {
-		o.InlayHints = &vInlayHints
-		return nil
-	}
-	return fmt.Errorf("invalid InlayHintsOrNull: %s", data)
+	return fmt.Errorf("invalid InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression: %s", data)
 }
 
 type RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport struct {
@@ -15959,13 +15731,13 @@ func (o *RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnostic
 	return fmt.Errorf("invalid RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport: %s", data)
 }
 
-type InlineCompletionListOrInlineCompletionItemsOrNull struct {
+type InlineCompletionListOrInlineCompletionItems struct {
 	InlineCompletionList  *InlineCompletionList
 	InlineCompletionItems *[]*InlineCompletionItem
 }
 
-func (o InlineCompletionListOrInlineCompletionItemsOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of InlineCompletionListOrInlineCompletionItemsOrNull is set", o.InlineCompletionList != nil, o.InlineCompletionItems != nil)
+func (o InlineCompletionListOrInlineCompletionItems) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of InlineCompletionListOrInlineCompletionItems is set", o.InlineCompletionList != nil, o.InlineCompletionItems != nil)
 
 	if o.InlineCompletionList != nil {
 		return json.Marshal(*o.InlineCompletionList)
@@ -15973,17 +15745,11 @@ func (o InlineCompletionListOrInlineCompletionItemsOrNull) MarshalJSON() ([]byte
 	if o.InlineCompletionItems != nil {
 		return json.Marshal(*o.InlineCompletionItems)
 	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
-func (o *InlineCompletionListOrInlineCompletionItemsOrNull) UnmarshalJSON(data []byte) error {
-	*o = InlineCompletionListOrInlineCompletionItemsOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
+func (o *InlineCompletionListOrInlineCompletionItems) UnmarshalJSON(data []byte) error {
+	*o = InlineCompletionListOrInlineCompletionItems{}
 
 	var vInlineCompletionList InlineCompletionList
 	if err := json.Unmarshal(data, &vInlineCompletionList); err == nil {
@@ -15995,76 +15761,16 @@ func (o *InlineCompletionListOrInlineCompletionItemsOrNull) UnmarshalJSON(data [
 		o.InlineCompletionItems = &vInlineCompletionItems
 		return nil
 	}
-	return fmt.Errorf("invalid InlineCompletionListOrInlineCompletionItemsOrNull: %s", data)
+	return fmt.Errorf("invalid InlineCompletionListOrInlineCompletionItems: %s", data)
 }
 
-type MessageActionItemOrNull struct {
-	MessageActionItem *MessageActionItem
-}
-
-func (o MessageActionItemOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of MessageActionItemOrNull is set", o.MessageActionItem != nil)
-
-	if o.MessageActionItem != nil {
-		return json.Marshal(*o.MessageActionItem)
-	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
-}
-
-func (o *MessageActionItemOrNull) UnmarshalJSON(data []byte) error {
-	*o = MessageActionItemOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vMessageActionItem MessageActionItem
-	if err := json.Unmarshal(data, &vMessageActionItem); err == nil {
-		o.MessageActionItem = &vMessageActionItem
-		return nil
-	}
-	return fmt.Errorf("invalid MessageActionItemOrNull: %s", data)
-}
-
-type TextEditsOrNull struct {
-	TextEdits *[]*TextEdit
-}
-
-func (o TextEditsOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of TextEditsOrNull is set", o.TextEdits != nil)
-
-	if o.TextEdits != nil {
-		return json.Marshal(*o.TextEdits)
-	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
-}
-
-func (o *TextEditsOrNull) UnmarshalJSON(data []byte) error {
-	*o = TextEditsOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vTextEdits []*TextEdit
-	if err := json.Unmarshal(data, &vTextEdits); err == nil {
-		o.TextEdits = &vTextEdits
-		return nil
-	}
-	return fmt.Errorf("invalid TextEditsOrNull: %s", data)
-}
-
-type CompletionItemsOrCompletionListOrNull struct {
+type CompletionItemsOrCompletionList struct {
 	CompletionItems *[]*CompletionItem
 	CompletionList  *CompletionList
 }
 
-func (o CompletionItemsOrCompletionListOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of CompletionItemsOrCompletionListOrNull is set", o.CompletionItems != nil, o.CompletionList != nil)
+func (o CompletionItemsOrCompletionList) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of CompletionItemsOrCompletionList is set", o.CompletionItems != nil, o.CompletionList != nil)
 
 	if o.CompletionItems != nil {
 		return json.Marshal(*o.CompletionItems)
@@ -16072,17 +15778,11 @@ func (o CompletionItemsOrCompletionListOrNull) MarshalJSON() ([]byte, error) {
 	if o.CompletionList != nil {
 		return json.Marshal(*o.CompletionList)
 	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
-func (o *CompletionItemsOrCompletionListOrNull) UnmarshalJSON(data []byte) error {
-	*o = CompletionItemsOrCompletionListOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
+func (o *CompletionItemsOrCompletionList) UnmarshalJSON(data []byte) error {
+	*o = CompletionItemsOrCompletionList{}
 
 	var vCompletionItems []*CompletionItem
 	if err := json.Unmarshal(data, &vCompletionItems); err == nil {
@@ -16094,136 +15794,16 @@ func (o *CompletionItemsOrCompletionListOrNull) UnmarshalJSON(data []byte) error
 		o.CompletionList = &vCompletionList
 		return nil
 	}
-	return fmt.Errorf("invalid CompletionItemsOrCompletionListOrNull: %s", data)
+	return fmt.Errorf("invalid CompletionItemsOrCompletionList: %s", data)
 }
 
-type HoverOrNull struct {
-	Hover *Hover
-}
-
-func (o HoverOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of HoverOrNull is set", o.Hover != nil)
-
-	if o.Hover != nil {
-		return json.Marshal(*o.Hover)
-	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
-}
-
-func (o *HoverOrNull) UnmarshalJSON(data []byte) error {
-	*o = HoverOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vHover Hover
-	if err := json.Unmarshal(data, &vHover); err == nil {
-		o.Hover = &vHover
-		return nil
-	}
-	return fmt.Errorf("invalid HoverOrNull: %s", data)
-}
-
-type SignatureHelpOrNull struct {
-	SignatureHelp *SignatureHelp
-}
-
-func (o SignatureHelpOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of SignatureHelpOrNull is set", o.SignatureHelp != nil)
-
-	if o.SignatureHelp != nil {
-		return json.Marshal(*o.SignatureHelp)
-	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
-}
-
-func (o *SignatureHelpOrNull) UnmarshalJSON(data []byte) error {
-	*o = SignatureHelpOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vSignatureHelp SignatureHelp
-	if err := json.Unmarshal(data, &vSignatureHelp); err == nil {
-		o.SignatureHelp = &vSignatureHelp
-		return nil
-	}
-	return fmt.Errorf("invalid SignatureHelpOrNull: %s", data)
-}
-
-type LocationsOrNull struct {
-	Locations *[]Location
-}
-
-func (o LocationsOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of LocationsOrNull is set", o.Locations != nil)
-
-	if o.Locations != nil {
-		return json.Marshal(*o.Locations)
-	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
-}
-
-func (o *LocationsOrNull) UnmarshalJSON(data []byte) error {
-	*o = LocationsOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vLocations []Location
-	if err := json.Unmarshal(data, &vLocations); err == nil {
-		o.Locations = &vLocations
-		return nil
-	}
-	return fmt.Errorf("invalid LocationsOrNull: %s", data)
-}
-
-type DocumentHighlightsOrNull struct {
-	DocumentHighlights *[]*DocumentHighlight
-}
-
-func (o DocumentHighlightsOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of DocumentHighlightsOrNull is set", o.DocumentHighlights != nil)
-
-	if o.DocumentHighlights != nil {
-		return json.Marshal(*o.DocumentHighlights)
-	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
-}
-
-func (o *DocumentHighlightsOrNull) UnmarshalJSON(data []byte) error {
-	*o = DocumentHighlightsOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vDocumentHighlights []*DocumentHighlight
-	if err := json.Unmarshal(data, &vDocumentHighlights); err == nil {
-		o.DocumentHighlights = &vDocumentHighlights
-		return nil
-	}
-	return fmt.Errorf("invalid DocumentHighlightsOrNull: %s", data)
-}
-
-type SymbolInformationsOrDocumentSymbolsOrNull struct {
+type SymbolInformationsOrDocumentSymbols struct {
 	SymbolInformations *[]*SymbolInformation
 	DocumentSymbols    *[]*DocumentSymbol
 }
 
-func (o SymbolInformationsOrDocumentSymbolsOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of SymbolInformationsOrDocumentSymbolsOrNull is set", o.SymbolInformations != nil, o.DocumentSymbols != nil)
+func (o SymbolInformationsOrDocumentSymbols) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of SymbolInformationsOrDocumentSymbols is set", o.SymbolInformations != nil, o.DocumentSymbols != nil)
 
 	if o.SymbolInformations != nil {
 		return json.Marshal(*o.SymbolInformations)
@@ -16231,17 +15811,11 @@ func (o SymbolInformationsOrDocumentSymbolsOrNull) MarshalJSON() ([]byte, error)
 	if o.DocumentSymbols != nil {
 		return json.Marshal(*o.DocumentSymbols)
 	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
-func (o *SymbolInformationsOrDocumentSymbolsOrNull) UnmarshalJSON(data []byte) error {
-	*o = SymbolInformationsOrDocumentSymbolsOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
+func (o *SymbolInformationsOrDocumentSymbols) UnmarshalJSON(data []byte) error {
+	*o = SymbolInformationsOrDocumentSymbols{}
 
 	var vSymbolInformations []*SymbolInformation
 	if err := json.Unmarshal(data, &vSymbolInformations); err == nil {
@@ -16253,7 +15827,7 @@ func (o *SymbolInformationsOrDocumentSymbolsOrNull) UnmarshalJSON(data []byte) e
 		o.DocumentSymbols = &vDocumentSymbols
 		return nil
 	}
-	return fmt.Errorf("invalid SymbolInformationsOrDocumentSymbolsOrNull: %s", data)
+	return fmt.Errorf("invalid SymbolInformationsOrDocumentSymbols: %s", data)
 }
 
 type CommandOrCodeAction struct {
@@ -16289,43 +15863,13 @@ func (o *CommandOrCodeAction) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid CommandOrCodeAction: %s", data)
 }
 
-type CommandOrCodeActionArrayOrNull struct {
-	CommandOrCodeActionArray *[]CommandOrCodeAction
-}
-
-func (o CommandOrCodeActionArrayOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of CommandOrCodeActionArrayOrNull is set", o.CommandOrCodeActionArray != nil)
-
-	if o.CommandOrCodeActionArray != nil {
-		return json.Marshal(*o.CommandOrCodeActionArray)
-	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
-}
-
-func (o *CommandOrCodeActionArrayOrNull) UnmarshalJSON(data []byte) error {
-	*o = CommandOrCodeActionArrayOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vCommandOrCodeActionArray []CommandOrCodeAction
-	if err := json.Unmarshal(data, &vCommandOrCodeActionArray); err == nil {
-		o.CommandOrCodeActionArray = &vCommandOrCodeActionArray
-		return nil
-	}
-	return fmt.Errorf("invalid CommandOrCodeActionArrayOrNull: %s", data)
-}
-
-type SymbolInformationsOrWorkspaceSymbolsOrNull struct {
+type SymbolInformationsOrWorkspaceSymbols struct {
 	SymbolInformations *[]*SymbolInformation
 	WorkspaceSymbols   *[]*WorkspaceSymbol
 }
 
-func (o SymbolInformationsOrWorkspaceSymbolsOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of SymbolInformationsOrWorkspaceSymbolsOrNull is set", o.SymbolInformations != nil, o.WorkspaceSymbols != nil)
+func (o SymbolInformationsOrWorkspaceSymbols) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of SymbolInformationsOrWorkspaceSymbols is set", o.SymbolInformations != nil, o.WorkspaceSymbols != nil)
 
 	if o.SymbolInformations != nil {
 		return json.Marshal(*o.SymbolInformations)
@@ -16333,17 +15877,11 @@ func (o SymbolInformationsOrWorkspaceSymbolsOrNull) MarshalJSON() ([]byte, error
 	if o.WorkspaceSymbols != nil {
 		return json.Marshal(*o.WorkspaceSymbols)
 	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
-func (o *SymbolInformationsOrWorkspaceSymbolsOrNull) UnmarshalJSON(data []byte) error {
-	*o = SymbolInformationsOrWorkspaceSymbolsOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
+func (o *SymbolInformationsOrWorkspaceSymbols) UnmarshalJSON(data []byte) error {
+	*o = SymbolInformationsOrWorkspaceSymbols{}
 
 	var vSymbolInformations []*SymbolInformation
 	if err := json.Unmarshal(data, &vSymbolInformations); err == nil {
@@ -16355,77 +15893,17 @@ func (o *SymbolInformationsOrWorkspaceSymbolsOrNull) UnmarshalJSON(data []byte) 
 		o.WorkspaceSymbols = &vWorkspaceSymbols
 		return nil
 	}
-	return fmt.Errorf("invalid SymbolInformationsOrWorkspaceSymbolsOrNull: %s", data)
+	return fmt.Errorf("invalid SymbolInformationsOrWorkspaceSymbols: %s", data)
 }
 
-type CodeLenssOrNull struct {
-	CodeLenss *[]*CodeLens
-}
-
-func (o CodeLenssOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of CodeLenssOrNull is set", o.CodeLenss != nil)
-
-	if o.CodeLenss != nil {
-		return json.Marshal(*o.CodeLenss)
-	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
-}
-
-func (o *CodeLenssOrNull) UnmarshalJSON(data []byte) error {
-	*o = CodeLenssOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vCodeLenss []*CodeLens
-	if err := json.Unmarshal(data, &vCodeLenss); err == nil {
-		o.CodeLenss = &vCodeLenss
-		return nil
-	}
-	return fmt.Errorf("invalid CodeLenssOrNull: %s", data)
-}
-
-type DocumentLinksOrNull struct {
-	DocumentLinks *[]*DocumentLink
-}
-
-func (o DocumentLinksOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of DocumentLinksOrNull is set", o.DocumentLinks != nil)
-
-	if o.DocumentLinks != nil {
-		return json.Marshal(*o.DocumentLinks)
-	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
-}
-
-func (o *DocumentLinksOrNull) UnmarshalJSON(data []byte) error {
-	*o = DocumentLinksOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vDocumentLinks []*DocumentLink
-	if err := json.Unmarshal(data, &vDocumentLinks); err == nil {
-		o.DocumentLinks = &vDocumentLinks
-		return nil
-	}
-	return fmt.Errorf("invalid DocumentLinksOrNull: %s", data)
-}
-
-type RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull struct {
+type RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior struct {
 	Range                        *Range
 	PrepareRenamePlaceholder     *PrepareRenamePlaceholder
 	PrepareRenameDefaultBehavior *PrepareRenameDefaultBehavior
 }
 
-func (o RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull is set", o.Range != nil, o.PrepareRenamePlaceholder != nil, o.PrepareRenameDefaultBehavior != nil)
+func (o RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior is set", o.Range != nil, o.PrepareRenamePlaceholder != nil, o.PrepareRenameDefaultBehavior != nil)
 
 	if o.Range != nil {
 		return json.Marshal(*o.Range)
@@ -16436,17 +15914,11 @@ func (o RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull) Mar
 	if o.PrepareRenameDefaultBehavior != nil {
 		return json.Marshal(*o.PrepareRenameDefaultBehavior)
 	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
-func (o *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull) UnmarshalJSON(data []byte) error {
-	*o = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
+func (o *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior) UnmarshalJSON(data []byte) error {
+	*o = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior{}
 
 	var vRange Range
 	if err := json.Unmarshal(data, &vRange); err == nil {
@@ -16463,37 +15935,7 @@ func (o *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull) Un
 		o.PrepareRenameDefaultBehavior = &vPrepareRenameDefaultBehavior
 		return nil
 	}
-	return fmt.Errorf("invalid RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull: %s", data)
-}
-
-type LSPAnyOrNull struct {
-	LSPAny *any
-}
-
-func (o LSPAnyOrNull) MarshalJSON() ([]byte, error) {
-	assertAtMostOne("more than one element of LSPAnyOrNull is set", o.LSPAny != nil)
-
-	if o.LSPAny != nil {
-		return json.Marshal(*o.LSPAny)
-	}
-	// All fields are nil, represent as null
-	return []byte("null"), nil
-}
-
-func (o *LSPAnyOrNull) UnmarshalJSON(data []byte) error {
-	*o = LSPAnyOrNull{}
-
-	// Handle null case
-	if string(data) == "null" {
-		return nil
-	}
-
-	var vLSPAny any
-	if err := json.Unmarshal(data, &vLSPAny); err == nil {
-		o.LSPAny = &vLSPAny
-		return nil
-	}
-	return fmt.Errorf("invalid LSPAnyOrNull: %s", data)
+	return fmt.Errorf("invalid RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior: %s", data)
 }
 
 type TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter struct {
@@ -16578,48 +16020,6 @@ func (o *StringOrMarkedStringWithLanguage) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 	return fmt.Errorf("invalid StringOrMarkedStringWithLanguage: %s", data)
-}
-
-type InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression struct {
-	InlineValueText                  *InlineValueText
-	InlineValueVariableLookup        *InlineValueVariableLookup
-	InlineValueEvaluatableExpression *InlineValueEvaluatableExpression
-}
-
-func (o InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression is set", o.InlineValueText != nil, o.InlineValueVariableLookup != nil, o.InlineValueEvaluatableExpression != nil)
-
-	if o.InlineValueText != nil {
-		return json.Marshal(*o.InlineValueText)
-	}
-	if o.InlineValueVariableLookup != nil {
-		return json.Marshal(*o.InlineValueVariableLookup)
-	}
-	if o.InlineValueEvaluatableExpression != nil {
-		return json.Marshal(*o.InlineValueEvaluatableExpression)
-	}
-	panic("unreachable")
-}
-
-func (o *InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression) UnmarshalJSON(data []byte) error {
-	*o = InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression{}
-
-	var vInlineValueText InlineValueText
-	if err := json.Unmarshal(data, &vInlineValueText); err == nil {
-		o.InlineValueText = &vInlineValueText
-		return nil
-	}
-	var vInlineValueVariableLookup InlineValueVariableLookup
-	if err := json.Unmarshal(data, &vInlineValueVariableLookup); err == nil {
-		o.InlineValueVariableLookup = &vInlineValueVariableLookup
-		return nil
-	}
-	var vInlineValueEvaluatableExpression InlineValueEvaluatableExpression
-	if err := json.Unmarshal(data, &vInlineValueEvaluatableExpression); err == nil {
-		o.InlineValueEvaluatableExpression = &vInlineValueEvaluatableExpression
-		return nil
-	}
-	return fmt.Errorf("invalid InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression: %s", data)
 }
 
 // Literal types

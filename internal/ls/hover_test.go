@@ -170,7 +170,7 @@ func runHoverTest(t *testing.T, input string, expected map[string]*lsproto.Hover
 			assert.Assert(t, result == nil)
 		} else {
 			assert.Assert(t, result != nil)
-			assert.DeepEqual(t, *result, *expectedResult)
+			assert.DeepEqual(t, result, expectedResult)
 		}
 	}
 }
