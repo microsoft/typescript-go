@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"golang.org/x/text/language"
 )
 
 type handleMap[T any] map[Handle[T]]*T
@@ -225,7 +226,7 @@ func (api *API) GetSymbolAtPosition(ctx context.Context, projectId Handle[projec
 	if !ok {
 		return nil, errors.New("project not found")
 	}
-	languageService, done := project.GetLanguageServiceForRequest(ctx)
+	languageService, done := project.GetLanguageServiceForRequest(ctx, language.Und)
 	defer done()
 	symbol, err := languageService.GetSymbolAtPosition(ctx, fileName, position)
 	if err != nil || symbol == nil {
@@ -261,7 +262,7 @@ func (api *API) GetSymbolAtLocation(ctx context.Context, projectId Handle[projec
 	if node == nil {
 		return nil, fmt.Errorf("node of kind %s not found at position %d in file %q", kind.String(), pos, sourceFile.FileName())
 	}
-	languageService, done := project.GetLanguageServiceForRequest(ctx)
+	languageService, done := project.GetLanguageServiceForRequest(ctx, language.Und)
 	defer done()
 	symbol := languageService.GetSymbolAtLocation(ctx, node)
 	if symbol == nil {
@@ -285,7 +286,7 @@ func (api *API) GetTypeOfSymbol(ctx context.Context, projectId Handle[project.Pr
 	if !ok {
 		return nil, fmt.Errorf("symbol %q not found", symbolHandle)
 	}
-	languageService, done := project.GetLanguageServiceForRequest(ctx)
+	languageService, done := project.GetLanguageServiceForRequest(ctx, language.Und)
 	defer done()
 	t := languageService.GetTypeOfSymbol(ctx, symbol)
 	if t == nil {

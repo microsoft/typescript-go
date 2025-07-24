@@ -20,6 +20,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
+	"golang.org/x/text/language"
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=Kind -output=project_stringer_generated.go
@@ -43,6 +44,7 @@ type snapshot struct {
 	positionEncoding lsproto.PositionEncodingKind
 	program          *compiler.Program
 	lineMaps         collections.SyncMap[*ast.SourceFile, *ls.LineMap]
+	locale           language.Tag
 }
 
 // GetLineMap implements ls.Host.
@@ -69,6 +71,11 @@ func (s *snapshot) GetPositionEncoding() lsproto.PositionEncodingKind {
 // GetProgram implements ls.Host.
 func (s *snapshot) GetProgram() *compiler.Program {
 	return s.program
+}
+
+// GetLocale implements ls.Host.
+func (s *snapshot) GetLocale() language.Tag {
+	return s.locale
 }
 
 var _ ls.Host = (*snapshot)(nil)
@@ -326,7 +333,7 @@ func (p *Project) CurrentProgram() *compiler.Program {
 	return p.program
 }
 
-func (p *Project) GetLanguageServiceForRequest(ctx context.Context) (*ls.LanguageService, func()) {
+func (p *Project) GetLanguageServiceForRequest(ctx context.Context, locale language.Tag) (*ls.LanguageService, func()) {
 	if core.GetRequestID(ctx) == "" {
 		panic("context must already have a request ID")
 	}
@@ -339,6 +346,7 @@ func (p *Project) GetLanguageServiceForRequest(ctx context.Context) (*ls.Languag
 		project:          p,
 		positionEncoding: p.host.PositionEncoding(),
 		program:          program,
+		locale:           locale,
 	}
 	languageService := ls.NewLanguageService(ctx, snapshot)
 	cleanup := func() {

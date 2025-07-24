@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
+	"golang.org/x/text/language"
 	"gotest.tools/v3/assert"
 )
 
@@ -1805,7 +1806,7 @@ func createLanguageService(ctx context.Context, fileName string, files map[strin
 	projectService, _ := projecttestutil.Setup(files, nil)
 	projectService.OpenFile(fileName, files[fileName], core.GetScriptKindFromFileName(fileName), "")
 	project := projectService.Projects()[0]
-	return project.GetLanguageServiceForRequest(ctx)
+	return project.GetLanguageServiceForRequest(ctx, language.AmericanEnglish)
 }
 
 func ptrTo[T any](v T) *T {

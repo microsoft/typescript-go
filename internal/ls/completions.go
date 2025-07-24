@@ -23,6 +23,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsutil"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
+	"golang.org/x/text/collate"
 )
 
 func (l *LanguageService) ProvideCompletion(
@@ -1606,7 +1607,7 @@ func (l *LanguageService) completionInfoFromData(
 				!data.isTypeOnlyLocation && isContextualKeywordInAutoImportableExpressionSpace(keywordEntry.Label) ||
 				!uniqueNames.Has(keywordEntry.Label) {
 				uniqueNames.Add(keywordEntry.Label)
-				sortedEntries = core.InsertSorted(sortedEntries, keywordEntry, compareCompletionEntries)
+				sortedEntries = core.InsertSorted(sortedEntries, keywordEntry, l.compareCompletionEntries)
 			}
 		}
 	}
@@ -1614,18 +1615,18 @@ func (l *LanguageService) completionInfoFromData(
 	for _, keywordEntry := range getContextualKeywords(file, contextToken, position) {
 		if !uniqueNames.Has(keywordEntry.Label) {
 			uniqueNames.Add(keywordEntry.Label)
-			sortedEntries = core.InsertSorted(sortedEntries, keywordEntry, compareCompletionEntries)
+			sortedEntries = core.InsertSorted(sortedEntries, keywordEntry, l.compareCompletionEntries)
 		}
 	}
 
 	for _, literal := range literals {
 		literalEntry := createCompletionItemForLiteral(file, preferences, literal)
 		uniqueNames.Add(literalEntry.Label)
-		sortedEntries = core.InsertSorted(sortedEntries, literalEntry, compareCompletionEntries)
+		sortedEntries = core.InsertSorted(sortedEntries, literalEntry, l.compareCompletionEntries)
 	}
 
 	if !isChecked {
-		sortedEntries = getJSCompletionEntries(
+		sortedEntries = l.getJSCompletionEntries(
 			file,
 			position,
 			&uniqueNames,
@@ -1731,7 +1732,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			!(symbol.Parent == nil &&
 				!core.Some(symbol.Declarations, func(d *ast.Node) bool { return ast.GetSourceFileOfNode(d) == file }))
 		uniques[name] = shouldShadowLaterSymbols
-		sortedEntries = core.InsertSorted(sortedEntries, entry, compareCompletionEntries)
+		sortedEntries = core.InsertSorted(sortedEntries, entry, l.compareCompletionEntries)
 	}
 
 	uniqueSet := collections.NewSetWithSizeHint[string](len(uniques))
@@ -2982,11 +2983,11 @@ func getCompletionsSymbolKind(kind ScriptElementKind) lsproto.CompletionItemKind
 // by the language service consistent with what TS Server does and what editors typically do. This also makes
 // completions tests make more sense. We used to sort only alphabetically and only in the server layer, but
 // this made tests really weird, since most fourslash tests don't use the server.
-func compareCompletionEntries(entryInSlice *lsproto.CompletionItem, entryToInsert *lsproto.CompletionItem) int {
-	// !!! use locale-aware comparison
-	result := stringutil.CompareStringsCaseSensitive(*entryInSlice.SortText, *entryToInsert.SortText)
+func (l *LanguageService) compareCompletionEntries(entryInSlice *lsproto.CompletionItem, entryToInsert *lsproto.CompletionItem) int {
+	compareStrings := collate.New(l.host.GetLocale()).CompareString
+	result := compareStrings(*entryInSlice.SortText, *entryToInsert.SortText)
 	if result == stringutil.ComparisonEqual {
-		result = stringutil.CompareStringsCaseSensitive(entryInSlice.Label, entryToInsert.Label)
+		result = compareStrings(entryInSlice.Label, entryToInsert.Label)
 	}
 	// !!! auto-imports
 	// if (result === Comparison.EqualTo && entryInArray.data?.moduleSpecifier && entryToInsert.data?.moduleSpecifier) {
@@ -3183,7 +3184,7 @@ func getContextualKeywords(file *ast.SourceFile, contextToken *ast.Node, positio
 	return entries
 }
 
-func getJSCompletionEntries(
+func (l *LanguageService) getJSCompletionEntries(
 	file *ast.SourceFile,
 	position int,
 	uniqueNames *collections.Set[string],
@@ -3205,7 +3206,7 @@ func getJSCompletionEntries(
 					SortText:         ptrTo(string(SortTextJavascriptIdentifiers)),
 					CommitCharacters: ptrTo([]string{}),
 				},
-				compareCompletionEntries,
+				l.compareCompletionEntries,
 			)
 		}
 	}

@@ -9,7 +9,7 @@ import (
 
 func TestMemberListOnConstructorType(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var f: new () => void;
 f./*1*/`
