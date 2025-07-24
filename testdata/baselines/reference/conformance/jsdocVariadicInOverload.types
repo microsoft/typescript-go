@@ -1,6 +1,7 @@
 //// [tests/cases/conformance/jsdoc/jsdocVariadicInOverload.ts] ////
 
 === typeTagForMultipleVariableDeclarations.js ===
+// based on code from unifiedjs/unified
 class Node {}
 >Node : Node
 

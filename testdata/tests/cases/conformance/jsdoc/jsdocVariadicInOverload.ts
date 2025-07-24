@@ -3,6 +3,8 @@
 // @allowJs: true
 // @outdir: out
 // @declaration: true
+
+// based on code from unifiedjs/unified
 class Node {}
 /**
  * @template {Node | undefined} [ParseTree=undefined]

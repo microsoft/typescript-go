@@ -1,6 +1,7 @@
 //// [tests/cases/conformance/jsdoc/jsdocVariadicInOverload.ts] ////
 
 //// [typeTagForMultipleVariableDeclarations.js]
+// based on code from unifiedjs/unified
 class Node {}
 /**
  * @template {Node | undefined} [ParseTree=undefined]
@@ -47,6 +48,7 @@ p.use(x, y, z);
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Processor = void 0;
+// based on code from unifiedjs/unified
 class Node {
 }
 /**
@@ -92,6 +94,7 @@ p.use(x, y, z);
 
 
 //// [typeTagForMultipleVariableDeclarations.d.ts]
+// based on code from unifiedjs/unified
 declare class Node {
 }
 /**
