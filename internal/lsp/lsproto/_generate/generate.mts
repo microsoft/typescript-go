@@ -613,7 +613,7 @@ function generateCode() {
             const paramType = request.params ? resolveType(request.params) : undefined;
             const paramGoType = paramType ? (paramType.needsPointer ? `*${paramType.name}` : paramType.name) : "any";
 
-            writeLine(`var ${methodName}Handler = RequestToResponse[${paramGoType}, ${responseTypeName}]{Method: Method${methodName}}`);
+            writeLine(`var ${methodName}Handler = RequestToResponseMapping[${paramGoType}, ${responseTypeName}]{Method: Method${methodName}}`);
             writeLine("");
         }
     }

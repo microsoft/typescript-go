@@ -78,7 +78,7 @@ func (v *requiredProp) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 
 // Inspired by https://www.youtube.com/watch?v=dab3I-HcTVk
 
-type RequestToResponse[Req, Resp any] struct {
+type RequestToResponseMapping[Req, Resp any] struct {
 	_      [0]Req
 	_      [0]Resp
 	Method Method

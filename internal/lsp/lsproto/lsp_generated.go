@@ -13158,12 +13158,12 @@ const (
 // textDocument/implementation response type
 type ImplementationResponse = *LocationOrLocationsOrDefinitionLinks
 
-var TextDocumentImplementationHandler = RequestToResponse[*ImplementationParams, ImplementationResponse]{Method: MethodTextDocumentImplementation}
+var TextDocumentImplementationHandler = RequestToResponseMapping[*ImplementationParams, ImplementationResponse]{Method: MethodTextDocumentImplementation}
 
 // textDocument/typeDefinition response type
 type TypeDefinitionResponse = *LocationOrLocationsOrDefinitionLinks
 
-var TextDocumentTypeDefinitionHandler = RequestToResponse[*TypeDefinitionParams, TypeDefinitionResponse]{Method: MethodTextDocumentTypeDefinition}
+var TextDocumentTypeDefinitionHandler = RequestToResponseMapping[*TypeDefinitionParams, TypeDefinitionResponse]{Method: MethodTextDocumentTypeDefinition}
 
 // workspace/workspaceFolders response type
 type WorkspaceFoldersResponse = *[]*WorkspaceFolder
@@ -13174,17 +13174,17 @@ type ConfigurationResponse = []any
 // textDocument/documentColor response type
 type DocumentColorResponse = []*ColorInformation
 
-var TextDocumentDocumentColorHandler = RequestToResponse[*DocumentColorParams, DocumentColorResponse]{Method: MethodTextDocumentDocumentColor}
+var TextDocumentDocumentColorHandler = RequestToResponseMapping[*DocumentColorParams, DocumentColorResponse]{Method: MethodTextDocumentDocumentColor}
 
 // textDocument/colorPresentation response type
 type ColorPresentationResponse = []*ColorPresentation
 
-var TextDocumentColorPresentationHandler = RequestToResponse[*ColorPresentationParams, ColorPresentationResponse]{Method: MethodTextDocumentColorPresentation}
+var TextDocumentColorPresentationHandler = RequestToResponseMapping[*ColorPresentationParams, ColorPresentationResponse]{Method: MethodTextDocumentColorPresentation}
 
 // textDocument/foldingRange response type
 type FoldingRangeResponse = *[]*FoldingRange
 
-var TextDocumentFoldingRangeHandler = RequestToResponse[*FoldingRangeParams, FoldingRangeResponse]{Method: MethodTextDocumentFoldingRange}
+var TextDocumentFoldingRangeHandler = RequestToResponseMapping[*FoldingRangeParams, FoldingRangeResponse]{Method: MethodTextDocumentFoldingRange}
 
 // workspace/foldingRange/refresh response type
 type FoldingRangeRefreshResponse = any
@@ -13192,12 +13192,12 @@ type FoldingRangeRefreshResponse = any
 // textDocument/declaration response type
 type DeclarationResponse = *LocationOrLocationsOrDeclarationLinks
 
-var TextDocumentDeclarationHandler = RequestToResponse[*DeclarationParams, DeclarationResponse]{Method: MethodTextDocumentDeclaration}
+var TextDocumentDeclarationHandler = RequestToResponseMapping[*DeclarationParams, DeclarationResponse]{Method: MethodTextDocumentDeclaration}
 
 // textDocument/selectionRange response type
 type SelectionRangeResponse = *[]*SelectionRange
 
-var TextDocumentSelectionRangeHandler = RequestToResponse[*SelectionRangeParams, SelectionRangeResponse]{Method: MethodTextDocumentSelectionRange}
+var TextDocumentSelectionRangeHandler = RequestToResponseMapping[*SelectionRangeParams, SelectionRangeResponse]{Method: MethodTextDocumentSelectionRange}
 
 // window/workDoneProgress/create response type
 type WorkDoneProgressCreateResponse = any
@@ -13205,32 +13205,32 @@ type WorkDoneProgressCreateResponse = any
 // textDocument/prepareCallHierarchy response type
 type CallHierarchyPrepareResponse = *[]*CallHierarchyItem
 
-var TextDocumentPrepareCallHierarchyHandler = RequestToResponse[*CallHierarchyPrepareParams, CallHierarchyPrepareResponse]{Method: MethodTextDocumentPrepareCallHierarchy}
+var TextDocumentPrepareCallHierarchyHandler = RequestToResponseMapping[*CallHierarchyPrepareParams, CallHierarchyPrepareResponse]{Method: MethodTextDocumentPrepareCallHierarchy}
 
 // callHierarchy/incomingCalls response type
 type CallHierarchyIncomingCallsResponse = *[]*CallHierarchyIncomingCall
 
-var CallHierarchyIncomingCallsHandler = RequestToResponse[*CallHierarchyIncomingCallsParams, CallHierarchyIncomingCallsResponse]{Method: MethodCallHierarchyIncomingCalls}
+var CallHierarchyIncomingCallsHandler = RequestToResponseMapping[*CallHierarchyIncomingCallsParams, CallHierarchyIncomingCallsResponse]{Method: MethodCallHierarchyIncomingCalls}
 
 // callHierarchy/outgoingCalls response type
 type CallHierarchyOutgoingCallsResponse = *[]*CallHierarchyOutgoingCall
 
-var CallHierarchyOutgoingCallsHandler = RequestToResponse[*CallHierarchyOutgoingCallsParams, CallHierarchyOutgoingCallsResponse]{Method: MethodCallHierarchyOutgoingCalls}
+var CallHierarchyOutgoingCallsHandler = RequestToResponseMapping[*CallHierarchyOutgoingCallsParams, CallHierarchyOutgoingCallsResponse]{Method: MethodCallHierarchyOutgoingCalls}
 
 // textDocument/semanticTokens/full response type
 type SemanticTokensResponse = *SemanticTokens
 
-var TextDocumentSemanticTokensFullHandler = RequestToResponse[*SemanticTokensParams, SemanticTokensResponse]{Method: MethodTextDocumentSemanticTokensFull}
+var TextDocumentSemanticTokensFullHandler = RequestToResponseMapping[*SemanticTokensParams, SemanticTokensResponse]{Method: MethodTextDocumentSemanticTokensFull}
 
 // textDocument/semanticTokens/full/delta response type
 type SemanticTokensDeltaResponse = *SemanticTokensOrSemanticTokensDelta
 
-var TextDocumentSemanticTokensFullDeltaHandler = RequestToResponse[*SemanticTokensDeltaParams, SemanticTokensDeltaResponse]{Method: MethodTextDocumentSemanticTokensFullDelta}
+var TextDocumentSemanticTokensFullDeltaHandler = RequestToResponseMapping[*SemanticTokensDeltaParams, SemanticTokensDeltaResponse]{Method: MethodTextDocumentSemanticTokensFullDelta}
 
 // textDocument/semanticTokens/range response type
 type SemanticTokensRangeResponse = *SemanticTokens
 
-var TextDocumentSemanticTokensRangeHandler = RequestToResponse[*SemanticTokensRangeParams, SemanticTokensRangeResponse]{Method: MethodTextDocumentSemanticTokensRange}
+var TextDocumentSemanticTokensRangeHandler = RequestToResponseMapping[*SemanticTokensRangeParams, SemanticTokensRangeResponse]{Method: MethodTextDocumentSemanticTokensRange}
 
 // workspace/semanticTokens/refresh response type
 type SemanticTokensRefreshResponse = any
@@ -13241,47 +13241,47 @@ type ShowDocumentResponse = *ShowDocumentResult
 // textDocument/linkedEditingRange response type
 type LinkedEditingRangeResponse = *LinkedEditingRanges
 
-var TextDocumentLinkedEditingRangeHandler = RequestToResponse[*LinkedEditingRangeParams, LinkedEditingRangeResponse]{Method: MethodTextDocumentLinkedEditingRange}
+var TextDocumentLinkedEditingRangeHandler = RequestToResponseMapping[*LinkedEditingRangeParams, LinkedEditingRangeResponse]{Method: MethodTextDocumentLinkedEditingRange}
 
 // workspace/willCreateFiles response type
 type WillCreateFilesResponse = *WorkspaceEdit
 
-var WorkspaceWillCreateFilesHandler = RequestToResponse[*CreateFilesParams, WillCreateFilesResponse]{Method: MethodWorkspaceWillCreateFiles}
+var WorkspaceWillCreateFilesHandler = RequestToResponseMapping[*CreateFilesParams, WillCreateFilesResponse]{Method: MethodWorkspaceWillCreateFiles}
 
 // workspace/willRenameFiles response type
 type WillRenameFilesResponse = *WorkspaceEdit
 
-var WorkspaceWillRenameFilesHandler = RequestToResponse[*RenameFilesParams, WillRenameFilesResponse]{Method: MethodWorkspaceWillRenameFiles}
+var WorkspaceWillRenameFilesHandler = RequestToResponseMapping[*RenameFilesParams, WillRenameFilesResponse]{Method: MethodWorkspaceWillRenameFiles}
 
 // workspace/willDeleteFiles response type
 type WillDeleteFilesResponse = *WorkspaceEdit
 
-var WorkspaceWillDeleteFilesHandler = RequestToResponse[*DeleteFilesParams, WillDeleteFilesResponse]{Method: MethodWorkspaceWillDeleteFiles}
+var WorkspaceWillDeleteFilesHandler = RequestToResponseMapping[*DeleteFilesParams, WillDeleteFilesResponse]{Method: MethodWorkspaceWillDeleteFiles}
 
 // textDocument/moniker response type
 type MonikerResponse = *[]*Moniker
 
-var TextDocumentMonikerHandler = RequestToResponse[*MonikerParams, MonikerResponse]{Method: MethodTextDocumentMoniker}
+var TextDocumentMonikerHandler = RequestToResponseMapping[*MonikerParams, MonikerResponse]{Method: MethodTextDocumentMoniker}
 
 // textDocument/prepareTypeHierarchy response type
 type TypeHierarchyPrepareResponse = *[]*TypeHierarchyItem
 
-var TextDocumentPrepareTypeHierarchyHandler = RequestToResponse[*TypeHierarchyPrepareParams, TypeHierarchyPrepareResponse]{Method: MethodTextDocumentPrepareTypeHierarchy}
+var TextDocumentPrepareTypeHierarchyHandler = RequestToResponseMapping[*TypeHierarchyPrepareParams, TypeHierarchyPrepareResponse]{Method: MethodTextDocumentPrepareTypeHierarchy}
 
 // typeHierarchy/supertypes response type
 type TypeHierarchySupertypesResponse = *[]*TypeHierarchyItem
 
-var TypeHierarchySupertypesHandler = RequestToResponse[*TypeHierarchySupertypesParams, TypeHierarchySupertypesResponse]{Method: MethodTypeHierarchySupertypes}
+var TypeHierarchySupertypesHandler = RequestToResponseMapping[*TypeHierarchySupertypesParams, TypeHierarchySupertypesResponse]{Method: MethodTypeHierarchySupertypes}
 
 // typeHierarchy/subtypes response type
 type TypeHierarchySubtypesResponse = *[]*TypeHierarchyItem
 
-var TypeHierarchySubtypesHandler = RequestToResponse[*TypeHierarchySubtypesParams, TypeHierarchySubtypesResponse]{Method: MethodTypeHierarchySubtypes}
+var TypeHierarchySubtypesHandler = RequestToResponseMapping[*TypeHierarchySubtypesParams, TypeHierarchySubtypesResponse]{Method: MethodTypeHierarchySubtypes}
 
 // textDocument/inlineValue response type
 type InlineValueResponse = *[]InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression
 
-var TextDocumentInlineValueHandler = RequestToResponse[*InlineValueParams, InlineValueResponse]{Method: MethodTextDocumentInlineValue}
+var TextDocumentInlineValueHandler = RequestToResponseMapping[*InlineValueParams, InlineValueResponse]{Method: MethodTextDocumentInlineValue}
 
 // workspace/inlineValue/refresh response type
 type InlineValueRefreshResponse = any
@@ -13289,12 +13289,12 @@ type InlineValueRefreshResponse = any
 // textDocument/inlayHint response type
 type InlayHintResponse = *[]*InlayHint
 
-var TextDocumentInlayHintHandler = RequestToResponse[*InlayHintParams, InlayHintResponse]{Method: MethodTextDocumentInlayHint}
+var TextDocumentInlayHintHandler = RequestToResponseMapping[*InlayHintParams, InlayHintResponse]{Method: MethodTextDocumentInlayHint}
 
 // inlayHint/resolve response type
 type InlayHintResolveResponse = *InlayHint
 
-var InlayHintResolveHandler = RequestToResponse[*InlayHint, InlayHintResolveResponse]{Method: MethodInlayHintResolve}
+var InlayHintResolveHandler = RequestToResponseMapping[*InlayHint, InlayHintResolveResponse]{Method: MethodInlayHintResolve}
 
 // workspace/inlayHint/refresh response type
 type InlayHintRefreshResponse = any
@@ -13302,12 +13302,12 @@ type InlayHintRefreshResponse = any
 // textDocument/diagnostic response type
 type DocumentDiagnosticResponse = RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport
 
-var TextDocumentDiagnosticHandler = RequestToResponse[*DocumentDiagnosticParams, DocumentDiagnosticResponse]{Method: MethodTextDocumentDiagnostic}
+var TextDocumentDiagnosticHandler = RequestToResponseMapping[*DocumentDiagnosticParams, DocumentDiagnosticResponse]{Method: MethodTextDocumentDiagnostic}
 
 // workspace/diagnostic response type
 type WorkspaceDiagnosticResponse = *WorkspaceDiagnosticReport
 
-var WorkspaceDiagnosticHandler = RequestToResponse[*WorkspaceDiagnosticParams, WorkspaceDiagnosticResponse]{Method: MethodWorkspaceDiagnostic}
+var WorkspaceDiagnosticHandler = RequestToResponseMapping[*WorkspaceDiagnosticParams, WorkspaceDiagnosticResponse]{Method: MethodWorkspaceDiagnostic}
 
 // workspace/diagnostic/refresh response type
 type DiagnosticRefreshResponse = any
@@ -13315,12 +13315,12 @@ type DiagnosticRefreshResponse = any
 // textDocument/inlineCompletion response type
 type InlineCompletionResponse = *InlineCompletionListOrInlineCompletionItems
 
-var TextDocumentInlineCompletionHandler = RequestToResponse[*InlineCompletionParams, InlineCompletionResponse]{Method: MethodTextDocumentInlineCompletion}
+var TextDocumentInlineCompletionHandler = RequestToResponseMapping[*InlineCompletionParams, InlineCompletionResponse]{Method: MethodTextDocumentInlineCompletion}
 
 // workspace/textDocumentContent response type
 type TextDocumentContentResponse = *TextDocumentContentResult
 
-var WorkspaceTextDocumentContentHandler = RequestToResponse[*TextDocumentContentParams, TextDocumentContentResponse]{Method: MethodWorkspaceTextDocumentContent}
+var WorkspaceTextDocumentContentHandler = RequestToResponseMapping[*TextDocumentContentParams, TextDocumentContentResponse]{Method: MethodWorkspaceTextDocumentContent}
 
 // workspace/textDocumentContent/refresh response type
 type TextDocumentContentRefreshResponse = any
@@ -13334,12 +13334,12 @@ type UnregistrationResponse = any
 // initialize response type
 type InitializeResponse = *InitializeResult
 
-var InitializeHandler = RequestToResponse[*InitializeParams, InitializeResponse]{Method: MethodInitialize}
+var InitializeHandler = RequestToResponseMapping[*InitializeParams, InitializeResponse]{Method: MethodInitialize}
 
 // shutdown response type
 type ShutdownResponse = any
 
-var ShutdownHandler = RequestToResponse[any, ShutdownResponse]{Method: MethodShutdown}
+var ShutdownHandler = RequestToResponseMapping[any, ShutdownResponse]{Method: MethodShutdown}
 
 // window/showMessageRequest response type
 type ShowMessageResponse = *MessageActionItem
@@ -13347,77 +13347,77 @@ type ShowMessageResponse = *MessageActionItem
 // textDocument/willSaveWaitUntil response type
 type WillSaveTextDocumentWaitUntilResponse = *[]*TextEdit
 
-var TextDocumentWillSaveWaitUntilHandler = RequestToResponse[*WillSaveTextDocumentParams, WillSaveTextDocumentWaitUntilResponse]{Method: MethodTextDocumentWillSaveWaitUntil}
+var TextDocumentWillSaveWaitUntilHandler = RequestToResponseMapping[*WillSaveTextDocumentParams, WillSaveTextDocumentWaitUntilResponse]{Method: MethodTextDocumentWillSaveWaitUntil}
 
 // textDocument/completion response type
 type CompletionResponse = *CompletionItemsOrCompletionList
 
-var TextDocumentCompletionHandler = RequestToResponse[*CompletionParams, CompletionResponse]{Method: MethodTextDocumentCompletion}
+var TextDocumentCompletionHandler = RequestToResponseMapping[*CompletionParams, CompletionResponse]{Method: MethodTextDocumentCompletion}
 
 // completionItem/resolve response type
 type CompletionResolveResponse = *CompletionItem
 
-var CompletionItemResolveHandler = RequestToResponse[*CompletionItem, CompletionResolveResponse]{Method: MethodCompletionItemResolve}
+var CompletionItemResolveHandler = RequestToResponseMapping[*CompletionItem, CompletionResolveResponse]{Method: MethodCompletionItemResolve}
 
 // textDocument/hover response type
 type HoverResponse = *Hover
 
-var TextDocumentHoverHandler = RequestToResponse[*HoverParams, HoverResponse]{Method: MethodTextDocumentHover}
+var TextDocumentHoverHandler = RequestToResponseMapping[*HoverParams, HoverResponse]{Method: MethodTextDocumentHover}
 
 // textDocument/signatureHelp response type
 type SignatureHelpResponse = *SignatureHelp
 
-var TextDocumentSignatureHelpHandler = RequestToResponse[*SignatureHelpParams, SignatureHelpResponse]{Method: MethodTextDocumentSignatureHelp}
+var TextDocumentSignatureHelpHandler = RequestToResponseMapping[*SignatureHelpParams, SignatureHelpResponse]{Method: MethodTextDocumentSignatureHelp}
 
 // textDocument/definition response type
 type DefinitionResponse = *LocationOrLocationsOrDefinitionLinks
 
-var TextDocumentDefinitionHandler = RequestToResponse[*DefinitionParams, DefinitionResponse]{Method: MethodTextDocumentDefinition}
+var TextDocumentDefinitionHandler = RequestToResponseMapping[*DefinitionParams, DefinitionResponse]{Method: MethodTextDocumentDefinition}
 
 // textDocument/references response type
 type ReferencesResponse = *[]Location
 
-var TextDocumentReferencesHandler = RequestToResponse[*ReferenceParams, ReferencesResponse]{Method: MethodTextDocumentReferences}
+var TextDocumentReferencesHandler = RequestToResponseMapping[*ReferenceParams, ReferencesResponse]{Method: MethodTextDocumentReferences}
 
 // textDocument/documentHighlight response type
 type DocumentHighlightResponse = *[]*DocumentHighlight
 
-var TextDocumentDocumentHighlightHandler = RequestToResponse[*DocumentHighlightParams, DocumentHighlightResponse]{Method: MethodTextDocumentDocumentHighlight}
+var TextDocumentDocumentHighlightHandler = RequestToResponseMapping[*DocumentHighlightParams, DocumentHighlightResponse]{Method: MethodTextDocumentDocumentHighlight}
 
 // textDocument/documentSymbol response type
 type DocumentSymbolResponse = *SymbolInformationsOrDocumentSymbols
 
-var TextDocumentDocumentSymbolHandler = RequestToResponse[*DocumentSymbolParams, DocumentSymbolResponse]{Method: MethodTextDocumentDocumentSymbol}
+var TextDocumentDocumentSymbolHandler = RequestToResponseMapping[*DocumentSymbolParams, DocumentSymbolResponse]{Method: MethodTextDocumentDocumentSymbol}
 
 // textDocument/codeAction response type
 type CodeActionResponse = *[]CommandOrCodeAction
 
-var TextDocumentCodeActionHandler = RequestToResponse[*CodeActionParams, CodeActionResponse]{Method: MethodTextDocumentCodeAction}
+var TextDocumentCodeActionHandler = RequestToResponseMapping[*CodeActionParams, CodeActionResponse]{Method: MethodTextDocumentCodeAction}
 
 // codeAction/resolve response type
 type CodeActionResolveResponse = *CodeAction
 
-var CodeActionResolveHandler = RequestToResponse[*CodeAction, CodeActionResolveResponse]{Method: MethodCodeActionResolve}
+var CodeActionResolveHandler = RequestToResponseMapping[*CodeAction, CodeActionResolveResponse]{Method: MethodCodeActionResolve}
 
 // workspace/symbol response type
 type WorkspaceSymbolResponse = *SymbolInformationsOrWorkspaceSymbols
 
-var WorkspaceSymbolHandler = RequestToResponse[*WorkspaceSymbolParams, WorkspaceSymbolResponse]{Method: MethodWorkspaceSymbol}
+var WorkspaceSymbolHandler = RequestToResponseMapping[*WorkspaceSymbolParams, WorkspaceSymbolResponse]{Method: MethodWorkspaceSymbol}
 
 // workspaceSymbol/resolve response type
 type WorkspaceSymbolResolveResponse = *WorkspaceSymbol
 
-var WorkspaceSymbolResolveHandler = RequestToResponse[*WorkspaceSymbol, WorkspaceSymbolResolveResponse]{Method: MethodWorkspaceSymbolResolve}
+var WorkspaceSymbolResolveHandler = RequestToResponseMapping[*WorkspaceSymbol, WorkspaceSymbolResolveResponse]{Method: MethodWorkspaceSymbolResolve}
 
 // textDocument/codeLens response type
 type CodeLensResponse = *[]*CodeLens
 
-var TextDocumentCodeLensHandler = RequestToResponse[*CodeLensParams, CodeLensResponse]{Method: MethodTextDocumentCodeLens}
+var TextDocumentCodeLensHandler = RequestToResponseMapping[*CodeLensParams, CodeLensResponse]{Method: MethodTextDocumentCodeLens}
 
 // codeLens/resolve response type
 type CodeLensResolveResponse = *CodeLens
 
-var CodeLensResolveHandler = RequestToResponse[*CodeLens, CodeLensResolveResponse]{Method: MethodCodeLensResolve}
+var CodeLensResolveHandler = RequestToResponseMapping[*CodeLens, CodeLensResolveResponse]{Method: MethodCodeLensResolve}
 
 // workspace/codeLens/refresh response type
 type CodeLensRefreshResponse = any
@@ -13425,47 +13425,47 @@ type CodeLensRefreshResponse = any
 // textDocument/documentLink response type
 type DocumentLinkResponse = *[]*DocumentLink
 
-var TextDocumentDocumentLinkHandler = RequestToResponse[*DocumentLinkParams, DocumentLinkResponse]{Method: MethodTextDocumentDocumentLink}
+var TextDocumentDocumentLinkHandler = RequestToResponseMapping[*DocumentLinkParams, DocumentLinkResponse]{Method: MethodTextDocumentDocumentLink}
 
 // documentLink/resolve response type
 type DocumentLinkResolveResponse = *DocumentLink
 
-var DocumentLinkResolveHandler = RequestToResponse[*DocumentLink, DocumentLinkResolveResponse]{Method: MethodDocumentLinkResolve}
+var DocumentLinkResolveHandler = RequestToResponseMapping[*DocumentLink, DocumentLinkResolveResponse]{Method: MethodDocumentLinkResolve}
 
 // textDocument/formatting response type
 type DocumentFormattingResponse = *[]*TextEdit
 
-var TextDocumentFormattingHandler = RequestToResponse[*DocumentFormattingParams, DocumentFormattingResponse]{Method: MethodTextDocumentFormatting}
+var TextDocumentFormattingHandler = RequestToResponseMapping[*DocumentFormattingParams, DocumentFormattingResponse]{Method: MethodTextDocumentFormatting}
 
 // textDocument/rangeFormatting response type
 type DocumentRangeFormattingResponse = *[]*TextEdit
 
-var TextDocumentRangeFormattingHandler = RequestToResponse[*DocumentRangeFormattingParams, DocumentRangeFormattingResponse]{Method: MethodTextDocumentRangeFormatting}
+var TextDocumentRangeFormattingHandler = RequestToResponseMapping[*DocumentRangeFormattingParams, DocumentRangeFormattingResponse]{Method: MethodTextDocumentRangeFormatting}
 
 // textDocument/rangesFormatting response type
 type DocumentRangesFormattingResponse = *[]*TextEdit
 
-var TextDocumentRangesFormattingHandler = RequestToResponse[*DocumentRangesFormattingParams, DocumentRangesFormattingResponse]{Method: MethodTextDocumentRangesFormatting}
+var TextDocumentRangesFormattingHandler = RequestToResponseMapping[*DocumentRangesFormattingParams, DocumentRangesFormattingResponse]{Method: MethodTextDocumentRangesFormatting}
 
 // textDocument/onTypeFormatting response type
 type DocumentOnTypeFormattingResponse = *[]*TextEdit
 
-var TextDocumentOnTypeFormattingHandler = RequestToResponse[*DocumentOnTypeFormattingParams, DocumentOnTypeFormattingResponse]{Method: MethodTextDocumentOnTypeFormatting}
+var TextDocumentOnTypeFormattingHandler = RequestToResponseMapping[*DocumentOnTypeFormattingParams, DocumentOnTypeFormattingResponse]{Method: MethodTextDocumentOnTypeFormatting}
 
 // textDocument/rename response type
 type RenameResponse = *WorkspaceEdit
 
-var TextDocumentRenameHandler = RequestToResponse[*RenameParams, RenameResponse]{Method: MethodTextDocumentRename}
+var TextDocumentRenameHandler = RequestToResponseMapping[*RenameParams, RenameResponse]{Method: MethodTextDocumentRename}
 
 // textDocument/prepareRename response type
 type PrepareRenameResponse = *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior
 
-var TextDocumentPrepareRenameHandler = RequestToResponse[*PrepareRenameParams, PrepareRenameResponse]{Method: MethodTextDocumentPrepareRename}
+var TextDocumentPrepareRenameHandler = RequestToResponseMapping[*PrepareRenameParams, PrepareRenameResponse]{Method: MethodTextDocumentPrepareRename}
 
 // workspace/executeCommand response type
 type ExecuteCommandResponse = *any
 
-var WorkspaceExecuteCommandHandler = RequestToResponse[*ExecuteCommandParams, ExecuteCommandResponse]{Method: MethodWorkspaceExecuteCommand}
+var WorkspaceExecuteCommandHandler = RequestToResponseMapping[*ExecuteCommandParams, ExecuteCommandResponse]{Method: MethodWorkspaceExecuteCommand}
 
 // workspace/applyEdit response type
 type ApplyWorkspaceEditResponse = *ApplyWorkspaceEditResult

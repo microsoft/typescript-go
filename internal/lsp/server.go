@@ -653,7 +653,7 @@ func (s *Server) handleDidChangeWatchedFiles(ctx context.Context, req *lsproto.R
 func handleWithSingleResponse[Req, Resp any](
 	s *Server,
 	ctx context.Context,
-	info lsproto.RequestToResponse[Req, Resp],
+	info lsproto.RequestToResponseMapping[Req, Resp],
 	req *lsproto.RequestMessage,
 	fn func(*Server, context.Context, Req) (Resp, error),
 ) error {
