@@ -459,66 +459,64 @@ func (s *Server) sendResponse(resp *lsproto.ResponseMessage) {
 }
 
 func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.RequestMessage) error {
-	params := req.Params
-	switch params.(type) {
-	case *lsproto.InitializeParams:
+	switch req.Method {
+	case lsproto.MethodInitialize:
 		s.sendError(req.ID, lsproto.ErrInvalidRequest)
 		return nil
-	case *lsproto.InitializedParams:
+	case lsproto.MethodShutdown:
+		s.projectService.Close()
+		s.sendResult(req.ID, nil)
+		return nil
+	case lsproto.MethodExit:
+		return io.EOF
+
+	case lsproto.MethodInitialized:
 		return handleNotification(s, ctx, req, lsproto.InitializedHandler, (*Server).handleInitialized)
-	case *lsproto.DidOpenTextDocumentParams:
+	case lsproto.MethodTextDocumentDidOpen:
 		return handleNotification(s, ctx, req, lsproto.TextDocumentDidOpenHandler, (*Server).handleDidOpen)
-	case *lsproto.DidChangeTextDocumentParams:
+	case lsproto.MethodTextDocumentDidChange:
 		return handleNotification(s, ctx, req, lsproto.TextDocumentDidChangeHandler, (*Server).handleDidChange)
-	case *lsproto.DidSaveTextDocumentParams:
+	case lsproto.MethodTextDocumentDidSave:
 		return handleNotification(s, ctx, req, lsproto.TextDocumentDidSaveHandler, (*Server).handleDidSave)
-	case *lsproto.DidCloseTextDocumentParams:
+	case lsproto.MethodTextDocumentDidClose:
 		return handleNotification(s, ctx, req, lsproto.TextDocumentDidCloseHandler, (*Server).handleDidClose)
-	case *lsproto.DidChangeWatchedFilesParams:
+	case lsproto.MethodWorkspaceDidChangeWatchedFiles:
 		return handleNotification(s, ctx, req, lsproto.WorkspaceDidChangeWatchedFilesHandler, (*Server).handleDidChangeWatchedFiles)
-	case *lsproto.DocumentDiagnosticParams:
+	case lsproto.MethodTextDocumentDiagnostic:
 		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentDiagnosticHandler, (*Server).handleDocumentDiagnostic)
-	case *lsproto.HoverParams:
+	case lsproto.MethodTextDocumentHover:
 		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentHoverHandler, (*Server).handleHover)
-	case *lsproto.DefinitionParams:
+	case lsproto.MethodTextDocumentDefinition:
 		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentDefinitionHandler, (*Server).handleDefinition)
-	case *lsproto.TypeDefinitionParams:
+	case lsproto.MethodTextDocumentTypeDefinition:
 		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentTypeDefinitionHandler, (*Server).handleTypeDefinition)
-	case *lsproto.CompletionParams:
+	case lsproto.MethodTextDocumentCompletion:
 		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentCompletionHandler, (*Server).handleCompletion)
-	case *lsproto.ReferenceParams:
+	case lsproto.MethodTextDocumentReferences:
 		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentReferencesHandler, (*Server).handleReferences)
-	case *lsproto.ImplementationParams:
+	case lsproto.MethodTextDocumentImplementation:
 		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentImplementationHandler, (*Server).handleImplementations)
-	case *lsproto.SignatureHelpParams:
+	case lsproto.MethodTextDocumentSignatureHelp:
 		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentSignatureHelpHandler, (*Server).handleSignatureHelp)
-	case *lsproto.DocumentFormattingParams:
+	case lsproto.MethodTextDocumentFormatting:
 		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentFormattingHandler, (*Server).handleDocumentFormat)
-	case *lsproto.DocumentRangeFormattingParams:
+	case lsproto.MethodTextDocumentRangeFormatting:
 		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentRangeFormattingHandler, (*Server).handleDocumentRangeFormat)
-	case *lsproto.DocumentOnTypeFormattingParams:
+	case lsproto.MethodTextDocumentOnTypeFormatting:
 		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentOnTypeFormattingHandler, (*Server).handleDocumentOnTypeFormat)
-	case *lsproto.WorkspaceSymbolParams:
+	case lsproto.MethodWorkspaceSymbol:
 		return handleWithSingleResponse(s, ctx, req, lsproto.WorkspaceSymbolHandler, (*Server).handleWorkspaceSymbol)
-	case *lsproto.DocumentSymbolParams:
+	case lsproto.MethodTextDocumentDocumentSymbol:
 		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentDocumentSymbolHandler, (*Server).handleDocumentSymbol)
-	case *lsproto.CompletionItem:
+	case lsproto.MethodCompletionItemResolve:
 		return handleWithSingleResponse(s, ctx, req, lsproto.CompletionItemResolveHandler, (*Server).handleCompletionItemResolve)
+
 	default:
-		switch req.Method {
-		case lsproto.MethodShutdown:
-			s.projectService.Close()
-			s.sendResult(req.ID, nil)
-			return nil
-		case lsproto.MethodExit:
-			return io.EOF
-		default:
-			s.Log("unknown method", req.Method)
-			if req.ID != nil {
-				s.sendError(req.ID, lsproto.ErrInvalidRequest)
-			}
-			return nil
+		s.Log("unknown method", req.Method)
+		if req.ID != nil {
+			s.sendError(req.ID, lsproto.ErrInvalidRequest)
 		}
+		return nil
 	}
 }
 
