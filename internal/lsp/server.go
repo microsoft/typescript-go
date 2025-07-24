@@ -465,17 +465,17 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 		s.sendError(req.ID, lsproto.ErrInvalidRequest)
 		return nil
 	case *lsproto.InitializedParams:
-		return s.handleInitialized(ctx, req)
+		return handleNotification(s, ctx, lsproto.InitializedHandler, req, (*Server).handleInitialized)
 	case *lsproto.DidOpenTextDocumentParams:
-		return s.handleDidOpen(ctx, req)
+		return handleNotification(s, ctx, lsproto.TextDocumentDidOpenHandler, req, (*Server).handleDidOpen)
 	case *lsproto.DidChangeTextDocumentParams:
-		return s.handleDidChange(ctx, req)
+		return handleNotification(s, ctx, lsproto.TextDocumentDidChangeHandler, req, (*Server).handleDidChange)
 	case *lsproto.DidSaveTextDocumentParams:
-		return s.handleDidSave(ctx, req)
+		return handleNotification(s, ctx, lsproto.TextDocumentDidSaveHandler, req, (*Server).handleDidSave)
 	case *lsproto.DidCloseTextDocumentParams:
-		return s.handleDidClose(ctx, req)
+		return handleNotification(s, ctx, lsproto.TextDocumentDidCloseHandler, req, (*Server).handleDidClose)
 	case *lsproto.DidChangeWatchedFilesParams:
-		return s.handleDidChangeWatchedFiles(ctx, req)
+		return handleNotification(s, ctx, lsproto.WorkspaceDidChangeWatchedFilesHandler, req, (*Server).handleDidChangeWatchedFiles)
 	case *lsproto.DocumentDiagnosticParams:
 		return handleWithSingleResponse(s, ctx, lsproto.TextDocumentDiagnosticHandler, req, (*Server).handleDocumentDiagnostic)
 	case *lsproto.HoverParams:
@@ -520,6 +520,45 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 			return nil
 		}
 	}
+}
+
+func handleNotification[Req any](
+	s *Server,
+	ctx context.Context,
+	info lsproto.NotificationMapping[Req],
+	req *lsproto.RequestMessage,
+	fn func(*Server, context.Context, Req) error,
+) error {
+	if req.Method != info.Method {
+		panic(fmt.Sprintf("expected method %s, got %s", info.Method, req.Method))
+	}
+	params := req.Params.(Req)
+	if err := fn(s, ctx, params); err != nil {
+		return err
+	}
+	return ctx.Err()
+}
+
+func handleWithSingleResponse[Req, Resp any](
+	s *Server,
+	ctx context.Context,
+	info lsproto.RequestToResponseMapping[Req, Resp],
+	req *lsproto.RequestMessage,
+	fn func(*Server, context.Context, Req) (Resp, error),
+) error {
+	if req.Method != info.Method {
+		panic(fmt.Sprintf("expected method %s, got %s", info.Method, req.Method))
+	}
+	params := req.Params.(Req)
+	resp, err := fn(s, ctx, params)
+	if err != nil {
+		return err
+	}
+	if ctx.Err() != nil {
+		return ctx.Err()
+	}
+	s.sendResult(req.ID, resp)
+	return nil
 }
 
 func (s *Server) handleInitialize(req *lsproto.RequestMessage) {
@@ -598,7 +637,7 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) {
 	})
 }
 
-func (s *Server) handleInitialized(ctx context.Context, req *lsproto.RequestMessage) error {
+func (s *Server) handleInitialized(ctx context.Context, params *lsproto.InitializedParams) error {
 	if shouldEnableWatch(s.initializeParams) {
 		s.watchEnabled = true
 	}
@@ -622,54 +661,27 @@ func (s *Server) handleInitialized(ctx context.Context, req *lsproto.RequestMess
 	return nil
 }
 
-func (s *Server) handleDidOpen(ctx context.Context, req *lsproto.RequestMessage) error {
-	params := req.Params.(*lsproto.DidOpenTextDocumentParams)
+func (s *Server) handleDidOpen(ctx context.Context, params *lsproto.DidOpenTextDocumentParams) error {
 	s.projectService.OpenFile(ls.DocumentURIToFileName(params.TextDocument.Uri), params.TextDocument.Text, ls.LanguageKindToScriptKind(params.TextDocument.LanguageId), "")
 	return nil
 }
 
-func (s *Server) handleDidChange(ctx context.Context, req *lsproto.RequestMessage) error {
-	params := req.Params.(*lsproto.DidChangeTextDocumentParams)
+func (s *Server) handleDidChange(ctx context.Context, params *lsproto.DidChangeTextDocumentParams) error {
 	return s.projectService.ChangeFile(params.TextDocument, params.ContentChanges)
 }
 
-func (s *Server) handleDidSave(ctx context.Context, req *lsproto.RequestMessage) error {
-	params := req.Params.(*lsproto.DidSaveTextDocumentParams)
+func (s *Server) handleDidSave(ctx context.Context, params *lsproto.DidSaveTextDocumentParams) error {
 	s.projectService.MarkFileSaved(ls.DocumentURIToFileName(params.TextDocument.Uri), *params.Text)
 	return nil
 }
 
-func (s *Server) handleDidClose(ctx context.Context, req *lsproto.RequestMessage) error {
-	params := req.Params.(*lsproto.DidCloseTextDocumentParams)
+func (s *Server) handleDidClose(ctx context.Context, params *lsproto.DidCloseTextDocumentParams) error {
 	s.projectService.CloseFile(ls.DocumentURIToFileName(params.TextDocument.Uri))
 	return nil
 }
 
-func (s *Server) handleDidChangeWatchedFiles(ctx context.Context, req *lsproto.RequestMessage) error {
-	params := req.Params.(*lsproto.DidChangeWatchedFilesParams)
+func (s *Server) handleDidChangeWatchedFiles(ctx context.Context, params *lsproto.DidChangeWatchedFilesParams) error {
 	return s.projectService.OnWatchedFilesChanged(ctx, params.Changes)
-}
-
-func handleWithSingleResponse[Req, Resp any](
-	s *Server,
-	ctx context.Context,
-	info lsproto.RequestToResponseMapping[Req, Resp],
-	req *lsproto.RequestMessage,
-	fn func(*Server, context.Context, Req) (Resp, error),
-) error {
-	if req.Method != info.Method {
-		panic(fmt.Sprintf("expected method %s, got %s", info.Method, req.Method))
-	}
-	params := req.Params.(Req)
-	resp, err := fn(s, ctx, params)
-	if err != nil {
-		return err
-	}
-	if ctx.Err() != nil {
-		return ctx.Err()
-	}
-	s.sendResult(req.ID, resp)
-	return nil
 }
 
 func (s *Server) handleDocumentDiagnostic(ctx context.Context, params *lsproto.DocumentDiagnosticParams) (lsproto.DocumentDiagnosticResponse, error) {

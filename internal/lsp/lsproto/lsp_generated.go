@@ -13168,8 +13168,12 @@ var TextDocumentTypeDefinitionHandler = RequestToResponseMapping[*TypeDefinition
 // workspace/workspaceFolders response type
 type WorkspaceFoldersResponse = *[]*WorkspaceFolder
 
+var WorkspaceWorkspaceFoldersHandler = RequestToResponseMapping[any, WorkspaceFoldersResponse]{Method: MethodWorkspaceWorkspaceFolders}
+
 // workspace/configuration response type
 type ConfigurationResponse = []any
+
+var WorkspaceConfigurationHandler = RequestToResponseMapping[*ConfigurationParams, ConfigurationResponse]{Method: MethodWorkspaceConfiguration}
 
 // textDocument/documentColor response type
 type DocumentColorResponse = []*ColorInformation
@@ -13189,6 +13193,8 @@ var TextDocumentFoldingRangeHandler = RequestToResponseMapping[*FoldingRangePara
 // workspace/foldingRange/refresh response type
 type FoldingRangeRefreshResponse = any
 
+var WorkspaceFoldingRangeRefreshHandler = RequestToResponseMapping[any, FoldingRangeRefreshResponse]{Method: MethodWorkspaceFoldingRangeRefresh}
+
 // textDocument/declaration response type
 type DeclarationResponse = *LocationOrLocationsOrDeclarationLinks
 
@@ -13201,6 +13207,8 @@ var TextDocumentSelectionRangeHandler = RequestToResponseMapping[*SelectionRange
 
 // window/workDoneProgress/create response type
 type WorkDoneProgressCreateResponse = any
+
+var WindowWorkDoneProgressCreateHandler = RequestToResponseMapping[*WorkDoneProgressCreateParams, WorkDoneProgressCreateResponse]{Method: MethodWindowWorkDoneProgressCreate}
 
 // textDocument/prepareCallHierarchy response type
 type CallHierarchyPrepareResponse = *[]*CallHierarchyItem
@@ -13235,8 +13243,12 @@ var TextDocumentSemanticTokensRangeHandler = RequestToResponseMapping[*SemanticT
 // workspace/semanticTokens/refresh response type
 type SemanticTokensRefreshResponse = any
 
+var WorkspaceSemanticTokensRefreshHandler = RequestToResponseMapping[any, SemanticTokensRefreshResponse]{Method: MethodWorkspaceSemanticTokensRefresh}
+
 // window/showDocument response type
 type ShowDocumentResponse = *ShowDocumentResult
+
+var WindowShowDocumentHandler = RequestToResponseMapping[*ShowDocumentParams, ShowDocumentResponse]{Method: MethodWindowShowDocument}
 
 // textDocument/linkedEditingRange response type
 type LinkedEditingRangeResponse = *LinkedEditingRanges
@@ -13286,6 +13298,8 @@ var TextDocumentInlineValueHandler = RequestToResponseMapping[*InlineValueParams
 // workspace/inlineValue/refresh response type
 type InlineValueRefreshResponse = any
 
+var WorkspaceInlineValueRefreshHandler = RequestToResponseMapping[any, InlineValueRefreshResponse]{Method: MethodWorkspaceInlineValueRefresh}
+
 // textDocument/inlayHint response type
 type InlayHintResponse = *[]*InlayHint
 
@@ -13298,6 +13312,8 @@ var InlayHintResolveHandler = RequestToResponseMapping[*InlayHint, InlayHintReso
 
 // workspace/inlayHint/refresh response type
 type InlayHintRefreshResponse = any
+
+var WorkspaceInlayHintRefreshHandler = RequestToResponseMapping[any, InlayHintRefreshResponse]{Method: MethodWorkspaceInlayHintRefresh}
 
 // textDocument/diagnostic response type
 type DocumentDiagnosticResponse = RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport
@@ -13312,6 +13328,8 @@ var WorkspaceDiagnosticHandler = RequestToResponseMapping[*WorkspaceDiagnosticPa
 // workspace/diagnostic/refresh response type
 type DiagnosticRefreshResponse = any
 
+var WorkspaceDiagnosticRefreshHandler = RequestToResponseMapping[any, DiagnosticRefreshResponse]{Method: MethodWorkspaceDiagnosticRefresh}
+
 // textDocument/inlineCompletion response type
 type InlineCompletionResponse = *InlineCompletionListOrInlineCompletionItems
 
@@ -13325,11 +13343,17 @@ var WorkspaceTextDocumentContentHandler = RequestToResponseMapping[*TextDocument
 // workspace/textDocumentContent/refresh response type
 type TextDocumentContentRefreshResponse = any
 
+var WorkspaceTextDocumentContentRefreshHandler = RequestToResponseMapping[*TextDocumentContentRefreshParams, TextDocumentContentRefreshResponse]{Method: MethodWorkspaceTextDocumentContentRefresh}
+
 // client/registerCapability response type
 type RegistrationResponse = any
 
+var ClientRegisterCapabilityHandler = RequestToResponseMapping[*RegistrationParams, RegistrationResponse]{Method: MethodClientRegisterCapability}
+
 // client/unregisterCapability response type
 type UnregistrationResponse = any
+
+var ClientUnregisterCapabilityHandler = RequestToResponseMapping[*UnregistrationParams, UnregistrationResponse]{Method: MethodClientUnregisterCapability}
 
 // initialize response type
 type InitializeResponse = *InitializeResult
@@ -13343,6 +13367,8 @@ var ShutdownHandler = RequestToResponseMapping[any, ShutdownResponse]{Method: Me
 
 // window/showMessageRequest response type
 type ShowMessageResponse = *MessageActionItem
+
+var WindowShowMessageRequestHandler = RequestToResponseMapping[*ShowMessageRequestParams, ShowMessageResponse]{Method: MethodWindowShowMessageRequest}
 
 // textDocument/willSaveWaitUntil response type
 type WillSaveTextDocumentWaitUntilResponse = *[]*TextEdit
@@ -13422,6 +13448,8 @@ var CodeLensResolveHandler = RequestToResponseMapping[*CodeLens, CodeLensResolve
 // workspace/codeLens/refresh response type
 type CodeLensRefreshResponse = any
 
+var WorkspaceCodeLensRefreshHandler = RequestToResponseMapping[any, CodeLensRefreshResponse]{Method: MethodWorkspaceCodeLensRefresh}
+
 // textDocument/documentLink response type
 type DocumentLinkResponse = *[]*DocumentLink
 
@@ -13469,6 +13497,60 @@ var WorkspaceExecuteCommandHandler = RequestToResponseMapping[*ExecuteCommandPar
 
 // workspace/applyEdit response type
 type ApplyWorkspaceEditResponse = *ApplyWorkspaceEditResult
+
+var WorkspaceApplyEditHandler = RequestToResponseMapping[*ApplyWorkspaceEditParams, ApplyWorkspaceEditResponse]{Method: MethodWorkspaceApplyEdit}
+
+var WorkspaceDidChangeWorkspaceFoldersHandler = NotificationMapping[*DidChangeWorkspaceFoldersParams]{Method: MethodWorkspaceDidChangeWorkspaceFolders}
+
+var WindowWorkDoneProgressCancelHandler = NotificationMapping[*WorkDoneProgressCancelParams]{Method: MethodWindowWorkDoneProgressCancel}
+
+var WorkspaceDidCreateFilesHandler = NotificationMapping[*CreateFilesParams]{Method: MethodWorkspaceDidCreateFiles}
+
+var WorkspaceDidRenameFilesHandler = NotificationMapping[*RenameFilesParams]{Method: MethodWorkspaceDidRenameFiles}
+
+var WorkspaceDidDeleteFilesHandler = NotificationMapping[*DeleteFilesParams]{Method: MethodWorkspaceDidDeleteFiles}
+
+var NotebookDocumentDidOpenHandler = NotificationMapping[*DidOpenNotebookDocumentParams]{Method: MethodNotebookDocumentDidOpen}
+
+var NotebookDocumentDidChangeHandler = NotificationMapping[*DidChangeNotebookDocumentParams]{Method: MethodNotebookDocumentDidChange}
+
+var NotebookDocumentDidSaveHandler = NotificationMapping[*DidSaveNotebookDocumentParams]{Method: MethodNotebookDocumentDidSave}
+
+var NotebookDocumentDidCloseHandler = NotificationMapping[*DidCloseNotebookDocumentParams]{Method: MethodNotebookDocumentDidClose}
+
+var InitializedHandler = NotificationMapping[*InitializedParams]{Method: MethodInitialized}
+
+var ExitHandler = NotificationMapping[any]{Method: MethodExit}
+
+var WorkspaceDidChangeConfigurationHandler = NotificationMapping[*DidChangeConfigurationParams]{Method: MethodWorkspaceDidChangeConfiguration}
+
+var WindowShowMessageHandler = NotificationMapping[*ShowMessageParams]{Method: MethodWindowShowMessage}
+
+var WindowLogMessageHandler = NotificationMapping[*LogMessageParams]{Method: MethodWindowLogMessage}
+
+var TelemetryEventHandler = NotificationMapping[any]{Method: MethodTelemetryEvent}
+
+var TextDocumentDidOpenHandler = NotificationMapping[*DidOpenTextDocumentParams]{Method: MethodTextDocumentDidOpen}
+
+var TextDocumentDidChangeHandler = NotificationMapping[*DidChangeTextDocumentParams]{Method: MethodTextDocumentDidChange}
+
+var TextDocumentDidCloseHandler = NotificationMapping[*DidCloseTextDocumentParams]{Method: MethodTextDocumentDidClose}
+
+var TextDocumentDidSaveHandler = NotificationMapping[*DidSaveTextDocumentParams]{Method: MethodTextDocumentDidSave}
+
+var TextDocumentWillSaveHandler = NotificationMapping[*WillSaveTextDocumentParams]{Method: MethodTextDocumentWillSave}
+
+var WorkspaceDidChangeWatchedFilesHandler = NotificationMapping[*DidChangeWatchedFilesParams]{Method: MethodWorkspaceDidChangeWatchedFiles}
+
+var TextDocumentPublishDiagnosticsHandler = NotificationMapping[*PublishDiagnosticsParams]{Method: MethodTextDocumentPublishDiagnostics}
+
+var SetTraceHandler = NotificationMapping[*SetTraceParams]{Method: MethodSetTrace}
+
+var LogTraceHandler = NotificationMapping[*LogTraceParams]{Method: MethodLogTrace}
+
+var CancelRequestHandler = NotificationMapping[*CancelParams]{Method: MethodCancelRequest}
+
+var ProgressHandler = NotificationMapping[*ProgressParams]{Method: MethodProgress}
 
 // Union types
 

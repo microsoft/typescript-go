@@ -83,3 +83,8 @@ type RequestToResponseMapping[Req, Resp any] struct {
 	_      [0]Resp
 	Method Method
 }
+
+type NotificationMapping[Req any] struct {
+	_      [0]Req
+	Method Method
+}

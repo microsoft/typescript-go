@@ -587,35 +587,42 @@ function generateCode() {
     writeLine("// Request response types");
     writeLine("");
 
-    for (const request of model.requests) {
+    for (const request of requestsAndNotifications) {
         const methodName = methodNameIdentifier(request.method);
 
-        let responseTypeName;
-        if (request.typeName && request.typeName.endsWith("Request")) {
-            responseTypeName = request.typeName.replace(/Request$/, "Response");
-        }
-        else {
-            responseTypeName = `${methodName}Response`;
-        }
+        let responseTypeName: string | undefined;
 
-        writeLine(`// ${request.method} response type`);
-        const resultType = resolveType(request.result, /*nullToPointer*/ true);
-        const goType = resultType.needsPointer ? `*${resultType.name}` : resultType.name;
-
-        writeLine(`type ${responseTypeName} = ${goType}`);
-        writeLine("");
-
-        if (request.messageDirection !== "serverToClient") {
-            if (Array.isArray(request.params)) {
-                throw new Error("Unexpected request params for " + methodName + ": " + JSON.stringify(request.params));
+        if ("result" in request) {
+            if (request.typeName && request.typeName.endsWith("Request")) {
+                responseTypeName = request.typeName.replace(/Request$/, "Response");
+            }
+            else {
+                responseTypeName = `${methodName}Response`;
             }
 
-            const paramType = request.params ? resolveType(request.params) : undefined;
-            const paramGoType = paramType ? (paramType.needsPointer ? `*${paramType.name}` : paramType.name) : "any";
+            writeLine(`// ${request.method} response type`);
+            const resultType = resolveType(request.result, /*nullToPointer*/ true);
+            const goType = resultType.needsPointer ? `*${resultType.name}` : resultType.name;
 
-            writeLine(`var ${methodName}Handler = RequestToResponseMapping[${paramGoType}, ${responseTypeName}]{Method: Method${methodName}}`);
+            writeLine(`type ${responseTypeName} = ${goType}`);
             writeLine("");
         }
+
+        if (Array.isArray(request.params)) {
+            throw new Error("Unexpected request params for " + methodName + ": " + JSON.stringify(request.params));
+        }
+
+        const paramType = request.params ? resolveType(request.params) : undefined;
+        const paramGoType = paramType ? (paramType.needsPointer ? `*${paramType.name}` : paramType.name) : "any";
+
+        if (responseTypeName) {
+            writeLine(`var ${methodName}Handler = RequestToResponseMapping[${paramGoType}, ${responseTypeName}]{Method: Method${methodName}}`);
+        }
+        else {
+            writeLine(`var ${methodName}Handler = NotificationMapping[${paramGoType}]{Method: Method${methodName}}`);
+        }
+
+        writeLine("");
     }
 
     // Generate union types
