@@ -83,7 +83,3 @@ type RequestToResponse[Req, Resp any] struct {
 	_      [0]Resp
 	Method Method
 }
-
-func Handle[Req, Resp any](endpoint RequestToResponse[Req, Resp], req Req, fn func(Req) (Resp, error)) (Resp, error) {
-	return fn(req)
-}
