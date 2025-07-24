@@ -10,15 +10,22 @@ const stradaFourslashPath = path.resolve(import.meta.dirname, "../", "../", "../
 let inputFileSet: Set<string> | undefined;
 
 const failingTestsPath = path.join(import.meta.dirname, "failingTests.txt");
+const manualTestsPath = path.join(import.meta.dirname, "manualTests.txt");
 const helperFilePath = path.join(import.meta.dirname, "../", "tests", "util_test.go");
 
 const outputDir = path.join(import.meta.dirname, "../", "tests", "gen");
+const manualOutputDir = path.join(import.meta.dirname, "../", "tests", "manual");
 
 const unparsedFiles: string[] = [];
 
 function getFailingTests(): Set<string> {
     const failingTestsList = fs.readFileSync(failingTestsPath, "utf-8").split("\n").map(line => line.trim().substring(4)).filter(line => line.length > 0);
     return new Set(failingTestsList);
+}
+
+function getManualTests(): Set<string> {
+    const manualTestsList = fs.readFileSync(manualTestsPath, "utf-8").split("\n").map(line => line.trim()).filter(line => line.length > 0);
+    return new Set(manualTestsList);
 }
 
 export function main() {
@@ -34,15 +41,16 @@ export function main() {
 
     fs.rmSync(outputDir, { recursive: true, force: true });
     fs.mkdirSync(outputDir, { recursive: true });
+    fs.mkdirSync(manualOutputDir, { recursive: true });
 
     generateHelperFile();
-    parseTypeScriptFiles(getFailingTests(), stradaFourslashPath);
+    parseTypeScriptFiles(getFailingTests(), getManualTests(), stradaFourslashPath);
     console.log(unparsedFiles.join("\n"));
     const gofmt = which.sync("go");
     cp.execFileSync(gofmt, ["tool", "mvdan.cc/gofumpt", "-lang=go1.24", "-w", outputDir]);
 }
 
-function parseTypeScriptFiles(failingTests: Set<string>, folder: string): void {
+function parseTypeScriptFiles(failingTests: Set<string>, manualTests: Set<string>, folder: string): void {
     const files = fs.readdirSync(folder);
 
     files.forEach(file => {
@@ -53,15 +61,22 @@ function parseTypeScriptFiles(failingTests: Set<string>, folder: string): void {
         }
 
         if (stat.isDirectory()) {
-            parseTypeScriptFiles(failingTests, filePath);
+            parseTypeScriptFiles(failingTests, manualTests, filePath);
         }
         else if (file.endsWith(".ts")) {
             const content = fs.readFileSync(filePath, "utf-8");
             const test = parseFileContent(file, content);
             if (test) {
+                const testName = test.name[0].toUpperCase() + test.name.substring(1);
+                // Skip generation if test is in manual tests list
+                if (manualTests.has(testName)) {
+                    return;
+                }
                 const testContent = generateGoTest(failingTests, test);
-                const testPath = path.join(outputDir, `${test.name}_test.go`);
-                fs.writeFileSync(testPath, testContent, "utf-8");
+                if (testContent) {
+                    const testPath = path.join(outputDir, `${test.name}_test.go`);
+                    fs.writeFileSync(testPath, testContent, "utf-8");
+                }
             }
         }
     });
