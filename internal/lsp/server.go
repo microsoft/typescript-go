@@ -483,33 +483,33 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 	case lsproto.MethodWorkspaceDidChangeWatchedFiles:
 		return handleNotification(s, ctx, req, lsproto.WorkspaceDidChangeWatchedFilesMapping, (*Server).handleDidChangeWatchedFiles)
 	case lsproto.MethodTextDocumentDiagnostic:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentDiagnosticMapping, (*Server).handleDocumentDiagnostic)
+		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentDiagnosticMapping, (*Server).handleDocumentDiagnostic)
 	case lsproto.MethodTextDocumentHover:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentHoverMapping, (*Server).handleHover)
+		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentHoverMapping, (*Server).handleHover)
 	case lsproto.MethodTextDocumentDefinition:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentDefinitionMapping, (*Server).handleDefinition)
+		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentDefinitionMapping, (*Server).handleDefinition)
 	case lsproto.MethodTextDocumentTypeDefinition:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentTypeDefinitionMapping, (*Server).handleTypeDefinition)
+		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentTypeDefinitionMapping, (*Server).handleTypeDefinition)
 	case lsproto.MethodTextDocumentCompletion:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentCompletionMapping, (*Server).handleCompletion)
+		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentCompletionMapping, (*Server).handleCompletion)
 	case lsproto.MethodTextDocumentReferences:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentReferencesMapping, (*Server).handleReferences)
+		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentReferencesMapping, (*Server).handleReferences)
 	case lsproto.MethodTextDocumentImplementation:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentImplementationMapping, (*Server).handleImplementations)
+		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentImplementationMapping, (*Server).handleImplementations)
 	case lsproto.MethodTextDocumentSignatureHelp:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentSignatureHelpMapping, (*Server).handleSignatureHelp)
+		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentSignatureHelpMapping, (*Server).handleSignatureHelp)
 	case lsproto.MethodTextDocumentFormatting:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentFormattingMapping, (*Server).handleDocumentFormat)
+		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentFormattingMapping, (*Server).handleDocumentFormat)
 	case lsproto.MethodTextDocumentRangeFormatting:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentRangeFormattingMapping, (*Server).handleDocumentRangeFormat)
+		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentRangeFormattingMapping, (*Server).handleDocumentRangeFormat)
 	case lsproto.MethodTextDocumentOnTypeFormatting:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentOnTypeFormattingMapping, (*Server).handleDocumentOnTypeFormat)
+		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentOnTypeFormattingMapping, (*Server).handleDocumentOnTypeFormat)
 	case lsproto.MethodWorkspaceSymbol:
-		return handleWithSingleResponse(s, ctx, req, lsproto.WorkspaceSymbolMapping, (*Server).handleWorkspaceSymbol)
+		return handleRequestSingleResponse(s, ctx, req, lsproto.WorkspaceSymbolMapping, (*Server).handleWorkspaceSymbol)
 	case lsproto.MethodTextDocumentDocumentSymbol:
-		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentDocumentSymbolMapping, (*Server).handleDocumentSymbol)
+		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentDocumentSymbolMapping, (*Server).handleDocumentSymbol)
 	case lsproto.MethodCompletionItemResolve:
-		return handleWithSingleResponse(s, ctx, req, lsproto.CompletionItemResolveMapping, (*Server).handleCompletionItemResolve)
+		return handleRequestSingleResponse(s, ctx, req, lsproto.CompletionItemResolveMapping, (*Server).handleCompletionItemResolve)
 
 	default:
 		s.Log("unknown method", req.Method)
@@ -537,7 +537,7 @@ func handleNotification[Req any](
 	return ctx.Err()
 }
 
-func handleWithSingleResponse[Req, Resp any](
+func handleRequestSingleResponse[Req, Resp any](
 	s *Server,
 	ctx context.Context,
 	req *lsproto.RequestMessage,
