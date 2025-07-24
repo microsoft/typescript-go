@@ -186,8 +186,9 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testin
 		showConfig(sys, configForCompilation.CompilerOptions())
 		return CommandLineResult{Status: ExitStatusSuccess}
 	}
+	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), &extendedConfigCache)
 	if configForCompilation.CompilerOptions().Watch.IsTrue() {
-		watcher := createWatcher(sys, configForCompilation, reportDiagnostic, testing)
+		watcher := createWatcher(sys, configForCompilation, reportDiagnostic, testing, host)
 		watcher.start()
 		return CommandLineResult{Status: ExitStatusSuccess, Watcher: watcher}
 	} else if configForCompilation.CompilerOptions().IsIncremental() {
@@ -195,17 +196,17 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testin
 			sys,
 			configForCompilation,
 			reportDiagnostic,
-			&extendedConfigCache,
 			configTime,
 			testing,
+			host,
 		)
 	}
 	return performCompilation(
 		sys,
 		configForCompilation,
 		reportDiagnostic,
-		&extendedConfigCache,
 		configTime,
+		host,
 	)
 }
 
@@ -227,11 +228,10 @@ func performIncrementalCompilation(
 	sys System,
 	config *tsoptions.ParsedCommandLine,
 	reportDiagnostic diagnosticReporter,
-	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
 	configTime time.Duration,
 	testing bool,
+	host compiler.CompilerHost,
 ) CommandLineResult {
-	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache)
 	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host))
 	// todo: cache, statistics, tracing
 	parseStart := sys.Now()
@@ -260,10 +260,9 @@ func performCompilation(
 	sys System,
 	config *tsoptions.ParsedCommandLine,
 	reportDiagnostic diagnosticReporter,
-	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
 	configTime time.Duration,
+	host compiler.CompilerHost,
 ) CommandLineResult {
-	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache)
 	// todo: cache, statistics, tracing
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{

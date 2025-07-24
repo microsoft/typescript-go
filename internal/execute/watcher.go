@@ -27,12 +27,13 @@ type Watcher struct {
 	configModified bool
 }
 
-func createWatcher(sys System, configParseResult *tsoptions.ParsedCommandLine, reportDiagnostic diagnosticReporter, testing bool) *Watcher {
+func createWatcher(sys System, configParseResult *tsoptions.ParsedCommandLine, reportDiagnostic diagnosticReporter, testing bool, host compiler.CompilerHost) *Watcher {
 	w := &Watcher{
 		sys:              sys,
 		options:          configParseResult,
 		reportDiagnostic: reportDiagnostic,
 		testing:          testing,
+		host:             host,
 		// reportWatchStatus: createWatchStatusReporter(sys, configParseResult.CompilerOptions().Pretty),
 	}
 	if configParseResult.ConfigFile != nil {
