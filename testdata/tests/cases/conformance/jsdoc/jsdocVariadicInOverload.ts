@@ -44,4 +44,5 @@ export class Processor {
   }
 }
 var p = new Processor();
+var x = 1, y = 2, z = 3;
 p.use(x, y, z);

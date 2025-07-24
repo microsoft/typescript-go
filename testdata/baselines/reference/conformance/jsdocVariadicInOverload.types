@@ -54,12 +54,20 @@ var p = new Processor();
 >new Processor() : Processor<undefined, undefined, undefined, undefined, undefined>
 >Processor : typeof Processor
 
+var x = 1, y = 2, z = 3;
+>x : number
+>1 : 1
+>y : number
+>2 : 2
+>z : number
+>3 : 3
+
 p.use(x, y, z);
 >p.use(x, y, z) : Processor<undefined, undefined, undefined, undefined, undefined>
 >p.use : { (preset?: string): Processor<undefined, undefined, undefined, undefined, undefined>; <Parameters extends unknown[] = [], Input extends string | Node = undefined, Output = Input>(plugin: number, ...parameters: Parameters | [boolean]): Processor<undefined, undefined, undefined, undefined, undefined>; }
 >p : Processor<undefined, undefined, undefined, undefined, undefined>
 >use : { (preset?: string): Processor<undefined, undefined, undefined, undefined, undefined>; <Parameters extends unknown[] = [], Input extends string | Node = undefined, Output = Input>(plugin: number, ...parameters: Parameters | [boolean]): Processor<undefined, undefined, undefined, undefined, undefined>; }
->x : any
->y : any
->z : any
+>x : number
+>y : number
+>z : number
 

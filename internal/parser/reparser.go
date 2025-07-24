@@ -170,12 +170,10 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 
 			if jsparam.TypeExpression != nil {
 				if jsparam.TypeExpression.Type().Kind == ast.KindJSDocVariadicType {
-					// Create dotDotDotToken for rest parameter
 					dotDotDotToken = p.factory.NewToken(ast.KindDotDotDotToken)
 					dotDotDotToken.Loc = jsparam.Loc
 					dotDotDotToken.Flags = p.contextFlags | ast.NodeFlagsReparsed
 
-					// Unwrap the nested type from the variadic type
 					variadicType := jsparam.TypeExpression.Type().AsJSDocVariadicType()
 					paramType = p.reparseJSDocTypeLiteral(variadicType.Type)
 				} else {
