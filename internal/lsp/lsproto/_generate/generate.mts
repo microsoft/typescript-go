@@ -600,7 +600,7 @@ function generateCode() {
                 responseTypeName = `${methodName}Response`;
             }
 
-            writeLine(`// ${request.method} response type`);
+            writeLine(`// Response type for \`${request.method}\``);
             const resultType = resolveType(request.result, /*nullToPointer*/ true);
             const goType = resultType.needsPointer ? `*${resultType.name}` : resultType.name;
 
@@ -615,6 +615,7 @@ function generateCode() {
         const paramType = request.params ? resolveType(request.params) : undefined;
         const paramGoType = paramType ? (paramType.needsPointer ? `*${paramType.name}` : paramType.name) : "any";
 
+        writeLine(`// Type mapping for \`${request.method}\``);
         if (responseTypeName) {
             writeLine(`var ${methodName}Mapping = RequestToResponseMapping[${paramGoType}, ${responseTypeName}]{Method: Method${methodName}}`);
         }
