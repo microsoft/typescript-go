@@ -465,45 +465,45 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 		s.sendError(req.ID, lsproto.ErrInvalidRequest)
 		return nil
 	case *lsproto.InitializedParams:
-		return handleNotification(s, ctx, lsproto.InitializedHandler, req, (*Server).handleInitialized)
+		return handleNotification(s, ctx, req, lsproto.InitializedHandler, (*Server).handleInitialized)
 	case *lsproto.DidOpenTextDocumentParams:
-		return handleNotification(s, ctx, lsproto.TextDocumentDidOpenHandler, req, (*Server).handleDidOpen)
+		return handleNotification(s, ctx, req, lsproto.TextDocumentDidOpenHandler, (*Server).handleDidOpen)
 	case *lsproto.DidChangeTextDocumentParams:
-		return handleNotification(s, ctx, lsproto.TextDocumentDidChangeHandler, req, (*Server).handleDidChange)
+		return handleNotification(s, ctx, req, lsproto.TextDocumentDidChangeHandler, (*Server).handleDidChange)
 	case *lsproto.DidSaveTextDocumentParams:
-		return handleNotification(s, ctx, lsproto.TextDocumentDidSaveHandler, req, (*Server).handleDidSave)
+		return handleNotification(s, ctx, req, lsproto.TextDocumentDidSaveHandler, (*Server).handleDidSave)
 	case *lsproto.DidCloseTextDocumentParams:
-		return handleNotification(s, ctx, lsproto.TextDocumentDidCloseHandler, req, (*Server).handleDidClose)
+		return handleNotification(s, ctx, req, lsproto.TextDocumentDidCloseHandler, (*Server).handleDidClose)
 	case *lsproto.DidChangeWatchedFilesParams:
-		return handleNotification(s, ctx, lsproto.WorkspaceDidChangeWatchedFilesHandler, req, (*Server).handleDidChangeWatchedFiles)
+		return handleNotification(s, ctx, req, lsproto.WorkspaceDidChangeWatchedFilesHandler, (*Server).handleDidChangeWatchedFiles)
 	case *lsproto.DocumentDiagnosticParams:
-		return handleWithSingleResponse(s, ctx, lsproto.TextDocumentDiagnosticHandler, req, (*Server).handleDocumentDiagnostic)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentDiagnosticHandler, (*Server).handleDocumentDiagnostic)
 	case *lsproto.HoverParams:
-		return handleWithSingleResponse(s, ctx, lsproto.TextDocumentHoverHandler, req, (*Server).handleHover)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentHoverHandler, (*Server).handleHover)
 	case *lsproto.DefinitionParams:
-		return handleWithSingleResponse(s, ctx, lsproto.TextDocumentDefinitionHandler, req, (*Server).handleDefinition)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentDefinitionHandler, (*Server).handleDefinition)
 	case *lsproto.TypeDefinitionParams:
-		return handleWithSingleResponse(s, ctx, lsproto.TextDocumentTypeDefinitionHandler, req, (*Server).handleTypeDefinition)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentTypeDefinitionHandler, (*Server).handleTypeDefinition)
 	case *lsproto.CompletionParams:
-		return handleWithSingleResponse(s, ctx, lsproto.TextDocumentCompletionHandler, req, (*Server).handleCompletion)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentCompletionHandler, (*Server).handleCompletion)
 	case *lsproto.ReferenceParams:
-		return handleWithSingleResponse(s, ctx, lsproto.TextDocumentReferencesHandler, req, (*Server).handleReferences)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentReferencesHandler, (*Server).handleReferences)
 	case *lsproto.ImplementationParams:
-		return handleWithSingleResponse(s, ctx, lsproto.TextDocumentImplementationHandler, req, (*Server).handleImplementations)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentImplementationHandler, (*Server).handleImplementations)
 	case *lsproto.SignatureHelpParams:
-		return handleWithSingleResponse(s, ctx, lsproto.TextDocumentSignatureHelpHandler, req, (*Server).handleSignatureHelp)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentSignatureHelpHandler, (*Server).handleSignatureHelp)
 	case *lsproto.DocumentFormattingParams:
-		return handleWithSingleResponse(s, ctx, lsproto.TextDocumentFormattingHandler, req, (*Server).handleDocumentFormat)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentFormattingHandler, (*Server).handleDocumentFormat)
 	case *lsproto.DocumentRangeFormattingParams:
-		return handleWithSingleResponse(s, ctx, lsproto.TextDocumentRangeFormattingHandler, req, (*Server).handleDocumentRangeFormat)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentRangeFormattingHandler, (*Server).handleDocumentRangeFormat)
 	case *lsproto.DocumentOnTypeFormattingParams:
-		return handleWithSingleResponse(s, ctx, lsproto.TextDocumentOnTypeFormattingHandler, req, (*Server).handleDocumentOnTypeFormat)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentOnTypeFormattingHandler, (*Server).handleDocumentOnTypeFormat)
 	case *lsproto.WorkspaceSymbolParams:
-		return handleWithSingleResponse(s, ctx, lsproto.WorkspaceSymbolHandler, req, (*Server).handleWorkspaceSymbol)
+		return handleWithSingleResponse(s, ctx, req, lsproto.WorkspaceSymbolHandler, (*Server).handleWorkspaceSymbol)
 	case *lsproto.DocumentSymbolParams:
-		return handleWithSingleResponse(s, ctx, lsproto.TextDocumentDocumentSymbolHandler, req, (*Server).handleDocumentSymbol)
+		return handleWithSingleResponse(s, ctx, req, lsproto.TextDocumentDocumentSymbolHandler, (*Server).handleDocumentSymbol)
 	case *lsproto.CompletionItem:
-		return handleWithSingleResponse(s, ctx, lsproto.CompletionItemResolveHandler, req, (*Server).handleCompletionItemResolve)
+		return handleWithSingleResponse(s, ctx, req, lsproto.CompletionItemResolveHandler, (*Server).handleCompletionItemResolve)
 	default:
 		switch req.Method {
 		case lsproto.MethodShutdown:
@@ -525,8 +525,8 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 func handleNotification[Req any](
 	s *Server,
 	ctx context.Context,
-	info lsproto.NotificationMapping[Req],
 	req *lsproto.RequestMessage,
+	info lsproto.NotificationMapping[Req],
 	fn func(*Server, context.Context, Req) error,
 ) error {
 	if req.Method != info.Method {
@@ -542,8 +542,8 @@ func handleNotification[Req any](
 func handleWithSingleResponse[Req, Resp any](
 	s *Server,
 	ctx context.Context,
-	info lsproto.RequestToResponseMapping[Req, Resp],
 	req *lsproto.RequestMessage,
+	info lsproto.RequestToResponseMapping[Req, Resp],
 	fn func(*Server, context.Context, Req) (Resp, error),
 ) error {
 	if req.Method != info.Method {
