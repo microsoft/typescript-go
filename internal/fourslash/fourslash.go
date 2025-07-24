@@ -267,10 +267,10 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	return &capabilitiesWithDefaults
 }
 
-func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, mapping lsproto.RequestInfo[Params, Resp], params Params) (*lsproto.Message, Resp, bool) {
+func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params) (*lsproto.Message, Resp, bool) {
 	id := f.nextID()
 	req := lsproto.NewRequestMessage(
-		mapping.Method,
+		info.Method,
 		lsproto.NewID(lsproto.IntegerOrString{Integer: &id}),
 		params,
 	)
