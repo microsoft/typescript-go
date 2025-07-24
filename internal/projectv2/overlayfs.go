@@ -53,6 +53,7 @@ func (f *fileBase) LineMap() *ls.LineMap {
 
 type diskFile struct {
 	fileBase
+	needsReload bool
 }
 
 func newDiskFile(fileName string, content string) *diskFile {
@@ -72,7 +73,7 @@ func (f *diskFile) Version() int32 {
 }
 
 func (f *diskFile) MatchesDiskText() bool {
-	return true
+	return !f.needsReload
 }
 
 func (f *diskFile) IsOverlay() bool {
@@ -81,6 +82,16 @@ func (f *diskFile) IsOverlay() bool {
 
 func (f *diskFile) Kind() core.ScriptKind {
 	return core.GetScriptKindFromFileName(f.fileName)
+}
+
+func (f *diskFile) Clone() *diskFile {
+	return &diskFile{
+		fileBase: fileBase{
+			fileName: f.fileName,
+			content:  f.content,
+			hash:     f.hash,
+		},
+	}
 }
 
 var _ FileHandle = (*overlay)(nil)
@@ -130,7 +141,7 @@ type overlayFS struct {
 	fs               vfs.FS
 	positionEncoding lsproto.PositionEncodingKind
 
-	mu       sync.Mutex
+	mu       sync.RWMutex
 	overlays map[tspath.Path]*overlay
 }
 
@@ -144,9 +155,9 @@ func newOverlayFS(fs vfs.FS, overlays map[tspath.Path]*overlay, positionEncoding
 }
 
 func (fs *overlayFS) getFile(fileName string) FileHandle {
-	fs.mu.Lock()
+	fs.mu.RLock()
 	overlays := fs.overlays
-	fs.mu.Unlock()
+	fs.mu.RUnlock()
 
 	path := fs.toPath(fileName)
 	if overlay, ok := overlays[path]; ok {
@@ -164,6 +175,7 @@ func (fs *overlayFS) processChanges(changes []FileChange) FileChangeSummary {
 	fs.mu.Lock()
 	defer fs.mu.Unlock()
 
+	var includesNonWatchChange bool
 	var result FileChangeSummary
 	newOverlays := maps.Clone(fs.overlays)
 
@@ -248,6 +260,7 @@ func (fs *overlayFS) processChanges(changes []FileChange) FileChangeSummary {
 			if result.Opened != "" {
 				panic("can only process one file open event at a time")
 			}
+			includesNonWatchChange = true
 			result.Opened = uri
 			newOverlays[path] = newOverlay(
 				ls.DocumentURIToFileName(uri),
@@ -259,6 +272,7 @@ func (fs *overlayFS) processChanges(changes []FileChange) FileChangeSummary {
 		}
 
 		if events.closeChange != nil {
+			includesNonWatchChange = true
 			if result.Closed == nil {
 				result.Closed = make(map[lsproto.DocumentUri][sha256.Size]byte)
 			}
@@ -277,6 +291,7 @@ func (fs *overlayFS) processChanges(changes []FileChange) FileChangeSummary {
 		}
 
 		if len(events.changes) > 0 {
+			includesNonWatchChange = true
 			result.Changed.Add(uri)
 			if o == nil {
 				panic("overlay not found for changed file: " + uri)
@@ -320,5 +335,6 @@ func (fs *overlayFS) processChanges(changes []FileChange) FileChangeSummary {
 	}
 
 	fs.overlays = newOverlays
+	result.IncludesWatchChangesOnly = !includesNonWatchChange
 	return result
 }

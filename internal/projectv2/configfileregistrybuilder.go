@@ -23,7 +23,7 @@ var _ tsoptions.ExtendedConfigCache = (*configFileRegistryBuilder)(nil)
 // configFileRegistry, producing a new clone with `finalize()` after
 // all changes have been made.
 type configFileRegistryBuilder struct {
-	fs                  *overlayFS
+	fs                  *snapshotFSBuilder
 	extendedConfigCache *extendedConfigCache
 	sessionOptions      *SessionOptions
 	logger              *logCollector
@@ -34,7 +34,7 @@ type configFileRegistryBuilder struct {
 }
 
 func newConfigFileRegistryBuilder(
-	fs *overlayFS,
+	fs *snapshotFSBuilder,
 	oldConfigFileRegistry *ConfigFileRegistry,
 	extendedConfigCache *extendedConfigCache,
 	sessionOptions *SessionOptions,
@@ -320,9 +320,9 @@ func (c *configFileRegistryBuilder) handlePossibleConfigChange(path tspath.Path,
 
 	var affectedFiles map[tspath.Path]struct{}
 	if changeKind != lsproto.FileChangeTypeChanged {
-		directoryPath := path.GetDirectoryPath()
 		baseName := tspath.GetBaseFileName(string(path))
 		if baseName == "tsconfig.json" || baseName == "jsconfig.json" {
+			directoryPath := path.GetDirectoryPath()
 			c.configFileNames.Range(func(entry *dirty.MapEntry[tspath.Path, *configFileNames]) bool {
 				if directoryPath.ContainsPath(entry.Key()) {
 					if affectedFiles == nil {
@@ -462,7 +462,7 @@ func (c *configFileRegistryBuilder) GetCurrentDirectory() string {
 
 // GetExtendedConfig implements tsoptions.ExtendedConfigCache.
 func (c *configFileRegistryBuilder) GetExtendedConfig(fileName string, path tspath.Path, parse func() *tsoptions.ExtendedConfigCacheEntry) *tsoptions.ExtendedConfigCacheEntry {
-	fh := c.fs.getFile(fileName)
+	fh := c.fs.GetFileByPath(fileName, path)
 	return c.extendedConfigCache.Acquire(fh, path, parse)
 }
 

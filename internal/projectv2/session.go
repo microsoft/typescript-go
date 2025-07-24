@@ -62,7 +62,7 @@ func NewSession(options SessionOptions, fs vfs.FS, client Client, logger Logger)
 		extendedConfigCache: extendedConfigCache,
 		programCounter:      &programCounter{},
 		snapshot: NewSnapshot(
-			newSnapshotFS(overlayFS.fs, overlayFS.overlays, options.PositionEncoding, toPath),
+			make(map[tspath.Path]*diskFile),
 			&options,
 			parseCache,
 			extendedConfigCache,
@@ -140,8 +140,12 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 		})
 	}
 	s.pendingFileChangesMu.Lock()
-	defer s.pendingFileChangesMu.Unlock()
 	s.pendingFileChanges = append(s.pendingFileChanges, fileChanges...)
+	changeSummary := s.flushChangesLocked(ctx)
+	s.pendingFileChangesMu.Unlock()
+	s.UpdateSnapshot(ctx, SnapshotChange{
+		fileChanges: changeSummary,
+	})
 }
 
 func (s *Session) Snapshot() (*Snapshot, func()) {
@@ -181,8 +185,8 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 	}
 
 	project := snapshot.GetDefaultProject(uri)
-	if project == nil && !updateSnapshot {
-		// The current snapshot does not have the project for the URI,
+	if project == nil && !updateSnapshot || project != nil && project.dirty {
+		// The current snapshot does not have an up to date project for the URI,
 		// so we need to update the snapshot to ensure the project is loaded.
 		// !!! Allow multiple projects to update in parallel
 		snapshot = s.UpdateSnapshot(ctx, SnapshotChange{requestedURIs: []lsproto.DocumentUri{uri}})
@@ -215,6 +219,11 @@ func (s *Session) UpdateSnapshot(ctx context.Context, change SnapshotChange) *Sn
 		if s.options.WatchEnabled {
 			if err := s.updateWatches(oldSnapshot, newSnapshot); err != nil && s.options.LoggingEnabled {
 				s.logger.Log(err)
+			}
+		}
+		if change.fileChanges.IncludesWatchChangesOnly {
+			if err := s.client.RefreshDiagnostics(context.Background()); err != nil && s.options.LoggingEnabled {
+				s.logger.Log(fmt.Sprintf("Error refreshing diagnostics: %v", err))
 			}
 		}
 	}()

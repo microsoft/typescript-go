@@ -3,6 +3,7 @@ package projectv2
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -15,7 +16,7 @@ type compilerHost struct {
 	currentDirectory string
 	sessionOptions   *SessionOptions
 
-	overlayFS          *overlayFS
+	fs                 *snapshotFSBuilder
 	compilerFS         *compilerFS
 	configFileRegistry *ConfigFileRegistry
 
@@ -33,15 +34,17 @@ func newCompilerHost(
 		currentDirectory: currentDirectory,
 		sessionOptions:   builder.sessionOptions,
 
-		overlayFS:  builder.fs,
-		compilerFS: &compilerFS{overlayFS: builder.fs},
+		fs:         builder.fs,
+		compilerFS: &compilerFS{source: builder.fs},
 
 		project: project,
 		builder: builder,
 	}
 }
 
-func (c *compilerHost) freeze(configFileRegistry *ConfigFileRegistry) {
+func (c *compilerHost) freeze(snapshotFS *snapshotFS, configFileRegistry *ConfigFileRegistry) {
+	c.fs = nil
+	c.compilerFS.source = snapshotFS
 	c.configFileRegistry = configFileRegistry
 	c.builder = nil
 	c.project = nil
@@ -82,8 +85,15 @@ func (c *compilerHost) GetResolvedProjectReference(fileName string, path tspath.
 // be a corresponding release for each call made.
 func (c *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
 	c.ensureAlive()
-	if fh := c.overlayFS.getFile(opts.FileName); fh != nil {
+	if fh := c.fs.GetFileByPath(opts.FileName, opts.Path); fh != nil {
 		return c.builder.parseCache.Acquire(fh, opts, fh.Kind())
+	}
+	return nil
+}
+
+func (c *compilerHost) GetLineMap(fileName string) *ls.LineMap {
+	if fh := c.compilerFS.source.GetFile(fileName); fh != nil {
+		return fh.LineMap()
 	}
 	return nil
 }
@@ -96,30 +106,30 @@ func (c *compilerHost) Trace(msg string) {
 var _ vfs.FS = (*compilerFS)(nil)
 
 type compilerFS struct {
-	overlayFS *overlayFS
+	source FileSource
 }
 
 // DirectoryExists implements vfs.FS.
 func (fs *compilerFS) DirectoryExists(path string) bool {
-	return fs.overlayFS.fs.DirectoryExists(path)
+	return fs.source.FS().DirectoryExists(path)
 }
 
 // FileExists implements vfs.FS.
 func (fs *compilerFS) FileExists(path string) bool {
-	if fh := fs.overlayFS.getFile(path); fh != nil {
+	if fh := fs.source.GetFile(path); fh != nil {
 		return true
 	}
-	return fs.overlayFS.fs.FileExists(path)
+	return fs.source.FS().FileExists(path)
 }
 
 // GetAccessibleEntries implements vfs.FS.
 func (fs *compilerFS) GetAccessibleEntries(path string) vfs.Entries {
-	return fs.overlayFS.fs.GetAccessibleEntries(path)
+	return fs.source.FS().GetAccessibleEntries(path)
 }
 
 // ReadFile implements vfs.FS.
 func (fs *compilerFS) ReadFile(path string) (contents string, ok bool) {
-	if fh := fs.overlayFS.getFile(path); fh != nil {
+	if fh := fs.source.GetFile(path); fh != nil {
 		return fh.Content(), true
 	}
 	return "", false
@@ -127,17 +137,17 @@ func (fs *compilerFS) ReadFile(path string) (contents string, ok bool) {
 
 // Realpath implements vfs.FS.
 func (fs *compilerFS) Realpath(path string) string {
-	return fs.overlayFS.fs.Realpath(path)
+	return fs.source.FS().Realpath(path)
 }
 
 // Stat implements vfs.FS.
 func (fs *compilerFS) Stat(path string) vfs.FileInfo {
-	return fs.overlayFS.fs.Stat(path)
+	return fs.source.FS().Stat(path)
 }
 
 // UseCaseSensitiveFileNames implements vfs.FS.
 func (fs *compilerFS) UseCaseSensitiveFileNames() bool {
-	return fs.overlayFS.fs.UseCaseSensitiveFileNames()
+	return fs.source.FS().UseCaseSensitiveFileNames()
 }
 
 // WalkDir implements vfs.FS.

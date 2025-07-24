@@ -32,7 +32,7 @@ type projectCollectionBuilder struct {
 	extendedConfigCache *extendedConfigCache
 
 	ctx                                context.Context
-	fs                                 *overlayFS
+	fs                                 *snapshotFSBuilder
 	base                               *ProjectCollection
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	configFileRegistryBuilder          *configFileRegistryBuilder
@@ -46,7 +46,7 @@ type projectCollectionBuilder struct {
 
 func newProjectCollectionBuilder(
 	ctx context.Context,
-	fs *overlayFS,
+	fs *snapshotFSBuilder,
 	oldProjectCollection *ProjectCollection,
 	oldConfigFileRegistry *ConfigFileRegistry,
 	compilerOptionsForInferredProjects *core.CompilerOptions,
@@ -70,7 +70,8 @@ func newProjectCollectionBuilder(
 	}
 }
 
-func (b *projectCollectionBuilder) Finalize() (*ProjectCollection, *ConfigFileRegistry) {
+func (b *projectCollectionBuilder) Finalize(logger *logCollector) (*ProjectCollection, *ConfigFileRegistry) {
+	b.markProjectsAffectedByConfigChanges(logger)
 	var changed bool
 	newProjectCollection := b.base
 	ensureCloned := func() {
@@ -117,7 +118,7 @@ func (b *projectCollectionBuilder) forEachProject(fn func(entry dirty.Value[*Pro
 func (b *projectCollectionBuilder) DidCloseFile(uri lsproto.DocumentUri, hash [sha256.Size]byte, logger *logCollector) {
 	fileName := uri.FileName()
 	path := b.toPath(fileName)
-	fh := b.fs.getFile(fileName)
+	fh := b.fs.GetFileByPath(fileName, path)
 	if fh == nil || fh.Hash() != hash {
 		b.forEachProject(func(entry dirty.Value[*Project]) bool {
 			b.markFileChanged(path, logger)
@@ -193,6 +194,7 @@ func (b *projectCollectionBuilder) DidDeleteFiles(uris []lsproto.DocumentUri, lo
 
 // DidCreateFiles is only called when file watching is enabled.
 func (b *projectCollectionBuilder) DidCreateFiles(uris []lsproto.DocumentUri, logger *logCollector) {
+	// !!! some way to stop iterating when everything that can be marked has been marked?
 	for _, uri := range uris {
 		fileName := uri.FileName()
 		path := uri.Path(b.fs.fs.UseCaseSensitiveFileNames())
@@ -254,29 +256,7 @@ func (b *projectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, logge
 	startTime := time.Now()
 	fileName := uri.FileName()
 
-	// Mark projects affected by config changes as dirty.
-	for projectPath := range b.projectsAffectedByConfigChanges {
-		project, ok := b.configuredProjects.Load(projectPath)
-		if !ok {
-			panic(fmt.Sprintf("project %s affected by config change not found", projectPath))
-		}
-		project.ChangeIf(
-			func(p *Project) bool { return !p.dirty || p.dirtyFilePath != "" },
-			func(p *Project) {
-				p.dirty = true
-				p.dirtyFilePath = ""
-			},
-		)
-	}
-
-	var hasChanges bool
-
-	// Recompute default projects for open files that now have different config file presence.
-	for path := range b.filesAffectedByConfigChanges {
-		fileName := b.fs.overlays[path].FileName()
-		_ = b.ensureConfiguredProjectAndAncestorsForOpenFile(fileName, path, logger)
-		hasChanges = true
-	}
+	hasChanges := b.markProjectsAffectedByConfigChanges(logger)
 
 	// See if we can find a default project without updating a bunch of stuff.
 	path := b.toPath(fileName)
@@ -315,6 +295,34 @@ func (b *projectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, logge
 		elapsed := time.Since(startTime)
 		logger.Log(fmt.Sprintf("Completed file request for %s in %v", fileName, elapsed))
 	}
+}
+
+func (b *projectCollectionBuilder) markProjectsAffectedByConfigChanges(logger *logCollector) bool {
+	for projectPath := range b.projectsAffectedByConfigChanges {
+		project, ok := b.configuredProjects.Load(projectPath)
+		if !ok {
+			panic(fmt.Sprintf("project %s affected by config change not found", projectPath))
+		}
+		project.ChangeIf(
+			func(p *Project) bool { return !p.dirty || p.dirtyFilePath != "" },
+			func(p *Project) {
+				p.dirty = true
+				p.dirtyFilePath = ""
+			},
+		)
+	}
+
+	// Recompute default projects for open files that now have different config file presence.
+	var hasChanges bool
+	for path := range b.filesAffectedByConfigChanges {
+		fileName := b.fs.overlays[path].FileName()
+		_ = b.ensureConfiguredProjectAndAncestorsForOpenFile(fileName, path, logger)
+		hasChanges = true
+	}
+
+	b.projectsAffectedByConfigChanges = nil
+	b.filesAffectedByConfigChanges = nil
+	return hasChanges
 }
 
 func (b *projectCollectionBuilder) findDefaultProject(fileName string, path tspath.Path) dirty.Value[*Project] {
@@ -651,6 +659,7 @@ func (b *projectCollectionBuilder) updateInferredProject(rootFileNames []string,
 func (b *projectCollectionBuilder) updateProgram(entry dirty.Value[*Project], logger *logCollector) bool {
 	var updateProgram bool
 	var filesChanged bool
+	configFileName := entry.Value().configFileName
 	startTime := time.Now()
 	entry.Locked(func(entry dirty.Value[*Project]) {
 		if entry.Value().Kind == KindConfigured {
@@ -692,7 +701,7 @@ func (b *projectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 	})
 	if updateProgram && logger != nil {
 		elapsed := time.Since(startTime)
-		logger.Log(fmt.Sprintf("Program update for %s completed in %v", entry.Value().configFileName, elapsed))
+		logger.Log(fmt.Sprintf("Program update for %s completed in %v", configFileName, elapsed))
 	}
 	return filesChanged
 }

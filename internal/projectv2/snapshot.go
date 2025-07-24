@@ -12,18 +12,9 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tspath"
-	"github.com/microsoft/typescript-go/internal/vfs"
-	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
 )
 
 var snapshotID atomic.Uint64
-
-// !!! create some type safety for this to ensure caching
-func newSnapshotFS(fs vfs.FS, overlays map[tspath.Path]*overlay, positionEncoding lsproto.PositionEncodingKind, toPath func(string) tspath.Path) *overlayFS {
-	cachedFS := cachedvfs.From(fs)
-	cachedFS.Enable()
-	return newOverlayFS(cachedFS, overlays, positionEncoding, toPath)
-}
 
 type Snapshot struct {
 	id       uint64
@@ -36,7 +27,7 @@ type Snapshot struct {
 	toPath         func(fileName string) tspath.Path
 
 	// Immutable state, cloned between snapshots
-	overlayFS                          *overlayFS
+	diskFiles                          map[tspath.Path]*diskFile
 	ProjectCollection                  *ProjectCollection
 	ConfigFileRegistry                 *ConfigFileRegistry
 	compilerOptionsForInferredProjects *core.CompilerOptions
@@ -45,7 +36,7 @@ type Snapshot struct {
 
 // NewSnapshot
 func NewSnapshot(
-	fs *overlayFS,
+	diskFiles map[tspath.Path]*diskFile,
 	sessionOptions *SessionOptions,
 	parseCache *parseCache,
 	extendedConfigCache *extendedConfigCache,
@@ -61,7 +52,7 @@ func NewSnapshot(
 		sessionOptions: sessionOptions,
 		toPath:         toPath,
 
-		overlayFS:                          fs,
+		diskFiles:                          diskFiles,
 		ConfigFileRegistry:                 configFileRegistry,
 		ProjectCollection:                  &ProjectCollection{toPath: toPath},
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
@@ -79,11 +70,6 @@ func (s *Snapshot) GetDefaultProject(uri lsproto.DocumentUri) *Project {
 
 func (s *Snapshot) ID() uint64 {
 	return s.id
-}
-
-func (s *Snapshot) GetFile(uri lsproto.DocumentUri) FileHandle {
-	fileName := ls.DocumentURIToFileName(uri)
-	return s.overlayFS.getFile(fileName)
 }
 
 type SnapshotChange struct {
@@ -107,7 +93,9 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, session *Se
 	}
 
 	start := time.Now()
-	fs := newSnapshotFS(session.fs.fs, session.fs.overlays, session.fs.positionEncoding, s.toPath)
+	fs := newSnapshotFSBuilder(session.fs.fs, session.fs.overlays, s.diskFiles, session.options.PositionEncoding, s.toPath)
+	fs.markDirtyFiles(change.fileChanges)
+
 	compilerOptionsForInferredProjects := s.compilerOptionsForInferredProjects
 	if change.compilerOptionsForInferredProjects != nil {
 		// !!! mark inferred projects as dirty?
@@ -141,8 +129,11 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, session *Se
 		projectCollectionBuilder.DidRequestFile(uri, logger.Fork("DidRequestFile"))
 	}
 
+	projectCollection, configFileRegistry := projectCollectionBuilder.Finalize(logger)
+	snapshotFS, _ := fs.Finalize()
+
 	newSnapshot := NewSnapshot(
-		fs,
+		snapshotFS.diskFiles,
 		s.sessionOptions,
 		session.parseCache,
 		session.extendedConfigCache,
@@ -152,12 +143,13 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, session *Se
 	)
 
 	newSnapshot.parentId = s.id
-	newSnapshot.ProjectCollection, newSnapshot.ConfigFileRegistry = projectCollectionBuilder.Finalize()
+	newSnapshot.ProjectCollection = projectCollection
+	newSnapshot.ConfigFileRegistry = configFileRegistry
 	newSnapshot.builderLogs = logger
 
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
 		if project.Program != nil {
-			project.host.freeze(newSnapshot.ConfigFileRegistry)
+			project.host.freeze(snapshotFS, newSnapshot.ConfigFileRegistry)
 			session.programCounter.Ref(project.Program)
 		}
 	}
