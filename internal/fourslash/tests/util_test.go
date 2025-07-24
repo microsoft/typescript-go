@@ -13446,7 +13446,7 @@ var completionFunctionMembersWithPrototype = sortCompletionItems(append(
 	completionFunctionMembers,
 	&lsproto.CompletionItem{
 		Label: "prototype",
-		Kind:  ptrTo(lsproto.CompletionItemKindProperty),
+		Kind:  ptrTo(lsproto.CompletionItemKindField),
 	},
 ))
 

@@ -610,7 +610,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 				if moduleSymbol == nil ||
 					!checker.IsExternalModuleSymbol(moduleSymbol) ||
 					typeChecker.TryGetMemberInModuleExportsAndProperties(firstAccessibleSymbol.Name, moduleSymbol) != firstAccessibleSymbol {
-					symbolToOriginInfoMap[ast.GetSymbolId(symbol)] = &symbolOriginInfo{kind: getNullableSymbolOriginInfoKind(symbolOriginInfoKindSymbolMemberNoExport, insertQuestionDot)}
+					symbolToOriginInfoMap[firstAccessibleSymbolId] = &symbolOriginInfo{kind: getNullableSymbolOriginInfoKind(symbolOriginInfoKindSymbolMemberNoExport, insertQuestionDot)}
 				} else {
 					// !!! imports
 					// var fileName string
