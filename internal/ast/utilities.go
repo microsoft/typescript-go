@@ -867,17 +867,6 @@ func WalkUpParenthesizedTypes(node *TypeNode) *Node {
 	return node
 }
 
-func GetEffectiveTypeParent(parent *Node) *Node {
-	if parent != nil && IsInJSFile(parent) {
-		if parent.Kind == KindJSDocTypeExpression && parent.AsJSDocTypeExpression().Host != nil {
-			parent = parent.AsJSDocTypeExpression().Host
-		} else if parent.Kind == KindJSDocTemplateTag && parent.AsJSDocTemplateTag().Host != nil {
-			parent = parent.AsJSDocTemplateTag().Host
-		}
-	}
-	return parent
-}
-
 // Walks up the parents of a node to find the containing SourceFile
 func GetSourceFileOfNode(node *Node) *SourceFile {
 	for node != nil {
@@ -1466,6 +1455,8 @@ func getAssignedName(node *Node) *Node {
 					}
 				}
 			}
+		case KindCommonJSExport:
+			return parent.AsCommonJSExport().Name()
 		case KindVariableDeclaration:
 			name := parent.AsVariableDeclaration().Name()
 			if IsIdentifier(name) {
@@ -1642,6 +1633,10 @@ func IsModuleAugmentationExternal(node *Node) bool {
 		return IsAmbientModule(grandParent) && IsSourceFile(grandParent.Parent) && !IsExternalModule(grandParent.Parent.AsSourceFile())
 	}
 	return false
+}
+
+func IsModuleWithStringLiteralName(node *Node) bool {
+	return IsModuleDeclaration(node) && node.Name().Kind == KindStringLiteral
 }
 
 func GetContainingClass(node *Node) *Node {

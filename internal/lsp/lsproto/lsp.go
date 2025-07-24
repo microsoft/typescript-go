@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/go-json-experiment/json/jsontext"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -119,4 +120,20 @@ func assertOnlyOne(message string, values ...bool) {
 	if count != 1 {
 		panic(message)
 	}
+}
+
+func ptrTo[T any](v T) *T {
+	return &v
+}
+
+type requiredProp bool
+
+func (v *requiredProp) UnmarshalJSON(data []byte) error {
+	*v = true
+	return nil
+}
+
+func (v *requiredProp) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	*v = true
+	return dec.SkipValue()
 }

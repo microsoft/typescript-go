@@ -1,12 +1,7 @@
 // === findAllReferences ===
-
-
-
-
-// === findAllReferences ===
 // === /a.js ===
 
-// /** @typedef {number} /*FIND ALL REFS*/[|T|] */
+// /** /*FIND ALL REFS*/@typedef {number} T */
 // const T = 1;
 // /** @type {T} */
 // const n = T;
@@ -15,6 +10,23 @@
 
 
 // === findAllReferences ===
+// === /a.js ===
+
+// /** @typedef {number} /*FIND ALL REFS*/T */
+// const T = 1;
+// /** @type {T} */
+// const n = T;
+
+
+
+
+// === findAllReferences ===
+// === /a.js ===
+
+// /** @typedef {number} T */
+// /*FIND ALL REFS*/const T = 1;
+// /** @type {T} */
+// const n = T;
 
 
 
@@ -31,6 +43,12 @@
 
 
 // === findAllReferences ===
+// === /a.js ===
+
+// /** @typedef {number} T */
+// const T = 1;
+// /** @type {/*FIND ALL REFS*/[|T|]} */
+// const n = T;
 
 
 

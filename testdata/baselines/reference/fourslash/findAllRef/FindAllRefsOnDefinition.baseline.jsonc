@@ -1,4 +1,15 @@
 // === findAllReferences ===
+// === /findAllRefsOnDefinition-import.ts ===
+
+// --- (line: 3) skipped ---
+// 
+//     }
+// 
+//     /*FIND ALL REFS*/public start(){
+//         return this;
+//     }
+// 
+// // --- (line: 11) skipped ---
 
 
 
@@ -15,6 +26,15 @@
 //     }
 // 
 // // --- (line: 11) skipped ---
+
+
+// === /findAllRefsOnDefinition.ts ===
+
+// import Second = require("./findAllRefsOnDefinition-import");
+// 
+// var second = new Second.Test()
+// second.[|start|]();
+// second.stop();
 
 
 
