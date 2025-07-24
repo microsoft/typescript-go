@@ -290,7 +290,11 @@ func (s *Server) readLoop(ctx context.Context) error {
 		if s.initializeParams == nil && msg.Kind == lsproto.MessageKindRequest {
 			req := msg.AsRequest()
 			if req.Method == lsproto.MethodInitialize {
-				s.handleInitialize(req)
+				resp, err := s.handleInitialize(ctx, req.Params.(*lsproto.InitializeParams))
+				if err != nil {
+					return err
+				}
+				s.sendResult(req.ID, resp)
 			} else {
 				s.sendError(req.ID, lsproto.ErrServerNotInitialized)
 			}
@@ -459,108 +463,77 @@ func (s *Server) sendResponse(resp *lsproto.ResponseMessage) {
 }
 
 func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.RequestMessage) error {
-	switch req.Method {
-	case lsproto.MethodInitialize:
+	if handler := handlers[req.Method]; handler != nil {
+		return handler(s, ctx, req)
+	}
+	s.Log("unknown method", req.Method)
+	if req.ID != nil {
 		s.sendError(req.ID, lsproto.ErrInvalidRequest)
-		return nil
-	case lsproto.MethodShutdown:
-		s.projectService.Close()
-		s.sendResult(req.ID, nil)
-		return nil
-	case lsproto.MethodExit:
-		return io.EOF
-
-	case lsproto.MethodInitialized:
-		return handleNotification(s, ctx, req, lsproto.InitializedMapping, (*Server).handleInitialized)
-	case lsproto.MethodTextDocumentDidOpen:
-		return handleNotification(s, ctx, req, lsproto.TextDocumentDidOpenMapping, (*Server).handleDidOpen)
-	case lsproto.MethodTextDocumentDidChange:
-		return handleNotification(s, ctx, req, lsproto.TextDocumentDidChangeMapping, (*Server).handleDidChange)
-	case lsproto.MethodTextDocumentDidSave:
-		return handleNotification(s, ctx, req, lsproto.TextDocumentDidSaveMapping, (*Server).handleDidSave)
-	case lsproto.MethodTextDocumentDidClose:
-		return handleNotification(s, ctx, req, lsproto.TextDocumentDidCloseMapping, (*Server).handleDidClose)
-	case lsproto.MethodWorkspaceDidChangeWatchedFiles:
-		return handleNotification(s, ctx, req, lsproto.WorkspaceDidChangeWatchedFilesMapping, (*Server).handleDidChangeWatchedFiles)
-	case lsproto.MethodTextDocumentDiagnostic:
-		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentDiagnosticMapping, (*Server).handleDocumentDiagnostic)
-	case lsproto.MethodTextDocumentHover:
-		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentHoverMapping, (*Server).handleHover)
-	case lsproto.MethodTextDocumentDefinition:
-		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentDefinitionMapping, (*Server).handleDefinition)
-	case lsproto.MethodTextDocumentTypeDefinition:
-		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentTypeDefinitionMapping, (*Server).handleTypeDefinition)
-	case lsproto.MethodTextDocumentCompletion:
-		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentCompletionMapping, (*Server).handleCompletion)
-	case lsproto.MethodTextDocumentReferences:
-		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentReferencesMapping, (*Server).handleReferences)
-	case lsproto.MethodTextDocumentImplementation:
-		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentImplementationMapping, (*Server).handleImplementations)
-	case lsproto.MethodTextDocumentSignatureHelp:
-		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentSignatureHelpMapping, (*Server).handleSignatureHelp)
-	case lsproto.MethodTextDocumentFormatting:
-		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentFormattingMapping, (*Server).handleDocumentFormat)
-	case lsproto.MethodTextDocumentRangeFormatting:
-		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentRangeFormattingMapping, (*Server).handleDocumentRangeFormat)
-	case lsproto.MethodTextDocumentOnTypeFormatting:
-		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentOnTypeFormattingMapping, (*Server).handleDocumentOnTypeFormat)
-	case lsproto.MethodWorkspaceSymbol:
-		return handleRequestSingleResponse(s, ctx, req, lsproto.WorkspaceSymbolMapping, (*Server).handleWorkspaceSymbol)
-	case lsproto.MethodTextDocumentDocumentSymbol:
-		return handleRequestSingleResponse(s, ctx, req, lsproto.TextDocumentDocumentSymbolMapping, (*Server).handleDocumentSymbol)
-	case lsproto.MethodCompletionItemResolve:
-		return handleRequestSingleResponse(s, ctx, req, lsproto.CompletionItemResolveMapping, (*Server).handleCompletionItemResolve)
-
-	default:
-		s.Log("unknown method", req.Method)
-		if req.ID != nil {
-			s.sendError(req.ID, lsproto.ErrInvalidRequest)
-		}
-		return nil
 	}
-}
-
-func handleNotification[Req any](
-	s *Server,
-	ctx context.Context,
-	req *lsproto.RequestMessage,
-	info lsproto.NotificationMapping[Req],
-	fn func(*Server, context.Context, Req) error,
-) error {
-	if req.Method != info.Method {
-		panic(fmt.Sprintf("expected method %s, got %s", info.Method, req.Method))
-	}
-	params := req.Params.(Req)
-	if err := fn(s, ctx, params); err != nil {
-		return err
-	}
-	return ctx.Err()
-}
-
-func handleRequestSingleResponse[Req, Resp any](
-	s *Server,
-	ctx context.Context,
-	req *lsproto.RequestMessage,
-	info lsproto.RequestToResponseMapping[Req, Resp],
-	fn func(*Server, context.Context, Req) (Resp, error),
-) error {
-	if req.Method != info.Method {
-		panic(fmt.Sprintf("expected method %s, got %s", info.Method, req.Method))
-	}
-	params := req.Params.(Req)
-	resp, err := fn(s, ctx, params)
-	if err != nil {
-		return err
-	}
-	if ctx.Err() != nil {
-		return ctx.Err()
-	}
-	s.sendResult(req.ID, resp)
 	return nil
 }
 
-func (s *Server) handleInitialize(req *lsproto.RequestMessage) {
-	s.initializeParams = req.Params.(*lsproto.InitializeParams)
+var handlers = map[lsproto.Method]func(*Server, context.Context, *lsproto.RequestMessage) error{}
+
+func init() {
+	registerRequestHandler(lsproto.InitializeMapping, (*Server).handleInitialize)
+	registerRequestHandler(lsproto.ShutdownMapping, (*Server).handleShutdown)
+	registerNotificationHandler(lsproto.ExitMapping, (*Server).handleExit)
+
+	registerNotificationHandler(lsproto.InitializedMapping, (*Server).handleInitialized)
+	registerNotificationHandler(lsproto.TextDocumentDidOpenMapping, (*Server).handleDidOpen)
+	registerNotificationHandler(lsproto.TextDocumentDidChangeMapping, (*Server).handleDidChange)
+	registerNotificationHandler(lsproto.TextDocumentDidSaveMapping, (*Server).handleDidSave)
+	registerNotificationHandler(lsproto.TextDocumentDidCloseMapping, (*Server).handleDidClose)
+	registerNotificationHandler(lsproto.WorkspaceDidChangeWatchedFilesMapping, (*Server).handleDidChangeWatchedFiles)
+
+	registerRequestHandler(lsproto.TextDocumentDiagnosticMapping, (*Server).handleDocumentDiagnostic)
+	registerRequestHandler(lsproto.TextDocumentHoverMapping, (*Server).handleHover)
+	registerRequestHandler(lsproto.TextDocumentDefinitionMapping, (*Server).handleDefinition)
+	registerRequestHandler(lsproto.TextDocumentTypeDefinitionMapping, (*Server).handleTypeDefinition)
+	registerRequestHandler(lsproto.TextDocumentCompletionMapping, (*Server).handleCompletion)
+	registerRequestHandler(lsproto.TextDocumentReferencesMapping, (*Server).handleReferences)
+	registerRequestHandler(lsproto.TextDocumentImplementationMapping, (*Server).handleImplementations)
+	registerRequestHandler(lsproto.TextDocumentSignatureHelpMapping, (*Server).handleSignatureHelp)
+	registerRequestHandler(lsproto.TextDocumentFormattingMapping, (*Server).handleDocumentFormat)
+	registerRequestHandler(lsproto.TextDocumentRangeFormattingMapping, (*Server).handleDocumentRangeFormat)
+	registerRequestHandler(lsproto.TextDocumentOnTypeFormattingMapping, (*Server).handleDocumentOnTypeFormat)
+	registerRequestHandler(lsproto.WorkspaceSymbolMapping, (*Server).handleWorkspaceSymbol)
+	registerRequestHandler(lsproto.TextDocumentDocumentSymbolMapping, (*Server).handleDocumentSymbol)
+	registerRequestHandler(lsproto.CompletionItemResolveMapping, (*Server).handleCompletionItemResolve)
+}
+
+func registerNotificationHandler[Req any](info lsproto.NotificationMapping[Req], fn func(*Server, context.Context, Req) error) {
+	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
+		params := req.Params.(Req)
+		if err := fn(s, ctx, params); err != nil {
+			return err
+		}
+		return ctx.Err()
+	}
+}
+
+func registerRequestHandler[Req, Resp any](info lsproto.RequestToResponseMapping[Req, Resp], fn func(*Server, context.Context, Req) (Resp, error)) {
+	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
+		params := req.Params.(Req)
+		resp, err := fn(s, ctx, params)
+		if err != nil {
+			return err
+		}
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		s.sendResult(req.ID, resp)
+		return nil
+	}
+}
+
+func (s *Server) handleInitialize(ctx context.Context, params *lsproto.InitializeParams) (lsproto.InitializeResponse, error) {
+	if s.initializeParams != nil {
+		return nil, lsproto.ErrInvalidRequest
+	}
+
+	s.initializeParams = params
 
 	s.positionEncoding = lsproto.PositionEncodingKindUTF16
 	if genCapabilities := s.initializeParams.Capabilities.General; genCapabilities != nil && genCapabilities.PositionEncodings != nil {
@@ -569,7 +542,7 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) {
 		}
 	}
 
-	s.sendResult(req.ID, &lsproto.InitializeResult{
+	response := &lsproto.InitializeResult{
 		ServerInfo: &lsproto.ServerInfo{
 			Name:    "typescript-go",
 			Version: ptrTo(core.Version()),
@@ -632,7 +605,9 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) {
 				Boolean: ptrTo(true),
 			},
 		},
-	})
+	}
+
+	return response, nil
 }
 
 func (s *Server) handleInitialized(ctx context.Context, params *lsproto.InitializedParams) error {
@@ -657,6 +632,15 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	}
 
 	return nil
+}
+
+func (s *Server) handleShutdown(ctx context.Context, params any) (lsproto.ShutdownResponse, error) {
+	s.projectService.Close()
+	return nil, nil
+}
+
+func (s *Server) handleExit(ctx context.Context, params any) error {
+	return io.EOF
 }
 
 func (s *Server) handleDidOpen(ctx context.Context, params *lsproto.DidOpenTextDocumentParams) error {
