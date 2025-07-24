@@ -231,7 +231,7 @@ func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCap
 	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
 	// !!! check for errors?
 	sendRequest(t, f, lsproto.InitializeMapping, params)
-	f.sendNotification(t, lsproto.MethodInitialized, &lsproto.InitializedParams{})
+	sendNotification(t, f, lsproto.InitializedMapping, &lsproto.InitializedParams{})
 }
 
 var (
@@ -283,9 +283,9 @@ func sendRequest[Req, Resp any](t *testing.T, f *FourslashTest, mapping lsproto.
 	return resp, result, ok
 }
 
-func (f *FourslashTest) sendNotification(t *testing.T, method lsproto.Method, params any) {
+func sendNotification[Req any](t *testing.T, f *FourslashTest, mapping lsproto.NotificationMapping[Req], params Req) {
 	notification := lsproto.NewNotificationMessage(
-		method,
+		mapping.Method,
 		params,
 	)
 	f.writeMsg(t, notification.Message())
@@ -435,7 +435,7 @@ func (f *FourslashTest) openFile(t *testing.T, filename string) {
 		t.Fatalf("File %s not found in test data", filename)
 	}
 	f.activeFilename = filename
-	f.sendNotification(t, lsproto.MethodTextDocumentDidOpen, &lsproto.DidOpenTextDocumentParams{
+	sendNotification(t, f, lsproto.TextDocumentDidOpenMapping, &lsproto.DidOpenTextDocumentParams{
 		TextDocument: &lsproto.TextDocumentItem{
 			Uri:        ls.FileNameToDocumentURI(filename),
 			LanguageId: getLanguageKind(filename),
@@ -1059,7 +1059,7 @@ func (f *FourslashTest) editScript(t *testing.T, fileName string, start int, end
 	if err != nil {
 		panic(fmt.Sprintf("Failed to write file %s: %v", fileName, err))
 	}
-	f.sendNotification(t, lsproto.MethodTextDocumentDidChange, &lsproto.DidChangeTextDocumentParams{
+	sendNotification(t, f, lsproto.TextDocumentDidChangeMapping, &lsproto.DidChangeTextDocumentParams{
 		TextDocument: lsproto.VersionedTextDocumentIdentifier{
 			TextDocumentIdentifier: lsproto.TextDocumentIdentifier{
 				Uri: ls.FileNameToDocumentURI(fileName),
