@@ -1066,7 +1066,7 @@ func (f *FourslashTest) editScript(t *testing.T, fileName string, start int, end
 			},
 			Version: script.version,
 		},
-		ContentChanges: []lsproto.TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument{
+		ContentChanges: []lsproto.TextDocumentContentChangePartialOrWholeDocument{
 			{
 				TextDocumentContentChangePartial: &lsproto.TextDocumentContentChangePartial{
 					Range: changeRange,

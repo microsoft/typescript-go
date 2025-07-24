@@ -248,7 +248,70 @@ function handleOrType(orType: OrType, nullToPointer: boolean | undefined): GoTyp
         };
     }
 
-    let unionTypeName = memberNames.join("Or");
+    // Find longest common prefix of member names chunked by PascalCase
+    function findLongestCommonPrefix(names: string[]): string {
+        if (names.length === 0) return "";
+        if (names.length === 1) return "";
+
+        // Split each name into PascalCase chunks
+        function splitPascalCase(name: string): string[] {
+            const chunks: string[] = [];
+            let currentChunk = "";
+
+            for (let i = 0; i < name.length; i++) {
+                const char = name[i];
+                if (char >= "A" && char <= "Z" && currentChunk.length > 0) {
+                    // Start of a new chunk
+                    chunks.push(currentChunk);
+                    currentChunk = char;
+                }
+                else {
+                    currentChunk += char;
+                }
+            }
+
+            if (currentChunk.length > 0) {
+                chunks.push(currentChunk);
+            }
+
+            return chunks;
+        }
+
+        const allChunks = names.map(splitPascalCase);
+        const minChunkLength = Math.min(...allChunks.map(chunks => chunks.length));
+
+        // Find the longest common prefix of chunks
+        let commonChunks: string[] = [];
+        for (let i = 0; i < minChunkLength; i++) {
+            const chunk = allChunks[0][i];
+            if (allChunks.every(chunks => chunks[i] === chunk)) {
+                commonChunks.push(chunk);
+            }
+            else {
+                break;
+            }
+        }
+
+        return commonChunks.join("");
+    }
+
+    const commonPrefix = findLongestCommonPrefix(memberNames);
+
+    let unionTypeName = "";
+
+    if (commonPrefix.length > 0) {
+        const trimmedMemberNames = memberNames.map(name => name.slice(commonPrefix.length));
+        if (!trimmedMemberNames.some(name => name === "s")) {
+            unionTypeName = commonPrefix + trimmedMemberNames.join("Or");
+        }
+        else {
+            unionTypeName = memberNames.join("Or");
+        }
+    }
+    else {
+        unionTypeName = memberNames.join("Or");
+    }
+
     if (containedNull && !nullToPointer) {
         unionTypeName += "OrNull";
     }

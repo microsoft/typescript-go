@@ -100,7 +100,7 @@ func TestService(t *testing.T) {
 					},
 					Version: 1,
 				},
-				[]lsproto.TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument{
+				[]lsproto.TextDocumentContentChangePartialOrWholeDocument{
 					{
 						TextDocumentContentChangePartial: ptrTo(lsproto.TextDocumentContentChangePartial{
 							Range: lsproto.Range{
@@ -139,7 +139,7 @@ func TestService(t *testing.T) {
 					},
 					Version: 1,
 				},
-				[]lsproto.TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument{
+				[]lsproto.TextDocumentContentChangePartialOrWholeDocument{
 					{
 						TextDocumentContentChangePartial: ptrTo(lsproto.TextDocumentContentChangePartial{
 							Range: lsproto.Range{
@@ -178,7 +178,7 @@ func TestService(t *testing.T) {
 					},
 					Version: 1,
 				},
-				[]lsproto.TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument{
+				[]lsproto.TextDocumentContentChangePartialOrWholeDocument{
 					{
 						TextDocumentContentChangePartial: ptrTo(lsproto.TextDocumentContentChangePartial{
 							Range: lsproto.Range{
@@ -226,7 +226,7 @@ func TestService(t *testing.T) {
 					},
 					Version: 1,
 				},
-				[]lsproto.TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument{
+				[]lsproto.TextDocumentContentChangePartialOrWholeDocument{
 					{
 						TextDocumentContentChangePartial: ptrTo(lsproto.TextDocumentContentChangePartial{
 							Range: lsproto.Range{

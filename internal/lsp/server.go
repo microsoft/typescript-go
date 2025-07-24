@@ -553,7 +553,7 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 		},
 		Capabilities: &lsproto.ServerCapabilities{
 			PositionEncoding: ptrTo(s.positionEncoding),
-			TextDocumentSync: &lsproto.TextDocumentSyncOptionsOrTextDocumentSyncKind{
+			TextDocumentSync: &lsproto.TextDocumentSyncOptionsOrKind{
 				TextDocumentSyncOptions: &lsproto.TextDocumentSyncOptions{
 					OpenClose: ptrTo(true),
 					Change:    ptrTo(lsproto.TextDocumentSyncKindIncremental),
@@ -579,7 +579,7 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			ImplementationProvider: &lsproto.BooleanOrImplementationOptionsOrImplementationRegistrationOptions{
 				Boolean: ptrTo(true),
 			},
-			DiagnosticProvider: &lsproto.DiagnosticOptionsOrDiagnosticRegistrationOptions{
+			DiagnosticProvider: &lsproto.DiagnosticOptionsOrRegistrationOptions{
 				DiagnosticOptions: &lsproto.DiagnosticOptions{
 					InterFileDependencies: true,
 				},
@@ -747,7 +747,7 @@ func (s *Server) handleCompletion(ctx context.Context, params *lsproto.Completio
 	if err != nil {
 		return nil, err
 	}
-	return &lsproto.CompletionItemsOrCompletionList{
+	return &lsproto.CompletionItemsOrList{
 		CompletionList: list,
 	}, nil
 }
