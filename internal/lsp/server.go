@@ -376,7 +376,7 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 						s.sendError(req.ID, lsproto.ErrRequestCancelled)
 					} else if errors.Is(err, io.EOF) {
 						lspExit()
-					} else  {
+					} else {
 						s.sendError(req.ID, err)
 					}
 				}
