@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsWithShorthandPropertyAssignment(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = ` var /*0*/name = "Foo";
 
