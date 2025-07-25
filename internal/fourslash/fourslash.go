@@ -149,9 +149,10 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		scriptInfos[filePath] = newScriptInfo(filePath, file.Content)
 	}
 
-	compilerOptions := &core.CompilerOptions{}
+	compilerOptions := &core.CompilerOptions{
+		SkipDefaultLibCheck: core.TSTrue,
+	}
 	harnessutil.SetCompilerOptionsFromTestConfig(t, testData.GlobalOptions, compilerOptions)
-	compilerOptions.SkipDefaultLibCheck = core.TSTrue
 
 	inputReader, inputWriter := newLSPPipe()
 	outputReader, outputWriter := newLSPPipe()
@@ -202,7 +203,10 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	// !!! replace with a proper request *after initialize*
 	f.server.SetCompilerOptionsForInferredProjects(compilerOptions)
 	f.initialize(t, capabilities)
-	f.openFile(t, f.testData.Files[0].fileName)
+	for _, file := range testData.Files {
+		f.openFile(t, file.fileName)
+	}
+	f.activeFilename = f.testData.Files[0].fileName
 
 	t.Cleanup(func() {
 		inputWriter.Close()
@@ -226,8 +230,8 @@ func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCap
 	params := &lsproto.InitializeParams{}
 	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
 	// !!! check for errors?
-	f.sendRequest(t, lsproto.MethodInitialize, params)
-	f.sendNotification(t, lsproto.MethodInitialized, &lsproto.InitializedParams{})
+	sendRequest(t, f, lsproto.InitializeInfo, params)
+	sendNotification(t, f, lsproto.InitializedInfo, &lsproto.InitializedParams{})
 }
 
 var (
@@ -263,20 +267,25 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	return &capabilitiesWithDefaults
 }
 
-func (f *FourslashTest) sendRequest(t *testing.T, method lsproto.Method, params any) *lsproto.Message {
+func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params) (*lsproto.Message, Resp, bool) {
 	id := f.nextID()
 	req := lsproto.NewRequestMessage(
-		method,
+		info.Method,
 		lsproto.NewID(lsproto.IntegerOrString{Integer: &id}),
 		params,
 	)
 	f.writeMsg(t, req.Message())
-	return f.readMsg(t)
+	resp := f.readMsg(t)
+	if resp == nil {
+		return nil, *new(Resp), false
+	}
+	result, ok := resp.AsResponse().Result.(Resp)
+	return resp, result, ok
 }
 
-func (f *FourslashTest) sendNotification(t *testing.T, method lsproto.Method, params any) {
+func sendNotification[Params any](t *testing.T, f *FourslashTest, info lsproto.NotificationInfo[Params], params Params) {
 	notification := lsproto.NewNotificationMessage(
-		method,
+		info.Method,
 		params,
 	)
 	f.writeMsg(t, notification.Message())
@@ -410,6 +419,15 @@ func (f *FourslashTest) Markers() []*Marker {
 	return f.testData.Markers
 }
 
+func (f *FourslashTest) MarkerNames() []string {
+	return core.MapFiltered(f.testData.Markers, func(marker *Marker) (string, bool) {
+		if marker.Name == nil {
+			return "", false
+		}
+		return *marker.Name, true
+	})
+}
+
 func (f *FourslashTest) Ranges() []*RangeMarker {
 	return f.testData.Ranges
 }
@@ -426,7 +444,7 @@ func (f *FourslashTest) openFile(t *testing.T, filename string) {
 		t.Fatalf("File %s not found in test data", filename)
 	}
 	f.activeFilename = filename
-	f.sendNotification(t, lsproto.MethodTextDocumentDidOpen, &lsproto.DidOpenTextDocumentParams{
+	sendNotification(t, f, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
 		TextDocument: &lsproto.TextDocumentItem{
 			Uri:        ls.FileNameToDocumentURI(filename),
 			LanguageId: getLanguageKind(filename),
@@ -540,17 +558,14 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *Completi
 		TextDocumentPositionParams: f.currentTextDocumentPositionParams(),
 		Context:                    &lsproto.CompletionContext{},
 	}
-	resMsg := f.sendRequest(t, lsproto.MethodTextDocumentCompletion, params)
+	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentCompletionInfo, params)
 	if resMsg == nil {
 		t.Fatalf(prefix+"Nil response received for completion request", f.lastKnownMarkerName)
 	}
-	result := resMsg.AsResponse().Result
-	switch result := result.(type) {
-	case *lsproto.CompletionList:
-		f.verifyCompletionsResult(t, f.currentCaretPosition, result, expected, prefix)
-	default:
-		t.Fatalf(prefix+"Unexpected response type for completion request: %v", result)
+	if !resultOk {
+		t.Fatalf(prefix+"Unexpected response type for completion request: %T", resMsg.AsResponse().Result)
 	}
+	f.verifyCompletionsResult(t, f.currentCaretPosition, result.List, expected, prefix)
 }
 
 func (f *FourslashTest) verifyCompletionsResult(
@@ -728,15 +743,14 @@ var completionIgnoreOpts = cmp.FilterPath(
 
 func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual *lsproto.CompletionItem, expected *lsproto.CompletionItem) {
 	if expected.Detail != nil || expected.Documentation != nil {
-		response := f.sendRequest(t, lsproto.MethodCompletionItemResolve, actual)
-		if response == nil {
+		resMsg, result, resultOk := sendRequest(t, f, lsproto.CompletionItemResolveInfo, actual)
+		if resMsg == nil {
 			t.Fatal(prefix + "Expected non-nil response for completion item resolve, got nil")
 		}
-		resolvedItem, ok := response.AsResponse().Result.(*lsproto.CompletionItem)
-		if !ok {
-			t.Fatalf(prefix+"Expected response to be *lsproto.CompletionItem, got %T", response.AsResponse().Result)
+		if !resultOk {
+			t.Fatalf(prefix+"Unexpected response type for completion item resolve: %T", resMsg.AsResponse().Result)
 		}
-		actual = resolvedItem
+		actual = result
 	}
 	assertDeepEqual(t, actual, expected, prefix, completionIgnoreOpts)
 	if expected.Kind != nil {
@@ -770,19 +784,7 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 	t *testing.T,
 	markers ...string,
 ) {
-	// if there are no markers specified, use all ranges
-	var referenceLocations []MarkerOrRange
-	if len(markers) == 0 {
-		referenceLocations = core.Map(f.testData.Ranges, func(r *RangeMarker) MarkerOrRange { return r })
-	} else {
-		referenceLocations = core.Map(markers, func(markerName string) MarkerOrRange {
-			marker, ok := f.testData.MarkerPositions[markerName]
-			if !ok {
-				t.Fatalf("Marker '%s' not found", markerName)
-			}
-			return marker
-		})
-	}
+	referenceLocations := f.lookupMarkersOrGetRanges(t, markers)
 
 	if f.baseline != nil {
 		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
@@ -802,33 +804,117 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 	for _, markerOrRange := range referenceLocations {
 		// worker in `baselineEachMarkerOrRange`
 		f.GoToMarkerOrRange(t, markerOrRange)
+
 		params := &lsproto.ReferenceParams{
 			TextDocumentPositionParams: f.currentTextDocumentPositionParams(),
 			Context:                    &lsproto.ReferenceContext{},
 		}
-		resMsg := f.sendRequest(t, lsproto.MethodTextDocumentReferences, params)
+		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentReferencesInfo, params)
 		if resMsg == nil {
 			if f.lastKnownMarkerName == nil {
-				t.Fatalf("Unexpected references response type at pos %v", f.currentCaretPosition)
+				t.Fatalf("Nil response received for references request at pos %v", f.currentCaretPosition)
 			} else {
 				t.Fatalf("Nil response received for references request at marker '%s'", *f.lastKnownMarkerName)
 			}
 		}
-		result := resMsg.AsResponse().Result
-		if result, ok := result.([]*lsproto.Location); ok {
-			f.baseline.addResult("findAllReferences", f.getBaselineForLocationsWithFileContents(result, baselineFourslashLocationsOptions{
-				marker:     markerOrRange.GetMarker(),
-				markerName: "/*FIND ALL REFS*/",
-			}))
-		} else {
+		if !resultOk {
 			if f.lastKnownMarkerName == nil {
-				t.Fatalf("Unexpected references response type at pos %v: %T", f.currentCaretPosition, result)
+				t.Fatalf("Unexpected references response type at pos %v: %T", f.currentCaretPosition, resMsg.AsResponse().Result)
 			} else {
-				t.Fatalf("Unexpected references response type at marker '%s': %T", *f.lastKnownMarkerName, result)
+				t.Fatalf("Unexpected references response type at marker '%s': %T", *f.lastKnownMarkerName, resMsg.AsResponse().Result)
 			}
 		}
+
+		f.baseline.addResult("findAllReferences", f.getBaselineForLocationsWithFileContents(*result, baselineFourslashLocationsOptions{
+			marker:     markerOrRange.GetMarker(),
+			markerName: "/*FIND ALL REFS*/",
+		}))
+
 	}
+
 	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
+}
+
+func (f *FourslashTest) VerifyBaselineGoToDefinition(
+	t *testing.T,
+	markers ...string,
+) {
+	referenceLocations := f.lookupMarkersOrGetRanges(t, markers)
+
+	if f.baseline != nil {
+		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
+	} else {
+		f.baseline = &baselineFromTest{
+			content:      &strings.Builder{},
+			baselineName: "goToDef/" + strings.TrimPrefix(t.Name(), "Test"),
+			ext:          ".baseline.jsonc",
+		}
+	}
+
+	// empty baseline after test completes
+	defer func() {
+		f.baseline = nil
+	}()
+
+	for _, markerOrRange := range referenceLocations {
+		// worker in `baselineEachMarkerOrRange`
+		f.GoToMarkerOrRange(t, markerOrRange)
+
+		params := &lsproto.DefinitionParams{
+			TextDocumentPositionParams: f.currentTextDocumentPositionParams(),
+		}
+
+		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentDefinitionInfo, params)
+		if resMsg == nil {
+			if f.lastKnownMarkerName == nil {
+				t.Fatalf("Nil response received for definition request at pos %v", f.currentCaretPosition)
+			} else {
+				t.Fatalf("Nil response received for definition request at marker '%s'", *f.lastKnownMarkerName)
+			}
+		}
+		if !resultOk {
+			if f.lastKnownMarkerName == nil {
+				t.Fatalf("Unexpected definition response type at pos %v: %T", f.currentCaretPosition, resMsg.AsResponse().Result)
+			} else {
+				t.Fatalf("Unexpected definition response type at marker '%s': %T", *f.lastKnownMarkerName, resMsg.AsResponse().Result)
+			}
+		}
+
+		var resultAsLocations []lsproto.Location
+		if result != nil {
+			if result.Locations != nil {
+				resultAsLocations = *result.Locations
+			} else if result.Location != nil {
+				resultAsLocations = []lsproto.Location{*result.Location}
+			} else {
+				t.Fatalf("Unexpected definition response type at marker '%s': %T", *f.lastKnownMarkerName, result.DefinitionLinks)
+			}
+		}
+
+		f.baseline.addResult("goToDefinition", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
+			marker:     markerOrRange.GetMarker(),
+			markerName: "/*GO TO DEFINITION*/",
+		}))
+	}
+
+	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
+}
+
+// Collects all named markers if provided, or defaults to anonymous ranges
+func (f *FourslashTest) lookupMarkersOrGetRanges(t *testing.T, markers []string) []MarkerOrRange {
+	var referenceLocations []MarkerOrRange
+	if len(markers) == 0 {
+		referenceLocations = core.Map(f.testData.Ranges, func(r *RangeMarker) MarkerOrRange { return r })
+	} else {
+		referenceLocations = core.Map(markers, func(markerName string) MarkerOrRange {
+			marker, ok := f.testData.MarkerPositions[markerName]
+			if !ok {
+				t.Fatalf("Marker '%s' not found", markerName)
+			}
+			return marker
+		})
+	}
+	return referenceLocations
 }
 
 func ptrTo[T any](v T) *T {
@@ -982,16 +1068,16 @@ func (f *FourslashTest) editScript(t *testing.T, fileName string, start int, end
 	if err != nil {
 		panic(fmt.Sprintf("Failed to write file %s: %v", fileName, err))
 	}
-	f.sendNotification(t, lsproto.MethodTextDocumentDidChange, &lsproto.DidChangeTextDocumentParams{
+	sendNotification(t, f, lsproto.TextDocumentDidChangeInfo, &lsproto.DidChangeTextDocumentParams{
 		TextDocument: lsproto.VersionedTextDocumentIdentifier{
 			TextDocumentIdentifier: lsproto.TextDocumentIdentifier{
 				Uri: ls.FileNameToDocumentURI(fileName),
 			},
 			Version: script.version,
 		},
-		ContentChanges: []lsproto.TextDocumentContentChangeEvent{
+		ContentChanges: []lsproto.TextDocumentContentChangePartialOrWholeDocument{
 			{
-				TextDocumentContentChangePartial: &lsproto.TextDocumentContentChangePartial{
+				Partial: &lsproto.TextDocumentContentChangePartial{
 					Range: changeRange,
 					Text:  newText,
 				},

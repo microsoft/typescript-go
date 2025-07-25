@@ -605,15 +605,13 @@ func (n *Node) Type() *Node {
 		return n.AsCommonJSExport().Type
 	case KindBinaryExpression:
 		return n.AsBinaryExpression().Type
-	case KindEnumMember, KindBindingElement:
-		return nil
 	default:
 		funcLike := n.FunctionLikeData()
 		if funcLike != nil {
 			return funcLike.Type
 		}
 	}
-	panic("Unhandled case in Node.Type: " + n.Kind.String())
+	return nil
 }
 
 func (n *Node) Initializer() *Node {
@@ -2783,6 +2781,10 @@ func (node *SwitchStatement) Clone(f NodeFactoryCoercible) *Node {
 func (node *SwitchStatement) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) |
 		propagateSubtreeFacts(node.CaseBlock)
+}
+
+func IsSwitchStatement(node *Node) bool {
+	return node.Kind == KindSwitchStatement
 }
 
 // CaseBlock
@@ -9063,7 +9065,6 @@ func (node *JSDocLinkCode) Name() *DeclarationName {
 
 type JSDocTypeExpression struct {
 	TypeNodeBase
-	Host *Node
 	Type *TypeNode
 }
 
@@ -9321,7 +9322,6 @@ type JSDocTemplateTag struct {
 	JSDocTagBase
 	Constraint     *Node
 	TypeParameters *TypeParameterList
-	Host           *Node
 }
 
 func (f *NodeFactory) NewJSDocTemplateTag(tagName *IdentifierNode, constraint *Node, typeParameters *TypeParameterList, comment *NodeList) *Node {
@@ -9816,10 +9816,9 @@ func (node *JSDocThisTag) Clone(f NodeFactoryCoercible) *Node {
 // JSDocImportTag
 type JSDocImportTag struct {
 	JSDocTagBase
-	JSImportDeclaration *ImportDeclaration
-	ImportClause        *Declaration
-	ModuleSpecifier     *Expression
-	Attributes          *Node
+	ImportClause    *Declaration
+	ModuleSpecifier *Expression
+	Attributes      *Node
 }
 
 func (f *NodeFactory) NewJSDocImportTag(tagName *IdentifierNode, importClause *Declaration, moduleSpecifier *Node, attributes *Node, comment *NodeList) *Node {
@@ -10164,7 +10163,7 @@ type SourceFile struct {
 }
 
 func (f *NodeFactory) NewSourceFile(opts SourceFileParseOptions, text string, statements *NodeList, endOfFileToken *TokenNode) *Node {
-	if (tspath.GetEncodedRootLength(opts.FileName) == 0 && !strings.HasPrefix(opts.FileName, "^/")) || opts.FileName != tspath.NormalizePath(opts.FileName) {
+	if tspath.GetEncodedRootLength(opts.FileName) == 0 || opts.FileName != tspath.NormalizePath(opts.FileName) {
 		panic(fmt.Sprintf("fileName should be normalized and absolute: %q", opts.FileName))
 	}
 	data := &SourceFile{}

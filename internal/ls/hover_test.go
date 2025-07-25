@@ -41,13 +41,99 @@ function myFunction() {
 /*marker*/myFunction();`,
 			expected: map[string]*lsproto.Hover{
 				"marker": {
-					Contents: lsproto.MarkupContentOrMarkedStringOrMarkedStrings{
+					Contents: lsproto.MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings{
 						MarkupContent: &lsproto.MarkupContent{
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "```tsx\nfunction myFunction(): string\n```\nA function with JSDoc links that previously caused panic\n`console.log` and `Array.from` and `Object.keys`",
 						},
 					},
 				},
+			},
+		},
+		{
+			title: "JSDocParamHoverFunctionDeclaration",
+			input: `
+// @filename: index.js
+/**
+ * @param {string} param - the greatest of days
+ */
+function /*marker*/myFunction(param) {
+    return "test" + param;
+}
+
+myFunction();`,
+			expected: map[string]*lsproto.Hover{
+				"marker": {
+					Contents: lsproto.MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings{
+						MarkupContent: &lsproto.MarkupContent{
+							Kind:  lsproto.MarkupKindMarkdown,
+							Value: "```tsx\nfunction myFunction(param: string): string\n```\n\n\n*@param* `param` - the greatest of days\n",
+						},
+					},
+				},
+			},
+		},
+		{
+			title: "JSDocParamHoverFunctionCall",
+			input: `
+// @filename: index.js
+/**
+ * @param {string} param - the greatest of days
+ */
+function myFunction(param) {
+    return "test" + param;
+}
+
+/*marker*/myFunction();`,
+			expected: map[string]*lsproto.Hover{
+				"marker": {
+					Contents: lsproto.MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings{
+						MarkupContent: &lsproto.MarkupContent{
+							Kind:  lsproto.MarkupKindMarkdown,
+							Value: "```tsx\nfunction myFunction(param: string): string\n```\n\n\n*@param* `param` - the greatest of days\n",
+						},
+					},
+				},
+			},
+		},
+		{
+			title: "JSDocParamHoverParameter",
+			input: `
+// @filename: index.js
+/**
+ * @param {string} param - the greatest of days
+ */
+function myFunction(/*marker*/param) {
+    return "test" + param;
+}
+
+myFunction();`,
+			expected: map[string]*lsproto.Hover{
+				"marker": {
+					Contents: lsproto.MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings{
+						MarkupContent: &lsproto.MarkupContent{
+							Kind:  lsproto.MarkupKindMarkdown,
+							Value: "```tsx\n(parameter) param: string\n```\n- the greatest of days\n",
+						},
+					},
+				},
+			},
+		},
+		{
+			title: "JSDocParamHoverTagIdentifier",
+			input: `
+// @filename: index.js
+/**
+ * @param {string} /*marker*/param - the greatest of days
+ */
+function myFunction(param) {
+    return "test" + param;
+}
+
+myFunction();`,
+			expected: map[string]*lsproto.Hover{
+				// TODO: Should have same result as hovering on the parameter itself.
+				"marker": nil,
 			},
 		},
 	}
@@ -84,7 +170,7 @@ func runHoverTest(t *testing.T, input string, expected map[string]*lsproto.Hover
 			assert.Assert(t, result == nil)
 		} else {
 			assert.Assert(t, result != nil)
-			assert.DeepEqual(t, *result, *expectedResult)
+			assert.DeepEqual(t, result, expectedResult)
 		}
 	}
 }

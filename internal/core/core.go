@@ -95,6 +95,18 @@ func MapNonNil[T any, U comparable](slice []T, f func(T) U) []U {
 	return result
 }
 
+func MapFiltered[T any, U any](slice []T, f func(T) (U, bool)) []U {
+	var result []U
+	for _, value := range slice {
+		mapped, ok := f(value)
+		if !ok {
+			continue
+		}
+		result = append(result, mapped)
+	}
+	return result
+}
+
 func FlatMap[T any, U comparable](slice []T, f func(T) []U) []U {
 	var result []U
 	for _, value := range slice {
@@ -476,7 +488,7 @@ func GetSpellingSuggestion[T any](name string, candidates []T, getName func(T) s
 			}
 			// Only consider candidates less than 3 characters long when they differ by case.
 			// Otherwise, don't bother, since a user would usually notice differences of a 2-character name.
-			if len(candidateName) < 3 && strings.ToLower(candidateName) != strings.ToLower(name) {
+			if len(candidateName) < 3 && !strings.EqualFold(candidateName, name) {
 				continue
 			}
 			distance := levenshteinWithMax(runeName, []rune(candidateName), bestDistance-0.1)
