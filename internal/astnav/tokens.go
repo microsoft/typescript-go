@@ -53,7 +53,7 @@ func getTokenAtPosition(
 			prevSubtree = node
 		}
 
-		if node.End() <= position {
+		if node.End() < position || node.Kind != ast.KindEndOfFile && node.End() == position {
 			return -1
 		}
 		if getPosition(node, sourceFile, allowPositionInLeadingTrivia) > position {
@@ -172,16 +172,6 @@ func getTokenAtPosition(
 				}
 				left = tokenEnd
 				scanner.Scan()
-			}
-			// Scan EOF token if we are at the end of the file.
-			if ast.IsSourceFile(current) {
-				token := scanner.Token()
-				tokenFullStart := scanner.TokenFullStart()
-				tokenStart := core.IfElse(allowPositionInLeadingTrivia, tokenFullStart, scanner.TokenStart())
-				tokenEnd := scanner.TokenEnd()
-				if tokenStart <= position && position <= tokenEnd {
-					return sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current)
-				}
 			}
 			return current
 		}
