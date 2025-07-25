@@ -691,64 +691,64 @@ func (n *Node) Type() *Node {
 	return nil
 }
 
-func (m *mutableNode) SetType(typ *Node) {
+func (m *mutableNode) SetType(t *Node) {
 	n := (*Node)(m)
 	switch m.Kind {
 	case KindVariableDeclaration:
-		n.AsVariableDeclaration().Type = typ
+		n.AsVariableDeclaration().Type = t
 	case KindParameter:
-		n.AsParameterDeclaration().Type = typ
+		n.AsParameterDeclaration().Type = t
 	case KindPropertySignature:
-		n.AsPropertySignatureDeclaration().Type = typ
+		n.AsPropertySignatureDeclaration().Type = t
 	case KindPropertyDeclaration:
-		n.AsPropertyDeclaration().Type = typ
+		n.AsPropertyDeclaration().Type = t
 	case KindPropertyAssignment:
-		n.AsPropertyAssignment().Type = typ
+		n.AsPropertyAssignment().Type = t
 	case KindShorthandPropertyAssignment:
-		n.AsShorthandPropertyAssignment().Type = typ
+		n.AsShorthandPropertyAssignment().Type = t
 	case KindTypePredicate:
-		n.AsTypePredicateNode().Type = typ
+		n.AsTypePredicateNode().Type = t
 	case KindParenthesizedType:
-		n.AsParenthesizedTypeNode().Type = typ
+		n.AsParenthesizedTypeNode().Type = t
 	case KindTypeOperator:
-		n.AsTypeOperatorNode().Type = typ
+		n.AsTypeOperatorNode().Type = t
 	case KindMappedType:
-		n.AsMappedTypeNode().Type = typ
+		n.AsMappedTypeNode().Type = t
 	case KindTypeAssertionExpression:
-		n.AsTypeAssertion().Type = typ
+		n.AsTypeAssertion().Type = t
 	case KindAsExpression:
-		n.AsAsExpression().Type = typ
+		n.AsAsExpression().Type = t
 	case KindSatisfiesExpression:
-		n.AsSatisfiesExpression().Type = typ
+		n.AsSatisfiesExpression().Type = t
 	case KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
-		n.AsTypeAliasDeclaration().Type = typ
+		n.AsTypeAliasDeclaration().Type = t
 	case KindNamedTupleMember:
-		n.AsNamedTupleMember().Type = typ
+		n.AsNamedTupleMember().Type = t
 	case KindOptionalType:
-		n.AsOptionalTypeNode().Type = typ
+		n.AsOptionalTypeNode().Type = t
 	case KindRestType:
-		n.AsRestTypeNode().Type = typ
+		n.AsRestTypeNode().Type = t
 	case KindTemplateLiteralTypeSpan:
-		n.AsTemplateLiteralTypeSpan().Type = typ
+		n.AsTemplateLiteralTypeSpan().Type = t
 	case KindJSDocTypeExpression:
-		n.AsJSDocTypeExpression().Type = typ
+		n.AsJSDocTypeExpression().Type = t
 	case KindJSDocParameterTag, KindJSDocPropertyTag:
-		n.AsJSDocParameterOrPropertyTag().TypeExpression = typ
+		n.AsJSDocParameterOrPropertyTag().TypeExpression = t
 	case KindJSDocNullableType:
-		n.AsJSDocNullableType().Type = typ
+		n.AsJSDocNullableType().Type = t
 	case KindJSDocNonNullableType:
-		n.AsJSDocNonNullableType().Type = typ
+		n.AsJSDocNonNullableType().Type = t
 	case KindJSDocOptionalType:
-		n.AsJSDocOptionalType().Type = typ
+		n.AsJSDocOptionalType().Type = t
 	case KindExportAssignment, KindJSExportAssignment:
-		n.AsExportAssignment().Type = typ
+		n.AsExportAssignment().Type = t
 	case KindCommonJSExport:
-		n.AsCommonJSExport().Type = typ
+		n.AsCommonJSExport().Type = t
 	case KindBinaryExpression:
-		n.AsBinaryExpression().Type = typ
+		n.AsBinaryExpression().Type = t
 	default:
 		if funcLike := n.FunctionLikeData(); funcLike != nil {
-			funcLike.Type = typ
+			funcLike.Type = t
 		} else {
 			panic("Unhandled case in mutableNode.SetType: " + n.Kind.String())
 		}
