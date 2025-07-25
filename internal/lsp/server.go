@@ -512,7 +512,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 func registerNotificationHandler[Req any](handlers handlerMap, info lsproto.NotificationInfo[Req], fn func(*Server, context.Context, Req) error) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
 		var params Req
-		// Ignore empty params.
+		// Ignore empty params; all generated params are either pointers or any.
 		if req.Params != nil {
 			params = req.Params.(Req)
 		}
