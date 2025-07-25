@@ -885,7 +885,7 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 			resultAsLocations = *result.Locations
 		} else if result.Location != nil {
 			resultAsLocations = []lsproto.Location{*result.Location}
-		} else {
+		} else if result.DefinitionLinks != nil {
 			t.Fatalf("Unexpected definition response type at marker '%s': %T", *f.lastKnownMarkerName, result.DefinitionLinks)
 		}
 
