@@ -9,7 +9,7 @@ import (
 
 func TestReferencesForStringLiteralPropertyNames(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Foo {
     public "/*1*/ss": any;

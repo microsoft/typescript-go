@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsForVariableInImplementsClause01(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var Base = class { };
 class C extends Base implements /**/Base { }`

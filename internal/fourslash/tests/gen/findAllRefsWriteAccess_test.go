@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsWriteAccess(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Obj {
     [` + "`" + `/*1*/num` + "`" + `]: number;

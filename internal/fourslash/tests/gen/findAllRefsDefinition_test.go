@@ -9,7 +9,7 @@ import (
 
 func TestFindAllRefsDefinition(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const /*1*/x = 0;
 /*2*/x;`

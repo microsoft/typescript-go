@@ -9,7 +9,7 @@ import (
 
 func TestFindReferencesJSXTagName(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: index.tsx
 import { /*1*/SubmissionComp } from "./RedditSubmission"

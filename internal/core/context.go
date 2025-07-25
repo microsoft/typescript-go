@@ -18,6 +18,9 @@ func WithRequestID(ctx context.Context, id string) context.Context {
 }
 
 func GetRequestID(ctx context.Context) string {
+	if ctx == nil {
+		return ""
+	}
 	if id, ok := ctx.Value(requestIDKey).(string); ok {
 		return id
 	}
@@ -29,6 +32,9 @@ func WithLocale(ctx context.Context, locale language.Tag) context.Context {
 }
 
 func GetLocale(ctx context.Context) language.Tag {
+	if ctx == nil {
+		return language.Und
+	}
 	if locale, ok := ctx.Value(localeKey).(language.Tag); ok {
 		return locale
 	}

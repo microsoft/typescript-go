@@ -9,7 +9,7 @@ import (
 
 func TestGetOccurrencesIsDefinitionOfStringNamedProperty(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `let o = { /*1*/"/*2*/x": 12 };
 let y = o./*3*/x;`
