@@ -3,6 +3,7 @@ package projectv2
 import (
 	"context"
 	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/core"
@@ -214,6 +215,7 @@ func (s *Session) UpdateSnapshot(ctx context.Context, change SnapshotChange) *Sn
 	go func() {
 		if s.options.LoggingEnabled {
 			newSnapshot.builderLogs.WriteLogs(s.logger)
+			s.logProjectChanges(oldSnapshot, newSnapshot)
 			s.logger.Log("")
 		}
 		if s.options.WatchEnabled {
@@ -329,4 +331,47 @@ func (s *Session) flushChangesLocked(ctx context.Context) FileChangeSummary {
 	changes := s.fs.processChanges(s.pendingFileChanges)
 	s.pendingFileChanges = nil
 	return changes
+}
+
+// logProjectChanges logs information about projects that have changed between snapshots
+func (s *Session) logProjectChanges(oldSnapshot *Snapshot, newSnapshot *Snapshot) {
+	// Log configured projects that changed
+	logProject := func(project *Project) {
+		var builder strings.Builder
+		project.print(true /*writeFileNames*/, true /*writeFileExplanation*/, &builder)
+		s.logger.Log(builder.String())
+	}
+	core.DiffMaps(
+		oldSnapshot.ProjectCollection.configuredProjects,
+		newSnapshot.ProjectCollection.configuredProjects,
+		func(path tspath.Path, addedProject *Project) {
+			// New project added
+			logProject(addedProject)
+		},
+		func(path tspath.Path, removedProject *Project) {
+			// Project removed
+			s.logger.Log(fmt.Sprintf("\nProject '%s' removed\n%s", removedProject.Name(), hr))
+		},
+		func(path tspath.Path, oldProject, newProject *Project) {
+			// Project updated
+			if newProject.ProgramUpdateKind == ProgramUpdateKindNewFiles {
+				logProject(newProject)
+			}
+		},
+	)
+
+	// Log inferred project changes
+	oldInferred := oldSnapshot.ProjectCollection.inferredProject
+	newInferred := newSnapshot.ProjectCollection.inferredProject
+
+	if oldInferred == nil && newInferred != nil {
+		// New inferred project created
+		logProject(newInferred)
+	} else if oldInferred != nil && newInferred == nil {
+		// Inferred project removed
+		s.logger.Log(fmt.Sprintf("\nProject '%s' removed\n%s", oldInferred.Name(), hr))
+	} else if oldInferred != nil && newInferred != nil && newInferred.ProgramUpdateKind != ProgramUpdateKindNone {
+		// Inferred project updated
+		logProject(newInferred)
+	}
 }

@@ -2,6 +2,7 @@ package projectv2
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
@@ -13,7 +14,10 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-const inferredProjectName = "/dev/null/inferredProject"
+const (
+	inferredProjectName = "/dev/null/inferredProject"
+	hr                  = "-----------------------------------------------"
+)
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=Kind -trimprefix=Kind -output=project_stringer_generated.go
 //go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w project_stringer_generated.go
@@ -264,4 +268,23 @@ func (p *Project) log(msg string) {
 
 func (p *Project) toPath(fileName string) tspath.Path {
 	return tspath.ToPath(fileName, p.currentDirectory, p.host.FS().UseCaseSensitiveFileNames())
+}
+
+func (p *Project) print(writeFileNames bool, writeFileExplanation bool, builder *strings.Builder) string {
+	builder.WriteString(fmt.Sprintf("\nProject '%s'\n", p.Name()))
+	if p.Program == nil {
+		builder.WriteString("\tFiles (0) NoProgram\n")
+	} else {
+		sourceFiles := p.Program.GetSourceFiles()
+		builder.WriteString(fmt.Sprintf("\tFiles (%d)\n", len(sourceFiles)))
+		if writeFileNames {
+			for _, sourceFile := range sourceFiles {
+				builder.WriteString("\t\t" + sourceFile.FileName() + "\n")
+			}
+			// !!!
+			// if writeFileExplanation {}
+		}
+	}
+	builder.WriteString(hr)
+	return builder.String()
 }
