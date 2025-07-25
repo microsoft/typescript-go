@@ -1676,6 +1676,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 	// true otherwise. Based on the order we add things we will always see locals first, then globals, then module exports.
 	// So adding a completion for a local will prevent us from adding completions for external module exports sharing the same name.
 	uniques := make(uniqueNamesMap)
+	compareCompletionEntries := getCompareCompletionEntries(ctx)
 	for _, symbol := range data.symbols {
 		symbolId := ast.GetSymbolId(symbol)
 		origin := data.symbolToOriginInfoMap[symbolId]
@@ -1735,7 +1736,6 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			!(symbol.Parent == nil &&
 				!core.Some(symbol.Declarations, func(d *ast.Node) bool { return ast.GetSourceFileOfNode(d) == file }))
 		uniques[name] = shouldShadowLaterSymbols
-		compareCompletionEntries := getCompareCompletionEntries(ctx)
 		sortedEntries = core.InsertSorted(sortedEntries, entry, compareCompletionEntries)
 	}
 
