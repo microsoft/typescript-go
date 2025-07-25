@@ -1,6 +1,7 @@
 package fourslash
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"maps"
@@ -292,6 +293,8 @@ func sendNotification[Params any](t *testing.T, f *FourslashTest, info lsproto.N
 }
 
 func (f *FourslashTest) writeMsg(t *testing.T, msg *lsproto.Message) {
+	enc := json.NewEncoder(io.Discard)
+	assert.NilError(t, enc.Encode(msg), "failed to encode message as JSON")
 	if err := f.in.Write(msg); err != nil {
 		t.Fatalf("failed to write message: %v", err)
 	}
@@ -303,6 +306,8 @@ func (f *FourslashTest) readMsg(t *testing.T) *lsproto.Message {
 	if err != nil {
 		t.Fatalf("failed to read message: %v", err)
 	}
+	enc := json.NewEncoder(io.Discard)
+	assert.NilError(t, enc.Encode(msg), "failed to encode message as JSON")
 	return msg
 }
 
