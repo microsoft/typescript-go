@@ -374,7 +374,9 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 					}
 				}()
 				if err := s.handleRequestOrNotification(requestCtx, req); err != nil {
-					if errors.Is(err, io.EOF) {
+					if errors.Is(err, context.Canceled) {
+						s.sendError(req.ID, lsproto.ErrRequestCancelled)
+					} else if errors.Is(err, io.EOF) {
 						lspExit()
 					} else {
 						s.sendError(req.ID, err)
@@ -511,7 +513,11 @@ var handlers = sync.OnceValue(func() handlerMap {
 
 func registerNotificationHandler[Req any](handlers handlerMap, info lsproto.NotificationInfo[Req], fn func(*Server, context.Context, Req) error) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
-		params := req.Params.(Req)
+		var params Req
+		// Ignore empty params; all generated params are either pointers or any.
+		if req.Params != nil {
+			params = req.Params.(Req)
+		}
 		if err := fn(s, ctx, params); err != nil {
 			return err
 		}
@@ -521,7 +527,11 @@ func registerNotificationHandler[Req any](handlers handlerMap, info lsproto.Noti
 
 func registerRequestHandler[Req, Resp any](handlers handlerMap, info lsproto.RequestInfo[Req, Resp], fn func(*Server, context.Context, Req) (Resp, error)) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
-		params := req.Params.(Req)
+		var params Req
+		// Ignore empty params.
+		if req.Params != nil {
+			params = req.Params.(Req)
+		}
 		resp, err := fn(s, ctx, params)
 		if err != nil {
 			return err
@@ -705,7 +715,7 @@ func (s *Server) handleSignatureHelp(ctx context.Context, params *lsproto.Signat
 		params.Context,
 		s.initializeParams.Capabilities.TextDocument.SignatureHelp,
 		&ls.UserPreferences{},
-	), nil
+	)
 }
 
 func (s *Server) handleDefinition(ctx context.Context, params *lsproto.DefinitionParams) (lsproto.DefinitionResponse, error) {
@@ -727,8 +737,7 @@ func (s *Server) handleReferences(ctx context.Context, params *lsproto.Reference
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
 	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
-	locations := languageService.ProvideReferences(params)
-	return &locations, nil
+	return languageService.ProvideReferences(params)
 }
 
 func (s *Server) handleImplementations(ctx context.Context, params *lsproto.ImplementationParams) (lsproto.ImplementationResponse, error) {
@@ -736,10 +745,7 @@ func (s *Server) handleImplementations(ctx context.Context, params *lsproto.Impl
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
 	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
-	locations := languageService.ProvideImplementations(params)
-	return &lsproto.LocationOrLocationsOrDefinitionLinks{
-		Locations: &locations,
-	}, nil
+	return languageService.ProvideImplementations(params)
 }
 
 func (s *Server) handleCompletion(ctx context.Context, params *lsproto.CompletionParams) (lsproto.CompletionResponse, error) {
@@ -747,19 +753,13 @@ func (s *Server) handleCompletion(ctx context.Context, params *lsproto.Completio
 	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
 	// !!! get user preferences
-	list, err := languageService.ProvideCompletion(
+	return languageService.ProvideCompletion(
 		ctx,
 		params.TextDocument.Uri,
 		params.Position,
 		params.Context,
 		getCompletionClientCapabilities(s.initializeParams),
 		&ls.UserPreferences{})
-	if err != nil {
-		return nil, err
-	}
-	return &lsproto.CompletionItemsOrList{
-		List: list,
-	}, nil
 }
 
 func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsproto.CompletionItem) (lsproto.CompletionResolveResponse, error) {
@@ -783,72 +783,48 @@ func (s *Server) handleDocumentFormat(ctx context.Context, params *lsproto.Docum
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
 	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
-	res, err := languageService.ProvideFormatDocument(
+	return languageService.ProvideFormatDocument(
 		ctx,
 		params.TextDocument.Uri,
 		params.Options,
 	)
-	if err != nil {
-		return nil, err
-	}
-	return &res, nil
 }
 
 func (s *Server) handleDocumentRangeFormat(ctx context.Context, params *lsproto.DocumentRangeFormattingParams) (lsproto.DocumentRangeFormattingResponse, error) {
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
 	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
-	res, err := languageService.ProvideFormatDocumentRange(
+	return languageService.ProvideFormatDocumentRange(
 		ctx,
 		params.TextDocument.Uri,
 		params.Options,
 		params.Range,
 	)
-	if err != nil {
-		return nil, err
-	}
-	return &res, nil
 }
 
 func (s *Server) handleDocumentOnTypeFormat(ctx context.Context, params *lsproto.DocumentOnTypeFormattingParams) (lsproto.DocumentOnTypeFormattingResponse, error) {
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
 	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
-	res, err := languageService.ProvideFormatDocumentOnType(
+	return languageService.ProvideFormatDocumentOnType(
 		ctx,
 		params.TextDocument.Uri,
 		params.Options,
 		params.Position,
 		params.Ch,
 	)
-	if err != nil {
-		return nil, err
-	}
-	return &res, nil
 }
 
 func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.WorkspaceSymbolParams) (lsproto.WorkspaceSymbolResponse, error) {
 	programs := core.Map(s.projectService.Projects(), (*project.Project).GetProgram)
-	symbols, err := ls.ProvideWorkspaceSymbols(ctx, programs, s.projectService.Converters(), params.Query)
-	if err != nil {
-		return nil, err
-	}
-	return &lsproto.SymbolInformationsOrWorkspaceSymbols{
-		SymbolInformations: &symbols,
-	}, nil
+	return ls.ProvideWorkspaceSymbols(ctx, programs, s.projectService.Converters(), params.Query)
 }
 
 func (s *Server) handleDocumentSymbol(ctx context.Context, params *lsproto.DocumentSymbolParams) (lsproto.DocumentSymbolResponse, error) {
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
 	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
-	symbols, err := languageService.ProvideDocumentSymbols(ctx, params.TextDocument.Uri)
-	if err != nil {
-		return nil, err
-	}
-	return &lsproto.SymbolInformationsOrDocumentSymbols{
-		DocumentSymbols: &symbols,
-	}, nil
+	return languageService.ProvideDocumentSymbols(ctx, params.TextDocument.Uri)
 }
 
 func (s *Server) Log(msg ...any) {
