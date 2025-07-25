@@ -15,7 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
-func (l *LanguageService) ProvideFoldingRange(ctx context.Context, documentURI lsproto.DocumentUri) (*[]*lsproto.FoldingRange, error) {
+func (l *LanguageService) ProvideFoldingRange(ctx context.Context, documentURI lsproto.DocumentUri) (lsproto.FoldingRangeResponse, error) {
 	_, sourceFile := l.getProgramAndFile(documentURI)
 	res := l.addNodeOutliningSpans(sourceFile)
 	res = append(res, l.addRegionOutliningSpans(sourceFile)...)
@@ -34,7 +34,7 @@ func (l *LanguageService) ProvideFoldingRange(ctx context.Context, documentURI l
 		}
 		return 0
 	})
-	return &res, nil
+	return lsproto.FoldingRangesOrNull{FoldingRanges: &res}, nil
 }
 
 func (l *LanguageService) addNodeOutliningSpans(sourceFile *ast.SourceFile) []*lsproto.FoldingRange {
