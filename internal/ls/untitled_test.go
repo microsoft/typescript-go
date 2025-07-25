@@ -60,7 +60,10 @@ x++;`
 	position := 13 // After "let x = 42;\n\n"
 
 	// Call ProvideReferences using the test method
-	refs := service.TestProvideReferences("/Untitled-2.ts", position)
+	resp, err := service.TestProvideReferences("/Untitled-2.ts", position)
+	assert.NilError(t, err)
+
+	refs := *resp
 
 	// Log the results
 	t.Logf("Input file name: %s", "/Untitled-2.ts")

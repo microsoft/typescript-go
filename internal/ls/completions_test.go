@@ -1773,12 +1773,16 @@ func runTest(t *testing.T, files map[string]string, expected map[string]*testCas
 			preferences)
 		assert.NilError(t, err)
 		if expectedResult.isIncludes {
-			assertIncludesItem(t, completionList, expectedResult.list)
+			assertIncludesItem(t, completionList.List, expectedResult.list)
 		} else {
-			assert.DeepEqual(t, completionList, expectedResult.list, ignoreData)
+			if completionList == nil {
+				assert.Assert(t, expectedResult.list == nil, "Expected completion list to be nil but got non-nil")
+			} else {
+				assert.DeepEqual(t, completionList.List, expectedResult.list, ignoreData)
+			}
 		}
 		for _, excludedLabel := range expectedResult.excludes {
-			for _, item := range completionList.Items {
+			for _, item := range completionList.List.Items {
 				if item.Label == excludedLabel {
 					t.Fatalf("Label %s should not be included in completion list", excludedLabel)
 				}

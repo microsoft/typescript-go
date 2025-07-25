@@ -565,7 +565,11 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *Completi
 	if !resultOk {
 		t.Fatalf(prefix+"Unexpected response type for completion request: %T", resMsg.AsResponse().Result)
 	}
-	f.verifyCompletionsResult(t, f.currentCaretPosition, result.List, expected, prefix)
+	var resultList *lsproto.CompletionList
+	if result != nil {
+		resultList = result.List
+	}
+	f.verifyCompletionsResult(t, f.currentCaretPosition, resultList, expected, prefix)
 }
 
 func (f *FourslashTest) verifyCompletionsResult(
