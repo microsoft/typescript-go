@@ -25,6 +25,15 @@ const (
 	KindConfigured
 )
 
+type ProgramUpdateKind int
+
+const (
+	ProgramUpdateKindNone ProgramUpdateKind = iota
+	ProgramUpdateKindCloned
+	ProgramUpdateKindSameFiles
+	ProgramUpdateKindNewFiles
+)
+
 type PendingReload int
 
 const (
@@ -46,11 +55,11 @@ type Project struct {
 	dirty         bool
 	dirtyFilePath tspath.Path
 
-	host                    *compilerHost
-	CommandLine             *tsoptions.ParsedCommandLine
-	Program                 *compiler.Program
-	LanguageService         *ls.LanguageService
-	ProgramStructureVersion int
+	host              *compilerHost
+	CommandLine       *tsoptions.ParsedCommandLine
+	Program           *compiler.Program
+	LanguageService   *ls.LanguageService
+	ProgramUpdateKind ProgramUpdateKind
 
 	failedLookupsWatch      *WatchedFiles[map[tspath.Path]string]
 	affectingLocationsWatch *WatchedFiles[map[tspath.Path]string]
@@ -177,11 +186,11 @@ func (p *Project) Clone() *Project {
 		dirty:         p.dirty,
 		dirtyFilePath: p.dirtyFilePath,
 
-		host:                    p.host,
-		CommandLine:             p.CommandLine,
-		Program:                 p.Program,
-		LanguageService:         p.LanguageService,
-		ProgramStructureVersion: p.ProgramStructureVersion,
+		host:              p.host,
+		CommandLine:       p.CommandLine,
+		Program:           p.Program,
+		LanguageService:   p.LanguageService,
+		ProgramUpdateKind: ProgramUpdateKindNone,
 
 		failedLookupsWatch:      p.failedLookupsWatch,
 		affectingLocationsWatch: p.affectingLocationsWatch,
@@ -192,17 +201,19 @@ func (p *Project) Clone() *Project {
 
 type CreateProgramResult struct {
 	Program     *compiler.Program
-	Cloned      bool
+	UpdateKind  ProgramUpdateKind
 	CheckerPool *project.CheckerPool
 }
 
 func (p *Project) CreateProgram() CreateProgramResult {
+	updateKind := ProgramUpdateKindNewFiles
 	var programCloned bool
 	var checkerPool *project.CheckerPool
 	var newProgram *compiler.Program
 	if p.dirtyFilePath != "" && p.Program != nil && p.Program.CommandLine() == p.CommandLine {
 		newProgram, programCloned = p.Program.UpdateProgram(p.dirtyFilePath, p.host)
 		if programCloned {
+			updateKind = ProgramUpdateKindCloned
 			for _, file := range newProgram.GetSourceFiles() {
 				if file.Path() != p.dirtyFilePath {
 					// UpdateProgram only called host.GetSourceFile for the dirty file.
@@ -225,11 +236,14 @@ func (p *Project) CreateProgram() CreateProgramResult {
 				},
 			},
 		)
+		if p.Program != nil && p.Program.HasSameFileNames(newProgram) {
+			updateKind = ProgramUpdateKindSameFiles
+		}
 	}
 
 	return CreateProgramResult{
 		Program:     newProgram,
-		Cloned:      programCloned,
+		UpdateKind:  updateKind,
 		CheckerPool: checkerPool,
 	}
 }

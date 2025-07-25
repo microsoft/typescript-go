@@ -682,9 +682,9 @@ func (b *projectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 				result := project.CreateProgram()
 				project.Program = result.Program
 				project.checkerPool = result.CheckerPool
-				if !result.Cloned {
+				project.ProgramUpdateKind = result.UpdateKind
+				if result.UpdateKind == ProgramUpdateKindNewFiles {
 					filesChanged = true
-					project.ProgramStructureVersion++
 					if b.sessionOptions.WatchEnabled {
 						failedLookupsWatch, affectingLocationsWatch := project.CloneWatchers()
 						project.failedLookupsWatch = failedLookupsWatch

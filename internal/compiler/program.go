@@ -1412,6 +1412,10 @@ func (p *Program) GetSourceFileByPath(path tspath.Path) *ast.SourceFile {
 	return p.filesByPath[path]
 }
 
+func (p *Program) HasSameFileNames(other *Program) bool {
+	return maps.Equal(p.filesByPath, other.filesByPath)
+}
+
 func (p *Program) GetSourceFiles() []*ast.SourceFile {
 	return p.files
 }
