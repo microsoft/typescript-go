@@ -48,7 +48,7 @@ func (l *LanguageService) ProvideFormatDocument(
 		file,
 		toFormatCodeSettings(options),
 	))
-	return &edits, nil
+	return lsproto.TextEditsOrNull{TextEdits: &edits}, nil
 }
 
 func (l *LanguageService) ProvideFormatDocumentRange(
@@ -64,7 +64,7 @@ func (l *LanguageService) ProvideFormatDocumentRange(
 		toFormatCodeSettings(options),
 		l.converters.FromLSPRange(file, r),
 	))
-	return &edits, nil
+	return lsproto.TextEditsOrNull{TextEdits: &edits}, nil
 }
 
 func (l *LanguageService) ProvideFormatDocumentOnType(
@@ -82,7 +82,7 @@ func (l *LanguageService) ProvideFormatDocumentOnType(
 		int(l.converters.LineAndCharacterToPosition(file, position)),
 		character,
 	))
-	return &edits, nil
+	return lsproto.TextEditsOrNull{TextEdits: &edits}, nil
 }
 
 func (l *LanguageService) getFormattingEditsForRange(

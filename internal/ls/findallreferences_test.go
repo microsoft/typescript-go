@@ -36,7 +36,7 @@ func runFindReferencesTest(t *testing.T, input string, expectedLocations map[str
 		assert.NilError(t, err, "Failed to get references for marker '%s'", requestMarkerName)
 		libReference := 0
 
-		referencesResult := *referencesResp
+		referencesResult := *referencesResp.Locations
 
 		for _, loc := range referencesResult {
 			if name, ok := allExpectedLocations[loc]; ok {

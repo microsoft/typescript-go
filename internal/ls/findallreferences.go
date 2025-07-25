@@ -407,7 +407,7 @@ func (l *LanguageService) ProvideReferences(params *lsproto.ReferenceParams) (ls
 	symbolsAndEntries := l.getReferencedSymbolsForNode(position, node, program, program.GetSourceFiles(), options, nil)
 
 	locations := core.FlatMap(symbolsAndEntries, l.convertSymbolAndEntriesToLocations)
-	return &locations, nil
+	return lsproto.LocationsOrNull{Locations: &locations}, nil
 }
 
 func (l *LanguageService) ProvideImplementations(params *lsproto.ImplementationParams) (lsproto.ImplementationResponse, error) {
@@ -429,9 +429,7 @@ func (l *LanguageService) ProvideImplementations(params *lsproto.ImplementationP
 	}
 
 	locations := l.convertEntriesToLocations(entries)
-	return &lsproto.LocationOrLocationsOrDefinitionLinks{
-		Locations: &locations,
-	}, nil
+	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{Locations: &locations}, nil
 }
 
 func (l *LanguageService) getImplementationReferenceEntries(program *compiler.Program, node *ast.Node, position int) []*referenceEntry {

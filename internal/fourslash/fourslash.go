@@ -565,11 +565,7 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *Completi
 	if !resultOk {
 		t.Fatalf(prefix+"Unexpected response type for completion request: %T", resMsg.AsResponse().Result)
 	}
-	var resultList *lsproto.CompletionList
-	if result != nil {
-		resultList = result.List
-	}
-	f.verifyCompletionsResult(t, f.currentCaretPosition, resultList, expected, prefix)
+	f.verifyCompletionsResult(t, f.currentCaretPosition, result.List, expected, prefix)
 }
 
 func (f *FourslashTest) verifyCompletionsResult(
@@ -829,7 +825,7 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 			}
 		}
 
-		f.baseline.addResult("findAllReferences", f.getBaselineForLocationsWithFileContents(*result, baselineFourslashLocationsOptions{
+		f.baseline.addResult("findAllReferences", f.getBaselineForLocationsWithFileContents(*result.Locations, baselineFourslashLocationsOptions{
 			marker:     markerOrRange.GetMarker(),
 			markerName: "/*FIND ALL REFS*/",
 		}))
@@ -885,14 +881,12 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 		}
 
 		var resultAsLocations []lsproto.Location
-		if result != nil {
-			if result.Locations != nil {
-				resultAsLocations = *result.Locations
-			} else if result.Location != nil {
-				resultAsLocations = []lsproto.Location{*result.Location}
-			} else {
-				t.Fatalf("Unexpected definition response type at marker '%s': %T", *f.lastKnownMarkerName, result.DefinitionLinks)
-			}
+		if result.Locations != nil {
+			resultAsLocations = *result.Locations
+		} else if result.Location != nil {
+			resultAsLocations = []lsproto.Location{*result.Location}
+		} else {
+			t.Fatalf("Unexpected definition response type at marker '%s': %T", *f.lastKnownMarkerName, result.DefinitionLinks)
 		}
 
 		f.baseline.addResult("goToDefinition", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{

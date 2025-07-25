@@ -49,10 +49,7 @@ func (l *LanguageService) ProvideCompletion(
 		clientOptions,
 	)
 	completionList = ensureItemData(file.FileName(), position, completionList)
-	if completionList == nil {
-		return nil, nil
-	}
-	return &lsproto.CompletionItemsOrList{List: completionList}, nil
+	return lsproto.CompletionItemsOrListOrNull{List: completionList}, nil
 }
 
 func ensureItemData(fileName string, pos int, list *lsproto.CompletionList) *lsproto.CompletionList {

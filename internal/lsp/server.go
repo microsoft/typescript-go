@@ -705,7 +705,7 @@ func (s *Server) handleSignatureHelp(ctx context.Context, params *lsproto.Signat
 		params.Context,
 		s.initializeParams.Capabilities.TextDocument.SignatureHelp,
 		&ls.UserPreferences{},
-	), nil
+	)
 }
 
 func (s *Server) handleDefinition(ctx context.Context, params *lsproto.DefinitionParams) (lsproto.DefinitionResponse, error) {

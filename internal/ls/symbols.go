@@ -20,7 +20,7 @@ import (
 func (l *LanguageService) ProvideDocumentSymbols(ctx context.Context, documentURI lsproto.DocumentUri) (lsproto.DocumentSymbolResponse, error) {
 	_, file := l.getProgramAndFile(documentURI)
 	symbols := l.getDocumentSymbolsForChildren(ctx, file.AsNode())
-	return &lsproto.SymbolInformationsOrDocumentSymbols{DocumentSymbols: &symbols}, nil
+	return lsproto.SymbolInformationsOrDocumentSymbolsOrNull{DocumentSymbols: &symbols}, nil
 }
 
 func (l *LanguageService) getDocumentSymbolsForChildren(ctx context.Context, node *ast.Node) []*lsproto.DocumentSymbol {
@@ -207,7 +207,7 @@ func ProvideWorkspaceSymbols(ctx context.Context, programs []*compiler.Program, 
 	var infos []DeclarationInfo
 	for sourceFile := range sourceFiles.Keys() {
 		if ctx != nil && ctx.Err() != nil {
-			return nil, nil
+			return lsproto.SymbolInformationsOrWorkspaceSymbolsOrNull{}, nil
 		}
 		declarationMap := sourceFile.GetDeclarationMap()
 		for name, declarations := range declarationMap {
@@ -233,7 +233,7 @@ func ProvideWorkspaceSymbols(ctx context.Context, programs []*compiler.Program, 
 		symbol.Location = converters.ToLSPLocation(sourceFile, core.NewTextRange(pos, node.End()))
 		symbols[i] = &symbol
 	}
-	return &lsproto.SymbolInformationsOrWorkspaceSymbols{SymbolInformations: &symbols}, nil
+	return lsproto.SymbolInformationsOrWorkspaceSymbolsOrNull{SymbolInformations: &symbols}, nil
 }
 
 // Return a score for matching `s` against `pattern`. In order to match, `s` must contain each of the characters in
