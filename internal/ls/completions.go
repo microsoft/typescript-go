@@ -1598,6 +1598,7 @@ func (l *LanguageService) completionInfoFromData(
 		clientOptions,
 	)
 
+	compareCompletionEntries := getCompareCompletionEntries(ctx)
 	if data.keywordFilters != KeywordCompletionFiltersNone {
 		keywordCompletions := getKeywordCompletions(
 			data.keywordFilters,
@@ -1607,7 +1608,7 @@ func (l *LanguageService) completionInfoFromData(
 				!data.isTypeOnlyLocation && isContextualKeywordInAutoImportableExpressionSpace(keywordEntry.Label) ||
 				!uniqueNames.Has(keywordEntry.Label) {
 				uniqueNames.Add(keywordEntry.Label)
-				sortedEntries = core.InsertSorted(sortedEntries, keywordEntry, l.compareCompletionEntries)
+				sortedEntries = core.InsertSorted(sortedEntries, keywordEntry, compareCompletionEntries)
 			}
 		}
 	}
@@ -1615,18 +1616,19 @@ func (l *LanguageService) completionInfoFromData(
 	for _, keywordEntry := range getContextualKeywords(file, contextToken, position) {
 		if !uniqueNames.Has(keywordEntry.Label) {
 			uniqueNames.Add(keywordEntry.Label)
-			sortedEntries = core.InsertSorted(sortedEntries, keywordEntry, l.compareCompletionEntries)
+			sortedEntries = core.InsertSorted(sortedEntries, keywordEntry, compareCompletionEntries)
 		}
 	}
 
 	for _, literal := range literals {
 		literalEntry := createCompletionItemForLiteral(file, preferences, literal)
 		uniqueNames.Add(literalEntry.Label)
-		sortedEntries = core.InsertSorted(sortedEntries, literalEntry, l.compareCompletionEntries)
+		sortedEntries = core.InsertSorted(sortedEntries, literalEntry, compareCompletionEntries)
 	}
 
 	if !isChecked {
 		sortedEntries = l.getJSCompletionEntries(
+			ctx,
 			file,
 			position,
 			&uniqueNames,
@@ -1732,7 +1734,8 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			!(symbol.Parent == nil &&
 				!core.Some(symbol.Declarations, func(d *ast.Node) bool { return ast.GetSourceFileOfNode(d) == file }))
 		uniques[name] = shouldShadowLaterSymbols
-		sortedEntries = core.InsertSorted(sortedEntries, entry, l.compareCompletionEntries)
+		compareCompletionEntries := getCompareCompletionEntries(ctx)
+		sortedEntries = core.InsertSorted(sortedEntries, entry, compareCompletionEntries)
 	}
 
 	uniqueSet := collections.NewSetWithSizeHint[string](len(uniques))
@@ -2983,26 +2986,28 @@ func getCompletionsSymbolKind(kind ScriptElementKind) lsproto.CompletionItemKind
 // by the language service consistent with what TS Server does and what editors typically do. This also makes
 // completions tests make more sense. We used to sort only alphabetically and only in the server layer, but
 // this made tests really weird, since most fourslash tests don't use the server.
-func (l *LanguageService) compareCompletionEntries(entryInSlice *lsproto.CompletionItem, entryToInsert *lsproto.CompletionItem) int {
-	compareStrings := collate.New(l.host.GetLocale()).CompareString
-	result := compareStrings(*entryInSlice.SortText, *entryToInsert.SortText)
-	if result == stringutil.ComparisonEqual {
-		result = compareStrings(entryInSlice.Label, entryToInsert.Label)
-	}
-	// !!! auto-imports
-	// if (result === Comparison.EqualTo && entryInArray.data?.moduleSpecifier && entryToInsert.data?.moduleSpecifier) {
-	//     // Sort same-named auto-imports by module specifier
-	//     result = compareNumberOfDirectorySeparators(
-	//         (entryInArray.data as CompletionEntryDataResolved).moduleSpecifier,
-	//         (entryToInsert.data as CompletionEntryDataResolved).moduleSpecifier,
-	//     );
-	// }
-	if result == stringutil.ComparisonEqual {
-		// Fall back to symbol order - if we return `EqualTo`, `insertSorted` will put later symbols first.
-		return stringutil.ComparisonLessThan
-	}
+func getCompareCompletionEntries(ctx context.Context) func(entryInSlice *lsproto.CompletionItem, entryToInsert *lsproto.CompletionItem) int {
+	return func(entryInSlice *lsproto.CompletionItem, entryToInsert *lsproto.CompletionItem) int {
+		compareStrings := collate.New(core.GetLocale(ctx)).CompareString
+		result := compareStrings(*entryInSlice.SortText, *entryToInsert.SortText)
+		if result == stringutil.ComparisonEqual {
+			result = compareStrings(entryInSlice.Label, entryToInsert.Label)
+		}
+		// !!! auto-imports
+		// if (result === Comparison.EqualTo && entryInArray.data?.moduleSpecifier && entryToInsert.data?.moduleSpecifier) {
+		//     // Sort same-named auto-imports by module specifier
+		//     result = compareNumberOfDirectorySeparators(
+		//         (entryInArray.data as CompletionEntryDataResolved).moduleSpecifier,
+		//         (entryToInsert.data as CompletionEntryDataResolved).moduleSpecifier,
+		//     );
+		// }
+		if result == stringutil.ComparisonEqual {
+			// Fall back to symbol order - if we return `EqualTo`, `insertSorted` will put later symbols first.
+			return stringutil.ComparisonLessThan
+		}
 
-	return result
+		return result
+	}
 }
 
 var (
@@ -3185,11 +3190,13 @@ func getContextualKeywords(file *ast.SourceFile, contextToken *ast.Node, positio
 }
 
 func (l *LanguageService) getJSCompletionEntries(
+	ctx context.Context,
 	file *ast.SourceFile,
 	position int,
 	uniqueNames *collections.Set[string],
 	sortedEntries []*lsproto.CompletionItem,
 ) []*lsproto.CompletionItem {
+	compareCompletionEntries := getCompareCompletionEntries(ctx)
 	nameTable := getNameTable(file)
 	for name, pos := range nameTable {
 		// Skip identifiers produced only from the current location
@@ -3206,7 +3213,7 @@ func (l *LanguageService) getJSCompletionEntries(
 					SortText:         ptrTo(string(SortTextJavascriptIdentifiers)),
 					CommitCharacters: ptrTo([]string{}),
 				},
-				l.compareCompletionEntries,
+				compareCompletionEntries,
 			)
 		}
 	}

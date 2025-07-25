@@ -10,7 +10,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
-	"golang.org/x/text/language"
 	"gotest.tools/v3/assert"
 )
 
@@ -180,5 +179,5 @@ func createLanguageServiceForHover(ctx context.Context, fileName string, files m
 	projectService, _ := projecttestutil.Setup(files, nil)
 	projectService.OpenFile(fileName, files[fileName].(string), core.GetScriptKindFromFileName(fileName), "")
 	project := projectService.Projects()[0]
-	return project.GetLanguageServiceForRequest(ctx, language.AmericanEnglish)
+	return project.GetLanguageServiceForRequest(ctx)
 }

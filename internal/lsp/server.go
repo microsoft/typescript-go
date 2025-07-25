@@ -345,7 +345,7 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 		case <-ctx.Done():
 			return ctx.Err()
 		case req := <-s.requestQueue:
-			requestCtx := ctx
+			requestCtx := core.WithLocale(ctx, s.locale)
 			if req.ID != nil {
 				var cancel context.CancelFunc
 				requestCtx, cancel = context.WithCancel(core.WithRequestID(requestCtx, req.ID.String()))
@@ -682,21 +682,21 @@ func (s *Server) handleDidChangeWatchedFiles(ctx context.Context, params *lsprot
 
 func (s *Server) handleDocumentDiagnostic(ctx context.Context, params *lsproto.DocumentDiagnosticParams) (lsproto.DocumentDiagnosticResponse, error) {
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
-	languageService, done := project.GetLanguageServiceForRequest(ctx, s.locale)
+	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
 	return languageService.ProvideDiagnostics(ctx, params.TextDocument.Uri)
 }
 
 func (s *Server) handleHover(ctx context.Context, params *lsproto.HoverParams) (lsproto.HoverResponse, error) {
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
-	languageService, done := project.GetLanguageServiceForRequest(ctx, s.locale)
+	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
 	return languageService.ProvideHover(ctx, params.TextDocument.Uri, params.Position)
 }
 
 func (s *Server) handleSignatureHelp(ctx context.Context, params *lsproto.SignatureHelpParams) (lsproto.SignatureHelpResponse, error) {
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
-	languageService, done := project.GetLanguageServiceForRequest(ctx, s.locale)
+	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
 	return languageService.ProvideSignatureHelp(
 		ctx,
@@ -710,14 +710,14 @@ func (s *Server) handleSignatureHelp(ctx context.Context, params *lsproto.Signat
 
 func (s *Server) handleDefinition(ctx context.Context, params *lsproto.DefinitionParams) (lsproto.DefinitionResponse, error) {
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
-	languageService, done := project.GetLanguageServiceForRequest(ctx, s.locale)
+	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
 	return languageService.ProvideDefinition(ctx, params.TextDocument.Uri, params.Position)
 }
 
 func (s *Server) handleTypeDefinition(ctx context.Context, params *lsproto.TypeDefinitionParams) (lsproto.TypeDefinitionResponse, error) {
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
-	languageService, done := project.GetLanguageServiceForRequest(ctx, s.locale)
+	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
 	return languageService.ProvideTypeDefinition(ctx, params.TextDocument.Uri, params.Position)
 }
@@ -725,7 +725,7 @@ func (s *Server) handleTypeDefinition(ctx context.Context, params *lsproto.TypeD
 func (s *Server) handleReferences(ctx context.Context, params *lsproto.ReferenceParams) (lsproto.ReferencesResponse, error) {
 	// findAllReferences
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
-	languageService, done := project.GetLanguageServiceForRequest(ctx, s.locale)
+	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
 	locations := languageService.ProvideReferences(params)
 	return &locations, nil
@@ -734,7 +734,7 @@ func (s *Server) handleReferences(ctx context.Context, params *lsproto.Reference
 func (s *Server) handleImplementations(ctx context.Context, params *lsproto.ImplementationParams) (lsproto.ImplementationResponse, error) {
 	// goToImplementation
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
-	languageService, done := project.GetLanguageServiceForRequest(ctx, s.locale)
+	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
 	locations := languageService.ProvideImplementations(params)
 	return &lsproto.LocationOrLocationsOrDefinitionLinks{
@@ -744,7 +744,7 @@ func (s *Server) handleImplementations(ctx context.Context, params *lsproto.Impl
 
 func (s *Server) handleCompletion(ctx context.Context, params *lsproto.CompletionParams) (lsproto.CompletionResponse, error) {
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
-	languageService, done := project.GetLanguageServiceForRequest(ctx, s.locale)
+	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
 	// !!! get user preferences
 	list, err := languageService.ProvideCompletion(
@@ -768,7 +768,7 @@ func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsprot
 		return nil, err
 	}
 	_, project := s.projectService.EnsureDefaultProjectForFile(data.FileName)
-	languageService, done := project.GetLanguageServiceForRequest(ctx, s.locale)
+	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
 	return languageService.ResolveCompletionItem(
 		ctx,
@@ -781,7 +781,7 @@ func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsprot
 
 func (s *Server) handleDocumentFormat(ctx context.Context, params *lsproto.DocumentFormattingParams) (lsproto.DocumentFormattingResponse, error) {
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
-	languageService, done := project.GetLanguageServiceForRequest(ctx, s.locale)
+	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
 	res, err := languageService.ProvideFormatDocument(
 		ctx,
@@ -796,7 +796,7 @@ func (s *Server) handleDocumentFormat(ctx context.Context, params *lsproto.Docum
 
 func (s *Server) handleDocumentRangeFormat(ctx context.Context, params *lsproto.DocumentRangeFormattingParams) (lsproto.DocumentRangeFormattingResponse, error) {
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
-	languageService, done := project.GetLanguageServiceForRequest(ctx, s.locale)
+	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
 	res, err := languageService.ProvideFormatDocumentRange(
 		ctx,
@@ -812,7 +812,7 @@ func (s *Server) handleDocumentRangeFormat(ctx context.Context, params *lsproto.
 
 func (s *Server) handleDocumentOnTypeFormat(ctx context.Context, params *lsproto.DocumentOnTypeFormattingParams) (lsproto.DocumentOnTypeFormattingResponse, error) {
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
-	languageService, done := project.GetLanguageServiceForRequest(ctx, s.locale)
+	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
 	res, err := languageService.ProvideFormatDocumentOnType(
 		ctx,
@@ -840,7 +840,7 @@ func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.Work
 
 func (s *Server) handleDocumentSymbol(ctx context.Context, params *lsproto.DocumentSymbolParams) (lsproto.DocumentSymbolResponse, error) {
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
-	languageService, done := project.GetLanguageServiceForRequest(ctx, s.locale)
+	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
 	symbols, err := languageService.ProvideDocumentSymbols(ctx, params.TextDocument.Uri)
 	if err != nil {
