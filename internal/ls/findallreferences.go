@@ -437,7 +437,7 @@ func (l *LanguageService) ProvideImplementations(ctx context.Context, params *ls
 	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{Locations: &locations}, nil
 }
 
-func (l *LanguageService) getImplementationReferenceEntries(ctx context.Context,program *compiler.Program, node *ast.Node, position int) []*referenceEntry {
+func (l *LanguageService) getImplementationReferenceEntries(ctx context.Context, program *compiler.Program, node *ast.Node, position int) []*referenceEntry {
 	options := refOptions{use: referenceUseReferences, implementations: true}
 	symbolsAndEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil)
 	return core.FlatMap(symbolsAndEntries, func(s *SymbolAndEntries) []*referenceEntry { return s.references })
