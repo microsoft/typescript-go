@@ -70,7 +70,6 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 func (p *Parser) reparseUnhosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node) {
 	switch tag.Kind {
 	case ast.KindJSDocTypedefTag:
-		// !!! Don't mark typedefs as exported if they are not in a module
 		typeExpression := tag.AsJSDocTypedefTag().TypeExpression
 		if typeExpression == nil {
 			break

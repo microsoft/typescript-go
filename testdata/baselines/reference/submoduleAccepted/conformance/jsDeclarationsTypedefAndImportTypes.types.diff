@@ -30,10 +30,10 @@
          this.another = "";
  >this.another = "" : ""
 ->this.another : import("conn").Whatever
-+>this.another : any
++>this.another : import("./conn").Whatever
  >this : this
 ->another : import("conn").Whatever
-+>another : any
++>another : import("./conn").Whatever
  >"" : ""
      }
  }
