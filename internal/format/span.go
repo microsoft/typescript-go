@@ -122,7 +122,7 @@ func prepareRangeContainsErrorFunction(errors []*ast.Diagnostic, originalRange c
 	return func(r core.TextRange) bool {
 		// in current implementation sequence of arguments [r1, r2...] is monotonically increasing.
 		// 'index' tracks the index of the most recent error that was checked.
-		for true {
+		for {
 			if index >= len(sorted) {
 				// all errors in the range were already checked -> no error in specified range
 				return false
@@ -142,7 +142,6 @@ func prepareRangeContainsErrorFunction(errors []*ast.Diagnostic, originalRange c
 
 			index++
 		}
-		return false // unreachable
 	}
 }
 
@@ -266,7 +265,7 @@ func (w *formatSpanWorker) execute(s *formattingScanner) []core.TextChange {
 			w.insertIndentation(item.Loc.Pos(), indentation, false)
 		})
 
-		if opt.TrimTrailingWhitespace != false {
+		if opt.TrimTrailingWhitespace {
 			w.trimTrailingWhitespacesForRemainingRange(remainingTrivia)
 		}
 	}
@@ -633,7 +632,7 @@ func (w *formatSpanWorker) processPair(currentItem TextRangeWithKind, currentSta
 	w.currentRules = w.currentRules[:0]
 	w.currentRules = getRules(w.formattingContext, w.currentRules)
 
-	trimTrailingWhitespaces := w.formattingContext.Options.TrimTrailingWhitespace != false
+	trimTrailingWhitespaces := w.formattingContext.Options.TrimTrailingWhitespace
 	lineAction := LineActionNone
 
 	if len(w.currentRules) > 0 {
@@ -1047,7 +1046,7 @@ func (w *formatSpanWorker) consumeTokenAndAdvanceScanner(currentTokenInfo tokenI
 	if indentToken {
 		tokenIndentation := -1
 		if isTokenInRange && !w.rangeContainsError(currentTokenInfo.token.Loc) {
-			tokenIndentation = dynamicIndenation.getIndentationForToken(tokenStartLine, currentTokenInfo.token.Kind, container, !!isListEndToken)
+			tokenIndentation = dynamicIndenation.getIndentationForToken(tokenStartLine, currentTokenInfo.token.Kind, container, isListEndToken)
 		}
 		indentNextTokenOrTrivia := true
 		if len(currentTokenInfo.leadingTrivia) > 0 {
@@ -1150,12 +1149,10 @@ func (i *dynamicIndenter) shouldAddDelta(line int, kind ast.Kind, container *ast
 		case ast.KindJsxOpeningElement, ast.KindJsxClosingElement, ast.KindJsxSelfClosingElement:
 			return false
 		}
-		break
 	case ast.KindOpenBracketToken, ast.KindCloseBracketToken:
 		if container.Kind != ast.KindMappedType {
 			return false
 		}
-		break
 	}
 	// if token line equals to the line of containing node (this is a first token in the node) - use node indentation
 	return i.nodeStartLine != line &&
