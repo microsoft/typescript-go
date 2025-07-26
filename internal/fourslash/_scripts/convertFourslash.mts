@@ -10,6 +10,7 @@ const stradaFourslashPath = path.resolve(import.meta.dirname, "../", "../", "../
 let inputFileSet: Set<string> | undefined;
 
 const failingTestsPath = path.join(import.meta.dirname, "failingTests.txt");
+const unparsedTestsPath = path.join(import.meta.dirname, "unparsedTests.txt");
 const helperFilePath = path.join(import.meta.dirname, "../", "tests", "util_test.go");
 
 const outputDir = path.join(import.meta.dirname, "../", "tests", "gen");
@@ -37,7 +38,8 @@ export function main() {
 
     generateHelperFile();
     parseTypeScriptFiles(getFailingTests(), stradaFourslashPath);
-    console.log(unparsedFiles.join("\n"));
+    unparsedFiles.sort();
+    fs.writeFileSync(unparsedTestsPath, unparsedFiles.join("\n") + "\n", "utf-8");
     const gofmt = which.sync("go");
     cp.execFileSync(gofmt, ["tool", "mvdan.cc/gofumpt", "-lang=go1.24", "-w", outputDir]);
 }
