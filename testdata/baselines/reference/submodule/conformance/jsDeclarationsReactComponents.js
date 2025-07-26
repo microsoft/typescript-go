@@ -225,9 +225,19 @@ declare const TabbedShowLayout: {
 };
 export default TabbedShowLayout;
 //// [jsDeclarationsReactComponents5.d.ts]
+import PropTypes from 'prop-types';
 declare function Tree({ allowDropOnRoot }: {
     allowDropOnRoot: any;
 }): JSX.Element;
+declare namespace Tree {
+    var propTypes: {
+        classes: PropTypes.Requireable<object>;
+    };
+    var defaultProps: {
+        classes: {};
+        parentSource: string;
+    };
+}
 export default Tree;
 
 
@@ -239,7 +249,8 @@ out/jsDeclarationsReactComponents1.d.ts(3,15): error TS2503: Cannot find namespa
 out/jsDeclarationsReactComponents2.d.ts(1,19): error TS2307: Cannot find module 'react' or its corresponding type declarations.
 out/jsDeclarationsReactComponents3.d.ts(10,7): error TS2503: Cannot find namespace 'JSX'.
 out/jsDeclarationsReactComponents4.d.ts(4,9): error TS2503: Cannot find namespace 'JSX'.
-out/jsDeclarationsReactComponents5.d.ts(3,5): error TS2503: Cannot find namespace 'JSX'.
+out/jsDeclarationsReactComponents5.d.ts(1,23): error TS2307: Cannot find module 'prop-types' or its corresponding type declarations.
+out/jsDeclarationsReactComponents5.d.ts(4,5): error TS2503: Cannot find namespace 'JSX'.
 
 
 ==== out/jsDeclarationsReactComponents1.d.ts (2 errors) ====
@@ -297,11 +308,23 @@ out/jsDeclarationsReactComponents5.d.ts(3,5): error TS2503: Cannot find namespac
     };
     export default TabbedShowLayout;
     
-==== out/jsDeclarationsReactComponents5.d.ts (1 errors) ====
+==== out/jsDeclarationsReactComponents5.d.ts (2 errors) ====
+    import PropTypes from 'prop-types';
+                          ~~~~~~~~~~~~
+!!! error TS2307: Cannot find module 'prop-types' or its corresponding type declarations.
     declare function Tree({ allowDropOnRoot }: {
         allowDropOnRoot: any;
     }): JSX.Element;
         ~~~
 !!! error TS2503: Cannot find namespace 'JSX'.
+    declare namespace Tree {
+        var propTypes: {
+            classes: PropTypes.Requireable<object>;
+        };
+        var defaultProps: {
+            classes: {};
+            parentSource: string;
+        };
+    }
     export default Tree;
     

@@ -170,6 +170,10 @@ var n = ExpandoExpr3.prop + ExpandoExpr3.m(13) + new ExpandoExpr3().n;
 
 //// [typeFromPropertyAssignment29.d.ts]
 declare function ExpandoDecl(n: number): string;
+declare namespace ExpandoDecl {
+    var prop: number;
+    var m: (n: number) => number;
+}
 declare var n: number;
 declare const ExpandoExpr: {
     (n: number): string;
@@ -192,7 +196,13 @@ declare function ExpandoNested(n: number): {
     (m: number): number;
     total: number;
 };
+declare namespace ExpandoNested {
+    var also: number;
+}
 declare function ExpandoMerge(n: number): number;
+declare namespace ExpandoMerge {
+    var p1: number;
+}
 declare namespace ExpandoMerge {
     var p2: number;
 }
@@ -202,6 +212,9 @@ declare namespace ExpandoMerge {
 declare var n: number;
 declare namespace Ns {
     function ExpandoNamespace(): void;
+    namespace ExpandoNamespace {
+        var p6: number;
+    }
     export function foo(): typeof ExpandoNamespace;
     export {};
 }

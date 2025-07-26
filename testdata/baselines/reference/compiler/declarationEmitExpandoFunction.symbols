@@ -1,0 +1,22 @@
+//// [tests/cases/compiler/declarationEmitExpandoFunction.ts] ////
+
+=== declarationEmitExpandoFunction.ts ===
+export function A() {
+>A : Symbol(A, Decl(declarationEmitExpandoFunction.ts, 0, 0))
+
+    return 'A';
+}
+
+export enum B {
+>B : Symbol(B, Decl(declarationEmitExpandoFunction.ts, 2, 1))
+
+    C
+>C : Symbol(C, Decl(declarationEmitExpandoFunction.ts, 4, 15))
+}
+
+A.B = B;
+>A.B : Symbol(B, Decl(declarationEmitExpandoFunction.ts, 6, 1))
+>A : Symbol(A, Decl(declarationEmitExpandoFunction.ts, 0, 0))
+>B : Symbol(B, Decl(declarationEmitExpandoFunction.ts, 6, 1))
+>B : Symbol(B, Decl(declarationEmitExpandoFunction.ts, 2, 1))
+

@@ -1337,7 +1337,7 @@ func IsBindableStaticElementAccessExpression(node *Node, excludeThisKeyword bool
 	return IsLiteralLikeElementAccess(node) &&
 		((!excludeThisKeyword && node.Expression().Kind == KindThisKeyword) ||
 			IsEntityNameExpression(node.Expression()) ||
-			IsBindableStaticAccessExpression(node.Expression() /*excludeThisKeyword*/, true))
+			IsBindableStaticAccessExpression(node.Expression(), true /*excludeThisKeyword*/))
 }
 
 func IsLiteralLikeElementAccess(node *Node) bool {
@@ -2812,10 +2812,6 @@ func IsModuleExportsAccessExpression(node *Node) bool {
 	return false
 }
 
-func isLiteralLikeElementAccess(node *Node) bool {
-	return node.Kind == KindElementAccessExpression && IsStringOrNumericLiteralLike(node.AsElementAccessExpression().ArgumentExpression)
-}
-
 func IsCheckJSEnabledForFile(sourceFile *SourceFile, compilerOptions *core.CompilerOptions) bool {
 	if sourceFile.CheckJsDirective != nil {
 		return sourceFile.CheckJsDirective.Enabled
@@ -2917,6 +2913,14 @@ func NodeHasKind(node *Node, kind Kind) bool {
 
 func IsContextualKeyword(token Kind) bool {
 	return KindFirstContextualKeyword <= token && token <= KindLastContextualKeyword
+}
+
+func IsKeyword(token Kind) bool {
+	return KindFirstKeyword <= token && token <= KindLastKeyword
+}
+
+func IsNonContextualKeyword(token Kind) bool {
+	return IsKeyword(token) && !IsContextualKeyword(token)
 }
 
 func IsThisInTypeQuery(node *Node) bool {
@@ -3627,4 +3631,17 @@ func GetSemanticJsxChildren(children []*JsxChild) []*JsxChild {
 			return true
 		}
 	})
+}
+
+func IsExpandoInitializer(initializer *Node) bool {
+	if initializer == nil {
+		return false
+	}
+	if IsFunctionExpressionOrArrowFunction(initializer) {
+		return true
+	}
+	if IsInJSFile(initializer) {
+		return IsClassExpression(initializer) || (IsObjectLiteralExpression(initializer) && len(initializer.AsObjectLiteralExpression().Properties.Nodes) == 0)
+	}
+	return false
 }

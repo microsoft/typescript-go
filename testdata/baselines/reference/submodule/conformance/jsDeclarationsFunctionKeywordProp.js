@@ -25,5 +25,18 @@ baz.normal = false;
 
 //// [source.d.ts]
 declare function foo(): void;
+declare namespace foo {
+    var _a: boolean;
+    export { _a as null };
+}
 declare function bar(): void;
+declare namespace bar {
+    var async: boolean;
+    var normal: boolean;
+}
 declare function baz(): void;
+declare namespace baz {
+    var _b: boolean;
+    export var normal: boolean;
+    export { _b as class };
+}
