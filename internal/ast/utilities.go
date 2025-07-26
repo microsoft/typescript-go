@@ -514,9 +514,9 @@ func isFunctionLikeDeclarationKind(kind Kind) bool {
 }
 
 // Determines if a node is function-like (but is not a signature declaration)
+// ensure node != nil before calling this
 func IsFunctionLikeDeclaration(node *Node) bool {
-	// TODO(rbuckton): Move `node != nil` test to call sites
-	return node != nil && isFunctionLikeDeclarationKind(node.Kind)
+	return isFunctionLikeDeclarationKind(node.Kind)
 }
 
 func IsFunctionLikeKind(kind Kind) bool {
@@ -534,9 +534,9 @@ func IsFunctionLikeKind(kind Kind) bool {
 }
 
 // Determines if a node is function- or signature-like.
+// Ensure node != nil before calling this
 func IsFunctionLike(node *Node) bool {
-	// TODO(rbuckton): Move `node != nil` test to call sites
-	return node != nil && IsFunctionLikeKind(node.Kind)
+	return IsFunctionLikeKind(node.Kind)
 }
 
 func IsFunctionLikeOrClassStaticBlockDeclaration(node *Node) bool {
@@ -1138,7 +1138,7 @@ func CanHaveDecorators(node *Node) bool {
 }
 
 func IsFunctionOrModuleBlock(node *Node) bool {
-	return IsSourceFile(node) || IsModuleBlock(node) || IsBlock(node) && IsFunctionLike(node.Parent)
+	return IsSourceFile(node) || IsModuleBlock(node) || IsBlock(node) && node.Parent != nil && IsFunctionLike(node.Parent)
 }
 
 func IsFunctionExpressionOrArrowFunction(node *Node) bool {
