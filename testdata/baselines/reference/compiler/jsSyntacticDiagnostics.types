@@ -1,0 +1,207 @@
+//// [tests/cases/compiler/jsSyntacticDiagnostics.ts] ////
+
+=== test.js ===
+// Type annotations should be flagged as errors
+function func(x: number): string {
+>func : (x: number) => string
+>x : number
+
+    return x.toString();
+>x.toString() : string
+>x.toString : (radix?: number) => string
+>x : number
+>toString : (radix?: number) => string
+}
+
+// Interface declarations should be flagged as errors
+interface Person {
+    name: string;
+>name : string
+
+    age: number;
+>age : number
+}
+
+// Type alias declarations should be flagged as errors
+type StringOrNumber = string | number;
+>StringOrNumber : StringOrNumber
+
+// Enum declarations should be flagged as errors
+enum Color {
+>Color : Color
+
+    Red,
+>Red : Color.Red
+
+    Green,
+>Green : Color.Green
+
+    Blue
+>Blue : Color.Blue
+}
+
+// Module declarations should be flagged as errors
+module MyModule {
+>MyModule : typeof MyModule
+
+    export var x = 1;
+>x : number
+>1 : 1
+}
+
+// Namespace declarations should be flagged as errors
+namespace MyNamespace {
+>MyNamespace : typeof MyNamespace
+
+    export var y = 2;
+>y : number
+>2 : 2
+}
+
+// Non-null assertions should be flagged as errors
+let value = getValue()!;
+>value : any
+>getValue()! : any
+>getValue() : any
+>getValue : () => any
+
+// Type assertions should be flagged as errors
+let result = (value as string).toUpperCase();
+>result : string
+>(value as string).toUpperCase() : string
+>(value as string).toUpperCase : () => string
+>(value as string) : string
+>value as string : string
+>value : any
+>toUpperCase : () => string
+
+// Satisfies expressions should be flagged as errors
+let config = {} satisfies Config;
+>config : {}
+>{} satisfies Config : {}
+>{} : {}
+
+// Import type should be flagged as errors
+import type { SomeType } from './other';
+>SomeType : any
+
+// Export type should be flagged as errors
+export type { SomeType };
+>SomeType : any
+
+// Import equals should be flagged as errors
+import lib = require('./lib');
+>lib : any
+
+// Export equals should be flagged as errors
+export = MyModule;
+>MyModule : typeof MyModule
+
+// TypeScript modifiers should be flagged as errors
+class MyClass {
+>MyClass : MyClass
+
+    public name: string;
+>name : string
+
+    private age: number;
+>age : number
+
+    protected id: number;
+>id : number
+
+    readonly value: number;
+>value : number
+    
+    constructor(public x: number, private y: number) {
+>x : number
+>y : number
+
+        this.name = '';
+>this.name = '' : ""
+>this.name : string
+>this : this
+>name : string
+>'' : ""
+
+        this.age = 0;
+>this.age = 0 : 0
+>this.age : number
+>this : this
+>age : number
+>0 : 0
+
+        this.id = 0;
+>this.id = 0 : 0
+>this.id : number
+>this : this
+>id : number
+>0 : 0
+
+        this.value = 0;
+>this.value = 0 : 0
+>this.value : number
+>this : this
+>value : number
+>0 : 0
+    }
+}
+
+// Optional parameters should be flagged as errors
+function optionalParam(x?: number) {
+>optionalParam : (x?: number) => number
+>x : number
+
+    return x || 0;
+>x || 0 : number
+>x : number
+>0 : 0
+}
+
+// Signature declarations should be flagged as errors
+function signatureOnly(x: number): string;
+>signatureOnly : (x: number) => string
+>x : number
+
+// Type parameters should be flagged as errors
+function generic<T>(x: T): T {
+>generic : <T>(x: T) => T
+>x : T
+
+    return x;
+>x : T
+}
+
+// Type arguments should be flagged as errors
+let array = Array<string>();
+>array : boolean
+>Array<string>() : boolean
+>Array<string : boolean
+>Array : ArrayConstructor
+>string : any
+>() : any
+> : any
+
+// Implements clause should be flagged as errors
+class MyClassWithImplements implements Person {
+>MyClassWithImplements : MyClassWithImplements
+
+    name = '';
+>name : string
+>'' : ""
+
+    age = 0;
+>age : number
+>0 : 0
+}
+
+function getValue(): any {
+>getValue : () => any
+
+    return null;
+}
+
+interface Config {
+    name: string;
+>name : string
+}

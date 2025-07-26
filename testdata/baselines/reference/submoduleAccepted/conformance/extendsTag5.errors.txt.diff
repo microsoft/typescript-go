@@ -1,0 +1,54 @@
+--- old.extendsTag5.errors.txt
++++ new.extendsTag5.errors.txt
+@@= skipped -0, +0 lines =@@
++/a.js(26,17): error TS8010: Type annotations can only be used in TypeScript files.
+ /a.js(29,16): error TS2344: Type '{ a: string; b: string; }' does not satisfy the constraint 'Foo'.
+   Types of property 'b' are incompatible.
+     Type 'string' is not assignable to type 'boolean | string[]'.
++/a.js(34,17): error TS8010: Type annotations can only be used in TypeScript files.
++/a.js(39,17): error TS8010: Type annotations can only be used in TypeScript files.
+ /a.js(42,16): error TS2344: Type '{ a: string; b: string; }' does not satisfy the constraint 'Foo'.
+   Types of property 'b' are incompatible.
+     Type 'string' is not assignable to type 'boolean | string[]'.
+-
+-
+-==== /a.js (2 errors) ====
++/a.js(44,17): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== /a.js (6 errors) ====
+     /**
+      * @typedef {{
+     *     a: number | string;
+@@= skipped -32, +36 lines =@@
+     * }>}
+     */
+     class B extends A {}
++                    ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+     
+     /**
+      * @extends {A<{
+@@= skipped -15, +17 lines =@@
+ !!! error TS2344:     Type 'string' is not assignable to type 'boolean | string[]'.
+      */
+     class C extends A {}
++                    ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+     
+     /**
+      * @extends {A<{a: string, b: string[]}>}
+      */
+     class D extends A {}
++                    ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+     
+     /**
+      * @extends {A<{a: string, b: string}>}
+@@= skipped -14, +18 lines =@@
+ !!! error TS2344:     Type 'string' is not assignable to type 'boolean | string[]'.
+      */
+     class E extends A {}
++                    ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+     

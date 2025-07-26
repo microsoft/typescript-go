@@ -6,12 +6,13 @@ functions.js(15,14): error TS7006: Parameter 'c' implicitly has an 'any' type.
 functions.js(30,12): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 functions.js(31,19): error TS7006: Parameter 'ab' implicitly has an 'any' type.
 functions.js(31,23): error TS7006: Parameter 'onetwo' implicitly has an 'any' type.
+functions.js(31,51): error TS8009: The '?' modifier can only be used in TypeScript files.
 functions.js(49,13): error TS2749: 'D' refers to a value, but is being used as a type here. Did you mean 'typeof D'?
 functions.js(51,26): error TS7006: Parameter 'dref' implicitly has an 'any' type.
 functions.js(72,14): error TS7019: Rest parameter 'args' implicitly has an 'any[]' type.
 
 
-==== functions.js (11 errors) ====
+==== functions.js (12 errors) ====
     /**
      * @param {function(this: string, number): number} c is just passing on through
      * @return {function(this: string, number): number}
@@ -62,6 +63,8 @@ functions.js(72,14): error TS7019: Rest parameter 'args' implicitly has an 'any[
 !!! error TS7006: Parameter 'ab' implicitly has an 'any' type.
                           ~~~~~~
 !!! error TS7006: Parameter 'onetwo' implicitly has an 'any' type.
+                                                      ~
+!!! error TS8009: The '?' modifier can only be used in TypeScript files.
     
     
     /** 
