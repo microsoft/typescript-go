@@ -605,43 +605,8 @@ func (r *emitResolver) IsLiteralConstDeclaration(node *ast.Node) bool {
 }
 
 func (r *emitResolver) IsExpandoFunctionDeclaration(node *ast.Node) bool {
-	if !ast.IsParseTreeNode(node) {
-		return false
-	}
-
-	r.checkerMu.Lock()
-	defer r.checkerMu.Unlock()
-
-	var declaration *ast.Node
-	if ast.IsVariableDeclaration(node) {
-		initializer := node.Initializer()
-		if node.Type() == nil && (ast.IsInJSFile(node) || ast.IsVarConstLike(node)) && ast.IsExpandoInitializer(initializer) {
-			declaration = initializer
-		}
-	}
-
-	if ast.IsFunctionDeclaration(node) {
-		declaration = node
-	}
-
-	if declaration == nil {
-		return false
-	}
-
-	symbol := r.checker.getSymbolOfDeclaration(declaration)
-	if symbol == nil || (symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsVariable)) == 0 {
-		return false
-	}
-
-	exports := r.checker.getExportsOfSymbol(symbol)
-	for _, p := range exports {
-		if p.ValueDeclaration == nil || p.Flags&ast.SymbolFlagsValue == 0 || p.Flags&ast.SymbolFlagsAssignment == 0 {
-			continue
-		}
-		if p.ValueDeclaration.Flags&ast.NodeFlagsAmbient == 0 {
-			return true
-		}
-	}
+	// node = r.emitContext.ParseNode(node)
+	// !!! TODO: expando function support
 	return false
 }
 
@@ -880,26 +845,6 @@ func (r *emitResolver) GetReferencedValueDeclarations(node *ast.IdentifierNode) 
 	defer r.checkerMu.Unlock()
 
 	return r.getReferenceResolver().GetReferencedValueDeclarations(node)
-}
-
-func (r *emitResolver) GetPropertiesOfContainerFunction(node *ast.Node) []*ast.Symbol {
-	props := []*ast.Symbol{}
-
-	if !ast.IsParseTreeNode(node) {
-		return props
-	}
-
-	if ast.IsFunctionDeclaration(node) {
-		r.checkerMu.Lock()
-		defer r.checkerMu.Unlock()
-
-		symbol := r.checker.getSymbolOfDeclaration(node)
-		if symbol == nil {
-			return props
-		}
-		props = r.checker.getPropertiesOfType(r.checker.getTypeOfSymbol(symbol))
-	}
-	return props
 }
 
 // TODO: the emit resolver being responsible for some amount of node construction is a very leaky abstraction,

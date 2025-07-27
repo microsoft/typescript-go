@@ -21,4 +21,5 @@ var after = func();
 
 
 //// [es5ExportDefaultFunctionDeclaration3.d.ts]
-export default function func(): typeof func;
+declare function func(): typeof func;
+export default func;

@@ -4,8 +4,15 @@ export function A() {
     return 'A';
 }
 
-export enum B {
+export function B() {
+    return 'B';
+}
+
+export enum C {
     C
 }
 
-A.B = B;
+A.a = C;
+A.b = C;
+
+B.c = C;

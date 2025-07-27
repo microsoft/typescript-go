@@ -29,6 +29,7 @@ import PropTypes from 'prop-types';
 declare function Foo({ bar }: {
     bar: any;
 }): JSX.Element;
+export default Foo;
 declare namespace Foo {
     var propTypes: {
         bar: PropTypes.Requireable<boolean>;
@@ -37,7 +38,6 @@ declare namespace Foo {
         bar: boolean;
     };
 }
-export default Foo;
 
 
 //// [DtsFileErrors]
@@ -56,6 +56,7 @@ jsxDeclarationsWithEsModuleInteropNoCrash.d.ts(4,5): error TS2503: Cannot find n
     }): JSX.Element;
         ~~~
 !!! error TS2503: Cannot find namespace 'JSX'.
+    export default Foo;
     declare namespace Foo {
         var propTypes: {
             bar: PropTypes.Requireable<boolean>;
@@ -64,5 +65,4 @@ jsxDeclarationsWithEsModuleInteropNoCrash.d.ts(4,5): error TS2503: Cannot find n
             bar: boolean;
         };
     }
-    export default Foo;
     

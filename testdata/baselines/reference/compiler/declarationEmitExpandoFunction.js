@@ -5,33 +5,51 @@ export function A() {
     return 'A';
 }
 
-export enum B {
+export function B() {
+    return 'B';
+}
+
+export enum C {
     C
 }
 
-A.B = B;
+A.a = C;
+A.b = C;
+
+B.c = C;
 
 
 //// [declarationEmitExpandoFunction.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.B = void 0;
+exports.C = void 0;
 exports.A = A;
+exports.B = B;
 function A() {
     return 'A';
 }
-var B;
-(function (B) {
-    B[B["C"] = 0] = "C";
-})(B || (exports.B = B = {}));
-A.B = B;
+function B() {
+    return 'B';
+}
+var C;
+(function (C) {
+    C[C["C"] = 0] = "C";
+})(C || (exports.C = C = {}));
+A.a = C;
+A.b = C;
+B.c = C;
 
 
 //// [declarationEmitExpandoFunction.d.ts]
 export declare function A(): string;
-export declare namespace A {
-    var B: typeof import("./declarationEmitExpandoFunction").B;
-}
-export declare enum B {
+export declare function B(): string;
+export declare enum C {
     C = 0
+}
+export declare namespace A {
+    var a: typeof C;
+    var b: typeof C;
+}
+export declare namespace B {
+    var c: typeof C;
 }

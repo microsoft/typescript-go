@@ -1,0 +1,9 @@
+--- old.es6ExportDefaultFunctionDeclaration.js
++++ new.es6ExportDefaultFunctionDeclaration.js
+@@= skipped -8, +8 lines =@@
+
+
+ //// [es6ExportDefaultFunctionDeclaration.d.ts]
+-export default function f(): void;
++declare function f(): void;
++export default f;

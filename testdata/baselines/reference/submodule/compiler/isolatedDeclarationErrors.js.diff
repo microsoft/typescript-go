@@ -16,3 +16,51 @@
 +    (): void;
 +    a: string;
 +};
++declare namespace errorOnAssignmentBelowDecl {
++    var a: "";
++}
++declare namespace errorOnAssignmentBelow {
++    var a: "";
++}
++declare namespace errorOnMissingReturn {
++    var a: "";
++}
++
++
++//// [DtsFileErrors]
++
++
++isolatedDeclarationErrors.d.ts(2,15): error TS2451: Cannot redeclare block-scoped variable 'errorOnAssignmentBelow'.
++isolatedDeclarationErrors.d.ts(6,15): error TS2451: Cannot redeclare block-scoped variable 'errorOnMissingReturn'.
++isolatedDeclarationErrors.d.ts(13,19): error TS2451: Cannot redeclare block-scoped variable 'errorOnAssignmentBelow'.
++isolatedDeclarationErrors.d.ts(16,19): error TS2451: Cannot redeclare block-scoped variable 'errorOnMissingReturn'.
++
++
++==== isolatedDeclarationErrors.d.ts (4 errors) ====
++    declare function errorOnAssignmentBelowDecl(): void;
++    declare const errorOnAssignmentBelow: {
++                  ~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS2451: Cannot redeclare block-scoped variable 'errorOnAssignmentBelow'.
++        (): void;
++        a: string;
++    };
++    declare const errorOnMissingReturn: {
++                  ~~~~~~~~~~~~~~~~~~~~
++!!! error TS2451: Cannot redeclare block-scoped variable 'errorOnMissingReturn'.
++        (): void;
++        a: string;
++    };
++    declare namespace errorOnAssignmentBelowDecl {
++        var a: "";
++    }
++    declare namespace errorOnAssignmentBelow {
++                      ~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS2451: Cannot redeclare block-scoped variable 'errorOnAssignmentBelow'.
++        var a: "";
++    }
++    declare namespace errorOnMissingReturn {
++                      ~~~~~~~~~~~~~~~~~~~~
++!!! error TS2451: Cannot redeclare block-scoped variable 'errorOnMissingReturn'.
++        var a: "";
++    }
++    

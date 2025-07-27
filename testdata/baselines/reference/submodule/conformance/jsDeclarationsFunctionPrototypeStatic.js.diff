@@ -26,13 +26,15 @@
 -declare class MyClass {
 -    method(): void;
 -}
--declare namespace MyClass {
++export type DoneCB = (failures: number) ;
+ declare namespace MyClass {
 -    export { staticMethod, staticProperty, DoneCB };
--}
++    var staticMethod: () => void;
++    var staticProperty: 123;
+ }
 -declare function staticMethod(): void;
 -declare var staticProperty: number;
 -/**
 - * Callback to be invoked when test execution is complete.
 - */
 -type DoneCB = (failures: number) => any;
-+export type DoneCB = (failures: number) ;

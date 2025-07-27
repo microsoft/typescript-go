@@ -129,9 +129,6 @@ C2.staticProp = function (x, y) {
 
 //// [jsDeclarationsClassMethod.d.ts]
 declare function C1(): void;
-declare namespace C1 {
-    var staticProp: (x: any, y: any) => any;
-}
 declare class C2 {
     /**
      * A comment method1
@@ -140,4 +137,10 @@ declare class C2 {
      * @returns {number}
      */
     method1(x: number, y: number): number;
+}
+declare namespace C1 {
+    var staticProp: (x: any, y: any) => any;
+}
+declare namespace C2 {
+    var staticProp: (x: any, y: any) => any;
 }

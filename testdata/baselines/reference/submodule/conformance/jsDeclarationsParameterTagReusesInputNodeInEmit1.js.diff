@@ -16,13 +16,18 @@
 
 
  //// [base.d.ts]
- export = BaseFactory;
+-export = BaseFactory;
 -declare function BaseFactory(): Base;
 -declare namespace BaseFactory {
 -    export { Base };
 -}
--declare class Base {
--}
+ declare class Base {
++    constructor();
++}
++export = BaseFactory;
++declare namespace BaseFactory {
++    var Base: typeof Base;
+ }
  //// [file.d.ts]
 -type couldntThinkOfAny = {
 -    (): {};

@@ -1,0 +1,9 @@
+--- old.lateBoundFunctionMemberAssignmentDeclarations.js
++++ new.lateBoundFunctionMemberAssignmentDeclarations.js
+@@= skipped -19, +19 lines =@@
+ //// [index.d.ts]
+ export declare function foo(): void;
+ export declare namespace foo {
+-    var bar: number;
++    var bar: 12;
+ }

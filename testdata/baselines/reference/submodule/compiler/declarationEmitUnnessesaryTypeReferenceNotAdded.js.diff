@@ -11,3 +11,10 @@
  function parseArgs() {
      return minimist(process.argv.slice(2));
  }
+@@= skipped -9, +9 lines =@@
+
+ //// [index.d.ts]
+ import minimist = require('minimist');
+-export default function parseArgs(): minimist.ParsedArgs;
++declare function parseArgs(): minimist.ParsedArgs;
++export default parseArgs;

@@ -47,5 +47,5 @@ if (Math.random()) {
 export declare function X(): void;
 export declare function Y(): void;
 export declare namespace Y {
-    var test: string;
+    var test: "foo";
 }

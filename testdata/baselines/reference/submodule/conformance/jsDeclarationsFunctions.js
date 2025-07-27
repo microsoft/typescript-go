@@ -123,15 +123,7 @@ function j() { }
 //// [index.d.ts]
 export declare function a(): void;
 export declare function b(): void;
-export declare namespace b {
-    var cat: string;
-}
 export declare function c(): void;
-export declare namespace c {
-    var Cls: {
-        new (): {};
-    };
-}
 /**
  * @param {number} a
  * @param {number} b
@@ -150,9 +142,6 @@ export declare function e<T, U>(a: T, b: U): T & U;
  * @param {T} a
  */
 export declare function f<T>(a: T): T;
-export declare namespace f {
-    var self: typeof f;
-}
 /**
  * @param {{x: string}} a
  * @param {{y: typeof b}} b
@@ -177,3 +166,14 @@ export declare function i(): void;
 export { i as ii };
 export { j as jj };
 export declare function j(): void;
+export declare namespace b {
+    var cat: "cat";
+}
+export declare namespace c {
+    var Cls: {
+        new (): {};
+    };
+}
+export declare namespace f {
+    var self: typeof f;
+}

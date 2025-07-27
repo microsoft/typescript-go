@@ -10,6 +10,7 @@
  declare function Foo({ bar }: {
      bar: any;
  }): JSX.Element;
++export default Foo;
  declare namespace Foo {
 -    export { propTypes };
 -    export { defaultProps };
@@ -29,7 +30,6 @@
 +        bar: boolean;
 +    };
 +}
-+export default Foo;
 +
 +
 +//// [DtsFileErrors]
@@ -48,6 +48,7 @@
 +    }): JSX.Element;
 +        ~~~
 +!!! error TS2503: Cannot find namespace 'JSX'.
++    export default Foo;
 +    declare namespace Foo {
 +        var propTypes: {
 +            bar: PropTypes.Requireable<boolean>;
@@ -56,5 +57,4 @@
 +            bar: boolean;
 +        };
 +    }
-+    export default Foo;
 +    

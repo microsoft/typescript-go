@@ -43,4 +43,5 @@ function parseArgs() {
 
 //// [index.d.ts]
 import minimist = require('minimist');
-export default function parseArgs(): minimist.ParsedArgs;
+declare function parseArgs(): minimist.ParsedArgs;
+export default parseArgs;
