@@ -28,16 +28,16 @@ declare function foo(): void;
 declare function bar(): void;
 declare function baz(): void;
 declare namespace bar {
-    var async: true;
-    var normal: false;
+    const async: true;
+    const normal: false;
 }
 declare namespace baz {
-    var class_1: true;
+    const class_1: true;
     export { class_1 as class };
-    var normal: false;
+    const normal: false;
 }
 declare namespace foo {
-    var null_1: true;
+    const null_1: true;
     export { null_1 as null };
 }
 
@@ -51,18 +51,18 @@ declare namespace foo {
  declare function bar(): void;
  declare function baz(): void;
 +declare namespace foo {
-+    var null_1: true;
++    const null_1: true;
 +    export { null_1 as null };
 +}
  declare namespace bar {
-     var async: true;
-     var normal: false;
+     const async: true;
+     const normal: false;
 @@ -9,8 +13,4 @@
-     var class_1: true;
+     const class_1: true;
      export { class_1 as class };
-     var normal: false;
+     const normal: false;
 -}
 -declare namespace foo {
--    var null_1: true;
+-    const null_1: true;
 -    export { null_1 as null };
  }

@@ -91,10 +91,10 @@
 +};
 +export default TabbedShowLayout;
 +declare namespace TabbedShowLayout {
-+    var propTypes: {
++    const propTypes: {
 +        version: PropTypes.Requireable<number>;
 +    };
-+    var defaultProps: {
++    const defaultProps: {
 +        tabs: undefined;
 +    };
 +}
@@ -111,7 +111,7 @@
 +declare const TabbedShowLayout: React.SFC;
 +export default TabbedShowLayout;
 +declare namespace TabbedShowLayout {
-+    var defaultProps: {
++    const defaultProps: {
 +        tabs: string;
 +    };
 +}
@@ -126,7 +126,7 @@
  }) => JSX.Element);
 +export default TabbedShowLayout;
 +declare namespace TabbedShowLayout {
-+    var defaultProps: {
++    const defaultProps: {
 +        tabs: string;
 +    };
 +}
@@ -147,7 +147,7 @@
 -    namespace defaultProps {
 -        let tabs: string;
 -    }
-+    var defaultProps: {
++    const defaultProps: {
 +        tabs: string;
 +    };
  }
@@ -167,10 +167,10 @@
 -        export { classes_1 as classes };
 -        export let parentSource: string;
 -    }
-+    var propTypes: {
++    const propTypes: {
 +        classes: PropTypes.Requireable<object>;
 +    };
-+    var defaultProps: {
++    const defaultProps: {
 +        classes: {};
 +        parentSource: string;
 +    };
@@ -219,10 +219,10 @@
 +    declare namespace TabbedShowLayout {
 +                      ~~~~~~~~~~~~~~~~
 +!!! error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
-+        var propTypes: {
++        const propTypes: {
 +            version: PropTypes.Requireable<number>;
 +        };
-+        var defaultProps: {
++        const defaultProps: {
 +            tabs: undefined;
 +        };
 +    }
@@ -241,7 +241,7 @@
 +    declare namespace TabbedShowLayout {
 +                      ~~~~~~~~~~~~~~~~
 +!!! error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
-+        var defaultProps: {
++        const defaultProps: {
 +            tabs: string;
 +        };
 +    }
@@ -265,7 +265,7 @@
 +    declare namespace TabbedShowLayout {
 +                      ~~~~~~~~~~~~~~~~
 +!!! error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
-+        var defaultProps: {
++        const defaultProps: {
 +            tabs: string;
 +        };
 +    }
@@ -287,7 +287,7 @@
 +    declare namespace TabbedShowLayout {
 +                      ~~~~~~~~~~~~~~~~
 +!!! error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
-+        var defaultProps: {
++        const defaultProps: {
 +            tabs: string;
 +        };
 +    }
@@ -303,10 +303,10 @@
 +!!! error TS2503: Cannot find namespace 'JSX'.
 +    export default Tree;
 +    declare namespace Tree {
-+        var propTypes: {
++        const propTypes: {
 +            classes: PropTypes.Requireable<object>;
 +        };
-+        var defaultProps: {
++        const defaultProps: {
 +            classes: {};
 +            parentSource: string;
 +        };

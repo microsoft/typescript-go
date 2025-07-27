@@ -67,7 +67,9 @@ declare class Base {
 }
 export = BaseFactory;
 declare namespace BaseFactory {
-    var Base: typeof Base;
+    const Base: {
+        new (): Base;
+    };
 }
 //// [file.d.ts]
 export type BaseFactory = import('./base');

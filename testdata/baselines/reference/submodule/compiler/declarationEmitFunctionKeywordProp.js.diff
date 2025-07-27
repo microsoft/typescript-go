@@ -15,20 +15,20 @@
 -}
  declare function baz(): void;
 +declare namespace bar {
-+    var async: true;
-+    var normal: false;
++    const async: true;
++    const normal: false;
 +}
  declare namespace baz {
 -    var _a: boolean;
 -    export var normal: boolean;
 -    export { _a as class };
 -}
-+    var class_1: true;
++    const class_1: true;
 +    export { class_1 as class };
-+    var normal: false;
++    const normal: false;
 +}
 +declare namespace foo {
-+    var null_1: true;
++    const null_1: true;
 +    export { null_1 as null };
 +}
 +
@@ -42,18 +42,18 @@
 + declare function bar(): void;
 + declare function baz(): void;
 ++declare namespace foo {
-++    var null_1: true;
+++    const null_1: true;
 ++    export { null_1 as null };
 ++}
 + declare namespace bar {
-+     var async: true;
-+     var normal: false;
++     const async: true;
++     const normal: false;
 +@@= skipped -8, +12 lines =@@
-+     var class_1: true;
++     const class_1: true;
 +     export { class_1 as class };
-+     var normal: false;
++     const normal: false;
 +-}
 +-declare namespace foo {
-+-    var null_1: true;
++-    const null_1: true;
 +-    export { null_1 as null };
 + }

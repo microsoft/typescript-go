@@ -31,10 +31,10 @@ declare function Foo({ bar }: {
 }): JSX.Element;
 export default Foo;
 declare namespace Foo {
-    var propTypes: {
+    const propTypes: {
         bar: PropTypes.Requireable<boolean>;
     };
-    var defaultProps: {
+    const defaultProps: {
         bar: boolean;
     };
 }
@@ -58,10 +58,10 @@ jsxDeclarationsWithEsModuleInteropNoCrash.d.ts(4,5): error TS2503: Cannot find n
 !!! error TS2503: Cannot find namespace 'JSX'.
     export default Foo;
     declare namespace Foo {
-        var propTypes: {
+        const propTypes: {
             bar: PropTypes.Requireable<boolean>;
         };
-        var defaultProps: {
+        const defaultProps: {
             bar: boolean;
         };
     }

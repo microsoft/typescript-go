@@ -27,16 +27,42 @@ baz.normal = false;
 declare function foo(): void;
 declare function bar(): void;
 declare function baz(): void;
+declare namespace bar {
+    const async: true;
+    const normal: false;
+}
 declare namespace baz {
-    var class_1: true;
+    const class_1: true;
     export { class_1 as class };
-    var normal: false;
+    const normal: false;
 }
 declare namespace foo {
-    var null_1: true;
+    const null_1: true;
     export { null_1 as null };
 }
-declare namespace bar {
-    var async: true;
-    var normal: false;
-}
+
+
+!!!! File out/source.d.ts differs from original emit in noCheck emit
+//// [source.d.ts]
+--- Expected	The full check baseline
++++ Actual	with noCheck set
+@@ -1,10 +1,6 @@
+ declare function foo(): void;
+ declare function bar(): void;
+ declare function baz(): void;
+-declare namespace bar {
+-    const async: true;
+-    const normal: false;
+-}
+ declare namespace baz {
+     const class_1: true;
+     export { class_1 as class };
+@@ -13,4 +9,8 @@
+ declare namespace foo {
+     const null_1: true;
+     export { null_1 as null };
++}
++declare namespace bar {
++    const async: true;
++    const normal: false;
+ }

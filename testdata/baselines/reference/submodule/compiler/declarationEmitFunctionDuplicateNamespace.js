@@ -21,5 +21,5 @@ f.x = 2;
 declare function f(a: 0): 0;
 declare function f(a: 1): 1;
 declare namespace f {
-    var x: 2;
+    const x: 2;
 }

@@ -42,7 +42,7 @@ export declare const Point: {
 };
 export declare const Rect: <p extends Point>(a: p, b: p) => Rect<p>;
 declare namespace Point {
-    var zero: () => Point;
+    const zero: () => Point;
 }
 
 
@@ -81,6 +81,6 @@ declarationEmitExpandoWithGenericConstraint.d.ts(14,19): error TS2451: Cannot re
 !!! error TS2395: Individual declarations in merged declaration 'Point' must be all exported or all local.
                       ~~~~~
 !!! error TS2451: Cannot redeclare block-scoped variable 'Point'.
-        var zero: () => Point;
+        const zero: () => Point;
     }
     

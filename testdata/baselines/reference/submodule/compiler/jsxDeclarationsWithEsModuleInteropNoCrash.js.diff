@@ -23,10 +23,10 @@
 -    export { bar_1 as bar };
 -}
 -import PropTypes from 'prop-types';
-+    var propTypes: {
++    const propTypes: {
 +        bar: PropTypes.Requireable<boolean>;
 +    };
-+    var defaultProps: {
++    const defaultProps: {
 +        bar: boolean;
 +    };
 +}
@@ -50,10 +50,10 @@
 +!!! error TS2503: Cannot find namespace 'JSX'.
 +    export default Foo;
 +    declare namespace Foo {
-+        var propTypes: {
++        const propTypes: {
 +            bar: PropTypes.Requireable<boolean>;
 +        };
-+        var defaultProps: {
++        const defaultProps: {
 +            bar: boolean;
 +        };
 +    }

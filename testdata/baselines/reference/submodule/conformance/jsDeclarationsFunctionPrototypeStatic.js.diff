@@ -29,8 +29,8 @@
 +export type DoneCB = (failures: number) ;
  declare namespace MyClass {
 -    export { staticMethod, staticProperty, DoneCB };
-+    var staticMethod: () => void;
-+    var staticProperty: 123;
++    const staticMethod: () => void;
++    const staticProperty: 123;
  }
 -declare function staticMethod(): void;
 -declare var staticProperty: number;

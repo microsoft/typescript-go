@@ -31,13 +31,13 @@ declare const errorOnMissingReturn: {
     a: string;
 };
 declare namespace errorOnAssignmentBelowDecl {
-    var a: "";
+    const a: "";
 }
 declare namespace errorOnAssignmentBelow {
-    var a: "";
+    const a: "";
 }
 declare namespace errorOnMissingReturn {
-    var a: "";
+    const a: "";
 }
 
 
@@ -65,16 +65,16 @@ isolatedDeclarationErrors.d.ts(16,19): error TS2451: Cannot redeclare block-scop
         a: string;
     };
     declare namespace errorOnAssignmentBelowDecl {
-        var a: "";
+        const a: "";
     }
     declare namespace errorOnAssignmentBelow {
                       ~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2451: Cannot redeclare block-scoped variable 'errorOnAssignmentBelow'.
-        var a: "";
+        const a: "";
     }
     declare namespace errorOnMissingReturn {
                       ~~~~~~~~~~~~~~~~~~~~
 !!! error TS2451: Cannot redeclare block-scoped variable 'errorOnMissingReturn'.
-        var a: "";
+        const a: "";
     }
     

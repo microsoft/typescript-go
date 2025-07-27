@@ -165,7 +165,7 @@ export declare function Vec(len: number): void;
  */
 export declare function Point2D(x: number, y: number): any;
 export declare namespace Vec {
-    var prototype: {
+    const prototype: {
         /**
          * @param {Vec} other
          */
@@ -174,7 +174,7 @@ export declare namespace Vec {
     };
 }
 export declare namespace Point2D {
-    var prototype: {
+    const prototype: {
         __proto__: typeof Vec;
         x: number;
         y: number;

@@ -26,7 +26,9 @@
 +}
 +export = BaseFactory;
 +declare namespace BaseFactory {
-+    var Base: typeof Base;
++    const Base: {
++        new (): Base;
++    };
  }
  //// [file.d.ts]
 -type couldntThinkOfAny = {

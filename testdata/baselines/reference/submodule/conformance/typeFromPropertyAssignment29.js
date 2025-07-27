@@ -195,85 +195,85 @@ declare function ExpandoNested(n: number): {
 declare function ExpandoMerge(n: number): number;
 declare namespace ExpandoMerge {
     export var p2: number;
+    declare namespace ExpandoArrow {
+        const prop: 2;
+        const m: (n: number) => number;
+    }
     declare namespace ExpandoNested {
-        var also: -1;
+        const also: -1;
     }
     declare namespace ExpandoMerge {
-        var p1: 111;
+        const p1: 111;
     }
     declare namespace ExpandoDecl {
-        var prop: 2;
-        var m: (n: number) => number;
+        const prop: 2;
+        const m: (n: number) => number;
     }
     declare namespace ExpandoExpr {
-        var prop: {
+        const prop: {
             x: number;
         };
-        var prop: {
+        const prop: {
             y: string;
         };
-        var m: (n: number) => number;
-    }
-    declare namespace ExpandoArrow {
-        var prop: 2;
-        var m: (n: number) => number;
+        const m: (n: number) => number;
     }
 }
 declare namespace ExpandoMerge {
     export var p3: number;
-    declare namespace ExpandoNested {
-        var also: -1;
-    }
-    declare namespace ExpandoMerge {
-        var p1: 111;
-    }
     declare namespace ExpandoDecl {
-        var prop: 2;
-        var m: (n: number) => number;
+        const prop: 2;
+        const m: (n: number) => number;
     }
     declare namespace ExpandoExpr {
-        var prop: {
+        const prop: {
             x: number;
         };
-        var prop: {
+        const prop: {
             y: string;
         };
-        var m: (n: number) => number;
+        const m: (n: number) => number;
     }
     declare namespace ExpandoArrow {
-        var prop: 2;
-        var m: (n: number) => number;
+        const prop: 2;
+        const m: (n: number) => number;
+    }
+    declare namespace ExpandoNested {
+        const also: -1;
+    }
+    declare namespace ExpandoMerge {
+        const p1: 111;
     }
 }
 declare var n: number;
 declare namespace Ns {
     function ExpandoNamespace(): void;
     export function foo(): typeof ExpandoNamespace;
-    declare namespace ExpandoDecl {
-        var prop: 2;
-        var m: (n: number) => number;
-    }
-    declare namespace ExpandoExpr {
-        var prop: {
-            x: number;
-        };
-        var prop: {
-            y: string;
-        };
-        var m: (n: number) => number;
-    }
-    declare namespace ExpandoArrow {
-        var prop: 2;
-        var m: (n: number) => number;
-    }
-    declare namespace ExpandoNested {
-        var also: -1;
-    }
     declare namespace ExpandoMerge {
-        var p1: 111;
+        const p1: 111;
     }
     declare namespace ExpandoNamespace {
-        var p6: 42;
+        const p6: 42;
+    }
+    declare namespace ExpandoDecl {
+        const prop: 2;
+        const m: (n: number) => number;
+    }
+    declare namespace ExpandoExpr {
+        const prop: {
+            x: number;
+        };
+        const prop: {
+            y: string;
+        };
+        const m: (n: number) => number;
+    }
+    declare namespace ExpandoArrow {
+        const prop: 2;
+        const m: (n: number) => number;
+    }
+    declare namespace ExpandoNested {
+        const also: -1;
     }
 }
 // Should not work in Typescript -- must be const
@@ -291,31 +291,31 @@ declare var ExpandoExpr3: {
     };
 };
 declare var n: number;
-declare namespace ExpandoDecl {
-    var prop: 2;
-    var m: (n: number) => number;
-}
-declare namespace ExpandoExpr {
-    var prop: {
-        x: number;
-    };
-    var prop: {
-        y: string;
-    };
-    var m: (n: number) => number;
-}
-declare namespace ExpandoArrow {
-    var prop: 2;
-    var m: (n: number) => number;
-}
-declare namespace ExpandoNested {
-    var also: -1;
-}
 declare namespace ExpandoMerge {
-    var p1: 111;
+    const p1: 111;
 }
 declare namespace ExpandoNamespace {
-    var p6: 42;
+    const p6: 42;
+}
+declare namespace ExpandoDecl {
+    const prop: 2;
+    const m: (n: number) => number;
+}
+declare namespace ExpandoExpr {
+    const prop: {
+        x: number;
+    };
+    const prop: {
+        y: string;
+    };
+    const m: (n: number) => number;
+}
+declare namespace ExpandoArrow {
+    const prop: 2;
+    const m: (n: number) => number;
+}
+declare namespace ExpandoNested {
+    const also: -1;
 }
 
 
@@ -323,48 +323,123 @@ declare namespace ExpandoNamespace {
 //// [typeFromPropertyAssignment29.d.ts]
 --- Expected	The full check baseline
 +++ Actual	with noCheck set
-@@ -24,12 +24,6 @@
+@@ -24,13 +24,6 @@
  declare function ExpandoMerge(n: number): number;
  declare namespace ExpandoMerge {
      export var p2: number;
+-    declare namespace ExpandoArrow {
+-        const prop: 2;
+-        const m: (n: number) => number;
+-    }
 -    declare namespace ExpandoNested {
--        var also: -1;
+-        const also: -1;
 -    }
--    declare namespace ExpandoMerge {
--        var p1: 111;
--    }
-     declare namespace ExpandoDecl {
-         var prop: 2;
-         var m: (n: number) => number;
-@@ -46,10 +40,20 @@
-     declare namespace ExpandoArrow {
-         var prop: 2;
-         var m: (n: number) => number;
+     declare namespace ExpandoMerge {
+         const p1: 111;
+     }
+@@ -46,10 +39,23 @@
+             y: string;
+         };
+         const m: (n: number) => number;
++    }
++    declare namespace ExpandoArrow {
++        const prop: 2;
++        const m: (n: number) => number;
 +    }
 +    declare namespace ExpandoNested {
-+        var also: -1;
-+    }
-+    declare namespace ExpandoMerge {
-+        var p1: 111;
++        const also: -1;
      }
  }
  declare namespace ExpandoMerge {
      export var p3: number;
-+    declare namespace ExpandoArrow {
-+        var prop: 2;
-+        var m: (n: number) => number;
++    declare namespace ExpandoNested {
++        const also: -1;
 +    }
-     declare namespace ExpandoNested {
-         var also: -1;
++    declare namespace ExpandoMerge {
++        const p1: 111;
++    }
+     declare namespace ExpandoDecl {
+         const prop: 2;
+         const m: (n: number) => number;
+@@ -66,18 +72,28 @@
+     declare namespace ExpandoArrow {
+         const prop: 2;
+         const m: (n: number) => number;
+-    }
+-    declare namespace ExpandoNested {
+-        const also: -1;
+-    }
+-    declare namespace ExpandoMerge {
+-        const p1: 111;
      }
-@@ -67,10 +71,6 @@
-         var prop: {
-             y: string;
-         };
--        var m: (n: number) => number;
+ }
+ declare var n: number;
+ declare namespace Ns {
+     function ExpandoNamespace(): void;
+     export function foo(): typeof ExpandoNamespace;
++    declare namespace ExpandoExpr {
++        const prop: {
++            x: number;
++        };
++        const prop: {
++            y: string;
++        };
++        const m: (n: number) => number;
++    }
++    declare namespace ExpandoArrow {
++        const prop: 2;
++        const m: (n: number) => number;
++    }
++    declare namespace ExpandoNested {
++        const also: -1;
++    }
+     declare namespace ExpandoMerge {
+         const p1: 111;
+     }
+@@ -88,22 +104,6 @@
+         const prop: 2;
+         const m: (n: number) => number;
+     }
+-    declare namespace ExpandoExpr {
+-        const prop: {
+-            x: number;
+-        };
+-        const prop: {
+-            y: string;
+-        };
+-        const m: (n: number) => number;
 -    }
 -    declare namespace ExpandoArrow {
--        var prop: 2;
-         var m: (n: number) => number;
-     }
+-        const prop: 2;
+-        const m: (n: number) => number;
+-    }
+-    declare namespace ExpandoNested {
+-        const also: -1;
+-    }
+ }
+ // Should not work in Typescript -- must be const
+ declare var ExpandoExpr2: (n: number) => string;
+@@ -120,12 +120,6 @@
+     };
+ };
+ declare var n: number;
+-declare namespace ExpandoMerge {
+-    const p1: 111;
+-}
+-declare namespace ExpandoNamespace {
+-    const p6: 42;
+-}
+ declare namespace ExpandoDecl {
+     const prop: 2;
+     const m: (n: number) => number;
+@@ -145,4 +139,10 @@
+ }
+ declare namespace ExpandoNested {
+     const also: -1;
++}
++declare namespace ExpandoMerge {
++    const p1: 111;
++}
++declare namespace ExpandoNamespace {
++    const p6: 42;
  }

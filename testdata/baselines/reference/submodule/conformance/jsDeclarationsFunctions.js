@@ -167,13 +167,37 @@ export { i as ii };
 export { j as jj };
 export declare function j(): void;
 export declare namespace b {
-    var cat: "cat";
+    const cat: "cat";
 }
 export declare namespace c {
-    var Cls: {
+    const Cls: {
         new (): {};
     };
 }
 export declare namespace f {
-    var self: typeof f;
+    const self: typeof f;
 }
+
+
+!!!! File out/index.d.ts differs from original emit in noCheck emit
+//// [index.d.ts]
+--- Expected	The full check baseline
++++ Actual	with noCheck set
+@@ -43,9 +43,6 @@
+ export { i as ii };
+ export { j as jj };
+ export declare function j(): void;
+-export declare namespace b {
+-    const cat: "cat";
+-}
+ export declare namespace c {
+     const Cls: {
+         new (): {};
+@@ -53,4 +50,7 @@
+ }
+ export declare namespace f {
+     const self: typeof f;
++}
++export declare namespace b {
++    const cat: "cat";
+ }

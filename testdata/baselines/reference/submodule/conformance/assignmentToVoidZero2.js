@@ -48,9 +48,8 @@ assignmentToVoidZero2_1.j + assignmentToVoidZero2_1.k;
 export var j = 1;
 export var k = void 0;
 declare namespace o {
-    var x: 1;
-    var y: any;
+    const x: 1;
+    const y: any;
 }
-export {};
 //// [importer.d.ts]
 export {};

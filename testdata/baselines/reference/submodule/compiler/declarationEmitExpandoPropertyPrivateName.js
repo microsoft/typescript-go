@@ -32,5 +32,5 @@ export {};
 //// [b.d.ts]
 export declare function q(): void;
 export declare namespace q {
-    var val: I;
+    const val: I;
 }

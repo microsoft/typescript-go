@@ -5,6 +5,6 @@
  declare function someFunc(): string;
  declare namespace someFunc {
 -    var someProp: string;
-+    var someProp: "yo";
++    const someProp: "yo";
  }
  export default someFunc;

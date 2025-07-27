@@ -1812,12 +1812,39 @@ func (tx *DeclarationTransformer) collectExpandoAssignments(node *ast.BinaryExpr
 		return
 	}
 
+	namespaceName := ast.GetFirstIdentifier(left.AsPropertyAccessExpression().Expression).Text()
+	id := ast.GetSymbolId(host)
+	modifierFlags := ast.ModifierFlagsAmbient
+	if host.ValueDeclaration.ModifierFlags()&ast.ModifierFlagsExport != 0 && host.ValueDeclaration.ModifierFlags()&ast.ModifierFlagsDefault == 0 {
+		modifierFlags |= ast.ModifierFlagsExport
+	}
+	modifiers := tx.Factory().NewModifierList(ast.CreateModifiersFromModifierFlags(modifierFlags, tx.Factory().NewModifier))
+
+	synthesizedModuleDeclaration := core.IfElse(
+		tx.pendingExpando[id] == nil,
+		tx.Factory().NewModuleDeclaration(
+			modifiers,
+			ast.KindNamespaceKeyword,
+			tx.Factory().NewIdentifier(namespaceName),
+			tx.Factory().NewModuleBlock(tx.Factory().NewNodeList([]*ast.Node{})),
+		),
+		tx.pendingExpando[id],
+	).AsModuleDeclaration()
+
+	synthesizedModuleDeclaration.Parent = tx.enclosingDeclaration
+
+	declarationData := synthesizedModuleDeclaration.DeclarationData()
+	declarationData.Symbol = host
+
+	containerData := synthesizedModuleDeclaration.LocalsContainerData()
+	containerData.Locals = make(ast.SymbolTable, 0)
+
 	saveDiag := tx.state.getSymbolAccessibilityDiagnostic
 	tx.state.getSymbolAccessibilityDiagnostic = createGetSymbolAccessibilityDiagnosticForNode(node.AsNode())
 	t := tx.resolver.CreateTypeOfExpression(
 		tx.EmitContext(),
 		right,
-		host.ValueDeclaration,
+		synthesizedModuleDeclaration.AsNode(),
 		declarationEmitNodeBuilderFlags,
 		declarationEmitInternalNodeBuilderFlags|nodebuilder.InternalFlagsNoSyntacticPrinter,
 		tx.tracker,
@@ -1849,33 +1876,16 @@ func (tx *DeclarationTransformer) collectExpandoAssignments(node *ast.BinaryExpr
 		)
 	}
 
-	id := ast.GetSymbolId(host)
-	if tx.pendingExpando[id] == nil {
-		modifierFlags := ast.ModifierFlagsAmbient
-		if host.ValueDeclaration.ModifierFlags()&ast.ModifierFlagsExport != 0 && host.ValueDeclaration.ModifierFlags()&ast.ModifierFlagsDefault == 0 {
-			modifierFlags |= ast.ModifierFlagsExport
-		}
-		modifiers := tx.Factory().NewModifierList(ast.CreateModifiersFromModifierFlags(modifierFlags, tx.Factory().NewModifier))
-		name := tx.Factory().NewIdentifier(ast.GetFirstIdentifier(left.AsPropertyAccessExpression().Expression).Text())
-		tx.pendingExpando[id] = tx.Factory().NewModuleDeclaration(
-			modifiers,
-			ast.KindNamespaceKeyword,
-			name,
-			tx.Factory().NewModuleBlock(tx.Factory().NewNodeList(statements)),
-		)
-	} else {
-		namespace := tx.pendingExpando[id].AsModuleDeclaration()
-		tx.pendingExpando[id] = tx.Factory().UpdateModuleDeclaration(
-			namespace,
-			namespace.Modifiers(),
-			namespace.Keyword,
-			namespace.Name(),
-			tx.Factory().UpdateModuleBlock(
-				namespace.Body.AsModuleBlock(),
-				tx.Factory().NewNodeList(append(namespace.Body.AsModuleBlock().Statements.Nodes, statements...)),
-			),
-		)
-	}
+	tx.pendingExpando[id] = tx.Factory().UpdateModuleDeclaration(
+		synthesizedModuleDeclaration,
+		synthesizedModuleDeclaration.Modifiers(),
+		synthesizedModuleDeclaration.Keyword,
+		synthesizedModuleDeclaration.Name(),
+		tx.Factory().UpdateModuleBlock(
+			synthesizedModuleDeclaration.Body.AsModuleBlock(),
+			tx.Factory().NewNodeList(append(synthesizedModuleDeclaration.Body.AsModuleBlock().Statements.Nodes, statements...)),
+		),
+	)
 }
 
 func (tx *DeclarationTransformer) transformPendingExpandoAssignments() []*ast.Node {

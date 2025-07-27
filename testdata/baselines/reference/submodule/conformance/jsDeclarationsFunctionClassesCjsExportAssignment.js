@@ -160,7 +160,7 @@ export type State = {
 };
 export = Context;
 declare namespace Context {
-    var prototype: {
+    const prototype: {
         /**
          * @param {Input} input
          * @param {HookHandler=} handle

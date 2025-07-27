@@ -30,6 +30,6 @@ MyClass.staticProperty = 123;
 export = MyClass;
 export type DoneCB = (failures: number) ;
 declare namespace MyClass {
-    var staticMethod: () => void;
-    var staticProperty: 123;
+    const staticMethod: () => void;
+    const staticProperty: 123;
 }

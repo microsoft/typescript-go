@@ -53,5 +53,5 @@ export type HandlerOptions = {
     name: String;
 };
 declare namespace Handler {
-    var statische: () => void;
+    const statische: () => void;
 }

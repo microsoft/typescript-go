@@ -107,10 +107,10 @@ declare class CC {
 }
 declare var C5: any;
 declare namespace Ns {
-    var C1: {
+    const C1: {
         new (): {
             method(): number;
         };
     };
-    var C5: any;
+    const C5: any;
 }

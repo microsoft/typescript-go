@@ -47,9 +47,9 @@ export declare enum C {
     C = 0
 }
 export declare namespace A {
-    var a: typeof C;
-    var b: typeof C;
+    const a: typeof C;
+    const b: typeof C;
 }
 export declare namespace B {
-    var c: typeof C;
+    const c: typeof C;
 }

@@ -48,5 +48,5 @@
 -     */
 -    name: string;
 -};
-+    var statische: () => void;
++    const statische: () => void;
 +}
