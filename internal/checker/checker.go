@@ -3241,6 +3241,14 @@ func (c *Checker) checkFunctionOrMethodDeclaration(node *ast.Node) {
 	body := node.Body()
 	c.checkSourceElement(body)
 	c.checkAllCodePathsInNonVoidFunctionReturnOrThrow(node, c.getReturnTypeFromAnnotation(node))
+	if node.FunctionLikeData().WholeType != nil {
+		if c.getContextualCallSignature(c.getTypeFromTypeNode(node.FunctionLikeData().WholeType), node) == nil {
+			c.error(node.FunctionLikeData().WholeType, diagnostics.A_JSDoc_type_tag_on_a_function_must_have_a_signature_with_the_correct_number_of_arguments)
+		}
+		if node.Type() != nil || core.Some(node.Parameters(), func(p *ast.Node) bool { return p.Type() != nil }) {
+			c.error(node.FunctionLikeData().WholeType, diagnostics.A_JSDoc_type_tag_may_not_occur_with_a_param_or_returns_tag)
+		}
+	}
 	if node.Type() == nil {
 		// Report an implicit any error if there is no body, no explicit return type, and node is not a private method
 		// in an ambient context
@@ -11593,6 +11601,11 @@ func (c *Checker) TryGetThisTypeAtEx(node *ast.Node, includeGlobalThis bool, con
 	}
 	if ast.IsFunctionLike(container) && (!c.isInParameterInitializerBeforeContainingFunction(node) || ast.GetThisParameter(container) != nil) {
 		thisType := c.getThisTypeOfDeclaration(container)
+		if thisType == nil && ast.IsInJSFile(node) {
+			if sig := c.getSignatureOfTypeTag(node); sig != nil {
+				thisType = c.getThisTypeOfSignature(sig)
+			}
+		}
 		// Note: a parameter initializer should refer to class-this unless function-this is explicitly annotated.
 		// If this is a function in a JS file, it might be a class method.
 		if thisType == nil {
@@ -15935,6 +15948,9 @@ func (c *Checker) getTypeForVariableLikeDeclaration(declaration *ast.Node, inclu
 				return c.getReturnTypeOfSignature(getterSignature)
 			}
 		}
+		if t := c.getParameterTypeOfTypeTag(fn, declaration); t != nil {
+			return t
+		}
 		// Use contextual parameter type if one is available
 		var t *Type
 		if declaration.Symbol().Name == ast.InternalSymbolNameThis {
@@ -18906,6 +18922,12 @@ func (c *Checker) getSignaturesOfSymbol(symbol *ast.Symbol) []*Signature {
 		}
 		// If this is a function or method declaration, get the signature from the @type tag for the sake of optional parameters.
 		// Exclude contextually-typed kinds because we already apply the @type tag to the context, plus applying it here to the initializer would suppress checks that the two are compatible.
+		if ast.IsFunctionExpressionOrArrowFunction(decl) || ast.IsObjectLiteralMethod(decl) {
+			if sig := c.getSignatureOfTypeTag(decl); sig != nil {
+				result = append(result, sig)
+				continue
+			}
+		}
 		result = append(result, c.getSignatureFromDeclaration(decl))
 	}
 	return result
@@ -18983,6 +19005,11 @@ func (c *Checker) getTypeParametersFromDeclaration(declaration *ast.Node) []*Typ
 	var result []*Type
 	for _, node := range declaration.TypeParameters() {
 		result = core.AppendIfUnique(result, c.getDeclaredTypeOfTypeParameter(node.Symbol()))
+	}
+	if len(result) == 0 && ast.IsFunctionDeclaration(declaration) {
+		if sig := c.getSignatureOfTypeTag(declaration); sig != nil && sig.TypeParameters() != nil {
+			return sig.TypeParameters()
+		}
 	}
 	return result
 }
@@ -19132,6 +19159,32 @@ func (c *Checker) getReturnTypeFromAnnotation(declaration *ast.Node) *Type {
 	}
 	if ast.IsGetAccessorDeclaration(declaration) && c.hasBindableName(declaration) {
 		return c.getAnnotatedAccessorType(ast.GetDeclarationOfKind(c.getSymbolOfDeclaration(declaration), ast.KindSetAccessor))
+	}
+	return c.getReturnTypeOfTag(declaration)
+}
+
+func (c *Checker) getSignatureOfTypeTag(node *ast.Node) *Signature {
+	if ast.IsInJSFile(node) && ast.IsFunctionLike(node) && node.FunctionLikeData().WholeType != nil {
+		return c.getSingleCallSignature(c.getTypeFromTypeNode(node.FunctionLikeData().WholeType))
+	}
+	return nil
+}
+
+func (c *Checker) getParameterTypeOfTypeTag(node *ast.Node, parameter *ast.ParameterDeclarationNode) *Type {
+	if signature := c.getSignatureOfTypeTag(node); signature != nil {
+		pos := slices.Index(node.Parameters(), parameter)
+		if parameter.AsParameterDeclaration().DotDotDotToken != nil {
+			return c.getRestTypeAtPosition(signature, pos, false /*readonly*/)
+		} else {
+			return c.getTypeAtPosition(signature, pos)
+		}
+	}
+	return nil
+}
+
+func (c *Checker) getReturnTypeOfTag(node *ast.Node) *Type {
+	if signature := c.getSignatureOfTypeTag(node); signature != nil {
+		return c.getReturnTypeOfSignature(signature)
 	}
 	return nil
 }

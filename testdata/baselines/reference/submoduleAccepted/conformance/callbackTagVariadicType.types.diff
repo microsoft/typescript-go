@@ -1,0 +1,11 @@
+--- old.callbackTagVariadicType.types
++++ new.callbackTagVariadicType.types
+@@= skipped -9, +9 lines =@@
+ /** @type {Foo} */
+ export const x = () => 1
+ >x : Foo
+->() => 1 : () => number
++>() => 1 : (...args: string) => number
+ >1 : 1
+
+ var res = x('a', 'b')

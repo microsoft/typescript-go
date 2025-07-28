@@ -1,6 +1,15 @@
 --- old.callbackTag2.types
 +++ new.callbackTag2.types
-@@= skipped -27, +27 lines =@@
+@@= skipped -12, +12 lines =@@
+ /** @type {Id<string>} I actually wanted to write `const "120"` */
+ var one_twenty = s => "120";
+ >one_twenty : Id<string>
+->s => "120" : (s: string) => string
++>s => "120" : (t: string) => string
+ >s : string
+ >"120" : "120"
+
+@@= skipped -15, +15 lines =@@
      constructor() {
          /** @type {SharedId<S>} */
          this.id;
@@ -12,12 +21,10 @@
      }
  }
  /** @type {SharedId<number>} */
-@@= skipped -17, +17 lines =@@
- /** @type {Final<{ fantasy }, { heroes }>} */
- var noreturn = (barts, tidus, noctis) => "cecil"
- >noreturn : Final<{ fantasy: any; }, { heroes: any; }>
-->(barts, tidus, noctis) => "cecil" : (barts: { fantasy: any; }, tidus: { heroes: any; }, noctis: { heroes: any; } & { fantasy: any; }) => "cecil" | "zidane"
-+>(barts, tidus, noctis) => "cecil" : (barts: { fantasy: any; }, tidus: { heroes: any; }, noctis: { heroes: any; } & { fantasy: any; }) => "cecil"
- >barts : { fantasy: any; }
- >tidus : { heroes: any; }
- >noctis : { heroes: any; } & { fantasy: any; }
+ var outside = n => n + 1;
+ >outside : SharedId<number>
+->n => n + 1 : (n: number) => number
++>n => n + 1 : (ego: number) => number
+ >n : number
+ >n + 1 : number
+ >n : number

@@ -1956,6 +1956,7 @@ type FunctionLikeBase struct {
 	TypeParameters *NodeList // NodeList[*TypeParameterDeclarationNode]. Optional
 	Parameters     *NodeList // NodeList[*ParameterDeclarationNode]
 	Type           *TypeNode // Optional
+	WholeType      *TypeNode // Type that applies to the whole function; should not be set if Type is set or if Parameters have types set.
 }
 
 func (node *FunctionLikeBase) LocalsContainerData() *LocalsContainerBase {
@@ -3528,13 +3529,15 @@ type FunctionDeclaration struct {
 	DeclarationBase
 	ExportableBase
 	ModifiersBase
+	// TODO: Make changes for all these and maybe also all FunctionLikeBases
+	// TODO: Update all other uses of getSignatureOfTypeTag from Strada
 	FunctionLikeWithBodyBase
 	compositeNodeBase
 	name           *IdentifierNode // IdentifierNode
 	ReturnFlowNode *FlowNode
 }
 
-func (f *NodeFactory) NewFunctionDeclaration(modifiers *ModifierList, asteriskToken *TokenNode, name *IdentifierNode, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, body *BlockNode) *Node {
+func (f *NodeFactory) NewFunctionDeclaration(modifiers *ModifierList, asteriskToken *TokenNode, name *IdentifierNode, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, wholeType *TypeNode, body *BlockNode) *Node {
 	data := f.functionDeclarationPool.New()
 	data.modifiers = modifiers
 	data.AsteriskToken = asteriskToken
@@ -3542,28 +3545,29 @@ func (f *NodeFactory) NewFunctionDeclaration(modifiers *ModifierList, asteriskTo
 	data.TypeParameters = typeParameters
 	data.Parameters = parameters
 	data.Type = returnType
+	data.WholeType = wholeType
 	data.Body = body
 	return f.newNode(KindFunctionDeclaration, data)
 }
 
-func (f *NodeFactory) UpdateFunctionDeclaration(node *FunctionDeclaration, modifiers *ModifierList, asteriskToken *TokenNode, name *IdentifierNode, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, body *BlockNode) *Node {
-	if modifiers != node.modifiers || asteriskToken != node.AsteriskToken || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || body != node.Body {
-		return updateNode(f.NewFunctionDeclaration(modifiers, asteriskToken, name, typeParameters, parameters, returnType, body), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateFunctionDeclaration(node *FunctionDeclaration, modifiers *ModifierList, asteriskToken *TokenNode, name *IdentifierNode, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, wholeType *TypeNode, body *BlockNode) *Node {
+	if modifiers != node.modifiers || asteriskToken != node.AsteriskToken || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || wholeType != node.WholeType || body != node.Body {
+		return updateNode(f.NewFunctionDeclaration(modifiers, asteriskToken, name, typeParameters, parameters, returnType, wholeType, body), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
 
 func (node *FunctionDeclaration) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.AsteriskToken) || visit(v, node.name) || visitNodeList(v, node.TypeParameters) ||
-		visitNodeList(v, node.Parameters) || visit(v, node.Type) || visit(v, node.Body)
+		visitNodeList(v, node.Parameters) || visit(v, node.Type) || visit(v, node.WholeType) || visit(v, node.Body)
 }
 
 func (node *FunctionDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateFunctionDeclaration(node, v.visitModifiers(node.modifiers), v.visitToken(node.AsteriskToken), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitFunctionBody(node.Body))
+	return v.Factory.UpdateFunctionDeclaration(node, v.visitModifiers(node.modifiers), v.visitToken(node.AsteriskToken), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitNode(node.WholeType), v.visitFunctionBody(node.Body))
 }
 
 func (node *FunctionDeclaration) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewFunctionDeclaration(node.Modifiers(), node.AsteriskToken, node.Name(), node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewFunctionDeclaration(node.Modifiers(), node.AsteriskToken, node.Name(), node.TypeParameters, node.Parameters, node.Type, node.WholeType, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *FunctionDeclaration) Name() *DeclarationName {
@@ -3582,6 +3586,7 @@ func (node *FunctionDeclaration) computeSubtreeFacts() SubtreeFacts {
 			propagateEraseableSyntaxListSubtreeFacts(node.TypeParameters) |
 			propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
 			propagateEraseableSyntaxSubtreeFacts(node.Type) |
+			propagateEraseableSyntaxSubtreeFacts(node.WholeType) |
 			propagateSubtreeFacts(node.Body) |
 			core.IfElse(isAsync && isGenerator, SubtreeContainsForAwaitOrAsyncGenerator, SubtreeFactsNone) |
 			core.IfElse(isAsync && !isGenerator, SubtreeContainsAnyAwait, SubtreeFactsNone)
@@ -5027,33 +5032,34 @@ type ConstructorDeclaration struct {
 	ReturnFlowNode *FlowNode
 }
 
-func (f *NodeFactory) NewConstructorDeclaration(modifiers *ModifierList, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, body *BlockNode) *Node {
+func (f *NodeFactory) NewConstructorDeclaration(modifiers *ModifierList, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, wholeType *TypeNode, body *BlockNode) *Node {
 	data := &ConstructorDeclaration{}
 	data.modifiers = modifiers
 	data.TypeParameters = typeParameters
 	data.Parameters = parameters
 	data.Type = returnType
+	data.WholeType = wholeType
 	data.Body = body
 	return f.newNode(KindConstructor, data)
 }
 
-func (f *NodeFactory) UpdateConstructorDeclaration(node *ConstructorDeclaration, modifiers *ModifierList, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, body *BlockNode) *Node {
-	if modifiers != node.modifiers || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || body != node.Body {
-		return updateNode(f.NewConstructorDeclaration(modifiers, typeParameters, parameters, returnType, body), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateConstructorDeclaration(node *ConstructorDeclaration, modifiers *ModifierList, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, wholeType *TypeNode, body *BlockNode) *Node {
+	if modifiers != node.modifiers || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || wholeType != node.WholeType || body != node.Body {
+		return updateNode(f.NewConstructorDeclaration(modifiers, typeParameters, parameters, returnType, wholeType, body), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
 
 func (node *ConstructorDeclaration) ForEachChild(v Visitor) bool {
-	return visitModifiers(v, node.modifiers) || visitNodeList(v, node.TypeParameters) || visitNodeList(v, node.Parameters) || visit(v, node.Type) || visit(v, node.Body)
+	return visitModifiers(v, node.modifiers) || visitNodeList(v, node.TypeParameters) || visitNodeList(v, node.Parameters) || visit(v, node.Type) || visit(v, node.WholeType) || visit(v, node.Body)
 }
 
 func (node *ConstructorDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateConstructorDeclaration(node, v.visitModifiers(node.modifiers), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitFunctionBody(node.Body))
+	return v.Factory.UpdateConstructorDeclaration(node, v.visitModifiers(node.modifiers), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitNode(node.WholeType), v.visitFunctionBody(node.Body))
 }
 
 func (node *ConstructorDeclaration) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewConstructorDeclaration(node.Modifiers(), node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewConstructorDeclaration(node.Modifiers(), node.TypeParameters, node.Parameters, node.Type, node.WholeType, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ConstructorDeclaration) computeSubtreeFacts() SubtreeFacts {
@@ -5064,6 +5070,7 @@ func (node *ConstructorDeclaration) computeSubtreeFacts() SubtreeFacts {
 			propagateEraseableSyntaxListSubtreeFacts(node.TypeParameters) |
 			propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
 			propagateEraseableSyntaxSubtreeFacts(node.Type) |
+			propagateEraseableSyntaxSubtreeFacts(node.WholeType) |
 			propagateSubtreeFacts(node.Body)
 	}
 }
@@ -5091,7 +5098,7 @@ type AccessorDeclarationBase struct {
 
 func (node *AccessorDeclarationBase) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.name) || visitNodeList(v, node.TypeParameters) || visitNodeList(v, node.Parameters) ||
-		visit(v, node.Type) || visit(v, node.Body)
+		visit(v, node.Type) || visit(v, node.WholeType) || visit(v, node.Body)
 }
 
 func (node *AccessorDeclarationBase) IsAccessorDeclaration() {}
@@ -5105,6 +5112,7 @@ func (node *AccessorDeclarationBase) computeSubtreeFacts() SubtreeFacts {
 			propagateEraseableSyntaxListSubtreeFacts(node.TypeParameters) |
 			propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
 			propagateEraseableSyntaxSubtreeFacts(node.Type) |
+			propagateEraseableSyntaxSubtreeFacts(node.WholeType) |
 			propagateSubtreeFacts(node.Body)
 	}
 }
@@ -5120,30 +5128,31 @@ type GetAccessorDeclaration struct {
 	AccessorDeclarationBase
 }
 
-func (f *NodeFactory) NewGetAccessorDeclaration(modifiers *ModifierList, name *PropertyName, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, body *BlockNode) *Node {
+func (f *NodeFactory) NewGetAccessorDeclaration(modifiers *ModifierList, name *PropertyName, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, wholeType *TypeNode, body *BlockNode) *Node {
 	data := &GetAccessorDeclaration{}
 	data.modifiers = modifiers
 	data.name = name
 	data.TypeParameters = typeParameters
 	data.Parameters = parameters
 	data.Type = returnType
+	data.WholeType = wholeType
 	data.Body = body
 	return f.newNode(KindGetAccessor, data)
 }
 
-func (f *NodeFactory) UpdateGetAccessorDeclaration(node *GetAccessorDeclaration, modifiers *ModifierList, name *PropertyName, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, body *BlockNode) *Node {
-	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || body != node.Body {
-		return updateNode(f.NewGetAccessorDeclaration(modifiers, name, typeParameters, parameters, returnType, body), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateGetAccessorDeclaration(node *GetAccessorDeclaration, modifiers *ModifierList, name *PropertyName, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, wholeType *TypeNode, body *BlockNode) *Node {
+	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || wholeType != node.WholeType || body != node.Body {
+		return updateNode(f.NewGetAccessorDeclaration(modifiers, name, typeParameters, parameters, returnType, wholeType, body), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
 
 func (node *GetAccessorDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateGetAccessorDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitFunctionBody(node.Body))
+	return v.Factory.UpdateGetAccessorDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitNode(node.WholeType), v.visitFunctionBody(node.Body))
 }
 
 func (node *GetAccessorDeclaration) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewGetAccessorDeclaration(node.modifiers, node.Name(), node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewGetAccessorDeclaration(node.modifiers, node.Name(), node.TypeParameters, node.Parameters, node.Type, node.WholeType, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsGetAccessorDeclaration(node *Node) bool {
@@ -5156,30 +5165,31 @@ type SetAccessorDeclaration struct {
 	AccessorDeclarationBase
 }
 
-func (f *NodeFactory) NewSetAccessorDeclaration(modifiers *ModifierList, name *PropertyName, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, body *BlockNode) *Node {
+func (f *NodeFactory) NewSetAccessorDeclaration(modifiers *ModifierList, name *PropertyName, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, wholeType *TypeNode, body *BlockNode) *Node {
 	data := &SetAccessorDeclaration{}
 	data.modifiers = modifiers
 	data.name = name
 	data.TypeParameters = typeParameters
 	data.Parameters = parameters
 	data.Type = returnType
+	data.WholeType = wholeType
 	data.Body = body
 	return f.newNode(KindSetAccessor, data)
 }
 
-func (f *NodeFactory) UpdateSetAccessorDeclaration(node *SetAccessorDeclaration, modifiers *ModifierList, name *PropertyName, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, body *BlockNode) *Node {
-	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || body != node.Body {
-		return updateNode(f.NewSetAccessorDeclaration(modifiers, name, typeParameters, parameters, returnType, body), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateSetAccessorDeclaration(node *SetAccessorDeclaration, modifiers *ModifierList, name *PropertyName, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, wholeType *TypeNode, body *BlockNode) *Node {
+	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || wholeType != node.WholeType || body != node.Body {
+		return updateNode(f.NewSetAccessorDeclaration(modifiers, name, typeParameters, parameters, returnType, wholeType, body), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
 
 func (node *SetAccessorDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateSetAccessorDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitFunctionBody(node.Body))
+	return v.Factory.UpdateSetAccessorDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitNode(node.WholeType), v.visitFunctionBody(node.Body))
 }
 
 func (node *SetAccessorDeclaration) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewSetAccessorDeclaration(node.Modifiers(), node.Name(), node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewSetAccessorDeclaration(node.Modifiers(), node.Name(), node.TypeParameters, node.Parameters, node.Type, node.WholeType, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsSetAccessorDeclaration(node *Node) bool {
@@ -5286,7 +5296,7 @@ type MethodDeclaration struct {
 	compositeNodeBase
 }
 
-func (f *NodeFactory) NewMethodDeclaration(modifiers *ModifierList, asteriskToken *TokenNode, name *PropertyName, postfixToken *TokenNode, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, body *BlockNode) *Node {
+func (f *NodeFactory) NewMethodDeclaration(modifiers *ModifierList, asteriskToken *TokenNode, name *PropertyName, postfixToken *TokenNode, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, wholeType *TypeNode, body *BlockNode) *Node {
 	data := &MethodDeclaration{}
 	data.modifiers = modifiers
 	data.AsteriskToken = asteriskToken
@@ -5295,28 +5305,29 @@ func (f *NodeFactory) NewMethodDeclaration(modifiers *ModifierList, asteriskToke
 	data.TypeParameters = typeParameters
 	data.Parameters = parameters
 	data.Type = returnType
+	data.WholeType = wholeType
 	data.Body = body
 	return f.newNode(KindMethodDeclaration, data)
 }
 
-func (f *NodeFactory) UpdateMethodDeclaration(node *MethodDeclaration, modifiers *ModifierList, asteriskToken *TokenNode, name *PropertyName, postfixToken *TokenNode, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, body *BlockNode) *Node {
-	if modifiers != node.modifiers || asteriskToken != node.AsteriskToken || name != node.name || postfixToken != node.PostfixToken || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || body != node.Body {
-		return updateNode(f.NewMethodDeclaration(modifiers, asteriskToken, name, postfixToken, typeParameters, parameters, returnType, body), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateMethodDeclaration(node *MethodDeclaration, modifiers *ModifierList, asteriskToken *TokenNode, name *PropertyName, postfixToken *TokenNode, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, wholeType *TypeNode, body *BlockNode) *Node {
+	if modifiers != node.modifiers || asteriskToken != node.AsteriskToken || name != node.name || postfixToken != node.PostfixToken || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || wholeType != node.WholeType || body != node.Body {
+		return updateNode(f.NewMethodDeclaration(modifiers, asteriskToken, name, postfixToken, typeParameters, parameters, returnType, wholeType, body), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
 
 func (node *MethodDeclaration) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.AsteriskToken) || visit(v, node.name) || visit(v, node.PostfixToken) ||
-		visitNodeList(v, node.TypeParameters) || visitNodeList(v, node.Parameters) || visit(v, node.Type) || visit(v, node.Body)
+		visitNodeList(v, node.TypeParameters) || visitNodeList(v, node.Parameters) || visit(v, node.Type) || visit(v, node.WholeType) || visit(v, node.Body)
 }
 
 func (node *MethodDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateMethodDeclaration(node, v.visitModifiers(node.modifiers), v.visitToken(node.AsteriskToken), v.visitNode(node.name), v.visitToken(node.PostfixToken), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitFunctionBody(node.Body))
+	return v.Factory.UpdateMethodDeclaration(node, v.visitModifiers(node.modifiers), v.visitToken(node.AsteriskToken), v.visitNode(node.name), v.visitToken(node.PostfixToken), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitNode(node.WholeType), v.visitFunctionBody(node.Body))
 }
 
 func (node *MethodDeclaration) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewMethodDeclaration(node.Modifiers(), node.AsteriskToken, node.Name(), node.PostfixToken, node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewMethodDeclaration(node.Modifiers(), node.AsteriskToken, node.Name(), node.PostfixToken, node.TypeParameters, node.Parameters, node.Type, node.WholeType, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *MethodDeclaration) computeSubtreeFacts() SubtreeFacts {
@@ -5333,6 +5344,7 @@ func (node *MethodDeclaration) computeSubtreeFacts() SubtreeFacts {
 			propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
 			propagateSubtreeFacts(node.Body) |
 			propagateEraseableSyntaxSubtreeFacts(node.Type) |
+			propagateEraseableSyntaxSubtreeFacts(node.WholeType) |
 			core.IfElse(isAsync && isGenerator, SubtreeContainsForAwaitOrAsyncGenerator, SubtreeFactsNone) |
 			core.IfElse(isAsync && !isGenerator, SubtreeContainsAnyAwait, SubtreeFactsNone)
 	}
@@ -5875,35 +5887,36 @@ type ArrowFunction struct {
 	EqualsGreaterThanToken *TokenNode // TokenNode
 }
 
-func (f *NodeFactory) NewArrowFunction(modifiers *ModifierList, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, equalsGreaterThanToken *TokenNode, body *BlockOrExpression) *Node {
+func (f *NodeFactory) NewArrowFunction(modifiers *ModifierList, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, wholeType *TypeNode, equalsGreaterThanToken *TokenNode, body *BlockOrExpression) *Node {
 	data := &ArrowFunction{}
 	data.modifiers = modifiers
 	data.TypeParameters = typeParameters
 	data.Parameters = parameters
 	data.Type = returnType
+	data.WholeType = wholeType
 	data.EqualsGreaterThanToken = equalsGreaterThanToken
 	data.Body = body
 	return f.newNode(KindArrowFunction, data)
 }
 
-func (f *NodeFactory) UpdateArrowFunction(node *ArrowFunction, modifiers *ModifierList, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, equalsGreaterThanToken *TokenNode, body *BlockOrExpression) *Node {
-	if modifiers != node.modifiers || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || equalsGreaterThanToken != node.EqualsGreaterThanToken || body != node.Body {
-		return updateNode(f.NewArrowFunction(modifiers, typeParameters, parameters, returnType, equalsGreaterThanToken, body), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateArrowFunction(node *ArrowFunction, modifiers *ModifierList, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, wholeType *TypeNode, equalsGreaterThanToken *TokenNode, body *BlockOrExpression) *Node {
+	if modifiers != node.modifiers || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || wholeType != node.WholeType || equalsGreaterThanToken != node.EqualsGreaterThanToken || body != node.Body {
+		return updateNode(f.NewArrowFunction(modifiers, typeParameters, parameters, returnType, wholeType, equalsGreaterThanToken, body), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
 
 func (node *ArrowFunction) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visitNodeList(v, node.TypeParameters) || visitNodeList(v, node.Parameters) ||
-		visit(v, node.Type) || visit(v, node.EqualsGreaterThanToken) || visit(v, node.Body)
+		visit(v, node.Type) || visit(v, node.WholeType) || visit(v, node.EqualsGreaterThanToken) || visit(v, node.Body)
 }
 
 func (node *ArrowFunction) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateArrowFunction(node, v.visitModifiers(node.modifiers), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitToken(node.EqualsGreaterThanToken), v.visitFunctionBody(node.Body))
+	return v.Factory.UpdateArrowFunction(node, v.visitModifiers(node.modifiers), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitNode(node.WholeType), v.visitToken(node.EqualsGreaterThanToken), v.visitFunctionBody(node.Body))
 }
 
 func (node *ArrowFunction) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewArrowFunction(node.Modifiers(), node.TypeParameters, node.Parameters, node.Type, node.EqualsGreaterThanToken, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewArrowFunction(node.Modifiers(), node.TypeParameters, node.Parameters, node.Type, node.WholeType, node.EqualsGreaterThanToken, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ArrowFunction) Name() *DeclarationName {
@@ -5915,6 +5928,7 @@ func (node *ArrowFunction) computeSubtreeFacts() SubtreeFacts {
 		propagateEraseableSyntaxListSubtreeFacts(node.TypeParameters) |
 		propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
 		propagateEraseableSyntaxSubtreeFacts(node.Type) |
+		propagateEraseableSyntaxSubtreeFacts(node.WholeType) |
 		propagateSubtreeFacts(node.Body) |
 		core.IfElse(node.ModifierFlags()&ModifierFlagsAsync != 0, SubtreeContainsAnyAwait, SubtreeFactsNone)
 }
@@ -5940,7 +5954,7 @@ type FunctionExpression struct {
 	ReturnFlowNode *FlowNode
 }
 
-func (f *NodeFactory) NewFunctionExpression(modifiers *ModifierList, asteriskToken *TokenNode, name *IdentifierNode, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, body *BlockNode) *Node {
+func (f *NodeFactory) NewFunctionExpression(modifiers *ModifierList, asteriskToken *TokenNode, name *IdentifierNode, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, wholeType *TypeNode, body *BlockNode) *Node {
 	data := &FunctionExpression{}
 	data.modifiers = modifiers
 	data.AsteriskToken = asteriskToken
@@ -5948,28 +5962,29 @@ func (f *NodeFactory) NewFunctionExpression(modifiers *ModifierList, asteriskTok
 	data.TypeParameters = typeParameters
 	data.Parameters = parameters
 	data.Type = returnType
+	data.WholeType = wholeType
 	data.Body = body
 	return f.newNode(KindFunctionExpression, data)
 }
 
-func (f *NodeFactory) UpdateFunctionExpression(node *FunctionExpression, modifiers *ModifierList, asteriskToken *TokenNode, name *IdentifierNode, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, body *BlockNode) *Node {
-	if modifiers != node.modifiers || asteriskToken != node.AsteriskToken || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || body != node.Body {
-		return updateNode(f.NewFunctionExpression(modifiers, asteriskToken, name, typeParameters, parameters, returnType, body), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateFunctionExpression(node *FunctionExpression, modifiers *ModifierList, asteriskToken *TokenNode, name *IdentifierNode, typeParameters *TypeParameterList, parameters *ParameterList, returnType *TypeNode, wholeType *TypeNode, body *BlockNode) *Node {
+	if modifiers != node.modifiers || asteriskToken != node.AsteriskToken || name != node.name || typeParameters != node.TypeParameters || parameters != node.Parameters || returnType != node.Type || wholeType != node.WholeType || body != node.Body {
+		return updateNode(f.NewFunctionExpression(modifiers, asteriskToken, name, typeParameters, parameters, returnType, wholeType, body), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
 
 func (node *FunctionExpression) ForEachChild(v Visitor) bool {
 	return visitModifiers(v, node.modifiers) || visit(v, node.AsteriskToken) || visit(v, node.name) || visitNodeList(v, node.TypeParameters) ||
-		visitNodeList(v, node.Parameters) || visit(v, node.Type) || visit(v, node.Body)
+		visitNodeList(v, node.Parameters) || visit(v, node.Type) || visit(v, node.WholeType) || visit(v, node.Body)
 }
 
 func (node *FunctionExpression) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateFunctionExpression(node, v.visitModifiers(node.modifiers), v.visitToken(node.AsteriskToken), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitFunctionBody(node.Body))
+	return v.Factory.UpdateFunctionExpression(node, v.visitModifiers(node.modifiers), v.visitToken(node.AsteriskToken), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitNode(node.WholeType), v.visitFunctionBody(node.Body))
 }
 
 func (node *FunctionExpression) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewFunctionExpression(node.Modifiers(), node.AsteriskToken, node.Name(), node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewFunctionExpression(node.Modifiers(), node.AsteriskToken, node.Name(), node.TypeParameters, node.Parameters, node.Type, node.WholeType, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *FunctionExpression) Name() *DeclarationName {
@@ -5985,6 +6000,7 @@ func (node *FunctionExpression) computeSubtreeFacts() SubtreeFacts {
 		propagateEraseableSyntaxListSubtreeFacts(node.TypeParameters) |
 		propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
 		propagateEraseableSyntaxSubtreeFacts(node.Type) |
+		propagateEraseableSyntaxSubtreeFacts(node.WholeType) |
 		propagateSubtreeFacts(node.Body) |
 		core.IfElse(isAsync && isGenerator, SubtreeContainsForAwaitOrAsyncGenerator, SubtreeFactsNone) |
 		core.IfElse(isAsync && !isGenerator, SubtreeContainsAnyAwait, SubtreeFactsNone)

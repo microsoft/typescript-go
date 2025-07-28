@@ -1,7 +1,8 @@
+0.js(8,14): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 0.js(16,14): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 
 
-==== 0.js (1 errors) ====
+==== 0.js (2 errors) ====
     // @ts-check
     var lol = "hello Lol"
     const obj = {
@@ -10,6 +11,9 @@
       /** @type {string|undefined} */
       bar: "42",
       /** @type {function(number): number} */
+                 ~~~~~~~~
+!!! error TS2552: Cannot find name 'function'. Did you mean 'Function'?
+!!! related TS2728 lib.es5.d.ts:--:--: 'Function' is declared here.
       method1(n1) {
           return n1 + 42;
       },

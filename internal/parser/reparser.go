@@ -137,11 +137,11 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 	clonedModifiers := p.factory.DeepCloneReparseModifiers(modifiers)
 	switch fun.Kind {
 	case ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction:
-		signature = p.factory.NewFunctionDeclaration(clonedModifiers, nil, p.factory.DeepCloneReparse(fun.Name()), nil, nil, nil, nil)
+		signature = p.factory.NewFunctionDeclaration(clonedModifiers, nil, p.factory.DeepCloneReparse(fun.Name()), nil, nil, nil, nil, nil)
 	case ast.KindMethodDeclaration, ast.KindMethodSignature:
-		signature = p.factory.NewMethodDeclaration(clonedModifiers, nil, p.factory.DeepCloneReparse(fun.Name()), nil, nil, nil, nil, nil)
+		signature = p.factory.NewMethodDeclaration(clonedModifiers, nil, p.factory.DeepCloneReparse(fun.Name()), nil, nil, nil, nil, nil, nil)
 	case ast.KindConstructor:
-		signature = p.factory.NewConstructorDeclaration(clonedModifiers, nil, nil, nil, nil)
+		signature = p.factory.NewConstructorDeclaration(clonedModifiers, nil, nil, nil, nil, nil)
 	case ast.KindJSDocCallbackTag:
 		signature = p.factory.NewFunctionTypeNode(nil, nil, nil)
 	default:
@@ -367,6 +367,14 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 					bin.Type = p.factory.DeepCloneReparse(tag.AsJSDocTypeTag().TypeExpression.Type())
 					p.finishMutatedNode(bin.AsNode())
 				}
+			}
+		}
+		if fun, ok := getFunctionLikeHost(parent); ok {
+			noTypedParams := core.Every(fun.Parameters(), func(param *ast.Node) bool { return param.Type() == nil })
+			if fun.Type() == nil && noTypedParams && tag.AsJSDocTypeTag().TypeExpression != nil {
+				fun.FunctionLikeData().WholeType = p.factory.DeepCloneReparse(tag.AsJSDocTypeTag().TypeExpression.Type())
+				p.finishMutatedNode(fun)
+				break
 			}
 		}
 	case ast.KindJSDocSatisfiesTag:

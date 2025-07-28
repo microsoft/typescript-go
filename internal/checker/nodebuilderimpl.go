@@ -1760,13 +1760,13 @@ func (b *nodeBuilderImpl) signatureToSignatureDeclarationHelper(signature *Signa
 		}
 		node = b.f.NewMethodSignatureDeclaration(modifierList, name, questionToken, typeParamList, paramList, returnTypeNode)
 	case kind == ast.KindMethodDeclaration:
-		node = b.f.NewMethodDeclaration(modifierList, nil /*asteriskToken*/, name, nil /*questionToken*/, typeParamList, paramList, returnTypeNode, nil /*body*/)
+		node = b.f.NewMethodDeclaration(modifierList, nil /*asteriskToken*/, name, nil /*questionToken*/, typeParamList, paramList, returnTypeNode, nil /*wholeType*/, nil /*body*/)
 	case kind == ast.KindConstructor:
-		node = b.f.NewConstructorDeclaration(modifierList, nil /*typeParamList*/, paramList, nil /*returnTypeNode*/, nil /*body*/)
+		node = b.f.NewConstructorDeclaration(modifierList, nil /*typeParamList*/, paramList, nil /*returnTypeNode*/, nil /*wholeType*/, nil /*body*/)
 	case kind == ast.KindGetAccessor:
-		node = b.f.NewGetAccessorDeclaration(modifierList, name, nil /*typeParamList*/, paramList, returnTypeNode, nil /*body*/)
+		node = b.f.NewGetAccessorDeclaration(modifierList, name, nil /*typeParamList*/, paramList, returnTypeNode, nil /*wholeType*/, nil /*body*/)
 	case kind == ast.KindSetAccessor:
-		node = b.f.NewSetAccessorDeclaration(modifierList, name, nil /*typeParamList*/, paramList, nil /*returnTypeNode*/, nil /*body*/)
+		node = b.f.NewSetAccessorDeclaration(modifierList, name, nil /*typeParamList*/, paramList, nil /*returnTypeNode*/, nil /*wholeType*/, nil /*body*/)
 	case kind == ast.KindIndexSignature:
 		node = b.f.NewIndexSignatureDeclaration(modifierList, paramList, returnTypeNode)
 	// !!! JSDoc Support
@@ -1784,12 +1784,12 @@ func (b *nodeBuilderImpl) signatureToSignatureDeclarationHelper(signature *Signa
 		node = b.f.NewConstructorTypeNode(modifierList, typeParamList, paramList, returnTypeNode)
 	case kind == ast.KindFunctionDeclaration:
 		// TODO: assert name is Identifier
-		node = b.f.NewFunctionDeclaration(modifierList, nil /*asteriskToken*/, name, typeParamList, paramList, returnTypeNode, nil /*body*/)
+		node = b.f.NewFunctionDeclaration(modifierList, nil /*asteriskToken*/, name, typeParamList, paramList, returnTypeNode, nil /*wholeType*/, nil /*body*/)
 	case kind == ast.KindFunctionExpression:
 		// TODO: assert name is Identifier
-		node = b.f.NewFunctionExpression(modifierList, nil /*asteriskToken*/, name, typeParamList, paramList, returnTypeNode, b.f.NewBlock(b.f.NewNodeList([]*ast.Node{}), false))
+		node = b.f.NewFunctionExpression(modifierList, nil /*asteriskToken*/, name, typeParamList, paramList, returnTypeNode, nil /*wholeType*/, b.f.NewBlock(b.f.NewNodeList([]*ast.Node{}), false))
 	case kind == ast.KindArrowFunction:
-		node = b.f.NewArrowFunction(modifierList, typeParamList, paramList, returnTypeNode, nil /*equalsGreaterThanToken*/, b.f.NewBlock(b.f.NewNodeList([]*ast.Node{}), false))
+		node = b.f.NewArrowFunction(modifierList, typeParamList, paramList, returnTypeNode, nil /*wholeType*/, nil /*equalsGreaterThanToken*/, b.f.NewBlock(b.f.NewNodeList([]*ast.Node{}), false))
 	default:
 		panic("Unhandled kind in signatureToSignatureDeclarationHelper")
 	}

@@ -753,6 +753,7 @@ func (tx *DeclarationTransformer) transformSetAccessorDeclaration(input *ast.Set
 		tx.updateAccessorParamList(input.AsNode(), tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(input.AsNode()), ast.ModifierFlagsPrivate) != 0),
 		nil,
 		nil,
+		nil,
 	)
 }
 
@@ -767,6 +768,7 @@ func (tx *DeclarationTransformer) transformGetAccesorDeclaration(input *ast.GetA
 		nil, // accessors shouldn't have type params
 		tx.updateAccessorParamList(input.AsNode(), tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(input.AsNode()), ast.ModifierFlagsPrivate) != 0),
 		tx.ensureType(input.AsNode(), false),
+		nil,
 		nil,
 	)
 }
@@ -818,6 +820,7 @@ func (tx *DeclarationTransformer) transformConstructorDeclaration(input *ast.Con
 		nil, // no type params
 		tx.updateParamList(input.AsNode(), input.Parameters),
 		nil, // no return type
+		nil,
 		nil,
 	)
 }
@@ -878,6 +881,7 @@ func (tx *DeclarationTransformer) transformMethodDeclaration(input *ast.MethodDe
 			tx.ensureTypeParams(input.AsNode(), input.TypeParameters),
 			tx.updateParamList(input.AsNode(), input.Parameters),
 			tx.ensureType(input.AsNode(), false),
+			nil,
 			nil,
 		)
 	}
@@ -1141,6 +1145,7 @@ func (tx *DeclarationTransformer) transformFunctionDeclaration(input *ast.Functi
 		tx.ensureTypeParams(input.AsNode(), input.TypeParameters),
 		tx.updateParamList(input.AsNode(), input.Parameters),
 		tx.ensureType(input.AsNode(), false),
+		nil, /*wholeType*/
 		nil,
 	)
 	if updated == nil || !tx.resolver.IsExpandoFunctionDeclaration(input.AsNode()) || !shouldEmitFunctionProperties(input) {
