@@ -458,16 +458,6 @@ func (f *FourslashTest) openFile(t *testing.T, filename string) {
 	})
 }
 
-// TODO(jakebailey): remove me
-func (f *FourslashTest) currentTextDocumentPositionParams() lsproto.TextDocumentPositionParams {
-	return lsproto.TextDocumentPositionParams{
-		TextDocument: lsproto.TextDocumentIdentifier{
-			Uri: ls.FileNameToDocumentURI(f.activeFilename),
-		},
-		Position: f.currentCaretPosition,
-	}
-}
-
 func getLanguageKind(filename string) lsproto.LanguageKind {
 	if tspath.FileExtensionIsOneOf(
 		filename,
