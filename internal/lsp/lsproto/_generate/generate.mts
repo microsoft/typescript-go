@@ -30,72 +30,46 @@ const model: MetaModel = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
 
 // Preprocess the model to inline extends/mixins contents
 function preprocessModel() {
-    // Create a map of structure names to structures for quick lookup
     const structureMap = new Map<string, Structure>();
     for (const structure of model.structures) {
         structureMap.set(structure.name, structure);
     }
 
-    // Function to recursively gather all properties from extends/mixins
-    function gatherInheritedProperties(structure: Structure, visited = new Set<string>()): Property[] {
+    function collectInheritedProperties(structure: Structure, visited = new Set<string>()): Property[] {
         if (visited.has(structure.name)) {
-            // Circular dependency, skip to avoid infinite recursion
-            return [];
+            return []; // Avoid circular dependencies
         }
         visited.add(structure.name);
 
-        const inheritedProperties: Property[] = [];
+        const properties: Property[] = [];
+        const inheritanceTypes = [...(structure.extends || []), ...(structure.mixins || [])];
 
-        // Gather properties from extends
-        for (const extendType of structure.extends || []) {
-            if (extendType.kind === "reference") {
-                const extendedStructure = structureMap.get(extendType.name);
-                if (extendedStructure) {
-                    // Recursively gather from the extended structure
-                    inheritedProperties.push(...gatherInheritedProperties(extendedStructure, new Set(visited)));
-                    // Add its own properties
-                    inheritedProperties.push(...extendedStructure.properties);
+        for (const type of inheritanceTypes) {
+            if (type.kind === "reference") {
+                const inheritedStructure = structureMap.get(type.name);
+                if (inheritedStructure) {
+                    properties.push(
+                        ...collectInheritedProperties(inheritedStructure, new Set(visited)),
+                        ...inheritedStructure.properties
+                    );
                 }
             }
         }
 
-        // Gather properties from mixins
-        for (const mixinType of structure.mixins || []) {
-            if (mixinType.kind === "reference") {
-                const mixinStructure = structureMap.get(mixinType.name);
-                if (mixinStructure) {
-                    // Recursively gather from the mixin structure
-                    inheritedProperties.push(...gatherInheritedProperties(mixinStructure, new Set(visited)));
-                    // Add its own properties
-                    inheritedProperties.push(...mixinStructure.properties);
-                }
-            }
-        }
-
-        return inheritedProperties;
+        return properties;
     }
 
-    // Process each structure to inline extends/mixins
+    // Inline inheritance for each structure
     for (const structure of model.structures) {
-        const inheritedProperties = gatherInheritedProperties(structure);
-
-        // Create a map to track properties by name to handle conflicts
+        const inheritedProperties = collectInheritedProperties(structure);
+        
+        // Merge properties with structure's own properties taking precedence
         const propertyMap = new Map<string, Property>();
-
-        // First add inherited properties
-        for (const prop of inheritedProperties) {
-            propertyMap.set(prop.name, prop);
-        }
-
-        // Then add the structure's own properties (these will override inherited ones)
-        for (const prop of structure.properties) {
-            propertyMap.set(prop.name, prop);
-        }
-
-        // Convert back to array, maintaining the original order where possible
+        
+        inheritedProperties.forEach(prop => propertyMap.set(prop.name, prop));
+        structure.properties.forEach(prop => propertyMap.set(prop.name, prop));
+        
         structure.properties = Array.from(propertyMap.values());
-
-        // Clear extends and mixins since we've inlined their contents
         structure.extends = undefined;
         structure.mixins = undefined;
     }
