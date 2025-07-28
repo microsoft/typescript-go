@@ -55,13 +55,13 @@ function funcWithMoreParameters(more) {} // error
 /** @type {() => void} */
 const variableWithMoreParameters = function (more) {}; // error
 >variableWithMoreParameters : () => void
->function (more) {} : () => void
+>function (more) {} : (more: any) => void
 >more : any
 
 /** @type {() => void} */
 const arrowWithMoreParameters = (more) => {}; // error
 >arrowWithMoreParameters : () => void
->(more) => {} : () => void
+>(more) => {} : (more: any) => void
 >more : any
 
 ({

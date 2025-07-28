@@ -41,7 +41,7 @@ var testPromise3 = /** @type {FunctionReturningPromise} */ function() {
 /** @type {FunctionReturningPromise} */
 var testPromise4 = function() {
 >testPromise4 : FunctionReturningPromise
->function() {    console.log("test")} : () => Promise<number>
+>function() {    console.log("test")} : () => void
 
     console.log("test")
 >console.log("test") : void
@@ -85,7 +85,7 @@ var testNever3 = /** @type {FunctionReturningNever} */ function() {
 /** @type {FunctionReturningNever} */
 var testNever4 = function() {
 >testNever4 : FunctionReturningNever
->function() {    console.log("test")} : () => never
+>function() {    console.log("test")} : () => void
 
     console.log("test")
 >console.log("test") : void

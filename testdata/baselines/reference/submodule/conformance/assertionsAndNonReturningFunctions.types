@@ -6,7 +6,7 @@
 /** @type {AssertFunc} */
 const assert = check => {
 >assert : AssertFunc
->check => {    if (!check) throw new Error();} : (check: boolean) => asserts check
+>check => {    if (!check) throw new Error();} : (check: boolean) => void
 >check : boolean
 
     if (!check) throw new Error();

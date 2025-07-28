@@ -16,7 +16,8 @@ const cb = function (a, b) {
 >b : Symbol(b, Decl(a.js, 9, 23))
 
     this
->this : Symbol(__type, Decl(a.js, 2, 10))
+>this : Symbol(@this {{ a: string, b: number }}
+ * , Decl(a.js, 2, 3))
 
     return true
 }

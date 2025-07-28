@@ -297,7 +297,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 					if declaration.Type() == nil && tag.AsJSDocTypeTag().TypeExpression != nil {
 						declaration.AsMutable().SetType(p.factory.DeepCloneReparse(tag.AsJSDocTypeTag().TypeExpression.Type()))
 						p.finishMutatedNode(declaration)
-						break
+						return
 					}
 				}
 			}
@@ -307,11 +307,13 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 			if parent.Type() == nil && tag.AsJSDocTypeTag().TypeExpression != nil {
 				parent.AsMutable().SetType(p.factory.DeepCloneReparse(tag.AsJSDocTypeTag().TypeExpression.Type()))
 				p.finishMutatedNode(parent)
+				return
 			}
 		case ast.KindParameter:
 			if parent.Type() == nil && tag.AsJSDocTypeTag().TypeExpression != nil {
 				parent.AsMutable().SetType(p.reparseJSDocTypeLiteral(tag.AsJSDocTypeTag().TypeExpression.Type()))
 				p.finishMutatedNode(parent)
+				return
 			}
 		case ast.KindExpressionStatement:
 			if parent.AsExpressionStatement().Expression.Kind == ast.KindBinaryExpression {
@@ -319,6 +321,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 				if kind := ast.GetAssignmentDeclarationKind(bin); kind != ast.JSDeclarationKindNone && tag.AsJSDocTypeTag().TypeExpression != nil {
 					bin.AsMutable().SetType(p.factory.DeepCloneReparse(tag.AsJSDocTypeTag().TypeExpression.Type()))
 					p.finishMutatedNode(bin.AsNode())
+					return
 				}
 			}
 		case ast.KindReturnStatement, ast.KindParenthesizedExpression:
@@ -328,6 +331,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 					p.factory.DeepCloneReparse(parent.Expression()),
 					true /*isAssertion*/))
 				p.finishMutatedNode(parent)
+				return
 			}
 		}
 		if fun, ok := getFunctionLikeHost(parent); ok {
@@ -335,7 +339,6 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 			if fun.Type() == nil && noTypedParams && tag.AsJSDocTypeTag().TypeExpression != nil {
 				fun.FunctionLikeData().WholeType = p.factory.DeepCloneReparse(tag.AsJSDocTypeTag().TypeExpression.Type())
 				p.finishMutatedNode(fun)
-				break
 			}
 		}
 	case ast.KindJSDocSatisfiesTag:

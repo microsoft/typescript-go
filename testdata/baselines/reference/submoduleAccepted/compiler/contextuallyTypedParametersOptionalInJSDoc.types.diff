@@ -1,37 +1,6 @@
 --- old.contextuallyTypedParametersOptionalInJSDoc.types
 +++ new.contextuallyTypedParametersOptionalInJSDoc.types
-@@= skipped -20, +20 lines =@@
-    * @param [b]
-    */
-   function self(a, b) {
-->function self(a, b) {    acceptNum(b); // error    self("");    self("", undefined);  } : (a: string, b?: number | undefined) => void
-->self : (a: string, b?: number | undefined) => void
-+>function self(a, b) {    acceptNum(b); // error    self("");    self("", undefined);  } : (a: string, b: number) => void
-+>self : (a: string, b: number) => void
- >a : string
-->b : number | undefined
-+>b : number
-
-     acceptNum(b); // error
- >acceptNum(b) : void
- >acceptNum : (num: number) => void
-->b : number | undefined
-+>b : number
-
-     self("");
- >self("") : void
-->self : (a: string, b?: number | undefined) => void
-+>self : (a: string, b: number) => void
- >"" : ""
-
-     self("", undefined);
- >self("", undefined) : void
-->self : (a: string, b?: number | undefined) => void
-+>self : (a: string, b: number) => void
- >"" : ""
- >undefined : undefined
-
-@@= skipped -31, +31 lines =@@
+@@= skipped -51, +51 lines =@@
     * @param {number} [b]
     */
    function self(a, b) {

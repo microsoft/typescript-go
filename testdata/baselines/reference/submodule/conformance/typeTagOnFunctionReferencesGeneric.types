@@ -21,7 +21,7 @@ inJs(1); // lints error. Why?
 /**@type {IFn}*/
 const inJsArrow = (j) => {
 >inJsArrow : IFn
->(j) => {    return j;} : <T>(m: T) => T
+>(j) => {    return j;} : <T>(j: T) => T
 >j : T
 
     return j;
