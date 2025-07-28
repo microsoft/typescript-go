@@ -11,11 +11,11 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
-func (l *LanguageService) ProvideDefinition(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position) (*lsproto.Definition, error) {
+func (l *LanguageService) ProvideDefinition(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position) (lsproto.DefinitionResponse, error) {
 	program, file := l.getProgramAndFile(documentURI)
 	node := astnav.GetTouchingPropertyName(file, int(l.converters.LineAndCharacterToPosition(file, position)))
 	if node.Kind == ast.KindSourceFile {
-		return nil, nil
+		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{}, nil
 	}
 
 	c, done := program.GetTypeCheckerForFile(ctx, file)
@@ -81,14 +81,14 @@ func (l *LanguageService) ProvideDefinition(ctx context.Context, documentURI lsp
 		return l.createLocationsFromDeclarations(indexInfos), nil
 	}
 
-	return nil, nil
+	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{}, nil
 }
 
-func (l *LanguageService) ProvideTypeDefinition(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position) (*lsproto.Definition, error) {
+func (l *LanguageService) ProvideTypeDefinition(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position) (lsproto.DefinitionResponse, error) {
 	program, file := l.getProgramAndFile(documentURI)
 	node := astnav.GetTouchingPropertyName(file, int(l.converters.LineAndCharacterToPosition(file, position)))
 	if node.Kind == ast.KindSourceFile {
-		return nil, nil
+		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{}, nil
 	}
 
 	c, done := program.GetTypeCheckerForFile(ctx, file)
@@ -110,7 +110,7 @@ func (l *LanguageService) ProvideTypeDefinition(ctx context.Context, documentURI
 		}
 	}
 
-	return nil, nil
+	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{}, nil
 }
 
 func getDeclarationNameForKeyword(node *ast.Node) *ast.Node {
@@ -126,7 +126,7 @@ func getDeclarationNameForKeyword(node *ast.Node) *ast.Node {
 	return node
 }
 
-func (l *LanguageService) createLocationsFromDeclarations(declarations []*ast.Node) *lsproto.Definition {
+func (l *LanguageService) createLocationsFromDeclarations(declarations []*ast.Node) lsproto.DefinitionResponse {
 	someHaveBody := core.Some(declarations, func(node *ast.Node) bool { return node.Body() != nil })
 	locations := make([]lsproto.Location, 0, len(declarations))
 	for _, decl := range declarations {
@@ -139,11 +139,11 @@ func (l *LanguageService) createLocationsFromDeclarations(declarations []*ast.No
 			})
 		}
 	}
-	return &lsproto.Definition{Locations: &locations}
+	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{Locations: &locations}
 }
 
-func (l *LanguageService) createLocationFromFileAndRange(file *ast.SourceFile, textRange core.TextRange) *lsproto.Definition {
-	return &lsproto.Definition{
+func (l *LanguageService) createLocationFromFileAndRange(file *ast.SourceFile, textRange core.TextRange) lsproto.DefinitionResponse {
+	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{
 		Location: &lsproto.Location{
 			Uri:   FileNameToDocumentURI(file.FileName()),
 			Range: *l.createLspRangeFromBounds(textRange.Pos(), textRange.End(), file),
