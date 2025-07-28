@@ -3529,8 +3529,6 @@ type FunctionDeclaration struct {
 	DeclarationBase
 	ExportableBase
 	ModifiersBase
-	// TODO: Make changes for all these and maybe also all FunctionLikeBases
-	// TODO: Update all other uses of getSignatureOfTypeTag from Strada
 	FunctionLikeWithBodyBase
 	compositeNodeBase
 	name           *IdentifierNode // IdentifierNode
