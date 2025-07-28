@@ -9,7 +9,9 @@ import type {
     MetaModel,
     Notification,
     OrType,
+    Property,
     Request,
+    Structure,
     Type,
 } from "./metaModelSchema.mts";
 
@@ -25,6 +27,82 @@ if (!fs.existsSync(metaModelPath)) {
 }
 
 const model: MetaModel = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
+
+// Preprocess the model to inline extends/mixins contents
+function preprocessModel() {
+    // Create a map of structure names to structures for quick lookup
+    const structureMap = new Map<string, Structure>();
+    for (const structure of model.structures) {
+        structureMap.set(structure.name, structure);
+    }
+
+    // Function to recursively gather all properties from extends/mixins
+    function gatherInheritedProperties(structure: Structure, visited = new Set<string>()): Property[] {
+        if (visited.has(structure.name)) {
+            // Circular dependency, skip to avoid infinite recursion
+            return [];
+        }
+        visited.add(structure.name);
+
+        const inheritedProperties: Property[] = [];
+
+        // Gather properties from extends
+        for (const extendType of structure.extends || []) {
+            if (extendType.kind === "reference") {
+                const extendedStructure = structureMap.get(extendType.name);
+                if (extendedStructure) {
+                    // Recursively gather from the extended structure
+                    inheritedProperties.push(...gatherInheritedProperties(extendedStructure, new Set(visited)));
+                    // Add its own properties
+                    inheritedProperties.push(...extendedStructure.properties);
+                }
+            }
+        }
+
+        // Gather properties from mixins
+        for (const mixinType of structure.mixins || []) {
+            if (mixinType.kind === "reference") {
+                const mixinStructure = structureMap.get(mixinType.name);
+                if (mixinStructure) {
+                    // Recursively gather from the mixin structure
+                    inheritedProperties.push(...gatherInheritedProperties(mixinStructure, new Set(visited)));
+                    // Add its own properties
+                    inheritedProperties.push(...mixinStructure.properties);
+                }
+            }
+        }
+
+        return inheritedProperties;
+    }
+
+    // Process each structure to inline extends/mixins
+    for (const structure of model.structures) {
+        const inheritedProperties = gatherInheritedProperties(structure);
+
+        // Create a map to track properties by name to handle conflicts
+        const propertyMap = new Map<string, Property>();
+
+        // First add inherited properties
+        for (const prop of inheritedProperties) {
+            propertyMap.set(prop.name, prop);
+        }
+
+        // Then add the structure's own properties (these will override inherited ones)
+        for (const prop of structure.properties) {
+            propertyMap.set(prop.name, prop);
+        }
+
+        // Convert back to array, maintaining the original order where possible
+        structure.properties = Array.from(propertyMap.values());
+
+        // Clear extends and mixins since we've inlined their contents
+        structure.extends = undefined;
+        structure.mixins = undefined;
+    }
+}
+
+// Preprocess the model before proceeding
+preprocessModel();
 
 interface GoType {
     name: string;
@@ -443,30 +521,7 @@ function generateCode() {
 
             writeLine(`type ${name} struct {`);
 
-            // Embed extended types and mixins
-            for (const e of structure.extends || []) {
-                if (e.kind !== "reference") {
-                    throw new Error(`Unexpected extends kind: ${e.kind}`);
-                }
-                writeLine(`\t${e.name}`);
-            }
-
-            for (const m of structure.mixins || []) {
-                if (m.kind !== "reference") {
-                    throw new Error(`Unexpected mixin kind: ${m.kind}`);
-                }
-                writeLine(`\t${m.name}`);
-            }
-
-            // Insert a blank line after embeds if there were any
-            if (
-                (structure.extends && structure.extends.length > 0) ||
-                (structure.mixins && structure.mixins.length > 0)
-            ) {
-                writeLine("");
-            }
-
-            // Then properties
+            // Properties are now inlined, no need to embed extends/mixins
             for (const prop of structure.properties) {
                 if (includeDocumentation) {
                     write(formatDocumentation(prop.documentation));
