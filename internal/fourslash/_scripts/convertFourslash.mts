@@ -14,7 +14,6 @@ const manualTestsPath = path.join(import.meta.dirname, "manualTests.txt");
 const helperFilePath = path.join(import.meta.dirname, "../", "tests", "util_test.go");
 
 const outputDir = path.join(import.meta.dirname, "../", "tests", "gen");
-const manualOutputDir = path.join(import.meta.dirname, "../", "tests", "manual");
 
 const unparsedFiles: string[] = [];
 
@@ -44,7 +43,6 @@ export function main() {
 
     fs.rmSync(outputDir, { recursive: true, force: true });
     fs.mkdirSync(outputDir, { recursive: true });
-    fs.mkdirSync(manualOutputDir, { recursive: true });
 
     generateHelperFile();
     parseTypeScriptFiles(getFailingTests(), getManualTests(), stradaFourslashPath);
@@ -66,15 +64,10 @@ function parseTypeScriptFiles(failingTests: Set<string>, manualTests: Set<string
         if (stat.isDirectory()) {
             parseTypeScriptFiles(failingTests, manualTests, filePath);
         }
-        else if (file.endsWith(".ts")) {
+        else if (file.endsWith(".ts") && !manualTests.has(file.slice(0, -3))) {
             const content = fs.readFileSync(filePath, "utf-8");
             const test = parseFileContent(file, content);
             if (test) {
-                const testName = test.name[0].toUpperCase() + test.name.substring(1);
-                // Skip generation if test is in manual tests list
-                if (manualTests.has(testName)) {
-                    return;
-                }
                 const testContent = generateGoTest(failingTests, test);
                 const testPath = path.join(outputDir, `${test.name}_test.go`);
                 fs.writeFileSync(testPath, testContent, "utf-8");

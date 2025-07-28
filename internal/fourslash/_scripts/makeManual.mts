@@ -10,15 +10,15 @@ function main() {
     const args = process.argv.slice(2);
 
     if (args.length === 0) {
+        console.error("Please provide the name of the generated test file.");
         process.exit(1);
     }
 
     const testName = args[0];
     const testFileName = testName;
-    const genTestFile = path.join(genDir, `${testFileName}`);
+    const genTestFile = path.join(genDir, testFileName + "_test.go");
     if (!fs.existsSync(genTestFile)) {
-        console.error(`Test file not found: ${genTestFile}`);
-        console.error("Make sure the test exists in the gen directory first.");
+        console.error(`Test file not found: '${genTestFile}'. Make sure the test exists in the gen directory first.`);
         process.exit(1);
     }
 
@@ -27,7 +27,7 @@ function main() {
     }
 
     const manualTestFile = path.join(manualDir, path.basename(genTestFile));
-    fs.renameSync(genTestFile, manualTestFile);
+    renameAndRemoveSkip(genTestFile, manualTestFile);
 
     let manualTests: string[] = [];
     if (fs.existsSync(manualTestsPath)) {
@@ -40,6 +40,13 @@ function main() {
         manualTests.sort();
         fs.writeFileSync(manualTestsPath, [...manualTests, ""].join("\n"), "utf-8");
     }
+}
+
+function renameAndRemoveSkip(genFilePath: string, manualFilePath: string) {
+    const content = fs.readFileSync(genFilePath, "utf-8");
+    const updatedContent = content.replace(/^\s*t\.Skip\(\)\s*$/m, "");
+    fs.writeFileSync(manualFilePath, updatedContent, "utf-8");
+    fs.rmSync(genFilePath);
 }
 
 main();
