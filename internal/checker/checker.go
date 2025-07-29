@@ -11617,8 +11617,8 @@ func (c *Checker) TryGetThisTypeAtEx(node *ast.Node, includeGlobalThis bool, con
 	}
 	if ast.IsFunctionLike(container) && (!c.isInParameterInitializerBeforeContainingFunction(node) || ast.GetThisParameter(container) != nil) {
 		thisType := c.getThisTypeOfDeclaration(container)
-		if thisType == nil && ast.IsInJSFile(node) {
-			if sig := c.getSignatureOfTypeTag(node); sig != nil {
+		if thisType == nil && ast.IsInJSFile(container) {
+			if sig := c.getSignatureOfTypeTag(container); sig != nil {
 				thisType = c.getThisTypeOfSignature(sig)
 			}
 		}
