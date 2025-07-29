@@ -1013,7 +1013,7 @@ f</*1*/>(1, 2);`,
 			expected: map[string]verifySignatureHelpOptions{
 				"1": {text: "", parameterCount: 0, parameterSpan: "", activeParameter: nil},
 			},
-			noContext: false,
+			noContext: true,
 		},
 	}
 
