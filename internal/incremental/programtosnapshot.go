@@ -83,7 +83,6 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 	copyLibFileDiagnostics := copyDeclarationFileDiagnostics &&
 		t.snapshot.options.SkipDefaultLibCheck.IsTrue() == t.oldProgram.snapshot.options.SkipDefaultLibCheck.IsTrue()
 
-	var referenceMap collections.SyncMap[tspath.Path, *collections.Set[tspath.Path]]
 	files := t.program.GetSourceFiles()
 	wg := core.NewWorkGroup(t.program.SingleThreaded())
 	for _, file := range files {
@@ -94,7 +93,7 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 			var signature string
 			newReferences := getReferencedFiles(t.program, file)
 			if newReferences != nil {
-				referenceMap.Store(file.Path(), newReferences)
+				t.snapshot.referencedMap.Store(file.Path(), newReferences)
 			}
 			if t.oldProgram != nil {
 				if oldFileInfo, ok := t.oldProgram.snapshot.fileInfos.Load(file.Path()); ok {
@@ -150,10 +149,6 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 		})
 	}
 	wg.RunAndWait()
-	referenceMap.Range(func(key tspath.Path, value *collections.Set[tspath.Path]) bool {
-		t.snapshot.referencedMap.Set(key, value.Clone())
-		return true
-	})
 }
 
 func (t *toProgramSnapshot) handleFileDelete() {

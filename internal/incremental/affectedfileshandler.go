@@ -2,6 +2,7 @@ package incremental
 
 import (
 	"context"
+	"iter"
 	"maps"
 	"slices"
 	"sync"
@@ -139,10 +140,10 @@ func (h *affectedFilesHandler) getFilesAffectedBy(path tspath.Path) []*ast.Sourc
 }
 
 // Gets the files referenced by the the file path
-func (h *affectedFilesHandler) getReferencedByPaths(file tspath.Path) map[tspath.Path]struct{} {
+func (h *affectedFilesHandler) getReferencedByPaths(file tspath.Path) iter.Seq[tspath.Path] {
 	keys, ok := h.program.snapshot.referencedMap.GetKeys(file)
 	if !ok {
-		return nil
+		return func(yield func(tspath.Path) bool) {}
 	}
 	return keys.Keys()
 }
@@ -154,8 +155,7 @@ func (h *affectedFilesHandler) forEachFileReferencedBy(file *ast.SourceFile, fn 
 	seenFileNamesMap := map[tspath.Path]*ast.SourceFile{}
 	// Start with the paths this file was referenced by
 	seenFileNamesMap[file.Path()] = file
-	references := h.getReferencedByPaths(file.Path())
-	queue := slices.Collect(maps.Keys(references))
+	queue := slices.Collect(h.getReferencedByPaths(file.Path()))
 	for len(queue) > 0 {
 		currentPath := queue[len(queue)-1]
 		queue = queue[:len(queue)-1]

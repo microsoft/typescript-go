@@ -224,7 +224,7 @@ func (t *toBuildInfo) setCompilerOptions() {
 }
 
 func (t *toBuildInfo) setReferencedMap() {
-	keys := slices.Collect(maps.Keys(t.snapshot.referencedMap.Keys()))
+	keys := slices.Collect(t.snapshot.referencedMap.Keys().Keys())
 	slices.Sort(keys)
 	t.buildInfo.ReferencedMap = core.Map(keys, func(filePath tspath.Path) *BuildInfoReferenceMapEntry {
 		references, _ := t.snapshot.referencedMap.GetValues(filePath)

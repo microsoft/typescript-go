@@ -188,7 +188,7 @@ type snapshot struct {
 	fileInfos collections.SyncMap[tspath.Path, *fileInfo]
 	options   *core.CompilerOptions
 	//  Contains the map of ReferencedSet=Referenced files of the file if module emit is enabled
-	referencedMap collections.ManyToManySet[tspath.Path, tspath.Path]
+	referencedMap collections.SyncManyToManySet[tspath.Path, tspath.Path]
 	// Cache of semantic diagnostics for files with their Path being the key
 	semanticDiagnosticsPerFile collections.SyncMap[tspath.Path, *diagnosticsOrBuildInfoDiagnosticsWithFileName]
 	// Cache of dts emit diagnostics for files with their Path being the key
