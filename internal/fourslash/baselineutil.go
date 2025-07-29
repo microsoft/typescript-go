@@ -487,9 +487,8 @@ func annotateContentWithTooltips[T comparable](
 		if textRange.Start.Line != textRange.End.Line {
 			t.Fatalf("Expected text range to be on a single line, got %v", textRange)
 		}
-		underline :=
-			strings.Repeat(" ", int(textRange.Start.Character)) +
-				strings.Repeat("^", int(textRange.End.Character-textRange.Start.Character))
+		underline := strings.Repeat(" ", int(textRange.Start.Character)) +
+			strings.Repeat("^", int(textRange.End.Character-textRange.Start.Character))
 
 		fileName := marker.FileName()
 		lines, ok := filesToLines.Get(fileName)

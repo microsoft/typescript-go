@@ -711,9 +711,8 @@ function parseBaselineQuickInfo(args: ts.NodeArray<ts.Expression>): Cmd {
     }
     return {
         kind: "verifyBaselineQuickInfo",
-    }
+    };
 }
-
 
 function parseKind(expr: ts.Expression): string | undefined {
     if (!ts.isStringLiteral(expr)) {
@@ -884,8 +883,7 @@ type Cmd =
     | VerifyBaselineGoToDefinitionCmd
     | VerifyBaselineQuickInfoCmd
     | GoToCmd
-    | EditCmd
-    ;
+    | EditCmd;
 
 function generateVerifyCompletions({ marker, args, isNewIdentifierLocation }: VerifyCompletionsCmd): string {
     let expectedList: string;
