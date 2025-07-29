@@ -980,7 +980,7 @@ func (f *FourslashTest) VerifyBaselineHover(t *testing.T) {
 		return result
 	}
 
-	writeAnnotatedContentWithTooltipsToBaseline(t, f, itemsMarkers, "quickinfo", getRange, getTooltipLines)
+	f.baseline.addResult("QuickInfo", annotateContentWithTooltips(t, f, itemsMarkers, "quickinfo", getRange, getTooltipLines))
 	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
 }
 

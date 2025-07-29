@@ -450,14 +450,14 @@ type markerAndItem[T any] struct {
 	item   T
 }
 
-func writeAnnotatedContentWithTooltipsToBaseline[T comparable](
+func annotateContentWithTooltips[T comparable](
 	t *testing.T,
 	f *FourslashTest,
 	markersAndItems []markerAndItem[T],
 	opName string,
 	getRange func(item T) *lsproto.Range,
 	getTooltipLines func(item T, prev T) []string,
-) {
+) string {
 	barWithGutter := "| " + strings.Repeat("-", 70)
 
 	// sort by file, then *backwards* by position in the file
@@ -516,7 +516,7 @@ func writeAnnotatedContentWithTooltipsToBaseline[T comparable](
 
 		lines = slices.Insert(
 			lines,
-			int(textRange.Start.Line),
+			int(textRange.Start.Line+1),
 			linesToInsert...,
 		)
 		filesToLines.Set(fileName, lines)
@@ -524,7 +524,7 @@ func writeAnnotatedContentWithTooltipsToBaseline[T comparable](
 		previous = item
 	}
 
-	builder := f.baseline.content
+	builder := strings.Builder{}
 	seenFirst := false
 	for fileName, lines := range filesToLines.Entries() {
 		builder.WriteString(fmt.Sprintf("=== %s ===\n", fileName))
@@ -540,6 +540,8 @@ func writeAnnotatedContentWithTooltipsToBaseline[T comparable](
 			seenFirst = true
 		}
 	}
+
+	return builder.String()
 }
 
 func (t *textWithContext) sliceOfContent(start *int, end *int) string {
