@@ -1526,6 +1526,12 @@ func (b *nodeBuilderImpl) typeParametersToTypeParameterDeclarations(symbol *ast.
 			results = append(results, b.typeParameterToDeclaration(param))
 		}
 		return results
+	} else if targetSymbol.Flags&ast.SymbolFlagsFunction != 0 {
+		var results []*ast.Node
+		for _, param := range b.ch.getTypeParametersFromDeclaration(symbol.ValueDeclaration) {
+			results = append(results, b.typeParameterToDeclaration(param))
+		}
+		return results
 	}
 	return nil
 }

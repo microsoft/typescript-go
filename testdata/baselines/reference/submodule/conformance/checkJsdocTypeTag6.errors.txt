@@ -6,9 +6,10 @@ test.js(27,7): error TS2322: Type '(more: any) => void' is not assignable to typ
   Target signature provides too few arguments. Expected 1 or more, but got 0.
 test.js(30,7): error TS2322: Type '(more: any) => void' is not assignable to type '() => void'.
   Target signature provides too few arguments. Expected 1 or more, but got 0.
+test.js(33,14): error TS8030: A JSDoc '@type' tag on a function must have a signature with the correct number of arguments.
 
 
-==== test.js (6 errors) ====
+==== test.js (7 errors) ====
     /** @type {number} */
                ~~~~~~
 !!! error TS8030: A JSDoc '@type' tag on a function must have a signature with the correct number of arguments.
@@ -56,6 +57,8 @@ test.js(30,7): error TS2322: Type '(more: any) => void' is not assignable to typ
     
     ({
       /** @type {() => void} */
+                 ~~~~~~~~~~
+!!! error TS8030: A JSDoc '@type' tag on a function must have a signature with the correct number of arguments.
       methodWithMoreParameters(more) {}, // error
     });
     

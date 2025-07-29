@@ -25,25 +25,4 @@
 + * @typedef {<T>(m : T) => T} IFn
 + */
 +/**@type {IFn}*/
-+export declare function inJs(l: T): T;
-+
-+
-+//// [DtsFileErrors]
-+
-+
-+out/typeTagOnFunctionReferencesGeneric.d.ts(6,33): error TS2304: Cannot find name 'T'.
-+out/typeTagOnFunctionReferencesGeneric.d.ts(6,37): error TS2304: Cannot find name 'T'.
-+
-+
-+==== out/typeTagOnFunctionReferencesGeneric.d.ts (2 errors) ====
-+    export type IFn = <T>(m: T) => T;
-+    /**
-+     * @typedef {<T>(m : T) => T} IFn
-+     */
-+    /**@type {IFn}*/
-+    export declare function inJs(l: T): T;
-+                                    ~
-+!!! error TS2304: Cannot find name 'T'.
-+                                        ~
-+!!! error TS2304: Cannot find name 'T'.
-+    
++export declare function inJs<T>(l: T): T;

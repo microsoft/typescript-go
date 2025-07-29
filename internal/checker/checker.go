@@ -3540,7 +3540,15 @@ func (c *Checker) checkAllCodePathsInNonVoidFunctionReturnOrThrow(fn *ast.Node, 
 		return
 	}
 	hasExplicitReturn := fn.Flags&ast.NodeFlagsHasExplicitReturn != 0
-	errorNode := core.OrElse(fn.Type(), fn)
+	errorNode := fn.Type()
+	if errorNode == nil {
+		if data := fn.FunctionLikeData(); data != nil {
+			errorNode = data.WholeType
+		}
+	}
+	if errorNode == nil {
+		errorNode = fn
+	}
 	switch {
 	case t != nil && t.flags&TypeFlagsNever != 0:
 		c.error(errorNode, diagnostics.A_function_returning_never_cannot_have_a_reachable_end_point)
@@ -9761,6 +9769,14 @@ func (c *Checker) checkFunctionExpressionOrObjectLiteralMethod(node *ast.Node, c
 	hasGrammarError := c.checkGrammarFunctionLikeDeclaration(node)
 	if !hasGrammarError && ast.IsFunctionExpression(node) {
 		c.checkGrammarForGenerator(node)
+	}
+	if node.FunctionLikeData().WholeType != nil {
+		if c.getContextualCallSignature(c.getTypeFromTypeNode(node.FunctionLikeData().WholeType), node) == nil {
+			c.error(node.FunctionLikeData().WholeType, diagnostics.A_JSDoc_type_tag_on_a_function_must_have_a_signature_with_the_correct_number_of_arguments)
+		}
+		if node.Type() != nil || core.Some(node.Parameters(), func(p *ast.Node) bool { return p.Type() != nil }) {
+			c.error(node.FunctionLikeData().WholeType, diagnostics.A_JSDoc_type_tag_may_not_occur_with_a_param_or_returns_tag)
+		}
 	}
 	c.contextuallyCheckFunctionExpressionOrObjectLiteralMethod(node, checkMode)
 	return c.getTypeOfSymbol(c.getSymbolOfDeclaration(node))
@@ -19007,7 +19023,7 @@ func (c *Checker) getTypeParametersFromDeclaration(declaration *ast.Node) []*Typ
 		result = core.AppendIfUnique(result, c.getDeclaredTypeOfTypeParameter(node.Symbol()))
 	}
 	if len(result) == 0 && ast.IsFunctionDeclaration(declaration) {
-		if sig := c.getSignatureOfTypeTag(declaration); sig != nil && sig.TypeParameters() != nil {
+		if sig := c.getSignatureOfTypeTag(declaration); sig != nil {
 			return sig.TypeParameters()
 		}
 	}
