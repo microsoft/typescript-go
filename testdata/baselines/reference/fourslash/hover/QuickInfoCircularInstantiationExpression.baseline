@@ -1,0 +1,11 @@
+// === QuickInfo ===
+=== /quickInfoCircularInstantiationExpression.ts ===
+// declare function foo<T>(t: T): typeof foo<T>;
+// foo("");
+// ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function foo<string>(t: string): (t: string) => ...
+// | ```
+// | 
+// | ----------------------------------------------------------------------

@@ -1,0 +1,21 @@
+// === QuickInfo ===
+=== /quickInfoLink11.ts ===
+// /**
+//  * {@link https://vscode.dev}
+//  * [link text]{https://vscode.dev}
+//  * {@link https://vscode.dev|link text}
+//  * {@link https://vscode.dev link text}
+//  */
+// function f() {}
+// 
+// f();
+// ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function f(): void
+// | ```
+// | https://vscode.dev
+// | [link text]{https://vscode.dev}
+// | https://vscode.dev|link text
+// | https://vscode.dev link text
+// | ----------------------------------------------------------------------

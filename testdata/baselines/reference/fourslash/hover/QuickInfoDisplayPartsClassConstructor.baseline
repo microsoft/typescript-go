@@ -1,0 +1,221 @@
+// === QuickInfo ===
+=== /quickInfoDisplayPartsClassConstructor.ts ===
+// class c {
+//     constructor() {
+//     ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | constructor c(): c
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     }
+// }
+// var cInstance = new c();
+//     ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | var cInstance: c
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                     ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | constructor c(): c
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// var cVal = c;
+//     ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | var cVal: typeof c
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//            ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | class c
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// class cWithOverloads {
+//     constructor(x: string);
+//     ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | constructor cWithOverloads(x: string): cWithOverloads
+// | constructor cWithOverloads(x: number): cWithOverloads
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     constructor(x: number);
+//     ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | constructor cWithOverloads(x: string): cWithOverloads
+// | constructor cWithOverloads(x: number): cWithOverloads
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     constructor(x: any) {
+//     ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | constructor cWithOverloads(x: string): cWithOverloads
+// | constructor cWithOverloads(x: number): cWithOverloads
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     }
+// }
+// var cWithOverloadsInstance = new cWithOverloads("hello");
+//     ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | var cWithOverloadsInstance: cWithOverloads
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                                  ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | constructor cWithOverloads(x: string): cWithOverloads
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// var cWithOverloadsInstance2 = new cWithOverloads(10);
+//     ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | var cWithOverloadsInstance2: cWithOverloads
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                                   ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | constructor cWithOverloads(x: number): cWithOverloads
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// var cWithOverloadsVal = cWithOverloads;
+//     ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | var cWithOverloadsVal: typeof cWithOverloads
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                         ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | class cWithOverloads
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// class cWithMultipleOverloads {
+//     constructor(x: string);
+//     ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | constructor cWithMultipleOverloads(x: string): cWithMultipleOverloads
+// | constructor cWithMultipleOverloads(x: number): cWithMultipleOverloads
+// | constructor cWithMultipleOverloads(x: boolean): cWithMultipleOverloads
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     constructor(x: number);
+//     ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | constructor cWithMultipleOverloads(x: string): cWithMultipleOverloads
+// | constructor cWithMultipleOverloads(x: number): cWithMultipleOverloads
+// | constructor cWithMultipleOverloads(x: boolean): cWithMultipleOverloads
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     constructor(x: boolean);
+//     ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | constructor cWithMultipleOverloads(x: string): cWithMultipleOverloads
+// | constructor cWithMultipleOverloads(x: number): cWithMultipleOverloads
+// | constructor cWithMultipleOverloads(x: boolean): cWithMultipleOverloads
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     constructor(x: any) {
+//     ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | constructor cWithMultipleOverloads(x: string): cWithMultipleOverloads
+// | constructor cWithMultipleOverloads(x: number): cWithMultipleOverloads
+// | constructor cWithMultipleOverloads(x: boolean): cWithMultipleOverloads
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     }
+// }
+// var cWithMultipleOverloadsInstance = new cWithMultipleOverloads("hello");
+//     ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | var cWithMultipleOverloadsInstance: cWithMultipleOverloads
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                                          ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | constructor cWithMultipleOverloads(x: string): cWithMultipleOverloads
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// var cWithMultipleOverloadsInstance2 = new cWithMultipleOverloads(10);
+//     ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | var cWithMultipleOverloadsInstance2: cWithMultipleOverloads
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                                           ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | constructor cWithMultipleOverloads(x: number): cWithMultipleOverloads
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// var cWithMultipleOverloadsInstance3 = new cWithMultipleOverloads(true);
+//     ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | var cWithMultipleOverloadsInstance3: cWithMultipleOverloads
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                                           ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | constructor cWithMultipleOverloads(x: boolean): cWithMultipleOverloads
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// var cWithMultipleOverloadsVal = cWithMultipleOverloads;
+//     ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | var cWithMultipleOverloadsVal: typeof cWithMultipleOverloads
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                                 ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | class cWithMultipleOverloads
+// | ```
+// | 
+// | ----------------------------------------------------------------------

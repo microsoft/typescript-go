@@ -1,0 +1,121 @@
+// === QuickInfo ===
+=== /quickInfoCommentsFunctionExpression.ts ===
+// /** lambdaFoo var comment*/
+// var lambdaFoo = /** this is lambda comment*/ (/**param a*/a: number, /**param b*/b: number) => a + b;
+//         ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | var lambdaFoo: (a: number, b: number) => number
+// | ```
+// | lambdaFoo var comment
+// | ----------------------------------------------------------------------
+// var lambddaNoVarComment = /** this is lambda multiplication*/ (/**param a*/a: number, /**param b*/b: number) => a * b;
+//             ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | var lambddaNoVarComment: (a: number, b: number) => number
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// lambdaFoo(10, 20);
+// function anotherFunc(a: number) {
+//          ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function anotherFunc(a: number): string
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     /** documentation
+//         @param b {string} inner parameter */
+//     var lambdaVar = /** inner docs */(b: string) => {
+//         ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | var lambdaVar: (b: string) => string
+// | ```
+// | documentation
+// | 
+// | *@param* `b` — inner parameter 
+// | ----------------------------------------------------------------------
+//                                       ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | (parameter) b: string
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//         var localVar = "Hello ";
+//             ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | var localVar: string
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//         return localVar + b;
+//                ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | var localVar: string
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//                           ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | (parameter) b: string
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     }
+//     return lambdaVar("World") + a;
+//                ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | var lambdaVar: (b: string) => string
+// | ```
+// | documentation
+// | 
+// | *@param* `b` — inner parameter 
+// | ----------------------------------------------------------------------
+// }
+// /**
+//  * On variable
+//  * @param s the first parameter!
+//  * @returns the parameter's length
+//  */
+// var assigned = /**
+//         ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | var assigned: (s: string) => number
+// | ```
+// | On variable
+// | 
+// | *@param* `s` — the first parameter!
+// | 
+// | 
+// | *@returns* — the parameter's length
+// | 
+// | ----------------------------------------------------------------------
+//                 * Summary on expression
+//                 * @param s param on expression
+//                 * @returns return on expression
+//                 */function(/** On parameter */s: string) {
+//   return s.length;
+// }
+// assigned("hey");
+//      ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | var assigned: (s: string) => number
+// | ```
+// | On variable
+// | 
+// | *@param* `s` — the first parameter!
+// | 
+// | 
+// | *@returns* — the parameter's length
+// | 
+// | ----------------------------------------------------------------------

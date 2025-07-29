@@ -1,0 +1,130 @@
+// === QuickInfo ===
+=== /quickInfoDisplayPartsFunction.ts ===
+// function foo(param: string, optionalParam?: string, paramWithInitializer = "hello", ...restParam: string[]) {
+//          ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function foo(param: string, optionalParam?: string, paramWithInitializer?: string, ...restParam: string[]): void
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// }
+// function foowithoverload(a: string): string;
+//          ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function foowithoverload(a: string): string
+// | function foowithoverload(a: number): number
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// function foowithoverload(a: number): number;
+//          ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function foowithoverload(a: string): string
+// | function foowithoverload(a: number): number
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// function foowithoverload(a: any): any {
+//          ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function foowithoverload(a: string): string
+// | function foowithoverload(a: number): number
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     return a;
+// }
+// function foowith3overload(a: string): string;
+//          ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function foowith3overload(a: string): string
+// | function foowith3overload(a: number): number
+// | function foowith3overload(a: boolean): boolean
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// function foowith3overload(a: number): number;
+//          ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function foowith3overload(a: string): string
+// | function foowith3overload(a: number): number
+// | function foowith3overload(a: boolean): boolean
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// function foowith3overload(a: boolean): boolean;
+//          ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function foowith3overload(a: string): string
+// | function foowith3overload(a: number): number
+// | function foowith3overload(a: boolean): boolean
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// function foowith3overload(a: any): any {
+//          ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function foowith3overload(a: string): string
+// | function foowith3overload(a: number): number
+// | function foowith3overload(a: boolean): boolean
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//     return a;
+// }
+// foo("hello");
+// ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function foo(param: string, optionalParam?: string, paramWithInitializer?: string, ...restParam: string[]): void
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foowithoverload("hello");
+// ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function foowithoverload(a: string): string
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foowithoverload(10);
+// ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function foowithoverload(a: number): number
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foowith3overload("hello");
+// ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function foowith3overload(a: string): string
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foowith3overload(10);
+// ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function foowith3overload(a: number): number
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// foowith3overload(true);
+// ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function foowith3overload(a: boolean): boolean
+// | ```
+// | 
+// | ----------------------------------------------------------------------

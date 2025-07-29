@@ -1,0 +1,28 @@
+// === QuickInfo ===
+=== /quickInfoJsDocTagsFunctionOverload01.ts ===
+// /**
+//  * Doc foo
+//  */
+// declare function foo(): void;
+//                  ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function foo(): void
+// | function foo(x: number): void
+// | ```
+// | Doc foo
+// | ----------------------------------------------------------------------
+// 
+// /**
+//  * Doc foo overloaded
+//  * @tag Tag text
+//  */
+// declare function foo(x: number): void
+//                  ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function foo(): void
+// | function foo(x: number): void
+// | ```
+// | Doc foo
+// | ----------------------------------------------------------------------

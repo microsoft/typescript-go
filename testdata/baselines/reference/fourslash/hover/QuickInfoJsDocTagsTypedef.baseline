@@ -1,0 +1,28 @@
+// === QuickInfo ===
+=== /quickInfoJsDocTagsTypedef.js ===
+// /**
+//  * Bar comment
+//  * @typedef {Object} Bar
+//                      ^
+// | ----------------------------------------------------------------------
+// | No quickinfo at /*1*/.
+// | ----------------------------------------------------------------------
+//  * @property {string} baz - baz comment
+//  * @property {string} qux - qux comment
+//  */
+// 
+// /**
+//  * foo comment
+//  * @param {Bar} x - x comment
+//            ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | type Bar = { baz: string; qux: string; }
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//  * @returns {Bar}
+//  */
+// function foo(x) {
+//     return x;
+// }

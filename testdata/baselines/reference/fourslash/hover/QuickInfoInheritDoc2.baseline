@@ -1,0 +1,26 @@
+// === QuickInfo ===
+=== /quickInfoInheritDoc2.ts ===
+// class Base<T> {
+//     /**
+//      * Base.prop
+//      */
+//     prop: T | undefined;
+// }
+// 
+// class SubClass<T> extends Base<T> {
+//     /**
+//      * @inheritdoc
+//      * SubClass.prop
+//      */
+//     prop: T | undefined;
+//     ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | (property) SubClass.prop: T
+// | ```
+// | 
+// | 
+// | *@inheritdoc* — SubClass.prop
+// | 
+// | ----------------------------------------------------------------------
+// }

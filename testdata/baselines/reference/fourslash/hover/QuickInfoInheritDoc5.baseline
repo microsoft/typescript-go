@@ -1,0 +1,21 @@
+// === QuickInfo ===
+=== /quickInfoInheritDoc5.js ===
+// function A() {}
+// 
+// class B extends A {
+//     /**
+//      * @inheritdoc
+//      */
+//     static value() {
+//            ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | (method) B.value(): any
+// | ```
+// | 
+// | 
+// | *@inheritdoc*
+// | ----------------------------------------------------------------------
+//         return undefined;
+//     }
+// }

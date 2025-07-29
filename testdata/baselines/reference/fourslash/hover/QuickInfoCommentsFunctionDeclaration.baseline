@@ -1,0 +1,54 @@
+// === QuickInfo ===
+=== /quickInfoCommentsFunctionDeclaration.ts ===
+// /** This comment should appear for foo*/
+// function foo() {
+//           ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function foo(): void
+// | ```
+// | This comment should appear for foo
+// | ----------------------------------------------------------------------
+// }
+// foo();
+//  ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function foo(): void
+// | ```
+// | This comment should appear for foo
+// | ----------------------------------------------------------------------
+// /** This is comment for function signature*/
+// function fooWithParameters(/** this is comment about a*/a: string,
+//            ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function fooWithParameters(a: string, b: number): void
+// | ```
+// | This is comment for function signature
+// | ----------------------------------------------------------------------
+//     /** this is comment for b*/
+//     b: number) {
+//     var d = a;
+//         ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | var d: string
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// }
+// fooWithParameters("a",10);
+//             ^
+// | ----------------------------------------------------------------------
+// | ```tsx
+// | function fooWithParameters(a: string, b: number): void
+// | ```
+// | This is comment for function signature
+// | ----------------------------------------------------------------------
+// /**
+// * Does something
+// * @param a a string
+// */
+// declare function fn(a: string);
+// fn("hello");
