@@ -32,3 +32,73 @@
 // | ```
 // | 
 // | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 22,
+      "LSPosition": {
+        "line": 0,
+        "character": 22
+      },
+      "Name": "1",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\ntype const\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 44,
+      "LSPosition": {
+        "line": 1,
+        "character": 15
+      },
+      "Name": "2",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\ntype const\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 68,
+      "LSPosition": {
+        "line": 2,
+        "character": 17
+      },
+      "Name": "3",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\ntype const\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 95,
+      "LSPosition": {
+        "line": 3,
+        "character": 20
+      },
+      "Name": "4",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\ntype const\n```\n"
+      }
+    }
+  }
+]

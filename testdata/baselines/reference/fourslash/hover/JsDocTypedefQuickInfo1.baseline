@@ -40,3 +40,39 @@
 //     opts1.x;
 // }
 // foo1({x: 'abc'});
+[
+  {
+    "marker": {
+      "Position": 179,
+      "LSPosition": {
+        "line": 9,
+        "character": 13
+      },
+      "Name": "1",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) opts: Opts\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 400,
+      "LSPosition": {
+        "line": 22,
+        "character": 14
+      },
+      "Name": "2",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) opts1: any\n```\n"
+      }
+    }
+  }
+]

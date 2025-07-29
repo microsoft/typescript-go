@@ -110,3 +110,90 @@
 // | ----------------------------------------------------------------------
 //     return '2';
 // }
+[
+  {
+    "marker": {
+      "Position": 64,
+      "LSPosition": {
+        "line": 6,
+        "character": 11
+      },
+      "Name": "1",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction foo(): string\n```\n\n\n*@example* — if (true) {\n    foo()\n}\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 134,
+      "LSPosition": {
+        "line": 15,
+        "character": 11
+      },
+      "Name": "2",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction foo2(): string\n```\n\n\n*@example* — {\n    foo()\n}\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 219,
+      "LSPosition": {
+        "line": 24,
+        "character": 10
+      },
+      "Name": "3",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction moo(): string\n```\n\n\n*@example* —   x y\n  12345\n     b\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 313,
+      "LSPosition": {
+        "line": 34,
+        "character": 10
+      },
+      "Name": "4",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction boo(): string\n```\n\n\n*@func*\n\n*@example* —   x y\n  12345\n     b\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 426,
+      "LSPosition": {
+        "line": 43,
+        "character": 11
+      },
+      "Name": "5",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction goo(): string\n```\n\n\n*@func*\n\n*@example* — x y\n12345\n   b\n"
+      }
+    }
+  }
+]

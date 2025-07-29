@@ -43,3 +43,56 @@
 // | ```
 // | 
 // | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 114,
+      "LSPosition": {
+        "line": 5,
+        "character": 1
+      },
+      "Name": "1",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction f(): void\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 316,
+      "LSPosition": {
+        "line": 13,
+        "character": 1
+      },
+      "Name": "2",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction g(): void\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 472,
+      "LSPosition": {
+        "line": 21,
+        "character": 1
+      },
+      "Name": "3",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction h(keep: Local): void\n```\n"
+      }
+    }
+  }
+]

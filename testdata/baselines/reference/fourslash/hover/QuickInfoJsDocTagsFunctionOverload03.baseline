@@ -23,3 +23,39 @@
 // | ```
 // | 
 // | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 17,
+      "LSPosition": {
+        "line": 0,
+        "character": 17
+      },
+      "Name": "1",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction foo(): void\nfunction foo(x: number): void\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 95,
+      "LSPosition": {
+        "line": 6,
+        "character": 17
+      },
+      "Name": "2",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction foo(): void\nfunction foo(x: number): void\n```\n"
+      }
+    }
+  }
+]

@@ -134,3 +134,158 @@
 // | *@param* `value` — foo D
 // | 
 // | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 75,
+      "LSPosition": {
+        "line": 5,
+        "character": 8
+      },
+      "Name": "1",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(accessor) A.x: string\n```\ngetter A\n\n*@returns* — return A\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 205,
+      "LSPosition": {
+        "line": 13,
+        "character": 8
+      },
+      "Name": "2",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(accessor) A.x: string\n```\ngetter A\n\n*@returns* — return A\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 340,
+      "LSPosition": {
+        "line": 21,
+        "character": 8
+      },
+      "Name": "3",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(accessor) B.x: string\n```\ngetter B\n\n*@returns* — return B\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 445,
+      "LSPosition": {
+        "line": 28,
+        "character": 8
+      },
+      "Name": "4",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(accessor) B.x: string\n```\ngetter B\n\n*@returns* — return B\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 607,
+      "LSPosition": {
+        "line": 38,
+        "character": 8
+      },
+      "Name": "5",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(accessor) D.x: string\n```\nsetter D\n\n*@param* `value` — foo D\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 636,
+      "LSPosition": {
+        "line": 40,
+        "character": 8
+      },
+      "Name": "6",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(accessor) A.x: string\n```\ngetter A\n\n*@returns* — return A\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 653,
+      "LSPosition": {
+        "line": 41,
+        "character": 8
+      },
+      "Name": "7",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(accessor) B.x: string\n```\ngetter B\n\n*@returns* — return B\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 670,
+      "LSPosition": {
+        "line": 42,
+        "character": 8
+      },
+      "Name": "8",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(accessor) A.x: string\n```\ngetter A\n\n*@returns* — return A\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 687,
+      "LSPosition": {
+        "line": 43,
+        "character": 8
+      },
+      "Name": "9",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(accessor) D.x: string\n```\nsetter D\n\n*@param* `value` — foo D\n"
+      }
+    }
+  }
+]

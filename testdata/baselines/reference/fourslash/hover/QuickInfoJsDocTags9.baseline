@@ -19,3 +19,22 @@
 // | *@template* `T` — Comment Text
 // | 
 // | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 135,
+      "LSPosition": {
+        "line": 8,
+        "character": 6
+      },
+      "Name": "",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nconst foo: (t: T) =\u003e number\n```\n\n\n*@template* `T` — Comment Text\n"
+      }
+    }
+  }
+]

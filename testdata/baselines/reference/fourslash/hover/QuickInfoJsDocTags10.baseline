@@ -20,3 +20,22 @@
 // | *@template* `T1`, `T2` — Comment Text
 // | 
 // | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 80,
+      "LSPosition": {
+        "line": 5,
+        "character": 6
+      },
+      "Name": "",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nconst foo: \u003cT1, T2\u003e(a: T1, b: any) =\u003e void\n```\n\n\n*@param* `a`\n\n*@param* `a`\n\n*@template* `T1`, `T2` — Comment Text\n"
+      }
+    }
+  }
+]

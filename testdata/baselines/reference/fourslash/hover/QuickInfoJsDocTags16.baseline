@@ -30,3 +30,39 @@
 // | 
 // | ----------------------------------------------------------------------
 // }
+[
+  {
+    "marker": {
+      "Position": 129,
+      "LSPosition": {
+        "line": 10,
+        "character": 13
+      },
+      "Name": "1",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(method) B.foo(): void\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 175,
+      "LSPosition": {
+        "line": 14,
+        "character": 13
+      },
+      "Name": "2",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(method) C.foo(): void\n```\n"
+      }
+    }
+  }
+]

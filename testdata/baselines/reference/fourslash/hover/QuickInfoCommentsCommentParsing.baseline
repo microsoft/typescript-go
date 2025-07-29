@@ -696,3 +696,935 @@
 // | 
 // | ----------------------------------------------------------------------
 // }
+[
+  {
+    "marker": {
+      "Position": 58,
+      "LSPosition": {
+        "line": 4,
+        "character": 3
+      },
+      "Name": "1q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction simple(): void\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 190,
+      "LSPosition": {
+        "line": 11,
+        "character": 3
+      },
+      "Name": "2q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction multiLine(): void\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 291,
+      "LSPosition": {
+        "line": 16,
+        "character": 5
+      },
+      "Name": "3q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction jsDocSingleLine(): void\n```\nthis is eg of single line jsdoc style comment"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 413,
+      "LSPosition": {
+        "line": 24,
+        "character": 6
+      },
+      "Name": "4q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction jsDocMultiLine(): void\n```\nthis is multiple line jsdoc stule comment\nNew line1\nNew Line2"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 618,
+      "LSPosition": {
+        "line": 33,
+        "character": 7
+      },
+      "Name": "5q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction jsDocMultiLineMerge(): void\n```\nAnother this one too"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 725,
+      "LSPosition": {
+        "line": 40,
+        "character": 8
+      },
+      "Name": "6q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction jsDocMixedComments1(): void\n```\njsdoc comment"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 856,
+      "LSPosition": {
+        "line": 46,
+        "character": 7
+      },
+      "Name": "7q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction jsDocMixedComments2(): void\n```\nanother jsDocComment"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 994,
+      "LSPosition": {
+        "line": 52,
+        "character": 9
+      },
+      "Name": "8q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction jsDocMixedComments3(): void\n```\n* triplestar jsDocComment"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1154,
+      "LSPosition": {
+        "line": 59,
+        "character": 10
+      },
+      "Name": "9q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction jsDocMixedComments4(): void\n```\nanother jsDocComment"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1336,
+      "LSPosition": {
+        "line": 67,
+        "character": 6
+      },
+      "Name": "10q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction jsDocMixedComments5(): void\n```\nanother jsDocComment"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1524,
+      "LSPosition": {
+        "line": 76,
+        "character": 8
+      },
+      "Name": "11q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction jsDocMixedComments6(): void\n```\njsdoc comment"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1608,
+      "LSPosition": {
+        "line": 81,
+        "character": 5
+      },
+      "Name": "12q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction noHelpComment1(): void\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1695,
+      "LSPosition": {
+        "line": 86,
+        "character": 7
+      },
+      "Name": "13q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction noHelpComment2(): void\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1744,
+      "LSPosition": {
+        "line": 90,
+        "character": 7
+      },
+      "Name": "14q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction noHelpComment3(): void\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1880,
+      "LSPosition": {
+        "line": 95,
+        "character": 13
+      },
+      "Name": "16aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) a: number\n```\nfirst number\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1891,
+      "LSPosition": {
+        "line": 95,
+        "character": 24
+      },
+      "Name": "17aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) b: number\n```\nsecond number\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1925,
+      "LSPosition": {
+        "line": 98,
+        "character": 1
+      },
+      "Name": "16q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction sum(a: number, b: number): number\n```\nAdds two integers and returns the result\n\n*@param* `a` — first number\n\n\n*@param* `b` — second number\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 2111,
+      "LSPosition": {
+        "line": 106,
+        "character": 18
+      },
+      "Name": "19aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) a: number\n```\nfirst number\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 2122,
+      "LSPosition": {
+        "line": 106,
+        "character": 29
+      },
+      "Name": "20aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) b: number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 2133,
+      "LSPosition": {
+        "line": 106,
+        "character": 40
+      },
+      "Name": "21aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) c: number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 2145,
+      "LSPosition": {
+        "line": 106,
+        "character": 52
+      },
+      "Name": "22aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) d: any\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 2149,
+      "LSPosition": {
+        "line": 106,
+        "character": 56
+      },
+      "Name": "23aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) e: any\n```\nLastParam "
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 2161,
+      "LSPosition": {
+        "line": 108,
+        "character": 4
+      },
+      "Name": "19q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction multiply(a: number, b: number, c?: number, d?: any, e?: any): void\n```\nThis is multiplication function\n\n*@param* ``\n\n*@param* `a` — first number\n\n\n*@param* `b`\n\n*@param* `c`\n\n*@param* `d`\n\n*@anotherTag*\n\n*@param* `e` — LastParam \n\n*@anotherTag*"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 2253,
+      "LSPosition": {
+        "line": 112,
+        "character": 12
+      },
+      "Name": "25aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) a: number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 2277,
+      "LSPosition": {
+        "line": 113,
+        "character": 12
+      },
+      "Name": "26aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) b: string\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 2370,
+      "LSPosition": {
+        "line": 118,
+        "character": 1
+      },
+      "Name": "25q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction f1(a: number): any\n```\nfn f1 with number\n\n*@param* `b` — about b\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 2378,
+      "LSPosition": {
+        "line": 119,
+        "character": 1
+      },
+      "Name": "26q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction f1(b: string): any\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 2716,
+      "LSPosition": {
+        "line": 129,
+        "character": 18
+      },
+      "Name": "28aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) a: number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 2727,
+      "LSPosition": {
+        "line": 129,
+        "character": 29
+      },
+      "Name": "29aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) b: number\n```\nthis is about b\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 2738,
+      "LSPosition": {
+        "line": 129,
+        "character": 40
+      },
+      "Name": "30aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) c: () =\u003e string\n```\nthis is optional param c\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 2756,
+      "LSPosition": {
+        "line": 129,
+        "character": 58
+      },
+      "Name": "31aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) d: () =\u003e string\n```\nthis is optional param d\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 2774,
+      "LSPosition": {
+        "line": 129,
+        "character": 76
+      },
+      "Name": "32aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) e: () =\u003e string\n```\nthis is optional param e\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 2792,
+      "LSPosition": {
+        "line": 129,
+        "character": 94
+      },
+      "Name": "33aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) f: () =\u003e string\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 2818,
+      "LSPosition": {
+        "line": 131,
+        "character": 4
+      },
+      "Name": "28q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction subtract(a: number, b: number, c?: () =\u003e string, d?: () =\u003e string, e?: () =\u003e string, f?: () =\u003e string): void\n```\nThis is subtract function\n\n*@param* ``\n\n*@param* `b` — this is about b\n\n\n*@param* `c` — this is optional param c\n\n\n*@param* `d` — this is optional param d\n\n\n*@param* `e` — this is optional param e\n\n\n*@param* `` — { () =\u003e string; } } f this is optional param f\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 3045,
+      "LSPosition": {
+        "line": 137,
+        "character": 16
+      },
+      "Name": "34aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) a: number\n```\nthis is input number\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 3081,
+      "LSPosition": {
+        "line": 140,
+        "character": 3
+      },
+      "Name": "34q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction square(a: number): number\n```\nthis is square function\n\n*@paramTag* — { number } a this is input number of paramTag\n\n\n*@param* `a` — this is input number\n\n\n*@returnType* — { number } it is return type\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 3243,
+      "LSPosition": {
+        "line": 146,
+        "character": 16
+      },
+      "Name": "35aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) a: number\n```\nthis is a\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 3254,
+      "LSPosition": {
+        "line": 146,
+        "character": 27
+      },
+      "Name": "36aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) b: number\n```\nthis is b\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 3272,
+      "LSPosition": {
+        "line": 148,
+        "character": 3
+      },
+      "Name": "35q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction divide(a: number, b: number): void\n```\nthis is divide function\n\n*@param* `a` — this is a\n\n\n*@paramTag* — { number } g this is optional param g\n\n\n*@param* `b` — this is b\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 3432,
+      "LSPosition": {
+        "line": 154,
+        "character": 16
+      },
+      "Name": "37aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) foo: string\n```\nis string\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 3445,
+      "LSPosition": {
+        "line": 154,
+        "character": 29
+      },
+      "Name": "38aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) bar: string\n```\nis second string\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 3486,
+      "LSPosition": {
+        "line": 157,
+        "character": 2
+      },
+      "Name": "37q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction fooBar(foo: string, bar: string): string\n```\nFunction returns string concat of foo and bar\n\n*@param* `foo` — is string\n\n\n*@param* `bar` — is second string\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 3782,
+      "LSPosition": {
+        "line": 168,
+        "character": 59
+      },
+      "Name": "40aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) a: number\n```\nthis is inline comment for a"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 3828,
+      "LSPosition": {
+        "line": 168,
+        "character": 105
+      },
+      "Name": "41aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) b: number\n```\nthis is inline comment for b"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 3839,
+      "LSPosition": {
+        "line": 168,
+        "character": 116
+      },
+      "Name": "42aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) c: number\n```\nit is third parameter\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 3850,
+      "LSPosition": {
+        "line": 168,
+        "character": 127
+      },
+      "Name": "43aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) d: number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 3894,
+      "LSPosition": {
+        "line": 171,
+        "character": 3
+      },
+      "Name": "40q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction jsDocParamTest(a: number, b: number, c: number, d: number): number\n```\nthis is jsdoc style function with param tag as well as inline parameter help\n\n*@param* `a` — it is first parameter\n\n\n*@param* `c` — it is third parameter\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 4040,
+      "LSPosition": {
+        "line": 177,
+        "character": 8
+      },
+      "Name": "45q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction jsDocCommentAlignmentTest1(): void\n```\nThis is function comment\nAnd properly aligned comment"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 4193,
+      "LSPosition": {
+        "line": 183,
+        "character": 10
+      },
+      "Name": "46q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction jsDocCommentAlignmentTest2(): void\n```\nThis is function comment\n    And aligned with 4 space char margin"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 4778,
+      "LSPosition": {
+        "line": 195,
+        "character": 36
+      },
+      "Name": "47aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) a: string\n```\nthis is info about a\nspanning on two lines and aligned perfectly\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 4789,
+      "LSPosition": {
+        "line": 195,
+        "character": 47
+      },
+      "Name": "48aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) b: any\n```\nthis is info about b\nspanning on two lines and aligned perfectly\nspanning one more line alined perfectly\n    spanning another line with more margin\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 4792,
+      "LSPosition": {
+        "line": 195,
+        "character": 50
+      },
+      "Name": "49aq",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) c: any\n```\nthis is info about b\nnot aligned text about parameter will eat only one space\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 4809,
+      "LSPosition": {
+        "line": 197,
+        "character": 10
+      },
+      "Name": "47q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction jsDocCommentAlignmentTest3(a: string, b: any, c: any): void\n```\nThis is function comment\n    And aligned with 4 space char margin\n\n*@param* `a` — this is info about a\nspanning on two lines and aligned perfectly\n\n\n*@param* `b` — this is info about b\nspanning on two lines and aligned perfectly\nspanning one more line alined perfectly\n    spanning another line with more margin\n\n\n*@param* `c` — this is info about b\nnot aligned text about parameter will eat only one space\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 4841,
+      "LSPosition": {
+        "line": 198,
+        "character": 0
+      },
+      "Name": "",
+      "Data": null
+    },
+    "item": null
+  },
+  {
+    "marker": {
+      "Position": 4854,
+      "LSPosition": {
+        "line": 199,
+        "character": 12
+      },
+      "Name": "50q",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nclass NoQuickInfoClass\n```\n"
+      }
+    }
+  }
+]

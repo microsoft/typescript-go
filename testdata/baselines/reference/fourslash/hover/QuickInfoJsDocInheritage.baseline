@@ -272,3 +272,413 @@
 // | ```
 // | 
 // | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 429,
+      "LSPosition": {
+        "line": 25,
+        "character": 4
+      },
+      "Name": "1",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) C.foo1: number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 451,
+      "LSPosition": {
+        "line": 26,
+        "character": 4
+      },
+      "Name": "2",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(method) C.foo2(q: string): number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 598,
+      "LSPosition": {
+        "line": 32,
+        "character": 4
+      },
+      "Name": "3",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) D.foo1: number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 620,
+      "LSPosition": {
+        "line": 33,
+        "character": 4
+      },
+      "Name": "4",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) D.foo2: (q: string) =\u003e number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 666,
+      "LSPosition": {
+        "line": 36,
+        "character": 8
+      },
+      "Name": "5",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) C.foo1: number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 680,
+      "LSPosition": {
+        "line": 37,
+        "character": 8
+      },
+      "Name": "6",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(method) C.foo2(q: string): number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 694,
+      "LSPosition": {
+        "line": 38,
+        "character": 8
+      },
+      "Name": "7",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) D.foo1: number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 708,
+      "LSPosition": {
+        "line": 39,
+        "character": 8
+      },
+      "Name": "8",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) D.foo2: (q: string) =\u003e number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1069,
+      "LSPosition": {
+        "line": 58,
+        "character": 4
+      },
+      "Name": "9",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) Drived1.foo1: number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1091,
+      "LSPosition": {
+        "line": 59,
+        "character": 4
+      },
+      "Name": "10",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(method) Drived1.foo2(para1: string): number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1263,
+      "LSPosition": {
+        "line": 65,
+        "character": 4
+      },
+      "Name": "11",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) Drived2.foo1: number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1285,
+      "LSPosition": {
+        "line": 66,
+        "character": 4
+      },
+      "Name": "12",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) Drived2.foo2: (para1: string) =\u003e number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1681,
+      "LSPosition": {
+        "line": 85,
+        "character": 4
+      },
+      "Name": "13",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) Drived3.foo1: number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1703,
+      "LSPosition": {
+        "line": 86,
+        "character": 4
+      },
+      "Name": "14",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(method) Drived3.foo2(para1: string): number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1875,
+      "LSPosition": {
+        "line": 92,
+        "character": 4
+      },
+      "Name": "15",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) Drived4.foo1: number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1897,
+      "LSPosition": {
+        "line": 93,
+        "character": 4
+      },
+      "Name": "16",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) Drived4.foo2: (para1: string) =\u003e number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1955,
+      "LSPosition": {
+        "line": 96,
+        "character": 14
+      },
+      "Name": "17",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) Drived1.foo1: number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1975,
+      "LSPosition": {
+        "line": 97,
+        "character": 14
+      },
+      "Name": "18",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(method) Drived1.foo2(para1: string): number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1995,
+      "LSPosition": {
+        "line": 98,
+        "character": 14
+      },
+      "Name": "19",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) Drived2.foo1: number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 2015,
+      "LSPosition": {
+        "line": 99,
+        "character": 14
+      },
+      "Name": "20",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) Drived2.foo2: (para1: string) =\u003e number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 2035,
+      "LSPosition": {
+        "line": 100,
+        "character": 14
+      },
+      "Name": "21",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) Drived3.foo1: number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 2055,
+      "LSPosition": {
+        "line": 101,
+        "character": 14
+      },
+      "Name": "22",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(method) Drived3.foo2(para1: string): number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 2075,
+      "LSPosition": {
+        "line": 102,
+        "character": 14
+      },
+      "Name": "23",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) Drived4.foo1: number\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 2095,
+      "LSPosition": {
+        "line": 103,
+        "character": 14
+      },
+      "Name": "24",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) Drived4.foo2: (para1: string) =\u003e number\n```\n"
+      }
+    }
+  }
+]

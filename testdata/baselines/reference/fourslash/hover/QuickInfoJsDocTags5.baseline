@@ -27,3 +27,22 @@
 //         return res;
 //     }
 // }
+[
+  {
+    "marker": {
+      "Position": 285,
+      "LSPosition": {
+        "line": 15,
+        "character": 4
+      },
+      "Name": "",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(method) Bar.method(x: any, y: any): number\n```\n"
+      }
+    }
+  }
+]

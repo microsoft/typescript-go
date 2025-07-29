@@ -25,3 +25,22 @@
 // | ```
 // | 
 // | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 217,
+      "LSPosition": {
+        "line": 17,
+        "character": 5
+      },
+      "Name": "",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nconst isBar: boolean\n```\n"
+      }
+    }
+  }
+]

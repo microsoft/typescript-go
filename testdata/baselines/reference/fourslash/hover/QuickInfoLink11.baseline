@@ -19,3 +19,22 @@
 // | https://vscode.dev|link text
 // | https://vscode.dev link text
 // | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 170,
+      "LSPosition": {
+        "line": 8,
+        "character": 0
+      },
+      "Name": "",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction f(): void\n```\nhttps://vscode.dev\n[link text]{https://vscode.dev}\nhttps://vscode.dev|link text\nhttps://vscode.dev link text"
+      }
+    }
+  }
+]

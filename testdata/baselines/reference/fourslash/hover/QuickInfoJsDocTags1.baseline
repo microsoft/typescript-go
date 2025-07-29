@@ -20,3 +20,22 @@
 // | ```
 // | 
 // | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 298,
+      "LSPosition": {
+        "line": 12,
+        "character": 9
+      },
+      "Name": "",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nfunction foo(x: any): void\n```\n"
+      }
+    }
+  }
+]

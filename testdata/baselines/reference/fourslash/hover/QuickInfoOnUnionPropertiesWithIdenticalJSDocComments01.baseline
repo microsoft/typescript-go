@@ -32,3 +32,22 @@
 // | ```
 // | 
 // | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 746,
+      "LSPosition": {
+        "line": 24,
+        "character": 2
+      },
+      "Name": "",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) language: string\n```\n"
+      }
+    }
+  }
+]

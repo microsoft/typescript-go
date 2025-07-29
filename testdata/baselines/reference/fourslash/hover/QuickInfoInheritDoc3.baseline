@@ -25,3 +25,22 @@
 // | 
 // | ----------------------------------------------------------------------
 // }
+[
+  {
+    "marker": {
+      "Position": 237,
+      "LSPosition": {
+        "line": 13,
+        "character": 4
+      },
+      "Name": "1",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) SubClass.prop: string\n```\n\n\n*@inheritdoc* — SubClass.prop\n"
+      }
+    }
+  }
+]

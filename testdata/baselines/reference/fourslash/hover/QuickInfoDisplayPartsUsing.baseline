@@ -18,3 +18,39 @@
 // | 
 // | ----------------------------------------------------------------------
 // };
+[
+  {
+    "marker": {
+      "Position": 7,
+      "LSPosition": {
+        "line": 0,
+        "character": 7
+      },
+      "Name": "a",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nusing a: \"a\"\n```\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 55,
+      "LSPosition": {
+        "line": 2,
+        "character": 16
+      },
+      "Name": "b",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nawait using b: { [Symbol.asyncDispose](): Promise\u003cvoid\u003e; }\n```\n"
+      }
+    }
+  }
+]

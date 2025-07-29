@@ -17,3 +17,22 @@
 //         return undefined;
 //     }
 // }
+[
+  {
+    "marker": {
+      "Position": 107,
+      "LSPosition": {
+        "line": 4,
+        "character": 11
+      },
+      "Name": "",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(method) B.value(): any\n```\n\n\n*@inheritdoc*"
+      }
+    }
+  }
+]

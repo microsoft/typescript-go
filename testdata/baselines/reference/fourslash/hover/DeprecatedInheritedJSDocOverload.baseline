@@ -32,3 +32,22 @@
 // | ----------------------------------------------------------------------
 //   console.log('something happened');
 // });
+[
+  {
+    "marker": {
+      "Position": 1183,
+      "LSPosition": {
+        "line": 22,
+        "character": 11
+      },
+      "Name": "",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(method) ThingWithDeprecations.subscribe(observer?: PartialObserver\u003cvoid\u003e): Subscription\n```\n"
+      }
+    }
+  }
+]

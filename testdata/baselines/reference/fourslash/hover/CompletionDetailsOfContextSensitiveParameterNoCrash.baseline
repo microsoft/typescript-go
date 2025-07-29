@@ -93,3 +93,22 @@
 //     },
 //     3
 // );
+[
+  {
+    "marker": {
+      "Position": 3101,
+      "LSPosition": {
+        "line": 82,
+        "character": 60
+      },
+      "Name": "",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(parameter) args: []\n```\n"
+      }
+    }
+  }
+]

@@ -17,3 +17,22 @@
 // | 
 // | ----------------------------------------------------------------------
 // }
+[
+  {
+    "marker": {
+      "Position": 122,
+      "LSPosition": {
+        "line": 8,
+        "character": 7
+      },
+      "Name": "1",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\nvar foo: string\n```\n"
+      }
+    }
+  }
+]

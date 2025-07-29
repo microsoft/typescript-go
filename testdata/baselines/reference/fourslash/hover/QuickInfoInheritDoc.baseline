@@ -94,3 +94,56 @@
 // | 
 // | ----------------------------------------------------------------------
 // }
+[
+  {
+    "marker": {
+      "Position": 817,
+      "LSPosition": {
+        "line": 34,
+        "character": 18
+      },
+      "Name": "1",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(method) SubClass.doSomethingUseful(mySpecificStuff?: { tiger: string; lion: string; }): string\n```\n\n\n*@inheritDoc*\n\n*@param* `mySpecificStuff` — Description of my specific parameter.\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1143,
+      "LSPosition": {
+        "line": 47,
+        "character": 18
+      },
+      "Name": "2",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(method) SubClass.func1(stuff1: any): void\n```\n\n\n*@inheritDoc*\n\n*@param* `stuff1` — SubClass.func1.stuff1\n\n\n*@returns* — SubClass.func1.returns\n"
+      }
+    }
+  },
+  {
+    "marker": {
+      "Position": 1282,
+      "LSPosition": {
+        "line": 55,
+        "character": 27
+      },
+      "Name": "3",
+      "Data": null
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tsx\n(property) SubClass.someProperty: string\n```\ntext over tag\n\n*@inheritDoc* — text after tag\n"
+      }
+    }
+  }
+]
