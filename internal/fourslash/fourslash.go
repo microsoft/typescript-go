@@ -990,7 +990,7 @@ func (f *FourslashTest) VerifyBaselineHover(t *testing.T) {
 }
 
 func appendLinesForMarkedStringWithLanguage(result []string, ms *lsproto.MarkedStringWithLanguage) []string {
-	result = append(result, fmt.Sprintf("```%s", ms.Language))
+	result = append(result, "```"+ms.Language)
 	result = append(result, ms.Value)
 	result = append(result, "```")
 	return result
