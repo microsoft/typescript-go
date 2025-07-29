@@ -30,6 +30,20 @@ func (c *ProjectCollection) ConfiguredProject(path tspath.Path) *Project {
 	return c.configuredProjects[path]
 }
 
+func (c *ProjectCollection) GetProjectByPath(projectPath tspath.Path) *Project {
+	// First check if it's a configured project
+	if project, ok := c.configuredProjects[projectPath]; ok {
+		return project
+	}
+
+	// Check if it's the inferred project path (empty path or special inferred project name)
+	if projectPath == "" || string(projectPath) == inferredProjectName {
+		return c.inferredProject
+	}
+
+	return nil
+}
+
 func (c *ProjectCollection) ConfiguredProjects() []*Project {
 	projects := make([]*Project, 0, len(c.configuredProjects))
 	c.fillConfiguredProjects(&projects)

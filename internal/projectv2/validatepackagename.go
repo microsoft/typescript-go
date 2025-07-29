@@ -1,4 +1,4 @@
-package project
+package projectv2
 
 import (
 	"fmt"

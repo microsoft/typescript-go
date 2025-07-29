@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -69,6 +70,12 @@ type Project struct {
 	affectingLocationsWatch *WatchedFiles[map[tspath.Path]string]
 
 	checkerPool *project.CheckerPool
+
+	// installedTypingsInfo is the value of `project.ComputeTypingsInfo()` that was
+	// used during the most recently completed typings installation.
+	installedTypingsInfo *TypingsInfo
+	// typingsFiles are the root files added by the typings installer.
+	typingsFiles []string
 }
 
 func NewConfiguredProject(
@@ -200,7 +207,39 @@ func (p *Project) Clone() *Project {
 		affectingLocationsWatch: p.affectingLocationsWatch,
 
 		checkerPool: p.checkerPool,
+
+		installedTypingsInfo: p.installedTypingsInfo,
+		typingsFiles:         p.typingsFiles,
 	}
+}
+
+// getAugmentedCommandLine returns the command line augmented with typing files if ATA is enabled.
+func (p *Project) getAugmentedCommandLine() *tsoptions.ParsedCommandLine {
+	if len(p.typingsFiles) == 0 {
+		return p.CommandLine
+	}
+
+	// Check if ATA is enabled for this project
+	typeAcquisition := p.GetTypeAcquisition()
+	if typeAcquisition == nil || !typeAcquisition.Enable.IsTrue() {
+		return p.CommandLine
+	}
+
+	// Create an augmented command line that includes typing files
+	originalRootNames := p.CommandLine.FileNames()
+	newRootNames := make([]string, 0, len(originalRootNames)+len(p.typingsFiles))
+	newRootNames = append(newRootNames, originalRootNames...)
+	newRootNames = append(newRootNames, p.typingsFiles...)
+
+	// Create a new ParsedCommandLine with the augmented root file names
+	return tsoptions.NewParsedCommandLine(
+		p.CommandLine.CompilerOptions(),
+		newRootNames,
+		tspath.ComparePathsOptions{
+			UseCaseSensitiveFileNames: p.host.FS().UseCaseSensitiveFileNames(),
+			CurrentDirectory:          p.currentDirectory,
+		},
+	)
 }
 
 type CreateProgramResult struct {
@@ -214,7 +253,11 @@ func (p *Project) CreateProgram() CreateProgramResult {
 	var programCloned bool
 	var checkerPool *project.CheckerPool
 	var newProgram *compiler.Program
-	if p.dirtyFilePath != "" && p.Program != nil && p.Program.CommandLine() == p.CommandLine {
+
+	// Create the command line, potentially augmented with typing files
+	commandLine := p.getAugmentedCommandLine()
+
+	if p.dirtyFilePath != "" && p.Program != nil && p.Program.CommandLine() == commandLine {
 		newProgram, programCloned = p.Program.UpdateProgram(p.dirtyFilePath, p.host)
 		if programCloned {
 			updateKind = ProgramUpdateKindCloned
@@ -230,7 +273,7 @@ func (p *Project) CreateProgram() CreateProgramResult {
 		newProgram = compiler.NewProgram(
 			compiler.ProgramOptions{
 				Host:                        p.host,
-				Config:                      p.CommandLine,
+				Config:                      commandLine,
 				UseSourceOfProjectReference: true,
 				TypingsLocation:             p.host.sessionOptions.TypingsLocation,
 				JSDocParsingMode:            ast.JSDocParsingModeParseAll,
@@ -287,4 +330,54 @@ func (p *Project) print(writeFileNames bool, writeFileExplanation bool, builder 
 	}
 	builder.WriteString(hr)
 	return builder.String()
+}
+
+// GetTypeAcquisition returns the type acquisition settings for this project.
+func (p *Project) GetTypeAcquisition() *core.TypeAcquisition {
+	if p.Kind == KindInferred {
+		// For inferred projects, use default settings
+		return &core.TypeAcquisition{
+			Enable:                              core.TSTrue,
+			Include:                             nil,
+			Exclude:                             nil,
+			DisableFilenameBasedTypeAcquisition: core.TSFalse,
+		}
+	}
+
+	if p.CommandLine != nil {
+		return p.CommandLine.TypeAcquisition()
+	}
+
+	return nil
+}
+
+// GetUnresolvedImports extracts unresolved imports from this project's program.
+func (p *Project) GetUnresolvedImports() collections.Set[string] {
+	if p.Program == nil {
+		return collections.Set[string]{}
+	}
+
+	return p.Program.ExtractUnresolvedImports()
+}
+
+// ShouldTriggerATA determines if ATA should be triggered for this project.
+func (p *Project) ShouldTriggerATA() bool {
+	typeAcquisition := p.GetTypeAcquisition()
+	if typeAcquisition == nil || !typeAcquisition.Enable.IsTrue() {
+		return false
+	}
+
+	if p.installedTypingsInfo == nil || p.ProgramUpdateKind == ProgramUpdateKindNewFiles {
+		return true
+	}
+
+	return !p.installedTypingsInfo.Equals(p.ComputeTypingsInfo())
+}
+
+func (p *Project) ComputeTypingsInfo() TypingsInfo {
+	return TypingsInfo{
+		CompilerOptions:   p.CommandLine.CompilerOptions(),
+		TypeAcquisition:   p.GetTypeAcquisition(),
+		UnresolvedImports: p.GetUnresolvedImports(),
+	}
 }

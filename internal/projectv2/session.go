@@ -6,6 +6,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -22,16 +23,26 @@ type SessionOptions struct {
 	LoggingEnabled     bool
 }
 
+type SessionInit struct {
+	Options    *SessionOptions
+	FS         vfs.FS
+	Client     Client
+	Logger     Logger
+	NpmInstall NpmInstallOperation
+}
+
 type Session struct {
-	options                            SessionOptions
+	options                            *SessionOptions
 	toPath                             func(string) tspath.Path
 	client                             Client
 	logger                             Logger
+	npmInstall                         NpmInstallOperation
 	fs                                 *overlayFS
 	parseCache                         *parseCache
 	extendedConfigCache                *extendedConfigCache
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	programCounter                     *programCounter
+	typingsInstaller                   *TypingsInstaller
 
 	snapshotMu sync.RWMutex
 	snapshot   *Snapshot
@@ -40,31 +51,32 @@ type Session struct {
 	pendingFileChanges   []FileChange
 }
 
-func NewSession(options SessionOptions, fs vfs.FS, client Client, logger Logger) *Session {
-	currentDirectory := options.CurrentDirectory
-	useCaseSensitiveFileNames := fs.UseCaseSensitiveFileNames()
+func NewSession(init *SessionInit) *Session {
+	currentDirectory := init.Options.CurrentDirectory
+	useCaseSensitiveFileNames := init.FS.UseCaseSensitiveFileNames()
 	toPath := func(fileName string) tspath.Path {
 		return tspath.ToPath(fileName, currentDirectory, useCaseSensitiveFileNames)
 	}
-	overlayFS := newOverlayFS(fs, make(map[tspath.Path]*overlay), options.PositionEncoding, toPath)
+	overlayFS := newOverlayFS(init.FS, make(map[tspath.Path]*overlay), init.Options.PositionEncoding, toPath)
 	parseCache := &parseCache{options: tspath.ComparePathsOptions{
-		UseCaseSensitiveFileNames: fs.UseCaseSensitiveFileNames(),
-		CurrentDirectory:          options.CurrentDirectory,
+		UseCaseSensitiveFileNames: init.FS.UseCaseSensitiveFileNames(),
+		CurrentDirectory:          init.Options.CurrentDirectory,
 	}}
 	extendedConfigCache := &extendedConfigCache{}
 
-	return &Session{
-		options:             options,
+	session := &Session{
+		options:             init.Options,
 		toPath:              toPath,
-		client:              client,
-		logger:              logger,
+		client:              init.Client,
+		logger:              init.Logger,
+		npmInstall:          init.NpmInstall,
 		fs:                  overlayFS,
 		parseCache:          parseCache,
 		extendedConfigCache: extendedConfigCache,
 		programCounter:      &programCounter{},
 		snapshot: NewSnapshot(
 			make(map[tspath.Path]*diskFile),
-			&options,
+			init.Options,
 			parseCache,
 			extendedConfigCache,
 			&ConfigFileRegistry{},
@@ -72,6 +84,13 @@ func NewSession(options SessionOptions, fs vfs.FS, client Client, logger Logger)
 			toPath,
 		),
 	}
+
+	session.typingsInstaller = NewTypingsInstaller(&TypingsInstallerOptions{
+		TypingsLocation: init.Options.TypingsLocation,
+		ThrottleLimit:   5,
+	}, session)
+
+	return session
 }
 
 func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, version int32, content string, languageKind lsproto.LanguageKind) {
@@ -212,6 +231,11 @@ func (s *Session) UpdateSnapshot(ctx context.Context, change SnapshotChange) *Sn
 	if shouldDispose {
 		oldSnapshot.dispose(s)
 	}
+
+	if s.npmInstall != nil {
+		go s.triggerATAForUpdatedProjects(newSnapshot)
+	}
+
 	go func() {
 		if s.options.LoggingEnabled {
 			newSnapshot.builderLogs.WriteLogs(s.logger)
@@ -335,7 +359,6 @@ func (s *Session) flushChangesLocked(ctx context.Context) FileChangeSummary {
 
 // logProjectChanges logs information about projects that have changed between snapshots
 func (s *Session) logProjectChanges(oldSnapshot *Snapshot, newSnapshot *Snapshot) {
-	// Log configured projects that changed
 	logProject := func(project *Project) {
 		var builder strings.Builder
 		project.print(true /*writeFileNames*/, true /*writeFileExplanation*/, &builder)
@@ -360,7 +383,6 @@ func (s *Session) logProjectChanges(oldSnapshot *Snapshot, newSnapshot *Snapshot
 		},
 	)
 
-	// Log inferred project changes
 	oldInferred := oldSnapshot.ProjectCollection.inferredProject
 	newInferred := newSnapshot.ProjectCollection.inferredProject
 
@@ -373,5 +395,56 @@ func (s *Session) logProjectChanges(oldSnapshot *Snapshot, newSnapshot *Snapshot
 	} else if oldInferred != nil && newInferred != nil && newInferred.ProgramUpdateKind != ProgramUpdateKindNone {
 		// Inferred project updated
 		logProject(newInferred)
+	}
+}
+
+// OnTypingsInstalled is called when typings have been successfully installed for a project.
+func (s *Session) OnTypingsInstalled(projectID tspath.Path, typingsInfo *TypingsInfo, typingFiles []string) {
+	// Queue a snapshot update with the new ATA state
+	ataChanges := make(map[tspath.Path]*ATAStateChange)
+	ataChanges[projectID] = &ATAStateChange{
+		TypingsInfo: typingsInfo,
+		TypingFiles: typingFiles,
+	}
+
+	s.UpdateSnapshot(context.Background(), SnapshotChange{
+		ataChanges: ataChanges,
+	})
+}
+
+// OnTypingsInstallFailed is called when typings installation fails for a project.
+func (s *Session) OnTypingsInstallFailed(projectID tspath.Path, typingsInfo *TypingsInfo, err error) {
+	if s.options.LoggingEnabled {
+		s.logger.Log(fmt.Sprintf("ATA installation failed for project %s: %v", projectID, err))
+	}
+}
+
+func (s *Session) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error) {
+	return s.npmInstall(cwd, npmInstallArgs)
+}
+
+func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {
+	for _, project := range newSnapshot.ProjectCollection.Projects() {
+		if project.ShouldTriggerATA() {
+			logger := func(msg string) {
+				if s.options.LoggingEnabled {
+					s.logger.Log(msg)
+				}
+			}
+
+			request := &TypingsInstallRequest{
+				ProjectID:        project.configFilePath,
+				TypingsInfo:      ptrTo(project.ComputeTypingsInfo()),
+				FileNames:        core.Map(project.Program.GetSourceFiles(), func(file *ast.SourceFile) string { return file.FileName() }),
+				ProjectRootPath:  project.currentDirectory,
+				CompilerOptions:  project.CommandLine.CompilerOptions(),
+				CurrentDirectory: s.options.CurrentDirectory,
+				GetScriptKind:    core.GetScriptKindFromFileName,
+				FS:               s.fs.fs,
+				Logger:           logger,
+			}
+
+			s.typingsInstaller.InstallTypings(request)
+		}
 	}
 }

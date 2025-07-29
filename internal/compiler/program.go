@@ -61,6 +61,10 @@ type Program struct {
 
 	sourceFilesToEmitOnce sync.Once
 	sourceFilesToEmit     []*ast.SourceFile
+
+	// Cached unresolved imports for ATA
+	unresolvedImportsOnce sync.Once
+	unresolvedImports     *collections.Set[string]
 }
 
 // FileExists implements checker.Program.
@@ -210,6 +214,7 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 		usesUriStyleNodeCoreModules: p.usesUriStyleNodeCoreModules,
 		programDiagnostics:          p.programDiagnostics,
 		hasEmitBlockingDiagnostics:  p.hasEmitBlockingDiagnostics,
+		unresolvedImports:           p.unresolvedImports,
 	}
 	result.initCheckerPool()
 	index := core.FindIndex(result.files, func(file *ast.SourceFile) bool { return file.Path() == newFile.Path() })
@@ -263,6 +268,49 @@ func (p *Program) CommandLine() *tsoptions.ParsedCommandLine { return p.opts.Con
 func (p *Program) Host() CompilerHost                        { return p.opts.Host }
 func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 	return slices.Clip(p.opts.Config.GetConfigFileParsingDiagnostics())
+}
+
+// ExtractUnresolvedImports returns the unresolved imports for this program.
+// The result is cached and computed only once.
+func (p *Program) ExtractUnresolvedImports() collections.Set[string] {
+	if p.unresolvedImports != nil {
+		return *p.unresolvedImports
+	}
+	p.unresolvedImportsOnce.Do(func() {
+		p.unresolvedImports = p.extractUnresolvedImports()
+	})
+
+	return *p.unresolvedImports
+}
+
+// extractUnresolvedImports is the internal implementation that does the actual work.
+func (p *Program) extractUnresolvedImports() *collections.Set[string] {
+	unresolvedSet := &collections.Set[string]{}
+
+	for _, sourceFile := range p.files {
+		unresolvedImports := p.extractUnresolvedImportsFromSourceFile(sourceFile)
+		for _, imp := range unresolvedImports {
+			unresolvedSet.Add(imp)
+		}
+	}
+
+	return unresolvedSet
+}
+
+// extractUnresolvedImportsFromSourceFile extracts unresolved imports from a single source file.
+func (p *Program) extractUnresolvedImportsFromSourceFile(file *ast.SourceFile) []string {
+	var unresolvedImports []string
+
+	resolvedModules := p.resolvedModules[file.Path()]
+	for cacheKey, resolution := range resolvedModules {
+		resolved := resolution.IsResolved()
+		if (!resolved || !tspath.ExtensionIsOneOf(resolution.Extension, tspath.SupportedTSExtensionsWithJsonFlat)) &&
+			!tspath.IsExternalModuleNameRelative(cacheKey.Name) {
+			unresolvedImports = append(unresolvedImports, cacheKey.Name)
+		}
+	}
+
+	return unresolvedImports
 }
 
 func (p *Program) SingleThreaded() bool {

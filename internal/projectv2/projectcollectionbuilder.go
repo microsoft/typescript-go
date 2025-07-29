@@ -297,6 +297,41 @@ func (b *projectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, logge
 	}
 }
 
+func (b *projectCollectionBuilder) DidUpdateATAState(ataChanges map[tspath.Path]*ATAStateChange, logger *logCollector) {
+	updateProject := func(project dirty.Value[*Project], ataChange *ATAStateChange) {
+		project.ChangeIf(
+			func(p *Project) bool {
+				if p == nil {
+					return false
+				}
+				// Check if the typings request is still applicable
+				// !!! check if typings files are actually different?
+				return ataChange.TypingsInfo.Equals(p.ComputeTypingsInfo())
+			},
+			func(p *Project) {
+				p.installedTypingsInfo = ataChange.TypingsInfo
+				p.typingsFiles = ataChange.TypingFiles
+				p.dirty = true
+				p.dirtyFilePath = ""
+			},
+		)
+	}
+
+	for projectPath, ataChange := range ataChanges {
+		// Handle configured projects
+		if project, ok := b.configuredProjects.Load(projectPath); ok {
+			updateProject(project, ataChange)
+		} else if projectPath == inferredProjectName || projectPath == "" {
+			// Handle inferred project
+			updateProject(b.inferredProject, ataChange)
+		}
+
+		if logger != nil {
+			logger.Log(fmt.Sprintf("Updated ATA state for project %s", projectPath))
+		}
+	}
+}
+
 func (b *projectCollectionBuilder) markProjectsAffectedByConfigChanges(logger *logCollector) bool {
 	for projectPath := range b.projectsAffectedByConfigChanges {
 		project, ok := b.configuredProjects.Load(projectPath)
@@ -668,6 +703,7 @@ func (b *projectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 				updateProgram = true
 				if commandLine == nil {
 					b.deleteConfiguredProject(entry, logger)
+					filesChanged = true
 					return
 				}
 				entry.Change(func(p *Project) { p.CommandLine = commandLine })

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"os/signal"
 	"runtime/debug"
 	"slices"
@@ -506,14 +507,20 @@ func (s *ProjectV2Server) handleInitialized(ctx context.Context, req *lsproto.Re
 		s.watchEnabled = true
 	}
 
-	s.session = projectv2.NewSession(projectv2.SessionOptions{
-		CurrentDirectory:   s.cwd,
-		DefaultLibraryPath: s.defaultLibraryPath,
-		TypingsLocation:    s.typingsLocation,
-		PositionEncoding:   s.positionEncoding,
-		WatchEnabled:       s.watchEnabled,
-		LoggingEnabled:     true,
-	}, s.fs, s.Client(), s)
+	s.session = projectv2.NewSession(&projectv2.SessionInit{
+		Options: &projectv2.SessionOptions{
+			CurrentDirectory:   s.cwd,
+			DefaultLibraryPath: s.defaultLibraryPath,
+			TypingsLocation:    s.typingsLocation,
+			PositionEncoding:   s.positionEncoding,
+			WatchEnabled:       s.watchEnabled,
+			LoggingEnabled:     true,
+		},
+		FS:         s.fs,
+		Client:     s.Client(),
+		Logger:     s,
+		NpmInstall: s.npmInstall,
+	})
 
 	return nil
 }
@@ -745,4 +752,10 @@ func (s *ProjectV2Server) handleDocumentOnTypeFormat(ctx context.Context, req *l
 // Log implements projectv2.Logger interface
 func (s *ProjectV2Server) Log(msg ...any) {
 	s.logQueue <- fmt.Sprint(msg...)
+}
+
+func (s *ProjectV2Server) npmInstall(cwd string, args []string) ([]byte, error) {
+	cmd := exec.Command("npm", args...)
+	cmd.Dir = cwd
+	return cmd.Output()
 }

@@ -19,14 +19,17 @@ func TestRefCountingCaches(t *testing.T) {
 
 	setup := func(files map[string]any) *Session {
 		fs := bundled.WrapFS(vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/))
-		session := NewSession(SessionOptions{
-			CurrentDirectory:   "/",
-			DefaultLibraryPath: bundled.LibPath(),
-			TypingsLocation:    "/home/src/Library/Caches/typescript",
-			PositionEncoding:   lsproto.PositionEncodingKindUTF8,
-			WatchEnabled:       false,
-			LoggingEnabled:     false,
-		}, fs, nil, nil)
+		session := NewSession(&SessionInit{
+			Options: &SessionOptions{
+				CurrentDirectory:   "/",
+				DefaultLibraryPath: bundled.LibPath(),
+				TypingsLocation:    "/home/src/Library/Caches/typescript",
+				PositionEncoding:   lsproto.PositionEncodingKindUTF8,
+				WatchEnabled:       false,
+				LoggingEnabled:     false,
+			},
+			FS: fs,
+		})
 		return session
 	}
 

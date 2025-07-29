@@ -44,7 +44,6 @@ func NewSnapshot(
 	compilerOptionsForInferredProjects *core.CompilerOptions,
 	toPath func(fileName string) tspath.Path,
 ) *Snapshot {
-
 	id := snapshotID.Add(1)
 	s := &Snapshot{
 		id: id,
@@ -82,6 +81,16 @@ type SnapshotChange struct {
 	// It should only be set the value in the next snapshot should be changed. If nil, the
 	// value from the previous snapshot will be copied to the new snapshot.
 	compilerOptionsForInferredProjects *core.CompilerOptions
+	// ataChanges contains ATA-related changes to apply to projects in the new snapshot.
+	ataChanges map[tspath.Path]*ATAStateChange
+}
+
+// ATAStateChange represents a change to a project's ATA state.
+type ATAStateChange struct {
+	// TypingsInfo is the new typings info for the project.
+	TypingsInfo *TypingsInfo
+	// TypingFiles is the new list of typing files for the project.
+	TypingFiles []string
 }
 
 func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, session *Session) *Snapshot {
@@ -120,6 +129,10 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, session *Se
 	projectCollectionBuilder.DidDeleteFiles(slices.Collect(maps.Keys(change.fileChanges.Deleted.M)), logger.Fork("DidDeleteFiles"))
 	projectCollectionBuilder.DidCreateFiles(slices.Collect(maps.Keys(change.fileChanges.Created.M)), logger.Fork("DidCreateFiles"))
 	projectCollectionBuilder.DidChangeFiles(slices.Collect(maps.Keys(change.fileChanges.Changed.M)), logger.Fork("DidChangeFiles"))
+
+	if change.ataChanges != nil {
+		projectCollectionBuilder.DidUpdateATAState(change.ataChanges, logger.Fork("DidUpdateATAState"))
+	}
 
 	if change.fileChanges.Opened != "" {
 		projectCollectionBuilder.DidOpenFile(change.fileChanges.Opened, logger.Fork("DidOpenFile"))
