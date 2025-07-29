@@ -516,10 +516,10 @@ func (s *ProjectV2Server) handleInitialized(ctx context.Context, req *lsproto.Re
 			WatchEnabled:       s.watchEnabled,
 			LoggingEnabled:     true,
 		},
-		FS:         s.fs,
-		Client:     s.Client(),
-		Logger:     s,
-		NpmInstall: s.npmInstall,
+		FS:          s.fs,
+		Client:      s.Client(),
+		Logger:      s,
+		NpmExecutor: s,
 	})
 
 	return nil
@@ -754,7 +754,7 @@ func (s *ProjectV2Server) Log(msg ...any) {
 	s.logQueue <- fmt.Sprint(msg...)
 }
 
-func (s *ProjectV2Server) npmInstall(cwd string, args []string) ([]byte, error) {
+func (s *ProjectV2Server) NpmInstall(cwd string, args []string) ([]byte, error) {
 	cmd := exec.Command("npm", args...)
 	cmd.Dir = cwd
 	return cmd.Output()

@@ -24,11 +24,11 @@ type SessionOptions struct {
 }
 
 type SessionInit struct {
-	Options    *SessionOptions
-	FS         vfs.FS
-	Client     Client
-	Logger     Logger
-	NpmInstall NpmInstallOperation
+	Options     *SessionOptions
+	FS          vfs.FS
+	Client      Client
+	Logger      Logger
+	NpmExecutor NpmExecutor
 }
 
 type Session struct {
@@ -36,19 +36,23 @@ type Session struct {
 	toPath                             func(string) tspath.Path
 	client                             Client
 	logger                             Logger
-	npmInstall                         NpmInstallOperation
+	npmExecutor                        NpmExecutor
 	fs                                 *overlayFS
 	parseCache                         *parseCache
 	extendedConfigCache                *extendedConfigCache
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	programCounter                     *programCounter
 	typingsInstaller                   *TypingsInstaller
+	backgroundTasks                    *BackgroundQueue
 
 	snapshotMu sync.RWMutex
 	snapshot   *Snapshot
 
 	pendingFileChangesMu sync.Mutex
 	pendingFileChanges   []FileChange
+
+	pendingATAChangesMu sync.Mutex
+	pendingATAChanges   map[tspath.Path]*ATAStateChange
 }
 
 func NewSession(init *SessionInit) *Session {
@@ -69,11 +73,12 @@ func NewSession(init *SessionInit) *Session {
 		toPath:              toPath,
 		client:              init.Client,
 		logger:              init.Logger,
-		npmInstall:          init.NpmInstall,
+		npmExecutor:         init.NpmExecutor,
 		fs:                  overlayFS,
 		parseCache:          parseCache,
 		extendedConfigCache: extendedConfigCache,
 		programCounter:      &programCounter{},
+		backgroundTasks:     newBackgroundTaskQueue(),
 		snapshot: NewSnapshot(
 			make(map[tspath.Path]*diskFile),
 			init.Options,
@@ -83,6 +88,7 @@ func NewSession(init *SessionInit) *Session {
 			nil,
 			toPath,
 		),
+		pendingATAChanges: make(map[tspath.Path]*ATAStateChange),
 	}
 
 	session.typingsInstaller = NewTypingsInstaller(&TypingsInstallerOptions{
@@ -91,6 +97,21 @@ func NewSession(init *SessionInit) *Session {
 	}, session)
 
 	return session
+}
+
+// FS implements module.ResolutionHost
+func (s *Session) FS() vfs.FS {
+	return s.fs.fs
+}
+
+// GetCurrentDirectory implements module.ResolutionHost
+func (s *Session) GetCurrentDirectory() string {
+	return s.options.CurrentDirectory
+}
+
+// Trace implements module.ResolutionHost
+func (s *Session) Trace(msg string) {
+	panic("ATA module resolution should not use tracing")
 }
 
 func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, version int32, content string, languageKind lsproto.LanguageKind) {
@@ -188,13 +209,14 @@ func (s *Session) Snapshot() (*Snapshot, func()) {
 
 func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
 	var snapshot *Snapshot
-	changes := s.flushChanges(ctx)
-	updateSnapshot := !changes.IsEmpty()
+	fileChanges, ataChanges := s.flushChanges(ctx)
+	updateSnapshot := !fileChanges.IsEmpty() || len(ataChanges) > 0
 	if updateSnapshot {
 		// If there are pending file changes, we need to update the snapshot.
 		// Sending the requested URI ensures that the project for this URI is loaded.
 		snapshot = s.UpdateSnapshot(ctx, SnapshotChange{
-			fileChanges:   changes,
+			fileChanges:   fileChanges,
+			ataChanges:    ataChanges,
 			requestedURIs: []lsproto.DocumentUri{uri},
 		})
 	} else {
@@ -232,11 +254,13 @@ func (s *Session) UpdateSnapshot(ctx context.Context, change SnapshotChange) *Sn
 		oldSnapshot.dispose(s)
 	}
 
-	if s.npmInstall != nil {
-		go s.triggerATAForUpdatedProjects(newSnapshot)
+	// Enqueue ATA updates if needed
+	if s.npmExecutor != nil {
+		s.triggerATAForUpdatedProjects(newSnapshot)
 	}
 
-	go func() {
+	// Enqueue logging, watch updates, and diagnostic refresh tasks
+	s.backgroundTasks.Enqueue(func() {
 		if s.options.LoggingEnabled {
 			newSnapshot.builderLogs.WriteLogs(s.logger)
 			s.logProjectChanges(oldSnapshot, newSnapshot)
@@ -252,8 +276,15 @@ func (s *Session) UpdateSnapshot(ctx context.Context, change SnapshotChange) *Sn
 				s.logger.Log(fmt.Sprintf("Error refreshing diagnostics: %v", err))
 			}
 		}
-	}()
+	})
+
 	return newSnapshot
+}
+
+// WaitForBackgroundTasks waits for all background tasks to complete.
+// This is intended to be used only for testing purposes.
+func (s *Session) WaitForBackgroundTasks() {
+	s.backgroundTasks.WaitForEmpty()
 }
 
 func updateWatch[T any](ctx context.Context, client Client, logger Logger, oldWatcher, newWatcher *WatchedFiles[T]) []error {
@@ -337,13 +368,17 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 }
 
 func (s *Session) Close() {
-	// !!!
+	s.backgroundTasks.Close()
 }
 
-func (s *Session) flushChanges(ctx context.Context) FileChangeSummary {
+func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspath.Path]*ATAStateChange) {
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
-	return s.flushChangesLocked(ctx)
+	s.pendingATAChangesMu.Lock()
+	defer s.pendingATAChangesMu.Unlock()
+	pendingATAChanges := s.pendingATAChanges
+	s.pendingATAChanges = make(map[tspath.Path]*ATAStateChange)
+	return s.flushChangesLocked(ctx), pendingATAChanges
 }
 
 // flushChangesLocked should only be called with s.pendingFileChangesMu held.
@@ -398,53 +433,46 @@ func (s *Session) logProjectChanges(oldSnapshot *Snapshot, newSnapshot *Snapshot
 	}
 }
 
-// OnTypingsInstalled is called when typings have been successfully installed for a project.
-func (s *Session) OnTypingsInstalled(projectID tspath.Path, typingsInfo *TypingsInfo, typingFiles []string) {
-	// Queue a snapshot update with the new ATA state
-	ataChanges := make(map[tspath.Path]*ATAStateChange)
-	ataChanges[projectID] = &ATAStateChange{
-		TypingsInfo: typingsInfo,
-		TypingFiles: typingFiles,
-	}
-
-	s.UpdateSnapshot(context.Background(), SnapshotChange{
-		ataChanges: ataChanges,
-	})
-}
-
-// OnTypingsInstallFailed is called when typings installation fails for a project.
-func (s *Session) OnTypingsInstallFailed(projectID tspath.Path, typingsInfo *TypingsInfo, err error) {
-	if s.options.LoggingEnabled {
-		s.logger.Log(fmt.Sprintf("ATA installation failed for project %s: %v", projectID, err))
-	}
-}
-
 func (s *Session) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error) {
-	return s.npmInstall(cwd, npmInstallArgs)
+	return s.npmExecutor.NpmInstall(cwd, npmInstallArgs)
 }
 
 func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
 		if project.ShouldTriggerATA() {
-			logger := func(msg string) {
+			s.backgroundTasks.Enqueue(func() {
+				var logger *logCollector
 				if s.options.LoggingEnabled {
-					s.logger.Log(msg)
+					logger = NewLogCollector(fmt.Sprintf("Triggering ATA for project %s", project.Name()))
 				}
-			}
 
-			request := &TypingsInstallRequest{
-				ProjectID:        project.configFilePath,
-				TypingsInfo:      ptrTo(project.ComputeTypingsInfo()),
-				FileNames:        core.Map(project.Program.GetSourceFiles(), func(file *ast.SourceFile) string { return file.FileName() }),
-				ProjectRootPath:  project.currentDirectory,
-				CompilerOptions:  project.CommandLine.CompilerOptions(),
-				CurrentDirectory: s.options.CurrentDirectory,
-				GetScriptKind:    core.GetScriptKindFromFileName,
-				FS:               s.fs.fs,
-				Logger:           logger,
-			}
+				typingsInfo := project.ComputeTypingsInfo()
+				request := &TypingsInstallRequest{
+					ProjectID:        project.configFilePath,
+					TypingsInfo:      &typingsInfo,
+					FileNames:        core.Map(project.Program.GetSourceFiles(), func(file *ast.SourceFile) string { return file.FileName() }),
+					ProjectRootPath:  project.currentDirectory,
+					CompilerOptions:  project.CommandLine.CompilerOptions(),
+					CurrentDirectory: s.options.CurrentDirectory,
+					GetScriptKind:    core.GetScriptKindFromFileName,
+					FS:               s.fs.fs,
+					Logger:           logger,
+				}
 
-			s.typingsInstaller.InstallTypings(request)
+				if typingsFiles, err := s.typingsInstaller.InstallTypings(request); err != nil && logger != nil {
+					s.logger.Log(fmt.Sprintf("ATA installation failed for project %s: %v", project.Name(), err))
+					logger.Close()
+					logger.WriteLogs(s.logger)
+				} else {
+					s.pendingATAChangesMu.Lock()
+					defer s.pendingATAChangesMu.Unlock()
+					s.pendingATAChanges[project.configFilePath] = &ATAStateChange{
+						TypingsInfo:  &typingsInfo,
+						TypingsFiles: typingsFiles,
+						Logs:         logger,
+					}
+				}
+			})
 		}
 	}
 }

@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	inferredProjectName = "/dev/null/inferredProject"
+	inferredProjectName = "/dev/null/inferred" // lowercase so toPath is a no-op regardless of settings
 	hr                  = "-----------------------------------------------"
 )
 
@@ -362,6 +362,10 @@ func (p *Project) GetUnresolvedImports() collections.Set[string] {
 
 // ShouldTriggerATA determines if ATA should be triggered for this project.
 func (p *Project) ShouldTriggerATA() bool {
+	if p.Program == nil || p.CommandLine == nil {
+		return false
+	}
+
 	typeAcquisition := p.GetTypeAcquisition()
 	if typeAcquisition == nil || !typeAcquisition.Enable.IsTrue() {
 		return false

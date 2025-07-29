@@ -26,7 +26,7 @@ func IsTypingUpToDate(cachedTyping *CachedTyping, availableTypingVersions map[st
 
 func DiscoverTypings(
 	fs vfs.FS,
-	log func(s string),
+	logger *logCollector,
 	typingsInfo *TypingsInfo,
 	fileNames []string,
 	projectRootPath string,
@@ -42,7 +42,7 @@ func DiscoverTypings(
 	})
 
 	if typingsInfo.TypeAcquisition.Include != nil {
-		addInferredTypings(fs, log, inferredTypings, typingsInfo.TypeAcquisition.Include, "Explicitly included types")
+		addInferredTypings(fs, logger, inferredTypings, typingsInfo.TypeAcquisition.Include, "Explicitly included types")
 	}
 	exclude := typingsInfo.TypeAcquisition.Exclude
 
@@ -54,13 +54,13 @@ func DiscoverTypings(
 		}
 		possibleSearchDirs[projectRootPath] = true
 		for searchDir := range possibleSearchDirs {
-			filesToWatch = addTypingNamesAndGetFilesToWatch(fs, log, inferredTypings, filesToWatch, searchDir, "bower.json", "bower_components")
-			filesToWatch = addTypingNamesAndGetFilesToWatch(fs, log, inferredTypings, filesToWatch, searchDir, "package.json", "node_modules")
+			filesToWatch = addTypingNamesAndGetFilesToWatch(fs, logger, inferredTypings, filesToWatch, searchDir, "bower.json", "bower_components")
+			filesToWatch = addTypingNamesAndGetFilesToWatch(fs, logger, inferredTypings, filesToWatch, searchDir, "package.json", "node_modules")
 		}
 	}
 
 	if !typingsInfo.TypeAcquisition.DisableFilenameBasedTypeAcquisition.IsTrue() {
-		getTypingNamesFromSourceFileNames(fs, log, inferredTypings, fileNames)
+		getTypingNamesFromSourceFileNames(fs, logger, inferredTypings, fileNames)
 	}
 
 	// add typings for unresolved imports
@@ -70,12 +70,12 @@ func DiscoverTypings(
 	}
 	slices.Sort(modules)
 	modules = slices.Compact(modules)
-	addInferredTypings(fs, log, inferredTypings, modules, "Inferred typings from unresolved imports")
+	addInferredTypings(fs, logger, inferredTypings, modules, "Inferred typings from unresolved imports")
 
 	// Remove typings that the user has added to the exclude list
 	for _, excludeTypingName := range exclude {
 		delete(inferredTypings, excludeTypingName)
-		log(fmt.Sprintf("ATA:: Typing for %s is in exclude list, will be ignored.", excludeTypingName))
+		logger.Log(fmt.Sprintf("ATA:: Typing for %s is in exclude list, will be ignored.", excludeTypingName))
 	}
 
 	// Add the cached typing locations for inferred typings that are already installed
@@ -94,7 +94,7 @@ func DiscoverTypings(
 			newTypingNames = append(newTypingNames, typing)
 		}
 	}
-	log(fmt.Sprintf("ATA:: Finished typings discovery: cachedTypingsPaths: %v newTypingNames: %v, filesToWatch %v", cachedTypingPaths, newTypingNames, filesToWatch))
+	logger.Log(fmt.Sprintf("ATA:: Finished typings discovery: cachedTypingsPaths: %v newTypingNames: %v, filesToWatch %v", cachedTypingPaths, newTypingNames, filesToWatch))
 	return cachedTypingPaths, newTypingNames, filesToWatch
 }
 
@@ -106,11 +106,11 @@ func addInferredTyping(inferredTypings map[string]string, typingName string) {
 
 func addInferredTypings(
 	fs vfs.FS,
-	log func(s string),
+	logger *logCollector,
 	inferredTypings map[string]string,
 	typingNames []string, message string,
 ) {
-	log(fmt.Sprintf("ATA:: %s: %v", message, typingNames))
+	logger.Log(fmt.Sprintf("ATA:: %s: %v", message, typingNames))
 	for _, typingName := range typingNames {
 		addInferredTyping(inferredTypings, typingName)
 	}
@@ -124,7 +124,7 @@ func addInferredTypings(
  */
 func getTypingNamesFromSourceFileNames(
 	fs vfs.FS,
-	log func(s string),
+	logger *logCollector,
 	inferredTypings map[string]string,
 	fileNames []string,
 ) {
@@ -139,10 +139,10 @@ func getTypingNamesFromSourceFileNames(
 		}
 	}
 	if len(fromFileNames) > 0 {
-		addInferredTypings(fs, log, inferredTypings, fromFileNames, "Inferred typings from file names")
+		addInferredTypings(fs, logger, inferredTypings, fromFileNames, "Inferred typings from file names")
 	}
 	if hasJsxFile {
-		log("ATA:: Inferred 'react' typings due to presence of '.jsx' extension")
+		logger.Log("ATA:: Inferred 'react' typings due to presence of '.jsx' extension")
 		addInferredTyping(inferredTypings, "react")
 	}
 }
@@ -157,7 +157,7 @@ func getTypingNamesFromSourceFileNames(
  */
 func addTypingNamesAndGetFilesToWatch(
 	fs vfs.FS,
-	log func(s string),
+	logger *logCollector,
 	inferredTypings map[string]string,
 	filesToWatch []string,
 	projectRootPath string,
@@ -180,7 +180,7 @@ func addTypingNamesAndGetFilesToWatch(
 			manifestTypingNames = slices.AppendSeq(manifestTypingNames, maps.Keys(manifest.DevDependencies.Value))
 			manifestTypingNames = slices.AppendSeq(manifestTypingNames, maps.Keys(manifest.OptionalDependencies.Value))
 			manifestTypingNames = slices.AppendSeq(manifestTypingNames, maps.Keys(manifest.PeerDependencies.Value))
-			addInferredTypings(fs, log, inferredTypings, manifestTypingNames, "Typing names in '"+manifestPath+"' dependencies")
+			addInferredTypings(fs, logger, inferredTypings, manifestTypingNames, "Typing names in '"+manifestPath+"' dependencies")
 		}
 	}
 
@@ -242,7 +242,7 @@ func addTypingNamesAndGetFilesToWatch(
 
 	}
 
-	log(fmt.Sprintf("ATA:: Searching for typing names in %s; all files: %v", packagesFolderPath, dependencyManifestNames))
+	logger.Log(fmt.Sprintf("ATA:: Searching for typing names in %s; all files: %v", packagesFolderPath, dependencyManifestNames))
 
 	// Once we have the names of things to look up, we iterate over
 	// and either collect their included typings, or add them to the
@@ -265,16 +265,16 @@ func addTypingNamesAndGetFilesToWatch(
 		if len(ownTypes) != 0 {
 			absolutePath := tspath.GetNormalizedAbsolutePath(ownTypes, tspath.GetDirectoryPath(manifestPath))
 			if fs.FileExists(absolutePath) {
-				log(fmt.Sprintf("ATA::     Package '%s' provides its own types.", manifest.Name.Value))
+				logger.Log(fmt.Sprintf("ATA::     Package '%s' provides its own types.", manifest.Name.Value))
 				inferredTypings[manifest.Name.Value] = absolutePath
 			} else {
-				log(fmt.Sprintf("ATA::     Package '%s' provides its own types but they are missing.", manifest.Name.Value))
+				logger.Log(fmt.Sprintf("ATA::     Package '%s' provides its own types but they are missing.", manifest.Name.Value))
 			}
 		} else {
 			packageNames = append(packageNames, manifest.Name.Value)
 		}
 	}
-	addInferredTypings(fs, log, inferredTypings, packageNames, "    Found package names")
+	addInferredTypings(fs, logger, inferredTypings, packageNames, "    Found package names")
 	return filesToWatch
 }
 

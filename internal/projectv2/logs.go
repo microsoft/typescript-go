@@ -71,21 +71,23 @@ type logCollector struct {
 	name       string
 	logs       []log
 	dispatcher *dispatcher
+	close      func()
 }
 
-func NewLogCollector(name string) (*logCollector, func()) {
+func NewLogCollector(name string) *logCollector {
 	dispatcher, close := newDispatcher()
 	return &logCollector{
 		name:       name,
 		dispatcher: dispatcher,
-	}, close
+		close:      close,
+	}
 }
 
-func (c *logCollector) Log(message string) {
+func (c *logCollector) Log(message ...any) {
 	if c == nil {
 		return
 	}
-	log := newLog(nil, message)
+	log := newLog(nil, fmt.Sprint(message...))
 	c.dispatcher.Dispatch(func() {
 		c.logs = append(c.logs, log)
 	})
@@ -111,6 +113,13 @@ func (c *logCollector) Fork(message string) *logCollector {
 		c.logs = append(c.logs, log)
 	})
 	return child
+}
+
+func (c *logCollector) Close() {
+	if c == nil {
+		return
+	}
+	c.close()
 }
 
 type Logger interface {

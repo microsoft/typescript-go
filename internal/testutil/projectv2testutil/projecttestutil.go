@@ -1,6 +1,7 @@
 package projectv2testutil
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"slices"
@@ -11,9 +12,8 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/projectv2"
-	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
@@ -21,6 +21,9 @@ import (
 
 //go:generate go tool github.com/matryer/moq -stub -fmt goimports -pkg projectv2testutil -out clientmock_generated.go ../../projectv2 Client
 //go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w clientmock_generated.go
+
+//go:generate go tool github.com/matryer/moq -stub -fmt goimports -pkg projectv2testutil -out npmexecutormock_generated.go ../../projectv2 NpmExecutor
+//go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w npmexecutormock_generated.go
 
 const (
 	TestTypingsLocation = "/home/src/Library/Caches/typescript"
@@ -32,19 +35,70 @@ type TestTypingsInstallerOptions struct {
 }
 
 type SessionUtils struct {
-	fs            vfs.FS
-	client        *ClientMock
-	testOptions   *TestTypingsInstallerOptions
-	preNpmInstall func(cwd string, npmInstallArgs []string)
-}
-
-type NpmInstallRequest struct {
-	Cwd            string
-	NpmInstallArgs []string
+	fs          vfs.FS
+	client      *ClientMock
+	npmExecutor *NpmExecutorMock
+	testOptions *TestTypingsInstallerOptions
+	logs        strings.Builder
+	logWriter   *bufio.Writer
 }
 
 func (h *SessionUtils) Client() *ClientMock {
 	return h.client
+}
+
+func (h *SessionUtils) NpmExecutor() *NpmExecutorMock {
+	return h.npmExecutor
+}
+
+func (h *SessionUtils) SetupNpmExecutorForTypingsInstaller() {
+	if h.testOptions == nil {
+		return
+	}
+
+	h.npmExecutor.NpmInstallFunc = func(cwd string, packageNames []string) ([]byte, error) {
+		// packageNames is actually npmInstallArgs due to interface misnaming
+		npmInstallArgs := packageNames
+		lenNpmInstallArgs := len(npmInstallArgs)
+		if lenNpmInstallArgs < 3 {
+			return nil, fmt.Errorf("unexpected npm install: %s %v", cwd, npmInstallArgs)
+		}
+
+		if lenNpmInstallArgs == 3 && npmInstallArgs[2] == "types-registry@latest" {
+			// Write typings file
+			err := h.fs.WriteFile(cwd+"/node_modules/types-registry/index.json", h.createTypesRegistryFileContent(), false)
+			return nil, err
+		}
+
+		// Find the packages: they start at index 2 and continue until we hit a flag starting with --
+		packageEnd := lenNpmInstallArgs
+		for i := 2; i < lenNpmInstallArgs; i++ {
+			if strings.HasPrefix(npmInstallArgs[i], "--") {
+				packageEnd = i
+				break
+			}
+		}
+
+		for _, atTypesPackageTs := range npmInstallArgs[2:packageEnd] {
+			// @types/packageName@TsVersionToUse
+			atTypesPackage := atTypesPackageTs
+			// Remove version suffix
+			if versionIndex := strings.LastIndex(atTypesPackage, "@"); versionIndex > 6 { // "@types/".length is 7, so version @ must be after
+				atTypesPackage = atTypesPackage[:versionIndex]
+			}
+			// Extract package name from @types/packageName
+			packageBaseName := atTypesPackage[7:] // Remove "@types/" prefix
+			content, ok := h.testOptions.PackageToFile[packageBaseName]
+			if !ok {
+				return nil, fmt.Errorf("content not provided for %s", packageBaseName)
+			}
+			err := h.fs.WriteFile(cwd+"/node_modules/@types/"+packageBaseName+"/index.d.ts", content, false)
+			if err != nil {
+				return nil, err
+			}
+		}
+		return nil, nil
+	}
 }
 
 func (h *SessionUtils) ExpectWatchFilesCalls(count int) func(t *testing.T) {
@@ -83,71 +137,23 @@ func (h *SessionUtils) ExpectUnwatchFilesCalls(count int) func(t *testing.T) {
 	}
 }
 
-func (h *SessionUtils) ExpectNpmInstallCalls(count int) func() []NpmInstallRequest {
-	var calls []NpmInstallRequest
-	var mu sync.Mutex
-	var wg sync.WaitGroup
-	wg.Add(count)
-
-	if h.preNpmInstall != nil {
-		panic("cannot call ExpectNpmInstallCalls without invoking the return of the previous call")
-	}
-
-	h.preNpmInstall = func(cwd string, npmInstallArgs []string) {
-		mu.Lock()
-		defer mu.Unlock()
-		calls = append(calls, NpmInstallRequest{Cwd: cwd, NpmInstallArgs: npmInstallArgs})
-		wg.Done()
-	}
-	return func() []NpmInstallRequest {
-		wg.Wait()
-		mu.Lock()
-		defer mu.Unlock()
-		h.preNpmInstall = nil
-		return calls
-	}
-}
-
-func (h *SessionUtils) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error) {
-	if h.testOptions == nil {
-		return nil, nil
-	}
-
-	if h.preNpmInstall == nil {
-		panic(fmt.Sprintf("unexpected npm install command invoked: %v", npmInstallArgs))
-	}
-
-	// Always call preNpmInstall to decrement the wait group
-	h.preNpmInstall(cwd, npmInstallArgs)
-
-	lenNpmInstallArgs := len(npmInstallArgs)
-	if lenNpmInstallArgs < 3 {
-		return nil, fmt.Errorf("unexpected npm install: %s %v", cwd, npmInstallArgs)
-	}
-
-	if lenNpmInstallArgs == 3 && npmInstallArgs[2] == "types-registry@latest" {
-		// Write typings file
-		err := h.fs.WriteFile(tspath.CombinePaths(cwd, "node_modules/types-registry/index.json"), h.createTypesRegistryFileContent(), false)
-		return nil, err
-	}
-
-	for _, atTypesPackageTs := range npmInstallArgs[2 : lenNpmInstallArgs-2] {
-		// @types/packageName@TsVersionToUse
-		packageName := atTypesPackageTs[7 : len(atTypesPackageTs)-len(project.TsVersionToUse)-1]
-		content, ok := h.testOptions.PackageToFile[packageName]
-		if !ok {
-			return nil, fmt.Errorf("content not provided for %s", packageName)
-		}
-		err := h.fs.WriteFile(tspath.CombinePaths(cwd, "node_modules/@types/"+packageName+"/index.d.ts"), content, false)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return nil, nil
-}
-
 func (h *SessionUtils) FS() vfs.FS {
 	return h.fs
+}
+
+func (h *SessionUtils) Log(msg ...any) {
+	fmt.Fprintln(&h.logs, msg...)
+}
+
+func (h *SessionUtils) Logs() string {
+	h.logWriter.Flush()
+	return h.logs.String()
+}
+
+func (h *SessionUtils) BaselineLogs(t *testing.T) {
+	baseline.Run(t, t.Name()+".log", h.Logs(), baseline.Options{
+		Subfolder: "project",
+	})
 }
 
 var (
@@ -223,11 +229,17 @@ func Setup(files map[string]any) (*projectv2.Session, *SessionUtils) {
 func SetupWithTypingsInstaller(files map[string]any, testOptions *TestTypingsInstallerOptions) (*projectv2.Session, *SessionUtils) {
 	fs := bundled.WrapFS(vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/))
 	clientMock := &ClientMock{}
+	npmExecutorMock := &NpmExecutorMock{}
 	sessionUtils := &SessionUtils{
 		fs:          fs,
 		client:      clientMock,
+		npmExecutor: npmExecutorMock,
 		testOptions: testOptions,
 	}
+	sessionUtils.logWriter = bufio.NewWriter(&sessionUtils.logs)
+
+	// Configure the npm executor mock to handle typings installation
+	sessionUtils.SetupNpmExecutorForTypingsInstaller()
 
 	session := projectv2.NewSession(&projectv2.SessionInit{
 		Options: &projectv2.SessionOptions{
@@ -236,11 +248,12 @@ func SetupWithTypingsInstaller(files map[string]any, testOptions *TestTypingsIns
 			TypingsLocation:    TestTypingsLocation,
 			PositionEncoding:   lsproto.PositionEncodingKindUTF8,
 			WatchEnabled:       true,
-			LoggingEnabled:     false,
+			LoggingEnabled:     true,
 		},
-		FS:         fs,
-		Client:     clientMock,
-		NpmInstall: sessionUtils.NpmInstall,
+		FS:          fs,
+		Client:      clientMock,
+		NpmExecutor: npmExecutorMock,
+		Logger:      sessionUtils,
 	})
 
 	return session, sessionUtils

@@ -304,26 +304,25 @@ func (b *projectCollectionBuilder) DidUpdateATAState(ataChanges map[tspath.Path]
 				if p == nil {
 					return false
 				}
-				// Check if the typings request is still applicable
-				// !!! check if typings files are actually different?
 				return ataChange.TypingsInfo.Equals(p.ComputeTypingsInfo())
 			},
 			func(p *Project) {
 				p.installedTypingsInfo = ataChange.TypingsInfo
-				p.typingsFiles = ataChange.TypingFiles
-				p.dirty = true
-				p.dirtyFilePath = ""
+				if !slices.Equal(p.typingsFiles, ataChange.TypingsFiles) {
+					p.typingsFiles = ataChange.TypingsFiles
+					p.dirty = true
+					p.dirtyFilePath = ""
+				}
 			},
 		)
 	}
 
 	for projectPath, ataChange := range ataChanges {
-		// Handle configured projects
-		if project, ok := b.configuredProjects.Load(projectPath); ok {
-			updateProject(project, ataChange)
-		} else if projectPath == inferredProjectName || projectPath == "" {
-			// Handle inferred project
+		ataChange.Logs.WriteLogs(logger.Fork("Typings Installer Logs for " + string(projectPath)))
+		if projectPath == inferredProjectName {
 			updateProject(b.inferredProject, ataChange)
+		} else if project, ok := b.configuredProjects.Load(projectPath); ok {
+			updateProject(project, ataChange)
 		}
 
 		if logger != nil {

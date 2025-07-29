@@ -87,18 +87,19 @@ type SnapshotChange struct {
 
 // ATAStateChange represents a change to a project's ATA state.
 type ATAStateChange struct {
+	ProjectID tspath.Path
 	// TypingsInfo is the new typings info for the project.
 	TypingsInfo *TypingsInfo
-	// TypingFiles is the new list of typing files for the project.
-	TypingFiles []string
+	// TypingsFiles is the new list of typing files for the project.
+	TypingsFiles []string
+	Logs         *logCollector
 }
 
 func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, session *Session) *Snapshot {
 	var logger *logCollector
 	if session.options.LoggingEnabled {
-		var close func()
-		logger, close = NewLogCollector(fmt.Sprintf("Cloning snapshot %d", s.id))
-		defer close()
+		logger = NewLogCollector(fmt.Sprintf("Cloning snapshot %d", s.id))
+		defer logger.Close()
 	}
 
 	start := time.Now()
@@ -122,6 +123,10 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, session *Se
 		session.extendedConfigCache,
 	)
 
+	if change.ataChanges != nil {
+		projectCollectionBuilder.DidUpdateATAState(change.ataChanges, logger.Fork("DidUpdateATAState"))
+	}
+
 	for file, hash := range change.fileChanges.Closed {
 		projectCollectionBuilder.DidCloseFile(file, hash, logger.Fork("DidCloseFile"))
 	}
@@ -129,10 +134,6 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, session *Se
 	projectCollectionBuilder.DidDeleteFiles(slices.Collect(maps.Keys(change.fileChanges.Deleted.M)), logger.Fork("DidDeleteFiles"))
 	projectCollectionBuilder.DidCreateFiles(slices.Collect(maps.Keys(change.fileChanges.Created.M)), logger.Fork("DidCreateFiles"))
 	projectCollectionBuilder.DidChangeFiles(slices.Collect(maps.Keys(change.fileChanges.Changed.M)), logger.Fork("DidChangeFiles"))
-
-	if change.ataChanges != nil {
-		projectCollectionBuilder.DidUpdateATAState(change.ataChanges, logger.Fork("DidUpdateATAState"))
-	}
 
 	if change.fileChanges.Opened != "" {
 		projectCollectionBuilder.DidOpenFile(change.fileChanges.Opened, logger.Fork("DidOpenFile"))
