@@ -531,14 +531,14 @@ func writeAnnotatedContentWithTooltipsToBaseline[T comparable](
 		for _, line := range lines {
 			builder.WriteString("// ")
 			builder.WriteString(line)
+			builder.WriteByte('\n')
 		}
-		builder.WriteByte('\n')
-	}
 
-	if seenFirst {
-		builder.WriteString("\n\n")
-	} else {
-		seenFirst = true
+		if seenFirst {
+			builder.WriteString("\n\n")
+		} else {
+			seenFirst = true
+		}
 	}
 }
 
