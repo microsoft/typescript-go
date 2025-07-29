@@ -51,52 +51,51 @@ func (h *emitFilesHandler) emitAllAffectedFiles(options compiler.EmitOptions) *c
 
 	// Emit all affected files
 	var results []*compiler.EmitResult
-	if len(h.program.snapshot.affectedFilesPendingEmit) != 0 {
-		wg := core.NewWorkGroup(h.program.program.SingleThreaded())
-		for path, emitKind := range h.program.snapshot.affectedFilesPendingEmit {
-			affectedFile := h.program.program.GetSourceFileByPath(path)
-			if affectedFile == nil || !h.program.program.SourceFileMayBeEmitted(affectedFile, false) {
-				h.deletedPendingKinds.Add(path)
-				continue
-			}
-			pendingKind := h.getPendingEmitKindForEmitOptions(emitKind, options)
-			if pendingKind != 0 {
-				wg.Queue(func() {
-					// Determine if we can do partial emit
-					var emitOnly compiler.EmitOnly
-					if (pendingKind & FileEmitKindAllJs) != 0 {
-						emitOnly = compiler.EmitOnlyJs
-					}
-					if (pendingKind & FileEmitKindAllDts) != 0 {
-						if emitOnly == compiler.EmitOnlyJs {
-							emitOnly = compiler.EmitAll
-						} else {
-							emitOnly = compiler.EmitOnlyDts
-						}
-					}
-					var result *compiler.EmitResult
-					if !h.isForDtsErrors {
-						result = h.program.program.Emit(h.ctx, h.getEmitOptions(compiler.EmitOptions{
-							TargetSourceFile: affectedFile,
-							EmitOnly:         emitOnly,
-							WriteFile:        options.WriteFile,
-						}))
+	wg := core.NewWorkGroup(h.program.program.SingleThreaded())
+	h.program.snapshot.affectedFilesPendingEmit.Range(func(path tspath.Path, emitKind FileEmitKind) bool {
+		affectedFile := h.program.program.GetSourceFileByPath(path)
+		if affectedFile == nil || !h.program.program.SourceFileMayBeEmitted(affectedFile, false) {
+			h.deletedPendingKinds.Add(path)
+			return true
+		}
+		pendingKind := h.getPendingEmitKindForEmitOptions(emitKind, options)
+		if pendingKind != 0 {
+			wg.Queue(func() {
+				// Determine if we can do partial emit
+				var emitOnly compiler.EmitOnly
+				if (pendingKind & FileEmitKindAllJs) != 0 {
+					emitOnly = compiler.EmitOnlyJs
+				}
+				if (pendingKind & FileEmitKindAllDts) != 0 {
+					if emitOnly == compiler.EmitOnlyJs {
+						emitOnly = compiler.EmitAll
 					} else {
-						result = &compiler.EmitResult{
-							EmitSkipped: true,
-							Diagnostics: h.program.program.GetDeclarationDiagnostics(h.ctx, affectedFile),
-						}
+						emitOnly = compiler.EmitOnlyDts
 					}
+				}
+				var result *compiler.EmitResult
+				if !h.isForDtsErrors {
+					result = h.program.program.Emit(h.ctx, h.getEmitOptions(compiler.EmitOptions{
+						TargetSourceFile: affectedFile,
+						EmitOnly:         emitOnly,
+						WriteFile:        options.WriteFile,
+					}))
+				} else {
+					result = &compiler.EmitResult{
+						EmitSkipped: true,
+						Diagnostics: h.program.program.GetDeclarationDiagnostics(h.ctx, affectedFile),
+					}
+				}
 
-					// Update the pendingEmit for the file
-					h.emitUpdates.Store(path, &emitUpdate{pendingKind: getPendingEmitKind(emitKind, pendingKind), result: result})
-				})
-			}
+				// Update the pendingEmit for the file
+				h.emitUpdates.Store(path, &emitUpdate{pendingKind: getPendingEmitKind(emitKind, pendingKind), result: result})
+			})
 		}
-		wg.RunAndWait()
-		if h.ctx.Err() != nil {
-			return nil
-		}
+		return true
+	})
+	wg.RunAndWait()
+	if h.ctx.Err() != nil {
+		return nil
 	}
 
 	// Get updated errors that were not included in affected files emit
@@ -107,7 +106,7 @@ func (h *emitFilesHandler) emitAllAffectedFiles(options compiler.EmitOptions) *c
 				h.deletedPendingKinds.Add(path)
 				return true
 			}
-			pendingKind := h.program.snapshot.affectedFilesPendingEmit[path]
+			pendingKind, _ := h.program.snapshot.affectedFilesPendingEmit.Load(path)
 			h.emitUpdates.Store(path, &emitUpdate{pendingKind: pendingKind, result: &compiler.EmitResult{
 				EmitSkipped: true,
 				Diagnostics: diagnostics.getDiagnostics(h.program.program, affectedFile),
@@ -236,15 +235,15 @@ func (h *emitFilesHandler) updateSnapshot() []*compiler.EmitResult {
 		h.program.snapshot.buildInfoEmitPending.Store(true)
 	}
 	for file := range h.deletedPendingKinds.Keys() {
-		delete(h.program.snapshot.affectedFilesPendingEmit, file)
+		h.program.snapshot.affectedFilesPendingEmit.Delete(file)
 		h.program.snapshot.buildInfoEmitPending.Store(true)
 	}
 	var results []*compiler.EmitResult
 	h.emitUpdates.Range(func(file tspath.Path, update *emitUpdate) bool {
 		if update.pendingKind == 0 {
-			delete(h.program.snapshot.affectedFilesPendingEmit, file)
+			h.program.snapshot.affectedFilesPendingEmit.Delete(file)
 		} else {
-			h.program.snapshot.affectedFilesPendingEmit[file] = update.pendingKind
+			h.program.snapshot.affectedFilesPendingEmit.Store(file, update.pendingKind)
 		}
 		if update.result != nil {
 			results = append(results, update.result)

@@ -196,7 +196,7 @@ type snapshot struct {
 	// The map has key by source file's path that has been changed
 	changedFilesSet collections.SyncSet[tspath.Path]
 	// Files pending to be emitted
-	affectedFilesPendingEmit map[tspath.Path]FileEmitKind
+	affectedFilesPendingEmit collections.SyncMap[tspath.Path, FileEmitKind]
 	// Name of the file whose dts was the latest to change
 	latestChangedDtsFile string
 	// Hash of d.ts emitted for the file, use to track when emit of d.ts changes
@@ -225,11 +225,8 @@ func (s *snapshot) addFileToChangeSet(filePath tspath.Path) {
 }
 
 func (s *snapshot) addFileToAffectedFilesPendingEmit(filePath tspath.Path, emitKind FileEmitKind) {
-	existingKind := s.affectedFilesPendingEmit[filePath]
-	if s.affectedFilesPendingEmit == nil {
-		s.affectedFilesPendingEmit = make(map[tspath.Path]FileEmitKind)
-	}
-	s.affectedFilesPendingEmit[filePath] = existingKind | emitKind
+	existingKind, _ := s.affectedFilesPendingEmit.Load(filePath)
+	s.affectedFilesPendingEmit.Store(filePath, existingKind|emitKind)
 	s.emitDiagnosticsPerFile.Delete(filePath)
 	s.buildInfoEmitPending.Store(true)
 }

@@ -2,7 +2,6 @@ package incremental
 
 import (
 	"context"
-	"maps"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
@@ -56,9 +55,10 @@ func (t *toProgramSnapshot) reuseFromOldProgram() {
 			t.snapshot.changedFilesSet.Add(key)
 			return true
 		})
-		if len(t.oldProgram.snapshot.affectedFilesPendingEmit) != 0 {
-			t.snapshot.affectedFilesPendingEmit = maps.Clone(t.oldProgram.snapshot.affectedFilesPendingEmit)
-		}
+		t.oldProgram.snapshot.affectedFilesPendingEmit.Range(func(key tspath.Path, emitKind FileEmitKind) bool {
+			t.snapshot.affectedFilesPendingEmit.Store(key, emitKind)
+			return true
+		})
 		t.snapshot.buildInfoEmitPending.Store(t.oldProgram.snapshot.buildInfoEmitPending.Load())
 		t.snapshot.hasErrorsFromOldState = t.oldProgram.snapshot.hasErrors
 	} else {
@@ -84,7 +84,6 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 		t.snapshot.options.SkipDefaultLibCheck.IsTrue() == t.oldProgram.snapshot.options.SkipDefaultLibCheck.IsTrue()
 
 	var referenceMap collections.SyncMap[tspath.Path, *collections.Set[tspath.Path]]
-	var pendingEmitFiles collections.SyncMap[tspath.Path, FileEmitKind]
 	files := t.program.GetSourceFiles()
 	wg := core.NewWorkGroup(t.program.SingleThreaded())
 	for _, file := range files {
@@ -139,7 +138,7 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 					}
 				}
 			} else {
-				pendingEmitFiles.Store(file.Path(), GetFileEmitKind(t.snapshot.options))
+				t.snapshot.addFileToAffectedFilesPendingEmit(file.Path(), GetFileEmitKind(t.snapshot.options))
 				signature = version
 			}
 			t.snapshot.fileInfos.Store(file.Path(), &fileInfo{
@@ -153,10 +152,6 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 	wg.RunAndWait()
 	referenceMap.Range(func(key tspath.Path, value *collections.Set[tspath.Path]) bool {
 		t.snapshot.referencedMap.Set(key, value.Clone())
-		return true
-	})
-	pendingEmitFiles.Range(func(key tspath.Path, value FileEmitKind) bool {
-		t.snapshot.addFileToAffectedFilesPendingEmit(key, value)
 		return true
 	})
 }

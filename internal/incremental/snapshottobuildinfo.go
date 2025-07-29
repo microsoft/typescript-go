@@ -271,10 +271,7 @@ func (t *toBuildInfo) setEmitDiagnostics() {
 }
 
 func (t *toBuildInfo) setAffectedFilesPendingEmit() {
-	if len(t.snapshot.affectedFilesPendingEmit) == 0 {
-		return
-	}
-	files := slices.Collect(maps.Keys(t.snapshot.affectedFilesPendingEmit))
+	files := slices.Collect(t.snapshot.affectedFilesPendingEmit.Keys())
 	slices.Sort(files)
 	fullEmitKind := GetFileEmitKind(t.snapshot.options)
 	for _, filePath := range files {
@@ -282,7 +279,7 @@ func (t *toBuildInfo) setAffectedFilesPendingEmit() {
 		if file == nil || !t.program.SourceFileMayBeEmitted(file, false) {
 			continue
 		}
-		pendingEmit := t.snapshot.affectedFilesPendingEmit[filePath]
+		pendingEmit, _ := t.snapshot.affectedFilesPendingEmit.Load(filePath)
 		t.buildInfo.AffectedFilesPendingEmit = append(t.buildInfo.AffectedFilesPendingEmit, &BuildInfoFilePendingEmit{
 			FileId:   t.toFileId(filePath),
 			EmitKind: core.IfElse(pendingEmit == fullEmitKind, 0, pendingEmit),

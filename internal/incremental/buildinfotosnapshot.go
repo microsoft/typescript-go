@@ -158,8 +158,7 @@ func (t *toSnapshot) setAffectedFilesPendingEmit() {
 		return
 	}
 	ownOptionsEmitKind := GetFileEmitKind(t.snapshot.options)
-	t.snapshot.affectedFilesPendingEmit = make(map[tspath.Path]FileEmitKind, len(t.buildInfo.AffectedFilesPendingEmit))
 	for _, pendingEmit := range t.buildInfo.AffectedFilesPendingEmit {
-		t.snapshot.affectedFilesPendingEmit[t.toFilePath(pendingEmit.FileId)] = core.IfElse(pendingEmit.EmitKind == 0, ownOptionsEmitKind, pendingEmit.EmitKind)
+		t.snapshot.affectedFilesPendingEmit.Store(t.toFilePath(pendingEmit.FileId), core.IfElse(pendingEmit.EmitKind == 0, ownOptionsEmitKind, pendingEmit.EmitKind))
 	}
 }
