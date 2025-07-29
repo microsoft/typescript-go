@@ -944,7 +944,7 @@ function generateGoTest(failingTests: Set<string>, test: GoTest): string {
     if (commands.includes("lsproto.")) {
         imports.push(`"github.com/microsoft/typescript-go/internal/lsp/lsproto"`);
     }
-    if (usesBuiltIn(commands)) {
+    if (usesHelper(commands)) {
         imports.push(`. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"`);
     }
     imports.push(`"github.com/microsoft/typescript-go/internal/testutil"`);
@@ -967,7 +967,7 @@ func Test${testName}(t *testing.T) {
     return template;
 }
 
-function usesBuiltIn(goTxt: string): boolean {
+function usesHelper(goTxt: string): boolean {
     for (const [_, constant] of completionConstants) {
         if (goTxt.includes(constant)) {
             return true;
