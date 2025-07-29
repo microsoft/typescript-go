@@ -82,7 +82,7 @@ func (l *LanguageService) GetSignatureHelpItems(
 		return nil
 	}
 
-	isManuallyInvoked := context == nil || context.TriggerKind == 1
+	isManuallyInvoked := context != nil && context.TriggerKind == 1
 	argumentInfo := getContainingArgumentInfo(startingToken, sourceFile, typeChecker, isManuallyInvoked, position)
 	if argumentInfo == nil {
 		return nil
