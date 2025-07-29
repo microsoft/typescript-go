@@ -50,7 +50,7 @@ function preprocessModel() {
                 if (inheritedStructure) {
                     properties.push(
                         ...collectInheritedProperties(inheritedStructure, new Set(visited)),
-                        ...inheritedStructure.properties
+                        ...inheritedStructure.properties,
                     );
                 }
             }
@@ -62,13 +62,13 @@ function preprocessModel() {
     // Inline inheritance for each structure
     for (const structure of model.structures) {
         const inheritedProperties = collectInheritedProperties(structure);
-        
+
         // Merge properties with structure's own properties taking precedence
         const propertyMap = new Map<string, Property>();
-        
+
         inheritedProperties.forEach(prop => propertyMap.set(prop.name, prop));
         structure.properties.forEach(prop => propertyMap.set(prop.name, prop));
-        
+
         structure.properties = Array.from(propertyMap.values());
         structure.extends = undefined;
         structure.mixins = undefined;
