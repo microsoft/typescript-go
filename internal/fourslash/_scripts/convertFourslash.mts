@@ -150,6 +150,8 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                 case "baselineFindAllReferences":
                     // `verify.baselineFindAllReferences(...)`
                     return [parseBaselineFindAllReferencesArgs(callExpression.arguments)];
+                case "baselineQuickInfo":
+                    return [parseBaselineQuickInfo(callExpression.arguments)];
                 case "baselineGoToDefinition":
                 case "baselineGetDefinitionAtPosition":
                     // Both of these take the same arguments, but differ in that...
@@ -702,6 +704,17 @@ function parseBaselineGoToDefinitionArgs(args: readonly ts.Expression[]): Verify
     };
 }
 
+function parseBaselineQuickInfo(args: ts.NodeArray<ts.Expression>): Cmd {
+    if (args.length !== 0) {
+        // All calls are currently empty!
+        throw new Error("Expected no arguments in verify.baselineQuickInfo");
+    }
+    return {
+        kind: "verifyBaselineQuickInfo",
+    }
+}
+
+
 function parseKind(expr: ts.Expression): string | undefined {
     if (!ts.isStringLiteral(expr)) {
         console.error(`Expected string literal for kind, got ${expr.getText()}`);
@@ -849,6 +862,10 @@ interface VerifyBaselineGoToDefinitionCmd {
     ranges?: boolean;
 }
 
+interface VerifyBaselineQuickInfoCmd {
+    kind: "verifyBaselineQuickInfo";
+}
+
 interface GoToCmd {
     kind: "goTo";
     // !!! `selectRange` and `rangeStart` require parsing variables and `test.ranges()[n]`
@@ -861,7 +878,14 @@ interface EditCmd {
     goStatement: string;
 }
 
-type Cmd = VerifyCompletionsCmd | VerifyBaselineFindAllReferencesCmd | VerifyBaselineGoToDefinitionCmd | GoToCmd | EditCmd;
+type Cmd =
+    | VerifyCompletionsCmd
+    | VerifyBaselineFindAllReferencesCmd
+    | VerifyBaselineGoToDefinitionCmd
+    | VerifyBaselineQuickInfoCmd
+    | GoToCmd
+    | EditCmd
+    ;
 
 function generateVerifyCompletions({ marker, args, isNewIdentifierLocation }: VerifyCompletionsCmd): string {
     let expectedList: string;
@@ -917,6 +941,9 @@ function generateCmd(cmd: Cmd): string {
             return generateBaselineFindAllReferences(cmd as VerifyBaselineFindAllReferencesCmd);
         case "verifyBaselineGoToDefinition":
             return generateBaselineGoToDefinition(cmd as VerifyBaselineGoToDefinitionCmd);
+        case "verifyBaselineQuickInfo":
+            // Quick Info -> Hover
+            return `f.VerifyBaselineHover(t)`;
         case "goTo":
             return generateGoToCommand(cmd as GoToCmd);
         case "edit":
