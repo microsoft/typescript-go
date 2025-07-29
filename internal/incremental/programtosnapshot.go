@@ -83,7 +83,6 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 	copyLibFileDiagnostics := copyDeclarationFileDiagnostics &&
 		t.snapshot.options.SkipDefaultLibCheck.IsTrue() == t.oldProgram.snapshot.options.SkipDefaultLibCheck.IsTrue()
 
-	var fileInfos collections.SyncMap[tspath.Path, *fileInfo]
 	var referenceMap collections.SyncMap[tspath.Path, *collections.Set[tspath.Path]]
 	var changeSet collections.SyncSet[tspath.Path]
 	var semanticDiagnosticsPerFile collections.SyncMap[tspath.Path, *diagnosticsOrBuildInfoDiagnosticsWithFileName]
@@ -104,7 +103,7 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 			}
 			if t.oldProgram != nil {
 				isChanged := false
-				if oldFileInfo, ok := t.oldProgram.snapshot.fileInfos[file.Path()]; ok {
+				if oldFileInfo, ok := t.oldProgram.snapshot.fileInfos.Load(file.Path()); ok {
 					signature = oldFileInfo.signature
 					if oldFileInfo.version != version || oldFileInfo.affectsGlobalScope != affectsGlobalScope || oldFileInfo.impliedNodeFormat != impliedNodeFormat {
 						changeSet.Add(file.Path())
@@ -115,11 +114,13 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 						isChanged = true
 					} else if newReferences != nil {
 						for refPath := range newReferences.Keys() {
-							if t.program.GetSourceFileByPath(refPath) == nil && t.oldProgram.snapshot.fileInfos[refPath] != nil {
-								// Referenced file was deleted in the new program
-								changeSet.Add(file.Path())
-								isChanged = true
-								break
+							if t.program.GetSourceFileByPath(refPath) == nil {
+								if _, ok := t.oldProgram.snapshot.fileInfos.Load(refPath); ok {
+									// Referenced file was deleted in the new program
+									changeSet.Add(file.Path())
+									isChanged = true
+									break
+								}
 							}
 						}
 					}
@@ -150,7 +151,7 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 				pendingEmitFiles.Store(file.Path(), GetFileEmitKind(t.snapshot.options))
 				signature = version
 			}
-			fileInfos.Store(file.Path(), &fileInfo{
+			t.snapshot.fileInfos.Store(file.Path(), &fileInfo{
 				version:            version,
 				signature:          signature,
 				affectsGlobalScope: affectsGlobalScope,
@@ -159,7 +160,6 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 		})
 	}
 	wg.RunAndWait()
-	t.snapshot.fileInfos = fileInfos.ToMap()
 	referenceMap.Range(func(key tspath.Path, value *collections.Set[tspath.Path]) bool {
 		t.snapshot.referencedMap.Set(key, value.Clone())
 		return true
@@ -193,8 +193,8 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 func (t *toProgramSnapshot) handleFileDelete() {
 	if t.oldProgram != nil {
 		// If the global file is removed, add all files as changed
-		for filePath, oldInfo := range t.oldProgram.snapshot.fileInfos {
-			if _, ok := t.snapshot.fileInfos[filePath]; !ok {
+		t.oldProgram.snapshot.fileInfos.Range(func(filePath tspath.Path, oldInfo *fileInfo) bool {
+			if _, ok := t.snapshot.fileInfos.Load(filePath); !ok {
 				if oldInfo.affectsGlobalScope {
 					for _, file := range t.snapshot.getAllFilesExcludingDefaultLibraryFile(t.program, nil) {
 						t.snapshot.addFileToChangeSet(file.Path())
@@ -203,9 +203,10 @@ func (t *toProgramSnapshot) handleFileDelete() {
 				} else {
 					t.snapshot.buildInfoEmitPending = true
 				}
-				break
+				return false
 			}
-		}
+			return true
+		})
 	}
 }
 
@@ -234,7 +235,7 @@ func (t *toProgramSnapshot) handlePendingEmit() {
 
 func (t *toProgramSnapshot) handlePendingCheck() {
 	if t.oldProgram != nil &&
-		len(t.snapshot.semanticDiagnosticsPerFile) != len(t.snapshot.fileInfos) &&
+		len(t.snapshot.semanticDiagnosticsPerFile) != len(t.program.GetSourceFiles()) &&
 		t.oldProgram.snapshot.checkPending != t.snapshot.checkPending {
 		t.snapshot.buildInfoEmitPending = true
 	}

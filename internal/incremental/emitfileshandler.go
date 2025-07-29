@@ -149,7 +149,7 @@ func (h *emitFilesHandler) getEmitOptions(options compiler.EmitOptions) compiler
 		WriteFile: func(fileName string, text string, writeByteOrderMark bool, data *compiler.WriteFileData) error {
 			if tspath.IsDeclarationFileName(fileName) {
 				var emitSignature string
-				info := h.program.snapshot.fileInfos[options.TargetSourceFile.Path()]
+				info, _ := h.program.snapshot.fileInfos.Load(options.TargetSourceFile.Path())
 				if info.signature == info.version {
 					signature := h.program.snapshot.computeSignatureWithDiagnostics(options.TargetSourceFile, text, data)
 					// With d.ts diagnostics they are also part of the signature so emitSignature will be different from it since its just hash of d.ts
@@ -215,7 +215,7 @@ func (h *emitFilesHandler) skipDtsOutputOfComposite(file *ast.SourceFile, output
 
 func (h *emitFilesHandler) updateSnapshot() []*compiler.EmitResult {
 	h.signatures.Range(func(file tspath.Path, signature string) bool {
-		info := h.program.snapshot.fileInfos[file]
+		info, _ := h.program.snapshot.fileInfos.Load(file)
 		info.signature = signature
 		if h.program.updatedSignatureKinds != nil {
 			h.program.updatedSignatureKinds[file] = SignatureUpdateKindStoredAtEmit

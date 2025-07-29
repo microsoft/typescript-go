@@ -41,8 +41,8 @@ func (h *affectedFilesHandler) getDtsMayChange(affectedFilePath tspath.Path, aff
 
 func (h *affectedFilesHandler) isChangedSignature(path tspath.Path) bool {
 	newSignature, _ := h.updatedSignatures.Load(path)
-	oldSignature := h.program.snapshot.fileInfos[path].signature
-	return newSignature != oldSignature
+	oldInfo, _ := h.program.snapshot.fileInfos.Load(path)
+	return newSignature != oldInfo.signature
 }
 
 func (h *affectedFilesHandler) removeSemanticDiagnosticsOf(path tspath.Path) {
@@ -81,7 +81,7 @@ func (h *affectedFilesHandler) updateShapeSignature(file *ast.SourceFile, useFil
 		return false
 	}
 
-	info := h.program.snapshot.fileInfos[file.Path()]
+	info, _ := h.program.snapshot.fileInfos.Load(file.Path())
 	prevSignature := info.signature
 	var latestSignature string
 	var updateKind SignatureUpdateKind
@@ -110,7 +110,7 @@ func (h *affectedFilesHandler) getFilesAffectedBy(path tspath.Path) []*ast.Sourc
 		return []*ast.SourceFile{file}
 	}
 
-	if info := h.program.snapshot.fileInfos[file.Path()]; info.affectsGlobalScope {
+	if info, _ := h.program.snapshot.fileInfos.Load(file.Path()); info.affectsGlobalScope {
 		h.hasAllFilesExcludingDefaultLibraryFile.Store(true)
 		h.program.snapshot.getAllFilesExcludingDefaultLibraryFile(h.program.program, file)
 	}
@@ -290,7 +290,7 @@ func (h *affectedFilesHandler) handleDtsMayChangeOfFileAndExportsOfFile(dtsMayCh
 }
 
 func (h *affectedFilesHandler) handleDtsMayChangeOfGlobalScope(dtsMayChange dtsMayChange, filePath tspath.Path, invalidateJsFiles bool) bool {
-	if info, ok := h.program.snapshot.fileInfos[filePath]; !ok || !info.affectsGlobalScope {
+	if info, ok := h.program.snapshot.fileInfos.Load(filePath); !ok || !info.affectsGlobalScope {
 		return false
 	}
 	// Every file needs to be handled
@@ -331,7 +331,9 @@ func (h *affectedFilesHandler) updateSnapshot() {
 		return
 	}
 	h.updatedSignatures.Range(func(filePath tspath.Path, signature string) bool {
-		h.program.snapshot.fileInfos[filePath].signature = signature
+		if info, ok := h.program.snapshot.fileInfos.Load(filePath); ok {
+			info.signature = signature
+		}
 		return true
 	})
 	if h.updatedSignatureKinds != nil {

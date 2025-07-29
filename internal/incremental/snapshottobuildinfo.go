@@ -171,7 +171,7 @@ func (t *toBuildInfo) toBuildInfoDiagnosticsOfFile(filePath tspath.Path, diags *
 
 func (t *toBuildInfo) setFileInfoAndEmitSignatures() {
 	t.buildInfo.FileInfos = core.Map(t.program.GetSourceFiles(), func(file *ast.SourceFile) *BuildInfoFileInfo {
-		info := t.snapshot.fileInfos[file.Path()]
+		info, _ := t.snapshot.fileInfos.Load(file.Path())
 		fileId := t.toFileId(file.Path())
 		//  tryAddRoot(key, fileId);
 		if t.buildInfo.FileNames[fileId-1] != t.relativeToBuildInfo(string(file.Path())) {

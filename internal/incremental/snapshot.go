@@ -184,7 +184,7 @@ type snapshot struct {
 	// These are the fields that get serialized
 
 	// Information of the file eg. its version, signature etc
-	fileInfos map[tspath.Path]*fileInfo
+	fileInfos collections.SyncMap[tspath.Path, *fileInfo]
 	options   *core.CompilerOptions
 	//  Contains the map of ReferencedSet=Referenced files of the file if module emit is enabled
 	referencedMap collections.ManyToManySet[tspath.Path, tspath.Path]

@@ -93,12 +93,11 @@ func (t *toSnapshot) setCompilerOptions() {
 }
 
 func (t *toSnapshot) setFileInfoAndEmitSignatures() {
-	t.snapshot.fileInfos = make(map[tspath.Path]*fileInfo, len(t.buildInfo.FileInfos))
 	t.snapshot.createEmitSignaturesMap()
 	for index, buildInfoFileInfo := range t.buildInfo.FileInfos {
 		path := t.toFilePath(BuildInfoFileId(index + 1))
 		info := buildInfoFileInfo.GetFileInfo()
-		t.snapshot.fileInfos[path] = info
+		t.snapshot.fileInfos.Store(path, info)
 		// Add default emit signature as file's signature
 		if info.signature != "" && t.snapshot.emitSignatures != nil {
 			t.snapshot.emitSignatures[path] = &emitSignature{signature: info.signature}
@@ -130,13 +129,14 @@ func (t *toSnapshot) setChangeFileSet() {
 }
 
 func (t *toSnapshot) setSemanticDiagnostics() {
-	t.snapshot.semanticDiagnosticsPerFile = make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName, len(t.snapshot.fileInfos))
-	for path := range t.snapshot.fileInfos {
+	t.snapshot.semanticDiagnosticsPerFile = make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName)
+	t.snapshot.fileInfos.Range(func(path tspath.Path, info *fileInfo) bool {
 		// Initialize to have no diagnostics if its not changed file
 		if !t.snapshot.changedFilesSet.Has(path) {
 			t.snapshot.semanticDiagnosticsPerFile[path] = &diagnosticsOrBuildInfoDiagnosticsWithFileName{}
 		}
-	}
+		return true
+	})
 	for _, diagnostic := range t.buildInfo.SemanticDiagnosticsPerFile {
 		if diagnostic.FileId != 0 {
 			filePath := t.toFilePath(diagnostic.FileId)
@@ -149,7 +149,7 @@ func (t *toSnapshot) setSemanticDiagnostics() {
 }
 
 func (t *toSnapshot) setEmitDiagnostics() {
-	t.snapshot.emitDiagnosticsPerFile = make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName, len(t.snapshot.fileInfos))
+	t.snapshot.emitDiagnosticsPerFile = make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName)
 	for _, diagnostic := range t.buildInfo.EmitDiagnosticsPerFile {
 		filePath := t.toFilePath(diagnostic.FileId)
 		t.snapshot.emitDiagnosticsPerFile[filePath] = t.toDiagnosticsOrBuildInfoDiagnosticsWithFileName(diagnostic)
