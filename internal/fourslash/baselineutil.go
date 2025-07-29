@@ -1,12 +1,14 @@
 package fourslash
 
 import (
+	"cmp"
 	"errors"
 	"fmt"
 	"io/fs"
 	"regexp"
 	"slices"
 	"strings"
+	"testing"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -440,6 +442,103 @@ func (t *textWithContext) add(detail *baselineDetail) {
 func (t *textWithContext) readableJsoncBaseline(text string) {
 	for _, line := range lineSplitter.Split(text, -1) {
 		t.readableContents.WriteString(`// ` + line + "\n")
+	}
+}
+
+type markerAndItem[T any] struct {
+	marker *Marker
+	item   T
+}
+
+func writeAnnotatedContentWithTooltipsToBaseline[T comparable](
+	t *testing.T,
+	f *FourslashTest,
+	markersAndItems []markerAndItem[T],
+	opName string,
+	getRange func(item T) *lsproto.Range,
+	getTooltipLines func(item T, prev T) []string,
+) {
+	barWithGutter := "| " + strings.Repeat("-", 70)
+
+	// sort by file, then *backwards* by position in the file
+	// so we can insert multiple times on a line without counting
+	sorted := slices.Clone(markersAndItems)
+	slices.SortFunc(sorted, func(a, b markerAndItem[T]) int {
+		if c := cmp.Compare(a.marker.FileName(), b.marker.FileName()); c != 0 {
+			return c
+		}
+		return -cmp.Compare(a.marker.Position, b.marker.Position)
+	})
+
+	filesToLines := collections.NewOrderedMapWithSizeHint[string, []string](1)
+	var previous T
+	for _, itemAndMarker := range sorted {
+		marker := itemAndMarker.marker
+		item := itemAndMarker.item
+
+		textRange := getRange(item)
+		if textRange == nil {
+			start := marker.LSPosition
+			end := start
+			end.Character = end.Character + 1
+			textRange = &lsproto.Range{Start: start, End: end}
+		}
+
+		if textRange.Start.Line != textRange.End.Line {
+			t.Fatalf("Expected text range to be on a single line, got %v", textRange)
+		}
+		underline :=
+			strings.Repeat(" ", int(textRange.Start.Character)) +
+				strings.Repeat("^", int(textRange.End.Character-textRange.Start.Character))
+
+		fileName := marker.FileName()
+		lines, ok := filesToLines.Get(fileName)
+		if !ok {
+			lines = lineSplitter.Split(f.getScriptInfo(fileName).content, -1)
+		}
+
+		var tooltipLines []string
+		if item != *new(T) {
+			tooltipLines = getTooltipLines(item, previous)
+		}
+		if len(tooltipLines) == 0 {
+			tooltipLines = []string{fmt.Sprintf("No %s at /*%s*/.", opName, *marker.Name)}
+		}
+		tooltipLines = core.Map(tooltipLines, func(line string) string {
+			return "| " + line
+		})
+
+		linesToInsert := make([]string, len(tooltipLines)+3)
+		linesToInsert[0] = underline
+		linesToInsert[1] = barWithGutter
+		copy(linesToInsert[2:], tooltipLines)
+		linesToInsert[len(linesToInsert)-1] = barWithGutter
+
+		lines = slices.Insert(
+			lines,
+			int(textRange.Start.Line),
+			linesToInsert...,
+		)
+		filesToLines.Set(fileName, lines)
+
+		previous = item
+	}
+
+	builder := f.baseline.content
+	seenFirst := false
+	for fileName, lines := range filesToLines.Entries() {
+		builder.WriteString(fmt.Sprintf("=== %s ===\n", fileName))
+		for _, line := range lines {
+			builder.WriteString("// ")
+			builder.WriteString(line)
+		}
+		builder.WriteByte('\n')
+	}
+
+	if seenFirst {
+		builder.WriteString("\n\n")
+	} else {
+		seenFirst = true
 	}
 }
 
