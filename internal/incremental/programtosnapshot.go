@@ -75,7 +75,6 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 	// but that option change does not affect d.ts file name so emitSignatures should still be reused.
 	canCopyEmitSignatures := t.snapshot.options.Composite.IsTrue() &&
 		t.oldProgram != nil &&
-		t.oldProgram.snapshot.emitSignatures != nil &&
 		!tsoptions.CompilerOptionsAffectDeclarationPath(t.oldProgram.snapshot.options, t.program.Options())
 	copyDeclarationFileDiagnostics := canCopySemanticDiagnostics &&
 		t.snapshot.options.SkipLibCheck.IsTrue() == t.oldProgram.snapshot.options.SkipLibCheck.IsTrue()
@@ -84,7 +83,6 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 
 	var referenceMap collections.SyncMap[tspath.Path, *collections.Set[tspath.Path]]
 	var changeSet collections.SyncSet[tspath.Path]
-	var emitSignatures collections.SyncMap[tspath.Path, *emitSignature]
 	var pendingEmitFiles collections.SyncMap[tspath.Path, FileEmitKind]
 	files := t.program.GetSourceFiles()
 	wg := core.NewWorkGroup(t.program.SingleThreaded())
@@ -140,8 +138,8 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 					}
 				}
 				if canCopyEmitSignatures {
-					if oldEmitSignature, ok := t.oldProgram.snapshot.emitSignatures[file.Path()]; ok {
-						emitSignatures.Store(file.Path(), oldEmitSignature.getNewEmitSignature(t.oldProgram.snapshot.options, t.snapshot.options))
+					if oldEmitSignature, ok := t.oldProgram.snapshot.emitSignatures.Load(file.Path()); ok {
+						t.snapshot.emitSignatures.Store(file.Path(), oldEmitSignature.getNewEmitSignature(t.oldProgram.snapshot.options, t.snapshot.options))
 					}
 				}
 			} else {
@@ -163,11 +161,6 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 	})
 	changeSet.Range(func(key tspath.Path) bool {
 		t.snapshot.changedFilesSet.Add(key)
-		return true
-	})
-	emitSignatures.Range(func(key tspath.Path, value *emitSignature) bool {
-		t.snapshot.createEmitSignaturesMap()
-		t.snapshot.emitSignatures[key] = value
 		return true
 	})
 	pendingEmitFiles.Range(func(key tspath.Path, value FileEmitKind) bool {

@@ -185,7 +185,7 @@ func (h *emitFilesHandler) skipDtsOutputOfComposite(file *ast.SourceFile, output
 		return false
 	}
 	var oldSignature string
-	oldSignatureFormat, ok := h.program.snapshot.emitSignatures[file.Path()]
+	oldSignatureFormat, ok := h.program.snapshot.emitSignatures.Load(file.Path())
 	if ok {
 		if oldSignatureFormat.signature != "" {
 			oldSignature = oldSignatureFormat.signature
@@ -225,10 +225,7 @@ func (h *emitFilesHandler) updateSnapshot() []*compiler.EmitResult {
 		return true
 	})
 	h.emitSignatures.Range(func(file tspath.Path, signature *emitSignature) bool {
-		if h.program.snapshot.emitSignatures == nil {
-			h.program.snapshot.emitSignatures = make(map[tspath.Path]*emitSignature)
-		}
-		h.program.snapshot.emitSignatures[file] = signature
+		h.program.snapshot.emitSignatures.Store(file, signature)
 		h.program.snapshot.buildInfoEmitPending = true
 		return true
 	})

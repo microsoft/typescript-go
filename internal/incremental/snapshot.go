@@ -199,7 +199,7 @@ type snapshot struct {
 	// Name of the file whose dts was the latest to change
 	latestChangedDtsFile string
 	// Hash of d.ts emitted for the file, use to track when emit of d.ts changes
-	emitSignatures map[tspath.Path]*emitSignature
+	emitSignatures collections.SyncMap[tspath.Path, *emitSignature]
 	// Recorded if program had errors
 	hasErrors core.Tristate
 	// If semantic diagnsotic check is pending
@@ -216,12 +216,6 @@ type snapshot struct {
 
 	// Used with testing to add text of hash for better comparison
 	hashWithText bool
-}
-
-func (s *snapshot) createEmitSignaturesMap() {
-	if s.emitSignatures == nil && s.options.Composite.IsTrue() {
-		s.emitSignatures = make(map[tspath.Path]*emitSignature)
-	}
 }
 
 func (s *snapshot) addFileToChangeSet(filePath tspath.Path) {

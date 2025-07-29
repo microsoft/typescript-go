@@ -93,23 +93,23 @@ func (t *toSnapshot) setCompilerOptions() {
 }
 
 func (t *toSnapshot) setFileInfoAndEmitSignatures() {
-	t.snapshot.createEmitSignaturesMap()
+	isComposite := t.snapshot.options.Composite.IsTrue()
 	for index, buildInfoFileInfo := range t.buildInfo.FileInfos {
 		path := t.toFilePath(BuildInfoFileId(index + 1))
 		info := buildInfoFileInfo.GetFileInfo()
 		t.snapshot.fileInfos.Store(path, info)
 		// Add default emit signature as file's signature
-		if info.signature != "" && t.snapshot.emitSignatures != nil {
-			t.snapshot.emitSignatures[path] = &emitSignature{signature: info.signature}
+		if info.signature != "" && isComposite {
+			t.snapshot.emitSignatures.Store(path, &emitSignature{signature: info.signature})
 		}
 	}
 	// Fix up emit signatures
 	for _, value := range t.buildInfo.EmitSignatures {
 		if value.noEmitSignature() {
-			delete(t.snapshot.emitSignatures, t.toFilePath(value.FileId))
+			t.snapshot.emitSignatures.Delete(t.toFilePath(value.FileId))
 		} else {
 			path := t.toFilePath(value.FileId)
-			t.snapshot.emitSignatures[path] = value.toEmitSignature(path, t.snapshot.emitSignatures)
+			t.snapshot.emitSignatures.Store(path, value.toEmitSignature(path, &t.snapshot.emitSignatures))
 		}
 	}
 }

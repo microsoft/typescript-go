@@ -179,8 +179,7 @@ func (t *toBuildInfo) setFileInfoAndEmitSignatures() {
 		}
 		if t.snapshot.options.Composite.IsTrue() {
 			if !ast.IsJsonSourceFile(file) && t.program.SourceFileMayBeEmitted(file, false) {
-				emitSignature := t.snapshot.emitSignatures[file.Path()]
-				if emitSignature == nil {
+				if emitSignature, loaded := t.snapshot.emitSignatures.Load(file.Path()); !loaded {
 					t.buildInfo.EmitSignatures = append(t.buildInfo.EmitSignatures, &BuildInfoEmitSignature{
 						FileId: fileId,
 					})
