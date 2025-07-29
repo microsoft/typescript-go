@@ -33,7 +33,7 @@ var _ compiler.ProgramLike = (*Program)(nil)
 
 func NewProgram(program *compiler.Program, oldProgram *Program, testing bool) *Program {
 	incrementalProgram := &Program{
-		snapshot: newSnapshotForProgram(program, oldProgram, testing),
+		snapshot: programToSnapshot(program, oldProgram, testing),
 		program:  program,
 	}
 
