@@ -919,7 +919,7 @@ func (f *FourslashTest) VerifyBaselineHover(t *testing.T) {
 		f.baseline = nil
 	}()
 
-	itemsMarkers := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.Hover], bool) {
+	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.Hover], bool) {
 		if marker.Name == nil {
 			return markerAndItem[*lsproto.Hover]{}, false
 		}
@@ -945,7 +945,7 @@ func (f *FourslashTest) VerifyBaselineHover(t *testing.T) {
 			t.Fatalf(prefix+"Unexpected response type for quick info request: %T", resMsg.AsResponse().Result)
 		}
 
-		return markerAndItem[*lsproto.Hover]{marker: marker, item: result.Hover}, true
+		return markerAndItem[*lsproto.Hover]{Marker: marker, Item: result.Hover}, true
 	})
 
 	getRange := func(item *lsproto.Hover) *lsproto.Range {
@@ -980,7 +980,12 @@ func (f *FourslashTest) VerifyBaselineHover(t *testing.T) {
 		return result
 	}
 
-	f.baseline.addResult("QuickInfo", annotateContentWithTooltips(t, f, itemsMarkers, "quickinfo", getRange, getTooltipLines))
+	f.baseline.addResult("QuickInfo", annotateContentWithTooltips(t, f, markersAndItems, "quickinfo", getRange, getTooltipLines))
+	if jsonStr, err := core.StringifyJson(markersAndItems, "", "  "); err == nil {
+		f.baseline.content.WriteString(jsonStr)
+	} else {
+		t.Fatalf("Failed to stringify markers and items for baseline: %v", err)
+	}
 	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
 }
 

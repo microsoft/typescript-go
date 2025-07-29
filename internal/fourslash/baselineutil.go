@@ -446,8 +446,8 @@ func (t *textWithContext) readableJsoncBaseline(text string) {
 }
 
 type markerAndItem[T any] struct {
-	marker *Marker
-	item   T
+	Marker *Marker `json:"marker"`
+	Item   T       `json:"item"`
 }
 
 func annotateContentWithTooltips[T comparable](
@@ -464,17 +464,17 @@ func annotateContentWithTooltips[T comparable](
 	// so we can insert multiple times on a line without counting
 	sorted := slices.Clone(markersAndItems)
 	slices.SortFunc(sorted, func(a, b markerAndItem[T]) int {
-		if c := cmp.Compare(a.marker.FileName(), b.marker.FileName()); c != 0 {
+		if c := cmp.Compare(a.Marker.FileName(), b.Marker.FileName()); c != 0 {
 			return c
 		}
-		return -cmp.Compare(a.marker.Position, b.marker.Position)
+		return -cmp.Compare(a.Marker.Position, b.Marker.Position)
 	})
 
 	filesToLines := collections.NewOrderedMapWithSizeHint[string, []string](1)
 	var previous T
 	for _, itemAndMarker := range sorted {
-		marker := itemAndMarker.marker
-		item := itemAndMarker.item
+		marker := itemAndMarker.Marker
+		item := itemAndMarker.Item
 
 		textRange := getRange(item)
 		if textRange == nil {
