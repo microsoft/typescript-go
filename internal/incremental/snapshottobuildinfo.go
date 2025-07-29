@@ -244,7 +244,7 @@ func (t *toBuildInfo) setChangeFileSet() {
 
 func (t *toBuildInfo) setSemanticDiagnostics() {
 	for _, file := range t.program.GetSourceFiles() {
-		value, ok := t.snapshot.semanticDiagnosticsPerFile[file.Path()]
+		value, ok := t.snapshot.semanticDiagnosticsPerFile.Load(file.Path())
 		if !ok {
 			if !t.snapshot.changedFilesSet.Has(file.Path()) {
 				t.buildInfo.SemanticDiagnosticsPerFile = append(t.buildInfo.SemanticDiagnosticsPerFile, &BuildInfoSemanticDiagnostic{
@@ -263,10 +263,11 @@ func (t *toBuildInfo) setSemanticDiagnostics() {
 }
 
 func (t *toBuildInfo) setEmitDiagnostics() {
-	files := slices.Collect(maps.Keys(t.snapshot.emitDiagnosticsPerFile))
+	files := slices.Collect(t.snapshot.emitDiagnosticsPerFile.Keys())
 	slices.Sort(files)
 	t.buildInfo.EmitDiagnosticsPerFile = core.Map(files, func(filePath tspath.Path) *BuildInfoDiagnosticsOfFile {
-		return t.toBuildInfoDiagnosticsOfFile(filePath, t.snapshot.emitDiagnosticsPerFile[filePath])
+		value, _ := t.snapshot.emitDiagnosticsPerFile.Load(filePath)
+		return t.toBuildInfoDiagnosticsOfFile(filePath, value)
 	})
 }
 

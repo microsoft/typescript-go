@@ -22,9 +22,8 @@ func programToSnapshot(program *compiler.Program, oldProgram *Program, hashWithT
 		program:    program,
 		oldProgram: oldProgram,
 		snapshot: &snapshot{
-			options:                    program.Options(),
-			semanticDiagnosticsPerFile: make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName, len(program.GetSourceFiles())),
-			hashWithText:               hashWithText,
+			options:      program.Options(),
+			hashWithText: hashWithText,
 		},
 	}
 
@@ -85,8 +84,6 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 
 	var referenceMap collections.SyncMap[tspath.Path, *collections.Set[tspath.Path]]
 	var changeSet collections.SyncSet[tspath.Path]
-	var semanticDiagnosticsPerFile collections.SyncMap[tspath.Path, *diagnosticsOrBuildInfoDiagnosticsWithFileName]
-	var emitDiagnosticsPerFile collections.SyncMap[tspath.Path, *diagnosticsOrBuildInfoDiagnosticsWithFileName]
 	var emitSignatures collections.SyncMap[tspath.Path, *emitSignature]
 	var pendingEmitFiles collections.SyncMap[tspath.Path, FileEmitKind]
 	files := t.program.GetSourceFiles()
@@ -129,15 +126,15 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 					isChanged = true
 				}
 				if !isChanged && (t.oldProgram == nil || !t.oldProgram.snapshot.changedFilesSet.Has(file.Path())) {
-					if emitDiagnostics, ok := t.oldProgram.snapshot.emitDiagnosticsPerFile[file.Path()]; ok {
-						emitDiagnosticsPerFile.Store(file.Path(), emitDiagnostics)
+					if emitDiagnostics, ok := t.oldProgram.snapshot.emitDiagnosticsPerFile.Load(file.Path()); ok {
+						t.snapshot.emitDiagnosticsPerFile.Store(file.Path(), emitDiagnostics)
 					}
 					if canCopySemanticDiagnostics {
 						if (!file.IsDeclarationFile || copyDeclarationFileDiagnostics) &&
 							(!t.program.IsSourceFileDefaultLibrary(file.Path()) || copyLibFileDiagnostics) {
 							// Unchanged file copy diagnostics
-							if diagnostics, ok := t.oldProgram.snapshot.semanticDiagnosticsPerFile[file.Path()]; ok {
-								semanticDiagnosticsPerFile.Store(file.Path(), diagnostics)
+							if diagnostics, ok := t.oldProgram.snapshot.semanticDiagnosticsPerFile.Load(file.Path()); ok {
+								t.snapshot.semanticDiagnosticsPerFile.Store(file.Path(), diagnostics)
 							}
 						}
 					}
@@ -166,17 +163,6 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 	})
 	changeSet.Range(func(key tspath.Path) bool {
 		t.snapshot.changedFilesSet.Add(key)
-		return true
-	})
-	semanticDiagnosticsPerFile.Range(func(key tspath.Path, value *diagnosticsOrBuildInfoDiagnosticsWithFileName) bool {
-		t.snapshot.semanticDiagnosticsPerFile[key] = value
-		return true
-	})
-	emitDiagnosticsPerFile.Range(func(key tspath.Path, value *diagnosticsOrBuildInfoDiagnosticsWithFileName) bool {
-		if t.snapshot.emitDiagnosticsPerFile == nil {
-			t.snapshot.emitDiagnosticsPerFile = make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName, len(files))
-		}
-		t.snapshot.emitDiagnosticsPerFile[key] = value
 		return true
 	})
 	emitSignatures.Range(func(key tspath.Path, value *emitSignature) bool {
@@ -235,7 +221,7 @@ func (t *toProgramSnapshot) handlePendingEmit() {
 
 func (t *toProgramSnapshot) handlePendingCheck() {
 	if t.oldProgram != nil &&
-		len(t.snapshot.semanticDiagnosticsPerFile) != len(t.program.GetSourceFiles()) &&
+		t.snapshot.semanticDiagnosticsPerFile.Size() != len(t.program.GetSourceFiles()) &&
 		t.oldProgram.snapshot.checkPending != t.snapshot.checkPending {
 		t.snapshot.buildInfoEmitPending = true
 	}

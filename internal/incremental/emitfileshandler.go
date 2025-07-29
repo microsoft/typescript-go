@@ -100,12 +100,12 @@ func (h *emitFilesHandler) emitAllAffectedFiles(options compiler.EmitOptions) *c
 	}
 
 	// Get updated errors that were not included in affected files emit
-	for path, diagnostics := range h.program.snapshot.emitDiagnosticsPerFile {
+	h.program.snapshot.emitDiagnosticsPerFile.Range(func(path tspath.Path, diagnostics *diagnosticsOrBuildInfoDiagnosticsWithFileName) bool {
 		if _, ok := h.emitUpdates.Load(path); !ok {
 			affectedFile := h.program.program.GetSourceFileByPath(path)
 			if affectedFile == nil || !h.program.program.SourceFileMayBeEmitted(affectedFile, false) {
 				h.deletedPendingKinds.Add(path)
-				continue
+				return true
 			}
 			pendingKind := h.program.snapshot.affectedFilesPendingEmit[path]
 			h.emitUpdates.Store(path, &emitUpdate{pendingKind: pendingKind, result: &compiler.EmitResult{
@@ -113,14 +113,15 @@ func (h *emitFilesHandler) emitAllAffectedFiles(options compiler.EmitOptions) *c
 				Diagnostics: diagnostics.getDiagnostics(h.program.program, affectedFile),
 			}})
 		}
-	}
+		return true
+	})
 
 	results = h.updateSnapshot()
 
 	// Combine results and update buildInfo
 	if h.isForDtsErrors && options.TargetSourceFile != nil {
 		// Result from cache
-		diagnostics := h.program.snapshot.emitDiagnosticsPerFile[options.TargetSourceFile.Path()]
+		diagnostics, _ := h.program.snapshot.emitDiagnosticsPerFile.Load(options.TargetSourceFile.Path())
 		return &compiler.EmitResult{
 			EmitSkipped: true,
 			Diagnostics: diagnostics.getDiagnostics(h.program.program, options.TargetSourceFile),
@@ -251,10 +252,7 @@ func (h *emitFilesHandler) updateSnapshot() []*compiler.EmitResult {
 		if update.result != nil {
 			results = append(results, update.result)
 			if len(update.result.Diagnostics) != 0 {
-				if h.program.snapshot.emitDiagnosticsPerFile == nil {
-					h.program.snapshot.emitDiagnosticsPerFile = make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName)
-				}
-				h.program.snapshot.emitDiagnosticsPerFile[file] = &diagnosticsOrBuildInfoDiagnosticsWithFileName{diagnostics: update.result.Diagnostics}
+				h.program.snapshot.emitDiagnosticsPerFile.Store(file, &diagnosticsOrBuildInfoDiagnosticsWithFileName{diagnostics: update.result.Diagnostics})
 			}
 		}
 		h.program.snapshot.buildInfoEmitPending = true

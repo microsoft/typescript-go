@@ -129,30 +129,28 @@ func (t *toSnapshot) setChangeFileSet() {
 }
 
 func (t *toSnapshot) setSemanticDiagnostics() {
-	t.snapshot.semanticDiagnosticsPerFile = make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName)
 	t.snapshot.fileInfos.Range(func(path tspath.Path, info *fileInfo) bool {
 		// Initialize to have no diagnostics if its not changed file
 		if !t.snapshot.changedFilesSet.Has(path) {
-			t.snapshot.semanticDiagnosticsPerFile[path] = &diagnosticsOrBuildInfoDiagnosticsWithFileName{}
+			t.snapshot.semanticDiagnosticsPerFile.Store(path, &diagnosticsOrBuildInfoDiagnosticsWithFileName{})
 		}
 		return true
 	})
 	for _, diagnostic := range t.buildInfo.SemanticDiagnosticsPerFile {
 		if diagnostic.FileId != 0 {
 			filePath := t.toFilePath(diagnostic.FileId)
-			delete(t.snapshot.semanticDiagnosticsPerFile, filePath) // does not have cached diagnostics
+			t.snapshot.semanticDiagnosticsPerFile.Delete(filePath) // does not have cached diagnostics
 		} else {
 			filePath := t.toFilePath(diagnostic.Diagnostics.FileId)
-			t.snapshot.semanticDiagnosticsPerFile[filePath] = t.toDiagnosticsOrBuildInfoDiagnosticsWithFileName(diagnostic.Diagnostics)
+			t.snapshot.semanticDiagnosticsPerFile.Store(filePath, t.toDiagnosticsOrBuildInfoDiagnosticsWithFileName(diagnostic.Diagnostics))
 		}
 	}
 }
 
 func (t *toSnapshot) setEmitDiagnostics() {
-	t.snapshot.emitDiagnosticsPerFile = make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName)
 	for _, diagnostic := range t.buildInfo.EmitDiagnosticsPerFile {
 		filePath := t.toFilePath(diagnostic.FileId)
-		t.snapshot.emitDiagnosticsPerFile[filePath] = t.toDiagnosticsOrBuildInfoDiagnosticsWithFileName(diagnostic)
+		t.snapshot.emitDiagnosticsPerFile.Store(filePath, t.toDiagnosticsOrBuildInfoDiagnosticsWithFileName(diagnostic))
 	}
 }
 

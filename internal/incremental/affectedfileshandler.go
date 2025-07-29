@@ -343,7 +343,7 @@ func (h *affectedFilesHandler) updateSnapshot() {
 		})
 	}
 	h.filesToRemoveDiagnostics.Range(func(file tspath.Path) bool {
-		delete(h.program.snapshot.semanticDiagnosticsPerFile, file)
+		h.program.snapshot.semanticDiagnosticsPerFile.Delete(file)
 		return true
 	})
 	for _, change := range h.dtsMayChange {

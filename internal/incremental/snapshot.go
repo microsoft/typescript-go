@@ -189,9 +189,9 @@ type snapshot struct {
 	//  Contains the map of ReferencedSet=Referenced files of the file if module emit is enabled
 	referencedMap collections.ManyToManySet[tspath.Path, tspath.Path]
 	// Cache of semantic diagnostics for files with their Path being the key
-	semanticDiagnosticsPerFile map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName
+	semanticDiagnosticsPerFile collections.SyncMap[tspath.Path, *diagnosticsOrBuildInfoDiagnosticsWithFileName]
 	// Cache of dts emit diagnostics for files with their Path being the key
-	emitDiagnosticsPerFile map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName
+	emitDiagnosticsPerFile collections.SyncMap[tspath.Path, *diagnosticsOrBuildInfoDiagnosticsWithFileName]
 	// The map has key by source file's path that has been changed
 	changedFilesSet *collections.Set[tspath.Path]
 	// Files pending to be emitted
@@ -235,7 +235,7 @@ func (s *snapshot) addFileToAffectedFilesPendingEmit(filePath tspath.Path, emitK
 		s.affectedFilesPendingEmit = make(map[tspath.Path]FileEmitKind)
 	}
 	s.affectedFilesPendingEmit[filePath] = existingKind | emitKind
-	delete(s.emitDiagnosticsPerFile, filePath)
+	s.emitDiagnosticsPerFile.Delete(filePath)
 	s.buildInfoEmitPending = true
 }
 
