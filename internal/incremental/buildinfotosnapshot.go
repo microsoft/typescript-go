@@ -121,7 +121,6 @@ func (t *toSnapshot) setReferencedMap() {
 }
 
 func (t *toSnapshot) setChangeFileSet() {
-	t.snapshot.changedFilesSet = collections.NewSetWithSizeHint[tspath.Path](len(t.buildInfo.ChangeFileSet))
 	for _, fileId := range t.buildInfo.ChangeFileSet {
 		filePath := t.toFilePath(fileId)
 		t.snapshot.changedFilesSet.Add(filePath)

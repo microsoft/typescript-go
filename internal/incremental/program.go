@@ -235,7 +235,7 @@ func (p *Program) collectSemanticDiagnosticsOfAffectedFiles(ctx context.Context,
 	if p.snapshot.semanticDiagnosticsPerFile.Size() == len(p.program.GetSourceFiles()) && p.snapshot.checkPending && !p.snapshot.options.NoCheck.IsTrue() {
 		p.snapshot.checkPending = false
 	}
-	p.snapshot.buildInfoEmitPending = true
+	p.snapshot.buildInfoEmitPending.Store(true)
 }
 
 func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOptions) *compiler.EmitResult {
@@ -249,10 +249,10 @@ func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOption
 	if p.snapshot.hasErrors == core.TSUnknown {
 		p.snapshot.hasErrors = p.ensureHasErrorsForState(ctx, p.program)
 		if p.snapshot.hasErrors != p.snapshot.hasErrorsFromOldState {
-			p.snapshot.buildInfoEmitPending = true
+			p.snapshot.buildInfoEmitPending.Store(true)
 		}
 	}
-	if !p.snapshot.buildInfoEmitPending {
+	if !p.snapshot.buildInfoEmitPending.Load() {
 		return nil
 	}
 	if ctx.Err() != nil {
@@ -278,7 +278,7 @@ func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOption
 			},
 		}
 	}
-	p.snapshot.buildInfoEmitPending = false
+	p.snapshot.buildInfoEmitPending.Store(false)
 
 	var emittedFiles []string
 	if p.snapshot.options.ListEmittedFiles.IsTrue() {

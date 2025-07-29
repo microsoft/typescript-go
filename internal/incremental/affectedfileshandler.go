@@ -351,25 +351,26 @@ func (h *affectedFilesHandler) updateSnapshot() {
 			h.program.snapshot.addFileToAffectedFilesPendingEmit(filePath, emitKind)
 		}
 	}
-	h.program.snapshot.changedFilesSet = &collections.Set[tspath.Path]{}
-	h.program.snapshot.buildInfoEmitPending = true
+	h.program.snapshot.changedFilesSet = collections.SyncSet[tspath.Path]{}
+	h.program.snapshot.buildInfoEmitPending.Store(true)
 }
 
 func collectAllAffectedFiles(ctx context.Context, program *Program) {
-	if program.snapshot.changedFilesSet.Len() == 0 {
+	if program.snapshot.changedFilesSet.Size() == 0 {
 		return
 	}
 
 	handler := affectedFilesHandler{ctx: ctx, program: program, updatedSignatureKinds: core.IfElse(program.updatedSignatureKinds == nil, nil, &collections.SyncMap[tspath.Path, SignatureUpdateKind]{})}
 	wg := core.NewWorkGroup(handler.program.program.SingleThreaded())
 	var result collections.SyncSet[*ast.SourceFile]
-	for file := range program.snapshot.changedFilesSet.Keys() {
+	program.snapshot.changedFilesSet.Range(func(file tspath.Path) bool {
 		wg.Queue(func() {
 			for _, affectedFile := range handler.getFilesAffectedBy(file) {
 				result.Add(affectedFile)
 			}
 		})
-	}
+		return true
+	})
 	wg.RunAndWait()
 
 	if ctx.Err() != nil {

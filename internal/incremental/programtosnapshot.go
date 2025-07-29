@@ -52,15 +52,17 @@ func (t *toProgramSnapshot) reuseFromOldProgram() {
 
 	if t.oldProgram != nil {
 		// Copy old snapshot's changed files set
-		t.snapshot.changedFilesSet = t.oldProgram.snapshot.changedFilesSet.Clone()
+		t.oldProgram.snapshot.changedFilesSet.Range(func(key tspath.Path) bool {
+			t.snapshot.changedFilesSet.Add(key)
+			return true
+		})
 		if len(t.oldProgram.snapshot.affectedFilesPendingEmit) != 0 {
 			t.snapshot.affectedFilesPendingEmit = maps.Clone(t.oldProgram.snapshot.affectedFilesPendingEmit)
 		}
-		t.snapshot.buildInfoEmitPending = t.oldProgram.snapshot.buildInfoEmitPending
+		t.snapshot.buildInfoEmitPending.Store(t.oldProgram.snapshot.buildInfoEmitPending.Load())
 		t.snapshot.hasErrorsFromOldState = t.oldProgram.snapshot.hasErrors
 	} else {
-		t.snapshot.changedFilesSet = &collections.Set[tspath.Path]{}
-		t.snapshot.buildInfoEmitPending = t.snapshot.options.IsIncremental()
+		t.snapshot.buildInfoEmitPending.Store(t.snapshot.options.IsIncremental())
 	}
 }
 
@@ -82,7 +84,6 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 		t.snapshot.options.SkipDefaultLibCheck.IsTrue() == t.oldProgram.snapshot.options.SkipDefaultLibCheck.IsTrue()
 
 	var referenceMap collections.SyncMap[tspath.Path, *collections.Set[tspath.Path]]
-	var changeSet collections.SyncSet[tspath.Path]
 	var pendingEmitFiles collections.SyncMap[tspath.Path, FileEmitKind]
 	files := t.program.GetSourceFiles()
 	wg := core.NewWorkGroup(t.program.SingleThreaded())
@@ -97,33 +98,28 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 				referenceMap.Store(file.Path(), newReferences)
 			}
 			if t.oldProgram != nil {
-				isChanged := false
 				if oldFileInfo, ok := t.oldProgram.snapshot.fileInfos.Load(file.Path()); ok {
 					signature = oldFileInfo.signature
 					if oldFileInfo.version != version || oldFileInfo.affectsGlobalScope != affectsGlobalScope || oldFileInfo.impliedNodeFormat != impliedNodeFormat {
-						changeSet.Add(file.Path())
-						isChanged = true
+						t.snapshot.addFileToChangeSet(file.Path())
 					} else if oldReferences, _ := t.oldProgram.snapshot.referencedMap.GetValues(file.Path()); !newReferences.Equals(oldReferences) {
 						// Referenced files changed
-						changeSet.Add(file.Path())
-						isChanged = true
+						t.snapshot.addFileToChangeSet(file.Path())
 					} else if newReferences != nil {
 						for refPath := range newReferences.Keys() {
 							if t.program.GetSourceFileByPath(refPath) == nil {
 								if _, ok := t.oldProgram.snapshot.fileInfos.Load(refPath); ok {
 									// Referenced file was deleted in the new program
-									changeSet.Add(file.Path())
-									isChanged = true
+									t.snapshot.addFileToChangeSet(file.Path())
 									break
 								}
 							}
 						}
 					}
 				} else {
-					changeSet.Add(file.Path())
-					isChanged = true
+					t.snapshot.addFileToChangeSet(file.Path())
 				}
-				if !isChanged && (t.oldProgram == nil || !t.oldProgram.snapshot.changedFilesSet.Has(file.Path())) {
+				if !t.snapshot.changedFilesSet.Has(file.Path()) {
 					if emitDiagnostics, ok := t.oldProgram.snapshot.emitDiagnosticsPerFile.Load(file.Path()); ok {
 						t.snapshot.emitDiagnosticsPerFile.Store(file.Path(), emitDiagnostics)
 					}
@@ -159,10 +155,6 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 		t.snapshot.referencedMap.Set(key, value.Clone())
 		return true
 	})
-	changeSet.Range(func(key tspath.Path) bool {
-		t.snapshot.changedFilesSet.Add(key)
-		return true
-	})
 	pendingEmitFiles.Range(func(key tspath.Path, value FileEmitKind) bool {
 		t.snapshot.addFileToAffectedFilesPendingEmit(key, value)
 		return true
@@ -180,7 +172,7 @@ func (t *toProgramSnapshot) handleFileDelete() {
 					}
 					t.globalFileRemoved = true
 				} else {
-					t.snapshot.buildInfoEmitPending = true
+					t.snapshot.buildInfoEmitPending.Store(true)
 				}
 				return false
 			}
@@ -207,7 +199,7 @@ func (t *toProgramSnapshot) handlePendingEmit() {
 					t.snapshot.addFileToAffectedFilesPendingEmit(file.Path(), pendingEmitKind)
 				}
 			}
-			t.snapshot.buildInfoEmitPending = true
+			t.snapshot.buildInfoEmitPending.Store(true)
 		}
 	}
 }
@@ -216,7 +208,7 @@ func (t *toProgramSnapshot) handlePendingCheck() {
 	if t.oldProgram != nil &&
 		t.snapshot.semanticDiagnosticsPerFile.Size() != len(t.program.GetSourceFiles()) &&
 		t.oldProgram.snapshot.checkPending != t.snapshot.checkPending {
-		t.snapshot.buildInfoEmitPending = true
+		t.snapshot.buildInfoEmitPending.Store(true)
 	}
 }
 

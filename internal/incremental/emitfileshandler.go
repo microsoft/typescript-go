@@ -221,23 +221,23 @@ func (h *emitFilesHandler) updateSnapshot() []*compiler.EmitResult {
 		if h.program.updatedSignatureKinds != nil {
 			h.program.updatedSignatureKinds[file] = SignatureUpdateKindStoredAtEmit
 		}
-		h.program.snapshot.buildInfoEmitPending = true
+		h.program.snapshot.buildInfoEmitPending.Store(true)
 		return true
 	})
 	h.emitSignatures.Range(func(file tspath.Path, signature *emitSignature) bool {
 		h.program.snapshot.emitSignatures.Store(file, signature)
-		h.program.snapshot.buildInfoEmitPending = true
+		h.program.snapshot.buildInfoEmitPending.Store(true)
 		return true
 	})
 	latestChangedDtsFiles := h.latestChangedDtsFiles.ToSlice()
 	slices.Sort(latestChangedDtsFiles)
 	if latestChangedDtsFile := core.LastOrNil(latestChangedDtsFiles); latestChangedDtsFile != "" {
 		h.program.snapshot.latestChangedDtsFile = latestChangedDtsFile
-		h.program.snapshot.buildInfoEmitPending = true
+		h.program.snapshot.buildInfoEmitPending.Store(true)
 	}
 	for file := range h.deletedPendingKinds.Keys() {
 		delete(h.program.snapshot.affectedFilesPendingEmit, file)
-		h.program.snapshot.buildInfoEmitPending = true
+		h.program.snapshot.buildInfoEmitPending.Store(true)
 	}
 	var results []*compiler.EmitResult
 	h.emitUpdates.Range(func(file tspath.Path, update *emitUpdate) bool {
@@ -252,7 +252,7 @@ func (h *emitFilesHandler) updateSnapshot() []*compiler.EmitResult {
 				h.program.snapshot.emitDiagnosticsPerFile.Store(file, &diagnosticsOrBuildInfoDiagnosticsWithFileName{diagnostics: update.result.Diagnostics})
 			}
 		}
-		h.program.snapshot.buildInfoEmitPending = true
+		h.program.snapshot.buildInfoEmitPending.Store(true)
 		return true
 	})
 	return results

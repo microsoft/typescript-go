@@ -6,6 +6,7 @@ import (
 	"hash/fnv"
 	"strings"
 	"sync"
+	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -193,7 +194,7 @@ type snapshot struct {
 	// Cache of dts emit diagnostics for files with their Path being the key
 	emitDiagnosticsPerFile collections.SyncMap[tspath.Path, *diagnosticsOrBuildInfoDiagnosticsWithFileName]
 	// The map has key by source file's path that has been changed
-	changedFilesSet *collections.Set[tspath.Path]
+	changedFilesSet collections.SyncSet[tspath.Path]
 	// Files pending to be emitted
 	affectedFilesPendingEmit map[tspath.Path]FileEmitKind
 	// Name of the file whose dts was the latest to change
@@ -208,7 +209,7 @@ type snapshot struct {
 	// Additional fields that are not serialized but needed to track state
 
 	// true if build info emit is pending
-	buildInfoEmitPending                    bool
+	buildInfoEmitPending                    atomic.Bool
 	hasErrorsFromOldState                   core.Tristate
 	allFilesExcludingDefaultLibraryFileOnce sync.Once
 	//  Cache of all files excluding default library file for the current program
@@ -220,7 +221,7 @@ type snapshot struct {
 
 func (s *snapshot) addFileToChangeSet(filePath tspath.Path) {
 	s.changedFilesSet.Add(filePath)
-	s.buildInfoEmitPending = true
+	s.buildInfoEmitPending.Store(true)
 }
 
 func (s *snapshot) addFileToAffectedFilesPendingEmit(filePath tspath.Path, emitKind FileEmitKind) {
@@ -230,7 +231,7 @@ func (s *snapshot) addFileToAffectedFilesPendingEmit(filePath tspath.Path, emitK
 	}
 	s.affectedFilesPendingEmit[filePath] = existingKind | emitKind
 	s.emitDiagnosticsPerFile.Delete(filePath)
-	s.buildInfoEmitPending = true
+	s.buildInfoEmitPending.Store(true)
 }
 
 func (s *snapshot) getAllFilesExcludingDefaultLibraryFile(program *compiler.Program, firstSourceFile *ast.SourceFile) []*ast.SourceFile {

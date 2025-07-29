@@ -236,7 +236,7 @@ func (t *toBuildInfo) setReferencedMap() {
 }
 
 func (t *toBuildInfo) setChangeFileSet() {
-	files := slices.Collect(maps.Keys(t.snapshot.changedFilesSet.Keys()))
+	files := slices.Collect(t.snapshot.changedFilesSet.Keys())
 	slices.Sort(files)
 	t.buildInfo.ChangeFileSet = core.Map(files, t.toFileId)
 }
