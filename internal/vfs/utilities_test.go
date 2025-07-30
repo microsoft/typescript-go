@@ -498,9 +498,6 @@ func TestMatchFilesCompatibility(t *testing.T) {
 			t.Parallel()
 			fs := vfstest.FromMap(tt.files, tt.useCaseSensitiveFileNames)
 
-
-
-
 			// Get results from both implementations
 			oldResult := vfs.MatchFilesOld(
 				tt.path,

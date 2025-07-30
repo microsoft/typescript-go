@@ -461,3 +461,61 @@ func (v *newGlobVisitor) visitDirectory(path string, absolutePath string, depth 
 func ReadDirectoryNew(host FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
 	return MatchFilesNew(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
 }
+
+// MatchesExclude checks if a file matches any of the exclude patterns using glob matching (no regexp2)
+func MatchesExclude(fileName string, excludeSpecs []string, currentDirectory string, useCaseSensitiveFileNames bool) bool {
+	if len(excludeSpecs) == 0 {
+		return false
+	}
+	for _, excludeSpec := range excludeSpecs {
+		matcher := GlobMatcherForPattern(excludeSpec, currentDirectory, useCaseSensitiveFileNames)
+		if matcher.matchesFile(fileName) {
+			return true
+		}
+		// Also check if it matches as a directory (for extensionless files)
+		if !tspath.HasExtension(fileName) {
+			if matcher.matchesDirectory(tspath.EnsureTrailingDirectorySeparator(fileName)) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// MatchesInclude checks if a file matches any of the include patterns using glob matching (no regexp2)
+func MatchesInclude(fileName string, includeSpecs []string, basePath string, useCaseSensitiveFileNames bool) bool {
+	if len(includeSpecs) == 0 {
+		return false
+	}
+	for _, includeSpec := range includeSpecs {
+		matcher := GlobMatcherForPattern(includeSpec, basePath, useCaseSensitiveFileNames)
+		if matcher.matchesFile(fileName) {
+			return true
+		}
+	}
+	return false
+}
+
+// MatchesIncludeWithJsonOnly checks if a file matches any of the JSON-only include patterns using glob matching (no regexp2)
+func MatchesIncludeWithJsonOnly(fileName string, includeSpecs []string, basePath string, useCaseSensitiveFileNames bool) bool {
+	if len(includeSpecs) == 0 {
+		return false
+	}
+	// Filter to only JSON include patterns
+	jsonIncludes := core.Filter(includeSpecs, func(include string) bool {
+		return strings.HasSuffix(include, tspath.ExtensionJson)
+	})
+	for _, includeSpec := range jsonIncludes {
+		matcher := GlobMatcherForPattern(includeSpec, basePath, useCaseSensitiveFileNames)
+		if matcher.matchesFile(fileName) {
+			return true
+		}
+	}
+	return false
+}
+
+// GlobMatcherForPattern is an exported wrapper for newGlobMatcher for use outside this file
+func GlobMatcherForPattern(pattern string, basePath string, useCaseSensitiveFileNames bool) globMatcher {
+	tempCache := newPathCache()
+	return newGlobMatcher(pattern, basePath, useCaseSensitiveFileNames, tempCache)
+}
