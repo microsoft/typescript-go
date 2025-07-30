@@ -34,6 +34,9 @@ func newDispatcher() (*dispatcher, func()) {
 	}()
 
 	return d, func() {
+		if d.closed {
+			return
+		}
 		done := make(chan struct{})
 		d.Dispatch(func() {
 			close(done)
