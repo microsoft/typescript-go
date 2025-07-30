@@ -662,7 +662,7 @@ func BenchmarkMatchFiles(b *testing.B) {
 			b.ReportAllocs()
 
 			for b.Loop() {
-				vfs.MatchFiles(bc.path, bc.exts, bc.excludes, bc.includes, fs.UseCaseSensitiveFileNames(), currentDirectory, depth, fs)
+				vfs.MatchFilesOld(bc.path, bc.exts, bc.excludes, bc.includes, fs.UseCaseSensitiveFileNames(), currentDirectory, depth, fs)
 			}
 		})
 
@@ -840,7 +840,7 @@ func BenchmarkMatchFilesLarge(b *testing.B) {
 			b.ReportAllocs()
 
 			for b.Loop() {
-				vfs.MatchFiles(bc.path, bc.exts, bc.excludes, bc.includes, fs.UseCaseSensitiveFileNames(), currentDirectory, depth, fs)
+				vfs.MatchFilesOld(bc.path, bc.exts, bc.excludes, bc.includes, fs.UseCaseSensitiveFileNames(), currentDirectory, depth, fs)
 			}
 		})
 

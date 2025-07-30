@@ -376,7 +376,7 @@ func (v *visitor) visitDirectory(
 }
 
 // path is the directory of the tsconfig.json
-func MatchFiles(path string, extensions []string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth *int, host FS) []string {
+func MatchFilesOld(path string, extensions []string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth *int, host FS) []string {
 	// ...existing code...
 
 	// TODO: Implement glob-based matching for MatchFilesOld if needed, or remove this function if unused.
