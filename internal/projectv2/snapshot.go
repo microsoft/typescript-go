@@ -3,8 +3,6 @@ package projectv2
 import (
 	"context"
 	"fmt"
-	"maps"
-	"slices"
 	"sync/atomic"
 	"time"
 
@@ -127,16 +125,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, session *Se
 		projectCollectionBuilder.DidUpdateATAState(change.ataChanges, logger.Fork("DidUpdateATAState"))
 	}
 
-	for file, hash := range change.fileChanges.Closed {
-		projectCollectionBuilder.DidCloseFile(file, hash, logger.Fork("DidCloseFile"))
-	}
-
-	projectCollectionBuilder.DidDeleteFiles(slices.Collect(maps.Keys(change.fileChanges.Deleted.M)), logger.Fork("DidDeleteFiles"))
-	projectCollectionBuilder.DidCreateFiles(slices.Collect(maps.Keys(change.fileChanges.Created.M)), logger.Fork("DidCreateFiles"))
-	projectCollectionBuilder.DidChangeFiles(slices.Collect(maps.Keys(change.fileChanges.Changed.M)), logger.Fork("DidChangeFiles"))
-
-	if change.fileChanges.Opened != "" {
-		projectCollectionBuilder.DidOpenFile(change.fileChanges.Opened, logger.Fork("DidOpenFile"))
+	if !change.fileChanges.IsEmpty() {
+		projectCollectionBuilder.DidChangeFiles(change.fileChanges, logger.Fork("DidChangeFiles"))
 	}
 
 	for _, uri := range change.requestedURIs {

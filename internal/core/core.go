@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"iter"
+	"maps"
 	"math"
 	"slices"
 	"sort"
@@ -610,4 +611,12 @@ func DiffMapsFunc[K comparable, V any](m1 map[K]V, m2 map[K]V, equalValues func(
 			onAdded(k, v2)
 		}
 	}
+}
+
+func CopyMap[M1 ~map[K]V, M2 ~map[K]V, K comparable, V any](dst M1, src M2) map[K]V {
+	if dst == nil {
+		return maps.Clone(src)
+	}
+	maps.Copy(dst, src)
+	return dst
 }

@@ -9,15 +9,16 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/dirty"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
-var _ tsoptions.ParseConfigHost = (*configFileRegistryBuilder)(nil)
-var _ tsoptions.ExtendedConfigCache = (*configFileRegistryBuilder)(nil)
+var (
+	_ tsoptions.ParseConfigHost     = (*configFileRegistryBuilder)(nil)
+	_ tsoptions.ExtendedConfigCache = (*configFileRegistryBuilder)(nil)
+)
 
 // configFileRegistryBuilder tracks changes made on top of a previous
 // configFileRegistry, producing a new clone with `finalize()` after
@@ -253,9 +254,9 @@ func (c *configFileRegistryBuilder) releaseConfigForProject(configFilePath tspat
 	}
 }
 
-// DidCloseFile removes the open file from the config entry. Once no projects
+// didCloseFile removes the open file from the config entry. Once no projects
 // or files are associated with the config entry, it will be removed on the next call to `cleanup`.
-func (c *configFileRegistryBuilder) DidCloseFile(path tspath.Path) {
+func (c *configFileRegistryBuilder) didCloseFile(path tspath.Path) {
 	c.configFileNames.Delete(path)
 	c.configs.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *configFileEntry]) bool {
 		entry.ChangeIf(
@@ -280,46 +281,84 @@ func (r changeFileResult) IsEmpty() bool {
 	return len(r.affectedProjects) == 0 && len(r.affectedFiles) == 0
 }
 
-func (c *configFileRegistryBuilder) DidChangeFile(path tspath.Path) changeFileResult {
-	return c.handlePossibleConfigChange(path, lsproto.FileChangeTypeChanged)
-}
-
-func (c *configFileRegistryBuilder) DidCreateFile(fileName string, path tspath.Path) changeFileResult {
-	result := c.handlePossibleConfigChange(path, lsproto.FileChangeTypeCreated)
-	if result.IsEmpty() {
-		affectedProjects := c.handlePossibleRootFileCreation(fileName, path)
-		if affectedProjects != nil {
-			if result.affectedProjects == nil {
-				result.affectedProjects = make(map[tspath.Path]struct{})
-			}
-			maps.Copy(result.affectedProjects, affectedProjects)
-		}
-	}
-	return result
-}
-
-func (c *configFileRegistryBuilder) DidDeleteFile(path tspath.Path) changeFileResult {
-	return c.handlePossibleConfigChange(path, lsproto.FileChangeTypeDeleted)
-}
-
-func (c *configFileRegistryBuilder) handlePossibleConfigChange(path tspath.Path, changeKind lsproto.FileChangeType) changeFileResult {
+func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary) changeFileResult {
 	var affectedProjects map[tspath.Path]struct{}
-	if entry, ok := c.configs.Load(path); ok {
-		entry.Locked(func(entry dirty.Value[*configFileEntry]) {
-			affectedProjects = c.handleConfigChange(entry)
+	var affectedFiles map[tspath.Path]struct{}
+	createdFiles := make(map[tspath.Path]string, summary.Created.Len())
+	createdOrDeletedFiles := make(map[tspath.Path]struct{}, summary.Created.Len()+summary.Deleted.Len())
+	createdOrChangedOrDeletedFiles := make(map[tspath.Path]struct{}, summary.Changed.Len()+summary.Deleted.Len())
+	for uri := range summary.Changed.Keys() {
+		fileName := uri.FileName()
+		path := c.fs.toPath(fileName)
+		createdOrDeletedFiles[path] = struct{}{}
+		createdOrChangedOrDeletedFiles[path] = struct{}{}
+	}
+	for uri := range summary.Deleted.Keys() {
+		fileName := uri.FileName()
+		path := c.fs.toPath(fileName)
+		createdOrDeletedFiles[path] = struct{}{}
+		createdOrChangedOrDeletedFiles[path] = struct{}{}
+	}
+	for uri := range summary.Created.Keys() {
+		fileName := uri.FileName()
+		path := c.fs.toPath(fileName)
+		createdFiles[path] = fileName
+		createdOrDeletedFiles[path] = struct{}{}
+		createdOrChangedOrDeletedFiles[path] = struct{}{}
+	}
+
+	// Handle closed files - this ranges over config entries and could be combined
+	// with the file change handling, but a separate loop is simpler and a snapshot
+	// change with both closing and watch changes seems rare.
+	for uri := range summary.Closed {
+		fileName := uri.FileName()
+		path := c.fs.toPath(fileName)
+		c.didCloseFile(path)
+	}
+
+	// Handle changes to stored config files
+	for path := range createdOrChangedOrDeletedFiles {
+		if entry, ok := c.configs.Load(path); ok {
+			affectedProjects = core.CopyMap(affectedProjects, c.handleConfigChange(entry))
 			for extendingConfigPath := range entry.Value().retainingConfigs {
 				if extendingConfigEntry, ok := c.configs.Load(extendingConfigPath); ok {
+					affectedProjects = core.CopyMap(affectedProjects, c.handleConfigChange(extendingConfigEntry))
+				}
+			}
+			// This was a config file, so assume it's not also a root file
+			delete(createdFiles, path)
+		}
+	}
+
+	// Handle possible root file creation
+	if len(createdFiles) > 0 {
+		c.configs.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *configFileEntry]) bool {
+			entry.ChangeIf(
+				func(config *configFileEntry) bool {
+					if config.commandLine == nil || config.pendingReload != PendingReloadNone {
+						return false
+					}
+					for _, fileName := range createdFiles {
+						if config.commandLine.MatchesFileName(fileName) {
+							return true
+						}
+					}
+					return false
+				},
+				func(config *configFileEntry) {
+					config.pendingReload = PendingReloadFileNames
 					if affectedProjects == nil {
 						affectedProjects = make(map[tspath.Path]struct{})
 					}
-					maps.Copy(affectedProjects, c.handleConfigChange(extendingConfigEntry))
-				}
-			}
+					maps.Copy(affectedProjects, config.retainingProjects)
+				},
+			)
+			return true
 		})
 	}
 
-	var affectedFiles map[tspath.Path]struct{}
-	if changeKind != lsproto.FileChangeTypeChanged {
+	// Handle created/deleted files named "tsconfig.json" or "jsconfig.json"
+	for path := range createdOrDeletedFiles {
 		baseName := tspath.GetBaseFileName(string(path))
 		if baseName == "tsconfig.json" || baseName == "jsconfig.json" {
 			directoryPath := path.GetDirectoryPath()
@@ -352,26 +391,6 @@ func (c *configFileRegistryBuilder) handleConfigChange(entry dirty.Value[*config
 		affectedProjects = maps.Clone(entry.Value().retainingProjects)
 	}
 
-	return affectedProjects
-}
-
-func (c *configFileRegistryBuilder) handlePossibleRootFileCreation(fileName string, path tspath.Path) map[tspath.Path]struct{} {
-	var affectedProjects map[tspath.Path]struct{}
-	c.configs.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *configFileEntry]) bool {
-		entry.ChangeIf(
-			func(config *configFileEntry) bool {
-				return config.commandLine != nil && config.pendingReload == PendingReloadNone && config.commandLine.MatchesFileName(fileName)
-			},
-			func(config *configFileEntry) {
-				config.pendingReload = PendingReloadFileNames
-				if affectedProjects == nil {
-					affectedProjects = make(map[tspath.Path]struct{})
-				}
-				maps.Copy(affectedProjects, config.retainingProjects)
-			},
-		)
-		return true
-	})
 	return affectedProjects
 }
 
