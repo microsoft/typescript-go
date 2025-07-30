@@ -395,7 +395,7 @@ func TestMatchFilesImplicitExclusions(t *testing.T) {
 	})
 }
 
-// Test that verifies matchFiles and matchFilesNew return the same data
+// Test that verifies MatchFilesNew and MatchFilesOld return the same data
 func TestMatchFilesCompatibility(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
@@ -498,18 +498,20 @@ func TestMatchFilesCompatibility(t *testing.T) {
 			t.Parallel()
 			fs := vfstest.FromMap(tt.files, tt.useCaseSensitiveFileNames)
 
-			// Get results from original implementation
-			originalResult := vfs.ReadDirectoryNew(
-				fs,
-				tt.currentDirectory,
+
+
+
+			// Get results from both implementations
+			oldResult := vfs.MatchFilesOld(
 				tt.path,
 				tt.extensions,
 				tt.excludes,
 				tt.includes,
+				tt.useCaseSensitiveFileNames,
+				tt.currentDirectory,
 				tt.depth,
+				fs,
 			)
-
-			// Get results from new implementation
 			newResult := vfs.MatchFilesNew(
 				tt.path,
 				tt.extensions,
@@ -521,10 +523,11 @@ func TestMatchFilesCompatibility(t *testing.T) {
 				fs,
 			)
 
-			assert.DeepEqual(t, originalResult, newResult)
+			// Assert both implementations return the same result
+			assert.DeepEqual(t, oldResult, newResult)
 
-			// For now, just verify the original implementation works
-			assert.Assert(t, originalResult != nil, "original implementation should not return nil")
+			// For now, just verify the result is not nil
+			assert.Assert(t, newResult != nil, "MatchFilesNew should not return nil")
 		})
 	}
 }
