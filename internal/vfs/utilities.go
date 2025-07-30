@@ -477,14 +477,14 @@ func MatchFilesNew(path string, extensions []string, excludes []string, includes
 	}
 
 	// Prepare matchers for includes and excludes
-	includeMatchers := make([]GlobMatcher, len(includes))
+	includeMatchers := make([]globMatcher, len(includes))
 	for i, include := range includes {
-		includeMatchers[i] = NewGlobMatcher(include, absolutePath, useCaseSensitiveFileNames)
+		includeMatchers[i] = newGlobMatcher(include, absolutePath, useCaseSensitiveFileNames)
 	}
 
-	excludeMatchers := make([]GlobMatcher, len(excludes))
+	excludeMatchers := make([]globMatcher, len(excludes))
 	for i, exclude := range excludes {
-		excludeMatchers[i] = NewGlobMatcher(exclude, absolutePath, useCaseSensitiveFileNames)
+		excludeMatchers[i] = newGlobMatcher(exclude, absolutePath, useCaseSensitiveFileNames)
 	}
 
 	// Associate an array of results with each include matcher. This keeps results in order of the "include" order.
@@ -521,16 +521,16 @@ func MatchFilesNew(path string, extensions []string, excludes []string, includes
 	return flattened
 }
 
-// GlobMatcher represents a glob pattern matcher without using regex
-type GlobMatcher struct {
+// globMatcher represents a glob pattern matcher without using regex
+type globMatcher struct {
 	pattern                   string
 	basePath                  string
 	useCaseSensitiveFileNames bool
 	segments                  []string
 }
 
-// NewGlobMatcher creates a new glob matcher for the given pattern
-func NewGlobMatcher(pattern string, basePath string, useCaseSensitiveFileNames bool) GlobMatcher {
+// newGlobMatcher creates a new glob matcher for the given pattern
+func newGlobMatcher(pattern string, basePath string, useCaseSensitiveFileNames bool) globMatcher {
 	// Convert pattern to absolute path if it's relative
 	var absolutePattern string
 	if tspath.IsRootedDiskPath(pattern) {
@@ -554,7 +554,7 @@ func NewGlobMatcher(pattern string, basePath string, useCaseSensitiveFileNames b
 		}
 	}
 
-	return GlobMatcher{
+	return globMatcher{
 		pattern:                   absolutePattern,
 		basePath:                  basePath,
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
@@ -562,29 +562,29 @@ func NewGlobMatcher(pattern string, basePath string, useCaseSensitiveFileNames b
 	}
 }
 
-// MatchesFile returns true if the given absolute file path matches the glob pattern
-func (gm GlobMatcher) MatchesFile(absolutePath string) bool {
+// matchesFile returns true if the given absolute file path matches the glob pattern
+func (gm globMatcher) matchesFile(absolutePath string) bool {
 	return gm.matchesPath(absolutePath, false)
 }
 
-// MatchesDirectory returns true if the given absolute directory path matches the glob pattern
-func (gm GlobMatcher) MatchesDirectory(absolutePath string) bool {
+// matchesDirectory returns true if the given absolute directory path matches the glob pattern
+func (gm globMatcher) matchesDirectory(absolutePath string) bool {
 	return gm.matchesPath(absolutePath, true)
 }
 
-// CouldMatchInSubdirectory returns true if this pattern could match files within the given directory
-func (gm GlobMatcher) CouldMatchInSubdirectory(absolutePath string) bool {
+// couldMatchInSubdirectory returns true if this pattern could match files within the given directory
+func (gm globMatcher) couldMatchInSubdirectory(absolutePath string) bool {
 	pathSegments := tspath.GetNormalizedPathComponents(absolutePath, "")
 	// Remove the empty root component
 	if len(pathSegments) > 0 && pathSegments[0] == "" {
 		pathSegments = pathSegments[1:]
 	}
 
-	return gm.couldMatchInSubdirectory(gm.segments, pathSegments)
+	return gm.couldMatchInSubdirectoryRecursive(gm.segments, pathSegments)
 }
 
-// couldMatchInSubdirectory checks if the pattern could match files under the given path
-func (gm GlobMatcher) couldMatchInSubdirectory(patternSegments []string, pathSegments []string) bool {
+// couldMatchInSubdirectoryRecursive checks if the pattern could match files under the given path
+func (gm globMatcher) couldMatchInSubdirectoryRecursive(patternSegments []string, pathSegments []string) bool {
 	if len(patternSegments) == 0 {
 		return false
 	}
@@ -610,7 +610,7 @@ func (gm GlobMatcher) couldMatchInSubdirectory(patternSegments []string, pathSeg
 	if gm.matchSegment(pattern, pathSegment) {
 		// If we match and have more pattern segments, continue
 		if len(remainingPattern) > 0 {
-			return gm.couldMatchInSubdirectory(remainingPattern, remainingPath)
+			return gm.couldMatchInSubdirectoryRecursive(remainingPattern, remainingPath)
 		}
 		// If no more pattern segments, we could match files in this directory
 		return true
@@ -620,7 +620,7 @@ func (gm GlobMatcher) couldMatchInSubdirectory(patternSegments []string, pathSeg
 }
 
 // matchesPath performs the actual glob matching logic
-func (gm GlobMatcher) matchesPath(absolutePath string, isDirectory bool) bool {
+func (gm globMatcher) matchesPath(absolutePath string, isDirectory bool) bool {
 	pathSegments := tspath.GetNormalizedPathComponents(absolutePath, "")
 	// Remove the empty root component
 	if len(pathSegments) > 0 && pathSegments[0] == "" {
@@ -631,7 +631,7 @@ func (gm GlobMatcher) matchesPath(absolutePath string, isDirectory bool) bool {
 }
 
 // matchSegments recursively matches glob pattern segments against path segments
-func (gm GlobMatcher) matchSegments(patternSegments []string, pathSegments []string, isDirectory bool) bool {
+func (gm globMatcher) matchSegments(patternSegments []string, pathSegments []string, isDirectory bool) bool {
 	if len(patternSegments) == 0 {
 		return len(pathSegments) == 0
 	}
@@ -679,7 +679,7 @@ func (gm GlobMatcher) matchSegments(patternSegments []string, pathSegments []str
 }
 
 // matchSegment matches a single glob pattern segment against a path segment
-func (gm GlobMatcher) matchSegment(pattern, segment string) bool {
+func (gm globMatcher) matchSegment(pattern, segment string) bool {
 	// Handle case sensitivity
 	if !gm.useCaseSensitiveFileNames {
 		pattern = strings.ToLower(pattern)
@@ -689,7 +689,7 @@ func (gm GlobMatcher) matchSegment(pattern, segment string) bool {
 	return gm.matchGlobPattern(pattern, segment, false)
 }
 
-func (gm GlobMatcher) matchSegmentForFile(pattern, segment string) bool {
+func (gm globMatcher) matchSegmentForFile(pattern, segment string) bool {
 	// Handle case sensitivity
 	if !gm.useCaseSensitiveFileNames {
 		pattern = strings.ToLower(pattern)
@@ -700,7 +700,7 @@ func (gm GlobMatcher) matchSegmentForFile(pattern, segment string) bool {
 }
 
 // matchGlobPattern implements glob pattern matching for a single segment
-func (gm GlobMatcher) matchGlobPattern(pattern, text string, isFileMatch bool) bool {
+func (gm globMatcher) matchGlobPattern(pattern, text string, isFileMatch bool) bool {
 	pi, ti := 0, 0
 	starIdx, match := -1, 0
 
@@ -734,8 +734,8 @@ func (gm GlobMatcher) matchGlobPattern(pattern, text string, isFileMatch bool) b
 }
 
 type newGlobVisitor struct {
-	includeMatchers           []GlobMatcher
-	excludeMatchers           []GlobMatcher
+	includeMatchers           []globMatcher
+	excludeMatchers           []globMatcher
 	extensions                []string
 	useCaseSensitiveFileNames bool
 	host                      FS
@@ -772,7 +772,7 @@ func (v *newGlobVisitor) visitDirectory(path string, absolutePath string, depth 
 		// Check exclude patterns
 		excluded := false
 		for _, excludeMatcher := range v.excludeMatchers {
-			if excludeMatcher.MatchesFile(absoluteName) {
+			if excludeMatcher.matchesFile(absoluteName) {
 				excluded = true
 				break
 			}
@@ -788,7 +788,7 @@ func (v *newGlobVisitor) visitDirectory(path string, absolutePath string, depth 
 		} else {
 			// Check each include pattern
 			for i, includeMatcher := range v.includeMatchers {
-				if includeMatcher.MatchesFile(absoluteName) {
+				if includeMatcher.matchesFile(absoluteName) {
 					v.results[i] = append(v.results[i], name)
 					break
 				}
@@ -832,7 +832,7 @@ func (v *newGlobVisitor) visitDirectory(path string, absolutePath string, depth 
 		shouldInclude := len(v.includeMatchers) == 0
 		if !shouldInclude {
 			for _, includeMatcher := range v.includeMatchers {
-				if includeMatcher.CouldMatchInSubdirectory(absoluteName) {
+				if includeMatcher.couldMatchInSubdirectory(absoluteName) {
 					shouldInclude = true
 					break
 				}
@@ -842,7 +842,7 @@ func (v *newGlobVisitor) visitDirectory(path string, absolutePath string, depth 
 		// Check if directory should be excluded
 		shouldExclude := false
 		for _, excludeMatcher := range v.excludeMatchers {
-			if excludeMatcher.MatchesDirectory(absoluteName) {
+			if excludeMatcher.matchesDirectory(absoluteName) {
 				shouldExclude = true
 				break
 			}
