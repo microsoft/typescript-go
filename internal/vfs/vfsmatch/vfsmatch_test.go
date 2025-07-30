@@ -1504,7 +1504,7 @@ func TestUncoveredOldFunctions(t *testing.T) {
 		currentDirectory := "/project"
 
 		// This should return a regex pattern string
-		pattern := GetExcludePattern(excludeSpecs, currentDirectory)
+		pattern := getExcludePattern(excludeSpecs, currentDirectory)
 		assert.Assert(t, pattern != "", "GetExcludePattern should return a non-empty pattern")
 		assert.Assert(t, strings.Contains(pattern, "node_modules"), "Pattern should contain node_modules")
 	})
@@ -1515,7 +1515,7 @@ func TestUncoveredOldFunctions(t *testing.T) {
 		basePath := "/project"
 
 		// This should return an array of regex patterns
-		patterns := GetFileIncludePatterns(includeSpecs, basePath)
+		patterns := getFileIncludePatterns(includeSpecs, basePath)
 		assert.Assert(t, patterns != nil, "GetFileIncludePatterns should return patterns")
 		assert.Assert(t, len(patterns) > 0, "Should return at least one pattern")
 
@@ -1532,7 +1532,7 @@ func TestUncoveredOldFunctions(t *testing.T) {
 		excludeSpecs := []string{"*.temp", "build/**/*"}
 		currentDirectory := "/project"
 
-		pattern := GetExcludePattern(excludeSpecs, currentDirectory)
+		pattern := getExcludePattern(excludeSpecs, currentDirectory)
 		assert.Assert(t, pattern != "", "Should generate pattern from specs")
 	})
 }

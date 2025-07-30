@@ -89,7 +89,7 @@ var (
 	implicitExcludePathRegexPattern = "(?!(" + strings.Join(commonPackageFolders, "|") + ")(/|$))"
 )
 
-type WildcardMatcher struct {
+type wildcardMatcher struct {
 	singleAsteriskRegexFragment string
 	doubleAsteriskRegexFragment string
 	replaceWildcardCharacter    func(match string) string
@@ -105,7 +105,7 @@ const (
 	singleAsteriskRegexFragment             = "[^/]*"
 )
 
-var filesMatcher = WildcardMatcher{
+var filesMatcher = wildcardMatcher{
 	singleAsteriskRegexFragment: singleAsteriskRegexFragmentFilesMatcher,
 	// Regex for the ** wildcard. Matches any number of subdirectories. When used for including
 	// files or directories, does not match subdirectories that start with a . character
@@ -115,7 +115,7 @@ var filesMatcher = WildcardMatcher{
 	},
 }
 
-var directoriesMatcher = WildcardMatcher{
+var directoriesMatcher = wildcardMatcher{
 	singleAsteriskRegexFragment: singleAsteriskRegexFragment,
 	// Regex for the ** wildcard. Matches any number of subdirectories. When used for including
 	// files or directories, does not match subdirectories that start with a . character
@@ -125,7 +125,7 @@ var directoriesMatcher = WildcardMatcher{
 	},
 }
 
-var excludeMatcher = WildcardMatcher{
+var excludeMatcher = wildcardMatcher{
 	singleAsteriskRegexFragment: singleAsteriskRegexFragment,
 	doubleAsteriskRegexFragment: "(/.+?)?",
 	replaceWildcardCharacter: func(match string) string {
@@ -133,7 +133,7 @@ var excludeMatcher = WildcardMatcher{
 	},
 }
 
-var wildcardMatchers = map[usage]WildcardMatcher{
+var wildcardMatchers = map[usage]wildcardMatcher{
 	usageFiles:       filesMatcher,
 	usageDirectories: directoriesMatcher,
 	usageExclude:     excludeMatcher,
@@ -156,7 +156,7 @@ func getSubPatternFromSpec(
 	spec string,
 	basePath string,
 	usage usage,
-	matcher WildcardMatcher,
+	matcher wildcardMatcher,
 ) string {
 	matcher = wildcardMatchers[usage]
 
@@ -228,13 +228,13 @@ func getSubPatternFromSpec(
 	return subpattern.String()
 }
 
-// GetExcludePattern creates a regular expression pattern for exclude specs
-func GetExcludePattern(excludeSpecs []string, currentDirectory string) string {
+// getExcludePattern creates a regular expression pattern for exclude specs
+func getExcludePattern(excludeSpecs []string, currentDirectory string) string {
 	return getRegularExpressionForWildcard(excludeSpecs, currentDirectory, "exclude")
 }
 
-// GetFileIncludePatterns creates regular expression patterns for file include specs
-func GetFileIncludePatterns(includeSpecs []string, basePath string) []string {
+// getFileIncludePatterns creates regular expression patterns for file include specs
+func getFileIncludePatterns(includeSpecs []string, basePath string) []string {
 	patterns := getRegularExpressionsForWildcards(includeSpecs, basePath, "files")
 	if patterns == nil {
 		return nil
