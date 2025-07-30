@@ -1042,6 +1042,22 @@ func TestMatchesInclude(t *testing.T) {
 			useCaseSensitiveFileNames: true,
 			expectIncluded:            true,
 		},
+		{
+			name:                      "min.js files with explicit pattern",
+			fileName:                  "/dev/js/d.min.js",
+			includeSpecs:              []string{"js/*.min.js"},
+			basePath:                  "/dev",
+			useCaseSensitiveFileNames: true,
+			expectIncluded:            true,
+		},
+		{
+			name:                      "min.js files should not match generic * pattern",
+			fileName:                  "/dev/js/d.min.js",
+			includeSpecs:              []string{"js/*"},
+			basePath:                  "/dev",
+			useCaseSensitiveFileNames: true,
+			expectIncluded:            false,
+		},
 	}
 
 	for _, tt := range tests {

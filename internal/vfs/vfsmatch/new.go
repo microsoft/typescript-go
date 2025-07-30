@@ -282,8 +282,8 @@ func (gm globMatcher) matchGlobPattern(pattern, text string, isFileMatch bool) b
 			pi++
 			ti++
 		} else if pi < len(pattern) && pattern[pi] == '*' {
-			// For file matching, * should not match .min.js files
-			if isFileMatch && strings.HasSuffix(text, ".min.js") {
+			// For file matching, * should not match .min.js files UNLESS the pattern explicitly ends with .min.js
+			if isFileMatch && strings.HasSuffix(text, ".min.js") && !strings.HasSuffix(pattern, ".min.js") {
 				return false
 			}
 			starIdx = pi
