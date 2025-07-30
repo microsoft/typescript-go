@@ -474,7 +474,14 @@ func matchesExcludeNew(fileName string, excludeSpecs []string, currentDirectory 
 		}
 		// Also check if it matches as a directory (for extensionless files)
 		if !tspath.HasExtension(fileName) {
-			if matcher.matchesDirectory(tspath.EnsureTrailingDirectorySeparator(fileName)) {
+			fileNameWithSlash := tspath.EnsureTrailingDirectorySeparator(fileName)
+			// Check if the file with trailing slash matches the pattern
+			if matcher.matchesDirectory(fileNameWithSlash) {
+				return true
+			}
+			// Also check if this directory could contain files that match the pattern
+			// This handles cases like "LICENSE/**/*" should exclude the LICENSE directory itself
+			if matcher.couldMatchInSubdirectory(fileNameWithSlash) {
 				return true
 			}
 		}

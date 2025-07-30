@@ -530,6 +530,338 @@ func TestMatchFilesCompatibility(t *testing.T) {
 	}
 }
 
+// Test that verifies MatchesExcludeNew and MatchesExcludeOld return the same data
+func TestMatchesExcludeCompatibility(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name                      string
+		fileName                  string
+		excludeSpecs              []string
+		currentDirectory          string
+		useCaseSensitiveFileNames bool
+	}{
+		{
+			name:                      "no exclude specs",
+			fileName:                  "/project/src/index.ts",
+			excludeSpecs:              []string{},
+			currentDirectory:          "/",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "simple exclude match",
+			fileName:                  "/project/node_modules/react/index.js",
+			excludeSpecs:              []string{"node_modules/**/*"},
+			currentDirectory:          "/project",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "exclude does not match",
+			fileName:                  "/project/src/index.ts",
+			excludeSpecs:              []string{"node_modules/**/*"},
+			currentDirectory:          "/project",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "multiple exclude patterns",
+			fileName:                  "/project/dist/output.js",
+			excludeSpecs:              []string{"node_modules/**/*", "dist/**/*"},
+			currentDirectory:          "/project",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "case insensitive exclude",
+			fileName:                  "/project/BUILD/output.js",
+			excludeSpecs:              []string{"build/**/*"},
+			currentDirectory:          "/project",
+			useCaseSensitiveFileNames: false,
+		},
+		{
+			name:                      "extensionless file matches directory pattern",
+			fileName:                  "/project/LICENSE",
+			excludeSpecs:              []string{"LICENSE/**/*"},
+			currentDirectory:          "/project",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "complex patterns with wildcards",
+			fileName:                  "/project/src/test.spec.ts",
+			excludeSpecs:              []string{"**/*.spec.*", "build/**/*"},
+			currentDirectory:          "/project",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "relative path handling",
+			fileName:                  "/project/src/index.ts",
+			excludeSpecs:              []string{"./src/**/*"},
+			currentDirectory:          "/project",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "nested directory exclusion",
+			fileName:                  "/project/src/deep/nested/file.ts",
+			excludeSpecs:              []string{"src/deep/**/*"},
+			currentDirectory:          "/project",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "hidden files and directories",
+			fileName:                  "/project/.git/config",
+			excludeSpecs:              []string{".git/**/*"},
+			currentDirectory:          "/project",
+			useCaseSensitiveFileNames: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			// Get results from both implementations
+			oldResult := matchesExcludeOld(
+				tt.fileName,
+				tt.excludeSpecs,
+				tt.currentDirectory,
+				tt.useCaseSensitiveFileNames,
+			)
+			newResult := matchesExcludeNew(
+				tt.fileName,
+				tt.excludeSpecs,
+				tt.currentDirectory,
+				tt.useCaseSensitiveFileNames,
+			)
+
+			// Assert both implementations return the same result
+			assert.Equal(t, oldResult, newResult, "MatchesExcludeOld and MatchesExcludeNew should return the same result")
+		})
+	}
+}
+
+// Test that verifies MatchesIncludeNew and MatchesIncludeOld return the same data
+func TestMatchesIncludeCompatibility(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name                      string
+		fileName                  string
+		includeSpecs              []string
+		basePath                  string
+		useCaseSensitiveFileNames bool
+	}{
+		{
+			name:                      "no include specs",
+			fileName:                  "/project/src/index.ts",
+			includeSpecs:              []string{},
+			basePath:                  "/project",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "simple include match",
+			fileName:                  "/project/src/index.ts",
+			includeSpecs:              []string{"src/**/*"},
+			basePath:                  "/project",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "include does not match",
+			fileName:                  "/project/tests/unit.test.ts",
+			includeSpecs:              []string{"src/**/*"},
+			basePath:                  "/project",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "multiple include patterns",
+			fileName:                  "/project/tests/unit.test.ts",
+			includeSpecs:              []string{"src/**/*", "tests/**/*"},
+			basePath:                  "/project",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "case insensitive include",
+			fileName:                  "/project/SRC/Index.ts",
+			includeSpecs:              []string{"src/**/*"},
+			basePath:                  "/project",
+			useCaseSensitiveFileNames: false,
+		},
+		{
+			name:                      "specific file pattern",
+			fileName:                  "/project/package.json",
+			includeSpecs:              []string{"*.json"},
+			basePath:                  "/project",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "min.js files with explicit pattern",
+			fileName:                  "/dev/js/d.min.js",
+			includeSpecs:              []string{"js/*.min.js"},
+			basePath:                  "/dev",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "min.js files should not match generic * pattern",
+			fileName:                  "/dev/js/d.min.js",
+			includeSpecs:              []string{"js/*"},
+			basePath:                  "/dev",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "complex nested patterns",
+			fileName:                  "/project/src/components/button/index.tsx",
+			includeSpecs:              []string{"src/**/*.tsx", "tests/**/*.test.*"},
+			basePath:                  "/project",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "wildcard file extensions",
+			fileName:                  "/project/src/util.ts",
+			includeSpecs:              []string{"src/**/*.{ts,tsx,js}"},
+			basePath:                  "/project",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "question mark pattern",
+			fileName:                  "/project/test1.ts",
+			includeSpecs:              []string{"test?.ts"},
+			basePath:                  "/project",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "relative base path",
+			fileName:                  "/project/src/index.ts",
+			includeSpecs:              []string{"./src/**/*"},
+			basePath:                  "/project",
+			useCaseSensitiveFileNames: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			// Get results from both implementations
+			oldResult := matchesIncludeOld(
+				tt.fileName,
+				tt.includeSpecs,
+				tt.basePath, // Note: old version uses currentDirectory parameter name
+				tt.useCaseSensitiveFileNames,
+			)
+			newResult := matchesIncludeNew(
+				tt.fileName,
+				tt.includeSpecs,
+				tt.basePath,
+				tt.useCaseSensitiveFileNames,
+			)
+
+			// Assert both implementations return the same result
+			assert.Equal(t, oldResult, newResult, "MatchesIncludeOld and MatchesIncludeNew should return the same result")
+		})
+	}
+}
+
+// Test that verifies MatchesIncludeWithJsonOnlyNew and MatchesIncludeWithJsonOnlyOld return the same data
+func TestMatchesIncludeWithJsonOnlyCompatibility(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name                      string
+		fileName                  string
+		includeSpecs              []string
+		basePath                  string
+		useCaseSensitiveFileNames bool
+	}{
+		{
+			name:                      "no include specs",
+			fileName:                  "/project/package.json",
+			includeSpecs:              []string{},
+			basePath:                  "/project",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "json file matches json pattern",
+			fileName:                  "/project/package.json",
+			includeSpecs:              []string{"*.json", "src/**/*"},
+			basePath:                  "/project",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "non-json file does not match",
+			fileName:                  "/project/src/index.ts",
+			includeSpecs:              []string{"*.json", "src/**/*"},
+			basePath:                  "/project",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "json file does not match non-json pattern",
+			fileName:                  "/project/config.json",
+			includeSpecs:              []string{"src/**/*", "tests/**/*"},
+			basePath:                  "/project",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "nested json file",
+			fileName:                  "/project/src/config/app.json",
+			includeSpecs:              []string{"src/**/*.json"},
+			basePath:                  "/project",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "multiple json patterns",
+			fileName:                  "/project/tsconfig.json",
+			includeSpecs:              []string{"*.json", "config/**/*.json"},
+			basePath:                  "/project",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "case insensitive json matching",
+			fileName:                  "/project/CONFIG.JSON",
+			includeSpecs:              []string{"*.json"},
+			basePath:                  "/project",
+			useCaseSensitiveFileNames: false,
+		},
+		{
+			name:                      "json file with complex pattern",
+			fileName:                  "/project/src/data/users.json",
+			includeSpecs:              []string{"src/**/*.json", "test/**/*.spec.json"},
+			basePath:                  "/project",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "non-json extension ignored",
+			fileName:                  "/project/src/util.ts",
+			includeSpecs:              []string{"src/**/*.json", "src/**/*.ts"},
+			basePath:                  "/project",
+			useCaseSensitiveFileNames: true,
+		},
+		{
+			name:                      "json pattern with wildcards",
+			fileName:                  "/project/config/dev.json",
+			includeSpecs:              []string{"config/*.json"},
+			basePath:                  "/project",
+			useCaseSensitiveFileNames: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			// Get results from both implementations
+			oldResult := matchesIncludeWithJsonOnlyOld(
+				tt.fileName,
+				tt.includeSpecs,
+				tt.basePath,
+				tt.useCaseSensitiveFileNames,
+			)
+			newResult := matchesIncludeWithJsonOnlyNew(
+				tt.fileName,
+				tt.includeSpecs,
+				tt.basePath,
+				tt.useCaseSensitiveFileNames,
+			)
+
+			// Assert both implementations return the same result
+			assert.Equal(t, oldResult, newResult, "MatchesIncludeWithJsonOnlyOld and MatchesIncludeWithJsonOnlyNew should return the same result")
+		})
+	}
+}
+
 // Test specific patterns that were originally in debug test
 func TestDottedFilesAndPackageFolders(t *testing.T) {
 	t.Parallel()
