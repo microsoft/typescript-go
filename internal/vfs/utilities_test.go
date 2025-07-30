@@ -774,7 +774,7 @@ func setupLargeTestFS(useCaseSensitiveFileNames bool) vfs.FS {
 
 		// Add some .d.ts files
 		if i < 50 {
-			files[fmt.Sprintf("/node_modules/pkg%d/types/file%d.d.ts", pkg, i)] = fmt.Sprintf("export declare const value: number;")
+			files[fmt.Sprintf("/node_modules/pkg%d/types/file%d.d.ts", pkg, i)] = "export declare const value: number;"
 		}
 	}
 
