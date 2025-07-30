@@ -16,16 +16,39 @@ type pendingDecl struct {
 	original           *ast.Node
 }
 
+type flattenContext struct {
+	currentExpressions         []*ast.Node
+	currentDeclarations        []pendingDecl
+	hasTransformedPriorElement bool
+	emitBindingOrAssignment    func(t *objectRestSpreadTransformer, target *ast.Node, value *ast.Node, location core.TextRange, original *ast.Node)
+	hoistTempVariables         bool
+}
+
+type oldFlattenContext flattenContext
+
 type objectRestSpreadTransformer struct {
 	transformers.Transformer
 	compilerOptions *core.CompilerOptions
 
 	inExportedVariableStatement bool
 
-	currentExpressions         []*ast.Node
-	currentDeclarations        []pendingDecl
-	hasTransformedPriorElement bool
-	emitBindingOrAssignment    func(t *objectRestSpreadTransformer, target *ast.Node, value *ast.Node, location core.TextRange, original *ast.Node)
+	ctx flattenContext
+}
+
+func (ch *objectRestSpreadTransformer) enterFlattenContext(
+	emitBindingOrAssignment func(t *objectRestSpreadTransformer, target *ast.Node, value *ast.Node, location core.TextRange, original *ast.Node),
+	hoistTempVariables bool,
+) oldFlattenContext {
+	old := ch.ctx
+	ch.ctx = flattenContext{
+		emitBindingOrAssignment: emitBindingOrAssignment,
+		hoistTempVariables:      hoistTempVariables,
+	}
+	return oldFlattenContext(old)
+}
+
+func (ch *objectRestSpreadTransformer) exitFlattenContext(old oldFlattenContext) {
+	ch.ctx = flattenContext(old)
 }
 
 func (ch *objectRestSpreadTransformer) visit(node *ast.Node) *ast.Node {
@@ -115,31 +138,29 @@ func (ch *objectRestSpreadTransformer) visitVariableDeclarationWorker(node *ast.
 }
 
 func (ch *objectRestSpreadTransformer) flattenDestructuringBinding(node *ast.VariableDeclaration, skipInitializer bool) *ast.Node {
-	ch.hasTransformedPriorElement = false
-	ch.currentExpressions = nil
-	ch.emitBindingOrAssignment = (*objectRestSpreadTransformer).emitBinding
+	old := ch.enterFlattenContext((*objectRestSpreadTransformer).emitBinding, false)
+	defer ch.exitFlattenContext(old)
 
 	initializer := getInitializerOfBindingOrAssignmentElement(node.AsNode())
 	if initializer != nil && (ast.IsIdentifier(initializer) && bindingOrAssignmentElementAssignsToName(node.AsNode(), initializer.AsIdentifier().Text) || bindingOrAssignmentElementContainsNonLiteralComputedName(node.AsNode())) {
 		// If the right-hand value of the assignment is also an assignment target then
 		// we need to cache the right-hand value.
-		initializer = ch.ensureIdentifier(ch.Visitor().VisitNode(initializer), false, initializer.Loc, false)
+		initializer = ch.ensureIdentifier(ch.Visitor().VisitNode(initializer), false, initializer.Loc)
 		node = ch.Factory().UpdateVariableDeclaration(node, node.Name(), nil, nil, initializer).AsVariableDeclaration()
 	}
 
-	ch.flattenBindingOrAssignmentElement(node.AsNode(), nil, node.Loc, skipInitializer, false)
+	ch.flattenBindingOrAssignmentElement(node.AsNode(), nil, node.Loc, skipInitializer)
 
-	if len(ch.currentExpressions) > 0 {
+	if len(ch.ctx.currentExpressions) > 0 {
 		temp := ch.Factory().NewTempVariable()
 		ch.EmitContext().AddVariableDeclaration(temp)
-		last := &ch.currentDeclarations[len(ch.currentDeclarations)-1]
+		last := &ch.ctx.currentDeclarations[len(ch.ctx.currentDeclarations)-1]
 		last.pendingExpressions = append(last.pendingExpressions, ch.Factory().NewAssignmentExpression(temp, last.value))
-		last.pendingExpressions = append(last.pendingExpressions, ch.currentExpressions...)
+		last.pendingExpressions = append(last.pendingExpressions, ch.ctx.currentExpressions...)
 		last.value = temp
-		ch.currentExpressions = nil
 	}
-	decls := make([]*ast.Node, 0, len(ch.currentDeclarations))
-	for _, pending := range ch.currentDeclarations {
+	decls := make([]*ast.Node, 0, len(ch.ctx.currentDeclarations))
+	for _, pending := range ch.ctx.currentDeclarations {
 		expr := pending.value
 		if len(pending.pendingExpressions) > 0 {
 			expr = ch.Factory().InlineExpressions(append(pending.pendingExpressions, pending.value))
@@ -154,7 +175,6 @@ func (ch *objectRestSpreadTransformer) flattenDestructuringBinding(node *ast.Var
 		ch.EmitContext().SetOriginal(decl, pending.original)
 		decls = append(decls, decl)
 	}
-	ch.currentDeclarations = nil
 	if len(decls) == 1 {
 		return decls[0]
 	}
@@ -269,18 +289,16 @@ func (ch *objectRestSpreadTransformer) flattenDestructuringAssignment(node *ast.
 			}
 		}
 	}
+	old := ch.enterFlattenContext((*objectRestSpreadTransformer).emitAssignment, true)
+	defer ch.exitFlattenContext(old)
 
-	oldExprs := ch.currentExpressions
-	ch.currentExpressions = nil
-	ch.hasTransformedPriorElement = false
-	ch.emitBindingOrAssignment = (*objectRestSpreadTransformer).emitAssignment
 	if value != nil {
 		value = ch.Visitor().VisitNode(value)
 
 		if ast.IsIdentifier(value) && bindingOrAssignmentElementAssignsToName(node.AsNode(), value.AsIdentifier().Text) || bindingOrAssignmentElementContainsNonLiteralComputedName(node.AsNode()) {
 			// If the right-hand value of the assignment is also an assignment target then
 			// we need to cache the right-hand value.
-			value = ch.ensureIdentifier(value, false, location, true)
+			value = ch.ensureIdentifier(value, false, location)
 		} else if ast.NodeIsSynthesized(node.AsNode()) {
 			// Generally, the source map location for a destructuring assignment is the root
 			// expression.
@@ -293,27 +311,26 @@ func (ch *objectRestSpreadTransformer) flattenDestructuringAssignment(node *ast.
 		// !!! else if needsValue {}
 	}
 
-	ch.flattenBindingOrAssignmentElement(node.AsNode(), value, location, ast.IsDestructuringAssignment(node.AsNode()), true)
+	ch.flattenBindingOrAssignmentElement(node.AsNode(), value, location, ast.IsDestructuringAssignment(node.AsNode()))
 
-	res := ch.Factory().InlineExpressions(ch.currentExpressions)
-	ch.currentExpressions = oldExprs
+	res := ch.Factory().InlineExpressions(ch.ctx.currentExpressions)
 	if res != nil {
 		return res
 	}
 	return ch.Factory().NewOmittedExpression()
 }
 
-func (ch *objectRestSpreadTransformer) flattenBindingOrAssignmentElement(element *ast.Node, value *ast.Node, location core.TextRange, skipInitializer bool, hoist bool) {
+func (ch *objectRestSpreadTransformer) flattenBindingOrAssignmentElement(element *ast.Node, value *ast.Node, location core.TextRange, skipInitializer bool) {
 	bindingTarget := ast.GetTargetOfBindingOrAssignmentElement(element)
 	if !skipInitializer {
 		initializer := ch.Visitor().VisitNode(getInitializerOfBindingOrAssignmentElement(element))
 		if initializer != nil {
 			// Combine value and initializer
 			if value != nil {
-				value = ch.createDefaultValueCheck(value, initializer, location, hoist)
+				value = ch.createDefaultValueCheck(value, initializer, location)
 				// If 'value' is not a simple expression, it could contain side-effecting code that should evaluate before an object or array binding pattern.
 				if !transformers.IsSimpleCopiableExpression(initializer) && (ast.IsBindingPattern(bindingTarget) || ast.IsAssignmentPattern(bindingTarget)) {
-					value = ch.ensureIdentifier(value, true, location, hoist)
+					value = ch.ensureIdentifier(value, true, location)
 				}
 			} else {
 				value = initializer
@@ -325,15 +342,15 @@ func (ch *objectRestSpreadTransformer) flattenBindingOrAssignmentElement(element
 	}
 
 	if isObjectBindingOrAssignmentPattern(bindingTarget) {
-		ch.flattenObjectBindingOrAssignmentPattern(element, bindingTarget, value, location, hoist)
+		ch.flattenObjectBindingOrAssignmentPattern(element, bindingTarget, value, location)
 	} else if isArrayBindingOrAssignmentPattern(bindingTarget) {
-		ch.flattenArrayBindingOrAssignmentPattern(element, bindingTarget, value, location, hoist)
+		ch.flattenArrayBindingOrAssignmentPattern(element, bindingTarget, value, location)
 	} else {
-		ch.emitBindingOrAssignment(ch, bindingTarget, value, location, element)
+		ch.ctx.emitBindingOrAssignment(ch, bindingTarget, value, location, element)
 	}
 }
 
-func (ch *objectRestSpreadTransformer) flattenObjectBindingOrAssignmentPattern(parent *ast.Node, pattern *ast.Node, value *ast.Node, location core.TextRange, hoist bool) {
+func (ch *objectRestSpreadTransformer) flattenObjectBindingOrAssignmentPattern(parent *ast.Node, pattern *ast.Node, value *ast.Node, location core.TextRange) {
 	elements := ast.GetElementsOfBindingOrAssignmentPattern(pattern)
 	numElements := len(elements)
 	if numElements != 1 {
@@ -342,7 +359,7 @@ func (ch *objectRestSpreadTransformer) flattenObjectBindingOrAssignmentPattern(p
 		// we need to emit *something* to ensure that in case a 'var' keyword was already emitted,
 		// so in that case, we'll intentionally create that temporary.
 		reuseIdentifierExpressions := !ast.IsDeclarationBindingElement(parent) || numElements != 0
-		value = ch.ensureIdentifier(value, reuseIdentifierExpressions, location, hoist)
+		value = ch.ensureIdentifier(value, reuseIdentifierExpressions, location)
 	}
 	var bindingElements []*ast.Node
 	var computedTempVariables []*ast.Node
@@ -353,26 +370,26 @@ func (ch *objectRestSpreadTransformer) flattenObjectBindingOrAssignmentPattern(p
 				bindingElements = append(bindingElements, ch.Visitor().VisitNode(element))
 			} else {
 				if len(bindingElements) > 0 {
-					ch.emitBindingOrAssignment(ch, ch.createObjectBindingOrAssignmentPattern(bindingElements), value, location, pattern)
+					ch.ctx.emitBindingOrAssignment(ch, ch.createObjectBindingOrAssignmentPattern(bindingElements), value, location, pattern)
 					bindingElements = nil
 				}
-				rhsValue := ch.createDestructuringPropertyAccess(value, propertyName, hoist)
+				rhsValue := ch.createDestructuringPropertyAccess(value, propertyName)
 				if ast.IsComputedPropertyName(propertyName) {
 					computedTempVariables = append(computedTempVariables, rhsValue.AsElementAccessExpression().ArgumentExpression)
 				}
-				ch.flattenBindingOrAssignmentElement(element, rhsValue, element.Loc, false, hoist)
+				ch.flattenBindingOrAssignmentElement(element, rhsValue, element.Loc, false)
 			}
 		} else if i == numElements-1 {
 			if len(bindingElements) > 0 {
-				ch.emitBindingOrAssignment(ch, ch.createObjectBindingOrAssignmentPattern(bindingElements), value, location, pattern)
+				ch.ctx.emitBindingOrAssignment(ch, ch.createObjectBindingOrAssignmentPattern(bindingElements), value, location, pattern)
 				bindingElements = nil
 			}
 			rhsValue := ch.Factory().NewRestHelper(value, elements, computedTempVariables, pattern.Loc)
-			ch.flattenBindingOrAssignmentElement(element, rhsValue, element.Loc, false, hoist)
+			ch.flattenBindingOrAssignmentElement(element, rhsValue, element.Loc, false)
 		}
 	}
 	if len(bindingElements) > 0 {
-		ch.emitBindingOrAssignment(ch, ch.createObjectBindingOrAssignmentPattern(bindingElements), value, location, pattern)
+		ch.ctx.emitBindingOrAssignment(ch, ch.createObjectBindingOrAssignmentPattern(bindingElements), value, location, pattern)
 	}
 }
 
@@ -381,7 +398,7 @@ type restIdElemPair struct {
 	element *ast.Node
 }
 
-func (ch *objectRestSpreadTransformer) flattenArrayBindingOrAssignmentPattern(parent *ast.Node, pattern *ast.Node, value *ast.Node, location core.TextRange, hoist bool) {
+func (ch *objectRestSpreadTransformer) flattenArrayBindingOrAssignmentPattern(parent *ast.Node, pattern *ast.Node, value *ast.Node, location core.TextRange) {
 	elements := ast.GetElementsOfBindingOrAssignmentPattern(pattern)
 	numElements := len(elements)
 	if numElements != 1 || core.Every(elements, ast.IsOmittedExpression) {
@@ -392,17 +409,17 @@ func (ch *objectRestSpreadTransformer) flattenArrayBindingOrAssignmentPattern(pa
 		// Or all the elements of the binding pattern are omitted expression such as "var [,] = [1,2]",
 		// then we will create temporary variable.
 		reuseIdentifierExpressions := !ast.IsDeclarationBindingElement(parent) || numElements != 0
-		value = ch.ensureIdentifier(value, reuseIdentifierExpressions, location, hoist)
+		value = ch.ensureIdentifier(value, reuseIdentifierExpressions, location)
 	}
 	var bindingElements []*ast.Node
 	var restContainingElements []restIdElemPair
 	for _, element := range elements {
 		// If an array pattern contains an ObjectRest, we must cache the result so that we
 		// can perform the ObjectRest destructuring in a different declaration
-		if element.SubtreeFacts()&ast.SubtreeContainsObjectRestOrSpread != 0 || ch.hasTransformedPriorElement && !isSimpleBindingOrAssignmentElement(element) {
-			ch.hasTransformedPriorElement = true
+		if element.SubtreeFacts()&ast.SubtreeContainsObjectRestOrSpread != 0 || ch.ctx.hasTransformedPriorElement && !isSimpleBindingOrAssignmentElement(element) {
+			ch.ctx.hasTransformedPriorElement = true
 			temp := ch.Factory().NewTempVariable()
-			if hoist {
+			if ch.ctx.hoistTempVariables {
 				ch.EmitContext().AddVariableDeclaration(temp)
 			}
 
@@ -414,11 +431,11 @@ func (ch *objectRestSpreadTransformer) flattenArrayBindingOrAssignmentPattern(pa
 		// !!! ??? other flatten levels? only objectRest currently in use
 	}
 	if len(bindingElements) > 0 {
-		ch.emitBindingOrAssignment(ch, ch.createArrayBindingOrAssignmentPattern(bindingElements), value, location, pattern)
+		ch.ctx.emitBindingOrAssignment(ch, ch.createArrayBindingOrAssignmentPattern(bindingElements), value, location, pattern)
 	}
 	if len(restContainingElements) > 0 {
 		for _, pair := range restContainingElements {
-			ch.flattenBindingOrAssignmentElement(pair.element, pair.id, pair.element.Loc, false, hoist)
+			ch.flattenBindingOrAssignmentElement(pair.element, pair.id, pair.element.Loc, false)
 		}
 	}
 }
@@ -433,9 +450,9 @@ func (ch *objectRestSpreadTransformer) flattenArrayBindingOrAssignmentPattern(pa
  * @param value The RHS value that is the source of the property.
  * @param propertyName The destructuring property name.
  */
-func (ch *objectRestSpreadTransformer) createDestructuringPropertyAccess(value *ast.Node, propertyName *ast.Node, hoist bool) *ast.Node {
+func (ch *objectRestSpreadTransformer) createDestructuringPropertyAccess(value *ast.Node, propertyName *ast.Node) *ast.Node {
 	if ast.IsComputedPropertyName(propertyName) {
-		argumentExpression := ch.ensureIdentifier(ch.Visitor().VisitNode(propertyName.AsComputedPropertyName().Expression), false, propertyName.Loc, hoist)
+		argumentExpression := ch.ensureIdentifier(ch.Visitor().VisitNode(propertyName.AsComputedPropertyName().Expression), false, propertyName.Loc)
 		return ch.Factory().NewElementAccessExpression(
 			value,
 			nil,
@@ -470,7 +487,7 @@ func (ch *objectRestSpreadTransformer) createArrayBindingOrAssignmentPattern(ele
 }
 
 func (ch *objectRestSpreadTransformer) emitExpression(node *ast.Node) {
-	ch.currentExpressions = append(ch.currentExpressions, node)
+	ch.ctx.currentExpressions = append(ch.ctx.currentExpressions, node)
 }
 
 func (ch *objectRestSpreadTransformer) emitAssignment(target *ast.Node, value *ast.Node, location core.TextRange, original *ast.Node) {
@@ -483,12 +500,12 @@ func (ch *objectRestSpreadTransformer) emitAssignment(target *ast.Node, value *a
 
 func (ch *objectRestSpreadTransformer) emitBinding(target *ast.Node, value *ast.Node, location core.TextRange, original *ast.Node) {
 	// Debug.assertNode(target, isBindingName); // !!!
-	if len(ch.currentExpressions) > 0 {
-		value = ch.Factory().InlineExpressions(append(ch.currentExpressions, value))
-		ch.currentExpressions = nil
+	if len(ch.ctx.currentExpressions) > 0 {
+		value = ch.Factory().InlineExpressions(append(ch.ctx.currentExpressions, value))
+		ch.ctx.currentExpressions = nil
 	}
-	ch.currentDeclarations = append(ch.currentDeclarations, pendingDecl{
-		ch.currentExpressions,
+	ch.ctx.currentDeclarations = append(ch.ctx.currentDeclarations, pendingDecl{
+		ch.ctx.currentExpressions,
 		target,
 		value,
 		location,
@@ -496,25 +513,25 @@ func (ch *objectRestSpreadTransformer) emitBinding(target *ast.Node, value *ast.
 	})
 }
 
-func (ch *objectRestSpreadTransformer) ensureIdentifier(value *ast.Node, reuseIdentifierExpressions bool, location core.TextRange, hoist bool) *ast.Node {
+func (ch *objectRestSpreadTransformer) ensureIdentifier(value *ast.Node, reuseIdentifierExpressions bool, location core.TextRange) *ast.Node {
 	if reuseIdentifierExpressions && ast.IsIdentifier(value) {
 		return value
 	}
 
 	temp := ch.Factory().NewTempVariable()
-	if hoist {
+	if ch.ctx.hoistTempVariables {
 		ch.EmitContext().AddVariableDeclaration(temp)
 		assign := ch.Factory().NewAssignmentExpression(temp, value)
 		assign.Loc = location
 		ch.emitExpression(assign)
 	} else {
-		ch.emitBindingOrAssignment(ch, temp, value, location, nil)
+		ch.ctx.emitBindingOrAssignment(ch, temp, value, location, nil)
 	}
 	return temp
 }
 
-func (ch *objectRestSpreadTransformer) createDefaultValueCheck(value *ast.Expression, defaultValue *ast.Expression, location core.TextRange, hoist bool) *ast.Node {
-	value = ch.ensureIdentifier(value, true, location, hoist)
+func (ch *objectRestSpreadTransformer) createDefaultValueCheck(value *ast.Expression, defaultValue *ast.Expression, location core.TextRange) *ast.Node {
+	value = ch.ensureIdentifier(value, true, location)
 	return ch.Factory().NewConditionalExpression(
 		ch.Factory().NewTypeCheck(value, "undefined"),
 		ch.Factory().NewToken(ast.KindQuestionToken),

@@ -7,7 +7,6 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -3749,7 +3748,7 @@ func TryGetPropertyNameOfBindingOrAssignmentElement(bindingElement *Node) *Node 
 			// if ast.IsPrivateIdentifier(propertyName) {
 			// 	return Debug.failBadSyntaxKind(propertyName) // !!!
 			// }
-			if ast.IsComputedPropertyName(propertyName) && ast.IsStringOrNumericLiteralLike(propertyName.AsComputedPropertyName().Expression) {
+			if IsComputedPropertyName(propertyName) && IsStringOrNumericLiteralLike(propertyName.AsComputedPropertyName().Expression) {
 				return propertyName.AsComputedPropertyName().Expression
 			}
 			return propertyName
@@ -3778,7 +3777,7 @@ func TryGetPropertyNameOfBindingOrAssignmentElement(bindingElement *Node) *Node 
 	}
 
 	target := GetTargetOfBindingOrAssignmentElement(bindingElement)
-	if target != nil && ast.IsPropertyName(target) {
+	if target != nil && IsPropertyName(target) {
 		return target
 	}
 	return nil
@@ -3824,11 +3823,11 @@ func IsEmptyArrayLiteral(expression *Node) bool {
 
 func GetRestIndicatorOfBindingOrAssignmentElement(bindingElement *Node) *Node {
 	switch bindingElement.Kind {
-	case ast.KindParameter:
+	case KindParameter:
 		return bindingElement.AsParameterDeclaration().DotDotDotToken
-	case ast.KindBindingElement:
+	case KindBindingElement:
 		return bindingElement.AsBindingElement().DotDotDotToken
-	case ast.KindSpreadElement, ast.KindSpreadAssignment:
+	case KindSpreadElement, KindSpreadAssignment:
 		return bindingElement
 	}
 	return nil

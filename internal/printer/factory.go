@@ -551,7 +551,7 @@ func (f *NodeFactory) NewAssignHelper(attributesSegments []*ast.Expression, scri
 	)
 }
 
-// !!! ES2018 Destructuring Helpers
+// ES2018 Destructuring Helpers
 
 func (f *NodeFactory) NewRestHelper(value *ast.Expression, elements []*ast.Node, computedTempVariables []*ast.Node, location core.TextRange) *ast.Expression {
 	f.emitContext.RequestEmitHelper(restHelper)
@@ -577,7 +577,7 @@ func (f *NodeFactory) NewRestHelper(value *ast.Expression, elements []*ast.Node,
 			}
 		}
 	}
-	propNames := f.NewArrayLiteralExpression(f.NewNodeList(propertyNames))
+	propNames := f.NewArrayLiteralExpression(f.NewNodeList(propertyNames), false)
 	propNames.Loc = location
 	return f.NewCallExpression(
 		f.NewUnscopedHelperName("__rest"),
