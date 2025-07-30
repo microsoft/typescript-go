@@ -1,4 +1,4 @@
-package vfs
+package vfsmatch
 
 import (
 	"fmt"
@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type fileMatcherPatterns struct {
@@ -367,7 +368,7 @@ type visitor struct {
 	includeDirectoryRegex     *regexp2.Regexp
 	extensions                []string
 	useCaseSensitiveFileNames bool
-	host                      FS
+	host                      vfs.FS
 	visited                   collections.Set[string]
 	results                   [][]string
 }
@@ -423,7 +424,7 @@ func (v *visitor) visitDirectory(
 }
 
 // path is the directory of the tsconfig.json
-func MatchFilesOld(path string, extensions []string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth *int, host FS) []string {
+func matchFilesOld(path string, extensions []string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth *int, host vfs.FS) []string {
 	path = tspath.NormalizePath(path)
 	currentDirectory = tspath.NormalizePath(currentDirectory)
 
@@ -469,6 +470,6 @@ func MatchFilesOld(path string, extensions []string, excludes []string, includes
 	return core.Flatten(results)
 }
 
-func ReadDirectoryOld(host FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
-	return MatchFilesOld(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
+func readDirectoryOld(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
+	return matchFilesOld(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
 }

@@ -16,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
 type extendsResult struct {
@@ -97,7 +98,7 @@ type configFileSpecs struct {
 }
 
 func (c *configFileSpecs) matchesExclude(fileName string, comparePathsOptions tspath.ComparePathsOptions) bool {
-	return vfs.MatchesExclude(fileName, c.validatedExcludeSpecs, comparePathsOptions.CurrentDirectory, comparePathsOptions.UseCaseSensitiveFileNames)
+	return vfsmatch.MatchesExclude(fileName, c.validatedExcludeSpecs, comparePathsOptions.CurrentDirectory, comparePathsOptions.UseCaseSensitiveFileNames)
 }
 
 func (c *configFileSpecs) matchesInclude(fileName string, comparePathsOptions tspath.ComparePathsOptions) bool {
@@ -105,9 +106,9 @@ func (c *configFileSpecs) matchesInclude(fileName string, comparePathsOptions ts
 		return false
 	}
 	for _, spec := range c.validatedIncludeSpecs {
-		includePattern := vfs.GetPatternFromSpec(spec, comparePathsOptions.CurrentDirectory, "files")
+		includePattern := vfsmatch.GetPatternFromSpec(spec, comparePathsOptions.CurrentDirectory, "files")
 		if includePattern != "" {
-			includeRegex := vfs.GetRegexFromPattern(includePattern, comparePathsOptions.UseCaseSensitiveFileNames)
+			includeRegex := vfsmatch.GetRegexFromPattern(includePattern, comparePathsOptions.UseCaseSensitiveFileNames)
 			if match, err := includeRegex.MatchString(fileName); err == nil && match {
 				return true
 			}
@@ -1558,13 +1559,13 @@ func getFileNamesFromConfigSpecs(
 
 	var jsonOnlyIncludeSpecs []string
 	if len(validatedIncludeSpecs) > 0 {
-		files := vfs.ReadDirectoryNew(host, basePath, basePath, core.Flatten(supportedExtensionsWithJsonIfResolveJsonModule), validatedExcludeSpecs, validatedIncludeSpecs, nil)
+		files := vfsmatch.ReadDirectory(host, basePath, basePath, core.Flatten(supportedExtensionsWithJsonIfResolveJsonModule), validatedExcludeSpecs, validatedIncludeSpecs, nil)
 		for _, file := range files {
 			if tspath.FileExtensionIs(file, tspath.ExtensionJson) {
 				if jsonOnlyIncludeSpecs == nil {
 					jsonOnlyIncludeSpecs = core.Filter(validatedIncludeSpecs, func(include string) bool { return strings.HasSuffix(include, tspath.ExtensionJson) })
 				}
-				if vfs.MatchesIncludeWithJsonOnly(file, jsonOnlyIncludeSpecs, basePath, host.UseCaseSensitiveFileNames()) {
+				if vfsmatch.MatchesIncludeWithJsonOnly(file, jsonOnlyIncludeSpecs, basePath, host.UseCaseSensitiveFileNames()) {
 					key := keyMappper(file)
 					if !literalFileMap.Has(key) && !wildCardJsonFileMap.Has(key) {
 						wildCardJsonFileMap.Set(key, file)

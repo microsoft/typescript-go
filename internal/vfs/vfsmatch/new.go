@@ -1,4 +1,4 @@
-package vfs
+package vfsmatch
 
 import (
 	"strings"
@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 // Cache for normalized path components to avoid repeated allocations
@@ -29,8 +30,8 @@ func (pc *pathCache) getNormalizedPathComponents(path string) []string {
 	return components
 }
 
-// MatchFilesNew is the regex-free implementation of file matching
-func MatchFilesNew(path string, extensions []string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth *int, host FS) []string {
+// matchFilesNew is the regex-free implementation of file matching
+func matchFilesNew(path string, extensions []string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth *int, host vfs.FS) []string {
 	path = tspath.NormalizePath(path)
 	currentDirectory = tspath.NormalizePath(currentDirectory)
 	absolutePath := tspath.CombinePaths(currentDirectory, path)
@@ -310,7 +311,7 @@ type newGlobVisitor struct {
 	excludeMatchers           []globMatcher
 	extensions                []string
 	useCaseSensitiveFileNames bool
-	host                      FS
+	host                      vfs.FS
 	visited                   collections.Set[string]
 	results                   [][]string
 	pathCache                 *pathCache
@@ -458,8 +459,8 @@ func (v *newGlobVisitor) visitDirectory(path string, absolutePath string, depth 
 	}
 }
 
-func ReadDirectoryNew(host FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
-	return MatchFilesNew(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
+func readDirectoryNew(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
+	return matchFilesNew(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
 }
 
 // MatchesExclude checks if a file matches any of the exclude patterns using glob matching (no regexp2)

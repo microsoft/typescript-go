@@ -1,4 +1,4 @@
-package vfs_test
+package vfsmatch
 
 import (
 	"fmt"
@@ -214,7 +214,7 @@ func TestMatchFiles(t *testing.T) {
 			t.Parallel()
 			fs := vfstest.FromMap(tt.files, tt.useCaseSensitiveFileNames)
 
-			result := vfs.ReadDirectoryNew(
+			result := readDirectoryNew(
 				fs,
 				tt.currentDirectory,
 				tt.path,
@@ -322,7 +322,7 @@ func TestMatchFilesEdgeCases(t *testing.T) {
 			t.Parallel()
 			fs := vfstest.FromMap(tt.files, tt.useCaseSensitiveFileNames)
 
-			result := vfs.ReadDirectoryNew(
+			result := readDirectoryNew(
 				fs,
 				tt.currentDirectory,
 				tt.path,
@@ -352,7 +352,7 @@ func TestMatchFilesImplicitExclusions(t *testing.T) {
 		fs := vfstest.FromMap(files, true)
 
 		// This should only return test.ts, not the dotted files
-		result := vfs.MatchFilesNew(
+		result := matchFilesNew(
 			"/apath",
 			[]string{".ts"},
 			[]string{}, // no explicit excludes
@@ -380,7 +380,7 @@ func TestMatchFilesImplicitExclusions(t *testing.T) {
 		fs := vfstest.FromMap(files, true)
 
 		// This should only return d.ts and folder/e.ts, not the package folders
-		result := vfs.MatchFilesNew(
+		result := matchFilesNew(
 			"/",
 			[]string{".ts"},
 			[]string{}, // no explicit excludes
@@ -500,7 +500,7 @@ func TestMatchFilesCompatibility(t *testing.T) {
 			fs := vfstest.FromMap(tt.files, tt.useCaseSensitiveFileNames)
 
 			// Get results from both implementations
-			oldResult := vfs.MatchFilesOld(
+			oldResult := matchFilesOld(
 				tt.path,
 				tt.extensions,
 				tt.excludes,
@@ -510,7 +510,7 @@ func TestMatchFilesCompatibility(t *testing.T) {
 				tt.depth,
 				fs,
 			)
-			newResult := vfs.MatchFilesNew(
+			newResult := matchFilesNew(
 				tt.path,
 				tt.extensions,
 				tt.excludes,
@@ -546,7 +546,7 @@ func TestDottedFilesAndPackageFolders(t *testing.T) {
 		fs := vfstest.FromMap(files, true)
 
 		// Test the new implementation
-		result := vfs.MatchFilesNew(
+		result := matchFilesNew(
 			"/apath",
 			[]string{".ts"},
 			[]string{}, // no explicit excludes
@@ -575,7 +575,7 @@ func TestDottedFilesAndPackageFolders(t *testing.T) {
 		fs := vfstest.FromMap(files, true)
 
 		// This should only return d.ts and folder/e.ts, not the package folders
-		result := vfs.MatchFilesNew(
+		result := matchFilesNew(
 			"/",
 			[]string{".ts"},
 			[]string{}, // no explicit excludes
@@ -663,7 +663,7 @@ func BenchmarkMatchFiles(b *testing.B) {
 			b.ReportAllocs()
 
 			for b.Loop() {
-				vfs.MatchFilesOld(bc.path, bc.exts, bc.excludes, bc.includes, fs.UseCaseSensitiveFileNames(), currentDirectory, depth, fs)
+				matchFilesOld(bc.path, bc.exts, bc.excludes, bc.includes, fs.UseCaseSensitiveFileNames(), currentDirectory, depth, fs)
 			}
 		})
 
@@ -671,7 +671,7 @@ func BenchmarkMatchFiles(b *testing.B) {
 			b.ReportAllocs()
 
 			for b.Loop() {
-				vfs.MatchFilesNew(bc.path, bc.exts, bc.excludes, bc.includes, fs.UseCaseSensitiveFileNames(), currentDirectory, depth, fs)
+				matchFilesNew(bc.path, bc.exts, bc.excludes, bc.includes, fs.UseCaseSensitiveFileNames(), currentDirectory, depth, fs)
 			}
 		})
 	}
@@ -841,7 +841,7 @@ func BenchmarkMatchFilesLarge(b *testing.B) {
 			b.ReportAllocs()
 
 			for b.Loop() {
-				vfs.MatchFilesOld(bc.path, bc.exts, bc.excludes, bc.includes, fs.UseCaseSensitiveFileNames(), currentDirectory, depth, fs)
+				matchFilesOld(bc.path, bc.exts, bc.excludes, bc.includes, fs.UseCaseSensitiveFileNames(), currentDirectory, depth, fs)
 			}
 		})
 
@@ -849,7 +849,7 @@ func BenchmarkMatchFilesLarge(b *testing.B) {
 			b.ReportAllocs()
 
 			for b.Loop() {
-				vfs.MatchFilesNew(bc.path, bc.exts, bc.excludes, bc.includes, fs.UseCaseSensitiveFileNames(), currentDirectory, depth, fs)
+				matchFilesNew(bc.path, bc.exts, bc.excludes, bc.includes, fs.UseCaseSensitiveFileNames(), currentDirectory, depth, fs)
 			}
 		})
 	}
@@ -908,7 +908,7 @@ func TestIsImplicitGlob(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			result := vfs.IsImplicitGlob(tt.lastPathComponent)
+			result := IsImplicitGlob(tt.lastPathComponent)
 			assert.Equal(t, tt.expectImplicitGlob, result)
 		})
 	}
@@ -978,7 +978,7 @@ func TestMatchesExclude(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			result := vfs.MatchesExclude(tt.fileName, tt.excludeSpecs, tt.currentDirectory, tt.useCaseSensitiveFileNames)
+			result := MatchesExclude(tt.fileName, tt.excludeSpecs, tt.currentDirectory, tt.useCaseSensitiveFileNames)
 			assert.Equal(t, tt.expectExcluded, result)
 		})
 	}
@@ -1047,7 +1047,7 @@ func TestMatchesInclude(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			result := vfs.MatchesInclude(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
+			result := MatchesInclude(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
 			assert.Equal(t, tt.expectIncluded, result)
 		})
 	}
@@ -1108,7 +1108,7 @@ func TestMatchesIncludeWithJsonOnly(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			result := vfs.MatchesIncludeWithJsonOnly(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
+			result := MatchesIncludeWithJsonOnly(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
 			assert.Equal(t, tt.expectIncluded, result)
 		})
 	}
@@ -1157,7 +1157,7 @@ func TestGlobMatcherForPattern(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			// Test that GlobMatcherForPattern doesn't panic and creates a valid matcher
-			matcher := vfs.GlobMatcherForPattern(tt.pattern, tt.basePath, tt.useCaseSensitiveFileNames)
+			matcher := GlobMatcherForPattern(tt.pattern, tt.basePath, tt.useCaseSensitiveFileNames)
 
 			// We can't test the internal structure directly, but we can verify
 			// the function completes without panicking, which indicates success
@@ -1216,7 +1216,7 @@ func TestGetPatternFromSpec(t *testing.T) {
 			}, true)
 
 			// This will internally call GetPatternFromSpec
-			result := vfs.MatchFilesOld(
+			result := matchFilesOld(
 				"/project",
 				[]string{".ts", ".js"},
 				[]string{tt.spec},
@@ -1269,7 +1269,7 @@ func TestGetExcludePattern(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			result := vfs.MatchFilesOld(
+			result := matchFilesOld(
 				"/project",
 				[]string{".ts", ".js"},
 				tt.excludes,
@@ -1322,7 +1322,7 @@ func TestGetFileIncludePatterns(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			result := vfs.MatchFilesOld(
+			result := matchFilesOld(
 				"/project",
 				[]string{".ts", ".js"},
 				[]string{},
@@ -1349,7 +1349,7 @@ func TestReadDirectoryOld(t *testing.T) {
 	fs := vfstest.FromMap(files, true)
 
 	// Test ReadDirectoryOld function
-	result := vfs.ReadDirectoryOld(
+	result := readDirectoryOld(
 		fs,
 		"/",
 		"/project",
@@ -1376,7 +1376,7 @@ func TestMatchFilesEdgeCasesForCoverage(t *testing.T) {
 		fs := vfstest.FromMap(files, true)
 
 		// Test with empty includes - should return all files
-		result := vfs.MatchFilesNew(
+		result := matchFilesNew(
 			"/project",
 			[]string{".ts"},
 			[]string{},
@@ -1400,7 +1400,7 @@ func TestMatchFilesEdgeCasesForCoverage(t *testing.T) {
 		fs := vfstest.FromMap(files, true)
 
 		// Test with absolute currentDirectory
-		result := vfs.MatchFilesNew(
+		result := matchFilesNew(
 			"/project",
 			[]string{".ts"},
 			[]string{},
@@ -1425,7 +1425,7 @@ func TestMatchFilesEdgeCasesForCoverage(t *testing.T) {
 		fs := vfstest.FromMap(files, true)
 
 		depth := 0
-		result := vfs.MatchFilesNew(
+		result := matchFilesNew(
 			"/project",
 			[]string{".ts"},
 			[]string{},
@@ -1452,7 +1452,7 @@ func TestMatchFilesEdgeCasesForCoverage(t *testing.T) {
 		fs := vfstest.FromMap(files, true)
 
 		// Test question mark pattern
-		result := vfs.MatchFilesNew(
+		result := matchFilesNew(
 			"/project",
 			[]string{".ts"},
 			[]string{},
@@ -1478,7 +1478,7 @@ func TestMatchFilesEdgeCasesForCoverage(t *testing.T) {
 		fs := vfstest.FromMap(files, true)
 
 		// Test with "src" as include - should be treated as "src/**/*"
-		result := vfs.MatchFilesNew(
+		result := matchFilesNew(
 			"/project",
 			[]string{".ts"},
 			[]string{},
@@ -1504,7 +1504,7 @@ func TestUncoveredOldFunctions(t *testing.T) {
 		currentDirectory := "/project"
 
 		// This should return a regex pattern string
-		pattern := vfs.GetExcludePattern(excludeSpecs, currentDirectory)
+		pattern := GetExcludePattern(excludeSpecs, currentDirectory)
 		assert.Assert(t, pattern != "", "GetExcludePattern should return a non-empty pattern")
 		assert.Assert(t, strings.Contains(pattern, "node_modules"), "Pattern should contain node_modules")
 	})
@@ -1515,7 +1515,7 @@ func TestUncoveredOldFunctions(t *testing.T) {
 		basePath := "/project"
 
 		// This should return an array of regex patterns
-		patterns := vfs.GetFileIncludePatterns(includeSpecs, basePath)
+		patterns := GetFileIncludePatterns(includeSpecs, basePath)
 		assert.Assert(t, patterns != nil, "GetFileIncludePatterns should return patterns")
 		assert.Assert(t, len(patterns) > 0, "Should return at least one pattern")
 
@@ -1532,7 +1532,7 @@ func TestUncoveredOldFunctions(t *testing.T) {
 		excludeSpecs := []string{"*.temp", "build/**/*"}
 		currentDirectory := "/project"
 
-		pattern := vfs.GetExcludePattern(excludeSpecs, currentDirectory)
+		pattern := GetExcludePattern(excludeSpecs, currentDirectory)
 		assert.Assert(t, pattern != "", "Should generate pattern from specs")
 	})
 }
@@ -1550,7 +1550,7 @@ func TestNewGlobMatcherOld(t *testing.T) {
 	fs := vfstest.FromMap(files, true)
 
 	// Test complex patterns that might trigger different code paths
-	result := vfs.MatchFilesNew(
+	result := matchFilesNew(
 		"/project",
 		[]string{".ts"},
 		[]string{},

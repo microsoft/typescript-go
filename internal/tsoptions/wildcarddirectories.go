@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/tspath"
-	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
 func getWildcardDirectories(include []string, exclude []string, comparePathsOptions tspath.ComparePathsOptions) map[string]bool {
@@ -32,7 +32,7 @@ func getWildcardDirectories(include []string, exclude []string, comparePathsOpti
 
 	for _, file := range include {
 		spec := tspath.NormalizeSlashes(tspath.CombinePaths(comparePathsOptions.CurrentDirectory, file))
-		if vfs.MatchesExclude(spec, exclude, comparePathsOptions.CurrentDirectory, comparePathsOptions.UseCaseSensitiveFileNames) {
+		if vfsmatch.MatchesExclude(spec, exclude, comparePathsOptions.CurrentDirectory, comparePathsOptions.UseCaseSensitiveFileNames) {
 			continue
 		}
 
@@ -149,7 +149,7 @@ func getWildcardDirectoryFromSpec(spec string, useCaseSensitiveFileNames bool) *
 
 	if lastSepIndex := strings.LastIndexByte(spec, tspath.DirectorySeparator); lastSepIndex != -1 {
 		lastSegment := spec[lastSepIndex+1:]
-		if vfs.IsImplicitGlob(lastSegment) {
+		if vfsmatch.IsImplicitGlob(lastSegment) {
 			path := tspath.RemoveTrailingDirectorySeparator(spec)
 			return &wildcardDirectoryMatch{
 				Key:       toCanonicalKey(path, useCaseSensitiveFileNames),
