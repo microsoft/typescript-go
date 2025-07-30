@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -21,6 +22,7 @@ type SessionOptions struct {
 	PositionEncoding   lsproto.PositionEncodingKind
 	WatchEnabled       bool
 	LoggingEnabled     bool
+	DebounceDelay      time.Duration
 }
 
 type SessionInit struct {
@@ -53,6 +55,10 @@ type Session struct {
 
 	pendingATAChangesMu sync.Mutex
 	pendingATAChanges   map[tspath.Path]*ATAStateChange
+
+	// Debouncing fields for snapshot updates
+	snapshotUpdateMu     sync.Mutex
+	snapshotUpdateCancel context.CancelFunc
 }
 
 func NewSession(init *SessionInit) *Session {
@@ -180,12 +186,63 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 			URI:  change.Uri,
 		})
 	}
+
 	s.pendingFileChangesMu.Lock()
 	s.pendingFileChanges = append(s.pendingFileChanges, fileChanges...)
-	changeSummary := s.flushChangesLocked(ctx)
 	s.pendingFileChangesMu.Unlock()
-	s.UpdateSnapshot(ctx, SnapshotChange{
-		fileChanges: changeSummary,
+
+	// Schedule a debounced snapshot update
+	s.ScheduleSnapshotUpdate()
+}
+
+// ScheduleSnapshotUpdate schedules a debounced snapshot update.
+// If there's already a pending update, it will be cancelled and a new one scheduled.
+// This is useful for batching rapid changes like file watch events.
+func (s *Session) ScheduleSnapshotUpdate() {
+	s.snapshotUpdateMu.Lock()
+	defer s.snapshotUpdateMu.Unlock()
+
+	// Cancel any existing scheduled update
+	if s.snapshotUpdateCancel != nil {
+		s.snapshotUpdateCancel()
+		s.logger.Log("Delaying scheduled snapshot update...")
+	} else {
+		s.logger.Log("Scheduling new snapshot update...")
+	}
+
+	// Create a new cancellable context for the debounce task
+	debounceCtx, cancel := context.WithCancel(context.Background())
+	s.snapshotUpdateCancel = cancel
+
+	// Enqueue the debounced snapshot update
+	s.backgroundTasks.Enqueue(debounceCtx, func(ctx context.Context) {
+		// Sleep for the debounce delay
+		select {
+		case <-time.After(s.options.DebounceDelay):
+			// Delay completed, proceed with update
+		case <-ctx.Done():
+			// Context was cancelled, newer events arrived
+			return
+		}
+
+		// Clear the cancel function since we're about to execute the update
+		s.snapshotUpdateMu.Lock()
+		s.snapshotUpdateCancel = nil
+		s.snapshotUpdateMu.Unlock()
+
+		// Process the accumulated changes
+		changeSummary, ataChanges := s.flushChanges(context.Background())
+		if !changeSummary.IsEmpty() || len(ataChanges) > 0 {
+			if s.options.LoggingEnabled {
+				s.logger.Log("Running scheduled snapshot update")
+			}
+			s.UpdateSnapshot(context.Background(), SnapshotChange{
+				fileChanges: changeSummary,
+				ataChanges:  ataChanges,
+			})
+		} else if s.options.LoggingEnabled {
+			s.logger.Log("Scheduled snapshot update skipped (no changes)")
+		}
 	})
 }
 
@@ -244,6 +301,15 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 }
 
 func (s *Session) UpdateSnapshot(ctx context.Context, change SnapshotChange) *Snapshot {
+	// Cancel any pending scheduled update since we're doing an immediate update
+	s.snapshotUpdateMu.Lock()
+	if s.snapshotUpdateCancel != nil {
+		s.logger.Log("Canceling scheduled snapshot update and performing one now")
+		s.snapshotUpdateCancel()
+		s.snapshotUpdateCancel = nil
+	}
+	s.snapshotUpdateMu.Unlock()
+
 	s.snapshotMu.Lock()
 	oldSnapshot := s.snapshot
 	newSnapshot := oldSnapshot.Clone(ctx, change, s)
@@ -260,7 +326,7 @@ func (s *Session) UpdateSnapshot(ctx context.Context, change SnapshotChange) *Sn
 	}
 
 	// Enqueue logging, watch updates, and diagnostic refresh tasks
-	s.backgroundTasks.Enqueue(func() {
+	s.backgroundTasks.Enqueue(context.Background(), func(ctx context.Context) {
 		if s.options.LoggingEnabled {
 			s.logger.Log(newSnapshot.builderLogs.String())
 			s.logProjectChanges(oldSnapshot, newSnapshot)
@@ -368,6 +434,13 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 }
 
 func (s *Session) Close() {
+	// Cancel any pending snapshot update
+	s.snapshotUpdateMu.Lock()
+	if s.snapshotUpdateCancel != nil {
+		s.snapshotUpdateCancel()
+		s.snapshotUpdateCancel = nil
+	}
+	s.snapshotUpdateMu.Unlock()
 	s.backgroundTasks.Close()
 }
 
@@ -437,7 +510,7 @@ func (s *Session) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error
 func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
 		if project.ShouldTriggerATA() {
-			s.backgroundTasks.Enqueue(func() {
+			s.backgroundTasks.Enqueue(context.Background(), func(ctx context.Context) {
 				var logger *logCollector
 				if s.options.LoggingEnabled {
 					logger = NewLogCollector(fmt.Sprintf("Triggering ATA for project %s", project.Name()))

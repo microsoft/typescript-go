@@ -9,6 +9,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/glob"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -24,28 +25,30 @@ type WatcherID string
 var watcherID atomic.Uint64
 
 type WatchedFiles[T any] struct {
-	name         string
-	watchKind    lsproto.WatchKind
-	computeGlobs func(input T) []string
+	name                string
+	watchKind           lsproto.WatchKind
+	computeGlobPatterns func(input T) []string
 
-	input               T
-	computeWatchersOnce sync.Once
-	watchers            []*lsproto.FileSystemWatcher
-	id                  uint64
+	input                  T
+	computeWatchersOnce    sync.Once
+	watchers               []*lsproto.FileSystemWatcher
+	computeParsedGlobsOnce sync.Once
+	parsedGlobs            []*glob.Glob
+	id                     uint64
 }
 
-func NewWatchedFiles[T any](name string, watchKind lsproto.WatchKind, computeGlobs func(input T) []string) *WatchedFiles[T] {
+func NewWatchedFiles[T any](name string, watchKind lsproto.WatchKind, computeGlobPatterns func(input T) []string) *WatchedFiles[T] {
 	return &WatchedFiles[T]{
-		id:           watcherID.Add(1),
-		name:         name,
-		watchKind:    watchKind,
-		computeGlobs: computeGlobs,
+		id:                  watcherID.Add(1),
+		name:                name,
+		watchKind:           watchKind,
+		computeGlobPatterns: computeGlobPatterns,
 	}
 }
 
 func (w *WatchedFiles[T]) Watchers() (WatcherID, []*lsproto.FileSystemWatcher) {
 	w.computeWatchersOnce.Do(func() {
-		newWatchers := core.Map(w.computeGlobs(w.input), func(glob string) *lsproto.FileSystemWatcher {
+		newWatchers := core.Map(w.computeGlobPatterns(w.input), func(glob string) *lsproto.FileSystemWatcher {
 			return &lsproto.FileSystemWatcher{
 				GlobPattern: lsproto.GlobPattern{
 					Pattern: &glob,
@@ -79,14 +82,30 @@ func (w *WatchedFiles[T]) WatchKind() lsproto.WatchKind {
 	return w.watchKind
 }
 
+func (w *WatchedFiles[T]) ParsedGlobs() []*glob.Glob {
+	w.computeParsedGlobsOnce.Do(func() {
+		patterns := w.computeGlobPatterns(w.input)
+		w.parsedGlobs = make([]*glob.Glob, 0, len(patterns))
+		for _, pattern := range patterns {
+			if g, err := glob.Parse(pattern); err == nil {
+				w.parsedGlobs = append(w.parsedGlobs, g)
+			} else {
+				panic(fmt.Sprintf("failed to parse glob pattern: %s", pattern))
+			}
+		}
+	})
+	return w.parsedGlobs
+}
+
 func (w *WatchedFiles[T]) Clone(input T) *WatchedFiles[T] {
 	return &WatchedFiles[T]{
-		name:         w.name,
-		watchKind:    w.watchKind,
-		computeGlobs: w.computeGlobs,
-		input:        input,
-		watchers:     w.watchers,
-		id:           w.id,
+		name:                w.name,
+		watchKind:           w.watchKind,
+		computeGlobPatterns: w.computeGlobPatterns,
+		input:               input,
+		watchers:            w.watchers,
+		parsedGlobs:         w.parsedGlobs,
+		id:                  w.id,
 	}
 }
 

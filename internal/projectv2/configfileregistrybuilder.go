@@ -281,25 +281,34 @@ func (r changeFileResult) IsEmpty() bool {
 	return len(r.affectedProjects) == 0 && len(r.affectedFiles) == 0
 }
 
-func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary) changeFileResult {
+func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, logger *logCollector) changeFileResult {
 	var affectedProjects map[tspath.Path]struct{}
 	var affectedFiles map[tspath.Path]struct{}
 	createdFiles := make(map[tspath.Path]string, summary.Created.Len())
 	createdOrDeletedFiles := make(map[tspath.Path]struct{}, summary.Created.Len()+summary.Deleted.Len())
 	createdOrChangedOrDeletedFiles := make(map[tspath.Path]struct{}, summary.Changed.Len()+summary.Deleted.Len())
 	for uri := range summary.Changed.Keys() {
+		if tspath.ContainsIgnoredPath(string(uri)) {
+			continue
+		}
 		fileName := uri.FileName()
 		path := c.fs.toPath(fileName)
 		createdOrDeletedFiles[path] = struct{}{}
 		createdOrChangedOrDeletedFiles[path] = struct{}{}
 	}
 	for uri := range summary.Deleted.Keys() {
+		if tspath.ContainsIgnoredPath(string(uri)) {
+			continue
+		}
 		fileName := uri.FileName()
 		path := c.fs.toPath(fileName)
 		createdOrDeletedFiles[path] = struct{}{}
 		createdOrChangedOrDeletedFiles[path] = struct{}{}
 	}
 	for uri := range summary.Created.Keys() {
+		if tspath.ContainsIgnoredPath(string(uri)) {
+			continue
+		}
 		fileName := uri.FileName()
 		path := c.fs.toPath(fileName)
 		createdFiles[path] = fileName
@@ -319,10 +328,10 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary) ch
 	// Handle changes to stored config files
 	for path := range createdOrChangedOrDeletedFiles {
 		if entry, ok := c.configs.Load(path); ok {
-			affectedProjects = core.CopyMap(affectedProjects, c.handleConfigChange(entry))
+			affectedProjects = core.CopyMap(affectedProjects, c.handleConfigChange(entry, logger))
 			for extendingConfigPath := range entry.Value().retainingConfigs {
 				if extendingConfigEntry, ok := c.configs.Load(extendingConfigPath); ok {
-					affectedProjects = core.CopyMap(affectedProjects, c.handleConfigChange(extendingConfigEntry))
+					affectedProjects = core.CopyMap(affectedProjects, c.handleConfigChange(extendingConfigEntry, logger))
 				}
 			}
 			// This was a config file, so assume it's not also a root file
@@ -335,12 +344,16 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary) ch
 		c.configs.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *configFileEntry]) bool {
 			entry.ChangeIf(
 				func(config *configFileEntry) bool {
-					if config.commandLine == nil || config.pendingReload != PendingReloadNone {
+					if config.commandLine == nil || config.rootFilesWatch == nil || config.pendingReload != PendingReloadNone {
 						return false
 					}
+					logger.Logf("Checking if any of %d created files match root files for config %s", len(createdFiles), entry.Key())
 					for _, fileName := range createdFiles {
-						if config.commandLine.MatchesFileName(fileName) {
-							return true
+						parsedGlobs := config.rootFilesWatch.ParsedGlobs()
+						for _, g := range parsedGlobs {
+							if g.Match(fileName) {
+								return true
+							}
 						}
 					}
 					return false
@@ -351,6 +364,7 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary) ch
 						affectedProjects = make(map[tspath.Path]struct{})
 					}
 					maps.Copy(affectedProjects, config.retainingProjects)
+					logger.Logf("Root files for config %s changed", entry.Key())
 				},
 			)
 			return true
@@ -381,13 +395,14 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary) ch
 	}
 }
 
-func (c *configFileRegistryBuilder) handleConfigChange(entry dirty.Value[*configFileEntry]) map[tspath.Path]struct{} {
+func (c *configFileRegistryBuilder) handleConfigChange(entry *dirty.SyncMapEntry[tspath.Path, *configFileEntry], logger *logCollector) map[tspath.Path]struct{} {
 	var affectedProjects map[tspath.Path]struct{}
 	changed := entry.ChangeIf(
 		func(config *configFileEntry) bool { return config.pendingReload != PendingReloadFull },
 		func(config *configFileEntry) { config.pendingReload = PendingReloadFull },
 	)
 	if changed {
+		logger.Logf("Config file %s changed", entry.Key())
 		affectedProjects = maps.Clone(entry.Value().retainingProjects)
 	}
 

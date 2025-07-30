@@ -1,11 +1,12 @@
 package projectv2
 
 import (
+	"context"
 	"sync"
 )
 
 // BackgroundTask represents a task that can be executed asynchronously
-type BackgroundTask func()
+type BackgroundTask func(ctx context.Context)
 
 // BackgroundQueue manages background tasks execution
 type BackgroundQueue struct {
@@ -18,7 +19,7 @@ func newBackgroundQueue() *BackgroundQueue {
 	return &BackgroundQueue{}
 }
 
-func (q *BackgroundQueue) Enqueue(task BackgroundTask) {
+func (q *BackgroundQueue) Enqueue(ctx context.Context, task BackgroundTask) {
 	q.mu.RLock()
 	if q.closed {
 		q.mu.RUnlock()
@@ -30,7 +31,7 @@ func (q *BackgroundQueue) Enqueue(task BackgroundTask) {
 
 	go func() {
 		defer q.wg.Done()
-		task()
+		task(ctx)
 	}()
 }
 

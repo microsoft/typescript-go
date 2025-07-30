@@ -13,6 +13,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"syscall"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -515,6 +516,7 @@ func (s *ProjectV2Server) handleInitialized(ctx context.Context, req *lsproto.Re
 			PositionEncoding:   s.positionEncoding,
 			WatchEnabled:       s.watchEnabled,
 			LoggingEnabled:     true,
+			DebounceDelay:      500 * time.Millisecond,
 		},
 		FS:          s.fs,
 		Client:      s.Client(),

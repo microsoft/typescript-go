@@ -125,8 +125,9 @@ func (b *projectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 		changedFiles = append(changedFiles, path)
 	}
 
-	configChangeResult := b.configFileRegistryBuilder.DidChangeFiles(summary)
-	logChangeFileResult(configChangeResult, logger)
+	configChangeLogger := logger.Fork("Checking for changes affecting config files")
+	configChangeResult := b.configFileRegistryBuilder.DidChangeFiles(summary, configChangeLogger)
+	logChangeFileResult(configChangeResult, configChangeLogger)
 
 	b.forEachProject(func(entry dirty.Value[*Project]) bool {
 		// Handle closed and changed files

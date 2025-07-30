@@ -226,7 +226,15 @@ func Setup(files map[string]any) (*projectv2.Session, *SessionUtils) {
 	return SetupWithTypingsInstaller(files, nil)
 }
 
+func SetupWithOptions(files map[string]any, options *projectv2.SessionOptions) (*projectv2.Session, *SessionUtils) {
+	return SetupWithOptionsAndTypingsInstaller(files, options, nil)
+}
+
 func SetupWithTypingsInstaller(files map[string]any, testOptions *TestTypingsInstallerOptions) (*projectv2.Session, *SessionUtils) {
+	return SetupWithOptionsAndTypingsInstaller(files, nil, testOptions)
+}
+
+func SetupWithOptionsAndTypingsInstaller(files map[string]any, options *projectv2.SessionOptions, testOptions *TestTypingsInstallerOptions) (*projectv2.Session, *SessionUtils) {
 	fs := bundled.WrapFS(vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/))
 	clientMock := &ClientMock{}
 	npmExecutorMock := &NpmExecutorMock{}
@@ -241,15 +249,21 @@ func SetupWithTypingsInstaller(files map[string]any, testOptions *TestTypingsIns
 	// Configure the npm executor mock to handle typings installation
 	sessionUtils.SetupNpmExecutorForTypingsInstaller()
 
-	session := projectv2.NewSession(&projectv2.SessionInit{
-		Options: &projectv2.SessionOptions{
+	// Use provided options or create default ones
+	sessionOptions := options
+	if sessionOptions == nil {
+		sessionOptions = &projectv2.SessionOptions{
 			CurrentDirectory:   "/",
 			DefaultLibraryPath: bundled.LibPath(),
 			TypingsLocation:    TestTypingsLocation,
 			PositionEncoding:   lsproto.PositionEncodingKindUTF8,
 			WatchEnabled:       true,
 			LoggingEnabled:     true,
-		},
+		}
+	}
+
+	session := projectv2.NewSession(&projectv2.SessionInit{
+		Options:     sessionOptions,
 		FS:          fs,
 		Client:      clientMock,
 		NpmExecutor: npmExecutorMock,
