@@ -1,11 +1,14 @@
 fileJs.js(1,1): error TS2304: Cannot find name 'x'.
+fileJs.js(1,3): error TS8009: The '?' modifier can only be used in TypeScript files.
 fileTs.ts(1,1): error TS2304: Cannot find name 'x'.
 
 
-==== fileJs.js (1 errors) ====
+==== fileJs.js (2 errors) ====
     x ? y => ({ y }) : z => ({ z }) // Legal JS
     ~
 !!! error TS2304: Cannot find name 'x'.
+      ~
+!!! error TS8009: The '?' modifier can only be used in TypeScript files.
     
 ==== fileTs.ts (1 errors) ====
     x ? y => ({ y }) : z => ({ z })

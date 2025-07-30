@@ -1,9 +1,11 @@
 mod1.js(2,14): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 mod1.js(9,12): error TS2304: Cannot find name 'Type1'.
+mod2.js(15,18): error TS8009: The '?' modifier can only be used in TypeScript files.
 mod3.js(4,14): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 mod3.js(10,12): error TS2304: Cannot find name 'StringOrNumber1'.
 mod4.js(4,14): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 mod4.js(11,12): error TS2304: Cannot find name 'StringOrNumber2'.
+mod5.js(18,18): error TS8009: The '?' modifier can only be used in TypeScript files.
 
 
 ==== mod1.js (2 errors) ====
@@ -28,7 +30,7 @@ mod4.js(11,12): error TS2304: Cannot find name 'StringOrNumber2'.
       return func(arg);
     }
     
-==== mod2.js (0 errors) ====
+==== mod2.js (1 errors) ====
     /** 
      * @typedef {{
      *   num: number,
@@ -44,6 +46,8 @@ mod4.js(11,12): error TS2304: Cannot find name 'StringOrNumber2'.
      */
     function check(obj) {
       return obj.boo ? obj.num : obj.str;
+                     ~
+!!! error TS8009: The '?' modifier can only be used in TypeScript files.
     }
     
 ==== mod3.js (2 errors) ====
@@ -97,7 +101,7 @@ mod4.js(11,12): error TS2304: Cannot find name 'StringOrNumber2'.
       return func(bool, str, num)
     }
     
-==== mod5.js (0 errors) ====
+==== mod5.js (1 errors) ====
     /** 
      * @typedef {{
      *   num:
@@ -116,6 +120,8 @@ mod4.js(11,12): error TS2304: Cannot find name 'StringOrNumber2'.
      */
     function check5(obj) {
       return obj.boo ? obj.num : obj.str;
+                     ~
+!!! error TS8009: The '?' modifier can only be used in TypeScript files.
     }
     
 ==== mod6.js (0 errors) ====
