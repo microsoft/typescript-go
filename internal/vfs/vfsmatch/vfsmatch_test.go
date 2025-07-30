@@ -1173,7 +1173,7 @@ func TestGlobMatcherForPattern(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			// Test that GlobMatcherForPattern doesn't panic and creates a valid matcher
-			matcher := GlobMatcherForPattern(tt.pattern, tt.basePath, tt.useCaseSensitiveFileNames)
+			matcher := globMatcherForPattern(tt.pattern, tt.basePath, tt.useCaseSensitiveFileNames)
 
 			// We can't test the internal structure directly, but we can verify
 			// the function completes without panicking, which indicates success

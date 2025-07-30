@@ -469,7 +469,7 @@ func MatchesExclude(fileName string, excludeSpecs []string, currentDirectory str
 		return false
 	}
 	for _, excludeSpec := range excludeSpecs {
-		matcher := GlobMatcherForPattern(excludeSpec, currentDirectory, useCaseSensitiveFileNames)
+		matcher := globMatcherForPattern(excludeSpec, currentDirectory, useCaseSensitiveFileNames)
 		if matcher.matchesFile(fileName) {
 			return true
 		}
@@ -489,7 +489,7 @@ func MatchesInclude(fileName string, includeSpecs []string, basePath string, use
 		return false
 	}
 	for _, includeSpec := range includeSpecs {
-		matcher := GlobMatcherForPattern(includeSpec, basePath, useCaseSensitiveFileNames)
+		matcher := globMatcherForPattern(includeSpec, basePath, useCaseSensitiveFileNames)
 		if matcher.matchesFile(fileName) {
 			return true
 		}
@@ -507,7 +507,7 @@ func MatchesIncludeWithJsonOnly(fileName string, includeSpecs []string, basePath
 		return strings.HasSuffix(include, tspath.ExtensionJson)
 	})
 	for _, includeSpec := range jsonIncludes {
-		matcher := GlobMatcherForPattern(includeSpec, basePath, useCaseSensitiveFileNames)
+		matcher := globMatcherForPattern(includeSpec, basePath, useCaseSensitiveFileNames)
 		if matcher.matchesFile(fileName) {
 			return true
 		}
@@ -515,8 +515,8 @@ func MatchesIncludeWithJsonOnly(fileName string, includeSpecs []string, basePath
 	return false
 }
 
-// GlobMatcherForPattern is an exported wrapper for newGlobMatcher for use outside this file
-func GlobMatcherForPattern(pattern string, basePath string, useCaseSensitiveFileNames bool) globMatcher {
+// globMatcherForPattern is an exported wrapper for newGlobMatcher for use outside this file
+func globMatcherForPattern(pattern string, basePath string, useCaseSensitiveFileNames bool) globMatcher {
 	tempCache := newPathCache()
 	return newGlobMatcher(pattern, basePath, useCaseSensitiveFileNames, tempCache)
 }
