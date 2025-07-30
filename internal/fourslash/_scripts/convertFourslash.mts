@@ -10,7 +10,7 @@ const stradaFourslashPath = path.resolve(import.meta.dirname, "../", "../", "../
 let inputFileSet: Set<string> | undefined;
 
 const failingTestsPath = path.join(import.meta.dirname, "failingTests.txt");
-const helperFilePath = path.join(import.meta.dirname, "../", "tests", "util_test.go");
+const manualTestsPath = path.join(import.meta.dirname, "manualTests.txt");
 
 const outputDir = path.join(import.meta.dirname, "../", "tests", "gen");
 
@@ -19,6 +19,14 @@ const unparsedFiles: string[] = [];
 function getFailingTests(): Set<string> {
     const failingTestsList = fs.readFileSync(failingTestsPath, "utf-8").split("\n").map(line => line.trim().substring(4)).filter(line => line.length > 0);
     return new Set(failingTestsList);
+}
+
+function getManualTests(): Set<string> {
+    if (!fs.existsSync(manualTestsPath)) {
+        return new Set();
+    }
+    const manualTestsList = fs.readFileSync(manualTestsPath, "utf-8").split("\n").map(line => line.trim()).filter(line => line.length > 0);
+    return new Set(manualTestsList);
 }
 
 export function main() {
@@ -35,14 +43,13 @@ export function main() {
     fs.rmSync(outputDir, { recursive: true, force: true });
     fs.mkdirSync(outputDir, { recursive: true });
 
-    generateHelperFile();
-    parseTypeScriptFiles(getFailingTests(), stradaFourslashPath);
+    parseTypeScriptFiles(getFailingTests(), getManualTests(), stradaFourslashPath);
     console.log(unparsedFiles.join("\n"));
     const gofmt = which.sync("go");
     cp.execFileSync(gofmt, ["tool", "mvdan.cc/gofumpt", "-lang=go1.24", "-w", outputDir]);
 }
 
-function parseTypeScriptFiles(failingTests: Set<string>, folder: string): void {
+function parseTypeScriptFiles(failingTests: Set<string>, manualTests: Set<string>, folder: string): void {
     const files = fs.readdirSync(folder);
 
     files.forEach(file => {
@@ -53,9 +60,9 @@ function parseTypeScriptFiles(failingTests: Set<string>, folder: string): void {
         }
 
         if (stat.isDirectory()) {
-            parseTypeScriptFiles(failingTests, filePath);
+            parseTypeScriptFiles(failingTests, manualTests, filePath);
         }
-        else if (file.endsWith(".ts")) {
+        else if (file.endsWith(".ts") && !manualTests.has(file.slice(0, -3))) {
             const content = fs.readFileSync(filePath, "utf-8");
             const test = parseFileContent(file, content);
             if (test) {
@@ -317,25 +324,25 @@ function parseVerifyCompletionsArgs(args: readonly ts.Expression[]): VerifyCompl
 }
 
 const completionConstants = new Map([
-    ["completion.globals", "completionGlobals"],
-    ["completion.globalTypes", "completionGlobalTypes"],
-    ["completion.classElementKeywords", "completionClassElementKeywords"],
-    ["completion.classElementInJsKeywords", "completionClassElementInJSKeywords"],
-    ["completion.constructorParameterKeywords", "completionConstructorParameterKeywords"],
-    ["completion.functionMembersWithPrototype", "completionFunctionMembersWithPrototype"],
-    ["completion.functionMembers", "completionFunctionMembers"],
-    ["completion.typeKeywords", "completionTypeKeywords"],
-    ["completion.undefinedVarEntry", "completionUndefinedVarItem"],
-    ["completion.typeAssertionKeywords", "completionTypeAssertionKeywords"],
+    ["completion.globals", "CompletionGlobals"],
+    ["completion.globalTypes", "CompletionGlobalTypes"],
+    ["completion.classElementKeywords", "CompletionClassElementKeywords"],
+    ["completion.classElementInJsKeywords", "CompletionClassElementInJSKeywords"],
+    ["completion.constructorParameterKeywords", "CompletionConstructorParameterKeywords"],
+    ["completion.functionMembersWithPrototype", "CompletionFunctionMembersWithPrototype"],
+    ["completion.functionMembers", "CompletionFunctionMembers"],
+    ["completion.typeKeywords", "CompletionTypeKeywords"],
+    ["completion.undefinedVarEntry", "CompletionUndefinedVarItem"],
+    ["completion.typeAssertionKeywords", "CompletionTypeAssertionKeywords"],
 ]);
 
 const completionPlus = new Map([
-    ["completion.globalsPlus", "completionGlobalsPlus"],
-    ["completion.globalTypesPlus", "completionGlobalTypesPlus"],
-    ["completion.functionMembersPlus", "completionFunctionMembersPlus"],
-    ["completion.functionMembersWithPrototypePlus", "completionFunctionMembersWithPrototypePlus"],
-    ["completion.globalsInJsPlus", "completionGlobalsInJSPlus"],
-    ["completion.typeKeywordsPlus", "completionTypeKeywordsPlus"],
+    ["completion.globalsPlus", "CompletionGlobalsPlus"],
+    ["completion.globalTypesPlus", "CompletionGlobalTypesPlus"],
+    ["completion.functionMembersPlus", "CompletionFunctionMembersPlus"],
+    ["completion.functionMembersWithPrototypePlus", "CompletionFunctionMembersWithPrototypePlus"],
+    ["completion.globalsInJsPlus", "CompletionGlobalsInJSPlus"],
+    ["completion.typeKeywordsPlus", "CompletionTypeKeywordsPlus"],
 ]);
 
 function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | undefined {
@@ -558,7 +565,7 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
                     if (!result) {
                         return undefined;
                     }
-                    itemProps.push(`SortText: ptrTo(string(${result})),`);
+                    itemProps.push(`SortText: PtrTo(string(${result})),`);
                     if (result === "ls.SortTextOptionalMember") {
                         isOptional = true;
                     }
@@ -586,7 +593,7 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
                     break;
                 case "isRecommended":
                     if (init.kind === ts.SyntaxKind.TrueKeyword) {
-                        itemProps.push(`Preselect: ptrTo(true),`);
+                        itemProps.push(`Preselect: PtrTo(true),`);
                     }
                     break;
                 case "kind":
@@ -594,7 +601,7 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
                     if (!kind) {
                         return undefined;
                     }
-                    itemProps.push(`Kind: ptrTo(${kind}),`);
+                    itemProps.push(`Kind: PtrTo(${kind}),`);
                     break;
                 case "kindModifiers":
                     const modifiers = parseKindModifiers(init);
@@ -605,7 +612,7 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
                     break;
                 case "text":
                     if (ts.isStringLiteralLike(init)) {
-                        itemProps.push(`Detail: ptrTo(${getGoStringLiteral(init.text)}),`);
+                        itemProps.push(`Detail: PtrTo(${getGoStringLiteral(init.text)}),`);
                     }
                     else {
                         console.error(`Expected string literal for text, got ${init.getText()}`);
@@ -645,8 +652,8 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
             filterText ??= name;
             name += "?";
         }
-        if (filterText) itemProps.unshift(`FilterText: ptrTo(${getGoStringLiteral(filterText)}),`);
-        if (insertText) itemProps.unshift(`InsertText: ptrTo(${getGoStringLiteral(insertText)}),`);
+        if (filterText) itemProps.unshift(`FilterText: PtrTo(${getGoStringLiteral(filterText)}),`);
+        if (insertText) itemProps.unshift(`InsertText: PtrTo(${getGoStringLiteral(insertText)}),`);
         itemProps.unshift(`Label: ${getGoStringLiteral(name!)},`);
         return `&lsproto.CompletionItem{\n${itemProps.join("\n")}}`;
     }
@@ -875,12 +882,12 @@ function generateVerifyCompletions({ marker, args, isNewIdentifierLocation }: Ve
         if (args?.exact) expected.push(`Exact: ${args.exact},`);
         if (args?.unsorted) expected.push(`Unsorted: ${args.unsorted},`);
         // !!! isIncomplete
-        const commitCharacters = isNewIdentifierLocation ? "[]string{}" : "defaultCommitCharacters";
+        const commitCharacters = isNewIdentifierLocation ? "[]string{}" : "DefaultCommitCharacters";
         expectedList = `&fourslash.CompletionsExpectedList{
     IsIncomplete: false,
     ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
         CommitCharacters: &${commitCharacters},
-        EditRange: ignored,
+        EditRange: Ignored,
     },
     Items: &fourslash.CompletionsExpectedItems{
         ${expected.join("\n")}
@@ -945,6 +952,9 @@ function generateGoTest(failingTests: Set<string>, test: GoTest): string {
     if (commands.includes("lsproto.")) {
         imports.push(`"github.com/microsoft/typescript-go/internal/lsp/lsproto"`);
     }
+    if (usesHelper(commands)) {
+        imports.push(`. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"`);
+    }
     imports.push(`"github.com/microsoft/typescript-go/internal/testutil"`);
     const template = `package fourslash_test
 
@@ -965,8 +975,20 @@ func Test${testName}(t *testing.T) {
     return template;
 }
 
-function generateHelperFile() {
-    fs.copyFileSync(helperFilePath, path.join(outputDir, "util_test.go"));
+function usesHelper(goTxt: string): boolean {
+    for (const [_, constant] of completionConstants) {
+        if (goTxt.includes(constant)) {
+            return true;
+        }
+    }
+    for (const [_, constant] of completionPlus) {
+        if (goTxt.includes(constant)) {
+            return true;
+        }
+    }
+    return goTxt.includes("Ignored")
+        || goTxt.includes("DefaultCommitCharacters")
+        || goTxt.includes("PtrTo");
 }
 
 if (url.fileURLToPath(import.meta.url) == process.argv[1]) {
