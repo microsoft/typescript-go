@@ -971,7 +971,7 @@ func TestMatchesExclude(t *testing.T) {
 			excludeSpecs:              []string{"LICENSE/**/*"},
 			currentDirectory:          "/project",
 			useCaseSensitiveFileNames: true,
-			expectExcluded:            false, // Changed expectation - this should not match
+			expectExcluded:            true,
 		},
 	}
 
