@@ -1558,7 +1558,7 @@ func getFileNamesFromConfigSpecs(
 
 	var jsonOnlyIncludeSpecs []string
 	if len(validatedIncludeSpecs) > 0 {
-		files := vfs.ReadDirectory(host, basePath, basePath, core.Flatten(supportedExtensionsWithJsonIfResolveJsonModule), validatedExcludeSpecs, validatedIncludeSpecs, nil)
+		files := vfs.ReadDirectoryNew(host, basePath, basePath, core.Flatten(supportedExtensionsWithJsonIfResolveJsonModule), validatedExcludeSpecs, validatedIncludeSpecs, nil)
 		for _, file := range files {
 			if tspath.FileExtensionIs(file, tspath.ExtensionJson) {
 				if jsonOnlyIncludeSpecs == nil {

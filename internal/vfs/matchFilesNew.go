@@ -457,3 +457,7 @@ func (v *newGlobVisitor) visitDirectory(path string, absolutePath string, depth 
 		}
 	}
 }
+
+func ReadDirectoryNew(host FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
+	return MatchFilesNew(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
+}

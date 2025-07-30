@@ -213,7 +213,7 @@ func TestMatchFiles(t *testing.T) {
 			t.Parallel()
 			fs := vfstest.FromMap(tt.files, tt.useCaseSensitiveFileNames)
 
-			result := vfs.ReadDirectory(
+			result := vfs.ReadDirectoryNew(
 				fs,
 				tt.currentDirectory,
 				tt.path,
@@ -321,7 +321,7 @@ func TestMatchFilesEdgeCases(t *testing.T) {
 			t.Parallel()
 			fs := vfstest.FromMap(tt.files, tt.useCaseSensitiveFileNames)
 
-			result := vfs.ReadDirectory(
+			result := vfs.ReadDirectoryNew(
 				fs,
 				tt.currentDirectory,
 				tt.path,
@@ -499,7 +499,7 @@ func TestMatchFilesCompatibility(t *testing.T) {
 			fs := vfstest.FromMap(tt.files, tt.useCaseSensitiveFileNames)
 
 			// Get results from original implementation
-			originalResult := vfs.ReadDirectory(
+			originalResult := vfs.ReadDirectoryNew(
 				fs,
 				tt.currentDirectory,
 				tt.path,

@@ -220,7 +220,7 @@ func addTypingNamesAndGetFilesToWatch(
 	} else {
 		// And #2. Depth = 3 because scoped packages look like `node_modules/@foo/bar/package.json`
 		depth := 3
-		for _, manifestPath := range vfs.ReadDirectory(fs, projectRootPath, packagesFolderPath, []string{tspath.ExtensionJson}, nil, nil, &depth) {
+		for _, manifestPath := range vfs.ReadDirectoryNew(fs, projectRootPath, packagesFolderPath, []string{tspath.ExtensionJson}, nil, nil, &depth) {
 			if tspath.GetBaseFileName(manifestPath) != manifestName {
 				continue
 			}

@@ -524,3 +524,7 @@ func MatchesIncludeWithJsonOnly(fileName string, includeSpecs []string, basePath
 	}
 	return false
 }
+
+func ReadDirectoryOld(host FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
+	return MatchFilesOld(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
+}
