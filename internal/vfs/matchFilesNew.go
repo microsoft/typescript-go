@@ -211,50 +211,43 @@ func (gm globMatcher) matchesPath(absolutePath string, isDirectory bool) bool {
 
 // matchSegments recursively matches glob pattern segments against path segments
 func (gm globMatcher) matchSegments(patternSegments []string, pathSegments []string, isDirectory bool) bool {
-	if len(patternSegments) == 0 {
-		return len(pathSegments) == 0
-	}
-
-	pattern := patternSegments[0]
-	remainingPattern := patternSegments[1:]
-
-	if pattern == "**" {
-		// Double asterisk matches zero or more directories
-		// Try matching remaining pattern at current position
-		if gm.matchSegments(remainingPattern, pathSegments, isDirectory) {
-			return true
+	pi, ti := 0, 0
+	plen, tlen := len(patternSegments), len(pathSegments)
+	for pi < plen {
+		pattern := patternSegments[pi]
+		if pattern == "**" {
+			// Try matching remaining pattern at current position
+			if gm.matchSegments(patternSegments[pi+1:], pathSegments[ti:], isDirectory) {
+				return true
+			}
+			// Try consuming one path segment and continue with **
+			for ti < tlen && (isDirectory || tlen-ti > 1) {
+				ti++
+				if gm.matchSegments(patternSegments[pi+1:], pathSegments[ti:], isDirectory) {
+					return true
+				}
+			}
+			return false
 		}
-		// Try consuming one path segment and continue with **
-		if len(pathSegments) > 0 && (isDirectory || len(pathSegments) > 1) {
-			return gm.matchSegments(patternSegments, pathSegments[1:], isDirectory)
+		if ti >= tlen {
+			return false
 		}
-		return false
+		pathSegment := pathSegments[ti]
+		isFinalSegment := (pi == plen-1) && (ti == tlen-1)
+		isFileSegment := !isDirectory && isFinalSegment
+		var segmentMatches bool
+		if isFileSegment {
+			segmentMatches = gm.matchSegmentForFile(pattern, pathSegment)
+		} else {
+			segmentMatches = gm.matchSegment(pattern, pathSegment)
+		}
+		if !segmentMatches {
+			return false
+		}
+		pi++
+		ti++
 	}
-
-	if len(pathSegments) == 0 {
-		return false
-	}
-
-	pathSegment := pathSegments[0]
-	remainingPath := pathSegments[1:]
-
-	// Determine if this is the final segment (for file matching rules)
-	isFinalSegment := len(remainingPattern) == 0 && len(remainingPath) == 0
-	isFileSegment := !isDirectory && isFinalSegment
-
-	// Check if this segment matches
-	var segmentMatches bool
-	if isFileSegment {
-		segmentMatches = gm.matchSegmentForFile(pattern, pathSegment)
-	} else {
-		segmentMatches = gm.matchSegment(pattern, pathSegment)
-	}
-
-	if segmentMatches {
-		return gm.matchSegments(remainingPattern, remainingPath, isDirectory)
-	}
-
-	return false
+	return ti == tlen
 }
 
 // matchSegment matches a single glob pattern segment against a path segment
@@ -334,35 +327,46 @@ func (v *newGlobVisitor) visitDirectory(path string, absolutePath string, depth 
 	files := systemEntries.Files
 	directories := systemEntries.Directories
 
-	// Process files
+	// Preallocate local buffers for results
+	var localResults [][]string
+	if len(v.includeMatchers) > 0 {
+		localResults = make([][]string, len(v.includeMatchers))
+		for i := range localResults {
+			localResults[i] = make([]string, 0, len(files)/len(v.includeMatchers)+1)
+		}
+	} else {
+		localResults = [][]string{make([]string, 0, len(files))}
+	}
 	for _, current := range files {
-		// Skip dotted files (files starting with '.') - this matches original regex behavior
 		if len(current) > 0 && current[0] == '.' {
 			continue
 		}
-
-		// Build paths more efficiently
-		var name, absoluteName string
+		var nameBuilder, absBuilder strings.Builder
+		nameBuilder.Grow(len(path) + len(current) + 2)
+		absBuilder.Grow(len(absolutePath) + len(current) + 2)
 		if path == "" {
-			name = current
-		} else if path[len(path)-1] == '/' {
-			name = path + current
+			nameBuilder.WriteString(current)
 		} else {
-			name = path + "/" + current
+			nameBuilder.WriteString(path)
+			if path[len(path)-1] != '/' {
+				nameBuilder.WriteByte('/')
+			}
+			nameBuilder.WriteString(current)
 		}
-
-		if absolutePath[len(absolutePath)-1] == '/' {
-			absoluteName = absolutePath + current
+		if absolutePath == "" {
+			absBuilder.WriteString(current)
 		} else {
-			absoluteName = absolutePath + "/" + current
+			absBuilder.WriteString(absolutePath)
+			if absolutePath[len(absolutePath)-1] != '/' {
+				absBuilder.WriteByte('/')
+			}
+			absBuilder.WriteString(current)
 		}
-
-		// Check extension filter
+		name := nameBuilder.String()
+		absoluteName := absBuilder.String()
 		if len(v.extensions) > 0 && !tspath.FileExtensionIsOneOf(name, v.extensions) {
 			continue
 		}
-
-		// Check exclude patterns
 		excluded := false
 		for _, excludeMatcher := range v.excludeMatchers {
 			if excludeMatcher.matchesFile(absoluteName) {
@@ -373,23 +377,21 @@ func (v *newGlobVisitor) visitDirectory(path string, absolutePath string, depth 
 		if excluded {
 			continue
 		}
-
-		// Check include patterns
 		if len(v.includeMatchers) == 0 {
-			// No specific includes, add to results[0]
-			v.results[0] = append(v.results[0], name)
+			localResults[0] = append(localResults[0], name)
 		} else {
-			// Check each include pattern
 			for i, includeMatcher := range v.includeMatchers {
 				if includeMatcher.matchesFile(absoluteName) {
-					v.results[i] = append(v.results[i], name)
+					localResults[i] = append(localResults[i], name)
 					break
 				}
 			}
 		}
 	}
-
-	// Handle depth limit
+	// Merge local buffers into main results
+	for i := range localResults {
+		v.results[i] = append(v.results[i], localResults[i]...)
+	}
 	if depth != nil {
 		newDepth := *depth - 1
 		if newDepth == 0 {
@@ -397,15 +399,10 @@ func (v *newGlobVisitor) visitDirectory(path string, absolutePath string, depth 
 		}
 		depth = &newDepth
 	}
-
-	// Process directories
 	for _, current := range directories {
-		// Skip dotted directories (directories starting with '.') - this matches original regex behavior
 		if len(current) > 0 && current[0] == '.' {
 			continue
 		}
-
-		// Skip common package folders unless explicitly included
 		isCommonPackageFolder := false
 		for _, pkg := range commonPackageFolders {
 			if current == pkg {
@@ -416,25 +413,29 @@ func (v *newGlobVisitor) visitDirectory(path string, absolutePath string, depth 
 		if isCommonPackageFolder {
 			continue
 		}
-
-		// Build paths more efficiently
-		var name, absoluteName string
+		var nameBuilder, absBuilder strings.Builder
+		nameBuilder.Grow(len(path) + len(current) + 2)
+		absBuilder.Grow(len(absolutePath) + len(current) + 2)
 		if path == "" {
-			name = current
-		} else if path[len(path)-1] == '/' {
-			name = path + current
+			nameBuilder.WriteString(current)
 		} else {
-			name = path + "/" + current
+			nameBuilder.WriteString(path)
+			if path[len(path)-1] != '/' {
+				nameBuilder.WriteByte('/')
+			}
+			nameBuilder.WriteString(current)
 		}
-
-		if absolutePath[len(absolutePath)-1] == '/' {
-			absoluteName = absolutePath + current
+		if absolutePath == "" {
+			absBuilder.WriteString(current)
 		} else {
-			absoluteName = absolutePath + "/" + current
+			absBuilder.WriteString(absolutePath)
+			if absolutePath[len(absolutePath)-1] != '/' {
+				absBuilder.WriteByte('/')
+			}
+			absBuilder.WriteString(current)
 		}
-
-		// Check if directory should be included (for directory traversal)
-		// A directory should be included if it could lead to files that match
+		name := nameBuilder.String()
+		absoluteName := absBuilder.String()
 		shouldInclude := len(v.includeMatchers) == 0
 		if !shouldInclude {
 			for _, includeMatcher := range v.includeMatchers {
@@ -444,8 +445,6 @@ func (v *newGlobVisitor) visitDirectory(path string, absolutePath string, depth 
 				}
 			}
 		}
-
-		// Check if directory should be excluded
 		shouldExclude := false
 		for _, excludeMatcher := range v.excludeMatchers {
 			if excludeMatcher.matchesDirectory(absoluteName) {
@@ -453,7 +452,6 @@ func (v *newGlobVisitor) visitDirectory(path string, absolutePath string, depth 
 				break
 			}
 		}
-
 		if shouldInclude && !shouldExclude {
 			v.visitDirectory(name, absoluteName, depth)
 		}
