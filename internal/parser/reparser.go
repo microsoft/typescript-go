@@ -537,6 +537,17 @@ func (p *Parser) makeQuestionIfOptional(parameter *ast.JSDocParameterTag) *ast.N
 }
 
 func findMatchingParameter(fun *ast.Node, parameterTag *ast.JSDocParameterTag, jsDoc *ast.Node) (*ast.ParameterDeclaration, bool) {
+	// Check for nil function node to prevent nil pointer dereference
+	if fun == nil {
+		return nil, false
+	}
+	
+	// Check if the function node has valid function-like data before accessing parameters
+	functionData := fun.FunctionLikeData()
+	if functionData == nil || functionData.Parameters == nil {
+		return nil, false
+	}
+	
 	tagIndex := -1
 	paramCount := -1
 	for _, tag := range jsDoc.AsJSDoc().Tags.Nodes {
