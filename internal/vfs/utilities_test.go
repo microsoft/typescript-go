@@ -10,6 +10,7 @@ import (
 
 // Test cases based on real-world patterns found in the TypeScript codebase
 func TestMatchFiles(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name                      string
 		files                     map[string]string
@@ -207,6 +208,7 @@ func TestMatchFiles(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			fs := vfstest.FromMap(tt.files, tt.useCaseSensitiveFileNames)
 
 			result := vfs.ReadDirectory(
@@ -226,6 +228,7 @@ func TestMatchFiles(t *testing.T) {
 
 // Test edge cases and error conditions
 func TestMatchFilesEdgeCases(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name                      string
 		files                     map[string]string
@@ -313,6 +316,7 @@ func TestMatchFilesEdgeCases(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			fs := vfstest.FromMap(tt.files, tt.useCaseSensitiveFileNames)
 
 			result := vfs.ReadDirectory(
@@ -332,6 +336,7 @@ func TestMatchFilesEdgeCases(t *testing.T) {
 
 // Test that verifies matchFiles and matchFilesNew return the same data
 func TestMatchFilesCompatibility(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name                      string
 		files                     map[string]string
@@ -429,6 +434,7 @@ func TestMatchFilesCompatibility(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			fs := vfstest.FromMap(tt.files, tt.useCaseSensitiveFileNames)
 
 			// Get results from original implementation
