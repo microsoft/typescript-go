@@ -473,3 +473,50 @@ func matchFilesOld(path string, extensions []string, excludes []string, includes
 func readDirectoryOld(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
 	return matchFilesOld(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
 }
+
+func matchesExcludeOld(fileName string, excludeSpecs []string, currentDirectory string, useCaseSensitiveFileNames bool) bool {
+	if len(excludeSpecs) == 0 {
+		return false
+	}
+	excludePattern := getRegularExpressionForWildcard(excludeSpecs, currentDirectory, "exclude")
+	excludeRegex := getRegexFromPattern(excludePattern, useCaseSensitiveFileNames)
+	if match, err := excludeRegex.MatchString(fileName); err == nil && match {
+		return true
+	}
+	if !tspath.HasExtension(fileName) {
+		if match, err := excludeRegex.MatchString(tspath.EnsureTrailingDirectorySeparator(fileName)); err == nil && match {
+			return true
+		}
+	}
+	return false
+}
+
+func matchesIncludeOld(fileName string, includeSpecs []string, currentDirectory string, useCaseSensitiveFileNames bool) bool {
+	if len(includeSpecs) == 0 {
+		return false
+	}
+	for _, spec := range includeSpecs {
+		includePattern := getPatternFromSpec(spec, currentDirectory, "files")
+		if includePattern != "" {
+			includeRegex := getRegexFromPattern(includePattern, useCaseSensitiveFileNames)
+			if match, err := includeRegex.MatchString(fileName); err == nil && match {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func matchesIncludeWithJsonOnlyOld(fileName string, includeSpecs []string, basePath string, useCaseSensitiveFileNames bool) bool {
+	var jsonOnlyIncludeRegexes []*regexp2.Regexp
+	includes := core.Filter(includeSpecs, func(include string) bool { return strings.HasSuffix(include, tspath.ExtensionJson) })
+	includeFilePatterns := core.Map(getRegularExpressionsForWildcards(includes, basePath, "files"), func(pattern string) string { return fmt.Sprintf("^%s$", pattern) })
+	if includeFilePatterns != nil {
+		jsonOnlyIncludeRegexes = core.Map(includeFilePatterns, func(pattern string) *regexp2.Regexp {
+			return getRegexFromPattern(pattern, useCaseSensitiveFileNames)
+		})
+	} else {
+		jsonOnlyIncludeRegexes = nil
+	}
+	return core.FindIndex(jsonOnlyIncludeRegexes, func(re *regexp2.Regexp) bool { return core.Must(re.MatchString(fileName)) }) != -1
+}

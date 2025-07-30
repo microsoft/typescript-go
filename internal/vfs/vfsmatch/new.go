@@ -463,8 +463,7 @@ func readDirectoryNew(host vfs.FS, currentDir string, path string, extensions []
 	return matchFilesNew(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
 }
 
-// MatchesExclude checks if a file matches any of the exclude patterns using glob matching (no regexp2)
-func MatchesExclude(fileName string, excludeSpecs []string, currentDirectory string, useCaseSensitiveFileNames bool) bool {
+func matchesExcludeNew(fileName string, excludeSpecs []string, currentDirectory string, useCaseSensitiveFileNames bool) bool {
 	if len(excludeSpecs) == 0 {
 		return false
 	}
@@ -483,8 +482,7 @@ func MatchesExclude(fileName string, excludeSpecs []string, currentDirectory str
 	return false
 }
 
-// MatchesInclude checks if a file matches any of the include patterns using glob matching (no regexp2)
-func MatchesInclude(fileName string, includeSpecs []string, basePath string, useCaseSensitiveFileNames bool) bool {
+func matchesIncludeNew(fileName string, includeSpecs []string, basePath string, useCaseSensitiveFileNames bool) bool {
 	if len(includeSpecs) == 0 {
 		return false
 	}
@@ -497,8 +495,7 @@ func MatchesInclude(fileName string, includeSpecs []string, basePath string, use
 	return false
 }
 
-// MatchesIncludeWithJsonOnly checks if a file matches any of the JSON-only include patterns using glob matching (no regexp2)
-func MatchesIncludeWithJsonOnly(fileName string, includeSpecs []string, basePath string, useCaseSensitiveFileNames bool) bool {
+func matchesIncludeWithJsonOnlyNew(fileName string, includeSpecs []string, basePath string, useCaseSensitiveFileNames bool) bool {
 	if len(includeSpecs) == 0 {
 		return false
 	}
