@@ -31,20 +31,18 @@ func getFormatOptsOfSys(sys System) *diagnosticwriter.FormattingOptions {
 
 type diagnosticReporter = func(*ast.Diagnostic)
 
+func quietDiagnosticReporter(diagnostic *ast.Diagnostic) {}
+
 func createDiagnosticReporter(sys System, options *core.CompilerOptions) diagnosticReporter {
 	if options.Quiet.IsTrue() {
-		return func(diagnostic *ast.Diagnostic) {}
+		return quietDiagnosticReporter
 	}
 
 	formatOpts := getFormatOptsOfSys(sys)
-	if !shouldBePretty(sys, options) {
-		return func(diagnostic *ast.Diagnostic) {
-			diagnosticwriter.WriteFormatDiagnostic(sys.Writer(), diagnostic, formatOpts)
-			sys.EndWrite()
-		}
-	}
+	writeDiagnostic := core.IfElse(shouldBePretty(sys, options), diagnosticwriter.FormatDiagnosticWithColorAndContext, diagnosticwriter.WriteFormatDiagnostic)
 	return func(diagnostic *ast.Diagnostic) {
-		diagnosticwriter.FormatDiagnosticsWithColorAndContext(sys.Writer(), []*ast.Diagnostic{diagnostic}, formatOpts)
+		writeDiagnostic(sys.Writer(), diagnostic, formatOpts)
+		fmt.Fprint(sys.Writer(), formatOpts.NewLine)
 		sys.EndWrite()
 	}
 }
@@ -57,50 +55,104 @@ func shouldBePretty(sys System, options *core.CompilerOptions) bool {
 	return false
 }
 
-func createReportErrorSummary(sys System, options *core.CompilerOptions) func(diagnostics []*ast.Diagnostic) {
-	if shouldBePretty(sys, options) {
+type diagnosticsReporter = func(diagnostics []*ast.Diagnostic)
+
+func quietDiagnosticsReporter(diagnostics []*ast.Diagnostic) {}
+
+func createReportErrorSummary(sys System, options *core.CompilerOptions) diagnosticsReporter {
+	if !options.Quiet.IsTrue() && shouldBePretty(sys, options) {
 		formatOpts := getFormatOptsOfSys(sys)
 		return func(diagnostics []*ast.Diagnostic) {
 			diagnosticwriter.WriteErrorSummaryText(sys.Writer(), diagnostics, formatOpts)
 			sys.EndWrite()
 		}
 	}
-	return func(diagnostics []*ast.Diagnostic) {}
+	return quietDiagnosticsReporter
 }
 
-func reportStatistics(sys System, program *compiler.Program, result compileAndEmitResult, memStats *runtime.MemStats) {
+func createBuilderStatusReporter(sys System, options *core.CompilerOptions) diagnosticReporter {
+	if options.Quiet.IsTrue() {
+		return quietDiagnosticReporter
+	}
+
+	formatOpts := getFormatOptsOfSys(sys)
+	writeStatus := core.IfElse(shouldBePretty(sys, options), diagnosticwriter.FormatDiagnosticsStatusWithColorAndTime, diagnosticwriter.FormatDiagnosticsStatusAndTime)
+	return func(diagnostic *ast.Diagnostic) {
+		writeStatus(sys.Writer(), sys.Now().Format("03:04:05 PM"), diagnostic, formatOpts)
+		fmt.Fprint(sys.Writer(), formatOpts.NewLine, formatOpts.NewLine)
+		sys.EndWrite()
+	}
+}
+
+type statistics struct {
+	isAggregate      bool
+	projects         int
+	projectsBuilt    int
+	timestampUpdates int
+	files            int
+	lines            int
+	identifiers      int
+	symbols          int
+	types            int
+	instantiations   int
+	memoryUsed       uint64
+	memoryAllocs     uint64
+	compileTimes     *compileTimes
+}
+
+func statisticsFromProgram(program *compiler.Program, compileTimes *compileTimes, memStats *runtime.MemStats) *statistics {
+	return &statistics{
+		files:          len(program.SourceFiles()),
+		lines:          program.LineCount(),
+		identifiers:    program.IdentifierCount(),
+		symbols:        program.SymbolCount(),
+		types:          program.TypeCount(),
+		instantiations: program.InstantiationCount(),
+		memoryUsed:     memStats.Alloc,
+		memoryAllocs:   memStats.Mallocs,
+		compileTimes:   compileTimes,
+	}
+}
+
+func (p *statistics) report(ioWriter io.Writer) {
 	var stats table
+	var prefix string
 
-	stats.add("Files", len(program.SourceFiles()))
-	stats.add("Lines", program.LineCount())
-	stats.add("Identifiers", program.IdentifierCount())
-	stats.add("Symbols", program.SymbolCount())
-	stats.add("Types", program.TypeCount())
-	stats.add("Instantiations", program.InstantiationCount())
-	stats.add("Memory used", fmt.Sprintf("%vK", memStats.Alloc/1024))
-	stats.add("Memory allocs", strconv.FormatUint(memStats.Mallocs, 10))
-	if result.configTime != 0 {
-		stats.add("Config time", result.configTime)
+	if p.isAggregate {
+		prefix = "Aggregate "
+		stats.add("Projects in scope", p.projects)
+		stats.add("Projects built", p.projectsBuilt)
+		stats.add("Timestamps only updates", p.timestampUpdates)
 	}
-	if result.buildInfoReadTime != 0 {
-		stats.add("BuildInfo read time", result.buildInfoReadTime)
+	stats.add(prefix+"Files", p.files)
+	stats.add(prefix+"Lines", p.lines)
+	stats.add(prefix+"Identifiers", p.identifiers)
+	stats.add(prefix+"Symbols", p.symbols)
+	stats.add(prefix+"Types", p.types)
+	stats.add(prefix+"Instantiations", p.instantiations)
+	stats.add(prefix+"Memory used", fmt.Sprintf("%vK", p.memoryUsed/1024))
+	stats.add(prefix+"Memory allocs", strconv.FormatUint(p.memoryAllocs, 10))
+	if p.compileTimes.configTime != 0 {
+		stats.add(prefix+"Config time", p.compileTimes.configTime)
 	}
-	stats.add("Parse time", result.parseTime)
-	if result.bindTime != 0 {
-		stats.add("Bind time", result.bindTime)
+	if p.compileTimes.buildInfoReadTime != 0 {
+		stats.add(prefix+"BuildInfo read time", p.compileTimes.buildInfoReadTime)
 	}
-	if result.checkTime != 0 {
-		stats.add("Check time", result.checkTime)
+	stats.add(prefix+"Parse time", p.compileTimes.parseTime)
+	if p.compileTimes.bindTime != 0 {
+		stats.add(prefix+"Bind time", p.compileTimes.bindTime)
 	}
-	if result.emitTime != 0 {
-		stats.add("Emit time", result.emitTime)
+	if p.compileTimes.checkTime != 0 {
+		stats.add(prefix+"Check time", p.compileTimes.checkTime)
 	}
-	if result.changesComputeTime != 0 {
-		stats.add("Changes compute time", result.changesComputeTime)
+	if p.compileTimes.emitTime != 0 {
+		stats.add(prefix+"Emit time", p.compileTimes.emitTime)
 	}
-	stats.add("Total time", result.totalTime)
-
-	stats.print(sys.Writer())
+	if p.compileTimes.changesComputeTime != 0 {
+		stats.add(prefix+"Changes compute time", p.compileTimes.changesComputeTime)
+	}
+	stats.add(prefix+"Total time", p.compileTimes.totalTime)
+	stats.print(ioWriter)
 }
 
 func printVersion(sys System) {

@@ -50,6 +50,7 @@ type TestingData struct {
 	SemanticDiagnosticsPerFile           map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName
 	OldProgramSemanticDiagnosticsPerFile map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName
 	UpdatedSignatureKinds                map[tspath.Path]SignatureUpdateKind
+	ConfigFilePath                       string
 }
 
 func (p *Program) GetTestingData(program *compiler.Program) TestingData {
@@ -57,6 +58,7 @@ func (p *Program) GetTestingData(program *compiler.Program) TestingData {
 		SemanticDiagnosticsPerFile:           p.snapshot.semanticDiagnosticsPerFile,
 		OldProgramSemanticDiagnosticsPerFile: p.semanticDiagnosticsPerFile,
 		UpdatedSignatureKinds:                p.updatedSignatureKinds,
+		ConfigFilePath:                       p.snapshot.options.ConfigFilePath,
 	}
 }
 
@@ -181,7 +183,7 @@ func (p *Program) Emit(ctx context.Context, options compiler.EmitOptions) *compi
 
 		// Emit buildInfo and combine result
 		buildInfoResult := p.emitBuildInfo(ctx, options)
-		if buildInfoResult != nil && buildInfoResult.EmittedFiles != nil {
+		if buildInfoResult != nil {
 			result.Diagnostics = append(result.Diagnostics, buildInfoResult.Diagnostics...)
 			result.EmittedFiles = append(result.EmittedFiles, buildInfoResult.EmittedFiles...)
 		}
@@ -276,14 +278,9 @@ func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOption
 		}
 	}
 	p.snapshot.buildInfoEmitPending = false
-
-	var emittedFiles []string
-	if p.snapshot.options.ListEmittedFiles.IsTrue() {
-		emittedFiles = []string{buildInfoFileName}
-	}
 	return &compiler.EmitResult{
 		EmitSkipped:  false,
-		EmittedFiles: emittedFiles,
+		EmittedFiles: []string{buildInfoFileName},
 	}
 }
 

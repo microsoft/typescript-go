@@ -38,6 +38,7 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 
+/home/src/workspaces/project/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/first.ts

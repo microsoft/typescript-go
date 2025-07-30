@@ -60,7 +60,7 @@ func (test *tscInput) executeCommand(sys *testSys, baselineBuilder *strings.Buil
 
 func (test *tscInput) run(t *testing.T, scenario string) {
 	t.Helper()
-	t.Run(test.subScenario+" tsc baseline", func(t *testing.T) {
+	t.Run(test.subScenario, func(t *testing.T) {
 		t.Parallel()
 		// initial test tsc compile
 		baselineBuilder := &strings.Builder{}
@@ -76,7 +76,7 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 		sys.baselineFSwithDiff(baselineBuilder)
 		result := test.executeCommand(sys, baselineBuilder, test.commandLineArgs)
 		sys.serializeState(baselineBuilder)
-		sys.baselineProgram(baselineBuilder, result.IncrementalProgram, result.Watcher)
+		sys.baselinePrograms(baselineBuilder, result.IncrementalProgram, result.Watcher)
 
 		for index, do := range test.edits {
 			sys.clearOutput()
@@ -97,7 +97,7 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 					result.Watcher.DoCycle()
 				}
 				sys.serializeState(baselineBuilder)
-				sys.baselineProgram(baselineBuilder, editResult.IncrementalProgram, result.Watcher)
+				sys.baselinePrograms(baselineBuilder, editResult.IncrementalProgram, result.Watcher)
 			})
 			wg.Queue(func() {
 				// Compute build with all the edits
@@ -152,7 +152,7 @@ func getDiffForIncremental(incrementalSys *testSys, nonIncrementalSys *testSys) 
 	incrementalErrors := strings.Join(incrementalSys.output, "")
 	nonIncrementalErrors := strings.Join(nonIncrementalSys.output, "")
 	if incrementalErrors != nonIncrementalErrors {
-		diffBuilder.WriteString(baseline.DiffText("nonIncremental errors.txt", "incremental errors.txt", nonIncrementalErrors, incrementalErrors))
+		diffBuilder.WriteString(baseline.DiffText("nonIncremental.output.txt", "incremental.output.txt", nonIncrementalErrors, incrementalErrors))
 	}
 	return diffBuilder.String()
 }

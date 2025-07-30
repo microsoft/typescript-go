@@ -6,7 +6,6 @@ tsgo --build --help
 ExitStatus:: Success
 Output::
 Version FakeTSVersion
-
 tsc: The TypeScript Compiler - Version FakeTSVersion
 
 BUILD OPTIONS

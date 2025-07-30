@@ -567,11 +567,6 @@ func getInferredLibraryNameResolveFrom(options *core.CompilerOptions, currentDir
 	return tspath.CombinePaths(containingDirectory, "__lib_node_modules_lookup_"+libFileName+"__.ts")
 }
 
-type resolution struct {
-	node           *ast.Node
-	resolvedModule *module.ResolvedModule
-}
-
 func getModeForTypeReferenceDirectiveInFile(ref *ast.FileReference, file *ast.SourceFile, meta ast.SourceFileMetaData, options *core.CompilerOptions) core.ResolutionMode {
 	if ref.ResolutionMode != core.ResolutionModeNone {
 		return ref.ResolutionMode
