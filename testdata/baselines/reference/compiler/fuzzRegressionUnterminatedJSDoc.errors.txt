@@ -1,0 +1,10 @@
+fuzzRegressionUnterminatedJSDoc.ts(4,1): error TS1010: '*/' expected.
+
+
+==== fuzzRegressionUnterminatedJSDoc.ts (1 errors) ====
+    // Test case from fuzz test c1f12885d61e63cf  
+    // Unterminated JSDoc comment
+    /**
+    
+    
+!!! error TS1010: '*/' expected.

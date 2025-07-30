@@ -1,0 +1,14 @@
+//// [tests/cases/compiler/fuzzRegressionAwaitImportParsing.ts] ////
+
+//// [fuzzRegressionAwaitImportParsing.ts]
+// Test case from fuzz test eb41aa84b0bd9f37
+// Await import parsing issue
+0))await!import "00000
+
+
+//// [fuzzRegressionAwaitImportParsing.js]
+// Test case from fuzz test eb41aa84b0bd9f37
+// Await import parsing issue
+0;
+await;
+import "00000;

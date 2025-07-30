@@ -1,0 +1,5 @@
+// @target: esnext
+
+// Test case from fuzz test eb41aa84b0bd9f37
+// Await import parsing issue
+0))await!import "00000

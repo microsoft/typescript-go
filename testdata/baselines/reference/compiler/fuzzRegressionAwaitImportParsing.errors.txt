@@ -1,0 +1,22 @@
+fuzzRegressionAwaitImportParsing.ts(3,2): error TS1005: ';' expected.
+fuzzRegressionAwaitImportParsing.ts(3,3): error TS1128: Declaration or statement expected.
+fuzzRegressionAwaitImportParsing.ts(3,4): error TS2304: Cannot find name 'await'.
+fuzzRegressionAwaitImportParsing.ts(3,10): error TS1005: ';' expected.
+fuzzRegressionAwaitImportParsing.ts(3,23): error TS1002: Unterminated string literal.
+
+
+==== fuzzRegressionAwaitImportParsing.ts (5 errors) ====
+    // Test case from fuzz test eb41aa84b0bd9f37
+    // Await import parsing issue
+    0))await!import "00000
+     ~
+!!! error TS1005: ';' expected.
+      ~
+!!! error TS1128: Declaration or statement expected.
+       ~~~~~
+!!! error TS2304: Cannot find name 'await'.
+             ~~~~~~
+!!! error TS1005: ';' expected.
+                          
+!!! error TS1002: Unterminated string literal.
+    
