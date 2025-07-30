@@ -78,7 +78,7 @@ func NewSession(init *SessionInit) *Session {
 		parseCache:          parseCache,
 		extendedConfigCache: extendedConfigCache,
 		programCounter:      &programCounter{},
-		backgroundTasks:     newBackgroundTaskQueue(),
+		backgroundTasks:     newBackgroundQueue(),
 		snapshot: NewSnapshot(
 			make(map[tspath.Path]*diskFile),
 			init.Options,
