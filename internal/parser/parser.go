@@ -6550,6 +6550,9 @@ func extractPragmas(commentRange ast.CommentRange, text string) []ast.Pragma {
 }
 
 func match(text string, pos int, s string) bool {
+	if pos >= len(text) {
+		return false
+	}
 	return strings.HasPrefix(text[pos:], s)
 }
 
@@ -6568,6 +6571,9 @@ func skipNonBlanks(text string, pos int) int {
 }
 
 func skipTo(text string, pos int, s string) int {
+	if pos >= len(text) {
+		return -1
+	}
 	i := strings.Index(text[pos:], s)
 	if i < 0 {
 		return -1
