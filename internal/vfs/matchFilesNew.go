@@ -8,6 +8,27 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
+// Cache for normalized path components to avoid repeated allocations
+type pathCache struct {
+	cache map[string][]string
+}
+
+func newPathCache() *pathCache {
+	return &pathCache{
+		cache: make(map[string][]string),
+	}
+}
+
+func (pc *pathCache) getNormalizedPathComponents(path string) []string {
+	if components, exists := pc.cache[path]; exists {
+		return components
+	}
+
+	components := tspath.GetNormalizedPathComponents(path, "")
+	pc.cache[path] = components
+	return components
+}
+
 // MatchFilesNew is the regex-free implementation of file matching
 func MatchFilesNew(path string, extensions []string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth *int, host FS) []string {
 	path = tspath.NormalizePath(path)
@@ -21,15 +42,18 @@ func MatchFilesNew(path string, extensions []string, excludes []string, includes
 		return nil
 	}
 
+	// Create a shared path cache for this operation
+	pathCache := newPathCache()
+
 	// Prepare matchers for includes and excludes
 	includeMatchers := make([]globMatcher, len(includes))
 	for i, include := range includes {
-		includeMatchers[i] = newGlobMatcher(include, absolutePath, useCaseSensitiveFileNames)
+		includeMatchers[i] = newGlobMatcher(include, absolutePath, useCaseSensitiveFileNames, pathCache)
 	}
 
 	excludeMatchers := make([]globMatcher, len(excludes))
 	for i, exclude := range excludes {
-		excludeMatchers[i] = newGlobMatcher(exclude, absolutePath, useCaseSensitiveFileNames)
+		excludeMatchers[i] = newGlobMatcher(exclude, absolutePath, useCaseSensitiveFileNames, pathCache)
 	}
 
 	// Associate an array of results with each include matcher. This keeps results in order of the "include" order.
@@ -53,6 +77,7 @@ func MatchFilesNew(path string, extensions []string, excludes []string, includes
 		extensions:                extensions,
 		results:                   results,
 		visited:                   *collections.NewSetWithSizeHint[string](0),
+		pathCache:                 pathCache,
 	}
 
 	for _, basePath := range basePaths {
@@ -72,10 +97,11 @@ type globMatcher struct {
 	basePath                  string
 	useCaseSensitiveFileNames bool
 	segments                  []string
+	pathCache                 *pathCache
 }
 
 // newGlobMatcher creates a new glob matcher for the given pattern
-func newGlobMatcher(pattern string, basePath string, useCaseSensitiveFileNames bool) globMatcher {
+func newGlobMatcher(pattern string, basePath string, useCaseSensitiveFileNames bool, pathCache *pathCache) globMatcher {
 	// Convert pattern to absolute path if it's relative
 	var absolutePattern string
 	if tspath.IsRootedDiskPath(pattern) {
@@ -84,8 +110,8 @@ func newGlobMatcher(pattern string, basePath string, useCaseSensitiveFileNames b
 		absolutePattern = tspath.NormalizePath(tspath.CombinePaths(basePath, pattern))
 	}
 
-	// Split into path segments
-	segments := tspath.GetNormalizedPathComponents(absolutePattern, "")
+	// Split into path segments - use cache to avoid repeated calls
+	segments := pathCache.getNormalizedPathComponents(absolutePattern)
 	// Remove the empty root component
 	if len(segments) > 0 && segments[0] == "" {
 		segments = segments[1:]
@@ -104,7 +130,15 @@ func newGlobMatcher(pattern string, basePath string, useCaseSensitiveFileNames b
 		basePath:                  basePath,
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
 		segments:                  segments,
+		pathCache:                 pathCache,
 	}
+}
+
+// newGlobMatcherOld creates a new glob matcher for the given pattern (for backwards compatibility)
+func newGlobMatcherOld(pattern string, basePath string, useCaseSensitiveFileNames bool) globMatcher {
+	// Create a temporary path cache for old implementation
+	tempCache := newPathCache()
+	return newGlobMatcher(pattern, basePath, useCaseSensitiveFileNames, tempCache)
 }
 
 // matchesFile returns true if the given absolute file path matches the glob pattern
@@ -119,7 +153,7 @@ func (gm globMatcher) matchesDirectory(absolutePath string) bool {
 
 // couldMatchInSubdirectory returns true if this pattern could match files within the given directory
 func (gm globMatcher) couldMatchInSubdirectory(absolutePath string) bool {
-	pathSegments := tspath.GetNormalizedPathComponents(absolutePath, "")
+	pathSegments := gm.pathCache.getNormalizedPathComponents(absolutePath)
 	// Remove the empty root component
 	if len(pathSegments) > 0 && pathSegments[0] == "" {
 		pathSegments = pathSegments[1:]
@@ -166,7 +200,7 @@ func (gm globMatcher) couldMatchInSubdirectoryRecursive(patternSegments []string
 
 // matchesPath performs the actual glob matching logic
 func (gm globMatcher) matchesPath(absolutePath string, isDirectory bool) bool {
-	pathSegments := tspath.GetNormalizedPathComponents(absolutePath, "")
+	pathSegments := gm.pathCache.getNormalizedPathComponents(absolutePath)
 	// Remove the empty root component
 	if len(pathSegments) > 0 && pathSegments[0] == "" {
 		pathSegments = pathSegments[1:]
@@ -286,6 +320,7 @@ type newGlobVisitor struct {
 	host                      FS
 	visited                   collections.Set[string]
 	results                   [][]string
+	pathCache                 *pathCache
 }
 
 func (v *newGlobVisitor) visitDirectory(path string, absolutePath string, depth *int) {
@@ -301,12 +336,25 @@ func (v *newGlobVisitor) visitDirectory(path string, absolutePath string, depth 
 
 	// Process files
 	for _, current := range files {
-		name := tspath.CombinePaths(path, current)
-		absoluteName := tspath.CombinePaths(absolutePath, current)
-
 		// Skip dotted files (files starting with '.') - this matches original regex behavior
-		if strings.HasPrefix(current, ".") {
+		if len(current) > 0 && current[0] == '.' {
 			continue
+		}
+
+		// Build paths more efficiently
+		var name, absoluteName string
+		if path == "" {
+			name = current
+		} else if path[len(path)-1] == '/' {
+			name = path + current
+		} else {
+			name = path + "/" + current
+		}
+
+		if absolutePath[len(absolutePath)-1] == '/' {
+			absoluteName = absolutePath + current
+		} else {
+			absoluteName = absolutePath + "/" + current
 		}
 
 		// Check extension filter
@@ -352,11 +400,8 @@ func (v *newGlobVisitor) visitDirectory(path string, absolutePath string, depth 
 
 	// Process directories
 	for _, current := range directories {
-		name := tspath.CombinePaths(path, current)
-		absoluteName := tspath.CombinePaths(absolutePath, current)
-
 		// Skip dotted directories (directories starting with '.') - this matches original regex behavior
-		if strings.HasPrefix(current, ".") {
+		if len(current) > 0 && current[0] == '.' {
 			continue
 		}
 
@@ -370,6 +415,22 @@ func (v *newGlobVisitor) visitDirectory(path string, absolutePath string, depth 
 		}
 		if isCommonPackageFolder {
 			continue
+		}
+
+		// Build paths more efficiently
+		var name, absoluteName string
+		if path == "" {
+			name = current
+		} else if path[len(path)-1] == '/' {
+			name = path + current
+		} else {
+			name = path + "/" + current
+		}
+
+		if absolutePath[len(absolutePath)-1] == '/' {
+			absoluteName = absolutePath + current
+		} else {
+			absoluteName = absolutePath + "/" + current
 		}
 
 		// Check if directory should be included (for directory traversal)

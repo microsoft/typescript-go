@@ -476,7 +476,7 @@ func MatchesExclude(fileName string, excludeSpecs []string, currentDirectory str
 	}
 
 	for _, excludeSpec := range excludeSpecs {
-		matcher := newGlobMatcher(excludeSpec, currentDirectory, useCaseSensitiveFileNames)
+		matcher := newGlobMatcherOld(excludeSpec, currentDirectory, useCaseSensitiveFileNames)
 		if matcher.matchesFile(fileName) {
 			return true
 		}
@@ -497,7 +497,7 @@ func MatchesInclude(fileName string, includeSpecs []string, basePath string, use
 	}
 
 	for _, includeSpec := range includeSpecs {
-		matcher := newGlobMatcher(includeSpec, basePath, useCaseSensitiveFileNames)
+		matcher := newGlobMatcherOld(includeSpec, basePath, useCaseSensitiveFileNames)
 		if matcher.matchesFile(fileName) {
 			return true
 		}
@@ -517,7 +517,7 @@ func MatchesIncludeWithJsonOnly(fileName string, includeSpecs []string, basePath
 	})
 
 	for _, includeSpec := range jsonIncludes {
-		matcher := newGlobMatcher(includeSpec, basePath, useCaseSensitiveFileNames)
+		matcher := newGlobMatcherOld(includeSpec, basePath, useCaseSensitiveFileNames)
 		if matcher.matchesFile(fileName) {
 			return true
 		}
