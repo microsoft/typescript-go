@@ -1,0 +1,5 @@
+go test fuzz v1
+string(".ts")
+string("0))await!import \"00000")
+int(0)
+int(0)

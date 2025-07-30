@@ -407,6 +407,12 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 	afterAwaitStatement := 0
 	for i := 0; i < len(p.possibleAwaitSpans); i += 2 {
 		nextAwaitStatement := p.possibleAwaitSpans[i]
+		
+		// Bounds check: ensure indices are within the statements slice
+		if afterAwaitStatement >= len(sourceFile.Statements.Nodes) || nextAwaitStatement >= len(sourceFile.Statements.Nodes) {
+			continue
+		}
+		
 		// append all non-await statements between afterAwaitStatement and nextAwaitStatement
 		prevStatement := sourceFile.Statements.Nodes[afterAwaitStatement]
 		nextStatement := sourceFile.Statements.Nodes[nextAwaitStatement]
