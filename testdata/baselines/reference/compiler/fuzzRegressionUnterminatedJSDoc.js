@@ -1,12 +1,8 @@
 //// [tests/cases/compiler/fuzzRegressionUnterminatedJSDoc.ts] ////
 
 //// [fuzzRegressionUnterminatedJSDoc.ts]
-// Test case from fuzz test c1f12885d61e63cf  
-// Unterminated JSDoc comment
 /**
 
 
 //// [fuzzRegressionUnterminatedJSDoc.js]
-// Test case from fuzz test c1f12885d61e63cf  
-// Unterminated JSDoc comment
 /**

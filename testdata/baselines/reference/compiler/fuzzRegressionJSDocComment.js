@@ -1,14 +1,10 @@
 //// [tests/cases/compiler/fuzzRegressionJSDocComment.ts] ////
 
 //// [fuzzRegressionJSDocComment.ts]
-// Test case from fuzz test 02b74efe61495c2a
-// JSDoc comment with special characters
 /**@0
      * */0
 
 
 //// [fuzzRegressionJSDocComment.js]
-// Test case from fuzz test 02b74efe61495c2a
-// JSDoc comment with special characters
 /**@0
      * */ 0;

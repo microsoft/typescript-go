@@ -1,9 +1,7 @@
-fuzzRegressionSingleSlash.ts(3,1): error TS1161: Unterminated regular expression literal.
+fuzzRegressionSingleSlash.ts(1,1): error TS1161: Unterminated regular expression literal.
 
 
 ==== fuzzRegressionSingleSlash.ts (1 errors) ====
-    // Test case from fuzz test 9ce2d994c65c7bfe
-    // Single slash
     /
     ~
 !!! error TS1161: Unterminated regular expression literal.

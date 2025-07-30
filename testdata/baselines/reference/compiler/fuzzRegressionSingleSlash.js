@@ -1,12 +1,8 @@
 //// [tests/cases/compiler/fuzzRegressionSingleSlash.ts] ////
 
 //// [fuzzRegressionSingleSlash.ts]
-// Test case from fuzz test 9ce2d994c65c7bfe
-// Single slash
 /
 
 
 //// [fuzzRegressionSingleSlash.js]
-// Test case from fuzz test 9ce2d994c65c7bfe
-// Single slash
 /;
