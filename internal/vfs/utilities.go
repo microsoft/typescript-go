@@ -599,7 +599,8 @@ func (gm GlobMatcher) couldMatchInSubdirectory(patternSegments []string, pathSeg
 
 	if len(pathSegments) == 0 {
 		// We've run out of path but still have pattern segments
-		return len(remainingPattern) > 0
+		// This means we could match files in the current directory
+		return true
 	}
 
 	pathSegment := pathSegments[0]
@@ -658,8 +659,19 @@ func (gm GlobMatcher) matchSegments(patternSegments []string, pathSegments []str
 	pathSegment := pathSegments[0]
 	remainingPath := pathSegments[1:]
 
+	// Determine if this is the final segment (for file matching rules)
+	isFinalSegment := len(remainingPattern) == 0 && len(remainingPath) == 0
+	isFileSegment := !isDirectory && isFinalSegment
+
 	// Check if this segment matches
-	if gm.matchSegment(pattern, pathSegment) {
+	var segmentMatches bool
+	if isFileSegment {
+		segmentMatches = gm.matchSegmentForFile(pattern, pathSegment)
+	} else {
+		segmentMatches = gm.matchSegment(pattern, pathSegment)
+	}
+
+	if segmentMatches {
 		return gm.matchSegments(remainingPattern, remainingPath, isDirectory)
 	}
 
@@ -674,11 +686,21 @@ func (gm GlobMatcher) matchSegment(pattern, segment string) bool {
 		segment = strings.ToLower(segment)
 	}
 
-	return gm.matchGlobPattern(pattern, segment)
+	return gm.matchGlobPattern(pattern, segment, false)
+}
+
+func (gm GlobMatcher) matchSegmentForFile(pattern, segment string) bool {
+	// Handle case sensitivity
+	if !gm.useCaseSensitiveFileNames {
+		pattern = strings.ToLower(pattern)
+		segment = strings.ToLower(segment)
+	}
+
+	return gm.matchGlobPattern(pattern, segment, true)
 }
 
 // matchGlobPattern implements glob pattern matching for a single segment
-func (gm GlobMatcher) matchGlobPattern(pattern, text string) bool {
+func (gm GlobMatcher) matchGlobPattern(pattern, text string, isFileMatch bool) bool {
 	pi, ti := 0, 0
 	starIdx, match := -1, 0
 
@@ -687,6 +709,10 @@ func (gm GlobMatcher) matchGlobPattern(pattern, text string) bool {
 			pi++
 			ti++
 		} else if pi < len(pattern) && pattern[pi] == '*' {
+			// For file matching, * should not match .min.js files
+			if isFileMatch && strings.HasSuffix(text, ".min.js") {
+				return false
+			}
 			starIdx = pi
 			match = ti
 			pi++
@@ -733,6 +759,11 @@ func (v *newGlobVisitor) visitDirectory(path string, absolutePath string, depth 
 		name := tspath.CombinePaths(path, current)
 		absoluteName := tspath.CombinePaths(absolutePath, current)
 
+		// Skip dotted files (files starting with '.') - this matches original regex behavior
+		if strings.HasPrefix(current, ".") {
+			continue
+		}
+
 		// Check extension filter
 		if len(v.extensions) > 0 && !tspath.FileExtensionIsOneOf(name, v.extensions) {
 			continue
@@ -778,6 +809,23 @@ func (v *newGlobVisitor) visitDirectory(path string, absolutePath string, depth 
 	for _, current := range directories {
 		name := tspath.CombinePaths(path, current)
 		absoluteName := tspath.CombinePaths(absolutePath, current)
+
+		// Skip dotted directories (directories starting with '.') - this matches original regex behavior
+		if strings.HasPrefix(current, ".") {
+			continue
+		}
+
+		// Skip common package folders unless explicitly included
+		isCommonPackageFolder := false
+		for _, pkg := range commonPackageFolders {
+			if current == pkg {
+				isCommonPackageFolder = true
+				break
+			}
+		}
+		if isCommonPackageFolder {
+			continue
+		}
 
 		// Check if directory should be included (for directory traversal)
 		// A directory should be included if it could lead to files that match

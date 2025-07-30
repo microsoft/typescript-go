@@ -334,6 +334,65 @@ func TestMatchFilesEdgeCases(t *testing.T) {
 	}
 }
 
+func TestMatchFilesImplicitExclusions(t *testing.T) {
+	t.Parallel()
+
+	t.Run("ignore dotted files and folders", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]string{
+			"/apath/..c.ts":        "export {}",
+			"/apath/.b.ts":         "export {}",
+			"/apath/.git/a.ts":     "export {}",
+			"/apath/test.ts":       "export {}",
+			"/apath/tsconfig.json": "{}",
+		}
+		fs := vfstest.FromMap(files, true)
+
+		// This should only return test.ts, not the dotted files
+		result := vfs.MatchFilesNew(
+			"/apath",
+			[]string{".ts"},
+			[]string{}, // no explicit excludes
+			[]string{}, // no explicit includes - should include all
+			true,
+			"/",
+			nil,
+			fs,
+		)
+
+		expected := []string{"/apath/test.ts"}
+		assert.DeepEqual(t, result, expected)
+	})
+
+	t.Run("implicitly exclude common package folders", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]string{
+			"/bower_components/b.ts": "export {}",
+			"/d.ts":                  "export {}",
+			"/folder/e.ts":           "export {}",
+			"/jspm_packages/c.ts":    "export {}",
+			"/node_modules/a.ts":     "export {}",
+			"/tsconfig.json":         "{}",
+		}
+		fs := vfstest.FromMap(files, true)
+
+		// This should only return d.ts and folder/e.ts, not the package folders
+		result := vfs.MatchFilesNew(
+			"/",
+			[]string{".ts"},
+			[]string{}, // no explicit excludes
+			[]string{}, // no explicit includes - should include all
+			true,
+			"/",
+			nil,
+			fs,
+		)
+
+		expected := []string{"/d.ts", "/folder/e.ts"}
+		assert.DeepEqual(t, result, expected)
+	})
+}
+
 // Test that verifies matchFiles and matchFilesNew return the same data
 func TestMatchFilesCompatibility(t *testing.T) {
 	t.Parallel()
@@ -466,4 +525,65 @@ func TestMatchFilesCompatibility(t *testing.T) {
 			assert.Assert(t, originalResult != nil, "original implementation should not return nil")
 		})
 	}
+}
+
+// Test specific patterns that were originally in debug test
+func TestDottedFilesAndPackageFolders(t *testing.T) {
+	t.Parallel()
+
+	t.Run("ignore dotted files and folders", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]string{
+			"/apath/..c.ts":        "export {}",
+			"/apath/.b.ts":         "export {}",
+			"/apath/.git/a.ts":     "export {}",
+			"/apath/test.ts":       "export {}",
+			"/apath/tsconfig.json": "{}",
+		}
+		fs := vfstest.FromMap(files, true)
+
+		// Test the new implementation
+		result := vfs.MatchFilesNew(
+			"/apath",
+			[]string{".ts"},
+			[]string{}, // no explicit excludes
+			[]string{}, // no explicit includes - should include all
+			true,
+			"/",
+			nil,
+			fs,
+		)
+
+		// Based on TypeScript behavior, dotted files should be excluded
+		expected := []string{"/apath/test.ts"}
+		assert.DeepEqual(t, result, expected)
+	})
+
+	t.Run("implicitly exclude common package folders", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]string{
+			"/bower_components/b.ts": "export {}",
+			"/d.ts":                  "export {}",
+			"/folder/e.ts":           "export {}",
+			"/jspm_packages/c.ts":    "export {}",
+			"/node_modules/a.ts":     "export {}",
+			"/tsconfig.json":         "{}",
+		}
+		fs := vfstest.FromMap(files, true)
+
+		// This should only return d.ts and folder/e.ts, not the package folders
+		result := vfs.MatchFilesNew(
+			"/",
+			[]string{".ts"},
+			[]string{}, // no explicit excludes
+			[]string{}, // no explicit includes - should include all
+			true,
+			"/",
+			nil,
+			fs,
+		)
+
+		expected := []string{"/d.ts", "/folder/e.ts"}
+		assert.DeepEqual(t, result, expected)
+	})
 }
