@@ -1,0 +1,400 @@
+package vfs
+
+import (
+	"strings"
+
+	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/tspath"
+)
+
+// MatchFilesNew is the regex-free implementation of file matching
+func MatchFilesNew(path string, extensions []string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth *int, host FS) []string {
+	path = tspath.NormalizePath(path)
+	currentDirectory = tspath.NormalizePath(currentDirectory)
+	absolutePath := tspath.CombinePaths(currentDirectory, path)
+
+	basePaths := getBasePaths(path, includes, useCaseSensitiveFileNames)
+
+	// If no base paths found, return nil (consistent with original implementation)
+	if len(basePaths) == 0 {
+		return nil
+	}
+
+	// Prepare matchers for includes and excludes
+	includeMatchers := make([]globMatcher, len(includes))
+	for i, include := range includes {
+		includeMatchers[i] = newGlobMatcher(include, absolutePath, useCaseSensitiveFileNames)
+	}
+
+	excludeMatchers := make([]globMatcher, len(excludes))
+	for i, exclude := range excludes {
+		excludeMatchers[i] = newGlobMatcher(exclude, absolutePath, useCaseSensitiveFileNames)
+	}
+
+	// Associate an array of results with each include matcher. This keeps results in order of the "include" order.
+	// If there are no "includes", then just put everything in results[0].
+	var results [][]string
+	if len(includeMatchers) > 0 {
+		tempResults := make([][]string, len(includeMatchers))
+		for i := range includeMatchers {
+			tempResults[i] = []string{}
+		}
+		results = tempResults
+	} else {
+		results = [][]string{{}}
+	}
+
+	visitor := newGlobVisitor{
+		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
+		host:                      host,
+		includeMatchers:           includeMatchers,
+		excludeMatchers:           excludeMatchers,
+		extensions:                extensions,
+		results:                   results,
+		visited:                   *collections.NewSetWithSizeHint[string](0),
+	}
+
+	for _, basePath := range basePaths {
+		visitor.visitDirectory(basePath, tspath.CombinePaths(currentDirectory, basePath), depth)
+	}
+
+	flattened := core.Flatten(results)
+	if len(flattened) == 0 {
+		return nil // Consistent with original implementation
+	}
+	return flattened
+}
+
+// globMatcher represents a glob pattern matcher without using regex
+type globMatcher struct {
+	pattern                   string
+	basePath                  string
+	useCaseSensitiveFileNames bool
+	segments                  []string
+}
+
+// newGlobMatcher creates a new glob matcher for the given pattern
+func newGlobMatcher(pattern string, basePath string, useCaseSensitiveFileNames bool) globMatcher {
+	// Convert pattern to absolute path if it's relative
+	var absolutePattern string
+	if tspath.IsRootedDiskPath(pattern) {
+		absolutePattern = pattern
+	} else {
+		absolutePattern = tspath.NormalizePath(tspath.CombinePaths(basePath, pattern))
+	}
+
+	// Split into path segments
+	segments := tspath.GetNormalizedPathComponents(absolutePattern, "")
+	// Remove the empty root component
+	if len(segments) > 0 && segments[0] == "" {
+		segments = segments[1:]
+	}
+
+	// Handle implicit glob - if the last component has no extension and no wildcards, add **/*
+	if len(segments) > 0 {
+		lastComponent := segments[len(segments)-1]
+		if IsImplicitGlob(lastComponent) {
+			segments = append(segments, "**", "*")
+		}
+	}
+
+	return globMatcher{
+		pattern:                   absolutePattern,
+		basePath:                  basePath,
+		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
+		segments:                  segments,
+	}
+}
+
+// matchesFile returns true if the given absolute file path matches the glob pattern
+func (gm globMatcher) matchesFile(absolutePath string) bool {
+	return gm.matchesPath(absolutePath, false)
+}
+
+// matchesDirectory returns true if the given absolute directory path matches the glob pattern
+func (gm globMatcher) matchesDirectory(absolutePath string) bool {
+	return gm.matchesPath(absolutePath, true)
+}
+
+// couldMatchInSubdirectory returns true if this pattern could match files within the given directory
+func (gm globMatcher) couldMatchInSubdirectory(absolutePath string) bool {
+	pathSegments := tspath.GetNormalizedPathComponents(absolutePath, "")
+	// Remove the empty root component
+	if len(pathSegments) > 0 && pathSegments[0] == "" {
+		pathSegments = pathSegments[1:]
+	}
+
+	return gm.couldMatchInSubdirectoryRecursive(gm.segments, pathSegments)
+}
+
+// couldMatchInSubdirectoryRecursive checks if the pattern could match files under the given path
+func (gm globMatcher) couldMatchInSubdirectoryRecursive(patternSegments []string, pathSegments []string) bool {
+	if len(patternSegments) == 0 {
+		return false
+	}
+
+	pattern := patternSegments[0]
+	remainingPattern := patternSegments[1:]
+
+	if pattern == "**" {
+		// Double asterisk can match anywhere
+		return true
+	}
+
+	if len(pathSegments) == 0 {
+		// We've run out of path but still have pattern segments
+		// This means we could match files in the current directory
+		return true
+	}
+
+	pathSegment := pathSegments[0]
+	remainingPath := pathSegments[1:]
+
+	// Check if this segment matches
+	if gm.matchSegment(pattern, pathSegment) {
+		// If we match and have more pattern segments, continue
+		if len(remainingPattern) > 0 {
+			return gm.couldMatchInSubdirectoryRecursive(remainingPattern, remainingPath)
+		}
+		// If no more pattern segments, we could match files in this directory
+		return true
+	}
+
+	return false
+}
+
+// matchesPath performs the actual glob matching logic
+func (gm globMatcher) matchesPath(absolutePath string, isDirectory bool) bool {
+	pathSegments := tspath.GetNormalizedPathComponents(absolutePath, "")
+	// Remove the empty root component
+	if len(pathSegments) > 0 && pathSegments[0] == "" {
+		pathSegments = pathSegments[1:]
+	}
+
+	return gm.matchSegments(gm.segments, pathSegments, isDirectory)
+}
+
+// matchSegments recursively matches glob pattern segments against path segments
+func (gm globMatcher) matchSegments(patternSegments []string, pathSegments []string, isDirectory bool) bool {
+	if len(patternSegments) == 0 {
+		return len(pathSegments) == 0
+	}
+
+	pattern := patternSegments[0]
+	remainingPattern := patternSegments[1:]
+
+	if pattern == "**" {
+		// Double asterisk matches zero or more directories
+		// Try matching remaining pattern at current position
+		if gm.matchSegments(remainingPattern, pathSegments, isDirectory) {
+			return true
+		}
+		// Try consuming one path segment and continue with **
+		if len(pathSegments) > 0 && (isDirectory || len(pathSegments) > 1) {
+			return gm.matchSegments(patternSegments, pathSegments[1:], isDirectory)
+		}
+		return false
+	}
+
+	if len(pathSegments) == 0 {
+		return false
+	}
+
+	pathSegment := pathSegments[0]
+	remainingPath := pathSegments[1:]
+
+	// Determine if this is the final segment (for file matching rules)
+	isFinalSegment := len(remainingPattern) == 0 && len(remainingPath) == 0
+	isFileSegment := !isDirectory && isFinalSegment
+
+	// Check if this segment matches
+	var segmentMatches bool
+	if isFileSegment {
+		segmentMatches = gm.matchSegmentForFile(pattern, pathSegment)
+	} else {
+		segmentMatches = gm.matchSegment(pattern, pathSegment)
+	}
+
+	if segmentMatches {
+		return gm.matchSegments(remainingPattern, remainingPath, isDirectory)
+	}
+
+	return false
+}
+
+// matchSegment matches a single glob pattern segment against a path segment
+func (gm globMatcher) matchSegment(pattern, segment string) bool {
+	// Handle case sensitivity
+	if !gm.useCaseSensitiveFileNames {
+		pattern = strings.ToLower(pattern)
+		segment = strings.ToLower(segment)
+	}
+
+	return gm.matchGlobPattern(pattern, segment, false)
+}
+
+func (gm globMatcher) matchSegmentForFile(pattern, segment string) bool {
+	// Handle case sensitivity
+	if !gm.useCaseSensitiveFileNames {
+		pattern = strings.ToLower(pattern)
+		segment = strings.ToLower(segment)
+	}
+
+	return gm.matchGlobPattern(pattern, segment, true)
+}
+
+// matchGlobPattern implements glob pattern matching for a single segment
+func (gm globMatcher) matchGlobPattern(pattern, text string, isFileMatch bool) bool {
+	pi, ti := 0, 0
+	starIdx, match := -1, 0
+
+	for ti < len(text) {
+		if pi < len(pattern) && (pattern[pi] == '?' || pattern[pi] == text[ti]) {
+			pi++
+			ti++
+		} else if pi < len(pattern) && pattern[pi] == '*' {
+			// For file matching, * should not match .min.js files
+			if isFileMatch && strings.HasSuffix(text, ".min.js") {
+				return false
+			}
+			starIdx = pi
+			match = ti
+			pi++
+		} else if starIdx != -1 {
+			pi = starIdx + 1
+			match++
+			ti = match
+		} else {
+			return false
+		}
+	}
+
+	// Handle remaining '*' in pattern
+	for pi < len(pattern) && pattern[pi] == '*' {
+		pi++
+	}
+
+	return pi == len(pattern)
+}
+
+type newGlobVisitor struct {
+	includeMatchers           []globMatcher
+	excludeMatchers           []globMatcher
+	extensions                []string
+	useCaseSensitiveFileNames bool
+	host                      FS
+	visited                   collections.Set[string]
+	results                   [][]string
+}
+
+func (v *newGlobVisitor) visitDirectory(path string, absolutePath string, depth *int) {
+	canonicalPath := tspath.GetCanonicalFileName(absolutePath, v.useCaseSensitiveFileNames)
+	if v.visited.Has(canonicalPath) {
+		return
+	}
+	v.visited.Add(canonicalPath)
+
+	systemEntries := v.host.GetAccessibleEntries(absolutePath)
+	files := systemEntries.Files
+	directories := systemEntries.Directories
+
+	// Process files
+	for _, current := range files {
+		name := tspath.CombinePaths(path, current)
+		absoluteName := tspath.CombinePaths(absolutePath, current)
+
+		// Skip dotted files (files starting with '.') - this matches original regex behavior
+		if strings.HasPrefix(current, ".") {
+			continue
+		}
+
+		// Check extension filter
+		if len(v.extensions) > 0 && !tspath.FileExtensionIsOneOf(name, v.extensions) {
+			continue
+		}
+
+		// Check exclude patterns
+		excluded := false
+		for _, excludeMatcher := range v.excludeMatchers {
+			if excludeMatcher.matchesFile(absoluteName) {
+				excluded = true
+				break
+			}
+		}
+		if excluded {
+			continue
+		}
+
+		// Check include patterns
+		if len(v.includeMatchers) == 0 {
+			// No specific includes, add to results[0]
+			v.results[0] = append(v.results[0], name)
+		} else {
+			// Check each include pattern
+			for i, includeMatcher := range v.includeMatchers {
+				if includeMatcher.matchesFile(absoluteName) {
+					v.results[i] = append(v.results[i], name)
+					break
+				}
+			}
+		}
+	}
+
+	// Handle depth limit
+	if depth != nil {
+		newDepth := *depth - 1
+		if newDepth == 0 {
+			return
+		}
+		depth = &newDepth
+	}
+
+	// Process directories
+	for _, current := range directories {
+		name := tspath.CombinePaths(path, current)
+		absoluteName := tspath.CombinePaths(absolutePath, current)
+
+		// Skip dotted directories (directories starting with '.') - this matches original regex behavior
+		if strings.HasPrefix(current, ".") {
+			continue
+		}
+
+		// Skip common package folders unless explicitly included
+		isCommonPackageFolder := false
+		for _, pkg := range commonPackageFolders {
+			if current == pkg {
+				isCommonPackageFolder = true
+				break
+			}
+		}
+		if isCommonPackageFolder {
+			continue
+		}
+
+		// Check if directory should be included (for directory traversal)
+		// A directory should be included if it could lead to files that match
+		shouldInclude := len(v.includeMatchers) == 0
+		if !shouldInclude {
+			for _, includeMatcher := range v.includeMatchers {
+				if includeMatcher.couldMatchInSubdirectory(absoluteName) {
+					shouldInclude = true
+					break
+				}
+			}
+		}
+
+		// Check if directory should be excluded
+		shouldExclude := false
+		for _, excludeMatcher := range v.excludeMatchers {
+			if excludeMatcher.matchesDirectory(absoluteName) {
+				shouldExclude = true
+				break
+			}
+		}
+
+		if shouldInclude && !shouldExclude {
+			v.visitDirectory(name, absoluteName, depth)
+		}
+	}
+}
