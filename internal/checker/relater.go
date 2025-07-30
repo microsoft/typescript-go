@@ -2001,7 +2001,7 @@ func (c *Checker) getTypePredicateOfSignature(sig *Signature) *TypePredicate {
 				typeNode := sig.declaration.Type()
 				var jsdocTypePredicate *TypePredicate
 				if typeNode == nil {
-					if jsdocSignature := c.getSignatureOfTypeTag(sig.declaration); jsdocSignature != nil {
+					if jsdocSignature := c.getSignatureOfFullSignatureType(sig.declaration); jsdocSignature != nil {
 						jsdocTypePredicate = c.getTypePredicateOfSignature(jsdocSignature)
 					}
 				}

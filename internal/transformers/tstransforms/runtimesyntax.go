@@ -724,7 +724,7 @@ func (tx *RuntimeSyntaxTransformer) visitFunctionDeclaration(node *ast.FunctionD
 			nil, /*typeParameters*/
 			tx.Visitor().VisitNodes(node.Parameters),
 			nil, /*returnType*/
-			nil, /*wholeType*/
+			nil, /*fullSignature*/
 			tx.Visitor().VisitNode(node.Body),
 		)
 		export := tx.createExportStatementForDeclaration(node.AsNode())
@@ -830,7 +830,7 @@ func (tx *RuntimeSyntaxTransformer) visitConstructorDeclaration(node *ast.Constr
 	modifiers := tx.Visitor().VisitModifiers(node.Modifiers())
 	parameters := tx.EmitContext().VisitParameters(node.ParameterList(), tx.Visitor())
 	body := tx.visitConstructorBody(node.Body.AsBlock(), node.AsNode())
-	return tx.Factory().UpdateConstructorDeclaration(node, modifiers, nil /*typeParameters*/, parameters, nil /*returnType*/, nil /*wholeType*/, body)
+	return tx.Factory().UpdateConstructorDeclaration(node, modifiers, nil /*typeParameters*/, parameters, nil /*returnType*/, nil /*fullSignature*/, body)
 }
 
 func (tx *RuntimeSyntaxTransformer) visitConstructorBody(body *ast.Block, constructor *ast.Node) *ast.Node {

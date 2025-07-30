@@ -337,7 +337,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 		if fun, ok := getFunctionLikeHost(parent); ok {
 			noTypedParams := core.Every(fun.Parameters(), func(param *ast.Node) bool { return param.Type() == nil })
 			if fun.Type() == nil && noTypedParams && tag.AsJSDocTypeTag().TypeExpression != nil {
-				fun.FunctionLikeData().WholeType = p.factory.DeepCloneReparse(tag.AsJSDocTypeTag().TypeExpression.Type())
+				fun.FunctionLikeData().FullSignature = p.factory.DeepCloneReparse(tag.AsJSDocTypeTag().TypeExpression.Type())
 				p.finishMutatedNode(fun)
 			}
 		}
