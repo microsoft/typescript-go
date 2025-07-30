@@ -318,7 +318,7 @@ func (b *projectCollectionBuilder) DidUpdateATAState(ataChanges map[tspath.Path]
 	}
 
 	for projectPath, ataChange := range ataChanges {
-		ataChange.Logs.WriteLogs(logger.Fork("Typings Installer Logs for " + string(projectPath)))
+		ataChange.Logs.Embed(logger)
 		if projectPath == inferredProjectName {
 			updateProject(b.inferredProject, ataChange)
 		} else if project, ok := b.configuredProjects.Load(projectPath); ok {

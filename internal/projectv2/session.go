@@ -262,7 +262,7 @@ func (s *Session) UpdateSnapshot(ctx context.Context, change SnapshotChange) *Sn
 	// Enqueue logging, watch updates, and diagnostic refresh tasks
 	s.backgroundTasks.Enqueue(func() {
 		if s.options.LoggingEnabled {
-			newSnapshot.builderLogs.WriteLogs(s.logger)
+			s.logger.Log(newSnapshot.builderLogs.String())
 			s.logProjectChanges(oldSnapshot, newSnapshot)
 			s.logger.Log("")
 		}
@@ -421,13 +421,10 @@ func (s *Session) logProjectChanges(oldSnapshot *Snapshot, newSnapshot *Snapshot
 	oldInferred := oldSnapshot.ProjectCollection.inferredProject
 	newInferred := newSnapshot.ProjectCollection.inferredProject
 
-	if oldInferred == nil && newInferred != nil {
-		// New inferred project created
-		logProject(newInferred)
-	} else if oldInferred != nil && newInferred == nil {
+	if oldInferred != nil && newInferred == nil {
 		// Inferred project removed
 		s.logger.Log(fmt.Sprintf("\nProject '%s' removed\n%s", oldInferred.Name(), hr))
-	} else if oldInferred != nil && newInferred != nil && newInferred.ProgramUpdateKind != ProgramUpdateKindNone {
+	} else if newInferred != nil && newInferred.ProgramUpdateKind == ProgramUpdateKindNewFiles {
 		// Inferred project updated
 		logProject(newInferred)
 	}
@@ -461,8 +458,7 @@ func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {
 
 				if typingsFiles, err := s.typingsInstaller.InstallTypings(request); err != nil && logger != nil {
 					s.logger.Log(fmt.Sprintf("ATA installation failed for project %s: %v", project.Name(), err))
-					logger.Close()
-					logger.WriteLogs(s.logger)
+					s.logger.Log(logger.String())
 				} else {
 					s.pendingATAChangesMu.Lock()
 					defer s.pendingATAChangesMu.Unlock()

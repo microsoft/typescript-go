@@ -3,6 +3,7 @@ package projectv2
 import (
 	"context"
 	"fmt"
+	"strings"
 	"sync/atomic"
 	"time"
 )
@@ -58,8 +59,8 @@ type log struct {
 	child   *logCollector
 }
 
-func newLog(child *logCollector, message string) log {
-	return log{
+func newLog(child *logCollector, message string) *log {
+	return &log{
 		seq:     seq.Add(1),
 		time:    time.Now(),
 		message: message,
@@ -69,18 +70,35 @@ func newLog(child *logCollector, message string) log {
 
 type logCollector struct {
 	name       string
-	logs       []log
+	logs       []*log
 	dispatcher *dispatcher
-	close      func()
+	root       *logCollector
+	level      int
+
+	// Only set on root
+	count        atomic.Int32
+	stringLength atomic.Int32
+	close        func()
 }
 
 func NewLogCollector(name string) *logCollector {
 	dispatcher, close := newDispatcher()
-	return &logCollector{
+	lc := &logCollector{
 		name:       name,
 		dispatcher: dispatcher,
 		close:      close,
 	}
+	lc.root = lc
+	return lc
+}
+
+func (c *logCollector) add(log *log) {
+	// indent + header + message + newline
+	c.root.stringLength.Add(int32(c.level + 15 + len(log.message) + 1))
+	c.root.count.Add(1)
+	c.dispatcher.Dispatch(func() {
+		c.logs = append(c.logs, log)
+	})
 }
 
 func (c *logCollector) Log(message ...any) {
@@ -88,9 +106,7 @@ func (c *logCollector) Log(message ...any) {
 		return
 	}
 	log := newLog(nil, fmt.Sprint(message...))
-	c.dispatcher.Dispatch(func() {
-		c.logs = append(c.logs, log)
-	})
+	c.add(log)
 }
 
 func (c *logCollector) Logf(format string, args ...any) {
@@ -98,20 +114,25 @@ func (c *logCollector) Logf(format string, args ...any) {
 		return
 	}
 	log := newLog(nil, fmt.Sprintf(format, args...))
-	c.dispatcher.Dispatch(func() {
-		c.logs = append(c.logs, log)
-	})
+	c.add(log)
+}
+
+func (c *logCollector) Embed(logs *logCollector) {
+	logs.Close()
+	count := logs.count.Load()
+	c.root.stringLength.Add(logs.stringLength.Load() + count*int32(c.level))
+	c.root.count.Add(count)
+	log := newLog(logs, logs.name)
+	c.add(log)
 }
 
 func (c *logCollector) Fork(message string) *logCollector {
 	if c == nil {
 		return nil
 	}
-	child := &logCollector{dispatcher: c.dispatcher}
+	child := &logCollector{dispatcher: c.dispatcher, level: c.level + 1, root: c.root}
 	log := newLog(child, message)
-	c.dispatcher.Dispatch(func() {
-		c.logs = append(c.logs, log)
-	})
+	c.add(log)
 	return child
 }
 
@@ -126,18 +147,29 @@ type Logger interface {
 	Log(msg ...any)
 }
 
-func (c *logCollector) WriteLogs(logger Logger) {
-	logger.Log(fmt.Sprintf("======== %s ========", c.name))
-	c.writeLogsRecursive(logger, "")
+func (c *logCollector) String() string {
+	if c.root != c {
+		panic("can only call String on root logCollector")
+	}
+	c.Close()
+	var builder strings.Builder
+	header := fmt.Sprintf("======== %s ========\n", c.name)
+	builder.Grow(int(c.stringLength.Load()) + len(header))
+	builder.WriteString(header)
+	c.writeLogsRecursive(&builder, "")
+	return builder.String()
 }
 
-func (c *logCollector) writeLogsRecursive(logger Logger, indent string) {
+func (c *logCollector) writeLogsRecursive(builder *strings.Builder, indent string) {
 	for _, log := range c.logs {
-		if log.child == nil || len(log.child.logs) > 0 {
-			logger.Log(indent, "[", log.time.Format("15:04:05.000"), "] ", log.message)
-			if log.child != nil {
-				log.child.writeLogsRecursive(logger, indent+"\t")
-			}
+		builder.WriteString(indent)
+		builder.WriteString("[")
+		builder.WriteString(log.time.Format("15:04:05.000"))
+		builder.WriteString("] ")
+		builder.WriteString(log.message)
+		builder.WriteString("\n")
+		if log.child != nil {
+			log.child.writeLogsRecursive(builder, indent+"\t")
 		}
 	}
 }
