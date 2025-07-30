@@ -102,19 +102,7 @@ func (c *configFileSpecs) matchesExclude(fileName string, comparePathsOptions ts
 }
 
 func (c *configFileSpecs) matchesInclude(fileName string, comparePathsOptions tspath.ComparePathsOptions) bool {
-	if len(c.validatedIncludeSpecs) == 0 {
-		return false
-	}
-	for _, spec := range c.validatedIncludeSpecs {
-		includePattern := vfsmatch.GetPatternFromSpec(spec, comparePathsOptions.CurrentDirectory, "files")
-		if includePattern != "" {
-			includeRegex := vfsmatch.GetRegexFromPattern(includePattern, comparePathsOptions.UseCaseSensitiveFileNames)
-			if match, err := includeRegex.MatchString(fileName); err == nil && match {
-				return true
-			}
-		}
-	}
-	return false
+	return vfsmatch.MatchesInclude(fileName, c.validatedIncludeSpecs, comparePathsOptions.CurrentDirectory, comparePathsOptions.UseCaseSensitiveFileNames)
 }
 
 type FileExtensionInfo struct {

@@ -139,7 +139,7 @@ var wildcardMatchers = map[usage]wildcardMatcher{
 	usageExclude:     excludeMatcher,
 }
 
-func GetPatternFromSpec(
+func getPatternFromSpec(
 	spec string,
 	basePath string,
 	usage usage,
@@ -324,7 +324,7 @@ var (
 	regexp2Cache   = make(map[regexp2CacheKey]*regexp2.Regexp)
 )
 
-func GetRegexFromPattern(pattern string, useCaseSensitiveFileNames bool) *regexp2.Regexp {
+func getRegexFromPattern(pattern string, useCaseSensitiveFileNames bool) *regexp2.Regexp {
 	flags := regexp2.ECMAScript
 	if !useCaseSensitiveFileNames {
 		flags |= regexp2.IgnoreCase
@@ -431,15 +431,15 @@ func matchFilesOld(path string, extensions []string, excludes []string, includes
 	patterns := getFileMatcherPatterns(path, excludes, includes, useCaseSensitiveFileNames, currentDirectory)
 	var includeFileRegexes []*regexp2.Regexp
 	if patterns.includeFilePatterns != nil {
-		includeFileRegexes = core.Map(patterns.includeFilePatterns, func(pattern string) *regexp2.Regexp { return GetRegexFromPattern(pattern, useCaseSensitiveFileNames) })
+		includeFileRegexes = core.Map(patterns.includeFilePatterns, func(pattern string) *regexp2.Regexp { return getRegexFromPattern(pattern, useCaseSensitiveFileNames) })
 	}
 	var includeDirectoryRegex *regexp2.Regexp
 	if patterns.includeDirectoryPattern != "" {
-		includeDirectoryRegex = GetRegexFromPattern(patterns.includeDirectoryPattern, useCaseSensitiveFileNames)
+		includeDirectoryRegex = getRegexFromPattern(patterns.includeDirectoryPattern, useCaseSensitiveFileNames)
 	}
 	var excludeRegex *regexp2.Regexp
 	if patterns.excludePattern != "" {
-		excludeRegex = GetRegexFromPattern(patterns.excludePattern, useCaseSensitiveFileNames)
+		excludeRegex = getRegexFromPattern(patterns.excludePattern, useCaseSensitiveFileNames)
 	}
 
 	// Associate an array of results with each include regex. This keeps results in order of the "include" order.
