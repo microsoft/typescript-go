@@ -134,14 +134,15 @@ func newGlobMatcher(pattern string, basePath string, useCaseSensitiveFileNames b
 	}
 }
 
-// NewGlobMatcher creates a new glob matcher for the given pattern
-func NewGlobMatcher(pattern string, basePath string, useCaseSensitiveFileNames bool) globMatcher {
+// newGlobMatcherOld creates a new glob matcher for the given pattern (for backwards compatibility)
+func newGlobMatcherOld(pattern string, basePath string, useCaseSensitiveFileNames bool) globMatcher {
+	// Create a temporary path cache for old implementation
 	tempCache := newPathCache()
 	return newGlobMatcher(pattern, basePath, useCaseSensitiveFileNames, tempCache)
 }
 
-// MatchesFile returns true if the given absolute file path matches the glob pattern
-func (gm globMatcher) MatchesFile(absolutePath string) bool {
+// matchesFile returns true if the given absolute file path matches the glob pattern
+func (gm globMatcher) matchesFile(absolutePath string) bool {
 	return gm.matchesPath(absolutePath, false)
 }
 
@@ -280,8 +281,8 @@ func (gm globMatcher) matchGlobPattern(pattern, text string, isFileMatch bool) b
 			pi++
 			ti++
 		} else if pi < len(pattern) && pattern[pi] == '*' {
-			// For file matching, a bare '*' should not match .min.js files
-			if isFileMatch && pattern == "*" && strings.HasSuffix(text, ".min.js") {
+			// For file matching, * should not match .min.js files
+			if isFileMatch && strings.HasSuffix(text, ".min.js") {
 				return false
 			}
 			starIdx = pi
@@ -368,7 +369,7 @@ func (v *newGlobVisitor) visitDirectory(path string, absolutePath string, depth 
 		}
 		excluded := false
 		for _, excludeMatcher := range v.excludeMatchers {
-			if excludeMatcher.MatchesFile(absoluteName) {
+			if excludeMatcher.matchesFile(absoluteName) {
 				excluded = true
 				break
 			}
@@ -380,7 +381,7 @@ func (v *newGlobVisitor) visitDirectory(path string, absolutePath string, depth 
 			localResults[0] = append(localResults[0], name)
 		} else {
 			for i, includeMatcher := range v.includeMatchers {
-				if includeMatcher.MatchesFile(absoluteName) {
+				if includeMatcher.matchesFile(absoluteName) {
 					localResults[i] = append(localResults[i], name)
 					break
 				}
