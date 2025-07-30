@@ -752,23 +752,23 @@ func setupLargeTestFS(useCaseSensitiveFileNames bool) vfs.FS {
 	files["/node_modules/typescript/package.json"] = "{ \"name\": \"typescript\", \"version\": \"5.0.0\" }"
 
 	// Add 1000 TypeScript files in src/components
-	for i := 0; i < 1000; i++ {
+	for i := range 1000 {
 		files[fmt.Sprintf("/src/components/component%d.ts", i)] = fmt.Sprintf("export const Component%d = () => null;", i)
 	}
 
 	// Add 500 TypeScript files in src/utils with nested structure
-	for i := 0; i < 500; i++ {
+	for i := range 500 {
 		folder := i % 10 // Create 10 different folders
 		files[fmt.Sprintf("/src/utils/folder%d/util%d.ts", folder, i)] = fmt.Sprintf("export function util%d() { return %d; }", i, i)
 	}
 
 	// Add 500 test files
-	for i := 0; i < 500; i++ {
+	for i := range 500 {
 		files[fmt.Sprintf("/tests/unit/test%d.spec.ts", i)] = fmt.Sprintf("describe('test%d', () => { it('works', () => {}) });", i)
 	}
 
 	// Add 200 files in node_modules with various extensions
-	for i := 0; i < 200; i++ {
+	for i := range 200 {
 		pkg := i % 20 // Create 20 different packages
 		files[fmt.Sprintf("/node_modules/pkg%d/file%d.js", pkg, i)] = fmt.Sprintf("module.exports = { value: %d };", i)
 
@@ -779,12 +779,12 @@ func setupLargeTestFS(useCaseSensitiveFileNames bool) vfs.FS {
 	}
 
 	// Add 100 files in dist directory (build output)
-	for i := 0; i < 100; i++ {
+	for i := range 100 {
 		files[fmt.Sprintf("/dist/file%d.js", i)] = fmt.Sprintf("console.log(%d);", i)
 	}
 
 	// Add some hidden files
-	for i := 0; i < 50; i++ {
+	for i := range 50 {
 		files[fmt.Sprintf("/.hidden/file%d.ts", i)] = fmt.Sprintf("// Hidden file %d", i)
 	}
 

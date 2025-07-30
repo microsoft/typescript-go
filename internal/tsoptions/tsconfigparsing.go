@@ -105,12 +105,9 @@ func (c *configFileSpecs) matchesInclude(fileName string, comparePathsOptions ts
 		return false
 	}
 	for _, spec := range c.validatedIncludeSpecs {
-		includePattern := vfs.GetPatternFromSpec(spec, comparePathsOptions.CurrentDirectory, "files")
-		if includePattern != "" {
-			includeRegex := vfs.GetRegexFromPattern(includePattern, comparePathsOptions.UseCaseSensitiveFileNames)
-			if match, err := includeRegex.MatchString(fileName); err == nil && match {
-				return true
-			}
+		matcher := vfs.NewGlobMatcher(spec, comparePathsOptions.CurrentDirectory, comparePathsOptions.UseCaseSensitiveFileNames)
+		if matcher.MatchesFile(fileName) {
+			return true
 		}
 	}
 	return false

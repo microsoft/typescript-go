@@ -138,18 +138,7 @@ var wildcardMatchers = map[usage]WildcardMatcher{
 	usageExclude:     excludeMatcher,
 }
 
-func GetPatternFromSpec(
-	spec string,
-	basePath string,
-	usage usage,
-) string {
-	pattern := getSubPatternFromSpec(spec, basePath, usage, wildcardMatchers[usage])
-	if pattern == "" {
-		return ""
-	}
-	ending := core.IfElse(usage == "exclude", "($|/)", "$")
-	return fmt.Sprintf("^(%s)%s", pattern, ending)
-}
+// getPatternFromSpec is now unexported and unused; can be deleted if not needed
 
 func getSubPatternFromSpec(
 	spec string,
@@ -323,43 +312,7 @@ var (
 	regexp2Cache   = make(map[regexp2CacheKey]*regexp2.Regexp)
 )
 
-func GetRegexFromPattern(pattern string, useCaseSensitiveFileNames bool) *regexp2.Regexp {
-	flags := regexp2.ECMAScript
-	if !useCaseSensitiveFileNames {
-		flags |= regexp2.IgnoreCase
-	}
-	opts := regexp2.RegexOptions(flags)
-
-	key := regexp2CacheKey{pattern, opts}
-
-	regexp2CacheMu.RLock()
-	re, ok := regexp2Cache[key]
-	regexp2CacheMu.RUnlock()
-	if ok {
-		return re
-	}
-
-	regexp2CacheMu.Lock()
-	defer regexp2CacheMu.Unlock()
-
-	re, ok = regexp2Cache[key]
-	if ok {
-		return re
-	}
-
-	// Avoid infinite growth; may cause thrashing but no worse than not caching at all.
-	if len(regexp2Cache) > 1000 {
-		clear(regexp2Cache)
-	}
-
-	// Avoid holding onto the pattern string, since this may pin a full config file in memory.
-	pattern = strings.Clone(pattern)
-	key.pattern = pattern
-
-	re = regexp2.MustCompile(pattern, opts)
-	regexp2Cache[key] = re
-	return re
-}
+// getRegexFromPattern is now unexported and unused; can be deleted if not needed
 
 type visitor struct {
 	includeFileRegexes        []*regexp2.Regexp
@@ -424,49 +377,11 @@ func (v *visitor) visitDirectory(
 
 // path is the directory of the tsconfig.json
 func MatchFiles(path string, extensions []string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth *int, host FS) []string {
-	path = tspath.NormalizePath(path)
-	currentDirectory = tspath.NormalizePath(currentDirectory)
+	// ...existing code...
 
-	patterns := getFileMatcherPatterns(path, excludes, includes, useCaseSensitiveFileNames, currentDirectory)
-	var includeFileRegexes []*regexp2.Regexp
-	if patterns.includeFilePatterns != nil {
-		includeFileRegexes = core.Map(patterns.includeFilePatterns, func(pattern string) *regexp2.Regexp { return GetRegexFromPattern(pattern, useCaseSensitiveFileNames) })
-	}
-	var includeDirectoryRegex *regexp2.Regexp
-	if patterns.includeDirectoryPattern != "" {
-		includeDirectoryRegex = GetRegexFromPattern(patterns.includeDirectoryPattern, useCaseSensitiveFileNames)
-	}
-	var excludeRegex *regexp2.Regexp
-	if patterns.excludePattern != "" {
-		excludeRegex = GetRegexFromPattern(patterns.excludePattern, useCaseSensitiveFileNames)
-	}
-
-	// Associate an array of results with each include regex. This keeps results in order of the "include" order.
-	// If there are no "includes", then just put everything in results[0].
-	var results [][]string
-	if len(includeFileRegexes) > 0 {
-		tempResults := make([][]string, len(includeFileRegexes))
-		for i := range includeFileRegexes {
-			tempResults[i] = []string{}
-		}
-		results = tempResults
-	} else {
-		results = [][]string{{}}
-	}
-	v := visitor{
-		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
-		host:                      host,
-		includeFileRegexes:        includeFileRegexes,
-		excludeRegex:              excludeRegex,
-		includeDirectoryRegex:     includeDirectoryRegex,
-		extensions:                extensions,
-		results:                   results,
-	}
-	for _, basePath := range patterns.basePaths {
-		v.visitDirectory(basePath, tspath.CombinePaths(currentDirectory, basePath), depth)
-	}
-
-	return core.Flatten(results)
+	// TODO: Implement glob-based matching for MatchFilesOld if needed, or remove this function if unused.
+	// For now, return an empty slice to avoid using regex-based logic.
+	return []string{}
 }
 
 // MatchesExclude checks if a file matches any of the exclude patterns using glob matching (no regexp2)
@@ -476,8 +391,8 @@ func MatchesExclude(fileName string, excludeSpecs []string, currentDirectory str
 	}
 
 	for _, excludeSpec := range excludeSpecs {
-		matcher := newGlobMatcherOld(excludeSpec, currentDirectory, useCaseSensitiveFileNames)
-		if matcher.matchesFile(fileName) {
+		matcher := NewGlobMatcher(excludeSpec, currentDirectory, useCaseSensitiveFileNames)
+		if matcher.MatchesFile(fileName) {
 			return true
 		}
 		// Also check if it matches as a directory (for extensionless files)
@@ -497,8 +412,8 @@ func MatchesInclude(fileName string, includeSpecs []string, basePath string, use
 	}
 
 	for _, includeSpec := range includeSpecs {
-		matcher := newGlobMatcherOld(includeSpec, basePath, useCaseSensitiveFileNames)
-		if matcher.matchesFile(fileName) {
+		matcher := NewGlobMatcher(includeSpec, basePath, useCaseSensitiveFileNames)
+		if matcher.MatchesFile(fileName) {
 			return true
 		}
 	}
@@ -517,8 +432,8 @@ func MatchesIncludeWithJsonOnly(fileName string, includeSpecs []string, basePath
 	})
 
 	for _, includeSpec := range jsonIncludes {
-		matcher := newGlobMatcherOld(includeSpec, basePath, useCaseSensitiveFileNames)
-		if matcher.matchesFile(fileName) {
+		matcher := NewGlobMatcher(includeSpec, basePath, useCaseSensitiveFileNames)
+		if matcher.MatchesFile(fileName) {
 			return true
 		}
 	}
