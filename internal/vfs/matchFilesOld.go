@@ -32,7 +32,7 @@ const (
 	usageExclude     usage = "exclude"
 )
 
-func GetRegularExpressionsForWildcards(specs []string, basePath string, usage usage) []string {
+func getRegularExpressionsForWildcards(specs []string, basePath string, usage usage) []string {
 	if len(specs) == 0 {
 		return nil
 	}
@@ -41,8 +41,8 @@ func GetRegularExpressionsForWildcards(specs []string, basePath string, usage us
 	})
 }
 
-func GetRegularExpressionForWildcard(specs []string, basePath string, usage usage) string {
-	patterns := GetRegularExpressionsForWildcards(specs, basePath, usage)
+func getRegularExpressionForWildcard(specs []string, basePath string, usage usage) string {
+	patterns := getRegularExpressionsForWildcards(specs, basePath, usage)
 	if len(patterns) == 0 {
 		return ""
 	}
@@ -227,6 +227,22 @@ func getSubPatternFromSpec(
 	return subpattern.String()
 }
 
+// GetExcludePattern creates a regular expression pattern for exclude specs
+func GetExcludePattern(excludeSpecs []string, currentDirectory string) string {
+	return getRegularExpressionForWildcard(excludeSpecs, currentDirectory, "exclude")
+}
+
+// GetFileIncludePatterns creates regular expression patterns for file include specs
+func GetFileIncludePatterns(includeSpecs []string, basePath string) []string {
+	patterns := getRegularExpressionsForWildcards(includeSpecs, basePath, "files")
+	if patterns == nil {
+		return nil
+	}
+	return core.Map(patterns, func(pattern string) string {
+		return fmt.Sprintf("^%s$", pattern)
+	})
+}
+
 func getIncludeBasePath(absolute string) string {
 	wildcardOffset := strings.IndexAny(absolute, string(wildcardCharCodes))
 	if wildcardOffset < 0 {
@@ -289,10 +305,10 @@ func getFileMatcherPatterns(path string, excludes []string, includes []string, u
 	absolutePath := tspath.CombinePaths(currentDirectory, path)
 
 	return fileMatcherPatterns{
-		includeFilePatterns:     core.Map(GetRegularExpressionsForWildcards(includes, absolutePath, "files"), func(pattern string) string { return "^" + pattern + "$" }),
-		includeFilePattern:      GetRegularExpressionForWildcard(includes, absolutePath, "files"),
-		includeDirectoryPattern: GetRegularExpressionForWildcard(includes, absolutePath, "directories"),
-		excludePattern:          GetRegularExpressionForWildcard(excludes, absolutePath, "exclude"),
+		includeFilePatterns:     core.Map(getRegularExpressionsForWildcards(includes, absolutePath, "files"), func(pattern string) string { return "^" + pattern + "$" }),
+		includeFilePattern:      getRegularExpressionForWildcard(includes, absolutePath, "files"),
+		includeDirectoryPattern: getRegularExpressionForWildcard(includes, absolutePath, "directories"),
+		excludePattern:          getRegularExpressionForWildcard(excludes, absolutePath, "exclude"),
 		basePaths:               getBasePaths(path, includes, useCaseSensitiveFileNames),
 	}
 }
@@ -451,4 +467,60 @@ func matchFiles(path string, extensions []string, excludes []string, includes []
 	}
 
 	return core.Flatten(results)
+}
+
+// MatchesExclude checks if a file matches any of the exclude patterns using glob matching (no regexp2)
+func MatchesExclude(fileName string, excludeSpecs []string, currentDirectory string, useCaseSensitiveFileNames bool) bool {
+	if len(excludeSpecs) == 0 {
+		return false
+	}
+
+	for _, excludeSpec := range excludeSpecs {
+		matcher := newGlobMatcher(excludeSpec, currentDirectory, useCaseSensitiveFileNames)
+		if matcher.matchesFile(fileName) {
+			return true
+		}
+		// Also check if it matches as a directory (for extensionless files)
+		if !tspath.HasExtension(fileName) {
+			if matcher.matchesDirectory(tspath.EnsureTrailingDirectorySeparator(fileName)) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// MatchesInclude checks if a file matches any of the include patterns using glob matching (no regexp2)
+func MatchesInclude(fileName string, includeSpecs []string, basePath string, useCaseSensitiveFileNames bool) bool {
+	if len(includeSpecs) == 0 {
+		return false
+	}
+
+	for _, includeSpec := range includeSpecs {
+		matcher := newGlobMatcher(includeSpec, basePath, useCaseSensitiveFileNames)
+		if matcher.matchesFile(fileName) {
+			return true
+		}
+	}
+	return false
+}
+
+// MatchesIncludeWithJsonOnly checks if a file matches any of the JSON-only include patterns using glob matching (no regexp2)
+func MatchesIncludeWithJsonOnly(fileName string, includeSpecs []string, basePath string, useCaseSensitiveFileNames bool) bool {
+	if len(includeSpecs) == 0 {
+		return false
+	}
+
+	// Filter to only JSON include patterns
+	jsonIncludes := core.Filter(includeSpecs, func(include string) bool {
+		return strings.HasSuffix(include, tspath.ExtensionJson)
+	})
+
+	for _, includeSpec := range jsonIncludes {
+		matcher := newGlobMatcher(includeSpec, basePath, useCaseSensitiveFileNames)
+		if matcher.matchesFile(fileName) {
+			return true
+		}
+	}
+	return false
 }
