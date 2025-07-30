@@ -84,7 +84,7 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 			var nonIncrementalSys *testSys
 			commandLineArgs := core.IfElse(do.commandLineArgs == nil, test.commandLineArgs, do.commandLineArgs)
 			wg.Queue(func() {
-				baselineBuilder.WriteString(fmt.Sprintf("\n\nEdit [%d]:: %s\n", index, do.caption))
+				fmt.Fprintf(baselineBuilder, "\n\nEdit [%d]:: %s\n", index, do.caption)
 				if do.edit != nil {
 					do.edit(sys)
 				}
@@ -113,10 +113,10 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 
 			diff := getDiffForIncremental(sys, nonIncrementalSys)
 			if diff != "" {
-				baselineBuilder.WriteString(fmt.Sprintf("\n\nDiff:: %s\n", core.IfElse(do.expectedDiff == "", "!!! Unexpected diff, please review and either fix or write explanation as expectedDiff !!!", do.expectedDiff)))
+				fmt.Fprintf(baselineBuilder, "\n\nDiff:: %s\n", core.IfElse(do.expectedDiff == "", "!!! Unexpected diff, please review and either fix or write explanation as expectedDiff !!!", do.expectedDiff))
 				baselineBuilder.WriteString(diff)
 			} else if do.expectedDiff != "" {
-				baselineBuilder.WriteString(fmt.Sprintf("\n\nDiff:: %s !!! Diff not found but explanation present, please review and remove the explanation !!!\n", do.expectedDiff))
+				fmt.Fprintf(baselineBuilder, "\n\nDiff:: %s !!! Diff not found but explanation present, please review and remove the explanation !!!\n", do.expectedDiff)
 			}
 		}
 		baseline.Run(t, strings.ReplaceAll(test.subScenario, " ", "-")+".js", baselineBuilder.String(), baseline.Options{Subfolder: filepath.Join(test.getBaselineSubFolder(), scenario)})
