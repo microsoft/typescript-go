@@ -78,7 +78,7 @@ x++;`
 	// Also test definition using ProvideDefinition
 	uri := ls.FileNameToDocumentURI("/Untitled-2.ts")
 	lspPosition := lsproto.Position{Line: 2, Character: 0}
-	definition, err := service.ProvideDefinition(t.Context(), uri, lspPosition)
+	definition, err := service.ProvideDefinition(t.Context(), uri, lspPosition, nil)
 	assert.NilError(t, err)
 	if definition.Locations != nil {
 		t.Logf("Definition found: %d locations", len(*definition.Locations))

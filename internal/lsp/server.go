@@ -722,7 +722,7 @@ func (s *Server) handleDefinition(ctx context.Context, params *lsproto.Definitio
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
 	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
-	return languageService.ProvideDefinition(ctx, params.TextDocument.Uri, params.Position)
+	return languageService.ProvideDefinition(ctx, params.TextDocument.Uri, params.Position, getDefinitionClientCapabilities(s.initializeParams))
 }
 
 func (s *Server) handleTypeDefinition(ctx context.Context, params *lsproto.TypeDefinitionParams) (lsproto.TypeDefinitionResponse, error) {
@@ -877,4 +877,11 @@ func getCompletionClientCapabilities(params *lsproto.InitializeParams) *lsproto.
 		return nil
 	}
 	return params.Capabilities.TextDocument.Completion
+}
+
+func getDefinitionClientCapabilities(params *lsproto.InitializeParams) *lsproto.DefinitionClientCapabilities {
+	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil {
+		return nil
+	}
+	return params.Capabilities.TextDocument.Definition
 }
