@@ -4,7 +4,7 @@
 //  * start {@link https://vscode.dev/ | end}
 //  */
 // const a = () => 1;
-//       ^
+//      ^^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | const a: () => number
@@ -26,6 +26,16 @@
       "contents": {
         "kind": "markdown",
         "value": "```tsx\nconst a: () => number\n```\nstart https://vscode.dev/ | end"
+      },
+      "range": {
+        "start": {
+          "line": 3,
+          "character": 5
+        },
+        "end": {
+          "line": 3,
+          "character": 7
+        }
       }
     }
   }

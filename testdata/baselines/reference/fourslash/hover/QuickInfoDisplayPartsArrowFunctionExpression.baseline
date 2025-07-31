@@ -1,14 +1,14 @@
 // === QuickInfo ===
 === /quickInfoDisplayPartsArrowFunctionExpression.ts ===
 // var x = a => 10;
-//     ^
+//    ^^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | var x: (a: any) => number
 // | ```
 // | 
 // | ----------------------------------------------------------------------
-//         ^
+//        ^^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | (parameter) a: any
@@ -16,7 +16,7 @@
 // | 
 // | ----------------------------------------------------------------------
 // var y = (a, b) => 10;
-//     ^
+//    ^^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | var y: (a: any, b: any) => number
@@ -30,7 +30,7 @@
 // | ```
 // | 
 // | ----------------------------------------------------------------------
-//             ^
+//            ^^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | (parameter) b: any
@@ -38,7 +38,7 @@
 // | 
 // | ----------------------------------------------------------------------
 // var z = (a: number) => 10;
-//     ^
+//    ^^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | var z: (a: number) => number
@@ -53,7 +53,7 @@
 // | 
 // | ----------------------------------------------------------------------
 // var z2 = () => 10;
-//     ^
+//    ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | var z2: () => number
@@ -75,6 +75,16 @@
       "contents": {
         "kind": "markdown",
         "value": "```tsx\nvar x: (a: any) => number\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 3
+        },
+        "end": {
+          "line": 0,
+          "character": 5
+        }
       }
     }
   },
@@ -92,6 +102,16 @@
       "contents": {
         "kind": "markdown",
         "value": "```tsx\n(parameter) a: any\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 0,
+          "character": 7
+        },
+        "end": {
+          "line": 0,
+          "character": 9
+        }
       }
     }
   },
@@ -109,6 +129,16 @@
       "contents": {
         "kind": "markdown",
         "value": "```tsx\nvar y: (a: any, b: any) => number\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 1,
+          "character": 3
+        },
+        "end": {
+          "line": 1,
+          "character": 5
+        }
       }
     }
   },
@@ -126,6 +156,16 @@
       "contents": {
         "kind": "markdown",
         "value": "```tsx\n(parameter) a: any\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 1,
+          "character": 9
+        },
+        "end": {
+          "line": 1,
+          "character": 10
+        }
       }
     }
   },
@@ -143,6 +183,16 @@
       "contents": {
         "kind": "markdown",
         "value": "```tsx\n(parameter) b: any\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 1,
+          "character": 11
+        },
+        "end": {
+          "line": 1,
+          "character": 13
+        }
       }
     }
   },
@@ -160,6 +210,16 @@
       "contents": {
         "kind": "markdown",
         "value": "```tsx\nvar z: (a: number) => number\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 2,
+          "character": 3
+        },
+        "end": {
+          "line": 2,
+          "character": 5
+        }
       }
     }
   },
@@ -177,6 +237,16 @@
       "contents": {
         "kind": "markdown",
         "value": "```tsx\n(parameter) a: number\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 2,
+          "character": 9
+        },
+        "end": {
+          "line": 2,
+          "character": 10
+        }
       }
     }
   },
@@ -194,6 +264,16 @@
       "contents": {
         "kind": "markdown",
         "value": "```tsx\nvar z2: () => number\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 3,
+          "character": 3
+        },
+        "end": {
+          "line": 3,
+          "character": 6
+        }
       }
     }
   }

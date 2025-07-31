@@ -5,7 +5,7 @@
 //  * See {@link A | constant A} instead
 //  */
 // const B = 456;
-//       ^
+//      ^^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | const B: 456
@@ -27,6 +27,16 @@
       "contents": {
         "kind": "markdown",
         "value": "```tsx\nconst B: 456\n```\nSee A| constant A instead"
+      },
+      "range": {
+        "start": {
+          "line": 4,
+          "character": 5
+        },
+        "end": {
+          "line": 4,
+          "character": 7
+        }
       }
     }
   }
