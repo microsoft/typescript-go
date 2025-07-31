@@ -12,6 +12,8 @@ func IsImplicitGlob(lastPathComponent string) bool {
 	return !strings.ContainsAny(lastPathComponent, ".*?")
 }
 
+var commonPackageFolders = []string{"node_modules", "bower_components", "jspm_packages"}
+
 func ReadDirectory(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
 	return readDirectoryNew(host, currentDir, path, extensions, excludes, includes, depth)
 }

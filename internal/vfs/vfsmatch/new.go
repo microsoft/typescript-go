@@ -1,6 +1,7 @@
 package vfsmatch
 
 import (
+	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -18,13 +19,8 @@ func isImplicitlyExcluded(name string, isDirectory bool) bool {
 	}
 
 	// For directories, exclude common package folders
-	if isDirectory {
-		commonPackageFolders := []string{"node_modules", "bower_components", "jspm_packages"}
-		for _, pkg := range commonPackageFolders {
-			if name == pkg {
-				return true
-			}
-		}
+	if isDirectory && slices.Contains(commonPackageFolders, name) {
+		return true
 	}
 
 	return false

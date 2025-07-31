@@ -84,10 +84,7 @@ var (
 	wildcardCharCodes                       = []rune{'*', '?'}
 )
 
-var (
-	commonPackageFolders            = []string{"node_modules", "bower_components", "jspm_packages"}
-	implicitExcludePathRegexPattern = "(?!(" + strings.Join(commonPackageFolders, "|") + ")(/|$))"
-)
+var implicitExcludePathRegexPattern = "(?!(" + strings.Join(commonPackageFolders, "|") + ")(/|$))"
 
 type wildcardMatcher struct {
 	singleAsteriskRegexFragment string
