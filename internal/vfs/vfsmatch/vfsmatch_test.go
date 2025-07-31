@@ -412,6 +412,118 @@ func TestMatchFiles(t *testing.T) {
 			currentDirectory:          "/",
 			expected:                  []string{"/project/src/index.ts", "/project/src/util.ts", "/project/src/sub/file.ts"},
 		},
+		{
+			name: "no includes match - empty base paths",
+			files: map[string]string{
+				"/project/src/index.ts": "export {}",
+				"/project/src/util.ts":  "export {}",
+			},
+			path:                      "/project",
+			extensions:                []string{".ts"},
+			excludes:                  []string{},
+			includes:                  []string{"nonexistent/**/*"},
+			useCaseSensitiveFileNames: true,
+			currentDirectory:          "/",
+			expected:                  nil, // No base paths found
+		},
+		{
+			name: "minified file exclusion pattern",
+			files: map[string]string{
+				"/project/src/app.js":     "console.log('app')",
+				"/project/src/app.min.js": "console.log('minified')",
+				"/project/src/util.js":    "console.log('util')",
+			},
+			path:                      "/project",
+			extensions:                []string{".js"},
+			excludes:                  []string{},
+			includes:                  []string{"**/*.js"}, // Should match .min.js files too when pattern is explicit
+			useCaseSensitiveFileNames: true,
+			currentDirectory:          "/",
+			expected:                  []string{"/project/src/app.js", "/project/src/util.js"},
+		},
+		{
+			name: "empty path in file building",
+			files: map[string]string{
+				"/index.ts": "export {}",
+				"/util.ts":  "export {}",
+			},
+			path:                      "",
+			extensions:                []string{".ts"},
+			excludes:                  []string{},
+			includes:                  []string{"**/*"},
+			useCaseSensitiveFileNames: true,
+			currentDirectory:          "/",
+			expected:                  []string{"index.ts", "util.ts"},
+		},
+		{
+			name: "empty absolute path in file building",
+			files: map[string]string{
+				"/index.ts": "export {}",
+				"/util.ts":  "export {}",
+			},
+			path:                      "",
+			extensions:                []string{".ts"},
+			excludes:                  []string{},
+			includes:                  []string{"**/*"},
+			useCaseSensitiveFileNames: true,
+			currentDirectory:          "/",
+			expected:                  []string{"index.ts", "util.ts"},
+		},
+		{
+			name: "visited directory prevention",
+			files: map[string]string{
+				"/project/src/index.ts": "export {}",
+			},
+			path:                      "/project",
+			extensions:                []string{".ts"},
+			excludes:                  []string{},
+			includes:                  []string{"**/*"},
+			useCaseSensitiveFileNames: true,
+			currentDirectory:          "/",
+			expected:                  []string{"/project/src/index.ts"},
+		},
+		{
+			name: "exclude pattern with absolute path fallback",
+			files: map[string]string{
+				"/different/path/src/index.ts": "export {}",
+				"/different/path/other.ts":     "export {}",
+			},
+			path:                      "/different/path",
+			extensions:                []string{".ts"},
+			excludes:                  []string{"/absolute/exclude/pattern"},
+			includes:                  []string{"**/*"},
+			useCaseSensitiveFileNames: true,
+			currentDirectory:          "/",
+			expected:                  []string{"/different/path/other.ts", "/different/path/src/index.ts"},
+		},
+		{
+			name: "empty include pattern",
+			files: map[string]string{
+				"/project/index.ts": "export {}",
+				"/project/util.ts":  "export {}",
+			},
+			path:                      "/project",
+			extensions:                []string{".ts"},
+			excludes:                  []string{},
+			includes:                  []string{""},
+			useCaseSensitiveFileNames: true,
+			currentDirectory:          "/",
+			expected:                  []string{"/project/index.ts", "/project/util.ts"}, // Empty pattern still matches in the old implementation
+		},
+		{
+			name: "relative path equals absolute path fallback",
+			files: map[string]string{
+				"/index.ts": "export {}",
+				"/util.ts":  "export {}",
+			},
+			path:                      "/",
+			extensions:                []string{".ts"},
+			excludes:                  []string{},
+			includes:                  []string{"**/*"},
+			useCaseSensitiveFileNames: true,
+			currentDirectory:          "/",
+			expected:                  []string{"/index.ts", "/util.ts"},
+		},
 	}
 
 	for _, tt := range tests {
@@ -668,6 +780,30 @@ func TestMatchesExclude(t *testing.T) {
 			useCaseSensitiveFileNames: true,
 			expectExcluded:            true,
 		},
+		{
+			name:                      "extensionless file with directory pattern",
+			fileName:                  "/project/LICENSE",
+			excludeSpecs:              []string{"LICENSE/**/*"},
+			currentDirectory:          "/project",
+			useCaseSensitiveFileNames: true,
+			expectExcluded:            true,
+		},
+		{
+			name:                      "empty exclude pattern",
+			fileName:                  "/project/src/index.ts",
+			excludeSpecs:              []string{""},
+			currentDirectory:          "/project",
+			useCaseSensitiveFileNames: true,
+			expectExcluded:            true,
+		},
+		{
+			name:                      "file name equals relative path",
+			fileName:                  "/index.ts",
+			excludeSpecs:              []string{"**/*"},
+			currentDirectory:          "/",
+			useCaseSensitiveFileNames: true,
+			expectExcluded:            true,
+		},
 	}
 
 	for _, tt := range tests {
@@ -920,6 +1056,30 @@ func TestMatchesInclude(t *testing.T) {
 			useCaseSensitiveFileNames: true,
 			expectIncluded:            true,
 		},
+		{
+			name:                      "empty include specs",
+			fileName:                  "/project/src/index.ts",
+			includeSpecs:              []string{},
+			basePath:                  "/project",
+			useCaseSensitiveFileNames: true,
+			expectIncluded:            false,
+		},
+		{
+			name:                      "empty file name",
+			fileName:                  "",
+			includeSpecs:              []string{"**/*"},
+			basePath:                  "/project",
+			useCaseSensitiveFileNames: true,
+			expectIncluded:            false,
+		},
+		{
+			name:                      "relative path equals file name",
+			fileName:                  "/index.ts",
+			includeSpecs:              []string{"**/*"},
+			basePath:                  "/",
+			useCaseSensitiveFileNames: true,
+			expectIncluded:            true,
+		},
 	}
 
 	for _, tt := range tests {
@@ -1153,6 +1313,22 @@ func TestMatchesIncludeWithJsonOnly(t *testing.T) {
 			fileName:                  "/project/types.d.ts",
 			includeSpecs:              []string{"*.json", "**/*.json"},
 			basePath:                  "/project",
+			useCaseSensitiveFileNames: true,
+			expectIncluded:            false,
+		},
+		{
+			name:                      "empty include specs array",
+			fileName:                  "/project/config.json",
+			includeSpecs:              []string{},
+			basePath:                  "/project",
+			useCaseSensitiveFileNames: true,
+			expectIncluded:            false,
+		},
+		{
+			name:                      "empty relative path",
+			fileName:                  "/",
+			includeSpecs:              []string{"*.json"},
+			basePath:                  "/",
 			useCaseSensitiveFileNames: true,
 			expectIncluded:            false,
 		},
