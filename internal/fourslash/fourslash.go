@@ -1,7 +1,6 @@
 package fourslash
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"maps"
@@ -16,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -228,7 +228,9 @@ func (f *FourslashTest) nextID() int32 {
 }
 
 func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCapabilities) {
-	params := &lsproto.InitializeParams{}
+	params := &lsproto.InitializeParams{
+		Locale: ptrTo("en-US"),
+	}
 	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
 	// !!! check for errors?
 	sendRequest(t, f, lsproto.InitializeInfo, params)
@@ -293,8 +295,7 @@ func sendNotification[Params any](t *testing.T, f *FourslashTest, info lsproto.N
 }
 
 func (f *FourslashTest) writeMsg(t *testing.T, msg *lsproto.Message) {
-	enc := json.NewEncoder(io.Discard)
-	assert.NilError(t, enc.Encode(msg), "failed to encode message as JSON")
+	assert.NilError(t, json.MarshalWrite(io.Discard, msg), "failed to encode message as JSON")
 	if err := f.in.Write(msg); err != nil {
 		t.Fatalf("failed to write message: %v", err)
 	}
@@ -306,8 +307,7 @@ func (f *FourslashTest) readMsg(t *testing.T) *lsproto.Message {
 	if err != nil {
 		t.Fatalf("failed to read message: %v", err)
 	}
-	enc := json.NewEncoder(io.Discard)
-	assert.NilError(t, enc.Encode(msg), "failed to encode message as JSON")
+	assert.NilError(t, json.MarshalWrite(io.Discard, msg), "failed to encode message as JSON")
 	return msg
 }
 
@@ -901,6 +901,99 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 	}
 
 	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
+}
+
+func (f *FourslashTest) VerifyBaselineHover(t *testing.T) {
+	if f.baseline != nil {
+		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
+	} else {
+		f.baseline = &baselineFromTest{
+			content:      &strings.Builder{},
+			baselineName: "hover/" + strings.TrimPrefix(t.Name(), "Test"),
+			ext:          ".baseline",
+		}
+	}
+
+	// empty baseline after test completes
+	defer func() {
+		f.baseline = nil
+	}()
+
+	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.Hover], bool) {
+		if marker.Name == nil {
+			return markerAndItem[*lsproto.Hover]{}, false
+		}
+
+		params := &lsproto.HoverParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: ls.FileNameToDocumentURI(f.activeFilename),
+			},
+			Position: marker.LSPosition,
+		}
+
+		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentHoverInfo, params)
+		var prefix string
+		if f.lastKnownMarkerName != nil {
+			prefix = fmt.Sprintf("At marker '%s': ", *f.lastKnownMarkerName)
+		} else {
+			prefix = fmt.Sprintf("At position (Ln %d, Col %d): ", f.currentCaretPosition.Line, f.currentCaretPosition.Character)
+		}
+		if resMsg == nil {
+			t.Fatalf(prefix+"Nil response received for quick info request", f.lastKnownMarkerName)
+		}
+		if !resultOk {
+			t.Fatalf(prefix+"Unexpected response type for quick info request: %T", resMsg.AsResponse().Result)
+		}
+
+		return markerAndItem[*lsproto.Hover]{Marker: marker, Item: result.Hover}, true
+	})
+
+	getRange := func(item *lsproto.Hover) *lsproto.Range {
+		if item == nil || item.Range == nil {
+			return nil
+		}
+		return item.Range
+	}
+
+	getTooltipLines := func(item, _prev *lsproto.Hover) []string {
+		var result []string
+
+		if item.Contents.MarkupContent != nil {
+			result = strings.Split(item.Contents.MarkupContent.Value, "\n")
+		}
+		if item.Contents.String != nil {
+			result = strings.Split(*item.Contents.String, "\n")
+		}
+		if item.Contents.MarkedStringWithLanguage != nil {
+			result = appendLinesForMarkedStringWithLanguage(result, item.Contents.MarkedStringWithLanguage)
+		}
+		if item.Contents.MarkedStrings != nil {
+			for _, ms := range *item.Contents.MarkedStrings {
+				if ms.MarkedStringWithLanguage != nil {
+					result = appendLinesForMarkedStringWithLanguage(result, ms.MarkedStringWithLanguage)
+				} else {
+					result = append(result, *ms.String)
+				}
+			}
+		}
+
+		return result
+	}
+
+	f.baseline.addResult("QuickInfo", annotateContentWithTooltips(t, f, markersAndItems, "quickinfo", getRange, getTooltipLines))
+	if jsonStr, err := core.StringifyJson(markersAndItems, "", "  "); err == nil {
+		f.baseline.content.WriteString(jsonStr)
+	} else {
+		t.Fatalf("Failed to stringify markers and items for baseline: %v", err)
+	}
+	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
+}
+
+func appendLinesForMarkedStringWithLanguage(result []string, ms *lsproto.MarkedStringWithLanguage) []string {
+	result = append(result, "```"+ms.Language)
+	result = append(result, ms.Value)
+	result = append(result, "```")
+	return result
 }
 
 // Collects all named markers if provided, or defaults to anonymous ranges
