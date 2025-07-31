@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
+	"github.com/microsoft/typescript-go/internal/projectv2/logging"
 	"github.com/microsoft/typescript-go/internal/semver"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -69,7 +70,7 @@ func NewTypingsInstaller(options *TypingsInstallerOptions, host TypingsInstaller
 	}
 }
 
-func (ti *TypingsInstaller) IsKnownTypesPackageName(projectID tspath.Path, name string, fs vfs.FS, logger Logger) bool {
+func (ti *TypingsInstaller) IsKnownTypesPackageName(projectID tspath.Path, name string, fs vfs.FS, logger logging.Logger) bool {
 	// We want to avoid looking this up in the registry as that is expensive. So first check that it's actually an NPM package.
 	validationResult, _, _ := ValidatePackageName(name)
 	if validationResult != NameOk {
@@ -93,7 +94,7 @@ type TypingsInstallRequest struct {
 	CurrentDirectory string
 	GetScriptKind    func(string) core.ScriptKind
 	FS               vfs.FS
-	Logger           Logger
+	Logger           logging.Logger
 }
 
 func (ti *TypingsInstaller) InstallTypings(request *TypingsInstallRequest) ([]string, error) {
@@ -143,7 +144,7 @@ func (ti *TypingsInstaller) installTypings(
 	requestID int32,
 	currentlyCachedTypings []string,
 	filteredTypings []string,
-	logger Logger,
+	logger logging.Logger,
 ) ([]string, error) {
 	// !!! sheetal events to send
 	// send progress event
@@ -239,7 +240,7 @@ func (ti *TypingsInstaller) installWorker(
 	projectID tspath.Path,
 	requestId int32,
 	packageNames []string,
-	logger Logger,
+	logger logging.Logger,
 ) ([]string, bool) {
 	logger.Log(fmt.Sprintf("ATA:: #%d with cwd: %s arguments: %v", requestId, ti.typingsLocation, packageNames))
 	ctx := context.Background()
@@ -299,7 +300,7 @@ func installNpmPackages(
 
 func (ti *TypingsInstaller) filterTypings(
 	projectID tspath.Path,
-	logger Logger,
+	logger logging.Logger,
 	typingsToInstall []string,
 ) []string {
 	var result []string
@@ -330,7 +331,7 @@ func (ti *TypingsInstaller) filterTypings(
 	return result
 }
 
-func (ti *TypingsInstaller) init(projectID string, fs vfs.FS, logger Logger) {
+func (ti *TypingsInstaller) init(projectID string, fs vfs.FS, logger logging.Logger) {
 	ti.initOnce.Do(func() {
 		logger.Log("ATA:: Global cache location '" + ti.typingsLocation + "'") //, safe file path '" + safeListPath + "', types map path '" + typesMapLocation + "`")
 		ti.processCacheLocation(projectID, fs, logger)
@@ -383,7 +384,7 @@ type npmLock struct {
 	Packages     map[string]npmDependecyEntry `json:"packages"`
 }
 
-func (ti *TypingsInstaller) processCacheLocation(projectID string, fs vfs.FS, logger Logger) {
+func (ti *TypingsInstaller) processCacheLocation(projectID string, fs vfs.FS, logger logging.Logger) {
 	logger.Log("ATA:: Processing cache location " + ti.typingsLocation)
 	packageJson := tspath.CombinePaths(ti.typingsLocation, "package.json")
 	packageLockJson := tspath.CombinePaths(ti.typingsLocation, "package-lock.json")
@@ -427,13 +428,13 @@ func (ti *TypingsInstaller) processCacheLocation(projectID string, fs vfs.FS, lo
 	logger.Log("ATA:: Finished processing cache location " + ti.typingsLocation)
 }
 
-func parseNpmConfigOrLock[T npmConfig | npmLock](fs vfs.FS, logger Logger, location string, config *T) string {
+func parseNpmConfigOrLock[T npmConfig | npmLock](fs vfs.FS, logger logging.Logger, location string, config *T) string {
 	contents, _ := fs.ReadFile(location)
 	_ = json.Unmarshal([]byte(contents), config)
 	return contents
 }
 
-func (ti *TypingsInstaller) ensureTypingsLocationExists(fs vfs.FS, logger Logger) {
+func (ti *TypingsInstaller) ensureTypingsLocationExists(fs vfs.FS, logger logging.Logger) {
 	npmConfigPath := tspath.CombinePaths(ti.typingsLocation, "package.json")
 	logger.Log("ATA:: Npm config file: " + npmConfigPath)
 
@@ -451,7 +452,7 @@ func (ti *TypingsInstaller) typingToFileName(resolver *module.Resolver, packageN
 	return result.ResolvedFileName
 }
 
-func (ti *TypingsInstaller) loadTypesRegistryFile(fs vfs.FS, logger Logger) map[string]map[string]string {
+func (ti *TypingsInstaller) loadTypesRegistryFile(fs vfs.FS, logger logging.Logger) map[string]map[string]string {
 	typesRegistryFile := tspath.CombinePaths(ti.typingsLocation, "node_modules/types-registry/index.json")
 	typesRegistryFileContents, ok := fs.ReadFile(typesRegistryFile)
 	if ok {

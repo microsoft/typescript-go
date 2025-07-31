@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/projectv2/ata"
+	"github.com/microsoft/typescript-go/internal/projectv2/logging"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -30,7 +31,7 @@ type Snapshot struct {
 	ProjectCollection                  *ProjectCollection
 	ConfigFileRegistry                 *ConfigFileRegistry
 	compilerOptionsForInferredProjects *core.CompilerOptions
-	builderLogs                        *logCollector
+	builderLogs                        *logging.LogTree
 }
 
 // NewSnapshot
@@ -91,14 +92,13 @@ type ATAStateChange struct {
 	TypingsInfo *ata.TypingsInfo
 	// TypingsFiles is the new list of typing files for the project.
 	TypingsFiles []string
-	Logs         *logCollector
+	Logs         *logging.LogTree
 }
 
 func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, session *Session) *Snapshot {
-	var logger *logCollector
+	var logger *logging.LogTree
 	if session.options.LoggingEnabled {
-		logger = NewLogCollector(fmt.Sprintf("Cloning snapshot %d", s.id))
-		defer logger.Close()
+		logger = logging.NewLogTree(fmt.Sprintf("Cloning snapshot %d", s.id))
 	}
 
 	start := time.Now()

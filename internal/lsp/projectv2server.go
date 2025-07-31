@@ -21,6 +21,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/projectv2"
+	"github.com/microsoft/typescript-go/internal/projectv2/logging"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"golang.org/x/sync/errgroup"
 )
@@ -33,6 +34,7 @@ func NewProjectV2Server(opts ServerOptions) *ProjectV2Server {
 		r:                     opts.In,
 		w:                     opts.Out,
 		stderr:                opts.Err,
+		logger:                logging.NewLogger(opts.Err),
 		requestQueue:          make(chan *lsproto.RequestMessage, 100),
 		outgoingQueue:         make(chan *lsproto.Message, 100),
 		logQueue:              make(chan string, 100),
@@ -52,6 +54,7 @@ type ProjectV2Server struct {
 
 	stderr io.Writer
 
+	logger                  logging.Logger
 	clientSeq               atomic.Int32
 	requestQueue            chan *lsproto.RequestMessage
 	outgoingQueue           chan *lsproto.Message
@@ -104,7 +107,7 @@ func (s *ProjectV2Server) GetCurrentDirectory() string {
 
 // Trace implements project.ServiceHost.
 func (s *ProjectV2Server) Trace(msg string) {
-	s.Log(msg)
+	s.logger.Log(msg)
 }
 
 // Client implements project.ServiceHost.
@@ -277,7 +280,7 @@ func (s *ProjectV2Server) dispatchLoop(ctx context.Context) error {
 				defer func() {
 					if r := recover(); r != nil {
 						stack := debug.Stack()
-						s.Log("panic handling request", req.Method, r, string(stack))
+						s.logger.Log("panic handling request", req.Method, r, string(stack))
 						// !!! send something back to client
 						lspExit()
 					}
@@ -431,7 +434,7 @@ func (s *ProjectV2Server) handleRequestOrNotification(ctx context.Context, req *
 		case lsproto.MethodExit:
 			return io.EOF
 		default:
-			s.Log("unknown method", req.Method)
+			s.logger.Log("unknown method", req.Method)
 			if req.ID != nil {
 				s.sendError(req.ID, lsproto.ErrInvalidRequest)
 			}
@@ -520,7 +523,7 @@ func (s *ProjectV2Server) handleInitialized(ctx context.Context, req *lsproto.Re
 		},
 		FS:          s.fs,
 		Client:      s.Client(),
-		Logger:      s,
+		Logger:      s.logger,
 		NpmExecutor: s,
 	})
 
@@ -628,7 +631,7 @@ func (s *ProjectV2Server) handleReferences(ctx context.Context, req *lsproto.Req
 	defer func() {
 		if r := recover(); r != nil {
 			stack := debug.Stack()
-			s.Log("panic obtaining references:", r, string(stack))
+			s.logger.Log("panic obtaining references:", r, string(stack))
 			s.sendResult(req.ID, []*lsproto.Location{})
 		}
 	}()
@@ -648,7 +651,7 @@ func (s *ProjectV2Server) handleCompletion(ctx context.Context, req *lsproto.Req
 	defer func() {
 		if r := recover(); r != nil {
 			stack := debug.Stack()
-			s.Log("panic obtaining completions:", r, string(stack))
+			s.logger.Log("panic obtaining completions:", r, string(stack))
 			s.sendResult(req.ID, &lsproto.CompletionList{})
 		}
 	}()
@@ -677,7 +680,7 @@ func (s *ProjectV2Server) handleDocumentFormat(ctx context.Context, req *lsproto
 	defer func() {
 		if r := recover(); r != nil {
 			stack := debug.Stack()
-			s.Log("panic on document format:", r, string(stack))
+			s.logger.Log("panic on document format:", r, string(stack))
 			s.sendResult(req.ID, []*lsproto.TextEdit{})
 		}
 	}()
@@ -704,7 +707,7 @@ func (s *ProjectV2Server) handleDocumentRangeFormat(ctx context.Context, req *ls
 	defer func() {
 		if r := recover(); r != nil {
 			stack := debug.Stack()
-			s.Log("panic on document range format:", r, string(stack))
+			s.logger.Log("panic on document range format:", r, string(stack))
 			s.sendResult(req.ID, []*lsproto.TextEdit{})
 		}
 	}()
@@ -732,7 +735,7 @@ func (s *ProjectV2Server) handleDocumentOnTypeFormat(ctx context.Context, req *l
 	defer func() {
 		if r := recover(); r != nil {
 			stack := debug.Stack()
-			s.Log("panic on type format:", r, string(stack))
+			s.logger.Log("panic on type format:", r, string(stack))
 			s.sendResult(req.ID, []*lsproto.TextEdit{})
 		}
 	}()
@@ -751,11 +754,7 @@ func (s *ProjectV2Server) handleDocumentOnTypeFormat(ctx context.Context, req *l
 	return nil
 }
 
-// Log implements projectv2.Logger interface
-func (s *ProjectV2Server) Log(msg ...any) {
-	s.logQueue <- fmt.Sprint(msg...)
-}
-
+// NpmInstall implements ata.NpmExecutor
 func (s *ProjectV2Server) NpmInstall(cwd string, args []string) ([]byte, error) {
 	cmd := exec.Command("npm", args...)
 	cmd.Dir = cwd

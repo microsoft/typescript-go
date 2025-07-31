@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/dirty"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/projectv2/logging"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -66,7 +67,7 @@ func newProjectCollectionBuilder(
 	}
 }
 
-func (b *projectCollectionBuilder) Finalize(logger *logCollector) (*ProjectCollection, *ConfigFileRegistry) {
+func (b *projectCollectionBuilder) Finalize(logger *logging.LogTree) (*ProjectCollection, *ConfigFileRegistry) {
 	var changed bool
 	newProjectCollection := b.base
 	ensureCloned := func() {
@@ -110,7 +111,7 @@ func (b *projectCollectionBuilder) forEachProject(fn func(entry dirty.Value[*Pro
 	}
 }
 
-func (b *projectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, logger *logCollector) {
+func (b *projectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, logger *logging.LogTree) {
 	changedFiles := make([]tspath.Path, 0, len(summary.Closed)+summary.Changed.Len())
 	for uri, hash := range summary.Closed {
 		fileName := uri.FileName()
@@ -205,7 +206,7 @@ func (b *projectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 	b.programStructureChanged = b.markProjectsAffectedByConfigChanges(configChangeResult, logger)
 }
 
-func logChangeFileResult(result changeFileResult, logger *logCollector) {
+func logChangeFileResult(result changeFileResult, logger *logging.LogTree) {
 	if len(result.affectedProjects) > 0 {
 		logger.Logf("Config file change affected projects: %v", slices.Collect(maps.Keys(result.affectedProjects)))
 	}
@@ -214,7 +215,7 @@ func logChangeFileResult(result changeFileResult, logger *logCollector) {
 	}
 }
 
-func (b *projectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, logger *logCollector) {
+func (b *projectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, logger *logging.LogTree) {
 	startTime := time.Now()
 	fileName := uri.FileName()
 	hasChanges := b.programStructureChanged
@@ -262,7 +263,7 @@ func (b *projectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, logge
 	}
 }
 
-func (b *projectCollectionBuilder) DidUpdateATAState(ataChanges map[tspath.Path]*ATAStateChange, logger *logCollector) {
+func (b *projectCollectionBuilder) DidUpdateATAState(ataChanges map[tspath.Path]*ATAStateChange, logger *logging.LogTree) {
 	updateProject := func(project dirty.Value[*Project], ataChange *ATAStateChange) {
 		project.ChangeIf(
 			func(p *Project) bool {
@@ -298,7 +299,7 @@ func (b *projectCollectionBuilder) DidUpdateATAState(ataChanges map[tspath.Path]
 
 func (b *projectCollectionBuilder) markProjectsAffectedByConfigChanges(
 	configChangeResult changeFileResult,
-	logger *logCollector,
+	logger *logging.LogTree,
 ) bool {
 	for projectPath := range configChangeResult.affectedProjects {
 		project, ok := b.configuredProjects.Load(projectPath)
@@ -370,7 +371,7 @@ func (b *projectCollectionBuilder) findDefaultConfiguredProject(fileName string,
 	return configuredProjects[project]
 }
 
-func (b *projectCollectionBuilder) ensureConfiguredProjectAndAncestorsForOpenFile(fileName string, path tspath.Path, logger *logCollector) searchResult {
+func (b *projectCollectionBuilder) ensureConfiguredProjectAndAncestorsForOpenFile(fileName string, path tspath.Path, logger *logging.LogTree) searchResult {
 	result := b.findOrCreateDefaultConfiguredProjectForOpenScriptInfo(fileName, path, projectLoadKindCreate, logger)
 	if result.project != nil {
 		// !!! sheetal todo this later
@@ -395,7 +396,7 @@ func (b *projectCollectionBuilder) ensureConfiguredProjectAndAncestorsForOpenFil
 type searchNode struct {
 	configFileName string
 	loadKind       projectLoadKind
-	logger         *logCollector
+	logger         *logging.LogTree
 }
 
 type searchResult struct {
@@ -410,7 +411,7 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 	loadKind projectLoadKind,
 	visited *collections.SyncSet[searchNode],
 	fallback *searchResult,
-	logger *logCollector,
+	logger *logging.LogTree,
 ) searchResult {
 	var configs collections.SyncMap[tspath.Path, *tsoptions.ParsedCommandLine]
 	if visited == nil {
@@ -426,7 +427,7 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 					referenceLoadKind = projectLoadKindFind
 				}
 
-				var logger *logCollector
+				var logger *logging.LogTree
 				references := config.ResolvedProjectReferencePaths()
 				if len(references) > 0 && node.logger != nil {
 					logger = node.logger.Fork(fmt.Sprintf("Searching %d project references of %s", len(references), node.configFileName))
@@ -556,7 +557,7 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectForOpenSc
 	fileName string,
 	path tspath.Path,
 	loadKind projectLoadKind,
-	logger *logCollector,
+	logger *logging.LogTree,
 ) searchResult {
 	if key, ok := b.fileDefaultProjects[path]; ok {
 		if key == inferredProjectName {
@@ -600,7 +601,7 @@ func (b *projectCollectionBuilder) findOrCreateProject(
 	configFileName string,
 	configFilePath tspath.Path,
 	loadKind projectLoadKind,
-	logger *logCollector,
+	logger *logging.LogTree,
 ) *dirty.SyncMapEntry[tspath.Path, *Project] {
 	if loadKind == projectLoadKindFind {
 		entry, _ := b.configuredProjects.Load(configFilePath)
@@ -614,7 +615,7 @@ func (b *projectCollectionBuilder) toPath(fileName string) tspath.Path {
 	return tspath.ToPath(fileName, b.sessionOptions.CurrentDirectory, b.fs.fs.UseCaseSensitiveFileNames())
 }
 
-func (b *projectCollectionBuilder) updateInferredProjectRoots(rootFileNames []string, logger *logCollector) bool {
+func (b *projectCollectionBuilder) updateInferredProjectRoots(rootFileNames []string, logger *logging.LogTree) bool {
 	if len(rootFileNames) == 0 {
 		if b.inferredProject.Value() != nil {
 			if logger != nil {
@@ -659,7 +660,7 @@ func (b *projectCollectionBuilder) updateInferredProjectRoots(rootFileNames []st
 
 // updateProgram updates the program for the given project entry if necessary. It returns
 // a boolean indicating whether the update could have caused any structure-affecting changes.
-func (b *projectCollectionBuilder) updateProgram(entry dirty.Value[*Project], logger *logCollector) bool {
+func (b *projectCollectionBuilder) updateProgram(entry dirty.Value[*Project], logger *logging.LogTree) bool {
 	var updateProgram bool
 	var filesChanged bool
 	configFileName := entry.Value().configFileName
@@ -709,7 +710,7 @@ func (b *projectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 	return filesChanged
 }
 
-func (b *projectCollectionBuilder) markFilesChanged(entry dirty.Value[*Project], paths []tspath.Path, changeType lsproto.FileChangeType, logger *logCollector) {
+func (b *projectCollectionBuilder) markFilesChanged(entry dirty.Value[*Project], paths []tspath.Path, changeType lsproto.FileChangeType, logger *logging.LogTree) {
 	var dirty bool
 	var dirtyFilePath tspath.Path
 	entry.ChangeIf(
@@ -761,7 +762,7 @@ func (b *projectCollectionBuilder) markFilesChanged(entry dirty.Value[*Project],
 	)
 }
 
-func (b *projectCollectionBuilder) deleteConfiguredProject(project dirty.Value[*Project], logger *logCollector) {
+func (b *projectCollectionBuilder) deleteConfiguredProject(project dirty.Value[*Project], logger *logging.LogTree) {
 	projectPath := project.Value().configFilePath
 	if logger != nil {
 		logger.Log(fmt.Sprintf("Deleting configured project: %s", project.Value().configFileName))

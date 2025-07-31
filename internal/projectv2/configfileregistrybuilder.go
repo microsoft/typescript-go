@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/dirty"
 	"github.com/microsoft/typescript-go/internal/project"
+	"github.com/microsoft/typescript-go/internal/projectv2/logging"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -27,7 +28,7 @@ type configFileRegistryBuilder struct {
 	fs                  *snapshotFSBuilder
 	extendedConfigCache *extendedConfigCache
 	sessionOptions      *SessionOptions
-	logger              *logCollector
+	logger              *logging.LogTree
 
 	base            *ConfigFileRegistry
 	configs         *dirty.SyncMap[tspath.Path, *configFileEntry]
@@ -39,7 +40,7 @@ func newConfigFileRegistryBuilder(
 	oldConfigFileRegistry *ConfigFileRegistry,
 	extendedConfigCache *extendedConfigCache,
 	sessionOptions *SessionOptions,
-	logger *logCollector,
+	logger *logging.LogTree,
 ) *configFileRegistryBuilder {
 	return &configFileRegistryBuilder{
 		fs:                  fs,
@@ -281,7 +282,7 @@ func (r changeFileResult) IsEmpty() bool {
 	return len(r.affectedProjects) == 0 && len(r.affectedFiles) == 0
 }
 
-func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, logger *logCollector) changeFileResult {
+func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, logger *logging.LogTree) changeFileResult {
 	var affectedProjects map[tspath.Path]struct{}
 	var affectedFiles map[tspath.Path]struct{}
 	logger.Log("Summarizing file changes")
@@ -397,7 +398,7 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 	}
 }
 
-func (c *configFileRegistryBuilder) handleConfigChange(entry *dirty.SyncMapEntry[tspath.Path, *configFileEntry], logger *logCollector) map[tspath.Path]struct{} {
+func (c *configFileRegistryBuilder) handleConfigChange(entry *dirty.SyncMapEntry[tspath.Path, *configFileEntry], logger *logging.LogTree) map[tspath.Path]struct{} {
 	var affectedProjects map[tspath.Path]struct{}
 	changed := entry.ChangeIf(
 		func(config *configFileEntry) bool { return config.pendingReload != PendingReloadFull },

@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/projectv2/ata"
+	"github.com/microsoft/typescript-go/internal/projectv2/logging"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -83,7 +84,7 @@ func NewConfiguredProject(
 	configFileName string,
 	configFilePath tspath.Path,
 	builder *projectCollectionBuilder,
-	logger *logCollector,
+	logger *logging.LogTree,
 ) *Project {
 	return NewProject(configFileName, KindConfigured, tspath.GetDirectoryPath(configFileName), builder, logger)
 }
@@ -93,7 +94,7 @@ func NewInferredProject(
 	compilerOptions *core.CompilerOptions,
 	rootFileNames []string,
 	builder *projectCollectionBuilder,
-	logger *logCollector,
+	logger *logging.LogTree,
 ) *Project {
 	p := NewProject(inferredProjectName, KindInferred, currentDirectory, builder, logger)
 	if compilerOptions == nil {
@@ -128,7 +129,7 @@ func NewProject(
 	kind Kind,
 	currentDirectory string,
 	builder *projectCollectionBuilder,
-	logger *logCollector,
+	logger *logging.LogTree,
 ) *Project {
 	if logger != nil {
 		logger.Log(fmt.Sprintf("Creating %sProject: %s, currentDirectory: %s", kind.String(), configFileName, currentDirectory))

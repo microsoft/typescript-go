@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/projectv2/ata"
+	"github.com/microsoft/typescript-go/internal/projectv2/logging"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -30,7 +31,7 @@ type SessionInit struct {
 	Options     *SessionOptions
 	FS          vfs.FS
 	Client      Client
-	Logger      Logger
+	Logger      logging.Logger
 	NpmExecutor ata.NpmExecutor
 }
 
@@ -38,7 +39,7 @@ type Session struct {
 	options                            *SessionOptions
 	toPath                             func(string) tspath.Path
 	client                             Client
-	logger                             Logger
+	logger                             logging.Logger
 	npmExecutor                        ata.NpmExecutor
 	fs                                 *overlayFS
 	parseCache                         *parseCache
@@ -329,9 +330,9 @@ func (s *Session) UpdateSnapshot(ctx context.Context, change SnapshotChange) *Sn
 	// Enqueue logging, watch updates, and diagnostic refresh tasks
 	s.backgroundTasks.Enqueue(context.Background(), func(ctx context.Context) {
 		if s.options.LoggingEnabled {
-			s.logger.Log(newSnapshot.builderLogs.String())
+			s.logger.Write(newSnapshot.builderLogs.String())
 			s.logProjectChanges(oldSnapshot, newSnapshot)
-			s.logger.Log("")
+			s.logger.Write("")
 		}
 		if s.options.WatchEnabled {
 			if err := s.updateWatches(oldSnapshot, newSnapshot); err != nil && s.options.LoggingEnabled {
@@ -354,7 +355,7 @@ func (s *Session) WaitForBackgroundTasks() {
 	s.backgroundTasks.WaitForEmpty()
 }
 
-func updateWatch[T any](ctx context.Context, client Client, logger Logger, oldWatcher, newWatcher *WatchedFiles[T]) []error {
+func updateWatch[T any](ctx context.Context, client Client, logger logging.Logger, oldWatcher, newWatcher *WatchedFiles[T]) []error {
 	var errors []error
 	if newWatcher != nil {
 		if id, watchers := newWatcher.Watchers(); len(watchers) > 0 {
@@ -474,7 +475,7 @@ func (s *Session) flushChangesLocked(ctx context.Context) FileChangeSummary {
 func (s *Session) logProjectChanges(oldSnapshot *Snapshot, newSnapshot *Snapshot) {
 	logProject := func(project *Project) {
 		var builder strings.Builder
-		project.print(true /*writeFileNames*/, true /*writeFileExplanation*/, &builder)
+		project.print(s.logger.IsVerbose() /*writeFileNames*/, s.logger.IsVerbose() /*writeFileExplanation*/, &builder)
 		s.logger.Log(builder.String())
 	}
 	core.DiffMaps(
@@ -486,7 +487,7 @@ func (s *Session) logProjectChanges(oldSnapshot *Snapshot, newSnapshot *Snapshot
 		},
 		func(path tspath.Path, removedProject *Project) {
 			// Project removed
-			s.logger.Log(fmt.Sprintf("\nProject '%s' removed\n%s", removedProject.Name(), hr))
+			s.logger.Logf("\nProject '%s' removed\n%s", removedProject.Name(), hr)
 		},
 		func(path tspath.Path, oldProject, newProject *Project) {
 			// Project updated
@@ -501,7 +502,7 @@ func (s *Session) logProjectChanges(oldSnapshot *Snapshot, newSnapshot *Snapshot
 
 	if oldInferred != nil && newInferred == nil {
 		// Inferred project removed
-		s.logger.Log(fmt.Sprintf("\nProject '%s' removed\n%s", oldInferred.Name(), hr))
+		s.logger.Logf("\nProject '%s' removed\n%s", oldInferred.Name(), hr)
 	} else if newInferred != nil && newInferred.ProgramUpdateKind == ProgramUpdateKindNewFiles {
 		// Inferred project updated
 		logProject(newInferred)
@@ -516,9 +517,9 @@ func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
 		if project.ShouldTriggerATA() {
 			s.backgroundTasks.Enqueue(context.Background(), func(ctx context.Context) {
-				var logger *logCollector
+				var logTree *logging.LogTree
 				if s.options.LoggingEnabled {
-					logger = NewLogCollector(fmt.Sprintf("Triggering ATA for project %s", project.Name()))
+					logTree = logging.NewLogTree(fmt.Sprintf("Triggering ATA for project %s", project.Name()))
 				}
 
 				typingsInfo := project.ComputeTypingsInfo()
@@ -531,19 +532,19 @@ func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {
 					CurrentDirectory: s.options.CurrentDirectory,
 					GetScriptKind:    core.GetScriptKindFromFileName,
 					FS:               s.fs.fs,
-					Logger:           logger,
+					Logger:           logTree,
 				}
 
-				if typingsFiles, err := s.typingsInstaller.InstallTypings(request); err != nil && logger != nil {
+				if typingsFiles, err := s.typingsInstaller.InstallTypings(request); err != nil && logTree != nil {
 					s.logger.Log(fmt.Sprintf("ATA installation failed for project %s: %v", project.Name(), err))
-					s.logger.Log(logger.String())
+					s.logger.Log(logTree.String())
 				} else {
 					s.pendingATAChangesMu.Lock()
 					defer s.pendingATAChangesMu.Unlock()
 					s.pendingATAChanges[project.configFilePath] = &ATAStateChange{
 						TypingsInfo:  &typingsInfo,
 						TypingsFiles: typingsFiles,
-						Logs:         logger,
+						Logs:         logTree,
 					}
 				}
 			})

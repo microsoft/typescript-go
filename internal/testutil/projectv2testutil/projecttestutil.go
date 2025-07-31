@@ -1,7 +1,6 @@
 package projectv2testutil
 
 import (
-	"bufio"
 	"fmt"
 	"slices"
 	"strings"
@@ -11,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/projectv2"
+	"github.com/microsoft/typescript-go/internal/projectv2/logging"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -36,8 +36,7 @@ type SessionUtils struct {
 	client      *ClientMock
 	npmExecutor *NpmExecutorMock
 	testOptions *TestTypingsInstallerOptions
-	logs        strings.Builder
-	logWriter   *bufio.Writer
+	logger      logging.LogCollector
 }
 
 func (h *SessionUtils) Client() *ClientMock {
@@ -102,13 +101,8 @@ func (h *SessionUtils) FS() vfs.FS {
 	return h.fs
 }
 
-func (h *SessionUtils) Log(msg ...any) {
-	fmt.Fprintln(&h.logs, msg...)
-}
-
 func (h *SessionUtils) Logs() string {
-	h.logWriter.Flush()
-	return h.logs.String()
+	return h.logger.String()
 }
 
 func (h *SessionUtils) BaselineLogs(t *testing.T) {
@@ -204,8 +198,8 @@ func SetupWithOptionsAndTypingsInstaller(files map[string]any, options *projectv
 		client:      clientMock,
 		npmExecutor: npmExecutorMock,
 		testOptions: testOptions,
+		logger:      logging.NewTestLogger(),
 	}
-	sessionUtils.logWriter = bufio.NewWriter(&sessionUtils.logs)
 
 	// Configure the npm executor mock to handle typings installation
 	sessionUtils.SetupNpmExecutorForTypingsInstaller()
@@ -228,7 +222,7 @@ func SetupWithOptionsAndTypingsInstaller(files map[string]any, options *projectv
 		FS:          fs,
 		Client:      clientMock,
 		NpmExecutor: npmExecutorMock,
-		Logger:      sessionUtils,
+		Logger:      sessionUtils.logger,
 	})
 
 	return session, sessionUtils

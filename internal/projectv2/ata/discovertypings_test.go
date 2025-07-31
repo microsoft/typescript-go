@@ -1,32 +1,24 @@
 package ata_test
 
 import (
-	"fmt"
 	"maps"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/projectv2/ata"
+	"github.com/microsoft/typescript-go/internal/projectv2/logging"
 	"github.com/microsoft/typescript-go/internal/semver"
 	"github.com/microsoft/typescript-go/internal/testutil/projectv2testutil"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
 
-type testLogger struct {
-	messages []string
-}
-
-func (l *testLogger) Log(msg ...any) {
-	l.messages = append(l.messages, fmt.Sprint(msg...))
-}
-
 func TestDiscoverTypings(t *testing.T) {
 	t.Parallel()
 	t.Run("should use mappings from safe list", func(t *testing.T) {
 		t.Parallel()
-		logger := &testLogger{}
+		logger := logging.NewLogTree("DiscoverTypings")
 		files := map[string]string{
 			"/home/src/projects/project/app.js":        "",
 			"/home/src/projects/project/jquery.js":     "",
@@ -59,7 +51,7 @@ func TestDiscoverTypings(t *testing.T) {
 
 	t.Run("should return node for core modules", func(t *testing.T) {
 		t.Parallel()
-		logger := &testLogger{}
+		logger := logging.NewLogTree("DiscoverTypings")
 		files := map[string]string{
 			"/home/src/projects/project/app.js": "",
 		}
@@ -91,7 +83,7 @@ func TestDiscoverTypings(t *testing.T) {
 
 	t.Run("should use cached locations", func(t *testing.T) {
 		t.Parallel()
-		logger := &testLogger{}
+		logger := logging.NewLogTree("DiscoverTypings")
 		files := map[string]string{
 			"/home/src/projects/project/app.js":    "",
 			"/home/src/projects/project/node.d.ts": "",
@@ -133,7 +125,7 @@ func TestDiscoverTypings(t *testing.T) {
 
 	t.Run("should gracefully handle packages that have been removed from the types-registry", func(t *testing.T) {
 		t.Parallel()
-		logger := &testLogger{}
+		logger := logging.NewLogTree("DiscoverTypings")
 		files := map[string]string{
 			"/home/src/projects/project/app.js":    "",
 			"/home/src/projects/project/node.d.ts": "",
@@ -172,7 +164,7 @@ func TestDiscoverTypings(t *testing.T) {
 
 	t.Run("should search only 2 levels deep", func(t *testing.T) {
 		t.Parallel()
-		logger := &testLogger{}
+		logger := logging.NewLogTree("DiscoverTypings")
 		files := map[string]string{
 			"/home/src/projects/project/app.js":                        "",
 			"/home/src/projects/project/node_modules/a/package.json":   `{ "name": "a" }`,
@@ -204,7 +196,7 @@ func TestDiscoverTypings(t *testing.T) {
 
 	t.Run("should support scoped packages", func(t *testing.T) {
 		t.Parallel()
-		logger := &testLogger{}
+		logger := logging.NewLogTree("DiscoverTypings")
 		files := map[string]string{
 			"/home/src/projects/project/app.js":                         "",
 			"/home/src/projects/project/node_modules/@a/b/package.json": `{ "name": "@a/b" }`,
@@ -235,7 +227,7 @@ func TestDiscoverTypings(t *testing.T) {
 
 	t.Run("should install expired typings", func(t *testing.T) {
 		t.Parallel()
-		logger := &testLogger{}
+		logger := logging.NewLogTree("DiscoverTypings")
 		files := map[string]string{
 			"/home/src/projects/project/app.js": "",
 		}
@@ -282,7 +274,7 @@ func TestDiscoverTypings(t *testing.T) {
 
 	t.Run("should install expired typings with prerelease version of tsserver", func(t *testing.T) {
 		t.Parallel()
-		logger := &testLogger{}
+		logger := logging.NewLogTree("DiscoverTypings")
 		files := map[string]string{
 			"/home/src/projects/project/app.js": "",
 		}
@@ -324,7 +316,7 @@ func TestDiscoverTypings(t *testing.T) {
 
 	t.Run("prerelease typings are properly handled", func(t *testing.T) {
 		t.Parallel()
-		logger := &testLogger{}
+		logger := logging.NewLogTree("DiscoverTypings")
 		files := map[string]string{
 			"/home/src/projects/project/app.js": "",
 		}

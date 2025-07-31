@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/packagejson"
+	"github.com/microsoft/typescript-go/internal/projectv2/logging"
 	"github.com/microsoft/typescript-go/internal/semver"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -26,7 +27,7 @@ func isTypingUpToDate(cachedTyping *CachedTyping, availableTypingVersions map[st
 
 func DiscoverTypings(
 	fs vfs.FS,
-	logger Logger,
+	logger logging.Logger,
 	typingsInfo *TypingsInfo,
 	fileNames []string,
 	projectRootPath string,
@@ -106,7 +107,7 @@ func addInferredTyping(inferredTypings map[string]string, typingName string) {
 
 func addInferredTypings(
 	fs vfs.FS,
-	logger Logger,
+	logger logging.Logger,
 	inferredTypings map[string]string,
 	typingNames []string, message string,
 ) {
@@ -124,7 +125,7 @@ func addInferredTypings(
  */
 func getTypingNamesFromSourceFileNames(
 	fs vfs.FS,
-	logger Logger,
+	logger logging.Logger,
 	inferredTypings map[string]string,
 	fileNames []string,
 ) {
@@ -157,7 +158,7 @@ func getTypingNamesFromSourceFileNames(
  */
 func addTypingNamesAndGetFilesToWatch(
 	fs vfs.FS,
-	logger Logger,
+	logger logging.Logger,
 	inferredTypings map[string]string,
 	filesToWatch []string,
 	projectRootPath string,
