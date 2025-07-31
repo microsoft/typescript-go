@@ -5,6 +5,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
+	"gotest.tools/v3/assert/cmp"
 )
 
 func TestMatchFiles(t *testing.T) {
@@ -412,7 +413,7 @@ func TestMatchFiles(t *testing.T) {
 				tt.includes,
 				tt.depth,
 			)
-			assert.DeepEqual(t, mainResult, tt.expected)
+			assert.Check(t, cmp.DeepEqual(mainResult, tt.expected))
 
 			// Call new and old variants
 			newResult := matchFilesNew(
@@ -435,7 +436,7 @@ func TestMatchFiles(t *testing.T) {
 				tt.depth,
 				fs,
 			)
-			assert.DeepEqual(t, newResult, oldResult)
+			assert.Check(t, cmp.DeepEqual(newResult, oldResult))
 		})
 	}
 }
@@ -659,12 +660,12 @@ func TestMatchesExclude(t *testing.T) {
 
 			// Call main variant
 			mainResult := MatchesExclude(tt.fileName, tt.excludeSpecs, tt.currentDirectory, tt.useCaseSensitiveFileNames)
-			assert.Equal(t, tt.expectExcluded, mainResult)
+			assert.Check(t, cmp.Equal(tt.expectExcluded, mainResult))
 
 			// Call new and old variants
 			newResult := matchesExcludeNew(tt.fileName, tt.excludeSpecs, tt.currentDirectory, tt.useCaseSensitiveFileNames)
 			oldResult := matchesExcludeOld(tt.fileName, tt.excludeSpecs, tt.currentDirectory, tt.useCaseSensitiveFileNames)
-			assert.Equal(t, newResult, oldResult)
+			assert.Check(t, cmp.Equal(newResult, oldResult))
 		})
 	}
 }
@@ -911,12 +912,12 @@ func TestMatchesInclude(t *testing.T) {
 
 			// Call main variant
 			mainResult := MatchesInclude(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
-			assert.Equal(t, tt.expectIncluded, mainResult)
+			assert.Check(t, cmp.Equal(tt.expectIncluded, mainResult))
 
 			// Call new and old variants
 			newResult := matchesIncludeNew(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
 			oldResult := matchesIncludeOld(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
-			assert.Equal(t, newResult, oldResult)
+			assert.Check(t, cmp.Equal(newResult, oldResult))
 		})
 	}
 }
@@ -1147,12 +1148,12 @@ func TestMatchesIncludeWithJsonOnly(t *testing.T) {
 
 			// Call main variant
 			mainResult := MatchesIncludeWithJsonOnly(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
-			assert.Equal(t, tt.expectIncluded, mainResult)
+			assert.Check(t, cmp.DeepEqual(tt.expectIncluded, mainResult))
 
 			// Call new and old variants
 			newResult := matchesIncludeWithJsonOnlyNew(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
 			oldResult := matchesIncludeWithJsonOnlyOld(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
-			assert.Equal(t, newResult, oldResult)
+			assert.Check(t, cmp.DeepEqual(newResult, oldResult))
 		})
 	}
 }
@@ -1209,11 +1210,7 @@ func TestIsImplicitGlob(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			mainResult := IsImplicitGlob(tt.lastPathComponent)
-			assert.Equal(t, tt.expectImplicitGlob, mainResult)
-
-			// Only one implementation exists, so just compare mainResult to itself
-			assert.Equal(t, mainResult, mainResult)
+			assert.Equal(t, tt.expectImplicitGlob, IsImplicitGlob(tt.lastPathComponent))
 		})
 	}
 }
