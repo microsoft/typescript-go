@@ -26,7 +26,7 @@ func IsTypingUpToDate(cachedTyping *CachedTyping, availableTypingVersions map[st
 
 func DiscoverTypings(
 	fs vfs.FS,
-	logger *logCollector,
+	logger Logger,
 	typingsInfo *TypingsInfo,
 	fileNames []string,
 	projectRootPath string,
@@ -106,7 +106,7 @@ func addInferredTyping(inferredTypings map[string]string, typingName string) {
 
 func addInferredTypings(
 	fs vfs.FS,
-	logger *logCollector,
+	logger Logger,
 	inferredTypings map[string]string,
 	typingNames []string, message string,
 ) {
@@ -124,7 +124,7 @@ func addInferredTypings(
  */
 func getTypingNamesFromSourceFileNames(
 	fs vfs.FS,
-	logger *logCollector,
+	logger Logger,
 	inferredTypings map[string]string,
 	fileNames []string,
 ) {
@@ -157,7 +157,7 @@ func getTypingNamesFromSourceFileNames(
  */
 func addTypingNamesAndGetFilesToWatch(
 	fs vfs.FS,
-	logger *logCollector,
+	logger Logger,
 	inferredTypings map[string]string,
 	filesToWatch []string,
 	projectRootPath string,
@@ -326,48 +326,4 @@ func removeMinAndVersionNumbers(fileName string) string {
 		end = pos
 	}
 	return fileName[0:end]
-}
-
-// Copy the safe filename to type name mapping from the original file
-var safeFileNameToTypeName = map[string]string{
-	"jquery":      "jquery",
-	"angular":     "angular",
-	"lodash":      "lodash",
-	"underscore":  "underscore",
-	"backbone":    "backbone",
-	"knockout":    "knockout",
-	"requirejs":   "requirejs",
-	"react":       "react",
-	"d3":          "d3",
-	"three":       "three",
-	"handlebars":  "handlebars",
-	"express":     "express",
-	"socket.io":   "socket.io",
-	"mocha":       "mocha",
-	"jasmine":     "jasmine",
-	"qunit":       "qunit",
-	"chai":        "chai",
-	"moment":      "moment",
-	"async":       "async",
-	"gulp":        "gulp",
-	"grunt":       "grunt",
-	"webpack":     "webpack",
-	"browserify":  "browserify",
-	"node":        "node",
-	"bluebird":    "bluebird",
-	"q":           "q",
-	"ramda":       "ramda",
-	"immutable":   "immutable",
-	"redux":       "redux",
-	"ember":       "ember",
-	"vue":         "vue",
-	"angular2":    "@angular/core",
-	"rxjs":        "rxjs",
-	"bootstrap":   "bootstrap",
-	"material-ui": "@material-ui/core",
-	"antd":        "antd",
-	"ionic":       "ionic-angular",
-	"cordova":     "cordova",
-	"phonegap":    "cordova",
-	"firebase":    "firebase",
 }

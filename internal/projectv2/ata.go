@@ -172,18 +172,7 @@ func (ti *TypingsInstaller) installTypings(
 		scopedTypings[i] = fmt.Sprintf("@types/%s@%s", packageName, TsVersionToUse) // @tscore.VersionMajorMinor) // This is normally @tsVersionMajorMinor but for now lets use latest
 	}
 
-	return ti.invokeRoutineToInstallTypings(requestID, projectID, scopedTypings, filteredTypings, currentlyCachedTypings, logger)
-}
-
-func (ti *TypingsInstaller) invokeRoutineToInstallTypings(
-	requestID int32,
-	projectID tspath.Path,
-	packageNames []string,
-	filteredTypings []string,
-	currentlyCachedTypings []string,
-	logger *logCollector,
-) ([]string, error) {
-	if packageNames, ok := ti.installWorker(projectID, requestID, packageNames, ti.typingsLocation, ti.concurrencySemaphore, logger); ok {
+	if packageNames, ok := ti.installWorker(projectID, requestID, scopedTypings, ti.typingsLocation, ti.concurrencySemaphore, logger); ok {
 		logger.Log(fmt.Sprintf("ATA:: Installed typings %v", packageNames))
 		var installedTypingFiles []string
 		resolver := module.NewResolver(ti.host, &core.CompilerOptions{ModuleResolution: core.ModuleResolutionKindNodeNext}, "", "")
