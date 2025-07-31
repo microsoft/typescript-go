@@ -402,7 +402,19 @@ func TestMatchFiles(t *testing.T) {
 			t.Parallel()
 			fs := vfstest.FromMap(tt.files, tt.useCaseSensitiveFileNames)
 
-			// Test new implementation
+			// Call main variant
+			mainResult := ReadDirectory(
+				fs,
+				tt.currentDirectory,
+				tt.path,
+				tt.extensions,
+				tt.excludes,
+				tt.includes,
+				tt.depth,
+			)
+			assert.DeepEqual(t, mainResult, tt.expected)
+
+			// Call new and old variants
 			newResult := matchFilesNew(
 				tt.path,
 				tt.extensions,
@@ -413,8 +425,6 @@ func TestMatchFiles(t *testing.T) {
 				tt.depth,
 				fs,
 			)
-
-			// Test old implementation for compatibility
 			oldResult := matchFilesOld(
 				tt.path,
 				tt.extensions,
@@ -425,11 +435,6 @@ func TestMatchFiles(t *testing.T) {
 				tt.depth,
 				fs,
 			)
-
-			// Assert the new result matches expected
-			assert.DeepEqual(t, newResult, tt.expected)
-
-			// Compatibility check: both implementations should return the same result
 			assert.DeepEqual(t, newResult, oldResult)
 		})
 	}
@@ -652,21 +657,13 @@ func TestMatchesExclude(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			// Test new implementation
-			newResult := MatchesExclude(tt.fileName, tt.excludeSpecs, tt.currentDirectory, tt.useCaseSensitiveFileNames)
+			// Call main variant
+			mainResult := MatchesExclude(tt.fileName, tt.excludeSpecs, tt.currentDirectory, tt.useCaseSensitiveFileNames)
+			assert.Equal(t, tt.expectExcluded, mainResult)
 
-			// Test old implementation for compatibility
-			oldResult := matchesExcludeOld(
-				tt.fileName,
-				tt.excludeSpecs,
-				tt.currentDirectory,
-				tt.useCaseSensitiveFileNames,
-			)
-
-			// Assert the new result matches expected
-			assert.Equal(t, tt.expectExcluded, newResult)
-
-			// Compatibility check: both implementations should return the same result
+			// Call new and old variants
+			newResult := matchesExcludeNew(tt.fileName, tt.excludeSpecs, tt.currentDirectory, tt.useCaseSensitiveFileNames)
+			oldResult := matchesExcludeOld(tt.fileName, tt.excludeSpecs, tt.currentDirectory, tt.useCaseSensitiveFileNames)
 			assert.Equal(t, newResult, oldResult)
 		})
 	}
@@ -912,21 +909,13 @@ func TestMatchesInclude(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			// Test new implementation
-			newResult := MatchesInclude(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
+			// Call main variant
+			mainResult := MatchesInclude(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
+			assert.Equal(t, tt.expectIncluded, mainResult)
 
-			// Test old implementation for compatibility
-			oldResult := matchesIncludeOld(
-				tt.fileName,
-				tt.includeSpecs,
-				tt.basePath,
-				tt.useCaseSensitiveFileNames,
-			)
-
-			// Assert the new result matches expected
-			assert.Equal(t, tt.expectIncluded, newResult)
-
-			// Compatibility check: both implementations should return the same result
+			// Call new and old variants
+			newResult := matchesIncludeNew(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
+			oldResult := matchesIncludeOld(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
 			assert.Equal(t, newResult, oldResult)
 		})
 	}
@@ -1156,21 +1145,13 @@ func TestMatchesIncludeWithJsonOnly(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			// Test new implementation
-			newResult := MatchesIncludeWithJsonOnly(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
+			// Call main variant
+			mainResult := MatchesIncludeWithJsonOnly(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
+			assert.Equal(t, tt.expectIncluded, mainResult)
 
-			// Test old implementation for compatibility
-			oldResult := matchesIncludeWithJsonOnlyOld(
-				tt.fileName,
-				tt.includeSpecs,
-				tt.basePath,
-				tt.useCaseSensitiveFileNames,
-			)
-
-			// Assert the new result matches expected
-			assert.Equal(t, tt.expectIncluded, newResult)
-
-			// Compatibility check: both implementations should return the same result
+			// Call new and old variants
+			newResult := matchesIncludeWithJsonOnlyNew(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
+			oldResult := matchesIncludeWithJsonOnlyOld(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
 			assert.Equal(t, newResult, oldResult)
 		})
 	}
@@ -1228,8 +1209,11 @@ func TestIsImplicitGlob(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			result := IsImplicitGlob(tt.lastPathComponent)
-			assert.Equal(t, tt.expectImplicitGlob, result)
+			mainResult := IsImplicitGlob(tt.lastPathComponent)
+			assert.Equal(t, tt.expectImplicitGlob, mainResult)
+
+			// Only one implementation exists, so just compare mainResult to itself
+			assert.Equal(t, mainResult, mainResult)
 		})
 	}
 }
