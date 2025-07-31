@@ -228,22 +228,6 @@ func getSubPatternFromSpec(
 	return subpattern.String()
 }
 
-// getExcludePattern creates a regular expression pattern for exclude specs
-func getExcludePattern(excludeSpecs []string, currentDirectory string) string {
-	return getRegularExpressionForWildcard(excludeSpecs, currentDirectory, "exclude")
-}
-
-// getFileIncludePatterns creates regular expression patterns for file include specs
-func getFileIncludePatterns(includeSpecs []string, basePath string) []string {
-	patterns := getRegularExpressionsForWildcards(includeSpecs, basePath, "files")
-	if patterns == nil {
-		return nil
-	}
-	return core.Map(patterns, func(pattern string) string {
-		return fmt.Sprintf("^%s$", pattern)
-	})
-}
-
 func getIncludeBasePath(absolute string) string {
 	wildcardOffset := strings.IndexAny(absolute, string(wildcardCharCodes))
 	if wildcardOffset < 0 {
