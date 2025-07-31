@@ -1,7 +1,7 @@
 // === QuickInfo ===
 === /quickInfoDisplayPartsTypeParameterInFunctionLikeInTypeAlias.ts ===
 // type MixinCtor<A> = new () => A & { constructor: MixinCtor<A> };
-//                              ^^
+//                               ^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | (type parameter) A
@@ -42,7 +42,7 @@
       "range": {
         "start": {
           "line": 0,
-          "character": 29
+          "character": 30
         },
         "end": {
           "line": 0,

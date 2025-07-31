@@ -4,7 +4,7 @@
 //  * Doc foo
 //  */
 // declare function foo(): void;
-//                 ^^^^
+//                  ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | function foo(): void
@@ -18,7 +18,7 @@
 //  * @tag Tag text
 //  */
 // declare function foo(x: number): void
-//                 ^^^^
+//                  ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | function foo(): void
@@ -45,7 +45,7 @@
       "range": {
         "start": {
           "line": 3,
-          "character": 16
+          "character": 17
         },
         "end": {
           "line": 3,
@@ -72,7 +72,7 @@
       "range": {
         "start": {
           "line": 9,
-          "character": 16
+          "character": 17
         },
         "end": {
           "line": 9,

@@ -4,7 +4,7 @@
 //  * @return Don't @ me
 //  */
 // function f() { }
-//         ^^
+//          ^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | function f(): void
@@ -18,7 +18,7 @@
 //  * @return One final @
 //  */
 // function g() { }
-//         ^^
+//          ^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | function g(): void
@@ -33,7 +33,7 @@
 //  * But another line
 //  */
 // function h() { }
-//         ^^
+//          ^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | function h(): void
@@ -63,7 +63,7 @@
       "range": {
         "start": {
           "line": 3,
-          "character": 8
+          "character": 9
         },
         "end": {
           "line": 3,
@@ -90,7 +90,7 @@
       "range": {
         "start": {
           "line": 7,
-          "character": 8
+          "character": 9
         },
         "end": {
           "line": 7,
@@ -117,7 +117,7 @@
       "range": {
         "start": {
           "line": 12,
-          "character": 8
+          "character": 9
         },
         "end": {
           "line": 12,

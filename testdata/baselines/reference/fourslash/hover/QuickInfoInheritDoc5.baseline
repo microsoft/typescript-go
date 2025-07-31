@@ -7,7 +7,7 @@
 //      * @inheritdoc
 //      */
 //     static value() {
-//           ^^^^^^
+//            ^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | (method) B.value(): any
@@ -38,7 +38,7 @@
       "range": {
         "start": {
           "line": 6,
-          "character": 10
+          "character": 11
         },
         "end": {
           "line": 6,

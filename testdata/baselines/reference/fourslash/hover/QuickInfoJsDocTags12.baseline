@@ -8,7 +8,7 @@
 //  * @returns {number}
 //  */
 // function f(options, callback = null) {
-//         ^^
+//          ^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | function f(options: any, callback?: any): void
@@ -43,7 +43,7 @@
       "range": {
         "start": {
           "line": 7,
-          "character": 8
+          "character": 9
         },
         "end": {
           "line": 7,

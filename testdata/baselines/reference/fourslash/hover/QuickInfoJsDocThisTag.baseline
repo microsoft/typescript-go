@@ -2,7 +2,7 @@
 === /a.ts ===
 // /** @this {number} */
 // function f() {
-//         ^^
+//          ^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | function f(): void
@@ -32,7 +32,7 @@
       "range": {
         "start": {
           "line": 1,
-          "character": 8
+          "character": 9
         },
         "end": {
           "line": 1,

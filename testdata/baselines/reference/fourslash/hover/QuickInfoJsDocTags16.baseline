@@ -11,7 +11,7 @@
 // 
 // class B extends A {
 //     override foo() { }
-//             ^^^^
+//              ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | (method) B.foo(): void
@@ -22,7 +22,7 @@
 // 
 // class C extends B {
 //     override foo() { }
-//             ^^^^
+//              ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | (method) C.foo(): void
@@ -49,7 +49,7 @@
       "range": {
         "start": {
           "line": 10,
-          "character": 12
+          "character": 13
         },
         "end": {
           "line": 10,
@@ -76,7 +76,7 @@
       "range": {
         "start": {
           "line": 14,
-          "character": 12
+          "character": 13
         },
         "end": {
           "line": 14,

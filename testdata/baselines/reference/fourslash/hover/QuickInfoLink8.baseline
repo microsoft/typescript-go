@@ -5,7 +5,7 @@
 //  * See {@link A | constant A} instead
 //  */
 // const B = 456;
-//      ^^
+//       ^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | const B: 456
@@ -31,7 +31,7 @@
       "range": {
         "start": {
           "line": 4,
-          "character": 5
+          "character": 6
         },
         "end": {
           "line": 4,

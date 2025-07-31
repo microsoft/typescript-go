@@ -35,7 +35,7 @@
 //      * @param {{ tiger: string; lion: string; }} [mySpecificStuff] Description of my specific parameter.
 //      */
 //     public static doSomethingUseful(mySpecificStuff?: { tiger: string; lion: string; }): string {
-//                  ^^^^^^^^^^^^^^^^^^
+//                   ^^^^^^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | (method) SubClass.doSomethingUseful(mySpecificStuff?: { tiger: string; lion: string; }): string
@@ -60,7 +60,7 @@
 //      * @returns {void} SubClass.func1.returns
 //      */
 //     public static func1(stuff1: any): void {
-//                  ^^^^^^
+//                   ^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | (method) SubClass.func1(stuff1: any): void
@@ -83,7 +83,7 @@
 //      * text after tag
 //      */
 //     public static readonly someProperty: string = 'specific to this class value'
-//                           ^^^^^^^^^^^^^
+//                            ^^^^^^^^^^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | (property) SubClass.someProperty: string
@@ -113,7 +113,7 @@
       "range": {
         "start": {
           "line": 34,
-          "character": 17
+          "character": 18
         },
         "end": {
           "line": 34,
@@ -140,7 +140,7 @@
       "range": {
         "start": {
           "line": 47,
-          "character": 17
+          "character": 18
         },
         "end": {
           "line": 47,
@@ -167,7 +167,7 @@
       "range": {
         "start": {
           "line": 55,
-          "character": 26
+          "character": 27
         },
         "end": {
           "line": 55,

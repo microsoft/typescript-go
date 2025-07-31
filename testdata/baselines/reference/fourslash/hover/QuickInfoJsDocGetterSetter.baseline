@@ -6,7 +6,7 @@
 //      * @returns return A
 //      */
 //     get x(): string {
-//        ^^
+//         ^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | (accessor) A.x: string
@@ -24,7 +24,7 @@
 //      * @todo empty jsdoc
 //      */
 //     set x(value) { }
-//        ^^
+//         ^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | (accessor) A.x: string
@@ -42,7 +42,7 @@
 //      * @returns return B
 //      */
 //     get x(): string {
-//        ^^
+//         ^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | (accessor) B.x: string
@@ -59,7 +59,7 @@
 //      * @param value foo B
 //      */
 //     set x(vale) { }
-//        ^^
+//         ^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | (accessor) B.x: string
@@ -79,7 +79,7 @@
 //      * @param value foo D
 //      */
 //     set x(val: string) { }
-//        ^^
+//         ^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | (accessor) D.x: string
@@ -153,7 +153,7 @@
       "range": {
         "start": {
           "line": 5,
-          "character": 7
+          "character": 8
         },
         "end": {
           "line": 5,
@@ -180,7 +180,7 @@
       "range": {
         "start": {
           "line": 13,
-          "character": 7
+          "character": 8
         },
         "end": {
           "line": 13,
@@ -207,7 +207,7 @@
       "range": {
         "start": {
           "line": 21,
-          "character": 7
+          "character": 8
         },
         "end": {
           "line": 21,
@@ -234,7 +234,7 @@
       "range": {
         "start": {
           "line": 28,
-          "character": 7
+          "character": 8
         },
         "end": {
           "line": 28,
@@ -261,7 +261,7 @@
       "range": {
         "start": {
           "line": 38,
-          "character": 7
+          "character": 8
         },
         "end": {
           "line": 38,

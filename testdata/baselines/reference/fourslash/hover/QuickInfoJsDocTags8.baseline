@@ -9,7 +9,7 @@
 //  * @template {Foo} T
 //  */
 // const foo = t => t.y;
-//      ^^^^
+//       ^^^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | const foo: (t: T) => number
@@ -37,7 +37,7 @@
       "range": {
         "start": {
           "line": 8,
-          "character": 5
+          "character": 6
         },
         "end": {
           "line": 8,
