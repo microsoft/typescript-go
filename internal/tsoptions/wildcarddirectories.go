@@ -130,7 +130,7 @@ func getWildcardDirectoryFromSpec(spec string, useCaseSensitiveFileNames bool) *
 
 				// Determine if this should be watched recursively
 				lastWildcardIndex := max(questionWildcardIndex, starWildcardIndex)
-				recursive := lastWildcardIndex != -1 && lastWildcardIndex < lastDirectorySeparatorIndex
+				recursive := 0 <= lastWildcardIndex && lastWildcardIndex < lastDirectorySeparatorIndex
 
 				return &wildcardDirectoryMatch{
 					Key:       toCanonicalKey(path, useCaseSensitiveFileNames),

@@ -10,6 +10,24 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
+const (
+	// minJsExtension is the file extension for minified JavaScript files
+	// These files should be excluded from wildcard matching unless explicitly included
+	minJsExtension = ".min.js"
+)
+
+// applyImplicitGlob applies implicit glob expansion to segments if needed
+// If the last component has no extension and no wildcards, adds **/*
+func applyImplicitGlob(segments []string) []string {
+	if len(segments) > 0 {
+		lastComponent := segments[len(segments)-1]
+		if IsImplicitGlob(lastComponent) {
+			return append(segments, "**", "*")
+		}
+	}
+	return segments
+}
+
 // isImplicitlyExcluded checks if a file or directory should be implicitly excluded
 // based on TypeScript's default behavior (dotted files/folders and common package folders)
 func isImplicitlyExcluded(name string, isDirectory bool) bool {
@@ -246,7 +264,7 @@ func (gm globMatcher) matchGlobPattern(pattern, text string, isFileMatch bool) b
 			ti++
 		} else if pi < len(pattern) && pattern[pi] == '*' {
 			// For file matching, * should not match .min.js files UNLESS the pattern explicitly ends with .min.js
-			if isFileMatch && strings.HasSuffix(text, ".min.js") && !strings.HasSuffix(pattern, ".min.js") {
+			if isFileMatch && strings.HasSuffix(text, minJsExtension) && !strings.HasSuffix(pattern, minJsExtension) {
 				return false
 			}
 			starIdx = pi
@@ -588,13 +606,8 @@ func globMatcherForPatternAbsolute(pattern string, absolutePath string, useCaseS
 		segments = filteredSegments
 	}
 
-	// Handle implicit glob - if the last component has no extension and no wildcards, add **/*
-	if len(segments) > 0 {
-		lastComponent := segments[len(segments)-1]
-		if IsImplicitGlob(lastComponent) {
-			segments = append(segments, "**", "*")
-		}
-	}
+	// Handle implicit glob using the shared helper function
+	segments = applyImplicitGlob(segments)
 
 	return globMatcher{
 		pattern:                   pattern,
@@ -627,13 +640,8 @@ func globMatcherForPatternRelative(pattern string, useCaseSensitiveFileNames boo
 		segments = filteredSegments
 	}
 
-	// Handle implicit glob - if the last component has no extension and no wildcards, add **/*
-	if len(segments) > 0 {
-		lastComponent := segments[len(segments)-1]
-		if IsImplicitGlob(lastComponent) {
-			segments = append(segments, "**", "*")
-		}
-	}
+	// Handle implicit glob using the shared helper function
+	segments = applyImplicitGlob(segments)
 
 	return globMatcher{
 		pattern:                   pattern,
