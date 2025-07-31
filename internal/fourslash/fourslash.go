@@ -1089,9 +1089,10 @@ func (f *FourslashTest) VerifyBaselineSignatureHelp(t *testing.T) {
 					} else if activeParam.Documentation.String != nil {
 						activeParamLine = *activeParam.Documentation.String
 					}
+
+					activeParamLine = fmt.Sprintf("- `%s`: %s", activeParamLabel, activeParamLine)
 				}
 
-				activeParamLine = fmt.Sprintf("- `%s`: %s", activeParamLabel, activeParamLine)
 			}
 		}
 
