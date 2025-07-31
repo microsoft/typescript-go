@@ -16,8 +16,10 @@ type FileSource interface {
 	GetFile(fileName string) FileHandle
 }
 
-var _ FileSource = (*snapshotFSBuilder)(nil)
-var _ FileSource = (*snapshotFS)(nil)
+var (
+	_ FileSource = (*snapshotFSBuilder)(nil)
+	_ FileSource = (*snapshotFS)(nil)
+)
 
 type snapshotFS struct {
 	toPath    func(fileName string) tspath.Path
@@ -88,16 +90,20 @@ func (s *snapshotFSBuilder) GetFileByPath(fileName string, path tspath.Path) Fil
 		return file
 	}
 	entry, _ := s.diskFiles.LoadOrStore(path, &diskFile{fileBase: fileBase{fileName: fileName}, needsReload: true})
-	if entry != nil && !entry.Value().MatchesDiskText() {
-		if content, ok := s.fs.ReadFile(fileName); ok {
-			entry.Change(func(file *diskFile) {
-				file.content = content
-				file.hash = sha256.Sum256([]byte(content))
-				file.needsReload = false
-			})
-		} else {
-			entry.Delete()
-		}
+	if entry != nil {
+		entry.Locked(func(entry dirty.Value[*diskFile]) {
+			if !entry.Value().MatchesDiskText() {
+				if content, ok := s.fs.ReadFile(fileName); ok {
+					entry.Change(func(file *diskFile) {
+						file.content = content
+						file.hash = sha256.Sum256([]byte(content))
+						file.needsReload = false
+					})
+				} else {
+					entry.Delete()
+				}
+			}
+		})
 	}
 	if entry == nil || entry.Value() == nil {
 		return nil
