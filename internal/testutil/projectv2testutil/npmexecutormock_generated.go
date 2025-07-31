@@ -6,18 +6,18 @@ package projectv2testutil
 import (
 	"sync"
 
-	"github.com/microsoft/typescript-go/internal/projectv2"
+	"github.com/microsoft/typescript-go/internal/projectv2/ata"
 )
 
-// Ensure, that NpmExecutorMock does implement projectv2.NpmExecutor.
+// Ensure, that NpmExecutorMock does implement ata.NpmExecutor.
 // If this is not the case, regenerate this file with moq.
-var _ projectv2.NpmExecutor = &NpmExecutorMock{}
+var _ ata.NpmExecutor = &NpmExecutorMock{}
 
-// NpmExecutorMock is a mock implementation of projectv2.NpmExecutor.
+// NpmExecutorMock is a mock implementation of ata.NpmExecutor.
 //
 //	func TestSomethingThatUsesNpmExecutor(t *testing.T) {
 //
-//		// make and configure a mocked projectv2.NpmExecutor
+//		// make and configure a mocked ata.NpmExecutor
 //		mockedNpmExecutor := &NpmExecutorMock{
 //			NpmInstallFunc: func(cwd string, args []string) ([]byte, error) {
 //				panic("mock out the NpmInstall method")

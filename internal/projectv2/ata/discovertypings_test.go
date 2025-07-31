@@ -1,4 +1,4 @@
-package projectv2_test
+package ata_test
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/projectv2"
+	"github.com/microsoft/typescript-go/internal/projectv2/ata"
 	"github.com/microsoft/typescript-go/internal/semver"
 	"github.com/microsoft/typescript-go/internal/testutil/projectv2testutil"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -33,17 +33,17 @@ func TestDiscoverTypings(t *testing.T) {
 			"/home/src/projects/project/chroma.min.js": "",
 		}
 		fs := vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/)
-		cachedTypingPaths, newTypingNames, filesToWatch := projectv2.DiscoverTypings(
+		cachedTypingPaths, newTypingNames, filesToWatch := ata.DiscoverTypings(
 			fs,
 			logger,
-			&projectv2.TypingsInfo{
+			&ata.TypingsInfo{
 				CompilerOptions:   &core.CompilerOptions{},
 				TypeAcquisition:   &core.TypeAcquisition{Enable: core.TSTrue},
 				UnresolvedImports: collections.Set[string]{},
 			},
 			[]string{"/home/src/projects/project/app.js", "/home/src/projects/project/jquery.js", "/home/src/projects/project/chroma.min.js"},
 			"/home/src/projects/project",
-			&collections.SyncMap[string, *projectv2.CachedTyping]{},
+			&collections.SyncMap[string, *ata.CachedTyping]{},
 			map[string]map[string]string{},
 		)
 		assert.Assert(t, cachedTypingPaths == nil)
@@ -65,17 +65,17 @@ func TestDiscoverTypings(t *testing.T) {
 		}
 		fs := vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/)
 		unresolvedImports := collections.Set[string]{M: map[string]struct{}{"assert": {}, "somename": {}}}
-		cachedTypingPaths, newTypingNames, filesToWatch := projectv2.DiscoverTypings(
+		cachedTypingPaths, newTypingNames, filesToWatch := ata.DiscoverTypings(
 			fs,
 			logger,
-			&projectv2.TypingsInfo{
+			&ata.TypingsInfo{
 				CompilerOptions:   &core.CompilerOptions{},
 				TypeAcquisition:   &core.TypeAcquisition{Enable: core.TSTrue},
 				UnresolvedImports: unresolvedImports,
 			},
 			[]string{"/home/src/projects/project/app.js"},
 			"/home/src/projects/project",
-			&collections.SyncMap[string, *projectv2.CachedTyping]{},
+			&collections.SyncMap[string, *ata.CachedTyping]{},
 			map[string]map[string]string{},
 		)
 		assert.Assert(t, cachedTypingPaths == nil)
@@ -97,17 +97,17 @@ func TestDiscoverTypings(t *testing.T) {
 			"/home/src/projects/project/node.d.ts": "",
 		}
 		fs := vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/)
-		cache := collections.SyncMap[string, *projectv2.CachedTyping]{}
+		cache := collections.SyncMap[string, *ata.CachedTyping]{}
 		version := semver.MustParse("1.3.0")
-		cache.Store("node", &projectv2.CachedTyping{
+		cache.Store("node", &ata.CachedTyping{
 			TypingsLocation: "/home/src/projects/project/node.d.ts",
 			Version:         &version,
 		})
 		unresolvedImports := collections.Set[string]{M: map[string]struct{}{"fs": {}, "bar": {}}}
-		cachedTypingPaths, newTypingNames, filesToWatch := projectv2.DiscoverTypings(
+		cachedTypingPaths, newTypingNames, filesToWatch := ata.DiscoverTypings(
 			fs,
 			logger,
-			&projectv2.TypingsInfo{
+			&ata.TypingsInfo{
 				CompilerOptions:   &core.CompilerOptions{},
 				TypeAcquisition:   &core.TypeAcquisition{Enable: core.TSTrue},
 				UnresolvedImports: unresolvedImports,
@@ -139,17 +139,17 @@ func TestDiscoverTypings(t *testing.T) {
 			"/home/src/projects/project/node.d.ts": "",
 		}
 		fs := vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/)
-		cache := collections.SyncMap[string, *projectv2.CachedTyping]{}
+		cache := collections.SyncMap[string, *ata.CachedTyping]{}
 		version := semver.MustParse("1.3.0")
-		cache.Store("node", &projectv2.CachedTyping{
+		cache.Store("node", &ata.CachedTyping{
 			TypingsLocation: "/home/src/projects/project/node.d.ts",
 			Version:         &version,
 		})
 		unresolvedImports := collections.Set[string]{M: map[string]struct{}{"fs": {}, "bar": {}}}
-		cachedTypingPaths, newTypingNames, filesToWatch := projectv2.DiscoverTypings(
+		cachedTypingPaths, newTypingNames, filesToWatch := ata.DiscoverTypings(
 			fs,
 			logger,
-			&projectv2.TypingsInfo{
+			&ata.TypingsInfo{
 				CompilerOptions:   &core.CompilerOptions{},
 				TypeAcquisition:   &core.TypeAcquisition{Enable: core.TSTrue},
 				UnresolvedImports: unresolvedImports,
@@ -179,17 +179,17 @@ func TestDiscoverTypings(t *testing.T) {
 			"/home/src/projects/project/node_modules/a/b/package.json": `{ "name": "b" }`,
 		}
 		fs := vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/)
-		cachedTypingPaths, newTypingNames, filesToWatch := projectv2.DiscoverTypings(
+		cachedTypingPaths, newTypingNames, filesToWatch := ata.DiscoverTypings(
 			fs,
 			logger,
-			&projectv2.TypingsInfo{
+			&ata.TypingsInfo{
 				CompilerOptions:   &core.CompilerOptions{},
 				TypeAcquisition:   &core.TypeAcquisition{Enable: core.TSTrue},
 				UnresolvedImports: collections.Set[string]{},
 			},
 			[]string{"/home/src/projects/project/app.js"},
 			"/home/src/projects/project",
-			&collections.SyncMap[string, *projectv2.CachedTyping]{},
+			&collections.SyncMap[string, *ata.CachedTyping]{},
 			map[string]map[string]string{},
 		)
 		assert.Assert(t, cachedTypingPaths == nil)
@@ -210,17 +210,17 @@ func TestDiscoverTypings(t *testing.T) {
 			"/home/src/projects/project/node_modules/@a/b/package.json": `{ "name": "@a/b" }`,
 		}
 		fs := vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/)
-		cachedTypingPaths, newTypingNames, filesToWatch := projectv2.DiscoverTypings(
+		cachedTypingPaths, newTypingNames, filesToWatch := ata.DiscoverTypings(
 			fs,
 			logger,
-			&projectv2.TypingsInfo{
+			&ata.TypingsInfo{
 				CompilerOptions:   &core.CompilerOptions{},
 				TypeAcquisition:   &core.TypeAcquisition{Enable: core.TSTrue},
 				UnresolvedImports: collections.Set[string]{},
 			},
 			[]string{"/home/src/projects/project/app.js"},
 			"/home/src/projects/project",
-			&collections.SyncMap[string, *projectv2.CachedTyping]{},
+			&collections.SyncMap[string, *ata.CachedTyping]{},
 			map[string]map[string]string{},
 		)
 		assert.Assert(t, cachedTypingPaths == nil)
@@ -240,22 +240,22 @@ func TestDiscoverTypings(t *testing.T) {
 			"/home/src/projects/project/app.js": "",
 		}
 		fs := vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/)
-		cache := collections.SyncMap[string, *projectv2.CachedTyping]{}
+		cache := collections.SyncMap[string, *ata.CachedTyping]{}
 		nodeVersion := semver.MustParse("1.3.0")
 		commanderVersion := semver.MustParse("1.0.0")
-		cache.Store("node", &projectv2.CachedTyping{
+		cache.Store("node", &ata.CachedTyping{
 			TypingsLocation: projectv2testutil.TestTypingsLocation + "/node_modules/@types/node/index.d.ts",
 			Version:         &nodeVersion,
 		})
-		cache.Store("commander", &projectv2.CachedTyping{
+		cache.Store("commander", &ata.CachedTyping{
 			TypingsLocation: projectv2testutil.TestTypingsLocation + "/node_modules/@types/commander/index.d.ts",
 			Version:         &commanderVersion,
 		})
 		unresolvedImports := collections.Set[string]{M: map[string]struct{}{"http": {}, "commander": {}}}
-		cachedTypingPaths, newTypingNames, filesToWatch := projectv2.DiscoverTypings(
+		cachedTypingPaths, newTypingNames, filesToWatch := ata.DiscoverTypings(
 			fs,
 			logger,
-			&projectv2.TypingsInfo{
+			&ata.TypingsInfo{
 				CompilerOptions:   &core.CompilerOptions{},
 				TypeAcquisition:   &core.TypeAcquisition{Enable: core.TSTrue},
 				UnresolvedImports: unresolvedImports,
@@ -287,9 +287,9 @@ func TestDiscoverTypings(t *testing.T) {
 			"/home/src/projects/project/app.js": "",
 		}
 		fs := vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/)
-		cache := collections.SyncMap[string, *projectv2.CachedTyping]{}
+		cache := collections.SyncMap[string, *ata.CachedTyping]{}
 		nodeVersion := semver.MustParse("1.0.0")
-		cache.Store("node", &projectv2.CachedTyping{
+		cache.Store("node", &ata.CachedTyping{
 			TypingsLocation: projectv2testutil.TestTypingsLocation + "/node_modules/@types/node/index.d.ts",
 			Version:         &nodeVersion,
 		})
@@ -297,10 +297,10 @@ func TestDiscoverTypings(t *testing.T) {
 		delete(config, "ts"+core.VersionMajorMinor())
 
 		unresolvedImports := collections.Set[string]{M: map[string]struct{}{"http": {}}}
-		cachedTypingPaths, newTypingNames, filesToWatch := projectv2.DiscoverTypings(
+		cachedTypingPaths, newTypingNames, filesToWatch := ata.DiscoverTypings(
 			fs,
 			logger,
-			&projectv2.TypingsInfo{
+			&ata.TypingsInfo{
 				CompilerOptions:   &core.CompilerOptions{},
 				TypeAcquisition:   &core.TypeAcquisition{Enable: core.TSTrue},
 				UnresolvedImports: unresolvedImports,
@@ -329,24 +329,24 @@ func TestDiscoverTypings(t *testing.T) {
 			"/home/src/projects/project/app.js": "",
 		}
 		fs := vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/)
-		cache := collections.SyncMap[string, *projectv2.CachedTyping]{}
+		cache := collections.SyncMap[string, *ata.CachedTyping]{}
 		nodeVersion := semver.MustParse("1.3.0-next.0")
 		commanderVersion := semver.MustParse("1.3.0-next.0")
-		cache.Store("node", &projectv2.CachedTyping{
+		cache.Store("node", &ata.CachedTyping{
 			TypingsLocation: projectv2testutil.TestTypingsLocation + "/node_modules/@types/node/index.d.ts",
 			Version:         &nodeVersion,
 		})
-		cache.Store("commander", &projectv2.CachedTyping{
+		cache.Store("commander", &ata.CachedTyping{
 			TypingsLocation: projectv2testutil.TestTypingsLocation + "/node_modules/@types/commander/index.d.ts",
 			Version:         &commanderVersion,
 		})
 		config := maps.Clone(projectv2testutil.TypesRegistryConfig())
 		config["ts"+core.VersionMajorMinor()] = "1.3.0-next.1"
 		unresolvedImports := collections.Set[string]{M: map[string]struct{}{"http": {}, "commander": {}}}
-		cachedTypingPaths, newTypingNames, filesToWatch := projectv2.DiscoverTypings(
+		cachedTypingPaths, newTypingNames, filesToWatch := ata.DiscoverTypings(
 			fs,
 			logger,
-			&projectv2.TypingsInfo{
+			&ata.TypingsInfo{
 				CompilerOptions:   &core.CompilerOptions{},
 				TypeAcquisition:   &core.TypeAcquisition{Enable: core.TSTrue},
 				UnresolvedImports: unresolvedImports,

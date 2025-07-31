@@ -19,7 +19,7 @@ import (
 //go:generate go tool github.com/matryer/moq -stub -fmt goimports -pkg projectv2testutil -out clientmock_generated.go ../../projectv2 Client
 //go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w clientmock_generated.go
 
-//go:generate go tool github.com/matryer/moq -stub -fmt goimports -pkg projectv2testutil -out npmexecutormock_generated.go ../../projectv2 NpmExecutor
+//go:generate go tool github.com/matryer/moq -stub -fmt goimports -pkg projectv2testutil -out npmexecutormock_generated.go ../../projectv2/ata NpmExecutor
 //go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w npmexecutormock_generated.go
 
 const (

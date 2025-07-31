@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/projectv2/ata"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -87,7 +88,7 @@ type SnapshotChange struct {
 type ATAStateChange struct {
 	ProjectID tspath.Path
 	// TypingsInfo is the new typings info for the project.
-	TypingsInfo *TypingsInfo
+	TypingsInfo *ata.TypingsInfo
 	// TypingsFiles is the new list of typing files for the project.
 	TypingsFiles []string
 	Logs         *logCollector

@@ -1,4 +1,4 @@
-package projectv2
+package ata
 
 import (
 	"encoding/json"
@@ -15,7 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
-func IsTypingUpToDate(cachedTyping *CachedTyping, availableTypingVersions map[string]string) bool {
+func isTypingUpToDate(cachedTyping *CachedTyping, availableTypingVersions map[string]string) bool {
 	useVersion, ok := availableTypingVersions["ts"+core.VersionMajorMinor()]
 	if !ok {
 		useVersion = availableTypingVersions["latest"]
@@ -81,7 +81,7 @@ func DiscoverTypings(
 	// Add the cached typing locations for inferred typings that are already installed
 	packageNameToTypingLocation.Range(func(name string, typing *CachedTyping) bool {
 		registryEntry := typesRegistry[name]
-		if inferredTypings[name] == "" && registryEntry != nil && IsTypingUpToDate(typing, registryEntry) {
+		if inferredTypings[name] == "" && registryEntry != nil && isTypingUpToDate(typing, registryEntry) {
 			inferredTypings[name] = typing.TypingsLocation
 		}
 		return true

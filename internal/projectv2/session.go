@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/projectv2/ata"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -30,7 +31,7 @@ type SessionInit struct {
 	FS          vfs.FS
 	Client      Client
 	Logger      Logger
-	NpmExecutor NpmExecutor
+	NpmExecutor ata.NpmExecutor
 }
 
 type Session struct {
@@ -38,13 +39,13 @@ type Session struct {
 	toPath                             func(string) tspath.Path
 	client                             Client
 	logger                             Logger
-	npmExecutor                        NpmExecutor
+	npmExecutor                        ata.NpmExecutor
 	fs                                 *overlayFS
 	parseCache                         *parseCache
 	extendedConfigCache                *extendedConfigCache
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	programCounter                     *programCounter
-	typingsInstaller                   *TypingsInstaller
+	typingsInstaller                   *ata.TypingsInstaller
 	backgroundTasks                    *BackgroundQueue
 
 	snapshotMu sync.RWMutex
@@ -97,7 +98,7 @@ func NewSession(init *SessionInit) *Session {
 		pendingATAChanges: make(map[tspath.Path]*ATAStateChange),
 	}
 
-	session.typingsInstaller = NewTypingsInstaller(&TypingsInstallerOptions{
+	session.typingsInstaller = ata.NewTypingsInstaller(&ata.TypingsInstallerOptions{
 		TypingsLocation: init.Options.TypingsLocation,
 		ThrottleLimit:   5,
 	}, session)
@@ -521,7 +522,7 @@ func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {
 				}
 
 				typingsInfo := project.ComputeTypingsInfo()
-				request := &TypingsInstallRequest{
+				request := &ata.TypingsInstallRequest{
 					ProjectID:        project.configFilePath,
 					TypingsInfo:      &typingsInfo,
 					FileNames:        core.Map(project.Program.GetSourceFiles(), func(file *ast.SourceFile) string { return file.FileName() }),

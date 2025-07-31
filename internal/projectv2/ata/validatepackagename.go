@@ -1,4 +1,4 @@
-package projectv2
+package ata
 
 import (
 	"fmt"
@@ -69,7 +69,7 @@ func validatePackageNameWorker(packageName string, supportScopedPackage bool) (r
 }
 
 /** @internal */
-func RenderPackageNameValidationFailure(typing string, result NameValidationResult, name string, isScopeName bool) string {
+func renderPackageNameValidationFailure(typing string, result NameValidationResult, name string, isScopeName bool) string {
 	var kind string
 	if isScopeName {
 		kind = "Scope"

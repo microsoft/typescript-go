@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
+	"github.com/microsoft/typescript-go/internal/projectv2/ata"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -73,7 +74,7 @@ type Project struct {
 
 	// installedTypingsInfo is the value of `project.ComputeTypingsInfo()` that was
 	// used during the most recently completed typings installation.
-	installedTypingsInfo *TypingsInfo
+	installedTypingsInfo *ata.TypingsInfo
 	// typingsFiles are the root files added by the typings installer.
 	typingsFiles []string
 }
@@ -378,8 +379,8 @@ func (p *Project) ShouldTriggerATA() bool {
 	return !p.installedTypingsInfo.Equals(p.ComputeTypingsInfo())
 }
 
-func (p *Project) ComputeTypingsInfo() TypingsInfo {
-	return TypingsInfo{
+func (p *Project) ComputeTypingsInfo() ata.TypingsInfo {
+	return ata.TypingsInfo{
 		CompilerOptions:   p.CommandLine.CompilerOptions(),
 		TypeAcquisition:   p.GetTypeAcquisition(),
 		UnresolvedImports: p.GetUnresolvedImports(),
