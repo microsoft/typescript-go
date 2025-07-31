@@ -467,6 +467,11 @@ func matchesExcludeNew(fileName string, excludeSpecs []string, currentDirectory 
 	}
 
 	for _, excludeSpec := range excludeSpecs {
+		// Special case: empty pattern matches everything (consistent with TypeScript behavior)
+		if excludeSpec == "" {
+			return true
+		}
+
 		matcher := globMatcherForPatternRelative(excludeSpec, useCaseSensitiveFileNames)
 		if matcher.matchesFileRelative(relativePath) {
 			return true
@@ -501,6 +506,11 @@ func matchesIncludeNew(fileName string, includeSpecs []string, basePath string, 
 	}
 
 	for _, includeSpec := range includeSpecs {
+		// Special case: empty pattern matches everything (consistent with TypeScript behavior)
+		if includeSpec == "" {
+			return true
+		}
+
 		matcher := globMatcherForPatternRelative(includeSpec, useCaseSensitiveFileNames)
 		if matcher.matchesFileRelative(relativePath) {
 			return true
@@ -520,6 +530,13 @@ func matchesIncludeWithJsonOnlyNew(fileName string, includeSpecs []string, baseP
 		relativePath = fileName[len(basePath):]
 		if strings.HasPrefix(relativePath, "/") {
 			relativePath = relativePath[1:]
+		}
+	}
+
+	// Special case: empty pattern matches everything (consistent with TypeScript behavior)
+	for _, includeSpec := range includeSpecs {
+		if includeSpec == "" {
+			return true
 		}
 	}
 
@@ -657,6 +674,11 @@ func (gm globMatcher) matchesFileAbsolute(absolutePath string) bool {
 
 // matchesFileRelative returns true if the given relative file path matches the glob pattern
 func (gm globMatcher) matchesFileRelative(relativePath string) bool {
+	// Special case: empty pattern matches everything (consistent with TypeScript behavior)
+	if gm.pattern == "" {
+		return true
+	}
+
 	// Split the relative path into segments
 	var pathSegments []string
 	if relativePath == "" {
@@ -703,6 +725,11 @@ func (gm globMatcher) matchesDirectoryAbsolute(absolutePath string) bool {
 
 // matchesDirectoryRelative returns true if the given relative directory path matches the glob pattern
 func (gm globMatcher) matchesDirectoryRelative(relativePath string) bool {
+	// Special case: empty pattern matches everything (consistent with TypeScript behavior)
+	if gm.pattern == "" {
+		return true
+	}
+
 	// Split the relative path into segments
 	var pathSegments []string
 	if relativePath == "" {
