@@ -289,7 +289,7 @@ func TestMatchFiles(t *testing.T) {
 			includes:                  []string{},
 			useCaseSensitiveFileNames: true,
 			currentDirectory:          "/",
-			// !!! This seems wrong, but the old implementation behaved this way.
+			// This seems wrong, but the Strada behaved this way.
 			expected: []string{
 				"/apath/..c.ts",
 				"/apath/.b.ts",
@@ -313,7 +313,7 @@ func TestMatchFiles(t *testing.T) {
 			includes:                  []string{},
 			useCaseSensitiveFileNames: true,
 			currentDirectory:          "/",
-			// !!! This seems wrong, but the old implementation behaved this way.
+			// This seems wrong, but the Strada behaved this way.
 			expected: []string{
 				"/d.ts",
 				"/bower_components/b.ts",
