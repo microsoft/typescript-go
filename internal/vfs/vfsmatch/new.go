@@ -9,6 +9,44 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
+// isImplicitlyExcluded checks if a file or directory should be implicitly excluded
+// based on TypeScript's default behavior (dotted files/folders and common package folders)
+func isImplicitlyExcluded(name string, isDirectory bool) bool {
+	// Exclude files/directories that start with a dot
+	if strings.HasPrefix(name, ".") {
+		return true
+	}
+
+	// For directories, exclude common package folders
+	if isDirectory {
+		commonPackageFolders := []string{"node_modules", "bower_components", "jspm_packages"}
+		for _, pkg := range commonPackageFolders {
+			if name == pkg {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+// shouldImplicitlyExcludeRelativePath checks if a relative path should be implicitly excluded
+func shouldImplicitlyExcludeRelativePath(relativePath string) bool {
+	if relativePath == "" {
+		return false
+	}
+
+	// Split path into segments and check each segment
+	segments := strings.Split(relativePath, "/")
+	for _, segment := range segments {
+		if isImplicitlyExcluded(segment, true) { // Check as directory since it's a path segment
+			return true
+		}
+	}
+
+	return false
+}
+
 // matchFilesNew is the regex-free implementation of file matching
 func matchFilesNew(path string, extensions []string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth *int, host vfs.FS) []string {
 	path = tspath.NormalizePath(path)
@@ -30,7 +68,7 @@ func matchFilesNew(path string, extensions []string, excludes []string, includes
 
 	excludeMatchers := make([]globMatcher, len(excludes))
 	for i, exclude := range excludes {
-		excludeMatchers[i] = globMatcherForPatternRelative(exclude, useCaseSensitiveFileNames)
+		excludeMatchers[i] = globMatcherForPatternAbsolute(exclude, absolutePath, useCaseSensitiveFileNames)
 	}
 
 	// Associate an array of results with each include matcher. This keeps results in order of the "include" order.
@@ -306,9 +344,14 @@ func (v *newRelativeGlobVisitor) visitDirectory(path string, absolutePath string
 			}
 		}
 
+		// Apply implicit exclusions (dotted files and common package folders)
+		if shouldImplicitlyExcludeRelativePath(relativePath) || isImplicitlyExcluded(current, false) {
+			continue
+		}
+
 		excluded := false
 		for _, excludeMatcher := range v.excludeMatchers {
-			if excludeMatcher.matchesFileRelative(relativePath) {
+			if excludeMatcher.matchesFileAbsolute(absoluteName) {
 				excluded = true
 				break
 			}
@@ -376,6 +419,11 @@ func (v *newRelativeGlobVisitor) visitDirectory(path string, absolutePath string
 			}
 		}
 
+		// Apply implicit exclusions (dotted directories and common package folders)
+		if shouldImplicitlyExcludeRelativePath(relativePath) || isImplicitlyExcluded(current, true) {
+			continue
+		}
+
 		shouldInclude := len(v.includeMatchers) == 0
 		if !shouldInclude {
 			for _, includeMatcher := range v.includeMatchers {
@@ -388,7 +436,7 @@ func (v *newRelativeGlobVisitor) visitDirectory(path string, absolutePath string
 
 		shouldExclude := false
 		for _, excludeMatcher := range v.excludeMatchers {
-			if excludeMatcher.matchesDirectoryRelative(relativePath) {
+			if excludeMatcher.matchesDirectoryAbsolute(absoluteName) {
 				shouldExclude = true
 				break
 			}
@@ -488,6 +536,61 @@ func matchesIncludeWithJsonOnlyNew(fileName string, includeSpecs []string, baseP
 	return false
 }
 
+// globMatcherForPatternAbsolute creates a matcher for absolute pattern matching
+// This is used for exclude patterns which are resolved against the absolutePath
+func globMatcherForPatternAbsolute(pattern string, absolutePath string, useCaseSensitiveFileNames bool) globMatcher {
+	// Resolve the pattern against the absolute path, similar to how getSubPatternFromSpec works
+	// in the old implementation
+	resolvedPattern := tspath.CombinePaths(absolutePath, pattern)
+	resolvedPattern = tspath.NormalizePath(resolvedPattern)
+
+	// Convert to relative pattern from the absolute path
+	var relativePart string
+	if strings.HasPrefix(resolvedPattern, absolutePath) {
+		relativePart = resolvedPattern[len(absolutePath):]
+		if strings.HasPrefix(relativePart, "/") {
+			relativePart = relativePart[1:]
+		}
+	} else {
+		// If the pattern doesn't start with absolutePath, use it as-is
+		relativePart = pattern
+		if strings.HasPrefix(relativePart, "/") {
+			relativePart = relativePart[1:]
+		}
+	}
+
+	// Parse the pattern as a relative path
+	var segments []string
+	if relativePart == "" {
+		segments = []string{}
+	} else {
+		segments = strings.Split(relativePart, "/")
+		// Remove empty segments
+		filteredSegments := segments[:0]
+		for _, seg := range segments {
+			if seg != "" {
+				filteredSegments = append(filteredSegments, seg)
+			}
+		}
+		segments = filteredSegments
+	}
+
+	// Handle implicit glob - if the last component has no extension and no wildcards, add **/*
+	if len(segments) > 0 {
+		lastComponent := segments[len(segments)-1]
+		if IsImplicitGlob(lastComponent) {
+			segments = append(segments, "**", "*")
+		}
+	}
+
+	return globMatcher{
+		pattern:                   pattern,
+		basePath:                  absolutePath,
+		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
+		segments:                  segments,
+	}
+}
+
 // globMatcherForPatternRelative creates a matcher for relative pattern matching
 func globMatcherForPatternRelative(pattern string, useCaseSensitiveFileNames bool) globMatcher {
 	// Handle patterns starting with "./" - remove the leading "./"
@@ -527,6 +630,31 @@ func globMatcherForPatternRelative(pattern string, useCaseSensitiveFileNames boo
 	}
 }
 
+// matchesFileAbsolute returns true if the given absolute file path matches the glob pattern
+func (gm globMatcher) matchesFileAbsolute(absolutePath string) bool {
+	// Special case for exclude patterns: if the pattern exactly matches the base path,
+	// then it should exclude everything under that path (like "/apath" excluding "/apath/*")
+	if gm.basePath != "" && len(gm.segments) == 0 {
+		// Empty segments means the pattern exactly matched the base path
+		// For excludes, this should match anything under the base path
+		return strings.HasPrefix(absolutePath, gm.basePath) &&
+			(absolutePath == gm.basePath || strings.HasPrefix(absolutePath, gm.basePath+"/"))
+	}
+
+	// Convert absolute path to relative path from the matcher's base path
+	var relativePath string
+	if gm.basePath != "" && strings.HasPrefix(absolutePath, gm.basePath) {
+		relativePath = absolutePath[len(gm.basePath):]
+		if strings.HasPrefix(relativePath, "/") {
+			relativePath = relativePath[1:]
+		}
+	} else {
+		relativePath = absolutePath
+	}
+
+	return gm.matchesFileRelative(relativePath)
+}
+
 // matchesFileRelative returns true if the given relative file path matches the glob pattern
 func (gm globMatcher) matchesFileRelative(relativePath string) bool {
 	// Split the relative path into segments
@@ -546,6 +674,31 @@ func (gm globMatcher) matchesFileRelative(relativePath string) bool {
 	}
 
 	return gm.matchSegments(gm.segments, pathSegments, false)
+}
+
+// matchesDirectoryAbsolute returns true if the given absolute directory path matches the glob pattern
+func (gm globMatcher) matchesDirectoryAbsolute(absolutePath string) bool {
+	// Special case for exclude patterns: if the pattern exactly matches the base path,
+	// then it should exclude everything under that path (like "/apath" excluding "/apath/*")
+	if gm.basePath != "" && len(gm.segments) == 0 {
+		// Empty segments means the pattern exactly matched the base path
+		// For excludes, this should match anything under the base path
+		return strings.HasPrefix(absolutePath, gm.basePath) &&
+			(absolutePath == gm.basePath || strings.HasPrefix(absolutePath, gm.basePath+"/"))
+	}
+
+	// Convert absolute path to relative path from the matcher's base path
+	var relativePath string
+	if gm.basePath != "" && strings.HasPrefix(absolutePath, gm.basePath) {
+		relativePath = absolutePath[len(gm.basePath):]
+		if strings.HasPrefix(relativePath, "/") {
+			relativePath = relativePath[1:]
+		}
+	} else {
+		relativePath = absolutePath
+	}
+
+	return gm.matchesDirectoryRelative(relativePath)
 }
 
 // matchesDirectoryRelative returns true if the given relative directory path matches the glob pattern

@@ -275,7 +275,7 @@ func TestMatchFiles(t *testing.T) {
 			expected:                  []string{"/project/src/component.js", "/project/src/util.ts"},
 		},
 		{
-			name: "ignore dotted files and folders",
+			name: "ignore dotted files and folders from tsoptions test",
 			files: map[string]string{
 				"/apath/..c.ts":        "export {}",
 				"/apath/.b.ts":         "export {}",
@@ -284,21 +284,19 @@ func TestMatchFiles(t *testing.T) {
 				"/apath/tsconfig.json": "{}",
 			},
 			path:                      "/apath",
-			extensions:                []string{".ts"},
+			extensions:                []string{".ts", ".tsx", ".d.ts", ".cts", ".d.cts", ".mts", ".d.mts", ".json"},
 			excludes:                  []string{},
-			includes:                  []string{},
+			includes:                  []string{"**/*"},
 			useCaseSensitiveFileNames: true,
-			currentDirectory:          "/",
-			// This seems wrong, but the Strada behaved this way.
+			currentDirectory:          "/apath",
+			// OLD behavior excludes dotted files automatically
 			expected: []string{
-				"/apath/..c.ts",
-				"/apath/.b.ts",
 				"/apath/test.ts",
-				"/apath/.git/a.ts",
+				"/apath/tsconfig.json",
 			},
 		},
 		{
-			name: "implicitly exclude common package folders",
+			name: "implicitly exclude common package folders from tsoptions test",
 			files: map[string]string{
 				"/bower_components/b.ts": "export {}",
 				"/d.ts":                  "export {}",
@@ -308,18 +306,16 @@ func TestMatchFiles(t *testing.T) {
 				"/tsconfig.json":         "{}",
 			},
 			path:                      "/",
-			extensions:                []string{".ts"},
+			extensions:                []string{".ts", ".tsx", ".d.ts", ".cts", ".d.cts", ".mts", ".d.mts", ".json"},
 			excludes:                  []string{},
-			includes:                  []string{},
+			includes:                  []string{"**/*"},
 			useCaseSensitiveFileNames: true,
 			currentDirectory:          "/",
-			// This seems wrong, but the Strada behaved this way.
+			// OLD behavior excludes node_modules, bower_components, jspm_packages automatically
 			expected: []string{
 				"/d.ts",
-				"/bower_components/b.ts",
+				"/tsconfig.json",
 				"/folder/e.ts",
-				"/jspm_packages/c.ts",
-				"/node_modules/a.ts",
 			},
 		},
 		{
