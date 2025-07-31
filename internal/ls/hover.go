@@ -31,6 +31,12 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 	if quickInfo == "" {
 		return lsproto.HoverOrNull{}, nil
 	}
+
+	// Calculate the applicable range for the hover
+	rangeNode := getNodeForQuickInfo(node)
+	textRange := core.NewTextRange(rangeNode.Pos(), rangeNode.End())
+	hoverRange := l.converters.ToLSPRange(file, textRange)
+
 	return lsproto.HoverOrNull{
 		Hover: &lsproto.Hover{
 			Contents: lsproto.MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings{
@@ -39,6 +45,7 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 					Value: formatQuickInfo(quickInfo) + documentation,
 				},
 			},
+			Range: &hoverRange,
 		},
 	}, nil
 }

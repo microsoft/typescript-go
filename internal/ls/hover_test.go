@@ -47,6 +47,10 @@ function myFunction() {
 							Value: "```tsx\nfunction myFunction(): string\n```\nA function with JSDoc links that previously caused panic\n`console.log` and `Array.from` and `Object.keys`",
 						},
 					},
+					Range: &lsproto.Range{
+						Start: lsproto.Position{Line: 6, Character: 1},
+						End:   lsproto.Position{Line: 8, Character: 10},
+					},
 				},
 			},
 		},
@@ -69,6 +73,10 @@ myFunction();`,
 							Kind:  lsproto.MarkupKindMarkdown,
 							Value: "```tsx\nfunction myFunction(param: string): string\n```\n\n\n*@param* `param` - the greatest of days\n",
 						},
+					},
+					Range: &lsproto.Range{
+						Start: lsproto.Position{Line: 3, Character: 8},
+						End:   lsproto.Position{Line: 3, Character: 19},
 					},
 				},
 			},
@@ -93,6 +101,10 @@ function myFunction(param) {
 							Value: "```tsx\nfunction myFunction(param: string): string\n```\n\n\n*@param* `param` - the greatest of days\n",
 						},
 					},
+					Range: &lsproto.Range{
+						Start: lsproto.Position{Line: 5, Character: 1},
+						End:   lsproto.Position{Line: 7, Character: 10},
+					},
 				},
 			},
 		},
@@ -116,6 +128,10 @@ myFunction();`,
 							Value: "```tsx\n(parameter) param: string\n```\n- the greatest of days\n",
 						},
 					},
+					Range: &lsproto.Range{
+						Start: lsproto.Position{Line: 3, Character: 20},
+						End:   lsproto.Position{Line: 3, Character: 25},
+					},
 				},
 			},
 		},
@@ -134,6 +150,28 @@ myFunction();`,
 			expected: map[string]*lsproto.Hover{
 				// TODO: Should have same result as hovering on the parameter itself.
 				"marker": nil,
+			},
+		},
+		{
+			title: "HoverRangeTest",
+			input: `
+// @filename: index.ts
+function /*marker*/testFunction(param: string): string {
+    return param;
+}`,
+			expected: map[string]*lsproto.Hover{
+				"marker": {
+					Contents: lsproto.MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings{
+						MarkupContent: &lsproto.MarkupContent{
+							Kind:  lsproto.MarkupKindMarkdown,
+							Value: "```tsx\nfunction testFunction(param: string): string\n```\n",
+						},
+					},
+					Range: &lsproto.Range{
+						Start: lsproto.Position{Line: 0, Character: 8},
+						End:   lsproto.Position{Line: 0, Character: 21},
+					},
+				},
 			},
 		},
 	}
