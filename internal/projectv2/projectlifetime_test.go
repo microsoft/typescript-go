@@ -62,24 +62,23 @@ func TestProjectLifetime(t *testing.T) {
 		// Open files in two projects
 		uri1 := lsproto.DocumentUri("file:///home/projects/TS/p1/src/index.ts")
 		uri2 := lsproto.DocumentUri("file:///home/projects/TS/p2/src/index.ts")
-		assertWatchCalls := utils.ExpectWatchFilesCalls(2)
 		session.DidOpenFile(context.Background(), uri1, 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 		session.DidOpenFile(context.Background(), uri2, 1, files["/home/projects/TS/p2/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		session.WaitForBackgroundTasks()
 		snapshot, release = session.Snapshot()
 		defer release()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 2)
 		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
 		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p2/tsconfig.json")) != nil)
-		assertWatchCalls(t)
+		assert.Equal(t, len(utils.Client().WatchFilesCalls()), 2)
 		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
 		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p2/tsconfig.json")) != nil)
 
 		// Close p1 file and open p3 file
-		assertWatchCalls = utils.ExpectWatchFilesCalls(1)
-		assertUnwatchCalls := utils.ExpectUnwatchFilesCalls(1)
 		session.DidCloseFile(context.Background(), uri1)
 		uri3 := lsproto.DocumentUri("file:///home/projects/TS/p3/src/index.ts")
 		session.DidOpenFile(context.Background(), uri3, 1, files["/home/projects/TS/p3/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		session.WaitForBackgroundTasks()
 		// Should still have two projects, but p1 replaced by p3
 		snapshot, release = session.Snapshot()
 		defer release()
@@ -90,15 +89,14 @@ func TestProjectLifetime(t *testing.T) {
 		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tsconfig.json")) == nil)
 		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p2/tsconfig.json")) != nil)
 		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p3/tsconfig.json")) != nil)
-		assertWatchCalls(t)
-		assertUnwatchCalls(t)
+		assert.Equal(t, len(utils.Client().WatchFilesCalls()), 3)
+		assert.Equal(t, len(utils.Client().UnwatchFilesCalls()), 1)
 
 		// Close p2 and p3 files, open p1 file again
-		assertWatchCalls = utils.ExpectWatchFilesCalls(1)
-		assertUnwatchCalls = utils.ExpectUnwatchFilesCalls(2)
 		session.DidCloseFile(context.Background(), uri2)
 		session.DidCloseFile(context.Background(), uri3)
 		session.DidOpenFile(context.Background(), uri1, 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+		session.WaitForBackgroundTasks()
 		// Should have one project (p1)
 		snapshot, release = session.Snapshot()
 		defer release()
@@ -107,8 +105,8 @@ func TestProjectLifetime(t *testing.T) {
 		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
 		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p2/tsconfig.json")) == nil)
 		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p3/tsconfig.json")) == nil)
-		assertWatchCalls(t)
-		assertUnwatchCalls(t)
+		assert.Equal(t, len(utils.Client().WatchFilesCalls()), 4)
+		assert.Equal(t, len(utils.Client().UnwatchFilesCalls()), 3)
 	})
 
 	t.Run("unrooted inferred projects", func(t *testing.T) {

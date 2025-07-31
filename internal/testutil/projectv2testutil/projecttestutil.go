@@ -2,12 +2,10 @@ package projectv2testutil
 
 import (
 	"bufio"
-	"context"
 	"fmt"
 	"slices"
 	"strings"
 	"sync"
-	"sync/atomic"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
@@ -16,7 +14,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
-	"gotest.tools/v3/assert"
 )
 
 //go:generate go tool github.com/matryer/moq -stub -fmt goimports -pkg projectv2testutil -out clientmock_generated.go ../../projectv2 Client
@@ -98,42 +95,6 @@ func (h *SessionUtils) SetupNpmExecutorForTypingsInstaller() {
 			}
 		}
 		return nil, nil
-	}
-}
-
-func (h *SessionUtils) ExpectWatchFilesCalls(count int) func(t *testing.T) {
-	var actualCalls atomic.Int32
-	var wg sync.WaitGroup
-	wg.Add(count)
-	saveFunc := h.client.WatchFilesFunc
-	h.client.WatchFilesFunc = func(_ context.Context, id projectv2.WatcherID, _ []*lsproto.FileSystemWatcher) error {
-		actualCalls.Add(1)
-		wg.Done()
-		return nil
-	}
-	return func(t *testing.T) {
-		t.Helper()
-		wg.Wait()
-		assert.Equal(t, actualCalls.Load(), int32(count))
-		h.client.WatchFilesFunc = saveFunc
-	}
-}
-
-func (h *SessionUtils) ExpectUnwatchFilesCalls(count int) func(t *testing.T) {
-	var actualCalls atomic.Int32
-	var wg sync.WaitGroup
-	wg.Add(count)
-	saveFunc := h.client.UnwatchFilesFunc
-	h.client.UnwatchFilesFunc = func(_ context.Context, id projectv2.WatcherID) error {
-		actualCalls.Add(1)
-		wg.Done()
-		return nil
-	}
-	return func(t *testing.T) {
-		t.Helper()
-		wg.Wait()
-		assert.Equal(t, actualCalls.Load(), int32(count))
-		h.client.UnwatchFilesFunc = saveFunc
 	}
 }
 
