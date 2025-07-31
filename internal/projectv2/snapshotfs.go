@@ -92,7 +92,7 @@ func (s *snapshotFSBuilder) GetFileByPath(fileName string, path tspath.Path) Fil
 	entry, _ := s.diskFiles.LoadOrStore(path, &diskFile{fileBase: fileBase{fileName: fileName}, needsReload: true})
 	if entry != nil {
 		entry.Locked(func(entry dirty.Value[*diskFile]) {
-			if !entry.Value().MatchesDiskText() {
+			if entry.Value() != nil && !entry.Value().MatchesDiskText() {
 				if content, ok := s.fs.ReadFile(fileName); ok {
 					entry.Change(func(file *diskFile) {
 						file.content = content
