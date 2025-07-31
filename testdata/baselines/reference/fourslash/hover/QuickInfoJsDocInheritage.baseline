@@ -281,7 +281,7 @@
         "character": 4
       },
       "Name": "1",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -298,7 +298,7 @@
         "character": 4
       },
       "Name": "2",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -315,7 +315,7 @@
         "character": 4
       },
       "Name": "3",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -332,7 +332,7 @@
         "character": 4
       },
       "Name": "4",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -349,7 +349,7 @@
         "character": 8
       },
       "Name": "5",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -366,7 +366,7 @@
         "character": 8
       },
       "Name": "6",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -383,7 +383,7 @@
         "character": 8
       },
       "Name": "7",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -400,7 +400,7 @@
         "character": 8
       },
       "Name": "8",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -417,7 +417,7 @@
         "character": 4
       },
       "Name": "9",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -434,7 +434,7 @@
         "character": 4
       },
       "Name": "10",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -451,7 +451,7 @@
         "character": 4
       },
       "Name": "11",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -468,7 +468,7 @@
         "character": 4
       },
       "Name": "12",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -485,7 +485,7 @@
         "character": 4
       },
       "Name": "13",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -502,7 +502,7 @@
         "character": 4
       },
       "Name": "14",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -519,7 +519,7 @@
         "character": 4
       },
       "Name": "15",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -536,7 +536,7 @@
         "character": 4
       },
       "Name": "16",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -553,7 +553,7 @@
         "character": 14
       },
       "Name": "17",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -570,7 +570,7 @@
         "character": 14
       },
       "Name": "18",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -587,7 +587,7 @@
         "character": 14
       },
       "Name": "19",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -604,7 +604,7 @@
         "character": 14
       },
       "Name": "20",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -621,7 +621,7 @@
         "character": 14
       },
       "Name": "21",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -638,7 +638,7 @@
         "character": 14
       },
       "Name": "22",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -655,7 +655,7 @@
         "character": 14
       },
       "Name": "23",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -672,7 +672,7 @@
         "character": 14
       },
       "Name": "24",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {

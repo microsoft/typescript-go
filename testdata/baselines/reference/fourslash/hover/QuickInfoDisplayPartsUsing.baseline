@@ -27,7 +27,7 @@
         "character": 7
       },
       "Name": "a",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
@@ -44,7 +44,7 @@
         "character": 16
       },
       "Name": "b",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "contents": {
