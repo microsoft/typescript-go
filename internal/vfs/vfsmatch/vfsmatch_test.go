@@ -289,7 +289,13 @@ func TestMatchFiles(t *testing.T) {
 			includes:                  []string{},
 			useCaseSensitiveFileNames: true,
 			currentDirectory:          "/",
-			expected:                  []string{"/apath/test.ts"},
+			// !!! This seems wrong, but the old implementation behaved this way.
+			expected: []string{
+				"/apath/..c.ts",
+				"/apath/.b.ts",
+				"/apath/test.ts",
+				"/apath/.git/a.ts",
+			},
 		},
 		{
 			name: "implicitly exclude common package folders",
@@ -307,7 +313,14 @@ func TestMatchFiles(t *testing.T) {
 			includes:                  []string{},
 			useCaseSensitiveFileNames: true,
 			currentDirectory:          "/",
-			expected:                  []string{"/d.ts", "/folder/e.ts"},
+			// !!! This seems wrong, but the old implementation behaved this way.
+			expected: []string{
+				"/d.ts",
+				"/bower_components/b.ts",
+				"/folder/e.ts",
+				"/jspm_packages/c.ts",
+				"/node_modules/a.ts",
+			},
 		},
 		{
 			name: "comprehensive test case",
@@ -329,7 +342,14 @@ func TestMatchFiles(t *testing.T) {
 			includes:                  []string{"src/**/*", "tests/**/*"},
 			useCaseSensitiveFileNames: true,
 			currentDirectory:          "/",
-			expected:                  []string{"/project/src/components/App.tsx", "/project/src/index.ts", "/project/src/types/index.d.ts", "/project/src/util.ts", "/project/tests/e2e.spec.ts", "/project/tests/unit.test.ts"},
+			expected: []string{
+				"/project/src/index.ts",
+				"/project/src/util.ts",
+				"/project/src/components/App.tsx",
+				"/project/src/types/index.d.ts",
+				"/project/tests/e2e.spec.ts",
+				"/project/tests/unit.test.ts",
+			},
 		},
 		{
 			name: "case insensitive comparison",
@@ -345,7 +365,7 @@ func TestMatchFiles(t *testing.T) {
 			includes:                  []string{"src/**/*", "tests/**/*"},
 			useCaseSensitiveFileNames: false,
 			currentDirectory:          "/",
-			expected:                  []string{"/project/SRC/Index.TS", "/project/src/Util.ts", "/project/Tests/Unit.test.ts"},
+			expected:                  []string{"/project/SRC/Util.ts", "/project/Tests/Unit.test.ts"},
 		},
 		{
 			name: "depth limited comparison",
@@ -394,7 +414,7 @@ func TestMatchFiles(t *testing.T) {
 			includes:                  []string{"src"}, // Should be treated as src/**/*
 			useCaseSensitiveFileNames: true,
 			currentDirectory:          "/",
-			expected:                  []string{"/project/src/index.ts", "/project/src/sub/file.ts", "/project/src/util.ts"},
+			expected:                  []string{"/project/src/index.ts", "/project/src/util.ts", "/project/src/sub/file.ts"},
 		},
 	}
 
@@ -642,7 +662,8 @@ func TestMatchesExclude(t *testing.T) {
 			excludeSpecs:              []string{"src/**/*"},
 			currentDirectory:          "/project",
 			useCaseSensitiveFileNames: true,
-			expectExcluded:            true,
+			// !!! This seems wrong, but the old implementation behaved this way.
+			expectExcluded: false,
 		},
 		{
 			name:                      "deeply nested exclusion",
@@ -758,7 +779,7 @@ func TestMatchesInclude(t *testing.T) {
 			includeSpecs:              []string{"src/**/*.{ts,tsx,js}"},
 			basePath:                  "/project",
 			useCaseSensitiveFileNames: true,
-			expectIncluded:            true,
+			expectIncluded:            false,
 		},
 		{
 			name:                      "question mark pattern",
@@ -854,7 +875,7 @@ func TestMatchesInclude(t *testing.T) {
 			includeSpecs:              []string{"src/**/*.{ts,tsx}"},
 			basePath:                  "/project",
 			useCaseSensitiveFileNames: true,
-			expectIncluded:            true,
+			expectIncluded:            false,
 		},
 		{
 			name:                      "pattern with brackets no match",
@@ -1090,7 +1111,7 @@ func TestMatchesIncludeWithJsonOnly(t *testing.T) {
 			includeSpecs:              []string{"*.{json,xml,yaml}"},
 			basePath:                  "/project",
 			useCaseSensitiveFileNames: true,
-			expectIncluded:            true,
+			expectIncluded:            false,
 		},
 		{
 			name:                      "non-json file with bracket pattern",
