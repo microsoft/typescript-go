@@ -284,6 +284,7 @@ func (r changeFileResult) IsEmpty() bool {
 func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, logger *logCollector) changeFileResult {
 	var affectedProjects map[tspath.Path]struct{}
 	var affectedFiles map[tspath.Path]struct{}
+	logger.Log("Summarizing file changes")
 	createdFiles := make(map[tspath.Path]string, summary.Created.Len())
 	createdOrDeletedFiles := make(map[tspath.Path]struct{}, summary.Created.Len()+summary.Deleted.Len())
 	createdOrChangedOrDeletedFiles := make(map[tspath.Path]struct{}, summary.Changed.Len()+summary.Deleted.Len())
@@ -326,6 +327,7 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 	}
 
 	// Handle changes to stored config files
+	logger.Log("Checking if any changed files are config files")
 	for path := range createdOrChangedOrDeletedFiles {
 		if entry, ok := c.configs.Load(path); ok {
 			affectedProjects = core.CopyMap(affectedProjects, c.handleConfigChange(entry, logger))

@@ -460,7 +460,11 @@ func (s *Session) flushChangesLocked(ctx context.Context) FileChangeSummary {
 		return FileChangeSummary{}
 	}
 
+	start := time.Now()
 	changes := s.fs.processChanges(s.pendingFileChanges)
+	if s.options.LoggingEnabled {
+		s.logger.Log(fmt.Sprintf("Processed %d file changes in %v", len(s.pendingFileChanges), time.Since(start)))
+	}
 	s.pendingFileChanges = nil
 	return changes
 }
