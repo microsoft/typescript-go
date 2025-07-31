@@ -1,0 +1,9 @@
+--- old.es5ExportDefaultFunctionDeclaration3.js
++++ new.es5ExportDefaultFunctionDeclaration3.js
+@@= skipped -20, +20 lines =@@
+
+
+ //// [es5ExportDefaultFunctionDeclaration3.d.ts]
+-export default function func(): typeof func;
++declare function func(): typeof func;
++export default func;

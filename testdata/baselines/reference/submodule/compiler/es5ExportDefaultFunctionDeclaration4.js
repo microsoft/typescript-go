@@ -14,7 +14,28 @@ declare module "bar" {
 
 //// [es5ExportDefaultFunctionDeclaration4.d.ts]
 declare module "bar" {
-    var before: typeof func;
-    export default function func(): typeof func;
-    var after: typeof func;
+    export var before: typeof func;
+    function func(): typeof func;
+    export var after: typeof func;
+    export default func;
 }
+export default func;
+
+
+//// [DtsFileErrors]
+
+
+es5ExportDefaultFunctionDeclaration4.d.ts(7,16): error TS2304: Cannot find name 'func'.
+
+
+==== es5ExportDefaultFunctionDeclaration4.d.ts (1 errors) ====
+    declare module "bar" {
+        export var before: typeof func;
+        function func(): typeof func;
+        export var after: typeof func;
+        export default func;
+    }
+    export default func;
+                   ~~~~
+!!! error TS2304: Cannot find name 'func'.
+    

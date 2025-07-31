@@ -90,9 +90,10 @@ function func() { }
 declare const _default: number;
 export default _default;
 //// [index2.d.ts]
-export default function foo(): typeof foo;
+declare function foo(): typeof foo;
 export declare const x: typeof foo;
 export { foo as bar };
+export default foo;
 //// [index3.d.ts]
 export default class Foo {
     a: Foo;
@@ -111,8 +112,9 @@ export default _default;
 export type default = string | number;
 //// [index6.d.ts]
 // merge type alias and function (OK)
-export default function func(): void;
+declare function func(): void;
 export type default = string | number;
+export default func;
 
 
 //// [DtsFileErrors]
@@ -137,9 +139,10 @@ out/index6.d.ts(3,32): error TS2693: 'number' only refers to a type, but is bein
     export default _default;
     
 ==== out/index2.d.ts (0 errors) ====
-    export default function foo(): typeof foo;
+    declare function foo(): typeof foo;
     export declare const x: typeof foo;
     export { foo as bar };
+    export default foo;
     
 ==== out/index3.d.ts (0 errors) ====
     export default class Foo {
@@ -174,7 +177,7 @@ out/index6.d.ts(3,32): error TS2693: 'number' only refers to a type, but is bein
     
 ==== out/index6.d.ts (6 errors) ====
     // merge type alias and function (OK)
-    export default function func(): void;
+    declare function func(): void;
     export type default = string | number;
     ~~~~~~
 !!! error TS1128: Declaration or statement expected.
@@ -188,4 +191,5 @@ out/index6.d.ts(3,32): error TS2693: 'number' only refers to a type, but is bein
 !!! error TS2693: 'string' only refers to a type, but is being used as a value here.
                                    ~~~~~~
 !!! error TS2693: 'number' only refers to a type, but is being used as a value here.
+    export default func;
     

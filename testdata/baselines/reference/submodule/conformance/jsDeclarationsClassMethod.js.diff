@@ -43,8 +43,11 @@
 -     * @returns {number}
 -     */
 -    method2(x: number, y: number): number;
--}
--declare namespace C2 {
++}
++declare namespace C1 {
++    const staticProp: (x: any, y: any) => any;
+ }
+ declare namespace C2 {
 -    /**
 -     * A comment staticProp
 -     * @param {number} x
@@ -52,4 +55,5 @@
 -     * @returns {number}
 -     */
 -    function staticProp(x: number, y: number): number;
++    const staticProp: (x: any, y: any) => any;
  }

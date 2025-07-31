@@ -9,4 +9,5 @@ export default function f() { }
 
 
 //// [es6ExportDefaultFunctionDeclaration.d.ts]
-export default function f(): void;
+declare function f(): void;
+export default f;

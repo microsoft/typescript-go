@@ -30,7 +30,11 @@
 -    static get OPTIONS(): number;
 -    process(): void;
 -}
--declare namespace Handler {
++export var Strings = Strings;
++export type HandlerOptions = {
++    name: String;
++};
+ declare namespace Handler {
 -    export { statische, Strings, HandlerOptions };
 -}
 -declare function statische(): void;
@@ -43,7 +47,6 @@
 -     * Should be able to export a type alias at the same time.
 -     */
 -    name: string;
-+export var Strings = Strings;
-+export type HandlerOptions = {
-+    name: String;
- };
+-};
++    const statische: () => void;
++}

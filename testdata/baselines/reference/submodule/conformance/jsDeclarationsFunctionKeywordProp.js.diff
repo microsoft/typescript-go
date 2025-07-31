@@ -14,9 +14,47 @@
 -    let normal: boolean;
 -}
  declare function baz(): void;
--declare namespace baz {
++declare namespace bar {
++    const async: true;
++    const normal: false;
++}
+ declare namespace baz {
 -    let _class: boolean;
 -    export { _class as class };
 -    let normal_1: boolean;
 -    export { normal_1 as normal };
 -}
++    const class_1: true;
++    export { class_1 as class };
++    const normal: false;
++}
++declare namespace foo {
++    const null_1: true;
++    export { null_1 as null };
++}
++
++
++!!!! File out/source.d.ts differs from original emit in noCheck emit
++//// [source.d.ts]
++--- Expected	The full check baseline
+++++ Actual	with noCheck set
++@@= skipped --24, +-24 lines =@@
++ declare function foo(): void;
++ declare function bar(): void;
++ declare function baz(): void;
++-declare namespace bar {
++-    const async: true;
++-    const normal: false;
++-}
++ declare namespace baz {
++     const class_1: true;
++     export { class_1 as class };
++@@= skipped -12, +8 lines =@@
++ declare namespace foo {
++     const null_1: true;
++     export { null_1 as null };
+++}
+++declare namespace bar {
+++    const async: true;
+++    const normal: false;
++ }

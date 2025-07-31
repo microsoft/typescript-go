@@ -1,0 +1,9 @@
+--- old.declarationEmitDefaultExport3.js
++++ new.declarationEmitDefaultExport3.js
+@@= skipped -11, +11 lines =@@
+
+
+ //// [declarationEmitDefaultExport3.d.ts]
+-export default function foo(): string;
++declare function foo(): string;
++export default foo;

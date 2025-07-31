@@ -138,3 +138,9 @@ declare class C2 {
      */
     method1(x: number, y: number): number;
 }
+declare namespace C1 {
+    const staticProp: (x: any, y: any) => any;
+}
+declare namespace C2 {
+    const staticProp: (x: any, y: any) => any;
+}

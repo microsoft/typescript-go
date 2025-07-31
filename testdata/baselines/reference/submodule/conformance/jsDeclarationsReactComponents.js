@@ -195,6 +195,14 @@ declare const TabbedShowLayout: {
     };
 };
 export default TabbedShowLayout;
+declare namespace TabbedShowLayout {
+    const propTypes: {
+        version: PropTypes.Requireable<number>;
+    };
+    const defaultProps: {
+        tabs: undefined;
+    };
+}
 //// [jsDeclarationsReactComponents2.d.ts]
 import React from "react";
 /**
@@ -202,6 +210,11 @@ import React from "react";
  */
 declare const TabbedShowLayout: React.SFC;
 export default TabbedShowLayout;
+declare namespace TabbedShowLayout {
+    const defaultProps: {
+        tabs: string;
+    };
+}
 //// [jsDeclarationsReactComponents3.d.ts]
 /**
  * @type {{defaultProps: {tabs: string}} & ((props?: {elem: string}) => JSX.Element)}
@@ -214,6 +227,11 @@ declare const TabbedShowLayout: {
     elem: string;
 }) => JSX.Element);
 export default TabbedShowLayout;
+declare namespace TabbedShowLayout {
+    const defaultProps: {
+        tabs: string;
+    };
+}
 //// [jsDeclarationsReactComponents4.d.ts]
 declare const TabbedShowLayout: {
     (prop: {
@@ -224,29 +242,55 @@ declare const TabbedShowLayout: {
     };
 };
 export default TabbedShowLayout;
+declare namespace TabbedShowLayout {
+    const defaultProps: {
+        tabs: string;
+    };
+}
 //// [jsDeclarationsReactComponents5.d.ts]
+import PropTypes from 'prop-types';
 declare function Tree({ allowDropOnRoot }: {
     allowDropOnRoot: any;
 }): JSX.Element;
 export default Tree;
+declare namespace Tree {
+    const propTypes: {
+        classes: PropTypes.Requireable<object>;
+    };
+    const defaultProps: {
+        classes: {};
+        parentSource: string;
+    };
+}
 
 
 //// [DtsFileErrors]
 
 
 out/jsDeclarationsReactComponents1.d.ts(1,23): error TS2307: Cannot find module 'prop-types' or its corresponding type declarations.
+out/jsDeclarationsReactComponents1.d.ts(2,15): error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
 out/jsDeclarationsReactComponents1.d.ts(3,15): error TS2503: Cannot find namespace 'JSX'.
+out/jsDeclarationsReactComponents1.d.ts(12,19): error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
 out/jsDeclarationsReactComponents2.d.ts(1,19): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+out/jsDeclarationsReactComponents2.d.ts(5,15): error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+out/jsDeclarationsReactComponents2.d.ts(7,19): error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+out/jsDeclarationsReactComponents3.d.ts(4,15): error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
 out/jsDeclarationsReactComponents3.d.ts(10,7): error TS2503: Cannot find namespace 'JSX'.
+out/jsDeclarationsReactComponents3.d.ts(12,19): error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+out/jsDeclarationsReactComponents4.d.ts(1,15): error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
 out/jsDeclarationsReactComponents4.d.ts(4,9): error TS2503: Cannot find namespace 'JSX'.
-out/jsDeclarationsReactComponents5.d.ts(3,5): error TS2503: Cannot find namespace 'JSX'.
+out/jsDeclarationsReactComponents4.d.ts(10,19): error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+out/jsDeclarationsReactComponents5.d.ts(1,23): error TS2307: Cannot find module 'prop-types' or its corresponding type declarations.
+out/jsDeclarationsReactComponents5.d.ts(4,5): error TS2503: Cannot find namespace 'JSX'.
 
 
-==== out/jsDeclarationsReactComponents1.d.ts (2 errors) ====
+==== out/jsDeclarationsReactComponents1.d.ts (4 errors) ====
     import PropTypes from "prop-types";
                           ~~~~~~~~~~~~
 !!! error TS2307: Cannot find module 'prop-types' or its corresponding type declarations.
     declare const TabbedShowLayout: {
+                  ~~~~~~~~~~~~~~~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
         ({}: {}): JSX.Element;
                   ~~~
 !!! error TS2503: Cannot find namespace 'JSX'.
@@ -258,8 +302,18 @@ out/jsDeclarationsReactComponents5.d.ts(3,5): error TS2503: Cannot find namespac
         };
     };
     export default TabbedShowLayout;
+    declare namespace TabbedShowLayout {
+                      ~~~~~~~~~~~~~~~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+        const propTypes: {
+            version: PropTypes.Requireable<number>;
+        };
+        const defaultProps: {
+            tabs: undefined;
+        };
+    }
     
-==== out/jsDeclarationsReactComponents2.d.ts (1 errors) ====
+==== out/jsDeclarationsReactComponents2.d.ts (3 errors) ====
     import React from "react";
                       ~~~~~~~
 !!! error TS2307: Cannot find module 'react' or its corresponding type declarations.
@@ -267,13 +321,24 @@ out/jsDeclarationsReactComponents5.d.ts(3,5): error TS2503: Cannot find namespac
      * @type {React.SFC}
      */
     declare const TabbedShowLayout: React.SFC;
+                  ~~~~~~~~~~~~~~~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
     export default TabbedShowLayout;
+    declare namespace TabbedShowLayout {
+                      ~~~~~~~~~~~~~~~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+        const defaultProps: {
+            tabs: string;
+        };
+    }
     
-==== out/jsDeclarationsReactComponents3.d.ts (1 errors) ====
+==== out/jsDeclarationsReactComponents3.d.ts (3 errors) ====
     /**
      * @type {{defaultProps: {tabs: string}} & ((props?: {elem: string}) => JSX.Element)}
      */
     declare const TabbedShowLayout: {
+                  ~~~~~~~~~~~~~~~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
         defaultProps: {
             tabs: string;
         };
@@ -283,9 +348,18 @@ out/jsDeclarationsReactComponents5.d.ts(3,5): error TS2503: Cannot find namespac
           ~~~
 !!! error TS2503: Cannot find namespace 'JSX'.
     export default TabbedShowLayout;
+    declare namespace TabbedShowLayout {
+                      ~~~~~~~~~~~~~~~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+        const defaultProps: {
+            tabs: string;
+        };
+    }
     
-==== out/jsDeclarationsReactComponents4.d.ts (1 errors) ====
+==== out/jsDeclarationsReactComponents4.d.ts (3 errors) ====
     declare const TabbedShowLayout: {
+                  ~~~~~~~~~~~~~~~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
         (prop: {
             className: string;
         }): JSX.Element;
@@ -296,12 +370,31 @@ out/jsDeclarationsReactComponents5.d.ts(3,5): error TS2503: Cannot find namespac
         };
     };
     export default TabbedShowLayout;
+    declare namespace TabbedShowLayout {
+                      ~~~~~~~~~~~~~~~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+        const defaultProps: {
+            tabs: string;
+        };
+    }
     
-==== out/jsDeclarationsReactComponents5.d.ts (1 errors) ====
+==== out/jsDeclarationsReactComponents5.d.ts (2 errors) ====
+    import PropTypes from 'prop-types';
+                          ~~~~~~~~~~~~
+!!! error TS2307: Cannot find module 'prop-types' or its corresponding type declarations.
     declare function Tree({ allowDropOnRoot }: {
         allowDropOnRoot: any;
     }): JSX.Element;
         ~~~
 !!! error TS2503: Cannot find namespace 'JSX'.
     export default Tree;
+    declare namespace Tree {
+        const propTypes: {
+            classes: PropTypes.Requireable<object>;
+        };
+        const defaultProps: {
+            classes: {};
+            parentSource: string;
+        };
+    }
     

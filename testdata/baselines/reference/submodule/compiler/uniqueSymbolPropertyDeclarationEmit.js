@@ -53,7 +53,8 @@ export default Op;
 //// [test.d.ts]
 import Op from './op';
 import { Po } from './po';
-export default function foo(): {
+declare function foo(): {
     [Op.or]: any[];
     [Po.ro]: {};
 };
+export default foo;

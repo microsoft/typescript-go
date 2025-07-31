@@ -29,3 +29,7 @@ MyClass.staticProperty = 123;
 //// [source.d.ts]
 export = MyClass;
 export type DoneCB = (failures: number) ;
+declare namespace MyClass {
+    const staticMethod: () => void;
+    const staticProperty: 123;
+}
