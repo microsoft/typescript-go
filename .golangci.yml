@@ -29,7 +29,6 @@ linters:
     - inamedparam
     - ineffassign
     - intrange
-    - importas
     - makezero
     - mirror
     - misspell
