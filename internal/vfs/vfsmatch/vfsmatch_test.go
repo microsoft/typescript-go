@@ -662,8 +662,7 @@ func TestMatchesExclude(t *testing.T) {
 			excludeSpecs:              []string{"src/**/*"},
 			currentDirectory:          "/project",
 			useCaseSensitiveFileNames: true,
-			// !!! This seems wrong, but the old implementation behaved this way.
-			expectExcluded: false,
+			expectExcluded:            false, // Surprising, but Strada's code does not match this.
 		},
 		{
 			name:                      "deeply nested exclusion",
