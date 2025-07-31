@@ -403,29 +403,6 @@ func TestMatchFiles(t *testing.T) {
 			t.Parallel()
 			fs := vfstest.FromMap(tt.files, tt.useCaseSensitiveFileNames)
 
-			// Call main variant
-			mainResult := ReadDirectory(
-				fs,
-				tt.currentDirectory,
-				tt.path,
-				tt.extensions,
-				tt.excludes,
-				tt.includes,
-				tt.depth,
-			)
-			assert.Check(t, cmp.DeepEqual(mainResult, tt.expected))
-
-			// Call new and old variants
-			newResult := matchFilesNew(
-				tt.path,
-				tt.extensions,
-				tt.excludes,
-				tt.includes,
-				tt.useCaseSensitiveFileNames,
-				tt.currentDirectory,
-				tt.depth,
-				fs,
-			)
 			oldResult := matchFilesOld(
 				tt.path,
 				tt.extensions,
@@ -436,7 +413,30 @@ func TestMatchFiles(t *testing.T) {
 				tt.depth,
 				fs,
 			)
-			assert.Check(t, cmp.DeepEqual(newResult, oldResult))
+			assert.Check(t, cmp.DeepEqual(oldResult, tt.expected))
+
+			newResult := matchFilesNew(
+				tt.path,
+				tt.extensions,
+				tt.excludes,
+				tt.includes,
+				tt.useCaseSensitiveFileNames,
+				tt.currentDirectory,
+				tt.depth,
+				fs,
+			)
+			assert.Check(t, cmp.DeepEqual(newResult, tt.expected))
+
+			mainResult := ReadDirectory(
+				fs,
+				tt.currentDirectory,
+				tt.path,
+				tt.extensions,
+				tt.excludes,
+				tt.includes,
+				tt.depth,
+			)
+			assert.Check(t, cmp.DeepEqual(mainResult, tt.expected))
 		})
 	}
 }
@@ -658,14 +658,14 @@ func TestMatchesExclude(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			// Call main variant
-			mainResult := MatchesExclude(tt.fileName, tt.excludeSpecs, tt.currentDirectory, tt.useCaseSensitiveFileNames)
-			assert.Check(t, cmp.Equal(tt.expectExcluded, mainResult))
-
-			// Call new and old variants
-			newResult := matchesExcludeNew(tt.fileName, tt.excludeSpecs, tt.currentDirectory, tt.useCaseSensitiveFileNames)
 			oldResult := matchesExcludeOld(tt.fileName, tt.excludeSpecs, tt.currentDirectory, tt.useCaseSensitiveFileNames)
-			assert.Check(t, cmp.Equal(newResult, oldResult))
+			assert.Check(t, cmp.Equal(oldResult, tt.expectExcluded))
+
+			newResult := matchesExcludeNew(tt.fileName, tt.excludeSpecs, tt.currentDirectory, tt.useCaseSensitiveFileNames)
+			assert.Check(t, cmp.Equal(newResult, tt.expectExcluded))
+
+			mainResult := MatchesExclude(tt.fileName, tt.excludeSpecs, tt.currentDirectory, tt.useCaseSensitiveFileNames)
+			assert.Check(t, cmp.Equal(mainResult, tt.expectExcluded))
 		})
 	}
 }
@@ -910,14 +910,14 @@ func TestMatchesInclude(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			// Call main variant
-			mainResult := MatchesInclude(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
-			assert.Check(t, cmp.Equal(tt.expectIncluded, mainResult))
-
-			// Call new and old variants
-			newResult := matchesIncludeNew(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
 			oldResult := matchesIncludeOld(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
-			assert.Check(t, cmp.Equal(newResult, oldResult))
+			assert.Check(t, cmp.Equal(oldResult, tt.expectIncluded))
+
+			newResult := matchesIncludeNew(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
+			assert.Check(t, cmp.Equal(newResult, tt.expectIncluded))
+
+			mainResult := MatchesInclude(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
+			assert.Check(t, cmp.Equal(mainResult, tt.expectIncluded))
 		})
 	}
 }
@@ -1146,14 +1146,14 @@ func TestMatchesIncludeWithJsonOnly(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			// Call main variant
-			mainResult := MatchesIncludeWithJsonOnly(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
-			assert.Check(t, cmp.DeepEqual(tt.expectIncluded, mainResult))
-
-			// Call new and old variants
-			newResult := matchesIncludeWithJsonOnlyNew(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
 			oldResult := matchesIncludeWithJsonOnlyOld(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
-			assert.Check(t, cmp.DeepEqual(newResult, oldResult))
+			assert.Check(t, cmp.Equal(oldResult, tt.expectIncluded))
+
+			newResult := matchesIncludeWithJsonOnlyNew(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
+			assert.Check(t, cmp.Equal(newResult, tt.expectIncluded))
+
+			mainResult := MatchesIncludeWithJsonOnly(tt.fileName, tt.includeSpecs, tt.basePath, tt.useCaseSensitiveFileNames)
+			assert.Check(t, cmp.Equal(mainResult, tt.expectIncluded))
 		})
 	}
 }
