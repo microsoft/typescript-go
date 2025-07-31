@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -50,14 +51,14 @@ else {
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
-			EditRange:        ignored,
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "nonExportedStrOrNum",
-					Detail: ptrTo("var nonExportedStrOrNum: string | number"),
+					Detail: PtrTo("var nonExportedStrOrNum: string | number"),
 				},
 			},
 		},
@@ -66,13 +67,13 @@ else {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
-			EditRange:        ignored,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "nonExportedStrOrNum",
-					Detail: ptrTo("var nonExportedStrOrNum: number"),
+					Detail: PtrTo("var nonExportedStrOrNum: number"),
 				},
 			},
 		},
@@ -81,13 +82,13 @@ else {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
-			EditRange:        ignored,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "nonExportedStrOrNum",
-					Detail: ptrTo("var nonExportedStrOrNum: string"),
+					Detail: PtrTo("var nonExportedStrOrNum: string"),
 				},
 			},
 		},
@@ -95,14 +96,14 @@ else {
 	f.VerifyCompletions(t, "4", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
-			EditRange:        ignored,
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "exportedStrOrNum",
-					Detail: ptrTo("var exportedStrOrNum: string | number"),
+					Detail: PtrTo("var exportedStrOrNum: string | number"),
 				},
 			},
 		},
@@ -111,13 +112,13 @@ else {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
-			EditRange:        ignored,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "exportedStrOrNum",
-					Detail: ptrTo("var exportedStrOrNum: number"),
+					Detail: PtrTo("var exportedStrOrNum: number"),
 				},
 			},
 		},
@@ -126,13 +127,13 @@ else {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
-			EditRange:        ignored,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "exportedStrOrNum",
-					Detail: ptrTo("var exportedStrOrNum: string"),
+					Detail: PtrTo("var exportedStrOrNum: string"),
 				},
 			},
 		},
@@ -140,14 +141,14 @@ else {
 	f.VerifyCompletions(t, "7", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
-			EditRange:        ignored,
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "exportedStrOrNum",
-					Detail: ptrTo("var m.exportedStrOrNum: string | number"),
+					Detail: PtrTo("var m.exportedStrOrNum: string | number"),
 				},
 			},
 		},
@@ -155,14 +156,14 @@ else {
 	f.VerifyCompletions(t, "8", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
-			EditRange:        ignored,
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "exportedStrOrNum",
-					Detail: ptrTo("var m.exportedStrOrNum: number"),
+					Detail: PtrTo("var m.exportedStrOrNum: number"),
 				},
 			},
 		},
@@ -170,14 +171,14 @@ else {
 	f.VerifyCompletions(t, "9", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
-			EditRange:        ignored,
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label:  "exportedStrOrNum",
-					Detail: ptrTo("var m.exportedStrOrNum: string"),
+					Detail: PtrTo("var m.exportedStrOrNum: string"),
 				},
 			},
 		},

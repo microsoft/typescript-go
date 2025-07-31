@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
@@ -30,39 +31,39 @@ inst2.blah/*b*/;`
 	f.VerifyCompletions(t, nil, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
-			EditRange:        ignored,
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{
 				"property",
 				&lsproto.CompletionItem{
 					Label:    "blah",
-					SortText: ptrTo(string(ls.SortTextJavascriptIdentifiers)),
+					SortText: PtrTo(string(ls.SortTextJavascriptIdentifiers)),
 				},
 				&lsproto.CompletionItem{
 					Label:    "class2",
-					SortText: ptrTo(string(ls.SortTextJavascriptIdentifiers)),
+					SortText: PtrTo(string(ls.SortTextJavascriptIdentifiers)),
 				},
 				&lsproto.CompletionItem{
 					Label:    "constructor",
-					SortText: ptrTo(string(ls.SortTextJavascriptIdentifiers)),
+					SortText: PtrTo(string(ls.SortTextJavascriptIdentifiers)),
 				},
 				&lsproto.CompletionItem{
 					Label:    "inst2",
-					SortText: ptrTo(string(ls.SortTextJavascriptIdentifiers)),
+					SortText: PtrTo(string(ls.SortTextJavascriptIdentifiers)),
 				},
 				&lsproto.CompletionItem{
 					Label:    "instance",
-					SortText: ptrTo(string(ls.SortTextJavascriptIdentifiers)),
+					SortText: PtrTo(string(ls.SortTextJavascriptIdentifiers)),
 				},
 				&lsproto.CompletionItem{
 					Label:    "prototype",
-					SortText: ptrTo(string(ls.SortTextJavascriptIdentifiers)),
+					SortText: PtrTo(string(ls.SortTextJavascriptIdentifiers)),
 				},
 				&lsproto.CompletionItem{
 					Label:    "TestObj",
-					SortText: ptrTo(string(ls.SortTextJavascriptIdentifiers)),
+					SortText: PtrTo(string(ls.SortTextJavascriptIdentifiers)),
 				},
 			},
 		},
