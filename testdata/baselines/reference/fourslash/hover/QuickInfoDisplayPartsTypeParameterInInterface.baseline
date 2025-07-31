@@ -487,7 +487,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\ninterface I\u003cT\u003e\n```\n"
+        "value": "```tsx\ninterface I<T>\n```\n"
       }
     }
   },
@@ -725,7 +725,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) I.method\u003cU\u003e(a: U, b: T): U\n```\n"
+        "value": "```tsx\n(method) I.method<U>(a: U, b: T): U\n```\n"
       }
     }
   },
@@ -844,7 +844,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar iVal: I\u003cstring\u003e\n```\n"
+        "value": "```tsx\nvar iVal: I<string>\n```\n"
       }
     }
   },
@@ -861,7 +861,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\ninterface I\u003cT\u003e\n```\n"
+        "value": "```tsx\ninterface I<T>\n```\n"
       }
     }
   },
@@ -878,7 +878,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar iVal: I\u003cstring\u003e\n```\n"
+        "value": "```tsx\nvar iVal: I<string>\n```\n"
       }
     }
   },
@@ -895,7 +895,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar iVal: I\u003cstring\u003e\n```\n"
+        "value": "```tsx\nvar iVal: I<string>\n```\n"
       }
     }
   },
@@ -912,7 +912,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar iVal: I\u003cstring\u003e\n```\n"
+        "value": "```tsx\nvar iVal: I<string>\n```\n"
       }
     }
   },
@@ -929,7 +929,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) I.method\u003c\"hello\"\u003e(a: \"hello\", b: string): \"hello\"\n```\n"
+        "value": "```tsx\n(method) I.method<\"hello\">(a: \"hello\", b: string): \"hello\"\n```\n"
       }
     }
   },
@@ -946,7 +946,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\ninterface I1\u003cT extends I\u003cstring\u003e\u003e\n```\n"
+        "value": "```tsx\ninterface I1<T extends I<string>>\n```\n"
       }
     }
   },
@@ -963,7 +963,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) T extends I\u003cstring\u003e\n```\n"
+        "value": "```tsx\n(type parameter) T extends I<string>\n```\n"
       }
     }
   },
@@ -980,7 +980,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\ninterface I\u003cT\u003e\n```\n"
+        "value": "```tsx\ninterface I<T>\n```\n"
       }
     }
   },
@@ -997,7 +997,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) U extends I\u003cstring\u003e\n```\n"
+        "value": "```tsx\n(type parameter) U extends I<string>\n```\n"
       }
     }
   },
@@ -1014,7 +1014,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\ninterface I\u003cT\u003e\n```\n"
+        "value": "```tsx\ninterface I<T>\n```\n"
       }
     }
   },
@@ -1048,7 +1048,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) U extends I\u003cstring\u003e\n```\n"
+        "value": "```tsx\n(type parameter) U extends I<string>\n```\n"
       }
     }
   },
@@ -1082,7 +1082,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) T extends I\u003cstring\u003e\n```\n"
+        "value": "```tsx\n(type parameter) T extends I<string>\n```\n"
       }
     }
   },
@@ -1099,7 +1099,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) U extends I\u003cstring\u003e\n```\n"
+        "value": "```tsx\n(type parameter) U extends I<string>\n```\n"
       }
     }
   },
@@ -1116,7 +1116,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) U extends I\u003cstring\u003e\n```\n"
+        "value": "```tsx\n(type parameter) U extends I<string>\n```\n"
       }
     }
   },
@@ -1133,7 +1133,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\ninterface I\u003cT\u003e\n```\n"
+        "value": "```tsx\ninterface I<T>\n```\n"
       }
     }
   },
@@ -1167,7 +1167,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) U extends I\u003cstring\u003e\n```\n"
+        "value": "```tsx\n(type parameter) U extends I<string>\n```\n"
       }
     }
   },
@@ -1201,7 +1201,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) T extends I\u003cstring\u003e\n```\n"
+        "value": "```tsx\n(type parameter) T extends I<string>\n```\n"
       }
     }
   },
@@ -1218,7 +1218,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) U extends I\u003cstring\u003e\n```\n"
+        "value": "```tsx\n(type parameter) U extends I<string>\n```\n"
       }
     }
   },
@@ -1235,7 +1235,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) I1.method\u003cU extends I\u003cstring\u003e\u003e(a: U, b: T): U\n```\n"
+        "value": "```tsx\n(method) I1.method<U extends I<string>>(a: U, b: T): U\n```\n"
       }
     }
   },
@@ -1252,7 +1252,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) U extends I\u003cstring\u003e\n```\n"
+        "value": "```tsx\n(type parameter) U extends I<string>\n```\n"
       }
     }
   },
@@ -1269,7 +1269,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\ninterface I\u003cT\u003e\n```\n"
+        "value": "```tsx\ninterface I<T>\n```\n"
       }
     }
   },
@@ -1303,7 +1303,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) U extends I\u003cstring\u003e\n```\n"
+        "value": "```tsx\n(type parameter) U extends I<string>\n```\n"
       }
     }
   },
@@ -1337,7 +1337,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) T extends I\u003cstring\u003e\n```\n"
+        "value": "```tsx\n(type parameter) T extends I<string>\n```\n"
       }
     }
   },
@@ -1354,7 +1354,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) U extends I\u003cstring\u003e\n```\n"
+        "value": "```tsx\n(type parameter) U extends I<string>\n```\n"
       }
     }
   },
@@ -1371,7 +1371,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar iVal1: I1\u003cI\u003cstring\u003e\u003e\n```\n"
+        "value": "```tsx\nvar iVal1: I1<I<string>>\n```\n"
       }
     }
   },
@@ -1388,7 +1388,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\ninterface I1\u003cT extends I\u003cstring\u003e\u003e\n```\n"
+        "value": "```tsx\ninterface I1<T extends I<string>>\n```\n"
       }
     }
   },
@@ -1405,7 +1405,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\ninterface I\u003cT\u003e\n```\n"
+        "value": "```tsx\ninterface I<T>\n```\n"
       }
     }
   },
@@ -1422,7 +1422,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar iVal1: I1\u003cI\u003cstring\u003e\u003e\n```\n"
+        "value": "```tsx\nvar iVal1: I1<I<string>>\n```\n"
       }
     }
   },
@@ -1439,7 +1439,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar iVal: I\u003cstring\u003e\n```\n"
+        "value": "```tsx\nvar iVal: I<string>\n```\n"
       }
     }
   },
@@ -1456,7 +1456,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar iVal: I\u003cstring\u003e\n```\n"
+        "value": "```tsx\nvar iVal: I<string>\n```\n"
       }
     }
   },
@@ -1473,7 +1473,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar iVal1: I1\u003cI\u003cstring\u003e\u003e\n```\n"
+        "value": "```tsx\nvar iVal1: I1<I<string>>\n```\n"
       }
     }
   },
@@ -1490,7 +1490,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar iVal: I\u003cstring\u003e\n```\n"
+        "value": "```tsx\nvar iVal: I<string>\n```\n"
       }
     }
   },
@@ -1507,7 +1507,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar iVal: I\u003cstring\u003e\n```\n"
+        "value": "```tsx\nvar iVal: I<string>\n```\n"
       }
     }
   },
@@ -1524,7 +1524,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar iVal1: I1\u003cI\u003cstring\u003e\u003e\n```\n"
+        "value": "```tsx\nvar iVal1: I1<I<string>>\n```\n"
       }
     }
   },
@@ -1541,7 +1541,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) I1.method\u003cI\u003cstring\u003e\u003e(a: I\u003cstring\u003e, b: I\u003cstring\u003e): I\u003cstring\u003e\n```\n"
+        "value": "```tsx\n(method) I1.method<I<string>>(a: I<string>, b: I<string>): I<string>\n```\n"
       }
     }
   },
@@ -1558,7 +1558,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar iVal: I\u003cstring\u003e\n```\n"
+        "value": "```tsx\nvar iVal: I<string>\n```\n"
       }
     }
   },
@@ -1575,7 +1575,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar iVal: I\u003cstring\u003e\n```\n"
+        "value": "```tsx\nvar iVal: I<string>\n```\n"
       }
     }
   }

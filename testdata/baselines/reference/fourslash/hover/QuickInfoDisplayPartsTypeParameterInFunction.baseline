@@ -106,7 +106,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nfunction foo\u003cU\u003e(a: U): U\n```\n"
+        "value": "```tsx\nfunction foo<U>(a: U): U\n```\n"
       }
     }
   },
@@ -191,7 +191,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nfunction foo\u003c\"Hello\"\u003e(a: \"Hello\"): \"Hello\"\n```\n"
+        "value": "```tsx\nfunction foo<\"Hello\">(a: \"Hello\"): \"Hello\"\n```\n"
       }
     }
   },
@@ -208,7 +208,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nfunction foo2\u003cU extends string\u003e(a: U): U\n```\n"
+        "value": "```tsx\nfunction foo2<U extends string>(a: U): U\n```\n"
       }
     }
   },
@@ -293,7 +293,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nfunction foo2\u003c\"hello\"\u003e(a: \"hello\"): \"hello\"\n```\n"
+        "value": "```tsx\nfunction foo2<\"hello\">(a: \"hello\"): \"hello\"\n```\n"
       }
     }
   }

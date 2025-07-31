@@ -212,7 +212,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar f: () =\u003e number\n```\n"
+        "value": "```tsx\nvar f: () => number\n```\n"
       }
     }
   },
@@ -229,7 +229,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar g: () =\u003e number\n```\n"
+        "value": "```tsx\nvar g: () => number\n```\n"
       }
     }
   },
@@ -246,7 +246,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar f: () =\u003e number\n```\n"
+        "value": "```tsx\nvar f: () => number\n```\n"
       }
     }
   },
@@ -263,7 +263,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar f: () =\u003e number\n```\n"
+        "value": "```tsx\nvar f: () => number\n```\n"
       }
     }
   },

@@ -48,7 +48,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\ntype cb = (x: string) =\u003e any\n```\n"
+        "value": "```tsx\ntype cb = (x: string) => any\n```\n"
       }
     }
   }

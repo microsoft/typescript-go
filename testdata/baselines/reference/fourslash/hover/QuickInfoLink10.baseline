@@ -25,7 +25,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nconst a: () =\u003e number\n```\nstart https://vscode.dev/ | end"
+        "value": "```tsx\nconst a: () => number\n```\nstart https://vscode.dev/ | end"
       }
     }
   }

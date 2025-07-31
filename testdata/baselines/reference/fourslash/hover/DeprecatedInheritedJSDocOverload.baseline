@@ -46,7 +46,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) ThingWithDeprecations.subscribe(observer?: PartialObserver\u003cvoid\u003e): Subscription\n```\n"
+        "value": "```tsx\n(method) ThingWithDeprecations.subscribe(observer?: PartialObserver<void>): Subscription\n```\n"
       }
     }
   }

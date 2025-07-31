@@ -266,7 +266,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nconst f: () =\u003e number\n```\n"
+        "value": "```tsx\nconst f: () => number\n```\n"
       }
     }
   },
@@ -283,7 +283,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nconst g: () =\u003e number\n```\n"
+        "value": "```tsx\nconst g: () => number\n```\n"
       }
     }
   },
@@ -300,7 +300,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nconst f: () =\u003e number\n```\n"
+        "value": "```tsx\nconst f: () => number\n```\n"
       }
     }
   },
@@ -317,7 +317,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nconst f: () =\u003e number\n```\n"
+        "value": "```tsx\nconst f: () => number\n```\n"
       }
     }
   },

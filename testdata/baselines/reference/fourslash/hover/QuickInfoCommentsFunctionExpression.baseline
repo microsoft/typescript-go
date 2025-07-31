@@ -133,7 +133,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar lambdaFoo: (a: number, b: number) =\u003e number\n```\nlambdaFoo var comment"
+        "value": "```tsx\nvar lambdaFoo: (a: number, b: number) => number\n```\nlambdaFoo var comment"
       }
     }
   },
@@ -150,7 +150,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar lambddaNoVarComment: (a: number, b: number) =\u003e number\n```\n"
+        "value": "```tsx\nvar lambddaNoVarComment: (a: number, b: number) => number\n```\n"
       }
     }
   },
@@ -184,7 +184,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar lambdaVar: (b: string) =\u003e string\n```\ndocumentation\n\n*@param* `b` — inner parameter "
+        "value": "```tsx\nvar lambdaVar: (b: string) => string\n```\ndocumentation\n\n*@param* `b` — inner parameter "
       }
     }
   },
@@ -269,7 +269,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar lambdaVar: (b: string) =\u003e string\n```\ndocumentation\n\n*@param* `b` — inner parameter "
+        "value": "```tsx\nvar lambdaVar: (b: string) => string\n```\ndocumentation\n\n*@param* `b` — inner parameter "
       }
     }
   },
@@ -286,7 +286,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar assigned: (s: string) =\u003e number\n```\nOn variable\n\n*@param* `s` — the first parameter!\n\n\n*@returns* — the parameter's length\n"
+        "value": "```tsx\nvar assigned: (s: string) => number\n```\nOn variable\n\n*@param* `s` — the first parameter!\n\n\n*@returns* — the parameter's length\n"
       }
     }
   },
@@ -303,7 +303,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar assigned: (s: string) =\u003e number\n```\nOn variable\n\n*@param* `s` — the first parameter!\n\n\n*@returns* — the parameter's length\n"
+        "value": "```tsx\nvar assigned: (s: string) => number\n```\nOn variable\n\n*@param* `s` — the first parameter!\n\n\n*@returns* — the parameter's length\n"
       }
     }
   }

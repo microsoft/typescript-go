@@ -1489,7 +1489,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_f: (b: number) =\u003e number\n```\n"
+        "value": "```tsx\nvar i1_f: (b: number) => number\n```\n"
       }
     }
   },
@@ -1659,7 +1659,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_ncf: (b: number) =\u003e number\n```\n"
+        "value": "```tsx\nvar i1_ncf: (b: number) => number\n```\n"
       }
     }
   },
@@ -1846,7 +1846,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_s_f: (b: number) =\u003e number\n```\n"
+        "value": "```tsx\nvar i1_s_f: (b: number) => number\n```\n"
       }
     }
   },
@@ -2016,7 +2016,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar i1_s_ncf: (b: number) =\u003e number\n```\n"
+        "value": "```tsx\nvar i1_s_ncf: (b: number) => number\n```\n"
       }
     }
   },

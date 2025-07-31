@@ -32,7 +32,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nconst foo: (t: T) =\u003e number\n```\n\n\n*@template* `T`"
+        "value": "```tsx\nconst foo: (t: T) => number\n```\n\n\n*@template* `T`"
       }
     }
   }

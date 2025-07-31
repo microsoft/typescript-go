@@ -321,7 +321,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nclass c\u003cT\u003e\n```\n"
+        "value": "```tsx\nclass c<T>\n```\n"
       }
     }
   },
@@ -355,7 +355,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nconstructor c\u003cT\u003e(a: T): c\u003cT\u003e\n```\n"
+        "value": "```tsx\nconstructor c<T>(a: T): c<T>\n```\n"
       }
     }
   },
@@ -406,7 +406,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c.method\u003cU\u003e(a: U, b: T): U\n```\n"
+        "value": "```tsx\n(method) c.method<U>(a: U, b: T): U\n```\n"
       }
     }
   },
@@ -525,7 +525,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar cInstance: c\u003cstring\u003e\n```\n"
+        "value": "```tsx\nvar cInstance: c<string>\n```\n"
       }
     }
   },
@@ -542,7 +542,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nconstructor c\u003cstring\u003e(a: string): c\u003cstring\u003e\n```\n"
+        "value": "```tsx\nconstructor c<string>(a: string): c<string>\n```\n"
       }
     }
   },
@@ -576,7 +576,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nclass c\u003cT\u003e\n```\n"
+        "value": "```tsx\nclass c<T>\n```\n"
       }
     }
   },
@@ -593,7 +593,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar cInstance: c\u003cstring\u003e\n```\n"
+        "value": "```tsx\nvar cInstance: c<string>\n```\n"
       }
     }
   },
@@ -610,7 +610,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c.method\u003c\"hello\"\u003e(a: \"hello\", b: string): \"hello\"\n```\n"
+        "value": "```tsx\n(method) c.method<\"hello\">(a: \"hello\", b: string): \"hello\"\n```\n"
       }
     }
   },
@@ -627,7 +627,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nclass c2\u003cT extends c\u003cstring\u003e\u003e\n```\n"
+        "value": "```tsx\nclass c2<T extends c<string>>\n```\n"
       }
     }
   },
@@ -644,7 +644,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) T extends c\u003cstring\u003e\n```\n"
+        "value": "```tsx\n(type parameter) T extends c<string>\n```\n"
       }
     }
   },
@@ -661,7 +661,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nclass c\u003cT\u003e\n```\n"
+        "value": "```tsx\nclass c<T>\n```\n"
       }
     }
   },
@@ -678,7 +678,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nconstructor c2\u003cT extends c\u003cstring\u003e\u003e(a: T): c2\u003cT\u003e\n```\n"
+        "value": "```tsx\nconstructor c2<T extends c<string>>(a: T): c2<T>\n```\n"
       }
     }
   },
@@ -712,7 +712,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) T extends c\u003cstring\u003e\n```\n"
+        "value": "```tsx\n(type parameter) T extends c<string>\n```\n"
       }
     }
   },
@@ -729,7 +729,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c2.method\u003cU extends c\u003cstring\u003e\u003e(a: U, b: T): U\n```\n"
+        "value": "```tsx\n(method) c2.method<U extends c<string>>(a: U, b: T): U\n```\n"
       }
     }
   },
@@ -746,7 +746,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) U extends c\u003cstring\u003e\n```\n"
+        "value": "```tsx\n(type parameter) U extends c<string>\n```\n"
       }
     }
   },
@@ -763,7 +763,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nclass c\u003cT\u003e\n```\n"
+        "value": "```tsx\nclass c<T>\n```\n"
       }
     }
   },
@@ -797,7 +797,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) U extends c\u003cstring\u003e\n```\n"
+        "value": "```tsx\n(type parameter) U extends c<string>\n```\n"
       }
     }
   },
@@ -831,7 +831,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(type parameter) T extends c\u003cstring\u003e\n```\n"
+        "value": "```tsx\n(type parameter) T extends c<string>\n```\n"
       }
     }
   },
@@ -865,7 +865,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar cInstance1: c2\u003cc\u003cstring\u003e\u003e\n```\n"
+        "value": "```tsx\nvar cInstance1: c2<c<string>>\n```\n"
       }
     }
   },
@@ -882,7 +882,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nconstructor c2\u003cc\u003cstring\u003e\u003e(a: c\u003cstring\u003e): c2\u003cc\u003cstring\u003e\u003e\n```\n"
+        "value": "```tsx\nconstructor c2<c<string>>(a: c<string>): c2<c<string>>\n```\n"
       }
     }
   },
@@ -899,7 +899,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar cInstance: c\u003cstring\u003e\n```\n"
+        "value": "```tsx\nvar cInstance: c<string>\n```\n"
       }
     }
   },
@@ -933,7 +933,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nclass c2\u003cT extends c\u003cstring\u003e\u003e\n```\n"
+        "value": "```tsx\nclass c2<T extends c<string>>\n```\n"
       }
     }
   },
@@ -950,7 +950,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar cInstance1: c2\u003cc\u003cstring\u003e\u003e\n```\n"
+        "value": "```tsx\nvar cInstance1: c2<c<string>>\n```\n"
       }
     }
   },
@@ -967,7 +967,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(method) c2.method\u003cc\u003cstring\u003e\u003e(a: c\u003cstring\u003e, b: c\u003cstring\u003e): c\u003cstring\u003e\n```\n"
+        "value": "```tsx\n(method) c2.method<c<string>>(a: c<string>, b: c<string>): c<string>\n```\n"
       }
     }
   },
@@ -984,7 +984,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar cInstance: c\u003cstring\u003e\n```\n"
+        "value": "```tsx\nvar cInstance: c<string>\n```\n"
       }
     }
   },
@@ -1001,7 +1001,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar cInstance: c\u003cstring\u003e\n```\n"
+        "value": "```tsx\nvar cInstance: c<string>\n```\n"
       }
     }
   }

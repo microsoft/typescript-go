@@ -74,7 +74,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar x: (a: any) =\u003e number\n```\n"
+        "value": "```tsx\nvar x: (a: any) => number\n```\n"
       }
     }
   },
@@ -108,7 +108,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar y: (a: any, b: any) =\u003e number\n```\n"
+        "value": "```tsx\nvar y: (a: any, b: any) => number\n```\n"
       }
     }
   },
@@ -159,7 +159,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar z: (a: number) =\u003e number\n```\n"
+        "value": "```tsx\nvar z: (a: number) => number\n```\n"
       }
     }
   },
@@ -193,7 +193,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar z2: () =\u003e number\n```\n"
+        "value": "```tsx\nvar z2: () => number\n```\n"
       }
     }
   }

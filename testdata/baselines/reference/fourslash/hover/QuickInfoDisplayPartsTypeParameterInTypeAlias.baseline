@@ -58,7 +58,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\ntype List\u003cT\u003e = T[]\n```\n"
+        "value": "```tsx\ntype List<T> = T[]\n```\n"
       }
     }
   },
@@ -109,7 +109,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\ntype List2\u003cT extends string\u003e = T[]\n```\n"
+        "value": "```tsx\ntype List2<T extends string> = T[]\n```\n"
       }
     }
   },

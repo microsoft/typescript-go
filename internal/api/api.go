@@ -2,11 +2,11 @@ package api
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"sync"
 
+	jsonv2 "github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/api/encoder"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
@@ -364,5 +364,5 @@ func encodeJSON(v any, err error) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return json.Marshal(v)
+	return jsonv2.Marshal(v)
 }

@@ -337,7 +337,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(property) D.foo2: (q: string) =\u003e number\n```\n"
+        "value": "```tsx\n(property) D.foo2: (q: string) => number\n```\n"
       }
     }
   },
@@ -405,7 +405,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(property) D.foo2: (q: string) =\u003e number\n```\n"
+        "value": "```tsx\n(property) D.foo2: (q: string) => number\n```\n"
       }
     }
   },
@@ -473,7 +473,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(property) Drived2.foo2: (para1: string) =\u003e number\n```\n"
+        "value": "```tsx\n(property) Drived2.foo2: (para1: string) => number\n```\n"
       }
     }
   },
@@ -541,7 +541,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(property) Drived4.foo2: (para1: string) =\u003e number\n```\n"
+        "value": "```tsx\n(property) Drived4.foo2: (para1: string) => number\n```\n"
       }
     }
   },
@@ -609,7 +609,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(property) Drived2.foo2: (para1: string) =\u003e number\n```\n"
+        "value": "```tsx\n(property) Drived2.foo2: (para1: string) => number\n```\n"
       }
     }
   },
@@ -677,7 +677,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(property) Drived4.foo2: (para1: string) =\u003e number\n```\n"
+        "value": "```tsx\n(property) Drived4.foo2: (para1: string) => number\n```\n"
       }
     }
   }

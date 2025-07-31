@@ -64,7 +64,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar x: () =\u003e void\n```\n"
+        "value": "```tsx\nvar x: () => void\n```\n"
       }
     }
   },
@@ -115,7 +115,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nvar y: () =\u003e void\n```\n"
+        "value": "```tsx\nvar y: () => void\n```\n"
       }
     }
   },

@@ -1203,7 +1203,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) c: () =\u003e string\n```\nthis is optional param c\n"
+        "value": "```tsx\n(parameter) c: () => string\n```\nthis is optional param c\n"
       }
     }
   },
@@ -1220,7 +1220,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) d: () =\u003e string\n```\nthis is optional param d\n"
+        "value": "```tsx\n(parameter) d: () => string\n```\nthis is optional param d\n"
       }
     }
   },
@@ -1237,7 +1237,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) e: () =\u003e string\n```\nthis is optional param e\n"
+        "value": "```tsx\n(parameter) e: () => string\n```\nthis is optional param e\n"
       }
     }
   },
@@ -1254,7 +1254,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\n(parameter) f: () =\u003e string\n```\n"
+        "value": "```tsx\n(parameter) f: () => string\n```\n"
       }
     }
   },
@@ -1271,7 +1271,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nfunction subtract(a: number, b: number, c?: () =\u003e string, d?: () =\u003e string, e?: () =\u003e string, f?: () =\u003e string): void\n```\nThis is subtract function\n\n*@param* ``\n\n*@param* `b` — this is about b\n\n\n*@param* `c` — this is optional param c\n\n\n*@param* `d` — this is optional param d\n\n\n*@param* `e` — this is optional param e\n\n\n*@param* `` — { () =\u003e string; } } f this is optional param f\n"
+        "value": "```tsx\nfunction subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void\n```\nThis is subtract function\n\n*@param* ``\n\n*@param* `b` — this is about b\n\n\n*@param* `c` — this is optional param c\n\n\n*@param* `d` — this is optional param d\n\n\n*@param* `e` — this is optional param e\n\n\n*@param* `` — { () => string; } } f this is optional param f\n"
       }
     }
   },

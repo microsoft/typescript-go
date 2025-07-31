@@ -49,7 +49,7 @@
     "item": {
       "contents": {
         "kind": "markdown",
-        "value": "```tsx\nawait using b: { [Symbol.asyncDispose](): Promise\u003cvoid\u003e; }\n```\n"
+        "value": "```tsx\nawait using b: { [Symbol.asyncDispose](): Promise<void>; }\n```\n"
       }
     }
   }
