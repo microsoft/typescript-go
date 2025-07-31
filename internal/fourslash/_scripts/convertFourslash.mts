@@ -159,6 +159,8 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                     return [parseBaselineFindAllReferencesArgs(callExpression.arguments)];
                 case "baselineQuickInfo":
                     return [parseBaselineQuickInfo(callExpression.arguments)];
+                case "baselineSignatureHelp":
+                    return [parseBaselineSignatureHelp(callExpression.arguments)];
                 case "baselineGoToDefinition":
                 case "baselineGetDefinitionAtPosition":
                     // Both of these take the same arguments, but differ in that...
@@ -721,6 +723,16 @@ function parseBaselineQuickInfo(args: ts.NodeArray<ts.Expression>): Cmd {
     };
 }
 
+function parseBaselineSignatureHelp(args: ts.NodeArray<ts.Expression>): Cmd {
+    if (args.length !== 0) {
+        // All calls are currently empty!
+        throw new Error("Expected no arguments in verify.baselineSignatureHelp");
+    }
+    return {
+        kind: "verifyBaselineSignatureHelp",
+    };
+}
+
 function parseKind(expr: ts.Expression): string | undefined {
     if (!ts.isStringLiteral(expr)) {
         console.error(`Expected string literal for kind, got ${expr.getText()}`);
@@ -872,6 +884,10 @@ interface VerifyBaselineQuickInfoCmd {
     kind: "verifyBaselineQuickInfo";
 }
 
+interface VerifyBaselineSignatureHelpCmd {
+    kind: "verifyBaselineSignatureHelp";
+}
+
 interface GoToCmd {
     kind: "goTo";
     // !!! `selectRange` and `rangeStart` require parsing variables and `test.ranges()[n]`
@@ -889,6 +905,7 @@ type Cmd =
     | VerifyBaselineFindAllReferencesCmd
     | VerifyBaselineGoToDefinitionCmd
     | VerifyBaselineQuickInfoCmd
+    | VerifyBaselineSignatureHelpCmd
     | GoToCmd
     | EditCmd;
 
@@ -949,6 +966,8 @@ function generateCmd(cmd: Cmd): string {
         case "verifyBaselineQuickInfo":
             // Quick Info -> Hover
             return `f.VerifyBaselineHover(t)`;
+        case "verifyBaselineSignatureHelp":
+            return `f.VerifyBaselineSignatureHelp(t)`;
         case "goTo":
             return generateGoToCommand(cmd as GoToCmd);
         case "edit":
@@ -966,7 +985,7 @@ interface GoTest {
 }
 
 function generateGoTest(failingTests: Set<string>, test: GoTest): string {
-    const testName = test.name[0].toUpperCase() + test.name.substring(1);
+    const testName = (test.name[0].toUpperCase() + test.name.substring(1)).replaceAll("-", "_");
     const content = test.content;
     const commands = test.commands.map(cmd => generateCmd(cmd)).join("\n");
     const imports = [`"github.com/microsoft/typescript-go/internal/fourslash"`];
