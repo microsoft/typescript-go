@@ -96,21 +96,15 @@ type wildcardDirectoryMatch struct {
 
 func getWildcardDirectoryFromSpec(spec string, useCaseSensitiveFileNames bool) *wildcardDirectoryMatch {
 	// Find the first occurrence of wildcards (* or ?)
-	questionWildcardIndex := strings.Index(spec, "?")
-	starWildcardIndex := strings.Index(spec, "*")
+	questionWildcardIndex := strings.IndexByte(spec, '?')
+	starWildcardIndex := strings.IndexByte(spec, '*')
 
 	// Find the earliest wildcard
-	firstWildcardIndex := -1
-	if questionWildcardIndex != -1 && starWildcardIndex != -1 {
-		if questionWildcardIndex < starWildcardIndex {
-			firstWildcardIndex = questionWildcardIndex
-		} else {
-			firstWildcardIndex = starWildcardIndex
-		}
-	} else if questionWildcardIndex != -1 {
-		firstWildcardIndex = questionWildcardIndex
-	} else if starWildcardIndex != -1 {
-		firstWildcardIndex = starWildcardIndex
+	var firstWildcardIndex int
+	if questionWildcardIndex == -1 || starWildcardIndex == -1 {
+		firstWildcardIndex = max(questionWildcardIndex, starWildcardIndex)
+	} else {
+		firstWildcardIndex = min(questionWildcardIndex, starWildcardIndex)
 	}
 
 	if firstWildcardIndex != -1 {
@@ -135,8 +129,8 @@ func getWildcardDirectoryFromSpec(spec string, useCaseSensitiveFileNames bool) *
 				lastDirectorySeparatorIndex := strings.LastIndexByte(spec, tspath.DirectorySeparator)
 
 				// Determine if this should be watched recursively
-				recursive := (questionWildcardIndex != -1 && questionWildcardIndex < lastDirectorySeparatorIndex) ||
-					(starWildcardIndex != -1 && starWildcardIndex < lastDirectorySeparatorIndex)
+				lastWildcardIndex := max(questionWildcardIndex, starWildcardIndex)
+				recursive := lastWildcardIndex != -1 && lastWildcardIndex < lastDirectorySeparatorIndex
 
 				return &wildcardDirectoryMatch{
 					Key:       toCanonicalKey(path, useCaseSensitiveFileNames),
