@@ -40,5 +40,8 @@
     "volta": {
         "node": "22.16.0",
         "npm": "8.19.4"
+    },
+    "dependencies": {
+        "@typescript/native-preview": "^0.0.0"
     }
 }
