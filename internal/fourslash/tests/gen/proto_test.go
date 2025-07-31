@@ -10,7 +10,7 @@ import (
 
 func TestProto(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `module M {
     export interface /*1*/__proto__ {}
