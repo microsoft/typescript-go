@@ -5,8 +5,8 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/json"
 	"gotest.tools/v3/assert"
 )
 
@@ -160,7 +160,6 @@ func TestOrderedMapWithSizeHint(t *testing.T) { //nolint:paralleltest
 
 func TestOrderedMapUnmarshalJSON(t *testing.T) {
 	t.Parallel()
-
 
 	t.Run("UnmarshalJSONV2", func(t *testing.T) {
 		t.Parallel()
