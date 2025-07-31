@@ -11,7 +11,7 @@
 //  * @see {@link C} its great
 //  */
 // function CC() {
-//         ^^^
+//          ^^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | function CC(): void
@@ -46,7 +46,7 @@
       "range": {
         "start": {
           "line": 10,
-          "character": 8
+          "character": 9
         },
         "end": {
           "line": 10,

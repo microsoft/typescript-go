@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
 const (
@@ -27,14 +28,20 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 	}
 	c, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
-	quickInfo, documentation := getQuickInfoAndDocumentation(c, node)
+	
+	// Calculate the applicable range for the hover
+	rangeNode := getNodeForQuickInfo(node)
+	quickInfo, documentation := getQuickInfoAndDocumentationWithNode(c, node, rangeNode)
 	if quickInfo == "" {
 		return lsproto.HoverOrNull{}, nil
 	}
-
-	// Calculate the applicable range for the hover
-	rangeNode := getNodeForQuickInfo(node)
-	textRange := core.NewTextRange(rangeNode.Pos(), rangeNode.End())
+	
+	// Calculate range without leading trivia to avoid including whitespace
+	sourceFile := ast.GetSourceFileOfNode(rangeNode)
+	sourceText := sourceFile.Text()
+	start := scanner.SkipTrivia(sourceText, rangeNode.Pos())
+	end := rangeNode.End()
+	textRange := core.NewTextRange(start, end)
 	hoverRange := l.converters.ToLSPRange(file, textRange)
 
 	return lsproto.HoverOrNull{
@@ -51,7 +58,11 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 }
 
 func getQuickInfoAndDocumentation(c *checker.Checker, node *ast.Node) (string, string) {
-	return getQuickInfoAndDocumentationForSymbol(c, c.GetSymbolAtLocation(node), getNodeForQuickInfo(node))
+	return getQuickInfoAndDocumentationWithNode(c, node, getNodeForQuickInfo(node))
+}
+
+func getQuickInfoAndDocumentationWithNode(c *checker.Checker, node *ast.Node, rangeNode *ast.Node) (string, string) {
+	return getQuickInfoAndDocumentationForSymbol(c, c.GetSymbolAtLocation(node), rangeNode)
 }
 
 func getQuickInfoAndDocumentationForSymbol(c *checker.Checker, symbol *ast.Symbol, node *ast.Node) (string, string) {

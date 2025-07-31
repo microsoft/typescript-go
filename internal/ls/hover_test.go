@@ -48,7 +48,7 @@ function myFunction() {
 						},
 					},
 					Range: &lsproto.Range{
-						Start: lsproto.Position{Line: 6, Character: 1},
+						Start: lsproto.Position{Line: 8, Character: 0},
 						End:   lsproto.Position{Line: 8, Character: 10},
 					},
 				},
@@ -75,7 +75,7 @@ myFunction();`,
 						},
 					},
 					Range: &lsproto.Range{
-						Start: lsproto.Position{Line: 3, Character: 8},
+						Start: lsproto.Position{Line: 3, Character: 9},
 						End:   lsproto.Position{Line: 3, Character: 19},
 					},
 				},
@@ -102,7 +102,7 @@ function myFunction(param) {
 						},
 					},
 					Range: &lsproto.Range{
-						Start: lsproto.Position{Line: 5, Character: 1},
+						Start: lsproto.Position{Line: 7, Character: 0},
 						End:   lsproto.Position{Line: 7, Character: 10},
 					},
 				},
@@ -168,7 +168,7 @@ function /*marker*/testFunction(param: string): string {
 						},
 					},
 					Range: &lsproto.Range{
-						Start: lsproto.Position{Line: 0, Character: 8},
+						Start: lsproto.Position{Line: 0, Character: 9},
 						End:   lsproto.Position{Line: 0, Character: 21},
 					},
 				},
