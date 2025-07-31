@@ -33,7 +33,7 @@ func (n Number) String() string {
 	}
 
 	// Otherwise, the Go json package handles this correctly.
-	b, _ := json.Marshal(float64(n)) //nolint:errchkjson
+	b, _ := json.Marshal(float64(n))
 	return string(b)
 }
 
