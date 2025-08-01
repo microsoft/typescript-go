@@ -11,7 +11,7 @@ import (
 
 func TestCompletionListAfterStringLiteralTypeWithNoSubstitutionTemplateLiteral(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `let count: 'one' | 'two';
 count = ` + "`" + `[|/**/|]` + "`" + ``
@@ -26,9 +26,21 @@ count = ` + "`" + `[|/**/|]` + "`" + ``
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "one",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "one",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
 				},
 				&lsproto.CompletionItem{
 					Label: "two",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "two",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
 				},
 			},
 		},

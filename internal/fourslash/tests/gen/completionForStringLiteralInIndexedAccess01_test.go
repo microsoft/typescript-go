@@ -11,7 +11,7 @@ import (
 
 func TestCompletionForStringLiteralInIndexedAccess01(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Foo {
     foo: string;
@@ -30,9 +30,21 @@ let x: Foo["[|/*1*/|]"]`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "bar",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "bar",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
 				},
 				&lsproto.CompletionItem{
 					Label: "foo",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "foo",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
 				},
 			},
 		},

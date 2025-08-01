@@ -29,6 +29,12 @@ func TestCompletionOfAwaitPromise1(t *testing.T) {
 				&lsproto.CompletionItem{
 					Label:      "trim",
 					InsertText: PtrTo("(await x).trim"),
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "trim",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
 				},
 			},
 		},

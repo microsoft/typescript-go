@@ -45,6 +45,12 @@ x[|./**/|]`
 						},
 					},
 					Detail: PtrTo("(property) 0: number (lbl1)"),
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "0",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
 				},
 				&lsproto.CompletionItem{
 					Label:      "1",
@@ -56,6 +62,12 @@ x[|./**/|]`
 						},
 					},
 					Detail: PtrTo("(property) 1: number (lbl2)"),
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "1",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
 				},
 			},
 		},

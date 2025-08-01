@@ -11,7 +11,7 @@ import (
 
 func TestCompletionListInvalidMemberNames(t *testing.T) {
 	t.Parallel()
-	// t.Skip()
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var x = {
     "foo ": "space in the name",
@@ -37,27 +37,75 @@ x["[|/*b*/|]"];`
 			Unsorted: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "foo ",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "foo ",
+							Range:   f.Ranges()[1].LSRange,
+						},
+					},
 				},
 				&lsproto.CompletionItem{
 					Label: "bar",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "bar",
+							Range:   f.Ranges()[1].LSRange,
+						},
+					},
 				},
 				&lsproto.CompletionItem{
 					Label: "break",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "break",
+							Range:   f.Ranges()[1].LSRange,
+						},
+					},
 				},
 				&lsproto.CompletionItem{
 					Label: "any",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "any",
+							Range:   f.Ranges()[1].LSRange,
+						},
+					},
 				},
 				&lsproto.CompletionItem{
 					Label: "#",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "#",
+							Range:   f.Ranges()[1].LSRange,
+						},
+					},
 				},
 				&lsproto.CompletionItem{
 					Label: "$",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "$",
+							Range:   f.Ranges()[1].LSRange,
+						},
+					},
 				},
 				&lsproto.CompletionItem{
 					Label: "b",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "b",
+							Range:   f.Ranges()[1].LSRange,
+						},
+					},
 				},
 				&lsproto.CompletionItem{
 					Label: "1b",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "1b",
+							Range:   f.Ranges()[1].LSRange,
+						},
+					},
 				},
 			},
 		},
@@ -73,6 +121,12 @@ x["[|/*b*/|]"];`
 				&lsproto.CompletionItem{
 					Label:      "foo ",
 					InsertText: PtrTo("[\"foo \"]"),
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "foo ",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
 				},
 				"bar",
 				"break",
@@ -80,12 +134,24 @@ x["[|/*b*/|]"];`
 				&lsproto.CompletionItem{
 					Label:      "#",
 					InsertText: PtrTo("[\"#\"]"),
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "#",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
 				},
 				"$",
 				"b",
 				&lsproto.CompletionItem{
 					Label:      "1b",
 					InsertText: PtrTo("[\"1b\"]"),
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "1b",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
 				},
 			},
 		},

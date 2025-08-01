@@ -40,9 +40,21 @@ f/*1*/('literal', 'literal', "[|o/*2*/ther1|]", 12);`
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "other1",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "other1",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
 				},
 				&lsproto.CompletionItem{
 					Label: "other2",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "other2",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
 				},
 			},
 		},

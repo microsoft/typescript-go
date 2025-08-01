@@ -11,7 +11,7 @@ import (
 
 func TestCompletionForQuotedPropertyInPropertyAssignment3(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = ` let configFiles1: {
      jspm: string;
@@ -50,9 +50,21 @@ func TestCompletionForQuotedPropertyInPropertyAssignment3(t *testing.T) {
 			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
 					Label: "jspm",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "jspm",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
 				},
 				&lsproto.CompletionItem{
 					Label: "jspm:browser",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "jspm:browser",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
 				},
 			},
 		},

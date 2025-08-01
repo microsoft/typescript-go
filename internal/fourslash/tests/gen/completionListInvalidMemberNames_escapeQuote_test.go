@@ -27,6 +27,12 @@ x[|./**/|];`
 				&lsproto.CompletionItem{
 					Label:      "\"'",
 					InsertText: PtrTo("[\"\\\"'\"]"),
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "\"'",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
 				},
 			},
 		},
@@ -42,6 +48,12 @@ x[|./**/|];`
 				&lsproto.CompletionItem{
 					Label:      "\"'",
 					InsertText: PtrTo("['\"\\'']"),
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "\"'",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
 				},
 			},
 		},

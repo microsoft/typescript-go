@@ -584,13 +584,14 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
         let name: string | undefined;
         let insertText: string | undefined;
         let filterText: string | undefined;
+        let replacementSpanIdx: string | undefined;
         for (const prop of strExpr.properties) {
             if (!(ts.isPropertyAssignment(prop) || ts.isShorthandPropertyAssignment(prop)) || !ts.isIdentifier(prop.name)) {
                 console.error(`Expected property assignment with identifier name for completion item, got ${prop.getText()}`);
                 return undefined;
             }
             const propName = prop.name.text;
-            const init = ts.isPropertyAssignment(prop) ?  prop.initializer : prop.name;
+            const init = ts.isPropertyAssignment(prop) ? prop.initializer : prop.name;
             switch (propName) {
                 case "name": {
                     let nameInit;
@@ -687,9 +688,21 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
                 case "isFromUncheckedFile":
                     break; // Ignored
                 case "commitCharacters":
-                case "replacementSpan":
                     // !!! support these later
                     break;
+                case "replacementSpan": {
+                    let span;
+                    if (ts.isIdentifier(init)) {
+                        span = getNodeOfKind(init, (n: ts.Node): n is ts.Node => !ts.isIdentifier(n));
+                    }
+                    else {
+                        span = init;
+                    }
+                    if (span?.getText().startsWith("test.ranges()[")) {
+                        replacementSpanIdx = span.getText().match(/\d+/)?.[0];
+                    }
+                    break;
+                }
                 default:
                     console.error(`Unrecognized property in expected completion item: ${propName}`);
                     return undefined; // Unsupported property
@@ -697,6 +710,14 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
         }
         if (!name) {
             return undefined; // Shouldn't happen
+        }
+        if (replacementSpanIdx) {
+            itemProps.push(`TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+                TextEdit: &lsproto.TextEdit{
+                    NewText: ${getGoStringLiteral(name)},
+                    Range:   f.Ranges()[${replacementSpanIdx}].LSRange,
+                },
+            },`);
         }
         if (isOptional) {
             insertText ??= name;

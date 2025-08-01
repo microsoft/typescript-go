@@ -27,6 +27,12 @@ x[|./**/|];`
 				&lsproto.CompletionItem{
 					Label:      "foo ",
 					InsertText: PtrTo("[\"foo \"]"),
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "foo ",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
 				},
 			},
 		},
