@@ -77,10 +77,10 @@ func (s *ImplementationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenPosition {
-		return fmt.Errorf("required key 'position' is missing")
+		return fmt.Errorf("required property 'position' is missing")
 	}
 
 	return nil
@@ -135,10 +135,10 @@ func (s *Location) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 
 	return nil
@@ -197,7 +197,7 @@ func (s *ImplementationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -267,10 +267,10 @@ func (s *TypeDefinitionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenPosition {
-		return fmt.Errorf("required key 'position' is missing")
+		return fmt.Errorf("required property 'position' is missing")
 	}
 
 	return nil
@@ -329,7 +329,7 @@ func (s *TypeDefinitionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -386,10 +386,10 @@ func (s *WorkspaceFolder) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 	if !seenName {
-		return fmt.Errorf("required key 'name' is missing")
+		return fmt.Errorf("required property 'name' is missing")
 	}
 
 	return nil
@@ -434,7 +434,7 @@ func (s *DidChangeWorkspaceFoldersParams) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	if !seenEvent {
-		return fmt.Errorf("required key 'event' is missing")
+		return fmt.Errorf("required property 'event' is missing")
 	}
 
 	return nil
@@ -478,7 +478,7 @@ func (s *ConfigurationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenItems {
-		return fmt.Errorf("required key 'items' is missing")
+		return fmt.Errorf("required property 'items' is missing")
 	}
 
 	return nil
@@ -538,7 +538,7 @@ func (s *DocumentColorParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 
 	return nil
@@ -594,10 +594,10 @@ func (s *ColorInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 	if !seenColor {
-		return fmt.Errorf("required key 'color' is missing")
+		return fmt.Errorf("required property 'color' is missing")
 	}
 
 	return nil
@@ -656,7 +656,7 @@ func (s *DocumentColorRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -736,13 +736,13 @@ func (s *ColorPresentationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenColor {
-		return fmt.Errorf("required key 'color' is missing")
+		return fmt.Errorf("required property 'color' is missing")
 	}
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 
 	return nil
@@ -805,7 +805,7 @@ func (s *ColorPresentation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenLabel {
-		return fmt.Errorf("required key 'label' is missing")
+		return fmt.Errorf("required property 'label' is missing")
 	}
 
 	return nil
@@ -855,7 +855,7 @@ func (s *TextDocumentRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -915,7 +915,7 @@ func (s *FoldingRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 
 	return nil
@@ -1008,10 +1008,10 @@ func (s *FoldingRange) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenStartLine {
-		return fmt.Errorf("required key 'startLine' is missing")
+		return fmt.Errorf("required property 'startLine' is missing")
 	}
 	if !seenEndLine {
-		return fmt.Errorf("required key 'endLine' is missing")
+		return fmt.Errorf("required property 'endLine' is missing")
 	}
 
 	return nil
@@ -1070,7 +1070,7 @@ func (s *FoldingRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -1140,10 +1140,10 @@ func (s *DeclarationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenPosition {
-		return fmt.Errorf("required key 'position' is missing")
+		return fmt.Errorf("required property 'position' is missing")
 	}
 
 	return nil
@@ -1202,7 +1202,7 @@ func (s *DeclarationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -1273,10 +1273,10 @@ func (s *SelectionRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenPositions {
-		return fmt.Errorf("required key 'positions' is missing")
+		return fmt.Errorf("required property 'positions' is missing")
 	}
 
 	return nil
@@ -1329,7 +1329,7 @@ func (s *SelectionRange) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 
 	return nil
@@ -1388,7 +1388,7 @@ func (s *SelectionRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -1432,7 +1432,7 @@ func (s *WorkDoneProgressCreateParams) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	if !seenToken {
-		return fmt.Errorf("required key 'token' is missing")
+		return fmt.Errorf("required property 'token' is missing")
 	}
 
 	return nil
@@ -1476,7 +1476,7 @@ func (s *WorkDoneProgressCancelParams) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	if !seenToken {
-		return fmt.Errorf("required key 'token' is missing")
+		return fmt.Errorf("required property 'token' is missing")
 	}
 
 	return nil
@@ -1541,10 +1541,10 @@ func (s *CallHierarchyPrepareParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenPosition {
-		return fmt.Errorf("required key 'position' is missing")
+		return fmt.Errorf("required property 'position' is missing")
 	}
 
 	return nil
@@ -1653,19 +1653,19 @@ func (s *CallHierarchyItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenName {
-		return fmt.Errorf("required key 'name' is missing")
+		return fmt.Errorf("required property 'name' is missing")
 	}
 	if !seenKind {
-		return fmt.Errorf("required key 'kind' is missing")
+		return fmt.Errorf("required property 'kind' is missing")
 	}
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 	if !seenSelectionRange {
-		return fmt.Errorf("required key 'selectionRange' is missing")
+		return fmt.Errorf("required property 'selectionRange' is missing")
 	}
 
 	return nil
@@ -1727,7 +1727,7 @@ func (s *CallHierarchyRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -1788,7 +1788,7 @@ func (s *CallHierarchyIncomingCallsParams) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if !seenItem {
-		return fmt.Errorf("required key 'item' is missing")
+		return fmt.Errorf("required property 'item' is missing")
 	}
 
 	return nil
@@ -1847,10 +1847,10 @@ func (s *CallHierarchyIncomingCall) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if !seenFrom {
-		return fmt.Errorf("required key 'from' is missing")
+		return fmt.Errorf("required property 'from' is missing")
 	}
 	if !seenFromRanges {
-		return fmt.Errorf("required key 'fromRanges' is missing")
+		return fmt.Errorf("required property 'fromRanges' is missing")
 	}
 
 	return nil
@@ -1911,7 +1911,7 @@ func (s *CallHierarchyOutgoingCallsParams) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if !seenItem {
-		return fmt.Errorf("required key 'item' is missing")
+		return fmt.Errorf("required property 'item' is missing")
 	}
 
 	return nil
@@ -1971,10 +1971,10 @@ func (s *CallHierarchyOutgoingCall) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if !seenTo {
-		return fmt.Errorf("required key 'to' is missing")
+		return fmt.Errorf("required property 'to' is missing")
 	}
 	if !seenFromRanges {
-		return fmt.Errorf("required key 'fromRanges' is missing")
+		return fmt.Errorf("required property 'fromRanges' is missing")
 	}
 
 	return nil
@@ -2034,7 +2034,7 @@ func (s *SemanticTokensParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 
 	return nil
@@ -2089,7 +2089,7 @@ func (s *SemanticTokens) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenData {
-		return fmt.Errorf("required key 'data' is missing")
+		return fmt.Errorf("required property 'data' is missing")
 	}
 
 	return nil
@@ -2133,7 +2133,7 @@ func (s *SemanticTokensPartialResult) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	if !seenData {
-		return fmt.Errorf("required key 'data' is missing")
+		return fmt.Errorf("required property 'data' is missing")
 	}
 
 	return nil
@@ -2219,10 +2219,10 @@ func (s *SemanticTokensRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 	if !seenLegend {
-		return fmt.Errorf("required key 'legend' is missing")
+		return fmt.Errorf("required property 'legend' is missing")
 	}
 
 	return nil
@@ -2294,10 +2294,10 @@ func (s *SemanticTokensDeltaParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenPreviousResultId {
-		return fmt.Errorf("required key 'previousResultId' is missing")
+		return fmt.Errorf("required property 'previousResultId' is missing")
 	}
 
 	return nil
@@ -2348,7 +2348,7 @@ func (s *SemanticTokensDelta) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenEdits {
-		return fmt.Errorf("required key 'edits' is missing")
+		return fmt.Errorf("required property 'edits' is missing")
 	}
 
 	return nil
@@ -2392,7 +2392,7 @@ func (s *SemanticTokensDeltaPartialResult) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if !seenEdits {
-		return fmt.Errorf("required key 'edits' is missing")
+		return fmt.Errorf("required property 'edits' is missing")
 	}
 
 	return nil
@@ -2463,10 +2463,10 @@ func (s *SemanticTokensRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 
 	return nil
@@ -2542,7 +2542,7 @@ func (s *ShowDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 
 	return nil
@@ -2589,7 +2589,7 @@ func (s *ShowDocumentResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenSuccess {
-		return fmt.Errorf("required key 'success' is missing")
+		return fmt.Errorf("required property 'success' is missing")
 	}
 
 	return nil
@@ -2651,10 +2651,10 @@ func (s *LinkedEditingRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenPosition {
-		return fmt.Errorf("required key 'position' is missing")
+		return fmt.Errorf("required property 'position' is missing")
 	}
 
 	return nil
@@ -2711,7 +2711,7 @@ func (s *LinkedEditingRanges) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenRanges {
-		return fmt.Errorf("required key 'ranges' is missing")
+		return fmt.Errorf("required property 'ranges' is missing")
 	}
 
 	return nil
@@ -2770,7 +2770,7 @@ func (s *LinkedEditingRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -2818,7 +2818,7 @@ func (s *CreateFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenFiles {
-		return fmt.Errorf("required key 'files' is missing")
+		return fmt.Errorf("required property 'files' is missing")
 	}
 
 	return nil
@@ -2902,7 +2902,7 @@ func (s *FileOperationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if !seenFilters {
-		return fmt.Errorf("required key 'filters' is missing")
+		return fmt.Errorf("required property 'filters' is missing")
 	}
 
 	return nil
@@ -2951,7 +2951,7 @@ func (s *RenameFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenFiles {
-		return fmt.Errorf("required key 'files' is missing")
+		return fmt.Errorf("required property 'files' is missing")
 	}
 
 	return nil
@@ -2999,7 +2999,7 @@ func (s *DeleteFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenFiles {
-		return fmt.Errorf("required key 'files' is missing")
+		return fmt.Errorf("required property 'files' is missing")
 	}
 
 	return nil
@@ -3069,10 +3069,10 @@ func (s *MonikerParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenPosition {
-		return fmt.Errorf("required key 'position' is missing")
+		return fmt.Errorf("required property 'position' is missing")
 	}
 
 	return nil
@@ -3147,13 +3147,13 @@ func (s *Moniker) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenScheme {
-		return fmt.Errorf("required key 'scheme' is missing")
+		return fmt.Errorf("required property 'scheme' is missing")
 	}
 	if !seenIdentifier {
-		return fmt.Errorf("required key 'identifier' is missing")
+		return fmt.Errorf("required property 'identifier' is missing")
 	}
 	if !seenUnique {
-		return fmt.Errorf("required key 'unique' is missing")
+		return fmt.Errorf("required property 'unique' is missing")
 	}
 
 	return nil
@@ -3204,7 +3204,7 @@ func (s *MonikerRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -3269,10 +3269,10 @@ func (s *TypeHierarchyPrepareParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenPosition {
-		return fmt.Errorf("required key 'position' is missing")
+		return fmt.Errorf("required property 'position' is missing")
 	}
 
 	return nil
@@ -3382,19 +3382,19 @@ func (s *TypeHierarchyItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenName {
-		return fmt.Errorf("required key 'name' is missing")
+		return fmt.Errorf("required property 'name' is missing")
 	}
 	if !seenKind {
-		return fmt.Errorf("required key 'kind' is missing")
+		return fmt.Errorf("required property 'kind' is missing")
 	}
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 	if !seenSelectionRange {
-		return fmt.Errorf("required key 'selectionRange' is missing")
+		return fmt.Errorf("required property 'selectionRange' is missing")
 	}
 
 	return nil
@@ -3456,7 +3456,7 @@ func (s *TypeHierarchyRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -3517,7 +3517,7 @@ func (s *TypeHierarchySupertypesParams) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	if !seenItem {
-		return fmt.Errorf("required key 'item' is missing")
+		return fmt.Errorf("required property 'item' is missing")
 	}
 
 	return nil
@@ -3578,7 +3578,7 @@ func (s *TypeHierarchySubtypesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	if !seenItem {
-		return fmt.Errorf("required key 'item' is missing")
+		return fmt.Errorf("required property 'item' is missing")
 	}
 
 	return nil
@@ -3653,13 +3653,13 @@ func (s *InlineValueParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 	if !seenContext {
-		return fmt.Errorf("required key 'context' is missing")
+		return fmt.Errorf("required property 'context' is missing")
 	}
 
 	return nil
@@ -3721,7 +3721,7 @@ func (s *InlineValueRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -3786,10 +3786,10 @@ func (s *InlayHintParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 
 	return nil
@@ -3909,10 +3909,10 @@ func (s *InlayHint) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenPosition {
-		return fmt.Errorf("required key 'position' is missing")
+		return fmt.Errorf("required property 'position' is missing")
 	}
 	if !seenLabel {
-		return fmt.Errorf("required key 'label' is missing")
+		return fmt.Errorf("required property 'label' is missing")
 	}
 
 	return nil
@@ -3982,7 +3982,7 @@ func (s *InlayHintRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -4058,7 +4058,7 @@ func (s *DocumentDiagnosticParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 
 	return nil
@@ -4104,7 +4104,7 @@ func (s *DocumentDiagnosticReportPartialResult) UnmarshalJSONFrom(dec *jsontext.
 	}
 
 	if !seenRelatedDocuments {
-		return fmt.Errorf("required key 'relatedDocuments' is missing")
+		return fmt.Errorf("required property 'relatedDocuments' is missing")
 	}
 
 	return nil
@@ -4150,7 +4150,7 @@ func (s *DiagnosticServerCancellationData) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if !seenRetriggerRequest {
-		return fmt.Errorf("required key 'retriggerRequest' is missing")
+		return fmt.Errorf("required property 'retriggerRequest' is missing")
 	}
 
 	return nil
@@ -4243,13 +4243,13 @@ func (s *DiagnosticRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 	if !seenInterFileDependencies {
-		return fmt.Errorf("required key 'interFileDependencies' is missing")
+		return fmt.Errorf("required property 'interFileDependencies' is missing")
 	}
 	if !seenWorkspaceDiagnostics {
-		return fmt.Errorf("required key 'workspaceDiagnostics' is missing")
+		return fmt.Errorf("required property 'workspaceDiagnostics' is missing")
 	}
 
 	return nil
@@ -4319,7 +4319,7 @@ func (s *WorkspaceDiagnosticParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if !seenPreviousResultIds {
-		return fmt.Errorf("required key 'previousResultIds' is missing")
+		return fmt.Errorf("required property 'previousResultIds' is missing")
 	}
 
 	return nil
@@ -4365,7 +4365,7 @@ func (s *WorkspaceDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if !seenItems {
-		return fmt.Errorf("required key 'items' is missing")
+		return fmt.Errorf("required property 'items' is missing")
 	}
 
 	return nil
@@ -4411,7 +4411,7 @@ func (s *WorkspaceDiagnosticReportPartialResult) UnmarshalJSONFrom(dec *jsontext
 	}
 
 	if !seenItems {
-		return fmt.Errorf("required key 'items' is missing")
+		return fmt.Errorf("required property 'items' is missing")
 	}
 
 	return nil
@@ -4470,10 +4470,10 @@ func (s *DidOpenNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	if !seenNotebookDocument {
-		return fmt.Errorf("required key 'notebookDocument' is missing")
+		return fmt.Errorf("required property 'notebookDocument' is missing")
 	}
 	if !seenCellTextDocuments {
-		return fmt.Errorf("required key 'cellTextDocuments' is missing")
+		return fmt.Errorf("required property 'cellTextDocuments' is missing")
 	}
 
 	return nil
@@ -4536,7 +4536,7 @@ func (s *NotebookDocumentSyncRegistrationOptions) UnmarshalJSONFrom(dec *jsontex
 	}
 
 	if !seenNotebookSelector {
-		return fmt.Errorf("required key 'notebookSelector' is missing")
+		return fmt.Errorf("required property 'notebookSelector' is missing")
 	}
 
 	return nil
@@ -4609,10 +4609,10 @@ func (s *DidChangeNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	if !seenNotebookDocument {
-		return fmt.Errorf("required key 'notebookDocument' is missing")
+		return fmt.Errorf("required property 'notebookDocument' is missing")
 	}
 	if !seenChange {
-		return fmt.Errorf("required key 'change' is missing")
+		return fmt.Errorf("required property 'change' is missing")
 	}
 
 	return nil
@@ -4659,7 +4659,7 @@ func (s *DidSaveNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	if !seenNotebookDocument {
-		return fmt.Errorf("required key 'notebookDocument' is missing")
+		return fmt.Errorf("required property 'notebookDocument' is missing")
 	}
 
 	return nil
@@ -4718,10 +4718,10 @@ func (s *DidCloseNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	if !seenNotebookDocument {
-		return fmt.Errorf("required key 'notebookDocument' is missing")
+		return fmt.Errorf("required property 'notebookDocument' is missing")
 	}
 	if !seenCellTextDocuments {
-		return fmt.Errorf("required key 'cellTextDocuments' is missing")
+		return fmt.Errorf("required property 'cellTextDocuments' is missing")
 	}
 
 	return nil
@@ -4798,13 +4798,13 @@ func (s *InlineCompletionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenPosition {
-		return fmt.Errorf("required key 'position' is missing")
+		return fmt.Errorf("required property 'position' is missing")
 	}
 	if !seenContext {
-		return fmt.Errorf("required key 'context' is missing")
+		return fmt.Errorf("required property 'context' is missing")
 	}
 
 	return nil
@@ -4853,7 +4853,7 @@ func (s *InlineCompletionList) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenItems {
-		return fmt.Errorf("required key 'items' is missing")
+		return fmt.Errorf("required property 'items' is missing")
 	}
 
 	return nil
@@ -4923,7 +4923,7 @@ func (s *InlineCompletionItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenInsertText {
-		return fmt.Errorf("required key 'insertText' is missing")
+		return fmt.Errorf("required property 'insertText' is missing")
 	}
 
 	return nil
@@ -4987,7 +4987,7 @@ func (s *InlineCompletionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.De
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -5036,7 +5036,7 @@ func (s *TextDocumentContentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 
 	return nil
@@ -5088,7 +5088,7 @@ func (s *TextDocumentContentResult) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if !seenText {
-		return fmt.Errorf("required key 'text' is missing")
+		return fmt.Errorf("required property 'text' is missing")
 	}
 
 	return nil
@@ -5145,7 +5145,7 @@ func (s *TextDocumentContentRegistrationOptions) UnmarshalJSONFrom(dec *jsontext
 	}
 
 	if !seenSchemes {
-		return fmt.Errorf("required key 'schemes' is missing")
+		return fmt.Errorf("required property 'schemes' is missing")
 	}
 
 	return nil
@@ -5194,7 +5194,7 @@ func (s *TextDocumentContentRefreshParams) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 
 	return nil
@@ -5237,7 +5237,7 @@ func (s *RegistrationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenRegistrations {
-		return fmt.Errorf("required key 'registrations' is missing")
+		return fmt.Errorf("required property 'registrations' is missing")
 	}
 
 	return nil
@@ -5280,7 +5280,7 @@ func (s *UnregistrationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenUnregisterations {
-		return fmt.Errorf("required key 'unregisterations' is missing")
+		return fmt.Errorf("required property 'unregisterations' is missing")
 	}
 
 	return nil
@@ -5419,13 +5419,13 @@ func (s *InitializeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenProcessId {
-		return fmt.Errorf("required key 'processId' is missing")
+		return fmt.Errorf("required property 'processId' is missing")
 	}
 	if !seenRootUri {
-		return fmt.Errorf("required key 'rootUri' is missing")
+		return fmt.Errorf("required property 'rootUri' is missing")
 	}
 	if !seenCapabilities {
-		return fmt.Errorf("required key 'capabilities' is missing")
+		return fmt.Errorf("required property 'capabilities' is missing")
 	}
 
 	return nil
@@ -5479,7 +5479,7 @@ func (s *InitializeResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenCapabilities {
-		return fmt.Errorf("required key 'capabilities' is missing")
+		return fmt.Errorf("required property 'capabilities' is missing")
 	}
 
 	return nil
@@ -5528,7 +5528,7 @@ func (s *InitializeError) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenRetry {
-		return fmt.Errorf("required key 'retry' is missing")
+		return fmt.Errorf("required property 'retry' is missing")
 	}
 
 	return nil
@@ -5575,7 +5575,7 @@ func (s *DidChangeConfigurationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	if !seenSettings {
-		return fmt.Errorf("required key 'settings' is missing")
+		return fmt.Errorf("required property 'settings' is missing")
 	}
 
 	return nil
@@ -5635,10 +5635,10 @@ func (s *ShowMessageParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenType {
-		return fmt.Errorf("required key 'type' is missing")
+		return fmt.Errorf("required property 'type' is missing")
 	}
 	if !seenMessage {
-		return fmt.Errorf("required key 'message' is missing")
+		return fmt.Errorf("required property 'message' is missing")
 	}
 
 	return nil
@@ -5700,10 +5700,10 @@ func (s *ShowMessageRequestParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if !seenType {
-		return fmt.Errorf("required key 'type' is missing")
+		return fmt.Errorf("required property 'type' is missing")
 	}
 	if !seenMessage {
-		return fmt.Errorf("required key 'message' is missing")
+		return fmt.Errorf("required property 'message' is missing")
 	}
 
 	return nil
@@ -5747,7 +5747,7 @@ func (s *MessageActionItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTitle {
-		return fmt.Errorf("required key 'title' is missing")
+		return fmt.Errorf("required property 'title' is missing")
 	}
 
 	return nil
@@ -5803,10 +5803,10 @@ func (s *LogMessageParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenType {
-		return fmt.Errorf("required key 'type' is missing")
+		return fmt.Errorf("required property 'type' is missing")
 	}
 	if !seenMessage {
-		return fmt.Errorf("required key 'message' is missing")
+		return fmt.Errorf("required property 'message' is missing")
 	}
 
 	return nil
@@ -5851,7 +5851,7 @@ func (s *DidOpenTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 
 	return nil
@@ -5919,10 +5919,10 @@ func (s *DidChangeTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenContentChanges {
-		return fmt.Errorf("required key 'contentChanges' is missing")
+		return fmt.Errorf("required property 'contentChanges' is missing")
 	}
 
 	return nil
@@ -5979,10 +5979,10 @@ func (s *TextDocumentChangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 	if !seenSyncKind {
-		return fmt.Errorf("required key 'syncKind' is missing")
+		return fmt.Errorf("required property 'syncKind' is missing")
 	}
 
 	return nil
@@ -6027,7 +6027,7 @@ func (s *DidCloseTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 
 	return nil
@@ -6080,7 +6080,7 @@ func (s *DidSaveTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 
 	return nil
@@ -6133,7 +6133,7 @@ func (s *TextDocumentSaveRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.De
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -6189,10 +6189,10 @@ func (s *WillSaveTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenReason {
-		return fmt.Errorf("required key 'reason' is missing")
+		return fmt.Errorf("required property 'reason' is missing")
 	}
 
 	return nil
@@ -6250,10 +6250,10 @@ func (s *TextEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 	if !seenNewText {
-		return fmt.Errorf("required key 'newText' is missing")
+		return fmt.Errorf("required property 'newText' is missing")
 	}
 
 	return nil
@@ -6298,7 +6298,7 @@ func (s *DidChangeWatchedFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	if !seenChanges {
-		return fmt.Errorf("required key 'changes' is missing")
+		return fmt.Errorf("required property 'changes' is missing")
 	}
 
 	return nil
@@ -6343,7 +6343,7 @@ func (s *DidChangeWatchedFilesRegistrationOptions) UnmarshalJSONFrom(dec *jsonte
 	}
 
 	if !seenWatchers {
-		return fmt.Errorf("required key 'watchers' is missing")
+		return fmt.Errorf("required property 'watchers' is missing")
 	}
 
 	return nil
@@ -6408,10 +6408,10 @@ func (s *PublishDiagnosticsParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 	if !seenDiagnostics {
-		return fmt.Errorf("required key 'diagnostics' is missing")
+		return fmt.Errorf("required property 'diagnostics' is missing")
 	}
 
 	return nil
@@ -6490,10 +6490,10 @@ func (s *CompletionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenPosition {
-		return fmt.Errorf("required key 'position' is missing")
+		return fmt.Errorf("required property 'position' is missing")
 	}
 
 	return nil
@@ -6745,7 +6745,7 @@ func (s *CompletionItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenLabel {
-		return fmt.Errorf("required key 'label' is missing")
+		return fmt.Errorf("required property 'label' is missing")
 	}
 
 	return nil
@@ -6849,10 +6849,10 @@ func (s *CompletionList) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenIsIncomplete {
-		return fmt.Errorf("required key 'isIncomplete' is missing")
+		return fmt.Errorf("required property 'isIncomplete' is missing")
 	}
 	if !seenItems {
-		return fmt.Errorf("required key 'items' is missing")
+		return fmt.Errorf("required property 'items' is missing")
 	}
 
 	return nil
@@ -6950,7 +6950,7 @@ func (s *CompletionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -7013,10 +7013,10 @@ func (s *HoverParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenPosition {
-		return fmt.Errorf("required key 'position' is missing")
+		return fmt.Errorf("required property 'position' is missing")
 	}
 
 	return nil
@@ -7069,7 +7069,7 @@ func (s *Hover) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenContents {
-		return fmt.Errorf("required key 'contents' is missing")
+		return fmt.Errorf("required property 'contents' is missing")
 	}
 
 	return nil
@@ -7121,7 +7121,7 @@ func (s *HoverRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -7194,10 +7194,10 @@ func (s *SignatureHelpParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenPosition {
-		return fmt.Errorf("required key 'position' is missing")
+		return fmt.Errorf("required property 'position' is missing")
 	}
 
 	return nil
@@ -7281,7 +7281,7 @@ func (s *SignatureHelp) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenSignatures {
-		return fmt.Errorf("required key 'signatures' is missing")
+		return fmt.Errorf("required property 'signatures' is missing")
 	}
 
 	return nil
@@ -7352,7 +7352,7 @@ func (s *SignatureHelpRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -7423,10 +7423,10 @@ func (s *DefinitionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenPosition {
-		return fmt.Errorf("required key 'position' is missing")
+		return fmt.Errorf("required property 'position' is missing")
 	}
 
 	return nil
@@ -7478,7 +7478,7 @@ func (s *DefinitionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -7557,13 +7557,13 @@ func (s *ReferenceParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenPosition {
-		return fmt.Errorf("required key 'position' is missing")
+		return fmt.Errorf("required property 'position' is missing")
 	}
 	if !seenContext {
-		return fmt.Errorf("required key 'context' is missing")
+		return fmt.Errorf("required property 'context' is missing")
 	}
 
 	return nil
@@ -7615,7 +7615,7 @@ func (s *ReferenceRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -7686,10 +7686,10 @@ func (s *DocumentHighlightParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenPosition {
-		return fmt.Errorf("required key 'position' is missing")
+		return fmt.Errorf("required property 'position' is missing")
 	}
 
 	return nil
@@ -7743,7 +7743,7 @@ func (s *DocumentHighlight) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 
 	return nil
@@ -7795,7 +7795,7 @@ func (s *DocumentHighlightRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.D
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -7855,7 +7855,7 @@ func (s *DocumentSymbolParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 
 	return nil
@@ -7957,13 +7957,13 @@ func (s *SymbolInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenName {
-		return fmt.Errorf("required key 'name' is missing")
+		return fmt.Errorf("required property 'name' is missing")
 	}
 	if !seenKind {
-		return fmt.Errorf("required key 'kind' is missing")
+		return fmt.Errorf("required property 'kind' is missing")
 	}
 	if !seenLocation {
-		return fmt.Errorf("required key 'location' is missing")
+		return fmt.Errorf("required property 'location' is missing")
 	}
 
 	return nil
@@ -8076,16 +8076,16 @@ func (s *DocumentSymbol) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenName {
-		return fmt.Errorf("required key 'name' is missing")
+		return fmt.Errorf("required property 'name' is missing")
 	}
 	if !seenKind {
-		return fmt.Errorf("required key 'kind' is missing")
+		return fmt.Errorf("required property 'kind' is missing")
 	}
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 	if !seenSelectionRange {
-		return fmt.Errorf("required key 'selectionRange' is missing")
+		return fmt.Errorf("required property 'selectionRange' is missing")
 	}
 
 	return nil
@@ -8147,7 +8147,7 @@ func (s *DocumentSymbolRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -8227,13 +8227,13 @@ func (s *CodeActionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 	if !seenContext {
-		return fmt.Errorf("required key 'context' is missing")
+		return fmt.Errorf("required property 'context' is missing")
 	}
 
 	return nil
@@ -8311,10 +8311,10 @@ func (s *Command) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTitle {
-		return fmt.Errorf("required key 'title' is missing")
+		return fmt.Errorf("required property 'title' is missing")
 	}
 	if !seenCommand {
-		return fmt.Errorf("required key 'command' is missing")
+		return fmt.Errorf("required property 'command' is missing")
 	}
 
 	return nil
@@ -8447,7 +8447,7 @@ func (s *CodeAction) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTitle {
-		return fmt.Errorf("required key 'title' is missing")
+		return fmt.Errorf("required property 'title' is missing")
 	}
 
 	return nil
@@ -8541,7 +8541,7 @@ func (s *CodeActionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -8608,7 +8608,7 @@ func (s *WorkspaceSymbolParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenQuery {
-		return fmt.Errorf("required key 'query' is missing")
+		return fmt.Errorf("required property 'query' is missing")
 	}
 
 	return nil
@@ -8708,13 +8708,13 @@ func (s *WorkspaceSymbol) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenName {
-		return fmt.Errorf("required key 'name' is missing")
+		return fmt.Errorf("required property 'name' is missing")
 	}
 	if !seenKind {
-		return fmt.Errorf("required key 'kind' is missing")
+		return fmt.Errorf("required property 'kind' is missing")
 	}
 	if !seenLocation {
-		return fmt.Errorf("required key 'location' is missing")
+		return fmt.Errorf("required property 'location' is missing")
 	}
 
 	return nil
@@ -8785,7 +8785,7 @@ func (s *CodeLensParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 
 	return nil
@@ -8849,7 +8849,7 @@ func (s *CodeLens) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 
 	return nil
@@ -8908,7 +8908,7 @@ func (s *CodeLensRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -8968,7 +8968,7 @@ func (s *DocumentLinkParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 
 	return nil
@@ -9042,7 +9042,7 @@ func (s *DocumentLink) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 
 	return nil
@@ -9101,7 +9101,7 @@ func (s *DocumentLinkRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -9164,10 +9164,10 @@ func (s *DocumentFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenOptions {
-		return fmt.Errorf("required key 'options' is missing")
+		return fmt.Errorf("required property 'options' is missing")
 	}
 
 	return nil
@@ -9219,7 +9219,7 @@ func (s *DocumentFormattingRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -9291,13 +9291,13 @@ func (s *DocumentRangeFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 	if !seenOptions {
-		return fmt.Errorf("required key 'options' is missing")
+		return fmt.Errorf("required property 'options' is missing")
 	}
 
 	return nil
@@ -9360,7 +9360,7 @@ func (s *DocumentRangeFormattingRegistrationOptions) UnmarshalJSONFrom(dec *json
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -9436,13 +9436,13 @@ func (s *DocumentRangesFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenRanges {
-		return fmt.Errorf("required key 'ranges' is missing")
+		return fmt.Errorf("required property 'ranges' is missing")
 	}
 	if !seenOptions {
-		return fmt.Errorf("required key 'options' is missing")
+		return fmt.Errorf("required property 'options' is missing")
 	}
 
 	return nil
@@ -9521,16 +9521,16 @@ func (s *DocumentOnTypeFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenPosition {
-		return fmt.Errorf("required key 'position' is missing")
+		return fmt.Errorf("required property 'position' is missing")
 	}
 	if !seenCh {
-		return fmt.Errorf("required key 'ch' is missing")
+		return fmt.Errorf("required property 'ch' is missing")
 	}
 	if !seenOptions {
-		return fmt.Errorf("required key 'options' is missing")
+		return fmt.Errorf("required property 'options' is missing")
 	}
 
 	return nil
@@ -9594,10 +9594,10 @@ func (s *DocumentOnTypeFormattingRegistrationOptions) UnmarshalJSONFrom(dec *jso
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 	if !seenFirstTriggerCharacter {
-		return fmt.Errorf("required key 'firstTriggerCharacter' is missing")
+		return fmt.Errorf("required property 'firstTriggerCharacter' is missing")
 	}
 
 	return nil
@@ -9671,13 +9671,13 @@ func (s *RenameParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenPosition {
-		return fmt.Errorf("required key 'position' is missing")
+		return fmt.Errorf("required property 'position' is missing")
 	}
 	if !seenNewName {
-		return fmt.Errorf("required key 'newName' is missing")
+		return fmt.Errorf("required property 'newName' is missing")
 	}
 
 	return nil
@@ -9738,7 +9738,7 @@ func (s *RenameRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if !seenDocumentSelector {
-		return fmt.Errorf("required key 'documentSelector' is missing")
+		return fmt.Errorf("required property 'documentSelector' is missing")
 	}
 
 	return nil
@@ -9800,10 +9800,10 @@ func (s *PrepareRenameParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenPosition {
-		return fmt.Errorf("required key 'position' is missing")
+		return fmt.Errorf("required property 'position' is missing")
 	}
 
 	return nil
@@ -9862,7 +9862,7 @@ func (s *ExecuteCommandParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenCommand {
-		return fmt.Errorf("required key 'command' is missing")
+		return fmt.Errorf("required property 'command' is missing")
 	}
 
 	return nil
@@ -9913,7 +9913,7 @@ func (s *ExecuteCommandRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 	}
 
 	if !seenCommands {
-		return fmt.Errorf("required key 'commands' is missing")
+		return fmt.Errorf("required property 'commands' is missing")
 	}
 
 	return nil
@@ -9978,7 +9978,7 @@ func (s *ApplyWorkspaceEditParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if !seenEdit {
-		return fmt.Errorf("required key 'edit' is missing")
+		return fmt.Errorf("required property 'edit' is missing")
 	}
 
 	return nil
@@ -10043,7 +10043,7 @@ func (s *ApplyWorkspaceEditResult) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if !seenApplied {
-		return fmt.Errorf("required key 'applied' is missing")
+		return fmt.Errorf("required property 'applied' is missing")
 	}
 
 	return nil
@@ -10132,10 +10132,10 @@ func (s *WorkDoneProgressBegin) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenKind {
-		return fmt.Errorf("required key 'kind' is missing")
+		return fmt.Errorf("required property 'kind' is missing")
 	}
 	if !seenTitle {
-		return fmt.Errorf("required key 'title' is missing")
+		return fmt.Errorf("required property 'title' is missing")
 	}
 
 	return nil
@@ -10211,7 +10211,7 @@ func (s *WorkDoneProgressReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 	}
 
 	if !seenKind {
-		return fmt.Errorf("required key 'kind' is missing")
+		return fmt.Errorf("required property 'kind' is missing")
 	}
 
 	return nil
@@ -10262,7 +10262,7 @@ func (s *WorkDoneProgressEnd) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenKind {
-		return fmt.Errorf("required key 'kind' is missing")
+		return fmt.Errorf("required property 'kind' is missing")
 	}
 
 	return nil
@@ -10305,7 +10305,7 @@ func (s *SetTraceParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenValue {
-		return fmt.Errorf("required key 'value' is missing")
+		return fmt.Errorf("required property 'value' is missing")
 	}
 
 	return nil
@@ -10354,7 +10354,7 @@ func (s *LogTraceParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenMessage {
-		return fmt.Errorf("required key 'message' is missing")
+		return fmt.Errorf("required property 'message' is missing")
 	}
 
 	return nil
@@ -10398,7 +10398,7 @@ func (s *CancelParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenId {
-		return fmt.Errorf("required key 'id' is missing")
+		return fmt.Errorf("required property 'id' is missing")
 	}
 
 	return nil
@@ -10453,10 +10453,10 @@ func (s *ProgressParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenToken {
-		return fmt.Errorf("required key 'token' is missing")
+		return fmt.Errorf("required property 'token' is missing")
 	}
 	if !seenValue {
-		return fmt.Errorf("required key 'value' is missing")
+		return fmt.Errorf("required property 'value' is missing")
 	}
 
 	return nil
@@ -10513,10 +10513,10 @@ func (s *TextDocumentPositionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenPosition {
-		return fmt.Errorf("required key 'position' is missing")
+		return fmt.Errorf("required property 'position' is missing")
 	}
 
 	return nil
@@ -10606,13 +10606,13 @@ func (s *LocationLink) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTargetUri {
-		return fmt.Errorf("required key 'targetUri' is missing")
+		return fmt.Errorf("required property 'targetUri' is missing")
 	}
 	if !seenTargetRange {
-		return fmt.Errorf("required key 'targetRange' is missing")
+		return fmt.Errorf("required property 'targetRange' is missing")
 	}
 	if !seenTargetSelectionRange {
-		return fmt.Errorf("required key 'targetSelectionRange' is missing")
+		return fmt.Errorf("required property 'targetSelectionRange' is missing")
 	}
 
 	return nil
@@ -10680,10 +10680,10 @@ func (s *Range) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenStart {
-		return fmt.Errorf("required key 'start' is missing")
+		return fmt.Errorf("required property 'start' is missing")
 	}
 	if !seenEnd {
-		return fmt.Errorf("required key 'end' is missing")
+		return fmt.Errorf("required property 'end' is missing")
 	}
 
 	return nil
@@ -10755,10 +10755,10 @@ func (s *WorkspaceFoldersChangeEvent) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	if !seenAdded {
-		return fmt.Errorf("required key 'added' is missing")
+		return fmt.Errorf("required property 'added' is missing")
 	}
 	if !seenRemoved {
-		return fmt.Errorf("required key 'removed' is missing")
+		return fmt.Errorf("required property 'removed' is missing")
 	}
 
 	return nil
@@ -10811,7 +10811,7 @@ func (s *TextDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 	}
 
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 
 	return nil
@@ -10885,16 +10885,16 @@ func (s *Color) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenRed {
-		return fmt.Errorf("required key 'red' is missing")
+		return fmt.Errorf("required property 'red' is missing")
 	}
 	if !seenGreen {
-		return fmt.Errorf("required key 'green' is missing")
+		return fmt.Errorf("required property 'green' is missing")
 	}
 	if !seenBlue {
-		return fmt.Errorf("required key 'blue' is missing")
+		return fmt.Errorf("required property 'blue' is missing")
 	}
 	if !seenAlpha {
-		return fmt.Errorf("required key 'alpha' is missing")
+		return fmt.Errorf("required property 'alpha' is missing")
 	}
 
 	return nil
@@ -10991,10 +10991,10 @@ func (s *Position) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenLine {
-		return fmt.Errorf("required key 'line' is missing")
+		return fmt.Errorf("required property 'line' is missing")
 	}
 	if !seenCharacter {
-		return fmt.Errorf("required key 'character' is missing")
+		return fmt.Errorf("required property 'character' is missing")
 	}
 
 	return nil
@@ -11071,7 +11071,7 @@ func (s *SemanticTokensOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenLegend {
-		return fmt.Errorf("required key 'legend' is missing")
+		return fmt.Errorf("required property 'legend' is missing")
 	}
 
 	return nil
@@ -11134,10 +11134,10 @@ func (s *SemanticTokensEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenStart {
-		return fmt.Errorf("required key 'start' is missing")
+		return fmt.Errorf("required property 'start' is missing")
 	}
 	if !seenDeleteCount {
-		return fmt.Errorf("required key 'deleteCount' is missing")
+		return fmt.Errorf("required property 'deleteCount' is missing")
 	}
 
 	return nil
@@ -11188,7 +11188,7 @@ func (s *FileCreate) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 
 	return nil
@@ -11253,10 +11253,10 @@ func (s *TextDocumentEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTextDocument {
-		return fmt.Errorf("required key 'textDocument' is missing")
+		return fmt.Errorf("required property 'textDocument' is missing")
 	}
 	if !seenEdits {
-		return fmt.Errorf("required key 'edits' is missing")
+		return fmt.Errorf("required property 'edits' is missing")
 	}
 
 	return nil
@@ -11328,10 +11328,10 @@ func (s *CreateFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenKind {
-		return fmt.Errorf("required key 'kind' is missing")
+		return fmt.Errorf("required property 'kind' is missing")
 	}
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 
 	return nil
@@ -11412,13 +11412,13 @@ func (s *RenameFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenKind {
-		return fmt.Errorf("required key 'kind' is missing")
+		return fmt.Errorf("required property 'kind' is missing")
 	}
 	if !seenOldUri {
-		return fmt.Errorf("required key 'oldUri' is missing")
+		return fmt.Errorf("required property 'oldUri' is missing")
 	}
 	if !seenNewUri {
-		return fmt.Errorf("required key 'newUri' is missing")
+		return fmt.Errorf("required property 'newUri' is missing")
 	}
 
 	return nil
@@ -11490,10 +11490,10 @@ func (s *DeleteFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenKind {
-		return fmt.Errorf("required key 'kind' is missing")
+		return fmt.Errorf("required property 'kind' is missing")
 	}
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 
 	return nil
@@ -11557,7 +11557,7 @@ func (s *ChangeAnnotation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenLabel {
-		return fmt.Errorf("required key 'label' is missing")
+		return fmt.Errorf("required property 'label' is missing")
 	}
 
 	return nil
@@ -11612,7 +11612,7 @@ func (s *FileOperationFilter) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenPattern {
-		return fmt.Errorf("required key 'pattern' is missing")
+		return fmt.Errorf("required property 'pattern' is missing")
 	}
 
 	return nil
@@ -11670,10 +11670,10 @@ func (s *FileRename) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenOldUri {
-		return fmt.Errorf("required key 'oldUri' is missing")
+		return fmt.Errorf("required property 'oldUri' is missing")
 	}
 	if !seenNewUri {
-		return fmt.Errorf("required key 'newUri' is missing")
+		return fmt.Errorf("required property 'newUri' is missing")
 	}
 
 	return nil
@@ -11720,7 +11720,7 @@ func (s *FileDelete) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 
 	return nil
@@ -11788,10 +11788,10 @@ func (s *InlineValueContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenFrameId {
-		return fmt.Errorf("required key 'frameId' is missing")
+		return fmt.Errorf("required property 'frameId' is missing")
 	}
 	if !seenStoppedLocation {
-		return fmt.Errorf("required key 'stoppedLocation' is missing")
+		return fmt.Errorf("required property 'stoppedLocation' is missing")
 	}
 
 	return nil
@@ -11849,10 +11849,10 @@ func (s *InlineValueText) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 	if !seenText {
-		return fmt.Errorf("required key 'text' is missing")
+		return fmt.Errorf("required property 'text' is missing")
 	}
 
 	return nil
@@ -11920,10 +11920,10 @@ func (s *InlineValueVariableLookup) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 	if !seenCaseSensitiveLookup {
-		return fmt.Errorf("required key 'caseSensitiveLookup' is missing")
+		return fmt.Errorf("required property 'caseSensitiveLookup' is missing")
 	}
 
 	return nil
@@ -11980,7 +11980,7 @@ func (s *InlineValueEvaluatableExpression) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 
 	return nil
@@ -12071,7 +12071,7 @@ func (s *InlayHintLabelPart) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenValue {
-		return fmt.Errorf("required key 'value' is missing")
+		return fmt.Errorf("required property 'value' is missing")
 	}
 
 	return nil
@@ -12150,10 +12150,10 @@ func (s *MarkupContent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenKind {
-		return fmt.Errorf("required key 'kind' is missing")
+		return fmt.Errorf("required property 'kind' is missing")
 	}
 	if !seenValue {
-		return fmt.Errorf("required key 'value' is missing")
+		return fmt.Errorf("required property 'value' is missing")
 	}
 
 	return nil
@@ -12244,10 +12244,10 @@ func (s *RelatedFullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.De
 	}
 
 	if !seenKind {
-		return fmt.Errorf("required key 'kind' is missing")
+		return fmt.Errorf("required property 'kind' is missing")
 	}
 	if !seenItems {
-		return fmt.Errorf("required key 'items' is missing")
+		return fmt.Errorf("required property 'items' is missing")
 	}
 
 	return nil
@@ -12322,10 +12322,10 @@ func (s *RelatedUnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsonte
 	}
 
 	if !seenKind {
-		return fmt.Errorf("required key 'kind' is missing")
+		return fmt.Errorf("required property 'kind' is missing")
 	}
 	if !seenResultId {
-		return fmt.Errorf("required key 'resultId' is missing")
+		return fmt.Errorf("required property 'resultId' is missing")
 	}
 
 	return nil
@@ -12392,10 +12392,10 @@ func (s *FullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	if !seenKind {
-		return fmt.Errorf("required key 'kind' is missing")
+		return fmt.Errorf("required property 'kind' is missing")
 	}
 	if !seenItems {
-		return fmt.Errorf("required key 'items' is missing")
+		return fmt.Errorf("required property 'items' is missing")
 	}
 
 	return nil
@@ -12458,10 +12458,10 @@ func (s *UnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Deco
 	}
 
 	if !seenKind {
-		return fmt.Errorf("required key 'kind' is missing")
+		return fmt.Errorf("required property 'kind' is missing")
 	}
 	if !seenResultId {
-		return fmt.Errorf("required key 'resultId' is missing")
+		return fmt.Errorf("required property 'resultId' is missing")
 	}
 
 	return nil
@@ -12536,10 +12536,10 @@ func (s *DiagnosticOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenInterFileDependencies {
-		return fmt.Errorf("required key 'interFileDependencies' is missing")
+		return fmt.Errorf("required property 'interFileDependencies' is missing")
 	}
 	if !seenWorkspaceDiagnostics {
-		return fmt.Errorf("required key 'workspaceDiagnostics' is missing")
+		return fmt.Errorf("required property 'workspaceDiagnostics' is missing")
 	}
 
 	return nil
@@ -12598,10 +12598,10 @@ func (s *PreviousResultId) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 	if !seenValue {
-		return fmt.Errorf("required key 'value' is missing")
+		return fmt.Errorf("required property 'value' is missing")
 	}
 
 	return nil
@@ -12688,16 +12688,16 @@ func (s *NotebookDocument) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 	if !seenNotebookType {
-		return fmt.Errorf("required key 'notebookType' is missing")
+		return fmt.Errorf("required property 'notebookType' is missing")
 	}
 	if !seenVersion {
-		return fmt.Errorf("required key 'version' is missing")
+		return fmt.Errorf("required property 'version' is missing")
 	}
 	if !seenCells {
-		return fmt.Errorf("required key 'cells' is missing")
+		return fmt.Errorf("required property 'cells' is missing")
 	}
 
 	return nil
@@ -12773,16 +12773,16 @@ func (s *TextDocumentItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 	if !seenLanguageId {
-		return fmt.Errorf("required key 'languageId' is missing")
+		return fmt.Errorf("required property 'languageId' is missing")
 	}
 	if !seenVersion {
-		return fmt.Errorf("required key 'version' is missing")
+		return fmt.Errorf("required property 'version' is missing")
 	}
 	if !seenText {
-		return fmt.Errorf("required key 'text' is missing")
+		return fmt.Errorf("required property 'text' is missing")
 	}
 
 	return nil
@@ -12847,7 +12847,7 @@ func (s *NotebookDocumentSyncOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	if !seenNotebookSelector {
-		return fmt.Errorf("required key 'notebookSelector' is missing")
+		return fmt.Errorf("required property 'notebookSelector' is missing")
 	}
 
 	return nil
@@ -12905,10 +12905,10 @@ func (s *VersionedNotebookDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.De
 	}
 
 	if !seenVersion {
-		return fmt.Errorf("required key 'version' is missing")
+		return fmt.Errorf("required property 'version' is missing")
 	}
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 
 	return nil
@@ -12968,7 +12968,7 @@ func (s *NotebookDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 
 	return nil
@@ -13024,7 +13024,7 @@ func (s *InlineCompletionContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error
 	}
 
 	if !seenTriggerKind {
-		return fmt.Errorf("required key 'triggerKind' is missing")
+		return fmt.Errorf("required property 'triggerKind' is missing")
 	}
 
 	return nil
@@ -13090,10 +13090,10 @@ func (s *StringValue) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenKind {
-		return fmt.Errorf("required key 'kind' is missing")
+		return fmt.Errorf("required property 'kind' is missing")
 	}
 	if !seenValue {
-		return fmt.Errorf("required key 'value' is missing")
+		return fmt.Errorf("required property 'value' is missing")
 	}
 
 	return nil
@@ -13151,7 +13151,7 @@ func (s *TextDocumentContentOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if !seenSchemes {
-		return fmt.Errorf("required key 'schemes' is missing")
+		return fmt.Errorf("required property 'schemes' is missing")
 	}
 
 	return nil
@@ -13215,10 +13215,10 @@ func (s *Registration) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenId {
-		return fmt.Errorf("required key 'id' is missing")
+		return fmt.Errorf("required property 'id' is missing")
 	}
 	if !seenMethod {
-		return fmt.Errorf("required key 'method' is missing")
+		return fmt.Errorf("required property 'method' is missing")
 	}
 
 	return nil
@@ -13275,10 +13275,10 @@ func (s *Unregistration) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenId {
-		return fmt.Errorf("required key 'id' is missing")
+		return fmt.Errorf("required property 'id' is missing")
 	}
 	if !seenMethod {
-		return fmt.Errorf("required key 'method' is missing")
+		return fmt.Errorf("required property 'method' is missing")
 	}
 
 	return nil
@@ -13405,13 +13405,13 @@ func (s *InitializeParamsBase) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenProcessId {
-		return fmt.Errorf("required key 'processId' is missing")
+		return fmt.Errorf("required property 'processId' is missing")
 	}
 	if !seenRootUri {
-		return fmt.Errorf("required key 'rootUri' is missing")
+		return fmt.Errorf("required property 'rootUri' is missing")
 	}
 	if !seenCapabilities {
-		return fmt.Errorf("required key 'capabilities' is missing")
+		return fmt.Errorf("required property 'capabilities' is missing")
 	}
 
 	return nil
@@ -13626,7 +13626,7 @@ func (s *ServerInfo) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenName {
-		return fmt.Errorf("required key 'name' is missing")
+		return fmt.Errorf("required property 'name' is missing")
 	}
 
 	return nil
@@ -13682,10 +13682,10 @@ func (s *VersionedTextDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 	if !seenVersion {
-		return fmt.Errorf("required key 'version' is missing")
+		return fmt.Errorf("required property 'version' is missing")
 	}
 
 	return nil
@@ -13747,10 +13747,10 @@ func (s *FileEvent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 	if !seenType {
-		return fmt.Errorf("required key 'type' is missing")
+		return fmt.Errorf("required property 'type' is missing")
 	}
 
 	return nil
@@ -13805,7 +13805,7 @@ func (s *FileSystemWatcher) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenGlobPattern {
-		return fmt.Errorf("required key 'globPattern' is missing")
+		return fmt.Errorf("required property 'globPattern' is missing")
 	}
 
 	return nil
@@ -13924,10 +13924,10 @@ func (s *Diagnostic) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 	if !seenMessage {
-		return fmt.Errorf("required key 'message' is missing")
+		return fmt.Errorf("required property 'message' is missing")
 	}
 
 	return nil
@@ -13980,7 +13980,7 @@ func (s *CompletionContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTriggerKind {
-		return fmt.Errorf("required key 'triggerKind' is missing")
+		return fmt.Errorf("required property 'triggerKind' is missing")
 	}
 
 	return nil
@@ -14060,13 +14060,13 @@ func (s *InsertReplaceEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenNewText {
-		return fmt.Errorf("required key 'newText' is missing")
+		return fmt.Errorf("required property 'newText' is missing")
 	}
 	if !seenInsert {
-		return fmt.Errorf("required key 'insert' is missing")
+		return fmt.Errorf("required property 'insert' is missing")
 	}
 	if !seenReplace {
-		return fmt.Errorf("required key 'replace' is missing")
+		return fmt.Errorf("required property 'replace' is missing")
 	}
 
 	return nil
@@ -14288,10 +14288,10 @@ func (s *SignatureHelpContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTriggerKind {
-		return fmt.Errorf("required key 'triggerKind' is missing")
+		return fmt.Errorf("required property 'triggerKind' is missing")
 	}
 	if !seenIsRetrigger {
-		return fmt.Errorf("required key 'isRetrigger' is missing")
+		return fmt.Errorf("required property 'isRetrigger' is missing")
 	}
 
 	return nil
@@ -14371,7 +14371,7 @@ func (s *SignatureInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenLabel {
-		return fmt.Errorf("required key 'label' is missing")
+		return fmt.Errorf("required property 'label' is missing")
 	}
 
 	return nil
@@ -14438,7 +14438,7 @@ func (s *ReferenceContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenIncludeDeclaration {
-		return fmt.Errorf("required key 'includeDeclaration' is missing")
+		return fmt.Errorf("required property 'includeDeclaration' is missing")
 	}
 
 	return nil
@@ -14523,10 +14523,10 @@ func (s *BaseSymbolInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenName {
-		return fmt.Errorf("required key 'name' is missing")
+		return fmt.Errorf("required property 'name' is missing")
 	}
 	if !seenKind {
-		return fmt.Errorf("required key 'kind' is missing")
+		return fmt.Errorf("required property 'kind' is missing")
 	}
 
 	return nil
@@ -14606,7 +14606,7 @@ func (s *CodeActionContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenDiagnostics {
-		return fmt.Errorf("required key 'diagnostics' is missing")
+		return fmt.Errorf("required property 'diagnostics' is missing")
 	}
 
 	return nil
@@ -14655,7 +14655,7 @@ func (s *CodeActionDisabled) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenReason {
-		return fmt.Errorf("required key 'reason' is missing")
+		return fmt.Errorf("required property 'reason' is missing")
 	}
 
 	return nil
@@ -14736,7 +14736,7 @@ func (s *LocationUriOnly) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 
 	return nil
@@ -14846,10 +14846,10 @@ func (s *FormattingOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTabSize {
-		return fmt.Errorf("required key 'tabSize' is missing")
+		return fmt.Errorf("required property 'tabSize' is missing")
 	}
 	if !seenInsertSpaces {
-		return fmt.Errorf("required key 'insertSpaces' is missing")
+		return fmt.Errorf("required property 'insertSpaces' is missing")
 	}
 
 	return nil
@@ -14918,7 +14918,7 @@ func (s *DocumentOnTypeFormattingOptions) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	if !seenFirstTriggerCharacter {
-		return fmt.Errorf("required key 'firstTriggerCharacter' is missing")
+		return fmt.Errorf("required property 'firstTriggerCharacter' is missing")
 	}
 
 	return nil
@@ -14982,10 +14982,10 @@ func (s *PrepareRenamePlaceholder) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 	if !seenPlaceholder {
-		return fmt.Errorf("required key 'placeholder' is missing")
+		return fmt.Errorf("required property 'placeholder' is missing")
 	}
 
 	return nil
@@ -15029,7 +15029,7 @@ func (s *PrepareRenameDefaultBehavior) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	if !seenDefaultBehavior {
-		return fmt.Errorf("required key 'defaultBehavior' is missing")
+		return fmt.Errorf("required property 'defaultBehavior' is missing")
 	}
 
 	return nil
@@ -15080,7 +15080,7 @@ func (s *ExecuteCommandOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenCommands {
-		return fmt.Errorf("required key 'commands' is missing")
+		return fmt.Errorf("required property 'commands' is missing")
 	}
 
 	return nil
@@ -15146,10 +15146,10 @@ func (s *SemanticTokensLegend) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenTokenTypes {
-		return fmt.Errorf("required key 'tokenTypes' is missing")
+		return fmt.Errorf("required property 'tokenTypes' is missing")
 	}
 	if !seenTokenModifiers {
-		return fmt.Errorf("required key 'tokenModifiers' is missing")
+		return fmt.Errorf("required property 'tokenModifiers' is missing")
 	}
 
 	return nil
@@ -15217,10 +15217,10 @@ func (s *OptionalVersionedTextDocumentIdentifier) UnmarshalJSONFrom(dec *jsontex
 	}
 
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 	if !seenVersion {
-		return fmt.Errorf("required key 'version' is missing")
+		return fmt.Errorf("required property 'version' is missing")
 	}
 
 	return nil
@@ -15289,13 +15289,13 @@ func (s *AnnotatedTextEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 	if !seenNewText {
-		return fmt.Errorf("required key 'newText' is missing")
+		return fmt.Errorf("required property 'newText' is missing")
 	}
 	if !seenAnnotationId {
-		return fmt.Errorf("required key 'annotationId' is missing")
+		return fmt.Errorf("required property 'annotationId' is missing")
 	}
 
 	return nil
@@ -15362,10 +15362,10 @@ func (s *SnippetTextEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 	if !seenSnippet {
-		return fmt.Errorf("required key 'snippet' is missing")
+		return fmt.Errorf("required property 'snippet' is missing")
 	}
 
 	return nil
@@ -15419,7 +15419,7 @@ func (s *ResourceOperation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenKind {
-		return fmt.Errorf("required key 'kind' is missing")
+		return fmt.Errorf("required property 'kind' is missing")
 	}
 
 	return nil
@@ -15516,7 +15516,7 @@ func (s *FileOperationPattern) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenGlob {
-		return fmt.Errorf("required key 'glob' is missing")
+		return fmt.Errorf("required property 'glob' is missing")
 	}
 
 	return nil
@@ -15602,16 +15602,16 @@ func (s *WorkspaceFullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.
 	}
 
 	if !seenKind {
-		return fmt.Errorf("required key 'kind' is missing")
+		return fmt.Errorf("required property 'kind' is missing")
 	}
 	if !seenItems {
-		return fmt.Errorf("required key 'items' is missing")
+		return fmt.Errorf("required property 'items' is missing")
 	}
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 	if !seenVersion {
-		return fmt.Errorf("required key 'version' is missing")
+		return fmt.Errorf("required property 'version' is missing")
 	}
 
 	return nil
@@ -15692,16 +15692,16 @@ func (s *WorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *json
 	}
 
 	if !seenKind {
-		return fmt.Errorf("required key 'kind' is missing")
+		return fmt.Errorf("required property 'kind' is missing")
 	}
 	if !seenResultId {
-		return fmt.Errorf("required key 'resultId' is missing")
+		return fmt.Errorf("required property 'resultId' is missing")
 	}
 	if !seenUri {
-		return fmt.Errorf("required key 'uri' is missing")
+		return fmt.Errorf("required property 'uri' is missing")
 	}
 	if !seenVersion {
-		return fmt.Errorf("required key 'version' is missing")
+		return fmt.Errorf("required property 'version' is missing")
 	}
 
 	return nil
@@ -15781,10 +15781,10 @@ func (s *NotebookCell) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenKind {
-		return fmt.Errorf("required key 'kind' is missing")
+		return fmt.Errorf("required property 'kind' is missing")
 	}
 	if !seenDocument {
-		return fmt.Errorf("required key 'document' is missing")
+		return fmt.Errorf("required property 'document' is missing")
 	}
 
 	return nil
@@ -15838,7 +15838,7 @@ func (s *NotebookDocumentFilterWithNotebook) UnmarshalJSONFrom(dec *jsontext.Dec
 	}
 
 	if !seenNotebook {
-		return fmt.Errorf("required key 'notebook' is missing")
+		return fmt.Errorf("required property 'notebook' is missing")
 	}
 
 	return nil
@@ -15892,7 +15892,7 @@ func (s *NotebookDocumentFilterWithCells) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	if !seenCells {
-		return fmt.Errorf("required key 'cells' is missing")
+		return fmt.Errorf("required property 'cells' is missing")
 	}
 
 	return nil
@@ -15968,10 +15968,10 @@ func (s *SelectedCompletionInfo) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 	}
 
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 	if !seenText {
-		return fmt.Errorf("required key 'text' is missing")
+		return fmt.Errorf("required property 'text' is missing")
 	}
 
 	return nil
@@ -16027,7 +16027,7 @@ func (s *ClientInfo) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenName {
-		return fmt.Errorf("required key 'name' is missing")
+		return fmt.Errorf("required property 'name' is missing")
 	}
 
 	return nil
@@ -16161,10 +16161,10 @@ func (s *TextDocumentContentChangePartial) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if !seenRange {
-		return fmt.Errorf("required key 'range' is missing")
+		return fmt.Errorf("required property 'range' is missing")
 	}
 	if !seenText {
-		return fmt.Errorf("required key 'text' is missing")
+		return fmt.Errorf("required property 'text' is missing")
 	}
 
 	return nil
@@ -16209,7 +16209,7 @@ func (s *TextDocumentContentChangeWholeDocument) UnmarshalJSONFrom(dec *jsontext
 	}
 
 	if !seenText {
-		return fmt.Errorf("required key 'text' is missing")
+		return fmt.Errorf("required property 'text' is missing")
 	}
 
 	return nil
@@ -16256,7 +16256,7 @@ func (s *CodeDescription) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenHref {
-		return fmt.Errorf("required key 'href' is missing")
+		return fmt.Errorf("required property 'href' is missing")
 	}
 
 	return nil
@@ -16314,10 +16314,10 @@ func (s *DiagnosticRelatedInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	if !seenLocation {
-		return fmt.Errorf("required key 'location' is missing")
+		return fmt.Errorf("required property 'location' is missing")
 	}
 	if !seenMessage {
-		return fmt.Errorf("required key 'message' is missing")
+		return fmt.Errorf("required property 'message' is missing")
 	}
 
 	return nil
@@ -16373,10 +16373,10 @@ func (s *EditRangeWithInsertReplace) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if !seenInsert {
-		return fmt.Errorf("required key 'insert' is missing")
+		return fmt.Errorf("required property 'insert' is missing")
 	}
 	if !seenReplace {
-		return fmt.Errorf("required key 'replace' is missing")
+		return fmt.Errorf("required property 'replace' is missing")
 	}
 
 	return nil
@@ -16442,10 +16442,10 @@ func (s *MarkedStringWithLanguage) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if !seenLanguage {
-		return fmt.Errorf("required key 'language' is missing")
+		return fmt.Errorf("required property 'language' is missing")
 	}
 	if !seenValue {
-		return fmt.Errorf("required key 'value' is missing")
+		return fmt.Errorf("required property 'value' is missing")
 	}
 
 	return nil
@@ -16510,7 +16510,7 @@ func (s *ParameterInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenLabel {
-		return fmt.Errorf("required key 'label' is missing")
+		return fmt.Errorf("required property 'label' is missing")
 	}
 
 	return nil
@@ -16576,10 +16576,10 @@ func (s *CodeActionKindDocumentation) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	if !seenKind {
-		return fmt.Errorf("required key 'kind' is missing")
+		return fmt.Errorf("required property 'kind' is missing")
 	}
 	if !seenCommand {
-		return fmt.Errorf("required key 'command' is missing")
+		return fmt.Errorf("required property 'command' is missing")
 	}
 
 	return nil
@@ -16640,7 +16640,7 @@ func (s *NotebookCellTextDocumentFilter) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	if !seenNotebook {
-		return fmt.Errorf("required key 'notebook' is missing")
+		return fmt.Errorf("required property 'notebook' is missing")
 	}
 
 	return nil
@@ -16702,7 +16702,7 @@ func (s *ExecutionSummary) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenExecutionOrder {
-		return fmt.Errorf("required key 'executionOrder' is missing")
+		return fmt.Errorf("required property 'executionOrder' is missing")
 	}
 
 	return nil
@@ -16746,7 +16746,7 @@ func (s *NotebookCellLanguage) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenLanguage {
-		return fmt.Errorf("required key 'language' is missing")
+		return fmt.Errorf("required property 'language' is missing")
 	}
 
 	return nil
@@ -16807,7 +16807,7 @@ func (s *NotebookDocumentCellChangeStructure) UnmarshalJSONFrom(dec *jsontext.De
 	}
 
 	if !seenArray {
-		return fmt.Errorf("required key 'array' is missing")
+		return fmt.Errorf("required property 'array' is missing")
 	}
 
 	return nil
@@ -16863,10 +16863,10 @@ func (s *NotebookDocumentCellContentChanges) UnmarshalJSONFrom(dec *jsontext.Dec
 	}
 
 	if !seenDocument {
-		return fmt.Errorf("required key 'document' is missing")
+		return fmt.Errorf("required property 'document' is missing")
 	}
 	if !seenChanges {
-		return fmt.Errorf("required key 'changes' is missing")
+		return fmt.Errorf("required property 'changes' is missing")
 	}
 
 	return nil
@@ -17131,7 +17131,7 @@ func (s *NotebookDocumentClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Dec
 	}
 
 	if !seenSynchronization {
-		return fmt.Errorf("required key 'synchronization' is missing")
+		return fmt.Errorf("required property 'synchronization' is missing")
 	}
 
 	return nil
@@ -17295,10 +17295,10 @@ func (s *RelativePattern) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenBaseUri {
-		return fmt.Errorf("required key 'baseUri' is missing")
+		return fmt.Errorf("required property 'baseUri' is missing")
 	}
 	if !seenPattern {
-		return fmt.Errorf("required key 'pattern' is missing")
+		return fmt.Errorf("required property 'pattern' is missing")
 	}
 
 	return nil
@@ -17363,7 +17363,7 @@ func (s *TextDocumentFilterLanguage) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if !seenLanguage {
-		return fmt.Errorf("required key 'language' is missing")
+		return fmt.Errorf("required property 'language' is missing")
 	}
 
 	return nil
@@ -17428,7 +17428,7 @@ func (s *TextDocumentFilterScheme) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if !seenScheme {
-		return fmt.Errorf("required key 'scheme' is missing")
+		return fmt.Errorf("required property 'scheme' is missing")
 	}
 
 	return nil
@@ -17493,7 +17493,7 @@ func (s *TextDocumentFilterPattern) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	if !seenPattern {
-		return fmt.Errorf("required key 'pattern' is missing")
+		return fmt.Errorf("required property 'pattern' is missing")
 	}
 
 	return nil
@@ -17554,7 +17554,7 @@ func (s *NotebookDocumentFilterNotebookType) UnmarshalJSONFrom(dec *jsontext.Dec
 	}
 
 	if !seenNotebookType {
-		return fmt.Errorf("required key 'notebookType' is missing")
+		return fmt.Errorf("required property 'notebookType' is missing")
 	}
 
 	return nil
@@ -17615,7 +17615,7 @@ func (s *NotebookDocumentFilterScheme) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	if !seenScheme {
-		return fmt.Errorf("required key 'scheme' is missing")
+		return fmt.Errorf("required property 'scheme' is missing")
 	}
 
 	return nil
@@ -17676,7 +17676,7 @@ func (s *NotebookDocumentFilterPattern) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	if !seenPattern {
-		return fmt.Errorf("required key 'pattern' is missing")
+		return fmt.Errorf("required property 'pattern' is missing")
 	}
 
 	return nil
@@ -17742,10 +17742,10 @@ func (s *NotebookCellArrayChange) UnmarshalJSONFrom(dec *jsontext.Decoder) error
 	}
 
 	if !seenStart {
-		return fmt.Errorf("required key 'start' is missing")
+		return fmt.Errorf("required property 'start' is missing")
 	}
 	if !seenDeleteCount {
-		return fmt.Errorf("required key 'deleteCount' is missing")
+		return fmt.Errorf("required property 'deleteCount' is missing")
 	}
 
 	return nil
@@ -18474,16 +18474,16 @@ func (s *SemanticTokensClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	if !seenRequests {
-		return fmt.Errorf("required key 'requests' is missing")
+		return fmt.Errorf("required property 'requests' is missing")
 	}
 	if !seenTokenTypes {
-		return fmt.Errorf("required key 'tokenTypes' is missing")
+		return fmt.Errorf("required property 'tokenTypes' is missing")
 	}
 	if !seenTokenModifiers {
-		return fmt.Errorf("required key 'tokenModifiers' is missing")
+		return fmt.Errorf("required property 'tokenModifiers' is missing")
 	}
 	if !seenFormats {
-		return fmt.Errorf("required key 'formats' is missing")
+		return fmt.Errorf("required property 'formats' is missing")
 	}
 
 	return nil
@@ -18643,7 +18643,7 @@ func (s *ShowDocumentClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	if !seenSupport {
-		return fmt.Errorf("required key 'support' is missing")
+		return fmt.Errorf("required property 'support' is missing")
 	}
 
 	return nil
@@ -18701,10 +18701,10 @@ func (s *StaleRequestSupportOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if !seenCancel {
-		return fmt.Errorf("required key 'cancel' is missing")
+		return fmt.Errorf("required property 'cancel' is missing")
 	}
 	if !seenRetryOnContentModified {
-		return fmt.Errorf("required key 'retryOnContentModified' is missing")
+		return fmt.Errorf("required property 'retryOnContentModified' is missing")
 	}
 
 	return nil
@@ -18758,7 +18758,7 @@ func (s *RegularExpressionsClientCapabilities) UnmarshalJSONFrom(dec *jsontext.D
 	}
 
 	if !seenEngine {
-		return fmt.Errorf("required key 'engine' is missing")
+		return fmt.Errorf("required property 'engine' is missing")
 	}
 
 	return nil
@@ -18822,7 +18822,7 @@ func (s *MarkdownClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if !seenParser {
-		return fmt.Errorf("required key 'parser' is missing")
+		return fmt.Errorf("required property 'parser' is missing")
 	}
 
 	return nil
@@ -18888,7 +18888,7 @@ func (s *ClientSymbolTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 	}
 
 	if !seenValueSet {
-		return fmt.Errorf("required key 'valueSet' is missing")
+		return fmt.Errorf("required property 'valueSet' is missing")
 	}
 
 	return nil
@@ -18934,7 +18934,7 @@ func (s *ClientSymbolResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	if !seenProperties {
-		return fmt.Errorf("required key 'properties' is missing")
+		return fmt.Errorf("required property 'properties' is missing")
 	}
 
 	return nil
@@ -19105,7 +19105,7 @@ func (s *ClientCodeActionLiteralOptions) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	if !seenCodeActionKind {
-		return fmt.Errorf("required key 'codeActionKind' is missing")
+		return fmt.Errorf("required property 'codeActionKind' is missing")
 	}
 
 	return nil
@@ -19150,7 +19150,7 @@ func (s *ClientCodeActionResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	if !seenProperties {
-		return fmt.Errorf("required key 'properties' is missing")
+		return fmt.Errorf("required property 'properties' is missing")
 	}
 
 	return nil
@@ -19195,7 +19195,7 @@ func (s *CodeActionTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	if !seenValueSet {
-		return fmt.Errorf("required key 'valueSet' is missing")
+		return fmt.Errorf("required property 'valueSet' is missing")
 	}
 
 	return nil
@@ -19240,7 +19240,7 @@ func (s *ClientCodeLensResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	if !seenProperties {
-		return fmt.Errorf("required key 'properties' is missing")
+		return fmt.Errorf("required property 'properties' is missing")
 	}
 
 	return nil
@@ -19338,7 +19338,7 @@ func (s *ClientInlayHintResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	if !seenProperties {
-		return fmt.Errorf("required key 'properties' is missing")
+		return fmt.Errorf("required property 'properties' is missing")
 	}
 
 	return nil
@@ -19391,7 +19391,7 @@ func (s *CompletionItemTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	if !seenValueSet {
-		return fmt.Errorf("required key 'valueSet' is missing")
+		return fmt.Errorf("required property 'valueSet' is missing")
 	}
 
 	return nil
@@ -19436,7 +19436,7 @@ func (s *ClientCompletionItemResolveOptions) UnmarshalJSONFrom(dec *jsontext.Dec
 	}
 
 	if !seenProperties {
-		return fmt.Errorf("required key 'properties' is missing")
+		return fmt.Errorf("required property 'properties' is missing")
 	}
 
 	return nil
@@ -19480,7 +19480,7 @@ func (s *ClientCompletionItemInsertTextModeOptions) UnmarshalJSONFrom(dec *jsont
 	}
 
 	if !seenValueSet {
-		return fmt.Errorf("required key 'valueSet' is missing")
+		return fmt.Errorf("required property 'valueSet' is missing")
 	}
 
 	return nil
@@ -19537,7 +19537,7 @@ func (s *ClientCodeActionKindOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	if !seenValueSet {
-		return fmt.Errorf("required key 'valueSet' is missing")
+		return fmt.Errorf("required property 'valueSet' is missing")
 	}
 
 	return nil
@@ -19582,7 +19582,7 @@ func (s *ClientDiagnosticsTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	if !seenValueSet {
-		return fmt.Errorf("required key 'valueSet' is missing")
+		return fmt.Errorf("required property 'valueSet' is missing")
 	}
 
 	return nil

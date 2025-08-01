@@ -572,7 +572,7 @@ function generateCode() {
 
             for (const prop of requiredProps) {
                 writeLine(`\tif !seen${titleCase(prop.name)} {`);
-                writeLine(`\t\treturn fmt.Errorf("required key '${prop.name}' is missing")`);
+                writeLine(`\t\treturn fmt.Errorf("required property '${prop.name}' is missing")`);
                 writeLine(`\t}`);
             }
 
