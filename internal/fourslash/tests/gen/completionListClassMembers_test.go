@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
@@ -11,7 +12,7 @@ import (
 
 func TestCompletionListClassMembers(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Class {
     private privateInstanceMethod() { }
@@ -38,31 +39,31 @@ c./*instanceMembersOutsideClassScope*/privateProperty;`
 	f.VerifyCompletions(t, "staticsInsideClassScope", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
-			EditRange:        ignored,
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Exact: completionFunctionMembersPlus(
+			Exact: CompletionFunctionMembersPlus(
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
 						Label:    "privateStaticMethod",
-						SortText: ptrTo(string(ls.SortTextLocalDeclarationPriority)),
+						SortText: PtrTo(string(ls.SortTextLocalDeclarationPriority)),
 					},
 					&lsproto.CompletionItem{
 						Label:    "privateStaticProperty",
-						SortText: ptrTo(string(ls.SortTextLocalDeclarationPriority)),
+						SortText: PtrTo(string(ls.SortTextLocalDeclarationPriority)),
 					},
 					&lsproto.CompletionItem{
 						Label:    "publicStaticMethod",
-						SortText: ptrTo(string(ls.SortTextLocalDeclarationPriority)),
+						SortText: PtrTo(string(ls.SortTextLocalDeclarationPriority)),
 					},
 					&lsproto.CompletionItem{
 						Label:    "publicStaticProperty",
-						SortText: ptrTo(string(ls.SortTextLocalDeclarationPriority)),
+						SortText: PtrTo(string(ls.SortTextLocalDeclarationPriority)),
 					},
 					&lsproto.CompletionItem{
 						Label:    "prototype",
-						SortText: ptrTo(string(ls.SortTextLocationPriority)),
+						SortText: PtrTo(string(ls.SortTextLocationPriority)),
 					},
 				}),
 		},
@@ -70,8 +71,8 @@ c./*instanceMembersOutsideClassScope*/privateProperty;`
 	f.VerifyCompletions(t, "instanceMembersInsideClassScope", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
-			EditRange:        ignored,
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Unsorted: []fourslash.CompletionsExpectedItem{
@@ -85,23 +86,23 @@ c./*instanceMembersOutsideClassScope*/privateProperty;`
 	f.VerifyCompletions(t, "staticsOutsideClassScope", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
-			EditRange:        ignored,
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Exact: completionFunctionMembersPlus(
+			Exact: CompletionFunctionMembersPlus(
 				[]fourslash.CompletionsExpectedItem{
 					&lsproto.CompletionItem{
 						Label:    "publicStaticMethod",
-						SortText: ptrTo(string(ls.SortTextLocalDeclarationPriority)),
+						SortText: PtrTo(string(ls.SortTextLocalDeclarationPriority)),
 					},
 					&lsproto.CompletionItem{
 						Label:    "publicStaticProperty",
-						SortText: ptrTo(string(ls.SortTextLocalDeclarationPriority)),
+						SortText: PtrTo(string(ls.SortTextLocalDeclarationPriority)),
 					},
 					&lsproto.CompletionItem{
 						Label:    "prototype",
-						SortText: ptrTo(string(ls.SortTextLocationPriority)),
+						SortText: PtrTo(string(ls.SortTextLocationPriority)),
 					},
 				}),
 		},
@@ -109,8 +110,8 @@ c./*instanceMembersOutsideClassScope*/privateProperty;`
 	f.VerifyCompletions(t, "instanceMembersOutsideClassScope", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
-			EditRange:        ignored,
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{

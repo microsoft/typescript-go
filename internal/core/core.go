@@ -1,8 +1,6 @@
 package core
 
 import (
-	"bytes"
-	"encoding/json"
 	"iter"
 	"maps"
 	"math"
@@ -12,6 +10,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -92,6 +91,18 @@ func MapNonNil[T any, U comparable](slice []T, f func(T) U) []U {
 		if mapped != *new(U) {
 			result = append(result, mapped)
 		}
+	}
+	return result
+}
+
+func MapFiltered[T any, U any](slice []T, f func(T) (U, bool)) []U {
+	var result []U
+	for _, value := range slice {
+		mapped, ok := f(value)
+		if !ok {
+			continue
+		}
+		result = append(result, mapped)
 	}
 	return result
 }
@@ -417,17 +428,8 @@ func FirstResult[T1 any](t1 T1, _ ...any) T1 {
 }
 
 func StringifyJson(input any, prefix string, indent string) (string, error) {
-	var buf bytes.Buffer
-	encoder := json.NewEncoder(&buf)
-	encoder.SetEscapeHTML(false)
-	encoder.SetIndent(prefix, indent)
-	if _, ok := input.([]any); ok && len(input.([]any)) == 0 {
-		return "[]", nil
-	}
-	if err := encoder.Encode(input); err != nil {
-		return "", err
-	}
-	return strings.TrimSpace(buf.String()), nil
+	output, err := json.MarshalIndent(input, prefix, indent)
+	return string(output), err
 }
 
 func GetScriptKindFromFileName(fileName string) ScriptKind {

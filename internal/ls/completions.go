@@ -2,7 +2,6 @@ package ls
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"maps"
@@ -19,10 +18,12 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/lsutil"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
+	"golang.org/x/text/collate"
 )
 
 func (l *LanguageService) ProvideCompletion(
@@ -32,7 +33,7 @@ func (l *LanguageService) ProvideCompletion(
 	context *lsproto.CompletionContext,
 	clientOptions *lsproto.CompletionClientCapabilities,
 	preferences *UserPreferences,
-) (*lsproto.CompletionList, error) {
+) (lsproto.CompletionResponse, error) {
 	program, file := l.getProgramAndFile(documentURI)
 	var triggerCharacter *string
 	if context != nil {
@@ -48,7 +49,8 @@ func (l *LanguageService) ProvideCompletion(
 		preferences,
 		clientOptions,
 	)
-	return ensureItemData(file.FileName(), position, completionList), nil
+	completionList = ensureItemData(file.FileName(), position, completionList)
+	return lsproto.CompletionItemsOrListOrNull{List: completionList}, nil
 }
 
 func ensureItemData(fileName string, pos int, list *lsproto.CompletionList) *lsproto.CompletionList {
@@ -610,7 +612,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 				if moduleSymbol == nil ||
 					!checker.IsExternalModuleSymbol(moduleSymbol) ||
 					typeChecker.TryGetMemberInModuleExportsAndProperties(firstAccessibleSymbol.Name, moduleSymbol) != firstAccessibleSymbol {
-					symbolToOriginInfoMap[ast.GetSymbolId(symbol)] = &symbolOriginInfo{kind: getNullableSymbolOriginInfoKind(symbolOriginInfoKindSymbolMemberNoExport, insertQuestionDot)}
+					symbolToOriginInfoMap[firstAccessibleSymbolId] = &symbolOriginInfo{kind: getNullableSymbolOriginInfoKind(symbolOriginInfoKindSymbolMemberNoExport, insertQuestionDot)}
 				} else {
 					// !!! imports
 					// var fileName string
@@ -1597,6 +1599,7 @@ func (l *LanguageService) completionInfoFromData(
 		clientOptions,
 	)
 
+	compareCompletionEntries := getCompareCompletionEntries(ctx)
 	if data.keywordFilters != KeywordCompletionFiltersNone {
 		keywordCompletions := getKeywordCompletions(
 			data.keywordFilters,
@@ -1625,7 +1628,8 @@ func (l *LanguageService) completionInfoFromData(
 	}
 
 	if !isChecked {
-		sortedEntries = getJSCompletionEntries(
+		sortedEntries = l.getJSCompletionEntries(
+			ctx,
 			file,
 			position,
 			&uniqueNames,
@@ -1672,6 +1676,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 	// true otherwise. Based on the order we add things we will always see locals first, then globals, then module exports.
 	// So adding a completion for a local will prevent us from adding completions for external module exports sharing the same name.
 	uniques := make(uniqueNamesMap)
+	compareCompletionEntries := getCompareCompletionEntries(ctx)
 	for _, symbol := range data.symbols {
 		symbolId := ast.GetSymbolId(symbol)
 		origin := data.symbolToOriginInfoMap[symbolId]
@@ -2982,26 +2987,28 @@ func getCompletionsSymbolKind(kind ScriptElementKind) lsproto.CompletionItemKind
 // by the language service consistent with what TS Server does and what editors typically do. This also makes
 // completions tests make more sense. We used to sort only alphabetically and only in the server layer, but
 // this made tests really weird, since most fourslash tests don't use the server.
-func compareCompletionEntries(entryInSlice *lsproto.CompletionItem, entryToInsert *lsproto.CompletionItem) int {
-	// !!! use locale-aware comparison
-	result := stringutil.CompareStringsCaseSensitive(*entryInSlice.SortText, *entryToInsert.SortText)
-	if result == stringutil.ComparisonEqual {
-		result = stringutil.CompareStringsCaseSensitive(entryInSlice.Label, entryToInsert.Label)
-	}
-	// !!! auto-imports
-	// if (result === Comparison.EqualTo && entryInArray.data?.moduleSpecifier && entryToInsert.data?.moduleSpecifier) {
-	//     // Sort same-named auto-imports by module specifier
-	//     result = compareNumberOfDirectorySeparators(
-	//         (entryInArray.data as CompletionEntryDataResolved).moduleSpecifier,
-	//         (entryToInsert.data as CompletionEntryDataResolved).moduleSpecifier,
-	//     );
-	// }
-	if result == stringutil.ComparisonEqual {
-		// Fall back to symbol order - if we return `EqualTo`, `insertSorted` will put later symbols first.
-		return stringutil.ComparisonLessThan
-	}
+func getCompareCompletionEntries(ctx context.Context) func(entryInSlice *lsproto.CompletionItem, entryToInsert *lsproto.CompletionItem) int {
+	return func(entryInSlice *lsproto.CompletionItem, entryToInsert *lsproto.CompletionItem) int {
+		compareStrings := collate.New(core.GetLocale(ctx)).CompareString
+		result := compareStrings(*entryInSlice.SortText, *entryToInsert.SortText)
+		if result == stringutil.ComparisonEqual {
+			result = compareStrings(entryInSlice.Label, entryToInsert.Label)
+		}
+		// !!! auto-imports
+		// if (result === Comparison.EqualTo && entryInArray.data?.moduleSpecifier && entryToInsert.data?.moduleSpecifier) {
+		//     // Sort same-named auto-imports by module specifier
+		//     result = compareNumberOfDirectorySeparators(
+		//         (entryInArray.data as CompletionEntryDataResolved).moduleSpecifier,
+		//         (entryToInsert.data as CompletionEntryDataResolved).moduleSpecifier,
+		//     );
+		// }
+		if result == stringutil.ComparisonEqual {
+			// Fall back to symbol order - if we return `EqualTo`, `insertSorted` will put later symbols first.
+			return stringutil.ComparisonLessThan
+		}
 
-	return result
+		return result
+	}
 }
 
 var (
@@ -3183,12 +3190,14 @@ func getContextualKeywords(file *ast.SourceFile, contextToken *ast.Node, positio
 	return entries
 }
 
-func getJSCompletionEntries(
+func (l *LanguageService) getJSCompletionEntries(
+	ctx context.Context,
 	file *ast.SourceFile,
 	position int,
 	uniqueNames *collections.Set[string],
 	sortedEntries []*lsproto.CompletionItem,
 ) []*lsproto.CompletionItem {
+	compareCompletionEntries := getCompareCompletionEntries(ctx)
 	nameTable := getNameTable(file)
 	for name, pos := range nameTable {
 		// Skip identifiers produced only from the current location
@@ -4569,9 +4578,9 @@ func getArgumentInfoForCompletions(node *ast.Node, position int, file *ast.Sourc
 type itemData struct {
 	FileName   string          `json:"fileName"`
 	Position   int             `json:"position"`
-	Source     string          `json:"source,omitempty"`
-	Name       string          `json:"name,omitempty"`
-	AutoImport *autoImportData `json:"autoImport,omitempty"`
+	Source     string          `json:"source,omitzero"`
+	Name       string          `json:"name,omitzero"`
+	AutoImport *autoImportData `json:"autoImport,omitzero"`
 }
 
 // !!! CompletionEntryDataAutoImport

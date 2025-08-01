@@ -2,7 +2,6 @@ package execute
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"runtime"
 	"strings"
@@ -14,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/incremental"
+	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -229,7 +229,9 @@ func performIncrementalCompilation(
 	testing bool,
 ) CommandLineResult {
 	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache)
+	buildInfoReadStart := sys.Now()
 	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host))
+	buildInfoReadTime := sys.Now().Sub(buildInfoReadStart)
 	// todo: cache, statistics, tracing
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{
@@ -238,7 +240,9 @@ func performIncrementalCompilation(
 		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
 	})
 	parseTime := sys.Now().Sub(parseStart)
+	changesComputeStart := sys.Now()
 	incrementalProgram := incremental.NewProgram(program, oldProgram, testing)
+	changesComputeTime := sys.Now().Sub(changesComputeStart)
 	return CommandLineResult{
 		Status: emitAndReportStatistics(
 			sys,
@@ -248,6 +252,9 @@ func performIncrementalCompilation(
 			reportDiagnostic,
 			configTime,
 			parseTime,
+
+			buildInfoReadTime,
+			changesComputeTime,
 		),
 		IncrementalProgram: incrementalProgram,
 	}
@@ -278,6 +285,8 @@ func performCompilation(
 			reportDiagnostic,
 			configTime,
 			parseTime,
+			0,
+			0,
 		),
 	}
 }
@@ -290,6 +299,8 @@ func emitAndReportStatistics(
 	reportDiagnostic diagnosticReporter,
 	configTime time.Duration,
 	parseTime time.Duration,
+	buildInfoReadTime time.Duration,
+	changesComputeTime time.Duration,
 ) ExitStatus {
 	result := emitFilesAndReportErrors(sys, programLike, reportDiagnostic)
 	if result.status != ExitStatusSuccess {
@@ -299,6 +310,8 @@ func emitAndReportStatistics(
 
 	result.configTime = configTime
 	result.parseTime = parseTime
+	result.buildInfoReadTime = buildInfoReadTime
+	result.changesComputeTime = changesComputeTime
 	result.totalTime = sys.SinceStart()
 
 	if config.CompilerOptions().Diagnostics.IsTrue() || config.CompilerOptions().ExtendedDiagnostics.IsTrue() {
@@ -320,15 +333,17 @@ func emitAndReportStatistics(
 }
 
 type compileAndEmitResult struct {
-	diagnostics []*ast.Diagnostic
-	emitResult  *compiler.EmitResult
-	status      ExitStatus
-	configTime  time.Duration
-	parseTime   time.Duration
-	bindTime    time.Duration
-	checkTime   time.Duration
-	totalTime   time.Duration
-	emitTime    time.Duration
+	diagnostics        []*ast.Diagnostic
+	emitResult         *compiler.EmitResult
+	status             ExitStatus
+	configTime         time.Duration
+	parseTime          time.Duration
+	bindTime           time.Duration
+	checkTime          time.Duration
+	totalTime          time.Duration
+	emitTime           time.Duration
+	buildInfoReadTime  time.Duration
+	changesComputeTime time.Duration
 }
 
 func emitFilesAndReportErrors(
@@ -395,9 +410,7 @@ func emitFilesAndReportErrors(
 
 func showConfig(sys System, config *core.CompilerOptions) {
 	// !!!
-	enc := json.NewEncoder(sys.Writer())
-	enc.SetIndent("", "    ")
-	enc.Encode(config) //nolint:errcheck,errchkjson
+	_ = json.MarshalIndentWrite(sys.Writer(), config, "", "    ")
 }
 
 func listFiles(sys System, program compiler.ProgramLike) {

@@ -1462,7 +1462,7 @@ func (c *Checker) compareSignaturesRelated(source *Signature, target *Signature,
 		}
 		return TernaryFalse
 	}
-	if source.typeParameters != nil && !core.Same(source.typeParameters, target.typeParameters) {
+	if len(source.typeParameters) != 0 && !core.Same(source.typeParameters, target.typeParameters) {
 		target = c.getCanonicalSignature(target)
 		source = c.instantiateSignatureInContextOf(source, target /*inferenceContext*/, nil, compareTypes)
 	}
@@ -1653,7 +1653,7 @@ func (c *Checker) compareTypePredicateRelatedTo(source *TypePredicate, target *T
 
 // Returns true if `s` is `(...args: A) => R` where `A` is `any`, `any[]`, `never`, or `never[]`, and `R` is `any` or `unknown`.
 func (c *Checker) isTopSignature(s *Signature) bool {
-	if s.typeParameters == nil && (s.thisParameter == nil || IsTypeAny(c.getTypeOfParameter(s.thisParameter))) && len(s.parameters) == 1 && signatureHasRestParameter(s) {
+	if len(s.typeParameters) == 0 && (s.thisParameter == nil || IsTypeAny(c.getTypeOfParameter(s.thisParameter))) && len(s.parameters) == 1 && signatureHasRestParameter(s) {
 		paramType := c.getTypeOfParameter(s.parameters[0])
 		var restType *Type
 		if c.isArrayType(paramType) {
@@ -1999,11 +1999,19 @@ func (c *Checker) getTypePredicateOfSignature(sig *Signature) *TypePredicate {
 		default:
 			if sig.declaration != nil {
 				typeNode := sig.declaration.Type()
+				var jsdocTypePredicate *TypePredicate
+				if typeNode == nil {
+					if jsdocSignature := c.getSignatureOfFullSignatureType(sig.declaration); jsdocSignature != nil {
+						jsdocTypePredicate = c.getTypePredicateOfSignature(jsdocSignature)
+					}
+				}
 				switch {
 				case typeNode != nil:
 					if ast.IsTypePredicateNode(typeNode) {
 						sig.resolvedTypePredicate = c.createTypePredicateFromTypePredicateNode(typeNode, sig)
 					}
+				case jsdocTypePredicate != nil:
+					sig.resolvedTypePredicate = jsdocTypePredicate
 				case ast.IsFunctionLikeDeclaration(sig.declaration) && (sig.resolvedReturnType == nil || sig.resolvedReturnType.flags&TypeFlagsBoolean != 0) && c.getParameterCount(sig) > 0:
 					sig.resolvedTypePredicate = c.noTypePredicate // avoid infinite loop
 					sig.resolvedTypePredicate = c.getTypePredicateFromBody(sig.declaration)
@@ -2090,7 +2098,7 @@ func (c *Checker) isResolvingReturnTypeOfSignature(signature *Signature) bool {
 }
 
 func (c *Checker) findMatchingSignatures(signatureLists [][]*Signature, signature *Signature, listIndex int) []*Signature {
-	if signature.typeParameters != nil {
+	if len(signature.typeParameters) != 0 {
 		// We require an exact match for generic signatures, so we only return signatures from the first
 		// signature list and only if they have exact matches in the other signature lists.
 		if listIndex > 0 {
@@ -2150,7 +2158,7 @@ func (c *Checker) compareSignaturesIdentical(source *Signature, target *Signatur
 	}
 	// Check that type parameter constraints and defaults match. If they do, instantiate the source
 	// signature with the type parameters of the target signature and continue the comparison.
-	if target.typeParameters != nil {
+	if len(target.typeParameters) != 0 {
 		mapper := newTypeMapper(source.typeParameters, target.typeParameters)
 		for i := range len(target.typeParameters) {
 			s := source.typeParameters[i]
@@ -3365,15 +3373,8 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 		if r.relation == r.c.comparableRelation && source.flags&TypeFlagsTypeParameter != 0 {
 			// This is a carve-out in comparability to essentially forbid comparing a type parameter with another type parameter
 			// unless one extends the other. (Remember: comparability is mostly bidirectional!)
-			constraint := r.c.getConstraintOfTypeParameter(source)
-			if constraint != nil {
-				for constraint != nil && someType(constraint, func(c *Type) bool { return c.flags&TypeFlagsTypeParameter != 0 }) {
-					result = r.isRelatedTo(constraint, target, RecursionFlagsSource, false /*reportErrors*/)
-					if result != TernaryFalse {
-						return result
-					}
-					constraint = r.c.getConstraintOfTypeParameter(constraint)
-				}
+			if constraint := r.c.getConstraintOfTypeParameter(source); constraint != nil && someType(constraint, func(c *Type) bool { return c.flags&TypeFlagsTypeParameter != 0 }) {
+				return r.isRelatedTo(constraint, target, RecursionFlagsSource, false /*reportErrors*/)
 			}
 			return TernaryFalse
 		}

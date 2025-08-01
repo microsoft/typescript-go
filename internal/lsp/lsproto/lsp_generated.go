@@ -3,8 +3,9 @@
 package lsproto
 
 import (
-	"encoding/json"
 	"fmt"
+
+	"github.com/microsoft/typescript-go/internal/json"
 )
 
 // Meta model version 3.17.0
@@ -12,9 +13,48 @@ import (
 // Structures
 
 type ImplementationParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
-	PartialResultParams
+	// The text document.
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+
+	// The position inside the text document.
+	Position Position `json:"position"`
+
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
+}
+
+func (s *ImplementationParams) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Position     requiredProp `json:"position"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.TextDocument {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if !keys.Position {
+		return fmt.Errorf("required key 'position' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocument       TextDocumentIdentifier `json:"textDocument"`
+		Position           Position               `json:"position"`
+		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Represents a location inside a resource, such as a line
@@ -54,21 +94,122 @@ func (s *Location) UnmarshalJSON(data []byte) error {
 }
 
 type ImplementationRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	ImplementationOptions
-	StaticRegistrationOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// The id used to register the request. The id can be used to deregister
+	// the request again. See also Registration#id.
+	Id *string `json:"id,omitzero"`
+}
+
+func (s *ImplementationRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
+		Id               *string                `json:"id,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type TypeDefinitionParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
-	PartialResultParams
+	// The text document.
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+
+	// The position inside the text document.
+	Position Position `json:"position"`
+
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
+}
+
+func (s *TypeDefinitionParams) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Position     requiredProp `json:"position"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.TextDocument {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if !keys.Position {
+		return fmt.Errorf("required key 'position' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocument       TextDocumentIdentifier `json:"textDocument"`
+		Position           Position               `json:"position"`
+		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type TypeDefinitionRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	TypeDefinitionOptions
-	StaticRegistrationOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// The id used to register the request. The id can be used to deregister
+	// the request again. See also Registration#id.
+	Id *string `json:"id,omitzero"`
+}
+
+func (s *TypeDefinitionRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
+		Id               *string                `json:"id,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A workspace folder inside a client.
@@ -168,8 +309,12 @@ func (s *ConfigurationParams) UnmarshalJSON(data []byte) error {
 
 // Parameters for a DocumentColorRequest.
 type DocumentColorParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
@@ -192,10 +337,9 @@ func (s *DocumentColorParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-		PartialResultParams
-
-		TextDocument TextDocumentIdentifier `json:"textDocument"`
+		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
+		TextDocument       TextDocumentIdentifier `json:"textDocument"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -239,15 +383,50 @@ func (s *ColorInformation) UnmarshalJSON(data []byte) error {
 }
 
 type DocumentColorRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	DocumentColorOptions
-	StaticRegistrationOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// The id used to register the request. The id can be used to deregister
+	// the request again. See also Registration#id.
+	Id *string `json:"id,omitzero"`
+}
+
+func (s *DocumentColorRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
+		Id               *string                `json:"id,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Parameters for a ColorPresentationRequest.
 type ColorPresentationParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
@@ -284,12 +463,11 @@ func (s *ColorPresentationParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-		PartialResultParams
-
-		TextDocument TextDocumentIdentifier `json:"textDocument"`
-		Color        Color                  `json:"color"`
-		Range        Range                  `json:"range"`
+		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
+		TextDocument       TextDocumentIdentifier `json:"textDocument"`
+		Color              Color                  `json:"color"`
+		Range              Range                  `json:"range"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -304,11 +482,11 @@ type ColorPresentation struct {
 	// An edit which is applied to a document when selecting
 	// this presentation for the color.  When `falsy` the label
 	// is used.
-	TextEdit *TextEdit `json:"textEdit,omitempty"`
+	TextEdit *TextEdit `json:"textEdit,omitzero"`
 
 	// An optional array of additional edits that are applied when
 	// selecting this color presentation. Edits must not overlap with the main edit nor with themselves.
-	AdditionalTextEdits *[]*TextEdit `json:"additionalTextEdits,omitempty"`
+	AdditionalTextEdits *[]*TextEdit `json:"additionalTextEdits,omitzero"`
 }
 
 func (s *ColorPresentation) UnmarshalJSON(data []byte) error {
@@ -329,22 +507,22 @@ func (s *ColorPresentation) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Label               string       `json:"label"`
-		TextEdit            *TextEdit    `json:"textEdit,omitempty"`
-		AdditionalTextEdits *[]*TextEdit `json:"additionalTextEdits,omitempty"`
+		TextEdit            *TextEdit    `json:"textEdit,omitzero"`
+		AdditionalTextEdits *[]*TextEdit `json:"additionalTextEdits,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
 }
 
 type WorkDoneProgressOptions struct {
-	WorkDoneProgress *bool `json:"workDoneProgress,omitempty"`
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
 // General text document registration options.
 type TextDocumentRegistrationOptions struct {
 	// A document selector to identify the scope of the registration. If set to null
 	// the document selector provided on the client side will be used.
-	DocumentSelector Nullable[DocumentSelector] `json:"documentSelector"`
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
 }
 
 func (s *TextDocumentRegistrationOptions) UnmarshalJSON(data []byte) error {
@@ -364,7 +542,7 @@ func (s *TextDocumentRegistrationOptions) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		DocumentSelector Nullable[DocumentSelector] `json:"documentSelector"`
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -372,8 +550,12 @@ func (s *TextDocumentRegistrationOptions) UnmarshalJSON(data []byte) error {
 
 // Parameters for a FoldingRangeRequest.
 type FoldingRangeParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
@@ -396,10 +578,9 @@ func (s *FoldingRangeParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-		PartialResultParams
-
-		TextDocument TextDocumentIdentifier `json:"textDocument"`
+		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
+		TextDocument       TextDocumentIdentifier `json:"textDocument"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -413,26 +594,26 @@ type FoldingRange struct {
 	StartLine uint32 `json:"startLine"`
 
 	// The zero-based character offset from where the folded range starts. If not defined, defaults to the length of the start line.
-	StartCharacter *uint32 `json:"startCharacter,omitempty"`
+	StartCharacter *uint32 `json:"startCharacter,omitzero"`
 
 	// The zero-based end line of the range to fold. The folded area ends with the line's last character.
 	// To be valid, the end must be zero or larger and smaller than the number of lines in the document.
 	EndLine uint32 `json:"endLine"`
 
 	// The zero-based character offset before the folded range ends. If not defined, defaults to the length of the end line.
-	EndCharacter *uint32 `json:"endCharacter,omitempty"`
+	EndCharacter *uint32 `json:"endCharacter,omitzero"`
 
 	// Describes the kind of the folding range such as 'comment' or 'region'. The kind
 	// is used to categorize folding ranges and used by commands like 'Fold all comments'.
 	// See FoldingRangeKind for an enumeration of standardized kinds.
-	Kind *FoldingRangeKind `json:"kind,omitempty"`
+	Kind *FoldingRangeKind `json:"kind,omitzero"`
 
 	// The text that the client should show when the specified range is
 	// collapsed. If not defined or not supported by the client, a default
 	// will be chosen by the client.
 	//
 	// Since: 3.17.0
-	CollapsedText *string `json:"collapsedText,omitempty"`
+	CollapsedText *string `json:"collapsedText,omitzero"`
 }
 
 func (s *FoldingRange) UnmarshalJSON(data []byte) error {
@@ -457,38 +638,143 @@ func (s *FoldingRange) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		StartLine      uint32            `json:"startLine"`
-		StartCharacter *uint32           `json:"startCharacter,omitempty"`
+		StartCharacter *uint32           `json:"startCharacter,omitzero"`
 		EndLine        uint32            `json:"endLine"`
-		EndCharacter   *uint32           `json:"endCharacter,omitempty"`
-		Kind           *FoldingRangeKind `json:"kind,omitempty"`
-		CollapsedText  *string           `json:"collapsedText,omitempty"`
+		EndCharacter   *uint32           `json:"endCharacter,omitzero"`
+		Kind           *FoldingRangeKind `json:"kind,omitzero"`
+		CollapsedText  *string           `json:"collapsedText,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
 }
 
 type FoldingRangeRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	FoldingRangeOptions
-	StaticRegistrationOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// The id used to register the request. The id can be used to deregister
+	// the request again. See also Registration#id.
+	Id *string `json:"id,omitzero"`
+}
+
+func (s *FoldingRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
+		Id               *string                `json:"id,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type DeclarationParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
-	PartialResultParams
+	// The text document.
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+
+	// The position inside the text document.
+	Position Position `json:"position"`
+
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
+}
+
+func (s *DeclarationParams) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Position     requiredProp `json:"position"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.TextDocument {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if !keys.Position {
+		return fmt.Errorf("required key 'position' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocument       TextDocumentIdentifier `json:"textDocument"`
+		Position           Position               `json:"position"`
+		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type DeclarationRegistrationOptions struct {
-	DeclarationOptions
-	TextDocumentRegistrationOptions
-	StaticRegistrationOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	// The id used to register the request. The id can be used to deregister
+	// the request again. See also Registration#id.
+	Id *string `json:"id,omitzero"`
+}
+
+func (s *DeclarationRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		Id               *string                `json:"id,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A parameter literal used in selection range requests.
 type SelectionRangeParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
@@ -518,11 +804,10 @@ func (s *SelectionRangeParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-		PartialResultParams
-
-		TextDocument TextDocumentIdentifier `json:"textDocument"`
-		Positions    []Position             `json:"positions"`
+		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
+		TextDocument       TextDocumentIdentifier `json:"textDocument"`
+		Positions          []Position             `json:"positions"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -535,7 +820,7 @@ type SelectionRange struct {
 	Range Range `json:"range"`
 
 	// The parent selection range containing this range. Therefore `parent.range` must contain `this.range`.
-	Parent *SelectionRange `json:"parent,omitempty"`
+	Parent *SelectionRange `json:"parent,omitzero"`
 }
 
 func (s *SelectionRange) UnmarshalJSON(data []byte) error {
@@ -556,21 +841,52 @@ func (s *SelectionRange) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Range  Range           `json:"range"`
-		Parent *SelectionRange `json:"parent,omitempty"`
+		Parent *SelectionRange `json:"parent,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
 }
 
 type SelectionRangeRegistrationOptions struct {
-	SelectionRangeOptions
-	TextDocumentRegistrationOptions
-	StaticRegistrationOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	// The id used to register the request. The id can be used to deregister
+	// the request again. See also Registration#id.
+	Id *string `json:"id,omitzero"`
+}
+
+func (s *SelectionRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		Id               *string                `json:"id,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type WorkDoneProgressCreateParams struct {
 	// The token to be used to report progress.
-	Token ProgressToken `json:"token"`
+	Token IntegerOrString `json:"token"`
 }
 
 func (s *WorkDoneProgressCreateParams) UnmarshalJSON(data []byte) error {
@@ -590,7 +906,7 @@ func (s *WorkDoneProgressCreateParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Token ProgressToken `json:"token"`
+		Token IntegerOrString `json:"token"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -598,7 +914,7 @@ func (s *WorkDoneProgressCreateParams) UnmarshalJSON(data []byte) error {
 
 type WorkDoneProgressCancelParams struct {
 	// The token to be used to report progress.
-	Token ProgressToken `json:"token"`
+	Token IntegerOrString `json:"token"`
 }
 
 func (s *WorkDoneProgressCancelParams) UnmarshalJSON(data []byte) error {
@@ -618,7 +934,7 @@ func (s *WorkDoneProgressCancelParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Token ProgressToken `json:"token"`
+		Token IntegerOrString `json:"token"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -628,8 +944,43 @@ func (s *WorkDoneProgressCancelParams) UnmarshalJSON(data []byte) error {
 //
 // Since: 3.16.0
 type CallHierarchyPrepareParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
+	// The text document.
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+
+	// The position inside the text document.
+	Position Position `json:"position"`
+
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+}
+
+func (s *CallHierarchyPrepareParams) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Position     requiredProp `json:"position"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.TextDocument {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if !keys.Position {
+		return fmt.Errorf("required key 'position' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocument  TextDocumentIdentifier `json:"textDocument"`
+		Position      Position               `json:"position"`
+		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Represents programming constructs like functions or constructors in the context
@@ -644,10 +995,10 @@ type CallHierarchyItem struct {
 	Kind SymbolKind `json:"kind"`
 
 	// Tags for this item.
-	Tags *[]SymbolTag `json:"tags,omitempty"`
+	Tags *[]SymbolTag `json:"tags,omitzero"`
 
 	// More detail for this item, e.g. the signature of a function.
-	Detail *string `json:"detail,omitempty"`
+	Detail *string `json:"detail,omitzero"`
 
 	// The resource identifier of this item.
 	Uri DocumentUri `json:"uri"`
@@ -661,7 +1012,7 @@ type CallHierarchyItem struct {
 
 	// A data entry field that is preserved between a call hierarchy prepare and
 	// incoming calls or outgoing calls requests.
-	Data *any `json:"data,omitempty"`
+	Data *any `json:"data,omitzero"`
 }
 
 func (s *CallHierarchyItem) UnmarshalJSON(data []byte) error {
@@ -699,12 +1050,12 @@ func (s *CallHierarchyItem) UnmarshalJSON(data []byte) error {
 	type temp struct {
 		Name           string       `json:"name"`
 		Kind           SymbolKind   `json:"kind"`
-		Tags           *[]SymbolTag `json:"tags,omitempty"`
-		Detail         *string      `json:"detail,omitempty"`
+		Tags           *[]SymbolTag `json:"tags,omitzero"`
+		Detail         *string      `json:"detail,omitzero"`
 		Uri            DocumentUri  `json:"uri"`
 		Range          Range        `json:"range"`
 		SelectionRange Range        `json:"selectionRange"`
-		Data           *any         `json:"data,omitempty"`
+		Data           *any         `json:"data,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -714,17 +1065,52 @@ func (s *CallHierarchyItem) UnmarshalJSON(data []byte) error {
 //
 // Since: 3.16.0
 type CallHierarchyRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	CallHierarchyOptions
-	StaticRegistrationOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// The id used to register the request. The id can be used to deregister
+	// the request again. See also Registration#id.
+	Id *string `json:"id,omitzero"`
+}
+
+func (s *CallHierarchyRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
+		Id               *string                `json:"id,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameter of a `callHierarchy/incomingCalls` request.
 //
 // Since: 3.16.0
 type CallHierarchyIncomingCallsParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 
 	Item *CallHierarchyItem `json:"item"`
 }
@@ -746,10 +1132,9 @@ func (s *CallHierarchyIncomingCallsParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-		PartialResultParams
-
-		Item *CallHierarchyItem `json:"item"`
+		WorkDoneToken      *IntegerOrString   `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString   `json:"partialResultToken,omitzero"`
+		Item               *CallHierarchyItem `json:"item"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -799,8 +1184,12 @@ func (s *CallHierarchyIncomingCall) UnmarshalJSON(data []byte) error {
 //
 // Since: 3.16.0
 type CallHierarchyOutgoingCallsParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 
 	Item *CallHierarchyItem `json:"item"`
 }
@@ -822,10 +1211,9 @@ func (s *CallHierarchyOutgoingCallsParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-		PartialResultParams
-
-		Item *CallHierarchyItem `json:"item"`
+		WorkDoneToken      *IntegerOrString   `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString   `json:"partialResultToken,omitzero"`
+		Item               *CallHierarchyItem `json:"item"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -874,8 +1262,12 @@ func (s *CallHierarchyOutgoingCall) UnmarshalJSON(data []byte) error {
 
 // Since: 3.16.0
 type SemanticTokensParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
@@ -898,10 +1290,9 @@ func (s *SemanticTokensParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-		PartialResultParams
-
-		TextDocument TextDocumentIdentifier `json:"textDocument"`
+		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
+		TextDocument       TextDocumentIdentifier `json:"textDocument"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -913,7 +1304,7 @@ type SemanticTokens struct {
 	// the client will include the result id in the next semantic token request.
 	// A server can then instead of computing all semantic tokens again simply
 	// send a delta.
-	ResultId *string `json:"resultId,omitempty"`
+	ResultId *string `json:"resultId,omitzero"`
 
 	// The actual tokens.
 	Data []uint32 `json:"data"`
@@ -936,7 +1327,7 @@ func (s *SemanticTokens) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		ResultId *string  `json:"resultId,omitempty"`
+		ResultId *string  `json:"resultId,omitzero"`
 		Data     []uint32 `json:"data"`
 	}
 
@@ -973,15 +1364,67 @@ func (s *SemanticTokensPartialResult) UnmarshalJSON(data []byte) error {
 
 // Since: 3.16.0
 type SemanticTokensRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	SemanticTokensOptions
-	StaticRegistrationOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// The legend used by the server
+	Legend *SemanticTokensLegend `json:"legend"`
+
+	// Server supports providing semantic tokens for a specific range
+	// of a document.
+	Range *BooleanOrEmptyObject `json:"range,omitzero"`
+
+	// Server supports providing semantic tokens for a full document.
+	Full *BooleanOrSemanticTokensFullDelta `json:"full,omitzero"`
+
+	// The id used to register the request. The id can be used to deregister
+	// the request again. See also Registration#id.
+	Id *string `json:"id,omitzero"`
+}
+
+func (s *SemanticTokensRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+		Legend           requiredProp `json:"legend"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+	if !keys.Legend {
+		return fmt.Errorf("required key 'legend' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector DocumentSelectorOrNull            `json:"documentSelector"`
+		WorkDoneProgress *bool                             `json:"workDoneProgress,omitzero"`
+		Legend           *SemanticTokensLegend             `json:"legend"`
+		Range            *BooleanOrEmptyObject             `json:"range,omitzero"`
+		Full             *BooleanOrSemanticTokensFullDelta `json:"full,omitzero"`
+		Id               *string                           `json:"id,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.16.0
 type SemanticTokensDeltaParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
@@ -1012,11 +1455,10 @@ func (s *SemanticTokensDeltaParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-		PartialResultParams
-
-		TextDocument     TextDocumentIdentifier `json:"textDocument"`
-		PreviousResultId string                 `json:"previousResultId"`
+		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
+		TextDocument       TextDocumentIdentifier `json:"textDocument"`
+		PreviousResultId   string                 `json:"previousResultId"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -1024,7 +1466,7 @@ func (s *SemanticTokensDeltaParams) UnmarshalJSON(data []byte) error {
 
 // Since: 3.16.0
 type SemanticTokensDelta struct {
-	ResultId *string `json:"resultId,omitempty"`
+	ResultId *string `json:"resultId,omitzero"`
 
 	// The semantic token edits to transform a previous result into a new result.
 	Edits []*SemanticTokensEdit `json:"edits"`
@@ -1047,7 +1489,7 @@ func (s *SemanticTokensDelta) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		ResultId *string               `json:"resultId,omitempty"`
+		ResultId *string               `json:"resultId,omitzero"`
 		Edits    []*SemanticTokensEdit `json:"edits"`
 	}
 
@@ -1084,8 +1526,12 @@ func (s *SemanticTokensDeltaPartialResult) UnmarshalJSON(data []byte) error {
 
 // Since: 3.16.0
 type SemanticTokensRangeParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
@@ -1115,11 +1561,10 @@ func (s *SemanticTokensRangeParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-		PartialResultParams
-
-		TextDocument TextDocumentIdentifier `json:"textDocument"`
-		Range        Range                  `json:"range"`
+		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
+		TextDocument       TextDocumentIdentifier `json:"textDocument"`
+		Range              Range                  `json:"range"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -1135,19 +1580,19 @@ type ShowDocumentParams struct {
 	// Indicates to show the resource in an external program.
 	// To show, for example, `https://code.visualstudio.com/`
 	// in the default WEB browser set `external` to `true`.
-	External *bool `json:"external,omitempty"`
+	External *bool `json:"external,omitzero"`
 
 	// An optional property to indicate whether the editor
 	// showing the document should take focus or not.
 	// Clients might ignore this property if an external
 	// program is started.
-	TakeFocus *bool `json:"takeFocus,omitempty"`
+	TakeFocus *bool `json:"takeFocus,omitzero"`
 
 	// An optional selection range if the document is a text
 	// document. Clients might ignore the property if an
 	// external program is started or the file is not a text
 	// file.
-	Selection *Range `json:"selection,omitempty"`
+	Selection *Range `json:"selection,omitzero"`
 }
 
 func (s *ShowDocumentParams) UnmarshalJSON(data []byte) error {
@@ -1168,9 +1613,9 @@ func (s *ShowDocumentParams) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Uri       URI    `json:"uri"`
-		External  *bool  `json:"external,omitempty"`
-		TakeFocus *bool  `json:"takeFocus,omitempty"`
-		Selection *Range `json:"selection,omitempty"`
+		External  *bool  `json:"external,omitzero"`
+		TakeFocus *bool  `json:"takeFocus,omitzero"`
+		Selection *Range `json:"selection,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -1208,8 +1653,43 @@ func (s *ShowDocumentResult) UnmarshalJSON(data []byte) error {
 }
 
 type LinkedEditingRangeParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
+	// The text document.
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+
+	// The position inside the text document.
+	Position Position `json:"position"`
+
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+}
+
+func (s *LinkedEditingRangeParams) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Position     requiredProp `json:"position"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.TextDocument {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if !keys.Position {
+		return fmt.Errorf("required key 'position' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocument  TextDocumentIdentifier `json:"textDocument"`
+		Position      Position               `json:"position"`
+		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The result of a linked editing range request.
@@ -1223,7 +1703,7 @@ type LinkedEditingRanges struct {
 	// An optional word pattern (regular expression) that describes valid contents for
 	// the given ranges. If no pattern is provided, the client configuration's word
 	// pattern will be used.
-	WordPattern *string `json:"wordPattern,omitempty"`
+	WordPattern *string `json:"wordPattern,omitzero"`
 }
 
 func (s *LinkedEditingRanges) UnmarshalJSON(data []byte) error {
@@ -1244,16 +1724,47 @@ func (s *LinkedEditingRanges) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Ranges      []Range `json:"ranges"`
-		WordPattern *string `json:"wordPattern,omitempty"`
+		WordPattern *string `json:"wordPattern,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
 }
 
 type LinkedEditingRangeRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	LinkedEditingRangeOptions
-	StaticRegistrationOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// The id used to register the request. The id can be used to deregister
+	// the request again. See also Registration#id.
+	Id *string `json:"id,omitzero"`
+}
+
+func (s *LinkedEditingRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
+		Id               *string                `json:"id,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameters sent in notifications/requests for user-initiated creation of
@@ -1302,7 +1813,7 @@ func (s *CreateFilesParams) UnmarshalJSON(data []byte) error {
 // the client capability: `workspace.workspaceEdit.failureHandling`
 type WorkspaceEdit struct {
 	// Holds changes to existing resources.
-	Changes *map[DocumentUri][]*TextEdit `json:"changes,omitempty"`
+	Changes *map[DocumentUri][]*TextEdit `json:"changes,omitzero"`
 
 	// Depending on the client capability `workspace.workspaceEdit.resourceOperations` document changes
 	// are either an array of `TextDocumentEdit`s to express changes to n different text documents
@@ -1314,7 +1825,7 @@ type WorkspaceEdit struct {
 	//
 	// If a client neither supports `documentChanges` nor `workspace.workspaceEdit.resourceOperations` then
 	// only plain `TextEdit`s using the `changes` property are supported.
-	DocumentChanges *[]TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile `json:"documentChanges,omitempty"`
+	DocumentChanges *[]TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile `json:"documentChanges,omitzero"`
 
 	// A map of change annotations that can be referenced in `AnnotatedTextEdit`s or create, rename and
 	// delete file / folder operations.
@@ -1322,7 +1833,7 @@ type WorkspaceEdit struct {
 	// Whether clients honor this property depends on the client capability `workspace.changeAnnotationSupport`.
 	//
 	// Since: 3.16.0
-	ChangeAnnotations *map[ChangeAnnotationIdentifier]*ChangeAnnotation `json:"changeAnnotations,omitempty"`
+	ChangeAnnotations *map[string]*ChangeAnnotation `json:"changeAnnotations,omitzero"`
 }
 
 // The options to register for file operations.
@@ -1422,9 +1933,48 @@ func (s *DeleteFilesParams) UnmarshalJSON(data []byte) error {
 }
 
 type MonikerParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
-	PartialResultParams
+	// The text document.
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+
+	// The position inside the text document.
+	Position Position `json:"position"`
+
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
+}
+
+func (s *MonikerParams) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Position     requiredProp `json:"position"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.TextDocument {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if !keys.Position {
+		return fmt.Errorf("required key 'position' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocument       TextDocumentIdentifier `json:"textDocument"`
+		Position           Position               `json:"position"`
+		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Moniker definition to match LSIF 0.5 moniker definition.
@@ -1442,7 +1992,7 @@ type Moniker struct {
 	Unique UniquenessLevel `json:"unique"`
 
 	// The moniker kind if known.
-	Kind *MonikerKind `json:"kind,omitempty"`
+	Kind *MonikerKind `json:"kind,omitzero"`
 }
 
 func (s *Moniker) UnmarshalJSON(data []byte) error {
@@ -1473,23 +2023,85 @@ func (s *Moniker) UnmarshalJSON(data []byte) error {
 		Scheme     string          `json:"scheme"`
 		Identifier string          `json:"identifier"`
 		Unique     UniquenessLevel `json:"unique"`
-		Kind       *MonikerKind    `json:"kind,omitempty"`
+		Kind       *MonikerKind    `json:"kind,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
 }
 
 type MonikerRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	MonikerOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+}
+
+func (s *MonikerRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameter of a `textDocument/prepareTypeHierarchy` request.
 //
 // Since: 3.17.0
 type TypeHierarchyPrepareParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
+	// The text document.
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+
+	// The position inside the text document.
+	Position Position `json:"position"`
+
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+}
+
+func (s *TypeHierarchyPrepareParams) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Position     requiredProp `json:"position"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.TextDocument {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if !keys.Position {
+		return fmt.Errorf("required key 'position' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocument  TextDocumentIdentifier `json:"textDocument"`
+		Position      Position               `json:"position"`
+		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Since: 3.17.0
@@ -1501,10 +2113,10 @@ type TypeHierarchyItem struct {
 	Kind SymbolKind `json:"kind"`
 
 	// Tags for this item.
-	Tags *[]SymbolTag `json:"tags,omitempty"`
+	Tags *[]SymbolTag `json:"tags,omitzero"`
 
 	// More detail for this item, e.g. the signature of a function.
-	Detail *string `json:"detail,omitempty"`
+	Detail *string `json:"detail,omitzero"`
 
 	// The resource identifier of this item.
 	Uri DocumentUri `json:"uri"`
@@ -1522,7 +2134,7 @@ type TypeHierarchyItem struct {
 	// supertypes or subtypes requests. It could also be used to identify the
 	// type hierarchy in the server, helping improve the performance on
 	// resolving supertypes and subtypes.
-	Data *any `json:"data,omitempty"`
+	Data *any `json:"data,omitzero"`
 }
 
 func (s *TypeHierarchyItem) UnmarshalJSON(data []byte) error {
@@ -1560,12 +2172,12 @@ func (s *TypeHierarchyItem) UnmarshalJSON(data []byte) error {
 	type temp struct {
 		Name           string       `json:"name"`
 		Kind           SymbolKind   `json:"kind"`
-		Tags           *[]SymbolTag `json:"tags,omitempty"`
-		Detail         *string      `json:"detail,omitempty"`
+		Tags           *[]SymbolTag `json:"tags,omitzero"`
+		Detail         *string      `json:"detail,omitzero"`
 		Uri            DocumentUri  `json:"uri"`
 		Range          Range        `json:"range"`
 		SelectionRange Range        `json:"selectionRange"`
-		Data           *any         `json:"data,omitempty"`
+		Data           *any         `json:"data,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -1575,17 +2187,52 @@ func (s *TypeHierarchyItem) UnmarshalJSON(data []byte) error {
 //
 // Since: 3.17.0
 type TypeHierarchyRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	TypeHierarchyOptions
-	StaticRegistrationOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// The id used to register the request. The id can be used to deregister
+	// the request again. See also Registration#id.
+	Id *string `json:"id,omitzero"`
+}
+
+func (s *TypeHierarchyRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
+		Id               *string                `json:"id,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameter of a `typeHierarchy/supertypes` request.
 //
 // Since: 3.17.0
 type TypeHierarchySupertypesParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 
 	Item *TypeHierarchyItem `json:"item"`
 }
@@ -1607,10 +2254,9 @@ func (s *TypeHierarchySupertypesParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-		PartialResultParams
-
-		Item *TypeHierarchyItem `json:"item"`
+		WorkDoneToken      *IntegerOrString   `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString   `json:"partialResultToken,omitzero"`
+		Item               *TypeHierarchyItem `json:"item"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -1620,8 +2266,12 @@ func (s *TypeHierarchySupertypesParams) UnmarshalJSON(data []byte) error {
 //
 // Since: 3.17.0
 type TypeHierarchySubtypesParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 
 	Item *TypeHierarchyItem `json:"item"`
 }
@@ -1643,10 +2293,9 @@ func (s *TypeHierarchySubtypesParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-		PartialResultParams
-
-		Item *TypeHierarchyItem `json:"item"`
+		WorkDoneToken      *IntegerOrString   `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString   `json:"partialResultToken,omitzero"`
+		Item               *TypeHierarchyItem `json:"item"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -1656,7 +2305,8 @@ func (s *TypeHierarchySubtypesParams) UnmarshalJSON(data []byte) error {
 //
 // Since: 3.17.0
 type InlineValueParams struct {
-	WorkDoneProgressParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
 
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
@@ -1694,11 +2344,10 @@ func (s *InlineValueParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-
-		TextDocument TextDocumentIdentifier `json:"textDocument"`
-		Range        Range                  `json:"range"`
-		Context      *InlineValueContext    `json:"context"`
+		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
+		TextDocument  TextDocumentIdentifier `json:"textDocument"`
+		Range         Range                  `json:"range"`
+		Context       *InlineValueContext    `json:"context"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -1708,16 +2357,48 @@ func (s *InlineValueParams) UnmarshalJSON(data []byte) error {
 //
 // Since: 3.17.0
 type InlineValueRegistrationOptions struct {
-	InlineValueOptions
-	TextDocumentRegistrationOptions
-	StaticRegistrationOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	// The id used to register the request. The id can be used to deregister
+	// the request again. See also Registration#id.
+	Id *string `json:"id,omitzero"`
+}
+
+func (s *InlineValueRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		Id               *string                `json:"id,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A parameter literal used in inlay hint requests.
 //
 // Since: 3.17.0
 type InlayHintParams struct {
-	WorkDoneProgressParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
 
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
@@ -1747,10 +2428,9 @@ func (s *InlayHintParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-
-		TextDocument TextDocumentIdentifier `json:"textDocument"`
-		Range        Range                  `json:"range"`
+		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
+		TextDocument  TextDocumentIdentifier `json:"textDocument"`
+		Range         Range                  `json:"range"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -1774,35 +2454,35 @@ type InlayHint struct {
 
 	// The kind of this hint. Can be omitted in which case the client
 	// should fall back to a reasonable default.
-	Kind *InlayHintKind `json:"kind,omitempty"`
+	Kind *InlayHintKind `json:"kind,omitzero"`
 
 	// Optional text edits that are performed when accepting this inlay hint.
 	//
 	// *Note* that edits are expected to change the document so that the inlay
 	// hint (or its nearest variant) is now part of the document and the inlay
 	// hint itself is now obsolete.
-	TextEdits *[]*TextEdit `json:"textEdits,omitempty"`
+	TextEdits *[]*TextEdit `json:"textEdits,omitzero"`
 
 	// The tooltip text when you hover over this item.
-	Tooltip *StringOrMarkupContent `json:"tooltip,omitempty"`
+	Tooltip *StringOrMarkupContent `json:"tooltip,omitzero"`
 
 	// Render padding before the hint.
 	//
 	// Note: Padding should use the editor's background color, not the
 	// background color of the hint itself. That means padding can be used
 	// to visually align/separate an inlay hint.
-	PaddingLeft *bool `json:"paddingLeft,omitempty"`
+	PaddingLeft *bool `json:"paddingLeft,omitzero"`
 
 	// Render padding after the hint.
 	//
 	// Note: Padding should use the editor's background color, not the
 	// background color of the hint itself. That means padding can be used
 	// to visually align/separate an inlay hint.
-	PaddingRight *bool `json:"paddingRight,omitempty"`
+	PaddingRight *bool `json:"paddingRight,omitzero"`
 
 	// A data entry field that is preserved on an inlay hint between
 	// a `textDocument/inlayHint` and a `inlayHint/resolve` request.
-	Data *any `json:"data,omitempty"`
+	Data *any `json:"data,omitzero"`
 }
 
 func (s *InlayHint) UnmarshalJSON(data []byte) error {
@@ -1828,12 +2508,12 @@ func (s *InlayHint) UnmarshalJSON(data []byte) error {
 	type temp struct {
 		Position     Position                    `json:"position"`
 		Label        StringOrInlayHintLabelParts `json:"label"`
-		Kind         *InlayHintKind              `json:"kind,omitempty"`
-		TextEdits    *[]*TextEdit                `json:"textEdits,omitempty"`
-		Tooltip      *StringOrMarkupContent      `json:"tooltip,omitempty"`
-		PaddingLeft  *bool                       `json:"paddingLeft,omitempty"`
-		PaddingRight *bool                       `json:"paddingRight,omitempty"`
-		Data         *any                        `json:"data,omitempty"`
+		Kind         *InlayHintKind              `json:"kind,omitzero"`
+		TextEdits    *[]*TextEdit                `json:"textEdits,omitzero"`
+		Tooltip      *StringOrMarkupContent      `json:"tooltip,omitzero"`
+		PaddingLeft  *bool                       `json:"paddingLeft,omitzero"`
+		PaddingRight *bool                       `json:"paddingRight,omitzero"`
+		Data         *any                        `json:"data,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -1843,26 +2523,66 @@ func (s *InlayHint) UnmarshalJSON(data []byte) error {
 //
 // Since: 3.17.0
 type InlayHintRegistrationOptions struct {
-	InlayHintOptions
-	TextDocumentRegistrationOptions
-	StaticRegistrationOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// The server provides support to resolve additional
+	// information for an inlay hint item.
+	ResolveProvider *bool `json:"resolveProvider,omitzero"`
+
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	// The id used to register the request. The id can be used to deregister
+	// the request again. See also Registration#id.
+	Id *string `json:"id,omitzero"`
+}
+
+func (s *InlayHintRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
+		ResolveProvider  *bool                  `json:"resolveProvider,omitzero"`
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		Id               *string                `json:"id,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Parameters of the document diagnostic request.
 //
 // Since: 3.17.0
 type DocumentDiagnosticParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
 	// The additional identifier provided during registration.
-	Identifier *string `json:"identifier,omitempty"`
+	Identifier *string `json:"identifier,omitzero"`
 
 	// The result id of a previous response if provided.
-	PreviousResultId *string `json:"previousResultId,omitempty"`
+	PreviousResultId *string `json:"previousResultId,omitzero"`
 }
 
 func (s *DocumentDiagnosticParams) UnmarshalJSON(data []byte) error {
@@ -1882,12 +2602,11 @@ func (s *DocumentDiagnosticParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-		PartialResultParams
-
-		TextDocument     TextDocumentIdentifier `json:"textDocument"`
-		Identifier       *string                `json:"identifier,omitempty"`
-		PreviousResultId *string                `json:"previousResultId,omitempty"`
+		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
+		TextDocument       TextDocumentIdentifier `json:"textDocument"`
+		Identifier         *string                `json:"identifier,omitzero"`
+		PreviousResultId   *string                `json:"previousResultId,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -1957,20 +2676,79 @@ func (s *DiagnosticServerCancellationData) UnmarshalJSON(data []byte) error {
 //
 // Since: 3.17.0
 type DiagnosticRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	DiagnosticOptions
-	StaticRegistrationOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// An optional identifier under which the diagnostics are
+	// managed by the client.
+	Identifier *string `json:"identifier,omitzero"`
+
+	// Whether the language has inter file dependencies meaning that
+	// editing code in one file can result in a different diagnostic
+	// set in another file. Inter file dependencies are common for
+	// most programming languages and typically uncommon for linters.
+	InterFileDependencies bool `json:"interFileDependencies"`
+
+	// The server provides support for workspace diagnostics as well.
+	WorkspaceDiagnostics bool `json:"workspaceDiagnostics"`
+
+	// The id used to register the request. The id can be used to deregister
+	// the request again. See also Registration#id.
+	Id *string `json:"id,omitzero"`
+}
+
+func (s *DiagnosticRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector      requiredProp `json:"documentSelector"`
+		InterFileDependencies requiredProp `json:"interFileDependencies"`
+		WorkspaceDiagnostics  requiredProp `json:"workspaceDiagnostics"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+	if !keys.InterFileDependencies {
+		return fmt.Errorf("required key 'interFileDependencies' is missing")
+	}
+	if !keys.WorkspaceDiagnostics {
+		return fmt.Errorf("required key 'workspaceDiagnostics' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector      DocumentSelectorOrNull `json:"documentSelector"`
+		WorkDoneProgress      *bool                  `json:"workDoneProgress,omitzero"`
+		Identifier            *string                `json:"identifier,omitzero"`
+		InterFileDependencies bool                   `json:"interFileDependencies"`
+		WorkspaceDiagnostics  bool                   `json:"workspaceDiagnostics"`
+		Id                    *string                `json:"id,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Parameters of the workspace diagnostic request.
 //
 // Since: 3.17.0
 type WorkspaceDiagnosticParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 
 	// The additional identifier provided during registration.
-	Identifier *string `json:"identifier,omitempty"`
+	Identifier *string `json:"identifier,omitzero"`
 
 	// The currently known diagnostic reports with their
 	// previous result ids.
@@ -1994,11 +2772,10 @@ func (s *WorkspaceDiagnosticParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-		PartialResultParams
-
-		Identifier        *string            `json:"identifier,omitempty"`
-		PreviousResultIds []PreviousResultId `json:"previousResultIds"`
+		WorkDoneToken      *IntegerOrString   `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString   `json:"partialResultToken,omitzero"`
+		Identifier         *string            `json:"identifier,omitzero"`
+		PreviousResultIds  []PreviousResultId `json:"previousResultIds"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -2008,7 +2785,7 @@ func (s *WorkspaceDiagnosticParams) UnmarshalJSON(data []byte) error {
 //
 // Since: 3.17.0
 type WorkspaceDiagnosticReport struct {
-	Items []WorkspaceDocumentDiagnosticReport `json:"items"`
+	Items []WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"items"`
 }
 
 func (s *WorkspaceDiagnosticReport) UnmarshalJSON(data []byte) error {
@@ -2028,7 +2805,7 @@ func (s *WorkspaceDiagnosticReport) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Items []WorkspaceDocumentDiagnosticReport `json:"items"`
+		Items []WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"items"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -2038,7 +2815,7 @@ func (s *WorkspaceDiagnosticReport) UnmarshalJSON(data []byte) error {
 //
 // Since: 3.17.0
 type WorkspaceDiagnosticReportPartialResult struct {
-	Items []WorkspaceDocumentDiagnosticReport `json:"items"`
+	Items []WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"items"`
 }
 
 func (s *WorkspaceDiagnosticReportPartialResult) UnmarshalJSON(data []byte) error {
@@ -2058,7 +2835,7 @@ func (s *WorkspaceDiagnosticReportPartialResult) UnmarshalJSON(data []byte) erro
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Items []WorkspaceDocumentDiagnosticReport `json:"items"`
+		Items []WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"items"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -2108,8 +2885,41 @@ func (s *DidOpenNotebookDocumentParams) UnmarshalJSON(data []byte) error {
 //
 // Since: 3.17.0
 type NotebookDocumentSyncRegistrationOptions struct {
-	NotebookDocumentSyncOptions
-	StaticRegistrationOptions
+	// The notebooks to be synced
+	NotebookSelector []NotebookDocumentFilterWithNotebookOrCells `json:"notebookSelector"`
+
+	// Whether save notification should be forwarded to
+	// the server. Will only be honored if mode === `notebook`.
+	Save *bool `json:"save,omitzero"`
+
+	// The id used to register the request. The id can be used to deregister
+	// the request again. See also Registration#id.
+	Id *string `json:"id,omitzero"`
+}
+
+func (s *NotebookDocumentSyncRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		NotebookSelector requiredProp `json:"notebookSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.NotebookSelector {
+		return fmt.Errorf("required key 'notebookSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		NotebookSelector []NotebookDocumentFilterWithNotebookOrCells `json:"notebookSelector"`
+		Save             *bool                                       `json:"save,omitzero"`
+		Id               *string                                     `json:"id,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The params sent in a change notebook document notification.
@@ -2243,8 +3053,14 @@ func (s *DidCloseNotebookDocumentParams) UnmarshalJSON(data []byte) error {
 //
 // Proposed.
 type InlineCompletionParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
+	// The text document.
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+
+	// The position inside the text document.
+	Position Position `json:"position"`
+
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
 
 	// Additional information about the context in which inline completions were
 	// requested.
@@ -2254,7 +3070,9 @@ type InlineCompletionParams struct {
 func (s *InlineCompletionParams) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
-		Context requiredProp `json:"context"`
+		TextDocument requiredProp `json:"textDocument"`
+		Position     requiredProp `json:"position"`
+		Context      requiredProp `json:"context"`
 	}
 
 	var keys requiredProps
@@ -2262,16 +3080,22 @@ func (s *InlineCompletionParams) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
+	if !keys.TextDocument {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if !keys.Position {
+		return fmt.Errorf("required key 'position' is missing")
+	}
 	if !keys.Context {
 		return fmt.Errorf("required key 'context' is missing")
 	}
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		TextDocumentPositionParams
-		WorkDoneProgressParams
-
-		Context *InlineCompletionContext `json:"context"`
+		TextDocument  TextDocumentIdentifier   `json:"textDocument"`
+		Position      Position                 `json:"position"`
+		WorkDoneToken *IntegerOrString         `json:"workDoneToken,omitzero"`
+		Context       *InlineCompletionContext `json:"context"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -2320,13 +3144,13 @@ type InlineCompletionItem struct {
 	InsertText StringOrStringValue `json:"insertText"`
 
 	// A text that is used to decide if this inline completion should be shown. When `falsy` the InlineCompletionItem.insertText is used.
-	FilterText *string `json:"filterText,omitempty"`
+	FilterText *string `json:"filterText,omitzero"`
 
 	// The range to replace. Must begin and end on the same line.
-	Range *Range `json:"range,omitempty"`
+	Range *Range `json:"range,omitzero"`
 
 	// An optional Command that is executed *after* inserting this completion.
-	Command *Command `json:"command,omitempty"`
+	Command *Command `json:"command,omitzero"`
 }
 
 func (s *InlineCompletionItem) UnmarshalJSON(data []byte) error {
@@ -2347,9 +3171,9 @@ func (s *InlineCompletionItem) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		InsertText StringOrStringValue `json:"insertText"`
-		FilterText *string             `json:"filterText,omitempty"`
-		Range      *Range              `json:"range,omitempty"`
-		Command    *Command            `json:"command,omitempty"`
+		FilterText *string             `json:"filterText,omitzero"`
+		Range      *Range              `json:"range,omitzero"`
+		Command    *Command            `json:"command,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -2361,9 +3185,40 @@ func (s *InlineCompletionItem) UnmarshalJSON(data []byte) error {
 //
 // Proposed.
 type InlineCompletionRegistrationOptions struct {
-	InlineCompletionOptions
-	TextDocumentRegistrationOptions
-	StaticRegistrationOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	// The id used to register the request. The id can be used to deregister
+	// the request again. See also Registration#id.
+	Id *string `json:"id,omitzero"`
+}
+
+func (s *InlineCompletionRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		Id               *string                `json:"id,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Parameters for the `workspace/textDocumentContent` request.
@@ -2441,8 +3296,36 @@ func (s *TextDocumentContentResult) UnmarshalJSON(data []byte) error {
 //
 // Proposed.
 type TextDocumentContentRegistrationOptions struct {
-	TextDocumentContentOptions
-	StaticRegistrationOptions
+	// The schemes for which the server provides content.
+	Schemes []string `json:"schemes"`
+
+	// The id used to register the request. The id can be used to deregister
+	// the request again. See also Registration#id.
+	Id *string `json:"id,omitzero"`
+}
+
+func (s *TextDocumentContentRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		Schemes requiredProp `json:"schemes"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.Schemes {
+		return fmt.Errorf("required key 'schemes' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Schemes []string `json:"schemes"`
+		Id      *string  `json:"id,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Parameters for the `workspace/textDocumentContent/refresh` request.
@@ -2533,8 +3416,101 @@ func (s *UnregistrationParams) UnmarshalJSON(data []byte) error {
 }
 
 type InitializeParams struct {
-	InitializeParamsBase
-	WorkspaceFoldersInitializeParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// The process Id of the parent process that started
+	// the server.
+	//
+	// Is `null` if the process has not been started by another process.
+	// If the parent process is not alive then the server should exit.
+	ProcessId IntegerOrNull `json:"processId"`
+
+	// Information about the client
+	//
+	// Since: 3.15.0
+	ClientInfo *ClientInfo `json:"clientInfo,omitzero"`
+
+	// The locale the client is currently showing the user interface
+	// in. This must not necessarily be the locale of the operating
+	// system.
+	//
+	// Uses IETF language tags as the value's syntax
+	// (See https://en.wikipedia.org/wiki/IETF_language_tag)
+	//
+	// Since: 3.16.0
+	Locale *string `json:"locale,omitzero"`
+
+	// The rootPath of the workspace. Is null
+	// if no folder is open.
+	//
+	// Deprecated: in favour of rootUri.
+	RootPath *StringOrNull `json:"rootPath,omitzero"`
+
+	// The rootUri of the workspace. Is null if no
+	// folder is open. If both `rootPath` and `rootUri` are set
+	// `rootUri` wins.
+	//
+	// Deprecated: in favour of workspaceFolders.
+	RootUri DocumentUriOrNull `json:"rootUri"`
+
+	// The capabilities provided by the client (editor or tool)
+	Capabilities *ClientCapabilities `json:"capabilities"`
+
+	// User provided initialization options.
+	InitializationOptions *any `json:"initializationOptions,omitzero"`
+
+	// The initial trace setting. If omitted trace is disabled ('off').
+	Trace *TraceValue `json:"trace,omitzero"`
+
+	// The workspace folders configured in the client when the server starts.
+	//
+	// This property is only available if the client supports workspace folders.
+	// It can be `null` if the client supports workspace folders but none are
+	// configured.
+	//
+	// Since: 3.6.0
+	WorkspaceFolders *WorkspaceFoldersOrNull `json:"workspaceFolders,omitzero"`
+}
+
+func (s *InitializeParams) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		ProcessId    requiredProp `json:"processId"`
+		RootUri      requiredProp `json:"rootUri"`
+		Capabilities requiredProp `json:"capabilities"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.ProcessId {
+		return fmt.Errorf("required key 'processId' is missing")
+	}
+	if !keys.RootUri {
+		return fmt.Errorf("required key 'rootUri' is missing")
+	}
+	if !keys.Capabilities {
+		return fmt.Errorf("required key 'capabilities' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneToken         *IntegerOrString        `json:"workDoneToken,omitzero"`
+		ProcessId             IntegerOrNull           `json:"processId"`
+		ClientInfo            *ClientInfo             `json:"clientInfo,omitzero"`
+		Locale                *string                 `json:"locale,omitzero"`
+		RootPath              *StringOrNull           `json:"rootPath,omitzero"`
+		RootUri               DocumentUriOrNull       `json:"rootUri"`
+		Capabilities          *ClientCapabilities     `json:"capabilities"`
+		InitializationOptions *any                    `json:"initializationOptions,omitzero"`
+		Trace                 *TraceValue             `json:"trace,omitzero"`
+		WorkspaceFolders      *WorkspaceFoldersOrNull `json:"workspaceFolders,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The result returned from an initialize request.
@@ -2545,7 +3521,7 @@ type InitializeResult struct {
 	// Information about the server.
 	//
 	// Since: 3.15.0
-	ServerInfo *ServerInfo `json:"serverInfo,omitempty"`
+	ServerInfo *ServerInfo `json:"serverInfo,omitzero"`
 }
 
 func (s *InitializeResult) UnmarshalJSON(data []byte) error {
@@ -2566,7 +3542,7 @@ func (s *InitializeResult) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Capabilities *ServerCapabilities `json:"capabilities"`
-		ServerInfo   *ServerInfo         `json:"serverInfo,omitempty"`
+		ServerInfo   *ServerInfo         `json:"serverInfo,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -2637,7 +3613,7 @@ func (s *DidChangeConfigurationParams) UnmarshalJSON(data []byte) error {
 }
 
 type DidChangeConfigurationRegistrationOptions struct {
-	Section *StringOrStrings `json:"section,omitempty"`
+	Section *StringOrStrings `json:"section,omitzero"`
 }
 
 // The parameters of a notification message.
@@ -2685,7 +3661,7 @@ type ShowMessageRequestParams struct {
 	Message string `json:"message"`
 
 	// The message action items to present.
-	Actions *[]*MessageActionItem `json:"actions,omitempty"`
+	Actions *[]*MessageActionItem `json:"actions,omitzero"`
 }
 
 func (s *ShowMessageRequestParams) UnmarshalJSON(data []byte) error {
@@ -2711,7 +3687,7 @@ func (s *ShowMessageRequestParams) UnmarshalJSON(data []byte) error {
 	type temp struct {
 		Type    MessageType           `json:"type"`
 		Message string                `json:"message"`
-		Actions *[]*MessageActionItem `json:"actions,omitempty"`
+		Actions *[]*MessageActionItem `json:"actions,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -2829,7 +3805,7 @@ type DidChangeTextDocumentParams struct {
 	// - apply the 'textDocument/didChange' notifications in the order you receive them.
 	// - apply the `TextDocumentContentChangeEvent`s in a single notification in the order
 	//   you receive them.
-	ContentChanges []TextDocumentContentChangeEvent `json:"contentChanges"`
+	ContentChanges []TextDocumentContentChangePartialOrWholeDocument `json:"contentChanges"`
 }
 
 func (s *DidChangeTextDocumentParams) UnmarshalJSON(data []byte) error {
@@ -2853,8 +3829,8 @@ func (s *DidChangeTextDocumentParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		TextDocument   VersionedTextDocumentIdentifier  `json:"textDocument"`
-		ContentChanges []TextDocumentContentChangeEvent `json:"contentChanges"`
+		TextDocument   VersionedTextDocumentIdentifier                   `json:"textDocument"`
+		ContentChanges []TextDocumentContentChangePartialOrWholeDocument `json:"contentChanges"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -2862,7 +3838,9 @@ func (s *DidChangeTextDocumentParams) UnmarshalJSON(data []byte) error {
 
 // Describe options to be used when registered for text document change events.
 type TextDocumentChangeRegistrationOptions struct {
-	TextDocumentRegistrationOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
 
 	// How documents are synced to the server.
 	SyncKind TextDocumentSyncKind `json:"syncKind"`
@@ -2871,7 +3849,8 @@ type TextDocumentChangeRegistrationOptions struct {
 func (s *TextDocumentChangeRegistrationOptions) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
-		SyncKind requiredProp `json:"syncKind"`
+		DocumentSelector requiredProp `json:"documentSelector"`
+		SyncKind         requiredProp `json:"syncKind"`
 	}
 
 	var keys requiredProps
@@ -2879,15 +3858,17 @@ func (s *TextDocumentChangeRegistrationOptions) UnmarshalJSON(data []byte) error
 		return err
 	}
 
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
 	if !keys.SyncKind {
 		return fmt.Errorf("required key 'syncKind' is missing")
 	}
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		TextDocumentRegistrationOptions
-
-		SyncKind TextDocumentSyncKind `json:"syncKind"`
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		SyncKind         TextDocumentSyncKind   `json:"syncKind"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -2929,7 +3910,7 @@ type DidSaveTextDocumentParams struct {
 
 	// Optional the content when saved. Depends on the includeText value
 	// when the save notification was requested.
-	Text *string `json:"text,omitempty"`
+	Text *string `json:"text,omitzero"`
 }
 
 func (s *DidSaveTextDocumentParams) UnmarshalJSON(data []byte) error {
@@ -2950,7 +3931,7 @@ func (s *DidSaveTextDocumentParams) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		TextDocument TextDocumentIdentifier `json:"textDocument"`
-		Text         *string                `json:"text,omitempty"`
+		Text         *string                `json:"text,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -2958,8 +3939,36 @@ func (s *DidSaveTextDocumentParams) UnmarshalJSON(data []byte) error {
 
 // Save registration options.
 type TextDocumentSaveRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	SaveOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	// The client is supposed to include the content on save.
+	IncludeText *bool `json:"includeText,omitzero"`
+}
+
+func (s *TextDocumentSaveRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		IncludeText      *bool                  `json:"includeText,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameters sent in a will save text document notification.
@@ -3104,7 +4113,7 @@ type PublishDiagnosticsParams struct {
 	// Optional the version number of the document the diagnostics are published for.
 	//
 	// Since: 3.15.0
-	Version *int32 `json:"version,omitempty"`
+	Version *int32 `json:"version,omitzero"`
 
 	// An array of diagnostic information items.
 	Diagnostics []*Diagnostic `json:"diagnostics"`
@@ -3132,7 +4141,7 @@ func (s *PublishDiagnosticsParams) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Uri         DocumentUri   `json:"uri"`
-		Version     *int32        `json:"version,omitempty"`
+		Version     *int32        `json:"version,omitzero"`
 		Diagnostics []*Diagnostic `json:"diagnostics"`
 	}
 
@@ -3141,13 +4150,53 @@ func (s *PublishDiagnosticsParams) UnmarshalJSON(data []byte) error {
 
 // Completion parameters
 type CompletionParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
-	PartialResultParams
+	// The text document.
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+
+	// The position inside the text document.
+	Position Position `json:"position"`
+
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 
 	// The completion context. This is only available it the client specifies
 	// to send this using the client capability `textDocument.completion.contextSupport === true`
-	Context *CompletionContext `json:"context,omitempty"`
+	Context *CompletionContext `json:"context,omitzero"`
+}
+
+func (s *CompletionParams) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Position     requiredProp `json:"position"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.TextDocument {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if !keys.Position {
+		return fmt.Errorf("required key 'position' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocument       TextDocumentIdentifier `json:"textDocument"`
+		Position           Position               `json:"position"`
+		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
+		Context            *CompletionContext     `json:"context,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A completion item represents a text snippet that is
@@ -3165,45 +4214,45 @@ type CompletionItem struct {
 	// Additional details for the label
 	//
 	// Since: 3.17.0
-	LabelDetails *CompletionItemLabelDetails `json:"labelDetails,omitempty"`
+	LabelDetails *CompletionItemLabelDetails `json:"labelDetails,omitzero"`
 
 	// The kind of this completion item. Based of the kind
 	// an icon is chosen by the editor.
-	Kind *CompletionItemKind `json:"kind,omitempty"`
+	Kind *CompletionItemKind `json:"kind,omitzero"`
 
 	// Tags for this completion item.
 	//
 	// Since: 3.15.0
-	Tags *[]CompletionItemTag `json:"tags,omitempty"`
+	Tags *[]CompletionItemTag `json:"tags,omitzero"`
 
 	// A human-readable string with additional information
 	// about this item, like type or symbol information.
-	Detail *string `json:"detail,omitempty"`
+	Detail *string `json:"detail,omitzero"`
 
 	// A human-readable string that represents a doc-comment.
-	Documentation *StringOrMarkupContent `json:"documentation,omitempty"`
+	Documentation *StringOrMarkupContent `json:"documentation,omitzero"`
 
 	// Indicates if this item is deprecated.
 	//
 	// Deprecated: Use `tags` instead.
-	Deprecated *bool `json:"deprecated,omitempty"`
+	Deprecated *bool `json:"deprecated,omitzero"`
 
 	// Select this item when showing.
 	//
 	// *Note* that only one completion item can be selected and that the
 	// tool / client decides which item that is. The rule is that the *first*
 	// item of those that match best is selected.
-	Preselect *bool `json:"preselect,omitempty"`
+	Preselect *bool `json:"preselect,omitzero"`
 
 	// A string that should be used when comparing this item
 	// with other items. When `falsy` the label
 	// is used.
-	SortText *string `json:"sortText,omitempty"`
+	SortText *string `json:"sortText,omitzero"`
 
 	// A string that should be used when filtering a set of
 	// completion items. When `falsy` the label
 	// is used.
-	FilterText *string `json:"filterText,omitempty"`
+	FilterText *string `json:"filterText,omitzero"`
 
 	// A string that should be inserted into a document when selecting
 	// this completion. When `falsy` the label
@@ -3216,7 +4265,7 @@ type CompletionItem struct {
 	// `console` is provided it will only insert `sole`. Therefore it is
 	// recommended to use `textEdit` instead since it avoids additional client
 	// side interpretation.
-	InsertText *string `json:"insertText,omitempty"`
+	InsertText *string `json:"insertText,omitzero"`
 
 	// The format of the insert text. The format applies to both the
 	// `insertText` property and the `newText` property of a provided
@@ -3224,14 +4273,14 @@ type CompletionItem struct {
 	//
 	// Please note that the insertTextFormat doesn't apply to
 	// `additionalTextEdits`.
-	InsertTextFormat *InsertTextFormat `json:"insertTextFormat,omitempty"`
+	InsertTextFormat *InsertTextFormat `json:"insertTextFormat,omitzero"`
 
 	// How whitespace and indentation is handled during completion
 	// item insertion. If not provided the clients default value depends on
 	// the `textDocument.completion.insertTextMode` client capability.
 	//
 	// Since: 3.16.0
-	InsertTextMode *InsertTextMode `json:"insertTextMode,omitempty"`
+	InsertTextMode *InsertTextMode `json:"insertTextMode,omitzero"`
 
 	// An edit which is applied to a document when selecting
 	// this completion. When an edit is provided the value of
@@ -3253,7 +4302,7 @@ type CompletionItem struct {
 	// contained and starting at the same position.
 	//
 	// Since: 3.16.0 additional type `InsertReplaceEdit`
-	TextEdit *TextEditOrInsertReplaceEdit `json:"textEdit,omitempty"`
+	TextEdit *TextEditOrInsertReplaceEdit `json:"textEdit,omitzero"`
 
 	// The edit text used if the completion item is part of a CompletionList and
 	// CompletionList defines an item default for the text edit range.
@@ -3265,7 +4314,7 @@ type CompletionItem struct {
 	// property is used as a text.
 	//
 	// Since: 3.17.0
-	TextEditText *string `json:"textEditText,omitempty"`
+	TextEditText *string `json:"textEditText,omitzero"`
 
 	// An optional array of additional edits that are applied when
 	// selecting this completion. Edits must not overlap (including the same insert position)
@@ -3274,21 +4323,21 @@ type CompletionItem struct {
 	// Additional text edits should be used to change text unrelated to the current cursor position
 	// (for example adding an import statement at the top of the file if the completion item will
 	// insert an unqualified type).
-	AdditionalTextEdits *[]*TextEdit `json:"additionalTextEdits,omitempty"`
+	AdditionalTextEdits *[]*TextEdit `json:"additionalTextEdits,omitzero"`
 
 	// An optional set of characters that when pressed while this completion is active will accept it first and
 	// then type that character. *Note* that all commit characters should have `length=1` and that superfluous
 	// characters will be ignored.
-	CommitCharacters *[]string `json:"commitCharacters,omitempty"`
+	CommitCharacters *[]string `json:"commitCharacters,omitzero"`
 
 	// An optional command that is executed *after* inserting this completion. *Note* that
 	// additional modifications to the current document should be described with the
 	// additionalTextEdits-property.
-	Command *Command `json:"command,omitempty"`
+	Command *Command `json:"command,omitzero"`
 
 	// A data entry field that is preserved on a completion item between a
 	// CompletionRequest and a CompletionResolveRequest.
-	Data *any `json:"data,omitempty"`
+	Data *any `json:"data,omitzero"`
 }
 
 func (s *CompletionItem) UnmarshalJSON(data []byte) error {
@@ -3309,24 +4358,24 @@ func (s *CompletionItem) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Label               string                       `json:"label"`
-		LabelDetails        *CompletionItemLabelDetails  `json:"labelDetails,omitempty"`
-		Kind                *CompletionItemKind          `json:"kind,omitempty"`
-		Tags                *[]CompletionItemTag         `json:"tags,omitempty"`
-		Detail              *string                      `json:"detail,omitempty"`
-		Documentation       *StringOrMarkupContent       `json:"documentation,omitempty"`
-		Deprecated          *bool                        `json:"deprecated,omitempty"`
-		Preselect           *bool                        `json:"preselect,omitempty"`
-		SortText            *string                      `json:"sortText,omitempty"`
-		FilterText          *string                      `json:"filterText,omitempty"`
-		InsertText          *string                      `json:"insertText,omitempty"`
-		InsertTextFormat    *InsertTextFormat            `json:"insertTextFormat,omitempty"`
-		InsertTextMode      *InsertTextMode              `json:"insertTextMode,omitempty"`
-		TextEdit            *TextEditOrInsertReplaceEdit `json:"textEdit,omitempty"`
-		TextEditText        *string                      `json:"textEditText,omitempty"`
-		AdditionalTextEdits *[]*TextEdit                 `json:"additionalTextEdits,omitempty"`
-		CommitCharacters    *[]string                    `json:"commitCharacters,omitempty"`
-		Command             *Command                     `json:"command,omitempty"`
-		Data                *any                         `json:"data,omitempty"`
+		LabelDetails        *CompletionItemLabelDetails  `json:"labelDetails,omitzero"`
+		Kind                *CompletionItemKind          `json:"kind,omitzero"`
+		Tags                *[]CompletionItemTag         `json:"tags,omitzero"`
+		Detail              *string                      `json:"detail,omitzero"`
+		Documentation       *StringOrMarkupContent       `json:"documentation,omitzero"`
+		Deprecated          *bool                        `json:"deprecated,omitzero"`
+		Preselect           *bool                        `json:"preselect,omitzero"`
+		SortText            *string                      `json:"sortText,omitzero"`
+		FilterText          *string                      `json:"filterText,omitzero"`
+		InsertText          *string                      `json:"insertText,omitzero"`
+		InsertTextFormat    *InsertTextFormat            `json:"insertTextFormat,omitzero"`
+		InsertTextMode      *InsertTextMode              `json:"insertTextMode,omitzero"`
+		TextEdit            *TextEditOrInsertReplaceEdit `json:"textEdit,omitzero"`
+		TextEditText        *string                      `json:"textEditText,omitzero"`
+		AdditionalTextEdits *[]*TextEdit                 `json:"additionalTextEdits,omitzero"`
+		CommitCharacters    *[]string                    `json:"commitCharacters,omitzero"`
+		Command             *Command                     `json:"command,omitzero"`
+		Data                *any                         `json:"data,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -3356,7 +4405,7 @@ type CompletionList struct {
 	// capability.
 	//
 	// Since: 3.17.0
-	ItemDefaults *CompletionItemDefaults `json:"itemDefaults,omitempty"`
+	ItemDefaults *CompletionItemDefaults `json:"itemDefaults,omitzero"`
 
 	// Specifies how fields from a completion item should be combined with those
 	// from `completionList.itemDefaults`.
@@ -3375,7 +4424,7 @@ type CompletionList struct {
 	// capability.
 	//
 	// Since: 3.18.0
-	ApplyKind *CompletionItemApplyKinds `json:"applyKind,omitempty"`
+	ApplyKind *CompletionItemApplyKinds `json:"applyKind,omitzero"`
 
 	// The completion items.
 	Items []*CompletionItem `json:"items"`
@@ -3403,8 +4452,8 @@ func (s *CompletionList) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		IsIncomplete bool                      `json:"isIncomplete"`
-		ItemDefaults *CompletionItemDefaults   `json:"itemDefaults,omitempty"`
-		ApplyKind    *CompletionItemApplyKinds `json:"applyKind,omitempty"`
+		ItemDefaults *CompletionItemDefaults   `json:"itemDefaults,omitzero"`
+		ApplyKind    *CompletionItemApplyKinds `json:"applyKind,omitzero"`
 		Items        []*CompletionItem         `json:"items"`
 	}
 
@@ -3413,24 +4462,120 @@ func (s *CompletionList) UnmarshalJSON(data []byte) error {
 
 // Registration options for a CompletionRequest.
 type CompletionRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	CompletionOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// Most tools trigger completion request automatically without explicitly requesting
+	// it using a keyboard shortcut (e.g. Ctrl+Space). Typically they do so when the user
+	// starts to type an identifier. For example if the user types `c` in a JavaScript file
+	// code complete will automatically pop up present `console` besides others as a
+	// completion item. Characters that make up identifiers don't need to be listed here.
+	//
+	// If code complete should automatically be trigger on characters not being valid inside
+	// an identifier (for example `.` in JavaScript) list them in `triggerCharacters`.
+	TriggerCharacters *[]string `json:"triggerCharacters,omitzero"`
+
+	// The list of all possible characters that commit a completion. This field can be used
+	// if clients don't support individual commit characters per completion item. See
+	// `ClientCapabilities.textDocument.completion.completionItem.commitCharactersSupport`
+	//
+	// If a server provides both `allCommitCharacters` and commit characters on an individual
+	// completion item the ones on the completion item win.
+	//
+	// Since: 3.2.0
+	AllCommitCharacters *[]string `json:"allCommitCharacters,omitzero"`
+
+	// The server provides support to resolve additional
+	// information for a completion item.
+	ResolveProvider *bool `json:"resolveProvider,omitzero"`
+
+	// The server supports the following `CompletionItem` specific
+	// capabilities.
+	//
+	// Since: 3.17.0
+	CompletionItem *ServerCompletionItemOptions `json:"completionItem,omitzero"`
+}
+
+func (s *CompletionRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector    DocumentSelectorOrNull       `json:"documentSelector"`
+		WorkDoneProgress    *bool                        `json:"workDoneProgress,omitzero"`
+		TriggerCharacters   *[]string                    `json:"triggerCharacters,omitzero"`
+		AllCommitCharacters *[]string                    `json:"allCommitCharacters,omitzero"`
+		ResolveProvider     *bool                        `json:"resolveProvider,omitzero"`
+		CompletionItem      *ServerCompletionItemOptions `json:"completionItem,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Parameters for a HoverRequest.
 type HoverParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
+	// The text document.
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+
+	// The position inside the text document.
+	Position Position `json:"position"`
+
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+}
+
+func (s *HoverParams) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Position     requiredProp `json:"position"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.TextDocument {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if !keys.Position {
+		return fmt.Errorf("required key 'position' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocument  TextDocumentIdentifier `json:"textDocument"`
+		Position      Position               `json:"position"`
+		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The result of a hover request.
 type Hover struct {
 	// The hover's content
-	Contents MarkupContentOrMarkedStringOrMarkedStrings `json:"contents"`
+	Contents MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings `json:"contents"`
 
 	// An optional range inside the text document that is used to
 	// visualize the hover, e.g. by changing the background color.
-	Range *Range `json:"range,omitempty"`
+	Range *Range `json:"range,omitzero"`
 }
 
 func (s *Hover) UnmarshalJSON(data []byte) error {
@@ -3450,8 +4595,8 @@ func (s *Hover) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Contents MarkupContentOrMarkedStringOrMarkedStrings `json:"contents"`
-		Range    *Range                                     `json:"range,omitempty"`
+		Contents MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings `json:"contents"`
+		Range    *Range                                                         `json:"range,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -3459,20 +4604,83 @@ func (s *Hover) UnmarshalJSON(data []byte) error {
 
 // Registration options for a HoverRequest.
 type HoverRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	HoverOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+}
+
+func (s *HoverRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Parameters for a SignatureHelpRequest.
 type SignatureHelpParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
+	// The text document.
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+
+	// The position inside the text document.
+	Position Position `json:"position"`
+
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
 
 	// The signature help context. This is only available if the client specifies
 	// to send this using the client capability `textDocument.signatureHelp.contextSupport === true`
 	//
 	// Since: 3.15.0
-	Context *SignatureHelpContext `json:"context,omitempty"`
+	Context *SignatureHelpContext `json:"context,omitzero"`
+}
+
+func (s *SignatureHelpParams) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Position     requiredProp `json:"position"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.TextDocument {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if !keys.Position {
+		return fmt.Errorf("required key 'position' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocument  TextDocumentIdentifier `json:"textDocument"`
+		Position      Position               `json:"position"`
+		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
+		Context       *SignatureHelpContext  `json:"context,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Signature help represents the signature of something
@@ -3491,7 +4699,7 @@ type SignatureHelp struct {
 	//
 	// In future version of the protocol this property might become
 	// mandatory to better express this.
-	ActiveSignature *uint32 `json:"activeSignature,omitempty"`
+	ActiveSignature *uint32 `json:"activeSignature,omitzero"`
 
 	// The active parameter of the active signature.
 	//
@@ -3509,7 +4717,7 @@ type SignatureHelp struct {
 	// In future version of the protocol this property might become
 	// mandatory (but still nullable) to better express the active parameter if
 	// the active signature does have any.
-	ActiveParameter *Nullable[uint32] `json:"activeParameter,omitempty"`
+	ActiveParameter *UintegerOrNull `json:"activeParameter,omitzero"`
 }
 
 func (s *SignatureHelp) UnmarshalJSON(data []byte) error {
@@ -3530,8 +4738,8 @@ func (s *SignatureHelp) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Signatures      []*SignatureInformation `json:"signatures"`
-		ActiveSignature *uint32                 `json:"activeSignature,omitempty"`
-		ActiveParameter *Nullable[uint32]       `json:"activeParameter,omitempty"`
+		ActiveSignature *uint32                 `json:"activeSignature,omitzero"`
+		ActiveParameter *UintegerOrNull         `json:"activeParameter,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -3539,36 +4747,28 @@ func (s *SignatureHelp) UnmarshalJSON(data []byte) error {
 
 // Registration options for a SignatureHelpRequest.
 type SignatureHelpRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	SignatureHelpOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// List of characters that trigger signature help automatically.
+	TriggerCharacters *[]string `json:"triggerCharacters,omitzero"`
+
+	// List of characters that re-trigger signature help.
+	//
+	// These trigger characters are only active when signature help is already showing. All trigger characters
+	// are also counted as re-trigger characters.
+	//
+	// Since: 3.15.0
+	RetriggerCharacters *[]string `json:"retriggerCharacters,omitzero"`
 }
 
-// Parameters for a DefinitionRequest.
-type DefinitionParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
-	PartialResultParams
-}
-
-// Registration options for a DefinitionRequest.
-type DefinitionRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	DefinitionOptions
-}
-
-// Parameters for a ReferencesRequest.
-type ReferenceParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
-	PartialResultParams
-
-	Context *ReferenceContext `json:"context"`
-}
-
-func (s *ReferenceParams) UnmarshalJSON(data []byte) error {
+func (s *SignatureHelpRegistrationOptions) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
-		Context requiredProp `json:"context"`
+		DocumentSelector requiredProp `json:"documentSelector"`
 	}
 
 	var keys requiredProps
@@ -3576,17 +4776,148 @@ func (s *ReferenceParams) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector    DocumentSelectorOrNull `json:"documentSelector"`
+		WorkDoneProgress    *bool                  `json:"workDoneProgress,omitzero"`
+		TriggerCharacters   *[]string              `json:"triggerCharacters,omitzero"`
+		RetriggerCharacters *[]string              `json:"retriggerCharacters,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
+}
+
+// Parameters for a DefinitionRequest.
+type DefinitionParams struct {
+	// The text document.
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+
+	// The position inside the text document.
+	Position Position `json:"position"`
+
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
+}
+
+func (s *DefinitionParams) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Position     requiredProp `json:"position"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.TextDocument {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if !keys.Position {
+		return fmt.Errorf("required key 'position' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocument       TextDocumentIdentifier `json:"textDocument"`
+		Position           Position               `json:"position"`
+		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
+}
+
+// Registration options for a DefinitionRequest.
+type DefinitionRegistrationOptions struct {
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+}
+
+func (s *DefinitionRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
+}
+
+// Parameters for a ReferencesRequest.
+type ReferenceParams struct {
+	// The text document.
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+
+	// The position inside the text document.
+	Position Position `json:"position"`
+
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
+
+	Context *ReferenceContext `json:"context"`
+}
+
+func (s *ReferenceParams) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Position     requiredProp `json:"position"`
+		Context      requiredProp `json:"context"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.TextDocument {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if !keys.Position {
+		return fmt.Errorf("required key 'position' is missing")
+	}
 	if !keys.Context {
 		return fmt.Errorf("required key 'context' is missing")
 	}
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		TextDocumentPositionParams
-		WorkDoneProgressParams
-		PartialResultParams
-
-		Context *ReferenceContext `json:"context"`
+		TextDocument       TextDocumentIdentifier `json:"textDocument"`
+		Position           Position               `json:"position"`
+		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
+		Context            *ReferenceContext      `json:"context"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -3594,15 +4925,81 @@ func (s *ReferenceParams) UnmarshalJSON(data []byte) error {
 
 // Registration options for a ReferencesRequest.
 type ReferenceRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	ReferenceOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+}
+
+func (s *ReferenceRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Parameters for a DocumentHighlightRequest.
 type DocumentHighlightParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
-	PartialResultParams
+	// The text document.
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+
+	// The position inside the text document.
+	Position Position `json:"position"`
+
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
+}
+
+func (s *DocumentHighlightParams) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Position     requiredProp `json:"position"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.TextDocument {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if !keys.Position {
+		return fmt.Errorf("required key 'position' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocument       TextDocumentIdentifier `json:"textDocument"`
+		Position           Position               `json:"position"`
+		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A document highlight is a range inside a text document which deserves
@@ -3613,7 +5010,7 @@ type DocumentHighlight struct {
 	Range Range `json:"range"`
 
 	// The highlight kind, default is text.
-	Kind *DocumentHighlightKind `json:"kind,omitempty"`
+	Kind *DocumentHighlightKind `json:"kind,omitzero"`
 }
 
 func (s *DocumentHighlight) UnmarshalJSON(data []byte) error {
@@ -3634,7 +5031,7 @@ func (s *DocumentHighlight) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Range Range                  `json:"range"`
-		Kind  *DocumentHighlightKind `json:"kind,omitempty"`
+		Kind  *DocumentHighlightKind `json:"kind,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -3642,14 +5039,45 @@ func (s *DocumentHighlight) UnmarshalJSON(data []byte) error {
 
 // Registration options for a DocumentHighlightRequest.
 type DocumentHighlightRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	DocumentHighlightOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+}
+
+func (s *DocumentHighlightRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // Parameters for a DocumentSymbolRequest.
 type DocumentSymbolParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
@@ -3672,10 +5100,9 @@ func (s *DocumentSymbolParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-		PartialResultParams
-
-		TextDocument TextDocumentIdentifier `json:"textDocument"`
+		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
+		TextDocument       TextDocumentIdentifier `json:"textDocument"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -3684,12 +5111,27 @@ func (s *DocumentSymbolParams) UnmarshalJSON(data []byte) error {
 // Represents information about programming constructs like variables, classes,
 // interfaces etc.
 type SymbolInformation struct {
-	BaseSymbolInformation
+	// The name of this symbol.
+	Name string `json:"name"`
+
+	// The kind of this symbol.
+	Kind SymbolKind `json:"kind"`
+
+	// Tags for this symbol.
+	//
+	// Since: 3.16.0
+	Tags *[]SymbolTag `json:"tags,omitzero"`
+
+	// The name of the symbol containing this symbol. This information is for
+	// user interface purposes (e.g. to render a qualifier in the user interface
+	// if necessary). It can't be used to re-infer a hierarchy for the document
+	// symbols.
+	ContainerName *string `json:"containerName,omitzero"`
 
 	// Indicates if this symbol is deprecated.
 	//
 	// Deprecated: Use tags instead
-	Deprecated *bool `json:"deprecated,omitempty"`
+	Deprecated *bool `json:"deprecated,omitzero"`
 
 	// The location of this symbol. The location's range is used by a tool
 	// to reveal the location in the editor. If the symbol is selected in the
@@ -3706,6 +5148,8 @@ type SymbolInformation struct {
 func (s *SymbolInformation) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
+		Name     requiredProp `json:"name"`
+		Kind     requiredProp `json:"kind"`
 		Location requiredProp `json:"location"`
 	}
 
@@ -3714,16 +5158,24 @@ func (s *SymbolInformation) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
+	if !keys.Name {
+		return fmt.Errorf("required key 'name' is missing")
+	}
+	if !keys.Kind {
+		return fmt.Errorf("required key 'kind' is missing")
+	}
 	if !keys.Location {
 		return fmt.Errorf("required key 'location' is missing")
 	}
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		BaseSymbolInformation
-
-		Deprecated *bool    `json:"deprecated,omitempty"`
-		Location   Location `json:"location"`
+		Name          string       `json:"name"`
+		Kind          SymbolKind   `json:"kind"`
+		Tags          *[]SymbolTag `json:"tags,omitzero"`
+		ContainerName *string      `json:"containerName,omitzero"`
+		Deprecated    *bool        `json:"deprecated,omitzero"`
+		Location      Location     `json:"location"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -3739,7 +5191,7 @@ type DocumentSymbol struct {
 	Name string `json:"name"`
 
 	// More detail for this symbol, e.g the signature of a function.
-	Detail *string `json:"detail,omitempty"`
+	Detail *string `json:"detail,omitzero"`
 
 	// The kind of this symbol.
 	Kind SymbolKind `json:"kind"`
@@ -3747,12 +5199,12 @@ type DocumentSymbol struct {
 	// Tags for this document symbol.
 	//
 	// Since: 3.16.0
-	Tags *[]SymbolTag `json:"tags,omitempty"`
+	Tags *[]SymbolTag `json:"tags,omitzero"`
 
 	// Indicates if this symbol is deprecated.
 	//
 	// Deprecated: Use tags instead
-	Deprecated *bool `json:"deprecated,omitempty"`
+	Deprecated *bool `json:"deprecated,omitzero"`
 
 	// The range enclosing this symbol not including leading/trailing whitespace but everything else
 	// like comments. This information is typically used to determine if the clients cursor is
@@ -3764,7 +5216,7 @@ type DocumentSymbol struct {
 	SelectionRange Range `json:"selectionRange"`
 
 	// Children of this symbol, e.g. properties of a class.
-	Children *[]*DocumentSymbol `json:"children,omitempty"`
+	Children *[]*DocumentSymbol `json:"children,omitzero"`
 }
 
 func (s *DocumentSymbol) UnmarshalJSON(data []byte) error {
@@ -3797,13 +5249,13 @@ func (s *DocumentSymbol) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Name           string             `json:"name"`
-		Detail         *string            `json:"detail,omitempty"`
+		Detail         *string            `json:"detail,omitzero"`
 		Kind           SymbolKind         `json:"kind"`
-		Tags           *[]SymbolTag       `json:"tags,omitempty"`
-		Deprecated     *bool              `json:"deprecated,omitempty"`
+		Tags           *[]SymbolTag       `json:"tags,omitzero"`
+		Deprecated     *bool              `json:"deprecated,omitzero"`
 		Range          Range              `json:"range"`
 		SelectionRange Range              `json:"selectionRange"`
-		Children       *[]*DocumentSymbol `json:"children,omitempty"`
+		Children       *[]*DocumentSymbol `json:"children,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -3811,14 +5263,52 @@ func (s *DocumentSymbol) UnmarshalJSON(data []byte) error {
 
 // Registration options for a DocumentSymbolRequest.
 type DocumentSymbolRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	DocumentSymbolOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// A human-readable string that is shown when multiple outlines trees
+	// are shown for the same document.
+	//
+	// Since: 3.16.0
+	Label *string `json:"label,omitzero"`
+}
+
+func (s *DocumentSymbolRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
+		Label            *string                `json:"label,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameters of a CodeActionRequest.
 type CodeActionParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 
 	// The document in which the command was invoked.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
@@ -3855,12 +5345,11 @@ func (s *CodeActionParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-		PartialResultParams
-
-		TextDocument TextDocumentIdentifier `json:"textDocument"`
-		Range        Range                  `json:"range"`
-		Context      *CodeActionContext     `json:"context"`
+		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
+		TextDocument       TextDocumentIdentifier `json:"textDocument"`
+		Range              Range                  `json:"range"`
+		Context            *CodeActionContext     `json:"context"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -3879,14 +5368,14 @@ type Command struct {
 	// Since: 3.18.0
 	//
 	// Proposed.
-	Tooltip *string `json:"tooltip,omitempty"`
+	Tooltip *string `json:"tooltip,omitzero"`
 
 	// The identifier of the actual command handler.
 	Command string `json:"command"`
 
 	// Arguments that the command handler should be
 	// invoked with.
-	Arguments *[]any `json:"arguments,omitempty"`
+	Arguments *[]any `json:"arguments,omitzero"`
 }
 
 func (s *Command) UnmarshalJSON(data []byte) error {
@@ -3911,9 +5400,9 @@ func (s *Command) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Title     string  `json:"title"`
-		Tooltip   *string `json:"tooltip,omitempty"`
+		Tooltip   *string `json:"tooltip,omitzero"`
 		Command   string  `json:"command"`
-		Arguments *[]any  `json:"arguments,omitempty"`
+		Arguments *[]any  `json:"arguments,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -3930,10 +5419,10 @@ type CodeAction struct {
 	// The kind of the code action.
 	//
 	// Used to filter code actions.
-	Kind *CodeActionKind `json:"kind,omitempty"`
+	Kind *CodeActionKind `json:"kind,omitzero"`
 
 	// The diagnostics that this code action resolves.
-	Diagnostics *[]*Diagnostic `json:"diagnostics,omitempty"`
+	Diagnostics *[]*Diagnostic `json:"diagnostics,omitzero"`
 
 	// Marks this as a preferred action. Preferred actions are used by the `auto fix` command and can be targeted
 	// by keybindings.
@@ -3942,7 +5431,7 @@ type CodeAction struct {
 	// A refactoring should be marked preferred if it is the most reasonable choice of actions to take.
 	//
 	// Since: 3.15.0
-	IsPreferred *bool `json:"isPreferred,omitempty"`
+	IsPreferred *bool `json:"isPreferred,omitzero"`
 
 	// Marks that the code action cannot currently be applied.
 	//
@@ -3959,26 +5448,26 @@ type CodeAction struct {
 	//     error message with `reason` in the editor.
 	//
 	// Since: 3.16.0
-	Disabled *CodeActionDisabled `json:"disabled,omitempty"`
+	Disabled *CodeActionDisabled `json:"disabled,omitzero"`
 
 	// The workspace edit this code action performs.
-	Edit *WorkspaceEdit `json:"edit,omitempty"`
+	Edit *WorkspaceEdit `json:"edit,omitzero"`
 
 	// A command this code action executes. If a code action
 	// provides an edit and a command, first the edit is
 	// executed and then the command.
-	Command *Command `json:"command,omitempty"`
+	Command *Command `json:"command,omitzero"`
 
 	// A data entry field that is preserved on a code action between
 	// a `textDocument/codeAction` and a `codeAction/resolve` request.
 	//
 	// Since: 3.16.0
-	Data *any `json:"data,omitempty"`
+	Data *any `json:"data,omitzero"`
 
 	// Tags for this code action.
 	//
 	// Since: 3.18.0 - proposed
-	Tags *[]CodeActionTag `json:"tags,omitempty"`
+	Tags *[]CodeActionTag `json:"tags,omitzero"`
 }
 
 func (s *CodeAction) UnmarshalJSON(data []byte) error {
@@ -3999,14 +5488,14 @@ func (s *CodeAction) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Title       string              `json:"title"`
-		Kind        *CodeActionKind     `json:"kind,omitempty"`
-		Diagnostics *[]*Diagnostic      `json:"diagnostics,omitempty"`
-		IsPreferred *bool               `json:"isPreferred,omitempty"`
-		Disabled    *CodeActionDisabled `json:"disabled,omitempty"`
-		Edit        *WorkspaceEdit      `json:"edit,omitempty"`
-		Command     *Command            `json:"command,omitempty"`
-		Data        *any                `json:"data,omitempty"`
-		Tags        *[]CodeActionTag    `json:"tags,omitempty"`
+		Kind        *CodeActionKind     `json:"kind,omitzero"`
+		Diagnostics *[]*Diagnostic      `json:"diagnostics,omitzero"`
+		IsPreferred *bool               `json:"isPreferred,omitzero"`
+		Disabled    *CodeActionDisabled `json:"disabled,omitzero"`
+		Edit        *WorkspaceEdit      `json:"edit,omitzero"`
+		Command     *Command            `json:"command,omitzero"`
+		Data        *any                `json:"data,omitzero"`
+		Tags        *[]CodeActionTag    `json:"tags,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -4014,14 +5503,78 @@ func (s *CodeAction) UnmarshalJSON(data []byte) error {
 
 // Registration options for a CodeActionRequest.
 type CodeActionRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	CodeActionOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// CodeActionKinds that this server may return.
+	//
+	// The list of kinds may be generic, such as `CodeActionKind.Refactor`, or the server
+	// may list out every specific kind they provide.
+	CodeActionKinds *[]CodeActionKind `json:"codeActionKinds,omitzero"`
+
+	// Static documentation for a class of code actions.
+	//
+	// Documentation from the provider should be shown in the code actions menu if either:
+	//
+	// - Code actions of `kind` are requested by the editor. In this case, the editor will show the documentation that
+	//   most closely matches the requested code action kind. For example, if a provider has documentation for
+	//   both `Refactor` and `RefactorExtract`, when the user requests code actions for `RefactorExtract`,
+	//   the editor will use the documentation for `RefactorExtract` instead of the documentation for `Refactor`.
+	//
+	// - Any code actions of `kind` are returned by the provider.
+	//
+	// At most one documentation entry should be shown per provider.
+	//
+	// Since: 3.18.0
+	//
+	// Proposed.
+	Documentation *[]*CodeActionKindDocumentation `json:"documentation,omitzero"`
+
+	// The server provides support to resolve additional
+	// information for a code action.
+	//
+	// Since: 3.16.0
+	ResolveProvider *bool `json:"resolveProvider,omitzero"`
+}
+
+func (s *CodeActionRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector DocumentSelectorOrNull          `json:"documentSelector"`
+		WorkDoneProgress *bool                           `json:"workDoneProgress,omitzero"`
+		CodeActionKinds  *[]CodeActionKind               `json:"codeActionKinds,omitzero"`
+		Documentation    *[]*CodeActionKindDocumentation `json:"documentation,omitzero"`
+		ResolveProvider  *bool                           `json:"resolveProvider,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameters of a WorkspaceSymbolRequest.
 type WorkspaceSymbolParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 
 	// A query string to filter symbols by. Clients may send an empty
 	// string here to request all symbols.
@@ -4051,10 +5604,9 @@ func (s *WorkspaceSymbolParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-		PartialResultParams
-
-		Query string `json:"query"`
+		WorkDoneToken      *IntegerOrString `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
+		Query              string           `json:"query"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -4066,7 +5618,22 @@ func (s *WorkspaceSymbolParams) UnmarshalJSON(data []byte) error {
 //
 // Since: 3.17.0
 type WorkspaceSymbol struct {
-	BaseSymbolInformation
+	// The name of this symbol.
+	Name string `json:"name"`
+
+	// The kind of this symbol.
+	Kind SymbolKind `json:"kind"`
+
+	// Tags for this symbol.
+	//
+	// Since: 3.16.0
+	Tags *[]SymbolTag `json:"tags,omitzero"`
+
+	// The name of the symbol containing this symbol. This information is for
+	// user interface purposes (e.g. to render a qualifier in the user interface
+	// if necessary). It can't be used to re-infer a hierarchy for the document
+	// symbols.
+	ContainerName *string `json:"containerName,omitzero"`
 
 	// The location of the symbol. Whether a server is allowed to
 	// return a location without a range depends on the client
@@ -4077,12 +5644,14 @@ type WorkspaceSymbol struct {
 
 	// A data entry field that is preserved on a workspace symbol between a
 	// workspace symbol request and a workspace symbol resolve request.
-	Data *any `json:"data,omitempty"`
+	Data *any `json:"data,omitzero"`
 }
 
 func (s *WorkspaceSymbol) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
+		Name     requiredProp `json:"name"`
+		Kind     requiredProp `json:"kind"`
 		Location requiredProp `json:"location"`
 	}
 
@@ -4091,16 +5660,24 @@ func (s *WorkspaceSymbol) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
+	if !keys.Name {
+		return fmt.Errorf("required key 'name' is missing")
+	}
+	if !keys.Kind {
+		return fmt.Errorf("required key 'kind' is missing")
+	}
 	if !keys.Location {
 		return fmt.Errorf("required key 'location' is missing")
 	}
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		BaseSymbolInformation
-
-		Location LocationOrLocationUriOnly `json:"location"`
-		Data     *any                      `json:"data,omitempty"`
+		Name          string                    `json:"name"`
+		Kind          SymbolKind                `json:"kind"`
+		Tags          *[]SymbolTag              `json:"tags,omitzero"`
+		ContainerName *string                   `json:"containerName,omitzero"`
+		Location      LocationOrLocationUriOnly `json:"location"`
+		Data          *any                      `json:"data,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -4108,13 +5685,23 @@ func (s *WorkspaceSymbol) UnmarshalJSON(data []byte) error {
 
 // Registration options for a WorkspaceSymbolRequest.
 type WorkspaceSymbolRegistrationOptions struct {
-	WorkspaceSymbolOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// The server provides support to resolve additional
+	// information for a workspace symbol.
+	//
+	// Since: 3.17.0
+	ResolveProvider *bool `json:"resolveProvider,omitzero"`
 }
 
 // The parameters of a CodeLensRequest.
 type CodeLensParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 
 	// The document to request code lens for.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
@@ -4137,10 +5724,9 @@ func (s *CodeLensParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-		PartialResultParams
-
-		TextDocument TextDocumentIdentifier `json:"textDocument"`
+		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
+		TextDocument       TextDocumentIdentifier `json:"textDocument"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -4156,11 +5742,11 @@ type CodeLens struct {
 	Range Range `json:"range"`
 
 	// The command this code lens represents.
-	Command *Command `json:"command,omitempty"`
+	Command *Command `json:"command,omitzero"`
 
 	// A data entry field that is preserved on a code lens item between
 	// a CodeLensRequest and a CodeLensResolveRequest
-	Data *any `json:"data,omitempty"`
+	Data *any `json:"data,omitzero"`
 }
 
 func (s *CodeLens) UnmarshalJSON(data []byte) error {
@@ -4181,8 +5767,8 @@ func (s *CodeLens) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Range   Range    `json:"range"`
-		Command *Command `json:"command,omitempty"`
-		Data    *any     `json:"data,omitempty"`
+		Command *Command `json:"command,omitzero"`
+		Data    *any     `json:"data,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -4190,14 +5776,49 @@ func (s *CodeLens) UnmarshalJSON(data []byte) error {
 
 // Registration options for a CodeLensRequest.
 type CodeLensRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	CodeLensOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// Code lens has a resolve provider as well.
+	ResolveProvider *bool `json:"resolveProvider,omitzero"`
+}
+
+func (s *CodeLensRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
+		ResolveProvider  *bool                  `json:"resolveProvider,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameters of a DocumentLinkRequest.
 type DocumentLinkParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 
 	// The document to provide document links for.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
@@ -4220,10 +5841,9 @@ func (s *DocumentLinkParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-		PartialResultParams
-
-		TextDocument TextDocumentIdentifier `json:"textDocument"`
+		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
+		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
+		TextDocument       TextDocumentIdentifier `json:"textDocument"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -4236,7 +5856,7 @@ type DocumentLink struct {
 	Range Range `json:"range"`
 
 	// The uri this link points to. If missing a resolve request is sent later.
-	Target *URI `json:"target,omitempty"`
+	Target *URI `json:"target,omitzero"`
 
 	// The tooltip text when you hover over this link.
 	//
@@ -4245,11 +5865,11 @@ type DocumentLink struct {
 	// user settings, and localization.
 	//
 	// Since: 3.15.0
-	Tooltip *string `json:"tooltip,omitempty"`
+	Tooltip *string `json:"tooltip,omitzero"`
 
 	// A data entry field that is preserved on a document link between a
 	// DocumentLinkRequest and a DocumentLinkResolveRequest.
-	Data *any `json:"data,omitempty"`
+	Data *any `json:"data,omitzero"`
 }
 
 func (s *DocumentLink) UnmarshalJSON(data []byte) error {
@@ -4270,9 +5890,9 @@ func (s *DocumentLink) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Range   Range   `json:"range"`
-		Target  *URI    `json:"target,omitempty"`
-		Tooltip *string `json:"tooltip,omitempty"`
-		Data    *any    `json:"data,omitempty"`
+		Target  *URI    `json:"target,omitzero"`
+		Tooltip *string `json:"tooltip,omitzero"`
+		Data    *any    `json:"data,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -4280,13 +5900,45 @@ func (s *DocumentLink) UnmarshalJSON(data []byte) error {
 
 // Registration options for a DocumentLinkRequest.
 type DocumentLinkRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	DocumentLinkOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// Document links have a resolve provider as well.
+	ResolveProvider *bool `json:"resolveProvider,omitzero"`
+}
+
+func (s *DocumentLinkRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
+		ResolveProvider  *bool                  `json:"resolveProvider,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameters of a DocumentFormattingRequest.
 type DocumentFormattingParams struct {
-	WorkDoneProgressParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
 
 	// The document to format.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
@@ -4316,10 +5968,9 @@ func (s *DocumentFormattingParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-
-		TextDocument TextDocumentIdentifier `json:"textDocument"`
-		Options      *FormattingOptions     `json:"options"`
+		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
+		TextDocument  TextDocumentIdentifier `json:"textDocument"`
+		Options       *FormattingOptions     `json:"options"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -4327,13 +5978,41 @@ func (s *DocumentFormattingParams) UnmarshalJSON(data []byte) error {
 
 // Registration options for a DocumentFormattingRequest.
 type DocumentFormattingRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	DocumentFormattingOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+}
+
+func (s *DocumentFormattingRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameters of a DocumentRangeFormattingRequest.
 type DocumentRangeFormattingParams struct {
-	WorkDoneProgressParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
 
 	// The document to format.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
@@ -4370,11 +6049,10 @@ func (s *DocumentRangeFormattingParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-
-		TextDocument TextDocumentIdentifier `json:"textDocument"`
-		Range        Range                  `json:"range"`
-		Options      *FormattingOptions     `json:"options"`
+		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
+		TextDocument  TextDocumentIdentifier `json:"textDocument"`
+		Range         Range                  `json:"range"`
+		Options       *FormattingOptions     `json:"options"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -4382,8 +6060,43 @@ func (s *DocumentRangeFormattingParams) UnmarshalJSON(data []byte) error {
 
 // Registration options for a DocumentRangeFormattingRequest.
 type DocumentRangeFormattingRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	DocumentRangeFormattingOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// Whether the server supports formatting multiple ranges at once.
+	//
+	// Since: 3.18.0
+	//
+	// Proposed.
+	RangesSupport *bool `json:"rangesSupport,omitzero"`
+}
+
+func (s *DocumentRangeFormattingRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
+		RangesSupport    *bool                  `json:"rangesSupport,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameters of a DocumentRangesFormattingRequest.
@@ -4392,7 +6105,8 @@ type DocumentRangeFormattingRegistrationOptions struct {
 //
 // Proposed.
 type DocumentRangesFormattingParams struct {
-	WorkDoneProgressParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
 
 	// The document to format.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
@@ -4429,11 +6143,10 @@ func (s *DocumentRangesFormattingParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-
-		TextDocument TextDocumentIdentifier `json:"textDocument"`
-		Ranges       []Range                `json:"ranges"`
-		Options      *FormattingOptions     `json:"options"`
+		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
+		TextDocument  TextDocumentIdentifier `json:"textDocument"`
+		Ranges        []Range                `json:"ranges"`
+		Options       *FormattingOptions     `json:"options"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -4499,13 +6212,50 @@ func (s *DocumentOnTypeFormattingParams) UnmarshalJSON(data []byte) error {
 
 // Registration options for a DocumentOnTypeFormattingRequest.
 type DocumentOnTypeFormattingRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	DocumentOnTypeFormattingOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	// A character on which formatting should be triggered, like `{`.
+	FirstTriggerCharacter string `json:"firstTriggerCharacter"`
+
+	// More trigger characters.
+	MoreTriggerCharacter *[]string `json:"moreTriggerCharacter,omitzero"`
+}
+
+func (s *DocumentOnTypeFormattingRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector      requiredProp `json:"documentSelector"`
+		FirstTriggerCharacter requiredProp `json:"firstTriggerCharacter"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+	if !keys.FirstTriggerCharacter {
+		return fmt.Errorf("required key 'firstTriggerCharacter' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector      DocumentSelectorOrNull `json:"documentSelector"`
+		FirstTriggerCharacter string                 `json:"firstTriggerCharacter"`
+		MoreTriggerCharacter  *[]string              `json:"moreTriggerCharacter,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameters of a RenameRequest.
 type RenameParams struct {
-	WorkDoneProgressParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
 
 	// The document to rename.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
@@ -4544,11 +6294,10 @@ func (s *RenameParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-
-		TextDocument TextDocumentIdentifier `json:"textDocument"`
-		Position     Position               `json:"position"`
-		NewName      string                 `json:"newName"`
+		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
+		TextDocument  TextDocumentIdentifier `json:"textDocument"`
+		Position      Position               `json:"position"`
+		NewName       string                 `json:"newName"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -4556,24 +6305,93 @@ func (s *RenameParams) UnmarshalJSON(data []byte) error {
 
 // Registration options for a RenameRequest.
 type RenameRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	RenameOptions
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// Renames should be checked and tested before being executed.
+	//
+	// Since: version 3.12.0
+	PrepareProvider *bool `json:"prepareProvider,omitzero"`
+}
+
+func (s *RenameRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		DocumentSelector requiredProp `json:"documentSelector"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.DocumentSelector {
+		return fmt.Errorf("required key 'documentSelector' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
+		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
+		PrepareProvider  *bool                  `json:"prepareProvider,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 type PrepareRenameParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
+	// The text document.
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+
+	// The position inside the text document.
+	Position Position `json:"position"`
+
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+}
+
+func (s *PrepareRenameParams) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		TextDocument requiredProp `json:"textDocument"`
+		Position     requiredProp `json:"position"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.TextDocument {
+		return fmt.Errorf("required key 'textDocument' is missing")
+	}
+	if !keys.Position {
+		return fmt.Errorf("required key 'position' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		TextDocument  TextDocumentIdentifier `json:"textDocument"`
+		Position      Position               `json:"position"`
+		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameters of a ExecuteCommandRequest.
 type ExecuteCommandParams struct {
-	WorkDoneProgressParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
 
 	// The identifier of the actual command handler.
 	Command string `json:"command"`
 
 	// Arguments that the command should be invoked with.
-	Arguments *[]any `json:"arguments,omitempty"`
+	Arguments *[]any `json:"arguments,omitzero"`
 }
 
 func (s *ExecuteCommandParams) UnmarshalJSON(data []byte) error {
@@ -4593,10 +6411,9 @@ func (s *ExecuteCommandParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-
-		Command   string `json:"command"`
-		Arguments *[]any `json:"arguments,omitempty"`
+		WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+		Command       string           `json:"command"`
+		Arguments     *[]any           `json:"arguments,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -4604,7 +6421,34 @@ func (s *ExecuteCommandParams) UnmarshalJSON(data []byte) error {
 
 // Registration options for a ExecuteCommandRequest.
 type ExecuteCommandRegistrationOptions struct {
-	ExecuteCommandOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
+
+	// The commands to be executed on the server
+	Commands []string `json:"commands"`
+}
+
+func (s *ExecuteCommandRegistrationOptions) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		Commands requiredProp `json:"commands"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.Commands {
+		return fmt.Errorf("required key 'commands' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		WorkDoneProgress *bool    `json:"workDoneProgress,omitzero"`
+		Commands         []string `json:"commands"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // The parameters passed via an apply workspace edit request.
@@ -4612,7 +6456,7 @@ type ApplyWorkspaceEditParams struct {
 	// An optional label of the workspace edit. This label is
 	// presented in the user interface for example on an undo
 	// stack to undo the workspace edit.
-	Label *string `json:"label,omitempty"`
+	Label *string `json:"label,omitzero"`
 
 	// The edits to apply.
 	Edit *WorkspaceEdit `json:"edit"`
@@ -4622,7 +6466,7 @@ type ApplyWorkspaceEditParams struct {
 	// Since: 3.18.0
 	//
 	// Proposed.
-	Metadata *WorkspaceEditMetadata `json:"metadata,omitempty"`
+	Metadata *WorkspaceEditMetadata `json:"metadata,omitzero"`
 }
 
 func (s *ApplyWorkspaceEditParams) UnmarshalJSON(data []byte) error {
@@ -4642,9 +6486,9 @@ func (s *ApplyWorkspaceEditParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Label    *string                `json:"label,omitempty"`
+		Label    *string                `json:"label,omitzero"`
 		Edit     *WorkspaceEdit         `json:"edit"`
-		Metadata *WorkspaceEditMetadata `json:"metadata,omitempty"`
+		Metadata *WorkspaceEditMetadata `json:"metadata,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -4660,12 +6504,12 @@ type ApplyWorkspaceEditResult struct {
 	// An optional textual description for why the edit was not applied.
 	// This may be used by the server for diagnostic logging or to provide
 	// a suitable error for a request that triggered the edit.
-	FailureReason *string `json:"failureReason,omitempty"`
+	FailureReason *string `json:"failureReason,omitzero"`
 
 	// Depending on the client's failure handling strategy `failedChange` might
 	// contain the index of the change that failed. This property is only available
 	// if the client signals a `failureHandlingStrategy` in its client capabilities.
-	FailedChange *uint32 `json:"failedChange,omitempty"`
+	FailedChange *uint32 `json:"failedChange,omitzero"`
 }
 
 func (s *ApplyWorkspaceEditResult) UnmarshalJSON(data []byte) error {
@@ -4686,8 +6530,8 @@ func (s *ApplyWorkspaceEditResult) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Applied       bool    `json:"applied"`
-		FailureReason *string `json:"failureReason,omitempty"`
-		FailedChange  *uint32 `json:"failedChange,omitempty"`
+		FailureReason *string `json:"failureReason,omitzero"`
+		FailedChange  *uint32 `json:"failedChange,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -4705,14 +6549,14 @@ type WorkDoneProgressBegin struct {
 	// Controls if a cancel button should show to allow the user to cancel the
 	// long running operation. Clients that don't support cancellation are allowed
 	// to ignore the setting.
-	Cancellable *bool `json:"cancellable,omitempty"`
+	Cancellable *bool `json:"cancellable,omitzero"`
 
 	// Optional, more detailed associated progress message. Contains
 	// complementary information to the `title`.
 	//
 	// Examples: "3/25 files", "project/src/module2", "node_modules/some_dep".
 	// If unset, the previous progress message (if any) is still valid.
-	Message *string `json:"message,omitempty"`
+	Message *string `json:"message,omitzero"`
 
 	// Optional progress percentage to display (value 100 is considered 100%).
 	// If not provided infinite progress is assumed and clients are allowed
@@ -4720,7 +6564,7 @@ type WorkDoneProgressBegin struct {
 	//
 	// The value should be steadily rising. Clients are free to ignore values
 	// that are not following this rule. The value range is [0, 100].
-	Percentage *uint32 `json:"percentage,omitempty"`
+	Percentage *uint32 `json:"percentage,omitzero"`
 }
 
 func (s *WorkDoneProgressBegin) UnmarshalJSON(data []byte) error {
@@ -4746,9 +6590,9 @@ func (s *WorkDoneProgressBegin) UnmarshalJSON(data []byte) error {
 	type temp struct {
 		Kind        StringLiteralBegin `json:"kind"`
 		Title       string             `json:"title"`
-		Cancellable *bool              `json:"cancellable,omitempty"`
-		Message     *string            `json:"message,omitempty"`
-		Percentage  *uint32            `json:"percentage,omitempty"`
+		Cancellable *bool              `json:"cancellable,omitzero"`
+		Message     *string            `json:"message,omitzero"`
+		Percentage  *uint32            `json:"percentage,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -4761,14 +6605,14 @@ type WorkDoneProgressReport struct {
 	//
 	// Clients that don't support cancellation or don't support controlling the button's
 	// enablement state are allowed to ignore the property.
-	Cancellable *bool `json:"cancellable,omitempty"`
+	Cancellable *bool `json:"cancellable,omitzero"`
 
 	// Optional, more detailed associated progress message. Contains
 	// complementary information to the `title`.
 	//
 	// Examples: "3/25 files", "project/src/module2", "node_modules/some_dep".
 	// If unset, the previous progress message (if any) is still valid.
-	Message *string `json:"message,omitempty"`
+	Message *string `json:"message,omitzero"`
 
 	// Optional progress percentage to display (value 100 is considered 100%).
 	// If not provided infinite progress is assumed and clients are allowed
@@ -4776,7 +6620,7 @@ type WorkDoneProgressReport struct {
 	//
 	// The value should be steadily rising. Clients are free to ignore values
 	// that are not following this rule. The value range is [0, 100]
-	Percentage *uint32 `json:"percentage,omitempty"`
+	Percentage *uint32 `json:"percentage,omitzero"`
 }
 
 func (s *WorkDoneProgressReport) UnmarshalJSON(data []byte) error {
@@ -4797,9 +6641,9 @@ func (s *WorkDoneProgressReport) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Kind        StringLiteralReport `json:"kind"`
-		Cancellable *bool               `json:"cancellable,omitempty"`
-		Message     *string             `json:"message,omitempty"`
-		Percentage  *uint32             `json:"percentage,omitempty"`
+		Cancellable *bool               `json:"cancellable,omitzero"`
+		Message     *string             `json:"message,omitzero"`
+		Percentage  *uint32             `json:"percentage,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -4810,7 +6654,7 @@ type WorkDoneProgressEnd struct {
 
 	// Optional, a final message indicating to for example indicate the outcome
 	// of the operation.
-	Message *string `json:"message,omitempty"`
+	Message *string `json:"message,omitzero"`
 }
 
 func (s *WorkDoneProgressEnd) UnmarshalJSON(data []byte) error {
@@ -4831,7 +6675,7 @@ func (s *WorkDoneProgressEnd) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Kind    StringLiteralEnd `json:"kind"`
-		Message *string          `json:"message,omitempty"`
+		Message *string          `json:"message,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -4867,7 +6711,7 @@ func (s *SetTraceParams) UnmarshalJSON(data []byte) error {
 type LogTraceParams struct {
 	Message string `json:"message"`
 
-	Verbose *string `json:"verbose,omitempty"`
+	Verbose *string `json:"verbose,omitzero"`
 }
 
 func (s *LogTraceParams) UnmarshalJSON(data []byte) error {
@@ -4888,7 +6732,7 @@ func (s *LogTraceParams) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Message string  `json:"message"`
-		Verbose *string `json:"verbose,omitempty"`
+		Verbose *string `json:"verbose,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -4924,7 +6768,7 @@ func (s *CancelParams) UnmarshalJSON(data []byte) error {
 
 type ProgressParams struct {
 	// The progress token provided by the client or server.
-	Token ProgressToken `json:"token"`
+	Token IntegerOrString `json:"token"`
 
 	// The progress data.
 	Value any `json:"value"`
@@ -4951,8 +6795,8 @@ func (s *ProgressParams) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Token ProgressToken `json:"token"`
-		Value any           `json:"value"`
+		Token IntegerOrString `json:"token"`
+		Value any             `json:"value"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -4998,13 +6842,13 @@ func (s *TextDocumentPositionParams) UnmarshalJSON(data []byte) error {
 
 type WorkDoneProgressParams struct {
 	// An optional token that a server can use to report work done progress.
-	WorkDoneToken *ProgressToken `json:"workDoneToken,omitempty"`
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
 }
 
 type PartialResultParams struct {
 	// An optional token that a server can use to report partial results (e.g. streaming) to
 	// the client.
-	PartialResultToken *ProgressToken `json:"partialResultToken,omitempty"`
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 }
 
 // Represents the connection of two locations. Provides additional metadata over normal locations,
@@ -5014,7 +6858,7 @@ type LocationLink struct {
 	//
 	// Used as the underlined span for mouse interaction. Defaults to the word range at
 	// the definition position.
-	OriginSelectionRange *Range `json:"originSelectionRange,omitempty"`
+	OriginSelectionRange *Range `json:"originSelectionRange,omitzero"`
 
 	// The target resource identifier of this link.
 	TargetUri DocumentUri `json:"targetUri"`
@@ -5054,7 +6898,7 @@ func (s *LocationLink) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		OriginSelectionRange *Range      `json:"originSelectionRange,omitempty"`
+		OriginSelectionRange *Range      `json:"originSelectionRange,omitzero"`
 		TargetUri            DocumentUri `json:"targetUri"`
 		TargetRange          Range       `json:"targetRange"`
 		TargetSelectionRange Range       `json:"targetSelectionRange"`
@@ -5113,7 +6957,7 @@ func (s *Range) UnmarshalJSON(data []byte) error {
 }
 
 type ImplementationOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
 // Static registration options to be returned in the initialize
@@ -5121,11 +6965,11 @@ type ImplementationOptions struct {
 type StaticRegistrationOptions struct {
 	// The id used to register the request. The id can be used to deregister
 	// the request again. See also Registration#id.
-	Id *string `json:"id,omitempty"`
+	Id *string `json:"id,omitzero"`
 }
 
 type TypeDefinitionOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
 // The workspace folder change event.
@@ -5167,10 +7011,10 @@ func (s *WorkspaceFoldersChangeEvent) UnmarshalJSON(data []byte) error {
 
 type ConfigurationItem struct {
 	// The scope to get the configuration section for.
-	ScopeUri *URI `json:"scopeUri,omitempty"`
+	ScopeUri *URI `json:"scopeUri,omitzero"`
 
 	// The configuration section asked for.
-	Section *string `json:"section,omitempty"`
+	Section *string `json:"section,omitzero"`
 }
 
 // A literal to identify a text document in the client.
@@ -5256,15 +7100,15 @@ func (s *Color) UnmarshalJSON(data []byte) error {
 }
 
 type DocumentColorOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
 type FoldingRangeOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
 type DeclarationOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
 // Position in a text document expressed as zero-based line and character
@@ -5334,29 +7178,29 @@ func (s *Position) UnmarshalJSON(data []byte) error {
 }
 
 type SelectionRangeOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
 // Call hierarchy options used during static registration.
 //
 // Since: 3.16.0
 type CallHierarchyOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
 // Since: 3.16.0
 type SemanticTokensOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 
 	// The legend used by the server
 	Legend *SemanticTokensLegend `json:"legend"`
 
 	// Server supports providing semantic tokens for a specific range
 	// of a document.
-	Range *BooleanOrEmptyObject `json:"range,omitempty"`
+	Range *BooleanOrEmptyObject `json:"range,omitzero"`
 
 	// Server supports providing semantic tokens for a full document.
-	Full *BooleanOrSemanticTokensFullDelta `json:"full,omitempty"`
+	Full *BooleanOrSemanticTokensFullDelta `json:"full,omitzero"`
 }
 
 func (s *SemanticTokensOptions) UnmarshalJSON(data []byte) error {
@@ -5376,11 +7220,10 @@ func (s *SemanticTokensOptions) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressOptions
-
-		Legend *SemanticTokensLegend             `json:"legend"`
-		Range  *BooleanOrEmptyObject             `json:"range,omitempty"`
-		Full   *BooleanOrSemanticTokensFullDelta `json:"full,omitempty"`
+		WorkDoneProgress *bool                             `json:"workDoneProgress,omitzero"`
+		Legend           *SemanticTokensLegend             `json:"legend"`
+		Range            *BooleanOrEmptyObject             `json:"range,omitzero"`
+		Full             *BooleanOrSemanticTokensFullDelta `json:"full,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -5395,7 +7238,7 @@ type SemanticTokensEdit struct {
 	DeleteCount uint32 `json:"deleteCount"`
 
 	// The elements to insert.
-	Data *[]uint32 `json:"data,omitempty"`
+	Data *[]uint32 `json:"data,omitzero"`
 }
 
 func (s *SemanticTokensEdit) UnmarshalJSON(data []byte) error {
@@ -5421,14 +7264,14 @@ func (s *SemanticTokensEdit) UnmarshalJSON(data []byte) error {
 	type temp struct {
 		Start       uint32    `json:"start"`
 		DeleteCount uint32    `json:"deleteCount"`
-		Data        *[]uint32 `json:"data,omitempty"`
+		Data        *[]uint32 `json:"data,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
 }
 
 type LinkedEditingRangeOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
 // Represents information on a file/folder create.
@@ -5510,16 +7353,19 @@ func (s *TextDocumentEdit) UnmarshalJSON(data []byte) error {
 
 // Create file operation.
 type CreateFile struct {
-	ResourceOperation
-
 	// A create
 	Kind StringLiteralCreate `json:"kind"`
+
+	// An optional annotation identifier describing the operation.
+	//
+	// Since: 3.16.0
+	AnnotationId *string `json:"annotationId,omitzero"`
 
 	// The resource to create.
 	Uri DocumentUri `json:"uri"`
 
 	// Additional options
-	Options *CreateFileOptions `json:"options,omitempty"`
+	Options *CreateFileOptions `json:"options,omitzero"`
 }
 
 func (s *CreateFile) UnmarshalJSON(data []byte) error {
@@ -5543,11 +7389,10 @@ func (s *CreateFile) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		ResourceOperation
-
-		Kind    StringLiteralCreate `json:"kind"`
-		Uri     DocumentUri         `json:"uri"`
-		Options *CreateFileOptions  `json:"options,omitempty"`
+		Kind         StringLiteralCreate `json:"kind"`
+		AnnotationId *string             `json:"annotationId,omitzero"`
+		Uri          DocumentUri         `json:"uri"`
+		Options      *CreateFileOptions  `json:"options,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -5555,10 +7400,13 @@ func (s *CreateFile) UnmarshalJSON(data []byte) error {
 
 // Rename file operation
 type RenameFile struct {
-	ResourceOperation
-
 	// A rename
 	Kind StringLiteralRename `json:"kind"`
+
+	// An optional annotation identifier describing the operation.
+	//
+	// Since: 3.16.0
+	AnnotationId *string `json:"annotationId,omitzero"`
 
 	// The old (existing) location.
 	OldUri DocumentUri `json:"oldUri"`
@@ -5567,7 +7415,7 @@ type RenameFile struct {
 	NewUri DocumentUri `json:"newUri"`
 
 	// Rename options.
-	Options *RenameFileOptions `json:"options,omitempty"`
+	Options *RenameFileOptions `json:"options,omitzero"`
 }
 
 func (s *RenameFile) UnmarshalJSON(data []byte) error {
@@ -5595,12 +7443,11 @@ func (s *RenameFile) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		ResourceOperation
-
-		Kind    StringLiteralRename `json:"kind"`
-		OldUri  DocumentUri         `json:"oldUri"`
-		NewUri  DocumentUri         `json:"newUri"`
-		Options *RenameFileOptions  `json:"options,omitempty"`
+		Kind         StringLiteralRename `json:"kind"`
+		AnnotationId *string             `json:"annotationId,omitzero"`
+		OldUri       DocumentUri         `json:"oldUri"`
+		NewUri       DocumentUri         `json:"newUri"`
+		Options      *RenameFileOptions  `json:"options,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -5608,16 +7455,19 @@ func (s *RenameFile) UnmarshalJSON(data []byte) error {
 
 // Delete file operation
 type DeleteFile struct {
-	ResourceOperation
-
 	// A delete
 	Kind StringLiteralDelete `json:"kind"`
+
+	// An optional annotation identifier describing the operation.
+	//
+	// Since: 3.16.0
+	AnnotationId *string `json:"annotationId,omitzero"`
 
 	// The file to delete.
 	Uri DocumentUri `json:"uri"`
 
 	// Delete options.
-	Options *DeleteFileOptions `json:"options,omitempty"`
+	Options *DeleteFileOptions `json:"options,omitzero"`
 }
 
 func (s *DeleteFile) UnmarshalJSON(data []byte) error {
@@ -5641,11 +7491,10 @@ func (s *DeleteFile) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		ResourceOperation
-
-		Kind    StringLiteralDelete `json:"kind"`
-		Uri     DocumentUri         `json:"uri"`
-		Options *DeleteFileOptions  `json:"options,omitempty"`
+		Kind         StringLiteralDelete `json:"kind"`
+		AnnotationId *string             `json:"annotationId,omitzero"`
+		Uri          DocumentUri         `json:"uri"`
+		Options      *DeleteFileOptions  `json:"options,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -5661,11 +7510,11 @@ type ChangeAnnotation struct {
 
 	// A flag which indicates that user confirmation is needed
 	// before applying the change.
-	NeedsConfirmation *bool `json:"needsConfirmation,omitempty"`
+	NeedsConfirmation *bool `json:"needsConfirmation,omitzero"`
 
 	// A human-readable string which is rendered less prominent in
 	// the user interface.
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description,omitzero"`
 }
 
 func (s *ChangeAnnotation) UnmarshalJSON(data []byte) error {
@@ -5686,8 +7535,8 @@ func (s *ChangeAnnotation) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Label             string  `json:"label"`
-		NeedsConfirmation *bool   `json:"needsConfirmation,omitempty"`
-		Description       *string `json:"description,omitempty"`
+		NeedsConfirmation *bool   `json:"needsConfirmation,omitzero"`
+		Description       *string `json:"description,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -5699,7 +7548,7 @@ func (s *ChangeAnnotation) UnmarshalJSON(data []byte) error {
 // Since: 3.16.0
 type FileOperationFilter struct {
 	// A Uri scheme like `file` or `untitled`.
-	Scheme *string `json:"scheme,omitempty"`
+	Scheme *string `json:"scheme,omitzero"`
 
 	// The actual file operation pattern.
 	Pattern *FileOperationPattern `json:"pattern"`
@@ -5722,7 +7571,7 @@ func (s *FileOperationFilter) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Scheme  *string               `json:"scheme,omitempty"`
+		Scheme  *string               `json:"scheme,omitzero"`
 		Pattern *FileOperationPattern `json:"pattern"`
 	}
 
@@ -5800,14 +7649,14 @@ func (s *FileDelete) UnmarshalJSON(data []byte) error {
 }
 
 type MonikerOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
 // Type hierarchy options used during static registration.
 //
 // Since: 3.17.0
 type TypeHierarchyOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
 // Since: 3.17.0
@@ -5898,7 +7747,7 @@ type InlineValueVariableLookup struct {
 	Range Range `json:"range"`
 
 	// If specified the name of the variable to look up.
-	VariableName *string `json:"variableName,omitempty"`
+	VariableName *string `json:"variableName,omitzero"`
 
 	// How to perform the lookup.
 	CaseSensitiveLookup bool `json:"caseSensitiveLookup"`
@@ -5926,7 +7775,7 @@ func (s *InlineValueVariableLookup) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Range               Range   `json:"range"`
-		VariableName        *string `json:"variableName,omitempty"`
+		VariableName        *string `json:"variableName,omitzero"`
 		CaseSensitiveLookup bool    `json:"caseSensitiveLookup"`
 	}
 
@@ -5944,7 +7793,7 @@ type InlineValueEvaluatableExpression struct {
 	Range Range `json:"range"`
 
 	// If specified the expression overrides the extracted expression.
-	Expression *string `json:"expression,omitempty"`
+	Expression *string `json:"expression,omitzero"`
 }
 
 func (s *InlineValueEvaluatableExpression) UnmarshalJSON(data []byte) error {
@@ -5965,7 +7814,7 @@ func (s *InlineValueEvaluatableExpression) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Range      Range   `json:"range"`
-		Expression *string `json:"expression,omitempty"`
+		Expression *string `json:"expression,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -5975,7 +7824,7 @@ func (s *InlineValueEvaluatableExpression) UnmarshalJSON(data []byte) error {
 //
 // Since: 3.17.0
 type InlineValueOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
 // An inlay hint label part allows for interactive and composite labels
@@ -5989,7 +7838,7 @@ type InlayHintLabelPart struct {
 	// The tooltip text when you hover over this label part. Depending on
 	// the client capability `inlayHint.resolveSupport` clients might resolve
 	// this property late using the resolve request.
-	Tooltip *StringOrMarkupContent `json:"tooltip,omitempty"`
+	Tooltip *StringOrMarkupContent `json:"tooltip,omitzero"`
 
 	// An optional source code location that represents this
 	// label part.
@@ -6002,13 +7851,13 @@ type InlayHintLabelPart struct {
 	//
 	// Depending on the client capability `inlayHint.resolveSupport` clients
 	// might resolve this property late using the resolve request.
-	Location *Location `json:"location,omitempty"`
+	Location *Location `json:"location,omitzero"`
 
 	// An optional command for this label part.
 	//
 	// Depending on the client capability `inlayHint.resolveSupport` clients
 	// might resolve this property late using the resolve request.
-	Command *Command `json:"command,omitempty"`
+	Command *Command `json:"command,omitzero"`
 }
 
 func (s *InlayHintLabelPart) UnmarshalJSON(data []byte) error {
@@ -6029,9 +7878,9 @@ func (s *InlayHintLabelPart) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Value    string                 `json:"value"`
-		Tooltip  *StringOrMarkupContent `json:"tooltip,omitempty"`
-		Location *Location              `json:"location,omitempty"`
-		Command  *Command               `json:"command,omitempty"`
+		Tooltip  *StringOrMarkupContent `json:"tooltip,omitzero"`
+		Location *Location              `json:"location,omitzero"`
+		Command  *Command               `json:"command,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -6101,18 +7950,27 @@ func (s *MarkupContent) UnmarshalJSON(data []byte) error {
 //
 // Since: 3.17.0
 type InlayHintOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 
 	// The server provides support to resolve additional
 	// information for an inlay hint item.
-	ResolveProvider *bool `json:"resolveProvider,omitempty"`
+	ResolveProvider *bool `json:"resolveProvider,omitzero"`
 }
 
 // A full diagnostic report with a set of related documents.
 //
 // Since: 3.17.0
 type RelatedFullDocumentDiagnosticReport struct {
-	FullDocumentDiagnosticReport
+	// A full document diagnostic report.
+	Kind StringLiteralFull `json:"kind"`
+
+	// An optional result id. If provided it will
+	// be sent on the next diagnostic request for the
+	// same document.
+	ResultId *string `json:"resultId,omitzero"`
+
+	// The actual items.
+	Items []*Diagnostic `json:"items"`
 
 	// Diagnostics of related documents. This information is useful
 	// in programming languages where code in a file A can generate
@@ -6121,14 +7979,52 @@ type RelatedFullDocumentDiagnosticReport struct {
 	// a.cpp and result in errors in a header file b.hpp.
 	//
 	// Since: 3.17.0
-	RelatedDocuments *map[DocumentUri]FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments,omitempty"`
+	RelatedDocuments *map[DocumentUri]FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments,omitzero"`
+}
+
+func (s *RelatedFullDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		Kind  requiredProp `json:"kind"`
+		Items requiredProp `json:"items"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.Kind {
+		return fmt.Errorf("required key 'kind' is missing")
+	}
+	if !keys.Items {
+		return fmt.Errorf("required key 'items' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Kind             StringLiteralFull                                                                `json:"kind"`
+		ResultId         *string                                                                          `json:"resultId,omitzero"`
+		Items            []*Diagnostic                                                                    `json:"items"`
+		RelatedDocuments *map[DocumentUri]FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // An unchanged diagnostic report with a set of related documents.
 //
 // Since: 3.17.0
 type RelatedUnchangedDocumentDiagnosticReport struct {
-	UnchangedDocumentDiagnosticReport
+	// A document diagnostic report indicating
+	// no changes to the last result. A server can
+	// only return `unchanged` if result ids are
+	// provided.
+	Kind StringLiteralUnchanged `json:"kind"`
+
+	// A result id which will be sent on the next
+	// diagnostic request for the same document.
+	ResultId string `json:"resultId"`
 
 	// Diagnostics of related documents. This information is useful
 	// in programming languages where code in a file A can generate
@@ -6137,7 +8033,36 @@ type RelatedUnchangedDocumentDiagnosticReport struct {
 	// a.cpp and result in errors in a header file b.hpp.
 	//
 	// Since: 3.17.0
-	RelatedDocuments *map[DocumentUri]FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments,omitempty"`
+	RelatedDocuments *map[DocumentUri]FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments,omitzero"`
+}
+
+func (s *RelatedUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+	// Check required props
+	type requiredProps struct {
+		Kind     requiredProp `json:"kind"`
+		ResultId requiredProp `json:"resultId"`
+	}
+
+	var keys requiredProps
+	if err := json.Unmarshal(data, &keys); err != nil {
+		return err
+	}
+
+	if !keys.Kind {
+		return fmt.Errorf("required key 'kind' is missing")
+	}
+	if !keys.ResultId {
+		return fmt.Errorf("required key 'resultId' is missing")
+	}
+
+	// Redeclare the struct to prevent infinite recursion
+	type temp struct {
+		Kind             StringLiteralUnchanged                                                           `json:"kind"`
+		ResultId         string                                                                           `json:"resultId"`
+		RelatedDocuments *map[DocumentUri]FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments,omitzero"`
+	}
+
+	return json.Unmarshal(data, (*temp)(s))
 }
 
 // A diagnostic report with a full set of problems.
@@ -6150,7 +8075,7 @@ type FullDocumentDiagnosticReport struct {
 	// An optional result id. If provided it will
 	// be sent on the next diagnostic request for the
 	// same document.
-	ResultId *string `json:"resultId,omitempty"`
+	ResultId *string `json:"resultId,omitzero"`
 
 	// The actual items.
 	Items []*Diagnostic `json:"items"`
@@ -6178,7 +8103,7 @@ func (s *FullDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Kind     StringLiteralFull `json:"kind"`
-		ResultId *string           `json:"resultId,omitempty"`
+		ResultId *string           `json:"resultId,omitzero"`
 		Items    []*Diagnostic     `json:"items"`
 	}
 
@@ -6233,11 +8158,11 @@ func (s *UnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
 //
 // Since: 3.17.0
 type DiagnosticOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 
 	// An optional identifier under which the diagnostics are
 	// managed by the client.
-	Identifier *string `json:"identifier,omitempty"`
+	Identifier *string `json:"identifier,omitzero"`
 
 	// Whether the language has inter file dependencies meaning that
 	// editing code in one file can result in a different diagnostic
@@ -6270,9 +8195,8 @@ func (s *DiagnosticOptions) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressOptions
-
-		Identifier            *string `json:"identifier,omitempty"`
+		WorkDoneProgress      *bool   `json:"workDoneProgress,omitzero"`
+		Identifier            *string `json:"identifier,omitzero"`
 		InterFileDependencies bool    `json:"interFileDependencies"`
 		WorkspaceDiagnostics  bool    `json:"workspaceDiagnostics"`
 	}
@@ -6338,7 +8262,7 @@ type NotebookDocument struct {
 	// document.
 	//
 	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata *map[string]any `json:"metadata,omitempty"`
+	Metadata *map[string]any `json:"metadata,omitzero"`
 
 	// The cells of a notebook.
 	Cells []*NotebookCell `json:"cells"`
@@ -6376,7 +8300,7 @@ func (s *NotebookDocument) UnmarshalJSON(data []byte) error {
 		Uri          URI             `json:"uri"`
 		NotebookType string          `json:"notebookType"`
 		Version      int32           `json:"version"`
-		Metadata     *map[string]any `json:"metadata,omitempty"`
+		Metadata     *map[string]any `json:"metadata,omitzero"`
 		Cells        []*NotebookCell `json:"cells"`
 	}
 
@@ -6453,11 +8377,11 @@ func (s *TextDocumentItem) UnmarshalJSON(data []byte) error {
 // Since: 3.17.0
 type NotebookDocumentSyncOptions struct {
 	// The notebooks to be synced
-	NotebookSelector []NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells `json:"notebookSelector"`
+	NotebookSelector []NotebookDocumentFilterWithNotebookOrCells `json:"notebookSelector"`
 
 	// Whether save notification should be forwarded to
 	// the server. Will only be honored if mode === `notebook`.
-	Save *bool `json:"save,omitempty"`
+	Save *bool `json:"save,omitzero"`
 }
 
 func (s *NotebookDocumentSyncOptions) UnmarshalJSON(data []byte) error {
@@ -6477,8 +8401,8 @@ func (s *NotebookDocumentSyncOptions) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		NotebookSelector []NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells `json:"notebookSelector"`
-		Save             *bool                                                                 `json:"save,omitempty"`
+		NotebookSelector []NotebookDocumentFilterWithNotebookOrCells `json:"notebookSelector"`
+		Save             *bool                                       `json:"save,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -6530,10 +8454,10 @@ type NotebookDocumentChangeEvent struct {
 	// The changed meta data if any.
 	//
 	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata *map[string]any `json:"metadata,omitempty"`
+	Metadata *map[string]any `json:"metadata,omitzero"`
 
 	// Changes to cells
-	Cells *NotebookDocumentCellChanges `json:"cells,omitempty"`
+	Cells *NotebookDocumentCellChanges `json:"cells,omitzero"`
 }
 
 // A literal to identify a notebook document in the client.
@@ -6577,7 +8501,7 @@ type InlineCompletionContext struct {
 	TriggerKind InlineCompletionTriggerKind `json:"triggerKind"`
 
 	// Provides information about the currently selected item in the autocomplete widget if it is visible.
-	SelectedCompletionInfo *SelectedCompletionInfo `json:"selectedCompletionInfo,omitempty"`
+	SelectedCompletionInfo *SelectedCompletionInfo `json:"selectedCompletionInfo,omitzero"`
 }
 
 func (s *InlineCompletionContext) UnmarshalJSON(data []byte) error {
@@ -6598,7 +8522,7 @@ func (s *InlineCompletionContext) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		TriggerKind            InlineCompletionTriggerKind `json:"triggerKind"`
-		SelectedCompletionInfo *SelectedCompletionInfo     `json:"selectedCompletionInfo,omitempty"`
+		SelectedCompletionInfo *SelectedCompletionInfo     `json:"selectedCompletionInfo,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -6657,7 +8581,7 @@ func (s *StringValue) UnmarshalJSON(data []byte) error {
 //
 // Proposed.
 type InlineCompletionOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
 // Text document content provider options.
@@ -6703,7 +8627,7 @@ type Registration struct {
 	Method string `json:"method"`
 
 	// Options necessary for the registration.
-	RegisterOptions *any `json:"registerOptions,omitempty"`
+	RegisterOptions *any `json:"registerOptions,omitzero"`
 }
 
 func (s *Registration) UnmarshalJSON(data []byte) error {
@@ -6729,7 +8653,7 @@ func (s *Registration) UnmarshalJSON(data []byte) error {
 	type temp struct {
 		Id              string `json:"id"`
 		Method          string `json:"method"`
-		RegisterOptions *any   `json:"registerOptions,omitempty"`
+		RegisterOptions *any   `json:"registerOptions,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -6775,19 +8699,20 @@ func (s *Unregistration) UnmarshalJSON(data []byte) error {
 
 // The initialize parameters
 type InitializeParamsBase struct {
-	WorkDoneProgressParams
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
 
 	// The process Id of the parent process that started
 	// the server.
 	//
 	// Is `null` if the process has not been started by another process.
 	// If the parent process is not alive then the server should exit.
-	ProcessId Nullable[int32] `json:"processId"`
+	ProcessId IntegerOrNull `json:"processId"`
 
 	// Information about the client
 	//
 	// Since: 3.15.0
-	ClientInfo *ClientInfo `json:"clientInfo,omitempty"`
+	ClientInfo *ClientInfo `json:"clientInfo,omitzero"`
 
 	// The locale the client is currently showing the user interface
 	// in. This must not necessarily be the locale of the operating
@@ -6797,29 +8722,29 @@ type InitializeParamsBase struct {
 	// (See https://en.wikipedia.org/wiki/IETF_language_tag)
 	//
 	// Since: 3.16.0
-	Locale *string `json:"locale,omitempty"`
+	Locale *string `json:"locale,omitzero"`
 
 	// The rootPath of the workspace. Is null
 	// if no folder is open.
 	//
 	// Deprecated: in favour of rootUri.
-	RootPath *Nullable[string] `json:"rootPath,omitempty"`
+	RootPath *StringOrNull `json:"rootPath,omitzero"`
 
 	// The rootUri of the workspace. Is null if no
 	// folder is open. If both `rootPath` and `rootUri` are set
 	// `rootUri` wins.
 	//
 	// Deprecated: in favour of workspaceFolders.
-	RootUri Nullable[DocumentUri] `json:"rootUri"`
+	RootUri DocumentUriOrNull `json:"rootUri"`
 
 	// The capabilities provided by the client (editor or tool)
 	Capabilities *ClientCapabilities `json:"capabilities"`
 
 	// User provided initialization options.
-	InitializationOptions *any `json:"initializationOptions,omitempty"`
+	InitializationOptions *any `json:"initializationOptions,omitzero"`
 
 	// The initial trace setting. If omitted trace is disabled ('off').
-	Trace *TraceValue `json:"trace,omitempty"`
+	Trace *TraceValue `json:"trace,omitzero"`
 }
 
 func (s *InitializeParamsBase) UnmarshalJSON(data []byte) error {
@@ -6847,16 +8772,15 @@ func (s *InitializeParamsBase) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressParams
-
-		ProcessId             Nullable[int32]       `json:"processId"`
-		ClientInfo            *ClientInfo           `json:"clientInfo,omitempty"`
-		Locale                *string               `json:"locale,omitempty"`
-		RootPath              *Nullable[string]     `json:"rootPath,omitempty"`
-		RootUri               Nullable[DocumentUri] `json:"rootUri"`
-		Capabilities          *ClientCapabilities   `json:"capabilities"`
-		InitializationOptions *any                  `json:"initializationOptions,omitempty"`
-		Trace                 *TraceValue           `json:"trace,omitempty"`
+		WorkDoneToken         *IntegerOrString    `json:"workDoneToken,omitzero"`
+		ProcessId             IntegerOrNull       `json:"processId"`
+		ClientInfo            *ClientInfo         `json:"clientInfo,omitzero"`
+		Locale                *string             `json:"locale,omitzero"`
+		RootPath              *StringOrNull       `json:"rootPath,omitzero"`
+		RootUri               DocumentUriOrNull   `json:"rootUri"`
+		Capabilities          *ClientCapabilities `json:"capabilities"`
+		InitializationOptions *any                `json:"initializationOptions,omitzero"`
+		Trace                 *TraceValue         `json:"trace,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -6870,7 +8794,7 @@ type WorkspaceFoldersInitializeParams struct {
 	// configured.
 	//
 	// Since: 3.6.0
-	WorkspaceFolders *Nullable[[]*WorkspaceFolder] `json:"workspaceFolders,omitempty"`
+	WorkspaceFolders *WorkspaceFoldersOrNull `json:"workspaceFolders,omitzero"`
 }
 
 // Defines the capabilities provided by a language
@@ -6885,140 +8809,140 @@ type ServerCapabilities struct {
 	// If omitted it defaults to 'utf-16'.
 	//
 	// Since: 3.17.0
-	PositionEncoding *PositionEncodingKind `json:"positionEncoding,omitempty"`
+	PositionEncoding *PositionEncodingKind `json:"positionEncoding,omitzero"`
 
 	// Defines how text documents are synced. Is either a detailed structure
 	// defining each notification or for backwards compatibility the
 	// TextDocumentSyncKind number.
-	TextDocumentSync *TextDocumentSyncOptionsOrTextDocumentSyncKind `json:"textDocumentSync,omitempty"`
+	TextDocumentSync *TextDocumentSyncOptionsOrKind `json:"textDocumentSync,omitzero"`
 
 	// Defines how notebook documents are synced.
 	//
 	// Since: 3.17.0
-	NotebookDocumentSync *NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions `json:"notebookDocumentSync,omitempty"`
+	NotebookDocumentSync *NotebookDocumentSyncOptionsOrRegistrationOptions `json:"notebookDocumentSync,omitzero"`
 
 	// The server provides completion support.
-	CompletionProvider *CompletionOptions `json:"completionProvider,omitempty"`
+	CompletionProvider *CompletionOptions `json:"completionProvider,omitzero"`
 
 	// The server provides hover support.
-	HoverProvider *BooleanOrHoverOptions `json:"hoverProvider,omitempty"`
+	HoverProvider *BooleanOrHoverOptions `json:"hoverProvider,omitzero"`
 
 	// The server provides signature help support.
-	SignatureHelpProvider *SignatureHelpOptions `json:"signatureHelpProvider,omitempty"`
+	SignatureHelpProvider *SignatureHelpOptions `json:"signatureHelpProvider,omitzero"`
 
 	// The server provides Goto Declaration support.
-	DeclarationProvider *BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions `json:"declarationProvider,omitempty"`
+	DeclarationProvider *BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions `json:"declarationProvider,omitzero"`
 
 	// The server provides goto definition support.
-	DefinitionProvider *BooleanOrDefinitionOptions `json:"definitionProvider,omitempty"`
+	DefinitionProvider *BooleanOrDefinitionOptions `json:"definitionProvider,omitzero"`
 
 	// The server provides Goto Type Definition support.
-	TypeDefinitionProvider *BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions `json:"typeDefinitionProvider,omitempty"`
+	TypeDefinitionProvider *BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions `json:"typeDefinitionProvider,omitzero"`
 
 	// The server provides Goto Implementation support.
-	ImplementationProvider *BooleanOrImplementationOptionsOrImplementationRegistrationOptions `json:"implementationProvider,omitempty"`
+	ImplementationProvider *BooleanOrImplementationOptionsOrImplementationRegistrationOptions `json:"implementationProvider,omitzero"`
 
 	// The server provides find references support.
-	ReferencesProvider *BooleanOrReferenceOptions `json:"referencesProvider,omitempty"`
+	ReferencesProvider *BooleanOrReferenceOptions `json:"referencesProvider,omitzero"`
 
 	// The server provides document highlight support.
-	DocumentHighlightProvider *BooleanOrDocumentHighlightOptions `json:"documentHighlightProvider,omitempty"`
+	DocumentHighlightProvider *BooleanOrDocumentHighlightOptions `json:"documentHighlightProvider,omitzero"`
 
 	// The server provides document symbol support.
-	DocumentSymbolProvider *BooleanOrDocumentSymbolOptions `json:"documentSymbolProvider,omitempty"`
+	DocumentSymbolProvider *BooleanOrDocumentSymbolOptions `json:"documentSymbolProvider,omitzero"`
 
 	// The server provides code actions. CodeActionOptions may only be
 	// specified if the client states that it supports
 	// `codeActionLiteralSupport` in its initial `initialize` request.
-	CodeActionProvider *BooleanOrCodeActionOptions `json:"codeActionProvider,omitempty"`
+	CodeActionProvider *BooleanOrCodeActionOptions `json:"codeActionProvider,omitzero"`
 
 	// The server provides code lens.
-	CodeLensProvider *CodeLensOptions `json:"codeLensProvider,omitempty"`
+	CodeLensProvider *CodeLensOptions `json:"codeLensProvider,omitzero"`
 
 	// The server provides document link support.
-	DocumentLinkProvider *DocumentLinkOptions `json:"documentLinkProvider,omitempty"`
+	DocumentLinkProvider *DocumentLinkOptions `json:"documentLinkProvider,omitzero"`
 
 	// The server provides color provider support.
-	ColorProvider *BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions `json:"colorProvider,omitempty"`
+	ColorProvider *BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions `json:"colorProvider,omitzero"`
 
 	// The server provides workspace symbol support.
-	WorkspaceSymbolProvider *BooleanOrWorkspaceSymbolOptions `json:"workspaceSymbolProvider,omitempty"`
+	WorkspaceSymbolProvider *BooleanOrWorkspaceSymbolOptions `json:"workspaceSymbolProvider,omitzero"`
 
 	// The server provides document formatting.
-	DocumentFormattingProvider *BooleanOrDocumentFormattingOptions `json:"documentFormattingProvider,omitempty"`
+	DocumentFormattingProvider *BooleanOrDocumentFormattingOptions `json:"documentFormattingProvider,omitzero"`
 
 	// The server provides document range formatting.
-	DocumentRangeFormattingProvider *BooleanOrDocumentRangeFormattingOptions `json:"documentRangeFormattingProvider,omitempty"`
+	DocumentRangeFormattingProvider *BooleanOrDocumentRangeFormattingOptions `json:"documentRangeFormattingProvider,omitzero"`
 
 	// The server provides document formatting on typing.
-	DocumentOnTypeFormattingProvider *DocumentOnTypeFormattingOptions `json:"documentOnTypeFormattingProvider,omitempty"`
+	DocumentOnTypeFormattingProvider *DocumentOnTypeFormattingOptions `json:"documentOnTypeFormattingProvider,omitzero"`
 
 	// The server provides rename support. RenameOptions may only be
 	// specified if the client states that it supports
 	// `prepareSupport` in its initial `initialize` request.
-	RenameProvider *BooleanOrRenameOptions `json:"renameProvider,omitempty"`
+	RenameProvider *BooleanOrRenameOptions `json:"renameProvider,omitzero"`
 
 	// The server provides folding provider support.
-	FoldingRangeProvider *BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions `json:"foldingRangeProvider,omitempty"`
+	FoldingRangeProvider *BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions `json:"foldingRangeProvider,omitzero"`
 
 	// The server provides selection range support.
-	SelectionRangeProvider *BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions `json:"selectionRangeProvider,omitempty"`
+	SelectionRangeProvider *BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions `json:"selectionRangeProvider,omitzero"`
 
 	// The server provides execute command support.
-	ExecuteCommandProvider *ExecuteCommandOptions `json:"executeCommandProvider,omitempty"`
+	ExecuteCommandProvider *ExecuteCommandOptions `json:"executeCommandProvider,omitzero"`
 
 	// The server provides call hierarchy support.
 	//
 	// Since: 3.16.0
-	CallHierarchyProvider *BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions `json:"callHierarchyProvider,omitempty"`
+	CallHierarchyProvider *BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions `json:"callHierarchyProvider,omitzero"`
 
 	// The server provides linked editing range support.
 	//
 	// Since: 3.16.0
-	LinkedEditingRangeProvider *BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions `json:"linkedEditingRangeProvider,omitempty"`
+	LinkedEditingRangeProvider *BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions `json:"linkedEditingRangeProvider,omitzero"`
 
 	// The server provides semantic tokens support.
 	//
 	// Since: 3.16.0
-	SemanticTokensProvider *SemanticTokensOptionsOrSemanticTokensRegistrationOptions `json:"semanticTokensProvider,omitempty"`
+	SemanticTokensProvider *SemanticTokensOptionsOrRegistrationOptions `json:"semanticTokensProvider,omitzero"`
 
 	// The server provides moniker support.
 	//
 	// Since: 3.16.0
-	MonikerProvider *BooleanOrMonikerOptionsOrMonikerRegistrationOptions `json:"monikerProvider,omitempty"`
+	MonikerProvider *BooleanOrMonikerOptionsOrMonikerRegistrationOptions `json:"monikerProvider,omitzero"`
 
 	// The server provides type hierarchy support.
 	//
 	// Since: 3.17.0
-	TypeHierarchyProvider *BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions `json:"typeHierarchyProvider,omitempty"`
+	TypeHierarchyProvider *BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions `json:"typeHierarchyProvider,omitzero"`
 
 	// The server provides inline values.
 	//
 	// Since: 3.17.0
-	InlineValueProvider *BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions `json:"inlineValueProvider,omitempty"`
+	InlineValueProvider *BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions `json:"inlineValueProvider,omitzero"`
 
 	// The server provides inlay hints.
 	//
 	// Since: 3.17.0
-	InlayHintProvider *BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions `json:"inlayHintProvider,omitempty"`
+	InlayHintProvider *BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions `json:"inlayHintProvider,omitzero"`
 
 	// The server has support for pull model diagnostics.
 	//
 	// Since: 3.17.0
-	DiagnosticProvider *DiagnosticOptionsOrDiagnosticRegistrationOptions `json:"diagnosticProvider,omitempty"`
+	DiagnosticProvider *DiagnosticOptionsOrRegistrationOptions `json:"diagnosticProvider,omitzero"`
 
 	// Inline completion options used during static registration.
 	//
 	// Since: 3.18.0
 	//
 	// Proposed.
-	InlineCompletionProvider *BooleanOrInlineCompletionOptions `json:"inlineCompletionProvider,omitempty"`
+	InlineCompletionProvider *BooleanOrInlineCompletionOptions `json:"inlineCompletionProvider,omitzero"`
 
 	// Workspace specific server capabilities.
-	Workspace *WorkspaceOptions `json:"workspace,omitempty"`
+	Workspace *WorkspaceOptions `json:"workspace,omitzero"`
 
 	// Experimental server capabilities.
-	Experimental *any `json:"experimental,omitempty"`
+	Experimental *any `json:"experimental,omitzero"`
 }
 
 // Information about the server
@@ -7031,7 +8955,7 @@ type ServerInfo struct {
 	Name string `json:"name"`
 
 	// The server's version as defined by the server.
-	Version *string `json:"version,omitempty"`
+	Version *string `json:"version,omitzero"`
 }
 
 func (s *ServerInfo) UnmarshalJSON(data []byte) error {
@@ -7052,7 +8976,7 @@ func (s *ServerInfo) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Name    string  `json:"name"`
-		Version *string `json:"version,omitempty"`
+		Version *string `json:"version,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -7060,7 +8984,8 @@ func (s *ServerInfo) UnmarshalJSON(data []byte) error {
 
 // A text document identifier to denote a specific version of a text document.
 type VersionedTextDocumentIdentifier struct {
-	TextDocumentIdentifier
+	// The text document's uri.
+	Uri DocumentUri `json:"uri"`
 
 	// The version number of this document.
 	Version int32 `json:"version"`
@@ -7069,6 +8994,7 @@ type VersionedTextDocumentIdentifier struct {
 func (s *VersionedTextDocumentIdentifier) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
+		Uri     requiredProp `json:"uri"`
 		Version requiredProp `json:"version"`
 	}
 
@@ -7077,15 +9003,17 @@ func (s *VersionedTextDocumentIdentifier) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
+	if !keys.Uri {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
 	if !keys.Version {
 		return fmt.Errorf("required key 'version' is missing")
 	}
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		TextDocumentIdentifier
-
-		Version int32 `json:"version"`
+		Uri     DocumentUri `json:"uri"`
+		Version int32       `json:"version"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -7094,7 +9022,7 @@ func (s *VersionedTextDocumentIdentifier) UnmarshalJSON(data []byte) error {
 // Save options.
 type SaveOptions struct {
 	// The client is supposed to include the content on save.
-	IncludeText *bool `json:"includeText,omitempty"`
+	IncludeText *bool `json:"includeText,omitzero"`
 }
 
 // An event describing a file change.
@@ -7138,12 +9066,12 @@ type FileSystemWatcher struct {
 	// The glob pattern to watch. See pattern for more detail.
 	//
 	// Since: 3.17.0 support for relative patterns.
-	GlobPattern GlobPattern `json:"globPattern"`
+	GlobPattern PatternOrRelativePattern `json:"globPattern"`
 
 	// The kind of events of interest. If omitted it defaults
 	// to WatchKind.Create | WatchKind.Change | WatchKind.Delete
 	// which is 7.
-	Kind *WatchKind `json:"kind,omitempty"`
+	Kind *WatchKind `json:"kind,omitzero"`
 }
 
 func (s *FileSystemWatcher) UnmarshalJSON(data []byte) error {
@@ -7163,8 +9091,8 @@ func (s *FileSystemWatcher) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		GlobPattern GlobPattern `json:"globPattern"`
-		Kind        *WatchKind  `json:"kind,omitempty"`
+		GlobPattern PatternOrRelativePattern `json:"globPattern"`
+		Kind        *WatchKind               `json:"kind,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -7179,21 +9107,21 @@ type Diagnostic struct {
 	// The diagnostic's severity. To avoid interpretation mismatches when a
 	// server is used with different clients it is highly recommended that servers
 	// always provide a severity value.
-	Severity *DiagnosticSeverity `json:"severity,omitempty"`
+	Severity *DiagnosticSeverity `json:"severity,omitzero"`
 
 	// The diagnostic's code, which usually appear in the user interface.
-	Code *IntegerOrString `json:"code,omitempty"`
+	Code *IntegerOrString `json:"code,omitzero"`
 
 	// An optional property to describe the error code.
 	// Requires the code field (above) to be present/not null.
 	//
 	// Since: 3.16.0
-	CodeDescription *CodeDescription `json:"codeDescription,omitempty"`
+	CodeDescription *CodeDescription `json:"codeDescription,omitzero"`
 
 	// A human-readable string describing the source of this
 	// diagnostic, e.g. 'typescript' or 'super lint'. It usually
 	// appears in the user interface.
-	Source *string `json:"source,omitempty"`
+	Source *string `json:"source,omitzero"`
 
 	// The diagnostic's message. It usually appears in the user interface
 	Message string `json:"message"`
@@ -7201,17 +9129,17 @@ type Diagnostic struct {
 	// Additional metadata about the diagnostic.
 	//
 	// Since: 3.15.0
-	Tags *[]DiagnosticTag `json:"tags,omitempty"`
+	Tags *[]DiagnosticTag `json:"tags,omitzero"`
 
 	// An array of related diagnostic information, e.g. when symbol-names within
 	// a scope collide all definitions can be marked via this property.
-	RelatedInformation *[]*DiagnosticRelatedInformation `json:"relatedInformation,omitempty"`
+	RelatedInformation *[]*DiagnosticRelatedInformation `json:"relatedInformation,omitzero"`
 
 	// A data entry field that is preserved between a `textDocument/publishDiagnostics`
 	// notification and `textDocument/codeAction` request.
 	//
 	// Since: 3.16.0
-	Data *any `json:"data,omitempty"`
+	Data *any `json:"data,omitzero"`
 }
 
 func (s *Diagnostic) UnmarshalJSON(data []byte) error {
@@ -7236,14 +9164,14 @@ func (s *Diagnostic) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Range              Range                            `json:"range"`
-		Severity           *DiagnosticSeverity              `json:"severity,omitempty"`
-		Code               *IntegerOrString                 `json:"code,omitempty"`
-		CodeDescription    *CodeDescription                 `json:"codeDescription,omitempty"`
-		Source             *string                          `json:"source,omitempty"`
+		Severity           *DiagnosticSeverity              `json:"severity,omitzero"`
+		Code               *IntegerOrString                 `json:"code,omitzero"`
+		CodeDescription    *CodeDescription                 `json:"codeDescription,omitzero"`
+		Source             *string                          `json:"source,omitzero"`
 		Message            string                           `json:"message"`
-		Tags               *[]DiagnosticTag                 `json:"tags,omitempty"`
-		RelatedInformation *[]*DiagnosticRelatedInformation `json:"relatedInformation,omitempty"`
-		Data               *any                             `json:"data,omitempty"`
+		Tags               *[]DiagnosticTag                 `json:"tags,omitzero"`
+		RelatedInformation *[]*DiagnosticRelatedInformation `json:"relatedInformation,omitzero"`
+		Data               *any                             `json:"data,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -7256,7 +9184,7 @@ type CompletionContext struct {
 
 	// The trigger character (a single character) that has trigger code complete.
 	// Is undefined if `triggerKind !== CompletionTriggerKind.TriggerCharacter`
-	TriggerCharacter *string `json:"triggerCharacter,omitempty"`
+	TriggerCharacter *string `json:"triggerCharacter,omitzero"`
 }
 
 func (s *CompletionContext) UnmarshalJSON(data []byte) error {
@@ -7277,7 +9205,7 @@ func (s *CompletionContext) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		TriggerKind      CompletionTriggerKind `json:"triggerKind"`
-		TriggerCharacter *string               `json:"triggerCharacter,omitempty"`
+		TriggerCharacter *string               `json:"triggerCharacter,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -7289,11 +9217,11 @@ func (s *CompletionContext) UnmarshalJSON(data []byte) error {
 type CompletionItemLabelDetails struct {
 	// An optional string which is rendered less prominently directly after label,
 	// without any spacing. Should be used for function signatures and type annotations.
-	Detail *string `json:"detail,omitempty"`
+	Detail *string `json:"detail,omitzero"`
 
 	// An optional string which is rendered less prominently after CompletionItem.detail. Should be used
 	// for fully qualified names and file paths.
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description,omitzero"`
 }
 
 // A special text edit to provide an insert and a replace operation.
@@ -7362,27 +9290,27 @@ type CompletionItemDefaults struct {
 	// A default commit character set.
 	//
 	// Since: 3.17.0
-	CommitCharacters *[]string `json:"commitCharacters,omitempty"`
+	CommitCharacters *[]string `json:"commitCharacters,omitzero"`
 
 	// A default edit range.
 	//
 	// Since: 3.17.0
-	EditRange *RangeOrEditRangeWithInsertReplace `json:"editRange,omitempty"`
+	EditRange *RangeOrEditRangeWithInsertReplace `json:"editRange,omitzero"`
 
 	// A default insert text format.
 	//
 	// Since: 3.17.0
-	InsertTextFormat *InsertTextFormat `json:"insertTextFormat,omitempty"`
+	InsertTextFormat *InsertTextFormat `json:"insertTextFormat,omitzero"`
 
 	// A default insert text mode.
 	//
 	// Since: 3.17.0
-	InsertTextMode *InsertTextMode `json:"insertTextMode,omitempty"`
+	InsertTextMode *InsertTextMode `json:"insertTextMode,omitzero"`
 
 	// A default data value.
 	//
 	// Since: 3.17.0
-	Data *any `json:"data,omitempty"`
+	Data *any `json:"data,omitzero"`
 }
 
 // Specifies how fields from a completion item should be combined with those
@@ -7418,7 +9346,7 @@ type CompletionItemApplyKinds struct {
 	// and the completion's own `commitCharacters`.
 	//
 	// Since: 3.18.0
-	CommitCharacters *ApplyKind `json:"commitCharacters,omitempty"`
+	CommitCharacters *ApplyKind `json:"commitCharacters,omitzero"`
 
 	// Specifies whether the `data` field on a completion will replace or
 	// be merged with data from `completionList.itemDefaults.data`.
@@ -7442,12 +9370,12 @@ type CompletionItemApplyKinds struct {
 	//   within that value will occur.
 	//
 	// Since: 3.18.0
-	Data *ApplyKind `json:"data,omitempty"`
+	Data *ApplyKind `json:"data,omitzero"`
 }
 
 // Completion options.
 type CompletionOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 
 	// Most tools trigger completion request automatically without explicitly requesting
 	// it using a keyboard shortcut (e.g. Ctrl+Space). Typically they do so when the user
@@ -7457,7 +9385,7 @@ type CompletionOptions struct {
 	//
 	// If code complete should automatically be trigger on characters not being valid inside
 	// an identifier (for example `.` in JavaScript) list them in `triggerCharacters`.
-	TriggerCharacters *[]string `json:"triggerCharacters,omitempty"`
+	TriggerCharacters *[]string `json:"triggerCharacters,omitzero"`
 
 	// The list of all possible characters that commit a completion. This field can be used
 	// if clients don't support individual commit characters per completion item. See
@@ -7467,22 +9395,22 @@ type CompletionOptions struct {
 	// completion item the ones on the completion item win.
 	//
 	// Since: 3.2.0
-	AllCommitCharacters *[]string `json:"allCommitCharacters,omitempty"`
+	AllCommitCharacters *[]string `json:"allCommitCharacters,omitzero"`
 
 	// The server provides support to resolve additional
 	// information for a completion item.
-	ResolveProvider *bool `json:"resolveProvider,omitempty"`
+	ResolveProvider *bool `json:"resolveProvider,omitzero"`
 
 	// The server supports the following `CompletionItem` specific
 	// capabilities.
 	//
 	// Since: 3.17.0
-	CompletionItem *ServerCompletionItemOptions `json:"completionItem,omitempty"`
+	CompletionItem *ServerCompletionItemOptions `json:"completionItem,omitzero"`
 }
 
 // Hover options.
 type HoverOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
 // Additional information about the context in which a signature help request was triggered.
@@ -7495,7 +9423,7 @@ type SignatureHelpContext struct {
 	// Character that caused signature help to be triggered.
 	//
 	// This is undefined when `triggerKind !== SignatureHelpTriggerKind.TriggerCharacter`
-	TriggerCharacter *string `json:"triggerCharacter,omitempty"`
+	TriggerCharacter *string `json:"triggerCharacter,omitzero"`
 
 	// `true` if signature help was already showing when it was triggered.
 	//
@@ -7507,7 +9435,7 @@ type SignatureHelpContext struct {
 	//
 	// The `activeSignatureHelp` has its `SignatureHelp.activeSignature` field updated based on
 	// the user navigating through available signatures.
-	ActiveSignatureHelp *SignatureHelp `json:"activeSignatureHelp,omitempty"`
+	ActiveSignatureHelp *SignatureHelp `json:"activeSignatureHelp,omitzero"`
 }
 
 func (s *SignatureHelpContext) UnmarshalJSON(data []byte) error {
@@ -7532,9 +9460,9 @@ func (s *SignatureHelpContext) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		TriggerKind         SignatureHelpTriggerKind `json:"triggerKind"`
-		TriggerCharacter    *string                  `json:"triggerCharacter,omitempty"`
+		TriggerCharacter    *string                  `json:"triggerCharacter,omitzero"`
 		IsRetrigger         bool                     `json:"isRetrigger"`
-		ActiveSignatureHelp *SignatureHelp           `json:"activeSignatureHelp,omitempty"`
+		ActiveSignatureHelp *SignatureHelp           `json:"activeSignatureHelp,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -7550,10 +9478,10 @@ type SignatureInformation struct {
 
 	// The human-readable doc-comment of this signature. Will be shown
 	// in the UI but can be omitted.
-	Documentation *StringOrMarkupContent `json:"documentation,omitempty"`
+	Documentation *StringOrMarkupContent `json:"documentation,omitzero"`
 
 	// The parameters of this signature.
-	Parameters *[]*ParameterInformation `json:"parameters,omitempty"`
+	Parameters *[]*ParameterInformation `json:"parameters,omitzero"`
 
 	// The index of the active parameter.
 	//
@@ -7566,7 +9494,7 @@ type SignatureInformation struct {
 	// `SignatureHelp.activeParameter`.
 	//
 	// Since: 3.16.0
-	ActiveParameter *Nullable[uint32] `json:"activeParameter,omitempty"`
+	ActiveParameter *UintegerOrNull `json:"activeParameter,omitzero"`
 }
 
 func (s *SignatureInformation) UnmarshalJSON(data []byte) error {
@@ -7587,9 +9515,9 @@ func (s *SignatureInformation) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Label           string                   `json:"label"`
-		Documentation   *StringOrMarkupContent   `json:"documentation,omitempty"`
-		Parameters      *[]*ParameterInformation `json:"parameters,omitempty"`
-		ActiveParameter *Nullable[uint32]        `json:"activeParameter,omitempty"`
+		Documentation   *StringOrMarkupContent   `json:"documentation,omitzero"`
+		Parameters      *[]*ParameterInformation `json:"parameters,omitzero"`
+		ActiveParameter *UintegerOrNull          `json:"activeParameter,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -7597,10 +9525,10 @@ func (s *SignatureInformation) UnmarshalJSON(data []byte) error {
 
 // Server Capabilities for a SignatureHelpRequest.
 type SignatureHelpOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 
 	// List of characters that trigger signature help automatically.
-	TriggerCharacters *[]string `json:"triggerCharacters,omitempty"`
+	TriggerCharacters *[]string `json:"triggerCharacters,omitzero"`
 
 	// List of characters that re-trigger signature help.
 	//
@@ -7608,12 +9536,12 @@ type SignatureHelpOptions struct {
 	// are also counted as re-trigger characters.
 	//
 	// Since: 3.15.0
-	RetriggerCharacters *[]string `json:"retriggerCharacters,omitempty"`
+	RetriggerCharacters *[]string `json:"retriggerCharacters,omitzero"`
 }
 
 // Server Capabilities for a DefinitionRequest.
 type DefinitionOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
 // Value-object that contains additional information when
@@ -7648,12 +9576,12 @@ func (s *ReferenceContext) UnmarshalJSON(data []byte) error {
 
 // Reference options.
 type ReferenceOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
 // Provider options for a DocumentHighlightRequest.
 type DocumentHighlightOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
 // A base for all symbol information.
@@ -7667,13 +9595,13 @@ type BaseSymbolInformation struct {
 	// Tags for this symbol.
 	//
 	// Since: 3.16.0
-	Tags *[]SymbolTag `json:"tags,omitempty"`
+	Tags *[]SymbolTag `json:"tags,omitzero"`
 
 	// The name of the symbol containing this symbol. This information is for
 	// user interface purposes (e.g. to render a qualifier in the user interface
 	// if necessary). It can't be used to re-infer a hierarchy for the document
 	// symbols.
-	ContainerName *string `json:"containerName,omitempty"`
+	ContainerName *string `json:"containerName,omitzero"`
 }
 
 func (s *BaseSymbolInformation) UnmarshalJSON(data []byte) error {
@@ -7699,8 +9627,8 @@ func (s *BaseSymbolInformation) UnmarshalJSON(data []byte) error {
 	type temp struct {
 		Name          string       `json:"name"`
 		Kind          SymbolKind   `json:"kind"`
-		Tags          *[]SymbolTag `json:"tags,omitempty"`
-		ContainerName *string      `json:"containerName,omitempty"`
+		Tags          *[]SymbolTag `json:"tags,omitzero"`
+		ContainerName *string      `json:"containerName,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -7708,13 +9636,13 @@ func (s *BaseSymbolInformation) UnmarshalJSON(data []byte) error {
 
 // Provider options for a DocumentSymbolRequest.
 type DocumentSymbolOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 
 	// A human-readable string that is shown when multiple outlines trees
 	// are shown for the same document.
 	//
 	// Since: 3.16.0
-	Label *string `json:"label,omitempty"`
+	Label *string `json:"label,omitzero"`
 }
 
 // Contains additional diagnostic information about the context in which
@@ -7731,12 +9659,12 @@ type CodeActionContext struct {
 	//
 	// Actions not of this kind are filtered out by the client before being shown. So servers
 	// can omit computing them.
-	Only *[]CodeActionKind `json:"only,omitempty"`
+	Only *[]CodeActionKind `json:"only,omitzero"`
 
 	// The reason why code actions were requested.
 	//
 	// Since: 3.17.0
-	TriggerKind *CodeActionTriggerKind `json:"triggerKind,omitempty"`
+	TriggerKind *CodeActionTriggerKind `json:"triggerKind,omitzero"`
 }
 
 func (s *CodeActionContext) UnmarshalJSON(data []byte) error {
@@ -7757,8 +9685,8 @@ func (s *CodeActionContext) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Diagnostics []*Diagnostic          `json:"diagnostics"`
-		Only        *[]CodeActionKind      `json:"only,omitempty"`
-		TriggerKind *CodeActionTriggerKind `json:"triggerKind,omitempty"`
+		Only        *[]CodeActionKind      `json:"only,omitzero"`
+		TriggerKind *CodeActionTriggerKind `json:"triggerKind,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -7799,13 +9727,13 @@ func (s *CodeActionDisabled) UnmarshalJSON(data []byte) error {
 
 // Provider options for a CodeActionRequest.
 type CodeActionOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 
 	// CodeActionKinds that this server may return.
 	//
 	// The list of kinds may be generic, such as `CodeActionKind.Refactor`, or the server
 	// may list out every specific kind they provide.
-	CodeActionKinds *[]CodeActionKind `json:"codeActionKinds,omitempty"`
+	CodeActionKinds *[]CodeActionKind `json:"codeActionKinds,omitzero"`
 
 	// Static documentation for a class of code actions.
 	//
@@ -7823,13 +9751,13 @@ type CodeActionOptions struct {
 	// Since: 3.18.0
 	//
 	// Proposed.
-	Documentation *[]*CodeActionKindDocumentation `json:"documentation,omitempty"`
+	Documentation *[]*CodeActionKindDocumentation `json:"documentation,omitzero"`
 
 	// The server provides support to resolve additional
 	// information for a code action.
 	//
 	// Since: 3.16.0
-	ResolveProvider *bool `json:"resolveProvider,omitempty"`
+	ResolveProvider *bool `json:"resolveProvider,omitzero"`
 }
 
 // Location with only uri and does not include range.
@@ -7864,29 +9792,29 @@ func (s *LocationUriOnly) UnmarshalJSON(data []byte) error {
 
 // Server capabilities for a WorkspaceSymbolRequest.
 type WorkspaceSymbolOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 
 	// The server provides support to resolve additional
 	// information for a workspace symbol.
 	//
 	// Since: 3.17.0
-	ResolveProvider *bool `json:"resolveProvider,omitempty"`
+	ResolveProvider *bool `json:"resolveProvider,omitzero"`
 }
 
 // Code Lens provider options of a CodeLensRequest.
 type CodeLensOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 
 	// Code lens has a resolve provider as well.
-	ResolveProvider *bool `json:"resolveProvider,omitempty"`
+	ResolveProvider *bool `json:"resolveProvider,omitzero"`
 }
 
 // Provider options for a DocumentLinkRequest.
 type DocumentLinkOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 
 	// Document links have a resolve provider as well.
-	ResolveProvider *bool `json:"resolveProvider,omitempty"`
+	ResolveProvider *bool `json:"resolveProvider,omitzero"`
 }
 
 // Value-object describing what options formatting should use.
@@ -7900,17 +9828,17 @@ type FormattingOptions struct {
 	// Trim trailing whitespace on a line.
 	//
 	// Since: 3.15.0
-	TrimTrailingWhitespace *bool `json:"trimTrailingWhitespace,omitempty"`
+	TrimTrailingWhitespace *bool `json:"trimTrailingWhitespace,omitzero"`
 
 	// Insert a newline character at the end of the file if one does not exist.
 	//
 	// Since: 3.15.0
-	InsertFinalNewline *bool `json:"insertFinalNewline,omitempty"`
+	InsertFinalNewline *bool `json:"insertFinalNewline,omitzero"`
 
 	// Trim all newlines after the final newline at the end of the file.
 	//
 	// Since: 3.15.0
-	TrimFinalNewlines *bool `json:"trimFinalNewlines,omitempty"`
+	TrimFinalNewlines *bool `json:"trimFinalNewlines,omitzero"`
 }
 
 func (s *FormattingOptions) UnmarshalJSON(data []byte) error {
@@ -7936,9 +9864,9 @@ func (s *FormattingOptions) UnmarshalJSON(data []byte) error {
 	type temp struct {
 		TabSize                uint32 `json:"tabSize"`
 		InsertSpaces           bool   `json:"insertSpaces"`
-		TrimTrailingWhitespace *bool  `json:"trimTrailingWhitespace,omitempty"`
-		InsertFinalNewline     *bool  `json:"insertFinalNewline,omitempty"`
-		TrimFinalNewlines      *bool  `json:"trimFinalNewlines,omitempty"`
+		TrimTrailingWhitespace *bool  `json:"trimTrailingWhitespace,omitzero"`
+		InsertFinalNewline     *bool  `json:"insertFinalNewline,omitzero"`
+		TrimFinalNewlines      *bool  `json:"trimFinalNewlines,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -7946,19 +9874,19 @@ func (s *FormattingOptions) UnmarshalJSON(data []byte) error {
 
 // Provider options for a DocumentFormattingRequest.
 type DocumentFormattingOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
 // Provider options for a DocumentRangeFormattingRequest.
 type DocumentRangeFormattingOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 
 	// Whether the server supports formatting multiple ranges at once.
 	//
 	// Since: 3.18.0
 	//
 	// Proposed.
-	RangesSupport *bool `json:"rangesSupport,omitempty"`
+	RangesSupport *bool `json:"rangesSupport,omitzero"`
 }
 
 // Provider options for a DocumentOnTypeFormattingRequest.
@@ -7967,7 +9895,7 @@ type DocumentOnTypeFormattingOptions struct {
 	FirstTriggerCharacter string `json:"firstTriggerCharacter"`
 
 	// More trigger characters.
-	MoreTriggerCharacter *[]string `json:"moreTriggerCharacter,omitempty"`
+	MoreTriggerCharacter *[]string `json:"moreTriggerCharacter,omitzero"`
 }
 
 func (s *DocumentOnTypeFormattingOptions) UnmarshalJSON(data []byte) error {
@@ -7988,7 +9916,7 @@ func (s *DocumentOnTypeFormattingOptions) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		FirstTriggerCharacter string    `json:"firstTriggerCharacter"`
-		MoreTriggerCharacter  *[]string `json:"moreTriggerCharacter,omitempty"`
+		MoreTriggerCharacter  *[]string `json:"moreTriggerCharacter,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -7996,12 +9924,12 @@ func (s *DocumentOnTypeFormattingOptions) UnmarshalJSON(data []byte) error {
 
 // Provider options for a RenameRequest.
 type RenameOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 
 	// Renames should be checked and tested before being executed.
 	//
 	// Since: version 3.12.0
-	PrepareProvider *bool `json:"prepareProvider,omitempty"`
+	PrepareProvider *bool `json:"prepareProvider,omitzero"`
 }
 
 // Since: 3.18.0
@@ -8069,7 +9997,7 @@ func (s *PrepareRenameDefaultBehavior) UnmarshalJSON(data []byte) error {
 
 // The server capabilities of a ExecuteCommandRequest.
 type ExecuteCommandOptions struct {
-	WorkDoneProgressOptions
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 
 	// The commands to be executed on the server
 	Commands []string `json:"commands"`
@@ -8092,9 +10020,8 @@ func (s *ExecuteCommandOptions) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		WorkDoneProgressOptions
-
-		Commands []string `json:"commands"`
+		WorkDoneProgress *bool    `json:"workDoneProgress,omitzero"`
+		Commands         []string `json:"commands"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -8107,7 +10034,7 @@ func (s *ExecuteCommandOptions) UnmarshalJSON(data []byte) error {
 // Proposed.
 type WorkspaceEditMetadata struct {
 	// Signal to the editor that this edit is a refactoring.
-	IsRefactoring *bool `json:"isRefactoring,omitempty"`
+	IsRefactoring *bool `json:"isRefactoring,omitzero"`
 }
 
 // Since: 3.16.0
@@ -8152,24 +10079,26 @@ func (s *SemanticTokensLegend) UnmarshalJSON(data []byte) error {
 // Since: 3.18.0
 type SemanticTokensFullDelta struct {
 	// The server supports deltas for full documents.
-	Delta *bool `json:"delta,omitempty"`
+	Delta *bool `json:"delta,omitzero"`
 }
 
 // A text document identifier to optionally denote a specific version of a text document.
 type OptionalVersionedTextDocumentIdentifier struct {
-	TextDocumentIdentifier
+	// The text document's uri.
+	Uri DocumentUri `json:"uri"`
 
 	// The version number of this document. If a versioned text document identifier
 	// is sent from the server to the client and the file is not open in the editor
 	// (the server has not received an open notification before) the server can send
 	// `null` to indicate that the version is unknown and the content on disk is the
 	// truth (as specified with document content ownership).
-	Version Nullable[int32] `json:"version"`
+	Version IntegerOrNull `json:"version"`
 }
 
 func (s *OptionalVersionedTextDocumentIdentifier) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
+		Uri     requiredProp `json:"uri"`
 		Version requiredProp `json:"version"`
 	}
 
@@ -8178,15 +10107,17 @@ func (s *OptionalVersionedTextDocumentIdentifier) UnmarshalJSON(data []byte) err
 		return err
 	}
 
+	if !keys.Uri {
+		return fmt.Errorf("required key 'uri' is missing")
+	}
 	if !keys.Version {
 		return fmt.Errorf("required key 'version' is missing")
 	}
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		TextDocumentIdentifier
-
-		Version Nullable[int32] `json:"version"`
+		Uri     DocumentUri   `json:"uri"`
+		Version IntegerOrNull `json:"version"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -8196,15 +10127,23 @@ func (s *OptionalVersionedTextDocumentIdentifier) UnmarshalJSON(data []byte) err
 //
 // Since: 3.16.0.
 type AnnotatedTextEdit struct {
-	TextEdit
+	// The range of the text document to be manipulated. To insert
+	// text into a document create a range where start === end.
+	Range Range `json:"range"`
+
+	// The string to be inserted. For delete operations use an
+	// empty string.
+	NewText string `json:"newText"`
 
 	// The actual identifier of the change annotation
-	AnnotationId ChangeAnnotationIdentifier `json:"annotationId"`
+	AnnotationId string `json:"annotationId"`
 }
 
 func (s *AnnotatedTextEdit) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
+		Range        requiredProp `json:"range"`
+		NewText      requiredProp `json:"newText"`
 		AnnotationId requiredProp `json:"annotationId"`
 	}
 
@@ -8213,15 +10152,21 @@ func (s *AnnotatedTextEdit) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
+	if !keys.Range {
+		return fmt.Errorf("required key 'range' is missing")
+	}
+	if !keys.NewText {
+		return fmt.Errorf("required key 'newText' is missing")
+	}
 	if !keys.AnnotationId {
 		return fmt.Errorf("required key 'annotationId' is missing")
 	}
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		TextEdit
-
-		AnnotationId ChangeAnnotationIdentifier `json:"annotationId"`
+		Range        Range  `json:"range"`
+		NewText      string `json:"newText"`
+		AnnotationId string `json:"annotationId"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -8240,7 +10185,7 @@ type SnippetTextEdit struct {
 	Snippet *StringValue `json:"snippet"`
 
 	// The actual identifier of the snippet edit.
-	AnnotationId *ChangeAnnotationIdentifier `json:"annotationId,omitempty"`
+	AnnotationId *string `json:"annotationId,omitzero"`
 }
 
 func (s *SnippetTextEdit) UnmarshalJSON(data []byte) error {
@@ -8264,9 +10209,9 @@ func (s *SnippetTextEdit) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Range        Range                       `json:"range"`
-		Snippet      *StringValue                `json:"snippet"`
-		AnnotationId *ChangeAnnotationIdentifier `json:"annotationId,omitempty"`
+		Range        Range        `json:"range"`
+		Snippet      *StringValue `json:"snippet"`
+		AnnotationId *string      `json:"annotationId,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -8280,7 +10225,7 @@ type ResourceOperation struct {
 	// An optional annotation identifier describing the operation.
 	//
 	// Since: 3.16.0
-	AnnotationId *ChangeAnnotationIdentifier `json:"annotationId,omitempty"`
+	AnnotationId *string `json:"annotationId,omitzero"`
 }
 
 func (s *ResourceOperation) UnmarshalJSON(data []byte) error {
@@ -8300,8 +10245,8 @@ func (s *ResourceOperation) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Kind         string                      `json:"kind"`
-		AnnotationId *ChangeAnnotationIdentifier `json:"annotationId,omitempty"`
+		Kind         string  `json:"kind"`
+		AnnotationId *string `json:"annotationId,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -8310,28 +10255,28 @@ func (s *ResourceOperation) UnmarshalJSON(data []byte) error {
 // Options to create a file.
 type CreateFileOptions struct {
 	// Overwrite existing file. Overwrite wins over `ignoreIfExists`
-	Overwrite *bool `json:"overwrite,omitempty"`
+	Overwrite *bool `json:"overwrite,omitzero"`
 
 	// Ignore if exists.
-	IgnoreIfExists *bool `json:"ignoreIfExists,omitempty"`
+	IgnoreIfExists *bool `json:"ignoreIfExists,omitzero"`
 }
 
 // Rename file options
 type RenameFileOptions struct {
 	// Overwrite target if existing. Overwrite wins over `ignoreIfExists`
-	Overwrite *bool `json:"overwrite,omitempty"`
+	Overwrite *bool `json:"overwrite,omitzero"`
 
 	// Ignores if target exists.
-	IgnoreIfExists *bool `json:"ignoreIfExists,omitempty"`
+	IgnoreIfExists *bool `json:"ignoreIfExists,omitzero"`
 }
 
 // Delete file options
 type DeleteFileOptions struct {
 	// Delete the content recursively if a folder is denoted.
-	Recursive *bool `json:"recursive,omitempty"`
+	Recursive *bool `json:"recursive,omitzero"`
 
 	// Ignore the operation if the file doesn't exist.
-	IgnoreIfNotExists *bool `json:"ignoreIfNotExists,omitempty"`
+	IgnoreIfNotExists *bool `json:"ignoreIfNotExists,omitzero"`
 }
 
 // A pattern to describe in which file operation requests or notifications
@@ -8351,10 +10296,10 @@ type FileOperationPattern struct {
 	// Whether to match files or folders with this pattern.
 	//
 	// Matches both if undefined.
-	Matches *FileOperationPatternKind `json:"matches,omitempty"`
+	Matches *FileOperationPatternKind `json:"matches,omitzero"`
 
 	// Additional options used during matching.
-	Options *FileOperationPatternOptions `json:"options,omitempty"`
+	Options *FileOperationPatternOptions `json:"options,omitzero"`
 }
 
 func (s *FileOperationPattern) UnmarshalJSON(data []byte) error {
@@ -8375,8 +10320,8 @@ func (s *FileOperationPattern) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Glob    string                       `json:"glob"`
-		Matches *FileOperationPatternKind    `json:"matches,omitempty"`
-		Options *FileOperationPatternOptions `json:"options,omitempty"`
+		Matches *FileOperationPatternKind    `json:"matches,omitzero"`
+		Options *FileOperationPatternOptions `json:"options,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -8386,19 +10331,30 @@ func (s *FileOperationPattern) UnmarshalJSON(data []byte) error {
 //
 // Since: 3.17.0
 type WorkspaceFullDocumentDiagnosticReport struct {
-	FullDocumentDiagnosticReport
+	// A full document diagnostic report.
+	Kind StringLiteralFull `json:"kind"`
+
+	// An optional result id. If provided it will
+	// be sent on the next diagnostic request for the
+	// same document.
+	ResultId *string `json:"resultId,omitzero"`
+
+	// The actual items.
+	Items []*Diagnostic `json:"items"`
 
 	// The URI for which diagnostic information is reported.
 	Uri DocumentUri `json:"uri"`
 
 	// The version number for which the diagnostics are reported.
 	// If the document is not marked as open `null` can be provided.
-	Version Nullable[int32] `json:"version"`
+	Version IntegerOrNull `json:"version"`
 }
 
 func (s *WorkspaceFullDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
+		Kind    requiredProp `json:"kind"`
+		Items   requiredProp `json:"items"`
 		Uri     requiredProp `json:"uri"`
 		Version requiredProp `json:"version"`
 	}
@@ -8408,6 +10364,12 @@ func (s *WorkspaceFullDocumentDiagnosticReport) UnmarshalJSON(data []byte) error
 		return err
 	}
 
+	if !keys.Kind {
+		return fmt.Errorf("required key 'kind' is missing")
+	}
+	if !keys.Items {
+		return fmt.Errorf("required key 'items' is missing")
+	}
 	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
@@ -8417,10 +10379,11 @@ func (s *WorkspaceFullDocumentDiagnosticReport) UnmarshalJSON(data []byte) error
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		FullDocumentDiagnosticReport
-
-		Uri     DocumentUri     `json:"uri"`
-		Version Nullable[int32] `json:"version"`
+		Kind     StringLiteralFull `json:"kind"`
+		ResultId *string           `json:"resultId,omitzero"`
+		Items    []*Diagnostic     `json:"items"`
+		Uri      DocumentUri       `json:"uri"`
+		Version  IntegerOrNull     `json:"version"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -8430,21 +10393,31 @@ func (s *WorkspaceFullDocumentDiagnosticReport) UnmarshalJSON(data []byte) error
 //
 // Since: 3.17.0
 type WorkspaceUnchangedDocumentDiagnosticReport struct {
-	UnchangedDocumentDiagnosticReport
+	// A document diagnostic report indicating
+	// no changes to the last result. A server can
+	// only return `unchanged` if result ids are
+	// provided.
+	Kind StringLiteralUnchanged `json:"kind"`
+
+	// A result id which will be sent on the next
+	// diagnostic request for the same document.
+	ResultId string `json:"resultId"`
 
 	// The URI for which diagnostic information is reported.
 	Uri DocumentUri `json:"uri"`
 
 	// The version number for which the diagnostics are reported.
 	// If the document is not marked as open `null` can be provided.
-	Version Nullable[int32] `json:"version"`
+	Version IntegerOrNull `json:"version"`
 }
 
 func (s *WorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
-		Uri     requiredProp `json:"uri"`
-		Version requiredProp `json:"version"`
+		Kind     requiredProp `json:"kind"`
+		ResultId requiredProp `json:"resultId"`
+		Uri      requiredProp `json:"uri"`
+		Version  requiredProp `json:"version"`
 	}
 
 	var keys requiredProps
@@ -8452,6 +10425,12 @@ func (s *WorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) 
 		return err
 	}
 
+	if !keys.Kind {
+		return fmt.Errorf("required key 'kind' is missing")
+	}
+	if !keys.ResultId {
+		return fmt.Errorf("required key 'resultId' is missing")
+	}
 	if !keys.Uri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
@@ -8461,10 +10440,10 @@ func (s *WorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) 
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		UnchangedDocumentDiagnosticReport
-
-		Uri     DocumentUri     `json:"uri"`
-		Version Nullable[int32] `json:"version"`
+		Kind     StringLiteralUnchanged `json:"kind"`
+		ResultId string                 `json:"resultId"`
+		Uri      DocumentUri            `json:"uri"`
+		Version  IntegerOrNull          `json:"version"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -8488,11 +10467,11 @@ type NotebookCell struct {
 	// Additional metadata stored with the cell.
 	//
 	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata *map[string]any `json:"metadata,omitempty"`
+	Metadata *map[string]any `json:"metadata,omitzero"`
 
 	// Additional execution summary information
 	// if supported by the client.
-	ExecutionSummary *ExecutionSummary `json:"executionSummary,omitempty"`
+	ExecutionSummary *ExecutionSummary `json:"executionSummary,omitzero"`
 }
 
 func (s *NotebookCell) UnmarshalJSON(data []byte) error {
@@ -8518,8 +10497,8 @@ func (s *NotebookCell) UnmarshalJSON(data []byte) error {
 	type temp struct {
 		Kind             NotebookCellKind  `json:"kind"`
 		Document         DocumentUri       `json:"document"`
-		Metadata         *map[string]any   `json:"metadata,omitempty"`
-		ExecutionSummary *ExecutionSummary `json:"executionSummary,omitempty"`
+		Metadata         *map[string]any   `json:"metadata,omitzero"`
+		ExecutionSummary *ExecutionSummary `json:"executionSummary,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -8530,10 +10509,10 @@ type NotebookDocumentFilterWithNotebook struct {
 	// The notebook to be synced If a string
 	// value is provided it matches against the
 	// notebook type. '*' matches every notebook.
-	Notebook StringOrNotebookDocumentFilter `json:"notebook"`
+	Notebook StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern `json:"notebook"`
 
 	// The cells of the matching notebook to be synced.
-	Cells *[]*NotebookCellLanguage `json:"cells,omitempty"`
+	Cells *[]*NotebookCellLanguage `json:"cells,omitzero"`
 }
 
 func (s *NotebookDocumentFilterWithNotebook) UnmarshalJSON(data []byte) error {
@@ -8553,8 +10532,8 @@ func (s *NotebookDocumentFilterWithNotebook) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Notebook StringOrNotebookDocumentFilter `json:"notebook"`
-		Cells    *[]*NotebookCellLanguage       `json:"cells,omitempty"`
+		Notebook StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern `json:"notebook"`
+		Cells    *[]*NotebookCellLanguage                                                                                `json:"cells,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -8565,7 +10544,7 @@ type NotebookDocumentFilterWithCells struct {
 	// The notebook to be synced If a string
 	// value is provided it matches against the
 	// notebook type. '*' matches every notebook.
-	Notebook *StringOrNotebookDocumentFilter `json:"notebook,omitempty"`
+	Notebook *StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern `json:"notebook,omitzero"`
 
 	// The cells of the matching notebook to be synced.
 	Cells []*NotebookCellLanguage `json:"cells"`
@@ -8588,8 +10567,8 @@ func (s *NotebookDocumentFilterWithCells) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Notebook *StringOrNotebookDocumentFilter `json:"notebook,omitempty"`
-		Cells    []*NotebookCellLanguage         `json:"cells"`
+		Notebook *StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern `json:"notebook,omitzero"`
+		Cells    []*NotebookCellLanguage                                                                                  `json:"cells"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -8601,14 +10580,14 @@ func (s *NotebookDocumentFilterWithCells) UnmarshalJSON(data []byte) error {
 type NotebookDocumentCellChanges struct {
 	// Changes to the cell structure to add or
 	// remove cells.
-	Structure *NotebookDocumentCellChangeStructure `json:"structure,omitempty"`
+	Structure *NotebookDocumentCellChangeStructure `json:"structure,omitzero"`
 
 	// Changes to notebook cells properties like its
 	// kind, execution summary or metadata.
-	Data *[]*NotebookCell `json:"data,omitempty"`
+	Data *[]*NotebookCell `json:"data,omitzero"`
 
 	// Changes to the text content of notebook cells.
-	TextContent *[]*NotebookDocumentCellContentChanges `json:"textContent,omitempty"`
+	TextContent *[]*NotebookDocumentCellContentChanges `json:"textContent,omitzero"`
 }
 
 // Describes the currently selected completion item.
@@ -8662,7 +10641,7 @@ type ClientInfo struct {
 	Name string `json:"name"`
 
 	// The client's version as defined by the client.
-	Version *string `json:"version,omitempty"`
+	Version *string `json:"version,omitzero"`
 }
 
 func (s *ClientInfo) UnmarshalJSON(data []byte) error {
@@ -8683,7 +10662,7 @@ func (s *ClientInfo) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Name    string  `json:"name"`
-		Version *string `json:"version,omitempty"`
+		Version *string `json:"version,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -8692,48 +10671,48 @@ func (s *ClientInfo) UnmarshalJSON(data []byte) error {
 // Defines the capabilities provided by the client.
 type ClientCapabilities struct {
 	// Workspace specific client capabilities.
-	Workspace *WorkspaceClientCapabilities `json:"workspace,omitempty"`
+	Workspace *WorkspaceClientCapabilities `json:"workspace,omitzero"`
 
 	// Text document specific client capabilities.
-	TextDocument *TextDocumentClientCapabilities `json:"textDocument,omitempty"`
+	TextDocument *TextDocumentClientCapabilities `json:"textDocument,omitzero"`
 
 	// Capabilities specific to the notebook document support.
 	//
 	// Since: 3.17.0
-	NotebookDocument *NotebookDocumentClientCapabilities `json:"notebookDocument,omitempty"`
+	NotebookDocument *NotebookDocumentClientCapabilities `json:"notebookDocument,omitzero"`
 
 	// Window specific client capabilities.
-	Window *WindowClientCapabilities `json:"window,omitempty"`
+	Window *WindowClientCapabilities `json:"window,omitzero"`
 
 	// General client capabilities.
 	//
 	// Since: 3.16.0
-	General *GeneralClientCapabilities `json:"general,omitempty"`
+	General *GeneralClientCapabilities `json:"general,omitzero"`
 
 	// Experimental client capabilities.
-	Experimental *any `json:"experimental,omitempty"`
+	Experimental *any `json:"experimental,omitzero"`
 }
 
 type TextDocumentSyncOptions struct {
 	// Open and close notifications are sent to the server. If omitted open close notification should not
 	// be sent.
-	OpenClose *bool `json:"openClose,omitempty"`
+	OpenClose *bool `json:"openClose,omitzero"`
 
 	// Change notifications are sent to the server. See TextDocumentSyncKind.None, TextDocumentSyncKind.Full
 	// and TextDocumentSyncKind.Incremental. If omitted it defaults to TextDocumentSyncKind.None.
-	Change *TextDocumentSyncKind `json:"change,omitempty"`
+	Change *TextDocumentSyncKind `json:"change,omitzero"`
 
 	// If present will save notifications are sent to the server. If omitted the notification should not be
 	// sent.
-	WillSave *bool `json:"willSave,omitempty"`
+	WillSave *bool `json:"willSave,omitzero"`
 
 	// If present will save wait until requests are sent to the server. If omitted the request should not be
 	// sent.
-	WillSaveWaitUntil *bool `json:"willSaveWaitUntil,omitempty"`
+	WillSaveWaitUntil *bool `json:"willSaveWaitUntil,omitzero"`
 
 	// If present save notifications are sent to the server. If omitted the notification should not be
 	// sent.
-	Save *BooleanOrSaveOptions `json:"save,omitempty"`
+	Save *BooleanOrSaveOptions `json:"save,omitzero"`
 }
 
 // Defines workspace specific capabilities of the server.
@@ -8743,19 +10722,19 @@ type WorkspaceOptions struct {
 	// The server supports workspace folder.
 	//
 	// Since: 3.6.0
-	WorkspaceFolders *WorkspaceFoldersServerCapabilities `json:"workspaceFolders,omitempty"`
+	WorkspaceFolders *WorkspaceFoldersServerCapabilities `json:"workspaceFolders,omitzero"`
 
 	// The server is interested in notifications/requests for operations on files.
 	//
 	// Since: 3.16.0
-	FileOperations *FileOperationOptions `json:"fileOperations,omitempty"`
+	FileOperations *FileOperationOptions `json:"fileOperations,omitzero"`
 
 	// The server supports the `workspace/textDocumentContent` request.
 	//
 	// Since: 3.18.0
 	//
 	// Proposed.
-	TextDocumentContent *TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions `json:"textDocumentContent,omitempty"`
+	TextDocumentContent *TextDocumentContentOptionsOrRegistrationOptions `json:"textDocumentContent,omitzero"`
 }
 
 // Since: 3.18.0
@@ -8766,7 +10745,7 @@ type TextDocumentContentChangePartial struct {
 	// The optional length of the range that got replaced.
 	//
 	// Deprecated: use range instead.
-	RangeLength *uint32 `json:"rangeLength,omitempty"`
+	RangeLength *uint32 `json:"rangeLength,omitzero"`
 
 	// The new text for the provided range.
 	Text string `json:"text"`
@@ -8794,7 +10773,7 @@ func (s *TextDocumentContentChangePartial) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Range       Range   `json:"range"`
-		RangeLength *uint32 `json:"rangeLength,omitempty"`
+		RangeLength *uint32 `json:"rangeLength,omitzero"`
 		Text        string  `json:"text"`
 	}
 
@@ -8944,7 +10923,7 @@ type ServerCompletionItemOptions struct {
 	// receiving a completion item in a resolve call.
 	//
 	// Since: 3.17.0
-	LabelDetailsSupport *bool `json:"labelDetailsSupport,omitempty"`
+	LabelDetailsSupport *bool `json:"labelDetailsSupport,omitzero"`
 }
 
 // Since: 3.18.0
@@ -9003,7 +10982,7 @@ type ParameterInformation struct {
 
 	// The human-readable doc-comment of this parameter. Will be shown
 	// in the UI but can be omitted.
-	Documentation *StringOrMarkupContent `json:"documentation,omitempty"`
+	Documentation *StringOrMarkupContent `json:"documentation,omitzero"`
 }
 
 func (s *ParameterInformation) UnmarshalJSON(data []byte) error {
@@ -9024,7 +11003,7 @@ func (s *ParameterInformation) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Label         StringOrTuple          `json:"label"`
-		Documentation *StringOrMarkupContent `json:"documentation,omitempty"`
+		Documentation *StringOrMarkupContent `json:"documentation,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -9086,13 +11065,13 @@ type NotebookCellTextDocumentFilter struct {
 	// containing the notebook cell. If a string
 	// value is provided it matches against the
 	// notebook type. '*' matches every notebook.
-	Notebook StringOrNotebookDocumentFilter `json:"notebook"`
+	Notebook StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern `json:"notebook"`
 
 	// A language id like `python`.
 	//
 	// Will be matched against the language id of the
 	// notebook cell document. '*' matches every language.
-	Language *string `json:"language,omitempty"`
+	Language *string `json:"language,omitzero"`
 }
 
 func (s *NotebookCellTextDocumentFilter) UnmarshalJSON(data []byte) error {
@@ -9112,8 +11091,8 @@ func (s *NotebookCellTextDocumentFilter) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Notebook StringOrNotebookDocumentFilter `json:"notebook"`
-		Language *string                        `json:"language,omitempty"`
+		Notebook StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern `json:"notebook"`
+		Language *string                                                                                                 `json:"language,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -9124,7 +11103,7 @@ func (s *NotebookCellTextDocumentFilter) UnmarshalJSON(data []byte) error {
 // Since: 3.16.0
 type FileOperationPatternOptions struct {
 	// The pattern should be matched ignoring casing.
-	IgnoreCase *bool `json:"ignoreCase,omitempty"`
+	IgnoreCase *bool `json:"ignoreCase,omitzero"`
 }
 
 type ExecutionSummary struct {
@@ -9135,7 +11114,7 @@ type ExecutionSummary struct {
 
 	// Whether the execution was successful or
 	// not if known by the client.
-	Success *bool `json:"success,omitempty"`
+	Success *bool `json:"success,omitzero"`
 }
 
 func (s *ExecutionSummary) UnmarshalJSON(data []byte) error {
@@ -9156,7 +11135,7 @@ func (s *ExecutionSummary) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		ExecutionOrder uint32 `json:"executionOrder"`
-		Success        *bool  `json:"success,omitempty"`
+		Success        *bool  `json:"success,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -9198,10 +11177,10 @@ type NotebookDocumentCellChangeStructure struct {
 	Array *NotebookCellArrayChange `json:"array"`
 
 	// Additional opened cell text documents.
-	DidOpen *[]*TextDocumentItem `json:"didOpen,omitempty"`
+	DidOpen *[]*TextDocumentItem `json:"didOpen,omitzero"`
 
 	// Additional closed cell text documents.
-	DidClose *[]TextDocumentIdentifier `json:"didClose,omitempty"`
+	DidClose *[]TextDocumentIdentifier `json:"didClose,omitzero"`
 }
 
 func (s *NotebookDocumentCellChangeStructure) UnmarshalJSON(data []byte) error {
@@ -9222,8 +11201,8 @@ func (s *NotebookDocumentCellChangeStructure) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Array    *NotebookCellArrayChange  `json:"array"`
-		DidOpen  *[]*TextDocumentItem      `json:"didOpen,omitempty"`
-		DidClose *[]TextDocumentIdentifier `json:"didClose,omitempty"`
+		DidOpen  *[]*TextDocumentItem      `json:"didOpen,omitzero"`
+		DidClose *[]TextDocumentIdentifier `json:"didClose,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -9235,7 +11214,7 @@ func (s *NotebookDocumentCellChangeStructure) UnmarshalJSON(data []byte) error {
 type NotebookDocumentCellContentChanges struct {
 	Document VersionedTextDocumentIdentifier `json:"document"`
 
-	Changes []TextDocumentContentChangeEvent `json:"changes"`
+	Changes []TextDocumentContentChangePartialOrWholeDocument `json:"changes"`
 }
 
 func (s *NotebookDocumentCellContentChanges) UnmarshalJSON(data []byte) error {
@@ -9259,8 +11238,8 @@ func (s *NotebookDocumentCellContentChanges) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Document VersionedTextDocumentIdentifier  `json:"document"`
-		Changes  []TextDocumentContentChangeEvent `json:"changes"`
+		Document VersionedTextDocumentIdentifier                   `json:"document"`
+		Changes  []TextDocumentContentChangePartialOrWholeDocument `json:"changes"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -9271,215 +11250,215 @@ type WorkspaceClientCapabilities struct {
 	// The client supports applying batch edits
 	// to the workspace by supporting the request
 	// 'workspace/applyEdit'
-	ApplyEdit *bool `json:"applyEdit,omitempty"`
+	ApplyEdit *bool `json:"applyEdit,omitzero"`
 
 	// Capabilities specific to `WorkspaceEdit`s.
-	WorkspaceEdit *WorkspaceEditClientCapabilities `json:"workspaceEdit,omitempty"`
+	WorkspaceEdit *WorkspaceEditClientCapabilities `json:"workspaceEdit,omitzero"`
 
 	// Capabilities specific to the `workspace/didChangeConfiguration` notification.
-	DidChangeConfiguration *DidChangeConfigurationClientCapabilities `json:"didChangeConfiguration,omitempty"`
+	DidChangeConfiguration *DidChangeConfigurationClientCapabilities `json:"didChangeConfiguration,omitzero"`
 
 	// Capabilities specific to the `workspace/didChangeWatchedFiles` notification.
-	DidChangeWatchedFiles *DidChangeWatchedFilesClientCapabilities `json:"didChangeWatchedFiles,omitempty"`
+	DidChangeWatchedFiles *DidChangeWatchedFilesClientCapabilities `json:"didChangeWatchedFiles,omitzero"`
 
 	// Capabilities specific to the `workspace/symbol` request.
-	Symbol *WorkspaceSymbolClientCapabilities `json:"symbol,omitempty"`
+	Symbol *WorkspaceSymbolClientCapabilities `json:"symbol,omitzero"`
 
 	// Capabilities specific to the `workspace/executeCommand` request.
-	ExecuteCommand *ExecuteCommandClientCapabilities `json:"executeCommand,omitempty"`
+	ExecuteCommand *ExecuteCommandClientCapabilities `json:"executeCommand,omitzero"`
 
 	// The client has support for workspace folders.
 	//
 	// Since: 3.6.0
-	WorkspaceFolders *bool `json:"workspaceFolders,omitempty"`
+	WorkspaceFolders *bool `json:"workspaceFolders,omitzero"`
 
 	// The client supports `workspace/configuration` requests.
 	//
 	// Since: 3.6.0
-	Configuration *bool `json:"configuration,omitempty"`
+	Configuration *bool `json:"configuration,omitzero"`
 
 	// Capabilities specific to the semantic token requests scoped to the
 	// workspace.
 	//
 	// Since: 3.16.0.
-	SemanticTokens *SemanticTokensWorkspaceClientCapabilities `json:"semanticTokens,omitempty"`
+	SemanticTokens *SemanticTokensWorkspaceClientCapabilities `json:"semanticTokens,omitzero"`
 
 	// Capabilities specific to the code lens requests scoped to the
 	// workspace.
 	//
 	// Since: 3.16.0.
-	CodeLens *CodeLensWorkspaceClientCapabilities `json:"codeLens,omitempty"`
+	CodeLens *CodeLensWorkspaceClientCapabilities `json:"codeLens,omitzero"`
 
 	// The client has support for file notifications/requests for user operations on files.
 	//
 	// Since 3.16.0
-	FileOperations *FileOperationClientCapabilities `json:"fileOperations,omitempty"`
+	FileOperations *FileOperationClientCapabilities `json:"fileOperations,omitzero"`
 
 	// Capabilities specific to the inline values requests scoped to the
 	// workspace.
 	//
 	// Since: 3.17.0.
-	InlineValue *InlineValueWorkspaceClientCapabilities `json:"inlineValue,omitempty"`
+	InlineValue *InlineValueWorkspaceClientCapabilities `json:"inlineValue,omitzero"`
 
 	// Capabilities specific to the inlay hint requests scoped to the
 	// workspace.
 	//
 	// Since: 3.17.0.
-	InlayHint *InlayHintWorkspaceClientCapabilities `json:"inlayHint,omitempty"`
+	InlayHint *InlayHintWorkspaceClientCapabilities `json:"inlayHint,omitzero"`
 
 	// Capabilities specific to the diagnostic requests scoped to the
 	// workspace.
 	//
 	// Since: 3.17.0.
-	Diagnostics *DiagnosticWorkspaceClientCapabilities `json:"diagnostics,omitempty"`
+	Diagnostics *DiagnosticWorkspaceClientCapabilities `json:"diagnostics,omitzero"`
 
 	// Capabilities specific to the folding range requests scoped to the workspace.
 	//
 	// Since: 3.18.0
 	//
 	// Proposed.
-	FoldingRange *FoldingRangeWorkspaceClientCapabilities `json:"foldingRange,omitempty"`
+	FoldingRange *FoldingRangeWorkspaceClientCapabilities `json:"foldingRange,omitzero"`
 
 	// Capabilities specific to the `workspace/textDocumentContent` request.
 	//
 	// Since: 3.18.0
 	//
 	// Proposed.
-	TextDocumentContent *TextDocumentContentClientCapabilities `json:"textDocumentContent,omitempty"`
+	TextDocumentContent *TextDocumentContentClientCapabilities `json:"textDocumentContent,omitzero"`
 }
 
 // Text document specific client capabilities.
 type TextDocumentClientCapabilities struct {
 	// Defines which synchronization capabilities the client supports.
-	Synchronization *TextDocumentSyncClientCapabilities `json:"synchronization,omitempty"`
+	Synchronization *TextDocumentSyncClientCapabilities `json:"synchronization,omitzero"`
 
 	// Defines which filters the client supports.
 	//
 	// Since: 3.18.0
-	Filters *TextDocumentFilterClientCapabilities `json:"filters,omitempty"`
+	Filters *TextDocumentFilterClientCapabilities `json:"filters,omitzero"`
 
 	// Capabilities specific to the `textDocument/completion` request.
-	Completion *CompletionClientCapabilities `json:"completion,omitempty"`
+	Completion *CompletionClientCapabilities `json:"completion,omitzero"`
 
 	// Capabilities specific to the `textDocument/hover` request.
-	Hover *HoverClientCapabilities `json:"hover,omitempty"`
+	Hover *HoverClientCapabilities `json:"hover,omitzero"`
 
 	// Capabilities specific to the `textDocument/signatureHelp` request.
-	SignatureHelp *SignatureHelpClientCapabilities `json:"signatureHelp,omitempty"`
+	SignatureHelp *SignatureHelpClientCapabilities `json:"signatureHelp,omitzero"`
 
 	// Capabilities specific to the `textDocument/declaration` request.
 	//
 	// Since: 3.14.0
-	Declaration *DeclarationClientCapabilities `json:"declaration,omitempty"`
+	Declaration *DeclarationClientCapabilities `json:"declaration,omitzero"`
 
 	// Capabilities specific to the `textDocument/definition` request.
-	Definition *DefinitionClientCapabilities `json:"definition,omitempty"`
+	Definition *DefinitionClientCapabilities `json:"definition,omitzero"`
 
 	// Capabilities specific to the `textDocument/typeDefinition` request.
 	//
 	// Since: 3.6.0
-	TypeDefinition *TypeDefinitionClientCapabilities `json:"typeDefinition,omitempty"`
+	TypeDefinition *TypeDefinitionClientCapabilities `json:"typeDefinition,omitzero"`
 
 	// Capabilities specific to the `textDocument/implementation` request.
 	//
 	// Since: 3.6.0
-	Implementation *ImplementationClientCapabilities `json:"implementation,omitempty"`
+	Implementation *ImplementationClientCapabilities `json:"implementation,omitzero"`
 
 	// Capabilities specific to the `textDocument/references` request.
-	References *ReferenceClientCapabilities `json:"references,omitempty"`
+	References *ReferenceClientCapabilities `json:"references,omitzero"`
 
 	// Capabilities specific to the `textDocument/documentHighlight` request.
-	DocumentHighlight *DocumentHighlightClientCapabilities `json:"documentHighlight,omitempty"`
+	DocumentHighlight *DocumentHighlightClientCapabilities `json:"documentHighlight,omitzero"`
 
 	// Capabilities specific to the `textDocument/documentSymbol` request.
-	DocumentSymbol *DocumentSymbolClientCapabilities `json:"documentSymbol,omitempty"`
+	DocumentSymbol *DocumentSymbolClientCapabilities `json:"documentSymbol,omitzero"`
 
 	// Capabilities specific to the `textDocument/codeAction` request.
-	CodeAction *CodeActionClientCapabilities `json:"codeAction,omitempty"`
+	CodeAction *CodeActionClientCapabilities `json:"codeAction,omitzero"`
 
 	// Capabilities specific to the `textDocument/codeLens` request.
-	CodeLens *CodeLensClientCapabilities `json:"codeLens,omitempty"`
+	CodeLens *CodeLensClientCapabilities `json:"codeLens,omitzero"`
 
 	// Capabilities specific to the `textDocument/documentLink` request.
-	DocumentLink *DocumentLinkClientCapabilities `json:"documentLink,omitempty"`
+	DocumentLink *DocumentLinkClientCapabilities `json:"documentLink,omitzero"`
 
 	// Capabilities specific to the `textDocument/documentColor` and the
 	// `textDocument/colorPresentation` request.
 	//
 	// Since: 3.6.0
-	ColorProvider *DocumentColorClientCapabilities `json:"colorProvider,omitempty"`
+	ColorProvider *DocumentColorClientCapabilities `json:"colorProvider,omitzero"`
 
 	// Capabilities specific to the `textDocument/formatting` request.
-	Formatting *DocumentFormattingClientCapabilities `json:"formatting,omitempty"`
+	Formatting *DocumentFormattingClientCapabilities `json:"formatting,omitzero"`
 
 	// Capabilities specific to the `textDocument/rangeFormatting` request.
-	RangeFormatting *DocumentRangeFormattingClientCapabilities `json:"rangeFormatting,omitempty"`
+	RangeFormatting *DocumentRangeFormattingClientCapabilities `json:"rangeFormatting,omitzero"`
 
 	// Capabilities specific to the `textDocument/onTypeFormatting` request.
-	OnTypeFormatting *DocumentOnTypeFormattingClientCapabilities `json:"onTypeFormatting,omitempty"`
+	OnTypeFormatting *DocumentOnTypeFormattingClientCapabilities `json:"onTypeFormatting,omitzero"`
 
 	// Capabilities specific to the `textDocument/rename` request.
-	Rename *RenameClientCapabilities `json:"rename,omitempty"`
+	Rename *RenameClientCapabilities `json:"rename,omitzero"`
 
 	// Capabilities specific to the `textDocument/foldingRange` request.
 	//
 	// Since: 3.10.0
-	FoldingRange *FoldingRangeClientCapabilities `json:"foldingRange,omitempty"`
+	FoldingRange *FoldingRangeClientCapabilities `json:"foldingRange,omitzero"`
 
 	// Capabilities specific to the `textDocument/selectionRange` request.
 	//
 	// Since: 3.15.0
-	SelectionRange *SelectionRangeClientCapabilities `json:"selectionRange,omitempty"`
+	SelectionRange *SelectionRangeClientCapabilities `json:"selectionRange,omitzero"`
 
 	// Capabilities specific to the `textDocument/publishDiagnostics` notification.
-	PublishDiagnostics *PublishDiagnosticsClientCapabilities `json:"publishDiagnostics,omitempty"`
+	PublishDiagnostics *PublishDiagnosticsClientCapabilities `json:"publishDiagnostics,omitzero"`
 
 	// Capabilities specific to the various call hierarchy requests.
 	//
 	// Since: 3.16.0
-	CallHierarchy *CallHierarchyClientCapabilities `json:"callHierarchy,omitempty"`
+	CallHierarchy *CallHierarchyClientCapabilities `json:"callHierarchy,omitzero"`
 
 	// Capabilities specific to the various semantic token request.
 	//
 	// Since: 3.16.0
-	SemanticTokens *SemanticTokensClientCapabilities `json:"semanticTokens,omitempty"`
+	SemanticTokens *SemanticTokensClientCapabilities `json:"semanticTokens,omitzero"`
 
 	// Capabilities specific to the `textDocument/linkedEditingRange` request.
 	//
 	// Since: 3.16.0
-	LinkedEditingRange *LinkedEditingRangeClientCapabilities `json:"linkedEditingRange,omitempty"`
+	LinkedEditingRange *LinkedEditingRangeClientCapabilities `json:"linkedEditingRange,omitzero"`
 
 	// Client capabilities specific to the `textDocument/moniker` request.
 	//
 	// Since: 3.16.0
-	Moniker *MonikerClientCapabilities `json:"moniker,omitempty"`
+	Moniker *MonikerClientCapabilities `json:"moniker,omitzero"`
 
 	// Capabilities specific to the various type hierarchy requests.
 	//
 	// Since: 3.17.0
-	TypeHierarchy *TypeHierarchyClientCapabilities `json:"typeHierarchy,omitempty"`
+	TypeHierarchy *TypeHierarchyClientCapabilities `json:"typeHierarchy,omitzero"`
 
 	// Capabilities specific to the `textDocument/inlineValue` request.
 	//
 	// Since: 3.17.0
-	InlineValue *InlineValueClientCapabilities `json:"inlineValue,omitempty"`
+	InlineValue *InlineValueClientCapabilities `json:"inlineValue,omitzero"`
 
 	// Capabilities specific to the `textDocument/inlayHint` request.
 	//
 	// Since: 3.17.0
-	InlayHint *InlayHintClientCapabilities `json:"inlayHint,omitempty"`
+	InlayHint *InlayHintClientCapabilities `json:"inlayHint,omitzero"`
 
 	// Capabilities specific to the diagnostic pull model.
 	//
 	// Since: 3.17.0
-	Diagnostic *DiagnosticClientCapabilities `json:"diagnostic,omitempty"`
+	Diagnostic *DiagnosticClientCapabilities `json:"diagnostic,omitzero"`
 
 	// Client capabilities specific to inline completions.
 	//
 	// Since: 3.18.0
 	//
 	// Proposed.
-	InlineCompletion *InlineCompletionClientCapabilities `json:"inlineCompletion,omitempty"`
+	InlineCompletion *InlineCompletionClientCapabilities `json:"inlineCompletion,omitzero"`
 }
 
 // Capabilities specific to the notebook document support.
@@ -9525,17 +11504,17 @@ type WindowClientCapabilities struct {
 	// capabilities.
 	//
 	// Since: 3.15.0
-	WorkDoneProgress *bool `json:"workDoneProgress,omitempty"`
+	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 
 	// Capabilities specific to the showMessage request.
 	//
 	// Since: 3.16.0
-	ShowMessage *ShowMessageRequestClientCapabilities `json:"showMessage,omitempty"`
+	ShowMessage *ShowMessageRequestClientCapabilities `json:"showMessage,omitzero"`
 
 	// Capabilities specific to the showDocument request.
 	//
 	// Since: 3.16.0
-	ShowDocument *ShowDocumentClientCapabilities `json:"showDocument,omitempty"`
+	ShowDocument *ShowDocumentClientCapabilities `json:"showDocument,omitzero"`
 }
 
 // General client capabilities.
@@ -9548,17 +11527,17 @@ type GeneralClientCapabilities struct {
 	// anymore since the information is outdated).
 	//
 	// Since: 3.17.0
-	StaleRequestSupport *StaleRequestSupportOptions `json:"staleRequestSupport,omitempty"`
+	StaleRequestSupport *StaleRequestSupportOptions `json:"staleRequestSupport,omitzero"`
 
 	// Client capabilities specific to regular expressions.
 	//
 	// Since: 3.16.0
-	RegularExpressions *RegularExpressionsClientCapabilities `json:"regularExpressions,omitempty"`
+	RegularExpressions *RegularExpressionsClientCapabilities `json:"regularExpressions,omitzero"`
 
 	// Client capabilities specific to the client's markdown parser.
 	//
 	// Since: 3.16.0
-	Markdown *MarkdownClientCapabilities `json:"markdown,omitempty"`
+	Markdown *MarkdownClientCapabilities `json:"markdown,omitzero"`
 
 	// The position encodings supported by the client. Client and server
 	// have to agree on the same position encoding to ensure that offsets
@@ -9578,12 +11557,12 @@ type GeneralClientCapabilities struct {
 	// side.
 	//
 	// Since: 3.17.0
-	PositionEncodings *[]PositionEncodingKind `json:"positionEncodings,omitempty"`
+	PositionEncodings *[]PositionEncodingKind `json:"positionEncodings,omitzero"`
 }
 
 type WorkspaceFoldersServerCapabilities struct {
 	// The server has support for workspace folders
-	Supported *bool `json:"supported,omitempty"`
+	Supported *bool `json:"supported,omitzero"`
 
 	// Whether the server wants to receive workspace folder
 	// change notifications.
@@ -9592,7 +11571,7 @@ type WorkspaceFoldersServerCapabilities struct {
 	// under which the notification is registered on the client
 	// side. The ID can be used to unregister for these events
 	// using the `client/unregisterCapability` request.
-	ChangeNotifications *StringOrBoolean `json:"changeNotifications,omitempty"`
+	ChangeNotifications *StringOrBoolean `json:"changeNotifications,omitzero"`
 }
 
 // Options for notifications/requests for user operations on files.
@@ -9600,22 +11579,22 @@ type WorkspaceFoldersServerCapabilities struct {
 // Since: 3.16.0
 type FileOperationOptions struct {
 	// The server is interested in receiving didCreateFiles notifications.
-	DidCreate *FileOperationRegistrationOptions `json:"didCreate,omitempty"`
+	DidCreate *FileOperationRegistrationOptions `json:"didCreate,omitzero"`
 
 	// The server is interested in receiving willCreateFiles requests.
-	WillCreate *FileOperationRegistrationOptions `json:"willCreate,omitempty"`
+	WillCreate *FileOperationRegistrationOptions `json:"willCreate,omitzero"`
 
 	// The server is interested in receiving didRenameFiles notifications.
-	DidRename *FileOperationRegistrationOptions `json:"didRename,omitempty"`
+	DidRename *FileOperationRegistrationOptions `json:"didRename,omitzero"`
 
 	// The server is interested in receiving willRenameFiles requests.
-	WillRename *FileOperationRegistrationOptions `json:"willRename,omitempty"`
+	WillRename *FileOperationRegistrationOptions `json:"willRename,omitzero"`
 
 	// The server is interested in receiving didDeleteFiles file notifications.
-	DidDelete *FileOperationRegistrationOptions `json:"didDelete,omitempty"`
+	DidDelete *FileOperationRegistrationOptions `json:"didDelete,omitzero"`
 
 	// The server is interested in receiving willDeleteFiles file requests.
-	WillDelete *FileOperationRegistrationOptions `json:"willDelete,omitempty"`
+	WillDelete *FileOperationRegistrationOptions `json:"willDelete,omitzero"`
 }
 
 // A relative pattern is a helper to construct glob patterns that are matched
@@ -9629,7 +11608,7 @@ type RelativePattern struct {
 	BaseUri WorkspaceFolderOrURI `json:"baseUri"`
 
 	// The actual glob pattern;
-	Pattern Pattern `json:"pattern"`
+	Pattern string `json:"pattern"`
 }
 
 func (s *RelativePattern) UnmarshalJSON(data []byte) error {
@@ -9654,7 +11633,7 @@ func (s *RelativePattern) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		BaseUri WorkspaceFolderOrURI `json:"baseUri"`
-		Pattern Pattern              `json:"pattern"`
+		Pattern string               `json:"pattern"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -9668,14 +11647,14 @@ type TextDocumentFilterLanguage struct {
 	Language string `json:"language"`
 
 	// A Uri scheme, like `file` or `untitled`.
-	Scheme *string `json:"scheme,omitempty"`
+	Scheme *string `json:"scheme,omitzero"`
 
 	// A glob pattern, like **​/*.{ts,js}. See TextDocumentFilter for examples.
 	//
 	// Since: 3.18.0 - support for relative patterns. Whether clients support
 	// relative patterns depends on the client capability
 	// `textDocuments.filters.relativePatternSupport`.
-	Pattern *GlobPattern `json:"pattern,omitempty"`
+	Pattern *PatternOrRelativePattern `json:"pattern,omitzero"`
 }
 
 func (s *TextDocumentFilterLanguage) UnmarshalJSON(data []byte) error {
@@ -9695,9 +11674,9 @@ func (s *TextDocumentFilterLanguage) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Language string       `json:"language"`
-		Scheme   *string      `json:"scheme,omitempty"`
-		Pattern  *GlobPattern `json:"pattern,omitempty"`
+		Language string                    `json:"language"`
+		Scheme   *string                   `json:"scheme,omitzero"`
+		Pattern  *PatternOrRelativePattern `json:"pattern,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -9708,7 +11687,7 @@ func (s *TextDocumentFilterLanguage) UnmarshalJSON(data []byte) error {
 // Since: 3.18.0
 type TextDocumentFilterScheme struct {
 	// A language id, like `typescript`.
-	Language *string `json:"language,omitempty"`
+	Language *string `json:"language,omitzero"`
 
 	// A Uri scheme, like `file` or `untitled`.
 	Scheme string `json:"scheme"`
@@ -9718,7 +11697,7 @@ type TextDocumentFilterScheme struct {
 	// Since: 3.18.0 - support for relative patterns. Whether clients support
 	// relative patterns depends on the client capability
 	// `textDocuments.filters.relativePatternSupport`.
-	Pattern *GlobPattern `json:"pattern,omitempty"`
+	Pattern *PatternOrRelativePattern `json:"pattern,omitzero"`
 }
 
 func (s *TextDocumentFilterScheme) UnmarshalJSON(data []byte) error {
@@ -9738,9 +11717,9 @@ func (s *TextDocumentFilterScheme) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Language *string      `json:"language,omitempty"`
-		Scheme   string       `json:"scheme"`
-		Pattern  *GlobPattern `json:"pattern,omitempty"`
+		Language *string                   `json:"language,omitzero"`
+		Scheme   string                    `json:"scheme"`
+		Pattern  *PatternOrRelativePattern `json:"pattern,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -9751,17 +11730,17 @@ func (s *TextDocumentFilterScheme) UnmarshalJSON(data []byte) error {
 // Since: 3.18.0
 type TextDocumentFilterPattern struct {
 	// A language id, like `typescript`.
-	Language *string `json:"language,omitempty"`
+	Language *string `json:"language,omitzero"`
 
 	// A Uri scheme, like `file` or `untitled`.
-	Scheme *string `json:"scheme,omitempty"`
+	Scheme *string `json:"scheme,omitzero"`
 
 	// A glob pattern, like **​/*.{ts,js}. See TextDocumentFilter for examples.
 	//
 	// Since: 3.18.0 - support for relative patterns. Whether clients support
 	// relative patterns depends on the client capability
 	// `textDocuments.filters.relativePatternSupport`.
-	Pattern GlobPattern `json:"pattern"`
+	Pattern PatternOrRelativePattern `json:"pattern"`
 }
 
 func (s *TextDocumentFilterPattern) UnmarshalJSON(data []byte) error {
@@ -9781,9 +11760,9 @@ func (s *TextDocumentFilterPattern) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Language *string     `json:"language,omitempty"`
-		Scheme   *string     `json:"scheme,omitempty"`
-		Pattern  GlobPattern `json:"pattern"`
+		Language *string                  `json:"language,omitzero"`
+		Scheme   *string                  `json:"scheme,omitzero"`
+		Pattern  PatternOrRelativePattern `json:"pattern"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -9797,10 +11776,10 @@ type NotebookDocumentFilterNotebookType struct {
 	NotebookType string `json:"notebookType"`
 
 	// A Uri scheme, like `file` or `untitled`.
-	Scheme *string `json:"scheme,omitempty"`
+	Scheme *string `json:"scheme,omitzero"`
 
 	// A glob pattern.
-	Pattern *GlobPattern `json:"pattern,omitempty"`
+	Pattern *PatternOrRelativePattern `json:"pattern,omitzero"`
 }
 
 func (s *NotebookDocumentFilterNotebookType) UnmarshalJSON(data []byte) error {
@@ -9820,9 +11799,9 @@ func (s *NotebookDocumentFilterNotebookType) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		NotebookType string       `json:"notebookType"`
-		Scheme       *string      `json:"scheme,omitempty"`
-		Pattern      *GlobPattern `json:"pattern,omitempty"`
+		NotebookType string                    `json:"notebookType"`
+		Scheme       *string                   `json:"scheme,omitzero"`
+		Pattern      *PatternOrRelativePattern `json:"pattern,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -9833,13 +11812,13 @@ func (s *NotebookDocumentFilterNotebookType) UnmarshalJSON(data []byte) error {
 // Since: 3.18.0
 type NotebookDocumentFilterScheme struct {
 	// The type of the enclosing notebook.
-	NotebookType *string `json:"notebookType,omitempty"`
+	NotebookType *string `json:"notebookType,omitzero"`
 
 	// A Uri scheme, like `file` or `untitled`.
 	Scheme string `json:"scheme"`
 
 	// A glob pattern.
-	Pattern *GlobPattern `json:"pattern,omitempty"`
+	Pattern *PatternOrRelativePattern `json:"pattern,omitzero"`
 }
 
 func (s *NotebookDocumentFilterScheme) UnmarshalJSON(data []byte) error {
@@ -9859,9 +11838,9 @@ func (s *NotebookDocumentFilterScheme) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		NotebookType *string      `json:"notebookType,omitempty"`
-		Scheme       string       `json:"scheme"`
-		Pattern      *GlobPattern `json:"pattern,omitempty"`
+		NotebookType *string                   `json:"notebookType,omitzero"`
+		Scheme       string                    `json:"scheme"`
+		Pattern      *PatternOrRelativePattern `json:"pattern,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -9872,13 +11851,13 @@ func (s *NotebookDocumentFilterScheme) UnmarshalJSON(data []byte) error {
 // Since: 3.18.0
 type NotebookDocumentFilterPattern struct {
 	// The type of the enclosing notebook.
-	NotebookType *string `json:"notebookType,omitempty"`
+	NotebookType *string `json:"notebookType,omitzero"`
 
 	// A Uri scheme, like `file` or `untitled`.
-	Scheme *string `json:"scheme,omitempty"`
+	Scheme *string `json:"scheme,omitzero"`
 
 	// A glob pattern.
-	Pattern GlobPattern `json:"pattern"`
+	Pattern PatternOrRelativePattern `json:"pattern"`
 }
 
 func (s *NotebookDocumentFilterPattern) UnmarshalJSON(data []byte) error {
@@ -9898,9 +11877,9 @@ func (s *NotebookDocumentFilterPattern) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		NotebookType *string     `json:"notebookType,omitempty"`
-		Scheme       *string     `json:"scheme,omitempty"`
-		Pattern      GlobPattern `json:"pattern"`
+		NotebookType *string                  `json:"notebookType,omitzero"`
+		Scheme       *string                  `json:"scheme,omitzero"`
+		Pattern      PatternOrRelativePattern `json:"pattern"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -9918,7 +11897,7 @@ type NotebookCellArrayChange struct {
 	DeleteCount uint32 `json:"deleteCount"`
 
 	// The new cells, if any
-	Cells *[]*NotebookCell `json:"cells,omitempty"`
+	Cells *[]*NotebookCell `json:"cells,omitzero"`
 }
 
 func (s *NotebookCellArrayChange) UnmarshalJSON(data []byte) error {
@@ -9944,7 +11923,7 @@ func (s *NotebookCellArrayChange) UnmarshalJSON(data []byte) error {
 	type temp struct {
 		Start       uint32           `json:"start"`
 		DeleteCount uint32           `json:"deleteCount"`
-		Cells       *[]*NotebookCell `json:"cells,omitempty"`
+		Cells       *[]*NotebookCell `json:"cells,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -9952,19 +11931,19 @@ func (s *NotebookCellArrayChange) UnmarshalJSON(data []byte) error {
 
 type WorkspaceEditClientCapabilities struct {
 	// The client supports versioned document changes in `WorkspaceEdit`s
-	DocumentChanges *bool `json:"documentChanges,omitempty"`
+	DocumentChanges *bool `json:"documentChanges,omitzero"`
 
 	// The resource operations the client supports. Clients should at least
 	// support 'create', 'rename' and 'delete' files and folders.
 	//
 	// Since: 3.13.0
-	ResourceOperations *[]ResourceOperationKind `json:"resourceOperations,omitempty"`
+	ResourceOperations *[]ResourceOperationKind `json:"resourceOperations,omitzero"`
 
 	// The failure handling strategy of a client if applying the workspace edit
 	// fails.
 	//
 	// Since: 3.13.0
-	FailureHandling *FailureHandlingKind `json:"failureHandling,omitempty"`
+	FailureHandling *FailureHandlingKind `json:"failureHandling,omitzero"`
 
 	// Whether the client normalizes line endings to the client specific
 	// setting.
@@ -9973,73 +11952,73 @@ type WorkspaceEditClientCapabilities struct {
 	// character.
 	//
 	// Since: 3.16.0
-	NormalizesLineEndings *bool `json:"normalizesLineEndings,omitempty"`
+	NormalizesLineEndings *bool `json:"normalizesLineEndings,omitzero"`
 
 	// Whether the client in general supports change annotations on text edits,
 	// create file, rename file and delete file changes.
 	//
 	// Since: 3.16.0
-	ChangeAnnotationSupport *ChangeAnnotationsSupportOptions `json:"changeAnnotationSupport,omitempty"`
+	ChangeAnnotationSupport *ChangeAnnotationsSupportOptions `json:"changeAnnotationSupport,omitzero"`
 
 	// Whether the client supports `WorkspaceEditMetadata` in `WorkspaceEdit`s.
 	//
 	// Since: 3.18.0
 	//
 	// Proposed.
-	MetadataSupport *bool `json:"metadataSupport,omitempty"`
+	MetadataSupport *bool `json:"metadataSupport,omitzero"`
 
 	// Whether the client supports snippets as text edits.
 	//
 	// Since: 3.18.0
 	//
 	// Proposed.
-	SnippetEditSupport *bool `json:"snippetEditSupport,omitempty"`
+	SnippetEditSupport *bool `json:"snippetEditSupport,omitzero"`
 }
 
 type DidChangeConfigurationClientCapabilities struct {
 	// Did change configuration notification supports dynamic registration.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 }
 
 type DidChangeWatchedFilesClientCapabilities struct {
 	// Did change watched files notification supports dynamic registration. Please note
 	// that the current protocol doesn't support static configuration for file changes
 	// from the server side.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 
 	// Whether the client has support for pattern
 	// or not.
 	//
 	// Since: 3.17.0
-	RelativePatternSupport *bool `json:"relativePatternSupport,omitempty"`
+	RelativePatternSupport *bool `json:"relativePatternSupport,omitzero"`
 }
 
 // Client capabilities for a WorkspaceSymbolRequest.
 type WorkspaceSymbolClientCapabilities struct {
 	// Symbol request supports dynamic registration.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 
 	// Specific capabilities for the `SymbolKind` in the `workspace/symbol` request.
-	SymbolKind *ClientSymbolKindOptions `json:"symbolKind,omitempty"`
+	SymbolKind *ClientSymbolKindOptions `json:"symbolKind,omitzero"`
 
 	// The client supports tags on `SymbolInformation`.
 	// Clients supporting tags have to handle unknown tags gracefully.
 	//
 	// Since: 3.16.0
-	TagSupport *ClientSymbolTagOptions `json:"tagSupport,omitempty"`
+	TagSupport *ClientSymbolTagOptions `json:"tagSupport,omitzero"`
 
 	// The client support partial workspace symbols. The client will send the
 	// request `workspaceSymbol/resolve` to the server to resolve additional
 	// properties.
 	//
 	// Since: 3.17.0
-	ResolveSupport *ClientSymbolResolveOptions `json:"resolveSupport,omitempty"`
+	ResolveSupport *ClientSymbolResolveOptions `json:"resolveSupport,omitzero"`
 }
 
 // The client capabilities of a ExecuteCommandRequest.
 type ExecuteCommandClientCapabilities struct {
 	// Execute command supports dynamic registration.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 }
 
 // Since: 3.16.0
@@ -10051,7 +12030,7 @@ type SemanticTokensWorkspaceClientCapabilities struct {
 	// semantic tokens currently shown. It should be used with absolute care
 	// and is useful for situation where a server for example detects a project
 	// wide change that requires such a calculation.
-	RefreshSupport *bool `json:"refreshSupport,omitempty"`
+	RefreshSupport *bool `json:"refreshSupport,omitzero"`
 }
 
 // Since: 3.16.0
@@ -10063,7 +12042,7 @@ type CodeLensWorkspaceClientCapabilities struct {
 	// code lenses currently shown. It should be used with absolute care and is
 	// useful for situation where a server for example detect a project wide
 	// change that requires such a calculation.
-	RefreshSupport *bool `json:"refreshSupport,omitempty"`
+	RefreshSupport *bool `json:"refreshSupport,omitzero"`
 }
 
 // Capabilities relating to events from file operations by the user in the client.
@@ -10074,25 +12053,25 @@ type CodeLensWorkspaceClientCapabilities struct {
 // Since: 3.16.0
 type FileOperationClientCapabilities struct {
 	// Whether the client supports dynamic registration for file requests/notifications.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 
 	// The client has support for sending didCreateFiles notifications.
-	DidCreate *bool `json:"didCreate,omitempty"`
+	DidCreate *bool `json:"didCreate,omitzero"`
 
 	// The client has support for sending willCreateFiles requests.
-	WillCreate *bool `json:"willCreate,omitempty"`
+	WillCreate *bool `json:"willCreate,omitzero"`
 
 	// The client has support for sending didRenameFiles notifications.
-	DidRename *bool `json:"didRename,omitempty"`
+	DidRename *bool `json:"didRename,omitzero"`
 
 	// The client has support for sending willRenameFiles requests.
-	WillRename *bool `json:"willRename,omitempty"`
+	WillRename *bool `json:"willRename,omitzero"`
 
 	// The client has support for sending didDeleteFiles notifications.
-	DidDelete *bool `json:"didDelete,omitempty"`
+	DidDelete *bool `json:"didDelete,omitzero"`
 
 	// The client has support for sending willDeleteFiles requests.
-	WillDelete *bool `json:"willDelete,omitempty"`
+	WillDelete *bool `json:"willDelete,omitzero"`
 }
 
 // Client workspace capabilities specific to inline values.
@@ -10106,7 +12085,7 @@ type InlineValueWorkspaceClientCapabilities struct {
 	// inline values currently shown. It should be used with absolute care and is
 	// useful for situation where a server for example detects a project wide
 	// change that requires such a calculation.
-	RefreshSupport *bool `json:"refreshSupport,omitempty"`
+	RefreshSupport *bool `json:"refreshSupport,omitzero"`
 }
 
 // Client workspace capabilities specific to inlay hints.
@@ -10120,7 +12099,7 @@ type InlayHintWorkspaceClientCapabilities struct {
 	// inlay hints currently shown. It should be used with absolute care and
 	// is useful for situation where a server for example detects a project wide
 	// change that requires such a calculation.
-	RefreshSupport *bool `json:"refreshSupport,omitempty"`
+	RefreshSupport *bool `json:"refreshSupport,omitzero"`
 }
 
 // Workspace client capabilities specific to diagnostic pull requests.
@@ -10134,7 +12113,7 @@ type DiagnosticWorkspaceClientCapabilities struct {
 	// pulled diagnostics currently shown. It should be used with absolute care and
 	// is useful for situation where a server for example detects a project wide
 	// change that requires such a calculation.
-	RefreshSupport *bool `json:"refreshSupport,omitempty"`
+	RefreshSupport *bool `json:"refreshSupport,omitzero"`
 }
 
 // Client workspace capabilities specific to folding ranges
@@ -10154,7 +12133,7 @@ type FoldingRangeWorkspaceClientCapabilities struct {
 	// Since: 3.18.0
 	//
 	// Proposed.
-	RefreshSupport *bool `json:"refreshSupport,omitempty"`
+	RefreshSupport *bool `json:"refreshSupport,omitzero"`
 }
 
 // Client capabilities for a text document content provider.
@@ -10164,78 +12143,78 @@ type FoldingRangeWorkspaceClientCapabilities struct {
 // Proposed.
 type TextDocumentContentClientCapabilities struct {
 	// Text document content provider supports dynamic registration.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 }
 
 type TextDocumentSyncClientCapabilities struct {
 	// Whether text document synchronization supports dynamic registration.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 
 	// The client supports sending will save notifications.
-	WillSave *bool `json:"willSave,omitempty"`
+	WillSave *bool `json:"willSave,omitzero"`
 
 	// The client supports sending a will save request and
 	// waits for a response providing text edits which will
 	// be applied to the document before it is saved.
-	WillSaveWaitUntil *bool `json:"willSaveWaitUntil,omitempty"`
+	WillSaveWaitUntil *bool `json:"willSaveWaitUntil,omitzero"`
 
 	// The client supports did save notifications.
-	DidSave *bool `json:"didSave,omitempty"`
+	DidSave *bool `json:"didSave,omitzero"`
 }
 
 type TextDocumentFilterClientCapabilities struct {
 	// The client supports Relative Patterns.
 	//
 	// Since: 3.18.0
-	RelativePatternSupport *bool `json:"relativePatternSupport,omitempty"`
+	RelativePatternSupport *bool `json:"relativePatternSupport,omitzero"`
 }
 
 // Completion client capabilities
 type CompletionClientCapabilities struct {
 	// Whether completion supports dynamic registration.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 
 	// The client supports the following `CompletionItem` specific
 	// capabilities.
-	CompletionItem *ClientCompletionItemOptions `json:"completionItem,omitempty"`
+	CompletionItem *ClientCompletionItemOptions `json:"completionItem,omitzero"`
 
-	CompletionItemKind *ClientCompletionItemOptionsKind `json:"completionItemKind,omitempty"`
+	CompletionItemKind *ClientCompletionItemOptionsKind `json:"completionItemKind,omitzero"`
 
 	// Defines how the client handles whitespace and indentation
 	// when accepting a completion item that uses multi line
 	// text in either `insertText` or `textEdit`.
 	//
 	// Since: 3.17.0
-	InsertTextMode *InsertTextMode `json:"insertTextMode,omitempty"`
+	InsertTextMode *InsertTextMode `json:"insertTextMode,omitzero"`
 
 	// The client supports to send additional context information for a
 	// `textDocument/completion` request.
-	ContextSupport *bool `json:"contextSupport,omitempty"`
+	ContextSupport *bool `json:"contextSupport,omitzero"`
 
 	// The client supports the following `CompletionList` specific
 	// capabilities.
 	//
 	// Since: 3.17.0
-	CompletionList *CompletionListCapabilities `json:"completionList,omitempty"`
+	CompletionList *CompletionListCapabilities `json:"completionList,omitzero"`
 }
 
 type HoverClientCapabilities struct {
 	// Whether hover supports dynamic registration.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 
 	// Client supports the following content formats for the content
 	// property. The order describes the preferred format of the client.
-	ContentFormat *[]MarkupKind `json:"contentFormat,omitempty"`
+	ContentFormat *[]MarkupKind `json:"contentFormat,omitzero"`
 }
 
 // Client Capabilities for a SignatureHelpRequest.
 type SignatureHelpClientCapabilities struct {
 	// Whether signature help supports dynamic registration.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 
 	// The client supports the following `SignatureInformation`
 	// specific properties.
-	SignatureInformation *ClientSignatureInformationOptions `json:"signatureInformation,omitempty"`
+	SignatureInformation *ClientSignatureInformationOptions `json:"signatureInformation,omitzero"`
 
 	// The client supports to send additional context information for a
 	// `textDocument/signatureHelp` request. A client that opts into
@@ -10243,7 +12222,7 @@ type SignatureHelpClientCapabilities struct {
 	// `SignatureHelpOptions`.
 	//
 	// Since: 3.15.0
-	ContextSupport *bool `json:"contextSupport,omitempty"`
+	ContextSupport *bool `json:"contextSupport,omitzero"`
 }
 
 // Since: 3.14.0
@@ -10251,21 +12230,21 @@ type DeclarationClientCapabilities struct {
 	// Whether declaration supports dynamic registration. If this is set to `true`
 	// the client supports the new `DeclarationRegistrationOptions` return value
 	// for the corresponding server capability as well.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 
 	// The client supports additional metadata in the form of declaration links.
-	LinkSupport *bool `json:"linkSupport,omitempty"`
+	LinkSupport *bool `json:"linkSupport,omitzero"`
 }
 
 // Client Capabilities for a DefinitionRequest.
 type DefinitionClientCapabilities struct {
 	// Whether definition supports dynamic registration.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 
 	// The client supports additional metadata in the form of definition links.
 	//
 	// Since: 3.14.0
-	LinkSupport *bool `json:"linkSupport,omitempty"`
+	LinkSupport *bool `json:"linkSupport,omitzero"`
 }
 
 // Since 3.6.0
@@ -10273,12 +12252,12 @@ type TypeDefinitionClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `TypeDefinitionRegistrationOptions` return value
 	// for the corresponding server capability as well.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 
 	// The client supports additional metadata in the form of definition links.
 	//
 	// Since 3.14.0
-	LinkSupport *bool `json:"linkSupport,omitempty"`
+	LinkSupport *bool `json:"linkSupport,omitzero"`
 }
 
 // Since: 3.6.0
@@ -10286,86 +12265,86 @@ type ImplementationClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `ImplementationRegistrationOptions` return value
 	// for the corresponding server capability as well.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 
 	// The client supports additional metadata in the form of definition links.
 	//
 	// Since: 3.14.0
-	LinkSupport *bool `json:"linkSupport,omitempty"`
+	LinkSupport *bool `json:"linkSupport,omitzero"`
 }
 
 // Client Capabilities for a ReferencesRequest.
 type ReferenceClientCapabilities struct {
 	// Whether references supports dynamic registration.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 }
 
 // Client Capabilities for a DocumentHighlightRequest.
 type DocumentHighlightClientCapabilities struct {
 	// Whether document highlight supports dynamic registration.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 }
 
 // Client Capabilities for a DocumentSymbolRequest.
 type DocumentSymbolClientCapabilities struct {
 	// Whether document symbol supports dynamic registration.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 
 	// Specific capabilities for the `SymbolKind` in the
 	// `textDocument/documentSymbol` request.
-	SymbolKind *ClientSymbolKindOptions `json:"symbolKind,omitempty"`
+	SymbolKind *ClientSymbolKindOptions `json:"symbolKind,omitzero"`
 
 	// The client supports hierarchical document symbols.
-	HierarchicalDocumentSymbolSupport *bool `json:"hierarchicalDocumentSymbolSupport,omitempty"`
+	HierarchicalDocumentSymbolSupport *bool `json:"hierarchicalDocumentSymbolSupport,omitzero"`
 
 	// The client supports tags on `SymbolInformation`. Tags are supported on
 	// `DocumentSymbol` if `hierarchicalDocumentSymbolSupport` is set to true.
 	// Clients supporting tags have to handle unknown tags gracefully.
 	//
 	// Since: 3.16.0
-	TagSupport *ClientSymbolTagOptions `json:"tagSupport,omitempty"`
+	TagSupport *ClientSymbolTagOptions `json:"tagSupport,omitzero"`
 
 	// The client supports an additional label presented in the UI when
 	// registering a document symbol provider.
 	//
 	// Since: 3.16.0
-	LabelSupport *bool `json:"labelSupport,omitempty"`
+	LabelSupport *bool `json:"labelSupport,omitzero"`
 }
 
 // The Client Capabilities of a CodeActionRequest.
 type CodeActionClientCapabilities struct {
 	// Whether code action supports dynamic registration.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 
 	// The client support code action literals of type `CodeAction` as a valid
 	// response of the `textDocument/codeAction` request. If the property is not
 	// set the request can only return `Command` literals.
 	//
 	// Since: 3.8.0
-	CodeActionLiteralSupport *ClientCodeActionLiteralOptions `json:"codeActionLiteralSupport,omitempty"`
+	CodeActionLiteralSupport *ClientCodeActionLiteralOptions `json:"codeActionLiteralSupport,omitzero"`
 
 	// Whether code action supports the `isPreferred` property.
 	//
 	// Since: 3.15.0
-	IsPreferredSupport *bool `json:"isPreferredSupport,omitempty"`
+	IsPreferredSupport *bool `json:"isPreferredSupport,omitzero"`
 
 	// Whether code action supports the `disabled` property.
 	//
 	// Since: 3.16.0
-	DisabledSupport *bool `json:"disabledSupport,omitempty"`
+	DisabledSupport *bool `json:"disabledSupport,omitzero"`
 
 	// Whether code action supports the `data` property which is
 	// preserved between a `textDocument/codeAction` and a
 	// `codeAction/resolve` request.
 	//
 	// Since: 3.16.0
-	DataSupport *bool `json:"dataSupport,omitempty"`
+	DataSupport *bool `json:"dataSupport,omitzero"`
 
 	// Whether the client supports resolving additional code action
 	// properties via a separate `codeAction/resolve` request.
 	//
 	// Since: 3.16.0
-	ResolveSupport *ClientCodeActionResolveOptions `json:"resolveSupport,omitempty"`
+	ResolveSupport *ClientCodeActionResolveOptions `json:"resolveSupport,omitzero"`
 
 	// Whether the client honors the change annotations in
 	// text edits and resource operations returned via the
@@ -10374,7 +12353,7 @@ type CodeActionClientCapabilities struct {
 	// for confirmation.
 	//
 	// Since: 3.16.0
-	HonorsChangeAnnotations *bool `json:"honorsChangeAnnotations,omitempty"`
+	HonorsChangeAnnotations *bool `json:"honorsChangeAnnotations,omitzero"`
 
 	// Whether the client supports documentation for a class of
 	// code actions.
@@ -10382,79 +12361,79 @@ type CodeActionClientCapabilities struct {
 	// Since: 3.18.0
 	//
 	// Proposed.
-	DocumentationSupport *bool `json:"documentationSupport,omitempty"`
+	DocumentationSupport *bool `json:"documentationSupport,omitzero"`
 
 	// Client supports the tag property on a code action. Clients
 	// supporting tags have to handle unknown tags gracefully.
 	//
 	// Since: 3.18.0 - proposed
-	TagSupport *CodeActionTagOptions `json:"tagSupport,omitempty"`
+	TagSupport *CodeActionTagOptions `json:"tagSupport,omitzero"`
 }
 
 // The client capabilities of a CodeLensRequest.
 type CodeLensClientCapabilities struct {
 	// Whether code lens supports dynamic registration.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 
 	// Whether the client supports resolving additional code lens
 	// properties via a separate `codeLens/resolve` request.
 	//
 	// Since: 3.18.0
-	ResolveSupport *ClientCodeLensResolveOptions `json:"resolveSupport,omitempty"`
+	ResolveSupport *ClientCodeLensResolveOptions `json:"resolveSupport,omitzero"`
 }
 
 // The client capabilities of a DocumentLinkRequest.
 type DocumentLinkClientCapabilities struct {
 	// Whether document link supports dynamic registration.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 
 	// Whether the client supports the `tooltip` property on `DocumentLink`.
 	//
 	// Since: 3.15.0
-	TooltipSupport *bool `json:"tooltipSupport,omitempty"`
+	TooltipSupport *bool `json:"tooltipSupport,omitzero"`
 }
 
 type DocumentColorClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `DocumentColorRegistrationOptions` return value
 	// for the corresponding server capability as well.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 }
 
 // Client capabilities of a DocumentFormattingRequest.
 type DocumentFormattingClientCapabilities struct {
 	// Whether formatting supports dynamic registration.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 }
 
 // Client capabilities of a DocumentRangeFormattingRequest.
 type DocumentRangeFormattingClientCapabilities struct {
 	// Whether range formatting supports dynamic registration.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 
 	// Whether the client supports formatting multiple ranges at once.
 	//
 	// Since: 3.18.0
 	//
 	// Proposed.
-	RangesSupport *bool `json:"rangesSupport,omitempty"`
+	RangesSupport *bool `json:"rangesSupport,omitzero"`
 }
 
 // Client capabilities of a DocumentOnTypeFormattingRequest.
 type DocumentOnTypeFormattingClientCapabilities struct {
 	// Whether on type formatting supports dynamic registration.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 }
 
 type RenameClientCapabilities struct {
 	// Whether rename supports dynamic registration.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 
 	// Client supports testing for validity of rename operations
 	// before execution.
 	//
 	// Since: 3.12.0
-	PrepareSupport *bool `json:"prepareSupport,omitempty"`
+	PrepareSupport *bool `json:"prepareSupport,omitzero"`
 
 	// Client supports the default behavior result.
 	//
@@ -10462,7 +12441,7 @@ type RenameClientCapabilities struct {
 	// client.
 	//
 	// Since: 3.16.0
-	PrepareSupportDefaultBehavior *PrepareSupportDefaultBehavior `json:"prepareSupportDefaultBehavior,omitempty"`
+	PrepareSupportDefaultBehavior *PrepareSupportDefaultBehavior `json:"prepareSupportDefaultBehavior,omitzero"`
 
 	// Whether the client honors the change annotations in
 	// text edits and resource operations returned via the
@@ -10471,7 +12450,7 @@ type RenameClientCapabilities struct {
 	// for confirmation.
 	//
 	// Since: 3.16.0
-	HonorsChangeAnnotations *bool `json:"honorsChangeAnnotations,omitempty"`
+	HonorsChangeAnnotations *bool `json:"honorsChangeAnnotations,omitzero"`
 }
 
 type FoldingRangeClientCapabilities struct {
@@ -10479,45 +12458,64 @@ type FoldingRangeClientCapabilities struct {
 	// providers. If this is set to `true` the client supports the new
 	// `FoldingRangeRegistrationOptions` return value for the corresponding
 	// server capability as well.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 
 	// The maximum number of folding ranges that the client prefers to receive
 	// per document. The value serves as a hint, servers are free to follow the
 	// limit.
-	RangeLimit *uint32 `json:"rangeLimit,omitempty"`
+	RangeLimit *uint32 `json:"rangeLimit,omitzero"`
 
 	// If set, the client signals that it only supports folding complete lines.
 	// If set, client will ignore specified `startCharacter` and `endCharacter`
 	// properties in a FoldingRange.
-	LineFoldingOnly *bool `json:"lineFoldingOnly,omitempty"`
+	LineFoldingOnly *bool `json:"lineFoldingOnly,omitzero"`
 
 	// Specific options for the folding range kind.
 	//
 	// Since: 3.17.0
-	FoldingRangeKind *ClientFoldingRangeKindOptions `json:"foldingRangeKind,omitempty"`
+	FoldingRangeKind *ClientFoldingRangeKindOptions `json:"foldingRangeKind,omitzero"`
 
 	// Specific options for the folding range.
 	//
 	// Since: 3.17.0
-	FoldingRange *ClientFoldingRangeOptions `json:"foldingRange,omitempty"`
+	FoldingRange *ClientFoldingRangeOptions `json:"foldingRange,omitzero"`
 }
 
 type SelectionRangeClientCapabilities struct {
 	// Whether implementation supports dynamic registration for selection range providers. If this is set to `true`
 	// the client supports the new `SelectionRangeRegistrationOptions` return value for the corresponding server
 	// capability as well.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 }
 
 // The publish diagnostic client capabilities.
 type PublishDiagnosticsClientCapabilities struct {
-	DiagnosticsCapabilities
+	// Whether the clients accepts diagnostics with related information.
+	RelatedInformation *bool `json:"relatedInformation,omitzero"`
+
+	// Client supports the tag property to provide meta data about a diagnostic.
+	// Clients supporting tags have to handle unknown tags gracefully.
+	//
+	// Since: 3.15.0
+	TagSupport *ClientDiagnosticsTagOptions `json:"tagSupport,omitzero"`
+
+	// Client supports a codeDescription property
+	//
+	// Since: 3.16.0
+	CodeDescriptionSupport *bool `json:"codeDescriptionSupport,omitzero"`
+
+	// Whether code action supports the `data` property which is
+	// preserved between a `textDocument/publishDiagnostics` and
+	// `textDocument/codeAction` request.
+	//
+	// Since: 3.16.0
+	DataSupport *bool `json:"dataSupport,omitzero"`
 
 	// Whether the client interprets the version property of the
 	// `textDocument/publishDiagnostics` notification's parameter.
 	//
 	// Since: 3.15.0
-	VersionSupport *bool `json:"versionSupport,omitempty"`
+	VersionSupport *bool `json:"versionSupport,omitzero"`
 }
 
 // Since: 3.16.0
@@ -10525,7 +12523,7 @@ type CallHierarchyClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 }
 
 // Since: 3.16.0
@@ -10533,7 +12531,7 @@ type SemanticTokensClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 
 	// Which requests the client supports and might send to the server
 	// depending on the server's capability. Please note that clients might not
@@ -10555,10 +12553,10 @@ type SemanticTokensClientCapabilities struct {
 	Formats []TokenFormat `json:"formats"`
 
 	// Whether the client supports tokens that can overlap each other.
-	OverlappingTokenSupport *bool `json:"overlappingTokenSupport,omitempty"`
+	OverlappingTokenSupport *bool `json:"overlappingTokenSupport,omitzero"`
 
 	// Whether the client supports tokens that can span multiple lines.
-	MultilineTokenSupport *bool `json:"multilineTokenSupport,omitempty"`
+	MultilineTokenSupport *bool `json:"multilineTokenSupport,omitzero"`
 
 	// Whether the client allows the server to actively cancel a
 	// semantic token request, e.g. supports returning
@@ -10566,7 +12564,7 @@ type SemanticTokensClientCapabilities struct {
 	// needs to retrigger the request.
 	//
 	// Since: 3.17.0
-	ServerCancelSupport *bool `json:"serverCancelSupport,omitempty"`
+	ServerCancelSupport *bool `json:"serverCancelSupport,omitzero"`
 
 	// Whether the client uses semantic tokens to augment existing
 	// syntax tokens. If set to `true` client side created syntax
@@ -10578,7 +12576,7 @@ type SemanticTokensClientCapabilities struct {
 	// specified.
 	//
 	// Since: 3.17.0
-	AugmentsSyntaxTokens *bool `json:"augmentsSyntaxTokens,omitempty"`
+	AugmentsSyntaxTokens *bool `json:"augmentsSyntaxTokens,omitzero"`
 }
 
 func (s *SemanticTokensClientCapabilities) UnmarshalJSON(data []byte) error {
@@ -10610,15 +12608,15 @@ func (s *SemanticTokensClientCapabilities) UnmarshalJSON(data []byte) error {
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		DynamicRegistration     *bool                               `json:"dynamicRegistration,omitempty"`
+		DynamicRegistration     *bool                               `json:"dynamicRegistration,omitzero"`
 		Requests                *ClientSemanticTokensRequestOptions `json:"requests"`
 		TokenTypes              []string                            `json:"tokenTypes"`
 		TokenModifiers          []string                            `json:"tokenModifiers"`
 		Formats                 []TokenFormat                       `json:"formats"`
-		OverlappingTokenSupport *bool                               `json:"overlappingTokenSupport,omitempty"`
-		MultilineTokenSupport   *bool                               `json:"multilineTokenSupport,omitempty"`
-		ServerCancelSupport     *bool                               `json:"serverCancelSupport,omitempty"`
-		AugmentsSyntaxTokens    *bool                               `json:"augmentsSyntaxTokens,omitempty"`
+		OverlappingTokenSupport *bool                               `json:"overlappingTokenSupport,omitzero"`
+		MultilineTokenSupport   *bool                               `json:"multilineTokenSupport,omitzero"`
+		ServerCancelSupport     *bool                               `json:"serverCancelSupport,omitzero"`
+		AugmentsSyntaxTokens    *bool                               `json:"augmentsSyntaxTokens,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -10631,7 +12629,7 @@ type LinkedEditingRangeClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 }
 
 // Client capabilities specific to the moniker request.
@@ -10641,7 +12639,7 @@ type MonikerClientCapabilities struct {
 	// Whether moniker supports dynamic registration. If this is set to `true`
 	// the client supports the new `MonikerRegistrationOptions` return value
 	// for the corresponding server capability as well.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 }
 
 // Since: 3.17.0
@@ -10649,7 +12647,7 @@ type TypeHierarchyClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 }
 
 // Client capabilities specific to inline values.
@@ -10657,7 +12655,7 @@ type TypeHierarchyClientCapabilities struct {
 // Since: 3.17.0
 type InlineValueClientCapabilities struct {
 	// Whether implementation supports dynamic registration for inline value providers.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 }
 
 // Inlay hint client capabilities.
@@ -10665,26 +12663,45 @@ type InlineValueClientCapabilities struct {
 // Since: 3.17.0
 type InlayHintClientCapabilities struct {
 	// Whether inlay hints support dynamic registration.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 
 	// Indicates which properties a client can resolve lazily on an inlay
 	// hint.
-	ResolveSupport *ClientInlayHintResolveOptions `json:"resolveSupport,omitempty"`
+	ResolveSupport *ClientInlayHintResolveOptions `json:"resolveSupport,omitzero"`
 }
 
 // Client capabilities specific to diagnostic pull requests.
 //
 // Since: 3.17.0
 type DiagnosticClientCapabilities struct {
-	DiagnosticsCapabilities
+	// Whether the clients accepts diagnostics with related information.
+	RelatedInformation *bool `json:"relatedInformation,omitzero"`
+
+	// Client supports the tag property to provide meta data about a diagnostic.
+	// Clients supporting tags have to handle unknown tags gracefully.
+	//
+	// Since: 3.15.0
+	TagSupport *ClientDiagnosticsTagOptions `json:"tagSupport,omitzero"`
+
+	// Client supports a codeDescription property
+	//
+	// Since: 3.16.0
+	CodeDescriptionSupport *bool `json:"codeDescriptionSupport,omitzero"`
+
+	// Whether code action supports the `data` property which is
+	// preserved between a `textDocument/publishDiagnostics` and
+	// `textDocument/codeAction` request.
+	//
+	// Since: 3.16.0
+	DataSupport *bool `json:"dataSupport,omitzero"`
 
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 
 	// Whether the clients supports related documents for document diagnostic pulls.
-	RelatedDocumentSupport *bool `json:"relatedDocumentSupport,omitempty"`
+	RelatedDocumentSupport *bool `json:"relatedDocumentSupport,omitzero"`
 }
 
 // Client capabilities specific to inline completions.
@@ -10694,7 +12711,7 @@ type DiagnosticClientCapabilities struct {
 // Proposed.
 type InlineCompletionClientCapabilities struct {
 	// Whether implementation supports dynamic registration for inline completion providers.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 }
 
 // Notebook specific client capabilities.
@@ -10705,16 +12722,16 @@ type NotebookDocumentSyncClientCapabilities struct {
 	// set to `true` the client supports the new
 	// `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitzero"`
 
 	// The client supports sending execution summary data per cell.
-	ExecutionSummarySupport *bool `json:"executionSummarySupport,omitempty"`
+	ExecutionSummarySupport *bool `json:"executionSummarySupport,omitzero"`
 }
 
 // Show message request client capabilities
 type ShowMessageRequestClientCapabilities struct {
 	// Capabilities specific to the `MessageActionItem` type.
-	MessageActionItem *ClientShowMessageActionItemOptions `json:"messageActionItem,omitempty"`
+	MessageActionItem *ClientShowMessageActionItemOptions `json:"messageActionItem,omitzero"`
 }
 
 // Client capabilities for the showDocument request.
@@ -10793,10 +12810,10 @@ func (s *StaleRequestSupportOptions) UnmarshalJSON(data []byte) error {
 // Since: 3.16.0
 type RegularExpressionsClientCapabilities struct {
 	// The engine's name.
-	Engine RegularExpressionEngineKind `json:"engine"`
+	Engine string `json:"engine"`
 
 	// The engine's version.
-	Version *string `json:"version,omitempty"`
+	Version *string `json:"version,omitzero"`
 }
 
 func (s *RegularExpressionsClientCapabilities) UnmarshalJSON(data []byte) error {
@@ -10816,8 +12833,8 @@ func (s *RegularExpressionsClientCapabilities) UnmarshalJSON(data []byte) error 
 
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
-		Engine  RegularExpressionEngineKind `json:"engine"`
-		Version *string                     `json:"version,omitempty"`
+		Engine  string  `json:"engine"`
+		Version *string `json:"version,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -10831,13 +12848,13 @@ type MarkdownClientCapabilities struct {
 	Parser string `json:"parser"`
 
 	// The version of the parser.
-	Version *string `json:"version,omitempty"`
+	Version *string `json:"version,omitzero"`
 
 	// A list of HTML tags that the client allows / supports in
 	// Markdown.
 	//
 	// Since: 3.17.0
-	AllowedTags *[]string `json:"allowedTags,omitempty"`
+	AllowedTags *[]string `json:"allowedTags,omitzero"`
 }
 
 func (s *MarkdownClientCapabilities) UnmarshalJSON(data []byte) error {
@@ -10858,8 +12875,8 @@ func (s *MarkdownClientCapabilities) UnmarshalJSON(data []byte) error {
 	// Redeclare the struct to prevent infinite recursion
 	type temp struct {
 		Parser      string    `json:"parser"`
-		Version     *string   `json:"version,omitempty"`
-		AllowedTags *[]string `json:"allowedTags,omitempty"`
+		Version     *string   `json:"version,omitzero"`
+		AllowedTags *[]string `json:"allowedTags,omitzero"`
 	}
 
 	return json.Unmarshal(data, (*temp)(s))
@@ -10870,7 +12887,7 @@ type ChangeAnnotationsSupportOptions struct {
 	// Whether the client groups edits with equal labels into tree nodes,
 	// for instance all edits labelled with "Changes in Strings" would
 	// be a tree node.
-	GroupsOnLabel *bool `json:"groupsOnLabel,omitempty"`
+	GroupsOnLabel *bool `json:"groupsOnLabel,omitzero"`
 }
 
 // Since: 3.18.0
@@ -10883,7 +12900,7 @@ type ClientSymbolKindOptions struct {
 	// If this property is not present the client only supports
 	// the symbol kinds from `File` to `Array` as defined in
 	// the initial version of the protocol.
-	ValueSet *[]SymbolKind `json:"valueSet,omitempty"`
+	ValueSet *[]SymbolKind `json:"valueSet,omitzero"`
 }
 
 // Since: 3.18.0
@@ -10953,20 +12970,20 @@ type ClientCompletionItemOptions struct {
 	// and `${3:foo}`. `$0` defines the final tab stop, it defaults to
 	// the end of the snippet. Placeholders with equal identifiers are linked,
 	// that is typing in one will update others too.
-	SnippetSupport *bool `json:"snippetSupport,omitempty"`
+	SnippetSupport *bool `json:"snippetSupport,omitzero"`
 
 	// Client supports commit characters on a completion item.
-	CommitCharactersSupport *bool `json:"commitCharactersSupport,omitempty"`
+	CommitCharactersSupport *bool `json:"commitCharactersSupport,omitzero"`
 
 	// Client supports the following content formats for the documentation
 	// property. The order describes the preferred format of the client.
-	DocumentationFormat *[]MarkupKind `json:"documentationFormat,omitempty"`
+	DocumentationFormat *[]MarkupKind `json:"documentationFormat,omitzero"`
 
 	// Client supports the deprecated property on a completion item.
-	DeprecatedSupport *bool `json:"deprecatedSupport,omitempty"`
+	DeprecatedSupport *bool `json:"deprecatedSupport,omitzero"`
 
 	// Client supports the preselect property on a completion item.
-	PreselectSupport *bool `json:"preselectSupport,omitempty"`
+	PreselectSupport *bool `json:"preselectSupport,omitzero"`
 
 	// Client supports the tag property on a completion item. Clients supporting
 	// tags have to handle unknown tags gracefully. Clients especially need to
@@ -10974,33 +12991,33 @@ type ClientCompletionItemOptions struct {
 	// a resolve call.
 	//
 	// Since: 3.15.0
-	TagSupport *CompletionItemTagOptions `json:"tagSupport,omitempty"`
+	TagSupport *CompletionItemTagOptions `json:"tagSupport,omitzero"`
 
 	// Client support insert replace edit to control different behavior if a
 	// completion item is inserted in the text or should replace text.
 	//
 	// Since: 3.16.0
-	InsertReplaceSupport *bool `json:"insertReplaceSupport,omitempty"`
+	InsertReplaceSupport *bool `json:"insertReplaceSupport,omitzero"`
 
 	// Indicates which properties a client can resolve lazily on a completion
 	// item. Before version 3.16.0 only the predefined properties `documentation`
 	// and `details` could be resolved lazily.
 	//
 	// Since: 3.16.0
-	ResolveSupport *ClientCompletionItemResolveOptions `json:"resolveSupport,omitempty"`
+	ResolveSupport *ClientCompletionItemResolveOptions `json:"resolveSupport,omitzero"`
 
 	// The client supports the `insertTextMode` property on
 	// a completion item to override the whitespace handling mode
 	// as defined by the client (see `insertTextMode`).
 	//
 	// Since: 3.16.0
-	InsertTextModeSupport *ClientCompletionItemInsertTextModeOptions `json:"insertTextModeSupport,omitempty"`
+	InsertTextModeSupport *ClientCompletionItemInsertTextModeOptions `json:"insertTextModeSupport,omitzero"`
 
 	// The client has support for completion item label
 	// details (see also `CompletionItemLabelDetails`).
 	//
 	// Since: 3.17.0
-	LabelDetailsSupport *bool `json:"labelDetailsSupport,omitempty"`
+	LabelDetailsSupport *bool `json:"labelDetailsSupport,omitzero"`
 }
 
 // Since: 3.18.0
@@ -11013,7 +13030,7 @@ type ClientCompletionItemOptionsKind struct {
 	// If this property is not present the client only supports
 	// the completion items kinds from `Text` to `Reference` as defined in
 	// the initial version of the protocol.
-	ValueSet *[]CompletionItemKind `json:"valueSet,omitempty"`
+	ValueSet *[]CompletionItemKind `json:"valueSet,omitzero"`
 }
 
 // The client supports the following `CompletionList` specific
@@ -11029,7 +13046,7 @@ type CompletionListCapabilities struct {
 	// no properties are supported.
 	//
 	// Since: 3.17.0
-	ItemDefaults *[]string `json:"itemDefaults,omitempty"`
+	ItemDefaults *[]string `json:"itemDefaults,omitzero"`
 
 	// Specifies whether the client supports `CompletionList.applyKind` to
 	// indicate how supported values from `completionList.itemDefaults`
@@ -11042,23 +13059,23 @@ type CompletionListCapabilities struct {
 	// defined in `CompletionList.applyKind`.
 	//
 	// Since: 3.18.0
-	ApplyKindSupport *bool `json:"applyKindSupport,omitempty"`
+	ApplyKindSupport *bool `json:"applyKindSupport,omitzero"`
 }
 
 // Since: 3.18.0
 type ClientSignatureInformationOptions struct {
 	// Client supports the following content formats for the documentation
 	// property. The order describes the preferred format of the client.
-	DocumentationFormat *[]MarkupKind `json:"documentationFormat,omitempty"`
+	DocumentationFormat *[]MarkupKind `json:"documentationFormat,omitzero"`
 
 	// Client capabilities specific to parameter information.
-	ParameterInformation *ClientSignatureParameterInformationOptions `json:"parameterInformation,omitempty"`
+	ParameterInformation *ClientSignatureParameterInformationOptions `json:"parameterInformation,omitzero"`
 
 	// The client supports the `activeParameter` property on `SignatureInformation`
 	// literal.
 	//
 	// Since: 3.16.0
-	ActiveParameterSupport *bool `json:"activeParameterSupport,omitempty"`
+	ActiveParameterSupport *bool `json:"activeParameterSupport,omitzero"`
 
 	// The client supports the `activeParameter` property on
 	// `SignatureHelp`/`SignatureInformation` being set to `null` to
@@ -11067,7 +13084,7 @@ type ClientSignatureInformationOptions struct {
 	// Since: 3.18.0
 	//
 	// Proposed.
-	NoActiveParameterSupport *bool `json:"noActiveParameterSupport,omitempty"`
+	NoActiveParameterSupport *bool `json:"noActiveParameterSupport,omitzero"`
 }
 
 // Since: 3.18.0
@@ -11193,7 +13210,7 @@ type ClientFoldingRangeKindOptions struct {
 	// property exists the client also guarantees that it will
 	// handle values outside its set gracefully and falls back
 	// to a default value when unknown.
-	ValueSet *[]FoldingRangeKind `json:"valueSet,omitempty"`
+	ValueSet *[]FoldingRangeKind `json:"valueSet,omitzero"`
 }
 
 // Since: 3.18.0
@@ -11202,42 +13219,42 @@ type ClientFoldingRangeOptions struct {
 	// folding ranges to display custom labels instead of the default text.
 	//
 	// Since: 3.17.0
-	CollapsedText *bool `json:"collapsedText,omitempty"`
+	CollapsedText *bool `json:"collapsedText,omitzero"`
 }
 
 // General diagnostics capabilities for pull and push model.
 type DiagnosticsCapabilities struct {
 	// Whether the clients accepts diagnostics with related information.
-	RelatedInformation *bool `json:"relatedInformation,omitempty"`
+	RelatedInformation *bool `json:"relatedInformation,omitzero"`
 
 	// Client supports the tag property to provide meta data about a diagnostic.
 	// Clients supporting tags have to handle unknown tags gracefully.
 	//
 	// Since: 3.15.0
-	TagSupport *ClientDiagnosticsTagOptions `json:"tagSupport,omitempty"`
+	TagSupport *ClientDiagnosticsTagOptions `json:"tagSupport,omitzero"`
 
 	// Client supports a codeDescription property
 	//
 	// Since: 3.16.0
-	CodeDescriptionSupport *bool `json:"codeDescriptionSupport,omitempty"`
+	CodeDescriptionSupport *bool `json:"codeDescriptionSupport,omitzero"`
 
 	// Whether code action supports the `data` property which is
 	// preserved between a `textDocument/publishDiagnostics` and
 	// `textDocument/codeAction` request.
 	//
 	// Since: 3.16.0
-	DataSupport *bool `json:"dataSupport,omitempty"`
+	DataSupport *bool `json:"dataSupport,omitzero"`
 }
 
 // Since: 3.18.0
 type ClientSemanticTokensRequestOptions struct {
 	// The client will send the `textDocument/semanticTokens/range` request if
 	// the server provides a corresponding handler.
-	Range *BooleanOrEmptyObject `json:"range,omitempty"`
+	Range *BooleanOrEmptyObject `json:"range,omitzero"`
 
 	// The client will send the `textDocument/semanticTokens/full` request if
 	// the server provides a corresponding handler.
-	Full *BooleanOrClientSemanticTokensRequestFullDelta `json:"full,omitempty"`
+	Full *BooleanOrClientSemanticTokensRequestFullDelta `json:"full,omitzero"`
 }
 
 // Since: 3.18.0
@@ -11274,7 +13291,7 @@ type ClientShowMessageActionItemOptions struct {
 	// Whether the client supports additional attributes which
 	// are preserved and send back to the server in the
 	// request's response.
-	AdditionalPropertiesSupport *bool `json:"additionalPropertiesSupport,omitempty"`
+	AdditionalPropertiesSupport *bool `json:"additionalPropertiesSupport,omitzero"`
 }
 
 // Since: 3.18.0
@@ -11369,7 +13386,7 @@ type ClientSignatureParameterInformationOptions struct {
 	// simple label string.
 	//
 	// Since: 3.14.0
-	LabelOffsetSupport *bool `json:"labelOffsetSupport,omitempty"`
+	LabelOffsetSupport *bool `json:"labelOffsetSupport,omitzero"`
 }
 
 // Since: 3.18.0
@@ -11437,7 +13454,7 @@ func (s *ClientDiagnosticsTagOptions) UnmarshalJSON(data []byte) error {
 type ClientSemanticTokensRequestFullDelta struct {
 	// The client will send the `textDocument/semanticTokens/full/delta` request if
 	// the server provides a corresponding handler.
-	Delta *bool `json:"delta,omitempty"`
+	Delta *bool `json:"delta,omitzero"`
 }
 
 // Enumerations
@@ -12565,139 +14582,6 @@ func (e *TokenFormat) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// Type aliases
-
-// The definition of a symbol represented as one or many locations.
-// For most programming languages there is only one location at which a symbol is
-// defined.
-//
-// Servers should prefer returning `DefinitionLink` over `Definition` if supported
-// by the client.
-type Definition = LocationOrLocations
-
-// Information about where a symbol is defined.
-//
-// Provides additional metadata over normal location definitions, including the range of
-// the defining symbol
-type DefinitionLink = LocationLink
-
-// The declaration of a symbol representation as one or many locations.
-type Declaration = LocationOrLocations
-
-// Information about where a symbol is declared.
-//
-// Provides additional metadata over normal location declarations, including the range of
-// the declaring symbol.
-//
-// Servers should prefer returning `DeclarationLink` over `Declaration` if supported
-// by the client.
-type DeclarationLink = LocationLink
-
-// Inline value information can be provided by different means:
-// - directly as a text value (class InlineValueText).
-// - as a name to use for a variable lookup (class InlineValueVariableLookup)
-// - as an evaluatable expression (class InlineValueEvaluatableExpression)
-// The InlineValue types combines all inline value types into one type.
-//
-// Since: 3.17.0
-type InlineValue = InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression
-
-// The result of a document diagnostic pull request. A report can
-// either be a full report containing all diagnostics for the
-// requested document or an unchanged report indicating that nothing
-// has changed in terms of diagnostics in comparison to the last
-// pull request.
-//
-// Since: 3.17.0
-type DocumentDiagnosticReport = RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport
-
-type PrepareRenameResult = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior
-
-// A document selector is the combination of one or many document filters.
-//
-// @sample `let sel:DocumentSelector = [{ language: 'typescript' }, { language: 'json', pattern: '**∕tsconfig.json' }]`;
-//
-// The use of a string as a document filter is deprecated @since 3.16.0.
-type DocumentSelector = []DocumentFilter
-
-type ProgressToken = IntegerOrString
-
-// An identifier to refer to a change annotation stored with a workspace edit.
-type ChangeAnnotationIdentifier = string
-
-// A workspace diagnostic document report.
-//
-// Since: 3.17.0
-type WorkspaceDocumentDiagnosticReport = WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport
-
-// An event describing a change to a text document. If only a text is provided
-// it is considered to be the full content of the document.
-type TextDocumentContentChangeEvent = TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument
-
-// MarkedString can be used to render human readable text. It is either a markdown string
-// or a code-block that provides a language and a code snippet. The language identifier
-// is semantically equal to the optional language identifier in fenced code blocks in GitHub
-// issues. See https://help.github.com/articles/creating-and-highlighting-code-blocks/#syntax-highlighting
-//
-// The pair of a language and a value is an equivalent to markdown:
-// ```${language}
-// ${value}
-// ```
-//
-// Note that markdown strings will be sanitized - that means html will be escaped.
-//
-// Deprecated: use MarkupContent instead.
-type MarkedString = StringOrMarkedStringWithLanguage
-
-// A document filter describes a top level text document or
-// a notebook cell document.
-//
-// Since: 3.17.0 - support for NotebookCellTextDocumentFilter.
-type DocumentFilter = TextDocumentFilterOrNotebookCellTextDocumentFilter
-
-// The glob pattern. Either a string pattern or a relative pattern.
-//
-// Since: 3.17.0
-type GlobPattern = PatternOrRelativePattern
-
-// A document filter denotes a document by different properties like
-// the language, the scheme of
-// its resource, or a glob-pattern that is applied to the path.
-//
-// Glob patterns can have the following syntax:
-// - `*` to match one or more characters in a path segment
-// - `?` to match on one character in a path segment
-// - `**` to match any number of path segments, including none
-// - `{}` to group sub patterns into an OR expression. (e.g. `**​/*.{ts,js}` matches all TypeScript and JavaScript files)
-// - `[]` to declare a range of characters to match in a path segment (e.g., `example.[0-9]` to match on `example.0`, `example.1`, …)
-// - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
-//
-// @sample A language filter that applies to typescript files on disk: `{ language: 'typescript', scheme: 'file' }`
-// @sample A language filter that applies to all package.json paths: `{ language: 'json', pattern: '**package.json' }`
-//
-// Since: 3.17.0
-type TextDocumentFilter = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern
-
-// A notebook document filter denotes a notebook document by
-// different properties. The properties will be match
-// against the notebook's URI (same as with documents)
-//
-// Since: 3.17.0
-type NotebookDocumentFilter = NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern
-
-// The glob pattern to watch relative to the base path. Glob patterns can have the following syntax:
-// - `*` to match one or more characters in a path segment
-// - `?` to match on one character in a path segment
-// - `**` to match any number of path segments, including none
-// - `{}` to group conditions (e.g. `**​/*.{ts,js}` matches all TypeScript and JavaScript files)
-// - `[]` to declare a range of characters to match in a path segment (e.g., `example.[0-9]` to match on `example.0`, `example.1`, …)
-// - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
-//
-// Since: 3.17.0
-type Pattern = string
-
-type RegularExpressionEngineKind = string
-
 func unmarshalParams(method Method, data []byte) (any, error) {
 	switch method {
 	case MethodTextDocumentImplementation:
@@ -13286,153 +15170,501 @@ const (
 	MethodProgress                       Method = "$/progress"
 )
 
+// Request response types
+
+// Response type for `textDocument/implementation`
+type ImplementationResponse = LocationOrLocationsOrDefinitionLinksOrNull
+
+// Type mapping info for `textDocument/implementation`
+var TextDocumentImplementationInfo = RequestInfo[*ImplementationParams, ImplementationResponse]{Method: MethodTextDocumentImplementation}
+
+// Response type for `textDocument/typeDefinition`
+type TypeDefinitionResponse = LocationOrLocationsOrDefinitionLinksOrNull
+
+// Type mapping info for `textDocument/typeDefinition`
+var TextDocumentTypeDefinitionInfo = RequestInfo[*TypeDefinitionParams, TypeDefinitionResponse]{Method: MethodTextDocumentTypeDefinition}
+
+// Response type for `workspace/workspaceFolders`
+type WorkspaceFoldersResponse = WorkspaceFoldersOrNull
+
+// Type mapping info for `workspace/workspaceFolders`
+var WorkspaceWorkspaceFoldersInfo = RequestInfo[any, WorkspaceFoldersResponse]{Method: MethodWorkspaceWorkspaceFolders}
+
+// Response type for `workspace/configuration`
+type ConfigurationResponse = []any
+
+// Type mapping info for `workspace/configuration`
+var WorkspaceConfigurationInfo = RequestInfo[*ConfigurationParams, ConfigurationResponse]{Method: MethodWorkspaceConfiguration}
+
+// Response type for `textDocument/documentColor`
+type DocumentColorResponse = []*ColorInformation
+
+// Type mapping info for `textDocument/documentColor`
+var TextDocumentDocumentColorInfo = RequestInfo[*DocumentColorParams, DocumentColorResponse]{Method: MethodTextDocumentDocumentColor}
+
+// Response type for `textDocument/colorPresentation`
+type ColorPresentationResponse = []*ColorPresentation
+
+// Type mapping info for `textDocument/colorPresentation`
+var TextDocumentColorPresentationInfo = RequestInfo[*ColorPresentationParams, ColorPresentationResponse]{Method: MethodTextDocumentColorPresentation}
+
+// Response type for `textDocument/foldingRange`
+type FoldingRangeResponse = FoldingRangesOrNull
+
+// Type mapping info for `textDocument/foldingRange`
+var TextDocumentFoldingRangeInfo = RequestInfo[*FoldingRangeParams, FoldingRangeResponse]{Method: MethodTextDocumentFoldingRange}
+
+// Response type for `workspace/foldingRange/refresh`
+type FoldingRangeRefreshResponse = any
+
+// Type mapping info for `workspace/foldingRange/refresh`
+var WorkspaceFoldingRangeRefreshInfo = RequestInfo[any, FoldingRangeRefreshResponse]{Method: MethodWorkspaceFoldingRangeRefresh}
+
+// Response type for `textDocument/declaration`
+type DeclarationResponse = LocationOrLocationsOrDeclarationLinksOrNull
+
+// Type mapping info for `textDocument/declaration`
+var TextDocumentDeclarationInfo = RequestInfo[*DeclarationParams, DeclarationResponse]{Method: MethodTextDocumentDeclaration}
+
+// Response type for `textDocument/selectionRange`
+type SelectionRangeResponse = SelectionRangesOrNull
+
+// Type mapping info for `textDocument/selectionRange`
+var TextDocumentSelectionRangeInfo = RequestInfo[*SelectionRangeParams, SelectionRangeResponse]{Method: MethodTextDocumentSelectionRange}
+
+// Response type for `window/workDoneProgress/create`
+type WorkDoneProgressCreateResponse = any
+
+// Type mapping info for `window/workDoneProgress/create`
+var WindowWorkDoneProgressCreateInfo = RequestInfo[*WorkDoneProgressCreateParams, WorkDoneProgressCreateResponse]{Method: MethodWindowWorkDoneProgressCreate}
+
+// Response type for `textDocument/prepareCallHierarchy`
+type CallHierarchyPrepareResponse = CallHierarchyItemsOrNull
+
+// Type mapping info for `textDocument/prepareCallHierarchy`
+var TextDocumentPrepareCallHierarchyInfo = RequestInfo[*CallHierarchyPrepareParams, CallHierarchyPrepareResponse]{Method: MethodTextDocumentPrepareCallHierarchy}
+
+// Response type for `callHierarchy/incomingCalls`
+type CallHierarchyIncomingCallsResponse = CallHierarchyIncomingCallsOrNull
+
+// Type mapping info for `callHierarchy/incomingCalls`
+var CallHierarchyIncomingCallsInfo = RequestInfo[*CallHierarchyIncomingCallsParams, CallHierarchyIncomingCallsResponse]{Method: MethodCallHierarchyIncomingCalls}
+
+// Response type for `callHierarchy/outgoingCalls`
+type CallHierarchyOutgoingCallsResponse = CallHierarchyOutgoingCallsOrNull
+
+// Type mapping info for `callHierarchy/outgoingCalls`
+var CallHierarchyOutgoingCallsInfo = RequestInfo[*CallHierarchyOutgoingCallsParams, CallHierarchyOutgoingCallsResponse]{Method: MethodCallHierarchyOutgoingCalls}
+
+// Response type for `textDocument/semanticTokens/full`
+type SemanticTokensResponse = SemanticTokensOrNull
+
+// Type mapping info for `textDocument/semanticTokens/full`
+var TextDocumentSemanticTokensFullInfo = RequestInfo[*SemanticTokensParams, SemanticTokensResponse]{Method: MethodTextDocumentSemanticTokensFull}
+
+// Response type for `textDocument/semanticTokens/full/delta`
+type SemanticTokensDeltaResponse = SemanticTokensOrSemanticTokensDeltaOrNull
+
+// Type mapping info for `textDocument/semanticTokens/full/delta`
+var TextDocumentSemanticTokensFullDeltaInfo = RequestInfo[*SemanticTokensDeltaParams, SemanticTokensDeltaResponse]{Method: MethodTextDocumentSemanticTokensFullDelta}
+
+// Response type for `textDocument/semanticTokens/range`
+type SemanticTokensRangeResponse = SemanticTokensOrNull
+
+// Type mapping info for `textDocument/semanticTokens/range`
+var TextDocumentSemanticTokensRangeInfo = RequestInfo[*SemanticTokensRangeParams, SemanticTokensRangeResponse]{Method: MethodTextDocumentSemanticTokensRange}
+
+// Response type for `workspace/semanticTokens/refresh`
+type SemanticTokensRefreshResponse = any
+
+// Type mapping info for `workspace/semanticTokens/refresh`
+var WorkspaceSemanticTokensRefreshInfo = RequestInfo[any, SemanticTokensRefreshResponse]{Method: MethodWorkspaceSemanticTokensRefresh}
+
+// Response type for `window/showDocument`
+type ShowDocumentResponse = *ShowDocumentResult
+
+// Type mapping info for `window/showDocument`
+var WindowShowDocumentInfo = RequestInfo[*ShowDocumentParams, ShowDocumentResponse]{Method: MethodWindowShowDocument}
+
+// Response type for `textDocument/linkedEditingRange`
+type LinkedEditingRangeResponse = LinkedEditingRangesOrNull
+
+// Type mapping info for `textDocument/linkedEditingRange`
+var TextDocumentLinkedEditingRangeInfo = RequestInfo[*LinkedEditingRangeParams, LinkedEditingRangeResponse]{Method: MethodTextDocumentLinkedEditingRange}
+
+// Response type for `workspace/willCreateFiles`
+type WillCreateFilesResponse = WorkspaceEditOrNull
+
+// Type mapping info for `workspace/willCreateFiles`
+var WorkspaceWillCreateFilesInfo = RequestInfo[*CreateFilesParams, WillCreateFilesResponse]{Method: MethodWorkspaceWillCreateFiles}
+
+// Response type for `workspace/willRenameFiles`
+type WillRenameFilesResponse = WorkspaceEditOrNull
+
+// Type mapping info for `workspace/willRenameFiles`
+var WorkspaceWillRenameFilesInfo = RequestInfo[*RenameFilesParams, WillRenameFilesResponse]{Method: MethodWorkspaceWillRenameFiles}
+
+// Response type for `workspace/willDeleteFiles`
+type WillDeleteFilesResponse = WorkspaceEditOrNull
+
+// Type mapping info for `workspace/willDeleteFiles`
+var WorkspaceWillDeleteFilesInfo = RequestInfo[*DeleteFilesParams, WillDeleteFilesResponse]{Method: MethodWorkspaceWillDeleteFiles}
+
+// Response type for `textDocument/moniker`
+type MonikerResponse = MonikersOrNull
+
+// Type mapping info for `textDocument/moniker`
+var TextDocumentMonikerInfo = RequestInfo[*MonikerParams, MonikerResponse]{Method: MethodTextDocumentMoniker}
+
+// Response type for `textDocument/prepareTypeHierarchy`
+type TypeHierarchyPrepareResponse = TypeHierarchyItemsOrNull
+
+// Type mapping info for `textDocument/prepareTypeHierarchy`
+var TextDocumentPrepareTypeHierarchyInfo = RequestInfo[*TypeHierarchyPrepareParams, TypeHierarchyPrepareResponse]{Method: MethodTextDocumentPrepareTypeHierarchy}
+
+// Response type for `typeHierarchy/supertypes`
+type TypeHierarchySupertypesResponse = TypeHierarchyItemsOrNull
+
+// Type mapping info for `typeHierarchy/supertypes`
+var TypeHierarchySupertypesInfo = RequestInfo[*TypeHierarchySupertypesParams, TypeHierarchySupertypesResponse]{Method: MethodTypeHierarchySupertypes}
+
+// Response type for `typeHierarchy/subtypes`
+type TypeHierarchySubtypesResponse = TypeHierarchyItemsOrNull
+
+// Type mapping info for `typeHierarchy/subtypes`
+var TypeHierarchySubtypesInfo = RequestInfo[*TypeHierarchySubtypesParams, TypeHierarchySubtypesResponse]{Method: MethodTypeHierarchySubtypes}
+
+// Response type for `textDocument/inlineValue`
+type InlineValueResponse = InlineValuesOrNull
+
+// Type mapping info for `textDocument/inlineValue`
+var TextDocumentInlineValueInfo = RequestInfo[*InlineValueParams, InlineValueResponse]{Method: MethodTextDocumentInlineValue}
+
+// Response type for `workspace/inlineValue/refresh`
+type InlineValueRefreshResponse = any
+
+// Type mapping info for `workspace/inlineValue/refresh`
+var WorkspaceInlineValueRefreshInfo = RequestInfo[any, InlineValueRefreshResponse]{Method: MethodWorkspaceInlineValueRefresh}
+
+// Response type for `textDocument/inlayHint`
+type InlayHintResponse = InlayHintsOrNull
+
+// Type mapping info for `textDocument/inlayHint`
+var TextDocumentInlayHintInfo = RequestInfo[*InlayHintParams, InlayHintResponse]{Method: MethodTextDocumentInlayHint}
+
+// Response type for `inlayHint/resolve`
+type InlayHintResolveResponse = *InlayHint
+
+// Type mapping info for `inlayHint/resolve`
+var InlayHintResolveInfo = RequestInfo[*InlayHint, InlayHintResolveResponse]{Method: MethodInlayHintResolve}
+
+// Response type for `workspace/inlayHint/refresh`
+type InlayHintRefreshResponse = any
+
+// Type mapping info for `workspace/inlayHint/refresh`
+var WorkspaceInlayHintRefreshInfo = RequestInfo[any, InlayHintRefreshResponse]{Method: MethodWorkspaceInlayHintRefresh}
+
+// Response type for `textDocument/diagnostic`
+type DocumentDiagnosticResponse = RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport
+
+// Type mapping info for `textDocument/diagnostic`
+var TextDocumentDiagnosticInfo = RequestInfo[*DocumentDiagnosticParams, DocumentDiagnosticResponse]{Method: MethodTextDocumentDiagnostic}
+
+// Response type for `workspace/diagnostic`
+type WorkspaceDiagnosticResponse = *WorkspaceDiagnosticReport
+
+// Type mapping info for `workspace/diagnostic`
+var WorkspaceDiagnosticInfo = RequestInfo[*WorkspaceDiagnosticParams, WorkspaceDiagnosticResponse]{Method: MethodWorkspaceDiagnostic}
+
+// Response type for `workspace/diagnostic/refresh`
+type DiagnosticRefreshResponse = any
+
+// Type mapping info for `workspace/diagnostic/refresh`
+var WorkspaceDiagnosticRefreshInfo = RequestInfo[any, DiagnosticRefreshResponse]{Method: MethodWorkspaceDiagnosticRefresh}
+
+// Response type for `textDocument/inlineCompletion`
+type InlineCompletionResponse = InlineCompletionListOrItemsOrNull
+
+// Type mapping info for `textDocument/inlineCompletion`
+var TextDocumentInlineCompletionInfo = RequestInfo[*InlineCompletionParams, InlineCompletionResponse]{Method: MethodTextDocumentInlineCompletion}
+
+// Response type for `workspace/textDocumentContent`
+type TextDocumentContentResponse = *TextDocumentContentResult
+
+// Type mapping info for `workspace/textDocumentContent`
+var WorkspaceTextDocumentContentInfo = RequestInfo[*TextDocumentContentParams, TextDocumentContentResponse]{Method: MethodWorkspaceTextDocumentContent}
+
+// Response type for `workspace/textDocumentContent/refresh`
+type TextDocumentContentRefreshResponse = any
+
+// Type mapping info for `workspace/textDocumentContent/refresh`
+var WorkspaceTextDocumentContentRefreshInfo = RequestInfo[*TextDocumentContentRefreshParams, TextDocumentContentRefreshResponse]{Method: MethodWorkspaceTextDocumentContentRefresh}
+
+// Response type for `client/registerCapability`
+type RegistrationResponse = any
+
+// Type mapping info for `client/registerCapability`
+var ClientRegisterCapabilityInfo = RequestInfo[*RegistrationParams, RegistrationResponse]{Method: MethodClientRegisterCapability}
+
+// Response type for `client/unregisterCapability`
+type UnregistrationResponse = any
+
+// Type mapping info for `client/unregisterCapability`
+var ClientUnregisterCapabilityInfo = RequestInfo[*UnregistrationParams, UnregistrationResponse]{Method: MethodClientUnregisterCapability}
+
+// Response type for `initialize`
+type InitializeResponse = *InitializeResult
+
+// Type mapping info for `initialize`
+var InitializeInfo = RequestInfo[*InitializeParams, InitializeResponse]{Method: MethodInitialize}
+
+// Response type for `shutdown`
+type ShutdownResponse = any
+
+// Type mapping info for `shutdown`
+var ShutdownInfo = RequestInfo[any, ShutdownResponse]{Method: MethodShutdown}
+
+// Response type for `window/showMessageRequest`
+type ShowMessageResponse = MessageActionItemOrNull
+
+// Type mapping info for `window/showMessageRequest`
+var WindowShowMessageRequestInfo = RequestInfo[*ShowMessageRequestParams, ShowMessageResponse]{Method: MethodWindowShowMessageRequest}
+
+// Response type for `textDocument/willSaveWaitUntil`
+type WillSaveTextDocumentWaitUntilResponse = TextEditsOrNull
+
+// Type mapping info for `textDocument/willSaveWaitUntil`
+var TextDocumentWillSaveWaitUntilInfo = RequestInfo[*WillSaveTextDocumentParams, WillSaveTextDocumentWaitUntilResponse]{Method: MethodTextDocumentWillSaveWaitUntil}
+
+// Response type for `textDocument/completion`
+type CompletionResponse = CompletionItemsOrListOrNull
+
+// Type mapping info for `textDocument/completion`
+var TextDocumentCompletionInfo = RequestInfo[*CompletionParams, CompletionResponse]{Method: MethodTextDocumentCompletion}
+
+// Response type for `completionItem/resolve`
+type CompletionResolveResponse = *CompletionItem
+
+// Type mapping info for `completionItem/resolve`
+var CompletionItemResolveInfo = RequestInfo[*CompletionItem, CompletionResolveResponse]{Method: MethodCompletionItemResolve}
+
+// Response type for `textDocument/hover`
+type HoverResponse = HoverOrNull
+
+// Type mapping info for `textDocument/hover`
+var TextDocumentHoverInfo = RequestInfo[*HoverParams, HoverResponse]{Method: MethodTextDocumentHover}
+
+// Response type for `textDocument/signatureHelp`
+type SignatureHelpResponse = SignatureHelpOrNull
+
+// Type mapping info for `textDocument/signatureHelp`
+var TextDocumentSignatureHelpInfo = RequestInfo[*SignatureHelpParams, SignatureHelpResponse]{Method: MethodTextDocumentSignatureHelp}
+
+// Response type for `textDocument/definition`
+type DefinitionResponse = LocationOrLocationsOrDefinitionLinksOrNull
+
+// Type mapping info for `textDocument/definition`
+var TextDocumentDefinitionInfo = RequestInfo[*DefinitionParams, DefinitionResponse]{Method: MethodTextDocumentDefinition}
+
+// Response type for `textDocument/references`
+type ReferencesResponse = LocationsOrNull
+
+// Type mapping info for `textDocument/references`
+var TextDocumentReferencesInfo = RequestInfo[*ReferenceParams, ReferencesResponse]{Method: MethodTextDocumentReferences}
+
+// Response type for `textDocument/documentHighlight`
+type DocumentHighlightResponse = DocumentHighlightsOrNull
+
+// Type mapping info for `textDocument/documentHighlight`
+var TextDocumentDocumentHighlightInfo = RequestInfo[*DocumentHighlightParams, DocumentHighlightResponse]{Method: MethodTextDocumentDocumentHighlight}
+
+// Response type for `textDocument/documentSymbol`
+type DocumentSymbolResponse = SymbolInformationsOrDocumentSymbolsOrNull
+
+// Type mapping info for `textDocument/documentSymbol`
+var TextDocumentDocumentSymbolInfo = RequestInfo[*DocumentSymbolParams, DocumentSymbolResponse]{Method: MethodTextDocumentDocumentSymbol}
+
+// Response type for `textDocument/codeAction`
+type CodeActionResponse = CommandOrCodeActionArrayOrNull
+
+// Type mapping info for `textDocument/codeAction`
+var TextDocumentCodeActionInfo = RequestInfo[*CodeActionParams, CodeActionResponse]{Method: MethodTextDocumentCodeAction}
+
+// Response type for `codeAction/resolve`
+type CodeActionResolveResponse = *CodeAction
+
+// Type mapping info for `codeAction/resolve`
+var CodeActionResolveInfo = RequestInfo[*CodeAction, CodeActionResolveResponse]{Method: MethodCodeActionResolve}
+
+// Response type for `workspace/symbol`
+type WorkspaceSymbolResponse = SymbolInformationsOrWorkspaceSymbolsOrNull
+
+// Type mapping info for `workspace/symbol`
+var WorkspaceSymbolInfo = RequestInfo[*WorkspaceSymbolParams, WorkspaceSymbolResponse]{Method: MethodWorkspaceSymbol}
+
+// Response type for `workspaceSymbol/resolve`
+type WorkspaceSymbolResolveResponse = *WorkspaceSymbol
+
+// Type mapping info for `workspaceSymbol/resolve`
+var WorkspaceSymbolResolveInfo = RequestInfo[*WorkspaceSymbol, WorkspaceSymbolResolveResponse]{Method: MethodWorkspaceSymbolResolve}
+
+// Response type for `textDocument/codeLens`
+type CodeLensResponse = CodeLenssOrNull
+
+// Type mapping info for `textDocument/codeLens`
+var TextDocumentCodeLensInfo = RequestInfo[*CodeLensParams, CodeLensResponse]{Method: MethodTextDocumentCodeLens}
+
+// Response type for `codeLens/resolve`
+type CodeLensResolveResponse = *CodeLens
+
+// Type mapping info for `codeLens/resolve`
+var CodeLensResolveInfo = RequestInfo[*CodeLens, CodeLensResolveResponse]{Method: MethodCodeLensResolve}
+
+// Response type for `workspace/codeLens/refresh`
+type CodeLensRefreshResponse = any
+
+// Type mapping info for `workspace/codeLens/refresh`
+var WorkspaceCodeLensRefreshInfo = RequestInfo[any, CodeLensRefreshResponse]{Method: MethodWorkspaceCodeLensRefresh}
+
+// Response type for `textDocument/documentLink`
+type DocumentLinkResponse = DocumentLinksOrNull
+
+// Type mapping info for `textDocument/documentLink`
+var TextDocumentDocumentLinkInfo = RequestInfo[*DocumentLinkParams, DocumentLinkResponse]{Method: MethodTextDocumentDocumentLink}
+
+// Response type for `documentLink/resolve`
+type DocumentLinkResolveResponse = *DocumentLink
+
+// Type mapping info for `documentLink/resolve`
+var DocumentLinkResolveInfo = RequestInfo[*DocumentLink, DocumentLinkResolveResponse]{Method: MethodDocumentLinkResolve}
+
+// Response type for `textDocument/formatting`
+type DocumentFormattingResponse = TextEditsOrNull
+
+// Type mapping info for `textDocument/formatting`
+var TextDocumentFormattingInfo = RequestInfo[*DocumentFormattingParams, DocumentFormattingResponse]{Method: MethodTextDocumentFormatting}
+
+// Response type for `textDocument/rangeFormatting`
+type DocumentRangeFormattingResponse = TextEditsOrNull
+
+// Type mapping info for `textDocument/rangeFormatting`
+var TextDocumentRangeFormattingInfo = RequestInfo[*DocumentRangeFormattingParams, DocumentRangeFormattingResponse]{Method: MethodTextDocumentRangeFormatting}
+
+// Response type for `textDocument/rangesFormatting`
+type DocumentRangesFormattingResponse = TextEditsOrNull
+
+// Type mapping info for `textDocument/rangesFormatting`
+var TextDocumentRangesFormattingInfo = RequestInfo[*DocumentRangesFormattingParams, DocumentRangesFormattingResponse]{Method: MethodTextDocumentRangesFormatting}
+
+// Response type for `textDocument/onTypeFormatting`
+type DocumentOnTypeFormattingResponse = TextEditsOrNull
+
+// Type mapping info for `textDocument/onTypeFormatting`
+var TextDocumentOnTypeFormattingInfo = RequestInfo[*DocumentOnTypeFormattingParams, DocumentOnTypeFormattingResponse]{Method: MethodTextDocumentOnTypeFormatting}
+
+// Response type for `textDocument/rename`
+type RenameResponse = WorkspaceEditOrNull
+
+// Type mapping info for `textDocument/rename`
+var TextDocumentRenameInfo = RequestInfo[*RenameParams, RenameResponse]{Method: MethodTextDocumentRename}
+
+// Response type for `textDocument/prepareRename`
+type PrepareRenameResponse = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull
+
+// Type mapping info for `textDocument/prepareRename`
+var TextDocumentPrepareRenameInfo = RequestInfo[*PrepareRenameParams, PrepareRenameResponse]{Method: MethodTextDocumentPrepareRename}
+
+// Response type for `workspace/executeCommand`
+type ExecuteCommandResponse = LSPAnyOrNull
+
+// Type mapping info for `workspace/executeCommand`
+var WorkspaceExecuteCommandInfo = RequestInfo[*ExecuteCommandParams, ExecuteCommandResponse]{Method: MethodWorkspaceExecuteCommand}
+
+// Response type for `workspace/applyEdit`
+type ApplyWorkspaceEditResponse = *ApplyWorkspaceEditResult
+
+// Type mapping info for `workspace/applyEdit`
+var WorkspaceApplyEditInfo = RequestInfo[*ApplyWorkspaceEditParams, ApplyWorkspaceEditResponse]{Method: MethodWorkspaceApplyEdit}
+
+// Type mapping info for `workspace/didChangeWorkspaceFolders`
+var WorkspaceDidChangeWorkspaceFoldersInfo = NotificationInfo[*DidChangeWorkspaceFoldersParams]{Method: MethodWorkspaceDidChangeWorkspaceFolders}
+
+// Type mapping info for `window/workDoneProgress/cancel`
+var WindowWorkDoneProgressCancelInfo = NotificationInfo[*WorkDoneProgressCancelParams]{Method: MethodWindowWorkDoneProgressCancel}
+
+// Type mapping info for `workspace/didCreateFiles`
+var WorkspaceDidCreateFilesInfo = NotificationInfo[*CreateFilesParams]{Method: MethodWorkspaceDidCreateFiles}
+
+// Type mapping info for `workspace/didRenameFiles`
+var WorkspaceDidRenameFilesInfo = NotificationInfo[*RenameFilesParams]{Method: MethodWorkspaceDidRenameFiles}
+
+// Type mapping info for `workspace/didDeleteFiles`
+var WorkspaceDidDeleteFilesInfo = NotificationInfo[*DeleteFilesParams]{Method: MethodWorkspaceDidDeleteFiles}
+
+// Type mapping info for `notebookDocument/didOpen`
+var NotebookDocumentDidOpenInfo = NotificationInfo[*DidOpenNotebookDocumentParams]{Method: MethodNotebookDocumentDidOpen}
+
+// Type mapping info for `notebookDocument/didChange`
+var NotebookDocumentDidChangeInfo = NotificationInfo[*DidChangeNotebookDocumentParams]{Method: MethodNotebookDocumentDidChange}
+
+// Type mapping info for `notebookDocument/didSave`
+var NotebookDocumentDidSaveInfo = NotificationInfo[*DidSaveNotebookDocumentParams]{Method: MethodNotebookDocumentDidSave}
+
+// Type mapping info for `notebookDocument/didClose`
+var NotebookDocumentDidCloseInfo = NotificationInfo[*DidCloseNotebookDocumentParams]{Method: MethodNotebookDocumentDidClose}
+
+// Type mapping info for `initialized`
+var InitializedInfo = NotificationInfo[*InitializedParams]{Method: MethodInitialized}
+
+// Type mapping info for `exit`
+var ExitInfo = NotificationInfo[any]{Method: MethodExit}
+
+// Type mapping info for `workspace/didChangeConfiguration`
+var WorkspaceDidChangeConfigurationInfo = NotificationInfo[*DidChangeConfigurationParams]{Method: MethodWorkspaceDidChangeConfiguration}
+
+// Type mapping info for `window/showMessage`
+var WindowShowMessageInfo = NotificationInfo[*ShowMessageParams]{Method: MethodWindowShowMessage}
+
+// Type mapping info for `window/logMessage`
+var WindowLogMessageInfo = NotificationInfo[*LogMessageParams]{Method: MethodWindowLogMessage}
+
+// Type mapping info for `telemetry/event`
+var TelemetryEventInfo = NotificationInfo[any]{Method: MethodTelemetryEvent}
+
+// Type mapping info for `textDocument/didOpen`
+var TextDocumentDidOpenInfo = NotificationInfo[*DidOpenTextDocumentParams]{Method: MethodTextDocumentDidOpen}
+
+// Type mapping info for `textDocument/didChange`
+var TextDocumentDidChangeInfo = NotificationInfo[*DidChangeTextDocumentParams]{Method: MethodTextDocumentDidChange}
+
+// Type mapping info for `textDocument/didClose`
+var TextDocumentDidCloseInfo = NotificationInfo[*DidCloseTextDocumentParams]{Method: MethodTextDocumentDidClose}
+
+// Type mapping info for `textDocument/didSave`
+var TextDocumentDidSaveInfo = NotificationInfo[*DidSaveTextDocumentParams]{Method: MethodTextDocumentDidSave}
+
+// Type mapping info for `textDocument/willSave`
+var TextDocumentWillSaveInfo = NotificationInfo[*WillSaveTextDocumentParams]{Method: MethodTextDocumentWillSave}
+
+// Type mapping info for `workspace/didChangeWatchedFiles`
+var WorkspaceDidChangeWatchedFilesInfo = NotificationInfo[*DidChangeWatchedFilesParams]{Method: MethodWorkspaceDidChangeWatchedFiles}
+
+// Type mapping info for `textDocument/publishDiagnostics`
+var TextDocumentPublishDiagnosticsInfo = NotificationInfo[*PublishDiagnosticsParams]{Method: MethodTextDocumentPublishDiagnostics}
+
+// Type mapping info for `$/setTrace`
+var SetTraceInfo = NotificationInfo[*SetTraceParams]{Method: MethodSetTrace}
+
+// Type mapping info for `$/logTrace`
+var LogTraceInfo = NotificationInfo[*LogTraceParams]{Method: MethodLogTrace}
+
+// Type mapping info for `$/cancelRequest`
+var CancelRequestInfo = NotificationInfo[*CancelParams]{Method: MethodCancelRequest}
+
+// Type mapping info for `$/progress`
+var ProgressInfo = NotificationInfo[*ProgressParams]{Method: MethodProgress}
+
 // Union types
-
-type LocationOrLocations struct {
-	Location  *Location
-	Locations *[]Location
-}
-
-func (o LocationOrLocations) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of LocationOrLocations is set", o.Location != nil, o.Locations != nil)
-
-	if o.Location != nil {
-		return json.Marshal(*o.Location)
-	}
-	if o.Locations != nil {
-		return json.Marshal(*o.Locations)
-	}
-	panic("unreachable")
-}
-
-func (o *LocationOrLocations) UnmarshalJSON(data []byte) error {
-	*o = LocationOrLocations{}
-	var vLocation Location
-	if err := json.Unmarshal(data, &vLocation); err == nil {
-		o.Location = &vLocation
-		return nil
-	}
-	var vLocations []Location
-	if err := json.Unmarshal(data, &vLocations); err == nil {
-		o.Locations = &vLocations
-		return nil
-	}
-	return fmt.Errorf("invalid LocationOrLocations: %s", data)
-}
-
-type InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression struct {
-	InlineValueText                  *InlineValueText
-	InlineValueVariableLookup        *InlineValueVariableLookup
-	InlineValueEvaluatableExpression *InlineValueEvaluatableExpression
-}
-
-func (o InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression is set", o.InlineValueText != nil, o.InlineValueVariableLookup != nil, o.InlineValueEvaluatableExpression != nil)
-
-	if o.InlineValueText != nil {
-		return json.Marshal(*o.InlineValueText)
-	}
-	if o.InlineValueVariableLookup != nil {
-		return json.Marshal(*o.InlineValueVariableLookup)
-	}
-	if o.InlineValueEvaluatableExpression != nil {
-		return json.Marshal(*o.InlineValueEvaluatableExpression)
-	}
-	panic("unreachable")
-}
-
-func (o *InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression) UnmarshalJSON(data []byte) error {
-	*o = InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression{}
-	var vInlineValueText InlineValueText
-	if err := json.Unmarshal(data, &vInlineValueText); err == nil {
-		o.InlineValueText = &vInlineValueText
-		return nil
-	}
-	var vInlineValueVariableLookup InlineValueVariableLookup
-	if err := json.Unmarshal(data, &vInlineValueVariableLookup); err == nil {
-		o.InlineValueVariableLookup = &vInlineValueVariableLookup
-		return nil
-	}
-	var vInlineValueEvaluatableExpression InlineValueEvaluatableExpression
-	if err := json.Unmarshal(data, &vInlineValueEvaluatableExpression); err == nil {
-		o.InlineValueEvaluatableExpression = &vInlineValueEvaluatableExpression
-		return nil
-	}
-	return fmt.Errorf("invalid InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression: %s", data)
-}
-
-type RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport struct {
-	RelatedFullDocumentDiagnosticReport      *RelatedFullDocumentDiagnosticReport
-	RelatedUnchangedDocumentDiagnosticReport *RelatedUnchangedDocumentDiagnosticReport
-}
-
-func (o RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport is set", o.RelatedFullDocumentDiagnosticReport != nil, o.RelatedUnchangedDocumentDiagnosticReport != nil)
-
-	if o.RelatedFullDocumentDiagnosticReport != nil {
-		return json.Marshal(*o.RelatedFullDocumentDiagnosticReport)
-	}
-	if o.RelatedUnchangedDocumentDiagnosticReport != nil {
-		return json.Marshal(*o.RelatedUnchangedDocumentDiagnosticReport)
-	}
-	panic("unreachable")
-}
-
-func (o *RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
-	*o = RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport{}
-	var vRelatedFullDocumentDiagnosticReport RelatedFullDocumentDiagnosticReport
-	if err := json.Unmarshal(data, &vRelatedFullDocumentDiagnosticReport); err == nil {
-		o.RelatedFullDocumentDiagnosticReport = &vRelatedFullDocumentDiagnosticReport
-		return nil
-	}
-	var vRelatedUnchangedDocumentDiagnosticReport RelatedUnchangedDocumentDiagnosticReport
-	if err := json.Unmarshal(data, &vRelatedUnchangedDocumentDiagnosticReport); err == nil {
-		o.RelatedUnchangedDocumentDiagnosticReport = &vRelatedUnchangedDocumentDiagnosticReport
-		return nil
-	}
-	return fmt.Errorf("invalid RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport: %s", data)
-}
-
-type RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior struct {
-	Range                        *Range
-	PrepareRenamePlaceholder     *PrepareRenamePlaceholder
-	PrepareRenameDefaultBehavior *PrepareRenameDefaultBehavior
-}
-
-func (o RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior is set", o.Range != nil, o.PrepareRenamePlaceholder != nil, o.PrepareRenameDefaultBehavior != nil)
-
-	if o.Range != nil {
-		return json.Marshal(*o.Range)
-	}
-	if o.PrepareRenamePlaceholder != nil {
-		return json.Marshal(*o.PrepareRenamePlaceholder)
-	}
-	if o.PrepareRenameDefaultBehavior != nil {
-		return json.Marshal(*o.PrepareRenameDefaultBehavior)
-	}
-	panic("unreachable")
-}
-
-func (o *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior) UnmarshalJSON(data []byte) error {
-	*o = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior{}
-	var vRange Range
-	if err := json.Unmarshal(data, &vRange); err == nil {
-		o.Range = &vRange
-		return nil
-	}
-	var vPrepareRenamePlaceholder PrepareRenamePlaceholder
-	if err := json.Unmarshal(data, &vPrepareRenamePlaceholder); err == nil {
-		o.PrepareRenamePlaceholder = &vPrepareRenamePlaceholder
-		return nil
-	}
-	var vPrepareRenameDefaultBehavior PrepareRenameDefaultBehavior
-	if err := json.Unmarshal(data, &vPrepareRenameDefaultBehavior); err == nil {
-		o.PrepareRenameDefaultBehavior = &vPrepareRenameDefaultBehavior
-		return nil
-	}
-	return fmt.Errorf("invalid RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior: %s", data)
-}
 
 type IntegerOrString struct {
 	Integer *int32
@@ -13453,6 +15685,7 @@ func (o IntegerOrString) MarshalJSON() ([]byte, error) {
 
 func (o *IntegerOrString) UnmarshalJSON(data []byte) error {
 	*o = IntegerOrString{}
+
 	var vInteger int32
 	if err := json.Unmarshal(data, &vInteger); err == nil {
 		o.Integer = &vInteger
@@ -13466,246 +15699,100 @@ func (o *IntegerOrString) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid IntegerOrString: %s", data)
 }
 
-type WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport struct {
-	WorkspaceFullDocumentDiagnosticReport      *WorkspaceFullDocumentDiagnosticReport
-	WorkspaceUnchangedDocumentDiagnosticReport *WorkspaceUnchangedDocumentDiagnosticReport
+type DocumentSelectorOrNull struct {
+	DocumentSelector *[]TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter
 }
 
-func (o WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport is set", o.WorkspaceFullDocumentDiagnosticReport != nil, o.WorkspaceUnchangedDocumentDiagnosticReport != nil)
+func (o DocumentSelectorOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of DocumentSelectorOrNull is set", o.DocumentSelector != nil)
 
-	if o.WorkspaceFullDocumentDiagnosticReport != nil {
-		return json.Marshal(*o.WorkspaceFullDocumentDiagnosticReport)
+	if o.DocumentSelector != nil {
+		return json.Marshal(*o.DocumentSelector)
 	}
-	if o.WorkspaceUnchangedDocumentDiagnosticReport != nil {
-		return json.Marshal(*o.WorkspaceUnchangedDocumentDiagnosticReport)
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *DocumentSelectorOrNull) UnmarshalJSON(data []byte) error {
+	*o = DocumentSelectorOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vDocumentSelector []TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter
+	if err := json.Unmarshal(data, &vDocumentSelector); err == nil {
+		o.DocumentSelector = &vDocumentSelector
+		return nil
+	}
+	return fmt.Errorf("invalid DocumentSelectorOrNull: %s", data)
+}
+
+type BooleanOrEmptyObject struct {
+	Boolean     *bool
+	EmptyObject *struct{}
+}
+
+func (o BooleanOrEmptyObject) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of BooleanOrEmptyObject is set", o.Boolean != nil, o.EmptyObject != nil)
+
+	if o.Boolean != nil {
+		return json.Marshal(*o.Boolean)
+	}
+	if o.EmptyObject != nil {
+		return json.Marshal(*o.EmptyObject)
 	}
 	panic("unreachable")
 }
 
-func (o *WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
-	*o = WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport{}
-	var vWorkspaceFullDocumentDiagnosticReport WorkspaceFullDocumentDiagnosticReport
-	if err := json.Unmarshal(data, &vWorkspaceFullDocumentDiagnosticReport); err == nil {
-		o.WorkspaceFullDocumentDiagnosticReport = &vWorkspaceFullDocumentDiagnosticReport
+func (o *BooleanOrEmptyObject) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrEmptyObject{}
+
+	var vBoolean bool
+	if err := json.Unmarshal(data, &vBoolean); err == nil {
+		o.Boolean = &vBoolean
 		return nil
 	}
-	var vWorkspaceUnchangedDocumentDiagnosticReport WorkspaceUnchangedDocumentDiagnosticReport
-	if err := json.Unmarshal(data, &vWorkspaceUnchangedDocumentDiagnosticReport); err == nil {
-		o.WorkspaceUnchangedDocumentDiagnosticReport = &vWorkspaceUnchangedDocumentDiagnosticReport
+	var vEmptyObject struct{}
+	if err := json.Unmarshal(data, &vEmptyObject); err == nil {
+		o.EmptyObject = &vEmptyObject
 		return nil
 	}
-	return fmt.Errorf("invalid WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport: %s", data)
+	return fmt.Errorf("invalid BooleanOrEmptyObject: %s", data)
 }
 
-type TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument struct {
-	TextDocumentContentChangePartial       *TextDocumentContentChangePartial
-	TextDocumentContentChangeWholeDocument *TextDocumentContentChangeWholeDocument
+type BooleanOrSemanticTokensFullDelta struct {
+	Boolean                 *bool
+	SemanticTokensFullDelta *SemanticTokensFullDelta
 }
 
-func (o TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument is set", o.TextDocumentContentChangePartial != nil, o.TextDocumentContentChangeWholeDocument != nil)
+func (o BooleanOrSemanticTokensFullDelta) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of BooleanOrSemanticTokensFullDelta is set", o.Boolean != nil, o.SemanticTokensFullDelta != nil)
 
-	if o.TextDocumentContentChangePartial != nil {
-		return json.Marshal(*o.TextDocumentContentChangePartial)
+	if o.Boolean != nil {
+		return json.Marshal(*o.Boolean)
 	}
-	if o.TextDocumentContentChangeWholeDocument != nil {
-		return json.Marshal(*o.TextDocumentContentChangeWholeDocument)
+	if o.SemanticTokensFullDelta != nil {
+		return json.Marshal(*o.SemanticTokensFullDelta)
 	}
 	panic("unreachable")
 }
 
-func (o *TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument) UnmarshalJSON(data []byte) error {
-	*o = TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument{}
-	var vTextDocumentContentChangePartial TextDocumentContentChangePartial
-	if err := json.Unmarshal(data, &vTextDocumentContentChangePartial); err == nil {
-		o.TextDocumentContentChangePartial = &vTextDocumentContentChangePartial
+func (o *BooleanOrSemanticTokensFullDelta) UnmarshalJSON(data []byte) error {
+	*o = BooleanOrSemanticTokensFullDelta{}
+
+	var vBoolean bool
+	if err := json.Unmarshal(data, &vBoolean); err == nil {
+		o.Boolean = &vBoolean
 		return nil
 	}
-	var vTextDocumentContentChangeWholeDocument TextDocumentContentChangeWholeDocument
-	if err := json.Unmarshal(data, &vTextDocumentContentChangeWholeDocument); err == nil {
-		o.TextDocumentContentChangeWholeDocument = &vTextDocumentContentChangeWholeDocument
+	var vSemanticTokensFullDelta SemanticTokensFullDelta
+	if err := json.Unmarshal(data, &vSemanticTokensFullDelta); err == nil {
+		o.SemanticTokensFullDelta = &vSemanticTokensFullDelta
 		return nil
 	}
-	return fmt.Errorf("invalid TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument: %s", data)
-}
-
-type StringOrMarkedStringWithLanguage struct {
-	String                   *string
-	MarkedStringWithLanguage *MarkedStringWithLanguage
-}
-
-func (o StringOrMarkedStringWithLanguage) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of StringOrMarkedStringWithLanguage is set", o.String != nil, o.MarkedStringWithLanguage != nil)
-
-	if o.String != nil {
-		return json.Marshal(*o.String)
-	}
-	if o.MarkedStringWithLanguage != nil {
-		return json.Marshal(*o.MarkedStringWithLanguage)
-	}
-	panic("unreachable")
-}
-
-func (o *StringOrMarkedStringWithLanguage) UnmarshalJSON(data []byte) error {
-	*o = StringOrMarkedStringWithLanguage{}
-	var vString string
-	if err := json.Unmarshal(data, &vString); err == nil {
-		o.String = &vString
-		return nil
-	}
-	var vMarkedStringWithLanguage MarkedStringWithLanguage
-	if err := json.Unmarshal(data, &vMarkedStringWithLanguage); err == nil {
-		o.MarkedStringWithLanguage = &vMarkedStringWithLanguage
-		return nil
-	}
-	return fmt.Errorf("invalid StringOrMarkedStringWithLanguage: %s", data)
-}
-
-type TextDocumentFilterOrNotebookCellTextDocumentFilter struct {
-	TextDocumentFilter             *TextDocumentFilter
-	NotebookCellTextDocumentFilter *NotebookCellTextDocumentFilter
-}
-
-func (o TextDocumentFilterOrNotebookCellTextDocumentFilter) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of TextDocumentFilterOrNotebookCellTextDocumentFilter is set", o.TextDocumentFilter != nil, o.NotebookCellTextDocumentFilter != nil)
-
-	if o.TextDocumentFilter != nil {
-		return json.Marshal(*o.TextDocumentFilter)
-	}
-	if o.NotebookCellTextDocumentFilter != nil {
-		return json.Marshal(*o.NotebookCellTextDocumentFilter)
-	}
-	panic("unreachable")
-}
-
-func (o *TextDocumentFilterOrNotebookCellTextDocumentFilter) UnmarshalJSON(data []byte) error {
-	*o = TextDocumentFilterOrNotebookCellTextDocumentFilter{}
-	var vTextDocumentFilter TextDocumentFilter
-	if err := json.Unmarshal(data, &vTextDocumentFilter); err == nil {
-		o.TextDocumentFilter = &vTextDocumentFilter
-		return nil
-	}
-	var vNotebookCellTextDocumentFilter NotebookCellTextDocumentFilter
-	if err := json.Unmarshal(data, &vNotebookCellTextDocumentFilter); err == nil {
-		o.NotebookCellTextDocumentFilter = &vNotebookCellTextDocumentFilter
-		return nil
-	}
-	return fmt.Errorf("invalid TextDocumentFilterOrNotebookCellTextDocumentFilter: %s", data)
-}
-
-type PatternOrRelativePattern struct {
-	Pattern         *Pattern
-	RelativePattern *RelativePattern
-}
-
-func (o PatternOrRelativePattern) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of PatternOrRelativePattern is set", o.Pattern != nil, o.RelativePattern != nil)
-
-	if o.Pattern != nil {
-		return json.Marshal(*o.Pattern)
-	}
-	if o.RelativePattern != nil {
-		return json.Marshal(*o.RelativePattern)
-	}
-	panic("unreachable")
-}
-
-func (o *PatternOrRelativePattern) UnmarshalJSON(data []byte) error {
-	*o = PatternOrRelativePattern{}
-	var vPattern Pattern
-	if err := json.Unmarshal(data, &vPattern); err == nil {
-		o.Pattern = &vPattern
-		return nil
-	}
-	var vRelativePattern RelativePattern
-	if err := json.Unmarshal(data, &vRelativePattern); err == nil {
-		o.RelativePattern = &vRelativePattern
-		return nil
-	}
-	return fmt.Errorf("invalid PatternOrRelativePattern: %s", data)
-}
-
-type TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern struct {
-	TextDocumentFilterLanguage *TextDocumentFilterLanguage
-	TextDocumentFilterScheme   *TextDocumentFilterScheme
-	TextDocumentFilterPattern  *TextDocumentFilterPattern
-}
-
-func (o TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern is set", o.TextDocumentFilterLanguage != nil, o.TextDocumentFilterScheme != nil, o.TextDocumentFilterPattern != nil)
-
-	if o.TextDocumentFilterLanguage != nil {
-		return json.Marshal(*o.TextDocumentFilterLanguage)
-	}
-	if o.TextDocumentFilterScheme != nil {
-		return json.Marshal(*o.TextDocumentFilterScheme)
-	}
-	if o.TextDocumentFilterPattern != nil {
-		return json.Marshal(*o.TextDocumentFilterPattern)
-	}
-	panic("unreachable")
-}
-
-func (o *TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern) UnmarshalJSON(data []byte) error {
-	*o = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern{}
-	var vTextDocumentFilterLanguage TextDocumentFilterLanguage
-	if err := json.Unmarshal(data, &vTextDocumentFilterLanguage); err == nil {
-		o.TextDocumentFilterLanguage = &vTextDocumentFilterLanguage
-		return nil
-	}
-	var vTextDocumentFilterScheme TextDocumentFilterScheme
-	if err := json.Unmarshal(data, &vTextDocumentFilterScheme); err == nil {
-		o.TextDocumentFilterScheme = &vTextDocumentFilterScheme
-		return nil
-	}
-	var vTextDocumentFilterPattern TextDocumentFilterPattern
-	if err := json.Unmarshal(data, &vTextDocumentFilterPattern); err == nil {
-		o.TextDocumentFilterPattern = &vTextDocumentFilterPattern
-		return nil
-	}
-	return fmt.Errorf("invalid TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern: %s", data)
-}
-
-type NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern struct {
-	NotebookDocumentFilterNotebookType *NotebookDocumentFilterNotebookType
-	NotebookDocumentFilterScheme       *NotebookDocumentFilterScheme
-	NotebookDocumentFilterPattern      *NotebookDocumentFilterPattern
-}
-
-func (o NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern is set", o.NotebookDocumentFilterNotebookType != nil, o.NotebookDocumentFilterScheme != nil, o.NotebookDocumentFilterPattern != nil)
-
-	if o.NotebookDocumentFilterNotebookType != nil {
-		return json.Marshal(*o.NotebookDocumentFilterNotebookType)
-	}
-	if o.NotebookDocumentFilterScheme != nil {
-		return json.Marshal(*o.NotebookDocumentFilterScheme)
-	}
-	if o.NotebookDocumentFilterPattern != nil {
-		return json.Marshal(*o.NotebookDocumentFilterPattern)
-	}
-	panic("unreachable")
-}
-
-func (o *NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern) UnmarshalJSON(data []byte) error {
-	*o = NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern{}
-	var vNotebookDocumentFilterNotebookType NotebookDocumentFilterNotebookType
-	if err := json.Unmarshal(data, &vNotebookDocumentFilterNotebookType); err == nil {
-		o.NotebookDocumentFilterNotebookType = &vNotebookDocumentFilterNotebookType
-		return nil
-	}
-	var vNotebookDocumentFilterScheme NotebookDocumentFilterScheme
-	if err := json.Unmarshal(data, &vNotebookDocumentFilterScheme); err == nil {
-		o.NotebookDocumentFilterScheme = &vNotebookDocumentFilterScheme
-		return nil
-	}
-	var vNotebookDocumentFilterPattern NotebookDocumentFilterPattern
-	if err := json.Unmarshal(data, &vNotebookDocumentFilterPattern); err == nil {
-		o.NotebookDocumentFilterPattern = &vNotebookDocumentFilterPattern
-		return nil
-	}
-	return fmt.Errorf("invalid NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern: %s", data)
+	return fmt.Errorf("invalid BooleanOrSemanticTokensFullDelta: %s", data)
 }
 
 type TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile struct {
@@ -13735,6 +15822,7 @@ func (o TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) MarshalJSON() ([]b
 
 func (o *TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) UnmarshalJSON(data []byte) error {
 	*o = TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile{}
+
 	var vTextDocumentEdit TextDocumentEdit
 	if err := json.Unmarshal(data, &vTextDocumentEdit); err == nil {
 		o.TextDocumentEdit = &vTextDocumentEdit
@@ -13777,6 +15865,7 @@ func (o StringOrInlayHintLabelParts) MarshalJSON() ([]byte, error) {
 
 func (o *StringOrInlayHintLabelParts) UnmarshalJSON(data []byte) error {
 	*o = StringOrInlayHintLabelParts{}
+
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
@@ -13809,6 +15898,7 @@ func (o StringOrMarkupContent) MarshalJSON() ([]byte, error) {
 
 func (o *StringOrMarkupContent) UnmarshalJSON(data []byte) error {
 	*o = StringOrMarkupContent{}
+
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
@@ -13841,6 +15931,7 @@ func (o FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) Marshal
 
 func (o *FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
 	*o = FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{}
+
 	var vFullDocumentDiagnosticReport FullDocumentDiagnosticReport
 	if err := json.Unmarshal(data, &vFullDocumentDiagnosticReport); err == nil {
 		o.FullDocumentDiagnosticReport = &vFullDocumentDiagnosticReport
@@ -13852,6 +15943,72 @@ func (o *FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) Unmars
 		return nil
 	}
 	return fmt.Errorf("invalid FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport: %s", data)
+}
+
+type WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport struct {
+	FullDocumentDiagnosticReport      *WorkspaceFullDocumentDiagnosticReport
+	UnchangedDocumentDiagnosticReport *WorkspaceUnchangedDocumentDiagnosticReport
+}
+
+func (o WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport is set", o.FullDocumentDiagnosticReport != nil, o.UnchangedDocumentDiagnosticReport != nil)
+
+	if o.FullDocumentDiagnosticReport != nil {
+		return json.Marshal(*o.FullDocumentDiagnosticReport)
+	}
+	if o.UnchangedDocumentDiagnosticReport != nil {
+		return json.Marshal(*o.UnchangedDocumentDiagnosticReport)
+	}
+	panic("unreachable")
+}
+
+func (o *WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+	*o = WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{}
+
+	var vFullDocumentDiagnosticReport WorkspaceFullDocumentDiagnosticReport
+	if err := json.Unmarshal(data, &vFullDocumentDiagnosticReport); err == nil {
+		o.FullDocumentDiagnosticReport = &vFullDocumentDiagnosticReport
+		return nil
+	}
+	var vUnchangedDocumentDiagnosticReport WorkspaceUnchangedDocumentDiagnosticReport
+	if err := json.Unmarshal(data, &vUnchangedDocumentDiagnosticReport); err == nil {
+		o.UnchangedDocumentDiagnosticReport = &vUnchangedDocumentDiagnosticReport
+		return nil
+	}
+	return fmt.Errorf("invalid WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport: %s", data)
+}
+
+type NotebookDocumentFilterWithNotebookOrCells struct {
+	Notebook *NotebookDocumentFilterWithNotebook
+	Cells    *NotebookDocumentFilterWithCells
+}
+
+func (o NotebookDocumentFilterWithNotebookOrCells) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of NotebookDocumentFilterWithNotebookOrCells is set", o.Notebook != nil, o.Cells != nil)
+
+	if o.Notebook != nil {
+		return json.Marshal(*o.Notebook)
+	}
+	if o.Cells != nil {
+		return json.Marshal(*o.Cells)
+	}
+	panic("unreachable")
+}
+
+func (o *NotebookDocumentFilterWithNotebookOrCells) UnmarshalJSON(data []byte) error {
+	*o = NotebookDocumentFilterWithNotebookOrCells{}
+
+	var vNotebook NotebookDocumentFilterWithNotebook
+	if err := json.Unmarshal(data, &vNotebook); err == nil {
+		o.Notebook = &vNotebook
+		return nil
+	}
+	var vCells NotebookDocumentFilterWithCells
+	if err := json.Unmarshal(data, &vCells); err == nil {
+		o.Cells = &vCells
+		return nil
+	}
+	return fmt.Errorf("invalid NotebookDocumentFilterWithNotebookOrCells: %s", data)
 }
 
 type StringOrStringValue struct {
@@ -13873,6 +16030,7 @@ func (o StringOrStringValue) MarshalJSON() ([]byte, error) {
 
 func (o *StringOrStringValue) UnmarshalJSON(data []byte) error {
 	*o = StringOrStringValue{}
+
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
@@ -13884,6 +16042,126 @@ func (o *StringOrStringValue) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 	return fmt.Errorf("invalid StringOrStringValue: %s", data)
+}
+
+type IntegerOrNull struct {
+	Integer *int32
+}
+
+func (o IntegerOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of IntegerOrNull is set", o.Integer != nil)
+
+	if o.Integer != nil {
+		return json.Marshal(*o.Integer)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *IntegerOrNull) UnmarshalJSON(data []byte) error {
+	*o = IntegerOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vInteger int32
+	if err := json.Unmarshal(data, &vInteger); err == nil {
+		o.Integer = &vInteger
+		return nil
+	}
+	return fmt.Errorf("invalid IntegerOrNull: %s", data)
+}
+
+type StringOrNull struct {
+	String *string
+}
+
+func (o StringOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of StringOrNull is set", o.String != nil)
+
+	if o.String != nil {
+		return json.Marshal(*o.String)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *StringOrNull) UnmarshalJSON(data []byte) error {
+	*o = StringOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vString string
+	if err := json.Unmarshal(data, &vString); err == nil {
+		o.String = &vString
+		return nil
+	}
+	return fmt.Errorf("invalid StringOrNull: %s", data)
+}
+
+type DocumentUriOrNull struct {
+	DocumentUri *DocumentUri
+}
+
+func (o DocumentUriOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of DocumentUriOrNull is set", o.DocumentUri != nil)
+
+	if o.DocumentUri != nil {
+		return json.Marshal(*o.DocumentUri)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *DocumentUriOrNull) UnmarshalJSON(data []byte) error {
+	*o = DocumentUriOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vDocumentUri DocumentUri
+	if err := json.Unmarshal(data, &vDocumentUri); err == nil {
+		o.DocumentUri = &vDocumentUri
+		return nil
+	}
+	return fmt.Errorf("invalid DocumentUriOrNull: %s", data)
+}
+
+type WorkspaceFoldersOrNull struct {
+	WorkspaceFolders *[]*WorkspaceFolder
+}
+
+func (o WorkspaceFoldersOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of WorkspaceFoldersOrNull is set", o.WorkspaceFolders != nil)
+
+	if o.WorkspaceFolders != nil {
+		return json.Marshal(*o.WorkspaceFolders)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *WorkspaceFoldersOrNull) UnmarshalJSON(data []byte) error {
+	*o = WorkspaceFoldersOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vWorkspaceFolders []*WorkspaceFolder
+	if err := json.Unmarshal(data, &vWorkspaceFolders); err == nil {
+		o.WorkspaceFolders = &vWorkspaceFolders
+		return nil
+	}
+	return fmt.Errorf("invalid WorkspaceFoldersOrNull: %s", data)
 }
 
 type StringOrStrings struct {
@@ -13905,6 +16183,7 @@ func (o StringOrStrings) MarshalJSON() ([]byte, error) {
 
 func (o *StringOrStrings) UnmarshalJSON(data []byte) error {
 	*o = StringOrStrings{}
+
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
@@ -13916,6 +16195,39 @@ func (o *StringOrStrings) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 	return fmt.Errorf("invalid StringOrStrings: %s", data)
+}
+
+type TextDocumentContentChangePartialOrWholeDocument struct {
+	Partial       *TextDocumentContentChangePartial
+	WholeDocument *TextDocumentContentChangeWholeDocument
+}
+
+func (o TextDocumentContentChangePartialOrWholeDocument) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of TextDocumentContentChangePartialOrWholeDocument is set", o.Partial != nil, o.WholeDocument != nil)
+
+	if o.Partial != nil {
+		return json.Marshal(*o.Partial)
+	}
+	if o.WholeDocument != nil {
+		return json.Marshal(*o.WholeDocument)
+	}
+	panic("unreachable")
+}
+
+func (o *TextDocumentContentChangePartialOrWholeDocument) UnmarshalJSON(data []byte) error {
+	*o = TextDocumentContentChangePartialOrWholeDocument{}
+
+	var vPartial TextDocumentContentChangePartial
+	if err := json.Unmarshal(data, &vPartial); err == nil {
+		o.Partial = &vPartial
+		return nil
+	}
+	var vWholeDocument TextDocumentContentChangeWholeDocument
+	if err := json.Unmarshal(data, &vWholeDocument); err == nil {
+		o.WholeDocument = &vWholeDocument
+		return nil
+	}
+	return fmt.Errorf("invalid TextDocumentContentChangePartialOrWholeDocument: %s", data)
 }
 
 type TextEditOrInsertReplaceEdit struct {
@@ -13937,6 +16249,7 @@ func (o TextEditOrInsertReplaceEdit) MarshalJSON() ([]byte, error) {
 
 func (o *TextEditOrInsertReplaceEdit) UnmarshalJSON(data []byte) error {
 	*o = TextEditOrInsertReplaceEdit{}
+
 	var vTextEdit TextEdit
 	if err := json.Unmarshal(data, &vTextEdit); err == nil {
 		o.TextEdit = &vTextEdit
@@ -13950,20 +16263,24 @@ func (o *TextEditOrInsertReplaceEdit) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid TextEditOrInsertReplaceEdit: %s", data)
 }
 
-type MarkupContentOrMarkedStringOrMarkedStrings struct {
-	MarkupContent *MarkupContent
-	MarkedString  *MarkedString
-	MarkedStrings *[]MarkedString
+type MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings struct {
+	MarkupContent            *MarkupContent
+	String                   *string
+	MarkedStringWithLanguage *MarkedStringWithLanguage
+	MarkedStrings            *[]StringOrMarkedStringWithLanguage
 }
 
-func (o MarkupContentOrMarkedStringOrMarkedStrings) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of MarkupContentOrMarkedStringOrMarkedStrings is set", o.MarkupContent != nil, o.MarkedString != nil, o.MarkedStrings != nil)
+func (o MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings is set", o.MarkupContent != nil, o.String != nil, o.MarkedStringWithLanguage != nil, o.MarkedStrings != nil)
 
 	if o.MarkupContent != nil {
 		return json.Marshal(*o.MarkupContent)
 	}
-	if o.MarkedString != nil {
-		return json.Marshal(*o.MarkedString)
+	if o.String != nil {
+		return json.Marshal(*o.String)
+	}
+	if o.MarkedStringWithLanguage != nil {
+		return json.Marshal(*o.MarkedStringWithLanguage)
 	}
 	if o.MarkedStrings != nil {
 		return json.Marshal(*o.MarkedStrings)
@@ -13971,24 +16288,60 @@ func (o MarkupContentOrMarkedStringOrMarkedStrings) MarshalJSON() ([]byte, error
 	panic("unreachable")
 }
 
-func (o *MarkupContentOrMarkedStringOrMarkedStrings) UnmarshalJSON(data []byte) error {
-	*o = MarkupContentOrMarkedStringOrMarkedStrings{}
+func (o *MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings) UnmarshalJSON(data []byte) error {
+	*o = MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings{}
+
 	var vMarkupContent MarkupContent
 	if err := json.Unmarshal(data, &vMarkupContent); err == nil {
 		o.MarkupContent = &vMarkupContent
 		return nil
 	}
-	var vMarkedString MarkedString
-	if err := json.Unmarshal(data, &vMarkedString); err == nil {
-		o.MarkedString = &vMarkedString
+	var vString string
+	if err := json.Unmarshal(data, &vString); err == nil {
+		o.String = &vString
 		return nil
 	}
-	var vMarkedStrings []MarkedString
+	var vMarkedStringWithLanguage MarkedStringWithLanguage
+	if err := json.Unmarshal(data, &vMarkedStringWithLanguage); err == nil {
+		o.MarkedStringWithLanguage = &vMarkedStringWithLanguage
+		return nil
+	}
+	var vMarkedStrings []StringOrMarkedStringWithLanguage
 	if err := json.Unmarshal(data, &vMarkedStrings); err == nil {
 		o.MarkedStrings = &vMarkedStrings
 		return nil
 	}
-	return fmt.Errorf("invalid MarkupContentOrMarkedStringOrMarkedStrings: %s", data)
+	return fmt.Errorf("invalid MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings: %s", data)
+}
+
+type UintegerOrNull struct {
+	Uinteger *uint32
+}
+
+func (o UintegerOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of UintegerOrNull is set", o.Uinteger != nil)
+
+	if o.Uinteger != nil {
+		return json.Marshal(*o.Uinteger)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *UintegerOrNull) UnmarshalJSON(data []byte) error {
+	*o = UintegerOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vUinteger uint32
+	if err := json.Unmarshal(data, &vUinteger); err == nil {
+		o.Uinteger = &vUinteger
+		return nil
+	}
+	return fmt.Errorf("invalid UintegerOrNull: %s", data)
 }
 
 type LocationOrLocationUriOnly struct {
@@ -14010,6 +16363,7 @@ func (o LocationOrLocationUriOnly) MarshalJSON() ([]byte, error) {
 
 func (o *LocationOrLocationUriOnly) UnmarshalJSON(data []byte) error {
 	*o = LocationOrLocationUriOnly{}
+
 	var vLocation Location
 	if err := json.Unmarshal(data, &vLocation); err == nil {
 		o.Location = &vLocation
@@ -14021,70 +16375,6 @@ func (o *LocationOrLocationUriOnly) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 	return fmt.Errorf("invalid LocationOrLocationUriOnly: %s", data)
-}
-
-type BooleanOrEmptyObject struct {
-	Boolean     *bool
-	EmptyObject *struct{}
-}
-
-func (o BooleanOrEmptyObject) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of BooleanOrEmptyObject is set", o.Boolean != nil, o.EmptyObject != nil)
-
-	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
-	}
-	if o.EmptyObject != nil {
-		return json.Marshal(*o.EmptyObject)
-	}
-	panic("unreachable")
-}
-
-func (o *BooleanOrEmptyObject) UnmarshalJSON(data []byte) error {
-	*o = BooleanOrEmptyObject{}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
-		return nil
-	}
-	var vEmptyObject struct{}
-	if err := json.Unmarshal(data, &vEmptyObject); err == nil {
-		o.EmptyObject = &vEmptyObject
-		return nil
-	}
-	return fmt.Errorf("invalid BooleanOrEmptyObject: %s", data)
-}
-
-type BooleanOrSemanticTokensFullDelta struct {
-	Boolean                 *bool
-	SemanticTokensFullDelta *SemanticTokensFullDelta
-}
-
-func (o BooleanOrSemanticTokensFullDelta) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of BooleanOrSemanticTokensFullDelta is set", o.Boolean != nil, o.SemanticTokensFullDelta != nil)
-
-	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
-	}
-	if o.SemanticTokensFullDelta != nil {
-		return json.Marshal(*o.SemanticTokensFullDelta)
-	}
-	panic("unreachable")
-}
-
-func (o *BooleanOrSemanticTokensFullDelta) UnmarshalJSON(data []byte) error {
-	*o = BooleanOrSemanticTokensFullDelta{}
-	var vBoolean bool
-	if err := json.Unmarshal(data, &vBoolean); err == nil {
-		o.Boolean = &vBoolean
-		return nil
-	}
-	var vSemanticTokensFullDelta SemanticTokensFullDelta
-	if err := json.Unmarshal(data, &vSemanticTokensFullDelta); err == nil {
-		o.SemanticTokensFullDelta = &vSemanticTokensFullDelta
-		return nil
-	}
-	return fmt.Errorf("invalid BooleanOrSemanticTokensFullDelta: %s", data)
 }
 
 type TextEditOrAnnotatedTextEditOrSnippetTextEdit struct {
@@ -14110,6 +16400,7 @@ func (o TextEditOrAnnotatedTextEditOrSnippetTextEdit) MarshalJSON() ([]byte, err
 
 func (o *TextEditOrAnnotatedTextEditOrSnippetTextEdit) UnmarshalJSON(data []byte) error {
 	*o = TextEditOrAnnotatedTextEditOrSnippetTextEdit{}
+
 	var vTextEdit TextEdit
 	if err := json.Unmarshal(data, &vTextEdit); err == nil {
 		o.TextEdit = &vTextEdit
@@ -14128,100 +16419,70 @@ func (o *TextEditOrAnnotatedTextEditOrSnippetTextEdit) UnmarshalJSON(data []byte
 	return fmt.Errorf("invalid TextEditOrAnnotatedTextEditOrSnippetTextEdit: %s", data)
 }
 
-type NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells struct {
-	NotebookDocumentFilterWithNotebook *NotebookDocumentFilterWithNotebook
-	NotebookDocumentFilterWithCells    *NotebookDocumentFilterWithCells
+type TextDocumentSyncOptionsOrKind struct {
+	Options *TextDocumentSyncOptions
+	Kind    *TextDocumentSyncKind
 }
 
-func (o NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells is set", o.NotebookDocumentFilterWithNotebook != nil, o.NotebookDocumentFilterWithCells != nil)
+func (o TextDocumentSyncOptionsOrKind) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of TextDocumentSyncOptionsOrKind is set", o.Options != nil, o.Kind != nil)
 
-	if o.NotebookDocumentFilterWithNotebook != nil {
-		return json.Marshal(*o.NotebookDocumentFilterWithNotebook)
+	if o.Options != nil {
+		return json.Marshal(*o.Options)
 	}
-	if o.NotebookDocumentFilterWithCells != nil {
-		return json.Marshal(*o.NotebookDocumentFilterWithCells)
+	if o.Kind != nil {
+		return json.Marshal(*o.Kind)
 	}
 	panic("unreachable")
 }
 
-func (o *NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells) UnmarshalJSON(data []byte) error {
-	*o = NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells{}
-	var vNotebookDocumentFilterWithNotebook NotebookDocumentFilterWithNotebook
-	if err := json.Unmarshal(data, &vNotebookDocumentFilterWithNotebook); err == nil {
-		o.NotebookDocumentFilterWithNotebook = &vNotebookDocumentFilterWithNotebook
+func (o *TextDocumentSyncOptionsOrKind) UnmarshalJSON(data []byte) error {
+	*o = TextDocumentSyncOptionsOrKind{}
+
+	var vOptions TextDocumentSyncOptions
+	if err := json.Unmarshal(data, &vOptions); err == nil {
+		o.Options = &vOptions
 		return nil
 	}
-	var vNotebookDocumentFilterWithCells NotebookDocumentFilterWithCells
-	if err := json.Unmarshal(data, &vNotebookDocumentFilterWithCells); err == nil {
-		o.NotebookDocumentFilterWithCells = &vNotebookDocumentFilterWithCells
+	var vKind TextDocumentSyncKind
+	if err := json.Unmarshal(data, &vKind); err == nil {
+		o.Kind = &vKind
 		return nil
 	}
-	return fmt.Errorf("invalid NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells: %s", data)
+	return fmt.Errorf("invalid TextDocumentSyncOptionsOrKind: %s", data)
 }
 
-type TextDocumentSyncOptionsOrTextDocumentSyncKind struct {
-	TextDocumentSyncOptions *TextDocumentSyncOptions
-	TextDocumentSyncKind    *TextDocumentSyncKind
+type NotebookDocumentSyncOptionsOrRegistrationOptions struct {
+	Options             *NotebookDocumentSyncOptions
+	RegistrationOptions *NotebookDocumentSyncRegistrationOptions
 }
 
-func (o TextDocumentSyncOptionsOrTextDocumentSyncKind) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of TextDocumentSyncOptionsOrTextDocumentSyncKind is set", o.TextDocumentSyncOptions != nil, o.TextDocumentSyncKind != nil)
+func (o NotebookDocumentSyncOptionsOrRegistrationOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of NotebookDocumentSyncOptionsOrRegistrationOptions is set", o.Options != nil, o.RegistrationOptions != nil)
 
-	if o.TextDocumentSyncOptions != nil {
-		return json.Marshal(*o.TextDocumentSyncOptions)
+	if o.Options != nil {
+		return json.Marshal(*o.Options)
 	}
-	if o.TextDocumentSyncKind != nil {
-		return json.Marshal(*o.TextDocumentSyncKind)
+	if o.RegistrationOptions != nil {
+		return json.Marshal(*o.RegistrationOptions)
 	}
 	panic("unreachable")
 }
 
-func (o *TextDocumentSyncOptionsOrTextDocumentSyncKind) UnmarshalJSON(data []byte) error {
-	*o = TextDocumentSyncOptionsOrTextDocumentSyncKind{}
-	var vTextDocumentSyncOptions TextDocumentSyncOptions
-	if err := json.Unmarshal(data, &vTextDocumentSyncOptions); err == nil {
-		o.TextDocumentSyncOptions = &vTextDocumentSyncOptions
+func (o *NotebookDocumentSyncOptionsOrRegistrationOptions) UnmarshalJSON(data []byte) error {
+	*o = NotebookDocumentSyncOptionsOrRegistrationOptions{}
+
+	var vOptions NotebookDocumentSyncOptions
+	if err := json.Unmarshal(data, &vOptions); err == nil {
+		o.Options = &vOptions
 		return nil
 	}
-	var vTextDocumentSyncKind TextDocumentSyncKind
-	if err := json.Unmarshal(data, &vTextDocumentSyncKind); err == nil {
-		o.TextDocumentSyncKind = &vTextDocumentSyncKind
+	var vRegistrationOptions NotebookDocumentSyncRegistrationOptions
+	if err := json.Unmarshal(data, &vRegistrationOptions); err == nil {
+		o.RegistrationOptions = &vRegistrationOptions
 		return nil
 	}
-	return fmt.Errorf("invalid TextDocumentSyncOptionsOrTextDocumentSyncKind: %s", data)
-}
-
-type NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions struct {
-	NotebookDocumentSyncOptions             *NotebookDocumentSyncOptions
-	NotebookDocumentSyncRegistrationOptions *NotebookDocumentSyncRegistrationOptions
-}
-
-func (o NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions is set", o.NotebookDocumentSyncOptions != nil, o.NotebookDocumentSyncRegistrationOptions != nil)
-
-	if o.NotebookDocumentSyncOptions != nil {
-		return json.Marshal(*o.NotebookDocumentSyncOptions)
-	}
-	if o.NotebookDocumentSyncRegistrationOptions != nil {
-		return json.Marshal(*o.NotebookDocumentSyncRegistrationOptions)
-	}
-	panic("unreachable")
-}
-
-func (o *NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions) UnmarshalJSON(data []byte) error {
-	*o = NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions{}
-	var vNotebookDocumentSyncOptions NotebookDocumentSyncOptions
-	if err := json.Unmarshal(data, &vNotebookDocumentSyncOptions); err == nil {
-		o.NotebookDocumentSyncOptions = &vNotebookDocumentSyncOptions
-		return nil
-	}
-	var vNotebookDocumentSyncRegistrationOptions NotebookDocumentSyncRegistrationOptions
-	if err := json.Unmarshal(data, &vNotebookDocumentSyncRegistrationOptions); err == nil {
-		o.NotebookDocumentSyncRegistrationOptions = &vNotebookDocumentSyncRegistrationOptions
-		return nil
-	}
-	return fmt.Errorf("invalid NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions: %s", data)
+	return fmt.Errorf("invalid NotebookDocumentSyncOptionsOrRegistrationOptions: %s", data)
 }
 
 type BooleanOrHoverOptions struct {
@@ -14243,6 +16504,7 @@ func (o BooleanOrHoverOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrHoverOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrHoverOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14279,6 +16541,7 @@ func (o BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) MarshalJSON
 
 func (o *BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14316,6 +16579,7 @@ func (o BooleanOrDefinitionOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrDefinitionOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDefinitionOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14352,6 +16616,7 @@ func (o BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) Marsh
 
 func (o *BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14393,6 +16658,7 @@ func (o BooleanOrImplementationOptionsOrImplementationRegistrationOptions) Marsh
 
 func (o *BooleanOrImplementationOptionsOrImplementationRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrImplementationOptionsOrImplementationRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14430,6 +16696,7 @@ func (o BooleanOrReferenceOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrReferenceOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrReferenceOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14462,6 +16729,7 @@ func (o BooleanOrDocumentHighlightOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrDocumentHighlightOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDocumentHighlightOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14494,6 +16762,7 @@ func (o BooleanOrDocumentSymbolOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrDocumentSymbolOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDocumentSymbolOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14526,6 +16795,7 @@ func (o BooleanOrCodeActionOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrCodeActionOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrCodeActionOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14562,6 +16832,7 @@ func (o BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) Marshal
 
 func (o *BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14599,6 +16870,7 @@ func (o BooleanOrWorkspaceSymbolOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrWorkspaceSymbolOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrWorkspaceSymbolOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14631,6 +16903,7 @@ func (o BooleanOrDocumentFormattingOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrDocumentFormattingOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDocumentFormattingOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14663,6 +16936,7 @@ func (o BooleanOrDocumentRangeFormattingOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrDocumentRangeFormattingOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDocumentRangeFormattingOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14695,6 +16969,7 @@ func (o BooleanOrRenameOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrRenameOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrRenameOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14731,6 +17006,7 @@ func (o BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) MarshalJS
 
 func (o *BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14772,6 +17048,7 @@ func (o BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) Marsh
 
 func (o *BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14813,6 +17090,7 @@ func (o BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) Marshal
 
 func (o *BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14854,6 +17132,7 @@ func (o BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOption
 
 func (o *BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14872,36 +17151,37 @@ func (o *BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptio
 	return fmt.Errorf("invalid BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions: %s", data)
 }
 
-type SemanticTokensOptionsOrSemanticTokensRegistrationOptions struct {
-	SemanticTokensOptions             *SemanticTokensOptions
-	SemanticTokensRegistrationOptions *SemanticTokensRegistrationOptions
+type SemanticTokensOptionsOrRegistrationOptions struct {
+	Options             *SemanticTokensOptions
+	RegistrationOptions *SemanticTokensRegistrationOptions
 }
 
-func (o SemanticTokensOptionsOrSemanticTokensRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of SemanticTokensOptionsOrSemanticTokensRegistrationOptions is set", o.SemanticTokensOptions != nil, o.SemanticTokensRegistrationOptions != nil)
+func (o SemanticTokensOptionsOrRegistrationOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of SemanticTokensOptionsOrRegistrationOptions is set", o.Options != nil, o.RegistrationOptions != nil)
 
-	if o.SemanticTokensOptions != nil {
-		return json.Marshal(*o.SemanticTokensOptions)
+	if o.Options != nil {
+		return json.Marshal(*o.Options)
 	}
-	if o.SemanticTokensRegistrationOptions != nil {
-		return json.Marshal(*o.SemanticTokensRegistrationOptions)
+	if o.RegistrationOptions != nil {
+		return json.Marshal(*o.RegistrationOptions)
 	}
 	panic("unreachable")
 }
 
-func (o *SemanticTokensOptionsOrSemanticTokensRegistrationOptions) UnmarshalJSON(data []byte) error {
-	*o = SemanticTokensOptionsOrSemanticTokensRegistrationOptions{}
-	var vSemanticTokensOptions SemanticTokensOptions
-	if err := json.Unmarshal(data, &vSemanticTokensOptions); err == nil {
-		o.SemanticTokensOptions = &vSemanticTokensOptions
+func (o *SemanticTokensOptionsOrRegistrationOptions) UnmarshalJSON(data []byte) error {
+	*o = SemanticTokensOptionsOrRegistrationOptions{}
+
+	var vOptions SemanticTokensOptions
+	if err := json.Unmarshal(data, &vOptions); err == nil {
+		o.Options = &vOptions
 		return nil
 	}
-	var vSemanticTokensRegistrationOptions SemanticTokensRegistrationOptions
-	if err := json.Unmarshal(data, &vSemanticTokensRegistrationOptions); err == nil {
-		o.SemanticTokensRegistrationOptions = &vSemanticTokensRegistrationOptions
+	var vRegistrationOptions SemanticTokensRegistrationOptions
+	if err := json.Unmarshal(data, &vRegistrationOptions); err == nil {
+		o.RegistrationOptions = &vRegistrationOptions
 		return nil
 	}
-	return fmt.Errorf("invalid SemanticTokensOptionsOrSemanticTokensRegistrationOptions: %s", data)
+	return fmt.Errorf("invalid SemanticTokensOptionsOrRegistrationOptions: %s", data)
 }
 
 type BooleanOrMonikerOptionsOrMonikerRegistrationOptions struct {
@@ -14927,6 +17207,7 @@ func (o BooleanOrMonikerOptionsOrMonikerRegistrationOptions) MarshalJSON() ([]by
 
 func (o *BooleanOrMonikerOptionsOrMonikerRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrMonikerOptionsOrMonikerRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -14968,6 +17249,7 @@ func (o BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) Marshal
 
 func (o *BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -15009,6 +17291,7 @@ func (o BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) MarshalJSON
 
 func (o *BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -15050,6 +17333,7 @@ func (o BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) MarshalJSON() (
 
 func (o *BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -15068,36 +17352,37 @@ func (o *BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) UnmarshalJSON(
 	return fmt.Errorf("invalid BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions: %s", data)
 }
 
-type DiagnosticOptionsOrDiagnosticRegistrationOptions struct {
-	DiagnosticOptions             *DiagnosticOptions
-	DiagnosticRegistrationOptions *DiagnosticRegistrationOptions
+type DiagnosticOptionsOrRegistrationOptions struct {
+	Options             *DiagnosticOptions
+	RegistrationOptions *DiagnosticRegistrationOptions
 }
 
-func (o DiagnosticOptionsOrDiagnosticRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of DiagnosticOptionsOrDiagnosticRegistrationOptions is set", o.DiagnosticOptions != nil, o.DiagnosticRegistrationOptions != nil)
+func (o DiagnosticOptionsOrRegistrationOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of DiagnosticOptionsOrRegistrationOptions is set", o.Options != nil, o.RegistrationOptions != nil)
 
-	if o.DiagnosticOptions != nil {
-		return json.Marshal(*o.DiagnosticOptions)
+	if o.Options != nil {
+		return json.Marshal(*o.Options)
 	}
-	if o.DiagnosticRegistrationOptions != nil {
-		return json.Marshal(*o.DiagnosticRegistrationOptions)
+	if o.RegistrationOptions != nil {
+		return json.Marshal(*o.RegistrationOptions)
 	}
 	panic("unreachable")
 }
 
-func (o *DiagnosticOptionsOrDiagnosticRegistrationOptions) UnmarshalJSON(data []byte) error {
-	*o = DiagnosticOptionsOrDiagnosticRegistrationOptions{}
-	var vDiagnosticOptions DiagnosticOptions
-	if err := json.Unmarshal(data, &vDiagnosticOptions); err == nil {
-		o.DiagnosticOptions = &vDiagnosticOptions
+func (o *DiagnosticOptionsOrRegistrationOptions) UnmarshalJSON(data []byte) error {
+	*o = DiagnosticOptionsOrRegistrationOptions{}
+
+	var vOptions DiagnosticOptions
+	if err := json.Unmarshal(data, &vOptions); err == nil {
+		o.Options = &vOptions
 		return nil
 	}
-	var vDiagnosticRegistrationOptions DiagnosticRegistrationOptions
-	if err := json.Unmarshal(data, &vDiagnosticRegistrationOptions); err == nil {
-		o.DiagnosticRegistrationOptions = &vDiagnosticRegistrationOptions
+	var vRegistrationOptions DiagnosticRegistrationOptions
+	if err := json.Unmarshal(data, &vRegistrationOptions); err == nil {
+		o.RegistrationOptions = &vRegistrationOptions
 		return nil
 	}
-	return fmt.Errorf("invalid DiagnosticOptionsOrDiagnosticRegistrationOptions: %s", data)
+	return fmt.Errorf("invalid DiagnosticOptionsOrRegistrationOptions: %s", data)
 }
 
 type BooleanOrInlineCompletionOptions struct {
@@ -15119,6 +17404,7 @@ func (o BooleanOrInlineCompletionOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrInlineCompletionOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrInlineCompletionOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -15130,6 +17416,39 @@ func (o *BooleanOrInlineCompletionOptions) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 	return fmt.Errorf("invalid BooleanOrInlineCompletionOptions: %s", data)
+}
+
+type PatternOrRelativePattern struct {
+	Pattern         *string
+	RelativePattern *RelativePattern
+}
+
+func (o PatternOrRelativePattern) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of PatternOrRelativePattern is set", o.Pattern != nil, o.RelativePattern != nil)
+
+	if o.Pattern != nil {
+		return json.Marshal(*o.Pattern)
+	}
+	if o.RelativePattern != nil {
+		return json.Marshal(*o.RelativePattern)
+	}
+	panic("unreachable")
+}
+
+func (o *PatternOrRelativePattern) UnmarshalJSON(data []byte) error {
+	*o = PatternOrRelativePattern{}
+
+	var vPattern string
+	if err := json.Unmarshal(data, &vPattern); err == nil {
+		o.Pattern = &vPattern
+		return nil
+	}
+	var vRelativePattern RelativePattern
+	if err := json.Unmarshal(data, &vRelativePattern); err == nil {
+		o.RelativePattern = &vRelativePattern
+		return nil
+	}
+	return fmt.Errorf("invalid PatternOrRelativePattern: %s", data)
 }
 
 type RangeOrEditRangeWithInsertReplace struct {
@@ -15151,6 +17470,7 @@ func (o RangeOrEditRangeWithInsertReplace) MarshalJSON() ([]byte, error) {
 
 func (o *RangeOrEditRangeWithInsertReplace) UnmarshalJSON(data []byte) error {
 	*o = RangeOrEditRangeWithInsertReplace{}
+
 	var vRange Range
 	if err := json.Unmarshal(data, &vRange); err == nil {
 		o.Range = &vRange
@@ -15164,36 +17484,55 @@ func (o *RangeOrEditRangeWithInsertReplace) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid RangeOrEditRangeWithInsertReplace: %s", data)
 }
 
-type StringOrNotebookDocumentFilter struct {
-	String                 *string
-	NotebookDocumentFilter *NotebookDocumentFilter
+type StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern struct {
+	String                             *string
+	NotebookDocumentFilterNotebookType *NotebookDocumentFilterNotebookType
+	NotebookDocumentFilterScheme       *NotebookDocumentFilterScheme
+	NotebookDocumentFilterPattern      *NotebookDocumentFilterPattern
 }
 
-func (o StringOrNotebookDocumentFilter) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of StringOrNotebookDocumentFilter is set", o.String != nil, o.NotebookDocumentFilter != nil)
+func (o StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern is set", o.String != nil, o.NotebookDocumentFilterNotebookType != nil, o.NotebookDocumentFilterScheme != nil, o.NotebookDocumentFilterPattern != nil)
 
 	if o.String != nil {
 		return json.Marshal(*o.String)
 	}
-	if o.NotebookDocumentFilter != nil {
-		return json.Marshal(*o.NotebookDocumentFilter)
+	if o.NotebookDocumentFilterNotebookType != nil {
+		return json.Marshal(*o.NotebookDocumentFilterNotebookType)
+	}
+	if o.NotebookDocumentFilterScheme != nil {
+		return json.Marshal(*o.NotebookDocumentFilterScheme)
+	}
+	if o.NotebookDocumentFilterPattern != nil {
+		return json.Marshal(*o.NotebookDocumentFilterPattern)
 	}
 	panic("unreachable")
 }
 
-func (o *StringOrNotebookDocumentFilter) UnmarshalJSON(data []byte) error {
-	*o = StringOrNotebookDocumentFilter{}
+func (o *StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern) UnmarshalJSON(data []byte) error {
+	*o = StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern{}
+
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
 		return nil
 	}
-	var vNotebookDocumentFilter NotebookDocumentFilter
-	if err := json.Unmarshal(data, &vNotebookDocumentFilter); err == nil {
-		o.NotebookDocumentFilter = &vNotebookDocumentFilter
+	var vNotebookDocumentFilterNotebookType NotebookDocumentFilterNotebookType
+	if err := json.Unmarshal(data, &vNotebookDocumentFilterNotebookType); err == nil {
+		o.NotebookDocumentFilterNotebookType = &vNotebookDocumentFilterNotebookType
 		return nil
 	}
-	return fmt.Errorf("invalid StringOrNotebookDocumentFilter: %s", data)
+	var vNotebookDocumentFilterScheme NotebookDocumentFilterScheme
+	if err := json.Unmarshal(data, &vNotebookDocumentFilterScheme); err == nil {
+		o.NotebookDocumentFilterScheme = &vNotebookDocumentFilterScheme
+		return nil
+	}
+	var vNotebookDocumentFilterPattern NotebookDocumentFilterPattern
+	if err := json.Unmarshal(data, &vNotebookDocumentFilterPattern); err == nil {
+		o.NotebookDocumentFilterPattern = &vNotebookDocumentFilterPattern
+		return nil
+	}
+	return fmt.Errorf("invalid StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern: %s", data)
 }
 
 type BooleanOrSaveOptions struct {
@@ -15215,6 +17554,7 @@ func (o BooleanOrSaveOptions) MarshalJSON() ([]byte, error) {
 
 func (o *BooleanOrSaveOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrSaveOptions{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -15228,36 +17568,37 @@ func (o *BooleanOrSaveOptions) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid BooleanOrSaveOptions: %s", data)
 }
 
-type TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions struct {
-	TextDocumentContentOptions             *TextDocumentContentOptions
-	TextDocumentContentRegistrationOptions *TextDocumentContentRegistrationOptions
+type TextDocumentContentOptionsOrRegistrationOptions struct {
+	Options             *TextDocumentContentOptions
+	RegistrationOptions *TextDocumentContentRegistrationOptions
 }
 
-func (o TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions is set", o.TextDocumentContentOptions != nil, o.TextDocumentContentRegistrationOptions != nil)
+func (o TextDocumentContentOptionsOrRegistrationOptions) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of TextDocumentContentOptionsOrRegistrationOptions is set", o.Options != nil, o.RegistrationOptions != nil)
 
-	if o.TextDocumentContentOptions != nil {
-		return json.Marshal(*o.TextDocumentContentOptions)
+	if o.Options != nil {
+		return json.Marshal(*o.Options)
 	}
-	if o.TextDocumentContentRegistrationOptions != nil {
-		return json.Marshal(*o.TextDocumentContentRegistrationOptions)
+	if o.RegistrationOptions != nil {
+		return json.Marshal(*o.RegistrationOptions)
 	}
 	panic("unreachable")
 }
 
-func (o *TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions) UnmarshalJSON(data []byte) error {
-	*o = TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions{}
-	var vTextDocumentContentOptions TextDocumentContentOptions
-	if err := json.Unmarshal(data, &vTextDocumentContentOptions); err == nil {
-		o.TextDocumentContentOptions = &vTextDocumentContentOptions
+func (o *TextDocumentContentOptionsOrRegistrationOptions) UnmarshalJSON(data []byte) error {
+	*o = TextDocumentContentOptionsOrRegistrationOptions{}
+
+	var vOptions TextDocumentContentOptions
+	if err := json.Unmarshal(data, &vOptions); err == nil {
+		o.Options = &vOptions
 		return nil
 	}
-	var vTextDocumentContentRegistrationOptions TextDocumentContentRegistrationOptions
-	if err := json.Unmarshal(data, &vTextDocumentContentRegistrationOptions); err == nil {
-		o.TextDocumentContentRegistrationOptions = &vTextDocumentContentRegistrationOptions
+	var vRegistrationOptions TextDocumentContentRegistrationOptions
+	if err := json.Unmarshal(data, &vRegistrationOptions); err == nil {
+		o.RegistrationOptions = &vRegistrationOptions
 		return nil
 	}
-	return fmt.Errorf("invalid TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions: %s", data)
+	return fmt.Errorf("invalid TextDocumentContentOptionsOrRegistrationOptions: %s", data)
 }
 
 type StringOrTuple struct {
@@ -15279,6 +17620,7 @@ func (o StringOrTuple) MarshalJSON() ([]byte, error) {
 
 func (o *StringOrTuple) UnmarshalJSON(data []byte) error {
 	*o = StringOrTuple{}
+
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
@@ -15311,6 +17653,7 @@ func (o StringOrBoolean) MarshalJSON() ([]byte, error) {
 
 func (o *StringOrBoolean) UnmarshalJSON(data []byte) error {
 	*o = StringOrBoolean{}
+
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
@@ -15343,6 +17686,7 @@ func (o WorkspaceFolderOrURI) MarshalJSON() ([]byte, error) {
 
 func (o *WorkspaceFolderOrURI) UnmarshalJSON(data []byte) error {
 	*o = WorkspaceFolderOrURI{}
+
 	var vWorkspaceFolder WorkspaceFolder
 	if err := json.Unmarshal(data, &vWorkspaceFolder); err == nil {
 		o.WorkspaceFolder = &vWorkspaceFolder
@@ -15375,6 +17719,7 @@ func (o BooleanOrClientSemanticTokensRequestFullDelta) MarshalJSON() ([]byte, er
 
 func (o *BooleanOrClientSemanticTokensRequestFullDelta) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrClientSemanticTokensRequestFullDelta{}
+
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -15386,6 +17731,1197 @@ func (o *BooleanOrClientSemanticTokensRequestFullDelta) UnmarshalJSON(data []byt
 		return nil
 	}
 	return fmt.Errorf("invalid BooleanOrClientSemanticTokensRequestFullDelta: %s", data)
+}
+
+type LocationOrLocationsOrDefinitionLinksOrNull struct {
+	Location        *Location
+	Locations       *[]Location
+	DefinitionLinks *[]*LocationLink
+}
+
+func (o LocationOrLocationsOrDefinitionLinksOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of LocationOrLocationsOrDefinitionLinksOrNull is set", o.Location != nil, o.Locations != nil, o.DefinitionLinks != nil)
+
+	if o.Location != nil {
+		return json.Marshal(*o.Location)
+	}
+	if o.Locations != nil {
+		return json.Marshal(*o.Locations)
+	}
+	if o.DefinitionLinks != nil {
+		return json.Marshal(*o.DefinitionLinks)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *LocationOrLocationsOrDefinitionLinksOrNull) UnmarshalJSON(data []byte) error {
+	*o = LocationOrLocationsOrDefinitionLinksOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vLocation Location
+	if err := json.Unmarshal(data, &vLocation); err == nil {
+		o.Location = &vLocation
+		return nil
+	}
+	var vLocations []Location
+	if err := json.Unmarshal(data, &vLocations); err == nil {
+		o.Locations = &vLocations
+		return nil
+	}
+	var vDefinitionLinks []*LocationLink
+	if err := json.Unmarshal(data, &vDefinitionLinks); err == nil {
+		o.DefinitionLinks = &vDefinitionLinks
+		return nil
+	}
+	return fmt.Errorf("invalid LocationOrLocationsOrDefinitionLinksOrNull: %s", data)
+}
+
+type FoldingRangesOrNull struct {
+	FoldingRanges *[]*FoldingRange
+}
+
+func (o FoldingRangesOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of FoldingRangesOrNull is set", o.FoldingRanges != nil)
+
+	if o.FoldingRanges != nil {
+		return json.Marshal(*o.FoldingRanges)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *FoldingRangesOrNull) UnmarshalJSON(data []byte) error {
+	*o = FoldingRangesOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vFoldingRanges []*FoldingRange
+	if err := json.Unmarshal(data, &vFoldingRanges); err == nil {
+		o.FoldingRanges = &vFoldingRanges
+		return nil
+	}
+	return fmt.Errorf("invalid FoldingRangesOrNull: %s", data)
+}
+
+type LocationOrLocationsOrDeclarationLinksOrNull struct {
+	Location         *Location
+	Locations        *[]Location
+	DeclarationLinks *[]*LocationLink
+}
+
+func (o LocationOrLocationsOrDeclarationLinksOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of LocationOrLocationsOrDeclarationLinksOrNull is set", o.Location != nil, o.Locations != nil, o.DeclarationLinks != nil)
+
+	if o.Location != nil {
+		return json.Marshal(*o.Location)
+	}
+	if o.Locations != nil {
+		return json.Marshal(*o.Locations)
+	}
+	if o.DeclarationLinks != nil {
+		return json.Marshal(*o.DeclarationLinks)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *LocationOrLocationsOrDeclarationLinksOrNull) UnmarshalJSON(data []byte) error {
+	*o = LocationOrLocationsOrDeclarationLinksOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vLocation Location
+	if err := json.Unmarshal(data, &vLocation); err == nil {
+		o.Location = &vLocation
+		return nil
+	}
+	var vLocations []Location
+	if err := json.Unmarshal(data, &vLocations); err == nil {
+		o.Locations = &vLocations
+		return nil
+	}
+	var vDeclarationLinks []*LocationLink
+	if err := json.Unmarshal(data, &vDeclarationLinks); err == nil {
+		o.DeclarationLinks = &vDeclarationLinks
+		return nil
+	}
+	return fmt.Errorf("invalid LocationOrLocationsOrDeclarationLinksOrNull: %s", data)
+}
+
+type SelectionRangesOrNull struct {
+	SelectionRanges *[]*SelectionRange
+}
+
+func (o SelectionRangesOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of SelectionRangesOrNull is set", o.SelectionRanges != nil)
+
+	if o.SelectionRanges != nil {
+		return json.Marshal(*o.SelectionRanges)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *SelectionRangesOrNull) UnmarshalJSON(data []byte) error {
+	*o = SelectionRangesOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vSelectionRanges []*SelectionRange
+	if err := json.Unmarshal(data, &vSelectionRanges); err == nil {
+		o.SelectionRanges = &vSelectionRanges
+		return nil
+	}
+	return fmt.Errorf("invalid SelectionRangesOrNull: %s", data)
+}
+
+type CallHierarchyItemsOrNull struct {
+	CallHierarchyItems *[]*CallHierarchyItem
+}
+
+func (o CallHierarchyItemsOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of CallHierarchyItemsOrNull is set", o.CallHierarchyItems != nil)
+
+	if o.CallHierarchyItems != nil {
+		return json.Marshal(*o.CallHierarchyItems)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *CallHierarchyItemsOrNull) UnmarshalJSON(data []byte) error {
+	*o = CallHierarchyItemsOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vCallHierarchyItems []*CallHierarchyItem
+	if err := json.Unmarshal(data, &vCallHierarchyItems); err == nil {
+		o.CallHierarchyItems = &vCallHierarchyItems
+		return nil
+	}
+	return fmt.Errorf("invalid CallHierarchyItemsOrNull: %s", data)
+}
+
+type CallHierarchyIncomingCallsOrNull struct {
+	CallHierarchyIncomingCalls *[]*CallHierarchyIncomingCall
+}
+
+func (o CallHierarchyIncomingCallsOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of CallHierarchyIncomingCallsOrNull is set", o.CallHierarchyIncomingCalls != nil)
+
+	if o.CallHierarchyIncomingCalls != nil {
+		return json.Marshal(*o.CallHierarchyIncomingCalls)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *CallHierarchyIncomingCallsOrNull) UnmarshalJSON(data []byte) error {
+	*o = CallHierarchyIncomingCallsOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vCallHierarchyIncomingCalls []*CallHierarchyIncomingCall
+	if err := json.Unmarshal(data, &vCallHierarchyIncomingCalls); err == nil {
+		o.CallHierarchyIncomingCalls = &vCallHierarchyIncomingCalls
+		return nil
+	}
+	return fmt.Errorf("invalid CallHierarchyIncomingCallsOrNull: %s", data)
+}
+
+type CallHierarchyOutgoingCallsOrNull struct {
+	CallHierarchyOutgoingCalls *[]*CallHierarchyOutgoingCall
+}
+
+func (o CallHierarchyOutgoingCallsOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of CallHierarchyOutgoingCallsOrNull is set", o.CallHierarchyOutgoingCalls != nil)
+
+	if o.CallHierarchyOutgoingCalls != nil {
+		return json.Marshal(*o.CallHierarchyOutgoingCalls)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *CallHierarchyOutgoingCallsOrNull) UnmarshalJSON(data []byte) error {
+	*o = CallHierarchyOutgoingCallsOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vCallHierarchyOutgoingCalls []*CallHierarchyOutgoingCall
+	if err := json.Unmarshal(data, &vCallHierarchyOutgoingCalls); err == nil {
+		o.CallHierarchyOutgoingCalls = &vCallHierarchyOutgoingCalls
+		return nil
+	}
+	return fmt.Errorf("invalid CallHierarchyOutgoingCallsOrNull: %s", data)
+}
+
+type SemanticTokensOrNull struct {
+	SemanticTokens *SemanticTokens
+}
+
+func (o SemanticTokensOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of SemanticTokensOrNull is set", o.SemanticTokens != nil)
+
+	if o.SemanticTokens != nil {
+		return json.Marshal(*o.SemanticTokens)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *SemanticTokensOrNull) UnmarshalJSON(data []byte) error {
+	*o = SemanticTokensOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vSemanticTokens SemanticTokens
+	if err := json.Unmarshal(data, &vSemanticTokens); err == nil {
+		o.SemanticTokens = &vSemanticTokens
+		return nil
+	}
+	return fmt.Errorf("invalid SemanticTokensOrNull: %s", data)
+}
+
+type SemanticTokensOrSemanticTokensDeltaOrNull struct {
+	SemanticTokens      *SemanticTokens
+	SemanticTokensDelta *SemanticTokensDelta
+}
+
+func (o SemanticTokensOrSemanticTokensDeltaOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of SemanticTokensOrSemanticTokensDeltaOrNull is set", o.SemanticTokens != nil, o.SemanticTokensDelta != nil)
+
+	if o.SemanticTokens != nil {
+		return json.Marshal(*o.SemanticTokens)
+	}
+	if o.SemanticTokensDelta != nil {
+		return json.Marshal(*o.SemanticTokensDelta)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *SemanticTokensOrSemanticTokensDeltaOrNull) UnmarshalJSON(data []byte) error {
+	*o = SemanticTokensOrSemanticTokensDeltaOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vSemanticTokens SemanticTokens
+	if err := json.Unmarshal(data, &vSemanticTokens); err == nil {
+		o.SemanticTokens = &vSemanticTokens
+		return nil
+	}
+	var vSemanticTokensDelta SemanticTokensDelta
+	if err := json.Unmarshal(data, &vSemanticTokensDelta); err == nil {
+		o.SemanticTokensDelta = &vSemanticTokensDelta
+		return nil
+	}
+	return fmt.Errorf("invalid SemanticTokensOrSemanticTokensDeltaOrNull: %s", data)
+}
+
+type LinkedEditingRangesOrNull struct {
+	LinkedEditingRanges *LinkedEditingRanges
+}
+
+func (o LinkedEditingRangesOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of LinkedEditingRangesOrNull is set", o.LinkedEditingRanges != nil)
+
+	if o.LinkedEditingRanges != nil {
+		return json.Marshal(*o.LinkedEditingRanges)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *LinkedEditingRangesOrNull) UnmarshalJSON(data []byte) error {
+	*o = LinkedEditingRangesOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vLinkedEditingRanges LinkedEditingRanges
+	if err := json.Unmarshal(data, &vLinkedEditingRanges); err == nil {
+		o.LinkedEditingRanges = &vLinkedEditingRanges
+		return nil
+	}
+	return fmt.Errorf("invalid LinkedEditingRangesOrNull: %s", data)
+}
+
+type WorkspaceEditOrNull struct {
+	WorkspaceEdit *WorkspaceEdit
+}
+
+func (o WorkspaceEditOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of WorkspaceEditOrNull is set", o.WorkspaceEdit != nil)
+
+	if o.WorkspaceEdit != nil {
+		return json.Marshal(*o.WorkspaceEdit)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *WorkspaceEditOrNull) UnmarshalJSON(data []byte) error {
+	*o = WorkspaceEditOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vWorkspaceEdit WorkspaceEdit
+	if err := json.Unmarshal(data, &vWorkspaceEdit); err == nil {
+		o.WorkspaceEdit = &vWorkspaceEdit
+		return nil
+	}
+	return fmt.Errorf("invalid WorkspaceEditOrNull: %s", data)
+}
+
+type MonikersOrNull struct {
+	Monikers *[]*Moniker
+}
+
+func (o MonikersOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of MonikersOrNull is set", o.Monikers != nil)
+
+	if o.Monikers != nil {
+		return json.Marshal(*o.Monikers)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *MonikersOrNull) UnmarshalJSON(data []byte) error {
+	*o = MonikersOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vMonikers []*Moniker
+	if err := json.Unmarshal(data, &vMonikers); err == nil {
+		o.Monikers = &vMonikers
+		return nil
+	}
+	return fmt.Errorf("invalid MonikersOrNull: %s", data)
+}
+
+type TypeHierarchyItemsOrNull struct {
+	TypeHierarchyItems *[]*TypeHierarchyItem
+}
+
+func (o TypeHierarchyItemsOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of TypeHierarchyItemsOrNull is set", o.TypeHierarchyItems != nil)
+
+	if o.TypeHierarchyItems != nil {
+		return json.Marshal(*o.TypeHierarchyItems)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *TypeHierarchyItemsOrNull) UnmarshalJSON(data []byte) error {
+	*o = TypeHierarchyItemsOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vTypeHierarchyItems []*TypeHierarchyItem
+	if err := json.Unmarshal(data, &vTypeHierarchyItems); err == nil {
+		o.TypeHierarchyItems = &vTypeHierarchyItems
+		return nil
+	}
+	return fmt.Errorf("invalid TypeHierarchyItemsOrNull: %s", data)
+}
+
+type InlineValuesOrNull struct {
+	InlineValues *[]InlineValueTextOrVariableLookupOrEvaluatableExpression
+}
+
+func (o InlineValuesOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of InlineValuesOrNull is set", o.InlineValues != nil)
+
+	if o.InlineValues != nil {
+		return json.Marshal(*o.InlineValues)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *InlineValuesOrNull) UnmarshalJSON(data []byte) error {
+	*o = InlineValuesOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vInlineValues []InlineValueTextOrVariableLookupOrEvaluatableExpression
+	if err := json.Unmarshal(data, &vInlineValues); err == nil {
+		o.InlineValues = &vInlineValues
+		return nil
+	}
+	return fmt.Errorf("invalid InlineValuesOrNull: %s", data)
+}
+
+type InlayHintsOrNull struct {
+	InlayHints *[]*InlayHint
+}
+
+func (o InlayHintsOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of InlayHintsOrNull is set", o.InlayHints != nil)
+
+	if o.InlayHints != nil {
+		return json.Marshal(*o.InlayHints)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *InlayHintsOrNull) UnmarshalJSON(data []byte) error {
+	*o = InlayHintsOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vInlayHints []*InlayHint
+	if err := json.Unmarshal(data, &vInlayHints); err == nil {
+		o.InlayHints = &vInlayHints
+		return nil
+	}
+	return fmt.Errorf("invalid InlayHintsOrNull: %s", data)
+}
+
+type RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport struct {
+	FullDocumentDiagnosticReport      *RelatedFullDocumentDiagnosticReport
+	UnchangedDocumentDiagnosticReport *RelatedUnchangedDocumentDiagnosticReport
+}
+
+func (o RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport is set", o.FullDocumentDiagnosticReport != nil, o.UnchangedDocumentDiagnosticReport != nil)
+
+	if o.FullDocumentDiagnosticReport != nil {
+		return json.Marshal(*o.FullDocumentDiagnosticReport)
+	}
+	if o.UnchangedDocumentDiagnosticReport != nil {
+		return json.Marshal(*o.UnchangedDocumentDiagnosticReport)
+	}
+	panic("unreachable")
+}
+
+func (o *RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+	*o = RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{}
+
+	var vFullDocumentDiagnosticReport RelatedFullDocumentDiagnosticReport
+	if err := json.Unmarshal(data, &vFullDocumentDiagnosticReport); err == nil {
+		o.FullDocumentDiagnosticReport = &vFullDocumentDiagnosticReport
+		return nil
+	}
+	var vUnchangedDocumentDiagnosticReport RelatedUnchangedDocumentDiagnosticReport
+	if err := json.Unmarshal(data, &vUnchangedDocumentDiagnosticReport); err == nil {
+		o.UnchangedDocumentDiagnosticReport = &vUnchangedDocumentDiagnosticReport
+		return nil
+	}
+	return fmt.Errorf("invalid RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport: %s", data)
+}
+
+type InlineCompletionListOrItemsOrNull struct {
+	List  *InlineCompletionList
+	Items *[]*InlineCompletionItem
+}
+
+func (o InlineCompletionListOrItemsOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of InlineCompletionListOrItemsOrNull is set", o.List != nil, o.Items != nil)
+
+	if o.List != nil {
+		return json.Marshal(*o.List)
+	}
+	if o.Items != nil {
+		return json.Marshal(*o.Items)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *InlineCompletionListOrItemsOrNull) UnmarshalJSON(data []byte) error {
+	*o = InlineCompletionListOrItemsOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vList InlineCompletionList
+	if err := json.Unmarshal(data, &vList); err == nil {
+		o.List = &vList
+		return nil
+	}
+	var vItems []*InlineCompletionItem
+	if err := json.Unmarshal(data, &vItems); err == nil {
+		o.Items = &vItems
+		return nil
+	}
+	return fmt.Errorf("invalid InlineCompletionListOrItemsOrNull: %s", data)
+}
+
+type MessageActionItemOrNull struct {
+	MessageActionItem *MessageActionItem
+}
+
+func (o MessageActionItemOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of MessageActionItemOrNull is set", o.MessageActionItem != nil)
+
+	if o.MessageActionItem != nil {
+		return json.Marshal(*o.MessageActionItem)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *MessageActionItemOrNull) UnmarshalJSON(data []byte) error {
+	*o = MessageActionItemOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vMessageActionItem MessageActionItem
+	if err := json.Unmarshal(data, &vMessageActionItem); err == nil {
+		o.MessageActionItem = &vMessageActionItem
+		return nil
+	}
+	return fmt.Errorf("invalid MessageActionItemOrNull: %s", data)
+}
+
+type TextEditsOrNull struct {
+	TextEdits *[]*TextEdit
+}
+
+func (o TextEditsOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of TextEditsOrNull is set", o.TextEdits != nil)
+
+	if o.TextEdits != nil {
+		return json.Marshal(*o.TextEdits)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *TextEditsOrNull) UnmarshalJSON(data []byte) error {
+	*o = TextEditsOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vTextEdits []*TextEdit
+	if err := json.Unmarshal(data, &vTextEdits); err == nil {
+		o.TextEdits = &vTextEdits
+		return nil
+	}
+	return fmt.Errorf("invalid TextEditsOrNull: %s", data)
+}
+
+type CompletionItemsOrListOrNull struct {
+	Items *[]*CompletionItem
+	List  *CompletionList
+}
+
+func (o CompletionItemsOrListOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of CompletionItemsOrListOrNull is set", o.Items != nil, o.List != nil)
+
+	if o.Items != nil {
+		return json.Marshal(*o.Items)
+	}
+	if o.List != nil {
+		return json.Marshal(*o.List)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *CompletionItemsOrListOrNull) UnmarshalJSON(data []byte) error {
+	*o = CompletionItemsOrListOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vItems []*CompletionItem
+	if err := json.Unmarshal(data, &vItems); err == nil {
+		o.Items = &vItems
+		return nil
+	}
+	var vList CompletionList
+	if err := json.Unmarshal(data, &vList); err == nil {
+		o.List = &vList
+		return nil
+	}
+	return fmt.Errorf("invalid CompletionItemsOrListOrNull: %s", data)
+}
+
+type HoverOrNull struct {
+	Hover *Hover
+}
+
+func (o HoverOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of HoverOrNull is set", o.Hover != nil)
+
+	if o.Hover != nil {
+		return json.Marshal(*o.Hover)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *HoverOrNull) UnmarshalJSON(data []byte) error {
+	*o = HoverOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vHover Hover
+	if err := json.Unmarshal(data, &vHover); err == nil {
+		o.Hover = &vHover
+		return nil
+	}
+	return fmt.Errorf("invalid HoverOrNull: %s", data)
+}
+
+type SignatureHelpOrNull struct {
+	SignatureHelp *SignatureHelp
+}
+
+func (o SignatureHelpOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of SignatureHelpOrNull is set", o.SignatureHelp != nil)
+
+	if o.SignatureHelp != nil {
+		return json.Marshal(*o.SignatureHelp)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *SignatureHelpOrNull) UnmarshalJSON(data []byte) error {
+	*o = SignatureHelpOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vSignatureHelp SignatureHelp
+	if err := json.Unmarshal(data, &vSignatureHelp); err == nil {
+		o.SignatureHelp = &vSignatureHelp
+		return nil
+	}
+	return fmt.Errorf("invalid SignatureHelpOrNull: %s", data)
+}
+
+type LocationsOrNull struct {
+	Locations *[]Location
+}
+
+func (o LocationsOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of LocationsOrNull is set", o.Locations != nil)
+
+	if o.Locations != nil {
+		return json.Marshal(*o.Locations)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *LocationsOrNull) UnmarshalJSON(data []byte) error {
+	*o = LocationsOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vLocations []Location
+	if err := json.Unmarshal(data, &vLocations); err == nil {
+		o.Locations = &vLocations
+		return nil
+	}
+	return fmt.Errorf("invalid LocationsOrNull: %s", data)
+}
+
+type DocumentHighlightsOrNull struct {
+	DocumentHighlights *[]*DocumentHighlight
+}
+
+func (o DocumentHighlightsOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of DocumentHighlightsOrNull is set", o.DocumentHighlights != nil)
+
+	if o.DocumentHighlights != nil {
+		return json.Marshal(*o.DocumentHighlights)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *DocumentHighlightsOrNull) UnmarshalJSON(data []byte) error {
+	*o = DocumentHighlightsOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vDocumentHighlights []*DocumentHighlight
+	if err := json.Unmarshal(data, &vDocumentHighlights); err == nil {
+		o.DocumentHighlights = &vDocumentHighlights
+		return nil
+	}
+	return fmt.Errorf("invalid DocumentHighlightsOrNull: %s", data)
+}
+
+type SymbolInformationsOrDocumentSymbolsOrNull struct {
+	SymbolInformations *[]*SymbolInformation
+	DocumentSymbols    *[]*DocumentSymbol
+}
+
+func (o SymbolInformationsOrDocumentSymbolsOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of SymbolInformationsOrDocumentSymbolsOrNull is set", o.SymbolInformations != nil, o.DocumentSymbols != nil)
+
+	if o.SymbolInformations != nil {
+		return json.Marshal(*o.SymbolInformations)
+	}
+	if o.DocumentSymbols != nil {
+		return json.Marshal(*o.DocumentSymbols)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *SymbolInformationsOrDocumentSymbolsOrNull) UnmarshalJSON(data []byte) error {
+	*o = SymbolInformationsOrDocumentSymbolsOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vSymbolInformations []*SymbolInformation
+	if err := json.Unmarshal(data, &vSymbolInformations); err == nil {
+		o.SymbolInformations = &vSymbolInformations
+		return nil
+	}
+	var vDocumentSymbols []*DocumentSymbol
+	if err := json.Unmarshal(data, &vDocumentSymbols); err == nil {
+		o.DocumentSymbols = &vDocumentSymbols
+		return nil
+	}
+	return fmt.Errorf("invalid SymbolInformationsOrDocumentSymbolsOrNull: %s", data)
+}
+
+type CommandOrCodeAction struct {
+	Command    *Command
+	CodeAction *CodeAction
+}
+
+func (o CommandOrCodeAction) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of CommandOrCodeAction is set", o.Command != nil, o.CodeAction != nil)
+
+	if o.Command != nil {
+		return json.Marshal(*o.Command)
+	}
+	if o.CodeAction != nil {
+		return json.Marshal(*o.CodeAction)
+	}
+	panic("unreachable")
+}
+
+func (o *CommandOrCodeAction) UnmarshalJSON(data []byte) error {
+	*o = CommandOrCodeAction{}
+
+	var vCommand Command
+	if err := json.Unmarshal(data, &vCommand); err == nil {
+		o.Command = &vCommand
+		return nil
+	}
+	var vCodeAction CodeAction
+	if err := json.Unmarshal(data, &vCodeAction); err == nil {
+		o.CodeAction = &vCodeAction
+		return nil
+	}
+	return fmt.Errorf("invalid CommandOrCodeAction: %s", data)
+}
+
+type CommandOrCodeActionArrayOrNull struct {
+	CommandOrCodeActionArray *[]CommandOrCodeAction
+}
+
+func (o CommandOrCodeActionArrayOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of CommandOrCodeActionArrayOrNull is set", o.CommandOrCodeActionArray != nil)
+
+	if o.CommandOrCodeActionArray != nil {
+		return json.Marshal(*o.CommandOrCodeActionArray)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *CommandOrCodeActionArrayOrNull) UnmarshalJSON(data []byte) error {
+	*o = CommandOrCodeActionArrayOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vCommandOrCodeActionArray []CommandOrCodeAction
+	if err := json.Unmarshal(data, &vCommandOrCodeActionArray); err == nil {
+		o.CommandOrCodeActionArray = &vCommandOrCodeActionArray
+		return nil
+	}
+	return fmt.Errorf("invalid CommandOrCodeActionArrayOrNull: %s", data)
+}
+
+type SymbolInformationsOrWorkspaceSymbolsOrNull struct {
+	SymbolInformations *[]*SymbolInformation
+	WorkspaceSymbols   *[]*WorkspaceSymbol
+}
+
+func (o SymbolInformationsOrWorkspaceSymbolsOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of SymbolInformationsOrWorkspaceSymbolsOrNull is set", o.SymbolInformations != nil, o.WorkspaceSymbols != nil)
+
+	if o.SymbolInformations != nil {
+		return json.Marshal(*o.SymbolInformations)
+	}
+	if o.WorkspaceSymbols != nil {
+		return json.Marshal(*o.WorkspaceSymbols)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *SymbolInformationsOrWorkspaceSymbolsOrNull) UnmarshalJSON(data []byte) error {
+	*o = SymbolInformationsOrWorkspaceSymbolsOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vSymbolInformations []*SymbolInformation
+	if err := json.Unmarshal(data, &vSymbolInformations); err == nil {
+		o.SymbolInformations = &vSymbolInformations
+		return nil
+	}
+	var vWorkspaceSymbols []*WorkspaceSymbol
+	if err := json.Unmarshal(data, &vWorkspaceSymbols); err == nil {
+		o.WorkspaceSymbols = &vWorkspaceSymbols
+		return nil
+	}
+	return fmt.Errorf("invalid SymbolInformationsOrWorkspaceSymbolsOrNull: %s", data)
+}
+
+type CodeLenssOrNull struct {
+	CodeLenss *[]*CodeLens
+}
+
+func (o CodeLenssOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of CodeLenssOrNull is set", o.CodeLenss != nil)
+
+	if o.CodeLenss != nil {
+		return json.Marshal(*o.CodeLenss)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *CodeLenssOrNull) UnmarshalJSON(data []byte) error {
+	*o = CodeLenssOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vCodeLenss []*CodeLens
+	if err := json.Unmarshal(data, &vCodeLenss); err == nil {
+		o.CodeLenss = &vCodeLenss
+		return nil
+	}
+	return fmt.Errorf("invalid CodeLenssOrNull: %s", data)
+}
+
+type DocumentLinksOrNull struct {
+	DocumentLinks *[]*DocumentLink
+}
+
+func (o DocumentLinksOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of DocumentLinksOrNull is set", o.DocumentLinks != nil)
+
+	if o.DocumentLinks != nil {
+		return json.Marshal(*o.DocumentLinks)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *DocumentLinksOrNull) UnmarshalJSON(data []byte) error {
+	*o = DocumentLinksOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vDocumentLinks []*DocumentLink
+	if err := json.Unmarshal(data, &vDocumentLinks); err == nil {
+		o.DocumentLinks = &vDocumentLinks
+		return nil
+	}
+	return fmt.Errorf("invalid DocumentLinksOrNull: %s", data)
+}
+
+type RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull struct {
+	Range                        *Range
+	PrepareRenamePlaceholder     *PrepareRenamePlaceholder
+	PrepareRenameDefaultBehavior *PrepareRenameDefaultBehavior
+}
+
+func (o RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull is set", o.Range != nil, o.PrepareRenamePlaceholder != nil, o.PrepareRenameDefaultBehavior != nil)
+
+	if o.Range != nil {
+		return json.Marshal(*o.Range)
+	}
+	if o.PrepareRenamePlaceholder != nil {
+		return json.Marshal(*o.PrepareRenamePlaceholder)
+	}
+	if o.PrepareRenameDefaultBehavior != nil {
+		return json.Marshal(*o.PrepareRenameDefaultBehavior)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull) UnmarshalJSON(data []byte) error {
+	*o = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vRange Range
+	if err := json.Unmarshal(data, &vRange); err == nil {
+		o.Range = &vRange
+		return nil
+	}
+	var vPrepareRenamePlaceholder PrepareRenamePlaceholder
+	if err := json.Unmarshal(data, &vPrepareRenamePlaceholder); err == nil {
+		o.PrepareRenamePlaceholder = &vPrepareRenamePlaceholder
+		return nil
+	}
+	var vPrepareRenameDefaultBehavior PrepareRenameDefaultBehavior
+	if err := json.Unmarshal(data, &vPrepareRenameDefaultBehavior); err == nil {
+		o.PrepareRenameDefaultBehavior = &vPrepareRenameDefaultBehavior
+		return nil
+	}
+	return fmt.Errorf("invalid RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull: %s", data)
+}
+
+type LSPAnyOrNull struct {
+	LSPAny *any
+}
+
+func (o LSPAnyOrNull) MarshalJSON() ([]byte, error) {
+	assertAtMostOne("more than one element of LSPAnyOrNull is set", o.LSPAny != nil)
+
+	if o.LSPAny != nil {
+		return json.Marshal(*o.LSPAny)
+	}
+	// All fields are nil, represent as null
+	return []byte("null"), nil
+}
+
+func (o *LSPAnyOrNull) UnmarshalJSON(data []byte) error {
+	*o = LSPAnyOrNull{}
+
+	// Handle null case
+	if string(data) == "null" {
+		return nil
+	}
+
+	var vLSPAny any
+	if err := json.Unmarshal(data, &vLSPAny); err == nil {
+		o.LSPAny = &vLSPAny
+		return nil
+	}
+	return fmt.Errorf("invalid LSPAnyOrNull: %s", data)
+}
+
+type TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter struct {
+	TextDocumentFilterLanguage     *TextDocumentFilterLanguage
+	TextDocumentFilterScheme       *TextDocumentFilterScheme
+	TextDocumentFilterPattern      *TextDocumentFilterPattern
+	NotebookCellTextDocumentFilter *NotebookCellTextDocumentFilter
+}
+
+func (o TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter is set", o.TextDocumentFilterLanguage != nil, o.TextDocumentFilterScheme != nil, o.TextDocumentFilterPattern != nil, o.NotebookCellTextDocumentFilter != nil)
+
+	if o.TextDocumentFilterLanguage != nil {
+		return json.Marshal(*o.TextDocumentFilterLanguage)
+	}
+	if o.TextDocumentFilterScheme != nil {
+		return json.Marshal(*o.TextDocumentFilterScheme)
+	}
+	if o.TextDocumentFilterPattern != nil {
+		return json.Marshal(*o.TextDocumentFilterPattern)
+	}
+	if o.NotebookCellTextDocumentFilter != nil {
+		return json.Marshal(*o.NotebookCellTextDocumentFilter)
+	}
+	panic("unreachable")
+}
+
+func (o *TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter) UnmarshalJSON(data []byte) error {
+	*o = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter{}
+
+	var vTextDocumentFilterLanguage TextDocumentFilterLanguage
+	if err := json.Unmarshal(data, &vTextDocumentFilterLanguage); err == nil {
+		o.TextDocumentFilterLanguage = &vTextDocumentFilterLanguage
+		return nil
+	}
+	var vTextDocumentFilterScheme TextDocumentFilterScheme
+	if err := json.Unmarshal(data, &vTextDocumentFilterScheme); err == nil {
+		o.TextDocumentFilterScheme = &vTextDocumentFilterScheme
+		return nil
+	}
+	var vTextDocumentFilterPattern TextDocumentFilterPattern
+	if err := json.Unmarshal(data, &vTextDocumentFilterPattern); err == nil {
+		o.TextDocumentFilterPattern = &vTextDocumentFilterPattern
+		return nil
+	}
+	var vNotebookCellTextDocumentFilter NotebookCellTextDocumentFilter
+	if err := json.Unmarshal(data, &vNotebookCellTextDocumentFilter); err == nil {
+		o.NotebookCellTextDocumentFilter = &vNotebookCellTextDocumentFilter
+		return nil
+	}
+	return fmt.Errorf("invalid TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter: %s", data)
+}
+
+type StringOrMarkedStringWithLanguage struct {
+	String                   *string
+	MarkedStringWithLanguage *MarkedStringWithLanguage
+}
+
+func (o StringOrMarkedStringWithLanguage) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of StringOrMarkedStringWithLanguage is set", o.String != nil, o.MarkedStringWithLanguage != nil)
+
+	if o.String != nil {
+		return json.Marshal(*o.String)
+	}
+	if o.MarkedStringWithLanguage != nil {
+		return json.Marshal(*o.MarkedStringWithLanguage)
+	}
+	panic("unreachable")
+}
+
+func (o *StringOrMarkedStringWithLanguage) UnmarshalJSON(data []byte) error {
+	*o = StringOrMarkedStringWithLanguage{}
+
+	var vString string
+	if err := json.Unmarshal(data, &vString); err == nil {
+		o.String = &vString
+		return nil
+	}
+	var vMarkedStringWithLanguage MarkedStringWithLanguage
+	if err := json.Unmarshal(data, &vMarkedStringWithLanguage); err == nil {
+		o.MarkedStringWithLanguage = &vMarkedStringWithLanguage
+		return nil
+	}
+	return fmt.Errorf("invalid StringOrMarkedStringWithLanguage: %s", data)
+}
+
+type InlineValueTextOrVariableLookupOrEvaluatableExpression struct {
+	Text                  *InlineValueText
+	VariableLookup        *InlineValueVariableLookup
+	EvaluatableExpression *InlineValueEvaluatableExpression
+}
+
+func (o InlineValueTextOrVariableLookupOrEvaluatableExpression) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of InlineValueTextOrVariableLookupOrEvaluatableExpression is set", o.Text != nil, o.VariableLookup != nil, o.EvaluatableExpression != nil)
+
+	if o.Text != nil {
+		return json.Marshal(*o.Text)
+	}
+	if o.VariableLookup != nil {
+		return json.Marshal(*o.VariableLookup)
+	}
+	if o.EvaluatableExpression != nil {
+		return json.Marshal(*o.EvaluatableExpression)
+	}
+	panic("unreachable")
+}
+
+func (o *InlineValueTextOrVariableLookupOrEvaluatableExpression) UnmarshalJSON(data []byte) error {
+	*o = InlineValueTextOrVariableLookupOrEvaluatableExpression{}
+
+	var vText InlineValueText
+	if err := json.Unmarshal(data, &vText); err == nil {
+		o.Text = &vText
+		return nil
+	}
+	var vVariableLookup InlineValueVariableLookup
+	if err := json.Unmarshal(data, &vVariableLookup); err == nil {
+		o.VariableLookup = &vVariableLookup
+		return nil
+	}
+	var vEvaluatableExpression InlineValueEvaluatableExpression
+	if err := json.Unmarshal(data, &vEvaluatableExpression); err == nil {
+		o.EvaluatableExpression = &vEvaluatableExpression
+		return nil
+	}
+	return fmt.Errorf("invalid InlineValueTextOrVariableLookupOrEvaluatableExpression: %s", data)
 }
 
 // Literal types
