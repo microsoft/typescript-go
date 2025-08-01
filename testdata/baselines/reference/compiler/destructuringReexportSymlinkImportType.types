@@ -1,0 +1,27 @@
+//// [tests/cases/compiler/destructuringReexportSymlinkImportType.ts] ////
+
+=== /real-packages/package-b/index.d.ts ===
+export interface B {
+  value: string;
+>value : string
+}
+
+=== /project/src/types.ts ===
+import type { B } from "package-b";
+>B : B
+
+export type { B };
+>B : B
+
+=== /project/src/main.ts ===
+import type { B } from "./types";
+>B : B
+
+export function useB(param: B): B {
+>useB : (param: B) => B
+>param : B
+
+  return param;
+>param : B
+}
+
