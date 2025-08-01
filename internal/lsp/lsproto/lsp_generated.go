@@ -18563,15 +18563,6 @@ const (
 	SemanticTokenTypeslabel SemanticTokenTypes = "label"
 )
 
-func (e *SemanticTokenTypes) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = SemanticTokenTypes(v)
-	return nil
-}
-
 // A set of predefined token modifiers. This set is not fixed
 // an clients can specify additional token types via the
 // corresponding client capabilities.
@@ -18592,15 +18583,6 @@ const (
 	SemanticTokenModifiersdefaultLibrary SemanticTokenModifiers = "defaultLibrary"
 )
 
-func (e *SemanticTokenModifiers) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = SemanticTokenModifiers(v)
-	return nil
-}
-
 // The document diagnostic report kinds.
 //
 // Since: 3.17.0
@@ -18614,15 +18596,6 @@ const (
 	// returned report is still accurate.
 	DocumentDiagnosticReportKindUnchanged DocumentDiagnosticReportKind = "unchanged"
 )
-
-func (e *DocumentDiagnosticReportKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = DocumentDiagnosticReportKind(v)
-	return nil
-}
 
 // Predefined error codes.
 type ErrorCodes int32
@@ -18638,15 +18611,6 @@ const (
 	ErrorCodesServerNotInitialized ErrorCodes = -32002
 	ErrorCodesUnknownErrorCode     ErrorCodes = -32001
 )
-
-func (e *ErrorCodes) UnmarshalJSON(data []byte) error {
-	var v int32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = ErrorCodes(v)
-	return nil
-}
 
 type LSPErrorCodes int32
 
@@ -18678,15 +18642,6 @@ const (
 	LSPErrorCodesRequestCancelled LSPErrorCodes = -32800
 )
 
-func (e *LSPErrorCodes) UnmarshalJSON(data []byte) error {
-	var v int32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = LSPErrorCodes(v)
-	return nil
-}
-
 // A set of predefined range kinds.
 type FoldingRangeKind string
 
@@ -18698,15 +18653,6 @@ const (
 	// Folding range for a region (e.g. `#region`)
 	FoldingRangeKindRegion FoldingRangeKind = "region"
 )
-
-func (e *FoldingRangeKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = FoldingRangeKind(v)
-	return nil
-}
 
 // A symbol kind.
 type SymbolKind uint32
@@ -18740,15 +18686,6 @@ const (
 	SymbolKindTypeParameter SymbolKind = 26
 )
 
-func (e *SymbolKind) UnmarshalJSON(data []byte) error {
-	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = SymbolKind(v)
-	return nil
-}
-
 // Symbol tags are extra annotations that tweak the rendering of a symbol.
 //
 // Since: 3.16
@@ -18758,15 +18695,6 @@ const (
 	// Render a symbol as obsolete, usually using a strike-out.
 	SymbolTagDeprecated SymbolTag = 1
 )
-
-func (e *SymbolTag) UnmarshalJSON(data []byte) error {
-	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = SymbolTag(v)
-	return nil
-}
 
 // Moniker uniqueness level to define scope of the moniker.
 //
@@ -18786,15 +18714,6 @@ const (
 	UniquenessLevelglobal UniquenessLevel = "global"
 )
 
-func (e *UniquenessLevel) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = UniquenessLevel(v)
-	return nil
-}
-
 // The moniker kind.
 //
 // Since: 3.16.0
@@ -18810,15 +18729,6 @@ const (
 	MonikerKindlocal MonikerKind = "local"
 )
 
-func (e *MonikerKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = MonikerKind(v)
-	return nil
-}
-
 // Inlay hint kinds.
 //
 // Since: 3.17.0
@@ -18830,15 +18740,6 @@ const (
 	// An inlay hint that is for a parameter.
 	InlayHintKindParameter InlayHintKind = 2
 )
-
-func (e *InlayHintKind) UnmarshalJSON(data []byte) error {
-	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = InlayHintKind(v)
-	return nil
-}
 
 // The message type
 type MessageType uint32
@@ -18860,15 +18761,6 @@ const (
 	MessageTypeDebug MessageType = 5
 )
 
-func (e *MessageType) UnmarshalJSON(data []byte) error {
-	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = MessageType(v)
-	return nil
-}
-
 // Defines how the host (editor) should sync
 // document changes to the language server.
 type TextDocumentSyncKind uint32
@@ -18885,15 +18777,6 @@ const (
 	TextDocumentSyncKindIncremental TextDocumentSyncKind = 2
 )
 
-func (e *TextDocumentSyncKind) UnmarshalJSON(data []byte) error {
-	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = TextDocumentSyncKind(v)
-	return nil
-}
-
 // Represents reasons why a text document is saved.
 type TextDocumentSaveReason uint32
 
@@ -18906,15 +18789,6 @@ const (
 	// When the editor lost focus.
 	TextDocumentSaveReasonFocusOut TextDocumentSaveReason = 3
 )
-
-func (e *TextDocumentSaveReason) UnmarshalJSON(data []byte) error {
-	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = TextDocumentSaveReason(v)
-	return nil
-}
 
 // The kind of a completion entry.
 type CompletionItemKind uint32
@@ -18947,15 +18821,6 @@ const (
 	CompletionItemKindTypeParameter CompletionItemKind = 25
 )
 
-func (e *CompletionItemKind) UnmarshalJSON(data []byte) error {
-	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = CompletionItemKind(v)
-	return nil
-}
-
 // Completion item tags are extra annotations that tweak the rendering of a completion
 // item.
 //
@@ -18966,15 +18831,6 @@ const (
 	// Render a completion as obsolete, usually using a strike-out.
 	CompletionItemTagDeprecated CompletionItemTag = 1
 )
-
-func (e *CompletionItemTag) UnmarshalJSON(data []byte) error {
-	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = CompletionItemTag(v)
-	return nil
-}
 
 // Defines whether the insert text in a completion item should be interpreted as
 // plain text or a snippet.
@@ -18993,15 +18849,6 @@ const (
 	// See also: https://microsoft.github.io/language-server-protocol/specifications/specification-current/#snippet_syntax
 	InsertTextFormatSnippet InsertTextFormat = 2
 )
-
-func (e *InsertTextFormat) UnmarshalJSON(data []byte) error {
-	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = InsertTextFormat(v)
-	return nil
-}
 
 // How whitespace and indentation is handled during completion
 // item insertion.
@@ -19026,15 +18873,6 @@ const (
 	InsertTextModeadjustIndentation InsertTextMode = 2
 )
 
-func (e *InsertTextMode) UnmarshalJSON(data []byte) error {
-	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = InsertTextMode(v)
-	return nil
-}
-
 // A document highlight kind.
 type DocumentHighlightKind uint32
 
@@ -19046,15 +18884,6 @@ const (
 	// Write-access of a symbol, like writing to a variable.
 	DocumentHighlightKindWrite DocumentHighlightKind = 3
 )
-
-func (e *DocumentHighlightKind) UnmarshalJSON(data []byte) error {
-	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = DocumentHighlightKind(v)
-	return nil
-}
 
 // A set of predefined code action kinds
 type CodeActionKind string
@@ -19129,15 +18958,6 @@ const (
 	CodeActionKindNotebook CodeActionKind = "notebook"
 )
 
-func (e *CodeActionKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = CodeActionKind(v)
-	return nil
-}
-
 // Code action tags are extra annotations that tweak the behavior of a code action.
 //
 // Since: 3.18.0 - proposed
@@ -19147,15 +18967,6 @@ const (
 	// Marks the code action as LLM-generated.
 	CodeActionTagLLMGenerated CodeActionTag = 1
 )
-
-func (e *CodeActionTag) UnmarshalJSON(data []byte) error {
-	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = CodeActionTag(v)
-	return nil
-}
 
 type TraceValue string
 
@@ -19167,15 +18978,6 @@ const (
 	// Verbose message tracing.
 	TraceValueVerbose TraceValue = "verbose"
 )
-
-func (e *TraceValue) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = TraceValue(v)
-	return nil
-}
 
 // Describes the content type that a client supports in various
 // result literals like `Hover`, `ParameterInfo` or `CompletionItem`.
@@ -19190,15 +18992,6 @@ const (
 	// Markdown is supported as a content format
 	MarkupKindMarkdown MarkupKind = "markdown"
 )
-
-func (e *MarkupKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = MarkupKind(v)
-	return nil
-}
 
 // Predefined Language kinds
 //
@@ -19278,15 +19071,6 @@ const (
 	LanguageKindYAML            LanguageKind = "yaml"
 )
 
-func (e *LanguageKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = LanguageKind(v)
-	return nil
-}
-
 // Describes how an provider was triggered.
 //
 // Since: 3.18.0
@@ -19300,15 +19084,6 @@ const (
 	// Completion was triggered automatically while editing.
 	InlineCompletionTriggerKindAutomatic InlineCompletionTriggerKind = 2
 )
-
-func (e *InlineCompletionTriggerKind) UnmarshalJSON(data []byte) error {
-	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = InlineCompletionTriggerKind(v)
-	return nil
-}
 
 // A set of predefined position encoding kinds.
 //
@@ -19331,15 +19106,6 @@ const (
 	PositionEncodingKindUTF32 PositionEncodingKind = "utf-32"
 )
 
-func (e *PositionEncodingKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = PositionEncodingKind(v)
-	return nil
-}
-
 // The file event type
 type FileChangeType uint32
 
@@ -19352,15 +19118,6 @@ const (
 	FileChangeTypeDeleted FileChangeType = 3
 )
 
-func (e *FileChangeType) UnmarshalJSON(data []byte) error {
-	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = FileChangeType(v)
-	return nil
-}
-
 type WatchKind uint32
 
 const (
@@ -19371,15 +19128,6 @@ const (
 	// Interested in delete events
 	WatchKindDelete WatchKind = 4
 )
-
-func (e *WatchKind) UnmarshalJSON(data []byte) error {
-	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = WatchKind(v)
-	return nil
-}
 
 // The diagnostic's severity.
 type DiagnosticSeverity uint32
@@ -19394,15 +19142,6 @@ const (
 	// Reports a hint.
 	DiagnosticSeverityHint DiagnosticSeverity = 4
 )
-
-func (e *DiagnosticSeverity) UnmarshalJSON(data []byte) error {
-	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = DiagnosticSeverity(v)
-	return nil
-}
 
 // The diagnostic tags.
 //
@@ -19421,15 +19160,6 @@ const (
 	DiagnosticTagDeprecated DiagnosticTag = 2
 )
 
-func (e *DiagnosticTag) UnmarshalJSON(data []byte) error {
-	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = DiagnosticTag(v)
-	return nil
-}
-
 // How a completion was triggered
 type CompletionTriggerKind uint32
 
@@ -19443,15 +19173,6 @@ const (
 	// Completion was re-triggered as current completion list is incomplete
 	CompletionTriggerKindTriggerForIncompleteCompletions CompletionTriggerKind = 3
 )
-
-func (e *CompletionTriggerKind) UnmarshalJSON(data []byte) error {
-	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = CompletionTriggerKind(v)
-	return nil
-}
 
 // Defines how values from a set of defaults and an individual item will be
 // merged.
@@ -19470,15 +19191,6 @@ const (
 	ApplyKindMerge ApplyKind = 2
 )
 
-func (e *ApplyKind) UnmarshalJSON(data []byte) error {
-	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = ApplyKind(v)
-	return nil
-}
-
 // How a signature help was triggered.
 //
 // Since: 3.15.0
@@ -19492,15 +19204,6 @@ const (
 	// Signature help was triggered by the cursor moving or by the document content changing.
 	SignatureHelpTriggerKindContentChange SignatureHelpTriggerKind = 3
 )
-
-func (e *SignatureHelpTriggerKind) UnmarshalJSON(data []byte) error {
-	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = SignatureHelpTriggerKind(v)
-	return nil
-}
 
 // The reason why code actions were requested.
 //
@@ -19517,15 +19220,6 @@ const (
 	CodeActionTriggerKindAutomatic CodeActionTriggerKind = 2
 )
 
-func (e *CodeActionTriggerKind) UnmarshalJSON(data []byte) error {
-	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = CodeActionTriggerKind(v)
-	return nil
-}
-
 // A pattern kind describing if a glob pattern matches a file a folder or
 // both.
 //
@@ -19539,15 +19233,6 @@ const (
 	FileOperationPatternKindfolder FileOperationPatternKind = "folder"
 )
 
-func (e *FileOperationPatternKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = FileOperationPatternKind(v)
-	return nil
-}
-
 // A notebook cell kind.
 //
 // Since: 3.17.0
@@ -19560,15 +19245,6 @@ const (
 	NotebookCellKindCode NotebookCellKind = 2
 )
 
-func (e *NotebookCellKind) UnmarshalJSON(data []byte) error {
-	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = NotebookCellKind(v)
-	return nil
-}
-
 type ResourceOperationKind string
 
 const (
@@ -19579,15 +19255,6 @@ const (
 	// Supports deleting existing files and folders.
 	ResourceOperationKindDelete ResourceOperationKind = "delete"
 )
-
-func (e *ResourceOperationKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = ResourceOperationKind(v)
-	return nil
-}
 
 type FailureHandlingKind string
 
@@ -19607,15 +19274,6 @@ const (
 	FailureHandlingKindUndo FailureHandlingKind = "undo"
 )
 
-func (e *FailureHandlingKind) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = FailureHandlingKind(v)
-	return nil
-}
-
 type PrepareSupportDefaultBehavior uint32
 
 const (
@@ -19624,29 +19282,11 @@ const (
 	PrepareSupportDefaultBehaviorIdentifier PrepareSupportDefaultBehavior = 1
 )
 
-func (e *PrepareSupportDefaultBehavior) UnmarshalJSON(data []byte) error {
-	var v uint32
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = PrepareSupportDefaultBehavior(v)
-	return nil
-}
-
 type TokenFormat string
 
 const (
 	TokenFormatRelative TokenFormat = "relative"
 )
-
-func (e *TokenFormat) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	*e = TokenFormat(v)
-	return nil
-}
 
 func unmarshalParams(method Method, data []byte) (any, error) {
 	switch method {

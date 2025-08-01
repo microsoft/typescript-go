@@ -631,17 +631,6 @@ function generateCode() {
 
         writeLine(")");
         writeLine("");
-
-        // Add custom JSON unmarshaling
-        writeLine(`func (e *${enumeration.name}) UnmarshalJSON(data []byte) error {`);
-        writeLine(`\tvar v ${baseType}`);
-        writeLine(`\tif err := json.Unmarshal(data, &v); err != nil {`);
-        writeLine(`\t\treturn err`);
-        writeLine(`\t}`);
-        writeLine(`\t*e = ${enumeration.name}(v)`);
-        writeLine(`\treturn nil`);
-        writeLine(`}`);
-        writeLine("");
     }
 
     const requestsAndNotifications: (Request | Notification)[] = [...model.requests, ...model.notifications];
