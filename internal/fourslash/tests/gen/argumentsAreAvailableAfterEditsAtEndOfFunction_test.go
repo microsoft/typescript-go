@@ -5,39 +5,37 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestJsDocTagsWithHyphen(t *testing.T) {
+func TestArgumentsAreAvailableAfterEditsAtEndOfFunction(t *testing.T) {
 	t.Parallel()
 	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @allowJs: true
-// @Filename: dummy.js
-/**
- * @typedef Product
- * @property {string} title
- * @property {boolean} h/*1*/igh-top some-comments
- */
-
-/**
- * @type {Pro/*2*/duct}
- */
-const product = {
-    /*3*/
+	const content = `module Test1 {
+	class Person {
+		children: string[];
+		constructor(public name: string, children: string[]) {
+			/**/
+		}
+	}
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyQuickInfoAt(t, "1", "(property) high-top: boolean", "some-comments")
-	f.VerifyQuickInfoAt(t, "2", "type Product = {\n    title: string;\n    \"high-top\": boolean;\n}", "")
-	f.VerifyCompletions(t, []string{"3"}, &fourslash.CompletionsExpectedList{
+	f.GoToMarker(t, "")
+	f.Insert(t, "this.children = ch")
+	f.VerifyCompletions(t, nil, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &DefaultCommitCharacters,
+			CommitCharacters: &[]string{},
 			EditRange:        Ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
-				"\"high-top\"",
+				&lsproto.CompletionItem{
+					Label:  "children",
+					Detail: PtrTo("(parameter) children: string[]"),
+				},
 			},
 		},
 	})

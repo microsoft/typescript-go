@@ -5,31 +5,18 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestJsDocTagsWithHyphen(t *testing.T) {
+func TestCompletionsTuple(t *testing.T) {
 	t.Parallel()
 	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @allowJs: true
-// @Filename: dummy.js
-/**
- * @typedef Product
- * @property {string} title
- * @property {boolean} h/*1*/igh-top some-comments
- */
-
-/**
- * @type {Pro/*2*/duct}
- */
-const product = {
-    /*3*/
-}`
+	const content = `declare const x: [number, number];
+x[|./**/|];`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyQuickInfoAt(t, "1", "(property) high-top: boolean", "some-comments")
-	f.VerifyQuickInfoAt(t, "2", "type Product = {\n    title: string;\n    \"high-top\": boolean;\n}", "")
-	f.VerifyCompletions(t, []string{"3"}, &fourslash.CompletionsExpectedList{
+	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &DefaultCommitCharacters,
@@ -37,7 +24,18 @@ const product = {
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
-				"\"high-top\"",
+				&lsproto.CompletionItem{
+					Label:      "0",
+					InsertText: PtrTo("[0]"),
+				},
+				&lsproto.CompletionItem{
+					Label:      "1",
+					InsertText: PtrTo("[1]"),
+				},
+				"length",
+			},
+			Excludes: []string{
+				"2",
 			},
 		},
 	})
