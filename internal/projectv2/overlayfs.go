@@ -301,10 +301,10 @@ func (fs *overlayFS) processChanges(changes []FileChange) FileChangeSummary {
 					return o.LineMap()
 				})
 				for _, textChange := range change.Changes {
-					if partialChange := textChange.TextDocumentContentChangePartial; partialChange != nil {
+					if partialChange := textChange.Partial; partialChange != nil {
 						newContent := converters.FromLSPTextChange(o, partialChange).ApplyTo(o.content)
 						o = newOverlay(o.fileName, newContent, change.Version, o.kind)
-					} else if wholeChange := textChange.TextDocumentContentChangeWholeDocument; wholeChange != nil {
+					} else if wholeChange := textChange.WholeDocument; wholeChange != nil {
 						o = newOverlay(o.fileName, wholeChange.Text, change.Version, o.kind)
 					}
 				}

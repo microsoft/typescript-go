@@ -65,7 +65,6 @@ type Project struct {
 	host              *compilerHost
 	CommandLine       *tsoptions.ParsedCommandLine
 	Program           *compiler.Program
-	LanguageService   *ls.LanguageService
 	ProgramUpdateKind ProgramUpdateKind
 
 	failedLookupsWatch      *WatchedFiles[map[tspath.Path]string]
@@ -166,16 +165,6 @@ func (p *Project) Name() string {
 	return p.configFileName
 }
 
-// GetLineMap implements ls.Host.
-func (p *Project) GetLineMap(fileName string) *ls.LineMap {
-	return p.host.GetLineMap(fileName)
-}
-
-// GetPositionEncoding implements ls.Host.
-func (p *Project) GetPositionEncoding() lsproto.PositionEncodingKind {
-	return p.host.sessionOptions.PositionEncoding
-}
-
 // GetProgram implements ls.Host.
 func (p *Project) GetProgram() *compiler.Program {
 	return p.Program
@@ -202,7 +191,6 @@ func (p *Project) Clone() *Project {
 		host:              p.host,
 		CommandLine:       p.CommandLine,
 		Program:           p.Program,
-		LanguageService:   p.LanguageService,
 		ProgramUpdateKind: ProgramUpdateKindNone,
 
 		failedLookupsWatch:      p.failedLookupsWatch,

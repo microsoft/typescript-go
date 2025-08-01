@@ -124,9 +124,9 @@ func TestSession(t *testing.T) {
 			assert.NilError(t, err)
 			programBefore := lsBefore.GetProgram()
 
-			session.DidChangeFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 2, []lsproto.TextDocumentContentChangeEvent{
-				lsproto.TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument{
-					TextDocumentContentChangePartial: ptrTo(lsproto.TextDocumentContentChangePartial{
+			session.DidChangeFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+				{
+					Partial: ptrTo(lsproto.TextDocumentContentChangePartial{
 						Range: lsproto.Range{
 							Start: lsproto.Position{
 								Line:      0,
@@ -162,9 +162,9 @@ func TestSession(t *testing.T) {
 			programBefore := lsBefore.GetProgram()
 			indexFileBefore := programBefore.GetSourceFile("/home/projects/TS/p1/src/index.ts")
 
-			session.DidChangeFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 2, []lsproto.TextDocumentContentChangeEvent{
-				lsproto.TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument{
-					TextDocumentContentChangePartial: ptrTo(lsproto.TextDocumentContentChangePartial{
+			session.DidChangeFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+				{
+					Partial: ptrTo(lsproto.TextDocumentContentChangePartial{
 						Range: lsproto.Range{
 							Start: lsproto.Position{
 								Line:      0,
@@ -202,9 +202,9 @@ func TestSession(t *testing.T) {
 			programBefore := lsBefore.GetProgram()
 			assert.Check(t, programBefore.GetSourceFile("/home/projects/TS/p1/y.ts") == nil)
 
-			session.DidChangeFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 2, []lsproto.TextDocumentContentChangeEvent{
-				lsproto.TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument{
-					TextDocumentContentChangePartial: ptrTo(lsproto.TextDocumentContentChangePartial{
+			session.DidChangeFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+				{
+					Partial: ptrTo(lsproto.TextDocumentContentChangePartial{
 						Range: lsproto.Range{
 							Start: lsproto.Position{
 								Line:      0,
@@ -248,9 +248,9 @@ func TestSession(t *testing.T) {
 			programBefore := lsBefore.GetProgram()
 			assert.Equal(t, len(programBefore.GetSourceFiles()), 2)
 
-			session.DidChangeFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 2, []lsproto.TextDocumentContentChangeEvent{
-				lsproto.TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument{
-					TextDocumentContentChangePartial: ptrTo(lsproto.TextDocumentContentChangePartial{
+			session.DidChangeFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
+				{
+					Partial: ptrTo(lsproto.TextDocumentContentChangePartial{
 						Range: lsproto.Range{
 							Start: lsproto.Position{
 								Line:      0,

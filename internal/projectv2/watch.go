@@ -50,7 +50,7 @@ func (w *WatchedFiles[T]) Watchers() (WatcherID, []*lsproto.FileSystemWatcher) {
 	w.computeWatchersOnce.Do(func() {
 		newWatchers := core.Map(w.computeGlobPatterns(w.input), func(glob string) *lsproto.FileSystemWatcher {
 			return &lsproto.FileSystemWatcher{
-				GlobPattern: lsproto.GlobPattern{
+				GlobPattern: lsproto.PatternOrRelativePattern{
 					Pattern: &glob,
 				},
 				Kind: &w.watchKind,

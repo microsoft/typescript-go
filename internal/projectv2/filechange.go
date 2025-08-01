@@ -22,11 +22,11 @@ const (
 type FileChange struct {
 	Kind         FileChangeKind
 	URI          lsproto.DocumentUri
-	Hash         [sha256.Size]byte                        // Only set for Close
-	Version      int32                                    // Only set for Open/Change
-	Content      string                                   // Only set for Open
-	LanguageKind lsproto.LanguageKind                     // Only set for Open
-	Changes      []lsproto.TextDocumentContentChangeEvent // Only set for Change
+	Hash         [sha256.Size]byte                                         // Only set for Close
+	Version      int32                                                     // Only set for Open/Change
+	Content      string                                                    // Only set for Open
+	LanguageKind lsproto.LanguageKind                                      // Only set for Open
+	Changes      []lsproto.TextDocumentContentChangePartialOrWholeDocument // Only set for Change
 }
 
 type FileChangeSummary struct {

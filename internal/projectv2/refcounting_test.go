@@ -56,9 +56,9 @@ func TestRefCountingCaches(t *testing.T) {
 			assert.Equal(t, mainEntry.refCount, 1)
 			assert.Equal(t, utilsEntry.refCount, 1)
 
-			session.DidChangeFile(context.Background(), "file:///user/username/projects/myproject/src/main.ts", 2, []lsproto.TextDocumentContentChangeEvent{
+			session.DidChangeFile(context.Background(), "file:///user/username/projects/myproject/src/main.ts", 2, []lsproto.TextDocumentContentChangePartialOrWholeDocument{
 				{
-					TextDocumentContentChangePartial: &lsproto.TextDocumentContentChangePartial{
+					Partial: &lsproto.TextDocumentContentChangePartial{
 						Range: lsproto.Range{
 							Start: lsproto.Position{Line: 0, Character: 0},
 							End:   lsproto.Position{Line: 0, Character: 12},

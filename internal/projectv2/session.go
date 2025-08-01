@@ -88,7 +88,10 @@ func NewSession(init *SessionInit) *Session {
 		programCounter:      &programCounter{},
 		backgroundTasks:     newBackgroundQueue(),
 		snapshot: NewSnapshot(
-			make(map[tspath.Path]*diskFile),
+			&snapshotFS{
+				toPath: toPath,
+				fs:     init.FS,
+			},
 			init.Options,
 			parseCache,
 			extendedConfigCache,
@@ -149,7 +152,7 @@ func (s *Session) DidCloseFile(ctx context.Context, uri lsproto.DocumentUri) {
 	})
 }
 
-func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, version int32, changes []lsproto.TextDocumentContentChangeEvent) {
+func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, version int32, changes []lsproto.TextDocumentContentChangePartialOrWholeDocument) {
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
 	s.pendingFileChanges = append(s.pendingFileChanges, FileChange{
@@ -195,6 +198,13 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 
 	// Schedule a debounced snapshot update
 	s.ScheduleSnapshotUpdate()
+}
+
+func (s *Session) DidChangeCompilerOptionsForInferredProjects(ctx context.Context, options *core.CompilerOptions) {
+	s.compilerOptionsForInferredProjects = options
+	s.UpdateSnapshot(ctx, SnapshotChange{
+		compilerOptionsForInferredProjects: options,
+	})
 }
 
 // ScheduleSnapshotUpdate schedules a debounced snapshot update.
@@ -296,10 +306,7 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 	if project == nil {
 		return nil, fmt.Errorf("no project found for URI %s", uri)
 	}
-	if project.LanguageService == nil {
-		panic("project language service is nil")
-	}
-	return project.LanguageService, nil
+	return ls.NewLanguageService(project, snapshot.Converters()), nil
 }
 
 func (s *Session) UpdateSnapshot(ctx context.Context, change SnapshotChange) *Snapshot {

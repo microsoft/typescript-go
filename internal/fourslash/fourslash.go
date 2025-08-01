@@ -202,7 +202,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	// !!! replace with a proper request *after initialize*
-	f.server.SetCompilerOptionsForInferredProjects(compilerOptions)
+	f.server.SetCompilerOptionsForInferredProjects(t.Context(), compilerOptions)
 	f.initialize(t, capabilities)
 	for _, file := range testData.Files {
 		f.openFile(t, file.fileName)

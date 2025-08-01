@@ -54,6 +54,10 @@ func fixWindowsURIPath(path string) string {
 	return path
 }
 
+type HasTextDocumentURI interface {
+	TextDocumentURI() DocumentUri
+}
+
 type URI string // !!!
 
 type Method string

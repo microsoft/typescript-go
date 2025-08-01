@@ -25,9 +25,10 @@ type Snapshot struct {
 	// so can be a pointer.
 	sessionOptions *SessionOptions
 	toPath         func(fileName string) tspath.Path
+	converters     *ls.Converters
 
 	// Immutable state, cloned between snapshots
-	diskFiles                          map[tspath.Path]*diskFile
+	fs                                 *snapshotFS
 	ProjectCollection                  *ProjectCollection
 	ConfigFileRegistry                 *ConfigFileRegistry
 	compilerOptionsForInferredProjects *core.CompilerOptions
@@ -36,7 +37,7 @@ type Snapshot struct {
 
 // NewSnapshot
 func NewSnapshot(
-	diskFiles map[tspath.Path]*diskFile,
+	fs *snapshotFS,
 	sessionOptions *SessionOptions,
 	parseCache *parseCache,
 	extendedConfigCache *extendedConfigCache,
@@ -51,12 +52,12 @@ func NewSnapshot(
 		sessionOptions: sessionOptions,
 		toPath:         toPath,
 
-		diskFiles:                          diskFiles,
+		fs:                                 fs,
 		ConfigFileRegistry:                 configFileRegistry,
 		ProjectCollection:                  &ProjectCollection{toPath: toPath},
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
 	}
-
+	s.converters = ls.NewConverters(s.sessionOptions.PositionEncoding, s.LineMap)
 	s.refCount.Store(1)
 	return s
 }
@@ -65,6 +66,17 @@ func (s *Snapshot) GetDefaultProject(uri lsproto.DocumentUri) *Project {
 	fileName := ls.DocumentURIToFileName(uri)
 	path := s.toPath(fileName)
 	return s.ProjectCollection.GetDefaultProject(fileName, path)
+}
+
+func (s *Snapshot) LineMap(fileName string) *ls.LineMap {
+	if file := s.fs.GetFile(fileName); file != nil {
+		return file.LineMap()
+	}
+	return nil
+}
+
+func (s *Snapshot) Converters() *ls.Converters {
+	return s.converters
 }
 
 func (s *Snapshot) ID() uint64 {
@@ -102,7 +114,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, session *Se
 	}
 
 	start := time.Now()
-	fs := newSnapshotFSBuilder(session.fs.fs, session.fs.overlays, s.diskFiles, session.options.PositionEncoding, s.toPath)
+	fs := newSnapshotFSBuilder(session.fs.fs, session.fs.overlays, s.fs.diskFiles, session.options.PositionEncoding, s.toPath)
 	fs.markDirtyFiles(change.fileChanges)
 
 	compilerOptionsForInferredProjects := s.compilerOptionsForInferredProjects
@@ -138,7 +150,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, session *Se
 	snapshotFS, _ := fs.Finalize()
 
 	newSnapshot := NewSnapshot(
-		snapshotFS.diskFiles,
+		snapshotFS,
 		s.sessionOptions,
 		session.parseCache,
 		session.extendedConfigCache,

@@ -11,14 +11,13 @@ type LanguageService struct {
 	converters *Converters
 }
 
-func NewLanguageService(host Host) *LanguageService {
+func NewLanguageService(host Host, converters *Converters) *LanguageService {
 	return &LanguageService{
 		host:       host,
-		converters: NewConverters(host.GetPositionEncoding(), host.GetLineMap),
+		converters: converters,
 	}
 }
 
-// GetProgram updates the program if the project version has changed.
 func (l *LanguageService) GetProgram() *compiler.Program {
 	return l.host.GetProgram()
 }

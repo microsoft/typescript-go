@@ -27,6 +27,10 @@ type ImplementationParams struct {
 	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 }
 
+func (s *ImplementationParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
+}
+
 func (s *ImplementationParams) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
@@ -143,6 +147,10 @@ type TypeDefinitionParams struct {
 	// An optional token that a server can use to report partial results (e.g. streaming) to
 	// the client.
 	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
+}
+
+func (s *TypeDefinitionParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *TypeDefinitionParams) UnmarshalJSON(data []byte) error {
@@ -320,6 +328,10 @@ type DocumentColorParams struct {
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
+func (s *DocumentColorParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
+}
+
 func (s *DocumentColorParams) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
@@ -436,6 +448,10 @@ type ColorPresentationParams struct {
 
 	// The range where the color would be inserted. Serves as a context.
 	Range Range `json:"range"`
+}
+
+func (s *ColorPresentationParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *ColorPresentationParams) UnmarshalJSON(data []byte) error {
@@ -559,6 +575,10 @@ type FoldingRangeParams struct {
 
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
+}
+
+func (s *FoldingRangeParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *FoldingRangeParams) UnmarshalJSON(data []byte) error {
@@ -700,6 +720,10 @@ type DeclarationParams struct {
 	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 }
 
+func (s *DeclarationParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
+}
+
 func (s *DeclarationParams) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
@@ -781,6 +805,10 @@ type SelectionRangeParams struct {
 
 	// The positions inside the text document.
 	Positions []Position `json:"positions"`
+}
+
+func (s *SelectionRangeParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *SelectionRangeParams) UnmarshalJSON(data []byte) error {
@@ -952,6 +980,10 @@ type CallHierarchyPrepareParams struct {
 
 	// An optional token that a server can use to report work done progress.
 	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+}
+
+func (s *CallHierarchyPrepareParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *CallHierarchyPrepareParams) UnmarshalJSON(data []byte) error {
@@ -1273,6 +1305,10 @@ type SemanticTokensParams struct {
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
+func (s *SemanticTokensParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
+}
+
 func (s *SemanticTokensParams) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
@@ -1434,6 +1470,10 @@ type SemanticTokensDeltaParams struct {
 	PreviousResultId string `json:"previousResultId"`
 }
 
+func (s *SemanticTokensDeltaParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
+}
+
 func (s *SemanticTokensDeltaParams) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
@@ -1538,6 +1578,10 @@ type SemanticTokensRangeParams struct {
 
 	// The range the semantic tokens are requested for.
 	Range Range `json:"range"`
+}
+
+func (s *SemanticTokensRangeParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *SemanticTokensRangeParams) UnmarshalJSON(data []byte) error {
@@ -1661,6 +1705,10 @@ type LinkedEditingRangeParams struct {
 
 	// An optional token that a server can use to report work done progress.
 	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+}
+
+func (s *LinkedEditingRangeParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *LinkedEditingRangeParams) UnmarshalJSON(data []byte) error {
@@ -1947,6 +1995,10 @@ type MonikerParams struct {
 	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 }
 
+func (s *MonikerParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
+}
+
 func (s *MonikerParams) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
@@ -2073,6 +2125,10 @@ type TypeHierarchyPrepareParams struct {
 
 	// An optional token that a server can use to report work done progress.
 	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+}
+
+func (s *TypeHierarchyPrepareParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *TypeHierarchyPrepareParams) UnmarshalJSON(data []byte) error {
@@ -2319,6 +2375,10 @@ type InlineValueParams struct {
 	Context *InlineValueContext `json:"context"`
 }
 
+func (s *InlineValueParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
+}
+
 func (s *InlineValueParams) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
@@ -2405,6 +2465,10 @@ type InlayHintParams struct {
 
 	// The document range for which inlay hints should be computed.
 	Range Range `json:"range"`
+}
+
+func (s *InlayHintParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *InlayHintParams) UnmarshalJSON(data []byte) error {
@@ -2583,6 +2647,10 @@ type DocumentDiagnosticParams struct {
 
 	// The result id of a previous response if provided.
 	PreviousResultId *string `json:"previousResultId,omitzero"`
+}
+
+func (s *DocumentDiagnosticParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *DocumentDiagnosticParams) UnmarshalJSON(data []byte) error {
@@ -3065,6 +3133,10 @@ type InlineCompletionParams struct {
 	// Additional information about the context in which inline completions were
 	// requested.
 	Context *InlineCompletionContext `json:"context"`
+}
+
+func (s *InlineCompletionParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *InlineCompletionParams) UnmarshalJSON(data []byte) error {
@@ -3880,6 +3952,10 @@ type DidCloseTextDocumentParams struct {
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
+func (s *DidCloseTextDocumentParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
+}
+
 func (s *DidCloseTextDocumentParams) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
@@ -3911,6 +3987,10 @@ type DidSaveTextDocumentParams struct {
 	// Optional the content when saved. Depends on the includeText value
 	// when the save notification was requested.
 	Text *string `json:"text,omitzero"`
+}
+
+func (s *DidSaveTextDocumentParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *DidSaveTextDocumentParams) UnmarshalJSON(data []byte) error {
@@ -3978,6 +4058,10 @@ type WillSaveTextDocumentParams struct {
 
 	// The 'TextDocumentSaveReason'.
 	Reason TextDocumentSaveReason `json:"reason"`
+}
+
+func (s *WillSaveTextDocumentParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *WillSaveTextDocumentParams) UnmarshalJSON(data []byte) error {
@@ -4166,6 +4250,10 @@ type CompletionParams struct {
 	// The completion context. This is only available it the client specifies
 	// to send this using the client capability `textDocument.completion.contextSupport === true`
 	Context *CompletionContext `json:"context,omitzero"`
+}
+
+func (s *CompletionParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *CompletionParams) UnmarshalJSON(data []byte) error {
@@ -4539,6 +4627,10 @@ type HoverParams struct {
 	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
 }
 
+func (s *HoverParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
+}
+
 func (s *HoverParams) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
@@ -4651,6 +4743,10 @@ type SignatureHelpParams struct {
 	//
 	// Since: 3.15.0
 	Context *SignatureHelpContext `json:"context,omitzero"`
+}
+
+func (s *SignatureHelpParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *SignatureHelpParams) UnmarshalJSON(data []byte) error {
@@ -4807,6 +4903,10 @@ type DefinitionParams struct {
 	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 }
 
+func (s *DefinitionParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
+}
+
 func (s *DefinitionParams) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
@@ -4886,6 +4986,10 @@ type ReferenceParams struct {
 	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 
 	Context *ReferenceContext `json:"context"`
+}
+
+func (s *ReferenceParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *ReferenceParams) UnmarshalJSON(data []byte) error {
@@ -4970,6 +5074,10 @@ type DocumentHighlightParams struct {
 	// An optional token that a server can use to report partial results (e.g. streaming) to
 	// the client.
 	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
+}
+
+func (s *DocumentHighlightParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *DocumentHighlightParams) UnmarshalJSON(data []byte) error {
@@ -5081,6 +5189,10 @@ type DocumentSymbolParams struct {
 
 	// The text document.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
+}
+
+func (s *DocumentSymbolParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *DocumentSymbolParams) UnmarshalJSON(data []byte) error {
@@ -5318,6 +5430,10 @@ type CodeActionParams struct {
 
 	// Context carrying additional information.
 	Context *CodeActionContext `json:"context"`
+}
+
+func (s *CodeActionParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *CodeActionParams) UnmarshalJSON(data []byte) error {
@@ -5707,6 +5823,10 @@ type CodeLensParams struct {
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
+func (s *CodeLensParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
+}
+
 func (s *CodeLensParams) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
@@ -5822,6 +5942,10 @@ type DocumentLinkParams struct {
 
 	// The document to provide document links for.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
+}
+
+func (s *DocumentLinkParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *DocumentLinkParams) UnmarshalJSON(data []byte) error {
@@ -5947,6 +6071,10 @@ type DocumentFormattingParams struct {
 	Options *FormattingOptions `json:"options"`
 }
 
+func (s *DocumentFormattingParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
+}
+
 func (s *DocumentFormattingParams) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
@@ -6022,6 +6150,10 @@ type DocumentRangeFormattingParams struct {
 
 	// The format options
 	Options *FormattingOptions `json:"options"`
+}
+
+func (s *DocumentRangeFormattingParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *DocumentRangeFormattingParams) UnmarshalJSON(data []byte) error {
@@ -6118,6 +6250,10 @@ type DocumentRangesFormattingParams struct {
 	Options *FormattingOptions `json:"options"`
 }
 
+func (s *DocumentRangesFormattingParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
+}
+
 func (s *DocumentRangesFormattingParams) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
@@ -6170,6 +6306,10 @@ type DocumentOnTypeFormattingParams struct {
 
 	// The formatting options.
 	Options *FormattingOptions `json:"options"`
+}
+
+func (s *DocumentOnTypeFormattingParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *DocumentOnTypeFormattingParams) UnmarshalJSON(data []byte) error {
@@ -6269,6 +6409,10 @@ type RenameParams struct {
 	NewName string `json:"newName"`
 }
 
+func (s *RenameParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
+}
+
 func (s *RenameParams) UnmarshalJSON(data []byte) error {
 	// Check required props
 	type requiredProps struct {
@@ -6351,6 +6495,10 @@ type PrepareRenameParams struct {
 
 	// An optional token that a server can use to report work done progress.
 	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+}
+
+func (s *PrepareRenameParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *PrepareRenameParams) UnmarshalJSON(data []byte) error {
@@ -6810,6 +6958,10 @@ type TextDocumentPositionParams struct {
 
 	// The position inside the text document.
 	Position Position `json:"position"`
+}
+
+func (s *TextDocumentPositionParams) TextDocumentURI() DocumentUri {
+	return s.TextDocument.Uri
 }
 
 func (s *TextDocumentPositionParams) UnmarshalJSON(data []byte) error {

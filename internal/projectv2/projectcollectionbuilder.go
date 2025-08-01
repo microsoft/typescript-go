@@ -9,7 +9,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/projectv2/dirty"
 	"github.com/microsoft/typescript-go/internal/projectv2/logging"
@@ -696,8 +695,6 @@ func (b *projectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 						project.affectingLocationsWatch = affectingLocationsWatch
 					}
 				}
-				// !!! unthread context
-				project.LanguageService = ls.NewLanguageService(b.ctx, project)
 				project.dirty = false
 				project.dirtyFilePath = ""
 			})
