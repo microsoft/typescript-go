@@ -3,9 +3,9 @@ package projectv2
 import (
 	"crypto/sha256"
 
-	"github.com/microsoft/typescript-go/internal/dirty"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/projectv2/dirty"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
