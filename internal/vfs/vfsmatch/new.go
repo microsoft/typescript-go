@@ -16,6 +16,53 @@ const (
 	minJsExtension = ".min.js"
 )
 
+// parsePathSegments splits a path into segments and removes empty segments
+func parsePathSegments(path string) []string {
+	if path == "" {
+		return []string{}
+	}
+
+	segments := strings.Split(path, "/")
+	// Remove empty segments
+	filteredSegments := segments[:0]
+	for _, seg := range segments {
+		if seg != "" {
+			filteredSegments = append(filteredSegments, seg)
+		}
+	}
+	return filteredSegments
+}
+
+// convertToRelativePath converts an absolute path to a relative path from the given base path
+func convertToRelativePath(absolutePath, basePath string) string {
+	if basePath == "" || !strings.HasPrefix(absolutePath, basePath) {
+		return absolutePath
+	}
+
+	relativePath := absolutePath[len(basePath):]
+	if strings.HasPrefix(relativePath, "/") {
+		relativePath = relativePath[1:]
+	}
+	return relativePath
+}
+
+// buildPath efficiently builds a path by combining base and current components
+func buildPath(base, current string) string {
+	var builder strings.Builder
+	builder.Grow(len(base) + len(current) + 2)
+
+	if base == "" {
+		builder.WriteString(current)
+	} else {
+		builder.WriteString(base)
+		if base[len(base)-1] != '/' {
+			builder.WriteByte('/')
+		}
+		builder.WriteString(current)
+	}
+	return builder.String()
+}
+
 // applyImplicitGlob applies implicit glob expansion to segments if needed
 // If the last component has no extension and no wildcards, adds **/*
 func applyImplicitGlob(segments []string) []string {
@@ -231,24 +278,22 @@ func (gm globMatcher) matchSegments(patternSegments []string, pathSegments []str
 	return ti == tlen
 }
 
+// normalizeForCaseSensitivity converts pattern and segment to lowercase if case-insensitive matching is enabled
+func (gm globMatcher) normalizeForCaseSensitivity(pattern, segment string) (string, string) {
+	if !gm.useCaseSensitiveFileNames {
+		return strings.ToLower(pattern), strings.ToLower(segment)
+	}
+	return pattern, segment
+}
+
 // matchSegment matches a single glob pattern segment against a path segment
 func (gm globMatcher) matchSegment(pattern, segment string) bool {
-	// Handle case sensitivity
-	if !gm.useCaseSensitiveFileNames {
-		pattern = strings.ToLower(pattern)
-		segment = strings.ToLower(segment)
-	}
-
+	pattern, segment = gm.normalizeForCaseSensitivity(pattern, segment)
 	return gm.matchGlobPattern(pattern, segment, false)
 }
 
 func (gm globMatcher) matchSegmentForFile(pattern, segment string) bool {
-	// Handle case sensitivity
-	if !gm.useCaseSensitiveFileNames {
-		pattern = strings.ToLower(pattern)
-		segment = strings.ToLower(segment)
-	}
-
+	pattern, segment = gm.normalizeForCaseSensitivity(pattern, segment)
 	return gm.matchGlobPattern(pattern, segment, true)
 }
 
@@ -320,42 +365,15 @@ func (v *newRelativeGlobVisitor) visitDirectory(path string, absolutePath string
 	}
 
 	for _, current := range files {
-		var nameBuilder, absBuilder strings.Builder
-		nameBuilder.Grow(len(path) + len(current) + 2)
-		absBuilder.Grow(len(absolutePath) + len(current) + 2)
-		if path == "" {
-			nameBuilder.WriteString(current)
-		} else {
-			nameBuilder.WriteString(path)
-			if path[len(path)-1] != '/' {
-				nameBuilder.WriteByte('/')
-			}
-			nameBuilder.WriteString(current)
-		}
-		if absolutePath == "" {
-			absBuilder.WriteString(current)
-		} else {
-			absBuilder.WriteString(absolutePath)
-			if absolutePath[len(absolutePath)-1] != '/' {
-				absBuilder.WriteByte('/')
-			}
-			absBuilder.WriteString(current)
-		}
-		name := nameBuilder.String()
-		absoluteName := absBuilder.String()
+		name := buildPath(path, current)
+		absoluteName := buildPath(absolutePath, current)
 
 		if len(v.extensions) > 0 && !tspath.FileExtensionIsOneOf(name, v.extensions) {
 			continue
 		}
 
 		// Convert to relative path for matching
-		relativePath := absoluteName
-		if strings.HasPrefix(absoluteName, v.basePath) {
-			relativePath = absoluteName[len(v.basePath):]
-			if strings.HasPrefix(relativePath, "/") {
-				relativePath = relativePath[1:]
-			}
-		}
+		relativePath := convertToRelativePath(absoluteName, v.basePath)
 
 		// Apply implicit exclusions (dotted files and common package folders)
 		if shouldImplicitlyExcludeRelativePath(relativePath) || isImplicitlyExcluded(current, false) {
@@ -399,38 +417,11 @@ func (v *newRelativeGlobVisitor) visitDirectory(path string, absolutePath string
 	}
 
 	for _, current := range directories {
-		var nameBuilder, absBuilder strings.Builder
-		nameBuilder.Grow(len(path) + len(current) + 2)
-		absBuilder.Grow(len(absolutePath) + len(current) + 2)
-		if path == "" {
-			nameBuilder.WriteString(current)
-		} else {
-			nameBuilder.WriteString(path)
-			if path[len(path)-1] != '/' {
-				nameBuilder.WriteByte('/')
-			}
-			nameBuilder.WriteString(current)
-		}
-		if absolutePath == "" {
-			absBuilder.WriteString(current)
-		} else {
-			absBuilder.WriteString(absolutePath)
-			if absolutePath[len(absolutePath)-1] != '/' {
-				absBuilder.WriteByte('/')
-			}
-			absBuilder.WriteString(current)
-		}
-		name := nameBuilder.String()
-		absoluteName := absBuilder.String()
+		name := buildPath(path, current)
+		absoluteName := buildPath(absolutePath, current)
 
 		// Convert to relative path for matching
-		relativePath := absoluteName
-		if strings.HasPrefix(absoluteName, v.basePath) {
-			relativePath = absoluteName[len(v.basePath):]
-			if strings.HasPrefix(relativePath, "/") {
-				relativePath = relativePath[1:]
-			}
-		}
+		relativePath := convertToRelativePath(absoluteName, v.basePath)
 
 		// Apply implicit exclusions (dotted directories and common package folders)
 		if shouldImplicitlyExcludeRelativePath(relativePath) || isImplicitlyExcluded(current, true) {
@@ -470,14 +461,7 @@ func matchesExcludeNew(fileName string, excludeSpecs []string, currentDirectory 
 		return false
 	}
 
-	// Convert fileName to relative path from currentDirectory for matching
-	relativePath := fileName
-	if strings.HasPrefix(fileName, currentDirectory) {
-		relativePath = fileName[len(currentDirectory):]
-		if strings.HasPrefix(relativePath, "/") {
-			relativePath = relativePath[1:]
-		}
-	}
+	relativePath := convertToRelativePath(fileName, currentDirectory)
 
 	for _, excludeSpec := range excludeSpecs {
 		// Special case: empty pattern matches everything (consistent with TypeScript behavior)
@@ -509,14 +493,7 @@ func matchesIncludeNew(fileName string, includeSpecs []string, basePath string, 
 		return false
 	}
 
-	// Convert fileName to relative path from basePath for matching
-	relativePath := fileName
-	if strings.HasPrefix(fileName, basePath) {
-		relativePath = fileName[len(basePath):]
-		if strings.HasPrefix(relativePath, "/") {
-			relativePath = relativePath[1:]
-		}
-	}
+	relativePath := convertToRelativePath(fileName, basePath)
 
 	for _, includeSpec := range includeSpecs {
 		// Special case: empty pattern matches everything (consistent with TypeScript behavior)
@@ -537,14 +514,7 @@ func matchesIncludeWithJsonOnlyNew(fileName string, includeSpecs []string, baseP
 		return false
 	}
 
-	// Convert fileName to relative path from basePath for matching
-	relativePath := fileName
-	if strings.HasPrefix(fileName, basePath) {
-		relativePath = fileName[len(basePath):]
-		if strings.HasPrefix(relativePath, "/") {
-			relativePath = relativePath[1:]
-		}
-	}
+	relativePath := convertToRelativePath(fileName, basePath)
 
 	// Special case: empty pattern matches everything (consistent with TypeScript behavior)
 	if slices.Contains(includeSpecs, "") {
@@ -562,6 +532,17 @@ func matchesIncludeWithJsonOnlyNew(fileName string, includeSpecs []string, baseP
 		}
 	}
 	return false
+}
+
+// parsePatternSegments parses a pattern into segments and applies implicit glob expansion
+func parsePatternSegments(pattern string) []string {
+	// Handle patterns starting with "./" - remove the leading "./"
+	if strings.HasPrefix(pattern, "./") {
+		pattern = pattern[2:]
+	}
+
+	segments := parsePathSegments(pattern)
+	return applyImplicitGlob(segments)
 }
 
 // globMatcherForPatternAbsolute creates a matcher for absolute pattern matching
@@ -587,24 +568,7 @@ func globMatcherForPatternAbsolute(pattern string, absolutePath string, useCaseS
 		}
 	}
 
-	// Parse the pattern as a relative path
-	var segments []string
-	if relativePart == "" {
-		segments = []string{}
-	} else {
-		segments = strings.Split(relativePart, "/")
-		// Remove empty segments
-		filteredSegments := segments[:0]
-		for _, seg := range segments {
-			if seg != "" {
-				filteredSegments = append(filteredSegments, seg)
-			}
-		}
-		segments = filteredSegments
-	}
-
-	// Handle implicit glob using the shared helper function
-	segments = applyImplicitGlob(segments)
+	segments := parsePatternSegments(relativePart)
 
 	return globMatcher{
 		pattern:                   pattern,
@@ -616,29 +580,7 @@ func globMatcherForPatternAbsolute(pattern string, absolutePath string, useCaseS
 
 // globMatcherForPatternRelative creates a matcher for relative pattern matching
 func globMatcherForPatternRelative(pattern string, useCaseSensitiveFileNames bool) globMatcher {
-	// Handle patterns starting with "./" - remove the leading "./"
-	if strings.HasPrefix(pattern, "./") {
-		pattern = pattern[2:]
-	}
-
-	// Parse the pattern as a relative path
-	var segments []string
-	if pattern == "" {
-		segments = []string{}
-	} else {
-		segments = strings.Split(pattern, "/")
-		// Remove empty segments
-		filteredSegments := segments[:0]
-		for _, seg := range segments {
-			if seg != "" {
-				filteredSegments = append(filteredSegments, seg)
-			}
-		}
-		segments = filteredSegments
-	}
-
-	// Handle implicit glob using the shared helper function
-	segments = applyImplicitGlob(segments)
+	segments := parsePatternSegments(pattern)
 
 	return globMatcher{
 		pattern:                   pattern,
@@ -659,17 +601,7 @@ func (gm globMatcher) matchesFileAbsolute(absolutePath string) bool {
 			(absolutePath == gm.basePath || strings.HasPrefix(absolutePath, gm.basePath+"/"))
 	}
 
-	// Convert absolute path to relative path from the matcher's base path
-	var relativePath string
-	if gm.basePath != "" && strings.HasPrefix(absolutePath, gm.basePath) {
-		relativePath = absolutePath[len(gm.basePath):]
-		if strings.HasPrefix(relativePath, "/") {
-			relativePath = relativePath[1:]
-		}
-	} else {
-		relativePath = absolutePath
-	}
-
+	relativePath := convertToRelativePath(absolutePath, gm.basePath)
 	return gm.matchesFileRelative(relativePath)
 }
 
@@ -680,22 +612,7 @@ func (gm globMatcher) matchesFileRelative(relativePath string) bool {
 		return true
 	}
 
-	// Split the relative path into segments
-	var pathSegments []string
-	if relativePath == "" {
-		pathSegments = []string{}
-	} else {
-		pathSegments = strings.Split(relativePath, "/")
-		// Remove empty segments
-		filteredSegments := pathSegments[:0]
-		for _, seg := range pathSegments {
-			if seg != "" {
-				filteredSegments = append(filteredSegments, seg)
-			}
-		}
-		pathSegments = filteredSegments
-	}
-
+	pathSegments := parsePathSegments(relativePath)
 	return gm.matchSegments(gm.segments, pathSegments, false)
 }
 
@@ -710,17 +627,7 @@ func (gm globMatcher) matchesDirectoryAbsolute(absolutePath string) bool {
 			(absolutePath == gm.basePath || strings.HasPrefix(absolutePath, gm.basePath+"/"))
 	}
 
-	// Convert absolute path to relative path from the matcher's base path
-	var relativePath string
-	if gm.basePath != "" && strings.HasPrefix(absolutePath, gm.basePath) {
-		relativePath = absolutePath[len(gm.basePath):]
-		if strings.HasPrefix(relativePath, "/") {
-			relativePath = relativePath[1:]
-		}
-	} else {
-		relativePath = absolutePath
-	}
-
+	relativePath := convertToRelativePath(absolutePath, gm.basePath)
 	return gm.matchesDirectoryRelative(relativePath)
 }
 
@@ -731,42 +638,12 @@ func (gm globMatcher) matchesDirectoryRelative(relativePath string) bool {
 		return true
 	}
 
-	// Split the relative path into segments
-	var pathSegments []string
-	if relativePath == "" {
-		pathSegments = []string{}
-	} else {
-		pathSegments = strings.Split(relativePath, "/")
-		// Remove empty segments
-		filteredSegments := pathSegments[:0]
-		for _, seg := range pathSegments {
-			if seg != "" {
-				filteredSegments = append(filteredSegments, seg)
-			}
-		}
-		pathSegments = filteredSegments
-	}
-
+	pathSegments := parsePathSegments(relativePath)
 	return gm.matchSegments(gm.segments, pathSegments, true)
 }
 
 // couldMatchInSubdirectoryRelative returns true if this pattern could match files within the given relative directory
 func (gm globMatcher) couldMatchInSubdirectoryRelative(relativePath string) bool {
-	// Split the relative path into segments
-	var pathSegments []string
-	if relativePath == "" {
-		pathSegments = []string{}
-	} else {
-		pathSegments = strings.Split(relativePath, "/")
-		// Remove empty segments
-		filteredSegments := pathSegments[:0]
-		for _, seg := range pathSegments {
-			if seg != "" {
-				filteredSegments = append(filteredSegments, seg)
-			}
-		}
-		pathSegments = filteredSegments
-	}
-
+	pathSegments := parsePathSegments(relativePath)
 	return gm.couldMatchInSubdirectoryRecursive(gm.segments, pathSegments)
 }
