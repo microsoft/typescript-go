@@ -67,7 +67,8 @@ func runDefinitionTest(t *testing.T, input string, expected map[string]lsproto.D
 		locations, err := languageService.ProvideDefinition(
 			ctx,
 			ls.FileNameToDocumentURI(file),
-			marker.LSPosition)
+			marker.LSPosition,
+			nil) // No client capabilities in test
 		assert.NilError(t, err)
 		assert.DeepEqual(t, locations, expectedResult)
 	}

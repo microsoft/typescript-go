@@ -1,0 +1,42 @@
+//// [tests/cases/compiler/gotoDefinitionLocationLink.ts] ////
+
+=== file1.ts ===
+export interface Person {
+>Person : Symbol(Person, Decl(file1.ts, 0, 0))
+
+    name: string;
+>name : Symbol(name, Decl(file1.ts, 0, 25))
+
+    age: number;
+>age : Symbol(age, Decl(file1.ts, 1, 17))
+}
+
+export function createPerson(name: string, age: number): Person {
+>createPerson : Symbol(createPerson, Decl(file1.ts, 3, 1))
+>name : Symbol(name, Decl(file1.ts, 5, 29))
+>age : Symbol(age, Decl(file1.ts, 5, 42))
+>Person : Symbol(Person, Decl(file1.ts, 0, 0))
+
+    return { name, age };
+>name : Symbol(name, Decl(file1.ts, 6, 12))
+>age : Symbol(age, Decl(file1.ts, 6, 18))
+}
+
+=== file2.ts ===
+import { Person, createPerson } from "./file1";
+>Person : Symbol(Person, Decl(file2.ts, 0, 8))
+>createPerson : Symbol(createPerson, Decl(file2.ts, 0, 16))
+
+const person: Person = createPerson("John", 30);
+>person : Symbol(person, Decl(file2.ts, 2, 5))
+>Person : Symbol(Person, Decl(file2.ts, 0, 8))
+>createPerson : Symbol(createPerson, Decl(file2.ts, 0, 16))
+
+console.log(person.name);
+>console.log : Symbol(log, Decl(lib.dom.d.ts, --, --))
+>console : Symbol(console, Decl(lib.dom.d.ts, --, --))
+>log : Symbol(log, Decl(lib.dom.d.ts, --, --))
+>person.name : Symbol(name, Decl(file1.ts, 0, 25))
+>person : Symbol(person, Decl(file2.ts, 2, 5))
+>name : Symbol(name, Decl(file1.ts, 0, 25))
+

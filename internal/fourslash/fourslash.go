@@ -891,7 +891,14 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 		} else if result.Location != nil {
 			resultAsLocations = []lsproto.Location{*result.Location}
 		} else if result.DefinitionLinks != nil {
-			t.Fatalf("Unexpected definition response type at marker '%s': %T", *f.lastKnownMarkerName, result.DefinitionLinks)
+			// Convert DefinitionLinks to Locations for baseline comparison
+			resultAsLocations = make([]lsproto.Location, len(*result.DefinitionLinks))
+			for i, link := range *result.DefinitionLinks {
+				resultAsLocations[i] = lsproto.Location{
+					Uri:   link.TargetUri,
+					Range: link.TargetSelectionRange,
+				}
+			}
 		}
 
 		f.baseline.addResult("goToDefinition", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{

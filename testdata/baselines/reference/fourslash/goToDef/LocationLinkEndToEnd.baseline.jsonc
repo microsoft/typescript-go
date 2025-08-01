@@ -1,0 +1,15 @@
+// === goToDefinition ===
+// === /types.ts ===
+
+// export interface [|Person|] {
+//     name: string;
+//     age: number;
+// }
+// // --- (line: 5) skipped ---
+
+
+// === /main.ts ===
+
+// import { /*GO TO DEFINITION*/Person, createPerson } from "./types";
+// 
+// const john: Person = createPerson("John", 30);
