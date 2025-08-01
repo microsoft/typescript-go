@@ -21449,16 +21449,16 @@ type IntegerOrString struct {
 	String  *string
 }
 
-var _ json.MarshalerTo = IntegerOrString{}
+var _ json.MarshalerTo = (*IntegerOrString)(nil)
 
-func (o IntegerOrString) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *IntegerOrString) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of IntegerOrString should be set", o.Integer != nil, o.String != nil)
 
 	if o.Integer != nil {
-		return json.MarshalEncode(enc, *o.Integer)
+		return json.MarshalEncode(enc, o.Integer)
 	}
 	if o.String != nil {
-		return json.MarshalEncode(enc, *o.String)
+		return json.MarshalEncode(enc, o.String)
 	}
 	panic("unreachable")
 }
@@ -21489,13 +21489,13 @@ type DocumentSelectorOrNull struct {
 	DocumentSelector *[]TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter
 }
 
-var _ json.MarshalerTo = DocumentSelectorOrNull{}
+var _ json.MarshalerTo = (*DocumentSelectorOrNull)(nil)
 
-func (o DocumentSelectorOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *DocumentSelectorOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of DocumentSelectorOrNull is set", o.DocumentSelector != nil)
 
 	if o.DocumentSelector != nil {
-		return json.MarshalEncode(enc, *o.DocumentSelector)
+		return json.MarshalEncode(enc, o.DocumentSelector)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -21526,16 +21526,16 @@ type BooleanOrEmptyObject struct {
 	EmptyObject *struct{}
 }
 
-var _ json.MarshalerTo = BooleanOrEmptyObject{}
+var _ json.MarshalerTo = (*BooleanOrEmptyObject)(nil)
 
-func (o BooleanOrEmptyObject) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrEmptyObject) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrEmptyObject should be set", o.Boolean != nil, o.EmptyObject != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.EmptyObject != nil {
-		return json.MarshalEncode(enc, *o.EmptyObject)
+		return json.MarshalEncode(enc, o.EmptyObject)
 	}
 	panic("unreachable")
 }
@@ -21567,16 +21567,16 @@ type BooleanOrSemanticTokensFullDelta struct {
 	SemanticTokensFullDelta *SemanticTokensFullDelta
 }
 
-var _ json.MarshalerTo = BooleanOrSemanticTokensFullDelta{}
+var _ json.MarshalerTo = (*BooleanOrSemanticTokensFullDelta)(nil)
 
-func (o BooleanOrSemanticTokensFullDelta) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrSemanticTokensFullDelta) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrSemanticTokensFullDelta should be set", o.Boolean != nil, o.SemanticTokensFullDelta != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.SemanticTokensFullDelta != nil {
-		return json.MarshalEncode(enc, *o.SemanticTokensFullDelta)
+		return json.MarshalEncode(enc, o.SemanticTokensFullDelta)
 	}
 	panic("unreachable")
 }
@@ -21610,22 +21610,22 @@ type TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile struct {
 	DeleteFile       *DeleteFile
 }
 
-var _ json.MarshalerTo = TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile{}
+var _ json.MarshalerTo = (*TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile)(nil)
 
-func (o TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile should be set", o.TextDocumentEdit != nil, o.CreateFile != nil, o.RenameFile != nil, o.DeleteFile != nil)
 
 	if o.TextDocumentEdit != nil {
-		return json.MarshalEncode(enc, *o.TextDocumentEdit)
+		return json.MarshalEncode(enc, o.TextDocumentEdit)
 	}
 	if o.CreateFile != nil {
-		return json.MarshalEncode(enc, *o.CreateFile)
+		return json.MarshalEncode(enc, o.CreateFile)
 	}
 	if o.RenameFile != nil {
-		return json.MarshalEncode(enc, *o.RenameFile)
+		return json.MarshalEncode(enc, o.RenameFile)
 	}
 	if o.DeleteFile != nil {
-		return json.MarshalEncode(enc, *o.DeleteFile)
+		return json.MarshalEncode(enc, o.DeleteFile)
 	}
 	panic("unreachable")
 }
@@ -21667,16 +21667,16 @@ type StringOrInlayHintLabelParts struct {
 	InlayHintLabelParts *[]*InlayHintLabelPart
 }
 
-var _ json.MarshalerTo = StringOrInlayHintLabelParts{}
+var _ json.MarshalerTo = (*StringOrInlayHintLabelParts)(nil)
 
-func (o StringOrInlayHintLabelParts) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *StringOrInlayHintLabelParts) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of StringOrInlayHintLabelParts should be set", o.String != nil, o.InlayHintLabelParts != nil)
 
 	if o.String != nil {
-		return json.MarshalEncode(enc, *o.String)
+		return json.MarshalEncode(enc, o.String)
 	}
 	if o.InlayHintLabelParts != nil {
-		return json.MarshalEncode(enc, *o.InlayHintLabelParts)
+		return json.MarshalEncode(enc, o.InlayHintLabelParts)
 	}
 	panic("unreachable")
 }
@@ -21708,16 +21708,16 @@ type StringOrMarkupContent struct {
 	MarkupContent *MarkupContent
 }
 
-var _ json.MarshalerTo = StringOrMarkupContent{}
+var _ json.MarshalerTo = (*StringOrMarkupContent)(nil)
 
-func (o StringOrMarkupContent) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *StringOrMarkupContent) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of StringOrMarkupContent should be set", o.String != nil, o.MarkupContent != nil)
 
 	if o.String != nil {
-		return json.MarshalEncode(enc, *o.String)
+		return json.MarshalEncode(enc, o.String)
 	}
 	if o.MarkupContent != nil {
-		return json.MarshalEncode(enc, *o.MarkupContent)
+		return json.MarshalEncode(enc, o.MarkupContent)
 	}
 	panic("unreachable")
 }
@@ -21749,16 +21749,16 @@ type FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport struct {
 	UnchangedDocumentDiagnosticReport *UnchangedDocumentDiagnosticReport
 }
 
-var _ json.MarshalerTo = FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{}
+var _ json.MarshalerTo = (*FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport)(nil)
 
-func (o FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport should be set", o.FullDocumentDiagnosticReport != nil, o.UnchangedDocumentDiagnosticReport != nil)
 
 	if o.FullDocumentDiagnosticReport != nil {
-		return json.MarshalEncode(enc, *o.FullDocumentDiagnosticReport)
+		return json.MarshalEncode(enc, o.FullDocumentDiagnosticReport)
 	}
 	if o.UnchangedDocumentDiagnosticReport != nil {
-		return json.MarshalEncode(enc, *o.UnchangedDocumentDiagnosticReport)
+		return json.MarshalEncode(enc, o.UnchangedDocumentDiagnosticReport)
 	}
 	panic("unreachable")
 }
@@ -21790,16 +21790,16 @@ type WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport st
 	UnchangedDocumentDiagnosticReport *WorkspaceUnchangedDocumentDiagnosticReport
 }
 
-var _ json.MarshalerTo = WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{}
+var _ json.MarshalerTo = (*WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport)(nil)
 
-func (o WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport should be set", o.FullDocumentDiagnosticReport != nil, o.UnchangedDocumentDiagnosticReport != nil)
 
 	if o.FullDocumentDiagnosticReport != nil {
-		return json.MarshalEncode(enc, *o.FullDocumentDiagnosticReport)
+		return json.MarshalEncode(enc, o.FullDocumentDiagnosticReport)
 	}
 	if o.UnchangedDocumentDiagnosticReport != nil {
-		return json.MarshalEncode(enc, *o.UnchangedDocumentDiagnosticReport)
+		return json.MarshalEncode(enc, o.UnchangedDocumentDiagnosticReport)
 	}
 	panic("unreachable")
 }
@@ -21831,16 +21831,16 @@ type NotebookDocumentFilterWithNotebookOrCells struct {
 	Cells    *NotebookDocumentFilterWithCells
 }
 
-var _ json.MarshalerTo = NotebookDocumentFilterWithNotebookOrCells{}
+var _ json.MarshalerTo = (*NotebookDocumentFilterWithNotebookOrCells)(nil)
 
-func (o NotebookDocumentFilterWithNotebookOrCells) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *NotebookDocumentFilterWithNotebookOrCells) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of NotebookDocumentFilterWithNotebookOrCells should be set", o.Notebook != nil, o.Cells != nil)
 
 	if o.Notebook != nil {
-		return json.MarshalEncode(enc, *o.Notebook)
+		return json.MarshalEncode(enc, o.Notebook)
 	}
 	if o.Cells != nil {
-		return json.MarshalEncode(enc, *o.Cells)
+		return json.MarshalEncode(enc, o.Cells)
 	}
 	panic("unreachable")
 }
@@ -21872,16 +21872,16 @@ type StringOrStringValue struct {
 	StringValue *StringValue
 }
 
-var _ json.MarshalerTo = StringOrStringValue{}
+var _ json.MarshalerTo = (*StringOrStringValue)(nil)
 
-func (o StringOrStringValue) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *StringOrStringValue) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of StringOrStringValue should be set", o.String != nil, o.StringValue != nil)
 
 	if o.String != nil {
-		return json.MarshalEncode(enc, *o.String)
+		return json.MarshalEncode(enc, o.String)
 	}
 	if o.StringValue != nil {
-		return json.MarshalEncode(enc, *o.StringValue)
+		return json.MarshalEncode(enc, o.StringValue)
 	}
 	panic("unreachable")
 }
@@ -21912,13 +21912,13 @@ type IntegerOrNull struct {
 	Integer *int32
 }
 
-var _ json.MarshalerTo = IntegerOrNull{}
+var _ json.MarshalerTo = (*IntegerOrNull)(nil)
 
-func (o IntegerOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *IntegerOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of IntegerOrNull is set", o.Integer != nil)
 
 	if o.Integer != nil {
-		return json.MarshalEncode(enc, *o.Integer)
+		return json.MarshalEncode(enc, o.Integer)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -21948,13 +21948,13 @@ type StringOrNull struct {
 	String *string
 }
 
-var _ json.MarshalerTo = StringOrNull{}
+var _ json.MarshalerTo = (*StringOrNull)(nil)
 
-func (o StringOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *StringOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of StringOrNull is set", o.String != nil)
 
 	if o.String != nil {
-		return json.MarshalEncode(enc, *o.String)
+		return json.MarshalEncode(enc, o.String)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -21984,13 +21984,13 @@ type DocumentUriOrNull struct {
 	DocumentUri *DocumentUri
 }
 
-var _ json.MarshalerTo = DocumentUriOrNull{}
+var _ json.MarshalerTo = (*DocumentUriOrNull)(nil)
 
-func (o DocumentUriOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *DocumentUriOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of DocumentUriOrNull is set", o.DocumentUri != nil)
 
 	if o.DocumentUri != nil {
-		return json.MarshalEncode(enc, *o.DocumentUri)
+		return json.MarshalEncode(enc, o.DocumentUri)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -22020,13 +22020,13 @@ type WorkspaceFoldersOrNull struct {
 	WorkspaceFolders *[]*WorkspaceFolder
 }
 
-var _ json.MarshalerTo = WorkspaceFoldersOrNull{}
+var _ json.MarshalerTo = (*WorkspaceFoldersOrNull)(nil)
 
-func (o WorkspaceFoldersOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *WorkspaceFoldersOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of WorkspaceFoldersOrNull is set", o.WorkspaceFolders != nil)
 
 	if o.WorkspaceFolders != nil {
-		return json.MarshalEncode(enc, *o.WorkspaceFolders)
+		return json.MarshalEncode(enc, o.WorkspaceFolders)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -22057,16 +22057,16 @@ type StringOrStrings struct {
 	Strings *[]string
 }
 
-var _ json.MarshalerTo = StringOrStrings{}
+var _ json.MarshalerTo = (*StringOrStrings)(nil)
 
-func (o StringOrStrings) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *StringOrStrings) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of StringOrStrings should be set", o.String != nil, o.Strings != nil)
 
 	if o.String != nil {
-		return json.MarshalEncode(enc, *o.String)
+		return json.MarshalEncode(enc, o.String)
 	}
 	if o.Strings != nil {
-		return json.MarshalEncode(enc, *o.Strings)
+		return json.MarshalEncode(enc, o.Strings)
 	}
 	panic("unreachable")
 }
@@ -22098,16 +22098,16 @@ type TextDocumentContentChangePartialOrWholeDocument struct {
 	WholeDocument *TextDocumentContentChangeWholeDocument
 }
 
-var _ json.MarshalerTo = TextDocumentContentChangePartialOrWholeDocument{}
+var _ json.MarshalerTo = (*TextDocumentContentChangePartialOrWholeDocument)(nil)
 
-func (o TextDocumentContentChangePartialOrWholeDocument) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *TextDocumentContentChangePartialOrWholeDocument) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of TextDocumentContentChangePartialOrWholeDocument should be set", o.Partial != nil, o.WholeDocument != nil)
 
 	if o.Partial != nil {
-		return json.MarshalEncode(enc, *o.Partial)
+		return json.MarshalEncode(enc, o.Partial)
 	}
 	if o.WholeDocument != nil {
-		return json.MarshalEncode(enc, *o.WholeDocument)
+		return json.MarshalEncode(enc, o.WholeDocument)
 	}
 	panic("unreachable")
 }
@@ -22139,16 +22139,16 @@ type TextEditOrInsertReplaceEdit struct {
 	InsertReplaceEdit *InsertReplaceEdit
 }
 
-var _ json.MarshalerTo = TextEditOrInsertReplaceEdit{}
+var _ json.MarshalerTo = (*TextEditOrInsertReplaceEdit)(nil)
 
-func (o TextEditOrInsertReplaceEdit) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *TextEditOrInsertReplaceEdit) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of TextEditOrInsertReplaceEdit should be set", o.TextEdit != nil, o.InsertReplaceEdit != nil)
 
 	if o.TextEdit != nil {
-		return json.MarshalEncode(enc, *o.TextEdit)
+		return json.MarshalEncode(enc, o.TextEdit)
 	}
 	if o.InsertReplaceEdit != nil {
-		return json.MarshalEncode(enc, *o.InsertReplaceEdit)
+		return json.MarshalEncode(enc, o.InsertReplaceEdit)
 	}
 	panic("unreachable")
 }
@@ -22182,22 +22182,22 @@ type MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings struct {
 	MarkedStrings            *[]StringOrMarkedStringWithLanguage
 }
 
-var _ json.MarshalerTo = MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings{}
+var _ json.MarshalerTo = (*MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings)(nil)
 
-func (o MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings should be set", o.MarkupContent != nil, o.String != nil, o.MarkedStringWithLanguage != nil, o.MarkedStrings != nil)
 
 	if o.MarkupContent != nil {
-		return json.MarshalEncode(enc, *o.MarkupContent)
+		return json.MarshalEncode(enc, o.MarkupContent)
 	}
 	if o.String != nil {
-		return json.MarshalEncode(enc, *o.String)
+		return json.MarshalEncode(enc, o.String)
 	}
 	if o.MarkedStringWithLanguage != nil {
-		return json.MarshalEncode(enc, *o.MarkedStringWithLanguage)
+		return json.MarshalEncode(enc, o.MarkedStringWithLanguage)
 	}
 	if o.MarkedStrings != nil {
-		return json.MarshalEncode(enc, *o.MarkedStrings)
+		return json.MarshalEncode(enc, o.MarkedStrings)
 	}
 	panic("unreachable")
 }
@@ -22238,13 +22238,13 @@ type UintegerOrNull struct {
 	Uinteger *uint32
 }
 
-var _ json.MarshalerTo = UintegerOrNull{}
+var _ json.MarshalerTo = (*UintegerOrNull)(nil)
 
-func (o UintegerOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *UintegerOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of UintegerOrNull is set", o.Uinteger != nil)
 
 	if o.Uinteger != nil {
-		return json.MarshalEncode(enc, *o.Uinteger)
+		return json.MarshalEncode(enc, o.Uinteger)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -22275,16 +22275,16 @@ type LocationOrLocationUriOnly struct {
 	LocationUriOnly *LocationUriOnly
 }
 
-var _ json.MarshalerTo = LocationOrLocationUriOnly{}
+var _ json.MarshalerTo = (*LocationOrLocationUriOnly)(nil)
 
-func (o LocationOrLocationUriOnly) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *LocationOrLocationUriOnly) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of LocationOrLocationUriOnly should be set", o.Location != nil, o.LocationUriOnly != nil)
 
 	if o.Location != nil {
-		return json.MarshalEncode(enc, *o.Location)
+		return json.MarshalEncode(enc, o.Location)
 	}
 	if o.LocationUriOnly != nil {
-		return json.MarshalEncode(enc, *o.LocationUriOnly)
+		return json.MarshalEncode(enc, o.LocationUriOnly)
 	}
 	panic("unreachable")
 }
@@ -22317,19 +22317,19 @@ type TextEditOrAnnotatedTextEditOrSnippetTextEdit struct {
 	SnippetTextEdit   *SnippetTextEdit
 }
 
-var _ json.MarshalerTo = TextEditOrAnnotatedTextEditOrSnippetTextEdit{}
+var _ json.MarshalerTo = (*TextEditOrAnnotatedTextEditOrSnippetTextEdit)(nil)
 
-func (o TextEditOrAnnotatedTextEditOrSnippetTextEdit) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *TextEditOrAnnotatedTextEditOrSnippetTextEdit) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of TextEditOrAnnotatedTextEditOrSnippetTextEdit should be set", o.TextEdit != nil, o.AnnotatedTextEdit != nil, o.SnippetTextEdit != nil)
 
 	if o.TextEdit != nil {
-		return json.MarshalEncode(enc, *o.TextEdit)
+		return json.MarshalEncode(enc, o.TextEdit)
 	}
 	if o.AnnotatedTextEdit != nil {
-		return json.MarshalEncode(enc, *o.AnnotatedTextEdit)
+		return json.MarshalEncode(enc, o.AnnotatedTextEdit)
 	}
 	if o.SnippetTextEdit != nil {
-		return json.MarshalEncode(enc, *o.SnippetTextEdit)
+		return json.MarshalEncode(enc, o.SnippetTextEdit)
 	}
 	panic("unreachable")
 }
@@ -22366,16 +22366,16 @@ type TextDocumentSyncOptionsOrKind struct {
 	Kind    *TextDocumentSyncKind
 }
 
-var _ json.MarshalerTo = TextDocumentSyncOptionsOrKind{}
+var _ json.MarshalerTo = (*TextDocumentSyncOptionsOrKind)(nil)
 
-func (o TextDocumentSyncOptionsOrKind) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *TextDocumentSyncOptionsOrKind) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of TextDocumentSyncOptionsOrKind should be set", o.Options != nil, o.Kind != nil)
 
 	if o.Options != nil {
-		return json.MarshalEncode(enc, *o.Options)
+		return json.MarshalEncode(enc, o.Options)
 	}
 	if o.Kind != nil {
-		return json.MarshalEncode(enc, *o.Kind)
+		return json.MarshalEncode(enc, o.Kind)
 	}
 	panic("unreachable")
 }
@@ -22407,16 +22407,16 @@ type NotebookDocumentSyncOptionsOrRegistrationOptions struct {
 	RegistrationOptions *NotebookDocumentSyncRegistrationOptions
 }
 
-var _ json.MarshalerTo = NotebookDocumentSyncOptionsOrRegistrationOptions{}
+var _ json.MarshalerTo = (*NotebookDocumentSyncOptionsOrRegistrationOptions)(nil)
 
-func (o NotebookDocumentSyncOptionsOrRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *NotebookDocumentSyncOptionsOrRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of NotebookDocumentSyncOptionsOrRegistrationOptions should be set", o.Options != nil, o.RegistrationOptions != nil)
 
 	if o.Options != nil {
-		return json.MarshalEncode(enc, *o.Options)
+		return json.MarshalEncode(enc, o.Options)
 	}
 	if o.RegistrationOptions != nil {
-		return json.MarshalEncode(enc, *o.RegistrationOptions)
+		return json.MarshalEncode(enc, o.RegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -22448,16 +22448,16 @@ type BooleanOrHoverOptions struct {
 	HoverOptions *HoverOptions
 }
 
-var _ json.MarshalerTo = BooleanOrHoverOptions{}
+var _ json.MarshalerTo = (*BooleanOrHoverOptions)(nil)
 
-func (o BooleanOrHoverOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrHoverOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrHoverOptions should be set", o.Boolean != nil, o.HoverOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.HoverOptions != nil {
-		return json.MarshalEncode(enc, *o.HoverOptions)
+		return json.MarshalEncode(enc, o.HoverOptions)
 	}
 	panic("unreachable")
 }
@@ -22490,19 +22490,19 @@ type BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions struct {
 	DeclarationRegistrationOptions *DeclarationRegistrationOptions
 }
 
-var _ json.MarshalerTo = BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions{}
+var _ json.MarshalerTo = (*BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions)(nil)
 
-func (o BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions should be set", o.Boolean != nil, o.DeclarationOptions != nil, o.DeclarationRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.DeclarationOptions != nil {
-		return json.MarshalEncode(enc, *o.DeclarationOptions)
+		return json.MarshalEncode(enc, o.DeclarationOptions)
 	}
 	if o.DeclarationRegistrationOptions != nil {
-		return json.MarshalEncode(enc, *o.DeclarationRegistrationOptions)
+		return json.MarshalEncode(enc, o.DeclarationRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -22539,16 +22539,16 @@ type BooleanOrDefinitionOptions struct {
 	DefinitionOptions *DefinitionOptions
 }
 
-var _ json.MarshalerTo = BooleanOrDefinitionOptions{}
+var _ json.MarshalerTo = (*BooleanOrDefinitionOptions)(nil)
 
-func (o BooleanOrDefinitionOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrDefinitionOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrDefinitionOptions should be set", o.Boolean != nil, o.DefinitionOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.DefinitionOptions != nil {
-		return json.MarshalEncode(enc, *o.DefinitionOptions)
+		return json.MarshalEncode(enc, o.DefinitionOptions)
 	}
 	panic("unreachable")
 }
@@ -22581,19 +22581,19 @@ type BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions struct {
 	TypeDefinitionRegistrationOptions *TypeDefinitionRegistrationOptions
 }
 
-var _ json.MarshalerTo = BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions{}
+var _ json.MarshalerTo = (*BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions)(nil)
 
-func (o BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions should be set", o.Boolean != nil, o.TypeDefinitionOptions != nil, o.TypeDefinitionRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.TypeDefinitionOptions != nil {
-		return json.MarshalEncode(enc, *o.TypeDefinitionOptions)
+		return json.MarshalEncode(enc, o.TypeDefinitionOptions)
 	}
 	if o.TypeDefinitionRegistrationOptions != nil {
-		return json.MarshalEncode(enc, *o.TypeDefinitionRegistrationOptions)
+		return json.MarshalEncode(enc, o.TypeDefinitionRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -22631,19 +22631,19 @@ type BooleanOrImplementationOptionsOrImplementationRegistrationOptions struct {
 	ImplementationRegistrationOptions *ImplementationRegistrationOptions
 }
 
-var _ json.MarshalerTo = BooleanOrImplementationOptionsOrImplementationRegistrationOptions{}
+var _ json.MarshalerTo = (*BooleanOrImplementationOptionsOrImplementationRegistrationOptions)(nil)
 
-func (o BooleanOrImplementationOptionsOrImplementationRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrImplementationOptionsOrImplementationRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrImplementationOptionsOrImplementationRegistrationOptions should be set", o.Boolean != nil, o.ImplementationOptions != nil, o.ImplementationRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.ImplementationOptions != nil {
-		return json.MarshalEncode(enc, *o.ImplementationOptions)
+		return json.MarshalEncode(enc, o.ImplementationOptions)
 	}
 	if o.ImplementationRegistrationOptions != nil {
-		return json.MarshalEncode(enc, *o.ImplementationRegistrationOptions)
+		return json.MarshalEncode(enc, o.ImplementationRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -22680,16 +22680,16 @@ type BooleanOrReferenceOptions struct {
 	ReferenceOptions *ReferenceOptions
 }
 
-var _ json.MarshalerTo = BooleanOrReferenceOptions{}
+var _ json.MarshalerTo = (*BooleanOrReferenceOptions)(nil)
 
-func (o BooleanOrReferenceOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrReferenceOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrReferenceOptions should be set", o.Boolean != nil, o.ReferenceOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.ReferenceOptions != nil {
-		return json.MarshalEncode(enc, *o.ReferenceOptions)
+		return json.MarshalEncode(enc, o.ReferenceOptions)
 	}
 	panic("unreachable")
 }
@@ -22721,16 +22721,16 @@ type BooleanOrDocumentHighlightOptions struct {
 	DocumentHighlightOptions *DocumentHighlightOptions
 }
 
-var _ json.MarshalerTo = BooleanOrDocumentHighlightOptions{}
+var _ json.MarshalerTo = (*BooleanOrDocumentHighlightOptions)(nil)
 
-func (o BooleanOrDocumentHighlightOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrDocumentHighlightOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrDocumentHighlightOptions should be set", o.Boolean != nil, o.DocumentHighlightOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.DocumentHighlightOptions != nil {
-		return json.MarshalEncode(enc, *o.DocumentHighlightOptions)
+		return json.MarshalEncode(enc, o.DocumentHighlightOptions)
 	}
 	panic("unreachable")
 }
@@ -22762,16 +22762,16 @@ type BooleanOrDocumentSymbolOptions struct {
 	DocumentSymbolOptions *DocumentSymbolOptions
 }
 
-var _ json.MarshalerTo = BooleanOrDocumentSymbolOptions{}
+var _ json.MarshalerTo = (*BooleanOrDocumentSymbolOptions)(nil)
 
-func (o BooleanOrDocumentSymbolOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrDocumentSymbolOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrDocumentSymbolOptions should be set", o.Boolean != nil, o.DocumentSymbolOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.DocumentSymbolOptions != nil {
-		return json.MarshalEncode(enc, *o.DocumentSymbolOptions)
+		return json.MarshalEncode(enc, o.DocumentSymbolOptions)
 	}
 	panic("unreachable")
 }
@@ -22803,16 +22803,16 @@ type BooleanOrCodeActionOptions struct {
 	CodeActionOptions *CodeActionOptions
 }
 
-var _ json.MarshalerTo = BooleanOrCodeActionOptions{}
+var _ json.MarshalerTo = (*BooleanOrCodeActionOptions)(nil)
 
-func (o BooleanOrCodeActionOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrCodeActionOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrCodeActionOptions should be set", o.Boolean != nil, o.CodeActionOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.CodeActionOptions != nil {
-		return json.MarshalEncode(enc, *o.CodeActionOptions)
+		return json.MarshalEncode(enc, o.CodeActionOptions)
 	}
 	panic("unreachable")
 }
@@ -22845,19 +22845,19 @@ type BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions struct {
 	DocumentColorRegistrationOptions *DocumentColorRegistrationOptions
 }
 
-var _ json.MarshalerTo = BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions{}
+var _ json.MarshalerTo = (*BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions)(nil)
 
-func (o BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions should be set", o.Boolean != nil, o.DocumentColorOptions != nil, o.DocumentColorRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.DocumentColorOptions != nil {
-		return json.MarshalEncode(enc, *o.DocumentColorOptions)
+		return json.MarshalEncode(enc, o.DocumentColorOptions)
 	}
 	if o.DocumentColorRegistrationOptions != nil {
-		return json.MarshalEncode(enc, *o.DocumentColorRegistrationOptions)
+		return json.MarshalEncode(enc, o.DocumentColorRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -22894,16 +22894,16 @@ type BooleanOrWorkspaceSymbolOptions struct {
 	WorkspaceSymbolOptions *WorkspaceSymbolOptions
 }
 
-var _ json.MarshalerTo = BooleanOrWorkspaceSymbolOptions{}
+var _ json.MarshalerTo = (*BooleanOrWorkspaceSymbolOptions)(nil)
 
-func (o BooleanOrWorkspaceSymbolOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrWorkspaceSymbolOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrWorkspaceSymbolOptions should be set", o.Boolean != nil, o.WorkspaceSymbolOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.WorkspaceSymbolOptions != nil {
-		return json.MarshalEncode(enc, *o.WorkspaceSymbolOptions)
+		return json.MarshalEncode(enc, o.WorkspaceSymbolOptions)
 	}
 	panic("unreachable")
 }
@@ -22935,16 +22935,16 @@ type BooleanOrDocumentFormattingOptions struct {
 	DocumentFormattingOptions *DocumentFormattingOptions
 }
 
-var _ json.MarshalerTo = BooleanOrDocumentFormattingOptions{}
+var _ json.MarshalerTo = (*BooleanOrDocumentFormattingOptions)(nil)
 
-func (o BooleanOrDocumentFormattingOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrDocumentFormattingOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrDocumentFormattingOptions should be set", o.Boolean != nil, o.DocumentFormattingOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.DocumentFormattingOptions != nil {
-		return json.MarshalEncode(enc, *o.DocumentFormattingOptions)
+		return json.MarshalEncode(enc, o.DocumentFormattingOptions)
 	}
 	panic("unreachable")
 }
@@ -22976,16 +22976,16 @@ type BooleanOrDocumentRangeFormattingOptions struct {
 	DocumentRangeFormattingOptions *DocumentRangeFormattingOptions
 }
 
-var _ json.MarshalerTo = BooleanOrDocumentRangeFormattingOptions{}
+var _ json.MarshalerTo = (*BooleanOrDocumentRangeFormattingOptions)(nil)
 
-func (o BooleanOrDocumentRangeFormattingOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrDocumentRangeFormattingOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrDocumentRangeFormattingOptions should be set", o.Boolean != nil, o.DocumentRangeFormattingOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.DocumentRangeFormattingOptions != nil {
-		return json.MarshalEncode(enc, *o.DocumentRangeFormattingOptions)
+		return json.MarshalEncode(enc, o.DocumentRangeFormattingOptions)
 	}
 	panic("unreachable")
 }
@@ -23017,16 +23017,16 @@ type BooleanOrRenameOptions struct {
 	RenameOptions *RenameOptions
 }
 
-var _ json.MarshalerTo = BooleanOrRenameOptions{}
+var _ json.MarshalerTo = (*BooleanOrRenameOptions)(nil)
 
-func (o BooleanOrRenameOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrRenameOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrRenameOptions should be set", o.Boolean != nil, o.RenameOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.RenameOptions != nil {
-		return json.MarshalEncode(enc, *o.RenameOptions)
+		return json.MarshalEncode(enc, o.RenameOptions)
 	}
 	panic("unreachable")
 }
@@ -23059,19 +23059,19 @@ type BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions struct {
 	FoldingRangeRegistrationOptions *FoldingRangeRegistrationOptions
 }
 
-var _ json.MarshalerTo = BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions{}
+var _ json.MarshalerTo = (*BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions)(nil)
 
-func (o BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions should be set", o.Boolean != nil, o.FoldingRangeOptions != nil, o.FoldingRangeRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.FoldingRangeOptions != nil {
-		return json.MarshalEncode(enc, *o.FoldingRangeOptions)
+		return json.MarshalEncode(enc, o.FoldingRangeOptions)
 	}
 	if o.FoldingRangeRegistrationOptions != nil {
-		return json.MarshalEncode(enc, *o.FoldingRangeRegistrationOptions)
+		return json.MarshalEncode(enc, o.FoldingRangeRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -23109,19 +23109,19 @@ type BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions struct {
 	SelectionRangeRegistrationOptions *SelectionRangeRegistrationOptions
 }
 
-var _ json.MarshalerTo = BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions{}
+var _ json.MarshalerTo = (*BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions)(nil)
 
-func (o BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions should be set", o.Boolean != nil, o.SelectionRangeOptions != nil, o.SelectionRangeRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.SelectionRangeOptions != nil {
-		return json.MarshalEncode(enc, *o.SelectionRangeOptions)
+		return json.MarshalEncode(enc, o.SelectionRangeOptions)
 	}
 	if o.SelectionRangeRegistrationOptions != nil {
-		return json.MarshalEncode(enc, *o.SelectionRangeRegistrationOptions)
+		return json.MarshalEncode(enc, o.SelectionRangeRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -23159,19 +23159,19 @@ type BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions struct {
 	CallHierarchyRegistrationOptions *CallHierarchyRegistrationOptions
 }
 
-var _ json.MarshalerTo = BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions{}
+var _ json.MarshalerTo = (*BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions)(nil)
 
-func (o BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions should be set", o.Boolean != nil, o.CallHierarchyOptions != nil, o.CallHierarchyRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.CallHierarchyOptions != nil {
-		return json.MarshalEncode(enc, *o.CallHierarchyOptions)
+		return json.MarshalEncode(enc, o.CallHierarchyOptions)
 	}
 	if o.CallHierarchyRegistrationOptions != nil {
-		return json.MarshalEncode(enc, *o.CallHierarchyRegistrationOptions)
+		return json.MarshalEncode(enc, o.CallHierarchyRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -23209,19 +23209,19 @@ type BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions s
 	LinkedEditingRangeRegistrationOptions *LinkedEditingRangeRegistrationOptions
 }
 
-var _ json.MarshalerTo = BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions{}
+var _ json.MarshalerTo = (*BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions)(nil)
 
-func (o BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions should be set", o.Boolean != nil, o.LinkedEditingRangeOptions != nil, o.LinkedEditingRangeRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.LinkedEditingRangeOptions != nil {
-		return json.MarshalEncode(enc, *o.LinkedEditingRangeOptions)
+		return json.MarshalEncode(enc, o.LinkedEditingRangeOptions)
 	}
 	if o.LinkedEditingRangeRegistrationOptions != nil {
-		return json.MarshalEncode(enc, *o.LinkedEditingRangeRegistrationOptions)
+		return json.MarshalEncode(enc, o.LinkedEditingRangeRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -23258,16 +23258,16 @@ type SemanticTokensOptionsOrRegistrationOptions struct {
 	RegistrationOptions *SemanticTokensRegistrationOptions
 }
 
-var _ json.MarshalerTo = SemanticTokensOptionsOrRegistrationOptions{}
+var _ json.MarshalerTo = (*SemanticTokensOptionsOrRegistrationOptions)(nil)
 
-func (o SemanticTokensOptionsOrRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *SemanticTokensOptionsOrRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of SemanticTokensOptionsOrRegistrationOptions should be set", o.Options != nil, o.RegistrationOptions != nil)
 
 	if o.Options != nil {
-		return json.MarshalEncode(enc, *o.Options)
+		return json.MarshalEncode(enc, o.Options)
 	}
 	if o.RegistrationOptions != nil {
-		return json.MarshalEncode(enc, *o.RegistrationOptions)
+		return json.MarshalEncode(enc, o.RegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -23300,19 +23300,19 @@ type BooleanOrMonikerOptionsOrMonikerRegistrationOptions struct {
 	MonikerRegistrationOptions *MonikerRegistrationOptions
 }
 
-var _ json.MarshalerTo = BooleanOrMonikerOptionsOrMonikerRegistrationOptions{}
+var _ json.MarshalerTo = (*BooleanOrMonikerOptionsOrMonikerRegistrationOptions)(nil)
 
-func (o BooleanOrMonikerOptionsOrMonikerRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrMonikerOptionsOrMonikerRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrMonikerOptionsOrMonikerRegistrationOptions should be set", o.Boolean != nil, o.MonikerOptions != nil, o.MonikerRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.MonikerOptions != nil {
-		return json.MarshalEncode(enc, *o.MonikerOptions)
+		return json.MarshalEncode(enc, o.MonikerOptions)
 	}
 	if o.MonikerRegistrationOptions != nil {
-		return json.MarshalEncode(enc, *o.MonikerRegistrationOptions)
+		return json.MarshalEncode(enc, o.MonikerRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -23350,19 +23350,19 @@ type BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions struct {
 	TypeHierarchyRegistrationOptions *TypeHierarchyRegistrationOptions
 }
 
-var _ json.MarshalerTo = BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions{}
+var _ json.MarshalerTo = (*BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions)(nil)
 
-func (o BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions should be set", o.Boolean != nil, o.TypeHierarchyOptions != nil, o.TypeHierarchyRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.TypeHierarchyOptions != nil {
-		return json.MarshalEncode(enc, *o.TypeHierarchyOptions)
+		return json.MarshalEncode(enc, o.TypeHierarchyOptions)
 	}
 	if o.TypeHierarchyRegistrationOptions != nil {
-		return json.MarshalEncode(enc, *o.TypeHierarchyRegistrationOptions)
+		return json.MarshalEncode(enc, o.TypeHierarchyRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -23400,19 +23400,19 @@ type BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions struct {
 	InlineValueRegistrationOptions *InlineValueRegistrationOptions
 }
 
-var _ json.MarshalerTo = BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions{}
+var _ json.MarshalerTo = (*BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions)(nil)
 
-func (o BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions should be set", o.Boolean != nil, o.InlineValueOptions != nil, o.InlineValueRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.InlineValueOptions != nil {
-		return json.MarshalEncode(enc, *o.InlineValueOptions)
+		return json.MarshalEncode(enc, o.InlineValueOptions)
 	}
 	if o.InlineValueRegistrationOptions != nil {
-		return json.MarshalEncode(enc, *o.InlineValueRegistrationOptions)
+		return json.MarshalEncode(enc, o.InlineValueRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -23450,19 +23450,19 @@ type BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions struct {
 	InlayHintRegistrationOptions *InlayHintRegistrationOptions
 }
 
-var _ json.MarshalerTo = BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions{}
+var _ json.MarshalerTo = (*BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions)(nil)
 
-func (o BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions should be set", o.Boolean != nil, o.InlayHintOptions != nil, o.InlayHintRegistrationOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.InlayHintOptions != nil {
-		return json.MarshalEncode(enc, *o.InlayHintOptions)
+		return json.MarshalEncode(enc, o.InlayHintOptions)
 	}
 	if o.InlayHintRegistrationOptions != nil {
-		return json.MarshalEncode(enc, *o.InlayHintRegistrationOptions)
+		return json.MarshalEncode(enc, o.InlayHintRegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -23499,16 +23499,16 @@ type DiagnosticOptionsOrRegistrationOptions struct {
 	RegistrationOptions *DiagnosticRegistrationOptions
 }
 
-var _ json.MarshalerTo = DiagnosticOptionsOrRegistrationOptions{}
+var _ json.MarshalerTo = (*DiagnosticOptionsOrRegistrationOptions)(nil)
 
-func (o DiagnosticOptionsOrRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *DiagnosticOptionsOrRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of DiagnosticOptionsOrRegistrationOptions should be set", o.Options != nil, o.RegistrationOptions != nil)
 
 	if o.Options != nil {
-		return json.MarshalEncode(enc, *o.Options)
+		return json.MarshalEncode(enc, o.Options)
 	}
 	if o.RegistrationOptions != nil {
-		return json.MarshalEncode(enc, *o.RegistrationOptions)
+		return json.MarshalEncode(enc, o.RegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -23540,16 +23540,16 @@ type BooleanOrInlineCompletionOptions struct {
 	InlineCompletionOptions *InlineCompletionOptions
 }
 
-var _ json.MarshalerTo = BooleanOrInlineCompletionOptions{}
+var _ json.MarshalerTo = (*BooleanOrInlineCompletionOptions)(nil)
 
-func (o BooleanOrInlineCompletionOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrInlineCompletionOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrInlineCompletionOptions should be set", o.Boolean != nil, o.InlineCompletionOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.InlineCompletionOptions != nil {
-		return json.MarshalEncode(enc, *o.InlineCompletionOptions)
+		return json.MarshalEncode(enc, o.InlineCompletionOptions)
 	}
 	panic("unreachable")
 }
@@ -23581,16 +23581,16 @@ type PatternOrRelativePattern struct {
 	RelativePattern *RelativePattern
 }
 
-var _ json.MarshalerTo = PatternOrRelativePattern{}
+var _ json.MarshalerTo = (*PatternOrRelativePattern)(nil)
 
-func (o PatternOrRelativePattern) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *PatternOrRelativePattern) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of PatternOrRelativePattern should be set", o.Pattern != nil, o.RelativePattern != nil)
 
 	if o.Pattern != nil {
-		return json.MarshalEncode(enc, *o.Pattern)
+		return json.MarshalEncode(enc, o.Pattern)
 	}
 	if o.RelativePattern != nil {
-		return json.MarshalEncode(enc, *o.RelativePattern)
+		return json.MarshalEncode(enc, o.RelativePattern)
 	}
 	panic("unreachable")
 }
@@ -23622,16 +23622,16 @@ type RangeOrEditRangeWithInsertReplace struct {
 	EditRangeWithInsertReplace *EditRangeWithInsertReplace
 }
 
-var _ json.MarshalerTo = RangeOrEditRangeWithInsertReplace{}
+var _ json.MarshalerTo = (*RangeOrEditRangeWithInsertReplace)(nil)
 
-func (o RangeOrEditRangeWithInsertReplace) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *RangeOrEditRangeWithInsertReplace) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of RangeOrEditRangeWithInsertReplace should be set", o.Range != nil, o.EditRangeWithInsertReplace != nil)
 
 	if o.Range != nil {
-		return json.MarshalEncode(enc, *o.Range)
+		return json.MarshalEncode(enc, o.Range)
 	}
 	if o.EditRangeWithInsertReplace != nil {
-		return json.MarshalEncode(enc, *o.EditRangeWithInsertReplace)
+		return json.MarshalEncode(enc, o.EditRangeWithInsertReplace)
 	}
 	panic("unreachable")
 }
@@ -23665,22 +23665,22 @@ type StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrN
 	NotebookDocumentFilterPattern      *NotebookDocumentFilterPattern
 }
 
-var _ json.MarshalerTo = StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern{}
+var _ json.MarshalerTo = (*StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern)(nil)
 
-func (o StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern should be set", o.String != nil, o.NotebookDocumentFilterNotebookType != nil, o.NotebookDocumentFilterScheme != nil, o.NotebookDocumentFilterPattern != nil)
 
 	if o.String != nil {
-		return json.MarshalEncode(enc, *o.String)
+		return json.MarshalEncode(enc, o.String)
 	}
 	if o.NotebookDocumentFilterNotebookType != nil {
-		return json.MarshalEncode(enc, *o.NotebookDocumentFilterNotebookType)
+		return json.MarshalEncode(enc, o.NotebookDocumentFilterNotebookType)
 	}
 	if o.NotebookDocumentFilterScheme != nil {
-		return json.MarshalEncode(enc, *o.NotebookDocumentFilterScheme)
+		return json.MarshalEncode(enc, o.NotebookDocumentFilterScheme)
 	}
 	if o.NotebookDocumentFilterPattern != nil {
-		return json.MarshalEncode(enc, *o.NotebookDocumentFilterPattern)
+		return json.MarshalEncode(enc, o.NotebookDocumentFilterPattern)
 	}
 	panic("unreachable")
 }
@@ -23722,16 +23722,16 @@ type BooleanOrSaveOptions struct {
 	SaveOptions *SaveOptions
 }
 
-var _ json.MarshalerTo = BooleanOrSaveOptions{}
+var _ json.MarshalerTo = (*BooleanOrSaveOptions)(nil)
 
-func (o BooleanOrSaveOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrSaveOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrSaveOptions should be set", o.Boolean != nil, o.SaveOptions != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.SaveOptions != nil {
-		return json.MarshalEncode(enc, *o.SaveOptions)
+		return json.MarshalEncode(enc, o.SaveOptions)
 	}
 	panic("unreachable")
 }
@@ -23763,16 +23763,16 @@ type TextDocumentContentOptionsOrRegistrationOptions struct {
 	RegistrationOptions *TextDocumentContentRegistrationOptions
 }
 
-var _ json.MarshalerTo = TextDocumentContentOptionsOrRegistrationOptions{}
+var _ json.MarshalerTo = (*TextDocumentContentOptionsOrRegistrationOptions)(nil)
 
-func (o TextDocumentContentOptionsOrRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *TextDocumentContentOptionsOrRegistrationOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of TextDocumentContentOptionsOrRegistrationOptions should be set", o.Options != nil, o.RegistrationOptions != nil)
 
 	if o.Options != nil {
-		return json.MarshalEncode(enc, *o.Options)
+		return json.MarshalEncode(enc, o.Options)
 	}
 	if o.RegistrationOptions != nil {
-		return json.MarshalEncode(enc, *o.RegistrationOptions)
+		return json.MarshalEncode(enc, o.RegistrationOptions)
 	}
 	panic("unreachable")
 }
@@ -23804,16 +23804,16 @@ type StringOrTuple struct {
 	Tuple  *[2]uint32
 }
 
-var _ json.MarshalerTo = StringOrTuple{}
+var _ json.MarshalerTo = (*StringOrTuple)(nil)
 
-func (o StringOrTuple) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *StringOrTuple) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of StringOrTuple should be set", o.String != nil, o.Tuple != nil)
 
 	if o.String != nil {
-		return json.MarshalEncode(enc, *o.String)
+		return json.MarshalEncode(enc, o.String)
 	}
 	if o.Tuple != nil {
-		return json.MarshalEncode(enc, *o.Tuple)
+		return json.MarshalEncode(enc, o.Tuple)
 	}
 	panic("unreachable")
 }
@@ -23845,16 +23845,16 @@ type StringOrBoolean struct {
 	Boolean *bool
 }
 
-var _ json.MarshalerTo = StringOrBoolean{}
+var _ json.MarshalerTo = (*StringOrBoolean)(nil)
 
-func (o StringOrBoolean) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *StringOrBoolean) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of StringOrBoolean should be set", o.String != nil, o.Boolean != nil)
 
 	if o.String != nil {
-		return json.MarshalEncode(enc, *o.String)
+		return json.MarshalEncode(enc, o.String)
 	}
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	panic("unreachable")
 }
@@ -23886,16 +23886,16 @@ type WorkspaceFolderOrURI struct {
 	URI             *URI
 }
 
-var _ json.MarshalerTo = WorkspaceFolderOrURI{}
+var _ json.MarshalerTo = (*WorkspaceFolderOrURI)(nil)
 
-func (o WorkspaceFolderOrURI) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *WorkspaceFolderOrURI) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of WorkspaceFolderOrURI should be set", o.WorkspaceFolder != nil, o.URI != nil)
 
 	if o.WorkspaceFolder != nil {
-		return json.MarshalEncode(enc, *o.WorkspaceFolder)
+		return json.MarshalEncode(enc, o.WorkspaceFolder)
 	}
 	if o.URI != nil {
-		return json.MarshalEncode(enc, *o.URI)
+		return json.MarshalEncode(enc, o.URI)
 	}
 	panic("unreachable")
 }
@@ -23927,16 +23927,16 @@ type BooleanOrClientSemanticTokensRequestFullDelta struct {
 	ClientSemanticTokensRequestFullDelta *ClientSemanticTokensRequestFullDelta
 }
 
-var _ json.MarshalerTo = BooleanOrClientSemanticTokensRequestFullDelta{}
+var _ json.MarshalerTo = (*BooleanOrClientSemanticTokensRequestFullDelta)(nil)
 
-func (o BooleanOrClientSemanticTokensRequestFullDelta) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *BooleanOrClientSemanticTokensRequestFullDelta) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of BooleanOrClientSemanticTokensRequestFullDelta should be set", o.Boolean != nil, o.ClientSemanticTokensRequestFullDelta != nil)
 
 	if o.Boolean != nil {
-		return json.MarshalEncode(enc, *o.Boolean)
+		return json.MarshalEncode(enc, o.Boolean)
 	}
 	if o.ClientSemanticTokensRequestFullDelta != nil {
-		return json.MarshalEncode(enc, *o.ClientSemanticTokensRequestFullDelta)
+		return json.MarshalEncode(enc, o.ClientSemanticTokensRequestFullDelta)
 	}
 	panic("unreachable")
 }
@@ -23969,19 +23969,19 @@ type LocationOrLocationsOrDefinitionLinksOrNull struct {
 	DefinitionLinks *[]*LocationLink
 }
 
-var _ json.MarshalerTo = LocationOrLocationsOrDefinitionLinksOrNull{}
+var _ json.MarshalerTo = (*LocationOrLocationsOrDefinitionLinksOrNull)(nil)
 
-func (o LocationOrLocationsOrDefinitionLinksOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *LocationOrLocationsOrDefinitionLinksOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of LocationOrLocationsOrDefinitionLinksOrNull is set", o.Location != nil, o.Locations != nil, o.DefinitionLinks != nil)
 
 	if o.Location != nil {
-		return json.MarshalEncode(enc, *o.Location)
+		return json.MarshalEncode(enc, o.Location)
 	}
 	if o.Locations != nil {
-		return json.MarshalEncode(enc, *o.Locations)
+		return json.MarshalEncode(enc, o.Locations)
 	}
 	if o.DefinitionLinks != nil {
-		return json.MarshalEncode(enc, *o.DefinitionLinks)
+		return json.MarshalEncode(enc, o.DefinitionLinks)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24021,13 +24021,13 @@ type FoldingRangesOrNull struct {
 	FoldingRanges *[]*FoldingRange
 }
 
-var _ json.MarshalerTo = FoldingRangesOrNull{}
+var _ json.MarshalerTo = (*FoldingRangesOrNull)(nil)
 
-func (o FoldingRangesOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *FoldingRangesOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of FoldingRangesOrNull is set", o.FoldingRanges != nil)
 
 	if o.FoldingRanges != nil {
-		return json.MarshalEncode(enc, *o.FoldingRanges)
+		return json.MarshalEncode(enc, o.FoldingRanges)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24059,19 +24059,19 @@ type LocationOrLocationsOrDeclarationLinksOrNull struct {
 	DeclarationLinks *[]*LocationLink
 }
 
-var _ json.MarshalerTo = LocationOrLocationsOrDeclarationLinksOrNull{}
+var _ json.MarshalerTo = (*LocationOrLocationsOrDeclarationLinksOrNull)(nil)
 
-func (o LocationOrLocationsOrDeclarationLinksOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *LocationOrLocationsOrDeclarationLinksOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of LocationOrLocationsOrDeclarationLinksOrNull is set", o.Location != nil, o.Locations != nil, o.DeclarationLinks != nil)
 
 	if o.Location != nil {
-		return json.MarshalEncode(enc, *o.Location)
+		return json.MarshalEncode(enc, o.Location)
 	}
 	if o.Locations != nil {
-		return json.MarshalEncode(enc, *o.Locations)
+		return json.MarshalEncode(enc, o.Locations)
 	}
 	if o.DeclarationLinks != nil {
-		return json.MarshalEncode(enc, *o.DeclarationLinks)
+		return json.MarshalEncode(enc, o.DeclarationLinks)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24111,13 +24111,13 @@ type SelectionRangesOrNull struct {
 	SelectionRanges *[]*SelectionRange
 }
 
-var _ json.MarshalerTo = SelectionRangesOrNull{}
+var _ json.MarshalerTo = (*SelectionRangesOrNull)(nil)
 
-func (o SelectionRangesOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *SelectionRangesOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of SelectionRangesOrNull is set", o.SelectionRanges != nil)
 
 	if o.SelectionRanges != nil {
-		return json.MarshalEncode(enc, *o.SelectionRanges)
+		return json.MarshalEncode(enc, o.SelectionRanges)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24147,13 +24147,13 @@ type CallHierarchyItemsOrNull struct {
 	CallHierarchyItems *[]*CallHierarchyItem
 }
 
-var _ json.MarshalerTo = CallHierarchyItemsOrNull{}
+var _ json.MarshalerTo = (*CallHierarchyItemsOrNull)(nil)
 
-func (o CallHierarchyItemsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *CallHierarchyItemsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of CallHierarchyItemsOrNull is set", o.CallHierarchyItems != nil)
 
 	if o.CallHierarchyItems != nil {
-		return json.MarshalEncode(enc, *o.CallHierarchyItems)
+		return json.MarshalEncode(enc, o.CallHierarchyItems)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24183,13 +24183,13 @@ type CallHierarchyIncomingCallsOrNull struct {
 	CallHierarchyIncomingCalls *[]*CallHierarchyIncomingCall
 }
 
-var _ json.MarshalerTo = CallHierarchyIncomingCallsOrNull{}
+var _ json.MarshalerTo = (*CallHierarchyIncomingCallsOrNull)(nil)
 
-func (o CallHierarchyIncomingCallsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *CallHierarchyIncomingCallsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of CallHierarchyIncomingCallsOrNull is set", o.CallHierarchyIncomingCalls != nil)
 
 	if o.CallHierarchyIncomingCalls != nil {
-		return json.MarshalEncode(enc, *o.CallHierarchyIncomingCalls)
+		return json.MarshalEncode(enc, o.CallHierarchyIncomingCalls)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24219,13 +24219,13 @@ type CallHierarchyOutgoingCallsOrNull struct {
 	CallHierarchyOutgoingCalls *[]*CallHierarchyOutgoingCall
 }
 
-var _ json.MarshalerTo = CallHierarchyOutgoingCallsOrNull{}
+var _ json.MarshalerTo = (*CallHierarchyOutgoingCallsOrNull)(nil)
 
-func (o CallHierarchyOutgoingCallsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *CallHierarchyOutgoingCallsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of CallHierarchyOutgoingCallsOrNull is set", o.CallHierarchyOutgoingCalls != nil)
 
 	if o.CallHierarchyOutgoingCalls != nil {
-		return json.MarshalEncode(enc, *o.CallHierarchyOutgoingCalls)
+		return json.MarshalEncode(enc, o.CallHierarchyOutgoingCalls)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24255,13 +24255,13 @@ type SemanticTokensOrNull struct {
 	SemanticTokens *SemanticTokens
 }
 
-var _ json.MarshalerTo = SemanticTokensOrNull{}
+var _ json.MarshalerTo = (*SemanticTokensOrNull)(nil)
 
-func (o SemanticTokensOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *SemanticTokensOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of SemanticTokensOrNull is set", o.SemanticTokens != nil)
 
 	if o.SemanticTokens != nil {
-		return json.MarshalEncode(enc, *o.SemanticTokens)
+		return json.MarshalEncode(enc, o.SemanticTokens)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24292,16 +24292,16 @@ type SemanticTokensOrSemanticTokensDeltaOrNull struct {
 	SemanticTokensDelta *SemanticTokensDelta
 }
 
-var _ json.MarshalerTo = SemanticTokensOrSemanticTokensDeltaOrNull{}
+var _ json.MarshalerTo = (*SemanticTokensOrSemanticTokensDeltaOrNull)(nil)
 
-func (o SemanticTokensOrSemanticTokensDeltaOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *SemanticTokensOrSemanticTokensDeltaOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of SemanticTokensOrSemanticTokensDeltaOrNull is set", o.SemanticTokens != nil, o.SemanticTokensDelta != nil)
 
 	if o.SemanticTokens != nil {
-		return json.MarshalEncode(enc, *o.SemanticTokens)
+		return json.MarshalEncode(enc, o.SemanticTokens)
 	}
 	if o.SemanticTokensDelta != nil {
-		return json.MarshalEncode(enc, *o.SemanticTokensDelta)
+		return json.MarshalEncode(enc, o.SemanticTokensDelta)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24336,13 +24336,13 @@ type LinkedEditingRangesOrNull struct {
 	LinkedEditingRanges *LinkedEditingRanges
 }
 
-var _ json.MarshalerTo = LinkedEditingRangesOrNull{}
+var _ json.MarshalerTo = (*LinkedEditingRangesOrNull)(nil)
 
-func (o LinkedEditingRangesOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *LinkedEditingRangesOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of LinkedEditingRangesOrNull is set", o.LinkedEditingRanges != nil)
 
 	if o.LinkedEditingRanges != nil {
-		return json.MarshalEncode(enc, *o.LinkedEditingRanges)
+		return json.MarshalEncode(enc, o.LinkedEditingRanges)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24372,13 +24372,13 @@ type WorkspaceEditOrNull struct {
 	WorkspaceEdit *WorkspaceEdit
 }
 
-var _ json.MarshalerTo = WorkspaceEditOrNull{}
+var _ json.MarshalerTo = (*WorkspaceEditOrNull)(nil)
 
-func (o WorkspaceEditOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *WorkspaceEditOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of WorkspaceEditOrNull is set", o.WorkspaceEdit != nil)
 
 	if o.WorkspaceEdit != nil {
-		return json.MarshalEncode(enc, *o.WorkspaceEdit)
+		return json.MarshalEncode(enc, o.WorkspaceEdit)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24408,13 +24408,13 @@ type MonikersOrNull struct {
 	Monikers *[]*Moniker
 }
 
-var _ json.MarshalerTo = MonikersOrNull{}
+var _ json.MarshalerTo = (*MonikersOrNull)(nil)
 
-func (o MonikersOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *MonikersOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of MonikersOrNull is set", o.Monikers != nil)
 
 	if o.Monikers != nil {
-		return json.MarshalEncode(enc, *o.Monikers)
+		return json.MarshalEncode(enc, o.Monikers)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24444,13 +24444,13 @@ type TypeHierarchyItemsOrNull struct {
 	TypeHierarchyItems *[]*TypeHierarchyItem
 }
 
-var _ json.MarshalerTo = TypeHierarchyItemsOrNull{}
+var _ json.MarshalerTo = (*TypeHierarchyItemsOrNull)(nil)
 
-func (o TypeHierarchyItemsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *TypeHierarchyItemsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of TypeHierarchyItemsOrNull is set", o.TypeHierarchyItems != nil)
 
 	if o.TypeHierarchyItems != nil {
-		return json.MarshalEncode(enc, *o.TypeHierarchyItems)
+		return json.MarshalEncode(enc, o.TypeHierarchyItems)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24480,13 +24480,13 @@ type InlineValuesOrNull struct {
 	InlineValues *[]InlineValueTextOrVariableLookupOrEvaluatableExpression
 }
 
-var _ json.MarshalerTo = InlineValuesOrNull{}
+var _ json.MarshalerTo = (*InlineValuesOrNull)(nil)
 
-func (o InlineValuesOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *InlineValuesOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of InlineValuesOrNull is set", o.InlineValues != nil)
 
 	if o.InlineValues != nil {
-		return json.MarshalEncode(enc, *o.InlineValues)
+		return json.MarshalEncode(enc, o.InlineValues)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24516,13 +24516,13 @@ type InlayHintsOrNull struct {
 	InlayHints *[]*InlayHint
 }
 
-var _ json.MarshalerTo = InlayHintsOrNull{}
+var _ json.MarshalerTo = (*InlayHintsOrNull)(nil)
 
-func (o InlayHintsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *InlayHintsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of InlayHintsOrNull is set", o.InlayHints != nil)
 
 	if o.InlayHints != nil {
-		return json.MarshalEncode(enc, *o.InlayHints)
+		return json.MarshalEncode(enc, o.InlayHints)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24553,16 +24553,16 @@ type RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport stru
 	UnchangedDocumentDiagnosticReport *RelatedUnchangedDocumentDiagnosticReport
 }
 
-var _ json.MarshalerTo = RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{}
+var _ json.MarshalerTo = (*RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport)(nil)
 
-func (o RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport should be set", o.FullDocumentDiagnosticReport != nil, o.UnchangedDocumentDiagnosticReport != nil)
 
 	if o.FullDocumentDiagnosticReport != nil {
-		return json.MarshalEncode(enc, *o.FullDocumentDiagnosticReport)
+		return json.MarshalEncode(enc, o.FullDocumentDiagnosticReport)
 	}
 	if o.UnchangedDocumentDiagnosticReport != nil {
-		return json.MarshalEncode(enc, *o.UnchangedDocumentDiagnosticReport)
+		return json.MarshalEncode(enc, o.UnchangedDocumentDiagnosticReport)
 	}
 	panic("unreachable")
 }
@@ -24594,16 +24594,16 @@ type InlineCompletionListOrItemsOrNull struct {
 	Items *[]*InlineCompletionItem
 }
 
-var _ json.MarshalerTo = InlineCompletionListOrItemsOrNull{}
+var _ json.MarshalerTo = (*InlineCompletionListOrItemsOrNull)(nil)
 
-func (o InlineCompletionListOrItemsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *InlineCompletionListOrItemsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of InlineCompletionListOrItemsOrNull is set", o.List != nil, o.Items != nil)
 
 	if o.List != nil {
-		return json.MarshalEncode(enc, *o.List)
+		return json.MarshalEncode(enc, o.List)
 	}
 	if o.Items != nil {
-		return json.MarshalEncode(enc, *o.Items)
+		return json.MarshalEncode(enc, o.Items)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24638,13 +24638,13 @@ type MessageActionItemOrNull struct {
 	MessageActionItem *MessageActionItem
 }
 
-var _ json.MarshalerTo = MessageActionItemOrNull{}
+var _ json.MarshalerTo = (*MessageActionItemOrNull)(nil)
 
-func (o MessageActionItemOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *MessageActionItemOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of MessageActionItemOrNull is set", o.MessageActionItem != nil)
 
 	if o.MessageActionItem != nil {
-		return json.MarshalEncode(enc, *o.MessageActionItem)
+		return json.MarshalEncode(enc, o.MessageActionItem)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24674,13 +24674,13 @@ type TextEditsOrNull struct {
 	TextEdits *[]*TextEdit
 }
 
-var _ json.MarshalerTo = TextEditsOrNull{}
+var _ json.MarshalerTo = (*TextEditsOrNull)(nil)
 
-func (o TextEditsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *TextEditsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of TextEditsOrNull is set", o.TextEdits != nil)
 
 	if o.TextEdits != nil {
-		return json.MarshalEncode(enc, *o.TextEdits)
+		return json.MarshalEncode(enc, o.TextEdits)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24711,16 +24711,16 @@ type CompletionItemsOrListOrNull struct {
 	List  *CompletionList
 }
 
-var _ json.MarshalerTo = CompletionItemsOrListOrNull{}
+var _ json.MarshalerTo = (*CompletionItemsOrListOrNull)(nil)
 
-func (o CompletionItemsOrListOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *CompletionItemsOrListOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of CompletionItemsOrListOrNull is set", o.Items != nil, o.List != nil)
 
 	if o.Items != nil {
-		return json.MarshalEncode(enc, *o.Items)
+		return json.MarshalEncode(enc, o.Items)
 	}
 	if o.List != nil {
-		return json.MarshalEncode(enc, *o.List)
+		return json.MarshalEncode(enc, o.List)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24755,13 +24755,13 @@ type HoverOrNull struct {
 	Hover *Hover
 }
 
-var _ json.MarshalerTo = HoverOrNull{}
+var _ json.MarshalerTo = (*HoverOrNull)(nil)
 
-func (o HoverOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *HoverOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of HoverOrNull is set", o.Hover != nil)
 
 	if o.Hover != nil {
-		return json.MarshalEncode(enc, *o.Hover)
+		return json.MarshalEncode(enc, o.Hover)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24791,13 +24791,13 @@ type SignatureHelpOrNull struct {
 	SignatureHelp *SignatureHelp
 }
 
-var _ json.MarshalerTo = SignatureHelpOrNull{}
+var _ json.MarshalerTo = (*SignatureHelpOrNull)(nil)
 
-func (o SignatureHelpOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *SignatureHelpOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of SignatureHelpOrNull is set", o.SignatureHelp != nil)
 
 	if o.SignatureHelp != nil {
-		return json.MarshalEncode(enc, *o.SignatureHelp)
+		return json.MarshalEncode(enc, o.SignatureHelp)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24827,13 +24827,13 @@ type LocationsOrNull struct {
 	Locations *[]Location
 }
 
-var _ json.MarshalerTo = LocationsOrNull{}
+var _ json.MarshalerTo = (*LocationsOrNull)(nil)
 
-func (o LocationsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *LocationsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of LocationsOrNull is set", o.Locations != nil)
 
 	if o.Locations != nil {
-		return json.MarshalEncode(enc, *o.Locations)
+		return json.MarshalEncode(enc, o.Locations)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24863,13 +24863,13 @@ type DocumentHighlightsOrNull struct {
 	DocumentHighlights *[]*DocumentHighlight
 }
 
-var _ json.MarshalerTo = DocumentHighlightsOrNull{}
+var _ json.MarshalerTo = (*DocumentHighlightsOrNull)(nil)
 
-func (o DocumentHighlightsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *DocumentHighlightsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of DocumentHighlightsOrNull is set", o.DocumentHighlights != nil)
 
 	if o.DocumentHighlights != nil {
-		return json.MarshalEncode(enc, *o.DocumentHighlights)
+		return json.MarshalEncode(enc, o.DocumentHighlights)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24900,16 +24900,16 @@ type SymbolInformationsOrDocumentSymbolsOrNull struct {
 	DocumentSymbols    *[]*DocumentSymbol
 }
 
-var _ json.MarshalerTo = SymbolInformationsOrDocumentSymbolsOrNull{}
+var _ json.MarshalerTo = (*SymbolInformationsOrDocumentSymbolsOrNull)(nil)
 
-func (o SymbolInformationsOrDocumentSymbolsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *SymbolInformationsOrDocumentSymbolsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of SymbolInformationsOrDocumentSymbolsOrNull is set", o.SymbolInformations != nil, o.DocumentSymbols != nil)
 
 	if o.SymbolInformations != nil {
-		return json.MarshalEncode(enc, *o.SymbolInformations)
+		return json.MarshalEncode(enc, o.SymbolInformations)
 	}
 	if o.DocumentSymbols != nil {
-		return json.MarshalEncode(enc, *o.DocumentSymbols)
+		return json.MarshalEncode(enc, o.DocumentSymbols)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -24945,16 +24945,16 @@ type CommandOrCodeAction struct {
 	CodeAction *CodeAction
 }
 
-var _ json.MarshalerTo = CommandOrCodeAction{}
+var _ json.MarshalerTo = (*CommandOrCodeAction)(nil)
 
-func (o CommandOrCodeAction) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *CommandOrCodeAction) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of CommandOrCodeAction should be set", o.Command != nil, o.CodeAction != nil)
 
 	if o.Command != nil {
-		return json.MarshalEncode(enc, *o.Command)
+		return json.MarshalEncode(enc, o.Command)
 	}
 	if o.CodeAction != nil {
-		return json.MarshalEncode(enc, *o.CodeAction)
+		return json.MarshalEncode(enc, o.CodeAction)
 	}
 	panic("unreachable")
 }
@@ -24985,13 +24985,13 @@ type CommandOrCodeActionArrayOrNull struct {
 	CommandOrCodeActionArray *[]CommandOrCodeAction
 }
 
-var _ json.MarshalerTo = CommandOrCodeActionArrayOrNull{}
+var _ json.MarshalerTo = (*CommandOrCodeActionArrayOrNull)(nil)
 
-func (o CommandOrCodeActionArrayOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *CommandOrCodeActionArrayOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of CommandOrCodeActionArrayOrNull is set", o.CommandOrCodeActionArray != nil)
 
 	if o.CommandOrCodeActionArray != nil {
-		return json.MarshalEncode(enc, *o.CommandOrCodeActionArray)
+		return json.MarshalEncode(enc, o.CommandOrCodeActionArray)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -25022,16 +25022,16 @@ type SymbolInformationsOrWorkspaceSymbolsOrNull struct {
 	WorkspaceSymbols   *[]*WorkspaceSymbol
 }
 
-var _ json.MarshalerTo = SymbolInformationsOrWorkspaceSymbolsOrNull{}
+var _ json.MarshalerTo = (*SymbolInformationsOrWorkspaceSymbolsOrNull)(nil)
 
-func (o SymbolInformationsOrWorkspaceSymbolsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *SymbolInformationsOrWorkspaceSymbolsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of SymbolInformationsOrWorkspaceSymbolsOrNull is set", o.SymbolInformations != nil, o.WorkspaceSymbols != nil)
 
 	if o.SymbolInformations != nil {
-		return json.MarshalEncode(enc, *o.SymbolInformations)
+		return json.MarshalEncode(enc, o.SymbolInformations)
 	}
 	if o.WorkspaceSymbols != nil {
-		return json.MarshalEncode(enc, *o.WorkspaceSymbols)
+		return json.MarshalEncode(enc, o.WorkspaceSymbols)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -25066,13 +25066,13 @@ type CodeLenssOrNull struct {
 	CodeLenss *[]*CodeLens
 }
 
-var _ json.MarshalerTo = CodeLenssOrNull{}
+var _ json.MarshalerTo = (*CodeLenssOrNull)(nil)
 
-func (o CodeLenssOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *CodeLenssOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of CodeLenssOrNull is set", o.CodeLenss != nil)
 
 	if o.CodeLenss != nil {
-		return json.MarshalEncode(enc, *o.CodeLenss)
+		return json.MarshalEncode(enc, o.CodeLenss)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -25102,13 +25102,13 @@ type DocumentLinksOrNull struct {
 	DocumentLinks *[]*DocumentLink
 }
 
-var _ json.MarshalerTo = DocumentLinksOrNull{}
+var _ json.MarshalerTo = (*DocumentLinksOrNull)(nil)
 
-func (o DocumentLinksOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *DocumentLinksOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of DocumentLinksOrNull is set", o.DocumentLinks != nil)
 
 	if o.DocumentLinks != nil {
-		return json.MarshalEncode(enc, *o.DocumentLinks)
+		return json.MarshalEncode(enc, o.DocumentLinks)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -25140,19 +25140,19 @@ type RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull struct 
 	PrepareRenameDefaultBehavior *PrepareRenameDefaultBehavior
 }
 
-var _ json.MarshalerTo = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull{}
+var _ json.MarshalerTo = (*RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull)(nil)
 
-func (o RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull is set", o.Range != nil, o.PrepareRenamePlaceholder != nil, o.PrepareRenameDefaultBehavior != nil)
 
 	if o.Range != nil {
-		return json.MarshalEncode(enc, *o.Range)
+		return json.MarshalEncode(enc, o.Range)
 	}
 	if o.PrepareRenamePlaceholder != nil {
-		return json.MarshalEncode(enc, *o.PrepareRenamePlaceholder)
+		return json.MarshalEncode(enc, o.PrepareRenamePlaceholder)
 	}
 	if o.PrepareRenameDefaultBehavior != nil {
-		return json.MarshalEncode(enc, *o.PrepareRenameDefaultBehavior)
+		return json.MarshalEncode(enc, o.PrepareRenameDefaultBehavior)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -25192,13 +25192,13 @@ type LSPAnyOrNull struct {
 	LSPAny *any
 }
 
-var _ json.MarshalerTo = LSPAnyOrNull{}
+var _ json.MarshalerTo = (*LSPAnyOrNull)(nil)
 
-func (o LSPAnyOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *LSPAnyOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertAtMostOne("more than one element of LSPAnyOrNull is set", o.LSPAny != nil)
 
 	if o.LSPAny != nil {
-		return json.MarshalEncode(enc, *o.LSPAny)
+		return json.MarshalEncode(enc, o.LSPAny)
 	}
 	return enc.WriteToken(jsontext.Null)
 }
@@ -25231,22 +25231,22 @@ type TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPat
 	NotebookCellTextDocumentFilter *NotebookCellTextDocumentFilter
 }
 
-var _ json.MarshalerTo = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter{}
+var _ json.MarshalerTo = (*TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter)(nil)
 
-func (o TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter should be set", o.TextDocumentFilterLanguage != nil, o.TextDocumentFilterScheme != nil, o.TextDocumentFilterPattern != nil, o.NotebookCellTextDocumentFilter != nil)
 
 	if o.TextDocumentFilterLanguage != nil {
-		return json.MarshalEncode(enc, *o.TextDocumentFilterLanguage)
+		return json.MarshalEncode(enc, o.TextDocumentFilterLanguage)
 	}
 	if o.TextDocumentFilterScheme != nil {
-		return json.MarshalEncode(enc, *o.TextDocumentFilterScheme)
+		return json.MarshalEncode(enc, o.TextDocumentFilterScheme)
 	}
 	if o.TextDocumentFilterPattern != nil {
-		return json.MarshalEncode(enc, *o.TextDocumentFilterPattern)
+		return json.MarshalEncode(enc, o.TextDocumentFilterPattern)
 	}
 	if o.NotebookCellTextDocumentFilter != nil {
-		return json.MarshalEncode(enc, *o.NotebookCellTextDocumentFilter)
+		return json.MarshalEncode(enc, o.NotebookCellTextDocumentFilter)
 	}
 	panic("unreachable")
 }
@@ -25288,16 +25288,16 @@ type StringOrMarkedStringWithLanguage struct {
 	MarkedStringWithLanguage *MarkedStringWithLanguage
 }
 
-var _ json.MarshalerTo = StringOrMarkedStringWithLanguage{}
+var _ json.MarshalerTo = (*StringOrMarkedStringWithLanguage)(nil)
 
-func (o StringOrMarkedStringWithLanguage) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *StringOrMarkedStringWithLanguage) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of StringOrMarkedStringWithLanguage should be set", o.String != nil, o.MarkedStringWithLanguage != nil)
 
 	if o.String != nil {
-		return json.MarshalEncode(enc, *o.String)
+		return json.MarshalEncode(enc, o.String)
 	}
 	if o.MarkedStringWithLanguage != nil {
-		return json.MarshalEncode(enc, *o.MarkedStringWithLanguage)
+		return json.MarshalEncode(enc, o.MarkedStringWithLanguage)
 	}
 	panic("unreachable")
 }
@@ -25330,19 +25330,19 @@ type InlineValueTextOrVariableLookupOrEvaluatableExpression struct {
 	EvaluatableExpression *InlineValueEvaluatableExpression
 }
 
-var _ json.MarshalerTo = InlineValueTextOrVariableLookupOrEvaluatableExpression{}
+var _ json.MarshalerTo = (*InlineValueTextOrVariableLookupOrEvaluatableExpression)(nil)
 
-func (o InlineValueTextOrVariableLookupOrEvaluatableExpression) MarshalJSONTo(enc *jsontext.Encoder) error {
+func (o *InlineValueTextOrVariableLookupOrEvaluatableExpression) MarshalJSONTo(enc *jsontext.Encoder) error {
 	assertOnlyOne("exactly one element of InlineValueTextOrVariableLookupOrEvaluatableExpression should be set", o.Text != nil, o.VariableLookup != nil, o.EvaluatableExpression != nil)
 
 	if o.Text != nil {
-		return json.MarshalEncode(enc, *o.Text)
+		return json.MarshalEncode(enc, o.Text)
 	}
 	if o.VariableLookup != nil {
-		return json.MarshalEncode(enc, *o.VariableLookup)
+		return json.MarshalEncode(enc, o.VariableLookup)
 	}
 	if o.EvaluatableExpression != nil {
-		return json.MarshalEncode(enc, *o.EvaluatableExpression)
+		return json.MarshalEncode(enc, o.EvaluatableExpression)
 	}
 	panic("unreachable")
 }
