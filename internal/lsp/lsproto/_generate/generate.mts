@@ -831,9 +831,13 @@ function generateCode() {
         writeLine(`}`);
         writeLine("");
 
-        writeLine(`func (o *${name}) UnmarshalJSON(data []byte) error {`);
-        writeLine(`\tif string(data) != \`${jsonValue}\` {`);
-        writeLine(`\t\treturn fmt.Errorf("invalid ${name}: %s", data)`);
+        writeLine(`func (o *${name}) UnmarshalJSONFrom(dec *jsontext.Decoder) error {`);
+        writeLine(`\tv, err := dec.ReadValue();`);
+        writeLine(`\tif err != nil {`);
+        writeLine(`\t\treturn err`);
+        writeLine(`\t}`);
+        writeLine(`\tif string(v) != \`${jsonValue}\` {`);
+        writeLine(`\t\treturn fmt.Errorf("expected ${name} value %s, got %s", \`${jsonValue}\`, v)`);
         writeLine(`\t}`);
         writeLine(`\treturn nil`);
         writeLine(`}`);

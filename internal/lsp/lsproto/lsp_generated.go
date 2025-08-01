@@ -23639,9 +23639,13 @@ func (o StringLiteralBegin) MarshalerTo(enc *jsontext.Encoder) error {
 	return enc.WriteValue(jsontext.Value(`"begin"`))
 }
 
-func (o *StringLiteralBegin) UnmarshalJSON(data []byte) error {
-	if string(data) != `"begin"` {
-		return fmt.Errorf("invalid StringLiteralBegin: %s", data)
+func (o *StringLiteralBegin) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	v, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	if string(v) != `"begin"` {
+		return fmt.Errorf("expected StringLiteralBegin value %s, got %s", `"begin"`, v)
 	}
 	return nil
 }
@@ -23653,9 +23657,13 @@ func (o StringLiteralReport) MarshalerTo(enc *jsontext.Encoder) error {
 	return enc.WriteValue(jsontext.Value(`"report"`))
 }
 
-func (o *StringLiteralReport) UnmarshalJSON(data []byte) error {
-	if string(data) != `"report"` {
-		return fmt.Errorf("invalid StringLiteralReport: %s", data)
+func (o *StringLiteralReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	v, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	if string(v) != `"report"` {
+		return fmt.Errorf("expected StringLiteralReport value %s, got %s", `"report"`, v)
 	}
 	return nil
 }
@@ -23667,9 +23675,13 @@ func (o StringLiteralEnd) MarshalerTo(enc *jsontext.Encoder) error {
 	return enc.WriteValue(jsontext.Value(`"end"`))
 }
 
-func (o *StringLiteralEnd) UnmarshalJSON(data []byte) error {
-	if string(data) != `"end"` {
-		return fmt.Errorf("invalid StringLiteralEnd: %s", data)
+func (o *StringLiteralEnd) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	v, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	if string(v) != `"end"` {
+		return fmt.Errorf("expected StringLiteralEnd value %s, got %s", `"end"`, v)
 	}
 	return nil
 }
@@ -23681,9 +23693,13 @@ func (o StringLiteralCreate) MarshalerTo(enc *jsontext.Encoder) error {
 	return enc.WriteValue(jsontext.Value(`"create"`))
 }
 
-func (o *StringLiteralCreate) UnmarshalJSON(data []byte) error {
-	if string(data) != `"create"` {
-		return fmt.Errorf("invalid StringLiteralCreate: %s", data)
+func (o *StringLiteralCreate) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	v, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	if string(v) != `"create"` {
+		return fmt.Errorf("expected StringLiteralCreate value %s, got %s", `"create"`, v)
 	}
 	return nil
 }
@@ -23695,9 +23711,13 @@ func (o StringLiteralRename) MarshalerTo(enc *jsontext.Encoder) error {
 	return enc.WriteValue(jsontext.Value(`"rename"`))
 }
 
-func (o *StringLiteralRename) UnmarshalJSON(data []byte) error {
-	if string(data) != `"rename"` {
-		return fmt.Errorf("invalid StringLiteralRename: %s", data)
+func (o *StringLiteralRename) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	v, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	if string(v) != `"rename"` {
+		return fmt.Errorf("expected StringLiteralRename value %s, got %s", `"rename"`, v)
 	}
 	return nil
 }
@@ -23709,9 +23729,13 @@ func (o StringLiteralDelete) MarshalerTo(enc *jsontext.Encoder) error {
 	return enc.WriteValue(jsontext.Value(`"delete"`))
 }
 
-func (o *StringLiteralDelete) UnmarshalJSON(data []byte) error {
-	if string(data) != `"delete"` {
-		return fmt.Errorf("invalid StringLiteralDelete: %s", data)
+func (o *StringLiteralDelete) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	v, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	if string(v) != `"delete"` {
+		return fmt.Errorf("expected StringLiteralDelete value %s, got %s", `"delete"`, v)
 	}
 	return nil
 }
@@ -23723,9 +23747,13 @@ func (o StringLiteralFull) MarshalerTo(enc *jsontext.Encoder) error {
 	return enc.WriteValue(jsontext.Value(`"full"`))
 }
 
-func (o *StringLiteralFull) UnmarshalJSON(data []byte) error {
-	if string(data) != `"full"` {
-		return fmt.Errorf("invalid StringLiteralFull: %s", data)
+func (o *StringLiteralFull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	v, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	if string(v) != `"full"` {
+		return fmt.Errorf("expected StringLiteralFull value %s, got %s", `"full"`, v)
 	}
 	return nil
 }
@@ -23737,9 +23765,13 @@ func (o StringLiteralUnchanged) MarshalerTo(enc *jsontext.Encoder) error {
 	return enc.WriteValue(jsontext.Value(`"unchanged"`))
 }
 
-func (o *StringLiteralUnchanged) UnmarshalJSON(data []byte) error {
-	if string(data) != `"unchanged"` {
-		return fmt.Errorf("invalid StringLiteralUnchanged: %s", data)
+func (o *StringLiteralUnchanged) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	v, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	if string(v) != `"unchanged"` {
+		return fmt.Errorf("expected StringLiteralUnchanged value %s, got %s", `"unchanged"`, v)
 	}
 	return nil
 }
@@ -23751,9 +23783,13 @@ func (o StringLiteralSnippet) MarshalerTo(enc *jsontext.Encoder) error {
 	return enc.WriteValue(jsontext.Value(`"snippet"`))
 }
 
-func (o *StringLiteralSnippet) UnmarshalJSON(data []byte) error {
-	if string(data) != `"snippet"` {
-		return fmt.Errorf("invalid StringLiteralSnippet: %s", data)
+func (o *StringLiteralSnippet) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	v, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	if string(v) != `"snippet"` {
+		return fmt.Errorf("expected StringLiteralSnippet value %s, got %s", `"snippet"`, v)
 	}
 	return nil
 }
