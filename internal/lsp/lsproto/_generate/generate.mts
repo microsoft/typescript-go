@@ -785,7 +785,6 @@ function generateCode() {
 
         // If all fields are nil, marshal as null (only for unions that can contain null)
         if (unionContainedNull) {
-            writeLine(`\t// All fields are nil, represent as null`);
             writeLine(`\treturn enc.WriteToken(jsontext.Null)`);
         }
         else {

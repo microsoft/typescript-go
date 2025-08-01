@@ -20961,7 +20961,6 @@ func (o DocumentSelectorOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.DocumentSelector != nil {
 		return json.MarshalEncode(enc, *o.DocumentSelector)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -21386,7 +21385,6 @@ func (o IntegerOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.Integer != nil {
 		return json.MarshalEncode(enc, *o.Integer)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -21424,7 +21422,6 @@ func (o StringOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.String != nil {
 		return json.MarshalEncode(enc, *o.String)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -21462,7 +21459,6 @@ func (o DocumentUriOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.DocumentUri != nil {
 		return json.MarshalEncode(enc, *o.DocumentUri)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -21500,7 +21496,6 @@ func (o WorkspaceFoldersOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.WorkspaceFolders != nil {
 		return json.MarshalEncode(enc, *o.WorkspaceFolders)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -21720,7 +21715,6 @@ func (o UintegerOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.Uinteger != nil {
 		return json.MarshalEncode(enc, *o.Uinteger)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -23459,7 +23453,6 @@ func (o LocationOrLocationsOrDefinitionLinksOrNull) MarshalJSONTo(enc *jsontext.
 	if o.DefinitionLinks != nil {
 		return json.MarshalEncode(enc, *o.DefinitionLinks)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -23507,7 +23500,6 @@ func (o FoldingRangesOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.FoldingRanges != nil {
 		return json.MarshalEncode(enc, *o.FoldingRanges)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -23553,7 +23545,6 @@ func (o LocationOrLocationsOrDeclarationLinksOrNull) MarshalJSONTo(enc *jsontext
 	if o.DeclarationLinks != nil {
 		return json.MarshalEncode(enc, *o.DeclarationLinks)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -23601,7 +23592,6 @@ func (o SelectionRangesOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.SelectionRanges != nil {
 		return json.MarshalEncode(enc, *o.SelectionRanges)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -23639,7 +23629,6 @@ func (o CallHierarchyItemsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.CallHierarchyItems != nil {
 		return json.MarshalEncode(enc, *o.CallHierarchyItems)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -23677,7 +23666,6 @@ func (o CallHierarchyIncomingCallsOrNull) MarshalJSONTo(enc *jsontext.Encoder) e
 	if o.CallHierarchyIncomingCalls != nil {
 		return json.MarshalEncode(enc, *o.CallHierarchyIncomingCalls)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -23715,7 +23703,6 @@ func (o CallHierarchyOutgoingCallsOrNull) MarshalJSONTo(enc *jsontext.Encoder) e
 	if o.CallHierarchyOutgoingCalls != nil {
 		return json.MarshalEncode(enc, *o.CallHierarchyOutgoingCalls)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -23753,7 +23740,6 @@ func (o SemanticTokensOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.SemanticTokens != nil {
 		return json.MarshalEncode(enc, *o.SemanticTokens)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -23795,7 +23781,6 @@ func (o SemanticTokensOrSemanticTokensDeltaOrNull) MarshalJSONTo(enc *jsontext.E
 	if o.SemanticTokensDelta != nil {
 		return json.MarshalEncode(enc, *o.SemanticTokensDelta)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -23838,7 +23823,6 @@ func (o LinkedEditingRangesOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.LinkedEditingRanges != nil {
 		return json.MarshalEncode(enc, *o.LinkedEditingRanges)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -23876,7 +23860,6 @@ func (o WorkspaceEditOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.WorkspaceEdit != nil {
 		return json.MarshalEncode(enc, *o.WorkspaceEdit)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -23914,7 +23897,6 @@ func (o MonikersOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.Monikers != nil {
 		return json.MarshalEncode(enc, *o.Monikers)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -23952,7 +23934,6 @@ func (o TypeHierarchyItemsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.TypeHierarchyItems != nil {
 		return json.MarshalEncode(enc, *o.TypeHierarchyItems)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -23990,7 +23971,6 @@ func (o InlineValuesOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.InlineValues != nil {
 		return json.MarshalEncode(enc, *o.InlineValues)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -24028,7 +24008,6 @@ func (o InlayHintsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.InlayHints != nil {
 		return json.MarshalEncode(enc, *o.InlayHints)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -24111,7 +24090,6 @@ func (o InlineCompletionListOrItemsOrNull) MarshalJSONTo(enc *jsontext.Encoder) 
 	if o.Items != nil {
 		return json.MarshalEncode(enc, *o.Items)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -24154,7 +24132,6 @@ func (o MessageActionItemOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.MessageActionItem != nil {
 		return json.MarshalEncode(enc, *o.MessageActionItem)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -24192,7 +24169,6 @@ func (o TextEditsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.TextEdits != nil {
 		return json.MarshalEncode(enc, *o.TextEdits)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -24234,7 +24210,6 @@ func (o CompletionItemsOrListOrNull) MarshalJSONTo(enc *jsontext.Encoder) error 
 	if o.List != nil {
 		return json.MarshalEncode(enc, *o.List)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -24277,7 +24252,6 @@ func (o HoverOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.Hover != nil {
 		return json.MarshalEncode(enc, *o.Hover)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -24315,7 +24289,6 @@ func (o SignatureHelpOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.SignatureHelp != nil {
 		return json.MarshalEncode(enc, *o.SignatureHelp)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -24353,7 +24326,6 @@ func (o LocationsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.Locations != nil {
 		return json.MarshalEncode(enc, *o.Locations)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -24391,7 +24363,6 @@ func (o DocumentHighlightsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.DocumentHighlights != nil {
 		return json.MarshalEncode(enc, *o.DocumentHighlights)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -24433,7 +24404,6 @@ func (o SymbolInformationsOrDocumentSymbolsOrNull) MarshalJSONTo(enc *jsontext.E
 	if o.DocumentSymbols != nil {
 		return json.MarshalEncode(enc, *o.DocumentSymbols)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -24517,7 +24487,6 @@ func (o CommandOrCodeActionArrayOrNull) MarshalJSONTo(enc *jsontext.Encoder) err
 	if o.CommandOrCodeActionArray != nil {
 		return json.MarshalEncode(enc, *o.CommandOrCodeActionArray)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -24559,7 +24528,6 @@ func (o SymbolInformationsOrWorkspaceSymbolsOrNull) MarshalJSONTo(enc *jsontext.
 	if o.WorkspaceSymbols != nil {
 		return json.MarshalEncode(enc, *o.WorkspaceSymbols)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -24602,7 +24570,6 @@ func (o CodeLenssOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.CodeLenss != nil {
 		return json.MarshalEncode(enc, *o.CodeLenss)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -24640,7 +24607,6 @@ func (o DocumentLinksOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.DocumentLinks != nil {
 		return json.MarshalEncode(enc, *o.DocumentLinks)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -24686,7 +24652,6 @@ func (o RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull) Mar
 	if o.PrepareRenameDefaultBehavior != nil {
 		return json.MarshalEncode(enc, *o.PrepareRenameDefaultBehavior)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
@@ -24734,7 +24699,6 @@ func (o LSPAnyOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	if o.LSPAny != nil {
 		return json.MarshalEncode(enc, *o.LSPAny)
 	}
-	// All fields are nil, represent as null
 	return enc.WriteToken(jsontext.Null)
 }
 
