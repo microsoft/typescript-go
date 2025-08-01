@@ -20927,11 +20927,15 @@ func (o IntegerOrString) MarshalJSONTo(enc *jsontext.Encoder) error {
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*IntegerOrString)(nil)
+var _ json.UnmarshalerFrom = (*IntegerOrString)(nil)
 
-func (o *IntegerOrString) UnmarshalJSON(data []byte) error {
+func (o *IntegerOrString) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = IntegerOrString{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vInteger int32
 	if err := json.Unmarshal(data, &vInteger); err == nil {
 		o.Integer = &vInteger
@@ -20961,11 +20965,15 @@ func (o DocumentSelectorOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*DocumentSelectorOrNull)(nil)
+var _ json.UnmarshalerFrom = (*DocumentSelectorOrNull)(nil)
 
-func (o *DocumentSelectorOrNull) UnmarshalJSON(data []byte) error {
+func (o *DocumentSelectorOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = DocumentSelectorOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -20998,11 +21006,15 @@ func (o BooleanOrEmptyObject) MarshalJSONTo(enc *jsontext.Encoder) error {
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrEmptyObject)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrEmptyObject)(nil)
 
-func (o *BooleanOrEmptyObject) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrEmptyObject) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrEmptyObject{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -21035,11 +21047,15 @@ func (o BooleanOrSemanticTokensFullDelta) MarshalJSONTo(enc *jsontext.Encoder) e
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrSemanticTokensFullDelta)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrSemanticTokensFullDelta)(nil)
 
-func (o *BooleanOrSemanticTokensFullDelta) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrSemanticTokensFullDelta) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrSemanticTokensFullDelta{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -21080,11 +21096,15 @@ func (o TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) MarshalJSONTo(enc 
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile)(nil)
+var _ json.UnmarshalerFrom = (*TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile)(nil)
 
-func (o *TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) UnmarshalJSON(data []byte) error {
+func (o *TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vTextDocumentEdit TextDocumentEdit
 	if err := json.Unmarshal(data, &vTextDocumentEdit); err == nil {
 		o.TextDocumentEdit = &vTextDocumentEdit
@@ -21127,11 +21147,15 @@ func (o StringOrInlayHintLabelParts) MarshalJSONTo(enc *jsontext.Encoder) error 
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*StringOrInlayHintLabelParts)(nil)
+var _ json.UnmarshalerFrom = (*StringOrInlayHintLabelParts)(nil)
 
-func (o *StringOrInlayHintLabelParts) UnmarshalJSON(data []byte) error {
+func (o *StringOrInlayHintLabelParts) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = StringOrInlayHintLabelParts{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
@@ -21164,11 +21188,15 @@ func (o StringOrMarkupContent) MarshalJSONTo(enc *jsontext.Encoder) error {
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*StringOrMarkupContent)(nil)
+var _ json.UnmarshalerFrom = (*StringOrMarkupContent)(nil)
 
-func (o *StringOrMarkupContent) UnmarshalJSON(data []byte) error {
+func (o *StringOrMarkupContent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = StringOrMarkupContent{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
@@ -21201,11 +21229,15 @@ func (o FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) Marshal
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport)(nil)
+var _ json.UnmarshalerFrom = (*FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport)(nil)
 
-func (o *FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+func (o *FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vFullDocumentDiagnosticReport FullDocumentDiagnosticReport
 	if err := json.Unmarshal(data, &vFullDocumentDiagnosticReport); err == nil {
 		o.FullDocumentDiagnosticReport = &vFullDocumentDiagnosticReport
@@ -21238,11 +21270,15 @@ func (o WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport)(nil)
+var _ json.UnmarshalerFrom = (*WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport)(nil)
 
-func (o *WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+func (o *WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vFullDocumentDiagnosticReport WorkspaceFullDocumentDiagnosticReport
 	if err := json.Unmarshal(data, &vFullDocumentDiagnosticReport); err == nil {
 		o.FullDocumentDiagnosticReport = &vFullDocumentDiagnosticReport
@@ -21275,11 +21311,15 @@ func (o NotebookDocumentFilterWithNotebookOrCells) MarshalJSONTo(enc *jsontext.E
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*NotebookDocumentFilterWithNotebookOrCells)(nil)
+var _ json.UnmarshalerFrom = (*NotebookDocumentFilterWithNotebookOrCells)(nil)
 
-func (o *NotebookDocumentFilterWithNotebookOrCells) UnmarshalJSON(data []byte) error {
+func (o *NotebookDocumentFilterWithNotebookOrCells) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = NotebookDocumentFilterWithNotebookOrCells{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vNotebook NotebookDocumentFilterWithNotebook
 	if err := json.Unmarshal(data, &vNotebook); err == nil {
 		o.Notebook = &vNotebook
@@ -21312,11 +21352,15 @@ func (o StringOrStringValue) MarshalJSONTo(enc *jsontext.Encoder) error {
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*StringOrStringValue)(nil)
+var _ json.UnmarshalerFrom = (*StringOrStringValue)(nil)
 
-func (o *StringOrStringValue) UnmarshalJSON(data []byte) error {
+func (o *StringOrStringValue) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = StringOrStringValue{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
@@ -21346,11 +21390,15 @@ func (o IntegerOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*IntegerOrNull)(nil)
+var _ json.UnmarshalerFrom = (*IntegerOrNull)(nil)
 
-func (o *IntegerOrNull) UnmarshalJSON(data []byte) error {
+func (o *IntegerOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = IntegerOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -21380,11 +21428,15 @@ func (o StringOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*StringOrNull)(nil)
+var _ json.UnmarshalerFrom = (*StringOrNull)(nil)
 
-func (o *StringOrNull) UnmarshalJSON(data []byte) error {
+func (o *StringOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = StringOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -21414,11 +21466,15 @@ func (o DocumentUriOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*DocumentUriOrNull)(nil)
+var _ json.UnmarshalerFrom = (*DocumentUriOrNull)(nil)
 
-func (o *DocumentUriOrNull) UnmarshalJSON(data []byte) error {
+func (o *DocumentUriOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = DocumentUriOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -21448,11 +21504,15 @@ func (o WorkspaceFoldersOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*WorkspaceFoldersOrNull)(nil)
+var _ json.UnmarshalerFrom = (*WorkspaceFoldersOrNull)(nil)
 
-func (o *WorkspaceFoldersOrNull) UnmarshalJSON(data []byte) error {
+func (o *WorkspaceFoldersOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = WorkspaceFoldersOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -21485,11 +21545,15 @@ func (o StringOrStrings) MarshalJSONTo(enc *jsontext.Encoder) error {
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*StringOrStrings)(nil)
+var _ json.UnmarshalerFrom = (*StringOrStrings)(nil)
 
-func (o *StringOrStrings) UnmarshalJSON(data []byte) error {
+func (o *StringOrStrings) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = StringOrStrings{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
@@ -21522,11 +21586,15 @@ func (o TextDocumentContentChangePartialOrWholeDocument) MarshalJSONTo(enc *json
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*TextDocumentContentChangePartialOrWholeDocument)(nil)
+var _ json.UnmarshalerFrom = (*TextDocumentContentChangePartialOrWholeDocument)(nil)
 
-func (o *TextDocumentContentChangePartialOrWholeDocument) UnmarshalJSON(data []byte) error {
+func (o *TextDocumentContentChangePartialOrWholeDocument) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = TextDocumentContentChangePartialOrWholeDocument{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vPartial TextDocumentContentChangePartial
 	if err := json.Unmarshal(data, &vPartial); err == nil {
 		o.Partial = &vPartial
@@ -21559,11 +21627,15 @@ func (o TextEditOrInsertReplaceEdit) MarshalJSONTo(enc *jsontext.Encoder) error 
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*TextEditOrInsertReplaceEdit)(nil)
+var _ json.UnmarshalerFrom = (*TextEditOrInsertReplaceEdit)(nil)
 
-func (o *TextEditOrInsertReplaceEdit) UnmarshalJSON(data []byte) error {
+func (o *TextEditOrInsertReplaceEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = TextEditOrInsertReplaceEdit{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vTextEdit TextEdit
 	if err := json.Unmarshal(data, &vTextEdit); err == nil {
 		o.TextEdit = &vTextEdit
@@ -21604,11 +21676,15 @@ func (o MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings) MarshalJ
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings)(nil)
+var _ json.UnmarshalerFrom = (*MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings)(nil)
 
-func (o *MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings) UnmarshalJSON(data []byte) error {
+func (o *MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vMarkupContent MarkupContent
 	if err := json.Unmarshal(data, &vMarkupContent); err == nil {
 		o.MarkupContent = &vMarkupContent
@@ -21648,11 +21724,15 @@ func (o UintegerOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*UintegerOrNull)(nil)
+var _ json.UnmarshalerFrom = (*UintegerOrNull)(nil)
 
-func (o *UintegerOrNull) UnmarshalJSON(data []byte) error {
+func (o *UintegerOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = UintegerOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -21685,11 +21765,15 @@ func (o LocationOrLocationUriOnly) MarshalJSONTo(enc *jsontext.Encoder) error {
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*LocationOrLocationUriOnly)(nil)
+var _ json.UnmarshalerFrom = (*LocationOrLocationUriOnly)(nil)
 
-func (o *LocationOrLocationUriOnly) UnmarshalJSON(data []byte) error {
+func (o *LocationOrLocationUriOnly) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = LocationOrLocationUriOnly{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vLocation Location
 	if err := json.Unmarshal(data, &vLocation); err == nil {
 		o.Location = &vLocation
@@ -21726,11 +21810,15 @@ func (o TextEditOrAnnotatedTextEditOrSnippetTextEdit) MarshalJSONTo(enc *jsontex
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*TextEditOrAnnotatedTextEditOrSnippetTextEdit)(nil)
+var _ json.UnmarshalerFrom = (*TextEditOrAnnotatedTextEditOrSnippetTextEdit)(nil)
 
-func (o *TextEditOrAnnotatedTextEditOrSnippetTextEdit) UnmarshalJSON(data []byte) error {
+func (o *TextEditOrAnnotatedTextEditOrSnippetTextEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = TextEditOrAnnotatedTextEditOrSnippetTextEdit{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vTextEdit TextEdit
 	if err := json.Unmarshal(data, &vTextEdit); err == nil {
 		o.TextEdit = &vTextEdit
@@ -21768,11 +21856,15 @@ func (o TextDocumentSyncOptionsOrKind) MarshalJSONTo(enc *jsontext.Encoder) erro
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*TextDocumentSyncOptionsOrKind)(nil)
+var _ json.UnmarshalerFrom = (*TextDocumentSyncOptionsOrKind)(nil)
 
-func (o *TextDocumentSyncOptionsOrKind) UnmarshalJSON(data []byte) error {
+func (o *TextDocumentSyncOptionsOrKind) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = TextDocumentSyncOptionsOrKind{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vOptions TextDocumentSyncOptions
 	if err := json.Unmarshal(data, &vOptions); err == nil {
 		o.Options = &vOptions
@@ -21805,11 +21897,15 @@ func (o NotebookDocumentSyncOptionsOrRegistrationOptions) MarshalJSONTo(enc *jso
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*NotebookDocumentSyncOptionsOrRegistrationOptions)(nil)
+var _ json.UnmarshalerFrom = (*NotebookDocumentSyncOptionsOrRegistrationOptions)(nil)
 
-func (o *NotebookDocumentSyncOptionsOrRegistrationOptions) UnmarshalJSON(data []byte) error {
+func (o *NotebookDocumentSyncOptionsOrRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = NotebookDocumentSyncOptionsOrRegistrationOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vOptions NotebookDocumentSyncOptions
 	if err := json.Unmarshal(data, &vOptions); err == nil {
 		o.Options = &vOptions
@@ -21842,11 +21938,15 @@ func (o BooleanOrHoverOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrHoverOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrHoverOptions)(nil)
 
-func (o *BooleanOrHoverOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrHoverOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrHoverOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -21883,11 +21983,15 @@ func (o BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) MarshalJSON
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions)(nil)
 
-func (o *BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -21925,11 +22029,15 @@ func (o BooleanOrDefinitionOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrDefinitionOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrDefinitionOptions)(nil)
 
-func (o *BooleanOrDefinitionOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrDefinitionOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrDefinitionOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -21966,11 +22074,15 @@ func (o BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) Marsh
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions)(nil)
 
-func (o *BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -22012,11 +22124,15 @@ func (o BooleanOrImplementationOptionsOrImplementationRegistrationOptions) Marsh
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrImplementationOptionsOrImplementationRegistrationOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrImplementationOptionsOrImplementationRegistrationOptions)(nil)
 
-func (o *BooleanOrImplementationOptionsOrImplementationRegistrationOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrImplementationOptionsOrImplementationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrImplementationOptionsOrImplementationRegistrationOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -22054,11 +22170,15 @@ func (o BooleanOrReferenceOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrReferenceOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrReferenceOptions)(nil)
 
-func (o *BooleanOrReferenceOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrReferenceOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrReferenceOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -22091,11 +22211,15 @@ func (o BooleanOrDocumentHighlightOptions) MarshalJSONTo(enc *jsontext.Encoder) 
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrDocumentHighlightOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrDocumentHighlightOptions)(nil)
 
-func (o *BooleanOrDocumentHighlightOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrDocumentHighlightOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrDocumentHighlightOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -22128,11 +22252,15 @@ func (o BooleanOrDocumentSymbolOptions) MarshalJSONTo(enc *jsontext.Encoder) err
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrDocumentSymbolOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrDocumentSymbolOptions)(nil)
 
-func (o *BooleanOrDocumentSymbolOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrDocumentSymbolOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrDocumentSymbolOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -22165,11 +22293,15 @@ func (o BooleanOrCodeActionOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrCodeActionOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrCodeActionOptions)(nil)
 
-func (o *BooleanOrCodeActionOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrCodeActionOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrCodeActionOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -22206,11 +22338,15 @@ func (o BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) Marshal
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions)(nil)
 
-func (o *BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -22248,11 +22384,15 @@ func (o BooleanOrWorkspaceSymbolOptions) MarshalJSONTo(enc *jsontext.Encoder) er
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrWorkspaceSymbolOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrWorkspaceSymbolOptions)(nil)
 
-func (o *BooleanOrWorkspaceSymbolOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrWorkspaceSymbolOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrWorkspaceSymbolOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -22285,11 +22425,15 @@ func (o BooleanOrDocumentFormattingOptions) MarshalJSONTo(enc *jsontext.Encoder)
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrDocumentFormattingOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrDocumentFormattingOptions)(nil)
 
-func (o *BooleanOrDocumentFormattingOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrDocumentFormattingOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrDocumentFormattingOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -22322,11 +22466,15 @@ func (o BooleanOrDocumentRangeFormattingOptions) MarshalJSONTo(enc *jsontext.Enc
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrDocumentRangeFormattingOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrDocumentRangeFormattingOptions)(nil)
 
-func (o *BooleanOrDocumentRangeFormattingOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrDocumentRangeFormattingOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrDocumentRangeFormattingOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -22359,11 +22507,15 @@ func (o BooleanOrRenameOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrRenameOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrRenameOptions)(nil)
 
-func (o *BooleanOrRenameOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrRenameOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrRenameOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -22400,11 +22552,15 @@ func (o BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) MarshalJS
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions)(nil)
 
-func (o *BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -22446,11 +22602,15 @@ func (o BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) Marsh
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions)(nil)
 
-func (o *BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -22492,11 +22652,15 @@ func (o BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) Marshal
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions)(nil)
 
-func (o *BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -22538,11 +22702,15 @@ func (o BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOption
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions)(nil)
 
-func (o *BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -22580,11 +22748,15 @@ func (o SemanticTokensOptionsOrRegistrationOptions) MarshalJSONTo(enc *jsontext.
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*SemanticTokensOptionsOrRegistrationOptions)(nil)
+var _ json.UnmarshalerFrom = (*SemanticTokensOptionsOrRegistrationOptions)(nil)
 
-func (o *SemanticTokensOptionsOrRegistrationOptions) UnmarshalJSON(data []byte) error {
+func (o *SemanticTokensOptionsOrRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = SemanticTokensOptionsOrRegistrationOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vOptions SemanticTokensOptions
 	if err := json.Unmarshal(data, &vOptions); err == nil {
 		o.Options = &vOptions
@@ -22621,11 +22793,15 @@ func (o BooleanOrMonikerOptionsOrMonikerRegistrationOptions) MarshalJSONTo(enc *
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrMonikerOptionsOrMonikerRegistrationOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrMonikerOptionsOrMonikerRegistrationOptions)(nil)
 
-func (o *BooleanOrMonikerOptionsOrMonikerRegistrationOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrMonikerOptionsOrMonikerRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrMonikerOptionsOrMonikerRegistrationOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -22667,11 +22843,15 @@ func (o BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) Marshal
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions)(nil)
 
-func (o *BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -22713,11 +22893,15 @@ func (o BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) MarshalJSON
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions)(nil)
 
-func (o *BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -22759,11 +22943,15 @@ func (o BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) MarshalJSONTo(e
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions)(nil)
 
-func (o *BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -22801,11 +22989,15 @@ func (o DiagnosticOptionsOrRegistrationOptions) MarshalJSONTo(enc *jsontext.Enco
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*DiagnosticOptionsOrRegistrationOptions)(nil)
+var _ json.UnmarshalerFrom = (*DiagnosticOptionsOrRegistrationOptions)(nil)
 
-func (o *DiagnosticOptionsOrRegistrationOptions) UnmarshalJSON(data []byte) error {
+func (o *DiagnosticOptionsOrRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = DiagnosticOptionsOrRegistrationOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vOptions DiagnosticOptions
 	if err := json.Unmarshal(data, &vOptions); err == nil {
 		o.Options = &vOptions
@@ -22838,11 +23030,15 @@ func (o BooleanOrInlineCompletionOptions) MarshalJSONTo(enc *jsontext.Encoder) e
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrInlineCompletionOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrInlineCompletionOptions)(nil)
 
-func (o *BooleanOrInlineCompletionOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrInlineCompletionOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrInlineCompletionOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -22875,11 +23071,15 @@ func (o PatternOrRelativePattern) MarshalJSONTo(enc *jsontext.Encoder) error {
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*PatternOrRelativePattern)(nil)
+var _ json.UnmarshalerFrom = (*PatternOrRelativePattern)(nil)
 
-func (o *PatternOrRelativePattern) UnmarshalJSON(data []byte) error {
+func (o *PatternOrRelativePattern) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = PatternOrRelativePattern{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vPattern string
 	if err := json.Unmarshal(data, &vPattern); err == nil {
 		o.Pattern = &vPattern
@@ -22912,11 +23112,15 @@ func (o RangeOrEditRangeWithInsertReplace) MarshalJSONTo(enc *jsontext.Encoder) 
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*RangeOrEditRangeWithInsertReplace)(nil)
+var _ json.UnmarshalerFrom = (*RangeOrEditRangeWithInsertReplace)(nil)
 
-func (o *RangeOrEditRangeWithInsertReplace) UnmarshalJSON(data []byte) error {
+func (o *RangeOrEditRangeWithInsertReplace) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = RangeOrEditRangeWithInsertReplace{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vRange Range
 	if err := json.Unmarshal(data, &vRange); err == nil {
 		o.Range = &vRange
@@ -22957,11 +23161,15 @@ func (o StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterScheme
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern)(nil)
+var _ json.UnmarshalerFrom = (*StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern)(nil)
 
-func (o *StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern) UnmarshalJSON(data []byte) error {
+func (o *StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
@@ -23004,11 +23212,15 @@ func (o BooleanOrSaveOptions) MarshalJSONTo(enc *jsontext.Encoder) error {
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrSaveOptions)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrSaveOptions)(nil)
 
-func (o *BooleanOrSaveOptions) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrSaveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrSaveOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -23041,11 +23253,15 @@ func (o TextDocumentContentOptionsOrRegistrationOptions) MarshalJSONTo(enc *json
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*TextDocumentContentOptionsOrRegistrationOptions)(nil)
+var _ json.UnmarshalerFrom = (*TextDocumentContentOptionsOrRegistrationOptions)(nil)
 
-func (o *TextDocumentContentOptionsOrRegistrationOptions) UnmarshalJSON(data []byte) error {
+func (o *TextDocumentContentOptionsOrRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = TextDocumentContentOptionsOrRegistrationOptions{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vOptions TextDocumentContentOptions
 	if err := json.Unmarshal(data, &vOptions); err == nil {
 		o.Options = &vOptions
@@ -23078,11 +23294,15 @@ func (o StringOrTuple) MarshalJSONTo(enc *jsontext.Encoder) error {
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*StringOrTuple)(nil)
+var _ json.UnmarshalerFrom = (*StringOrTuple)(nil)
 
-func (o *StringOrTuple) UnmarshalJSON(data []byte) error {
+func (o *StringOrTuple) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = StringOrTuple{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
@@ -23115,11 +23335,15 @@ func (o StringOrBoolean) MarshalJSONTo(enc *jsontext.Encoder) error {
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*StringOrBoolean)(nil)
+var _ json.UnmarshalerFrom = (*StringOrBoolean)(nil)
 
-func (o *StringOrBoolean) UnmarshalJSON(data []byte) error {
+func (o *StringOrBoolean) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = StringOrBoolean{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
@@ -23152,11 +23376,15 @@ func (o WorkspaceFolderOrURI) MarshalJSONTo(enc *jsontext.Encoder) error {
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*WorkspaceFolderOrURI)(nil)
+var _ json.UnmarshalerFrom = (*WorkspaceFolderOrURI)(nil)
 
-func (o *WorkspaceFolderOrURI) UnmarshalJSON(data []byte) error {
+func (o *WorkspaceFolderOrURI) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = WorkspaceFolderOrURI{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vWorkspaceFolder WorkspaceFolder
 	if err := json.Unmarshal(data, &vWorkspaceFolder); err == nil {
 		o.WorkspaceFolder = &vWorkspaceFolder
@@ -23189,11 +23417,15 @@ func (o BooleanOrClientSemanticTokensRequestFullDelta) MarshalJSONTo(enc *jsonte
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*BooleanOrClientSemanticTokensRequestFullDelta)(nil)
+var _ json.UnmarshalerFrom = (*BooleanOrClientSemanticTokensRequestFullDelta)(nil)
 
-func (o *BooleanOrClientSemanticTokensRequestFullDelta) UnmarshalJSON(data []byte) error {
+func (o *BooleanOrClientSemanticTokensRequestFullDelta) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = BooleanOrClientSemanticTokensRequestFullDelta{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vBoolean bool
 	if err := json.Unmarshal(data, &vBoolean); err == nil {
 		o.Boolean = &vBoolean
@@ -23231,11 +23463,15 @@ func (o LocationOrLocationsOrDefinitionLinksOrNull) MarshalJSONTo(enc *jsontext.
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*LocationOrLocationsOrDefinitionLinksOrNull)(nil)
+var _ json.UnmarshalerFrom = (*LocationOrLocationsOrDefinitionLinksOrNull)(nil)
 
-func (o *LocationOrLocationsOrDefinitionLinksOrNull) UnmarshalJSON(data []byte) error {
+func (o *LocationOrLocationsOrDefinitionLinksOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = LocationOrLocationsOrDefinitionLinksOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -23275,11 +23511,15 @@ func (o FoldingRangesOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*FoldingRangesOrNull)(nil)
+var _ json.UnmarshalerFrom = (*FoldingRangesOrNull)(nil)
 
-func (o *FoldingRangesOrNull) UnmarshalJSON(data []byte) error {
+func (o *FoldingRangesOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = FoldingRangesOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -23317,11 +23557,15 @@ func (o LocationOrLocationsOrDeclarationLinksOrNull) MarshalJSONTo(enc *jsontext
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*LocationOrLocationsOrDeclarationLinksOrNull)(nil)
+var _ json.UnmarshalerFrom = (*LocationOrLocationsOrDeclarationLinksOrNull)(nil)
 
-func (o *LocationOrLocationsOrDeclarationLinksOrNull) UnmarshalJSON(data []byte) error {
+func (o *LocationOrLocationsOrDeclarationLinksOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = LocationOrLocationsOrDeclarationLinksOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -23361,11 +23605,15 @@ func (o SelectionRangesOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*SelectionRangesOrNull)(nil)
+var _ json.UnmarshalerFrom = (*SelectionRangesOrNull)(nil)
 
-func (o *SelectionRangesOrNull) UnmarshalJSON(data []byte) error {
+func (o *SelectionRangesOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = SelectionRangesOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -23395,11 +23643,15 @@ func (o CallHierarchyItemsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*CallHierarchyItemsOrNull)(nil)
+var _ json.UnmarshalerFrom = (*CallHierarchyItemsOrNull)(nil)
 
-func (o *CallHierarchyItemsOrNull) UnmarshalJSON(data []byte) error {
+func (o *CallHierarchyItemsOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = CallHierarchyItemsOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -23429,11 +23681,15 @@ func (o CallHierarchyIncomingCallsOrNull) MarshalJSONTo(enc *jsontext.Encoder) e
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*CallHierarchyIncomingCallsOrNull)(nil)
+var _ json.UnmarshalerFrom = (*CallHierarchyIncomingCallsOrNull)(nil)
 
-func (o *CallHierarchyIncomingCallsOrNull) UnmarshalJSON(data []byte) error {
+func (o *CallHierarchyIncomingCallsOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = CallHierarchyIncomingCallsOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -23463,11 +23719,15 @@ func (o CallHierarchyOutgoingCallsOrNull) MarshalJSONTo(enc *jsontext.Encoder) e
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*CallHierarchyOutgoingCallsOrNull)(nil)
+var _ json.UnmarshalerFrom = (*CallHierarchyOutgoingCallsOrNull)(nil)
 
-func (o *CallHierarchyOutgoingCallsOrNull) UnmarshalJSON(data []byte) error {
+func (o *CallHierarchyOutgoingCallsOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = CallHierarchyOutgoingCallsOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -23497,11 +23757,15 @@ func (o SemanticTokensOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*SemanticTokensOrNull)(nil)
+var _ json.UnmarshalerFrom = (*SemanticTokensOrNull)(nil)
 
-func (o *SemanticTokensOrNull) UnmarshalJSON(data []byte) error {
+func (o *SemanticTokensOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = SemanticTokensOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -23535,11 +23799,15 @@ func (o SemanticTokensOrSemanticTokensDeltaOrNull) MarshalJSONTo(enc *jsontext.E
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*SemanticTokensOrSemanticTokensDeltaOrNull)(nil)
+var _ json.UnmarshalerFrom = (*SemanticTokensOrSemanticTokensDeltaOrNull)(nil)
 
-func (o *SemanticTokensOrSemanticTokensDeltaOrNull) UnmarshalJSON(data []byte) error {
+func (o *SemanticTokensOrSemanticTokensDeltaOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = SemanticTokensOrSemanticTokensDeltaOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -23574,11 +23842,15 @@ func (o LinkedEditingRangesOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*LinkedEditingRangesOrNull)(nil)
+var _ json.UnmarshalerFrom = (*LinkedEditingRangesOrNull)(nil)
 
-func (o *LinkedEditingRangesOrNull) UnmarshalJSON(data []byte) error {
+func (o *LinkedEditingRangesOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = LinkedEditingRangesOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -23608,11 +23880,15 @@ func (o WorkspaceEditOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*WorkspaceEditOrNull)(nil)
+var _ json.UnmarshalerFrom = (*WorkspaceEditOrNull)(nil)
 
-func (o *WorkspaceEditOrNull) UnmarshalJSON(data []byte) error {
+func (o *WorkspaceEditOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = WorkspaceEditOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -23642,11 +23918,15 @@ func (o MonikersOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*MonikersOrNull)(nil)
+var _ json.UnmarshalerFrom = (*MonikersOrNull)(nil)
 
-func (o *MonikersOrNull) UnmarshalJSON(data []byte) error {
+func (o *MonikersOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = MonikersOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -23676,11 +23956,15 @@ func (o TypeHierarchyItemsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*TypeHierarchyItemsOrNull)(nil)
+var _ json.UnmarshalerFrom = (*TypeHierarchyItemsOrNull)(nil)
 
-func (o *TypeHierarchyItemsOrNull) UnmarshalJSON(data []byte) error {
+func (o *TypeHierarchyItemsOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = TypeHierarchyItemsOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -23710,11 +23994,15 @@ func (o InlineValuesOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*InlineValuesOrNull)(nil)
+var _ json.UnmarshalerFrom = (*InlineValuesOrNull)(nil)
 
-func (o *InlineValuesOrNull) UnmarshalJSON(data []byte) error {
+func (o *InlineValuesOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = InlineValuesOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -23744,11 +24032,15 @@ func (o InlayHintsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*InlayHintsOrNull)(nil)
+var _ json.UnmarshalerFrom = (*InlayHintsOrNull)(nil)
 
-func (o *InlayHintsOrNull) UnmarshalJSON(data []byte) error {
+func (o *InlayHintsOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = InlayHintsOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -23781,11 +24073,15 @@ func (o RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) 
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport)(nil)
+var _ json.UnmarshalerFrom = (*RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport)(nil)
 
-func (o *RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+func (o *RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vFullDocumentDiagnosticReport RelatedFullDocumentDiagnosticReport
 	if err := json.Unmarshal(data, &vFullDocumentDiagnosticReport); err == nil {
 		o.FullDocumentDiagnosticReport = &vFullDocumentDiagnosticReport
@@ -23819,11 +24115,15 @@ func (o InlineCompletionListOrItemsOrNull) MarshalJSONTo(enc *jsontext.Encoder) 
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*InlineCompletionListOrItemsOrNull)(nil)
+var _ json.UnmarshalerFrom = (*InlineCompletionListOrItemsOrNull)(nil)
 
-func (o *InlineCompletionListOrItemsOrNull) UnmarshalJSON(data []byte) error {
+func (o *InlineCompletionListOrItemsOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = InlineCompletionListOrItemsOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -23858,11 +24158,15 @@ func (o MessageActionItemOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*MessageActionItemOrNull)(nil)
+var _ json.UnmarshalerFrom = (*MessageActionItemOrNull)(nil)
 
-func (o *MessageActionItemOrNull) UnmarshalJSON(data []byte) error {
+func (o *MessageActionItemOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = MessageActionItemOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -23892,11 +24196,15 @@ func (o TextEditsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*TextEditsOrNull)(nil)
+var _ json.UnmarshalerFrom = (*TextEditsOrNull)(nil)
 
-func (o *TextEditsOrNull) UnmarshalJSON(data []byte) error {
+func (o *TextEditsOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = TextEditsOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -23930,11 +24238,15 @@ func (o CompletionItemsOrListOrNull) MarshalJSONTo(enc *jsontext.Encoder) error 
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*CompletionItemsOrListOrNull)(nil)
+var _ json.UnmarshalerFrom = (*CompletionItemsOrListOrNull)(nil)
 
-func (o *CompletionItemsOrListOrNull) UnmarshalJSON(data []byte) error {
+func (o *CompletionItemsOrListOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = CompletionItemsOrListOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -23969,11 +24281,15 @@ func (o HoverOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*HoverOrNull)(nil)
+var _ json.UnmarshalerFrom = (*HoverOrNull)(nil)
 
-func (o *HoverOrNull) UnmarshalJSON(data []byte) error {
+func (o *HoverOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = HoverOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -24003,11 +24319,15 @@ func (o SignatureHelpOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*SignatureHelpOrNull)(nil)
+var _ json.UnmarshalerFrom = (*SignatureHelpOrNull)(nil)
 
-func (o *SignatureHelpOrNull) UnmarshalJSON(data []byte) error {
+func (o *SignatureHelpOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = SignatureHelpOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -24037,11 +24357,15 @@ func (o LocationsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*LocationsOrNull)(nil)
+var _ json.UnmarshalerFrom = (*LocationsOrNull)(nil)
 
-func (o *LocationsOrNull) UnmarshalJSON(data []byte) error {
+func (o *LocationsOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = LocationsOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -24071,11 +24395,15 @@ func (o DocumentHighlightsOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*DocumentHighlightsOrNull)(nil)
+var _ json.UnmarshalerFrom = (*DocumentHighlightsOrNull)(nil)
 
-func (o *DocumentHighlightsOrNull) UnmarshalJSON(data []byte) error {
+func (o *DocumentHighlightsOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = DocumentHighlightsOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -24109,11 +24437,15 @@ func (o SymbolInformationsOrDocumentSymbolsOrNull) MarshalJSONTo(enc *jsontext.E
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*SymbolInformationsOrDocumentSymbolsOrNull)(nil)
+var _ json.UnmarshalerFrom = (*SymbolInformationsOrDocumentSymbolsOrNull)(nil)
 
-func (o *SymbolInformationsOrDocumentSymbolsOrNull) UnmarshalJSON(data []byte) error {
+func (o *SymbolInformationsOrDocumentSymbolsOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = SymbolInformationsOrDocumentSymbolsOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -24151,11 +24483,15 @@ func (o CommandOrCodeAction) MarshalJSONTo(enc *jsontext.Encoder) error {
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*CommandOrCodeAction)(nil)
+var _ json.UnmarshalerFrom = (*CommandOrCodeAction)(nil)
 
-func (o *CommandOrCodeAction) UnmarshalJSON(data []byte) error {
+func (o *CommandOrCodeAction) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = CommandOrCodeAction{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vCommand Command
 	if err := json.Unmarshal(data, &vCommand); err == nil {
 		o.Command = &vCommand
@@ -24185,11 +24521,15 @@ func (o CommandOrCodeActionArrayOrNull) MarshalJSONTo(enc *jsontext.Encoder) err
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*CommandOrCodeActionArrayOrNull)(nil)
+var _ json.UnmarshalerFrom = (*CommandOrCodeActionArrayOrNull)(nil)
 
-func (o *CommandOrCodeActionArrayOrNull) UnmarshalJSON(data []byte) error {
+func (o *CommandOrCodeActionArrayOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = CommandOrCodeActionArrayOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -24223,11 +24563,15 @@ func (o SymbolInformationsOrWorkspaceSymbolsOrNull) MarshalJSONTo(enc *jsontext.
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*SymbolInformationsOrWorkspaceSymbolsOrNull)(nil)
+var _ json.UnmarshalerFrom = (*SymbolInformationsOrWorkspaceSymbolsOrNull)(nil)
 
-func (o *SymbolInformationsOrWorkspaceSymbolsOrNull) UnmarshalJSON(data []byte) error {
+func (o *SymbolInformationsOrWorkspaceSymbolsOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = SymbolInformationsOrWorkspaceSymbolsOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -24262,11 +24606,15 @@ func (o CodeLenssOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*CodeLenssOrNull)(nil)
+var _ json.UnmarshalerFrom = (*CodeLenssOrNull)(nil)
 
-func (o *CodeLenssOrNull) UnmarshalJSON(data []byte) error {
+func (o *CodeLenssOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = CodeLenssOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -24296,11 +24644,15 @@ func (o DocumentLinksOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*DocumentLinksOrNull)(nil)
+var _ json.UnmarshalerFrom = (*DocumentLinksOrNull)(nil)
 
-func (o *DocumentLinksOrNull) UnmarshalJSON(data []byte) error {
+func (o *DocumentLinksOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = DocumentLinksOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -24338,11 +24690,15 @@ func (o RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull) Mar
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull)(nil)
+var _ json.UnmarshalerFrom = (*RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull)(nil)
 
-func (o *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull) UnmarshalJSON(data []byte) error {
+func (o *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -24382,11 +24738,15 @@ func (o LSPAnyOrNull) MarshalJSONTo(enc *jsontext.Encoder) error {
 	return enc.WriteToken(jsontext.Null)
 }
 
-var _ json.Unmarshaler = (*LSPAnyOrNull)(nil)
+var _ json.UnmarshalerFrom = (*LSPAnyOrNull)(nil)
 
-func (o *LSPAnyOrNull) UnmarshalJSON(data []byte) error {
+func (o *LSPAnyOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = LSPAnyOrNull{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// Handle null case
 	if string(data) == "null" {
 		return nil
@@ -24427,11 +24787,15 @@ func (o TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilter
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter)(nil)
+var _ json.UnmarshalerFrom = (*TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter)(nil)
 
-func (o *TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter) UnmarshalJSON(data []byte) error {
+func (o *TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vTextDocumentFilterLanguage TextDocumentFilterLanguage
 	if err := json.Unmarshal(data, &vTextDocumentFilterLanguage); err == nil {
 		o.TextDocumentFilterLanguage = &vTextDocumentFilterLanguage
@@ -24474,11 +24838,15 @@ func (o StringOrMarkedStringWithLanguage) MarshalJSONTo(enc *jsontext.Encoder) e
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*StringOrMarkedStringWithLanguage)(nil)
+var _ json.UnmarshalerFrom = (*StringOrMarkedStringWithLanguage)(nil)
 
-func (o *StringOrMarkedStringWithLanguage) UnmarshalJSON(data []byte) error {
+func (o *StringOrMarkedStringWithLanguage) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = StringOrMarkedStringWithLanguage{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vString string
 	if err := json.Unmarshal(data, &vString); err == nil {
 		o.String = &vString
@@ -24515,11 +24883,15 @@ func (o InlineValueTextOrVariableLookupOrEvaluatableExpression) MarshalJSONTo(en
 	panic("unreachable")
 }
 
-var _ json.Unmarshaler = (*InlineValueTextOrVariableLookupOrEvaluatableExpression)(nil)
+var _ json.UnmarshalerFrom = (*InlineValueTextOrVariableLookupOrEvaluatableExpression)(nil)
 
-func (o *InlineValueTextOrVariableLookupOrEvaluatableExpression) UnmarshalJSON(data []byte) error {
+func (o *InlineValueTextOrVariableLookupOrEvaluatableExpression) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*o = InlineValueTextOrVariableLookupOrEvaluatableExpression{}
 
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var vText InlineValueText
 	if err := json.Unmarshal(data, &vText); err == nil {
 		o.Text = &vText

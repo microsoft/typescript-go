@@ -795,12 +795,17 @@ function generateCode() {
         writeLine("");
 
         // Unmarshal method
-        writeLine(`var _ json.Unmarshaler = (*${name})(nil)`);
+        writeLine(`var _ json.UnmarshalerFrom = (*${name})(nil)`);
         writeLine("");
 
-        writeLine(`func (o *${name}) UnmarshalJSON(data []byte) error {`);
+        writeLine(`func (o *${name}) UnmarshalJSONFrom(dec *jsontext.Decoder) error {`);
         writeLine(`\t*o = ${name}{}`);
         writeLine("");
+
+        writeLine("\tdata, err := dec.ReadValue()");
+        writeLine("\tif err != nil {");
+        writeLine("\t\treturn err");
+        writeLine("\t}");
 
         // Handle null case only for unions that can contain null
         if (unionContainedNull) {
