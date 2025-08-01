@@ -547,10 +547,8 @@ func matchesIncludeWithJsonOnlyNew(fileName string, includeSpecs []string, baseP
 	}
 
 	// Special case: empty pattern matches everything (consistent with TypeScript behavior)
-	for _, includeSpec := range includeSpecs {
-		if includeSpec == "" {
-			return true
-		}
+	if slices.Contains(includeSpecs, "") {
+		return true
 	}
 
 	// Filter to only JSON include patterns
