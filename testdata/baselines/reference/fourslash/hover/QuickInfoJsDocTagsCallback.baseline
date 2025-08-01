@@ -11,7 +11,7 @@
 // 
 // /**
 //  * @param {cb} bar -callback comment
-//            ^
+//            ^^
 // | ----------------------------------------------------------------------
 // | ```tsx
 // | type cb = (x: string) => any
@@ -49,6 +49,16 @@
       "contents": {
         "kind": "markdown",
         "value": "```tsx\ntype cb = (x: string) => any\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 6,
+          "character": 11
+        },
+        "end": {
+          "line": 6,
+          "character": 13
+        }
       }
     }
   }
