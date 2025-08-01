@@ -754,10 +754,14 @@ function generateCode() {
 
         // Determine if this union contained null (check if any member has containedNull = true)
         const unionContainedNull = members.some(member => member.containedNull);
-        const assertionFunc = unionContainedNull ? "assertAtMostOne" : "assertOnlyOne";
+        if (unionContainedNull) {
+            write(`\tassertAtMostOne("more than one element of ${name} is set", `);
+        }
+        else {
+            write(`\tassertOnlyOne("exactly one element of ${name} should be set", `);
+        }
 
         // Create assertion to ensure at most one field is set at a time
-        write(`\t${assertionFunc}("more than one element of ${name} is set", `);
 
         // Write the assertion conditions
         for (let i = 0; i < fieldEntries.length; i++) {

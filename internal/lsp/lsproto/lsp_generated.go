@@ -20378,7 +20378,7 @@ type IntegerOrString struct {
 }
 
 func (o IntegerOrString) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of IntegerOrString is set", o.Integer != nil, o.String != nil)
+	assertOnlyOne("exactly one element of IntegerOrString should be set", o.Integer != nil, o.String != nil)
 
 	if o.Integer != nil {
 		return json.MarshalEncode(enc, *o.Integer)
@@ -20441,7 +20441,7 @@ type BooleanOrEmptyObject struct {
 }
 
 func (o BooleanOrEmptyObject) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrEmptyObject is set", o.Boolean != nil, o.EmptyObject != nil)
+	assertOnlyOne("exactly one element of BooleanOrEmptyObject should be set", o.Boolean != nil, o.EmptyObject != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -20474,7 +20474,7 @@ type BooleanOrSemanticTokensFullDelta struct {
 }
 
 func (o BooleanOrSemanticTokensFullDelta) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrSemanticTokensFullDelta is set", o.Boolean != nil, o.SemanticTokensFullDelta != nil)
+	assertOnlyOne("exactly one element of BooleanOrSemanticTokensFullDelta should be set", o.Boolean != nil, o.SemanticTokensFullDelta != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -20509,7 +20509,7 @@ type TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile struct {
 }
 
 func (o TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile is set", o.TextDocumentEdit != nil, o.CreateFile != nil, o.RenameFile != nil, o.DeleteFile != nil)
+	assertOnlyOne("exactly one element of TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile should be set", o.TextDocumentEdit != nil, o.CreateFile != nil, o.RenameFile != nil, o.DeleteFile != nil)
 
 	if o.TextDocumentEdit != nil {
 		return json.MarshalEncode(enc, *o.TextDocumentEdit)
@@ -20558,7 +20558,7 @@ type StringOrInlayHintLabelParts struct {
 }
 
 func (o StringOrInlayHintLabelParts) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of StringOrInlayHintLabelParts is set", o.String != nil, o.InlayHintLabelParts != nil)
+	assertOnlyOne("exactly one element of StringOrInlayHintLabelParts should be set", o.String != nil, o.InlayHintLabelParts != nil)
 
 	if o.String != nil {
 		return json.MarshalEncode(enc, *o.String)
@@ -20591,7 +20591,7 @@ type StringOrMarkupContent struct {
 }
 
 func (o StringOrMarkupContent) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of StringOrMarkupContent is set", o.String != nil, o.MarkupContent != nil)
+	assertOnlyOne("exactly one element of StringOrMarkupContent should be set", o.String != nil, o.MarkupContent != nil)
 
 	if o.String != nil {
 		return json.MarshalEncode(enc, *o.String)
@@ -20624,7 +20624,7 @@ type FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport struct {
 }
 
 func (o FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport is set", o.FullDocumentDiagnosticReport != nil, o.UnchangedDocumentDiagnosticReport != nil)
+	assertOnlyOne("exactly one element of FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport should be set", o.FullDocumentDiagnosticReport != nil, o.UnchangedDocumentDiagnosticReport != nil)
 
 	if o.FullDocumentDiagnosticReport != nil {
 		return json.MarshalEncode(enc, *o.FullDocumentDiagnosticReport)
@@ -20657,7 +20657,7 @@ type WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport st
 }
 
 func (o WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport is set", o.FullDocumentDiagnosticReport != nil, o.UnchangedDocumentDiagnosticReport != nil)
+	assertOnlyOne("exactly one element of WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport should be set", o.FullDocumentDiagnosticReport != nil, o.UnchangedDocumentDiagnosticReport != nil)
 
 	if o.FullDocumentDiagnosticReport != nil {
 		return json.MarshalEncode(enc, *o.FullDocumentDiagnosticReport)
@@ -20690,7 +20690,7 @@ type NotebookDocumentFilterWithNotebookOrCells struct {
 }
 
 func (o NotebookDocumentFilterWithNotebookOrCells) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of NotebookDocumentFilterWithNotebookOrCells is set", o.Notebook != nil, o.Cells != nil)
+	assertOnlyOne("exactly one element of NotebookDocumentFilterWithNotebookOrCells should be set", o.Notebook != nil, o.Cells != nil)
 
 	if o.Notebook != nil {
 		return json.MarshalEncode(enc, *o.Notebook)
@@ -20723,7 +20723,7 @@ type StringOrStringValue struct {
 }
 
 func (o StringOrStringValue) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of StringOrStringValue is set", o.String != nil, o.StringValue != nil)
+	assertOnlyOne("exactly one element of StringOrStringValue should be set", o.String != nil, o.StringValue != nil)
 
 	if o.String != nil {
 		return json.MarshalEncode(enc, *o.String)
@@ -20876,7 +20876,7 @@ type StringOrStrings struct {
 }
 
 func (o StringOrStrings) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of StringOrStrings is set", o.String != nil, o.Strings != nil)
+	assertOnlyOne("exactly one element of StringOrStrings should be set", o.String != nil, o.Strings != nil)
 
 	if o.String != nil {
 		return json.MarshalEncode(enc, *o.String)
@@ -20909,7 +20909,7 @@ type TextDocumentContentChangePartialOrWholeDocument struct {
 }
 
 func (o TextDocumentContentChangePartialOrWholeDocument) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of TextDocumentContentChangePartialOrWholeDocument is set", o.Partial != nil, o.WholeDocument != nil)
+	assertOnlyOne("exactly one element of TextDocumentContentChangePartialOrWholeDocument should be set", o.Partial != nil, o.WholeDocument != nil)
 
 	if o.Partial != nil {
 		return json.MarshalEncode(enc, *o.Partial)
@@ -20942,7 +20942,7 @@ type TextEditOrInsertReplaceEdit struct {
 }
 
 func (o TextEditOrInsertReplaceEdit) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of TextEditOrInsertReplaceEdit is set", o.TextEdit != nil, o.InsertReplaceEdit != nil)
+	assertOnlyOne("exactly one element of TextEditOrInsertReplaceEdit should be set", o.TextEdit != nil, o.InsertReplaceEdit != nil)
 
 	if o.TextEdit != nil {
 		return json.MarshalEncode(enc, *o.TextEdit)
@@ -20977,7 +20977,7 @@ type MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings struct {
 }
 
 func (o MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings is set", o.MarkupContent != nil, o.String != nil, o.MarkedStringWithLanguage != nil, o.MarkedStrings != nil)
+	assertOnlyOne("exactly one element of MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings should be set", o.MarkupContent != nil, o.String != nil, o.MarkedStringWithLanguage != nil, o.MarkedStrings != nil)
 
 	if o.MarkupContent != nil {
 		return json.MarshalEncode(enc, *o.MarkupContent)
@@ -21056,7 +21056,7 @@ type LocationOrLocationUriOnly struct {
 }
 
 func (o LocationOrLocationUriOnly) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of LocationOrLocationUriOnly is set", o.Location != nil, o.LocationUriOnly != nil)
+	assertOnlyOne("exactly one element of LocationOrLocationUriOnly should be set", o.Location != nil, o.LocationUriOnly != nil)
 
 	if o.Location != nil {
 		return json.MarshalEncode(enc, *o.Location)
@@ -21090,7 +21090,7 @@ type TextEditOrAnnotatedTextEditOrSnippetTextEdit struct {
 }
 
 func (o TextEditOrAnnotatedTextEditOrSnippetTextEdit) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of TextEditOrAnnotatedTextEditOrSnippetTextEdit is set", o.TextEdit != nil, o.AnnotatedTextEdit != nil, o.SnippetTextEdit != nil)
+	assertOnlyOne("exactly one element of TextEditOrAnnotatedTextEditOrSnippetTextEdit should be set", o.TextEdit != nil, o.AnnotatedTextEdit != nil, o.SnippetTextEdit != nil)
 
 	if o.TextEdit != nil {
 		return json.MarshalEncode(enc, *o.TextEdit)
@@ -21131,7 +21131,7 @@ type TextDocumentSyncOptionsOrKind struct {
 }
 
 func (o TextDocumentSyncOptionsOrKind) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of TextDocumentSyncOptionsOrKind is set", o.Options != nil, o.Kind != nil)
+	assertOnlyOne("exactly one element of TextDocumentSyncOptionsOrKind should be set", o.Options != nil, o.Kind != nil)
 
 	if o.Options != nil {
 		return json.MarshalEncode(enc, *o.Options)
@@ -21164,7 +21164,7 @@ type NotebookDocumentSyncOptionsOrRegistrationOptions struct {
 }
 
 func (o NotebookDocumentSyncOptionsOrRegistrationOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of NotebookDocumentSyncOptionsOrRegistrationOptions is set", o.Options != nil, o.RegistrationOptions != nil)
+	assertOnlyOne("exactly one element of NotebookDocumentSyncOptionsOrRegistrationOptions should be set", o.Options != nil, o.RegistrationOptions != nil)
 
 	if o.Options != nil {
 		return json.MarshalEncode(enc, *o.Options)
@@ -21197,7 +21197,7 @@ type BooleanOrHoverOptions struct {
 }
 
 func (o BooleanOrHoverOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrHoverOptions is set", o.Boolean != nil, o.HoverOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrHoverOptions should be set", o.Boolean != nil, o.HoverOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -21231,7 +21231,7 @@ type BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions struct {
 }
 
 func (o BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions is set", o.Boolean != nil, o.DeclarationOptions != nil, o.DeclarationRegistrationOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions should be set", o.Boolean != nil, o.DeclarationOptions != nil, o.DeclarationRegistrationOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -21272,7 +21272,7 @@ type BooleanOrDefinitionOptions struct {
 }
 
 func (o BooleanOrDefinitionOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrDefinitionOptions is set", o.Boolean != nil, o.DefinitionOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrDefinitionOptions should be set", o.Boolean != nil, o.DefinitionOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -21306,7 +21306,7 @@ type BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions struct {
 }
 
 func (o BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions is set", o.Boolean != nil, o.TypeDefinitionOptions != nil, o.TypeDefinitionRegistrationOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions should be set", o.Boolean != nil, o.TypeDefinitionOptions != nil, o.TypeDefinitionRegistrationOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -21348,7 +21348,7 @@ type BooleanOrImplementationOptionsOrImplementationRegistrationOptions struct {
 }
 
 func (o BooleanOrImplementationOptionsOrImplementationRegistrationOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrImplementationOptionsOrImplementationRegistrationOptions is set", o.Boolean != nil, o.ImplementationOptions != nil, o.ImplementationRegistrationOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrImplementationOptionsOrImplementationRegistrationOptions should be set", o.Boolean != nil, o.ImplementationOptions != nil, o.ImplementationRegistrationOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -21389,7 +21389,7 @@ type BooleanOrReferenceOptions struct {
 }
 
 func (o BooleanOrReferenceOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrReferenceOptions is set", o.Boolean != nil, o.ReferenceOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrReferenceOptions should be set", o.Boolean != nil, o.ReferenceOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -21422,7 +21422,7 @@ type BooleanOrDocumentHighlightOptions struct {
 }
 
 func (o BooleanOrDocumentHighlightOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrDocumentHighlightOptions is set", o.Boolean != nil, o.DocumentHighlightOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrDocumentHighlightOptions should be set", o.Boolean != nil, o.DocumentHighlightOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -21455,7 +21455,7 @@ type BooleanOrDocumentSymbolOptions struct {
 }
 
 func (o BooleanOrDocumentSymbolOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrDocumentSymbolOptions is set", o.Boolean != nil, o.DocumentSymbolOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrDocumentSymbolOptions should be set", o.Boolean != nil, o.DocumentSymbolOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -21488,7 +21488,7 @@ type BooleanOrCodeActionOptions struct {
 }
 
 func (o BooleanOrCodeActionOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrCodeActionOptions is set", o.Boolean != nil, o.CodeActionOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrCodeActionOptions should be set", o.Boolean != nil, o.CodeActionOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -21522,7 +21522,7 @@ type BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions struct {
 }
 
 func (o BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions is set", o.Boolean != nil, o.DocumentColorOptions != nil, o.DocumentColorRegistrationOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions should be set", o.Boolean != nil, o.DocumentColorOptions != nil, o.DocumentColorRegistrationOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -21563,7 +21563,7 @@ type BooleanOrWorkspaceSymbolOptions struct {
 }
 
 func (o BooleanOrWorkspaceSymbolOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrWorkspaceSymbolOptions is set", o.Boolean != nil, o.WorkspaceSymbolOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrWorkspaceSymbolOptions should be set", o.Boolean != nil, o.WorkspaceSymbolOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -21596,7 +21596,7 @@ type BooleanOrDocumentFormattingOptions struct {
 }
 
 func (o BooleanOrDocumentFormattingOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrDocumentFormattingOptions is set", o.Boolean != nil, o.DocumentFormattingOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrDocumentFormattingOptions should be set", o.Boolean != nil, o.DocumentFormattingOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -21629,7 +21629,7 @@ type BooleanOrDocumentRangeFormattingOptions struct {
 }
 
 func (o BooleanOrDocumentRangeFormattingOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrDocumentRangeFormattingOptions is set", o.Boolean != nil, o.DocumentRangeFormattingOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrDocumentRangeFormattingOptions should be set", o.Boolean != nil, o.DocumentRangeFormattingOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -21662,7 +21662,7 @@ type BooleanOrRenameOptions struct {
 }
 
 func (o BooleanOrRenameOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrRenameOptions is set", o.Boolean != nil, o.RenameOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrRenameOptions should be set", o.Boolean != nil, o.RenameOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -21696,7 +21696,7 @@ type BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions struct {
 }
 
 func (o BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions is set", o.Boolean != nil, o.FoldingRangeOptions != nil, o.FoldingRangeRegistrationOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions should be set", o.Boolean != nil, o.FoldingRangeOptions != nil, o.FoldingRangeRegistrationOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -21738,7 +21738,7 @@ type BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions struct {
 }
 
 func (o BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions is set", o.Boolean != nil, o.SelectionRangeOptions != nil, o.SelectionRangeRegistrationOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions should be set", o.Boolean != nil, o.SelectionRangeOptions != nil, o.SelectionRangeRegistrationOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -21780,7 +21780,7 @@ type BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions struct {
 }
 
 func (o BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions is set", o.Boolean != nil, o.CallHierarchyOptions != nil, o.CallHierarchyRegistrationOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions should be set", o.Boolean != nil, o.CallHierarchyOptions != nil, o.CallHierarchyRegistrationOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -21822,7 +21822,7 @@ type BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions s
 }
 
 func (o BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions is set", o.Boolean != nil, o.LinkedEditingRangeOptions != nil, o.LinkedEditingRangeRegistrationOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions should be set", o.Boolean != nil, o.LinkedEditingRangeOptions != nil, o.LinkedEditingRangeRegistrationOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -21863,7 +21863,7 @@ type SemanticTokensOptionsOrRegistrationOptions struct {
 }
 
 func (o SemanticTokensOptionsOrRegistrationOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of SemanticTokensOptionsOrRegistrationOptions is set", o.Options != nil, o.RegistrationOptions != nil)
+	assertOnlyOne("exactly one element of SemanticTokensOptionsOrRegistrationOptions should be set", o.Options != nil, o.RegistrationOptions != nil)
 
 	if o.Options != nil {
 		return json.MarshalEncode(enc, *o.Options)
@@ -21897,7 +21897,7 @@ type BooleanOrMonikerOptionsOrMonikerRegistrationOptions struct {
 }
 
 func (o BooleanOrMonikerOptionsOrMonikerRegistrationOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrMonikerOptionsOrMonikerRegistrationOptions is set", o.Boolean != nil, o.MonikerOptions != nil, o.MonikerRegistrationOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrMonikerOptionsOrMonikerRegistrationOptions should be set", o.Boolean != nil, o.MonikerOptions != nil, o.MonikerRegistrationOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -21939,7 +21939,7 @@ type BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions struct {
 }
 
 func (o BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions is set", o.Boolean != nil, o.TypeHierarchyOptions != nil, o.TypeHierarchyRegistrationOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions should be set", o.Boolean != nil, o.TypeHierarchyOptions != nil, o.TypeHierarchyRegistrationOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -21981,7 +21981,7 @@ type BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions struct {
 }
 
 func (o BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions is set", o.Boolean != nil, o.InlineValueOptions != nil, o.InlineValueRegistrationOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions should be set", o.Boolean != nil, o.InlineValueOptions != nil, o.InlineValueRegistrationOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -22023,7 +22023,7 @@ type BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions struct {
 }
 
 func (o BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions is set", o.Boolean != nil, o.InlayHintOptions != nil, o.InlayHintRegistrationOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions should be set", o.Boolean != nil, o.InlayHintOptions != nil, o.InlayHintRegistrationOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -22064,7 +22064,7 @@ type DiagnosticOptionsOrRegistrationOptions struct {
 }
 
 func (o DiagnosticOptionsOrRegistrationOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of DiagnosticOptionsOrRegistrationOptions is set", o.Options != nil, o.RegistrationOptions != nil)
+	assertOnlyOne("exactly one element of DiagnosticOptionsOrRegistrationOptions should be set", o.Options != nil, o.RegistrationOptions != nil)
 
 	if o.Options != nil {
 		return json.MarshalEncode(enc, *o.Options)
@@ -22097,7 +22097,7 @@ type BooleanOrInlineCompletionOptions struct {
 }
 
 func (o BooleanOrInlineCompletionOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrInlineCompletionOptions is set", o.Boolean != nil, o.InlineCompletionOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrInlineCompletionOptions should be set", o.Boolean != nil, o.InlineCompletionOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -22130,7 +22130,7 @@ type PatternOrRelativePattern struct {
 }
 
 func (o PatternOrRelativePattern) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of PatternOrRelativePattern is set", o.Pattern != nil, o.RelativePattern != nil)
+	assertOnlyOne("exactly one element of PatternOrRelativePattern should be set", o.Pattern != nil, o.RelativePattern != nil)
 
 	if o.Pattern != nil {
 		return json.MarshalEncode(enc, *o.Pattern)
@@ -22163,7 +22163,7 @@ type RangeOrEditRangeWithInsertReplace struct {
 }
 
 func (o RangeOrEditRangeWithInsertReplace) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of RangeOrEditRangeWithInsertReplace is set", o.Range != nil, o.EditRangeWithInsertReplace != nil)
+	assertOnlyOne("exactly one element of RangeOrEditRangeWithInsertReplace should be set", o.Range != nil, o.EditRangeWithInsertReplace != nil)
 
 	if o.Range != nil {
 		return json.MarshalEncode(enc, *o.Range)
@@ -22198,7 +22198,7 @@ type StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrN
 }
 
 func (o StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern is set", o.String != nil, o.NotebookDocumentFilterNotebookType != nil, o.NotebookDocumentFilterScheme != nil, o.NotebookDocumentFilterPattern != nil)
+	assertOnlyOne("exactly one element of StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern should be set", o.String != nil, o.NotebookDocumentFilterNotebookType != nil, o.NotebookDocumentFilterScheme != nil, o.NotebookDocumentFilterPattern != nil)
 
 	if o.String != nil {
 		return json.MarshalEncode(enc, *o.String)
@@ -22247,7 +22247,7 @@ type BooleanOrSaveOptions struct {
 }
 
 func (o BooleanOrSaveOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrSaveOptions is set", o.Boolean != nil, o.SaveOptions != nil)
+	assertOnlyOne("exactly one element of BooleanOrSaveOptions should be set", o.Boolean != nil, o.SaveOptions != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -22280,7 +22280,7 @@ type TextDocumentContentOptionsOrRegistrationOptions struct {
 }
 
 func (o TextDocumentContentOptionsOrRegistrationOptions) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of TextDocumentContentOptionsOrRegistrationOptions is set", o.Options != nil, o.RegistrationOptions != nil)
+	assertOnlyOne("exactly one element of TextDocumentContentOptionsOrRegistrationOptions should be set", o.Options != nil, o.RegistrationOptions != nil)
 
 	if o.Options != nil {
 		return json.MarshalEncode(enc, *o.Options)
@@ -22313,7 +22313,7 @@ type StringOrTuple struct {
 }
 
 func (o StringOrTuple) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of StringOrTuple is set", o.String != nil, o.Tuple != nil)
+	assertOnlyOne("exactly one element of StringOrTuple should be set", o.String != nil, o.Tuple != nil)
 
 	if o.String != nil {
 		return json.MarshalEncode(enc, *o.String)
@@ -22346,7 +22346,7 @@ type StringOrBoolean struct {
 }
 
 func (o StringOrBoolean) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of StringOrBoolean is set", o.String != nil, o.Boolean != nil)
+	assertOnlyOne("exactly one element of StringOrBoolean should be set", o.String != nil, o.Boolean != nil)
 
 	if o.String != nil {
 		return json.MarshalEncode(enc, *o.String)
@@ -22379,7 +22379,7 @@ type WorkspaceFolderOrURI struct {
 }
 
 func (o WorkspaceFolderOrURI) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of WorkspaceFolderOrURI is set", o.WorkspaceFolder != nil, o.URI != nil)
+	assertOnlyOne("exactly one element of WorkspaceFolderOrURI should be set", o.WorkspaceFolder != nil, o.URI != nil)
 
 	if o.WorkspaceFolder != nil {
 		return json.MarshalEncode(enc, *o.WorkspaceFolder)
@@ -22412,7 +22412,7 @@ type BooleanOrClientSemanticTokensRequestFullDelta struct {
 }
 
 func (o BooleanOrClientSemanticTokensRequestFullDelta) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of BooleanOrClientSemanticTokensRequestFullDelta is set", o.Boolean != nil, o.ClientSemanticTokensRequestFullDelta != nil)
+	assertOnlyOne("exactly one element of BooleanOrClientSemanticTokensRequestFullDelta should be set", o.Boolean != nil, o.ClientSemanticTokensRequestFullDelta != nil)
 
 	if o.Boolean != nil {
 		return json.MarshalEncode(enc, *o.Boolean)
@@ -22940,7 +22940,7 @@ type RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport stru
 }
 
 func (o RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport is set", o.FullDocumentDiagnosticReport != nil, o.UnchangedDocumentDiagnosticReport != nil)
+	assertOnlyOne("exactly one element of RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport should be set", o.FullDocumentDiagnosticReport != nil, o.UnchangedDocumentDiagnosticReport != nil)
 
 	if o.FullDocumentDiagnosticReport != nil {
 		return json.MarshalEncode(enc, *o.FullDocumentDiagnosticReport)
@@ -23270,7 +23270,7 @@ type CommandOrCodeAction struct {
 }
 
 func (o CommandOrCodeAction) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of CommandOrCodeAction is set", o.Command != nil, o.CodeAction != nil)
+	assertOnlyOne("exactly one element of CommandOrCodeAction should be set", o.Command != nil, o.CodeAction != nil)
 
 	if o.Command != nil {
 		return json.MarshalEncode(enc, *o.Command)
@@ -23512,7 +23512,7 @@ type TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPat
 }
 
 func (o TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter is set", o.TextDocumentFilterLanguage != nil, o.TextDocumentFilterScheme != nil, o.TextDocumentFilterPattern != nil, o.NotebookCellTextDocumentFilter != nil)
+	assertOnlyOne("exactly one element of TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPatternOrNotebookCellTextDocumentFilter should be set", o.TextDocumentFilterLanguage != nil, o.TextDocumentFilterScheme != nil, o.TextDocumentFilterPattern != nil, o.NotebookCellTextDocumentFilter != nil)
 
 	if o.TextDocumentFilterLanguage != nil {
 		return json.MarshalEncode(enc, *o.TextDocumentFilterLanguage)
@@ -23561,7 +23561,7 @@ type StringOrMarkedStringWithLanguage struct {
 }
 
 func (o StringOrMarkedStringWithLanguage) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of StringOrMarkedStringWithLanguage is set", o.String != nil, o.MarkedStringWithLanguage != nil)
+	assertOnlyOne("exactly one element of StringOrMarkedStringWithLanguage should be set", o.String != nil, o.MarkedStringWithLanguage != nil)
 
 	if o.String != nil {
 		return json.MarshalEncode(enc, *o.String)
@@ -23595,7 +23595,7 @@ type InlineValueTextOrVariableLookupOrEvaluatableExpression struct {
 }
 
 func (o InlineValueTextOrVariableLookupOrEvaluatableExpression) MarshalerTo(enc *jsontext.Encoder) error {
-	assertOnlyOne("more than one element of InlineValueTextOrVariableLookupOrEvaluatableExpression is set", o.Text != nil, o.VariableLookup != nil, o.EvaluatableExpression != nil)
+	assertOnlyOne("exactly one element of InlineValueTextOrVariableLookupOrEvaluatableExpression should be set", o.Text != nil, o.VariableLookup != nil, o.EvaluatableExpression != nil)
 
 	if o.Text != nil {
 		return json.MarshalEncode(enc, *o.Text)
