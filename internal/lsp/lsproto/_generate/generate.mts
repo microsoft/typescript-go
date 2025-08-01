@@ -750,7 +750,7 @@ function generateCode() {
         const fieldEntries = Array.from(uniqueTypeFields.entries()).map(([typeName, fieldName]) => ({ fieldName, typeName }));
 
         // Marshal method
-        writeLine(`func (o ${name}) MarshalJSON() ([]byte, error) {`);
+        writeLine(`func (o ${name}) MarshalerTo(enc *jsontext.Encoder) error {`);
 
         // Determine if this union contained null (check if any member has containedNull = true)
         const unionContainedNull = members.some(member => member.containedNull);
@@ -769,14 +769,14 @@ function generateCode() {
 
         for (const entry of fieldEntries) {
             writeLine(`\tif o.${entry.fieldName} != nil {`);
-            writeLine(`\t\treturn json.Marshal(*o.${entry.fieldName})`);
+            writeLine(`\t\treturn json.MarshalEncode(enc, *o.${entry.fieldName})`);
             writeLine(`\t}`);
         }
 
         // If all fields are nil, marshal as null (only for unions that can contain null)
         if (unionContainedNull) {
             writeLine(`\t// All fields are nil, represent as null`);
-            writeLine(`\treturn []byte("null"), nil`);
+            writeLine(`\treturn enc.WriteToken(jsontext.Null)`);
         }
         else {
             writeLine(`\tpanic("unreachable")`);
