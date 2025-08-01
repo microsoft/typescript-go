@@ -806,9 +806,7 @@ function generateCode() {
         writeLine("\t\treturn err");
         writeLine("\t}");
 
-        // Handle null case only for unions that can contain null
         if (unionContainedNull) {
-            writeLine(`\t// Handle null case`);
             writeLine(`\tif string(data) == "null" {`);
             writeLine(`\t\treturn nil`);
             writeLine(`\t}`);

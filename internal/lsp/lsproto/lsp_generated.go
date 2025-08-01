@@ -20973,7 +20973,6 @@ func (o *DocumentSelectorOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -21397,7 +21396,6 @@ func (o *IntegerOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -21434,7 +21432,6 @@ func (o *StringOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -21471,7 +21468,6 @@ func (o *DocumentUriOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -21508,7 +21504,6 @@ func (o *WorkspaceFoldersOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -21727,7 +21722,6 @@ func (o *UintegerOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -23465,7 +23459,6 @@ func (o *LocationOrLocationsOrDefinitionLinksOrNull) UnmarshalJSONFrom(dec *json
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -23512,7 +23505,6 @@ func (o *FoldingRangesOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -23557,7 +23549,6 @@ func (o *LocationOrLocationsOrDeclarationLinksOrNull) UnmarshalJSONFrom(dec *jso
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -23604,7 +23595,6 @@ func (o *SelectionRangesOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -23641,7 +23631,6 @@ func (o *CallHierarchyItemsOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -23678,7 +23667,6 @@ func (o *CallHierarchyIncomingCallsOrNull) UnmarshalJSONFrom(dec *jsontext.Decod
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -23715,7 +23703,6 @@ func (o *CallHierarchyOutgoingCallsOrNull) UnmarshalJSONFrom(dec *jsontext.Decod
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -23752,7 +23739,6 @@ func (o *SemanticTokensOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -23793,7 +23779,6 @@ func (o *SemanticTokensOrSemanticTokensDeltaOrNull) UnmarshalJSONFrom(dec *jsont
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -23835,7 +23820,6 @@ func (o *LinkedEditingRangesOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -23872,7 +23856,6 @@ func (o *WorkspaceEditOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -23909,7 +23892,6 @@ func (o *MonikersOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -23946,7 +23928,6 @@ func (o *TypeHierarchyItemsOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -23983,7 +23964,6 @@ func (o *InlineValuesOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -24020,7 +24000,6 @@ func (o *InlayHintsOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -24102,7 +24081,6 @@ func (o *InlineCompletionListOrItemsOrNull) UnmarshalJSONFrom(dec *jsontext.Deco
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -24144,7 +24122,6 @@ func (o *MessageActionItemOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -24181,7 +24158,6 @@ func (o *TextEditsOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -24222,7 +24198,6 @@ func (o *CompletionItemsOrListOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -24264,7 +24239,6 @@ func (o *HoverOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -24301,7 +24275,6 @@ func (o *SignatureHelpOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -24338,7 +24311,6 @@ func (o *LocationsOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -24375,7 +24347,6 @@ func (o *DocumentHighlightsOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -24416,7 +24387,6 @@ func (o *SymbolInformationsOrDocumentSymbolsOrNull) UnmarshalJSONFrom(dec *jsont
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -24499,7 +24469,6 @@ func (o *CommandOrCodeActionArrayOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -24540,7 +24509,6 @@ func (o *SymbolInformationsOrWorkspaceSymbolsOrNull) UnmarshalJSONFrom(dec *json
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -24582,7 +24550,6 @@ func (o *CodeLenssOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -24619,7 +24586,6 @@ func (o *DocumentLinksOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -24664,7 +24630,6 @@ func (o *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehaviorOrNull) Un
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
@@ -24711,7 +24676,6 @@ func (o *LSPAnyOrNull) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	if err != nil {
 		return err
 	}
-	// Handle null case
 	if string(data) == "null" {
 		return nil
 	}
