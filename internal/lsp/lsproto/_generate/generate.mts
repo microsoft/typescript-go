@@ -543,14 +543,14 @@ function generateCode() {
             writeLine("");
 
             writeLine(`\tfor dec.PeekKind() != '}' {`);
-            writeLine(`\t\tvar name string`);
-            writeLine(`\t\tif err := json.UnmarshalDecode(dec, &name); err != nil {`);
+            writeLine("name, err := dec.ReadValue()");
+            writeLine(`\t\tif err != nil {`);
             writeLine(`\t\t\treturn err`);
             writeLine(`\t\t}`);
-            writeLine(`\t\tswitch name {`);
+            writeLine(`\t\tswitch string(name) {`);
 
             for (const prop of structure.properties) {
-                writeLine(`\t\tcase "${prop.name}":`);
+                writeLine(`\t\tcase \`"${prop.name}"\`:`);
                 if (!prop.optional) {
                     writeLine(`\t\t\tseen${titleCase(prop.name)} = true`);
                 }

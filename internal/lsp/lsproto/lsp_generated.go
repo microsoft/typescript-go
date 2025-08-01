@@ -44,26 +44,26 @@ func (s *ImplementationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "textDocument":
+		switch string(name) {
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "position":
+		case `"position"`:
 			seenPosition = true
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
-		case "workDoneToken":
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
@@ -110,17 +110,17 @@ func (s *Location) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "uri":
+		switch string(name) {
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
-		case "range":
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
@@ -169,21 +169,21 @@ func (s *ImplementationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "workDoneProgress":
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "id":
+		case `"id"`:
 			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
 				return err
 			}
@@ -234,26 +234,26 @@ func (s *TypeDefinitionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "textDocument":
+		switch string(name) {
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "position":
+		case `"position"`:
 			seenPosition = true
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
-		case "workDoneToken":
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
@@ -301,21 +301,21 @@ func (s *TypeDefinitionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "workDoneProgress":
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "id":
+		case `"id"`:
 			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
 				return err
 			}
@@ -361,17 +361,17 @@ func (s *WorkspaceFolder) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "uri":
+		switch string(name) {
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
-		case "name":
+		case `"name"`:
 			seenName = true
 			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
 				return err
@@ -414,12 +414,12 @@ func (s *DidChangeWorkspaceFoldersParams) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "event":
+		switch string(name) {
+		case `"event"`:
 			seenEvent = true
 			if err := json.UnmarshalDecode(dec, &s.Event); err != nil {
 				return err
@@ -458,12 +458,12 @@ func (s *ConfigurationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "items":
+		switch string(name) {
+		case `"items"`:
 			seenItems = true
 			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
 				return err
@@ -510,20 +510,20 @@ func (s *DocumentColorParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
-		case "textDocument":
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
@@ -569,17 +569,17 @@ func (s *ColorInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "range":
+		switch string(name) {
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "color":
+		case `"color"`:
 			seenColor = true
 			if err := json.UnmarshalDecode(dec, &s.Color); err != nil {
 				return err
@@ -628,21 +628,21 @@ func (s *DocumentColorRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "workDoneProgress":
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "id":
+		case `"id"`:
 			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
 				return err
 			}
@@ -698,30 +698,30 @@ func (s *ColorPresentationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
-		case "textDocument":
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "color":
+		case `"color"`:
 			seenColor = true
 			if err := json.UnmarshalDecode(dec, &s.Color); err != nil {
 				return err
 			}
-		case "range":
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
@@ -777,21 +777,21 @@ func (s *ColorPresentation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "label":
+		switch string(name) {
+		case `"label"`:
 			seenLabel = true
 			if err := json.UnmarshalDecode(dec, &s.Label); err != nil {
 				return err
 			}
-		case "textEdit":
+		case `"textEdit"`:
 			if err := json.UnmarshalDecode(dec, &s.TextEdit); err != nil {
 				return err
 			}
-		case "additionalTextEdits":
+		case `"additionalTextEdits"`:
 			if err := json.UnmarshalDecode(dec, &s.AdditionalTextEdits); err != nil {
 				return err
 			}
@@ -835,12 +835,12 @@ func (s *TextDocumentRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
@@ -887,20 +887,20 @@ func (s *FoldingRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
-		case "textDocument":
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
@@ -967,34 +967,34 @@ func (s *FoldingRange) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "startLine":
+		switch string(name) {
+		case `"startLine"`:
 			seenStartLine = true
 			if err := json.UnmarshalDecode(dec, &s.StartLine); err != nil {
 				return err
 			}
-		case "startCharacter":
+		case `"startCharacter"`:
 			if err := json.UnmarshalDecode(dec, &s.StartCharacter); err != nil {
 				return err
 			}
-		case "endLine":
+		case `"endLine"`:
 			seenEndLine = true
 			if err := json.UnmarshalDecode(dec, &s.EndLine); err != nil {
 				return err
 			}
-		case "endCharacter":
+		case `"endCharacter"`:
 			if err := json.UnmarshalDecode(dec, &s.EndCharacter); err != nil {
 				return err
 			}
-		case "kind":
+		case `"kind"`:
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "collapsedText":
+		case `"collapsedText"`:
 			if err := json.UnmarshalDecode(dec, &s.CollapsedText); err != nil {
 				return err
 			}
@@ -1042,21 +1042,21 @@ func (s *FoldingRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "workDoneProgress":
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "id":
+		case `"id"`:
 			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
 				return err
 			}
@@ -1107,26 +1107,26 @@ func (s *DeclarationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "textDocument":
+		switch string(name) {
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "position":
+		case `"position"`:
 			seenPosition = true
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
-		case "workDoneToken":
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
@@ -1174,21 +1174,21 @@ func (s *DeclarationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneProgress":
+		switch string(name) {
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "documentSelector":
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "id":
+		case `"id"`:
 			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
 				return err
 			}
@@ -1240,25 +1240,25 @@ func (s *SelectionRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
-		case "textDocument":
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "positions":
+		case `"positions"`:
 			seenPositions = true
 			if err := json.UnmarshalDecode(dec, &s.Positions); err != nil {
 				return err
@@ -1305,17 +1305,17 @@ func (s *SelectionRange) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "range":
+		switch string(name) {
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "parent":
+		case `"parent"`:
 			if err := json.UnmarshalDecode(dec, &s.Parent); err != nil {
 				return err
 			}
@@ -1360,21 +1360,21 @@ func (s *SelectionRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneProgress":
+		switch string(name) {
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "documentSelector":
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "id":
+		case `"id"`:
 			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
 				return err
 			}
@@ -1412,12 +1412,12 @@ func (s *WorkDoneProgressCreateParams) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "token":
+		switch string(name) {
+		case `"token"`:
 			seenToken = true
 			if err := json.UnmarshalDecode(dec, &s.Token); err != nil {
 				return err
@@ -1456,12 +1456,12 @@ func (s *WorkDoneProgressCancelParams) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "token":
+		switch string(name) {
+		case `"token"`:
 			seenToken = true
 			if err := json.UnmarshalDecode(dec, &s.Token); err != nil {
 				return err
@@ -1512,22 +1512,22 @@ func (s *CallHierarchyPrepareParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "textDocument":
+		switch string(name) {
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "position":
+		case `"position"`:
 			seenPosition = true
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
-		case "workDoneToken":
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
@@ -1601,45 +1601,45 @@ func (s *CallHierarchyItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "name":
+		switch string(name) {
+		case `"name"`:
 			seenName = true
 			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
 				return err
 			}
-		case "kind":
+		case `"kind"`:
 			seenKind = true
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "tags":
+		case `"tags"`:
 			if err := json.UnmarshalDecode(dec, &s.Tags); err != nil {
 				return err
 			}
-		case "detail":
+		case `"detail"`:
 			if err := json.UnmarshalDecode(dec, &s.Detail); err != nil {
 				return err
 			}
-		case "uri":
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
-		case "range":
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "selectionRange":
+		case `"selectionRange"`:
 			seenSelectionRange = true
 			if err := json.UnmarshalDecode(dec, &s.SelectionRange); err != nil {
 				return err
 			}
-		case "data":
+		case `"data"`:
 			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
 				return err
 			}
@@ -1699,21 +1699,21 @@ func (s *CallHierarchyRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "workDoneProgress":
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "id":
+		case `"id"`:
 			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
 				return err
 			}
@@ -1760,20 +1760,20 @@ func (s *CallHierarchyIncomingCallsParams) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
-		case "item":
+		case `"item"`:
 			seenItem = true
 			if err := json.UnmarshalDecode(dec, &s.Item); err != nil {
 				return err
@@ -1822,17 +1822,17 @@ func (s *CallHierarchyIncomingCall) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "from":
+		switch string(name) {
+		case `"from"`:
 			seenFrom = true
 			if err := json.UnmarshalDecode(dec, &s.From); err != nil {
 				return err
 			}
-		case "fromRanges":
+		case `"fromRanges"`:
 			seenFromRanges = true
 			if err := json.UnmarshalDecode(dec, &s.FromRanges); err != nil {
 				return err
@@ -1883,20 +1883,20 @@ func (s *CallHierarchyOutgoingCallsParams) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
-		case "item":
+		case `"item"`:
 			seenItem = true
 			if err := json.UnmarshalDecode(dec, &s.Item); err != nil {
 				return err
@@ -1946,17 +1946,17 @@ func (s *CallHierarchyOutgoingCall) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "to":
+		switch string(name) {
+		case `"to"`:
 			seenTo = true
 			if err := json.UnmarshalDecode(dec, &s.To); err != nil {
 				return err
 			}
-		case "fromRanges":
+		case `"fromRanges"`:
 			seenFromRanges = true
 			if err := json.UnmarshalDecode(dec, &s.FromRanges); err != nil {
 				return err
@@ -2006,20 +2006,20 @@ func (s *SemanticTokensParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
-		case "textDocument":
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
@@ -2065,16 +2065,16 @@ func (s *SemanticTokens) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "resultId":
+		switch string(name) {
+		case `"resultId"`:
 			if err := json.UnmarshalDecode(dec, &s.ResultId); err != nil {
 				return err
 			}
-		case "data":
+		case `"data"`:
 			seenData = true
 			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
 				return err
@@ -2113,12 +2113,12 @@ func (s *SemanticTokensPartialResult) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "data":
+		switch string(name) {
+		case `"data"`:
 			seenData = true
 			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
 				return err
@@ -2178,34 +2178,34 @@ func (s *SemanticTokensRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "workDoneProgress":
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "legend":
+		case `"legend"`:
 			seenLegend = true
 			if err := json.UnmarshalDecode(dec, &s.Legend); err != nil {
 				return err
 			}
-		case "range":
+		case `"range"`:
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "full":
+		case `"full"`:
 			if err := json.UnmarshalDecode(dec, &s.Full); err != nil {
 				return err
 			}
-		case "id":
+		case `"id"`:
 			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
 				return err
 			}
@@ -2261,25 +2261,25 @@ func (s *SemanticTokensDeltaParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
-		case "textDocument":
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "previousResultId":
+		case `"previousResultId"`:
 			seenPreviousResultId = true
 			if err := json.UnmarshalDecode(dec, &s.PreviousResultId); err != nil {
 				return err
@@ -2324,16 +2324,16 @@ func (s *SemanticTokensDelta) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "resultId":
+		switch string(name) {
+		case `"resultId"`:
 			if err := json.UnmarshalDecode(dec, &s.ResultId); err != nil {
 				return err
 			}
-		case "edits":
+		case `"edits"`:
 			seenEdits = true
 			if err := json.UnmarshalDecode(dec, &s.Edits); err != nil {
 				return err
@@ -2372,12 +2372,12 @@ func (s *SemanticTokensDeltaPartialResult) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "edits":
+		switch string(name) {
+		case `"edits"`:
 			seenEdits = true
 			if err := json.UnmarshalDecode(dec, &s.Edits); err != nil {
 				return err
@@ -2430,25 +2430,25 @@ func (s *SemanticTokensRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
-		case "textDocument":
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "range":
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
@@ -2510,25 +2510,25 @@ func (s *ShowDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "uri":
+		switch string(name) {
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
-		case "external":
+		case `"external"`:
 			if err := json.UnmarshalDecode(dec, &s.External); err != nil {
 				return err
 			}
-		case "takeFocus":
+		case `"takeFocus"`:
 			if err := json.UnmarshalDecode(dec, &s.TakeFocus); err != nil {
 				return err
 			}
-		case "selection":
+		case `"selection"`:
 			if err := json.UnmarshalDecode(dec, &s.Selection); err != nil {
 				return err
 			}
@@ -2569,12 +2569,12 @@ func (s *ShowDocumentResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "success":
+		switch string(name) {
+		case `"success"`:
 			seenSuccess = true
 			if err := json.UnmarshalDecode(dec, &s.Success); err != nil {
 				return err
@@ -2622,22 +2622,22 @@ func (s *LinkedEditingRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "textDocument":
+		switch string(name) {
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "position":
+		case `"position"`:
 			seenPosition = true
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
-		case "workDoneToken":
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
@@ -2687,17 +2687,17 @@ func (s *LinkedEditingRanges) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "ranges":
+		switch string(name) {
+		case `"ranges"`:
 			seenRanges = true
 			if err := json.UnmarshalDecode(dec, &s.Ranges); err != nil {
 				return err
 			}
-		case "wordPattern":
+		case `"wordPattern"`:
 			if err := json.UnmarshalDecode(dec, &s.WordPattern); err != nil {
 				return err
 			}
@@ -2742,21 +2742,21 @@ func (s *LinkedEditingRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "workDoneProgress":
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "id":
+		case `"id"`:
 			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
 				return err
 			}
@@ -2798,12 +2798,12 @@ func (s *CreateFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "files":
+		switch string(name) {
+		case `"files"`:
 			seenFiles = true
 			if err := json.UnmarshalDecode(dec, &s.Files); err != nil {
 				return err
@@ -2882,12 +2882,12 @@ func (s *FileOperationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "filters":
+		switch string(name) {
+		case `"filters"`:
 			seenFilters = true
 			if err := json.UnmarshalDecode(dec, &s.Filters); err != nil {
 				return err
@@ -2931,12 +2931,12 @@ func (s *RenameFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "files":
+		switch string(name) {
+		case `"files"`:
 			seenFiles = true
 			if err := json.UnmarshalDecode(dec, &s.Files); err != nil {
 				return err
@@ -2979,12 +2979,12 @@ func (s *DeleteFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "files":
+		switch string(name) {
+		case `"files"`:
 			seenFiles = true
 			if err := json.UnmarshalDecode(dec, &s.Files); err != nil {
 				return err
@@ -3036,26 +3036,26 @@ func (s *MonikerParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "textDocument":
+		switch string(name) {
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "position":
+		case `"position"`:
 			seenPosition = true
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
-		case "workDoneToken":
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
@@ -3113,27 +3113,27 @@ func (s *Moniker) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "scheme":
+		switch string(name) {
+		case `"scheme"`:
 			seenScheme = true
 			if err := json.UnmarshalDecode(dec, &s.Scheme); err != nil {
 				return err
 			}
-		case "identifier":
+		case `"identifier"`:
 			seenIdentifier = true
 			if err := json.UnmarshalDecode(dec, &s.Identifier); err != nil {
 				return err
 			}
-		case "unique":
+		case `"unique"`:
 			seenUnique = true
 			if err := json.UnmarshalDecode(dec, &s.Unique); err != nil {
 				return err
 			}
-		case "kind":
+		case `"kind"`:
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
@@ -3180,17 +3180,17 @@ func (s *MonikerRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "workDoneProgress":
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
@@ -3240,22 +3240,22 @@ func (s *TypeHierarchyPrepareParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "textDocument":
+		switch string(name) {
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "position":
+		case `"position"`:
 			seenPosition = true
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
-		case "workDoneToken":
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
@@ -3330,45 +3330,45 @@ func (s *TypeHierarchyItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "name":
+		switch string(name) {
+		case `"name"`:
 			seenName = true
 			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
 				return err
 			}
-		case "kind":
+		case `"kind"`:
 			seenKind = true
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "tags":
+		case `"tags"`:
 			if err := json.UnmarshalDecode(dec, &s.Tags); err != nil {
 				return err
 			}
-		case "detail":
+		case `"detail"`:
 			if err := json.UnmarshalDecode(dec, &s.Detail); err != nil {
 				return err
 			}
-		case "uri":
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
-		case "range":
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "selectionRange":
+		case `"selectionRange"`:
 			seenSelectionRange = true
 			if err := json.UnmarshalDecode(dec, &s.SelectionRange); err != nil {
 				return err
 			}
-		case "data":
+		case `"data"`:
 			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
 				return err
 			}
@@ -3428,21 +3428,21 @@ func (s *TypeHierarchyRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "workDoneProgress":
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "id":
+		case `"id"`:
 			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
 				return err
 			}
@@ -3489,20 +3489,20 @@ func (s *TypeHierarchySupertypesParams) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
-		case "item":
+		case `"item"`:
 			seenItem = true
 			if err := json.UnmarshalDecode(dec, &s.Item); err != nil {
 				return err
@@ -3550,20 +3550,20 @@ func (s *TypeHierarchySubtypesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
-		case "item":
+		case `"item"`:
 			seenItem = true
 			if err := json.UnmarshalDecode(dec, &s.Item); err != nil {
 				return err
@@ -3619,26 +3619,26 @@ func (s *InlineValueParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "textDocument":
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "range":
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "context":
+		case `"context"`:
 			seenContext = true
 			if err := json.UnmarshalDecode(dec, &s.Context); err != nil {
 				return err
@@ -3693,21 +3693,21 @@ func (s *InlineValueRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneProgress":
+		switch string(name) {
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "documentSelector":
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "id":
+		case `"id"`:
 			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
 				return err
 			}
@@ -3757,21 +3757,21 @@ func (s *InlayHintParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "textDocument":
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "range":
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
@@ -3860,42 +3860,42 @@ func (s *InlayHint) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "position":
+		switch string(name) {
+		case `"position"`:
 			seenPosition = true
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
-		case "label":
+		case `"label"`:
 			seenLabel = true
 			if err := json.UnmarshalDecode(dec, &s.Label); err != nil {
 				return err
 			}
-		case "kind":
+		case `"kind"`:
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "textEdits":
+		case `"textEdits"`:
 			if err := json.UnmarshalDecode(dec, &s.TextEdits); err != nil {
 				return err
 			}
-		case "tooltip":
+		case `"tooltip"`:
 			if err := json.UnmarshalDecode(dec, &s.Tooltip); err != nil {
 				return err
 			}
-		case "paddingLeft":
+		case `"paddingLeft"`:
 			if err := json.UnmarshalDecode(dec, &s.PaddingLeft); err != nil {
 				return err
 			}
-		case "paddingRight":
+		case `"paddingRight"`:
 			if err := json.UnmarshalDecode(dec, &s.PaddingRight); err != nil {
 				return err
 			}
-		case "data":
+		case `"data"`:
 			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
 				return err
 			}
@@ -3950,25 +3950,25 @@ func (s *InlayHintRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneProgress":
+		switch string(name) {
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "resolveProvider":
+		case `"resolveProvider"`:
 			if err := json.UnmarshalDecode(dec, &s.ResolveProvider); err != nil {
 				return err
 			}
-		case "documentSelector":
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "id":
+		case `"id"`:
 			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
 				return err
 			}
@@ -4022,29 +4022,29 @@ func (s *DocumentDiagnosticParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
-		case "textDocument":
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "identifier":
+		case `"identifier"`:
 			if err := json.UnmarshalDecode(dec, &s.Identifier); err != nil {
 				return err
 			}
-		case "previousResultId":
+		case `"previousResultId"`:
 			if err := json.UnmarshalDecode(dec, &s.PreviousResultId); err != nil {
 				return err
 			}
@@ -4084,12 +4084,12 @@ func (s *DocumentDiagnosticReportPartialResult) UnmarshalJSONFrom(dec *jsontext.
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "relatedDocuments":
+		switch string(name) {
+		case `"relatedDocuments"`:
 			seenRelatedDocuments = true
 			if err := json.UnmarshalDecode(dec, &s.RelatedDocuments); err != nil {
 				return err
@@ -4130,12 +4130,12 @@ func (s *DiagnosticServerCancellationData) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "retriggerRequest":
+		switch string(name) {
+		case `"retriggerRequest"`:
 			seenRetriggerRequest = true
 			if err := json.UnmarshalDecode(dec, &s.RetriggerRequest); err != nil {
 				return err
@@ -4201,35 +4201,35 @@ func (s *DiagnosticRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "workDoneProgress":
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "identifier":
+		case `"identifier"`:
 			if err := json.UnmarshalDecode(dec, &s.Identifier); err != nil {
 				return err
 			}
-		case "interFileDependencies":
+		case `"interFileDependencies"`:
 			seenInterFileDependencies = true
 			if err := json.UnmarshalDecode(dec, &s.InterFileDependencies); err != nil {
 				return err
 			}
-		case "workspaceDiagnostics":
+		case `"workspaceDiagnostics"`:
 			seenWorkspaceDiagnostics = true
 			if err := json.UnmarshalDecode(dec, &s.WorkspaceDiagnostics); err != nil {
 				return err
 			}
-		case "id":
+		case `"id"`:
 			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
 				return err
 			}
@@ -4287,24 +4287,24 @@ func (s *WorkspaceDiagnosticParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
-		case "identifier":
+		case `"identifier"`:
 			if err := json.UnmarshalDecode(dec, &s.Identifier); err != nil {
 				return err
 			}
-		case "previousResultIds":
+		case `"previousResultIds"`:
 			seenPreviousResultIds = true
 			if err := json.UnmarshalDecode(dec, &s.PreviousResultIds); err != nil {
 				return err
@@ -4345,12 +4345,12 @@ func (s *WorkspaceDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "items":
+		switch string(name) {
+		case `"items"`:
 			seenItems = true
 			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
 				return err
@@ -4391,12 +4391,12 @@ func (s *WorkspaceDiagnosticReportPartialResult) UnmarshalJSONFrom(dec *jsontext
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "items":
+		switch string(name) {
+		case `"items"`:
 			seenItems = true
 			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
 				return err
@@ -4445,17 +4445,17 @@ func (s *DidOpenNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "notebookDocument":
+		switch string(name) {
+		case `"notebookDocument"`:
 			seenNotebookDocument = true
 			if err := json.UnmarshalDecode(dec, &s.NotebookDocument); err != nil {
 				return err
 			}
-		case "cellTextDocuments":
+		case `"cellTextDocuments"`:
 			seenCellTextDocuments = true
 			if err := json.UnmarshalDecode(dec, &s.CellTextDocuments); err != nil {
 				return err
@@ -4508,21 +4508,21 @@ func (s *NotebookDocumentSyncRegistrationOptions) UnmarshalJSONFrom(dec *jsontex
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "notebookSelector":
+		switch string(name) {
+		case `"notebookSelector"`:
 			seenNotebookSelector = true
 			if err := json.UnmarshalDecode(dec, &s.NotebookSelector); err != nil {
 				return err
 			}
-		case "save":
+		case `"save"`:
 			if err := json.UnmarshalDecode(dec, &s.Save); err != nil {
 				return err
 			}
-		case "id":
+		case `"id"`:
 			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
 				return err
 			}
@@ -4584,17 +4584,17 @@ func (s *DidChangeNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "notebookDocument":
+		switch string(name) {
+		case `"notebookDocument"`:
 			seenNotebookDocument = true
 			if err := json.UnmarshalDecode(dec, &s.NotebookDocument); err != nil {
 				return err
 			}
-		case "change":
+		case `"change"`:
 			seenChange = true
 			if err := json.UnmarshalDecode(dec, &s.Change); err != nil {
 				return err
@@ -4639,12 +4639,12 @@ func (s *DidSaveNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "notebookDocument":
+		switch string(name) {
+		case `"notebookDocument"`:
 			seenNotebookDocument = true
 			if err := json.UnmarshalDecode(dec, &s.NotebookDocument); err != nil {
 				return err
@@ -4693,17 +4693,17 @@ func (s *DidCloseNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "notebookDocument":
+		switch string(name) {
+		case `"notebookDocument"`:
 			seenNotebookDocument = true
 			if err := json.UnmarshalDecode(dec, &s.NotebookDocument); err != nil {
 				return err
 			}
-		case "cellTextDocuments":
+		case `"cellTextDocuments"`:
 			seenCellTextDocuments = true
 			if err := json.UnmarshalDecode(dec, &s.CellTextDocuments); err != nil {
 				return err
@@ -4764,26 +4764,26 @@ func (s *InlineCompletionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "textDocument":
+		switch string(name) {
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "position":
+		case `"position"`:
 			seenPosition = true
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
-		case "workDoneToken":
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "context":
+		case `"context"`:
 			seenContext = true
 			if err := json.UnmarshalDecode(dec, &s.Context); err != nil {
 				return err
@@ -4833,12 +4833,12 @@ func (s *InlineCompletionList) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "items":
+		switch string(name) {
+		case `"items"`:
 			seenItems = true
 			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
 				return err
@@ -4891,25 +4891,25 @@ func (s *InlineCompletionItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "insertText":
+		switch string(name) {
+		case `"insertText"`:
 			seenInsertText = true
 			if err := json.UnmarshalDecode(dec, &s.InsertText); err != nil {
 				return err
 			}
-		case "filterText":
+		case `"filterText"`:
 			if err := json.UnmarshalDecode(dec, &s.FilterText); err != nil {
 				return err
 			}
-		case "range":
+		case `"range"`:
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "command":
+		case `"command"`:
 			if err := json.UnmarshalDecode(dec, &s.Command); err != nil {
 				return err
 			}
@@ -4959,21 +4959,21 @@ func (s *InlineCompletionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.De
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneProgress":
+		switch string(name) {
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "documentSelector":
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "id":
+		case `"id"`:
 			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
 				return err
 			}
@@ -5016,12 +5016,12 @@ func (s *TextDocumentContentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "uri":
+		switch string(name) {
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
@@ -5068,12 +5068,12 @@ func (s *TextDocumentContentResult) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "text":
+		switch string(name) {
+		case `"text"`:
 			seenText = true
 			if err := json.UnmarshalDecode(dec, &s.Text); err != nil {
 				return err
@@ -5121,17 +5121,17 @@ func (s *TextDocumentContentRegistrationOptions) UnmarshalJSONFrom(dec *jsontext
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "schemes":
+		switch string(name) {
+		case `"schemes"`:
 			seenSchemes = true
 			if err := json.UnmarshalDecode(dec, &s.Schemes); err != nil {
 				return err
 			}
-		case "id":
+		case `"id"`:
 			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
 				return err
 			}
@@ -5174,12 +5174,12 @@ func (s *TextDocumentContentRefreshParams) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "uri":
+		switch string(name) {
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
@@ -5217,12 +5217,12 @@ func (s *RegistrationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "registrations":
+		switch string(name) {
+		case `"registrations"`:
 			seenRegistrations = true
 			if err := json.UnmarshalDecode(dec, &s.Registrations); err != nil {
 				return err
@@ -5260,12 +5260,12 @@ func (s *UnregistrationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "unregisterations":
+		switch string(name) {
+		case `"unregisterations"`:
 			seenUnregisterations = true
 			if err := json.UnmarshalDecode(dec, &s.Unregisterations); err != nil {
 				return err
@@ -5361,51 +5361,51 @@ func (s *InitializeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "processId":
+		case `"processId"`:
 			seenProcessId = true
 			if err := json.UnmarshalDecode(dec, &s.ProcessId); err != nil {
 				return err
 			}
-		case "clientInfo":
+		case `"clientInfo"`:
 			if err := json.UnmarshalDecode(dec, &s.ClientInfo); err != nil {
 				return err
 			}
-		case "locale":
+		case `"locale"`:
 			if err := json.UnmarshalDecode(dec, &s.Locale); err != nil {
 				return err
 			}
-		case "rootPath":
+		case `"rootPath"`:
 			if err := json.UnmarshalDecode(dec, &s.RootPath); err != nil {
 				return err
 			}
-		case "rootUri":
+		case `"rootUri"`:
 			seenRootUri = true
 			if err := json.UnmarshalDecode(dec, &s.RootUri); err != nil {
 				return err
 			}
-		case "capabilities":
+		case `"capabilities"`:
 			seenCapabilities = true
 			if err := json.UnmarshalDecode(dec, &s.Capabilities); err != nil {
 				return err
 			}
-		case "initializationOptions":
+		case `"initializationOptions"`:
 			if err := json.UnmarshalDecode(dec, &s.InitializationOptions); err != nil {
 				return err
 			}
-		case "trace":
+		case `"trace"`:
 			if err := json.UnmarshalDecode(dec, &s.Trace); err != nil {
 				return err
 			}
-		case "workspaceFolders":
+		case `"workspaceFolders"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkspaceFolders); err != nil {
 				return err
 			}
@@ -5455,17 +5455,17 @@ func (s *InitializeResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "capabilities":
+		switch string(name) {
+		case `"capabilities"`:
 			seenCapabilities = true
 			if err := json.UnmarshalDecode(dec, &s.Capabilities); err != nil {
 				return err
 			}
-		case "serverInfo":
+		case `"serverInfo"`:
 			if err := json.UnmarshalDecode(dec, &s.ServerInfo); err != nil {
 				return err
 			}
@@ -5508,12 +5508,12 @@ func (s *InitializeError) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "retry":
+		switch string(name) {
+		case `"retry"`:
 			seenRetry = true
 			if err := json.UnmarshalDecode(dec, &s.Retry); err != nil {
 				return err
@@ -5555,12 +5555,12 @@ func (s *DidChangeConfigurationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "settings":
+		switch string(name) {
+		case `"settings"`:
 			seenSettings = true
 			if err := json.UnmarshalDecode(dec, &s.Settings); err != nil {
 				return err
@@ -5610,17 +5610,17 @@ func (s *ShowMessageParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "type":
+		switch string(name) {
+		case `"type"`:
 			seenType = true
 			if err := json.UnmarshalDecode(dec, &s.Type); err != nil {
 				return err
 			}
-		case "message":
+		case `"message"`:
 			seenMessage = true
 			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
 				return err
@@ -5671,22 +5671,22 @@ func (s *ShowMessageRequestParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "type":
+		switch string(name) {
+		case `"type"`:
 			seenType = true
 			if err := json.UnmarshalDecode(dec, &s.Type); err != nil {
 				return err
 			}
-		case "message":
+		case `"message"`:
 			seenMessage = true
 			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
 				return err
 			}
-		case "actions":
+		case `"actions"`:
 			if err := json.UnmarshalDecode(dec, &s.Actions); err != nil {
 				return err
 			}
@@ -5727,12 +5727,12 @@ func (s *MessageActionItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "title":
+		switch string(name) {
+		case `"title"`:
 			seenTitle = true
 			if err := json.UnmarshalDecode(dec, &s.Title); err != nil {
 				return err
@@ -5778,17 +5778,17 @@ func (s *LogMessageParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "type":
+		switch string(name) {
+		case `"type"`:
 			seenType = true
 			if err := json.UnmarshalDecode(dec, &s.Type); err != nil {
 				return err
 			}
-		case "message":
+		case `"message"`:
 			seenMessage = true
 			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
 				return err
@@ -5831,12 +5831,12 @@ func (s *DidOpenTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "textDocument":
+		switch string(name) {
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
@@ -5894,17 +5894,17 @@ func (s *DidChangeTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "textDocument":
+		switch string(name) {
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "contentChanges":
+		case `"contentChanges"`:
 			seenContentChanges = true
 			if err := json.UnmarshalDecode(dec, &s.ContentChanges); err != nil {
 				return err
@@ -5954,17 +5954,17 @@ func (s *TextDocumentChangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "syncKind":
+		case `"syncKind"`:
 			seenSyncKind = true
 			if err := json.UnmarshalDecode(dec, &s.SyncKind); err != nil {
 				return err
@@ -6007,12 +6007,12 @@ func (s *DidCloseTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "textDocument":
+		switch string(name) {
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
@@ -6056,17 +6056,17 @@ func (s *DidSaveTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "textDocument":
+		switch string(name) {
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "text":
+		case `"text"`:
 			if err := json.UnmarshalDecode(dec, &s.Text); err != nil {
 				return err
 			}
@@ -6109,17 +6109,17 @@ func (s *TextDocumentSaveRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.De
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "includeText":
+		case `"includeText"`:
 			if err := json.UnmarshalDecode(dec, &s.IncludeText); err != nil {
 				return err
 			}
@@ -6164,17 +6164,17 @@ func (s *WillSaveTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "textDocument":
+		switch string(name) {
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "reason":
+		case `"reason"`:
 			seenReason = true
 			if err := json.UnmarshalDecode(dec, &s.Reason); err != nil {
 				return err
@@ -6225,17 +6225,17 @@ func (s *TextEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "range":
+		switch string(name) {
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "newText":
+		case `"newText"`:
 			seenNewText = true
 			if err := json.UnmarshalDecode(dec, &s.NewText); err != nil {
 				return err
@@ -6278,12 +6278,12 @@ func (s *DidChangeWatchedFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "changes":
+		switch string(name) {
+		case `"changes"`:
 			seenChanges = true
 			if err := json.UnmarshalDecode(dec, &s.Changes); err != nil {
 				return err
@@ -6323,12 +6323,12 @@ func (s *DidChangeWatchedFilesRegistrationOptions) UnmarshalJSONFrom(dec *jsonte
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "watchers":
+		switch string(name) {
+		case `"watchers"`:
 			seenWatchers = true
 			if err := json.UnmarshalDecode(dec, &s.Watchers); err != nil {
 				return err
@@ -6379,21 +6379,21 @@ func (s *PublishDiagnosticsParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "uri":
+		switch string(name) {
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
-		case "version":
+		case `"version"`:
 			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
 				return err
 			}
-		case "diagnostics":
+		case `"diagnostics"`:
 			seenDiagnostics = true
 			if err := json.UnmarshalDecode(dec, &s.Diagnostics); err != nil {
 				return err
@@ -6453,30 +6453,30 @@ func (s *CompletionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "textDocument":
+		switch string(name) {
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "position":
+		case `"position"`:
 			seenPosition = true
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
-		case "workDoneToken":
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
-		case "context":
+		case `"context"`:
 			if err := json.UnmarshalDecode(dec, &s.Context); err != nil {
 				return err
 			}
@@ -6653,85 +6653,85 @@ func (s *CompletionItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "label":
+		switch string(name) {
+		case `"label"`:
 			seenLabel = true
 			if err := json.UnmarshalDecode(dec, &s.Label); err != nil {
 				return err
 			}
-		case "labelDetails":
+		case `"labelDetails"`:
 			if err := json.UnmarshalDecode(dec, &s.LabelDetails); err != nil {
 				return err
 			}
-		case "kind":
+		case `"kind"`:
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "tags":
+		case `"tags"`:
 			if err := json.UnmarshalDecode(dec, &s.Tags); err != nil {
 				return err
 			}
-		case "detail":
+		case `"detail"`:
 			if err := json.UnmarshalDecode(dec, &s.Detail); err != nil {
 				return err
 			}
-		case "documentation":
+		case `"documentation"`:
 			if err := json.UnmarshalDecode(dec, &s.Documentation); err != nil {
 				return err
 			}
-		case "deprecated":
+		case `"deprecated"`:
 			if err := json.UnmarshalDecode(dec, &s.Deprecated); err != nil {
 				return err
 			}
-		case "preselect":
+		case `"preselect"`:
 			if err := json.UnmarshalDecode(dec, &s.Preselect); err != nil {
 				return err
 			}
-		case "sortText":
+		case `"sortText"`:
 			if err := json.UnmarshalDecode(dec, &s.SortText); err != nil {
 				return err
 			}
-		case "filterText":
+		case `"filterText"`:
 			if err := json.UnmarshalDecode(dec, &s.FilterText); err != nil {
 				return err
 			}
-		case "insertText":
+		case `"insertText"`:
 			if err := json.UnmarshalDecode(dec, &s.InsertText); err != nil {
 				return err
 			}
-		case "insertTextFormat":
+		case `"insertTextFormat"`:
 			if err := json.UnmarshalDecode(dec, &s.InsertTextFormat); err != nil {
 				return err
 			}
-		case "insertTextMode":
+		case `"insertTextMode"`:
 			if err := json.UnmarshalDecode(dec, &s.InsertTextMode); err != nil {
 				return err
 			}
-		case "textEdit":
+		case `"textEdit"`:
 			if err := json.UnmarshalDecode(dec, &s.TextEdit); err != nil {
 				return err
 			}
-		case "textEditText":
+		case `"textEditText"`:
 			if err := json.UnmarshalDecode(dec, &s.TextEditText); err != nil {
 				return err
 			}
-		case "additionalTextEdits":
+		case `"additionalTextEdits"`:
 			if err := json.UnmarshalDecode(dec, &s.AdditionalTextEdits); err != nil {
 				return err
 			}
-		case "commitCharacters":
+		case `"commitCharacters"`:
 			if err := json.UnmarshalDecode(dec, &s.CommitCharacters); err != nil {
 				return err
 			}
-		case "command":
+		case `"command"`:
 			if err := json.UnmarshalDecode(dec, &s.Command); err != nil {
 				return err
 			}
-		case "data":
+		case `"data"`:
 			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
 				return err
 			}
@@ -6816,25 +6816,25 @@ func (s *CompletionList) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "isIncomplete":
+		switch string(name) {
+		case `"isIncomplete"`:
 			seenIsIncomplete = true
 			if err := json.UnmarshalDecode(dec, &s.IsIncomplete); err != nil {
 				return err
 			}
-		case "itemDefaults":
+		case `"itemDefaults"`:
 			if err := json.UnmarshalDecode(dec, &s.ItemDefaults); err != nil {
 				return err
 			}
-		case "applyKind":
+		case `"applyKind"`:
 			if err := json.UnmarshalDecode(dec, &s.ApplyKind); err != nil {
 				return err
 			}
-		case "items":
+		case `"items"`:
 			seenItems = true
 			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
 				return err
@@ -6910,33 +6910,33 @@ func (s *CompletionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "workDoneProgress":
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "triggerCharacters":
+		case `"triggerCharacters"`:
 			if err := json.UnmarshalDecode(dec, &s.TriggerCharacters); err != nil {
 				return err
 			}
-		case "allCommitCharacters":
+		case `"allCommitCharacters"`:
 			if err := json.UnmarshalDecode(dec, &s.AllCommitCharacters); err != nil {
 				return err
 			}
-		case "resolveProvider":
+		case `"resolveProvider"`:
 			if err := json.UnmarshalDecode(dec, &s.ResolveProvider); err != nil {
 				return err
 			}
-		case "completionItem":
+		case `"completionItem"`:
 			if err := json.UnmarshalDecode(dec, &s.CompletionItem); err != nil {
 				return err
 			}
@@ -6984,22 +6984,22 @@ func (s *HoverParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "textDocument":
+		switch string(name) {
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "position":
+		case `"position"`:
 			seenPosition = true
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
-		case "workDoneToken":
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
@@ -7045,17 +7045,17 @@ func (s *Hover) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "contents":
+		switch string(name) {
+		case `"contents"`:
 			seenContents = true
 			if err := json.UnmarshalDecode(dec, &s.Contents); err != nil {
 				return err
 			}
-		case "range":
+		case `"range"`:
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
@@ -7097,17 +7097,17 @@ func (s *HoverRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "workDoneProgress":
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
@@ -7161,26 +7161,26 @@ func (s *SignatureHelpParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "textDocument":
+		switch string(name) {
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "position":
+		case `"position"`:
 			seenPosition = true
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
-		case "workDoneToken":
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "context":
+		case `"context"`:
 			if err := json.UnmarshalDecode(dec, &s.Context); err != nil {
 				return err
 			}
@@ -7253,21 +7253,21 @@ func (s *SignatureHelp) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "signatures":
+		switch string(name) {
+		case `"signatures"`:
 			seenSignatures = true
 			if err := json.UnmarshalDecode(dec, &s.Signatures); err != nil {
 				return err
 			}
-		case "activeSignature":
+		case `"activeSignature"`:
 			if err := json.UnmarshalDecode(dec, &s.ActiveSignature); err != nil {
 				return err
 			}
-		case "activeParameter":
+		case `"activeParameter"`:
 			if err := json.UnmarshalDecode(dec, &s.ActiveParameter); err != nil {
 				return err
 			}
@@ -7320,25 +7320,25 @@ func (s *SignatureHelpRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "workDoneProgress":
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "triggerCharacters":
+		case `"triggerCharacters"`:
 			if err := json.UnmarshalDecode(dec, &s.TriggerCharacters); err != nil {
 				return err
 			}
-		case "retriggerCharacters":
+		case `"retriggerCharacters"`:
 			if err := json.UnmarshalDecode(dec, &s.RetriggerCharacters); err != nil {
 				return err
 			}
@@ -7390,26 +7390,26 @@ func (s *DefinitionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "textDocument":
+		switch string(name) {
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "position":
+		case `"position"`:
 			seenPosition = true
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
-		case "workDoneToken":
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
@@ -7454,17 +7454,17 @@ func (s *DefinitionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "workDoneProgress":
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
@@ -7519,30 +7519,30 @@ func (s *ReferenceParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "textDocument":
+		switch string(name) {
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "position":
+		case `"position"`:
 			seenPosition = true
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
-		case "workDoneToken":
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
-		case "context":
+		case `"context"`:
 			seenContext = true
 			if err := json.UnmarshalDecode(dec, &s.Context); err != nil {
 				return err
@@ -7591,17 +7591,17 @@ func (s *ReferenceRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "workDoneProgress":
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
@@ -7653,26 +7653,26 @@ func (s *DocumentHighlightParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "textDocument":
+		switch string(name) {
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "position":
+		case `"position"`:
 			seenPosition = true
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
-		case "workDoneToken":
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
@@ -7719,17 +7719,17 @@ func (s *DocumentHighlight) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "range":
+		switch string(name) {
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "kind":
+		case `"kind"`:
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
@@ -7771,17 +7771,17 @@ func (s *DocumentHighlightRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.D
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "workDoneProgress":
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
@@ -7827,20 +7827,20 @@ func (s *DocumentSymbolParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
-		case "textDocument":
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
@@ -7915,34 +7915,34 @@ func (s *SymbolInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "name":
+		switch string(name) {
+		case `"name"`:
 			seenName = true
 			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
 				return err
 			}
-		case "kind":
+		case `"kind"`:
 			seenKind = true
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "tags":
+		case `"tags"`:
 			if err := json.UnmarshalDecode(dec, &s.Tags); err != nil {
 				return err
 			}
-		case "containerName":
+		case `"containerName"`:
 			if err := json.UnmarshalDecode(dec, &s.ContainerName); err != nil {
 				return err
 			}
-		case "deprecated":
+		case `"deprecated"`:
 			if err := json.UnmarshalDecode(dec, &s.Deprecated); err != nil {
 				return err
 			}
-		case "location":
+		case `"location"`:
 			seenLocation = true
 			if err := json.UnmarshalDecode(dec, &s.Location); err != nil {
 				return err
@@ -8025,44 +8025,44 @@ func (s *DocumentSymbol) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "name":
+		switch string(name) {
+		case `"name"`:
 			seenName = true
 			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
 				return err
 			}
-		case "detail":
+		case `"detail"`:
 			if err := json.UnmarshalDecode(dec, &s.Detail); err != nil {
 				return err
 			}
-		case "kind":
+		case `"kind"`:
 			seenKind = true
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "tags":
+		case `"tags"`:
 			if err := json.UnmarshalDecode(dec, &s.Tags); err != nil {
 				return err
 			}
-		case "deprecated":
+		case `"deprecated"`:
 			if err := json.UnmarshalDecode(dec, &s.Deprecated); err != nil {
 				return err
 			}
-		case "range":
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "selectionRange":
+		case `"selectionRange"`:
 			seenSelectionRange = true
 			if err := json.UnmarshalDecode(dec, &s.SelectionRange); err != nil {
 				return err
 			}
-		case "children":
+		case `"children"`:
 			if err := json.UnmarshalDecode(dec, &s.Children); err != nil {
 				return err
 			}
@@ -8119,21 +8119,21 @@ func (s *DocumentSymbolRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "workDoneProgress":
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "label":
+		case `"label"`:
 			if err := json.UnmarshalDecode(dec, &s.Label); err != nil {
 				return err
 			}
@@ -8189,30 +8189,30 @@ func (s *CodeActionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
-		case "textDocument":
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "range":
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "context":
+		case `"context"`:
 			seenContext = true
 			if err := json.UnmarshalDecode(dec, &s.Context); err != nil {
 				return err
@@ -8278,26 +8278,26 @@ func (s *Command) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "title":
+		switch string(name) {
+		case `"title"`:
 			seenTitle = true
 			if err := json.UnmarshalDecode(dec, &s.Title); err != nil {
 				return err
 			}
-		case "tooltip":
+		case `"tooltip"`:
 			if err := json.UnmarshalDecode(dec, &s.Tooltip); err != nil {
 				return err
 			}
-		case "command":
+		case `"command"`:
 			seenCommand = true
 			if err := json.UnmarshalDecode(dec, &s.Command); err != nil {
 				return err
 			}
-		case "arguments":
+		case `"arguments"`:
 			if err := json.UnmarshalDecode(dec, &s.Arguments); err != nil {
 				return err
 			}
@@ -8395,45 +8395,45 @@ func (s *CodeAction) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "title":
+		switch string(name) {
+		case `"title"`:
 			seenTitle = true
 			if err := json.UnmarshalDecode(dec, &s.Title); err != nil {
 				return err
 			}
-		case "kind":
+		case `"kind"`:
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "diagnostics":
+		case `"diagnostics"`:
 			if err := json.UnmarshalDecode(dec, &s.Diagnostics); err != nil {
 				return err
 			}
-		case "isPreferred":
+		case `"isPreferred"`:
 			if err := json.UnmarshalDecode(dec, &s.IsPreferred); err != nil {
 				return err
 			}
-		case "disabled":
+		case `"disabled"`:
 			if err := json.UnmarshalDecode(dec, &s.Disabled); err != nil {
 				return err
 			}
-		case "edit":
+		case `"edit"`:
 			if err := json.UnmarshalDecode(dec, &s.Edit); err != nil {
 				return err
 			}
-		case "command":
+		case `"command"`:
 			if err := json.UnmarshalDecode(dec, &s.Command); err != nil {
 				return err
 			}
-		case "data":
+		case `"data"`:
 			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
 				return err
 			}
-		case "tags":
+		case `"tags"`:
 			if err := json.UnmarshalDecode(dec, &s.Tags); err != nil {
 				return err
 			}
@@ -8505,29 +8505,29 @@ func (s *CodeActionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "workDoneProgress":
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "codeActionKinds":
+		case `"codeActionKinds"`:
 			if err := json.UnmarshalDecode(dec, &s.CodeActionKinds); err != nil {
 				return err
 			}
-		case "documentation":
+		case `"documentation"`:
 			if err := json.UnmarshalDecode(dec, &s.Documentation); err != nil {
 				return err
 			}
-		case "resolveProvider":
+		case `"resolveProvider"`:
 			if err := json.UnmarshalDecode(dec, &s.ResolveProvider); err != nil {
 				return err
 			}
@@ -8580,20 +8580,20 @@ func (s *WorkspaceSymbolParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
-		case "query":
+		case `"query"`:
 			seenQuery = true
 			if err := json.UnmarshalDecode(dec, &s.Query); err != nil {
 				return err
@@ -8666,35 +8666,35 @@ func (s *WorkspaceSymbol) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "name":
+		switch string(name) {
+		case `"name"`:
 			seenName = true
 			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
 				return err
 			}
-		case "kind":
+		case `"kind"`:
 			seenKind = true
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "tags":
+		case `"tags"`:
 			if err := json.UnmarshalDecode(dec, &s.Tags); err != nil {
 				return err
 			}
-		case "containerName":
+		case `"containerName"`:
 			if err := json.UnmarshalDecode(dec, &s.ContainerName); err != nil {
 				return err
 			}
-		case "location":
+		case `"location"`:
 			seenLocation = true
 			if err := json.UnmarshalDecode(dec, &s.Location); err != nil {
 				return err
 			}
-		case "data":
+		case `"data"`:
 			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
 				return err
 			}
@@ -8757,20 +8757,20 @@ func (s *CodeLensParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
-		case "textDocument":
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
@@ -8821,21 +8821,21 @@ func (s *CodeLens) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "range":
+		switch string(name) {
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "command":
+		case `"command"`:
 			if err := json.UnmarshalDecode(dec, &s.Command); err != nil {
 				return err
 			}
-		case "data":
+		case `"data"`:
 			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
 				return err
 			}
@@ -8880,21 +8880,21 @@ func (s *CodeLensRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "workDoneProgress":
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "resolveProvider":
+		case `"resolveProvider"`:
 			if err := json.UnmarshalDecode(dec, &s.ResolveProvider); err != nil {
 				return err
 			}
@@ -8940,20 +8940,20 @@ func (s *DocumentLinkParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "partialResultToken":
+		case `"partialResultToken"`:
 			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
 				return err
 			}
-		case "textDocument":
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
@@ -9010,25 +9010,25 @@ func (s *DocumentLink) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "range":
+		switch string(name) {
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "target":
+		case `"target"`:
 			if err := json.UnmarshalDecode(dec, &s.Target); err != nil {
 				return err
 			}
-		case "tooltip":
+		case `"tooltip"`:
 			if err := json.UnmarshalDecode(dec, &s.Tooltip); err != nil {
 				return err
 			}
-		case "data":
+		case `"data"`:
 			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
 				return err
 			}
@@ -9073,21 +9073,21 @@ func (s *DocumentLinkRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "workDoneProgress":
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "resolveProvider":
+		case `"resolveProvider"`:
 			if err := json.UnmarshalDecode(dec, &s.ResolveProvider); err != nil {
 				return err
 			}
@@ -9135,21 +9135,21 @@ func (s *DocumentFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "textDocument":
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "options":
+		case `"options"`:
 			seenOptions = true
 			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
 				return err
@@ -9195,17 +9195,17 @@ func (s *DocumentFormattingRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "workDoneProgress":
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
@@ -9257,26 +9257,26 @@ func (s *DocumentRangeFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "textDocument":
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "range":
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "options":
+		case `"options"`:
 			seenOptions = true
 			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
 				return err
@@ -9332,21 +9332,21 @@ func (s *DocumentRangeFormattingRegistrationOptions) UnmarshalJSONFrom(dec *json
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "workDoneProgress":
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "rangesSupport":
+		case `"rangesSupport"`:
 			if err := json.UnmarshalDecode(dec, &s.RangesSupport); err != nil {
 				return err
 			}
@@ -9402,26 +9402,26 @@ func (s *DocumentRangesFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "textDocument":
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "ranges":
+		case `"ranges"`:
 			seenRanges = true
 			if err := json.UnmarshalDecode(dec, &s.Ranges); err != nil {
 				return err
 			}
-		case "options":
+		case `"options"`:
 			seenOptions = true
 			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
 				return err
@@ -9486,27 +9486,27 @@ func (s *DocumentOnTypeFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "textDocument":
+		switch string(name) {
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "position":
+		case `"position"`:
 			seenPosition = true
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
-		case "ch":
+		case `"ch"`:
 			seenCh = true
 			if err := json.UnmarshalDecode(dec, &s.Ch); err != nil {
 				return err
 			}
-		case "options":
+		case `"options"`:
 			seenOptions = true
 			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
 				return err
@@ -9565,22 +9565,22 @@ func (s *DocumentOnTypeFormattingRegistrationOptions) UnmarshalJSONFrom(dec *jso
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "firstTriggerCharacter":
+		case `"firstTriggerCharacter"`:
 			seenFirstTriggerCharacter = true
 			if err := json.UnmarshalDecode(dec, &s.FirstTriggerCharacter); err != nil {
 				return err
 			}
-		case "moreTriggerCharacter":
+		case `"moreTriggerCharacter"`:
 			if err := json.UnmarshalDecode(dec, &s.MoreTriggerCharacter); err != nil {
 				return err
 			}
@@ -9637,26 +9637,26 @@ func (s *RenameParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "textDocument":
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "position":
+		case `"position"`:
 			seenPosition = true
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
-		case "newName":
+		case `"newName"`:
 			seenNewName = true
 			if err := json.UnmarshalDecode(dec, &s.NewName); err != nil {
 				return err
@@ -9710,21 +9710,21 @@ func (s *RenameRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "documentSelector":
+		switch string(name) {
+		case `"documentSelector"`:
 			seenDocumentSelector = true
 			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
 				return err
 			}
-		case "workDoneProgress":
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "prepareProvider":
+		case `"prepareProvider"`:
 			if err := json.UnmarshalDecode(dec, &s.PrepareProvider); err != nil {
 				return err
 			}
@@ -9771,22 +9771,22 @@ func (s *PrepareRenameParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "textDocument":
+		switch string(name) {
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "position":
+		case `"position"`:
 			seenPosition = true
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
 			}
-		case "workDoneToken":
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
@@ -9834,21 +9834,21 @@ func (s *ExecuteCommandParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "command":
+		case `"command"`:
 			seenCommand = true
 			if err := json.UnmarshalDecode(dec, &s.Command); err != nil {
 				return err
 			}
-		case "arguments":
+		case `"arguments"`:
 			if err := json.UnmarshalDecode(dec, &s.Arguments); err != nil {
 				return err
 			}
@@ -9889,16 +9889,16 @@ func (s *ExecuteCommandRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Deco
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneProgress":
+		switch string(name) {
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "commands":
+		case `"commands"`:
 			seenCommands = true
 			if err := json.UnmarshalDecode(dec, &s.Commands); err != nil {
 				return err
@@ -9950,21 +9950,21 @@ func (s *ApplyWorkspaceEditParams) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "label":
+		switch string(name) {
+		case `"label"`:
 			if err := json.UnmarshalDecode(dec, &s.Label); err != nil {
 				return err
 			}
-		case "edit":
+		case `"edit"`:
 			seenEdit = true
 			if err := json.UnmarshalDecode(dec, &s.Edit); err != nil {
 				return err
 			}
-		case "metadata":
+		case `"metadata"`:
 			if err := json.UnmarshalDecode(dec, &s.Metadata); err != nil {
 				return err
 			}
@@ -10015,21 +10015,21 @@ func (s *ApplyWorkspaceEditResult) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "applied":
+		switch string(name) {
+		case `"applied"`:
 			seenApplied = true
 			if err := json.UnmarshalDecode(dec, &s.Applied); err != nil {
 				return err
 			}
-		case "failureReason":
+		case `"failureReason"`:
 			if err := json.UnmarshalDecode(dec, &s.FailureReason); err != nil {
 				return err
 			}
-		case "failedChange":
+		case `"failedChange"`:
 			if err := json.UnmarshalDecode(dec, &s.FailedChange); err != nil {
 				return err
 			}
@@ -10095,30 +10095,30 @@ func (s *WorkDoneProgressBegin) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "kind":
+		switch string(name) {
+		case `"kind"`:
 			seenKind = true
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "title":
+		case `"title"`:
 			seenTitle = true
 			if err := json.UnmarshalDecode(dec, &s.Title); err != nil {
 				return err
 			}
-		case "cancellable":
+		case `"cancellable"`:
 			if err := json.UnmarshalDecode(dec, &s.Cancellable); err != nil {
 				return err
 			}
-		case "message":
+		case `"message"`:
 			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
 				return err
 			}
-		case "percentage":
+		case `"percentage"`:
 			if err := json.UnmarshalDecode(dec, &s.Percentage); err != nil {
 				return err
 			}
@@ -10179,25 +10179,25 @@ func (s *WorkDoneProgressReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "kind":
+		switch string(name) {
+		case `"kind"`:
 			seenKind = true
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "cancellable":
+		case `"cancellable"`:
 			if err := json.UnmarshalDecode(dec, &s.Cancellable); err != nil {
 				return err
 			}
-		case "message":
+		case `"message"`:
 			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
 				return err
 			}
-		case "percentage":
+		case `"percentage"`:
 			if err := json.UnmarshalDecode(dec, &s.Percentage); err != nil {
 				return err
 			}
@@ -10238,17 +10238,17 @@ func (s *WorkDoneProgressEnd) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "kind":
+		switch string(name) {
+		case `"kind"`:
 			seenKind = true
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "message":
+		case `"message"`:
 			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
 				return err
 			}
@@ -10285,12 +10285,12 @@ func (s *SetTraceParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "value":
+		switch string(name) {
+		case `"value"`:
 			seenValue = true
 			if err := json.UnmarshalDecode(dec, &s.Value); err != nil {
 				return err
@@ -10330,17 +10330,17 @@ func (s *LogTraceParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "message":
+		switch string(name) {
+		case `"message"`:
 			seenMessage = true
 			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
 				return err
 			}
-		case "verbose":
+		case `"verbose"`:
 			if err := json.UnmarshalDecode(dec, &s.Verbose); err != nil {
 				return err
 			}
@@ -10378,12 +10378,12 @@ func (s *CancelParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "id":
+		switch string(name) {
+		case `"id"`:
 			seenId = true
 			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
 				return err
@@ -10428,17 +10428,17 @@ func (s *ProgressParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "token":
+		switch string(name) {
+		case `"token"`:
 			seenToken = true
 			if err := json.UnmarshalDecode(dec, &s.Token); err != nil {
 				return err
 			}
-		case "value":
+		case `"value"`:
 			seenValue = true
 			if err := json.UnmarshalDecode(dec, &s.Value); err != nil {
 				return err
@@ -10488,17 +10488,17 @@ func (s *TextDocumentPositionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "textDocument":
+		switch string(name) {
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "position":
+		case `"position"`:
 			seenPosition = true
 			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
 				return err
@@ -10572,26 +10572,26 @@ func (s *LocationLink) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "originSelectionRange":
+		switch string(name) {
+		case `"originSelectionRange"`:
 			if err := json.UnmarshalDecode(dec, &s.OriginSelectionRange); err != nil {
 				return err
 			}
-		case "targetUri":
+		case `"targetUri"`:
 			seenTargetUri = true
 			if err := json.UnmarshalDecode(dec, &s.TargetUri); err != nil {
 				return err
 			}
-		case "targetRange":
+		case `"targetRange"`:
 			seenTargetRange = true
 			if err := json.UnmarshalDecode(dec, &s.TargetRange); err != nil {
 				return err
 			}
-		case "targetSelectionRange":
+		case `"targetSelectionRange"`:
 			seenTargetSelectionRange = true
 			if err := json.UnmarshalDecode(dec, &s.TargetSelectionRange); err != nil {
 				return err
@@ -10655,17 +10655,17 @@ func (s *Range) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "start":
+		switch string(name) {
+		case `"start"`:
 			seenStart = true
 			if err := json.UnmarshalDecode(dec, &s.Start); err != nil {
 				return err
 			}
-		case "end":
+		case `"end"`:
 			seenEnd = true
 			if err := json.UnmarshalDecode(dec, &s.End); err != nil {
 				return err
@@ -10730,17 +10730,17 @@ func (s *WorkspaceFoldersChangeEvent) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "added":
+		switch string(name) {
+		case `"added"`:
 			seenAdded = true
 			if err := json.UnmarshalDecode(dec, &s.Added); err != nil {
 				return err
 			}
-		case "removed":
+		case `"removed"`:
 			seenRemoved = true
 			if err := json.UnmarshalDecode(dec, &s.Removed); err != nil {
 				return err
@@ -10791,12 +10791,12 @@ func (s *TextDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "uri":
+		switch string(name) {
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
@@ -10850,27 +10850,27 @@ func (s *Color) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "red":
+		switch string(name) {
+		case `"red"`:
 			seenRed = true
 			if err := json.UnmarshalDecode(dec, &s.Red); err != nil {
 				return err
 			}
-		case "green":
+		case `"green"`:
 			seenGreen = true
 			if err := json.UnmarshalDecode(dec, &s.Green); err != nil {
 				return err
 			}
-		case "blue":
+		case `"blue"`:
 			seenBlue = true
 			if err := json.UnmarshalDecode(dec, &s.Blue); err != nil {
 				return err
 			}
-		case "alpha":
+		case `"alpha"`:
 			seenAlpha = true
 			if err := json.UnmarshalDecode(dec, &s.Alpha); err != nil {
 				return err
@@ -10966,17 +10966,17 @@ func (s *Position) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "line":
+		switch string(name) {
+		case `"line"`:
 			seenLine = true
 			if err := json.UnmarshalDecode(dec, &s.Line); err != nil {
 				return err
 			}
-		case "character":
+		case `"character"`:
 			seenCharacter = true
 			if err := json.UnmarshalDecode(dec, &s.Character); err != nil {
 				return err
@@ -11039,25 +11039,25 @@ func (s *SemanticTokensOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneProgress":
+		switch string(name) {
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "legend":
+		case `"legend"`:
 			seenLegend = true
 			if err := json.UnmarshalDecode(dec, &s.Legend); err != nil {
 				return err
 			}
-		case "range":
+		case `"range"`:
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "full":
+		case `"full"`:
 			if err := json.UnmarshalDecode(dec, &s.Full); err != nil {
 				return err
 			}
@@ -11105,22 +11105,22 @@ func (s *SemanticTokensEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "start":
+		switch string(name) {
+		case `"start"`:
 			seenStart = true
 			if err := json.UnmarshalDecode(dec, &s.Start); err != nil {
 				return err
 			}
-		case "deleteCount":
+		case `"deleteCount"`:
 			seenDeleteCount = true
 			if err := json.UnmarshalDecode(dec, &s.DeleteCount); err != nil {
 				return err
 			}
-		case "data":
+		case `"data"`:
 			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
 				return err
 			}
@@ -11168,12 +11168,12 @@ func (s *FileCreate) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "uri":
+		switch string(name) {
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
@@ -11228,17 +11228,17 @@ func (s *TextDocumentEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "textDocument":
+		switch string(name) {
+		case `"textDocument"`:
 			seenTextDocument = true
 			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
 				return err
 			}
-		case "edits":
+		case `"edits"`:
 			seenEdits = true
 			if err := json.UnmarshalDecode(dec, &s.Edits); err != nil {
 				return err
@@ -11295,26 +11295,26 @@ func (s *CreateFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "kind":
+		switch string(name) {
+		case `"kind"`:
 			seenKind = true
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "annotationId":
+		case `"annotationId"`:
 			if err := json.UnmarshalDecode(dec, &s.AnnotationId); err != nil {
 				return err
 			}
-		case "uri":
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
-		case "options":
+		case `"options"`:
 			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
 				return err
 			}
@@ -11374,31 +11374,31 @@ func (s *RenameFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "kind":
+		switch string(name) {
+		case `"kind"`:
 			seenKind = true
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "annotationId":
+		case `"annotationId"`:
 			if err := json.UnmarshalDecode(dec, &s.AnnotationId); err != nil {
 				return err
 			}
-		case "oldUri":
+		case `"oldUri"`:
 			seenOldUri = true
 			if err := json.UnmarshalDecode(dec, &s.OldUri); err != nil {
 				return err
 			}
-		case "newUri":
+		case `"newUri"`:
 			seenNewUri = true
 			if err := json.UnmarshalDecode(dec, &s.NewUri); err != nil {
 				return err
 			}
-		case "options":
+		case `"options"`:
 			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
 				return err
 			}
@@ -11457,26 +11457,26 @@ func (s *DeleteFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "kind":
+		switch string(name) {
+		case `"kind"`:
 			seenKind = true
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "annotationId":
+		case `"annotationId"`:
 			if err := json.UnmarshalDecode(dec, &s.AnnotationId); err != nil {
 				return err
 			}
-		case "uri":
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
-		case "options":
+		case `"options"`:
 			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
 				return err
 			}
@@ -11529,21 +11529,21 @@ func (s *ChangeAnnotation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "label":
+		switch string(name) {
+		case `"label"`:
 			seenLabel = true
 			if err := json.UnmarshalDecode(dec, &s.Label); err != nil {
 				return err
 			}
-		case "needsConfirmation":
+		case `"needsConfirmation"`:
 			if err := json.UnmarshalDecode(dec, &s.NeedsConfirmation); err != nil {
 				return err
 			}
-		case "description":
+		case `"description"`:
 			if err := json.UnmarshalDecode(dec, &s.Description); err != nil {
 				return err
 			}
@@ -11588,16 +11588,16 @@ func (s *FileOperationFilter) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "scheme":
+		switch string(name) {
+		case `"scheme"`:
 			if err := json.UnmarshalDecode(dec, &s.Scheme); err != nil {
 				return err
 			}
-		case "pattern":
+		case `"pattern"`:
 			seenPattern = true
 			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
 				return err
@@ -11645,17 +11645,17 @@ func (s *FileRename) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "oldUri":
+		switch string(name) {
+		case `"oldUri"`:
 			seenOldUri = true
 			if err := json.UnmarshalDecode(dec, &s.OldUri); err != nil {
 				return err
 			}
-		case "newUri":
+		case `"newUri"`:
 			seenNewUri = true
 			if err := json.UnmarshalDecode(dec, &s.NewUri); err != nil {
 				return err
@@ -11700,12 +11700,12 @@ func (s *FileDelete) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "uri":
+		switch string(name) {
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
@@ -11763,17 +11763,17 @@ func (s *InlineValueContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "frameId":
+		switch string(name) {
+		case `"frameId"`:
 			seenFrameId = true
 			if err := json.UnmarshalDecode(dec, &s.FrameId); err != nil {
 				return err
 			}
-		case "stoppedLocation":
+		case `"stoppedLocation"`:
 			seenStoppedLocation = true
 			if err := json.UnmarshalDecode(dec, &s.StoppedLocation); err != nil {
 				return err
@@ -11824,17 +11824,17 @@ func (s *InlineValueText) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "range":
+		switch string(name) {
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "text":
+		case `"text"`:
 			seenText = true
 			if err := json.UnmarshalDecode(dec, &s.Text); err != nil {
 				return err
@@ -11891,21 +11891,21 @@ func (s *InlineValueVariableLookup) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "range":
+		switch string(name) {
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "variableName":
+		case `"variableName"`:
 			if err := json.UnmarshalDecode(dec, &s.VariableName); err != nil {
 				return err
 			}
-		case "caseSensitiveLookup":
+		case `"caseSensitiveLookup"`:
 			seenCaseSensitiveLookup = true
 			if err := json.UnmarshalDecode(dec, &s.CaseSensitiveLookup); err != nil {
 				return err
@@ -11956,17 +11956,17 @@ func (s *InlineValueEvaluatableExpression) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "range":
+		switch string(name) {
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "expression":
+		case `"expression"`:
 			if err := json.UnmarshalDecode(dec, &s.Expression); err != nil {
 				return err
 			}
@@ -12039,25 +12039,25 @@ func (s *InlayHintLabelPart) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "value":
+		switch string(name) {
+		case `"value"`:
 			seenValue = true
 			if err := json.UnmarshalDecode(dec, &s.Value); err != nil {
 				return err
 			}
-		case "tooltip":
+		case `"tooltip"`:
 			if err := json.UnmarshalDecode(dec, &s.Tooltip); err != nil {
 				return err
 			}
-		case "location":
+		case `"location"`:
 			if err := json.UnmarshalDecode(dec, &s.Location); err != nil {
 				return err
 			}
-		case "command":
+		case `"command"`:
 			if err := json.UnmarshalDecode(dec, &s.Command); err != nil {
 				return err
 			}
@@ -12125,17 +12125,17 @@ func (s *MarkupContent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "kind":
+		switch string(name) {
+		case `"kind"`:
 			seenKind = true
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "value":
+		case `"value"`:
 			seenValue = true
 			if err := json.UnmarshalDecode(dec, &s.Value); err != nil {
 				return err
@@ -12211,26 +12211,26 @@ func (s *RelatedFullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.De
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "kind":
+		switch string(name) {
+		case `"kind"`:
 			seenKind = true
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "resultId":
+		case `"resultId"`:
 			if err := json.UnmarshalDecode(dec, &s.ResultId); err != nil {
 				return err
 			}
-		case "items":
+		case `"items"`:
 			seenItems = true
 			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
 				return err
 			}
-		case "relatedDocuments":
+		case `"relatedDocuments"`:
 			if err := json.UnmarshalDecode(dec, &s.RelatedDocuments); err != nil {
 				return err
 			}
@@ -12293,22 +12293,22 @@ func (s *RelatedUnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsonte
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "kind":
+		switch string(name) {
+		case `"kind"`:
 			seenKind = true
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "resultId":
+		case `"resultId"`:
 			seenResultId = true
 			if err := json.UnmarshalDecode(dec, &s.ResultId); err != nil {
 				return err
 			}
-		case "relatedDocuments":
+		case `"relatedDocuments"`:
 			if err := json.UnmarshalDecode(dec, &s.RelatedDocuments); err != nil {
 				return err
 			}
@@ -12363,21 +12363,21 @@ func (s *FullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "kind":
+		switch string(name) {
+		case `"kind"`:
 			seenKind = true
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "resultId":
+		case `"resultId"`:
 			if err := json.UnmarshalDecode(dec, &s.ResultId); err != nil {
 				return err
 			}
-		case "items":
+		case `"items"`:
 			seenItems = true
 			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
 				return err
@@ -12433,17 +12433,17 @@ func (s *UnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Deco
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "kind":
+		switch string(name) {
+		case `"kind"`:
 			seenKind = true
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "resultId":
+		case `"resultId"`:
 			seenResultId = true
 			if err := json.UnmarshalDecode(dec, &s.ResultId); err != nil {
 				return err
@@ -12503,25 +12503,25 @@ func (s *DiagnosticOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneProgress":
+		switch string(name) {
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "identifier":
+		case `"identifier"`:
 			if err := json.UnmarshalDecode(dec, &s.Identifier); err != nil {
 				return err
 			}
-		case "interFileDependencies":
+		case `"interFileDependencies"`:
 			seenInterFileDependencies = true
 			if err := json.UnmarshalDecode(dec, &s.InterFileDependencies); err != nil {
 				return err
 			}
-		case "workspaceDiagnostics":
+		case `"workspaceDiagnostics"`:
 			seenWorkspaceDiagnostics = true
 			if err := json.UnmarshalDecode(dec, &s.WorkspaceDiagnostics); err != nil {
 				return err
@@ -12573,17 +12573,17 @@ func (s *PreviousResultId) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "uri":
+		switch string(name) {
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
-		case "value":
+		case `"value"`:
 			seenValue = true
 			if err := json.UnmarshalDecode(dec, &s.Value); err != nil {
 				return err
@@ -12649,31 +12649,31 @@ func (s *NotebookDocument) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "uri":
+		switch string(name) {
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
-		case "notebookType":
+		case `"notebookType"`:
 			seenNotebookType = true
 			if err := json.UnmarshalDecode(dec, &s.NotebookType); err != nil {
 				return err
 			}
-		case "version":
+		case `"version"`:
 			seenVersion = true
 			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
 				return err
 			}
-		case "metadata":
+		case `"metadata"`:
 			if err := json.UnmarshalDecode(dec, &s.Metadata); err != nil {
 				return err
 			}
-		case "cells":
+		case `"cells"`:
 			seenCells = true
 			if err := json.UnmarshalDecode(dec, &s.Cells); err != nil {
 				return err
@@ -12738,27 +12738,27 @@ func (s *TextDocumentItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "uri":
+		switch string(name) {
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
-		case "languageId":
+		case `"languageId"`:
 			seenLanguageId = true
 			if err := json.UnmarshalDecode(dec, &s.LanguageId); err != nil {
 				return err
 			}
-		case "version":
+		case `"version"`:
 			seenVersion = true
 			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
 				return err
 			}
-		case "text":
+		case `"text"`:
 			seenText = true
 			if err := json.UnmarshalDecode(dec, &s.Text); err != nil {
 				return err
@@ -12823,17 +12823,17 @@ func (s *NotebookDocumentSyncOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "notebookSelector":
+		switch string(name) {
+		case `"notebookSelector"`:
 			seenNotebookSelector = true
 			if err := json.UnmarshalDecode(dec, &s.NotebookSelector); err != nil {
 				return err
 			}
-		case "save":
+		case `"save"`:
 			if err := json.UnmarshalDecode(dec, &s.Save); err != nil {
 				return err
 			}
@@ -12880,17 +12880,17 @@ func (s *VersionedNotebookDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.De
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "version":
+		switch string(name) {
+		case `"version"`:
 			seenVersion = true
 			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
 				return err
 			}
-		case "uri":
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
@@ -12948,12 +12948,12 @@ func (s *NotebookDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "uri":
+		switch string(name) {
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
@@ -13000,17 +13000,17 @@ func (s *InlineCompletionContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "triggerKind":
+		switch string(name) {
+		case `"triggerKind"`:
 			seenTriggerKind = true
 			if err := json.UnmarshalDecode(dec, &s.TriggerKind); err != nil {
 				return err
 			}
-		case "selectedCompletionInfo":
+		case `"selectedCompletionInfo"`:
 			if err := json.UnmarshalDecode(dec, &s.SelectedCompletionInfo); err != nil {
 				return err
 			}
@@ -13065,17 +13065,17 @@ func (s *StringValue) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "kind":
+		switch string(name) {
+		case `"kind"`:
 			seenKind = true
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "value":
+		case `"value"`:
 			seenValue = true
 			if err := json.UnmarshalDecode(dec, &s.Value); err != nil {
 				return err
@@ -13131,12 +13131,12 @@ func (s *TextDocumentContentOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "schemes":
+		switch string(name) {
+		case `"schemes"`:
 			seenSchemes = true
 			if err := json.UnmarshalDecode(dec, &s.Schemes); err != nil {
 				return err
@@ -13186,22 +13186,22 @@ func (s *Registration) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "id":
+		switch string(name) {
+		case `"id"`:
 			seenId = true
 			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
 				return err
 			}
-		case "method":
+		case `"method"`:
 			seenMethod = true
 			if err := json.UnmarshalDecode(dec, &s.Method); err != nil {
 				return err
 			}
-		case "registerOptions":
+		case `"registerOptions"`:
 			if err := json.UnmarshalDecode(dec, &s.RegisterOptions); err != nil {
 				return err
 			}
@@ -13250,17 +13250,17 @@ func (s *Unregistration) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "id":
+		switch string(name) {
+		case `"id"`:
 			seenId = true
 			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
 				return err
 			}
-		case "method":
+		case `"method"`:
 			seenMethod = true
 			if err := json.UnmarshalDecode(dec, &s.Method); err != nil {
 				return err
@@ -13351,47 +13351,47 @@ func (s *InitializeParamsBase) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneToken":
+		switch string(name) {
+		case `"workDoneToken"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
 				return err
 			}
-		case "processId":
+		case `"processId"`:
 			seenProcessId = true
 			if err := json.UnmarshalDecode(dec, &s.ProcessId); err != nil {
 				return err
 			}
-		case "clientInfo":
+		case `"clientInfo"`:
 			if err := json.UnmarshalDecode(dec, &s.ClientInfo); err != nil {
 				return err
 			}
-		case "locale":
+		case `"locale"`:
 			if err := json.UnmarshalDecode(dec, &s.Locale); err != nil {
 				return err
 			}
-		case "rootPath":
+		case `"rootPath"`:
 			if err := json.UnmarshalDecode(dec, &s.RootPath); err != nil {
 				return err
 			}
-		case "rootUri":
+		case `"rootUri"`:
 			seenRootUri = true
 			if err := json.UnmarshalDecode(dec, &s.RootUri); err != nil {
 				return err
 			}
-		case "capabilities":
+		case `"capabilities"`:
 			seenCapabilities = true
 			if err := json.UnmarshalDecode(dec, &s.Capabilities); err != nil {
 				return err
 			}
-		case "initializationOptions":
+		case `"initializationOptions"`:
 			if err := json.UnmarshalDecode(dec, &s.InitializationOptions); err != nil {
 				return err
 			}
-		case "trace":
+		case `"trace"`:
 			if err := json.UnmarshalDecode(dec, &s.Trace); err != nil {
 				return err
 			}
@@ -13602,17 +13602,17 @@ func (s *ServerInfo) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "name":
+		switch string(name) {
+		case `"name"`:
 			seenName = true
 			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
 				return err
 			}
-		case "version":
+		case `"version"`:
 			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
 				return err
 			}
@@ -13657,17 +13657,17 @@ func (s *VersionedTextDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "uri":
+		switch string(name) {
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
-		case "version":
+		case `"version"`:
 			seenVersion = true
 			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
 				return err
@@ -13722,17 +13722,17 @@ func (s *FileEvent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "uri":
+		switch string(name) {
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
-		case "type":
+		case `"type"`:
 			seenType = true
 			if err := json.UnmarshalDecode(dec, &s.Type); err != nil {
 				return err
@@ -13781,17 +13781,17 @@ func (s *FileSystemWatcher) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "globPattern":
+		switch string(name) {
+		case `"globPattern"`:
 			seenGlobPattern = true
 			if err := json.UnmarshalDecode(dec, &s.GlobPattern); err != nil {
 				return err
 			}
-		case "kind":
+		case `"kind"`:
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
@@ -13871,46 +13871,46 @@ func (s *Diagnostic) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "range":
+		switch string(name) {
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "severity":
+		case `"severity"`:
 			if err := json.UnmarshalDecode(dec, &s.Severity); err != nil {
 				return err
 			}
-		case "code":
+		case `"code"`:
 			if err := json.UnmarshalDecode(dec, &s.Code); err != nil {
 				return err
 			}
-		case "codeDescription":
+		case `"codeDescription"`:
 			if err := json.UnmarshalDecode(dec, &s.CodeDescription); err != nil {
 				return err
 			}
-		case "source":
+		case `"source"`:
 			if err := json.UnmarshalDecode(dec, &s.Source); err != nil {
 				return err
 			}
-		case "message":
+		case `"message"`:
 			seenMessage = true
 			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
 				return err
 			}
-		case "tags":
+		case `"tags"`:
 			if err := json.UnmarshalDecode(dec, &s.Tags); err != nil {
 				return err
 			}
-		case "relatedInformation":
+		case `"relatedInformation"`:
 			if err := json.UnmarshalDecode(dec, &s.RelatedInformation); err != nil {
 				return err
 			}
-		case "data":
+		case `"data"`:
 			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
 				return err
 			}
@@ -13956,17 +13956,17 @@ func (s *CompletionContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "triggerKind":
+		switch string(name) {
+		case `"triggerKind"`:
 			seenTriggerKind = true
 			if err := json.UnmarshalDecode(dec, &s.TriggerKind); err != nil {
 				return err
 			}
-		case "triggerCharacter":
+		case `"triggerCharacter"`:
 			if err := json.UnmarshalDecode(dec, &s.TriggerCharacter); err != nil {
 				return err
 			}
@@ -14030,22 +14030,22 @@ func (s *InsertReplaceEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "newText":
+		switch string(name) {
+		case `"newText"`:
 			seenNewText = true
 			if err := json.UnmarshalDecode(dec, &s.NewText); err != nil {
 				return err
 			}
-		case "insert":
+		case `"insert"`:
 			seenInsert = true
 			if err := json.UnmarshalDecode(dec, &s.Insert); err != nil {
 				return err
 			}
-		case "replace":
+		case `"replace"`:
 			seenReplace = true
 			if err := json.UnmarshalDecode(dec, &s.Replace); err != nil {
 				return err
@@ -14255,26 +14255,26 @@ func (s *SignatureHelpContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "triggerKind":
+		switch string(name) {
+		case `"triggerKind"`:
 			seenTriggerKind = true
 			if err := json.UnmarshalDecode(dec, &s.TriggerKind); err != nil {
 				return err
 			}
-		case "triggerCharacter":
+		case `"triggerCharacter"`:
 			if err := json.UnmarshalDecode(dec, &s.TriggerCharacter); err != nil {
 				return err
 			}
-		case "isRetrigger":
+		case `"isRetrigger"`:
 			seenIsRetrigger = true
 			if err := json.UnmarshalDecode(dec, &s.IsRetrigger); err != nil {
 				return err
 			}
-		case "activeSignatureHelp":
+		case `"activeSignatureHelp"`:
 			if err := json.UnmarshalDecode(dec, &s.ActiveSignatureHelp); err != nil {
 				return err
 			}
@@ -14339,25 +14339,25 @@ func (s *SignatureInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "label":
+		switch string(name) {
+		case `"label"`:
 			seenLabel = true
 			if err := json.UnmarshalDecode(dec, &s.Label); err != nil {
 				return err
 			}
-		case "documentation":
+		case `"documentation"`:
 			if err := json.UnmarshalDecode(dec, &s.Documentation); err != nil {
 				return err
 			}
-		case "parameters":
+		case `"parameters"`:
 			if err := json.UnmarshalDecode(dec, &s.Parameters); err != nil {
 				return err
 			}
-		case "activeParameter":
+		case `"activeParameter"`:
 			if err := json.UnmarshalDecode(dec, &s.ActiveParameter); err != nil {
 				return err
 			}
@@ -14418,12 +14418,12 @@ func (s *ReferenceContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "includeDeclaration":
+		switch string(name) {
+		case `"includeDeclaration"`:
 			seenIncludeDeclaration = true
 			if err := json.UnmarshalDecode(dec, &s.IncludeDeclaration); err != nil {
 				return err
@@ -14490,26 +14490,26 @@ func (s *BaseSymbolInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "name":
+		switch string(name) {
+		case `"name"`:
 			seenName = true
 			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
 				return err
 			}
-		case "kind":
+		case `"kind"`:
 			seenKind = true
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "tags":
+		case `"tags"`:
 			if err := json.UnmarshalDecode(dec, &s.Tags); err != nil {
 				return err
 			}
-		case "containerName":
+		case `"containerName"`:
 			if err := json.UnmarshalDecode(dec, &s.ContainerName); err != nil {
 				return err
 			}
@@ -14578,21 +14578,21 @@ func (s *CodeActionContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "diagnostics":
+		switch string(name) {
+		case `"diagnostics"`:
 			seenDiagnostics = true
 			if err := json.UnmarshalDecode(dec, &s.Diagnostics); err != nil {
 				return err
 			}
-		case "only":
+		case `"only"`:
 			if err := json.UnmarshalDecode(dec, &s.Only); err != nil {
 				return err
 			}
-		case "triggerKind":
+		case `"triggerKind"`:
 			if err := json.UnmarshalDecode(dec, &s.TriggerKind); err != nil {
 				return err
 			}
@@ -14635,12 +14635,12 @@ func (s *CodeActionDisabled) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "reason":
+		switch string(name) {
+		case `"reason"`:
 			seenReason = true
 			if err := json.UnmarshalDecode(dec, &s.Reason); err != nil {
 				return err
@@ -14716,12 +14716,12 @@ func (s *LocationUriOnly) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "uri":
+		switch string(name) {
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
@@ -14809,30 +14809,30 @@ func (s *FormattingOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "tabSize":
+		switch string(name) {
+		case `"tabSize"`:
 			seenTabSize = true
 			if err := json.UnmarshalDecode(dec, &s.TabSize); err != nil {
 				return err
 			}
-		case "insertSpaces":
+		case `"insertSpaces"`:
 			seenInsertSpaces = true
 			if err := json.UnmarshalDecode(dec, &s.InsertSpaces); err != nil {
 				return err
 			}
-		case "trimTrailingWhitespace":
+		case `"trimTrailingWhitespace"`:
 			if err := json.UnmarshalDecode(dec, &s.TrimTrailingWhitespace); err != nil {
 				return err
 			}
-		case "insertFinalNewline":
+		case `"insertFinalNewline"`:
 			if err := json.UnmarshalDecode(dec, &s.InsertFinalNewline); err != nil {
 				return err
 			}
-		case "trimFinalNewlines":
+		case `"trimFinalNewlines"`:
 			if err := json.UnmarshalDecode(dec, &s.TrimFinalNewlines); err != nil {
 				return err
 			}
@@ -14894,17 +14894,17 @@ func (s *DocumentOnTypeFormattingOptions) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "firstTriggerCharacter":
+		switch string(name) {
+		case `"firstTriggerCharacter"`:
 			seenFirstTriggerCharacter = true
 			if err := json.UnmarshalDecode(dec, &s.FirstTriggerCharacter); err != nil {
 				return err
 			}
-		case "moreTriggerCharacter":
+		case `"moreTriggerCharacter"`:
 			if err := json.UnmarshalDecode(dec, &s.MoreTriggerCharacter); err != nil {
 				return err
 			}
@@ -14957,17 +14957,17 @@ func (s *PrepareRenamePlaceholder) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "range":
+		switch string(name) {
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "placeholder":
+		case `"placeholder"`:
 			seenPlaceholder = true
 			if err := json.UnmarshalDecode(dec, &s.Placeholder); err != nil {
 				return err
@@ -15009,12 +15009,12 @@ func (s *PrepareRenameDefaultBehavior) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "defaultBehavior":
+		switch string(name) {
+		case `"defaultBehavior"`:
 			seenDefaultBehavior = true
 			if err := json.UnmarshalDecode(dec, &s.DefaultBehavior); err != nil {
 				return err
@@ -15056,16 +15056,16 @@ func (s *ExecuteCommandOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "workDoneProgress":
+		switch string(name) {
+		case `"workDoneProgress"`:
 			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
 				return err
 			}
-		case "commands":
+		case `"commands"`:
 			seenCommands = true
 			if err := json.UnmarshalDecode(dec, &s.Commands); err != nil {
 				return err
@@ -15121,17 +15121,17 @@ func (s *SemanticTokensLegend) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "tokenTypes":
+		switch string(name) {
+		case `"tokenTypes"`:
 			seenTokenTypes = true
 			if err := json.UnmarshalDecode(dec, &s.TokenTypes); err != nil {
 				return err
 			}
-		case "tokenModifiers":
+		case `"tokenModifiers"`:
 			seenTokenModifiers = true
 			if err := json.UnmarshalDecode(dec, &s.TokenModifiers); err != nil {
 				return err
@@ -15192,17 +15192,17 @@ func (s *OptionalVersionedTextDocumentIdentifier) UnmarshalJSONFrom(dec *jsontex
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "uri":
+		switch string(name) {
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
-		case "version":
+		case `"version"`:
 			seenVersion = true
 			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
 				return err
@@ -15259,22 +15259,22 @@ func (s *AnnotatedTextEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "range":
+		switch string(name) {
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "newText":
+		case `"newText"`:
 			seenNewText = true
 			if err := json.UnmarshalDecode(dec, &s.NewText); err != nil {
 				return err
 			}
-		case "annotationId":
+		case `"annotationId"`:
 			seenAnnotationId = true
 			if err := json.UnmarshalDecode(dec, &s.AnnotationId); err != nil {
 				return err
@@ -15333,22 +15333,22 @@ func (s *SnippetTextEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "range":
+		switch string(name) {
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "snippet":
+		case `"snippet"`:
 			seenSnippet = true
 			if err := json.UnmarshalDecode(dec, &s.Snippet); err != nil {
 				return err
 			}
-		case "annotationId":
+		case `"annotationId"`:
 			if err := json.UnmarshalDecode(dec, &s.AnnotationId); err != nil {
 				return err
 			}
@@ -15395,17 +15395,17 @@ func (s *ResourceOperation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "kind":
+		switch string(name) {
+		case `"kind"`:
 			seenKind = true
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "annotationId":
+		case `"annotationId"`:
 			if err := json.UnmarshalDecode(dec, &s.AnnotationId); err != nil {
 				return err
 			}
@@ -15488,21 +15488,21 @@ func (s *FileOperationPattern) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "glob":
+		switch string(name) {
+		case `"glob"`:
 			seenGlob = true
 			if err := json.UnmarshalDecode(dec, &s.Glob); err != nil {
 				return err
 			}
-		case "matches":
+		case `"matches"`:
 			if err := json.UnmarshalDecode(dec, &s.Matches); err != nil {
 				return err
 			}
-		case "options":
+		case `"options"`:
 			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
 				return err
 			}
@@ -15563,31 +15563,31 @@ func (s *WorkspaceFullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "kind":
+		switch string(name) {
+		case `"kind"`:
 			seenKind = true
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "resultId":
+		case `"resultId"`:
 			if err := json.UnmarshalDecode(dec, &s.ResultId); err != nil {
 				return err
 			}
-		case "items":
+		case `"items"`:
 			seenItems = true
 			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
 				return err
 			}
-		case "uri":
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
-		case "version":
+		case `"version"`:
 			seenVersion = true
 			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
 				return err
@@ -15657,27 +15657,27 @@ func (s *WorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *json
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "kind":
+		switch string(name) {
+		case `"kind"`:
 			seenKind = true
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "resultId":
+		case `"resultId"`:
 			seenResultId = true
 			if err := json.UnmarshalDecode(dec, &s.ResultId); err != nil {
 				return err
 			}
-		case "uri":
+		case `"uri"`:
 			seenUri = true
 			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
 				return err
 			}
-		case "version":
+		case `"version"`:
 			seenVersion = true
 			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
 				return err
@@ -15748,26 +15748,26 @@ func (s *NotebookCell) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "kind":
+		switch string(name) {
+		case `"kind"`:
 			seenKind = true
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "document":
+		case `"document"`:
 			seenDocument = true
 			if err := json.UnmarshalDecode(dec, &s.Document); err != nil {
 				return err
 			}
-		case "metadata":
+		case `"metadata"`:
 			if err := json.UnmarshalDecode(dec, &s.Metadata); err != nil {
 				return err
 			}
-		case "executionSummary":
+		case `"executionSummary"`:
 			if err := json.UnmarshalDecode(dec, &s.ExecutionSummary); err != nil {
 				return err
 			}
@@ -15814,17 +15814,17 @@ func (s *NotebookDocumentFilterWithNotebook) UnmarshalJSONFrom(dec *jsontext.Dec
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "notebook":
+		switch string(name) {
+		case `"notebook"`:
 			seenNotebook = true
 			if err := json.UnmarshalDecode(dec, &s.Notebook); err != nil {
 				return err
 			}
-		case "cells":
+		case `"cells"`:
 			if err := json.UnmarshalDecode(dec, &s.Cells); err != nil {
 				return err
 			}
@@ -15868,16 +15868,16 @@ func (s *NotebookDocumentFilterWithCells) UnmarshalJSONFrom(dec *jsontext.Decode
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "notebook":
+		switch string(name) {
+		case `"notebook"`:
 			if err := json.UnmarshalDecode(dec, &s.Notebook); err != nil {
 				return err
 			}
-		case "cells":
+		case `"cells"`:
 			seenCells = true
 			if err := json.UnmarshalDecode(dec, &s.Cells); err != nil {
 				return err
@@ -15943,17 +15943,17 @@ func (s *SelectedCompletionInfo) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "range":
+		switch string(name) {
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "text":
+		case `"text"`:
 			seenText = true
 			if err := json.UnmarshalDecode(dec, &s.Text); err != nil {
 				return err
@@ -16003,17 +16003,17 @@ func (s *ClientInfo) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "name":
+		switch string(name) {
+		case `"name"`:
 			seenName = true
 			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
 				return err
 			}
-		case "version":
+		case `"version"`:
 			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
 				return err
 			}
@@ -16132,21 +16132,21 @@ func (s *TextDocumentContentChangePartial) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "range":
+		switch string(name) {
+		case `"range"`:
 			seenRange = true
 			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
 				return err
 			}
-		case "rangeLength":
+		case `"rangeLength"`:
 			if err := json.UnmarshalDecode(dec, &s.RangeLength); err != nil {
 				return err
 			}
-		case "text":
+		case `"text"`:
 			seenText = true
 			if err := json.UnmarshalDecode(dec, &s.Text); err != nil {
 				return err
@@ -16189,12 +16189,12 @@ func (s *TextDocumentContentChangeWholeDocument) UnmarshalJSONFrom(dec *jsontext
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "text":
+		switch string(name) {
+		case `"text"`:
 			seenText = true
 			if err := json.UnmarshalDecode(dec, &s.Text); err != nil {
 				return err
@@ -16236,12 +16236,12 @@ func (s *CodeDescription) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "href":
+		switch string(name) {
+		case `"href"`:
 			seenHref = true
 			if err := json.UnmarshalDecode(dec, &s.Href); err != nil {
 				return err
@@ -16289,17 +16289,17 @@ func (s *DiagnosticRelatedInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "location":
+		switch string(name) {
+		case `"location"`:
 			seenLocation = true
 			if err := json.UnmarshalDecode(dec, &s.Location); err != nil {
 				return err
 			}
-		case "message":
+		case `"message"`:
 			seenMessage = true
 			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
 				return err
@@ -16348,17 +16348,17 @@ func (s *EditRangeWithInsertReplace) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "insert":
+		switch string(name) {
+		case `"insert"`:
 			seenInsert = true
 			if err := json.UnmarshalDecode(dec, &s.Insert); err != nil {
 				return err
 			}
-		case "replace":
+		case `"replace"`:
 			seenReplace = true
 			if err := json.UnmarshalDecode(dec, &s.Replace); err != nil {
 				return err
@@ -16417,17 +16417,17 @@ func (s *MarkedStringWithLanguage) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "language":
+		switch string(name) {
+		case `"language"`:
 			seenLanguage = true
 			if err := json.UnmarshalDecode(dec, &s.Language); err != nil {
 				return err
 			}
-		case "value":
+		case `"value"`:
 			seenValue = true
 			if err := json.UnmarshalDecode(dec, &s.Value); err != nil {
 				return err
@@ -16486,17 +16486,17 @@ func (s *ParameterInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "label":
+		switch string(name) {
+		case `"label"`:
 			seenLabel = true
 			if err := json.UnmarshalDecode(dec, &s.Label); err != nil {
 				return err
 			}
-		case "documentation":
+		case `"documentation"`:
 			if err := json.UnmarshalDecode(dec, &s.Documentation); err != nil {
 				return err
 			}
@@ -16551,17 +16551,17 @@ func (s *CodeActionKindDocumentation) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "kind":
+		switch string(name) {
+		case `"kind"`:
 			seenKind = true
 			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
 				return err
 			}
-		case "command":
+		case `"command"`:
 			seenCommand = true
 			if err := json.UnmarshalDecode(dec, &s.Command); err != nil {
 				return err
@@ -16616,17 +16616,17 @@ func (s *NotebookCellTextDocumentFilter) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "notebook":
+		switch string(name) {
+		case `"notebook"`:
 			seenNotebook = true
 			if err := json.UnmarshalDecode(dec, &s.Notebook); err != nil {
 				return err
 			}
-		case "language":
+		case `"language"`:
 			if err := json.UnmarshalDecode(dec, &s.Language); err != nil {
 				return err
 			}
@@ -16678,17 +16678,17 @@ func (s *ExecutionSummary) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "executionOrder":
+		switch string(name) {
+		case `"executionOrder"`:
 			seenExecutionOrder = true
 			if err := json.UnmarshalDecode(dec, &s.ExecutionOrder); err != nil {
 				return err
 			}
-		case "success":
+		case `"success"`:
 			if err := json.UnmarshalDecode(dec, &s.Success); err != nil {
 				return err
 			}
@@ -16726,12 +16726,12 @@ func (s *NotebookCellLanguage) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "language":
+		switch string(name) {
+		case `"language"`:
 			seenLanguage = true
 			if err := json.UnmarshalDecode(dec, &s.Language); err != nil {
 				return err
@@ -16779,21 +16779,21 @@ func (s *NotebookDocumentCellChangeStructure) UnmarshalJSONFrom(dec *jsontext.De
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "array":
+		switch string(name) {
+		case `"array"`:
 			seenArray = true
 			if err := json.UnmarshalDecode(dec, &s.Array); err != nil {
 				return err
 			}
-		case "didOpen":
+		case `"didOpen"`:
 			if err := json.UnmarshalDecode(dec, &s.DidOpen); err != nil {
 				return err
 			}
-		case "didClose":
+		case `"didClose"`:
 			if err := json.UnmarshalDecode(dec, &s.DidClose); err != nil {
 				return err
 			}
@@ -16838,17 +16838,17 @@ func (s *NotebookDocumentCellContentChanges) UnmarshalJSONFrom(dec *jsontext.Dec
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "document":
+		switch string(name) {
+		case `"document"`:
 			seenDocument = true
 			if err := json.UnmarshalDecode(dec, &s.Document); err != nil {
 				return err
 			}
-		case "changes":
+		case `"changes"`:
 			seenChanges = true
 			if err := json.UnmarshalDecode(dec, &s.Changes); err != nil {
 				return err
@@ -17111,12 +17111,12 @@ func (s *NotebookDocumentClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Dec
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "synchronization":
+		switch string(name) {
+		case `"synchronization"`:
 			seenSynchronization = true
 			if err := json.UnmarshalDecode(dec, &s.Synchronization); err != nil {
 				return err
@@ -17270,17 +17270,17 @@ func (s *RelativePattern) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "baseUri":
+		switch string(name) {
+		case `"baseUri"`:
 			seenBaseUri = true
 			if err := json.UnmarshalDecode(dec, &s.BaseUri); err != nil {
 				return err
 			}
-		case "pattern":
+		case `"pattern"`:
 			seenPattern = true
 			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
 				return err
@@ -17335,21 +17335,21 @@ func (s *TextDocumentFilterLanguage) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "language":
+		switch string(name) {
+		case `"language"`:
 			seenLanguage = true
 			if err := json.UnmarshalDecode(dec, &s.Language); err != nil {
 				return err
 			}
-		case "scheme":
+		case `"scheme"`:
 			if err := json.UnmarshalDecode(dec, &s.Scheme); err != nil {
 				return err
 			}
-		case "pattern":
+		case `"pattern"`:
 			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
 				return err
 			}
@@ -17400,21 +17400,21 @@ func (s *TextDocumentFilterScheme) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "language":
+		switch string(name) {
+		case `"language"`:
 			if err := json.UnmarshalDecode(dec, &s.Language); err != nil {
 				return err
 			}
-		case "scheme":
+		case `"scheme"`:
 			seenScheme = true
 			if err := json.UnmarshalDecode(dec, &s.Scheme); err != nil {
 				return err
 			}
-		case "pattern":
+		case `"pattern"`:
 			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
 				return err
 			}
@@ -17465,20 +17465,20 @@ func (s *TextDocumentFilterPattern) UnmarshalJSONFrom(dec *jsontext.Decoder) err
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "language":
+		switch string(name) {
+		case `"language"`:
 			if err := json.UnmarshalDecode(dec, &s.Language); err != nil {
 				return err
 			}
-		case "scheme":
+		case `"scheme"`:
 			if err := json.UnmarshalDecode(dec, &s.Scheme); err != nil {
 				return err
 			}
-		case "pattern":
+		case `"pattern"`:
 			seenPattern = true
 			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
 				return err
@@ -17526,21 +17526,21 @@ func (s *NotebookDocumentFilterNotebookType) UnmarshalJSONFrom(dec *jsontext.Dec
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "notebookType":
+		switch string(name) {
+		case `"notebookType"`:
 			seenNotebookType = true
 			if err := json.UnmarshalDecode(dec, &s.NotebookType); err != nil {
 				return err
 			}
-		case "scheme":
+		case `"scheme"`:
 			if err := json.UnmarshalDecode(dec, &s.Scheme); err != nil {
 				return err
 			}
-		case "pattern":
+		case `"pattern"`:
 			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
 				return err
 			}
@@ -17587,21 +17587,21 @@ func (s *NotebookDocumentFilterScheme) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "notebookType":
+		switch string(name) {
+		case `"notebookType"`:
 			if err := json.UnmarshalDecode(dec, &s.NotebookType); err != nil {
 				return err
 			}
-		case "scheme":
+		case `"scheme"`:
 			seenScheme = true
 			if err := json.UnmarshalDecode(dec, &s.Scheme); err != nil {
 				return err
 			}
-		case "pattern":
+		case `"pattern"`:
 			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
 				return err
 			}
@@ -17648,20 +17648,20 @@ func (s *NotebookDocumentFilterPattern) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "notebookType":
+		switch string(name) {
+		case `"notebookType"`:
 			if err := json.UnmarshalDecode(dec, &s.NotebookType); err != nil {
 				return err
 			}
-		case "scheme":
+		case `"scheme"`:
 			if err := json.UnmarshalDecode(dec, &s.Scheme); err != nil {
 				return err
 			}
-		case "pattern":
+		case `"pattern"`:
 			seenPattern = true
 			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
 				return err
@@ -17713,22 +17713,22 @@ func (s *NotebookCellArrayChange) UnmarshalJSONFrom(dec *jsontext.Decoder) error
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "start":
+		switch string(name) {
+		case `"start"`:
 			seenStart = true
 			if err := json.UnmarshalDecode(dec, &s.Start); err != nil {
 				return err
 			}
-		case "deleteCount":
+		case `"deleteCount"`:
 			seenDeleteCount = true
 			if err := json.UnmarshalDecode(dec, &s.DeleteCount); err != nil {
 				return err
 			}
-		case "cells":
+		case `"cells"`:
 			if err := json.UnmarshalDecode(dec, &s.Cells); err != nil {
 				return err
 			}
@@ -18419,48 +18419,48 @@ func (s *SemanticTokensClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decod
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "dynamicRegistration":
+		switch string(name) {
+		case `"dynamicRegistration"`:
 			if err := json.UnmarshalDecode(dec, &s.DynamicRegistration); err != nil {
 				return err
 			}
-		case "requests":
+		case `"requests"`:
 			seenRequests = true
 			if err := json.UnmarshalDecode(dec, &s.Requests); err != nil {
 				return err
 			}
-		case "tokenTypes":
+		case `"tokenTypes"`:
 			seenTokenTypes = true
 			if err := json.UnmarshalDecode(dec, &s.TokenTypes); err != nil {
 				return err
 			}
-		case "tokenModifiers":
+		case `"tokenModifiers"`:
 			seenTokenModifiers = true
 			if err := json.UnmarshalDecode(dec, &s.TokenModifiers); err != nil {
 				return err
 			}
-		case "formats":
+		case `"formats"`:
 			seenFormats = true
 			if err := json.UnmarshalDecode(dec, &s.Formats); err != nil {
 				return err
 			}
-		case "overlappingTokenSupport":
+		case `"overlappingTokenSupport"`:
 			if err := json.UnmarshalDecode(dec, &s.OverlappingTokenSupport); err != nil {
 				return err
 			}
-		case "multilineTokenSupport":
+		case `"multilineTokenSupport"`:
 			if err := json.UnmarshalDecode(dec, &s.MultilineTokenSupport); err != nil {
 				return err
 			}
-		case "serverCancelSupport":
+		case `"serverCancelSupport"`:
 			if err := json.UnmarshalDecode(dec, &s.ServerCancelSupport); err != nil {
 				return err
 			}
-		case "augmentsSyntaxTokens":
+		case `"augmentsSyntaxTokens"`:
 			if err := json.UnmarshalDecode(dec, &s.AugmentsSyntaxTokens); err != nil {
 				return err
 			}
@@ -18623,12 +18623,12 @@ func (s *ShowDocumentClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "support":
+		switch string(name) {
+		case `"support"`:
 			seenSupport = true
 			if err := json.UnmarshalDecode(dec, &s.Support); err != nil {
 				return err
@@ -18676,17 +18676,17 @@ func (s *StaleRequestSupportOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "cancel":
+		switch string(name) {
+		case `"cancel"`:
 			seenCancel = true
 			if err := json.UnmarshalDecode(dec, &s.Cancel); err != nil {
 				return err
 			}
-		case "retryOnContentModified":
+		case `"retryOnContentModified"`:
 			seenRetryOnContentModified = true
 			if err := json.UnmarshalDecode(dec, &s.RetryOnContentModified); err != nil {
 				return err
@@ -18734,17 +18734,17 @@ func (s *RegularExpressionsClientCapabilities) UnmarshalJSONFrom(dec *jsontext.D
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "engine":
+		switch string(name) {
+		case `"engine"`:
 			seenEngine = true
 			if err := json.UnmarshalDecode(dec, &s.Engine); err != nil {
 				return err
 			}
-		case "version":
+		case `"version"`:
 			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
 				return err
 			}
@@ -18794,21 +18794,21 @@ func (s *MarkdownClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "parser":
+		switch string(name) {
+		case `"parser"`:
 			seenParser = true
 			if err := json.UnmarshalDecode(dec, &s.Parser); err != nil {
 				return err
 			}
-		case "version":
+		case `"version"`:
 			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
 				return err
 			}
-		case "allowedTags":
+		case `"allowedTags"`:
 			if err := json.UnmarshalDecode(dec, &s.AllowedTags); err != nil {
 				return err
 			}
@@ -18868,12 +18868,12 @@ func (s *ClientSymbolTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error 
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "valueSet":
+		switch string(name) {
+		case `"valueSet"`:
 			seenValueSet = true
 			if err := json.UnmarshalDecode(dec, &s.ValueSet); err != nil {
 				return err
@@ -18914,12 +18914,12 @@ func (s *ClientSymbolResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) er
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "properties":
+		switch string(name) {
+		case `"properties"`:
 			seenProperties = true
 			if err := json.UnmarshalDecode(dec, &s.Properties); err != nil {
 				return err
@@ -19085,12 +19085,12 @@ func (s *ClientCodeActionLiteralOptions) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "codeActionKind":
+		switch string(name) {
+		case `"codeActionKind"`:
 			seenCodeActionKind = true
 			if err := json.UnmarshalDecode(dec, &s.CodeActionKind); err != nil {
 				return err
@@ -19130,12 +19130,12 @@ func (s *ClientCodeActionResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "properties":
+		switch string(name) {
+		case `"properties"`:
 			seenProperties = true
 			if err := json.UnmarshalDecode(dec, &s.Properties); err != nil {
 				return err
@@ -19175,12 +19175,12 @@ func (s *CodeActionTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "valueSet":
+		switch string(name) {
+		case `"valueSet"`:
 			seenValueSet = true
 			if err := json.UnmarshalDecode(dec, &s.ValueSet); err != nil {
 				return err
@@ -19220,12 +19220,12 @@ func (s *ClientCodeLensResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) 
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "properties":
+		switch string(name) {
+		case `"properties"`:
 			seenProperties = true
 			if err := json.UnmarshalDecode(dec, &s.Properties); err != nil {
 				return err
@@ -19318,12 +19318,12 @@ func (s *ClientInlayHintResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder)
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "properties":
+		switch string(name) {
+		case `"properties"`:
 			seenProperties = true
 			if err := json.UnmarshalDecode(dec, &s.Properties); err != nil {
 				return err
@@ -19371,12 +19371,12 @@ func (s *CompletionItemTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) erro
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "valueSet":
+		switch string(name) {
+		case `"valueSet"`:
 			seenValueSet = true
 			if err := json.UnmarshalDecode(dec, &s.ValueSet); err != nil {
 				return err
@@ -19416,12 +19416,12 @@ func (s *ClientCompletionItemResolveOptions) UnmarshalJSONFrom(dec *jsontext.Dec
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "properties":
+		switch string(name) {
+		case `"properties"`:
 			seenProperties = true
 			if err := json.UnmarshalDecode(dec, &s.Properties); err != nil {
 				return err
@@ -19460,12 +19460,12 @@ func (s *ClientCompletionItemInsertTextModeOptions) UnmarshalJSONFrom(dec *jsont
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "valueSet":
+		switch string(name) {
+		case `"valueSet"`:
 			seenValueSet = true
 			if err := json.UnmarshalDecode(dec, &s.ValueSet); err != nil {
 				return err
@@ -19517,12 +19517,12 @@ func (s *ClientCodeActionKindOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "valueSet":
+		switch string(name) {
+		case `"valueSet"`:
 			seenValueSet = true
 			if err := json.UnmarshalDecode(dec, &s.ValueSet); err != nil {
 				return err
@@ -19562,12 +19562,12 @@ func (s *ClientDiagnosticsTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) e
 	}
 
 	for dec.PeekKind() != '}' {
-		var name string
-		if err := json.UnmarshalDecode(dec, &name); err != nil {
+		name, err := dec.ReadValue()
+		if err != nil {
 			return err
 		}
-		switch name {
-		case "valueSet":
+		switch string(name) {
+		case `"valueSet"`:
 			seenValueSet = true
 			if err := json.UnmarshalDecode(dec, &s.ValueSet); err != nil {
 				return err
