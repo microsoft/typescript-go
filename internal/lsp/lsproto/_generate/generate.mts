@@ -523,6 +523,9 @@ function generateCode() {
         // Generate UnmarshalJSONFrom method for structure validation
         const requiredProps = structure.properties?.filter(p => !p.optional) || [];
         if (requiredProps.length > 0) {
+            writeLine(`\tvar _ json.UnmarshalerFrom = (*${structure.name})(nil)`);
+            writeLine("");
+
             writeLine(`func (s *${structure.name}) UnmarshalJSONFrom(dec *jsontext.Decoder) error {`);
             writeLine(`\tvar (`);
             for (const prop of requiredProps) {
@@ -750,7 +753,10 @@ function generateCode() {
         const fieldEntries = Array.from(uniqueTypeFields.entries()).map(([typeName, fieldName]) => ({ fieldName, typeName }));
 
         // Marshal method
-        writeLine(`func (o ${name}) MarshalerTo(enc *jsontext.Encoder) error {`);
+        writeLine(`var _ json.MarshalerTo = ${name}{}`);
+        writeLine("");
+
+        writeLine(`func (o ${name}) MarshalJSONTo(enc *jsontext.Encoder) error {`);
 
         // Determine if this union contained null (check if any member has containedNull = true)
         const unionContainedNull = members.some(member => member.containedNull);
@@ -789,6 +795,9 @@ function generateCode() {
         writeLine("");
 
         // Unmarshal method
+        writeLine(`var _ json.Unmarshaler = (*${name})(nil)`);
+        writeLine("");
+
         writeLine(`func (o *${name}) UnmarshalJSON(data []byte) error {`);
         writeLine(`\t*o = ${name}{}`);
         writeLine("");
@@ -826,9 +835,15 @@ function generateCode() {
         writeLine(`type ${name} struct{}`);
         writeLine("");
 
-        writeLine(`func (o ${name}) MarshalerTo(enc *jsontext.Encoder) error {`);
+        writeLine(`var _ json.MarshalerTo = ${name}{}`);
+        writeLine("");
+
+        writeLine(`func (o ${name}) MarshalJSONTo(enc *jsontext.Encoder) error {`);
         writeLine(`\treturn enc.WriteValue(jsontext.Value(\`${jsonValue}\`))`);
         writeLine(`}`);
+        writeLine("");
+
+        writeLine(`var _ json.UnmarshalerFrom = &${name}{}`);
         writeLine("");
 
         writeLine(`func (o *${name}) UnmarshalJSONFrom(dec *jsontext.Decoder) error {`);
