@@ -51,8 +51,7 @@ func shouldImplicitlyExcludeRelativePath(relativePath string) bool {
 	}
 
 	// Split path into segments and check each segment
-	segments := strings.Split(relativePath, "/")
-	for _, segment := range segments {
+	for segment := range strings.SplitSeq(relativePath, "/") {
 		if isImplicitlyExcluded(segment, true) { // Check as directory since it's a path segment
 			return true
 		}
