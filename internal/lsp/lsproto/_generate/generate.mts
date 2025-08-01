@@ -559,6 +559,8 @@ function generateCode() {
                 writeLine(`\t\t\t}`);
             }
 
+            writeLine(`\t\tdefault:`);
+            writeLine(`\t\t// Ignore unknown properties.`);
             writeLine(`\t\t}`);
             writeLine(`\t}`);
             writeLine("");
