@@ -5,7 +5,8 @@ package lsproto
 import (
 	"fmt"
 
-	"github.com/microsoft/typescript-go/internal/json"
+	"github.com/go-json-experiment/json"
+	"github.com/go-json-experiment/json/jsontext"
 )
 
 // Meta model version 3.17.0
@@ -27,34 +28,58 @@ type ImplementationParams struct {
 	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 }
 
-func (s *ImplementationParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Position     requiredProp `json:"position"`
-	}
+func (s *ImplementationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenPosition     bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "position":
+			seenPosition = true
+			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
+				return err
+			}
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Position {
+	if !seenPosition {
 		return fmt.Errorf("required key 'position' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TextDocument       TextDocumentIdentifier `json:"textDocument"`
-		Position           Position               `json:"position"`
-		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Represents a location inside a resource, such as a line
@@ -65,32 +90,50 @@ type Location struct {
 	Range Range `json:"range"`
 }
 
-func (s *Location) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Uri   requiredProp `json:"uri"`
-		Range requiredProp `json:"range"`
-	}
+func (s *Location) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenUri   bool
+		seenRange bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Uri {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if !keys.Range {
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Uri   DocumentUri `json:"uri"`
-		Range Range       `json:"range"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type ImplementationRegistrationOptions struct {
@@ -105,29 +148,47 @@ type ImplementationRegistrationOptions struct {
 	Id *string `json:"id,omitzero"`
 }
 
-func (s *ImplementationRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *ImplementationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "id":
+			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
-		Id               *string                `json:"id,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type TypeDefinitionParams struct {
@@ -145,34 +206,58 @@ type TypeDefinitionParams struct {
 	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 }
 
-func (s *TypeDefinitionParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Position     requiredProp `json:"position"`
-	}
+func (s *TypeDefinitionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenPosition     bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "position":
+			seenPosition = true
+			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
+				return err
+			}
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Position {
+	if !seenPosition {
 		return fmt.Errorf("required key 'position' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TextDocument       TextDocumentIdentifier `json:"textDocument"`
-		Position           Position               `json:"position"`
-		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type TypeDefinitionRegistrationOptions struct {
@@ -187,29 +272,47 @@ type TypeDefinitionRegistrationOptions struct {
 	Id *string `json:"id,omitzero"`
 }
 
-func (s *TypeDefinitionRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *TypeDefinitionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "id":
+			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
-		Id               *string                `json:"id,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A workspace folder inside a client.
@@ -222,32 +325,50 @@ type WorkspaceFolder struct {
 	Name string `json:"name"`
 }
 
-func (s *WorkspaceFolder) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Uri  requiredProp `json:"uri"`
-		Name requiredProp `json:"name"`
-	}
+func (s *WorkspaceFolder) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenUri  bool
+		seenName bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Uri {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		case "name":
+			seenName = true
+			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if !keys.Name {
+	if !seenName {
 		return fmt.Errorf("required key 'name' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Uri  URI    `json:"uri"`
-		Name string `json:"name"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameters of a `workspace/didChangeWorkspaceFolders` notification.
@@ -256,27 +377,39 @@ type DidChangeWorkspaceFoldersParams struct {
 	Event *WorkspaceFoldersChangeEvent `json:"event"`
 }
 
-func (s *DidChangeWorkspaceFoldersParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Event requiredProp `json:"event"`
-	}
+func (s *DidChangeWorkspaceFoldersParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenEvent bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Event {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "event":
+			seenEvent = true
+			if err := json.UnmarshalDecode(dec, &s.Event); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenEvent {
 		return fmt.Errorf("required key 'event' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Event *WorkspaceFoldersChangeEvent `json:"event"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameters of a configuration request.
@@ -284,27 +417,39 @@ type ConfigurationParams struct {
 	Items []*ConfigurationItem `json:"items"`
 }
 
-func (s *ConfigurationParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Items requiredProp `json:"items"`
-	}
+func (s *ConfigurationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenItems bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Items {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "items":
+			seenItems = true
+			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenItems {
 		return fmt.Errorf("required key 'items' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Items []*ConfigurationItem `json:"items"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Parameters for a DocumentColorRequest.
@@ -320,29 +465,47 @@ type DocumentColorParams struct {
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
-func (s *DocumentColorParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-	}
+func (s *DocumentColorParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenTextDocument bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
-		TextDocument       TextDocumentIdentifier `json:"textDocument"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Represents a color range from a document.
@@ -354,32 +517,50 @@ type ColorInformation struct {
 	Color Color `json:"color"`
 }
 
-func (s *ColorInformation) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Range requiredProp `json:"range"`
-		Color requiredProp `json:"color"`
-	}
+func (s *ColorInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenRange bool
+		seenColor bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Range {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "color":
+			seenColor = true
+			if err := json.UnmarshalDecode(dec, &s.Color); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if !keys.Color {
+	if !seenColor {
 		return fmt.Errorf("required key 'color' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Range Range `json:"range"`
-		Color Color `json:"color"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type DocumentColorRegistrationOptions struct {
@@ -394,29 +575,47 @@ type DocumentColorRegistrationOptions struct {
 	Id *string `json:"id,omitzero"`
 }
 
-func (s *DocumentColorRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *DocumentColorRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "id":
+			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
-		Id               *string                `json:"id,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Parameters for a ColorPresentationRequest.
@@ -438,39 +637,67 @@ type ColorPresentationParams struct {
 	Range Range `json:"range"`
 }
 
-func (s *ColorPresentationParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Color        requiredProp `json:"color"`
-		Range        requiredProp `json:"range"`
-	}
+func (s *ColorPresentationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenColor        bool
+		seenRange        bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "color":
+			seenColor = true
+			if err := json.UnmarshalDecode(dec, &s.Color); err != nil {
+				return err
+			}
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Color {
+	if !seenColor {
 		return fmt.Errorf("required key 'color' is missing")
 	}
-	if !keys.Range {
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
-		TextDocument       TextDocumentIdentifier `json:"textDocument"`
-		Color              Color                  `json:"color"`
-		Range              Range                  `json:"range"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type ColorPresentation struct {
@@ -489,29 +716,47 @@ type ColorPresentation struct {
 	AdditionalTextEdits *[]*TextEdit `json:"additionalTextEdits,omitzero"`
 }
 
-func (s *ColorPresentation) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Label requiredProp `json:"label"`
-	}
+func (s *ColorPresentation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenLabel bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Label {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "label":
+			seenLabel = true
+			if err := json.UnmarshalDecode(dec, &s.Label); err != nil {
+				return err
+			}
+		case "textEdit":
+			if err := json.UnmarshalDecode(dec, &s.TextEdit); err != nil {
+				return err
+			}
+		case "additionalTextEdits":
+			if err := json.UnmarshalDecode(dec, &s.AdditionalTextEdits); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenLabel {
 		return fmt.Errorf("required key 'label' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Label               string       `json:"label"`
-		TextEdit            *TextEdit    `json:"textEdit,omitzero"`
-		AdditionalTextEdits *[]*TextEdit `json:"additionalTextEdits,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type WorkDoneProgressOptions struct {
@@ -525,27 +770,39 @@ type TextDocumentRegistrationOptions struct {
 	DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
 }
 
-func (s *TextDocumentRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *TextDocumentRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Parameters for a FoldingRangeRequest.
@@ -561,29 +818,47 @@ type FoldingRangeParams struct {
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
-func (s *FoldingRangeParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-	}
+func (s *FoldingRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenTextDocument bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
-		TextDocument       TextDocumentIdentifier `json:"textDocument"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Represents a folding range. To be valid, start and end line must be bigger than zero and smaller
@@ -616,36 +891,66 @@ type FoldingRange struct {
 	CollapsedText *string `json:"collapsedText,omitzero"`
 }
 
-func (s *FoldingRange) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		StartLine requiredProp `json:"startLine"`
-		EndLine   requiredProp `json:"endLine"`
-	}
+func (s *FoldingRange) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenStartLine bool
+		seenEndLine   bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.StartLine {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "startLine":
+			seenStartLine = true
+			if err := json.UnmarshalDecode(dec, &s.StartLine); err != nil {
+				return err
+			}
+		case "startCharacter":
+			if err := json.UnmarshalDecode(dec, &s.StartCharacter); err != nil {
+				return err
+			}
+		case "endLine":
+			seenEndLine = true
+			if err := json.UnmarshalDecode(dec, &s.EndLine); err != nil {
+				return err
+			}
+		case "endCharacter":
+			if err := json.UnmarshalDecode(dec, &s.EndCharacter); err != nil {
+				return err
+			}
+		case "kind":
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "collapsedText":
+			if err := json.UnmarshalDecode(dec, &s.CollapsedText); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenStartLine {
 		return fmt.Errorf("required key 'startLine' is missing")
 	}
-	if !keys.EndLine {
+	if !seenEndLine {
 		return fmt.Errorf("required key 'endLine' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		StartLine      uint32            `json:"startLine"`
-		StartCharacter *uint32           `json:"startCharacter,omitzero"`
-		EndLine        uint32            `json:"endLine"`
-		EndCharacter   *uint32           `json:"endCharacter,omitzero"`
-		Kind           *FoldingRangeKind `json:"kind,omitzero"`
-		CollapsedText  *string           `json:"collapsedText,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type FoldingRangeRegistrationOptions struct {
@@ -660,29 +965,47 @@ type FoldingRangeRegistrationOptions struct {
 	Id *string `json:"id,omitzero"`
 }
 
-func (s *FoldingRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *FoldingRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "id":
+			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
-		Id               *string                `json:"id,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type DeclarationParams struct {
@@ -700,34 +1023,58 @@ type DeclarationParams struct {
 	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 }
 
-func (s *DeclarationParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Position     requiredProp `json:"position"`
-	}
+func (s *DeclarationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenPosition     bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "position":
+			seenPosition = true
+			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
+				return err
+			}
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Position {
+	if !seenPosition {
 		return fmt.Errorf("required key 'position' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TextDocument       TextDocumentIdentifier `json:"textDocument"`
-		Position           Position               `json:"position"`
-		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type DeclarationRegistrationOptions struct {
@@ -742,29 +1089,47 @@ type DeclarationRegistrationOptions struct {
 	Id *string `json:"id,omitzero"`
 }
 
-func (s *DeclarationRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *DeclarationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "id":
+			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		Id               *string                `json:"id,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A parameter literal used in selection range requests.
@@ -783,34 +1148,58 @@ type SelectionRangeParams struct {
 	Positions []Position `json:"positions"`
 }
 
-func (s *SelectionRangeParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Positions    requiredProp `json:"positions"`
-	}
+func (s *SelectionRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenPositions    bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "positions":
+			seenPositions = true
+			if err := json.UnmarshalDecode(dec, &s.Positions); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Positions {
+	if !seenPositions {
 		return fmt.Errorf("required key 'positions' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
-		TextDocument       TextDocumentIdentifier `json:"textDocument"`
-		Positions          []Position             `json:"positions"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A selection range represents a part of a selection hierarchy. A selection range
@@ -823,28 +1212,43 @@ type SelectionRange struct {
 	Parent *SelectionRange `json:"parent,omitzero"`
 }
 
-func (s *SelectionRange) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Range requiredProp `json:"range"`
-	}
+func (s *SelectionRange) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenRange bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Range {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "parent":
+			if err := json.UnmarshalDecode(dec, &s.Parent); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Range  Range           `json:"range"`
-		Parent *SelectionRange `json:"parent,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type SelectionRangeRegistrationOptions struct {
@@ -859,29 +1263,47 @@ type SelectionRangeRegistrationOptions struct {
 	Id *string `json:"id,omitzero"`
 }
 
-func (s *SelectionRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *SelectionRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "id":
+			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		Id               *string                `json:"id,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type WorkDoneProgressCreateParams struct {
@@ -889,27 +1311,39 @@ type WorkDoneProgressCreateParams struct {
 	Token IntegerOrString `json:"token"`
 }
 
-func (s *WorkDoneProgressCreateParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Token requiredProp `json:"token"`
-	}
+func (s *WorkDoneProgressCreateParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenToken bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Token {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "token":
+			seenToken = true
+			if err := json.UnmarshalDecode(dec, &s.Token); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenToken {
 		return fmt.Errorf("required key 'token' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Token IntegerOrString `json:"token"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type WorkDoneProgressCancelParams struct {
@@ -917,27 +1351,39 @@ type WorkDoneProgressCancelParams struct {
 	Token IntegerOrString `json:"token"`
 }
 
-func (s *WorkDoneProgressCancelParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Token requiredProp `json:"token"`
-	}
+func (s *WorkDoneProgressCancelParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenToken bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Token {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "token":
+			seenToken = true
+			if err := json.UnmarshalDecode(dec, &s.Token); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenToken {
 		return fmt.Errorf("required key 'token' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Token IntegerOrString `json:"token"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameter of a `textDocument/prepareCallHierarchy` request.
@@ -954,33 +1400,54 @@ type CallHierarchyPrepareParams struct {
 	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
 }
 
-func (s *CallHierarchyPrepareParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Position     requiredProp `json:"position"`
-	}
+func (s *CallHierarchyPrepareParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenPosition     bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "position":
+			seenPosition = true
+			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
+				return err
+			}
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Position {
+	if !seenPosition {
 		return fmt.Errorf("required key 'position' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TextDocument  TextDocumentIdentifier `json:"textDocument"`
-		Position      Position               `json:"position"`
-		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Represents programming constructs like functions or constructors in the context
@@ -1015,50 +1482,89 @@ type CallHierarchyItem struct {
 	Data *any `json:"data,omitzero"`
 }
 
-func (s *CallHierarchyItem) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Name           requiredProp `json:"name"`
-		Kind           requiredProp `json:"kind"`
-		Uri            requiredProp `json:"uri"`
-		Range          requiredProp `json:"range"`
-		SelectionRange requiredProp `json:"selectionRange"`
-	}
+func (s *CallHierarchyItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenName           bool
+		seenKind           bool
+		seenUri            bool
+		seenRange          bool
+		seenSelectionRange bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Name {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "name":
+			seenName = true
+			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
+				return err
+			}
+		case "kind":
+			seenKind = true
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "tags":
+			if err := json.UnmarshalDecode(dec, &s.Tags); err != nil {
+				return err
+			}
+		case "detail":
+			if err := json.UnmarshalDecode(dec, &s.Detail); err != nil {
+				return err
+			}
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "selectionRange":
+			seenSelectionRange = true
+			if err := json.UnmarshalDecode(dec, &s.SelectionRange); err != nil {
+				return err
+			}
+		case "data":
+			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenName {
 		return fmt.Errorf("required key 'name' is missing")
 	}
-	if !keys.Kind {
+	if !seenKind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if !keys.Uri {
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if !keys.Range {
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if !keys.SelectionRange {
+	if !seenSelectionRange {
 		return fmt.Errorf("required key 'selectionRange' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Name           string       `json:"name"`
-		Kind           SymbolKind   `json:"kind"`
-		Tags           *[]SymbolTag `json:"tags,omitzero"`
-		Detail         *string      `json:"detail,omitzero"`
-		Uri            DocumentUri  `json:"uri"`
-		Range          Range        `json:"range"`
-		SelectionRange Range        `json:"selectionRange"`
-		Data           *any         `json:"data,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Call hierarchy options used during static or dynamic registration.
@@ -1076,29 +1582,47 @@ type CallHierarchyRegistrationOptions struct {
 	Id *string `json:"id,omitzero"`
 }
 
-func (s *CallHierarchyRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *CallHierarchyRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "id":
+			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
-		Id               *string                `json:"id,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameter of a `callHierarchy/incomingCalls` request.
@@ -1115,29 +1639,47 @@ type CallHierarchyIncomingCallsParams struct {
 	Item *CallHierarchyItem `json:"item"`
 }
 
-func (s *CallHierarchyIncomingCallsParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Item requiredProp `json:"item"`
-	}
+func (s *CallHierarchyIncomingCallsParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenItem bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Item {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		case "item":
+			seenItem = true
+			if err := json.UnmarshalDecode(dec, &s.Item); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenItem {
 		return fmt.Errorf("required key 'item' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken      *IntegerOrString   `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString   `json:"partialResultToken,omitzero"`
-		Item               *CallHierarchyItem `json:"item"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Represents an incoming call, e.g. a caller of a method or constructor.
@@ -1152,32 +1694,50 @@ type CallHierarchyIncomingCall struct {
 	FromRanges []Range `json:"fromRanges"`
 }
 
-func (s *CallHierarchyIncomingCall) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		From       requiredProp `json:"from"`
-		FromRanges requiredProp `json:"fromRanges"`
-	}
+func (s *CallHierarchyIncomingCall) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenFrom       bool
+		seenFromRanges bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.From {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "from":
+			seenFrom = true
+			if err := json.UnmarshalDecode(dec, &s.From); err != nil {
+				return err
+			}
+		case "fromRanges":
+			seenFromRanges = true
+			if err := json.UnmarshalDecode(dec, &s.FromRanges); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenFrom {
 		return fmt.Errorf("required key 'from' is missing")
 	}
-	if !keys.FromRanges {
+	if !seenFromRanges {
 		return fmt.Errorf("required key 'fromRanges' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		From       *CallHierarchyItem `json:"from"`
-		FromRanges []Range            `json:"fromRanges"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameter of a `callHierarchy/outgoingCalls` request.
@@ -1194,29 +1754,47 @@ type CallHierarchyOutgoingCallsParams struct {
 	Item *CallHierarchyItem `json:"item"`
 }
 
-func (s *CallHierarchyOutgoingCallsParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Item requiredProp `json:"item"`
-	}
+func (s *CallHierarchyOutgoingCallsParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenItem bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Item {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		case "item":
+			seenItem = true
+			if err := json.UnmarshalDecode(dec, &s.Item); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenItem {
 		return fmt.Errorf("required key 'item' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken      *IntegerOrString   `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString   `json:"partialResultToken,omitzero"`
-		Item               *CallHierarchyItem `json:"item"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Represents an outgoing call, e.g. calling a getter from a method or a method from a constructor etc.
@@ -1232,32 +1810,50 @@ type CallHierarchyOutgoingCall struct {
 	FromRanges []Range `json:"fromRanges"`
 }
 
-func (s *CallHierarchyOutgoingCall) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		To         requiredProp `json:"to"`
-		FromRanges requiredProp `json:"fromRanges"`
-	}
+func (s *CallHierarchyOutgoingCall) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTo         bool
+		seenFromRanges bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.To {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "to":
+			seenTo = true
+			if err := json.UnmarshalDecode(dec, &s.To); err != nil {
+				return err
+			}
+		case "fromRanges":
+			seenFromRanges = true
+			if err := json.UnmarshalDecode(dec, &s.FromRanges); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTo {
 		return fmt.Errorf("required key 'to' is missing")
 	}
-	if !keys.FromRanges {
+	if !seenFromRanges {
 		return fmt.Errorf("required key 'fromRanges' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		To         *CallHierarchyItem `json:"to"`
-		FromRanges []Range            `json:"fromRanges"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.16.0
@@ -1273,29 +1869,47 @@ type SemanticTokensParams struct {
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
-func (s *SemanticTokensParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-	}
+func (s *SemanticTokensParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenTextDocument bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
-		TextDocument       TextDocumentIdentifier `json:"textDocument"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.16.0
@@ -1310,28 +1924,43 @@ type SemanticTokens struct {
 	Data []uint32 `json:"data"`
 }
 
-func (s *SemanticTokens) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Data requiredProp `json:"data"`
-	}
+func (s *SemanticTokens) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenData bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Data {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "resultId":
+			if err := json.UnmarshalDecode(dec, &s.ResultId); err != nil {
+				return err
+			}
+		case "data":
+			seenData = true
+			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenData {
 		return fmt.Errorf("required key 'data' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		ResultId *string  `json:"resultId,omitzero"`
-		Data     []uint32 `json:"data"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.16.0
@@ -1339,27 +1968,39 @@ type SemanticTokensPartialResult struct {
 	Data []uint32 `json:"data"`
 }
 
-func (s *SemanticTokensPartialResult) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Data requiredProp `json:"data"`
-	}
+func (s *SemanticTokensPartialResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenData bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Data {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "data":
+			seenData = true
+			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenData {
 		return fmt.Errorf("required key 'data' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Data []uint32 `json:"data"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.16.0
@@ -1385,36 +2026,66 @@ type SemanticTokensRegistrationOptions struct {
 	Id *string `json:"id,omitzero"`
 }
 
-func (s *SemanticTokensRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-		Legend           requiredProp `json:"legend"`
-	}
+func (s *SemanticTokensRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenDocumentSelector bool
+		seenLegend           bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "legend":
+			seenLegend = true
+			if err := json.UnmarshalDecode(dec, &s.Legend); err != nil {
+				return err
+			}
+		case "range":
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "full":
+			if err := json.UnmarshalDecode(dec, &s.Full); err != nil {
+				return err
+			}
+		case "id":
+			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
-	if !keys.Legend {
+	if !seenLegend {
 		return fmt.Errorf("required key 'legend' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector DocumentSelectorOrNull            `json:"documentSelector"`
-		WorkDoneProgress *bool                             `json:"workDoneProgress,omitzero"`
-		Legend           *SemanticTokensLegend             `json:"legend"`
-		Range            *BooleanOrEmptyObject             `json:"range,omitzero"`
-		Full             *BooleanOrSemanticTokensFullDelta `json:"full,omitzero"`
-		Id               *string                           `json:"id,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.16.0
@@ -1434,34 +2105,58 @@ type SemanticTokensDeltaParams struct {
 	PreviousResultId string `json:"previousResultId"`
 }
 
-func (s *SemanticTokensDeltaParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument     requiredProp `json:"textDocument"`
-		PreviousResultId requiredProp `json:"previousResultId"`
-	}
+func (s *SemanticTokensDeltaParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument     bool
+		seenPreviousResultId bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "previousResultId":
+			seenPreviousResultId = true
+			if err := json.UnmarshalDecode(dec, &s.PreviousResultId); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.PreviousResultId {
+	if !seenPreviousResultId {
 		return fmt.Errorf("required key 'previousResultId' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
-		TextDocument       TextDocumentIdentifier `json:"textDocument"`
-		PreviousResultId   string                 `json:"previousResultId"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.16.0
@@ -1472,28 +2167,43 @@ type SemanticTokensDelta struct {
 	Edits []*SemanticTokensEdit `json:"edits"`
 }
 
-func (s *SemanticTokensDelta) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Edits requiredProp `json:"edits"`
-	}
+func (s *SemanticTokensDelta) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenEdits bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Edits {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "resultId":
+			if err := json.UnmarshalDecode(dec, &s.ResultId); err != nil {
+				return err
+			}
+		case "edits":
+			seenEdits = true
+			if err := json.UnmarshalDecode(dec, &s.Edits); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenEdits {
 		return fmt.Errorf("required key 'edits' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		ResultId *string               `json:"resultId,omitzero"`
-		Edits    []*SemanticTokensEdit `json:"edits"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.16.0
@@ -1501,27 +2211,39 @@ type SemanticTokensDeltaPartialResult struct {
 	Edits []*SemanticTokensEdit `json:"edits"`
 }
 
-func (s *SemanticTokensDeltaPartialResult) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Edits requiredProp `json:"edits"`
-	}
+func (s *SemanticTokensDeltaPartialResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenEdits bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Edits {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "edits":
+			seenEdits = true
+			if err := json.UnmarshalDecode(dec, &s.Edits); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenEdits {
 		return fmt.Errorf("required key 'edits' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Edits []*SemanticTokensEdit `json:"edits"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.16.0
@@ -1540,34 +2262,58 @@ type SemanticTokensRangeParams struct {
 	Range Range `json:"range"`
 }
 
-func (s *SemanticTokensRangeParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Range        requiredProp `json:"range"`
-	}
+func (s *SemanticTokensRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenRange        bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Range {
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
-		TextDocument       TextDocumentIdentifier `json:"textDocument"`
-		Range              Range                  `json:"range"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Params to show a resource in the UI.
@@ -1595,30 +2341,51 @@ type ShowDocumentParams struct {
 	Selection *Range `json:"selection,omitzero"`
 }
 
-func (s *ShowDocumentParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Uri requiredProp `json:"uri"`
-	}
+func (s *ShowDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenUri bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Uri {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		case "external":
+			if err := json.UnmarshalDecode(dec, &s.External); err != nil {
+				return err
+			}
+		case "takeFocus":
+			if err := json.UnmarshalDecode(dec, &s.TakeFocus); err != nil {
+				return err
+			}
+		case "selection":
+			if err := json.UnmarshalDecode(dec, &s.Selection); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Uri       URI    `json:"uri"`
-		External  *bool  `json:"external,omitzero"`
-		TakeFocus *bool  `json:"takeFocus,omitzero"`
-		Selection *Range `json:"selection,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The result of a showDocument request.
@@ -1629,27 +2396,39 @@ type ShowDocumentResult struct {
 	Success bool `json:"success"`
 }
 
-func (s *ShowDocumentResult) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Success requiredProp `json:"success"`
-	}
+func (s *ShowDocumentResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenSuccess bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Success {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "success":
+			seenSuccess = true
+			if err := json.UnmarshalDecode(dec, &s.Success); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenSuccess {
 		return fmt.Errorf("required key 'success' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Success bool `json:"success"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type LinkedEditingRangeParams struct {
@@ -1663,33 +2442,54 @@ type LinkedEditingRangeParams struct {
 	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
 }
 
-func (s *LinkedEditingRangeParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Position     requiredProp `json:"position"`
-	}
+func (s *LinkedEditingRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenPosition     bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "position":
+			seenPosition = true
+			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
+				return err
+			}
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Position {
+	if !seenPosition {
 		return fmt.Errorf("required key 'position' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TextDocument  TextDocumentIdentifier `json:"textDocument"`
-		Position      Position               `json:"position"`
-		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The result of a linked editing range request.
@@ -1706,28 +2506,43 @@ type LinkedEditingRanges struct {
 	WordPattern *string `json:"wordPattern,omitzero"`
 }
 
-func (s *LinkedEditingRanges) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Ranges requiredProp `json:"ranges"`
-	}
+func (s *LinkedEditingRanges) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenRanges bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Ranges {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "ranges":
+			seenRanges = true
+			if err := json.UnmarshalDecode(dec, &s.Ranges); err != nil {
+				return err
+			}
+		case "wordPattern":
+			if err := json.UnmarshalDecode(dec, &s.WordPattern); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenRanges {
 		return fmt.Errorf("required key 'ranges' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Ranges      []Range `json:"ranges"`
-		WordPattern *string `json:"wordPattern,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type LinkedEditingRangeRegistrationOptions struct {
@@ -1742,29 +2557,47 @@ type LinkedEditingRangeRegistrationOptions struct {
 	Id *string `json:"id,omitzero"`
 }
 
-func (s *LinkedEditingRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *LinkedEditingRangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "id":
+			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
-		Id               *string                `json:"id,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameters sent in notifications/requests for user-initiated creation of
@@ -1776,27 +2609,39 @@ type CreateFilesParams struct {
 	Files []*FileCreate `json:"files"`
 }
 
-func (s *CreateFilesParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Files requiredProp `json:"files"`
-	}
+func (s *CreateFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenFiles bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Files {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "files":
+			seenFiles = true
+			if err := json.UnmarshalDecode(dec, &s.Files); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenFiles {
 		return fmt.Errorf("required key 'files' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Files []*FileCreate `json:"files"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A workspace edit represents changes to many resources managed in the workspace. The edit
@@ -1844,27 +2689,39 @@ type FileOperationRegistrationOptions struct {
 	Filters []*FileOperationFilter `json:"filters"`
 }
 
-func (s *FileOperationRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Filters requiredProp `json:"filters"`
-	}
+func (s *FileOperationRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenFilters bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Filters {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "filters":
+			seenFilters = true
+			if err := json.UnmarshalDecode(dec, &s.Filters); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenFilters {
 		return fmt.Errorf("required key 'filters' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Filters []*FileOperationFilter `json:"filters"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameters sent in notifications/requests for user-initiated renames of
@@ -1877,27 +2734,39 @@ type RenameFilesParams struct {
 	Files []*FileRename `json:"files"`
 }
 
-func (s *RenameFilesParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Files requiredProp `json:"files"`
-	}
+func (s *RenameFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenFiles bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Files {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "files":
+			seenFiles = true
+			if err := json.UnmarshalDecode(dec, &s.Files); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenFiles {
 		return fmt.Errorf("required key 'files' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Files []*FileRename `json:"files"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameters sent in notifications/requests for user-initiated deletes of
@@ -1909,27 +2778,39 @@ type DeleteFilesParams struct {
 	Files []*FileDelete `json:"files"`
 }
 
-func (s *DeleteFilesParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Files requiredProp `json:"files"`
-	}
+func (s *DeleteFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenFiles bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Files {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "files":
+			seenFiles = true
+			if err := json.UnmarshalDecode(dec, &s.Files); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenFiles {
 		return fmt.Errorf("required key 'files' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Files []*FileDelete `json:"files"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type MonikerParams struct {
@@ -1947,34 +2828,58 @@ type MonikerParams struct {
 	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 }
 
-func (s *MonikerParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Position     requiredProp `json:"position"`
-	}
+func (s *MonikerParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenPosition     bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "position":
+			seenPosition = true
+			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
+				return err
+			}
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Position {
+	if !seenPosition {
 		return fmt.Errorf("required key 'position' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TextDocument       TextDocumentIdentifier `json:"textDocument"`
-		Position           Position               `json:"position"`
-		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Moniker definition to match LSIF 0.5 moniker definition.
@@ -1995,38 +2900,63 @@ type Moniker struct {
 	Kind *MonikerKind `json:"kind,omitzero"`
 }
 
-func (s *Moniker) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Scheme     requiredProp `json:"scheme"`
-		Identifier requiredProp `json:"identifier"`
-		Unique     requiredProp `json:"unique"`
-	}
+func (s *Moniker) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenScheme     bool
+		seenIdentifier bool
+		seenUnique     bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Scheme {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "scheme":
+			seenScheme = true
+			if err := json.UnmarshalDecode(dec, &s.Scheme); err != nil {
+				return err
+			}
+		case "identifier":
+			seenIdentifier = true
+			if err := json.UnmarshalDecode(dec, &s.Identifier); err != nil {
+				return err
+			}
+		case "unique":
+			seenUnique = true
+			if err := json.UnmarshalDecode(dec, &s.Unique); err != nil {
+				return err
+			}
+		case "kind":
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenScheme {
 		return fmt.Errorf("required key 'scheme' is missing")
 	}
-	if !keys.Identifier {
+	if !seenIdentifier {
 		return fmt.Errorf("required key 'identifier' is missing")
 	}
-	if !keys.Unique {
+	if !seenUnique {
 		return fmt.Errorf("required key 'unique' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Scheme     string          `json:"scheme"`
-		Identifier string          `json:"identifier"`
-		Unique     UniquenessLevel `json:"unique"`
-		Kind       *MonikerKind    `json:"kind,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type MonikerRegistrationOptions struct {
@@ -2037,28 +2967,43 @@ type MonikerRegistrationOptions struct {
 	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
-func (s *MonikerRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *MonikerRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameter of a `textDocument/prepareTypeHierarchy` request.
@@ -2075,33 +3020,54 @@ type TypeHierarchyPrepareParams struct {
 	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
 }
 
-func (s *TypeHierarchyPrepareParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Position     requiredProp `json:"position"`
-	}
+func (s *TypeHierarchyPrepareParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenPosition     bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "position":
+			seenPosition = true
+			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
+				return err
+			}
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Position {
+	if !seenPosition {
 		return fmt.Errorf("required key 'position' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TextDocument  TextDocumentIdentifier `json:"textDocument"`
-		Position      Position               `json:"position"`
-		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.17.0
@@ -2137,50 +3103,89 @@ type TypeHierarchyItem struct {
 	Data *any `json:"data,omitzero"`
 }
 
-func (s *TypeHierarchyItem) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Name           requiredProp `json:"name"`
-		Kind           requiredProp `json:"kind"`
-		Uri            requiredProp `json:"uri"`
-		Range          requiredProp `json:"range"`
-		SelectionRange requiredProp `json:"selectionRange"`
-	}
+func (s *TypeHierarchyItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenName           bool
+		seenKind           bool
+		seenUri            bool
+		seenRange          bool
+		seenSelectionRange bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Name {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "name":
+			seenName = true
+			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
+				return err
+			}
+		case "kind":
+			seenKind = true
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "tags":
+			if err := json.UnmarshalDecode(dec, &s.Tags); err != nil {
+				return err
+			}
+		case "detail":
+			if err := json.UnmarshalDecode(dec, &s.Detail); err != nil {
+				return err
+			}
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "selectionRange":
+			seenSelectionRange = true
+			if err := json.UnmarshalDecode(dec, &s.SelectionRange); err != nil {
+				return err
+			}
+		case "data":
+			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenName {
 		return fmt.Errorf("required key 'name' is missing")
 	}
-	if !keys.Kind {
+	if !seenKind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if !keys.Uri {
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if !keys.Range {
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if !keys.SelectionRange {
+	if !seenSelectionRange {
 		return fmt.Errorf("required key 'selectionRange' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Name           string       `json:"name"`
-		Kind           SymbolKind   `json:"kind"`
-		Tags           *[]SymbolTag `json:"tags,omitzero"`
-		Detail         *string      `json:"detail,omitzero"`
-		Uri            DocumentUri  `json:"uri"`
-		Range          Range        `json:"range"`
-		SelectionRange Range        `json:"selectionRange"`
-		Data           *any         `json:"data,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Type hierarchy options used during static or dynamic registration.
@@ -2198,29 +3203,47 @@ type TypeHierarchyRegistrationOptions struct {
 	Id *string `json:"id,omitzero"`
 }
 
-func (s *TypeHierarchyRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *TypeHierarchyRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "id":
+			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
-		Id               *string                `json:"id,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameter of a `typeHierarchy/supertypes` request.
@@ -2237,29 +3260,47 @@ type TypeHierarchySupertypesParams struct {
 	Item *TypeHierarchyItem `json:"item"`
 }
 
-func (s *TypeHierarchySupertypesParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Item requiredProp `json:"item"`
-	}
+func (s *TypeHierarchySupertypesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenItem bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Item {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		case "item":
+			seenItem = true
+			if err := json.UnmarshalDecode(dec, &s.Item); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenItem {
 		return fmt.Errorf("required key 'item' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken      *IntegerOrString   `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString   `json:"partialResultToken,omitzero"`
-		Item               *TypeHierarchyItem `json:"item"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameter of a `typeHierarchy/subtypes` request.
@@ -2276,29 +3317,47 @@ type TypeHierarchySubtypesParams struct {
 	Item *TypeHierarchyItem `json:"item"`
 }
 
-func (s *TypeHierarchySubtypesParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Item requiredProp `json:"item"`
-	}
+func (s *TypeHierarchySubtypesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenItem bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Item {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		case "item":
+			seenItem = true
+			if err := json.UnmarshalDecode(dec, &s.Item); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenItem {
 		return fmt.Errorf("required key 'item' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken      *IntegerOrString   `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString   `json:"partialResultToken,omitzero"`
-		Item               *TypeHierarchyItem `json:"item"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A parameter literal used in inline value requests.
@@ -2319,38 +3378,63 @@ type InlineValueParams struct {
 	Context *InlineValueContext `json:"context"`
 }
 
-func (s *InlineValueParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Range        requiredProp `json:"range"`
-		Context      requiredProp `json:"context"`
-	}
+func (s *InlineValueParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenRange        bool
+		seenContext      bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "context":
+			seenContext = true
+			if err := json.UnmarshalDecode(dec, &s.Context); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Range {
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if !keys.Context {
+	if !seenContext {
 		return fmt.Errorf("required key 'context' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
-		TextDocument  TextDocumentIdentifier `json:"textDocument"`
-		Range         Range                  `json:"range"`
-		Context       *InlineValueContext    `json:"context"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Inline value options used during static or dynamic registration.
@@ -2368,29 +3452,47 @@ type InlineValueRegistrationOptions struct {
 	Id *string `json:"id,omitzero"`
 }
 
-func (s *InlineValueRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *InlineValueRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "id":
+			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		Id               *string                `json:"id,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A parameter literal used in inlay hint requests.
@@ -2407,33 +3509,54 @@ type InlayHintParams struct {
 	Range Range `json:"range"`
 }
 
-func (s *InlayHintParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Range        requiredProp `json:"range"`
-	}
+func (s *InlayHintParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenRange        bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Range {
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
-		TextDocument  TextDocumentIdentifier `json:"textDocument"`
-		Range         Range                  `json:"range"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Inlay hint information.
@@ -2485,38 +3608,74 @@ type InlayHint struct {
 	Data *any `json:"data,omitzero"`
 }
 
-func (s *InlayHint) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Position requiredProp `json:"position"`
-		Label    requiredProp `json:"label"`
-	}
+func (s *InlayHint) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenPosition bool
+		seenLabel    bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Position {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "position":
+			seenPosition = true
+			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
+				return err
+			}
+		case "label":
+			seenLabel = true
+			if err := json.UnmarshalDecode(dec, &s.Label); err != nil {
+				return err
+			}
+		case "kind":
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "textEdits":
+			if err := json.UnmarshalDecode(dec, &s.TextEdits); err != nil {
+				return err
+			}
+		case "tooltip":
+			if err := json.UnmarshalDecode(dec, &s.Tooltip); err != nil {
+				return err
+			}
+		case "paddingLeft":
+			if err := json.UnmarshalDecode(dec, &s.PaddingLeft); err != nil {
+				return err
+			}
+		case "paddingRight":
+			if err := json.UnmarshalDecode(dec, &s.PaddingRight); err != nil {
+				return err
+			}
+		case "data":
+			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenPosition {
 		return fmt.Errorf("required key 'position' is missing")
 	}
-	if !keys.Label {
+	if !seenLabel {
 		return fmt.Errorf("required key 'label' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Position     Position                    `json:"position"`
-		Label        StringOrInlayHintLabelParts `json:"label"`
-		Kind         *InlayHintKind              `json:"kind,omitzero"`
-		TextEdits    *[]*TextEdit                `json:"textEdits,omitzero"`
-		Tooltip      *StringOrMarkupContent      `json:"tooltip,omitzero"`
-		PaddingLeft  *bool                       `json:"paddingLeft,omitzero"`
-		PaddingRight *bool                       `json:"paddingRight,omitzero"`
-		Data         *any                        `json:"data,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Inlay hint options used during static or dynamic registration.
@@ -2538,30 +3697,51 @@ type InlayHintRegistrationOptions struct {
 	Id *string `json:"id,omitzero"`
 }
 
-func (s *InlayHintRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *InlayHintRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "resolveProvider":
+			if err := json.UnmarshalDecode(dec, &s.ResolveProvider); err != nil {
+				return err
+			}
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "id":
+			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
-		ResolveProvider  *bool                  `json:"resolveProvider,omitzero"`
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		Id               *string                `json:"id,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Parameters of the document diagnostic request.
@@ -2585,31 +3765,55 @@ type DocumentDiagnosticParams struct {
 	PreviousResultId *string `json:"previousResultId,omitzero"`
 }
 
-func (s *DocumentDiagnosticParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-	}
+func (s *DocumentDiagnosticParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenTextDocument bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "identifier":
+			if err := json.UnmarshalDecode(dec, &s.Identifier); err != nil {
+				return err
+			}
+		case "previousResultId":
+			if err := json.UnmarshalDecode(dec, &s.PreviousResultId); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
-		TextDocument       TextDocumentIdentifier `json:"textDocument"`
-		Identifier         *string                `json:"identifier,omitzero"`
-		PreviousResultId   *string                `json:"previousResultId,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A partial result for a document diagnostic report.
@@ -2619,27 +3823,39 @@ type DocumentDiagnosticReportPartialResult struct {
 	RelatedDocuments map[DocumentUri]FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments"`
 }
 
-func (s *DocumentDiagnosticReportPartialResult) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		RelatedDocuments requiredProp `json:"relatedDocuments"`
-	}
+func (s *DocumentDiagnosticReportPartialResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenRelatedDocuments bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.RelatedDocuments {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "relatedDocuments":
+			seenRelatedDocuments = true
+			if err := json.UnmarshalDecode(dec, &s.RelatedDocuments); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenRelatedDocuments {
 		return fmt.Errorf("required key 'relatedDocuments' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		RelatedDocuments map[DocumentUri]FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Cancellation data returned from a diagnostic request.
@@ -2649,27 +3865,39 @@ type DiagnosticServerCancellationData struct {
 	RetriggerRequest bool `json:"retriggerRequest"`
 }
 
-func (s *DiagnosticServerCancellationData) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		RetriggerRequest requiredProp `json:"retriggerRequest"`
-	}
+func (s *DiagnosticServerCancellationData) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenRetriggerRequest bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.RetriggerRequest {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "retriggerRequest":
+			seenRetriggerRequest = true
+			if err := json.UnmarshalDecode(dec, &s.RetriggerRequest); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenRetriggerRequest {
 		return fmt.Errorf("required key 'retriggerRequest' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		RetriggerRequest bool `json:"retriggerRequest"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Diagnostic registration options.
@@ -2700,40 +3928,71 @@ type DiagnosticRegistrationOptions struct {
 	Id *string `json:"id,omitzero"`
 }
 
-func (s *DiagnosticRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector      requiredProp `json:"documentSelector"`
-		InterFileDependencies requiredProp `json:"interFileDependencies"`
-		WorkspaceDiagnostics  requiredProp `json:"workspaceDiagnostics"`
-	}
+func (s *DiagnosticRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenDocumentSelector      bool
+		seenInterFileDependencies bool
+		seenWorkspaceDiagnostics  bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "identifier":
+			if err := json.UnmarshalDecode(dec, &s.Identifier); err != nil {
+				return err
+			}
+		case "interFileDependencies":
+			seenInterFileDependencies = true
+			if err := json.UnmarshalDecode(dec, &s.InterFileDependencies); err != nil {
+				return err
+			}
+		case "workspaceDiagnostics":
+			seenWorkspaceDiagnostics = true
+			if err := json.UnmarshalDecode(dec, &s.WorkspaceDiagnostics); err != nil {
+				return err
+			}
+		case "id":
+			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
-	if !keys.InterFileDependencies {
+	if !seenInterFileDependencies {
 		return fmt.Errorf("required key 'interFileDependencies' is missing")
 	}
-	if !keys.WorkspaceDiagnostics {
+	if !seenWorkspaceDiagnostics {
 		return fmt.Errorf("required key 'workspaceDiagnostics' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector      DocumentSelectorOrNull `json:"documentSelector"`
-		WorkDoneProgress      *bool                  `json:"workDoneProgress,omitzero"`
-		Identifier            *string                `json:"identifier,omitzero"`
-		InterFileDependencies bool                   `json:"interFileDependencies"`
-		WorkspaceDiagnostics  bool                   `json:"workspaceDiagnostics"`
-		Id                    *string                `json:"id,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Parameters of the workspace diagnostic request.
@@ -2755,30 +4014,51 @@ type WorkspaceDiagnosticParams struct {
 	PreviousResultIds []PreviousResultId `json:"previousResultIds"`
 }
 
-func (s *WorkspaceDiagnosticParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		PreviousResultIds requiredProp `json:"previousResultIds"`
-	}
+func (s *WorkspaceDiagnosticParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenPreviousResultIds bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.PreviousResultIds {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		case "identifier":
+			if err := json.UnmarshalDecode(dec, &s.Identifier); err != nil {
+				return err
+			}
+		case "previousResultIds":
+			seenPreviousResultIds = true
+			if err := json.UnmarshalDecode(dec, &s.PreviousResultIds); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenPreviousResultIds {
 		return fmt.Errorf("required key 'previousResultIds' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken      *IntegerOrString   `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString   `json:"partialResultToken,omitzero"`
-		Identifier         *string            `json:"identifier,omitzero"`
-		PreviousResultIds  []PreviousResultId `json:"previousResultIds"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A workspace diagnostic report.
@@ -2788,27 +4068,39 @@ type WorkspaceDiagnosticReport struct {
 	Items []WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"items"`
 }
 
-func (s *WorkspaceDiagnosticReport) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Items requiredProp `json:"items"`
-	}
+func (s *WorkspaceDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenItems bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Items {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "items":
+			seenItems = true
+			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenItems {
 		return fmt.Errorf("required key 'items' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Items []WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"items"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A partial result for a workspace diagnostic report.
@@ -2818,27 +4110,39 @@ type WorkspaceDiagnosticReportPartialResult struct {
 	Items []WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"items"`
 }
 
-func (s *WorkspaceDiagnosticReportPartialResult) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Items requiredProp `json:"items"`
-	}
+func (s *WorkspaceDiagnosticReportPartialResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenItems bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Items {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "items":
+			seenItems = true
+			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenItems {
 		return fmt.Errorf("required key 'items' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Items []WorkspaceFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"items"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The params sent in an open notebook document notification.
@@ -2853,32 +4157,50 @@ type DidOpenNotebookDocumentParams struct {
 	CellTextDocuments []*TextDocumentItem `json:"cellTextDocuments"`
 }
 
-func (s *DidOpenNotebookDocumentParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		NotebookDocument  requiredProp `json:"notebookDocument"`
-		CellTextDocuments requiredProp `json:"cellTextDocuments"`
-	}
+func (s *DidOpenNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenNotebookDocument  bool
+		seenCellTextDocuments bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.NotebookDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "notebookDocument":
+			seenNotebookDocument = true
+			if err := json.UnmarshalDecode(dec, &s.NotebookDocument); err != nil {
+				return err
+			}
+		case "cellTextDocuments":
+			seenCellTextDocuments = true
+			if err := json.UnmarshalDecode(dec, &s.CellTextDocuments); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenNotebookDocument {
 		return fmt.Errorf("required key 'notebookDocument' is missing")
 	}
-	if !keys.CellTextDocuments {
+	if !seenCellTextDocuments {
 		return fmt.Errorf("required key 'cellTextDocuments' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		NotebookDocument  *NotebookDocument   `json:"notebookDocument"`
-		CellTextDocuments []*TextDocumentItem `json:"cellTextDocuments"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Registration options specific to a notebook.
@@ -2897,29 +4219,47 @@ type NotebookDocumentSyncRegistrationOptions struct {
 	Id *string `json:"id,omitzero"`
 }
 
-func (s *NotebookDocumentSyncRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		NotebookSelector requiredProp `json:"notebookSelector"`
-	}
+func (s *NotebookDocumentSyncRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenNotebookSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.NotebookSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "notebookSelector":
+			seenNotebookSelector = true
+			if err := json.UnmarshalDecode(dec, &s.NotebookSelector); err != nil {
+				return err
+			}
+		case "save":
+			if err := json.UnmarshalDecode(dec, &s.Save); err != nil {
+				return err
+			}
+		case "id":
+			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenNotebookSelector {
 		return fmt.Errorf("required key 'notebookSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		NotebookSelector []NotebookDocumentFilterWithNotebookOrCells `json:"notebookSelector"`
-		Save             *bool                                       `json:"save,omitzero"`
-		Id               *string                                     `json:"id,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The params sent in a change notebook document notification.
@@ -2948,32 +4288,50 @@ type DidChangeNotebookDocumentParams struct {
 	Change *NotebookDocumentChangeEvent `json:"change"`
 }
 
-func (s *DidChangeNotebookDocumentParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		NotebookDocument requiredProp `json:"notebookDocument"`
-		Change           requiredProp `json:"change"`
-	}
+func (s *DidChangeNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenNotebookDocument bool
+		seenChange           bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.NotebookDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "notebookDocument":
+			seenNotebookDocument = true
+			if err := json.UnmarshalDecode(dec, &s.NotebookDocument); err != nil {
+				return err
+			}
+		case "change":
+			seenChange = true
+			if err := json.UnmarshalDecode(dec, &s.Change); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenNotebookDocument {
 		return fmt.Errorf("required key 'notebookDocument' is missing")
 	}
-	if !keys.Change {
+	if !seenChange {
 		return fmt.Errorf("required key 'change' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		NotebookDocument VersionedNotebookDocumentIdentifier `json:"notebookDocument"`
-		Change           *NotebookDocumentChangeEvent        `json:"change"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The params sent in a save notebook document notification.
@@ -2984,27 +4342,39 @@ type DidSaveNotebookDocumentParams struct {
 	NotebookDocument NotebookDocumentIdentifier `json:"notebookDocument"`
 }
 
-func (s *DidSaveNotebookDocumentParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		NotebookDocument requiredProp `json:"notebookDocument"`
-	}
+func (s *DidSaveNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenNotebookDocument bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.NotebookDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "notebookDocument":
+			seenNotebookDocument = true
+			if err := json.UnmarshalDecode(dec, &s.NotebookDocument); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenNotebookDocument {
 		return fmt.Errorf("required key 'notebookDocument' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		NotebookDocument NotebookDocumentIdentifier `json:"notebookDocument"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The params sent in a close notebook document notification.
@@ -3019,32 +4389,50 @@ type DidCloseNotebookDocumentParams struct {
 	CellTextDocuments []TextDocumentIdentifier `json:"cellTextDocuments"`
 }
 
-func (s *DidCloseNotebookDocumentParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		NotebookDocument  requiredProp `json:"notebookDocument"`
-		CellTextDocuments requiredProp `json:"cellTextDocuments"`
-	}
+func (s *DidCloseNotebookDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenNotebookDocument  bool
+		seenCellTextDocuments bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.NotebookDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "notebookDocument":
+			seenNotebookDocument = true
+			if err := json.UnmarshalDecode(dec, &s.NotebookDocument); err != nil {
+				return err
+			}
+		case "cellTextDocuments":
+			seenCellTextDocuments = true
+			if err := json.UnmarshalDecode(dec, &s.CellTextDocuments); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenNotebookDocument {
 		return fmt.Errorf("required key 'notebookDocument' is missing")
 	}
-	if !keys.CellTextDocuments {
+	if !seenCellTextDocuments {
 		return fmt.Errorf("required key 'cellTextDocuments' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		NotebookDocument  NotebookDocumentIdentifier `json:"notebookDocument"`
-		CellTextDocuments []TextDocumentIdentifier   `json:"cellTextDocuments"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A parameter literal used in inline completion requests.
@@ -3067,38 +4455,63 @@ type InlineCompletionParams struct {
 	Context *InlineCompletionContext `json:"context"`
 }
 
-func (s *InlineCompletionParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Position     requiredProp `json:"position"`
-		Context      requiredProp `json:"context"`
-	}
+func (s *InlineCompletionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenPosition     bool
+		seenContext      bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "position":
+			seenPosition = true
+			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
+				return err
+			}
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "context":
+			seenContext = true
+			if err := json.UnmarshalDecode(dec, &s.Context); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Position {
+	if !seenPosition {
 		return fmt.Errorf("required key 'position' is missing")
 	}
-	if !keys.Context {
+	if !seenContext {
 		return fmt.Errorf("required key 'context' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TextDocument  TextDocumentIdentifier   `json:"textDocument"`
-		Position      Position                 `json:"position"`
-		WorkDoneToken *IntegerOrString         `json:"workDoneToken,omitzero"`
-		Context       *InlineCompletionContext `json:"context"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Represents a collection of items to be presented in the editor.
@@ -3111,27 +4524,39 @@ type InlineCompletionList struct {
 	Items []*InlineCompletionItem `json:"items"`
 }
 
-func (s *InlineCompletionList) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Items requiredProp `json:"items"`
-	}
+func (s *InlineCompletionList) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenItems bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Items {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "items":
+			seenItems = true
+			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenItems {
 		return fmt.Errorf("required key 'items' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Items []*InlineCompletionItem `json:"items"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // An inline completion item represents a text snippet that is proposed inline to complete text that is being typed.
@@ -3153,30 +4578,51 @@ type InlineCompletionItem struct {
 	Command *Command `json:"command,omitzero"`
 }
 
-func (s *InlineCompletionItem) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		InsertText requiredProp `json:"insertText"`
-	}
+func (s *InlineCompletionItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenInsertText bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.InsertText {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "insertText":
+			seenInsertText = true
+			if err := json.UnmarshalDecode(dec, &s.InsertText); err != nil {
+				return err
+			}
+		case "filterText":
+			if err := json.UnmarshalDecode(dec, &s.FilterText); err != nil {
+				return err
+			}
+		case "range":
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "command":
+			if err := json.UnmarshalDecode(dec, &s.Command); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenInsertText {
 		return fmt.Errorf("required key 'insertText' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		InsertText StringOrStringValue `json:"insertText"`
-		FilterText *string             `json:"filterText,omitzero"`
-		Range      *Range              `json:"range,omitzero"`
-		Command    *Command            `json:"command,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Inline completion options used during static or dynamic registration.
@@ -3196,29 +4642,47 @@ type InlineCompletionRegistrationOptions struct {
 	Id *string `json:"id,omitzero"`
 }
 
-func (s *InlineCompletionRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *InlineCompletionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "id":
+			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		Id               *string                `json:"id,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Parameters for the `workspace/textDocumentContent` request.
@@ -3231,27 +4695,39 @@ type TextDocumentContentParams struct {
 	Uri DocumentUri `json:"uri"`
 }
 
-func (s *TextDocumentContentParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Uri requiredProp `json:"uri"`
-	}
+func (s *TextDocumentContentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenUri bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Uri {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Uri DocumentUri `json:"uri"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Result of the `workspace/textDocumentContent` request.
@@ -3267,27 +4743,39 @@ type TextDocumentContentResult struct {
 	Text string `json:"text"`
 }
 
-func (s *TextDocumentContentResult) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Text requiredProp `json:"text"`
-	}
+func (s *TextDocumentContentResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenText bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Text {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "text":
+			seenText = true
+			if err := json.UnmarshalDecode(dec, &s.Text); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenText {
 		return fmt.Errorf("required key 'text' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Text string `json:"text"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Text document content provider registration options.
@@ -3304,28 +4792,43 @@ type TextDocumentContentRegistrationOptions struct {
 	Id *string `json:"id,omitzero"`
 }
 
-func (s *TextDocumentContentRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Schemes requiredProp `json:"schemes"`
-	}
+func (s *TextDocumentContentRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenSchemes bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Schemes {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "schemes":
+			seenSchemes = true
+			if err := json.UnmarshalDecode(dec, &s.Schemes); err != nil {
+				return err
+			}
+		case "id":
+			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenSchemes {
 		return fmt.Errorf("required key 'schemes' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Schemes []string `json:"schemes"`
-		Id      *string  `json:"id,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Parameters for the `workspace/textDocumentContent/refresh` request.
@@ -3338,81 +4841,117 @@ type TextDocumentContentRefreshParams struct {
 	Uri DocumentUri `json:"uri"`
 }
 
-func (s *TextDocumentContentRefreshParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Uri requiredProp `json:"uri"`
-	}
+func (s *TextDocumentContentRefreshParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenUri bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Uri {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Uri DocumentUri `json:"uri"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type RegistrationParams struct {
 	Registrations []*Registration `json:"registrations"`
 }
 
-func (s *RegistrationParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Registrations requiredProp `json:"registrations"`
-	}
+func (s *RegistrationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenRegistrations bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Registrations {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "registrations":
+			seenRegistrations = true
+			if err := json.UnmarshalDecode(dec, &s.Registrations); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenRegistrations {
 		return fmt.Errorf("required key 'registrations' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Registrations []*Registration `json:"registrations"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type UnregistrationParams struct {
 	Unregisterations []*Unregistration `json:"unregisterations"`
 }
 
-func (s *UnregistrationParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Unregisterations requiredProp `json:"unregisterations"`
-	}
+func (s *UnregistrationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenUnregisterations bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Unregisterations {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "unregisterations":
+			seenUnregisterations = true
+			if err := json.UnmarshalDecode(dec, &s.Unregisterations); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenUnregisterations {
 		return fmt.Errorf("required key 'unregisterations' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Unregisterations []*Unregistration `json:"unregisterations"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type InitializeParams struct {
@@ -3473,44 +5012,87 @@ type InitializeParams struct {
 	WorkspaceFolders *WorkspaceFoldersOrNull `json:"workspaceFolders,omitzero"`
 }
 
-func (s *InitializeParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		ProcessId    requiredProp `json:"processId"`
-		RootUri      requiredProp `json:"rootUri"`
-		Capabilities requiredProp `json:"capabilities"`
-	}
+func (s *InitializeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenProcessId    bool
+		seenRootUri      bool
+		seenCapabilities bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.ProcessId {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "processId":
+			seenProcessId = true
+			if err := json.UnmarshalDecode(dec, &s.ProcessId); err != nil {
+				return err
+			}
+		case "clientInfo":
+			if err := json.UnmarshalDecode(dec, &s.ClientInfo); err != nil {
+				return err
+			}
+		case "locale":
+			if err := json.UnmarshalDecode(dec, &s.Locale); err != nil {
+				return err
+			}
+		case "rootPath":
+			if err := json.UnmarshalDecode(dec, &s.RootPath); err != nil {
+				return err
+			}
+		case "rootUri":
+			seenRootUri = true
+			if err := json.UnmarshalDecode(dec, &s.RootUri); err != nil {
+				return err
+			}
+		case "capabilities":
+			seenCapabilities = true
+			if err := json.UnmarshalDecode(dec, &s.Capabilities); err != nil {
+				return err
+			}
+		case "initializationOptions":
+			if err := json.UnmarshalDecode(dec, &s.InitializationOptions); err != nil {
+				return err
+			}
+		case "trace":
+			if err := json.UnmarshalDecode(dec, &s.Trace); err != nil {
+				return err
+			}
+		case "workspaceFolders":
+			if err := json.UnmarshalDecode(dec, &s.WorkspaceFolders); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenProcessId {
 		return fmt.Errorf("required key 'processId' is missing")
 	}
-	if !keys.RootUri {
+	if !seenRootUri {
 		return fmt.Errorf("required key 'rootUri' is missing")
 	}
-	if !keys.Capabilities {
+	if !seenCapabilities {
 		return fmt.Errorf("required key 'capabilities' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken         *IntegerOrString        `json:"workDoneToken,omitzero"`
-		ProcessId             IntegerOrNull           `json:"processId"`
-		ClientInfo            *ClientInfo             `json:"clientInfo,omitzero"`
-		Locale                *string                 `json:"locale,omitzero"`
-		RootPath              *StringOrNull           `json:"rootPath,omitzero"`
-		RootUri               DocumentUriOrNull       `json:"rootUri"`
-		Capabilities          *ClientCapabilities     `json:"capabilities"`
-		InitializationOptions *any                    `json:"initializationOptions,omitzero"`
-		Trace                 *TraceValue             `json:"trace,omitzero"`
-		WorkspaceFolders      *WorkspaceFoldersOrNull `json:"workspaceFolders,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The result returned from an initialize request.
@@ -3524,28 +5106,43 @@ type InitializeResult struct {
 	ServerInfo *ServerInfo `json:"serverInfo,omitzero"`
 }
 
-func (s *InitializeResult) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Capabilities requiredProp `json:"capabilities"`
-	}
+func (s *InitializeResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenCapabilities bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Capabilities {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "capabilities":
+			seenCapabilities = true
+			if err := json.UnmarshalDecode(dec, &s.Capabilities); err != nil {
+				return err
+			}
+		case "serverInfo":
+			if err := json.UnmarshalDecode(dec, &s.ServerInfo); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenCapabilities {
 		return fmt.Errorf("required key 'capabilities' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Capabilities *ServerCapabilities `json:"capabilities"`
-		ServerInfo   *ServerInfo         `json:"serverInfo,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The data type of the ResponseError if the
@@ -3558,27 +5155,39 @@ type InitializeError struct {
 	Retry bool `json:"retry"`
 }
 
-func (s *InitializeError) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Retry requiredProp `json:"retry"`
-	}
+func (s *InitializeError) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenRetry bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Retry {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "retry":
+			seenRetry = true
+			if err := json.UnmarshalDecode(dec, &s.Retry); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenRetry {
 		return fmt.Errorf("required key 'retry' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Retry bool `json:"retry"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type InitializedParams struct{}
@@ -3589,27 +5198,39 @@ type DidChangeConfigurationParams struct {
 	Settings any `json:"settings"`
 }
 
-func (s *DidChangeConfigurationParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Settings requiredProp `json:"settings"`
-	}
+func (s *DidChangeConfigurationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenSettings bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Settings {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "settings":
+			seenSettings = true
+			if err := json.UnmarshalDecode(dec, &s.Settings); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenSettings {
 		return fmt.Errorf("required key 'settings' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Settings any `json:"settings"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type DidChangeConfigurationRegistrationOptions struct {
@@ -3625,32 +5246,50 @@ type ShowMessageParams struct {
 	Message string `json:"message"`
 }
 
-func (s *ShowMessageParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Type    requiredProp `json:"type"`
-		Message requiredProp `json:"message"`
-	}
+func (s *ShowMessageParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenType    bool
+		seenMessage bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Type {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "type":
+			seenType = true
+			if err := json.UnmarshalDecode(dec, &s.Type); err != nil {
+				return err
+			}
+		case "message":
+			seenMessage = true
+			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenType {
 		return fmt.Errorf("required key 'type' is missing")
 	}
-	if !keys.Message {
+	if !seenMessage {
 		return fmt.Errorf("required key 'message' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Type    MessageType `json:"type"`
-		Message string      `json:"message"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type ShowMessageRequestParams struct {
@@ -3664,33 +5303,54 @@ type ShowMessageRequestParams struct {
 	Actions *[]*MessageActionItem `json:"actions,omitzero"`
 }
 
-func (s *ShowMessageRequestParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Type    requiredProp `json:"type"`
-		Message requiredProp `json:"message"`
-	}
+func (s *ShowMessageRequestParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenType    bool
+		seenMessage bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Type {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "type":
+			seenType = true
+			if err := json.UnmarshalDecode(dec, &s.Type); err != nil {
+				return err
+			}
+		case "message":
+			seenMessage = true
+			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
+				return err
+			}
+		case "actions":
+			if err := json.UnmarshalDecode(dec, &s.Actions); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenType {
 		return fmt.Errorf("required key 'type' is missing")
 	}
-	if !keys.Message {
+	if !seenMessage {
 		return fmt.Errorf("required key 'message' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Type    MessageType           `json:"type"`
-		Message string                `json:"message"`
-		Actions *[]*MessageActionItem `json:"actions,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type MessageActionItem struct {
@@ -3698,27 +5358,39 @@ type MessageActionItem struct {
 	Title string `json:"title"`
 }
 
-func (s *MessageActionItem) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Title requiredProp `json:"title"`
-	}
+func (s *MessageActionItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenTitle bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Title {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "title":
+			seenTitle = true
+			if err := json.UnmarshalDecode(dec, &s.Title); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTitle {
 		return fmt.Errorf("required key 'title' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Title string `json:"title"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The log message parameters.
@@ -3730,32 +5402,50 @@ type LogMessageParams struct {
 	Message string `json:"message"`
 }
 
-func (s *LogMessageParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Type    requiredProp `json:"type"`
-		Message requiredProp `json:"message"`
-	}
+func (s *LogMessageParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenType    bool
+		seenMessage bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Type {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "type":
+			seenType = true
+			if err := json.UnmarshalDecode(dec, &s.Type); err != nil {
+				return err
+			}
+		case "message":
+			seenMessage = true
+			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenType {
 		return fmt.Errorf("required key 'type' is missing")
 	}
-	if !keys.Message {
+	if !seenMessage {
 		return fmt.Errorf("required key 'message' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Type    MessageType `json:"type"`
-		Message string      `json:"message"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameters sent in an open text document notification
@@ -3764,27 +5454,39 @@ type DidOpenTextDocumentParams struct {
 	TextDocument *TextDocumentItem `json:"textDocument"`
 }
 
-func (s *DidOpenTextDocumentParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-	}
+func (s *DidOpenTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenTextDocument bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TextDocument *TextDocumentItem `json:"textDocument"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The change text document notification's parameters.
@@ -3808,32 +5510,50 @@ type DidChangeTextDocumentParams struct {
 	ContentChanges []TextDocumentContentChangePartialOrWholeDocument `json:"contentChanges"`
 }
 
-func (s *DidChangeTextDocumentParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument   requiredProp `json:"textDocument"`
-		ContentChanges requiredProp `json:"contentChanges"`
-	}
+func (s *DidChangeTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument   bool
+		seenContentChanges bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "contentChanges":
+			seenContentChanges = true
+			if err := json.UnmarshalDecode(dec, &s.ContentChanges); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.ContentChanges {
+	if !seenContentChanges {
 		return fmt.Errorf("required key 'contentChanges' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TextDocument   VersionedTextDocumentIdentifier                   `json:"textDocument"`
-		ContentChanges []TextDocumentContentChangePartialOrWholeDocument `json:"contentChanges"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Describe options to be used when registered for text document change events.
@@ -3846,32 +5566,50 @@ type TextDocumentChangeRegistrationOptions struct {
 	SyncKind TextDocumentSyncKind `json:"syncKind"`
 }
 
-func (s *TextDocumentChangeRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-		SyncKind         requiredProp `json:"syncKind"`
-	}
+func (s *TextDocumentChangeRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenDocumentSelector bool
+		seenSyncKind         bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "syncKind":
+			seenSyncKind = true
+			if err := json.UnmarshalDecode(dec, &s.SyncKind); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
-	if !keys.SyncKind {
+	if !seenSyncKind {
 		return fmt.Errorf("required key 'syncKind' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		SyncKind         TextDocumentSyncKind   `json:"syncKind"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameters sent in a close text document notification
@@ -3880,27 +5618,39 @@ type DidCloseTextDocumentParams struct {
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
-func (s *DidCloseTextDocumentParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-	}
+func (s *DidCloseTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenTextDocument bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TextDocument TextDocumentIdentifier `json:"textDocument"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameters sent in a save text document notification
@@ -3913,28 +5663,43 @@ type DidSaveTextDocumentParams struct {
 	Text *string `json:"text,omitzero"`
 }
 
-func (s *DidSaveTextDocumentParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-	}
+func (s *DidSaveTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenTextDocument bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "text":
+			if err := json.UnmarshalDecode(dec, &s.Text); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TextDocument TextDocumentIdentifier `json:"textDocument"`
-		Text         *string                `json:"text,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Save registration options.
@@ -3947,28 +5712,43 @@ type TextDocumentSaveRegistrationOptions struct {
 	IncludeText *bool `json:"includeText,omitzero"`
 }
 
-func (s *TextDocumentSaveRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *TextDocumentSaveRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "includeText":
+			if err := json.UnmarshalDecode(dec, &s.IncludeText); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		IncludeText      *bool                  `json:"includeText,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameters sent in a will save text document notification.
@@ -3980,32 +5760,50 @@ type WillSaveTextDocumentParams struct {
 	Reason TextDocumentSaveReason `json:"reason"`
 }
 
-func (s *WillSaveTextDocumentParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Reason       requiredProp `json:"reason"`
-	}
+func (s *WillSaveTextDocumentParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenReason       bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "reason":
+			seenReason = true
+			if err := json.UnmarshalDecode(dec, &s.Reason); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Reason {
+	if !seenReason {
 		return fmt.Errorf("required key 'reason' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TextDocument TextDocumentIdentifier `json:"textDocument"`
-		Reason       TextDocumentSaveReason `json:"reason"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A text edit applicable to a text document.
@@ -4019,32 +5817,50 @@ type TextEdit struct {
 	NewText string `json:"newText"`
 }
 
-func (s *TextEdit) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Range   requiredProp `json:"range"`
-		NewText requiredProp `json:"newText"`
-	}
+func (s *TextEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenRange   bool
+		seenNewText bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Range {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "newText":
+			seenNewText = true
+			if err := json.UnmarshalDecode(dec, &s.NewText); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if !keys.NewText {
+	if !seenNewText {
 		return fmt.Errorf("required key 'newText' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Range   Range  `json:"range"`
-		NewText string `json:"newText"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The watched files change notification's parameters.
@@ -4053,27 +5869,39 @@ type DidChangeWatchedFilesParams struct {
 	Changes []*FileEvent `json:"changes"`
 }
 
-func (s *DidChangeWatchedFilesParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Changes requiredProp `json:"changes"`
-	}
+func (s *DidChangeWatchedFilesParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenChanges bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Changes {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "changes":
+			seenChanges = true
+			if err := json.UnmarshalDecode(dec, &s.Changes); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenChanges {
 		return fmt.Errorf("required key 'changes' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Changes []*FileEvent `json:"changes"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Describe options to be used when registered for text document change events.
@@ -4082,27 +5910,39 @@ type DidChangeWatchedFilesRegistrationOptions struct {
 	Watchers []*FileSystemWatcher `json:"watchers"`
 }
 
-func (s *DidChangeWatchedFilesRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Watchers requiredProp `json:"watchers"`
-	}
+func (s *DidChangeWatchedFilesRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenWatchers bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Watchers {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "watchers":
+			seenWatchers = true
+			if err := json.UnmarshalDecode(dec, &s.Watchers); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenWatchers {
 		return fmt.Errorf("required key 'watchers' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Watchers []*FileSystemWatcher `json:"watchers"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The publish diagnostic notification's parameters.
@@ -4119,33 +5959,54 @@ type PublishDiagnosticsParams struct {
 	Diagnostics []*Diagnostic `json:"diagnostics"`
 }
 
-func (s *PublishDiagnosticsParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Uri         requiredProp `json:"uri"`
-		Diagnostics requiredProp `json:"diagnostics"`
-	}
+func (s *PublishDiagnosticsParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenUri         bool
+		seenDiagnostics bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Uri {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		case "version":
+			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
+				return err
+			}
+		case "diagnostics":
+			seenDiagnostics = true
+			if err := json.UnmarshalDecode(dec, &s.Diagnostics); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if !keys.Diagnostics {
+	if !seenDiagnostics {
 		return fmt.Errorf("required key 'diagnostics' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Uri         DocumentUri   `json:"uri"`
-		Version     *int32        `json:"version,omitzero"`
-		Diagnostics []*Diagnostic `json:"diagnostics"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Completion parameters
@@ -4168,35 +6029,62 @@ type CompletionParams struct {
 	Context *CompletionContext `json:"context,omitzero"`
 }
 
-func (s *CompletionParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Position     requiredProp `json:"position"`
-	}
+func (s *CompletionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenPosition     bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "position":
+			seenPosition = true
+			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
+				return err
+			}
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		case "context":
+			if err := json.UnmarshalDecode(dec, &s.Context); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Position {
+	if !seenPosition {
 		return fmt.Errorf("required key 'position' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TextDocument       TextDocumentIdentifier `json:"textDocument"`
-		Position           Position               `json:"position"`
-		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
-		Context            *CompletionContext     `json:"context,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A completion item represents a text snippet that is
@@ -4340,45 +6228,111 @@ type CompletionItem struct {
 	Data *any `json:"data,omitzero"`
 }
 
-func (s *CompletionItem) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Label requiredProp `json:"label"`
-	}
+func (s *CompletionItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenLabel bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Label {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "label":
+			seenLabel = true
+			if err := json.UnmarshalDecode(dec, &s.Label); err != nil {
+				return err
+			}
+		case "labelDetails":
+			if err := json.UnmarshalDecode(dec, &s.LabelDetails); err != nil {
+				return err
+			}
+		case "kind":
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "tags":
+			if err := json.UnmarshalDecode(dec, &s.Tags); err != nil {
+				return err
+			}
+		case "detail":
+			if err := json.UnmarshalDecode(dec, &s.Detail); err != nil {
+				return err
+			}
+		case "documentation":
+			if err := json.UnmarshalDecode(dec, &s.Documentation); err != nil {
+				return err
+			}
+		case "deprecated":
+			if err := json.UnmarshalDecode(dec, &s.Deprecated); err != nil {
+				return err
+			}
+		case "preselect":
+			if err := json.UnmarshalDecode(dec, &s.Preselect); err != nil {
+				return err
+			}
+		case "sortText":
+			if err := json.UnmarshalDecode(dec, &s.SortText); err != nil {
+				return err
+			}
+		case "filterText":
+			if err := json.UnmarshalDecode(dec, &s.FilterText); err != nil {
+				return err
+			}
+		case "insertText":
+			if err := json.UnmarshalDecode(dec, &s.InsertText); err != nil {
+				return err
+			}
+		case "insertTextFormat":
+			if err := json.UnmarshalDecode(dec, &s.InsertTextFormat); err != nil {
+				return err
+			}
+		case "insertTextMode":
+			if err := json.UnmarshalDecode(dec, &s.InsertTextMode); err != nil {
+				return err
+			}
+		case "textEdit":
+			if err := json.UnmarshalDecode(dec, &s.TextEdit); err != nil {
+				return err
+			}
+		case "textEditText":
+			if err := json.UnmarshalDecode(dec, &s.TextEditText); err != nil {
+				return err
+			}
+		case "additionalTextEdits":
+			if err := json.UnmarshalDecode(dec, &s.AdditionalTextEdits); err != nil {
+				return err
+			}
+		case "commitCharacters":
+			if err := json.UnmarshalDecode(dec, &s.CommitCharacters); err != nil {
+				return err
+			}
+		case "command":
+			if err := json.UnmarshalDecode(dec, &s.Command); err != nil {
+				return err
+			}
+		case "data":
+			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenLabel {
 		return fmt.Errorf("required key 'label' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Label               string                       `json:"label"`
-		LabelDetails        *CompletionItemLabelDetails  `json:"labelDetails,omitzero"`
-		Kind                *CompletionItemKind          `json:"kind,omitzero"`
-		Tags                *[]CompletionItemTag         `json:"tags,omitzero"`
-		Detail              *string                      `json:"detail,omitzero"`
-		Documentation       *StringOrMarkupContent       `json:"documentation,omitzero"`
-		Deprecated          *bool                        `json:"deprecated,omitzero"`
-		Preselect           *bool                        `json:"preselect,omitzero"`
-		SortText            *string                      `json:"sortText,omitzero"`
-		FilterText          *string                      `json:"filterText,omitzero"`
-		InsertText          *string                      `json:"insertText,omitzero"`
-		InsertTextFormat    *InsertTextFormat            `json:"insertTextFormat,omitzero"`
-		InsertTextMode      *InsertTextMode              `json:"insertTextMode,omitzero"`
-		TextEdit            *TextEditOrInsertReplaceEdit `json:"textEdit,omitzero"`
-		TextEditText        *string                      `json:"textEditText,omitzero"`
-		AdditionalTextEdits *[]*TextEdit                 `json:"additionalTextEdits,omitzero"`
-		CommitCharacters    *[]string                    `json:"commitCharacters,omitzero"`
-		Command             *Command                     `json:"command,omitzero"`
-		Data                *any                         `json:"data,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Represents a collection of items to be presented
@@ -4430,34 +6384,58 @@ type CompletionList struct {
 	Items []*CompletionItem `json:"items"`
 }
 
-func (s *CompletionList) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		IsIncomplete requiredProp `json:"isIncomplete"`
-		Items        requiredProp `json:"items"`
-	}
+func (s *CompletionList) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenIsIncomplete bool
+		seenItems        bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.IsIncomplete {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "isIncomplete":
+			seenIsIncomplete = true
+			if err := json.UnmarshalDecode(dec, &s.IsIncomplete); err != nil {
+				return err
+			}
+		case "itemDefaults":
+			if err := json.UnmarshalDecode(dec, &s.ItemDefaults); err != nil {
+				return err
+			}
+		case "applyKind":
+			if err := json.UnmarshalDecode(dec, &s.ApplyKind); err != nil {
+				return err
+			}
+		case "items":
+			seenItems = true
+			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenIsIncomplete {
 		return fmt.Errorf("required key 'isIncomplete' is missing")
 	}
-	if !keys.Items {
+	if !seenItems {
 		return fmt.Errorf("required key 'items' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		IsIncomplete bool                      `json:"isIncomplete"`
-		ItemDefaults *CompletionItemDefaults   `json:"itemDefaults,omitzero"`
-		ApplyKind    *CompletionItemApplyKinds `json:"applyKind,omitzero"`
-		Items        []*CompletionItem         `json:"items"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Registration options for a CompletionRequest.
@@ -4499,32 +6477,59 @@ type CompletionRegistrationOptions struct {
 	CompletionItem *ServerCompletionItemOptions `json:"completionItem,omitzero"`
 }
 
-func (s *CompletionRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *CompletionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "triggerCharacters":
+			if err := json.UnmarshalDecode(dec, &s.TriggerCharacters); err != nil {
+				return err
+			}
+		case "allCommitCharacters":
+			if err := json.UnmarshalDecode(dec, &s.AllCommitCharacters); err != nil {
+				return err
+			}
+		case "resolveProvider":
+			if err := json.UnmarshalDecode(dec, &s.ResolveProvider); err != nil {
+				return err
+			}
+		case "completionItem":
+			if err := json.UnmarshalDecode(dec, &s.CompletionItem); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector    DocumentSelectorOrNull       `json:"documentSelector"`
-		WorkDoneProgress    *bool                        `json:"workDoneProgress,omitzero"`
-		TriggerCharacters   *[]string                    `json:"triggerCharacters,omitzero"`
-		AllCommitCharacters *[]string                    `json:"allCommitCharacters,omitzero"`
-		ResolveProvider     *bool                        `json:"resolveProvider,omitzero"`
-		CompletionItem      *ServerCompletionItemOptions `json:"completionItem,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Parameters for a HoverRequest.
@@ -4539,33 +6544,54 @@ type HoverParams struct {
 	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
 }
 
-func (s *HoverParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Position     requiredProp `json:"position"`
-	}
+func (s *HoverParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenPosition     bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "position":
+			seenPosition = true
+			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
+				return err
+			}
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Position {
+	if !seenPosition {
 		return fmt.Errorf("required key 'position' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TextDocument  TextDocumentIdentifier `json:"textDocument"`
-		Position      Position               `json:"position"`
-		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The result of a hover request.
@@ -4578,28 +6604,43 @@ type Hover struct {
 	Range *Range `json:"range,omitzero"`
 }
 
-func (s *Hover) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Contents requiredProp `json:"contents"`
-	}
+func (s *Hover) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenContents bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Contents {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "contents":
+			seenContents = true
+			if err := json.UnmarshalDecode(dec, &s.Contents); err != nil {
+				return err
+			}
+		case "range":
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenContents {
 		return fmt.Errorf("required key 'contents' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Contents MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings `json:"contents"`
-		Range    *Range                                                         `json:"range,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Registration options for a HoverRequest.
@@ -4611,28 +6652,43 @@ type HoverRegistrationOptions struct {
 	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
-func (s *HoverRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *HoverRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Parameters for a SignatureHelpRequest.
@@ -4653,34 +6709,58 @@ type SignatureHelpParams struct {
 	Context *SignatureHelpContext `json:"context,omitzero"`
 }
 
-func (s *SignatureHelpParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Position     requiredProp `json:"position"`
-	}
+func (s *SignatureHelpParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenPosition     bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "position":
+			seenPosition = true
+			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
+				return err
+			}
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "context":
+			if err := json.UnmarshalDecode(dec, &s.Context); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Position {
+	if !seenPosition {
 		return fmt.Errorf("required key 'position' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TextDocument  TextDocumentIdentifier `json:"textDocument"`
-		Position      Position               `json:"position"`
-		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
-		Context       *SignatureHelpContext  `json:"context,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Signature help represents the signature of something
@@ -4720,29 +6800,47 @@ type SignatureHelp struct {
 	ActiveParameter *UintegerOrNull `json:"activeParameter,omitzero"`
 }
 
-func (s *SignatureHelp) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Signatures requiredProp `json:"signatures"`
-	}
+func (s *SignatureHelp) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenSignatures bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Signatures {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "signatures":
+			seenSignatures = true
+			if err := json.UnmarshalDecode(dec, &s.Signatures); err != nil {
+				return err
+			}
+		case "activeSignature":
+			if err := json.UnmarshalDecode(dec, &s.ActiveSignature); err != nil {
+				return err
+			}
+		case "activeParameter":
+			if err := json.UnmarshalDecode(dec, &s.ActiveParameter); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenSignatures {
 		return fmt.Errorf("required key 'signatures' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Signatures      []*SignatureInformation `json:"signatures"`
-		ActiveSignature *uint32                 `json:"activeSignature,omitzero"`
-		ActiveParameter *UintegerOrNull         `json:"activeParameter,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Registration options for a SignatureHelpRequest.
@@ -4765,30 +6863,51 @@ type SignatureHelpRegistrationOptions struct {
 	RetriggerCharacters *[]string `json:"retriggerCharacters,omitzero"`
 }
 
-func (s *SignatureHelpRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *SignatureHelpRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "triggerCharacters":
+			if err := json.UnmarshalDecode(dec, &s.TriggerCharacters); err != nil {
+				return err
+			}
+		case "retriggerCharacters":
+			if err := json.UnmarshalDecode(dec, &s.RetriggerCharacters); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector    DocumentSelectorOrNull `json:"documentSelector"`
-		WorkDoneProgress    *bool                  `json:"workDoneProgress,omitzero"`
-		TriggerCharacters   *[]string              `json:"triggerCharacters,omitzero"`
-		RetriggerCharacters *[]string              `json:"retriggerCharacters,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Parameters for a DefinitionRequest.
@@ -4807,34 +6926,58 @@ type DefinitionParams struct {
 	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 }
 
-func (s *DefinitionParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Position     requiredProp `json:"position"`
-	}
+func (s *DefinitionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenPosition     bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "position":
+			seenPosition = true
+			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
+				return err
+			}
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Position {
+	if !seenPosition {
 		return fmt.Errorf("required key 'position' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TextDocument       TextDocumentIdentifier `json:"textDocument"`
-		Position           Position               `json:"position"`
-		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Registration options for a DefinitionRequest.
@@ -4846,28 +6989,43 @@ type DefinitionRegistrationOptions struct {
 	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
-func (s *DefinitionRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *DefinitionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Parameters for a ReferencesRequest.
@@ -4888,39 +7046,67 @@ type ReferenceParams struct {
 	Context *ReferenceContext `json:"context"`
 }
 
-func (s *ReferenceParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Position     requiredProp `json:"position"`
-		Context      requiredProp `json:"context"`
-	}
+func (s *ReferenceParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenPosition     bool
+		seenContext      bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "position":
+			seenPosition = true
+			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
+				return err
+			}
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		case "context":
+			seenContext = true
+			if err := json.UnmarshalDecode(dec, &s.Context); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Position {
+	if !seenPosition {
 		return fmt.Errorf("required key 'position' is missing")
 	}
-	if !keys.Context {
+	if !seenContext {
 		return fmt.Errorf("required key 'context' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TextDocument       TextDocumentIdentifier `json:"textDocument"`
-		Position           Position               `json:"position"`
-		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
-		Context            *ReferenceContext      `json:"context"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Registration options for a ReferencesRequest.
@@ -4932,28 +7118,43 @@ type ReferenceRegistrationOptions struct {
 	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
-func (s *ReferenceRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *ReferenceRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Parameters for a DocumentHighlightRequest.
@@ -4972,34 +7173,58 @@ type DocumentHighlightParams struct {
 	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 }
 
-func (s *DocumentHighlightParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Position     requiredProp `json:"position"`
-	}
+func (s *DocumentHighlightParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenPosition     bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "position":
+			seenPosition = true
+			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
+				return err
+			}
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Position {
+	if !seenPosition {
 		return fmt.Errorf("required key 'position' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TextDocument       TextDocumentIdentifier `json:"textDocument"`
-		Position           Position               `json:"position"`
-		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A document highlight is a range inside a text document which deserves
@@ -5013,28 +7238,43 @@ type DocumentHighlight struct {
 	Kind *DocumentHighlightKind `json:"kind,omitzero"`
 }
 
-func (s *DocumentHighlight) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Range requiredProp `json:"range"`
-	}
+func (s *DocumentHighlight) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenRange bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Range {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "kind":
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Range Range                  `json:"range"`
-		Kind  *DocumentHighlightKind `json:"kind,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Registration options for a DocumentHighlightRequest.
@@ -5046,28 +7286,43 @@ type DocumentHighlightRegistrationOptions struct {
 	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
-func (s *DocumentHighlightRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *DocumentHighlightRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Parameters for a DocumentSymbolRequest.
@@ -5083,29 +7338,47 @@ type DocumentSymbolParams struct {
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
-func (s *DocumentSymbolParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-	}
+func (s *DocumentSymbolParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenTextDocument bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
-		TextDocument       TextDocumentIdentifier `json:"textDocument"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Represents information about programming constructs like variables, classes,
@@ -5145,40 +7418,71 @@ type SymbolInformation struct {
 	Location Location `json:"location"`
 }
 
-func (s *SymbolInformation) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Name     requiredProp `json:"name"`
-		Kind     requiredProp `json:"kind"`
-		Location requiredProp `json:"location"`
-	}
+func (s *SymbolInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenName     bool
+		seenKind     bool
+		seenLocation bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Name {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "name":
+			seenName = true
+			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
+				return err
+			}
+		case "kind":
+			seenKind = true
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "tags":
+			if err := json.UnmarshalDecode(dec, &s.Tags); err != nil {
+				return err
+			}
+		case "containerName":
+			if err := json.UnmarshalDecode(dec, &s.ContainerName); err != nil {
+				return err
+			}
+		case "deprecated":
+			if err := json.UnmarshalDecode(dec, &s.Deprecated); err != nil {
+				return err
+			}
+		case "location":
+			seenLocation = true
+			if err := json.UnmarshalDecode(dec, &s.Location); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenName {
 		return fmt.Errorf("required key 'name' is missing")
 	}
-	if !keys.Kind {
+	if !seenKind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if !keys.Location {
+	if !seenLocation {
 		return fmt.Errorf("required key 'location' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Name          string       `json:"name"`
-		Kind          SymbolKind   `json:"kind"`
-		Tags          *[]SymbolTag `json:"tags,omitzero"`
-		ContainerName *string      `json:"containerName,omitzero"`
-		Deprecated    *bool        `json:"deprecated,omitzero"`
-		Location      Location     `json:"location"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Represents programming constructs like variables, classes, interfaces etc.
@@ -5219,46 +7523,84 @@ type DocumentSymbol struct {
 	Children *[]*DocumentSymbol `json:"children,omitzero"`
 }
 
-func (s *DocumentSymbol) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Name           requiredProp `json:"name"`
-		Kind           requiredProp `json:"kind"`
-		Range          requiredProp `json:"range"`
-		SelectionRange requiredProp `json:"selectionRange"`
-	}
+func (s *DocumentSymbol) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenName           bool
+		seenKind           bool
+		seenRange          bool
+		seenSelectionRange bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Name {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "name":
+			seenName = true
+			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
+				return err
+			}
+		case "detail":
+			if err := json.UnmarshalDecode(dec, &s.Detail); err != nil {
+				return err
+			}
+		case "kind":
+			seenKind = true
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "tags":
+			if err := json.UnmarshalDecode(dec, &s.Tags); err != nil {
+				return err
+			}
+		case "deprecated":
+			if err := json.UnmarshalDecode(dec, &s.Deprecated); err != nil {
+				return err
+			}
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "selectionRange":
+			seenSelectionRange = true
+			if err := json.UnmarshalDecode(dec, &s.SelectionRange); err != nil {
+				return err
+			}
+		case "children":
+			if err := json.UnmarshalDecode(dec, &s.Children); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenName {
 		return fmt.Errorf("required key 'name' is missing")
 	}
-	if !keys.Kind {
+	if !seenKind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if !keys.Range {
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if !keys.SelectionRange {
+	if !seenSelectionRange {
 		return fmt.Errorf("required key 'selectionRange' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Name           string             `json:"name"`
-		Detail         *string            `json:"detail,omitzero"`
-		Kind           SymbolKind         `json:"kind"`
-		Tags           *[]SymbolTag       `json:"tags,omitzero"`
-		Deprecated     *bool              `json:"deprecated,omitzero"`
-		Range          Range              `json:"range"`
-		SelectionRange Range              `json:"selectionRange"`
-		Children       *[]*DocumentSymbol `json:"children,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Registration options for a DocumentSymbolRequest.
@@ -5276,29 +7618,47 @@ type DocumentSymbolRegistrationOptions struct {
 	Label *string `json:"label,omitzero"`
 }
 
-func (s *DocumentSymbolRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *DocumentSymbolRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "label":
+			if err := json.UnmarshalDecode(dec, &s.Label); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
-		Label            *string                `json:"label,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameters of a CodeActionRequest.
@@ -5320,39 +7680,67 @@ type CodeActionParams struct {
 	Context *CodeActionContext `json:"context"`
 }
 
-func (s *CodeActionParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Range        requiredProp `json:"range"`
-		Context      requiredProp `json:"context"`
-	}
+func (s *CodeActionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenRange        bool
+		seenContext      bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "context":
+			seenContext = true
+			if err := json.UnmarshalDecode(dec, &s.Context); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Range {
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if !keys.Context {
+	if !seenContext {
 		return fmt.Errorf("required key 'context' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
-		TextDocument       TextDocumentIdentifier `json:"textDocument"`
-		Range              Range                  `json:"range"`
-		Context            *CodeActionContext     `json:"context"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Represents a reference to a command. Provides a title which
@@ -5378,34 +7766,58 @@ type Command struct {
 	Arguments *[]any `json:"arguments,omitzero"`
 }
 
-func (s *Command) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Title   requiredProp `json:"title"`
-		Command requiredProp `json:"command"`
-	}
+func (s *Command) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTitle   bool
+		seenCommand bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Title {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "title":
+			seenTitle = true
+			if err := json.UnmarshalDecode(dec, &s.Title); err != nil {
+				return err
+			}
+		case "tooltip":
+			if err := json.UnmarshalDecode(dec, &s.Tooltip); err != nil {
+				return err
+			}
+		case "command":
+			seenCommand = true
+			if err := json.UnmarshalDecode(dec, &s.Command); err != nil {
+				return err
+			}
+		case "arguments":
+			if err := json.UnmarshalDecode(dec, &s.Arguments); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTitle {
 		return fmt.Errorf("required key 'title' is missing")
 	}
-	if !keys.Command {
+	if !seenCommand {
 		return fmt.Errorf("required key 'command' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Title     string  `json:"title"`
-		Tooltip   *string `json:"tooltip,omitzero"`
-		Command   string  `json:"command"`
-		Arguments *[]any  `json:"arguments,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A code action represents a change that can be performed in code, e.g. to fix a problem or
@@ -5470,35 +7882,71 @@ type CodeAction struct {
 	Tags *[]CodeActionTag `json:"tags,omitzero"`
 }
 
-func (s *CodeAction) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Title requiredProp `json:"title"`
-	}
+func (s *CodeAction) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenTitle bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Title {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "title":
+			seenTitle = true
+			if err := json.UnmarshalDecode(dec, &s.Title); err != nil {
+				return err
+			}
+		case "kind":
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "diagnostics":
+			if err := json.UnmarshalDecode(dec, &s.Diagnostics); err != nil {
+				return err
+			}
+		case "isPreferred":
+			if err := json.UnmarshalDecode(dec, &s.IsPreferred); err != nil {
+				return err
+			}
+		case "disabled":
+			if err := json.UnmarshalDecode(dec, &s.Disabled); err != nil {
+				return err
+			}
+		case "edit":
+			if err := json.UnmarshalDecode(dec, &s.Edit); err != nil {
+				return err
+			}
+		case "command":
+			if err := json.UnmarshalDecode(dec, &s.Command); err != nil {
+				return err
+			}
+		case "data":
+			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
+				return err
+			}
+		case "tags":
+			if err := json.UnmarshalDecode(dec, &s.Tags); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTitle {
 		return fmt.Errorf("required key 'title' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Title       string              `json:"title"`
-		Kind        *CodeActionKind     `json:"kind,omitzero"`
-		Diagnostics *[]*Diagnostic      `json:"diagnostics,omitzero"`
-		IsPreferred *bool               `json:"isPreferred,omitzero"`
-		Disabled    *CodeActionDisabled `json:"disabled,omitzero"`
-		Edit        *WorkspaceEdit      `json:"edit,omitzero"`
-		Command     *Command            `json:"command,omitzero"`
-		Data        *any                `json:"data,omitzero"`
-		Tags        *[]CodeActionTag    `json:"tags,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Registration options for a CodeActionRequest.
@@ -5540,31 +7988,55 @@ type CodeActionRegistrationOptions struct {
 	ResolveProvider *bool `json:"resolveProvider,omitzero"`
 }
 
-func (s *CodeActionRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *CodeActionRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "codeActionKinds":
+			if err := json.UnmarshalDecode(dec, &s.CodeActionKinds); err != nil {
+				return err
+			}
+		case "documentation":
+			if err := json.UnmarshalDecode(dec, &s.Documentation); err != nil {
+				return err
+			}
+		case "resolveProvider":
+			if err := json.UnmarshalDecode(dec, &s.ResolveProvider); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector DocumentSelectorOrNull          `json:"documentSelector"`
-		WorkDoneProgress *bool                           `json:"workDoneProgress,omitzero"`
-		CodeActionKinds  *[]CodeActionKind               `json:"codeActionKinds,omitzero"`
-		Documentation    *[]*CodeActionKindDocumentation `json:"documentation,omitzero"`
-		ResolveProvider  *bool                           `json:"resolveProvider,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameters of a WorkspaceSymbolRequest.
@@ -5587,29 +8059,47 @@ type WorkspaceSymbolParams struct {
 	Query string `json:"query"`
 }
 
-func (s *WorkspaceSymbolParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Query requiredProp `json:"query"`
-	}
+func (s *WorkspaceSymbolParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenQuery bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Query {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		case "query":
+			seenQuery = true
+			if err := json.UnmarshalDecode(dec, &s.Query); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenQuery {
 		return fmt.Errorf("required key 'query' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken      *IntegerOrString `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
-		Query              string           `json:"query"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A special workspace symbol that supports locations without a range.
@@ -5647,40 +8137,71 @@ type WorkspaceSymbol struct {
 	Data *any `json:"data,omitzero"`
 }
 
-func (s *WorkspaceSymbol) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Name     requiredProp `json:"name"`
-		Kind     requiredProp `json:"kind"`
-		Location requiredProp `json:"location"`
-	}
+func (s *WorkspaceSymbol) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenName     bool
+		seenKind     bool
+		seenLocation bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Name {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "name":
+			seenName = true
+			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
+				return err
+			}
+		case "kind":
+			seenKind = true
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "tags":
+			if err := json.UnmarshalDecode(dec, &s.Tags); err != nil {
+				return err
+			}
+		case "containerName":
+			if err := json.UnmarshalDecode(dec, &s.ContainerName); err != nil {
+				return err
+			}
+		case "location":
+			seenLocation = true
+			if err := json.UnmarshalDecode(dec, &s.Location); err != nil {
+				return err
+			}
+		case "data":
+			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenName {
 		return fmt.Errorf("required key 'name' is missing")
 	}
-	if !keys.Kind {
+	if !seenKind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if !keys.Location {
+	if !seenLocation {
 		return fmt.Errorf("required key 'location' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Name          string                    `json:"name"`
-		Kind          SymbolKind                `json:"kind"`
-		Tags          *[]SymbolTag              `json:"tags,omitzero"`
-		ContainerName *string                   `json:"containerName,omitzero"`
-		Location      LocationOrLocationUriOnly `json:"location"`
-		Data          *any                      `json:"data,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Registration options for a WorkspaceSymbolRequest.
@@ -5707,29 +8228,47 @@ type CodeLensParams struct {
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
-func (s *CodeLensParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-	}
+func (s *CodeLensParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenTextDocument bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
-		TextDocument       TextDocumentIdentifier `json:"textDocument"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A code lens represents a command that should be shown along with
@@ -5749,29 +8288,47 @@ type CodeLens struct {
 	Data *any `json:"data,omitzero"`
 }
 
-func (s *CodeLens) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Range requiredProp `json:"range"`
-	}
+func (s *CodeLens) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenRange bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Range {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "command":
+			if err := json.UnmarshalDecode(dec, &s.Command); err != nil {
+				return err
+			}
+		case "data":
+			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Range   Range    `json:"range"`
-		Command *Command `json:"command,omitzero"`
-		Data    *any     `json:"data,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Registration options for a CodeLensRequest.
@@ -5786,29 +8343,47 @@ type CodeLensRegistrationOptions struct {
 	ResolveProvider *bool `json:"resolveProvider,omitzero"`
 }
 
-func (s *CodeLensRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *CodeLensRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "resolveProvider":
+			if err := json.UnmarshalDecode(dec, &s.ResolveProvider); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
-		ResolveProvider  *bool                  `json:"resolveProvider,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameters of a DocumentLinkRequest.
@@ -5824,29 +8399,47 @@ type DocumentLinkParams struct {
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
-func (s *DocumentLinkParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-	}
+func (s *DocumentLinkParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenTextDocument bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "partialResultToken":
+			if err := json.UnmarshalDecode(dec, &s.PartialResultToken); err != nil {
+				return err
+			}
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken      *IntegerOrString       `json:"workDoneToken,omitzero"`
-		PartialResultToken *IntegerOrString       `json:"partialResultToken,omitzero"`
-		TextDocument       TextDocumentIdentifier `json:"textDocument"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A document link is a range in a text document that links to an internal or external resource, like another
@@ -5872,30 +8465,51 @@ type DocumentLink struct {
 	Data *any `json:"data,omitzero"`
 }
 
-func (s *DocumentLink) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Range requiredProp `json:"range"`
-	}
+func (s *DocumentLink) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenRange bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Range {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "target":
+			if err := json.UnmarshalDecode(dec, &s.Target); err != nil {
+				return err
+			}
+		case "tooltip":
+			if err := json.UnmarshalDecode(dec, &s.Tooltip); err != nil {
+				return err
+			}
+		case "data":
+			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Range   Range   `json:"range"`
-		Target  *URI    `json:"target,omitzero"`
-		Tooltip *string `json:"tooltip,omitzero"`
-		Data    *any    `json:"data,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Registration options for a DocumentLinkRequest.
@@ -5910,29 +8524,47 @@ type DocumentLinkRegistrationOptions struct {
 	ResolveProvider *bool `json:"resolveProvider,omitzero"`
 }
 
-func (s *DocumentLinkRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *DocumentLinkRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "resolveProvider":
+			if err := json.UnmarshalDecode(dec, &s.ResolveProvider); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
-		ResolveProvider  *bool                  `json:"resolveProvider,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameters of a DocumentFormattingRequest.
@@ -5947,33 +8579,54 @@ type DocumentFormattingParams struct {
 	Options *FormattingOptions `json:"options"`
 }
 
-func (s *DocumentFormattingParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Options      requiredProp `json:"options"`
-	}
+func (s *DocumentFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenOptions      bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "options":
+			seenOptions = true
+			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Options {
+	if !seenOptions {
 		return fmt.Errorf("required key 'options' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
-		TextDocument  TextDocumentIdentifier `json:"textDocument"`
-		Options       *FormattingOptions     `json:"options"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Registration options for a DocumentFormattingRequest.
@@ -5985,28 +8638,43 @@ type DocumentFormattingRegistrationOptions struct {
 	WorkDoneProgress *bool `json:"workDoneProgress,omitzero"`
 }
 
-func (s *DocumentFormattingRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *DocumentFormattingRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameters of a DocumentRangeFormattingRequest.
@@ -6024,38 +8692,63 @@ type DocumentRangeFormattingParams struct {
 	Options *FormattingOptions `json:"options"`
 }
 
-func (s *DocumentRangeFormattingParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Range        requiredProp `json:"range"`
-		Options      requiredProp `json:"options"`
-	}
+func (s *DocumentRangeFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenRange        bool
+		seenOptions      bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "options":
+			seenOptions = true
+			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Range {
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if !keys.Options {
+	if !seenOptions {
 		return fmt.Errorf("required key 'options' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
-		TextDocument  TextDocumentIdentifier `json:"textDocument"`
-		Range         Range                  `json:"range"`
-		Options       *FormattingOptions     `json:"options"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Registration options for a DocumentRangeFormattingRequest.
@@ -6074,29 +8767,47 @@ type DocumentRangeFormattingRegistrationOptions struct {
 	RangesSupport *bool `json:"rangesSupport,omitzero"`
 }
 
-func (s *DocumentRangeFormattingRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *DocumentRangeFormattingRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "rangesSupport":
+			if err := json.UnmarshalDecode(dec, &s.RangesSupport); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
-		RangesSupport    *bool                  `json:"rangesSupport,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameters of a DocumentRangesFormattingRequest.
@@ -6118,38 +8829,63 @@ type DocumentRangesFormattingParams struct {
 	Options *FormattingOptions `json:"options"`
 }
 
-func (s *DocumentRangesFormattingParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Ranges       requiredProp `json:"ranges"`
-		Options      requiredProp `json:"options"`
-	}
+func (s *DocumentRangesFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenRanges       bool
+		seenOptions      bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "ranges":
+			seenRanges = true
+			if err := json.UnmarshalDecode(dec, &s.Ranges); err != nil {
+				return err
+			}
+		case "options":
+			seenOptions = true
+			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Ranges {
+	if !seenRanges {
 		return fmt.Errorf("required key 'ranges' is missing")
 	}
-	if !keys.Options {
+	if !seenOptions {
 		return fmt.Errorf("required key 'options' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
-		TextDocument  TextDocumentIdentifier `json:"textDocument"`
-		Ranges        []Range                `json:"ranges"`
-		Options       *FormattingOptions     `json:"options"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameters of a DocumentOnTypeFormattingRequest.
@@ -6172,42 +8908,68 @@ type DocumentOnTypeFormattingParams struct {
 	Options *FormattingOptions `json:"options"`
 }
 
-func (s *DocumentOnTypeFormattingParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Position     requiredProp `json:"position"`
-		Ch           requiredProp `json:"ch"`
-		Options      requiredProp `json:"options"`
-	}
+func (s *DocumentOnTypeFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenPosition     bool
+		seenCh           bool
+		seenOptions      bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "position":
+			seenPosition = true
+			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
+				return err
+			}
+		case "ch":
+			seenCh = true
+			if err := json.UnmarshalDecode(dec, &s.Ch); err != nil {
+				return err
+			}
+		case "options":
+			seenOptions = true
+			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Position {
+	if !seenPosition {
 		return fmt.Errorf("required key 'position' is missing")
 	}
-	if !keys.Ch {
+	if !seenCh {
 		return fmt.Errorf("required key 'ch' is missing")
 	}
-	if !keys.Options {
+	if !seenOptions {
 		return fmt.Errorf("required key 'options' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TextDocument TextDocumentIdentifier `json:"textDocument"`
-		Position     Position               `json:"position"`
-		Ch           string                 `json:"ch"`
-		Options      *FormattingOptions     `json:"options"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Registration options for a DocumentOnTypeFormattingRequest.
@@ -6223,33 +8985,54 @@ type DocumentOnTypeFormattingRegistrationOptions struct {
 	MoreTriggerCharacter *[]string `json:"moreTriggerCharacter,omitzero"`
 }
 
-func (s *DocumentOnTypeFormattingRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector      requiredProp `json:"documentSelector"`
-		FirstTriggerCharacter requiredProp `json:"firstTriggerCharacter"`
-	}
+func (s *DocumentOnTypeFormattingRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenDocumentSelector      bool
+		seenFirstTriggerCharacter bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "firstTriggerCharacter":
+			seenFirstTriggerCharacter = true
+			if err := json.UnmarshalDecode(dec, &s.FirstTriggerCharacter); err != nil {
+				return err
+			}
+		case "moreTriggerCharacter":
+			if err := json.UnmarshalDecode(dec, &s.MoreTriggerCharacter); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
-	if !keys.FirstTriggerCharacter {
+	if !seenFirstTriggerCharacter {
 		return fmt.Errorf("required key 'firstTriggerCharacter' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector      DocumentSelectorOrNull `json:"documentSelector"`
-		FirstTriggerCharacter string                 `json:"firstTriggerCharacter"`
-		MoreTriggerCharacter  *[]string              `json:"moreTriggerCharacter,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameters of a RenameRequest.
@@ -6269,38 +9052,63 @@ type RenameParams struct {
 	NewName string `json:"newName"`
 }
 
-func (s *RenameParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Position     requiredProp `json:"position"`
-		NewName      requiredProp `json:"newName"`
-	}
+func (s *RenameParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenPosition     bool
+		seenNewName      bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "position":
+			seenPosition = true
+			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
+				return err
+			}
+		case "newName":
+			seenNewName = true
+			if err := json.UnmarshalDecode(dec, &s.NewName); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Position {
+	if !seenPosition {
 		return fmt.Errorf("required key 'position' is missing")
 	}
-	if !keys.NewName {
+	if !seenNewName {
 		return fmt.Errorf("required key 'newName' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
-		TextDocument  TextDocumentIdentifier `json:"textDocument"`
-		Position      Position               `json:"position"`
-		NewName       string                 `json:"newName"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Registration options for a RenameRequest.
@@ -6317,29 +9125,47 @@ type RenameRegistrationOptions struct {
 	PrepareProvider *bool `json:"prepareProvider,omitzero"`
 }
 
-func (s *RenameRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DocumentSelector requiredProp `json:"documentSelector"`
-	}
+func (s *RenameRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDocumentSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DocumentSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "documentSelector":
+			seenDocumentSelector = true
+			if err := json.UnmarshalDecode(dec, &s.DocumentSelector); err != nil {
+				return err
+			}
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "prepareProvider":
+			if err := json.UnmarshalDecode(dec, &s.PrepareProvider); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocumentSelector {
 		return fmt.Errorf("required key 'documentSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DocumentSelector DocumentSelectorOrNull `json:"documentSelector"`
-		WorkDoneProgress *bool                  `json:"workDoneProgress,omitzero"`
-		PrepareProvider  *bool                  `json:"prepareProvider,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type PrepareRenameParams struct {
@@ -6353,33 +9179,54 @@ type PrepareRenameParams struct {
 	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
 }
 
-func (s *PrepareRenameParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Position     requiredProp `json:"position"`
-	}
+func (s *PrepareRenameParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenPosition     bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "position":
+			seenPosition = true
+			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
+				return err
+			}
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Position {
+	if !seenPosition {
 		return fmt.Errorf("required key 'position' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TextDocument  TextDocumentIdentifier `json:"textDocument"`
-		Position      Position               `json:"position"`
-		WorkDoneToken *IntegerOrString       `json:"workDoneToken,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameters of a ExecuteCommandRequest.
@@ -6394,29 +9241,47 @@ type ExecuteCommandParams struct {
 	Arguments *[]any `json:"arguments,omitzero"`
 }
 
-func (s *ExecuteCommandParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Command requiredProp `json:"command"`
-	}
+func (s *ExecuteCommandParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenCommand bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Command {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "command":
+			seenCommand = true
+			if err := json.UnmarshalDecode(dec, &s.Command); err != nil {
+				return err
+			}
+		case "arguments":
+			if err := json.UnmarshalDecode(dec, &s.Arguments); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenCommand {
 		return fmt.Errorf("required key 'command' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
-		Command       string           `json:"command"`
-		Arguments     *[]any           `json:"arguments,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Registration options for a ExecuteCommandRequest.
@@ -6427,28 +9292,43 @@ type ExecuteCommandRegistrationOptions struct {
 	Commands []string `json:"commands"`
 }
 
-func (s *ExecuteCommandRegistrationOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Commands requiredProp `json:"commands"`
-	}
+func (s *ExecuteCommandRegistrationOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenCommands bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Commands {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "commands":
+			seenCommands = true
+			if err := json.UnmarshalDecode(dec, &s.Commands); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenCommands {
 		return fmt.Errorf("required key 'commands' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneProgress *bool    `json:"workDoneProgress,omitzero"`
-		Commands         []string `json:"commands"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The parameters passed via an apply workspace edit request.
@@ -6469,29 +9349,47 @@ type ApplyWorkspaceEditParams struct {
 	Metadata *WorkspaceEditMetadata `json:"metadata,omitzero"`
 }
 
-func (s *ApplyWorkspaceEditParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Edit requiredProp `json:"edit"`
-	}
+func (s *ApplyWorkspaceEditParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenEdit bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Edit {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "label":
+			if err := json.UnmarshalDecode(dec, &s.Label); err != nil {
+				return err
+			}
+		case "edit":
+			seenEdit = true
+			if err := json.UnmarshalDecode(dec, &s.Edit); err != nil {
+				return err
+			}
+		case "metadata":
+			if err := json.UnmarshalDecode(dec, &s.Metadata); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenEdit {
 		return fmt.Errorf("required key 'edit' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Label    *string                `json:"label,omitzero"`
-		Edit     *WorkspaceEdit         `json:"edit"`
-		Metadata *WorkspaceEditMetadata `json:"metadata,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The result returned from the apply workspace edit request.
@@ -6512,29 +9410,47 @@ type ApplyWorkspaceEditResult struct {
 	FailedChange *uint32 `json:"failedChange,omitzero"`
 }
 
-func (s *ApplyWorkspaceEditResult) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Applied requiredProp `json:"applied"`
-	}
+func (s *ApplyWorkspaceEditResult) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenApplied bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Applied {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "applied":
+			seenApplied = true
+			if err := json.UnmarshalDecode(dec, &s.Applied); err != nil {
+				return err
+			}
+		case "failureReason":
+			if err := json.UnmarshalDecode(dec, &s.FailureReason); err != nil {
+				return err
+			}
+		case "failedChange":
+			if err := json.UnmarshalDecode(dec, &s.FailedChange); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenApplied {
 		return fmt.Errorf("required key 'applied' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Applied       bool    `json:"applied"`
-		FailureReason *string `json:"failureReason,omitzero"`
-		FailedChange  *uint32 `json:"failedChange,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type WorkDoneProgressBegin struct {
@@ -6567,35 +9483,62 @@ type WorkDoneProgressBegin struct {
 	Percentage *uint32 `json:"percentage,omitzero"`
 }
 
-func (s *WorkDoneProgressBegin) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Kind  requiredProp `json:"kind"`
-		Title requiredProp `json:"title"`
-	}
+func (s *WorkDoneProgressBegin) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenKind  bool
+		seenTitle bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Kind {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "kind":
+			seenKind = true
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "title":
+			seenTitle = true
+			if err := json.UnmarshalDecode(dec, &s.Title); err != nil {
+				return err
+			}
+		case "cancellable":
+			if err := json.UnmarshalDecode(dec, &s.Cancellable); err != nil {
+				return err
+			}
+		case "message":
+			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
+				return err
+			}
+		case "percentage":
+			if err := json.UnmarshalDecode(dec, &s.Percentage); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenKind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if !keys.Title {
+	if !seenTitle {
 		return fmt.Errorf("required key 'title' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Kind        StringLiteralBegin `json:"kind"`
-		Title       string             `json:"title"`
-		Cancellable *bool              `json:"cancellable,omitzero"`
-		Message     *string            `json:"message,omitzero"`
-		Percentage  *uint32            `json:"percentage,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type WorkDoneProgressReport struct {
@@ -6623,30 +9566,51 @@ type WorkDoneProgressReport struct {
 	Percentage *uint32 `json:"percentage,omitzero"`
 }
 
-func (s *WorkDoneProgressReport) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Kind requiredProp `json:"kind"`
-	}
+func (s *WorkDoneProgressReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenKind bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Kind {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "kind":
+			seenKind = true
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "cancellable":
+			if err := json.UnmarshalDecode(dec, &s.Cancellable); err != nil {
+				return err
+			}
+		case "message":
+			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
+				return err
+			}
+		case "percentage":
+			if err := json.UnmarshalDecode(dec, &s.Percentage); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenKind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Kind        StringLiteralReport `json:"kind"`
-		Cancellable *bool               `json:"cancellable,omitzero"`
-		Message     *string             `json:"message,omitzero"`
-		Percentage  *uint32             `json:"percentage,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type WorkDoneProgressEnd struct {
@@ -6657,55 +9621,82 @@ type WorkDoneProgressEnd struct {
 	Message *string `json:"message,omitzero"`
 }
 
-func (s *WorkDoneProgressEnd) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Kind requiredProp `json:"kind"`
-	}
+func (s *WorkDoneProgressEnd) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenKind bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Kind {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "kind":
+			seenKind = true
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "message":
+			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenKind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Kind    StringLiteralEnd `json:"kind"`
-		Message *string          `json:"message,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type SetTraceParams struct {
 	Value TraceValue `json:"value"`
 }
 
-func (s *SetTraceParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Value requiredProp `json:"value"`
-	}
+func (s *SetTraceParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenValue bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Value {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "value":
+			seenValue = true
+			if err := json.UnmarshalDecode(dec, &s.Value); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenValue {
 		return fmt.Errorf("required key 'value' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Value TraceValue `json:"value"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type LogTraceParams struct {
@@ -6714,28 +9705,43 @@ type LogTraceParams struct {
 	Verbose *string `json:"verbose,omitzero"`
 }
 
-func (s *LogTraceParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Message requiredProp `json:"message"`
-	}
+func (s *LogTraceParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenMessage bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Message {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "message":
+			seenMessage = true
+			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
+				return err
+			}
+		case "verbose":
+			if err := json.UnmarshalDecode(dec, &s.Verbose); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenMessage {
 		return fmt.Errorf("required key 'message' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Message string  `json:"message"`
-		Verbose *string `json:"verbose,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type CancelParams struct {
@@ -6743,27 +9749,39 @@ type CancelParams struct {
 	Id IntegerOrString `json:"id"`
 }
 
-func (s *CancelParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Id requiredProp `json:"id"`
-	}
+func (s *CancelParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenId bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Id {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "id":
+			seenId = true
+			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenId {
 		return fmt.Errorf("required key 'id' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Id IntegerOrString `json:"id"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type ProgressParams struct {
@@ -6774,32 +9792,50 @@ type ProgressParams struct {
 	Value any `json:"value"`
 }
 
-func (s *ProgressParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Token requiredProp `json:"token"`
-		Value requiredProp `json:"value"`
-	}
+func (s *ProgressParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenToken bool
+		seenValue bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Token {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "token":
+			seenToken = true
+			if err := json.UnmarshalDecode(dec, &s.Token); err != nil {
+				return err
+			}
+		case "value":
+			seenValue = true
+			if err := json.UnmarshalDecode(dec, &s.Value); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenToken {
 		return fmt.Errorf("required key 'token' is missing")
 	}
-	if !keys.Value {
+	if !seenValue {
 		return fmt.Errorf("required key 'value' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Token IntegerOrString `json:"token"`
-		Value any             `json:"value"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A parameter literal used in requests to pass a text document and a position inside that
@@ -6812,32 +9848,50 @@ type TextDocumentPositionParams struct {
 	Position Position `json:"position"`
 }
 
-func (s *TextDocumentPositionParams) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Position     requiredProp `json:"position"`
-	}
+func (s *TextDocumentPositionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenPosition     bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "position":
+			seenPosition = true
+			if err := json.UnmarshalDecode(dec, &s.Position); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Position {
+	if !seenPosition {
 		return fmt.Errorf("required key 'position' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TextDocument TextDocumentIdentifier `json:"textDocument"`
-		Position     Position               `json:"position"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type WorkDoneProgressParams struct {
@@ -6873,38 +9927,63 @@ type LocationLink struct {
 	TargetSelectionRange Range `json:"targetSelectionRange"`
 }
 
-func (s *LocationLink) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TargetUri            requiredProp `json:"targetUri"`
-		TargetRange          requiredProp `json:"targetRange"`
-		TargetSelectionRange requiredProp `json:"targetSelectionRange"`
-	}
+func (s *LocationLink) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTargetUri            bool
+		seenTargetRange          bool
+		seenTargetSelectionRange bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TargetUri {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "originSelectionRange":
+			if err := json.UnmarshalDecode(dec, &s.OriginSelectionRange); err != nil {
+				return err
+			}
+		case "targetUri":
+			seenTargetUri = true
+			if err := json.UnmarshalDecode(dec, &s.TargetUri); err != nil {
+				return err
+			}
+		case "targetRange":
+			seenTargetRange = true
+			if err := json.UnmarshalDecode(dec, &s.TargetRange); err != nil {
+				return err
+			}
+		case "targetSelectionRange":
+			seenTargetSelectionRange = true
+			if err := json.UnmarshalDecode(dec, &s.TargetSelectionRange); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTargetUri {
 		return fmt.Errorf("required key 'targetUri' is missing")
 	}
-	if !keys.TargetRange {
+	if !seenTargetRange {
 		return fmt.Errorf("required key 'targetRange' is missing")
 	}
-	if !keys.TargetSelectionRange {
+	if !seenTargetSelectionRange {
 		return fmt.Errorf("required key 'targetSelectionRange' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		OriginSelectionRange *Range      `json:"originSelectionRange,omitzero"`
-		TargetUri            DocumentUri `json:"targetUri"`
-		TargetRange          Range       `json:"targetRange"`
-		TargetSelectionRange Range       `json:"targetSelectionRange"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A range in a text document expressed as (zero-based) start and end positions.
@@ -6928,32 +10007,50 @@ type Range struct {
 	End Position `json:"end"`
 }
 
-func (s *Range) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Start requiredProp `json:"start"`
-		End   requiredProp `json:"end"`
-	}
+func (s *Range) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenStart bool
+		seenEnd   bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Start {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "start":
+			seenStart = true
+			if err := json.UnmarshalDecode(dec, &s.Start); err != nil {
+				return err
+			}
+		case "end":
+			seenEnd = true
+			if err := json.UnmarshalDecode(dec, &s.End); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenStart {
 		return fmt.Errorf("required key 'start' is missing")
 	}
-	if !keys.End {
+	if !seenEnd {
 		return fmt.Errorf("required key 'end' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Start Position `json:"start"`
-		End   Position `json:"end"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type ImplementationOptions struct {
@@ -6981,32 +10078,50 @@ type WorkspaceFoldersChangeEvent struct {
 	Removed []*WorkspaceFolder `json:"removed"`
 }
 
-func (s *WorkspaceFoldersChangeEvent) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Added   requiredProp `json:"added"`
-		Removed requiredProp `json:"removed"`
-	}
+func (s *WorkspaceFoldersChangeEvent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenAdded   bool
+		seenRemoved bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Added {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "added":
+			seenAdded = true
+			if err := json.UnmarshalDecode(dec, &s.Added); err != nil {
+				return err
+			}
+		case "removed":
+			seenRemoved = true
+			if err := json.UnmarshalDecode(dec, &s.Removed); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenAdded {
 		return fmt.Errorf("required key 'added' is missing")
 	}
-	if !keys.Removed {
+	if !seenRemoved {
 		return fmt.Errorf("required key 'removed' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Added   []*WorkspaceFolder `json:"added"`
-		Removed []*WorkspaceFolder `json:"removed"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type ConfigurationItem struct {
@@ -7023,27 +10138,39 @@ type TextDocumentIdentifier struct {
 	Uri DocumentUri `json:"uri"`
 }
 
-func (s *TextDocumentIdentifier) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Uri requiredProp `json:"uri"`
-	}
+func (s *TextDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenUri bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Uri {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Uri DocumentUri `json:"uri"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Represents a color in RGBA space.
@@ -7061,42 +10188,68 @@ type Color struct {
 	Alpha float64 `json:"alpha"`
 }
 
-func (s *Color) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Red   requiredProp `json:"red"`
-		Green requiredProp `json:"green"`
-		Blue  requiredProp `json:"blue"`
-		Alpha requiredProp `json:"alpha"`
-	}
+func (s *Color) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenRed   bool
+		seenGreen bool
+		seenBlue  bool
+		seenAlpha bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Red {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "red":
+			seenRed = true
+			if err := json.UnmarshalDecode(dec, &s.Red); err != nil {
+				return err
+			}
+		case "green":
+			seenGreen = true
+			if err := json.UnmarshalDecode(dec, &s.Green); err != nil {
+				return err
+			}
+		case "blue":
+			seenBlue = true
+			if err := json.UnmarshalDecode(dec, &s.Blue); err != nil {
+				return err
+			}
+		case "alpha":
+			seenAlpha = true
+			if err := json.UnmarshalDecode(dec, &s.Alpha); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenRed {
 		return fmt.Errorf("required key 'red' is missing")
 	}
-	if !keys.Green {
+	if !seenGreen {
 		return fmt.Errorf("required key 'green' is missing")
 	}
-	if !keys.Blue {
+	if !seenBlue {
 		return fmt.Errorf("required key 'blue' is missing")
 	}
-	if !keys.Alpha {
+	if !seenAlpha {
 		return fmt.Errorf("required key 'alpha' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Red   float64 `json:"red"`
-		Green float64 `json:"green"`
-		Blue  float64 `json:"blue"`
-		Alpha float64 `json:"alpha"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type DocumentColorOptions struct {
@@ -7149,32 +10302,50 @@ type Position struct {
 	Character uint32 `json:"character"`
 }
 
-func (s *Position) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Line      requiredProp `json:"line"`
-		Character requiredProp `json:"character"`
-	}
+func (s *Position) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenLine      bool
+		seenCharacter bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Line {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "line":
+			seenLine = true
+			if err := json.UnmarshalDecode(dec, &s.Line); err != nil {
+				return err
+			}
+		case "character":
+			seenCharacter = true
+			if err := json.UnmarshalDecode(dec, &s.Character); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenLine {
 		return fmt.Errorf("required key 'line' is missing")
 	}
-	if !keys.Character {
+	if !seenCharacter {
 		return fmt.Errorf("required key 'character' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Line      uint32 `json:"line"`
-		Character uint32 `json:"character"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type SelectionRangeOptions struct {
@@ -7203,30 +10374,51 @@ type SemanticTokensOptions struct {
 	Full *BooleanOrSemanticTokensFullDelta `json:"full,omitzero"`
 }
 
-func (s *SemanticTokensOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Legend requiredProp `json:"legend"`
-	}
+func (s *SemanticTokensOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenLegend bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Legend {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "legend":
+			seenLegend = true
+			if err := json.UnmarshalDecode(dec, &s.Legend); err != nil {
+				return err
+			}
+		case "range":
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "full":
+			if err := json.UnmarshalDecode(dec, &s.Full); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenLegend {
 		return fmt.Errorf("required key 'legend' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneProgress *bool                             `json:"workDoneProgress,omitzero"`
-		Legend           *SemanticTokensLegend             `json:"legend"`
-		Range            *BooleanOrEmptyObject             `json:"range,omitzero"`
-		Full             *BooleanOrSemanticTokensFullDelta `json:"full,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.16.0
@@ -7241,33 +10433,54 @@ type SemanticTokensEdit struct {
 	Data *[]uint32 `json:"data,omitzero"`
 }
 
-func (s *SemanticTokensEdit) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Start       requiredProp `json:"start"`
-		DeleteCount requiredProp `json:"deleteCount"`
-	}
+func (s *SemanticTokensEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenStart       bool
+		seenDeleteCount bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Start {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "start":
+			seenStart = true
+			if err := json.UnmarshalDecode(dec, &s.Start); err != nil {
+				return err
+			}
+		case "deleteCount":
+			seenDeleteCount = true
+			if err := json.UnmarshalDecode(dec, &s.DeleteCount); err != nil {
+				return err
+			}
+		case "data":
+			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenStart {
 		return fmt.Errorf("required key 'start' is missing")
 	}
-	if !keys.DeleteCount {
+	if !seenDeleteCount {
 		return fmt.Errorf("required key 'deleteCount' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Start       uint32    `json:"start"`
-		DeleteCount uint32    `json:"deleteCount"`
-		Data        *[]uint32 `json:"data,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type LinkedEditingRangeOptions struct {
@@ -7282,27 +10495,39 @@ type FileCreate struct {
 	Uri string `json:"uri"`
 }
 
-func (s *FileCreate) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Uri requiredProp `json:"uri"`
-	}
+func (s *FileCreate) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenUri bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Uri {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Uri string `json:"uri"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Describes textual changes on a text document. A TextDocumentEdit describes all changes
@@ -7323,32 +10548,50 @@ type TextDocumentEdit struct {
 	Edits []TextEditOrAnnotatedTextEditOrSnippetTextEdit `json:"edits"`
 }
 
-func (s *TextDocumentEdit) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TextDocument requiredProp `json:"textDocument"`
-		Edits        requiredProp `json:"edits"`
-	}
+func (s *TextDocumentEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTextDocument bool
+		seenEdits        bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TextDocument {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "textDocument":
+			seenTextDocument = true
+			if err := json.UnmarshalDecode(dec, &s.TextDocument); err != nil {
+				return err
+			}
+		case "edits":
+			seenEdits = true
+			if err := json.UnmarshalDecode(dec, &s.Edits); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTextDocument {
 		return fmt.Errorf("required key 'textDocument' is missing")
 	}
-	if !keys.Edits {
+	if !seenEdits {
 		return fmt.Errorf("required key 'edits' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TextDocument OptionalVersionedTextDocumentIdentifier        `json:"textDocument"`
-		Edits        []TextEditOrAnnotatedTextEditOrSnippetTextEdit `json:"edits"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Create file operation.
@@ -7368,34 +10611,58 @@ type CreateFile struct {
 	Options *CreateFileOptions `json:"options,omitzero"`
 }
 
-func (s *CreateFile) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Kind requiredProp `json:"kind"`
-		Uri  requiredProp `json:"uri"`
-	}
+func (s *CreateFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenKind bool
+		seenUri  bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Kind {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "kind":
+			seenKind = true
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "annotationId":
+			if err := json.UnmarshalDecode(dec, &s.AnnotationId); err != nil {
+				return err
+			}
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		case "options":
+			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenKind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if !keys.Uri {
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Kind         StringLiteralCreate `json:"kind"`
-		AnnotationId *string             `json:"annotationId,omitzero"`
-		Uri          DocumentUri         `json:"uri"`
-		Options      *CreateFileOptions  `json:"options,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Rename file operation
@@ -7418,39 +10685,67 @@ type RenameFile struct {
 	Options *RenameFileOptions `json:"options,omitzero"`
 }
 
-func (s *RenameFile) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Kind   requiredProp `json:"kind"`
-		OldUri requiredProp `json:"oldUri"`
-		NewUri requiredProp `json:"newUri"`
-	}
+func (s *RenameFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenKind   bool
+		seenOldUri bool
+		seenNewUri bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Kind {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "kind":
+			seenKind = true
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "annotationId":
+			if err := json.UnmarshalDecode(dec, &s.AnnotationId); err != nil {
+				return err
+			}
+		case "oldUri":
+			seenOldUri = true
+			if err := json.UnmarshalDecode(dec, &s.OldUri); err != nil {
+				return err
+			}
+		case "newUri":
+			seenNewUri = true
+			if err := json.UnmarshalDecode(dec, &s.NewUri); err != nil {
+				return err
+			}
+		case "options":
+			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenKind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if !keys.OldUri {
+	if !seenOldUri {
 		return fmt.Errorf("required key 'oldUri' is missing")
 	}
-	if !keys.NewUri {
+	if !seenNewUri {
 		return fmt.Errorf("required key 'newUri' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Kind         StringLiteralRename `json:"kind"`
-		AnnotationId *string             `json:"annotationId,omitzero"`
-		OldUri       DocumentUri         `json:"oldUri"`
-		NewUri       DocumentUri         `json:"newUri"`
-		Options      *RenameFileOptions  `json:"options,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Delete file operation
@@ -7470,34 +10765,58 @@ type DeleteFile struct {
 	Options *DeleteFileOptions `json:"options,omitzero"`
 }
 
-func (s *DeleteFile) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Kind requiredProp `json:"kind"`
-		Uri  requiredProp `json:"uri"`
-	}
+func (s *DeleteFile) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenKind bool
+		seenUri  bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Kind {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "kind":
+			seenKind = true
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "annotationId":
+			if err := json.UnmarshalDecode(dec, &s.AnnotationId); err != nil {
+				return err
+			}
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		case "options":
+			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenKind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if !keys.Uri {
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Kind         StringLiteralDelete `json:"kind"`
-		AnnotationId *string             `json:"annotationId,omitzero"`
-		Uri          DocumentUri         `json:"uri"`
-		Options      *DeleteFileOptions  `json:"options,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Additional information that describes document changes.
@@ -7517,29 +10836,47 @@ type ChangeAnnotation struct {
 	Description *string `json:"description,omitzero"`
 }
 
-func (s *ChangeAnnotation) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Label requiredProp `json:"label"`
-	}
+func (s *ChangeAnnotation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenLabel bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Label {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "label":
+			seenLabel = true
+			if err := json.UnmarshalDecode(dec, &s.Label); err != nil {
+				return err
+			}
+		case "needsConfirmation":
+			if err := json.UnmarshalDecode(dec, &s.NeedsConfirmation); err != nil {
+				return err
+			}
+		case "description":
+			if err := json.UnmarshalDecode(dec, &s.Description); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenLabel {
 		return fmt.Errorf("required key 'label' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Label             string  `json:"label"`
-		NeedsConfirmation *bool   `json:"needsConfirmation,omitzero"`
-		Description       *string `json:"description,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A filter to describe in which file operation requests or notifications
@@ -7554,28 +10891,43 @@ type FileOperationFilter struct {
 	Pattern *FileOperationPattern `json:"pattern"`
 }
 
-func (s *FileOperationFilter) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Pattern requiredProp `json:"pattern"`
-	}
+func (s *FileOperationFilter) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenPattern bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Pattern {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "scheme":
+			if err := json.UnmarshalDecode(dec, &s.Scheme); err != nil {
+				return err
+			}
+		case "pattern":
+			seenPattern = true
+			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenPattern {
 		return fmt.Errorf("required key 'pattern' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Scheme  *string               `json:"scheme,omitzero"`
-		Pattern *FileOperationPattern `json:"pattern"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Represents information on a file/folder rename.
@@ -7589,32 +10941,50 @@ type FileRename struct {
 	NewUri string `json:"newUri"`
 }
 
-func (s *FileRename) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		OldUri requiredProp `json:"oldUri"`
-		NewUri requiredProp `json:"newUri"`
-	}
+func (s *FileRename) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenOldUri bool
+		seenNewUri bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.OldUri {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "oldUri":
+			seenOldUri = true
+			if err := json.UnmarshalDecode(dec, &s.OldUri); err != nil {
+				return err
+			}
+		case "newUri":
+			seenNewUri = true
+			if err := json.UnmarshalDecode(dec, &s.NewUri); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenOldUri {
 		return fmt.Errorf("required key 'oldUri' is missing")
 	}
-	if !keys.NewUri {
+	if !seenNewUri {
 		return fmt.Errorf("required key 'newUri' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		OldUri string `json:"oldUri"`
-		NewUri string `json:"newUri"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Represents information on a file/folder delete.
@@ -7625,27 +10995,39 @@ type FileDelete struct {
 	Uri string `json:"uri"`
 }
 
-func (s *FileDelete) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Uri requiredProp `json:"uri"`
-	}
+func (s *FileDelete) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenUri bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Uri {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Uri string `json:"uri"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type MonikerOptions struct {
@@ -7669,32 +11051,50 @@ type InlineValueContext struct {
 	StoppedLocation Range `json:"stoppedLocation"`
 }
 
-func (s *InlineValueContext) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		FrameId         requiredProp `json:"frameId"`
-		StoppedLocation requiredProp `json:"stoppedLocation"`
-	}
+func (s *InlineValueContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenFrameId         bool
+		seenStoppedLocation bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.FrameId {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "frameId":
+			seenFrameId = true
+			if err := json.UnmarshalDecode(dec, &s.FrameId); err != nil {
+				return err
+			}
+		case "stoppedLocation":
+			seenStoppedLocation = true
+			if err := json.UnmarshalDecode(dec, &s.StoppedLocation); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenFrameId {
 		return fmt.Errorf("required key 'frameId' is missing")
 	}
-	if !keys.StoppedLocation {
+	if !seenStoppedLocation {
 		return fmt.Errorf("required key 'stoppedLocation' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		FrameId         int32 `json:"frameId"`
-		StoppedLocation Range `json:"stoppedLocation"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Provide inline value as text.
@@ -7708,32 +11108,50 @@ type InlineValueText struct {
 	Text string `json:"text"`
 }
 
-func (s *InlineValueText) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Range requiredProp `json:"range"`
-		Text  requiredProp `json:"text"`
-	}
+func (s *InlineValueText) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenRange bool
+		seenText  bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Range {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "text":
+			seenText = true
+			if err := json.UnmarshalDecode(dec, &s.Text); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if !keys.Text {
+	if !seenText {
 		return fmt.Errorf("required key 'text' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Range Range  `json:"range"`
-		Text  string `json:"text"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Provide inline value through a variable lookup.
@@ -7753,33 +11171,54 @@ type InlineValueVariableLookup struct {
 	CaseSensitiveLookup bool `json:"caseSensitiveLookup"`
 }
 
-func (s *InlineValueVariableLookup) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Range               requiredProp `json:"range"`
-		CaseSensitiveLookup requiredProp `json:"caseSensitiveLookup"`
-	}
+func (s *InlineValueVariableLookup) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenRange               bool
+		seenCaseSensitiveLookup bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Range {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "variableName":
+			if err := json.UnmarshalDecode(dec, &s.VariableName); err != nil {
+				return err
+			}
+		case "caseSensitiveLookup":
+			seenCaseSensitiveLookup = true
+			if err := json.UnmarshalDecode(dec, &s.CaseSensitiveLookup); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if !keys.CaseSensitiveLookup {
+	if !seenCaseSensitiveLookup {
 		return fmt.Errorf("required key 'caseSensitiveLookup' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Range               Range   `json:"range"`
-		VariableName        *string `json:"variableName,omitzero"`
-		CaseSensitiveLookup bool    `json:"caseSensitiveLookup"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Provide an inline value through an expression evaluation.
@@ -7796,28 +11235,43 @@ type InlineValueEvaluatableExpression struct {
 	Expression *string `json:"expression,omitzero"`
 }
 
-func (s *InlineValueEvaluatableExpression) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Range requiredProp `json:"range"`
-	}
+func (s *InlineValueEvaluatableExpression) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenRange bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Range {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "expression":
+			if err := json.UnmarshalDecode(dec, &s.Expression); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Range      Range   `json:"range"`
-		Expression *string `json:"expression,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Inline value options used during static registration.
@@ -7860,30 +11314,51 @@ type InlayHintLabelPart struct {
 	Command *Command `json:"command,omitzero"`
 }
 
-func (s *InlayHintLabelPart) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Value requiredProp `json:"value"`
-	}
+func (s *InlayHintLabelPart) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenValue bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Value {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "value":
+			seenValue = true
+			if err := json.UnmarshalDecode(dec, &s.Value); err != nil {
+				return err
+			}
+		case "tooltip":
+			if err := json.UnmarshalDecode(dec, &s.Tooltip); err != nil {
+				return err
+			}
+		case "location":
+			if err := json.UnmarshalDecode(dec, &s.Location); err != nil {
+				return err
+			}
+		case "command":
+			if err := json.UnmarshalDecode(dec, &s.Command); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenValue {
 		return fmt.Errorf("required key 'value' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Value    string                 `json:"value"`
-		Tooltip  *StringOrMarkupContent `json:"tooltip,omitzero"`
-		Location *Location              `json:"location,omitzero"`
-		Command  *Command               `json:"command,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A `MarkupContent` literal represents a string value which content is interpreted base on its
@@ -7918,32 +11393,50 @@ type MarkupContent struct {
 	Value string `json:"value"`
 }
 
-func (s *MarkupContent) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Kind  requiredProp `json:"kind"`
-		Value requiredProp `json:"value"`
-	}
+func (s *MarkupContent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenKind  bool
+		seenValue bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Kind {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "kind":
+			seenKind = true
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "value":
+			seenValue = true
+			if err := json.UnmarshalDecode(dec, &s.Value); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenKind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if !keys.Value {
+	if !seenValue {
 		return fmt.Errorf("required key 'value' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Kind  MarkupKind `json:"kind"`
-		Value string     `json:"value"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Inlay hint options used during static registration.
@@ -7982,34 +11475,58 @@ type RelatedFullDocumentDiagnosticReport struct {
 	RelatedDocuments *map[DocumentUri]FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments,omitzero"`
 }
 
-func (s *RelatedFullDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Kind  requiredProp `json:"kind"`
-		Items requiredProp `json:"items"`
-	}
+func (s *RelatedFullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenKind  bool
+		seenItems bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Kind {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "kind":
+			seenKind = true
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "resultId":
+			if err := json.UnmarshalDecode(dec, &s.ResultId); err != nil {
+				return err
+			}
+		case "items":
+			seenItems = true
+			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
+				return err
+			}
+		case "relatedDocuments":
+			if err := json.UnmarshalDecode(dec, &s.RelatedDocuments); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenKind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if !keys.Items {
+	if !seenItems {
 		return fmt.Errorf("required key 'items' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Kind             StringLiteralFull                                                                `json:"kind"`
-		ResultId         *string                                                                          `json:"resultId,omitzero"`
-		Items            []*Diagnostic                                                                    `json:"items"`
-		RelatedDocuments *map[DocumentUri]FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // An unchanged diagnostic report with a set of related documents.
@@ -8036,33 +11553,54 @@ type RelatedUnchangedDocumentDiagnosticReport struct {
 	RelatedDocuments *map[DocumentUri]FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments,omitzero"`
 }
 
-func (s *RelatedUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Kind     requiredProp `json:"kind"`
-		ResultId requiredProp `json:"resultId"`
-	}
+func (s *RelatedUnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenKind     bool
+		seenResultId bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Kind {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "kind":
+			seenKind = true
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "resultId":
+			seenResultId = true
+			if err := json.UnmarshalDecode(dec, &s.ResultId); err != nil {
+				return err
+			}
+		case "relatedDocuments":
+			if err := json.UnmarshalDecode(dec, &s.RelatedDocuments); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenKind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if !keys.ResultId {
+	if !seenResultId {
 		return fmt.Errorf("required key 'resultId' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Kind             StringLiteralUnchanged                                                           `json:"kind"`
-		ResultId         string                                                                           `json:"resultId"`
-		RelatedDocuments *map[DocumentUri]FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A diagnostic report with a full set of problems.
@@ -8081,33 +11619,54 @@ type FullDocumentDiagnosticReport struct {
 	Items []*Diagnostic `json:"items"`
 }
 
-func (s *FullDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Kind  requiredProp `json:"kind"`
-		Items requiredProp `json:"items"`
-	}
+func (s *FullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenKind  bool
+		seenItems bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Kind {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "kind":
+			seenKind = true
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "resultId":
+			if err := json.UnmarshalDecode(dec, &s.ResultId); err != nil {
+				return err
+			}
+		case "items":
+			seenItems = true
+			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenKind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if !keys.Items {
+	if !seenItems {
 		return fmt.Errorf("required key 'items' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Kind     StringLiteralFull `json:"kind"`
-		ResultId *string           `json:"resultId,omitzero"`
-		Items    []*Diagnostic     `json:"items"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A diagnostic report indicating that the last returned
@@ -8126,32 +11685,50 @@ type UnchangedDocumentDiagnosticReport struct {
 	ResultId string `json:"resultId"`
 }
 
-func (s *UnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Kind     requiredProp `json:"kind"`
-		ResultId requiredProp `json:"resultId"`
-	}
+func (s *UnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenKind     bool
+		seenResultId bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Kind {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "kind":
+			seenKind = true
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "resultId":
+			seenResultId = true
+			if err := json.UnmarshalDecode(dec, &s.ResultId); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenKind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if !keys.ResultId {
+	if !seenResultId {
 		return fmt.Errorf("required key 'resultId' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Kind     StringLiteralUnchanged `json:"kind"`
-		ResultId string                 `json:"resultId"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Diagnostic options.
@@ -8174,34 +11751,58 @@ type DiagnosticOptions struct {
 	WorkspaceDiagnostics bool `json:"workspaceDiagnostics"`
 }
 
-func (s *DiagnosticOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		InterFileDependencies requiredProp `json:"interFileDependencies"`
-		WorkspaceDiagnostics  requiredProp `json:"workspaceDiagnostics"`
-	}
+func (s *DiagnosticOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenInterFileDependencies bool
+		seenWorkspaceDiagnostics  bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.InterFileDependencies {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "identifier":
+			if err := json.UnmarshalDecode(dec, &s.Identifier); err != nil {
+				return err
+			}
+		case "interFileDependencies":
+			seenInterFileDependencies = true
+			if err := json.UnmarshalDecode(dec, &s.InterFileDependencies); err != nil {
+				return err
+			}
+		case "workspaceDiagnostics":
+			seenWorkspaceDiagnostics = true
+			if err := json.UnmarshalDecode(dec, &s.WorkspaceDiagnostics); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenInterFileDependencies {
 		return fmt.Errorf("required key 'interFileDependencies' is missing")
 	}
-	if !keys.WorkspaceDiagnostics {
+	if !seenWorkspaceDiagnostics {
 		return fmt.Errorf("required key 'workspaceDiagnostics' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneProgress      *bool   `json:"workDoneProgress,omitzero"`
-		Identifier            *string `json:"identifier,omitzero"`
-		InterFileDependencies bool    `json:"interFileDependencies"`
-		WorkspaceDiagnostics  bool    `json:"workspaceDiagnostics"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A previous result id in a workspace pull request.
@@ -8216,32 +11817,50 @@ type PreviousResultId struct {
 	Value string `json:"value"`
 }
 
-func (s *PreviousResultId) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Uri   requiredProp `json:"uri"`
-		Value requiredProp `json:"value"`
-	}
+func (s *PreviousResultId) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenUri   bool
+		seenValue bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Uri {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		case "value":
+			seenValue = true
+			if err := json.UnmarshalDecode(dec, &s.Value); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if !keys.Value {
+	if !seenValue {
 		return fmt.Errorf("required key 'value' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Uri   DocumentUri `json:"uri"`
-		Value string      `json:"value"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A notebook document.
@@ -8268,43 +11887,72 @@ type NotebookDocument struct {
 	Cells []*NotebookCell `json:"cells"`
 }
 
-func (s *NotebookDocument) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Uri          requiredProp `json:"uri"`
-		NotebookType requiredProp `json:"notebookType"`
-		Version      requiredProp `json:"version"`
-		Cells        requiredProp `json:"cells"`
-	}
+func (s *NotebookDocument) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenUri          bool
+		seenNotebookType bool
+		seenVersion      bool
+		seenCells        bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Uri {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		case "notebookType":
+			seenNotebookType = true
+			if err := json.UnmarshalDecode(dec, &s.NotebookType); err != nil {
+				return err
+			}
+		case "version":
+			seenVersion = true
+			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
+				return err
+			}
+		case "metadata":
+			if err := json.UnmarshalDecode(dec, &s.Metadata); err != nil {
+				return err
+			}
+		case "cells":
+			seenCells = true
+			if err := json.UnmarshalDecode(dec, &s.Cells); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if !keys.NotebookType {
+	if !seenNotebookType {
 		return fmt.Errorf("required key 'notebookType' is missing")
 	}
-	if !keys.Version {
+	if !seenVersion {
 		return fmt.Errorf("required key 'version' is missing")
 	}
-	if !keys.Cells {
+	if !seenCells {
 		return fmt.Errorf("required key 'cells' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Uri          URI             `json:"uri"`
-		NotebookType string          `json:"notebookType"`
-		Version      int32           `json:"version"`
-		Metadata     *map[string]any `json:"metadata,omitzero"`
-		Cells        []*NotebookCell `json:"cells"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // An item to transfer a text document from the client to the
@@ -8324,42 +11972,68 @@ type TextDocumentItem struct {
 	Text string `json:"text"`
 }
 
-func (s *TextDocumentItem) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Uri        requiredProp `json:"uri"`
-		LanguageId requiredProp `json:"languageId"`
-		Version    requiredProp `json:"version"`
-		Text       requiredProp `json:"text"`
-	}
+func (s *TextDocumentItem) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenUri        bool
+		seenLanguageId bool
+		seenVersion    bool
+		seenText       bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Uri {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		case "languageId":
+			seenLanguageId = true
+			if err := json.UnmarshalDecode(dec, &s.LanguageId); err != nil {
+				return err
+			}
+		case "version":
+			seenVersion = true
+			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
+				return err
+			}
+		case "text":
+			seenText = true
+			if err := json.UnmarshalDecode(dec, &s.Text); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if !keys.LanguageId {
+	if !seenLanguageId {
 		return fmt.Errorf("required key 'languageId' is missing")
 	}
-	if !keys.Version {
+	if !seenVersion {
 		return fmt.Errorf("required key 'version' is missing")
 	}
-	if !keys.Text {
+	if !seenText {
 		return fmt.Errorf("required key 'text' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Uri        DocumentUri  `json:"uri"`
-		LanguageId LanguageKind `json:"languageId"`
-		Version    int32        `json:"version"`
-		Text       string       `json:"text"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Options specific to a notebook plus its cells
@@ -8384,28 +12058,43 @@ type NotebookDocumentSyncOptions struct {
 	Save *bool `json:"save,omitzero"`
 }
 
-func (s *NotebookDocumentSyncOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		NotebookSelector requiredProp `json:"notebookSelector"`
-	}
+func (s *NotebookDocumentSyncOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenNotebookSelector bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.NotebookSelector {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "notebookSelector":
+			seenNotebookSelector = true
+			if err := json.UnmarshalDecode(dec, &s.NotebookSelector); err != nil {
+				return err
+			}
+		case "save":
+			if err := json.UnmarshalDecode(dec, &s.Save); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenNotebookSelector {
 		return fmt.Errorf("required key 'notebookSelector' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		NotebookSelector []NotebookDocumentFilterWithNotebookOrCells `json:"notebookSelector"`
-		Save             *bool                                       `json:"save,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A versioned notebook document identifier.
@@ -8419,32 +12108,50 @@ type VersionedNotebookDocumentIdentifier struct {
 	Uri URI `json:"uri"`
 }
 
-func (s *VersionedNotebookDocumentIdentifier) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Version requiredProp `json:"version"`
-		Uri     requiredProp `json:"uri"`
-	}
+func (s *VersionedNotebookDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenVersion bool
+		seenUri     bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Version {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "version":
+			seenVersion = true
+			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
+				return err
+			}
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenVersion {
 		return fmt.Errorf("required key 'version' is missing")
 	}
-	if !keys.Uri {
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Version int32 `json:"version"`
-		Uri     URI   `json:"uri"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A change event for a notebook document.
@@ -8468,27 +12175,39 @@ type NotebookDocumentIdentifier struct {
 	Uri URI `json:"uri"`
 }
 
-func (s *NotebookDocumentIdentifier) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Uri requiredProp `json:"uri"`
-	}
+func (s *NotebookDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenUri bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Uri {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Uri URI `json:"uri"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Provides information about the context in which an inline completion was requested.
@@ -8504,28 +12223,43 @@ type InlineCompletionContext struct {
 	SelectedCompletionInfo *SelectedCompletionInfo `json:"selectedCompletionInfo,omitzero"`
 }
 
-func (s *InlineCompletionContext) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TriggerKind requiredProp `json:"triggerKind"`
-	}
+func (s *InlineCompletionContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenTriggerKind bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TriggerKind {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "triggerKind":
+			seenTriggerKind = true
+			if err := json.UnmarshalDecode(dec, &s.TriggerKind); err != nil {
+				return err
+			}
+		case "selectedCompletionInfo":
+			if err := json.UnmarshalDecode(dec, &s.SelectedCompletionInfo); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTriggerKind {
 		return fmt.Errorf("required key 'triggerKind' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TriggerKind            InlineCompletionTriggerKind `json:"triggerKind"`
-		SelectedCompletionInfo *SelectedCompletionInfo     `json:"selectedCompletionInfo,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A string value used as a snippet is a template which allows to insert text
@@ -8547,32 +12281,50 @@ type StringValue struct {
 	Value string `json:"value"`
 }
 
-func (s *StringValue) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Kind  requiredProp `json:"kind"`
-		Value requiredProp `json:"value"`
-	}
+func (s *StringValue) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenKind  bool
+		seenValue bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Kind {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "kind":
+			seenKind = true
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "value":
+			seenValue = true
+			if err := json.UnmarshalDecode(dec, &s.Value); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenKind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if !keys.Value {
+	if !seenValue {
 		return fmt.Errorf("required key 'value' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Kind  StringLiteralSnippet `json:"kind"`
-		Value string               `json:"value"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Inline completion options used during static registration.
@@ -8594,27 +12346,39 @@ type TextDocumentContentOptions struct {
 	Schemes []string `json:"schemes"`
 }
 
-func (s *TextDocumentContentOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Schemes requiredProp `json:"schemes"`
-	}
+func (s *TextDocumentContentOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenSchemes bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Schemes {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "schemes":
+			seenSchemes = true
+			if err := json.UnmarshalDecode(dec, &s.Schemes); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenSchemes {
 		return fmt.Errorf("required key 'schemes' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Schemes []string `json:"schemes"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // General parameters to register for a notification or to register a provider.
@@ -8630,33 +12394,54 @@ type Registration struct {
 	RegisterOptions *any `json:"registerOptions,omitzero"`
 }
 
-func (s *Registration) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Id     requiredProp `json:"id"`
-		Method requiredProp `json:"method"`
-	}
+func (s *Registration) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenId     bool
+		seenMethod bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Id {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "id":
+			seenId = true
+			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
+				return err
+			}
+		case "method":
+			seenMethod = true
+			if err := json.UnmarshalDecode(dec, &s.Method); err != nil {
+				return err
+			}
+		case "registerOptions":
+			if err := json.UnmarshalDecode(dec, &s.RegisterOptions); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenId {
 		return fmt.Errorf("required key 'id' is missing")
 	}
-	if !keys.Method {
+	if !seenMethod {
 		return fmt.Errorf("required key 'method' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Id              string `json:"id"`
-		Method          string `json:"method"`
-		RegisterOptions *any   `json:"registerOptions,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // General parameters to unregister a request or notification.
@@ -8669,32 +12454,50 @@ type Unregistration struct {
 	Method string `json:"method"`
 }
 
-func (s *Unregistration) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Id     requiredProp `json:"id"`
-		Method requiredProp `json:"method"`
-	}
+func (s *Unregistration) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenId     bool
+		seenMethod bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Id {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "id":
+			seenId = true
+			if err := json.UnmarshalDecode(dec, &s.Id); err != nil {
+				return err
+			}
+		case "method":
+			seenMethod = true
+			if err := json.UnmarshalDecode(dec, &s.Method); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenId {
 		return fmt.Errorf("required key 'id' is missing")
 	}
-	if !keys.Method {
+	if !seenMethod {
 		return fmt.Errorf("required key 'method' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Id     string `json:"id"`
-		Method string `json:"method"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The initialize parameters
@@ -8747,43 +12550,83 @@ type InitializeParamsBase struct {
 	Trace *TraceValue `json:"trace,omitzero"`
 }
 
-func (s *InitializeParamsBase) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		ProcessId    requiredProp `json:"processId"`
-		RootUri      requiredProp `json:"rootUri"`
-		Capabilities requiredProp `json:"capabilities"`
-	}
+func (s *InitializeParamsBase) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenProcessId    bool
+		seenRootUri      bool
+		seenCapabilities bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.ProcessId {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneToken":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneToken); err != nil {
+				return err
+			}
+		case "processId":
+			seenProcessId = true
+			if err := json.UnmarshalDecode(dec, &s.ProcessId); err != nil {
+				return err
+			}
+		case "clientInfo":
+			if err := json.UnmarshalDecode(dec, &s.ClientInfo); err != nil {
+				return err
+			}
+		case "locale":
+			if err := json.UnmarshalDecode(dec, &s.Locale); err != nil {
+				return err
+			}
+		case "rootPath":
+			if err := json.UnmarshalDecode(dec, &s.RootPath); err != nil {
+				return err
+			}
+		case "rootUri":
+			seenRootUri = true
+			if err := json.UnmarshalDecode(dec, &s.RootUri); err != nil {
+				return err
+			}
+		case "capabilities":
+			seenCapabilities = true
+			if err := json.UnmarshalDecode(dec, &s.Capabilities); err != nil {
+				return err
+			}
+		case "initializationOptions":
+			if err := json.UnmarshalDecode(dec, &s.InitializationOptions); err != nil {
+				return err
+			}
+		case "trace":
+			if err := json.UnmarshalDecode(dec, &s.Trace); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenProcessId {
 		return fmt.Errorf("required key 'processId' is missing")
 	}
-	if !keys.RootUri {
+	if !seenRootUri {
 		return fmt.Errorf("required key 'rootUri' is missing")
 	}
-	if !keys.Capabilities {
+	if !seenCapabilities {
 		return fmt.Errorf("required key 'capabilities' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneToken         *IntegerOrString    `json:"workDoneToken,omitzero"`
-		ProcessId             IntegerOrNull       `json:"processId"`
-		ClientInfo            *ClientInfo         `json:"clientInfo,omitzero"`
-		Locale                *string             `json:"locale,omitzero"`
-		RootPath              *StringOrNull       `json:"rootPath,omitzero"`
-		RootUri               DocumentUriOrNull   `json:"rootUri"`
-		Capabilities          *ClientCapabilities `json:"capabilities"`
-		InitializationOptions *any                `json:"initializationOptions,omitzero"`
-		Trace                 *TraceValue         `json:"trace,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type WorkspaceFoldersInitializeParams struct {
@@ -8958,28 +12801,43 @@ type ServerInfo struct {
 	Version *string `json:"version,omitzero"`
 }
 
-func (s *ServerInfo) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Name requiredProp `json:"name"`
-	}
+func (s *ServerInfo) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenName bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Name {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "name":
+			seenName = true
+			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
+				return err
+			}
+		case "version":
+			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenName {
 		return fmt.Errorf("required key 'name' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Name    string  `json:"name"`
-		Version *string `json:"version,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A text document identifier to denote a specific version of a text document.
@@ -8991,32 +12849,50 @@ type VersionedTextDocumentIdentifier struct {
 	Version int32 `json:"version"`
 }
 
-func (s *VersionedTextDocumentIdentifier) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Uri     requiredProp `json:"uri"`
-		Version requiredProp `json:"version"`
-	}
+func (s *VersionedTextDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenUri     bool
+		seenVersion bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Uri {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		case "version":
+			seenVersion = true
+			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if !keys.Version {
+	if !seenVersion {
 		return fmt.Errorf("required key 'version' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Uri     DocumentUri `json:"uri"`
-		Version int32       `json:"version"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Save options.
@@ -9034,32 +12910,50 @@ type FileEvent struct {
 	Type FileChangeType `json:"type"`
 }
 
-func (s *FileEvent) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Uri  requiredProp `json:"uri"`
-		Type requiredProp `json:"type"`
-	}
+func (s *FileEvent) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenUri  bool
+		seenType bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Uri {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		case "type":
+			seenType = true
+			if err := json.UnmarshalDecode(dec, &s.Type); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if !keys.Type {
+	if !seenType {
 		return fmt.Errorf("required key 'type' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Uri  DocumentUri    `json:"uri"`
-		Type FileChangeType `json:"type"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type FileSystemWatcher struct {
@@ -9074,28 +12968,43 @@ type FileSystemWatcher struct {
 	Kind *WatchKind `json:"kind,omitzero"`
 }
 
-func (s *FileSystemWatcher) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		GlobPattern requiredProp `json:"globPattern"`
-	}
+func (s *FileSystemWatcher) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenGlobPattern bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.GlobPattern {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "globPattern":
+			seenGlobPattern = true
+			if err := json.UnmarshalDecode(dec, &s.GlobPattern); err != nil {
+				return err
+			}
+		case "kind":
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenGlobPattern {
 		return fmt.Errorf("required key 'globPattern' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		GlobPattern PatternOrRelativePattern `json:"globPattern"`
-		Kind        *WatchKind               `json:"kind,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Represents a diagnostic, such as a compiler error or warning. Diagnostic objects
@@ -9142,39 +13051,78 @@ type Diagnostic struct {
 	Data *any `json:"data,omitzero"`
 }
 
-func (s *Diagnostic) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Range   requiredProp `json:"range"`
-		Message requiredProp `json:"message"`
-	}
+func (s *Diagnostic) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenRange   bool
+		seenMessage bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Range {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "severity":
+			if err := json.UnmarshalDecode(dec, &s.Severity); err != nil {
+				return err
+			}
+		case "code":
+			if err := json.UnmarshalDecode(dec, &s.Code); err != nil {
+				return err
+			}
+		case "codeDescription":
+			if err := json.UnmarshalDecode(dec, &s.CodeDescription); err != nil {
+				return err
+			}
+		case "source":
+			if err := json.UnmarshalDecode(dec, &s.Source); err != nil {
+				return err
+			}
+		case "message":
+			seenMessage = true
+			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
+				return err
+			}
+		case "tags":
+			if err := json.UnmarshalDecode(dec, &s.Tags); err != nil {
+				return err
+			}
+		case "relatedInformation":
+			if err := json.UnmarshalDecode(dec, &s.RelatedInformation); err != nil {
+				return err
+			}
+		case "data":
+			if err := json.UnmarshalDecode(dec, &s.Data); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if !keys.Message {
+	if !seenMessage {
 		return fmt.Errorf("required key 'message' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Range              Range                            `json:"range"`
-		Severity           *DiagnosticSeverity              `json:"severity,omitzero"`
-		Code               *IntegerOrString                 `json:"code,omitzero"`
-		CodeDescription    *CodeDescription                 `json:"codeDescription,omitzero"`
-		Source             *string                          `json:"source,omitzero"`
-		Message            string                           `json:"message"`
-		Tags               *[]DiagnosticTag                 `json:"tags,omitzero"`
-		RelatedInformation *[]*DiagnosticRelatedInformation `json:"relatedInformation,omitzero"`
-		Data               *any                             `json:"data,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Contains additional information about the context in which a completion request is triggered.
@@ -9187,28 +13135,43 @@ type CompletionContext struct {
 	TriggerCharacter *string `json:"triggerCharacter,omitzero"`
 }
 
-func (s *CompletionContext) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TriggerKind requiredProp `json:"triggerKind"`
-	}
+func (s *CompletionContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenTriggerKind bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TriggerKind {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "triggerKind":
+			seenTriggerKind = true
+			if err := json.UnmarshalDecode(dec, &s.TriggerKind); err != nil {
+				return err
+			}
+		case "triggerCharacter":
+			if err := json.UnmarshalDecode(dec, &s.TriggerCharacter); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTriggerKind {
 		return fmt.Errorf("required key 'triggerKind' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TriggerKind      CompletionTriggerKind `json:"triggerKind"`
-		TriggerCharacter *string               `json:"triggerCharacter,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Additional details for a completion item label.
@@ -9238,37 +13201,59 @@ type InsertReplaceEdit struct {
 	Replace Range `json:"replace"`
 }
 
-func (s *InsertReplaceEdit) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		NewText requiredProp `json:"newText"`
-		Insert  requiredProp `json:"insert"`
-		Replace requiredProp `json:"replace"`
-	}
+func (s *InsertReplaceEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenNewText bool
+		seenInsert  bool
+		seenReplace bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.NewText {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "newText":
+			seenNewText = true
+			if err := json.UnmarshalDecode(dec, &s.NewText); err != nil {
+				return err
+			}
+		case "insert":
+			seenInsert = true
+			if err := json.UnmarshalDecode(dec, &s.Insert); err != nil {
+				return err
+			}
+		case "replace":
+			seenReplace = true
+			if err := json.UnmarshalDecode(dec, &s.Replace); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenNewText {
 		return fmt.Errorf("required key 'newText' is missing")
 	}
-	if !keys.Insert {
+	if !seenInsert {
 		return fmt.Errorf("required key 'insert' is missing")
 	}
-	if !keys.Replace {
+	if !seenReplace {
 		return fmt.Errorf("required key 'replace' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		NewText string `json:"newText"`
-		Insert  Range  `json:"insert"`
-		Replace Range  `json:"replace"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // In many cases the items of an actual completion result share the same
@@ -9438,34 +13423,58 @@ type SignatureHelpContext struct {
 	ActiveSignatureHelp *SignatureHelp `json:"activeSignatureHelp,omitzero"`
 }
 
-func (s *SignatureHelpContext) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TriggerKind requiredProp `json:"triggerKind"`
-		IsRetrigger requiredProp `json:"isRetrigger"`
-	}
+func (s *SignatureHelpContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTriggerKind bool
+		seenIsRetrigger bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TriggerKind {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "triggerKind":
+			seenTriggerKind = true
+			if err := json.UnmarshalDecode(dec, &s.TriggerKind); err != nil {
+				return err
+			}
+		case "triggerCharacter":
+			if err := json.UnmarshalDecode(dec, &s.TriggerCharacter); err != nil {
+				return err
+			}
+		case "isRetrigger":
+			seenIsRetrigger = true
+			if err := json.UnmarshalDecode(dec, &s.IsRetrigger); err != nil {
+				return err
+			}
+		case "activeSignatureHelp":
+			if err := json.UnmarshalDecode(dec, &s.ActiveSignatureHelp); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTriggerKind {
 		return fmt.Errorf("required key 'triggerKind' is missing")
 	}
-	if !keys.IsRetrigger {
+	if !seenIsRetrigger {
 		return fmt.Errorf("required key 'isRetrigger' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TriggerKind         SignatureHelpTriggerKind `json:"triggerKind"`
-		TriggerCharacter    *string                  `json:"triggerCharacter,omitzero"`
-		IsRetrigger         bool                     `json:"isRetrigger"`
-		ActiveSignatureHelp *SignatureHelp           `json:"activeSignatureHelp,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Represents the signature of something callable. A signature
@@ -9497,30 +13506,51 @@ type SignatureInformation struct {
 	ActiveParameter *UintegerOrNull `json:"activeParameter,omitzero"`
 }
 
-func (s *SignatureInformation) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Label requiredProp `json:"label"`
-	}
+func (s *SignatureInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenLabel bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Label {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "label":
+			seenLabel = true
+			if err := json.UnmarshalDecode(dec, &s.Label); err != nil {
+				return err
+			}
+		case "documentation":
+			if err := json.UnmarshalDecode(dec, &s.Documentation); err != nil {
+				return err
+			}
+		case "parameters":
+			if err := json.UnmarshalDecode(dec, &s.Parameters); err != nil {
+				return err
+			}
+		case "activeParameter":
+			if err := json.UnmarshalDecode(dec, &s.ActiveParameter); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenLabel {
 		return fmt.Errorf("required key 'label' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Label           string                   `json:"label"`
-		Documentation   *StringOrMarkupContent   `json:"documentation,omitzero"`
-		Parameters      *[]*ParameterInformation `json:"parameters,omitzero"`
-		ActiveParameter *UintegerOrNull          `json:"activeParameter,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Server Capabilities for a SignatureHelpRequest.
@@ -9551,27 +13581,39 @@ type ReferenceContext struct {
 	IncludeDeclaration bool `json:"includeDeclaration"`
 }
 
-func (s *ReferenceContext) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		IncludeDeclaration requiredProp `json:"includeDeclaration"`
-	}
+func (s *ReferenceContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenIncludeDeclaration bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.IncludeDeclaration {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "includeDeclaration":
+			seenIncludeDeclaration = true
+			if err := json.UnmarshalDecode(dec, &s.IncludeDeclaration); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenIncludeDeclaration {
 		return fmt.Errorf("required key 'includeDeclaration' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		IncludeDeclaration bool `json:"includeDeclaration"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Reference options.
@@ -9604,34 +13646,58 @@ type BaseSymbolInformation struct {
 	ContainerName *string `json:"containerName,omitzero"`
 }
 
-func (s *BaseSymbolInformation) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Name requiredProp `json:"name"`
-		Kind requiredProp `json:"kind"`
-	}
+func (s *BaseSymbolInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenName bool
+		seenKind bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Name {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "name":
+			seenName = true
+			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
+				return err
+			}
+		case "kind":
+			seenKind = true
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "tags":
+			if err := json.UnmarshalDecode(dec, &s.Tags); err != nil {
+				return err
+			}
+		case "containerName":
+			if err := json.UnmarshalDecode(dec, &s.ContainerName); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenName {
 		return fmt.Errorf("required key 'name' is missing")
 	}
-	if !keys.Kind {
+	if !seenKind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Name          string       `json:"name"`
-		Kind          SymbolKind   `json:"kind"`
-		Tags          *[]SymbolTag `json:"tags,omitzero"`
-		ContainerName *string      `json:"containerName,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Provider options for a DocumentSymbolRequest.
@@ -9667,29 +13733,47 @@ type CodeActionContext struct {
 	TriggerKind *CodeActionTriggerKind `json:"triggerKind,omitzero"`
 }
 
-func (s *CodeActionContext) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Diagnostics requiredProp `json:"diagnostics"`
-	}
+func (s *CodeActionContext) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDiagnostics bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Diagnostics {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "diagnostics":
+			seenDiagnostics = true
+			if err := json.UnmarshalDecode(dec, &s.Diagnostics); err != nil {
+				return err
+			}
+		case "only":
+			if err := json.UnmarshalDecode(dec, &s.Only); err != nil {
+				return err
+			}
+		case "triggerKind":
+			if err := json.UnmarshalDecode(dec, &s.TriggerKind); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDiagnostics {
 		return fmt.Errorf("required key 'diagnostics' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Diagnostics []*Diagnostic          `json:"diagnostics"`
-		Only        *[]CodeActionKind      `json:"only,omitzero"`
-		TriggerKind *CodeActionTriggerKind `json:"triggerKind,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Captures why the code action is currently disabled.
@@ -9702,27 +13786,39 @@ type CodeActionDisabled struct {
 	Reason string `json:"reason"`
 }
 
-func (s *CodeActionDisabled) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Reason requiredProp `json:"reason"`
-	}
+func (s *CodeActionDisabled) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenReason bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Reason {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "reason":
+			seenReason = true
+			if err := json.UnmarshalDecode(dec, &s.Reason); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenReason {
 		return fmt.Errorf("required key 'reason' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Reason string `json:"reason"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Provider options for a CodeActionRequest.
@@ -9767,27 +13863,39 @@ type LocationUriOnly struct {
 	Uri DocumentUri `json:"uri"`
 }
 
-func (s *LocationUriOnly) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Uri requiredProp `json:"uri"`
-	}
+func (s *LocationUriOnly) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenUri bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Uri {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Uri DocumentUri `json:"uri"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Server capabilities for a WorkspaceSymbolRequest.
@@ -9841,35 +13949,62 @@ type FormattingOptions struct {
 	TrimFinalNewlines *bool `json:"trimFinalNewlines,omitzero"`
 }
 
-func (s *FormattingOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TabSize      requiredProp `json:"tabSize"`
-		InsertSpaces requiredProp `json:"insertSpaces"`
-	}
+func (s *FormattingOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTabSize      bool
+		seenInsertSpaces bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TabSize {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "tabSize":
+			seenTabSize = true
+			if err := json.UnmarshalDecode(dec, &s.TabSize); err != nil {
+				return err
+			}
+		case "insertSpaces":
+			seenInsertSpaces = true
+			if err := json.UnmarshalDecode(dec, &s.InsertSpaces); err != nil {
+				return err
+			}
+		case "trimTrailingWhitespace":
+			if err := json.UnmarshalDecode(dec, &s.TrimTrailingWhitespace); err != nil {
+				return err
+			}
+		case "insertFinalNewline":
+			if err := json.UnmarshalDecode(dec, &s.InsertFinalNewline); err != nil {
+				return err
+			}
+		case "trimFinalNewlines":
+			if err := json.UnmarshalDecode(dec, &s.TrimFinalNewlines); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTabSize {
 		return fmt.Errorf("required key 'tabSize' is missing")
 	}
-	if !keys.InsertSpaces {
+	if !seenInsertSpaces {
 		return fmt.Errorf("required key 'insertSpaces' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TabSize                uint32 `json:"tabSize"`
-		InsertSpaces           bool   `json:"insertSpaces"`
-		TrimTrailingWhitespace *bool  `json:"trimTrailingWhitespace,omitzero"`
-		InsertFinalNewline     *bool  `json:"insertFinalNewline,omitzero"`
-		TrimFinalNewlines      *bool  `json:"trimFinalNewlines,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Provider options for a DocumentFormattingRequest.
@@ -9898,28 +14033,43 @@ type DocumentOnTypeFormattingOptions struct {
 	MoreTriggerCharacter *[]string `json:"moreTriggerCharacter,omitzero"`
 }
 
-func (s *DocumentOnTypeFormattingOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		FirstTriggerCharacter requiredProp `json:"firstTriggerCharacter"`
-	}
+func (s *DocumentOnTypeFormattingOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenFirstTriggerCharacter bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.FirstTriggerCharacter {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "firstTriggerCharacter":
+			seenFirstTriggerCharacter = true
+			if err := json.UnmarshalDecode(dec, &s.FirstTriggerCharacter); err != nil {
+				return err
+			}
+		case "moreTriggerCharacter":
+			if err := json.UnmarshalDecode(dec, &s.MoreTriggerCharacter); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenFirstTriggerCharacter {
 		return fmt.Errorf("required key 'firstTriggerCharacter' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		FirstTriggerCharacter string    `json:"firstTriggerCharacter"`
-		MoreTriggerCharacter  *[]string `json:"moreTriggerCharacter,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Provider options for a RenameRequest.
@@ -9939,32 +14089,50 @@ type PrepareRenamePlaceholder struct {
 	Placeholder string `json:"placeholder"`
 }
 
-func (s *PrepareRenamePlaceholder) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Range       requiredProp `json:"range"`
-		Placeholder requiredProp `json:"placeholder"`
-	}
+func (s *PrepareRenamePlaceholder) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenRange       bool
+		seenPlaceholder bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Range {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "placeholder":
+			seenPlaceholder = true
+			if err := json.UnmarshalDecode(dec, &s.Placeholder); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if !keys.Placeholder {
+	if !seenPlaceholder {
 		return fmt.Errorf("required key 'placeholder' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Range       Range  `json:"range"`
-		Placeholder string `json:"placeholder"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.18.0
@@ -9972,27 +14140,39 @@ type PrepareRenameDefaultBehavior struct {
 	DefaultBehavior bool `json:"defaultBehavior"`
 }
 
-func (s *PrepareRenameDefaultBehavior) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		DefaultBehavior requiredProp `json:"defaultBehavior"`
-	}
+func (s *PrepareRenameDefaultBehavior) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenDefaultBehavior bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.DefaultBehavior {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "defaultBehavior":
+			seenDefaultBehavior = true
+			if err := json.UnmarshalDecode(dec, &s.DefaultBehavior); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDefaultBehavior {
 		return fmt.Errorf("required key 'defaultBehavior' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DefaultBehavior bool `json:"defaultBehavior"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // The server capabilities of a ExecuteCommandRequest.
@@ -10003,28 +14183,43 @@ type ExecuteCommandOptions struct {
 	Commands []string `json:"commands"`
 }
 
-func (s *ExecuteCommandOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Commands requiredProp `json:"commands"`
-	}
+func (s *ExecuteCommandOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenCommands bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Commands {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "workDoneProgress":
+			if err := json.UnmarshalDecode(dec, &s.WorkDoneProgress); err != nil {
+				return err
+			}
+		case "commands":
+			seenCommands = true
+			if err := json.UnmarshalDecode(dec, &s.Commands); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenCommands {
 		return fmt.Errorf("required key 'commands' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		WorkDoneProgress *bool    `json:"workDoneProgress,omitzero"`
-		Commands         []string `json:"commands"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Additional data about a workspace edit.
@@ -10046,32 +14241,50 @@ type SemanticTokensLegend struct {
 	TokenModifiers []string `json:"tokenModifiers"`
 }
 
-func (s *SemanticTokensLegend) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		TokenTypes     requiredProp `json:"tokenTypes"`
-		TokenModifiers requiredProp `json:"tokenModifiers"`
-	}
+func (s *SemanticTokensLegend) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenTokenTypes     bool
+		seenTokenModifiers bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.TokenTypes {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "tokenTypes":
+			seenTokenTypes = true
+			if err := json.UnmarshalDecode(dec, &s.TokenTypes); err != nil {
+				return err
+			}
+		case "tokenModifiers":
+			seenTokenModifiers = true
+			if err := json.UnmarshalDecode(dec, &s.TokenModifiers); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenTokenTypes {
 		return fmt.Errorf("required key 'tokenTypes' is missing")
 	}
-	if !keys.TokenModifiers {
+	if !seenTokenModifiers {
 		return fmt.Errorf("required key 'tokenModifiers' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		TokenTypes     []string `json:"tokenTypes"`
-		TokenModifiers []string `json:"tokenModifiers"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Semantic tokens options to support deltas for full documents
@@ -10095,32 +14308,50 @@ type OptionalVersionedTextDocumentIdentifier struct {
 	Version IntegerOrNull `json:"version"`
 }
 
-func (s *OptionalVersionedTextDocumentIdentifier) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Uri     requiredProp `json:"uri"`
-		Version requiredProp `json:"version"`
-	}
+func (s *OptionalVersionedTextDocumentIdentifier) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenUri     bool
+		seenVersion bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Uri {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		case "version":
+			seenVersion = true
+			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if !keys.Version {
+	if !seenVersion {
 		return fmt.Errorf("required key 'version' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Uri     DocumentUri   `json:"uri"`
-		Version IntegerOrNull `json:"version"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A special text edit with an additional change annotation.
@@ -10139,37 +14370,59 @@ type AnnotatedTextEdit struct {
 	AnnotationId string `json:"annotationId"`
 }
 
-func (s *AnnotatedTextEdit) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Range        requiredProp `json:"range"`
-		NewText      requiredProp `json:"newText"`
-		AnnotationId requiredProp `json:"annotationId"`
-	}
+func (s *AnnotatedTextEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenRange        bool
+		seenNewText      bool
+		seenAnnotationId bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Range {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "newText":
+			seenNewText = true
+			if err := json.UnmarshalDecode(dec, &s.NewText); err != nil {
+				return err
+			}
+		case "annotationId":
+			seenAnnotationId = true
+			if err := json.UnmarshalDecode(dec, &s.AnnotationId); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if !keys.NewText {
+	if !seenNewText {
 		return fmt.Errorf("required key 'newText' is missing")
 	}
-	if !keys.AnnotationId {
+	if !seenAnnotationId {
 		return fmt.Errorf("required key 'annotationId' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Range        Range  `json:"range"`
-		NewText      string `json:"newText"`
-		AnnotationId string `json:"annotationId"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // An interactive text edit.
@@ -10188,33 +14441,54 @@ type SnippetTextEdit struct {
 	AnnotationId *string `json:"annotationId,omitzero"`
 }
 
-func (s *SnippetTextEdit) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Range   requiredProp `json:"range"`
-		Snippet requiredProp `json:"snippet"`
-	}
+func (s *SnippetTextEdit) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenRange   bool
+		seenSnippet bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Range {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "snippet":
+			seenSnippet = true
+			if err := json.UnmarshalDecode(dec, &s.Snippet); err != nil {
+				return err
+			}
+		case "annotationId":
+			if err := json.UnmarshalDecode(dec, &s.AnnotationId); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if !keys.Snippet {
+	if !seenSnippet {
 		return fmt.Errorf("required key 'snippet' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Range        Range        `json:"range"`
-		Snippet      *StringValue `json:"snippet"`
-		AnnotationId *string      `json:"annotationId,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A generic resource operation.
@@ -10228,28 +14502,43 @@ type ResourceOperation struct {
 	AnnotationId *string `json:"annotationId,omitzero"`
 }
 
-func (s *ResourceOperation) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Kind requiredProp `json:"kind"`
-	}
+func (s *ResourceOperation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenKind bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Kind {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "kind":
+			seenKind = true
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "annotationId":
+			if err := json.UnmarshalDecode(dec, &s.AnnotationId); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenKind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Kind         string  `json:"kind"`
-		AnnotationId *string `json:"annotationId,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Options to create a file.
@@ -10302,29 +14591,47 @@ type FileOperationPattern struct {
 	Options *FileOperationPatternOptions `json:"options,omitzero"`
 }
 
-func (s *FileOperationPattern) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Glob requiredProp `json:"glob"`
-	}
+func (s *FileOperationPattern) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenGlob bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Glob {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "glob":
+			seenGlob = true
+			if err := json.UnmarshalDecode(dec, &s.Glob); err != nil {
+				return err
+			}
+		case "matches":
+			if err := json.UnmarshalDecode(dec, &s.Matches); err != nil {
+				return err
+			}
+		case "options":
+			if err := json.UnmarshalDecode(dec, &s.Options); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenGlob {
 		return fmt.Errorf("required key 'glob' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Glob    string                       `json:"glob"`
-		Matches *FileOperationPatternKind    `json:"matches,omitzero"`
-		Options *FileOperationPatternOptions `json:"options,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A full document diagnostic report for a workspace diagnostic result.
@@ -10350,43 +14657,72 @@ type WorkspaceFullDocumentDiagnosticReport struct {
 	Version IntegerOrNull `json:"version"`
 }
 
-func (s *WorkspaceFullDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Kind    requiredProp `json:"kind"`
-		Items   requiredProp `json:"items"`
-		Uri     requiredProp `json:"uri"`
-		Version requiredProp `json:"version"`
-	}
+func (s *WorkspaceFullDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenKind    bool
+		seenItems   bool
+		seenUri     bool
+		seenVersion bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Kind {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "kind":
+			seenKind = true
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "resultId":
+			if err := json.UnmarshalDecode(dec, &s.ResultId); err != nil {
+				return err
+			}
+		case "items":
+			seenItems = true
+			if err := json.UnmarshalDecode(dec, &s.Items); err != nil {
+				return err
+			}
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		case "version":
+			seenVersion = true
+			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenKind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if !keys.Items {
+	if !seenItems {
 		return fmt.Errorf("required key 'items' is missing")
 	}
-	if !keys.Uri {
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if !keys.Version {
+	if !seenVersion {
 		return fmt.Errorf("required key 'version' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Kind     StringLiteralFull `json:"kind"`
-		ResultId *string           `json:"resultId,omitzero"`
-		Items    []*Diagnostic     `json:"items"`
-		Uri      DocumentUri       `json:"uri"`
-		Version  IntegerOrNull     `json:"version"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // An unchanged document diagnostic report for a workspace diagnostic result.
@@ -10411,42 +14747,68 @@ type WorkspaceUnchangedDocumentDiagnosticReport struct {
 	Version IntegerOrNull `json:"version"`
 }
 
-func (s *WorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Kind     requiredProp `json:"kind"`
-		ResultId requiredProp `json:"resultId"`
-		Uri      requiredProp `json:"uri"`
-		Version  requiredProp `json:"version"`
-	}
+func (s *WorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenKind     bool
+		seenResultId bool
+		seenUri      bool
+		seenVersion  bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Kind {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "kind":
+			seenKind = true
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "resultId":
+			seenResultId = true
+			if err := json.UnmarshalDecode(dec, &s.ResultId); err != nil {
+				return err
+			}
+		case "uri":
+			seenUri = true
+			if err := json.UnmarshalDecode(dec, &s.Uri); err != nil {
+				return err
+			}
+		case "version":
+			seenVersion = true
+			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenKind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if !keys.ResultId {
+	if !seenResultId {
 		return fmt.Errorf("required key 'resultId' is missing")
 	}
-	if !keys.Uri {
+	if !seenUri {
 		return fmt.Errorf("required key 'uri' is missing")
 	}
-	if !keys.Version {
+	if !seenVersion {
 		return fmt.Errorf("required key 'version' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Kind     StringLiteralUnchanged `json:"kind"`
-		ResultId string                 `json:"resultId"`
-		Uri      DocumentUri            `json:"uri"`
-		Version  IntegerOrNull          `json:"version"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A notebook cell.
@@ -10474,34 +14836,58 @@ type NotebookCell struct {
 	ExecutionSummary *ExecutionSummary `json:"executionSummary,omitzero"`
 }
 
-func (s *NotebookCell) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Kind     requiredProp `json:"kind"`
-		Document requiredProp `json:"document"`
-	}
+func (s *NotebookCell) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenKind     bool
+		seenDocument bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Kind {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "kind":
+			seenKind = true
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "document":
+			seenDocument = true
+			if err := json.UnmarshalDecode(dec, &s.Document); err != nil {
+				return err
+			}
+		case "metadata":
+			if err := json.UnmarshalDecode(dec, &s.Metadata); err != nil {
+				return err
+			}
+		case "executionSummary":
+			if err := json.UnmarshalDecode(dec, &s.ExecutionSummary); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenKind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if !keys.Document {
+	if !seenDocument {
 		return fmt.Errorf("required key 'document' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Kind             NotebookCellKind  `json:"kind"`
-		Document         DocumentUri       `json:"document"`
-		Metadata         *map[string]any   `json:"metadata,omitzero"`
-		ExecutionSummary *ExecutionSummary `json:"executionSummary,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.18.0
@@ -10515,28 +14901,43 @@ type NotebookDocumentFilterWithNotebook struct {
 	Cells *[]*NotebookCellLanguage `json:"cells,omitzero"`
 }
 
-func (s *NotebookDocumentFilterWithNotebook) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Notebook requiredProp `json:"notebook"`
-	}
+func (s *NotebookDocumentFilterWithNotebook) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenNotebook bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Notebook {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "notebook":
+			seenNotebook = true
+			if err := json.UnmarshalDecode(dec, &s.Notebook); err != nil {
+				return err
+			}
+		case "cells":
+			if err := json.UnmarshalDecode(dec, &s.Cells); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenNotebook {
 		return fmt.Errorf("required key 'notebook' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Notebook StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern `json:"notebook"`
-		Cells    *[]*NotebookCellLanguage                                                                                `json:"cells,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.18.0
@@ -10550,28 +14951,43 @@ type NotebookDocumentFilterWithCells struct {
 	Cells []*NotebookCellLanguage `json:"cells"`
 }
 
-func (s *NotebookDocumentFilterWithCells) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Cells requiredProp `json:"cells"`
-	}
+func (s *NotebookDocumentFilterWithCells) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenCells bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Cells {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "notebook":
+			if err := json.UnmarshalDecode(dec, &s.Notebook); err != nil {
+				return err
+			}
+		case "cells":
+			seenCells = true
+			if err := json.UnmarshalDecode(dec, &s.Cells); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenCells {
 		return fmt.Errorf("required key 'cells' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Notebook *StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern `json:"notebook,omitzero"`
-		Cells    []*NotebookCellLanguage                                                                                  `json:"cells"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Cell changes to a notebook document.
@@ -10603,32 +15019,50 @@ type SelectedCompletionInfo struct {
 	Text string `json:"text"`
 }
 
-func (s *SelectedCompletionInfo) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Range requiredProp `json:"range"`
-		Text  requiredProp `json:"text"`
-	}
+func (s *SelectedCompletionInfo) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenRange bool
+		seenText  bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Range {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "text":
+			seenText = true
+			if err := json.UnmarshalDecode(dec, &s.Text); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if !keys.Text {
+	if !seenText {
 		return fmt.Errorf("required key 'text' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Range Range  `json:"range"`
-		Text  string `json:"text"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Information about the client
@@ -10644,28 +15078,43 @@ type ClientInfo struct {
 	Version *string `json:"version,omitzero"`
 }
 
-func (s *ClientInfo) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Name requiredProp `json:"name"`
-	}
+func (s *ClientInfo) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenName bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Name {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "name":
+			seenName = true
+			if err := json.UnmarshalDecode(dec, &s.Name); err != nil {
+				return err
+			}
+		case "version":
+			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenName {
 		return fmt.Errorf("required key 'name' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Name    string  `json:"name"`
-		Version *string `json:"version,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Defines the capabilities provided by the client.
@@ -10751,33 +15200,54 @@ type TextDocumentContentChangePartial struct {
 	Text string `json:"text"`
 }
 
-func (s *TextDocumentContentChangePartial) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Range requiredProp `json:"range"`
-		Text  requiredProp `json:"text"`
-	}
+func (s *TextDocumentContentChangePartial) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenRange bool
+		seenText  bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Range {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "range":
+			seenRange = true
+			if err := json.UnmarshalDecode(dec, &s.Range); err != nil {
+				return err
+			}
+		case "rangeLength":
+			if err := json.UnmarshalDecode(dec, &s.RangeLength); err != nil {
+				return err
+			}
+		case "text":
+			seenText = true
+			if err := json.UnmarshalDecode(dec, &s.Text); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenRange {
 		return fmt.Errorf("required key 'range' is missing")
 	}
-	if !keys.Text {
+	if !seenText {
 		return fmt.Errorf("required key 'text' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Range       Range   `json:"range"`
-		RangeLength *uint32 `json:"rangeLength,omitzero"`
-		Text        string  `json:"text"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.18.0
@@ -10786,27 +15256,39 @@ type TextDocumentContentChangeWholeDocument struct {
 	Text string `json:"text"`
 }
 
-func (s *TextDocumentContentChangeWholeDocument) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Text requiredProp `json:"text"`
-	}
+func (s *TextDocumentContentChangeWholeDocument) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenText bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Text {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "text":
+			seenText = true
+			if err := json.UnmarshalDecode(dec, &s.Text); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenText {
 		return fmt.Errorf("required key 'text' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Text string `json:"text"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Structure to capture a description for an error code.
@@ -10817,27 +15299,39 @@ type CodeDescription struct {
 	Href URI `json:"href"`
 }
 
-func (s *CodeDescription) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Href requiredProp `json:"href"`
-	}
+func (s *CodeDescription) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenHref bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Href {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "href":
+			seenHref = true
+			if err := json.UnmarshalDecode(dec, &s.Href); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenHref {
 		return fmt.Errorf("required key 'href' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Href URI `json:"href"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Represents a related message and source code location for a diagnostic. This should be
@@ -10851,32 +15345,50 @@ type DiagnosticRelatedInformation struct {
 	Message string `json:"message"`
 }
 
-func (s *DiagnosticRelatedInformation) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Location requiredProp `json:"location"`
-		Message  requiredProp `json:"message"`
-	}
+func (s *DiagnosticRelatedInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenLocation bool
+		seenMessage  bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Location {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "location":
+			seenLocation = true
+			if err := json.UnmarshalDecode(dec, &s.Location); err != nil {
+				return err
+			}
+		case "message":
+			seenMessage = true
+			if err := json.UnmarshalDecode(dec, &s.Message); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenLocation {
 		return fmt.Errorf("required key 'location' is missing")
 	}
-	if !keys.Message {
+	if !seenMessage {
 		return fmt.Errorf("required key 'message' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Location Location `json:"location"`
-		Message  string   `json:"message"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Edit range variant that includes ranges for insert and replace operations.
@@ -10888,32 +15400,50 @@ type EditRangeWithInsertReplace struct {
 	Replace Range `json:"replace"`
 }
 
-func (s *EditRangeWithInsertReplace) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Insert  requiredProp `json:"insert"`
-		Replace requiredProp `json:"replace"`
-	}
+func (s *EditRangeWithInsertReplace) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenInsert  bool
+		seenReplace bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Insert {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "insert":
+			seenInsert = true
+			if err := json.UnmarshalDecode(dec, &s.Insert); err != nil {
+				return err
+			}
+		case "replace":
+			seenReplace = true
+			if err := json.UnmarshalDecode(dec, &s.Replace); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenInsert {
 		return fmt.Errorf("required key 'insert' is missing")
 	}
-	if !keys.Replace {
+	if !seenReplace {
 		return fmt.Errorf("required key 'replace' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Insert  Range `json:"insert"`
-		Replace Range `json:"replace"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.18.0
@@ -10935,32 +15465,50 @@ type MarkedStringWithLanguage struct {
 	Value string `json:"value"`
 }
 
-func (s *MarkedStringWithLanguage) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Language requiredProp `json:"language"`
-		Value    requiredProp `json:"value"`
-	}
+func (s *MarkedStringWithLanguage) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenLanguage bool
+		seenValue    bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Language {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "language":
+			seenLanguage = true
+			if err := json.UnmarshalDecode(dec, &s.Language); err != nil {
+				return err
+			}
+		case "value":
+			seenValue = true
+			if err := json.UnmarshalDecode(dec, &s.Value); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenLanguage {
 		return fmt.Errorf("required key 'language' is missing")
 	}
-	if !keys.Value {
+	if !seenValue {
 		return fmt.Errorf("required key 'value' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Language string `json:"language"`
-		Value    string `json:"value"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Represents a parameter of a callable-signature. A parameter can
@@ -10985,28 +15533,43 @@ type ParameterInformation struct {
 	Documentation *StringOrMarkupContent `json:"documentation,omitzero"`
 }
 
-func (s *ParameterInformation) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Label requiredProp `json:"label"`
-	}
+func (s *ParameterInformation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenLabel bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Label {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "label":
+			seenLabel = true
+			if err := json.UnmarshalDecode(dec, &s.Label); err != nil {
+				return err
+			}
+		case "documentation":
+			if err := json.UnmarshalDecode(dec, &s.Documentation); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenLabel {
 		return fmt.Errorf("required key 'label' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Label         StringOrTuple          `json:"label"`
-		Documentation *StringOrMarkupContent `json:"documentation,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Documentation for a class of code actions.
@@ -11028,32 +15591,50 @@ type CodeActionKindDocumentation struct {
 	Command *Command `json:"command"`
 }
 
-func (s *CodeActionKindDocumentation) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Kind    requiredProp `json:"kind"`
-		Command requiredProp `json:"command"`
-	}
+func (s *CodeActionKindDocumentation) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenKind    bool
+		seenCommand bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Kind {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "kind":
+			seenKind = true
+			if err := json.UnmarshalDecode(dec, &s.Kind); err != nil {
+				return err
+			}
+		case "command":
+			seenCommand = true
+			if err := json.UnmarshalDecode(dec, &s.Command); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenKind {
 		return fmt.Errorf("required key 'kind' is missing")
 	}
-	if !keys.Command {
+	if !seenCommand {
 		return fmt.Errorf("required key 'command' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Kind    CodeActionKind `json:"kind"`
-		Command *Command       `json:"command"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A notebook cell text document filter denotes a cell text
@@ -11074,28 +15655,43 @@ type NotebookCellTextDocumentFilter struct {
 	Language *string `json:"language,omitzero"`
 }
 
-func (s *NotebookCellTextDocumentFilter) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Notebook requiredProp `json:"notebook"`
-	}
+func (s *NotebookCellTextDocumentFilter) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenNotebook bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Notebook {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "notebook":
+			seenNotebook = true
+			if err := json.UnmarshalDecode(dec, &s.Notebook); err != nil {
+				return err
+			}
+		case "language":
+			if err := json.UnmarshalDecode(dec, &s.Language); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenNotebook {
 		return fmt.Errorf("required key 'notebook' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Notebook StringOrNotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern `json:"notebook"`
-		Language *string                                                                                                 `json:"language,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Matching options for the file operation pattern.
@@ -11117,28 +15713,43 @@ type ExecutionSummary struct {
 	Success *bool `json:"success,omitzero"`
 }
 
-func (s *ExecutionSummary) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		ExecutionOrder requiredProp `json:"executionOrder"`
-	}
+func (s *ExecutionSummary) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenExecutionOrder bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.ExecutionOrder {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "executionOrder":
+			seenExecutionOrder = true
+			if err := json.UnmarshalDecode(dec, &s.ExecutionOrder); err != nil {
+				return err
+			}
+		case "success":
+			if err := json.UnmarshalDecode(dec, &s.Success); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenExecutionOrder {
 		return fmt.Errorf("required key 'executionOrder' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		ExecutionOrder uint32 `json:"executionOrder"`
-		Success        *bool  `json:"success,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.18.0
@@ -11146,27 +15757,39 @@ type NotebookCellLanguage struct {
 	Language string `json:"language"`
 }
 
-func (s *NotebookCellLanguage) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Language requiredProp `json:"language"`
-	}
+func (s *NotebookCellLanguage) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenLanguage bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Language {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "language":
+			seenLanguage = true
+			if err := json.UnmarshalDecode(dec, &s.Language); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenLanguage {
 		return fmt.Errorf("required key 'language' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Language string `json:"language"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Structural changes to cells in a notebook document.
@@ -11183,29 +15806,47 @@ type NotebookDocumentCellChangeStructure struct {
 	DidClose *[]TextDocumentIdentifier `json:"didClose,omitzero"`
 }
 
-func (s *NotebookDocumentCellChangeStructure) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Array requiredProp `json:"array"`
-	}
+func (s *NotebookDocumentCellChangeStructure) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenArray bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Array {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "array":
+			seenArray = true
+			if err := json.UnmarshalDecode(dec, &s.Array); err != nil {
+				return err
+			}
+		case "didOpen":
+			if err := json.UnmarshalDecode(dec, &s.DidOpen); err != nil {
+				return err
+			}
+		case "didClose":
+			if err := json.UnmarshalDecode(dec, &s.DidClose); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenArray {
 		return fmt.Errorf("required key 'array' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Array    *NotebookCellArrayChange  `json:"array"`
-		DidOpen  *[]*TextDocumentItem      `json:"didOpen,omitzero"`
-		DidClose *[]TextDocumentIdentifier `json:"didClose,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Content changes to a cell in a notebook document.
@@ -11217,32 +15858,50 @@ type NotebookDocumentCellContentChanges struct {
 	Changes []TextDocumentContentChangePartialOrWholeDocument `json:"changes"`
 }
 
-func (s *NotebookDocumentCellContentChanges) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Document requiredProp `json:"document"`
-		Changes  requiredProp `json:"changes"`
-	}
+func (s *NotebookDocumentCellContentChanges) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenDocument bool
+		seenChanges  bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Document {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "document":
+			seenDocument = true
+			if err := json.UnmarshalDecode(dec, &s.Document); err != nil {
+				return err
+			}
+		case "changes":
+			seenChanges = true
+			if err := json.UnmarshalDecode(dec, &s.Changes); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenDocument {
 		return fmt.Errorf("required key 'document' is missing")
 	}
-	if !keys.Changes {
+	if !seenChanges {
 		return fmt.Errorf("required key 'changes' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Document VersionedTextDocumentIdentifier                   `json:"document"`
-		Changes  []TextDocumentContentChangePartialOrWholeDocument `json:"changes"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Workspace specific client capabilities.
@@ -11471,27 +16130,39 @@ type NotebookDocumentClientCapabilities struct {
 	Synchronization *NotebookDocumentSyncClientCapabilities `json:"synchronization"`
 }
 
-func (s *NotebookDocumentClientCapabilities) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Synchronization requiredProp `json:"synchronization"`
-	}
+func (s *NotebookDocumentClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenSynchronization bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Synchronization {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "synchronization":
+			seenSynchronization = true
+			if err := json.UnmarshalDecode(dec, &s.Synchronization); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenSynchronization {
 		return fmt.Errorf("required key 'synchronization' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Synchronization *NotebookDocumentSyncClientCapabilities `json:"synchronization"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type WindowClientCapabilities struct {
@@ -11611,32 +16282,50 @@ type RelativePattern struct {
 	Pattern string `json:"pattern"`
 }
 
-func (s *RelativePattern) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		BaseUri requiredProp `json:"baseUri"`
-		Pattern requiredProp `json:"pattern"`
-	}
+func (s *RelativePattern) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenBaseUri bool
+		seenPattern bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.BaseUri {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "baseUri":
+			seenBaseUri = true
+			if err := json.UnmarshalDecode(dec, &s.BaseUri); err != nil {
+				return err
+			}
+		case "pattern":
+			seenPattern = true
+			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenBaseUri {
 		return fmt.Errorf("required key 'baseUri' is missing")
 	}
-	if !keys.Pattern {
+	if !seenPattern {
 		return fmt.Errorf("required key 'pattern' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		BaseUri WorkspaceFolderOrURI `json:"baseUri"`
-		Pattern string               `json:"pattern"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A document filter where `language` is required field.
@@ -11657,29 +16346,47 @@ type TextDocumentFilterLanguage struct {
 	Pattern *PatternOrRelativePattern `json:"pattern,omitzero"`
 }
 
-func (s *TextDocumentFilterLanguage) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Language requiredProp `json:"language"`
-	}
+func (s *TextDocumentFilterLanguage) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenLanguage bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Language {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "language":
+			seenLanguage = true
+			if err := json.UnmarshalDecode(dec, &s.Language); err != nil {
+				return err
+			}
+		case "scheme":
+			if err := json.UnmarshalDecode(dec, &s.Scheme); err != nil {
+				return err
+			}
+		case "pattern":
+			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenLanguage {
 		return fmt.Errorf("required key 'language' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Language string                    `json:"language"`
-		Scheme   *string                   `json:"scheme,omitzero"`
-		Pattern  *PatternOrRelativePattern `json:"pattern,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A document filter where `scheme` is required field.
@@ -11700,29 +16407,47 @@ type TextDocumentFilterScheme struct {
 	Pattern *PatternOrRelativePattern `json:"pattern,omitzero"`
 }
 
-func (s *TextDocumentFilterScheme) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Scheme requiredProp `json:"scheme"`
-	}
+func (s *TextDocumentFilterScheme) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenScheme bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Scheme {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "language":
+			if err := json.UnmarshalDecode(dec, &s.Language); err != nil {
+				return err
+			}
+		case "scheme":
+			seenScheme = true
+			if err := json.UnmarshalDecode(dec, &s.Scheme); err != nil {
+				return err
+			}
+		case "pattern":
+			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenScheme {
 		return fmt.Errorf("required key 'scheme' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Language *string                   `json:"language,omitzero"`
-		Scheme   string                    `json:"scheme"`
-		Pattern  *PatternOrRelativePattern `json:"pattern,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A document filter where `pattern` is required field.
@@ -11743,29 +16468,47 @@ type TextDocumentFilterPattern struct {
 	Pattern PatternOrRelativePattern `json:"pattern"`
 }
 
-func (s *TextDocumentFilterPattern) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Pattern requiredProp `json:"pattern"`
-	}
+func (s *TextDocumentFilterPattern) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenPattern bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Pattern {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "language":
+			if err := json.UnmarshalDecode(dec, &s.Language); err != nil {
+				return err
+			}
+		case "scheme":
+			if err := json.UnmarshalDecode(dec, &s.Scheme); err != nil {
+				return err
+			}
+		case "pattern":
+			seenPattern = true
+			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenPattern {
 		return fmt.Errorf("required key 'pattern' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Language *string                  `json:"language,omitzero"`
-		Scheme   *string                  `json:"scheme,omitzero"`
-		Pattern  PatternOrRelativePattern `json:"pattern"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A notebook document filter where `notebookType` is required field.
@@ -11782,29 +16525,47 @@ type NotebookDocumentFilterNotebookType struct {
 	Pattern *PatternOrRelativePattern `json:"pattern,omitzero"`
 }
 
-func (s *NotebookDocumentFilterNotebookType) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		NotebookType requiredProp `json:"notebookType"`
-	}
+func (s *NotebookDocumentFilterNotebookType) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenNotebookType bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.NotebookType {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "notebookType":
+			seenNotebookType = true
+			if err := json.UnmarshalDecode(dec, &s.NotebookType); err != nil {
+				return err
+			}
+		case "scheme":
+			if err := json.UnmarshalDecode(dec, &s.Scheme); err != nil {
+				return err
+			}
+		case "pattern":
+			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenNotebookType {
 		return fmt.Errorf("required key 'notebookType' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		NotebookType string                    `json:"notebookType"`
-		Scheme       *string                   `json:"scheme,omitzero"`
-		Pattern      *PatternOrRelativePattern `json:"pattern,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A notebook document filter where `scheme` is required field.
@@ -11821,29 +16582,47 @@ type NotebookDocumentFilterScheme struct {
 	Pattern *PatternOrRelativePattern `json:"pattern,omitzero"`
 }
 
-func (s *NotebookDocumentFilterScheme) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Scheme requiredProp `json:"scheme"`
-	}
+func (s *NotebookDocumentFilterScheme) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenScheme bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Scheme {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "notebookType":
+			if err := json.UnmarshalDecode(dec, &s.NotebookType); err != nil {
+				return err
+			}
+		case "scheme":
+			seenScheme = true
+			if err := json.UnmarshalDecode(dec, &s.Scheme); err != nil {
+				return err
+			}
+		case "pattern":
+			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenScheme {
 		return fmt.Errorf("required key 'scheme' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		NotebookType *string                   `json:"notebookType,omitzero"`
-		Scheme       string                    `json:"scheme"`
-		Pattern      *PatternOrRelativePattern `json:"pattern,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A notebook document filter where `pattern` is required field.
@@ -11860,29 +16639,47 @@ type NotebookDocumentFilterPattern struct {
 	Pattern PatternOrRelativePattern `json:"pattern"`
 }
 
-func (s *NotebookDocumentFilterPattern) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Pattern requiredProp `json:"pattern"`
-	}
+func (s *NotebookDocumentFilterPattern) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenPattern bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Pattern {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "notebookType":
+			if err := json.UnmarshalDecode(dec, &s.NotebookType); err != nil {
+				return err
+			}
+		case "scheme":
+			if err := json.UnmarshalDecode(dec, &s.Scheme); err != nil {
+				return err
+			}
+		case "pattern":
+			seenPattern = true
+			if err := json.UnmarshalDecode(dec, &s.Pattern); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenPattern {
 		return fmt.Errorf("required key 'pattern' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		NotebookType *string                  `json:"notebookType,omitzero"`
-		Scheme       *string                  `json:"scheme,omitzero"`
-		Pattern      PatternOrRelativePattern `json:"pattern"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // A change describing how to move a `NotebookCell`
@@ -11900,33 +16697,54 @@ type NotebookCellArrayChange struct {
 	Cells *[]*NotebookCell `json:"cells,omitzero"`
 }
 
-func (s *NotebookCellArrayChange) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Start       requiredProp `json:"start"`
-		DeleteCount requiredProp `json:"deleteCount"`
-	}
+func (s *NotebookCellArrayChange) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenStart       bool
+		seenDeleteCount bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Start {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "start":
+			seenStart = true
+			if err := json.UnmarshalDecode(dec, &s.Start); err != nil {
+				return err
+			}
+		case "deleteCount":
+			seenDeleteCount = true
+			if err := json.UnmarshalDecode(dec, &s.DeleteCount); err != nil {
+				return err
+			}
+		case "cells":
+			if err := json.UnmarshalDecode(dec, &s.Cells); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenStart {
 		return fmt.Errorf("required key 'start' is missing")
 	}
-	if !keys.DeleteCount {
+	if !seenDeleteCount {
 		return fmt.Errorf("required key 'deleteCount' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Start       uint32           `json:"start"`
-		DeleteCount uint32           `json:"deleteCount"`
-		Cells       *[]*NotebookCell `json:"cells,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 type WorkspaceEditClientCapabilities struct {
@@ -12579,47 +17397,88 @@ type SemanticTokensClientCapabilities struct {
 	AugmentsSyntaxTokens *bool `json:"augmentsSyntaxTokens,omitzero"`
 }
 
-func (s *SemanticTokensClientCapabilities) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Requests       requiredProp `json:"requests"`
-		TokenTypes     requiredProp `json:"tokenTypes"`
-		TokenModifiers requiredProp `json:"tokenModifiers"`
-		Formats        requiredProp `json:"formats"`
-	}
+func (s *SemanticTokensClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenRequests       bool
+		seenTokenTypes     bool
+		seenTokenModifiers bool
+		seenFormats        bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Requests {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "dynamicRegistration":
+			if err := json.UnmarshalDecode(dec, &s.DynamicRegistration); err != nil {
+				return err
+			}
+		case "requests":
+			seenRequests = true
+			if err := json.UnmarshalDecode(dec, &s.Requests); err != nil {
+				return err
+			}
+		case "tokenTypes":
+			seenTokenTypes = true
+			if err := json.UnmarshalDecode(dec, &s.TokenTypes); err != nil {
+				return err
+			}
+		case "tokenModifiers":
+			seenTokenModifiers = true
+			if err := json.UnmarshalDecode(dec, &s.TokenModifiers); err != nil {
+				return err
+			}
+		case "formats":
+			seenFormats = true
+			if err := json.UnmarshalDecode(dec, &s.Formats); err != nil {
+				return err
+			}
+		case "overlappingTokenSupport":
+			if err := json.UnmarshalDecode(dec, &s.OverlappingTokenSupport); err != nil {
+				return err
+			}
+		case "multilineTokenSupport":
+			if err := json.UnmarshalDecode(dec, &s.MultilineTokenSupport); err != nil {
+				return err
+			}
+		case "serverCancelSupport":
+			if err := json.UnmarshalDecode(dec, &s.ServerCancelSupport); err != nil {
+				return err
+			}
+		case "augmentsSyntaxTokens":
+			if err := json.UnmarshalDecode(dec, &s.AugmentsSyntaxTokens); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenRequests {
 		return fmt.Errorf("required key 'requests' is missing")
 	}
-	if !keys.TokenTypes {
+	if !seenTokenTypes {
 		return fmt.Errorf("required key 'tokenTypes' is missing")
 	}
-	if !keys.TokenModifiers {
+	if !seenTokenModifiers {
 		return fmt.Errorf("required key 'tokenModifiers' is missing")
 	}
-	if !keys.Formats {
+	if !seenFormats {
 		return fmt.Errorf("required key 'formats' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		DynamicRegistration     *bool                               `json:"dynamicRegistration,omitzero"`
-		Requests                *ClientSemanticTokensRequestOptions `json:"requests"`
-		TokenTypes              []string                            `json:"tokenTypes"`
-		TokenModifiers          []string                            `json:"tokenModifiers"`
-		Formats                 []TokenFormat                       `json:"formats"`
-		OverlappingTokenSupport *bool                               `json:"overlappingTokenSupport,omitzero"`
-		MultilineTokenSupport   *bool                               `json:"multilineTokenSupport,omitzero"`
-		ServerCancelSupport     *bool                               `json:"serverCancelSupport,omitzero"`
-		AugmentsSyntaxTokens    *bool                               `json:"augmentsSyntaxTokens,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Client capabilities for the linked editing range request.
@@ -12743,27 +17602,39 @@ type ShowDocumentClientCapabilities struct {
 	Support bool `json:"support"`
 }
 
-func (s *ShowDocumentClientCapabilities) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Support requiredProp `json:"support"`
-	}
+func (s *ShowDocumentClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenSupport bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Support {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "support":
+			seenSupport = true
+			if err := json.UnmarshalDecode(dec, &s.Support); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenSupport {
 		return fmt.Errorf("required key 'support' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Support bool `json:"support"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.18.0
@@ -12777,32 +17648,50 @@ type StaleRequestSupportOptions struct {
 	RetryOnContentModified []string `json:"retryOnContentModified"`
 }
 
-func (s *StaleRequestSupportOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Cancel                 requiredProp `json:"cancel"`
-		RetryOnContentModified requiredProp `json:"retryOnContentModified"`
-	}
+func (s *StaleRequestSupportOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var (
+		seenCancel                 bool
+		seenRetryOnContentModified bool
+	)
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Cancel {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "cancel":
+			seenCancel = true
+			if err := json.UnmarshalDecode(dec, &s.Cancel); err != nil {
+				return err
+			}
+		case "retryOnContentModified":
+			seenRetryOnContentModified = true
+			if err := json.UnmarshalDecode(dec, &s.RetryOnContentModified); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenCancel {
 		return fmt.Errorf("required key 'cancel' is missing")
 	}
-	if !keys.RetryOnContentModified {
+	if !seenRetryOnContentModified {
 		return fmt.Errorf("required key 'retryOnContentModified' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Cancel                 bool     `json:"cancel"`
-		RetryOnContentModified []string `json:"retryOnContentModified"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Client capabilities specific to regular expressions.
@@ -12816,28 +17705,43 @@ type RegularExpressionsClientCapabilities struct {
 	Version *string `json:"version,omitzero"`
 }
 
-func (s *RegularExpressionsClientCapabilities) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Engine requiredProp `json:"engine"`
-	}
+func (s *RegularExpressionsClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenEngine bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Engine {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "engine":
+			seenEngine = true
+			if err := json.UnmarshalDecode(dec, &s.Engine); err != nil {
+				return err
+			}
+		case "version":
+			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenEngine {
 		return fmt.Errorf("required key 'engine' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Engine  string  `json:"engine"`
-		Version *string `json:"version,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Client capabilities specific to the used markdown parser.
@@ -12857,29 +17761,47 @@ type MarkdownClientCapabilities struct {
 	AllowedTags *[]string `json:"allowedTags,omitzero"`
 }
 
-func (s *MarkdownClientCapabilities) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Parser requiredProp `json:"parser"`
-	}
+func (s *MarkdownClientCapabilities) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenParser bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Parser {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "parser":
+			seenParser = true
+			if err := json.UnmarshalDecode(dec, &s.Parser); err != nil {
+				return err
+			}
+		case "version":
+			if err := json.UnmarshalDecode(dec, &s.Version); err != nil {
+				return err
+			}
+		case "allowedTags":
+			if err := json.UnmarshalDecode(dec, &s.AllowedTags); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenParser {
 		return fmt.Errorf("required key 'parser' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Parser      string    `json:"parser"`
-		Version     *string   `json:"version,omitzero"`
-		AllowedTags *[]string `json:"allowedTags,omitzero"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.18.0
@@ -12909,27 +17831,39 @@ type ClientSymbolTagOptions struct {
 	ValueSet []SymbolTag `json:"valueSet"`
 }
 
-func (s *ClientSymbolTagOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		ValueSet requiredProp `json:"valueSet"`
-	}
+func (s *ClientSymbolTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenValueSet bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.ValueSet {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "valueSet":
+			seenValueSet = true
+			if err := json.UnmarshalDecode(dec, &s.ValueSet); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenValueSet {
 		return fmt.Errorf("required key 'valueSet' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		ValueSet []SymbolTag `json:"valueSet"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.18.0
@@ -12939,27 +17873,39 @@ type ClientSymbolResolveOptions struct {
 	Properties []string `json:"properties"`
 }
 
-func (s *ClientSymbolResolveOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Properties requiredProp `json:"properties"`
-	}
+func (s *ClientSymbolResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenProperties bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Properties {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "properties":
+			seenProperties = true
+			if err := json.UnmarshalDecode(dec, &s.Properties); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenProperties {
 		return fmt.Errorf("required key 'properties' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Properties []string `json:"properties"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.18.0
@@ -13094,27 +18040,39 @@ type ClientCodeActionLiteralOptions struct {
 	CodeActionKind *ClientCodeActionKindOptions `json:"codeActionKind"`
 }
 
-func (s *ClientCodeActionLiteralOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		CodeActionKind requiredProp `json:"codeActionKind"`
-	}
+func (s *ClientCodeActionLiteralOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenCodeActionKind bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.CodeActionKind {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "codeActionKind":
+			seenCodeActionKind = true
+			if err := json.UnmarshalDecode(dec, &s.CodeActionKind); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenCodeActionKind {
 		return fmt.Errorf("required key 'codeActionKind' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		CodeActionKind *ClientCodeActionKindOptions `json:"codeActionKind"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.18.0
@@ -13123,27 +18081,39 @@ type ClientCodeActionResolveOptions struct {
 	Properties []string `json:"properties"`
 }
 
-func (s *ClientCodeActionResolveOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Properties requiredProp `json:"properties"`
-	}
+func (s *ClientCodeActionResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenProperties bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Properties {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "properties":
+			seenProperties = true
+			if err := json.UnmarshalDecode(dec, &s.Properties); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenProperties {
 		return fmt.Errorf("required key 'properties' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Properties []string `json:"properties"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.18.0 - proposed
@@ -13152,27 +18122,39 @@ type CodeActionTagOptions struct {
 	ValueSet []CodeActionTag `json:"valueSet"`
 }
 
-func (s *CodeActionTagOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		ValueSet requiredProp `json:"valueSet"`
-	}
+func (s *CodeActionTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenValueSet bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.ValueSet {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "valueSet":
+			seenValueSet = true
+			if err := json.UnmarshalDecode(dec, &s.ValueSet); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenValueSet {
 		return fmt.Errorf("required key 'valueSet' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		ValueSet []CodeActionTag `json:"valueSet"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.18.0
@@ -13181,27 +18163,39 @@ type ClientCodeLensResolveOptions struct {
 	Properties []string `json:"properties"`
 }
 
-func (s *ClientCodeLensResolveOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Properties requiredProp `json:"properties"`
-	}
+func (s *ClientCodeLensResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenProperties bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Properties {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "properties":
+			seenProperties = true
+			if err := json.UnmarshalDecode(dec, &s.Properties); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenProperties {
 		return fmt.Errorf("required key 'properties' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Properties []string `json:"properties"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.18.0
@@ -13263,27 +18257,39 @@ type ClientInlayHintResolveOptions struct {
 	Properties []string `json:"properties"`
 }
 
-func (s *ClientInlayHintResolveOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Properties requiredProp `json:"properties"`
-	}
+func (s *ClientInlayHintResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenProperties bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Properties {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "properties":
+			seenProperties = true
+			if err := json.UnmarshalDecode(dec, &s.Properties); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenProperties {
 		return fmt.Errorf("required key 'properties' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Properties []string `json:"properties"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.18.0
@@ -13300,27 +18306,39 @@ type CompletionItemTagOptions struct {
 	ValueSet []CompletionItemTag `json:"valueSet"`
 }
 
-func (s *CompletionItemTagOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		ValueSet requiredProp `json:"valueSet"`
-	}
+func (s *CompletionItemTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenValueSet bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.ValueSet {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "valueSet":
+			seenValueSet = true
+			if err := json.UnmarshalDecode(dec, &s.ValueSet); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenValueSet {
 		return fmt.Errorf("required key 'valueSet' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		ValueSet []CompletionItemTag `json:"valueSet"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.18.0
@@ -13329,27 +18347,39 @@ type ClientCompletionItemResolveOptions struct {
 	Properties []string `json:"properties"`
 }
 
-func (s *ClientCompletionItemResolveOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		Properties requiredProp `json:"properties"`
-	}
+func (s *ClientCompletionItemResolveOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenProperties bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.Properties {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "properties":
+			seenProperties = true
+			if err := json.UnmarshalDecode(dec, &s.Properties); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenProperties {
 		return fmt.Errorf("required key 'properties' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		Properties []string `json:"properties"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.18.0
@@ -13357,27 +18387,39 @@ type ClientCompletionItemInsertTextModeOptions struct {
 	ValueSet []InsertTextMode `json:"valueSet"`
 }
 
-func (s *ClientCompletionItemInsertTextModeOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		ValueSet requiredProp `json:"valueSet"`
-	}
+func (s *ClientCompletionItemInsertTextModeOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenValueSet bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.ValueSet {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "valueSet":
+			seenValueSet = true
+			if err := json.UnmarshalDecode(dec, &s.ValueSet); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenValueSet {
 		return fmt.Errorf("required key 'valueSet' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		ValueSet []InsertTextMode `json:"valueSet"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.18.0
@@ -13398,27 +18440,39 @@ type ClientCodeActionKindOptions struct {
 	ValueSet []CodeActionKind `json:"valueSet"`
 }
 
-func (s *ClientCodeActionKindOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		ValueSet requiredProp `json:"valueSet"`
-	}
+func (s *ClientCodeActionKindOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenValueSet bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.ValueSet {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "valueSet":
+			seenValueSet = true
+			if err := json.UnmarshalDecode(dec, &s.ValueSet); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenValueSet {
 		return fmt.Errorf("required key 'valueSet' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		ValueSet []CodeActionKind `json:"valueSet"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.18.0
@@ -13427,27 +18481,39 @@ type ClientDiagnosticsTagOptions struct {
 	ValueSet []DiagnosticTag `json:"valueSet"`
 }
 
-func (s *ClientDiagnosticsTagOptions) UnmarshalJSON(data []byte) error {
-	// Check required props
-	type requiredProps struct {
-		ValueSet requiredProp `json:"valueSet"`
-	}
+func (s *ClientDiagnosticsTagOptions) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	var seenValueSet bool
 
-	var keys requiredProps
-	if err := json.Unmarshal(data, &keys); err != nil {
+	if k := dec.PeekKind(); k != '{' {
+		return fmt.Errorf("expected object start, but encountered %v", k)
+	}
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
 
-	if !keys.ValueSet {
+	for dec.PeekKind() != '}' {
+		var name string
+		if err := json.UnmarshalDecode(dec, &name); err != nil {
+			return err
+		}
+		switch name {
+		case "valueSet":
+			seenValueSet = true
+			if err := json.UnmarshalDecode(dec, &s.ValueSet); err != nil {
+				return err
+			}
+		}
+	}
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	if !seenValueSet {
 		return fmt.Errorf("required key 'valueSet' is missing")
 	}
 
-	// Redeclare the struct to prevent infinite recursion
-	type temp struct {
-		ValueSet []DiagnosticTag `json:"valueSet"`
-	}
-
-	return json.Unmarshal(data, (*temp)(s))
+	return nil
 }
 
 // Since: 3.18.0

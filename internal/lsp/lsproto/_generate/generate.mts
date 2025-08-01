@@ -479,7 +479,8 @@ function generateCode() {
     writeLine(`import (`);
     writeLine(`\t"fmt"`);
     writeLine("");
-    writeLine(`\t"github.com/microsoft/typescript-go/internal/json"`);
+    writeLine(`\t"github.com/go-json-experiment/json"`);
+    writeLine(`\t"github.com/go-json-experiment/json/jsontext"`);
     writeLine(`)`);
     writeLine("");
     writeLine("// Meta model version " + model.metaData.version);
@@ -519,35 +520,59 @@ function generateCode() {
         generateStructFields(structure.name, true);
         writeLine("");
 
-        // Generate UnmarshalJSON method for structure validation
+        // Generate UnmarshalJSONFrom method for structure validation
         const requiredProps = structure.properties?.filter(p => !p.optional) || [];
         if (requiredProps.length > 0) {
-            writeLine(`func (s *${structure.name}) UnmarshalJSON(data []byte) error {`);
-            writeLine(`\t// Check required props`);
-            writeLine(`\ttype requiredProps struct {`);
+            writeLine(`func (s *${structure.name}) UnmarshalJSONFrom(dec *jsontext.Decoder) error {`);
+            writeLine(`\tvar (`);
             for (const prop of requiredProps) {
-                writeLine(`\t\t${titleCase(prop.name)} requiredProp \`json:"${prop.name}"\``);
+                writeLine(`\t\tseen${titleCase(prop.name)} bool`);
             }
-            writeLine(`}`);
+            writeLine(`\t)`);
             writeLine("");
 
-            writeLine(`\tvar keys requiredProps`);
-            writeLine(`\tif err := json.Unmarshal(data, &keys); err != nil {`);
+            writeLine(`\tif k := dec.PeekKind(); k != '{' {`);
+            writeLine(`\t\treturn fmt.Errorf("expected object start, but encountered %v", k)`);
+            writeLine(`\t}`);
+            writeLine(`\tif _, err := dec.ReadToken(); err != nil {`);
             writeLine(`\t\treturn err`);
             writeLine(`\t}`);
             writeLine("");
 
-            // writeLine(`\t// Check for missing required keys`);
-            for (const prop of requiredProps) {
-                writeLine(`if !keys.${titleCase(prop.name)} {`);
-                writeLine(`\t\treturn fmt.Errorf("required key '${prop.name}' is missing")`);
-                writeLine(`}`);
+            writeLine(`\tfor dec.PeekKind() != '}' {`);
+            writeLine(`\t\tvar name string`);
+            writeLine(`\t\tif err := json.UnmarshalDecode(dec, &name); err != nil {`);
+            writeLine(`\t\t\treturn err`);
+            writeLine(`\t\t}`);
+            writeLine(`\t\tswitch name {`);
+
+            for (const prop of structure.properties) {
+                writeLine(`\t\tcase "${prop.name}":`);
+                if (!prop.optional) {
+                    writeLine(`\t\t\tseen${titleCase(prop.name)} = true`);
+                }
+                writeLine(`\t\t\tif err := json.UnmarshalDecode(dec, &s.${titleCase(prop.name)}); err != nil {`);
+                writeLine(`\t\t\t\treturn err`);
+                writeLine(`\t\t\t}`);
             }
 
-            writeLine(``);
-            writeLine(`\t// Redeclare the struct to prevent infinite recursion`);
-            generateStructFields("temp", false);
-            writeLine(`\treturn json.Unmarshal(data, (*temp)(s))`);
+            writeLine(`\t\t}`);
+            writeLine(`\t}`);
+            writeLine("");
+
+            writeLine(`\tif _, err := dec.ReadToken(); err != nil {`);
+            writeLine(`\t\treturn err`);
+            writeLine(`\t}`);
+            writeLine("");
+
+            for (const prop of requiredProps) {
+                writeLine(`\tif !seen${titleCase(prop.name)} {`);
+                writeLine(`\t\treturn fmt.Errorf("required key '${prop.name}' is missing")`);
+                writeLine(`\t}`);
+            }
+
+            writeLine("");
+            writeLine(`\treturn nil`);
             writeLine(`}`);
             writeLine("");
         }
