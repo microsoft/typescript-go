@@ -826,8 +826,8 @@ function generateCode() {
         writeLine(`type ${name} struct{}`);
         writeLine("");
 
-        writeLine(`func (o ${name}) MarshalJSON() ([]byte, error) {`);
-        writeLine(`\treturn []byte(\`${jsonValue}\`), nil`);
+        writeLine(`func (o ${name}) MarshalerTo(enc *jsontext.Encoder) error {`);
+        writeLine(`\treturn enc.WriteValue(jsontext.Value(\`${jsonValue}\`))`);
         writeLine(`}`);
         writeLine("");
 

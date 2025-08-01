@@ -23635,8 +23635,8 @@ func (o *InlineValueTextOrVariableLookupOrEvaluatableExpression) UnmarshalJSON(d
 // StringLiteralBegin is a literal type for "begin"
 type StringLiteralBegin struct{}
 
-func (o StringLiteralBegin) MarshalJSON() ([]byte, error) {
-	return []byte(`"begin"`), nil
+func (o StringLiteralBegin) MarshalerTo(enc *jsontext.Encoder) error {
+	return enc.WriteValue(jsontext.Value(`"begin"`))
 }
 
 func (o *StringLiteralBegin) UnmarshalJSON(data []byte) error {
@@ -23649,8 +23649,8 @@ func (o *StringLiteralBegin) UnmarshalJSON(data []byte) error {
 // StringLiteralReport is a literal type for "report"
 type StringLiteralReport struct{}
 
-func (o StringLiteralReport) MarshalJSON() ([]byte, error) {
-	return []byte(`"report"`), nil
+func (o StringLiteralReport) MarshalerTo(enc *jsontext.Encoder) error {
+	return enc.WriteValue(jsontext.Value(`"report"`))
 }
 
 func (o *StringLiteralReport) UnmarshalJSON(data []byte) error {
@@ -23663,8 +23663,8 @@ func (o *StringLiteralReport) UnmarshalJSON(data []byte) error {
 // StringLiteralEnd is a literal type for "end"
 type StringLiteralEnd struct{}
 
-func (o StringLiteralEnd) MarshalJSON() ([]byte, error) {
-	return []byte(`"end"`), nil
+func (o StringLiteralEnd) MarshalerTo(enc *jsontext.Encoder) error {
+	return enc.WriteValue(jsontext.Value(`"end"`))
 }
 
 func (o *StringLiteralEnd) UnmarshalJSON(data []byte) error {
@@ -23677,8 +23677,8 @@ func (o *StringLiteralEnd) UnmarshalJSON(data []byte) error {
 // StringLiteralCreate is a literal type for "create"
 type StringLiteralCreate struct{}
 
-func (o StringLiteralCreate) MarshalJSON() ([]byte, error) {
-	return []byte(`"create"`), nil
+func (o StringLiteralCreate) MarshalerTo(enc *jsontext.Encoder) error {
+	return enc.WriteValue(jsontext.Value(`"create"`))
 }
 
 func (o *StringLiteralCreate) UnmarshalJSON(data []byte) error {
@@ -23691,8 +23691,8 @@ func (o *StringLiteralCreate) UnmarshalJSON(data []byte) error {
 // StringLiteralRename is a literal type for "rename"
 type StringLiteralRename struct{}
 
-func (o StringLiteralRename) MarshalJSON() ([]byte, error) {
-	return []byte(`"rename"`), nil
+func (o StringLiteralRename) MarshalerTo(enc *jsontext.Encoder) error {
+	return enc.WriteValue(jsontext.Value(`"rename"`))
 }
 
 func (o *StringLiteralRename) UnmarshalJSON(data []byte) error {
@@ -23705,8 +23705,8 @@ func (o *StringLiteralRename) UnmarshalJSON(data []byte) error {
 // StringLiteralDelete is a literal type for "delete"
 type StringLiteralDelete struct{}
 
-func (o StringLiteralDelete) MarshalJSON() ([]byte, error) {
-	return []byte(`"delete"`), nil
+func (o StringLiteralDelete) MarshalerTo(enc *jsontext.Encoder) error {
+	return enc.WriteValue(jsontext.Value(`"delete"`))
 }
 
 func (o *StringLiteralDelete) UnmarshalJSON(data []byte) error {
@@ -23719,8 +23719,8 @@ func (o *StringLiteralDelete) UnmarshalJSON(data []byte) error {
 // StringLiteralFull is a literal type for "full"
 type StringLiteralFull struct{}
 
-func (o StringLiteralFull) MarshalJSON() ([]byte, error) {
-	return []byte(`"full"`), nil
+func (o StringLiteralFull) MarshalerTo(enc *jsontext.Encoder) error {
+	return enc.WriteValue(jsontext.Value(`"full"`))
 }
 
 func (o *StringLiteralFull) UnmarshalJSON(data []byte) error {
@@ -23733,8 +23733,8 @@ func (o *StringLiteralFull) UnmarshalJSON(data []byte) error {
 // StringLiteralUnchanged is a literal type for "unchanged"
 type StringLiteralUnchanged struct{}
 
-func (o StringLiteralUnchanged) MarshalJSON() ([]byte, error) {
-	return []byte(`"unchanged"`), nil
+func (o StringLiteralUnchanged) MarshalerTo(enc *jsontext.Encoder) error {
+	return enc.WriteValue(jsontext.Value(`"unchanged"`))
 }
 
 func (o *StringLiteralUnchanged) UnmarshalJSON(data []byte) error {
@@ -23747,8 +23747,8 @@ func (o *StringLiteralUnchanged) UnmarshalJSON(data []byte) error {
 // StringLiteralSnippet is a literal type for "snippet"
 type StringLiteralSnippet struct{}
 
-func (o StringLiteralSnippet) MarshalJSON() ([]byte, error) {
-	return []byte(`"snippet"`), nil
+func (o StringLiteralSnippet) MarshalerTo(enc *jsontext.Encoder) error {
+	return enc.WriteValue(jsontext.Value(`"snippet"`))
 }
 
 func (o *StringLiteralSnippet) UnmarshalJSON(data []byte) error {
