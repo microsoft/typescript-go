@@ -23,16 +23,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+        go-version:
+          - '>=1.24.0'
+
         include:
-          - os: ubuntu-latest
-            go-version: '>=1.24.0'
           # Temporary for the Copilot setup steps
           - os: ubuntu-latest
             go-version: '>=1.25.0-rc.1'
-          - os: windows-latest
-            go-version: '>=1.24.0'
-          - os: macos-latest
-            go-version: '>=1.24.0'
 
     runs-on: ${{ matrix.os }}
 
