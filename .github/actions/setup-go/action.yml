@@ -20,22 +20,49 @@ runs:
         go-version: ${{ inputs.go-version }}
         cache: false
 
-    - name: Cache Go modules
-      uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+    # Avoid hardcoding the cache keys more than once.
+    - name: Create cache keys
+      shell: bash
+      id: cache-keys
+      env:
+        MODULES_KEY: go-modules-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}-${{ hashFiles('**/go.sum', '**/Herebyfile.mjs', '**/.custom-gcl.yml', '**/.dprint.jsonc') }}
+        BUILD_KEY: go-build-cache-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}
+      run: |
+        echo "modules=$MODULES_KEY" >> $GITHUB_OUTPUT
+        echo "build=$BUILD_KEY" >> $GITHUB_OUTPUT
+
+    - if: ${{ inputs.create != 'true' }}
+      name: Restore Go modules
+      uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
       with:
-        key: go-modules-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}-${{ hashFiles('**/go.sum', '**/Herebyfile.mjs', '**/.custom-gcl.yml') }}
+        key: ${{ steps.cache-keys.outputs.modules }}
         path: |
           ~/go/pkg/mod
 
-    - if: ${{ inputs.create == 'true' }}
-      shell: bash
-      run: npm ci
+    - if: ${{ inputs.create != 'true' }}
+      name: Restore Go build cache
+      uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+      with:
+        # key is unused, but a required input.
+        key: ${{ steps.cache-keys.outputs.build }}-
+        # Restore the most recent cache, ignoring the run ID.
+        restore-keys: ${{ steps.cache-keys.outputs.build }}-
+        path: |
+          ~/.cache/go-build
+          ~/Library/Caches/go-build
+          ~/AppData/Local/go-build
 
     - name: Set mtimes
       shell: bash
       run: |
         find . -type f ! -path ./.git/\*\* | go run github.com/slsyy/mtimehash/cmd/mtimehash@v1.0.0 || true
         find . -type d ! -path ./.git/\*\* -exec touch -d '1970-01-01T00:00:01Z' {} + || true
+
+    # All steps below are only run if the cache is being created.
+
+    - if: ${{ inputs.create == 'true' }}
+      shell: bash
+      run: npm ci
 
     - if: ${{ inputs.create == 'true' }}
       shell: bash
@@ -53,34 +80,20 @@ runs:
       shell: bash
       run: npx dprint check
 
-    # Avoid hardcoding the cache key more than once.
-    - name: Create Go build cache key
-      shell: bash
-      id: go-build-cache-key
-      env:
-        CACHE_KEY: go-build-cache-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}
-      run: |
-        echo "key=$CACHE_KEY" >> $GITHUB_OUTPUT
+    - if: ${{ inputs.create == 'true' }}
+      name: Save Go modules
+      uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+      with:
+        key: ${{ steps.cache-keys.outputs.modules }}
+        path: |
+          ~/go/pkg/mod
 
     - if: ${{ inputs.create == 'true' }}
       name: Save Go build cache
       uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
       with:
         # Save a new cache each time by including the unique run ID.
-        key: ${{ steps.go-build-cache-key.outputs.key }}-${{ github.run_id }}
-        path: |
-          ~/.cache/go-build
-          ~/Library/Caches/go-build
-          ~/AppData/Local/go-build
-
-    - if: ${{ inputs.create != 'true' }}
-      name: Restore Go build cache
-      uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
-      with:
-        # key is unused, but a required input.
-        key: ${{ steps.go-build-cache-key.outputs.key }}-
-        # Restore the most recent cache, ignoring the run ID.
-        restore-keys: ${{ steps.go-build-cache-key.outputs.key }}-
+        key: ${{ steps.cache-keys.outputs.build }}-${{ github.run_id }}
         path: |
           ~/.cache/go-build
           ~/Library/Caches/go-build
