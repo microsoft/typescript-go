@@ -21,9 +21,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
-	"github.com/microsoft/typescript-go/internal/projectv2"
-	"github.com/microsoft/typescript-go/internal/projectv2/ata"
-	"github.com/microsoft/typescript-go/internal/projectv2/logging"
+	"github.com/microsoft/typescript-go/internal/project/ata"
+	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/text/language"
@@ -38,8 +37,6 @@ type ServerOptions struct {
 	FS                 vfs.FS
 	DefaultLibraryPath string
 	TypingsLocation    string
-
-	ParsedFileCache project.ParsedFileCache
 }
 
 func NewServer(opts *ServerOptions) *Server {
@@ -63,8 +60,8 @@ func NewServer(opts *ServerOptions) *Server {
 }
 
 var (
-	_ ata.NpmExecutor  = (*Server)(nil)
-	_ projectv2.Client = (*Server)(nil)
+	_ ata.NpmExecutor = (*Server)(nil)
+	_ project.Client  = (*Server)(nil)
 )
 
 type pendingClientRequest struct {
@@ -149,16 +146,16 @@ type Server struct {
 
 	watchEnabled bool
 	watcherID    atomic.Uint32
-	watchers     collections.SyncSet[projectv2.WatcherID]
+	watchers     collections.SyncSet[project.WatcherID]
 
-	session *projectv2.Session
+	session *project.Session
 
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	compilerOptionsForInferredProjects *core.CompilerOptions
 }
 
-// WatchFiles implements projectv2.Client.
-func (s *Server) WatchFiles(ctx context.Context, id projectv2.WatcherID, watchers []*lsproto.FileSystemWatcher) error {
+// WatchFiles implements project.Client.
+func (s *Server) WatchFiles(ctx context.Context, id project.WatcherID, watchers []*lsproto.FileSystemWatcher) error {
 	_, err := s.sendRequest(ctx, lsproto.MethodClientRegisterCapability, &lsproto.RegistrationParams{
 		Registrations: []*lsproto.Registration{
 			{
@@ -178,8 +175,8 @@ func (s *Server) WatchFiles(ctx context.Context, id projectv2.WatcherID, watcher
 	return nil
 }
 
-// UnwatchFiles implements projectv2.Client.
-func (s *Server) UnwatchFiles(ctx context.Context, id projectv2.WatcherID) error {
+// UnwatchFiles implements project.Client.
+func (s *Server) UnwatchFiles(ctx context.Context, id project.WatcherID) error {
 	if s.watchers.Has(id) {
 		_, err := s.sendRequest(ctx, lsproto.MethodClientUnregisterCapability, &lsproto.UnregistrationParams{
 			Unregisterations: []*lsproto.Unregistration{
@@ -200,7 +197,7 @@ func (s *Server) UnwatchFiles(ctx context.Context, id projectv2.WatcherID) error
 	return fmt.Errorf("no file watcher exists with ID %s", id)
 }
 
-// RefreshDiagnostics implements projectv2.Client.
+// RefreshDiagnostics implements project.Client.
 func (s *Server) RefreshDiagnostics(ctx context.Context) error {
 	if s.initializeParams.Capabilities == nil ||
 		s.initializeParams.Capabilities.Workspace == nil ||
@@ -629,8 +626,8 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 		s.watchEnabled = true
 	}
 
-	s.session = projectv2.NewSession(&projectv2.SessionInit{
-		Options: &projectv2.SessionOptions{
+	s.session = project.NewSession(&project.SessionInit{
+		Options: &project.SessionOptions{
 			CurrentDirectory:   s.cwd,
 			DefaultLibraryPath: s.defaultLibraryPath,
 			TypingsLocation:    s.typingsLocation,
@@ -784,7 +781,7 @@ func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.Work
 	snapshot, release := s.session.Snapshot()
 	defer release()
 	defer recover()
-	programs := core.Map(snapshot.ProjectCollection.Projects(), (*projectv2.Project).GetProgram)
+	programs := core.Map(snapshot.ProjectCollection.Projects(), (*project.Project).GetProgram)
 	return ls.ProvideWorkspaceSymbols(ctx, programs, snapshot.Converters(), params.Query)
 }
 

@@ -1,15 +1,17 @@
 package project
 
 import (
-	"context"
 	"fmt"
-	"maps"
 	"slices"
 	"strings"
-	"time"
+	"sync"
+	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/glob"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -18,93 +20,101 @@ const (
 	recursiveFileGlobPattern = "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json}"
 )
 
-type watchFileHost interface {
-	Name() string
-	Client() Client
-	Log(message string)
+type WatcherID string
+
+var watcherID atomic.Uint64
+
+type WatchedFiles[T any] struct {
+	name                string
+	watchKind           lsproto.WatchKind
+	computeGlobPatterns func(input T) []string
+
+	input                  T
+	computeWatchersOnce    sync.Once
+	watchers               []*lsproto.FileSystemWatcher
+	computeParsedGlobsOnce sync.Once
+	parsedGlobs            []*glob.Glob
+	id                     uint64
 }
 
-type watchedFiles[T any] struct {
-	p         watchFileHost
-	getGlobs  func(data T) []string
-	watchKind lsproto.WatchKind
-
-	data      T
-	globs     []string
-	watcherID WatcherHandle
-	watchType string
-}
-
-func newWatchedFiles[T any](
-	p watchFileHost,
-	watchKind lsproto.WatchKind,
-	getGlobs func(data T) []string,
-	watchType string,
-) *watchedFiles[T] {
-	return &watchedFiles[T]{
-		p:         p,
-		watchKind: watchKind,
-		getGlobs:  getGlobs,
-		watchType: watchType,
+func NewWatchedFiles[T any](name string, watchKind lsproto.WatchKind, computeGlobPatterns func(input T) []string) *WatchedFiles[T] {
+	return &WatchedFiles[T]{
+		id:                  watcherID.Add(1),
+		name:                name,
+		watchKind:           watchKind,
+		computeGlobPatterns: computeGlobPatterns,
 	}
 }
 
-func (w *watchedFiles[T]) update(ctx context.Context, newData T) {
-	newGlobs := w.getGlobs(newData)
-	newGlobs = slices.Clone(newGlobs)
-	slices.Sort(newGlobs)
-
-	w.data = newData
-	if slices.Equal(w.globs, newGlobs) {
-		return
-	}
-
-	w.globs = newGlobs
-	if w.watcherID != "" {
-		if err := w.p.Client().UnwatchFiles(ctx, w.watcherID); err != nil {
-			w.p.Log(fmt.Sprintf("%s:: Failed to unwatch %s watch: %s, err: %v newGlobs that are not updated: \n%s", w.p.Name(), w.watchType, w.watcherID, err, formatFileList(w.globs, "\t", hr)))
-			return
-		}
-		w.p.Log(fmt.Sprintf("%s:: %s watches unwatch %s", w.p.Name(), w.watchType, w.watcherID))
-	}
-
-	w.watcherID = ""
-	if len(newGlobs) == 0 {
-		return
-	}
-
-	watchers := make([]*lsproto.FileSystemWatcher, 0, len(newGlobs))
-	for _, glob := range newGlobs {
-		watchers = append(watchers, &lsproto.FileSystemWatcher{
-			GlobPattern: lsproto.PatternOrRelativePattern{
-				Pattern: &glob,
-			},
-			Kind: &w.watchKind,
+func (w *WatchedFiles[T]) Watchers() (WatcherID, []*lsproto.FileSystemWatcher) {
+	w.computeWatchersOnce.Do(func() {
+		newWatchers := core.Map(w.computeGlobPatterns(w.input), func(glob string) *lsproto.FileSystemWatcher {
+			return &lsproto.FileSystemWatcher{
+				GlobPattern: lsproto.PatternOrRelativePattern{
+					Pattern: &glob,
+				},
+				Kind: &w.watchKind,
+			}
 		})
-	}
-	watcherID, err := w.p.Client().WatchFiles(ctx, watchers)
-	if err != nil {
-		w.p.Log(fmt.Sprintf("%s:: Failed to update %s watch: %v\n%s", w.p.Name(), w.watchType, err, formatFileList(w.globs, "\t", hr)))
-		return
-	}
-	w.watcherID = watcherID
-	w.p.Log(fmt.Sprintf("%s:: %s watches updated %s:\n%s", w.p.Name(), w.watchType, w.watcherID, formatFileList(w.globs, "\t", hr)))
-	return
+		if !slices.EqualFunc(w.watchers, newWatchers, func(a, b *lsproto.FileSystemWatcher) bool {
+			return *a.GlobPattern.Pattern == *b.GlobPattern.Pattern
+		}) {
+			w.watchers = newWatchers
+			w.id = watcherID.Add(1)
+		}
+	})
+	return WatcherID(fmt.Sprintf("%s watcher %d", w.name, w.id)), w.watchers
 }
 
-func globMapperForTypingsInstaller(data map[tspath.Path]string) []string {
-	return slices.AppendSeq(make([]string, 0, len(data)), maps.Values(data))
+func (w *WatchedFiles[T]) ID() WatcherID {
+	if w == nil {
+		return ""
+	}
+	id, _ := w.Watchers()
+	return id
 }
 
-func createResolutionLookupGlobMapper(host ProjectHost) func(data map[tspath.Path]string) []string {
-	rootDir := host.GetCurrentDirectory()
-	rootPath := tspath.ToPath(rootDir, "", host.FS().UseCaseSensitiveFileNames())
+func (w *WatchedFiles[T]) Name() string {
+	return w.name
+}
+
+func (w *WatchedFiles[T]) WatchKind() lsproto.WatchKind {
+	return w.watchKind
+}
+
+func (w *WatchedFiles[T]) ParsedGlobs() []*glob.Glob {
+	w.computeParsedGlobsOnce.Do(func() {
+		patterns := w.computeGlobPatterns(w.input)
+		w.parsedGlobs = make([]*glob.Glob, 0, len(patterns))
+		for _, pattern := range patterns {
+			if g, err := glob.Parse(pattern); err == nil {
+				w.parsedGlobs = append(w.parsedGlobs, g)
+			} else {
+				panic(fmt.Sprintf("failed to parse glob pattern: %s", pattern))
+			}
+		}
+	})
+	return w.parsedGlobs
+}
+
+func (w *WatchedFiles[T]) Clone(input T) *WatchedFiles[T] {
+	return &WatchedFiles[T]{
+		name:                w.name,
+		watchKind:           w.watchKind,
+		computeGlobPatterns: w.computeGlobPatterns,
+		input:               input,
+		watchers:            w.watchers,
+		parsedGlobs:         w.parsedGlobs,
+		id:                  w.id,
+	}
+}
+
+func createResolutionLookupGlobMapper(currentDirectory string, useCaseSensitiveFileNames bool) func(data map[tspath.Path]string) []string {
+	rootPath := tspath.ToPath(currentDirectory, "", useCaseSensitiveFileNames)
 	rootPathComponents := tspath.GetPathComponents(string(rootPath), "")
 	isRootWatchable := canWatchDirectoryOrFile(rootPathComponents)
 
 	return func(data map[tspath.Path]string) []string {
-		start := time.Now()
-
 		// dir -> recursive
 		globSet := make(map[string]bool)
 		var seenDirs collections.Set[string]
@@ -120,11 +130,10 @@ func createResolutionLookupGlobMapper(host ProjectHost) func(data map[tspath.Pat
 			w := getDirectoryToWatchFailedLookupLocation(
 				fileName,
 				path,
-				rootDir,
+				currentDirectory,
 				rootPath,
 				rootPathComponents,
 				isRootWatchable,
-				rootDir,
 				true,
 			)
 			if w == nil {
@@ -142,8 +151,7 @@ func createResolutionLookupGlobMapper(host ProjectHost) func(data map[tspath.Pat
 			}
 		}
 
-		timeTaken := time.Since(start)
-		host.Log(fmt.Sprintf("createGlobMapper took %s to create %d globs for %d failed lookups", timeTaken, len(globs), len(data)))
+		slices.Sort(globs)
 		return globs
 	}
 }
@@ -163,17 +171,9 @@ func getDirectoryToWatchFailedLookupLocation(
 	rootPath tspath.Path,
 	rootPathComponents []string,
 	isRootWatchable bool,
-	currentDirectory string,
 	preferNonRecursiveWatch bool,
 ) *directoryOfFailedLookupWatch {
 	failedLookupPathComponents := tspath.GetPathComponents(string(failedLookupLocationPath), "")
-	// Ensure failed look up is normalized path
-	// !!! needed?
-	if tspath.IsRootedDiskPath(failedLookupLocation) {
-		failedLookupLocation = tspath.NormalizePath(failedLookupLocation)
-	} else {
-		failedLookupLocation = tspath.GetNormalizedAbsolutePath(failedLookupLocation, currentDirectory)
-	}
 	failedLookupComponents := tspath.GetPathComponents(failedLookupLocation, "")
 	perceivedOsRootLength := perceivedOsRootLengthForWatching(failedLookupPathComponents, len(failedLookupPathComponents))
 	if len(failedLookupPathComponents) <= perceivedOsRootLength+1 {
@@ -361,4 +361,32 @@ func isInDirectoryPath(dirComponents []string, fileOrDirComponents []string) boo
 
 func ptrTo[T any](v T) *T {
 	return &v
+}
+
+type resolutionWithLookupLocations interface {
+	GetLookupLocations() *module.LookupLocations
+}
+
+func extractLookups[T resolutionWithLookupLocations](
+	projectToPath func(string) tspath.Path,
+	failedLookups map[tspath.Path]string,
+	affectingLocations map[tspath.Path]string,
+	cache map[tspath.Path]module.ModeAwareCache[T],
+) {
+	for _, resolvedModulesInFile := range cache {
+		for _, resolvedModule := range resolvedModulesInFile {
+			for _, failedLookupLocation := range resolvedModule.GetLookupLocations().FailedLookupLocations {
+				path := projectToPath(failedLookupLocation)
+				if _, ok := failedLookups[path]; !ok {
+					failedLookups[path] = failedLookupLocation
+				}
+			}
+			for _, affectingLocation := range resolvedModule.GetLookupLocations().AffectingLocations {
+				path := projectToPath(affectingLocation)
+				if _, ok := affectingLocations[path]; !ok {
+					affectingLocations[path] = affectingLocation
+				}
+			}
+		}
+	}
 }

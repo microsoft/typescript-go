@@ -19,7 +19,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -130,7 +129,7 @@ func (c *parsedFileCache) CacheFile(opts ast.SourceFileParseOptions, text string
 	sourceFileCache.Store(key, sourceFile)
 }
 
-var _ project.ParsedFileCache = (*parsedFileCache)(nil)
+// var _ project.ParsedFileCache = (*parsedFileCache)(nil)
 
 const rootDir = "/"
 
@@ -169,7 +168,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		FS:                 fs,
 		DefaultLibraryPath: bundled.LibPath(),
 
-		ParsedFileCache: &parsedFileCache{},
+		// ParsedFileCache: &parsedFileCache{},
 	})
 
 	go func() {
