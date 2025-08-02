@@ -77,7 +77,7 @@ func TestProcessChanges(t *testing.T) {
 			},
 		}
 
-		result := fs.processChanges(changes)
+		result, _ := fs.processChanges(changes)
 		assert.Assert(t, result.IsEmpty())
 	})
 
@@ -95,7 +95,7 @@ func TestProcessChanges(t *testing.T) {
 			},
 		}
 
-		result := fs.processChanges(changes)
+		result, _ := fs.processChanges(changes)
 
 		assert.Equal(t, result.Created.Len(), 0)
 		assert.Equal(t, result.Deleted.Len(), 0)
@@ -120,7 +120,7 @@ func TestProcessChanges(t *testing.T) {
 			},
 		}
 
-		result := fs.processChanges(changes)
+		result, _ := fs.processChanges(changes)
 
 		assert.Assert(t, result.Changed.Has(testURI1))
 		assert.Equal(t, result.Changed.Len(), 1)
@@ -140,7 +140,7 @@ func TestProcessChanges(t *testing.T) {
 			},
 		})
 		// Then save
-		result := fs.processChanges([]FileChange{
+		result, _ := fs.processChanges([]FileChange{
 			{
 				Kind: FileChangeKindSave,
 				URI:  testURI1,

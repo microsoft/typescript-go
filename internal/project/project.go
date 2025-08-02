@@ -340,7 +340,7 @@ func (p *Project) GetLanguageServiceForRequest(ctx context.Context) (*ls.Languag
 		positionEncoding: p.host.PositionEncoding(),
 		program:          program,
 	}
-	languageService := ls.NewLanguageService(snapshot)
+	languageService := ls.NewLanguageService(snapshot, nil)
 	cleanup := func() {
 		if checkerPool.isRequestCheckerInUse(core.GetRequestID(ctx)) {
 			panic(fmt.Errorf("checker for request ID %s not returned to pool at end of request", core.GetRequestID(ctx)))

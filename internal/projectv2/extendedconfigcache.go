@@ -1,12 +1,12 @@
 package projectv2
 
 import (
-	"crypto/sha256"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/zeebo/xxh3"
 )
 
 type extendedConfigCache struct {
@@ -16,7 +16,7 @@ type extendedConfigCache struct {
 type extendedConfigCacheEntry struct {
 	mu       sync.Mutex
 	entry    *tsoptions.ExtendedConfigCacheEntry
-	hash     [sha256.Size]byte
+	hash     xxh3.Uint128
 	refCount int
 }
 

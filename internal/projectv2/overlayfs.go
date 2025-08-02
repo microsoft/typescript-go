@@ -1,7 +1,6 @@
 package projectv2
 
 import (
-	"crypto/sha256"
 	"maps"
 	"sync"
 
@@ -10,12 +9,13 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/zeebo/xxh3"
 )
 
 type FileHandle interface {
 	FileName() string
 	Version() int32
-	Hash() [sha256.Size]byte
+	Hash() xxh3.Uint128
 	Content() string
 	MatchesDiskText() bool
 	IsOverlay() bool
@@ -26,7 +26,7 @@ type FileHandle interface {
 type fileBase struct {
 	fileName string
 	content  string
-	hash     [sha256.Size]byte
+	hash     xxh3.Uint128
 
 	lineMapOnce sync.Once
 	lineMap     *ls.LineMap
@@ -36,7 +36,7 @@ func (f *fileBase) FileName() string {
 	return f.fileName
 }
 
-func (f *fileBase) Hash() [sha256.Size]byte {
+func (f *fileBase) Hash() xxh3.Uint128 {
 	return f.hash
 }
 
@@ -61,7 +61,7 @@ func newDiskFile(fileName string, content string) *diskFile {
 		fileBase: fileBase{
 			fileName: fileName,
 			content:  content,
-			hash:     sha256.Sum256([]byte(content)),
+			hash:     xxh3.Hash128([]byte(content)),
 		},
 	}
 }
@@ -108,7 +108,7 @@ func newOverlay(fileName string, content string, version int32, kind core.Script
 		fileBase: fileBase{
 			fileName: fileName,
 			content:  content,
-			hash:     sha256.Sum256([]byte(content)),
+			hash:     xxh3.Hash128([]byte(content)),
 		},
 		version: version,
 		kind:    kind,
@@ -154,6 +154,12 @@ func newOverlayFS(fs vfs.FS, overlays map[tspath.Path]*overlay, positionEncoding
 	}
 }
 
+func (fs *overlayFS) Overlays() map[tspath.Path]*overlay {
+	fs.mu.RLock()
+	defer fs.mu.RUnlock()
+	return fs.overlays
+}
+
 func (fs *overlayFS) getFile(fileName string) FileHandle {
 	fs.mu.RLock()
 	overlays := fs.overlays
@@ -171,7 +177,7 @@ func (fs *overlayFS) getFile(fileName string) FileHandle {
 	return newDiskFile(fileName, content)
 }
 
-func (fs *overlayFS) processChanges(changes []FileChange) FileChangeSummary {
+func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, map[tspath.Path]*overlay) {
 	fs.mu.Lock()
 	defer fs.mu.Unlock()
 
@@ -274,7 +280,7 @@ func (fs *overlayFS) processChanges(changes []FileChange) FileChangeSummary {
 		if events.closeChange != nil {
 			includesNonWatchChange = true
 			if result.Closed == nil {
-				result.Closed = make(map[lsproto.DocumentUri][sha256.Size]byte)
+				result.Closed = make(map[lsproto.DocumentUri]xxh3.Uint128)
 			}
 			result.Closed[uri] = events.closeChange.Hash
 			delete(newOverlays, path)
@@ -308,10 +314,12 @@ func (fs *overlayFS) processChanges(changes []FileChange) FileChangeSummary {
 						o = newOverlay(o.fileName, wholeChange.Text, change.Version, o.kind)
 					}
 				}
-				o.version = change.Version
-				o.hash = sha256.Sum256([]byte(o.content))
-				o.matchesDiskText = false
-				newOverlays[path] = o
+				if len(change.Changes) > 0 {
+					o.version = change.Version
+					o.hash = xxh3.Hash128([]byte(o.content))
+					o.matchesDiskText = false
+					newOverlays[path] = o
+				}
 			}
 		}
 
@@ -336,5 +344,5 @@ func (fs *overlayFS) processChanges(changes []FileChange) FileChangeSummary {
 
 	fs.overlays = newOverlays
 	result.IncludesWatchChangesOnly = !includesNonWatchChange
-	return result
+	return result, newOverlays
 }

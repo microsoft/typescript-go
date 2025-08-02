@@ -1,7 +1,6 @@
 package projectv2
 
 import (
-	"crypto/sha256"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -9,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/zeebo/xxh3"
 )
 
 type parseCacheKey struct {
@@ -29,7 +29,7 @@ func newParseCacheKey(
 type parseCacheEntry struct {
 	mu         sync.Mutex
 	sourceFile *ast.SourceFile
-	hash       [sha256.Size]byte
+	hash       xxh3.Uint128
 	refCount   int
 }
 

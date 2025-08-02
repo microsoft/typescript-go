@@ -133,7 +133,6 @@ type Server struct {
 	clientSeq               atomic.Int32
 	requestQueue            chan *lsproto.RequestMessage
 	outgoingQueue           chan *lsproto.Message
-	logQueue                chan string
 	pendingClientRequests   map[lsproto.ID]pendingClientRequest
 	pendingClientRequestsMu sync.Mutex
 	pendingServerRequests   map[lsproto.ID]chan *lsproto.ResponseMessage
@@ -325,7 +324,7 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 				s.pendingClientRequestsMu.Unlock()
 			}
 
-			go func() {
+			handle := func() {
 				if err := s.handleRequestOrNotification(requestCtx, req); err != nil {
 					if errors.Is(err, context.Canceled) {
 						s.sendError(req.ID, lsproto.ErrRequestCancelled)
@@ -341,7 +340,13 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 					delete(s.pendingClientRequests, *req.ID)
 					s.pendingClientRequestsMu.Unlock()
 				}
-			}()
+			}
+
+			if isBlockingMethod(req.Method) {
+				handle()
+			} else {
+				go handle()
+			}
 		}
 	}
 }
@@ -354,19 +359,6 @@ func (s *Server) writeLoop(ctx context.Context) error {
 		case msg := <-s.outgoingQueue:
 			if err := s.w.Write(msg); err != nil {
 				return fmt.Errorf("failed to write message: %w", err)
-			}
-		}
-	}
-}
-
-func (s *Server) logLoop(ctx context.Context) error {
-	for {
-		select {
-		case <-ctx.Done():
-			return ctx.Err()
-		case logMessage := <-s.logQueue:
-			if _, err := fmt.Fprintln(s.stderr, logMessage); err != nil {
-				return fmt.Errorf("failed to write log message: %w", err)
 			}
 		}
 	}
@@ -817,6 +809,20 @@ func (s *Server) NpmInstall(cwd string, args []string) ([]byte, error) {
 	cmd := exec.Command("npm", args...)
 	cmd.Dir = cwd
 	return cmd.Output()
+}
+
+func isBlockingMethod(method lsproto.Method) bool {
+	switch method {
+	case lsproto.MethodInitialize,
+		lsproto.MethodInitialized,
+		lsproto.MethodTextDocumentDidOpen,
+		lsproto.MethodTextDocumentDidChange,
+		lsproto.MethodTextDocumentDidSave,
+		lsproto.MethodTextDocumentDidClose,
+		lsproto.MethodWorkspaceDidChangeWatchedFiles:
+		return true
+	}
+	return false
 }
 
 func ptrTo[T any](v T) *T {

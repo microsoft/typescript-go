@@ -134,9 +134,9 @@ func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, vers
 		Content:      content,
 		LanguageKind: languageKind,
 	})
-	changes := s.flushChangesLocked(ctx)
+	changes, overlays := s.flushChangesLocked(ctx)
 	s.pendingFileChangesMu.Unlock()
-	s.UpdateSnapshot(ctx, SnapshotChange{
+	s.UpdateSnapshot(ctx, overlays, SnapshotChange{
 		fileChanges:   changes,
 		requestedURIs: []lsproto.DocumentUri{uri},
 	})
@@ -202,7 +202,7 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 
 func (s *Session) DidChangeCompilerOptionsForInferredProjects(ctx context.Context, options *core.CompilerOptions) {
 	s.compilerOptionsForInferredProjects = options
-	s.UpdateSnapshot(ctx, SnapshotChange{
+	s.UpdateSnapshot(ctx, s.fs.Overlays(), SnapshotChange{
 		compilerOptionsForInferredProjects: options,
 	})
 }
@@ -243,12 +243,12 @@ func (s *Session) ScheduleSnapshotUpdate() {
 		s.snapshotUpdateMu.Unlock()
 
 		// Process the accumulated changes
-		changeSummary, ataChanges := s.flushChanges(context.Background())
+		changeSummary, overlays, ataChanges := s.flushChanges(context.Background())
 		if !changeSummary.IsEmpty() || len(ataChanges) > 0 {
 			if s.options.LoggingEnabled {
 				s.logger.Log("Running scheduled snapshot update")
 			}
-			s.UpdateSnapshot(context.Background(), SnapshotChange{
+			s.UpdateSnapshot(context.Background(), overlays, SnapshotChange{
 				fileChanges: changeSummary,
 				ataChanges:  ataChanges,
 			})
@@ -278,12 +278,12 @@ func (s *Session) Snapshot() (*Snapshot, func()) {
 
 func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
 	var snapshot *Snapshot
-	fileChanges, ataChanges := s.flushChanges(ctx)
+	fileChanges, overlays, ataChanges := s.flushChanges(ctx)
 	updateSnapshot := !fileChanges.IsEmpty() || len(ataChanges) > 0
 	if updateSnapshot {
 		// If there are pending file changes, we need to update the snapshot.
 		// Sending the requested URI ensures that the project for this URI is loaded.
-		snapshot = s.UpdateSnapshot(ctx, SnapshotChange{
+		snapshot = s.UpdateSnapshot(ctx, overlays, SnapshotChange{
 			fileChanges:   fileChanges,
 			ataChanges:    ataChanges,
 			requestedURIs: []lsproto.DocumentUri{uri},
@@ -300,7 +300,7 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 		// The current snapshot does not have an up to date project for the URI,
 		// so we need to update the snapshot to ensure the project is loaded.
 		// !!! Allow multiple projects to update in parallel
-		snapshot = s.UpdateSnapshot(ctx, SnapshotChange{requestedURIs: []lsproto.DocumentUri{uri}})
+		snapshot = s.UpdateSnapshot(ctx, overlays, SnapshotChange{requestedURIs: []lsproto.DocumentUri{uri}})
 		project = snapshot.GetDefaultProject(uri)
 	}
 	if project == nil {
@@ -309,7 +309,7 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 	return ls.NewLanguageService(project, snapshot.Converters()), nil
 }
 
-func (s *Session) UpdateSnapshot(ctx context.Context, change SnapshotChange) *Snapshot {
+func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*overlay, change SnapshotChange) *Snapshot {
 	// Cancel any pending scheduled update since we're doing an immediate update
 	s.snapshotUpdateMu.Lock()
 	if s.snapshotUpdateCancel != nil {
@@ -321,7 +321,7 @@ func (s *Session) UpdateSnapshot(ctx context.Context, change SnapshotChange) *Sn
 
 	s.snapshotMu.Lock()
 	oldSnapshot := s.snapshot
-	newSnapshot := oldSnapshot.Clone(ctx, change, s)
+	newSnapshot := oldSnapshot.Clone(ctx, change, overlays, s)
 	s.snapshot = newSnapshot
 	shouldDispose := newSnapshot != oldSnapshot && oldSnapshot.Deref()
 	s.snapshotMu.Unlock()
@@ -453,29 +453,30 @@ func (s *Session) Close() {
 	s.backgroundTasks.Close()
 }
 
-func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspath.Path]*ATAStateChange) {
+func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspath.Path]*overlay, map[tspath.Path]*ATAStateChange) {
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
 	s.pendingATAChangesMu.Lock()
 	defer s.pendingATAChangesMu.Unlock()
 	pendingATAChanges := s.pendingATAChanges
 	s.pendingATAChanges = make(map[tspath.Path]*ATAStateChange)
-	return s.flushChangesLocked(ctx), pendingATAChanges
+	fileChanges, overlays := s.flushChangesLocked(ctx)
+	return fileChanges, overlays, pendingATAChanges
 }
 
 // flushChangesLocked should only be called with s.pendingFileChangesMu held.
-func (s *Session) flushChangesLocked(ctx context.Context) FileChangeSummary {
+func (s *Session) flushChangesLocked(ctx context.Context) (FileChangeSummary, map[tspath.Path]*overlay) {
 	if len(s.pendingFileChanges) == 0 {
-		return FileChangeSummary{}
+		return FileChangeSummary{}, s.fs.Overlays()
 	}
 
 	start := time.Now()
-	changes := s.fs.processChanges(s.pendingFileChanges)
+	changes, overlays := s.fs.processChanges(s.pendingFileChanges)
 	if s.options.LoggingEnabled {
 		s.logger.Log(fmt.Sprintf("Processed %d file changes in %v", len(s.pendingFileChanges), time.Since(start)))
 	}
 	s.pendingFileChanges = nil
-	return changes
+	return changes, overlays
 }
 
 // logProjectChanges logs information about projects that have changed between snapshots

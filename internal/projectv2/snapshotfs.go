@@ -1,14 +1,13 @@
 package projectv2
 
 import (
-	"crypto/sha256"
-
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/projectv2/dirty"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
+	"github.com/zeebo/xxh3"
 )
 
 type FileSource interface {
@@ -96,7 +95,7 @@ func (s *snapshotFSBuilder) GetFileByPath(fileName string, path tspath.Path) Fil
 				if content, ok := s.fs.ReadFile(fileName); ok {
 					entry.Change(func(file *diskFile) {
 						file.content = content
-						file.hash = sha256.Sum256([]byte(content))
+						file.hash = xxh3.Hash128([]byte(content))
 						file.needsReload = false
 					})
 				} else {

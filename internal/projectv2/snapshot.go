@@ -107,14 +107,14 @@ type ATAStateChange struct {
 	Logs         *logging.LogTree
 }
 
-func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, session *Session) *Snapshot {
+func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays map[tspath.Path]*overlay, session *Session) *Snapshot {
 	var logger *logging.LogTree
 	if session.options.LoggingEnabled {
 		logger = logging.NewLogTree(fmt.Sprintf("Cloning snapshot %d", s.id))
 	}
 
 	start := time.Now()
-	fs := newSnapshotFSBuilder(session.fs.fs, session.fs.overlays, s.fs.diskFiles, session.options.PositionEncoding, s.toPath)
+	fs := newSnapshotFSBuilder(session.fs.fs, overlays, s.fs.diskFiles, session.options.PositionEncoding, s.toPath)
 	fs.markDirtyFiles(change.fileChanges)
 
 	compilerOptionsForInferredProjects := s.compilerOptionsForInferredProjects
