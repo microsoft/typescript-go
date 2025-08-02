@@ -37,6 +37,7 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 
+/home/src/workspaces/project/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/a.ts
@@ -50,6 +51,7 @@ const a = "hello";
 
 Output::
 
+/home/src/workspaces/project/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/a.ts
@@ -71,6 +73,7 @@ Output::
 const a = "hello";
 
 
+/home/src/workspaces/project/tsconfig.json::
 SemanticDiagnostics::
 Signatures::
 
@@ -87,6 +90,7 @@ Edit [2]:: no emit run after fixing error
 
 Output::
 
+/home/src/workspaces/project/tsconfig.json::
 SemanticDiagnostics::
 Signatures::
 
@@ -98,6 +102,7 @@ const a = class { private p = 10; };
 
 Output::
 
+/home/src/workspaces/project/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/a.ts
@@ -121,6 +126,7 @@ const a = class {
 };
 
 
+/home/src/workspaces/project/tsconfig.json::
 SemanticDiagnostics::
 Signatures::
 
@@ -137,5 +143,6 @@ Edit [5]:: no emit run when error
 
 Output::
 
+/home/src/workspaces/project/tsconfig.json::
 SemanticDiagnostics::
 Signatures::

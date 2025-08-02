@@ -70,10 +70,18 @@ export {};
 Object.defineProperty(exports, "__esModule", { value: true });
 
 //// [/home/src/workspaces/solution/dist/services/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","fileNames":["../../../../tslibs/TS/Lib/lib.esnext.full.d.ts","../compiler/parser.d.ts","../../src/services/services.ts"],"fileInfos":[{"version":"eae9e83ef0f77eeb2e35dc9b91facce1-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"cfa3a281a55f906e741cc0868d71cc7e-export {};",{"version":"f33c006175af536b357e04f67c3196f8-import {} from \"../compiler/parser.ts\";","signature":"04e66752f096b7e8df60e5900b0692bc-export {};\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true,"module":199,"outDir":"./","rewriteRelativeImportExtensions":true,"rootDir":"../../src/services"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./services.d.ts"}
+{"version":"FakeTSVersion","root":[3],"fileNames":["../../../../tslibs/TS/Lib/lib.esnext.full.d.ts","../compiler/parser.d.ts","../../src/services/services.ts"],"fileInfos":[{"version":"eae9e83ef0f77eeb2e35dc9b91facce1-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"cfa3a281a55f906e741cc0868d71cc7e-export {};",{"version":"f33c006175af536b357e04f67c3196f8-import {} from \"../compiler/parser.ts\";","signature":"04e66752f096b7e8df60e5900b0692bc-export {};\n","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"composite":true,"module":199,"outDir":"./","rewriteRelativeImportExtensions":true,"rootDir":"../../src/services"},"referencedMap":[[3,1]],"latestChangedDtsFile":"./services.d.ts"}
 //// [/home/src/workspaces/solution/dist/services/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
+  "root": [
+    {
+      "files": [
+        "../../src/services/services.ts"
+      ],
+      "original": 3
+    }
+  ],
   "fileNames": [
     "../../../../tslibs/TS/Lib/lib.esnext.full.d.ts",
     "../compiler/parser.d.ts",
@@ -128,9 +136,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
     ]
   },
   "latestChangedDtsFile": "./services.d.ts",
-  "size": 1361
+  "size": 1372
 }
 
+/home/src/workspaces/solution/src/services/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.esnext.full.d.ts
 *refresh*    /home/src/workspaces/solution/dist/compiler/parser.d.ts

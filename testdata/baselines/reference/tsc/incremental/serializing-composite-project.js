@@ -53,10 +53,22 @@ export declare const b = 2;
 export const b = 2;
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./index.tsx","./other.ts"],"fileInfos":[{"version":"eae9e83ef0f77eeb2e35dc9b91facce1-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"aeca45d938aaa455d9404c033875ae44-export const a = 1;","signature":"f70bb083bc713e58fec0f95d2f6b0880-export declare const a = 1;\n","impliedNodeFormat":1},{"version":"9dbcbc1a90aaa455d943c542d553b7f4-export const b = 2;","signature":"e0f3a39424713e58f1132fb04dee4150-export declare const b = 2;\n","impliedNodeFormat":1}],"options":{"composite":true,"module":99,"strict":true},"latestChangedDtsFile":"./other.d.ts"}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["../../tslibs/TS/Lib/lib.d.ts","./index.tsx","./other.ts"],"fileInfos":[{"version":"eae9e83ef0f77eeb2e35dc9b91facce1-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"aeca45d938aaa455d9404c033875ae44-export const a = 1;","signature":"f70bb083bc713e58fec0f95d2f6b0880-export declare const a = 1;\n","impliedNodeFormat":1},{"version":"9dbcbc1a90aaa455d943c542d553b7f4-export const b = 2;","signature":"e0f3a39424713e58f1132fb04dee4150-export declare const b = 2;\n","impliedNodeFormat":1}],"options":{"composite":true,"module":99,"strict":true},"latestChangedDtsFile":"./other.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
+  "root": [
+    {
+      "files": [
+        "./index.tsx",
+        "./other.ts"
+      ],
+      "original": [
+        2,
+        3
+      ]
+    }
+  ],
   "fileNames": [
     "../../tslibs/TS/Lib/lib.d.ts",
     "./index.tsx",
@@ -104,9 +116,10 @@ export const b = 2;
     "strict": true
   },
   "latestChangedDtsFile": "./other.d.ts",
-  "size": 1308
+  "size": 1323
 }
 
+/home/src/workspaces/project/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/index.tsx

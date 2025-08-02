@@ -15,11 +15,12 @@ import (
 )
 
 type Watcher struct {
-	sys              System
-	configFileName   string
-	options          *tsoptions.ParsedCommandLine
-	reportDiagnostic diagnosticReporter
-	testing          bool
+	sys                System
+	configFileName     string
+	options            *tsoptions.ParsedCommandLine
+	reportDiagnostic   diagnosticReporter
+	reportErrorSummary diagnosticsReporter
+	testing            bool
 
 	host           compiler.CompilerHost
 	program        *incremental.Program
@@ -27,12 +28,13 @@ type Watcher struct {
 	configModified bool
 }
 
-func createWatcher(sys System, configParseResult *tsoptions.ParsedCommandLine, reportDiagnostic diagnosticReporter, testing bool) *Watcher {
+func createWatcher(sys System, configParseResult *tsoptions.ParsedCommandLine, reportDiagnostic diagnosticReporter, reportErrorSummary diagnosticsReporter, testing bool) *Watcher {
 	w := &Watcher{
-		sys:              sys,
-		options:          configParseResult,
-		reportDiagnostic: reportDiagnostic,
-		testing:          testing,
+		sys:                sys,
+		options:            configParseResult,
+		reportDiagnostic:   reportDiagnostic,
+		reportErrorSummary: reportErrorSummary,
+		testing:            testing,
 		// reportWatchStatus: createWatchStatusReporter(sys, configParseResult.CompilerOptions().Pretty),
 	}
 	if configParseResult.ConfigFile != nil {
@@ -88,7 +90,7 @@ func (w *Watcher) DoCycle() {
 func (w *Watcher) compileAndEmit() {
 	// !!! output/error reporting is currently the same as non-watch mode
 	// diagnostics, emitResult, exitStatus :=
-	emitFilesAndReportErrors(w.sys, w.program, w.reportDiagnostic)
+	emitFilesAndReportErrors(w.sys, w.program, w.reportDiagnostic, w.reportErrorSummary, w.sys.Writer(), compileTimes{})
 }
 
 func (w *Watcher) hasErrorsInTsConfig() bool {

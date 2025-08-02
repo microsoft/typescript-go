@@ -7,11 +7,13 @@ import (
 	"io/fs"
 	"maps"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/incremental"
 	"github.com/microsoft/typescript-go/internal/testutil/incrementaltestutil"
@@ -81,6 +83,7 @@ func newTestSys(fileOrFolderList FileMap, cwd string) *testSys {
 
 type diffEntry struct {
 	content   string
+	mTime     time.Time
 	isWritten bool
 }
 
@@ -162,6 +165,51 @@ func sanitizeSysOutput(output string, prefixLine string, replaceString string) s
 	return output
 }
 
+func isTimeAndAmPmFormat(output string) bool {
+	timeAndAmPm := strings.Split(output[:11], " ")
+	if len(timeAndAmPm) != 2 {
+		return false
+	}
+	if timeAndAmPm[1] != "AM" && timeAndAmPm[1] != "PM" {
+		return false
+	}
+
+	// Split the time into hours, minutes, and seconds
+	timeComponents := strings.Split(timeAndAmPm[0], ":")
+	if len(timeComponents) != 3 {
+		return false
+	}
+	hours, err1 := strconv.Atoi(timeComponents[0])
+	minutes, err2 := strconv.Atoi(timeComponents[1])
+	seconds, err3 := strconv.Atoi(timeComponents[2])
+	if err1 != nil || err2 != nil || err3 != nil {
+		return false
+	}
+	if hours < 1 || hours > 12 || minutes < 0 || minutes > 59 || seconds < 0 || seconds > 59 {
+		return false
+	}
+	return true
+}
+
+func sanitizeBuildTimeStamp(output string) string {
+	index := strings.Index(output, "["+diagnosticwriter.ForegroundColorEscapeGrey)
+	if index != 0 {
+		if indexOfDash := strings.Index(output, " -"); indexOfDash == 11 && isTimeAndAmPmFormat(output[:indexOfDash]) {
+			return "HH:MM:SS AM" + output[indexOfDash:]
+		}
+		return output
+	}
+	searchInStr := output[index+len(diagnosticwriter.ForegroundColorEscapeGrey)+1:]
+	endIndex := strings.Index(searchInStr, diagnosticwriter.ResetEscapeSequence+"]")
+	if endIndex != 11 {
+		return output
+	}
+	if !isTimeAndAmPmFormat(searchInStr[:endIndex]) {
+		return output
+	}
+	return "[" + diagnosticwriter.ForegroundColorEscapeGrey + "HH:MM:SS AM" + searchInStr[endIndex:]
+}
+
 func (s *testSys) EndWrite() {
 	// todo: revisit if improving tsc/build/watch unittest baselines
 	output := s.currentWrite.String()
@@ -169,19 +217,32 @@ func (s *testSys) EndWrite() {
 	output = sanitizeSysOutput(output, "Version "+core.Version(), "Version FakeTSVersion\n")
 	output = sanitizeSysOutput(output, "build starting at ", "")
 	output = sanitizeSysOutput(output, "build finished in ", "")
+	output = sanitizeBuildTimeStamp(output)
 	s.output = append(s.output, output)
 }
 
-func (s *testSys) baselineProgram(baseline *strings.Builder, program *incremental.Program, watcher *execute.Watcher) {
+func (s *testSys) baselinePrograms(baseline *strings.Builder, programs []*incremental.Program, watcher *execute.Watcher) {
 	if watcher != nil {
-		program = watcher.GetProgram()
+		programs = []*incremental.Program{watcher.GetProgram()}
 	}
+	for index, program := range programs {
+		if index > 0 {
+			baseline.WriteString("\n")
+		}
+		s.baselineProgram(baseline, program)
+	}
+}
+
+func (s *testSys) baselineProgram(baseline *strings.Builder, program *incremental.Program) {
 	if program == nil {
 		return
 	}
 
-	baseline.WriteString("SemanticDiagnostics::\n")
 	testingData := program.GetTestingData(program.GetProgram())
+	if testingData.ConfigFilePath != "" {
+		baseline.WriteString(testingData.ConfigFilePath + "::\n")
+	}
+	baseline.WriteString("SemanticDiagnostics::\n")
 	for _, file := range program.GetProgram().GetSourceFiles() {
 		if diagnostics, ok := testingData.SemanticDiagnosticsPerFile[file.Path()]; ok {
 			if oldDiagnostics, ok := testingData.OldProgramSemanticDiagnosticsPerFile[file.Path()]; !ok || oldDiagnostics != diagnostics {
@@ -252,7 +313,11 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 		if !ok {
 			return nil
 		}
-		newEntry := &diffEntry{content: newContents, isWritten: testFs.writtenFiles.Has(path)}
+		stat := s.fsFromFileMap().Stat(path)
+		if stat == nil {
+			panic("stat is nil: " + path)
+		}
+		newEntry := &diffEntry{content: newContents, mTime: stat.ModTime(), isWritten: testFs.writtenFiles.Has(path)}
 		snap[path] = newEntry
 		s.addFsEntryDiff(diffs, newEntry, path)
 
@@ -308,6 +373,8 @@ func (s *testSys) addFsEntryDiff(diffs map[string]string, newDirContent *diffEnt
 		diffs[path] = "*modified* \n" + newDirContent.content
 	} else if newDirContent.isWritten {
 		diffs[path] = "*rewrite with same content*"
+	} else if newDirContent.mTime != oldDirContent.mTime {
+		diffs[path] = "*mTime changed*"
 	} else if defaultLibs != nil && defaultLibs.Has(path) && s.testFs().defaultLibs != nil && !s.testFs().defaultLibs.Has(path) {
 		// Lib file that was read
 		diffs[path] = "*Lib*\n" + newDirContent.content
@@ -316,7 +383,7 @@ func (s *testSys) addFsEntryDiff(diffs map[string]string, newDirContent *diffEnt
 
 func (s *testSys) printOutputs(baseline io.Writer) {
 	// todo sanitize sys output
-	fmt.Fprint(baseline, strings.Join(s.output, "\n"))
+	fmt.Fprint(baseline, strings.Join(s.output, ""))
 }
 
 func (s *testSys) writeFileNoError(path string, content string, writeByteOrderMark bool) {

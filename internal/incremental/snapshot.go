@@ -31,6 +31,16 @@ func (f *fileInfo) Signature() string                      { return f.signature 
 func (f *fileInfo) AffectsGlobalScope() bool               { return f.affectsGlobalScope }
 func (f *fileInfo) ImpliedNodeFormat() core.ResolutionMode { return f.impliedNodeFormat }
 
+func ComputeHash(text string, hashWithText bool) string {
+	hasher := fnv.New128a()
+	hasher.Write([]byte(text))
+	hash := hex.EncodeToString(hasher.Sum(nil))
+	if hashWithText {
+		hash += "-" + text
+	}
+	return hash
+}
+
 type FileEmitKind uint32
 
 const (
@@ -307,13 +317,7 @@ func diagnosticToStringBuilder(diagnostic *ast.Diagnostic, file *ast.SourceFile,
 }
 
 func (s *snapshot) computeHash(text string) string {
-	hasher := fnv.New128a()
-	hasher.Write([]byte(text))
-	hash := hex.EncodeToString(hasher.Sum(nil))
-	if s.hashWithText {
-		hash += "-" + text
-	}
-	return hash
+	return ComputeHash(text, s.hashWithText)
 }
 
 func newSnapshotForProgram(program *compiler.Program, oldProgram *Program, hashWithText bool) *snapshot {
