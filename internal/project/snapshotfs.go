@@ -1,7 +1,6 @@
 package project
 
 import (
-	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -112,7 +111,7 @@ func (s *snapshotFSBuilder) GetFileByPath(fileName string, path tspath.Path) Fil
 
 func (s *snapshotFSBuilder) markDirtyFiles(change FileChangeSummary) {
 	for uri := range change.Changed.Keys() {
-		path := s.toPath(ls.DocumentURIToFileName(uri))
+		path := s.toPath(uri.FileName())
 		if entry, ok := s.diskFiles.Load(path); ok {
 			entry.Change(func(file *diskFile) {
 				file.needsReload = true
@@ -120,7 +119,7 @@ func (s *snapshotFSBuilder) markDirtyFiles(change FileChangeSummary) {
 		}
 	}
 	for uri := range change.Deleted.Keys() {
-		path := s.toPath(ls.DocumentURIToFileName(uri))
+		path := s.toPath(uri.FileName())
 		if entry, ok := s.diskFiles.Load(path); ok {
 			entry.Change(func(file *diskFile) {
 				file.needsReload = true

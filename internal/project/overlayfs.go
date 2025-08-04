@@ -273,7 +273,7 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 			includesNonWatchChange = true
 			result.Opened = uri
 			newOverlays[path] = newOverlay(
-				ls.DocumentURIToFileName(uri),
+				uri.FileName(),
 				events.openChange.Content,
 				events.openChange.Version,
 				ls.LanguageKindToScriptKind(events.openChange.LanguageKind),

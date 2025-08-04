@@ -63,7 +63,7 @@ func NewSnapshot(
 }
 
 func (s *Snapshot) GetDefaultProject(uri lsproto.DocumentUri) *Project {
-	fileName := ls.DocumentURIToFileName(uri)
+	fileName := uri.FileName()
 	path := s.toPath(fileName)
 	return s.ProjectCollection.GetDefaultProject(fileName, path)
 }

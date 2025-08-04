@@ -20,7 +20,7 @@ func TestUntitledReferences(t *testing.T) {
 
 	// First test the URI conversion functions to understand the issue
 	untitledURI := lsproto.DocumentUri("untitled:Untitled-2")
-	convertedFileName := ls.DocumentURIToFileName(untitledURI)
+	convertedFileName := untitledURI.FileName()
 	t.Logf("URI '%s' converts to filename '%s'", untitledURI, convertedFileName)
 
 	backToURI := ls.FileNameToDocumentURI(convertedFileName)
@@ -129,7 +129,7 @@ x++;`
 	assert.NilError(t, err)
 
 	program := languageService.GetProgram()
-	untitledFileName := ls.DocumentURIToFileName("untitled:Untitled-2")
+	untitledFileName := lsproto.DocumentUri("untitled:Untitled-2").FileName()
 	sourceFile := program.GetSourceFile(untitledFileName)
 	assert.Assert(t, sourceFile != nil)
 	assert.Equal(t, sourceFile.Text(), testContent)

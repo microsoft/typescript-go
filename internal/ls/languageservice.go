@@ -29,7 +29,7 @@ func (l *LanguageService) tryGetProgramAndFile(fileName string) (*compiler.Progr
 }
 
 func (l *LanguageService) getProgramAndFile(documentURI lsproto.DocumentUri) (*compiler.Program, *ast.SourceFile) {
-	fileName := DocumentURIToFileName(documentURI)
+	fileName := documentURI.FileName()
 	program, file := l.tryGetProgramAndFile(fileName)
 	if file == nil {
 		panic("file not found: " + fileName)

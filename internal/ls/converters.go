@@ -82,10 +82,6 @@ func LanguageKindToScriptKind(languageID lsproto.LanguageKind) core.ScriptKind {
 	}
 }
 
-func DocumentURIToFileName(uri lsproto.DocumentUri) string {
-	return uri.FileName()
-}
-
 // https://github.com/microsoft/vscode-uri/blob/edfdccd976efaf4bb8fdeca87e97c47257721729/src/uri.ts#L455
 var extraEscapeReplacer = strings.NewReplacer(
 	":", "%3A",
