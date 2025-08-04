@@ -850,7 +850,6 @@ func (p *Program) verifyProjectReferences() {
 	}
 
 	p.ForEachResolvedProjectReference(func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) {
-		// Implementation goes here
 		ref := parent.ProjectReferences()[index]
 		// !!! Deprecated in 5.0 and removed since 5.5
 		// verifyRemovedProjectReference(ref, parent, index);
