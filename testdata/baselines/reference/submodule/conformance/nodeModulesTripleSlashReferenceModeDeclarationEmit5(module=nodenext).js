@@ -32,6 +32,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 
 //// [index.d.ts]
+/// <reference types="pkg" resolution-mode="import" preserve="true" />/// <reference types="pkg" resolution-mode="require" preserve="true" />
 export interface LocalInterface extends ImportInterface, RequireInterface {
 }
 
@@ -39,14 +40,12 @@ export interface LocalInterface extends ImportInterface, RequireInterface {
 //// [DtsFileErrors]
 
 
-out/index.d.ts(1,41): error TS2304: Cannot find name 'ImportInterface'.
-out/index.d.ts(1,58): error TS2304: Cannot find name 'RequireInterface'.
+out/index.d.ts(2,58): error TS2304: Cannot find name 'RequireInterface'.
 
 
-==== out/index.d.ts (2 errors) ====
+==== out/index.d.ts (1 errors) ====
+    /// <reference types="pkg" resolution-mode="import" preserve="true" />/// <reference types="pkg" resolution-mode="require" preserve="true" />
     export interface LocalInterface extends ImportInterface, RequireInterface {
-                                            ~~~~~~~~~~~~~~~
-!!! error TS2304: Cannot find name 'ImportInterface'.
                                                              ~~~~~~~~~~~~~~~~
 !!! error TS2304: Cannot find name 'RequireInterface'.
     }
