@@ -502,7 +502,7 @@ func (h *cachedCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast
 
 func createCompilerHost(fs vfs.FS, defaultLibraryPath string, currentDirectory string) compiler.CompilerHost {
 	return &cachedCompilerHost{
-		CompilerHost: compiler.NewCompilerHost(currentDirectory, fs, defaultLibraryPath, nil /*extendedConfigCache*/),
+		CompilerHost: compiler.NewCompilerHost(currentDirectory, fs, defaultLibraryPath, nil),
 	}
 }
 

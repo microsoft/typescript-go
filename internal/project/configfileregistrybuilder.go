@@ -433,7 +433,7 @@ func (c *configFileRegistryBuilder) computeConfigFileName(fileName string, skipS
 }
 
 func (c *configFileRegistryBuilder) getConfigFileNameForFile(fileName string, path tspath.Path, loadKind projectLoadKind) string {
-	if IsDynamicFileName(fileName) {
+	if isDynamicFileName(fileName) {
 		return ""
 	}
 
@@ -456,7 +456,7 @@ func (c *configFileRegistryBuilder) getConfigFileNameForFile(fileName string, pa
 }
 
 func (c *configFileRegistryBuilder) getAncestorConfigFileName(fileName string, path tspath.Path, configFileName string, loadKind projectLoadKind) string {
-	if IsDynamicFileName(fileName) {
+	if isDynamicFileName(fileName) {
 		return ""
 	}
 

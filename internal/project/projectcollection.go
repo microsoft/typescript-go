@@ -14,9 +14,9 @@ type ProjectCollection struct {
 	configFileRegistry *ConfigFileRegistry
 	// fileDefaultProjects is a map of file paths to the config file path (the key
 	// into `configuredProjects`) of the default project for that file. If the file
-	// belongs to the inferred project, the value is "". This map contains quick
-	// lookups for only the associations discovered during the latest snapshot
-	// update.
+	// belongs to the inferred project, the value is `inferredProjectName`. This map
+	// contains quick lookups for only the associations discovered during the latest
+	// snapshot update.
 	fileDefaultProjects map[tspath.Path]tspath.Path
 	// configuredProjects is the set of loaded projects associated with a tsconfig
 	// file, keyed by the config file path.
@@ -36,8 +36,8 @@ func (c *ProjectCollection) GetProjectByPath(projectPath tspath.Path) *Project {
 		return project
 	}
 
-	// Check if it's the inferred project path (empty path or special inferred project name)
-	if projectPath == "" || string(projectPath) == inferredProjectName {
+	// Check if it's the inferred project path
+	if projectPath == inferredProjectName {
 		return c.inferredProject
 	}
 

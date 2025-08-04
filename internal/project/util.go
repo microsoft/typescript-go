@@ -2,6 +2,6 @@ package project
 
 import "strings"
 
-func IsDynamicFileName(fileName string) bool {
+func isDynamicFileName(fileName string) bool {
 	return strings.HasPrefix(fileName, "^")
 }
