@@ -44,6 +44,7 @@ func (p *ProgramOptions) canUseProjectReferenceSource() bool {
 type Program struct {
 	opts        ProgramOptions
 	checkerPool CheckerPool
+	cloned      bool
 
 	comparePathsOptions tspath.ComparePathsOptions
 
@@ -208,6 +209,7 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 	}
 	// TODO: reverify compiler options when config has changed?
 	result := &Program{
+		cloned:                      true,
 		opts:                        newOpts,
 		comparePathsOptions:         p.comparePathsOptions,
 		processedFiles:              p.processedFiles,
@@ -273,7 +275,7 @@ func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 // ExtractUnresolvedImports returns the unresolved imports for this program.
 // The result is cached and computed only once.
 func (p *Program) ExtractUnresolvedImports() collections.Set[string] {
-	if p.unresolvedImports != nil {
+	if p.cloned {
 		return *p.unresolvedImports
 	}
 	p.unresolvedImportsOnce.Do(func() {
@@ -283,7 +285,6 @@ func (p *Program) ExtractUnresolvedImports() collections.Set[string] {
 	return *p.unresolvedImports
 }
 
-// extractUnresolvedImports is the internal implementation that does the actual work.
 func (p *Program) extractUnresolvedImports() *collections.Set[string] {
 	unresolvedSet := &collections.Set[string]{}
 
@@ -297,7 +298,6 @@ func (p *Program) extractUnresolvedImports() *collections.Set[string] {
 	return unresolvedSet
 }
 
-// extractUnresolvedImportsFromSourceFile extracts unresolved imports from a single source file.
 func (p *Program) extractUnresolvedImportsFromSourceFile(file *ast.SourceFile) []string {
 	var unresolvedImports []string
 
