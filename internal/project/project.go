@@ -277,6 +277,8 @@ func (p *Project) CreateProgram() CreateProgramResult {
 		}
 	}
 
+	newProgram.BindSourceFiles()
+
 	return CreateProgramResult{
 		Program:     newProgram,
 		UpdateKind:  updateKind,
