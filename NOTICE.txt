@@ -236,6 +236,34 @@ BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
 
 ---------------------------------------------------------
 
+golang.org/x/sys v0.34.0 - BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
+
+
+Copyright 2009 The Go Authors
+Copyright 2010 The Go Authors
+Copyright 2011 The Go Authors
+Copyright 2012 The Go Authors
+Copyright 2013 The Go Authors
+Copyright 2014 The Go Authors
+Copyright 2015 The Go Authors
+Copyright 2016 The Go Authors
+Copyright 2017 The Go Authors
+Copyright 2018 The Go Authors
+Copyright 2019 The Go Authors
+Copyright 2020 The Go Authors
+Copyright 2021 The Go Authors
+Copyright 2022 The Go Authors
+Copyright 2023 The Go Authors
+Copyright 2024 The Go Authors
+Copyright 2025 The Go Authors
+Copyright 2009,2010 The Go Authors
+
+BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
+
+---------------------------------------------------------
+
+---------------------------------------------------------
+
 golang.org/x/text v0.27.0 - BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
 
 
