@@ -330,10 +330,10 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 	logger.Log("Checking if any changed files are config files")
 	for path := range createdOrChangedOrDeletedFiles {
 		if entry, ok := c.configs.Load(path); ok {
-			affectedProjects = core.CopyMap(affectedProjects, c.handleConfigChange(entry, logger))
+			affectedProjects = core.CopyMapInto(affectedProjects, c.handleConfigChange(entry, logger))
 			for extendingConfigPath := range entry.Value().retainingConfigs {
 				if extendingConfigEntry, ok := c.configs.Load(extendingConfigPath); ok {
-					affectedProjects = core.CopyMap(affectedProjects, c.handleConfigChange(extendingConfigEntry, logger))
+					affectedProjects = core.CopyMapInto(affectedProjects, c.handleConfigChange(extendingConfigEntry, logger))
 				}
 			}
 			// This was a config file, so assume it's not also a root file

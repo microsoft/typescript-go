@@ -615,7 +615,9 @@ func DiffMapsFunc[K comparable, V any](m1 map[K]V, m2 map[K]V, equalValues func(
 	}
 }
 
-func CopyMap[M1 ~map[K]V, M2 ~map[K]V, K comparable, V any](dst M1, src M2) map[K]V {
+// CopyMapInto is maps.Copy, unless dst is nil, in which case it clones and returns src.
+// Use CopyMapInto anywhere you would use maps.Copy preceded by a nil check and map initialization.
+func CopyMapInto[M1 ~map[K]V, M2 ~map[K]V, K comparable, V any](dst M1, src M2) map[K]V {
 	if dst == nil {
 		return maps.Clone(src)
 	}
