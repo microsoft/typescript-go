@@ -2,10 +2,10 @@ package incremental
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"slices"
 
+	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"

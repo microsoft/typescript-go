@@ -1,7 +1,6 @@
 package fourslash
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"maps"
@@ -11,6 +10,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+	"github.com/go-json-experiment/json"
 	"github.com/google/go-cmp/cmp"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/bundled"
@@ -228,7 +228,9 @@ func (f *FourslashTest) nextID() int32 {
 }
 
 func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCapabilities) {
-	params := &lsproto.InitializeParams{}
+	params := &lsproto.InitializeParams{
+		Locale: ptrTo("en-US"),
+	}
 	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
 	// !!! check for errors?
 	sendRequest(t, f, lsproto.InitializeInfo, params)
@@ -293,8 +295,7 @@ func sendNotification[Params any](t *testing.T, f *FourslashTest, info lsproto.N
 }
 
 func (f *FourslashTest) writeMsg(t *testing.T, msg *lsproto.Message) {
-	enc := json.NewEncoder(io.Discard)
-	assert.NilError(t, enc.Encode(msg), "failed to encode message as JSON")
+	assert.NilError(t, json.MarshalWrite(io.Discard, msg), "failed to encode message as JSON")
 	if err := f.in.Write(msg); err != nil {
 		t.Fatalf("failed to write message: %v", err)
 	}
@@ -306,8 +307,7 @@ func (f *FourslashTest) readMsg(t *testing.T) *lsproto.Message {
 	if err != nil {
 		t.Fatalf("failed to read message: %v", err)
 	}
-	enc := json.NewEncoder(io.Discard)
-	assert.NilError(t, enc.Encode(msg), "failed to encode message as JSON")
+	assert.NilError(t, json.MarshalWrite(io.Discard, msg), "failed to encode message as JSON")
 	return msg
 }
 
@@ -903,6 +903,229 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
 }
 
+func (f *FourslashTest) VerifyBaselineHover(t *testing.T) {
+	if f.baseline != nil {
+		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
+	} else {
+		f.baseline = &baselineFromTest{
+			content:      &strings.Builder{},
+			baselineName: "hover/" + strings.TrimPrefix(t.Name(), "Test"),
+			ext:          ".baseline",
+		}
+	}
+
+	// empty baseline after test completes
+	defer func() {
+		f.baseline = nil
+	}()
+
+	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.Hover], bool) {
+		if marker.Name == nil {
+			return markerAndItem[*lsproto.Hover]{}, false
+		}
+
+		params := &lsproto.HoverParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: ls.FileNameToDocumentURI(f.activeFilename),
+			},
+			Position: marker.LSPosition,
+		}
+
+		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentHoverInfo, params)
+		var prefix string
+		if f.lastKnownMarkerName != nil {
+			prefix = fmt.Sprintf("At marker '%s': ", *f.lastKnownMarkerName)
+		} else {
+			prefix = fmt.Sprintf("At position (Ln %d, Col %d): ", f.currentCaretPosition.Line, f.currentCaretPosition.Character)
+		}
+		if resMsg == nil {
+			t.Fatalf(prefix+"Nil response received for quick info request", f.lastKnownMarkerName)
+		}
+		if !resultOk {
+			t.Fatalf(prefix+"Unexpected response type for quick info request: %T", resMsg.AsResponse().Result)
+		}
+
+		return markerAndItem[*lsproto.Hover]{Marker: marker, Item: result.Hover}, true
+	})
+
+	getRange := func(item *lsproto.Hover) *lsproto.Range {
+		if item == nil || item.Range == nil {
+			return nil
+		}
+		return item.Range
+	}
+
+	getTooltipLines := func(item, _prev *lsproto.Hover) []string {
+		var result []string
+
+		if item.Contents.MarkupContent != nil {
+			result = strings.Split(item.Contents.MarkupContent.Value, "\n")
+		}
+		if item.Contents.String != nil {
+			result = strings.Split(*item.Contents.String, "\n")
+		}
+		if item.Contents.MarkedStringWithLanguage != nil {
+			result = appendLinesForMarkedStringWithLanguage(result, item.Contents.MarkedStringWithLanguage)
+		}
+		if item.Contents.MarkedStrings != nil {
+			for _, ms := range *item.Contents.MarkedStrings {
+				if ms.MarkedStringWithLanguage != nil {
+					result = appendLinesForMarkedStringWithLanguage(result, ms.MarkedStringWithLanguage)
+				} else {
+					result = append(result, *ms.String)
+				}
+			}
+		}
+
+		return result
+	}
+
+	f.baseline.addResult("QuickInfo", annotateContentWithTooltips(t, f, markersAndItems, "quickinfo", getRange, getTooltipLines))
+	if jsonStr, err := core.StringifyJson(markersAndItems, "", "  "); err == nil {
+		f.baseline.content.WriteString(jsonStr)
+	} else {
+		t.Fatalf("Failed to stringify markers and items for baseline: %v", err)
+	}
+	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
+}
+
+func appendLinesForMarkedStringWithLanguage(result []string, ms *lsproto.MarkedStringWithLanguage) []string {
+	result = append(result, "```"+ms.Language)
+	result = append(result, ms.Value)
+	result = append(result, "```")
+	return result
+}
+
+func (f *FourslashTest) VerifyBaselineSignatureHelp(t *testing.T) {
+	if f.baseline != nil {
+		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
+	} else {
+		f.baseline = &baselineFromTest{
+			content:      &strings.Builder{},
+			baselineName: "signatureHelp/" + strings.TrimPrefix(t.Name(), "Test"),
+			ext:          ".baseline",
+		}
+	}
+
+	// empty baseline after test completes
+	defer func() {
+		f.baseline = nil
+	}()
+
+	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.SignatureHelp], bool) {
+		if marker.Name == nil {
+			return markerAndItem[*lsproto.SignatureHelp]{}, false
+		}
+
+		params := &lsproto.SignatureHelpParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: ls.FileNameToDocumentURI(f.activeFilename),
+			},
+			Position: marker.LSPosition,
+		}
+
+		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentSignatureHelpInfo, params)
+		var prefix string
+		if f.lastKnownMarkerName != nil {
+			prefix = fmt.Sprintf("At marker '%s': ", *f.lastKnownMarkerName)
+		} else {
+			prefix = fmt.Sprintf("At position (Ln %d, Col %d): ", f.currentCaretPosition.Line, f.currentCaretPosition.Character)
+		}
+		if resMsg == nil {
+			t.Fatalf(prefix+"Nil response received for signature help request", f.lastKnownMarkerName)
+		}
+		if !resultOk {
+			t.Fatalf(prefix+"Unexpected response type for signature help request: %T", resMsg.AsResponse().Result)
+		}
+
+		return markerAndItem[*lsproto.SignatureHelp]{Marker: marker, Item: result.SignatureHelp}, true
+	})
+
+	getRange := func(item *lsproto.SignatureHelp) *lsproto.Range {
+		// SignatureHelp doesn't have a range like hover does
+		return nil
+	}
+
+	getTooltipLines := func(item, _prev *lsproto.SignatureHelp) []string {
+		if item == nil || len(item.Signatures) == 0 {
+			return []string{"No signature help available"}
+		}
+
+		// Show active signature if specified, otherwise first signature
+		activeSignature := 0
+		if item.ActiveSignature != nil && int(*item.ActiveSignature) < len(item.Signatures) {
+			activeSignature = int(*item.ActiveSignature)
+		}
+
+		sig := item.Signatures[activeSignature]
+
+		// Build signature display
+		signatureLine := sig.Label
+		activeParamLine := ""
+
+		// Show active parameter if specified, and the signature text.
+		if item.ActiveParameter != nil && sig.Parameters != nil {
+			activeParamIndex := int(*item.ActiveParameter.Uinteger)
+			if activeParamIndex >= 0 && activeParamIndex < len(*sig.Parameters) {
+				activeParam := (*sig.Parameters)[activeParamIndex]
+
+				// Get the parameter label and bold the
+				// parameter text within the original string.
+				activeParamLabel := ""
+				if activeParam.Label.String != nil {
+					activeParamLabel = *activeParam.Label.String
+				} else if activeParam.Label.Tuple != nil {
+					activeParamLabel = signatureLine[(*activeParam.Label.Tuple)[0]:(*activeParam.Label.Tuple)[1]]
+				} else {
+					t.Fatal("Unsupported param label kind.")
+				}
+				signatureLine = strings.Replace(signatureLine, activeParamLabel, "**"+activeParamLabel+"**", 1)
+
+				if activeParam.Documentation != nil {
+					if activeParam.Documentation.MarkupContent != nil {
+						activeParamLine = activeParam.Documentation.MarkupContent.Value
+					} else if activeParam.Documentation.String != nil {
+						activeParamLine = *activeParam.Documentation.String
+					}
+
+					activeParamLine = fmt.Sprintf("- `%s`: %s", activeParamLabel, activeParamLine)
+				}
+
+			}
+		}
+
+		result := make([]string, 0, 16)
+		result = append(result, signatureLine)
+		if activeParamLine != "" {
+			result = append(result, activeParamLine)
+		}
+
+		// ORIGINALLY we would "only display signature documentation on the last argument when multiple arguments are marked".
+		// !!!
+		// Note that this is harder than in Strada, because LSP signature help has no concept of
+		// applicable spans.
+		if sig.Documentation != nil {
+			if sig.Documentation.MarkupContent != nil {
+				result = append(result, strings.Split(sig.Documentation.MarkupContent.Value, "\n")...)
+			} else if sig.Documentation.String != nil {
+				result = append(result, strings.Split(*sig.Documentation.String, "\n")...)
+			} else {
+				t.Fatal("Unsupported documentation format.")
+			}
+		}
+
+		return result
+	}
+
+	f.baseline.addResult("SignatureHelp", annotateContentWithTooltips(t, f, markersAndItems, "signaturehelp", getRange, getTooltipLines))
+	if jsonStr, err := core.StringifyJson(markersAndItems, "", "  "); err == nil {
+		f.baseline.content.WriteString(jsonStr)
+	} else {
+		t.Fatalf("Failed to stringify markers and items for baseline: %v", err)
+	}
+	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
+}
+
 // Collects all named markers if provided, or defaults to anonymous ranges
 func (f *FourslashTest) lookupMarkersOrGetRanges(t *testing.T, markers []string) []MarkerOrRange {
 	var referenceLocations []MarkerOrRange
@@ -1090,4 +1313,90 @@ func (f *FourslashTest) editScript(t *testing.T, fileName string, start int, end
 
 func (f *FourslashTest) getScriptInfo(fileName string) *scriptInfo {
 	return f.scriptInfos[fileName]
+}
+
+// !!! expected tags
+func (f *FourslashTest) VerifyQuickInfoAt(t *testing.T, marker string, expectedText string, expectedDocumentation string) {
+	f.GoToMarker(t, marker)
+	hover := f.getQuickInfoAtCurrentPosition(t)
+
+	f.verifyHoverContent(t, hover.Contents, expectedText, expectedDocumentation, fmt.Sprintf("At marker '%s': ", marker))
+}
+
+func (f *FourslashTest) getQuickInfoAtCurrentPosition(t *testing.T) *lsproto.Hover {
+	params := &lsproto.HoverParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: ls.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+	}
+	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentHoverInfo, params)
+	if resMsg == nil {
+		t.Fatalf("Nil response received for hover request at marker '%s'", *f.lastKnownMarkerName)
+	}
+	if !resultOk {
+		t.Fatalf("Unexpected hover response type at marker '%s': %T", *f.lastKnownMarkerName, resMsg.AsResponse().Result)
+	}
+	if result.Hover == nil {
+		t.Fatalf("Expected hover result at marker '%s' but got nil", *f.lastKnownMarkerName)
+	}
+	return result.Hover
+}
+
+func (f *FourslashTest) verifyHoverContent(
+	t *testing.T,
+	actual lsproto.MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings,
+	expectedText string,
+	expectedDocumentation string,
+	prefix string,
+) {
+	switch {
+	case actual.MarkupContent != nil:
+		f.verifyHoverMarkdown(t, actual.MarkupContent.Value, expectedText, expectedDocumentation, prefix)
+	default:
+		t.Fatalf(prefix+"Expected markup content, got: %s", cmp.Diff(actual, nil))
+	}
+}
+
+func (f *FourslashTest) verifyHoverMarkdown(
+	t *testing.T,
+	actual string,
+	expectedText string,
+	expectedDocumentation string,
+	prefix string,
+) {
+	expected := fmt.Sprintf("```tsx\n%s\n```\n%s", expectedText, expectedDocumentation)
+	assertDeepEqual(t, actual, expected, prefix+"Hover markdown content mismatch")
+}
+
+func (f *FourslashTest) VerifyQuickInfoExists(t *testing.T) {
+	if isEmpty, _ := f.quickInfoIsEmpty(t); isEmpty {
+		t.Fatalf("Expected non-nil hover content at marker '%s'", *f.lastKnownMarkerName)
+	}
+}
+
+func (f *FourslashTest) VerifyNotQuickInfoExists(t *testing.T) {
+	if isEmpty, hover := f.quickInfoIsEmpty(t); !isEmpty {
+		t.Fatalf("Expected empty hover content at marker '%s', got '%s'", *f.lastKnownMarkerName, cmp.Diff(hover, nil))
+	}
+}
+
+func (f *FourslashTest) quickInfoIsEmpty(t *testing.T) (bool, *lsproto.Hover) {
+	hover := f.getQuickInfoAtCurrentPosition(t)
+	if hover == nil ||
+		(hover.Contents.MarkupContent == nil && hover.Contents.MarkedStrings == nil && hover.Contents.String == nil) {
+		return true, nil
+	}
+	return false, hover
+}
+
+func (f *FourslashTest) VerifyQuickInfoIs(t *testing.T, expectedText string, expectedDocumentation string) {
+	hover := f.getQuickInfoAtCurrentPosition(t)
+	var prefix string
+	if f.lastKnownMarkerName != nil {
+		prefix = fmt.Sprintf("At marker '%s': ", *f.lastKnownMarkerName)
+	} else {
+		prefix = fmt.Sprintf("At position (Ln %d, Col %d): ", f.currentCaretPosition.Line, f.currentCaretPosition.Character)
+	}
+	f.verifyHoverContent(t, hover.Contents, expectedText, expectedDocumentation, prefix)
 }

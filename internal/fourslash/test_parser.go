@@ -1,12 +1,12 @@
 package fourslash
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 	"testing"
 	"unicode/utf8"
 
+	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"

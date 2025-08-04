@@ -1,9 +1,10 @@
 package incremental
 
 import (
-	"encoding/json"
 	"fmt"
 
+	"github.com/go-json-experiment/json"
+	"github.com/go-json-experiment/json/jsontext"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
@@ -213,7 +214,7 @@ func (b *BuildInfoDiagnosticsOfFile) MarshalJSON() ([]byte, error) {
 }
 
 func (b *BuildInfoDiagnosticsOfFile) UnmarshalJSON(data []byte) error {
-	var fileIdAndDiagnostics []json.RawMessage
+	var fileIdAndDiagnostics []jsontext.Value
 	if err := json.Unmarshal(data, &fileIdAndDiagnostics); err != nil {
 		return fmt.Errorf("invalid BuildInfoDiagnosticsOfFile: %s", data)
 	}

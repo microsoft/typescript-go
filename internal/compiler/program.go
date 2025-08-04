@@ -2,13 +2,13 @@ package compiler
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"maps"
 	"slices"
 	"strings"
 	"sync"
 
+	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/checker"

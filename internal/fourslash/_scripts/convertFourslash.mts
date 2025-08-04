@@ -10,7 +10,7 @@ const stradaFourslashPath = path.resolve(import.meta.dirname, "../", "../", "../
 let inputFileSet: Set<string> | undefined;
 
 const failingTestsPath = path.join(import.meta.dirname, "failingTests.txt");
-const helperFilePath = path.join(import.meta.dirname, "../", "tests", "util_test.go");
+const manualTestsPath = path.join(import.meta.dirname, "manualTests.txt");
 
 const outputDir = path.join(import.meta.dirname, "../", "tests", "gen");
 
@@ -19,6 +19,14 @@ const unparsedFiles: string[] = [];
 function getFailingTests(): Set<string> {
     const failingTestsList = fs.readFileSync(failingTestsPath, "utf-8").split("\n").map(line => line.trim().substring(4)).filter(line => line.length > 0);
     return new Set(failingTestsList);
+}
+
+function getManualTests(): Set<string> {
+    if (!fs.existsSync(manualTestsPath)) {
+        return new Set();
+    }
+    const manualTestsList = fs.readFileSync(manualTestsPath, "utf-8").split("\n").map(line => line.trim()).filter(line => line.length > 0);
+    return new Set(manualTestsList);
 }
 
 export function main() {
@@ -35,13 +43,13 @@ export function main() {
     fs.rmSync(outputDir, { recursive: true, force: true });
     fs.mkdirSync(outputDir, { recursive: true });
 
-    parseTypeScriptFiles(getFailingTests(), stradaFourslashPath);
+    parseTypeScriptFiles(getFailingTests(), getManualTests(), stradaFourslashPath);
     console.log(unparsedFiles.join("\n"));
     const gofmt = which.sync("go");
     cp.execFileSync(gofmt, ["tool", "mvdan.cc/gofumpt", "-lang=go1.24", "-w", outputDir]);
 }
 
-function parseTypeScriptFiles(failingTests: Set<string>, folder: string): void {
+function parseTypeScriptFiles(failingTests: Set<string>, manualTests: Set<string>, folder: string): void {
     const files = fs.readdirSync(folder);
 
     files.forEach(file => {
@@ -52,9 +60,9 @@ function parseTypeScriptFiles(failingTests: Set<string>, folder: string): void {
         }
 
         if (stat.isDirectory()) {
-            parseTypeScriptFiles(failingTests, filePath);
+            parseTypeScriptFiles(failingTests, manualTests, filePath);
         }
-        else if (file.endsWith(".ts")) {
+        else if (file.endsWith(".ts") && !manualTests.has(file.slice(0, -3))) {
             const content = fs.readFileSync(filePath, "utf-8");
             const test = parseFileContent(file, content);
             if (test) {
@@ -136,8 +144,16 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
         }
         const namespace = callExpression.expression.expression;
         const func = callExpression.expression.name;
-        if (!ts.isIdentifier(namespace) || !ts.isIdentifier(func)) {
+        if (!(ts.isIdentifier(namespace) || namespace.getText() === "verify.not") || !ts.isIdentifier(func)) {
             console.error(`Expected identifiers for namespace and function, got ${namespace.getText()} and ${func.getText()}`);
+            return undefined;
+        }
+        if (!ts.isIdentifier(namespace)) {
+            switch (func.text) {
+                case "quickInfoExists":
+                    return parseQuickInfoArgs("notQuickInfoExists", callExpression.arguments);
+            }
+            console.error(`Unrecognized fourslash statement: ${statement.getText()}`);
             return undefined;
         }
         // `verify.(...)`
@@ -146,9 +162,19 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                 case "completions":
                     // `verify.completions(...)`
                     return parseVerifyCompletionsArgs(callExpression.arguments);
+                case "quickInfoAt":
+                case "quickInfoExists":
+                case "quickInfoIs":
+                case "quickInfos":
+                    // `verify.quickInfo...(...)`
+                    return parseQuickInfoArgs(func.text, callExpression.arguments);
                 case "baselineFindAllReferences":
                     // `verify.baselineFindAllReferences(...)`
                     return [parseBaselineFindAllReferencesArgs(callExpression.arguments)];
+                case "baselineQuickInfo":
+                    return [parseBaselineQuickInfo(callExpression.arguments)];
+                case "baselineSignatureHelp":
+                    return [parseBaselineSignatureHelp(callExpression.arguments)];
                 case "baselineGoToDefinition":
                 case "baselineGetDefinitionAtPosition":
                     // Both of these take the same arguments, but differ in that...
@@ -701,6 +727,147 @@ function parseBaselineGoToDefinitionArgs(args: readonly ts.Expression[]): Verify
     };
 }
 
+function parseBaselineQuickInfo(args: ts.NodeArray<ts.Expression>): Cmd {
+    if (args.length !== 0) {
+        // All calls are currently empty!
+        throw new Error("Expected no arguments in verify.baselineQuickInfo");
+    }
+    return {
+        kind: "verifyBaselineQuickInfo",
+    };
+}
+
+function parseQuickInfoArgs(funcName: string, args: readonly ts.Expression[]): VerifyQuickInfoCmd[] | undefined {
+    // We currently don't support 'expectedTags'.
+    switch (funcName) {
+        case "quickInfoAt": {
+            if (args.length < 1 || args.length > 3) {
+                console.error(`Expected 1 or 2 arguments in quickInfoIs, got ${args.map(arg => arg.getText()).join(", ")}`);
+                return undefined;
+            }
+            if (!ts.isStringLiteralLike(args[0])) {
+                console.error(`Expected string literal for first argument in quickInfoAt, got ${args[0].getText()}`);
+                return undefined;
+            }
+            const marker = getGoStringLiteral(args[0].text);
+            let text: string | undefined;
+            if (args[1]) {
+                if (!ts.isStringLiteralLike(args[1])) {
+                    console.error(`Expected string literal for second argument in quickInfoAt, got ${args[1].getText()}`);
+                    return undefined;
+                }
+                text = getGoStringLiteral(args[1].text);
+            }
+            let docs: string | undefined;
+            if (args[2]) {
+                if (!ts.isStringLiteralLike(args[2]) && args[2].getText() !== "undefined") {
+                    console.error(`Expected string literal or undefined for third argument in quickInfoAt, got ${args[2].getText()}`);
+                    return undefined;
+                }
+                if (ts.isStringLiteralLike(args[2])) {
+                    docs = getGoStringLiteral(args[1].text);
+                }
+            }
+            return [{
+                kind: "quickInfoAt",
+                marker,
+                text,
+                docs,
+            }];
+        }
+        case "quickInfos": {
+            const cmds: VerifyQuickInfoCmd[] = [];
+            if (args.length !== 1 || !ts.isObjectLiteralExpression(args[0])) {
+                console.error(`Expected a single object literal argument in quickInfos, got ${args.map(arg => arg.getText()).join(", ")}`);
+                return undefined;
+            }
+            for (const prop of args[0].properties) {
+                if (!ts.isPropertyAssignment(prop)) {
+                    console.error(`Expected property assignment in quickInfos, got ${prop.getText()}`);
+                    return undefined;
+                }
+                if (!(ts.isIdentifier(prop.name) || ts.isStringLiteralLike(prop.name) || ts.isNumericLiteral(prop.name))) {
+                    console.error(`Expected identifier or literal for property name in quickInfos, got ${prop.name.getText()}`);
+                    return undefined;
+                }
+                const marker = getGoStringLiteral(prop.name.text);
+                let text: string | undefined;
+                let docs: string | undefined;
+                if (ts.isArrayLiteralExpression(prop.initializer)) {
+                    if (prop.initializer.elements.length !== 2) {
+                        console.error(`Expected two elements in array literal for quickInfos property, got ${prop.initializer.getText()}`);
+                        return undefined;
+                    }
+                    if (!ts.isStringLiteralLike(prop.initializer.elements[0]) || !ts.isStringLiteralLike(prop.initializer.elements[1])) {
+                        console.error(`Expected string literals in array literal for quickInfos property, got ${prop.initializer.getText()}`);
+                        return undefined;
+                    }
+                    text = getGoStringLiteral(prop.initializer.elements[0].text);
+                    docs = getGoStringLiteral(prop.initializer.elements[1].text);
+                }
+                else if (ts.isStringLiteralLike(prop.initializer)) {
+                    text = getGoStringLiteral(prop.initializer.text);
+                }
+                else {
+                    console.error(`Expected string literal or array literal for quickInfos property, got ${prop.initializer.getText()}`);
+                    return undefined;
+                }
+                cmds.push({
+                    kind: "quickInfoAt",
+                    marker,
+                    text,
+                    docs,
+                });
+            }
+            return cmds;
+        }
+        case "quickInfoExists":
+            return [{
+                kind: "quickInfoExists",
+            }];
+        case "notQuickInfoExists":
+            return [{
+                kind: "notQuickInfoExists",
+            }];
+        case "quickInfoIs": {
+            if (args.length < 1 || args.length > 2) {
+                console.error(`Expected 1 or 2 arguments in quickInfoIs, got ${args.map(arg => arg.getText()).join(", ")}`);
+                return undefined;
+            }
+            if (!ts.isStringLiteralLike(args[0])) {
+                console.error(`Expected string literal for first argument in quickInfoIs, got ${args[0].getText()}`);
+                return undefined;
+            }
+            const text = getGoStringLiteral(args[0].text);
+            let docs: string | undefined;
+            if (args[1]) {
+                if (!ts.isStringLiteralLike(args[1])) {
+                    console.error(`Expected string literal for second argument in quickInfoIs, got ${args[1].getText()}`);
+                    return undefined;
+                }
+                docs = getGoStringLiteral(args[1].text);
+            }
+            return [{
+                kind: "quickInfoIs",
+                text,
+                docs,
+            }];
+        }
+    }
+    console.error(`Unrecognized quick info function: ${funcName}`);
+    return undefined;
+}
+
+function parseBaselineSignatureHelp(args: ts.NodeArray<ts.Expression>): Cmd {
+    if (args.length !== 0) {
+        // All calls are currently empty!
+        throw new Error("Expected no arguments in verify.baselineSignatureHelp");
+    }
+    return {
+        kind: "verifyBaselineSignatureHelp",
+    };
+}
+
 function parseKind(expr: ts.Expression): string | undefined {
     if (!ts.isStringLiteral(expr)) {
         console.error(`Expected string literal for kind, got ${expr.getText()}`);
@@ -848,6 +1015,14 @@ interface VerifyBaselineGoToDefinitionCmd {
     ranges?: boolean;
 }
 
+interface VerifyBaselineQuickInfoCmd {
+    kind: "verifyBaselineQuickInfo";
+}
+
+interface VerifyBaselineSignatureHelpCmd {
+    kind: "verifyBaselineSignatureHelp";
+}
+
 interface GoToCmd {
     kind: "goTo";
     // !!! `selectRange` and `rangeStart` require parsing variables and `test.ranges()[n]`
@@ -860,7 +1035,22 @@ interface EditCmd {
     goStatement: string;
 }
 
-type Cmd = VerifyCompletionsCmd | VerifyBaselineFindAllReferencesCmd | VerifyBaselineGoToDefinitionCmd | GoToCmd | EditCmd;
+interface VerifyQuickInfoCmd {
+    kind: "quickInfoIs" | "quickInfoAt" | "quickInfoExists" | "notQuickInfoExists";
+    marker?: string;
+    text?: string;
+    docs?: string;
+}
+
+type Cmd =
+    | VerifyCompletionsCmd
+    | VerifyBaselineFindAllReferencesCmd
+    | VerifyBaselineGoToDefinitionCmd
+    | VerifyBaselineQuickInfoCmd
+    | VerifyBaselineSignatureHelpCmd
+    | GoToCmd
+    | EditCmd
+    | VerifyQuickInfoCmd;
 
 function generateVerifyCompletions({ marker, args, isNewIdentifierLocation }: VerifyCompletionsCmd): string {
     let expectedList: string;
@@ -908,18 +1098,41 @@ function generateGoToCommand({ funcName, args }: GoToCmd): string {
     return `f.GoTo${funcNameCapitalized}(t, ${args.join(", ")})`;
 }
 
+function generateQuickInfoCommand({ kind, marker, text, docs }: VerifyQuickInfoCmd): string {
+    switch (kind) {
+        case "quickInfoIs":
+            return `f.VerifyQuickInfoIs(t, ${text!}, ${docs ? docs : `""`})`;
+        case "quickInfoAt":
+            return `f.VerifyQuickInfoAt(t, ${marker!}, ${text ? text : `""`}, ${docs ? docs : `""`})`;
+        case "quickInfoExists":
+            return `f.VerifyQuickInfoExists(t)`;
+        case "notQuickInfoExists":
+            return `f.VerifyNotQuickInfoExists(t)`;
+    }
+}
+
 function generateCmd(cmd: Cmd): string {
     switch (cmd.kind) {
         case "verifyCompletions":
-            return generateVerifyCompletions(cmd as VerifyCompletionsCmd);
+            return generateVerifyCompletions(cmd);
         case "verifyBaselineFindAllReferences":
-            return generateBaselineFindAllReferences(cmd as VerifyBaselineFindAllReferencesCmd);
+            return generateBaselineFindAllReferences(cmd);
         case "verifyBaselineGoToDefinition":
-            return generateBaselineGoToDefinition(cmd as VerifyBaselineGoToDefinitionCmd);
+            return generateBaselineGoToDefinition(cmd);
+        case "verifyBaselineQuickInfo":
+            // Quick Info -> Hover
+            return `f.VerifyBaselineHover(t)`;
+        case "verifyBaselineSignatureHelp":
+            return `f.VerifyBaselineSignatureHelp(t)`;
         case "goTo":
-            return generateGoToCommand(cmd as GoToCmd);
+            return generateGoToCommand(cmd);
         case "edit":
             return cmd.goStatement;
+        case "quickInfoAt":
+        case "quickInfoIs":
+        case "quickInfoExists":
+        case "notQuickInfoExists":
+            return generateQuickInfoCommand(cmd);
         default:
             let neverCommand: never = cmd;
             throw new Error(`Unknown command kind: ${neverCommand as Cmd["kind"]}`);
@@ -933,7 +1146,7 @@ interface GoTest {
 }
 
 function generateGoTest(failingTests: Set<string>, test: GoTest): string {
-    const testName = test.name[0].toUpperCase() + test.name.substring(1);
+    const testName = (test.name[0].toUpperCase() + test.name.substring(1)).replaceAll("-", "_");
     const content = test.content;
     const commands = test.commands.map(cmd => generateCmd(cmd)).join("\n");
     const imports = [`"github.com/microsoft/typescript-go/internal/fourslash"`];
