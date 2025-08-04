@@ -5,5 +5,5 @@
 //     m() {}
 // }
 // class Bar extends Foo {
-//     /*GO TO DEFINITION*/override [|m1|]() {}
+//     /*GO TO DEFINITION*/override [|{ textSpan: true |}m1|]() {}
 // }

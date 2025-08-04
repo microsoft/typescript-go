@@ -893,13 +893,12 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 			resultAsLocations = []lsproto.Location{*result.Location}
 		} else if result.DefinitionLinks != nil {
 			// For DefinitionLinks, extract the target locations and optionally set additionalSpan
-			resultAsLocations = make([]lsproto.Location, len(*result.DefinitionLinks))
-			for i, link := range *result.DefinitionLinks {
-				resultAsLocations[i] = lsproto.Location{
+			resultAsLocations = core.Map(*result.DefinitionLinks, func(link *lsproto.LocationLink) lsproto.Location {
+				return lsproto.Location{
 					Uri:   link.TargetUri,
 					Range: link.TargetSelectionRange,
 				}
-			}
+			})
 			// If there's a single result and it has an origin selection range, use it as additionalSpan
 			if len(*result.DefinitionLinks) == 1 && (*result.DefinitionLinks)[0].OriginSelectionRange != nil {
 				additionalSpan = &lsproto.Location{

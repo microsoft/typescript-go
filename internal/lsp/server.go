@@ -881,7 +881,29 @@ func getCompletionClientCapabilities(params *lsproto.InitializeParams) *lsproto.
 
 func getDefinitionClientCapabilities(params *lsproto.InitializeParams) *lsproto.DefinitionClientCapabilities {
 	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil {
-		return nil
+		// Return default capabilities with LinkSupport enabled
+		linkSupport := true
+		return &lsproto.DefinitionClientCapabilities{
+			LinkSupport: &linkSupport,
+		}
 	}
-	return params.Capabilities.TextDocument.Definition
+	
+	capabilities := params.Capabilities.TextDocument.Definition
+	if capabilities == nil {
+		// Return default capabilities with LinkSupport enabled
+		linkSupport := true
+		return &lsproto.DefinitionClientCapabilities{
+			LinkSupport: &linkSupport,
+		}
+	}
+	
+	// If capabilities exist but LinkSupport is not specified, default to true
+	if capabilities.LinkSupport == nil {
+		linkSupport := true
+		return &lsproto.DefinitionClientCapabilities{
+			LinkSupport: &linkSupport,
+		}
+	}
+	
+	return capabilities
 }
