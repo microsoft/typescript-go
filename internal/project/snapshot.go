@@ -39,7 +39,7 @@ type Snapshot struct {
 func NewSnapshot(
 	fs *snapshotFS,
 	sessionOptions *SessionOptions,
-	parseCache *parseCache,
+	parseCache *ParseCache,
 	extendedConfigCache *extendedConfigCache,
 	configFileRegistry *ConfigFileRegistry,
 	compilerOptionsForInferredProjects *core.CompilerOptions,
@@ -155,7 +155,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		session.parseCache,
 		session.extendedConfigCache,
 		nil,
-		s.compilerOptionsForInferredProjects,
+		compilerOptionsForInferredProjects,
 		s.toPath,
 	)
 

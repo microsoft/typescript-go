@@ -33,6 +33,7 @@ type SessionInit struct {
 	Client      Client
 	Logger      logging.Logger
 	NpmExecutor ata.NpmExecutor
+	ParseCache  *ParseCache
 }
 
 type Session struct {
@@ -42,7 +43,7 @@ type Session struct {
 	logger                             logging.Logger
 	npmExecutor                        ata.NpmExecutor
 	fs                                 *overlayFS
-	parseCache                         *parseCache
+	parseCache                         *ParseCache
 	extendedConfigCache                *extendedConfigCache
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	programCounter                     *programCounter
@@ -70,10 +71,10 @@ func NewSession(init *SessionInit) *Session {
 		return tspath.ToPath(fileName, currentDirectory, useCaseSensitiveFileNames)
 	}
 	overlayFS := newOverlayFS(init.FS, make(map[tspath.Path]*overlay), init.Options.PositionEncoding, toPath)
-	parseCache := &parseCache{options: tspath.ComparePathsOptions{
-		UseCaseSensitiveFileNames: init.FS.UseCaseSensitiveFileNames(),
-		CurrentDirectory:          init.Options.CurrentDirectory,
-	}}
+	parseCache := init.ParseCache
+	if parseCache == nil {
+		parseCache = &ParseCache{}
+	}
 	extendedConfigCache := &extendedConfigCache{}
 
 	session := &Session{
@@ -102,10 +103,12 @@ func NewSession(init *SessionInit) *Session {
 		pendingATAChanges: make(map[tspath.Path]*ATAStateChange),
 	}
 
-	session.typingsInstaller = ata.NewTypingsInstaller(&ata.TypingsInstallerOptions{
-		TypingsLocation: init.Options.TypingsLocation,
-		ThrottleLimit:   5,
-	}, session)
+	if init.Options.TypingsLocation != "" && init.NpmExecutor != nil {
+		session.typingsInstaller = ata.NewTypingsInstaller(&ata.TypingsInstallerOptions{
+			TypingsLocation: init.Options.TypingsLocation,
+			ThrottleLimit:   5,
+		}, session)
+	}
 
 	return session
 }
@@ -330,7 +333,7 @@ func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 	}
 
 	// Enqueue ATA updates if needed
-	if s.npmExecutor != nil {
+	if s.typingsInstaller != nil {
 		s.triggerATAForUpdatedProjects(newSnapshot)
 	}
 

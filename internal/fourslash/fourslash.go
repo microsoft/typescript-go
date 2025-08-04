@@ -11,14 +11,13 @@ import (
 	"unicode/utf8"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/bundled"
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/json"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -111,26 +110,6 @@ func newLSPPipe() (*lspReader, *lspWriter) {
 	return &lspReader{c: c}, &lspWriter{c: c}
 }
 
-var sourceFileCache collections.SyncMap[harnessutil.SourceFileCacheKey, *ast.SourceFile]
-
-type parsedFileCache struct{}
-
-func (c *parsedFileCache) GetFile(opts ast.SourceFileParseOptions, text string, scriptKind core.ScriptKind) *ast.SourceFile {
-	key := harnessutil.GetSourceFileCacheKey(opts, text, scriptKind)
-	cachedFile, ok := sourceFileCache.Load(key)
-	if !ok {
-		return nil
-	}
-	return cachedFile
-}
-
-func (c *parsedFileCache) CacheFile(opts ast.SourceFileParseOptions, text string, scriptKind core.ScriptKind, sourceFile *ast.SourceFile) {
-	key := harnessutil.GetSourceFileCacheKey(opts, text, scriptKind)
-	sourceFileCache.Store(key, sourceFile)
-}
-
-// var _ project.ParsedFileCache = (*parsedFileCache)(nil)
-
 const rootDir = "/"
 
 func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, content string) *FourslashTest {
@@ -168,7 +147,11 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		FS:                 fs,
 		DefaultLibraryPath: bundled.LibPath(),
 
-		// ParsedFileCache: &parsedFileCache{},
+		ParseCache: &project.ParseCache{
+			Options: project.ParseCacheOptions{
+				DisableDeletion: true,
+			},
+		},
 	})
 
 	go func() {

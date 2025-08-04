@@ -115,7 +115,7 @@ x++;`
 	ctx := projecttestutil.WithRequestID(context.Background())
 
 	// Open untitled files - these should create an inferred project
-	session.DidOpenFile(ctx, "untitled:Untitled-1", 1, "x", lsproto.LanguageKindTypeScript)
+	session.DidOpenFile(ctx, "untitled:Untitled-1", 1, "x\n\n", lsproto.LanguageKindTypeScript)
 	session.DidOpenFile(ctx, "untitled:Untitled-2", 1, testContent, lsproto.LanguageKindTypeScript)
 
 	snapshot, release := session.Snapshot()
@@ -156,6 +156,6 @@ x++;`
 			"Expected untitled: URI, got %s", ref.Uri)
 	}
 
-	// We expect to find 3 references
-	assert.Assert(t, len(refs) == 3, "Expected 3 references, got %d", len(refs))
+	// We expect to find 4 references
+	assert.Assert(t, len(refs) == 4, "Expected 4 references, got %d", len(refs))
 }

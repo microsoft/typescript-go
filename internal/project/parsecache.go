@@ -7,7 +7,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
-	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/zeebo/xxh3"
 )
 
@@ -33,13 +32,19 @@ type parseCacheEntry struct {
 	refCount   int
 }
 
-type parseCache struct {
-	options tspath.ComparePathsOptions
+type ParseCacheOptions struct {
+	// DisableDeletion prevents entries from being removed from the cache.
+	// Used for testing.
+	DisableDeletion bool
+}
+
+type ParseCache struct {
+	Options ParseCacheOptions
 	entries collections.SyncMap[parseCacheKey, *parseCacheEntry]
 }
 
-func (c *parseCache) Acquire(
-	fh FileHandle,
+func (c *ParseCache) Acquire(
+	fh FileContent,
 	opts ast.SourceFileParseOptions,
 	scriptKind core.ScriptKind,
 ) *ast.SourceFile {
@@ -54,7 +59,7 @@ func (c *parseCache) Acquire(
 	return entry.sourceFile
 }
 
-func (c *parseCache) Ref(file *ast.SourceFile) {
+func (c *ParseCache) Ref(file *ast.SourceFile) {
 	key := newParseCacheKey(file.ParseOptions(), file.ScriptKind)
 	if entry, ok := c.entries.Load(key); ok {
 		entry.mu.Lock()
@@ -65,14 +70,14 @@ func (c *parseCache) Ref(file *ast.SourceFile) {
 	}
 }
 
-func (c *parseCache) Release(file *ast.SourceFile) {
+func (c *ParseCache) Release(file *ast.SourceFile) {
 	key := newParseCacheKey(file.ParseOptions(), file.ScriptKind)
 	if entry, ok := c.entries.Load(key); ok {
 		entry.mu.Lock()
 		entry.refCount--
 		remove := entry.refCount <= 0
 		entry.mu.Unlock()
-		if remove {
+		if !c.Options.DisableDeletion && remove {
 			c.entries.Delete(key)
 		}
 	}
@@ -81,7 +86,7 @@ func (c *parseCache) Release(file *ast.SourceFile) {
 // loadOrStoreNewLockedEntry loads an existing entry or creates a new one. The returned
 // entry's mutex is locked and its refCount is incremented (or initialized to 1 in the
 // case of a new entry).
-func (c *parseCache) loadOrStoreNewLockedEntry(key parseCacheKey) (*parseCacheEntry, bool) {
+func (c *ParseCache) loadOrStoreNewLockedEntry(key parseCacheKey) (*parseCacheEntry, bool) {
 	entry := &parseCacheEntry{refCount: 1}
 	entry.mu.Lock()
 	existing, loaded := c.entries.LoadOrStore(key, entry)

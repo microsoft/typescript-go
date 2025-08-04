@@ -37,6 +37,7 @@ type ServerOptions struct {
 	FS                 vfs.FS
 	DefaultLibraryPath string
 	TypingsLocation    string
+	ParseCache         *project.ParseCache
 }
 
 func NewServer(opts *ServerOptions) *Server {

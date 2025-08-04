@@ -12,11 +12,15 @@ import (
 	"github.com/zeebo/xxh3"
 )
 
+type FileContent interface {
+	Content() string
+	Hash() xxh3.Uint128
+}
+
 type FileHandle interface {
+	FileContent
 	FileName() string
 	Version() int32
-	Hash() xxh3.Uint128
-	Content() string
 	MatchesDiskText() bool
 	IsOverlay() bool
 	LineMap() *ls.LineMap

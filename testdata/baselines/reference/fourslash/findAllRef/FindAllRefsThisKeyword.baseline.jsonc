@@ -16,10 +16,11 @@
 // this;
 // function f(/*FIND ALL REFS*/[|this|]) {
 //     return [|this|];
-//     function g(this) { return this; }
+//     function g([|this|]) { return [|this|]; }
 // }
 // class C {
-// // --- (line: 7) skipped ---
+//     static x() {
+// // --- (line: 8) skipped ---
 
 
 
@@ -30,10 +31,11 @@
 // this;
 // function f([|this|]) {
 //     return /*FIND ALL REFS*/[|this|];
-//     function g(this) { return this; }
+//     function g([|this|]) { return [|this|]; }
 // }
 // class C {
-// // --- (line: 7) skipped ---
+//     static x() {
+// // --- (line: 8) skipped ---
 
 
 
@@ -43,7 +45,7 @@
 
 // this;
 // function f(this) {
-//     return this;
+//     return [|this|];
 //     function g(/*FIND ALL REFS*/[|this|]) { return [|this|]; }
 // }
 // class C {
@@ -58,7 +60,7 @@
 
 // this;
 // function f(this) {
-//     return this;
+//     return [|this|];
 //     function g(this) { return /*FIND ALL REFS*/[|this|]) { return [|this|]; }
 // }
 // class C {
@@ -109,6 +111,15 @@
 // === findAllReferences ===
 // === /findAllRefsThisKeyword.ts ===
 
+// this;
+// function f(this) {
+//     return [|this|];
+//     function g(this) { return this; }
+// }
+// class C {
+// // --- (line: 7) skipped ---
+
+
 // --- (line: 10) skipped ---
 //         () => this;
 //     }
@@ -128,6 +139,15 @@
 
 // === findAllReferences ===
 // === /findAllRefsThisKeyword.ts ===
+
+// this;
+// function f(this) {
+//     return [|this|];
+//     function g(this) { return this; }
+// }
+// class C {
+// // --- (line: 7) skipped ---
+
 
 // --- (line: 10) skipped ---
 //         () => this;

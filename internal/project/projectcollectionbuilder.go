@@ -27,7 +27,7 @@ const (
 
 type projectCollectionBuilder struct {
 	sessionOptions      *SessionOptions
-	parseCache          *parseCache
+	parseCache          *ParseCache
 	extendedConfigCache *extendedConfigCache
 
 	ctx                                context.Context
@@ -49,7 +49,7 @@ func newProjectCollectionBuilder(
 	oldConfigFileRegistry *ConfigFileRegistry,
 	compilerOptionsForInferredProjects *core.CompilerOptions,
 	sessionOptions *SessionOptions,
-	parseCache *parseCache,
+	parseCache *ParseCache,
 	extendedConfigCache *extendedConfigCache,
 ) *projectCollectionBuilder {
 	return &projectCollectionBuilder{
@@ -251,10 +251,13 @@ func (b *projectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, logge
 		b.updateProgram(b.inferredProject, logger)
 	}
 
-	// ...and then try to find the default configured project for this file again.
-	if b.findDefaultProject(fileName, path) == nil {
-		panic(fmt.Sprintf("no project found for file %s", fileName))
-	}
+	// At this point we should be able to find the default project for the file without
+	// creating anything else. Initially, I verified that and panicked if nothing was found,
+	// but that panic was getting triggered by fourslash infrastructure when it told us to
+	// open a package.json file. This is something the VS Code client would never do, but
+	// it seems possible that another client would. There's no point in panicking; we don't
+	// really even have an error condition until it tries to ask us language questions about
+	// a non-TS-handleable file.
 
 	if logger != nil {
 		elapsed := time.Since(startTime)

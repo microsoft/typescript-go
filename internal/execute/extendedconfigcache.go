@@ -26,6 +26,9 @@ func (e *extendedConfigCache) GetExtendedConfig(fileName string, path tspath.Pat
 		return entry
 	}
 	entry := parse()
+	if e.m == nil {
+		e.m = make(map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry)
+	}
 	e.m[path] = entry
 	return entry
 }
