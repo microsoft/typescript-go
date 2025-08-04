@@ -91,6 +91,10 @@ runs:
 
     - if: ${{ inputs.create == 'true' }}
       shell: bash
+      run: npx hereby lint --noembed
+
+    - if: ${{ inputs.create == 'true' }}
+      shell: bash
       run: npx dprint check
 
     - if: ${{ inputs.create == 'true' }}
