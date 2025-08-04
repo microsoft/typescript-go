@@ -532,7 +532,7 @@ func (s *Server) recover(req *lsproto.RequestMessage) {
 	}
 }
 
-func (s *Server) handleInitialize(ctx context.Context, params *lsproto.InitializeParams, recover func()) (lsproto.InitializeResponse, error) {
+func (s *Server) handleInitialize(ctx context.Context, params *lsproto.InitializeParams, _ func()) (lsproto.InitializeResponse, error) {
 	if s.initializeParams != nil {
 		return nil, lsproto.ErrInvalidRequest
 	}
@@ -650,7 +650,7 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	return nil
 }
 
-func (s *Server) handleShutdown(ctx context.Context, params any, recover func()) (lsproto.ShutdownResponse, error) {
+func (s *Server) handleShutdown(ctx context.Context, params any, _ func()) (lsproto.ShutdownResponse, error) {
 	s.session.Close()
 	return nil, nil
 }
@@ -732,7 +732,7 @@ func (s *Server) handleCompletion(ctx context.Context, languageService *ls.Langu
 		&ls.UserPreferences{})
 }
 
-func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsproto.CompletionItem, recover func()) (lsproto.CompletionResolveResponse, error) {
+func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsproto.CompletionItem, recoverAndSendError func()) (lsproto.CompletionResolveResponse, error) {
 	data, err := ls.GetCompletionItemData(params)
 	if err != nil {
 		return nil, err
@@ -741,7 +741,7 @@ func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsprot
 	if err != nil {
 		return nil, err
 	}
-	defer recover()
+	defer recoverAndSendError()
 	return languageService.ResolveCompletionItem(
 		ctx,
 		params,
@@ -778,10 +778,10 @@ func (s *Server) handleDocumentOnTypeFormat(ctx context.Context, ls *ls.Language
 	)
 }
 
-func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.WorkspaceSymbolParams, recover func()) (lsproto.WorkspaceSymbolResponse, error) {
+func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.WorkspaceSymbolParams, recoverAndSendError func()) (lsproto.WorkspaceSymbolResponse, error) {
 	snapshot, release := s.session.Snapshot()
 	defer release()
-	defer recover()
+	defer recoverAndSendError()
 	programs := core.Map(snapshot.ProjectCollection.Projects(), (*project.Project).GetProgram)
 	return ls.ProvideWorkspaceSymbols(ctx, programs, snapshot.Converters(), params.Query)
 }
