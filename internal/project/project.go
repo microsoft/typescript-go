@@ -147,12 +147,12 @@ func NewProject(
 	project.configFilePath = tspath.ToPath(configFileName, currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames())
 	if builder.sessionOptions.WatchEnabled {
 		project.failedLookupsWatch = NewWatchedFiles(
-			fmt.Sprintf("failed lookups for %s", configFileName),
+			"failed lookups for "+configFileName,
 			lsproto.WatchKindCreate,
 			createResolutionLookupGlobMapper(project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
 		)
 		project.affectingLocationsWatch = NewWatchedFiles(
-			fmt.Sprintf("affecting locations for %s", configFileName),
+			"affecting locations for "+configFileName,
 			lsproto.WatchKindCreate,
 			createResolutionLookupGlobMapper(project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
 		)

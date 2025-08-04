@@ -429,13 +429,13 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 					referenceLoadKind = projectLoadKindFind
 				}
 
-				var logger *logging.LogTree
+				var refLogger *logging.LogTree
 				references := config.ResolvedProjectReferencePaths()
 				if len(references) > 0 && node.logger != nil {
-					logger = node.logger.Fork(fmt.Sprintf("Searching %d project references of %s", len(references), node.configFileName))
+					refLogger = node.logger.Fork(fmt.Sprintf("Searching %d project references of %s", len(references), node.configFileName))
 				}
 				return core.Map(references, func(configFileName string) searchNode {
-					return searchNode{configFileName: configFileName, loadKind: referenceLoadKind, logger: logger.Fork("Searching project reference " + configFileName)}
+					return searchNode{configFileName: configFileName, loadKind: referenceLoadKind, logger: refLogger.Fork("Searching project reference " + configFileName)}
 				})
 			}
 			return nil
@@ -539,7 +539,7 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 			loadKind,
 			visited,
 			fallback,
-			logger.Fork(fmt.Sprintf("Searching ancestor config file at %s", ancestorConfigName)),
+			logger.Fork("Searching ancestor config file at "+ancestorConfigName),
 		)
 	}
 	if fallback != nil {
@@ -578,7 +578,7 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectForOpenSc
 			loadKind,
 			nil,
 			nil,
-			logger.Fork(fmt.Sprintf("Searching for default configured project for %s", fileName)),
+			logger.Fork("Searching for default configured project for "+fileName),
 		)
 		if result.project != nil {
 			if b.fileDefaultProjects == nil {
@@ -765,7 +765,7 @@ func (b *projectCollectionBuilder) markFilesChanged(entry dirty.Value[*Project],
 func (b *projectCollectionBuilder) deleteConfiguredProject(project dirty.Value[*Project], logger *logging.LogTree) {
 	projectPath := project.Value().configFilePath
 	if logger != nil {
-		logger.Log(fmt.Sprintf("Deleting configured project: %s", project.Value().configFileName))
+		logger.Log("Deleting configured project: " + project.Value().configFileName)
 	}
 	if program := project.Value().Program; program != nil {
 		program.ForEachResolvedProjectReference(func(referencePath tspath.Path, config *tsoptions.ParsedCommandLine, _ *tsoptions.ParsedCommandLine, _ int) {

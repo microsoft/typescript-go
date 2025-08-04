@@ -2,11 +2,12 @@ package ata
 
 import (
 	"context"
-	"encoding/json"
+	"errors"
 	"fmt"
 	"sync"
 	"sync/atomic"
 
+	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
@@ -201,7 +202,7 @@ func (ti *TypingsInstaller) installTypings(
 		ti.missingTypingsSet.Store(typing, true)
 	}
 
-	return nil, fmt.Errorf("npm install failed")
+	return nil, errors.New("npm install failed")
 
 	// !!! sheetal events to send
 	// const response: EndInstallTypes = {

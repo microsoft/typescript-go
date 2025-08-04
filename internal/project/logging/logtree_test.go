@@ -11,8 +11,10 @@ type testLogger interface {
 }
 
 func TestLogTreeImplementsLogger(t *testing.T) {
+	t.Parallel()
 	var _ testLogger = &LogTree{}
 }
 
 func TestLogTree(t *testing.T) {
+	t.Parallel()
 }

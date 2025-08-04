@@ -33,7 +33,10 @@ func TestConfigFileChanges(t *testing.T) {
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-		utils.FS().WriteFile("/src/tsconfig.json", `{"extends": "../tsconfig.base.json", "compilerOptions": {"target": "esnext"}, "references": [{"path": "../utils"}]}`, false /*writeByteOrderMark*/)
+		err := utils.FS().WriteFile("/src/tsconfig.json", `{"extends": "../tsconfig.base.json", "compilerOptions": {"target": "esnext"}, "references": [{"path": "../utils"}]}`, false /*writeByteOrderMark*/)
+		if err != nil {
+			t.Fatal(err)
+		}
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
 				Uri:  lsproto.DocumentUri("file:///src/tsconfig.json"),
@@ -51,7 +54,10 @@ func TestConfigFileChanges(t *testing.T) {
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-		utils.FS().WriteFile("/tsconfig.base.json", `{"compilerOptions": {"strict": false}}`, false /*writeByteOrderMark*/)
+		err := utils.FS().WriteFile("/tsconfig.base.json", `{"compilerOptions": {"strict": false}}`, false /*writeByteOrderMark*/)
+		if err != nil {
+			t.Fatal(err)
+		}
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
 				Uri:  lsproto.DocumentUri("file:///tsconfig.base.json"),
@@ -71,7 +77,10 @@ func TestConfigFileChanges(t *testing.T) {
 		snapshotBefore, release := session.Snapshot()
 		defer release()
 
-		utils.FS().WriteFile("/utils/tsconfig.json", `{"compilerOptions": {"composite": true, "target": "esnext"}}`, false /*writeByteOrderMark*/)
+		err := utils.FS().WriteFile("/utils/tsconfig.json", `{"compilerOptions": {"composite": true, "target": "esnext"}}`, false /*writeByteOrderMark*/)
+		if err != nil {
+			t.Fatal(err)
+		}
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
 				Uri:  lsproto.DocumentUri("file:///utils/tsconfig.json"),
@@ -79,7 +88,7 @@ func TestConfigFileChanges(t *testing.T) {
 			},
 		})
 
-		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
 		snapshotAfter, release := session.Snapshot()
 		defer release()
@@ -91,7 +100,10 @@ func TestConfigFileChanges(t *testing.T) {
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
-		utils.FS().Remove("/src/tsconfig.json")
+		err := utils.FS().Remove("/src/tsconfig.json")
+		if err != nil {
+			t.Fatal(err)
+		}
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
 				Uri:  lsproto.DocumentUri("file:///src/tsconfig.json"),
@@ -99,7 +111,7 @@ func TestConfigFileChanges(t *testing.T) {
 			},
 		})
 
-		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
 		snapshot, release := session.Snapshot()
 		defer release()
@@ -112,7 +124,10 @@ func TestConfigFileChanges(t *testing.T) {
 		session, utils := projecttestutil.Setup(files)
 		session.DidOpenFile(context.Background(), "file:///src/subfolder/foo.ts", 1, files["/src/subfolder/foo.ts"].(string), lsproto.LanguageKindTypeScript)
 
-		utils.FS().WriteFile("/src/subfolder/tsconfig.json", `{}`, false /*writeByteOrderMark*/)
+		err := utils.FS().WriteFile("/src/subfolder/tsconfig.json", `{}`, false /*writeByteOrderMark*/)
+		if err != nil {
+			t.Fatal(err)
+		}
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
 				Uri:  lsproto.DocumentUri("file:///src/subfolder/tsconfig.json"),
@@ -120,14 +135,17 @@ func TestConfigFileChanges(t *testing.T) {
 			},
 		})
 
-		_, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/subfolder/foo.ts"))
+		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/subfolder/foo.ts"))
 		assert.NilError(t, err)
 		snapshot, release := session.Snapshot()
 		defer release()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 2)
 		assert.Equal(t, snapshot.GetDefaultProject(lsproto.DocumentUri("file:///src/subfolder/foo.ts")).Name(), "/src/subfolder/tsconfig.json")
 
-		utils.FS().Remove("/src/subfolder/tsconfig.json")
+		err = utils.FS().Remove("/src/subfolder/tsconfig.json")
+		if err != nil {
+			t.Fatal(err)
+		}
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
 				Uri:  lsproto.DocumentUri("file:///src/subfolder/tsconfig.json"),

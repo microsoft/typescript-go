@@ -77,7 +77,7 @@ func parse(pattern string, nested bool) (*Glob, string, error) {
 			var gs group
 			for pattern[0] != '}' {
 				pattern = pattern[1:]
-				g, pat, err := parse(pattern, true)
+				groupG, pat, err := parse(pattern, true)
 				if err != nil {
 					return nil, "", err
 				}
@@ -85,7 +85,7 @@ func parse(pattern string, nested bool) (*Glob, string, error) {
 					return nil, "", errors.New("unmatched '{'")
 				}
 				pattern = pat
-				gs = append(gs, g)
+				gs = append(gs, groupG)
 			}
 			pattern = pattern[1:]
 			g.elems = append(g.elems, gs)

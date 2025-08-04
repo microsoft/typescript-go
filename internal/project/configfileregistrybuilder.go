@@ -104,12 +104,12 @@ func (c *configFileRegistryBuilder) reloadIfNeeded(entry *configFileEntry, fileN
 	switch entry.pendingReload {
 	case PendingReloadFileNames:
 		if c.logger != nil {
-			c.logger.Log(fmt.Sprintf("Reloading file names for config: %s", fileName))
+			c.logger.Log("Reloading file names for config: " + fileName)
 		}
 		entry.commandLine = tsoptions.ReloadFileNamesOfParsedCommandLine(entry.commandLine, c.fs.fs)
 	case PendingReloadFull:
 		if c.logger != nil {
-			c.logger.Log(fmt.Sprintf("Loading config file: %s", fileName))
+			c.logger.Log("Loading config file: " + fileName)
 		}
 		entry.commandLine, _ = tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, c, c)
 		c.updateExtendingConfigs(path, entry.commandLine, entry.commandLine)
@@ -152,8 +152,8 @@ func (c *configFileRegistryBuilder) updateExtendingConfigs(extendingConfigPath t
 			if entry, ok := c.configs.Load(extendedConfigPath); ok {
 				entry.ChangeIf(
 					func(config *configFileEntry) bool {
-						_, ok := config.retainingConfigs[extendingConfigPath]
-						return ok
+						_, exists := config.retainingConfigs[extendingConfigPath]
+						return exists
 					},
 					func(config *configFileEntry) {
 						delete(config.retainingConfigs, extendingConfigPath)
@@ -244,8 +244,8 @@ func (c *configFileRegistryBuilder) releaseConfigForProject(configFilePath tspat
 	if entry, ok := c.configs.Load(configFilePath); ok {
 		entry.ChangeIf(
 			func(config *configFileEntry) bool {
-				_, ok := config.retainingProjects[projectPath]
-				return ok
+				_, exists := config.retainingProjects[projectPath]
+				return exists
 			},
 			func(config *configFileEntry) {
 				delete(config.retainingProjects, projectPath)

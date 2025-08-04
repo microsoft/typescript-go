@@ -10,6 +10,7 @@ import (
 )
 
 func TestProcessChanges(t *testing.T) {
+	t.Parallel()
 	// Helper to create test overlayFS
 	createOverlayFS := func() *overlayFS {
 		testFS := vfstest.FromMap(map[string]string{
@@ -33,6 +34,7 @@ func TestProcessChanges(t *testing.T) {
 	)
 
 	t.Run("multiple opens should panic", func(t *testing.T) {
+		t.Parallel()
 		fs := createOverlayFS()
 
 		changes := []FileChange{
@@ -64,6 +66,7 @@ func TestProcessChanges(t *testing.T) {
 	})
 
 	t.Run("watch create then delete becomes nothing", func(t *testing.T) {
+		t.Parallel()
 		fs := createOverlayFS()
 
 		changes := []FileChange{
@@ -82,6 +85,7 @@ func TestProcessChanges(t *testing.T) {
 	})
 
 	t.Run("watch delete then create becomes change", func(t *testing.T) {
+		t.Parallel()
 		fs := createOverlayFS()
 
 		changes := []FileChange{
@@ -103,6 +107,7 @@ func TestProcessChanges(t *testing.T) {
 	})
 
 	t.Run("multiple watch changes deduplicated", func(t *testing.T) {
+		t.Parallel()
 		fs := createOverlayFS()
 
 		changes := []FileChange{
@@ -127,6 +132,7 @@ func TestProcessChanges(t *testing.T) {
 	})
 
 	t.Run("save marks overlay as matching disk", func(t *testing.T) {
+		t.Parallel()
 		fs := createOverlayFS()
 
 		// First create an overlay
@@ -155,6 +161,7 @@ func TestProcessChanges(t *testing.T) {
 	})
 
 	t.Run("watch change on overlay marks as not matching disk", func(t *testing.T) {
+		t.Parallel()
 		fs := createOverlayFS()
 
 		// First create an overlay

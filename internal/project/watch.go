@@ -90,7 +90,7 @@ func (w *WatchedFiles[T]) ParsedGlobs() []*glob.Glob {
 			if g, err := glob.Parse(pattern); err == nil {
 				w.parsedGlobs = append(w.parsedGlobs, g)
 			} else {
-				panic(fmt.Sprintf("failed to parse glob pattern: %s", pattern))
+				panic("failed to parse glob pattern: " + pattern)
 			}
 		}
 	})

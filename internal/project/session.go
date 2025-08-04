@@ -379,7 +379,7 @@ func updateWatch[T any](ctx context.Context, client Client, logger logging.Logge
 					logger.Log(fmt.Sprintf("Updated watch: %s", id))
 				}
 				for _, watcher := range watchers {
-					logger.Log(fmt.Sprintf("\t%s", *watcher.GlobPattern.Pattern))
+					logger.Log("\t" + *watcher.GlobPattern.Pattern)
 				}
 				logger.Log("")
 			}
@@ -530,7 +530,7 @@ func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {
 			s.backgroundTasks.Enqueue(context.Background(), func(ctx context.Context) {
 				var logTree *logging.LogTree
 				if s.options.LoggingEnabled {
-					logTree = logging.NewLogTree(fmt.Sprintf("Triggering ATA for project %s", project.Name()))
+					logTree = logging.NewLogTree("Triggering ATA for project " + project.Name())
 				}
 
 				typingsInfo := project.ComputeTypingsInfo()

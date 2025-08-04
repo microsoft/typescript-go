@@ -10,6 +10,7 @@ import (
 )
 
 func TestBreadthFirstSearchParallel(t *testing.T) {
+	t.Parallel()
 	t.Run("basic functionality", func(t *testing.T) {
 		t.Parallel()
 		// Test basic functionality with a simple DAG

@@ -95,7 +95,8 @@ func TestRefCountingCaches(t *testing.T) {
 			assert.Equal(t, utilsEntry.refCount, 1)
 
 			session.DidCloseFile(context.Background(), "file:///user/username/projects/myproject/src/main.ts")
-			session.GetLanguageService(context.Background(), "file:///user/username/projects/myproject/src/utils.ts")
+			_, err := session.GetLanguageService(context.Background(), "file:///user/username/projects/myproject/src/utils.ts")
+			assert.NilError(t, err)
 			assert.Equal(t, utilsEntry.refCount, 1)
 			assert.Equal(t, mainEntry.refCount, 0)
 			mainEntry, ok := session.parseCache.entries.Load(newParseCacheKey(main.ParseOptions(), main.ScriptKind))
