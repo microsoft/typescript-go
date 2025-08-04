@@ -37,7 +37,7 @@
         "character": 2
       },
       "Name": "f0",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -71,7 +71,7 @@
         "character": 10
       },
       "Name": "f1",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -105,7 +105,7 @@
         "character": 18
       },
       "Name": "f2",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -139,7 +139,7 @@
         "character": 27
       },
       "Name": "f3",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [

@@ -208,7 +208,7 @@
         "character": 23
       },
       "Name": "8",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -233,7 +233,7 @@
         "character": 26
       },
       "Name": "13",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -258,7 +258,7 @@
         "character": 24
       },
       "Name": "20",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -283,7 +283,7 @@
         "character": 28
       },
       "Name": "25",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -308,7 +308,7 @@
         "character": 21
       },
       "Name": "35",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -333,7 +333,7 @@
         "character": 22
       },
       "Name": "42",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -358,7 +358,7 @@
         "character": 26
       },
       "Name": "47",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -383,7 +383,7 @@
         "character": 32
       },
       "Name": "49",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -408,7 +408,7 @@
         "character": 27
       },
       "Name": "54",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -433,7 +433,7 @@
         "character": 34
       },
       "Name": "56",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -458,7 +458,7 @@
         "character": 24
       },
       "Name": "61",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -483,7 +483,7 @@
         "character": 28
       },
       "Name": "63",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -508,7 +508,7 @@
         "character": 16
       },
       "Name": "65",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -529,7 +529,7 @@
         "character": 17
       },
       "Name": "71",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -554,7 +554,7 @@
         "character": 22
       },
       "Name": "81",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -579,7 +579,7 @@
         "character": 19
       },
       "Name": "92",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -604,7 +604,7 @@
         "character": 24
       },
       "Name": "102",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [

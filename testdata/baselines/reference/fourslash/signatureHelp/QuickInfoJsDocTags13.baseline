@@ -39,7 +39,7 @@
         "character": 2
       },
       "Name": "a",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -72,7 +72,7 @@
         "character": 2
       },
       "Name": "b",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [

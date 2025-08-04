@@ -36,7 +36,7 @@
         "character": 6
       },
       "Name": "foo",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -57,7 +57,7 @@
         "character": 6
       },
       "Name": "bar",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -78,7 +78,7 @@
         "character": 6
       },
       "Name": "zee",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [

@@ -43,7 +43,7 @@
         "character": 2
       },
       "Name": "4",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -74,7 +74,7 @@
         "character": 7
       },
       "Name": "5",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
@@ -105,7 +105,7 @@
         "character": 11
       },
       "Name": "6",
-      "Data": null
+      "Data": {}
     },
     "item": {
       "signatures": [
