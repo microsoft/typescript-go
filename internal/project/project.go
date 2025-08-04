@@ -259,12 +259,16 @@ func (p *Project) CreateProgram() CreateProgramResult {
 			}
 		}
 	} else {
+		var typingsLocation string
+		if p.GetTypeAcquisition().Enable.IsTrue() {
+			typingsLocation = p.host.sessionOptions.TypingsLocation
+		}
 		newProgram = compiler.NewProgram(
 			compiler.ProgramOptions{
 				Host:                        p.host,
 				Config:                      commandLine,
 				UseSourceOfProjectReference: true,
-				TypingsLocation:             p.host.sessionOptions.TypingsLocation,
+				TypingsLocation:             typingsLocation,
 				JSDocParsingMode:            ast.JSDocParsingModeParseAll,
 				CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
 					checkerPool = newCheckerPool(4, program, p.log)
