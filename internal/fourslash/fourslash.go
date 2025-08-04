@@ -899,6 +899,7 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 					Range: link.TargetSelectionRange,
 				}
 			})
+
 			// If there's a single result and it has an origin selection range, use it as additionalSpan
 			if len(*result.DefinitionLinks) == 1 && (*result.DefinitionLinks)[0].OriginSelectionRange != nil {
 				additionalSpan = &lsproto.Location{
