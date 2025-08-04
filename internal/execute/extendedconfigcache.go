@@ -21,14 +21,17 @@ var _ tsoptions.ExtendedConfigCache = (*extendedConfigCache)(nil)
 // GetExtendedConfig implements tsoptions.ExtendedConfigCache.
 func (e *extendedConfigCache) GetExtendedConfig(fileName string, path tspath.Path, parse func() *tsoptions.ExtendedConfigCacheEntry) *tsoptions.ExtendedConfigCacheEntry {
 	e.mu.Lock()
-	defer e.mu.Unlock()
 	if entry, ok := e.m[path]; ok {
+		e.mu.Unlock()
 		return entry
 	}
+	e.mu.Unlock()
 	entry := parse()
+	e.mu.Lock()
 	if e.m == nil {
 		e.m = make(map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry)
 	}
 	e.m[path] = entry
+	e.mu.Unlock()
 	return entry
 }
