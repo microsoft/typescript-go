@@ -58,7 +58,7 @@ runs:
           ~/AppData/Local/go-build
 
     - if: ${{ inputs.create != 'true' && inputs.lint-cache == 'true' }}
-      name: Restore golangci-lint-cache
+      name: Restore golangci-lint cache
       uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
       with:
         key: unused-key-${{ github.run_id }}
