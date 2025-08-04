@@ -202,8 +202,8 @@ func (p *Project) Clone() *Project {
 	}
 }
 
-// getAugmentedCommandLine returns the command line augmented with typing files if ATA is enabled.
-func (p *Project) getAugmentedCommandLine() *tsoptions.ParsedCommandLine {
+// getCommandLineWithTypingsFiles returns the command line augmented with typing files if ATA is enabled.
+func (p *Project) getCommandLineWithTypingsFiles() *tsoptions.ParsedCommandLine {
 	if len(p.typingsFiles) == 0 {
 		return p.CommandLine
 	}
@@ -244,7 +244,7 @@ func (p *Project) CreateProgram() CreateProgramResult {
 	var newProgram *compiler.Program
 
 	// Create the command line, potentially augmented with typing files
-	commandLine := p.getAugmentedCommandLine()
+	commandLine := p.getCommandLineWithTypingsFiles()
 
 	if p.dirtyFilePath != "" && p.Program != nil && p.Program.CommandLine() == commandLine {
 		newProgram, programCloned = p.Program.UpdateProgram(p.dirtyFilePath, p.host)
