@@ -8,6 +8,9 @@ inputs:
   create:
     description: Create the cache
     default: 'false'
+  lint-cache:
+    description: Restore the golangci-lint cache
+    default: 'false'
 
 runs:
   using: composite
@@ -21,21 +24,25 @@ runs:
         cache: false
 
     # Avoid hardcoding the cache keys more than once.
-    - name: Create cache keys
+    - name: Get cache info
       shell: bash
-      id: cache-keys
+      id: cache-info
       env:
         MODULES_KEY: go-modules-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}-${{ hashFiles('**/go.sum', '**/Herebyfile.mjs', '**/.custom-gcl.yml', '**/.dprint.jsonc') }}
+        LINT_KEY: golangci-lint-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}-${{ hashFiles('**/go.sum', '**/Herebyfile.mjs', '**/.custom-gcl.yml', '**/.dprint.jsonc') }}
         BUILD_KEY: go-build-cache-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}
       run: |
-        echo "modules=$MODULES_KEY" >> $GITHUB_OUTPUT
-        echo "build=$BUILD_KEY" >> $GITHUB_OUTPUT
+        echo "modules-key=$MODULES_KEY" >> $GITHUB_OUTPUT
+        echo "lint-key=$LINT_KEY" >> $GITHUB_OUTPUT
+        echo "build-key=$BUILD_KEY" >> $GITHUB_OUTPUT
+        echo "GOLANGCI_LINT_CACHE=$RUNNER_TEMP/golangci-lint-cache" >> $GITHUB_ENV
 
     - if: ${{ inputs.create != 'true' }}
       name: Restore Go modules
       uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
       with:
-        key: ${{ steps.cache-keys.outputs.modules }}
+        key: unused-key-${{ github.run_id }}
+        restore-keys: ${{ steps.cache-info.outputs.modules-key }}-
         path: |
           ~/go/pkg/mod
 
@@ -43,14 +50,20 @@ runs:
       name: Restore Go build cache
       uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
       with:
-        # key is unused, but a required input.
-        key: ${{ steps.cache-keys.outputs.build }}-
-        # Restore the most recent cache, ignoring the run ID.
-        restore-keys: ${{ steps.cache-keys.outputs.build }}-
+        key: unused-key-${{ github.run_id }}
+        restore-keys: ${{ steps.cache-info.outputs.build-key }}-
         path: |
           ~/.cache/go-build
           ~/Library/Caches/go-build
           ~/AppData/Local/go-build
+
+    - if: ${{ inputs.create != 'true' && inputs.lint-cache == 'true' }}
+      name: Restore golangci-lint-cache
+      uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+      with:
+        key: unused-key-${{ github.run_id }}
+        restore-keys: ${{ steps.cache-info.outputs.lint-key }}-
+        path: ${{ env.GOLANGCI_LINT_CACHE }}
 
     - name: Set mtimes
       shell: bash
@@ -84,7 +97,7 @@ runs:
       name: Save Go modules
       uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
       with:
-        key: ${{ steps.cache-keys.outputs.modules }}
+        key: ${{ steps.cache-info.outputs.modules-key }}
         path: |
           ~/go/pkg/mod
 
@@ -92,9 +105,15 @@ runs:
       name: Save Go build cache
       uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
       with:
-        # Save a new cache each time by including the unique run ID.
-        key: ${{ steps.cache-keys.outputs.build }}-${{ github.run_id }}
+        key: ${{ steps.cache-info.outputs.build-key }}-${{ github.run_id }}
         path: |
           ~/.cache/go-build
           ~/Library/Caches/go-build
           ~/AppData/Local/go-build
+
+    - if: ${{ inputs.create == 'true' }}
+      name: Save golangci-lint cache
+      uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+      with:
+        key: ${{ steps.cache-info.outputs.lint-key }}-${{ github.run_id }}
+        path: ${{ env.GOLANGCI_LINT_CACHE }}
