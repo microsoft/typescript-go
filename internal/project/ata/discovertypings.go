@@ -1,7 +1,6 @@
 package ata
 
 import (
-	"encoding/json"
 	"fmt"
 	"maps"
 	"slices"
