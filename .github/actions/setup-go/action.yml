@@ -78,6 +78,13 @@ runs:
 
     - if: ${{ inputs.create == 'true' }}
       shell: bash
+      run: |
+        go mod download
+        cd _tools
+        go mod download
+
+    - if: ${{ inputs.create == 'true' }}
+      shell: bash
       run: npx hereby build
 
     - if: ${{ inputs.create == 'true' }}
