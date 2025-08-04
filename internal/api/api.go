@@ -12,8 +12,9 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/json"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/project"
+	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -21,18 +22,19 @@ import (
 
 type handleMap[T any] map[Handle[T]]*T
 
-type APIOptions struct {
-	Logger *project.Logger
+type APIInit struct {
+	Logger         logging.Logger
+	FS             vfs.FS
+	SessionOptions *project.SessionOptions
 }
 
 type API struct {
-	host    APIHost
-	options APIOptions
+	host   APIHost
+	logger logging.Logger
 
-	documentStore      *project.DocumentStore
-	configFileRegistry *project.ConfigFileRegistry
+	session *project.Session
 
-	projects  handleMap[project.Project]
+	projects  map[Handle[project.Project]]tspath.Path
 	filesMu   sync.Mutex
 	files     handleMap[ast.SourceFile]
 	symbolsMu sync.Mutex
@@ -41,84 +43,19 @@ type API struct {
 	types     handleMap[checker.Type]
 }
 
-var _ project.ProjectHost = (*API)(nil)
-
-func NewAPI(host APIHost, options APIOptions) *API {
+func NewAPI(init *APIInit) *API {
 	api := &API{
-		host:     host,
-		options:  options,
-		projects: make(handleMap[project.Project]),
-		files:    make(handleMap[ast.SourceFile]),
-		symbols:  make(handleMap[ast.Symbol]),
-		types:    make(handleMap[checker.Type]),
+		session: project.NewSession(&project.SessionInit{
+			Logger:  init.Logger,
+			FS:      init.FS,
+			Options: init.SessionOptions,
+		}),
+		files:   make(handleMap[ast.SourceFile]),
+		symbols: make(handleMap[ast.Symbol]),
+		types:   make(handleMap[checker.Type]),
 	}
 
-	api.documentStore = project.NewDocumentStore(project.DocumentStoreOptions{
-		ComparePathsOptions: tspath.ComparePathsOptions{
-			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
-			CurrentDirectory:          host.GetCurrentDirectory(),
-		},
-		Hooks: project.DocumentRegistryHooks{
-			OnReleaseDocument: func(file *ast.SourceFile) {
-				_ = api.releaseHandle(string(FileHandle(file)))
-			},
-		},
-	})
-
-	api.configFileRegistry = &project.ConfigFileRegistry{
-		Host: api,
-	}
 	return api
-}
-
-// DefaultLibraryPath implements ProjectHost.
-func (api *API) DefaultLibraryPath() string {
-	return api.host.DefaultLibraryPath()
-}
-
-// TypingsInstaller implements ProjectHost
-func (api *API) TypingsInstaller() *project.TypingsInstaller {
-	return nil
-}
-
-// DocumentStore implements ProjectHost.
-func (api *API) DocumentStore() *project.DocumentStore {
-	return api.documentStore
-}
-
-// ConfigFileRegistry implements ProjectHost.
-func (api *API) ConfigFileRegistry() *project.ConfigFileRegistry {
-	return api.configFileRegistry
-}
-
-// FS implements ProjectHost.
-func (api *API) FS() vfs.FS {
-	return api.host.FS()
-}
-
-// GetCurrentDirectory implements ProjectHost.
-func (api *API) GetCurrentDirectory() string {
-	return api.host.GetCurrentDirectory()
-}
-
-// Log implements ProjectHost.
-func (api *API) Log(s string) {
-	api.options.Logger.Info(s)
-}
-
-// Log implements ProjectHost.
-func (api *API) Trace(s string) {
-	api.options.Logger.Info(s)
-}
-
-// PositionEncoding implements ProjectHost.
-func (api *API) PositionEncoding() lsproto.PositionEncodingKind {
-	return lsproto.PositionEncodingKindUTF8
-}
-
-// Client implements ProjectHost.
-func (api *API) Client() project.Client {
-	return nil
 }
 
 // IsWatchEnabled implements ProjectHost.
@@ -180,7 +117,7 @@ func (api *API) HandleRequest(ctx context.Context, method string, payload []byte
 }
 
 func (api *API) Close() {
-	api.options.Logger.Close()
+	api.session.Close()
 }
 
 func (api *API) ParseConfigFile(configFileName string) (*ConfigFileResponse, error) {
@@ -208,25 +145,23 @@ func (api *API) ParseConfigFile(configFileName string) (*ConfigFileResponse, err
 }
 
 func (api *API) LoadProject(configFileName string) (*ProjectResponse, error) {
-	configFileName = api.toAbsoluteFileName(configFileName)
-	configFilePath := api.toPath(configFileName)
-	p := project.NewConfiguredProject(configFileName, configFilePath, api)
-	if err := p.LoadConfig(); err != nil {
-		return nil, err
-	}
-	p.GetProgram()
-	data := NewProjectResponse(p)
-	api.projects[data.Id] = p
-	return data, nil
+	// !!!
+	return nil, nil
 }
 
 func (api *API) GetSymbolAtPosition(ctx context.Context, projectId Handle[project.Project], fileName string, position int) (*SymbolResponse, error) {
-	project, ok := api.projects[projectId]
+	projectPath, ok := api.projects[projectId]
 	if !ok {
+		return nil, errors.New("project ID not found")
+	}
+	snapshot, release := api.session.Snapshot()
+	defer release()
+	project := snapshot.ProjectCollection.GetProjectByPath(projectPath)
+	if project == nil {
 		return nil, errors.New("project not found")
 	}
-	languageService, done := project.GetLanguageServiceForRequest(ctx)
-	defer done()
+
+	languageService := ls.NewLanguageService(project, snapshot.Converters())
 	symbol, err := languageService.GetSymbolAtPosition(ctx, fileName, position)
 	if err != nil || symbol == nil {
 		return nil, err
@@ -239,10 +174,17 @@ func (api *API) GetSymbolAtPosition(ctx context.Context, projectId Handle[projec
 }
 
 func (api *API) GetSymbolAtLocation(ctx context.Context, projectId Handle[project.Project], location Handle[ast.Node]) (*SymbolResponse, error) {
-	project, ok := api.projects[projectId]
+	projectPath, ok := api.projects[projectId]
 	if !ok {
+		return nil, errors.New("project ID not found")
+	}
+	snapshot, release := api.session.Snapshot()
+	defer release()
+	project := snapshot.ProjectCollection.GetProjectByPath(projectPath)
+	if project == nil {
 		return nil, errors.New("project not found")
 	}
+
 	fileHandle, pos, kind, err := parseNodeHandle(location)
 	if err != nil {
 		return nil, err
@@ -261,8 +203,7 @@ func (api *API) GetSymbolAtLocation(ctx context.Context, projectId Handle[projec
 	if node == nil {
 		return nil, fmt.Errorf("node of kind %s not found at position %d in file %q", kind.String(), pos, sourceFile.FileName())
 	}
-	languageService, done := project.GetLanguageServiceForRequest(ctx)
-	defer done()
+	languageService := ls.NewLanguageService(project, snapshot.Converters())
 	symbol := languageService.GetSymbolAtLocation(ctx, node)
 	if symbol == nil {
 		return nil, nil
@@ -275,18 +216,24 @@ func (api *API) GetSymbolAtLocation(ctx context.Context, projectId Handle[projec
 }
 
 func (api *API) GetTypeOfSymbol(ctx context.Context, projectId Handle[project.Project], symbolHandle Handle[ast.Symbol]) (*TypeResponse, error) {
-	project, ok := api.projects[projectId]
+	projectPath, ok := api.projects[projectId]
 	if !ok {
+		return nil, errors.New("project ID not found")
+	}
+	snapshot, release := api.session.Snapshot()
+	defer release()
+	project := snapshot.ProjectCollection.GetProjectByPath(projectPath)
+	if project == nil {
 		return nil, errors.New("project not found")
 	}
+
 	api.symbolsMu.Lock()
 	defer api.symbolsMu.Unlock()
 	symbol, ok := api.symbols[symbolHandle]
 	if !ok {
 		return nil, fmt.Errorf("symbol %q not found", symbolHandle)
 	}
-	languageService, done := project.GetLanguageServiceForRequest(ctx)
-	defer done()
+	languageService := ls.NewLanguageService(project, snapshot.Converters())
 	t := languageService.GetTypeOfSymbol(ctx, symbol)
 	if t == nil {
 		return nil, nil
@@ -295,10 +242,17 @@ func (api *API) GetTypeOfSymbol(ctx context.Context, projectId Handle[project.Pr
 }
 
 func (api *API) GetSourceFile(projectId Handle[project.Project], fileName string) (*ast.SourceFile, error) {
-	project, ok := api.projects[projectId]
+	projectPath, ok := api.projects[projectId]
 	if !ok {
+		return nil, errors.New("project ID not found")
+	}
+	snapshot, release := api.session.Snapshot()
+	defer release()
+	project := snapshot.ProjectCollection.GetProjectByPath(projectPath)
+	if project == nil {
 		return nil, errors.New("project not found")
 	}
+
 	sourceFile := project.GetProgram().GetSourceFile(fileName)
 	if sourceFile == nil {
 		return nil, fmt.Errorf("source file %q not found", fileName)
@@ -313,12 +267,11 @@ func (api *API) releaseHandle(handle string) error {
 	switch handle[0] {
 	case handlePrefixProject:
 		projectId := Handle[project.Project](handle)
-		project, ok := api.projects[projectId]
+		_, ok := api.projects[projectId]
 		if !ok {
 			return fmt.Errorf("project %q not found", handle)
 		}
 		delete(api.projects, projectId)
-		project.Close()
 	case handlePrefixFile:
 		fileId := Handle[ast.SourceFile](handle)
 		api.filesMu.Lock()

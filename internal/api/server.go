@@ -12,7 +12,9 @@ import (
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/json"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
+	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 )
@@ -81,7 +83,7 @@ type Server struct {
 
 	callbackMu       sync.Mutex
 	enabledCallbacks Callback
-	logger           *project.Logger
+	logger           logging.Logger
 	api              *API
 
 	requestId int
@@ -100,12 +102,18 @@ func NewServer(options *ServerOptions) *Server {
 		fs:                 bundled.WrapFS(osvfs.FS()),
 		defaultLibraryPath: options.DefaultLibraryPath,
 	}
-	logger := project.NewLogger([]io.Writer{options.Err}, "", project.LogLevelVerbose)
-	api := NewAPI(server, APIOptions{
-		Logger: logger,
-	})
+	logger := logging.NewLogger(options.Err)
 	server.logger = logger
-	server.api = api
+	server.api = NewAPI(&APIInit{
+		Logger: logger,
+		FS:     server,
+		SessionOptions: &project.SessionOptions{
+			CurrentDirectory:   options.Cwd,
+			DefaultLibraryPath: options.DefaultLibraryPath,
+			PositionEncoding:   lsproto.PositionEncodingKindUTF8,
+			LoggingEnabled:     true,
+		},
+	})
 	return server
 }
 
@@ -265,10 +273,11 @@ func (s *Server) handleConfigure(payload []byte) error {
 			return err
 		}
 	}
+	// !!!
 	if params.LogFile != "" {
-		s.logger.SetFile(params.LogFile)
+		// s.logger.SetFile(params.LogFile)
 	} else {
-		s.logger.SetFile("")
+		// s.logger.SetFile("")
 	}
 	return nil
 }
