@@ -39,7 +39,7 @@ func (c *extendedConfigCache) Ref(path tspath.Path) {
 	}
 }
 
-func (c *extendedConfigCache) Release(path tspath.Path) {
+func (c *extendedConfigCache) Deref(path tspath.Path) {
 	if entry, ok := c.entries.Load(path); ok {
 		entry.mu.Lock()
 		entry.refCount--

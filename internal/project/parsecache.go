@@ -70,7 +70,7 @@ func (c *ParseCache) Ref(file *ast.SourceFile) {
 	}
 }
 
-func (c *ParseCache) Release(file *ast.SourceFile) {
+func (c *ParseCache) Deref(file *ast.SourceFile) {
 	key := newParseCacheKey(file.ParseOptions(), file.ScriptKind)
 	if entry, ok := c.entries.Load(key); ok {
 		entry.mu.Lock()

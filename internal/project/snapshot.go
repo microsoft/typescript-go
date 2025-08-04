@@ -200,14 +200,14 @@ func (s *Snapshot) dispose(session *Session) {
 	for _, project := range s.ProjectCollection.Projects() {
 		if project.Program != nil && session.programCounter.Deref(project.Program) {
 			for _, file := range project.Program.SourceFiles() {
-				session.parseCache.Release(file)
+				session.parseCache.Deref(file)
 			}
 		}
 	}
 	for _, config := range s.ConfigFileRegistry.configs {
 		if config.commandLine != nil {
 			for _, file := range config.commandLine.ExtendedSourceFiles() {
-				session.extendedConfigCache.Release(session.toPath(file))
+				session.extendedConfigCache.Deref(session.toPath(file))
 			}
 		}
 	}
