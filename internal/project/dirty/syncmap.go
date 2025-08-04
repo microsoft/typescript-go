@@ -14,11 +14,11 @@ type lockedEntry[K comparable, V Cloneable[V]] struct {
 }
 
 func (e *lockedEntry[K, V]) Value() V {
-	return e.e.Value()
+	return e.e.value
 }
 
 func (e *lockedEntry[K, V]) Original() V {
-	return e.e.Original()
+	return e.e.original
 }
 
 func (e *lockedEntry[K, V]) Dirty() bool {
@@ -51,17 +51,48 @@ type SyncMapEntry[K comparable, V Cloneable[V]] struct {
 	m  *SyncMap[K, V]
 	mu sync.Mutex
 	mapEntry[K, V]
+	// proxyFor is set when this entry loses a race to become the dirty entry
+	// for a value. Since two goroutines hold a reference to two entries that
+	// may try to mutate the same underlying value, all mutations are routed
+	// through the one that actually exists in the dirty map.
+	proxyFor *SyncMapEntry[K, V]
+}
+
+func (e *SyncMapEntry[K, V]) Value() V {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	if e.proxyFor != nil {
+		return e.proxyFor.Value()
+	}
+	return e.value
+}
+
+func (e *SyncMapEntry[K, V]) Dirty() bool {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	if e.proxyFor != nil {
+		return e.proxyFor.Dirty()
+	}
+	return e.dirty
 }
 
 func (e *SyncMapEntry[K, V]) Locked(fn func(Value[V])) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
+	if e.proxyFor != nil {
+		e.proxyFor.Locked(fn)
+		return
+	}
 	fn(&lockedEntry[K, V]{e: e})
 }
 
 func (e *SyncMapEntry[K, V]) Change(apply func(V)) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
+	if e.proxyFor != nil {
+		e.proxyFor.Change(apply)
+		return
+	}
 	e.changeLocked(apply)
 }
 
@@ -81,10 +112,10 @@ func (e *SyncMapEntry[K, V]) changeLocked(apply func(V)) {
 		entry.dirty = true
 	}
 	if loaded {
-		// !!! There are now two entries for the same key...
-		// for now just sync the values.
+		e.proxyFor = entry
 		e.value = entry.value
 		e.dirty = true
+		e.delete = entry.delete
 	}
 	apply(entry.value)
 }
@@ -92,7 +123,11 @@ func (e *SyncMapEntry[K, V]) changeLocked(apply func(V)) {
 func (e *SyncMapEntry[K, V]) ChangeIf(cond func(V) bool, apply func(V)) bool {
 	e.mu.Lock()
 	defer e.mu.Unlock()
-	if cond(e.Value()) {
+	if e.proxyFor != nil {
+		return e.proxyFor.ChangeIf(cond, apply)
+	}
+
+	if cond(e.value) {
 		e.changeLocked(apply)
 		return true
 	}
@@ -102,6 +137,11 @@ func (e *SyncMapEntry[K, V]) ChangeIf(cond func(V) bool, apply func(V)) bool {
 func (e *SyncMapEntry[K, V]) Delete() {
 	e.mu.Lock()
 	defer e.mu.Unlock()
+	if e.proxyFor != nil {
+		e.proxyFor.Delete()
+		return
+	}
+
 	if e.dirty {
 		e.delete = true
 		return
@@ -125,6 +165,10 @@ func (e *SyncMapEntry[K, V]) deleteLocked() {
 	if loaded {
 		entry.mu.Lock()
 		defer entry.mu.Unlock()
+		e.proxyFor = entry
+		e.value = entry.value
+		e.delete = true
+		e.dirty = entry.dirty
 	}
 	entry.delete = true
 }
@@ -132,7 +176,11 @@ func (e *SyncMapEntry[K, V]) deleteLocked() {
 func (e *SyncMapEntry[K, V]) DeleteIf(cond func(V) bool) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
-	if cond(e.Value()) {
+	if e.proxyFor != nil {
+		e.proxyFor.DeleteIf(cond)
+		return
+	}
+	if cond(e.value) {
 		e.deleteLocked()
 	}
 }
@@ -175,7 +223,7 @@ func (m *SyncMap[K, V]) Load(key K) (*SyncMapEntry[K, V], bool) {
 
 func (m *SyncMap[K, V]) LoadOrStore(key K, value V) (*SyncMapEntry[K, V], bool) {
 	// Check for existence in the base map first so the sync map access is atomic.
-	if value, ok := m.base[key]; ok {
+	if baseValue, ok := m.base[key]; ok {
 		if dirty, ok := m.dirty.Load(key); ok {
 			if dirty.delete {
 				return nil, false
@@ -186,8 +234,8 @@ func (m *SyncMap[K, V]) LoadOrStore(key K, value V) (*SyncMapEntry[K, V], bool) 
 			m: m,
 			mapEntry: mapEntry[K, V]{
 				key:      key,
-				original: value,
-				value:    value,
+				original: baseValue,
+				value:    baseValue,
 				dirty:    false,
 				delete:   false,
 			},
