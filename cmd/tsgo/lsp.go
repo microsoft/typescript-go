@@ -41,7 +41,7 @@ func runLSP(args []string) int {
 	defaultLibraryPath := bundled.LibPath()
 	typingsLocation := getGlobalTypingsCacheLocation()
 
-	serverOptions := lsp.ServerOptions{
+	s := lsp.NewServer(&lsp.ServerOptions{
 		In:                 lsp.ToReader(os.Stdin),
 		Out:                lsp.ToWriter(os.Stdout),
 		Err:                os.Stderr,
@@ -49,9 +49,8 @@ func runLSP(args []string) int {
 		FS:                 fs,
 		DefaultLibraryPath: defaultLibraryPath,
 		TypingsLocation:    typingsLocation,
-	}
+	})
 
-	s := lsp.NewServer(&serverOptions)
 	if err := s.Run(); err != nil {
 		return 1
 	}

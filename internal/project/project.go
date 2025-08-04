@@ -69,7 +69,7 @@ type Project struct {
 	failedLookupsWatch      *WatchedFiles[map[tspath.Path]string]
 	affectingLocationsWatch *WatchedFiles[map[tspath.Path]string]
 
-	checkerPool *CheckerPool
+	checkerPool *checkerPool
 
 	// installedTypingsInfo is the value of `project.ComputeTypingsInfo()` that was
 	// used during the most recently completed typings installation.
@@ -234,13 +234,13 @@ func (p *Project) getCommandLineWithTypingsFiles() *tsoptions.ParsedCommandLine 
 type CreateProgramResult struct {
 	Program     *compiler.Program
 	UpdateKind  ProgramUpdateKind
-	CheckerPool *CheckerPool
+	CheckerPool *checkerPool
 }
 
 func (p *Project) CreateProgram() CreateProgramResult {
 	updateKind := ProgramUpdateKindNewFiles
 	var programCloned bool
-	var checkerPool *CheckerPool
+	var checkerPool *checkerPool
 	var newProgram *compiler.Program
 
 	// Create the command line, potentially augmented with typing files
@@ -267,7 +267,7 @@ func (p *Project) CreateProgram() CreateProgramResult {
 				TypingsLocation:             p.host.sessionOptions.TypingsLocation,
 				JSDocParsingMode:            ast.JSDocParsingModeParseAll,
 				CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
-					checkerPool = NewCheckerPool(4, program, p.log)
+					checkerPool = newCheckerPool(4, program, p.log)
 					return checkerPool
 				},
 			},
