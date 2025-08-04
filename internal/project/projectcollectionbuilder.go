@@ -768,7 +768,7 @@ func (b *projectCollectionBuilder) deleteConfiguredProject(project dirty.Value[*
 		logger.Log(fmt.Sprintf("Deleting configured project: %s", project.Value().configFileName))
 	}
 	if program := project.Value().Program; program != nil {
-		program.ForEachResolvedProjectReference(func(referencePath tspath.Path, config *tsoptions.ParsedCommandLine) {
+		program.ForEachResolvedProjectReference(func(referencePath tspath.Path, config *tsoptions.ParsedCommandLine, _ *tsoptions.ParsedCommandLine, _ int) {
 			b.configFileRegistryBuilder.releaseConfigForProject(referencePath, projectPath)
 		})
 	}
