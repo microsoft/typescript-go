@@ -28,8 +28,8 @@ runs:
       shell: bash
       id: cache-info
       env:
-        MODULES_KEY: go-modules-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}-${{ hashFiles('**/go.sum', '**/Herebyfile.mjs', '**/.custom-gcl.yml', '**/.dprint.jsonc') }}
-        LINT_KEY: golangci-lint-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}-${{ hashFiles('**/go.sum', '**/Herebyfile.mjs', '**/.custom-gcl.yml', '**/.dprint.jsonc') }}
+        MODULES_KEY: go-modules-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}-${{ hashFiles('**/go.sum', '**/.custom-gcl.yml') }}
+        LINT_KEY: golangci-lint-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}-${{ hashFiles('**/go.sum', '**/.custom-gcl.yml') }}
         BUILD_KEY: go-build-cache-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}
       run: |
         echo "modules-key=$MODULES_KEY" >> $GITHUB_OUTPUT
