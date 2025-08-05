@@ -31,5 +31,5 @@ export function processValue(value: any) {
 }
 `
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyQuickInfoAt(t, "1", "(alias) function isSomeAliasType(x: any): x is import(\"./other2\").SomeAliasType<any>", "")
+	f.VerifyQuickInfoAt(t, "1", "(alias) function isSomeAliasType(x: any): x is SomeAliasType<any>", "")
 }
