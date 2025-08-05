@@ -3,6 +3,7 @@ package logging
 import (
 	"fmt"
 	"io"
+	"sync"
 	"time"
 )
 
@@ -25,6 +26,7 @@ type Logger interface {
 var _ Logger = (*logger)(nil)
 
 type logger struct {
+	mu      sync.Mutex
 	verbose bool
 	writer  io.Writer
 	prefix  func() string
@@ -34,6 +36,8 @@ func (l *logger) Log(msg ...any) {
 	if l == nil {
 		return
 	}
+	l.mu.Lock()
+	defer l.mu.Unlock()
 	fmt.Fprintln(l.writer, l.prefix(), fmt.Sprint(msg...))
 }
 
@@ -41,6 +45,8 @@ func (l *logger) Logf(format string, args ...any) {
 	if l == nil {
 		return
 	}
+	l.mu.Lock()
+	defer l.mu.Unlock()
 	fmt.Fprintf(l.writer, "%s %s\n", l.prefix(), fmt.Sprintf(format, args...))
 }
 
@@ -48,24 +54,38 @@ func (l *logger) Write(msg string) {
 	if l == nil {
 		return
 	}
+	l.mu.Lock()
+	defer l.mu.Unlock()
 	fmt.Fprintln(l.writer, msg)
 }
 
 func (l *logger) Verbose() Logger {
-	if l == nil || !l.verbose {
+	if l == nil {
+		return nil
+	}
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	if !l.verbose {
 		return nil
 	}
 	return l
 }
 
 func (l *logger) IsVerbose() bool {
-	return l != nil && l.verbose
+	if l == nil {
+		return false
+	}
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	return l.verbose
 }
 
 func (l *logger) SetVerbose(verbose bool) {
 	if l == nil {
 		return
 	}
+	l.mu.Lock()
+	defer l.mu.Unlock()
 	l.verbose = verbose
 }
 
