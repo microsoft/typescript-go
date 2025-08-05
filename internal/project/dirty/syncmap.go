@@ -14,7 +14,7 @@ type lockedEntry[K comparable, V Cloneable[V]] struct {
 }
 
 func (e *lockedEntry[K, V]) Value() V {
-	return e.e.value
+	return e.e.valueLocked()
 }
 
 func (e *lockedEntry[K, V]) Original() V {
@@ -30,7 +30,7 @@ func (e *lockedEntry[K, V]) Change(apply func(V)) {
 }
 
 func (e *lockedEntry[K, V]) ChangeIf(cond func(V) bool, apply func(V)) bool {
-	if cond(e.e.Value()) {
+	if cond(e.e.valueLocked()) {
 		e.e.changeLocked(apply)
 		return true
 	}
@@ -63,6 +63,14 @@ func (e *SyncMapEntry[K, V]) Value() V {
 	defer e.mu.Unlock()
 	if e.proxyFor != nil {
 		return e.proxyFor.Value()
+	}
+	return e.valueLocked()
+}
+
+func (e *SyncMapEntry[K, V]) valueLocked() V {
+	if e.delete {
+		var zero V
+		return zero
 	}
 	return e.value
 }
