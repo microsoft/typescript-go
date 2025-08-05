@@ -6,6 +6,7 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -28,6 +29,10 @@ type SessionOptions struct {
 	DebounceDelay      time.Duration
 }
 
+type SessionHooks struct {
+	DidUpdateSnapshot func(prev, current *Snapshot)
+}
+
 type SessionInit struct {
 	Options     *SessionOptions
 	FS          vfs.FS
@@ -35,10 +40,12 @@ type SessionInit struct {
 	Logger      logging.Logger
 	NpmExecutor ata.NpmExecutor
 	ParseCache  *ParseCache
+	Hooks       SessionHooks
 }
 
 type Session struct {
 	options                            *SessionOptions
+	hooks                              SessionHooks
 	toPath                             func(string) tspath.Path
 	client                             Client
 	logger                             logging.Logger
@@ -50,6 +57,10 @@ type Session struct {
 	programCounter                     *programCounter
 	typingsInstaller                   *ata.TypingsInstaller
 	backgroundTasks                    *BackgroundQueue
+
+	// Counter for snapshot IDs. Stored on Session instead of
+	// globally so IDs are predictable in tests.
+	snapshotID atomic.Uint64
 
 	snapshotMu sync.RWMutex
 	snapshot   *Snapshot
@@ -89,7 +100,9 @@ func NewSession(init *SessionInit) *Session {
 		extendedConfigCache: extendedConfigCache,
 		programCounter:      &programCounter{},
 		backgroundTasks:     newBackgroundQueue(),
+		snapshotID:          atomic.Uint64{},
 		snapshot: NewSnapshot(
+			uint64(0),
 			&snapshotFS{
 				toPath: toPath,
 				fs:     init.FS,
@@ -327,8 +340,17 @@ func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 	oldSnapshot := s.snapshot
 	newSnapshot := oldSnapshot.Clone(ctx, change, overlays, s)
 	s.snapshot = newSnapshot
-	shouldDispose := newSnapshot != oldSnapshot && oldSnapshot.Deref()
 	s.snapshotMu.Unlock()
+
+	if s.hooks.DidUpdateSnapshot != nil {
+		oldSnapshot.Ref()
+		newSnapshot.Ref()
+		s.hooks.DidUpdateSnapshot(oldSnapshot, newSnapshot)
+		oldSnapshot.Deref()
+		newSnapshot.Deref()
+	}
+
+	shouldDispose := newSnapshot != oldSnapshot && oldSnapshot.Deref()
 	if shouldDispose {
 		oldSnapshot.dispose(s)
 	}

@@ -152,7 +152,9 @@ func TestProcessChanges(t *testing.T) {
 				URI:  testURI1,
 			},
 		})
-		assert.Assert(t, result.Saved.Has(testURI1))
+		// We don't observe saves for snapshot changes,
+		// so they're not included in the summary
+		assert.Assert(t, result.IsEmpty())
 
 		// Check that the overlay is marked as matching disk text
 		fh := fs.getFile(testURI1.FileName())

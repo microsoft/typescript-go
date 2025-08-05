@@ -357,6 +357,69 @@ func TestSession(t *testing.T) {
 		})
 	})
 
+	t.Run("DidSaveFile", func(t *testing.T) {
+		t.Parallel()
+		t.Run("save event first", func(t *testing.T) {
+			t.Parallel()
+			session, _ := projecttestutil.Setup(defaultFiles)
+			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, defaultFiles["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+			snapshot, release := session.Snapshot()
+			defer release()
+			assert.Equal(t, snapshot.ID(), uint64(1))
+
+			session.DidSaveFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+				{
+					Type: lsproto.FileChangeTypeChanged,
+					Uri:  "file:///home/projects/TS/p1/src/index.ts",
+				},
+			})
+
+			session.WaitForBackgroundTasks()
+			snapshot, release = session.Snapshot()
+			defer release()
+			// We didn't need a snapshot change, but the session overlays should be updated.
+			assert.Equal(t, snapshot.ID(), uint64(1))
+
+			// Open another file to force a snapshot update so we can see the changes.
+			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 1, defaultFiles["/home/projects/TS/p1/src/x.ts"].(string), lsproto.LanguageKindTypeScript)
+			snapshot, release = session.Snapshot()
+			defer release()
+			assert.Equal(t, snapshot.GetFile("/home/projects/TS/p1/src/index.ts").MatchesDiskText(), true)
+		})
+
+		t.Run("watch event first", func(t *testing.T) {
+			t.Parallel()
+			session, _ := projecttestutil.Setup(defaultFiles)
+			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, defaultFiles["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
+
+			snapshot, release := session.Snapshot()
+			defer release()
+			assert.Equal(t, snapshot.ID(), uint64(1))
+
+			session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
+				{
+					Type: lsproto.FileChangeTypeChanged,
+					Uri:  "file:///home/projects/TS/p1/src/index.ts",
+				},
+			})
+			session.DidSaveFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+
+			session.WaitForBackgroundTasks()
+			snapshot, release = session.Snapshot()
+			defer release()
+			// We didn't need a snapshot change, but the session overlays should be updated.
+			assert.Equal(t, snapshot.ID(), uint64(1))
+
+			// Open another file to force a snapshot update so we can see the changes.
+			session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/x.ts", 1, defaultFiles["/home/projects/TS/p1/src/x.ts"].(string), lsproto.LanguageKindTypeScript)
+			snapshot, release = session.Snapshot()
+			defer release()
+			assert.Equal(t, snapshot.GetFile("/home/projects/TS/p1/src/index.ts").MatchesDiskText(), true)
+		})
+	})
+
 	t.Run("Source file sharing", func(t *testing.T) {
 		t.Parallel()
 		t.Run("projects with similar options share source files", func(t *testing.T) {

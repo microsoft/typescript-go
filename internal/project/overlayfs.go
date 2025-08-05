@@ -132,6 +132,18 @@ func (o *overlay) MatchesDiskText() bool {
 	return o.matchesDiskText
 }
 
+// !!! optimization: incorporate mtime
+func (o *overlay) computeMatchesDiskText(fs vfs.FS) bool {
+	if isDynamicFileName(o.fileName) {
+		return false
+	}
+	diskContent, ok := fs.ReadFile(o.fileName)
+	if !ok {
+		return false
+	}
+	return xxh3.Hash128([]byte(diskContent)) == o.hash
+}
+
 func (o *overlay) IsOverlay() bool {
 	return true
 }
@@ -248,6 +260,7 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 		case FileChangeKindWatchChange:
 			if !events.created {
 				events.watchChanged = true
+				events.saved = false
 			}
 		case FileChangeKindWatchDelete:
 			events.watchChanged = false
@@ -293,10 +306,12 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 		if events.watchChanged {
 			if o == nil {
 				result.Changed.Add(uri)
-			} else if o != nil && o.MatchesDiskText() {
-				o = newOverlay(o.FileName(), o.Content(), o.Version(), o.kind)
-				o.matchesDiskText = false
-				newOverlays[path] = o
+			} else if o != nil && !events.saved {
+				if matchesDiskText := o.computeMatchesDiskText(fs.fs); matchesDiskText != o.MatchesDiskText() {
+					o = newOverlay(o.FileName(), o.Content(), o.Version(), o.kind)
+					o.matchesDiskText = matchesDiskText
+					newOverlays[path] = o
+				}
 			}
 		}
 
@@ -328,7 +343,6 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 		}
 
 		if events.saved {
-			result.Saved.Add(uri)
 			if o == nil {
 				panic("overlay not found for saved file: " + uri)
 			}

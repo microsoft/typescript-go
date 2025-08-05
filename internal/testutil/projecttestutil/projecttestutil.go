@@ -183,15 +183,15 @@ func Setup(files map[string]any) (*project.Session, *SessionUtils) {
 	return SetupWithTypingsInstaller(files, nil)
 }
 
-func SetupWithOptions(files map[string]any, options *project.SessionOptions) (*project.Session, *SessionUtils) {
-	return SetupWithOptionsAndTypingsInstaller(files, options, nil)
+func SetupWithOptions(files map[string]any, hooks project.SessionHooks, options *project.SessionOptions) (*project.Session, *SessionUtils) {
+	return SetupWithOptionsAndTypingsInstaller(files, hooks, options, nil)
 }
 
-func SetupWithTypingsInstaller(files map[string]any, testOptions *TestTypingsInstallerOptions) (*project.Session, *SessionUtils) {
-	return SetupWithOptionsAndTypingsInstaller(files, nil, testOptions)
+func SetupWithTypingsInstaller(files map[string]any, tiOptions *TestTypingsInstallerOptions) (*project.Session, *SessionUtils) {
+	return SetupWithOptionsAndTypingsInstaller(files, project.SessionHooks{}, nil, tiOptions)
 }
 
-func SetupWithOptionsAndTypingsInstaller(files map[string]any, options *project.SessionOptions, testOptions *TestTypingsInstallerOptions) (*project.Session, *SessionUtils) {
+func SetupWithOptionsAndTypingsInstaller(files map[string]any, hooks project.SessionHooks, options *project.SessionOptions, tiOptions *TestTypingsInstallerOptions) (*project.Session, *SessionUtils) {
 	fs := bundled.WrapFS(vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/))
 	clientMock := &ClientMock{}
 	npmExecutorMock := &NpmExecutorMock{}
@@ -199,7 +199,7 @@ func SetupWithOptionsAndTypingsInstaller(files map[string]any, options *project.
 		fs:          fs,
 		client:      clientMock,
 		npmExecutor: npmExecutorMock,
-		testOptions: testOptions,
+		testOptions: tiOptions,
 		logger:      logging.NewTestLogger(),
 	}
 
@@ -225,6 +225,7 @@ func SetupWithOptionsAndTypingsInstaller(files map[string]any, options *project.
 		Client:      clientMock,
 		NpmExecutor: npmExecutorMock,
 		Logger:      sessionUtils.logger,
+		Hooks:       hooks,
 	})
 
 	return session, sessionUtils

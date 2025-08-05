@@ -24,7 +24,7 @@ var _ ata.NpmExecutor = &NpmExecutorMock{}
 //			},
 //		}
 //
-//		// use mockedNpmExecutor in code that requires project.NpmExecutor
+//		// use mockedNpmExecutor in code that requires ata.NpmExecutor
 //		// and then make assertions.
 //
 //	}

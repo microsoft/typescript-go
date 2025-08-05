@@ -14,8 +14,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-var snapshotID atomic.Uint64
-
 type Snapshot struct {
 	id       uint64
 	parentId uint64
@@ -37,6 +35,7 @@ type Snapshot struct {
 
 // NewSnapshot
 func NewSnapshot(
+	id uint64,
 	fs *snapshotFS,
 	sessionOptions *SessionOptions,
 	parseCache *ParseCache,
@@ -45,7 +44,6 @@ func NewSnapshot(
 	compilerOptionsForInferredProjects *core.CompilerOptions,
 	toPath func(fileName string) tspath.Path,
 ) *Snapshot {
-	id := snapshotID.Add(1)
 	s := &Snapshot{
 		id: id,
 
@@ -66,6 +64,10 @@ func (s *Snapshot) GetDefaultProject(uri lsproto.DocumentUri) *Project {
 	fileName := uri.FileName()
 	path := s.toPath(fileName)
 	return s.ProjectCollection.GetDefaultProject(fileName, path)
+}
+
+func (s *Snapshot) GetFile(fileName string) FileHandle {
+	return s.fs.GetFile(fileName)
 }
 
 func (s *Snapshot) LineMap(fileName string) *ls.LineMap {
@@ -150,6 +152,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	snapshotFS, _ := fs.Finalize()
 
 	newSnapshot := NewSnapshot(
+		session.snapshotID.Add(1),
 		snapshotFS,
 		s.sessionOptions,
 		session.parseCache,

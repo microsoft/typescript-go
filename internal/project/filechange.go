@@ -34,7 +34,6 @@ type FileChangeSummary struct {
 	// Values are the content hashes of the overlays before closing.
 	Closed  map[lsproto.DocumentUri]xxh3.Uint128
 	Changed collections.Set[lsproto.DocumentUri]
-	Saved   collections.Set[lsproto.DocumentUri]
 	// Only set when file watching is enabled
 	Created collections.Set[lsproto.DocumentUri]
 	// Only set when file watching is enabled
@@ -44,5 +43,5 @@ type FileChangeSummary struct {
 }
 
 func (f FileChangeSummary) IsEmpty() bool {
-	return f.Opened == "" && len(f.Closed) == 0 && f.Changed.Len() == 0 && f.Saved.Len() == 0 && f.Created.Len() == 0 && f.Deleted.Len() == 0
+	return f.Opened == "" && len(f.Closed) == 0 && f.Changed.Len() == 0 && f.Created.Len() == 0 && f.Deleted.Len() == 0
 }
