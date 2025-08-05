@@ -229,6 +229,8 @@ func (m *SyncMap[K, V]) LoadOrStore(key K, value V) (*SyncMapEntry[K, V], bool) 
 	// Check for existence in the base map first so the sync map access is atomic.
 	if baseValue, ok := m.base[key]; ok {
 		if dirty, ok := m.dirty.Load(key); ok {
+			dirty.mu.Lock()
+			defer dirty.mu.Unlock()
 			if dirty.delete {
 				return nil, false
 			}
