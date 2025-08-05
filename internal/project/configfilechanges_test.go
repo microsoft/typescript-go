@@ -34,9 +34,7 @@ func TestConfigFileChanges(t *testing.T) {
 		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		err := utils.FS().WriteFile("/src/tsconfig.json", `{"extends": "../tsconfig.base.json", "compilerOptions": {"target": "esnext"}, "references": [{"path": "../utils"}]}`, false /*writeByteOrderMark*/)
-		if err != nil {
-			t.Fatal(err)
-		}
+		assert.NilError(t, err)
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
 				Uri:  lsproto.DocumentUri("file:///src/tsconfig.json"),
@@ -55,9 +53,7 @@ func TestConfigFileChanges(t *testing.T) {
 		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		err := utils.FS().WriteFile("/tsconfig.base.json", `{"compilerOptions": {"strict": false}}`, false /*writeByteOrderMark*/)
-		if err != nil {
-			t.Fatal(err)
-		}
+		assert.NilError(t, err)
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
 				Uri:  lsproto.DocumentUri("file:///tsconfig.base.json"),
@@ -78,9 +74,7 @@ func TestConfigFileChanges(t *testing.T) {
 		defer release()
 
 		err := utils.FS().WriteFile("/utils/tsconfig.json", `{"compilerOptions": {"composite": true, "target": "esnext"}}`, false /*writeByteOrderMark*/)
-		if err != nil {
-			t.Fatal(err)
-		}
+		assert.NilError(t, err)
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
 				Uri:  lsproto.DocumentUri("file:///utils/tsconfig.json"),
@@ -101,9 +95,7 @@ func TestConfigFileChanges(t *testing.T) {
 		session.DidOpenFile(context.Background(), "file:///src/index.ts", 1, files["/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		err := utils.FS().Remove("/src/tsconfig.json")
-		if err != nil {
-			t.Fatal(err)
-		}
+		assert.NilError(t, err)
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
 				Uri:  lsproto.DocumentUri("file:///src/tsconfig.json"),
@@ -125,9 +117,7 @@ func TestConfigFileChanges(t *testing.T) {
 		session.DidOpenFile(context.Background(), "file:///src/subfolder/foo.ts", 1, files["/src/subfolder/foo.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		err := utils.FS().WriteFile("/src/subfolder/tsconfig.json", `{}`, false /*writeByteOrderMark*/)
-		if err != nil {
-			t.Fatal(err)
-		}
+		assert.NilError(t, err)
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
 				Uri:  lsproto.DocumentUri("file:///src/subfolder/tsconfig.json"),
@@ -143,9 +133,7 @@ func TestConfigFileChanges(t *testing.T) {
 		assert.Equal(t, snapshot.GetDefaultProject(lsproto.DocumentUri("file:///src/subfolder/foo.ts")).Name(), "/src/subfolder/tsconfig.json")
 
 		err = utils.FS().Remove("/src/subfolder/tsconfig.json")
-		if err != nil {
-			t.Fatal(err)
-		}
+		assert.NilError(t, err)
 		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{
 			{
 				Uri:  lsproto.DocumentUri("file:///src/subfolder/tsconfig.json"),
