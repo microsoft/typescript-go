@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/ata"
+	"github.com/microsoft/typescript-go/internal/project/background"
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -56,7 +57,7 @@ type Session struct {
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	programCounter                     *programCounter
 	typingsInstaller                   *ata.TypingsInstaller
-	backgroundTasks                    *BackgroundQueue
+	backgroundQueue                    *background.Queue
 
 	// Counter for snapshot IDs. Stored on Session instead of
 	// globally so IDs are predictable in tests.
@@ -74,6 +75,10 @@ type Session struct {
 	// Debouncing fields for snapshot updates
 	snapshotUpdateMu     sync.Mutex
 	snapshotUpdateCancel context.CancelFunc
+
+	// Debouncing fields for diagnostics refresh
+	diagnosticsRefreshMu     sync.Mutex
+	diagnosticsRefreshCancel context.CancelFunc
 }
 
 func NewSession(init *SessionInit) *Session {
@@ -99,7 +104,7 @@ func NewSession(init *SessionInit) *Session {
 		parseCache:          parseCache,
 		extendedConfigCache: extendedConfigCache,
 		programCounter:      &programCounter{},
-		backgroundTasks:     newBackgroundQueue(),
+		backgroundQueue:     background.NewQueue(),
 		snapshotID:          atomic.Uint64{},
 		snapshot: NewSnapshot(
 			uint64(0),
@@ -143,6 +148,7 @@ func (s *Session) Trace(msg string) {
 }
 
 func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, version int32, content string, languageKind lsproto.LanguageKind) {
+	s.cancelDiagnosticsRefresh()
 	s.pendingFileChangesMu.Lock()
 	s.pendingFileChanges = append(s.pendingFileChanges, FileChange{
 		Kind:         FileChangeKindOpen,
@@ -160,6 +166,7 @@ func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, vers
 }
 
 func (s *Session) DidCloseFile(ctx context.Context, uri lsproto.DocumentUri) {
+	s.cancelDiagnosticsRefresh()
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
 	s.pendingFileChanges = append(s.pendingFileChanges, FileChange{
@@ -170,6 +177,7 @@ func (s *Session) DidCloseFile(ctx context.Context, uri lsproto.DocumentUri) {
 }
 
 func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, version int32, changes []lsproto.TextDocumentContentChangePartialOrWholeDocument) {
+	s.cancelDiagnosticsRefresh()
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
 	s.pendingFileChanges = append(s.pendingFileChanges, FileChange{
@@ -181,6 +189,7 @@ func (s *Session) DidChangeFile(ctx context.Context, uri lsproto.DocumentUri, ve
 }
 
 func (s *Session) DidSaveFile(ctx context.Context, uri lsproto.DocumentUri) {
+	s.cancelDiagnosticsRefresh()
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
 	s.pendingFileChanges = append(s.pendingFileChanges, FileChange{
@@ -244,7 +253,7 @@ func (s *Session) ScheduleSnapshotUpdate() {
 	s.snapshotUpdateCancel = cancel
 
 	// Enqueue the debounced snapshot update
-	s.backgroundTasks.Enqueue(debounceCtx, func(ctx context.Context) {
+	s.backgroundQueue.Enqueue(debounceCtx, func(ctx context.Context) {
 		// Sleep for the debounce delay
 		select {
 		case <-time.After(s.options.DebounceDelay):
@@ -273,6 +282,57 @@ func (s *Session) ScheduleSnapshotUpdate() {
 			s.logger.Log("Scheduled snapshot update skipped (no changes)")
 		}
 	})
+}
+
+func (s *Session) ScheduleDiagnosticsRefresh() {
+	s.diagnosticsRefreshMu.Lock()
+	defer s.diagnosticsRefreshMu.Unlock()
+
+	// Cancel any existing scheduled diagnostics refresh
+	if s.diagnosticsRefreshCancel != nil {
+		s.diagnosticsRefreshCancel()
+		s.logger.Log("Delaying scheduled diagnostics refresh...")
+	} else {
+		s.logger.Log("Scheduling new diagnostics refresh...")
+	}
+
+	// Create a new cancellable context for the debounce task
+	debounceCtx, cancel := context.WithCancel(context.Background())
+	s.diagnosticsRefreshCancel = cancel
+
+	// Enqueue the debounced diagnostics refresh
+	s.backgroundQueue.Enqueue(debounceCtx, func(ctx context.Context) {
+		// Sleep for the debounce delay
+		select {
+		case <-time.After(s.options.DebounceDelay):
+			// Delay completed, proceed with refresh
+		case <-ctx.Done():
+			// Context was cancelled, newer events arrived
+			return
+		}
+
+		// Clear the cancel function since we're about to execute the refresh
+		s.diagnosticsRefreshMu.Lock()
+		s.diagnosticsRefreshCancel = nil
+		s.diagnosticsRefreshMu.Unlock()
+
+		if s.options.LoggingEnabled {
+			s.logger.Log("Running scheduled diagnostics refresh")
+		}
+		if err := s.client.RefreshDiagnostics(context.Background()); err != nil && s.options.LoggingEnabled {
+			s.logger.Logf("Error refreshing diagnostics: %v", err)
+		}
+	})
+}
+
+func (s *Session) cancelDiagnosticsRefresh() {
+	s.diagnosticsRefreshMu.Lock()
+	defer s.diagnosticsRefreshMu.Unlock()
+	if s.diagnosticsRefreshCancel != nil {
+		s.diagnosticsRefreshCancel()
+		s.logger.Log("Canceled scheduled diagnostics refresh")
+		s.diagnosticsRefreshCancel = nil
+	}
 }
 
 func (s *Session) Snapshot() (*Snapshot, func()) {
@@ -361,7 +421,7 @@ func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 	}
 
 	// Enqueue logging, watch updates, and diagnostic refresh tasks
-	s.backgroundTasks.Enqueue(context.Background(), func(ctx context.Context) {
+	s.backgroundQueue.Enqueue(context.Background(), func(ctx context.Context) {
 		if s.options.LoggingEnabled {
 			s.logger.Write(newSnapshot.builderLogs.String())
 			s.logProjectChanges(oldSnapshot, newSnapshot)
@@ -373,9 +433,7 @@ func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 			}
 		}
 		if change.fileChanges.IncludesWatchChangesOnly {
-			if err := s.client.RefreshDiagnostics(context.Background()); err != nil && s.options.LoggingEnabled {
-				s.logger.Log(fmt.Sprintf("Error refreshing diagnostics: %v", err))
-			}
+			s.ScheduleDiagnosticsRefresh()
 		}
 	})
 
@@ -385,7 +443,7 @@ func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 // WaitForBackgroundTasks waits for all background tasks to complete.
 // This is intended to be used only for testing purposes.
 func (s *Session) WaitForBackgroundTasks() {
-	s.backgroundTasks.WaitForEmpty()
+	s.backgroundQueue.Wait()
 }
 
 func updateWatch[T any](ctx context.Context, client Client, logger logging.Logger, oldWatcher, newWatcher *WatchedFiles[T]) []error {
@@ -476,7 +534,7 @@ func (s *Session) Close() {
 		s.snapshotUpdateCancel = nil
 	}
 	s.snapshotUpdateMu.Unlock()
-	s.backgroundTasks.Close()
+	s.backgroundQueue.Close()
 }
 
 func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspath.Path]*overlay, map[tspath.Path]*ATAStateChange) {
@@ -550,7 +608,7 @@ func (s *Session) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error
 func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
 		if project.ShouldTriggerATA() {
-			s.backgroundTasks.Enqueue(context.Background(), func(ctx context.Context) {
+			s.backgroundQueue.Enqueue(context.Background(), func(ctx context.Context) {
 				var logTree *logging.LogTree
 				if s.options.LoggingEnabled {
 					logTree = logging.NewLogTree("Triggering ATA for project " + project.Name())
@@ -581,6 +639,7 @@ func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {
 							TypingsFiles: typingsFiles,
 							Logs:         logTree,
 						}
+						s.ScheduleDiagnosticsRefresh()
 					}
 				}
 			})

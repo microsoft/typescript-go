@@ -84,6 +84,7 @@ func TestATA(t *testing.T) {
 		assert.Equal(t, npmCalls[0].Args[2], "types-registry@latest")
 		assert.Equal(t, npmCalls[1].Cwd, projecttestutil.TestTypingsLocation)
 		assert.Assert(t, slices.Contains(npmCalls[1].Args, "@types/jquery@latest"))
+		assert.Equal(t, len(utils.Client().RefreshDiagnosticsCalls()), 1)
 	})
 
 	t.Run("inferred projects", func(t *testing.T) {
