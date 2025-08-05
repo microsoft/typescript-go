@@ -11,7 +11,9 @@ import (
 )
 
 func TestQueue(t *testing.T) {
+	t.Parallel()
 	t.Run("BasicEnqueue", func(t *testing.T) {
+		t.Parallel()
 		q := background.NewQueue()
 		defer q.Close()
 
@@ -26,6 +28,7 @@ func TestQueue(t *testing.T) {
 	})
 
 	t.Run("MultipleTasksExecution", func(t *testing.T) {
+		t.Parallel()
 		q := background.NewQueue()
 		defer q.Close()
 
@@ -44,6 +47,7 @@ func TestQueue(t *testing.T) {
 	})
 
 	t.Run("NestedEnqueue", func(t *testing.T) {
+		t.Parallel()
 		q := background.NewQueue()
 		defer q.Close()
 
@@ -71,6 +75,7 @@ func TestQueue(t *testing.T) {
 	})
 
 	t.Run("ClosedQueueRejectsNewTasks", func(t *testing.T) {
+		t.Parallel()
 		q := background.NewQueue()
 		q.Close()
 
