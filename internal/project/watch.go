@@ -103,9 +103,7 @@ func (w *WatchedFiles[T]) Clone(input T) *WatchedFiles[T] {
 		watchKind:           w.watchKind,
 		computeGlobPatterns: w.computeGlobPatterns,
 		input:               input,
-		watchers:            w.watchers,
 		parsedGlobs:         w.parsedGlobs,
-		id:                  w.id,
 	}
 }
 
