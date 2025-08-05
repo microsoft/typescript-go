@@ -2,8 +2,6 @@ package dirty
 
 import "maps"
 
-var _ Value[*cloneable] = (*MapEntry[any, *cloneable])(nil)
-
 type MapEntry[K comparable, V Cloneable[V]] struct {
 	m *Map[K, V]
 	mapEntry[K, V]

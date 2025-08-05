@@ -1,7 +1,5 @@
 package dirty
 
-var _ Value[*cloneable] = (*Box[*cloneable])(nil)
-
 type Box[T Cloneable[T]] struct {
 	original T
 	value    T

@@ -1,11 +1,5 @@
 package dirty
 
-type cloneable struct{}
-
-func (c *cloneable) Clone() *cloneable {
-	return &cloneable{}
-}
-
 type Cloneable[T any] interface {
 	Clone() T
 }

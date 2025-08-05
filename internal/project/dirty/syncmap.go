@@ -7,8 +7,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 )
 
-var _ Value[*cloneable] = (*lockedEntry[any, *cloneable])(nil)
-
 type lockedEntry[K comparable, V Cloneable[V]] struct {
 	e *SyncMapEntry[K, V]
 }
@@ -44,8 +42,6 @@ func (e *lockedEntry[K, V]) Delete() {
 func (e *lockedEntry[K, V]) Locked(fn func(Value[V])) {
 	fn(e)
 }
-
-var _ Value[*cloneable] = (*SyncMapEntry[any, *cloneable])(nil)
 
 type SyncMapEntry[K comparable, V Cloneable[V]] struct {
 	m  *SyncMap[K, V]
