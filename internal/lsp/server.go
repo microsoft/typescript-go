@@ -507,6 +507,7 @@ func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentUR
 		if err != nil {
 			return err
 		}
+		defer s.recover(req)
 		resp, err := fn(s, ctx, ls, params)
 		if err != nil {
 			return err
@@ -514,7 +515,6 @@ func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentUR
 		if ctx.Err() != nil {
 			return ctx.Err()
 		}
-		defer s.recover(req)
 		s.sendResult(req.ID, resp)
 		return nil
 	}
