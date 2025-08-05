@@ -4436,6 +4436,7 @@ func (p *Printer) emitDirective(kind string, refs []*ast.FileReference) {
 			resolutionMode = fmt.Sprintf(`resolution-mode="%s" `, core.IfElse(ref.ResolutionMode == core.ResolutionModeESM, "import", "require"))
 		}
 		p.writeComment(fmt.Sprintf("/// <reference %s=\"%s\" %s%s/>", kind, ref.FileName, resolutionMode, core.IfElse(ref.Preserve, `preserve="true" `, "")))
+		p.writeLine()
 	}
 }
 
