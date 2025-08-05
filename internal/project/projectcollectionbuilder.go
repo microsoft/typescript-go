@@ -272,15 +272,18 @@ func (b *projectCollectionBuilder) DidUpdateATAState(ataChanges map[tspath.Path]
 				if p == nil {
 					return false
 				}
+				// Consistency check: the ATA demands (project options, unresolved imports) of this project
+				// has not changed since the time the ATA request was dispatched; the change can still be
+				// applied to this project in its current state.
 				return ataChange.TypingsInfo.Equals(p.ComputeTypingsInfo())
 			},
 			func(p *Project) {
+				// We checked before triggering this change (in Session.triggerATAForUpdatedProjects) that
+				// the set of typings files is actually different.
 				p.installedTypingsInfo = ataChange.TypingsInfo
-				if !slices.Equal(p.typingsFiles, ataChange.TypingsFiles) {
-					p.typingsFiles = ataChange.TypingsFiles
-					p.dirty = true
-					p.dirtyFilePath = ""
-				}
+				p.typingsFiles = ataChange.TypingsFiles
+				p.dirty = true
+				p.dirtyFilePath = ""
 			},
 		)
 	}

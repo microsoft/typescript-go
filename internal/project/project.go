@@ -203,6 +203,7 @@ func (p *Project) Clone() *Project {
 }
 
 // getCommandLineWithTypingsFiles returns the command line augmented with typing files if ATA is enabled.
+// !!! Need to cache this for equality comparison in CreateProgram
 func (p *Project) getCommandLineWithTypingsFiles() *tsoptions.ParsedCommandLine {
 	if len(p.typingsFiles) == 0 {
 		return p.CommandLine

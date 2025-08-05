@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
 	"sync"
 	"sync/atomic"
 
@@ -101,7 +102,11 @@ type TypingsInstallRequest struct {
 func (ti *TypingsInstaller) InstallTypings(request *TypingsInstallRequest) ([]string, error) {
 	// because we arent using buffers, no need to throttle for requests here
 	request.Logger.Log("ATA:: Got install request for: " + string(request.ProjectID))
-	return ti.discoverAndInstallTypings(request)
+	typingsFiles, err := ti.discoverAndInstallTypings(request)
+	if err == nil {
+		slices.Sort(typingsFiles)
+	}
+	return typingsFiles, err
 }
 
 func (ti *TypingsInstaller) discoverAndInstallTypings(request *TypingsInstallRequest) ([]string, error) {

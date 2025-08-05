@@ -3,6 +3,7 @@ package project
 import (
 	"context"
 	"fmt"
+	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -550,12 +551,14 @@ func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {
 					s.logger.Log(fmt.Sprintf("ATA installation failed for project %s: %v", project.Name(), err))
 					s.logger.Log(logTree.String())
 				} else {
-					s.pendingATAChangesMu.Lock()
-					defer s.pendingATAChangesMu.Unlock()
-					s.pendingATAChanges[project.configFilePath] = &ATAStateChange{
-						TypingsInfo:  &typingsInfo,
-						TypingsFiles: typingsFiles,
-						Logs:         logTree,
+					if !slices.Equal(typingsFiles, project.typingsFiles) {
+						s.pendingATAChangesMu.Lock()
+						defer s.pendingATAChangesMu.Unlock()
+						s.pendingATAChanges[project.configFilePath] = &ATAStateChange{
+							TypingsInfo:  &typingsInfo,
+							TypingsFiles: typingsFiles,
+							Logs:         logTree,
+						}
 					}
 				}
 			})
