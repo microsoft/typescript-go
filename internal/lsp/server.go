@@ -507,6 +507,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerRequestHandler(handlers, lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
 	registerRequestHandler(handlers, lsproto.TextDocumentDocumentSymbolInfo, (*Server).handleDocumentSymbol)
 	registerRequestHandler(handlers, lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
+	registerRequestHandler(handlers, lsproto.TextDocumentFoldingRangeInfo, (*Server).handleFoldingRange)
 
 	return handlers
 })
@@ -628,9 +629,11 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			DocumentSymbolProvider: &lsproto.BooleanOrDocumentSymbolOptions{
 				Boolean: ptrTo(true),
 			},
+			FoldingRangeProvider: &lsproto.BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions{
+				Boolean: ptrTo(true),
+			},
 		},
-	})
-}
+	}
 
 	return response, nil
 }
@@ -717,18 +720,13 @@ func (s *Server) handleSignatureHelp(ctx context.Context, params *lsproto.Signat
 		s.initializeParams.Capabilities.TextDocument.SignatureHelp,
 		&ls.UserPreferences{},
 	)
-	s.sendResult(req.ID, signatureHelp)
-	return nil
 }
 
-func (s *Server) handleFoldingRange(ctx context.Context, req *lsproto.RequestMessage) error {
-	params := req.Params.(*lsproto.FoldingRangeParams)
+func (s *Server) handleFoldingRange(ctx context.Context, params *lsproto.FoldingRangeParams) (lsproto.FoldingRangeResponse, error) {
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
 	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
-	foldingRanges := languageService.ProvideFoldingRange(ctx, params.TextDocument.Uri)
-	s.sendResult(req.ID, foldingRanges)
-	return nil
+	return languageService.ProvideFoldingRange(ctx, params.TextDocument.Uri)
 }
 
 func (s *Server) handleDefinition(ctx context.Context, params *lsproto.DefinitionParams) (lsproto.DefinitionResponse, error) {

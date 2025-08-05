@@ -21,9 +21,10 @@ func runFoldingRangeTest(t *testing.T, input string) {
 	})
 	defer done()
 
-	foldingRanges := service.ProvideFoldingRange(ctx, ls.FileNameToDocumentURI("/file1.ts"))
-	if len(foldingRanges) != len(markerPositions) {
-		t.Fatalf("Expected %d folding ranges, got %d", len(markerPositions), len(foldingRanges))
+	foldingRanges, _ := service.ProvideFoldingRange(ctx, ls.FileNameToDocumentURI("/file1.ts"))
+	ranges := *foldingRanges.FoldingRanges
+	if len(ranges) != len(markerPositions) {
+		t.Fatalf("Expected %d folding ranges, got %d", len(markerPositions), len(ranges))
 	}
 	slices.SortFunc(markerPositions, func(a, b *fourslash.RangeMarker) int {
 		if a.LSRange.Start.Line != b.LSRange.Start.Line {
@@ -36,10 +37,10 @@ func runFoldingRangeTest(t *testing.T, input string) {
 		return cmp.Compare(a.LSRange.End.Character, b.LSRange.End.Character)
 	})
 	for i, marker := range markerPositions {
-		assert.DeepEqual(t, marker.LSRange.Start.Line, foldingRanges[i].StartLine)
-		assert.DeepEqual(t, marker.LSRange.End.Line, foldingRanges[i].EndLine)
-		assert.DeepEqual(t, marker.LSRange.Start.Character, *foldingRanges[i].StartCharacter)
-		assert.DeepEqual(t, marker.LSRange.End.Character, *foldingRanges[i].EndCharacter)
+		assert.DeepEqual(t, marker.LSRange.Start.Line, ranges[i].StartLine)
+		assert.DeepEqual(t, marker.LSRange.End.Line, ranges[i].EndLine)
+		assert.DeepEqual(t, marker.LSRange.Start.Character, *ranges[i].StartCharacter)
+		assert.DeepEqual(t, marker.LSRange.End.Character, *ranges[i].EndCharacter)
 	}
 }
 

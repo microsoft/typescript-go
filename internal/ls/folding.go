@@ -15,7 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
-func (l *LanguageService) ProvideFoldingRange(ctx context.Context, documentURI lsproto.DocumentUri) []*lsproto.FoldingRange {
+func (l *LanguageService) ProvideFoldingRange(ctx context.Context, documentURI lsproto.DocumentUri) (lsproto.FoldingRangeResponse, error) {
 	_, sourceFile := l.getProgramAndFile(documentURI)
 	res := l.addNodeOutliningSpans(sourceFile)
 	res = append(res, l.addRegionOutliningSpans(sourceFile)...)
@@ -34,7 +34,7 @@ func (l *LanguageService) ProvideFoldingRange(ctx context.Context, documentURI l
 		}
 		return 0
 	})
-	return res
+	return lsproto.FoldingRangesOrNull{FoldingRanges: &res}, nil
 }
 
 func (l *LanguageService) addNodeOutliningSpans(sourceFile *ast.SourceFile) []*lsproto.FoldingRange {
@@ -83,7 +83,7 @@ func (l *LanguageService) addRegionOutliningSpans(sourceFile *ast.SourceFile) []
 		lineEnd := scanner.GetLineEndOfPosition(sourceFile, int(currentLineStart))
 		lineText := sourceFile.Text()[currentLineStart:lineEnd]
 		result := parseRegionDelimiter(lineText)
-		if result == nil || isInComment(sourceFile, int(currentLineStart), nil) != nil {
+		if result == nil || isInComment(sourceFile, int(currentLineStart), astnav.GetTokenAtPosition(sourceFile, int(currentLineStart))) != nil {
 			continue
 		}
 
