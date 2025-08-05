@@ -2,6 +2,7 @@ package core_test
 
 import (
 	"sort"
+	"sync"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -37,8 +38,11 @@ func TestBreadthFirstSearchParallel(t *testing.T) {
 
 		t.Run("visit all nodes", func(t *testing.T) {
 			t.Parallel()
+			var mu sync.Mutex
 			var visitedNodes []string
 			result := core.BreadthFirstSearchParallel("A", children, func(node string) (bool, bool) {
+				mu.Lock()
+				defer mu.Unlock()
 				visitedNodes = append(visitedNodes, node)
 				return false, false // Never stop early
 			})
