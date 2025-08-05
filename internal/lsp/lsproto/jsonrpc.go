@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/microsoft/typescript-go/internal/json"
+	"github.com/go-json-experiment/json"
+	"github.com/go-json-experiment/json/jsontext"
 )
 
 type JSONRPCVersion struct{}
@@ -100,12 +101,12 @@ func (m *Message) AsResponse() *ResponseMessage {
 
 func (m *Message) UnmarshalJSON(data []byte) error {
 	var raw struct {
-		JSONRPC JSONRPCVersion  `json:"jsonrpc"`
-		Method  Method          `json:"method"`
-		ID      *ID             `json:"id,omitzero"`
-		Params  json.RawMessage `json:"params"`
-		Result  any             `json:"result,omitzero"`
-		Error   *ResponseError  `json:"error,omitzero"`
+		JSONRPC JSONRPCVersion `json:"jsonrpc"`
+		Method  Method         `json:"method"`
+		ID      *ID            `json:"id,omitzero"`
+		Params  jsontext.Value `json:"params"`
+		Result  any            `json:"result,omitzero"`
+		Error   *ResponseError `json:"error,omitzero"`
 	}
 	if err := json.Unmarshal(data, &raw); err != nil {
 		return fmt.Errorf("%w: %w", ErrInvalidRequest, err)
@@ -182,10 +183,10 @@ func (r *RequestMessage) Message() *Message {
 
 func (r *RequestMessage) UnmarshalJSON(data []byte) error {
 	var raw struct {
-		JSONRPC JSONRPCVersion  `json:"jsonrpc"`
-		ID      *ID             `json:"id"`
-		Method  Method          `json:"method"`
-		Params  json.RawMessage `json:"params"`
+		JSONRPC JSONRPCVersion `json:"jsonrpc"`
+		ID      *ID            `json:"id"`
+		Method  Method         `json:"method"`
+		Params  jsontext.Value `json:"params"`
 	}
 	if err := json.Unmarshal(data, &raw); err != nil {
 		return fmt.Errorf("%w: %w", ErrInvalidRequest, err)
