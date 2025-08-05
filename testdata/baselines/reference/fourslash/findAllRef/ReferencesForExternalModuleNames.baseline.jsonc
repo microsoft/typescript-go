@@ -1,4 +1,9 @@
 // === findAllReferences ===
+// === /referencesForGlobals_1.ts ===
+
+// /*FIND ALL REFS*/declare module "foo" {
+//     var f: number;
+// }
 
 
 
@@ -11,9 +16,17 @@
 // }
 
 
+// === /referencesForGlobals_2.ts ===
+
+// import f = require("[|foo|]");
+
+
 
 
 // === findAllReferences ===
+// === /referencesForGlobals_2.ts ===
+
+// /*FIND ALL REFS*/import f = require("foo");
 
 
 

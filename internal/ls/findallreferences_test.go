@@ -32,11 +32,14 @@ func runFindReferencesTest(t *testing.T, input string, expectedLocations map[str
 			t.Fatalf("No marker found for '%s'", requestMarkerName)
 		}
 
-		referencesResult := service.TestProvideReferences(marker.FileName(), marker.Position)
+		referencesResp, err := service.TestProvideReferences(marker.FileName(), marker.Position)
+		assert.NilError(t, err, "Failed to get references for marker '%s'", requestMarkerName)
 		libReference := 0
 
+		referencesResult := *referencesResp.Locations
+
 		for _, loc := range referencesResult {
-			if name, ok := allExpectedLocations[*loc]; ok {
+			if name, ok := allExpectedLocations[loc]; ok {
 				// check if returned ref location is in this request's expected set
 				assert.Assert(t, expectedSet.Has(name), "Reference to '%s' not expected when find all references requested at %s", name, requestMarkerName)
 			} else if strings.Contains(string(loc.Uri), "//bundled") && strings.Contains(string(loc.Uri), "//libs") {

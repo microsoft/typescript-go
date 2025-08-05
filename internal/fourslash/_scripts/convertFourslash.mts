@@ -10,7 +10,7 @@ const stradaFourslashPath = path.resolve(import.meta.dirname, "../", "../", "../
 let inputFileSet: Set<string> | undefined;
 
 const failingTestsPath = path.join(import.meta.dirname, "failingTests.txt");
-const helperFilePath = path.join(import.meta.dirname, "../", "tests", "util_test.go");
+const manualTestsPath = path.join(import.meta.dirname, "manualTests.txt");
 
 const outputDir = path.join(import.meta.dirname, "../", "tests", "gen");
 
@@ -19,6 +19,14 @@ const unparsedFiles: string[] = [];
 function getFailingTests(): Set<string> {
     const failingTestsList = fs.readFileSync(failingTestsPath, "utf-8").split("\n").map(line => line.trim().substring(4)).filter(line => line.length > 0);
     return new Set(failingTestsList);
+}
+
+function getManualTests(): Set<string> {
+    if (!fs.existsSync(manualTestsPath)) {
+        return new Set();
+    }
+    const manualTestsList = fs.readFileSync(manualTestsPath, "utf-8").split("\n").map(line => line.trim()).filter(line => line.length > 0);
+    return new Set(manualTestsList);
 }
 
 export function main() {
@@ -35,14 +43,13 @@ export function main() {
     fs.rmSync(outputDir, { recursive: true, force: true });
     fs.mkdirSync(outputDir, { recursive: true });
 
-    generateHelperFile();
-    parseTypeScriptFiles(getFailingTests(), stradaFourslashPath);
+    parseTypeScriptFiles(getFailingTests(), getManualTests(), stradaFourslashPath);
     console.log(unparsedFiles.join("\n"));
     const gofmt = which.sync("go");
     cp.execFileSync(gofmt, ["tool", "mvdan.cc/gofumpt", "-lang=go1.24", "-w", outputDir]);
 }
 
-function parseTypeScriptFiles(failingTests: Set<string>, folder: string): void {
+function parseTypeScriptFiles(failingTests: Set<string>, manualTests: Set<string>, folder: string): void {
     const files = fs.readdirSync(folder);
 
     files.forEach(file => {
@@ -53,9 +60,9 @@ function parseTypeScriptFiles(failingTests: Set<string>, folder: string): void {
         }
 
         if (stat.isDirectory()) {
-            parseTypeScriptFiles(failingTests, filePath);
+            parseTypeScriptFiles(failingTests, manualTests, filePath);
         }
-        else if (file.endsWith(".ts")) {
+        else if (file.endsWith(".ts") && !manualTests.has(file.slice(0, -3))) {
             const content = fs.readFileSync(filePath, "utf-8");
             const test = parseFileContent(file, content);
             if (test) {
@@ -137,8 +144,16 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
         }
         const namespace = callExpression.expression.expression;
         const func = callExpression.expression.name;
-        if (!ts.isIdentifier(namespace) || !ts.isIdentifier(func)) {
+        if (!(ts.isIdentifier(namespace) || namespace.getText() === "verify.not") || !ts.isIdentifier(func)) {
             console.error(`Expected identifiers for namespace and function, got ${namespace.getText()} and ${func.getText()}`);
+            return undefined;
+        }
+        if (!ts.isIdentifier(namespace)) {
+            switch (func.text) {
+                case "quickInfoExists":
+                    return parseQuickInfoArgs("notQuickInfoExists", callExpression.arguments);
+            }
+            console.error(`Unrecognized fourslash statement: ${statement.getText()}`);
             return undefined;
         }
         // `verify.(...)`
@@ -147,9 +162,26 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                 case "completions":
                     // `verify.completions(...)`
                     return parseVerifyCompletionsArgs(callExpression.arguments);
+                case "quickInfoAt":
+                case "quickInfoExists":
+                case "quickInfoIs":
+                case "quickInfos":
+                    // `verify.quickInfo...(...)`
+                    return parseQuickInfoArgs(func.text, callExpression.arguments);
                 case "baselineFindAllReferences":
                     // `verify.baselineFindAllReferences(...)`
                     return [parseBaselineFindAllReferencesArgs(callExpression.arguments)];
+                case "baselineQuickInfo":
+                    return [parseBaselineQuickInfo(callExpression.arguments)];
+                case "baselineSignatureHelp":
+                    return [parseBaselineSignatureHelp(callExpression.arguments)];
+                case "baselineGoToDefinition":
+                case "baselineGetDefinitionAtPosition":
+                    // Both of these take the same arguments, but differ in that...
+                    //  - `verify.baselineGoToDefinition(...)` called getDefinitionAndBoundSpan
+                    //  - `verify.baselineGetDefinitionAtPosition(...)` called getDefinitionAtPosition
+                    // LSP doesn't have two separate commands though. It's unclear how we would model bound spans though.
+                    return [parseBaselineGoToDefinitionArgs(callExpression.arguments)];
             }
         }
         // `goTo....`
@@ -310,25 +342,25 @@ function parseVerifyCompletionsArgs(args: readonly ts.Expression[]): VerifyCompl
 }
 
 const completionConstants = new Map([
-    ["completion.globals", "completionGlobals"],
-    ["completion.globalTypes", "completionGlobalTypes"],
-    ["completion.classElementKeywords", "completionClassElementKeywords"],
-    ["completion.classElementInJsKeywords", "completionClassElementInJSKeywords"],
-    ["completion.constructorParameterKeywords", "completionConstructorParameterKeywords"],
-    ["completion.functionMembersWithPrototype", "completionFunctionMembersWithPrototype"],
-    ["completion.functionMembers", "completionFunctionMembers"],
-    ["completion.typeKeywords", "completionTypeKeywords"],
-    ["completion.undefinedVarEntry", "completionUndefinedVarItem"],
-    ["completion.typeAssertionKeywords", "completionTypeAssertionKeywords"],
+    ["completion.globals", "CompletionGlobals"],
+    ["completion.globalTypes", "CompletionGlobalTypes"],
+    ["completion.classElementKeywords", "CompletionClassElementKeywords"],
+    ["completion.classElementInJsKeywords", "CompletionClassElementInJSKeywords"],
+    ["completion.constructorParameterKeywords", "CompletionConstructorParameterKeywords"],
+    ["completion.functionMembersWithPrototype", "CompletionFunctionMembersWithPrototype"],
+    ["completion.functionMembers", "CompletionFunctionMembers"],
+    ["completion.typeKeywords", "CompletionTypeKeywords"],
+    ["completion.undefinedVarEntry", "CompletionUndefinedVarItem"],
+    ["completion.typeAssertionKeywords", "CompletionTypeAssertionKeywords"],
 ]);
 
 const completionPlus = new Map([
-    ["completion.globalsPlus", "completionGlobalsPlus"],
-    ["completion.globalTypesPlus", "completionGlobalTypesPlus"],
-    ["completion.functionMembersPlus", "completionFunctionMembersPlus"],
-    ["completion.functionMembersWithPrototypePlus", "completionFunctionMembersWithPrototypePlus"],
-    ["completion.globalsInJsPlus", "completionGlobalsInJSPlus"],
-    ["completion.typeKeywordsPlus", "completionTypeKeywordsPlus"],
+    ["completion.globalsPlus", "CompletionGlobalsPlus"],
+    ["completion.globalTypesPlus", "CompletionGlobalTypesPlus"],
+    ["completion.functionMembersPlus", "CompletionFunctionMembersPlus"],
+    ["completion.functionMembersWithPrototypePlus", "CompletionFunctionMembersWithPrototypePlus"],
+    ["completion.globalsInJsPlus", "CompletionGlobalsInJSPlus"],
+    ["completion.typeKeywordsPlus", "CompletionTypeKeywordsPlus"],
 ]);
 
 function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | undefined {
@@ -551,7 +583,7 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
                     if (!result) {
                         return undefined;
                     }
-                    itemProps.push(`SortText: ptrTo(string(${result})),`);
+                    itemProps.push(`SortText: PtrTo(string(${result})),`);
                     if (result === "ls.SortTextOptionalMember") {
                         isOptional = true;
                     }
@@ -579,7 +611,7 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
                     break;
                 case "isRecommended":
                     if (init.kind === ts.SyntaxKind.TrueKeyword) {
-                        itemProps.push(`Preselect: ptrTo(true),`);
+                        itemProps.push(`Preselect: PtrTo(true),`);
                     }
                     break;
                 case "kind":
@@ -587,7 +619,7 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
                     if (!kind) {
                         return undefined;
                     }
-                    itemProps.push(`Kind: ptrTo(${kind}),`);
+                    itemProps.push(`Kind: PtrTo(${kind}),`);
                     break;
                 case "kindModifiers":
                     const modifiers = parseKindModifiers(init);
@@ -598,7 +630,7 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
                     break;
                 case "text":
                     if (ts.isStringLiteralLike(init)) {
-                        itemProps.push(`Detail: ptrTo(${getGoStringLiteral(init.text)}),`);
+                        itemProps.push(`Detail: PtrTo(${getGoStringLiteral(init.text)}),`);
                     }
                     else {
                         console.error(`Expected string literal for text, got ${init.getText()}`);
@@ -638,8 +670,8 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
             filterText ??= name;
             name += "?";
         }
-        if (filterText) itemProps.unshift(`FilterText: ptrTo(${getGoStringLiteral(filterText)}),`);
-        if (insertText) itemProps.unshift(`InsertText: ptrTo(${getGoStringLiteral(insertText)}),`);
+        if (filterText) itemProps.unshift(`FilterText: PtrTo(${getGoStringLiteral(filterText)}),`);
+        if (insertText) itemProps.unshift(`InsertText: PtrTo(${getGoStringLiteral(insertText)}),`);
         itemProps.unshift(`Label: ${getGoStringLiteral(name!)},`);
         return `&lsproto.CompletionItem{\n${itemProps.join("\n")}}`;
     }
@@ -653,6 +685,9 @@ function parseBaselineFindAllReferencesArgs(args: readonly ts.Expression[]): Ver
         if (ts.isStringLiteral(arg)) {
             newArgs.push(getGoStringLiteral(arg.text));
         }
+        else if (arg.getText() === "...test.markerNames()") {
+            newArgs.push("f.MarkerNames()...");
+        }
         else if (arg.getText() === "...test.ranges()") {
             return {
                 kind: "verifyBaselineFindAllReferences",
@@ -665,6 +700,171 @@ function parseBaselineFindAllReferencesArgs(args: readonly ts.Expression[]): Ver
     return {
         kind: "verifyBaselineFindAllReferences",
         markers: newArgs,
+    };
+}
+
+function parseBaselineGoToDefinitionArgs(args: readonly ts.Expression[]): VerifyBaselineGoToDefinitionCmd {
+    const newArgs = [];
+    for (const arg of args) {
+        if (ts.isStringLiteral(arg)) {
+            newArgs.push(getGoStringLiteral(arg.text));
+        }
+        else if (arg.getText() === "...test.markerNames()") {
+            newArgs.push("f.MarkerNames()...");
+        }
+        else if (arg.getText() === "...test.ranges()") {
+            return {
+                kind: "verifyBaselineGoToDefinition",
+                markers: [],
+                ranges: true,
+            };
+        }
+    }
+
+    return {
+        kind: "verifyBaselineGoToDefinition",
+        markers: newArgs,
+    };
+}
+
+function parseBaselineQuickInfo(args: ts.NodeArray<ts.Expression>): Cmd {
+    if (args.length !== 0) {
+        // All calls are currently empty!
+        throw new Error("Expected no arguments in verify.baselineQuickInfo");
+    }
+    return {
+        kind: "verifyBaselineQuickInfo",
+    };
+}
+
+function parseQuickInfoArgs(funcName: string, args: readonly ts.Expression[]): VerifyQuickInfoCmd[] | undefined {
+    // We currently don't support 'expectedTags'.
+    switch (funcName) {
+        case "quickInfoAt": {
+            if (args.length < 1 || args.length > 3) {
+                console.error(`Expected 1 or 2 arguments in quickInfoIs, got ${args.map(arg => arg.getText()).join(", ")}`);
+                return undefined;
+            }
+            if (!ts.isStringLiteralLike(args[0])) {
+                console.error(`Expected string literal for first argument in quickInfoAt, got ${args[0].getText()}`);
+                return undefined;
+            }
+            const marker = getGoStringLiteral(args[0].text);
+            let text: string | undefined;
+            if (args[1]) {
+                if (!ts.isStringLiteralLike(args[1])) {
+                    console.error(`Expected string literal for second argument in quickInfoAt, got ${args[1].getText()}`);
+                    return undefined;
+                }
+                text = getGoStringLiteral(args[1].text);
+            }
+            let docs: string | undefined;
+            if (args[2]) {
+                if (!ts.isStringLiteralLike(args[2]) && args[2].getText() !== "undefined") {
+                    console.error(`Expected string literal or undefined for third argument in quickInfoAt, got ${args[2].getText()}`);
+                    return undefined;
+                }
+                if (ts.isStringLiteralLike(args[2])) {
+                    docs = getGoStringLiteral(args[1].text);
+                }
+            }
+            return [{
+                kind: "quickInfoAt",
+                marker,
+                text,
+                docs,
+            }];
+        }
+        case "quickInfos": {
+            const cmds: VerifyQuickInfoCmd[] = [];
+            if (args.length !== 1 || !ts.isObjectLiteralExpression(args[0])) {
+                console.error(`Expected a single object literal argument in quickInfos, got ${args.map(arg => arg.getText()).join(", ")}`);
+                return undefined;
+            }
+            for (const prop of args[0].properties) {
+                if (!ts.isPropertyAssignment(prop)) {
+                    console.error(`Expected property assignment in quickInfos, got ${prop.getText()}`);
+                    return undefined;
+                }
+                if (!(ts.isIdentifier(prop.name) || ts.isStringLiteralLike(prop.name) || ts.isNumericLiteral(prop.name))) {
+                    console.error(`Expected identifier or literal for property name in quickInfos, got ${prop.name.getText()}`);
+                    return undefined;
+                }
+                const marker = getGoStringLiteral(prop.name.text);
+                let text: string | undefined;
+                let docs: string | undefined;
+                if (ts.isArrayLiteralExpression(prop.initializer)) {
+                    if (prop.initializer.elements.length !== 2) {
+                        console.error(`Expected two elements in array literal for quickInfos property, got ${prop.initializer.getText()}`);
+                        return undefined;
+                    }
+                    if (!ts.isStringLiteralLike(prop.initializer.elements[0]) || !ts.isStringLiteralLike(prop.initializer.elements[1])) {
+                        console.error(`Expected string literals in array literal for quickInfos property, got ${prop.initializer.getText()}`);
+                        return undefined;
+                    }
+                    text = getGoStringLiteral(prop.initializer.elements[0].text);
+                    docs = getGoStringLiteral(prop.initializer.elements[1].text);
+                }
+                else if (ts.isStringLiteralLike(prop.initializer)) {
+                    text = getGoStringLiteral(prop.initializer.text);
+                }
+                else {
+                    console.error(`Expected string literal or array literal for quickInfos property, got ${prop.initializer.getText()}`);
+                    return undefined;
+                }
+                cmds.push({
+                    kind: "quickInfoAt",
+                    marker,
+                    text,
+                    docs,
+                });
+            }
+            return cmds;
+        }
+        case "quickInfoExists":
+            return [{
+                kind: "quickInfoExists",
+            }];
+        case "notQuickInfoExists":
+            return [{
+                kind: "notQuickInfoExists",
+            }];
+        case "quickInfoIs": {
+            if (args.length < 1 || args.length > 2) {
+                console.error(`Expected 1 or 2 arguments in quickInfoIs, got ${args.map(arg => arg.getText()).join(", ")}`);
+                return undefined;
+            }
+            if (!ts.isStringLiteralLike(args[0])) {
+                console.error(`Expected string literal for first argument in quickInfoIs, got ${args[0].getText()}`);
+                return undefined;
+            }
+            const text = getGoStringLiteral(args[0].text);
+            let docs: string | undefined;
+            if (args[1]) {
+                if (!ts.isStringLiteralLike(args[1])) {
+                    console.error(`Expected string literal for second argument in quickInfoIs, got ${args[1].getText()}`);
+                    return undefined;
+                }
+                docs = getGoStringLiteral(args[1].text);
+            }
+            return [{
+                kind: "quickInfoIs",
+                text,
+                docs,
+            }];
+        }
+    }
+    console.error(`Unrecognized quick info function: ${funcName}`);
+    return undefined;
+}
+
+function parseBaselineSignatureHelp(args: ts.NodeArray<ts.Expression>): Cmd {
+    if (args.length !== 0) {
+        // All calls are currently empty!
+        throw new Error("Expected no arguments in verify.baselineSignatureHelp");
+    }
+    return {
+        kind: "verifyBaselineSignatureHelp",
     };
 }
 
@@ -809,6 +1009,20 @@ interface VerifyBaselineFindAllReferencesCmd {
     ranges?: boolean;
 }
 
+interface VerifyBaselineGoToDefinitionCmd {
+    kind: "verifyBaselineGoToDefinition";
+    markers: string[];
+    ranges?: boolean;
+}
+
+interface VerifyBaselineQuickInfoCmd {
+    kind: "verifyBaselineQuickInfo";
+}
+
+interface VerifyBaselineSignatureHelpCmd {
+    kind: "verifyBaselineSignatureHelp";
+}
+
 interface GoToCmd {
     kind: "goTo";
     // !!! `selectRange` and `rangeStart` require parsing variables and `test.ranges()[n]`
@@ -821,7 +1035,22 @@ interface EditCmd {
     goStatement: string;
 }
 
-type Cmd = VerifyCompletionsCmd | VerifyBaselineFindAllReferencesCmd | GoToCmd | EditCmd;
+interface VerifyQuickInfoCmd {
+    kind: "quickInfoIs" | "quickInfoAt" | "quickInfoExists" | "notQuickInfoExists";
+    marker?: string;
+    text?: string;
+    docs?: string;
+}
+
+type Cmd =
+    | VerifyCompletionsCmd
+    | VerifyBaselineFindAllReferencesCmd
+    | VerifyBaselineGoToDefinitionCmd
+    | VerifyBaselineQuickInfoCmd
+    | VerifyBaselineSignatureHelpCmd
+    | GoToCmd
+    | EditCmd
+    | VerifyQuickInfoCmd;
 
 function generateVerifyCompletions({ marker, args, isNewIdentifierLocation }: VerifyCompletionsCmd): string {
     let expectedList: string;
@@ -835,12 +1064,12 @@ function generateVerifyCompletions({ marker, args, isNewIdentifierLocation }: Ve
         if (args?.exact) expected.push(`Exact: ${args.exact},`);
         if (args?.unsorted) expected.push(`Unsorted: ${args.unsorted},`);
         // !!! isIncomplete
-        const commitCharacters = isNewIdentifierLocation ? "[]string{}" : "defaultCommitCharacters";
+        const commitCharacters = isNewIdentifierLocation ? "[]string{}" : "DefaultCommitCharacters";
         expectedList = `&fourslash.CompletionsExpectedList{
     IsIncomplete: false,
     ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
         CommitCharacters: &${commitCharacters},
-        EditRange: ignored,
+        EditRange: Ignored,
     },
     Items: &fourslash.CompletionsExpectedItems{
         ${expected.join("\n")}
@@ -857,23 +1086,56 @@ function generateBaselineFindAllReferences({ markers, ranges }: VerifyBaselineFi
     return `f.VerifyBaselineFindAllReferences(t, ${markers.join(", ")})`;
 }
 
+function generateBaselineGoToDefinition({ markers, ranges }: VerifyBaselineGoToDefinitionCmd): string {
+    if (ranges || markers.length === 0) {
+        return `f.VerifyBaselineGoToDefinition(t)`;
+    }
+    return `f.VerifyBaselineGoToDefinition(t, ${markers.join(", ")})`;
+}
+
 function generateGoToCommand({ funcName, args }: GoToCmd): string {
     const funcNameCapitalized = funcName.charAt(0).toUpperCase() + funcName.slice(1);
     return `f.GoTo${funcNameCapitalized}(t, ${args.join(", ")})`;
 }
 
+function generateQuickInfoCommand({ kind, marker, text, docs }: VerifyQuickInfoCmd): string {
+    switch (kind) {
+        case "quickInfoIs":
+            return `f.VerifyQuickInfoIs(t, ${text!}, ${docs ? docs : `""`})`;
+        case "quickInfoAt":
+            return `f.VerifyQuickInfoAt(t, ${marker!}, ${text ? text : `""`}, ${docs ? docs : `""`})`;
+        case "quickInfoExists":
+            return `f.VerifyQuickInfoExists(t)`;
+        case "notQuickInfoExists":
+            return `f.VerifyNotQuickInfoExists(t)`;
+    }
+}
+
 function generateCmd(cmd: Cmd): string {
     switch (cmd.kind) {
         case "verifyCompletions":
-            return generateVerifyCompletions(cmd as VerifyCompletionsCmd);
+            return generateVerifyCompletions(cmd);
         case "verifyBaselineFindAllReferences":
-            return generateBaselineFindAllReferences(cmd as VerifyBaselineFindAllReferencesCmd);
+            return generateBaselineFindAllReferences(cmd);
+        case "verifyBaselineGoToDefinition":
+            return generateBaselineGoToDefinition(cmd);
+        case "verifyBaselineQuickInfo":
+            // Quick Info -> Hover
+            return `f.VerifyBaselineHover(t)`;
+        case "verifyBaselineSignatureHelp":
+            return `f.VerifyBaselineSignatureHelp(t)`;
         case "goTo":
-            return generateGoToCommand(cmd as GoToCmd);
+            return generateGoToCommand(cmd);
         case "edit":
             return cmd.goStatement;
+        case "quickInfoAt":
+        case "quickInfoIs":
+        case "quickInfoExists":
+        case "notQuickInfoExists":
+            return generateQuickInfoCommand(cmd);
         default:
-            throw new Error(`Unknown command kind: ${cmd}`);
+            let neverCommand: never = cmd;
+            throw new Error(`Unknown command kind: ${neverCommand as Cmd["kind"]}`);
     }
 }
 
@@ -884,7 +1146,7 @@ interface GoTest {
 }
 
 function generateGoTest(failingTests: Set<string>, test: GoTest): string {
-    const testName = test.name[0].toUpperCase() + test.name.substring(1);
+    const testName = (test.name[0].toUpperCase() + test.name.substring(1)).replaceAll("-", "_");
     const content = test.content;
     const commands = test.commands.map(cmd => generateCmd(cmd)).join("\n");
     const imports = [`"github.com/microsoft/typescript-go/internal/fourslash"`];
@@ -894,6 +1156,9 @@ function generateGoTest(failingTests: Set<string>, test: GoTest): string {
     }
     if (commands.includes("lsproto.")) {
         imports.push(`"github.com/microsoft/typescript-go/internal/lsp/lsproto"`);
+    }
+    if (usesHelper(commands)) {
+        imports.push(`. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"`);
     }
     imports.push(`"github.com/microsoft/typescript-go/internal/testutil"`);
     const template = `package fourslash_test
@@ -915,8 +1180,20 @@ func Test${testName}(t *testing.T) {
     return template;
 }
 
-function generateHelperFile() {
-    fs.copyFileSync(helperFilePath, path.join(outputDir, "util_test.go"));
+function usesHelper(goTxt: string): boolean {
+    for (const [_, constant] of completionConstants) {
+        if (goTxt.includes(constant)) {
+            return true;
+        }
+    }
+    for (const [_, constant] of completionPlus) {
+        if (goTxt.includes(constant)) {
+            return true;
+        }
+    }
+    return goTxt.includes("Ignored")
+        || goTxt.includes("DefaultCommitCharacters")
+        || goTxt.includes("PtrTo");
 }
 
 if (url.fileURLToPath(import.meta.url) == process.argv[1]) {

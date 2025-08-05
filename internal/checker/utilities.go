@@ -23,7 +23,7 @@ func NewDiagnosticForNode(node *ast.Node, message *diagnostics.Message, args ...
 	var loc core.TextRange
 	if node != nil {
 		file = ast.GetSourceFileOfNode(node)
-		loc = binder.GetErrorRangeForNode(file, node)
+		loc = scanner.GetErrorRangeForNode(file, node)
 	}
 	return ast.NewDiagnostic(file, loc, message, args...)
 }
@@ -1460,8 +1460,8 @@ func forEachYieldExpression(body *ast.Node, visitor func(expr *ast.Node)) {
 	traverse(body)
 }
 
-func SkipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions, host Program) bool {
-	return options.NoCheck.IsTrue() ||
+func SkipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions, host Program, ignoreNoCheck bool) bool {
+	return (!ignoreNoCheck && options.NoCheck.IsTrue()) ||
 		options.SkipLibCheck.IsTrue() && sourceFile.IsDeclarationFile ||
 		options.SkipDefaultLibCheck.IsTrue() && host.IsSourceFileDefaultLibrary(sourceFile.Path()) ||
 		host.IsSourceFromProjectReference(sourceFile.Path()) ||
@@ -1841,9 +1841,6 @@ func getAnyImportSyntax(node *ast.Node) *ast.Node {
 		importNode = node.Parent.Parent.Parent
 	default:
 		return nil
-	}
-	if importNode.Kind == ast.KindJSDocImportTag {
-		return importNode.AsJSDocImportTag().JSImportDeclaration.AsNode()
 	}
 	return importNode
 }

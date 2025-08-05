@@ -1,12 +1,12 @@
 package project
 
 import (
-	"encoding/json"
 	"fmt"
 	"maps"
 	"slices"
 	"unicode/utf8"
 
+	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/packagejson"

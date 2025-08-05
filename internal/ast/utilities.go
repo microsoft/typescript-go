@@ -867,17 +867,6 @@ func WalkUpParenthesizedTypes(node *TypeNode) *Node {
 	return node
 }
 
-func GetEffectiveTypeParent(parent *Node) *Node {
-	if parent != nil && IsInJSFile(parent) {
-		if parent.Kind == KindJSDocTypeExpression && parent.AsJSDocTypeExpression().Host != nil {
-			parent = parent.AsJSDocTypeExpression().Host
-		} else if parent.Kind == KindJSDocTemplateTag && parent.AsJSDocTemplateTag().Host != nil {
-			parent = parent.AsJSDocTemplateTag().Host
-		}
-	}
-	return parent
-}
-
 // Walks up the parents of a node to find the containing SourceFile
 func GetSourceFileOfNode(node *Node) *SourceFile {
 	for node != nil {
@@ -1466,6 +1455,8 @@ func getAssignedName(node *Node) *Node {
 					}
 				}
 			}
+		case KindCommonJSExport:
+			return parent.AsCommonJSExport().Name()
 		case KindVariableDeclaration:
 			name := parent.AsVariableDeclaration().Name()
 			if IsIdentifier(name) {
@@ -1642,6 +1633,10 @@ func IsModuleAugmentationExternal(node *Node) bool {
 		return IsAmbientModule(grandParent) && IsSourceFile(grandParent.Parent) && !IsExternalModule(grandParent.Parent.AsSourceFile())
 	}
 	return false
+}
+
+func IsModuleWithStringLiteralName(node *Node) bool {
+	return IsModuleDeclaration(node) && node.Name().Kind == KindStringLiteral
 }
 
 func GetContainingClass(node *Node) *Node {
@@ -3286,6 +3281,7 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 			node.TypeParameterList(),
 			node.ParameterList(),
 			node.Type(),
+			node.AsMethodDeclaration().FullSignature,
 			node.Body(),
 		)
 	case KindConstructor:
@@ -3295,6 +3291,7 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 			node.TypeParameterList(),
 			node.ParameterList(),
 			node.Type(),
+			node.AsConstructorDeclaration().FullSignature,
 			node.Body(),
 		)
 	case KindGetAccessor:
@@ -3305,6 +3302,7 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 			node.TypeParameterList(),
 			node.ParameterList(),
 			node.Type(),
+			node.AsGetAccessorDeclaration().FullSignature,
 			node.Body(),
 		)
 	case KindSetAccessor:
@@ -3315,6 +3313,7 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 			node.TypeParameterList(),
 			node.ParameterList(),
 			node.Type(),
+			node.AsSetAccessorDeclaration().FullSignature,
 			node.Body(),
 		)
 	case KindIndexSignature:
@@ -3333,6 +3332,7 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 			node.TypeParameterList(),
 			node.ParameterList(),
 			node.Type(),
+			node.AsFunctionExpression().FullSignature,
 			node.Body(),
 		)
 	case KindArrowFunction:
@@ -3342,6 +3342,7 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 			node.TypeParameterList(),
 			node.ParameterList(),
 			node.Type(),
+			node.AsArrowFunction().FullSignature,
 			node.AsArrowFunction().EqualsGreaterThanToken,
 			node.Body(),
 		)
@@ -3369,6 +3370,7 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 			node.TypeParameterList(),
 			node.ParameterList(),
 			node.Type(),
+			node.AsFunctionDeclaration().FullSignature,
 			node.Body(),
 		)
 	case KindClassDeclaration:
