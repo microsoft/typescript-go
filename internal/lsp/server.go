@@ -566,9 +566,7 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 					OpenClose: ptrTo(true),
 					Change:    ptrTo(lsproto.TextDocumentSyncKindIncremental),
 					Save: &lsproto.BooleanOrSaveOptions{
-						SaveOptions: &lsproto.SaveOptions{
-							IncludeText: ptrTo(true),
-						},
+						Boolean: ptrTo(true),
 					},
 				},
 			},
