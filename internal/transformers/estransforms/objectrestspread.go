@@ -329,7 +329,7 @@ func (ch *objectRestSpreadTransformer) collectObjectRestAssignments(node *ast.No
 				// we usually don't want to emit a var declaration; however, in the presence
 				// of an initializer, we must emit that expression to preserve side effects.
 				if len(parameter.Name().AsBindingPattern().Elements.Nodes) > 0 {
-					declarations := ch.flattenDestructuringBinding(flattenLevelAll, parameter, ch.Factory().NewGeneratedNameForNode(parameter), false)
+					declarations := ch.flattenDestructuringBinding(flattenLevelAll, parameter, ch.Factory().NewGeneratedNameForNode(parameter), false, false)
 					if declarations != nil {
 						declarationList := ch.Factory().NewVariableDeclarationList(ast.NodeFlagsNone, ch.Factory().NewNodeList([]*ast.Node{}))
 						decls := []*ast.Node{declarations}
@@ -383,7 +383,7 @@ func (ch *objectRestSpreadTransformer) collectObjectRestAssignments(node *ast.No
 			}
 		} else if parameter.SubtreeFacts()&ast.SubtreeContainsObjectRestOrSpread != 0 {
 			containsPrecedingObjectRestOrSpread = true
-			declarations := ch.flattenDestructuringBinding(flattenLevelObjectRest, parameter, ch.Factory().NewGeneratedNameForNode(parameter), true)
+			declarations := ch.flattenDestructuringBinding(flattenLevelObjectRest, parameter, ch.Factory().NewGeneratedNameForNode(parameter), false, true)
 			if declarations != nil {
 				declarationList := ch.Factory().NewVariableDeclarationList(ast.NodeFlagsNone, ch.Factory().NewNodeList([]*ast.Node{}))
 				decls := []*ast.Node{declarations}
@@ -405,7 +405,7 @@ func (ch *objectRestSpreadTransformer) visitCatchClause(node *ast.CatchClause) *
 	if node.VariableDeclaration != nil && ast.IsBindingPattern(node.VariableDeclaration.Name()) && node.VariableDeclaration.Name().SubtreeFacts()&ast.SubtreeContainsObjectRestOrSpread != 0 {
 		name := ch.Factory().NewGeneratedNameForNode(node.VariableDeclaration.Name())
 		updatedDecl := ch.Factory().UpdateVariableDeclaration(node.VariableDeclaration.AsVariableDeclaration(), node.VariableDeclaration.Name(), nil, nil, name)
-		visitedBindings := ch.flattenDestructuringBinding(flattenLevelObjectRest, updatedDecl, nil, false)
+		visitedBindings := ch.flattenDestructuringBinding(flattenLevelObjectRest, updatedDecl, nil, false, false)
 		block := ch.Visitor().VisitNode(node.Block)
 		if visitedBindings != nil {
 			var decls []*ast.Node
@@ -462,13 +462,14 @@ func (ch *objectRestSpreadTransformer) visitVariableDeclarationWorker(node *ast.
 			node.AsNode(),
 			nil,
 			exported,
+			false,
 		)
 	}
 	return ch.Visitor().VisitEachChild(node.AsNode())
 }
 
-func (ch *objectRestSpreadTransformer) flattenDestructuringBinding(level flattenLevel, node *ast.Node, rvalue *ast.Node, skipInitializer bool) *ast.Node {
-	old := ch.enterFlattenContext(level, (*objectRestSpreadTransformer).emitBinding, (*objectRestSpreadTransformer).createArrayBindingPattern, (*objectRestSpreadTransformer).createObjectBindingPattern, (*objectRestSpreadTransformer).createArrayBindingElement, false)
+func (ch *objectRestSpreadTransformer) flattenDestructuringBinding(level flattenLevel, node *ast.Node, rvalue *ast.Node, hoist bool, skipInitializer bool) *ast.Node {
+	old := ch.enterFlattenContext(level, (*objectRestSpreadTransformer).emitBinding, (*objectRestSpreadTransformer).createArrayBindingPattern, (*objectRestSpreadTransformer).createObjectBindingPattern, (*objectRestSpreadTransformer).createArrayBindingElement, hoist)
 	defer ch.exitFlattenContext(old)
 
 	if ast.IsVariableDeclaration(node) {
