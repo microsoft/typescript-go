@@ -65,12 +65,15 @@ func DiscoverTypings(
 	}
 
 	// add typings for unresolved imports
-	modules := make([]string, 0, typingsInfo.UnresolvedImports.Len())
-	for module := range typingsInfo.UnresolvedImports.Keys() {
-		modules = append(modules, core.NonRelativeModuleNameForTypingCache(module))
+	var modules []string
+	if typingsInfo.UnresolvedImports != nil {
+		modules = make([]string, 0, typingsInfo.UnresolvedImports.Len())
+		for module := range typingsInfo.UnresolvedImports.Keys() {
+			modules = append(modules, core.NonRelativeModuleNameForTypingCache(module))
+		}
+		slices.Sort(modules)
+		modules = slices.Compact(modules)
 	}
-	slices.Sort(modules)
-	modules = slices.Compact(modules)
 	addInferredTypings(fs, logger, inferredTypings, modules, "Inferred typings from unresolved imports")
 
 	// Remove typings that the user has added to the exclude list
