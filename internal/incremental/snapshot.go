@@ -28,6 +28,15 @@ func (f *fileInfo) Signature() string                      { return f.signature 
 func (f *fileInfo) AffectsGlobalScope() bool               { return f.affectsGlobalScope }
 func (f *fileInfo) ImpliedNodeFormat() core.ResolutionMode { return f.impliedNodeFormat }
 
+func ComputeHash(text string, hashWithText bool) string {
+	hashBytes := xxh3.Hash128([]byte(text)).Bytes()
+	hash := hex.EncodeToString(hashBytes[:])
+	if hashWithText {
+		hash += "-" + text
+	}
+	return hash
+}
+
 type FileEmitKind uint32
 
 const (
@@ -295,10 +304,5 @@ func diagnosticToStringBuilder(diagnostic *ast.Diagnostic, file *ast.SourceFile,
 }
 
 func (s *snapshot) computeHash(text string) string {
-	hashBytes := xxh3.Hash128([]byte(text)).Bytes()
-	hash := hex.EncodeToString(hashBytes[:])
-	if s.hashWithText {
-		hash += "-" + text
-	}
-	return hash
+	return ComputeHash(text, s.hashWithText)
 }

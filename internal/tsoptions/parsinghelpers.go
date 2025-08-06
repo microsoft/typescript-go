@@ -612,7 +612,9 @@ func ConvertOptionToAbsolutePath(o string, v any, optionMap CommandLineOptionNam
 			}
 		}
 	} else if option.IsFilePath {
-		return tspath.GetNormalizedAbsolutePath(v.(string), cwd), true
+		if value, ok := v.(string); ok {
+			return tspath.GetNormalizedAbsolutePath(value, cwd), true
+		}
 	}
 	return nil, false
 }
