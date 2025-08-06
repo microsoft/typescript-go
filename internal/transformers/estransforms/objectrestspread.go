@@ -298,11 +298,11 @@ func (ch *objectRestSpreadTransformer) transformFunctionBody(node *ast.Node) *as
 			}
 		}
 	} else {
+		ret := ch.Factory().NewReturnStatement(body)
+		ret.Loc = body.Loc
 		list := ch.Factory().NewNodeList([]*ast.Node{})
 		list.Loc = body.Loc
 		body = ch.Factory().NewBlock(list, true)
-		ret := ch.Factory().NewReturnStatement(body)
-		ret.Loc = body.Loc
 		suffix = append(suffix, ret)
 	}
 
@@ -496,7 +496,9 @@ func (ch *objectRestSpreadTransformer) flattenDestructuringBinding(level flatten
 			expr,
 		)
 		decl.Loc = pending.location
-		ch.EmitContext().SetOriginal(decl, pending.original)
+		if pending.original != nil {
+			ch.EmitContext().SetOriginal(decl, pending.original)
+		}
 		decls = append(decls, decl)
 	}
 	if len(decls) == 1 {
