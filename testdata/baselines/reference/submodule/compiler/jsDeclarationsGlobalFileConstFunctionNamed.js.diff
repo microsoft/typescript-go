@@ -7,6 +7,8 @@
 -declare function SomeConstructor(): void;
 -declare class SomeConstructor {
 -    x: number;
+-}
+-declare function SomeConstructor2(): void;
 +declare const SomeConstructor: () => void;
 +declare const SomeConstructor2: {
 +    (): void;
@@ -20,10 +22,6 @@
 +    (): any;
 +    staticMember: string;
 +};
-+declare namespace SelfReference {
-+    const staticMember: "str";
- }
--declare function SomeConstructor2(): void;
  declare namespace SomeConstructor2 {
 -    let staticMember: string;
 +    const staticMember: "str";
@@ -37,34 +35,13 @@
 -    x: number;
 -}
 -declare function SelfReference(): SelfReference;
--declare namespace SelfReference {
++    const staticMember: "str";
++}
+ declare namespace SelfReference {
 -    let staticMember_2: string;
 -    export { staticMember_2 as staticMember };
 -}
 -declare class SelfReference {
 -    x: number;
--}
 +    const staticMember: "str";
-+}
-+
-+
-+!!!! File file.d.ts differs from original emit in noCheck emit
-+//// [file.d.ts]
-+--- Expected	The full check baseline
-++++ Actual	with noCheck set
-+@@= skipped --13, +-13 lines =@@
-+     (): any;
-+     staticMember: string;
-+ };
-+-declare namespace SelfReference {
-+-    const staticMember: "str";
-+-}
-+ declare namespace SomeConstructor2 {
-+     const staticMember: "str";
-+ }
-+ declare namespace SomeConstructor3 {
-++    const staticMember: "str";
-++}
-++declare namespace SelfReference {
-+     const staticMember: "str";
-+ }
+ }

@@ -2,12 +2,12 @@ package tsbaseline
 
 import (
 	"encoding/base64"
-	"encoding/json"
 	"net/url"
 	"slices"
 	"strings"
 	"testing"
 
+	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"

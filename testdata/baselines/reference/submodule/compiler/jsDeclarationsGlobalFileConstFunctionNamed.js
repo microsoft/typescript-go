@@ -37,34 +37,12 @@ declare const SelfReference: {
     (): any;
     staticMember: string;
 };
-declare namespace SelfReference {
-    const staticMember: "str";
-}
 declare namespace SomeConstructor2 {
     const staticMember: "str";
 }
 declare namespace SomeConstructor3 {
     const staticMember: "str";
 }
-
-
-!!!! File file.d.ts differs from original emit in noCheck emit
-//// [file.d.ts]
---- Expected	The full check baseline
-+++ Actual	with noCheck set
-@@ -11,12 +11,12 @@
-     (): any;
-     staticMember: string;
- };
--declare namespace SelfReference {
--    const staticMember: "str";
--}
- declare namespace SomeConstructor2 {
-     const staticMember: "str";
- }
- declare namespace SomeConstructor3 {
-+    const staticMember: "str";
-+}
-+declare namespace SelfReference {
-     const staticMember: "str";
- }
+declare namespace SelfReference {
+    const staticMember: "str";
+}

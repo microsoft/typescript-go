@@ -10,6 +10,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+	"github.com/go-json-experiment/json"
 	"github.com/google/go-cmp/cmp"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/bundled"
@@ -149,9 +150,10 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		scriptInfos[filePath] = newScriptInfo(filePath, file.Content)
 	}
 
-	compilerOptions := &core.CompilerOptions{}
+	compilerOptions := &core.CompilerOptions{
+		SkipDefaultLibCheck: core.TSTrue,
+	}
 	harnessutil.SetCompilerOptionsFromTestConfig(t, testData.GlobalOptions, compilerOptions)
-	compilerOptions.SkipDefaultLibCheck = core.TSTrue
 
 	inputReader, inputWriter := newLSPPipe()
 	outputReader, outputWriter := newLSPPipe()
@@ -202,7 +204,10 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	// !!! replace with a proper request *after initialize*
 	f.server.SetCompilerOptionsForInferredProjects(compilerOptions)
 	f.initialize(t, capabilities)
-	f.openFile(t, f.testData.Files[0].fileName)
+	for _, file := range testData.Files {
+		f.openFile(t, file.fileName)
+	}
+	f.activeFilename = f.testData.Files[0].fileName
 
 	t.Cleanup(func() {
 		inputWriter.Close()
@@ -223,11 +228,13 @@ func (f *FourslashTest) nextID() int32 {
 }
 
 func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCapabilities) {
-	params := &lsproto.InitializeParams{}
+	params := &lsproto.InitializeParams{
+		Locale: ptrTo("en-US"),
+	}
 	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
 	// !!! check for errors?
-	f.sendRequest(t, lsproto.MethodInitialize, params)
-	f.sendNotification(t, lsproto.MethodInitialized, &lsproto.InitializedParams{})
+	sendRequest(t, f, lsproto.InitializeInfo, params)
+	sendNotification(t, f, lsproto.InitializedInfo, &lsproto.InitializedParams{})
 }
 
 var (
@@ -263,26 +270,32 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	return &capabilitiesWithDefaults
 }
 
-func (f *FourslashTest) sendRequest(t *testing.T, method lsproto.Method, params any) *lsproto.Message {
+func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params) (*lsproto.Message, Resp, bool) {
 	id := f.nextID()
 	req := lsproto.NewRequestMessage(
-		method,
+		info.Method,
 		lsproto.NewID(lsproto.IntegerOrString{Integer: &id}),
 		params,
 	)
 	f.writeMsg(t, req.Message())
-	return f.readMsg(t)
+	resp := f.readMsg(t)
+	if resp == nil {
+		return nil, *new(Resp), false
+	}
+	result, ok := resp.AsResponse().Result.(Resp)
+	return resp, result, ok
 }
 
-func (f *FourslashTest) sendNotification(t *testing.T, method lsproto.Method, params any) {
+func sendNotification[Params any](t *testing.T, f *FourslashTest, info lsproto.NotificationInfo[Params], params Params) {
 	notification := lsproto.NewNotificationMessage(
-		method,
+		info.Method,
 		params,
 	)
 	f.writeMsg(t, notification.Message())
 }
 
 func (f *FourslashTest) writeMsg(t *testing.T, msg *lsproto.Message) {
+	assert.NilError(t, json.MarshalWrite(io.Discard, msg), "failed to encode message as JSON")
 	if err := f.in.Write(msg); err != nil {
 		t.Fatalf("failed to write message: %v", err)
 	}
@@ -294,6 +307,7 @@ func (f *FourslashTest) readMsg(t *testing.T) *lsproto.Message {
 	if err != nil {
 		t.Fatalf("failed to read message: %v", err)
 	}
+	assert.NilError(t, json.MarshalWrite(io.Discard, msg), "failed to encode message as JSON")
 	return msg
 }
 
@@ -410,6 +424,15 @@ func (f *FourslashTest) Markers() []*Marker {
 	return f.testData.Markers
 }
 
+func (f *FourslashTest) MarkerNames() []string {
+	return core.MapFiltered(f.testData.Markers, func(marker *Marker) (string, bool) {
+		if marker.Name == nil {
+			return "", false
+		}
+		return *marker.Name, true
+	})
+}
+
 func (f *FourslashTest) Ranges() []*RangeMarker {
 	return f.testData.Ranges
 }
@@ -426,22 +449,13 @@ func (f *FourslashTest) openFile(t *testing.T, filename string) {
 		t.Fatalf("File %s not found in test data", filename)
 	}
 	f.activeFilename = filename
-	f.sendNotification(t, lsproto.MethodTextDocumentDidOpen, &lsproto.DidOpenTextDocumentParams{
+	sendNotification(t, f, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
 		TextDocument: &lsproto.TextDocumentItem{
 			Uri:        ls.FileNameToDocumentURI(filename),
 			LanguageId: getLanguageKind(filename),
 			Text:       script.content,
 		},
 	})
-}
-
-func (f *FourslashTest) currentTextDocumentPositionParams() lsproto.TextDocumentPositionParams {
-	return lsproto.TextDocumentPositionParams{
-		TextDocument: lsproto.TextDocumentIdentifier{
-			Uri: ls.FileNameToDocumentURI(f.activeFilename),
-		},
-		Position: f.currentCaretPosition,
-	}
 }
 
 func getLanguageKind(filename string) lsproto.LanguageKind {
@@ -537,20 +551,20 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *Completi
 		prefix = fmt.Sprintf("At position (Ln %d, Col %d): ", f.currentCaretPosition.Line, f.currentCaretPosition.Character)
 	}
 	params := &lsproto.CompletionParams{
-		TextDocumentPositionParams: f.currentTextDocumentPositionParams(),
-		Context:                    &lsproto.CompletionContext{},
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: ls.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+		Context:  &lsproto.CompletionContext{},
 	}
-	resMsg := f.sendRequest(t, lsproto.MethodTextDocumentCompletion, params)
+	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentCompletionInfo, params)
 	if resMsg == nil {
 		t.Fatalf(prefix+"Nil response received for completion request", f.lastKnownMarkerName)
 	}
-	result := resMsg.AsResponse().Result
-	switch result := result.(type) {
-	case *lsproto.CompletionList:
-		f.verifyCompletionsResult(t, f.currentCaretPosition, result, expected, prefix)
-	default:
-		t.Fatalf(prefix+"Unexpected response type for completion request: %v", result)
+	if !resultOk {
+		t.Fatalf(prefix+"Unexpected response type for completion request: %T", resMsg.AsResponse().Result)
 	}
+	f.verifyCompletionsResult(t, f.currentCaretPosition, result.List, expected, prefix)
 }
 
 func (f *FourslashTest) verifyCompletionsResult(
@@ -728,15 +742,14 @@ var completionIgnoreOpts = cmp.FilterPath(
 
 func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual *lsproto.CompletionItem, expected *lsproto.CompletionItem) {
 	if expected.Detail != nil || expected.Documentation != nil {
-		response := f.sendRequest(t, lsproto.MethodCompletionItemResolve, actual)
-		if response == nil {
+		resMsg, result, resultOk := sendRequest(t, f, lsproto.CompletionItemResolveInfo, actual)
+		if resMsg == nil {
 			t.Fatal(prefix + "Expected non-nil response for completion item resolve, got nil")
 		}
-		resolvedItem, ok := response.AsResponse().Result.(*lsproto.CompletionItem)
-		if !ok {
-			t.Fatalf(prefix+"Expected response to be *lsproto.CompletionItem, got %T", response.AsResponse().Result)
+		if !resultOk {
+			t.Fatalf(prefix+"Unexpected response type for completion item resolve: %T", resMsg.AsResponse().Result)
 		}
-		actual = resolvedItem
+		actual = result
 	}
 	assertDeepEqual(t, actual, expected, prefix, completionIgnoreOpts)
 	if expected.Kind != nil {
@@ -770,19 +783,7 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 	t *testing.T,
 	markers ...string,
 ) {
-	// if there are no markers specified, use all ranges
-	var referenceLocations []MarkerOrRange
-	if len(markers) == 0 {
-		referenceLocations = core.Map(f.testData.Ranges, func(r *RangeMarker) MarkerOrRange { return r })
-	} else {
-		referenceLocations = core.Map(markers, func(markerName string) MarkerOrRange {
-			marker, ok := f.testData.MarkerPositions[markerName]
-			if !ok {
-				t.Fatalf("Marker '%s' not found", markerName)
-			}
-			return marker
-		})
-	}
+	referenceLocations := f.lookupMarkersOrGetRanges(t, markers)
 
 	if f.baseline != nil {
 		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
@@ -802,33 +803,344 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 	for _, markerOrRange := range referenceLocations {
 		// worker in `baselineEachMarkerOrRange`
 		f.GoToMarkerOrRange(t, markerOrRange)
+
 		params := &lsproto.ReferenceParams{
-			TextDocumentPositionParams: f.currentTextDocumentPositionParams(),
-			Context:                    &lsproto.ReferenceContext{},
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: ls.FileNameToDocumentURI(f.activeFilename),
+			},
+			Position: f.currentCaretPosition,
+			Context:  &lsproto.ReferenceContext{},
 		}
-		resMsg := f.sendRequest(t, lsproto.MethodTextDocumentReferences, params)
+		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentReferencesInfo, params)
 		if resMsg == nil {
 			if f.lastKnownMarkerName == nil {
-				t.Fatalf("Unexpected references response type at pos %v", f.currentCaretPosition)
+				t.Fatalf("Nil response received for references request at pos %v", f.currentCaretPosition)
 			} else {
 				t.Fatalf("Nil response received for references request at marker '%s'", *f.lastKnownMarkerName)
 			}
 		}
-		result := resMsg.AsResponse().Result
-		if result, ok := result.([]*lsproto.Location); ok {
-			f.baseline.addResult("findAllReferences", f.getBaselineForLocationsWithFileContents(result, baselineFourslashLocationsOptions{
-				marker:     markerOrRange.GetMarker(),
-				markerName: "/*FIND ALL REFS*/",
-			}))
-		} else {
+		if !resultOk {
 			if f.lastKnownMarkerName == nil {
-				t.Fatalf("Unexpected references response type at pos %v: %T", f.currentCaretPosition, result)
+				t.Fatalf("Unexpected references response type at pos %v: %T", f.currentCaretPosition, resMsg.AsResponse().Result)
 			} else {
-				t.Fatalf("Unexpected references response type at marker '%s': %T", *f.lastKnownMarkerName, result)
+				t.Fatalf("Unexpected references response type at marker '%s': %T", *f.lastKnownMarkerName, resMsg.AsResponse().Result)
 			}
 		}
+
+		f.baseline.addResult("findAllReferences", f.getBaselineForLocationsWithFileContents(*result.Locations, baselineFourslashLocationsOptions{
+			marker:     markerOrRange.GetMarker(),
+			markerName: "/*FIND ALL REFS*/",
+		}))
+
+	}
+
+	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
+}
+
+func (f *FourslashTest) VerifyBaselineGoToDefinition(
+	t *testing.T,
+	markers ...string,
+) {
+	referenceLocations := f.lookupMarkersOrGetRanges(t, markers)
+
+	if f.baseline != nil {
+		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
+	} else {
+		f.baseline = &baselineFromTest{
+			content:      &strings.Builder{},
+			baselineName: "goToDef/" + strings.TrimPrefix(t.Name(), "Test"),
+			ext:          ".baseline.jsonc",
+		}
+	}
+
+	// empty baseline after test completes
+	defer func() {
+		f.baseline = nil
+	}()
+
+	for _, markerOrRange := range referenceLocations {
+		// worker in `baselineEachMarkerOrRange`
+		f.GoToMarkerOrRange(t, markerOrRange)
+
+		params := &lsproto.DefinitionParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: ls.FileNameToDocumentURI(f.activeFilename),
+			},
+			Position: f.currentCaretPosition,
+		}
+
+		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentDefinitionInfo, params)
+		if resMsg == nil {
+			if f.lastKnownMarkerName == nil {
+				t.Fatalf("Nil response received for definition request at pos %v", f.currentCaretPosition)
+			} else {
+				t.Fatalf("Nil response received for definition request at marker '%s'", *f.lastKnownMarkerName)
+			}
+		}
+		if !resultOk {
+			if f.lastKnownMarkerName == nil {
+				t.Fatalf("Unexpected definition response type at pos %v: %T", f.currentCaretPosition, resMsg.AsResponse().Result)
+			} else {
+				t.Fatalf("Unexpected definition response type at marker '%s': %T", *f.lastKnownMarkerName, resMsg.AsResponse().Result)
+			}
+		}
+
+		var resultAsLocations []lsproto.Location
+		if result.Locations != nil {
+			resultAsLocations = *result.Locations
+		} else if result.Location != nil {
+			resultAsLocations = []lsproto.Location{*result.Location}
+		} else if result.DefinitionLinks != nil {
+			t.Fatalf("Unexpected definition response type at marker '%s': %T", *f.lastKnownMarkerName, result.DefinitionLinks)
+		}
+
+		f.baseline.addResult("goToDefinition", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
+			marker:     markerOrRange.GetMarker(),
+			markerName: "/*GO TO DEFINITION*/",
+		}))
+	}
+
+	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
+}
+
+func (f *FourslashTest) VerifyBaselineHover(t *testing.T) {
+	if f.baseline != nil {
+		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
+	} else {
+		f.baseline = &baselineFromTest{
+			content:      &strings.Builder{},
+			baselineName: "hover/" + strings.TrimPrefix(t.Name(), "Test"),
+			ext:          ".baseline",
+		}
+	}
+
+	// empty baseline after test completes
+	defer func() {
+		f.baseline = nil
+	}()
+
+	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.Hover], bool) {
+		if marker.Name == nil {
+			return markerAndItem[*lsproto.Hover]{}, false
+		}
+
+		params := &lsproto.HoverParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: ls.FileNameToDocumentURI(f.activeFilename),
+			},
+			Position: marker.LSPosition,
+		}
+
+		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentHoverInfo, params)
+		var prefix string
+		if f.lastKnownMarkerName != nil {
+			prefix = fmt.Sprintf("At marker '%s': ", *f.lastKnownMarkerName)
+		} else {
+			prefix = fmt.Sprintf("At position (Ln %d, Col %d): ", f.currentCaretPosition.Line, f.currentCaretPosition.Character)
+		}
+		if resMsg == nil {
+			t.Fatalf(prefix+"Nil response received for quick info request", f.lastKnownMarkerName)
+		}
+		if !resultOk {
+			t.Fatalf(prefix+"Unexpected response type for quick info request: %T", resMsg.AsResponse().Result)
+		}
+
+		return markerAndItem[*lsproto.Hover]{Marker: marker, Item: result.Hover}, true
+	})
+
+	getRange := func(item *lsproto.Hover) *lsproto.Range {
+		if item == nil || item.Range == nil {
+			return nil
+		}
+		return item.Range
+	}
+
+	getTooltipLines := func(item, _prev *lsproto.Hover) []string {
+		var result []string
+
+		if item.Contents.MarkupContent != nil {
+			result = strings.Split(item.Contents.MarkupContent.Value, "\n")
+		}
+		if item.Contents.String != nil {
+			result = strings.Split(*item.Contents.String, "\n")
+		}
+		if item.Contents.MarkedStringWithLanguage != nil {
+			result = appendLinesForMarkedStringWithLanguage(result, item.Contents.MarkedStringWithLanguage)
+		}
+		if item.Contents.MarkedStrings != nil {
+			for _, ms := range *item.Contents.MarkedStrings {
+				if ms.MarkedStringWithLanguage != nil {
+					result = appendLinesForMarkedStringWithLanguage(result, ms.MarkedStringWithLanguage)
+				} else {
+					result = append(result, *ms.String)
+				}
+			}
+		}
+
+		return result
+	}
+
+	f.baseline.addResult("QuickInfo", annotateContentWithTooltips(t, f, markersAndItems, "quickinfo", getRange, getTooltipLines))
+	if jsonStr, err := core.StringifyJson(markersAndItems, "", "  "); err == nil {
+		f.baseline.content.WriteString(jsonStr)
+	} else {
+		t.Fatalf("Failed to stringify markers and items for baseline: %v", err)
 	}
 	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
+}
+
+func appendLinesForMarkedStringWithLanguage(result []string, ms *lsproto.MarkedStringWithLanguage) []string {
+	result = append(result, "```"+ms.Language)
+	result = append(result, ms.Value)
+	result = append(result, "```")
+	return result
+}
+
+func (f *FourslashTest) VerifyBaselineSignatureHelp(t *testing.T) {
+	if f.baseline != nil {
+		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
+	} else {
+		f.baseline = &baselineFromTest{
+			content:      &strings.Builder{},
+			baselineName: "signatureHelp/" + strings.TrimPrefix(t.Name(), "Test"),
+			ext:          ".baseline",
+		}
+	}
+
+	// empty baseline after test completes
+	defer func() {
+		f.baseline = nil
+	}()
+
+	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.SignatureHelp], bool) {
+		if marker.Name == nil {
+			return markerAndItem[*lsproto.SignatureHelp]{}, false
+		}
+
+		params := &lsproto.SignatureHelpParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: ls.FileNameToDocumentURI(f.activeFilename),
+			},
+			Position: marker.LSPosition,
+		}
+
+		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentSignatureHelpInfo, params)
+		var prefix string
+		if f.lastKnownMarkerName != nil {
+			prefix = fmt.Sprintf("At marker '%s': ", *f.lastKnownMarkerName)
+		} else {
+			prefix = fmt.Sprintf("At position (Ln %d, Col %d): ", f.currentCaretPosition.Line, f.currentCaretPosition.Character)
+		}
+		if resMsg == nil {
+			t.Fatalf(prefix+"Nil response received for signature help request", f.lastKnownMarkerName)
+		}
+		if !resultOk {
+			t.Fatalf(prefix+"Unexpected response type for signature help request: %T", resMsg.AsResponse().Result)
+		}
+
+		return markerAndItem[*lsproto.SignatureHelp]{Marker: marker, Item: result.SignatureHelp}, true
+	})
+
+	getRange := func(item *lsproto.SignatureHelp) *lsproto.Range {
+		// SignatureHelp doesn't have a range like hover does
+		return nil
+	}
+
+	getTooltipLines := func(item, _prev *lsproto.SignatureHelp) []string {
+		if item == nil || len(item.Signatures) == 0 {
+			return []string{"No signature help available"}
+		}
+
+		// Show active signature if specified, otherwise first signature
+		activeSignature := 0
+		if item.ActiveSignature != nil && int(*item.ActiveSignature) < len(item.Signatures) {
+			activeSignature = int(*item.ActiveSignature)
+		}
+
+		sig := item.Signatures[activeSignature]
+
+		// Build signature display
+		signatureLine := sig.Label
+		activeParamLine := ""
+
+		// Show active parameter if specified, and the signature text.
+		if item.ActiveParameter != nil && sig.Parameters != nil {
+			activeParamIndex := int(*item.ActiveParameter.Uinteger)
+			if activeParamIndex >= 0 && activeParamIndex < len(*sig.Parameters) {
+				activeParam := (*sig.Parameters)[activeParamIndex]
+
+				// Get the parameter label and bold the
+				// parameter text within the original string.
+				activeParamLabel := ""
+				if activeParam.Label.String != nil {
+					activeParamLabel = *activeParam.Label.String
+				} else if activeParam.Label.Tuple != nil {
+					activeParamLabel = signatureLine[(*activeParam.Label.Tuple)[0]:(*activeParam.Label.Tuple)[1]]
+				} else {
+					t.Fatal("Unsupported param label kind.")
+				}
+				signatureLine = strings.Replace(signatureLine, activeParamLabel, "**"+activeParamLabel+"**", 1)
+
+				if activeParam.Documentation != nil {
+					if activeParam.Documentation.MarkupContent != nil {
+						activeParamLine = activeParam.Documentation.MarkupContent.Value
+					} else if activeParam.Documentation.String != nil {
+						activeParamLine = *activeParam.Documentation.String
+					}
+
+					activeParamLine = fmt.Sprintf("- `%s`: %s", activeParamLabel, activeParamLine)
+				}
+
+			}
+		}
+
+		result := make([]string, 0, 16)
+		result = append(result, signatureLine)
+		if activeParamLine != "" {
+			result = append(result, activeParamLine)
+		}
+
+		// ORIGINALLY we would "only display signature documentation on the last argument when multiple arguments are marked".
+		// !!!
+		// Note that this is harder than in Strada, because LSP signature help has no concept of
+		// applicable spans.
+		if sig.Documentation != nil {
+			if sig.Documentation.MarkupContent != nil {
+				result = append(result, strings.Split(sig.Documentation.MarkupContent.Value, "\n")...)
+			} else if sig.Documentation.String != nil {
+				result = append(result, strings.Split(*sig.Documentation.String, "\n")...)
+			} else {
+				t.Fatal("Unsupported documentation format.")
+			}
+		}
+
+		return result
+	}
+
+	f.baseline.addResult("SignatureHelp", annotateContentWithTooltips(t, f, markersAndItems, "signaturehelp", getRange, getTooltipLines))
+	if jsonStr, err := core.StringifyJson(markersAndItems, "", "  "); err == nil {
+		f.baseline.content.WriteString(jsonStr)
+	} else {
+		t.Fatalf("Failed to stringify markers and items for baseline: %v", err)
+	}
+	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
+}
+
+// Collects all named markers if provided, or defaults to anonymous ranges
+func (f *FourslashTest) lookupMarkersOrGetRanges(t *testing.T, markers []string) []MarkerOrRange {
+	var referenceLocations []MarkerOrRange
+	if len(markers) == 0 {
+		referenceLocations = core.Map(f.testData.Ranges, func(r *RangeMarker) MarkerOrRange { return r })
+	} else {
+		referenceLocations = core.Map(markers, func(markerName string) MarkerOrRange {
+			marker, ok := f.testData.MarkerPositions[markerName]
+			if !ok {
+				t.Fatalf("Marker '%s' not found", markerName)
+			}
+			return marker
+		})
+	}
+	return referenceLocations
 }
 
 func ptrTo[T any](v T) *T {
@@ -982,16 +1294,14 @@ func (f *FourslashTest) editScript(t *testing.T, fileName string, start int, end
 	if err != nil {
 		panic(fmt.Sprintf("Failed to write file %s: %v", fileName, err))
 	}
-	f.sendNotification(t, lsproto.MethodTextDocumentDidChange, &lsproto.DidChangeTextDocumentParams{
+	sendNotification(t, f, lsproto.TextDocumentDidChangeInfo, &lsproto.DidChangeTextDocumentParams{
 		TextDocument: lsproto.VersionedTextDocumentIdentifier{
-			TextDocumentIdentifier: lsproto.TextDocumentIdentifier{
-				Uri: ls.FileNameToDocumentURI(fileName),
-			},
+			Uri:     ls.FileNameToDocumentURI(fileName),
 			Version: script.version,
 		},
-		ContentChanges: []lsproto.TextDocumentContentChangeEvent{
+		ContentChanges: []lsproto.TextDocumentContentChangePartialOrWholeDocument{
 			{
-				TextDocumentContentChangePartial: &lsproto.TextDocumentContentChangePartial{
+				Partial: &lsproto.TextDocumentContentChangePartial{
 					Range: changeRange,
 					Text:  newText,
 				},
@@ -1003,4 +1313,90 @@ func (f *FourslashTest) editScript(t *testing.T, fileName string, start int, end
 
 func (f *FourslashTest) getScriptInfo(fileName string) *scriptInfo {
 	return f.scriptInfos[fileName]
+}
+
+// !!! expected tags
+func (f *FourslashTest) VerifyQuickInfoAt(t *testing.T, marker string, expectedText string, expectedDocumentation string) {
+	f.GoToMarker(t, marker)
+	hover := f.getQuickInfoAtCurrentPosition(t)
+
+	f.verifyHoverContent(t, hover.Contents, expectedText, expectedDocumentation, fmt.Sprintf("At marker '%s': ", marker))
+}
+
+func (f *FourslashTest) getQuickInfoAtCurrentPosition(t *testing.T) *lsproto.Hover {
+	params := &lsproto.HoverParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: ls.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+	}
+	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentHoverInfo, params)
+	if resMsg == nil {
+		t.Fatalf("Nil response received for hover request at marker '%s'", *f.lastKnownMarkerName)
+	}
+	if !resultOk {
+		t.Fatalf("Unexpected hover response type at marker '%s': %T", *f.lastKnownMarkerName, resMsg.AsResponse().Result)
+	}
+	if result.Hover == nil {
+		t.Fatalf("Expected hover result at marker '%s' but got nil", *f.lastKnownMarkerName)
+	}
+	return result.Hover
+}
+
+func (f *FourslashTest) verifyHoverContent(
+	t *testing.T,
+	actual lsproto.MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings,
+	expectedText string,
+	expectedDocumentation string,
+	prefix string,
+) {
+	switch {
+	case actual.MarkupContent != nil:
+		f.verifyHoverMarkdown(t, actual.MarkupContent.Value, expectedText, expectedDocumentation, prefix)
+	default:
+		t.Fatalf(prefix+"Expected markup content, got: %s", cmp.Diff(actual, nil))
+	}
+}
+
+func (f *FourslashTest) verifyHoverMarkdown(
+	t *testing.T,
+	actual string,
+	expectedText string,
+	expectedDocumentation string,
+	prefix string,
+) {
+	expected := fmt.Sprintf("```tsx\n%s\n```\n%s", expectedText, expectedDocumentation)
+	assertDeepEqual(t, actual, expected, prefix+"Hover markdown content mismatch")
+}
+
+func (f *FourslashTest) VerifyQuickInfoExists(t *testing.T) {
+	if isEmpty, _ := f.quickInfoIsEmpty(t); isEmpty {
+		t.Fatalf("Expected non-nil hover content at marker '%s'", *f.lastKnownMarkerName)
+	}
+}
+
+func (f *FourslashTest) VerifyNotQuickInfoExists(t *testing.T) {
+	if isEmpty, hover := f.quickInfoIsEmpty(t); !isEmpty {
+		t.Fatalf("Expected empty hover content at marker '%s', got '%s'", *f.lastKnownMarkerName, cmp.Diff(hover, nil))
+	}
+}
+
+func (f *FourslashTest) quickInfoIsEmpty(t *testing.T) (bool, *lsproto.Hover) {
+	hover := f.getQuickInfoAtCurrentPosition(t)
+	if hover == nil ||
+		(hover.Contents.MarkupContent == nil && hover.Contents.MarkedStrings == nil && hover.Contents.String == nil) {
+		return true, nil
+	}
+	return false, hover
+}
+
+func (f *FourslashTest) VerifyQuickInfoIs(t *testing.T, expectedText string, expectedDocumentation string) {
+	hover := f.getQuickInfoAtCurrentPosition(t)
+	var prefix string
+	if f.lastKnownMarkerName != nil {
+		prefix = fmt.Sprintf("At marker '%s': ", *f.lastKnownMarkerName)
+	} else {
+		prefix = fmt.Sprintf("At position (Ln %d, Col %d): ", f.currentCaretPosition.Line, f.currentCaretPosition.Character)
+	}
+	f.verifyHoverContent(t, hover.Contents, expectedText, expectedDocumentation, prefix)
 }

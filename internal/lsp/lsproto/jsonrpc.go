@@ -1,10 +1,12 @@
 package lsproto
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
+
+	"github.com/go-json-experiment/json"
+	"github.com/go-json-experiment/json/jsontext"
 )
 
 type JSONRPCVersion struct{}
@@ -99,12 +101,12 @@ func (m *Message) AsResponse() *ResponseMessage {
 
 func (m *Message) UnmarshalJSON(data []byte) error {
 	var raw struct {
-		JSONRPC JSONRPCVersion  `json:"jsonrpc"`
-		Method  Method          `json:"method"`
-		ID      *ID             `json:"id,omitempty"`
-		Params  json.RawMessage `json:"params"`
-		Result  any             `json:"result,omitempty"`
-		Error   *ResponseError  `json:"error,omitempty"`
+		JSONRPC JSONRPCVersion `json:"jsonrpc"`
+		Method  Method         `json:"method"`
+		ID      *ID            `json:"id,omitzero"`
+		Params  jsontext.Value `json:"params"`
+		Result  any            `json:"result,omitzero"`
+		Error   *ResponseError `json:"error,omitzero"`
 	}
 	if err := json.Unmarshal(data, &raw); err != nil {
 		return fmt.Errorf("%w: %w", ErrInvalidRequest, err)
@@ -159,9 +161,9 @@ func NewNotificationMessage(method Method, params any) *RequestMessage {
 
 type RequestMessage struct {
 	JSONRPC JSONRPCVersion `json:"jsonrpc"`
-	ID      *ID            `json:"id,omitempty"`
+	ID      *ID            `json:"id,omitzero"`
 	Method  Method         `json:"method"`
-	Params  any            `json:"params,omitempty"`
+	Params  any            `json:"params,omitzero"`
 }
 
 func NewRequestMessage(method Method, id *ID, params any) *RequestMessage {
@@ -181,10 +183,10 @@ func (r *RequestMessage) Message() *Message {
 
 func (r *RequestMessage) UnmarshalJSON(data []byte) error {
 	var raw struct {
-		JSONRPC JSONRPCVersion  `json:"jsonrpc"`
-		ID      *ID             `json:"id"`
-		Method  Method          `json:"method"`
-		Params  json.RawMessage `json:"params"`
+		JSONRPC JSONRPCVersion `json:"jsonrpc"`
+		ID      *ID            `json:"id"`
+		Method  Method         `json:"method"`
+		Params  jsontext.Value `json:"params"`
 	}
 	if err := json.Unmarshal(data, &raw); err != nil {
 		return fmt.Errorf("%w: %w", ErrInvalidRequest, err)
@@ -204,9 +206,9 @@ func (r *RequestMessage) UnmarshalJSON(data []byte) error {
 
 type ResponseMessage struct {
 	JSONRPC JSONRPCVersion `json:"jsonrpc"`
-	ID      *ID            `json:"id,omitempty"`
+	ID      *ID            `json:"id,omitzero"`
 	Result  any            `json:"result"`
-	Error   *ResponseError `json:"error,omitempty"`
+	Error   *ResponseError `json:"error,omitzero"`
 }
 
 func (r *ResponseMessage) Message() *Message {
@@ -219,7 +221,7 @@ func (r *ResponseMessage) Message() *Message {
 type ResponseError struct {
 	Code    int32  `json:"code"`
 	Message string `json:"message"`
-	Data    any    `json:"data,omitempty"`
+	Data    any    `json:"data,omitzero"`
 }
 
 func (r *ResponseError) String() string {

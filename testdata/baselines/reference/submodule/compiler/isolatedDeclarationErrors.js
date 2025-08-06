@@ -78,3 +78,24 @@ isolatedDeclarationErrors.d.ts(16,19): error TS2451: Cannot redeclare block-scop
         const a: "";
     }
     
+
+!!!! File isolatedDeclarationErrors.d.ts differs from original emit in noCheck emit
+//// [isolatedDeclarationErrors.d.ts]
+--- Expected	The full check baseline
++++ Actual	with noCheck set
+@@ -7,12 +7,12 @@
+     (): void;
+     a: string;
+ };
+-declare namespace errorOnAssignmentBelowDecl {
+-    const a: "";
+-}
+ declare namespace errorOnAssignmentBelow {
+     const a: "";
+ }
+ declare namespace errorOnMissingReturn {
++    const a: "";
++}
++declare namespace errorOnAssignmentBelowDecl {
+     const a: "";
+ }

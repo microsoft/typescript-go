@@ -1,4 +1,14 @@
 // === findAllReferences ===
+// === /referencesOnStatic_1.ts ===
+
+// var n = 43;
+// 
+// class foo {
+//     /*FIND ALL REFS*/static n = '';
+// 
+//     public bar() {
+//         foo.n = "'";
+// // --- (line: 8) skipped ---
 
 
 
@@ -31,6 +41,11 @@
 // }
 
 
+// === /referencesOnStatic_2.ts ===
+
+// var q = foo.[|n|];
+
+
 
 
 // === findAllReferences ===
@@ -59,6 +74,11 @@
 //         n = foo.[|n|];
 //     }
 // }
+
+
+// === /referencesOnStatic_2.ts ===
+
+// var q = foo.[|n|];
 
 
 
@@ -91,6 +111,11 @@
 // }
 
 
+// === /referencesOnStatic_2.ts ===
+
+// var q = foo.[|n|];
+
+
 
 
 // === findAllReferences ===
@@ -119,6 +144,11 @@
 //         n = foo.[|n|];
 //     }
 // }
+
+
+// === /referencesOnStatic_2.ts ===
+
+// var q = foo.[|n|];
 
 
 
@@ -151,6 +181,11 @@
 // }
 
 
+// === /referencesOnStatic_2.ts ===
+
+// var q = foo.[|n|];
+
+
 
 
 // === findAllReferences ===
@@ -181,6 +216,11 @@
 // }
 
 
+// === /referencesOnStatic_2.ts ===
+
+// var q = foo.[|n|];
+
+
 
 
 // === findAllReferences ===
@@ -209,6 +249,11 @@
 //         n = foo./*FIND ALL REFS*/[|n|];
 //     }
 // }
+
+
+// === /referencesOnStatic_2.ts ===
+
+// var q = foo.[|n|];
 
 
 

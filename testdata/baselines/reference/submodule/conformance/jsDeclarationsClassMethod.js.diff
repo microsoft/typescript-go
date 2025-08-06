@@ -43,9 +43,6 @@
 -     * @returns {number}
 -     */
 -    method2(x: number, y: number): number;
-+}
-+declare namespace C1 {
-+    const staticProp: (x: any, y: any) => any;
  }
  declare namespace C2 {
 -    /**
@@ -55,5 +52,27 @@
 -     * @returns {number}
 -     */
 -    function staticProp(x: number, y: number): number;
+-}
 +    const staticProp: (x: any, y: any) => any;
- }
++}
++declare namespace C1 {
++    const staticProp: (x: any, y: any) => any;
++}
++
++
++!!!! File out/jsDeclarationsClassMethod.d.ts differs from original emit in noCheck emit
++//// [jsDeclarationsClassMethod.d.ts]
++--- Expected	The full check baseline
+++++ Actual	with noCheck set
++@@= skipped --154, +-129 lines =@@
++      */
++     method1(x: number, y: number): number;
++ }
++-declare namespace C2 {
+++declare namespace C1 {
++     const staticProp: (x: any, y: any) => any;
++ }
++-declare namespace C1 {
+++declare namespace C2 {
++     const staticProp: (x: any, y: any) => any;
++ }

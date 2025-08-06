@@ -1,12 +1,12 @@
 package project
 
 import (
-	"encoding/json"
 	"fmt"
 	"os/exec"
 	"sync"
 	"sync/atomic"
 
+	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"

@@ -64,3 +64,24 @@
 +        const a: "";
 +    }
 +    
++
++!!!! File isolatedDeclarationErrors.d.ts differs from original emit in noCheck emit
++//// [isolatedDeclarationErrors.d.ts]
++--- Expected	The full check baseline
+++++ Actual	with noCheck set
++@@= skipped --11, +-11 lines =@@
++     (): void;
++     a: string;
++ };
++-declare namespace errorOnAssignmentBelowDecl {
++-    const a: "";
++-}
++ declare namespace errorOnAssignmentBelow {
++     const a: "";
++ }
++ declare namespace errorOnMissingReturn {
+++    const a: "";
+++}
+++declare namespace errorOnAssignmentBelowDecl {
++     const a: "";
++ }

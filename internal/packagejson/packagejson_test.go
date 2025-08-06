@@ -1,11 +1,10 @@
 package packagejson_test
 
 import (
-	"encoding/json"
 	"path/filepath"
 	"testing"
 
-	json2 "github.com/go-json-experiment/json"
+	"github.com/go-json-experiment/json"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -41,7 +40,7 @@ func BenchmarkPackageJSON(b *testing.B) {
 			b.Run(f.Name(), func(b *testing.B) {
 				for b.Loop() {
 					var p packagejson.Fields
-					if err := json2.Unmarshal(content, &p); err != nil {
+					if err := json.Unmarshal(content, &p); err != nil {
 						b.Fatal(err)
 					}
 				}

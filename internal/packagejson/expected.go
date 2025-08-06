@@ -1,8 +1,9 @@
 package packagejson
 
 import (
-	"encoding/json"
 	"reflect"
+
+	"github.com/go-json-experiment/json"
 )
 
 type Expected[T any] struct {

@@ -25,6 +25,7 @@ export default Foo;
 
 
 //// [jsxDeclarationsWithEsModuleInteropNoCrash.d.ts]
+/// <reference path="..react16.d.ts" preserve="true" />
 import PropTypes from 'prop-types';
 declare function Foo({ bar }: {
     bar: any;
@@ -38,31 +39,3 @@ declare namespace Foo {
         bar: boolean;
     };
 }
-
-
-//// [DtsFileErrors]
-
-
-jsxDeclarationsWithEsModuleInteropNoCrash.d.ts(1,23): error TS2307: Cannot find module 'prop-types' or its corresponding type declarations.
-jsxDeclarationsWithEsModuleInteropNoCrash.d.ts(4,5): error TS2503: Cannot find namespace 'JSX'.
-
-
-==== jsxDeclarationsWithEsModuleInteropNoCrash.d.ts (2 errors) ====
-    import PropTypes from 'prop-types';
-                          ~~~~~~~~~~~~
-!!! error TS2307: Cannot find module 'prop-types' or its corresponding type declarations.
-    declare function Foo({ bar }: {
-        bar: any;
-    }): JSX.Element;
-        ~~~
-!!! error TS2503: Cannot find namespace 'JSX'.
-    export default Foo;
-    declare namespace Foo {
-        const propTypes: {
-            bar: PropTypes.Requireable<boolean>;
-        };
-        const defaultProps: {
-            bar: boolean;
-        };
-    }
-    

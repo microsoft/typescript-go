@@ -1,4 +1,12 @@
 // === findAllReferences ===
+// === /findAllRefsOnDefinition2-import.ts ===
+
+// export module Test{
+// 
+//     /*FIND ALL REFS*/export interface start { }
+// 
+//     export interface stop { }
+// }
 
 
 
@@ -12,6 +20,14 @@
 // 
 //     export interface stop { }
 // }
+
+
+// === /findAllRefsOnDefinition2.ts ===
+
+// import Second = require("./findAllRefsOnDefinition2-import");
+// 
+// var start: Second.Test.[|start|];
+// var stop: Second.Test.stop;
 
 
 

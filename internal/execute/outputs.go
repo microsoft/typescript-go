@@ -54,7 +54,7 @@ func shouldBePretty(sys System, options *core.CompilerOptions) bool {
 		// todo: return defaultIsPretty(sys);
 		return true
 	}
-	return options.Pretty.IsTrue()
+	return false
 }
 
 func createReportErrorSummary(sys System, options *core.CompilerOptions) func(diagnostics []*ast.Diagnostic) {
@@ -82,6 +82,9 @@ func reportStatistics(sys System, program *compiler.Program, result compileAndEm
 	if result.configTime != 0 {
 		stats.add("Config time", result.configTime)
 	}
+	if result.buildInfoReadTime != 0 {
+		stats.add("BuildInfo read time", result.buildInfoReadTime)
+	}
 	stats.add("Parse time", result.parseTime)
 	if result.bindTime != 0 {
 		stats.add("Bind time", result.bindTime)
@@ -91,6 +94,9 @@ func reportStatistics(sys System, program *compiler.Program, result compileAndEm
 	}
 	if result.emitTime != 0 {
 		stats.add("Emit time", result.emitTime)
+	}
+	if result.changesComputeTime != 0 {
+		stats.add("Changes compute time", result.changesComputeTime)
 	}
 	stats.add("Total time", result.totalTime)
 
