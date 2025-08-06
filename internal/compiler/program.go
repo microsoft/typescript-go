@@ -44,7 +44,6 @@ func (p *ProgramOptions) canUseProjectReferenceSource() bool {
 type Program struct {
 	opts        ProgramOptions
 	checkerPool CheckerPool
-	cloned      bool
 
 	comparePathsOptions tspath.ComparePathsOptions
 
@@ -209,7 +208,6 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 	}
 	// TODO: reverify compiler options when config has changed?
 	result := &Program{
-		cloned:                      true,
 		opts:                        newOpts,
 		comparePathsOptions:         p.comparePathsOptions,
 		processedFiles:              p.processedFiles,
@@ -272,17 +270,16 @@ func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 	return slices.Clip(p.opts.Config.GetConfigFileParsingDiagnostics())
 }
 
-// ExtractUnresolvedImports returns the unresolved imports for this program.
+// GetUnresolvedImports returns the unresolved imports for this program.
 // The result is cached and computed only once.
-func (p *Program) ExtractUnresolvedImports() collections.Set[string] {
-	if p.cloned {
-		return *p.unresolvedImports
-	}
+func (p *Program) GetUnresolvedImports() *collections.Set[string] {
 	p.unresolvedImportsOnce.Do(func() {
-		p.unresolvedImports = p.extractUnresolvedImports()
+		if p.unresolvedImports == nil {
+			p.unresolvedImports = p.extractUnresolvedImports()
+		}
 	})
 
-	return *p.unresolvedImports
+	return p.unresolvedImports
 }
 
 func (p *Program) extractUnresolvedImports() *collections.Set[string] {

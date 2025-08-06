@@ -29,9 +29,8 @@ func TestDiscoverTypings(t *testing.T) {
 			fs,
 			logger,
 			&ata.TypingsInfo{
-				CompilerOptions:   &core.CompilerOptions{},
-				TypeAcquisition:   &core.TypeAcquisition{Enable: core.TSTrue},
-				UnresolvedImports: collections.Set[string]{},
+				CompilerOptions: &core.CompilerOptions{},
+				TypeAcquisition: &core.TypeAcquisition{Enable: core.TSTrue},
 			},
 			[]string{"/home/src/projects/project/app.js", "/home/src/projects/project/jquery.js", "/home/src/projects/project/chroma.min.js"},
 			"/home/src/projects/project",
@@ -56,7 +55,7 @@ func TestDiscoverTypings(t *testing.T) {
 			"/home/src/projects/project/app.js": "",
 		}
 		fs := vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/)
-		unresolvedImports := collections.Set[string]{M: map[string]struct{}{"assert": {}, "somename": {}}}
+		unresolvedImports := collections.NewSetFromItems("assert", "somename")
 		cachedTypingPaths, newTypingNames, filesToWatch := ata.DiscoverTypings(
 			fs,
 			logger,
@@ -95,7 +94,7 @@ func TestDiscoverTypings(t *testing.T) {
 			TypingsLocation: "/home/src/projects/project/node.d.ts",
 			Version:         &version,
 		})
-		unresolvedImports := collections.Set[string]{M: map[string]struct{}{"fs": {}, "bar": {}}}
+		unresolvedImports := collections.NewSetFromItems("fs", "bar")
 		cachedTypingPaths, newTypingNames, filesToWatch := ata.DiscoverTypings(
 			fs,
 			logger,
@@ -137,7 +136,7 @@ func TestDiscoverTypings(t *testing.T) {
 			TypingsLocation: "/home/src/projects/project/node.d.ts",
 			Version:         &version,
 		})
-		unresolvedImports := collections.Set[string]{M: map[string]struct{}{"fs": {}, "bar": {}}}
+		unresolvedImports := collections.NewSetFromItems("fs", "bar")
 		cachedTypingPaths, newTypingNames, filesToWatch := ata.DiscoverTypings(
 			fs,
 			logger,
@@ -175,9 +174,8 @@ func TestDiscoverTypings(t *testing.T) {
 			fs,
 			logger,
 			&ata.TypingsInfo{
-				CompilerOptions:   &core.CompilerOptions{},
-				TypeAcquisition:   &core.TypeAcquisition{Enable: core.TSTrue},
-				UnresolvedImports: collections.Set[string]{},
+				CompilerOptions: &core.CompilerOptions{},
+				TypeAcquisition: &core.TypeAcquisition{Enable: core.TSTrue},
 			},
 			[]string{"/home/src/projects/project/app.js"},
 			"/home/src/projects/project",
@@ -206,9 +204,8 @@ func TestDiscoverTypings(t *testing.T) {
 			fs,
 			logger,
 			&ata.TypingsInfo{
-				CompilerOptions:   &core.CompilerOptions{},
-				TypeAcquisition:   &core.TypeAcquisition{Enable: core.TSTrue},
-				UnresolvedImports: collections.Set[string]{},
+				CompilerOptions: &core.CompilerOptions{},
+				TypeAcquisition: &core.TypeAcquisition{Enable: core.TSTrue},
 			},
 			[]string{"/home/src/projects/project/app.js"},
 			"/home/src/projects/project",
@@ -243,7 +240,7 @@ func TestDiscoverTypings(t *testing.T) {
 			TypingsLocation: projecttestutil.TestTypingsLocation + "/node_modules/@types/commander/index.d.ts",
 			Version:         &commanderVersion,
 		})
-		unresolvedImports := collections.Set[string]{M: map[string]struct{}{"http": {}, "commander": {}}}
+		unresolvedImports := collections.NewSetFromItems("http", "commander")
 		cachedTypingPaths, newTypingNames, filesToWatch := ata.DiscoverTypings(
 			fs,
 			logger,
@@ -288,7 +285,7 @@ func TestDiscoverTypings(t *testing.T) {
 		config := maps.Clone(projecttestutil.TypesRegistryConfig())
 		delete(config, "ts"+core.VersionMajorMinor())
 
-		unresolvedImports := collections.Set[string]{M: map[string]struct{}{"http": {}}}
+		unresolvedImports := collections.NewSetFromItems("http")
 		cachedTypingPaths, newTypingNames, filesToWatch := ata.DiscoverTypings(
 			fs,
 			logger,
@@ -334,7 +331,7 @@ func TestDiscoverTypings(t *testing.T) {
 		})
 		config := maps.Clone(projecttestutil.TypesRegistryConfig())
 		config["ts"+core.VersionMajorMinor()] = "1.3.0-next.1"
-		unresolvedImports := collections.Set[string]{M: map[string]struct{}{"http": {}, "commander": {}}}
+		unresolvedImports := collections.NewSetFromItems("http", "commander")
 		cachedTypingPaths, newTypingNames, filesToWatch := ata.DiscoverTypings(
 			fs,
 			logger,

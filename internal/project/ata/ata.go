@@ -21,13 +21,13 @@ import (
 type TypingsInfo struct {
 	TypeAcquisition   *core.TypeAcquisition
 	CompilerOptions   *core.CompilerOptions
-	UnresolvedImports collections.Set[string]
+	UnresolvedImports *collections.Set[string]
 }
 
 func (ti TypingsInfo) Equals(other TypingsInfo) bool {
 	return ti.TypeAcquisition.Equals(other.TypeAcquisition) &&
 		ti.CompilerOptions.GetAllowJS() == other.CompilerOptions.GetAllowJS() &&
-		ti.UnresolvedImports.Equals(&other.UnresolvedImports)
+		ti.UnresolvedImports.Equals(other.UnresolvedImports)
 }
 
 type CachedTyping struct {

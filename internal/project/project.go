@@ -359,12 +359,12 @@ func (p *Project) GetTypeAcquisition() *core.TypeAcquisition {
 }
 
 // GetUnresolvedImports extracts unresolved imports from this project's program.
-func (p *Project) GetUnresolvedImports() collections.Set[string] {
+func (p *Project) GetUnresolvedImports() *collections.Set[string] {
 	if p.Program == nil {
-		return collections.Set[string]{}
+		return nil
 	}
 
-	return p.Program.ExtractUnresolvedImports()
+	return p.Program.GetUnresolvedImports()
 }
 
 // ShouldTriggerATA determines if ATA should be triggered for this project.
