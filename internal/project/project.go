@@ -138,12 +138,7 @@ func NewProject(
 		currentDirectory: currentDirectory,
 		dirty:            true,
 	}
-	host := newCompilerHost(
-		currentDirectory,
-		project,
-		builder,
-	)
-	project.host = host
+
 	project.configFilePath = tspath.ToPath(configFileName, currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames())
 	if builder.sessionOptions.WatchEnabled {
 		project.failedLookupsWatch = NewWatchedFiles(

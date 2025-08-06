@@ -4,6 +4,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -22,32 +23,36 @@ type compilerHost struct {
 
 	project *Project
 	builder *projectCollectionBuilder
+	logger  *logging.LogTree
 }
 
 func newCompilerHost(
 	currentDirectory string,
 	project *Project,
 	builder *projectCollectionBuilder,
+	logger *logging.LogTree
 ) *compilerHost {
 	return &compilerHost{
 		configFilePath:   project.configFilePath,
 		currentDirectory: currentDirectory,
 		sessionOptions:   builder.sessionOptions,
 
-		fs:         builder.fs,
 		compilerFS: &compilerFS{source: builder.fs},
 
+		fs:      builder.fs,
 		project: project,
 		builder: builder,
+		logger:  logger,
 	}
 }
 
 func (c *compilerHost) freeze(snapshotFS *snapshotFS, configFileRegistry *ConfigFileRegistry) {
-	c.fs = nil
 	c.compilerFS.source = snapshotFS
 	c.configFileRegistry = configFileRegistry
+	c.fs = nil
 	c.builder = nil
 	c.project = nil
+	c.logger = nil
 }
 
 func (c *compilerHost) ensureAlive() {
@@ -76,7 +81,7 @@ func (c *compilerHost) GetResolvedProjectReference(fileName string, path tspath.
 	if c.builder == nil {
 		return c.configFileRegistry.GetConfig(path)
 	} else {
-		return c.builder.configFileRegistryBuilder.acquireConfigForProject(fileName, path, c.project)
+		return c.builder.configFileRegistryBuilder.acquireConfigForProject(fileName, path, c.project, c.logger)
 	}
 }
 

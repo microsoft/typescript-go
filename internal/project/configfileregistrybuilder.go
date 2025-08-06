@@ -27,7 +27,6 @@ type configFileRegistryBuilder struct {
 	fs                  *snapshotFSBuilder
 	extendedConfigCache *extendedConfigCache
 	sessionOptions      *SessionOptions
-	logger              *logging.LogTree
 
 	base            *ConfigFileRegistry
 	configs         *dirty.SyncMap[tspath.Path, *configFileEntry]
@@ -46,7 +45,6 @@ func newConfigFileRegistryBuilder(
 		base:                oldConfigFileRegistry,
 		sessionOptions:      sessionOptions,
 		extendedConfigCache: extendedConfigCache,
-		logger:              logger,
 
 		configs:         dirty.NewSyncMap(oldConfigFileRegistry.configs, nil),
 		configFileNames: dirty.NewMap(oldConfigFileRegistry.configFileNames),
@@ -83,6 +81,7 @@ func (c *configFileRegistryBuilder) findOrAcquireConfigForOpenFile(
 	configFilePath tspath.Path,
 	openFilePath tspath.Path,
 	loadKind projectLoadKind,
+	logger *logging.LogTree,
 ) *tsoptions.ParsedCommandLine {
 	switch loadKind {
 	case projectLoadKindFind:
@@ -91,7 +90,7 @@ func (c *configFileRegistryBuilder) findOrAcquireConfigForOpenFile(
 		}
 		return nil
 	case projectLoadKindCreate:
-		return c.acquireConfigForOpenFile(configFileName, configFilePath, openFilePath)
+		return c.acquireConfigForOpenFile(configFileName, configFilePath, openFilePath, logger)
 	default:
 		panic(fmt.Sprintf("unknown project load kind: %d", loadKind))
 	}
@@ -100,20 +99,17 @@ func (c *configFileRegistryBuilder) findOrAcquireConfigForOpenFile(
 // reloadIfNeeded updates the command line of the config file entry based on its
 // pending reload state. This function should only be called from within the
 // Change() method of a dirty map entry.
-func (c *configFileRegistryBuilder) reloadIfNeeded(entry *configFileEntry, fileName string, path tspath.Path) {
+func (c *configFileRegistryBuilder) reloadIfNeeded(entry *configFileEntry, fileName string, path tspath.Path, logger *logging.LogTree) {
 	switch entry.pendingReload {
 	case PendingReloadFileNames:
-		if c.logger != nil {
-			c.logger.Log("Reloading file names for config: " + fileName)
-		}
+		logger.Log("Reloading file names for config: " + fileName)
 		entry.commandLine = tsoptions.ReloadFileNamesOfParsedCommandLine(entry.commandLine, c.fs.fs)
 	case PendingReloadFull:
-		if c.logger != nil {
-			c.logger.Log("Loading config file: " + fileName)
-		}
+		logger.Log("Loading config file: " + fileName)
 		entry.commandLine, _ = tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, c, c)
 		c.updateExtendingConfigs(path, entry.commandLine, entry.commandLine)
 		c.updateRootFilesWatch(fileName, entry)
+		logger.Log("Finished loading config file")
 	default:
 		return
 	}
@@ -190,7 +186,7 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 // cached, then adds the project (if provided) to `retainingProjects` to keep it alive
 // in the cache. Each `acquireConfigForProject` call that passes a `project` should be accompanied
 // by an eventual `releaseConfigForProject` call with the same project.
-func (c *configFileRegistryBuilder) acquireConfigForProject(fileName string, path tspath.Path, project *Project) *tsoptions.ParsedCommandLine {
+func (c *configFileRegistryBuilder) acquireConfigForProject(fileName string, path tspath.Path, project *Project, logger *logging.LogTree) *tsoptions.ParsedCommandLine {
 	entry, _ := c.configs.LoadOrStore(path, newConfigFileEntry(fileName))
 	var needsRetainProject bool
 	entry.ChangeIf(
@@ -206,7 +202,7 @@ func (c *configFileRegistryBuilder) acquireConfigForProject(fileName string, pat
 				}
 				config.retainingProjects[project.configFilePath] = struct{}{}
 			}
-			c.reloadIfNeeded(config, fileName, path)
+			c.reloadIfNeeded(config, fileName, path, logger)
 		},
 	)
 	return entry.Value().commandLine
@@ -216,7 +212,7 @@ func (c *configFileRegistryBuilder) acquireConfigForProject(fileName string, pat
 // cached, then adds the open file to `retainingOpenFiles` to keep it alive in the cache.
 // Each `acquireConfigForOpenFile` call that passes an `openFilePath`
 // should be accompanied by an eventual `releaseConfigForOpenFile` call with the same open file.
-func (c *configFileRegistryBuilder) acquireConfigForOpenFile(configFileName string, configFilePath tspath.Path, openFilePath tspath.Path) *tsoptions.ParsedCommandLine {
+func (c *configFileRegistryBuilder) acquireConfigForOpenFile(configFileName string, configFilePath tspath.Path, openFilePath tspath.Path, logger *logging.LogTree) *tsoptions.ParsedCommandLine {
 	entry, _ := c.configs.LoadOrStore(configFilePath, newConfigFileEntry(configFileName))
 	var needsRetainOpenFile bool
 	entry.ChangeIf(
@@ -232,7 +228,7 @@ func (c *configFileRegistryBuilder) acquireConfigForOpenFile(configFileName stri
 				}
 				config.retainingOpenFiles[openFilePath] = struct{}{}
 			}
-			c.reloadIfNeeded(config, configFileName, configFilePath)
+			c.reloadIfNeeded(config, configFileName, configFilePath, logger)
 		},
 	)
 	return entry.Value().commandLine
@@ -411,7 +407,7 @@ func (c *configFileRegistryBuilder) handleConfigChange(entry *dirty.SyncMapEntry
 	return affectedProjects
 }
 
-func (c *configFileRegistryBuilder) computeConfigFileName(fileName string, skipSearchInDirectoryOfFile bool) string {
+func (c *configFileRegistryBuilder) computeConfigFileName(fileName string, skipSearchInDirectoryOfFile bool, logger *logging.LogTree) string {
 	searchPath := tspath.GetDirectoryPath(fileName)
 	result, _ := tspath.ForEachAncestorDirectory(searchPath, func(directory string) (result string, stop bool) {
 		tsconfigPath := tspath.CombinePaths(directory, "tsconfig.json")
@@ -428,11 +424,11 @@ func (c *configFileRegistryBuilder) computeConfigFileName(fileName string, skipS
 		skipSearchInDirectoryOfFile = false
 		return "", false
 	})
-	// !!! c.snapshot.Logf("computeConfigFileName:: File: %s:: Result: %s", fileName, result)
+	logger.Logf("computeConfigFileName:: File: %s:: Result: %s", fileName, result)
 	return result
 }
 
-func (c *configFileRegistryBuilder) getConfigFileNameForFile(fileName string, path tspath.Path, loadKind projectLoadKind) string {
+func (c *configFileRegistryBuilder) getConfigFileNameForFile(fileName string, path tspath.Path, loadKind projectLoadKind, logger *logging.LogTree) string {
 	if isDynamicFileName(fileName) {
 		return ""
 	}
@@ -445,7 +441,7 @@ func (c *configFileRegistryBuilder) getConfigFileNameForFile(fileName string, pa
 		return ""
 	}
 
-	configName := c.computeConfigFileName(fileName, false)
+	configName := c.computeConfigFileName(fileName, false, logger)
 
 	if _, ok := c.fs.overlays[path]; ok {
 		c.configFileNames.Add(path, &configFileNames{
@@ -455,7 +451,7 @@ func (c *configFileRegistryBuilder) getConfigFileNameForFile(fileName string, pa
 	return configName
 }
 
-func (c *configFileRegistryBuilder) getAncestorConfigFileName(fileName string, path tspath.Path, configFileName string, loadKind projectLoadKind) string {
+func (c *configFileRegistryBuilder) getAncestorConfigFileName(fileName string, path tspath.Path, configFileName string, loadKind projectLoadKind, logger *logging.LogTree) string {
 	if isDynamicFileName(fileName) {
 		return ""
 	}
@@ -473,7 +469,7 @@ func (c *configFileRegistryBuilder) getAncestorConfigFileName(fileName string, p
 	}
 
 	// Look for config in parent folders of config file
-	result := c.computeConfigFileName(configFileName, true)
+	result := c.computeConfigFileName(configFileName, true, logger)
 
 	if _, ok := c.fs.overlays[path]; ok {
 		entry.Change(func(value *configFileNames) {

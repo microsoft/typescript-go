@@ -502,7 +502,7 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 		},
 		func(node searchNode) (isResult bool, stop bool) {
 			configFilePath := b.toPath(node.configFileName)
-			config := b.configFileRegistryBuilder.findOrAcquireConfigForOpenFile(node.configFileName, configFilePath, path, node.loadKind)
+			config := b.configFileRegistryBuilder.findOrAcquireConfigForOpenFile(node.configFileName, configFilePath, path, node.loadKind, node.logger.Fork("Acquiring config for open file"))
 			if config == nil {
 				return false, false
 			}
@@ -591,7 +591,7 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 			return *fallback
 		}
 	}
-	if ancestorConfigName := b.configFileRegistryBuilder.getAncestorConfigFileName(fileName, path, configFileName, loadKind); ancestorConfigName != "" {
+	if ancestorConfigName := b.configFileRegistryBuilder.getAncestorConfigFileName(fileName, path, configFileName, loadKind, logger); ancestorConfigName != "" {
 		return b.findOrCreateDefaultConfiguredProjectWorker(
 			fileName,
 			path,
@@ -629,7 +629,7 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectForOpenSc
 		entry, _ := b.configuredProjects.Load(key)
 		return searchResult{project: entry}
 	}
-	if configFileName := b.configFileRegistryBuilder.getConfigFileNameForFile(fileName, path, loadKind); configFileName != "" {
+	if configFileName := b.configFileRegistryBuilder.getConfigFileNameForFile(fileName, path, loadKind, logger); configFileName != "" {
 		startTime := time.Now()
 		result := b.findOrCreateDefaultConfiguredProjectWorker(
 			fileName,
@@ -729,7 +729,12 @@ func (b *projectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 	startTime := time.Now()
 	entry.Locked(func(entry dirty.Value[*Project]) {
 		if entry.Value().Kind == KindConfigured {
-			commandLine := b.configFileRegistryBuilder.acquireConfigForProject(entry.Value().configFileName, entry.Value().configFilePath, entry.Value())
+			commandLine := b.configFileRegistryBuilder.acquireConfigForProject(
+				entry.Value().configFileName,
+				entry.Value().configFilePath,
+				entry.Value(),
+				logger.Fork("Acquiring config for project"),
+			)
 			if entry.Value().CommandLine != commandLine {
 				updateProgram = true
 				if commandLine == nil {
@@ -745,7 +750,7 @@ func (b *projectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 		}
 		if updateProgram {
 			entry.Change(func(project *Project) {
-				project.host = newCompilerHost(project.currentDirectory, project, b)
+				project.host = newCompilerHost(project.currentDirectory, project, b, logger)
 				result := project.CreateProgram()
 				project.Program = result.Program
 				project.checkerPool = result.CheckerPool
