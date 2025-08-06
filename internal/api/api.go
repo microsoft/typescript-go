@@ -29,9 +29,7 @@ type APIInit struct {
 }
 
 type API struct {
-	host   APIHost
-	logger logging.Logger
-
+	logger  logging.Logger
 	session *project.Session
 
 	projects  map[Handle[project.Project]]tspath.Path
@@ -50,9 +48,10 @@ func NewAPI(init *APIInit) *API {
 			FS:      init.FS,
 			Options: init.SessionOptions,
 		}),
-		files:   make(handleMap[ast.SourceFile]),
-		symbols: make(handleMap[ast.Symbol]),
-		types:   make(handleMap[checker.Type]),
+		projects: make(map[Handle[project.Project]]tspath.Path),
+		files:    make(handleMap[ast.SourceFile]),
+		symbols:  make(handleMap[ast.Symbol]),
+		types:    make(handleMap[checker.Type]),
 	}
 
 	return api
@@ -117,7 +116,7 @@ func (api *API) Close() {
 
 func (api *API) ParseConfigFile(configFileName string) (*ConfigFileResponse, error) {
 	configFileName = api.toAbsoluteFileName(configFileName)
-	configFileContent, ok := api.host.FS().ReadFile(configFileName)
+	configFileContent, ok := api.session.FS().ReadFile(configFileName)
 	if !ok {
 		return nil, fmt.Errorf("could not read file %q", configFileName)
 	}
@@ -125,7 +124,7 @@ func (api *API) ParseConfigFile(configFileName string) (*ConfigFileResponse, err
 	tsConfigSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(configFileName, api.toPath(configFileName), configFileContent)
 	parsedCommandLine := tsoptions.ParseJsonSourceFileConfigFileContent(
 		tsConfigSourceFile,
-		api.host,
+		api.session,
 		configDir,
 		nil, /*existingOptions*/
 		configFileName,
@@ -140,7 +139,7 @@ func (api *API) ParseConfigFile(configFileName string) (*ConfigFileResponse, err
 }
 
 func (api *API) LoadProject(ctx context.Context, configFileName string) (*ProjectResponse, error) {
-	project, err := api.session.OpenProject(ctx, configFileName)
+	project, err := api.session.OpenProject(ctx, api.toAbsoluteFileName(configFileName))
 	if err != nil {
 		return nil, err
 	}
@@ -306,11 +305,11 @@ func (api *API) releaseHandle(handle string) error {
 }
 
 func (api *API) toAbsoluteFileName(fileName string) string {
-	return tspath.GetNormalizedAbsolutePath(fileName, api.host.GetCurrentDirectory())
+	return tspath.GetNormalizedAbsolutePath(fileName, api.session.GetCurrentDirectory())
 }
 
 func (api *API) toPath(fileName string) tspath.Path {
-	return tspath.ToPath(fileName, api.host.GetCurrentDirectory(), api.host.FS().UseCaseSensitiveFileNames())
+	return tspath.ToPath(fileName, api.session.GetCurrentDirectory(), api.session.FS().UseCaseSensitiveFileNames())
 }
 
 func encodeJSON(v any, err error) ([]byte, error) {

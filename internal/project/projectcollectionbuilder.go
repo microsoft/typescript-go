@@ -127,6 +127,9 @@ func (b *projectCollectionBuilder) HandleAPIRequest(apiRequest *APISnapshotReque
 		for configFileName := range apiRequest.OpenProjects.Keys() {
 			configPath := b.toPath(configFileName)
 			if entry := b.findOrCreateProject(configFileName, configPath, projectLoadKindCreate, logger); entry != nil {
+				if b.apiOpenedProjects == nil {
+					b.apiOpenedProjects = make(map[tspath.Path]struct{})
+				}
 				b.apiOpenedProjects[configPath] = struct{}{}
 				b.updateProgram(entry, logger)
 			} else {

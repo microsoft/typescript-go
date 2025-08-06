@@ -6,6 +6,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"runtime/debug"
 	"strconv"
 	"sync"
 
@@ -66,10 +67,7 @@ type ServerOptions struct {
 	DefaultLibraryPath string
 }
 
-var (
-	_ APIHost = (*Server)(nil)
-	_ vfs.FS  = (*Server)(nil)
-)
+var _ vfs.FS = (*Server)(nil)
 
 type Server struct {
 	r      *bufio.Reader
@@ -141,6 +139,16 @@ func (s *Server) Run() error {
 
 		switch messageType {
 		case MessageTypeRequest:
+			defer func() {
+				if r := recover(); r != nil {
+					stack := debug.Stack()
+					err = fmt.Errorf("panic handling request: %v\n%s", r, string(stack))
+					if fatalErr := s.sendError(method, err); fatalErr != nil {
+						panic("fatal error sending panic response")
+					}
+				}
+			}()
+
 			result, err := s.handleRequest(method, payload)
 
 			if err != nil {
