@@ -3,6 +3,7 @@ package logging
 import (
 	"fmt"
 	"strings"
+	"sync"
 	"sync/atomic"
 	"time"
 )
@@ -29,6 +30,7 @@ var _ LogCollector = (*LogTree)(nil)
 
 type LogTree struct {
 	name    string
+	mu      sync.Mutex
 	logs    []*logEntry
 	root    *LogTree
 	level   int
@@ -51,6 +53,8 @@ func (c *LogTree) add(log *logEntry) {
 	// indent + header + message + newline
 	c.root.stringLength.Add(int32(c.level + 15 + len(log.message) + 1))
 	c.root.count.Add(1)
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	c.logs = append(c.logs, log)
 }
 

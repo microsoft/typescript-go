@@ -41,40 +41,68 @@ type SessionInit struct {
 	ParseCache  *ParseCache
 }
 
+// Session manages the state of an LSP session. It receives textDocument
+// events and requests for LanguageService objects from the LPS server
+// and processes them into immutable snapshots as the data source for
+// LanguageServices. When Session transitions from one snapshot to the
+// next, it diffs them and updates file watchers and Automatic Type
+// Acquisition (ATA) state accordingly.
 type Session struct {
-	options                            *SessionOptions
-	toPath                             func(string) tspath.Path
-	client                             Client
-	logger                             logging.Logger
-	npmExecutor                        ata.NpmExecutor
-	fs                                 *overlayFS
-	parseCache                         *ParseCache
-	extendedConfigCache                *extendedConfigCache
+	options     *SessionOptions
+	toPath      func(string) tspath.Path
+	client      Client
+	logger      logging.Logger
+	npmExecutor ata.NpmExecutor
+	fs          *overlayFS
+
+	// parseCache is the ref-counted cache of source files used when
+	// creating programs during snapshot cloning.
+	parseCache *ParseCache
+	// extendedConfigCache is the ref-counted cache of tsconfig ASTs
+	// that are used in the "extends" of another tsconfig.
+	extendedConfigCache *extendedConfigCache
+	// programCounter counts how many snapshots reference a program.
+	// When a program is no longer referenced, its source files are
+	// released from the parseCache.
+	programCounter *programCounter
+
 	compilerOptionsForInferredProjects *core.CompilerOptions
-	programCounter                     *programCounter
 	typingsInstaller                   *ata.TypingsInstaller
 	backgroundQueue                    *background.Queue
 
-	// Counter for snapshot IDs. Stored on Session instead of
-	// globally so IDs are predictable in tests.
+	// snapshotID is the counter for snapshot IDs. It does not necessarily
+	// equal the `snapshot.ID`. It is stored on Session instead of globally
+	// so IDs are predictable in tests.
 	snapshotID atomic.Uint64
 
-	snapshotMu sync.RWMutex
+	// snapshot is the current immutable state of all projects.
 	snapshot   *Snapshot
+	snapshotMu sync.RWMutex
 
-	pendingFileChangesMu sync.Mutex
+	// pendingFileChanges are accumulated from textDocument/* events delivered
+	// by the LSP server through DidOpenFile(), DidChangeFile(), etc. They are
+	// applied to the next snapshot update.
 	pendingFileChanges   []FileChange
+	pendingFileChangesMu sync.Mutex
 
-	pendingATAChangesMu sync.Mutex
+	// pendingATAChanges are produced by Automatic Type Acquisition (ATA)
+	// installations and applied to the next snapshot update.
 	pendingATAChanges   map[tspath.Path]*ATAStateChange
+	pendingATAChangesMu sync.Mutex
 
-	// Debouncing fields for snapshot updates
-	snapshotUpdateMu     sync.Mutex
+	// snapshotUpdateCancel is the cancelation function for a scheduled
+	// snapshot update. Snapshot updates are debounced after file watch
+	// changes since many watch events can occur in quick succession
+	// during `npm install` or git operations.
+	// !!! This can probably be replaced by ScheduleDiagnosticsRefresh()
 	snapshotUpdateCancel context.CancelFunc
+	snapshotUpdateMu     sync.Mutex
 
-	// Debouncing fields for diagnostics refresh
-	diagnosticsRefreshMu     sync.Mutex
+	// diagnosticsRefreshCancel is the cancelation function for a scheduled
+	// diagnostics refresh. Diagnostics refreshes are scheduled and debounced
+	// after file watch changes and ATA updates.
 	diagnosticsRefreshCancel context.CancelFunc
+	diagnosticsRefreshMu     sync.Mutex
 }
 
 func NewSession(init *SessionInit) *Session {
