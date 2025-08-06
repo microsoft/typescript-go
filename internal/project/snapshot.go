@@ -135,8 +135,10 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		compilerOptionsForInferredProjects = change.compilerOptionsForInferredProjects
 	}
 
+	newSnapshotID := session.snapshotID.Add(1)
 	projectCollectionBuilder := newProjectCollectionBuilder(
 		ctx,
+		newSnapshotID,
 		fs,
 		s.ProjectCollection,
 		s.ConfigFileRegistry,
@@ -168,7 +170,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	snapshotFS, _ := fs.Finalize()
 
 	newSnapshot := NewSnapshot(
-		session.snapshotID.Add(1),
+		newSnapshotID,
 		snapshotFS,
 		s.sessionOptions,
 		session.parseCache,
@@ -186,7 +188,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
 		session.programCounter.Ref(project.Program)
-		if project.ProgramUpdateKind != ProgramUpdateKindNone {
+		if project.ProgramLastUpdate == newSnapshotID {
 			// If the program was updated during this clone, the project and its host are new
 			// and still retain references to the builder. Freezing clears the builder reference
 			// so it's GC'd and to ensure the project can't access any data not already in the

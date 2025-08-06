@@ -36,6 +36,7 @@ type projectCollectionBuilder struct {
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	configFileRegistryBuilder          *configFileRegistryBuilder
 
+	newSnapshotID           uint64
 	programStructureChanged bool
 	fileDefaultProjects     map[tspath.Path]tspath.Path
 	configuredProjects      *dirty.SyncMap[tspath.Path, *Project]
@@ -46,6 +47,7 @@ type projectCollectionBuilder struct {
 
 func newProjectCollectionBuilder(
 	ctx context.Context,
+	newSnapshotID uint64,
 	fs *snapshotFSBuilder,
 	oldProjectCollection *ProjectCollection,
 	oldConfigFileRegistry *ConfigFileRegistry,
@@ -64,6 +66,7 @@ func newProjectCollectionBuilder(
 		extendedConfigCache:                extendedConfigCache,
 		base:                               oldProjectCollection,
 		configFileRegistryBuilder:          newConfigFileRegistryBuilder(fs, oldConfigFileRegistry, extendedConfigCache, sessionOptions, nil),
+		newSnapshotID:                      newSnapshotID,
 		configuredProjects:                 dirty.NewSyncMap(oldProjectCollection.configuredProjects, nil),
 		inferredProject:                    dirty.NewBox(oldProjectCollection.inferredProject),
 		apiOpenedProjects:                  maps.Clone(oldAPIOpenedProjects),
@@ -755,6 +758,7 @@ func (b *projectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 				project.Program = result.Program
 				project.checkerPool = result.CheckerPool
 				project.ProgramUpdateKind = result.UpdateKind
+				project.ProgramLastUpdate = b.newSnapshotID
 				if result.UpdateKind == ProgramUpdateKindNewFiles {
 					filesChanged = true
 					if b.sessionOptions.WatchEnabled {

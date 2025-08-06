@@ -623,7 +623,7 @@ func (s *Session) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error
 
 func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
-		if project.ShouldTriggerATA() {
+		if project.ShouldTriggerATA(newSnapshot.ID()) {
 			s.backgroundQueue.Enqueue(context.Background(), func(ctx context.Context) {
 				var logTree *logging.LogTree
 				if s.options.LoggingEnabled {

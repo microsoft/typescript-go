@@ -61,10 +61,13 @@ type Project struct {
 	dirty         bool
 	dirtyFilePath tspath.Path
 
-	host              *compilerHost
-	CommandLine       *tsoptions.ParsedCommandLine
-	Program           *compiler.Program
+	host        *compilerHost
+	CommandLine *tsoptions.ParsedCommandLine
+	Program     *compiler.Program
+	// The kind of update that was performed on the program last time it was updated.
 	ProgramUpdateKind ProgramUpdateKind
+	// The ID of the snapshot that created the program stored in this project.
+	ProgramLastUpdate uint64
 
 	failedLookupsWatch      *WatchedFiles[map[tspath.Path]string]
 	affectingLocationsWatch *WatchedFiles[map[tspath.Path]string]
@@ -202,6 +205,7 @@ func (p *Project) Clone() *Project {
 		CommandLine:       p.CommandLine,
 		Program:           p.Program,
 		ProgramUpdateKind: ProgramUpdateKindNone,
+		ProgramLastUpdate: p.ProgramLastUpdate,
 
 		failedLookupsWatch:      p.failedLookupsWatch,
 		affectingLocationsWatch: p.affectingLocationsWatch,
@@ -368,7 +372,7 @@ func (p *Project) GetUnresolvedImports() *collections.Set[string] {
 }
 
 // ShouldTriggerATA determines if ATA should be triggered for this project.
-func (p *Project) ShouldTriggerATA() bool {
+func (p *Project) ShouldTriggerATA(snapshotID uint64) bool {
 	if p.Program == nil || p.CommandLine == nil {
 		return false
 	}
@@ -378,7 +382,7 @@ func (p *Project) ShouldTriggerATA() bool {
 		return false
 	}
 
-	if p.installedTypingsInfo == nil || p.ProgramUpdateKind == ProgramUpdateKindNewFiles {
+	if p.installedTypingsInfo == nil || p.ProgramLastUpdate == snapshotID && p.ProgramUpdateKind == ProgramUpdateKindNewFiles {
 		return true
 	}
 
