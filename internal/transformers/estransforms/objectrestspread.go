@@ -78,6 +78,8 @@ func (ch *objectRestSpreadTransformer) visit(node *ast.Node) *ast.Node {
 		return node
 	}
 	switch node.Kind {
+	case ast.KindSourceFile:
+		return ch.visitSourceFile(node.AsSourceFile())
 	case ast.KindObjectLiteralExpression:
 		return ch.visitObjectLiteralExpression(node.AsObjectLiteralExpression())
 	case ast.KindBinaryExpression:
@@ -109,6 +111,12 @@ func (ch *objectRestSpreadTransformer) visit(node *ast.Node) *ast.Node {
 	default:
 		return ch.Visitor().VisitEachChild(node)
 	}
+}
+
+func (ch *objectRestSpreadTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
+	visited := ch.Visitor().VisitEachChild(node.AsNode())
+	ch.EmitContext().AddEmitHelper(visited.AsNode(), ch.EmitContext().ReadEmitHelpers()...)
+	return visited
 }
 
 func (ch *objectRestSpreadTransformer) visitParameter(node *ast.ParameterDeclaration) *ast.Node {
