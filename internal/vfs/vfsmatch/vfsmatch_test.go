@@ -12,7 +12,7 @@ func TestMatchFiles(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
 		name                      string
-		files                     map[string]string
+		files                     map[string]any
 		path                      string
 		extensions                []string
 		excludes                  []string
@@ -24,7 +24,7 @@ func TestMatchFiles(t *testing.T) {
 	}{
 		{
 			name: "simple include all",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/src/index.ts":              "export {}",
 				"/project/src/util.ts":               "export {}",
 				"/project/src/sub/file.ts":           "export {}",
@@ -41,7 +41,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "exclude node_modules",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/src/index.ts":              "export {}",
 				"/project/src/util.ts":               "export {}",
 				"/project/node_modules/pkg/index.ts": "export {}",
@@ -57,7 +57,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "specific include directory",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/src/index.ts":    "export {}",
 				"/project/src/util.ts":     "export {}",
 				"/project/tests/test.ts":   "export {}",
@@ -74,7 +74,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "multiple include patterns",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/src/index.ts":     "export {}",
 				"/project/src/util.ts":      "export {}",
 				"/project/tests/test.ts":    "export {}",
@@ -91,7 +91,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "case insensitive matching",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/SRC/Index.TS":   "export {}",
 				"/project/src/UTIL.ts":    "export {}",
 				"/project/Docs/readme.md": "# readme",
@@ -106,7 +106,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "exclude with wildcards",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/src/index.ts":         "export {}",
 				"/project/src/util.ts":          "export {}",
 				"/project/src/types.d.ts":       "export {}",
@@ -124,7 +124,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "depth limit",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/index.ts":                "export {}",
 				"/project/src/util.ts":             "export {}",
 				"/project/src/deep/nested/file.ts": "export {}",
@@ -141,7 +141,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "relative excludes",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/src/index.ts":              "export {}",
 				"/project/src/util.ts":               "export {}",
 				"/project/build/output.js":           "console.log('hello')",
@@ -157,7 +157,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "empty includes and excludes",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/index.ts":      "export {}",
 				"/project/src/util.ts":   "export {}",
 				"/project/tests/test.ts": "export {}",
@@ -172,7 +172,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "star pattern matching",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/test.ts":      "export {}",
 				"/project/test.spec.ts": "export {}",
 				"/project/util.ts":      "export {}",
@@ -188,7 +188,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "mixed file extensions",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/component.tsx": "export {}",
 				"/project/util.ts":       "export {}",
 				"/project/types.d.ts":    "export {}",
@@ -205,7 +205,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name:                      "empty filesystem",
-			files:                     map[string]string{},
+			files:                     map[string]any{},
 			path:                      "/project",
 			extensions:                []string{".ts"},
 			excludes:                  []string{},
@@ -216,7 +216,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "no matching extensions",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/file.js":  "export {}",
 				"/project/file.py":  "print('hello')",
 				"/project/file.txt": "hello world",
@@ -231,7 +231,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "exclude everything",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/index.ts": "export {}",
 				"/project/util.ts":  "export {}",
 			},
@@ -245,7 +245,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "zero depth",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/index.ts":    "export {}",
 				"/project/src/util.ts": "export {}",
 			},
@@ -260,7 +260,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "complex wildcard patterns",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/src/component.min.js": "console.log('minified')",
 				"/project/src/component.js":     "console.log('normal')",
 				"/project/src/util.ts":          "export {}",
@@ -276,7 +276,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "ignore dotted files and folders from tsoptions test",
-			files: map[string]string{
+			files: map[string]any{
 				"/apath/..c.ts":        "export {}",
 				"/apath/.b.ts":         "export {}",
 				"/apath/.git/a.ts":     "export {}",
@@ -297,7 +297,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "implicitly exclude common package folders from tsoptions test",
-			files: map[string]string{
+			files: map[string]any{
 				"/bower_components/b.ts": "export {}",
 				"/d.ts":                  "export {}",
 				"/folder/e.ts":           "export {}",
@@ -320,7 +320,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "comprehensive test case",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/src/index.ts":                "export {}",
 				"/project/src/util.ts":                 "export {}",
 				"/project/src/components/App.tsx":      "export {}",
@@ -349,7 +349,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "case insensitive comparison",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/SRC/Index.TS":       "export {}",
 				"/project/src/Util.ts":        "export {}",
 				"/project/Tests/Unit.test.ts": "export {}",
@@ -365,7 +365,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "depth limited comparison",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/index.ts":                "export {}",
 				"/project/src/util.ts":             "export {}",
 				"/project/src/deep/nested/file.ts": "export {}",
@@ -382,7 +382,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "wildcard questions and asterisks",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/test1.ts":   "export {}",
 				"/project/test2.ts":   "export {}",
 				"/project/testAB.ts":  "export {}",
@@ -399,7 +399,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "implicit glob behavior",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/src/index.ts":    "export {}",
 				"/project/src/util.ts":     "export {}",
 				"/project/src/sub/file.ts": "export {}",
@@ -414,7 +414,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "no includes match - empty base paths",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/src/index.ts": "export {}",
 				"/project/src/util.ts":  "export {}",
 			},
@@ -428,7 +428,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "minified file exclusion pattern",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/src/app.js":     "console.log('app')",
 				"/project/src/app.min.js": "console.log('minified')",
 				"/project/src/util.js":    "console.log('util')",
@@ -443,7 +443,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "empty path in file building",
-			files: map[string]string{
+			files: map[string]any{
 				"/index.ts": "export {}",
 				"/util.ts":  "export {}",
 			},
@@ -457,7 +457,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "empty absolute path in file building",
-			files: map[string]string{
+			files: map[string]any{
 				"/index.ts": "export {}",
 				"/util.ts":  "export {}",
 			},
@@ -471,7 +471,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "visited directory prevention",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/src/index.ts": "export {}",
 			},
 			path:                      "/project",
@@ -484,7 +484,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "exclude pattern with absolute path fallback",
-			files: map[string]string{
+			files: map[string]any{
 				"/different/path/src/index.ts": "export {}",
 				"/different/path/other.ts":     "export {}",
 			},
@@ -498,7 +498,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "empty include pattern",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/index.ts": "export {}",
 				"/project/util.ts":  "export {}",
 			},
@@ -512,7 +512,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "relative path equals absolute path fallback",
-			files: map[string]string{
+			files: map[string]any{
 				"/index.ts": "export {}",
 				"/util.ts":  "export {}",
 			},
@@ -526,7 +526,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "files sorted in include order then alphabetical",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/z/a.ts":  "export {}",
 				"/project/z/b.ts":  "export {}",
 				"/project/x/a.ts":  "export {}",
@@ -544,7 +544,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "question mark matches single character only",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/x/a.ts":  "export {}",
 				"/project/x/b.ts":  "export {}",
 				"/project/x/aa.ts": "export {}",
@@ -559,7 +559,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "recursive directory pattern matching",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/a.ts":       "export {}",
 				"/project/z/a.ts":     "export {}",
 				"/project/x/a.ts":     "export {}",
@@ -577,7 +577,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "multiple recursive directories pattern",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/x/y/a.ts": "export {}",
 				"/project/x/a.ts":   "export {}",
 				"/project/z/a.ts":   "export {}",
@@ -593,7 +593,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "exclude folders by name",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/a.ts":     "export {}",
 				"/project/b.ts":     "export {}",
 				"/project/z/a.ts":   "export {}",
@@ -611,7 +611,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "with dotted folders should be excluded implicitly",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/x/d.ts":    "export {}",
 				"/project/x/y/d.ts":  "export {}",
 				"/project/x/y/.e.ts": "export {}",
@@ -630,7 +630,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "explicit dotted folder inclusion",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/x/.y/a.ts": "export {}",
 				"/project/.z/.b.ts":  "export {}",
 				"/project/.z/c.ts":   "export {}",
@@ -645,7 +645,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "recursive wildcards matching dotted directories",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/x/.y/a.ts": "export {}",
 				"/project/.z/.b.ts":  "export {}",
 				"/project/.z/c.ts":   "export {}",
@@ -661,7 +661,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "allowJs false excludes .js files",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/js/a.js":  "console.log('a')",
 				"/project/js/b.js":  "console.log('b')",
 				"/project/src/c.ts": "export {}",
@@ -676,7 +676,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "allowJs true includes .js files",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/js/a.js":  "console.log('a')",
 				"/project/js/b.js":  "console.log('b')",
 				"/project/src/c.ts": "export {}",
@@ -691,7 +691,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "min.js files excluded from star patterns",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/js/a.js":      "console.log('a')",
 				"/project/js/d.min.js":  "console.log('minified')",
 				"/project/js/ab.min.js": "console.log('minified')",
@@ -707,7 +707,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "min.js files included when explicitly matched",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/js/a.js":      "console.log('a')",
 				"/project/js/d.min.js":  "console.log('minified')",
 				"/project/js/ab.min.js": "console.log('minified')",
@@ -723,7 +723,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "paths outside project using absolute paths",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/a.ts": "export {}",
 				"/ext/ext.ts":   "export {}",
 			},
@@ -737,7 +737,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "files with double dots in name",
-			files: map[string]string{
+			files: map[string]any{
 				"/ext/b/a..b.ts":   "export {}",
 				"/ext/b/normal.ts": "export {}",
 			},
@@ -751,7 +751,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "exclude files with double dots in name",
-			files: map[string]string{
+			files: map[string]any{
 				"/ext/b/a..b.ts":   "export {}",
 				"/ext/b/normal.ts": "export {}",
 			},
@@ -765,7 +765,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "trailing recursive directory in includes **",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/a.ts":   "export {}",
 				"/project/b.ts":   "export {}",
 				"/project/z/a.ts": "export {}",
@@ -781,7 +781,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "parent directory symbols after recursive pattern",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/x/a.ts": "export {}",
 				"/project/y/b.ts": "export {}",
 			},
@@ -795,7 +795,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "case insensitive ordering preserved",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/xylophone.ts": "export {}",
 				"/project/Yosemite.ts":  "export {}",
 				"/project/zebra.ts":     "export {}",
@@ -810,7 +810,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "case sensitive ordering preserved",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/xylophone.ts": "export {}",
 				"/project/Yosemite.ts":  "export {}",
 				"/project/zebra.ts":     "export {}",
@@ -825,7 +825,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "literal file list with excludes should not exclude",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/a.ts": "export {}",
 				"/project/b.ts": "export {}",
 			},
@@ -839,7 +839,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "always include literal files even when excluded",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/a.ts":      "export {}",
 				"/project/z/file.ts": "export {}",
 			},
@@ -853,7 +853,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "exclude pattern starting with starstar",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/a.ts":   "export {}",
 				"/project/x/b.ts": "export {}",
 				"/project/y/c.ts": "export {}",
@@ -868,7 +868,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "include pattern starting with starstar",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/x/a.ts":       "export {}",
 				"/project/y/x/b.ts":     "export {}",
 				"/project/q/a/c/b/d.ts": "export {}",
@@ -883,7 +883,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "explicit dotted folder inclusion 2",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/x/.y/a.ts": "export {}",
 				"/project/.z/.b.ts":  "export {}",
 				"/project/.z/c.ts":   "export {}",
@@ -898,7 +898,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "recursive wildcards matching dotted directories 2",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/x/.y/a.ts": "export {}",
 				"/project/.z/.b.ts":  "export {}",
 				"/project/.z/c.ts":   "export {}",
@@ -914,7 +914,7 @@ func TestMatchFiles(t *testing.T) {
 		},
 		{
 			name: "jsx none allowJs false mixed extensions",
-			files: map[string]string{
+			files: map[string]any{
 				"/project/a.tsx":      "export {}",
 				"/project/a.d.ts":     "export {}",
 				"/project/b.tsx":      "export {}",
