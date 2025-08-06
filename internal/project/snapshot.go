@@ -185,6 +185,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	newSnapshot.apiError = apiError
 
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
+		session.programCounter.Ref(project.Program)
 		if project.ProgramUpdateKind != ProgramUpdateKindNone {
 			// If the program was updated during this clone, the project and its host are new
 			// and still retain references to the builder. Freezing clears the builder reference
@@ -199,7 +200,6 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			// separating what it takes to build a program from what it takes to use a program,
 			// and only pass the former into NewProgram instead of retaining it indefinitely.
 			project.host.freeze(snapshotFS, newSnapshot.ConfigFileRegistry)
-			session.programCounter.Ref(project.Program)
 		}
 	}
 	for path, config := range newSnapshot.ConfigFileRegistry.configs {
