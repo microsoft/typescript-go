@@ -215,6 +215,11 @@ func (gm globMatcher) matchSegments(patternSegments []string, pathSegments []str
 	pi, ti := 0, 0
 	plen, tlen := len(patternSegments), len(pathSegments)
 
+	// Special case: standalone "**" pattern matches everything
+	if plen == 1 && patternSegments[0] == "**" {
+		return true
+	}
+
 	// Special case for directory matching: if the path is a prefix of the pattern (ignoring final wildcards),
 	// then it matches. This handles cases like pattern "LICENSE/**/*" matching directory "LICENSE/"
 	if isDirectory && tlen < plen {
@@ -375,9 +380,31 @@ func (v *newRelativeGlobVisitor) visitDirectory(path string, absolutePath string
 		// Convert to relative path for matching
 		relativePath := convertToRelativePath(absoluteName, v.basePath)
 
-		// Apply implicit exclusions (dotted files and common package folders)
-		if shouldImplicitlyExcludeRelativePath(relativePath) || isImplicitlyExcluded(current, false) {
-			continue
+		// Apply implicit exclusions only if we're using wildcard patterns and no explicit patterns override them
+		shouldImplicitlyExclude := shouldImplicitlyExcludeRelativePath(relativePath) || isImplicitlyExcluded(current, false)
+		if shouldImplicitlyExclude {
+			// Check if any include matcher explicitly wants this file
+			explicitlyIncluded := false
+			for _, includeMatcher := range v.includeMatchers {
+				hasWildcards := includeMatcher.hasWildcards()
+				explicitlyIncludesDottedFiles := includeMatcher.explicitlyIncludesDottedFiles()
+				explicitlyIncludesDottedDirs := includeMatcher.explicitlyIncludesDottedDirectories()
+				matches := includeMatcher.matchesFileRelative(relativePath)
+
+				// Include if:
+				// 1. Non-wildcard pattern (explicit), OR
+				// 2. Pattern explicitly includes dotted files, OR
+				// 3. File is a non-dotted file in a directory and pattern explicitly includes dotted directories
+				isNonDottedFileInDottedDirectory := strings.Contains(relativePath, "/") && !strings.HasPrefix(tspath.GetBaseFileName(relativePath), ".") && explicitlyIncludesDottedDirs
+
+				if (!hasWildcards || explicitlyIncludesDottedFiles || isNonDottedFileInDottedDirectory) && matches {
+					explicitlyIncluded = true
+					break
+				}
+			}
+			if !explicitlyIncluded {
+				continue
+			}
 		}
 
 		excluded := false
@@ -423,11 +450,6 @@ func (v *newRelativeGlobVisitor) visitDirectory(path string, absolutePath string
 		// Convert to relative path for matching
 		relativePath := convertToRelativePath(absoluteName, v.basePath)
 
-		// Apply implicit exclusions (dotted directories and common package folders)
-		if shouldImplicitlyExcludeRelativePath(relativePath) || isImplicitlyExcluded(current, true) {
-			continue
-		}
-
 		shouldInclude := len(v.includeMatchers) == 0
 		if !shouldInclude {
 			for _, includeMatcher := range v.includeMatchers {
@@ -435,6 +457,22 @@ func (v *newRelativeGlobVisitor) visitDirectory(path string, absolutePath string
 					shouldInclude = true
 					break
 				}
+			}
+		}
+
+		// Apply implicit exclusions only if we're using wildcard patterns and no explicit patterns override them
+		if shouldInclude && (shouldImplicitlyExcludeRelativePath(relativePath) || isImplicitlyExcluded(current, true)) {
+			// Check if any include matcher could explicitly want this directory (non-wildcard or pattern that explicitly includes dotted directories)
+			explicitlyIncluded := false
+			for _, includeMatcher := range v.includeMatchers {
+				if (!includeMatcher.hasWildcards() || includeMatcher.explicitlyIncludesDottedElements()) &&
+					includeMatcher.couldMatchInSubdirectoryRelative(relativePath) {
+					explicitlyIncluded = true
+					break
+				}
+			}
+			if !explicitlyIncluded {
+				shouldInclude = false
 			}
 		}
 
@@ -503,6 +541,26 @@ func matchesIncludeNew(fileName string, includeSpecs []string, basePath string, 
 
 		matcher := globMatcherForPatternRelative(includeSpec, useCaseSensitiveFileNames)
 		if matcher.matchesFileRelative(relativePath) {
+			// Apply implicit exclusions for dotted files if using wildcard patterns
+			shouldImplicitlyExclude := shouldImplicitlyExcludeRelativePath(relativePath)
+			if shouldImplicitlyExclude {
+				// Check if this pattern explicitly includes dotted files or is a non-wildcard pattern
+				hasWildcards := matcher.hasWildcards()
+				explicitlyIncludesDottedFiles := matcher.explicitlyIncludesDottedFiles()
+				explicitlyIncludesDottedDirs := matcher.explicitlyIncludesDottedDirectories()
+
+				// Include if:
+				// 1. Non-wildcard pattern (explicit), OR
+				// 2. Pattern explicitly includes dotted files, OR
+				// 3. File is a non-dotted file in a directory and pattern explicitly includes dotted directories
+				isNonDottedFileInDottedDirectory := strings.Contains(relativePath, "/") && !strings.HasPrefix(tspath.GetBaseFileName(relativePath), ".") && explicitlyIncludesDottedDirs
+
+				if !hasWildcards || explicitlyIncludesDottedFiles || isNonDottedFileInDottedDirectory {
+					return true
+				}
+				// Pattern matches but should be implicitly excluded
+				continue
+			}
 			return true
 		}
 	}
@@ -542,7 +600,29 @@ func parsePatternSegments(pattern string) []string {
 	}
 
 	segments := parsePathSegments(pattern)
+
+	// Normalize parent directory patterns (e.g., "**/y/.." -> "**")
+	// This handles cases where patterns contain ".." components
+	if containsParentDirectoryReference(segments) {
+		normalizedComponents := tspath.GetNormalizedPathComponents("/"+strings.Join(segments, "/"), "/")
+		// Remove the leading "/" and convert back to segments
+		if len(normalizedComponents) > 0 && normalizedComponents[0] == "/" {
+			normalizedComponents = normalizedComponents[1:]
+		}
+		segments = normalizedComponents
+	}
+
 	return applyImplicitGlob(segments)
+}
+
+// containsParentDirectoryReference checks if segments contain ".." references
+func containsParentDirectoryReference(segments []string) bool {
+	for _, segment := range segments {
+		if segment == ".." {
+			return true
+		}
+	}
+	return false
 }
 
 // globMatcherForPatternAbsolute creates a matcher for absolute pattern matching
@@ -646,4 +726,60 @@ func (gm globMatcher) matchesDirectoryRelative(relativePath string) bool {
 func (gm globMatcher) couldMatchInSubdirectoryRelative(relativePath string) bool {
 	pathSegments := parsePathSegments(relativePath)
 	return gm.couldMatchInSubdirectoryRecursive(gm.segments, pathSegments)
+}
+
+// hasWildcards returns true if this pattern contains wildcards (* or ?)
+func (gm globMatcher) hasWildcards() bool {
+	for _, segment := range gm.segments {
+		if strings.Contains(segment, "*") || strings.Contains(segment, "?") {
+			return true
+		}
+	}
+	return false
+}
+
+// explicitlyIncludesDottedElements returns true if this pattern explicitly includes dotted files/directories
+func (gm globMatcher) explicitlyIncludesDottedElements() bool {
+	for _, segment := range gm.segments {
+		// Check for patterns like ".*", ".foo", etc. that explicitly start with a dot
+		if strings.HasPrefix(segment, ".") && len(segment) > 1 {
+			return true
+		}
+		// Check for patterns that contain dots in the middle like "foo.bar"
+		// But exclude file extensions and other common patterns
+		if strings.Contains(segment, ".") && !strings.HasSuffix(segment, ".*") &&
+			!strings.HasSuffix(segment, ".ts") && !strings.HasSuffix(segment, ".js") &&
+			!strings.HasSuffix(segment, ".tsx") && !strings.HasSuffix(segment, ".jsx") &&
+			!strings.HasSuffix(segment, ".d.ts") && !strings.HasSuffix(segment, ".min.js") {
+			return true
+		}
+	}
+	return false
+}
+
+// explicitlyIncludesDottedFiles returns true if the final segment (file pattern) explicitly includes dotted files
+func (gm globMatcher) explicitlyIncludesDottedFiles() bool {
+	if len(gm.segments) == 0 {
+		return false
+	}
+
+	// Check only the last segment (file pattern) - this determines if dotted files are explicitly included
+	lastSegment := gm.segments[len(gm.segments)-1]
+	if strings.HasPrefix(lastSegment, ".") && len(lastSegment) > 1 {
+		return true
+	}
+
+	return false
+}
+
+// explicitlyIncludesDottedDirectories returns true if any directory segment explicitly includes dotted directories
+func (gm globMatcher) explicitlyIncludesDottedDirectories() bool {
+	// Check if any directory segment explicitly starts with a dot (indicating files inside dotted directories)
+	for i := 0; i < len(gm.segments)-1; i++ {
+		segment := gm.segments[i]
+		if strings.HasPrefix(segment, ".") && len(segment) > 1 {
+			return true
+		}
+	}
+	return false
 }
