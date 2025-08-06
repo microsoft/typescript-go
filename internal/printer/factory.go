@@ -566,7 +566,10 @@ func (f *NodeFactory) NewRestHelper(value *ast.Expression, elements []*ast.Node,
 	f.emitContext.RequestEmitHelper(restHelper)
 	var propertyNames []*ast.Node
 	computedTempVariableOffset := 0
-	for _, element := range elements {
+	for i, element := range elements {
+		if i == len(elements)-1 {
+			break
+		}
 		propertyName := ast.TryGetPropertyNameOfBindingOrAssignmentElement(element)
 		if propertyName != nil {
 			if ast.IsComputedPropertyName(propertyName) {

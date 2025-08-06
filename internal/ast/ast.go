@@ -3479,7 +3479,7 @@ func (node *BindingElement) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.PropertyName) |
 		propagateSubtreeFacts(node.name) |
 		propagateSubtreeFacts(node.Initializer) |
-		core.IfElse(node.DotDotDotToken != nil, SubtreeContainsRest, SubtreeFactsNone)
+		core.IfElse(node.DotDotDotToken != nil, SubtreeContainsRest|SubtreeContainsESObjectRestOrSpread, SubtreeFactsNone)
 }
 
 func IsBindingElement(node *Node) bool {
