@@ -85,17 +85,14 @@ func (l *LanguageService) GetSignatureHelpItems(
 
 	// Emulate VS Code's toTsTriggerReason.
 	triggerReasonKind := signatureHelpTriggerReasonKindNone
-	// var triggerCharacter *string
 	if context != nil {
 		switch context.TriggerKind {
 		case lsproto.SignatureHelpTriggerKindTriggerCharacter:
 			if context.TriggerCharacter != nil {
 				if context.IsRetrigger {
 					triggerReasonKind = signatureHelpTriggerReasonKindRetriggered
-					// triggerCharacter = context.TriggerCharacter
 				} else {
 					triggerReasonKind = signatureHelpTriggerReasonKindCharacterTyped
-					// triggerCharacter = context.TriggerCharacter
 				}
 			} else {
 				triggerReasonKind = signatureHelpTriggerReasonKindInvoked
