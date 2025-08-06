@@ -3,6 +3,7 @@ package execute
 import (
 	"context"
 	"fmt"
+	"io"
 	"runtime"
 	"strings"
 	"time"
@@ -41,16 +42,20 @@ func applyBulkEdits(text string, edits []core.TextChange) string {
 
 type CommandLineResult struct {
 	Status             ExitStatus
-	IncrementalProgram *incremental.Program
+	IncrementalProgram []*incremental.Program
 	Watcher            *Watcher
 }
 
 type CommandLineTesting interface {
-	OnListFilesStart()
-	OnListFilesEnd()
-	OnStatisticsStart()
-	OnStatisticsEnd()
-	GetTrace() func(str string)
+	// Ensure that all emitted files are timestamped in order to ensure they are deterministic for test baseline
+	OnEmittedFiles(result *compiler.EmitResult)
+	OnListFilesStart(w io.Writer)
+	OnListFilesEnd(w io.Writer)
+	OnStatisticsStart(w io.Writer)
+	OnStatisticsEnd(w io.Writer)
+	OnBuildStatusReportStart(w io.Writer)
+	OnBuildStatusReportEnd(w io.Writer)
+	GetTrace(w io.Writer) func(msg string)
 }
 
 func CommandLine(sys System, commandLineArgs []string, testing CommandLineTesting) CommandLineResult {
@@ -94,7 +99,7 @@ func fmtMain(sys System, input, output string) ExitStatus {
 }
 
 func tscBuildCompilation(sys System, buildCommand *tsoptions.ParsedBuildCommandLine, testing CommandLineTesting) CommandLineResult {
-	reportDiagnostic := createDiagnosticReporter(sys, buildCommand.CompilerOptions)
+	reportDiagnostic := createDiagnosticReporter(sys, sys.Writer(), buildCommand.CompilerOptions)
 
 	// if (buildOptions.locale) {
 	//     validateLocaleAndSetLanguage(buildOptions.locale, sys, errors);
@@ -107,67 +112,34 @@ func tscBuildCompilation(sys System, buildCommand *tsoptions.ParsedBuildCommandL
 		return CommandLineResult{Status: ExitStatusDiagnosticsPresent_OutputsSkipped}
 	}
 
+	if pprofDir := buildCommand.CompilerOptions.PprofDir; pprofDir != "" {
+		// !!! stderr?
+		profileSession := pprof.BeginProfiling(pprofDir, sys.Writer())
+		defer profileSession.Stop()
+	}
+
 	if buildCommand.CompilerOptions.Help.IsTrue() {
 		printVersion(sys)
 		printBuildHelp(sys, tsoptions.BuildOpts)
 		return CommandLineResult{Status: ExitStatusSuccess}
 	}
 
-	// if (buildOptions.watch) {
-	//     if (reportWatchModeWithoutSysSupport(sys, reportDiagnostic)) return;
-	//     const buildHost = createSolutionBuilderWithWatchHost(
-	//         sys,
-	//         /*createProgram*/ undefined,
-	//         reportDiagnostic,
-	//         createBuilderStatusReporter(sys, shouldBePretty(sys, buildOptions)),
-	//         createWatchStatusReporter(sys, buildOptions),
-	//     );
-	//     buildHost.jsDocParsingMode = defaultJSDocParsingMode;
-	//     const solutionPerformance = enableSolutionPerformance(sys, buildOptions);
-	//     updateSolutionBuilderHost(sys, cb, buildHost, solutionPerformance);
-	//     const onWatchStatusChange = buildHost.onWatchStatusChange;
-	//     let reportBuildStatistics = false;
-	//     buildHost.onWatchStatusChange = (d, newLine, options, errorCount) => {
-	//         onWatchStatusChange?.(d, newLine, options, errorCount);
-	//         if (
-	//             reportBuildStatistics && (
-	//                 d.code === Diagnostics.Found_0_errors_Watching_for_file_changes.code ||
-	//                 d.code === Diagnostics.Found_1_error_Watching_for_file_changes.code
-	//             )
-	//         ) {
-	//             reportSolutionBuilderTimes(builder, solutionPerformance);
-	//         }
-	//     };
-	//     const builder = createSolutionBuilderWithWatch(buildHost, projects, buildOptions, watchOptions);
-	//     builder.build();
-	//     reportSolutionBuilderTimes(builder, solutionPerformance);
-	//     reportBuildStatistics = true;
-	//     return builder;
-	// }
-
-	// const buildHost = createSolutionBuilderHost(
-	//     sys,
-	//     /*createProgram*/ undefined,
-	//     reportDiagnostic,
-	//     createBuilderStatusReporter(sys, shouldBePretty(sys, buildOptions)),
-	//     createReportErrorSummary(sys, buildOptions),
-	// );
-	// buildHost.jsDocParsingMode = defaultJSDocParsingMode;
-	// const solutionPerformance = enableSolutionPerformance(sys, buildOptions);
-	// updateSolutionBuilderHost(sys, cb, buildHost, solutionPerformance);
-	// const builder = createSolutionBuilder(buildHost, projects, buildOptions);
-	// const exitStatus = buildOptions.clean ? builder.clean() : builder.build();
-	// reportSolutionBuilderTimes(builder, solutionPerformance);
-	// dumpTracingLegend(); // Will no-op if there hasn't been any tracing
-	// return sys.exit(exitStatus);
-
-	fmt.Fprintln(sys.Writer(), "Build mode is currently unsupported.")
-	return CommandLineResult{Status: ExitStatusNotImplemented}
+	// !!! sheetal watch mode
+	solutionBuilder := newSolutionBuilder(solutionBuilderOptions{
+		sys,
+		buildCommand,
+		testing,
+	})
+	if buildCommand.BuildOptions.Clean.IsTrue() {
+		return solutionBuilder.Clean()
+	} else {
+		return solutionBuilder.Build()
+	}
 }
 
 func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testing CommandLineTesting) CommandLineResult {
 	configFileName := ""
-	reportDiagnostic := createDiagnosticReporter(sys, commandLine.CompilerOptions())
+	reportDiagnostic := createDiagnosticReporter(sys, sys.Writer(), commandLine.CompilerOptions())
 	// if commandLine.Options().Locale != nil
 
 	if len(commandLine.Errors) > 0 {
@@ -241,11 +213,11 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testin
 	compilerOptionsFromCommandLine := commandLine.CompilerOptions()
 	configForCompilation := commandLine
 	var extendedConfigCache collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]
-	var configTime time.Duration
+	var compileTimes compileTimes
 	if configFileName != "" {
 		configStart := sys.Now()
 		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(configFileName, compilerOptionsFromCommandLine, sys, &extendedConfigCache)
-		configTime = sys.Now().Sub(configStart)
+		compileTimes.configTime = sys.Now().Sub(configStart)
 		if len(errors) != 0 {
 			// these are unrecoverable errors--exit to report them as diagnostics
 			for _, e := range errors {
@@ -255,15 +227,16 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testin
 		}
 		configForCompilation = configParseResult
 		// Updater to reflect pretty
-		reportDiagnostic = createDiagnosticReporter(sys, commandLine.CompilerOptions())
+		reportDiagnostic = createDiagnosticReporter(sys, sys.Writer(), commandLine.CompilerOptions())
 	}
 
+	reportErrorSummary := createReportErrorSummary(sys, configForCompilation.CompilerOptions())
 	if compilerOptionsFromCommandLine.ShowConfig.IsTrue() {
 		showConfig(sys, configForCompilation.CompilerOptions())
 		return CommandLineResult{Status: ExitStatusSuccess}
 	}
 	if configForCompilation.CompilerOptions().Watch.IsTrue() {
-		watcher := createWatcher(sys, configForCompilation, reportDiagnostic, testing)
+		watcher := createWatcher(sys, configForCompilation, reportDiagnostic, reportErrorSummary, testing)
 		watcher.start()
 		return CommandLineResult{Status: ExitStatusSuccess, Watcher: watcher}
 	} else if configForCompilation.CompilerOptions().IsIncremental() {
@@ -271,8 +244,9 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testin
 			sys,
 			configForCompilation,
 			reportDiagnostic,
+			reportErrorSummary,
 			&extendedConfigCache,
-			configTime,
+			compileTimes,
 			testing,
 		)
 	}
@@ -280,8 +254,9 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testin
 		sys,
 		configForCompilation,
 		reportDiagnostic,
+		reportErrorSummary,
 		&extendedConfigCache,
-		configTime,
+		compileTimes,
 		testing,
 	)
 }
@@ -301,12 +276,16 @@ func findConfigFile(searchPath string, fileExists func(string) bool, configName 
 }
 
 func getTraceFromSys(sys System, testing CommandLineTesting) func(msg string) {
+	return getTraceWithWriterFromSys(sys.Writer(), testing)
+}
+
+func getTraceWithWriterFromSys(w io.Writer, testing CommandLineTesting) func(msg string) {
 	if testing == nil {
 		return func(msg string) {
-			fmt.Fprintln(sys.Writer(), msg)
+			fmt.Fprintln(w, msg)
 		}
 	} else {
-		return testing.GetTrace()
+		return testing.GetTrace(w)
 	}
 }
 
@@ -314,14 +293,15 @@ func performIncrementalCompilation(
 	sys System,
 	config *tsoptions.ParsedCommandLine,
 	reportDiagnostic diagnosticReporter,
+	reportErrorSummary diagnosticsReporter,
 	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
-	configTime time.Duration,
+	compileTimes compileTimes,
 	testing CommandLineTesting,
 ) CommandLineResult {
 	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, testing))
 	buildInfoReadStart := sys.Now()
 	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host), host)
-	buildInfoReadTime := sys.Now().Sub(buildInfoReadStart)
+	compileTimes.buildInfoReadTime = sys.Now().Sub(buildInfoReadStart)
 	// todo: cache, statistics, tracing
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{
@@ -329,25 +309,24 @@ func performIncrementalCompilation(
 		Host:             host,
 		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
 	})
-	parseTime := sys.Now().Sub(parseStart)
+	compileTimes.parseTime = sys.Now().Sub(parseStart)
 	changesComputeStart := sys.Now()
-	incrementalProgram := incremental.NewProgram(program, oldProgram, testing != nil)
-	changesComputeTime := sys.Now().Sub(changesComputeStart)
+	incrementalProgram := incremental.NewProgram(program, oldProgram, nil, testing != nil)
+	compileTimes.changesComputeTime = sys.Now().Sub(changesComputeStart)
+	result, _ := emitAndReportStatistics(
+		sys,
+		incrementalProgram,
+		incrementalProgram.GetProgram(),
+		config,
+		reportDiagnostic,
+		reportErrorSummary,
+		sys.Writer(),
+		compileTimes,
+		testing,
+	)
 	return CommandLineResult{
-		Status: emitAndReportStatistics(
-			sys,
-			incrementalProgram,
-			incrementalProgram.GetProgram(),
-			config,
-			reportDiagnostic,
-			configTime,
-			parseTime,
-
-			buildInfoReadTime,
-			changesComputeTime,
-			testing,
-		),
-		IncrementalProgram: incrementalProgram,
+		Status:             result.status,
+		IncrementalProgram: []*incremental.Program{incrementalProgram},
 	}
 }
 
@@ -355,8 +334,9 @@ func performCompilation(
 	sys System,
 	config *tsoptions.ParsedCommandLine,
 	reportDiagnostic diagnosticReporter,
+	reportErrorSummary diagnosticsReporter,
 	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
-	configTime time.Duration,
+	compileTimes compileTimes,
 	testing CommandLineTesting,
 ) CommandLineResult {
 	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, testing))
@@ -367,20 +347,20 @@ func performCompilation(
 		Host:             host,
 		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
 	})
-	parseTime := sys.Now().Sub(parseStart)
+	compileTimes.parseTime = sys.Now().Sub(parseStart)
+	result, _ := emitAndReportStatistics(
+		sys,
+		program,
+		program,
+		config,
+		reportDiagnostic,
+		reportErrorSummary,
+		sys.Writer(),
+		compileTimes,
+		testing,
+	)
 	return CommandLineResult{
-		Status: emitAndReportStatistics(
-			sys,
-			program,
-			program,
-			config,
-			reportDiagnostic,
-			configTime,
-			parseTime,
-			0,
-			0,
-			testing,
-		),
+		Status: result.status,
 	}
 }
 
@@ -390,23 +370,18 @@ func emitAndReportStatistics(
 	program *compiler.Program,
 	config *tsoptions.ParsedCommandLine,
 	reportDiagnostic diagnosticReporter,
-	configTime time.Duration,
-	parseTime time.Duration,
-	buildInfoReadTime time.Duration,
-	changesComputeTime time.Duration,
+	reportErrorSummary diagnosticsReporter,
+	w io.Writer,
+	compileTimes compileTimes,
 	testing CommandLineTesting,
-) ExitStatus {
-	result := emitFilesAndReportErrors(sys, programLike, program, reportDiagnostic, testing)
+) (compileAndEmitResult, *statistics) {
+	var statistics *statistics
+	result := emitFilesAndReportErrors(sys, programLike, program, reportDiagnostic, reportErrorSummary, w, compileTimes, testing)
 	if result.status != ExitStatusSuccess {
 		// compile exited early
-		return result.status
+		return result, nil
 	}
-
-	result.configTime = configTime
-	result.parseTime = parseTime
-	result.buildInfoReadTime = buildInfoReadTime
-	result.changesComputeTime = changesComputeTime
-	result.totalTime = sys.SinceStart()
+	result.times.totalTime = sys.SinceStart()
 
 	if config.CompilerOptions().Diagnostics.IsTrue() || config.CompilerOptions().ExtendedDiagnostics.IsTrue() {
 		var memStats runtime.MemStats
@@ -415,21 +390,19 @@ func emitAndReportStatistics(
 		runtime.GC()
 		runtime.ReadMemStats(&memStats)
 
-		reportStatistics(sys, program, result, &memStats, testing)
+		statistics = statisticsFromProgram(program, &compileTimes, &memStats)
+		statistics.report(w, testing)
 	}
 
 	if result.emitResult.EmitSkipped && len(result.diagnostics) > 0 {
-		return ExitStatusDiagnosticsPresent_OutputsSkipped
+		result.status = ExitStatusDiagnosticsPresent_OutputsSkipped
 	} else if len(result.diagnostics) > 0 {
-		return ExitStatusDiagnosticsPresent_OutputsGenerated
+		result.status = ExitStatusDiagnosticsPresent_OutputsGenerated
 	}
-	return ExitStatusSuccess
+	return result, statistics
 }
 
-type compileAndEmitResult struct {
-	diagnostics        []*ast.Diagnostic
-	emitResult         *compiler.EmitResult
-	status             ExitStatus
+type compileTimes struct {
 	configTime         time.Duration
 	parseTime          time.Duration
 	bindTime           time.Duration
@@ -439,14 +412,24 @@ type compileAndEmitResult struct {
 	buildInfoReadTime  time.Duration
 	changesComputeTime time.Duration
 }
+type compileAndEmitResult struct {
+	diagnostics []*ast.Diagnostic
+	emitResult  *compiler.EmitResult
+	status      ExitStatus
+	times       compileTimes
+}
 
 func emitFilesAndReportErrors(
 	sys System,
 	programLike compiler.ProgramLike,
 	program *compiler.Program,
 	reportDiagnostic diagnosticReporter,
+	reportErrorSummary diagnosticsReporter,
+	w io.Writer,
+	compileTimes compileTimes,
 	testing CommandLineTesting,
 ) (result compileAndEmitResult) {
+	result.times = compileTimes
 	ctx := context.Background()
 
 	allDiagnostics := compiler.GetDiagnosticsOfAnyProgram(
@@ -460,13 +443,13 @@ func emitFilesAndReportErrors(
 			// early so we can track the time.
 			bindStart := sys.Now()
 			diags := programLike.GetBindDiagnostics(ctx, file)
-			result.bindTime = sys.Now().Sub(bindStart)
+			result.times.bindTime = sys.Now().Sub(bindStart)
 			return diags
 		},
 		func(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
 			checkStart := sys.Now()
 			diags := programLike.GetSemanticDiagnostics(ctx, file)
-			result.checkTime = sys.Now().Sub(checkStart)
+			result.times.checkTime = sys.Now().Sub(checkStart)
 			return diags
 		},
 	)
@@ -475,10 +458,13 @@ func emitFilesAndReportErrors(
 	if !programLike.Options().ListFilesOnly.IsTrue() {
 		emitStart := sys.Now()
 		emitResult = programLike.Emit(ctx, compiler.EmitOptions{})
-		result.emitTime = sys.Now().Sub(emitStart)
+		result.times.emitTime = sys.Now().Sub(emitStart)
 	}
 	if emitResult != nil {
 		allDiagnostics = append(allDiagnostics, emitResult.Diagnostics...)
+	}
+	if testing != nil {
+		testing.OnEmittedFiles(emitResult)
 	}
 
 	allDiagnostics = compiler.SortAndDeduplicateDiagnostics(allDiagnostics)
@@ -486,38 +472,36 @@ func emitFilesAndReportErrors(
 		reportDiagnostic(diagnostic)
 	}
 
-	listFiles(sys, program, emitResult, testing)
+	listFiles(w, program, emitResult, testing)
 
-	createReportErrorSummary(sys, programLike.Options())(allDiagnostics)
+	reportErrorSummary(allDiagnostics)
 	result.diagnostics = allDiagnostics
 	result.emitResult = emitResult
 	result.status = ExitStatusSuccess
 	return result
 }
 
-// func isBuildCommand(args []string) bool {
-// 	return len(args) > 0 && args[0] == "build"
-// }
-
 func showConfig(sys System, config *core.CompilerOptions) {
 	// !!!
 	_ = jsonutil.MarshalIndentWrite(sys.Writer(), config, "", "    ")
 }
 
-func listFiles(sys System, program *compiler.Program, emitResult *compiler.EmitResult, testing CommandLineTesting) {
+func listFiles(w io.Writer, program *compiler.Program, emitResult *compiler.EmitResult, testing CommandLineTesting) {
 	if testing != nil {
-		testing.OnListFilesStart()
-		defer testing.OnListFilesEnd()
-	}
-	for _, file := range emitResult.EmittedFiles {
-		fmt.Fprintln(sys.Writer(), "TSFILE: ", tspath.GetNormalizedAbsolutePath(file, sys.GetCurrentDirectory()))
+		testing.OnListFilesStart(w)
+		defer testing.OnListFilesEnd(w)
 	}
 	options := program.Options()
+	if options.ListEmittedFiles.IsTrue() {
+		for _, file := range emitResult.EmittedFiles {
+			fmt.Fprintln(w, "TSFILE: ", tspath.GetNormalizedAbsolutePath(file, program.GetCurrentDirectory()))
+		}
+	}
 	if options.ExplainFiles.IsTrue() {
-		program.ExplainFiles(sys.Writer())
+		program.ExplainFiles(w)
 	} else if options.ListFiles.IsTrue() || options.ListFilesOnly.IsTrue() {
 		for _, file := range program.GetSourceFiles() {
-			fmt.Fprintln(sys.Writer(), file.FileName())
+			fmt.Fprintln(w, file.FileName())
 		}
 	}
 }

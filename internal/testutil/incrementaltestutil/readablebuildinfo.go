@@ -17,9 +17,9 @@ type readableBuildInfo struct {
 	Version   string `json:"version,omitzero"`
 
 	// Common between incremental and tsc -b buildinfo for non incremental programs
-	Errors       bool `json:"errors,omitzero"`
-	CheckPending bool `json:"checkPending,omitzero"`
-	// Root         []BuildInfoRoot `json:"root,omitzero"`
+	Errors       bool                     `json:"errors,omitzero"`
+	CheckPending bool                     `json:"checkPending,omitzero"`
+	Root         []*readableBuildInfoRoot `json:"root,omitzero"`
 
 	// IncrementalProgram info
 	FileNames                  []string                                  `json:"fileNames,omitzero"`
@@ -33,8 +33,13 @@ type readableBuildInfo struct {
 	AffectedFilesPendingEmit   []*readableBuildInfoFilePendingEmit       `json:"affectedFilesPendingEmit,omitzero"`
 	LatestChangedDtsFile       string                                    `json:"latestChangedDtsFile,omitzero"` // Because this is only output file in the program, we dont need fileId to deduplicate name
 	EmitSignatures             []*readableBuildInfoEmitSignature         `json:"emitSignatures,omitzero"`
-	// resolvedRoot: readonly IncrementalBuildInfoResolvedRoot[] | undefined;
-	Size int `json:"size,omitzero"` // Size of the build info file
+	ResolvedRoot               []*readableBuildInfoResolvedRoot          `json:"resolvedRoot,omitzero"`
+	Size                       int                                       `json:"size,omitzero"` // Size of the build info file
+}
+
+type readableBuildInfoRoot struct {
+	Files    []string                   `json:"files,omitzero"`
+	Original *incremental.BuildInfoRoot `json:"original,omitzero"`
 }
 
 type readableBuildInfoFileInfo struct {
@@ -174,6 +179,27 @@ type readableBuildInfoEmitSignature struct {
 	Original            *incremental.BuildInfoEmitSignature `json:"original,omitzero"`
 }
 
+type readableBuildInfoResolvedRoot struct {
+	Resolved string
+	Root     string
+}
+
+func (b *readableBuildInfoResolvedRoot) MarshalJSON() ([]byte, error) {
+	return json.Marshal([2]string{b.Resolved, b.Root})
+}
+
+func (b *readableBuildInfoResolvedRoot) UnmarshalJSON(data []byte) error {
+	var resolvedAndRoot *[2]string
+	if err := json.Unmarshal(data, &resolvedAndRoot); err == nil {
+		*b = readableBuildInfoResolvedRoot{
+			Resolved: resolvedAndRoot[0],
+			Root:     resolvedAndRoot[1],
+		}
+		return nil
+	}
+	return fmt.Errorf("invalid BuildInfoResolvedRoot: %s", data)
+}
+
 func toReadableBuildInfo(buildInfo *incremental.BuildInfo, buildInfoText string) string {
 	readable := readableBuildInfo{
 		buildInfo:            buildInfo,
@@ -186,6 +212,7 @@ func toReadableBuildInfo(buildInfo *incremental.BuildInfo, buildInfoText string)
 		Size:                 len(buildInfoText),
 	}
 	readable.setFileInfos()
+	readable.setRoot()
 	readable.setFileIdsList()
 	readable.setReferencedMap()
 	readable.setChangeFileSet()
@@ -193,6 +220,7 @@ func toReadableBuildInfo(buildInfo *incremental.BuildInfo, buildInfoText string)
 	readable.setEmitDiagnostics()
 	readable.setAffectedFilesPendingEmit()
 	readable.setEmitSignatures()
+	readable.setResolvedRoot()
 	contents, err := jsonutil.MarshalIndent(&readable, "", "  ")
 	if err != nil {
 		panic("readableBuildInfo: failed to marshal readable build info: " + err.Error())
@@ -252,6 +280,26 @@ func (r *readableBuildInfo) setFileInfos() {
 			AffectsGlobalScope: fileInfo.AffectsGlobalScope(),
 			ImpliedNodeFormat:  fileInfo.ImpliedNodeFormat().String(),
 			Original:           original,
+		}
+	})
+}
+
+func (r *readableBuildInfo) setRoot() {
+	r.Root = core.Map(r.buildInfo.Root, func(original *incremental.BuildInfoRoot) *readableBuildInfoRoot {
+		var files []string
+		if original.NonIncremental != "" {
+			files = []string{original.NonIncremental}
+		} else if original.End == 0 {
+			files = []string{r.toFilePath(original.Start)}
+		} else {
+			files = make([]string, 0, original.End-original.Start+1)
+			for i := original.Start; i <= original.End; i++ {
+				files = append(files, r.toFilePath(i))
+			}
+		}
+		return &readableBuildInfoRoot{
+			Files:    files,
+			Original: original,
 		}
 	})
 }
@@ -355,6 +403,15 @@ func (r *readableBuildInfo) setEmitSignatures() {
 			DiffersOnlyInDtsMap: signature.DiffersOnlyInDtsMap,
 			DiffersInOptions:    signature.DiffersInOptions,
 			Original:            signature,
+		}
+	})
+}
+
+func (r *readableBuildInfo) setResolvedRoot() {
+	r.ResolvedRoot = core.Map(r.buildInfo.ResolvedRoot, func(original *incremental.BuildInfoResolvedRoot) *readableBuildInfoResolvedRoot {
+		return &readableBuildInfoResolvedRoot{
+			Resolved: r.toFilePath(original.Resolved),
+			Root:     r.toFilePath(original.Root),
 		}
 	})
 }

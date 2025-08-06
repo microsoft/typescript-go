@@ -135,6 +135,52 @@ func (p *ParsedCommandLine) GetOutputDeclarationFileNames() iter.Seq2[string, st
 	}
 }
 
+func (p *ParsedCommandLine) GetOutputFileNames() iter.Seq[string] {
+	return func(yield func(outputName string) bool) {
+		for _, fileName := range p.ParsedConfig.FileNames {
+			if tspath.IsDeclarationFileName(fileName) {
+				continue
+			}
+			jsFileName := outputpaths.GetOutputJSFileName(fileName, p.CompilerOptions(), p)
+			isJson := tspath.FileExtensionIs(fileName, tspath.ExtensionJson)
+			if jsFileName != "" {
+				if !yield(jsFileName) {
+					return
+				}
+				if !isJson {
+					sourceMap := outputpaths.GetSourceMapFilePath(jsFileName, p.CompilerOptions())
+					if sourceMap != "" {
+						if !yield(sourceMap) {
+							return
+						}
+					}
+				}
+			}
+			if isJson {
+				continue
+			}
+			if p.CompilerOptions().GetEmitDeclarations() {
+				dtsFileName := outputpaths.GetOutputDeclarationFileNameWorker(fileName, p.CompilerOptions(), p)
+				if dtsFileName != "" {
+					if !yield(dtsFileName) {
+						return
+					}
+					if p.CompilerOptions().GetAreDeclarationMapsEnabled() {
+						declarationMap := dtsFileName + ".map"
+						if !yield(declarationMap) {
+							return
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+func (p *ParsedCommandLine) GetBuildInfoFileName() string {
+	return outputpaths.GetBuildInfoFileName(p.CompilerOptions(), p.comparePathsOptions)
+}
+
 // WildcardDirectories returns the cached wildcard directories, initializing them if needed
 func (p *ParsedCommandLine) WildcardDirectories() map[string]bool {
 	if p == nil {
@@ -177,10 +223,6 @@ func (p *ParsedCommandLine) CompilerOptions() *core.CompilerOptions {
 		return nil
 	}
 	return p.ParsedConfig.CompilerOptions
-}
-
-func (p *ParsedCommandLine) GetBuildInfoFileName() string {
-	return outputpaths.GetBuildInfoFileName(p.CompilerOptions(), p.comparePathsOptions)
 }
 
 func (p *ParsedCommandLine) SetTypeAcquisition(o *core.TypeAcquisition) {

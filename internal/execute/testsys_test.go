@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/incremental"
@@ -207,34 +208,65 @@ func (s *testSys) GetEnvironmentVariable(name string) string {
 	return s.env[name]
 }
 
-func (s *testSys) OnListFilesStart() {
-	fmt.Fprintln(s.Writer(), listFileStart)
+func (s *testSys) OnEmittedFiles(result *compiler.EmitResult) {
+	if result != nil {
+		for _, file := range result.EmittedFiles {
+			// Ensure that the timestamp for emitted files is in the order
+			now := s.Now()
+			if err := s.fsFromFileMap().Chtimes(file, time.Time{}, now); err != nil {
+				panic("Failed to change time for emitted file: " + file + ": " + err.Error())
+			}
+		}
+	}
 }
 
-func (s *testSys) OnListFilesEnd() {
-	fmt.Fprintln(s.Writer(), listFileEnd)
+func (s *testSys) OnListFilesStart(w io.Writer) {
+	fmt.Fprintln(w, listFileStart)
 }
 
-func (s *testSys) OnStatisticsStart() {
-	fmt.Fprintln(s.Writer(), statisticsStart)
+func (s *testSys) OnListFilesEnd(w io.Writer) {
+	fmt.Fprintln(w, listFileEnd)
 }
 
-func (s *testSys) OnStatisticsEnd() {
-	fmt.Fprintln(s.Writer(), statisticsEnd)
+func (s *testSys) OnStatisticsStart(w io.Writer) {
+	fmt.Fprintln(w, statisticsStart)
 }
 
-func (s *testSys) GetTrace() func(str string) {
+func (s *testSys) OnStatisticsEnd(w io.Writer) {
+	fmt.Fprintln(w, statisticsEnd)
+}
+
+func (s *testSys) OnBuildStatusReportStart(w io.Writer) {
+	fmt.Fprintln(w, buildStatusReportStart)
+}
+
+func (s *testSys) OnBuildStatusReportEnd(w io.Writer) {
+	fmt.Fprintln(w, buildStatusReportEnd)
+}
+
+func (s *testSys) GetTrace(w io.Writer) func(str string) {
 	return func(str string) {
-		fmt.Fprintln(s.currentWrite, traceStart)
-		defer fmt.Fprintln(s.currentWrite, traceEnd)
-		s.tracer.Trace(str)
+		fmt.Fprintln(w, traceStart)
+		defer fmt.Fprintln(w, traceEnd)
+		// With tsc -b building projects in parallel we cannot serialize the package.json lookup trace
+		// so trace as if it wasnt cached
+		s.tracer.TraceWithWriter(w, str, w == s.Writer())
 	}
 }
 
-func (s *testSys) baselineProgram(baseline *strings.Builder, program *incremental.Program, watcher *execute.Watcher) {
+func (s *testSys) baselinePrograms(baseline *strings.Builder, programs []*incremental.Program, watcher *execute.Watcher) {
 	if watcher != nil {
-		program = watcher.GetProgram()
+		programs = []*incremental.Program{watcher.GetProgram()}
 	}
+	for index, program := range programs {
+		if index > 0 {
+			baseline.WriteString("\n")
+		}
+		s.baselineProgram(baseline, program)
+	}
+}
+
+func (s *testSys) baselineProgram(baseline *strings.Builder, program *incremental.Program) {
 	if program == nil {
 		return
 	}
@@ -288,14 +320,16 @@ var (
 	fakeTimeStamp = "HH:MM:SS AM"
 	fakeDuration  = "d.ddds"
 
-	buildStartingAt = "build starting at "
-	buildFinishedIn = "build finished in "
-	listFileStart   = "!!! List files start"
-	listFileEnd     = "!!! List files end"
-	statisticsStart = "!!! Statistics start"
-	statisticsEnd   = "!!! Statistics end"
-	traceStart      = "!!! Trace start"
-	traceEnd        = "!!! Trace end"
+	buildStartingAt        = "build starting at "
+	buildFinishedIn        = "build finished in "
+	listFileStart          = "!!! List files start"
+	listFileEnd            = "!!! List files end"
+	statisticsStart        = "!!! Statistics start"
+	statisticsEnd          = "!!! Statistics end"
+	buildStatusReportStart = "!!! Build Status Report Start"
+	buildStatusReportEnd   = "!!! Build Status Report End"
+	traceStart             = "!!! Trace start"
+	traceEnd               = "!!! Trace end"
 )
 
 func (s *testSys) baselineOutput(baseline io.Writer) {
@@ -312,16 +346,27 @@ type outputSanitizer struct {
 }
 
 func (o *outputSanitizer) addOutputLine(s string) {
+	if change := strings.ReplaceAll(s, fmt.Sprintf("'%s'", core.Version()), fmt.Sprintf("'%s'", harnessutil.FakeTSVersion)); change != s {
+		s = change
+	}
+	if change := strings.ReplaceAll(s, "Version "+core.Version(), "Version "+harnessutil.FakeTSVersion); change != s {
+		s = change
+	}
 	o.outputLines = append(o.outputLines, s)
+}
+
+func (o *outputSanitizer) sanitizeBuildStatusTimeStamp() string {
+	statusLine := o.lines[o.index]
+	hhSeparator := strings.IndexRune(statusLine, ':')
+	if hhSeparator < 2 {
+		panic("Expected timestamp")
+	}
+	return statusLine[:hhSeparator-2] + fakeTimeStamp + statusLine[hhSeparator+len(fakeTimeStamp)-2:]
 }
 
 func (o *outputSanitizer) transformLines() string {
 	for ; o.index < len(o.lines); o.index++ {
 		line := o.lines[o.index]
-		if change := strings.Replace(line, "Version "+core.Version(), "Version "+harnessutil.FakeTSVersion, 1); change != line {
-			o.addOutputLine(change)
-			continue
-		}
 		if strings.HasPrefix(line, buildStartingAt) {
 			if !o.forComparing {
 				o.addOutputLine(buildStartingAt + fakeTimeStamp)
@@ -334,9 +379,10 @@ func (o *outputSanitizer) transformLines() string {
 			}
 			continue
 		}
-		if !o.addOrSkipLinesForComparing(listFileStart, listFileEnd, false) &&
-			!o.addOrSkipLinesForComparing(statisticsStart, statisticsEnd, true) &&
-			!o.addOrSkipLinesForComparing(traceStart, traceEnd, false) {
+		if !o.addOrSkipLinesForComparing(listFileStart, listFileEnd, false, nil) &&
+			!o.addOrSkipLinesForComparing(statisticsStart, statisticsEnd, true, nil) &&
+			!o.addOrSkipLinesForComparing(traceStart, traceEnd, false, nil) &&
+			!o.addOrSkipLinesForComparing(buildStatusReportStart, buildStatusReportEnd, false, o.sanitizeBuildStatusTimeStamp) {
 			o.addOutputLine(line)
 		}
 	}
@@ -347,17 +393,24 @@ func (o *outputSanitizer) addOrSkipLinesForComparing(
 	lineStart string,
 	lineEnd string,
 	skipEvenIfNotComparing bool,
+	sanitizeFirstLine func() string,
 ) bool {
 	if o.lines[o.index] != lineStart {
 		return false
 	}
 	o.index++
+	isFirstLine := true
 	for ; o.index < len(o.lines); o.index++ {
 		if o.lines[o.index] == lineEnd {
 			return true
 		}
 		if !o.forComparing && !skipEvenIfNotComparing {
-			o.addOutputLine(o.lines[o.index])
+			line := o.lines[o.index]
+			if isFirstLine && sanitizeFirstLine != nil {
+				line = sanitizeFirstLine()
+				isFirstLine = false
+			}
+			o.addOutputLine(line)
 		}
 	}
 	panic("Expected lineEnd" + lineEnd + " not found after " + lineStart)

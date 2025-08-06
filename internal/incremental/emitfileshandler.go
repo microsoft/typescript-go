@@ -2,7 +2,7 @@ package incremental
 
 import (
 	"context"
-	"slices"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -22,7 +22,7 @@ type emitFilesHandler struct {
 	isForDtsErrors        bool
 	signatures            collections.SyncMap[tspath.Path, string]
 	emitSignatures        collections.SyncMap[tspath.Path, *emitSignature]
-	latestChangedDtsFiles collections.SyncSet[string]
+	latestChangedDtsFiles collections.SyncMap[tspath.Path, string]
 	deletedPendingKinds   collections.Set[tspath.Path]
 	emitUpdates           collections.SyncMap[tspath.Path, *emitUpdate]
 }
@@ -147,6 +147,7 @@ func (h *emitFilesHandler) getEmitOptions(options compiler.EmitOptions) compiler
 		TargetSourceFile: options.TargetSourceFile,
 		EmitOnly:         options.EmitOnly,
 		WriteFile: func(fileName string, text string, writeByteOrderMark bool, data *compiler.WriteFileData) error {
+			var differsOnlyInMap bool
 			if tspath.IsDeclarationFileName(fileName) {
 				var emitSignature string
 				info, _ := h.program.snapshot.fileInfos.Load(options.TargetSourceFile.Path())
@@ -164,22 +165,33 @@ func (h *emitFilesHandler) getEmitOptions(options compiler.EmitOptions) compiler
 				// Store d.ts emit hash so later can be compared to check if d.ts has changed.
 				// Currently we do this only for composite projects since these are the only projects that can be referenced by other projects
 				// and would need their d.ts change time in --build mode
-				if h.skipDtsOutputOfComposite(options.TargetSourceFile, fileName, text, data, emitSignature) {
+				if h.skipDtsOutputOfComposite(options.TargetSourceFile, fileName, text, data, emitSignature, &differsOnlyInMap) {
 					return nil
 				}
 			}
 
-			if options.WriteFile != nil {
-				return options.WriteFile(fileName, text, writeByteOrderMark, data)
+			var aTime time.Time
+			if differsOnlyInMap {
+				aTime = h.program.host.GetMTime(fileName)
 			}
-			return h.program.program.Host().FS().WriteFile(fileName, text, writeByteOrderMark)
+			var err error
+			if options.WriteFile != nil {
+				err = options.WriteFile(fileName, text, writeByteOrderMark, data)
+			} else {
+				err = h.program.program.Host().FS().WriteFile(fileName, text, writeByteOrderMark)
+			}
+			if err != nil && differsOnlyInMap {
+				// Revert the time to original one
+				err = h.program.host.SetMTime(fileName, aTime)
+			}
+			return err
 		},
 	}
 }
 
 // Compare to existing computed signature and store it or handle the changes in d.ts map option from before
 // returning undefined means that, we dont need to emit this d.ts file since its contents didnt change
-func (h *emitFilesHandler) skipDtsOutputOfComposite(file *ast.SourceFile, outputFileName string, text string, data *compiler.WriteFileData, newSignature string) bool {
+func (h *emitFilesHandler) skipDtsOutputOfComposite(file *ast.SourceFile, outputFileName string, text string, data *compiler.WriteFileData, newSignature string, differsOnlyInMap *bool) bool {
 	if !h.program.snapshot.options.Composite.IsTrue() {
 		return false
 	}
@@ -202,12 +214,12 @@ func (h *emitFilesHandler) skipDtsOutputOfComposite(file *ast.SourceFile, output
 			data.SkippedDtsWrite = true
 			return true
 		} else {
-			// Mark as differsOnlyInMap so that --build can reverse the timestamp so that
+			// Mark as differsOnlyInMap so that we can reverse the timestamp with --build so that
 			// the downstream projects dont detect this as change in d.ts file
-			data.DiffersOnlyInMap = true
+			*differsOnlyInMap = h.program.Options().Build.IsTrue()
 		}
 	} else {
-		h.latestChangedDtsFiles.Add(outputFileName)
+		h.latestChangedDtsFiles.Store(file.Path(), outputFileName)
 	}
 	h.emitSignatures.Store(file.Path(), &emitSignature{signature: newSignature})
 	return false
@@ -228,32 +240,32 @@ func (h *emitFilesHandler) updateSnapshot() []*compiler.EmitResult {
 		h.program.snapshot.buildInfoEmitPending.Store(true)
 		return true
 	})
-	latestChangedDtsFiles := h.latestChangedDtsFiles.ToSlice()
-	slices.Sort(latestChangedDtsFiles)
-	if latestChangedDtsFile := core.LastOrNil(latestChangedDtsFiles); latestChangedDtsFile != "" {
-		h.program.snapshot.latestChangedDtsFile = latestChangedDtsFile
-		h.program.snapshot.buildInfoEmitPending.Store(true)
-	}
 	for file := range h.deletedPendingKinds.Keys() {
 		h.program.snapshot.affectedFilesPendingEmit.Delete(file)
 		h.program.snapshot.buildInfoEmitPending.Store(true)
 	}
+	// Always use correct order when to collect the result
 	var results []*compiler.EmitResult
-	h.emitUpdates.Range(func(file tspath.Path, update *emitUpdate) bool {
-		if update.pendingKind == 0 {
-			h.program.snapshot.affectedFilesPendingEmit.Delete(file)
-		} else {
-			h.program.snapshot.affectedFilesPendingEmit.Store(file, update.pendingKind)
+	for _, file := range h.program.GetSourceFiles() {
+		if latestChangedDtsFile, ok := h.latestChangedDtsFiles.Load(file.Path()); ok {
+			h.program.snapshot.latestChangedDtsFile = latestChangedDtsFile
+			h.program.snapshot.buildInfoEmitPending.Store(true)
 		}
-		if update.result != nil {
-			results = append(results, update.result)
-			if len(update.result.Diagnostics) != 0 {
-				h.program.snapshot.emitDiagnosticsPerFile.Store(file, &diagnosticsOrBuildInfoDiagnosticsWithFileName{diagnostics: update.result.Diagnostics})
+		if update, ok := h.emitUpdates.Load(file.Path()); ok {
+			if update.pendingKind == 0 {
+				h.program.snapshot.affectedFilesPendingEmit.Delete(file.Path())
+			} else {
+				h.program.snapshot.affectedFilesPendingEmit.Store(file.Path(), update.pendingKind)
 			}
+			if update.result != nil {
+				results = append(results, update.result)
+				if len(update.result.Diagnostics) != 0 {
+					h.program.snapshot.emitDiagnosticsPerFile.Store(file.Path(), &diagnosticsOrBuildInfoDiagnosticsWithFileName{diagnostics: update.result.Diagnostics})
+				}
+			}
+			h.program.snapshot.buildInfoEmitPending.Store(true)
 		}
-		h.program.snapshot.buildInfoEmitPending.Store(true)
-		return true
-	})
+	}
 	return results
 }
 

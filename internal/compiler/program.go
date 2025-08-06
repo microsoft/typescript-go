@@ -270,6 +270,7 @@ func equalCheckJSDirectives(d1 *ast.CheckJsDirective, d2 *ast.CheckJsDirective) 
 
 func (p *Program) SourceFiles() []*ast.SourceFile { return p.files }
 func (p *Program) Options() *core.CompilerOptions { return p.opts.Config.CompilerOptions() }
+func (p *Program) GetRootFileNames() []string     { return p.opts.Config.FileNames() }
 func (p *Program) Host() CompilerHost             { return p.opts.Host }
 func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 	return slices.Clip(p.opts.Config.GetConfigFileParsingDiagnostics())
@@ -1268,11 +1269,10 @@ func (p *Program) CommonSourceDirectory() string {
 }
 
 type WriteFileData struct {
-	SourceMapUrlPos  int
-	BuildInfo        any
-	Diagnostics      []*ast.Diagnostic
-	DiffersOnlyInMap bool
-	SkippedDtsWrite  bool
+	SourceMapUrlPos int
+	BuildInfo       any
+	Diagnostics     []*ast.Diagnostic
+	SkippedDtsWrite bool
 }
 
 type EmitOptions struct {
@@ -1364,9 +1364,7 @@ func CombineEmitResults(results []*EmitResult) *EmitResult {
 			result.EmitSkipped = true
 		}
 		result.Diagnostics = append(result.Diagnostics, emitResult.Diagnostics...)
-		if emitResult.EmittedFiles != nil {
-			result.EmittedFiles = append(result.EmittedFiles, emitResult.EmittedFiles...)
-		}
+		result.EmittedFiles = append(result.EmittedFiles, emitResult.EmittedFiles...)
 		if emitResult.SourceMaps != nil {
 			result.SourceMaps = append(result.SourceMaps, emitResult.SourceMaps...)
 		}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"slices"
+	"time"
 
 	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -23,19 +24,26 @@ const (
 	SignatureUpdateKindUsedVersion
 )
 
+type BuildHost interface {
+	GetMTime(fileName string) time.Time
+	SetMTime(fileName string, mTime time.Time) error
+}
+
 type Program struct {
 	snapshot                   *snapshot
 	program                    *compiler.Program
 	semanticDiagnosticsPerFile *collections.SyncMap[tspath.Path, *diagnosticsOrBuildInfoDiagnosticsWithFileName]
 	updatedSignatureKinds      map[tspath.Path]SignatureUpdateKind
+	host                       BuildHost
 }
 
 var _ compiler.ProgramLike = (*Program)(nil)
 
-func NewProgram(program *compiler.Program, oldProgram *Program, testing bool) *Program {
+func NewProgram(program *compiler.Program, oldProgram *Program, buildHost BuildHost, testing bool) *Program {
 	incrementalProgram := &Program{
 		snapshot: programToSnapshot(program, oldProgram, testing),
 		program:  program,
+		host:     buildHost,
 	}
 
 	if testing {
@@ -186,7 +194,7 @@ func (p *Program) Emit(ctx context.Context, options compiler.EmitOptions) *compi
 
 		// Emit buildInfo and combine result
 		buildInfoResult := p.emitBuildInfo(ctx, options)
-		if buildInfoResult != nil && buildInfoResult.EmittedFiles != nil {
+		if buildInfoResult != nil {
 			result.Diagnostics = append(result.Diagnostics, buildInfoResult.Diagnostics...)
 			result.EmittedFiles = append(result.EmittedFiles, buildInfoResult.EmittedFiles...)
 		}
@@ -281,14 +289,9 @@ func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOption
 		}
 	}
 	p.snapshot.buildInfoEmitPending.Store(false)
-
-	var emittedFiles []string
-	if p.snapshot.options.ListEmittedFiles.IsTrue() {
-		emittedFiles = []string{buildInfoFileName}
-	}
 	return &compiler.EmitResult{
 		EmitSkipped:  false,
-		EmittedFiles: emittedFiles,
+		EmittedFiles: []string{buildInfoFileName},
 	}
 }
 
@@ -316,8 +319,10 @@ func (p *Program) ensureHasErrorsForState(ctx context.Context, program *compiler
 	}
 	if len(program.GetConfigFileParsingDiagnostics()) > 0 ||
 		len(program.GetSyntacticDiagnostics(ctx, nil)) > 0 ||
+		len(program.GetProgramDiagnostics()) > 0 ||
 		len(program.GetBindDiagnostics(ctx, nil)) > 0 ||
-		len(program.GetOptionsDiagnostics(ctx)) > 0 {
+		len(program.GetOptionsDiagnostics(ctx)) > 0 ||
+		len(program.GetGlobalDiagnostics(ctx)) > 0 {
 		return core.TSTrue
 	} else {
 		return core.TSFalse
