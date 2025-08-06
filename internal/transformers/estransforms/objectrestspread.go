@@ -74,7 +74,7 @@ func (ch *objectRestSpreadTransformer) exitFlattenContext(old oldFlattenContext)
 }
 
 func (ch *objectRestSpreadTransformer) visit(node *ast.Node) *ast.Node {
-	if node.SubtreeFacts()&ast.SubtreeContainsESObjectRestOrSpread == 0 {
+	if node.SubtreeFacts()&ast.SubtreeContainsESObjectRestOrSpread == 0 && ch.parametersWithPrecedingObjectRestOrSpread == nil {
 		return node
 	}
 	switch node.Kind {
@@ -133,7 +133,7 @@ func (ch *objectRestSpreadTransformer) visitParameter(node *ast.ParameterDeclara
 				name,
 				nil,
 				nil,
-				ch.Visitor().VisitNode(node.Initializer),
+				nil,
 			)
 		}
 	}
