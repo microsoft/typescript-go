@@ -279,10 +279,12 @@ func (ch *objectRestSpreadTransformer) visitFunctionExpression(node *ast.Functio
 }
 
 func (ch *objectRestSpreadTransformer) transformFunctionBody(node *ast.Node) *ast.Node {
+	ch.EmitContext().StartVariableEnvironment()
 	body := ch.Visitor().VisitNode(node.Body())
-	ch.EmitContext().StartLexicalEnvironment()
+	extras := ch.EmitContext().EndVariableEnvironment()
+	ch.EmitContext().StartVariableEnvironment()
 	newStatements := ch.collectObjectRestAssignments(node)
-	extras := ch.EmitContext().EndLexicalEnvironment()
+	extras = ch.EmitContext().EndAndMergeVariableEnvironment(extras)
 	if len(newStatements) == 0 && len(extras) == 0 {
 		return body
 	}
