@@ -77,6 +77,7 @@ func (l *LanguageService) GetSignatureHelpItems(
 	type signatureHelpTriggerReasonKind int32
 
 	const (
+		signatureHelpTriggerReasonKindNone           signatureHelpTriggerReasonKind = iota // was undefined
 		signatureHelpTriggerReasonKindInvoked        signatureHelpTriggerReasonKind = iota // was "invoked"
 		signatureHelpTriggerReasonKindCharacterTyped                                       // was "characterTyped"
 		signatureHelpTriggerReasonKindRetriggered                                          // was "retrigger"
