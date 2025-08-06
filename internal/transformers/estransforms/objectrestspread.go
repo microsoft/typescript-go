@@ -2,9 +2,11 @@ package estransforms
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/transformers"
 )
 
@@ -16,7 +18,15 @@ type pendingDecl struct {
 	original           *ast.Node
 }
 
+type flattenLevel int
+
+const (
+	flattenLevelAll flattenLevel = iota
+	flattenLevelObjectRest
+)
+
 type flattenContext struct {
+	level                      flattenLevel
 	currentExpressions         []*ast.Node
 	currentDeclarations        []pendingDecl
 	hasTransformedPriorElement bool
@@ -32,15 +42,18 @@ type objectRestSpreadTransformer struct {
 
 	inExportedVariableStatement bool
 
-	ctx flattenContext
+	ctx                                       flattenContext
+	parametersWithPrecedingObjectRestOrSpread map[*ast.Node]struct{}
 }
 
 func (ch *objectRestSpreadTransformer) enterFlattenContext(
+	level flattenLevel,
 	emitBindingOrAssignment func(t *objectRestSpreadTransformer, target *ast.Node, value *ast.Node, location core.TextRange, original *ast.Node),
 	hoistTempVariables bool,
 ) oldFlattenContext {
 	old := ch.ctx
 	ch.ctx = flattenContext{
+		level:                   level,
 		emitBindingOrAssignment: emitBindingOrAssignment,
 		hoistTempVariables:      hoistTempVariables,
 	}
@@ -68,16 +81,312 @@ func (ch *objectRestSpreadTransformer) visit(node *ast.Node) *ast.Node {
 		return ch.visitVariableDeclaration(node.AsVariableDeclaration())
 	case ast.KindCatchClause:
 		return ch.visitCatchClause(node.AsCatchClause())
+	case ast.KindParameter:
+		return ch.visitParameter(node.AsParameterDeclaration())
+	case ast.KindConstructor:
+		return ch.visitContructorDeclaration(node.AsConstructorDeclaration())
+	case ast.KindGetAccessor:
+		return ch.visitGetAccessorDeclaration(node.AsGetAccessorDeclaration())
+	case ast.KindSetAccessor:
+		return ch.visitSetAccessorDeclaration(node.AsSetAccessorDeclaration())
+	case ast.KindMethodDeclaration:
+		return ch.visitMethodDeclaration(node.AsMethodDeclaration())
+	case ast.KindFunctionDeclaration:
+		return ch.visitFunctionDeclaration(node.AsFunctionDeclaration())
+	case ast.KindArrowFunction:
+		return ch.visitArrowFunction(node.AsArrowFunction())
+	case ast.KindFunctionExpression:
+		return ch.visitFunctionExpression(node.AsFunctionExpression())
 	default:
 		return ch.Visitor().VisitEachChild(node)
 	}
+}
+
+func (ch *objectRestSpreadTransformer) visitParameter(node *ast.ParameterDeclaration) *ast.Node {
+	if ch.parametersWithPrecedingObjectRestOrSpread != nil {
+		if _, ok := ch.parametersWithPrecedingObjectRestOrSpread[node.AsNode()]; ok {
+			name := node.Name()
+			if ast.IsBindingPattern(name) {
+				name = ch.Factory().NewGeneratedNameForNode(node.AsNode())
+			}
+			return ch.Factory().UpdateParameterDeclaration(
+				node,
+				nil,
+				node.DotDotDotToken,
+				name,
+				nil,
+				nil,
+				ch.Visitor().VisitNode(node.Initializer),
+			)
+		}
+	}
+	if node.SubtreeFacts()&ast.SubtreeContainsObjectRestOrSpread != 0 {
+		// Binding patterns are converted into a generated name and are
+		// evaluated inside the function body.
+		return ch.Factory().UpdateParameterDeclaration(
+			node,
+			nil,
+			node.DotDotDotToken,
+			ch.Factory().NewGeneratedNameForNode(node.AsNode()),
+			nil,
+			nil,
+			ch.Visitor().VisitNode(node.Initializer),
+		)
+	}
+	return ch.Visitor().VisitEachChild(node.AsNode())
+}
+
+func (ch *objectRestSpreadTransformer) collectParametersWithPrecedingObjectRestOrSpread(node *ast.Node) map[*ast.Node]struct{} {
+	var result map[*ast.Node]struct{}
+	for _, parameter := range node.Parameters() {
+		if result != nil {
+			result[parameter] = struct{}{}
+		} else if parameter.SubtreeFacts()&ast.SubtreeContainsObjectRestOrSpread != 0 {
+			result = make(map[*ast.Node]struct{})
+		}
+	}
+	return result
+}
+
+type oldParamScope map[*ast.Node]struct{}
+
+func (ch *objectRestSpreadTransformer) enterParameterListContext(node *ast.Node) oldParamScope {
+	old := ch.parametersWithPrecedingObjectRestOrSpread
+	ch.parametersWithPrecedingObjectRestOrSpread = ch.collectParametersWithPrecedingObjectRestOrSpread(node)
+	return oldParamScope(old)
+}
+
+func (ch *objectRestSpreadTransformer) exitParameterListContext(scope oldParamScope) {
+	ch.parametersWithPrecedingObjectRestOrSpread = map[*ast.Node]struct{}(scope)
+}
+
+func (ch *objectRestSpreadTransformer) visitContructorDeclaration(node *ast.ConstructorDeclaration) *ast.Node {
+	old := ch.enterParameterListContext(node.AsNode())
+	defer ch.exitParameterListContext(old)
+	return ch.Factory().UpdateConstructorDeclaration(
+		node,
+		node.Modifiers(),
+		nil,
+		ch.Visitor().VisitNodes(node.Parameters),
+		nil,
+		ch.transformFunctionBody(node.AsNode()),
+	)
+}
+
+func (ch *objectRestSpreadTransformer) visitGetAccessorDeclaration(node *ast.GetAccessorDeclaration) *ast.Node {
+	old := ch.enterParameterListContext(node.AsNode())
+	defer ch.exitParameterListContext(old)
+	return ch.Factory().UpdateGetAccessorDeclaration(
+		node,
+		node.Modifiers(),
+		ch.Visitor().VisitNode(node.Name()),
+		nil,
+		ch.Visitor().VisitNodes(node.Parameters),
+		nil,
+		ch.transformFunctionBody(node.AsNode()),
+	)
+}
+
+func (ch *objectRestSpreadTransformer) visitSetAccessorDeclaration(node *ast.SetAccessorDeclaration) *ast.Node {
+	old := ch.enterParameterListContext(node.AsNode())
+	defer ch.exitParameterListContext(old)
+	return ch.Factory().UpdateSetAccessorDeclaration(
+		node,
+		node.Modifiers(),
+		ch.Visitor().VisitNode(node.Name()),
+		nil,
+		ch.Visitor().VisitNodes(node.Parameters),
+		nil,
+		ch.transformFunctionBody(node.AsNode()),
+	)
+}
+
+func (ch *objectRestSpreadTransformer) visitMethodDeclaration(node *ast.MethodDeclaration) *ast.Node {
+	old := ch.enterParameterListContext(node.AsNode())
+	defer ch.exitParameterListContext(old)
+	return ch.Factory().UpdateMethodDeclaration(
+		node,
+		node.Modifiers(),
+		node.AsteriskToken,
+		ch.Visitor().VisitNode(node.Name()),
+		node.PostfixToken,
+		nil,
+		ch.Visitor().VisitNodes(node.Parameters),
+		nil,
+		ch.transformFunctionBody(node.AsNode()),
+	)
+}
+
+func (ch *objectRestSpreadTransformer) visitFunctionDeclaration(node *ast.FunctionDeclaration) *ast.Node {
+	old := ch.enterParameterListContext(node.AsNode())
+	defer ch.exitParameterListContext(old)
+	return ch.Factory().UpdateFunctionDeclaration(
+		node,
+		node.Modifiers(),
+		node.AsteriskToken,
+		ch.Visitor().VisitNode(node.Name()),
+		nil,
+		ch.Visitor().VisitNodes(node.Parameters),
+		nil,
+		ch.transformFunctionBody(node.AsNode()),
+	)
+}
+
+func (ch *objectRestSpreadTransformer) visitArrowFunction(node *ast.ArrowFunction) *ast.Node {
+	old := ch.enterParameterListContext(node.AsNode())
+	defer ch.exitParameterListContext(old)
+	return ch.Factory().UpdateArrowFunction(
+		node,
+		node.Modifiers(),
+		nil,
+		ch.Visitor().VisitNodes(node.Parameters),
+		nil,
+		node.EqualsGreaterThanToken,
+		ch.transformFunctionBody(node.AsNode()),
+	)
+}
+
+func (ch *objectRestSpreadTransformer) visitFunctionExpression(node *ast.FunctionExpression) *ast.Node {
+	old := ch.enterParameterListContext(node.AsNode())
+	defer ch.exitParameterListContext(old)
+	return ch.Factory().UpdateFunctionExpression(
+		node,
+		node.Modifiers(),
+		node.AsteriskToken,
+		ch.Visitor().VisitNode(node.Name()),
+		nil,
+		ch.Visitor().VisitNodes(node.Parameters),
+		nil,
+		ch.transformFunctionBody(node.AsNode()),
+	)
+}
+
+func (ch *objectRestSpreadTransformer) transformFunctionBody(node *ast.Node) *ast.Node {
+	newStatements := ch.collectObjectRestAssignments(node)
+	body := ch.EmitContext().VisitFunctionBody(node.Body(), ch.Visitor())
+	if len(newStatements) == 0 {
+		return body
+	}
+
+	if body == nil {
+		body = ch.Factory().NewBlock(ch.Factory().NewNodeList([]*ast.Node{}), true)
+	}
+	var prefix []*ast.Node
+	var suffix []*ast.Node
+	if ast.IsBlock(body) {
+		custom := false
+		for i, statement := range body.AsBlock().Statements.Nodes {
+			if !custom && ast.IsPrologueDirective(statement) {
+				prefix = append(prefix, statement)
+			} else if ch.EmitContext().EmitFlags(statement)&printer.EFCustomPrologue != 0 {
+				custom = true
+				prefix = append(prefix, statement)
+			} else {
+				suffix = body.AsBlock().Statements.Nodes[i:]
+				break
+			}
+		}
+	} else {
+		list := ch.Factory().NewNodeList([]*ast.Node{})
+		list.Loc = body.Loc
+		body = ch.Factory().NewBlock(list, true)
+		ret := ch.Factory().NewReturnStatement(body)
+		ret.Loc = body.Loc
+		suffix = append(suffix, ret)
+	}
+
+	newStatementList := ch.Factory().NewNodeList(append(append(prefix, newStatements...), suffix...))
+	newStatementList.Loc = body.AsBlock().Statements.Loc
+	return ch.Factory().UpdateBlock(body.AsBlock(), newStatementList)
+}
+
+func (ch *objectRestSpreadTransformer) collectObjectRestAssignments(node *ast.Node) []*ast.Node {
+	containsPrecedingObjectRestOrSpread := false
+	var results []*ast.Node
+	for _, parameter := range node.Parameters() {
+		if containsPrecedingObjectRestOrSpread {
+			if ast.IsBindingPattern(parameter.Name()) {
+				// In cases where a binding pattern is simply '[]' or '{}',
+				// we usually don't want to emit a var declaration; however, in the presence
+				// of an initializer, we must emit that expression to preserve side effects.
+				if len(parameter.Name().AsBindingPattern().Elements.Nodes) > 0 {
+					declarations := ch.flattenDestructuringBinding(flattenLevelAll, parameter, ch.Factory().NewGeneratedNameForNode(parameter), false)
+					if declarations != nil {
+						declarationList := ch.Factory().NewVariableDeclarationList(ast.NodeFlagsNone, ch.Factory().NewNodeList([]*ast.Node{}))
+						decls := []*ast.Node{declarations}
+						if declarations.Kind == ast.KindSyntaxList {
+							decls = declarations.AsSyntaxList().Children
+						}
+						declarationList.AsVariableDeclarationList().Declarations.Nodes = append(declarationList.AsVariableDeclarationList().Declarations.Nodes, decls...)
+						statement := ch.Factory().NewVariableStatement(nil, declarationList)
+						ch.EmitContext().AddEmitFlags(statement, printer.EFCustomPrologue)
+						results = append(results, statement)
+					}
+				} else if parameter.Initializer() != nil {
+					name := ch.Factory().NewGeneratedNameForNode(parameter)
+					initializer := ch.Visitor().VisitNode(parameter.Initializer())
+					assignment := ch.Factory().NewAssignmentExpression(name, initializer)
+					statement := ch.Factory().NewExpressionStatement(assignment)
+					ch.EmitContext().AddEmitFlags(statement, printer.EFCustomPrologue)
+					results = append(results, statement)
+
+				}
+			} else if parameter.Initializer() != nil {
+				// Converts a parameter initializer into a function body statement, i.e.:
+				//
+				//  function f(x = 1) { }
+				//
+				// becomes
+				//
+				//  function f(x) {
+				//    if (typeof x === "undefined") { x = 1; }
+				//  }
+				name := parameter.Name().Clone(ch.Factory())
+				name.Loc = parameter.Name().Loc
+				ch.EmitContext().AddEmitFlags(name, printer.EFNoSourceMap)
+
+				initializer := ch.Visitor().VisitNode(parameter.Initializer())
+				ch.EmitContext().AddEmitFlags(initializer, printer.EFNoSourceMap|printer.EFNoComments)
+
+				assignment := ch.Factory().NewAssignmentExpression(name, initializer)
+				assignment.Loc = parameter.Loc
+				ch.EmitContext().AddEmitFlags(assignment, printer.EFNoComments)
+
+				block := ch.Factory().NewBlock(ch.Factory().NewNodeList([]*ast.Node{ch.Factory().NewExpressionStatement(assignment)}), false)
+				block.Loc = parameter.Loc
+				ch.EmitContext().AddEmitFlags(block, printer.EFSingleLine|printer.EFNoTrailingSourceMap|printer.EFNoTokenSourceMaps|printer.EFNoComments)
+
+				typeCheck := ch.Factory().NewTypeCheck(name.Clone(ch.Factory()), "undefined")
+				statement := ch.Factory().NewIfStatement(typeCheck, block, nil)
+				statement.Loc = parameter.Loc
+				ch.EmitContext().AddEmitFlags(statement, printer.EFNoTokenSourceMaps|printer.EFNoTrailingSourceMap|printer.EFCustomPrologue|printer.EFNoComments|printer.EFStartOnNewLine)
+				results = append(results, statement)
+			}
+		} else if parameter.SubtreeFacts()&ast.SubtreeContainsObjectRestOrSpread != 0 {
+			containsPrecedingObjectRestOrSpread = true
+			declarations := ch.flattenDestructuringBinding(flattenLevelObjectRest, parameter, ch.Factory().NewGeneratedNameForNode(parameter), true)
+			if declarations != nil {
+				declarationList := ch.Factory().NewVariableDeclarationList(ast.NodeFlagsNone, ch.Factory().NewNodeList([]*ast.Node{}))
+				decls := []*ast.Node{declarations}
+				if declarations.Kind == ast.KindSyntaxList {
+					decls = declarations.AsSyntaxList().Children
+				}
+				declarationList.AsVariableDeclarationList().Declarations.Nodes = append(declarationList.AsVariableDeclarationList().Declarations.Nodes, decls...)
+				statement := ch.Factory().NewVariableStatement(nil, declarationList)
+				ch.EmitContext().AddEmitFlags(statement, printer.EFCustomPrologue)
+				results = append(results, statement)
+			}
+		}
+	}
+
+	return results
 }
 
 func (ch *objectRestSpreadTransformer) visitCatchClause(node *ast.CatchClause) *ast.Node {
 	if node.VariableDeclaration != nil && ast.IsBindingPattern(node.VariableDeclaration.Name()) && node.VariableDeclaration.Name().SubtreeFacts()&ast.SubtreeContainsObjectRestOrSpread != 0 {
 		name := ch.Factory().NewGeneratedNameForNode(node.VariableDeclaration.Name())
 		updatedDecl := ch.Factory().UpdateVariableDeclaration(node.VariableDeclaration.AsVariableDeclaration(), node.VariableDeclaration.Name(), nil, nil, name)
-		visitedBindings := ch.flattenDestructuringBinding(updatedDecl.AsVariableDeclaration(), false)
+		visitedBindings := ch.flattenDestructuringBinding(flattenLevelObjectRest, updatedDecl, nil, false)
 		block := ch.Visitor().VisitNode(node.Block)
 		if visitedBindings != nil {
 			var decls []*ast.Node
@@ -130,26 +439,30 @@ func (ch *objectRestSpreadTransformer) visitVariableDeclarationWorker(node *ast.
 	// If we are here it is because the name contains a binding pattern with a rest somewhere in it.
 	if ast.IsBindingPattern(node.Name()) && node.SubtreeFacts()&ast.SubtreeContainsObjectRestOrSpread != 0 {
 		return ch.flattenDestructuringBinding(
-			node,
+			flattenLevelObjectRest,
+			node.AsNode(),
+			nil,
 			exported,
 		)
 	}
 	return ch.Visitor().VisitEachChild(node.AsNode())
 }
 
-func (ch *objectRestSpreadTransformer) flattenDestructuringBinding(node *ast.VariableDeclaration, skipInitializer bool) *ast.Node {
-	old := ch.enterFlattenContext((*objectRestSpreadTransformer).emitBinding, false)
+func (ch *objectRestSpreadTransformer) flattenDestructuringBinding(level flattenLevel, node *ast.Node, rvalue *ast.Node, skipInitializer bool) *ast.Node {
+	old := ch.enterFlattenContext(level, (*objectRestSpreadTransformer).emitBinding, false)
 	defer ch.exitFlattenContext(old)
 
-	initializer := getInitializerOfBindingOrAssignmentElement(node.AsNode())
-	if initializer != nil && (ast.IsIdentifier(initializer) && bindingOrAssignmentElementAssignsToName(node.AsNode(), initializer.AsIdentifier().Text) || bindingOrAssignmentElementContainsNonLiteralComputedName(node.AsNode())) {
-		// If the right-hand value of the assignment is also an assignment target then
-		// we need to cache the right-hand value.
-		initializer = ch.ensureIdentifier(ch.Visitor().VisitNode(initializer), false, initializer.Loc)
-		node = ch.Factory().UpdateVariableDeclaration(node, node.Name(), nil, nil, initializer).AsVariableDeclaration()
+	if ast.IsVariableDeclaration(node) {
+		initializer := getInitializerOfBindingOrAssignmentElement(node)
+		if initializer != nil && (ast.IsIdentifier(initializer) && bindingOrAssignmentElementAssignsToName(node, initializer.AsIdentifier().Text) || bindingOrAssignmentElementContainsNonLiteralComputedName(node)) {
+			// If the right-hand value of the assignment is also an assignment target then
+			// we need to cache the right-hand value.
+			initializer = ch.ensureIdentifier(ch.Visitor().VisitNode(initializer), false, initializer.Loc)
+			node = ch.Factory().UpdateVariableDeclaration(node.AsVariableDeclaration(), node.Name(), nil, nil, initializer)
+		}
 	}
 
-	ch.flattenBindingOrAssignmentElement(node.AsNode(), nil, node.Loc, skipInitializer)
+	ch.flattenBindingOrAssignmentElement(node, rvalue, node.Loc, skipInitializer)
 
 	if len(ch.ctx.currentExpressions) > 0 {
 		temp := ch.Factory().NewTempVariable()
@@ -289,7 +602,7 @@ func (ch *objectRestSpreadTransformer) flattenDestructuringAssignment(node *ast.
 			}
 		}
 	}
-	old := ch.enterFlattenContext((*objectRestSpreadTransformer).emitAssignment, true)
+	old := ch.enterFlattenContext(flattenLevelObjectRest, (*objectRestSpreadTransformer).emitAssignment, true)
 	defer ch.exitFlattenContext(old)
 
 	if value != nil {
@@ -299,7 +612,11 @@ func (ch *objectRestSpreadTransformer) flattenDestructuringAssignment(node *ast.
 			// If the right-hand value of the assignment is also an assignment target then
 			// we need to cache the right-hand value.
 			value = ch.ensureIdentifier(value, false, location)
-		} else if ast.NodeIsSynthesized(node.AsNode()) {
+		} else {
+			value = ch.ensureIdentifier(value, true, location)
+		}
+
+		if ast.NodeIsSynthesized(node.AsNode()) {
 			// Generally, the source map location for a destructuring assignment is the root
 			// expression.
 			//
@@ -308,7 +625,6 @@ func (ch *objectRestSpreadTransformer) flattenDestructuringAssignment(node *ast.
 			// location should point to the right-hand value of the expression.
 			location = value.Loc
 		}
-		// !!! else if needsValue {}
 	}
 
 	ch.flattenBindingOrAssignmentElement(node.AsNode(), value, location, ast.IsDestructuringAssignment(node.AsNode()))
@@ -366,7 +682,7 @@ func (ch *objectRestSpreadTransformer) flattenObjectBindingOrAssignmentPattern(p
 	for i, element := range elements {
 		if ast.GetRestIndicatorOfBindingOrAssignmentElement(element) == nil {
 			propertyName := ast.TryGetPropertyNameOfBindingOrAssignmentElement(element)
-			if element.SubtreeFacts()&(ast.SubtreeContainsRest|ast.SubtreeContainsObjectRestOrSpread) == 0 && ast.GetTargetOfBindingOrAssignmentElement(element).SubtreeFacts()&(ast.SubtreeContainsRest|ast.SubtreeContainsObjectRestOrSpread) == 0 && !ast.IsComputedPropertyName(propertyName) {
+			if ch.ctx.level >= flattenLevelObjectRest && element.SubtreeFacts()&(ast.SubtreeContainsRest|ast.SubtreeContainsObjectRestOrSpread) == 0 && ast.GetTargetOfBindingOrAssignmentElement(element).SubtreeFacts()&(ast.SubtreeContainsRest|ast.SubtreeContainsObjectRestOrSpread) == 0 && !ast.IsComputedPropertyName(propertyName) {
 				bindingElements = append(bindingElements, ch.Visitor().VisitNode(element))
 			} else {
 				if len(bindingElements) > 0 {
@@ -401,7 +717,7 @@ type restIdElemPair struct {
 func (ch *objectRestSpreadTransformer) flattenArrayBindingOrAssignmentPattern(parent *ast.Node, pattern *ast.Node, value *ast.Node, location core.TextRange) {
 	elements := ast.GetElementsOfBindingOrAssignmentPattern(pattern)
 	numElements := len(elements)
-	if numElements != 1 || core.Every(elements, ast.IsOmittedExpression) {
+	if numElements != 1 && (ch.ctx.level < flattenLevelObjectRest || numElements == 0) || core.Every(elements, ast.IsOmittedExpression) {
 		// For anything other than a single-element destructuring we need to generate a temporary
 		// to ensure value is evaluated exactly once. Additionally, if we have zero elements
 		// we need to emit *something* to ensure that in case a 'var' keyword was already emitted,
@@ -413,22 +729,31 @@ func (ch *objectRestSpreadTransformer) flattenArrayBindingOrAssignmentPattern(pa
 	}
 	var bindingElements []*ast.Node
 	var restContainingElements []restIdElemPair
-	for _, element := range elements {
-		// If an array pattern contains an ObjectRest, we must cache the result so that we
-		// can perform the ObjectRest destructuring in a different declaration
-		if element.SubtreeFacts()&ast.SubtreeContainsObjectRestOrSpread != 0 || ch.ctx.hasTransformedPriorElement && !isSimpleBindingOrAssignmentElement(element) {
-			ch.ctx.hasTransformedPriorElement = true
-			temp := ch.Factory().NewTempVariable()
-			if ch.ctx.hoistTempVariables {
-				ch.EmitContext().AddVariableDeclaration(temp)
-			}
+	for i, element := range elements {
+		if ch.ctx.level >= flattenLevelObjectRest {
+			// If an array pattern contains an ObjectRest, we must cache the result so that we
+			// can perform the ObjectRest destructuring in a different declaration
+			if element.SubtreeFacts()&ast.SubtreeContainsObjectRestOrSpread != 0 || ch.ctx.hasTransformedPriorElement && !isSimpleBindingOrAssignmentElement(element) {
+				ch.ctx.hasTransformedPriorElement = true
+				temp := ch.Factory().NewTempVariable()
+				if ch.ctx.hoistTempVariables {
+					ch.EmitContext().AddVariableDeclaration(temp)
+				}
 
-			restContainingElements = append(restContainingElements, restIdElemPair{temp, element})
-			bindingElements = append(bindingElements, ch.Factory().NewBindingElement(nil, nil, temp, nil))
-		} else {
-			bindingElements = append(bindingElements, element)
+				restContainingElements = append(restContainingElements, restIdElemPair{temp, element})
+				bindingElements = append(bindingElements, ch.Factory().NewBindingElement(nil, nil, temp, nil))
+			} else {
+				bindingElements = append(bindingElements, element)
+			}
+		} else if ast.IsOmittedExpression(element) {
+			continue
+		} else if ast.GetRestIndicatorOfBindingOrAssignmentElement(element) == nil {
+			rhsValue := ch.Factory().NewElementAccessExpression(value, nil, ch.Factory().NewNumericLiteral(strconv.Itoa(i)), ast.NodeFlagsNone)
+			ch.flattenBindingOrAssignmentElement(element, rhsValue, element.Loc, false)
+		} else if i == numElements-1 {
+			rhsValue := ch.Factory().NewArraySliceCall(value, i)
+			ch.flattenBindingOrAssignmentElement(element, rhsValue, element.Loc, false)
 		}
-		// !!! ??? other flatten levels? only objectRest currently in use
 	}
 	if len(bindingElements) > 0 {
 		ch.ctx.emitBindingOrAssignment(ch, ch.createArrayBindingOrAssignmentPattern(bindingElements), value, location, pattern)

@@ -2,6 +2,7 @@ package printer
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -314,6 +315,14 @@ func (f *NodeFactory) NewFunctionCallCall(target *ast.Expression, thisArg *ast.E
 	}
 	args := append([]*ast.Expression{thisArg}, argumentsList...)
 	return f.NewMethodCall(target, f.NewIdentifier("call"), args)
+}
+
+func (f *NodeFactory) NewArraySliceCall(array *ast.Expression, start int) *ast.Node {
+	var args []*ast.Node
+	if start != 0 {
+		args = append(args, f.NewNumericLiteral(strconv.Itoa(start)))
+	}
+	return f.NewMethodCall(array, f.NewIdentifier("slice"), args)
 }
 
 // Determines whether a node is a parenthesized expression that can be ignored when recreating outer expressions.
