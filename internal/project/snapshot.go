@@ -185,7 +185,19 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	newSnapshot.apiError = apiError
 
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
-		if project.Program != nil {
+		if project.ProgramUpdateKind != ProgramUpdateKindNone {
+			// If the program was updated during this clone, the project and its host are new
+			// and still retain references to the builder. Freezing clears the builder reference
+			// so it's GC'd and to ensure the project can't access any data not already in the
+			// snapshot during use. This is pretty kludgy, but it's an artifact of Program design:
+			// Program has a single host, which is expected to implement a full vfs.FS, among
+			// other things. That host is *mostly* only used during program *construction*, but a
+			// few methods may get exercised during program *use*. So, our compiler host is allowed
+			// to access caches and perform mutating effects (like acquire referenced project
+			// config files) during snapshot building, and then we call `freeze` to ensure those
+			// mutations don't happen afterwards. In the future, we might improve things by
+			// separating what it takes to build a program from what it takes to use a program,
+			// and only pass the former into NewProgram instead of retaining it indefinitely.
 			project.host.freeze(snapshotFS, newSnapshot.ConfigFileRegistry)
 			session.programCounter.Ref(project.Program)
 		}

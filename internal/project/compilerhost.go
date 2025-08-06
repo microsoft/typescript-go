@@ -46,6 +46,8 @@ func newCompilerHost(
 	}
 }
 
+// freeze clears references to mutable state to make the compilerHost safe for use
+// after the snapshot has been finalized. See the usage in snapshot.go for more details.
 func (c *compilerHost) freeze(snapshotFS *snapshotFS, configFileRegistry *ConfigFileRegistry) {
 	c.compilerFS.source = snapshotFS
 	c.configFileRegistry = configFileRegistry
