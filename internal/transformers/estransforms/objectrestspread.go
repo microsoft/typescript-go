@@ -937,7 +937,7 @@ func (ch *objectRestSpreadTransformer) visitObjectLiteralExpression(node *ast.Ob
 		objects = append([]*ast.Node{ch.Factory().NewObjectLiteralExpression(ch.Factory().NewNodeList(nil), false)}, objects...)
 	}
 	expression := objects[0]
-	if len(objects) > 0 {
+	if len(objects) > 1 {
 		for i, obj := range objects {
 			if i == 0 {
 				continue
