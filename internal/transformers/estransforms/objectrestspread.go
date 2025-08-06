@@ -33,6 +33,7 @@ type flattenContext struct {
 	emitBindingOrAssignment                func(t *objectRestSpreadTransformer, target *ast.Node, value *ast.Node, location core.TextRange, original *ast.Node)
 	createArrayBindingOrAssignmentPattern  func(t *objectRestSpreadTransformer, elements []*ast.Node) *ast.Node
 	createObjectBindingOrAssignmentPattern func(t *objectRestSpreadTransformer, elements []*ast.Node) *ast.Node
+	createArrayBindingOrAssignmentElement  func(t *objectRestSpreadTransformer, expr *ast.Node) *ast.Node
 	hoistTempVariables                     bool
 }
 
@@ -53,6 +54,7 @@ func (ch *objectRestSpreadTransformer) enterFlattenContext(
 	emitBindingOrAssignment func(t *objectRestSpreadTransformer, target *ast.Node, value *ast.Node, location core.TextRange, original *ast.Node),
 	createArrayBindingOrAssignmentPattern func(t *objectRestSpreadTransformer, elements []*ast.Node) *ast.Node,
 	createObjectBindingOrAssignmentPattern func(t *objectRestSpreadTransformer, elements []*ast.Node) *ast.Node,
+	createArrayBindingOrAssignmentElement func(t *objectRestSpreadTransformer, expr *ast.Node) *ast.Node,
 	hoistTempVariables bool,
 ) oldFlattenContext {
 	old := ch.ctx
@@ -61,6 +63,7 @@ func (ch *objectRestSpreadTransformer) enterFlattenContext(
 		emitBindingOrAssignment:                emitBindingOrAssignment,
 		createArrayBindingOrAssignmentPattern:  createArrayBindingOrAssignmentPattern,
 		createObjectBindingOrAssignmentPattern: createObjectBindingOrAssignmentPattern,
+		createArrayBindingOrAssignmentElement:  createArrayBindingOrAssignmentElement,
 		hoistTempVariables:                     hoistTempVariables,
 	}
 	return oldFlattenContext(old)
@@ -268,9 +271,11 @@ func (ch *objectRestSpreadTransformer) visitFunctionExpression(node *ast.Functio
 }
 
 func (ch *objectRestSpreadTransformer) transformFunctionBody(node *ast.Node) *ast.Node {
+	body := ch.Visitor().VisitNode(node.Body())
+	ch.EmitContext().StartLexicalEnvironment()
 	newStatements := ch.collectObjectRestAssignments(node)
-	body := ch.EmitContext().VisitFunctionBody(node.Body(), ch.Visitor())
-	if len(newStatements) == 0 {
+	extras := ch.EmitContext().EndLexicalEnvironment()
+	if len(newStatements) == 0 && len(extras) == 0 {
 		return body
 	}
 
@@ -301,7 +306,7 @@ func (ch *objectRestSpreadTransformer) transformFunctionBody(node *ast.Node) *as
 		suffix = append(suffix, ret)
 	}
 
-	newStatementList := ch.Factory().NewNodeList(append(append(prefix, newStatements...), suffix...))
+	newStatementList := ch.Factory().NewNodeList(append(append(append(prefix, extras...), newStatements...), suffix...))
 	newStatementList.Loc = body.AsBlock().Statements.Loc
 	return ch.Factory().UpdateBlock(body.AsBlock(), newStatementList)
 }
@@ -455,7 +460,7 @@ func (ch *objectRestSpreadTransformer) visitVariableDeclarationWorker(node *ast.
 }
 
 func (ch *objectRestSpreadTransformer) flattenDestructuringBinding(level flattenLevel, node *ast.Node, rvalue *ast.Node, skipInitializer bool) *ast.Node {
-	old := ch.enterFlattenContext(level, (*objectRestSpreadTransformer).emitBinding, (*objectRestSpreadTransformer).createArrayBindingPattern, (*objectRestSpreadTransformer).createObjectBindingPattern, false)
+	old := ch.enterFlattenContext(level, (*objectRestSpreadTransformer).emitBinding, (*objectRestSpreadTransformer).createArrayBindingPattern, (*objectRestSpreadTransformer).createObjectBindingPattern, (*objectRestSpreadTransformer).createArrayBindingElement, false)
 	defer ch.exitFlattenContext(old)
 
 	if ast.IsVariableDeclaration(node) {
@@ -608,7 +613,7 @@ func (ch *objectRestSpreadTransformer) flattenDestructuringAssignment(node *ast.
 			}
 		}
 	}
-	old := ch.enterFlattenContext(flattenLevelObjectRest, (*objectRestSpreadTransformer).emitAssignment, (*objectRestSpreadTransformer).createArrayAssignmentPattern, (*objectRestSpreadTransformer).createObjectAssignmentPattern, true)
+	old := ch.enterFlattenContext(flattenLevelObjectRest, (*objectRestSpreadTransformer).emitAssignment, (*objectRestSpreadTransformer).createArrayAssignmentPattern, (*objectRestSpreadTransformer).createObjectAssignmentPattern, (*objectRestSpreadTransformer).createArrayAssignmentElement, true)
 	defer ch.exitFlattenContext(old)
 
 	if value != nil {
@@ -747,7 +752,7 @@ func (ch *objectRestSpreadTransformer) flattenArrayBindingOrAssignmentPattern(pa
 				}
 
 				restContainingElements = append(restContainingElements, restIdElemPair{temp, element})
-				bindingElements = append(bindingElements, ch.Factory().NewBindingElement(nil, nil, temp, nil))
+				bindingElements = append(bindingElements, ch.ctx.createArrayBindingOrAssignmentElement(ch, temp))
 			} else {
 				bindingElements = append(bindingElements, element)
 			}
@@ -823,6 +828,14 @@ func (ch *objectRestSpreadTransformer) createObjectAssignmentPattern(elements []
 
 func (ch *objectRestSpreadTransformer) createArrayAssignmentPattern(elements []*ast.Node) *ast.Node {
 	return ch.Factory().NewArrayLiteralExpression(ch.Factory().NewNodeList(elements), false)
+}
+
+func (ch *objectRestSpreadTransformer) createArrayAssignmentElement(expr *ast.Node) *ast.Node {
+	return expr
+}
+
+func (ch *objectRestSpreadTransformer) createArrayBindingElement(expr *ast.Node) *ast.Node {
+	return ch.Factory().NewBindingElement(nil, nil, expr, nil)
 }
 
 func (ch *objectRestSpreadTransformer) emitExpression(node *ast.Node) {
