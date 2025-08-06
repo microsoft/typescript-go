@@ -58,11 +58,6 @@ func NewAPI(init *APIInit) *API {
 	return api
 }
 
-// IsWatchEnabled implements ProjectHost.
-func (api *API) IsWatchEnabled() bool {
-	return false
-}
-
 func (api *API) HandleRequest(ctx context.Context, method string, payload []byte) ([]byte, error) {
 	params, err := unmarshalPayload(method, payload)
 	if err != nil {
@@ -86,7 +81,7 @@ func (api *API) HandleRequest(ctx context.Context, method string, payload []byte
 	case MethodParseConfigFile:
 		return encodeJSON(api.ParseConfigFile(params.(*ParseConfigFileParams).FileName))
 	case MethodLoadProject:
-		return encodeJSON(api.LoadProject(params.(*LoadProjectParams).ConfigFileName))
+		return encodeJSON(api.LoadProject(ctx, params.(*LoadProjectParams).ConfigFileName))
 	case MethodGetSymbolAtPosition:
 		params := params.(*GetSymbolAtPositionParams)
 		return encodeJSON(api.GetSymbolAtPosition(ctx, params.Project, params.FileName, int(params.Position)))
@@ -144,9 +139,14 @@ func (api *API) ParseConfigFile(configFileName string) (*ConfigFileResponse, err
 	}, nil
 }
 
-func (api *API) LoadProject(configFileName string) (*ProjectResponse, error) {
-	// !!!
-	return nil, nil
+func (api *API) LoadProject(ctx context.Context, configFileName string) (*ProjectResponse, error) {
+	project, err := api.session.OpenProject(ctx, configFileName)
+	if err != nil {
+		return nil, err
+	}
+	data := NewProjectResponse(project)
+	api.projects[data.Id] = project.ConfigFilePath()
+	return data, nil
 }
 
 func (api *API) GetSymbolAtPosition(ctx context.Context, projectId Handle[project.Project], fileName string, position int) (*SymbolResponse, error) {

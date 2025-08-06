@@ -164,6 +164,22 @@ func (p *Project) Name() string {
 	return p.configFileName
 }
 
+// ConfigFileName panics if Kind() is not KindConfigured.
+func (p *Project) ConfigFileName() string {
+	if p.Kind != KindConfigured {
+		panic("ConfigFileName called on non-configured project")
+	}
+	return p.configFileName
+}
+
+// ConfigFilePath panics if Kind() is not KindConfigured.
+func (p *Project) ConfigFilePath() tspath.Path {
+	if p.Kind != KindConfigured {
+		panic("ConfigFilePath called on non-configured project")
+	}
+	return p.configFilePath
+}
+
 // GetProgram implements ls.Host.
 func (p *Project) GetProgram() *compiler.Program {
 	return p.Program

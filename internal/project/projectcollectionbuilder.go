@@ -40,6 +40,8 @@ type projectCollectionBuilder struct {
 	fileDefaultProjects     map[tspath.Path]tspath.Path
 	configuredProjects      *dirty.SyncMap[tspath.Path, *Project]
 	inferredProject         *dirty.Box[*Project]
+
+	apiOpenedProjects map[tspath.Path]struct{}
 }
 
 func newProjectCollectionBuilder(
@@ -47,6 +49,7 @@ func newProjectCollectionBuilder(
 	fs *snapshotFSBuilder,
 	oldProjectCollection *ProjectCollection,
 	oldConfigFileRegistry *ConfigFileRegistry,
+	oldAPIOpenedProjects map[tspath.Path]struct{},
 	compilerOptionsForInferredProjects *core.CompilerOptions,
 	sessionOptions *SessionOptions,
 	parseCache *ParseCache,
@@ -63,6 +66,7 @@ func newProjectCollectionBuilder(
 		configFileRegistryBuilder:          newConfigFileRegistryBuilder(fs, oldConfigFileRegistry, extendedConfigCache, sessionOptions, nil),
 		configuredProjects:                 dirty.NewSyncMap(oldProjectCollection.configuredProjects, nil),
 		inferredProject:                    dirty.NewBox(oldProjectCollection.inferredProject),
+		apiOpenedProjects:                  maps.Clone(oldAPIOpenedProjects),
 	}
 }
 
@@ -108,6 +112,52 @@ func (b *projectCollectionBuilder) forEachProject(fn func(entry dirty.Value[*Pro
 	if b.inferredProject.Value() != nil {
 		fn(b.inferredProject)
 	}
+}
+
+func (b *projectCollectionBuilder) HandleAPIRequest(apiRequest *APISnapshotRequest, logger *logging.LogTree) error {
+	var projectsToClose map[tspath.Path]struct{}
+	if apiRequest.CloseProjects != nil {
+		projectsToClose = maps.Clone(apiRequest.CloseProjects.M)
+		for projectPath := range apiRequest.CloseProjects.Keys() {
+			delete(b.apiOpenedProjects, projectPath)
+		}
+	}
+
+	if apiRequest.OpenProjects != nil {
+		for configFileName := range apiRequest.OpenProjects.Keys() {
+			configPath := b.toPath(configFileName)
+			if entry := b.findOrCreateProject(configFileName, configPath, projectLoadKindCreate, logger); entry != nil {
+				b.apiOpenedProjects[configPath] = struct{}{}
+				b.updateProgram(entry, logger)
+			} else {
+				return fmt.Errorf("project not found for open: %s", configFileName)
+			}
+		}
+	}
+
+	if apiRequest.UpdateProjects != nil {
+		for configPath := range apiRequest.UpdateProjects.Keys() {
+			if entry, ok := b.configuredProjects.Load(configPath); ok {
+				b.updateProgram(entry, logger)
+			} else {
+				return fmt.Errorf("project not found for update: %s", configPath)
+			}
+		}
+	}
+
+	for _, overlay := range b.fs.overlays {
+		if entry := b.findDefaultConfiguredProject(overlay.FileName(), b.toPath(overlay.FileName())); entry != nil {
+			delete(projectsToClose, entry.Value().configFilePath)
+		}
+	}
+
+	for projectPath := range projectsToClose {
+		if entry, ok := b.configuredProjects.Load(projectPath); ok {
+			b.deleteConfiguredProject(entry, logger)
+		}
+	}
+
+	return nil
 }
 
 func (b *projectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, logger *logging.LogTree) {
@@ -192,10 +242,14 @@ func (b *projectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 		}
 
 		for projectPath := range toRemoveProjects.Keys() {
-			if !openFileResult.retain.Has(projectPath) {
-				if p, ok := b.configuredProjects.Load(projectPath); ok {
-					b.deleteConfiguredProject(p, logger)
-				}
+			if openFileResult.retain.Has(projectPath) {
+				continue
+			}
+			if _, ok := b.apiOpenedProjects[projectPath]; ok {
+				continue
+			}
+			if p, ok := b.configuredProjects.Load(projectPath); ok {
+				b.deleteConfiguredProject(p, logger)
 			}
 		}
 		b.updateInferredProjectRoots(inferredProjectFiles, logger)

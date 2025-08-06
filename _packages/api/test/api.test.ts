@@ -26,7 +26,7 @@ const defaultFiles = {
     "/src/foo.ts": `export const foo = 42;`,
 };
 
-describe.skip("API", () => {
+describe("API", () => {
     test("parseConfigFile", () => {
         const api = spawnAPI();
         const config = api.parseConfigFile("/tsconfig.json");
@@ -35,7 +35,7 @@ describe.skip("API", () => {
     });
 });
 
-describe.skip("Project", () => {
+describe("Project", () => {
     test("getSymbolAtPosition", () => {
         const api = spawnAPI();
         const project = api.loadProject("/tsconfig.json");
@@ -72,7 +72,7 @@ describe.skip("Project", () => {
     });
 });
 
-describe.skip("SourceFile", () => {
+describe("SourceFile", () => {
     test("file properties", () => {
         const api = spawnAPI();
         const project = api.loadProject("/tsconfig.json");
@@ -113,7 +113,7 @@ describe.skip("SourceFile", () => {
     });
 });
 
-test.skip("Object equality", () => {
+test("Object equality", () => {
     const api = spawnAPI();
     const project = api.loadProject("/tsconfig.json");
     assert.strictEqual(project, api.loadProject("/tsconfig.json"));
@@ -123,7 +123,7 @@ test.skip("Object equality", () => {
     );
 });
 
-test.skip("Dispose", () => {
+test("Dispose", () => {
     const api = spawnAPI();
     const project = api.loadProject("/tsconfig.json");
     const symbol = project.getSymbolAtPosition("/src/index.ts", 9);
@@ -151,7 +151,7 @@ test.skip("Dispose", () => {
     });
 });
 
-test.skip("Benchmarks", async () => {
+test("Benchmarks", async () => {
     await runBenchmarks(/*singleIteration*/ true);
 });
 

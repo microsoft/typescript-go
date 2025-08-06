@@ -24,6 +24,9 @@ type ProjectCollection struct {
 	// inferredProject is a fallback project that is used when no configured
 	// project can be found for an open file.
 	inferredProject *Project
+	// apiOpenedProjects is the set of projects that should be kept open for
+	// API clients.
+	apiOpenedProjects map[tspath.Path]struct{}
 }
 
 func (c *ProjectCollection) ConfiguredProject(path tspath.Path) *Project {

@@ -6,6 +6,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -30,7 +31,9 @@ type Snapshot struct {
 	ProjectCollection                  *ProjectCollection
 	ConfigFileRegistry                 *ConfigFileRegistry
 	compilerOptionsForInferredProjects *core.CompilerOptions
-	builderLogs                        *logging.LogTree
+
+	builderLogs *logging.LogTree
+	apiError    error
 }
 
 // NewSnapshot
@@ -85,6 +88,12 @@ func (s *Snapshot) ID() uint64 {
 	return s.id
 }
 
+type APISnapshotRequest struct {
+	OpenProjects   *collections.Set[string]
+	CloseProjects  *collections.Set[tspath.Path]
+	UpdateProjects *collections.Set[tspath.Path]
+}
+
 type SnapshotChange struct {
 	// fileChanges are the changes that have occurred since the last snapshot.
 	fileChanges FileChangeSummary
@@ -97,6 +106,7 @@ type SnapshotChange struct {
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	// ataChanges contains ATA-related changes to apply to projects in the new snapshot.
 	ataChanges map[tspath.Path]*ATAStateChange
+	apiRequest *APISnapshotRequest
 }
 
 // ATAStateChange represents a change to a project's ATA state.
@@ -130,11 +140,17 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		fs,
 		s.ProjectCollection,
 		s.ConfigFileRegistry,
+		s.ProjectCollection.apiOpenedProjects,
 		compilerOptionsForInferredProjects,
 		s.sessionOptions,
 		session.parseCache,
 		session.extendedConfigCache,
 	)
+
+	var apiError error
+	if change.apiRequest != nil {
+		apiError = projectCollectionBuilder.HandleAPIRequest(change.apiRequest, logger.Fork("HandleAPIRequest"))
+	}
 
 	if change.ataChanges != nil {
 		projectCollectionBuilder.DidUpdateATAState(change.ataChanges, logger.Fork("DidUpdateATAState"))
@@ -166,6 +182,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	newSnapshot.ProjectCollection = projectCollection
 	newSnapshot.ConfigFileRegistry = configFileRegistry
 	newSnapshot.builderLogs = logger
+	newSnapshot.apiError = apiError
 
 	for _, project := range newSnapshot.ProjectCollection.Projects() {
 		if project.Program != nil {
