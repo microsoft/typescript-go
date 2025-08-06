@@ -20,6 +20,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
+// SessionOptions are the immutable initialization options for a session.
+// Snapshots may reference them as a pointer since they never change.
 type SessionOptions struct {
 	CurrentDirectory   string
 	DefaultLibraryPath string
@@ -30,10 +32,6 @@ type SessionOptions struct {
 	DebounceDelay      time.Duration
 }
 
-type SessionHooks struct {
-	DidUpdateSnapshot func(prev, current *Snapshot)
-}
-
 type SessionInit struct {
 	Options     *SessionOptions
 	FS          vfs.FS
@@ -41,12 +39,10 @@ type SessionInit struct {
 	Logger      logging.Logger
 	NpmExecutor ata.NpmExecutor
 	ParseCache  *ParseCache
-	Hooks       SessionHooks
 }
 
 type Session struct {
 	options                            *SessionOptions
-	hooks                              SessionHooks
 	toPath                             func(string) tspath.Path
 	client                             Client
 	logger                             logging.Logger
@@ -401,14 +397,6 @@ func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 	newSnapshot := oldSnapshot.Clone(ctx, change, overlays, s)
 	s.snapshot = newSnapshot
 	s.snapshotMu.Unlock()
-
-	if s.hooks.DidUpdateSnapshot != nil {
-		oldSnapshot.Ref()
-		newSnapshot.Ref()
-		s.hooks.DidUpdateSnapshot(oldSnapshot, newSnapshot)
-		oldSnapshot.Deref()
-		newSnapshot.Deref()
-	}
 
 	shouldDispose := newSnapshot != oldSnapshot && oldSnapshot.Deref()
 	if shouldDispose {

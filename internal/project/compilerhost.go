@@ -30,7 +30,7 @@ func newCompilerHost(
 	currentDirectory string,
 	project *Project,
 	builder *projectCollectionBuilder,
-	logger *logging.LogTree
+	logger *logging.LogTree,
 ) *compilerHost {
 	return &compilerHost{
 		configFilePath:   project.configFilePath,
