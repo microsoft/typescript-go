@@ -34,6 +34,7 @@ func TestSnapshot(t *testing.T) {
 	}
 
 	t.Run("compilerHost gets frozen with snapshot's FS only once", func(t *testing.T) {
+		t.Parallel()
 		files := map[string]any{
 			"/home/projects/TS/p1/tsconfig.json": "{}",
 			"/home/projects/TS/p1/index.ts":      "console.log('Hello, world!');",
