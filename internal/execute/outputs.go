@@ -377,9 +377,11 @@ func generateOptionOutput(
 		if showAdditionalInfoOutput(valueCandidates, option) {
 			if valueCandidates != nil {
 				text = append(text, getPrettyOutput(colors, valueCandidates.valueType, valueCandidates.possibleValues, rightAlignOfLeft, leftAlignOfRight, terminalWidth, false /*colorLeft*/)...)
+				text = append(text, "\n")
 			}
 			if defaultValueDescription != "" {
 				text = append(text, getPrettyOutput(colors, diagnostics.X_default_Colon.Format(), defaultValueDescription, rightAlignOfLeft, leftAlignOfRight, terminalWidth, false /*colorLeft*/)...)
+				text = append(text, "\n")
 			}
 		}
 		text = append(text, "\n")
