@@ -528,8 +528,9 @@ func getPrettyOutput(colors *colors, left string, right string, rightAlignOfLeft
 			curLeft = strings.Repeat(" ", leftAlignOfRight)
 		}
 
-		curRight := remainRight[:rightCharacterNumber]
-		remainRight = remainRight[rightCharacterNumber:]
+		idx := min(rightCharacterNumber, len(remainRight))
+		curRight := remainRight[:idx]
+		remainRight = remainRight[idx:]
 		res = append(res, curLeft, curRight)
 		isFirstLine = false
 	}
