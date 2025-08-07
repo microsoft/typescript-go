@@ -162,8 +162,8 @@ interface Symbol {
 declare const console: { log(msg: any): void; };
 
 SemanticDiagnostics::
-*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
-*refresh*    /home/node_modules/otherLib/index.d.ts
+*refresh*    /home/src/tslibs/ts/lib/lib.d.ts
+*refresh*    /home/node_modules/otherlib/index.d.ts
 *refresh*    /home/node_modules/somelib/index.d.ts
 *refresh*    /home/node_modules/lib1/index.d.ts
 *refresh*    /home/node_modules/lib2/index.d.ts

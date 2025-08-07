@@ -185,10 +185,10 @@ func (s *testSys) baselineProgram(baseline *strings.Builder, program *incrementa
 	for _, file := range program.GetProgram().GetSourceFiles() {
 		if diagnostics, ok := testingData.SemanticDiagnosticsPerFile.Load(file.Path()); ok {
 			if oldDiagnostics, ok := testingData.OldProgramSemanticDiagnosticsPerFile.Load(file.Path()); !ok || oldDiagnostics != diagnostics {
-				baseline.WriteString("*refresh*    " + file.FileName() + "\n")
+				baseline.WriteString("*refresh*    " + string(file.Path()) + "\n")
 			}
 		} else {
-			baseline.WriteString("*not cached* " + file.FileName() + "\n")
+			baseline.WriteString("*not cached* " + string(file.Path()) + "\n")
 		}
 	}
 
@@ -198,11 +198,11 @@ func (s *testSys) baselineProgram(baseline *strings.Builder, program *incrementa
 		if kind, ok := testingData.UpdatedSignatureKinds[file.Path()]; ok {
 			switch kind {
 			case incremental.SignatureUpdateKindComputedDts:
-				baseline.WriteString("(computed .d.ts) " + file.FileName() + "\n")
+				baseline.WriteString("(computed .d.ts) " + string(file.Path()) + "\n")
 			case incremental.SignatureUpdateKindStoredAtEmit:
-				baseline.WriteString("(stored at emit) " + file.FileName() + "\n")
+				baseline.WriteString("(stored at emit) " + string(file.Path()) + "\n")
 			case incremental.SignatureUpdateKindUsedVersion:
-				baseline.WriteString("(used version)   " + file.FileName() + "\n")
+				baseline.WriteString("(used version)   " + string(file.Path()) + "\n")
 			}
 		}
 	}
