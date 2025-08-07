@@ -175,8 +175,8 @@ func TestTscCommandline(t *testing.T) {
 					"name": "otherlib"
 				}`),
 			},
-			cwd:                         "/home/project",
-			useCaseInsensitiveFileNames: true,
+			cwd:        "/home/project",
+			ignoreCase: true,
 		},
 	}
 

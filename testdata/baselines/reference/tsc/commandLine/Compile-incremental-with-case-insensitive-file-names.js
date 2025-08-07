@@ -52,7 +52,7 @@ exports.foo1 = { foo: "a" };
 exports.foo2 = { foo: "b" };
 
 //// [/home/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","fileNames":["../src/tslibs/ts/lib/lib.d.ts","../node_modules/otherlib/index.d.ts","../node_modules/somelib/index.d.ts","../node_modules/lib1/index.d.ts","../node_modules/lib2/index.d.ts","./src/index.ts"],"fileInfos":[{"version":"eae9e83ef0f77eeb2e35dc9b91facce1-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"a40368814f37d4357a34c3f941f3e677-export type Str = string;","c83d508c75590e2f7051911d4a827ceb-import type { Str } from 'otherLib';\nexport type Foo = { foo: Str; };","a508f6d5ab12f0c2168b5488ebbd34be-import type { Foo } from 'someLib';\nexport type { Foo as Foo1 };","528165de17b5f9f1dbbf984a062d9b57-import type { Foo } from 'somelib';\nexport type { Foo as Foo2 };\nexport declare const foo2: Foo;","c367835e98822462afe5cacbac4d94c2-import type { Foo1 } from 'lib1';\nimport type { Foo2 } from 'lib2';\nexport const foo1: Foo1 = { foo: \"a\" };\nexport const foo2: Foo2 = { foo: \"b\" };"],"fileIdsList":[[3],[2],[4,5]],"referencedMap":[[4,1],[5,1],[3,2],[6,3]]}
+{"version":"FakeTSVersion","fileNames":["../src/tslibs/ts/lib/lib.d.ts","../node_modules/otherlib/index.d.ts","../node_modules/somelib/index.d.ts","../node_modules/lib1/index.d.ts","../node_modules/lib2/index.d.ts","./src/index.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"1fe659ed0634bb57b6dc25e9062f1162-export type Str = string;","12e112ff6e2744bb42d8e0b511e44117-import type { Str } from 'otherLib';\nexport type Foo = { foo: Str; };","b6305455d920a6729c435e6acf45eff6-import type { Foo } from 'someLib';\nexport type { Foo as Foo1 };","a5393e550a9c20a242a120bf6410db48-import type { Foo } from 'somelib';\nexport type { Foo as Foo2 };\nexport declare const foo2: Foo;","42aef197ff5f079223e2c29fb2e77cc5-import type { Foo1 } from 'lib1';\nimport type { Foo2 } from 'lib2';\nexport const foo1: Foo1 = { foo: \"a\" };\nexport const foo2: Foo2 = { foo: \"b\" };"],"fileIdsList":[[3],[2],[4,5]],"referencedMap":[[4,1],[5,1],[3,2],[6,3]]}
 //// [/home/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -67,44 +67,44 @@ exports.foo2 = { foo: "b" };
   "fileInfos": [
     {
       "fileName": "../src/tslibs/ts/lib/lib.d.ts",
-      "version": "eae9e83ef0f77eeb2e35dc9b91facce1-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
-      "signature": "eae9e83ef0f77eeb2e35dc9b91facce1-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
+      "version": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
+      "signature": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "eae9e83ef0f77eeb2e35dc9b91facce1-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
+        "version": "8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "../node_modules/otherlib/index.d.ts",
-      "version": "a40368814f37d4357a34c3f941f3e677-export type Str = string;",
-      "signature": "a40368814f37d4357a34c3f941f3e677-export type Str = string;",
+      "version": "1fe659ed0634bb57b6dc25e9062f1162-export type Str = string;",
+      "signature": "1fe659ed0634bb57b6dc25e9062f1162-export type Str = string;",
       "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "../node_modules/somelib/index.d.ts",
-      "version": "c83d508c75590e2f7051911d4a827ceb-import type { Str } from 'otherLib';\nexport type Foo = { foo: Str; };",
-      "signature": "c83d508c75590e2f7051911d4a827ceb-import type { Str } from 'otherLib';\nexport type Foo = { foo: Str; };",
+      "version": "12e112ff6e2744bb42d8e0b511e44117-import type { Str } from 'otherLib';\nexport type Foo = { foo: Str; };",
+      "signature": "12e112ff6e2744bb42d8e0b511e44117-import type { Str } from 'otherLib';\nexport type Foo = { foo: Str; };",
       "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "../node_modules/lib1/index.d.ts",
-      "version": "a508f6d5ab12f0c2168b5488ebbd34be-import type { Foo } from 'someLib';\nexport type { Foo as Foo1 };",
-      "signature": "a508f6d5ab12f0c2168b5488ebbd34be-import type { Foo } from 'someLib';\nexport type { Foo as Foo1 };",
+      "version": "b6305455d920a6729c435e6acf45eff6-import type { Foo } from 'someLib';\nexport type { Foo as Foo1 };",
+      "signature": "b6305455d920a6729c435e6acf45eff6-import type { Foo } from 'someLib';\nexport type { Foo as Foo1 };",
       "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "../node_modules/lib2/index.d.ts",
-      "version": "528165de17b5f9f1dbbf984a062d9b57-import type { Foo } from 'somelib';\nexport type { Foo as Foo2 };\nexport declare const foo2: Foo;",
-      "signature": "528165de17b5f9f1dbbf984a062d9b57-import type { Foo } from 'somelib';\nexport type { Foo as Foo2 };\nexport declare const foo2: Foo;",
+      "version": "a5393e550a9c20a242a120bf6410db48-import type { Foo } from 'somelib';\nexport type { Foo as Foo2 };\nexport declare const foo2: Foo;",
+      "signature": "a5393e550a9c20a242a120bf6410db48-import type { Foo } from 'somelib';\nexport type { Foo as Foo2 };\nexport declare const foo2: Foo;",
       "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "./src/index.ts",
-      "version": "c367835e98822462afe5cacbac4d94c2-import type { Foo1 } from 'lib1';\nimport type { Foo2 } from 'lib2';\nexport const foo1: Foo1 = { foo: \"a\" };\nexport const foo2: Foo2 = { foo: \"b\" };",
-      "signature": "c367835e98822462afe5cacbac4d94c2-import type { Foo1 } from 'lib1';\nimport type { Foo2 } from 'lib2';\nexport const foo1: Foo1 = { foo: \"a\" };\nexport const foo2: Foo2 = { foo: \"b\" };",
+      "version": "42aef197ff5f079223e2c29fb2e77cc5-import type { Foo1 } from 'lib1';\nimport type { Foo2 } from 'lib2';\nexport const foo1: Foo1 = { foo: \"a\" };\nexport const foo2: Foo2 = { foo: \"b\" };",
+      "signature": "42aef197ff5f079223e2c29fb2e77cc5-import type { Foo1 } from 'lib1';\nimport type { Foo2 } from 'lib2';\nexport const foo1: Foo1 = { foo: \"a\" };\nexport const foo2: Foo2 = { foo: \"b\" };",
       "impliedNodeFormat": "CommonJS"
     }
   ],
