@@ -533,7 +533,7 @@ func getPrettyOutput(colors *colors, left string, right string, rightAlignOfLeft
 		idx := min(rightCharacterNumber, len(remainRight))
 		curRight := remainRight[:idx]
 		remainRight = remainRight[idx:]
-		res = append(res, curLeft, curRight)
+		res = append(res, curLeft, curRight, "\n")
 		isFirstLine = false
 	}
 	return res
