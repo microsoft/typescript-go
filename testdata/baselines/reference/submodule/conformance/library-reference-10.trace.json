@@ -1,0 +1,11 @@
+======== Resolving type reference directive 'jquery', containing file '/foo/consumer.ts', root directory '/.src/node_modules/@types,/node_modules/@types'. ========
+Resolving with primary search path '/.src/node_modules/@types, /node_modules/@types'.
+Directory '/.src/node_modules/@types' does not exist, skipping all lookups in it.
+Directory '/node_modules/@types' does not exist, skipping all lookups in it.
+Looking up in 'node_modules' folder, initial location '/foo'.
+Searching all ancestor node_modules directories for preferred extensions: Declaration.
+Directory '/foo/node_modules' does not exist, skipping all lookups in it.
+Directory '/foo/node_modules/@types' does not exist, skipping all lookups in it.
+Directory '/node_modules' does not exist, skipping all lookups in it.
+Directory '/node_modules/@types' does not exist, skipping all lookups in it.
+======== Type reference directive 'jquery' was not resolved. ========

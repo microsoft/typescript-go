@@ -1,0 +1,38 @@
+--- old.nodeNextModuleResolution2.trace.json
++++ new.nodeNextModuleResolution2.trace.json
+@@= skipped -0, +0 lines =@@
+-Found 'package.json' at '/a/node_modules/foo/package.json'.
+ ======== Resolving module 'foo' from '/a/b/c/d/e/app.mts'. ========
+ Explicitly specified module resolution kind: 'NodeNext'.
+ Resolving in ESM mode with conditions 'import', 'types', 'node'.
+@@= skipped -10, +9 lines =@@
+ Loading module 'foo' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration.
+ Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
+ Directory '/a/b/c/d/e/node_modules' does not exist, skipping all lookups in it.
++Directory '/a/b/c/d/e/node_modules/@types' does not exist, skipping all lookups in it.
+ Directory '/a/b/c/d/node_modules' does not exist, skipping all lookups in it.
++Directory '/a/b/c/d/node_modules/@types' does not exist, skipping all lookups in it.
+ Directory '/a/b/c/node_modules' does not exist, skipping all lookups in it.
++Directory '/a/b/c/node_modules/@types' does not exist, skipping all lookups in it.
+ Directory '/a/b/node_modules' does not exist, skipping all lookups in it.
+-File '/a/node_modules/foo/package.json' exists according to earlier cached lookups.
++Directory '/a/b/node_modules/@types' does not exist, skipping all lookups in it.
++Found 'package.json' at '/a/node_modules/foo/package.json'.
+ Using 'exports' subpath '.' with target './index.d.ts'.
+ File '/a/node_modules/foo/index.d.ts' exists - use it as a name resolution result.
+ Resolving real path for '/a/node_modules/foo/index.d.ts', result '/a/node_modules/foo/index.d.ts'.
+ ======== Module name 'foo' was successfully resolved to '/a/node_modules/foo/index.d.ts'. ========
+-File '/.ts/package.json' does not exist.
+-File '/package.json' does not exist according to earlier cached lookups.
+-File '/.ts/package.json' does not exist according to earlier cached lookups.
+-File '/package.json' does not exist according to earlier cached lookups.
+-File '/.ts/package.json' does not exist according to earlier cached lookups.
+-File '/package.json' does not exist according to earlier cached lookups.
+-File '/.ts/package.json' does not exist according to earlier cached lookups.
+-File '/package.json' does not exist according to earlier cached lookups.
+-File '/.ts/package.json' does not exist according to earlier cached lookups.
+-File '/package.json' does not exist according to earlier cached lookups.
+-File '/.ts/package.json' does not exist according to earlier cached lookups.
+-File '/package.json' does not exist according to earlier cached lookups.
+-File '/.ts/package.json' does not exist according to earlier cached lookups.
+-File '/package.json' does not exist according to earlier cached lookups."

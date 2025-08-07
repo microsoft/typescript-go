@@ -1,0 +1,41 @@
+======== Resolving module './project/file2' from 'c:/root/src/file1.ts'. ========
+Module resolution kind is not specified, using 'Bundler'.
+Resolving in CJS mode with conditions 'require', 'types'.
+Loading module as file / folder, candidate module location 'c:/root/src/project/file2', target file types: TypeScript, JavaScript, Declaration, JSON.
+Directory 'c:/root/src/project' does not exist, skipping all lookups in it.
+======== Module name './project/file2' was not resolved. ========
+======== Resolving module 'module3' from 'c:/root/src/file1.ts'. ========
+Module resolution kind is not specified, using 'Bundler'.
+Resolving in CJS mode with conditions 'require', 'types'.
+'paths' option is specified, looking for a pattern to match module name 'module3'.
+Module name 'module3', matched pattern '*'.
+Trying substitution '*', candidate module location: 'module3'.
+Loading module as file / folder, candidate module location 'c:/root/src/module3', target file types: TypeScript, JavaScript, Declaration, JSON.
+File 'c:/root/src/module3.ts' does not exist.
+File 'c:/root/src/module3.tsx' does not exist.
+File 'c:/root/src/module3.d.ts' does not exist.
+File 'c:/root/src/module3.js' does not exist.
+File 'c:/root/src/module3.jsx' does not exist.
+Directory 'c:/root/src/module3' does not exist, skipping all lookups in it.
+Trying substitution 'c:/shared/*', candidate module location: 'c:/shared/module3'.
+Loading module as file / folder, candidate module location 'c:/shared/module3', target file types: TypeScript, JavaScript, Declaration, JSON.
+File 'c:/shared/module3.ts' does not exist.
+File 'c:/shared/module3.tsx' does not exist.
+File 'c:/shared/module3.d.ts' does not exist.
+File 'c:/shared/module3.js' does not exist.
+File 'c:/shared/module3.jsx' does not exist.
+Directory 'c:/shared/module3' does not exist, skipping all lookups in it.
+File 'c:/root/src/package.json' does not exist.
+File 'c:/root/package.json' does not exist.
+File 'c:/package.json' does not exist.
+Loading module 'module3' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration, JSON.
+Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
+Directory 'c:/root/src/node_modules' does not exist, skipping all lookups in it.
+Directory 'c:/root/src/node_modules/@types' does not exist, skipping all lookups in it.
+Directory 'c:/root/node_modules' does not exist, skipping all lookups in it.
+Directory 'c:/root/node_modules/@types' does not exist, skipping all lookups in it.
+File 'c:/node_modules/module3.ts' does not exist.
+File 'c:/node_modules/module3.tsx' does not exist.
+File 'c:/node_modules/module3.d.ts' exists - use it as a name resolution result.
+Resolving real path for 'c:/node_modules/module3.d.ts', result 'c:/node_modules/module3.d.ts'.
+======== Module name 'module3' was successfully resolved to 'c:/node_modules/module3.d.ts'. ========

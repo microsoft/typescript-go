@@ -1,0 +1,22 @@
+--- old.bundlerConditionsExcludesNode(module=preserve).trace.json
++++ new.bundlerConditionsExcludesNode(module=preserve).trace.json
+@@= skipped -0, +0 lines =@@
+-Found 'package.json' at '/node_modules/conditions/package.json'.
+-File '/node_modules/conditions/package.json' exists according to earlier cached lookups.
+ ======== Resolving module 'conditions' from '/main.ts'. ========
+ Explicitly specified module resolution kind: 'Bundler'.
+ Resolving in CJS mode with conditions 'import', 'types'.
+ File '/package.json' does not exist.
+ Loading module 'conditions' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration, JSON.
+ Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
+-File '/node_modules/conditions/package.json' exists according to earlier cached lookups.
++Found 'package.json' at '/node_modules/conditions/package.json'.
+ Entering conditional exports.
+ Saw non-matching condition 'node'.
+ Matched 'exports' condition 'default'.
+@@= skipped -18, +16 lines =@@
+ Resolved under condition 'default'.
+ Exiting conditional exports.
+ Resolving real path for '/node_modules/conditions/index.web.d.ts', result '/node_modules/conditions/index.web.d.ts'.
+-======== Module name 'conditions' was successfully resolved to '/node_modules/conditions/index.web.d.ts' with Package ID 'conditions/index.web.d.ts@1.0.0'. ========
++======== Module name 'conditions' was successfully resolved to '/node_modules/conditions/index.web.d.ts' with Package ID 'conditions@1.0.0'. ========

@@ -1,0 +1,23 @@
+--- old.moduleResolutionWithSymlinks_notInNodeModules.trace.json
++++ new.moduleResolutionWithSymlinks_notInNodeModules.trace.json
+@@= skipped -0, +0 lines =@@
+ ======== Resolving module './shared/abc' from '/src/app.ts'. ========
+-Module resolution kind is not specified, using 'Node10'.
+-Loading module as file / folder, candidate module location '/src/shared/abc', target file types: TypeScript, Declaration.
+-File '/src/shared/abc.ts' exists - use it as a name resolution result.
+-======== Module name './shared/abc' was successfully resolved to '/src/shared/abc.ts'. ========
++Module resolution kind is not specified, using 'Bundler'.
++Resolving in CJS mode with conditions 'require', 'types'.
++Loading module as file / folder, candidate module location '/src/shared/abc', target file types: TypeScript, JavaScript, Declaration, JSON.
++Directory '/src/shared' does not exist, skipping all lookups in it.
++======== Module name './shared/abc' was not resolved. ========
+ ======== Resolving module './shared2/abc' from '/src/app.ts'. ========
+-Module resolution kind is not specified, using 'Node10'.
+-Loading module as file / folder, candidate module location '/src/shared2/abc', target file types: TypeScript, Declaration.
+-File '/src/shared2/abc.ts' exists - use it as a name resolution result.
+-======== Module name './shared2/abc' was successfully resolved to '/src/shared2/abc.ts'. ========
++Module resolution kind is not specified, using 'Bundler'.
++Resolving in CJS mode with conditions 'require', 'types'.
++Loading module as file / folder, candidate module location '/src/shared2/abc', target file types: TypeScript, JavaScript, Declaration, JSON.
++Directory '/src/shared2' does not exist, skipping all lookups in it.
++======== Module name './shared2/abc' was not resolved. ========

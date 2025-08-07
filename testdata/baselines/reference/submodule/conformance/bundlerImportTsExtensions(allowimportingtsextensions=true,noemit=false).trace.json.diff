@@ -1,0 +1,37 @@
+--- old.bundlerImportTsExtensions(allowimportingtsextensions=true,noemit=false).trace.json
++++ new.bundlerImportTsExtensions(allowimportingtsextensions=true,noemit=false).trace.json
+@@= skipped -44, +44 lines =@@
+ File name '/project/b.d.ts' has a '.d.ts' extension - stripping it.
+ File '/project/b.ts' exists - use it as a name resolution result.
+ ======== Module name './b.d.ts' was successfully resolved to '/project/b.ts'. ========
++======== Resolving module './b.d.ts' from '/project/main.ts'. ========
++Explicitly specified module resolution kind: 'Bundler'.
++Resolving in CJS mode with conditions 'import', 'types'.
++Loading module as file / folder, candidate module location '/project/b.d.ts', target file types: TypeScript, JavaScript, Declaration, JSON.
++File name '/project/b.d.ts' has a '.d.ts' extension - stripping it.
++File '/project/b.ts' exists - use it as a name resolution result.
++======== Module name './b.d.ts' was successfully resolved to '/project/b.ts'. ========
+ ======== Resolving module './c.ts' from '/project/main.ts'. ========
+ Explicitly specified module resolution kind: 'Bundler'.
+ Resolving in CJS mode with conditions 'import', 'types'.
+@@= skipped -54, +61 lines =@@
+ File '/project/e.txt.ts' exists - use it as a name resolution result.
+ ======== Module name './e.txt' was successfully resolved to '/project/e.txt.ts'. ========
+ ======== Resolving module './a.ts' from '/project/types.d.ts'. ========
+-Resolution for module './a.ts' was found in cache from location '/project'.
++Explicitly specified module resolution kind: 'Bundler'.
++Resolving in CJS mode with conditions 'import', 'types'.
++Loading module as file / folder, candidate module location '/project/a.ts', target file types: TypeScript, JavaScript, Declaration, JSON.
++File name '/project/a.ts' has a '.ts' extension - stripping it.
++File '/project/a.ts' exists - use it as a name resolution result.
+ ======== Module name './a.ts' was successfully resolved to '/project/a.ts'. ========
++======== Resolving module './a.d.ts' from '/project/types.d.ts'. ========
++Explicitly specified module resolution kind: 'Bundler'.
++Resolving in CJS mode with conditions 'import', 'types'.
++Loading module as file / folder, candidate module location '/project/a.d.ts', target file types: TypeScript, JavaScript, Declaration, JSON.
++File name '/project/a.d.ts' has a '.d.ts' extension - stripping it.
++File '/project/a.ts' exists - use it as a name resolution result.
++======== Module name './a.d.ts' was successfully resolved to '/project/a.ts'. ========
+ ======== Resolving module './a.d.ts' from '/project/types.d.ts'. ========
+ Explicitly specified module resolution kind: 'Bundler'.
+ Resolving in CJS mode with conditions 'import', 'types'.

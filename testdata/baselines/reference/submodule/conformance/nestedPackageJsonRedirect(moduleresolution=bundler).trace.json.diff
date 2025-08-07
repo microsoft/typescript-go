@@ -1,0 +1,17 @@
+--- old.nestedPackageJsonRedirect(moduleresolution=bundler).trace.json
++++ new.nestedPackageJsonRedirect(moduleresolution=bundler).trace.json
+@@= skipped -0, +0 lines =@@
+-File '/node_modules/@restart/hooks/esm/package.json' does not exist.
+-Found 'package.json' at '/node_modules/@restart/hooks/package.json'.
+ ======== Resolving module '@restart/hooks/useMergedRefs' from '/main.ts'. ========
+ Explicitly specified module resolution kind: 'Bundler'.
+ Resolving in CJS mode with conditions 'require', 'types'.
+@@= skipped -6, +4 lines =@@
+ Loading module '@restart/hooks/useMergedRefs' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration, JSON.
+ Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
+ Found 'package.json' at '/node_modules/@restart/hooks/useMergedRefs/package.json'.
+-File '/node_modules/@restart/hooks/package.json' exists according to earlier cached lookups.
++Found 'package.json' at '/node_modules/@restart/hooks/package.json'.
+ File '/node_modules/@restart/hooks/useMergedRefs.ts' does not exist.
+ File '/node_modules/@restart/hooks/useMergedRefs.tsx' does not exist.
+ File '/node_modules/@restart/hooks/useMergedRefs.d.ts' does not exist.

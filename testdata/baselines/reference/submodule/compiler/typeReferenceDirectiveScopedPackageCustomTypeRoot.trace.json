@@ -1,0 +1,19 @@
+======== Resolving type reference directive '@scoped', containing file '/__inferred type names__.ts', root directory '/node_modules/@types'. ========
+Resolving with primary search path '/node_modules/@types'.
+File '/node_modules/@types/@scoped/package.json' does not exist.
+File '/node_modules/@types/@scoped/index.d.ts' does not exist.
+Looking up in 'node_modules' folder, initial location '/'.
+Searching all ancestor node_modules directories for preferred extensions: Declaration.
+File '/node_modules/@scoped/package.json' does not exist.
+File '/node_modules/@scoped.d.ts' does not exist.
+File '/node_modules/@scoped/index.d.ts' does not exist.
+File '/node_modules/@types/@scoped/package.json' does not exist according to earlier cached lookups.
+File '/node_modules/@types/@scoped.d.ts' does not exist.
+File '/node_modules/@types/@scoped/index.d.ts' does not exist.
+======== Type reference directive '@scoped' was not resolved. ========
+======== Resolving type reference directive 'mangled__attypescache', containing file '/__inferred type names__.ts', root directory '/node_modules/@types'. ========
+Resolving with primary search path '/node_modules/@types'.
+File '/node_modules/@types/mangled__attypescache/package.json' does not exist.
+File '/node_modules/@types/mangled__attypescache/index.d.ts' exists - use it as a name resolution result.
+Resolving real path for '/node_modules/@types/mangled__attypescache/index.d.ts', result '/node_modules/@types/mangled__attypescache/index.d.ts'.
+======== Type reference directive 'mangled__attypescache' was successfully resolved to '/node_modules/@types/mangled__attypescache/index.d.ts', primary: true. ========

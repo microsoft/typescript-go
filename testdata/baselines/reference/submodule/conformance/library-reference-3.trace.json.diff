@@ -1,0 +1,10 @@
+--- old.library-reference-3.trace.json
++++ new.library-reference-3.trace.json
+@@= skipped -8, +8 lines =@@
+ File '/src/node_modules/jquery/index.d.ts' exists - use it as a name resolution result.
+ Resolving real path for '/src/node_modules/jquery/index.d.ts', result '/src/node_modules/jquery/index.d.ts'.
+ ======== Type reference directive 'jquery' was successfully resolved to '/src/node_modules/jquery/index.d.ts', primary: false. ========
+-File '/src/node_modules/jquery/package.json' does not exist according to earlier cached lookups.
+-File '/src/node_modules/package.json' does not exist.
+-File '/src/package.json' does not exist.
+-File '/package.json' does not exist.

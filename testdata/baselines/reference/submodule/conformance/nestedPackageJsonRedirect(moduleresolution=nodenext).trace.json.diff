@@ -1,0 +1,36 @@
+--- old.nestedPackageJsonRedirect(moduleresolution=nodenext).trace.json
++++ new.nestedPackageJsonRedirect(moduleresolution=nodenext).trace.json
+@@= skipped -0, +0 lines =@@
+-File '/node_modules/@restart/hooks/esm/package.json' does not exist.
+-Found 'package.json' at '/node_modules/@restart/hooks/package.json'.
+-File '/package.json' does not exist.
+ ======== Resolving module '@restart/hooks/useMergedRefs' from '/main.ts'. ========
+ Explicitly specified module resolution kind: 'NodeNext'.
+ Resolving in CJS mode with conditions 'require', 'types', 'node'.
+@@= skipped -7, +4 lines =@@
+ Loading module '@restart/hooks/useMergedRefs' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration.
+ Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
+ Found 'package.json' at '/node_modules/@restart/hooks/useMergedRefs/package.json'.
+-File '/node_modules/@restart/hooks/package.json' exists according to earlier cached lookups.
++Found 'package.json' at '/node_modules/@restart/hooks/package.json'.
+ File '/node_modules/@restart/hooks/useMergedRefs.ts' does not exist.
+ File '/node_modules/@restart/hooks/useMergedRefs.tsx' does not exist.
+ File '/node_modules/@restart/hooks/useMergedRefs.d.ts' does not exist.
+@@= skipped -10, +10 lines =@@
+ File '/node_modules/@restart/hooks/esm/useMergedRefs.d.ts' exists - use it as a name resolution result.
+ Resolving real path for '/node_modules/@restart/hooks/esm/useMergedRefs.d.ts', result '/node_modules/@restart/hooks/esm/useMergedRefs.d.ts'.
+ ======== Module name '@restart/hooks/useMergedRefs' was successfully resolved to '/node_modules/@restart/hooks/esm/useMergedRefs.d.ts'. ========
+-File '/.ts/package.json' does not exist.
+-File '/package.json' does not exist according to earlier cached lookups.
+-File '/.ts/package.json' does not exist according to earlier cached lookups.
+-File '/package.json' does not exist according to earlier cached lookups.
+-File '/.ts/package.json' does not exist according to earlier cached lookups.
+-File '/package.json' does not exist according to earlier cached lookups.
+-File '/.ts/package.json' does not exist according to earlier cached lookups.
+-File '/package.json' does not exist according to earlier cached lookups.
+-File '/.ts/package.json' does not exist according to earlier cached lookups.
+-File '/package.json' does not exist according to earlier cached lookups.
+-File '/.ts/package.json' does not exist according to earlier cached lookups.
+-File '/package.json' does not exist according to earlier cached lookups.
+-File '/.ts/package.json' does not exist according to earlier cached lookups.
+-File '/package.json' does not exist according to earlier cached lookups."

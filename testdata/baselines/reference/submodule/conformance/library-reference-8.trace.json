@@ -1,0 +1,22 @@
+======== Resolving type reference directive 'alpha', containing file '/test/foo.ts', root directory '/test/node_modules/@types,/node_modules/@types'. ========
+Resolving with primary search path '/test/node_modules/@types, /node_modules/@types'.
+Directory '/test/node_modules/@types' does not exist, skipping all lookups in it.
+Directory '/node_modules/@types' does not exist, skipping all lookups in it.
+Looking up in 'node_modules' folder, initial location '/test'.
+Searching all ancestor node_modules directories for preferred extensions: Declaration.
+Directory '/test/node_modules' does not exist, skipping all lookups in it.
+Directory '/test/node_modules/@types' does not exist, skipping all lookups in it.
+Directory '/node_modules' does not exist, skipping all lookups in it.
+Directory '/node_modules/@types' does not exist, skipping all lookups in it.
+======== Type reference directive 'alpha' was not resolved. ========
+======== Resolving type reference directive 'beta', containing file '/test/foo.ts', root directory '/test/node_modules/@types,/node_modules/@types'. ========
+Resolving with primary search path '/test/node_modules/@types, /node_modules/@types'.
+Directory '/test/node_modules/@types' does not exist, skipping all lookups in it.
+Directory '/node_modules/@types' does not exist, skipping all lookups in it.
+Looking up in 'node_modules' folder, initial location '/test'.
+Searching all ancestor node_modules directories for preferred extensions: Declaration.
+Directory '/test/node_modules' does not exist, skipping all lookups in it.
+Directory '/test/node_modules/@types' does not exist, skipping all lookups in it.
+Directory '/node_modules' does not exist, skipping all lookups in it.
+Directory '/node_modules/@types' does not exist, skipping all lookups in it.
+======== Type reference directive 'beta' was not resolved. ========

@@ -1,0 +1,6 @@
+======== Resolving module './project/file3' from 'c:/root/src/file1.ts'. ========
+Module resolution kind is not specified, using 'Bundler'.
+Resolving in CJS mode with conditions 'require', 'types'.
+Loading module as file / folder, candidate module location 'c:/root/src/project/file3', target file types: TypeScript, JavaScript, Declaration, JSON.
+Directory 'c:/root/src/project' does not exist, skipping all lookups in it.
+======== Module name './project/file3' was not resolved. ========

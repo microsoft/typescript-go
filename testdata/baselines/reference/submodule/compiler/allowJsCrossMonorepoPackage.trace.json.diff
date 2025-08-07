@@ -1,0 +1,50 @@
+--- old.allowJsCrossMonorepoPackage.trace.json
++++ new.allowJsCrossMonorepoPackage.trace.json
+@@= skipped -11, +11 lines =@@
+ File '/packages/main/node_modules/shared/index.d.ts' does not exist.
+ Directory '/packages/main/node_modules/@types' does not exist, skipping all lookups in it.
+ Directory '/packages/node_modules' does not exist, skipping all lookups in it.
++Directory '/packages/node_modules/@types' does not exist, skipping all lookups in it.
+ File '/node_modules/shared.ts' does not exist.
+ File '/node_modules/shared.tsx' does not exist.
+ File '/node_modules/shared.d.ts' does not exist.
+@@= skipped -10, +11 lines =@@
+ File name '/packages/main/node_modules/shared/index.js' has a '.js' extension - stripping it.
+ File '/packages/main/node_modules/shared/index.js' exists - use it as a name resolution result.
+ 'package.json' does not have a 'peerDependencies' field.
++Resolving real path for '/packages/main/node_modules/shared/index.js', result '/packages/shared/index.js'.
+ Resolution of non-relative name failed; trying with modern Node resolution features disabled to see if npm library needs configuration update.
+ File '/packages/main/package.json' exists according to earlier cached lookups.
+ Loading module 'shared' from 'node_modules' folder, target file types: TypeScript, Declaration.
+@@= skipped -17, +18 lines =@@
+ File '/packages/main/node_modules/shared/index.d.ts' does not exist.
+ Directory '/packages/main/node_modules/@types' does not exist, skipping all lookups in it.
+ Directory '/packages/node_modules' does not exist, skipping all lookups in it.
++Directory '/packages/node_modules/@types' does not exist, skipping all lookups in it.
+ File '/node_modules/shared.ts' does not exist.
+ File '/node_modules/shared.tsx' does not exist.
+ File '/node_modules/shared.d.ts' does not exist.
+ Directory '/node_modules/@types' does not exist, skipping all lookups in it.
+-Resolving real path for '/packages/main/node_modules/shared/index.js', result '/packages/shared/index.js'.
+-======== Module name 'shared' was successfully resolved to '/packages/shared/index.js' with Package ID 'shared/index.js@1.0.0'. ========
++======== Module name 'shared' was successfully resolved to '/packages/shared/index.js' with Package ID 'shared@1.0.0'. ========
+ ======== Resolving module './utils.js' from '/packages/shared/index.js'. ========
+ Explicitly specified module resolution kind: 'Bundler'.
+ Resolving in CJS mode with conditions 'import', 'types'.
+@@= skipped -23, +23 lines =@@
+ Loading module 'pkg' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration, JSON.
+ Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
+ Directory '/packages/shared/node_modules' does not exist, skipping all lookups in it.
++Directory '/packages/shared/node_modules/@types' does not exist, skipping all lookups in it.
+ Directory '/packages/node_modules' does not exist, skipping all lookups in it.
++Directory '/packages/node_modules/@types' does not exist, skipping all lookups in it.
+ File '/node_modules/pkg/package.json' does not exist.
+ File '/node_modules/pkg.ts' does not exist.
+ File '/node_modules/pkg.tsx' does not exist.
+@@= skipped -10, +12 lines =@@
+ File '/node_modules/pkg/index.d.ts' exists - use it as a name resolution result.
+ Resolving real path for '/node_modules/pkg/index.d.ts', result '/node_modules/pkg/index.d.ts'.
+ ======== Module name 'pkg' was successfully resolved to '/node_modules/pkg/index.d.ts'. ========
+-File '/node_modules/pkg/package.json' does not exist according to earlier cached lookups.
+-File '/node_modules/package.json' does not exist.
+-File '/package.json' does not exist.
