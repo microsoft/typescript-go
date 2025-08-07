@@ -205,7 +205,7 @@ func getOptionsForHelp(commandLine *tsoptions.ParsedCommandLine) []*tsoptions.Co
 
 func getHeader(sys System, message string) []string {
 	colors := createColors(sys)
-	header := make([]string, 0, 2)
+	header := make([]string, 0, 3)
 	terminalWidth := sys.GetWidthOfTerminal()
 	const tsIcon = "     "
 	const tsIconTS = "  TS "
