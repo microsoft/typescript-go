@@ -1326,7 +1326,7 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 			// attach writer and perform emit
 			emitter.writer = writer
 			emitter.paths = outputpaths.GetOutputPathsFor(sourceFile, host.Options(), host, options.EmitOnly == EmitOnlyForcedDts)
-			emitter.emit(context.TODO())
+			emitter.emit(ctx)
 			emitter.writer = nil
 
 			// put the writer back in the pool
