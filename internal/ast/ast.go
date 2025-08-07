@@ -3479,7 +3479,7 @@ func (node *BindingElement) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.PropertyName) |
 		propagateSubtreeFacts(node.name) |
 		propagateSubtreeFacts(node.Initializer) |
-		core.IfElse(node.DotDotDotToken != nil, SubtreeContainsRest|SubtreeContainsESObjectRestOrSpread, SubtreeFactsNone)
+		core.IfElse(node.DotDotDotToken != nil, SubtreeContainsRestOrSpread, SubtreeFactsNone)
 }
 
 func IsBindingElement(node *Node) bool {
@@ -6476,7 +6476,7 @@ func (node *SpreadElement) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *SpreadElement) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression)
+	return propagateSubtreeFacts(node.Expression) | SubtreeContainsRestOrSpread
 }
 
 func IsSpreadElement(node *Node) bool {

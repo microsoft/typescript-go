@@ -706,7 +706,7 @@ func (ch *objectRestSpreadTransformer) flattenObjectBindingOrAssignmentPattern(p
 	for i, element := range elements {
 		if ast.GetRestIndicatorOfBindingOrAssignmentElement(element) == nil {
 			propertyName := ast.TryGetPropertyNameOfBindingOrAssignmentElement(element)
-			if ch.ctx.level >= flattenLevelObjectRest && element.SubtreeFacts()&(ast.SubtreeContainsRest|ast.SubtreeContainsObjectRestOrSpread) == 0 && ast.GetTargetOfBindingOrAssignmentElement(element).SubtreeFacts()&(ast.SubtreeContainsRest|ast.SubtreeContainsObjectRestOrSpread) == 0 && !ast.IsComputedPropertyName(propertyName) {
+			if ch.ctx.level >= flattenLevelObjectRest && element.SubtreeFacts()&(ast.SubtreeContainsRestOrSpread|ast.SubtreeContainsObjectRestOrSpread) == 0 && ast.GetTargetOfBindingOrAssignmentElement(element).SubtreeFacts()&(ast.SubtreeContainsRestOrSpread|ast.SubtreeContainsObjectRestOrSpread) == 0 && !ast.IsComputedPropertyName(propertyName) {
 				bindingElements = append(bindingElements, ch.Visitor().VisitNode(element))
 			} else {
 				if len(bindingElements) > 0 {
