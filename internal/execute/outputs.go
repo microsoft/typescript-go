@@ -49,12 +49,15 @@ func createDiagnosticReporter(sys System, options *core.CompilerOptions) diagnos
 	}
 }
 
+func defaultIsPretty(sys System) bool {
+	return sys.WriteOutputIsTTY() && sys.GetEnvironmentVariable("NO_COLOR") == ""
+}
+
 func shouldBePretty(sys System, options *core.CompilerOptions) bool {
-	if options == nil || options.Pretty.IsTrueOrUnknown() {
-		// todo: return defaultIsPretty(sys);
-		return true
+	if options == nil || options.Pretty.IsUnknown() {
+		return defaultIsPretty(sys)
 	}
-	return false
+	return options.Pretty.IsTrue()
 }
 
 func createReportErrorSummary(sys System, options *core.CompilerOptions) func(diagnostics []*ast.Diagnostic) {
@@ -136,7 +139,7 @@ func getOptionsForHelp(commandLine *tsoptions.ParsedCommandLine) []*tsoptions.Co
 func getHeader(sys System, message string) []string {
 	// !!! const colors = createColors(sys);
 	var header []string
-	// !!! terminalWidth := sys.GetWidthOfTerminal?.() ?? 0
+	// !!! terminalWidth := sys.GetWidthOfTerminal()
 	const tsIconLength = 5
 
 	//     const tsIconFirstLine = colors.blueBackground("".padStart(tsIconLength));

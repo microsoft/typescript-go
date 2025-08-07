@@ -152,6 +152,18 @@ func (s *testSys) Writer() io.Writer {
 	return s.currentWrite
 }
 
+func (s *testSys) WriteOutputIsTTY() bool {
+	return true
+}
+
+func (s *testSys) GetWidthOfTerminal() int {
+	return 0
+}
+
+func (s *testSys) GetEnvironmentVariable(name string) string {
+	return ""
+}
+
 func sanitizeSysOutput(output string, prefixLine string, replaceString string) string {
 	if index := strings.Index(output, prefixLine); index != -1 {
 		indexOfNewLine := strings.Index(output[index:], "\n")
