@@ -186,6 +186,7 @@ func (ch *objectRestSpreadTransformer) visitContructorDeclaration(node *ast.Cons
 		nil,
 		ch.Visitor().VisitNodes(node.Parameters),
 		nil,
+		nil,
 		ch.transformFunctionBody(node.AsNode()),
 	)
 }
@@ -200,6 +201,7 @@ func (ch *objectRestSpreadTransformer) visitGetAccessorDeclaration(node *ast.Get
 		nil,
 		ch.Visitor().VisitNodes(node.Parameters),
 		nil,
+		nil,
 		ch.transformFunctionBody(node.AsNode()),
 	)
 }
@@ -213,6 +215,7 @@ func (ch *objectRestSpreadTransformer) visitSetAccessorDeclaration(node *ast.Set
 		ch.Visitor().VisitNode(node.Name()),
 		nil,
 		ch.Visitor().VisitNodes(node.Parameters),
+		nil,
 		nil,
 		ch.transformFunctionBody(node.AsNode()),
 	)
@@ -230,6 +233,7 @@ func (ch *objectRestSpreadTransformer) visitMethodDeclaration(node *ast.MethodDe
 		nil,
 		ch.Visitor().VisitNodes(node.Parameters),
 		nil,
+		nil,
 		ch.transformFunctionBody(node.AsNode()),
 	)
 }
@@ -245,6 +249,7 @@ func (ch *objectRestSpreadTransformer) visitFunctionDeclaration(node *ast.Functi
 		nil,
 		ch.Visitor().VisitNodes(node.Parameters),
 		nil,
+		nil,
 		ch.transformFunctionBody(node.AsNode()),
 	)
 }
@@ -257,6 +262,7 @@ func (ch *objectRestSpreadTransformer) visitArrowFunction(node *ast.ArrowFunctio
 		node.Modifiers(),
 		nil,
 		ch.Visitor().VisitNodes(node.Parameters),
+		nil,
 		nil,
 		node.EqualsGreaterThanToken,
 		ch.transformFunctionBody(node.AsNode()),
@@ -273,6 +279,7 @@ func (ch *objectRestSpreadTransformer) visitFunctionExpression(node *ast.Functio
 		ch.Visitor().VisitNode(node.Name()),
 		nil,
 		ch.Visitor().VisitNodes(node.Parameters),
+		nil,
 		nil,
 		ch.transformFunctionBody(node.AsNode()),
 	)
