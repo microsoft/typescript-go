@@ -23,7 +23,7 @@ func (t *projectReferenceParseTask) parse(projectReferenceParser *projectReferen
 			t.resolved.ParseInputOutputNames()
 		})
 	}
-	if subReferences := t.resolved.ResolvedProjectReferencePaths(); subReferences != nil {
+	if subReferences := t.resolved.ResolvedProjectReferencePaths(); len(subReferences) > 0 {
 		t.subTasks = createProjectReferenceParseTasks(subReferences)
 	}
 }
