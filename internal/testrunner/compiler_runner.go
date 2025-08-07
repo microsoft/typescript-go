@@ -519,37 +519,9 @@ func (c *compilerTest) verifyModuleResolution(t *testing.T, suiteName string, is
 	t.Run("module resolution", func(t *testing.T) {
 		defer testutil.RecoverAndFail(t, "Panic on creating module resolution baseline for test "+c.filename)
 		tsbaseline.DoModuleResolutionBaseline(t, c.configuredName, c.result.Trace, baseline.Options{
-			Subfolder:   suiteName,
-			IsSubmodule: isSubmodule,
-			DiffFixupOld: func(old string) string {
-				var sb strings.Builder
-				sb.Grow(len(old))
-
-				removeLibReplacement := c.options.LibReplacement == core.TSUnknown
-				inLibResolution := false
-				for line := range strings.SplitSeq(old, "\n") {
-					if line == "[" || line == "]" {
-						continue
-					}
-					fixedLine := strings.TrimSuffix(strings.TrimPrefix(line, `    "`), `",`)
-					if removeLibReplacement {
-						if inLibResolution {
-							if strings.HasPrefix(fixedLine, `======== Module name '@typescript/lib-`) {
-								inLibResolution = false
-							}
-							continue
-						}
-						if strings.HasPrefix(fixedLine, `======== Resolving module '@typescript/lib-`) {
-							inLibResolution = true
-							continue
-						}
-					}
-					sb.WriteString(fixedLine)
-					sb.WriteString("\n")
-				}
-
-				return sb.String()[:sb.Len()-1]
-			},
+			Subfolder:       suiteName,
+			IsSubmodule:     isSubmodule,
+			SkipDiffWithOld: true,
 		})
 	})
 }

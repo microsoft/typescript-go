@@ -1,7 +1,0 @@
---- old.modulePreserve2.trace.json
-+++ new.modulePreserve2.trace.json
-@@= skipped -33, +33 lines =@@
- Exiting conditional exports.
- Resolving real path for '/node_modules/dep/require.d.ts', result '/node_modules/dep/require.d.ts'.
- ======== Module name 'dep' was successfully resolved to '/node_modules/dep/require.d.ts'. ========
--File '/node_modules/dep/package.json' exists according to earlier cached lookups.
