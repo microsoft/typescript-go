@@ -218,10 +218,10 @@ func getHeader(sys System, message string) []string {
 		// right align of the icon is 120 at most.
 		rightAlign := core.IfElse(terminalWidth > 120, 120, terminalWidth)
 		leftAlign := rightAlign - tsIconLength
-		header = append(header, fmt.Sprintf("%-*s%s\n", leftAlign, message, tsIconFirstLine))
-		header = append(header, fmt.Sprintf("%s%s\n", strings.Repeat(" ", leftAlign), tsIconSecondLine))
+		header = append(header, fmt.Sprintf("%-*s", leftAlign, message), tsIconFirstLine, "\n")
+		header = append(header, strings.Repeat(" ", leftAlign), tsIconSecondLine, "\n")
 	} else {
-		header = append(header, message+"\n", "\n")
+		header = append(header, message, "\n", "\n")
 	}
 	return header
 }
