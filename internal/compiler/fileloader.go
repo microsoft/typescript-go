@@ -22,9 +22,8 @@ type fileLoader struct {
 	comparePathsOptions tspath.ComparePathsOptions
 	supportedExtensions []string
 
-	parseTasks                 *fileLoaderWorker[*parseTask]
-	projectReferenceParseTasks *fileLoaderWorker[*projectReferenceParseTask]
-	rootTasks                  []*parseTask
+	parseTasks *fileLoaderWorker[*parseTask]
+	rootTasks  []*parseTask
 
 	totalFileCount atomic.Int32
 	libFileCount   atomic.Int32
@@ -84,13 +83,10 @@ func processAllProgramFiles(
 			wg:       core.NewWorkGroup(singleThreaded),
 			maxDepth: maxNodeModuleJsDepth,
 		},
-		projectReferenceParseTasks: &fileLoaderWorker[*projectReferenceParseTask]{
-			wg: core.NewWorkGroup(singleThreaded),
-		},
 		rootTasks:           make([]*parseTask, 0, len(rootFiles)+len(compilerOptions.Lib)),
 		supportedExtensions: core.Flatten(tsoptions.GetSupportedExtensionsWithJsonIfResolveJsonModule(compilerOptions, supportedExtensions)),
 	}
-	loader.addProjectReferenceTasks()
+	loader.addProjectReferenceTasks(singleThreaded)
 	loader.resolver = module.NewResolver(loader.projectReferenceFileMapper.host, compilerOptions, opts.TypingsLocation, opts.ProjectName)
 
 	var libs []string
@@ -280,7 +276,7 @@ func (p *fileLoader) resolveAutomaticTypeDirectives(containingFileName string) (
 	return toParse, typeResolutionsInFile
 }
 
-func (p *fileLoader) addProjectReferenceTasks() {
+func (p *fileLoader) addProjectReferenceTasks(singleThreaded bool) {
 	p.projectReferenceFileMapper = &projectReferenceFileMapper{
 		opts: p.opts,
 		host: p.opts.Host,
@@ -290,9 +286,12 @@ func (p *fileLoader) addProjectReferenceTasks() {
 		return
 	}
 
+	projectReferenceParser := &projectReferenceParser{
+		loader: p,
+		wg:     core.NewWorkGroup(singleThreaded),
+	}
 	rootTasks := createProjectReferenceParseTasks(projectReferences)
-	p.projectReferenceParseTasks.runAndWait(p, rootTasks)
-	p.projectReferenceFileMapper.init(p, rootTasks)
+	projectReferenceParser.parse(rootTasks)
 
 	// Add files from project references as root if the module kind is 'none'.
 	// This ensures that files from project references are included in the root tasks
@@ -565,11 +564,6 @@ func getInferredLibraryNameResolveFrom(options *core.CompilerOptions, currentDir
 		containingDirectory = currentDirectory
 	}
 	return tspath.CombinePaths(containingDirectory, "__lib_node_modules_lookup_"+libFileName+"__.ts")
-}
-
-type resolution struct {
-	node           *ast.Node
-	resolvedModule *module.ResolvedModule
 }
 
 func getModeForTypeReferenceDirectiveInFile(ref *ast.FileReference, file *ast.SourceFile, meta ast.SourceFileMetaData, options *core.CompilerOptions) core.ResolutionMode {
