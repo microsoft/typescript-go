@@ -39,7 +39,7 @@ func createProjectReferenceParseTasks(projectReferences []string) []*projectRefe
 type projectReferenceParser struct {
 	loader          *fileLoader
 	wg              core.WorkGroup
-	tasksByFileName collections.SyncMap[tspath.Path, *projectReferenceParseTask]
+	tasksByFilePath collections.SyncMap[tspath.Path, *projectReferenceParseTask]
 }
 
 func (p *projectReferenceParser) parse(tasks []*projectReferenceParseTask) {
@@ -52,7 +52,7 @@ func (p *projectReferenceParser) parse(tasks []*projectReferenceParseTask) {
 func (p *projectReferenceParser) start(tasks []*projectReferenceParseTask) {
 	for i, task := range tasks {
 		path := p.loader.toPath(task.configName)
-		if loadedTask, loaded := p.tasksByFileName.LoadOrStore(path, task); loaded {
+		if loadedTask, loaded := p.tasksByFilePath.LoadOrStore(path, task); loaded {
 			// dedup tasks to ensure correct file order, regardless of which task would be started first
 			tasks[i] = loadedTask
 		} else {
@@ -65,7 +65,7 @@ func (p *projectReferenceParser) start(tasks []*projectReferenceParseTask) {
 }
 
 func (p *projectReferenceParser) initMapper(tasks []*projectReferenceParseTask) {
-	totalReferences := p.tasksByFileName.Size() + 1
+	totalReferences := p.tasksByFilePath.Size() + 1
 	p.loader.projectReferenceFileMapper.configToProjectReference = make(map[tspath.Path]*tsoptions.ParsedCommandLine, totalReferences)
 	p.loader.projectReferenceFileMapper.referencesInConfigFile = make(map[tspath.Path][]tspath.Path, totalReferences)
 	p.loader.projectReferenceFileMapper.sourceToOutput = make(map[tspath.Path]*tsoptions.OutputDtsAndProjectReference)

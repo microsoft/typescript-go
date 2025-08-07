@@ -47,7 +47,6 @@ func (t *parseTask) Path() tspath.Path {
 
 func (t *parseTask) load(loader *fileLoader) {
 	t.loaded = true
-	t.path = loader.toPath(t.normalizedFilePath)
 	if t.isForAutomaticTypeDirective {
 		t.loadAutomaticTypeDirectives(loader)
 		return
@@ -74,7 +73,7 @@ func (t *parseTask) load(loader *fileLoader) {
 
 	for _, ref := range file.ReferencedFiles {
 		resolvedPath := loader.resolveTripleslashPathReference(ref.FileName, file.FileName())
-		t.addSubTask(resolvedPath, false)
+		t.addSubTask(resolvedPath, false, loader)
 	}
 
 	compilerOptions := loader.opts.Config.CompilerOptions()
@@ -83,7 +82,7 @@ func (t *parseTask) load(loader *fileLoader) {
 	if compilerOptions.NoLib != core.TSTrue {
 		for _, lib := range file.LibReferenceDirectives {
 			if name, ok := tsoptions.GetLibFileName(lib.FileName); ok {
-				t.addSubTask(resolvedRef{fileName: loader.pathForLibFile(name)}, true)
+				t.addSubTask(resolvedRef{fileName: loader.pathForLibFile(name)}, true, loader)
 			}
 		}
 	}
@@ -94,14 +93,20 @@ func (t *parseTask) load(loader *fileLoader) {
 func (t *parseTask) redirect(loader *fileLoader, fileName string) {
 	t.isRedirected = true
 	// increaseDepth and elideOnDepth are not copied to redirects, otherwise their depth would be double counted.
-	t.subTasks = []*parseTask{{normalizedFilePath: tspath.NormalizePath(fileName), isLib: t.isLib, fromExternalLibrary: t.fromExternalLibrary}}
+	normalizedFilePath := tspath.NormalizePath(fileName)
+	t.subTasks = []*parseTask{{
+		normalizedFilePath:  normalizedFilePath,
+		isLib:               t.isLib,
+		fromExternalLibrary: t.fromExternalLibrary,
+		path:                loader.toPath(normalizedFilePath),
+	}}
 }
 
 func (t *parseTask) loadAutomaticTypeDirectives(loader *fileLoader) {
 	toParseTypeRefs, typeResolutionsInFile := loader.resolveAutomaticTypeDirectives(t.normalizedFilePath)
 	t.typeResolutionsInFile = typeResolutionsInFile
 	for _, typeResolution := range toParseTypeRefs {
-		t.addSubTask(typeResolution, false)
+		t.addSubTask(typeResolution, false, loader)
 	}
 }
 
@@ -112,7 +117,7 @@ type resolvedRef struct {
 	isFromExternalLibrary bool
 }
 
-func (t *parseTask) addSubTask(ref resolvedRef, isLib bool) {
+func (t *parseTask) addSubTask(ref resolvedRef, isLib bool, loader *fileLoader) {
 	normalizedFilePath := tspath.NormalizePath(ref.fileName)
 	subTask := &parseTask{
 		normalizedFilePath:  normalizedFilePath,
@@ -120,13 +125,14 @@ func (t *parseTask) addSubTask(ref resolvedRef, isLib bool) {
 		increaseDepth:       ref.increaseDepth,
 		elideOnDepth:        ref.elideOnDepth,
 		fromExternalLibrary: ref.isFromExternalLibrary,
+		path:                loader.toPath(normalizedFilePath),
 	}
 	t.subTasks = append(t.subTasks, subTask)
 }
 
 type filesParser struct {
 	wg              core.WorkGroup
-	tasksByFileName collections.SyncMap[string, *queuedParseTask]
+	tasksByFilePath collections.SyncMap[tspath.Path, *queuedParseTask]
 	maxDepth        int
 }
 
@@ -146,7 +152,7 @@ func (w *filesParser) start(loader *fileLoader, tasks []*parseTask, depth int, i
 	for i, task := range tasks {
 		taskIsFromExternalLibrary := isFromExternalLibrary || task.fromExternalLibrary
 		newTask := &queuedParseTask{task: task, lowestDepth: math.MaxInt}
-		loadedTask, loaded := w.tasksByFileName.LoadOrStore(task.FileName(), newTask)
+		loadedTask, loaded := w.tasksByFilePath.LoadOrStore(task.Path(), newTask)
 		task = loadedTask.task
 		if loaded {
 			tasks[i] = task
@@ -195,7 +201,7 @@ func (w *filesParser) start(loader *fileLoader, tasks []*parseTask, depth int, i
 
 func (w *filesParser) collect(loader *fileLoader, tasks []*parseTask, iterate func(*parseTask)) []tspath.Path {
 	// Mark all tasks we saw as external after the fact.
-	w.tasksByFileName.Range(func(key string, value *queuedParseTask) bool {
+	w.tasksByFilePath.Range(func(_ tspath.Path, value *queuedParseTask) bool {
 		if value.fromExternalLibrary {
 			value.task.fromExternalLibrary = true
 		}
@@ -216,7 +222,7 @@ func (w *filesParser) collectWorker(loader *fileLoader, tasks []*parseTask, iter
 			w.collectWorker(loader, subTasks, iterate, seen)
 		}
 		iterate(task)
-		results = append(results, loader.toPath(task.FileName()))
+		results = append(results, task.Path())
 	}
 	return results
 }
