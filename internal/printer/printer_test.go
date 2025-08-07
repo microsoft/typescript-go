@@ -1,7 +1,6 @@
 package printer_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -2505,7 +2504,7 @@ func TestPartiallyEmittedExpression(t *testing.T) {
     .expression;`, false /*jsx*/)
 
 	emitContext := printer.NewEmitContext()
-	ctx := transformers.WithCompilerOptions(context.Background(), compilerOptions)
+	ctx := transformers.WithCompilerOptions(t.Context(), compilerOptions)
 	ctx = transformers.WithEmitContext(ctx, emitContext)
 	file = tstransforms.NewTypeEraserTransformer(ctx).TransformSourceFile(file)
 	emittestutil.CheckEmit(t, emitContext, file.AsSourceFile(), `return container.parent

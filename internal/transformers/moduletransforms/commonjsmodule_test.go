@@ -1,7 +1,6 @@
 package moduletransforms_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -1049,7 +1048,7 @@ exports.a = a;`,
 
 			emitContext := printer.NewEmitContext()
 			resolver := binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
-			ctx := transformers.WithCompilerOptions(context.Background(), compilerOptions)
+			ctx := transformers.WithCompilerOptions(t.Context(), compilerOptions)
 			ctx = transformers.WithEmitContext(ctx, emitContext)
 			file = tstransforms.NewRuntimeSyntaxTransformer(ctx, resolver).TransformSourceFile(file)
 			file = moduletransforms.NewCommonJSModuleTransformer(ctx, resolver, fakeGetEmitModuleFormatOfFile).TransformSourceFile(file)

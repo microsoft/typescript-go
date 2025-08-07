@@ -1,7 +1,6 @@
 package tstransforms_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/core"
@@ -101,7 +100,7 @@ func TestTypeEraser(t *testing.T) {
 			if rec.vms {
 				compilerOptions.VerbatimModuleSyntax = core.TSTrue
 			}
-			ctx := transformers.WithCompilerOptions(context.Background(), compilerOptions)
+			ctx := transformers.WithCompilerOptions(t.Context(), compilerOptions)
 			ctx = transformers.WithEmitContext(ctx, printer.NewEmitContext())
 			emittestutil.CheckEmit(t, nil, tstransforms.NewTypeEraserTransformer(ctx).TransformSourceFile(file), rec.output)
 		})
