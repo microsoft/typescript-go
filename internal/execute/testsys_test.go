@@ -50,14 +50,14 @@ interface Symbol {
 declare const console: { log(msg: any): void; };
 `)
 
-func newTestSys(fileOrFolderList FileMap, cwd string) *testSys {
+func newTestSys(fileOrFolderList FileMap, cwd string, useCaseSensitiveFileNames bool) *testSys {
 	if cwd == "" {
 		cwd = "/home/src/workspaces/project"
 	}
 	sys := &testSys{
 		fs: &incrementaltestutil.FsHandlingBuildInfo{
 			FS: &testFs{
-				FS: vfstest.FromMap(fileOrFolderList, true /*useCaseSensitiveFileNames*/),
+				FS: vfstest.FromMap(fileOrFolderList, useCaseSensitiveFileNames),
 			},
 		},
 		defaultLibraryPath: tscLibPath,

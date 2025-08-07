@@ -26,7 +26,7 @@ type projectReferenceFileMapper struct {
 }
 
 func (mapper *projectReferenceFileMapper) init(loader *fileLoader, rootTasks []*projectReferenceParseTask) {
-	totalReferences := loader.projectReferenceParseTasks.tasksByFileName.Size() + 1
+	totalReferences := loader.projectReferenceParseTasks.tasksByFilePath.Size() + 1
 	mapper.loader = loader
 	mapper.configToProjectReference = make(map[tspath.Path]*tsoptions.ParsedCommandLine, totalReferences)
 	mapper.referencesInConfigFile = make(map[tspath.Path][]tspath.Path, totalReferences)
@@ -36,7 +36,7 @@ func (mapper *projectReferenceFileMapper) init(loader *fileLoader, rootTasks []*
 		loader,
 		rootTasks,
 		func(task *projectReferenceParseTask, referencesInConfig []tspath.Path) {
-			path := loader.toPath(task.configName)
+			path := task.Path()
 			mapper.configToProjectReference[path] = task.resolved
 			if task.resolved == nil || mapper.opts.Config.ConfigFile == task.resolved.ConfigFile {
 				return

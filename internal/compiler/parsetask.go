@@ -37,6 +37,10 @@ func (t *parseTask) FileName() string {
 	return t.normalizedFilePath
 }
 
+func (t *parseTask) FilePath() tspath.Path {
+	return t.path
+}
+
 func (t *parseTask) Path() tspath.Path {
 	return t.path
 }
@@ -70,7 +74,7 @@ func (t *parseTask) load(loader *fileLoader) {
 
 	for _, ref := range file.ReferencedFiles {
 		resolvedPath := loader.resolveTripleslashPathReference(ref.FileName, file.FileName())
-		t.addSubTask(resolvedPath, false)
+		t.addSubTask(resolvedPath, false, loader)
 	}
 
 	compilerOptions := loader.opts.Config.CompilerOptions()
@@ -79,7 +83,7 @@ func (t *parseTask) load(loader *fileLoader) {
 	if compilerOptions.NoLib != core.TSTrue {
 		for _, lib := range file.LibReferenceDirectives {
 			if name, ok := tsoptions.GetLibFileName(lib.FileName); ok {
-				t.addSubTask(resolvedRef{fileName: loader.pathForLibFile(name)}, true)
+				t.addSubTask(resolvedRef{fileName: loader.pathForLibFile(name)}, true, loader)
 			}
 		}
 	}
@@ -90,14 +94,20 @@ func (t *parseTask) load(loader *fileLoader) {
 func (t *parseTask) redirect(loader *fileLoader, fileName string) {
 	t.isRedirected = true
 	// increaseDepth and elideOnDepth are not copied to redirects, otherwise their depth would be double counted.
-	t.subTasks = []*parseTask{{normalizedFilePath: tspath.NormalizePath(fileName), isLib: t.isLib, fromExternalLibrary: t.fromExternalLibrary}}
+	normalizedFilePath := tspath.NormalizePath(fileName)
+	t.subTasks = []*parseTask{{
+		normalizedFilePath:  normalizedFilePath,
+		isLib:               t.isLib,
+		fromExternalLibrary: t.fromExternalLibrary,
+		path:                loader.toPath(normalizedFilePath),
+	}}
 }
 
 func (t *parseTask) loadAutomaticTypeDirectives(loader *fileLoader) {
 	toParseTypeRefs, typeResolutionsInFile := loader.resolveAutomaticTypeDirectives(t.normalizedFilePath)
 	t.typeResolutionsInFile = typeResolutionsInFile
 	for _, typeResolution := range toParseTypeRefs {
-		t.addSubTask(typeResolution, false)
+		t.addSubTask(typeResolution, false, loader)
 	}
 }
 
@@ -108,7 +118,7 @@ type resolvedRef struct {
 	isFromExternalLibrary bool
 }
 
-func (t *parseTask) addSubTask(ref resolvedRef, isLib bool) {
+func (t *parseTask) addSubTask(ref resolvedRef, isLib bool, loader *fileLoader) {
 	normalizedFilePath := tspath.NormalizePath(ref.fileName)
 	subTask := &parseTask{
 		normalizedFilePath:  normalizedFilePath,
@@ -116,6 +126,7 @@ func (t *parseTask) addSubTask(ref resolvedRef, isLib bool) {
 		increaseDepth:       ref.increaseDepth,
 		elideOnDepth:        ref.elideOnDepth,
 		fromExternalLibrary: ref.isFromExternalLibrary,
+		path:                loader.toPath(normalizedFilePath),
 	}
 	t.subTasks = append(t.subTasks, subTask)
 }

@@ -3,23 +3,25 @@ package compiler
 import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type projectReferenceParseTask struct {
 	loaded     bool
+	configPath tspath.Path
 	configName string
 	resolved   *tsoptions.ParsedCommandLine
 	subTasks   []*projectReferenceParseTask
 }
 
-func (t *projectReferenceParseTask) FileName() string {
-	return t.configName
+func (t *projectReferenceParseTask) Path() tspath.Path {
+	return t.configPath
 }
 
 func (t *projectReferenceParseTask) load(loader *fileLoader) {
 	t.loaded = true
 
-	t.resolved = loader.opts.Host.GetResolvedProjectReference(t.configName, loader.toPath(t.configName))
+	t.resolved = loader.opts.Host.GetResolvedProjectReference(t.configName, t.configPath)
 	if t.resolved == nil {
 		return
 	}
@@ -32,7 +34,7 @@ func (t *projectReferenceParseTask) load(loader *fileLoader) {
 	if len(subReferences) == 0 {
 		return
 	}
-	t.subTasks = createProjectReferenceParseTasks(subReferences)
+	t.subTasks = createProjectReferenceParseTasks(subReferences, loader)
 }
 
 func (t *projectReferenceParseTask) getSubTasks() []*projectReferenceParseTask {
@@ -61,10 +63,11 @@ func (t *projectReferenceParseTask) isFromExternalLibrary() bool {
 
 func (t *projectReferenceParseTask) markFromExternalLibrary() {}
 
-func createProjectReferenceParseTasks(projectReferences []string) []*projectReferenceParseTask {
+func createProjectReferenceParseTasks(projectReferences []string, loader *fileLoader) []*projectReferenceParseTask {
 	return core.Map(projectReferences, func(configName string) *projectReferenceParseTask {
 		return &projectReferenceParseTask{
 			configName: configName,
+			configPath: loader.toPath(configName),
 		}
 	})
 }

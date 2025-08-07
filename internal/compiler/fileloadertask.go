@@ -11,7 +11,7 @@ import (
 
 type fileLoaderWorkerTask[T any] interface {
 	comparable
-	FileName() string
+	Path() tspath.Path
 	isLoaded() bool
 	load(loader *fileLoader)
 	getSubTasks() []T
@@ -24,7 +24,7 @@ type fileLoaderWorkerTask[T any] interface {
 
 type fileLoaderWorker[K fileLoaderWorkerTask[K]] struct {
 	wg              core.WorkGroup
-	tasksByFileName collections.SyncMap[string, *queuedTask[K]]
+	tasksByFilePath collections.SyncMap[tspath.Path, *queuedTask[K]]
 	maxDepth        int
 }
 
@@ -44,7 +44,7 @@ func (w *fileLoaderWorker[K]) start(loader *fileLoader, tasks []K, depth int, is
 	for i, task := range tasks {
 		taskIsFromExternalLibrary := isFromExternalLibrary || task.isFromExternalLibrary()
 		newTask := &queuedTask[K]{task: task, lowestDepth: math.MaxInt}
-		loadedTask, loaded := w.tasksByFileName.LoadOrStore(task.FileName(), newTask)
+		loadedTask, loaded := w.tasksByFilePath.LoadOrStore(task.Path(), newTask)
 		task = loadedTask.task
 		if loaded {
 			tasks[i] = task
@@ -93,7 +93,7 @@ func (w *fileLoaderWorker[K]) start(loader *fileLoader, tasks []K, depth int, is
 
 func (w *fileLoaderWorker[K]) collect(loader *fileLoader, tasks []K, iterate func(K, []tspath.Path)) []tspath.Path {
 	// Mark all tasks we saw as external after the fact.
-	w.tasksByFileName.Range(func(key string, value *queuedTask[K]) bool {
+	w.tasksByFilePath.Range(func(_ tspath.Path, value *queuedTask[K]) bool {
 		if value.fromExternalLibrary {
 			value.task.markFromExternalLibrary()
 		}
@@ -115,7 +115,7 @@ func (w *fileLoaderWorker[K]) collectWorker(loader *fileLoader, tasks []K, itera
 			subResults = w.collectWorker(loader, subTasks, iterate, seen)
 		}
 		iterate(task, subResults)
-		results = append(results, loader.toPath(task.FileName()))
+		results = append(results, task.Path())
 	}
 	return results
 }

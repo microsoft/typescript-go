@@ -239,7 +239,14 @@ func (p *fileLoader) addRootTasks(files []string, isLib bool) {
 	for _, fileName := range files {
 		absPath := tspath.GetNormalizedAbsolutePath(fileName, p.opts.Host.GetCurrentDirectory())
 		if core.Tristate.IsTrue(p.opts.Config.CompilerOptions().AllowNonTsExtensions) || slices.Contains(p.supportedExtensions, tspath.TryGetExtensionFromPath(absPath)) {
-			p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: absPath, isLib: isLib, root: true})
+			p.rootTasks = append(
+				p.rootTasks,
+				&parseTask{
+					normalizedFilePath: absPath,
+					isLib:              isLib,
+					root:               true,
+					path:               p.toPath(absPath),
+				})
 		}
 	}
 }
@@ -253,7 +260,14 @@ func (p *fileLoader) addAutomaticTypeDirectiveTasks() {
 		containingDirectory = p.opts.Host.GetCurrentDirectory()
 	}
 	containingFileName := tspath.CombinePaths(containingDirectory, module.InferredTypesContainingFile)
-	p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: containingFileName, isLib: false, isForAutomaticTypeDirective: true})
+	p.rootTasks = append(
+		p.rootTasks,
+		&parseTask{
+			normalizedFilePath:          containingFileName,
+			isLib:                       false,
+			isForAutomaticTypeDirective: true,
+			path:                        p.toPath(containingFileName),
+		})
 }
 
 func (p *fileLoader) resolveAutomaticTypeDirectives(containingFileName string) (
@@ -290,7 +304,7 @@ func (p *fileLoader) addProjectReferenceTasks() {
 		return
 	}
 
-	rootTasks := createProjectReferenceParseTasks(projectReferences)
+	rootTasks := createProjectReferenceParseTasks(projectReferences, p)
 	p.projectReferenceParseTasks.runAndWait(p, rootTasks)
 	p.projectReferenceFileMapper.init(p, rootTasks)
 
@@ -305,12 +319,24 @@ func (p *fileLoader) addProjectReferenceTasks() {
 			}
 			if p.opts.canUseProjectReferenceSource() {
 				for _, fileName := range resolved.FileNames() {
-					p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: fileName, isLib: false})
+					p.rootTasks = append(
+						p.rootTasks,
+						&parseTask{
+							normalizedFilePath: fileName,
+							isLib:              false,
+							path:               p.toPath(fileName),
+						})
 				}
 			} else {
 				for outputDts := range resolved.GetOutputDeclarationFileNames() {
 					if outputDts != "" {
-						p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: outputDts, isLib: false})
+						p.rootTasks = append(
+							p.rootTasks,
+							&parseTask{
+								normalizedFilePath: outputDts,
+								isLib:              false,
+								path:               p.toPath(outputDts),
+							})
 					}
 				}
 			}
@@ -406,7 +432,7 @@ func (p *fileLoader) resolveTypeReferenceDirectives(t *parseTask) {
 				increaseDepth:         resolved.IsExternalLibraryImport,
 				elideOnDepth:          false,
 				isFromExternalLibrary: resolved.IsExternalLibraryImport,
-			}, false)
+			}, false, p)
 		}
 	}
 
@@ -497,7 +523,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 					increaseDepth:         resolvedModule.IsExternalLibraryImport,
 					elideOnDepth:          isJsFileFromNodeModules,
 					isFromExternalLibrary: resolvedModule.IsExternalLibraryImport,
-				}, false)
+				}, false, p)
 			}
 		}
 
