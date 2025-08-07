@@ -629,6 +629,7 @@ func (tx *CommonJSModuleTransformer) createExportExpression(name *ast.ModuleExpo
 								nil, /*typeParameters*/
 								tx.Factory().NewNodeList([]*ast.Node{}),
 								nil, /*type*/
+								nil, /*fullSignature*/
 								tx.Factory().NewBlock(
 									tx.Factory().NewNodeList([]*ast.Node{
 										tx.Factory().NewReturnStatement(value),
@@ -949,6 +950,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelFunctionDeclaration(node *ast.
 			nil, /*typeParameters*/
 			tx.Visitor().VisitNodes(node.Parameters),
 			nil, /*type*/
+			nil, /*fullSignature*/
 			tx.Visitor().VisitNode(node.Body),
 		)
 	} else {
@@ -1515,6 +1517,7 @@ func (tx *CommonJSModuleTransformer) visitDestructuringAssignmentTargetNoStack(n
 				nil, /*typeParameters*/
 				tx.Factory().NewNodeList([]*ast.Node{param}),
 				nil, /*returnType*/
+				nil, /*fullSignature*/
 				tx.Factory().NewBlock(statementList, false /*multiLine*/),
 			)
 			propertyList := tx.Factory().NewNodeList([]*ast.Node{valueSetter})
@@ -1788,6 +1791,7 @@ func (tx *CommonJSModuleTransformer) createImportCallExpressionCommonJS(arg *ast
 		nil, /*typeParameters*/
 		tx.Factory().NewNodeList(parameters),
 		nil, /*type*/
+		nil, /*fullSignature*/
 		tx.Factory().NewToken(ast.KindEqualsGreaterThanToken), /*equalsGreaterThanToken*/
 		requireCall,
 	)
