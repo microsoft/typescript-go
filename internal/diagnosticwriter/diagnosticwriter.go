@@ -21,7 +21,7 @@ type FormattingOptions struct {
 }
 
 const (
-	foregroundColorEscapeGrey   = "\u001b[90m"
+	ForegroundColorEscapeGrey   = "\u001b[90m"
 	foregroundColorEscapeRed    = "\u001b[91m"
 	foregroundColorEscapeYellow = "\u001b[93m"
 	foregroundColorEscapeBlue   = "\u001b[94m"
@@ -39,43 +39,45 @@ func FormatDiagnosticsWithColorAndContext(output io.Writer, diags []*ast.Diagnos
 	if len(diags) == 0 {
 		return
 	}
-
 	for i, diagnostic := range diags {
 		if i > 0 {
 			fmt.Fprint(output, formatOpts.NewLine)
 		}
+		FormatDiagnosticWithColorAndContext(output, diagnostic, formatOpts)
+	}
+}
 
-		if diagnostic.File() != nil {
-			file := diagnostic.File()
-			pos := diagnostic.Loc().Pos()
-			WriteLocation(output, file, pos, formatOpts, writeWithStyleAndReset)
-			fmt.Fprint(output, " - ")
-		}
+func FormatDiagnosticWithColorAndContext(output io.Writer, diagnostic *ast.Diagnostic, formatOpts *FormattingOptions) {
+	if diagnostic.File() != nil {
+		file := diagnostic.File()
+		pos := diagnostic.Loc().Pos()
+		WriteLocation(output, file, pos, formatOpts, writeWithStyleAndReset)
+		fmt.Fprint(output, " - ")
+	}
 
-		writeWithStyleAndReset(output, diagnostic.Category().Name(), getCategoryFormat(diagnostic.Category()))
-		fmt.Fprintf(output, "%s TS%d: %s", foregroundColorEscapeGrey, diagnostic.Code(), resetEscapeSequence)
-		WriteFlattenedDiagnosticMessage(output, diagnostic, formatOpts.NewLine)
+	writeWithStyleAndReset(output, diagnostic.Category().Name(), getCategoryFormat(diagnostic.Category()))
+	fmt.Fprintf(output, "%s TS%d: %s", ForegroundColorEscapeGrey, diagnostic.Code(), resetEscapeSequence)
+	WriteFlattenedDiagnosticMessage(output, diagnostic, formatOpts.NewLine)
 
-		if diagnostic.File() != nil && diagnostic.Code() != diagnostics.File_appears_to_be_binary.Code() {
-			fmt.Fprint(output, formatOpts.NewLine)
-			writeCodeSnippet(output, diagnostic.File(), diagnostic.Pos(), diagnostic.Len(), getCategoryFormat(diagnostic.Category()), "", formatOpts)
-			fmt.Fprint(output, formatOpts.NewLine)
-		}
+	if diagnostic.File() != nil && diagnostic.Code() != diagnostics.File_appears_to_be_binary.Code() {
+		fmt.Fprint(output, formatOpts.NewLine)
+		writeCodeSnippet(output, diagnostic.File(), diagnostic.Pos(), diagnostic.Len(), getCategoryFormat(diagnostic.Category()), "", formatOpts)
+		fmt.Fprint(output, formatOpts.NewLine)
+	}
 
-		if (diagnostic.RelatedInformation() != nil) && (len(diagnostic.RelatedInformation()) > 0) {
-			for _, relatedInformation := range diagnostic.RelatedInformation() {
-				file := relatedInformation.File()
-				if file != nil {
-					fmt.Fprint(output, formatOpts.NewLine)
-					fmt.Fprint(output, "  ")
-					pos := relatedInformation.Pos()
-					WriteLocation(output, file, pos, formatOpts, writeWithStyleAndReset)
-					fmt.Fprint(output, " - ")
-					WriteFlattenedDiagnosticMessage(output, relatedInformation, formatOpts.NewLine)
-					writeCodeSnippet(output, file, pos, relatedInformation.Len(), foregroundColorEscapeCyan, "    ", formatOpts)
-				}
+	if (diagnostic.RelatedInformation() != nil) && (len(diagnostic.RelatedInformation()) > 0) {
+		for _, relatedInformation := range diagnostic.RelatedInformation() {
+			file := relatedInformation.File()
+			if file != nil {
 				fmt.Fprint(output, formatOpts.NewLine)
+				fmt.Fprint(output, "  ")
+				pos := relatedInformation.Pos()
+				WriteLocation(output, file, pos, formatOpts, writeWithStyleAndReset)
+				fmt.Fprint(output, " - ")
+				WriteFlattenedDiagnosticMessage(output, relatedInformation, formatOpts.NewLine)
+				writeCodeSnippet(output, file, pos, relatedInformation.Len(), foregroundColorEscapeCyan, "    ", formatOpts)
 			}
+			fmt.Fprint(output, formatOpts.NewLine)
 		}
 	}
 }
@@ -196,7 +198,7 @@ func getCategoryFormat(category diagnostics.Category) string {
 	case diagnostics.CategoryWarning:
 		return foregroundColorEscapeYellow
 	case diagnostics.CategorySuggestion:
-		return foregroundColorEscapeGrey
+		return ForegroundColorEscapeGrey
 	case diagnostics.CategoryMessage:
 		return foregroundColorEscapeBlue
 	}
@@ -359,7 +361,7 @@ func prettyPathForFileError(file *ast.SourceFile, fileErrors []*ast.Diagnostic, 
 	}
 	return fmt.Sprintf("%s%s:%d%s",
 		fileName,
-		foregroundColorEscapeGrey,
+		ForegroundColorEscapeGrey,
 		line+1,
 		resetEscapeSequence,
 	)
@@ -382,4 +384,16 @@ func WriteFormatDiagnostic(output io.Writer, diagnostic *ast.Diagnostic, formatO
 	fmt.Fprintf(output, "%s TS%d: ", diagnostic.Category().Name(), diagnostic.Code())
 	WriteFlattenedDiagnosticMessage(output, diagnostic, formatOpts.NewLine)
 	fmt.Fprint(output, formatOpts.NewLine)
+}
+
+func FormatDiagnosticsStatusWithColorAndTime(output io.Writer, time string, diag *ast.Diagnostic, formatOpts *FormattingOptions) {
+	fmt.Fprint(output, "[")
+	writeWithStyleAndReset(output, time, ForegroundColorEscapeGrey)
+	fmt.Fprint(output, "] ")
+	WriteFlattenedDiagnosticMessage(output, diag, formatOpts.NewLine)
+}
+
+func FormatDiagnosticsStatusAndTime(output io.Writer, time string, diag *ast.Diagnostic, formatOpts *FormattingOptions) {
+	fmt.Fprint(output, time, " - ")
+	WriteFlattenedDiagnosticMessage(output, diag, formatOpts.NewLine)
 }

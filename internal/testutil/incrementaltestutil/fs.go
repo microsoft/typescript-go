@@ -10,7 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
-var fakeTsVersion = "FakeTSVersion"
+var FakeTsVersion = "FakeTSVersion"
 
 type FsHandlingBuildInfo struct {
 	vfs.FS
@@ -24,7 +24,7 @@ func (f *FsHandlingBuildInfo) ReadFile(path string) (contents string, ok bool) {
 		// read buildinfo and modify version
 		var buildInfo incremental.BuildInfo
 		err := json.Unmarshal([]byte(contents), &buildInfo)
-		if err == nil && buildInfo.Version == fakeTsVersion {
+		if err == nil && buildInfo.Version == FakeTsVersion {
 			buildInfo.Version = core.Version()
 			newContents, err := json.Marshal(&buildInfo)
 			if err != nil {
@@ -42,7 +42,7 @@ func (f *FsHandlingBuildInfo) WriteFile(path string, data string, writeByteOrder
 		if err := json.Unmarshal([]byte(data), &buildInfo); err == nil {
 			if buildInfo.Version == core.Version() {
 				// Change it to fakeTsVersion
-				buildInfo.Version = fakeTsVersion
+				buildInfo.Version = FakeTsVersion
 				newData, err := json.Marshal(&buildInfo)
 				if err != nil {
 					return fmt.Errorf("testFs.WriteFile: failed to marshal build info after fixing version: %w", err)

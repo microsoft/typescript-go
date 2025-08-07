@@ -15,11 +15,12 @@ import (
 )
 
 type Watcher struct {
-	sys              System
-	configFileName   string
-	options          *tsoptions.ParsedCommandLine
-	reportDiagnostic diagnosticReporter
-	testing          bool
+	sys                System
+	configFileName     string
+	options            *tsoptions.ParsedCommandLine
+	reportDiagnostic   diagnosticReporter
+	reportErrorSummary diagnosticsReporter
+	testing            CommandLineTesting
 
 	host           compiler.CompilerHost
 	program        *incremental.Program
@@ -27,12 +28,13 @@ type Watcher struct {
 	configModified bool
 }
 
-func createWatcher(sys System, configParseResult *tsoptions.ParsedCommandLine, reportDiagnostic diagnosticReporter, testing bool) *Watcher {
+func createWatcher(sys System, configParseResult *tsoptions.ParsedCommandLine, reportDiagnostic diagnosticReporter, reportErrorSummary diagnosticsReporter, testing CommandLineTesting) *Watcher {
 	w := &Watcher{
-		sys:              sys,
-		options:          configParseResult,
-		reportDiagnostic: reportDiagnostic,
-		testing:          testing,
+		sys:                sys,
+		options:            configParseResult,
+		reportDiagnostic:   reportDiagnostic,
+		reportErrorSummary: reportErrorSummary,
+		testing:            testing,
 		// reportWatchStatus: createWatchStatusReporter(sys, configParseResult.CompilerOptions().Pretty),
 	}
 	if configParseResult.ConfigFile != nil {
@@ -45,7 +47,7 @@ func (w *Watcher) start() {
 	w.host = compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), nil)
 	w.program = incremental.ReadBuildInfoProgram(w.options, incremental.NewBuildInfoReader(w.host))
 
-	if !w.testing {
+	if w.testing == nil {
 		watchInterval := 1000 * time.Millisecond
 		if w.options.ParsedConfig.WatchOptions != nil {
 			watchInterval = time.Duration(*w.options.ParsedConfig.WatchOptions.Interval) * time.Millisecond
@@ -72,13 +74,13 @@ func (w *Watcher) DoCycle() {
 		Config:           w.options,
 		Host:             w.host,
 		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
-	}), w.program, w.testing)
+	}), w.program, w.testing != nil)
 
 	if w.hasBeenModified(w.program.GetProgram()) {
-		fmt.Fprintln(w.sys.Writer(), "build starting at ", w.sys.Now())
+		fmt.Fprintln(w.sys.Writer(), "build starting at", w.sys.Now().Format("03:04:05 PM"))
 		timeStart := w.sys.Now()
 		w.compileAndEmit()
-		fmt.Fprintln(w.sys.Writer(), "build finished in ", w.sys.Now().Sub(timeStart))
+		fmt.Fprintf(w.sys.Writer(), "build finished in %.3fs\n", w.sys.Now().Sub(timeStart).Seconds())
 	} else {
 		// print something???
 		// fmt.Fprintln(w.sys.Writer(), "no changes detected at ", w.sys.Now())
@@ -88,7 +90,7 @@ func (w *Watcher) DoCycle() {
 func (w *Watcher) compileAndEmit() {
 	// !!! output/error reporting is currently the same as non-watch mode
 	// diagnostics, emitResult, exitStatus :=
-	emitFilesAndReportErrors(w.sys, w.program, w.reportDiagnostic)
+	emitFilesAndReportErrors(w.sys, w.program, w.reportDiagnostic, w.reportErrorSummary, w.sys.Writer(), compileTimes{}, w.testing)
 }
 
 func (w *Watcher) hasErrorsInTsConfig() bool {

@@ -9,6 +9,7 @@ import (
 	"sync"
 	"testing"
 	"testing/fstest"
+	"time"
 	"unicode/utf16"
 
 	"github.com/microsoft/typescript-go/internal/testutil"
@@ -34,7 +35,7 @@ func TestInsensitive(t *testing.T) {
 			Data: contents,
 			Sys:  1234,
 		},
-	}, false /*useCaseSensitiveFileNames*/)
+	}, false /*useCaseSensitiveFileNames*/, &Time{start: time.Now()})
 
 	sensitive, err := fs.ReadFile(vfs, "foo/bar/baz")
 	assert.NilError(t, err)
@@ -97,7 +98,7 @@ func TestInsensitiveUpper(t *testing.T) {
 			Data: contents,
 			Sys:  1234,
 		},
-	}, false /*useCaseSensitiveFileNames*/)
+	}, false /*useCaseSensitiveFileNames*/, &Time{start: time.Now()})
 
 	sensitive, err := fs.ReadFile(vfs, "foo/bar/baz")
 	assert.NilError(t, err)
@@ -142,7 +143,7 @@ func TestSensitive(t *testing.T) {
 			Data: contents,
 			Sys:  1234,
 		},
-	}, true /*useCaseSensitiveFileNames*/)
+	}, true /*useCaseSensitiveFileNames*/, &Time{start: time.Now()})
 
 	sensitive, err := fs.ReadFile(vfs, "foo/bar/baz")
 	assert.NilError(t, err)
@@ -170,7 +171,7 @@ func TestSensitiveDuplicatePath(t *testing.T) {
 	}
 
 	testutil.AssertPanics(t, func() {
-		convertMapFS(testfs, false /*useCaseSensitiveFileNames*/)
+		convertMapFS(testfs, false /*useCaseSensitiveFileNames*/, &Time{start: time.Now()})
 	}, `duplicate path: "Foo" and "foo" have the same canonical path`)
 }
 
@@ -186,7 +187,7 @@ func TestInsensitiveDuplicatePath(t *testing.T) {
 		},
 	}
 
-	convertMapFS(testfs, true /*useCaseSensitiveFileNames*/)
+	convertMapFS(testfs, true /*useCaseSensitiveFileNames*/, &Time{start: time.Now()})
 }
 
 func dirEntriesToNames(entries []fs.DirEntry) []string {
@@ -303,7 +304,7 @@ func TestParentDirFile(t *testing.T) {
 	}
 
 	testutil.AssertPanics(t, func() {
-		convertMapFS(testfs, false /*useCaseSensitiveFileNames*/)
+		convertMapFS(testfs, false /*useCaseSensitiveFileNames*/, &Time{start: time.Now()})
 	}, `failed to create intermediate directories for "foo/oops": mkdir "foo": path exists but is not a directory`)
 }
 

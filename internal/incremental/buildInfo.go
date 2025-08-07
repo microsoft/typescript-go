@@ -2,6 +2,8 @@ package incremental
 
 import (
 	"fmt"
+	"iter"
+	"maps"
 
 	"github.com/go-json-experiment/json"
 	"github.com/go-json-experiment/json/jsontext"
@@ -17,52 +19,56 @@ type (
 	BuildInfoFileIdListId int
 )
 
-// /**
-//  * buildInfoRoot is
-//  * for incremental program buildinfo
-//  * - start and end of FileId for consecutive fileIds to be included as root
-//  * - single fileId that is root
-//  * for non incremental program buildinfo
-//  * - string that is the root file name
-//  */
-// type BuildInfoRoot struct {
-// 	StartEnd *[2]BuildInfoFileId
-// 	Single   BuildInfoFileId
-// 	nonIncremental      string
-// }
+// buildInfoRoot is
+// - for incremental program buildinfo
+//   - start and end of FileId for consecutive fileIds to be included as root
+//   - start - single fileId that is root
+//
+// - for non incremental program buildinfo
+//   - string that is the root file name
+type BuildInfoRoot struct {
+	Start          BuildInfoFileId
+	End            BuildInfoFileId
+	NonIncremental string // Root of a non incremental program
+}
 
-// func (o BuildInfoRoot) MarshalJSON() ([]byte, error) {
-// 	if o.StartEnd != nil {
-// 		return json.Marshal(o.StartEnd)
-// 	}
-// 	if o.Single != 0 {
-// 		return json.Marshal(o.Single)
-// 	}
-// 	if o.nonIncremental != "" {
-// 		return json.Marshal(o.nonIncremental)
-// 	}
-// 	panic("unknown BuildInfoRoot type")
-// }
+func (b *BuildInfoRoot) MarshalJSON() ([]byte, error) {
+	if b.Start != 0 {
+		if b.End != 0 {
+			return json.Marshal([2]BuildInfoFileId{b.Start, b.End})
+		} else {
+			return json.Marshal(b.Start)
+		}
+	} else {
+		return json.Marshal(b.NonIncremental)
+	}
+}
 
-// func (o *BuildInfoRoot) UnmarshalJSON(data []byte) error {
-// 	*o = BuildInfoRoot{}
-// 	var vStartEnd [2]BuildInfoFileId
-// 	if err := json.Unmarshal(data, &vStartEnd); err == nil {
-// 		o.StartEnd = &vStartEnd
-// 		return nil
-// 	}
-// 	var vSingle BuildInfoFileId
-// 	if err := json.Unmarshal(data, &vSingle); err == nil {
-// 		o.Single = vSingle
-// 		return nil
-// 	}
-// 	var vNonIncremental string
-// 	if err := json.Unmarshal(data, &vNonIncremental); err == nil {
-// 		o.nonIncremental = vNonIncremental
-// 		return nil
-// 	}
-// 	return fmt.Errorf("invalid BuildInfoRoot: %s", data)
-// }
+func (b *BuildInfoRoot) UnmarshalJSON(data []byte) error {
+	var startAndEnd *[2]int
+	if err := json.Unmarshal(data, &startAndEnd); err == nil {
+		*b = BuildInfoRoot{
+			Start: BuildInfoFileId(startAndEnd[0]),
+			End:   BuildInfoFileId(startAndEnd[1]),
+		}
+		return nil
+	}
+	var start int
+	if err := json.Unmarshal(data, &start); err == nil {
+		*b = BuildInfoRoot{
+			Start: BuildInfoFileId(start),
+		}
+		return nil
+	}
+	var name string
+	if err := json.Unmarshal(data, &name); err == nil {
+		*b = BuildInfoRoot{
+			NonIncremental: name,
+		}
+		return nil
+	}
+	return fmt.Errorf("invalid BuildInfoRoot: %s", data)
+}
 
 type buildInfoFileInfoNoSignature struct {
 	Version            string              `json:"version,omitzero"`
@@ -109,6 +115,9 @@ func newBuildInfoFileInfo(fileInfo *fileInfo) *BuildInfoFileInfo {
 }
 
 func (b *BuildInfoFileInfo) GetFileInfo() *fileInfo {
+	if b == nil {
+		return nil
+	}
 	if b.signature != "" {
 		return &fileInfo{
 			version:           b.signature,
@@ -413,13 +422,34 @@ func (b *BuildInfoEmitSignature) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid BuildInfoEmitSignature: %s", data)
 }
 
+type BuildInfoResolvedRoot struct {
+	Resolved BuildInfoFileId
+	Root     BuildInfoFileId
+}
+
+func (b *BuildInfoResolvedRoot) MarshalJSON() ([]byte, error) {
+	return json.Marshal([2]BuildInfoFileId{b.Resolved, b.Root})
+}
+
+func (b *BuildInfoResolvedRoot) UnmarshalJSON(data []byte) error {
+	var resolvedAndRoot *[2]int
+	if err := json.Unmarshal(data, &resolvedAndRoot); err == nil {
+		*b = BuildInfoResolvedRoot{
+			Resolved: BuildInfoFileId(resolvedAndRoot[0]),
+			Root:     BuildInfoFileId(resolvedAndRoot[1]),
+		}
+		return nil
+	}
+	return fmt.Errorf("invalid BuildInfoResolvedRoot: %s", data)
+}
+
 type BuildInfo struct {
 	Version string `json:"version,omitzero"`
 
 	// Common between incremental and tsc -b buildinfo for non incremental programs
-	Errors       bool `json:"errors,omitzero"`
-	CheckPending bool `json:"checkPending,omitzero"`
-	// Root         []BuildInfoRoot `json:"root,omitzero"`
+	Errors       bool             `json:"errors,omitzero"`
+	CheckPending bool             `json:"checkPending,omitzero"`
+	Root         []*BuildInfoRoot `json:"root,omitzero"`
 
 	// IncrementalProgram info
 	FileNames                  []string                             `json:"fileNames,omitzero"`
@@ -433,7 +463,7 @@ type BuildInfo struct {
 	AffectedFilesPendingEmit   []*BuildInfoFilePendingEmit          `json:"affectedFilesPendingEmit,omitzero"`
 	LatestChangedDtsFile       string                               `json:"latestChangedDtsFile,omitzero"` // Because this is only output file in the program, we dont need fileId to deduplicate name
 	EmitSignatures             []*BuildInfoEmitSignature            `json:"emitSignatures,omitzero"`
-	// resolvedRoot: readonly BuildInfoResolvedRoot[] | undefined;
+	ResolvedRoot               []*BuildInfoResolvedRoot             `json:"resolvedRoot,omitzero"`
 }
 
 func (b *BuildInfo) IsValidVersion() bool {
@@ -442,6 +472,14 @@ func (b *BuildInfo) IsValidVersion() bool {
 
 func (b *BuildInfo) IsIncremental() bool {
 	return b != nil && len(b.FileNames) != 0
+}
+
+func (b *BuildInfo) fileName(fileId BuildInfoFileId) string {
+	return b.FileNames[fileId-1]
+}
+
+func (b *BuildInfo) fileInfo(fileId BuildInfoFileId) *BuildInfoFileInfo {
+	return b.FileInfos[fileId-1]
 }
 
 func (b *BuildInfo) GetCompilerOptions(buildInfoDirectory string) *core.CompilerOptions {
@@ -458,4 +496,67 @@ func (b *BuildInfo) GetCompilerOptions(buildInfoDirectory string) *core.Compiler
 
 	}
 	return options
+}
+
+func (b *BuildInfo) IsEmitPending(resolved *tsoptions.ParsedCommandLine, buildInfoDirectory string) bool {
+	// Some of the emit files like source map or dts etc are not yet done
+	if !resolved.CompilerOptions().NoEmit.IsTrue() || resolved.CompilerOptions().GetEmitDeclarations() {
+		pendingEmit := getPendingEmitKindWithOptions(resolved.CompilerOptions(), b.GetCompilerOptions(buildInfoDirectory))
+		if resolved.CompilerOptions().NoEmit.IsTrue() {
+			pendingEmit |= FileEmitKindDtsErrors
+		}
+		return pendingEmit != 0
+	}
+	return false
+}
+
+func (b *BuildInfo) GetBuildInfoRootInfoReader(buildInfoDirectory string, comparePathOptions tspath.ComparePathsOptions) *BuildInfoRootInfoReader {
+	roots := make(map[tspath.Path]*BuildInfoFileInfo)
+	rootToResolved := make(map[tspath.Path]tspath.Path)
+
+	addRoot := func(root string, fileInfo *BuildInfoFileInfo) {
+		rootPath := tspath.ToPath(root, buildInfoDirectory, comparePathOptions.UseCaseSensitiveFileNames)
+		rootToResolved[rootPath] = rootPath
+		if fileInfo != nil {
+			roots[rootPath] = fileInfo
+		}
+	}
+
+	for _, root := range b.Root {
+		if root.NonIncremental != "" {
+			addRoot(root.NonIncremental, nil)
+		} else if root.End == 0 {
+			addRoot(b.fileName(root.Start), b.fileInfo(root.Start))
+		} else {
+			for i := root.Start; i <= root.End; i++ {
+				addRoot(b.fileName(i), b.fileInfo(i))
+			}
+		}
+	}
+	for _, resolved := range b.ResolvedRoot {
+		rootToResolved[tspath.ToPath(b.fileName(resolved.Root), buildInfoDirectory, comparePathOptions.UseCaseSensitiveFileNames)] = tspath.ToPath(b.fileName(resolved.Resolved), buildInfoDirectory, comparePathOptions.UseCaseSensitiveFileNames)
+	}
+	return &BuildInfoRootInfoReader{
+		rootFileInfos:  roots,
+		rootToResolved: rootToResolved,
+	}
+}
+
+type BuildInfoRootInfoReader struct {
+	rootFileInfos  map[tspath.Path]*BuildInfoFileInfo
+	rootToResolved map[tspath.Path]tspath.Path
+}
+
+func (b *BuildInfoRootInfoReader) GetBuildInfoFileInfo(inputFilePath tspath.Path) (*BuildInfoFileInfo, tspath.Path) {
+	if info, ok := b.rootFileInfos[inputFilePath]; ok {
+		return info, inputFilePath
+	}
+	if resolved, ok := b.rootToResolved[inputFilePath]; ok {
+		return b.rootFileInfos[resolved], resolved
+	}
+	return nil, ""
+}
+
+func (b *BuildInfoRootInfoReader) Roots() iter.Seq[tspath.Path] {
+	return maps.Keys(b.rootToResolved)
 }

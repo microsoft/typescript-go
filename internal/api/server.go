@@ -8,6 +8,7 @@ import (
 	"io"
 	"strconv"
 	"sync"
+	"time"
 
 	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/bundled"
@@ -470,5 +471,10 @@ func (s *Server) Stat(path string) vfs.FileInfo {
 
 // Remove implements vfs.FS.
 func (s *Server) Remove(path string) error {
+	panic("unimplemented")
+}
+
+// Chtimes implements vfs.FS.
+func (s *Server) Chtimes(path string, aTime time.Time, mTime time.Time) error {
 	panic("unimplemented")
 }

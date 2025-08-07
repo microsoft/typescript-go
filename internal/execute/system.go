@@ -9,7 +9,6 @@ import (
 
 type System interface {
 	Writer() io.Writer
-	EndWrite() // needed for testing
 	FS() vfs.FS
 	DefaultLibraryPath() string
 	GetCurrentDirectory() string
@@ -22,8 +21,8 @@ type ExitStatus int
 
 const (
 	ExitStatusSuccess                              ExitStatus = 0
-	ExitStatusDiagnosticsPresent_OutputsSkipped    ExitStatus = 1
-	ExitStatusDiagnosticsPresent_OutputsGenerated  ExitStatus = 2
+	ExitStatusDiagnosticsPresent_OutputsGenerated  ExitStatus = 1
+	ExitStatusDiagnosticsPresent_OutputsSkipped    ExitStatus = 2
 	ExitStatusInvalidProject_OutputsSkipped        ExitStatus = 3
 	ExitStatusProjectReferenceCycle_OutputsSkipped ExitStatus = 4
 	ExitStatusNotImplemented                       ExitStatus = 5

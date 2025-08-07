@@ -11,7 +11,9 @@ import (
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/incremental"
 	"github.com/microsoft/typescript-go/internal/testutil/incrementaltestutil"
@@ -54,18 +56,18 @@ func newTestSys(fileOrFolderList FileMap, cwd string) *testSys {
 	if cwd == "" {
 		cwd = "/home/src/workspaces/project"
 	}
+	fs, timeImpl := vfstest.FromMapWithTime(fileOrFolderList, true /*useCaseSensitiveFileNames*/)
 	sys := &testSys{
 		fs: &incrementaltestutil.FsHandlingBuildInfo{
 			FS: &testFs{
-				FS: vfstest.FromMap(fileOrFolderList, true /*useCaseSensitiveFileNames*/),
+				FS: fs,
 			},
 		},
 		defaultLibraryPath: tscLibPath,
 		cwd:                cwd,
 		files:              slices.Collect(maps.Keys(fileOrFolderList)),
-		output:             []string{},
 		currentWrite:       &strings.Builder{},
-		start:              time.Now(),
+		timeImpl:           timeImpl,
 	}
 
 	// Ensure the default library file is present
@@ -81,6 +83,7 @@ func newTestSys(fileOrFolderList FileMap, cwd string) *testSys {
 
 type diffEntry struct {
 	content   string
+	mTime     time.Time
 	isWritten bool
 }
 
@@ -91,7 +94,6 @@ type snapshot struct {
 
 type testSys struct {
 	// todo: original has write to output as a string[] because the separations are needed for baselining
-	output         []string
 	currentWrite   *strings.Builder
 	serializedDiff *snapshot
 
@@ -100,18 +102,20 @@ type testSys struct {
 	cwd                string
 	files              []string
 
-	start time.Time
+	timeImpl *vfstest.Time
 }
 
-var _ execute.System = (*testSys)(nil)
+var (
+	_ execute.System             = (*testSys)(nil)
+	_ execute.CommandLineTesting = (*testSys)(nil)
+)
 
 func (s *testSys) Now() time.Time {
-	// todo: make a "test time" structure
-	return time.Now()
+	return s.timeImpl.Now()
 }
 
 func (s *testSys) SinceStart() time.Duration {
-	return time.Since(s.start)
+	return s.timeImpl.SinceStart()
 }
 
 func (s *testSys) FS() vfs.FS {
@@ -152,36 +156,38 @@ func (s *testSys) Writer() io.Writer {
 	return s.currentWrite
 }
 
-func sanitizeSysOutput(output string, prefixLine string, replaceString string) string {
-	if index := strings.Index(output, prefixLine); index != -1 {
-		indexOfNewLine := strings.Index(output[index:], "\n")
-		if indexOfNewLine != -1 {
-			output = output[:index] + replaceString + output[index+indexOfNewLine+1:]
+func (s *testSys) OnEmittedFiles(result *compiler.EmitResult) {
+	if result != nil {
+		for _, file := range result.EmittedFiles {
+			// Ensure that the timestamp for emitted files is in the order
+			now := s.timeImpl.Now()
+			s.fsFromFileMap().Chtimes(file, time.Time{}, now)
 		}
 	}
-	return output
 }
 
-func (s *testSys) EndWrite() {
-	// todo: revisit if improving tsc/build/watch unittest baselines
-	output := s.currentWrite.String()
-	s.currentWrite.Reset()
-	output = sanitizeSysOutput(output, "Version "+core.Version(), "Version FakeTSVersion\n")
-	output = sanitizeSysOutput(output, "build starting at ", "")
-	output = sanitizeSysOutput(output, "build finished in ", "")
-	s.output = append(s.output, output)
-}
-
-func (s *testSys) baselineProgram(baseline *strings.Builder, program *incremental.Program, watcher *execute.Watcher) {
+func (s *testSys) baselinePrograms(baseline *strings.Builder, programs []*incremental.Program, watcher *execute.Watcher) {
 	if watcher != nil {
-		program = watcher.GetProgram()
+		programs = []*incremental.Program{watcher.GetProgram()}
 	}
+	for index, program := range programs {
+		if index > 0 {
+			baseline.WriteString("\n")
+		}
+		s.baselineProgram(baseline, program)
+	}
+}
+
+func (s *testSys) baselineProgram(baseline *strings.Builder, program *incremental.Program) {
 	if program == nil {
 		return
 	}
 
-	baseline.WriteString("SemanticDiagnostics::\n")
 	testingData := program.GetTestingData(program.GetProgram())
+	if testingData.ConfigFilePath != "" {
+		baseline.WriteString(testingData.ConfigFilePath + "::\n")
+	}
+	baseline.WriteString("SemanticDiagnostics::\n")
 	for _, file := range program.GetProgram().GetSourceFiles() {
 		if diagnostics, ok := testingData.SemanticDiagnosticsPerFile.Load(file.Path()); ok {
 			if oldDiagnostics, ok := testingData.OldProgramSemanticDiagnosticsPerFile.Load(file.Path()); !ok || oldDiagnostics != diagnostics {
@@ -221,16 +227,69 @@ func (s *testSys) serializeState(baseline *strings.Builder) {
 
 func (s *testSys) baselineOutput(baseline io.Writer) {
 	fmt.Fprint(baseline, "\nOutput::\n")
-	if len(s.output) == 0 {
-		fmt.Fprint(baseline, "No output\n")
-		return
+	output := s.getOutput(false)
+	fmt.Fprint(baseline, output)
+}
+
+var (
+	fakeTimeStamp = "HH:MM:SS AM"
+	fakeDuration  = "d.ddds"
+
+	buildStartingAt            = "build starting at "
+	buildFinishedIn            = "build finished in "
+	prettyStatusTimeStampStart = "[" + diagnosticwriter.ForegroundColorEscapeGrey
+	listFileStart              = "TSFILE:  "
+)
+
+func (s *testSys) getOutput(forComparing bool) string {
+	lines := strings.Split(s.currentWrite.String(), "\n")
+	outputLines := make([]string, 0, len(lines))
+	for i := 0; i < len(lines); i++ {
+		line := lines[i]
+		if change := strings.Replace(line, "Version "+core.Version(), "Version "+incrementaltestutil.FakeTsVersion, 1); change != line {
+			outputLines = append(outputLines, change)
+			continue
+		}
+		if strings.HasPrefix(line, buildStartingAt) {
+			if !forComparing {
+				outputLines = append(outputLines, buildStartingAt+fakeTimeStamp)
+			}
+			continue
+		}
+		if strings.HasPrefix(line, buildFinishedIn) {
+			if !forComparing {
+				outputLines = append(outputLines, buildFinishedIn+fakeDuration)
+			}
+			continue
+		}
+		if change := strings.TrimPrefix(line, prettyStatusTimeStampStart); change != line {
+			if !forComparing {
+				outputLines = append(outputLines, prettyStatusTimeStampStart+fakeTimeStamp+change[len(fakeTimeStamp):])
+			}
+		} else if strings.Index(line, " -") == len(fakeTimeStamp) && strings.Index(line, ":") == 2 && strings.Index(line[3:], ":") == 2 {
+			// Fuzzy check for hh:mm:ss AM/PM - string
+			outputLines = append(outputLines, fakeTimeStamp+line[11:])
+		} else if !forComparing || !strings.HasPrefix(line, listFileStart) {
+			outputLines = append(outputLines, line)
+			continue
+		}
+
+		// Consume all the buildStatus reported
+		for j := i + 1; j < len(lines); j++ {
+			if !forComparing {
+				outputLines = append(outputLines, lines[j])
+			}
+			if lines[j] == "" {
+				i = j
+				break
+			}
+		}
 	}
-	// todo screen clears
-	s.printOutputs(baseline)
+	return strings.Join(outputLines, "\n")
 }
 
 func (s *testSys) clearOutput() {
-	s.output = []string{}
+	s.currentWrite.Reset()
 }
 
 func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
@@ -252,7 +311,11 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 		if !ok {
 			return nil
 		}
-		newEntry := &diffEntry{content: newContents, isWritten: testFs.writtenFiles.Has(path)}
+		stat := s.fsFromFileMap().Stat(path)
+		if stat == nil {
+			panic("stat is nil: " + path)
+		}
+		newEntry := &diffEntry{content: newContents, mTime: stat.ModTime(), isWritten: testFs.writtenFiles.Has(path)}
 		snap[path] = newEntry
 		s.addFsEntryDiff(diffs, newEntry, path)
 
@@ -308,15 +371,12 @@ func (s *testSys) addFsEntryDiff(diffs map[string]string, newDirContent *diffEnt
 		diffs[path] = "*modified* \n" + newDirContent.content
 	} else if newDirContent.isWritten {
 		diffs[path] = "*rewrite with same content*"
+	} else if newDirContent.mTime != oldDirContent.mTime {
+		diffs[path] = "*mTime changed*"
 	} else if defaultLibs != nil && defaultLibs.Has(path) && s.testFs().defaultLibs != nil && !s.testFs().defaultLibs.Has(path) {
 		// Lib file that was read
 		diffs[path] = "*Lib*\n" + newDirContent.content
 	}
-}
-
-func (s *testSys) printOutputs(baseline io.Writer) {
-	// todo sanitize sys output
-	fmt.Fprint(baseline, strings.Join(s.output, "\n"))
 }
 
 func (s *testSys) writeFileNoError(path string, content string, writeByteOrderMark bool) {

@@ -2,7 +2,6 @@ package incremental
 
 import (
 	"context"
-	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -22,7 +21,7 @@ type emitFilesHandler struct {
 	isForDtsErrors        bool
 	signatures            collections.SyncMap[tspath.Path, string]
 	emitSignatures        collections.SyncMap[tspath.Path, *emitSignature]
-	latestChangedDtsFiles collections.SyncSet[string]
+	latestChangedDtsFiles collections.SyncMap[tspath.Path, string]
 	deletedPendingKinds   collections.Set[tspath.Path]
 	emitUpdates           collections.SyncMap[tspath.Path, *emitUpdate]
 }
@@ -207,7 +206,7 @@ func (h *emitFilesHandler) skipDtsOutputOfComposite(file *ast.SourceFile, output
 			data.DiffersOnlyInMap = true
 		}
 	} else {
-		h.latestChangedDtsFiles.Add(outputFileName)
+		h.latestChangedDtsFiles.Store(file.Path(), outputFileName)
 	}
 	h.emitSignatures.Store(file.Path(), &emitSignature{signature: newSignature})
 	return false
@@ -228,32 +227,32 @@ func (h *emitFilesHandler) updateSnapshot() []*compiler.EmitResult {
 		h.program.snapshot.buildInfoEmitPending.Store(true)
 		return true
 	})
-	latestChangedDtsFiles := h.latestChangedDtsFiles.ToSlice()
-	slices.Sort(latestChangedDtsFiles)
-	if latestChangedDtsFile := core.LastOrNil(latestChangedDtsFiles); latestChangedDtsFile != "" {
-		h.program.snapshot.latestChangedDtsFile = latestChangedDtsFile
-		h.program.snapshot.buildInfoEmitPending.Store(true)
-	}
 	for file := range h.deletedPendingKinds.Keys() {
 		h.program.snapshot.affectedFilesPendingEmit.Delete(file)
 		h.program.snapshot.buildInfoEmitPending.Store(true)
 	}
+	// Always use correct order when to collect the result
 	var results []*compiler.EmitResult
-	h.emitUpdates.Range(func(file tspath.Path, update *emitUpdate) bool {
-		if update.pendingKind == 0 {
-			h.program.snapshot.affectedFilesPendingEmit.Delete(file)
-		} else {
-			h.program.snapshot.affectedFilesPendingEmit.Store(file, update.pendingKind)
+	for _, file := range h.program.GetSourceFiles() {
+		if latestChangedDtsFile, ok := h.latestChangedDtsFiles.Load(file.Path()); ok {
+			h.program.snapshot.latestChangedDtsFile = latestChangedDtsFile
+			h.program.snapshot.buildInfoEmitPending.Store(true)
 		}
-		if update.result != nil {
-			results = append(results, update.result)
-			if len(update.result.Diagnostics) != 0 {
-				h.program.snapshot.emitDiagnosticsPerFile.Store(file, &diagnosticsOrBuildInfoDiagnosticsWithFileName{diagnostics: update.result.Diagnostics})
+		if update, ok := h.emitUpdates.Load(file.Path()); ok {
+			if update.pendingKind == 0 {
+				h.program.snapshot.affectedFilesPendingEmit.Delete(file.Path())
+			} else {
+				h.program.snapshot.affectedFilesPendingEmit.Store(file.Path(), update.pendingKind)
 			}
+			if update.result != nil {
+				results = append(results, update.result)
+				if len(update.result.Diagnostics) != 0 {
+					h.program.snapshot.emitDiagnosticsPerFile.Store(file.Path(), &diagnosticsOrBuildInfoDiagnosticsWithFileName{diagnostics: update.result.Diagnostics})
+				}
+			}
+			h.program.snapshot.buildInfoEmitPending.Store(true)
 		}
-		h.program.snapshot.buildInfoEmitPending.Store(true)
-		return true
-	})
+	}
 	return results
 }
 

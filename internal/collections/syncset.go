@@ -11,6 +11,11 @@ func (s *SyncSet[T]) Has(key T) bool {
 	return ok
 }
 
+func (s *SyncSet[T]) AddIfAbsent(key T) bool {
+	_, loaded := s.m.LoadOrStore(key, struct{}{})
+	return !loaded
+}
+
 func (s *SyncSet[T]) Add(key T) {
 	s.m.Store(key, struct{}{})
 }

@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"strings"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -84,6 +85,11 @@ func (fs *projectReferenceDtsFakingVfs) WriteFile(path string, data string, writ
 
 // Remove implements vfs.FS.
 func (fs *projectReferenceDtsFakingVfs) Remove(path string) error {
+	panic("should not be called by resolver")
+}
+
+// Chtimes implements vfs.FS.
+func (fs *projectReferenceDtsFakingVfs) Chtimes(path string, aTime time.Time, mTime time.Time) error {
 	panic("should not be called by resolver")
 }
 

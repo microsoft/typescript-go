@@ -26,10 +26,14 @@ func snapshotToBuildInfo(snapshot *snapshot, program *compiler.Program, buildInf
 		},
 		fileNameToFileId:        make(map[string]BuildInfoFileId),
 		fileNamesToFileIdListId: make(map[string]BuildInfoFileIdListId),
+		roots:                   make(map[*ast.SourceFile]tspath.Path),
 	}
+
 	to.buildInfo.Version = core.Version()
 	if snapshot.options.IsIncremental() {
+		to.collectRootFiles()
 		to.setFileInfoAndEmitSignatures()
+		to.setRootOfIncrementalProgram()
 		to.setCompilerOptions()
 		to.setReferencedMap()
 		to.setChangeFileSet()
@@ -39,12 +43,9 @@ func snapshotToBuildInfo(snapshot *snapshot, program *compiler.Program, buildInf
 		if snapshot.latestChangedDtsFile != "" {
 			to.buildInfo.LatestChangedDtsFile = to.relativeToBuildInfo(snapshot.latestChangedDtsFile)
 		}
+	} else {
+		to.setRootOfNonIncrementalProgram()
 	}
-	// else {
-	//     const buildInfo: NonIncrementalBuildInfo = {
-	//         root: arrayFrom(rootFileNames, r => relativeToBuildInfo(r)),
-	//     };
-	// }
 	to.buildInfo.Errors = snapshot.hasErrors.IsTrue()
 	to.buildInfo.CheckPending = snapshot.checkPending
 	return &to.buildInfo
@@ -58,6 +59,7 @@ type toBuildInfo struct {
 	comparePathsOptions     tspath.ComparePathsOptions
 	fileNameToFileId        map[string]BuildInfoFileId
 	fileNamesToFileIdListId map[string]BuildInfoFileIdListId
+	roots                   map[*ast.SourceFile]tspath.Path
 }
 
 func (t *toBuildInfo) relativeToBuildInfo(path string) string {
@@ -169,6 +171,20 @@ func (t *toBuildInfo) toBuildInfoDiagnosticsOfFile(filePath tspath.Path, diags *
 	return nil
 }
 
+func (t *toBuildInfo) collectRootFiles() {
+	for _, fileName := range t.program.GetRootFileNames() {
+		var file *ast.SourceFile
+		if redirect := t.program.GetParseFileRedirect(fileName); redirect != "" {
+			file = t.program.GetSourceFile(redirect)
+		} else {
+			file = t.program.GetSourceFile(fileName)
+		}
+		if file != nil {
+			t.roots[file] = tspath.ToPath(fileName, t.comparePathsOptions.CurrentDirectory, t.comparePathsOptions.UseCaseSensitiveFileNames)
+		}
+	}
+}
+
 func (t *toBuildInfo) setFileInfoAndEmitSignatures() {
 	t.buildInfo.FileInfos = core.Map(t.program.GetSourceFiles(), func(file *ast.SourceFile) *BuildInfoFileInfo {
 		info, _ := t.snapshot.fileInfos.Load(file.Path())
@@ -201,6 +217,38 @@ func (t *toBuildInfo) setFileInfoAndEmitSignatures() {
 		}
 		return newBuildInfoFileInfo(info)
 	})
+}
+
+func (t *toBuildInfo) setRootOfIncrementalProgram() {
+	keys := slices.Collect(maps.Keys(t.roots))
+	slices.SortFunc(keys, func(a, b *ast.SourceFile) int {
+		return int(t.toFileId(a.Path())) - int(t.toFileId(b.Path()))
+	})
+	for _, file := range keys {
+		root := t.toFileId(t.roots[file])
+		resolved := t.toFileId(file.Path())
+		if t.buildInfo.Root == nil {
+			// First fileId as is
+			t.buildInfo.Root = append(t.buildInfo.Root, &BuildInfoRoot{Start: resolved})
+		} else {
+			last := t.buildInfo.Root[len(t.buildInfo.Root)-1]
+			if last.End == resolved-1 {
+				// If its [..., last = [start, end = fileId - 1]], update last to [start, fileId]
+				last.End = resolved
+			} else if last.End == 0 && last.Start == resolved-1 {
+				// If its [..., last = start = fileId - 1 ], update last to [start, fileId]
+				last.End = resolved
+			} else {
+				t.buildInfo.Root = append(t.buildInfo.Root, &BuildInfoRoot{Start: resolved})
+			}
+		}
+		if root != resolved {
+			t.buildInfo.ResolvedRoot = append(t.buildInfo.ResolvedRoot, &BuildInfoResolvedRoot{
+				Resolved: resolved,
+				Root:     root,
+			})
+		}
+	}
 }
 
 func (t *toBuildInfo) setCompilerOptions() {
@@ -285,4 +333,12 @@ func (t *toBuildInfo) setAffectedFilesPendingEmit() {
 			EmitKind: core.IfElse(pendingEmit == fullEmitKind, 0, pendingEmit),
 		})
 	}
+}
+
+func (t *toBuildInfo) setRootOfNonIncrementalProgram() {
+	t.buildInfo.Root = core.Map(t.program.GetRootFileNames(), func(fileName string) *BuildInfoRoot {
+		return &BuildInfoRoot{
+			NonIncremental: t.relativeToBuildInfo(string(tspath.ToPath(fileName, t.comparePathsOptions.CurrentDirectory, t.comparePathsOptions.UseCaseSensitiveFileNames))),
+		}
+	})
 }

@@ -28,6 +28,28 @@ type mapFS struct {
 	useCaseSensitiveFileNames bool
 
 	symlinks map[canonicalPath]canonicalPath
+
+	timeImpl *Time
+}
+
+type Time struct {
+	start time.Time
+	now   time.Time
+	nowMu sync.Mutex
+}
+
+func (t *Time) Now() time.Time {
+	t.nowMu.Lock()
+	defer t.nowMu.Unlock()
+	if t.now.IsZero() {
+		t.now = t.start
+	}
+	t.now = t.now.Add(1 * time.Second) // Simulate some time passing
+	return t.now
+}
+
+func (t *Time) SinceStart() time.Duration {
+	return t.Now().Sub(t.start)
 }
 
 var (
@@ -47,8 +69,20 @@ type sys struct {
 // without trailing directory separators.
 // The paths must be all POSIX-style or all Windows-style, but not both.
 func FromMap[File any](m map[string]File, useCaseSensitiveFileNames bool) vfs.FS {
+	fs, _ := FromMapWithTime(m, useCaseSensitiveFileNames)
+	return fs
+}
+
+// FromMap creates a new [vfs.FS] from a map of paths to file contents.
+// Those file contents may be strings, byte slices, or [fstest.MapFile]s.
+//
+// The paths must be normalized absolute paths according to the tspath package,
+// without trailing directory separators.
+// The paths must be all POSIX-style or all Windows-style, but not both.
+func FromMapWithTime[File any](m map[string]File, useCaseSensitiveFileNames bool) (vfs.FS, *Time) {
 	posix := false
 	windows := false
+	timeImpl := &Time{start: time.Now()}
 
 	checkPath := func(p string) {
 		if !tspath.IsRootedDiskPath(p) {
@@ -67,17 +101,22 @@ func FromMap[File any](m map[string]File, useCaseSensitiveFileNames bool) vfs.FS
 	}
 
 	mfs := make(fstest.MapFS, len(m))
-	for p, f := range m {
+	// Sorted creation to ensure times are always guaranteed to be in order.
+	keys := slices.Collect(maps.Keys(m))
+	slices.SortFunc(keys, comparePathsByParts)
+	for _, p := range keys {
+		f := m[p]
 		checkPath(p)
 
 		var file *fstest.MapFile
 		switch f := any(f).(type) {
 		case string:
-			file = &fstest.MapFile{Data: []byte(f)}
+			file = &fstest.MapFile{Data: []byte(f), ModTime: timeImpl.Now()}
 		case []byte:
-			file = &fstest.MapFile{Data: f}
+			file = &fstest.MapFile{Data: f, ModTime: timeImpl.Now()}
 		case *fstest.MapFile:
 			file = f
+			file.ModTime = timeImpl.Now()
 		default:
 			panic(fmt.Sprintf("invalid file type %T", f))
 		}
@@ -100,13 +139,14 @@ func FromMap[File any](m map[string]File, useCaseSensitiveFileNames bool) vfs.FS
 		panic("mixed posix and windows paths")
 	}
 
-	return iovfs.From(convertMapFS(mfs, useCaseSensitiveFileNames), useCaseSensitiveFileNames)
+	return iovfs.From(convertMapFS(mfs, useCaseSensitiveFileNames, timeImpl), useCaseSensitiveFileNames), timeImpl
 }
 
-func convertMapFS(input fstest.MapFS, useCaseSensitiveFileNames bool) *mapFS {
+func convertMapFS(input fstest.MapFS, useCaseSensitiveFileNames bool, timeImpl *Time) *mapFS {
 	m := &mapFS{
 		m:                         make(fstest.MapFS, len(input)),
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
+		timeImpl:                  timeImpl,
 	}
 
 	// Verify that the input is well-formed.
@@ -320,7 +360,8 @@ func (m *mapFS) mkdirAll(p string, perm fs.FileMode) error {
 
 	for _, dir := range toCreate {
 		m.setEntry(dir, m.getCanonicalPath(dir), fstest.MapFile{
-			Mode: fs.ModeDir | perm&^umask,
+			Mode:    fs.ModeDir | perm&^umask,
+			ModTime: m.timeImpl.Now(),
 		})
 	}
 
@@ -482,7 +523,7 @@ func (m *mapFS) WriteFile(path string, data []byte, perm fs.FileMode) error {
 
 	m.setEntry(path, cp, fstest.MapFile{
 		Data:    data,
-		ModTime: time.Now(),
+		ModTime: m.timeImpl.Now(),
 		Mode:    perm &^ umask,
 	})
 
@@ -494,6 +535,20 @@ func (m *mapFS) Remove(path string) error {
 	defer m.mu.Unlock()
 
 	return m.remove(path)
+}
+
+func (m *mapFS) Chtimes(path string, aTime time.Time, mTime time.Time) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	canonical := m.getCanonicalPath(path)
+	canonicalString := string(canonical)
+	fileInfo := m.m[canonicalString]
+	if fileInfo == nil {
+		// file does not exist
+		return fs.ErrNotExist
+	}
+	fileInfo.ModTime = mTime
+	return nil
 }
 
 func must[T any](v T, err error) T {
