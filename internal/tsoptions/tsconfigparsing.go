@@ -91,11 +91,13 @@ type configFileSpecs struct {
 	// Present to report errors (user specified specs), validatedIncludeSpecs are used for file name matching
 	includeSpecs any
 	// Present to report errors (user specified specs), validatedExcludeSpecs are used for file name matching
-	excludeSpecs          any
-	validatedFilesSpec    []string
-	validatedIncludeSpecs []string
-	validatedExcludeSpecs []string
-	isDefaultIncludeSpec  bool
+	excludeSpecs                            any
+	validatedFilesSpec                      []string
+	validatedIncludeSpecs                   []string
+	validatedExcludeSpecs                   []string
+	validatedFilesSpecBeforeSubstitution    []string
+	validatedIncludeSpecsBeforeSubstitution []string
+	isDefaultIncludeSpec                    bool
 }
 
 func (c *configFileSpecs) matchesExclude(fileName string, comparePathsOptions tspath.ComparePathsOptions) bool {
@@ -115,20 +117,33 @@ func (c *configFileSpecs) matchesExclude(fileName string, comparePathsOptions ts
 	return false
 }
 
-func (c *configFileSpecs) matchesInclude(fileName string, comparePathsOptions tspath.ComparePathsOptions) bool {
+func (c *configFileSpecs) getMatchedIncludeSpec(fileName string, comparePathsOptions tspath.ComparePathsOptions) string {
 	if len(c.validatedIncludeSpecs) == 0 {
-		return false
+		return ""
 	}
-	for _, spec := range c.validatedIncludeSpecs {
+	for index, spec := range c.validatedIncludeSpecs {
 		includePattern := vfs.GetPatternFromSpec(spec, comparePathsOptions.CurrentDirectory, "files")
 		if includePattern != "" {
 			includeRegex := vfs.GetRegexFromPattern(includePattern, comparePathsOptions.UseCaseSensitiveFileNames)
 			if match, err := includeRegex.MatchString(fileName); err == nil && match {
-				return true
+				return c.validatedIncludeSpecsBeforeSubstitution[index]
 			}
 		}
 	}
-	return false
+	return ""
+}
+
+func (c *configFileSpecs) getMatchedFileSpec(fileName string, comparePathsOptions tspath.ComparePathsOptions) string {
+	if len(c.validatedFilesSpec) == 0 {
+		return ""
+	}
+	filePath := tspath.ToPath(fileName, comparePathsOptions.CurrentDirectory, comparePathsOptions.UseCaseSensitiveFileNames)
+	for index, spec := range c.validatedFilesSpec {
+		if tspath.ToPath(spec, comparePathsOptions.CurrentDirectory, comparePathsOptions.UseCaseSensitiveFileNames) == filePath {
+			return c.validatedFilesSpecBeforeSubstitution[index]
+		}
+	}
+	return ""
 }
 
 type FileExtensionInfo struct {
@@ -1199,31 +1214,39 @@ func parseJsonConfigFileContentWorker(
 		isDefaultIncludeSpec = true
 	}
 	var validatedIncludeSpecs []string
+	var validatedIncludeSpecsBeforeSubstitution []string
 	var validatedExcludeSpecs []string
 	var validatedFilesSpec []string
+	var validatedFilesSpecBeforeSubstitution []string
 	// The exclude spec list is converted into a regular expression, which allows us to quickly
 	// test whether a file or directory should be excluded before recursively traversing the
 	// file system.
 	if includeSpecs.sliceValue != nil {
 		var err []*ast.Diagnostic
-		validatedIncludeSpecs, err = validateSpecs(includeSpecs.sliceValue, true /*disallowTrailingRecursion*/, tsconfigToSourceFile(sourceFile), "include")
+		validatedIncludeSpecsBeforeSubstitution, err = validateSpecs(includeSpecs.sliceValue, true /*disallowTrailingRecursion*/, tsconfigToSourceFile(sourceFile), "include")
 		errors = append(errors, err...)
-		substituteStringArrayWithConfigDirTemplate(validatedIncludeSpecs, basePathForFileNames)
+		if validatedIncludeSpecs = getSubstitutedStringArrayWithConfigDirTemplate(validatedIncludeSpecsBeforeSubstitution, basePathForFileNames); validatedIncludeSpecs == nil {
+			validatedIncludeSpecs = validatedIncludeSpecsBeforeSubstitution
+		}
 	}
 	if excludeSpecs.sliceValue != nil {
 		var err []*ast.Diagnostic
 		validatedExcludeSpecs, err = validateSpecs(excludeSpecs.sliceValue, false /*disallowTrailingRecursion*/, tsconfigToSourceFile(sourceFile), "exclude")
 		errors = append(errors, err...)
-		substituteStringArrayWithConfigDirTemplate(validatedExcludeSpecs, basePathForFileNames)
+		if validatedExcludeSpecsWithSubstitution := getSubstitutedStringArrayWithConfigDirTemplate(validatedExcludeSpecs, basePathForFileNames); validatedExcludeSpecsWithSubstitution != nil {
+			validatedExcludeSpecs = validatedExcludeSpecsWithSubstitution
+		}
 	}
 	if fileSpecs.sliceValue != nil {
 		fileSpecs := core.Filter(fileSpecs.sliceValue, func(spec any) bool { return reflect.TypeOf(spec).Kind() == reflect.String })
 		for _, spec := range fileSpecs {
 			if spec, ok := spec.(string); ok {
-				validatedFilesSpec = append(validatedFilesSpec, spec)
+				validatedFilesSpecBeforeSubstitution = append(validatedFilesSpecBeforeSubstitution, spec)
 			}
 		}
-		substituteStringArrayWithConfigDirTemplate(validatedFilesSpec, basePathForFileNames)
+		if validatedFilesSpec = getSubstitutedStringArrayWithConfigDirTemplate(validatedFilesSpecBeforeSubstitution, basePathForFileNames); validatedFilesSpec == nil {
+			validatedFilesSpec = validatedFilesSpecBeforeSubstitution
+		}
 	}
 	configFileSpecs := configFileSpecs{
 		fileSpecs.sliceValue,
@@ -1232,6 +1255,8 @@ func parseJsonConfigFileContentWorker(
 		validatedFilesSpec,
 		validatedIncludeSpecs,
 		validatedExcludeSpecs,
+		validatedFilesSpecBeforeSubstitution,
+		validatedIncludeSpecsBeforeSubstitution,
 		isDefaultIncludeSpec,
 	}
 
@@ -1426,12 +1451,20 @@ func getSubstitutedPathWithConfigDirTemplate(value string, basePath string) stri
 	return tspath.GetNormalizedAbsolutePath(strings.Replace(value, configDirTemplate, "./", 1), basePath)
 }
 
-func substituteStringArrayWithConfigDirTemplate(list []string, basePath string) {
+func getSubstitutedStringArrayWithConfigDirTemplate(list []string, basePath string) []string {
+	var result []string
 	for i, element := range list {
 		if startsWithConfigDirTemplate(element) {
-			list[i] = getSubstitutedPathWithConfigDirTemplate(element, basePath)
+			if result == nil {
+				result = slices.Clone(list)
+			}
+			result[i] = getSubstitutedPathWithConfigDirTemplate(element, basePath)
 		}
 	}
+	if result != nil {
+		return result
+	}
+	return nil
 }
 
 func handleOptionConfigDirTemplateSubstitution(compilerOptions *core.CompilerOptions, basePath string) {
@@ -1441,13 +1474,18 @@ func handleOptionConfigDirTemplateSubstitution(compilerOptions *core.CompilerOpt
 
 	// !!! don't hardcode this; use options declarations?
 
-	for v := range compilerOptions.Paths.Values() {
-		substituteStringArrayWithConfigDirTemplate(v, basePath)
+	for k, v := range compilerOptions.Paths.Entries() {
+		if substitution := getSubstitutedStringArrayWithConfigDirTemplate(v, basePath); substitution != nil {
+			compilerOptions.Paths.Set(k, substitution)
+		}
 	}
 
-	substituteStringArrayWithConfigDirTemplate(compilerOptions.RootDirs, basePath)
-	substituteStringArrayWithConfigDirTemplate(compilerOptions.TypeRoots, basePath)
-
+	if rootDirs := getSubstitutedStringArrayWithConfigDirTemplate(compilerOptions.RootDirs, basePath); rootDirs != nil {
+		compilerOptions.RootDirs = rootDirs
+	}
+	if typeRoots := getSubstitutedStringArrayWithConfigDirTemplate(compilerOptions.TypeRoots, basePath); typeRoots != nil {
+		compilerOptions.TypeRoots = typeRoots
+	}
 	if startsWithConfigDirTemplate(compilerOptions.GenerateCpuProfile) {
 		compilerOptions.GenerateCpuProfile = getSubstitutedPathWithConfigDirTemplate(compilerOptions.GenerateCpuProfile, basePath)
 	}

@@ -3,6 +3,7 @@ package compiler
 import (
 	"context"
 	"fmt"
+	"io"
 	"maps"
 	"slices"
 	"strings"
@@ -1464,6 +1465,65 @@ func (p *Program) GetSourceFiles() []*ast.SourceFile {
 	return p.files
 }
 
+func (p *Program) ExplainFiles(writer io.Writer) {
+	toRelativeFileName := func(fileName string) string {
+		return tspath.GetRelativePathFromDirectory(p.GetCurrentDirectory(), fileName, p.comparePathsOptions)
+	}
+	for _, file := range p.GetSourceFiles() {
+		fmt.Fprintln(writer, toRelativeFileName(file.FileName()))
+		for _, reason := range p.fileIncludeReasons[file.Path()] {
+			fmt.Fprintln(writer, "  ", reason.toDiagnostic(p, toRelativeFileName).Message())
+		}
+		for _, diag := range p.explainRedirectAndImpliedFormat(file, toRelativeFileName) {
+			fmt.Fprintln(writer, "  ", diag.Message())
+		}
+	}
+}
+
+func (p *Program) explainRedirectAndImpliedFormat(
+	file *ast.SourceFile,
+	toFileName func(fileName string) string,
+) []*ast.Diagnostic {
+	var result []*ast.Diagnostic
+	if source, ok := p.outputFileToProjectReferenceSource[file.Path()]; ok {
+		result = append(result, ast.NewCompilerDiagnostic(
+			diagnostics.File_is_output_of_project_reference_source_0,
+			toFileName(source),
+		))
+	}
+	// !!! redirects
+	// if (file.redirectInfo) {
+	//     (result ??= []).push(chainDiagnosticMessages(
+	//         /*details*/ undefined,
+	//         Diagnostics.File_redirects_to_file_0,
+	//         toFileName(file.redirectInfo.redirectTarget, fileNameConvertor),
+	//     ));
+	// }
+	if ast.IsExternalOrCommonJSModule(file) {
+		metaData := p.GetSourceFileMetaData(file.Path())
+		switch p.GetImpliedNodeFormatForEmit(file) {
+		case core.ModuleKindESNext:
+			if metaData.PackageJsonType == "module" {
+				result = append(result, ast.NewCompilerDiagnostic(
+					diagnostics.File_is_ECMAScript_module_because_0_has_field_type_with_value_module,
+					toFileName(metaData.PackageJsonDirectory+"/package.json"),
+				))
+			}
+		case core.ModuleKindCommonJS:
+			if metaData.PackageJsonType != "" {
+				result = append(result, ast.NewCompilerDiagnostic(diagnostics.File_is_CommonJS_module_because_0_has_field_type_whose_value_is_not_module, toFileName(metaData.PackageJsonDirectory+"/package.json")))
+			} else if metaData.PackageJsonDirectory != "" {
+				if metaData.PackageJsonType == "" {
+					result = append(result, ast.NewCompilerDiagnostic(diagnostics.File_is_CommonJS_module_because_0_does_not_have_field_type, toFileName(metaData.PackageJsonDirectory+"/package.json")))
+				}
+			} else {
+				result = append(result, ast.NewCompilerDiagnostic(diagnostics.File_is_CommonJS_module_because_package_json_was_not_found))
+			}
+		}
+	}
+	return result
+}
+
 func (p *Program) GetLibFileFromReference(ref *ast.FileReference) *ast.SourceFile {
 	path, ok := tsoptions.GetLibFileName(ref.FileName)
 	if !ok {
@@ -1497,25 +1557,6 @@ func (p *Program) getModeForTypeReferenceDirectiveInFile(ref *ast.FileReference,
 
 func (p *Program) IsSourceFileFromExternalLibrary(file *ast.SourceFile) bool {
 	return p.sourceFilesFoundSearchingNodeModules.Has(file.Path())
-}
-
-type FileIncludeKind int
-
-const (
-	FileIncludeKindRootFile FileIncludeKind = iota
-	FileIncludeKindSourceFromProjectReference
-	FileIncludeKindOutputFromProjectReference
-	FileIncludeKindImport
-	FileIncludeKindReferenceFile
-	FileIncludeKindTypeReferenceDirective
-	FileIncludeKindLibFile
-	FileIncludeKindLibReferenceDirective
-	FileIncludeKindAutomaticTypeDirectiveFile
-)
-
-type FileIncludeReason struct {
-	Kind  FileIncludeKind
-	Index int
 }
 
 // UnsupportedExtensions returns a list of all present "unsupported" extensions,
