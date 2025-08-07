@@ -221,6 +221,7 @@ func CompileFilesEx(
 		Errors:     errors,
 	}, harnessOptions)
 	result.Symlinks = symlinks
+	result.Trace = host.tracer.String()
 	result.Repeat = func(testConfig TestConfiguration) *CompilationResult {
 		newHarnessOptions := *harnessOptions
 		newCompilerOptions := compilerOptions.Clone()
@@ -460,6 +461,7 @@ func getOptionValue(t *testing.T, option *tsoptions.CommandLineOption, value str
 
 type cachedCompilerHost struct {
 	compiler.CompilerHost
+	tracer *strings.Builder
 }
 
 var sourceFileCache collections.SyncMap[SourceFileCacheKey, *ast.SourceFile]
@@ -500,9 +502,14 @@ func (h *cachedCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast
 	return result
 }
 
-func createCompilerHost(fs vfs.FS, defaultLibraryPath string, currentDirectory string) compiler.CompilerHost {
+func createCompilerHost(fs vfs.FS, defaultLibraryPath string, currentDirectory string) *cachedCompilerHost {
+	var tracer strings.Builder
+	trace := func(msg string) {
+		fmt.Fprintln(&tracer, msg)
+	}
 	return &cachedCompilerHost{
-		CompilerHost: compiler.NewCompilerHost(currentDirectory, fs, defaultLibraryPath, nil),
+		CompilerHost: compiler.NewCompilerHost(currentDirectory, fs, defaultLibraryPath, nil, trace),
+		tracer: &tracer,
 	}
 }
 
@@ -598,6 +605,7 @@ type CompilationResult struct {
 	outputs          []*TestFile
 	inputs           []*TestFile
 	inputsAndOutputs collections.OrderedMap[string, *CompilationOutput]
+	Trace            string
 }
 
 type CompilationOutput struct {
