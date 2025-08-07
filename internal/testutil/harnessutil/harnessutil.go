@@ -509,7 +509,7 @@ func createCompilerHost(fs vfs.FS, defaultLibraryPath string, currentDirectory s
 	}
 	return &cachedCompilerHost{
 		CompilerHost: compiler.NewCompilerHost(currentDirectory, fs, defaultLibraryPath, nil, trace),
-		tracer: &tracer,
+		tracer:       &tracer,
 	}
 }
 
