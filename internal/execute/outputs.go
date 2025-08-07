@@ -517,7 +517,7 @@ func getPrettyOutput(colors *colors, left string, right string, rightAlignOfLeft
 	res := make([]string, 0, 4)
 	isFirstLine := true
 	remainRight := right
-	rightCharacterNumber := terminalWidth - rightAlignOfLeft
+	rightCharacterNumber := terminalWidth - leftAlignOfRight
 	for len(remainRight) > 0 {
 		curLeft := ""
 		if isFirstLine {
