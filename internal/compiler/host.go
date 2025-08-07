@@ -50,6 +50,9 @@ func NewCompilerHost(
 	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
 	trace func(msg string),
 ) CompilerHost {
+	if trace == nil {
+		trace = func(msg string) {}
+	}
 	return &compilerHost{
 		currentDirectory:    currentDirectory,
 		fs:                  fs,
