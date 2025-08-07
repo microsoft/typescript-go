@@ -22,8 +22,8 @@ type fileLoader struct {
 	comparePathsOptions tspath.ComparePathsOptions
 	supportedExtensions []string
 
-	parseTasks *fileLoaderWorker[*parseTask]
-	rootTasks  []*parseTask
+	filesParser *filesParser
+	rootTasks   []*parseTask
 
 	totalFileCount atomic.Int32
 	libFileCount   atomic.Int32
@@ -79,7 +79,7 @@ func processAllProgramFiles(
 			UseCaseSensitiveFileNames: opts.Host.FS().UseCaseSensitiveFileNames(),
 			CurrentDirectory:          opts.Host.GetCurrentDirectory(),
 		},
-		parseTasks: &fileLoaderWorker[*parseTask]{
+		filesParser: &filesParser{
 			wg:       core.NewWorkGroup(singleThreaded),
 			maxDepth: maxNodeModuleJsDepth,
 		},
@@ -111,7 +111,7 @@ func processAllProgramFiles(
 		loader.addAutomaticTypeDirectiveTasks()
 	}
 
-	loader.parseTasks.runAndWait(&loader, loader.rootTasks)
+	loader.filesParser.parse(&loader, loader.rootTasks)
 	// Clear out loader and host to ensure its not used post program creation
 	loader.projectReferenceFileMapper.loader = nil
 	loader.projectReferenceFileMapper.host = nil
@@ -134,7 +134,7 @@ func processAllProgramFiles(
 	var libFileSet collections.Set[tspath.Path]
 	fileLoadDiagnostics := &ast.DiagnosticsCollection{}
 
-	loader.parseTasks.collect(&loader, loader.rootTasks, func(task *parseTask, _ []tspath.Path) {
+	loader.filesParser.collect(&loader, loader.rootTasks, func(task *parseTask) {
 		if task.isRedirected {
 			return
 		}
@@ -286,12 +286,12 @@ func (p *fileLoader) addProjectReferenceTasks(singleThreaded bool) {
 		return
 	}
 
-	projectReferenceParser := &projectReferenceParser{
+	parser := &projectReferenceParser{
 		loader: p,
 		wg:     core.NewWorkGroup(singleThreaded),
 	}
 	rootTasks := createProjectReferenceParseTasks(projectReferences)
-	projectReferenceParser.parse(rootTasks)
+	parser.parse(rootTasks)
 
 	// Add files from project references as root if the module kind is 'none'.
 	// This ensures that files from project references are included in the root tasks
