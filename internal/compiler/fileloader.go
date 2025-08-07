@@ -206,7 +206,10 @@ func processAllProgramFiles(
 		}
 	}
 
-	loader.pathForLibFileResolutions.Range(func(key tspath.Path, value *libResolution) bool {
+	keys := slices.Collect(loader.pathForLibFileResolutions.Keys())
+	slices.Sort(keys)
+	for _, key := range keys {
+		value, _ := loader.pathForLibFileResolutions.Load(key)
 		resolvedModules[key] = module.ModeAwareCache[*module.ResolvedModule]{
 			module.ModeAwareCacheKey{Name: value.libraryName, Mode: core.ModuleKindCommonJS}: value.resolution,
 		}
@@ -216,8 +219,7 @@ func processAllProgramFiles(
 		for _, diag := range value.resolution.ResolutionDiagnostics {
 			fileLoadDiagnostics.Add(diag)
 		}
-		return true
-	})
+	}
 
 	return processedFiles{
 		resolver:                             loader.resolver,
