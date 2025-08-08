@@ -87,11 +87,14 @@ type NotificationInfo[Params any] struct {
 type Null struct{}
 
 func (Null) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	if k := dec.PeekKind(); k != 'n' {
-		return fmt.Errorf("expected null, got %s", k)
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
 	}
-	_, err := dec.ReadToken()
-	return err
+	if string(data) != "null" {
+		return fmt.Errorf("expected null, got %s", data)
+	}
+	return nil
 }
 
 func (Null) MarshalJSONTo(enc *jsontext.Encoder) error {
