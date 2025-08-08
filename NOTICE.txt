@@ -309,21 +309,6 @@ BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
 
 ---------------------------------------------------------
 
-golang.org/x/term v0.34.0 - BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
-
-
-Copyright 2009 The Go Authors
-Copyright 2011 The Go Authors
-Copyright 2013 The Go Authors
-Copyright 2019 The Go Authors
-Copyright 2021 The Go Authors
-
-BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
-
----------------------------------------------------------
-
----------------------------------------------------------
-
 golang.org/x/text v0.28.0 - BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
 
 
