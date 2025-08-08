@@ -1,13 +1,11 @@
 package tsoptions
 
 import (
-	"fmt"
 	"reflect"
 	"regexp"
 	"slices"
 	"strings"
 
-	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -18,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/vfsmatch"
 )
 
 type extendsResult struct {
@@ -99,36 +98,11 @@ type configFileSpecs struct {
 }
 
 func (c *configFileSpecs) matchesExclude(fileName string, comparePathsOptions tspath.ComparePathsOptions) bool {
-	if len(c.validatedExcludeSpecs) == 0 {
-		return false
-	}
-	excludePattern := vfs.GetRegularExpressionForWildcard(c.validatedExcludeSpecs, comparePathsOptions.CurrentDirectory, "exclude")
-	excludeRegex := vfs.GetRegexFromPattern(excludePattern, comparePathsOptions.UseCaseSensitiveFileNames)
-	if match, err := excludeRegex.MatchString(fileName); err == nil && match {
-		return true
-	}
-	if !tspath.HasExtension(fileName) {
-		if match, err := excludeRegex.MatchString(tspath.EnsureTrailingDirectorySeparator(fileName)); err == nil && match {
-			return true
-		}
-	}
-	return false
+	return vfsmatch.MatchesExclude(fileName, c.validatedExcludeSpecs, comparePathsOptions.CurrentDirectory, comparePathsOptions.UseCaseSensitiveFileNames)
 }
 
 func (c *configFileSpecs) matchesInclude(fileName string, comparePathsOptions tspath.ComparePathsOptions) bool {
-	if len(c.validatedIncludeSpecs) == 0 {
-		return false
-	}
-	for _, spec := range c.validatedIncludeSpecs {
-		includePattern := vfs.GetPatternFromSpec(spec, comparePathsOptions.CurrentDirectory, "files")
-		if includePattern != "" {
-			includeRegex := vfs.GetRegexFromPattern(includePattern, comparePathsOptions.UseCaseSensitiveFileNames)
-			if match, err := includeRegex.MatchString(fileName); err == nil && match {
-				return true
-			}
-		}
-	}
-	return false
+	return vfsmatch.MatchesInclude(fileName, c.validatedIncludeSpecs, comparePathsOptions.CurrentDirectory, comparePathsOptions.UseCaseSensitiveFileNames)
 }
 
 type FileExtensionInfo struct {
@@ -1571,24 +1545,15 @@ func getFileNamesFromConfigSpecs(
 		literalFileMap.Set(keyMappper(fileName), file)
 	}
 
-	var jsonOnlyIncludeRegexes []*regexp2.Regexp
+	var jsonOnlyIncludeSpecs []string
 	if len(validatedIncludeSpecs) > 0 {
-		files := vfs.ReadDirectory(host, basePath, basePath, core.Flatten(supportedExtensionsWithJsonIfResolveJsonModule), validatedExcludeSpecs, validatedIncludeSpecs, nil)
+		files := vfsmatch.ReadDirectory(host, basePath, basePath, core.Flatten(supportedExtensionsWithJsonIfResolveJsonModule), validatedExcludeSpecs, validatedIncludeSpecs, nil)
 		for _, file := range files {
 			if tspath.FileExtensionIs(file, tspath.ExtensionJson) {
-				if jsonOnlyIncludeRegexes == nil {
-					includes := core.Filter(validatedIncludeSpecs, func(include string) bool { return strings.HasSuffix(include, tspath.ExtensionJson) })
-					includeFilePatterns := core.Map(vfs.GetRegularExpressionsForWildcards(includes, basePath, "files"), func(pattern string) string { return fmt.Sprintf("^%s$", pattern) })
-					if includeFilePatterns != nil {
-						jsonOnlyIncludeRegexes = core.Map(includeFilePatterns, func(pattern string) *regexp2.Regexp {
-							return vfs.GetRegexFromPattern(pattern, host.UseCaseSensitiveFileNames())
-						})
-					} else {
-						jsonOnlyIncludeRegexes = nil
-					}
+				if jsonOnlyIncludeSpecs == nil {
+					jsonOnlyIncludeSpecs = core.Filter(validatedIncludeSpecs, func(include string) bool { return strings.HasSuffix(include, tspath.ExtensionJson) })
 				}
-				includeIndex := core.FindIndex(jsonOnlyIncludeRegexes, func(re *regexp2.Regexp) bool { return core.Must(re.MatchString(file)) })
-				if includeIndex != -1 {
+				if vfsmatch.MatchesIncludeWithJsonOnly(file, jsonOnlyIncludeSpecs, basePath, host.UseCaseSensitiveFileNames()) {
 					key := keyMappper(file)
 					if !literalFileMap.Has(key) && !wildCardJsonFileMap.Has(key) {
 						wildCardJsonFileMap.Set(key, file)

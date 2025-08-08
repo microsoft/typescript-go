@@ -69,10 +69,6 @@ Found 2 errors in the same file, starting at: tsconfig.json[90m:3[0m
 // some comment
 export declare const y = 10;
 
-//// [/home/src/projects/myproject/decls/src/secondary.d.ts] *new* 
-// some comment
-export declare const z = 10;
-
 //// [/home/src/projects/myproject/decls/types/sometype.d.ts] *new* 
 // some comment
 export declare const x = 10;
@@ -83,13 +79,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.y = void 0;
 // some comment
 exports.y = 10;
-
-//// [/home/src/projects/myproject/outDir/src/secondary.js] *new* 
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.z = void 0;
-// some comment
-exports.z = 10;
 
 //// [/home/src/projects/myproject/outDir/types/sometype.js] *new* 
 "use strict";
