@@ -575,6 +575,14 @@ func (c *EmitContext) SourceMapRange(node *ast.Node) core.TextRange {
 	return node.Loc
 }
 
+// Sets `EFNoComments` on a node and removes any leading and trailing synthetic comments.
+func (c *EmitContext) RemoveAllComments(node *ast.Node) {
+	c.AddEmitFlags(node, EFNoComments)
+	// !!! TODO: Also remove synthetic trailing/leading comments added by transforms
+	// emitNode.leadingComments = undefined;
+	// emitNode.trailingComments = undefined;
+}
+
 // Sets the range to use for a node when emitting source maps.
 func (c *EmitContext) SetSourceMapRange(node *ast.Node, loc core.TextRange) {
 	emitNode := c.emitNodes.Get(node)
@@ -614,6 +622,10 @@ func (c *EmitContext) SetTokenSourceMapRange(node *ast.Node, kind ast.Kind, loc 
 		emitNode.tokenSourceMapRanges = make(map[ast.Kind]core.TextRange)
 	}
 	emitNode.tokenSourceMapRanges[kind] = loc
+}
+
+func (c *EmitContext) TextSource(node *ast.Node) *ast.Node {
+	return c.textSource[node]
 }
 
 func (c *EmitContext) AssignedName(node *ast.Node) *ast.Expression {
