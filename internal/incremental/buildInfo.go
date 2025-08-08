@@ -1,9 +1,10 @@
 package incremental
 
 import (
-	"encoding/json"
 	"fmt"
 
+	"github.com/go-json-experiment/json"
+	"github.com/go-json-experiment/json/jsontext"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
@@ -213,7 +214,7 @@ func (b *BuildInfoDiagnosticsOfFile) MarshalJSON() ([]byte, error) {
 }
 
 func (b *BuildInfoDiagnosticsOfFile) UnmarshalJSON(data []byte) error {
-	var fileIdAndDiagnostics []json.RawMessage
+	var fileIdAndDiagnostics []jsontext.Value
 	if err := json.Unmarshal(data, &fileIdAndDiagnostics); err != nil {
 		return fmt.Errorf("invalid BuildInfoDiagnosticsOfFile: %s", data)
 	}
@@ -327,12 +328,13 @@ func (b *BuildInfoEmitSignature) noEmitSignature() bool {
 	return b.Signature == "" && !b.DiffersOnlyInDtsMap && !b.DiffersInOptions
 }
 
-func (b *BuildInfoEmitSignature) toEmitSignature(path tspath.Path, emitSignatures map[tspath.Path]*emitSignature) *emitSignature {
+func (b *BuildInfoEmitSignature) toEmitSignature(path tspath.Path, emitSignatures *collections.SyncMap[tspath.Path, *emitSignature]) *emitSignature {
 	var signature string
 	var signatureWithDifferentOptions []string
 	if b.DiffersOnlyInDtsMap {
 		signatureWithDifferentOptions = make([]string, 0, 1)
-		signatureWithDifferentOptions = append(signatureWithDifferentOptions, emitSignatures[path].signature)
+		info, _ := emitSignatures.Load(path)
+		signatureWithDifferentOptions = append(signatureWithDifferentOptions, info.signature)
 	} else if b.DiffersInOptions {
 		signatureWithDifferentOptions = make([]string, 0, 1)
 		signatureWithDifferentOptions = append(signatureWithDifferentOptions, b.Signature)

@@ -340,7 +340,7 @@ func (p *Project) GetLanguageServiceForRequest(ctx context.Context) (*ls.Languag
 		positionEncoding: p.host.PositionEncoding(),
 		program:          program,
 	}
-	languageService := ls.NewLanguageService(ctx, snapshot)
+	languageService := ls.NewLanguageService(snapshot)
 	cleanup := func() {
 		if checkerPool.isRequestCheckerInUse(core.GetRequestID(ctx)) {
 			panic(fmt.Errorf("checker for request ID %s not returned to pool at end of request", core.GetRequestID(ctx)))
@@ -533,7 +533,7 @@ func (p *Project) updateGraph() (*compiler.Program, bool) {
 				}
 			}
 
-			oldProgram.ForEachResolvedProjectReference(func(path tspath.Path, ref *tsoptions.ParsedCommandLine) {
+			oldProgram.ForEachResolvedProjectReference(func(path tspath.Path, ref *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) {
 				if _, ok := p.program.GetResolvedProjectReferenceFor(path); !ok {
 					p.host.ConfigFileRegistry().releaseConfig(path, p)
 				}
@@ -1096,7 +1096,7 @@ func (p *Project) Close() {
 			// Detach script info if its not root or is root of non inferred project
 			p.detachScriptInfoIfNotInferredRoot(sourceFile.Path())
 		}
-		p.program.ForEachResolvedProjectReference(func(path tspath.Path, ref *tsoptions.ParsedCommandLine) {
+		p.program.ForEachResolvedProjectReference(func(path tspath.Path, ref *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) {
 			p.host.ConfigFileRegistry().releaseConfig(path, p)
 		})
 		if p.kind == KindConfigured {

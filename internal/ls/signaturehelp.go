@@ -42,9 +42,9 @@ func (l *LanguageService) ProvideSignatureHelp(
 	context *lsproto.SignatureHelpContext,
 	clientOptions *lsproto.SignatureHelpClientCapabilities,
 	preferences *UserPreferences,
-) *lsproto.SignatureHelp {
+) (lsproto.SignatureHelpResponse, error) {
 	program, sourceFile := l.getProgramAndFile(documentURI)
-	return l.GetSignatureHelpItems(
+	items := l.GetSignatureHelpItems(
 		ctx,
 		int(l.converters.LineAndCharacterToPosition(sourceFile, position)),
 		program,
@@ -52,6 +52,7 @@ func (l *LanguageService) ProvideSignatureHelp(
 		context,
 		clientOptions,
 		preferences)
+	return lsproto.SignatureHelpOrNull{SignatureHelp: items}, nil
 }
 
 func (l *LanguageService) GetSignatureHelpItems(
@@ -73,15 +74,51 @@ func (l *LanguageService) GetSignatureHelpItems(
 		return nil
 	}
 
+	type signatureHelpTriggerReasonKind int32
+
+	const (
+		signatureHelpTriggerReasonKindNone           signatureHelpTriggerReasonKind = 0    // was undefined
+		signatureHelpTriggerReasonKindInvoked        signatureHelpTriggerReasonKind = iota // was "invoked"
+		signatureHelpTriggerReasonKindCharacterTyped                                       // was "characterTyped"
+		signatureHelpTriggerReasonKindRetriggered                                          // was "retrigger"
+	)
+
+	// Emulate VS Code's toTsTriggerReason.
+	triggerReasonKind := signatureHelpTriggerReasonKindNone
+	if context != nil {
+		switch context.TriggerKind {
+		case lsproto.SignatureHelpTriggerKindTriggerCharacter:
+			if context.TriggerCharacter != nil {
+				if context.IsRetrigger {
+					triggerReasonKind = signatureHelpTriggerReasonKindRetriggered
+				} else {
+					triggerReasonKind = signatureHelpTriggerReasonKindCharacterTyped
+				}
+			} else {
+				triggerReasonKind = signatureHelpTriggerReasonKindInvoked
+			}
+		case lsproto.SignatureHelpTriggerKindContentChange:
+			if context.IsRetrigger {
+				triggerReasonKind = signatureHelpTriggerReasonKindRetriggered
+			} else {
+				triggerReasonKind = signatureHelpTriggerReasonKindCharacterTyped
+			}
+		case lsproto.SignatureHelpTriggerKindInvoked:
+			triggerReasonKind = signatureHelpTriggerReasonKindInvoked
+		default:
+			triggerReasonKind = signatureHelpTriggerReasonKindInvoked
+		}
+	}
+
 	// Only need to be careful if the user typed a character and signature help wasn't showing.
-	onlyUseSyntacticOwners := context.TriggerKind == lsproto.SignatureHelpTriggerKindTriggerCharacter
+	onlyUseSyntacticOwners := triggerReasonKind == signatureHelpTriggerReasonKindCharacterTyped
 
 	// Bail out quickly in the middle of a string or comment, don't provide signature help unless the user explicitly requested it.
 	if onlyUseSyntacticOwners && IsInString(sourceFile, position, startingToken) { // isInComment(sourceFile, position) needs formatting implemented
 		return nil
 	}
 
-	isManuallyInvoked := context.TriggerKind == 1
+	isManuallyInvoked := triggerReasonKind == signatureHelpTriggerReasonKindInvoked
 	argumentInfo := getContainingArgumentInfo(startingToken, sourceFile, typeChecker, isManuallyInvoked, position)
 	if argumentInfo == nil {
 		return nil
@@ -93,11 +130,13 @@ func (l *LanguageService) GetSignatureHelpItems(
 	candidateInfo := getCandidateOrTypeInfo(argumentInfo, typeChecker, sourceFile, startingToken, onlyUseSyntacticOwners)
 	// cancellationToken.throwIfCancellationRequested();
 
-	// if (!candidateInfo) { !!!
-	// 	// We didn't have any sig help items produced by the TS compiler.  If this is a JS
-	// 	// file, then see if we can figure out anything better.
-	// 	return isSourceFileJS(sourceFile) ? createJSSignatureHelpItems(argumentInfo, program, cancellationToken) : undefined;
-	// }
+	if candidateInfo == nil {
+		//  !!!
+		// 	// We didn't have any sig help items produced by the TS compiler.  If this is a JS
+		// 	// file, then see if we can figure out anything better.
+		// 	return isSourceFileJS(sourceFile) ? createJSSignatureHelpItems(argumentInfo, program, cancellationToken) : undefined;
+		return nil
+	}
 
 	// return typeChecker.runWithCancellationToken(cancellationToken, typeChecker =>
 	if candidateInfo.candidateInfo != nil {

@@ -15,6 +15,7 @@ linters:
     - canonicalheader
     - copyloopvar
     - customlint
+    - depguard
     - durationcheck
     - errcheck
     - errchkjson
@@ -62,6 +63,13 @@ linters:
       customlint:
         type: module
 
+    depguard:
+      rules:
+        main:
+          deny:
+            - pkg: 'encoding/json$'
+              desc: 'Use "github.com/go-json-experiment/json" instead.'
+
     staticcheck:
       checks:
         - all
@@ -81,7 +89,8 @@ linters:
   exclusions:
     rules:
       - path: internal/fourslash/tests/gen/
-        linters: misspell
+        linters:
+          - misspell
 
     presets:
       - comments

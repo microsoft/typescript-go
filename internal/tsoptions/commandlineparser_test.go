@@ -1,12 +1,12 @@
 package tsoptions_test
 
 import (
-	"encoding/json"
 	"path/filepath"
 	"slices"
 	"strings"
 	"testing"
 
+	"github.com/go-json-experiment/json"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"

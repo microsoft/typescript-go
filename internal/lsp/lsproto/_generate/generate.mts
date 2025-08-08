@@ -9,7 +9,9 @@ import type {
     MetaModel,
     Notification,
     OrType,
+    Property,
     Request,
+    Structure,
     Type,
 } from "./metaModelSchema.mts";
 
@@ -25,6 +27,56 @@ if (!fs.existsSync(metaModelPath)) {
 }
 
 const model: MetaModel = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
+
+// Preprocess the model to inline extends/mixins contents
+function preprocessModel() {
+    const structureMap = new Map<string, Structure>();
+    for (const structure of model.structures) {
+        structureMap.set(structure.name, structure);
+    }
+
+    function collectInheritedProperties(structure: Structure, visited = new Set<string>()): Property[] {
+        if (visited.has(structure.name)) {
+            return []; // Avoid circular dependencies
+        }
+        visited.add(structure.name);
+
+        const properties: Property[] = [];
+        const inheritanceTypes = [...(structure.extends || []), ...(structure.mixins || [])];
+
+        for (const type of inheritanceTypes) {
+            if (type.kind === "reference") {
+                const inheritedStructure = structureMap.get(type.name);
+                if (inheritedStructure) {
+                    properties.push(
+                        ...collectInheritedProperties(inheritedStructure, new Set(visited)),
+                        ...inheritedStructure.properties,
+                    );
+                }
+            }
+        }
+
+        return properties;
+    }
+
+    // Inline inheritance for each structure
+    for (const structure of model.structures) {
+        const inheritedProperties = collectInheritedProperties(structure);
+
+        // Merge properties with structure's own properties taking precedence
+        const propertyMap = new Map<string, Property>();
+
+        inheritedProperties.forEach(prop => propertyMap.set(prop.name, prop));
+        structure.properties.forEach(prop => propertyMap.set(prop.name, prop));
+
+        structure.properties = Array.from(propertyMap.values());
+        structure.extends = undefined;
+        structure.mixins = undefined;
+    }
+}
+
+// Preprocess the model before proceeding
+preprocessModel();
 
 interface GoType {
     name: string;
@@ -49,7 +101,7 @@ function titleCase(s: string) {
     return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-function resolveType(type: Type, nullToPointer?: boolean): GoType {
+function resolveType(type: Type): GoType {
     switch (type.kind) {
         case "base":
             switch (type.name) {
@@ -151,7 +203,7 @@ function resolveType(type: Type, nullToPointer?: boolean): GoType {
             throw new Error("Unexpected non-empty literal object: " + JSON.stringify(type.value));
 
         case "or": {
-            return handleOrType(type, nullToPointer);
+            return handleOrType(type);
         }
 
         default:
@@ -187,7 +239,7 @@ function flattenOrTypes(types: Type[]): Type[] {
     return Array.from(flattened);
 }
 
-function handleOrType(orType: OrType, nullToPointer: boolean | undefined): GoType {
+function handleOrType(orType: OrType): GoType {
     // First, flatten any nested OR types
     const types = flattenOrTypes(orType.items);
 
@@ -237,16 +289,6 @@ function handleOrType(orType: OrType, nullToPointer: boolean | undefined): GoTyp
             throw new Error(`Unsupported type kind in union: ${type.kind}`);
         }
     });
-
-    const needsPointer = containedNull && !!nullToPointer;
-
-    if (needsPointer && nonNullTypes.length === 1) {
-        const name = resolveType(nonNullTypes[0], true).name;
-        return {
-            name,
-            needsPointer: true,
-        };
-    }
 
     // Find longest common prefix of member names chunked by PascalCase
     function findLongestCommonPrefix(names: string[]): string {
@@ -313,7 +355,7 @@ function handleOrType(orType: OrType, nullToPointer: boolean | undefined): GoTyp
         unionTypeName = memberNames.join("Or");
     }
 
-    if (containedNull && !nullToPointer) {
+    if (containedNull) {
         unionTypeName += "OrNull";
     }
     else {
@@ -326,7 +368,7 @@ function handleOrType(orType: OrType, nullToPointer: boolean | undefined): GoTyp
 
     return {
         name: unionTypeName,
-        needsPointer,
+        needsPointer: false,
     };
 }
 
@@ -435,8 +477,10 @@ function generateCode() {
     writeLine("package lsproto");
     writeLine("");
     writeLine(`import (`);
-    writeLine(`\t"encoding/json"`);
     writeLine(`\t"fmt"`);
+    writeLine("");
+    writeLine(`\t"github.com/go-json-experiment/json"`);
+    writeLine(`\t"github.com/go-json-experiment/json/jsontext"`);
     writeLine(`)`);
     writeLine("");
     writeLine("// Meta model version " + model.metaData.version);
@@ -453,30 +497,7 @@ function generateCode() {
 
             writeLine(`type ${name} struct {`);
 
-            // Embed extended types and mixins
-            for (const e of structure.extends || []) {
-                if (e.kind !== "reference") {
-                    throw new Error(`Unexpected extends kind: ${e.kind}`);
-                }
-                writeLine(`\t${e.name}`);
-            }
-
-            for (const m of structure.mixins || []) {
-                if (m.kind !== "reference") {
-                    throw new Error(`Unexpected mixin kind: ${m.kind}`);
-                }
-                writeLine(`\t${m.name}`);
-            }
-
-            // Insert a blank line after embeds if there were any
-            if (
-                (structure.extends && structure.extends.length > 0) ||
-                (structure.mixins && structure.mixins.length > 0)
-            ) {
-                writeLine("");
-            }
-
-            // Then properties
+            // Properties are now inlined, no need to embed extends/mixins
             for (const prop of structure.properties) {
                 if (includeDocumentation) {
                     write(formatDocumentation(prop.documentation));
@@ -485,7 +506,7 @@ function generateCode() {
                 const type = resolveType(prop.type);
                 const goType = prop.optional || type.needsPointer ? `*${type.name}` : type.name;
 
-                writeLine(`\t${titleCase(prop.name)} ${goType} \`json:"${prop.name}${prop.optional ? ",omitempty" : ""}"\``);
+                writeLine(`\t${titleCase(prop.name)} ${goType} \`json:"${prop.name}${prop.optional ? ",omitzero" : ""}"\``);
 
                 if (includeDocumentation) {
                     writeLine("");
@@ -499,35 +520,64 @@ function generateCode() {
         generateStructFields(structure.name, true);
         writeLine("");
 
-        // Generate UnmarshalJSON method for structure validation
+        // Generate UnmarshalJSONFrom method for structure validation
         const requiredProps = structure.properties?.filter(p => !p.optional) || [];
         if (requiredProps.length > 0) {
-            writeLine(`func (s *${structure.name}) UnmarshalJSON(data []byte) error {`);
-            writeLine(`\t// Check required props`);
-            writeLine(`\ttype requiredProps struct {`);
-            for (const prop of requiredProps) {
-                writeLine(`\t\t${titleCase(prop.name)} requiredProp \`json:"${prop.name}"\``);
-            }
-            writeLine(`}`);
+            writeLine(`\tvar _ json.UnmarshalerFrom = (*${structure.name})(nil)`);
             writeLine("");
 
-            writeLine(`\tvar keys requiredProps`);
-            writeLine(`\tif err := json.Unmarshal(data, &keys); err != nil {`);
+            writeLine(`func (s *${structure.name}) UnmarshalJSONFrom(dec *jsontext.Decoder) error {`);
+            writeLine(`\tvar (`);
+            for (const prop of requiredProps) {
+                writeLine(`\t\tseen${titleCase(prop.name)} bool`);
+            }
+            writeLine(`\t)`);
+            writeLine("");
+
+            writeLine(`\tif k := dec.PeekKind(); k != '{' {`);
+            writeLine(`\t\treturn fmt.Errorf("expected object start, but encountered %v", k)`);
+            writeLine(`\t}`);
+            writeLine(`\tif _, err := dec.ReadToken(); err != nil {`);
             writeLine(`\t\treturn err`);
             writeLine(`\t}`);
             writeLine("");
 
-            // writeLine(`\t// Check for missing required keys`);
-            for (const prop of requiredProps) {
-                writeLine(`if !keys.${titleCase(prop.name)} {`);
-                writeLine(`\t\treturn fmt.Errorf("required key '${prop.name}' is missing")`);
-                writeLine(`}`);
+            writeLine(`\tfor dec.PeekKind() != '}' {`);
+            writeLine("name, err := dec.ReadValue()");
+            writeLine(`\t\tif err != nil {`);
+            writeLine(`\t\t\treturn err`);
+            writeLine(`\t\t}`);
+            writeLine(`\t\tswitch string(name) {`);
+
+            for (const prop of structure.properties) {
+                writeLine(`\t\tcase \`"${prop.name}"\`:`);
+                if (!prop.optional) {
+                    writeLine(`\t\t\tseen${titleCase(prop.name)} = true`);
+                }
+                writeLine(`\t\t\tif err := json.UnmarshalDecode(dec, &s.${titleCase(prop.name)}); err != nil {`);
+                writeLine(`\t\t\t\treturn err`);
+                writeLine(`\t\t\t}`);
             }
 
-            writeLine(``);
-            writeLine(`\t// Redeclare the struct to prevent infinite recursion`);
-            generateStructFields("temp", false);
-            writeLine(`\treturn json.Unmarshal(data, (*temp)(s))`);
+            writeLine(`\t\tdefault:`);
+            writeLine(`\t\t// Ignore unknown properties.`);
+            writeLine(`\t\t}`);
+            writeLine(`\t}`);
+            writeLine("");
+
+            writeLine(`\tif _, err := dec.ReadToken(); err != nil {`);
+            writeLine(`\t\treturn err`);
+            writeLine(`\t}`);
+            writeLine("");
+
+            for (const prop of requiredProps) {
+                writeLine(`\tif !seen${titleCase(prop.name)} {`);
+                writeLine(`\t\treturn fmt.Errorf("required property '${prop.name}' is missing")`);
+                writeLine(`\t}`);
+            }
+
+            writeLine("");
+            writeLine(`\treturn nil`);
             writeLine(`}`);
             writeLine("");
         }
@@ -585,17 +635,6 @@ function generateCode() {
         }
 
         writeLine(")");
-        writeLine("");
-
-        // Add custom JSON unmarshaling
-        writeLine(`func (e *${enumeration.name}) UnmarshalJSON(data []byte) error {`);
-        writeLine(`\tvar v ${baseType}`);
-        writeLine(`\tif err := json.Unmarshal(data, &v); err != nil {`);
-        writeLine(`\t\treturn err`);
-        writeLine(`\t}`);
-        writeLine(`\t*e = ${enumeration.name}(v)`);
-        writeLine(`\treturn nil`);
-        writeLine(`}`);
         writeLine("");
     }
 
@@ -665,10 +704,16 @@ function generateCode() {
             }
 
             writeLine(`// Response type for \`${request.method}\``);
-            const resultType = resolveType(request.result, /*nullToPointer*/ true);
-            const goType = resultType.needsPointer ? `*${resultType.name}` : resultType.name;
 
-            writeLine(`type ${responseTypeName} = ${goType}`);
+            // Special case for response types that are explicitly base type "null"
+            if (request.result.kind === "base" && request.result.name === "null") {
+                writeLine(`type ${responseTypeName} = Null`);
+            }
+            else {
+                const resultType = resolveType(request.result);
+                const goType = resultType.needsPointer ? `*${resultType.name}` : resultType.name;
+                writeLine(`type ${responseTypeName} = ${goType}`);
+            }
             writeLine("");
         }
 
@@ -716,14 +761,21 @@ function generateCode() {
         const fieldEntries = Array.from(uniqueTypeFields.entries()).map(([typeName, fieldName]) => ({ fieldName, typeName }));
 
         // Marshal method
-        writeLine(`func (o ${name}) MarshalJSON() ([]byte, error) {`);
+        writeLine(`var _ json.MarshalerTo = (*${name})(nil)`);
+        writeLine("");
+
+        writeLine(`func (o *${name}) MarshalJSONTo(enc *jsontext.Encoder) error {`);
 
         // Determine if this union contained null (check if any member has containedNull = true)
         const unionContainedNull = members.some(member => member.containedNull);
-        const assertionFunc = unionContainedNull ? "assertAtMostOne" : "assertOnlyOne";
+        if (unionContainedNull) {
+            write(`\tassertAtMostOne("more than one element of ${name} is set", `);
+        }
+        else {
+            write(`\tassertOnlyOne("exactly one element of ${name} should be set", `);
+        }
 
         // Create assertion to ensure at most one field is set at a time
-        write(`\t${assertionFunc}("more than one element of ${name} is set", `);
 
         // Write the assertion conditions
         for (let i = 0; i < fieldEntries.length; i++) {
@@ -735,14 +787,13 @@ function generateCode() {
 
         for (const entry of fieldEntries) {
             writeLine(`\tif o.${entry.fieldName} != nil {`);
-            writeLine(`\t\treturn json.Marshal(*o.${entry.fieldName})`);
+            writeLine(`\t\treturn json.MarshalEncode(enc, o.${entry.fieldName})`);
             writeLine(`\t}`);
         }
 
         // If all fields are nil, marshal as null (only for unions that can contain null)
         if (unionContainedNull) {
-            writeLine(`\t// All fields are nil, represent as null`);
-            writeLine(`\treturn []byte("null"), nil`);
+            writeLine(`\treturn enc.WriteToken(jsontext.Null)`);
         }
         else {
             writeLine(`\tpanic("unreachable")`);
@@ -751,13 +802,19 @@ function generateCode() {
         writeLine("");
 
         // Unmarshal method
-        writeLine(`func (o *${name}) UnmarshalJSON(data []byte) error {`);
+        writeLine(`var _ json.UnmarshalerFrom = (*${name})(nil)`);
+        writeLine("");
+
+        writeLine(`func (o *${name}) UnmarshalJSONFrom(dec *jsontext.Decoder) error {`);
         writeLine(`\t*o = ${name}{}`);
         writeLine("");
 
-        // Handle null case only for unions that can contain null
+        writeLine("\tdata, err := dec.ReadValue()");
+        writeLine("\tif err != nil {");
+        writeLine("\t\treturn err");
+        writeLine("\t}");
+
         if (unionContainedNull) {
-            writeLine(`\t// Handle null case`);
             writeLine(`\tif string(data) == "null" {`);
             writeLine(`\t\treturn nil`);
             writeLine(`\t}`);
@@ -788,14 +845,24 @@ function generateCode() {
         writeLine(`type ${name} struct{}`);
         writeLine("");
 
-        writeLine(`func (o ${name}) MarshalJSON() ([]byte, error) {`);
-        writeLine(`\treturn []byte(\`${jsonValue}\`), nil`);
+        writeLine(`var _ json.MarshalerTo = ${name}{}`);
+        writeLine("");
+
+        writeLine(`func (o ${name}) MarshalJSONTo(enc *jsontext.Encoder) error {`);
+        writeLine(`\treturn enc.WriteValue(jsontext.Value(\`${jsonValue}\`))`);
         writeLine(`}`);
         writeLine("");
 
-        writeLine(`func (o *${name}) UnmarshalJSON(data []byte) error {`);
-        writeLine(`\tif string(data) != \`${jsonValue}\` {`);
-        writeLine(`\t\treturn fmt.Errorf("invalid ${name}: %s", data)`);
+        writeLine(`var _ json.UnmarshalerFrom = &${name}{}`);
+        writeLine("");
+
+        writeLine(`func (o *${name}) UnmarshalJSONFrom(dec *jsontext.Decoder) error {`);
+        writeLine(`\tv, err := dec.ReadValue();`);
+        writeLine(`\tif err != nil {`);
+        writeLine(`\t\treturn err`);
+        writeLine(`\t}`);
+        writeLine(`\tif string(v) != \`${jsonValue}\` {`);
+        writeLine(`\t\treturn fmt.Errorf("expected ${name} value %s, got %s", \`${jsonValue}\`, v)`);
         writeLine(`\t}`);
         writeLine(`\treturn nil`);
         writeLine(`}`);
