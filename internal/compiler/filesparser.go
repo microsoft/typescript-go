@@ -97,6 +97,10 @@ func (t *parseTask) load(loader *fileLoader) {
 						},
 					},
 				}, true)
+			} else {
+				// !!! sheetal file preprocessing diagnostic explaining
+				// Cannot_find_lib_definition_for_0_Did_you_mean_1
+				// filePreprocessingLibreferenceDiagnostic
 			}
 		}
 	}

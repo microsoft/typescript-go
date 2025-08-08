@@ -102,6 +102,17 @@ func (p *Program) GetRedirectTargets(path tspath.Path) []string {
 	return nil // !!! TODO: project references support
 }
 
+// gets the original file that was included in program
+// this returns original source file name when including output of project reference
+// otherwise same name
+// Equivalent to originalFileName on SourceFile in Strada
+func (p *Program) GetSourceOfProjectReferenceIfOutputIncluded(file ast.HasFileName) string {
+	if source, ok := p.outputFileToProjectReferenceSource[file.Path()]; ok {
+		return source
+	}
+	return file.FileName()
+}
+
 // GetOutputAndProjectReference implements checker.Program.
 func (p *Program) GetOutputAndProjectReference(path tspath.Path) *tsoptions.OutputDtsAndProjectReference {
 	return p.projectReferenceFileMapper.getOutputAndProjectReference(path)
@@ -411,7 +422,7 @@ func (p *Program) verifyCompilerOptions() {
 
 	createOptionDiagnosticInObjectLiteralSyntax := func(objectLiteral *ast.ObjectLiteralExpression, onKey bool, key1 string, key2 string, message *diagnostics.Message, args ...any) *ast.Diagnostic {
 		diag := tsoptions.ForEachPropertyAssignment(objectLiteral, key1, func(property *ast.PropertyAssignment) *ast.Diagnostic {
-			return tsoptions.CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile(), core.IfElse(onKey, property.Name(), property.Initializer), message, args...)
+			return tsoptions.CreateDiagnosticForNodeInSourceFile(sourceFile(), core.IfElse(onKey, property.Name(), property.Initializer), message, args...)
 		}, key2)
 		if diag != nil {
 			p.programDiagnostics = append(p.programDiagnostics, diag)
@@ -423,7 +434,7 @@ func (p *Program) verifyCompilerOptions() {
 		compilerOptionsProperty := getCompilerOptionsPropertySyntax()
 		var diag *ast.Diagnostic
 		if compilerOptionsProperty != nil {
-			diag = tsoptions.CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile(), compilerOptionsProperty.Name(), message, args...)
+			diag = tsoptions.CreateDiagnosticForNodeInSourceFile(sourceFile(), compilerOptionsProperty.Name(), message, args...)
 		} else {
 			diag = ast.NewCompilerDiagnostic(message, args...)
 		}
@@ -555,9 +566,10 @@ func (p *Program) verifyCompilerOptions() {
 
 		for _, file := range p.files {
 			if sourceFileMayBeEmitted(file, p, false) && !rootPaths.Has(file.Path()) {
-				p.programDiagnostics = append(p.programDiagnostics, ast.NewDiagnostic(
+				p.programDiagnostics = append(p.programDiagnostics, p.createDiagnosticExplainingFile(
+					getCompilerOptionsObjectLiteralSyntax,
 					file,
-					core.TextRange{},
+					nil,
 					diagnostics.File_0_is_not_listed_within_the_file_list_of_project_1_Projects_must_list_all_files_or_use_an_include_pattern,
 					file.FileName(),
 					configFilePath(),
@@ -591,7 +603,7 @@ func (p *Program) verifyCompilerOptions() {
 					if ast.IsArrayLiteralExpression(initializer) {
 						elements := initializer.AsArrayLiteralExpression().Elements
 						if elements != nil && len(elements.Nodes) > valueIndex {
-							diag := tsoptions.CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile(), elements.Nodes[valueIndex], message, args...)
+							diag := tsoptions.CreateDiagnosticForNodeInSourceFile(sourceFile(), elements.Nodes[valueIndex], message, args...)
 							p.programDiagnostics = append(p.programDiagnostics, diag)
 							return diag
 						}
@@ -677,6 +689,7 @@ func (p *Program) verifyCompilerOptions() {
 		options.SourceRoot != "" ||
 		options.MapRoot != "" ||
 		(options.GetEmitDeclarations() && options.DeclarationDir != "") {
+		// !!! sheetal checkSourceFilesBelongToPath - for root Dir and configFile - explaining why file is in the program
 		dir := p.CommonSourceDirectory()
 		if options.OutDir != "" && dir == "" && core.Some(p.files, func(f *ast.SourceFile) bool { return tspath.GetRootLength(f.FileName()) > 1 }) {
 			createDiagnosticForOptionName(diagnostics.Cannot_find_the_common_subdirectory_path_for_the_input_files, "outDir", "")
@@ -831,19 +844,7 @@ func (p *Program) IsEmitBlocked(emitFileName string) bool {
 func (p *Program) verifyProjectReferences() {
 	buildInfoFileName := core.IfElse(!p.Options().SuppressOutputPathCheck.IsTrue(), p.opts.Config.GetBuildInfoFileName(), "")
 	createDiagnosticForReference := func(config *tsoptions.ParsedCommandLine, index int, message *diagnostics.Message, args ...any) {
-		var sourceFile *ast.SourceFile
-		if config.ConfigFile != nil {
-			sourceFile = config.ConfigFile.SourceFile
-		}
-		diag := tsoptions.ForEachTsConfigPropArray(sourceFile, "references", func(property *ast.PropertyAssignment) *ast.Diagnostic {
-			if ast.IsArrayLiteralExpression(property.Initializer) {
-				value := property.Initializer.AsArrayLiteralExpression().Elements.Nodes
-				if len(value) > index {
-					return tsoptions.CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, value[index], message, args...)
-				}
-			}
-			return nil
-		})
+		diag := tsoptions.CreateDiagnosticAtReferenceSyntax(config, index, message, args...)
 		if diag == nil {
 			diag = ast.NewCompilerDiagnostic(message, args...)
 		}
@@ -1472,7 +1473,7 @@ func (p *Program) ExplainFiles(writer io.Writer) {
 	for _, file := range p.GetSourceFiles() {
 		fmt.Fprintln(writer, toRelativeFileName(file.FileName()))
 		for _, reason := range p.fileIncludeReasons[file.Path()] {
-			fmt.Fprintln(writer, "  ", reason.toDiagnostic(p, toRelativeFileName).Message())
+			fmt.Fprintln(writer, "  ", reason.toDiagnostic(p, true).Message())
 		}
 		for _, diag := range p.explainRedirectAndImpliedFormat(file, toRelativeFileName) {
 			fmt.Fprintln(writer, "  ", diag.Message())
@@ -1485,7 +1486,7 @@ func (p *Program) explainRedirectAndImpliedFormat(
 	toFileName func(fileName string) string,
 ) []*ast.Diagnostic {
 	var result []*ast.Diagnostic
-	if source, ok := p.outputFileToProjectReferenceSource[file.Path()]; ok {
+	if source := p.GetSourceOfProjectReferenceIfOutputIncluded(file); source != file.FileName() {
 		result = append(result, ast.NewCompilerDiagnostic(
 			diagnostics.File_is_output_of_project_reference_source_0,
 			toFileName(source),
@@ -1520,6 +1521,78 @@ func (p *Program) explainRedirectAndImpliedFormat(
 				result = append(result, ast.NewCompilerDiagnostic(diagnostics.File_is_CommonJS_module_because_package_json_was_not_found))
 			}
 		}
+	}
+	return result
+}
+
+func (p *Program) createDiagnosticExplainingFile(
+	getCompilerOptionsObjectLiteralSyntax func() *ast.ObjectLiteralExpression,
+	file *ast.SourceFile,
+	diagnosticReason *fileIncludeReason,
+	diag *diagnostics.Message,
+	args ...any,
+) *ast.Diagnostic {
+	var chain []*ast.Diagnostic
+	var relatedInfo []*ast.Diagnostic
+	var redirectInfo []*ast.Diagnostic
+	var preferredLocation *fileIncludeReason
+	var seenReasons collections.Set[*fileIncludeReason]
+	if diagnosticReason.isReferencedFile() && !diagnosticReason.getReferencedLocation(p).isSynthetic {
+		preferredLocation = diagnosticReason
+	}
+
+	processRelatedInfo := func(includeReason *fileIncludeReason) {
+		if preferredLocation == nil && includeReason.isReferencedFile() && !includeReason.getReferencedLocation(p).isSynthetic {
+			preferredLocation = includeReason
+		} else {
+			info := includeReason.toRelatedInfo(p, getCompilerOptionsObjectLiteralSyntax)
+			if info != nil {
+				relatedInfo = append(relatedInfo, info)
+			}
+		}
+	}
+	processInclude := func(includeReason *fileIncludeReason) {
+		if !seenReasons.AddIfAbsent(includeReason) {
+			return
+		}
+		chain = append(chain, includeReason.toDiagnostic(p, false))
+		processRelatedInfo(includeReason)
+	}
+
+	// !!! todo sheetal caching
+
+	if file != nil {
+		reasons := p.fileIncludeReasons[file.Path()]
+		chain = make([]*ast.Diagnostic, 0, len(reasons))
+		for _, reason := range reasons {
+			processInclude(reason)
+		}
+		redirectInfo = p.explainRedirectAndImpliedFormat(file, func(fileName string) string { return fileName })
+	}
+	if diagnosticReason != nil {
+		processInclude(diagnosticReason)
+	}
+	if chain != nil && (preferredLocation == nil || seenReasons.Len() != 1) {
+		fileReason := ast.NewCompilerDiagnostic(diagnostics.The_file_is_in_the_program_because_Colon)
+		fileReason.SetMessageChain(chain)
+		chain = []*ast.Diagnostic{fileReason}
+	}
+	if redirectInfo != nil {
+		chain = append(chain, redirectInfo...)
+	}
+
+	var result *ast.Diagnostic
+	if preferredLocation != nil {
+		result = preferredLocation.getReferencedLocation(p).diagnosticAt(diag, args...)
+	}
+	if result == nil {
+		result = ast.NewCompilerDiagnostic(diag, args...)
+	}
+	if chain != nil {
+		result.SetMessageChain(chain)
+	}
+	if relatedInfo != nil {
+		result.SetRelatedInfo(relatedInfo)
 	}
 	return result
 }

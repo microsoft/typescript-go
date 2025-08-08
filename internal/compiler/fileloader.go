@@ -153,16 +153,35 @@ func processAllProgramFiles(
 		file := task.file
 		path := task.path
 		if file == nil {
+			// !!! sheetal file preprocessing diagnostic explaining getSourceFileFromReferenceWorker
 			missingFiles = append(missingFiles, task.normalizedFilePath)
 			return
 		}
+
+		// !!! sheetal todo porting file case errors
+		// if _, ok := filesByPath[path]; ok {
+		// 	Check if it differs only in drive letters its ok to ignore that error:
+		// 	const checkedAbsolutePath = getNormalizedAbsolutePathWithoutRoot(checkedName, currentDirectory);
+		// 	const inputAbsolutePath = getNormalizedAbsolutePathWithoutRoot(fileName, currentDirectory);
+		// 	if (checkedAbsolutePath !== inputAbsolutePath) {
+		// 	    reportFileNamesDifferOnlyInCasingError(fileName, file, reason);
+		// 	}
+		// } else if loader.comparePathsOptions.UseCaseSensitiveFileNames {
+		// 	pathIgnoreCase := tspath.ToPath(file.FileName(), loader.comparePathsOptions.CurrentDirectory, false)
+		// 	// for case-sensitsive file systems check if we've already seen some file with similar filename ignoring case
+		// 	if _, ok := filesByNameIgnoreCase[pathIgnoreCase]; ok {
+		// 		reportFileNamesDifferOnlyInCasingError(fileName, existingFile, reason);
+		// 	} else {
+		// 		filesByNameIgnoreCase[pathIgnoreCase] = file
+		// 	}
+		// }
+
 		if task.isLib {
 			libFiles = append(libFiles, file)
 			libFileSet.Add(path)
 		} else {
 			files = append(files, file)
 		}
-
 		filesByPath[path] = file
 		fileIncludeReasons[path] = task.allIncludeReasons
 		resolvedModules[path] = task.resolutionsInFile
@@ -455,6 +474,8 @@ func (p *fileLoader) resolveTypeReferenceDirectives(t *parseTask) {
 					},
 				},
 			}, false)
+		} else {
+			// !! sheetal Cannot_find_type_definition_file_for_0
 		}
 	}
 
