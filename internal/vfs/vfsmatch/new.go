@@ -775,7 +775,7 @@ func (gm globMatcher) explicitlyIncludesDottedFiles() bool {
 // explicitlyIncludesDottedDirectories returns true if any directory segment explicitly includes dotted directories
 func (gm globMatcher) explicitlyIncludesDottedDirectories() bool {
 	// Check if any directory segment explicitly starts with a dot (indicating files inside dotted directories)
-	for i := 0; i < len(gm.segments)-1; i++ {
+	for i := range len(gm.segments) - 1 {
 		segment := gm.segments[i]
 		if strings.HasPrefix(segment, ".") && len(segment) > 1 {
 			return true
