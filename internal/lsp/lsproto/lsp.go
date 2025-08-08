@@ -83,3 +83,16 @@ type NotificationInfo[Params any] struct {
 	_      [0]Params
 	Method Method
 }
+
+type Null struct{}
+
+func (Null) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	if k := dec.PeekKind(); k != 'n' {
+		return fmt.Errorf("expected null, got %s", k)
+	}
+	return dec.SkipValue()
+}
+
+func (Null) MarshalJSONTo(enc *jsontext.Encoder) error {
+	return enc.WriteToken(jsontext.Null)
+}
