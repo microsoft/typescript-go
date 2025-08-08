@@ -720,13 +720,11 @@ func getReferencesForThisKeyword(thisOrSuperKeyword *ast.Node, sourceFiles []*as
 		}
 		staticFlag &= searchSpaceNode.ModifierFlags()
 		searchSpaceNode = searchSpaceNode.Parent // re-assign to be the owning class
-		break
 	case ast.KindSourceFile:
 		if ast.IsExternalModule(searchSpaceNode.AsSourceFile()) || isParameterName(thisOrSuperKeyword) {
 			return nil
 		}
 	case ast.KindFunctionDeclaration, ast.KindFunctionExpression:
-		break
 	// Computed properties in classes are not handled here because references to this are illegal,
 	// so there is no point finding references to them.
 	default:
@@ -792,7 +790,6 @@ func getReferencesForSuperKeyword(superKeyword *ast.Node) []*SymbolAndEntries {
 	case ast.KindPropertyDeclaration, ast.KindPropertySignature, ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindConstructor, ast.KindGetAccessor, ast.KindSetAccessor:
 		staticFlag &= searchSpaceNode.ModifierFlags()
 		searchSpaceNode = searchSpaceNode.Parent // re-assign to be the owning class
-		break
 	default:
 		return nil
 	}
@@ -1094,15 +1091,17 @@ func (state *refState) createSearch(location *ast.Node, symbol *ast.Symbol, comi
 			symbolToSearchFor = symbol
 		}
 	}
-	text = func() string {
-		var name string = ast.SymbolName(symbolToSearchFor)
-		firstChar, _ := utf8.DecodeRuneInString(name)
-		lastChar, _ := utf8.DecodeLastRuneInString(name)
-		if firstChar == lastChar && (firstChar == '\'' || firstChar == '"' || firstChar == '`') {
-			return name[1 : len(name)-1]
-		}
-		return name
-	}()
+	if text == "" {
+		text = func() string {
+			name := ast.SymbolName(symbolToSearchFor)
+			firstChar, _ := utf8.DecodeRuneInString(name)
+			lastChar, _ := utf8.DecodeLastRuneInString(name)
+			if firstChar == lastChar && (firstChar == '\'' || firstChar == '"' || firstChar == '`') {
+				return name[1 : len(name)-1]
+			}
+			return name
+		}()
+	}
 	escapedText := text
 	if len(allSearchSymbols) == 0 {
 		allSearchSymbols = []*ast.Symbol{symbol}
