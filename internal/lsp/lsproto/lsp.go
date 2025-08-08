@@ -90,7 +90,8 @@ func (Null) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	if k := dec.PeekKind(); k != 'n' {
 		return fmt.Errorf("expected null, got %s", k)
 	}
-	return dec.SkipValue()
+	_, err := dec.ReadToken()
+	return err
 }
 
 func (Null) MarshalJSONTo(enc *jsontext.Encoder) error {
