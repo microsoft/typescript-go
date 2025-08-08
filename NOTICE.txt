@@ -264,7 +264,7 @@ BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
 
 ---------------------------------------------------------
 
-golang.org/x/text v0.27.0 - BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
+golang.org/x/text v0.28.0 - BSD-3-Clause AND LicenseRef-scancode-google-patent-license-golang
 
 
 (c) (c) A
