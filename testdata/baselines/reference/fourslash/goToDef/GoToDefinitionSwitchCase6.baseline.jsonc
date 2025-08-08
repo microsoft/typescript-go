@@ -1,7 +1,7 @@
 // === goToDefinition ===
 // === /goToDefinitionSwitchCase6.ts ===
 
-// export default { /*GO TO DEFINITION*/[|case|] };
+// export default { /*GO TO DEFINITION*/[|{ textSpan: true |}case|] };
 // default;
 // case 42;
 

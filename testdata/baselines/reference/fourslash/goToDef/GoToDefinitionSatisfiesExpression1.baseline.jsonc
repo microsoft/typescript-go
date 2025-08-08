@@ -2,7 +2,7 @@
 // === /goToDefinitionSatisfiesExpression1.ts ===
 
 // const STRINGS = {
-//     /*GO TO DEFINITION*/[|title|]: 'A Title',
+//     /*GO TO DEFINITION*/[|{ textSpan: true |}title|]: 'A Title',
 // } satisfies Record<string,string>;
 // 
 // //somewhere in app

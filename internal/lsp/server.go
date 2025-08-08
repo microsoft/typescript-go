@@ -722,7 +722,7 @@ func (s *Server) handleDefinition(ctx context.Context, params *lsproto.Definitio
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
 	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
-	return languageService.ProvideDefinition(ctx, params.TextDocument.Uri, params.Position)
+	return languageService.ProvideDefinition(ctx, params.TextDocument.Uri, params.Position, definitionCapabilities(s.initializeParams))
 }
 
 func (s *Server) handleTypeDefinition(ctx context.Context, params *lsproto.TypeDefinitionParams) (lsproto.TypeDefinitionResponse, error) {
@@ -877,4 +877,31 @@ func getCompletionClientCapabilities(params *lsproto.InitializeParams) *lsproto.
 		return nil
 	}
 	return params.Capabilities.TextDocument.Completion
+}
+
+func definitionCapabilities(params *lsproto.InitializeParams) *lsproto.DefinitionClientCapabilities {
+	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil {
+		// Return default capabilities with LinkSupport enabled
+		return &lsproto.DefinitionClientCapabilities{
+			LinkSupport: ptrTo(true),
+		}
+	}
+	
+	capabilities := params.Capabilities.TextDocument.Definition
+	if capabilities == nil {
+		// Return default capabilities with LinkSupport enabled
+		return &lsproto.DefinitionClientCapabilities{
+			LinkSupport: ptrTo(true),
+		}
+	}
+	
+	// If capabilities exist but LinkSupport is not specified, default to true
+	if capabilities.LinkSupport == nil {
+		// Copy existing capabilities and override LinkSupport
+		result := *capabilities
+		result.LinkSupport = ptrTo(true)
+		return &result
+	}
+	
+	return capabilities
 }
