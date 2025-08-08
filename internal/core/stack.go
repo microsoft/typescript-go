@@ -31,3 +31,13 @@ func (s *Stack[T]) Peek() T {
 func (s *Stack[T]) Len() int {
 	return len(s.data)
 }
+
+func (s *Stack[T]) FindFromTop(predicate func(item T) bool) T {
+	for i := len(s.data) - 1; i >= 0; i-- {
+		if predicate(s.data[i]) {
+			return s.data[i]
+		}
+	}
+	var zero T
+	return zero
+}

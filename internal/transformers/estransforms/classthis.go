@@ -26,3 +26,17 @@ func isClassThisAssignmentBlock(emitContext *printer.EmitContext, node *ast.Node
 	}
 	return false
 }
+
+func classHasClassThisAssignment(emitContext *printer.EmitContext, node *ast.ClassLikeDeclaration) bool {
+	if emitContext.ClassThis(node) == nil {
+		return false
+	}
+
+	for _, member := range node.Members() {
+		if isClassThisAssignmentBlock(emitContext, member) {
+			return true
+		}
+	}
+
+	return false
+}

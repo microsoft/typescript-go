@@ -442,6 +442,22 @@ func (f *NodeFactory) getName(node *ast.Declaration, emitFlags EmitFlags, opts A
 	return f.NewGeneratedNameForNode(node)
 }
 
+// Gets the internal name of a declaration. This is primarily used for declarations that can be referred to by name in
+// the body of an ES5 class function body. An internal name will *never* be prefixed with an module or namespace export
+// modifier like "exports." when emitted as an expression. An internal name will also *never* be renamed due to a
+// collision with a block scoped variable.
+func (f *NodeFactory) GetInternalName(node *ast.Declaration) *ast.IdentifierNode {
+	return f.GetInternalNameEx(node, AssignedNameOptions{})
+}
+
+// Gets the internal name of a declaration. This is primarily used for declarations that can be referred to by name in
+// the body of an ES5 class function body. An internal name will *never* be prefixed with an module or namespace export
+// modifier like "exports." when emitted as an expression. An internal name will also *never* be renamed due to a
+// collision with a block scoped variable.
+func (f *NodeFactory) GetInternalNameEx(node *ast.Declaration, opts AssignedNameOptions) *ast.IdentifierNode {
+	return f.getName(node, EFLocalName|EFInternalName, opts)
+}
+
 // Gets the local name of a declaration. This is primarily used for declarations that can be referred to by name in the
 // declaration's immediate scope (classes, enums, namespaces). A local name will *never* be prefixed with a module or
 // namespace export modifier like "exports." when emitted as an expression.
@@ -633,6 +649,33 @@ func (f *NodeFactory) NewRewriteRelativeImportExtensionsHelper(firstArgument *as
 	}
 	return f.NewCallExpression(
 		f.NewUnscopedHelperName("__rewriteRelativeImportExtension"),
+		nil, /*questionDotToken*/
+		nil, /*typeArguments*/
+		f.NewNodeList(arguments),
+		ast.NodeFlagsNone,
+	)
+}
+
+// Allocate a new call expression to the `__classPrivateFieldGet` helper
+func (f *NodeFactory) NewClassPrivateFieldGetHelper(receiver *ast.Expression, state *ast.Identifier, kind PrivateIdentifierKind, farg *ast.Identifier) *ast.Expression {
+	f.emitContext.RequestEmitHelper(classPrivateFieldGetHelper)
+	var arguments []*ast.Expression
+	if farg == nil {
+		arguments = []*ast.Expression{
+			receiver,
+			state.AsNode(),
+			f.NewStringLiteral(kind.String()),
+		}
+	} else {
+		arguments = []*ast.Expression{
+			receiver,
+			state.AsNode(),
+			f.NewStringLiteral(kind.String()),
+			farg.AsNode(),
+		}
+	}
+	return f.NewCallExpression(
+		f.NewUnscopedHelperName("__classPrivateFieldGet"),
 		nil, /*questionDotToken*/
 		nil, /*typeArguments*/
 		f.NewNodeList(arguments),
