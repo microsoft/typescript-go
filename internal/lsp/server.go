@@ -650,7 +650,7 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 
 func (s *Server) handleShutdown(ctx context.Context, params any, _ func()) (lsproto.ShutdownResponse, error) {
 	s.session.Close()
-	return nil, nil
+	return lsproto.ShutdownResponse{}, nil
 }
 
 func (s *Server) handleExit(ctx context.Context, params any) error {

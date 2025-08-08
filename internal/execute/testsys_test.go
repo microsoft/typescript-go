@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"maps"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 
@@ -50,7 +51,7 @@ interface Symbol {
 declare const console: { log(msg: any): void; };
 `)
 
-func newTestSys(fileOrFolderList FileMap, cwd string) *testSys {
+func newTestSys(fileOrFolderList FileMap, cwd string, env map[string]string) *testSys {
 	if cwd == "" {
 		cwd = "/home/src/workspaces/project"
 	}
@@ -66,6 +67,7 @@ func newTestSys(fileOrFolderList FileMap, cwd string) *testSys {
 		output:             []string{},
 		currentWrite:       &strings.Builder{},
 		start:              time.Now(),
+		env:                env,
 	}
 
 	// Ensure the default library file is present
@@ -99,6 +101,7 @@ type testSys struct {
 	defaultLibraryPath string
 	cwd                string
 	files              []string
+	env                map[string]string
 
 	start time.Time
 }
@@ -152,6 +155,21 @@ func (s *testSys) Writer() io.Writer {
 	return s.currentWrite
 }
 
+func (s *testSys) WriteOutputIsTTY() bool {
+	return true
+}
+
+func (s *testSys) GetWidthOfTerminal() int {
+	if widthStr := s.GetEnvironmentVariable("TS_TEST_TERMINAL_WIDTH"); widthStr != "" {
+		return core.Must(strconv.Atoi(widthStr))
+	}
+	return 0
+}
+
+func (s *testSys) GetEnvironmentVariable(name string) string {
+	return s.env[name]
+}
+
 func sanitizeSysOutput(output string, prefixLine string, replaceString string) string {
 	if index := strings.Index(output, prefixLine); index != -1 {
 		indexOfNewLine := strings.Index(output[index:], "\n")
@@ -183,8 +201,8 @@ func (s *testSys) baselineProgram(baseline *strings.Builder, program *incrementa
 	baseline.WriteString("SemanticDiagnostics::\n")
 	testingData := program.GetTestingData(program.GetProgram())
 	for _, file := range program.GetProgram().GetSourceFiles() {
-		if diagnostics, ok := testingData.SemanticDiagnosticsPerFile[file.Path()]; ok {
-			if oldDiagnostics, ok := testingData.OldProgramSemanticDiagnosticsPerFile[file.Path()]; !ok || oldDiagnostics != diagnostics {
+		if diagnostics, ok := testingData.SemanticDiagnosticsPerFile.Load(file.Path()); ok {
+			if oldDiagnostics, ok := testingData.OldProgramSemanticDiagnosticsPerFile.Load(file.Path()); !ok || oldDiagnostics != diagnostics {
 				baseline.WriteString("*refresh*    " + file.FileName() + "\n")
 			}
 		} else {
