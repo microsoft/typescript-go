@@ -1,8 +1,9 @@
 package estransforms
 
 import (
+	"context"
+
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/transformers"
 )
 
@@ -85,7 +86,7 @@ func (ch *exponentiationTransformer) visitExponentiationExpression(node *ast.Bin
 	return result
 }
 
-func newExponentiationTransformer(emitContext *printer.EmitContext) *transformers.Transformer {
+func newExponentiationTransformer(ctx context.Context) *transformers.Transformer {
 	tx := &exponentiationTransformer{}
-	return tx.NewTransformer(tx.visit, emitContext)
+	return tx.NewTransformer(tx.visit, transformers.GetEmitContextFromContext(ctx))
 }

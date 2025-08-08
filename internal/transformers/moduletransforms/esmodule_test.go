@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/testutil/emittestutil"
 	"github.com/microsoft/typescript-go/internal/testutil/parsetestutil"
+	"github.com/microsoft/typescript-go/internal/transformers"
 	"github.com/microsoft/typescript-go/internal/transformers/moduletransforms"
 	"github.com/microsoft/typescript-go/internal/transformers/tstransforms"
 )
@@ -239,9 +240,10 @@ var __rewriteRelativeImportExtension;`,
 
 			emitContext := printer.NewEmitContext()
 			resolver := binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
-
-			file = tstransforms.NewRuntimeSyntaxTransformer(emitContext, compilerOptions, resolver).TransformSourceFile(file)
-			file = moduletransforms.NewESModuleTransformer(emitContext, compilerOptions, resolver, fakeGetEmitModuleFormatOfFile).TransformSourceFile(file)
+			ctx := transformers.WithCompilerOptions(t.Context(), compilerOptions)
+			ctx = transformers.WithEmitContext(ctx, emitContext)
+			file = tstransforms.NewRuntimeSyntaxTransformer(ctx, resolver).TransformSourceFile(file)
+			file = moduletransforms.NewESModuleTransformer(ctx, resolver, fakeGetEmitModuleFormatOfFile).TransformSourceFile(file)
 			emittestutil.CheckEmit(t, emitContext, file, rec.output)
 		})
 	}

@@ -245,3 +245,12 @@ func IsSimpleCopiableExpression(expression *ast.Expression) bool {
 		ast.IsKeywordKind(expression.Kind) ||
 		ast.IsIdentifier(expression)
 }
+
+/**
+ * A simple inlinable expression is an expression which can be copied into multiple locations
+ * without risk of repeating any sideeffects and whose value could not possibly change between
+ * any such locations
+ */
+func IsSimpleInlineableExpression(expression *ast.Expression) bool {
+	return !ast.IsIdentifier(expression) && IsSimpleCopiableExpression(expression)
+}

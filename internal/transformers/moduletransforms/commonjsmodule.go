@@ -1,6 +1,7 @@
 package moduletransforms
 
 import (
+	"context"
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -29,7 +30,9 @@ type CommonJSModuleTransformer struct {
 	currentNode               *ast.Node // used for ancestor tracking via pushNode/popNode to detect expression identifiers
 }
 
-func NewCommonJSModuleTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, resolver binder.ReferenceResolver, getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind) *transformers.Transformer {
+func NewCommonJSModuleTransformer(ctx context.Context, resolver binder.ReferenceResolver, getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind) *transformers.Transformer {
+	compilerOptions := transformers.GetCompilerOptionsFromContext(ctx)
+	emitContext := transformers.GetEmitContextFromContext(ctx)
 	if resolver == nil {
 		resolver = binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
 	}

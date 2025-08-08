@@ -1,6 +1,7 @@
 package estransforms
 
 import (
+	"context"
 	"maps"
 	"slices"
 
@@ -19,9 +20,9 @@ type usingDeclarationTransformer struct {
 	exportEqualsBinding  *ast.IdentifierNode
 }
 
-func newUsingDeclarationTransformer(emitContext *printer.EmitContext) *transformers.Transformer {
+func newUsingDeclarationTransformer(ctx context.Context) *transformers.Transformer {
 	tx := &usingDeclarationTransformer{}
-	return tx.NewTransformer(tx.visit, emitContext)
+	return tx.NewTransformer(tx.visit, transformers.GetEmitContextFromContext(ctx))
 }
 
 type usingKind uint

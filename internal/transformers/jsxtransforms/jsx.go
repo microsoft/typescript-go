@@ -1,6 +1,7 @@
 package jsxtransforms
 
 import (
+	"context"
 	"maps"
 	"slices"
 	"strconv"
@@ -29,7 +30,9 @@ type JSXTransformer struct {
 	currentSourceFile *ast.SourceFile
 }
 
-func NewJSXTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, emitResolver printer.EmitResolver) *transformers.Transformer {
+func NewJSXTransformer(ctx context.Context, emitResolver printer.EmitResolver) *transformers.Transformer {
+	compilerOptions := transformers.GetCompilerOptionsFromContext(ctx)
+	emitContext := transformers.GetEmitContextFromContext(ctx)
 	tx := &JSXTransformer{
 		compilerOptions: compilerOptions,
 		emitResolver:    emitResolver,
