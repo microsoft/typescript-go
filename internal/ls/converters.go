@@ -228,12 +228,17 @@ func (c *Converters) PositionToLineAndCharacter(script Script, position core.Tex
 
 	start := lineMap.LineStarts[line]
 
+	// Ensure position doesn't exceed text length to avoid slice bounds errors
+	text := script.Text()
+	textLen := core.TextPos(len(text))
+	position = min(position, textLen)
+
 	var character core.TextPos
 	if lineMap.AsciiOnly || c.positionEncoding == lsproto.PositionEncodingKindUTF8 {
 		character = position - start
 	} else {
 		// We need to rescan the text as UTF-16 to find the character offset.
-		for _, r := range script.Text()[start:position] {
+		for _, r := range text[start:position] {
 			character += core.TextPos(utf16.RuneLen(r))
 		}
 	}
