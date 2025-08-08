@@ -57,6 +57,9 @@ export var Strings = Strings;
 export type HandlerOptions = {
     name: String;
 };
+declare namespace Handler {
+    const statische: () => void;
+}
 /**
  * @typedef {Object} HandlerOptions
  * @property {String} name

@@ -22,9 +22,14 @@
 -export var K: {
 -    new (): {
 -        values(): /*elided*/ any;
--    };
--};
 +export var K = NS.K;
-+export {};
++declare namespace NS {
++    const K: {
++        new (): {
++            values(): any;
++        };
+     };
+-};
++}
  //// [main.d.ts]
  export {};

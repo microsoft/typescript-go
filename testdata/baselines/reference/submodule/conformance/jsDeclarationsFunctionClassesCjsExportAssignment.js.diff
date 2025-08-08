@@ -123,9 +123,17 @@
 -     */
 -    construct(input: Input, handle?: HookHandler | undefined): State;
 -}
--declare namespace Context {
+ declare namespace Context {
 -    export { Timer, Hook, HookHandler, Input, State };
--}
++    const prototype: {
++        /**
++         * @param {Input} input
++         * @param {HookHandler=} handle
++         * @returns {State}
++         */
++        construct(input: Input, handle?: any): State;
++    };
+ }
 -/**
 - * Imports
 - */

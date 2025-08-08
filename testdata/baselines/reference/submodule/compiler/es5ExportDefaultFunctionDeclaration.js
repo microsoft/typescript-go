@@ -12,4 +12,5 @@ function f() { }
 
 
 //// [es5ExportDefaultFunctionDeclaration.d.ts]
-export default function f(): void;
+declare function f(): void;
+export default f;

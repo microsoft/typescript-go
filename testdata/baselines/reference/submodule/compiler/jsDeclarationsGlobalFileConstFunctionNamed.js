@@ -37,3 +37,12 @@ declare const SelfReference: {
     (): any;
     staticMember: string;
 };
+declare namespace SomeConstructor2 {
+    const staticMember: "str";
+}
+declare namespace SomeConstructor3 {
+    const staticMember: "str";
+}
+declare namespace SelfReference {
+    const staticMember: "str";
+}

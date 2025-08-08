@@ -1,0 +1,9 @@
+--- old.es5ExportDefaultFunctionDeclaration.js
++++ new.es5ExportDefaultFunctionDeclaration.js
+@@= skipped -11, +11 lines =@@
+
+
+ //// [es5ExportDefaultFunctionDeclaration.d.ts]
+-export default function f(): void;
++declare function f(): void;
++export default f;

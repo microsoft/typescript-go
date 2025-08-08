@@ -19,6 +19,7 @@
 +// https://github.com/microsoft/TypeScript/issues/56538
  export declare function X(): void;
  export declare function Y(): void;
--export declare namespace Y {
+ export declare namespace Y {
 -    var test: string;
--}
++    const test: "foo";
+ }

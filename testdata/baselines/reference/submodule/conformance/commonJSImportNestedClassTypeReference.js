@@ -39,6 +39,12 @@ function f(k) {
 
 //// [mod1.d.ts]
 export var K = NS.K;
-export {};
+declare namespace NS {
+    const K: {
+        new (): {
+            values(): any;
+        };
+    };
+}
 //// [main.d.ts]
 export {};

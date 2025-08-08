@@ -47,4 +47,11 @@
 -}
 -declare class C3 implements A {
 -    method(): number;
--}
++declare namespace Ns {
++    const C1: {
++        new (): {
++            method(): number;
++        };
++    };
++    const C5: any;
+ }

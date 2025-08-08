@@ -22,6 +22,8 @@ declare class Base {
 }
 export declare class Foo extends Base {
 }
-export {};
+export declare namespace Foo {
+    const foo: "foo";
+}
 //// [Bar.d.ts]
 export {};
