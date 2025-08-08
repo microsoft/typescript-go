@@ -19,6 +19,7 @@ package printer
 
 import (
 	"fmt"
+    "os"
 	"slices"
 	"strings"
 
@@ -5429,11 +5430,11 @@ func (p *Printer) setSourceMapSource(source sourcemap.Source) {
 }
 
 func (p *Printer) emitPos(pos int) {
-	if p.sourceMapsDisabled || p.sourceMapSource == nil || p.sourceMapGenerator == nil || p.sourceMapSourceIsJson || ast.PositionIsSynthesized(pos) {
+    if p.sourceMapsDisabled || p.sourceMapSource == nil || p.sourceMapGenerator == nil || p.sourceMapSourceIsJson || ast.PositionIsSynthesized(pos) {
 		return
 	}
-
-	sourceLine, sourceCharacter := scanner.GetLineAndCharacterOfPosition(p.sourceMapSource, pos)
+    
+    sourceLine, sourceCharacter := scanner.GetLineAndCharacterOfPosition(p.sourceMapSource, pos)
 	if err := p.sourceMapGenerator.AddSourceMapping(
 		p.writer.GetLine(),
 		p.writer.GetColumn(),
@@ -5499,12 +5500,19 @@ func (p *Printer) emitSourceMapsBeforeNode(node *ast.Node) *sourceMapState {
 
 	emitFlags := p.emitContext.EmitFlags(node)
 	loc := p.emitContext.SourceMapRange(node)
+    // Prefer mapping against the original parse tree source file if available.
+    mapNode := p.emitContext.MostOriginal(node)
+    mapSourceFile := ast.GetSourceFileOfNode(mapNode)
+    mapSource := core.IfElse[sourcemap.Source](mapSourceFile != nil, mapSourceFile, p.sourceMapSource)
 
-	if !ast.IsNotEmittedStatement(node) &&
-		emitFlags&EFNoLeadingSourceMap == 0 &&
-		!ast.PositionIsSynthesized(loc.Pos()) {
-		p.emitSourcePos(p.sourceMapSource, scanner.SkipTrivia(p.currentSourceFile.Text(), loc.Pos())) // !!! support SourceMapRange from Strada?
-	}
+    if !ast.IsNotEmittedStatement(node) &&
+        emitFlags&EFNoLeadingSourceMap == 0 &&
+        !ast.PositionIsSynthesized(loc.Pos()) {
+        text := mapSource.Text()
+        pos := loc.Pos()
+        
+        p.emitSourcePos(mapSource, scanner.SkipTrivia(text, pos)) // !!! support SourceMapRange from Strada?
+    }
 
 	if emitFlags&EFNoNestedSourceMaps != 0 {
 		p.sourceMapsDisabled = true
@@ -5522,6 +5530,9 @@ func (p *Printer) emitSourceMapsAfterNode(node *ast.Node, previousState *sourceM
 
 	emitFlags := previousState.emitFlags
 	loc := previousState.sourceMapRange
+    mapNode := p.emitContext.MostOriginal(node)
+    mapSourceFile := ast.GetSourceFileOfNode(mapNode)
+    mapSource := core.IfElse[sourcemap.Source](mapSourceFile != nil, mapSourceFile, p.sourceMapSource)
 
 	if emitFlags&EFNoNestedSourceMaps != 0 {
 		p.sourceMapsDisabled = false
@@ -5530,7 +5541,7 @@ func (p *Printer) emitSourceMapsAfterNode(node *ast.Node, previousState *sourceM
 	if !ast.IsNotEmittedStatement(node) &&
 		emitFlags&EFNoTrailingSourceMap == 0 &&
 		!ast.PositionIsSynthesized(loc.End()) {
-		p.emitSourcePos(p.sourceMapSource, loc.End()) // !!! support SourceMapRange from Strada?
+        p.emitSourcePos(mapSource, loc.End()) // !!! support SourceMapRange from Strada?
 	}
 }
 
@@ -5541,12 +5552,15 @@ func (p *Printer) emitSourceMapsBeforeToken(token ast.Kind, pos int, contextNode
 
 	emitFlags := p.emitContext.EmitFlags(contextNode)
 	loc, hasLoc := p.emitContext.TokenSourceMapRange(contextNode, token)
+    mapNode := p.emitContext.MostOriginal(contextNode)
+    mapSourceFile := ast.GetSourceFileOfNode(mapNode)
+    mapSource := core.IfElse[sourcemap.Source](mapSourceFile != nil, mapSourceFile, p.sourceMapSource)
 	if emitFlags&EFNoTokenLeadingSourceMaps == 0 {
 		if hasLoc {
 			pos = loc.Pos()
 		}
 		if pos >= 0 {
-			p.emitSourcePos(p.sourceMapSource, pos) // !!! support SourceMapRange from Strada?
+            p.emitSourcePos(mapSource, pos) // !!! support SourceMapRange from Strada?
 		}
 	}
 
@@ -5563,12 +5577,15 @@ func (p *Printer) emitSourceMapsAfterToken(token ast.Kind, pos int, contextNode 
 	emitFlags := previousState.emitFlags
 	loc := previousState.sourceMapRange
 	hasLoc := previousState.hasTokenSourceMapRange
+    mapNode := p.emitContext.MostOriginal(contextNode)
+    mapSourceFile := ast.GetSourceFileOfNode(mapNode)
+    mapSource := core.IfElse[sourcemap.Source](mapSourceFile != nil, mapSourceFile, p.sourceMapSource)
 	if emitFlags&EFNoTokenTrailingSourceMaps == 0 {
 		if hasLoc {
 			pos = loc.End()
 		}
 		if pos >= 0 {
-			p.emitSourcePos(p.sourceMapSource, pos) // !!! support SourceMapRange from Strada?
+            p.emitSourcePos(mapSource, pos) // !!! support SourceMapRange from Strada?
 		}
 	}
 }

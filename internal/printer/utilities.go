@@ -14,6 +14,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
+//
+
 type getLiteralTextFlags int
 
 const (
