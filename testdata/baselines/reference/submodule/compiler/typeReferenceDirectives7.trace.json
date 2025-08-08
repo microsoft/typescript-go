@@ -1,0 +1,8 @@
+======== Resolving type reference directive 'lib', containing file '/app.ts', root directory '/node_modules/@types'. ========
+Resolving with primary search path '/node_modules/@types'.
+Directory '/node_modules/@types' does not exist, skipping all lookups in it.
+Looking up in 'node_modules' folder, initial location '/'.
+Searching all ancestor node_modules directories for preferred extensions: Declaration.
+Directory '/node_modules' does not exist, skipping all lookups in it.
+Directory '/node_modules/@types' does not exist, skipping all lookups in it.
+======== Type reference directive 'lib' was not resolved. ========

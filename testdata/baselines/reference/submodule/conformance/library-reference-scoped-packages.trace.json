@@ -1,0 +1,16 @@
+======== Resolving type reference directive '@beep/boop', containing file '/a.ts', root directory '/.src/node_modules/@types,/node_modules/@types'. ========
+Resolving with primary search path '/.src/node_modules/@types, /node_modules/@types'.
+Scoped package detected, looking in 'beep__boop'
+Directory '/.src/node_modules/@types' does not exist, skipping all lookups in it.
+Scoped package detected, looking in 'beep__boop'
+File '/node_modules/@types/beep__boop/package.json' does not exist according to earlier cached lookups.
+File '/node_modules/@types/beep__boop/index.d.ts' exists - use it as a name resolution result.
+Resolving real path for '/node_modules/@types/beep__boop/index.d.ts', result '/node_modules/@types/beep__boop/index.d.ts'.
+======== Type reference directive '@beep/boop' was successfully resolved to '/node_modules/@types/beep__boop/index.d.ts', primary: true. ========
+======== Resolving type reference directive 'beep__boop', containing file '/.src/__inferred type names__.ts', root directory '/.src/node_modules/@types,/node_modules/@types'. ========
+Resolving with primary search path '/.src/node_modules/@types, /node_modules/@types'.
+Directory '/.src/node_modules/@types' does not exist, skipping all lookups in it.
+File '/node_modules/@types/beep__boop/package.json' does not exist.
+File '/node_modules/@types/beep__boop/index.d.ts' exists - use it as a name resolution result.
+Resolving real path for '/node_modules/@types/beep__boop/index.d.ts', result '/node_modules/@types/beep__boop/index.d.ts'.
+======== Type reference directive 'beep__boop' was successfully resolved to '/node_modules/@types/beep__boop/index.d.ts', primary: true. ========
