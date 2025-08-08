@@ -1,10 +1,7 @@
 package compiler
 
 import (
-	"sync"
-
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -25,18 +22,17 @@ type CompilerHost interface {
 var _ CompilerHost = (*compilerHost)(nil)
 
 type compilerHost struct {
-	currentDirectory        string
-	fs                      vfs.FS
-	defaultLibraryPath      string
-	extendedConfigCache     *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]
-	extendedConfigCacheOnce sync.Once
+	currentDirectory    string
+	fs                  vfs.FS
+	defaultLibraryPath  string
+	extendedConfigCache tsoptions.ExtendedConfigCache
 }
 
 func NewCachedFSCompilerHost(
 	currentDirectory string,
 	fs vfs.FS,
 	defaultLibraryPath string,
-	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
+	extendedConfigCache tsoptions.ExtendedConfigCache,
 ) CompilerHost {
 	return NewCompilerHost(currentDirectory, cachedvfs.From(fs), defaultLibraryPath, extendedConfigCache)
 }
@@ -45,7 +41,7 @@ func NewCompilerHost(
 	currentDirectory string,
 	fs vfs.FS,
 	defaultLibraryPath string,
-	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
+	extendedConfigCache tsoptions.ExtendedConfigCache,
 ) CompilerHost {
 	return &compilerHost{
 		currentDirectory:    currentDirectory,
@@ -80,11 +76,6 @@ func (h *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.Sourc
 }
 
 func (h *compilerHost) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
-	h.extendedConfigCacheOnce.Do(func() {
-		if h.extendedConfigCache == nil {
-			h.extendedConfigCache = &collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]{}
-		}
-	})
 	commandLine, _ := tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, h, h.extendedConfigCache)
 	return commandLine
 }

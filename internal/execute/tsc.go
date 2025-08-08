@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
@@ -164,12 +163,10 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testin
 	// !!! convert to options with absolute paths is usually done here, but for ease of implementation, it's done in `tsoptions.ParseCommandLine()`
 	compilerOptionsFromCommandLine := commandLine.CompilerOptions()
 	configForCompilation := commandLine
-	var extendedConfigCache collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]
+	extendedConfigCache := &extendedConfigCache{}
 	var configTime time.Duration
 	if configFileName != "" {
-		configStart := sys.Now()
-		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(configFileName, compilerOptionsFromCommandLine, sys, &extendedConfigCache)
-		configTime = sys.Now().Sub(configStart)
+		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(configFileName, compilerOptionsFromCommandLine, sys, extendedConfigCache)
 		if len(errors) != 0 {
 			// these are unrecoverable errors--exit to report them as diagnostics
 			for _, e := range errors {
@@ -195,7 +192,7 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testin
 			sys,
 			configForCompilation,
 			reportDiagnostic,
-			&extendedConfigCache,
+			extendedConfigCache,
 			configTime,
 			testing,
 		)
@@ -204,7 +201,7 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testin
 		sys,
 		configForCompilation,
 		reportDiagnostic,
-		&extendedConfigCache,
+		extendedConfigCache,
 		configTime,
 	)
 }
@@ -227,7 +224,7 @@ func performIncrementalCompilation(
 	sys System,
 	config *tsoptions.ParsedCommandLine,
 	reportDiagnostic diagnosticReporter,
-	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
+	extendedConfigCache tsoptions.ExtendedConfigCache,
 	configTime time.Duration,
 	testing bool,
 ) CommandLineResult {
@@ -267,7 +264,7 @@ func performCompilation(
 	sys System,
 	config *tsoptions.ParsedCommandLine,
 	reportDiagnostic diagnosticReporter,
-	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
+	extendedConfigCache tsoptions.ExtendedConfigCache,
 	configTime time.Duration,
 ) CommandLineResult {
 	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache)
