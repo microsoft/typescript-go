@@ -104,7 +104,7 @@ func (l *LanguageService) createLocationsFromDeclarations(declarations []*ast.No
 	for _, decl := range declarations {
 		file := ast.GetSourceFileOfNode(decl)
 		name := core.OrElse(ast.GetNameOfDeclaration(decl), decl)
-		locations = append(locations, lsproto.Location{
+		locations = core.AppendIfUnique(locations, lsproto.Location{
 			Uri:   FileNameToDocumentURI(file.FileName()),
 			Range: *l.createLspRangeFromNode(name, file),
 		})
