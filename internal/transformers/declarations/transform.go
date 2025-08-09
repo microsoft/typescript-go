@@ -468,14 +468,14 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 	case ast.KindTupleType:
 		result = tx.Visitor().VisitEachChild(input)
 		if result != nil {
-			sourceFileForLocation := tx.state.currentSourceFile
-			if nodeFile := ast.GetSourceFileOfNode(input); nodeFile != nil && nodeFile != sourceFileForLocation {
-				sourceFileForLocation = nodeFile
-			}
-			startLine, _ := scanner.GetLineAndCharacterOfPosition(sourceFileForLocation, input.Loc.Pos())
-			endLine, _ := scanner.GetLineAndCharacterOfPosition(sourceFileForLocation, input.Loc.End())
-			if startLine == endLine {
-				tx.EmitContext().AddEmitFlags(result, printer.EFSingleLine)
+			original := tx.EmitContext().MostOriginal(input)
+			originalSourceFile := ast.GetSourceFileOfNode(original)
+			if originalSourceFile != nil {
+				startLine, _ := scanner.GetLineAndCharacterOfPosition(originalSourceFile, original.Loc.Pos())
+				endLine, _ := scanner.GetLineAndCharacterOfPosition(originalSourceFile, original.Loc.End())
+				if startLine == endLine {
+					tx.EmitContext().AddEmitFlags(result, printer.EFSingleLine)
+				}
 			}
 		}
 	case ast.KindJSDocTypeExpression:
