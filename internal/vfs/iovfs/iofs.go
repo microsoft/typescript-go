@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/fs"
 	"strings"
+	"unsafe"
 
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -65,7 +66,8 @@ func From(fsys fs.FS, useCaseSensitiveFileNames bool) vfs.FS {
 				// \xEF\xBB\xBF.
 				content = stringutil.AddUTF8ByteOrderMark(content)
 			}
-			return fsys.WriteFile(rest, []byte(content), 0o666)
+			buf := unsafe.Slice(unsafe.StringData(content), len(content))
+			return fsys.WriteFile(rest, buf, 0o666)
 		}
 		mkdirAll = func(path string) error {
 			rest, _ := strings.CutPrefix(path, "/")
