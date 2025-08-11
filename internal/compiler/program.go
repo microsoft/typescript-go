@@ -488,7 +488,7 @@ func (p *Program) verifyCompilerOptions() {
 				relative = "./" + relative
 			}
 			suggestion := tspath.CombinePaths(relative, "*")
-			useInstead = fmt.Sprintf(`"paths": {"*": %s}`, core.Must(json.Marshal(suggestion)))
+			useInstead = fmt.Sprintf(`"paths": {"*": [%s]}`, core.Must(json.Marshal(suggestion)))
 		}
 		createRemovedOptionDiagnostic("baseUrl", "", useInstead)
 	}
