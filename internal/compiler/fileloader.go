@@ -22,8 +22,9 @@ type fileLoader struct {
 	comparePathsOptions tspath.ComparePathsOptions
 	supportedExtensions []string
 
-	filesParser *filesParser
-	rootTasks   []*parseTask
+	filesParser      *filesParser
+	rootTasks        []*parseTask
+	includeProcessor *includeProcessor
 
 	totalFileCount atomic.Int32
 	libFileCount   atomic.Int32
@@ -53,8 +54,7 @@ type processedFiles struct {
 	// List of present unsupported extensions
 	unsupportedExtensions                []string
 	sourceFilesFoundSearchingNodeModules collections.Set[tspath.Path]
-	fileLoadDiagnostics                  *ast.DiagnosticsCollection
-	fileIncludeReasons                   map[tspath.Path][]*fileIncludeReason
+	includeProcessor                     *includeProcessor
 	// if file was included using source file and its output is actually part of program
 	// this contains mapping from output to source file
 	outputFileToProjectReferenceSource map[tspath.Path]string
@@ -89,6 +89,7 @@ func processAllProgramFiles(
 		},
 		rootTasks:           make([]*parseTask, 0, len(rootFiles)+len(compilerOptions.Lib)),
 		supportedExtensions: core.Flatten(tsoptions.GetSupportedExtensionsWithJsonIfResolveJsonModule(compilerOptions, supportedExtensions)),
+		includeProcessor:    &includeProcessor{},
 	}
 	loader.addProjectReferenceTasks(singleThreaded)
 	loader.resolver = module.NewResolver(loader.projectReferenceFileMapper.host, compilerOptions, opts.TypingsLocation, opts.ProjectName)
@@ -126,7 +127,7 @@ func processAllProgramFiles(
 	libFiles := make([]*ast.SourceFile, 0, totalFileCount) // totalFileCount here since we append files to it later to construct the final list
 
 	filesByPath := make(map[tspath.Path]*ast.SourceFile, totalFileCount)
-	fileIncludeReasons := make(map[tspath.Path][]*fileIncludeReason, totalFileCount)
+	loader.includeProcessor.fileIncludeReasons = make(map[tspath.Path][]*fileIncludeReason, totalFileCount)
 	outputFileToProjectReferenceSource := make(map[tspath.Path]string, totalFileCount)
 	resolvedModules := make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule], totalFileCount+1)
 	typeResolutionsInFile := make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedTypeReferenceDirective], totalFileCount)
@@ -136,7 +137,6 @@ func processAllProgramFiles(
 	var unsupportedExtensions []string
 	var sourceFilesFoundSearchingNodeModules collections.Set[tspath.Path]
 	var libFileSet collections.Set[tspath.Path]
-	fileLoadDiagnostics := &ast.DiagnosticsCollection{}
 
 	loader.filesParser.collect(&loader, loader.rootTasks, func(task *parseTask) {
 		if task.redirectedParseTask != nil {
@@ -183,7 +183,6 @@ func processAllProgramFiles(
 			files = append(files, file)
 		}
 		filesByPath[path] = file
-		fileIncludeReasons[path] = task.allIncludeReasons
 		resolvedModules[path] = task.resolutionsInFile
 		typeResolutionsInFile[path] = task.typeResolutionsInFile
 		sourceFileMetaDatas[path] = task.metadata
@@ -212,28 +211,8 @@ func processAllProgramFiles(
 
 	allFiles := append(libFiles, files...)
 
-	for _, resolutions := range resolvedModules {
-		for _, resolvedModule := range resolutions {
-			for _, diag := range resolvedModule.ResolutionDiagnostics {
-				fileLoadDiagnostics.Add(diag)
-			}
-		}
-	}
-	for _, typeResolutions := range typeResolutionsInFile {
-		for _, resolvedTypeRef := range typeResolutions {
-			for _, diag := range resolvedTypeRef.ResolutionDiagnostics {
-				fileLoadDiagnostics.Add(diag)
-			}
-		}
-	}
-
 	loader.pathForLibFileResolutions.Range(func(key tspath.Path, value module.ModeAwareCache[*module.ResolvedModule]) bool {
 		resolvedModules[key] = value
-		for _, resolvedModule := range value {
-			for _, diag := range resolvedModule.ResolutionDiagnostics {
-				fileLoadDiagnostics.Add(diag)
-			}
-		}
 		return true
 	})
 
@@ -250,8 +229,7 @@ func processAllProgramFiles(
 		unsupportedExtensions:                unsupportedExtensions,
 		sourceFilesFoundSearchingNodeModules: sourceFilesFoundSearchingNodeModules,
 		libFiles:                             libFileSet,
-		fileLoadDiagnostics:                  fileLoadDiagnostics,
-		fileIncludeReasons:                   fileIncludeReasons,
+		includeProcessor:                     loader.includeProcessor,
 		outputFileToProjectReferenceSource:   outputFileToProjectReferenceSource,
 	}
 }
@@ -459,23 +437,26 @@ func (p *fileLoader) resolveTypeReferenceDirectives(t *parseTask) {
 		resolutionMode := getModeForTypeReferenceDirectiveInFile(ref, file, meta, module.GetCompilerOptionsWithRedirect(p.opts.Config.CompilerOptions(), redirect))
 		resolved := p.resolver.ResolveTypeReferenceDirective(ref.FileName, file.FileName(), resolutionMode, redirect)
 		typeResolutionsInFile[module.ModeAwareCacheKey{Name: ref.FileName, Mode: resolutionMode}] = resolved
-
+		includeReason := &fileIncludeReason{
+			kind: fileIncludeKindTypeReferenceDirective,
+			data: &referencedFileData{
+				file:  t.path,
+				index: index,
+			},
+		}
 		if resolved.IsResolved() {
 			t.addSubTask(resolvedRef{
 				fileName:              resolved.ResolvedFileName,
 				increaseDepth:         resolved.IsExternalLibraryImport,
 				elideOnDepth:          false,
 				isFromExternalLibrary: resolved.IsExternalLibraryImport,
-				includeReason: &fileIncludeReason{
-					kind: fileIncludeKindTypeReferenceDirective,
-					data: &referencedFileData{
-						file:  t.path,
-						index: index,
-					},
-				},
+				includeReason:         includeReason,
 			}, false)
 		} else {
-			// !! sheetal Cannot_find_type_definition_file_for_0
+			p.includeProcessor.addProcessingDiagnostic(&processingDiagnostic{
+				kind: processingDiagnosticKindUnknownReference,
+				data: includeReason,
+			})
 		}
 	}
 

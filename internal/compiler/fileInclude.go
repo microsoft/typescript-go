@@ -39,18 +39,12 @@ type fileIncludeReason struct {
 	// Uses file name as is
 	diag     *ast.Diagnostic
 	diagOnce sync.Once
-
-	// related information
-	relatedInfo     *ast.Diagnostic
-	relatedInfoOnce sync.Once
 }
 
 type referencedFileData struct {
-	file         tspath.Path
-	index        int
-	synthetic    *ast.Node
-	location     *referenceFileLocation
-	locationOnce sync.Once
+	file      tspath.Path
+	index     int
+	synthetic *ast.Node
 }
 
 type referenceFileLocation struct {
@@ -105,56 +99,53 @@ func (r *fileIncludeReason) asAutomaticTypeDirectiveFileData() *automaticTypeDir
 
 func (r *fileIncludeReason) getReferencedLocation(program *Program) *referenceFileLocation {
 	ref := r.asReferencedFileData()
-	ref.locationOnce.Do(func() {
-		file := program.GetSourceFileByPath(ref.file)
-		switch r.kind {
-		case fileIncludeKindImport:
-			var specifier *ast.Node
-			var isSynthetic bool
-			if ref.synthetic != nil {
-				specifier = ref.synthetic
-				isSynthetic = true
-			} else if ref.index < len(file.Imports()) {
-				specifier = file.Imports()[ref.index]
-			} else {
-				augIndex := len(file.Imports())
-				for _, imp := range file.ModuleAugmentations {
-					if imp.Kind == ast.KindStringLiteral {
-						if augIndex == ref.index {
-							specifier = imp
-							break
-						}
-						augIndex++
+	file := program.GetSourceFileByPath(ref.file)
+	switch r.kind {
+	case fileIncludeKindImport:
+		var specifier *ast.Node
+		var isSynthetic bool
+		if ref.synthetic != nil {
+			specifier = ref.synthetic
+			isSynthetic = true
+		} else if ref.index < len(file.Imports()) {
+			specifier = file.Imports()[ref.index]
+		} else {
+			augIndex := len(file.Imports())
+			for _, imp := range file.ModuleAugmentations {
+				if imp.Kind == ast.KindStringLiteral {
+					if augIndex == ref.index {
+						specifier = imp
+						break
 					}
+					augIndex++
 				}
 			}
-			resolution := program.GetResolvedModuleFromModuleSpecifier(file, specifier)
-			ref.location = &referenceFileLocation{
-				file:        file,
-				node:        specifier,
-				packageId:   resolution.PackageId,
-				isSynthetic: isSynthetic,
-			}
-		case fileIncludeKindReferenceFile:
-			ref.location = &referenceFileLocation{
-				file: file,
-				ref:  file.ReferencedFiles[ref.index],
-			}
-		case fileIncludeKindTypeReferenceDirective:
-			ref.location = &referenceFileLocation{
-				file: file,
-				ref:  file.TypeReferenceDirectives[ref.index],
-			}
-		case fileIncludeKindLibReferenceDirective:
-			ref.location = &referenceFileLocation{
-				file: file,
-				ref:  file.LibReferenceDirectives[ref.index],
-			}
-		default:
-			panic(fmt.Sprintf("unknown reason: %v", r.kind))
 		}
-	})
-	return ref.location
+		resolution := program.GetResolvedModuleFromModuleSpecifier(file, specifier)
+		return &referenceFileLocation{
+			file:        file,
+			node:        specifier,
+			packageId:   resolution.PackageId,
+			isSynthetic: isSynthetic,
+		}
+	case fileIncludeKindReferenceFile:
+		return &referenceFileLocation{
+			file: file,
+			ref:  file.ReferencedFiles[ref.index],
+		}
+	case fileIncludeKindTypeReferenceDirective:
+		return &referenceFileLocation{
+			file: file,
+			ref:  file.TypeReferenceDirectives[ref.index],
+		}
+	case fileIncludeKindLibReferenceDirective:
+		return &referenceFileLocation{
+			file: file,
+			ref:  file.LibReferenceDirectives[ref.index],
+		}
+	default:
+		panic(fmt.Sprintf("unknown reason: %v", r.kind))
+	}
 }
 
 func (r *fileIncludeReason) toDiagnostic(program *Program, relativeFileName bool) *ast.Diagnostic {
@@ -234,7 +225,7 @@ func (r *fileIncludeReason) computeDiagnostic(program *Program, toFileName func(
 }
 
 func (r *fileIncludeReason) computeReferenceFileDiagnostic(program *Program, toFileName func(string) string) *ast.Diagnostic {
-	referenceLocation := r.getReferencedLocation(program)
+	referenceLocation := program.includeProcessor.getReferenceLocation(r, program)
 	referenceText := referenceLocation.text()
 	switch r.kind {
 	case fileIncludeKindImport:
@@ -272,14 +263,7 @@ func (r *fileIncludeReason) computeReferenceFileDiagnostic(program *Program, toF
 	}
 }
 
-func (r *fileIncludeReason) toRelatedInfo(program *Program, getCompilerOptionsObjectLiteralSyntax func() *ast.ObjectLiteralExpression) *ast.Diagnostic {
-	r.relatedInfoOnce.Do(func() {
-		r.relatedInfo = r.computeRelatedInfo(program, getCompilerOptionsObjectLiteralSyntax)
-	})
-	return r.relatedInfo
-}
-
-func (r *fileIncludeReason) computeRelatedInfo(program *Program, getCompilerOptionsObjectLiteralSyntax func() *ast.ObjectLiteralExpression) *ast.Diagnostic {
+func (r *fileIncludeReason) toRelatedInfo(program *Program) *ast.Diagnostic {
 	if r.isReferencedFile() {
 		return r.computeReferenceFileRelatedInfo(program)
 	}
@@ -312,17 +296,17 @@ func (r *fileIncludeReason) computeRelatedInfo(program *Program, getCompilerOpti
 	case fileIncludeKindAutomaticTypeDirectiveFile:
 		if program.Options().Types != nil {
 			data := r.asAutomaticTypeDirectiveFileData()
-			if typesSyntax := tsoptions.GetOptionsSyntaxByArrayElementValue(getCompilerOptionsObjectLiteralSyntax(), "types", data.typeReference); typesSyntax != nil {
+			if typesSyntax := tsoptions.GetOptionsSyntaxByArrayElementValue(program.includeProcessor.getCompilerOptionsObjectLiteralSyntax(program), "types", data.typeReference); typesSyntax != nil {
 				return tsoptions.CreateDiagnosticForNodeInSourceFile(config.ConfigFile.SourceFile, typesSyntax.AsNode(), diagnostics.File_is_entry_point_of_type_library_specified_here)
 			}
 		}
 	case fileIncludeKindLibFile:
 		if index, ok := r.asLibFileIndex(); ok {
-			if libSyntax := tsoptions.GetOptionsSyntaxByArrayElementValue(getCompilerOptionsObjectLiteralSyntax(), "lib", program.Options().Lib[index]); libSyntax != nil {
+			if libSyntax := tsoptions.GetOptionsSyntaxByArrayElementValue(program.includeProcessor.getCompilerOptionsObjectLiteralSyntax(program), "lib", program.Options().Lib[index]); libSyntax != nil {
 				return tsoptions.CreateDiagnosticForNodeInSourceFile(config.ConfigFile.SourceFile, libSyntax.AsNode(), diagnostics.File_is_library_specified_here)
 			}
 		} else if target := program.Options().GetEmitScriptTarget().String(); target != "" {
-			if targetValueSyntax := tsoptions.ForEachPropertyAssignment(getCompilerOptionsObjectLiteralSyntax(), "target", tsoptions.GetCallbackForFindingPropertyAssignmentByValue(target)); targetValueSyntax != nil {
+			if targetValueSyntax := tsoptions.ForEachPropertyAssignment(program.includeProcessor.getCompilerOptionsObjectLiteralSyntax(program), "target", tsoptions.GetCallbackForFindingPropertyAssignmentByValue(target)); targetValueSyntax != nil {
 				return tsoptions.CreateDiagnosticForNodeInSourceFile(config.ConfigFile.SourceFile, targetValueSyntax.AsNode(), diagnostics.File_is_default_library_for_target_specified_here)
 			}
 		}
@@ -333,7 +317,7 @@ func (r *fileIncludeReason) computeRelatedInfo(program *Program, getCompilerOpti
 }
 
 func (r *fileIncludeReason) computeReferenceFileRelatedInfo(program *Program) *ast.Diagnostic {
-	referenceLocation := r.getReferencedLocation(program)
+	referenceLocation := program.includeProcessor.getReferenceLocation(r, program)
 	if referenceLocation.isSynthetic {
 		return nil
 	}

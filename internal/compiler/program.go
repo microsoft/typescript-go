@@ -227,6 +227,7 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path) (*Program, bool) {
 	result.files[index] = newFile
 	result.filesByPath = maps.Clone(result.filesByPath)
 	result.filesByPath[newFile.Path()] = newFile
+	updateFileIncludeProcessor(result)
 	return result, true
 }
 
@@ -374,7 +375,7 @@ func (p *Program) GetSuggestionDiagnostics(ctx context.Context, sourceFile *ast.
 }
 
 func (p *Program) GetProgramDiagnostics() []*ast.Diagnostic {
-	return SortAndDeduplicateDiagnostics(slices.Concat(p.programDiagnostics, p.fileLoadDiagnostics.GetDiagnostics()))
+	return SortAndDeduplicateDiagnostics(slices.Concat(p.programDiagnostics, p.includeProcessor.getDiagnostics(p).GetDiagnostics()))
 }
 
 func (p *Program) getSourceFilesToEmit(targetSourceFile *ast.SourceFile, forceDtsEmit bool) []*ast.SourceFile {
@@ -566,14 +567,14 @@ func (p *Program) verifyCompilerOptions() {
 
 		for _, file := range p.files {
 			if sourceFileMayBeEmitted(file, p, false) && !rootPaths.Has(file.Path()) {
-				p.programDiagnostics = append(p.programDiagnostics, p.createDiagnosticExplainingFile(
-					getCompilerOptionsObjectLiteralSyntax,
-					file,
-					nil,
-					diagnostics.File_0_is_not_listed_within_the_file_list_of_project_1_Projects_must_list_all_files_or_use_an_include_pattern,
-					file.FileName(),
-					configFilePath(),
-				))
+				p.includeProcessor.addProcessingDiagnostic(&processingDiagnostic{
+					kind: processingDiagnosticKindExplainingFileInclude,
+					data: &includeExplainingDiagnostic{
+						file:    file.Path(),
+						message: diagnostics.File_0_is_not_listed_within_the_file_list_of_project_1_Projects_must_list_all_files_or_use_an_include_pattern,
+						args:    []any{file.FileName(), configFilePath()},
+					},
+				})
 			}
 		}
 	}
@@ -1472,129 +1473,13 @@ func (p *Program) ExplainFiles(writer io.Writer) {
 	}
 	for _, file := range p.GetSourceFiles() {
 		fmt.Fprintln(writer, toRelativeFileName(file.FileName()))
-		for _, reason := range p.fileIncludeReasons[file.Path()] {
+		for _, reason := range p.includeProcessor.fileIncludeReasons[file.Path()] {
 			fmt.Fprintln(writer, "  ", reason.toDiagnostic(p, true).Message())
 		}
-		for _, diag := range p.explainRedirectAndImpliedFormat(file, toRelativeFileName) {
+		for _, diag := range p.includeProcessor.explainRedirectAndImpliedFormat(p, file, toRelativeFileName) {
 			fmt.Fprintln(writer, "  ", diag.Message())
 		}
 	}
-}
-
-func (p *Program) explainRedirectAndImpliedFormat(
-	file *ast.SourceFile,
-	toFileName func(fileName string) string,
-) []*ast.Diagnostic {
-	var result []*ast.Diagnostic
-	if source := p.GetSourceOfProjectReferenceIfOutputIncluded(file); source != file.FileName() {
-		result = append(result, ast.NewCompilerDiagnostic(
-			diagnostics.File_is_output_of_project_reference_source_0,
-			toFileName(source),
-		))
-	}
-	// !!! redirects
-	// if (file.redirectInfo) {
-	//     (result ??= []).push(chainDiagnosticMessages(
-	//         /*details*/ undefined,
-	//         Diagnostics.File_redirects_to_file_0,
-	//         toFileName(file.redirectInfo.redirectTarget, fileNameConvertor),
-	//     ));
-	// }
-	if ast.IsExternalOrCommonJSModule(file) {
-		metaData := p.GetSourceFileMetaData(file.Path())
-		switch p.GetImpliedNodeFormatForEmit(file) {
-		case core.ModuleKindESNext:
-			if metaData.PackageJsonType == "module" {
-				result = append(result, ast.NewCompilerDiagnostic(
-					diagnostics.File_is_ECMAScript_module_because_0_has_field_type_with_value_module,
-					toFileName(metaData.PackageJsonDirectory+"/package.json"),
-				))
-			}
-		case core.ModuleKindCommonJS:
-			if metaData.PackageJsonType != "" {
-				result = append(result, ast.NewCompilerDiagnostic(diagnostics.File_is_CommonJS_module_because_0_has_field_type_whose_value_is_not_module, toFileName(metaData.PackageJsonDirectory+"/package.json")))
-			} else if metaData.PackageJsonDirectory != "" {
-				if metaData.PackageJsonType == "" {
-					result = append(result, ast.NewCompilerDiagnostic(diagnostics.File_is_CommonJS_module_because_0_does_not_have_field_type, toFileName(metaData.PackageJsonDirectory+"/package.json")))
-				}
-			} else {
-				result = append(result, ast.NewCompilerDiagnostic(diagnostics.File_is_CommonJS_module_because_package_json_was_not_found))
-			}
-		}
-	}
-	return result
-}
-
-func (p *Program) createDiagnosticExplainingFile(
-	getCompilerOptionsObjectLiteralSyntax func() *ast.ObjectLiteralExpression,
-	file *ast.SourceFile,
-	diagnosticReason *fileIncludeReason,
-	diag *diagnostics.Message,
-	args ...any,
-) *ast.Diagnostic {
-	var chain []*ast.Diagnostic
-	var relatedInfo []*ast.Diagnostic
-	var redirectInfo []*ast.Diagnostic
-	var preferredLocation *fileIncludeReason
-	var seenReasons collections.Set[*fileIncludeReason]
-	if diagnosticReason.isReferencedFile() && !diagnosticReason.getReferencedLocation(p).isSynthetic {
-		preferredLocation = diagnosticReason
-	}
-
-	processRelatedInfo := func(includeReason *fileIncludeReason) {
-		if preferredLocation == nil && includeReason.isReferencedFile() && !includeReason.getReferencedLocation(p).isSynthetic {
-			preferredLocation = includeReason
-		} else {
-			info := includeReason.toRelatedInfo(p, getCompilerOptionsObjectLiteralSyntax)
-			if info != nil {
-				relatedInfo = append(relatedInfo, info)
-			}
-		}
-	}
-	processInclude := func(includeReason *fileIncludeReason) {
-		if !seenReasons.AddIfAbsent(includeReason) {
-			return
-		}
-		chain = append(chain, includeReason.toDiagnostic(p, false))
-		processRelatedInfo(includeReason)
-	}
-
-	// !!! todo sheetal caching
-
-	if file != nil {
-		reasons := p.fileIncludeReasons[file.Path()]
-		chain = make([]*ast.Diagnostic, 0, len(reasons))
-		for _, reason := range reasons {
-			processInclude(reason)
-		}
-		redirectInfo = p.explainRedirectAndImpliedFormat(file, func(fileName string) string { return fileName })
-	}
-	if diagnosticReason != nil {
-		processInclude(diagnosticReason)
-	}
-	if chain != nil && (preferredLocation == nil || seenReasons.Len() != 1) {
-		fileReason := ast.NewCompilerDiagnostic(diagnostics.The_file_is_in_the_program_because_Colon)
-		fileReason.SetMessageChain(chain)
-		chain = []*ast.Diagnostic{fileReason}
-	}
-	if redirectInfo != nil {
-		chain = append(chain, redirectInfo...)
-	}
-
-	var result *ast.Diagnostic
-	if preferredLocation != nil {
-		result = preferredLocation.getReferencedLocation(p).diagnosticAt(diag, args...)
-	}
-	if result == nil {
-		result = ast.NewCompilerDiagnostic(diag, args...)
-	}
-	if chain != nil {
-		result.SetMessageChain(chain)
-	}
-	if relatedInfo != nil {
-		result.SetRelatedInfo(relatedInfo)
-	}
-	return result
 }
 
 func (p *Program) GetLibFileFromReference(ref *ast.FileReference) *ast.SourceFile {

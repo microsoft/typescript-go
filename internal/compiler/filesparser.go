@@ -86,21 +86,23 @@ func (t *parseTask) load(loader *fileLoader) {
 
 	if compilerOptions.NoLib != core.TSTrue {
 		for index, lib := range file.LibReferenceDirectives {
+			includeReason := &fileIncludeReason{
+				kind: fileIncludeKindLibReferenceDirective,
+				data: &referencedFileData{
+					file:  t.path,
+					index: index,
+				},
+			}
 			if name, ok := tsoptions.GetLibFileName(lib.FileName); ok {
 				t.addSubTask(resolvedRef{
-					fileName: loader.pathForLibFile(name),
-					includeReason: &fileIncludeReason{
-						kind: fileIncludeKindLibReferenceDirective,
-						data: &referencedFileData{
-							file:  t.path,
-							index: index,
-						},
-					},
+					fileName:      loader.pathForLibFile(name),
+					includeReason: includeReason,
 				}, true)
 			} else {
-				// !!! sheetal file preprocessing diagnostic explaining
-				// Cannot_find_lib_definition_for_0_Did_you_mean_1
-				// filePreprocessingLibreferenceDiagnostic
+				loader.includeProcessor.addProcessingDiagnostic(&processingDiagnostic{
+					kind: processingDiagnosticKindUnknownReference,
+					data: includeReason,
+				})
 			}
 		}
 	}
@@ -232,11 +234,14 @@ func (w *filesParser) collectWorker(loader *fileLoader, tasks []*parseTask, iter
 	var results []tspath.Path
 	for _, task := range tasks {
 		if task.redirectedParseTask == nil {
-			if task.loadedTask == nil {
-				task.allIncludeReasons = []*fileIncludeReason{task.includeReason}
-			} else {
-				task.loadedTask.allIncludeReasons = append(task.loadedTask.allIncludeReasons, task.includeReason)
+			includeReason := task.includeReason
+			if task.loadedTask != nil {
 				task = task.loadedTask
+			}
+			if existing, ok := loader.includeProcessor.fileIncludeReasons[task.path]; ok {
+				loader.includeProcessor.fileIncludeReasons[task.path] = append(existing, includeReason)
+			} else {
+				loader.includeProcessor.fileIncludeReasons[task.path] = []*fileIncludeReason{includeReason}
 			}
 		}
 		// ensure we only walk each task once
