@@ -987,14 +987,6 @@ func getReferencedSymbolsForSymbol(originalSymbol *ast.Symbol, node *ast.Node, s
 	return state.result
 }
 
-type ExportKind int
-
-const (
-	ExportKindDefault      ExportKind = 0
-	ExportKindNamed        ExportKind = 1
-	ExportKindExportEquals ExportKind = 2
-)
-
 type ExportInfo struct {
 	exportingModuleSymbol *ast.Symbol
 	exportKind            ExportKind

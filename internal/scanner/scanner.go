@@ -2428,6 +2428,10 @@ func GetLineStarts(sourceFile ast.SourceFileLike) []core.TextPos {
 	return sourceFile.LineMap()
 }
 
+func GetLineStartPositionForPosition(pos int, lineMap []core.TextPos) int {
+	return int(lineMap[ComputeLineOfPosition(lineMap, pos)])
+}
+
 func GetLineAndCharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, character int) {
 	lineMap := GetLineStarts(sourceFile)
 	line = ComputeLineOfPosition(lineMap, pos)

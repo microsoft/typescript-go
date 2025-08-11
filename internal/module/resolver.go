@@ -402,7 +402,7 @@ func (r *resolutionState) resolveNodeLike() *ResolvedModule {
 		}
 		r.diagnostics = r.diagnostics[:diagnosticsCount]
 	}
-	return result
+	return result // !!!
 }
 
 func (r *resolutionState) resolveNodeLikeWorker() *ResolvedModule {

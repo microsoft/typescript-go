@@ -161,6 +161,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 				false, /*hasAction*/
 				false, /*preselect*/
 				"",    /*source*/
+				nil,   /*autoImportEntryData*/
 			)
 		})
 		defaultCommitCharacters := getDefaultCommitCharacters(completion.isNewIdentifier)
@@ -210,6 +211,7 @@ func (l *LanguageService) convertPathCompletions(
 			false, /*hasAction*/
 			false, /*preselect*/
 			"",    /*source*/
+			nil,   /*autoImportEntryData*/
 		)
 	})
 	itemDefaults := l.setItemDefaults(

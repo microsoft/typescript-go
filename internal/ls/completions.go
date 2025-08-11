@@ -14,6 +14,7 @@ import (
 	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
+	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
@@ -21,8 +22,10 @@ import (
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/lsutil"
+	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"golang.org/x/text/collate"
 )
 
@@ -95,8 +98,8 @@ type completionDataData struct {
 	isJsxIdentifierExpected   bool
 	isRightOfOpenTag          bool
 	isRightOfDotOrQuestionDot bool
-	importStatementCompletion any  // !!!
-	hasUnresolvedAutoImports  bool // !!!
+	importStatementCompletion *importStatementCompletionInfo // !!!
+	hasUnresolvedAutoImports  bool                           // !!!
 	// flags CompletionInfoFlags // !!!
 	defaultCommitCharacters []string
 }
@@ -107,7 +110,12 @@ type completionDataKeyword struct {
 }
 
 type importStatementCompletionInfo struct {
-	// !!!
+	isKeywordOnlyCompletion        bool
+	keywordCompletion              ast.Kind // TokenKind
+	isNewIdentifierLocation        bool
+	isTopLevelTypeOnly             bool
+	couldBeTypeOnlyImportSpecifier bool
+	replacementSpan                *lsproto.Range
 }
 
 // If we're after the `=` sign but no identifier has been typed yet,
@@ -131,6 +139,15 @@ const (
 	KeywordCompletionFiltersTypeKeyword // Literally just `type`
 	KeywordCompletionFiltersLast        = KeywordCompletionFiltersTypeKeyword
 )
+
+func keywordFiltersFromSyntaxKind(keywordCompletion ast.Kind) KeywordCompletionFilters {
+	switch keywordCompletion {
+	case ast.KindTypeKeyword:
+		return KeywordCompletionFiltersTypeKeyword
+	default:
+		panic("Unknown mapping from ast.Kind `" + keywordCompletion.String() + "` to KeywordCompletionFilters")
+	}
+}
 
 type CompletionKind int
 
@@ -201,23 +218,69 @@ type symbolOriginInfo struct {
 	data              any
 }
 
-func (s *symbolOriginInfo) symbolName() string {
-	switch s.data.(type) {
+func (origin *symbolOriginInfo) symbolName() string {
+	switch origin.data.(type) {
 	case *symbolOriginInfoExport:
-		return s.data.(*symbolOriginInfoExport).symbolName
+		return origin.data.(*symbolOriginInfoExport).symbolName
 	case *symbolOriginInfoResolvedExport:
-		return s.data.(*symbolOriginInfoResolvedExport).symbolName
+		return origin.data.(*symbolOriginInfoResolvedExport).symbolName
 	default:
-		panic(fmt.Sprintf("symbolOriginInfo: unknown data type for symbolName(): %T", s.data))
+		panic(fmt.Sprintf("symbolOriginInfo: unknown data type for symbolName(): %T", origin.data))
+	}
+}
+
+func (origin *symbolOriginInfo) moduleSymbol() *ast.Symbol {
+	switch origin.data.(type) {
+	case *symbolOriginInfoExport:
+		return origin.data.(*symbolOriginInfoExport).moduleSymbol
+	case *symbolOriginInfoResolvedExport:
+		return origin.data.(*symbolOriginInfoResolvedExport).moduleSymbol
+	default:
+		panic(fmt.Sprintf("symbolOriginInfo: unknown data type for moduleSymbol(): %T", origin.data))
+	}
+}
+
+func (origin *symbolOriginInfo) toCompletionEntryData() *completionEntryData {
+	var ambientModuleName *string
+	if origin.fileName != "" {
+		ambientModuleName = strPtrTo(stringutil.StripQuotes(origin.fileName))
+	}
+	var isPackageJsonImport core.Tristate
+	if origin.isFromPackageJson {
+		isPackageJsonImport = core.TSTrue
+	}
+	switch origin.data.(type) {
+	case *symbolOriginInfoExport:
+		data := origin.data.(*symbolOriginInfoExport)
+		return &completionEntryData{
+			kind:                completionEntryDataKindAutoImportUnresolved,
+			exportName:          data.exportName,
+			exportMapKey:        data.exportMapKey,
+			fileName:            strPtrTo(origin.fileName),
+			ambientModuleName:   ambientModuleName,
+			isPackageJsonImport: isPackageJsonImport,
+		}
+	case *symbolOriginInfoResolvedExport:
+		data := origin.data.(*symbolOriginInfoResolvedExport)
+		return &completionEntryData{
+			kind:                completionEntryDataKindAutoImportResolved,
+			exportName:          data.exportName,
+			exportMapKey:        data.exportMapKey,
+			moduleSpecifier:     data.moduleSpecifier,
+			ambientModuleName:   ambientModuleName,
+			fileName:            strPtrTo(origin.fileName),
+			isPackageJsonImport: isPackageJsonImport,
+		}
+	default:
+		panic(fmt.Sprintf("completionEntryData is not generated for symbolOriginInfo of type %T", origin.data))
 	}
 }
 
 type symbolOriginInfoExport struct {
-	symbolName      string
-	moduleSymbol    *ast.Symbol
-	isDefaultExport bool
-	exporName       string
-	// exportMapKey  ExportMapInfoKey // !!!
+	symbolName   string
+	moduleSymbol *ast.Symbol
+	exportName   string
+	exportMapKey ExportMapInfoKey
 }
 
 func (s *symbolOriginInfo) asExport() *symbolOriginInfoExport {
@@ -225,10 +288,10 @@ func (s *symbolOriginInfo) asExport() *symbolOriginInfoExport {
 }
 
 type symbolOriginInfoResolvedExport struct {
-	symbolName   string
-	moduleSymbol *ast.Symbol
-	exportName   string
-	// exportMapKey ExportMapInfoKey // !!!
+	symbolName      string
+	moduleSymbol    *ast.Symbol
+	exportName      string
+	exportMapKey    ExportMapInfoKey
 	moduleSpecifier string
 }
 
@@ -352,7 +415,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 
 	checker, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
-	data := getCompletionData(program, checker, file, position, preferences)
+	data := l.getCompletionData(program, checker, file, position, nil, preferences)
 	if data == nil {
 		return nil
 	}
@@ -389,7 +452,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 	}
 }
 
-func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, file *ast.SourceFile, position int, preferences *UserPreferences) completionData {
+func (l *LanguageService) getCompletionData(program *compiler.Program, typeChecker *checker.Checker, file *ast.SourceFile, position int, itemData *itemData, preferences *UserPreferences) completionData {
 	inCheckedFile := isCheckedFile(file, program.Options())
 
 	currentToken := astnav.GetTokenAtPosition(file, position)
@@ -424,14 +487,34 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 	location := astnav.GetTouchingPropertyName(file, position)
 	keywordFilters := KeywordCompletionFiltersNone
 	isNewIdentifierLocation := false
-	// !!!
-	// flags := CompletionInfoFlagsNone
+	// !!! flags := CompletionInfoFlagsNone
 	var defaultCommitCharacters []string
 
 	if contextToken != nil {
-		// !!! import completions
+		importStatementCompletionInfo := l.getImportStatementCompletionInfo(contextToken, file)
+		if importStatementCompletionInfo.keywordCompletion != ast.KindUnknown {
+			if importStatementCompletionInfo.isKeywordOnlyCompletion {
+				return &completionDataKeyword{
+					keywordCompletions: []*lsproto.CompletionItem{{
+						Label:    scanner.TokenToString(importStatementCompletionInfo.keywordCompletion),
+						Kind:     ptrTo(lsproto.CompletionItemKindKeyword),
+						SortText: ptrTo(string(SortTextGlobalsOrKeywords)),
+					}},
+					isNewIdentifierLocation: importStatementCompletionInfo.isNewIdentifierLocation,
+				}
+			}
+			keywordFilters = keywordFiltersFromSyntaxKind(importStatementCompletionInfo.keywordCompletion)
+		}
+		if importStatementCompletionInfo.replacementSpan != nil && ptrIsTrue(preferences.IncludeCompletionsForImportStatements) && ptrIsTrue(preferences.IncludeCompletionsWithInsertText) {
+			// Import statement completions use `insertText`, and also require the `data` property of `CompletionEntryIdentifier`
+			// added in TypeScript 4.3 to be sent back from the client during `getCompletionEntryDetails`. Since this feature
+			// is not backward compatible with older clients, the language service defaults to disabling it, allowing newer clients
+			// to opt in with the `includeCompletionsForImportStatements` user preference.
+			// !!! flags |= CompletionInfoFlags.IsImportStatementCompletion;
+			importStatementCompletion = &importStatementCompletionInfo
+			isNewIdentifierLocation = importStatementCompletionInfo.isNewIdentifierLocation
+		}
 		// Bail out if this is a known invalid completion location.
-		// !!! if (!importStatementCompletionInfo.replacementSpan && ...)
 		if isCompletionListBlocker(contextToken, previousToken, location, file, position, typeChecker) {
 			if keywordFilters != KeywordCompletionFiltersNone {
 				isNewIdentifierLocation, _ := computeCommitCharactersAndIsNewIdentifier(contextToken, file, position)
@@ -553,15 +636,14 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 	var symbols []*ast.Symbol
 	symbolToOriginInfoMap := map[ast.SymbolId]*symbolOriginInfo{}
 	symbolToSortTextMap := map[ast.SymbolId]sortText{}
-	// var importSpecifierResolver any // !!! import
 	var seenPropertySymbols collections.Set[ast.SymbolId]
+	importSpecifierResolver := &importSpecifierResolverForCompletions{SourceFile: file, UserPreferences: preferences, l: l}
 	isTypeOnlyLocation := insideJSDocTagTypeExpression || insideJsDocImportTag ||
 		importStatementCompletion != nil && ast.IsTypeOnlyImportOrExportDeclaration(location.Parent) ||
 		!isContextTokenValueLocation(contextToken) &&
 			(isPossiblyTypeArgumentPosition(contextToken, file, typeChecker) ||
 				ast.IsPartOfTypeNode(location) ||
 				isContextTokenTypeLocation(contextToken))
-	// var getModuleSpecifierResolutionHost any // !!! auto import
 
 	addSymbolOriginInfo := func(symbol *ast.Symbol, insertQuestionDot bool, insertAwait bool) {
 		symbolId := ast.GetSymbolId(symbol)
@@ -614,38 +696,37 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 					typeChecker.TryGetMemberInModuleExportsAndProperties(firstAccessibleSymbol.Name, moduleSymbol) != firstAccessibleSymbol {
 					symbolToOriginInfoMap[firstAccessibleSymbolId] = &symbolOriginInfo{kind: getNullableSymbolOriginInfoKind(symbolOriginInfoKindSymbolMemberNoExport, insertQuestionDot)}
 				} else {
-					// !!! imports
-					// var fileName string
-					// if tspath.IsExternalModuleNameRelative(core.StripQuotes(moduleSymbol.Name)) {
-					// 	fileName = ast.GetSourceFileOfModule(moduleSymbol).FileName()
-					// }
-					// if importSpecifierResolver == nil {
-					// importSpecifierResolver ||= codefix.createImportSpecifierResolver(sourceFile, program, host, preferences))
-					// }
-					// const { moduleSpecifier } = importSpecifier.getModuleSpecifierForBestExportInfo(
-					// 	[{
-					// 		exportKind: ExportKind.Named,
-					// 		moduleFileName: fileName,
-					// 		isFromPackageJson: false,
-					// 		moduleSymbol,
-					// 		symbol: firstAccessibleSymbol,
-					// 		targetFlags: skipAlias(firstAccessibleSymbol, typeChecker).flags,
-					// 	}],
-					// 	position,
-					// 	isValidTypeOnlyAliasUseSite(location),
-					// ) || {};
-					// if (moduleSpecifier) {
-					// 	const origin: SymbolOriginInfoResolvedExport = {
-					// 		kind: getNullableSymbolOriginInfoKind(SymbolOriginInfoKind.SymbolMemberExport),
-					// 		moduleSymbol,
-					// 		isDefaultExport: false,
-					// 		symbolName: firstAccessibleSymbol.name,
-					// 		exportName: firstAccessibleSymbol.name,
-					// 		fileName,
-					// 		moduleSpecifier,
-					// 	};
-					// 	symbolToOriginInfoMap[index] = origin;
-					// }
+					var fileName string
+					if tspath.IsExternalModuleNameRelative(stringutil.StripQuotes(moduleSymbol.Name)) {
+						fileName = ast.GetSourceFileOfModule(moduleSymbol).FileName()
+					}
+					result := importSpecifierResolver.getModuleSpecifierForBestExportInfo(
+						typeChecker,
+						[]*SymbolExportInfo{{
+							exportKind:        ExportKindNamed,
+							moduleFileName:    fileName,
+							isFromPackageJson: ptrTo(false),
+							moduleSymbol:      moduleSymbol,
+							symbol:            firstAccessibleSymbol,
+							targetFlags:       typeChecker.SkipAlias(firstAccessibleSymbol).Flags,
+						}},
+						position,
+						ast.IsValidTypeOnlyAliasUseSite(location),
+					)
+
+					if result != nil {
+						symbolToOriginInfoMap[ast.GetSymbolId(symbol)] = &symbolOriginInfo{
+							kind:            getNullableSymbolOriginInfoKind(symbolOriginInfoKindSymbolMemberExport, insertQuestionDot),
+							isDefaultExport: false,
+							fileName:        fileName,
+							data: symbolOriginInfoResolvedExport{
+								moduleSymbol:    moduleSymbol,
+								symbolName:      firstAccessibleSymbol.Name,
+								exportName:      firstAccessibleSymbol.Name,
+								moduleSpecifier: result.Base().moduleSpecifier,
+							},
+						}
+					}
 				}
 			} else if firstAccessibleSymbolId == 0 || !seenPropertySymbols.Has(firstAccessibleSymbolId) {
 				symbols = append(symbols, symbol)
@@ -992,13 +1073,203 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 		return globalsSearchSuccess
 	}
 
+	shouldOfferImportCompletions := func() bool {
+		// If already typing an import statement, provide completions for it.
+		if importStatementCompletion != nil {
+			return true
+		}
+		// If not already a module, must have modules enabled.
+		if !ptrIsTrue(preferences.IncludeCompletionsForModuleExports) {
+			return false
+		}
+		// If already using ES modules, OK to continue using them.
+		if file.ExternalModuleIndicator != nil || file.CommonJSModuleIndicator != nil {
+			return true
+		}
+		// If module transpilation is enabled or we're targeting es6 or above, or not emitting, OK.
+		if compilerOptionsIndicateEsModules(program.Options()) {
+			return true
+		}
+
+		// If some file is using ES6 modules, assume that it's OK to add more.
+		return true || // !!! symlink program.getSymlinkCache?.().hasAnySymlinks() ||
+			program.Options().Paths.Size() > 0 ||
+			// programContainsModules
+			core.Some(program.GetSourceFiles(), func(file *ast.SourceFile) bool {
+				return !file.IsDeclarationFile && !program.IsSourceFileFromExternalLibrary(file) && (file.ExternalModuleIndicator != nil || file.CommonJSModuleIndicator != nil)
+			})
+	}
+	// Mutates `symbols`, `symbolToOriginInfoMap`, and `symbolToSortTextMap`
+	collectAutoImports := func() {
+		if !shouldOfferImportCompletions() {
+			return
+		}
+
+		if itemData != nil {
+			// Debug.assert(!detailsEntryId?.data, "Should not run 'collectAutoImports' when faster path is available via `data`");
+			// Asking for completion details for an item that is not an auto-import
+			if itemData.AutoImport != nil {
+				panic("Should not run 'collectAutoImports' when faster path is available via `AutoImport`")
+			}
+			if itemData.Source == "" {
+				return
+			}
+		}
+
+		// !!! CompletionInfoFlags
+
+		// import { type | -> token text should be blank
+		// !!! fuzzymatch
+		// var lowerCaseTokenText string
+		// if  previousToken != nil && ast.IsIdentifier(previousToken) && !(previousToken == contextToken && importStatementCompletion != nil){
+		// 	lowerCaseTokenText = strings.ToLower(previousToken.Text())
+		// }
+
+		// !!! moduleSpecifierCache := host.getModuleSpecifierCache();
+		// !!! packageJsonAutoImportProvider := host.getPackageJsonAutoImportProvider();
+		exportInfo := l.getExportInfoMap(typeChecker, file, preferences)
+
+		l.resolvingModuleSpecifiers(
+			"collectAutoImports",
+			importSpecifierResolver,
+			position,
+			importStatementCompletion != nil,
+			ast.IsValidTypeOnlyAliasUseSite(location),
+			func(context *resolvingModuleSpecifiersForCompletions) ImportFix {
+				exportInfo.search(
+					typeChecker,
+					file.Path(),
+					/*preferCapitalized*/ isRightOfOpenTag,
+					func(symbolName string, targetFlags ast.SymbolFlags) bool {
+						if !scanner.IsIdentifierText(symbolName, file.LanguageVariant) {
+							return false
+						}
+						if itemData == nil && isNonContextualKeyword(scanner.StringToToken(symbolName)) {
+							return false
+						}
+						if !isTypeOnlyLocation && importStatementCompletion == nil && (targetFlags&ast.SymbolFlagsValue) == 0 {
+							return false
+						}
+						if isTypeOnlyLocation && (targetFlags&(ast.SymbolFlagsModule|ast.SymbolFlagsType) == 0) {
+							return false
+						}
+						// Do not try to auto-import something with a lowercase first letter for a JSX tag
+						firstChar := rune(symbolName[0])
+						if isRightOfOpenTag && (firstChar < 'A' || firstChar > 'Z') {
+							return false
+						}
+
+						if itemData != nil {
+							return true
+						}
+						/// !!!
+						// return charactersFuzzyMatchInString(symbolName, lowerCaseTokenText);
+						return false
+					},
+					func(info []*SymbolExportInfo, symbolName string, isFromAmbientModule bool, exportMapKey ExportMapInfoKey) []*SymbolExportInfo {
+						if itemData != nil && !core.Some(info, func(i *SymbolExportInfo) bool {
+							return stringutil.StripQuotes(i.moduleSymbol.Name) == itemData.Source
+						}) {
+							return nil
+						}
+						// Do a relatively cheap check to bail early if all re-exports are non-importable
+						// due to file location or package.json dependency filtering. For non-node16+
+						// module resolution modes, getting past this point guarantees that we'll be
+						// able to generate a suitable module specifier, so we can safely show a completion,
+						// even if we defer computing the module specifier.
+						isImportableExportInfo := func(info *SymbolExportInfo) bool {
+							var toFile *ast.SourceFile
+							if ast.IsSourceFile(info.moduleSymbol.ValueDeclaration) {
+								toFile = info.moduleSymbol.ValueDeclaration.AsSourceFile()
+							}
+							return l.isImportable(
+								file,
+								toFile,
+								info.moduleSymbol,
+								preferences,
+								importSpecifierResolver.packageJsonImportFilter(),
+							)
+						}
+						info = core.Filter(info, isImportableExportInfo)
+						if len(info) == 0 {
+							return nil
+						}
+
+						// In node16+, module specifier resolution can fail due to modules being blocked
+						// by package.json `exports`. If that happens, don't show a completion item.
+						// N.B. in this resolution mode we always try to resolve module specifiers here,
+						// because we have to know now if it's going to fail so we can omit the completion
+						// from the list.
+						result, ok := context.tryResolve(typeChecker, info, isFromAmbientModule)
+						if ok == "failed" {
+							return nil
+						}
+
+						// If we skipped resolving module specifiers, our selection of which ExportInfo
+						// to use here is arbitrary, since the info shown in the completion list derived from
+						// it should be identical regardless of which one is used. During the subsequent
+						// `CompletionEntryDetails` request, we'll get all the ExportInfos again and pick
+						// the best one based on the module specifier it produces.
+						exportInfo := info[0]
+						var moduleSpecifier string
+						if ok != "skipped" {
+							if result.Base().exportInfo != nil {
+								exportInfo = result.Base().exportInfo
+							}
+							moduleSpecifier = result.Base().moduleSpecifier
+						}
+
+						isDefaultExport := exportInfo.exportKind == ExportKindDefault
+						if exportInfo.symbol == nil {
+							panic("should have handled `futureExportSymbolInfo` earlier")
+						}
+						symbol := exportInfo.symbol
+						if isDefaultExport {
+							symbol = binder.GetLocalSymbolForExportDefault(symbol)
+						}
+
+						// pushAutoImportSymbol
+						symbolId := ast.GetSymbolId(symbol)
+						if symbolToSortTextMap[symbolId] != SortTextGlobalsOrKeywords {
+							// If an auto-importable symbol is available as a global, don't push the auto import
+							return nil
+						}
+						if moduleSpecifier != "" {
+							symbolToOriginInfoMap[symbolId] = &symbolOriginInfo{
+								kind:              symbolOriginInfoKindResolvedExport,
+								isDefaultExport:   isDefaultExport,
+								isFromPackageJson: ptrIsTrue(exportInfo.isFromPackageJson),
+								fileName:          exportInfo.moduleFileName,
+								data: symbolOriginInfoResolvedExport{
+									symbolName:      symbolName,
+									moduleSymbol:    exportInfo.moduleSymbol,
+									exportName:      core.IfElse(exportInfo.exportKind == ExportKindExportEquals, ast.InternalSymbolNameExportEquals, exportInfo.symbol.Name),
+									exportMapKey:    exportMapKey,
+									moduleSpecifier: moduleSpecifier,
+								},
+							}
+						}
+						symbolToSortTextMap[symbolId] = core.IfElse(importStatementCompletion != nil, SortTextLocationPriority, SortTextAutoImportSuggestions)
+						symbols = append(symbols, symbol)
+						return nil
+					},
+				)
+
+				hasUnresolvedAutoImports = context.skippedAny
+				// !!! completionInfoFlags
+				// flags |= core.IfElse(context.resolvedCount > 0, completionInfoFlagsResolvedModuleSpecifiers, 0)
+				// flags |= core.IfElse(context.resolvedCount > moduleSpecifierResolutionLimit, completionInfoFlagsResolvedModuleSpecifiersBeyondLimit, 0)
+				return nil
+			},
+		)
+	}
+
 	tryGetImportCompletionSymbols := func() globalsSearch {
 		if importStatementCompletion == nil {
 			return globalsSearchContinue
 		}
 		isNewIdentifierLocation = true
-		// !!! auto imports
-		// collectAutoImports()
+		collectAutoImports()
 		return globalsSearchSuccess
 	}
 
@@ -1393,9 +1664,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 			}
 		}
 
-		// !!! auto imports
-		// collectAutoImports()
-
+		collectAutoImports()
 		if isTypeOnlyLocation {
 			if contextToken != nil && ast.IsAssertionExpression(contextToken.Parent) {
 				keywordFilters = KeywordCompletionFiltersTypeAssertionKeywords
@@ -1528,6 +1797,92 @@ func keywordCompletionData(
 	}
 }
 
+type resolvingModuleSpecifiersForCompletions struct {
+	logPrefix                      string
+	resolver                       *importSpecifierResolverForCompletions
+	position                       int
+	isForImportStatementCompletion bool
+	isValidTypeOnlyUseSite         bool
+
+	needsFullResolution    bool
+	skippedAny             bool
+	ambientCount           int
+	resolvedCount          int
+	resolvedFromCacheCount int
+	cacheAttemptCount      int
+}
+
+func (r *resolvingModuleSpecifiersForCompletions) tryResolve(ch *checker.Checker, exportInfo []*SymbolExportInfo, isFromAmbientModule bool) (ImportFix, string) {
+	if isFromAmbientModule {
+		if result := r.resolver.getModuleSpecifierForBestExportInfo(ch, exportInfo, r.position, r.isValidTypeOnlyUseSite); result != nil {
+			r.ambientCount++
+			return result, ""
+		}
+		return nil, "failed"
+	}
+
+	allowIncompleteCompletions := ptrIsTrue(r.resolver.UserPreferences.AllowIncompleteCompletions)
+	shouldResolveModuleSpecifier := r.needsFullResolution || allowIncompleteCompletions && r.resolvedCount < moduleSpecifierResolutionLimit
+	shouldGetModuleSpecifierFromCache := !shouldResolveModuleSpecifier && allowIncompleteCompletions && r.cacheAttemptCount < moduleSpecifierResolutionCacheAttemptLimit
+
+	var result ImportFix
+	if shouldResolveModuleSpecifier || shouldGetModuleSpecifierFromCache {
+		result = r.resolver.getModuleSpecifierForBestExportInfo(ch, exportInfo, r.position, r.isValidTypeOnlyUseSite)
+	}
+
+	if !shouldResolveModuleSpecifier && !shouldGetModuleSpecifierFromCache || shouldGetModuleSpecifierFromCache && result == nil {
+		r.skippedAny = true
+	}
+
+	// r.resolvedCount += result?.computedWithoutCacheCount || 0;
+	r.resolvedFromCacheCount += len(exportInfo) // - (result?.computedWithoutCacheCount || 0);
+	if shouldGetModuleSpecifierFromCache {
+		r.cacheAttemptCount++
+	}
+
+	if result != nil {
+		return result, ""
+	}
+	if r.needsFullResolution {
+		return nil, "failed"
+	}
+	return nil, "skipped"
+}
+
+func (l *LanguageService) resolvingModuleSpecifiers(
+	logPrefix string,
+	resolver *importSpecifierResolverForCompletions,
+	position int,
+	isForImportStatementCompletion bool,
+	isValidTypeOnlyUseSite bool,
+	cb func(*resolvingModuleSpecifiersForCompletions) ImportFix,
+) ImportFix {
+	// !!! timestamp
+	// Under `--moduleResolution nodenext` or `bundler`, we have to resolve module specifiers up front, because
+	// package.json exports can mean we *can't* resolve a module specifier (that doesn't include a
+	// relative path into node_modules), and we want to filter those completions out entirely.
+	// Import statement completions always need specifier resolution because the module specifier is
+	// part of their `insertText`, not the `codeActions` creating edits away from the cursor.
+	// Finally, `autoImportSpecifierExcludeRegexes` necessitates eagerly resolving module specifiers
+	// because completion items are being explcitly filtered out by module specifier.
+	r := &resolvingModuleSpecifiersForCompletions{
+		logPrefix:                      logPrefix,
+		resolver:                       resolver,
+		position:                       position,
+		isForImportStatementCompletion: isForImportStatementCompletion,
+		isValidTypeOnlyUseSite:         isValidTypeOnlyUseSite,
+
+		needsFullResolution: isForImportStatementCompletion ||
+			l.GetProgram().Options().GetResolvePackageJsonExports() ||
+			len(resolver.UserPreferences.AutoImportSpecifierExcludeRegexes) > 0,
+	}
+
+	result := cb(r)
+	// !!! logging
+
+	return result
+}
+
 func getDefaultCommitCharacters(isNewIdentifierLocation bool) []string {
 	if isNewIdentifierLocation {
 		return []string{}
@@ -1601,9 +1956,7 @@ func (l *LanguageService) completionInfoFromData(
 
 	compareCompletionEntries := getCompareCompletionEntries(ctx)
 	if data.keywordFilters != KeywordCompletionFiltersNone {
-		keywordCompletions := getKeywordCompletions(
-			data.keywordFilters,
-			!data.insideJSDocTagTypeExpression && ast.IsSourceFileJS(file))
+		keywordCompletions := getKeywordCompletions(data.keywordFilters, !data.insideJSDocTagTypeExpression && ast.IsSourceFileJS(file))
 		for _, keywordEntry := range keywordCompletions {
 			if data.isTypeOnlyLocation && isTypeKeyword(scanner.StringToToken(keywordEntry.Label)) ||
 				!data.isTypeOnlyLocation && isContextualKeywordInAutoImportableExpressionSpace(keywordEntry.Label) ||
@@ -1894,11 +2247,42 @@ func (l *LanguageService) createCompletionItem(
 	}
 
 	if originIsResolvedExport(origin) {
+		resolvedOrigin := origin.asResolvedExport()
 		labelDetails = &lsproto.CompletionItemLabelDetails{
-			Description: &origin.asResolvedExport().moduleSpecifier, // !!! vscode @link support
+			Description: &resolvedOrigin.moduleSpecifier, // !!! vscode @link support
 		}
 		if data.importStatementCompletion != nil {
-			// !!! auto-imports
+			quotedModuleSpecifier := escapeSnippetText(quote(file, preferences, resolvedOrigin.moduleSpecifier))
+			exportKind := ExportKindNamed
+			if origin.isDefaultExport {
+				exportKind = ExportKindDefault
+			} else if resolvedOrigin.exportName == ast.InternalSymbolNameExportEquals {
+				exportKind = ExportKindExportEquals
+			}
+
+			insertText = "import "
+			typeOnlyText := scanner.TokenToString(ast.KindTypeKeyword) + " "
+			if data.importStatementCompletion.isTopLevelTypeOnly {
+				insertText += typeOnlyText
+			}
+			tabStop := core.IfElse(ptrIsTrue(preferences.IncludeCompletionsWithSnippetText), "$1", "")
+			importKind := getImportKind(file, exportKind, program, true /*forceImportKeyword*/)
+			escapedSnippet := escapeSnippetText(name)
+			suffix := core.IfElse(useSemicolons, ";", "")
+			switch importKind {
+			case ImportKindCommonJS:
+				insertText += fmt.Sprintf(`%s%s = require(%s)%s`, escapedSnippet, tabStop, quotedModuleSpecifier, suffix)
+			case ImportKindDefault:
+				insertText += fmt.Sprintf(`%s%s from %s%s`, escapedSnippet, tabStop, quotedModuleSpecifier, suffix)
+			case ImportKindNamespace:
+				insertText += fmt.Sprintf(`* as %s from %s%s`, escapedSnippet, quotedModuleSpecifier, suffix)
+			case ImportKindNamed:
+				importSpecifierTypeOnlyText := core.IfElse(data.importStatementCompletion.couldBeTypeOnlyImportSpecifier, typeOnlyText, "")
+				insertText += fmt.Sprintf(`{ %s%s%s } from %s%s`, importSpecifierTypeOnlyText, escapedSnippet, tabStop, quotedModuleSpecifier, suffix)
+			}
+
+			replacementSpan = data.importStatementCompletion.replacementSpan
+			isSnippet = ptrIsTrue(preferences.IncludeCompletionsWithSnippetText)
 		}
 	}
 
@@ -1985,10 +2369,14 @@ func (l *LanguageService) createCompletionItem(
 		}
 	}
 
+	if insertText != "" && !ptrIsTrue(preferences.IncludeCompletionsWithInsertText) {
+		return nil
+	}
+
+	var autoImportData *completionEntryData
 	if originIsExport(origin) || originIsResolvedExport(origin) {
-		// !!! auto-imports
-		// data = originToCompletionEntryData(origin)
-		// hasAction = importStatementCompletion == nil
+		autoImportData = origin.toCompletionEntryData()
+		hasAction = data.importStatementCompletion == nil
 	}
 
 	parentNamedImportOrExport := ast.FindAncestor(data.location, isNamedImportsOrExports)
@@ -2049,6 +2437,7 @@ func (l *LanguageService) createCompletionItem(
 		hasAction,
 		preselect,
 		source,
+		autoImportData,
 	)
 }
 
@@ -2908,9 +3297,9 @@ func generateIdentifierForArbitraryString(text string) string {
 		if size > 0 && validChar {
 			if needsUnderscore {
 				identifier += "_"
-				identifier += string(ch)
-				needsUnderscore = false
 			}
+			identifier += string(ch)
+			needsUnderscore = false
 		} else {
 			needsUnderscore = true
 		}
@@ -2994,19 +3383,21 @@ func getCompareCompletionEntries(ctx context.Context) func(entryInSlice *lsproto
 		if result == stringutil.ComparisonEqual {
 			result = compareStrings(entryInSlice.Label, entryToInsert.Label)
 		}
-		// !!! auto-imports
-		// if (result === Comparison.EqualTo && entryInArray.data?.moduleSpecifier && entryToInsert.data?.moduleSpecifier) {
-		//     // Sort same-named auto-imports by module specifier
-		//     result = compareNumberOfDirectorySeparators(
-		//         (entryInArray.data as CompletionEntryDataResolved).moduleSpecifier,
-		//         (entryToInsert.data as CompletionEntryDataResolved).moduleSpecifier,
-		//     );
-		// }
+		if result == stringutil.ComparisonEqual && entryInSlice.Data != nil && entryToInsert.Data != nil {
+			sliceEntryData, ok1 := (*entryInSlice.Data).(*completionEntryData)
+			insertEntryData, ok2 := (*entryToInsert.Data).(*completionEntryData)
+			if ok1 && ok2 && sliceEntryData.moduleSpecifier != "" && insertEntryData.moduleSpecifier != "" {
+				// Sort same-named auto-imports by module specifier
+				result = compareNumberOfDirectorySeparators(
+					sliceEntryData.moduleSpecifier,
+					insertEntryData.moduleSpecifier,
+				)
+			}
+		}
 		if result == stringutil.ComparisonEqual {
 			// Fall back to symbol order - if we return `EqualTo`, `insertSorted` will put later symbols first.
 			return stringutil.ComparisonLessThan
 		}
-
 		return result
 	}
 }
@@ -4106,6 +4497,7 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 		false, /*hasAction*/
 		false, /*preselect*/
 		"",    /*source*/
+		nil,   /*autoImportEntryData*/ // !!! jsx autoimports
 	)
 	items := []*lsproto.CompletionItem{item}
 	itemDefaults := l.setItemDefaults(
@@ -4142,6 +4534,7 @@ func (l *LanguageService) createLSPCompletionItem(
 	hasAction bool,
 	preselect bool,
 	source string,
+	autoImportEntryData *completionEntryData,
 ) *lsproto.CompletionItem {
 	kind := getCompletionsSymbolKind(elementKind)
 	var data any = &itemData{
@@ -4149,7 +4542,7 @@ func (l *LanguageService) createLSPCompletionItem(
 		Position:   position,
 		Source:     source,
 		Name:       name,
-		AutoImport: nil, // !!! auto-imports
+		AutoImport: autoImportEntryData,
 	}
 
 	// Text edit
@@ -4290,6 +4683,7 @@ func (l *LanguageService) getLabelStatementCompletions(
 					false, /*hasAction*/
 					false, /*preselect*/
 					"",    /*source*/
+					nil,   /*autoImportEntryData*/
 				))
 			}
 		}
@@ -4527,6 +4921,11 @@ func hasCompletionItem(clientOptions *lsproto.CompletionClientCapabilities) bool
 	return clientOptions != nil && clientOptions.CompletionItem != nil
 }
 
+// strada TODO: this function is, at best, poorly named. Use sites are pretty suspicious.
+func compilerOptionsIndicateEsModules(options *core.CompilerOptions) bool {
+	return options.Module == core.ModuleKindNone || options.GetEmitScriptTarget() >= core.ScriptTargetES2015 || options.NoEmit.IsTrue()
+}
+
 func clientSupportsItemLabelDetails(clientOptions *lsproto.CompletionClientCapabilities) bool {
 	return hasCompletionItem(clientOptions) && ptrIsTrue(clientOptions.CompletionItem.LabelDetailsSupport)
 }
@@ -4576,15 +4975,67 @@ func getArgumentInfoForCompletions(node *ast.Node, position int, file *ast.Sourc
 }
 
 type itemData struct {
-	FileName   string          `json:"fileName"`
-	Position   int             `json:"position"`
-	Source     string          `json:"source,omitzero"`
-	Name       string          `json:"name,omitzero"`
-	AutoImport *autoImportData `json:"autoImport,omitzero"`
+	FileName   string               `json:"fileName"`
+	Position   int                  `json:"position"`
+	Source     string               `json:"source,omitempty"`
+	Name       string               `json:"name,omitempty"`
+	AutoImport *completionEntryData `json:"autoImport,omitempty"`
 }
 
-// !!! CompletionEntryDataAutoImport
-type autoImportData struct{}
+type completionEntryDataKind int
+
+const (
+	completionEntryDataKindNone completionEntryDataKind = 0
+
+	// Currently, only completions that use autoImports can have completionEntryData
+	completionEntryDataKindAutoImportResolved   completionEntryDataKind = 1
+	completionEntryDataKindAutoImportUnresolved completionEntryDataKind = 2
+)
+
+type completionEntryData struct {
+	kind completionEntryDataKind
+
+	/**
+	 * The name of the property or export in the module's symbol table. Differs from the completion name
+	 * in the case of InternalSymbolName.ExportEquals and InternalSymbolName.Default.
+	 */
+	exportName      string
+	exportMapKey    ExportMapInfoKey // required if kind==unresolved
+	moduleSpecifier string           // required if kind==resolved
+
+	/** The file name declaring the export's module symbol, if it was an external module */
+	fileName *string
+	/** The module name (with quotes stripped) of the export's module symbol, if it was an ambient module */
+	ambientModuleName *string
+
+	/** True if the export was found in the package.json AutoImportProvider */
+	isPackageJsonImport core.Tristate
+}
+
+func (d *completionEntryData) IsResolved() bool {
+	return d.moduleSpecifier != "" && d.kind == completionEntryDataKindAutoImportResolved
+}
+
+func (d *completionEntryData) toSymbolOriginExport(symbolName string, moduleSymbol *ast.Symbol, isDefaultExport bool) *symbolOriginInfoExport {
+	// Unresolved Export Origin information
+	return &symbolOriginInfoExport{
+		symbolName:   symbolName,
+		moduleSymbol: moduleSymbol,
+		exportName:   d.exportName,
+		exportMapKey: d.exportMapKey,
+	}
+}
+
+func (d *completionEntryData) toSymbolOriginResolvedExport(symbolName string, moduleSymbol *ast.Symbol, isDefaultExport bool) *symbolOriginInfoResolvedExport {
+	// Resolved Export Origin information
+	return &symbolOriginInfoResolvedExport{
+		symbolName:      symbolName,
+		moduleSymbol:    moduleSymbol,
+		exportName:      d.exportName,
+		exportMapKey:    d.exportMapKey,
+		moduleSpecifier: d.moduleSpecifier,
+	}
+}
 
 // Special values for `CompletionInfo['source']` used to disambiguate
 // completion items with the same `name`. (Each completion item must
@@ -4668,7 +5119,7 @@ func (l *LanguageService) getCompletionItemDetails(
 	}
 
 	// Compute all the completion symbols again.
-	symbolCompletion := getSymbolCompletionFromItemData(
+	symbolCompletion := l.getSymbolCompletionFromItemData(
 		program,
 		checker,
 		file,
@@ -4689,7 +5140,7 @@ func (l *LanguageService) getCompletionItemDetails(
 		return nil
 	case symbolCompletion.symbol != nil:
 		symbolDetails := symbolCompletion.symbol
-		actions := getCompletionItemActions(symbolDetails.symbol)
+		actions := l.getCompletionItemActions(ctx, checker, file, position, itemData, symbolDetails, preferences)
 		return createCompletionDetailsForSymbol(
 			item,
 			symbolDetails.symbol,
@@ -4731,9 +5182,9 @@ type symbolDetails struct {
 	isTypeOnlyLocation bool
 }
 
-func getSymbolCompletionFromItemData(
+func (l *LanguageService) getSymbolCompletionFromItemData(
 	program *compiler.Program,
-	checker *checker.Checker,
+	ch *checker.Checker,
 	file *ast.SourceFile,
 	position int,
 	itemData *itemData,
@@ -4746,11 +5197,16 @@ func getSymbolCompletionFromItemData(
 		}
 	}
 	if itemData.AutoImport != nil {
-		// !!! auto-import
-		return detailsData{}
+		if autoImportSymbolData := l.getAutoImportSymbolFromCompletionEntryData(ch, itemData.AutoImport.exportName, itemData.AutoImport); autoImportSymbolData != nil {
+			autoImportSymbolData.contextToken, autoImportSymbolData.previousToken = getRelevantTokens(position, file)
+			autoImportSymbolData.location = astnav.GetTouchingPropertyName(file, position)
+			autoImportSymbolData.jsxInitializer = jsxInitializer{false, nil}
+			autoImportSymbolData.isTypeOnlyLocation = false
+			return detailsData{symbol: autoImportSymbolData}
+		}
 	}
 
-	completionData := getCompletionData(program, checker, file, position, preferences)
+	completionData := l.getCompletionData(program, ch, file, position, itemData, preferences) //  &UserPreferences{IncludeCompletionsForModuleExports: ptrTo(true), IncludeCompletionsWithInsertText: ptrTo(true)}
 	if completionData == nil {
 		return detailsData{}
 	}
@@ -4805,6 +5261,54 @@ func getSymbolCompletionFromItemData(
 	return detailsData{}
 }
 
+func (l *LanguageService) getAutoImportSymbolFromCompletionEntryData(ch *checker.Checker, name string, autoImportData *completionEntryData) *symbolDetails {
+	containingProgram := l.GetPackageJsonAutoImportProvider()
+	var moduleSymbol *ast.Symbol
+	if autoImportData.ambientModuleName != nil {
+		moduleSymbol = ch.TryFindAmbientModule(*autoImportData.ambientModuleName)
+	} else if autoImportData.fileName != nil {
+		moduleSymbolSourceFile := containingProgram.GetSourceFile(*autoImportData.fileName)
+		if moduleSymbolSourceFile == nil {
+			panic("module sourceFile not found: " + *autoImportData.fileName)
+		}
+		moduleSymbol = ch.GetMergedSymbol(moduleSymbolSourceFile.Symbol)
+	}
+	if moduleSymbol == nil {
+		return nil
+	}
+
+	var symbol *ast.Symbol
+	if autoImportData.exportName == ast.InternalSymbolNameExportEquals {
+		symbol = ch.ResolveExternalModuleSymbol(moduleSymbol)
+	} else {
+		symbol = ch.TryGetMemberInModuleExportsAndProperties(autoImportData.exportName, moduleSymbol)
+	}
+	if symbol == nil {
+		return nil
+	}
+
+	isDefaultExport := autoImportData.exportName == ast.InternalSymbolNameDefault
+	if isDefaultExport {
+		if localSymbol := binder.GetLocalSymbolForExportDefault(symbol); localSymbol != nil {
+			symbol = localSymbol
+		}
+	}
+	origin := &symbolOriginInfo{
+		isFromPackageJson: autoImportData.isPackageJsonImport.IsTrue(),
+		isDefaultExport:   isDefaultExport,
+	}
+	if autoImportData.fileName != nil {
+		origin.fileName = *autoImportData.fileName
+		origin.kind = symbolOriginInfoKindResolvedExport
+		origin.data = autoImportData.toSymbolOriginResolvedExport(name, moduleSymbol, isDefaultExport)
+	} else {
+		origin.kind = symbolOriginInfoKindExport
+		origin.data = autoImportData.toSymbolOriginExport(name, moduleSymbol, isDefaultExport)
+	}
+
+	return &symbolDetails{symbol: symbol, origin: origin}
+}
+
 func createSimpleDetails(
 	item *lsproto.CompletionItem,
 	name string,
@@ -4855,8 +5359,226 @@ func createCompletionDetailsForSymbol(
 	return createCompletionDetails(item, strings.Join(details, "\n\n"), documentation)
 }
 
-// !!! auto-import
 // !!! snippets
-func getCompletionItemActions(symbol *ast.Symbol) []codeAction {
+func (l *LanguageService) getCompletionItemActions(ctx context.Context, ch *checker.Checker, file *ast.SourceFile, position int, itemData *itemData, symbolDetails *symbolDetails, preferences *UserPreferences) []codeAction {
+	if itemData.AutoImport.moduleSpecifier != "" && symbolDetails.previousToken != nil {
+		// Import statement completion: 'import c|'
+		if symbolDetails.contextToken != nil && l.getImportStatementCompletionInfo(symbolDetails.contextToken, file).replacementSpan != nil {
+			return nil
+		} else if l.getImportStatementCompletionInfo(symbolDetails.previousToken, file).replacementSpan != nil {
+			return nil // !!! sourceDisplay [textPart(data.moduleSpecifier)]
+		}
+	}
+	// !!! CompletionSource.ClassMemberSnippet
+	// !!! origin.isTypeOnlyAlias
+	// entryId.source == CompletionSourceObjectLiteralMemberWithComma && contextToken
+
+	if symbolDetails.origin == nil {
+		return nil
+	}
+
+	symbol := symbolDetails.symbol
+	if symbol.ExportSymbol != nil {
+		symbol = symbol.ExportSymbol
+	}
+	targetSymbol := ch.GetMergedSymbol(ch.SkipAlias(symbol))
+	isJsxOpeningTagName := symbolDetails.contextToken.Kind == ast.KindLessThanToken && ast.IsJsxOpeningLikeElement(symbolDetails.contextToken.Parent)
+	if symbolDetails.previousToken != nil && ast.IsIdentifier(symbolDetails.previousToken) {
+		// If the previous token is an identifier, we can use its start position.
+		position = astnav.GetStartOfNode(symbolDetails.previousToken, file, false)
+	}
+
+	moduleSymbol := symbolDetails.origin.moduleSymbol()
+
+	_, importCompletionAction := l.getImportCompletionAction(
+		ctx,
+		ch,
+		targetSymbol,
+		moduleSymbol,
+		file,
+		position,
+		"",          // entryId.data.exportMapKey
+		symbol.Name, // entryId.data.name,
+		isJsxOpeningTagName,
+		// formatContext,
+		preferences,
+	)
+	// Debug.assert(!data.moduleSpecifier || moduleSpecifier == data.moduleSpecifier);
+	return []codeAction{importCompletionAction}
+}
+
+func (l *LanguageService) getImportStatementCompletionInfo(contextToken *ast.Node, sourceFile *ast.SourceFile) importStatementCompletionInfo {
+	result := importStatementCompletionInfo{}
+	var candidate *ast.Node
+	parent := contextToken.Parent
+	switch {
+	case ast.IsImportEqualsDeclaration(parent):
+		// import Foo |
+		// import Foo f|
+		lastToken := lsutil.GetLastToken(parent, sourceFile)
+		if contextToken.Kind == ast.KindIdentifier && lastToken != contextToken {
+			result.keywordCompletion = ast.KindFromKeyword
+			result.isKeywordOnlyCompletion = true
+		} else {
+			if contextToken.Kind != ast.KindTypeKeyword {
+				result.keywordCompletion = ast.KindTypeKeyword
+			}
+			if isModuleSpecifierMissingOrEmpty(parent.AsImportEqualsDeclaration().ModuleReference) {
+				candidate = parent
+			}
+		}
+
+	case couldBeTypeOnlyImportSpecifier(parent, contextToken) && canCompleteFromNamedBindings(parent.Parent):
+		candidate = parent
+	case ast.IsNamedImports(parent) || ast.IsNamespaceImport(parent):
+		if !parent.Parent.IsTypeOnly() && (contextToken.Kind == ast.KindOpenBraceToken ||
+			contextToken.Kind == ast.KindImportKeyword ||
+			contextToken.Kind == ast.KindCommaToken) {
+			result.keywordCompletion = ast.KindTypeKeyword
+		}
+		if canCompleteFromNamedBindings(parent) {
+			// At `import { ... } |` or `import * as Foo |`, the only possible completion is `from`
+			if contextToken.Kind == ast.KindCloseBraceToken || contextToken.Kind == ast.KindIdentifier {
+				result.isKeywordOnlyCompletion = true
+				result.keywordCompletion = ast.KindFromKeyword
+			} else {
+				candidate = parent.Parent.Parent
+			}
+		}
+
+	case ast.IsExportDeclaration(parent) && contextToken.Kind == ast.KindAsteriskToken,
+		ast.IsNamedExports(parent) && contextToken.Kind == ast.KindCloseBraceToken:
+		result.isKeywordOnlyCompletion = true
+		result.keywordCompletion = ast.KindFromKeyword
+
+	case contextToken.Kind == ast.KindImportKeyword:
+		if ast.IsSourceFile(parent) {
+			// A lone import keyword with nothing following it does not parse as a statement at all
+			result.keywordCompletion = ast.KindTypeKeyword
+			candidate = contextToken
+		} else if ast.IsImportDeclaration(parent) {
+			// `import s| from`
+			result.keywordCompletion = ast.KindTypeKeyword
+			if isModuleSpecifierMissingOrEmpty(parent.ModuleSpecifier()) {
+				candidate = parent
+			}
+		}
+	}
+
+	if candidate != nil {
+		result.isNewIdentifierLocation = true
+		result.replacementSpan = l.getSingleLineReplacementSpanForImportCompletionNode(candidate)
+		result.couldBeTypeOnlyImportSpecifier = couldBeTypeOnlyImportSpecifier(candidate, contextToken)
+		if ast.IsImportDeclaration(candidate) {
+			result.isTopLevelTypeOnly = candidate.AsImportDeclaration().ImportClause.IsTypeOnly()
+		} else if candidate.Kind == ast.KindImportEqualsDeclaration {
+			result.isTopLevelTypeOnly = candidate.IsTypeOnly()
+		}
+	} else {
+		result.isNewIdentifierLocation = result.keywordCompletion == ast.KindTypeKeyword
+	}
+	return result
+}
+
+func (l *LanguageService) getSingleLineReplacementSpanForImportCompletionNode(node *ast.Node) *lsproto.Range {
+	// node is ImportDeclaration | ImportEqualsDeclaration | ImportSpecifier | JSDocImportTag | Token<SyntaxKind.ImportKeyword>
+	if ancestor := ast.FindAncestor(node, core.Or(ast.IsImportDeclaration, ast.IsImportEqualsDeclaration, ast.IsJSDocImportTag)); ancestor != nil {
+		node = ancestor
+	}
+	sourceFile := ast.GetSourceFileOfNode(node)
+	if printer.GetLinesBetweenPositions(sourceFile, node.Pos(), node.End()) == 0 {
+		return l.createLspRangeFromNode(node, sourceFile)
+	}
+
+	if node.Kind == ast.KindImportKeyword || node.Kind == ast.KindImportSpecifier {
+		panic("ImportKeyword was necessarily on one line; ImportSpecifier was necessarily parented in an ImportDeclaration")
+	}
+
+	// Guess which point in the import might actually be a later statement parsed as part of the import
+	// during parser recovery - either in the middle of named imports, or the module specifier.
+	var potentialSplitPoint *ast.Node
+	if node.Kind == ast.KindImportDeclaration || node.Kind == ast.KindJSDocImportTag {
+		var specifier *ast.Node
+		if importClause := node.ImportClause(); importClause != nil {
+			specifier = getPotentiallyInvalidImportSpecifier(importClause.AsImportClause().NamedBindings)
+		}
+		if specifier != nil {
+			potentialSplitPoint = specifier
+		} else {
+			potentialSplitPoint = node.ModuleSpecifier()
+		}
+	} else {
+		potentialSplitPoint = node.AsImportEqualsDeclaration().ModuleReference
+	}
+
+	withoutModuleSpecifier := core.NewTextRange(scanner.GetTokenPosOfNode(lsutil.GetFirstToken(node, sourceFile), sourceFile, false), potentialSplitPoint.Pos())
+	// The module specifier/reference was previously found to be missing, empty, or
+	// not a string literal - in this last case, it's likely that statement on a following
+	// line was parsed as the module specifier of a partially-typed import, e.g.
+	//   import Foo|
+	//   interface Blah {}
+	// This appears to be a multiline-import, and editors can't replace multiple lines.
+	// But if everything but the "module specifier" is on one line, by this point we can
+	// assume that the "module specifier" is actually just another statement, and return
+	// the single-line range of the import excluding that probable statement.
+	if printer.GetLinesBetweenPositions(sourceFile, withoutModuleSpecifier.Pos(), withoutModuleSpecifier.End()) == 0 {
+		return l.createLspRangeFromBounds(withoutModuleSpecifier.Pos(), withoutModuleSpecifier.End(), sourceFile)
+	}
 	return nil
+}
+
+func couldBeTypeOnlyImportSpecifier(importSpecifier *ast.Node, contextToken *ast.Node) bool {
+	return ast.IsImportSpecifier(importSpecifier) && (importSpecifier.IsTypeOnly() || contextToken == importSpecifier.Name() && isTypeKeywordTokenOrIdentifier(contextToken))
+}
+
+func canCompleteFromNamedBindings(namedBindings *ast.NamedImportBindings) bool {
+	if !isModuleSpecifierMissingOrEmpty(namedBindings.Parent.Parent.ModuleSpecifier()) || namedBindings.Parent.Name() != nil {
+		return false
+	}
+	if ast.IsNamedImports(namedBindings) {
+		// We can only complete on named imports if there are no other named imports already,
+		// but parser recovery sometimes puts later statements in the named imports list, so
+		// we try to only consider the probably-valid ones.
+		invalidNamedImport := getPotentiallyInvalidImportSpecifier(namedBindings)
+		elements := namedBindings.Elements()
+		validImports := len(elements)
+		if invalidNamedImport != nil {
+			validImports = slices.Index(elements, invalidNamedImport)
+		}
+
+		return validImports < 2 && validImports > -1
+	}
+	return true
+}
+
+// Tries to identify the first named import that is not really a named import, but rather
+// just parser recovery for a situation like:
+//
+//	import { Foo|
+//	interface Bar {}
+//
+// in which `Foo`, `interface`, and `Bar` are all parsed as import specifiers. The caller
+// will also check if this token is on a separate line from the rest of the import.
+func getPotentiallyInvalidImportSpecifier(namedBindings *ast.NamedImportBindings) *ast.Node {
+	if namedBindings.Kind != ast.KindNamedImports {
+		return nil
+	}
+	return core.Find(namedBindings.Elements(), func(e *ast.Node) bool {
+		return e.PropertyName() == nil && isNonContextualKeyword(scanner.StringToToken(e.Name().Text())) &&
+			astnav.FindPrecedingToken(ast.GetSourceFileOfNode(namedBindings), e.Name().Pos()).Kind != ast.KindCommaToken
+	})
+}
+
+func isModuleSpecifierMissingOrEmpty(specifier *ast.Expression) bool {
+	if ast.NodeIsMissing(specifier) {
+		return true
+	}
+	node := specifier
+	if ast.IsExternalModuleReference(node) {
+		node = node.Expression()
+	}
+	if !ast.IsStringLiteralLike(node) {
+		return true
+	}
+	return node.Text() == ""
 }

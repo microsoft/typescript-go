@@ -1408,6 +1408,16 @@ func GetNameOfDeclaration(declaration *Node) *Node {
 	return nil
 }
 
+func GetImportClauseOfDeclaration(declaration *Declaration) *ImportClause {
+	switch declaration.Kind {
+	case KindImportDeclaration:
+		return declaration.AsImportDeclaration().ImportClause.AsImportClause()
+	case KindJSDocImportTag:
+		return declaration.AsJSDocImportTag().ImportClause.AsImportClause()
+	}
+	return nil
+}
+
 func GetNonAssignedNameOfDeclaration(declaration *Node) *Node {
 	// !!!
 	switch declaration.Kind {
@@ -2658,6 +2668,10 @@ func nodeContainsPosition(node *Node, position int) bool {
 	return node.Kind >= KindFirstNode && node.Pos() <= position && (position < node.End() || position == node.End() && node.Kind == KindEndOfFile)
 }
 
+func NodeRangeContainsPosition(node *Node, pos int) bool {
+	return node.Pos() <= pos && pos <= node.End()
+}
+
 func findImportOrRequire(text string, start int) (index int, size int) {
 	index = max(start, 0)
 	n := len(text)
@@ -2730,6 +2744,15 @@ func IsRequireCall(node *Node, requireStringLiteralLikeArgument bool) bool {
 		return false
 	}
 	return !requireStringLiteralLikeArgument || IsStringLiteralLike(call.Arguments.Nodes[0])
+}
+
+func IsRequireVariableStatement(node *Node) bool {
+	if IsVariableStatement(node) {
+		if declarations := node.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes; len(declarations) > 0 {
+			return core.Every(declarations, IsVariableDeclarationInitializedToRequire)
+		}
+	}
+	return false
 }
 
 func GetJSXImplicitImportBase(compilerOptions *core.CompilerOptions, file *SourceFile) string {
