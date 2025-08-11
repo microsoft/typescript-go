@@ -10,7 +10,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
-	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/transformers"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -468,14 +467,8 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 	case ast.KindTupleType:
 		result = tx.Visitor().VisitEachChild(input)
 		if result != nil {
-			original := tx.EmitContext().MostOriginal(input)
-			originalSourceFile := ast.GetSourceFileOfNode(original)
-			if originalSourceFile != nil {
-				startLine, _ := scanner.GetLineAndCharacterOfPosition(originalSourceFile, original.Loc.Pos())
-				endLine, _ := scanner.GetLineAndCharacterOfPosition(originalSourceFile, original.Loc.End())
-				if startLine == endLine {
-					tx.EmitContext().AddEmitFlags(result, printer.EFSingleLine)
-				}
+			if transformers.IsOriginalNodeSingleLine(tx.EmitContext(), input) {
+				tx.EmitContext().AddEmitFlags(result, printer.EFSingleLine)
 			}
 		}
 	case ast.KindJSDocTypeExpression:
