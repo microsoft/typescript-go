@@ -73,7 +73,6 @@ func ensureItemData(fileName string, pos int, list *lsproto.CompletionList) *lsp
 	return list
 }
 
-// !!! TODO: consolidate some of these into a single jsdoc data
 // *completionDataData | *completionDataKeyword | *completionDataJSDocTagName | *completionDataJSDocTag | *completionDataJSDocParameterName
 type completionData = any
 
@@ -4795,14 +4794,24 @@ func (l *LanguageService) getCompletionItemDetails(
 	)
 	switch {
 	case symbolCompletion.request != nil:
-		request := symbolCompletion.request
-		// !!! JSDoc completions
-		if core.Some(request.keywordCompletions, func(c *lsproto.CompletionItem) bool {
-			return c.Label == itemData.Name
-		}) {
+		request := *symbolCompletion.request
+		switch request := request.(type) {
+		case *completionDataJSDocTagName:
 			return createSimpleDetails(item, itemData.Name)
+		case *completionDataJSDocTag:
+			return createSimpleDetails(item, itemData.Name)
+		case *completionDataJSDocParameterName:
+			return createSimpleDetails(item, itemData.Name)
+		case *completionDataKeyword:
+			if core.Some(request.keywordCompletions, func(c *lsproto.CompletionItem) bool {
+				return c.Label == itemData.Name
+			}) {
+				return createSimpleDetails(item, itemData.Name)
+			}
+			return item
+		default:
+			panic(fmt.Sprintf("Unexpected completion data type: %T", request))
 		}
-		return nil
 	case symbolCompletion.symbol != nil:
 		symbolDetails := symbolCompletion.symbol
 		actions := getCompletionItemActions(symbolDetails.symbol)
@@ -4826,13 +4835,13 @@ func (l *LanguageService) getCompletionItemDetails(
 		}) {
 			return createSimpleDetails(item, itemData.Name)
 		}
-		return nil
+		return item
 	}
 }
 
 type detailsData struct {
 	symbol  *symbolDetails
-	request *completionDataKeyword
+	request *completionData
 	literal *literalValue
 	cases   *struct{}
 }
@@ -4871,9 +4880,9 @@ func getSymbolCompletionFromItemData(
 		return detailsData{}
 	}
 
-	if completionData, ok := completionData.(*completionDataKeyword); ok {
+	if _, ok := completionData.(*completionDataData); !ok {
 		return detailsData{
-			request: completionData,
+			request: &completionData,
 		}
 	}
 
