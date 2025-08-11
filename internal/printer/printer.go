@@ -5051,13 +5051,13 @@ func (p *Printer) emitCommentsBeforeToken(token ast.Kind, pos int, contextNode *
 		return nil, pos
 	}
 
+	node := p.emitContext.ParseNode(contextNode)
+	isSimilarNode := node != nil && node.Kind == contextNode.Kind
 	startPos := pos
-	if p.currentSourceFile != nil {
+	if isSimilarNode && p.currentSourceFile != nil {
 		pos = scanner.SkipTrivia(p.currentSourceFile.Text(), startPos)
 	}
 
-	node := p.emitContext.ParseNode(contextNode)
-	isSimilarNode := node != nil && node.Kind == contextNode.Kind
 	if !isSimilarNode {
 		return nil, pos
 	}
