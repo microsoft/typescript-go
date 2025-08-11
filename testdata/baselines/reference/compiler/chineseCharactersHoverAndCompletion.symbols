@@ -1,0 +1,70 @@
+//// [tests/cases/compiler/chineseCharactersHoverAndCompletion.ts] ////
+
+=== chineseCharactersHoverAndCompletion.ts ===
+// Test Chinese characters in hover and completion display
+interface 中文界面 {
+>中文界面 : Symbol(中文界面, Decl(chineseCharactersHoverAndCompletion.ts, 0, 0))
+
+    上居中: string;
+>上居中 : Symbol(上居中, Decl(chineseCharactersHoverAndCompletion.ts, 1, 16))
+
+    下居中: string; 
+>下居中 : Symbol(下居中, Decl(chineseCharactersHoverAndCompletion.ts, 2, 16))
+
+    右居中: string;
+>右居中 : Symbol(右居中, Decl(chineseCharactersHoverAndCompletion.ts, 3, 16))
+
+    左居中: string;
+>左居中 : Symbol(左居中, Decl(chineseCharactersHoverAndCompletion.ts, 4, 16))
+}
+
+class 中文类 {
+>中文类 : Symbol(中文类, Decl(chineseCharactersHoverAndCompletion.ts, 6, 1))
+
+    setLengthTextPositionPreset(preset: "上居中" | "下居中" | "右居中" | "左居中"): void {
+>setLengthTextPositionPreset : Symbol(setLengthTextPositionPreset, Decl(chineseCharactersHoverAndCompletion.ts, 8, 11))
+>preset : Symbol(preset, Decl(chineseCharactersHoverAndCompletion.ts, 9, 32))
+
+        console.log("设置位置: " + preset);
+>console.log : Symbol(log, Decl(lib.dom.d.ts, --, --))
+>console : Symbol(console, Decl(lib.dom.d.ts, --, --))
+>log : Symbol(log, Decl(lib.dom.d.ts, --, --))
+>preset : Symbol(preset, Decl(chineseCharactersHoverAndCompletion.ts, 9, 32))
+    }
+    
+    获取中文属性(): 中文界面 {
+>获取中文属性 : Symbol(获取中文属性, Decl(chineseCharactersHoverAndCompletion.ts, 11, 5))
+>中文界面 : Symbol(中文界面, Decl(chineseCharactersHoverAndCompletion.ts, 0, 0))
+
+        return {
+            上居中: "上居中",
+>上居中 : Symbol(上居中, Decl(chineseCharactersHoverAndCompletion.ts, 14, 16))
+
+            下居中: "下居中",
+>下居中 : Symbol(下居中, Decl(chineseCharactersHoverAndCompletion.ts, 15, 23))
+
+            右居中: "右居中",
+>右居中 : Symbol(右居中, Decl(chineseCharactersHoverAndCompletion.ts, 16, 23))
+
+            左居中: "左居中"
+>左居中 : Symbol(左居中, Decl(chineseCharactersHoverAndCompletion.ts, 17, 23))
+
+        };
+    }
+}
+
+let 实例 = new 中文类();
+>实例 : Symbol(实例, Decl(chineseCharactersHoverAndCompletion.ts, 23, 3))
+>中文类 : Symbol(中文类, Decl(chineseCharactersHoverAndCompletion.ts, 6, 1))
+
+let 属性对象 = 实例.获取中文属性();
+>属性对象 : Symbol(属性对象, Decl(chineseCharactersHoverAndCompletion.ts, 24, 3))
+>实例.获取中文属性 : Symbol(获取中文属性, Decl(chineseCharactersHoverAndCompletion.ts, 11, 5))
+>实例 : Symbol(实例, Decl(chineseCharactersHoverAndCompletion.ts, 23, 3))
+>获取中文属性 : Symbol(获取中文属性, Decl(chineseCharactersHoverAndCompletion.ts, 11, 5))
+
+实例.setLengthTextPositionPreset("上居中");
+>实例.setLengthTextPositionPreset : Symbol(setLengthTextPositionPreset, Decl(chineseCharactersHoverAndCompletion.ts, 8, 11))
+>实例 : Symbol(实例, Decl(chineseCharactersHoverAndCompletion.ts, 23, 3))
+>setLengthTextPositionPreset : Symbol(setLengthTextPositionPreset, Decl(chineseCharactersHoverAndCompletion.ts, 8, 11))
+

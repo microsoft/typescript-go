@@ -192,7 +192,7 @@ func getTypeHelpItem(symbol *ast.Symbol, typeParameter []*checker.Type, enclosin
 
 	// Creating display label
 	var displayParts strings.Builder
-	displayParts.WriteString(c.SymbolToString(symbol))
+	displayParts.WriteString(c.SymbolToStringEx(symbol, nil, ast.SymbolFlagsAll, checker.SymbolFormatFlagsAllowAnyNodeKind|checker.SymbolFormatFlagsNeverAsciiEscape))
 	if len(parameters) != 0 {
 		displayParts.WriteString(scanner.TokenToString(ast.KindLessThanToken))
 		for i, typeParameter := range parameters {
@@ -229,7 +229,7 @@ func createSignatureHelpItems(candidates []*checker.Signature, resolvedSignature
 
 	var callTargetDisplayParts strings.Builder
 	if callTargetSymbol != nil {
-		callTargetDisplayParts.WriteString(c.SymbolToString(callTargetSymbol))
+		callTargetDisplayParts.WriteString(c.SymbolToStringEx(callTargetSymbol, nil, ast.SymbolFlagsAll, checker.SymbolFormatFlagsAllowAnyNodeKind|checker.SymbolFormatFlagsNeverAsciiEscape))
 	}
 	items := make([][]signatureInformation, len(candidates))
 	for i, candidateSignature := range candidates {

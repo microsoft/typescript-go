@@ -1,0 +1,80 @@
+//// [tests/cases/compiler/chineseCharactersHoverAndCompletion.ts] ////
+
+=== chineseCharactersHoverAndCompletion.ts ===
+// Test Chinese characters in hover and completion display
+interface 中文界面 {
+    上居中: string;
+>上居中 : string
+
+    下居中: string; 
+>下居中 : string
+
+    右居中: string;
+>右居中 : string
+
+    左居中: string;
+>左居中 : string
+}
+
+class 中文类 {
+>中文类 : 中文类
+
+    setLengthTextPositionPreset(preset: "上居中" | "下居中" | "右居中" | "左居中"): void {
+>setLengthTextPositionPreset : (preset: "上居中" | "下居中" | "右居中" | "左居中") => void
+>preset : "上居中" | "下居中" | "右居中" | "左居中"
+
+        console.log("设置位置: " + preset);
+>console.log("设置位置: " + preset) : void
+>console.log : (...data: any[]) => void
+>console : Console
+>log : (...data: any[]) => void
+>"设置位置: " + preset : string
+>"设置位置: " : "设置位置: "
+>preset : "上居中" | "下居中" | "右居中" | "左居中"
+    }
+    
+    获取中文属性(): 中文界面 {
+>获取中文属性 : () => 中文界面
+
+        return {
+>{            上居中: "上居中",            下居中: "下居中",            右居中: "右居中",            左居中: "左居中"        } : { 上居中: string; 下居中: string; 右居中: string; 左居中: string; }
+
+            上居中: "上居中",
+>上居中 : string
+>"上居中" : "上居中"
+
+            下居中: "下居中",
+>下居中 : string
+>"下居中" : "下居中"
+
+            右居中: "右居中",
+>右居中 : string
+>"右居中" : "右居中"
+
+            左居中: "左居中"
+>左居中 : string
+>"左居中" : "左居中"
+
+        };
+    }
+}
+
+let 实例 = new 中文类();
+>实例 : 中文类
+>new 中文类() : 中文类
+>中文类 : typeof 中文类
+
+let 属性对象 = 实例.获取中文属性();
+>属性对象 : 中文界面
+>实例.获取中文属性() : 中文界面
+>实例.获取中文属性 : () => 中文界面
+>实例 : 中文类
+>获取中文属性 : () => 中文界面
+
+实例.setLengthTextPositionPreset("上居中");
+>实例.setLengthTextPositionPreset("上居中") : void
+>实例.setLengthTextPositionPreset : (preset: "上居中" | "下居中" | "右居中" | "左居中") => void
+>实例 : 中文类
+>setLengthTextPositionPreset : (preset: "上居中" | "下居中" | "右居中" | "左居中") => void
+>"上居中" : "上居中"
+

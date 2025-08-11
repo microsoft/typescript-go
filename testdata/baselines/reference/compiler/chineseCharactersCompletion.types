@@ -1,0 +1,38 @@
+//// [tests/cases/compiler/chineseCharactersCompletion.ts] ////
+
+=== chineseCharactersCompletion.ts ===
+// Test Chinese characters in TypeScript
+interface Point {
+    上居中: string;
+>上居中 : string
+
+    下居中: string; 
+>下居中 : string
+
+    右居中: string;
+>右居中 : string
+
+    左居中: string;
+>左居中 : string
+}
+
+class TSLine {
+>TSLine : TSLine
+
+    setLengthTextPositionPreset(preset: "上居中" | "下居中" | "右居中" | "左居中"): void {}
+>setLengthTextPositionPreset : (preset: "上居中" | "下居中" | "右居中" | "左居中") => void
+>preset : "上居中" | "下居中" | "右居中" | "左居中"
+}
+
+// Test completion on method call
+let lines = new TSLine();
+>lines : TSLine
+>new TSLine() : TSLine
+>TSLine : typeof TSLine
+
+lines.setLengthTextPositionPreset(
+>lines.setLengthTextPositionPreset( : void
+>lines.setLengthTextPositionPreset : (preset: "上居中" | "下居中" | "右居中" | "左居中") => void
+>lines : TSLine
+>setLengthTextPositionPreset : (preset: "上居中" | "下居中" | "右居中" | "左居中") => void
+

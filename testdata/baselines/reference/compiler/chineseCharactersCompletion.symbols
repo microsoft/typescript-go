@@ -1,0 +1,38 @@
+//// [tests/cases/compiler/chineseCharactersCompletion.ts] ////
+
+=== chineseCharactersCompletion.ts ===
+// Test Chinese characters in TypeScript
+interface Point {
+>Point : Symbol(Point, Decl(chineseCharactersCompletion.ts, 0, 0))
+
+    上居中: string;
+>上居中 : Symbol(上居中, Decl(chineseCharactersCompletion.ts, 1, 17))
+
+    下居中: string; 
+>下居中 : Symbol(下居中, Decl(chineseCharactersCompletion.ts, 2, 16))
+
+    右居中: string;
+>右居中 : Symbol(右居中, Decl(chineseCharactersCompletion.ts, 3, 16))
+
+    左居中: string;
+>左居中 : Symbol(左居中, Decl(chineseCharactersCompletion.ts, 4, 16))
+}
+
+class TSLine {
+>TSLine : Symbol(TSLine, Decl(chineseCharactersCompletion.ts, 6, 1))
+
+    setLengthTextPositionPreset(preset: "上居中" | "下居中" | "右居中" | "左居中"): void {}
+>setLengthTextPositionPreset : Symbol(setLengthTextPositionPreset, Decl(chineseCharactersCompletion.ts, 8, 14))
+>preset : Symbol(preset, Decl(chineseCharactersCompletion.ts, 9, 32))
+}
+
+// Test completion on method call
+let lines = new TSLine();
+>lines : Symbol(lines, Decl(chineseCharactersCompletion.ts, 13, 3))
+>TSLine : Symbol(TSLine, Decl(chineseCharactersCompletion.ts, 6, 1))
+
+lines.setLengthTextPositionPreset(
+>lines.setLengthTextPositionPreset : Symbol(setLengthTextPositionPreset, Decl(chineseCharactersCompletion.ts, 8, 14))
+>lines : Symbol(lines, Decl(chineseCharactersCompletion.ts, 13, 3))
+>setLengthTextPositionPreset : Symbol(setLengthTextPositionPreset, Decl(chineseCharactersCompletion.ts, 8, 14))
+

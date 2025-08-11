@@ -1248,7 +1248,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 					symbolId := ast.GetSymbolId(symbol)
 					origin := &symbolOriginInfo{
 						kind: symbolOriginInfoKindComputedPropertyName,
-						data: &symbolOriginInfoComputedPropertyName{symbolName: typeChecker.SymbolToString(symbol)},
+						data: &symbolOriginInfoComputedPropertyName{symbolName: typeChecker.SymbolToStringEx(symbol, nil, ast.SymbolFlagsAll, checker.SymbolFormatFlagsAllowAnyNodeKind|checker.SymbolFormatFlagsNeverAsciiEscape)},
 					}
 					symbolToOriginInfoMap[symbolId] = origin
 				}
