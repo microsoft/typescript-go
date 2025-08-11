@@ -1119,11 +1119,10 @@ func (l *LanguageService) getCompletionData(program *compiler.Program, typeCheck
 		// !!! CompletionInfoFlags
 
 		// import { type | -> token text should be blank
-		// !!! fuzzymatch
-		// var lowerCaseTokenText string
-		// if  previousToken != nil && ast.IsIdentifier(previousToken) && !(previousToken == contextToken && importStatementCompletion != nil){
-		// 	lowerCaseTokenText = strings.ToLower(previousToken.Text())
-		// }
+		var lowerCaseTokenText string
+		if previousToken != nil && ast.IsIdentifier(previousToken) && !(previousToken == contextToken && importStatementCompletion != nil) {
+			lowerCaseTokenText = strings.ToLower(previousToken.Text())
+		}
 
 		// !!! moduleSpecifierCache := host.getModuleSpecifierCache();
 		// !!! packageJsonAutoImportProvider := host.getPackageJsonAutoImportProvider();
@@ -1162,9 +1161,7 @@ func (l *LanguageService) getCompletionData(program *compiler.Program, typeCheck
 						if itemData != nil {
 							return true
 						}
-						/// !!!
-						// return charactersFuzzyMatchInString(symbolName, lowerCaseTokenText);
-						return false
+						return charactersFuzzyMatchInString(symbolName, lowerCaseTokenText)
 					},
 					func(info []*SymbolExportInfo, symbolName string, isFromAmbientModule bool, exportMapKey ExportMapInfoKey) []*SymbolExportInfo {
 						if itemData != nil && !core.Some(info, func(i *SymbolExportInfo) bool {
@@ -3402,6 +3399,49 @@ func getCompareCompletionEntries(ctx context.Context) func(entryInSlice *lsproto
 	}
 }
 
+// True if the first character of `lowercaseCharacters` is the first character
+// of some "word" in `identiferString` (where the string is split into "words"
+// by camelCase and snake_case segments), then if the remaining characters of
+// `lowercaseCharacters` appear, in order, in the rest of `identifierString`.// 
+// True:
+// 'state' in 'useState'
+// 'sae' in 'useState'
+// 'viable' in 'ENVIRONMENT_VARIABLE'// 
+// False:
+// 'staet' in 'useState'
+// 'tate' in 'useState'
+// 'ment' in 'ENVIRONMENT_VARIABLE'
+func charactersFuzzyMatchInString(identifierString string, lowercaseCharacters string) bool {
+	if lowercaseCharacters == "" {
+		return true
+	}
+
+	var prevChar *rune
+	matchedFirstCharacter := false
+	characterIndex := 0
+	length := len(identifierString)
+	for strIndex := 0; strIndex < length; strIndex++ {
+		strChar := rune(identifierString[strIndex])
+		testChar := rune(lowercaseCharacters[strIndex])
+		if strChar == testChar || strChar == unicode.ToUpper(testChar) {
+			willMatchFirstChar := prevChar == nil || // Beginning of word
+				'a' <= *prevChar && *prevChar <= 'z' && 'A' <= strChar && strChar <= 'Z' || // camelCase transition
+				*prevChar == '_' && strChar != '_' // snake_case transition
+			matchedFirstCharacter = matchedFirstCharacter || willMatchFirstChar
+			if matchedFirstCharacter {
+				characterIndex++
+			}
+			if characterIndex == len(lowercaseCharacters) {
+				return true
+			}
+		}
+		prevChar = ptrTo(strChar)
+	}
+
+	// Did not find all characters
+	return false
+}
+
 var (
 	keywordCompletionsCache = collections.SyncMap[KeywordCompletionFilters, []*lsproto.CompletionItem]{}
 	allKeywordCompletions   = sync.OnceValue(func() []*lsproto.CompletionItem {
@@ -5206,7 +5246,7 @@ func (l *LanguageService) getSymbolCompletionFromItemData(
 		}
 	}
 
-	completionData := l.getCompletionData(program, ch, file, position, itemData, preferences) //  &UserPreferences{IncludeCompletionsForModuleExports: ptrTo(true), IncludeCompletionsWithInsertText: ptrTo(true)}
+	completionData := l.getCompletionData(program, ch, file, position, itemData, &UserPreferences{IncludeCompletionsForModuleExports: ptrTo(true), IncludeCompletionsWithInsertText: ptrTo(true)})
 	if completionData == nil {
 		return detailsData{}
 	}
