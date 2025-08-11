@@ -258,7 +258,8 @@ func (c *Checker) symbolToStringEx(symbol *ast.Symbol, enclosingDeclaration *ast
 		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
 	}
 	var printer_ *printer.Printer
-	if (enclosingDeclaration != nil && enclosingDeclaration.Kind == ast.KindSourceFile) || (flags&SymbolFormatFlagsNeverAsciiEscape != 0) {
+	// add neverAsciiEscape for GH#39027
+	if enclosingDeclaration != nil && enclosingDeclaration.Kind == ast.KindSourceFile {
 		printer_ = createPrinterWithRemoveCommentsNeverAsciiEscape(nodeBuilder.EmitContext())
 	} else {
 		printer_ = createPrinterWithRemoveComments(nodeBuilder.EmitContext())

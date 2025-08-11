@@ -105,8 +105,6 @@ const (
 	// Skip building an accessible symbol chain
 	/** @internal */
 	SymbolFormatFlagsDoNotIncludeSymbolChain SymbolFormatFlags = 1 << 5
-	// Never escape non-ASCII characters in symbol names
-	SymbolFormatFlagsNeverAsciiEscape SymbolFormatFlags = 1 << 6
 )
 
 // Ids
