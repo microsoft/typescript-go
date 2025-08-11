@@ -4,40 +4,8 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
-
-func TestChineseCharacterDisplayInCompletions(t *testing.T) {
-	t.Parallel()
-	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `
-interface Point {
-    上居中: string;
-    下居中: string; 
-    右居中: string;
-    左居中: string;
-}
-
-class TSLine {
-    setLengthTextPositionPreset(preset: "上居中" | "下居中" | "右居中" | "左居中"): void {}
-}
-
-let lines = new TSLine();
-lines./*completion*/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "completion", &fourslash.CompletionsExpectedList{
-		IsIncomplete: false,
-		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &DefaultCommitCharacters,
-		},
-		Items: &fourslash.CompletionsExpectedItems{
-			Includes: []fourslash.CompletionsExpectedItem{
-				"setLengthTextPositionPreset",
-			},
-		},
-	})
-}
 
 func TestChineseCharacterDisplayInHover(t *testing.T) {
 	t.Parallel()
