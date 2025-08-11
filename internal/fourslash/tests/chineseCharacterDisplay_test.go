@@ -76,7 +76,7 @@ class TSLine {
 let lines = new TSLine();
 lines./*method*/setLengthTextPositionPreset;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	
+
 	// Verify that the method displays Chinese characters correctly in hover (this was the original problem)
 	f.VerifyQuickInfoAt(t, "method", `(method) TSLine.setLengthTextPositionPreset(preset: "上居中" | "下居中" | "右居中" | "左居中"): void`, "")
 }
