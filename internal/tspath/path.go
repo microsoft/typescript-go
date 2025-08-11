@@ -533,13 +533,42 @@ func GetCanonicalFileName(fileName string, useCaseSensitiveFileNames bool) strin
 // Rest special characters are either already in lower case format or
 // they have corresponding upper case character so they dont need special handling
 
-func ToFileNameLowerCase(fileName string) string {
+func ToFileNameLowerCase(s string) string {
+	const IWithDot = '\u0130'
+
+	ascii := true
+	needsLower := false
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		if c >= 0x80 {
+			ascii = false
+			break
+		}
+		if 'A' <= c && c <= 'Z' {
+			needsLower = true
+		}
+	}
+	if ascii {
+		if !needsLower {
+			return s
+		}
+		b := make([]byte, len(s))
+		for i := 0; i < len(s); i++ {
+			c := s[i]
+			if 'A' <= c && c <= 'Z' {
+				c += 'a' - 'A' // +32
+			}
+			b[i] = c
+		}
+		return string(b)
+	}
+
 	return strings.Map(func(r rune) rune {
-		if r == '\u0130' {
+		if r == IWithDot {
 			return r
 		}
 		return unicode.ToLower(r)
-	}, fileName)
+	}, s)
 }
 
 func ToPath(fileName string, basePath string, useCaseSensitiveFileNames bool) Path {
