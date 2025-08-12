@@ -9,6 +9,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -54,6 +55,26 @@ interface Symbol {
 declare const console: { log(msg: any): void; };
 `)
 
+type TestClock struct {
+	start time.Time
+	now   time.Time
+	nowMu sync.Mutex
+}
+
+func (t *TestClock) Now() time.Time {
+	t.nowMu.Lock()
+	defer t.nowMu.Unlock()
+	if t.now.IsZero() {
+		t.now = t.start
+	}
+	t.now = t.now.Add(1 * time.Second) // Simulate some time passing
+	return t.now
+}
+
+func (t *TestClock) SinceStart() time.Duration {
+	return t.Now().Sub(t.start)
+}
+
 func newTestSys(tscInput *tscInput) *testSys {
 	cwd := tscInput.cwd
 	if cwd == "" {
@@ -64,10 +85,11 @@ func newTestSys(tscInput *tscInput) *testSys {
 		libPath = tscInput.windowsStyleRoot + libPath[1:]
 	}
 	currentWrite := &strings.Builder{}
+	clock := &TestClock{start: time.Now()}
 	sys := &testSys{
 		fs: &incrementaltestutil.FsHandlingBuildInfo{
 			FS: &testFs{
-				FS: vfstest.FromMap(tscInput.files, !tscInput.ignoreCase),
+				FS: vfstest.FromMapWithClock(tscInput.files, !tscInput.ignoreCase, clock),
 			},
 		},
 		defaultLibraryPath: libPath,
@@ -77,7 +99,7 @@ func newTestSys(tscInput *tscInput) *testSys {
 			UseCaseSensitiveFileNames: !tscInput.ignoreCase,
 			CurrentDirectory:          cwd,
 		}, currentWrite),
-		start: time.Now(),
+		clock: clock,
 		env:   tscInput.env,
 	}
 
@@ -113,8 +135,7 @@ type testSys struct {
 	defaultLibraryPath string
 	cwd                string
 	env                map[string]string
-
-	start time.Time
+	clock              *TestClock
 }
 
 var (
@@ -123,12 +144,11 @@ var (
 )
 
 func (s *testSys) Now() time.Time {
-	// todo: make a "test time" structure
-	return time.Now()
+	return s.clock.Now()
 }
 
 func (s *testSys) SinceStart() time.Duration {
-	return time.Since(s.start)
+	return s.clock.SinceStart()
 }
 
 func (s *testSys) FS() vfs.FS {
@@ -141,6 +161,10 @@ func (s *testSys) testFs() *testFs {
 
 func (s *testSys) fsFromFileMap() iovfs.FsWithSys {
 	return s.testFs().FS.(iovfs.FsWithSys)
+}
+
+func (s *testSys) mapFs() *vfstest.MapFS {
+	return s.fsFromFileMap().FSys().(*vfstest.MapFS)
 }
 
 func (s *testSys) ensureLibPathExists(path string) {
@@ -368,7 +392,7 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 
 		fileInfo := d.Type()
 		if fileInfo&fs.ModeSymlink != 0 {
-			target, ok := s.fsFromFileMap().FSys().(*vfstest.MapFS).GetTargetOfSymlink(path)
+			target, ok := s.mapFs().GetTargetOfSymlink(path)
 			if !ok {
 				panic("Failed to resolve symlink target: " + path)
 			}

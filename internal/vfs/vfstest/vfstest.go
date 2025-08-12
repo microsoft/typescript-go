@@ -28,6 +28,25 @@ type MapFS struct {
 	useCaseSensitiveFileNames bool
 
 	symlinks map[canonicalPath]canonicalPath
+
+	clock Clock
+}
+
+type Clock interface {
+	Now() time.Time
+	SinceStart() time.Duration
+}
+
+type clockImpl struct {
+	start time.Time
+}
+
+func (c *clockImpl) Now() time.Time {
+	return time.Now()
+}
+
+func (c *clockImpl) SinceStart() time.Duration {
+	return time.Since(c.start)
 }
 
 var (
@@ -47,6 +66,16 @@ type sys struct {
 // without trailing directory separators.
 // The paths must be all POSIX-style or all Windows-style, but not both.
 func FromMap[File any](m map[string]File, useCaseSensitiveFileNames bool) vfs.FS {
+	return FromMapWithClock(m, useCaseSensitiveFileNames, &clockImpl{start: time.Now()})
+}
+
+// FromMap creates a new [vfs.FS] from a map of paths to file contents.
+// Those file contents may be strings, byte slices, or [fstest.MapFile]s.
+//
+// The paths must be normalized absolute paths according to the tspath package,
+// without trailing directory separators.
+// The paths must be all POSIX-style or all Windows-style, but not both.
+func FromMapWithClock[File any](m map[string]File, useCaseSensitiveFileNames bool, clock Clock) vfs.FS {
 	posix := false
 	windows := false
 
@@ -67,17 +96,23 @@ func FromMap[File any](m map[string]File, useCaseSensitiveFileNames bool) vfs.FS
 	}
 
 	mfs := make(fstest.MapFS, len(m))
-	for p, f := range m {
+	// Sorted creation to ensure times are always guaranteed to be in order.
+	keys := slices.Collect(maps.Keys(m))
+	slices.SortFunc(keys, comparePathsByParts)
+	for _, p := range keys {
+		f := m[p]
 		checkPath(p)
 
 		var file *fstest.MapFile
 		switch f := any(f).(type) {
 		case string:
-			file = &fstest.MapFile{Data: []byte(f)}
+			file = &fstest.MapFile{Data: []byte(f), ModTime: clock.Now()}
 		case []byte:
-			file = &fstest.MapFile{Data: f}
+			file = &fstest.MapFile{Data: f, ModTime: clock.Now()}
 		case *fstest.MapFile:
-			file = f
+			fCopy := *f
+			fCopy.ModTime = clock.Now()
+			file = &fCopy
 		default:
 			panic(fmt.Sprintf("invalid file type %T", f))
 		}
@@ -100,13 +135,17 @@ func FromMap[File any](m map[string]File, useCaseSensitiveFileNames bool) vfs.FS
 		panic("mixed posix and windows paths")
 	}
 
-	return iovfs.From(convertMapFS(mfs, useCaseSensitiveFileNames), useCaseSensitiveFileNames)
+	return iovfs.From(convertMapFS(mfs, useCaseSensitiveFileNames, clock), useCaseSensitiveFileNames)
 }
 
-func convertMapFS(input fstest.MapFS, useCaseSensitiveFileNames bool) *MapFS {
+func convertMapFS(input fstest.MapFS, useCaseSensitiveFileNames bool, clock Clock) *MapFS {
+	if clock == nil {
+		clock = &clockImpl{start: time.Now()}
+	}
 	m := &MapFS{
 		m:                         make(fstest.MapFS, len(input)),
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
+		clock:                     clock,
 	}
 
 	// Verify that the input is well-formed.
@@ -320,7 +359,8 @@ func (m *MapFS) mkdirAll(p string, perm fs.FileMode) error {
 
 	for _, dir := range toCreate {
 		m.setEntry(dir, m.getCanonicalPath(dir), fstest.MapFile{
-			Mode: fs.ModeDir | perm&^umask,
+			Mode:    fs.ModeDir | perm&^umask,
+			ModTime: m.clock.Now(),
 		})
 	}
 
@@ -482,7 +522,7 @@ func (m *MapFS) WriteFile(path string, data []byte, perm fs.FileMode) error {
 
 	m.setEntry(path, cp, fstest.MapFile{
 		Data:    data,
-		ModTime: time.Now(),
+		ModTime: m.clock.Now(),
 		Mode:    perm &^ umask,
 	})
 
