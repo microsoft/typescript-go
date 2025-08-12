@@ -454,7 +454,7 @@ func (ti *TypingsInstaller) ensureTypingsLocationExists(fs vfs.FS, logger loggin
 }
 
 func (ti *TypingsInstaller) typingToFileName(resolver *module.Resolver, packageName string) string {
-	result := resolver.ResolveModuleName(packageName, tspath.CombinePaths(ti.typingsLocation, "index.d.ts"), core.ModuleKindNone, nil)
+	result, _ := resolver.ResolveModuleName(packageName, tspath.CombinePaths(ti.typingsLocation, "index.d.ts"), core.ModuleKindNone, nil)
 	return result.ResolvedFileName
 }
 

@@ -220,6 +220,12 @@ func findConfigFile(searchPath string, fileExists func(string) bool, configName 
 	return result
 }
 
+func getTraceFromSys(sys System) func(msg string) {
+	return func(msg string) {
+		fmt.Fprintln(sys.Writer(), msg)
+	}
+}
+
 func performIncrementalCompilation(
 	sys System,
 	config *tsoptions.ParsedCommandLine,
@@ -228,9 +234,9 @@ func performIncrementalCompilation(
 	configTime time.Duration,
 	testing bool,
 ) CommandLineResult {
-	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache)
+	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys))
 	buildInfoReadStart := sys.Now()
-	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host))
+	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host), host)
 	buildInfoReadTime := sys.Now().Sub(buildInfoReadStart)
 	// todo: cache, statistics, tracing
 	parseStart := sys.Now()
@@ -267,7 +273,7 @@ func performCompilation(
 	extendedConfigCache tsoptions.ExtendedConfigCache,
 	configTime time.Duration,
 ) CommandLineResult {
-	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache)
+	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys))
 	// todo: cache, statistics, tracing
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{

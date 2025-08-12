@@ -532,7 +532,7 @@ func (p *Program) verifyCompilerOptions() {
 				relative = "./" + relative
 			}
 			suggestion := tspath.CombinePaths(relative, "*")
-			useInstead = fmt.Sprintf(`"paths": {"*": %s}`, core.Must(json.Marshal(suggestion)))
+			useInstead = fmt.Sprintf(`"paths": {"*": [%s]}`, core.Must(json.Marshal(suggestion)))
 		}
 		createRemovedOptionDiagnostic("baseUrl", "", useInstead)
 	}
@@ -1281,7 +1281,15 @@ func (p *Program) GetDefaultResolutionModeForFile(sourceFile ast.HasFileName) co
 }
 
 func (p *Program) IsSourceFileDefaultLibrary(path tspath.Path) bool {
-	return p.libFiles.Has(path)
+	_, ok := p.libFiles[path]
+	return ok
+}
+
+func (p *Program) GetDefaultLibFile(path tspath.Path) *LibFile {
+	if libFile, ok := p.libFiles[path]; ok {
+		return libFile
+	}
+	return nil
 }
 
 func (p *Program) CommonSourceDirectory() string {

@@ -67,7 +67,11 @@ func (t *toBuildInfo) relativeToBuildInfo(path string) string {
 func (t *toBuildInfo) toFileId(path tspath.Path) BuildInfoFileId {
 	fileId := t.fileNameToFileId[string(path)]
 	if fileId == 0 {
-		t.buildInfo.FileNames = append(t.buildInfo.FileNames, t.relativeToBuildInfo(string(path)))
+		if libFile := t.program.GetDefaultLibFile(path); libFile != nil && !libFile.Replaced {
+			t.buildInfo.FileNames = append(t.buildInfo.FileNames, libFile.Name)
+		} else {
+			t.buildInfo.FileNames = append(t.buildInfo.FileNames, t.relativeToBuildInfo(string(path)))
+		}
 		fileId = BuildInfoFileId(len(t.buildInfo.FileNames))
 		t.fileNameToFileId[string(path)] = fileId
 	}
@@ -91,15 +95,16 @@ func (t *toBuildInfo) toFileIdListId(set *collections.Set[tspath.Path]) BuildInf
 }
 
 func (t *toBuildInfo) toRelativeToBuildInfoCompilerOptionValue(option *tsoptions.CommandLineOption, v any) any {
-	if !option.IsFilePath {
-		return v
-	}
 	if option.Kind == "list" {
-		if arr, ok := v.([]string); ok {
-			return core.Map(arr, t.relativeToBuildInfo)
+		if option.Elements().IsFilePath {
+			if arr, ok := v.([]string); ok {
+				return core.Map(arr, t.relativeToBuildInfo)
+			}
 		}
-	} else if str, ok := v.(string); ok && str != "" {
-		return t.relativeToBuildInfo(v.(string))
+	} else if option.IsFilePath {
+		if str, ok := v.(string); ok && str != "" {
+			return t.relativeToBuildInfo(v.(string))
+		}
 	}
 	return v
 }
@@ -175,7 +180,9 @@ func (t *toBuildInfo) setFileInfoAndEmitSignatures() {
 		fileId := t.toFileId(file.Path())
 		//  tryAddRoot(key, fileId);
 		if t.buildInfo.FileNames[fileId-1] != t.relativeToBuildInfo(string(file.Path())) {
-			panic(fmt.Sprintf("File name at index %d does not match expected relative path: %s != %s", fileId-1, t.buildInfo.FileNames[fileId-1], t.relativeToBuildInfo(string(file.Path()))))
+			if libFile := t.program.GetDefaultLibFile(file.Path()); libFile == nil || libFile.Replaced || t.buildInfo.FileNames[fileId-1] != libFile.Name {
+				panic(fmt.Sprintf("File name at index %d does not match expected relative path or libName: %s != %s", fileId-1, t.buildInfo.FileNames[fileId-1], t.relativeToBuildInfo(string(file.Path()))))
+			}
 		}
 		if t.snapshot.options.Composite.IsTrue() {
 			if !ast.IsJsonSourceFile(file) && t.program.SourceFileMayBeEmitted(file, false) {
