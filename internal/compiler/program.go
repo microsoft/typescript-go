@@ -1467,17 +1467,17 @@ func (p *Program) GetSourceFiles() []*ast.SourceFile {
 	return p.files
 }
 
-func (p *Program) ExplainFiles(writer io.Writer) {
+func (p *Program) ExplainFiles(w io.Writer) {
 	toRelativeFileName := func(fileName string) string {
 		return tspath.GetRelativePathFromDirectory(p.GetCurrentDirectory(), fileName, p.comparePathsOptions)
 	}
 	for _, file := range p.GetSourceFiles() {
-		fmt.Fprintln(writer, toRelativeFileName(file.FileName()))
+		fmt.Fprintln(w, toRelativeFileName(file.FileName()))
 		for _, reason := range p.includeProcessor.fileIncludeReasons[file.Path()] {
-			fmt.Fprintln(writer, "  ", reason.toDiagnostic(p, true).Message())
+			fmt.Fprintln(w, "  ", reason.toDiagnostic(p, true).Message())
 		}
 		for _, diag := range p.includeProcessor.explainRedirectAndImpliedFormat(p, file, toRelativeFileName) {
-			fmt.Fprintln(writer, "  ", diag.Message())
+			fmt.Fprintln(w, "  ", diag.Message())
 		}
 	}
 }
