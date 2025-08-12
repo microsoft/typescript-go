@@ -34,6 +34,8 @@ import (
 // Posix-style path to additional test libraries
 const testLibFolder = "/.lib"
 
+const FakeTSVersion = "FakeTSVersion"
+
 type TestFile struct {
 	UnitName string
 	Content  string
@@ -516,7 +518,7 @@ func (h *cachedCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast
 func createCompilerHost(fs vfs.FS, defaultLibraryPath string, currentDirectory string) *cachedCompilerHost {
 	var tracer strings.Builder
 	trace := func(msg string) {
-		fmt.Fprintln(&tracer, msg)
+		fmt.Fprintln(&tracer, strings.Replace(msg, "'"+core.Version()+"'", "'"+FakeTSVersion+"'", 1))
 	}
 	return &cachedCompilerHost{
 		CompilerHost: compiler.NewCompilerHost(currentDirectory, fs, defaultLibraryPath, nil, trace),
