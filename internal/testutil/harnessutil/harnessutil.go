@@ -395,7 +395,10 @@ func parseHarnessOption(t *testing.T, key string, value any, harnessOptions *Har
 	case "fileName":
 		harnessOptions.FileName = value.(string)
 	case "libFiles":
-		harnessOptions.LibFiles = value.([]string)
+		harnessOptions.LibFiles = make([]string, 0, len(value.([]any)))
+		for _, v := range value.([]any) {
+			harnessOptions.LibFiles = append(harnessOptions.LibFiles, v.(string))
+		}
 	case "noImplicitReferences":
 		harnessOptions.NoImplicitReferences = value.(bool)
 	case "currentDirectory":
