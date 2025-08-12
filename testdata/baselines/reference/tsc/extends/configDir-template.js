@@ -99,11 +99,13 @@ Directory '/node_modules' does not exist, skipping all lookups in it.
 
 [7m3[0m     "compilerOptions": {
 [7m [0m [91m    ~~~~~~~~~~~~~~~~~[0m
+
 [96mtsconfig.json[0m:[93m3[0m:[93m5[0m - [91merror[0m[90m TS5102: [0mOption 'baseUrl' has been removed. Please remove it from your configuration.
   Use '"paths": {"*": ["./*"]}' instead.
 
 [7m3[0m     "compilerOptions": {
 [7m [0m [91m    ~~~~~~~~~~~~~~~~~[0m
+
 ../../tslibs/TS/Lib/lib.d.ts
    Default library for target 'ES5'
 types/sometype.ts

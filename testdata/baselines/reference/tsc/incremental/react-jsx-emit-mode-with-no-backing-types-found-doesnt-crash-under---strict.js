@@ -35,6 +35,7 @@ Output::
 [7m1[0m export const App = () => <div propA={true}></div>;
 [7m [0m [91m                         ~~~~~~~~~~~~~~~~~~~~~~~~[0m
 
+
 Found 1 error in src/index.tsx[90m:1[0m
 
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*

@@ -155,6 +155,7 @@ Output::
 [7m3[0m     console.log( person.message );
 [7m [0m [91m                        ~~~~~~~[0m
 
+
 Found 1 error in main.ts[90m:3[0m
 
 //// [/home/src/workspaces/project/MessageablePerson.js] *rewrite with same content*
@@ -253,6 +254,7 @@ Output::
 
 [7m3[0m     console.log( person.message );
 [7m [0m [91m                        ~~~~~~~[0m
+
 
 Found 1 error in main.ts[90m:3[0m
 

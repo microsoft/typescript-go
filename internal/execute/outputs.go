@@ -31,19 +31,18 @@ func getFormatOptsOfSys(sys System) *diagnosticwriter.FormattingOptions {
 
 type diagnosticReporter = func(*ast.Diagnostic)
 
+func quietDiagnosticReporter(diagnostic *ast.Diagnostic) {}
 func createDiagnosticReporter(sys System, options *core.CompilerOptions) diagnosticReporter {
 	if options.Quiet.IsTrue() {
-		return func(diagnostic *ast.Diagnostic) {}
+		return quietDiagnosticReporter
 	}
 
 	formatOpts := getFormatOptsOfSys(sys)
-	if !shouldBePretty(sys, options) {
-		return func(diagnostic *ast.Diagnostic) {
-			diagnosticwriter.WriteFormatDiagnostic(sys.Writer(), diagnostic, formatOpts)
-		}
-	}
+	writeDiagnostic := core.IfElse(shouldBePretty(sys, options), diagnosticwriter.FormatDiagnosticWithColorAndContext, diagnosticwriter.WriteFormatDiagnostic)
+
 	return func(diagnostic *ast.Diagnostic) {
-		diagnosticwriter.FormatDiagnosticsWithColorAndContext(sys.Writer(), []*ast.Diagnostic{diagnostic}, formatOpts)
+		writeDiagnostic(sys.Writer(), diagnostic, formatOpts)
+		fmt.Fprint(sys.Writer(), formatOpts.NewLine)
 	}
 }
 

@@ -41,6 +41,7 @@ Output::
     [7m9[0m declare function Component(props: { children?: number }): any;
     [7m [0m [96m                 ~~~~~~~~~[0m
 
+
 Found 1 error in index.tsx[90m:10[0m
 
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
@@ -195,6 +196,7 @@ Output::
   [96mindex.tsx[0m:[93m9[0m:[93m18[0m - The last overload is declared here.
     [7m9[0m declare function Component(props: { children?: number }): any;
     [7m [0m [96m                 ~~~~~~~~~[0m
+
 
 Found 1 error in index.tsx[90m:10[0m
 
