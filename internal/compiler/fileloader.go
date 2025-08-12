@@ -21,6 +21,12 @@ type libResolution struct {
 	trace       []string
 }
 
+type LibFile struct {
+	Name     string
+	path     string
+	Replaced bool
+}
+
 type fileLoader struct {
 	opts                ProgramOptions
 	resolver            *module.Resolver
@@ -40,7 +46,7 @@ type fileLoader struct {
 	projectReferenceFileMapper *projectReferenceFileMapper
 	dtsDirectories             collections.Set[tspath.Path]
 
-	pathForLibFileCache       collections.SyncMap[string, string]
+	pathForLibFileCache       collections.SyncMap[string, *LibFile]
 	pathForLibFileResolutions collections.SyncMap[tspath.Path, *libResolution]
 }
 
@@ -55,7 +61,7 @@ type processedFiles struct {
 	sourceFileMetaDatas           map[tspath.Path]ast.SourceFileMetaData
 	jsxRuntimeImportSpecifiers    map[tspath.Path]*jsxRuntimeImportSpecifier
 	importHelpersImportSpecifiers map[tspath.Path]*ast.Node
-	libFiles                      collections.Set[tspath.Path]
+	libFiles                      map[tspath.Path]*LibFile
 	// List of present unsupported extensions
 	unsupportedExtensions                []string
 	sourceFilesFoundSearchingNodeModules collections.Set[tspath.Path]
@@ -95,23 +101,25 @@ func processAllProgramFiles(
 	loader.addProjectReferenceTasks(singleThreaded)
 	loader.resolver = module.NewResolver(loader.projectReferenceFileMapper.host, compilerOptions, opts.TypingsLocation, opts.ProjectName)
 
-	var libs []string
+	for _, file := range rootFiles {
+		loader.addRootTask(file, nil)
+	}
+
 	if len(rootFiles) > 0 && compilerOptions.NoLib.IsFalseOrUnknown() {
 		if compilerOptions.Lib == nil {
 			name := tsoptions.GetDefaultLibFileName(compilerOptions)
-			libs = append(libs, loader.pathForLibFile(name))
+			libFile := loader.pathForLibFile(name)
+			loader.addRootTask(libFile.path, libFile)
 		} else {
 			for _, lib := range compilerOptions.Lib {
 				if name, ok := tsoptions.GetLibFileName(lib); ok {
-					libs = append(libs, loader.pathForLibFile(name))
+					libFile := loader.pathForLibFile(name)
+					loader.addRootTask(libFile.path, libFile)
 				}
 				// !!! error on unknown name
 			}
 		}
 	}
-
-	loader.addRootTasks(rootFiles, false)
-	loader.addRootTasks(libs, true)
 
 	if len(rootFiles) > 0 {
 		loader.addAutomaticTypeDirectiveTasks()
@@ -137,7 +145,7 @@ func processAllProgramFiles(
 	var importHelpersImportSpecifiers map[tspath.Path]*ast.Node
 	var unsupportedExtensions []string
 	var sourceFilesFoundSearchingNodeModules collections.Set[tspath.Path]
-	var libFileSet collections.Set[tspath.Path]
+	libFilesMap := make(map[tspath.Path]*LibFile, libFileCount)
 	fileLoadDiagnostics := &ast.DiagnosticsCollection{}
 
 	loader.filesParser.collect(&loader, loader.rootTasks, func(task *parseTask) {
@@ -155,9 +163,9 @@ func processAllProgramFiles(
 			missingFiles = append(missingFiles, task.normalizedFilePath)
 			return
 		}
-		if task.isLib {
+		if task.libFile != nil {
 			libFiles = append(libFiles, file)
-			libFileSet.Add(path)
+			libFilesMap[path] = task.libFile
 		} else {
 			files = append(files, file)
 		}
@@ -233,7 +241,7 @@ func processAllProgramFiles(
 		importHelpersImportSpecifiers:        importHelpersImportSpecifiers,
 		unsupportedExtensions:                unsupportedExtensions,
 		sourceFilesFoundSearchingNodeModules: sourceFilesFoundSearchingNodeModules,
-		libFiles:                             libFileSet,
+		libFiles:                             libFilesMap,
 		fileLoadDiagnostics:                  fileLoadDiagnostics,
 	}
 }
@@ -242,12 +250,10 @@ func (p *fileLoader) toPath(file string) tspath.Path {
 	return tspath.ToPath(file, p.opts.Host.GetCurrentDirectory(), p.opts.Host.FS().UseCaseSensitiveFileNames())
 }
 
-func (p *fileLoader) addRootTasks(files []string, isLib bool) {
-	for _, fileName := range files {
-		absPath := tspath.GetNormalizedAbsolutePath(fileName, p.opts.Host.GetCurrentDirectory())
-		if core.Tristate.IsTrue(p.opts.Config.CompilerOptions().AllowNonTsExtensions) || slices.Contains(p.supportedExtensions, tspath.TryGetExtensionFromPath(absPath)) {
-			p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: absPath, isLib: isLib, root: true})
-		}
+func (p *fileLoader) addRootTask(fileName string, libFile *LibFile) {
+	absPath := tspath.GetNormalizedAbsolutePath(fileName, p.opts.Host.GetCurrentDirectory())
+	if core.Tristate.IsTrue(p.opts.Config.CompilerOptions().AllowNonTsExtensions) || slices.Contains(p.supportedExtensions, tspath.TryGetExtensionFromPath(absPath)) {
+		p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: absPath, libFile: libFile, root: true})
 	}
 }
 
@@ -260,7 +266,7 @@ func (p *fileLoader) addAutomaticTypeDirectiveTasks() {
 		containingDirectory = p.opts.Host.GetCurrentDirectory()
 	}
 	containingFileName := tspath.CombinePaths(containingDirectory, module.InferredTypesContainingFile)
-	p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: containingFileName, isLib: false, isForAutomaticTypeDirective: true})
+	p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: containingFileName, isForAutomaticTypeDirective: true})
 }
 
 func (p *fileLoader) resolveAutomaticTypeDirectives(containingFileName string) (
@@ -317,12 +323,12 @@ func (p *fileLoader) addProjectReferenceTasks(singleThreaded bool) {
 			}
 			if p.opts.canUseProjectReferenceSource() {
 				for _, fileName := range resolved.FileNames() {
-					p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: fileName, isLib: false})
+					p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: fileName})
 				}
 			} else {
 				for outputDts := range resolved.GetOutputDeclarationFileNames() {
 					if outputDts != "" {
-						p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: outputDts, isLib: false})
+						p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: outputDts})
 					}
 				}
 			}
@@ -420,7 +426,7 @@ func (p *fileLoader) resolveTypeReferenceDirectives(t *parseTask) {
 				increaseDepth:         resolved.IsExternalLibraryImport,
 				elideOnDepth:          false,
 				isFromExternalLibrary: resolved.IsExternalLibraryImport,
-			}, false)
+			}, nil)
 		}
 	}
 
@@ -514,7 +520,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 					increaseDepth:         resolvedModule.IsExternalLibraryImport,
 					elideOnDepth:          isJsFileFromNodeModules,
 					isFromExternalLibrary: resolvedModule.IsExternalLibraryImport,
-				}, false)
+				}, nil)
 			}
 		}
 
@@ -536,18 +542,20 @@ func (p *fileLoader) createSyntheticImport(text string, file *ast.SourceFile) *a
 	return externalHelpersModuleReference
 }
 
-func (p *fileLoader) pathForLibFile(name string) string {
+func (p *fileLoader) pathForLibFile(name string) *LibFile {
 	if cached, ok := p.pathForLibFileCache.Load(name); ok {
 		return cached
 	}
 
 	path := tspath.CombinePaths(p.defaultLibraryPath, name)
+	replaced := false
 	if p.opts.Config.CompilerOptions().LibReplacement.IsTrue() {
 		libraryName := getLibraryNameFromLibFileName(name)
 		resolveFrom := getInferredLibraryNameResolveFrom(p.opts.Config.CompilerOptions(), p.opts.Host.GetCurrentDirectory(), name)
 		resolution, trace := p.resolver.ResolveModuleName(libraryName, resolveFrom, core.ModuleKindCommonJS, nil)
 		if resolution.IsResolved() {
 			path = resolution.ResolvedFileName
+			replaced = true
 			p.pathForLibFileResolutions.LoadOrStore(p.toPath(resolveFrom), &libResolution{
 				libraryName: libraryName,
 				resolution:  resolution,
@@ -556,8 +564,8 @@ func (p *fileLoader) pathForLibFile(name string) string {
 		}
 	}
 
-	path, _ = p.pathForLibFileCache.LoadOrStore(name, path)
-	return path
+	libPath, _ := p.pathForLibFileCache.LoadOrStore(name, &LibFile{name, path, replaced})
+	return libPath
 }
 
 func getLibraryNameFromLibFileName(libFileName string) string {
