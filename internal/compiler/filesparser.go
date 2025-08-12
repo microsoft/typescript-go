@@ -21,7 +21,6 @@ type parseTask struct {
 	subTasks                    []*parseTask
 	loaded                      bool
 	isForAutomaticTypeDirective bool
-	root                        bool
 	includeReason               *fileIncludeReason
 
 	metadata                     ast.SourceFileMetaData
@@ -49,6 +48,10 @@ func (t *parseTask) FileName() string {
 
 func (t *parseTask) Path() tspath.Path {
 	return t.path
+}
+
+func (t *parseTask) isRoot() bool {
+	return t.includeReason.kind == fileIncludeKindRootFile || t.includeReason.kind == fileIncludeKindLibFile
 }
 
 func (t *parseTask) load(loader *fileLoader) {
@@ -201,7 +204,7 @@ func (w *filesParser) start(loader *fileLoader, tasks []*parseTask, depth int, i
 				startSubtasks = true
 			}
 
-			if !task.root && taskIsFromExternalLibrary && !loadedTask.fromExternalLibrary {
+			if !task.isRoot() && taskIsFromExternalLibrary && !loadedTask.fromExternalLibrary {
 				// If we're seeing this task now as an external library,
 				// reprocess its subtasks to ensure they are also marked as external.
 				loadedTask.fromExternalLibrary = true

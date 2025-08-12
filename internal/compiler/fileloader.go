@@ -266,7 +266,6 @@ func (p *fileLoader) addRootTask(fileName string, libFile *LibFile, includeReaso
 		p.rootTasks = append(p.rootTasks, &parseTask{
 			normalizedFilePath: absPath,
 			libFile:            libFile,
-			root:               true,
 			includeReason:      includeReason,
 		})
 	}
