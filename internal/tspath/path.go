@@ -503,9 +503,9 @@ func hasRelativePathSegment(p string) bool {
 
 	// Now look for any `//` or `/./` or `/../`
 
-	prevSlash := true // treat start as if preceded by '/'
-	segLen := 0       // length of current segment since last slash
-	dotCount := 0     // consecutive dots at start of the current segment; -1 => not only dots
+	prevSlash := false
+	segLen := 0   // length of current segment since last slash
+	dotCount := 0 // consecutive dots at start of the current segment; -1 => not only dots
 
 	for i := range n {
 		c := p[i]
