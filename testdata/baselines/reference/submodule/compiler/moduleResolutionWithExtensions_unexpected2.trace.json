@@ -32,6 +32,7 @@ Searching all ancestor node_modules directories for fallback extensions: JavaScr
 File '/node_modules/foo/package.json' exists according to earlier cached lookups.
 File '/node_modules/foo.js' does not exist.
 File '/node_modules/foo.jsx' does not exist.
+'package.json' does not have a 'typesVersions' field.
 'package.json' does not have a 'main' field.
 File '/node_modules/foo/index.js' does not exist.
 File '/node_modules/foo/index.jsx' does not exist.

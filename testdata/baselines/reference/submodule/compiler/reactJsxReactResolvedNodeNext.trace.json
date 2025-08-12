@@ -6,6 +6,7 @@ File '/package.json' does not exist.
 Loading module 'react/jsx-runtime' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration.
 Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
 Found 'package.json' at '/.src/node_modules/@types/react/package.json'.
+'package.json' does not have a 'typesVersions' field.
 File '/.src/node_modules/@types/react/jsx-runtime.d.ts' exists - use it as a name resolution result.
 'package.json' does not have a 'peerDependencies' field.
 Resolving real path for '/.src/node_modules/@types/react/jsx-runtime.d.ts', result '/.src/node_modules/@types/react/jsx-runtime.d.ts'.

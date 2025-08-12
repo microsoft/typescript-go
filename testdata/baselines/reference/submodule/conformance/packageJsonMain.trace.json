@@ -25,6 +25,7 @@ Searching all ancestor node_modules directories for fallback extensions: JavaScr
 File '/node_modules/foo/package.json' exists according to earlier cached lookups.
 File '/node_modules/foo.js' does not exist.
 File '/node_modules/foo.jsx' does not exist.
+'package.json' does not have a 'typesVersions' field.
 'package.json' has 'main' field 'oof' that references '/node_modules/foo/oof'.
 Loading module as file / folder, candidate module location '/node_modules/foo/oof', target file types: JavaScript, JSON.
 File '/node_modules/foo/oof.js' exists - use it as a name resolution result.
@@ -65,6 +66,7 @@ Searching all ancestor node_modules directories for fallback extensions: JavaScr
 File '/node_modules/bar/package.json' exists according to earlier cached lookups.
 File '/node_modules/bar.js' does not exist.
 File '/node_modules/bar.jsx' does not exist.
+'package.json' does not have a 'typesVersions' field.
 'package.json' has 'main' field 'rab.js' that references '/node_modules/bar/rab.js'.
 File name '/node_modules/bar/rab.js' has a '.js' extension - stripping it.
 File '/node_modules/bar/rab.js' exists - use it as a name resolution result.
@@ -99,6 +101,7 @@ Searching all ancestor node_modules directories for fallback extensions: JavaScr
 File '/node_modules/baz/package.json' exists according to earlier cached lookups.
 File '/node_modules/baz.js' does not exist.
 File '/node_modules/baz.jsx' does not exist.
+'package.json' does not have a 'typesVersions' field.
 'package.json' has 'main' field 'zab' that references '/node_modules/baz/zab'.
 Loading module as file / folder, candidate module location '/node_modules/baz/zab', target file types: JavaScript, JSON.
 File '/node_modules/baz/zab.js' does not exist.

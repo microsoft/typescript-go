@@ -33,6 +33,7 @@ File '/node_modules/normalize.css/package.json' exists according to earlier cach
 File name '/node_modules/normalize.css' has a '.css' extension - stripping it.
 File '/node_modules/normalize.css.js' does not exist.
 File '/node_modules/normalize.css.jsx' does not exist.
+'package.json' does not have a 'typesVersions' field.
 'package.json' has 'main' field 'normalize.css' that references '/node_modules/normalize.css/normalize.css'.
 File name '/node_modules/normalize.css/normalize.css' has a '.css' extension - stripping it.
 Loading module as file / folder, candidate module location '/node_modules/normalize.css/normalize.css', target file types: JavaScript, JSON.
