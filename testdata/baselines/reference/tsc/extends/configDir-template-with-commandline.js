@@ -116,13 +116,6 @@ exports.y = void 0;
 // some comment
 exports.y = 10;
 
-//// [/home/src/projects/myproject/${configDir}/outDir/src/secondary.js] *new* 
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.z = void 0;
-// some comment
-exports.z = 10;
-
 //// [/home/src/projects/myproject/${configDir}/outDir/types/sometype.js] *new* 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -133,10 +126,6 @@ exports.x = 10;
 //// [/home/src/projects/myproject/decls/main.d.ts] *new* 
 // some comment
 export declare const y = 10;
-
-//// [/home/src/projects/myproject/decls/src/secondary.d.ts] *new* 
-// some comment
-export declare const z = 10;
 
 //// [/home/src/projects/myproject/decls/types/sometype.d.ts] *new* 
 // some comment

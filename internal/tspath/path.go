@@ -129,9 +129,19 @@ func GetPathComponents(path string, currentDirectory string) []string {
 
 func pathComponents(path string, rootLength int) []string {
 	root := path[:rootLength]
-	rest := strings.Split(path[rootLength:], "/")
-	if len(rest) > 0 && rest[len(rest)-1] == "" {
-		rest = rest[:len(rest)-1]
+	restStr := path[rootLength:]
+	var rest []string
+	start := 0
+	for i := 0; i <= len(restStr); i++ {
+		if i == len(restStr) || restStr[i] == '/' {
+			if i > start {
+				seg := restStr[start:i]
+				if seg != "" {
+					rest = append(rest, seg)
+				}
+			}
+			start = i + 1
+		}
 	}
 	return append([]string{root}, rest...)
 }
@@ -279,21 +289,17 @@ func reducePathComponents(components []string) []string {
 	if len(components) == 0 {
 		return []string{}
 	}
-	reduced := []string{components[0]}
+	reduced := make([]string, 0, len(components))
+	reduced = append(reduced, components[0])
 	for i := 1; i < len(components); i++ {
 		component := components[i]
-		if component == "" {
-			continue
-		}
-		if component == "." {
+		if component == "" || component == "." {
 			continue
 		}
 		if component == ".." {
-			if len(reduced) > 1 {
-				if reduced[len(reduced)-1] != ".." {
-					reduced = reduced[:len(reduced)-1]
-					continue
-				}
+			if len(reduced) > 1 && reduced[len(reduced)-1] != ".." {
+				reduced = reduced[:len(reduced)-1]
+				continue
 			} else if reduced[0] != "" {
 				continue
 			}
