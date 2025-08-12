@@ -103,7 +103,7 @@ func (c *configFileRegistryBuilder) reloadIfNeeded(entry *configFileEntry, fileN
 	switch entry.pendingReload {
 	case PendingReloadFileNames:
 		logger.Log("Reloading file names for config: " + fileName)
-		entry.commandLine = tsoptions.ReloadFileNamesOfParsedCommandLine(entry.commandLine, c.fs.fs)
+		entry.commandLine = entry.commandLine.ReloadFileNamesOfParsedCommandLine(c.fs.fs)
 	case PendingReloadFull:
 		logger.Log("Loading config file: " + fileName)
 		entry.commandLine, _ = tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, c, c)

@@ -26,7 +26,7 @@ type compilerHost struct {
 	fs                  vfs.FS
 	defaultLibraryPath  string
 	extendedConfigCache tsoptions.ExtendedConfigCache
-	trace                   func(msg string)
+	trace               func(msg string)
 }
 
 func NewCachedFSCompilerHost(
