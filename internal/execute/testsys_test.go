@@ -21,6 +21,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/iovfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
 
@@ -84,8 +85,9 @@ func newTestSys(fileOrFolderList FileMap, cwd string, env map[string]string) *te
 }
 
 type diffEntry struct {
-	content   string
-	isWritten bool
+	content       string
+	isWritten     bool
+	symlinkTarget string
 }
 
 type snapshot struct {
@@ -127,8 +129,8 @@ func (s *testSys) testFs() *testFs {
 	return s.fs.FS.(*testFs)
 }
 
-func (s *testSys) fsFromFileMap() vfs.FS {
-	return s.testFs().FS
+func (s *testSys) fsFromFileMap() iovfs.FsWithSys {
+	return s.testFs().FS.(iovfs.FsWithSys)
 }
 
 func (s *testSys) ensureLibPathExists(path string) {
@@ -270,7 +272,19 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 			return e
 		}
 
-		if !d.Type().IsRegular() {
+		fileInfo := d.Type()
+		if fileInfo&fs.ModeSymlink != 0 {
+			target, ok := s.fsFromFileMap().FSys().(*vfstest.MapFS).GetTargetOfSymlink(path)
+			if !ok {
+				panic("Failed to resolve symlink target: " + path)
+			}
+			newEntry := &diffEntry{symlinkTarget: target}
+			snap[path] = newEntry
+			s.addFsEntryDiff(diffs, newEntry, path)
+			return nil
+		}
+
+		if !fileInfo.IsRegular() {
 			return nil
 		}
 
@@ -326,7 +340,11 @@ func (s *testSys) addFsEntryDiff(diffs map[string]string, newDirContent *diffEnt
 	// todo handle more cases of fs changes
 	if oldDirContent == nil {
 		if s.testFs().defaultLibs == nil || !s.testFs().defaultLibs.Has(path) {
-			diffs[path] = "*new* \n" + newDirContent.content
+			if newDirContent.symlinkTarget != "" {
+				diffs[path] = "-> " + newDirContent.symlinkTarget + " *new*"
+			} else {
+				diffs[path] = "*new* \n" + newDirContent.content
+			}
 		}
 	} else if newDirContent == nil {
 		diffs[path] = "*deleted*"

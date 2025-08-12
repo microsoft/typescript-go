@@ -17,7 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs/iovfs"
 )
 
-type mapFS struct {
+type MapFS struct {
 	// mu protects m.
 	// A single mutex is sufficient as we only use fstest.Map's Open method.
 	mu sync.RWMutex
@@ -31,8 +31,8 @@ type mapFS struct {
 }
 
 var (
-	_ iovfs.RealpathFS = (*mapFS)(nil)
-	_ iovfs.WritableFS = (*mapFS)(nil)
+	_ iovfs.RealpathFS = (*MapFS)(nil)
+	_ iovfs.WritableFS = (*MapFS)(nil)
 )
 
 type sys struct {
@@ -103,8 +103,8 @@ func FromMap[File any](m map[string]File, useCaseSensitiveFileNames bool) vfs.FS
 	return iovfs.From(convertMapFS(mfs, useCaseSensitiveFileNames), useCaseSensitiveFileNames)
 }
 
-func convertMapFS(input fstest.MapFS, useCaseSensitiveFileNames bool) *mapFS {
-	m := &mapFS{
+func convertMapFS(input fstest.MapFS, useCaseSensitiveFileNames bool) *MapFS {
+	m := &MapFS{
 		m:                         make(fstest.MapFS, len(input)),
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
 	}
@@ -162,15 +162,15 @@ func comparePathsByParts(a, b string) int {
 
 type canonicalPath string
 
-func (m *mapFS) getCanonicalPath(p string) canonicalPath {
+func (m *MapFS) getCanonicalPath(p string) canonicalPath {
 	return canonicalPath(tspath.GetCanonicalFileName(p, m.useCaseSensitiveFileNames))
 }
 
-func (m *mapFS) open(p canonicalPath) (fs.File, error) {
+func (m *MapFS) open(p canonicalPath) (fs.File, error) {
 	return m.m.Open(string(p))
 }
 
-func (m *mapFS) remove(path string) error {
+func (m *MapFS) remove(path string) error {
 	canonical := m.getCanonicalPath(path)
 	canonicalString := string(canonical)
 	fileInfo := m.m[canonicalString]
@@ -200,7 +200,7 @@ func Symlink(target string) *fstest.MapFile {
 	}
 }
 
-func (m *mapFS) getFollowingSymlinks(p canonicalPath) (*fstest.MapFile, canonicalPath, error) {
+func (m *MapFS) getFollowingSymlinks(p canonicalPath) (*fstest.MapFile, canonicalPath, error) {
 	return m.getFollowingSymlinksWorker(p, "", "")
 }
 
@@ -212,7 +212,7 @@ func (e *brokenSymlinkError) Error() string {
 	return fmt.Sprintf("broken symlink %q -> %q", e.from, e.to)
 }
 
-func (m *mapFS) getFollowingSymlinksWorker(p canonicalPath, symlinkFrom, symlinkTo canonicalPath) (*fstest.MapFile, canonicalPath, error) {
+func (m *MapFS) getFollowingSymlinksWorker(p canonicalPath, symlinkFrom, symlinkTo canonicalPath) (*fstest.MapFile, canonicalPath, error) {
 	if file, ok := m.m[string(p)]; ok && file.Mode&fs.ModeSymlink == 0 {
 		return file, p, nil
 	}
@@ -235,11 +235,11 @@ func (m *mapFS) getFollowingSymlinksWorker(p canonicalPath, symlinkFrom, symlink
 	return nil, p, err
 }
 
-func (m *mapFS) set(p canonicalPath, file *fstest.MapFile) {
+func (m *MapFS) set(p canonicalPath, file *fstest.MapFile) {
 	m.m[string(p)] = file
 }
 
-func (m *mapFS) setEntry(realpath string, canonical canonicalPath, file fstest.MapFile) {
+func (m *MapFS) setEntry(realpath string, canonical canonicalPath, file fstest.MapFile) {
 	if realpath == "" || canonical == "" {
 		panic("empty path")
 	}
@@ -276,7 +276,7 @@ func baseName(p string) string {
 	return file
 }
 
-func (m *mapFS) mkdirAll(p string, perm fs.FileMode) error {
+func (m *MapFS) mkdirAll(p string, perm fs.FileMode) error {
 	if p == "" {
 		panic("empty path")
 	}
@@ -378,7 +378,7 @@ func (f *readDirFile) ReadDir(n int) ([]fs.DirEntry, error) {
 	return entries, nil
 }
 
-func (m *mapFS) Open(name string) (fs.File, error) {
+func (m *MapFS) Open(name string) (fs.File, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
@@ -420,7 +420,7 @@ func (m *mapFS) Open(name string) (fs.File, error) {
 	}, nil
 }
 
-func (m *mapFS) Realpath(name string) (string, error) {
+func (m *MapFS) Realpath(name string) (string, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
@@ -445,14 +445,14 @@ func convertInfo(info fs.FileInfo) (*fileInfo, bool) {
 
 const umask = 0o022
 
-func (m *mapFS) MkdirAll(path string, perm fs.FileMode) error {
+func (m *MapFS) MkdirAll(path string, perm fs.FileMode) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
 	return m.mkdirAll(path, perm)
 }
 
-func (m *mapFS) WriteFile(path string, data []byte, perm fs.FileMode) error {
+func (m *MapFS) WriteFile(path string, data []byte, perm fs.FileMode) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
@@ -489,11 +489,25 @@ func (m *mapFS) WriteFile(path string, data []byte, perm fs.FileMode) error {
 	return nil
 }
 
-func (m *mapFS) Remove(path string) error {
+func (m *MapFS) Remove(path string) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
 	return m.remove(path)
+}
+
+func (m *MapFS) GetTargetOfSymlink(path string) (string, bool) {
+	path, _ = strings.CutPrefix(path, "/")
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	canonical := m.getCanonicalPath(path)
+	canonicalString := string(canonical)
+	if fileInfo, ok := m.m[canonicalString]; ok {
+		if fileInfo.Mode&fs.ModeSymlink != 0 {
+			return "/" + string(fileInfo.Data), true
+		}
+	}
+	return "", false
 }
 
 func must[T any](v T, err error) T {
