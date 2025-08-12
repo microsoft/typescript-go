@@ -15,6 +15,7 @@ Module resolution kind is not specified, using 'NodeNext'.
 Resolving in CJS mode with conditions 'require', 'types', 'node'.
 Loading module as file / folder, candidate module location '/.src/node_modules/@types/react/', target file types: TypeScript, JavaScript, Declaration.
 File '/.src/node_modules/@types/react/package.json' exists according to earlier cached lookups.
+'package.json' does not have a 'typesVersions' field.
 'package.json' does not have a 'typings' field.
 'package.json' has 'types' field 'index.d.ts' that references '/.src/node_modules/@types/react/index.d.ts'.
 File '/.src/node_modules/@types/react/index.d.ts' exists - use it as a name resolution result.
@@ -24,6 +25,7 @@ Module resolution kind is not specified, using 'NodeNext'.
 Resolving in CJS mode with conditions 'require', 'types', 'node'.
 Loading module as file / folder, candidate module location '/.src/node_modules/@types/react/', target file types: TypeScript, JavaScript, Declaration.
 File '/.src/node_modules/@types/react/package.json' exists according to earlier cached lookups.
+'package.json' does not have a 'typesVersions' field.
 'package.json' does not have a 'typings' field.
 'package.json' has 'types' field 'index.d.ts' that references '/.src/node_modules/@types/react/index.d.ts'.
 File '/.src/node_modules/@types/react/index.d.ts' exists - use it as a name resolution result.

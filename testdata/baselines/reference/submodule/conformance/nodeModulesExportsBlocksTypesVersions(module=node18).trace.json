@@ -91,6 +91,7 @@ File '/package.json' does not exist according to earlier cached lookups.
 Loading module 'just-types-versions/foo' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration.
 Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
 Found 'package.json' at '/node_modules/just-types-versions/package.json'.
+'package.json' has a 'typesVersions' field with version-specific path mappings.
 'package.json' has a 'typesVersions' entry '*' that matches compiler version 'FakeTSVersion', looking for a pattern to match module name 'foo'.
 Module name 'foo', matched pattern 'foo'.
 Trying substitution './types/foo.d.ts', candidate module location: './types/foo.d.ts'.
