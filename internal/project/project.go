@@ -1042,19 +1042,19 @@ func (p *Project) GetFileNames(excludeFilesFromExternalLibraries bool, excludeCo
 }
 
 func (p *Project) print(writeFileNames bool, writeFileExplanation bool, writeFileVersionAndText bool, builder *strings.Builder) string {
-	builder.WriteString(fmt.Sprintf("\nProject '%s' (%s)\n", p.name, p.kind.String()))
+	fmt.Fprintf(builder, "\nProject '%s' (%s)\n", p.name, p.kind.String())
 	if p.initialLoadPending {
 		builder.WriteString("\n\tFiles (0) InitialLoadPending\n")
 	} else if p.program == nil {
 		builder.WriteString("\n\tFiles (0) NoProgram\n")
 	} else {
 		sourceFiles := p.program.GetSourceFiles()
-		builder.WriteString(fmt.Sprintf("\n\tFiles (%d)\n", len(sourceFiles)))
+		fmt.Fprintf(builder, "\n\tFiles (%d)\n", len(sourceFiles))
 		if writeFileNames {
 			for _, sourceFile := range sourceFiles {
 				builder.WriteString("\n\t\t" + sourceFile.FileName())
 				if writeFileVersionAndText {
-					builder.WriteString(fmt.Sprintf(" %d %s", p.getFileVersion(sourceFile), sourceFile.Text()))
+					fmt.Fprintf(builder, " %d %s", p.getFileVersion(sourceFile), sourceFile.Text())
 				}
 			}
 			// !!!
