@@ -1,8 +1,8 @@
 ======== Resolving module '@typescript/lib-dom' from '/somepath/__lib_node_modules_lookup_lib.dom.d.ts__.ts'. ========
 Module resolution kind is not specified, using 'Bundler'.
 Resolving in CJS mode with conditions 'require', 'types'.
-File '/somepath/package.json' does not exist according to earlier cached lookups.
-File '/package.json' does not exist according to earlier cached lookups.
+File '/somepath/package.json' does not exist.
+File '/package.json' does not exist.
 Loading module '@typescript/lib-dom' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration, JSON.
 Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
 File '/somepath/node_modules/@typescript/lib-dom/package.json' does not exist.

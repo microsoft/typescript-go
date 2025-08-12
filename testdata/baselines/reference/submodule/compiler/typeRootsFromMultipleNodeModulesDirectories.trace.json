@@ -2,8 +2,8 @@
 Module resolution kind is not specified, using 'Bundler'.
 Resolving in CJS mode with conditions 'require', 'types'.
 File '/foo/bar/package.json' does not exist.
-File '/foo/package.json' does not exist according to earlier cached lookups.
-File '/package.json' does not exist according to earlier cached lookups.
+File '/foo/package.json' does not exist.
+File '/package.json' does not exist.
 Loading module 'xyz' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration, JSON.
 Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
 Directory '/foo/bar/node_modules' does not exist, skipping all lookups in it.

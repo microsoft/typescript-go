@@ -18,7 +18,7 @@ File name '/node_modules/normalize.css/normalize.css' has a '.css' extension - s
 File '/node_modules/normalize.css/normalize.d.css.ts' does not exist.
 Loading module as file / folder, candidate module location '/node_modules/normalize.css/normalize.css', target file types: TypeScript, Declaration.
 File name '/node_modules/normalize.css/normalize.css' has a '.css' extension - stripping it.
-File '/node_modules/normalize.css/normalize.d.css.ts' does not exist.
+File '/node_modules/normalize.css/normalize.d.css.ts' does not exist according to earlier cached lookups.
 File '/node_modules/normalize.css/normalize.css.ts' does not exist.
 File '/node_modules/normalize.css/normalize.css.tsx' does not exist.
 File '/node_modules/normalize.css/normalize.css.d.ts' does not exist.

@@ -50,8 +50,8 @@ File '/.src/node_modules/ext/package.json' exists according to earlier cached lo
 Module name 'index', matched pattern '*'.
 Trying substitution 'ts3.1/*', candidate module location: 'ts3.1/index'.
 Loading module as file / folder, candidate module location '/.src/node_modules/ext/ts3.1/index', target file types: TypeScript, JavaScript, Declaration, JSON.
-File '/.src/node_modules/ext/ts3.1/index.ts' does not exist.
-File '/.src/node_modules/ext/ts3.1/index.tsx' does not exist.
+File '/.src/node_modules/ext/ts3.1/index.ts' does not exist according to earlier cached lookups.
+File '/.src/node_modules/ext/ts3.1/index.tsx' does not exist according to earlier cached lookups.
 File '/.src/node_modules/ext/ts3.1/index.d.ts' exists - use it as a name resolution result.
 ======== Module name '../' was successfully resolved to '/.src/node_modules/ext/ts3.1/index.d.ts'. ========
 ======== Resolving module '../other' from '/.src/node_modules/ext/ts3.1/other.d.ts'. ========

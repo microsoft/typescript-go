@@ -1,10 +1,10 @@
 ======== Resolving module 'exports-and-types-versions/foo' from '/main.cts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in CJS mode with conditions 'require', 'types', 'node'.
-File '/package.json' does not exist according to earlier cached lookups.
+File '/package.json' does not exist.
 Loading module 'exports-and-types-versions/foo' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration.
 Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
-File '/node_modules/exports-and-types-versions/package.json' exists according to earlier cached lookups.
+Found 'package.json' at '/node_modules/exports-and-types-versions/package.json'.
 Using 'exports' subpath './foo' with target './dist/foo.js'.
 File name '/node_modules/exports-and-types-versions/dist/foo.js' has a '.js' extension - stripping it.
 File '/node_modules/exports-and-types-versions/dist/foo.ts' does not exist.
@@ -90,7 +90,7 @@ Resolving in CJS mode with conditions 'require', 'types', 'node'.
 File '/package.json' does not exist according to earlier cached lookups.
 Loading module 'just-types-versions/foo' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration.
 Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
-File '/node_modules/just-types-versions/package.json' exists according to earlier cached lookups.
+Found 'package.json' at '/node_modules/just-types-versions/package.json'.
 'package.json' has a 'typesVersions' entry '*' that matches compiler version 'FakeTSVersion', looking for a pattern to match module name 'foo'.
 Module name 'foo', matched pattern 'foo'.
 Trying substitution './types/foo.d.ts', candidate module location: './types/foo.d.ts'.
@@ -100,15 +100,15 @@ Resolving real path for '/node_modules/just-types-versions/types/foo.d.ts', resu
 ======== Resolving module 'exports-and-types-versions/foo' from '/main.mts'. ========
 Module resolution kind is not specified, using 'Node16'.
 Resolving in ESM mode with conditions 'import', 'types', 'node'.
-File '/package.json' does not exist.
+File '/package.json' does not exist according to earlier cached lookups.
 Loading module 'exports-and-types-versions/foo' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration.
 Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
-Found 'package.json' at '/node_modules/exports-and-types-versions/package.json'.
+File '/node_modules/exports-and-types-versions/package.json' exists according to earlier cached lookups.
 Using 'exports' subpath './foo' with target './dist/foo.js'.
 File name '/node_modules/exports-and-types-versions/dist/foo.js' has a '.js' extension - stripping it.
-File '/node_modules/exports-and-types-versions/dist/foo.ts' does not exist.
-File '/node_modules/exports-and-types-versions/dist/foo.tsx' does not exist.
-File '/node_modules/exports-and-types-versions/dist/foo.d.ts' does not exist.
+File '/node_modules/exports-and-types-versions/dist/foo.ts' does not exist according to earlier cached lookups.
+File '/node_modules/exports-and-types-versions/dist/foo.tsx' does not exist according to earlier cached lookups.
+File '/node_modules/exports-and-types-versions/dist/foo.d.ts' does not exist according to earlier cached lookups.
 Export specifier './foo' does not exist in package.json scope at path '/node_modules/exports-and-types-versions'.
 Directory '/node_modules/@types' does not exist, skipping all lookups in it.
 Searching all ancestor node_modules directories for fallback extensions: JavaScript.
@@ -200,7 +200,7 @@ Resolving in ESM mode with conditions 'import', 'types', 'node'.
 File '/package.json' does not exist according to earlier cached lookups.
 Loading module 'just-types-versions/foo' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration.
 Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
-Found 'package.json' at '/node_modules/just-types-versions/package.json'.
+File '/node_modules/just-types-versions/package.json' exists according to earlier cached lookups.
 'package.json' has a 'typesVersions' field with version-specific path mappings.
 'package.json' has a 'typesVersions' entry '*' that matches compiler version 'FakeTSVersion', looking for a pattern to match module name 'foo'.
 Module name 'foo', matched pattern 'foo'.

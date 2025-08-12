@@ -29,11 +29,11 @@ Module name 'zone.tsx', matched pattern '*'.
 Trying substitution 'foo/*', candidate module location: 'foo/zone.tsx'.
 Loading module as file / folder, candidate module location '/foo/zone.tsx', target file types: TypeScript, JavaScript, Declaration, JSON.
 File name '/foo/zone.tsx' has a '.tsx' extension - stripping it.
-File '/foo/zone.tsx' does not exist.
-File '/foo/zone.ts' does not exist.
-File '/foo/zone.d.ts' does not exist.
-File '/foo/zone.jsx' does not exist.
-File '/foo/zone.js' does not exist.
+File '/foo/zone.tsx' does not exist according to earlier cached lookups.
+File '/foo/zone.ts' does not exist according to earlier cached lookups.
+File '/foo/zone.d.ts' does not exist according to earlier cached lookups.
+File '/foo/zone.jsx' does not exist according to earlier cached lookups.
+File '/foo/zone.js' does not exist according to earlier cached lookups.
 File '/foo/zone.tsx.ts' does not exist.
 File '/foo/zone.tsx.tsx' does not exist.
 File '/foo/zone.tsx.d.ts' does not exist.

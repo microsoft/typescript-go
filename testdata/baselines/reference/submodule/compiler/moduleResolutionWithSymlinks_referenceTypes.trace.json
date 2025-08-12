@@ -26,9 +26,9 @@ Directory '/node_modules/@types/library-b/node_modules' does not exist, skipping
 Directory '/node_modules/@types/library-b/node_modules/@types' does not exist, skipping all lookups in it.
 Directory '/node_modules/@types/node_modules' does not exist, skipping all lookups in it.
 Directory '/node_modules/@types/node_modules/@types' does not exist, skipping all lookups in it.
-File '/node_modules/library-a.d.ts' does not exist.
+File '/node_modules/library-a.d.ts' does not exist according to earlier cached lookups.
 File '/node_modules/@types/library-a/package.json' does not exist according to earlier cached lookups.
-File '/node_modules/@types/library-a.d.ts' does not exist.
+File '/node_modules/@types/library-a.d.ts' does not exist according to earlier cached lookups.
 File '/node_modules/@types/library-a/index.d.ts' exists - use it as a name resolution result.
 Resolving real path for '/node_modules/@types/library-a/index.d.ts', result '/node_modules/@types/library-a/index.d.ts'.
 ======== Type reference directive 'library-a' was successfully resolved to '/node_modules/@types/library-a/index.d.ts', primary: false. ========

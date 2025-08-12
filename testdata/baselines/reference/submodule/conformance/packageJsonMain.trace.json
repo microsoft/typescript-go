@@ -50,9 +50,9 @@ File '/node_modules/bar/rab.tsx' does not exist.
 File '/node_modules/bar/rab.d.ts' does not exist.
 Loading module as file / folder, candidate module location '/node_modules/bar/rab.js', target file types: TypeScript, Declaration.
 File name '/node_modules/bar/rab.js' has a '.js' extension - stripping it.
-File '/node_modules/bar/rab.ts' does not exist.
-File '/node_modules/bar/rab.tsx' does not exist.
-File '/node_modules/bar/rab.d.ts' does not exist.
+File '/node_modules/bar/rab.ts' does not exist according to earlier cached lookups.
+File '/node_modules/bar/rab.tsx' does not exist according to earlier cached lookups.
+File '/node_modules/bar/rab.d.ts' does not exist according to earlier cached lookups.
 File '/node_modules/bar/rab.js.ts' does not exist.
 File '/node_modules/bar/rab.js.tsx' does not exist.
 File '/node_modules/bar/rab.js.d.ts' does not exist.

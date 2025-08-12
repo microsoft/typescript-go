@@ -18,7 +18,7 @@ Loading module 'linked' from 'node_modules' folder, target file types: TypeScrip
 Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
 File '/app/node_modules/linked.ts' does not exist.
 File '/app/node_modules/linked.tsx' does not exist.
-File '/app/node_modules/linked.d.ts' does not exist.
+File '/app/node_modules/linked.d.ts' does not exist according to earlier cached lookups.
 Directory '/app/node_modules/@types' does not exist, skipping all lookups in it.
 Directory '/node_modules' does not exist, skipping all lookups in it.
 Directory '/node_modules/@types' does not exist, skipping all lookups in it.

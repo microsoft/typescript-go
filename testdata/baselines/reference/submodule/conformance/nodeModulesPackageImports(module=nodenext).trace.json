@@ -1,7 +1,7 @@
 ======== Resolving module '#cjs' from '/.src/index.ts'. ========
 Module resolution kind is not specified, using 'NodeNext'.
 Resolving in ESM mode with conditions 'import', 'types', 'node'.
-File '/.src/package.json' exists according to earlier cached lookups.
+Found 'package.json' at '/.src/package.json'.
 Using 'imports' subpath '#cjs' with target './index.cjs'.
 File name '/.src/index.cjs' has a '.cjs' extension - stripping it.
 File '/.src/index.cts' exists - use it as a name resolution result.
@@ -25,7 +25,7 @@ File '/.src/index.ts' exists - use it as a name resolution result.
 ======== Resolving module '#cjs' from '/.src/index.cts'. ========
 Module resolution kind is not specified, using 'NodeNext'.
 Resolving in CJS mode with conditions 'require', 'types', 'node'.
-Found 'package.json' at '/.src/package.json'.
+File '/.src/package.json' exists according to earlier cached lookups.
 Using 'imports' subpath '#cjs' with target './index.cjs'.
 File name '/.src/index.cjs' has a '.cjs' extension - stripping it.
 File '/.src/index.cts' exists - use it as a name resolution result.

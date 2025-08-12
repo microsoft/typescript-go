@@ -19,8 +19,8 @@ Resolving in CJS mode with conditions 'import', 'types'.
 Module name 'foo/test', matched pattern 'foo/*'.
 Trying substitution 'node_modules/foo/lib/*', candidate module location: 'node_modules/foo/lib/test'.
 Loading module as file / folder, candidate module location '/node_modules/foo/lib/test', target file types: TypeScript, JavaScript, Declaration, JSON.
-File '/node_modules/foo/lib/test.ts' does not exist.
-File '/node_modules/foo/lib/test.tsx' does not exist.
+File '/node_modules/foo/lib/test.ts' does not exist according to earlier cached lookups.
+File '/node_modules/foo/lib/test.tsx' does not exist according to earlier cached lookups.
 File '/node_modules/foo/lib/test.d.ts' exists - use it as a name resolution result.
 File '/node_modules/foo/package.json' does not exist according to earlier cached lookups.
 Resolving real path for '/node_modules/foo/lib/test.d.ts', result '/node_modules/foo/lib/test.d.ts'.
@@ -38,7 +38,7 @@ File '/relative.d.ts' exists - use it as a name resolution result.
 Explicitly specified module resolution kind: 'Bundler'.
 Resolving in CJS mode with conditions 'import', 'types'.
 Loading module as file / folder, candidate module location '/relative', target file types: TypeScript, JavaScript, Declaration, JSON.
-File '/relative.ts' does not exist.
-File '/relative.tsx' does not exist.
+File '/relative.ts' does not exist according to earlier cached lookups.
+File '/relative.tsx' does not exist according to earlier cached lookups.
 File '/relative.d.ts' exists - use it as a name resolution result.
 ======== Module name './relative' was successfully resolved to '/relative.d.ts'. ========

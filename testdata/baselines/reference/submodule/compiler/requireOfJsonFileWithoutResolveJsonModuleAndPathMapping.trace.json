@@ -20,15 +20,15 @@ Loading module 'foo/bar/foobar.json' from 'node_modules' folder, target file typ
 Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
 File '/node_modules/foo/package.json' does not exist.
 File name '/node_modules/foo/bar/foobar.json' has a '.json' extension - stripping it.
-File '/node_modules/foo/bar/foobar.d.json.ts' does not exist.
-File '/node_modules/foo/bar/foobar.json.ts' does not exist.
-File '/node_modules/foo/bar/foobar.json.tsx' does not exist.
-File '/node_modules/foo/bar/foobar.json.d.ts' does not exist.
+File '/node_modules/foo/bar/foobar.d.json.ts' does not exist according to earlier cached lookups.
+File '/node_modules/foo/bar/foobar.json.ts' does not exist according to earlier cached lookups.
+File '/node_modules/foo/bar/foobar.json.tsx' does not exist according to earlier cached lookups.
+File '/node_modules/foo/bar/foobar.json.d.ts' does not exist according to earlier cached lookups.
 Directory '/node_modules/@types' does not exist, skipping all lookups in it.
 File name '/node_modules/@types/foo/bar/foobar.json' has a '.json' extension - stripping it.
 Searching all ancestor node_modules directories for fallback extensions: JavaScript.
 File '/node_modules/foo/package.json' does not exist according to earlier cached lookups.
 File name '/node_modules/foo/bar/foobar.json' has a '.json' extension - stripping it.
-File '/node_modules/foo/bar/foobar.json.js' does not exist.
-File '/node_modules/foo/bar/foobar.json.jsx' does not exist.
+File '/node_modules/foo/bar/foobar.json.js' does not exist according to earlier cached lookups.
+File '/node_modules/foo/bar/foobar.json.jsx' does not exist according to earlier cached lookups.
 ======== Module name 'foo/bar/foobar.json' was not resolved. ========

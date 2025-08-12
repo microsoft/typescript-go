@@ -35,9 +35,9 @@ Resolving in CJS mode with conditions 'require', 'types'.
 Module name 'c:/bar', matched pattern 'c:/*'.
 Trying substitution './src/*', candidate module location: './src/bar'.
 Loading module as file / folder, candidate module location '/root/src/bar', target file types: TypeScript, JavaScript, Declaration, JSON.
-File '/root/src/bar.ts' does not exist.
-File '/root/src/bar.tsx' does not exist.
-File '/root/src/bar.d.ts' does not exist.
+File '/root/src/bar.ts' does not exist according to earlier cached lookups.
+File '/root/src/bar.tsx' does not exist according to earlier cached lookups.
+File '/root/src/bar.d.ts' does not exist according to earlier cached lookups.
 File '/root/src/bar.js' exists - use it as a name resolution result.
 ======== Module name 'c:/bar' was successfully resolved to '/root/src/bar.js'. ========
 ======== Resolving module 'c:\foo' from '/root/a.ts'. ========
@@ -56,9 +56,9 @@ Resolving in CJS mode with conditions 'require', 'types'.
 Module name 'c:\bar', matched pattern 'c:\*'.
 Trying substitution './src/*', candidate module location: './src/bar'.
 Loading module as file / folder, candidate module location '/root/src/bar', target file types: TypeScript, JavaScript, Declaration, JSON.
-File '/root/src/bar.ts' does not exist.
-File '/root/src/bar.tsx' does not exist.
-File '/root/src/bar.d.ts' does not exist.
+File '/root/src/bar.ts' does not exist according to earlier cached lookups.
+File '/root/src/bar.tsx' does not exist according to earlier cached lookups.
+File '/root/src/bar.d.ts' does not exist according to earlier cached lookups.
 File '/root/src/bar.js' exists - use it as a name resolution result.
 ======== Module name 'c:\bar' was successfully resolved to '/root/src/bar.js'. ========
 ======== Resolving module '//server/foo' from '/root/a.ts'. ========
@@ -77,9 +77,9 @@ Resolving in CJS mode with conditions 'require', 'types'.
 Module name '//server/bar', matched pattern '//server/*'.
 Trying substitution './src/*', candidate module location: './src/bar'.
 Loading module as file / folder, candidate module location '/root/src/bar', target file types: TypeScript, JavaScript, Declaration, JSON.
-File '/root/src/bar.ts' does not exist.
-File '/root/src/bar.tsx' does not exist.
-File '/root/src/bar.d.ts' does not exist.
+File '/root/src/bar.ts' does not exist according to earlier cached lookups.
+File '/root/src/bar.tsx' does not exist according to earlier cached lookups.
+File '/root/src/bar.d.ts' does not exist according to earlier cached lookups.
 File '/root/src/bar.js' exists - use it as a name resolution result.
 ======== Module name '//server/bar' was successfully resolved to '/root/src/bar.js'. ========
 ======== Resolving module '\\server\foo' from '/root/a.ts'. ========
@@ -98,9 +98,9 @@ Resolving in CJS mode with conditions 'require', 'types'.
 Module name '\\server\bar', matched pattern '\\server\*'.
 Trying substitution './src/*', candidate module location: './src/bar'.
 Loading module as file / folder, candidate module location '/root/src/bar', target file types: TypeScript, JavaScript, Declaration, JSON.
-File '/root/src/bar.ts' does not exist.
-File '/root/src/bar.tsx' does not exist.
-File '/root/src/bar.d.ts' does not exist.
+File '/root/src/bar.ts' does not exist according to earlier cached lookups.
+File '/root/src/bar.tsx' does not exist according to earlier cached lookups.
+File '/root/src/bar.d.ts' does not exist according to earlier cached lookups.
 File '/root/src/bar.js' exists - use it as a name resolution result.
 ======== Module name '\\server\bar' was successfully resolved to '/root/src/bar.js'. ========
 ======== Resolving module 'file:///foo' from '/root/a.ts'. ========
@@ -119,9 +119,9 @@ Resolving in CJS mode with conditions 'require', 'types'.
 Module name 'file:///bar', matched pattern 'file:///*'.
 Trying substitution './src/*', candidate module location: './src/bar'.
 Loading module as file / folder, candidate module location '/root/src/bar', target file types: TypeScript, JavaScript, Declaration, JSON.
-File '/root/src/bar.ts' does not exist.
-File '/root/src/bar.tsx' does not exist.
-File '/root/src/bar.d.ts' does not exist.
+File '/root/src/bar.ts' does not exist according to earlier cached lookups.
+File '/root/src/bar.tsx' does not exist according to earlier cached lookups.
+File '/root/src/bar.d.ts' does not exist according to earlier cached lookups.
 File '/root/src/bar.js' exists - use it as a name resolution result.
 ======== Module name 'file:///bar' was successfully resolved to '/root/src/bar.js'. ========
 ======== Resolving module 'file://c:/foo' from '/root/a.ts'. ========
@@ -140,9 +140,9 @@ Resolving in CJS mode with conditions 'require', 'types'.
 Module name 'file://c:/bar', matched pattern 'file://c:/*'.
 Trying substitution './src/*', candidate module location: './src/bar'.
 Loading module as file / folder, candidate module location '/root/src/bar', target file types: TypeScript, JavaScript, Declaration, JSON.
-File '/root/src/bar.ts' does not exist.
-File '/root/src/bar.tsx' does not exist.
-File '/root/src/bar.d.ts' does not exist.
+File '/root/src/bar.ts' does not exist according to earlier cached lookups.
+File '/root/src/bar.tsx' does not exist according to earlier cached lookups.
+File '/root/src/bar.d.ts' does not exist according to earlier cached lookups.
 File '/root/src/bar.js' exists - use it as a name resolution result.
 ======== Module name 'file://c:/bar' was successfully resolved to '/root/src/bar.js'. ========
 ======== Resolving module 'file://server/foo' from '/root/a.ts'. ========
@@ -161,9 +161,9 @@ Resolving in CJS mode with conditions 'require', 'types'.
 Module name 'file://server/bar', matched pattern 'file://server/*'.
 Trying substitution './src/*', candidate module location: './src/bar'.
 Loading module as file / folder, candidate module location '/root/src/bar', target file types: TypeScript, JavaScript, Declaration, JSON.
-File '/root/src/bar.ts' does not exist.
-File '/root/src/bar.tsx' does not exist.
-File '/root/src/bar.d.ts' does not exist.
+File '/root/src/bar.ts' does not exist according to earlier cached lookups.
+File '/root/src/bar.tsx' does not exist according to earlier cached lookups.
+File '/root/src/bar.d.ts' does not exist according to earlier cached lookups.
 File '/root/src/bar.js' exists - use it as a name resolution result.
 ======== Module name 'file://server/bar' was successfully resolved to '/root/src/bar.js'. ========
 ======== Resolving module 'http://server/foo' from '/root/a.ts'. ========
@@ -182,8 +182,8 @@ Resolving in CJS mode with conditions 'require', 'types'.
 Module name 'http://server/bar', matched pattern 'http://server/*'.
 Trying substitution './src/*', candidate module location: './src/bar'.
 Loading module as file / folder, candidate module location '/root/src/bar', target file types: TypeScript, JavaScript, Declaration, JSON.
-File '/root/src/bar.ts' does not exist.
-File '/root/src/bar.tsx' does not exist.
-File '/root/src/bar.d.ts' does not exist.
+File '/root/src/bar.ts' does not exist according to earlier cached lookups.
+File '/root/src/bar.tsx' does not exist according to earlier cached lookups.
+File '/root/src/bar.d.ts' does not exist according to earlier cached lookups.
 File '/root/src/bar.js' exists - use it as a name resolution result.
 ======== Module name 'http://server/bar' was successfully resolved to '/root/src/bar.js'. ========
