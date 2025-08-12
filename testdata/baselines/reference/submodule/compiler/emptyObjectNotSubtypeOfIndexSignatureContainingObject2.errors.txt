@@ -1,6 +1,5 @@
-emptyObjectNotSubtypeOfIndexSignatureContainingObject2.ts(42,3): error TS2322: Type 'Dictionary<string>' is not assignable to type 'Record<string, Bar>'.
-  'string' index signatures are incompatible.
-    Type 'string' is not assignable to type 'Bar'.
+emptyObjectNotSubtypeOfIndexSignatureContainingObject2.ts(42,3): error TS2322: Type '{}' is not assignable to type 'Record<string, Bar>'.
+  Index signature for type 'string' is missing in type '{}'.
 
 
 ==== emptyObjectNotSubtypeOfIndexSignatureContainingObject2.ts (1 errors) ====
@@ -47,8 +46,7 @@ emptyObjectNotSubtypeOfIndexSignatureContainingObject2.ts(42,3): error TS2322: T
       // This line _should_ fail, because `result` is not the right type.
       return result;
       ~~~~~~
-!!! error TS2322: Type 'Dictionary<string>' is not assignable to type 'Record<string, Bar>'.
-!!! error TS2322:   'string' index signatures are incompatible.
-!!! error TS2322:     Type 'string' is not assignable to type 'Bar'.
+!!! error TS2322: Type '{}' is not assignable to type 'Record<string, Bar>'.
+!!! error TS2322:   Index signature for type 'string' is missing in type '{}'.
     }
     

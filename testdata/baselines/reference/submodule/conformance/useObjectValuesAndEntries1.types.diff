@@ -76,11 +76,15 @@
  >{ a: true, b: 2 } : { a: true; b: number; }
  >a : true
  >true : true
-@@= skipped -12, +12 lines =@@
+@@= skipped -10, +10 lines =@@
+ >2 : 2
+
  var entries3 = Object.entries({});                  // [string, {}][]
- >entries3 : [string, unknown][]
- >Object.entries({}) : [string, unknown][]
+->entries3 : [string, unknown][]
+->Object.entries({}) : [string, unknown][]
 ->Object.entries : { <T>(o: { [s: string]: T; } | ArrayLike<T>): [string, T][]; (o: {}): [string, any][]; }
++>entries3 : [string, any][]
++>Object.entries({}) : [string, any][]
 +>Object.entries : { <T>(o: ArrayLike<T> | { [s: string]: T; }): [string, T][]; (o: {}): [string, any][]; }
  >Object : ObjectConstructor
 ->entries : { <T>(o: { [s: string]: T; } | ArrayLike<T>): [string, T][]; (o: {}): [string, any][]; }
@@ -88,9 +92,11 @@
  >{} : {}
 
  var values3 = Object.values({});                    // {}[]
- >values3 : unknown[]
- >Object.values({}) : unknown[]
+->values3 : unknown[]
+->Object.values({}) : unknown[]
 ->Object.values : { <T>(o: { [s: string]: T; } | ArrayLike<T>): T[]; (o: {}): any[]; }
++>values3 : any[]
++>Object.values({}) : any[]
 +>Object.values : { <T>(o: ArrayLike<T> | { [s: string]: T; }): T[]; (o: {}): any[]; }
  >Object : ObjectConstructor
 ->values : { <T>(o: { [s: string]: T; } | ArrayLike<T>): T[]; (o: {}): any[]; }
@@ -98,7 +104,7 @@
  >{} : {}
 
  var a = ["a", "b", "c"];
-@@= skipped -23, +23 lines =@@
+@@= skipped -25, +25 lines =@@
  var entries4 = Object.entries(a);                   // [string, string][]
  >entries4 : [string, string][]
  >Object.entries(a) : [string, string][]

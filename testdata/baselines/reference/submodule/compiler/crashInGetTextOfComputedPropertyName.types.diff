@@ -1,0 +1,20 @@
+--- old.crashInGetTextOfComputedPropertyName.types
++++ new.crashInGetTextOfComputedPropertyName.types
+@@= skipped -57, +57 lines =@@
+     items: { [itemId]: itemWithTSError } = {} /*happens when default value is provided*/
+ >items : any
+ >itemId : "some-id"
+->itemWithTSError : AB
++>itemWithTSError : any
+ >{} : {}
+
+ } = objWithItems
+@@= skipped -9, +9 lines =@@
+ // in order to re-produce the error, uncomment next line:
+ typeof itemWithTSError // :(
+ >typeof itemWithTSError : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+->itemWithTSError : AB
++>itemWithTSError : any
+
+ // will result in:
+ // Error from compilation: TypeError: Cannot read property 'charCodeAt' of undefined  TypeError: Cannot read property 'charCodeAt' of undefined

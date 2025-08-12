@@ -1,0 +1,24 @@
+emptyObjectUnionComparison.ts(4,17): error TS2345: Argument of type '{}' is not assignable to parameter of type 'Record<string, string>'.
+  Index signature for type 'string' is missing in type '{}'.
+emptyObjectUnionComparison.ts(10,17): error TS2345: Argument of type '{}' is not assignable to parameter of type 'Record<string, string>'.
+  Index signature for type 'string' is missing in type '{}'.
+
+
+==== emptyObjectUnionComparison.ts (2 errors) ====
+    function f() {
+      const v: {} = "lol";
+      const acceptsRecord = (record: Record<string, string>) => {};
+      acceptsRecord(v || {});
+                    ~~~~~~~
+!!! error TS2345: Argument of type '{}' is not assignable to parameter of type 'Record<string, string>'.
+!!! error TS2345:   Index signature for type 'string' is missing in type '{}'.
+    }
+    
+    function g() {
+      const v: unknown = "lol";
+      const acceptsRecord = (record: Record<string, string>) => {};
+      acceptsRecord(v || {});
+                    ~~~~~~~
+!!! error TS2345: Argument of type '{}' is not assignable to parameter of type 'Record<string, string>'.
+!!! error TS2345:   Index signature for type 'string' is missing in type '{}'.
+    }

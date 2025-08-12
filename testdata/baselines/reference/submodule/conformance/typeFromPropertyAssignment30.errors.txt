@@ -1,0 +1,26 @@
+typeFromPropertyAssignment30.ts(5,7): error TS2322: Type '{ (): number; p: {}; }' is not assignable to type 'Combo'.
+  Types of property 'p' are incompatible.
+    Type '{}' is not assignable to type '{ [s: string]: number; }'.
+      Index signature for type 'string' is missing in type '{}'.
+typeFromPropertyAssignment30.ts(7,1): error TS2322: Type '{}' is not assignable to type '{ [s: string]: number; }'.
+  Index signature for type 'string' is missing in type '{}'.
+
+
+==== typeFromPropertyAssignment30.ts (2 errors) ====
+    interface Combo {
+        (): number;
+        p?: { [s: string]: number };
+    }
+    const c: Combo = () => 1
+          ~
+!!! error TS2322: Type '{ (): number; p: {}; }' is not assignable to type 'Combo'.
+!!! error TS2322:   Types of property 'p' are incompatible.
+!!! error TS2322:     Type '{}' is not assignable to type '{ [s: string]: number; }'.
+!!! error TS2322:       Index signature for type 'string' is missing in type '{}'.
+    // should not be an expando object, but contextually typed by Combo.p
+    c.p = {}
+    ~~~
+!!! error TS2322: Type '{}' is not assignable to type '{ [s: string]: number; }'.
+!!! error TS2322:   Index signature for type 'string' is missing in type '{}'.
+    
+    

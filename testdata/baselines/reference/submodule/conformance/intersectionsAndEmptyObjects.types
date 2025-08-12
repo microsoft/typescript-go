@@ -100,8 +100,8 @@ testDictionary(d1);
 >d1 : {}
 
 const d2 = intersectDictionaries(d1, d1);
->d2 : {}
->intersectDictionaries(d1, d1) : {}
+>d2 : Dictionary
+>intersectDictionaries(d1, d1) : Dictionary
 >intersectDictionaries : <F1 extends Dictionary, F2 extends Dictionary>(d1: F1, d2: F2) => F1 & F2
 >d1 : {}
 >d1 : {}
@@ -109,7 +109,7 @@ const d2 = intersectDictionaries(d1, d1);
 testDictionary(d2);
 >testDictionary(d2) : void
 >testDictionary : <T extends Dictionary>(_value: T) => void
->d2 : {}
+>d2 : Dictionary
 
 const d3 = {
 >d3 : { s: string; }
@@ -126,8 +126,8 @@ testDictionary(d3);
 >d3 : { s: string; }
 
 const d4 = intersectDictionaries(d1, d3);
->d4 : { s: string; }
->intersectDictionaries(d1, d3) : { s: string; }
+>d4 : Dictionary & { s: string; }
+>intersectDictionaries(d1, d3) : Dictionary & { s: string; }
 >intersectDictionaries : <F1 extends Dictionary, F2 extends Dictionary>(d1: F1, d2: F2) => F1 & F2
 >d1 : {}
 >d3 : { s: string; }
@@ -135,11 +135,11 @@ const d4 = intersectDictionaries(d1, d3);
 testDictionary(d4);
 >testDictionary(d4) : void
 >testDictionary : <T extends Dictionary>(_value: T) => void
->d4 : { s: string; }
+>d4 : Dictionary & { s: string; }
 
 const d5 = intersectDictionaries(d3, d1);
->d5 : { s: string; }
->intersectDictionaries(d3, d1) : { s: string; }
+>d5 : { s: string; } & Dictionary
+>intersectDictionaries(d3, d1) : { s: string; } & Dictionary
 >intersectDictionaries : <F1 extends Dictionary, F2 extends Dictionary>(d1: F1, d2: F2) => F1 & F2
 >d3 : { s: string; }
 >d1 : {}
@@ -147,7 +147,7 @@ const d5 = intersectDictionaries(d3, d1);
 testDictionary(d5);
 >testDictionary(d5) : void
 >testDictionary : <T extends Dictionary>(_value: T) => void
->d5 : { s: string; }
+>d5 : { s: string; } & Dictionary
 
 const d6 = intersectDictionaries(d3, d3);
 >d6 : { s: string; }

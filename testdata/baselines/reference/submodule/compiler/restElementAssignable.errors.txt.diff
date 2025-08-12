@@ -1,0 +1,33 @@
+--- old.restElementAssignable.errors.txt
++++ new.restElementAssignable.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++restElementAssignable.ts(4,11): error TS2322: Type '{}' is not assignable to type '{ [x: symbol]: unknown; }'.
++  Index signature for type 'symbol' is missing in type '{}'.
++restElementAssignable.ts(6,11): error TS2322: Type '{}' is not assignable to type '{ [x: symbol]: unknown; }'.
++  Index signature for type 'symbol' is missing in type '{}'.
++
++
++==== restElementAssignable.ts (2 errors) ====
++    {
++        const { ...props } = {};
++        // Use to fail
++        const t1: { [x: symbol]: unknown } = props;
++              ~~
++!!! error TS2322: Type '{}' is not assignable to type '{ [x: symbol]: unknown; }'.
++!!! error TS2322:   Index signature for type 'symbol' is missing in type '{}'.
++        // Working equivalent
++        const t2: { [x: symbol]: unknown } = {};
++              ~~
++!!! error TS2322: Type '{}' is not assignable to type '{ [x: symbol]: unknown; }'.
++!!! error TS2322:   Index signature for type 'symbol' is missing in type '{}'.
++    }
++    
++    {
++        const { ...props } = { a: 1, b: false, c: "str" };
++        // Use to fail
++        const t1: { [x: string]: number | boolean | string } = props;
++        // Working equivalent
++        const t2: { [x: string]: number | boolean | string } = { a: 1, b: false, c: "str" };;
++    }
++    

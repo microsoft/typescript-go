@@ -1,0 +1,18 @@
+//// [tests/cases/compiler/unknownUnionEmpty.ts] ////
+
+=== unknownUnionEmpty.ts ===
+function f() {
+>f : Symbol(f, Decl(unknownUnionEmpty.ts, 0, 0))
+
+  const v: unknown = "lol";
+>v : Symbol(v, Decl(unknownUnionEmpty.ts, 1, 7))
+
+  const acceptsRecord = (record: Record<string, string>) => {};
+>acceptsRecord : Symbol(acceptsRecord, Decl(unknownUnionEmpty.ts, 2, 7))
+>record : Symbol(record, Decl(unknownUnionEmpty.ts, 2, 25))
+>Record : Symbol(Record, Decl(lib.es5.d.ts, --, --))
+
+  acceptsRecord(v || {});
+>acceptsRecord : Symbol(acceptsRecord, Decl(unknownUnionEmpty.ts, 2, 7))
+>v : Symbol(v, Decl(unknownUnionEmpty.ts, 1, 7))
+}

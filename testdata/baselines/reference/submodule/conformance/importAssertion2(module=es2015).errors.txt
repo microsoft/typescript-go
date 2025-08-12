@@ -2,6 +2,8 @@
 1.ts(2,28): error TS2821: Import assertions are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'.
 1.ts(3,21): error TS2821: Import assertions are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'.
 1.ts(4,27): error TS2821: Import assertions are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'.
+2.ts(1,28): error TS2322: Type '{}' is not assignable to type 'ImportAttributes'.
+  Index signature for type 'string' is missing in type '{}'.
 2.ts(1,28): error TS2821: Import assertions are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'.
 2.ts(2,38): error TS2821: Import assertions are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'.
 
@@ -24,8 +26,11 @@
                               ~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2821: Import assertions are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'.
     
-==== 2.ts (2 errors) ====
+==== 2.ts (3 errors) ====
     export { a, b } from './0' assert {}
+                               ~~~~~~~~~
+!!! error TS2322: Type '{}' is not assignable to type 'ImportAttributes'.
+!!! error TS2322:   Index signature for type 'string' is missing in type '{}'.
                                ~~~~~~~~~
 !!! error TS2821: Import assertions are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'.
     export { a as c, b as d } from './0' assert { a: "a", b: "b", c: "c" }

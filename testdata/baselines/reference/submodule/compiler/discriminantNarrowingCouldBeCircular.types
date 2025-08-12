@@ -11,7 +11,7 @@ const o: Record<string, string> | undefined = {};
 >{} : {}
 
 if (o) {
->o : Record<string, string>
+>o : Record<string, string> | undefined
 
   for (const key in o) {
 >key : string

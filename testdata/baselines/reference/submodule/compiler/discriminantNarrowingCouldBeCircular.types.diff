@@ -1,6 +1,15 @@
 --- old.discriminantNarrowingCouldBeCircular.types
 +++ new.discriminantNarrowingCouldBeCircular.types
-@@= skipped -76, +76 lines =@@
+@@= skipped -10, +10 lines =@@
+ >{} : {}
+
+ if (o) {
+->o : Record<string, string>
++>o : Record<string, string> | undefined
+
+   for (const key in o) {
+ >key : string
+@@= skipped -66, +66 lines =@@
  >parent : SomeRecord | undefined
  >!parents.includes(parent.a) : boolean
  >parents.includes(parent.a) : boolean

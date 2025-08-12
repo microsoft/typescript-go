@@ -1,0 +1,22 @@
+incrementOnNullAssertion.ts(5,5): error TS2322: Type '{}' is not assignable to type 'Dictionary<number>'.
+  Index signature for type 'string' is missing in type '{}'.
+
+
+==== incrementOnNullAssertion.ts (1 errors) ====
+    interface Dictionary<T> {
+        [myFavouriteType: string]: T | undefined
+    }
+    const x = 'bar'
+    let foo: Dictionary<number> = {}
+        ~~~
+!!! error TS2322: Type '{}' is not assignable to type 'Dictionary<number>'.
+!!! error TS2322:   Index signature for type 'string' is missing in type '{}'.
+    if (foo[x] === undefined) {
+        foo[x] = 1
+    }
+    else {
+        let nu = foo[x]
+        let n = foo[x]
+        foo[x]!++
+    }
+    

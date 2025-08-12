@@ -1,0 +1,25 @@
+--- old.importAttributes2(module=esnext).errors.txt
++++ new.importAttributes2(module=esnext).errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++2.ts(1,28): error TS2322: Type '{}' is not assignable to type 'ImportAttributes'.
++  Index signature for type 'string' is missing in type '{}'.
++
++
++==== 0.ts (0 errors) ====
++    export const a = 1;
++    export const b = 2;
++    
++==== 1.ts (0 errors) ====
++    export {} from './0' with { type: "json" }
++    export { a, b } from './0' with { type: "json" }
++    export * from './0' with { type: "json" }
++    export * as ns from './0' with { type: "json" }
++    
++==== 2.ts (1 errors) ====
++    export { a, b } from './0' with {}
++                               ~~~~~~~
++!!! error TS2322: Type '{}' is not assignable to type 'ImportAttributes'.
++!!! error TS2322:   Index signature for type 'string' is missing in type '{}'.
++    export { a as c, b as d } from './0' with { a: "a", b: "b", c: "c" }
++    

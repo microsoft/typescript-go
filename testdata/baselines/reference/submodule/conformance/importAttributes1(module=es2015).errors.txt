@@ -1,12 +1,18 @@
 1.ts(1,14): error TS2823: Import attributes are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'.
 1.ts(2,28): error TS2823: Import attributes are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'.
 1.ts(3,28): error TS2823: Import attributes are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'.
+2.ts(1,28): error TS2322: Type '{}' is not assignable to type 'ImportAttributes'.
+  Index signature for type 'string' is missing in type '{}'.
 2.ts(1,28): error TS2823: Import attributes are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'.
 2.ts(2,38): error TS2823: Import attributes are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'.
 3.ts(1,11): error TS1323: Dynamic imports are only supported when the '--module' flag is set to 'es2020', 'es2022', 'esnext', 'commonjs', 'amd', 'system', 'umd', 'node16', 'node18', or 'nodenext'.
 3.ts(2,11): error TS1323: Dynamic imports are only supported when the '--module' flag is set to 'es2020', 'es2022', 'esnext', 'commonjs', 'amd', 'system', 'umd', 'node16', 'node18', or 'nodenext'.
 3.ts(3,11): error TS1323: Dynamic imports are only supported when the '--module' flag is set to 'es2020', 'es2022', 'esnext', 'commonjs', 'amd', 'system', 'umd', 'node16', 'node18', or 'nodenext'.
 3.ts(4,11): error TS1323: Dynamic imports are only supported when the '--module' flag is set to 'es2020', 'es2022', 'esnext', 'commonjs', 'amd', 'system', 'umd', 'node16', 'node18', or 'nodenext'.
+3.ts(4,25): error TS2322: Type '{ with: {}; }' is not assignable to type 'ImportCallOptions'.
+  Types of property 'with' are incompatible.
+    Type '{}' is not assignable to type 'ImportAttributes'.
+      Index signature for type 'string' is missing in type '{}'.
 3.ts(5,12): error TS1323: Dynamic imports are only supported when the '--module' flag is set to 'es2020', 'es2022', 'esnext', 'commonjs', 'amd', 'system', 'umd', 'node16', 'node18', or 'nodenext'.
 3.ts(7,11): error TS1323: Dynamic imports are only supported when the '--module' flag is set to 'es2020', 'es2022', 'esnext', 'commonjs', 'amd', 'system', 'umd', 'node16', 'node18', or 'nodenext'.
 3.ts(8,11): error TS1323: Dynamic imports are only supported when the '--module' flag is set to 'es2020', 'es2022', 'esnext', 'commonjs', 'amd', 'system', 'umd', 'node16', 'node18', or 'nodenext'.
@@ -32,8 +38,11 @@
     b;
     foo.a;
     foo.b;
-==== 2.ts (2 errors) ====
+==== 2.ts (3 errors) ====
     import { a, b } from './0' with {}
+                               ~~~~~~~
+!!! error TS2322: Type '{}' is not assignable to type 'ImportAttributes'.
+!!! error TS2322:   Index signature for type 'string' is missing in type '{}'.
                                ~~~~~~~
 !!! error TS2823: Import attributes are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'.
     import { a as c, b as d } from './0' with { a: "a", b: "b", c: "c" }
@@ -43,7 +52,7 @@
     b;
     c;
     d;
-==== 3.ts (9 errors) ====
+==== 3.ts (10 errors) ====
     const a = import('./0')
               ~~~~~~~~~~~~~
 !!! error TS1323: Dynamic imports are only supported when the '--module' flag is set to 'es2020', 'es2022', 'esnext', 'commonjs', 'amd', 'system', 'umd', 'node16', 'node18', or 'nodenext'.
@@ -56,6 +65,11 @@
     const d = import('./0', { with: {} })
               ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS1323: Dynamic imports are only supported when the '--module' flag is set to 'es2020', 'es2022', 'esnext', 'commonjs', 'amd', 'system', 'umd', 'node16', 'node18', or 'nodenext'.
+                            ~~~~~~~~~~~~
+!!! error TS2322: Type '{ with: {}; }' is not assignable to type 'ImportCallOptions'.
+!!! error TS2322:   Types of property 'with' are incompatible.
+!!! error TS2322:     Type '{}' is not assignable to type 'ImportAttributes'.
+!!! error TS2322:       Index signature for type 'string' is missing in type '{}'.
     const dd = import('./0', {})
                ~~~~~~~~~~~~~~~~~
 !!! error TS1323: Dynamic imports are only supported when the '--module' flag is set to 'es2020', 'es2022', 'esnext', 'commonjs', 'amd', 'system', 'umd', 'node16', 'node18', or 'nodenext'.

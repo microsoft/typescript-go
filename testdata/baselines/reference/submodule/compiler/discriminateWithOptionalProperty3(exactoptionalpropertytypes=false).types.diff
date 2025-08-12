@@ -9,7 +9,16 @@
 
    args: ExecutionArgs,
  >args : ExecutionArgs
-@@= skipped -26, +26 lines =@@
+@@= skipped -15, +15 lines =@@
+ >coercedVariableValues : CoercedVariableValues
+ >getVariableValues(rawVariableValues ?? {}) : CoercedVariableValues
+ >getVariableValues : (inputs: { readonly [variable: string]: unknown; }) => CoercedVariableValues
+->rawVariableValues ?? {} : { readonly [variable: string]: unknown; }
++>rawVariableValues ?? {} : { readonly [variable: string]: unknown; } | {}
+ >rawVariableValues : Maybe<{ readonly [variable: string]: unknown; }>
+ >{} : {}
+
+@@= skipped -11, +11 lines =@@
 
      return coercedVariableValues.errors;
  >coercedVariableValues.errors : readonly GraphQLError[]

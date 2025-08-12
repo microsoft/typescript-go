@@ -4529,7 +4529,14 @@ func (r *Relater) typeRelatedToIndexInfo(source *Type, targetInfo *IndexInfo, re
 	// only fresh object literals are considered to have inferred index signatures. This ensures { [x: string]: xxx } <: {} but
 	// not vice-versa. Without this rule, those types would be mutual strict subtypes.
 	if intersectionState&IntersectionStateSource == 0 && (r.relation != r.c.strictSubtypeRelation || source.objectFlags&ObjectFlagsFreshLiteral != 0) && r.c.isObjectTypeWithInferableIndex(source) {
-		return r.membersRelatedToIndexInfo(source, targetInfo, reportErrors, intersectionState)
+		// For strict type checking, don't allow empty anonymous object types that are not fresh literals
+		// to infer index signatures. This prevents issues where `v || {}` (where v: unknown) would be 
+		// incorrectly considered assignable to Record<string, string>.
+		if r.c.strictNullChecks && r.c.IsEmptyAnonymousObjectType(source) && source.objectFlags&ObjectFlagsFreshLiteral == 0 {
+			// Fall through to report the missing index signature error
+		} else {
+			return r.membersRelatedToIndexInfo(source, targetInfo, reportErrors, intersectionState)
+		}
 	}
 	if reportErrors {
 		r.reportError(diagnostics.Index_signature_for_type_0_is_missing_in_type_1, r.c.TypeToString(targetInfo.keyType), r.c.TypeToString(source))

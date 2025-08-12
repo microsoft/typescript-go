@@ -1,0 +1,22 @@
+--- old.emptyObjectNotSubtypeOfIndexSignatureContainingObject1.errors.txt
++++ new.emptyObjectNotSubtypeOfIndexSignatureContainingObject1.errors.txt
+@@= skipped -0, +0 lines =@@
+-emptyObjectNotSubtypeOfIndexSignatureContainingObject1.ts(41,3): error TS2322: Type 'Dictionary<string>' is not assignable to type 'Record<string, Bar>'.
+-  'string' index signatures are incompatible.
+-    Type 'string' is not assignable to type 'Bar'.
++emptyObjectNotSubtypeOfIndexSignatureContainingObject1.ts(41,3): error TS2322: Type '{}' is not assignable to type 'Record<string, Bar>'.
++  Index signature for type 'string' is missing in type '{}'.
+
+
+ ==== emptyObjectNotSubtypeOfIndexSignatureContainingObject1.ts (1 errors) ====
+@@= skipped -45, +44 lines =@@
+       // This line _should_ fail, because `result` is not the right type.
+       return result;
+       ~~~~~~
+-!!! error TS2322: Type 'Dictionary<string>' is not assignable to type 'Record<string, Bar>'.
+-!!! error TS2322:   'string' index signatures are incompatible.
+-!!! error TS2322:     Type 'string' is not assignable to type 'Bar'.
++!!! error TS2322: Type '{}' is not assignable to type 'Record<string, Bar>'.
++!!! error TS2322:   Index signature for type 'string' is missing in type '{}'.
+     }
+     

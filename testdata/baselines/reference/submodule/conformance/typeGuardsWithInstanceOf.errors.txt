@@ -1,12 +1,10 @@
 typeGuardsWithInstanceOf.ts(7,20): error TS2339: Property 'global' does not exist on type 'never'.
   The intersection 'I & RegExp' was reduced to 'never' because property 'global' has conflicting types in some constituents.
-typeGuardsWithInstanceOf.ts(36,11): error TS2339: Property 'onChanges' does not exist on type 'C | (Validator & Partial<OnChanges>)'.
-  Property 'onChanges' does not exist on type 'C'.
-typeGuardsWithInstanceOf.ts(37,11): error TS2339: Property 'onChanges' does not exist on type 'C | (Validator & Partial<OnChanges>)'.
-  Property 'onChanges' does not exist on type 'C'.
+typeGuardsWithInstanceOf.ts(37,21): error TS2345: Argument of type '{}' is not assignable to parameter of type 'Record<string, unknown>'.
+  Index signature for type 'string' is missing in type '{}'.
 
 
-==== typeGuardsWithInstanceOf.ts (3 errors) ====
+==== typeGuardsWithInstanceOf.ts (2 errors) ====
     interface I { global: string; }
     var result!: I;
     var result2!: I;
@@ -46,13 +44,10 @@ typeGuardsWithInstanceOf.ts(37,11): error TS2339: Property 'onChanges' does not 
         // we reverted that fix in #42231 which brought behavior back to
         // before 4.1.
         if (v.onChanges) {
-              ~~~~~~~~~
-!!! error TS2339: Property 'onChanges' does not exist on type 'C | (Validator & Partial<OnChanges>)'.
-!!! error TS2339:   Property 'onChanges' does not exist on type 'C'.
             v.onChanges({});
-              ~~~~~~~~~
-!!! error TS2339: Property 'onChanges' does not exist on type 'C | (Validator & Partial<OnChanges>)'.
-!!! error TS2339:   Property 'onChanges' does not exist on type 'C'.
+                        ~~
+!!! error TS2345: Argument of type '{}' is not assignable to parameter of type 'Record<string, unknown>'.
+!!! error TS2345:   Index signature for type 'string' is missing in type '{}'.
         }
     }
     

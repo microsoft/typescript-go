@@ -1,0 +1,18 @@
+--- old.typeGuardNarrowsIndexedAccessOfKnownProperty10.errors.txt
++++ new.typeGuardNarrowsIndexedAccessOfKnownProperty10.errors.txt
+@@= skipped -0, +0 lines =@@
++typeGuardNarrowsIndexedAccessOfKnownProperty10.ts(2,7): error TS2322: Type '{}' is not assignable to type '{ [id: string]: number; }'.
++  Index signature for type 'string' is missing in type '{}'.
+ typeGuardNarrowsIndexedAccessOfKnownProperty10.ts(5,6): error TS2448: Block-scoped variable 'id' used before its declaration.
+
+
+-==== typeGuardNarrowsIndexedAccessOfKnownProperty10.ts (1 errors) ====
++==== typeGuardNarrowsIndexedAccessOfKnownProperty10.ts (2 errors) ====
+     interface Foo { bar: any; }
+     const bar: { [id: string]: number } = {};
++          ~~~
++!!! error TS2322: Type '{}' is not assignable to type '{ [id: string]: number; }'.
++!!! error TS2322:   Index signature for type 'string' is missing in type '{}'.
+     
+     (foo: Foo) => {
+     	bar[id]++;

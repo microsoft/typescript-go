@@ -1,8 +1,10 @@
 symbolProperty52.ts(2,13): error TS2339: Property 'nonsense' does not exist on type 'SymbolConstructor'.
+symbolProperty52.ts(5,1): error TS2322: Type '{}' is not assignable to type '{ [x: number]: number; }'.
+  Index signature for type 'number' is missing in type '{}'.
 symbolProperty52.ts(7,12): error TS2339: Property 'nonsense' does not exist on type 'SymbolConstructor'.
 
 
-==== symbolProperty52.ts (2 errors) ====
+==== symbolProperty52.ts (3 errors) ====
     var obj = {
         [Symbol.nonsense]: 0
                 ~~~~~~~~
@@ -10,6 +12,9 @@ symbolProperty52.ts(7,12): error TS2339: Property 'nonsense' does not exist on t
     };
     
     obj = {};
+    ~~~
+!!! error TS2322: Type '{}' is not assignable to type '{ [x: number]: number; }'.
+!!! error TS2322:   Index signature for type 'number' is missing in type '{}'.
     
     obj[Symbol.nonsense];
                ~~~~~~~~

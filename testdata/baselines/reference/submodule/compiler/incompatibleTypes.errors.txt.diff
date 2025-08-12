@@ -19,9 +19,20 @@
 -  Overload 2 of 2, '(s: { c: { b: string; }; d: string; }): string', gave the following error.
 +  The last overload gave the following error.
      Object literal may only specify known properties, and 'e' does not exist in type '{ c: { b: string; }; d: string; }'.
++incompatibleTypes.ts(62,3): error TS2322: Type '{}' is not assignable to type 'IMap'.
++  Index signature for type 'string' is missing in type '{}'.
  incompatibleTypes.ts(66,47): error TS2353: Object literal may only specify known properties, and 'e' does not exist in type '{ a: { a: string; }; b: string; }'.
  incompatibleTypes.ts(72,5): error TS2322: Type 'number' is not assignable to type '() => string'.
-@@= skipped -79, +73 lines =@@
+ incompatibleTypes.ts(74,5): error TS2322: Type '(a: any) => number' is not assignable to type '() => any'.
+   Target signature provides too few arguments. Expected 1 or more, but got 0.
+
+
+-==== incompatibleTypes.ts (9 errors) ====
++==== incompatibleTypes.ts (10 errors) ====
+     interface IFoo1 {
+         p1(): number;
+     }
+@@= skipped -79, +75 lines =@@
      if1(c1);
          ~~
  !!! error TS2769: No overload matches this call.
@@ -51,3 +62,13 @@
  !!! related TS2793 incompatibleTypes.ts:47:10: The call would have succeeded against this implementation, but implementation signatures of overloads are not externally visible.
      
      interface IMap {
+@@= skipped -18, +17 lines =@@
+      var map:IMap;
+      foo(() => {
+       map = {};
++      ~~~
++!!! error TS2322: Type '{}' is not assignable to type 'IMap'.
++!!! error TS2322:   Index signature for type 'string' is missing in type '{}'.
+      });
+     }
+     

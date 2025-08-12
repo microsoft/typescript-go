@@ -27,7 +27,15 @@
  >foos : Record<string, Foo>
  >f => f.foo : (f: Foo) => string
  >f : Foo
-@@= skipped -15, +15 lines =@@
+@@= skipped -9, +9 lines =@@
+ >foo : string
+
+   const result = foos == null ? {} : mapValues(foos, f => f.foo);
+->result : Dictionary<string>
+->foos == null ? {} : mapValues(foos, f => f.foo) : Dictionary<string>
++>result : {}
++>foos == null ? {} : mapValues(foos, f => f.foo) : Dictionary<string> | {}
+ >foos == null : boolean
  >foos : Record<string, Foo>
  >{} : {}
  >mapValues(foos, f => f.foo) : Dictionary<string>
@@ -36,3 +44,10 @@
  >foos : Record<string, Foo>
  >f => f.foo : (f: Foo) => string
  >f : Foo
+@@= skipped -16, +16 lines =@@
+
+   // This line _should_ fail, because `result` is not the right type.
+   return result;
+->result : Dictionary<string>
++>result : {}
+ }

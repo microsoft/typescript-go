@@ -36,3 +36,17 @@
 
          return {}
      }
+@@= skipped -30, +30 lines =@@
+     // we reverted that fix in #42231 which brought behavior back to
+     // before 4.1.
+     if (v.onChanges) {
++>v.onChanges : Symbol(onChanges, Decl(typeGuardsWithInstanceOf.ts, 11, 21))
+ >v : Symbol(v, Decl(typeGuardsWithInstanceOf.ts, 25, 7))
++>onChanges : Symbol(onChanges, Decl(typeGuardsWithInstanceOf.ts, 11, 21))
+
+         v.onChanges({});
++>v.onChanges : Symbol(onChanges, Decl(typeGuardsWithInstanceOf.ts, 11, 21))
+ >v : Symbol(v, Decl(typeGuardsWithInstanceOf.ts, 25, 7))
++>onChanges : Symbol(onChanges, Decl(typeGuardsWithInstanceOf.ts, 11, 21))
+     }
+ }

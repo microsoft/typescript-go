@@ -1,0 +1,42 @@
+//// [tests/cases/compiler/emptyObjectUnionComparison.ts] ////
+
+=== emptyObjectUnionComparison.ts ===
+function f() {
+>f : () => void
+
+  const v: {} = "lol";
+>v : {}
+>"lol" : "lol"
+
+  const acceptsRecord = (record: Record<string, string>) => {};
+>acceptsRecord : (record: Record<string, string>) => void
+>(record: Record<string, string>) => {} : (record: Record<string, string>) => void
+>record : Record<string, string>
+
+  acceptsRecord(v || {});
+>acceptsRecord(v || {}) : void
+>acceptsRecord : (record: Record<string, string>) => void
+>v || {} : {}
+>v : {}
+>{} : {}
+}
+
+function g() {
+>g : () => void
+
+  const v: unknown = "lol";
+>v : unknown
+>"lol" : "lol"
+
+  const acceptsRecord = (record: Record<string, string>) => {};
+>acceptsRecord : (record: Record<string, string>) => void
+>(record: Record<string, string>) => {} : (record: Record<string, string>) => void
+>record : Record<string, string>
+
+  acceptsRecord(v || {});
+>acceptsRecord(v || {}) : void
+>acceptsRecord : (record: Record<string, string>) => void
+>v || {} : {}
+>v : unknown
+>{} : {}
+}

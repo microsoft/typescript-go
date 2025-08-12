@@ -17,13 +17,15 @@ incompatibleTypes.ts(42,5): error TS2769: No overload matches this call.
 incompatibleTypes.ts(49,7): error TS2769: No overload matches this call.
   The last overload gave the following error.
     Object literal may only specify known properties, and 'e' does not exist in type '{ c: { b: string; }; d: string; }'.
+incompatibleTypes.ts(62,3): error TS2322: Type '{}' is not assignable to type 'IMap'.
+  Index signature for type 'string' is missing in type '{}'.
 incompatibleTypes.ts(66,47): error TS2353: Object literal may only specify known properties, and 'e' does not exist in type '{ a: { a: string; }; b: string; }'.
 incompatibleTypes.ts(72,5): error TS2322: Type 'number' is not assignable to type '() => string'.
 incompatibleTypes.ts(74,5): error TS2322: Type '(a: any) => number' is not assignable to type '() => any'.
   Target signature provides too few arguments. Expected 1 or more, but got 0.
 
 
-==== incompatibleTypes.ts (9 errors) ====
+==== incompatibleTypes.ts (10 errors) ====
     interface IFoo1 {
         p1(): number;
     }
@@ -115,6 +117,9 @@ incompatibleTypes.ts(74,5): error TS2322: Type '(a: any) => number' is not assig
      var map:IMap;
      foo(() => {
       map = {};
+      ~~~
+!!! error TS2322: Type '{}' is not assignable to type 'IMap'.
+!!! error TS2322:   Index signature for type 'string' is missing in type '{}'.
      });
     }
     

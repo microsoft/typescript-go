@@ -1,0 +1,20 @@
+--- old.importAssertion4.errors.txt
++++ new.importAssertion4.errors.txt
+@@= skipped -0, +0 lines =@@
+ importAssertion4.ts(1,20): error TS2307: Cannot find module './first' or its corresponding type declarations.
++importAssertion4.ts(1,30): error TS2322: Type '{}' is not assignable to type 'ImportAttributes'.
++  Index signature for type 'string' is missing in type '{}'.
+ importAssertion4.ts(2,1): error TS1005: '{' expected.
+
+
+-==== importAssertion4.ts (2 errors) ====
++==== importAssertion4.ts (3 errors) ====
+     import * as f from "./first" assert
+                        ~~~~~~~~~
+ !!! error TS2307: Cannot find module './first' or its corresponding type declarations.
++                                 ~~~~~~
++!!! error TS2322: Type '{}' is not assignable to type 'ImportAttributes'.
++!!! error TS2322:   Index signature for type 'string' is missing in type '{}'.
+     
+     
+ !!! error TS1005: '{' expected.

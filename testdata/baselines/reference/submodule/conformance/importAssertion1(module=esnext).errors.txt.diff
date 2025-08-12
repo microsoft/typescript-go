@@ -1,0 +1,42 @@
+--- old.importAssertion1(module=esnext).errors.txt
++++ new.importAssertion1(module=esnext).errors.txt
+@@= skipped -0, +0 lines =@@
++2.ts(1,28): error TS2322: Type '{}' is not assignable to type 'ImportAttributes'.
++  Index signature for type 'string' is missing in type '{}'.
++3.ts(4,25): error TS2322: Type '{ assert: {}; }' is not assignable to type 'ImportCallOptions'.
++  Types of property 'assert' are incompatible.
++    Type '{}' is not assignable to type 'ImportAssertions'.
++      Index signature for type 'string' is missing in type '{}'.
+ 3.ts(8,11): message TS1450: Dynamic imports can only accept a module specifier and an optional set of attributes as arguments
+ 3.ts(9,11): message TS1450: Dynamic imports can only accept a module specifier and an optional set of attributes as arguments
+
+@@= skipped -14, +20 lines =@@
+     foo.a;
+     foo.b;
+     
+-==== 2.ts (0 errors) ====
++==== 2.ts (1 errors) ====
+     import { a, b } from './0' assert {}
++                               ~~~~~~~~~
++!!! error TS2322: Type '{}' is not assignable to type 'ImportAttributes'.
++!!! error TS2322:   Index signature for type 'string' is missing in type '{}'.
+     import { a as c, b as d } from './0' assert { a: "a", b: "b", c: "c" }
+     a;
+     b;
+     c;
+     d;
+     
+-==== 3.ts (2 errors) ====
++==== 3.ts (3 errors) ====
+     const a = import('./0')
+     const b = import('./0', { assert: { type: "json" } })
+     const c = import('./0', { assert: { type: "json", ttype: "typo" } })
+     const d = import('./0', { assert: {} })
++                            ~~~~~~~~~~~~~~
++!!! error TS2322: Type '{ assert: {}; }' is not assignable to type 'ImportCallOptions'.
++!!! error TS2322:   Types of property 'assert' are incompatible.
++!!! error TS2322:     Type '{}' is not assignable to type 'ImportAssertions'.
++!!! error TS2322:       Index signature for type 'string' is missing in type '{}'.
+     const dd = import('./0', {})
+     declare function foo(): any;
+     const e = import('./0', foo())

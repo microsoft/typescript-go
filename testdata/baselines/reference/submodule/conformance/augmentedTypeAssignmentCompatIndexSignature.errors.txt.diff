@@ -1,0 +1,24 @@
+--- old.augmentedTypeAssignmentCompatIndexSignature.errors.txt
++++ new.augmentedTypeAssignmentCompatIndexSignature.errors.txt
+@@= skipped -0, +0 lines =@@
++augmentedTypeAssignmentCompatIndexSignature.ts(15,5): error TS2322: Type '{}' is not assignable to type '{ [n: number]: Foo; }'.
++  Index signature for type 'number' is missing in type '{}'.
+ augmentedTypeAssignmentCompatIndexSignature.ts(19,5): error TS2322: Type '() => void' is not assignable to type '{ [n: number]: Bar; }'.
+   Index signature for type 'number' is missing in type '() => void'.
+
+
+-==== augmentedTypeAssignmentCompatIndexSignature.ts (1 errors) ====
++==== augmentedTypeAssignmentCompatIndexSignature.ts (2 errors) ====
+     interface Foo { a }
+     interface Bar { b }
+     
+@@= skipped -17, +19 lines =@@
+     var f = () => { };
+     
+     var v1: {
++        ~~
++!!! error TS2322: Type '{}' is not assignable to type '{ [n: number]: Foo; }'.
++!!! error TS2322:   Index signature for type 'number' is missing in type '{}'.
+         [n: number]: Foo
+     } = o; // Should be allowed
+     

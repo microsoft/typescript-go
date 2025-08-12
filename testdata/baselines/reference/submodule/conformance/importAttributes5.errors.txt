@@ -1,11 +1,16 @@
 importAttributes5.ts(1,20): error TS2307: Cannot find module './first' or its corresponding type declarations.
+importAttributes5.ts(1,30): error TS2322: Type '{}' is not assignable to type 'ImportAttributes'.
+  Index signature for type 'string' is missing in type '{}'.
 importAttributes5.ts(1,36): error TS1005: '}' expected.
 
 
-==== importAttributes5.ts (2 errors) ====
+==== importAttributes5.ts (3 errors) ====
     import * as f from "./first" with {
                        ~~~~~~~~~
 !!! error TS2307: Cannot find module './first' or its corresponding type declarations.
+                                 ~~~~~~
+!!! error TS2322: Type '{}' is not assignable to type 'ImportAttributes'.
+!!! error TS2322:   Index signature for type 'string' is missing in type '{}'.
                                        
 !!! error TS1005: '}' expected.
 !!! related TS1007 importAttributes5.ts:1:35: The parser expected to find a '}' to match the '{' token here.
