@@ -1,7 +1,7 @@
 ======== Resolving module '@cow/boy' from '/a.ts'. ========
 Module resolution kind is not specified, using 'Bundler'.
 Resolving in CJS mode with conditions 'require', 'types'.
-File '/package.json' does not exist according to earlier cached lookups.
+File '/package.json' does not exist.
 Loading module '@cow/boy' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration, JSON.
 Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
 File '/node_modules/@cow/boy/package.json' does not exist.
@@ -20,7 +20,7 @@ File '/package.json' does not exist according to earlier cached lookups.
 Loading module '@be/bop' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration, JSON.
 Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
 Scoped package detected, looking in 'be__bop'
-File '/node_modules/@types/be__bop/package.json' does not exist according to earlier cached lookups.
+File '/node_modules/@types/be__bop/package.json' does not exist.
 File '/node_modules/@types/be__bop.d.ts' does not exist.
 File '/node_modules/@types/be__bop/index.d.ts' exists - use it as a name resolution result.
 Resolving real path for '/node_modules/@types/be__bop/index.d.ts', result '/node_modules/@types/be__bop/index.d.ts'.
@@ -36,10 +36,3 @@ File '/node_modules/@types/be__bop/package.json' does not exist according to ear
 File '/node_modules/@types/be__bop/e/z.d.ts' exists - use it as a name resolution result.
 Resolving real path for '/node_modules/@types/be__bop/e/z.d.ts', result '/node_modules/@types/be__bop/e/z.d.ts'.
 ======== Module name '@be/bop/e/z' was successfully resolved to '/node_modules/@types/be__bop/e/z.d.ts'. ========
-======== Resolving type reference directive 'be__bop', containing file '/.src/__inferred type names__.ts', root directory '/.src/node_modules/@types,/node_modules/@types'. ========
-Resolving with primary search path '/.src/node_modules/@types, /node_modules/@types'.
-Directory '/.src/node_modules/@types' does not exist, skipping all lookups in it.
-File '/node_modules/@types/be__bop/package.json' does not exist.
-File '/node_modules/@types/be__bop/index.d.ts' exists - use it as a name resolution result.
-Resolving real path for '/node_modules/@types/be__bop/index.d.ts', result '/node_modules/@types/be__bop/index.d.ts'.
-======== Type reference directive 'be__bop' was successfully resolved to '/node_modules/@types/be__bop/index.d.ts', primary: true. ========

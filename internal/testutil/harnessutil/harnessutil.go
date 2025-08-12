@@ -98,7 +98,7 @@ func CompileFiles(
 
 	// Parse harness and compiler options from the test configuration
 	if testConfig != nil {
-		setOptionsFromTestConfig(t, testConfig, compilerOptions, &harnessOptions)
+		setOptionsFromTestConfig(t, testConfig, compilerOptions, &harnessOptions, currentDirectory)
 	}
 
 	return CompileFilesEx(t, inputFiles, otherFiles, &harnessOptions, compilerOptions, currentDirectory, symlinks, tsconfig)
@@ -225,7 +225,7 @@ func CompileFilesEx(
 	result.Repeat = func(testConfig TestConfiguration) *CompilationResult {
 		newHarnessOptions := *harnessOptions
 		newCompilerOptions := compilerOptions.Clone()
-		setOptionsFromTestConfig(t, testConfig, newCompilerOptions, &newHarnessOptions)
+		setOptionsFromTestConfig(t, testConfig, newCompilerOptions, &newHarnessOptions, currentDirectory)
 		return CompileFilesEx(t, inputFiles, otherFiles, &newHarnessOptions, newCompilerOptions, currentDirectory, symlinks, tsconfig)
 	}
 	return result
@@ -256,7 +256,7 @@ var testLibFolderMap = sync.OnceValue(func() map[string]any {
 	return testfs
 })
 
-func SetCompilerOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compilerOptions *core.CompilerOptions) {
+func SetCompilerOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compilerOptions *core.CompilerOptions, currentDirectory string) {
 	for name, value := range testConfig {
 		if name == "typescriptversion" {
 			continue
@@ -264,7 +264,7 @@ func SetCompilerOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration
 
 		commandLineOption := getCommandLineOption(name)
 		if commandLineOption != nil {
-			parsedValue := getOptionValue(t, commandLineOption, value)
+			parsedValue := getOptionValue(t, commandLineOption, value, currentDirectory)
 			errors := tsoptions.ParseCompilerOptions(commandLineOption.Name, parsedValue, compilerOptions)
 			if len(errors) > 0 {
 				t.Fatalf("Error parsing value '%s' for compiler option '%s'.", value, commandLineOption.Name)
@@ -273,7 +273,7 @@ func SetCompilerOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration
 	}
 }
 
-func setOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compilerOptions *core.CompilerOptions, harnessOptions *HarnessOptions) {
+func setOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compilerOptions *core.CompilerOptions, harnessOptions *HarnessOptions, currentDirectory string) {
 	for name, value := range testConfig {
 		if name == "typescriptversion" {
 			continue
@@ -281,7 +281,7 @@ func setOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compil
 
 		commandLineOption := getCommandLineOption(name)
 		if commandLineOption != nil {
-			parsedValue := getOptionValue(t, commandLineOption, value)
+			parsedValue := getOptionValue(t, commandLineOption, value, currentDirectory)
 			errors := tsoptions.ParseCompilerOptions(commandLineOption.Name, parsedValue, compilerOptions)
 			if len(errors) > 0 {
 				t.Fatalf("Error parsing value '%s' for compiler option '%s'.", value, commandLineOption.Name)
@@ -290,7 +290,7 @@ func setOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compil
 		}
 		harnessOption := getHarnessOption(name)
 		if harnessOption != nil {
-			parsedValue := getOptionValue(t, harnessOption, value)
+			parsedValue := getOptionValue(t, harnessOption, value, currentDirectory)
 			parseHarnessOption(t, harnessOption.Name, parsedValue, harnessOptions)
 			continue
 		}
@@ -396,7 +396,10 @@ func parseHarnessOption(t *testing.T, key string, value any, harnessOptions *Har
 	case "fileName":
 		harnessOptions.FileName = value.(string)
 	case "libFiles":
-		harnessOptions.LibFiles = value.([]string)
+		harnessOptions.LibFiles = make([]string, 0, len(value.([]any)))
+		for _, v := range value.([]any) {
+			harnessOptions.LibFiles = append(harnessOptions.LibFiles, v.(string))
+		}
 	case "noImplicitReferences":
 		harnessOptions.NoImplicitReferences = value.(bool)
 	case "currentDirectory":
@@ -422,9 +425,12 @@ func parseHarnessOption(t *testing.T, key string, value any, harnessOptions *Har
 
 var deprecatedModuleResolution []string = []string{"node", "classic", "node10"}
 
-func getOptionValue(t *testing.T, option *tsoptions.CommandLineOption, value string) tsoptions.CompilerOptionsValue {
+func getOptionValue(t *testing.T, option *tsoptions.CommandLineOption, value string, cwd string) tsoptions.CompilerOptionsValue {
 	switch option.Kind {
 	case tsoptions.CommandLineOptionTypeString:
+		if option.IsFilePath {
+			return tspath.GetNormalizedAbsolutePath(value, cwd)
+		}
 		return value
 	case tsoptions.CommandLineOptionTypeNumber:
 		numVal, err := strconv.Atoi(value)
@@ -449,6 +455,11 @@ func getOptionValue(t *testing.T, option *tsoptions.CommandLineOption, value str
 		return enumVal
 	case tsoptions.CommandLineOptionTypeList, tsoptions.CommandLineOptionTypeListOrElement:
 		listVal, errors := tsoptions.ParseListTypeOption(option, value)
+		if option.Elements().IsFilePath {
+			return core.Map(listVal, func(item any) any {
+				return tspath.GetNormalizedAbsolutePath(item.(string), cwd)
+			})
+		}
 		if len(errors) > 0 {
 			t.Fatalf("Unknown value '%s' for compiler option '%s'", value, option.Name)
 		}
@@ -995,7 +1006,7 @@ func getValueOfOptionString(t *testing.T, option string, value string) tsoptions
 	if optionDecl.Name == "moduleResolution" && slices.Contains(deprecatedModuleResolution, strings.ToLower(value)) {
 		return value
 	}
-	return getOptionValue(t, optionDecl, value)
+	return getOptionValue(t, optionDecl, value, "/")
 }
 
 func getCommandLineOption(option string) *tsoptions.CommandLineOption {
