@@ -16,7 +16,7 @@ type parseTask struct {
 	normalizedFilePath          string
 	path                        tspath.Path
 	file                        *ast.SourceFile
-	isLib                       bool
+	libFile                     *LibFile
 	redirectedParseTask         *parseTask
 	subTasks                    []*parseTask
 	loaded                      bool
@@ -26,7 +26,9 @@ type parseTask struct {
 
 	metadata                     ast.SourceFileMetaData
 	resolutionsInFile            module.ModeAwareCache[*module.ResolvedModule]
+	resolutionsTrace             []string
 	typeResolutionsInFile        module.ModeAwareCache[*module.ResolvedTypeReferenceDirective]
+	typeResolutionsTrace         []string
 	resolutionDiagnostics        []*ast.Diagnostic
 	importHelpersImportSpecifier *ast.Node
 	jsxRuntimeImportSpecifier    *jsxRuntimeImportSpecifier
@@ -63,7 +65,7 @@ func (t *parseTask) load(loader *fileLoader) {
 	}
 
 	loader.totalFileCount.Add(1)
-	if t.isLib {
+	if t.libFile != nil {
 		loader.libFileCount.Add(1)
 	}
 
@@ -78,7 +80,7 @@ func (t *parseTask) load(loader *fileLoader) {
 
 	for index, ref := range file.ReferencedFiles {
 		resolvedPath := loader.resolveTripleslashPathReference(ref.FileName, file.FileName(), index)
-		t.addSubTask(resolvedPath, false)
+		t.addSubTask(resolvedPath, nil)
 	}
 
 	compilerOptions := loader.opts.Config.CompilerOptions()
@@ -94,10 +96,11 @@ func (t *parseTask) load(loader *fileLoader) {
 				},
 			}
 			if name, ok := tsoptions.GetLibFileName(lib.FileName); ok {
+				libFile := loader.pathForLibFile(name)
 				t.addSubTask(resolvedRef{
-					fileName:      loader.pathForLibFile(name),
+					fileName:      libFile.path,
 					includeReason: includeReason,
-				}, true)
+				}, libFile)
 			} else {
 				loader.includeProcessor.addProcessingDiagnostic(&processingDiagnostic{
 					kind: processingDiagnosticKindUnknownReference,
@@ -113,7 +116,7 @@ func (t *parseTask) load(loader *fileLoader) {
 func (t *parseTask) redirect(loader *fileLoader, fileName string) {
 	t.redirectedParseTask = &parseTask{
 		normalizedFilePath:  tspath.NormalizePath(fileName),
-		isLib:               t.isLib,
+		libFile:             t.libFile,
 		fromExternalLibrary: t.fromExternalLibrary,
 		includeReason:       t.includeReason,
 	}
@@ -122,10 +125,11 @@ func (t *parseTask) redirect(loader *fileLoader, fileName string) {
 }
 
 func (t *parseTask) loadAutomaticTypeDirectives(loader *fileLoader) {
-	toParseTypeRefs, typeResolutionsInFile := loader.resolveAutomaticTypeDirectives(t.normalizedFilePath)
+	toParseTypeRefs, typeResolutionsInFile, typeResolutionsTrace := loader.resolveAutomaticTypeDirectives(t.normalizedFilePath)
 	t.typeResolutionsInFile = typeResolutionsInFile
+	t.typeResolutionsTrace = typeResolutionsTrace
 	for _, typeResolution := range toParseTypeRefs {
-		t.addSubTask(typeResolution, false)
+		t.addSubTask(typeResolution, nil)
 	}
 }
 
@@ -137,11 +141,11 @@ type resolvedRef struct {
 	includeReason         *fileIncludeReason
 }
 
-func (t *parseTask) addSubTask(ref resolvedRef, isLib bool) {
+func (t *parseTask) addSubTask(ref resolvedRef, libFile *LibFile) {
 	normalizedFilePath := tspath.NormalizePath(ref.fileName)
 	subTask := &parseTask{
 		normalizedFilePath:  normalizedFilePath,
-		isLib:               isLib,
+		libFile:             libFile,
 		increaseDepth:       ref.increaseDepth,
 		elideOnDepth:        ref.elideOnDepth,
 		fromExternalLibrary: ref.isFromExternalLibrary,
@@ -219,7 +223,7 @@ func (w *filesParser) start(loader *fileLoader, tasks []*parseTask, depth int, i
 	}
 }
 
-func (w *filesParser) collect(loader *fileLoader, tasks []*parseTask, iterate func(*parseTask)) []tspath.Path {
+func (w *filesParser) collect(loader *fileLoader, tasks []*parseTask, iterate func(*parseTask)) {
 	// Mark all tasks we saw as external after the fact.
 	w.tasksByFileName.Range(func(key string, value *queuedParseTask) bool {
 		if value.fromExternalLibrary {
@@ -227,11 +231,10 @@ func (w *filesParser) collect(loader *fileLoader, tasks []*parseTask, iterate fu
 		}
 		return true
 	})
-	return w.collectWorker(loader, tasks, iterate, collections.Set[*parseTask]{})
+	w.collectWorker(loader, tasks, iterate, collections.Set[*parseTask]{})
 }
 
-func (w *filesParser) collectWorker(loader *fileLoader, tasks []*parseTask, iterate func(*parseTask), seen collections.Set[*parseTask]) []tspath.Path {
-	var results []tspath.Path
+func (w *filesParser) collectWorker(loader *fileLoader, tasks []*parseTask, iterate func(*parseTask), seen collections.Set[*parseTask]) {
 	for _, task := range tasks {
 		if task.redirectedParseTask == nil {
 			includeReason := task.includeReason
@@ -248,11 +251,15 @@ func (w *filesParser) collectWorker(loader *fileLoader, tasks []*parseTask, iter
 		if !task.loaded || !seen.AddIfAbsent(task) {
 			continue
 		}
+		for _, trace := range task.typeResolutionsTrace {
+			loader.opts.Host.Trace(trace)
+		}
+		for _, trace := range task.resolutionsTrace {
+			loader.opts.Host.Trace(trace)
+		}
 		if subTasks := task.subTasks; len(subTasks) > 0 {
 			w.collectWorker(loader, subTasks, iterate, seen)
 		}
 		iterate(task)
-		results = append(results, loader.toPath(task.FileName()))
 	}
-	return results
 }
