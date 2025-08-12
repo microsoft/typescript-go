@@ -51,7 +51,8 @@ func (t *parseTask) Path() tspath.Path {
 }
 
 func (t *parseTask) isRoot() bool {
-	return t.includeReason.kind == fileIncludeKindRootFile || t.includeReason.kind == fileIncludeKindLibFile
+	// Intentionally not checking t.includeReason != nil to ensure we can catch cases for missing include reason
+	return !t.isForAutomaticTypeDirective && (t.includeReason.kind == fileIncludeKindRootFile || t.includeReason.kind == fileIncludeKindLibFile)
 }
 
 func (t *parseTask) load(loader *fileLoader) {
