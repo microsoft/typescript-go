@@ -90,7 +90,7 @@ type RecursionId struct {
 	value any
 }
 
-// This function exists to constraint the types of values that can be used as recursion IDs.
+// This function exists to constrain the types of values that can be used as recursion IDs.
 func asRecursionId[T *ast.Node | *ast.Symbol | *Type](value T) RecursionId {
 	return RecursionId{value: value}
 }
