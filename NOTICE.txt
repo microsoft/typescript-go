@@ -221,7 +221,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 ---------------------------------------------------------
 
-github.com/go-json-experiment/json v0.0.0-20250725192818-e39067aee2d2 - BSD-3-Clause
+github.com/go-json-experiment/json v0.0.0-20250811204210-4789234c3ea1 - BSD-3-Clause
 
 
 Copyright 2010 The Go Authors
