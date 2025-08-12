@@ -53,7 +53,6 @@ func CommandLine(sys System, commandLineArgs []string, testing bool) CommandLine
 		switch strings.ToLower(commandLineArgs[0]) {
 		case "-b", "--b", "-build", "--build":
 			fmt.Fprintln(sys.Writer(), "Build mode is currently unsupported.")
-			sys.EndWrite()
 			return CommandLineResult{Status: ExitStatusNotImplemented}
 			// case "-f":
 			// 	return fmtMain(sys, commandLineArgs[1], commandLineArgs[1])

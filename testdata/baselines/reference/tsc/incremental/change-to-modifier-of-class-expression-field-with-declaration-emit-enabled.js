@@ -184,12 +184,10 @@ Output::
   [96mMessageablePerson.ts[0m:[93m6[0m:[93m7[0m - Add a type annotation to the variable wrapper.
     [7m6[0m const wrapper = () => Messageable();
     [7m [0m [96m      ~~~~~~~[0m
-
 [96mmain.ts[0m:[93m3[0m:[93m25[0m - [91merror[0m[90m TS2445: [0mProperty 'message' is protected and only accessible within class 'MessageableClass' and its subclasses.
 
 [7m3[0m     console.log( person.message );
 [7m [0m [91m                        ~~~~~~~[0m
-
 
 Found 2 errors in 2 files.
 
@@ -323,12 +321,10 @@ Output::
   [96mMessageablePerson.ts[0m:[93m6[0m:[93m7[0m - Add a type annotation to the variable wrapper.
     [7m6[0m const wrapper = () => Messageable();
     [7m [0m [96m      ~~~~~~~[0m
-
 [96mmain.ts[0m:[93m3[0m:[93m25[0m - [91merror[0m[90m TS2445: [0mProperty 'message' is protected and only accessible within class 'MessageableClass' and its subclasses.
 
 [7m3[0m     console.log( person.message );
 [7m [0m [91m                        ~~~~~~~[0m
-
 
 Found 2 errors in 2 files.
 

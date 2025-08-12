@@ -18,7 +18,6 @@ Output::
 [7m3[0m         { "path": "../utils" },
 [7m [0m [91m        ~~~~~~~~~~~~~~~~~~~~~~[0m
 
-
 Found 1 error in project/tsconfig.json[90m:3[0m
 
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*

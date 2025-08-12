@@ -23,7 +23,6 @@ Output::
     [7m1[0m const a = class { private p = 10; };
     [7m [0m [96m      ~[0m
 
-
 Found 1 error in a.ts[90m:1[0m
 
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
@@ -126,7 +125,6 @@ Output::
     [7m1[0m const a = class { private p = 10; };
     [7m [0m [96m      ~[0m
 
-
 Found 1 error in a.ts[90m:1[0m
 
 
@@ -156,7 +154,6 @@ Output::
   [96ma.ts[0m:[93m1[0m:[93m7[0m - Add a type annotation to the variable a.
     [7m1[0m const a = class { private p = 10; };
     [7m [0m [96m      ~[0m
-
 
 Found 1 error in a.ts[90m:1[0m
 
@@ -197,7 +194,6 @@ Output::
   [96ma.ts[0m:[93m1[0m:[93m7[0m - Add a type annotation to the variable a.
     [7m1[0m const a = class { private p = 10; };
     [7m [0m [96m      ~[0m
-
 
 Found 1 error in a.ts[90m:1[0m
 

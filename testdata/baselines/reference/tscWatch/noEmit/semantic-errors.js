@@ -18,7 +18,6 @@ Output::
 [7m1[0m const a: number = "hello"
 [7m [0m [91m      ~[0m
 
-
 Found 1 error in a.ts[90m:1[0m
 
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
@@ -114,7 +113,6 @@ Output::
 [7m1[0m const a: number = "hello"
 [7m [0m [91m      ~[0m
 
-
 Found 1 error in a.ts[90m:1[0m
 
 
@@ -141,7 +139,6 @@ Output::
 [7m1[0m const a: number = "hello"
 [7m [0m [91m      ~[0m
 
-
 Found 1 error in a.ts[90m:1[0m
 
 //// [/home/src/workspaces/project/a.js] *rewrite with same content*
@@ -166,7 +163,6 @@ Output::
 
 [7m1[0m const a: number = "hello"
 [7m [0m [91m      ~[0m
-
 
 Found 1 error in a.ts[90m:1[0m
 

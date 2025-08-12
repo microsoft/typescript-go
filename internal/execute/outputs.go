@@ -40,12 +40,10 @@ func createDiagnosticReporter(sys System, options *core.CompilerOptions) diagnos
 	if !shouldBePretty(sys, options) {
 		return func(diagnostic *ast.Diagnostic) {
 			diagnosticwriter.WriteFormatDiagnostic(sys.Writer(), diagnostic, formatOpts)
-			sys.EndWrite()
 		}
 	}
 	return func(diagnostic *ast.Diagnostic) {
 		diagnosticwriter.FormatDiagnosticsWithColorAndContext(sys.Writer(), []*ast.Diagnostic{diagnostic}, formatOpts)
-		sys.EndWrite()
 	}
 }
 
@@ -132,7 +130,6 @@ func createReportErrorSummary(sys System, options *core.CompilerOptions) func(di
 		formatOpts := getFormatOptsOfSys(sys)
 		return func(diagnostics []*ast.Diagnostic) {
 			diagnosticwriter.WriteErrorSummaryText(sys.Writer(), diagnostics, formatOpts)
-			sys.EndWrite()
 		}
 	}
 	return func(diagnostics []*ast.Diagnostic) {}
@@ -175,7 +172,6 @@ func reportStatistics(sys System, program *compiler.Program, result compileAndEm
 
 func printVersion(sys System) {
 	fmt.Fprintln(sys.Writer(), diagnostics.Version_0.Format(core.Version()))
-	sys.EndWrite()
 }
 
 func printHelp(sys System, commandLine *tsoptions.ParsedCommandLine) {
@@ -268,7 +264,6 @@ func printEasyHelp(sys System, simpleOptions []*tsoptions.CommandLineOption) {
 	for _, chunk := range output {
 		fmt.Fprint(sys.Writer(), chunk)
 	}
-	sys.EndWrite()
 }
 
 func generateSectionOptionsOutput(

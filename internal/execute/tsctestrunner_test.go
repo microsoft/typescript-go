@@ -160,8 +160,8 @@ func getDiffForIncremental(incrementalSys *testSys, nonIncrementalSys *testSys) 
 		}
 	}
 
-	incrementalOutput := strings.Join(incrementalSys.output, "")
-	nonIncrementalOutput := strings.Join(nonIncrementalSys.output, "")
+	incrementalOutput := incrementalSys.getOutput()
+	nonIncrementalOutput := nonIncrementalSys.getOutput()
 	if incrementalOutput != nonIncrementalOutput {
 		diffBuilder.WriteString(baseline.DiffText("nonIncremental.output.txt", "incremental.output.txt", nonIncrementalOutput, incrementalOutput))
 	}

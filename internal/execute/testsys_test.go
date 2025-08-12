@@ -71,7 +71,6 @@ func newTestSys(tscInput *tscInput) *testSys {
 		},
 		defaultLibraryPath: libPath,
 		cwd:                cwd,
-		output:             []string{},
 		currentWrite:       &strings.Builder{},
 		start:              time.Now(),
 		env:                tscInput.env,
@@ -101,8 +100,6 @@ type snapshot struct {
 }
 
 type testSys struct {
-	// todo: original has write to output as a string[] because the separations are needed for baselining
-	output         []string
 	currentWrite   *strings.Builder
 	serializedDiff *snapshot
 
@@ -179,23 +176,16 @@ func (s *testSys) GetEnvironmentVariable(name string) string {
 }
 
 func sanitizeSysOutput(output string, prefixLine string, replaceString string) string {
-	if index := strings.Index(output, prefixLine); index != -1 {
-		indexOfNewLine := strings.Index(output[index:], "\n")
-		if indexOfNewLine != -1 {
-			output = output[:index] + replaceString + output[index+indexOfNewLine+1:]
+	for {
+		if index := strings.Index(output, prefixLine); index != -1 {
+			indexOfNewLine := strings.Index(output[index:], "\n")
+			if indexOfNewLine != -1 {
+				output = output[:index] + replaceString + output[index+indexOfNewLine+1:]
+				continue
+			}
 		}
+		return output
 	}
-	return output
-}
-
-func (s *testSys) EndWrite() {
-	// todo: revisit if improving tsc/build/watch unittest baselines
-	output := s.currentWrite.String()
-	s.currentWrite.Reset()
-	output = sanitizeSysOutput(output, "Version "+core.Version(), "Version "+harnessutil.FakeTSVersion+"\n")
-	output = sanitizeSysOutput(output, "build starting at ", "")
-	output = sanitizeSysOutput(output, "build finished in ", "")
-	s.output = append(s.output, output)
 }
 
 func (s *testSys) baselineProgram(baseline *strings.Builder, program *incremental.Program, watcher *execute.Watcher) {
@@ -253,16 +243,19 @@ func (s *testSys) serializeState(baseline *strings.Builder) {
 
 func (s *testSys) baselineOutput(baseline io.Writer) {
 	fmt.Fprint(baseline, "\nOutput::\n")
-	if len(s.output) == 0 {
-		fmt.Fprint(baseline, "No output\n")
-		return
-	}
-	// todo screen clears
-	s.printOutputs(baseline)
+	fmt.Fprint(baseline, s.getOutput())
+}
+
+func (s *testSys) getOutput() string {
+	output := s.currentWrite.String()
+	output = sanitizeSysOutput(output, "Version "+core.Version(), "Version "+harnessutil.FakeTSVersion+"\n")
+	output = sanitizeSysOutput(output, "build starting at ", "")
+	output = sanitizeSysOutput(output, "build finished in ", "")
+	return output
 }
 
 func (s *testSys) clearOutput() {
-	s.output = []string{}
+	s.currentWrite.Reset()
 }
 
 func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
@@ -366,11 +359,6 @@ func (s *testSys) addFsEntryDiff(diffs map[string]string, newDirContent *diffEnt
 		// Lib file that was read
 		diffs[path] = "*Lib*\n" + newDirContent.content
 	}
-}
-
-func (s *testSys) printOutputs(baseline io.Writer) {
-	// todo sanitize sys output
-	fmt.Fprint(baseline, strings.Join(s.output, "\n"))
 }
 
 func (s *testSys) writeFileNoError(path string, content string, writeByteOrderMark bool) {

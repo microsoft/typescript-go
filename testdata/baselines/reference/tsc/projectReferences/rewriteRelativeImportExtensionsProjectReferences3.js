@@ -38,7 +38,6 @@ import {} from "../compiler/parser.ts";
 tsgo --p src/services --pretty false
 ExitStatus:: Success
 Output::
-No output
 //// [/home/src/tslibs/TS/Lib/lib.esnext.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
