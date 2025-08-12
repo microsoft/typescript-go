@@ -4590,6 +4590,23 @@ func (r *Relater) membersRelatedToIndexInfo(source *Type, targetInfo *IndexInfo,
 			result &= related
 		}
 	}
+	
+	// Handle empty object types - they should fail when target requires meaningful index signatures
+	if len(props) == 0 && r.c.IsEmptyAnonymousObjectType(source) {
+		sourceIndexInfos := r.c.getIndexInfosOfType(source)
+		if len(sourceIndexInfos) == 0 {
+			// Empty object with no index signatures being assigned to a type that requires index signatures
+			// Only fail for non-never key types (Record<never, never> should still be allowed)
+			if keyType != r.c.neverType && (keyType == r.c.stringType || keyType == r.c.numberType || 
+				keyType.flags&(TypeFlagsStringLike|TypeFlagsNumberLike) != 0) {
+				if reportErrors {
+					r.reportError(diagnostics.Index_signature_for_type_0_is_missing_in_type_1, r.c.TypeToString(keyType), r.c.TypeToString(source))
+				}
+				return TernaryFalse
+			}
+		}
+	}
+	
 	for _, info := range r.c.getIndexInfosOfType(source) {
 		if r.c.isApplicableIndexType(info.keyType, keyType) {
 			related := r.indexInfoRelatedTo(info, targetInfo, reportErrors, intersectionState)
