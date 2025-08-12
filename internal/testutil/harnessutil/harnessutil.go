@@ -516,12 +516,12 @@ func (h *cachedCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast
 }
 
 type tracer struct {
-	fs                         vfs.FS
-	currentDirectory           string
-	packageJsonCache           map[tspath.Path]bool
-	builder                    strings.Builder
-	specifiTypesVersionMessage bool
-	noTypesVersionMessage      bool
+	fs                          vfs.FS
+	currentDirectory            string
+	packageJsonCache            map[tspath.Path]bool
+	builder                     strings.Builder
+	specificTypesVersionMessage bool
+	noTypesVersionMessage       bool
 }
 
 func (t *tracer) trace(msg string) {
@@ -530,16 +530,16 @@ func (t *tracer) trace(msg string) {
 
 func (t *tracer) sanitizeTrace(msg string) string {
 	if msg == "'package.json' has a 'typesVersions' field with version-specific path mappings." {
-		t.specifiTypesVersionMessage = true
+		t.specificTypesVersionMessage = true
 		t.noTypesVersionMessage = false
 		return msg
 	}
 	if msg == "'package.json' does not have a 'typesVersions' field." {
 		t.noTypesVersionMessage = true
-		t.specifiTypesVersionMessage = false
+		t.specificTypesVersionMessage = false
 		return msg
 	}
-	if strings.HasPrefix(msg, "'package.json' has a 'typesVersions' entry '") && !t.specifiTypesVersionMessage {
+	if strings.HasPrefix(msg, "'package.json' has a 'typesVersions' entry '") && !t.specificTypesVersionMessage {
 		fmt.Fprintln(&t.builder, "'package.json' has a 'typesVersions' field with version-specific path mappings.")
 	}
 	if (msg == "'package.json' does not have a 'typings' field." ||
@@ -548,7 +548,7 @@ func (t *tracer) sanitizeTrace(msg string) string {
 		fmt.Fprintln(&t.builder, "'package.json' does not have a 'typesVersions' field.")
 	}
 	t.noTypesVersionMessage = false
-	t.specifiTypesVersionMessage = false
+	t.specificTypesVersionMessage = false
 	// Version
 	if str := strings.Replace(msg, "'"+core.Version()+"'", "'"+FakeTSVersion+"'", 1); str != msg {
 		return str
