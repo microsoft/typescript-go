@@ -1,9 +1,9 @@
 package lsproto
 
 import (
-	"encoding/json"
 	"testing"
 
+	"github.com/go-json-experiment/json"
 	"gotest.tools/v3/assert"
 )
 

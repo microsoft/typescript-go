@@ -25,44 +25,6 @@ type projectReferenceFileMapper struct {
 	realpathDtsToSource collections.SyncMap[tspath.Path, *tsoptions.SourceAndProjectReference]
 }
 
-func (mapper *projectReferenceFileMapper) init(loader *fileLoader, rootTasks []*projectReferenceParseTask) {
-	totalReferences := loader.projectReferenceParseTasks.tasksByFileName.Size() + 1
-	mapper.loader = loader
-	mapper.configToProjectReference = make(map[tspath.Path]*tsoptions.ParsedCommandLine, totalReferences)
-	mapper.referencesInConfigFile = make(map[tspath.Path][]tspath.Path, totalReferences)
-	mapper.sourceToOutput = make(map[tspath.Path]*tsoptions.OutputDtsAndProjectReference)
-	mapper.outputDtsToSource = make(map[tspath.Path]*tsoptions.SourceAndProjectReference)
-	mapper.referencesInConfigFile[mapper.opts.Config.ConfigFile.SourceFile.Path()] = loader.projectReferenceParseTasks.collect(
-		loader,
-		rootTasks,
-		func(task *projectReferenceParseTask, referencesInConfig []tspath.Path) {
-			path := loader.toPath(task.configName)
-			mapper.configToProjectReference[path] = task.resolved
-			if task.resolved == nil || mapper.opts.Config.ConfigFile == task.resolved.ConfigFile {
-				return
-			}
-			mapper.referencesInConfigFile[path] = referencesInConfig
-			for key, value := range task.resolved.SourceToOutput() {
-				mapper.sourceToOutput[key] = value
-			}
-			for key, value := range task.resolved.OutputDtsToSource() {
-				mapper.outputDtsToSource[key] = value
-			}
-			if mapper.opts.canUseProjectReferenceSource() {
-				declDir := task.resolved.CompilerOptions().DeclarationDir
-				if declDir == "" {
-					declDir = task.resolved.CompilerOptions().OutDir
-				}
-				if declDir != "" {
-					loader.dtsDirectories.Add(loader.toPath(declDir))
-				}
-			}
-		})
-	if mapper.opts.canUseProjectReferenceSource() && len(loader.projectReferenceFileMapper.outputDtsToSource) != 0 {
-		mapper.host = newProjectReferenceDtsFakingHost(loader)
-	}
-}
-
 func (mapper *projectReferenceFileMapper) getParseFileRedirect(file ast.HasFileName) string {
 	if mapper.opts.canUseProjectReferenceSource() {
 		// Map to source file from project reference
@@ -140,23 +102,30 @@ func (mapper *projectReferenceFileMapper) getResolvedReferenceFor(path tspath.Pa
 }
 
 func (mapper *projectReferenceFileMapper) forEachResolvedProjectReference(
-	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine),
+	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int),
 ) {
 	if mapper.opts.Config.ConfigFile == nil {
 		return
 	}
+	seenRef := collections.NewSetWithSizeHint[tspath.Path](len(mapper.referencesInConfigFile))
+	seenRef.Add(mapper.opts.Config.ConfigFile.SourceFile.Path())
 	refs := mapper.referencesInConfigFile[mapper.opts.Config.ConfigFile.SourceFile.Path()]
-	mapper.forEachResolvedReferenceWorker(refs, fn)
+	mapper.forEachResolvedReferenceWorker(refs, fn, mapper.opts.Config, seenRef)
 }
 
 func (mapper *projectReferenceFileMapper) forEachResolvedReferenceWorker(
 	references []tspath.Path,
-	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine),
+	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int),
+	parent *tsoptions.ParsedCommandLine,
+	seenRef *collections.Set[tspath.Path],
 ) {
-	for _, path := range references {
+	for index, path := range references {
+		if !seenRef.AddIfAbsent(path) {
+			continue
+		}
 		config, _ := mapper.configToProjectReference[path]
-		fn(path, config)
-		mapper.forEachResolvedReferenceWorker(mapper.referencesInConfigFile[path], fn)
+		fn(path, config, parent, index)
+		mapper.forEachResolvedReferenceWorker(mapper.referencesInConfigFile[path], fn, config, seenRef)
 	}
 }
 

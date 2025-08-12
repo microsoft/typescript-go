@@ -2,7 +2,6 @@ package lsp
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -14,6 +13,7 @@ import (
 	"sync/atomic"
 	"syscall"
 
+	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -21,6 +21,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"golang.org/x/sync/errgroup"
+	"golang.org/x/text/language"
 )
 
 type ServerOptions struct {
@@ -138,6 +139,7 @@ type Server struct {
 
 	initializeParams *lsproto.InitializeParams
 	positionEncoding lsproto.PositionEncodingKind
+	locale           language.Tag
 
 	watchEnabled bool
 	watcherID    atomic.Uint32
@@ -343,7 +345,7 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 		case <-ctx.Done():
 			return ctx.Err()
 		case req := <-s.requestQueue:
-			requestCtx := ctx
+			requestCtx := core.WithLocale(ctx, s.locale)
 			if req.ID != nil {
 				var cancel context.CancelFunc
 				requestCtx, cancel = context.WithCancel(core.WithRequestID(requestCtx, req.ID.String()))
@@ -556,6 +558,14 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 		}
 	}
 
+	if s.initializeParams.Locale != nil {
+		locale, err := language.Parse(*s.initializeParams.Locale)
+		if err != nil {
+			return nil, err
+		}
+		s.locale = locale
+	}
+
 	response := &lsproto.InitializeResult{
 		ServerInfo: &lsproto.ServerInfo{
 			Name:    "typescript-go",
@@ -650,7 +660,7 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 
 func (s *Server) handleShutdown(ctx context.Context, params any) (lsproto.ShutdownResponse, error) {
 	s.projectService.Close()
-	return nil, nil
+	return lsproto.ShutdownResponse{}, nil
 }
 
 func (s *Server) handleExit(ctx context.Context, params any) error {

@@ -1,9 +1,9 @@
 package lsproto
 
 import (
-	"encoding/json"
 	"fmt"
 
+	"github.com/go-json-experiment/json"
 	"github.com/go-json-experiment/json/jsontext"
 )
 
@@ -66,11 +66,6 @@ func ptrTo[T any](v T) *T {
 
 type requiredProp bool
 
-func (v *requiredProp) UnmarshalJSON(data []byte) error {
-	*v = true
-	return nil
-}
-
 func (v *requiredProp) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	*v = true
 	return dec.SkipValue()
@@ -87,4 +82,21 @@ type RequestInfo[Params, Resp any] struct {
 type NotificationInfo[Params any] struct {
 	_      [0]Params
 	Method Method
+}
+
+type Null struct{}
+
+func (Null) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	if string(data) != "null" {
+		return fmt.Errorf("expected null, got %s", data)
+	}
+	return nil
+}
+
+func (Null) MarshalJSONTo(enc *jsontext.Encoder) error {
+	return enc.WriteToken(jsontext.Null)
 }
