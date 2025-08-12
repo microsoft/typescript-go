@@ -9,6 +9,8 @@ Input::
 tsgo --watch --incremental
 ExitStatus:: Success
 Output::
+build starting at HH:MM:SS AM
+build finished in d.ddds
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}

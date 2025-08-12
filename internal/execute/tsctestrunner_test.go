@@ -41,7 +41,7 @@ type tscInput struct {
 
 func (test *tscInput) executeCommand(sys *testSys, baselineBuilder *strings.Builder, commandLineArgs []string) execute.CommandLineResult {
 	fmt.Fprint(baselineBuilder, "tsgo ", strings.Join(commandLineArgs, " "), "\n")
-	result := execute.CommandLine(sys, commandLineArgs, true)
+	result := execute.CommandLine(sys, commandLineArgs, sys)
 	switch result.Status {
 	case execute.ExitStatusSuccess:
 		baselineBuilder.WriteString("ExitStatus:: Success")
@@ -111,7 +111,7 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 						test.edits[i].edit(nonIncrementalSys)
 					}
 				}
-				execute.CommandLine(nonIncrementalSys, commandLineArgs, true)
+				execute.CommandLine(nonIncrementalSys, commandLineArgs, nonIncrementalSys)
 			})
 			wg.RunAndWait()
 
@@ -160,8 +160,8 @@ func getDiffForIncremental(incrementalSys *testSys, nonIncrementalSys *testSys) 
 		}
 	}
 
-	incrementalOutput := incrementalSys.getOutput()
-	nonIncrementalOutput := nonIncrementalSys.getOutput()
+	incrementalOutput := incrementalSys.getOutput(true)
+	nonIncrementalOutput := nonIncrementalSys.getOutput(true)
 	if incrementalOutput != nonIncrementalOutput {
 		diffBuilder.WriteString(baseline.DiffText("nonIncremental.output.txt", "incremental.output.txt", nonIncrementalOutput, incrementalOutput))
 	}

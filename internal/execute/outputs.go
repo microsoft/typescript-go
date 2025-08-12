@@ -134,9 +134,13 @@ func createReportErrorSummary(sys System, options *core.CompilerOptions) func(di
 	return func(diagnostics []*ast.Diagnostic) {}
 }
 
-func reportStatistics(sys System, program *compiler.Program, result compileAndEmitResult, memStats *runtime.MemStats) {
+func reportStatistics(sys System, program *compiler.Program, result compileAndEmitResult, memStats *runtime.MemStats, testing CommandLineTesting) {
 	var stats table
 
+	if testing != nil {
+		testing.OnStatisticsStart()
+		defer testing.OnStatisticsEnd()
+	}
 	stats.add("Files", len(program.SourceFiles()))
 	stats.add("Lines", program.LineCount())
 	stats.add("Identifiers", program.IdentifierCount())

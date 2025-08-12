@@ -14,6 +14,7 @@ const a = class { private p = 10; };
 tsgo -w
 ExitStatus:: Success
 Output::
+build starting at HH:MM:SS AM
 [96ma.ts[0m:[93m1[0m:[93m7[0m - [91merror[0m[90m TS4094: [0mProperty 'p' of exported anonymous class type may not be private or protected.
 
 [7m1[0m const a = class { private p = 10; };
@@ -26,6 +27,7 @@ Output::
 
 Found 1 error in a.ts[90m:1[0m
 
+build finished in d.ddds
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
@@ -63,6 +65,8 @@ const a = "hello";
 
 
 Output::
+build starting at HH:MM:SS AM
+build finished in d.ddds
 
 tsconfig.json::
 SemanticDiagnostics::
@@ -82,6 +86,8 @@ Edit [1]:: emit after fixing error
 
 
 Output::
+build starting at HH:MM:SS AM
+build finished in d.ddds
 //// [/home/src/workspaces/project/a.d.ts] *new* 
 declare const a = "hello";
 
@@ -105,6 +111,8 @@ Edit [2]:: no emit run after fixing error
 
 
 Output::
+build starting at HH:MM:SS AM
+build finished in d.ddds
 
 tsconfig.json::
 SemanticDiagnostics::
@@ -117,6 +125,7 @@ const a = class { private p = 10; };
 
 
 Output::
+build starting at HH:MM:SS AM
 [96ma.ts[0m:[93m1[0m:[93m7[0m - [91merror[0m[90m TS4094: [0mProperty 'p' of exported anonymous class type may not be private or protected.
 
 [7m1[0m const a = class { private p = 10; };
@@ -129,6 +138,7 @@ Output::
 
 Found 1 error in a.ts[90m:1[0m
 
+build finished in d.ddds
 
 tsconfig.json::
 SemanticDiagnostics::
@@ -148,6 +158,7 @@ Edit [4]:: emit when error
 
 
 Output::
+build starting at HH:MM:SS AM
 [96ma.ts[0m:[93m1[0m:[93m7[0m - [91merror[0m[90m TS4094: [0mProperty 'p' of exported anonymous class type may not be private or protected.
 
 [7m1[0m const a = class { private p = 10; };
@@ -160,6 +171,7 @@ Output::
 
 Found 1 error in a.ts[90m:1[0m
 
+build finished in d.ddds
 //// [/home/src/workspaces/project/a.d.ts] *modified* 
 declare const a: {
     new (): {
@@ -189,6 +201,7 @@ Edit [5]:: no emit run when error
 
 
 Output::
+build starting at HH:MM:SS AM
 [96ma.ts[0m:[93m1[0m:[93m7[0m - [91merror[0m[90m TS4094: [0mProperty 'p' of exported anonymous class type may not be private or protected.
 
 [7m1[0m const a = class { private p = 10; };
@@ -201,6 +214,7 @@ Output::
 
 Found 1 error in a.ts[90m:1[0m
 
+build finished in d.ddds
 
 tsconfig.json::
 SemanticDiagnostics::

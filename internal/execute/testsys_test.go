@@ -111,7 +111,10 @@ type testSys struct {
 	start time.Time
 }
 
-var _ execute.System = (*testSys)(nil)
+var (
+	_ execute.System             = (*testSys)(nil)
+	_ execute.CommandLineTesting = (*testSys)(nil)
+)
 
 func (s *testSys) Now() time.Time {
 	// todo: make a "test time" structure
@@ -175,17 +178,20 @@ func (s *testSys) GetEnvironmentVariable(name string) string {
 	return s.env[name]
 }
 
-func sanitizeSysOutput(output string, prefixLine string, replaceString string) string {
-	for {
-		if index := strings.Index(output, prefixLine); index != -1 {
-			indexOfNewLine := strings.Index(output[index:], "\n")
-			if indexOfNewLine != -1 {
-				output = output[:index] + replaceString + output[index+indexOfNewLine+1:]
-				continue
-			}
-		}
-		return output
-	}
+func (s *testSys) OnListFilesStart() {
+	fmt.Fprintln(s.Writer(), listFileStart)
+}
+
+func (s *testSys) OnListFilesEnd() {
+	fmt.Fprintln(s.Writer(), listFileEnd)
+}
+
+func (s *testSys) OnStatisticsStart() {
+	fmt.Fprintln(s.Writer(), statisticsStart)
+}
+
+func (s *testSys) OnStatisticsEnd() {
+	fmt.Fprintln(s.Writer(), statisticsEnd)
 }
 
 func (s *testSys) baselineProgram(baseline *strings.Builder, program *incremental.Program, watcher *execute.Watcher) {
@@ -241,17 +247,90 @@ func (s *testSys) serializeState(baseline *strings.Builder) {
 	// this.service?.baseline();
 }
 
+var (
+	fakeTimeStamp = "HH:MM:SS AM"
+	fakeDuration  = "d.ddds"
+
+	buildStartingAt = "build starting at "
+	buildFinishedIn = "build finished in "
+	listFileStart   = "!!! List files start"
+	listFileEnd     = "!!! List files end"
+	statisticsStart = "!!! Statistics start"
+	statisticsEnd   = "!!! Statistics end"
+)
+
 func (s *testSys) baselineOutput(baseline io.Writer) {
 	fmt.Fprint(baseline, "\nOutput::\n")
-	fmt.Fprint(baseline, s.getOutput())
+	output := s.getOutput(false)
+	fmt.Fprint(baseline, output)
 }
 
-func (s *testSys) getOutput() string {
-	output := s.currentWrite.String()
-	output = sanitizeSysOutput(output, "Version "+core.Version(), "Version "+harnessutil.FakeTSVersion+"\n")
-	output = sanitizeSysOutput(output, "build starting at ", "")
-	output = sanitizeSysOutput(output, "build finished in ", "")
-	return output
+type outputSanitizer struct {
+	forComparing bool
+	lines        []string
+	index        int
+	outputLines  []string
+}
+
+func (o *outputSanitizer) addOutputLine(s string) {
+	o.outputLines = append(o.outputLines, s)
+}
+
+func (o *outputSanitizer) transformLines() string {
+	for ; o.index < len(o.lines); o.index++ {
+		line := o.lines[o.index]
+		if change := strings.Replace(line, "Version "+core.Version(), "Version "+harnessutil.FakeTSVersion, 1); change != line {
+			o.addOutputLine(change)
+			continue
+		}
+		if strings.HasPrefix(line, buildStartingAt) {
+			if !o.forComparing {
+				o.addOutputLine(buildStartingAt + fakeTimeStamp)
+			}
+			continue
+		}
+		if strings.HasPrefix(line, buildFinishedIn) {
+			if !o.forComparing {
+				o.addOutputLine(buildFinishedIn + fakeDuration)
+			}
+			continue
+		}
+		if !o.addOrSkipLinesForComparing(listFileStart, listFileEnd, false) &&
+			!o.addOrSkipLinesForComparing(statisticsStart, statisticsEnd, true) {
+			o.addOutputLine(line)
+		}
+	}
+	return strings.Join(o.outputLines, "\n")
+}
+
+func (o *outputSanitizer) addOrSkipLinesForComparing(
+	lineStart string,
+	lineEnd string,
+	skipEvenIfNotComparing bool,
+) bool {
+	if o.lines[o.index] != lineStart {
+		return false
+	}
+	o.index++
+	for ; o.index < len(o.lines); o.index++ {
+		if o.lines[o.index] == lineEnd {
+			return true
+		}
+		if !o.forComparing && !skipEvenIfNotComparing {
+			o.addOutputLine(o.lines[o.index])
+		}
+	}
+	panic("Expected lineEnd" + lineEnd + " not found after " + lineStart)
+}
+
+func (s *testSys) getOutput(forComparing bool) string {
+	lines := strings.Split(s.currentWrite.String(), "\n")
+	transformer := &outputSanitizer{
+		forComparing: forComparing,
+		lines:        lines,
+		outputLines:  make([]string, 0, len(lines)),
+	}
+	return transformer.transformLines()
 }
 
 func (s *testSys) clearOutput() {

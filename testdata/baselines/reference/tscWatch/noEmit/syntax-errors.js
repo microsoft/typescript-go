@@ -13,6 +13,7 @@ const a = "hello
 tsgo -w
 ExitStatus:: Success
 Output::
+build starting at HH:MM:SS AM
 [96ma.ts[0m:[93m1[0m:[93m17[0m - [91merror[0m[90m TS1002: [0mUnterminated string literal.
 
 [7m1[0m const a = "hello
@@ -21,6 +22,7 @@ Output::
 
 Found 1 error in a.ts[90m:1[0m
 
+build finished in d.ddds
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
@@ -58,6 +60,8 @@ const a = "hello";
 
 
 Output::
+build starting at HH:MM:SS AM
+build finished in d.ddds
 
 tsconfig.json::
 SemanticDiagnostics::
@@ -77,6 +81,8 @@ Edit [1]:: emit after fixing error
 
 
 Output::
+build starting at HH:MM:SS AM
+build finished in d.ddds
 //// [/home/src/workspaces/project/a.js] *new* 
 const a = "hello";
 
@@ -97,6 +103,8 @@ Edit [2]:: no emit run after fixing error
 
 
 Output::
+build starting at HH:MM:SS AM
+build finished in d.ddds
 
 tsconfig.json::
 SemanticDiagnostics::
@@ -109,6 +117,7 @@ const a = "hello
 
 
 Output::
+build starting at HH:MM:SS AM
 [96ma.ts[0m:[93m1[0m:[93m17[0m - [91merror[0m[90m TS1002: [0mUnterminated string literal.
 
 [7m1[0m const a = "hello
@@ -117,6 +126,7 @@ Output::
 
 Found 1 error in a.ts[90m:1[0m
 
+build finished in d.ddds
 
 tsconfig.json::
 SemanticDiagnostics::
@@ -134,6 +144,7 @@ Edit [4]:: emit when error
 
 
 Output::
+build starting at HH:MM:SS AM
 [96ma.ts[0m:[93m1[0m:[93m17[0m - [91merror[0m[90m TS1002: [0mUnterminated string literal.
 
 [7m1[0m const a = "hello
@@ -142,6 +153,7 @@ Output::
 
 Found 1 error in a.ts[90m:1[0m
 
+build finished in d.ddds
 //// [/home/src/workspaces/project/a.js] *modified* 
 const a = "hello;
 
@@ -164,6 +176,7 @@ Edit [5]:: no emit run when error
 
 
 Output::
+build starting at HH:MM:SS AM
 [96ma.ts[0m:[93m1[0m:[93m17[0m - [91merror[0m[90m TS1002: [0mUnterminated string literal.
 
 [7m1[0m const a = "hello
@@ -172,6 +185,7 @@ Output::
 
 Found 1 error in a.ts[90m:1[0m
 
+build finished in d.ddds
 
 tsconfig.json::
 SemanticDiagnostics::
