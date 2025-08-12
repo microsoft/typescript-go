@@ -1,0 +1,19 @@
+//// [tests/cases/compiler/unknownUnionEmptyDebug.ts] ////
+
+=== unknownUnionEmptyDebug.ts ===
+function f() {
+>f : Symbol(f, Decl(unknownUnionEmptyDebug.ts, 0, 0))
+
+  const emptyObj = {};
+>emptyObj : Symbol(emptyObj, Decl(unknownUnionEmptyDebug.ts, 1, 7))
+
+  const acceptsRecord = (record: Record<string, string>) => {};
+>acceptsRecord : Symbol(acceptsRecord, Decl(unknownUnionEmptyDebug.ts, 2, 7))
+>record : Symbol(record, Decl(unknownUnionEmptyDebug.ts, 2, 25))
+>Record : Symbol(Record, Decl(lib.es5.d.ts, --, --))
+  
+  // This should fail if {} is not assignable to Record<string, string>
+  acceptsRecord(emptyObj);
+>acceptsRecord : Symbol(acceptsRecord, Decl(unknownUnionEmptyDebug.ts, 2, 7))
+>emptyObj : Symbol(emptyObj, Decl(unknownUnionEmptyDebug.ts, 1, 7))
+}

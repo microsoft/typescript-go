@@ -1,0 +1,74 @@
+reactSFCAndFunctionResolvable.tsx(23,24): error TS2786: 'Component' cannot be used as a JSX component.
+  Its return type 'ReactElement<any> | ReactElement<{}>' is not a valid JSX element.
+    Type 'ReactElement<{}>' is not assignable to type 'ReactElement<any>'.
+      Types of property 'type' are incompatible.
+        Type 'string | ComponentClass<{}, any> | SFC<{}>' is not assignable to type 'string | ComponentClass<any, any> | SFC<any>'.
+          Type 'ComponentClass<{}, any>' is not assignable to type 'string | ComponentClass<any, any> | SFC<any>'.
+            Type 'ComponentClass<{}, any>' is not assignable to type 'ComponentClass<any, any> | SFC<any>'.
+              Type 'ComponentClass<{}, any>' is not assignable to type 'ComponentClass<any, any>'.
+                Types of property 'propTypes' are incompatible.
+                  Type 'ValidationMap<{}>' is not assignable to type 'ValidationMap<any>'.
+                    Index signature for type 'string' is missing in type 'ValidationMap<{}>'.
+reactSFCAndFunctionResolvable.tsx(23,40): error TS2786: 'OtherComponent' cannot be used as a JSX component.
+  Its return type 'ReactElement<any> | ReactElement<{}>' is not a valid JSX element.
+    Type 'ReactElement<{}>' is not assignable to type 'ReactElement<any>'.
+      Types of property 'type' are incompatible.
+        Type 'string | ComponentClass<{}, any> | SFC<{}>' is not assignable to type 'string | ComponentClass<any, any> | SFC<any>'.
+          Type 'ComponentClass<{}, any>' is not assignable to type 'string | ComponentClass<any, any> | SFC<any>'.
+            Type 'ComponentClass<{}, any>' is not assignable to type 'ComponentClass<any, any> | SFC<any>'.
+              Type 'ComponentClass<{}, any>' is not assignable to type 'ComponentClass<any, any>'.
+                Types of property 'propTypes' are incompatible.
+                  Type 'ValidationMap<{}>' is not assignable to type 'ValidationMap<any>'.
+                    Index signature for type 'string' is missing in type 'ValidationMap<{}>'.
+
+
+==== reactSFCAndFunctionResolvable.tsx (2 errors) ====
+    /// <reference path="/.lib/react16.d.ts" />
+    
+    import * as React from 'react';
+    
+    declare const Radio: (props: {}) => React.ReactElement<{}>;
+    declare const OtherRadio: () => React.ReactElement<{}>;
+    declare const Checkbox: React.SFC;
+    
+    declare const condition1: boolean;
+    declare const condition2: boolean;
+    declare const condition3: boolean;
+    
+    const RandomComponent: React.SFC = () => {
+      const Component =
+        condition1
+          ? Radio
+          : Checkbox;
+    
+      const OtherComponent =
+        condition2
+          ? OtherRadio
+          : Checkbox;
+      return condition1 ? <Component /> : <OtherComponent />;
+                           ~~~~~~~~~
+!!! error TS2786: 'Component' cannot be used as a JSX component.
+!!! error TS2786:   Its return type 'ReactElement<any> | ReactElement<{}>' is not a valid JSX element.
+!!! error TS2786:     Type 'ReactElement<{}>' is not assignable to type 'ReactElement<any>'.
+!!! error TS2786:       Types of property 'type' are incompatible.
+!!! error TS2786:         Type 'string | ComponentClass<{}, any> | SFC<{}>' is not assignable to type 'string | ComponentClass<any, any> | SFC<any>'.
+!!! error TS2786:           Type 'ComponentClass<{}, any>' is not assignable to type 'string | ComponentClass<any, any> | SFC<any>'.
+!!! error TS2786:             Type 'ComponentClass<{}, any>' is not assignable to type 'ComponentClass<any, any> | SFC<any>'.
+!!! error TS2786:               Type 'ComponentClass<{}, any>' is not assignable to type 'ComponentClass<any, any>'.
+!!! error TS2786:                 Types of property 'propTypes' are incompatible.
+!!! error TS2786:                   Type 'ValidationMap<{}>' is not assignable to type 'ValidationMap<any>'.
+!!! error TS2786:                     Index signature for type 'string' is missing in type 'ValidationMap<{}>'.
+                                           ~~~~~~~~~~~~~~
+!!! error TS2786: 'OtherComponent' cannot be used as a JSX component.
+!!! error TS2786:   Its return type 'ReactElement<any> | ReactElement<{}>' is not a valid JSX element.
+!!! error TS2786:     Type 'ReactElement<{}>' is not assignable to type 'ReactElement<any>'.
+!!! error TS2786:       Types of property 'type' are incompatible.
+!!! error TS2786:         Type 'string | ComponentClass<{}, any> | SFC<{}>' is not assignable to type 'string | ComponentClass<any, any> | SFC<any>'.
+!!! error TS2786:           Type 'ComponentClass<{}, any>' is not assignable to type 'string | ComponentClass<any, any> | SFC<any>'.
+!!! error TS2786:             Type 'ComponentClass<{}, any>' is not assignable to type 'ComponentClass<any, any> | SFC<any>'.
+!!! error TS2786:               Type 'ComponentClass<{}, any>' is not assignable to type 'ComponentClass<any, any>'.
+!!! error TS2786:                 Types of property 'propTypes' are incompatible.
+!!! error TS2786:                   Type 'ValidationMap<{}>' is not assignable to type 'ValidationMap<any>'.
+!!! error TS2786:                     Index signature for type 'string' is missing in type 'ValidationMap<{}>'.
+    };
+    
