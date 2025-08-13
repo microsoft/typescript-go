@@ -445,7 +445,7 @@ func getCompletionData(
 	isInSnippetScope := false
 	if insideComment != nil {
 		if hasDocComment(file, position) {
-			if r, _ := utf8.DecodeRuneInString(file.Text()[position:]); r == '@' {
+			if file.Text()[position] == '@' {
 				// The current position is next to the '@' sign, when no tag name being provided yet.
 				// Provide a full list of tag names
 				return &completionDataJSDocTagName{}
