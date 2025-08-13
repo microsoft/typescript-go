@@ -223,6 +223,12 @@ func findConfigFile(searchPath string, fileExists func(string) bool, configName 
 	return result
 }
 
+func getTraceFromSys(sys System) func(msg string) {
+	return func(msg string) {
+		fmt.Fprintln(sys.Writer(), msg)
+	}
+}
+
 func performIncrementalCompilation(
 	sys System,
 	config *tsoptions.ParsedCommandLine,
@@ -231,9 +237,9 @@ func performIncrementalCompilation(
 	configTime time.Duration,
 	testing bool,
 ) CommandLineResult {
-	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache)
+	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys))
 	buildInfoReadStart := sys.Now()
-	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host))
+	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host), host)
 	buildInfoReadTime := sys.Now().Sub(buildInfoReadStart)
 	// todo: cache, statistics, tracing
 	parseStart := sys.Now()
@@ -270,7 +276,7 @@ func performCompilation(
 	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
 	configTime time.Duration,
 ) CommandLineResult {
-	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache)
+	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys))
 	// todo: cache, statistics, tracing
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{
@@ -305,7 +311,7 @@ func emitAndReportStatistics(
 	buildInfoReadTime time.Duration,
 	changesComputeTime time.Duration,
 ) ExitStatus {
-	result := emitFilesAndReportErrors(sys, programLike, reportDiagnostic)
+	result := emitFilesAndReportErrors(sys, programLike, program, reportDiagnostic)
 	if result.status != ExitStatusSuccess {
 		// compile exited early
 		return result.status
@@ -351,14 +357,15 @@ type compileAndEmitResult struct {
 
 func emitFilesAndReportErrors(
 	sys System,
-	program compiler.ProgramLike,
+	programLike compiler.ProgramLike,
+	program *compiler.Program,
 	reportDiagnostic diagnosticReporter,
 ) (result compileAndEmitResult) {
 	ctx := context.Background()
 
 	allDiagnostics := compiler.GetDiagnosticsOfAnyProgram(
 		ctx,
-		program,
+		programLike,
 		nil,
 		false,
 		func(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
@@ -366,22 +373,22 @@ func emitFilesAndReportErrors(
 			// and global diagnostics create checkers, which then bind all of the files. Do this binding
 			// early so we can track the time.
 			bindStart := sys.Now()
-			diags := program.GetBindDiagnostics(ctx, file)
+			diags := programLike.GetBindDiagnostics(ctx, file)
 			result.bindTime = sys.Now().Sub(bindStart)
 			return diags
 		},
 		func(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
 			checkStart := sys.Now()
-			diags := program.GetSemanticDiagnostics(ctx, file)
+			diags := programLike.GetSemanticDiagnostics(ctx, file)
 			result.checkTime = sys.Now().Sub(checkStart)
 			return diags
 		},
 	)
 
 	emitResult := &compiler.EmitResult{EmitSkipped: true, Diagnostics: []*ast.Diagnostic{}}
-	if !program.Options().ListFilesOnly.IsTrue() {
+	if !programLike.Options().ListFilesOnly.IsTrue() {
 		emitStart := sys.Now()
-		emitResult = program.Emit(ctx, compiler.EmitOptions{})
+		emitResult = programLike.Emit(ctx, compiler.EmitOptions{})
 		result.emitTime = sys.Now().Sub(emitStart)
 	}
 	if emitResult != nil {
@@ -400,7 +407,7 @@ func emitFilesAndReportErrors(
 		listFiles(sys, program)
 	}
 
-	createReportErrorSummary(sys, program.Options())(allDiagnostics)
+	createReportErrorSummary(sys, programLike.Options())(allDiagnostics)
 	result.diagnostics = allDiagnostics
 	result.emitResult = emitResult
 	result.status = ExitStatusSuccess
@@ -416,10 +423,11 @@ func showConfig(sys System, config *core.CompilerOptions) {
 	_ = jsonutil.MarshalIndentWrite(sys.Writer(), config, "", "    ")
 }
 
-func listFiles(sys System, program compiler.ProgramLike) {
+func listFiles(sys System, program *compiler.Program) {
 	options := program.Options()
-	// !!! explainFiles
-	if options.ListFiles.IsTrue() || options.ListFilesOnly.IsTrue() {
+	if options.ExplainFiles.IsTrue() {
+		program.ExplainFiles(sys.Writer())
+	} else if options.ListFiles.IsTrue() || options.ListFilesOnly.IsTrue() {
 		for _, file := range program.GetSourceFiles() {
 			fmt.Fprintln(sys.Writer(), file.FileName())
 		}
