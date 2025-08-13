@@ -54,23 +54,23 @@ interface Symbol {
 declare const console: { log(msg: any): void; };
 `)
 
-func newTestSys(fileOrFolderList FileMap, cwd string, env map[string]string) *testSys {
+func newTestSys(tscInput *tscInput) *testSys {
+	cwd := tscInput.cwd
 	if cwd == "" {
 		cwd = "/home/src/workspaces/project"
 	}
 	sys := &testSys{
 		fs: &incrementaltestutil.FsHandlingBuildInfo{
 			FS: &testFs{
-				FS: vfstest.FromMap(fileOrFolderList, true /*useCaseSensitiveFileNames*/),
+				FS: vfstest.FromMap(tscInput.files, true /*useCaseSensitiveFileNames*/),
 			},
 		},
 		defaultLibraryPath: tscLibPath,
 		cwd:                cwd,
-		files:              slices.Collect(maps.Keys(fileOrFolderList)),
 		output:             []string{},
 		currentWrite:       &strings.Builder{},
 		start:              time.Now(),
-		env:                env,
+		env:                tscInput.env,
 	}
 
 	// Ensure the default library file is present
@@ -105,7 +105,6 @@ type testSys struct {
 	fs                 *incrementaltestutil.FsHandlingBuildInfo
 	defaultLibraryPath string
 	cwd                string
-	files              []string
 	env                map[string]string
 
 	start time.Time
