@@ -132,6 +132,49 @@ func TestBuildCommandLine(t *testing.T) {
 	}
 }
 
+func TestBuildClean(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario: "file name and output name clashing",
+			files: FileMap{
+				"/home/src/workspaces/solution/index.js": "",
+				"/home/src/workspaces/solution/bar.ts":   "",
+				"/home/src/workspaces/solution/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": { "allowJs": true }
+				}`),
+			},
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--b", "--clean"},
+		},
+		{
+			subScenario: "tsx with dts emit",
+			files: FileMap{
+				"/home/src/workspaces/solution/project/src/main.tsx": "export const x = 10;",
+				"/home/src/workspaces/solution/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": { "declaration": true },
+					"include": ["src/**/*.tsx", "src/**/*.ts"]
+				}`),
+			},
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--b", "project", "-v", "--explainFiles"},
+			edits: []*tscEdit{
+				noChange,
+				{
+					caption:         "clean build",
+					commandLineArgs: []string{"-b", "project", "--clean"},
+				},
+			},
+		},
+	}
+
+	for _, test := range testCases {
+		test.run(t, "clean")
+	}
+}
+
 func getBuildCommandLineDifferentOptionsMap(optionName string) FileMap {
 	return FileMap{
 		"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(fmt.Sprintf(`
