@@ -141,7 +141,8 @@ func (p *InfoCache) Get(packageJsonPath string) *InfoCacheEntry {
 	return nil
 }
 
-func (p *InfoCache) Set(packageJsonPath string, info *InfoCacheEntry) {
+func (p *InfoCache) Set(packageJsonPath string, info *InfoCacheEntry) *InfoCacheEntry {
 	key := tspath.ToPath(packageJsonPath, p.currentDirectory, p.useCaseSensitiveFileNames)
-	p.cache.Store(key, info)
+	actual, _ := p.cache.LoadOrStore(key, info)
+	return actual
 }
