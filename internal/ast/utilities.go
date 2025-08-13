@@ -2106,7 +2106,7 @@ func TryGetTextOfPropertyName(name *Node) (string, bool) {
 // True if node is of a JSDoc kind that may contain comment text.
 // NOTE: while this is a faithful port of Strada's implementation,
 // it is unsafe to call `.Comments()` on a node that returns true from this function,
-// becuase JSDoc type literal and JSDoc signature nodes do not have comments.
+// because JSDoc type literal and JSDoc signature nodes do not have comments.
 func IsJSDocCommentContainingNode(node *Node) bool {
 	return node.Kind == KindJSDoc ||
 		node.Kind == KindJSDocText ||
