@@ -62,7 +62,7 @@ func newTestSys(tscInput *tscInput) *testSys {
 	sys := &testSys{
 		fs: &incrementaltestutil.FsHandlingBuildInfo{
 			FS: &testFs{
-				FS: vfstest.FromMap(tscInput.files, true /*useCaseSensitiveFileNames*/),
+				FS: vfstest.FromMap(tscInput.files, !tscInput.ignoreCase),
 			},
 		},
 		defaultLibraryPath: tscLibPath,

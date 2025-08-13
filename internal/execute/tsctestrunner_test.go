@@ -35,6 +35,7 @@ type tscInput struct {
 	cwd             string
 	edits           []*testTscEdit
 	env             map[string]string
+	ignoreCase      bool
 }
 
 func (test *tscInput) executeCommand(sys *testSys, baselineBuilder *strings.Builder, commandLineArgs []string) execute.CommandLineResult {
