@@ -63,7 +63,7 @@ func (test *tscInput) executeCommand(sys *testSys, baselineBuilder *strings.Buil
 
 func (test *tscInput) run(t *testing.T, scenario string) {
 	t.Helper()
-	t.Run(test.subScenario+" tsc baseline", func(t *testing.T) {
+	t.Run(test.subScenario, func(t *testing.T) {
 		t.Parallel()
 		// initial test tsc compile
 		baselineBuilder := &strings.Builder{}
@@ -80,6 +80,7 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 		result := test.executeCommand(sys, baselineBuilder, test.commandLineArgs)
 		sys.serializeState(baselineBuilder)
 		sys.baselineProgram(baselineBuilder, result.IncrementalProgram, result.Watcher)
+		var unexpectedDiff string
 
 		for index, do := range test.edits {
 			sys.clearOutput()
@@ -118,11 +119,18 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 			if diff != "" {
 				baselineBuilder.WriteString(fmt.Sprintf("\n\nDiff:: %s\n", core.IfElse(do.expectedDiff == "", "!!! Unexpected diff, please review and either fix or write explanation as expectedDiff !!!", do.expectedDiff)))
 				baselineBuilder.WriteString(diff)
+				if do.expectedDiff == "" {
+					unexpectedDiff += fmt.Sprintf("Edit [%d]:: %s\n!!! Unexpected diff, please review and either fix or write explanation as expectedDiff !!!\n%s\n", index, do.caption, diff)
+				}
 			} else if do.expectedDiff != "" {
 				baselineBuilder.WriteString(fmt.Sprintf("\n\nDiff:: %s !!! Diff not found but explanation present, please review and remove the explanation !!!\n", do.expectedDiff))
+				unexpectedDiff += fmt.Sprintf("Edit [%d]:: %s\n!!! Diff not found but explanation present, please review and remove the explanation !!!\n", index, do.caption)
 			}
 		}
 		baseline.Run(t, strings.ReplaceAll(test.subScenario, " ", "-")+".js", baselineBuilder.String(), baseline.Options{Subfolder: filepath.Join(test.getBaselineSubFolder(), scenario)})
+		if unexpectedDiff != "" {
+			t.Errorf("Test %s has unexpected diff %s with incremental build, please review the baseline file", test.subScenario, unexpectedDiff)
+		}
 	})
 }
 
@@ -152,10 +160,10 @@ func getDiffForIncremental(incrementalSys *testSys, nonIncrementalSys *testSys) 
 		}
 	}
 
-	incrementalErrors := strings.Join(incrementalSys.output, "")
-	nonIncrementalErrors := strings.Join(nonIncrementalSys.output, "")
-	if incrementalErrors != nonIncrementalErrors {
-		diffBuilder.WriteString(baseline.DiffText("nonIncremental errors.txt", "incremental errors.txt", nonIncrementalErrors, incrementalErrors))
+	incrementalOutput := strings.Join(incrementalSys.output, "")
+	nonIncrementalOutput := strings.Join(nonIncrementalSys.output, "")
+	if incrementalOutput != nonIncrementalOutput {
+		diffBuilder.WriteString(baseline.DiffText("nonIncremental.output.txt", "incremental.output.txt", nonIncrementalOutput, incrementalOutput))
 	}
 	return diffBuilder.String()
 }

@@ -299,8 +299,8 @@ Diff:: Currently there is issue with d.ts emit for export default = 1 to widen i
 @@ -1,1 +1,1 @@
 -declare const a = 2;
 +declare const a = 1;
---- nonIncremental errors.txt
-+++ incremental errors.txt
+--- nonIncremental.output.txt
++++ incremental.output.txt
 @@ -1,7 +0,0 @@
 -[96mclass1.ts[0m:[93m1[0m:[93m7[0m - [91merror[0m[90m TS2322: [0mType '1' is not assignable to type '2'.
 -
