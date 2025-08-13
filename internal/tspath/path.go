@@ -5,6 +5,7 @@ import (
 	"slices"
 	"strings"
 	"unicode"
+	"unsafe"
 
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
@@ -613,7 +614,12 @@ func ToFileNameLowerCase(fileName string) string {
 			}
 			b[i] = c
 		}
-		return string(b)
+		// SAFETY: `b` is a freshly allocated, non-empty byte slice whose contents are
+		// fully initialized. We do not mutate `b` after this point, and the returned
+		// string becomes the only live reference to its backing array. The array is
+		// heap-allocated (via make), so the GC keeps it alive for the lifetime of the
+		// returned string. Since len(b) > 0 here, &b[0] is a valid pointer.
+		return unsafe.String(&b[0], len(b))
 	}
 
 	return strings.Map(func(r rune) rune {
