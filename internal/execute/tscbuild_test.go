@@ -472,6 +472,192 @@ func TestBuildInferredTypeFromTransitiveModule(t *testing.T) {
 	}
 }
 
+func TestBuildJavascriptProjectEmit(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			// !!! sheetal errors seem different
+			subScenario: "loads js-based projects and emits them correctly",
+			files: FileMap{
+				"/home/src/workspaces/solution/common/nominal.js": stringtestutil.Dedent(`
+                    /**
+                     * @template T, Name
+                     * @typedef {T & {[Symbol.species]: Name}} Nominal
+                     */
+                    module.exports = {};
+				`),
+				"/home/src/workspaces/solution/common/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"extends": "../tsconfig.base.json",
+						"compilerOptions": {
+							"composite": true,
+						},
+						"include": ["nominal.js"],
+					}
+				`),
+				"/home/src/workspaces/solution/sub-project/index.js": stringtestutil.Dedent(`
+                    import { Nominal } from '../common/nominal';
+
+                    /**
+                     * @typedef {Nominal<string, 'MyNominal'>} MyNominal
+                     */
+				`),
+				"/home/src/workspaces/solution/sub-project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"extends": "../tsconfig.base.json",
+					"compilerOptions": {
+						"composite": true,
+					},
+					"references": [
+						{ "path": "../common" },
+					],
+					"include": ["./index.js"],
+				}`),
+				"/home/src/workspaces/solution/sub-project-2/index.js": stringtestutil.Dedent(`
+                    import { MyNominal } from '../sub-project/index';
+
+                    const variable = {
+                        key: /** @type {MyNominal} */('value'),
+                    };
+
+                    /**
+                     * @return {keyof typeof variable}
+                     */
+                    export function getVar() {
+                        return 'key';
+                    }
+				`),
+				"/home/src/workspaces/solution/sub-project-2/tsconfig.json": stringtestutil.Dedent(`
+				{
+                    "extends": "../tsconfig.base.json",
+                    "compilerOptions": {
+                        "composite": true,
+                    },
+                    "references": [
+                        { "path": "../sub-project" },
+                    ],
+                    "include": ["./index.js"],
+                }`),
+				"/home/src/workspaces/solution/tsconfig.json": stringtestutil.Dedent(`
+				{
+                    "compilerOptions": {
+                        "composite": true,
+                    },
+                    "references": [
+                        { "path": "./sub-project" },
+                        { "path": "./sub-project-2" },
+                    ],
+                    "include": [],
+                }`),
+				"/home/src/workspaces/solution/tsconfig.base.json": stringtestutil.Dedent(`
+				{
+                    "compilerOptions": {
+                        "skipLibCheck": true,
+                        "rootDir": "./",
+                        "outDir": "../lib",
+                        "allowJs": true,
+                        "checkJs": true,
+                        "declaration": true,
+                    },
+                }`),
+				tscLibPath + "/lib.d.ts": strings.Replace(tscDefaultLibContent, "interface SymbolConstructor {", "interface SymbolConstructor {\n    readonly species: symbol;", 1),
+			},
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--b"},
+		},
+		{
+			subScenario: `loads js-based projects with non-moved json files and emits them correctly`,
+			files: FileMap{
+				"/home/src/workspaces/solution/common/obj.json": stringtestutil.Dedent(`
+				{
+                    "val": 42,
+                }`),
+				"/home/src/workspaces/solution/common/index.ts": stringtestutil.Dedent(`
+                    import x = require("./obj.json");
+                    export = x;
+                `),
+				"/home/src/workspaces/solution/common/tsconfig.json": stringtestutil.Dedent(`
+				{
+                    "extends": "../tsconfig.base.json",
+                    "compilerOptions": {
+                        "outDir": null,
+                        "composite": true,
+                    },
+                    "include": ["index.ts", "obj.json"],
+                }`),
+				"/home/src/workspaces/solution/sub-project/index.js": stringtestutil.Dedent(`
+                    import mod from '../common';
+
+                    export const m = mod;
+				`),
+				"/home/src/workspaces/solution/sub-project/tsconfig.json": stringtestutil.Dedent(`
+				{
+                    "extends": "../tsconfig.base.json",
+                    "compilerOptions": {
+                        "composite": true,
+                    },
+                    "references": [
+                        { "path": "../common" },
+                    ],
+                    "include": ["./index.js"],
+                }`),
+				"/home/src/workspaces/solution/sub-project-2/index.js": stringtestutil.Dedent(`
+                    import { m } from '../sub-project/index';
+
+                    const variable = {
+                        key: m,
+                    };
+
+                    export function getVar() {
+                        return variable;
+                    }
+				`),
+				"/home/src/workspaces/solution/sub-project-2/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"extends": "../tsconfig.base.json",
+					"compilerOptions": {
+						"composite": true,
+					},
+                    "references": [
+                        { "path": "../sub-project" },
+                    ],
+                    "include": ["./index.js"],
+                }`),
+				"/home/src/workspaces/solution/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+					},
+					"references": [
+						{ "path": "./sub-project" },
+						{ "path": "./sub-project-2" },
+                    ],
+                    "include": [],
+                }`),
+				"/home/src/workspaces/solution/tsconfig.base.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"skipLibCheck": true,
+						"rootDir": "./",
+						"outDir": "../out",
+						"allowJs": true,
+						"checkJs": true,
+						"resolveJsonModule": true,
+						"esModuleInterop": true,
+						"declaration": true,
+					},
+                }`),
+			},
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"-b"},
+		},
+	}
+
+	for _, test := range testCases {
+		test.run(t, "javascriptProjectEmit")
+	}
+}
+
 func TestBuildSolutionProject(t *testing.T) {
 	t.Parallel()
 	testCases := []*tscInput{
