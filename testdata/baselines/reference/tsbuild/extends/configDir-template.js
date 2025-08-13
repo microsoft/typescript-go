@@ -39,9 +39,16 @@ import { x } from "@myscope/sometype";
 //// [/home/src/projects/myproject/types/sometype.ts] *new* 
 export const x = 10;
 
-tsgo --explainFiles
+tsgo --b --explainFiles --v
 ExitStatus:: Success
 Output::
+[[90mHH:MM:SS AM[0m] Projects in this build: 
+    * tsconfig.json
+
+[[90mHH:MM:SS AM[0m] Project 'tsconfig.json' is out of date because output file 'outDir/tsconfig.tsbuildinfo' does not exist
+
+[[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
+
 ======== Resolving module '@myscope/sometype' from '/home/src/projects/myproject/main.ts'. ========
 Module resolution kind is not specified, using 'Bundler'.
 Resolving in CJS mode with conditions 'require', 'types'.
@@ -71,6 +78,21 @@ exports.y = void 0;
 // some comment
 exports.y = 10;
 
+//// [/home/src/projects/myproject/outDir/tsconfig.tsbuildinfo] *new* 
+{"version":"FakeTSVersion","root":["../main.ts"]}
+//// [/home/src/projects/myproject/outDir/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
+{
+  "version": "FakeTSVersion",
+  "root": [
+    {
+      "files": [
+        "../main.ts"
+      ],
+      "original": "../main.ts"
+    }
+  ],
+  "size": 49
+}
 //// [/home/src/projects/myproject/outDir/types/sometype.js] *new* 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -101,3 +123,11 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 
+tsconfig.json::
+SemanticDiagnostics::
+*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
+*refresh*    /home/src/projects/myproject/types/sometype.ts
+*refresh*    /home/src/projects/myproject/main.ts
+Signatures::
+(stored at emit) /home/src/projects/myproject/types/sometype.ts
+(stored at emit) /home/src/projects/myproject/main.ts
