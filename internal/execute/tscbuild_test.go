@@ -390,6 +390,88 @@ func TestBuildFileDelete(t *testing.T) {
 	}
 }
 
+func TestBuildInferredTypeFromTransitiveModule(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario:     "inferred type from transitive module",
+			files:           getBuildInferredTypeFromTransitiveModuleMap(false, ""),
+			commandLineArgs: []string{"--b", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption: "incremental-declaration-changes",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/home/src/workspaces/project/bar.ts", "param: string", "")
+					},
+				},
+				{
+					caption: "incremental-declaration-changes",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/home/src/workspaces/project/bar.ts", "foobar()", "foobar(param: string)")
+					},
+				},
+			},
+		},
+		{
+			subScenario:     "inferred type from transitive module with isolatedModules",
+			files:           getBuildInferredTypeFromTransitiveModuleMap(true, ""),
+			commandLineArgs: []string{"--b", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption: "incremental-declaration-changes",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/home/src/workspaces/project/bar.ts", "param: string", "")
+					},
+				},
+				{
+					caption: "incremental-declaration-changes",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/home/src/workspaces/project/bar.ts", "foobar()", "foobar(param: string)")
+					},
+				},
+			},
+		},
+		{
+			subScenario: "reports errors in files affected by change in signature with isolatedModules",
+			files: getBuildInferredTypeFromTransitiveModuleMap(true, stringtestutil.Dedent(`
+				import { default as bar } from './bar';
+				bar("hello");
+			`)),
+			commandLineArgs: []string{"--b", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption: "incremental-declaration-changes",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/home/src/workspaces/project/bar.ts", "param: string", "")
+					},
+				},
+				{
+					caption: "incremental-declaration-changes",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/home/src/workspaces/project/bar.ts", "foobar()", "foobar(param: string)")
+					},
+				},
+				{
+					caption: "incremental-declaration-changes",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/home/src/workspaces/project/bar.ts", "param: string", "")
+					},
+				},
+				{
+					caption: "Fix Error",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/home/src/workspaces/project/lazyIndex.ts", `bar("hello")`, "bar()")
+					},
+				},
+			},
+		},
+	}
+
+	for _, test := range testCases {
+		test.run(t, "inferredTypeFromTransitiveModule")
+	}
+}
+
 func TestBuildSolutionProject(t *testing.T) {
 	t.Parallel()
 	testCases := []*tscInput{
@@ -754,5 +836,62 @@ func getBuildEmitDeclarationOnlyTestCase(declarationMap bool) *tscInput {
 				},
 			},
 		},
+	}
+}
+
+func getBuildInferredTypeFromTransitiveModuleMap(isolatedModules bool, lazyExtraContents string) FileMap {
+	return FileMap{
+		"/home/src/workspaces/project/bar.ts": stringtestutil.Dedent(`
+			interface RawAction {
+				(...args: any[]): Promise<any> | void;
+			}
+			interface ActionFactory {
+				<T extends RawAction>(target: T): T;
+			}
+			declare function foo<U extends any[] = any[]>(): ActionFactory;
+			export default foo()(function foobar(param: string): void {
+			});
+		`),
+		"/home/src/workspaces/project/bundling.ts": stringtestutil.Dedent(`
+			export class LazyModule<TModule> {
+				constructor(private importCallback: () => Promise<TModule>) {}
+			}
+
+			export class LazyAction<
+				TAction extends (...args: any[]) => any,
+				TModule
+			>  {
+				constructor(_lazyModule: LazyModule<TModule>, _getter: (module: TModule) => TAction) {
+				}
+			}
+		`),
+		"/home/src/workspaces/project/global.d.ts": stringtestutil.Dedent(`
+			interface PromiseConstructor {
+				new <T>(): Promise<T>;
+			}
+			declare var Promise: PromiseConstructor;
+			interface Promise<T> {
+			}
+		`),
+		"/home/src/workspaces/project/index.ts": stringtestutil.Dedent(`
+			import { LazyAction, LazyModule } from './bundling';
+			const lazyModule = new LazyModule(() =>
+				import('./lazyIndex')
+			);
+			export const lazyBar = new LazyAction(lazyModule, m => m.bar);
+		`),
+		"/home/src/workspaces/project/lazyIndex.ts": stringtestutil.Dedent(`
+			export { default as bar } from './bar';
+		`) + lazyExtraContents,
+		"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(fmt.Sprintf(`
+			{
+                "compilerOptions": {
+                    "target": "es5",
+                    "declaration": true,
+                    "outDir": "obj",
+                    "incremental": true,
+					"isolatedModules": %t,
+                },
+            }`, isolatedModules)),
 	}
 }
