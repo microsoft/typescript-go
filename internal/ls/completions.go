@@ -475,7 +475,7 @@ func getCompletionData(
 					}
 				}
 				if noCommentPrefix {
-					return &completionDataJSDocTagName{}
+					return &completionDataJSDocTag{}
 				}
 			}
 		}
@@ -5214,13 +5214,18 @@ func getJSDocParameterCompletions(
 		tags = jsDoc.AsJSDoc().Tags.Nodes
 	}
 	for _, tag := range tags {
-		if ast.IsJSDocParameterTag(tag) && tag.End() <= position {
+		if ast.IsJSDocParameterTag(tag) &&
+			astnav.GetStartOfNode(tag, file, false /*includeJSDoc*/) < position &&
+			ast.IsIdentifier(tag.Name()) {
 			paramTagCount++
 		}
 	}
+	paramIndex := -1
 	return core.MapNonNil(fun.Parameters(), func(param *ast.ParameterDeclarationNode) *lsproto.CompletionItem {
-		if len(param.JSDoc(file)) > 0 {
-			return nil // Parameter is already annotated.
+		paramIndex++
+		if paramIndex < paramTagCount {
+			// This parameter is already annotated.
+			return nil
 		}
 		if ast.IsIdentifier(param.Name()) { // Named parameter
 			tabstopCounter := 1
@@ -5266,9 +5271,9 @@ func getJSDocParameterCompletions(
 				InsertText:       strPtrTo(snippetText),
 				InsertTextFormat: core.IfElse(isSnippet, ptrTo(lsproto.InsertTextFormatSnippet), nil),
 			}
-		} else if slices.Index(param.Parent.Parameters(), param) == paramTagCount {
+		} else if paramIndex == paramTagCount {
 			// Destructuring parameter; do it positionally
-			paramPath := fmt.Sprintf("param%d", paramTagCount)
+			paramPath := fmt.Sprintf("param%d", paramIndex)
 			displayTextResult := generateJSDocParamTagsForDestructuring(
 				paramPath,
 				param.Name(),

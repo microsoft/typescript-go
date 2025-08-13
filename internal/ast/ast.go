@@ -897,6 +897,7 @@ func (n *Node) IsTypeOnly() bool {
 	return false
 }
 
+// If updating this function, also update `hasComment`.
 func (n *Node) CommentList() *NodeList {
 	switch n.Kind {
 	case KindJSDoc:
@@ -1033,6 +1034,8 @@ func (n *Node) ElementList() *NodeList {
 		return n.AsNamedImports().Elements
 	case KindNamedExports:
 		return n.AsNamedExports().Elements
+	case KindObjectBindingPattern, KindArrayBindingPattern:
+		return n.AsBindingPattern().Elements
 	}
 
 	panic("Unhandled case in Node.ElementList: " + n.Kind.String())
