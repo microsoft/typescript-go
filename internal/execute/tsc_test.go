@@ -129,6 +129,166 @@ func TestTscCommandline(t *testing.T) {
 	}
 }
 
+func TestTscComposite(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario: "when setting composite false on command line",
+			files: FileMap{
+				"/home/src/workspaces/project/src/main.ts": "export const x = 10;",
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"target": "es5",
+						"module": "commonjs",
+						"composite": true,
+					},
+					"include": [
+						"src/**/*.ts",
+					],
+				}`),
+			},
+			commandLineArgs: []string{"--composite", "false"},
+		},
+		{
+			// !!! sheetal null is not reflected in final options
+			subScenario: "when setting composite null on command line",
+			files: FileMap{
+				"/home/src/workspaces/project/src/main.ts": "export const x = 10;",
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"target": "es5",
+						"module": "commonjs",
+						"composite": true,
+					},
+					"include": [
+						"src/**/*.ts",
+					],
+				}`),
+			},
+			commandLineArgs: []string{"--composite", "null"},
+		},
+		{
+			subScenario: "when setting composite false on command line but has tsbuild info in config",
+			files: FileMap{
+				"/home/src/workspaces/project/src/main.ts": "export const x = 10;",
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"target": "es5",
+						"module": "commonjs",
+						"composite": true,
+						"tsBuildInfoFile": "tsconfig.json.tsbuildinfo",
+					},
+					"include": [
+						"src/**/*.ts",
+					],
+				}`),
+			},
+			commandLineArgs: []string{"--composite", "false"},
+		},
+		{
+			subScenario: "when setting composite false and tsbuildinfo as null on command line but has tsbuild info in config",
+			files: FileMap{
+				"/home/src/workspaces/project/src/main.ts": "export const x = 10;",
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"target": "es5",
+						"module": "commonjs",
+						"composite": true,
+						"tsBuildInfoFile": "tsconfig.json.tsbuildinfo",
+					},
+					"include": [
+						"src/**/*.ts",
+					],
+				}`),
+			},
+			commandLineArgs: []string{"--composite", "false", "--tsBuildInfoFile", "null"},
+		},
+		{
+			subScenario: "converting to modules",
+			files: FileMap{
+				"/home/src/workspaces/project/src/main.ts": "const x = 10;",
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"module": "none",
+						"composite": true,
+					},
+				}`),
+			},
+			edits: []*tscEdit{
+				{
+					caption: "convert to modules",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/home/src/workspaces/project/tsconfig.json", "none", "es2015")
+					},
+				},
+			},
+		},
+		{
+			subScenario: "synthetic jsx import of ESM module from CJS module no crash no jsx element",
+			files: FileMap{
+				"/home/src/projects/project/src/main.ts": "export default 42;",
+				"/home/src/projects/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"module": "Node16",
+						"jsx": "react-jsx",
+						"jsxImportSource": "solid-js",
+					},
+				}`),
+				"/home/src/projects/project/node_modules/solid-js/package.json": stringtestutil.Dedent(`
+					{
+						"name": "solid-js",
+						"type": "module"
+					}
+				`),
+				"/home/src/projects/project/node_modules/solid-js/jsx-runtime.d.ts": stringtestutil.Dedent(`
+					export namespace JSX {
+						type IntrinsicElements = { div: {}; };
+					}
+				`),
+			},
+			cwd: "/home/src/projects/project",
+		},
+		{
+			subScenario: "synthetic jsx import of ESM module from CJS module error on jsx element",
+			files: FileMap{
+				"/home/src/projects/project/src/main.tsx": "export default <div/>;",
+				"/home/src/projects/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"module": "Node16",
+						"jsx": "react-jsx",
+						"jsxImportSource": "solid-js",
+					},
+				}`),
+				"/home/src/projects/project/node_modules/solid-js/package.json": stringtestutil.Dedent(`
+					{
+						"name": "solid-js",
+						"type": "module"
+					}
+				`),
+				"/home/src/projects/project/node_modules/solid-js/jsx-runtime.d.ts": stringtestutil.Dedent(`
+					export namespace JSX {
+						type IntrinsicElements = { div: {}; };
+					}
+				`),
+			},
+			cwd: "/home/src/projects/project",
+		},
+	}
+
+	for _, testCase := range testCases {
+		testCase.run(t, "composite")
+	}
+}
+
 func TestNoEmit(t *testing.T) {
 	t.Parallel()
 	(&tscInput{
