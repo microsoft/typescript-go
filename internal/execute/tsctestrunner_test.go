@@ -13,18 +13,18 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-type testTscEdit struct {
+type tscEdit struct {
 	caption         string
 	commandLineArgs []string
 	edit            func(*testSys)
 	expectedDiff    string
 }
 
-var noChange = &testTscEdit{
+var noChange = &tscEdit{
 	caption: "no change",
 }
 
-var noChangeOnlyEdit = []*testTscEdit{
+var noChangeOnlyEdit = []*tscEdit{
 	noChange,
 }
 
@@ -33,7 +33,7 @@ type tscInput struct {
 	commandLineArgs  []string
 	files            FileMap
 	cwd              string
-	edits            []*testTscEdit
+	edits            []*tscEdit
 	env              map[string]string
 	ignoreCase       bool
 	windowsStyleRoot string
