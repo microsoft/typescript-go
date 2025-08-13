@@ -86,6 +86,7 @@ func newTestSys(fileOrFolderList FileMap, cwd string, env map[string]string) *te
 
 type diffEntry struct {
 	content       string
+	mTime         time.Time
 	isWritten     bool
 	symlinkTarget string
 }
@@ -292,7 +293,11 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 		if !ok {
 			return nil
 		}
-		newEntry := &diffEntry{content: newContents, isWritten: testFs.writtenFiles.Has(path)}
+		stat := s.fsFromFileMap().Stat(path)
+		if stat == nil {
+			panic("stat is nil: " + path)
+		}
+		newEntry := &diffEntry{content: newContents, mTime: stat.ModTime(), isWritten: testFs.writtenFiles.Has(path)}
 		snap[path] = newEntry
 		s.addFsEntryDiff(diffs, newEntry, path)
 
@@ -352,6 +357,8 @@ func (s *testSys) addFsEntryDiff(diffs map[string]string, newDirContent *diffEnt
 		diffs[path] = "*modified* \n" + newDirContent.content
 	} else if newDirContent.isWritten {
 		diffs[path] = "*rewrite with same content*"
+	} else if newDirContent.mTime != oldDirContent.mTime {
+		diffs[path] = "*mTime changed*"
 	} else if defaultLibs != nil && defaultLibs.Has(path) && s.testFs().defaultLibs != nil && !s.testFs().defaultLibs.Has(path) {
 		// Lib file that was read
 		diffs[path] = "*Lib*\n" + newDirContent.content
