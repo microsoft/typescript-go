@@ -165,6 +165,7 @@ Object.defineProperty(exports, "ConstantNumber", { enumerable: true, get: functi
   "size": 1816
 }
 
+tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/class1.ts
@@ -285,6 +286,7 @@ exports.default = 2;
   "size": 1816
 }
 
+tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/constants.ts
 Signatures::

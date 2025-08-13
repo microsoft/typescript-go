@@ -131,6 +131,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
   "size": 1335
 }
 
+src/services/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.esnext.full.d.ts
 *refresh*    /home/src/workspaces/solution/dist/compiler/parser.d.ts

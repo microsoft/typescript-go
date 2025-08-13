@@ -135,6 +135,7 @@ exports.default = 1;
   "size": 1550
 }
 
+tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/class1.ts
@@ -235,6 +236,7 @@ exports.default = 2;
   "size": 1550
 }
 
+tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/constants.ts
 Signatures::

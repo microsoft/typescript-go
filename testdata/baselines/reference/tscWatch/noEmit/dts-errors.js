@@ -50,6 +50,7 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 
+tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/a.ts
@@ -63,6 +64,7 @@ const a = "hello";
 
 Output::
 
+tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/a.ts
@@ -87,6 +89,7 @@ declare const a = "hello";
 const a = "hello";
 
 
+tsconfig.json::
 SemanticDiagnostics::
 Signatures::
 
@@ -103,6 +106,7 @@ Edit [2]:: no emit run after fixing error
 
 Output::
 
+tsconfig.json::
 SemanticDiagnostics::
 Signatures::
 
@@ -126,6 +130,7 @@ Output::
 Found 1 error in a.ts[90m:1[0m
 
 
+tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/a.ts
@@ -168,6 +173,7 @@ const a = class {
 };
 
 
+tsconfig.json::
 SemanticDiagnostics::
 Signatures::
 
@@ -196,5 +202,6 @@ Output::
 Found 1 error in a.ts[90m:1[0m
 
 
+tsconfig.json::
 SemanticDiagnostics::
 Signatures::

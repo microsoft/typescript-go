@@ -19,6 +19,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil/incrementaltestutil"
 	"github.com/microsoft/typescript-go/internal/testutil/stringtestutil"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
@@ -199,8 +200,14 @@ func (s *testSys) baselineProgram(baseline *strings.Builder, program *incrementa
 		return
 	}
 
-	baseline.WriteString("SemanticDiagnostics::\n")
 	testingData := program.GetTestingData(program.GetProgram())
+	if testingData.ConfigFilePath != "" {
+		baseline.WriteString(tspath.GetRelativePathFromDirectory(s.cwd, testingData.ConfigFilePath, tspath.ComparePathsOptions{
+			UseCaseSensitiveFileNames: s.FS().UseCaseSensitiveFileNames(),
+			CurrentDirectory:          s.GetCurrentDirectory(),
+		}) + "::\n")
+	}
+	baseline.WriteString("SemanticDiagnostics::\n")
 	for _, file := range program.GetProgram().GetSourceFiles() {
 		if diagnostics, ok := testingData.SemanticDiagnosticsPerFile.Load(file.Path()); ok {
 			if oldDiagnostics, ok := testingData.OldProgramSemanticDiagnosticsPerFile.Load(file.Path()); !ok || oldDiagnostics != diagnostics {
