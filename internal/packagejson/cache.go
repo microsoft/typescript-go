@@ -2,7 +2,6 @@ package packagejson
 
 import (
 	"sync"
-	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -123,7 +122,6 @@ func (p *InfoCacheEntry) GetDirectory() string {
 
 type InfoCache struct {
 	cache                     collections.SyncMap[tspath.Path, *InfoCacheEntry]
-	isReadonly                atomic.Bool
 	currentDirectory          string
 	useCaseSensitiveFileNames bool
 }
@@ -144,17 +142,6 @@ func (p *InfoCache) Get(packageJsonPath string) *InfoCacheEntry {
 }
 
 func (p *InfoCache) Set(packageJsonPath string, info *InfoCacheEntry) {
-	if p.isReadonly.Load() {
-		return
-	}
 	key := tspath.ToPath(packageJsonPath, p.currentDirectory, p.useCaseSensitiveFileNames)
 	p.cache.Store(key, info)
-}
-
-func (p *InfoCache) SetReadonly(readonly bool) {
-	p.isReadonly.Store(readonly)
-}
-
-func (p *InfoCache) IsReadonly() bool {
-	return p.isReadonly.Load()
 }
