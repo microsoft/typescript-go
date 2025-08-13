@@ -480,19 +480,17 @@ func getCompletionData(
 			}
 		}
 
-		// Completion should work inside certain JsDoc tags. For example:
+		// Completion should work inside certain JSDoc tags. For example:
 		//     /** @type {number | string} */
 		// Completion should work in the brackets
-		tag := getJSDocTagAtPosition(currentToken, position)
-		if tag != nil {
+		if tag := getJSDocTagAtPosition(currentToken, position); tag != nil {
 			if tag.TagName().Pos() <= position && position <= tag.TagName().End() {
 				return &completionDataJSDocTagName{}
 			}
 			if ast.IsJSDocImportTag(tag) {
 				insideJsDocImportTag = true
 			} else {
-				typeExpression := tryGetTypeExpressionFromTag(tag)
-				if typeExpression != nil {
+				if typeExpression := tryGetTypeExpressionFromTag(tag); typeExpression != nil {
 					currentToken = astnav.GetTokenAtPosition(file, position)
 					if currentToken == nil ||
 						(!ast.IsDeclarationName(currentToken) &&
