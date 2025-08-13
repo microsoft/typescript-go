@@ -45,6 +45,13 @@ function baz(x, { y }) {
 function baz(x, { y }) {
   return x + y;
 }
+
+/**
+ * @/*5*/
+ */
+function baz(x = 0) {
+  return x * 2;
+}
 `
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
@@ -98,6 +105,18 @@ function baz(x, { y }) {
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				"number",
+			},
+		},
+	})
+	f.VerifyCompletions(t, "5", &fourslash.CompletionsExpectedList{
+		IsIncomplete: false,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
+		},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				"param {number} [x=0] ",
 			},
 		},
 	})
