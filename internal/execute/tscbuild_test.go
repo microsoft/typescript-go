@@ -175,6 +175,99 @@ func TestBuildClean(t *testing.T) {
 	}
 }
 
+func TestBuildConfigFileErrors(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario: "when tsconfig extends the missing file",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.first.json": stringtestutil.Dedent(`
+					{
+						"extends": "./foobar.json",
+						"compilerOptions": {
+							"composite": true
+						}
+					}`),
+				"/home/src/workspaces/project/tsconfig.second.json": stringtestutil.Dedent(`
+					{
+						"extends": "./foobar.json",
+						"compilerOptions": {
+							"composite": true
+						}
+					}`),
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"composite": true
+						},
+						"references": [
+							{ "path": "./tsconfig.first.json" },
+							{ "path": "./tsconfig.second.json" }
+						]
+					}`),
+			},
+			commandLineArgs: []string{"--b"},
+		},
+		{
+			subScenario: "reports syntax errors in config file",
+			files: FileMap{
+				"/home/src/workspaces/project/a.ts": "export function foo() { }",
+				"/home/src/workspaces/project/b.ts": "export function bar() { }",
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"composite": true,
+						},
+						"files": [
+							"a.ts"
+							"b.ts"
+						]
+					}`),
+			},
+			commandLineArgs: []string{"--b"},
+			edits: []*tscEdit{
+				{
+					caption: "reports syntax errors after change to config file",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/home/src/workspaces/project/tsconfig.json", ",", `, "declaration": true`)
+					},
+				},
+				{
+					caption: "reports syntax errors after change to ts file",
+					edit: func(sys *testSys) {
+						sys.appendFile("/home/src/workspaces/project/a.ts", "export function fooBar() { }")
+					},
+				},
+				noChange,
+				{
+					caption: "builds after fixing config file errors",
+					edit: func(sys *testSys) {
+						sys.writeFileNoError("/home/src/workspaces/project/tsconfig.json", stringtestutil.Dedent(`
+							{
+								"compilerOptions": {
+									"composite": true, "declaration": true
+								},
+								"files": [
+									"a.ts",
+									"b.ts"
+								]
+							}`), false)
+					},
+				},
+			},
+		},
+		{
+			subScenario:     "missing config file",
+			files:           FileMap{},
+			commandLineArgs: []string{"--b", "bogus.json"},
+		},
+	}
+
+	for _, test := range testCases {
+		test.run(t, "configFileErrors")
+	}
+}
+
 func getBuildCommandLineDifferentOptionsMap(optionName string) FileMap {
 	return FileMap{
 		"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(fmt.Sprintf(`
