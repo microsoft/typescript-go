@@ -5007,7 +5007,6 @@ func getJSDocTagAtPosition(node *ast.Node, position int) *ast.JSDocTag {
 func tryGetTypeExpressionFromTag(tag *ast.JSDocTag) *ast.Node {
 	if isTagWithTypeExpression(tag) {
 		var typeExpression *ast.Node
-		// !!! TODO: need to map the jsdoc type node to a synthetic type node here
 		if ast.IsJSDocTemplateTag(tag) {
 			typeExpression = tag.AsJSDocTemplateTag().Constraint
 		} else {
