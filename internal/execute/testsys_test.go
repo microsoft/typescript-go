@@ -59,13 +59,17 @@ func newTestSys(tscInput *tscInput) *testSys {
 	if cwd == "" {
 		cwd = "/home/src/workspaces/project"
 	}
+	libPath := tscLibPath
+	if tscInput.windowsStyleRoot != "" {
+		libPath = tscInput.windowsStyleRoot + libPath[1:]
+	}
 	sys := &testSys{
 		fs: &incrementaltestutil.FsHandlingBuildInfo{
 			FS: &testFs{
 				FS: vfstest.FromMap(tscInput.files, !tscInput.ignoreCase),
 			},
 		},
-		defaultLibraryPath: tscLibPath,
+		defaultLibraryPath: libPath,
 		cwd:                cwd,
 		output:             []string{},
 		currentWrite:       &strings.Builder{},
@@ -134,7 +138,7 @@ func (s *testSys) fsFromFileMap() iovfs.FsWithSys {
 }
 
 func (s *testSys) ensureLibPathExists(path string) {
-	path = tscLibPath + "/" + path
+	path = s.defaultLibraryPath + "/" + path
 	if _, ok := s.fsFromFileMap().ReadFile(path); !ok {
 		if s.testFs().defaultLibs == nil {
 			s.testFs().defaultLibs = &collections.SyncSet[string]{}

@@ -29,13 +29,14 @@ var noChangeOnlyEdit = []*testTscEdit{
 }
 
 type tscInput struct {
-	subScenario     string
-	commandLineArgs []string
-	files           FileMap
-	cwd             string
-	edits           []*testTscEdit
-	env             map[string]string
-	ignoreCase      bool
+	subScenario      string
+	commandLineArgs  []string
+	files            FileMap
+	cwd              string
+	edits            []*testTscEdit
+	env              map[string]string
+	ignoreCase       bool
+	windowsStyleRoot string
 }
 
 func (test *tscInput) executeCommand(sys *testSys, baselineBuilder *strings.Builder, commandLineArgs []string) execute.CommandLineResult {
