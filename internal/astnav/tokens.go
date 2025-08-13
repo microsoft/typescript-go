@@ -144,7 +144,7 @@ func getTokenAtPosition(
 		// we can in the AST. We've either found a token, or we need to run the scanner
 		// to construct one that isn't stored in the AST.
 		if next == nil {
-			if ast.IsTokenKind(current.Kind) || ast.IsJSDocCommentContainingNode(current) {
+			if ast.IsTokenKind(current.Kind) || shouldSkipChild(current) {
 				return current
 			}
 			scanner := scanner.GetScannerForSourceFile(sourceFile, left)
@@ -455,7 +455,7 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 		// 3. The current node is a childless, token-less node. The answer is the current node.
 
 		// Case 2: Look at unvisited trailing tokens that occur in between the rightmost visited nodes.
-		if !ast.IsJSDocCommentContainingNode(n) { // JSDoc nodes don't include trivia tokens as children.
+		if !shouldSkipChild(n) { // JSDoc nodes don't include trivia tokens as children.
 			var startPos int
 			if rightmostValidNode != nil {
 				startPos = rightmostValidNode.End()
@@ -623,4 +623,13 @@ func getNodeVisitor(
 			return modifiers
 		},
 	})
+}
+
+func shouldSkipChild(node *ast.Node) bool {
+	return node.Kind == ast.KindJSDoc ||
+		node.Kind == ast.KindJSDocText ||
+		node.Kind == ast.KindJSDocTypeLiteral ||
+		node.Kind == ast.KindJSDocSignature ||
+		ast.IsJSDocLinkLike(node) ||
+		ast.IsJSDocTag(node)
 }
