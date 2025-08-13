@@ -658,6 +658,63 @@ func TestBuildJavascriptProjectEmit(t *testing.T) {
 	}
 }
 
+func TestBuildLateBoundSymbol(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario: "interface is merged and contains late bound member",
+			files: FileMap{
+				"/home/src/workspaces/project/src/globals.d.ts": stringtestutil.Dedent(`
+                    interface SymbolConstructor {
+                        (description?: string | number): symbol;
+                    }
+                    declare var Symbol: SymbolConstructor;
+                `),
+				"/home/src/workspaces/project/src/hkt.ts": `export interface HKT<T> { }`,
+				"/home/src/workspaces/project/src/main.ts": stringtestutil.Dedent(`
+                    import { HKT } from "./hkt";
+
+                    const sym = Symbol();
+
+                    declare module "./hkt" {
+                        interface HKT<T> {
+                            [sym]: { a: T }
+                        }
+                    }
+                    const x = 10;
+                    type A = HKT<number>[typeof sym];
+                `),
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+                    "compilerOptions": {
+                        "rootDir": "src",
+                        "incremental": true,
+                    },
+                }`),
+			},
+			commandLineArgs: []string{"--b", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption: "incremental-declaration-doesnt-change",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/home/src/workspaces/project/src/main.ts", "const x = 10;", "")
+					},
+				},
+				{
+					caption: "incremental-declaration-doesnt-change",
+					edit: func(sys *testSys) {
+						sys.appendFile("/home/src/workspaces/project/src/main.ts", "const x = 10;")
+					},
+				},
+			},
+		},
+	}
+
+	for _, test := range testCases {
+		test.run(t, "lateBoundSymbol")
+	}
+}
+
 func TestBuildSolutionProject(t *testing.T) {
 	t.Parallel()
 	testCases := []*tscInput{
