@@ -2,6 +2,7 @@ package packagejson
 
 import (
 	"sync"
+	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -121,9 +122,8 @@ func (p *InfoCacheEntry) GetDirectory() string {
 }
 
 type InfoCache struct {
-	mu                        sync.RWMutex
-	IsReadonly                bool
-	cache                     map[tspath.Path]InfoCacheEntry
+	cache                     collections.SyncMap[tspath.Path, *InfoCacheEntry]
+	isReadonly                atomic.Bool
 	currentDirectory          string
 	useCaseSensitiveFileNames bool
 }
@@ -136,22 +136,25 @@ func NewInfoCache(currentDirectory string, useCaseSensitiveFileNames bool) *Info
 }
 
 func (p *InfoCache) Get(packageJsonPath string) *InfoCacheEntry {
-	p.mu.RLock()
-	defer p.mu.RUnlock()
 	key := tspath.ToPath(packageJsonPath, p.currentDirectory, p.useCaseSensitiveFileNames)
-	entry, ok := p.cache[key]
-	if !ok {
-		return nil
+	if value, ok := p.cache.Load(key); ok {
+		return value
 	}
-	return &entry
+	return nil
 }
 
 func (p *InfoCache) Set(packageJsonPath string, info *InfoCacheEntry) {
-	p.mu.Lock()
-	defer p.mu.Unlock()
-	key := tspath.ToPath(packageJsonPath, p.currentDirectory, p.useCaseSensitiveFileNames)
-	if p.cache == nil {
-		p.cache = make(map[tspath.Path]InfoCacheEntry)
+	if p.isReadonly.Load() {
+		return
 	}
-	p.cache[key] = *info
+	key := tspath.ToPath(packageJsonPath, p.currentDirectory, p.useCaseSensitiveFileNames)
+	p.cache.Store(key, info)
+}
+
+func (p *InfoCache) SetReadonly(readonly bool) {
+	p.isReadonly.Store(readonly)
+}
+
+func (p *InfoCache) IsReadonly() bool {
+	return p.isReadonly.Load()
 }
