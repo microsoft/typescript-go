@@ -5,6 +5,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -46,48 +47,48 @@ function baz(x, { y }) {
 }
 `
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	// f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
-	// 	IsIncomplete: false,
-	// 	ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-	// 		CommitCharacters: &DefaultCommitCharacters,
-	// 	},
-	// 	Items: &fourslash.CompletionsExpectedItems{
-	// 		Includes: []fourslash.CompletionsExpectedItem{
-	// 			&lsproto.CompletionItem{
-	// 				Label:  "link",
-	// 				Kind:   PtrTo(lsproto.CompletionItemKindKeyword),
-	// 				Detail: PtrTo("link"),
-	// 			},
-	// 			"param",
-	// 			"returns",
-	// 			"param {*} x ",
-	// 		},
-	// 	},
-	// })
-	// f.VerifyCompletions(t, "2", &fourslash.CompletionsExpectedList{
-	// 	IsIncomplete: false,
-	// 	ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-	// 		CommitCharacters: &DefaultCommitCharacters,
-	// 	},
-	// 	Items: &fourslash.CompletionsExpectedItems{
-	// 		Includes: []fourslash.CompletionsExpectedItem{
-	// 			"@param",
-	// 			"@param {*} x ",
-	// 		},
-	// 	},
-	// })
-	// f.VerifyCompletions(t, "3", &fourslash.CompletionsExpectedList{
-	// 	IsIncomplete: false,
-	// 	ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-	// 		CommitCharacters: &DefaultCommitCharacters,
-	// 	},
-	// 	Items: &fourslash.CompletionsExpectedItems{
-	// 		Includes: []fourslash.CompletionsExpectedItem{
-	// 			"@param",
-	// 			"@param {Object} param1 \n* @param {*} param1.y ",
-	// 		},
-	// 	},
-	// })
+	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
+		IsIncomplete: false,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+		},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label:  "link",
+					Kind:   PtrTo(lsproto.CompletionItemKindKeyword),
+					Detail: PtrTo("link"),
+				},
+				"param",
+				"returns",
+				"param {*} x ",
+			},
+		},
+	})
+	f.VerifyCompletions(t, "2", &fourslash.CompletionsExpectedList{
+		IsIncomplete: false,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+		},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				"@param",
+				"@param {*} x ",
+			},
+		},
+	})
+	f.VerifyCompletions(t, "3", &fourslash.CompletionsExpectedList{
+		IsIncomplete: false,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+		},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				"@param",
+				"@param {Object} param1 \n* @param {*} param1.y ",
+			},
+		},
+	})
 	f.VerifyCompletions(t, "4", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
