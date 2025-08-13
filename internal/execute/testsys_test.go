@@ -519,6 +519,12 @@ func (s *testSys) writeFileNoError(path string, content string, writeByteOrderMa
 	}
 }
 
+func (s *testSys) removeNoError(path string) {
+	if err := s.fsFromFileMap().Remove(path); err != nil {
+		panic(err)
+	}
+}
+
 func (s *testSys) replaceFileText(path string, oldText string, newText string) {
 	content, ok := s.fsFromFileMap().ReadFile(path)
 	if !ok {

@@ -415,10 +415,7 @@ func TestIncremental(t *testing.T) {
 				{
 					caption: "delete file with imports",
 					edit: func(sys *testSys) {
-						err := sys.fsFromFileMap().Remove("/home/src/workspaces/project/file2.ts")
-						if err != nil {
-							panic(err)
-						}
+						sys.removeNoError("/home/src/workspaces/project/file2.ts")
 					},
 				},
 			},

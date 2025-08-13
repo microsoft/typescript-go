@@ -305,6 +305,91 @@ func TestBuildEmitDeclarationOnly(t *testing.T) {
 	}
 }
 
+func TestBuildFileDelete(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario: "detects deleted file",
+			files: FileMap{
+				"/home/src/workspaces/solution/child/child.ts": stringtestutil.Dedent(`
+					import { child2 } from "../child/child2";
+					export function child() {
+						child2();
+					}
+				`),
+				"/home/src/workspaces/solution/child/child2.ts": stringtestutil.Dedent(`
+					export function child2() {
+					}
+				`),
+				"/home/src/workspaces/solution/child/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": { "composite": true }
+					}
+				`),
+				"/home/src/workspaces/solution/main/main.ts": stringtestutil.Dedent(`
+                    import { child } from "../child/child";
+                    export function main() {
+                        child();
+                    }
+                `),
+				"/home/src/workspaces/solution/main/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": { "composite": true },
+						"references": [{ "path": "../child" }],
+					}
+				`),
+			},
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--b", "main/tsconfig.json", "-v", "--traceResolution", "--explainFiles"},
+			edits: []*tscEdit{
+				{
+					caption: "delete child2 file",
+					edit: func(sys *testSys) {
+						sys.removeNoError("/home/src/workspaces/solution/child/child2.ts")
+						sys.removeNoError("/home/src/workspaces/solution/child/child2.js")
+						sys.removeNoError("/home/src/workspaces/solution/child/child2.d.ts")
+					},
+				},
+			},
+		},
+		{
+			subScenario: "deleted file without composite",
+			files: FileMap{
+				"/home/src/workspaces/solution/child/child.ts": stringtestutil.Dedent(`
+					import { child2 } from "../child/child2";
+					export function child() {
+						child2();
+					}
+				`),
+				"/home/src/workspaces/solution/child/child2.ts": stringtestutil.Dedent(`
+					export function child2() {
+					}
+				`),
+				"/home/src/workspaces/solution/child/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": { }
+					}
+				`),
+			},
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--b", "child/tsconfig.json", "-v", "--traceResolution", "--explainFiles"},
+			edits: []*tscEdit{
+				{
+					caption: "delete child2 file",
+					edit: func(sys *testSys) {
+						sys.removeNoError("/home/src/workspaces/solution/child/child2.ts")
+						sys.removeNoError("/home/src/workspaces/solution/child/child2.js")
+					},
+				},
+			},
+		},
+	}
+
+	for _, test := range testCases {
+		test.run(t, "fileDelete")
+	}
+}
+
 func TestBuildSolutionProject(t *testing.T) {
 	t.Parallel()
 	testCases := []*tscInput{
