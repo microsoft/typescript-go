@@ -55,6 +55,16 @@ interface Symbol {
 declare const console: { log(msg: any): void; };
 `)
 
+func getTestLibPathFor(libName string) string {
+	var libFile string
+	if value, ok := tsoptions.LibMap.Get(libName); ok {
+		libFile = value.(string)
+	} else {
+		libFile = "lib." + libName + ".d.ts"
+	}
+	return tscLibPath + "/" + libFile
+}
+
 type TestClock struct {
 	start time.Time
 	now   time.Time
