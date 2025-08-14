@@ -1083,6 +1083,12 @@ func getTokensFromNode(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
 	if node == nil {
 		return nil
 	}
+
+	// Special handling for template expressions
+	if node.Kind == ast.KindTemplateExpression {
+		return getTokensFromTemplateExpression(node, sourceFile)
+	}
+
 	var children []*ast.Node
 	current := node
 	left := node.Pos()
@@ -1095,6 +1101,31 @@ func getTokensFromNode(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
 		left = tokenEnd
 		scanner.Scan()
 	}
+	return children
+}
+
+func getTokensFromTemplateExpression(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
+	templateExpr := node.AsTemplateExpression()
+	var children []*ast.Node
+
+	// Add the template head
+	head := templateExpr.Head
+	children = append(children, head.AsNode())
+
+	// Add tokens for each template span
+	if templateExpr.TemplateSpans != nil {
+		for _, spanNode := range templateExpr.TemplateSpans.Nodes {
+			span := spanNode.AsTemplateSpan()
+
+			// Add tokens from the expression part
+			exprTokens := getTokensFromNode(span.Expression.AsNode(), sourceFile)
+			children = append(children, exprTokens...)
+
+			// Add the template literal part (middle or tail)
+			children = append(children, span.Literal.AsNode())
+		}
+	}
+
 	return children
 }
 

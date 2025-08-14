@@ -581,6 +581,15 @@ f("x", /**/);`,
 			},
 		},
 		{
+			title: "signatureHelpTaggedTemplate",
+			input: `function tag(strings: TemplateStringsArray, ...values: any[]) { return ""; }
+const value = 42;
+const result = tag` + "`Hello ${value} /*1*/ world ${value}!`" + `;`,
+			expected: map[string]verifySignatureHelpOptions{
+				"1": {text: "tag(strings: TemplateStringsArray, ...values: any[]): string", parameterCount: 2, parameterSpan: "...values: any[]", activeParameter: &lsproto.UintegerOrNull{Uinteger: ptrTo(uint32(1))}},
+			},
+		},
+		{
 			title: "signatureHelpInParenthetical",
 			input: `class base { constructor (public n: number, public y: string) { } }
 (new base(/*1*/
