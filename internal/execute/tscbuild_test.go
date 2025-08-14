@@ -268,6 +268,170 @@ func TestBuildConfigFileErrors(t *testing.T) {
 	}
 }
 
+func TestBuildSolutionProject(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario: "verify that subsequent builds after initial build doesnt build anything",
+			files: FileMap{
+				"/home/src/workspaces/solution/src/folder/index.ts": `export const x = 10;`,
+				"/home/src/workspaces/solution/src/folder/tsconfig.json": stringtestutil.Dedent(`
+                    {
+                        "files": ["index.ts"],
+                        "compilerOptions": {
+                            "composite": true
+                        }
+                    }
+                `),
+				"/home/src/workspaces/solution/src/folder2/index.ts": `export const x = 10;`,
+				"/home/src/workspaces/solution/src/folder2/tsconfig.json": stringtestutil.Dedent(`
+                    {
+                        "files": ["index.ts"],
+                        "compilerOptions": {
+                            "composite": true
+                        }
+                    }
+                `),
+				"/home/src/workspaces/solution/src/tsconfig.json": stringtestutil.Dedent(`
+                    {
+                        "files": [],
+                        "compilerOptions": {
+                            "composite": true
+                        },
+						"references": [
+							{ "path": "./folder" },
+							{ "path": "./folder2" },
+						]
+                }`),
+				"/home/src/workspaces/solution/tests/index.ts": `export const x = 10;`,
+				"/home/src/workspaces/solution/tests/tsconfig.json": stringtestutil.Dedent(`
+                    {
+                        "files": ["index.ts"],
+                        "compilerOptions": {
+                            "composite": true
+                        },
+                        "references": [
+                            { "path": "../src" }
+                        ]
+                    }
+                `),
+				"/home/src/workspaces/solution/tsconfig.json": stringtestutil.Dedent(`
+                    {
+                        "files": [],
+                        "compilerOptions": {
+                            "composite": true
+                        },
+                        "references": [
+                            { "path": "./src" },
+                            { "path": "./tests" }
+                        ]
+                    }
+                `),
+			},
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--b", "--v"},
+			edits:           noChangeOnlyEdit,
+		},
+		{
+			subScenario: "when solution is referenced indirectly",
+			files: FileMap{
+				"/home/src/workspaces/solution/project1/tsconfig.json": stringtestutil.Dedent(`
+                    {
+                        "compilerOptions": { "composite": true },
+                        "references": []
+                    }
+                `),
+				"/home/src/workspaces/solution/project2/tsconfig.json": stringtestutil.Dedent(`
+                    {
+                        "compilerOptions": { "composite": true },
+                        "references": []
+                    }
+                `),
+				"/home/src/workspaces/solution/project2/src/b.ts": "export const b = 10;",
+				"/home/src/workspaces/solution/project3/tsconfig.json": stringtestutil.Dedent(`
+                    {
+                        "compilerOptions": { "composite": true },
+                        "references": [
+							{ "path": "../project1" },
+							{ "path": "../project2" }
+						]
+                    }
+                `),
+				"/home/src/workspaces/solution/project3/src/c.ts": "export const c = 10;",
+				"/home/src/workspaces/solution/project4/tsconfig.json": stringtestutil.Dedent(`
+                    {
+                        "compilerOptions": { "composite": true },
+                        "references": [{ "path": "../project3" }]
+                    }
+                `),
+				"/home/src/workspaces/solution/project4/src/d.ts": "export const d = 10;",
+			},
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--b", "project4", "--verbose", "--explainFiles"},
+			edits: []*tscEdit{
+				{
+					caption: "modify project3 file",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/home/src/workspaces/solution/project3/src/c.ts", "c = ", "cc = ")
+					},
+				},
+			},
+		},
+		{
+			subScenario: "has empty files diagnostic when files is empty and no references are provided",
+			files: FileMap{
+				"/home/src/workspaces/solution/no-references/tsconfig.json": stringtestutil.Dedent(`
+                    {
+                        "references": [],
+                        "files": [],
+                        "compilerOptions": {
+                            "composite": true,
+                            "declaration": true,
+                            "forceConsistentCasingInFileNames": true,
+                            "skipDefaultLibCheck": true,
+                        },
+                    }`),
+			},
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--b", "no-references"},
+		},
+		{
+			subScenario: "does not have empty files diagnostic when files is empty and references are provided",
+			files: FileMap{
+				"/home/src/workspaces/solution/core/index.ts": "export function multiply(a: number, b: number) { return a * b; }",
+				"/home/src/workspaces/solution/core/tsconfig.json": stringtestutil.Dedent(`
+                    {
+                        "compilerOptions": {
+                            "composite": true,
+                            "declaration": true,
+                            "declarationMap": true,
+                            "skipDefaultLibCheck": true,
+                        },
+                    }`),
+				"/home/src/workspaces/solution/with-references/tsconfig.json": stringtestutil.Dedent(`
+                    {
+                        "references": [
+                            { "path": "../core" },
+                        ],
+                        "files": [],
+                        "compilerOptions": {
+                            "composite": true,
+                            "declaration": true,
+                            "forceConsistentCasingInFileNames": true,
+                            "skipDefaultLibCheck": true,
+                        },
+                    }`),
+			},
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--b", "with-references"},
+		},
+	}
+
+	for _, test := range testCases {
+		test.run(t, "solution")
+	}
+}
+
 func getBuildCommandLineDifferentOptionsMap(optionName string) FileMap {
 	return FileMap{
 		"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(fmt.Sprintf(`
