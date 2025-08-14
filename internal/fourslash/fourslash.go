@@ -544,12 +544,7 @@ func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput,
 }
 
 func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *CompletionsExpectedList) {
-	var prefix string
-	if f.lastKnownMarkerName != nil {
-		prefix = fmt.Sprintf("At marker '%s': ", *f.lastKnownMarkerName)
-	} else {
-		prefix = fmt.Sprintf("At position (Ln %d, Col %d): ", f.currentCaretPosition.Line, f.currentCaretPosition.Character)
-	}
+	prefix := f.getCurrentPositionPrefix()
 	params := &lsproto.CompletionParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: ls.FileNameToDocumentURI(f.activeFilename),
@@ -931,17 +926,11 @@ func (f *FourslashTest) VerifyBaselineHover(t *testing.T) {
 		}
 
 		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentHoverInfo, params)
-		var prefix string
-		if f.lastKnownMarkerName != nil {
-			prefix = fmt.Sprintf("At marker '%s': ", *f.lastKnownMarkerName)
-		} else {
-			prefix = fmt.Sprintf("At position (Ln %d, Col %d): ", f.currentCaretPosition.Line, f.currentCaretPosition.Character)
-		}
 		if resMsg == nil {
-			t.Fatalf(prefix+"Nil response received for quick info request", f.lastKnownMarkerName)
+			t.Fatalf(f.getCurrentPositionPrefix()+"Nil response received for quick info request", f.lastKnownMarkerName)
 		}
 		if !resultOk {
-			t.Fatalf(prefix+"Unexpected response type for quick info request: %T", resMsg.AsResponse().Result)
+			t.Fatalf(f.getCurrentPositionPrefix()+"Unexpected response type for quick info request: %T", resMsg.AsResponse().Result)
 		}
 
 		return markerAndItem[*lsproto.Hover]{Marker: marker, Item: result.Hover}, true
@@ -1024,17 +1013,11 @@ func (f *FourslashTest) VerifyBaselineSignatureHelp(t *testing.T) {
 		}
 
 		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentSignatureHelpInfo, params)
-		var prefix string
-		if f.lastKnownMarkerName != nil {
-			prefix = fmt.Sprintf("At marker '%s': ", *f.lastKnownMarkerName)
-		} else {
-			prefix = fmt.Sprintf("At position (Ln %d, Col %d): ", f.currentCaretPosition.Line, f.currentCaretPosition.Character)
-		}
 		if resMsg == nil {
-			t.Fatalf(prefix+"Nil response received for signature help request", f.lastKnownMarkerName)
+			t.Fatalf(f.getCurrentPositionPrefix()+"Nil response received for signature help request", f.lastKnownMarkerName)
 		}
 		if !resultOk {
-			t.Fatalf(prefix+"Unexpected response type for signature help request: %T", resMsg.AsResponse().Result)
+			t.Fatalf(f.getCurrentPositionPrefix()+"Unexpected response type for signature help request: %T", resMsg.AsResponse().Result)
 		}
 
 		return markerAndItem[*lsproto.SignatureHelp]{Marker: marker, Item: result.SignatureHelp}, true
@@ -1318,8 +1301,7 @@ func (f *FourslashTest) getScriptInfo(fileName string) *scriptInfo {
 func (f *FourslashTest) VerifyQuickInfoAt(t *testing.T, marker string, expectedText string, expectedDocumentation string) {
 	f.GoToMarker(t, marker)
 	hover := f.getQuickInfoAtCurrentPosition(t)
-
-	f.verifyHoverContent(t, hover.Contents, expectedText, expectedDocumentation, fmt.Sprintf("At marker '%s': ", marker))
+	f.verifyHoverContent(t, hover.Contents, expectedText, expectedDocumentation, f.getCurrentPositionPrefix())
 }
 
 func (f *FourslashTest) getQuickInfoAtCurrentPosition(t *testing.T) *lsproto.Hover {
@@ -1391,13 +1373,7 @@ func (f *FourslashTest) quickInfoIsEmpty(t *testing.T) (bool, *lsproto.Hover) {
 
 func (f *FourslashTest) VerifyQuickInfoIs(t *testing.T, expectedText string, expectedDocumentation string) {
 	hover := f.getQuickInfoAtCurrentPosition(t)
-	var prefix string
-	if f.lastKnownMarkerName != nil {
-		prefix = fmt.Sprintf("At marker '%s': ", *f.lastKnownMarkerName)
-	} else {
-		prefix = fmt.Sprintf("At position (Ln %d, Col %d): ", f.currentCaretPosition.Line, f.currentCaretPosition.Character)
-	}
-	f.verifyHoverContent(t, hover.Contents, expectedText, expectedDocumentation, prefix)
+	f.verifyHoverContent(t, hover.Contents, expectedText, expectedDocumentation, f.getCurrentPositionPrefix())
 }
 
 type SignatureHelpCase struct {
@@ -1438,12 +1414,7 @@ func (f *FourslashTest) verifySignatureHelp(
 	context *lsproto.SignatureHelpContext,
 	expected *lsproto.SignatureHelp,
 ) {
-	var prefix string
-	if f.lastKnownMarkerName != nil {
-		prefix = fmt.Sprintf("At marker '%s': ", *f.lastKnownMarkerName)
-	} else {
-		prefix = fmt.Sprintf("At position (Ln %d, Col %d): ", f.currentCaretPosition.Line, f.currentCaretPosition.Character)
-	}
+	prefix := f.getCurrentPositionPrefix()
 	params := &lsproto.SignatureHelpParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: ls.FileNameToDocumentURI(f.activeFilename),
@@ -1468,4 +1439,11 @@ func (f *FourslashTest) verifySignatureHelpResult(
 	prefix string,
 ) {
 	assertDeepEqual(t, actual, expected, prefix+" SignatureHelp mismatch")
+}
+
+func (f *FourslashTest) getCurrentPositionPrefix() string {
+	if f.lastKnownMarkerName != nil {
+		return fmt.Sprintf("At marker '%s': ", *f.lastKnownMarkerName)
+	}
+	return fmt.Sprintf("At position (Ln %d, Col %d): ", f.currentCaretPosition.Line, f.currentCaretPosition.Character)
 }
