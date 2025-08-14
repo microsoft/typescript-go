@@ -132,11 +132,7 @@ func (vfs *Common) WalkDir(root string, walkFn fs.WalkDirFunc) error {
 		if path == "." {
 			path = ""
 		}
-		walkPath := rootName + path
-		if rest, ok := strings.CutPrefix(walkPath, "/"); ok && tspath.PathIsAbsolute(rest) {
-			walkPath = rest
-		}
-		return walkFn(walkPath, d, err)
+		return walkFn(rootName+path, d, err)
 	})
 }
 

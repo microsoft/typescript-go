@@ -332,20 +332,6 @@ func TestFromMap(t *testing.T) {
 		content, ok = fs.ReadFile("/mapfile")
 		assert.Assert(t, ok)
 		assert.Equal(t, content, "hello, world")
-
-		var files []string
-		err := fs.WalkDir("/", func(path string, d vfs.DirEntry, err error) error {
-			if err != nil {
-				return err
-			}
-			if !d.IsDir() {
-				files = append(files, path)
-			}
-			return nil
-		})
-		assert.NilError(t, err)
-		slices.Sort(files)
-		assert.DeepEqual(t, files, []string{"/bytes", "/mapfile", "/string"})
 	})
 
 	t.Run("Windows", func(t *testing.T) {
@@ -370,20 +356,6 @@ func TestFromMap(t *testing.T) {
 		content, ok = fs.ReadFile("e:/mapfile")
 		assert.Assert(t, ok)
 		assert.Equal(t, content, "hello, world")
-
-		var files []string
-		err := fs.WalkDir("/", func(path string, d vfs.DirEntry, err error) error {
-			if err != nil {
-				return err
-			}
-			if !d.IsDir() {
-				files = append(files, path)
-			}
-			return nil
-		})
-		assert.NilError(t, err)
-		slices.Sort(files)
-		assert.DeepEqual(t, files, []string{"c:/string", "d:/bytes", "e:/mapfile"})
 	})
 
 	t.Run("Mixed", func(t *testing.T) {
