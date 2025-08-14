@@ -601,7 +601,7 @@ func isSyntacticOwner(startingToken *ast.Node, node *ast.CallLikeExpression, sou
 	if !ast.IsCallOrNewExpression(node) {
 		return false
 	}
-	invocationChildren := getChildrenFromNode(node, sourceFile)
+	invocationChildren := getChildrenFromNonJSDocNode(node, sourceFile)
 	switch startingToken.Kind {
 	case ast.KindOpenParenToken, ast.KindCommaToken:
 		return containsNode(invocationChildren, startingToken)
@@ -1072,39 +1072,6 @@ func countBinaryExpressionParameters(b *ast.BinaryExpression) int {
 		return countBinaryExpressionParameters(b.Left.AsBinaryExpression()) + 1
 	}
 	return 2
-}
-
-func getChildrenFromNode(node *ast.CallLikeExpression, sourceFile *ast.SourceFile) []*ast.Node {
-	var childNodes []*ast.Node
-	node.ForEachChild(func(child *ast.Node) bool {
-		childNodes = append(childNodes, child)
-		return false
-	})
-	var children []*ast.Node
-	pos := node.Pos()
-	for _, child := range childNodes {
-		scanner := scanner.GetScannerForSourceFile(sourceFile, pos)
-		for pos < child.Pos() {
-			token := scanner.Token()
-			tokenFullStart := scanner.TokenFullStart()
-			tokenEnd := scanner.TokenEnd()
-			children = append(children, sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, node))
-			pos = tokenEnd
-			scanner.Scan()
-		}
-		children = append(children, child)
-		pos = child.End()
-	}
-	scanner := scanner.GetScannerForSourceFile(sourceFile, pos)
-	for pos < node.End() {
-		token := scanner.Token()
-		tokenFullStart := scanner.TokenFullStart()
-		tokenEnd := scanner.TokenEnd()
-		children = append(children, sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, node))
-		pos = tokenEnd
-		scanner.Scan()
-	}
-	return children
 }
 
 func getTokenFromNodeList(nodeList *ast.NodeList, nodeListParent *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
