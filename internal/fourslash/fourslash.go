@@ -1406,7 +1406,17 @@ func (f *FourslashTest) VerifyQuickInfoIs(t *testing.T, expectedText string, exp
 	f.verifyHoverContent(t, hover.Contents, expectedText, expectedDocumentation, prefix)
 }
 
-func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerName string) {
+func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames []string) {
+	if f.baseline != nil {
+		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
+	} else {
+		f.baseline = &baselineFromTest{
+			content:      &strings.Builder{},
+			baselineName: "autoImport/" + strings.TrimPrefix(t.Name(), "Test"),
+			ext:          ".baseline.md",
+		}
+	}
+	for _,markerName := range markerNames {
 	f.GoToMarker(t, markerName)
 	params := &lsproto.CompletionParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
@@ -1424,22 +1434,7 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerName 
 	if !resultOk {
 		t.Fatalf(prefix+"Unexpected response type for completion request for autoimports: %T", resMsg.AsResponse().Result)
 	}
-	var list []*lsproto.CompletionItem
-	if result.Items == nil || len(*result.Items) == 0 {
-		list = result.List.Items
-	} else {
-		list = *result.Items
-	}
 
-	if f.baseline != nil {
-		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
-	} else {
-		f.baseline = &baselineFromTest{
-			content:      &strings.Builder{},
-			baselineName: "autoImport/" + strings.TrimPrefix(t.Name(), "Test"),
-			ext:          ".baseline.md",
-		}
-	}
 	f.baseline.content.WriteString("// === Auto Imports === \n")
 
 	fileContent, ok := f.vfs.ReadFile(f.activeFilename)
@@ -1451,14 +1446,25 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerName 
 	ext := strings.TrimPrefix(tspath.GetAnyExtensionFromPath(f.activeFilename, nil, true), ".")
 	lang := core.IfElse(ext == "mts" || ext == "cts", "ts", ext)
 	f.baseline.content.WriteString(codeFence(
-		"// @FileName: "+f.activeFilename+"\n"+fileContent[:marker.Position]+"/*"+markerName+"*/"+fileContent[marker.Position:],
 		lang,
+		"// @FileName: "+f.activeFilename+"\n"+fileContent[:marker.Position]+"/*"+markerName+"*/"+fileContent[marker.Position:],
 	))
 
 	currentFile := newScriptInfo(f.activeFilename, fileContent)
 	converters := ls.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *ls.LineMap {
 		return currentFile.lineMap
 	})
+	var list []*lsproto.CompletionItem
+	if result.Items == nil || len(*result.Items) == 0 {
+		if result.List == nil || result.List.Items == nil || len(result.List.Items) == 0 {
+		f.baseline.content.WriteString("no autoimport completions found" + "\n\n")
+
+			continue
+		}
+		list = result.List.Items
+	} else {
+		list = *result.Items
+	}
 
 	for _, item := range list {
 		if item.Data == nil || *item.SortText != string(ls.SortTextAutoImportSuggestions) {
@@ -1497,7 +1503,8 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerName 
 		for _, change := range allChanges {
 			newFileContent = newFileContent[:converters.LineAndCharacterToPosition(currentFile, change.Range.Start)] + change.NewText + newFileContent[converters.LineAndCharacterToPosition(currentFile, change.Range.End):]
 		}
-		f.baseline.content.WriteString(codeFence(newFileContent, lang) + "\n\n")
+		f.baseline.content.WriteString(codeFence(lang, newFileContent) + "\n\n")
 	}
+}
 	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
 }
