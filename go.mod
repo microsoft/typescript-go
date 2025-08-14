@@ -30,10 +30,10 @@ tool (
 )
 
 ignore (
-	node_modules
 	./_extension
 	./_packages
 	./_submodules
 	./built
 	./coverage
+	node_modules
 )
