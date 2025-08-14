@@ -3000,7 +3000,6 @@ func putCollator(tag language.Tag, collator *collate.Collator) {
 	pool.Put(collator)
 }
 
-
 // Editors will use the `sortText` and then fall back to `name` for sorting, but leave ties in response order.
 // So, it's important that we sort those ties in the order we want them displayed if it matters. We don't
 // strictly need to sort by name or SortText here since clients are going to do it anyway, but we have to
