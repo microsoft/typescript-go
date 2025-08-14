@@ -564,12 +564,11 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *Completi
 	if !resultOk {
 		t.Fatalf(prefix+"Unexpected response type for completion request: %T", resMsg.AsResponse().Result)
 	}
-	f.verifyCompletionsResult(t, f.currentCaretPosition, result.List, expected, prefix)
+	f.verifyCompletionsResult(t, result.List, expected, prefix)
 }
 
 func (f *FourslashTest) verifyCompletionsResult(
 	t *testing.T,
-	position lsproto.Position,
 	actual *lsproto.CompletionList,
 	expected *CompletionsExpectedList,
 	prefix string,
@@ -1399,4 +1398,74 @@ func (f *FourslashTest) VerifyQuickInfoIs(t *testing.T, expectedText string, exp
 		prefix = fmt.Sprintf("At position (Ln %d, Col %d): ", f.currentCaretPosition.Line, f.currentCaretPosition.Character)
 	}
 	f.verifyHoverContent(t, hover.Contents, expectedText, expectedDocumentation, prefix)
+}
+
+type SignatureHelpCase struct {
+	Context     *lsproto.SignatureHelpContext
+	MarkerInput MarkerInput
+	Expected    *lsproto.SignatureHelp
+}
+
+func (f *FourslashTest) VerifySignatureHelp(t *testing.T, signatureHelpCases ...*SignatureHelpCase) {
+	for _, option := range signatureHelpCases {
+		switch marker := option.MarkerInput.(type) {
+		case string:
+			f.GoToMarker(t, marker)
+			f.verifySignatureHelp(t, option.Context, option.Expected)
+		case *Marker:
+			f.goToMarker(t, marker)
+			f.verifySignatureHelp(t, option.Context, option.Expected)
+		case []string:
+			for _, markerName := range marker {
+				f.GoToMarker(t, markerName)
+				f.verifySignatureHelp(t, option.Context, option.Expected)
+			}
+		case []*Marker:
+			for _, marker := range marker {
+				f.goToMarker(t, marker)
+				f.verifySignatureHelp(t, option.Context, option.Expected)
+			}
+		case nil:
+			f.verifySignatureHelp(t, option.Context, option.Expected)
+		default:
+			t.Fatalf("Invalid marker input type: %T. Expected string, *Marker, []string, or []*Marker.", option.MarkerInput)
+		}
+	}
+}
+
+func (f *FourslashTest) verifySignatureHelp(
+	t *testing.T,
+	context *lsproto.SignatureHelpContext,
+	expected *lsproto.SignatureHelp,
+) {
+	var prefix string
+	if f.lastKnownMarkerName != nil {
+		prefix = fmt.Sprintf("At marker '%s': ", *f.lastKnownMarkerName)
+	} else {
+		prefix = fmt.Sprintf("At position (Ln %d, Col %d): ", f.currentCaretPosition.Line, f.currentCaretPosition.Character)
+	}
+	params := &lsproto.SignatureHelpParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: ls.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+		Context:  context,
+	}
+	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentSignatureHelpInfo, params)
+	if resMsg == nil {
+		t.Fatalf(prefix+"Nil response received for signature help request", f.lastKnownMarkerName)
+	}
+	if !resultOk {
+		t.Fatalf(prefix+"Unexpected response type for signature help request: %T", resMsg.AsResponse().Result)
+	}
+	f.verifySignatureHelpResult(t, result.SignatureHelp, expected, prefix)
+}
+
+func (f *FourslashTest) verifySignatureHelpResult(
+	t *testing.T,
+	actual *lsproto.SignatureHelp,
+	expected *lsproto.SignatureHelp,
+	prefix string,
+) {
+	assertDeepEqual(t, actual, expected, prefix+" SignatureHelp mismatch")
 }

@@ -597,19 +597,14 @@ func getCandidateOrTypeInfo(info *argumentListInfo, c *checker.Checker, sourceFi
 	return nil // return Debug.assertNever(invocation);
 }
 
-func isSyntacticOwner(startingToken *ast.Node, node *ast.Node, sourceFile *ast.SourceFile) bool { // !!! not tested
+func isSyntacticOwner(startingToken *ast.Node, node *ast.CallLikeExpression, sourceFile *ast.SourceFile) bool { // !!! not tested
 	if !ast.IsCallOrNewExpression(node) {
 		return false
 	}
-	invocationChildren := getTokensFromNode(node, sourceFile)
+	invocationChildren := getChildrenFromNode(node, sourceFile)
 	switch startingToken.Kind {
-	case ast.KindOpenParenToken:
+	case ast.KindOpenParenToken, ast.KindCommaToken:
 		return containsNode(invocationChildren, startingToken)
-	case ast.KindCommaToken:
-		return containsNode(invocationChildren, startingToken)
-		// !!!
-		// const containingList = findContainingList(startingToken);
-		// return !!containingList && contains(invocationChildren, containingList);
 	case ast.KindLessThanToken:
 		return containsPrecedingToken(startingToken, sourceFile, node.AsCallExpression().Expression)
 	default:
@@ -1079,20 +1074,34 @@ func countBinaryExpressionParameters(b *ast.BinaryExpression) int {
 	return 2
 }
 
-func getTokensFromNode(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
-	if node == nil {
-		return nil
-	}
+func getChildrenFromNode(node *ast.CallLikeExpression, sourceFile *ast.SourceFile) []*ast.Node {
+	var childNodes []*ast.Node
+	node.ForEachChild(func(child *ast.Node) bool {
+		childNodes = append(childNodes, child)
+		return false
+	})
 	var children []*ast.Node
-	current := node
-	left := node.Pos()
-	scanner := scanner.GetScannerForSourceFile(sourceFile, left)
-	for left < current.End() {
+	pos := node.Pos()
+	for _, child := range childNodes {
+		scanner := scanner.GetScannerForSourceFile(sourceFile, pos)
+		for pos < child.Pos() {
+			token := scanner.Token()
+			tokenFullStart := scanner.TokenFullStart()
+			tokenEnd := scanner.TokenEnd()
+			children = append(children, sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, node))
+			pos = tokenEnd
+			scanner.Scan()
+		}
+		children = append(children, child)
+		pos = child.End()
+	}
+	scanner := scanner.GetScannerForSourceFile(sourceFile, pos)
+	for pos < node.End() {
 		token := scanner.Token()
 		tokenFullStart := scanner.TokenFullStart()
 		tokenEnd := scanner.TokenEnd()
-		children = append(children, sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current))
-		left = tokenEnd
+		children = append(children, sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, node))
+		pos = tokenEnd
 		scanner.Scan()
 	}
 	return children
