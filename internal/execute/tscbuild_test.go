@@ -268,6 +268,43 @@ func TestBuildConfigFileErrors(t *testing.T) {
 	}
 }
 
+func TestBuildEmitDeclarationOnly(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		getBuildEmitDeclarationOnlyTestCase(false),
+		getBuildEmitDeclarationOnlyTestCase(true),
+		{
+			subScenario:     `only dts output in non circular imports project with emitDeclarationOnly`,
+			files:           getBuildEmitDeclarationOnlyImportFileMap(true, false),
+			commandLineArgs: []string{"--b", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption: "incremental-declaration-doesnt-change",
+					edit: func(sys *testSys) {
+						sys.replaceFileText(
+							"/home/src/workspaces/project/src/a.ts",
+							"export interface A {",
+							stringtestutil.Dedent(`
+								class C { }
+								export interface A {`),
+						)
+					},
+				},
+				{
+					caption: "incremental-declaration-changes",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/home/src/workspaces/project/src/a.ts", "b: B;", "b: B; foo: any;")
+					},
+				},
+			},
+		},
+	}
+
+	for _, test := range testCases {
+		test.run(t, "emitDeclarationOnly")
+	}
+}
+
 func TestBuildSolutionProject(t *testing.T) {
 	t.Parallel()
 	testCases := []*tscInput{
@@ -553,6 +590,82 @@ func getBuildCommandLineEmitDeclarationOnlyTestCases(options []string, suffix st
 						sys.appendFile("/home/src/workspaces/solution/project1/src/b.ts", "const blocal = 10;")
 					},
 					commandLineArgs: []string{"--b", "project2/src", "--verbose", "--emitDeclarationOnly", "false"},
+				},
+			},
+		},
+	}
+}
+
+func getBuildEmitDeclarationOnlyImportFileMap(declarationMap bool, circularRef bool) FileMap {
+	files := FileMap{
+		"/home/src/workspaces/project/src/a.ts": stringtestutil.Dedent(`
+			import { B } from "./b";
+
+			export interface A {
+				b: B;
+			}
+		`),
+		"/home/src/workspaces/project/src/b.ts": stringtestutil.Dedent(`
+			import { C } from "./c";
+
+			export interface B {
+				b: C;
+			}
+		`),
+		"/home/src/workspaces/project/src/c.ts": stringtestutil.Dedent(`
+			import { A } from "./a";
+
+			export interface C {
+				a: A;
+			}
+		`),
+		"/home/src/workspaces/project/src/index.ts": stringtestutil.Dedent(`
+			export { A } from "./a";
+			export { B } from "./b";
+			export { C } from "./c";
+		`),
+		"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(fmt.Sprintf(`
+			{
+				"compilerOptions": {
+					"incremental": true,
+					"target": "es5",
+					"module": "commonjs",
+					"declaration": true,
+					"declarationMap": %t,
+					"sourceMap": true,
+					"outDir": "./lib",
+					"composite": true,
+					"strict": true,
+					"esModuleInterop": true,
+					"alwaysStrict": true,
+					"rootDir": "src",
+					"emitDeclarationOnly": true,
+				},
+			}`, declarationMap)),
+	}
+	if !circularRef {
+		delete(files, "/home/src/workspaces/project/src/index.ts")
+		files["/home/src/workspaces/project/src/a.ts"] = stringtestutil.Dedent(`
+			export class B { prop = "hello"; }
+
+			export interface A {
+				b: B;
+			}
+		`)
+	}
+	return files
+}
+
+func getBuildEmitDeclarationOnlyTestCase(declarationMap bool) *tscInput {
+	return &tscInput{
+		subScenario:     `only dts output in circular import project with emitDeclarationOnly` + core.IfElse(declarationMap, " and declarationMap", ""),
+		files:           getBuildEmitDeclarationOnlyImportFileMap(declarationMap, true),
+		commandLineArgs: []string{"--b", "--verbose"},
+		edits: []*tscEdit{
+			{
+				caption: "incremental-declaration-changes",
+				edit: func(sys *testSys) {
+					sys.replaceFileText("/home/src/workspaces/project/src/a.ts", "b: B;", "b: B; foo: any;")
 				},
 			},
 		},
