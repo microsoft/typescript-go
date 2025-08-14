@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
+	"iter"
 	"maps"
 	"path"
 	"slices"
@@ -548,6 +549,26 @@ func (m *MapFS) GetTargetOfSymlink(path string) (string, bool) {
 		}
 	}
 	return "", false
+}
+
+func (m *MapFS) Entries() iter.Seq2[string, *fstest.MapFile] {
+	return func(yield func(string, *fstest.MapFile) bool) {
+		m.mu.RLock()
+		defer m.mu.RUnlock()
+		inputKeys := slices.Collect(maps.Keys(m.m))
+		slices.SortFunc(inputKeys, comparePathsByParts)
+
+		for _, p := range inputKeys {
+			file := m.m[p]
+			path := file.Sys.(*sys).realpath
+			if !tspath.PathIsAbsolute(path) {
+				path = "/" + path
+			}
+			if !yield(path, file) {
+				break
+			}
+		}
+	}
 }
 
 func must[T any](v T, err error) T {

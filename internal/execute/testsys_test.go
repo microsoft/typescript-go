@@ -1,7 +1,6 @@
 package execute_test
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"io/fs"
@@ -385,13 +384,9 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 
 	testFs := s.testFs()
 	diffs := map[string]string{}
-	err := s.fsFromFileMap().WalkDir("/", func(path string, d vfs.DirEntry, e error) error {
-		if e != nil {
-			return e
-		}
 
-		fileInfo := d.Type()
-		if fileInfo&fs.ModeSymlink != 0 {
+	for path, file := range s.mapFs().Entries() {
+		if file.Mode&fs.ModeSymlink != 0 {
 			target, ok := s.mapFs().GetTargetOfSymlink(path)
 			if !ok {
 				panic("Failed to resolve symlink target: " + path)
@@ -399,29 +394,12 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 			newEntry := &diffEntry{symlinkTarget: target}
 			snap[path] = newEntry
 			s.addFsEntryDiff(diffs, newEntry, path)
-			return nil
+			continue
+		} else if file.Mode.IsRegular() {
+			newEntry := &diffEntry{content: string(file.Data), mTime: file.ModTime, isWritten: testFs.writtenFiles.Has(path)}
+			snap[path] = newEntry
+			s.addFsEntryDiff(diffs, newEntry, path)
 		}
-
-		if !fileInfo.IsRegular() {
-			return nil
-		}
-
-		newContents, ok := s.fsFromFileMap().ReadFile(path)
-		if !ok {
-			return nil
-		}
-		stat := s.fsFromFileMap().Stat(path)
-		if stat == nil {
-			panic("stat is nil: " + path)
-		}
-		newEntry := &diffEntry{content: newContents, mTime: stat.ModTime(), isWritten: testFs.writtenFiles.Has(path)}
-		snap[path] = newEntry
-		s.addFsEntryDiff(diffs, newEntry, path)
-
-		return nil
-	})
-	if err != nil && !errors.Is(err, fs.ErrNotExist) {
-		panic("walkdir error during diff: " + err.Error())
 	}
 	if s.serializedDiff != nil {
 		for path := range s.serializedDiff.snap {
