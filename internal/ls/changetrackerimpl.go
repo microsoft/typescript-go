@@ -96,12 +96,12 @@ type trackerEditRemove struct {
 	lsproto.Range
 }
 
-func (eRemove *trackerEditRemove) Kind() trackerEditKind {
+func (removeEdit *trackerEditRemove) Kind() trackerEditKind {
 	return trackerEditKindRemove
 }
 
-func (eRemove *trackerEditRemove) getRange() lsproto.Range {
-	return eRemove.Range
+func (removeEdit *trackerEditRemove) getRange() lsproto.Range {
+	return removeEdit.Range
 }
 
 type trackerEditReplaceWithSingleNode struct {
@@ -111,12 +111,12 @@ type trackerEditReplaceWithSingleNode struct {
 	options insertNodeOptions
 }
 
-func (re *trackerEditReplaceWithSingleNode) Kind() trackerEditKind {
-	return trackerEditKindRemove
+func (replaceSingleEdit *trackerEditReplaceWithSingleNode) Kind() trackerEditKind {
+	return trackerEditKindReplaceWithSingleNode
 }
 
-func (eSingle *trackerEditReplaceWithSingleNode) getRange() lsproto.Range {
-	return eSingle.Range
+func (replaceSingleEdit *trackerEditReplaceWithSingleNode) getRange() lsproto.Range {
+	return replaceSingleEdit.Range
 }
 
 type trackerEditReplaceWithMultipleNodes struct {
@@ -126,12 +126,12 @@ type trackerEditReplaceWithMultipleNodes struct {
 	options changeNodeOptions
 }
 
-func (re *trackerEditReplaceWithMultipleNodes) Kind() trackerEditKind {
+func (replaceMultipleEdit *trackerEditReplaceWithMultipleNodes) Kind() trackerEditKind {
 	return trackerEditKindReplaceWithMultipleNodes
 }
 
-func (eSingle *trackerEditReplaceWithMultipleNodes) getRange() lsproto.Range {
-	return eSingle.Range
+func (replaceMultipleEdit *trackerEditReplaceWithMultipleNodes) getRange() lsproto.Range {
+	return replaceMultipleEdit.Range
 }
 
 type changeTracker struct {
@@ -152,14 +152,17 @@ type changeTracker struct {
 
 func (ls *LanguageService) newChangeTracker(ctx context.Context) *changeTracker {
 	emitContext := printer.NewEmitContext()
+	newLine := ls.GetProgram().Options().NewLine.GetNewLineCharacter()
+	formatCodeSettings := format.GetDefaultFormatCodeSettings(newLine) // !!! format.GetFormatCodeSettingsFromContext(ctx),
+	ctx = format.WithFormatCodeSettings(ctx, formatCodeSettings, newLine)
 	return &changeTracker{
 		ls:             ls,
 		EmitContext:    emitContext,
 		NodeFactory:    &emitContext.Factory.NodeFactory,
 		changes:        &collections.MultiMap[*ast.SourceFile, trackerEdit]{},
 		ctx:            ctx,
-		formatSettings: format.GetFormatCodeSettingsFromContext(ctx),
-		newLine:        format.GetNewLineOrDefaultFromContext(ctx),
+		formatSettings: formatCodeSettings,
+		newLine:        newLine,
 	}
 }
 
@@ -229,12 +232,15 @@ func (ct *changeTracker) computeNewText(change trackerEdit, targetSourceFile *as
 
 	case trackerEditKindReplaceWithMultipleNodes:
 		changeEditMultiple := change.(*trackerEditReplaceWithMultipleNodes)
+		options = changeEditMultiple.options
 		if options.joiner == "" {
 			options.joiner = ct.newLine
 		}
 		text = strings.Join(core.Map(changeEditMultiple.nodes, func(n *ast.Node) string { return strings.TrimSuffix(format(n), ct.newLine) }), options.joiner)
 	case trackerEditKindReplaceWithSingleNode:
-		text = format(change.(*trackerEditReplaceWithSingleNode).Node)
+		changeEditSingle := change.(*trackerEditReplaceWithSingleNode)
+		options.insertNodeOptions = changeEditSingle.options
+		text = format(changeEditSingle.Node)
 	default:
 		panic(fmt.Sprintf("change kind %d should have been handled earlier", change.Kind()))
 	}
@@ -452,12 +458,12 @@ func (ct *changeTracker) insertNodeInListAfter(sourceFile *ast.SourceFile, after
 	// pick the element preceding the after element to:
 	// - pick the separator
 	// - determine if list is a multiline
-	separator := ast.KindUnknown // SyntaxKind.CommaToken | SyntaxKind.SemicolonToken | undefined;
 	multilineList := false
 
 	// if list has only one element then we'll format is as multiline if node has comment in trailing trivia, or as singleline otherwise
 	// i.e. var x = 1 // this is x
 	//     | new element will be inserted at this position
+	separator := ast.KindCommaToken // SyntaxKind.CommaToken | SyntaxKind.SemicolonToken
 	if len(containingList) != 1 {
 		// otherwise, if list has more than one element, pick separator from the list
 		tokenBeforeInsertPosition := astnav.FindPrecedingToken(sourceFile, after.Pos())
@@ -471,15 +477,16 @@ func (ct *changeTracker) insertNodeInListAfter(sourceFile *ast.SourceFile, after
 		multilineList = true
 	}
 
+	separatorString := scanner.TokenToString(separator)
 	end := ct.ls.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(after.End()))
 	if !multilineList {
-		ct.replaceRange(sourceFile, lsproto.Range{Start: end, End: end}, newNode, insertNodeOptions{prefix: `${tokenToString(separator)} `})
+		ct.replaceRange(sourceFile, lsproto.Range{Start: end, End: end}, newNode, insertNodeOptions{prefix: separatorString})
 		return
 	}
 
 	// insert separator immediately following the 'after' node to preserve comments in trailing trivia
-	// !!! check GetOrCreateToken port
-	ct.replaceRange(sourceFile, lsproto.Range{Start: end, End: end}, sourceFile.GetOrCreateToken(separator, after.End(), after.End(), after.Parent), insertNodeOptions{})
+	// !!! formatcontext
+	ct.replaceRange(sourceFile, lsproto.Range{Start: end, End: end}, sourceFile.GetOrCreateToken(separator, after.End(), after.End()+len(separatorString), after.Parent), insertNodeOptions{})
 	// use the same indentation as 'after' item
 	indentation := format.FindFirstNonWhitespaceColumn(afterStartLinePosition, afterStart, sourceFile, ct.formatSettings)
 	// insert element before the line break on the line that contains 'after' element

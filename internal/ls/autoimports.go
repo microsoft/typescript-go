@@ -78,14 +78,11 @@ type exportInfoMap struct {
 	exportInfo       collections.MultiMap[ExportMapInfoKey, CachedSymbolExportInfo]
 	symbols          map[int]symbolExportEntry
 	exportInfoId     int
-	usableByFileName *tspath.Path
+	usableByFileName tspath.Path
 	packages         map[string]string
 
 	globalTypingsCacheLocation string
-	ls                         *LanguageService
 
-	isUsableByFile func(importingFile tspath.Path) bool
-	get            func(importingFile tspath.Path, key string) []*SymbolExportInfo
 	releaseSymbols func()
 	isEmpty        func() bool
 	/** @returns Whether the change resulted in the cache being cleared */
@@ -95,7 +92,14 @@ type exportInfoMap struct {
 func (e *exportInfoMap) clear() {
 	e.symbols = map[int]symbolExportEntry{}
 	e.exportInfo = collections.MultiMap[ExportMapInfoKey, CachedSymbolExportInfo]{}
-	e.usableByFileName = nil
+	e.usableByFileName = ""
+}
+
+func (e *exportInfoMap) get(importingFile tspath.Path, ch *checker.Checker, key ExportMapInfoKey) []*SymbolExportInfo {
+	if e.usableByFileName != importingFile {
+		return nil
+	}
+	return core.Map(e.exportInfo.Get(key), func(info CachedSymbolExportInfo) *SymbolExportInfo { return e.rehydrateCachedInfo(ch, info) })
 }
 
 func (e *exportInfoMap) add(
@@ -108,9 +112,9 @@ func (e *exportInfoMap) add(
 	isFromPackageJson bool,
 	ch *checker.Checker,
 ) {
-	if e.usableByFileName == nil || importingFile != *e.usableByFileName {
+	if importingFile != e.usableByFileName {
 		e.clear()
-		e.usableByFileName = &importingFile
+		e.usableByFileName = importingFile
 	}
 
 	packageName := ""
@@ -183,6 +187,10 @@ func (e *exportInfoMap) add(
 		moduleKey = moduleName
 	}
 
+	moduleFileName := ""
+	if moduleFile != nil {
+		moduleFileName = moduleFile.FileName()
+	}
 	e.exportInfo.Add(newExportMapInfoKey(symbolName, symbol, moduleKey, ch), CachedSymbolExportInfo{
 		id:                    id,
 		symbolTableKey:        symbolTableKey,
@@ -190,6 +198,7 @@ func (e *exportInfoMap) add(
 		capitalizedSymbolName: capitalizedSymbolName,
 		moduleName:            moduleName,
 		moduleFile:            moduleFile,
+		moduleFileName:        moduleFileName,
 		packageName:           packageName,
 
 		symbol:            storedSymbol,
@@ -207,7 +216,7 @@ func (e *exportInfoMap) search(
 	matches func(name string, targetFlags ast.SymbolFlags) bool,
 	action func(info []*SymbolExportInfo, symbolName string, isFromAmbientModule bool, key ExportMapInfoKey) []*SymbolExportInfo,
 ) []*SymbolExportInfo {
-	if ptrTo(importingFile) != e.usableByFileName {
+	if importingFile != e.usableByFileName {
 		return nil
 	}
 	for key, info := range e.exportInfo.M {
@@ -357,24 +366,6 @@ func (info *projectPackageJsonInfo) has(dependencyName string) bool {
 	return false
 }
 
-// type codeAction struct {
-//     /** Description of the code action to display in the UI of the editor */
-//     description string
-// 	/** Text changes to apply to each file as part of the code action */
-//     changes []FileTextChanges
-// 	/**
-//      * If the user accepts the code fix, the editor should send the action back in a `applyAction` request.
-//      * This allows the language service to have side effects (e.g. installing dependencies) upon a code fix.
-//      */
-//     commands [] CodeActionCommand
-// }
-
-type completionCodeAction struct {
-	description string
-	changes     []*lsproto.TextEdit
-	commands    *lsproto.Command
-}
-
 func (l *LanguageService) getImportCompletionAction(
 	ctx context.Context,
 	ch *checker.Checker,
@@ -382,7 +373,7 @@ func (l *LanguageService) getImportCompletionAction(
 	moduleSymbol *ast.Symbol,
 	sourceFile *ast.SourceFile,
 	position int,
-	exportMapKey string, // !!! needs *string ?
+	exportMapKey ExportMapInfoKey,
 	symbolName string, // !!! needs *string ?
 	isJsxTagName bool,
 	// formatContext *formattingContext,
@@ -392,8 +383,8 @@ func (l *LanguageService) getImportCompletionAction(
 	if exportMapKey != "" {
 		// The new way: `exportMapKey` should be in the `data` of each auto-import completion entry and
 		// sent back when asking for details.
-		exportInfos = l.getExportInfoMap(ch, sourceFile, preferences).get(sourceFile.Path(), exportMapKey)
-		if exportInfos == nil {
+		exportInfos = l.getExportInfoMap(ch, sourceFile, preferences).get(sourceFile.Path(), ch, exportMapKey)
+		if len(exportInfos) == 0 {
 			panic("Some exportInfo should match the specified exportMapKey")
 		}
 	} else {
@@ -417,8 +408,13 @@ func (l *LanguageService) getImportCompletionAction(
 	return fix.Base().moduleSpecifier, l.codeActionForFix(ctx, sourceFile, symbolName, fix /*includeSymbolNameInDescription*/, false, preferences)
 }
 
-func NewExportInfoMap(ls *LanguageService) *exportInfoMap {
-	return &exportInfoMap{ls: ls}
+func NewExportInfoMap(globalsTypingCacheLocation string) *exportInfoMap {
+	return &exportInfoMap{
+		packages:                   map[string]string{},
+		symbols:                    map[int]symbolExportEntry{},
+		exportInfo:                 collections.MultiMap[ExportMapInfoKey, CachedSymbolExportInfo]{},
+		globalTypingsCacheLocation: globalsTypingCacheLocation,
+	}
 }
 
 func (l *LanguageService) getExportInfoMap(
@@ -443,7 +439,7 @@ func (l *LanguageService) getExportInfoMap(
 	// }
 
 	// host.log?.("getExportInfoMap: expInfoMap miss or empty; calculating new results");
-	expInfoMap := NewExportInfoMap(l)
+	expInfoMap := NewExportInfoMap(l.GetProgram().GetGlobalTypingsCacheLocation())
 	moduleCount := 0
 	l.forEachExternalModuleToImportFrom(
 		ch,
@@ -469,11 +465,12 @@ func (l *LanguageService) getExportInfoMap(
 					ch,
 				)
 			}
+			var exportingModuleSymbol *ast.Symbol
+			if defaultInfo != nil {
+				exportingModuleSymbol = defaultInfo.exportingModuleSymbol
+			}
 			ch.ForEachExportAndPropertyOfModule(moduleSymbol, func(exported *ast.Symbol, key string) {
-				if defaultInfo == nil {
-					return
-				}
-				if exported != defaultInfo.exportingModuleSymbol && isImportableSymbol(exported, ch) && seenExports.Has(key) {
+				if exported != exportingModuleSymbol && isImportableSymbol(exported, ch) && seenExports.AddIfAbsent(key) {
 					expInfoMap.add(
 						importingFile.Path(),
 						exported,
@@ -734,7 +731,7 @@ func (l *LanguageService) getBestFix(fixes []ImportFix, sourceFile *ast.SourceFi
 		return fixes[0]
 	}
 
-	var best ImportFix
+	best := fixes[0]
 	for _, fix := range fixes {
 		// Takes true branch of conditional if `fix` is better than `best`
 		if compareModuleSpecifiers(
@@ -772,7 +769,7 @@ func (l *LanguageService) getImportFixes(
 	}
 	var existingImports []*FixAddToExistingImportInfo
 	if importMap != nil {
-		core.FlatMap(exportInfos, importMap.getImportsForExportInfo)
+		existingImports = core.FlatMap(exportInfos, importMap.getImportsForExportInfo)
 	}
 	var useNamespace []ImportFix
 	if usagePosition != nil {
@@ -972,20 +969,20 @@ type importMap struct {
 	m             collections.MultiMap[ast.SymbolId, *ast.Statement] // !!! anyImportOrRequire
 }
 
-func (i *importMap) getImportsForExportInfo(info *SymbolExportInfo /* | FutureSymbolExportInfo*/) []FixAddToExistingImportInfo {
+func (i *importMap) getImportsForExportInfo(info *SymbolExportInfo /* | FutureSymbolExportInfo*/) []*FixAddToExistingImportInfo {
 	matchingDeclarations := i.m.Get(ast.GetSymbolId(info.moduleSymbol))
 	if len(matchingDeclarations) == 0 {
-		return []FixAddToExistingImportInfo{}
+		return nil
 	}
 
 	// Can't use an es6 import for a type in JS.
 	if ast.IsSourceFileJS(i.importingFile) && info.targetFlags&ast.SymbolFlagsValue == 0 && !core.Every(matchingDeclarations, ast.IsJSDocImportTag) {
-		return []FixAddToExistingImportInfo{}
+		return nil
 	}
 
 	importKind := getImportKind(i.importingFile, info.exportKind, i.program, false)
-	return core.Map(matchingDeclarations, func(d *ast.Statement) FixAddToExistingImportInfo {
-		return FixAddToExistingImportInfo{declaration: d, importKind: importKind, symbol: info.symbol, targetFlags: info.targetFlags}
+	return core.Map(matchingDeclarations, func(d *ast.Statement) *FixAddToExistingImportInfo {
+		return &FixAddToExistingImportInfo{declaration: d, importKind: importKind, symbol: info.symbol, targetFlags: info.targetFlags}
 	})
 }
 

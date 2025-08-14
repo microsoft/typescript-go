@@ -23,6 +23,8 @@ func NewChangeTrackerWriter(newline string) *ChangeTrackerWriter {
 	ctw := &ChangeTrackerWriter{
 		textWriter:            textWriter{newLine: newline},
 		lastNonTriviaPosition: 0,
+		pos:                   map[triviaPositionKey]int{},
+		end:                   map[triviaPositionKey]int{},
 	}
 	ctw.textWriter.Clear()
 	return ctw

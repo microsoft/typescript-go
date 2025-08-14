@@ -27,17 +27,10 @@ type UserPreferences struct {
 	// `import write|` to be completed to `import { writeFile } from "fs"`.
 	IncludeCompletionsForImportStatements *bool
 
-	// Allows completions to be formatted with snippet text, indicated by `CompletionItem["isSnippet"]`.
-	IncludeCompletionsWithSnippetText *bool
-
 	// Unless this option is `false`,  member completion lists triggered with `.` will include entries
 	// on potentially-null and potentially-undefined values, with insertion text to replace
 	// preceding `.` tokens with `?.`.
 	IncludeAutomaticOptionalChainCompletions *bool
-
-	// If enabled, the completion list will include completions with invalid identifier names.
-	// For those entries, The `insertText` and `replacementSpan` properties will be set to change from `.x` property access to `["x"]`.
-	IncludeCompletionsWithInsertText *bool
 
 	// If enabled, completions for class members (e.g. methods and properties) will include
 	// a whole declaration for the member.

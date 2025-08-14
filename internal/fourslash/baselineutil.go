@@ -576,3 +576,7 @@ func (t *textWithContext) getIndex(i interface{}) *int {
 	}
 	panic(fmt.Sprintf("getIndex: unsupported type %T", i))
 }
+
+func codeFence(code string, lang string) string {
+	return "```" + lang + "\n" + code + "\n```"
+}

@@ -486,6 +486,7 @@ type CompletionsExpectedList struct {
 	IsIncomplete bool
 	ItemDefaults *CompletionsExpectedItemDefaults
 	Items        *CompletionsExpectedItems
+	*ls.UserPreferences
 }
 
 type Ignored = struct{}
@@ -1403,4 +1404,100 @@ func (f *FourslashTest) VerifyQuickInfoIs(t *testing.T, expectedText string, exp
 		prefix = fmt.Sprintf("At position (Ln %d, Col %d): ", f.currentCaretPosition.Line, f.currentCaretPosition.Character)
 	}
 	f.verifyHoverContent(t, hover.Contents, expectedText, expectedDocumentation, prefix)
+}
+
+func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerName string) {
+	f.GoToMarker(t, markerName)
+	params := &lsproto.CompletionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: ls.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+		Context:  &lsproto.CompletionContext{},
+	}
+	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentCompletionInfo, params)
+
+	prefix := fmt.Sprintf("At marker '%s': ", markerName)
+	if resMsg == nil {
+		t.Fatalf(prefix+"Nil response received for completion request for autoimports", f.lastKnownMarkerName)
+	}
+	if !resultOk {
+		t.Fatalf(prefix+"Unexpected response type for completion request for autoimports: %T", resMsg.AsResponse().Result)
+	}
+	var list []*lsproto.CompletionItem
+	if result.Items == nil || len(*result.Items) == 0 {
+		list = result.List.Items
+	} else {
+		list = *result.Items
+	}
+
+	if f.baseline != nil {
+		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
+	} else {
+		f.baseline = &baselineFromTest{
+			content:      &strings.Builder{},
+			baselineName: "autoImport/" + strings.TrimPrefix(t.Name(), "Test"),
+			ext:          ".baseline.md",
+		}
+	}
+	f.baseline.content.WriteString("// === Auto Imports === \n")
+
+	fileContent, ok := f.vfs.ReadFile(f.activeFilename)
+	if !ok {
+		t.Fatalf(prefix+"Failed to read file %s for auto-import baseline", f.activeFilename)
+	}
+
+	marker := f.testData.MarkerPositions[markerName]
+	ext := strings.TrimPrefix(tspath.GetAnyExtensionFromPath(f.activeFilename, nil, true), ".")
+	lang := core.IfElse(ext == "mts" || ext == "cts", "ts", ext)
+	f.baseline.content.WriteString(codeFence(
+		"// @FileName: "+f.activeFilename+"\n"+fileContent[:marker.Position]+"/*"+markerName+"*/"+fileContent[marker.Position:],
+		lang,
+	))
+
+	currentFile := newScriptInfo(f.activeFilename, fileContent)
+	converters := ls.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *ls.LineMap {
+		return currentFile.lineMap
+	})
+
+	for _, item := range list {
+		if item.Data == nil || *item.SortText != string(ls.SortTextAutoImportSuggestions) {
+			continue
+		}
+		resMsg, details, resultOk := sendRequest(t, f, lsproto.CompletionItemResolveInfo, item)
+		if resMsg == nil {
+			t.Fatalf(prefix+"Nil response received for resolve completion", f.lastKnownMarkerName)
+		}
+		if !resultOk {
+			t.Fatalf(prefix+"Unexpected response type for resolve completion: %T", resMsg.AsResponse().Result)
+		}
+		if details == nil || details.AdditionalTextEdits == nil || len(*details.AdditionalTextEdits) == 0 {
+			t.Fatalf(prefix+"Entry %s from %s returned no code changes from completion details request", item.Label, item.Detail)
+		}
+		allChanges := *details.AdditionalTextEdits
+
+		// !!! calculate the change provided by the completiontext
+		// completionChange:= &lsproto.TextEdit{}
+		// if details.TextEdit != nil {
+		// 	completionChange = details.TextEdit.TextEdit
+		// } else if details.AdditionalTextEdits != nil && len(*details.AdditionalTextEdits) > 0 {
+		// 	completionChange = (*details.AdditionalTextEdits)[0]
+		// } else {
+		// 	completionChange.Range = lsproto.Range{ Start: marker.LSPosition, End: marker.LSPosition }
+		// 	if item.InsertText != nil {
+		// 		completionChange.NewText = *item.InsertText
+		// 	} else {
+		// 		completionChange.NewText = item.Label
+		// 	}
+		// }
+		// allChanges := append(allChanges, completionChange)
+		// sorted from back-of-file-most to front-of-file-most
+		slices.SortFunc(allChanges, func(a, b *lsproto.TextEdit) int { return ls.ComparePositions(b.Range.Start, a.Range.Start) })
+		newFileContent := fileContent
+		for _, change := range allChanges {
+			newFileContent = newFileContent[:converters.LineAndCharacterToPosition(currentFile, change.Range.Start)] + change.NewText + newFileContent[converters.LineAndCharacterToPosition(currentFile, change.Range.End):]
+		}
+		f.baseline.content.WriteString(codeFence(newFileContent, lang) + "\n\n")
+	}
+	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
 }
