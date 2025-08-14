@@ -159,6 +159,16 @@ export type State = {
     hook: Hook;
 };
 export = Context;
+declare namespace Context {
+    const prototype: {
+        /**
+         * @param {Input} input
+         * @param {HookHandler=} handle
+         * @returns {State}
+         */
+        construct(input: Input, handle?: any): State;
+    };
+}
 //// [hook.d.ts]
 export type HookHandler = (arg: import("./context")) => void;
 export = Hook;

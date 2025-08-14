@@ -12,4 +12,5 @@ export default function foo() {
 
 
 //// [declarationEmitDefaultExport3.d.ts]
-export default function foo(): string;
+declare function foo(): string;
+export default foo;

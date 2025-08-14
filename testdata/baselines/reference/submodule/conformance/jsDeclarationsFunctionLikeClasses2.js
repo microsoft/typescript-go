@@ -164,6 +164,22 @@ export declare function Vec(len: number): void;
  * @param {number} y
  */
 export declare function Point2D(x: number, y: number): any;
+export declare namespace Vec {
+    const prototype: {
+        /**
+         * @param {Vec} other
+         */
+        dot(other: Vec): number;
+        magnitude(): number;
+    };
+}
+export declare namespace Point2D {
+    const prototype: {
+        __proto__: typeof Vec;
+        x: number;
+        y: number;
+    };
+}
 //// [referencer.d.ts]
 export declare const origin: any;
 // export const res = Point2D(2, 3).dot(origin); // TODO: when __proto__ works, validate this

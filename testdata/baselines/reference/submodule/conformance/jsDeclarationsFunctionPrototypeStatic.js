@@ -35,6 +35,10 @@ MyClass.staticProperty = 123;
 //// [source.d.ts]
 export = MyClass;
 export type DoneCB = (failures: number) ;
+declare namespace MyClass {
+    const staticMethod: () => void;
+    const staticProperty: 123;
+}
 /**
  * Callback to be invoked when test execution is complete.
  *

@@ -166,3 +166,14 @@ export declare function i(): void;
 export { i as ii };
 export { j as jj };
 export declare function j(): void;
+export declare namespace b {
+    const cat: "cat";
+}
+export declare namespace c {
+    const Cls: {
+        new (): {};
+    };
+}
+export declare namespace f {
+    const self: typeof f;
+}

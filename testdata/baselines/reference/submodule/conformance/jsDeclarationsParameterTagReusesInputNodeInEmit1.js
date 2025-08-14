@@ -62,7 +62,15 @@ export {};
 
 
 //// [base.d.ts]
+declare class Base {
+    constructor();
+}
 export = BaseFactory;
+declare namespace BaseFactory {
+    const Base: {
+        new (): Base;
+    };
+}
 //// [file.d.ts]
 export type BaseFactory = import('./base');
 export type BaseFactoryFactory = (factory: import('./base')) ;

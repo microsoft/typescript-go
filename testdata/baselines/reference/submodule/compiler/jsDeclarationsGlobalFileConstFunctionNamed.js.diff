@@ -9,25 +9,6 @@
 -    x: number;
 -}
 -declare function SomeConstructor2(): void;
--declare namespace SomeConstructor2 {
--    let staticMember: string;
--}
--declare function SomeConstructor3(): void;
--declare namespace SomeConstructor3 {
--    let staticMember_1: string;
--    export { staticMember_1 as staticMember };
--}
--declare class SomeConstructor3 {
--    x: number;
--}
--declare function SelfReference(): SelfReference;
--declare namespace SelfReference {
--    let staticMember_2: string;
--    export { staticMember_2 as staticMember };
--}
--declare class SelfReference {
--    x: number;
--}
 +declare const SomeConstructor: () => void;
 +declare const SomeConstructor2: {
 +    (): void;
@@ -41,3 +22,26 @@
 +    (): any;
 +    staticMember: string;
 +};
+ declare namespace SomeConstructor2 {
+-    let staticMember: string;
++    const staticMember: "str";
+ }
+-declare function SomeConstructor3(): void;
+ declare namespace SomeConstructor3 {
+-    let staticMember_1: string;
+-    export { staticMember_1 as staticMember };
+-}
+-declare class SomeConstructor3 {
+-    x: number;
+-}
+-declare function SelfReference(): SelfReference;
++    const staticMember: "str";
++}
+ declare namespace SelfReference {
+-    let staticMember_2: string;
+-    export { staticMember_2 as staticMember };
+-}
+-declare class SelfReference {
+-    x: number;
++    const staticMember: "str";
+ }

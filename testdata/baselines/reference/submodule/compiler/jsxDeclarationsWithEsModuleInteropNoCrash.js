@@ -26,7 +26,16 @@ export default Foo;
 
 //// [jsxDeclarationsWithEsModuleInteropNoCrash.d.ts]
 /// <reference path="..react16.d.ts" preserve="true" />
+import PropTypes from 'prop-types';
 declare function Foo({ bar }: {
     bar: any;
 }): JSX.Element;
 export default Foo;
+declare namespace Foo {
+    const propTypes: {
+        bar: PropTypes.Requireable<boolean>;
+    };
+    const defaultProps: {
+        bar: boolean;
+    };
+}

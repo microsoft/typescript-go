@@ -18,12 +18,14 @@
 -declare class MyClass {
 -    method(): void;
 -}
--declare namespace MyClass {
++export type DoneCB = (failures: number) ;
+ declare namespace MyClass {
 -    export { staticMethod, staticProperty, DoneCB };
--}
++    const staticMethod: () => void;
++    const staticProperty: 123;
+ }
 -declare function staticMethod(): void;
 -declare var staticProperty: number;
-+export type DoneCB = (failures: number) ;
  /**
   * Callback to be invoked when test execution is complete.
 - */
