@@ -1,6 +1,15 @@
 --- old.commonJSImportClassTypeReference.symbols
 +++ new.commonJSImportClassTypeReference.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -3, +3 lines =@@
+ const { K } = require("./mod1");
+ >K : Symbol(K, Decl(main.js, 0, 7))
+ >require : Symbol(require)
+->"./mod1" : Symbol("mod1", Decl(mod1.js, 0, 0))
++>"./mod1" : Symbol("./mod1", Decl(mod1.js, 0, 0))
+
+ /** @param {K} k */
+ function f(k) {
+@@= skipped -8, +8 lines =@@
  >k : Symbol(k, Decl(main.js, 2, 11))
 
      k.values()
@@ -10,20 +19,11 @@
  }
 
  === mod1.js ===
-@@= skipped -10, +8 lines =@@
- >K : Symbol(K, Decl(mod1.js, 0, 0))
-
-     values() {
-->values : Symbol(K.values, Decl(mod1.js, 0, 9))
-+>values : Symbol(values, Decl(mod1.js, 0, 9))
-
-         return new K()
- >K : Symbol(K, Decl(mod1.js, 0, 0))
-@@= skipped -8, +8 lines =@@
+@@= skipped -18, +16 lines =@@
  }
  exports.K = K;
  >exports.K : Symbol(K, Decl(mod1.js, 4, 1))
 ->exports : Symbol(K, Decl(mod1.js, 4, 1))
-+>exports : Symbol("mod1", Decl(mod1.js, 0, 0))
++>exports : Symbol("./mod1", Decl(mod1.js, 0, 0))
  >K : Symbol(K, Decl(mod1.js, 4, 1))
  >K : Symbol(K, Decl(mod1.js, 0, 0))

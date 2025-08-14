@@ -5,7 +5,7 @@
  >errors : Symbol(errors, Decl(index.js, 1, 5))
  >require : Symbol(require)
 ->"./errors" : Symbol(errors, Decl(errors.js, 0, 0))
-+>"./errors" : Symbol("utils/errors", Decl(errors.js, 0, 0))
++>"./errors" : Symbol("./errors", Decl(errors.js, 0, 0))
 
  module.exports = {
 ->module.exports : Symbol(module.exports, Decl(index.js, 0, 0))
