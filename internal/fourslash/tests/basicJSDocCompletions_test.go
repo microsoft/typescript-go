@@ -39,7 +39,7 @@ function baz(x, { y }) {
 
 /**
  * @param {number} x
- * @param {Object} param1 
+ * @param {object} param1 
  * @param {n/*4*/} param1.y 
  */
 function baz(x, { y }) {
@@ -92,7 +92,7 @@ function baz(x = 0) {
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				"@param",
-				"@param {Object} param1 \n* @param {*} param1.y ",
+				"@param {object} param1 \n* @param {*} param1.y ",
 			},
 		},
 	})
