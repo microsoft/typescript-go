@@ -63,6 +63,7 @@ func newTestSys(tscInput *tscInput) *testSys {
 	if tscInput.windowsStyleRoot != "" {
 		libPath = tscInput.windowsStyleRoot + libPath[1:]
 	}
+	currentWrite := &strings.Builder{}
 	sys := &testSys{
 		fs: &incrementaltestutil.FsHandlingBuildInfo{
 			FS: &testFs{
@@ -71,9 +72,13 @@ func newTestSys(tscInput *tscInput) *testSys {
 		},
 		defaultLibraryPath: libPath,
 		cwd:                cwd,
-		currentWrite:       &strings.Builder{},
-		start:              time.Now(),
-		env:                tscInput.env,
+		currentWrite:       currentWrite,
+		tracer: harnessutil.NewTracerForBaselining(tspath.ComparePathsOptions{
+			UseCaseSensitiveFileNames: !tscInput.ignoreCase,
+			CurrentDirectory:          cwd,
+		}, currentWrite),
+		start: time.Now(),
+		env:   tscInput.env,
 	}
 
 	// Ensure the default library file is present
@@ -101,6 +106,7 @@ type snapshot struct {
 
 type testSys struct {
 	currentWrite   *strings.Builder
+	tracer         *harnessutil.TracerForBaselining
 	serializedDiff *snapshot
 
 	fs                 *incrementaltestutil.FsHandlingBuildInfo
@@ -194,6 +200,14 @@ func (s *testSys) OnStatisticsEnd() {
 	fmt.Fprintln(s.Writer(), statisticsEnd)
 }
 
+func (s *testSys) GetTrace() func(str string) {
+	return func(str string) {
+		fmt.Fprintln(s.currentWrite, traceStart)
+		defer fmt.Fprintln(s.currentWrite, traceEnd)
+		s.tracer.Trace(str)
+	}
+}
+
 func (s *testSys) baselineProgram(baseline *strings.Builder, program *incremental.Program, watcher *execute.Watcher) {
 	if watcher != nil {
 		program = watcher.GetProgram()
@@ -257,6 +271,8 @@ var (
 	listFileEnd     = "!!! List files end"
 	statisticsStart = "!!! Statistics start"
 	statisticsEnd   = "!!! Statistics end"
+	traceStart      = "!!! Trace start"
+	traceEnd        = "!!! Trace end"
 )
 
 func (s *testSys) baselineOutput(baseline io.Writer) {
@@ -296,7 +312,8 @@ func (o *outputSanitizer) transformLines() string {
 			continue
 		}
 		if !o.addOrSkipLinesForComparing(listFileStart, listFileEnd, false) &&
-			!o.addOrSkipLinesForComparing(statisticsStart, statisticsEnd, true) {
+			!o.addOrSkipLinesForComparing(statisticsStart, statisticsEnd, true) &&
+			!o.addOrSkipLinesForComparing(traceStart, traceEnd, false) {
 			o.addOutputLine(line)
 		}
 	}
@@ -335,6 +352,7 @@ func (s *testSys) getOutput(forComparing bool) string {
 
 func (s *testSys) clearOutput() {
 	s.currentWrite.Reset()
+	s.tracer.Reset()
 }
 
 func (s *testSys) baselineFSwithDiff(baseline io.Writer) {

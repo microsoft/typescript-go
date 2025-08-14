@@ -42,7 +42,7 @@ func createWatcher(sys System, configParseResult *tsoptions.ParsedCommandLine, r
 }
 
 func (w *Watcher) start() {
-	w.host = compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), nil, getTraceFromSys(w.sys))
+	w.host = compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), nil, getTraceFromSys(w.sys, w.testing))
 	w.program = incremental.ReadBuildInfoProgram(w.options, incremental.NewBuildInfoReader(w.host), w.host)
 
 	if w.testing == nil {
@@ -93,8 +93,8 @@ func (w *Watcher) compileAndEmit() {
 
 func (w *Watcher) hasErrorsInTsConfig() bool {
 	// only need to check and reparse tsconfig options/update host if we are watching a config file
+	extendedConfigCache := collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]{}
 	if w.configFileName != "" {
-		extendedConfigCache := collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]{}
 		// !!! need to check that this merges compileroptions correctly. This differs from non-watch, since we allow overriding of previous options
 		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(w.configFileName, &core.CompilerOptions{}, w.sys, &extendedConfigCache)
 		if len(errors) > 0 {
@@ -109,8 +109,8 @@ func (w *Watcher) hasErrorsInTsConfig() bool {
 			w.configModified = true
 		}
 		w.options = configParseResult
-		w.host = compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), &extendedConfigCache, getTraceFromSys(w.sys))
 	}
+	w.host = compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), &extendedConfigCache, getTraceFromSys(w.sys, w.testing))
 	return false
 }
 
