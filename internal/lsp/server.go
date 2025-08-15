@@ -5,13 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
-	"os/signal"
 	"runtime/debug"
 	"slices"
 	"sync"
 	"sync/atomic"
-	"syscall"
 
 	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -249,10 +246,7 @@ func (s *Server) RefreshDiagnostics(ctx context.Context) error {
 	return nil
 }
 
-func (s *Server) Run() error {
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-	defer stop()
-
+func (s *Server) Run(ctx context.Context) error {
 	g, ctx := errgroup.WithContext(ctx)
 	g.Go(func() error { return s.dispatchLoop(ctx) })
 	g.Go(func() error { return s.writeLoop(ctx) })
