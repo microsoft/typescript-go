@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -16,13 +16,17 @@ func TestCompletionEntryForPropertyConstrainedToString(t *testing.T) {
 
 test({ type: /*ts*/ })`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, []string{"ts"}, &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, []string{"ts"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Includes: []fourslash.ExpectedCompletionItem{"\"a\"", "\"b\""},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				"\"a\"",
+				"\"b\"",
+			},
 		},
 	})
 }

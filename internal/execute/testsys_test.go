@@ -1,67 +1,183 @@
 package execute_test
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"io/fs"
 	"maps"
 	"slices"
+	"strconv"
 	"strings"
+	"sync"
 	"time"
 
-	"github.com/microsoft/typescript-go/internal/bundled"
+	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/execute"
+	"github.com/microsoft/typescript-go/internal/incremental"
+	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
+	"github.com/microsoft/typescript-go/internal/testutil/incrementaltestutil"
+	"github.com/microsoft/typescript-go/internal/testutil/stringtestutil"
+	"github.com/microsoft/typescript-go/internal/tsoptions"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/iovfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
 
-type FileMap map[string]string
+type FileMap map[string]any
 
-func newTestSys(fileOrFolderList FileMap, cwd string, args ...string) *testSys {
+var tscLibPath = "/home/src/tslibs/TS/Lib"
+
+var tscDefaultLibContent = stringtestutil.Dedent(`
+/// <reference no-default-lib="true"/>
+interface Boolean {}
+interface Function {}
+interface CallableFunction {}
+interface NewableFunction {}
+interface IArguments {}
+interface Number { toExponential: any; }
+interface Object {}
+interface RegExp {}
+interface String { charAt: any; }
+interface Array<T> { length: number; [n: number]: T; }
+interface ReadonlyArray<T> {}
+interface SymbolConstructor {
+    (desc?: string | number): symbol;
+    for(name: string): symbol;
+    readonly toStringTag: symbol;
+}
+declare var Symbol: SymbolConstructor;
+interface Symbol {
+    readonly [Symbol.toStringTag]: string;
+}
+declare const console: { log(msg: any): void; };
+`)
+
+type TestClock struct {
+	start time.Time
+	now   time.Time
+	nowMu sync.Mutex
+}
+
+func (t *TestClock) Now() time.Time {
+	t.nowMu.Lock()
+	defer t.nowMu.Unlock()
+	if t.now.IsZero() {
+		t.now = t.start
+	}
+	t.now = t.now.Add(1 * time.Second) // Simulate some time passing
+	return t.now
+}
+
+func (t *TestClock) SinceStart() time.Duration {
+	return t.Now().Sub(t.start)
+}
+
+func newTestSys(tscInput *tscInput) *testSys {
+	cwd := tscInput.cwd
 	if cwd == "" {
 		cwd = "/home/src/workspaces/project"
 	}
-	return &testSys{
-		fs:                 bundled.WrapFS(vfstest.FromMap(fileOrFolderList, true /*useCaseSensitiveFileNames*/)),
-		defaultLibraryPath: bundled.LibPath(),
-		cwd:                cwd,
-		files:              slices.Collect(maps.Keys(fileOrFolderList)),
-		output:             []string{},
-		currentWrite:       &strings.Builder{},
-		start:              time.Now(),
+	libPath := tscLibPath
+	if tscInput.windowsStyleRoot != "" {
+		libPath = tscInput.windowsStyleRoot + libPath[1:]
 	}
+	currentWrite := &strings.Builder{}
+	clock := &TestClock{start: time.Now()}
+	sys := &testSys{
+		fs: &incrementaltestutil.FsHandlingBuildInfo{
+			FS: &testFs{
+				FS: vfstest.FromMapWithClock(tscInput.files, !tscInput.ignoreCase, clock),
+			},
+		},
+		defaultLibraryPath: libPath,
+		cwd:                cwd,
+		currentWrite:       currentWrite,
+		tracer: harnessutil.NewTracerForBaselining(tspath.ComparePathsOptions{
+			UseCaseSensitiveFileNames: !tscInput.ignoreCase,
+			CurrentDirectory:          cwd,
+		}, currentWrite),
+		clock: clock,
+		env:   tscInput.env,
+	}
+
+	// Ensure the default library file is present
+	sys.ensureLibPathExists("lib.d.ts")
+	for _, libFile := range tsoptions.TargetToLibMap() {
+		sys.ensureLibPathExists(libFile)
+	}
+	for libFile := range tsoptions.LibFilesSet.Keys() {
+		sys.ensureLibPathExists(libFile)
+	}
+	return sys
+}
+
+type diffEntry struct {
+	content       string
+	mTime         time.Time
+	isWritten     bool
+	symlinkTarget string
+}
+
+type snapshot struct {
+	snap        map[string]*diffEntry
+	defaultLibs *collections.SyncSet[string]
 }
 
 type testSys struct {
-	// todo: original has write to output as a string[] because the separations are needed for baselining
-	output         []string
 	currentWrite   *strings.Builder
-	serializedDiff map[string]string
+	tracer         *harnessutil.TracerForBaselining
+	serializedDiff *snapshot
 
-	fs                 vfs.FS
+	fs                 *incrementaltestutil.FsHandlingBuildInfo
 	defaultLibraryPath string
 	cwd                string
-	files              []string
-
-	start time.Time
+	env                map[string]string
+	clock              *TestClock
 }
 
-func (s *testSys) IsTestDone() bool {
-	// todo: test is done if there are no edits left. Edits are not yet implemented
-	return true
-}
+var (
+	_ execute.System             = (*testSys)(nil)
+	_ execute.CommandLineTesting = (*testSys)(nil)
+)
 
 func (s *testSys) Now() time.Time {
-	// todo: make a "test time" structure
-	return time.Now()
+	return s.clock.Now()
 }
 
 func (s *testSys) SinceStart() time.Duration {
-	return time.Since(s.start)
+	return s.clock.SinceStart()
 }
 
 func (s *testSys) FS() vfs.FS {
 	return s.fs
+}
+
+func (s *testSys) testFs() *testFs {
+	return s.fs.FS.(*testFs)
+}
+
+func (s *testSys) fsFromFileMap() iovfs.FsWithSys {
+	return s.testFs().FS.(iovfs.FsWithSys)
+}
+
+func (s *testSys) mapFs() *vfstest.MapFS {
+	return s.fsFromFileMap().FSys().(*vfstest.MapFS)
+}
+
+func (s *testSys) ensureLibPathExists(path string) {
+	path = s.defaultLibraryPath + "/" + path
+	if _, ok := s.fsFromFileMap().ReadFile(path); !ok {
+		if s.testFs().defaultLibs == nil {
+			s.testFs().defaultLibs = &collections.SyncSet[string]{}
+		}
+		s.testFs().defaultLibs.Add(path)
+		err := s.fsFromFileMap().WriteFile(path, tscDefaultLibContent, false)
+		if err != nil {
+			panic("Failed to write default library file: " + err.Error())
+		}
+	}
 }
 
 func (s *testSys) DefaultLibraryPath() string {
@@ -72,18 +188,89 @@ func (s *testSys) GetCurrentDirectory() string {
 	return s.cwd
 }
 
-func (s *testSys) NewLine() string {
-	return "\n"
-}
-
 func (s *testSys) Writer() io.Writer {
 	return s.currentWrite
 }
 
-func (s *testSys) EndWrite() {
-	// todo: revisit if improving tsc/build/watch unittest baselines
-	s.output = append(s.output, s.currentWrite.String())
-	s.currentWrite.Reset()
+func (s *testSys) WriteOutputIsTTY() bool {
+	return true
+}
+
+func (s *testSys) GetWidthOfTerminal() int {
+	if widthStr := s.GetEnvironmentVariable("TS_TEST_TERMINAL_WIDTH"); widthStr != "" {
+		return core.Must(strconv.Atoi(widthStr))
+	}
+	return 0
+}
+
+func (s *testSys) GetEnvironmentVariable(name string) string {
+	return s.env[name]
+}
+
+func (s *testSys) OnListFilesStart() {
+	fmt.Fprintln(s.Writer(), listFileStart)
+}
+
+func (s *testSys) OnListFilesEnd() {
+	fmt.Fprintln(s.Writer(), listFileEnd)
+}
+
+func (s *testSys) OnStatisticsStart() {
+	fmt.Fprintln(s.Writer(), statisticsStart)
+}
+
+func (s *testSys) OnStatisticsEnd() {
+	fmt.Fprintln(s.Writer(), statisticsEnd)
+}
+
+func (s *testSys) GetTrace() func(str string) {
+	return func(str string) {
+		fmt.Fprintln(s.currentWrite, traceStart)
+		defer fmt.Fprintln(s.currentWrite, traceEnd)
+		s.tracer.Trace(str)
+	}
+}
+
+func (s *testSys) baselineProgram(baseline *strings.Builder, program *incremental.Program, watcher *execute.Watcher) {
+	if watcher != nil {
+		program = watcher.GetProgram()
+	}
+	if program == nil {
+		return
+	}
+
+	testingData := program.GetTestingData(program.GetProgram())
+	if testingData.ConfigFilePath != "" {
+		baseline.WriteString(tspath.GetRelativePathFromDirectory(s.cwd, testingData.ConfigFilePath, tspath.ComparePathsOptions{
+			UseCaseSensitiveFileNames: s.FS().UseCaseSensitiveFileNames(),
+			CurrentDirectory:          s.GetCurrentDirectory(),
+		}) + "::\n")
+	}
+	baseline.WriteString("SemanticDiagnostics::\n")
+	for _, file := range program.GetProgram().GetSourceFiles() {
+		if diagnostics, ok := testingData.SemanticDiagnosticsPerFile.Load(file.Path()); ok {
+			if oldDiagnostics, ok := testingData.OldProgramSemanticDiagnosticsPerFile.Load(file.Path()); !ok || oldDiagnostics != diagnostics {
+				baseline.WriteString("*refresh*    " + file.FileName() + "\n")
+			}
+		} else {
+			baseline.WriteString("*not cached* " + file.FileName() + "\n")
+		}
+	}
+
+	// Write signature updates
+	baseline.WriteString("Signatures::\n")
+	for _, file := range program.GetProgram().GetSourceFiles() {
+		if kind, ok := testingData.UpdatedSignatureKinds[file.Path()]; ok {
+			switch kind {
+			case incremental.SignatureUpdateKindComputedDts:
+				baseline.WriteString("(computed .d.ts) " + file.FileName() + "\n")
+			case incremental.SignatureUpdateKindStoredAtEmit:
+				baseline.WriteString("(stored at emit) " + file.FileName() + "\n")
+			case incremental.SignatureUpdateKindUsedVersion:
+				baseline.WriteString("(used version)   " + file.FileName() + "\n")
+			}
+		}
+	}
 }
 
 func (s *testSys) serializeState(baseline *strings.Builder) {
@@ -97,69 +284,209 @@ func (s *testSys) serializeState(baseline *strings.Builder) {
 	// this.service?.baseline();
 }
 
+var (
+	fakeTimeStamp = "HH:MM:SS AM"
+	fakeDuration  = "d.ddds"
+
+	buildStartingAt = "build starting at "
+	buildFinishedIn = "build finished in "
+	listFileStart   = "!!! List files start"
+	listFileEnd     = "!!! List files end"
+	statisticsStart = "!!! Statistics start"
+	statisticsEnd   = "!!! Statistics end"
+	traceStart      = "!!! Trace start"
+	traceEnd        = "!!! Trace end"
+)
+
 func (s *testSys) baselineOutput(baseline io.Writer) {
 	fmt.Fprint(baseline, "\nOutput::\n")
-	if len(s.output) == 0 {
-		fmt.Fprint(baseline, "No output\n")
-		return
+	output := s.getOutput(false)
+	fmt.Fprint(baseline, output)
+}
+
+type outputSanitizer struct {
+	forComparing bool
+	lines        []string
+	index        int
+	outputLines  []string
+}
+
+func (o *outputSanitizer) addOutputLine(s string) {
+	o.outputLines = append(o.outputLines, s)
+}
+
+func (o *outputSanitizer) transformLines() string {
+	for ; o.index < len(o.lines); o.index++ {
+		line := o.lines[o.index]
+		if change := strings.Replace(line, "Version "+core.Version(), "Version "+harnessutil.FakeTSVersion, 1); change != line {
+			o.addOutputLine(change)
+			continue
+		}
+		if strings.HasPrefix(line, buildStartingAt) {
+			if !o.forComparing {
+				o.addOutputLine(buildStartingAt + fakeTimeStamp)
+			}
+			continue
+		}
+		if strings.HasPrefix(line, buildFinishedIn) {
+			if !o.forComparing {
+				o.addOutputLine(buildFinishedIn + fakeDuration)
+			}
+			continue
+		}
+		if !o.addOrSkipLinesForComparing(listFileStart, listFileEnd, false) &&
+			!o.addOrSkipLinesForComparing(statisticsStart, statisticsEnd, true) &&
+			!o.addOrSkipLinesForComparing(traceStart, traceEnd, false) {
+			o.addOutputLine(line)
+		}
 	}
-	// todo screen clears
-	s.printOutputs(baseline)
-	s.output = []string{}
+	return strings.Join(o.outputLines, "\n")
+}
+
+func (o *outputSanitizer) addOrSkipLinesForComparing(
+	lineStart string,
+	lineEnd string,
+	skipEvenIfNotComparing bool,
+) bool {
+	if o.lines[o.index] != lineStart {
+		return false
+	}
+	o.index++
+	for ; o.index < len(o.lines); o.index++ {
+		if o.lines[o.index] == lineEnd {
+			return true
+		}
+		if !o.forComparing && !skipEvenIfNotComparing {
+			o.addOutputLine(o.lines[o.index])
+		}
+	}
+	panic("Expected lineEnd" + lineEnd + " not found after " + lineStart)
+}
+
+func (s *testSys) getOutput(forComparing bool) string {
+	lines := strings.Split(s.currentWrite.String(), "\n")
+	transformer := &outputSanitizer{
+		forComparing: forComparing,
+		lines:        lines,
+		outputLines:  make([]string, 0, len(lines)),
+	}
+	return transformer.transformLines()
+}
+
+func (s *testSys) clearOutput() {
+	s.currentWrite.Reset()
+	s.tracer.Reset()
 }
 
 func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 	// todo: baselines the entire fs, possibly doesn't correctly diff all cases of emitted files, since emit isn't fully implemented and doesn't always emit the same way as strada
-	snap := map[string]string{}
+	snap := map[string]*diffEntry{}
 
-	err := s.FS().WalkDir("/", func(path string, d vfs.DirEntry, e error) error {
-		if e != nil {
-			return e
+	testFs := s.testFs()
+	diffs := map[string]string{}
+
+	for path, file := range s.mapFs().Entries() {
+		if file.Mode&fs.ModeSymlink != 0 {
+			target, ok := s.mapFs().GetTargetOfSymlink(path)
+			if !ok {
+				panic("Failed to resolve symlink target: " + path)
+			}
+			newEntry := &diffEntry{symlinkTarget: target}
+			snap[path] = newEntry
+			s.addFsEntryDiff(diffs, newEntry, path)
+			continue
+		} else if file.Mode.IsRegular() {
+			newEntry := &diffEntry{content: string(file.Data), mTime: file.ModTime, isWritten: testFs.writtenFiles.Has(path)}
+			snap[path] = newEntry
+			s.addFsEntryDiff(diffs, newEntry, path)
 		}
-
-		if !d.Type().IsRegular() {
-			return nil
-		}
-
-		newContents, ok := s.FS().ReadFile(path)
-		if !ok {
-			return nil
-		}
-		snap[path] = newContents
-		reportFSEntryDiff(baseline, s.serializedDiff[path], newContents, path)
-
-		return nil
-	})
-	if err != nil && !errors.Is(err, fs.ErrNotExist) {
-		panic("walkdir error during diff: " + err.Error())
 	}
-	for path, oldDirContents := range s.serializedDiff {
-		if s.FS().FileExists(path) {
-			_, ok := s.FS().ReadFile(path)
+	if s.serializedDiff != nil {
+		for path := range s.serializedDiff.snap {
+			_, ok := s.fsFromFileMap().ReadFile(path)
 			if !ok {
 				// report deleted
-				reportFSEntryDiff(baseline, oldDirContents, "", path)
+				s.addFsEntryDiff(diffs, nil, path)
 			}
 		}
 	}
-	s.serializedDiff = snap
+	var defaultLibs collections.SyncSet[string]
+	if s.testFs().defaultLibs != nil {
+		s.testFs().defaultLibs.Range(func(libPath string) bool {
+			defaultLibs.Add(libPath)
+			return true
+		})
+	}
+	s.serializedDiff = &snapshot{
+		snap:        snap,
+		defaultLibs: &defaultLibs,
+	}
+	diffKeys := slices.Collect(maps.Keys(diffs))
+	slices.Sort(diffKeys)
+	for _, path := range diffKeys {
+		fmt.Fprint(baseline, "//// ["+path+"] ", diffs[path], "\n")
+	}
 	fmt.Fprintln(baseline)
+	testFs.writtenFiles = collections.SyncSet[string]{} // Reset written files after baseline
 }
 
-func reportFSEntryDiff(baseline io.Writer, oldDirContent string, newDirContent string, path string) {
+func (s *testSys) addFsEntryDiff(diffs map[string]string, newDirContent *diffEntry, path string) {
+	var oldDirContent *diffEntry
+	var defaultLibs *collections.SyncSet[string]
+	if s.serializedDiff != nil {
+		oldDirContent = s.serializedDiff.snap[path]
+		defaultLibs = s.serializedDiff.defaultLibs
+	}
 	// todo handle more cases of fs changes
-	if oldDirContent == "" {
-		fmt.Fprint(baseline, "//// [", path, "] new file\n", newDirContent, "\n")
-	} else if newDirContent == "" {
-		fmt.Fprint(baseline, "//// [", path, "] deleted\n")
-	} else if newDirContent == oldDirContent {
-		fmt.Fprint(baseline, "//// [", path, "] no change\n")
-	} else {
-		fmt.Fprint(baseline, "//// [", path, "] modified. new content:\n", newDirContent, "\n")
+	if oldDirContent == nil {
+		if s.testFs().defaultLibs == nil || !s.testFs().defaultLibs.Has(path) {
+			if newDirContent.symlinkTarget != "" {
+				diffs[path] = "-> " + newDirContent.symlinkTarget + " *new*"
+			} else {
+				diffs[path] = "*new* \n" + newDirContent.content
+			}
+		}
+	} else if newDirContent == nil {
+		diffs[path] = "*deleted*"
+	} else if newDirContent.content != oldDirContent.content {
+		diffs[path] = "*modified* \n" + newDirContent.content
+	} else if newDirContent.isWritten {
+		diffs[path] = "*rewrite with same content*"
+	} else if newDirContent.mTime != oldDirContent.mTime {
+		diffs[path] = "*mTime changed*"
+	} else if defaultLibs != nil && defaultLibs.Has(path) && s.testFs().defaultLibs != nil && !s.testFs().defaultLibs.Has(path) {
+		// Lib file that was read
+		diffs[path] = "*Lib*\n" + newDirContent.content
 	}
 }
 
-func (s *testSys) printOutputs(baseline io.Writer) {
-	// todo sanitize sys output
-	fmt.Fprint(baseline, strings.Join(s.output, "\n"))
+func (s *testSys) writeFileNoError(path string, content string, writeByteOrderMark bool) {
+	if err := s.fsFromFileMap().WriteFile(path, content, writeByteOrderMark); err != nil {
+		panic(err)
+	}
+}
+
+func (s *testSys) replaceFileText(path string, oldText string, newText string) {
+	content, ok := s.fsFromFileMap().ReadFile(path)
+	if !ok {
+		panic("File not found: " + path)
+	}
+	content = strings.Replace(content, oldText, newText, 1)
+	s.writeFileNoError(path, content, false)
+}
+
+func (s *testSys) appendFile(path string, text string) {
+	content, ok := s.fsFromFileMap().ReadFile(path)
+	if !ok {
+		panic("File not found: " + path)
+	}
+	s.writeFileNoError(path, content+text, false)
+}
+
+func (s *testSys) prependFile(path string, text string) {
+	content, ok := s.fsFromFileMap().ReadFile(path)
+	if !ok {
+		panic("File not found: " + path)
+	}
+	s.writeFileNoError(path, text+content, false)
 }

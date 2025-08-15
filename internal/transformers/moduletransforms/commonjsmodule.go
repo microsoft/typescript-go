@@ -229,8 +229,7 @@ func (tx *CommonJSModuleTransformer) visitAssignmentPatternNoStack(node *ast.Nod
 func (tx *CommonJSModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 	if node.IsDeclarationFile ||
 		!(ast.IsEffectiveExternalModule(node, tx.compilerOptions) ||
-			node.SubtreeFacts()&ast.SubtreeContainsDynamicImport != 0 ||
-			ast.IsJsonSourceFile(node) && tx.compilerOptions.HasJsonModuleEmitEnabled() && len(tx.compilerOptions.OutFile) > 0) {
+			node.SubtreeFacts()&ast.SubtreeContainsDynamicImport != 0) {
 		return node.AsNode()
 	}
 
@@ -363,7 +362,7 @@ func (tx *CommonJSModuleTransformer) transformCommonJSModule(node *ast.SourceFil
 
 	statementList := tx.Factory().NewNodeList(statements)
 	statementList.Loc = node.Statements.Loc
-	result := tx.Factory().UpdateSourceFile(node, statementList).AsSourceFile()
+	result := tx.Factory().UpdateSourceFile(node, statementList, node.EndOfFileToken).AsSourceFile()
 	tx.EmitContext().AddEmitHelper(result.AsNode(), tx.EmitContext().ReadEmitHelpers()...)
 
 	externalHelpersImportDeclaration := createExternalHelpersImportDeclarationIfNeeded(tx.EmitContext(), result, tx.compilerOptions, tx.getEmitModuleFormatOfFile(node), false /*hasExportStarsToExportValues*/, false /*hasImportStar*/, false /*hasImportDefault*/)
@@ -376,7 +375,7 @@ func (tx *CommonJSModuleTransformer) transformCommonJSModule(node *ast.SourceFil
 		statements = append(statements, rest...)
 		statementList := tx.Factory().NewNodeList(statements)
 		statementList.Loc = result.Statements.Loc
-		result = tx.Factory().UpdateSourceFile(result, statementList).AsSourceFile()
+		result = tx.Factory().UpdateSourceFile(result, statementList, node.EndOfFileToken).AsSourceFile()
 	}
 
 	return result.AsNode()
@@ -627,6 +626,7 @@ func (tx *CommonJSModuleTransformer) createExportExpression(name *ast.ModuleExpo
 								nil, /*typeParameters*/
 								tx.Factory().NewNodeList([]*ast.Node{}),
 								nil, /*type*/
+								nil, /*fullSignature*/
 								tx.Factory().NewBlock(
 									tx.Factory().NewNodeList([]*ast.Node{
 										tx.Factory().NewReturnStatement(value),
@@ -947,6 +947,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelFunctionDeclaration(node *ast.
 			nil, /*typeParameters*/
 			tx.Visitor().VisitNodes(node.Parameters),
 			nil, /*type*/
+			nil, /*fullSignature*/
 			tx.Visitor().VisitNode(node.Body),
 		)
 	} else {
@@ -1513,6 +1514,7 @@ func (tx *CommonJSModuleTransformer) visitDestructuringAssignmentTargetNoStack(n
 				nil, /*typeParameters*/
 				tx.Factory().NewNodeList([]*ast.Node{param}),
 				nil, /*returnType*/
+				nil, /*fullSignature*/
 				tx.Factory().NewBlock(statementList, false /*multiLine*/),
 			)
 			propertyList := tx.Factory().NewNodeList([]*ast.Node{valueSetter})
@@ -1786,6 +1788,7 @@ func (tx *CommonJSModuleTransformer) createImportCallExpressionCommonJS(arg *ast
 		nil, /*typeParameters*/
 		tx.Factory().NewNodeList(parameters),
 		nil, /*type*/
+		nil, /*fullSignature*/
 		tx.Factory().NewToken(ast.KindEqualsGreaterThanToken), /*equalsGreaterThanToken*/
 		requireCall,
 	)

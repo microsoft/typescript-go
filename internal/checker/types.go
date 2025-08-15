@@ -10,7 +10,7 @@ import (
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=SignatureKind -output=stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w stringer_generated.go
+//go:generate go tool mvdan.cc/gofumpt -lang=go1.25 -w stringer_generated.go
 
 // ParseFlags
 
@@ -295,34 +295,6 @@ const (
 	AccessFlagsSuppressNoImplicitAnyError AccessFlags = 1 << 7
 	AccessFlagsContextual                 AccessFlags = 1 << 8
 	AccessFlagsPersistent                             = AccessFlagsIncludeUndefined
-)
-
-type AssignmentDeclarationKind = int32
-
-const (
-	AssignmentDeclarationKindNone = AssignmentDeclarationKind(iota)
-	/// exports.name = expr
-	/// module.exports.name = expr
-	AssignmentDeclarationKindExportsProperty
-	/// module.exports = expr
-	AssignmentDeclarationKindModuleExports
-	/// className.prototype.name = expr
-	AssignmentDeclarationKindPrototypeProperty
-	/// this.name = expr
-	AssignmentDeclarationKindThisProperty
-	// F.name = expr
-	AssignmentDeclarationKindProperty
-	// F.prototype = { ... }
-	AssignmentDeclarationKindPrototype
-	// Object.defineProperty(x, 'name', { value: any, writable?: boolean (false by default) });
-	// Object.defineProperty(x, 'name', { get: Function, set: Function });
-	// Object.defineProperty(x, 'name', { get: Function });
-	// Object.defineProperty(x, 'name', { set: Function });
-	AssignmentDeclarationKindObjectDefinePropertyValue
-	// Object.defineProperty(exports || module.exports, 'name', ...);
-	AssignmentDeclarationKindObjectDefinePropertyExports
-	// Object.defineProperty(Foo.prototype, 'name', ...);
-	AssignmentDeclarationKindObjectDefinePrototypeProperty
 )
 
 type NodeCheckFlags uint32

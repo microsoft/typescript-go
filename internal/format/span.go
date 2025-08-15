@@ -467,7 +467,7 @@ func (w *formatSpanWorker) processChildNodes(
 					// }: {};
 					indentationOnListStartToken = w.indentationOnLastIndentedLine
 				} else {
-					startLinePosition := getLineStartPositionForPosition(tokenInfo.token.Loc.Pos(), w.sourceFile)
+					startLinePosition := GetLineStartPositionForPosition(tokenInfo.token.Loc.Pos(), w.sourceFile)
 					indentationOnListStartToken = findFirstNonWhitespaceColumn(startLinePosition, tokenInfo.token.Loc.Pos(), w.sourceFile, w.formattingContext.Options)
 				}
 
@@ -577,7 +577,7 @@ func (w *formatSpanWorker) tryComputeIndentationForListItem(startPos int, endPos
 		}
 	} else {
 		startLine, _ := scanner.GetLineAndCharacterOfPosition(w.sourceFile, startPos)
-		startLinePosition := getLineStartPositionForPosition(startPos, w.sourceFile)
+		startLinePosition := GetLineStartPositionForPosition(startPos, w.sourceFile)
 		column := findFirstNonWhitespaceColumn(startLinePosition, startPos, w.sourceFile, w.formattingContext.Options)
 		if startLine != parentStartLine || startPos == column {
 			// Use the base indent size if it is greater than
@@ -922,7 +922,7 @@ func (w *formatSpanWorker) indentMultilineComment(commentRange core.TextRange, i
 	for line := startLine; line < endLine; line++ {
 		endOfLine := scanner.GetEndLinePosition(w.sourceFile, line)
 		parts = append(parts, core.NewTextRange(startPos, endOfLine))
-		startPos = int(scanner.GetLineStarts(w.sourceFile)[line])
+		startPos = int(scanner.GetLineStarts(w.sourceFile)[line+1])
 	}
 
 	if indentFinalLine {

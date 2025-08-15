@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -27,13 +28,25 @@ namespace N {
 declare const i: N.I;
 i[|./**/|];`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{&lsproto.CompletionItem{Label: "M", InsertText: ptrTo("[M]")}},
+		Items: &fourslash.CompletionsExpectedItems{
+			Exact: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label:      "M",
+					InsertText: PtrTo("[M]"),
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "M",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
+				},
+			},
 		},
 	})
 }

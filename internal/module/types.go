@@ -14,7 +14,6 @@ import (
 type ResolutionHost interface {
 	FS() vfs.FS
 	GetCurrentDirectory() string
-	Trace(msg string)
 }
 
 type ModeAwareCacheKey struct {
@@ -63,7 +62,7 @@ func (p *PackageId) PackageName() string {
 type LookupLocations struct {
 	FailedLookupLocations []string
 	AffectingLocations    []string
-	ResolutionDiagnostics []ast.Diagnostic
+	ResolutionDiagnostics []*ast.Diagnostic
 }
 
 type ResolvedModule struct {

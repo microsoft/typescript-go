@@ -76,6 +76,10 @@ func (p *fakeProgram) GetRedirectTargets(path tspath.Path) []string {
 	return nil
 }
 
+func (p *fakeProgram) GetSourceOfProjectReferenceIfOutputIncluded(file ast.HasFileName) string {
+	return ""
+}
+
 func (p *fakeProgram) GetOutputAndProjectReference(path tspath.Path) *tsoptions.OutputDtsAndProjectReference {
 	return nil
 }
@@ -154,6 +158,10 @@ func (p *fakeProgram) GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleRefe
 
 func (p *fakeProgram) GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule] {
 	panic("unimplemented")
+}
+
+func (p *fakeProgram) IsSourceFileDefaultLibrary(path tspath.Path) bool {
+	return false
 }
 
 func TestImportElision(t *testing.T) {
@@ -237,7 +245,7 @@ func TestImportElision(t *testing.T) {
 				},
 			})
 
-			emitResolver := c.GetEmitResolver(file, false /*skipDiagnostics*/)
+			emitResolver := c.GetEmitResolver()
 			emitResolver.MarkLinkedReferencesRecursively(file)
 
 			emitContext := printer.NewEmitContext()

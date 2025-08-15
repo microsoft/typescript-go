@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -23,31 +23,41 @@ const a3 = <Foo b="somethingelse"/*3*/ />
 const a4 = <Foo b={"somethingelse"} /*4*/ />
 const a5 = <Foo b={"somethingelse"} c={0} /*5*/ />`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, []string{"1", "2"}, &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, []string{"1", "2"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{"somethingelse"},
+		Items: &fourslash.CompletionsExpectedItems{
+			Exact: []fourslash.CompletionsExpectedItem{
+				"somethingelse",
+			},
 		},
 	})
-	f.VerifyCompletions(t, []string{"3", "4"}, &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, []string{"3", "4"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Excludes: []string{"\"somethingelse\""},
+		Items: &fourslash.CompletionsExpectedItems{
+			Excludes: []string{
+				"\"somethingelse\"",
+			},
 		},
 	})
-	f.VerifyCompletions(t, []string{"5"}, &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, []string{"5"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Excludes: []string{"0", "1"},
+		Items: &fourslash.CompletionsExpectedItems{
+			Excludes: []string{
+				"0",
+				"1",
+			},
 		},
 	})
 }

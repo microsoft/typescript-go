@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -24,63 +24,102 @@ func TestCompletionsUnionStringLiteralProperty(t *testing.T) {
  const baz3: Baz = { x: 0, y: 1, z: '/*5*/' };
  const baz4: Baz = { x: 2, y: 1, z: '/*6*/' };`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "1", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Includes: []fourslash.ExpectedCompletionItem{"x", "y"},
-			Excludes: []string{"z"},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				"x",
+				"y",
+			},
+			Excludes: []string{
+				"z",
+			},
 		},
 	})
-	f.VerifyCompletions(t, "2", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "2", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Includes: []fourslash.ExpectedCompletionItem{"fx", "fy"},
-			Excludes: []string{"fz"},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				"fx",
+				"fy",
+			},
+			Excludes: []string{
+				"fz",
+			},
 		},
 	})
-	f.VerifyCompletions(t, "3", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "3", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Includes: []fourslash.ExpectedCompletionItem{"a", "b", "c", "d"},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				"a",
+				"b",
+				"c",
+				"d",
+			},
 		},
 	})
-	f.VerifyCompletions(t, "4", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "4", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Includes: []fourslash.ExpectedCompletionItem{"a", "b"},
-			Excludes: []string{"c", "d"},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				"a",
+				"b",
+			},
+			Excludes: []string{
+				"c",
+				"d",
+			},
 		},
 	})
-	f.VerifyCompletions(t, "5", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "5", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Includes: []fourslash.ExpectedCompletionItem{"b"},
-			Excludes: []string{"a", "c", "d"},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				"b",
+			},
+			Excludes: []string{
+				"a",
+				"c",
+				"d",
+			},
 		},
 	})
-	f.VerifyCompletions(t, "6", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "6", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Includes: []fourslash.ExpectedCompletionItem{"b", "d"},
-			Excludes: []string{"a", "c"},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				"b",
+				"d",
+			},
+			Excludes: []string{
+				"a",
+				"c",
+			},
 		},
 	})
 }

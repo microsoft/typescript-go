@@ -33,6 +33,7 @@
 +    static y: string;
  }
 +export default Cls;
++export type default = string | number;
 +/**
 + * @typedef {string | number} default
 + */
@@ -40,6 +41,7 @@
 +// merge type alias and class (error message improvement needed, see #32368)
  export default class C {
  }
++export type default = string | number;
 +/**
 + * @typedef {string | number} default
 + */
@@ -49,6 +51,7 @@
 +declare const x = 12;
  export { x as default };
 -declare const x: 12;
++export type default = string | number;
 +/**
 + * @typedef {string | number} default
 + */

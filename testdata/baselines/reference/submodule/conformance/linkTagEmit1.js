@@ -55,4 +55,5 @@ export type D1 = {
     m: 1;
 };
 export type Z = number;
+export type Attempt = number;
 /** @typedef {number} Attempt {@link https://wat} {@linkcode I think lingcod is better} {@linkplain or lutefisk}*/

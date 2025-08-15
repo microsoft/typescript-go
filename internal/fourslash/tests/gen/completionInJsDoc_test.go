@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
@@ -71,50 +72,72 @@ func TestCompletionInJsDoc(t *testing.T) {
    * jsdoc inline tag {@/*17*/}
    */`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, []string{"1", "2"}, &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, []string{"1", "2"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Includes: []fourslash.ExpectedCompletionItem{"constructor", "param", "type", "method", "template"},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				"constructor",
+				"param",
+				"type",
+				"method",
+				"template",
+			},
 		},
 	})
-	f.VerifyCompletions(t, []string{"3", "15", "16"}, &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, []string{"3", "15", "16"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{},
+		Items: &fourslash.CompletionsExpectedItems{
+			Exact: []fourslash.CompletionsExpectedItem{},
 		},
 	})
-	f.VerifyCompletions(t, []string{"4", "5", "8"}, &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, []string{"4", "5", "8"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Includes: []fourslash.ExpectedCompletionItem{&lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextGlobalsOrKeywords)), Label: "number"}},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label:    "number",
+					SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+				},
+			},
 		},
 	})
 	f.VerifyCompletions(t, []string{"6", "7", "14"}, nil)
-	f.VerifyCompletions(t, []string{"9", "10", "11", "12", "13"}, &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, []string{"9", "10", "11", "12", "13"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Includes: []fourslash.ExpectedCompletionItem{"@argument", "@returns"},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				"@argument",
+				"@returns",
+			},
 		},
 	})
-	f.VerifyCompletions(t, []string{"17"}, &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, []string{"17"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Includes: []fourslash.ExpectedCompletionItem{"link", "tutorial"},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				"link",
+				"tutorial",
+			},
 		},
 	})
 }

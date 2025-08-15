@@ -867,17 +867,6 @@ func WalkUpParenthesizedTypes(node *TypeNode) *Node {
 	return node
 }
 
-func GetEffectiveTypeParent(parent *Node) *Node {
-	if parent != nil && IsInJSFile(parent) {
-		if parent.Kind == KindJSDocTypeExpression && parent.AsJSDocTypeExpression().Host != nil {
-			parent = parent.AsJSDocTypeExpression().Host
-		} else if parent.Kind == KindJSDocTemplateTag && parent.AsJSDocTemplateTag().Host != nil {
-			parent = parent.AsJSDocTemplateTag().Host
-		}
-	}
-	return parent
-}
-
 // Walks up the parents of a node to find the containing SourceFile
 func GetSourceFileOfNode(node *Node) *SourceFile {
 	for node != nil {
@@ -1466,6 +1455,8 @@ func getAssignedName(node *Node) *Node {
 					}
 				}
 			}
+		case KindCommonJSExport:
+			return parent.AsCommonJSExport().Name()
 		case KindVariableDeclaration:
 			name := parent.AsVariableDeclaration().Name()
 			if IsIdentifier(name) {
@@ -1642,6 +1633,10 @@ func IsModuleAugmentationExternal(node *Node) bool {
 		return IsAmbientModule(grandParent) && IsSourceFile(grandParent.Parent) && !IsExternalModule(grandParent.Parent.AsSourceFile())
 	}
 	return false
+}
+
+func IsModuleWithStringLiteralName(node *Node) bool {
+	return IsModuleDeclaration(node) && node.Name().Kind == KindStringLiteral
 }
 
 func GetContainingClass(node *Node) *Node {
@@ -2106,16 +2101,6 @@ func TryGetTextOfPropertyName(name *Node) (string, bool) {
 		return name.AsJsxNamespacedName().Namespace.Text() + ":" + name.Name().Text(), true
 	}
 	return "", false
-}
-
-// True if node is of a JSDoc kind that may contain comment text.
-func IsJSDocCommentContainingNode(node *Node) bool {
-	return node.Kind == KindJSDoc ||
-		node.Kind == KindJSDocText ||
-		node.Kind == KindJSDocTypeLiteral ||
-		node.Kind == KindJSDocSignature ||
-		IsJSDocLinkLike(node) ||
-		IsJSDocTag(node)
 }
 
 func IsJSDocNode(node *Node) bool {
@@ -3022,13 +3007,27 @@ func IsTypeKeywordToken(node *Node) bool {
 	return node.Kind == KindTypeKeyword
 }
 
-// If node is a single comment JSDoc, we do not visit the comment node list.
-func IsJSDocSingleCommentNodeList(parent *Node, nodeList *NodeList) bool {
-	return IsJSDocSingleCommentNode(parent) && nodeList == parent.AsJSDoc().Comment
+// See `IsJSDocSingleCommentNode`.
+func IsJSDocSingleCommentNodeList(nodeList *NodeList) bool {
+	if nodeList == nil || len(nodeList.Nodes) == 0 {
+		return false
+	}
+	parent := nodeList.Nodes[0].Parent
+	return IsJSDocSingleCommentNode(parent) && nodeList == parent.CommentList()
 }
 
+// See `IsJSDocSingleCommentNode`.
+func IsJSDocSingleCommentNodeComment(node *Node) bool {
+	if node == nil || node.Parent == nil {
+		return false
+	}
+	return IsJSDocSingleCommentNode(node.Parent) && node == node.Parent.CommentList().Nodes[0]
+}
+
+// In Strada, if a JSDoc node has a single comment, that comment is represented as a string property
+// as a simplification, and therefore that comment is not visited by `forEachChild`.
 func IsJSDocSingleCommentNode(node *Node) bool {
-	return node.Kind == KindJSDoc && node.AsJSDoc().Comment != nil && len(node.AsJSDoc().Comment.Nodes) == 1
+	return hasComment(node.Kind) && node.CommentList() != nil && len(node.CommentList().Nodes) == 1
 }
 
 func IsValidTypeOnlyAliasUseSite(useSite *Node) bool {
@@ -3286,6 +3285,7 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 			node.TypeParameterList(),
 			node.ParameterList(),
 			node.Type(),
+			node.AsMethodDeclaration().FullSignature,
 			node.Body(),
 		)
 	case KindConstructor:
@@ -3295,6 +3295,7 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 			node.TypeParameterList(),
 			node.ParameterList(),
 			node.Type(),
+			node.AsConstructorDeclaration().FullSignature,
 			node.Body(),
 		)
 	case KindGetAccessor:
@@ -3305,6 +3306,7 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 			node.TypeParameterList(),
 			node.ParameterList(),
 			node.Type(),
+			node.AsGetAccessorDeclaration().FullSignature,
 			node.Body(),
 		)
 	case KindSetAccessor:
@@ -3315,6 +3317,7 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 			node.TypeParameterList(),
 			node.ParameterList(),
 			node.Type(),
+			node.AsSetAccessorDeclaration().FullSignature,
 			node.Body(),
 		)
 	case KindIndexSignature:
@@ -3333,6 +3336,7 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 			node.TypeParameterList(),
 			node.ParameterList(),
 			node.Type(),
+			node.AsFunctionExpression().FullSignature,
 			node.Body(),
 		)
 	case KindArrowFunction:
@@ -3342,6 +3346,7 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 			node.TypeParameterList(),
 			node.ParameterList(),
 			node.Type(),
+			node.AsArrowFunction().FullSignature,
 			node.AsArrowFunction().EqualsGreaterThanToken,
 			node.Body(),
 		)
@@ -3369,6 +3374,7 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 			node.TypeParameterList(),
 			node.ParameterList(),
 			node.Type(),
+			node.AsFunctionDeclaration().FullSignature,
 			node.Body(),
 		)
 	case KindClassDeclaration:
@@ -3632,4 +3638,19 @@ func GetSemanticJsxChildren(children []*JsxChild) []*JsxChild {
 			return true
 		}
 	})
+}
+
+// Returns true if the node kind has a comment property.
+func hasComment(kind Kind) bool {
+	switch kind {
+	case KindJSDoc, KindJSDocTag, KindJSDocAugmentsTag, KindJSDocImplementsTag,
+		KindJSDocDeprecatedTag, KindJSDocPublicTag, KindJSDocPrivateTag, KindJSDocProtectedTag,
+		KindJSDocReadonlyTag, KindJSDocOverrideTag, KindJSDocCallbackTag, KindJSDocOverloadTag,
+		KindJSDocParameterTag, KindJSDocPropertyTag, KindJSDocReturnTag, KindJSDocThisTag,
+		KindJSDocTypeTag, KindJSDocTemplateTag, KindJSDocTypedefTag, KindJSDocSeeTag,
+		KindJSDocSatisfiesTag, KindJSDocImportTag:
+		return true
+	default:
+		return false
+	}
 }

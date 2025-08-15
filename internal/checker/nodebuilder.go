@@ -26,7 +26,6 @@ func (b *NodeBuilder) enterContext(enclosingDeclaration *ast.Node, flags nodebui
 		enclosingDeclaration:     enclosingDeclaration,
 		enclosingFile:            ast.GetSourceFileOfNode(enclosingDeclaration),
 		inferTypeParameters:      make([]*Type, 0),
-		visitedTypes:             make(map[TypeId]bool),
 		symbolDepth:              make(map[CompositeSymbolIdentity]int),
 		trackedSymbols:           make([]*TrackedSymbolArgs, 0),
 		reverseMappedStack:       make([]*ast.Symbol, 0),
@@ -89,6 +88,13 @@ func (b *NodeBuilder) SerializeReturnTypeForSignature(signatureDeclaration *ast.
 		returnType = b.impl.ch.instantiateType(b.impl.ch.getReturnTypeOfSignature(signature), b.impl.ctx.mapper)
 	}
 	return b.exitContext(b.impl.serializeInferredReturnTypeForSignature(signature, returnType))
+}
+
+func (b *NodeBuilder) SerializeTypeParametersForSignature(signatureDeclaration *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node {
+	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
+	symbol := b.impl.ch.getSymbolOfDeclaration(signatureDeclaration)
+	typeParams := b.SymbolToTypeParameterDeclarations(symbol, enclosingDeclaration, flags, internalFlags, tracker)
+	return b.exitContextSlice(typeParams)
 }
 
 // SerializeTypeForDeclaration implements NodeBuilderInterface.
@@ -170,6 +176,6 @@ func NewNodeBuilder(ch *Checker, e *printer.EmitContext) *NodeBuilder {
 	return &NodeBuilder{impl: impl, ctxStack: make([]*NodeBuilderContext, 0, 1), host: ch.program}
 }
 
-func (c *Checker) GetDiagnosticNodeBuilder() *NodeBuilder {
-	return c.nodeBuilder
+func (c *Checker) getNodeBuilder() *NodeBuilder {
+	return NewNodeBuilder(c, printer.NewEmitContext())
 }

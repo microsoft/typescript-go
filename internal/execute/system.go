@@ -9,11 +9,12 @@ import (
 
 type System interface {
 	Writer() io.Writer
-	EndWrite() // needed for testing
 	FS() vfs.FS
 	DefaultLibraryPath() string
 	GetCurrentDirectory() string
-	NewLine() string // #241 eventually we want to use "\n"
+	WriteOutputIsTTY() bool
+	GetWidthOfTerminal() int
+	GetEnvironmentVariable(name string) string
 
 	Now() time.Time
 	SinceStart() time.Duration
@@ -28,5 +29,4 @@ const (
 	ExitStatusInvalidProject_OutputsSkipped        ExitStatus = 3
 	ExitStatusProjectReferenceCycle_OutputsSkipped ExitStatus = 4
 	ExitStatusNotImplemented                       ExitStatus = 5
-	ExitStatusNotImplementedWatch                  ExitStatus = 6
 )

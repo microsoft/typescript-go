@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
@@ -34,31 +35,55 @@ func TestTsxCompletion12(t *testing.T) {
  let opt3 = <Opt propx={100} optional /*4*/ />;
  let opt4 = <Opt wrong /*5*/ />;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, []string{"1", "2", "5"}, &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, []string{"1", "2", "5"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{"propString", "propx", &lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindField), SortText: ptrTo(string(ls.SortTextOptionalMember)), Label: "optional?", InsertText: ptrTo("optional"), FilterText: ptrTo("optional")}},
+		Items: &fourslash.CompletionsExpectedItems{
+			Exact: []fourslash.CompletionsExpectedItem{
+				"propString",
+				"propx",
+				&lsproto.CompletionItem{
+					Label:      "optional?",
+					InsertText: PtrTo("optional"),
+					FilterText: PtrTo("optional"),
+					Kind:       PtrTo(lsproto.CompletionItemKindField),
+					SortText:   PtrTo(string(ls.SortTextOptionalMember)),
+				},
+			},
 		},
 	})
-	f.VerifyCompletions(t, "3", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "3", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{"propString", &lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindField), SortText: ptrTo(string(ls.SortTextOptionalMember)), Label: "optional?", InsertText: ptrTo("optional"), FilterText: ptrTo("optional")}},
+		Items: &fourslash.CompletionsExpectedItems{
+			Exact: []fourslash.CompletionsExpectedItem{
+				"propString",
+				&lsproto.CompletionItem{
+					Label:      "optional?",
+					InsertText: PtrTo("optional"),
+					FilterText: PtrTo("optional"),
+					Kind:       PtrTo(lsproto.CompletionItemKindField),
+					SortText:   PtrTo(string(ls.SortTextOptionalMember)),
+				},
+			},
 		},
 	})
-	f.VerifyCompletions(t, "4", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "4", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{"propString"},
+		Items: &fourslash.CompletionsExpectedItems{
+			Exact: []fourslash.CompletionsExpectedItem{
+				"propString",
+			},
 		},
 	})
 }

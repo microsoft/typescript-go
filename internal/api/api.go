@@ -2,11 +2,11 @@ package api
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"sync"
 
+	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/api/encoder"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
@@ -109,11 +109,6 @@ func (api *API) Log(s string) {
 // Log implements ProjectHost.
 func (api *API) Trace(s string) {
 	api.options.Logger.Info(s)
-}
-
-// NewLine implements ProjectHost.
-func (api *API) NewLine() string {
-	return api.host.NewLine()
 }
 
 // PositionEncoding implements ProjectHost.

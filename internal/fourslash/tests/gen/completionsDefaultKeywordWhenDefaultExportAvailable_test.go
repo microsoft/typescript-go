@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
@@ -17,13 +18,20 @@ func TestCompletionsDefaultKeywordWhenDefaultExportAvailable(t *testing.T) {
 export default function () {}
 def/*1*/`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "1", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Includes: []fourslash.ExpectedCompletionItem{&lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindKeyword), SortText: ptrTo(string(ls.SortTextGlobalsOrKeywords)), Label: "default"}},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label:    "default",
+					Kind:     PtrTo(lsproto.CompletionItemKindKeyword),
+					SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+				},
+			},
 		},
 	})
 }

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
@@ -33,67 +34,207 @@ const f: F = '[|a"/*6*/|]';
 type G = "a<b" | "b<a";
 const g: G = '[|a</*7*/|]';`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "1", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{&lsproto.CompletionItem{Label: "a/b"}, &lsproto.CompletionItem{Label: "b/a"}},
+		Items: &fourslash.CompletionsExpectedItems{
+			Exact: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label: "a/b",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "a/b",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
+				},
+				&lsproto.CompletionItem{
+					Label: "b/a",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "b/a",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
+				},
+			},
 		},
 	})
-	f.VerifyCompletions(t, "2", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "2", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{&lsproto.CompletionItem{Label: "a@b"}, &lsproto.CompletionItem{Label: "b@a"}},
+		Items: &fourslash.CompletionsExpectedItems{
+			Exact: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label: "a@b",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "a@b",
+							Range:   f.Ranges()[1].LSRange,
+						},
+					},
+				},
+				&lsproto.CompletionItem{
+					Label: "b@a",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "b@a",
+							Range:   f.Ranges()[1].LSRange,
+						},
+					},
+				},
+			},
 		},
 	})
-	f.VerifyCompletions(t, "3", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "3", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{&lsproto.CompletionItem{Label: "a.b"}, &lsproto.CompletionItem{Label: "b.a"}},
+		Items: &fourslash.CompletionsExpectedItems{
+			Exact: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label: "a.b",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "a.b",
+							Range:   f.Ranges()[2].LSRange,
+						},
+					},
+				},
+				&lsproto.CompletionItem{
+					Label: "b.a",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "b.a",
+							Range:   f.Ranges()[2].LSRange,
+						},
+					},
+				},
+			},
 		},
 	})
-	f.VerifyCompletions(t, "4", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "4", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{&lsproto.CompletionItem{Label: "a'b"}, &lsproto.CompletionItem{Label: "b'a"}},
+		Items: &fourslash.CompletionsExpectedItems{
+			Exact: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label: "a'b",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "a'b",
+							Range:   f.Ranges()[3].LSRange,
+						},
+					},
+				},
+				&lsproto.CompletionItem{
+					Label: "b'a",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "b'a",
+							Range:   f.Ranges()[3].LSRange,
+						},
+					},
+				},
+			},
 		},
 	})
-	f.VerifyCompletions(t, "5", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "5", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{&lsproto.CompletionItem{Label: "a`b"}, &lsproto.CompletionItem{Label: "b`a"}},
+		Items: &fourslash.CompletionsExpectedItems{
+			Exact: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label: "a`b",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "a`b",
+							Range:   f.Ranges()[4].LSRange,
+						},
+					},
+				},
+				&lsproto.CompletionItem{
+					Label: "b`a",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "b`a",
+							Range:   f.Ranges()[4].LSRange,
+						},
+					},
+				},
+			},
 		},
 	})
-	f.VerifyCompletions(t, "6", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "6", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{&lsproto.CompletionItem{Label: "a\"b"}, &lsproto.CompletionItem{Label: "b\"a"}},
+		Items: &fourslash.CompletionsExpectedItems{
+			Exact: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label: "a\"b",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "a\"b",
+							Range:   f.Ranges()[5].LSRange,
+						},
+					},
+				},
+				&lsproto.CompletionItem{
+					Label: "b\"a",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "b\"a",
+							Range:   f.Ranges()[5].LSRange,
+						},
+					},
+				},
+			},
 		},
 	})
-	f.VerifyCompletions(t, "7", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "7", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{&lsproto.CompletionItem{Label: "a<b"}, &lsproto.CompletionItem{Label: "b<a"}},
+		Items: &fourslash.CompletionsExpectedItems{
+			Exact: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label: "a<b",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "a<b",
+							Range:   f.Ranges()[6].LSRange,
+						},
+					},
+				},
+				&lsproto.CompletionItem{
+					Label: "b<a",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "b<a",
+							Range:   f.Ranges()[6].LSRange,
+						},
+					},
+				},
+			},
 		},
 	})
 }

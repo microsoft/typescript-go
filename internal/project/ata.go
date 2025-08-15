@@ -1,12 +1,12 @@
 package project
 
 import (
-	"encoding/json"
 	"fmt"
 	"os/exec"
 	"sync"
 	"sync/atomic"
 
+	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
@@ -565,7 +565,7 @@ func (ti *TypingsInstaller) ensureTypingsLocationExists(p *Project) {
 }
 
 func (ti *TypingsInstaller) typingToFileName(resolver *module.Resolver, packageName string) string {
-	result := resolver.ResolveModuleName(packageName, tspath.CombinePaths(ti.TypingsLocation, "index.d.ts"), core.ModuleKindNone, nil)
+	result, _ := resolver.ResolveModuleName(packageName, tspath.CombinePaths(ti.TypingsLocation, "index.d.ts"), core.ModuleKindNone, nil)
 	return result.ResolvedFileName
 }
 

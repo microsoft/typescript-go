@@ -14,7 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/printer"
 )
 
-var _ printer.EmitResolver = &emitResolver{}
+var _ printer.EmitResolver = (*emitResolver)(nil)
 
 // Links for jsx
 type JSXLinks struct {
@@ -35,10 +35,18 @@ type emitResolver struct {
 	checker                 *Checker
 	checkerMu               sync.Mutex
 	isValueAliasDeclaration func(node *ast.Node) bool
+	aliasMarkingVisitor     func(node *ast.Node) bool
 	referenceResolver       binder.ReferenceResolver
 	jsxLinks                core.LinkStore[*ast.Node, JSXLinks]
 	declarationLinks        core.LinkStore[*ast.Node, DeclarationLinks]
 	declarationFileLinks    core.LinkStore[*ast.Node, DeclarationFileLinks]
+}
+
+func newEmitResolver(checker *Checker) *emitResolver {
+	e := &emitResolver{checker: checker}
+	e.isValueAliasDeclaration = e.isValueAliasDeclarationWorker
+	e.aliasMarkingVisitor = e.aliasMarkingVisitorWorker
+	return e
 }
 
 func (r *emitResolver) GetJsxFactoryEntity(location *ast.Node) *ast.Node {
@@ -140,7 +148,7 @@ func (r *emitResolver) determineIfDeclarationIsVisible(node *ast.Node) bool {
 		ast.KindImportEqualsDeclaration:
 		if ast.IsVariableDeclaration(node) {
 			if ast.IsBindingPattern(node.Name()) &&
-				len(node.Name().AsBindingPattern().Elements.Nodes) > 0 {
+				len(node.Name().AsBindingPattern().Elements.Nodes) == 0 {
 				// If the binding pattern is empty, this variable declaration is not visible
 				return false
 			}
@@ -227,7 +235,7 @@ func (r *emitResolver) PrecalculateDeclarationEmitVisibility(file *ast.SourceFil
 	file.AsNode().ForEachChild(r.aliasMarkingVisitor)
 }
 
-func (r *emitResolver) aliasMarkingVisitor(node *ast.Node) bool {
+func (r *emitResolver) aliasMarkingVisitorWorker(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindExportAssignment, ast.KindJSExportAssignment:
 		if node.AsExportAssignment().Expression.Kind == ast.KindIdentifier {
@@ -538,7 +546,7 @@ func (r *emitResolver) declaredParameterTypeContainsUndefined(parameter *ast.Nod
 func (r *emitResolver) isOptionalUninitializedParameterProperty(parameter *ast.Node) bool {
 	return r.checker.strictNullChecks &&
 		r.isOptionalParameter(parameter) &&
-		( /*isJSDocParameterTag(parameter) ||*/ parameter.Initializer() != nil) && // !!! TODO: JSDoc support
+		( /*isJSDocParameterTag(parameter) ||*/ parameter.Initializer() == nil) && // !!! TODO: JSDoc support
 		ast.HasSyntacticModifier(parameter, ast.ModifierFlagsParameterPropertyModifier)
 }
 
@@ -670,9 +678,6 @@ func (r *emitResolver) isValueAliasDeclarationWorker(node *ast.Node) bool {
 		return symbol != nil && r.isAliasResolvedToValue(symbol, true /*excludeTypeOnlyValues*/)
 	case ast.KindExportDeclaration:
 		exportClause := node.AsExportDeclaration().ExportClause
-		if r.isValueAliasDeclaration == nil {
-			r.isValueAliasDeclaration = r.isValueAliasDeclarationWorker
-		}
 		return exportClause != nil && (ast.IsNamespaceExport(exportClause) ||
 			core.Some(exportClause.AsNamedExports().Elements.Nodes, r.isValueAliasDeclaration))
 	case ast.KindExportAssignment, ast.KindJSExportAssignment:
@@ -856,6 +861,18 @@ func (r *emitResolver) CreateReturnTypeOfSignatureDeclaration(emitContext *print
 	defer r.checkerMu.Unlock()
 	requestNodeBuilder := NewNodeBuilder(r.checker, emitContext) // TODO: cache per-context
 	return requestNodeBuilder.SerializeReturnTypeForSignature(original, enclosingDeclaration, flags, internalFlags, tracker)
+}
+
+func (r *emitResolver) CreateTypeParametersOfSignatureDeclaration(emitContext *printer.EmitContext, signatureDeclaration *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node {
+	original := emitContext.ParseNode(signatureDeclaration)
+	if original == nil {
+		return nil
+	}
+
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+	requestNodeBuilder := NewNodeBuilder(r.checker, emitContext) // TODO: cache per-context
+	return requestNodeBuilder.SerializeTypeParametersForSignature(original, enclosingDeclaration, flags, internalFlags, tracker)
 }
 
 func (r *emitResolver) CreateTypeOfDeclaration(emitContext *printer.EmitContext, declaration *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {

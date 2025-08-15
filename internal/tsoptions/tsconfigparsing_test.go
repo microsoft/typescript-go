@@ -1,8 +1,6 @@
 package tsoptions_test
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"io/fs"
@@ -14,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
+	"github.com/microsoft/typescript-go/internal/jsonutil"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
@@ -133,12 +132,9 @@ func TestParseConfigFileTextToJson(t *testing.T) {
 				baselineContent.WriteString("Input::\n")
 				baselineContent.WriteString(jsonText + "\n")
 				parsed, errors := tsoptions.ParseConfigFileTextToJson("/apath/tsconfig.json", "/apath", jsonText)
-				if configText, err := jsonToReadableText(parsed); err != nil {
-					t.Fatal(err)
-				} else {
-					baselineContent.WriteString("Config::\n")
-					baselineContent.WriteString(configText)
-				}
+				baselineContent.WriteString("Config::\n")
+				assert.NilError(t, writeJsonReadableText(&baselineContent, parsed), "Failed to write JSON text")
+				baselineContent.WriteString("\n")
 				baselineContent.WriteString("Errors::\n")
 				diagnosticwriter.FormatDiagnosticsWithColorAndContext(&baselineContent, errors, &diagnosticwriter.FormattingOptions{
 					NewLine: "\n",
@@ -583,6 +579,155 @@ export {}`,
 			},
 		}},
 	},
+	{
+		title:               "null overrides in extended tsconfig - array fields",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "types": null,
+    "lib": null,
+    "typeRoots": null
+  }
+}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList: map[string]string{
+				"/tsconfig-base.json": `{
+  "compilerOptions": {
+    "types": ["node", "@types/jest"],
+    "lib": ["es2020", "dom"],
+    "typeRoots": ["./types", "./node_modules/@types"]
+  }
+}`,
+				"/app.ts": "",
+			},
+		}},
+	},
+	{
+		title:               "null overrides in extended tsconfig - string fields",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "outDir": null,
+    "baseUrl": null,
+    "rootDir": null
+  }
+}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList: map[string]string{
+				"/tsconfig-base.json": `{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "baseUrl": "./src",
+    "rootDir": "./src"
+  }
+}`,
+				"/app.ts": "",
+			},
+		}},
+	},
+	{
+		title:               "null overrides in extended tsconfig - mixed field types",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "types": null,
+    "outDir": null,
+    "strict": false,
+    "lib": ["es2022"],
+    "allowJs": null
+  }
+}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList: map[string]string{
+				"/tsconfig-base.json": `{
+  "compilerOptions": {
+    "types": ["node"],
+    "lib": ["es2020", "dom"],
+    "outDir": "./dist",
+    "strict": true,
+    "allowJs": true,
+    "target": "es2020"
+  }
+}`,
+				"/app.ts": "",
+			},
+		}},
+	},
+	{
+		title:               "null overrides with multiple extends levels",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+  "extends": "./tsconfig-middle.json",
+  "compilerOptions": {
+    "types": null,
+    "lib": null
+  }
+}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList: map[string]string{
+				"/tsconfig-middle.json": `{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "types": ["jest"],
+    "outDir": "./build"
+  }
+}`,
+				"/tsconfig-base.json": `{
+  "compilerOptions": {
+    "types": ["node"],
+    "lib": ["es2020"],
+    "outDir": "./dist",
+    "strict": true
+  }
+}`,
+				"/app.ts": "",
+			},
+		}},
+	},
+	{
+		title:               "null overrides in middle level of extends chain",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+  "extends": "./tsconfig-middle.json",
+  "compilerOptions": {
+    "outDir": "./final"
+  }
+}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList: map[string]string{
+				"/tsconfig-middle.json": `{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "types": null,
+    "lib": null,
+    "outDir": "./middle"
+  }
+}`,
+				"/tsconfig-base.json": `{
+  "compilerOptions": {
+    "types": ["node"],
+    "lib": ["es2020"],
+    "outDir": "./base",
+    "strict": true
+  }
+}`,
+				"/app.ts": "",
+			},
+		}},
+	},
 }
 
 var tsconfigWithExtends = `{
@@ -705,15 +850,14 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 		baselineContent.WriteString("configFileName:: " + config.configFileName + "\n")
 		if noSubmoduleBaseline {
 			baselineContent.WriteString("CompilerOptions::\n")
-			enc := json.NewEncoder(&baselineContent)
-			enc.SetIndent("", "  ")
-			enc.SetEscapeHTML(false)
-			assert.NilError(t, enc.Encode(parsedConfigFileContent.CompilerOptions()))
+			assert.NilError(t, jsonutil.MarshalIndentWrite(&baselineContent, parsedConfigFileContent.ParsedConfig.CompilerOptions, "", "  "))
+			baselineContent.WriteString("\n")
 			baselineContent.WriteString("\n")
 
 			if parsedConfigFileContent.ParsedConfig.TypeAcquisition != nil {
 				baselineContent.WriteString("TypeAcquisition::\n")
-				assert.NilError(t, enc.Encode(parsedConfigFileContent.ParsedConfig.TypeAcquisition))
+				assert.NilError(t, jsonutil.MarshalIndentWrite(&baselineContent, parsedConfigFileContent.ParsedConfig.TypeAcquisition, "", "  "))
+				baselineContent.WriteString("\n")
 				baselineContent.WriteString("\n")
 			}
 		}
@@ -739,15 +883,8 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 	}
 }
 
-func jsonToReadableText(input any) (string, error) {
-	var buf bytes.Buffer
-	encoder := json.NewEncoder(&buf)
-	encoder.SetIndent("", "  ")
-	encoder.SetEscapeHTML(false)
-	if err := encoder.Encode(input); err != nil {
-		return "", err
-	}
-	return buf.String(), nil
+func writeJsonReadableText(output io.Writer, input any) error {
+	return jsonutil.MarshalIndentWrite(output, input, "", "  ")
 }
 
 func TestParseTypeAcquisition(t *testing.T) {

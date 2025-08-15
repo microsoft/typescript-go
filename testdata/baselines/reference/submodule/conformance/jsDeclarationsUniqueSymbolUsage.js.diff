@@ -5,10 +5,10 @@
 
  //// [a.d.ts]
 -export const kSymbol: unique symbol;
--export type WithSymbol = {
--    [kSymbol]: true;
--};
 +export declare const kSymbol: unique symbol;
+ export type WithSymbol = {
+     [kSymbol]: true;
+ };
 +/**
 + * @typedef {{[kSymbol]: true}} WithSymbol
 + */ 

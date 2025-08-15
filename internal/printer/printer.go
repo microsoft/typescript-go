@@ -45,7 +45,7 @@ type PrinterOptions struct {
 	OmitBraceSourceMapPositions bool
 	// ExtendedDiagnostics           bool
 	OnlyPrintJSDocStyle bool
-	// NeverAsciiEscape              bool
+	NeverAsciiEscape    bool
 	// StripInternal                 bool
 	PreserveSourceNewlines bool
 	// TerminateUnterminatedLiterals bool
@@ -136,6 +136,8 @@ type Printer struct {
 	inExtends                         bool // whether we are emitting the `extends` clause of a ConditionalType or InferType
 	nameGenerator                     NameGenerator
 	makeFileLevelOptimisticUniqueName func(string) string
+	commentStatePool                  core.Pool[commentState]
+	sourceMapStatePool                core.Pool[sourceMapState]
 }
 
 type detachedCommentsInfo struct {
@@ -972,7 +974,11 @@ func (p *Printer) emitTokenNodeEx(node *ast.TokenNode, flags tokenEmitFlags) {
 //	SyntaxKindTemplateMiddle
 //	SyntaxKindTemplateTail
 func (p *Printer) emitLiteral(node *ast.LiteralLikeNode, flags getLiteralTextFlags) {
-	// !!! Printer option to control whether to escape non-ASCII characters
+	// Add NeverAsciiEscape flag if the printer option is set
+	if p.Options.NeverAsciiEscape {
+		flags |= getLiteralTextFlagsNeverAsciiEscape
+	}
+
 	text := p.getLiteralTextOfNode(node, nil /*sourceFile*/, flags)
 
 	// !!! Printer option to control source map emit, which causes us to use a different write method on the
@@ -3091,12 +3097,12 @@ func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPr
 		return
 	case ast.KindPartiallyEmittedExpression:
 		p.emitPartiallyEmittedExpression(node.AsPartiallyEmittedExpression(), precedence)
+	case ast.KindSyntheticReferenceExpression:
+		panic("SyntheticReferenceExpression should not be printed")
 
 	// !!!
 	////case ast.KindCommaListExpression:
 	////	p.emitCommaList(node.AsCommaListExpression())
-	////case ast.KindSyntheticReferenceExpression:
-	////	return Debug.fail("SyntheticReferenceExpression should not be printed")
 
 	default:
 		panic(fmt.Sprintf("unexpected Expression: %v", node.Kind))
@@ -4401,6 +4407,9 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 		p.emitShebangIfNeeded(node)
 		index = p.emitPrologueDirectives(node.Statements)
 		p.emitHelpers(node.AsNode())
+		if node.IsDeclarationFile {
+			p.emitTripleSlashDirectives(node)
+		}
 	}
 
 	// !!! Emit triple-slash directives
@@ -4416,6 +4425,23 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 	p.emitDetachedCommentsAfterStatementList(node.AsNode(), node.Statements.Loc, state)
 	p.currentSourceFile = savedCurrentSourceFile
 	p.commentsDisabled = savedCommentsDisabled
+}
+
+func (p *Printer) emitTripleSlashDirectives(node *ast.SourceFile) {
+	p.emitDirective("path", node.ReferencedFiles)
+	p.emitDirective("types", node.TypeReferenceDirectives)
+	p.emitDirective("lib", node.LibReferenceDirectives)
+}
+
+func (p *Printer) emitDirective(kind string, refs []*ast.FileReference) {
+	for _, ref := range refs {
+		var resolutionMode string
+		if ref.ResolutionMode != core.ResolutionModeNone {
+			resolutionMode = fmt.Sprintf(`resolution-mode="%s" `, core.IfElse(ref.ResolutionMode == core.ResolutionModeESM, "import", "require"))
+		}
+		p.writeComment(fmt.Sprintf("/// <reference %s=\"%s\" %s%s/>", kind, ref.FileName, resolutionMode, core.IfElse(ref.Preserve, `preserve="true" `, "")))
+		p.writeLine()
+	}
 }
 
 //
@@ -4993,7 +5019,9 @@ func (p *Printer) emitCommentsBeforeNode(node *ast.Node) *commentState {
 		p.commentsDisabled = true
 	}
 
-	return &commentState{emitFlags, commentRange, containerPos, containerEnd, declarationListContainerEnd}
+	c := p.commentStatePool.New()
+	*c = commentState{emitFlags, commentRange, containerPos, containerEnd, declarationListContainerEnd}
+	return c
 }
 
 func (p *Printer) emitCommentsAfterNode(node *ast.Node, state *commentState) {
@@ -5046,7 +5074,7 @@ func (p *Printer) emitCommentsBeforeToken(token ast.Kind, pos int, contextNode *
 		p.decreaseIndentIf(needsIndent)
 	}
 
-	return &commentState{}, pos
+	return p.commentStatePool.New(), pos
 }
 
 func (p *Printer) emitCommentsAfterToken(token ast.Kind, pos int, contextNode *ast.Node, state *commentState) {
@@ -5486,7 +5514,9 @@ func (p *Printer) emitSourceMapsBeforeNode(node *ast.Node) *sourceMapState {
 		p.sourceMapsDisabled = true
 	}
 
-	return &sourceMapState{emitFlags, loc, false}
+	state := p.sourceMapStatePool.New()
+	*state = sourceMapState{emitFlags, loc, false}
+	return state
 }
 
 func (p *Printer) emitSourceMapsAfterNode(node *ast.Node, previousState *sourceMapState) {
@@ -5524,7 +5554,9 @@ func (p *Printer) emitSourceMapsBeforeToken(token ast.Kind, pos int, contextNode
 		}
 	}
 
-	return &sourceMapState{emitFlags, loc, hasLoc}
+	state := p.sourceMapStatePool.New()
+	*state = sourceMapState{emitFlags, loc, hasLoc}
+	return state
 }
 
 func (p *Printer) emitSourceMapsAfterToken(token ast.Kind, pos int, contextNode *ast.Node, previousState *sourceMapState) {

@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -20,13 +20,25 @@ function foo(x: string, y: number, z: boolean) {
         var v = (p: MyType) => /*1*/
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "1", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Includes: []fourslash.ExpectedCompletionItem{"foo", "x", "y", "z", "bar", "a", "b", "c", "v", "p"},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				"foo",
+				"x",
+				"y",
+				"z",
+				"bar",
+				"a",
+				"b",
+				"c",
+				"v",
+				"p",
+			},
 		},
 	})
 }

@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -71,33 +71,69 @@ class TestClass {
     }
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "valueReference", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "valueReference", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Includes: []fourslash.ExpectedCompletionItem{"localVariable", "exportedVariable", "localFunction", "exportedFunction", "localClass", "exportedClass", "localModule", "exportedModule", "exportedVariable2", "exportedFunction2", "exportedClass2", "exportedModule2"},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				"localVariable",
+				"exportedVariable",
+				"localFunction",
+				"exportedFunction",
+				"localClass",
+				"exportedClass",
+				"localModule",
+				"exportedModule",
+				"exportedVariable2",
+				"exportedFunction2",
+				"exportedClass2",
+				"exportedModule2",
+			},
 		},
 	})
-	f.VerifyCompletions(t, "typeReference", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "typeReference", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Includes: []fourslash.ExpectedCompletionItem{"localInterface", "exportedInterface", "localClass", "exportedClass", "exportedClass2"},
-			Excludes: []string{"localModule", "exportedModule", "exportedModule2"},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				"localInterface",
+				"exportedInterface",
+				"localClass",
+				"exportedClass",
+				"exportedClass2",
+			},
+			Excludes: []string{
+				"localModule",
+				"exportedModule",
+				"exportedModule2",
+			},
 		},
 	})
-	f.VerifyCompletions(t, "insideMethod", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "insideMethod", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Includes: []fourslash.ExpectedCompletionItem{"globalVar", "globalFunction", "param", "localVar", "localFunction"},
-			Excludes: []string{"property", "testMethod", "staticMethod"},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				"globalVar",
+				"globalFunction",
+				"param",
+				"localVar",
+				"localFunction",
+			},
+			Excludes: []string{
+				"property",
+				"testMethod",
+				"staticMethod",
+			},
 		},
 	})
 }

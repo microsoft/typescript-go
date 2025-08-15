@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
@@ -82,13 +83,28 @@ func (r *CompilerBaselineRunner) EnumerateTestFiles() []string {
 	return files
 }
 
+// These tests contain options that have been completely removed, so fail to parse.
 var deprecatedTests = []string{
-	// Test deprecated `importsNotUsedAsValue`
 	"preserveUnusedImports.ts",
 	"noCrashWithVerbatimModuleSyntaxAndImportsNotUsedAsValues.ts",
 	"verbatimModuleSyntaxCompat.ts",
 	"preserveValueImports_importsNotUsedAsValues.ts",
 	"importsNotUsedAsValues_error.ts",
+	"alwaysStrictNoImplicitUseStrict.ts",
+	"nonPrimitiveIndexingWithForInSupressError.ts",
+	"parameterInitializerBeforeDestructuringEmit.ts",
+	"mappedTypeUnionConstraintInferences.ts",
+	"lateBoundConstraintTypeChecksCorrectly.ts",
+	"keyofDoesntContainSymbols.ts",
+	"isolatedModulesOut.ts",
+	"noStrictGenericChecks.ts",
+	"noImplicitUseStrict_umd.ts",
+	"noImplicitUseStrict_system.ts",
+	"noImplicitUseStrict_es6.ts",
+	"noImplicitUseStrict_commonjs.ts",
+	"noImplicitUseStrict_amd.ts",
+	"noImplicitAnyIndexingSuppressed.ts",
+	"excessPropertyErrorsSuppressed.ts",
 }
 
 func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
@@ -166,14 +182,21 @@ func (r *CompilerBaselineRunner) runSingleConfigTest(t *testing.T, testName stri
 	payload := makeUnitsFromTest(test.content, test.filename)
 	compilerTest := newCompilerTest(t, testName, test.filename, &payload, config)
 
+	switch compilerTest.options.GetEmitModuleKind() {
+	case core.ModuleKindAMD, core.ModuleKindUMD, core.ModuleKindSystem:
+		t.Skipf("Skipping test %s with unsupported module kind %s", testName, compilerTest.options.GetEmitModuleKind())
+	}
+
 	compilerTest.verifyDiagnostics(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifyJavaScriptOutput(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifySourceMapOutput(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifySourceMapRecord(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifyTypesAndSymbols(t, r.testSuitName, r.isSubmodule)
+	compilerTest.verifyModuleResolution(t, r.testSuitName, r.isSubmodule)
 	// !!! Verify all baselines
 
 	compilerTest.verifyUnionOrdering(t)
+	compilerTest.verifyParentPointers(t)
 }
 
 type compilerFileBasedTest struct {
@@ -336,7 +359,7 @@ func (c *compilerTest) verifyDiagnostics(t *testing.T, suiteName string, isSubmo
 		tsbaseline.DoErrorBaseline(t, c.configuredName, files, c.result.Diagnostics, c.result.Options.Pretty.IsTrue(), baseline.Options{
 			Subfolder:           suiteName,
 			IsSubmodule:         isSubmodule,
-			IsSubmoduleAccepted: c.containsUnsupportedOptions(),
+			IsSubmoduleAccepted: c.containsUnsupportedOptionsForDiagnostics(),
 			DiffFixupOld: func(old string) string {
 				var sb strings.Builder
 				sb.Grow(len(old))
@@ -376,6 +399,11 @@ func (c *compilerTest) verifyJavaScriptOutput(t *testing.T, suiteName string, is
 		return
 	}
 
+	if c.options.OutFile != "" {
+		// Just return, no t.Skip; this is unsupported so testing them is not helpful.
+		return
+	}
+
 	t.Run("output", func(t *testing.T) {
 		if msg, ok := skippedEmitTests[c.basename]; ok {
 			t.Skip(msg)
@@ -403,6 +431,11 @@ func (c *compilerTest) verifyJavaScriptOutput(t *testing.T, suiteName string, is
 }
 
 func (c *compilerTest) verifySourceMapOutput(t *testing.T, suiteName string, isSubmodule bool) {
+	if c.options.OutFile != "" {
+		// Just return, no t.Skip; this is unsupported so testing them is not helpful.
+		return
+	}
+
 	t.Run("sourcemap", func(t *testing.T) {
 		defer testutil.RecoverAndFail(t, "Panic on creating source map output for test "+c.filename)
 		headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath, c.filename, tspath.ComparePathsOptions{})
@@ -423,6 +456,11 @@ func (c *compilerTest) verifySourceMapOutput(t *testing.T, suiteName string, isS
 }
 
 func (c *compilerTest) verifySourceMapRecord(t *testing.T, suiteName string, isSubmodule bool) {
+	if c.options.OutFile != "" {
+		// Just return, no t.Skip; this is unsupported so testing them is not helpful.
+		return
+	}
+
 	t.Run("sourcemap record", func(t *testing.T) {
 		defer testutil.RecoverAndFail(t, "Panic on creating source map record for test "+c.filename)
 		headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath, c.filename, tspath.ComparePathsOptions{})
@@ -473,6 +511,21 @@ func (c *compilerTest) verifyTypesAndSymbols(t *testing.T, suiteName string, isS
 	)
 }
 
+func (c *compilerTest) verifyModuleResolution(t *testing.T, suiteName string, isSubmodule bool) {
+	if !c.options.TraceResolution.IsTrue() {
+		return
+	}
+
+	t.Run("module resolution", func(t *testing.T) {
+		defer testutil.RecoverAndFail(t, "Panic on creating module resolution baseline for test "+c.filename)
+		tsbaseline.DoModuleResolutionBaseline(t, c.configuredName, c.result.Trace, baseline.Options{
+			Subfolder:       suiteName,
+			IsSubmodule:     isSubmodule,
+			SkipDiffWithOld: true,
+		})
+	})
+}
+
 func createHarnessTestFile(unit *testUnit, currentDirectory string) *harnessutil.TestFile {
 	return &harnessutil.TestFile{
 		UnitName: tspath.GetNormalizedAbsolutePath(unit.name, currentDirectory),
@@ -506,18 +559,46 @@ func (c *compilerTest) verifyUnionOrdering(t *testing.T) {
 	})
 }
 
-func (c *compilerTest) containsUnsupportedOptions() bool {
+func (c *compilerTest) verifyParentPointers(t *testing.T) {
+	t.Run("source file parent pointers", func(t *testing.T) {
+		var parent *ast.Node
+		var verifier func(n *ast.Node) bool
+		verifier = func(n *ast.Node) bool {
+			if n == nil {
+				return false
+			}
+			assert.Assert(t, n.Parent != nil, "parent node does not exist")
+			elab := ""
+			if !ast.NodeIsSynthesized(n) {
+				elab += ast.GetSourceFileOfNode(n).Text()[n.Loc.Pos():n.Loc.End()]
+			} else {
+				elab += "!synthetic! no text available"
+			}
+			assert.Assert(t, n.Parent == parent, "parent node does not match traversed parent: "+n.Kind.String()+": "+elab)
+			oldParent := parent
+			parent = n
+			n.ForEachChild(verifier)
+			parent = oldParent
+			return false
+		}
+		for _, f := range c.result.Program.GetSourceFiles() {
+			if c.result.Program.IsSourceFileDefaultLibrary(f.Path()) {
+				continue
+			}
+			parent = f.AsNode()
+			f.AsNode().ForEachChild(verifier)
+		}
+	})
+}
+
+func (c *compilerTest) containsUnsupportedOptionsForDiagnostics() bool {
 	if len(c.result.Program.UnsupportedExtensions()) != 0 {
-		return true
-	}
-	switch c.options.GetEmitModuleKind() {
-	case core.ModuleKindAMD, core.ModuleKindUMD, core.ModuleKindSystem:
 		return true
 	}
 	if c.options.BaseUrl != "" {
 		return true
 	}
-	if c.options.RootDirs != nil {
+	if c.options.OutFile != "" {
 		return true
 	}
 

@@ -1,8 +1,9 @@
 package packagejson
 
 import (
-	"encoding/json"
 	"reflect"
+
+	"github.com/go-json-experiment/json"
 )
 
 type Expected[T any] struct {
@@ -67,4 +68,8 @@ func (e *Expected[T]) ExpectedJSONType() string {
 
 func (e *Expected[T]) ActualJSONType() string {
 	return e.actualJSONType
+}
+
+func ExpectedOf[T any](value T) Expected[T] {
+	return Expected[T]{Value: value, Valid: true, actualJSONType: (*Expected[T])(nil).ExpectedJSONType()}
 }

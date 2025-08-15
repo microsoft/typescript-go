@@ -23,7 +23,7 @@ func NewDiagnosticForNode(node *ast.Node, message *diagnostics.Message, args ...
 	var loc core.TextRange
 	if node != nil {
 		file = ast.GetSourceFileOfNode(node)
-		loc = binder.GetErrorRangeForNode(file, node)
+		loc = scanner.GetErrorRangeForNode(file, node)
 	}
 	return ast.NewDiagnostic(file, loc, message, args...)
 }
@@ -42,13 +42,6 @@ func findInMap[K comparable, V any](m map[K]V, predicate func(V) bool) V {
 		}
 	}
 	return *new(V)
-}
-
-func boolToTristate(b bool) core.Tristate {
-	if b {
-		return core.TSTrue
-	}
-	return core.TSFalse
 }
 
 func isCompoundAssignment(token ast.Kind) bool {
@@ -1467,10 +1460,10 @@ func forEachYieldExpression(body *ast.Node, visitor func(expr *ast.Node)) {
 	traverse(body)
 }
 
-func SkipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions, host Program) bool {
-	return options.NoCheck.IsTrue() ||
+func SkipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions, host Program, ignoreNoCheck bool) bool {
+	return (!ignoreNoCheck && options.NoCheck.IsTrue()) ||
 		options.SkipLibCheck.IsTrue() && sourceFile.IsDeclarationFile ||
-		options.SkipDefaultLibCheck.IsTrue() && sourceFile.HasNoDefaultLib ||
+		options.SkipDefaultLibCheck.IsTrue() && host.IsSourceFileDefaultLibrary(sourceFile.Path()) ||
 		host.IsSourceFromProjectReference(sourceFile.Path()) ||
 		!canIncludeBindAndCheckDiagnostics(sourceFile, options)
 }
@@ -1849,9 +1842,6 @@ func getAnyImportSyntax(node *ast.Node) *ast.Node {
 	default:
 		return nil
 	}
-	if importNode.Kind == ast.KindJSDocImportTag {
-		return importNode.AsJSDocImportTag().JSImportDeclaration.AsNode()
-	}
 	return importNode
 }
 
@@ -1951,4 +1941,13 @@ func ValueToString(value any) string {
 		return value.String() + "n"
 	}
 	panic("unhandled value type in valueToString")
+}
+
+func nodeStartsNewLexicalEnvironment(node *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindConstructor, ast.KindFunctionExpression, ast.KindFunctionDeclaration, ast.KindArrowFunction,
+		ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindModuleDeclaration, ast.KindSourceFile:
+		return true
+	}
+	return false
 }

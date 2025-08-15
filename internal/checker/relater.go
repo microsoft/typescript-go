@@ -86,17 +86,13 @@ type ErrorOutputContainer struct {
 
 type ErrorReporter func(message *diagnostics.Message, args ...any)
 
-type RecursionIdKind uint32
-
-const (
-	RecursionIdKindNode RecursionIdKind = iota
-	RecursionIdKindSymbol
-	RecursionIdKindType
-)
-
 type RecursionId struct {
-	kind RecursionIdKind
-	id   uint32
+	value any
+}
+
+// This function exists to constrain the types of values that can be used as recursion IDs.
+func asRecursionId[T *ast.Node | *ast.Symbol | *Type](value T) RecursionId {
+	return RecursionId{value: value}
 }
 
 type Relation struct {
@@ -587,7 +583,7 @@ func (c *Checker) elaborateElement(source *Type, target *Type, relation *Relatio
 	issuedElaboration := false
 	if targetProp == nil {
 		indexInfo := c.getApplicableIndexInfo(target, nameType)
-		if indexInfo != nil && indexInfo.declaration != nil && !ast.GetSourceFileOfNode(indexInfo.declaration).HasNoDefaultLib {
+		if indexInfo != nil && indexInfo.declaration != nil && !c.program.IsSourceFileDefaultLibrary(ast.GetSourceFileOfNode(indexInfo.declaration).Path()) {
 			issuedElaboration = true
 			diagnostic.AddRelatedInfo(createDiagnosticForNode(indexInfo.declaration, diagnostics.The_expected_type_comes_from_this_index_signature))
 		}
@@ -602,7 +598,7 @@ func (c *Checker) elaborateElement(source *Type, target *Type, relation *Relatio
 		if propertyName == "" || nameType.flags&TypeFlagsUniqueESSymbol != 0 {
 			propertyName = c.TypeToString(nameType)
 		}
-		if !ast.GetSourceFileOfNode(targetNode).HasNoDefaultLib {
+		if !c.program.IsSourceFileDefaultLibrary(ast.GetSourceFileOfNode(targetNode).Path()) {
 			diagnostic.AddRelatedInfo(createDiagnosticForNode(targetNode, diagnostics.The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1, propertyName, c.TypeToString(target)))
 		}
 	}
@@ -836,21 +832,21 @@ func getRecursionIdentity(t *Type) RecursionId {
 			// Deferred type references are tracked through their associated AST node. This gives us finer
 			// granularity than using their associated target because each manifest type reference has a
 			// unique AST node.
-			return RecursionId{kind: RecursionIdKindNode, id: uint32(ast.GetNodeId(t.AsTypeReference().node))}
+			return asRecursionId(t.AsTypeReference().node)
 		}
 		if t.symbol != nil && !(t.objectFlags&ObjectFlagsAnonymous != 0 && t.symbol.Flags&ast.SymbolFlagsClass != 0) {
 			// We track object types that have a symbol by that symbol (representing the origin of the type), but
 			// exclude the static side of a class since it shares its symbol with the instance side.
-			return RecursionId{kind: RecursionIdKindSymbol, id: uint32(ast.GetSymbolId(t.symbol))}
+			return asRecursionId(t.symbol)
 		}
 		if isTupleType(t) {
-			return RecursionId{kind: RecursionIdKindType, id: uint32(t.Target().id)}
+			return asRecursionId(t.Target())
 		}
 	}
 	if t.flags&TypeFlagsTypeParameter != 0 && t.symbol != nil {
 		// We use the symbol of the type parameter such that all "fresh" instantiations of that type parameter
 		// have the same recursion identity.
-		return RecursionId{kind: RecursionIdKindSymbol, id: uint32(ast.GetSymbolId(t.symbol))}
+		return asRecursionId(t.symbol)
 	}
 	if t.flags&TypeFlagsIndexedAccess != 0 {
 		// Identity is the leftmost object type in a chain of indexed accesses, eg, in A[P1][P2][P3] it is A.
@@ -858,13 +854,13 @@ func getRecursionIdentity(t *Type) RecursionId {
 		for t.flags&TypeFlagsIndexedAccess != 0 {
 			t = t.AsIndexedAccessType().objectType
 		}
-		return RecursionId{kind: RecursionIdKindType, id: uint32(t.id)}
+		return asRecursionId(t)
 	}
 	if t.flags&TypeFlagsConditional != 0 {
 		// The root object represents the origin of the conditional type
-		return RecursionId{kind: RecursionIdKindNode, id: uint32(ast.GetNodeId(t.AsConditionalType().root.node.AsNode()))}
+		return asRecursionId(t.AsConditionalType().root.node.AsNode())
 	}
-	return RecursionId{kind: RecursionIdKindType, id: uint32(t.id)}
+	return asRecursionId(t)
 }
 
 func (c *Checker) getBestMatchingType(source *Type, target *Type, isRelatedTo func(source *Type, target *Type) Ternary) *Type {
@@ -1270,13 +1266,13 @@ func isNonPrimitiveType(t *Type) bool {
 func (c *Checker) getTypeNamesForErrorDisplay(left *Type, right *Type) (string, string) {
 	var leftStr string
 	if c.symbolValueDeclarationIsContextSensitive(left.symbol) {
-		leftStr = c.typeToStringEx(left, left.symbol.ValueDeclaration, TypeFormatFlagsNone)
+		leftStr = c.typeToString(left, left.symbol.ValueDeclaration)
 	} else {
 		leftStr = c.TypeToString(left)
 	}
 	var rightStr string
 	if c.symbolValueDeclarationIsContextSensitive(right.symbol) {
-		rightStr = c.typeToStringEx(right, right.symbol.ValueDeclaration, TypeFormatFlagsNone)
+		rightStr = c.typeToString(right, right.symbol.ValueDeclaration)
 	} else {
 		rightStr = c.TypeToString(right)
 	}
@@ -1462,7 +1458,7 @@ func (c *Checker) compareSignaturesRelated(source *Signature, target *Signature,
 		}
 		return TernaryFalse
 	}
-	if source.typeParameters != nil && !core.Same(source.typeParameters, target.typeParameters) {
+	if len(source.typeParameters) != 0 && !core.Same(source.typeParameters, target.typeParameters) {
 		target = c.getCanonicalSignature(target)
 		source = c.instantiateSignatureInContextOf(source, target /*inferenceContext*/, nil, compareTypes)
 	}
@@ -1653,7 +1649,7 @@ func (c *Checker) compareTypePredicateRelatedTo(source *TypePredicate, target *T
 
 // Returns true if `s` is `(...args: A) => R` where `A` is `any`, `any[]`, `never`, or `never[]`, and `R` is `any` or `unknown`.
 func (c *Checker) isTopSignature(s *Signature) bool {
-	if s.typeParameters == nil && (s.thisParameter == nil || IsTypeAny(c.getTypeOfParameter(s.thisParameter))) && len(s.parameters) == 1 && signatureHasRestParameter(s) {
+	if len(s.typeParameters) == 0 && (s.thisParameter == nil || IsTypeAny(c.getTypeOfParameter(s.thisParameter))) && len(s.parameters) == 1 && signatureHasRestParameter(s) {
 		paramType := c.getTypeOfParameter(s.parameters[0])
 		var restType *Type
 		if c.isArrayType(paramType) {
@@ -1999,11 +1995,19 @@ func (c *Checker) getTypePredicateOfSignature(sig *Signature) *TypePredicate {
 		default:
 			if sig.declaration != nil {
 				typeNode := sig.declaration.Type()
+				var jsdocTypePredicate *TypePredicate
+				if typeNode == nil {
+					if jsdocSignature := c.getSignatureOfFullSignatureType(sig.declaration); jsdocSignature != nil {
+						jsdocTypePredicate = c.getTypePredicateOfSignature(jsdocSignature)
+					}
+				}
 				switch {
 				case typeNode != nil:
 					if ast.IsTypePredicateNode(typeNode) {
 						sig.resolvedTypePredicate = c.createTypePredicateFromTypePredicateNode(typeNode, sig)
 					}
+				case jsdocTypePredicate != nil:
+					sig.resolvedTypePredicate = jsdocTypePredicate
 				case ast.IsFunctionLikeDeclaration(sig.declaration) && (sig.resolvedReturnType == nil || sig.resolvedReturnType.flags&TypeFlagsBoolean != 0) && c.getParameterCount(sig) > 0:
 					sig.resolvedTypePredicate = c.noTypePredicate // avoid infinite loop
 					sig.resolvedTypePredicate = c.getTypePredicateFromBody(sig.declaration)
@@ -2090,7 +2094,7 @@ func (c *Checker) isResolvingReturnTypeOfSignature(signature *Signature) bool {
 }
 
 func (c *Checker) findMatchingSignatures(signatureLists [][]*Signature, signature *Signature, listIndex int) []*Signature {
-	if signature.typeParameters != nil {
+	if len(signature.typeParameters) != 0 {
 		// We require an exact match for generic signatures, so we only return signatures from the first
 		// signature list and only if they have exact matches in the other signature lists.
 		if listIndex > 0 {
@@ -2150,7 +2154,7 @@ func (c *Checker) compareSignaturesIdentical(source *Signature, target *Signatur
 	}
 	// Check that type parameter constraints and defaults match. If they do, instantiate the source
 	// signature with the type parameters of the target signature and continue the comparison.
-	if target.typeParameters != nil {
+	if len(target.typeParameters) != 0 {
 		mapper := newTypeMapper(source.typeParameters, target.typeParameters)
 		for i := range len(target.typeParameters) {
 			s := source.typeParameters[i]
@@ -3365,15 +3369,8 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 		if r.relation == r.c.comparableRelation && source.flags&TypeFlagsTypeParameter != 0 {
 			// This is a carve-out in comparability to essentially forbid comparing a type parameter with another type parameter
 			// unless one extends the other. (Remember: comparability is mostly bidirectional!)
-			constraint := r.c.getConstraintOfTypeParameter(source)
-			if constraint != nil {
-				for constraint != nil && someType(constraint, func(c *Type) bool { return c.flags&TypeFlagsTypeParameter != 0 }) {
-					result = r.isRelatedTo(constraint, target, RecursionFlagsSource, false /*reportErrors*/)
-					if result != TernaryFalse {
-						return result
-					}
-					constraint = r.c.getConstraintOfTypeParameter(constraint)
-				}
+			if constraint := r.c.getConstraintOfTypeParameter(source); constraint != nil && someType(constraint, func(c *Type) bool { return c.flags&TypeFlagsTypeParameter != 0 }) {
+				return r.isRelatedTo(constraint, target, RecursionFlagsSource, false /*reportErrors*/)
 			}
 			return TernaryFalse
 		}

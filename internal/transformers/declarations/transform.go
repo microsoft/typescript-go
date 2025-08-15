@@ -10,7 +10,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
-	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/transformers"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -35,6 +34,7 @@ type DeclarationEmitHost interface {
 	GetOutputPathsFor(file *ast.SourceFile, forceDtsPaths bool) OutputPaths
 	GetResolutionModeOverride(node *ast.Node) core.ResolutionMode
 	GetEffectiveDeclarationFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags
+	GetEmitResolver() printer.EmitResolver
 }
 
 type DeclarationTransformer struct {
@@ -60,7 +60,8 @@ type DeclarationTransformer struct {
 	rawLibReferenceDirectives        []*ast.FileReference
 }
 
-func NewDeclarationTransformer(host DeclarationEmitHost, resolver printer.EmitResolver, context *printer.EmitContext, compilerOptions *core.CompilerOptions, declarationFilePath string, declarationMapPath string) *DeclarationTransformer {
+func NewDeclarationTransformer(host DeclarationEmitHost, context *printer.EmitContext, compilerOptions *core.CompilerOptions, declarationFilePath string, declarationMapPath string) *DeclarationTransformer {
+	resolver := host.GetEmitResolver()
 	state := &SymbolTrackerSharedState{isolatedDeclarations: compilerOptions.IsolatedDeclarations.IsTrue(), resolver: resolver}
 	tracker := NewSymbolTracker(host, resolver, state)
 	// TODO: Use new host GetOutputPathsFor method instead of passing in entrypoint paths (which will also better support bundled emit)
@@ -193,10 +194,9 @@ func (tx *DeclarationTransformer) transformSourceFile(node *ast.SourceFile) *ast
 		combinedStatements = withMarker
 	}
 	outputFilePath := tspath.GetDirectoryPath(tspath.NormalizeSlashes(tx.declarationFilePath))
-	result := tx.Factory().UpdateSourceFile(node, combinedStatements)
+	result := tx.Factory().UpdateSourceFile(node, combinedStatements, node.EndOfFileToken)
 	result.AsSourceFile().LibReferenceDirectives = tx.getLibReferences()
 	result.AsSourceFile().TypeReferenceDirectives = tx.getTypeReferences()
-	result.AsSourceFile().HasNoDefaultLib = node.HasNoDefaultLib
 	result.AsSourceFile().IsDeclarationFile = true
 	result.AsSourceFile().ReferencedFiles = tx.getReferencedFiles(outputFilePath)
 	return result.AsNode()
@@ -467,9 +467,7 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 	case ast.KindTupleType:
 		result = tx.Visitor().VisitEachChild(input)
 		if result != nil {
-			startLine, _ := scanner.GetLineAndCharacterOfPosition(tx.state.currentSourceFile, input.Loc.Pos())
-			endLine, _ := scanner.GetLineAndCharacterOfPosition(tx.state.currentSourceFile, input.Loc.End())
-			if startLine == endLine {
+			if transformers.IsOriginalNodeSingleLine(tx.EmitContext(), input) {
 				tx.EmitContext().AddEmitFlags(result, printer.EFSingleLine)
 			}
 		}
@@ -666,15 +664,12 @@ func (tx *DeclarationTransformer) recreateBindingPattern(input *ast.BindingPatte
 		return nil
 	}
 	if len(results) == 1 {
-		return results[1]
+		return results[0]
 	}
 	return tx.Factory().NewSyntaxList(results)
 }
 
 func (tx *DeclarationTransformer) recreateBindingElement(e *ast.BindingElement) *ast.Node {
-	if e.Kind == ast.KindBindingElement {
-		return nil
-	}
 	if e.Name() == nil {
 		return nil
 	}
@@ -755,6 +750,7 @@ func (tx *DeclarationTransformer) transformSetAccessorDeclaration(input *ast.Set
 		tx.updateAccessorParamList(input.AsNode(), tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(input.AsNode()), ast.ModifierFlagsPrivate) != 0),
 		nil,
 		nil,
+		nil,
 	)
 }
 
@@ -769,6 +765,7 @@ func (tx *DeclarationTransformer) transformGetAccesorDeclaration(input *ast.GetA
 		nil, // accessors shouldn't have type params
 		tx.updateAccessorParamList(input.AsNode(), tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(input.AsNode()), ast.ModifierFlagsPrivate) != 0),
 		tx.ensureType(input.AsNode(), false),
+		nil,
 		nil,
 	)
 }
@@ -821,6 +818,7 @@ func (tx *DeclarationTransformer) transformConstructorDeclaration(input *ast.Con
 		tx.updateParamList(input.AsNode(), input.Parameters),
 		nil, // no return type
 		nil,
+		nil,
 	)
 }
 
@@ -829,7 +827,7 @@ func (tx *DeclarationTransformer) transformConstructSignatureDeclaration(input *
 		input,
 		tx.ensureTypeParams(input.AsNode(), input.TypeParameters),
 		tx.updateParamList(input.AsNode(), input.Parameters),
-		nil, // no return type
+		tx.ensureType(input.AsNode(), false),
 	)
 }
 
@@ -880,6 +878,7 @@ func (tx *DeclarationTransformer) transformMethodDeclaration(input *ast.MethodDe
 			tx.ensureTypeParams(input.AsNode(), input.TypeParameters),
 			tx.updateParamList(input.AsNode(), input.Parameters),
 			tx.ensureType(input.AsNode(), false),
+			nil,
 			nil,
 		)
 	}
@@ -932,7 +931,7 @@ func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *a
 		statement := tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{varDecl})))
 
 		assignment := tx.Factory().UpdateExportAssignment(input.AsExportAssignment(), input.Modifiers(), input.Type(), newId)
-		// Remove coments from the export declaration and copy them onto the synthetic _default declaration
+		// Remove comments from the export declaration and copy them onto the synthetic _default declaration
 		tx.preserveJsDoc(statement, input)
 		tx.removeAllComments(assignment)
 		return tx.Factory().NewSyntaxList([]*ast.Node{statement, assignment})
@@ -1143,6 +1142,7 @@ func (tx *DeclarationTransformer) transformFunctionDeclaration(input *ast.Functi
 		tx.ensureTypeParams(input.AsNode(), input.TypeParameters),
 		tx.updateParamList(input.AsNode(), input.Parameters),
 		tx.ensureType(input.AsNode(), false),
+		nil, /*fullSignature*/
 		nil,
 	)
 	if updated == nil || !tx.resolver.IsExpandoFunctionDeclaration(input.AsNode()) || !shouldEmitFunctionProperties(input) {
@@ -1503,7 +1503,36 @@ func (tx *DeclarationTransformer) ensureTypeParams(node *ast.Node, params *ast.T
 	if tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(node), ast.ModifierFlagsPrivate) != 0 {
 		return nil
 	}
-	return tx.Visitor().VisitNodes(params)
+	var typeParameters *ast.TypeParameterList
+	if typeParameters = tx.Visitor().VisitNodes(params); typeParameters != nil {
+		return typeParameters
+	}
+	oldErrorNameNode := tx.state.errorNameNode
+	tx.state.errorNameNode = node.Name()
+	var oldDiag GetSymbolAccessibilityDiagnostic
+	if !tx.suppressNewDiagnosticContexts {
+		oldDiag = tx.state.getSymbolAccessibilityDiagnostic
+		if canProduceDiagnostics(node) {
+			tx.state.getSymbolAccessibilityDiagnostic = createGetSymbolAccessibilityDiagnosticForNode(node)
+		}
+	}
+
+	if data := node.FunctionLikeData(); data != nil && data.FullSignature != nil {
+		if nodes := tx.resolver.CreateTypeParametersOfSignatureDeclaration(tx.EmitContext(), node, tx.enclosingDeclaration, declarationEmitNodeBuilderFlags, declarationEmitInternalNodeBuilderFlags, tx.tracker); nodes != nil {
+			typeParameters = &ast.TypeParameterList{
+				Loc:   node.Loc,
+				Nodes: nodes,
+			}
+		}
+	} else {
+		// Debug.assertNever(node); // !!!
+	}
+
+	tx.state.errorNameNode = oldErrorNameNode
+	if !tx.suppressNewDiagnosticContexts {
+		tx.state.getSymbolAccessibilityDiagnostic = oldDiag
+	}
+	return typeParameters
 }
 
 func (tx *DeclarationTransformer) updateParamList(node *ast.Node, params *ast.ParameterList) *ast.ParameterList {

@@ -23,7 +23,7 @@ import (
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=Kind -output=project_stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w project_stringer_generated.go
+//go:generate go tool mvdan.cc/gofumpt -lang=go1.25 -w project_stringer_generated.go
 
 const hr = "-----------------------------------------------"
 
@@ -42,6 +42,7 @@ type snapshot struct {
 	project          *Project
 	positionEncoding lsproto.PositionEncodingKind
 	program          *compiler.Program
+	lineMaps         collections.SyncMap[*ast.SourceFile, *ls.LineMap]
 }
 
 // GetLineMap implements ls.Host.
@@ -51,7 +52,13 @@ func (s *snapshot) GetLineMap(fileName string) *ls.LineMap {
 	if s.project.getFileVersion(file) == scriptInfo.Version() {
 		return scriptInfo.LineMap()
 	}
-	return ls.ComputeLineStarts(file.Text())
+	// The version changed; recompute the line map.
+	// !!! This shouldn't happen so often, but does. Probably removable once snapshotting is finished.
+	if cached, ok := s.lineMaps.Load(file); ok {
+		return cached
+	}
+	lineMap, _ := s.lineMaps.LoadOrStore(file, ls.ComputeLineStarts(file.Text()))
+	return lineMap
 }
 
 // GetPositionEncoding implements ls.Host.
@@ -77,7 +84,6 @@ const (
 type ProjectHost interface {
 	tsoptions.ParseConfigHost
 	module.ResolutionHost
-	NewLine() string
 	DefaultLibraryPath() string
 	TypingsInstaller() *TypingsInstaller
 	DocumentStore() *DocumentStore
@@ -294,11 +300,6 @@ func (p *Project) GetProgram() *compiler.Program {
 	return program
 }
 
-// NewLine implements compiler.CompilerHost.
-func (p *Project) NewLine() string {
-	return p.host.NewLine()
-}
-
 // Trace implements compiler.CompilerHost.
 func (p *Project) Trace(msg string) {
 	p.host.Log(msg)
@@ -339,7 +340,7 @@ func (p *Project) GetLanguageServiceForRequest(ctx context.Context) (*ls.Languag
 		positionEncoding: p.host.PositionEncoding(),
 		program:          program,
 	}
-	languageService := ls.NewLanguageService(ctx, snapshot)
+	languageService := ls.NewLanguageService(snapshot)
 	cleanup := func() {
 		if checkerPool.isRequestCheckerInUse(core.GetRequestID(ctx)) {
 			panic(fmt.Errorf("checker for request ID %s not returned to pool at end of request", core.GetRequestID(ctx)))
@@ -532,7 +533,7 @@ func (p *Project) updateGraph() (*compiler.Program, bool) {
 				}
 			}
 
-			oldProgram.ForEachResolvedProjectReference(func(path tspath.Path, ref *tsoptions.ParsedCommandLine) {
+			oldProgram.ForEachResolvedProjectReference(func(path tspath.Path, ref *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) {
 				if _, ok := p.program.GetResolvedProjectReferenceFor(path); !ok {
 					p.host.ConfigFileRegistry().releaseConfig(path, p)
 				}
@@ -1095,7 +1096,7 @@ func (p *Project) Close() {
 			// Detach script info if its not root or is root of non inferred project
 			p.detachScriptInfoIfNotInferredRoot(sourceFile.Path())
 		}
-		p.program.ForEachResolvedProjectReference(func(path tspath.Path, ref *tsoptions.ParsedCommandLine) {
+		p.program.ForEachResolvedProjectReference(func(path tspath.Path, ref *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) {
 			p.host.ConfigFileRegistry().releaseConfig(path, p)
 		})
 		if p.kind == KindConfigured {
