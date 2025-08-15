@@ -141,7 +141,6 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		// Just skip this for now.
 		t.Skip("bundled files are not embedded")
 	}
-	ctx := t.Context()
 
 	fileName := getFileNameFromTest(t)
 	testfs := make(map[string]string)
@@ -174,7 +173,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		ParsedFileCache: &parsedFileCache{},
 	})
 
-	lspCtx, lspCancel := context.WithCancel(ctx)
+	lspCtx, lspCancel := context.WithCancel(t.Context())
 	lspErrChan := make(chan error, 1)
 
 	go func() {
@@ -182,6 +181,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 			outputWriter.Close()
 		}()
 		lspErrChan <- server.Run(lspCtx)
+		t.Log("LSP server exited")
 	}()
 
 	converters := ls.NewConverters(lsproto.PositionEncodingKindUTF8, func(fileName string) *ls.LineMap {
@@ -215,13 +215,9 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		lspCancel()
 		inputWriter.Close()
 
-		select {
-		case <-ctx.Done():
-			// do nothing
-		case err := <-lspErrChan:
-			if err != nil && lspCtx.Err() == nil {
-				t.Errorf("LSP server exited with error: %v", err)
-			}
+		t.Log("Waiting for LSP server to exit")
+		if err := <-lspErrChan; err != nil && lspCtx.Err() == nil {
+			t.Errorf("LSP server exited with error: %v", err)
 		}
 	})
 	return f
