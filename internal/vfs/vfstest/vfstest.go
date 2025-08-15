@@ -70,7 +70,7 @@ func FromMap[File any](m map[string]File, useCaseSensitiveFileNames bool) vfs.FS
 	return FromMapWithClock(m, useCaseSensitiveFileNames, &clockImpl{start: time.Now()})
 }
 
-// FromMap creates a new [vfs.FS] from a map of paths to file contents.
+// FromMapWithClock creates a new [vfs.FS] from a map of paths to file contents.
 // Those file contents may be strings, byte slices, or [fstest.MapFile]s.
 //
 // The paths must be normalized absolute paths according to the tspath package,
