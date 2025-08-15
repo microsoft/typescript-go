@@ -20,7 +20,18 @@ import (
 )
 
 type changeNodeOptions struct {
-	insertNodeOptions
+	// Text to be inserted before the new node
+	prefix string
+
+	// Text to be inserted after the new node
+	suffix string
+
+	// Text of inserted node will be formatted with this indentation, otherwise indentation will be inferred from the old node
+	indentation *int
+
+	// Text of inserted node will be formatted with this delta, otherwise delta will be inferred from the new node kind
+	delta *int
+
 	leadingTriviaOption
 	trailingTriviaOption
 	joiner string
@@ -45,25 +56,6 @@ const (
 	trailingTriviaOptionInclude           trailingTriviaOption = 3
 )
 
-type insertNodeOptions struct {
-	/**
-	 * Text to be inserted before the new node
-	 */
-	prefix string
-	/**
-	 * Text to be inserted after the new node
-	 */
-	suffix string
-	/**
-	 * Text of inserted node will be formatted with this indentation, otherwise indentation will be inferred from the old node
-	 */
-	indentation *int
-	/**
-	 * Text of inserted node will be formatted with this delta, otherwise delta will be inferred from the new node kind
-	 */
-	delta *int
-}
-
 type trackerEditKind int
 
 const (
@@ -73,65 +65,15 @@ const (
 	trackerEditKindReplaceWithMultipleNodes trackerEditKind = 4
 )
 
-type trackerEdit interface {
-	Kind() trackerEditKind
-	getRange() lsproto.Range
-}
-
-type trackerEditText struct {
-	// sourceFile *ast.SourceFile
-	*lsproto.TextEdit
-}
-
-func (eText *trackerEditText) Kind() trackerEditKind {
-	return trackerEditKindText
-}
-
-func (eText *trackerEditText) getRange() lsproto.Range {
-	return eText.TextEdit.Range
-}
-
-type trackerEditRemove struct {
-	// sourceFile *ast.SourceFile
+type trackerEdit struct {
+	kind trackerEditKind
 	lsproto.Range
-}
 
-func (removeEdit *trackerEditRemove) Kind() trackerEditKind {
-	return trackerEditKindRemove
-}
+	NewText string // kind == text
 
-func (removeEdit *trackerEditRemove) getRange() lsproto.Range {
-	return removeEdit.Range
-}
-
-type trackerEditReplaceWithSingleNode struct {
-	// sourceFile *ast.SourceFile
-	lsproto.Range
-	*ast.Node
-	options insertNodeOptions
-}
-
-func (replaceSingleEdit *trackerEditReplaceWithSingleNode) Kind() trackerEditKind {
-	return trackerEditKindReplaceWithSingleNode
-}
-
-func (replaceSingleEdit *trackerEditReplaceWithSingleNode) getRange() lsproto.Range {
-	return replaceSingleEdit.Range
-}
-
-type trackerEditReplaceWithMultipleNodes struct {
-	// sourceFile *ast.SourceFile
-	lsproto.Range
-	nodes   []*ast.Node
-	options changeNodeOptions
-}
-
-func (replaceMultipleEdit *trackerEditReplaceWithMultipleNodes) Kind() trackerEditKind {
-	return trackerEditKindReplaceWithMultipleNodes
-}
-
-func (replaceMultipleEdit *trackerEditReplaceWithMultipleNodes) getRange() lsproto.Range {
-	return replaceMultipleEdit.Range
+	*ast.Node             // single
+	nodes     []*ast.Node // multiple
+	options   changeNodeOptions
 }
 
 type changeTracker struct {
@@ -143,7 +85,7 @@ type changeTracker struct {
 	*printer.EmitContext
 
 	*ast.NodeFactory
-	changes *collections.MultiMap[*ast.SourceFile, trackerEdit]
+	changes *collections.MultiMap[*ast.SourceFile, *trackerEdit]
 
 	// created during call to getChanges
 	writer *printer.ChangeTrackerWriter
@@ -159,14 +101,14 @@ func (ls *LanguageService) newChangeTracker(ctx context.Context) *changeTracker 
 		ls:             ls,
 		EmitContext:    emitContext,
 		NodeFactory:    &emitContext.Factory.NodeFactory,
-		changes:        &collections.MultiMap[*ast.SourceFile, trackerEdit]{},
+		changes:        &collections.MultiMap[*ast.SourceFile, *trackerEdit]{},
 		ctx:            ctx,
 		formatSettings: formatCodeSettings,
 		newLine:        newLine,
 	}
 }
 
-// !!! strada note
+// !!! address strada note
 //   - Note: after calling this, the TextChanges object must be discarded!
 func (ct *changeTracker) getChanges() map[string][]*lsproto.TextEdit {
 	// !!! finishDeleteDeclarations
@@ -181,27 +123,27 @@ func (ct *changeTracker) getTextChangesFromChanges() map[string][]*lsproto.TextE
 	for sourceFile, changesInFile := range ct.changes.M {
 		// order changes by start position
 		// If the start position is the same, put the shorter range first, since an empty range (x, x) may precede (x, y) but not vice-versa.
-		slices.SortStableFunc(changesInFile, func(a, b trackerEdit) int { return CompareRanges(ptrTo(a.getRange()), ptrTo(b.getRange())) })
+		slices.SortStableFunc(changesInFile, func(a, b *trackerEdit) int { return CompareRanges(ptrTo(a.Range), ptrTo(b.Range)) })
 		// verify that change intervals do not overlap, except possibly at end points.
 		for i := range len(changesInFile) - 1 {
-			if ComparePositions(changesInFile[i].getRange().End, changesInFile[i+1].getRange().Start) > 0 {
+			if ComparePositions(changesInFile[i].Range.End, changesInFile[i+1].Range.Start) > 0 {
 				// assert change[i].End <= change[i + 1].Start
-				panic(fmt.Sprintf("changes overlap: %v and %v", changesInFile[i].getRange(), changesInFile[i+1].getRange()))
+				panic(fmt.Sprintf("changes overlap: %v and %v", changesInFile[i].Range, changesInFile[i+1].Range))
 			}
 		}
 
-		textChanges := core.MapNonNil(changesInFile, func(change trackerEdit) *lsproto.TextEdit {
+		textChanges := core.MapNonNil(changesInFile, func(change *trackerEdit) *lsproto.TextEdit {
 			// !!! targetSourceFile
 
 			newText := ct.computeNewText(change, sourceFile, sourceFile)
-			// span := createTextSpanFromRange(c.getRange())
+			// span := createTextSpanFromRange(c.Range)
 			// !!!
 			// Filter out redundant changes.
 			// if (span.length == newText.length && stringContainsAt(targetSourceFile.text, newText, span.start)) { return nil }
 
 			return &lsproto.TextEdit{
 				NewText: newText,
-				Range:   change.getRange(),
+				Range:   change.Range,
 			}
 		})
 
@@ -212,48 +154,43 @@ func (ct *changeTracker) getTextChangesFromChanges() map[string][]*lsproto.TextE
 	return changes
 }
 
-func (ct *changeTracker) computeNewText(change trackerEdit, targetSourceFile *ast.SourceFile, sourceFile *ast.SourceFile) string {
-	switch change.Kind() {
+func (ct *changeTracker) computeNewText(change *trackerEdit, targetSourceFile *ast.SourceFile, sourceFile *ast.SourceFile) string {
+	switch change.kind {
 	case trackerEditKindRemove:
 		return ""
 	case trackerEditKindText:
-		return change.(*trackerEditText).NewText
+		return change.NewText
 	}
 
-	var options changeNodeOptions
-	pos := int(ct.ls.converters.LineAndCharacterToPosition(sourceFile, change.getRange().Start))
+	pos := int(ct.ls.converters.LineAndCharacterToPosition(sourceFile, change.Range.Start))
 	targetFileLineMap := targetSourceFile.LineMap()
 	format := func(n *ast.Node) string {
-		return ct.getFormattedTextOfNode(n, targetSourceFile, sourceFile, pos, targetFileLineMap, options.insertNodeOptions)
+		return ct.getFormattedTextOfNode(n, targetSourceFile, sourceFile, pos, targetFileLineMap, change.options)
 	}
 
 	var text string
-	switch change.Kind() {
+	switch change.kind {
 
 	case trackerEditKindReplaceWithMultipleNodes:
-		changeEditMultiple := change.(*trackerEditReplaceWithMultipleNodes)
-		options = changeEditMultiple.options
-		if options.joiner == "" {
-			options.joiner = ct.newLine
+		if change.options.joiner == "" {
+			change.options.joiner = ct.newLine
 		}
-		text = strings.Join(core.Map(changeEditMultiple.nodes, func(n *ast.Node) string { return strings.TrimSuffix(format(n), ct.newLine) }), options.joiner)
+		text = strings.Join(core.Map(change.nodes, func(n *ast.Node) string { return strings.TrimSuffix(format(n), ct.newLine) }), change.options.joiner)
 	case trackerEditKindReplaceWithSingleNode:
-		changeEditSingle := change.(*trackerEditReplaceWithSingleNode)
-		options.insertNodeOptions = changeEditSingle.options
-		text = format(changeEditSingle.Node)
+		text = format(change.Node)
 	default:
-		panic(fmt.Sprintf("change kind %d should have been handled earlier", change.Kind()))
+		panic(fmt.Sprintf("change kind %d should have been handled earlier", change.kind))
 	}
 	// strip initial indentation (spaces or tabs) if text will be inserted in the middle of the line
 	noIndent := text
-	if !(options.indentation != nil && *options.indentation != 0 || scanner.GetLineStartPositionForPosition(pos, targetFileLineMap) == pos) {
+	if !(change.options.indentation != nil && *change.options.indentation != 0 || scanner.GetLineStartPositionForPosition(pos, targetFileLineMap) == pos) {
 		noIndent = strings.TrimLeftFunc(text, unicode.IsSpace)
 	}
-	return options.prefix + noIndent // !!!  +((!options.suffix || endsWith(noIndent, options.suffix)) ? "" : options.suffix);
+	return change.options.prefix + noIndent // !!!  +((!options.suffix || endsWith(noIndent, options.suffix)) ? "" : options.suffix);
 }
 
 /** Note: this may mutate `nodeIn`. */
-func (ct *changeTracker) getFormattedTextOfNode(nodeIn *ast.Node, targetSourceFile *ast.SourceFile, sourceFile *ast.SourceFile, pos int, targetFileLineMap []core.TextPos, options insertNodeOptions) string {
+func (ct *changeTracker) getFormattedTextOfNode(nodeIn *ast.Node, targetSourceFile *ast.SourceFile, sourceFile *ast.SourceFile, pos int, targetFileLineMap []core.TextPos, options changeNodeOptions) string {
 	text, node := ct.getNonformattedText(nodeIn, targetSourceFile)
 	// !!! if (validate) validate(node, text);
 	formatOptions := getFormatCodeSettingsForWriting(ct.formatSettings, targetSourceFile)
@@ -312,35 +249,34 @@ func (ct *changeTracker) replaceNode(sourceFile *ast.SourceFile, oldNode *ast.No
 	if options == nil {
 		// defaults to `useNonAdjustedPositions`
 		options = &changeNodeOptions{
-			insertNodeOptions:    insertNodeOptions{},
 			leadingTriviaOption:  leadingTriviaOptionExclude,
 			trailingTriviaOption: trailingTriviaOptionExclude,
 		}
 	}
-	ct.replaceRange(sourceFile, ct.getAdjustedRange(sourceFile, oldNode, oldNode, options.leadingTriviaOption, options.trailingTriviaOption), newNode, options.insertNodeOptions)
+	ct.replaceRange(sourceFile, ct.getAdjustedRange(sourceFile, oldNode, oldNode, options.leadingTriviaOption, options.trailingTriviaOption), newNode, *options)
 }
 
-func (ct *changeTracker) replaceRange(sourceFile *ast.SourceFile, lsprotoRange lsproto.Range, newNode *ast.Node, options insertNodeOptions) {
-	ct.changes.Add(sourceFile, &trackerEditReplaceWithSingleNode{Range: lsprotoRange, options: options, Node: newNode})
+func (ct *changeTracker) replaceRange(sourceFile *ast.SourceFile, lsprotoRange lsproto.Range, newNode *ast.Node, options changeNodeOptions) {
+	ct.changes.Add(sourceFile, &trackerEdit{kind: trackerEditKindReplaceWithSingleNode, Range: lsprotoRange, options: options, Node: newNode})
 }
 
 func (ct *changeTracker) replaceRangeWithText(sourceFile *ast.SourceFile, lsprotoRange lsproto.Range, text string) {
-	ct.changes.Add(sourceFile, &trackerEditText{&lsproto.TextEdit{Range: lsprotoRange, NewText: text}})
+	ct.changes.Add(sourceFile, &trackerEdit{kind: trackerEditKindText, Range: lsprotoRange, NewText: text})
 }
 
 func (ct *changeTracker) replaceRangeWithNodes(sourceFile *ast.SourceFile, lsprotoRange lsproto.Range, newNodes []*ast.Node, options changeNodeOptions) {
 	if len(newNodes) == 1 {
-		ct.replaceRange(sourceFile, lsprotoRange, newNodes[0], options.insertNodeOptions)
+		ct.replaceRange(sourceFile, lsprotoRange, newNodes[0], options)
 		return
 	}
-	ct.changes.Add(sourceFile, &trackerEditReplaceWithMultipleNodes{Range: lsprotoRange, nodes: newNodes, options: options})
+	ct.changes.Add(sourceFile, &trackerEdit{kind: trackerEditKindReplaceWithMultipleNodes, Range: lsprotoRange, nodes: newNodes, options: options})
 }
 
 func (ct *changeTracker) insertText(sourceFile *ast.SourceFile, pos lsproto.Position, text string) {
 	ct.replaceRangeWithText(sourceFile, lsproto.Range{Start: pos, End: pos}, text)
 }
 
-func (ct *changeTracker) insertNodeAt(sourceFile *ast.SourceFile, pos core.TextPos, newNode *ast.Node, options insertNodeOptions) {
+func (ct *changeTracker) insertNodeAt(sourceFile *ast.SourceFile, pos core.TextPos, newNode *ast.Node, options changeNodeOptions) {
 	lsPos := ct.ls.converters.PositionToLineAndCharacter(sourceFile, pos)
 	ct.replaceRange(sourceFile, lsproto.Range{Start: lsPos, End: lsPos}, newNode, options)
 }
@@ -357,7 +293,7 @@ func (ct *changeTracker) insertNodeAfter(sourceFile *ast.SourceFile, after *ast.
 
 func (ct *changeTracker) insertNodesAfter(sourceFile *ast.SourceFile, after *ast.Node, newNodes []*ast.Node) {
 	endPosition := ct.endPosForInsertNodeAfter(sourceFile, after, newNodes[0])
-	ct.insertNodesAt(sourceFile, endPosition, newNodes, changeNodeOptions{insertNodeOptions: ct.getInsertNodeAfterOptions(sourceFile, after)})
+	ct.insertNodesAt(sourceFile, endPosition, newNodes, ct.getInsertNodeAfterOptions(sourceFile, after))
 }
 
 func (ct *changeTracker) endPosForInsertNodeAfter(sourceFile *ast.SourceFile, after *ast.Node, newNode *ast.Node) core.TextPos {
@@ -368,37 +304,37 @@ func (ct *changeTracker) endPosForInsertNodeAfter(sourceFile *ast.SourceFile, af
 		ct.replaceRange(sourceFile,
 			lsproto.Range{Start: endPos, End: endPos},
 			sourceFile.GetOrCreateToken(ast.KindSemicolonToken, after.End(), after.End(), after.Parent),
-			insertNodeOptions{},
+			changeNodeOptions{},
 		)
 	}
 	return core.TextPos(ct.getAdjustedEndPosition(sourceFile, after, trailingTriviaOptionNone))
 }
 
-func (ct *changeTracker) getInsertNodeAfterOptions(sourceFile *ast.SourceFile, node *ast.Node) insertNodeOptions {
+func (ct *changeTracker) getInsertNodeAfterOptions(sourceFile *ast.SourceFile, node *ast.Node) changeNodeOptions {
 	newLineChar := ct.newLine
-	var options insertNodeOptions
+	var options changeNodeOptions
 	switch node.Kind {
 	case ast.KindParameter:
 		// default opts
-		options = insertNodeOptions{}
+		options = changeNodeOptions{}
 	case ast.KindClassDeclaration, ast.KindModuleDeclaration:
-		options = insertNodeOptions{prefix: newLineChar, suffix: newLineChar}
+		options = changeNodeOptions{prefix: newLineChar, suffix: newLineChar}
 
 	case ast.KindVariableDeclaration, ast.KindStringLiteral, ast.KindIdentifier:
-		options = insertNodeOptions{prefix: ", "}
+		options = changeNodeOptions{prefix: ", "}
 
 	case ast.KindPropertyAssignment:
-		options = insertNodeOptions{suffix: "," + newLineChar}
+		options = changeNodeOptions{suffix: "," + newLineChar}
 
 	case ast.KindExportKeyword:
-		options = insertNodeOptions{prefix: " "}
+		options = changeNodeOptions{prefix: " "}
 
 	default:
 		if !(ast.IsStatement(node) || ast.IsClassOrTypeElement(node)) {
 			// Else we haven't handled this kind of node yet -- add it
 			panic("unimplemented node type " + node.Kind.String() + " in changeTracker.getInsertNodeAfterOptions")
 		}
-		options = insertNodeOptions{suffix: newLineChar}
+		options = changeNodeOptions{suffix: newLineChar}
 	}
 	if node.End() == sourceFile.End() && ast.IsStatement(node) {
 		options.prefix = "\n" + options.prefix
@@ -445,7 +381,7 @@ func (ct *changeTracker) insertNodeInListAfter(sourceFile *ast.SourceFile, after
 
 			// write separator and leading trivia of the next element as suffix
 			suffix := scanner.TokenToString(nextToken.Kind) + sourceFile.Text()[nextNode.End():startPos]
-			ct.insertNodeAt(sourceFile, core.TextPos(startPos), newNode, insertNodeOptions{suffix: suffix})
+			ct.insertNodeAt(sourceFile, core.TextPos(startPos), newNode, changeNodeOptions{suffix: suffix})
 		}
 		return
 	}
@@ -480,13 +416,13 @@ func (ct *changeTracker) insertNodeInListAfter(sourceFile *ast.SourceFile, after
 	separatorString := scanner.TokenToString(separator)
 	end := ct.ls.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(after.End()))
 	if !multilineList {
-		ct.replaceRange(sourceFile, lsproto.Range{Start: end, End: end}, newNode, insertNodeOptions{prefix: separatorString})
+		ct.replaceRange(sourceFile, lsproto.Range{Start: end, End: end}, newNode, changeNodeOptions{prefix: separatorString})
 		return
 	}
 
 	// insert separator immediately following the 'after' node to preserve comments in trailing trivia
 	// !!! formatcontext
-	ct.replaceRange(sourceFile, lsproto.Range{Start: end, End: end}, sourceFile.GetOrCreateToken(separator, after.End(), after.End()+len(separatorString), after.Parent), insertNodeOptions{})
+	ct.replaceRange(sourceFile, lsproto.Range{Start: end, End: end}, sourceFile.GetOrCreateToken(separator, after.End(), after.End()+len(separatorString), after.Parent), changeNodeOptions{})
 	// use the same indentation as 'after' item
 	indentation := format.FindFirstNonWhitespaceColumn(afterStartLinePosition, afterStart, sourceFile, ct.formatSettings)
 	// insert element before the line break on the line that contains 'after' element
@@ -500,7 +436,7 @@ func (ct *changeTracker) insertNodeInListAfter(sourceFile *ast.SourceFile, after
 		sourceFile,
 		lsproto.Range{Start: insertLSPos, End: insertLSPos},
 		newNode,
-		insertNodeOptions{
+		changeNodeOptions{
 			indentation: ptrTo(indentation),
 			prefix:      ct.newLine,
 		},
@@ -509,7 +445,7 @@ func (ct *changeTracker) insertNodeInListAfter(sourceFile *ast.SourceFile, after
 
 func (ct *changeTracker) insertAtTopOfFile(sourceFile *ast.SourceFile, insert []*ast.Statement, blankLineBetween bool) {
 	pos := ct.getInsertionPositionAtSourceFileTop(sourceFile)
-	options := insertNodeOptions{}
+	options := changeNodeOptions{}
 	if pos != 0 {
 		options.prefix = ct.newLine
 	}
@@ -523,7 +459,7 @@ func (ct *changeTracker) insertAtTopOfFile(sourceFile *ast.SourceFile, insert []
 	if len(insert) == 0 {
 		ct.insertNodeAt(sourceFile, core.TextPos(pos), insert[0], options)
 	} else {
-		ct.insertNodesAt(sourceFile, core.TextPos(pos), insert, changeNodeOptions{insertNodeOptions: options})
+		ct.insertNodesAt(sourceFile, core.TextPos(pos), insert, options)
 	}
 }
 

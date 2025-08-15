@@ -74,15 +74,15 @@ type ImportFix struct {
 	exportInfo          *SymbolExportInfo // !!! | FutureSymbolExportInfo | undefined
 	moduleSpecifierKind modulespecifiers.ResultKind
 	moduleSpecifier     string
-	usagePosition   *lsproto.Position
-	namespacePrefix *string
+	usagePosition       *lsproto.Position
+	namespacePrefix     *string
 
 	importClauseOrBindingPattern *ast.Node  // ImportClause | ObjectBindingPattern
 	importKind                   ImportKind // ImportKindDefault | ImportKindNamed
 	addAsTypeOnly                AddAsTypeOnly
 	propertyName                 string // !!! not implemented
 
-	useRequire    bool
+	useRequire bool
 
 	typeOnlyAliasDeclaration *ast.Declaration // TypeOnlyAliasDeclaration
 }
@@ -108,7 +108,6 @@ type Qualification struct {
 	namespacePrefix string
 }
 
-
 func getUseNamespaceImport(
 	moduleSpecifier string,
 	moduleSpecifierKind modulespecifiers.ResultKind,
@@ -116,12 +115,12 @@ func getUseNamespaceImport(
 	usagePosition lsproto.Position,
 ) *ImportFix {
 	return &ImportFix{
-		kind: ImportFixKindUseNamespace,
-			moduleSpecifierKind: moduleSpecifierKind,
-			moduleSpecifier:     moduleSpecifier,
+		kind:                ImportFixKindUseNamespace,
+		moduleSpecifierKind: moduleSpecifierKind,
+		moduleSpecifier:     moduleSpecifier,
 
-			usagePosition:   ptrTo(usagePosition),
-			namespacePrefix: strPtrTo(namespacePrefix),
+		usagePosition:   ptrTo(usagePosition),
+		namespacePrefix: strPtrTo(namespacePrefix),
 	}
 }
 
@@ -133,12 +132,12 @@ func getAddJsdocTypeImport(
 	isReExport *bool,
 ) *ImportFix {
 	return &ImportFix{
-		kind: ImportFixKindJsdocTypeImport,
+		kind:                ImportFixKindJsdocTypeImport,
 		isReExport:          isReExport,
-			exportInfo:          exportInfo,
-			moduleSpecifierKind: moduleSpecifierKind,
-			moduleSpecifier:     moduleSpecifier,
-		usagePosition: usagePosition,
+		exportInfo:          exportInfo,
+		moduleSpecifierKind: moduleSpecifierKind,
+		moduleSpecifier:     moduleSpecifier,
+		usagePosition:       usagePosition,
 	}
 }
 
@@ -150,9 +149,9 @@ func getAddToExistingImport(
 	addAsTypeOnly AddAsTypeOnly,
 ) *ImportFix {
 	return &ImportFix{
-		kind:ImportFixKindAddToExisting,
-		moduleSpecifierKind: moduleSpecifierKind,
-		moduleSpecifier:     moduleSpecifier,
+		kind:                         ImportFixKindAddToExisting,
+		moduleSpecifierKind:          moduleSpecifierKind,
+		moduleSpecifier:              moduleSpecifier,
 		importClauseOrBindingPattern: importClauseOrBindingPattern,
 		importKind:                   importKind,
 		addAsTypeOnly:                addAsTypeOnly,
@@ -170,14 +169,14 @@ func getNewAddNewImport(
 	qualification *Qualification,
 ) *ImportFix {
 	return &ImportFix{
-		kind:ImportFixKindAddNew,
-			isReExport:          isReExport,
-			exportInfo:          exportInfo,
-			moduleSpecifierKind: modulespecifiers.ResultKindNone,
-			moduleSpecifier:     moduleSpecifier,
-		importKind:    importKind,
-		addAsTypeOnly: addAsTypeOnly,
-		useRequire:    useRequire,
+		kind:                ImportFixKindAddNew,
+		isReExport:          isReExport,
+		exportInfo:          exportInfo,
+		moduleSpecifierKind: modulespecifiers.ResultKindNone,
+		moduleSpecifier:     moduleSpecifier,
+		importKind:          importKind,
+		addAsTypeOnly:       addAsTypeOnly,
+		useRequire:          useRequire,
 	}
 }
 
@@ -192,7 +191,6 @@ func getNewPromoteTypeOnlyImport(typeOnlyAliasDeclaration *ast.Declaration) *Imp
 		typeOnlyAliasDeclaration: typeOnlyAliasDeclaration,
 	}
 }
-
 
 /** Information needed to augment an existing import declaration. */
 // rename all fixes to say fix at end

@@ -18,6 +18,7 @@ func getImportDeclarationInsertIndex(sortedImports []*ast.Statement, newImport *
 }
 
 // returns `-1` if `a` is better than `b`
+//
 //	note: this sorts in descending order of preference; different than convention in other cmp-like functions
 func compareModuleSpecifiers(
 	a *ImportFix, // !!! ImportFixWithModuleSpecifier

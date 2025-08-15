@@ -104,6 +104,7 @@ b/**/
 	})
 	f.BaselineAutoImportsCompletions(t, []string{""})
 }
+
 func TestNodeModulesImportCompletions1Baseline(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
