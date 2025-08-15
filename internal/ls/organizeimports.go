@@ -20,33 +20,33 @@ func getImportDeclarationInsertIndex(sortedImports []*ast.Statement, newImport *
 // returns `-1` if `a` is better than `b`
 //	note: this sorts in descending order of preference; different than convention in other cmp-like functions
 func compareModuleSpecifiers(
-	a ImportFix, // !!! ImportFixWithModuleSpecifier
-	b ImportFix, // !!! ImportFixWithModuleSpecifier
+	a *ImportFix, // !!! ImportFixWithModuleSpecifier
+	b *ImportFix, // !!! ImportFixWithModuleSpecifier
 	importingFile *ast.SourceFile, // | FutureSourceFile,
 	program *compiler.Program,
 	preferences UserPreferences,
 	allowsImportingSpecifier func(specifier string) bool,
 	toPath func(fileName string) tspath.Path,
 ) int {
-	if a.Kind() == ImportFixKindUseNamespace || b.Kind() == ImportFixKindUseNamespace {
+	if a.kind == ImportFixKindUseNamespace || b.kind == ImportFixKindUseNamespace {
 		return 0
 	}
 	if comparison := compareBooleans(
-		b.Base().moduleSpecifierKind != modulespecifiers.ResultKindNodeModules || allowsImportingSpecifier(b.Base().moduleSpecifier),
-		a.Base().moduleSpecifierKind != modulespecifiers.ResultKindNodeModules || allowsImportingSpecifier(a.Base().moduleSpecifier),
+		b.moduleSpecifierKind != modulespecifiers.ResultKindNodeModules || allowsImportingSpecifier(b.moduleSpecifier),
+		a.moduleSpecifierKind != modulespecifiers.ResultKindNodeModules || allowsImportingSpecifier(a.moduleSpecifier),
 	); comparison != 0 {
 		return comparison
 	}
 	if comparison := compareModuleSpecifierRelativity(a, b, preferences); comparison != 0 {
 		return comparison
 	}
-	if comparison := compareNodeCoreModuleSpecifiers(a.Base().moduleSpecifier, b.Base().moduleSpecifier, importingFile, program); comparison != 0 {
+	if comparison := compareNodeCoreModuleSpecifiers(a.moduleSpecifier, b.moduleSpecifier, importingFile, program); comparison != 0 {
 		return comparison
 	}
 	if comparison := compareBooleans(isFixPossiblyReExportingImportingFile(a, importingFile.Path(), toPath), isFixPossiblyReExportingImportingFile(b, importingFile.Path(), toPath)); comparison != 0 {
 		return comparison
 	}
-	if comparison := compareNumberOfDirectorySeparators(a.Base().moduleSpecifier, b.Base().moduleSpecifier); comparison != 0 {
+	if comparison := compareNumberOfDirectorySeparators(a.moduleSpecifier, b.moduleSpecifier); comparison != 0 {
 		return comparison
 	}
 	return 0
@@ -63,10 +63,10 @@ func compareBooleans(a, b bool) int {
 }
 
 // returns `-1` if `a` is better than `b`
-func compareModuleSpecifierRelativity(a ImportFix, b ImportFix, preferences UserPreferences) int {
+func compareModuleSpecifierRelativity(a *ImportFix, b *ImportFix, preferences UserPreferences) int {
 	switch preferences.ImportModuleSpecifierPreference {
 	case modulespecifiers.ImportModuleSpecifierPreferenceNonRelative, modulespecifiers.ImportModuleSpecifierPreferenceProjectRelative:
-		return compareBooleans(a.Base().moduleSpecifierKind == modulespecifiers.ResultKindRelative, b.Base().moduleSpecifierKind == modulespecifiers.ResultKindRelative)
+		return compareBooleans(a.moduleSpecifierKind == modulespecifiers.ResultKindRelative, b.moduleSpecifierKind == modulespecifiers.ResultKindRelative)
 	}
 	return 0
 }
@@ -105,11 +105,10 @@ func shouldUseUriStyleNodeCoreModules(file *ast.SourceFile, program *compiler.Pr
 // E.g., do not `import { Foo } from ".."` when you could `import { Foo } from "../Foo"`.
 // This can produce false positives or negatives if re-exports cross into sibling directories
 // (e.g. `export * from "../whatever"`) or are not named "index".
-func isFixPossiblyReExportingImportingFile(fix ImportFix, importingFilePath tspath.Path, toPath func(fileName string) tspath.Path) bool {
-	base := fix.Base()
-	if base.isReExport != nil && *(base.isReExport) &&
-		base.exportInfo != nil && base.exportInfo.moduleFileName != "" && isIndexFileName(base.exportInfo.moduleFileName) {
-		reExportDir := toPath(tspath.GetDirectoryPath(base.exportInfo.moduleFileName))
+func isFixPossiblyReExportingImportingFile(fix *ImportFix, importingFilePath tspath.Path, toPath func(fileName string) tspath.Path) bool {
+	if fix.isReExport != nil && *(fix.isReExport) &&
+		fix.exportInfo != nil && fix.exportInfo.moduleFileName != "" && isIndexFileName(fix.exportInfo.moduleFileName) {
+		reExportDir := toPath(tspath.GetDirectoryPath(fix.exportInfo.moduleFileName))
 		return strings.HasPrefix(string(importingFilePath), string(reExportDir))
 	}
 	return false

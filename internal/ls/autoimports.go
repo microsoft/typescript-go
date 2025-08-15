@@ -405,7 +405,7 @@ func (l *LanguageService) getImportCompletionAction(
 		lineAndChar := l.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(position))
 		panic(fmt.Sprintf("expected importFix at %s: (%v,%v)", sourceFile.FileName(), lineAndChar.Line, lineAndChar.Character))
 	}
-	return fix.Base().moduleSpecifier, l.codeActionForFix(ctx, sourceFile, symbolName, fix /*includeSymbolNameInDescription*/, false, preferences)
+	return fix.moduleSpecifier, l.codeActionForFix(ctx, sourceFile, symbolName, fix /*includeSymbolNameInDescription*/, false, preferences)
 }
 
 func NewExportInfoMap(globalsTypingCacheLocation string) *exportInfoMap {
@@ -685,7 +685,7 @@ func (i *importSpecifierResolverForCompletions) getModuleSpecifierForBestExportI
 	exportInfo []*SymbolExportInfo,
 	position int,
 	isValidTypeOnlyUseSite bool,
-) ImportFix {
+) *ImportFix {
 	// !!! caching
 	//  used in completions, usually calculated once per `getCompletionData` call
 	var userPreferences UserPreferences
@@ -706,7 +706,7 @@ func (l *LanguageService) getImportFixForSymbol(
 	position int,
 	isValidTypeOnlySite *bool,
 	preferences *UserPreferences,
-) ImportFix {
+) *ImportFix {
 	var userPreferences UserPreferences
 	if preferences != nil {
 		userPreferences = *preferences
@@ -721,13 +721,13 @@ func (l *LanguageService) getImportFixForSymbol(
 	return l.getBestFix(fixes, sourceFile, packageJsonImportFilter.allowsImportingSpecifier, userPreferences)
 }
 
-func (l *LanguageService) getBestFix(fixes []ImportFix, sourceFile *ast.SourceFile, allowsImportingSpecifier func(moduleSpecifier string) bool, preferences UserPreferences) ImportFix {
+func (l *LanguageService) getBestFix(fixes []*ImportFix, sourceFile *ast.SourceFile, allowsImportingSpecifier func(moduleSpecifier string) bool, preferences UserPreferences) *ImportFix {
 	if len(fixes) == 0 {
 		return nil
 	}
 
 	// These will always be placed first if available, and are better than other kinds
-	if fixes[0].Kind() == ImportFixKindUseNamespace || fixes[0].Kind() == ImportFixKindAddToExisting {
+	if fixes[0].kind == ImportFixKindUseNamespace || fixes[0].kind == ImportFixKindAddToExisting {
 		return fixes[0]
 	}
 
@@ -760,18 +760,16 @@ func (l *LanguageService) getImportFixes(
 	useRequire *bool,
 	sourceFile *ast.SourceFile, // | FutureSourceFile,
 	preferences UserPreferences,
-	// importMap
+	// importMap *importMap,
 	fromCacheOnly bool,
-) (int, []ImportFix) {
-	var importMap *importMap
-	if importMap == nil { // && isFullSourceFile(sourceFile) {
-		importMap = createExistingImportMap(sourceFile, l.GetProgram(), ch)
-	}
+) (int, []*ImportFix) {
+	// if importMap == nil { && !!! isFullSourceFile(sourceFile)
+	importMap := createExistingImportMap(sourceFile, l.GetProgram(), ch)
 	var existingImports []*FixAddToExistingImportInfo
 	if importMap != nil {
 		existingImports = core.FlatMap(exportInfos, importMap.getImportsForExportInfo)
 	}
-	var useNamespace []ImportFix
+	var useNamespace []*ImportFix
 	if usagePosition != nil {
 		if namespaceImport := tryUseExistingNamespaceImport(existingImports, *usagePosition); namespaceImport != nil {
 			useNamespace = append(useNamespace, namespaceImport)
@@ -986,7 +984,7 @@ func (i *importMap) getImportsForExportInfo(info *SymbolExportInfo /* | FutureSy
 	})
 }
 
-func tryUseExistingNamespaceImport(existingImports []*FixAddToExistingImportInfo, position lsproto.Position) *FixUseNamespaceImport {
+func tryUseExistingNamespaceImport(existingImports []*FixAddToExistingImportInfo, position lsproto.Position) *ImportFix {
 	// It is possible that multiple import statements with the same specifier exist in the file.
 	// e.g.
 	//
@@ -1037,8 +1035,8 @@ func tryUseExistingNamespaceImport(existingImports []*FixAddToExistingImportInfo
 	return nil
 }
 
-func tryAddToExistingImport(existingImports []*FixAddToExistingImportInfo, isValidTypeOnlyUseSite *bool, ch *checker.Checker, compilerOptions *core.CompilerOptions) *FixAddToExistingImport {
-	var best *FixAddToExistingImport
+func tryAddToExistingImport(existingImports []*FixAddToExistingImportInfo, isValidTypeOnlyUseSite *bool, ch *checker.Checker, compilerOptions *core.CompilerOptions) *ImportFix {
+	var best *ImportFix
 
 	typeOnly := false
 	if isValidTypeOnlyUseSite != nil {
@@ -1063,7 +1061,7 @@ func tryAddToExistingImport(existingImports []*FixAddToExistingImportInfo, isVal
 	return best
 }
 
-func (info *FixAddToExistingImportInfo) getAddToExistingImportFix(isValidTypeOnlyUseSite bool, ch *checker.Checker, compilerOptions *core.CompilerOptions) *FixAddToExistingImport {
+func (info *FixAddToExistingImportInfo) getAddToExistingImportFix(isValidTypeOnlyUseSite bool, ch *checker.Checker, compilerOptions *core.CompilerOptions) *ImportFix {
 	if info.importKind == ImportKindCommonJS || info.importKind == ImportKindNamespace || info.declaration.Kind == ast.KindImportEqualsDeclaration {
 		// These kinds of imports are not combinable with anything
 		return nil
@@ -1128,9 +1126,9 @@ func (l *LanguageService) getFixesForAddImport(
 	useRequire bool,
 	preferences UserPreferences,
 	fromCacheOnly bool,
-) []ImportFix {
+) []*ImportFix {
 	// tries to create a new import statement using an existing import specifier
-	var importWithExistingSpecifier *FixAddNewImport
+	var importWithExistingSpecifier *ImportFix
 
 	for _, existingImport := range existingImports {
 		if fix := existingImport.getNewImportFromExistingSpecifier(isValidTypeOnlyUseSite, useRequire, ch, l.GetProgram().Options()); fix != nil {
@@ -1140,7 +1138,7 @@ func (l *LanguageService) getFixesForAddImport(
 	}
 
 	if importWithExistingSpecifier != nil {
-		return []ImportFix{importWithExistingSpecifier}
+		return []*ImportFix{importWithExistingSpecifier}
 	}
 
 	return l.getNewImportFixes(ch, sourceFile, usagePosition, isValidTypeOnlyUseSite, useRequire, exportInfos, preferences, fromCacheOnly)
@@ -1155,7 +1153,7 @@ func (l *LanguageService) getNewImportFixes(
 	exportInfos []*SymbolExportInfo, // !!! (SymbolExportInfo | FutureSymbolExportInfo)[],
 	preferences UserPreferences,
 	fromCacheOnly bool,
-) []ImportFix /* FixAddNewImport | FixAddJsdocTypeImport */ {
+) []*ImportFix /* FixAddNewImport | FixAddJsdocTypeImport */ {
 	isJs := tspath.HasJSFileExtension(sourceFile.FileName())
 	compilerOptions := l.GetProgram().Options()
 	// !!! packagejsonAutoimportProvider
@@ -1169,7 +1167,7 @@ func (l *LanguageService) getNewImportFixes(
 	//     : (exportInfo: SymbolExportInfo | FutureSymbolExportInfo, checker: TypeChecker) => moduleSpecifiers.getModuleSpecifiersWithCacheInfo(exportInfo.moduleSymbol, checker, compilerOptions, sourceFile, moduleSpecifierResolutionHost, preferences, /*options*/ nil, /*forAutoImport*/ true);
 
 	// computedWithoutCacheCount = 0;
-	var fixes []ImportFix /* FixAddNewImport | FixAddJsdocTypeImport */
+	var fixes []*ImportFix /* FixAddNewImport | FixAddJsdocTypeImport */
 	for i, exportInfo := range exportInfos {
 		moduleSpecifiers, moduleSpecifierKind := getModuleSpecifiers(exportInfo.moduleSymbol, ch)
 		importedSymbolHasValueMeaning := exportInfo.targetFlags&ast.SymbolFlagsValue != 0
@@ -1542,7 +1540,7 @@ func (l *LanguageService) codeActionForFix(
 	ctx context.Context,
 	sourceFile *ast.SourceFile,
 	symbolName string,
-	fix ImportFix,
+	fix *ImportFix,
 	includeSymbolNameInDescription bool,
 	preferences *UserPreferences,
 ) codeAction {
@@ -1557,54 +1555,50 @@ func (l *LanguageService) codeActionForFixWorker(
 	changeTracker *changeTracker,
 	sourceFile *ast.SourceFile,
 	symbolName string,
-	fix ImportFix,
+	fix *ImportFix,
 	includeSymbolNameInDescription bool,
 	preferences *UserPreferences,
 ) *diagnostics.Message {
-	switch fix.Kind() {
+	switch fix.kind {
 	case ImportFixKindUseNamespace:
-		namespaceFix := fix.(*FixUseNamespaceImport)
-		changeTracker.addNamespaceQualifier(sourceFile, namespaceFix.Qualification)
+		changeTracker.addNamespaceQualifier(sourceFile, fix.qualification())
 		return diagnostics.FormatMessage(diagnostics.Change_0_to_1, symbolName, `${fix.namespacePrefix}.${symbolName}`)
 	case ImportFixKindJsdocTypeImport:
 		// !!! not implemented
 		// changeTracker.addImportType(changeTracker, sourceFile, fix, quotePreference);
-		// return diagnostics.FormatMessage(diagnostics.Change_0_to_1, symbolName, getImportTypePrefix(fix.Base().moduleSpecifier, quotePreference) + symbolName);
+		// return diagnostics.FormatMessage(diagnostics.Change_0_to_1, symbolName, getImportTypePrefix(fix.moduleSpecifier, quotePreference) + symbolName);
 	case ImportFixKindAddToExisting:
-		{
-			fixAddToExisting := fix.(*FixAddToExistingImport)
-			changeTracker.doAddExistingFix(
-				sourceFile,
-				fixAddToExisting.importClauseOrBindingPattern,
-				core.IfElse(fixAddToExisting.importKind == ImportKindDefault, &Import{name: symbolName, addAsTypeOnly: fixAddToExisting.addAsTypeOnly}, nil),
-				core.IfElse(fixAddToExisting.importKind == ImportKindNamed, []*Import{{name: symbolName, addAsTypeOnly: fixAddToExisting.addAsTypeOnly}}, nil),
-				// nil /*removeExistingImportSpecifiers*/,
-				preferences,
-			)
-			moduleSpecifierWithoutQuotes := stringutil.StripQuotes(fix.Base().moduleSpecifier)
-			if includeSymbolNameInDescription {
-				return diagnostics.FormatMessage(diagnostics.Import_0_from_1, symbolName, moduleSpecifierWithoutQuotes)
-			}
-			return diagnostics.FormatMessage(diagnostics.Update_import_from_0, moduleSpecifierWithoutQuotes)
+		changeTracker.doAddExistingFix(
+			sourceFile,
+			fix.importClauseOrBindingPattern,
+			core.IfElse(fix.importKind == ImportKindDefault, &Import{name: symbolName, addAsTypeOnly: fix.addAsTypeOnly}, nil),
+			core.IfElse(fix.importKind == ImportKindNamed, []*Import{{name: symbolName, addAsTypeOnly: fix.addAsTypeOnly}}, nil),
+			// nil /*removeExistingImportSpecifiers*/,
+			preferences,
+		)
+		moduleSpecifierWithoutQuotes := stringutil.StripQuotes(fix.moduleSpecifier)
+		if includeSymbolNameInDescription {
+			return diagnostics.FormatMessage(diagnostics.Import_0_from_1, symbolName, moduleSpecifierWithoutQuotes)
 		}
+		return diagnostics.FormatMessage(diagnostics.Update_import_from_0, moduleSpecifierWithoutQuotes)
 	case ImportFixKindAddNew:
-		fixAddNew := fix.(*FixAddNewImport)
 		var declarations []*ast.Statement
-		defaultImport := core.IfElse(fixAddNew.importKind == ImportKindDefault, &Import{name: symbolName, addAsTypeOnly: fixAddNew.addAsTypeOnly}, nil)
-		namedImports := core.IfElse(fixAddNew.importKind == ImportKindNamed, []*Import{{name: symbolName, addAsTypeOnly: fixAddNew.addAsTypeOnly}}, nil)
+		defaultImport := core.IfElse(fix.importKind == ImportKindDefault, &Import{name: symbolName, addAsTypeOnly: fix.addAsTypeOnly}, nil)
+		namedImports := core.IfElse(fix.importKind == ImportKindNamed, []*Import{{name: symbolName, addAsTypeOnly: fix.addAsTypeOnly}}, nil)
 		var namespaceLikeImport *Import
-		if fixAddNew.importKind == ImportKindNamespace || fixAddNew.importKind == ImportKindCommonJS {
-			namespaceLikeImport = &Import{kind: fixAddNew.importKind, addAsTypeOnly: fixAddNew.addAsTypeOnly, name: symbolName}
-			if fixAddNew.Qualification != nil && fixAddNew.Qualification.namespacePrefix != "" {
-				namespaceLikeImport.name = fixAddNew.Qualification.namespacePrefix
+		qualification := fix.qualification()
+		if fix.importKind == ImportKindNamespace || fix.importKind == ImportKindCommonJS {
+			namespaceLikeImport = &Import{kind: fix.importKind, addAsTypeOnly: fix.addAsTypeOnly, name: symbolName}
+			if qualification != nil && qualification.namespacePrefix != "" {
+				namespaceLikeImport.name = qualification.namespacePrefix
 			}
 		}
 
-		if fixAddNew.useRequire {
+		if fix.useRequire {
 			// !!! require
 			// declarations = getNewRequires(fixAddNew.moduleSpecifier, quotePreference, defaultImport, namedImports, namespaceLikeImport, l.GetProgram().Options(), preferences)
 		} else {
-			declarations = changeTracker.getNewImports(fixAddNew.moduleSpecifier, defaultImport, namedImports, namespaceLikeImport, l.GetProgram().Options(), preferences)
+			declarations = changeTracker.getNewImports(fix.moduleSpecifier, defaultImport, namedImports, namespaceLikeImport, l.GetProgram().Options(), preferences)
 		}
 
 		changeTracker.insertImports(
@@ -1613,13 +1607,13 @@ func (l *LanguageService) codeActionForFixWorker(
 			/*blankLineBetween*/ true,
 			preferences,
 		)
-		if fixAddNew.Qualification != nil {
-			changeTracker.addNamespaceQualifier(sourceFile, *fixAddNew.Qualification)
+		if qualification != nil {
+			changeTracker.addNamespaceQualifier(sourceFile, qualification)
 		}
 		if includeSymbolNameInDescription {
-			return diagnostics.FormatMessage(diagnostics.Import_0_from_1, symbolName, fix.Base().moduleSpecifier)
+			return diagnostics.FormatMessage(diagnostics.Import_0_from_1, symbolName, fix.moduleSpecifier)
 		}
-		return diagnostics.FormatMessage(diagnostics.Add_import_from_0, fix.Base().moduleSpecifier)
+		return diagnostics.FormatMessage(diagnostics.Add_import_from_0, fix.moduleSpecifier)
 	case ImportFixKindPromoteTypeOnly:
 		// promotedDeclaration := promoteFromTypeOnly(changes, fix.typeOnlyAliasDeclaration, program, sourceFile, preferences);
 		// if promotedDeclaration.Kind == ast.KindImportSpecifier {
@@ -1627,7 +1621,7 @@ func (l *LanguageService) codeActionForFixWorker(
 		// }
 		// return diagnostics.FormatMessage(diagnostics.Remove_type_from_import_declaration_from_0, getModuleSpecifierText(promotedDeclaration));
 	default:
-		panic(fmt.Sprintf(`Unexpected fix kind %v`, fix.Kind()))
+		panic(fmt.Sprintf(`Unexpected fix kind %v`, fix.kind))
 	}
 	return nil
 }

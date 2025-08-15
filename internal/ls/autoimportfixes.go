@@ -13,7 +13,7 @@ type Import struct {
 	propertyName  string // Use when needing to generate an `ImportSpecifier with a `propertyName`; the name preceding "as" keyword (propertyName = "" when "as" is absent)
 }
 
-func (ct *changeTracker) addNamespaceQualifier(sourceFile *ast.SourceFile, qualification Qualification) {
+func (ct *changeTracker) addNamespaceQualifier(sourceFile *ast.SourceFile, qualification *Qualification) {
 	ct.insertText(sourceFile, qualification.usagePosition, qualification.namespacePrefix+".")
 }
 

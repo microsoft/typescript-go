@@ -719,7 +719,7 @@ func (l *LanguageService) getCompletionData(program *compiler.Program, typeCheck
 								moduleSymbol:    moduleSymbol,
 								symbolName:      firstAccessibleSymbol.Name,
 								exportName:      firstAccessibleSymbol.Name,
-								moduleSpecifier: result.Base().moduleSpecifier,
+								moduleSpecifier: result.moduleSpecifier,
 							},
 						}
 					}
@@ -1131,7 +1131,7 @@ func (l *LanguageService) getCompletionData(program *compiler.Program, typeCheck
 			position,
 			importStatementCompletion != nil,
 			ast.IsValidTypeOnlyAliasUseSite(location),
-			func(context *resolvingModuleSpecifiersForCompletions) ImportFix {
+			func(context *resolvingModuleSpecifiersForCompletions) *ImportFix {
 				exportInfo.search(
 					typeChecker,
 					file.Path(),
@@ -1207,10 +1207,10 @@ func (l *LanguageService) getCompletionData(program *compiler.Program, typeCheck
 						exportInfo := info[0]
 						var moduleSpecifier string
 						if ok != "skipped" {
-							if result.Base().exportInfo != nil {
-								exportInfo = result.Base().exportInfo
+							if result.exportInfo != nil {
+								exportInfo = result.exportInfo
 							}
-							moduleSpecifier = result.Base().moduleSpecifier
+							moduleSpecifier = result.moduleSpecifier
 						}
 
 						isDefaultExport := exportInfo.exportKind == ExportKindDefault
@@ -1817,7 +1817,7 @@ type resolvingModuleSpecifiersForCompletions struct {
 	cacheAttemptCount      int
 }
 
-func (r *resolvingModuleSpecifiersForCompletions) tryResolve(ch *checker.Checker, exportInfo []*SymbolExportInfo, isFromAmbientModule bool) (ImportFix, string) {
+func (r *resolvingModuleSpecifiersForCompletions) tryResolve(ch *checker.Checker, exportInfo []*SymbolExportInfo, isFromAmbientModule bool) (*ImportFix, string) {
 	if isFromAmbientModule {
 		if result := r.resolver.getModuleSpecifierForBestExportInfo(ch, exportInfo, r.position, r.isValidTypeOnlyUseSite); result != nil {
 			r.ambientCount++
@@ -1830,7 +1830,7 @@ func (r *resolvingModuleSpecifiersForCompletions) tryResolve(ch *checker.Checker
 	shouldResolveModuleSpecifier := r.needsFullResolution || allowIncompleteCompletions && r.resolvedCount < moduleSpecifierResolutionLimit
 	shouldGetModuleSpecifierFromCache := !shouldResolveModuleSpecifier && allowIncompleteCompletions && r.cacheAttemptCount < moduleSpecifierResolutionCacheAttemptLimit
 
-	var result ImportFix
+	var result *ImportFix
 	if shouldResolveModuleSpecifier || shouldGetModuleSpecifierFromCache {
 		result = r.resolver.getModuleSpecifierForBestExportInfo(ch, exportInfo, r.position, r.isValidTypeOnlyUseSite)
 	}
@@ -1860,8 +1860,8 @@ func (l *LanguageService) resolvingModuleSpecifiers(
 	position int,
 	isForImportStatementCompletion bool,
 	isValidTypeOnlyUseSite bool,
-	cb func(*resolvingModuleSpecifiersForCompletions) ImportFix,
-) ImportFix {
+	cb func(*resolvingModuleSpecifiersForCompletions) *ImportFix,
+) *ImportFix {
 	// !!! timestamp
 	// Under `--moduleResolution nodenext` or `bundler`, we have to resolve module specifiers up front, because
 	// package.json exports can mean we *can't* resolve a module specifier (that doesn't include a
@@ -2580,6 +2580,13 @@ func getDotAccessor(file *ast.SourceFile, position int) string {
 		return file.Text()[position-totalSize : position]
 	}
 	return ""
+}
+
+func strPtrIsEmpty(ptr *string) bool {
+	if ptr == nil {
+		return true
+	}
+	return *ptr == ""
 }
 
 func strPtrTo(v string) *string {

@@ -45,11 +45,6 @@ func (k ExportKind) String() string {
 	panic(fmt.Sprintf("unexpected export kind: %d", k))
 }
 
-type ImportFix interface {
-	Kind() ImportFixKind
-	Base() *ImportFixBase
-}
-
 type ImportFixKind int
 
 const (
@@ -73,11 +68,39 @@ const (
 	AddAsTypeOnlyNotAllowed AddAsTypeOnly = 1 << 2
 )
 
-type ImportFixBase struct {
+type ImportFix struct {
+	kind                ImportFixKind
 	isReExport          *bool
 	exportInfo          *SymbolExportInfo // !!! | FutureSymbolExportInfo | undefined
 	moduleSpecifierKind modulespecifiers.ResultKind
 	moduleSpecifier     string
+	usagePosition   *lsproto.Position
+	namespacePrefix *string
+
+	importClauseOrBindingPattern *ast.Node  // ImportClause | ObjectBindingPattern
+	importKind                   ImportKind // ImportKindDefault | ImportKindNamed
+	addAsTypeOnly                AddAsTypeOnly
+	propertyName                 string // !!! not implemented
+
+	useRequire    bool
+
+	typeOnlyAliasDeclaration *ast.Declaration // TypeOnlyAliasDeclaration
+}
+
+func (i *ImportFix) qualification() *Qualification {
+	switch i.kind {
+	case ImportFixKindAddNew:
+		if i.usagePosition == nil || strPtrIsEmpty(i.namespacePrefix) {
+			return nil
+		}
+		fallthrough
+	case ImportFixKindUseNamespace:
+		return &Qualification{
+			usagePosition:   *i.usagePosition,
+			namespacePrefix: *i.namespacePrefix,
+		}
+	}
+	panic(fmt.Sprintf("no qualification with ImportFixKind %v", i.kind))
 }
 
 type Qualification struct {
@@ -85,48 +108,21 @@ type Qualification struct {
 	namespacePrefix string
 }
 
-type FixUseNamespaceImport struct {
-	ImportFixBase
-	Qualification
-}
-
-func (f *FixUseNamespaceImport) Kind() ImportFixKind {
-	return ImportFixKindUseNamespace
-}
-
-func (f *FixUseNamespaceImport) Base() *ImportFixBase {
-	return &f.ImportFixBase
-}
 
 func getUseNamespaceImport(
 	moduleSpecifier string,
 	moduleSpecifierKind modulespecifiers.ResultKind,
 	namespacePrefix string,
 	usagePosition lsproto.Position,
-) *FixUseNamespaceImport {
-	return &FixUseNamespaceImport{
-		ImportFixBase: ImportFixBase{
+) *ImportFix {
+	return &ImportFix{
+		kind: ImportFixKindUseNamespace,
 			moduleSpecifierKind: moduleSpecifierKind,
 			moduleSpecifier:     moduleSpecifier,
-		},
-		Qualification: Qualification{
-			usagePosition:   usagePosition,
-			namespacePrefix: namespacePrefix,
-		},
+
+			usagePosition:   ptrTo(usagePosition),
+			namespacePrefix: strPtrTo(namespacePrefix),
 	}
-}
-
-type FixAddJsdocTypeImport struct {
-	ImportFixBase
-	usagePosition *lsproto.Position
-}
-
-func (f *FixAddJsdocTypeImport) Kind() ImportFixKind {
-	return ImportFixKindJsdocTypeImport
-}
-
-func (f *FixAddJsdocTypeImport) Base() *ImportFixBase {
-	return &f.ImportFixBase
 }
 
 func getAddJsdocTypeImport(
@@ -135,32 +131,15 @@ func getAddJsdocTypeImport(
 	usagePosition *lsproto.Position,
 	exportInfo *SymbolExportInfo,
 	isReExport *bool,
-) *FixAddJsdocTypeImport {
-	return &FixAddJsdocTypeImport{
-		ImportFixBase: ImportFixBase{
-			isReExport:          isReExport,
+) *ImportFix {
+	return &ImportFix{
+		kind: ImportFixKindJsdocTypeImport,
+		isReExport:          isReExport,
 			exportInfo:          exportInfo,
 			moduleSpecifierKind: moduleSpecifierKind,
 			moduleSpecifier:     moduleSpecifier,
-		},
 		usagePosition: usagePosition,
 	}
-}
-
-type FixAddToExistingImport struct {
-	ImportFixBase
-	importClauseOrBindingPattern *ast.Node  // ImportClause | ObjectBindingPattern
-	importKind                   ImportKind // ImportKindDefault | ImportKindNamed
-	addAsTypeOnly                AddAsTypeOnly
-	propertyName                 string
-}
-
-func (f *FixAddToExistingImport) Kind() ImportFixKind {
-	return ImportFixKindAddToExisting
-}
-
-func (f *FixAddToExistingImport) Base() *ImportFixBase {
-	return &f.ImportFixBase
 }
 
 func getAddToExistingImport(
@@ -169,33 +148,15 @@ func getAddToExistingImport(
 	moduleSpecifier string,
 	moduleSpecifierKind modulespecifiers.ResultKind,
 	addAsTypeOnly AddAsTypeOnly,
-) *FixAddToExistingImport {
-	return &FixAddToExistingImport{
-		ImportFixBase: ImportFixBase{
-			moduleSpecifierKind: moduleSpecifierKind,
-			moduleSpecifier:     moduleSpecifier,
-		},
+) *ImportFix {
+	return &ImportFix{
+		kind:ImportFixKindAddToExisting,
+		moduleSpecifierKind: moduleSpecifierKind,
+		moduleSpecifier:     moduleSpecifier,
 		importClauseOrBindingPattern: importClauseOrBindingPattern,
 		importKind:                   importKind,
 		addAsTypeOnly:                addAsTypeOnly,
 	}
-}
-
-type FixAddNewImport struct {
-	ImportFixBase
-	*Qualification
-	importKind    ImportKind
-	addAsTypeOnly AddAsTypeOnly
-	propertyName  string
-	useRequire    bool
-}
-
-func (f *FixAddNewImport) Kind() ImportFixKind {
-	return ImportFixKindAddNew
-}
-
-func (f *FixAddNewImport) Base() *ImportFixBase {
-	return &f.ImportFixBase
 }
 
 func getNewAddNewImport(
@@ -207,33 +168,31 @@ func getNewAddNewImport(
 	exportInfo *SymbolExportInfo, // !!! | FutureSymbolExportInfo
 	isReExport *bool,
 	qualification *Qualification,
-) *FixAddNewImport {
-	return &FixAddNewImport{
-		ImportFixBase: ImportFixBase{
+) *ImportFix {
+	return &ImportFix{
+		kind:ImportFixKindAddNew,
 			isReExport:          isReExport,
 			exportInfo:          exportInfo,
 			moduleSpecifierKind: modulespecifiers.ResultKindNone,
 			moduleSpecifier:     moduleSpecifier,
-		},
-		// Qualification: qualification,
 		importKind:    importKind,
 		addAsTypeOnly: addAsTypeOnly,
 		useRequire:    useRequire,
 	}
 }
 
-type FixPromoteTypeOnlyImport struct {
-	ImportFixBase
-	typeOnlyAliasDeclaration *ast.Declaration // TypeOnlyAliasDeclaration
+func getNewPromoteTypeOnlyImport(typeOnlyAliasDeclaration *ast.Declaration) *ImportFix {
+	// !!! function stub
+	return &ImportFix{
+		kind: ImportFixKindPromoteTypeOnly,
+		// 		isReExport          *bool
+		// exportInfo          *SymbolExportInfo // !!! | FutureSymbolExportInfo | undefined
+		// moduleSpecifierKind modulespecifiers.ResultKind
+		// moduleSpecifier     string
+		typeOnlyAliasDeclaration: typeOnlyAliasDeclaration,
+	}
 }
 
-func (f *FixPromoteTypeOnlyImport) Kind() ImportFixKind {
-	return ImportFixKindPromoteTypeOnly
-}
-
-func (f *FixPromoteTypeOnlyImport) Base() *ImportFixBase {
-	return &f.ImportFixBase
-}
 
 /** Information needed to augment an existing import declaration. */
 // rename all fixes to say fix at end
@@ -250,7 +209,7 @@ func (info *FixAddToExistingImportInfo) getNewImportFromExistingSpecifier(
 	useRequire bool,
 	ch *checker.Checker,
 	compilerOptions *core.CompilerOptions,
-) *FixAddNewImport {
+) *ImportFix {
 	moduleSpecifier := checker.TryGetModuleSpecifierFromDeclaration(info.declaration)
 	if moduleSpecifier == nil || moduleSpecifier.Text() == "" {
 		return nil
