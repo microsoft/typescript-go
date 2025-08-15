@@ -1,8 +1,6 @@
 package estransforms
 
 import (
-	"context"
-
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/transformers"
@@ -231,7 +229,7 @@ func (ch *optionalChainTransformer) visitOptionalExpression(node *ast.Node, capt
 	return target
 }
 
-func newOptionalChainTransformer(ctx context.Context) *transformers.Transformer {
+func newOptionalChainTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	tx := &optionalChainTransformer{}
-	return tx.NewTransformer(tx.visit, transformers.GetEmitContextFromContext(ctx))
+	return tx.NewTransformer(tx.visit, opts.Context)
 }

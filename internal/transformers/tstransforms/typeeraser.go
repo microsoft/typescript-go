@@ -1,8 +1,6 @@
 package tstransforms
 
 import (
-	"context"
-
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/transformers"
@@ -15,9 +13,9 @@ type TypeEraserTransformer struct {
 	currentNode     *ast.Node
 }
 
-func NewTypeEraserTransformer(ctx context.Context) *transformers.Transformer {
-	compilerOptions := transformers.GetCompilerOptionsFromContext(ctx)
-	emitContext := transformers.GetEmitContextFromContext(ctx)
+func NewTypeEraserTransformer(opt *transformers.TransformOptions) *transformers.Transformer {
+	compilerOptions := opt.CompilerOptions
+	emitContext := opt.Context
 	tx := &TypeEraserTransformer{compilerOptions: compilerOptions}
 	return tx.NewTransformer(tx.visit, emitContext)
 }

@@ -2511,9 +2511,7 @@ func TestPartiallyEmittedExpression(t *testing.T) {
     .expression;`, false /*jsx*/)
 
 	emitContext := printer.NewEmitContext()
-	ctx := transformers.WithCompilerOptions(t.Context(), compilerOptions)
-	ctx = transformers.WithEmitContext(ctx, emitContext)
-	file = tstransforms.NewTypeEraserTransformer(ctx).TransformSourceFile(file)
+	file = tstransforms.NewTypeEraserTransformer(&transformers.TransformOptions{CompilerOptions: compilerOptions, Context: emitContext}).TransformSourceFile(file)
 	emittestutil.CheckEmit(t, emitContext, file.AsSourceFile(), `return container.parent
     .left
     .expression

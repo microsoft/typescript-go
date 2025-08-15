@@ -1,8 +1,6 @@
 package moduletransforms
 
 import (
-	"context"
-
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -11,20 +9,21 @@ import (
 
 type ImpliedModuleTransformer struct {
 	transformers.Transformer
-	ctx                       context.Context
+	opts                      *transformers.TransformOptions
 	resolver                  binder.ReferenceResolver
 	getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind
 	cjsTransformer            *transformers.Transformer
 	esmTransformer            *transformers.Transformer
 }
 
-func NewImpliedModuleTransformer(ctx context.Context, resolver binder.ReferenceResolver, getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind) *transformers.Transformer {
-	compilerOptions := transformers.GetCompilerOptionsFromContext(ctx)
+func NewImpliedModuleTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
+	compilerOptions := opts.CompilerOptions
+	resolver := opts.Resolver
 	if resolver == nil {
 		resolver = binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
 	}
-	tx := &ImpliedModuleTransformer{ctx: ctx, resolver: resolver, getEmitModuleFormatOfFile: getEmitModuleFormatOfFile}
-	return tx.NewTransformer(tx.visit, transformers.GetEmitContextFromContext(ctx))
+	tx := &ImpliedModuleTransformer{opts: opts, resolver: resolver, getEmitModuleFormatOfFile: opts.GetEmitModuleFormatOfFile}
+	return tx.NewTransformer(tx.visit, opts.Context)
 }
 
 func (tx *ImpliedModuleTransformer) visit(node *ast.Node) *ast.Node {
@@ -45,12 +44,12 @@ func (tx *ImpliedModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.N
 	var transformer *transformers.Transformer
 	if format >= core.ModuleKindES2015 {
 		if tx.esmTransformer == nil {
-			tx.esmTransformer = NewESModuleTransformer(tx.ctx, tx.resolver, tx.getEmitModuleFormatOfFile)
+			tx.esmTransformer = NewESModuleTransformer(tx.opts)
 		}
 		transformer = tx.esmTransformer
 	} else {
 		if tx.cjsTransformer == nil {
-			tx.cjsTransformer = NewCommonJSModuleTransformer(tx.ctx, tx.resolver, tx.getEmitModuleFormatOfFile)
+			tx.cjsTransformer = NewCommonJSModuleTransformer(tx.opts)
 		}
 		transformer = tx.cjsTransformer
 	}

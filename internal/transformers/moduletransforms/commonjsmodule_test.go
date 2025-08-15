@@ -1048,10 +1048,9 @@ exports.a = a;`,
 
 			emitContext := printer.NewEmitContext()
 			resolver := binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
-			ctx := transformers.WithCompilerOptions(t.Context(), compilerOptions)
-			ctx = transformers.WithEmitContext(ctx, emitContext)
-			file = tstransforms.NewRuntimeSyntaxTransformer(ctx, resolver).TransformSourceFile(file)
-			file = moduletransforms.NewCommonJSModuleTransformer(ctx, resolver, fakeGetEmitModuleFormatOfFile).TransformSourceFile(file)
+			opts := transformers.TransformOptions{CompilerOptions: compilerOptions, Context: emitContext, Resolver: resolver, GetEmitModuleFormatOfFile: fakeGetEmitModuleFormatOfFile}
+			file = tstransforms.NewRuntimeSyntaxTransformer(&opts).TransformSourceFile(file)
+			file = moduletransforms.NewCommonJSModuleTransformer(&opts).TransformSourceFile(file)
 			emittestutil.CheckEmit(t, emitContext, file, rec.output)
 		})
 	}

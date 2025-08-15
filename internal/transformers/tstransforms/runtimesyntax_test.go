@@ -238,9 +238,7 @@ var E;
 			binder.BindSourceFile(file)
 			emitContext := printer.NewEmitContext()
 			resolver := binder.NewReferenceResolver(options, binder.ReferenceResolverHooks{})
-			ctx := transformers.WithCompilerOptions(t.Context(), options)
-			ctx = transformers.WithEmitContext(ctx, emitContext)
-			emittestutil.CheckEmit(t, emitContext, tstransforms.NewRuntimeSyntaxTransformer(ctx, resolver).TransformSourceFile(file), rec.output)
+			emittestutil.CheckEmit(t, emitContext, tstransforms.NewRuntimeSyntaxTransformer(&transformers.TransformOptions{CompilerOptions: options, Context: emitContext, Resolver: resolver}).TransformSourceFile(file), rec.output)
 		})
 	}
 }
@@ -417,10 +415,8 @@ func TestNamespaceTransformer(t *testing.T) {
 			parsetestutil.CheckDiagnostics(t, file)
 			binder.BindSourceFile(file)
 			emitContext := printer.NewEmitContext()
-			ctx := transformers.WithCompilerOptions(t.Context(), options)
-			ctx = transformers.WithEmitContext(ctx, emitContext)
 			resolver := binder.NewReferenceResolver(options, binder.ReferenceResolverHooks{})
-			emittestutil.CheckEmit(t, emitContext, tstransforms.NewRuntimeSyntaxTransformer(ctx, resolver).TransformSourceFile(file), rec.output)
+			emittestutil.CheckEmit(t, emitContext, tstransforms.NewRuntimeSyntaxTransformer(&transformers.TransformOptions{CompilerOptions: options, Context: emitContext, Resolver: resolver}).TransformSourceFile(file), rec.output)
 		})
 	}
 }
@@ -456,10 +452,9 @@ func TestParameterPropertyTransformer(t *testing.T) {
 			binder.BindSourceFile(file)
 			emitContext := printer.NewEmitContext()
 			resolver := binder.NewReferenceResolver(options, binder.ReferenceResolverHooks{})
-			ctx := transformers.WithCompilerOptions(t.Context(), options)
-			ctx = transformers.WithEmitContext(ctx, emitContext)
-			file = tstransforms.NewTypeEraserTransformer(ctx).TransformSourceFile(file)
-			file = tstransforms.NewRuntimeSyntaxTransformer(ctx, resolver).TransformSourceFile(file)
+			opts := &transformers.TransformOptions{Context: emitContext, CompilerOptions: options, Resolver: resolver}
+			file = tstransforms.NewTypeEraserTransformer(opts).TransformSourceFile(file)
+			file = tstransforms.NewRuntimeSyntaxTransformer(opts).TransformSourceFile(file)
 			emittestutil.CheckEmit(t, emitContext, file, rec.output)
 		})
 	}

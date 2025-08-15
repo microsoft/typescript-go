@@ -249,10 +249,9 @@ func TestImportElision(t *testing.T) {
 			emitResolver := c.GetEmitResolver()
 			emitResolver.MarkLinkedReferencesRecursively(file)
 
-			ctx := transformers.WithCompilerOptions(t.Context(), compilerOptions)
-			ctx = transformers.WithEmitContext(ctx, printer.NewEmitContext())
-			file = tstransforms.NewTypeEraserTransformer(ctx).TransformSourceFile(file)
-			file = tstransforms.NewImportElisionTransformer(ctx, emitResolver).TransformSourceFile(file)
+			opts := &transformers.TransformOptions{CompilerOptions: compilerOptions, Context: printer.NewEmitContext(), EmitResolver: emitResolver, Resolver: emitResolver}
+			file = tstransforms.NewTypeEraserTransformer(opts).TransformSourceFile(file)
+			file = tstransforms.NewImportElisionTransformer(opts).TransformSourceFile(file)
 			emittestutil.CheckEmit(t, nil, file, rec.output)
 		})
 	}

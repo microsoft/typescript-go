@@ -1,8 +1,6 @@
 package estransforms
 
 import (
-	"context"
-
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/transformers"
 )
@@ -15,7 +13,7 @@ func (ch *classFieldsTransformer) visit(node *ast.Node) *ast.Node {
 	return node // !!!
 }
 
-func newClassFieldsTransformer(ctx context.Context) *transformers.Transformer {
+func newClassFieldsTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	tx := &classFieldsTransformer{}
-	return tx.NewTransformer(tx.visit, transformers.GetEmitContextFromContext(ctx))
+	return tx.NewTransformer(tx.visit, opts.Context)
 }

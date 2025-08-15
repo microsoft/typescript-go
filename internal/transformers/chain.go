@@ -1,9 +1,10 @@
 package transformers
 
 import (
-	"context"
-
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/binder"
+	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/printer"
 )
 
 type chainedTransformer struct {
@@ -22,7 +23,15 @@ func (ch *chainedTransformer) visit(node *ast.Node) *ast.Node {
 	return result.AsNode()
 }
 
-type TransformerFactory = func(context context.Context) *Transformer
+type TransformOptions struct {
+	Context                   *printer.EmitContext
+	CompilerOptions           *core.CompilerOptions
+	Resolver                  binder.ReferenceResolver
+	EmitResolver              printer.EmitResolver
+	GetEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind
+}
+
+type TransformerFactory = func(opt *TransformOptions) *Transformer
 
 // Chains transforms in left-to-right order, running them one at a time in order (as opposed to interleaved at each node)
 // - the resulting combined transform only operates on SourceFile nodes
@@ -33,13 +42,13 @@ func Chain(transforms ...TransformerFactory) TransformerFactory {
 		}
 		return transforms[0]
 	}
-	return func(context context.Context) *Transformer {
+	return func(opt *TransformOptions) *Transformer {
 		constructed := make([]*Transformer, 0, len(transforms))
 		for _, t := range transforms {
 			// TODO: flatten nested chains?
-			constructed = append(constructed, t(context))
+			constructed = append(constructed, t(opt))
 		}
 		ch := &chainedTransformer{components: constructed}
-		return ch.NewTransformer(ch.visit, GetEmitContextFromContext(context))
+		return ch.NewTransformer(ch.visit, opt.Context)
 	}
 }

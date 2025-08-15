@@ -1,7 +1,6 @@
 package moduletransforms
 
 import (
-	"context"
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -26,13 +25,14 @@ type importRequireStatements struct {
 	requireHelperName *ast.IdentifierNode
 }
 
-func NewESModuleTransformer(ctx context.Context, resolver binder.ReferenceResolver, getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind) *transformers.Transformer {
-	compilerOptions := transformers.GetCompilerOptionsFromContext(ctx)
+func NewESModuleTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
+	compilerOptions := opts.CompilerOptions
+	resolver := opts.Resolver
 	if resolver == nil {
 		resolver = binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
 	}
-	tx := &ESModuleTransformer{compilerOptions: compilerOptions, resolver: resolver, getEmitModuleFormatOfFile: getEmitModuleFormatOfFile}
-	return tx.NewTransformer(tx.visit, transformers.GetEmitContextFromContext(ctx))
+	tx := &ESModuleTransformer{compilerOptions: compilerOptions, resolver: resolver, getEmitModuleFormatOfFile: opts.GetEmitModuleFormatOfFile}
+	return tx.NewTransformer(tx.visit, opts.Context)
 }
 
 // Visits source elements that are not top-level or top-level nested statements.

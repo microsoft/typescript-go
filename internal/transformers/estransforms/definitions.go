@@ -1,8 +1,6 @@
 package estransforms
 
 import (
-	"context"
-
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/transformers"
 )
@@ -23,26 +21,26 @@ var (
 	NewES2016Transformer = transformers.Chain(NewES2017Transformer, newExponentiationTransformer)
 )
 
-func GetESTransformer(ctx context.Context) *transformers.Transformer {
-	options := transformers.GetCompilerOptionsFromContext(ctx)
+func GetESTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
+	options := opts.CompilerOptions
 	switch options.GetEmitScriptTarget() {
 	case core.ScriptTargetESNext:
 		return nil // no transforms needed
 	case /*core.ScriptTargetES2025,*/ core.ScriptTargetES2024, core.ScriptTargetES2023, core.ScriptTargetES2022:
-		return NewESNextTransformer(ctx)
+		return NewESNextTransformer(opts)
 	case core.ScriptTargetES2021:
-		return NewES2022Transformer(ctx)
+		return NewES2022Transformer(opts)
 	case core.ScriptTargetES2020:
-		return NewES2021Transformer(ctx)
+		return NewES2021Transformer(opts)
 	case core.ScriptTargetES2019:
-		return NewES2020Transformer(ctx)
+		return NewES2020Transformer(opts)
 	case core.ScriptTargetES2018:
-		return NewES2019Transformer(ctx)
+		return NewES2019Transformer(opts)
 	case core.ScriptTargetES2017:
-		return NewES2018Transformer(ctx)
+		return NewES2018Transformer(opts)
 	case core.ScriptTargetES2016:
-		return NewES2017Transformer(ctx)
+		return NewES2017Transformer(opts)
 	default: // other, older, option, transform maximally
-		return NewES2016Transformer(ctx)
+		return NewES2016Transformer(opts)
 	}
 }

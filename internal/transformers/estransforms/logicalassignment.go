@@ -1,8 +1,6 @@
 package estransforms
 
 import (
-	"context"
-
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/transformers"
 )
@@ -109,7 +107,7 @@ func (ch *logicalAssignmentTransformer) visitBinaryExpression(node *ast.BinaryEx
 	)
 }
 
-func newLogicalAssignmentTransformer(ctx context.Context) *transformers.Transformer {
+func newLogicalAssignmentTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	tx := &logicalAssignmentTransformer{}
-	return tx.NewTransformer(tx.visit, transformers.GetEmitContextFromContext(ctx))
+	return tx.NewTransformer(tx.visit, opts.Context)
 }

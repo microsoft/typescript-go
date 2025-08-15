@@ -1,7 +1,6 @@
 package estransforms
 
 import (
-	"context"
 	"strconv"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -987,9 +986,9 @@ func (ch *objectRestSpreadTransformer) chunkObjectLiteralElements(list *ast.Node
 	return objects
 }
 
-func newObjectRestSpreadTransformer(ctx context.Context) *transformers.Transformer {
-	tx := &objectRestSpreadTransformer{compilerOptions: transformers.GetCompilerOptionsFromContext(ctx)}
-	return tx.NewTransformer(tx.visit, transformers.GetEmitContextFromContext(ctx))
+func newObjectRestSpreadTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
+	tx := &objectRestSpreadTransformer{compilerOptions: opts.CompilerOptions}
+	return tx.NewTransformer(tx.visit, opts.Context)
 }
 
 func bindingOrAssignmentElementAssignsToName(element *ast.Node, name string) bool {

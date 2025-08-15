@@ -1,8 +1,6 @@
 package tstransforms
 
 import (
-	"context"
-
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
@@ -16,13 +14,13 @@ type ImportElisionTransformer struct {
 	emitResolver      printer.EmitResolver
 }
 
-func NewImportElisionTransformer(ctx context.Context, resolver printer.EmitResolver) *transformers.Transformer {
-	compilerOptions := transformers.GetCompilerOptionsFromContext(ctx)
-	emitContext := transformers.GetEmitContextFromContext(ctx)
+func NewImportElisionTransformer(opt *transformers.TransformOptions) *transformers.Transformer {
+	compilerOptions := opt.CompilerOptions
+	emitContext := opt.Context
 	if compilerOptions.VerbatimModuleSyntax.IsTrue() {
 		panic("ImportElisionTransformer should not be used with VerbatimModuleSyntax")
 	}
-	tx := &ImportElisionTransformer{compilerOptions: compilerOptions, emitResolver: resolver}
+	tx := &ImportElisionTransformer{compilerOptions: compilerOptions, emitResolver: opt.EmitResolver}
 	return tx.NewTransformer(tx.visit, emitContext)
 }
 

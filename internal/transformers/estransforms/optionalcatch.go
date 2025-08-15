@@ -1,8 +1,6 @@
 package estransforms
 
 import (
-	"context"
-
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/transformers"
 )
@@ -33,7 +31,7 @@ func (ch *optionalCatchTransformer) visitCatchClause(node *ast.CatchClause) *ast
 	return ch.Visitor().VisitEachChild(node.AsNode())
 }
 
-func newOptionalCatchTransformer(ctx context.Context) *transformers.Transformer {
+func newOptionalCatchTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	tx := &optionalCatchTransformer{}
-	return tx.NewTransformer(tx.visit, transformers.GetEmitContextFromContext(ctx))
+	return tx.NewTransformer(tx.visit, opts.Context)
 }
