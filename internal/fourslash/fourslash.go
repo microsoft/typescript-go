@@ -175,7 +175,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		defer func() {
 			outputWriter.Close()
 		}()
-		err := server.Run()
+		err := server.Run(t.Context())
 		if err != nil {
 			t.Error("server error:", err)
 		}
