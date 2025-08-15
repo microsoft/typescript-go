@@ -257,8 +257,8 @@ func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOption
 		return nil
 	}
 	if p.snapshot.hasErrors == core.TSUnknown {
-		p.snapshot.hasErrors = p.ensureHasErrorsForState(ctx, p.program)
-		if p.snapshot.hasErrors != p.snapshot.hasErrorsFromOldState {
+		p.ensureHasErrorsForState(ctx, p.program)
+		if p.snapshot.hasErrors != p.snapshot.hasErrorsFromOldState || p.snapshot.hasSemanticErrors != p.snapshot.hasSemanticErrorsFromOldState {
 			p.snapshot.buildInfoEmitPending.Store(true)
 		}
 	}
@@ -295,7 +295,33 @@ func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOption
 	}
 }
 
-func (p *Program) ensureHasErrorsForState(ctx context.Context, program *compiler.Program) core.Tristate {
+func (p *Program) ensureHasErrorsForState(ctx context.Context, program *compiler.Program) {
+	if slices.ContainsFunc(program.GetSourceFiles(), func(file *ast.SourceFile) bool {
+		if _, ok := p.snapshot.emitDiagnosticsPerFile.Load(file.Path()); ok {
+			// emit diagnostics will be encoded in buildInfo;
+			return true
+		}
+		return false
+	}) {
+		// Record this for only non incremental build info
+		p.snapshot.hasErrors = core.IfElse(p.snapshot.options.IsIncremental(), core.TSFalse, core.TSTrue)
+		// Dont need to encode semantic errors state!!
+		p.snapshot.hasSemanticErrors = false
+		return
+	}
+	if len(program.GetConfigFileParsingDiagnostics()) > 0 ||
+		len(program.GetSyntacticDiagnostics(ctx, nil)) > 0 ||
+		len(program.GetProgramDiagnostics()) > 0 ||
+		len(program.GetBindDiagnostics(ctx, nil)) > 0 ||
+		len(program.GetOptionsDiagnostics(ctx)) > 0 ||
+		len(program.GetGlobalDiagnostics(ctx)) > 0 {
+		p.snapshot.hasErrors = core.TSTrue
+		// Dont need to encode semantic errors state!!
+		p.snapshot.hasSemanticErrors = false
+		return
+	}
+
+	p.snapshot.hasErrors = core.TSFalse
 	// Check semantic and emit diagnostics first as we dont need to ask program about it
 	if slices.ContainsFunc(program.GetSourceFiles(), func(file *ast.SourceFile) bool {
 		semanticDiagnostics, ok := p.snapshot.semanticDiagnosticsPerFile.Load(file.Path())
@@ -307,24 +333,10 @@ func (p *Program) ensureHasErrorsForState(ctx context.Context, program *compiler
 			// cached semantic diagnostics will be encoded in buildInfo
 			return true
 		}
-		if _, ok := p.snapshot.emitDiagnosticsPerFile.Load(file.Path()); ok {
-			// emit diagnostics will be encoded in buildInfo;
-			return true
-		}
 		return false
 	}) {
 		// Because semantic diagnostics are recorded in buildInfo, we dont need to encode hasErrors in incremental buildInfo
 		// But encode as errors in non incremental buildInfo
-		return core.IfElse(p.snapshot.options.IsIncremental(), core.TSFalse, core.TSTrue)
-	}
-	if len(program.GetConfigFileParsingDiagnostics()) > 0 ||
-		len(program.GetSyntacticDiagnostics(ctx, nil)) > 0 ||
-		len(program.GetProgramDiagnostics()) > 0 ||
-		len(program.GetBindDiagnostics(ctx, nil)) > 0 ||
-		len(program.GetOptionsDiagnostics(ctx)) > 0 ||
-		len(program.GetGlobalDiagnostics(ctx)) > 0 {
-		return core.TSTrue
-	} else {
-		return core.TSFalse
+		p.snapshot.hasSemanticErrors = !p.snapshot.options.IsIncremental()
 	}
 }

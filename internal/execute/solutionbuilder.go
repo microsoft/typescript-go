@@ -318,7 +318,8 @@ func (s *solutionBuilder) getUpToDateStatus(config string, configPath tspath.Pat
 	}
 
 	// Report errors if build info indicates errors
-	if !task.resolved.CompilerOptions().NoCheck.IsTrue() && (buildInfo.Errors || buildInfo.CheckPending) {
+	if buildInfo.Errors || // Errors that need to be reported irrespective of "--noCheck"
+		(!task.resolved.CompilerOptions().NoCheck.IsTrue() && (buildInfo.SemanticErrors || buildInfo.CheckPending)) { // Errors without --noCheck
 		return &upToDateStatus{kind: upToDateStatusTypeOutOfDateBuildInfoWithErrors, data: buildInfoPath}
 	}
 
@@ -329,17 +330,15 @@ func (s *solutionBuilder) getUpToDateStatus(config string, configPath tspath.Pat
 		}
 
 		// Errors need to be reported if build info has errors
-		if !task.resolved.CompilerOptions().NoCheck.IsTrue() &&
-			(buildInfo.ChangeFileSet != nil ||
-				buildInfo.SemanticDiagnosticsPerFile != nil ||
-				(task.resolved.CompilerOptions().GetEmitDeclarations() && buildInfo.EmitDiagnosticsPerFile != nil)) {
+		if (task.resolved.CompilerOptions().GetEmitDeclarations() && buildInfo.EmitDiagnosticsPerFile != nil) || // Always reported errors
+			(!task.resolved.CompilerOptions().NoCheck.IsTrue() && // Semantic errors if not --noCheck
+				(buildInfo.ChangeFileSet != nil || buildInfo.SemanticDiagnosticsPerFile != nil)) {
 			return &upToDateStatus{kind: upToDateStatusTypeOutOfDateBuildInfoWithErrors, data: buildInfoPath}
 		}
 
 		// Pending emit files
 		if !task.resolved.CompilerOptions().NoEmit.IsTrue() &&
-			(buildInfo.ChangeFileSet != nil ||
-				buildInfo.AffectedFilesPendingEmit != nil) {
+			(buildInfo.ChangeFileSet != nil || buildInfo.AffectedFilesPendingEmit != nil) {
 			return &upToDateStatus{kind: upToDateStatusTypeOutOfDateBuildInfoWithPendingEmit, data: buildInfoPath}
 		}
 

@@ -109,28 +109,39 @@ Signatures::
 Edit [0]:: no change
 
 tsgo -b -v --noCheck
-ExitStatus:: Success
+ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
-[[90mHH:MM:SS AM[0m] Project 'tsconfig.json' is up to date because newest input 'b.ts' is older than output 'a.js'
+[[90mHH:MM:SS AM[0m] Project 'tsconfig.json' is out of date because buildinfo file 'tsconfig.tsbuildinfo' indicates that program needs to report errors.
+
+[[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
+
+[96ma.ts[0m:[93m1[0m:[93m24[0m - [91merror[0m[90m TS1002: [0mUnterminated string literal.
+
+[7m1[0m export const a = "hello
+[7m [0m [91m                       ~[0m
 
 
+Found 1 error in a.ts[90m:1[0m
 
+//// [/home/src/workspaces/project/a.d.ts] *rewrite with same content*
+//// [/home/src/workspaces/project/a.js] *rewrite with same content*
+//// [/home/src/workspaces/project/b.d.ts] *rewrite with same content*
+//// [/home/src/workspaces/project/b.js] *rewrite with same content*
+//// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *rewrite with same content*
+//// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *rewrite with same content*
 
-Diff:: !!! Unexpected diff, please review and either fix or write explanation as expectedDiff !!!
---- nonIncremental.output.txt
-+++ incremental.output.txt
-@@ -1,8 +0,0 @@
--[96ma.ts[0m:[93m1[0m:[93m24[0m - [91merror[0m[90m TS1002: [0mUnterminated string literal.
--
--[7m1[0m export const a = "hello
--[7m [0m [91m                       ~[0m
--
--
--Found 1 error in a.ts[90m:1[0m
--
+tsconfig.json::
+SemanticDiagnostics::
+*not cached* /home/src/tslibs/TS/Lib/lib.d.ts
+*not cached* /home/src/workspaces/project/a.ts
+*not cached* /home/src/workspaces/project/b.ts
+Signatures::
+(stored at emit) /home/src/workspaces/project/a.ts
+(stored at emit) /home/src/workspaces/project/b.ts
+
 
 Edit [1]:: Fix `a` error with noCheck
 //// [/home/src/workspaces/project/a.ts] *modified* 
@@ -142,7 +153,7 @@ Output::
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
-[[90mHH:MM:SS AM[0m] Project 'tsconfig.json' is out of date because output 'tsconfig.tsbuildinfo' is older than input 'a.ts'
+[[90mHH:MM:SS AM[0m] Project 'tsconfig.json' is out of date because buildinfo file 'tsconfig.tsbuildinfo' indicates that program needs to report errors.
 
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
 
@@ -343,28 +354,39 @@ Signatures::
 Edit [7]:: no change
 
 tsgo -b -v --noCheck
-ExitStatus:: Success
+ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
-[[90mHH:MM:SS AM[0m] Project 'tsconfig.json' is up to date because newest input 'a.ts' is older than output 'a.js'
+[[90mHH:MM:SS AM[0m] Project 'tsconfig.json' is out of date because buildinfo file 'tsconfig.tsbuildinfo' indicates that program needs to report errors.
+
+[[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
+
+[96ma.ts[0m:[93m1[0m:[93m24[0m - [91merror[0m[90m TS1002: [0mUnterminated string literal.
+
+[7m1[0m export const a = "hello
+[7m [0m [91m                       ~[0m
 
 
+Found 1 error in a.ts[90m:1[0m
 
+//// [/home/src/workspaces/project/a.d.ts] *rewrite with same content*
+//// [/home/src/workspaces/project/a.js] *rewrite with same content*
+//// [/home/src/workspaces/project/b.d.ts] *rewrite with same content*
+//// [/home/src/workspaces/project/b.js] *rewrite with same content*
+//// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *rewrite with same content*
+//// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *rewrite with same content*
 
-Diff:: !!! Unexpected diff, please review and either fix or write explanation as expectedDiff !!!
---- nonIncremental.output.txt
-+++ incremental.output.txt
-@@ -1,8 +0,0 @@
--[96ma.ts[0m:[93m1[0m:[93m24[0m - [91merror[0m[90m TS1002: [0mUnterminated string literal.
--
--[7m1[0m export const a = "hello
--[7m [0m [91m                       ~[0m
--
--
--Found 1 error in a.ts[90m:1[0m
--
+tsconfig.json::
+SemanticDiagnostics::
+*not cached* /home/src/tslibs/TS/Lib/lib.d.ts
+*not cached* /home/src/workspaces/project/a.ts
+*not cached* /home/src/workspaces/project/b.ts
+Signatures::
+(stored at emit) /home/src/workspaces/project/a.ts
+(stored at emit) /home/src/workspaces/project/b.ts
+
 
 Edit [8]:: No Change run with checking
 
@@ -433,7 +455,7 @@ Output::
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
-[[90mHH:MM:SS AM[0m] Project 'tsconfig.json' is out of date because output 'tsconfig.tsbuildinfo' is older than input 'a.ts'
+[[90mHH:MM:SS AM[0m] Project 'tsconfig.json' is out of date because buildinfo file 'tsconfig.tsbuildinfo' indicates that program needs to report errors.
 
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
 
@@ -563,11 +585,10 @@ exports.c = void 0;
 exports.c = "hello";
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","errors":true,"root":["./a.ts","./b.ts","./c.ts"]}
+{"version":"FakeTSVersion","root":["./a.ts","./b.ts","./c.ts"],"semanticErrors":true}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
-  "errors": true,
   "root": [
     {
       "files": [
@@ -588,7 +609,8 @@ exports.c = "hello";
       "original": "./c.ts"
     }
   ],
-  "size": 77
+  "size": 85,
+  "semanticErrors": true
 }
 
 tsconfig.json::
@@ -688,7 +710,7 @@ Output::
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
-[[90mHH:MM:SS AM[0m] Project 'tsconfig.json' is out of date because output 'tsconfig.tsbuildinfo' is older than input 'a.ts'
+[[90mHH:MM:SS AM[0m] Project 'tsconfig.json' is out of date because buildinfo file 'tsconfig.tsbuildinfo' indicates that program needs to report errors.
 
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
 
@@ -771,11 +793,10 @@ Found 1 error in c.ts[90m:1[0m
 //// [/home/src/workspaces/project/c.d.ts] *rewrite with same content*
 //// [/home/src/workspaces/project/c.js] *rewrite with same content*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","errors":true,"root":["./a.ts","./b.ts","./c.ts"]}
+{"version":"FakeTSVersion","root":["./a.ts","./b.ts","./c.ts"],"semanticErrors":true}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
-  "errors": true,
   "root": [
     {
       "files": [
@@ -796,7 +817,8 @@ Found 1 error in c.ts[90m:1[0m
       "original": "./c.ts"
     }
   ],
-  "size": 77
+  "size": 85,
+  "semanticErrors": true
 }
 
 tsconfig.json::

@@ -138,10 +138,11 @@ Found 1 error in tsconfig.json[90m:5[0m
 //// [/home/src/workspaces/project/b.d.ts] *rewrite with same content*
 //// [/home/src/workspaces/project/b.js] *rewrite with same content*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[[1,2]],"fileNames":["./a.d.ts","./b.ts"],"fileInfos":[{"version":"65e51aad504cdd4dce12c03a2dcc9410-declare const a = \"hello\";","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"0b6737c5344041bf3b8940a4bf34d44f-const b = 10;","signature":"459f957b863aabe09fb52325f783682c-declare const b = 10;\n","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"declaration":true},"semanticDiagnosticsPerFile":[1,2]}
+{"version":"FakeTSVersion","errors":true,"root":[[1,2]],"fileNames":["./a.d.ts","./b.ts"],"fileInfos":[{"version":"65e51aad504cdd4dce12c03a2dcc9410-declare const a = \"hello\";","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"0b6737c5344041bf3b8940a4bf34d44f-const b = 10;","signature":"459f957b863aabe09fb52325f783682c-declare const b = 10;\n","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"declaration":true},"semanticDiagnosticsPerFile":[1,2]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
+  "errors": true,
   "root": [
     {
       "files": [
@@ -192,7 +193,7 @@ Found 1 error in tsconfig.json[90m:5[0m
     "./a.d.ts",
     "./b.ts"
   ],
-  "size": 460
+  "size": 474
 }
 
 tsconfig.json::

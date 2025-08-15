@@ -41,6 +41,7 @@ func buildInfoToSnapshot(buildInfo *BuildInfo, buildInfoFileName string, config 
 		to.snapshot.latestChangedDtsFile = to.toAbsolutePath(buildInfo.LatestChangedDtsFile)
 	}
 	to.snapshot.hasErrors = core.IfElse(buildInfo.Errors, core.TSTrue, core.TSFalse)
+	to.snapshot.hasSemanticErrors = buildInfo.SemanticErrors
 	to.snapshot.checkPending = buildInfo.CheckPending
 	return &to.snapshot
 }

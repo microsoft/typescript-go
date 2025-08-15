@@ -463,6 +463,9 @@ type BuildInfo struct {
 	LatestChangedDtsFile       string                               `json:"latestChangedDtsFile,omitzero"` // Because this is only output file in the program, we dont need fileId to deduplicate name
 	EmitSignatures             []*BuildInfoEmitSignature            `json:"emitSignatures,omitzero"`
 	ResolvedRoot               []*BuildInfoResolvedRoot             `json:"resolvedRoot,omitzero"`
+
+	// NonIncrementalProgram info
+	SemanticErrors bool `json:"semanticErrors,omitzero"`
 }
 
 func (b *BuildInfo) IsValidVersion() bool {

@@ -321,11 +321,10 @@ Found 1 error in a.ts[90m:1[0m
 //// [/home/src/workspaces/project/b.d.ts] *rewrite with same content*
 //// [/home/src/workspaces/project/b.js] *rewrite with same content*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","errors":true,"root":["./a.ts","./b.ts"]}
+{"version":"FakeTSVersion","root":["./a.ts","./b.ts"],"semanticErrors":true}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
-  "errors": true,
   "root": [
     {
       "files": [
@@ -340,7 +339,8 @@ Found 1 error in a.ts[90m:1[0m
       "original": "./b.ts"
     }
   ],
-  "size": 68
+  "size": 76,
+  "semanticErrors": true
 }
 
 tsconfig.json::
@@ -490,11 +490,10 @@ exports.c = void 0;
 exports.c = "hello";
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","errors":true,"root":["./a.ts","./b.ts","./c.ts"]}
+{"version":"FakeTSVersion","root":["./a.ts","./b.ts","./c.ts"],"semanticErrors":true}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
-  "errors": true,
   "root": [
     {
       "files": [
@@ -515,7 +514,8 @@ exports.c = "hello";
       "original": "./c.ts"
     }
   ],
-  "size": 77
+  "size": 85,
+  "semanticErrors": true
 }
 
 tsconfig.json::
@@ -657,11 +657,10 @@ Found 1 error in c.ts[90m:1[0m
 //// [/home/src/workspaces/project/c.d.ts] *rewrite with same content*
 //// [/home/src/workspaces/project/c.js] *rewrite with same content*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","errors":true,"root":["./a.ts","./b.ts","./c.ts"]}
+{"version":"FakeTSVersion","root":["./a.ts","./b.ts","./c.ts"],"semanticErrors":true}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
-  "errors": true,
   "root": [
     {
       "files": [
@@ -682,7 +681,8 @@ Found 1 error in c.ts[90m:1[0m
       "original": "./c.ts"
     }
   ],
-  "size": 77
+  "size": 85,
+  "semanticErrors": true
 }
 
 tsconfig.json::

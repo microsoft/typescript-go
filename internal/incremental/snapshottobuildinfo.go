@@ -47,6 +47,7 @@ func snapshotToBuildInfo(snapshot *snapshot, program *compiler.Program, buildInf
 		to.setRootOfNonIncrementalProgram()
 	}
 	to.buildInfo.Errors = snapshot.hasErrors.IsTrue()
+	to.buildInfo.SemanticErrors = snapshot.hasSemanticErrors
 	to.buildInfo.CheckPending = snapshot.checkPending
 	return &to.buildInfo
 }

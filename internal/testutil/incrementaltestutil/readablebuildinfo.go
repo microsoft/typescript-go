@@ -35,6 +35,9 @@ type readableBuildInfo struct {
 	EmitSignatures             []*readableBuildInfoEmitSignature         `json:"emitSignatures,omitzero"`
 	ResolvedRoot               []*readableBuildInfoResolvedRoot          `json:"resolvedRoot,omitzero"`
 	Size                       int                                       `json:"size,omitzero"` // Size of the build info file
+
+	// NonIncrementalProgram info
+	SemanticErrors bool `json:"semanticErrors,omitzero"`
 }
 
 type readableBuildInfoRoot struct {
@@ -209,6 +212,7 @@ func toReadableBuildInfo(buildInfo *incremental.BuildInfo, buildInfoText string)
 		FileNames:            buildInfo.FileNames,
 		Options:              buildInfo.Options,
 		LatestChangedDtsFile: buildInfo.LatestChangedDtsFile,
+		SemanticErrors:       buildInfo.SemanticErrors,
 		Size:                 len(buildInfoText),
 	}
 	readable.setFileInfos()
