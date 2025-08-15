@@ -36,7 +36,7 @@ export type { TheNum } from 'const';
 }
 
 tsgo -b packages/pkg1 --verbose --traceResolution
-ExitStatus:: DiagnosticsPresent_OutputsGenerated
+ExitStatus:: Success
 Output::
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * packages/pkg2/tsconfig.json
@@ -94,44 +94,11 @@ Using compiler options of project reference redirect '/user/username/projects/my
 Module resolution kind is not specified, using 'Bundler'.
 Resolving in CJS mode with conditions 'require', 'types'.
 'paths' option is specified, looking for a pattern to match module name 'const'.
-File '/user/username/projects/myproject/node_modules/pkg2/build/package.json' does not exist.
-Found 'package.json' at '/user/username/projects/myproject/node_modules/pkg2/package.json'.
-Loading module 'const' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration, JSON.
-Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
-Directory '/user/username/projects/myproject/node_modules/pkg2/build/node_modules' does not exist, skipping all lookups in it.
-Directory '/user/username/projects/myproject/node_modules/pkg2/build/node_modules/@types' does not exist, skipping all lookups in it.
-Directory '/user/username/projects/myproject/node_modules/pkg2/node_modules' does not exist, skipping all lookups in it.
-Directory '/user/username/projects/myproject/node_modules/pkg2/node_modules/@types' does not exist, skipping all lookups in it.
-File '/user/username/projects/myproject/node_modules/const.ts' does not exist.
-File '/user/username/projects/myproject/node_modules/const.tsx' does not exist.
-File '/user/username/projects/myproject/node_modules/const.d.ts' does not exist.
-Directory '/user/username/projects/myproject/node_modules/@types' does not exist, skipping all lookups in it.
-Directory '/user/username/projects/node_modules' does not exist, skipping all lookups in it.
-Directory '/user/username/projects/node_modules/@types' does not exist, skipping all lookups in it.
-Directory '/user/username/node_modules' does not exist, skipping all lookups in it.
-Directory '/user/username/node_modules/@types' does not exist, skipping all lookups in it.
-Directory '/user/node_modules' does not exist, skipping all lookups in it.
-Directory '/user/node_modules/@types' does not exist, skipping all lookups in it.
-Directory '/node_modules' does not exist, skipping all lookups in it.
-Directory '/node_modules/@types' does not exist, skipping all lookups in it.
-Searching all ancestor node_modules directories for fallback extensions: JavaScript, JSON.
-Directory '/user/username/projects/myproject/node_modules/pkg2/build/node_modules' does not exist, skipping all lookups in it.
-Directory '/user/username/projects/myproject/node_modules/pkg2/node_modules' does not exist, skipping all lookups in it.
-File '/user/username/projects/myproject/node_modules/const.js' does not exist.
-File '/user/username/projects/myproject/node_modules/const.jsx' does not exist.
-Directory '/user/username/projects/node_modules' does not exist, skipping all lookups in it.
-Directory '/user/username/node_modules' does not exist, skipping all lookups in it.
-Directory '/user/node_modules' does not exist, skipping all lookups in it.
-Directory '/node_modules' does not exist, skipping all lookups in it.
-======== Module name 'const' was not resolved. ========
-[96mnode_modules/pkg2/build/index.d.ts[0m:[93m1[0m:[93m29[0m - [91merror[0m[90m TS2307: [0mCannot find module 'const' or its corresponding type declarations.
-
-[7m1[0m export type { TheNum } from 'const';
-[7m [0m [91m                            ~~~~~~~[0m
-
-
-Found 1 error in node_modules/pkg2/build/index.d.ts[90m:1[0m
-
+Module name 'const', matched pattern 'const'.
+Trying substitution './const', candidate module location: './const'.
+Loading module as file / folder, candidate module location '/user/username/projects/myproject/packages/pkg2/const', target file types: TypeScript, JavaScript, Declaration, JSON.
+File '/user/username/projects/myproject/packages/pkg2/const.ts' exists - use it as a name resolution result.
+======== Module name 'const' was successfully resolved to '/user/username/projects/myproject/packages/pkg2/const.ts'. ========
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
@@ -163,11 +130,10 @@ exports.theNum = void 0;
 exports.theNum = 42;
 
 //// [/user/username/projects/myproject/packages/pkg1/build/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","errors":true,"root":["../index.ts"]}
+{"version":"FakeTSVersion","root":["../index.ts"]}
 //// [/user/username/projects/myproject/packages/pkg1/build/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
-  "errors": true,
   "root": [
     {
       "files": [
@@ -176,7 +142,7 @@ exports.theNum = 42;
       "original": "../index.ts"
     }
   ],
-  "size": 64
+  "size": 50
 }
 //// [/user/username/projects/myproject/packages/pkg2/build/const.d.ts] *new* 
 export type TheNum = 42;
@@ -280,6 +246,7 @@ Signatures::
 packages/pkg1/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
+*refresh*    /user/username/projects/myproject/packages/pkg2/build/const.d.ts
 *refresh*    /user/username/projects/myproject/node_modules/pkg2/build/index.d.ts
 *refresh*    /user/username/projects/myproject/packages/pkg1/index.ts
 Signatures::
