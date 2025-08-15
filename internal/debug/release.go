@@ -6,8 +6,6 @@ import (
 	"fmt"
 )
 
-func Fail(reason string)                                                                      {}
-func FailBadSyntaxKind(node interface{ KindString() string }, message ...string)              {}
 func Assert(expression bool, message ...string)                                               {}
 func AssertNil(value any, message ...string)                                                  {}
 func AssertEqual(a fmt.Stringer, b fmt.Stringer, msg ...string)                               {}
@@ -19,7 +17,6 @@ func AssertIsDefined(value any, message ...string)                              
 func CheckDefined(value any, message ...string) any                                           { return value }
 func AssertEachIsDefined[TElem any](value []TElem, message ...string)                         {}
 func CheckEachIsDefined[TElem any](value []TElem, message ...string) []TElem                  { return value }
-func AssertNever(member any, message ...string)                                               {}
 func AssertEachNode[TElem any](nodes []TElem, test func(elem TElem) bool, message ...string)  {}
 func AssertNode[TElem any](node TElem, test func(elem TElem) bool, message ...string)         {}
 func AssertNotNode[TElem any](node TElem, test func(elem TElem) bool, message ...string)      {}
