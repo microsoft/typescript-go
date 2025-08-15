@@ -2143,9 +2143,6 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 	compareCompletionEntries := getCompareCompletionEntries(ctx)
 	for _, symbol := range data.symbols {
 		symbolId := ast.GetSymbolId(symbol)
-		if symbol.Name == "anotherVar" {
-			symbolId = ast.GetSymbolId(symbol)
-		}
 		origin := data.symbolToOriginInfoMap[symbolId]
 		name, needsConvertPropertyAccess := getCompletionEntryDisplayNameForSymbol(
 			symbol,
@@ -5781,6 +5778,7 @@ func isModuleSpecifierMissingOrEmpty(specifier *ast.Expression) bool {
 	}
 	return node.Text() == ""
 }
+
 func hasDocComment(file *ast.SourceFile, position int) bool {
 	token := astnav.GetTokenAtPosition(file, position)
 	return ast.FindAncestor(token, (*ast.Node).IsJSDoc) != nil
