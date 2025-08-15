@@ -31,30 +31,97 @@ func getFormatOptsOfSys(sys System) *diagnosticwriter.FormattingOptions {
 
 type diagnosticReporter = func(*ast.Diagnostic)
 
+func quietDiagnosticReporter(diagnostic *ast.Diagnostic) {}
 func createDiagnosticReporter(sys System, options *core.CompilerOptions) diagnosticReporter {
 	if options.Quiet.IsTrue() {
-		return func(diagnostic *ast.Diagnostic) {}
+		return quietDiagnosticReporter
 	}
 
 	formatOpts := getFormatOptsOfSys(sys)
-	if !shouldBePretty(sys, options) {
-		return func(diagnostic *ast.Diagnostic) {
-			diagnosticwriter.WriteFormatDiagnostic(sys.Writer(), diagnostic, formatOpts)
-			sys.EndWrite()
-		}
-	}
+	writeDiagnostic := core.IfElse(shouldBePretty(sys, options), diagnosticwriter.FormatDiagnosticWithColorAndContext, diagnosticwriter.WriteFormatDiagnostic)
+
 	return func(diagnostic *ast.Diagnostic) {
-		diagnosticwriter.FormatDiagnosticsWithColorAndContext(sys.Writer(), []*ast.Diagnostic{diagnostic}, formatOpts)
-		sys.EndWrite()
+		writeDiagnostic(sys.Writer(), diagnostic, formatOpts)
+		fmt.Fprint(sys.Writer(), formatOpts.NewLine)
 	}
 }
 
+func defaultIsPretty(sys System) bool {
+	return sys.WriteOutputIsTTY() && sys.GetEnvironmentVariable("NO_COLOR") == ""
+}
+
 func shouldBePretty(sys System, options *core.CompilerOptions) bool {
-	if options == nil || options.Pretty.IsTrueOrUnknown() {
-		// todo: return defaultIsPretty(sys);
-		return true
+	if options == nil || options.Pretty.IsUnknown() {
+		return defaultIsPretty(sys)
 	}
-	return false
+	return options.Pretty.IsTrue()
+}
+
+type colors struct {
+	showColors bool
+
+	isWindows            bool
+	isWindowsTerminal    bool
+	isVSCode             bool
+	supportsRicherColors bool
+}
+
+func createColors(sys System) *colors {
+	if !defaultIsPretty(sys) {
+		return &colors{showColors: false}
+	}
+
+	os := sys.GetEnvironmentVariable("OS")
+	isWindows := strings.Contains(strings.ToLower(os), "windows")
+	isWindowsTerminal := sys.GetEnvironmentVariable("WT_SESSION") != ""
+	isVSCode := sys.GetEnvironmentVariable("TERM_PROGRAM") == "vscode"
+	supportsRicherColors := sys.GetEnvironmentVariable("COLORTERM") == "truecolor" || sys.GetEnvironmentVariable("TERM") == "xterm-256color"
+
+	return &colors{
+		showColors:           true,
+		isWindows:            isWindows,
+		isWindowsTerminal:    isWindowsTerminal,
+		isVSCode:             isVSCode,
+		supportsRicherColors: supportsRicherColors,
+	}
+}
+
+func (c *colors) bold(str string) string {
+	if !c.showColors {
+		return str
+	}
+	return "\x1b[1m" + str + "\x1b[22m"
+}
+
+func (c *colors) blue(str string) string {
+	if !c.showColors {
+		return str
+	}
+
+	// Effectively Powershell and Command prompt users use cyan instead
+	// of blue because the default theme doesn't show blue with enough contrast.
+	if c.isWindows && !c.isWindowsTerminal && !c.isVSCode {
+		return c.brightWhite(str)
+	}
+	return "\x1b[94m" + str + "\x1b[39m"
+}
+
+func (c *colors) blueBackground(str string) string {
+	if !c.showColors {
+		return str
+	}
+	if c.supportsRicherColors {
+		return "\x1B[48;5;68m" + str + "\x1B[39;49m"
+	} else {
+		return "\x1b[44m" + str + "\x1B[39;49m"
+	}
+}
+
+func (c *colors) brightWhite(str string) string {
+	if !c.showColors {
+		return str
+	}
+	return "\x1b[97m" + str + "\x1b[39m"
 }
 
 func createReportErrorSummary(sys System, options *core.CompilerOptions) func(diagnostics []*ast.Diagnostic) {
@@ -62,15 +129,18 @@ func createReportErrorSummary(sys System, options *core.CompilerOptions) func(di
 		formatOpts := getFormatOptsOfSys(sys)
 		return func(diagnostics []*ast.Diagnostic) {
 			diagnosticwriter.WriteErrorSummaryText(sys.Writer(), diagnostics, formatOpts)
-			sys.EndWrite()
 		}
 	}
 	return func(diagnostics []*ast.Diagnostic) {}
 }
 
-func reportStatistics(sys System, program *compiler.Program, result compileAndEmitResult, memStats *runtime.MemStats) {
+func reportStatistics(sys System, program *compiler.Program, result compileAndEmitResult, memStats *runtime.MemStats, testing CommandLineTesting) {
 	var stats table
 
+	if testing != nil {
+		testing.OnStatisticsStart()
+		defer testing.OnStatisticsEnd()
+	}
 	stats.add("Files", len(program.SourceFiles()))
 	stats.add("Lines", program.LineCount())
 	stats.add("Identifiers", program.IdentifierCount())
@@ -105,7 +175,6 @@ func reportStatistics(sys System, program *compiler.Program, result compileAndEm
 
 func printVersion(sys System) {
 	fmt.Fprintln(sys.Writer(), diagnostics.Version_0.Format(core.Version()))
-	sys.EndWrite()
 }
 
 func printHelp(sys System, commandLine *tsoptions.ParsedCommandLine) {
@@ -134,35 +203,34 @@ func getOptionsForHelp(commandLine *tsoptions.ParsedCommandLine) []*tsoptions.Co
 }
 
 func getHeader(sys System, message string) []string {
-	// !!! const colors = createColors(sys);
-	var header []string
-	// !!! terminalWidth := sys.GetWidthOfTerminal?.() ?? 0
-	const tsIconLength = 5
+	colors := createColors(sys)
+	header := make([]string, 0, 3)
+	terminalWidth := sys.GetWidthOfTerminal()
+	const tsIcon = "     "
+	const tsIconTS = "  TS "
+	const tsIconLength = len(tsIcon)
 
-	//     const tsIconFirstLine = colors.blueBackground("".padStart(tsIconLength));
-	//     const tsIconSecondLine = colors.blueBackground(colors.brightWhite("TS ".padStart(tsIconLength)));
-	//     // If we have enough space, print TS icon.
-	//     if (terminalWidth >= message.length + tsIconLength) {
-	//         // right align of the icon is 120 at most.
-	//         const rightAlign = terminalWidth > 120 ? 120 : terminalWidth;
-	//         const leftAlign = rightAlign - tsIconLength;
-	//         header.push(message.padEnd(leftAlign) + tsIconFirstLine + sys.newLine);
-	//         header.push("".padStart(leftAlign) + tsIconSecondLine + sys.newLine);
-	//     }
-	//     else {
-	header = append(header, message+"\n", "\n")
-	//     }
+	tsIconFirstLine := colors.blueBackground(tsIcon)
+	tsIconSecondLine := colors.blueBackground(colors.brightWhite(tsIconTS))
+	// If we have enough space, print TS icon.
+	if terminalWidth >= len(message)+tsIconLength {
+		// right align of the icon is 120 at most.
+		rightAlign := core.IfElse(terminalWidth > 120, 120, terminalWidth)
+		leftAlign := rightAlign - tsIconLength
+		header = append(header, fmt.Sprintf("%-*s", leftAlign, message), tsIconFirstLine, "\n")
+		header = append(header, strings.Repeat(" ", leftAlign), tsIconSecondLine, "\n")
+	} else {
+		header = append(header, message, "\n", "\n")
+	}
 	return header
 }
 
 func printEasyHelp(sys System, simpleOptions []*tsoptions.CommandLineOption) {
-	// !!! const colors = createColors(sys);
+	colors := createColors(sys)
 	var output []string
 	example := func(examples []string, desc *diagnostics.Message) {
 		for _, example := range examples {
-			// !!! colors
-			// output.push("  " + colors.blue(example) + sys.newLine);
-			output = append(output, "  ", example, "\n")
+			output = append(output, "  ", colors.blue(example), "\n")
 		}
 		output = append(output, "  ", desc.Format(), "\n", "\n")
 	}
@@ -170,7 +238,7 @@ func printEasyHelp(sys System, simpleOptions []*tsoptions.CommandLineOption) {
 	msg := diagnostics.X_tsc_Colon_The_TypeScript_Compiler.Format() + " - " + diagnostics.Version_0.Format(core.Version())
 	output = append(output, getHeader(sys, msg)...)
 
-	output = append(output /*colors.bold(*/, diagnostics.COMMON_COMMANDS.Format() /*)*/, "\n", "\n")
+	output = append(output, colors.bold(diagnostics.COMMON_COMMANDS.Format()), "\n", "\n")
 
 	example([]string{"tsc"}, diagnostics.Compiles_the_current_project_tsconfig_json_in_the_working_directory)
 	example([]string{"tsc app.ts util.ts"}, diagnostics.Ignoring_tsconfig_json_compiles_the_specified_files_with_default_compiler_options)
@@ -192,15 +260,13 @@ func printEasyHelp(sys System, simpleOptions []*tsoptions.CommandLineOption) {
 
 	output = append(output, generateSectionOptionsOutput(sys, diagnostics.COMMAND_LINE_FLAGS.Format(), cliCommands /*subCategory*/, false /*beforeOptionsDescription*/, nil /*afterOptionsDescription*/, nil)...)
 
+	// !!! locale formatMessage
 	after := diagnostics.You_can_learn_about_all_of_the_compiler_options_at_0.Format("https://aka.ms/tsc")
-	output = append(output, generateSectionOptionsOutput(sys, diagnostics.COMMON_COMPILER_OPTIONS.Format(), configOpts /*subCategory*/, false /*beforeOptionsDescription*/, nil,
-		// !!! locale formatMessage(Diagnostics.You_can_learn_about_all_of_the_compiler_options_at_0, "https://aka.ms/tsc")),
-		&after)...)
+	output = append(output, generateSectionOptionsOutput(sys, diagnostics.COMMON_COMPILER_OPTIONS.Format(), configOpts /*subCategory*/, false /*beforeOptionsDescription*/, nil, &after)...)
 
 	for _, chunk := range output {
 		fmt.Fprint(sys.Writer(), chunk)
 	}
-	sys.EndWrite()
 }
 
 func generateSectionOptionsOutput(
@@ -211,8 +277,7 @@ func generateSectionOptionsOutput(
 	beforeOptionsDescription,
 	afterOptionsDescription *string,
 ) (output []string) {
-	// !!! color
-	output = append(output /*createColors(sys).bold(*/, sectionName /*)*/, "\n", "\n")
+	output = append(output, createColors(sys).bold(sectionName), "\n", "\n")
 
 	if beforeOptionsDescription != nil {
 		output = append(output, *beforeOptionsDescription, "\n", "\n")
@@ -274,10 +339,10 @@ func generateGroupOptionOutput(sys System, optionsList []*tsoptions.CommandLineO
 func generateOptionOutput(
 	sys System,
 	option *tsoptions.CommandLineOption,
-	rightAlignOfLeftPart, leftAlignOfRightPart int,
+	rightAlignOfLeft, leftAlignOfRight int,
 ) []string {
 	var text []string
-	// !!! const colors = createColors(sys);
+	colors := createColors(sys)
 
 	// name and description
 	name := getDisplayNameTextOfOption(option)
@@ -298,27 +363,28 @@ func generateOptionOutput(
 		)
 	}
 
-	var terminalWidth int
-	// !!! const terminalWidth = sys.getWidthOfTerminal?.() ?? 0;
+	terminalWidth := sys.GetWidthOfTerminal()
 
-	// Note: child_process might return `terminalWidth` as undefined.
 	if terminalWidth >= 80 {
-		// !!!     let description = "";
-		// !!!     if (option.description) {
-		// !!!         description = getDiagnosticText(option.description);
-		// !!!     }
-		// !!!     text.push(...getPrettyOutput(name, description, rightAlignOfLeft, leftAlignOfRight, terminalWidth, /*colorLeft*/ true), sys.newLine);
-		// !!!     if (showAdditionalInfoOutput(valueCandidates, option)) {
-		// !!!         if (valueCandidates) {
-		// !!!             text.push(...getPrettyOutput(valueCandidates.valueType, valueCandidates.possibleValues, rightAlignOfLeft, leftAlignOfRight, terminalWidth, /*colorLeft*/ false), sys.newLine);
-		// !!!         }
-		// !!!         if (defaultValueDescription) {
-		// !!!             text.push(...getPrettyOutput(getDiagnosticText(Diagnostics.default_Colon), defaultValueDescription, rightAlignOfLeft, leftAlignOfRight, terminalWidth, /*colorLeft*/ false), sys.newLine);
-		// !!!         }
-		// !!!     }
-		// !!!     text.push(sys.newLine);
+		description := ""
+		if option.Description != nil {
+			description = option.Description.Format()
+		}
+		text = append(text, getPrettyOutput(colors, name, description, rightAlignOfLeft, leftAlignOfRight, terminalWidth, true /*colorLeft*/)...)
+		text = append(text, "\n")
+		if showAdditionalInfoOutput(valueCandidates, option) {
+			if valueCandidates != nil {
+				text = append(text, getPrettyOutput(colors, valueCandidates.valueType, valueCandidates.possibleValues, rightAlignOfLeft, leftAlignOfRight, terminalWidth, false /*colorLeft*/)...)
+				text = append(text, "\n")
+			}
+			if defaultValueDescription != "" {
+				text = append(text, getPrettyOutput(colors, diagnostics.X_default_Colon.Format(), defaultValueDescription, rightAlignOfLeft, leftAlignOfRight, terminalWidth, false /*colorLeft*/)...)
+				text = append(text, "\n")
+			}
+		}
+		text = append(text, "\n")
 	} else {
-		text = append(text /* !!! colors.blue(name) */, name, "\n")
+		text = append(text, colors.blue(name), "\n")
 		if option.Description != nil {
 			text = append(text, option.Description.Format())
 		}
@@ -442,6 +508,33 @@ func getPossibleValues(option *tsoptions.CommandLineOption) string {
 		}
 		return strings.Join(syns, ", ")
 	}
+}
+
+func getPrettyOutput(colors *colors, left string, right string, rightAlignOfLeft int, leftAlignOfRight int, terminalWidth int, colorLeft bool) []string {
+	// !!! How does terminalWidth interact with UTF-8 encoding? Strada just assumed UTF-16.
+	res := make([]string, 0, 4)
+	isFirstLine := true
+	remainRight := right
+	rightCharacterNumber := terminalWidth - leftAlignOfRight
+	for len(remainRight) > 0 {
+		curLeft := ""
+		if isFirstLine {
+			curLeft = fmt.Sprintf("%*s", rightAlignOfLeft, left)
+			curLeft = fmt.Sprintf("%-*s", leftAlignOfRight, curLeft)
+			if colorLeft {
+				curLeft = colors.blue(curLeft)
+			}
+		} else {
+			curLeft = strings.Repeat(" ", leftAlignOfRight)
+		}
+
+		idx := min(rightCharacterNumber, len(remainRight))
+		curRight := remainRight[:idx]
+		remainRight = remainRight[idx:]
+		res = append(res, curLeft, curRight, "\n")
+		isFirstLine = false
+	}
+	return res
 }
 
 func getDisplayNameTextOfOption(option *tsoptions.CommandLineOption) string {

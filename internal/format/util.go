@@ -75,7 +75,7 @@ func getCloseTokenForOpenToken(kind ast.Kind) ast.Kind {
 	return ast.KindUnknown
 }
 
-func getLineStartPositionForPosition(position int, sourceFile *ast.SourceFile) int {
+func GetLineStartPositionForPosition(position int, sourceFile *ast.SourceFile) int {
 	lineStarts := scanner.GetLineStarts(sourceFile)
 	line, _ := scanner.GetLineAndCharacterOfPosition(sourceFile, position)
 	return int(lineStarts[line])
@@ -83,7 +83,7 @@ func getLineStartPositionForPosition(position int, sourceFile *ast.SourceFile) i
 
 /**
  * Tests whether `child` is a grammar error on `parent`.
- * In strada, this also checked node arrays, but it is never acually called with one in practice.
+ * In strada, this also checked node arrays, but it is never actually called with one in practice.
  */
 func isGrammarError(parent *ast.Node, child *ast.Node) bool {
 	if ast.IsTypeParameterDeclaration(parent) {

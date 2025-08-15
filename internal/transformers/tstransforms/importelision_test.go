@@ -77,6 +77,10 @@ func (p *fakeProgram) GetRedirectTargets(path tspath.Path) []string {
 	return nil
 }
 
+func (p *fakeProgram) GetSourceOfProjectReferenceIfOutputIncluded(file ast.HasFileName) string {
+	return ""
+}
+
 func (p *fakeProgram) GetOutputAndProjectReference(path tspath.Path) *tsoptions.OutputDtsAndProjectReference {
 	return nil
 }

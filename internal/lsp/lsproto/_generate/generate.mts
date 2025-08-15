@@ -704,10 +704,16 @@ function generateCode() {
             }
 
             writeLine(`// Response type for \`${request.method}\``);
-            const resultType = resolveType(request.result);
-            const goType = resultType.needsPointer ? `*${resultType.name}` : resultType.name;
 
-            writeLine(`type ${responseTypeName} = ${goType}`);
+            // Special case for response types that are explicitly base type "null"
+            if (request.result.kind === "base" && request.result.name === "null") {
+                writeLine(`type ${responseTypeName} = Null`);
+            }
+            else {
+                const resultType = resolveType(request.result);
+                const goType = resultType.needsPointer ? `*${resultType.name}` : resultType.name;
+                writeLine(`type ${responseTypeName} = ${goType}`);
+            }
             writeLine("");
         }
 
@@ -877,7 +883,7 @@ function main() {
 
         // Format with gofmt
         const gofmt = which.sync("go");
-        cp.execFileSync(gofmt, ["tool", "mvdan.cc/gofumpt", "-lang=go1.24", "-w", out]);
+        cp.execFileSync(gofmt, ["tool", "mvdan.cc/gofumpt", "-lang=go1.25", "-w", out]);
 
         console.log(`Successfully generated ${out}`);
     }
