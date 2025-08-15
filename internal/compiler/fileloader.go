@@ -617,12 +617,12 @@ func (p *fileLoader) pathForLibFile(name string) *LibFile {
 		if resolution.IsResolved() {
 			path = resolution.ResolvedFileName
 			replaced = true
-			p.pathForLibFileResolutions.LoadOrStore(p.toPath(resolveFrom), &libResolution{
-				libraryName: libraryName,
-				resolution:  resolution,
-				trace:       trace,
-			})
 		}
+		p.pathForLibFileResolutions.LoadOrStore(p.toPath(resolveFrom), &libResolution{
+			libraryName: libraryName,
+			resolution:  resolution,
+			trace:       trace,
+		})
 	}
 
 	libPath, _ := p.pathForLibFileCache.LoadOrStore(name, &LibFile{name, path, replaced})
