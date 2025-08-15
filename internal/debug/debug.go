@@ -187,7 +187,7 @@ func AssertOptionalToken[TElem interface{ KindValue() int16 }](node TElem, kind 
 	if len(message) == 0 {
 		message = unexpectedNode
 	}
-	Assert(node.KindValue() == kind)
+	Assert(node.KindValue() == kind, message...)
 }
 
 func AssertMissingNode[TElem any](node TElem, message ...string) {

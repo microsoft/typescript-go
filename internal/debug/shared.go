@@ -6,7 +6,7 @@ func Fail(reason string) {
 	if len(reason) == 0 {
 		reason = "Debug failure."
 	} else {
-		reason = fmt.Sprintf("Debug failure. %s", reason)
+		reason = "Debug failure. " + reason
 	}
 	panic(reason)
 }
