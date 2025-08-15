@@ -32,6 +32,7 @@ func (b *NodeBuilder) enterContext(enclosingDeclaration *ast.Node, flags nodebui
 		enclosingSymbolTypes:     make(map[ast.SymbolId]*Type),
 		remappedSymbolReferences: make(map[ast.SymbolId]*ast.Symbol),
 	}
+	// TODO: always provide this; see https://github.com/microsoft/typescript-go/pull/1588#pullrequestreview-3125218673
 	var moduleResolverHost Host
 	if tracker != nil {
 		moduleResolverHost = tracker.GetModuleSpecifierGenerationHost()
