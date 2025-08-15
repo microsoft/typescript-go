@@ -289,6 +289,42 @@ func TestTscComposite(t *testing.T) {
 	}
 }
 
+func TestTscListFilesOnly(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario: "loose file",
+			files: FileMap{
+				"/home/src/workspaces/project/test.ts": "export const x = 1;",
+			},
+			commandLineArgs: []string{"test.ts", "--listFilesOnly"},
+		},
+		{
+			subScenario: "combined with incremental",
+			files: FileMap{
+				"/home/src/workspaces/project/test.ts":       "export const x = 1;",
+				"/home/src/workspaces/project/tsconfig.json": "{}",
+			},
+			commandLineArgs: []string{"--incremental", "--listFilesOnly"},
+			edits: []*tscEdit{
+				{
+					caption:         "incremental actual build",
+					commandLineArgs: []string{"--incremental"},
+				},
+				noChange,
+				{
+					caption:         "incremental should not build",
+					commandLineArgs: []string{"--incremental"},
+				},
+			},
+		},
+	}
+
+	for _, testCase := range testCases {
+		testCase.run(t, "listFilesOnly")
+	}
+}
+
 func TestNoEmit(t *testing.T) {
 	t.Parallel()
 	(&tscInput{
