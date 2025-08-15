@@ -614,11 +614,16 @@ func ToFileNameLowerCase(fileName string) string {
 			}
 			b[i] = c
 		}
-		// SAFETY: `b` is a freshly allocated, non-empty byte slice whose contents are
-		// fully initialized. We do not mutate `b` after this point, and the returned
-		// string becomes the only live reference to its backing array. The array is
-		// heap-allocated (via make), so the GC keeps it alive for the lifetime of the
-		// returned string. Since len(b) > 0 here, &b[0] is a valid pointer.
+		// SAFETY: We construct a string that aliases b’s backing array without copying.
+		// (1) Lifetime: The address of b’s elements escapes via the returned string,
+		//     so escape analysis allocates b’s backing array on the heap. The string
+		//     header points to that heap allocation, ensuring it remains live for the
+		//     string’s lifetime.
+		// (2) Initialization: We assign to every b[i] before creating the string.
+		//     (Note: Go zeroes all allocated memory, so “uninitialized” bytes cannot occur.)
+		// (3) Immutability: We do not modify b after this point, so the string view
+		//     observes immutable data.
+		// (4) Non-empty: On this path len(b) > 0, so &b[0] is a valid, non-nil pointer.
 		return unsafe.String(&b[0], len(b))
 	}
 
