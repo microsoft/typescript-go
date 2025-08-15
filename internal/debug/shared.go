@@ -1,6 +1,9 @@
 package debug
 
-import "fmt"
+import (
+	"fmt"
+	"runtime"
+)
 
 func Fail(reason string) {
 	if len(reason) == 0 {
@@ -8,6 +11,7 @@ func Fail(reason string) {
 	} else {
 		reason = "Debug failure. " + reason
 	}
+	runtime.Breakpoint()
 	panic(reason)
 }
 
@@ -34,7 +38,7 @@ func AssertNever(member any, message ...string) {
 	} else if member, ok := member.(fmt.Stringer); ok {
 		detail = member.String()
 	} else {
-		detail = "<unformattable>"
+		detail = fmt.Sprintf("%v", member)
 	}
 	Fail(fmt.Sprintf("%s %s", msg, detail))
 }

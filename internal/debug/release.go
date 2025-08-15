@@ -14,7 +14,7 @@ func AssertLessThanOrEqual(a int, b int, message ...string)                     
 func AssertGreaterThan(a int, b int, message ...string)                                       {}
 func AssertGreaterThanOrEqual(a int, b int, message ...string)                                {}
 func AssertIsDefined(value any, message ...string)                                            {}
-func CheckDefined(value any, message ...string) any                                           { return value }
+func CheckDefined[T any](value T, message ...string) T                                        { return value }
 func AssertEachIsDefined[TElem any](value []TElem, message ...string)                         {}
 func CheckEachIsDefined[TElem any](value []TElem, message ...string) []TElem                  { return value }
 func AssertEachNode[TElem any](nodes []TElem, test func(elem TElem) bool, message ...string)  {}

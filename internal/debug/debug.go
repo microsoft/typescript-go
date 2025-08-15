@@ -117,7 +117,7 @@ func AssertIsDefined(value any, message ...string) {
 	}
 }
 
-func CheckDefined(value any, message ...string) any {
+func CheckDefined[T any](value T, message ...string) T {
 	AssertIsDefined(value, message...)
 	return value
 }
