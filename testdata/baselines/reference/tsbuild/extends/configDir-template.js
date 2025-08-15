@@ -61,7 +61,7 @@ File '/home/src/projects/myproject/types/sometype.ts' exists - use it as a name 
 ../../tslibs/TS/Lib/lib.d.ts
    Default library for target 'ES5'
 types/sometype.ts
-   Imported via @myscope/sometype from file 'main.ts'
+   Imported via "@myscope/sometype" from file 'main.ts'
 main.ts
    Part of 'files' list in tsconfig.json
 //// [/home/src/projects/myproject/decls/main.d.ts] *new* 
