@@ -238,11 +238,11 @@ File '/home/src/workspace/projects/node_modules/@typescript/lib-webworker/index.
 Resolving real path for '/home/src/workspace/projects/node_modules/@typescript/lib-webworker/index.d.ts', result '/home/src/workspace/projects/node_modules/@typescript/lib-webworker/index.d.ts'.
 ======== Module name '@typescript/lib-webworker' was successfully resolved to '/home/src/workspace/projects/node_modules/@typescript/lib-webworker/index.d.ts'. ========
 node_modules/@typescript/lib-webworker/index.d.ts
-   Library referenced via '' from file 'project1/file2.ts'
+   Library referenced via 'webworker' from file 'project1/file2.ts'
 node_modules/@typescript/lib-scripthost/index.d.ts
-   Library referenced via '' from file 'project1/file2.ts'
+   Library referenced via 'scripthost' from file 'project1/file2.ts'
 node_modules/@typescript/lib-es5/index.d.ts
-   Library referenced via '' from file 'project1/file2.ts'
+   Library referenced via 'es5' from file 'project1/file2.ts'
    Library 'lib.es5.d.ts' specified in compilerOptions
 node_modules/@typescript/lib-dom/index.d.ts
    Library 'lib.dom.d.ts' specified in compilerOptions
