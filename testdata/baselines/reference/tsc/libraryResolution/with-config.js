@@ -84,14 +84,14 @@ File '/home/src/workspace/projects/project1/typeroot1/sometype/index.d.ts' exist
 Resolving real path for '/home/src/workspace/projects/project1/typeroot1/sometype/index.d.ts', result '/home/src/workspace/projects/project1/typeroot1/sometype/index.d.ts'.
 ======== Type reference directive 'sometype' was successfully resolved to '/home/src/workspace/projects/project1/typeroot1/sometype/index.d.ts', primary: true. ========
 ../../tslibs/TS/Lib/lib.es5.d.ts
-   Library referenced via '' from file 'project1/file2.ts'
+   Library referenced via 'es5' from file 'project1/file2.ts'
    Library 'lib.es5.d.ts' specified in compilerOptions
 ../../tslibs/TS/Lib/lib.dom.d.ts
    Library 'lib.dom.d.ts' specified in compilerOptions
 ../../tslibs/TS/Lib/lib.webworker.d.ts
-   Library referenced via '' from file 'project1/file2.ts'
+   Library referenced via 'webworker' from file 'project1/file2.ts'
 ../../tslibs/TS/Lib/lib.scripthost.d.ts
-   Library referenced via '' from file 'project1/file2.ts'
+   Library referenced via 'scripthost' from file 'project1/file2.ts'
 project1/core.d.ts
    Matched by default include pattern '**/*'
 project1/file.ts

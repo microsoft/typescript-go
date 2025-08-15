@@ -66,20 +66,20 @@ Directory '/home/src/node_modules' does not exist, skipping all lookups in it.
 Directory '/home/node_modules' does not exist, skipping all lookups in it.
 Directory '/node_modules' does not exist, skipping all lookups in it.
 ======== Module name '@typescript/lib-scripthost' was not resolved. ========
-[96mproject1/file2.ts[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TS2726: [0mCannot find lib definition for 'unknownlib'.
+[96mproject1/file2.ts[0m:[93m1[0m:[93m21[0m - [91merror[0m[90m TS2727: [0mCannot find lib definition for 'webworker2'. Did you mean 'webworker'?
 
 [7m1[0m /// <reference lib="webworker2"/>
-[7m [0m [91m~[0m
+[7m [0m [91m                    ~~~~~~~~~~[0m
 
-[96mproject1/file2.ts[0m:[93m1[0m:[93m1[0m - [91merror[0m[90m TS2727: [0mCannot find lib definition for 'webworker2'. Did you mean 'webworker'?
+[96mproject1/file2.ts[0m:[93m2[0m:[93m21[0m - [91merror[0m[90m TS2726: [0mCannot find lib definition for 'unknownlib'.
 
-[7m1[0m /// <reference lib="webworker2"/>
-[7m [0m [91m~[0m
+[7m2[0m /// <reference lib="unknownlib"/>
+[7m [0m [91m                    ~~~~~~~~~~[0m
 
 ../../tslibs/TS/Lib/lib.d.ts
    Default library for target 'ES5'
 ../../tslibs/TS/Lib/lib.scripthost.d.ts
-   Library referenced via '' from file 'project1/file2.ts'
+   Library referenced via 'scripthost' from file 'project1/file2.ts'
 project1/core.d.ts
    Matched by default include pattern '**/*'
 project1/file.ts
