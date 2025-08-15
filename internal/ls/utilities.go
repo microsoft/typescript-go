@@ -127,7 +127,7 @@ func moduleSpecifierToValidIdentifier(moduleSpecifier string, target core.Script
 	res := []rune{}
 	lastCharWasValid := true
 	baseNameRunes := []rune(baseName)
-	if scanner.IsIdentifierStart(baseNameRunes[0]) {
+	if len(baseNameRunes) > 0 && scanner.IsIdentifierStart(baseNameRunes[0]) {
 		if forceCapitalize {
 			res = append(res, unicode.ToUpper(baseNameRunes[0]))
 		} else {

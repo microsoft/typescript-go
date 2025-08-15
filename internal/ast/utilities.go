@@ -2658,10 +2658,6 @@ func nodeContainsPosition(node *Node, position int) bool {
 	return node.Kind >= KindFirstNode && node.Pos() <= position && (position < node.End() || position == node.End() && node.Kind == KindEndOfFile)
 }
 
-func NodeRangeContainsPosition(node *Node, pos int) bool {
-	return node.Pos() <= pos && pos <= node.End()
-}
-
 func findImportOrRequire(text string, start int) (index int, size int) {
 	index = max(start, 0)
 	n := len(text)

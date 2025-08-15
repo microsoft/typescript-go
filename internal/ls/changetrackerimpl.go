@@ -168,7 +168,7 @@ func (ct *changeTracker) getAdjustedStartPosition(sourceFile *ast.SourceFile, no
 	case leadingTriviaOptionExclude:
 		return start
 	case leadingTriviaOptionStartLine:
-		if ast.NodeRangeContainsPosition(node, startOfLinePos) {
+		if node.Loc.ContainsInclusive(startOfLinePos) {
 			return startOfLinePos
 		}
 		return start
