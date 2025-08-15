@@ -5,9 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"os/signal"
 	"runtime"
-	"syscall"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -17,7 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 )
 
-func runLSP(args []string) int {
+func runLSP(ctx context.Context, args []string) int {
 	flag := flag.NewFlagSet("lsp", flag.ContinueOnError)
 	stdio := flag.Bool("stdio", false, "use stdio for communication")
 	pprofDir := flag.String("pprofDir", "", "Generate pprof CPU/memory profiles to the given directory.")
@@ -39,9 +37,6 @@ func runLSP(args []string) int {
 		profileSession := pprof.BeginProfiling(*pprofDir, os.Stderr)
 		defer profileSession.Stop()
 	}
-
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-	defer stop()
 
 	fs := bundled.WrapFS(osvfs.FS())
 	defaultLibraryPath := bundled.LibPath()
