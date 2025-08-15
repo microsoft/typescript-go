@@ -671,7 +671,7 @@ func (l *LanguageService) getStringLiteralCompletionDetails(
 	preferences *UserPreferences,
 ) *lsproto.CompletionItem {
 	if contextToken == nil || !ast.IsStringLiteralLike(contextToken) {
-		return nil
+		return item
 	}
 	completions := l.getStringLiteralCompletionEntries(
 		ctx,
@@ -682,7 +682,7 @@ func (l *LanguageService) getStringLiteralCompletionDetails(
 		preferences,
 	)
 	if completions == nil {
-		return nil
+		return item
 	}
 	checker, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
@@ -720,5 +720,5 @@ func stringLiteralCompletionDetails(
 			}
 		}
 	}
-	return nil
+	return item
 }

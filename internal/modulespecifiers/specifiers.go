@@ -60,8 +60,8 @@ func GetModuleSpecifiersWithInfo(
 	}
 
 	modulePaths := getAllModulePathsWorker(
-		getInfo(importingSourceFile.FileName(), host),
-		moduleSourceFile.OriginalFileName(),
+		getInfo(host.GetSourceOfProjectReferenceIfOutputIncluded(importingSourceFile), host),
+		moduleSourceFile.FileName(),
 		host,
 		// compilerOptions,
 		// options,

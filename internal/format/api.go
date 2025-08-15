@@ -99,7 +99,7 @@ func formatNodeLines(ctx context.Context, sourceFile *ast.SourceFile, node *ast.
 		return nil
 	}
 	tokenStart := scanner.GetTokenPosOfNode(node, sourceFile, false)
-	lineStart := getLineStartPositionForPosition(tokenStart, sourceFile)
+	lineStart := GetLineStartPositionForPosition(tokenStart, sourceFile)
 	span := core.NewTextRange(lineStart, node.End())
 	return FormatSpan(ctx, span, sourceFile, requestKind)
 }
@@ -109,7 +109,7 @@ func FormatDocument(ctx context.Context, sourceFile *ast.SourceFile) []core.Text
 }
 
 func FormatSelection(ctx context.Context, sourceFile *ast.SourceFile, start int, end int) []core.TextChange {
-	return FormatSpan(ctx, core.NewTextRange(getLineStartPositionForPosition(start, sourceFile), end), sourceFile, FormatRequestKindFormatSelection)
+	return FormatSpan(ctx, core.NewTextRange(GetLineStartPositionForPosition(start, sourceFile), end), sourceFile, FormatRequestKindFormatSelection)
 }
 
 func FormatOnOpeningCurly(ctx context.Context, sourceFile *ast.SourceFile, position int) []core.TextChange {
@@ -131,7 +131,7 @@ func FormatOnOpeningCurly(ctx context.Context, sourceFile *ast.SourceFile, posit
 	 * ```
 	 * and we wouldn't want to move the closing brace.
 	 */
-	textRange := core.NewTextRange(getLineStartPositionForPosition(scanner.GetTokenPosOfNode(outermostNode, sourceFile, false), sourceFile), position)
+	textRange := core.NewTextRange(GetLineStartPositionForPosition(scanner.GetTokenPosOfNode(outermostNode, sourceFile, false), sourceFile), position)
 	return FormatSpan(ctx, textRange, sourceFile, FormatRequestKindFormatOnOpeningCurlyBrace)
 }
 

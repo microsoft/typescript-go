@@ -10,7 +10,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
-	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/transformers"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -468,9 +467,7 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 	case ast.KindTupleType:
 		result = tx.Visitor().VisitEachChild(input)
 		if result != nil {
-			startLine, _ := scanner.GetLineAndCharacterOfPosition(tx.state.currentSourceFile, input.Loc.Pos())
-			endLine, _ := scanner.GetLineAndCharacterOfPosition(tx.state.currentSourceFile, input.Loc.End())
-			if startLine == endLine {
+			if transformers.IsOriginalNodeSingleLine(tx.EmitContext(), input) {
 				tx.EmitContext().AddEmitFlags(result, printer.EFSingleLine)
 			}
 		}
@@ -934,7 +931,7 @@ func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *a
 		statement := tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{varDecl})))
 
 		assignment := tx.Factory().UpdateExportAssignment(input.AsExportAssignment(), input.Modifiers(), input.Type(), newId)
-		// Remove coments from the export declaration and copy them onto the synthetic _default declaration
+		// Remove comments from the export declaration and copy them onto the synthetic _default declaration
 		tx.preserveJsDoc(statement, input)
 		tx.removeAllComments(assignment)
 		return tx.Factory().NewSyntaxList([]*ast.Node{statement, assignment})
