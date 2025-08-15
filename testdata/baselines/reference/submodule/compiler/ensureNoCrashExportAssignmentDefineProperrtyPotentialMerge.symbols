@@ -4,7 +4,7 @@
 const _item = require("./namespacer");
 >_item : Symbol(_item, Decl(index.js, 0, 5))
 >require : Symbol(require)
->"./namespacer" : Symbol("namespacer", Decl(namespacer.js, 0, 0))
+>"./namespacer" : Symbol("./namespacer", Decl(namespacer.js, 0, 0))
 
 module.exports = 12;
 >module.exports : Symbol(export=, Decl(index.js, 0, 38))

@@ -78,9 +78,9 @@ const ns = require("./cls");
 
 module.exports.ns = ns;
 >module.exports.ns : Symbol(ns, Decl(cjs3.js, 0, 28))
->module.exports : Symbol("cjs3", Decl(cjs3.js, 0, 0))
+>module.exports : Symbol("./cjs3", Decl(cjs3.js, 0, 0))
 >module : Symbol(module.exports)
->exports : Symbol("cjs3", Decl(cjs3.js, 0, 0))
+>exports : Symbol("./cjs3", Decl(cjs3.js, 0, 0))
 >ns : Symbol(ns, Decl(cjs3.js, 0, 28))
 >ns : Symbol(ns, Decl(cjs3.js, 0, 5))
 
@@ -92,9 +92,9 @@ const ns = require("./cls");
 
 module.exports.names = ns;
 >module.exports.names : Symbol(names, Decl(cjs4.js, 0, 28))
->module.exports : Symbol("cjs4", Decl(cjs4.js, 0, 0))
+>module.exports : Symbol("./cjs4", Decl(cjs4.js, 0, 0))
 >module : Symbol(module.exports)
->exports : Symbol("cjs4", Decl(cjs4.js, 0, 0))
+>exports : Symbol("./cjs4", Decl(cjs4.js, 0, 0))
 >names : Symbol(names, Decl(cjs4.js, 0, 28))
 >ns : Symbol(ns, Decl(cjs4.js, 0, 5))
 
