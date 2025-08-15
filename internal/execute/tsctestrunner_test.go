@@ -63,7 +63,7 @@ func (test *tscInput) executeCommand(sys *testSys, baselineBuilder *strings.Buil
 
 func (test *tscInput) run(t *testing.T, scenario string) {
 	t.Helper()
-	t.Run(test.subScenario, func(t *testing.T) {
+	t.Run(test.getBaselineSubFolder()+"/"+test.subScenario, func(t *testing.T) {
 		t.Parallel()
 		// initial test tsc compile
 		baselineBuilder := &strings.Builder{}

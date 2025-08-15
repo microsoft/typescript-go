@@ -145,11 +145,10 @@ Found 1 error in child/child.ts[90m:1[0m
 
 //// [/home/src/workspaces/solution/child/child.js] *rewrite with same content*
 //// [/home/src/workspaces/solution/child/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","errors":true,"root":["./child.ts"]}
+{"version":"FakeTSVersion","root":["./child.ts"],"semanticErrors":true}
 //// [/home/src/workspaces/solution/child/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
-  "errors": true,
   "root": [
     {
       "files": [
@@ -158,7 +157,8 @@ Found 1 error in child/child.ts[90m:1[0m
       "original": "./child.ts"
     }
   ],
-  "size": 63
+  "size": 71,
+  "semanticErrors": true
 }
 
 child/tsconfig.json::

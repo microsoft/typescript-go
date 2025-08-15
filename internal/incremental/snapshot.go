@@ -210,9 +210,11 @@ type snapshot struct {
 	latestChangedDtsFile string
 	// Hash of d.ts emitted for the file, use to track when emit of d.ts changes
 	emitSignatures collections.SyncMap[tspath.Path, *emitSignature]
-	// Recorded if program had errors
+	// Recorded if program had errors that need to be reported even with --noCheck
 	hasErrors core.Tristate
-	// If semantic diagnsotic check is pending
+	// Recorded if program had semantic errors only for non incremental build
+	hasSemanticErrors bool
+	// If semantic diagnostic check is pending
 	checkPending bool
 
 	// Additional fields that are not serialized but needed to track state
@@ -220,6 +222,7 @@ type snapshot struct {
 	// true if build info emit is pending
 	buildInfoEmitPending                    atomic.Bool
 	hasErrorsFromOldState                   core.Tristate
+	hasSemanticErrorsFromOldState           bool
 	allFilesExcludingDefaultLibraryFileOnce sync.Once
 	//  Cache of all files excluding default library file for the current program
 	allFilesExcludingDefaultLibraryFile []*ast.SourceFile
