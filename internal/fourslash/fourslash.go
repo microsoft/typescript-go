@@ -732,7 +732,7 @@ func (f *FourslashTest) verifyCompletionsAreExactly(t *testing.T, prefix string,
 var completionIgnoreOpts = cmp.FilterPath(
 	func(p cmp.Path) bool {
 		switch p.Last().String() {
-		case ".Kind", ".SortText", ".Data", ".FilterText":
+		case ".Kind", ".SortText", ".Data":
 			return true
 		default:
 			return false
@@ -753,10 +753,6 @@ func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual
 		actual = result
 	}
 	assertDeepEqual(t, actual, expected, prefix, completionIgnoreOpts)
-	// in strada, filtertext was generated on the extension side in most cases
-	if expected.FilterText != nil {
-		assertDeepEqual(t, actual.FilterText, expected.FilterText, prefix+" FilterText mismatch")
-	}
 	if expected.Kind != nil {
 		assertDeepEqual(t, actual.Kind, expected.Kind, prefix+" Kind mismatch")
 	}

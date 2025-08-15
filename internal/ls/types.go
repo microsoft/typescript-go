@@ -1,14 +1,8 @@
 package ls
 
 import (
-	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 )
-
-type Location struct {
-	FileName string
-	Range    core.TextRange
-}
 
 type JsxAttributeCompletionStyle string
 
