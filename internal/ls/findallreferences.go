@@ -720,15 +720,13 @@ func getReferencesForThisKeyword(thisOrSuperKeyword *ast.Node, sourceFiles []*as
 		}
 		staticFlag &= searchSpaceNode.ModifierFlags()
 		searchSpaceNode = searchSpaceNode.Parent // re-assign to be the owning class
-		break
 	case ast.KindSourceFile:
 		if ast.IsExternalModule(searchSpaceNode.AsSourceFile()) || isParameterName(thisOrSuperKeyword) {
 			return nil
 		}
 	case ast.KindFunctionDeclaration, ast.KindFunctionExpression:
-		break
-	// Computed properties in classes are not handled here because references to this are illegal,
-	// so there is no point finding references to them.
+		// Computed properties in classes are not handled here because references to this are illegal,
+		// so there is no point finding references to them.
 	default:
 		return nil
 	}
@@ -986,14 +984,6 @@ func getReferencedSymbolsForSymbol(originalSymbol *ast.Symbol, node *ast.Node, s
 
 	return state.result
 }
-
-type ExportKind int
-
-const (
-	ExportKindDefault      ExportKind = 0
-	ExportKindNamed        ExportKind = 1
-	ExportKindExportEquals ExportKind = 2
-)
 
 type ExportInfo struct {
 	exportingModuleSymbol *ast.Symbol

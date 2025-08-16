@@ -1079,7 +1079,7 @@ func canHaveModuleSpecifier(node *ast.Node) bool {
 	return false
 }
 
-func tryGetModuleSpecifierFromDeclaration(node *ast.Node) *ast.Node {
+func TryGetModuleSpecifierFromDeclaration(node *ast.Node) *ast.Node {
 	res := tryGetModuleSpecifierFromDeclarationWorker(node)
 	if res == nil || !ast.IsStringLiteral(res) {
 		return nil
@@ -1165,7 +1165,7 @@ func (b *nodeBuilderImpl) getSpecifierForModuleSymbol(symbol *ast.Symbol, overri
 	enclosingDeclaration := b.e.MostOriginal(b.ctx.enclosingDeclaration)
 	var originalModuleSpecifier *ast.Node
 	if canHaveModuleSpecifier(enclosingDeclaration) {
-		originalModuleSpecifier = tryGetModuleSpecifierFromDeclaration(enclosingDeclaration)
+		originalModuleSpecifier = TryGetModuleSpecifierFromDeclaration(enclosingDeclaration)
 	}
 	contextFile := b.ctx.enclosingFile
 	resolutionMode := overrideImportMode
@@ -1216,6 +1216,7 @@ func (b *nodeBuilderImpl) getSpecifierForModuleSymbol(symbol *ast.Symbol, overri
 		modulespecifiers.ModuleSpecifierOptions{
 			OverrideImportMode: overrideImportMode,
 		},
+		false, /*forAutoImports*/
 	)
 	specifier := allSpecifiers[0]
 	links.specifierCache[cacheKey] = specifier

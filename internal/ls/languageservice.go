@@ -23,6 +23,11 @@ func (l *LanguageService) GetProgram() *compiler.Program {
 	return l.host.GetProgram()
 }
 
+func (l *LanguageService) GetPackageJsonAutoImportProvider() *compiler.Program {
+	// !!! packageJsonAutoImportProvider
+	return l.GetProgram()
+}
+
 func (l *LanguageService) tryGetProgramAndFile(fileName string) (*compiler.Program, *ast.SourceFile) {
 	program := l.GetProgram()
 	file := program.GetSourceFile(fileName)
