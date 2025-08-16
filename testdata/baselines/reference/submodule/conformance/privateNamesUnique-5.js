@@ -16,11 +16,22 @@ const b: A2 = new B();
 
 
 //// [privateNamesUnique-5.js]
+var _A_foo, _B_foo;
 // same as privateNamesUnique-1, but with an interface
 class A {
-    #foo;
+    constructor() {
+        _A_foo.set(this, void 0);
+    }
 }
+_A_foo = new WeakMap( // same as privateNamesUnique-1, but with an interface
+// same as privateNamesUnique-1, but with an interface
+);
 class B {
-    #foo;
+    constructor() {
+        _B_foo.set(this, void 0);
+    }
 }
+_B_foo = new WeakMap( // same as privateNamesUnique-1, but with an interface
+// same as privateNamesUnique-1, but with an interface
+);
 const b = new B();

@@ -11,9 +11,13 @@ class Test {
 
 
 //// [privateNameJsx.jsx]
+var _Test_prop;
 class Test {
-    #prop = () => <div />;
+    constructor() {
+        _Test_prop.set(this, () => <div />);
+    }
     render() {
         return <this. />;
     }
 }
+_Test_prop = new WeakMap();

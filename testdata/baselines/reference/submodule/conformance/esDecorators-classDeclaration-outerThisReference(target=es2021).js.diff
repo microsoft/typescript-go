@@ -1,8 +1,10 @@
 --- old.esDecorators-classDeclaration-outerThisReference(target=es2021).js
 +++ new.esDecorators-classDeclaration-outerThisReference(target=es2021).js
-@@= skipped -38, +38 lines =@@
+@@= skipped -37, +37 lines =@@
+ }
 
  //// [esDecorators-classDeclaration-outerThisReference.js]
++var _C_a;
  // `this` should point to the outer `this` in both cases.
 -let A = (() => {
 -    let _outerThis = this;
@@ -112,7 +114,10 @@
 -})();
 +@dec(this)
 +class C {
-+    #a = 1;
++    constructor() {
++        _C_a.set(this, 1);
++    }
 +    @dec(this, (x) => x.#a)
 +    b = 2;
 +}
++_C_a = new WeakMap();

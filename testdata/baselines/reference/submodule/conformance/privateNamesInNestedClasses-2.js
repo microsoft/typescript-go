@@ -22,9 +22,10 @@ class A {
 class A {
     static #x = 5;
     constructor() {
+        var _B_x;
         class B {
-            #x = 5;
             constructor() {
+                _B_x.set(this, 5);
                 class C {
                     constructor() {
                         A.#x; // error
@@ -32,5 +33,6 @@ class A {
                 }
             }
         }
+        _B_x = new WeakMap();
     }
 }

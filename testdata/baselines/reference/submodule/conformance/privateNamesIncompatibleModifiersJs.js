@@ -62,19 +62,22 @@ class A {
 
 
 //// [privateNamesIncompatibleModifiersJs.js]
+var _A_a, _A_b, _A_c;
 class A {
-    /**
-     * @public
-     */
-    #a = 1;
-    /**
-     * @private
-     */
-    #b = 1;
-    /**
-     * @protected
-     */
-    #c = 1;
+    constructor() {
+        /**
+         * @public
+         */
+        _A_a.set(this, 1);
+        /**
+         * @private
+         */
+        _A_b.set(this, 1);
+        /**
+         * @protected
+         */
+        _A_c.set(this, 1);
+    }
     /**
      * @public
      */
@@ -112,3 +115,4 @@ class A {
      */
     set #cProp(value) { }
 }
+_A_a = new WeakMap(), _A_b = new WeakMap(), _A_c = new WeakMap();
