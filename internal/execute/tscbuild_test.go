@@ -1285,6 +1285,145 @@ func TestBuildResolveJsonModule(t *testing.T) {
 	}
 }
 
+func TestBuildRoots(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario: `when two root files are consecutive`,
+			files: FileMap{
+				"/home/src/workspaces/project/file1.ts": `export const x = "hello";`,
+				"/home/src/workspaces/project/file2.ts": `export const y = "world";`,
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+                    "compilerOptions": { "composite": true },
+                    "include": ["*.ts"],
+                }`),
+			},
+			commandLineArgs: []string{"--b", "-v"},
+			edits: []*tscEdit{
+				{
+					caption: "delete file1",
+					edit: func(sys *testSys) {
+						sys.removeNoError("/home/src/workspaces/project/file1.ts")
+						sys.removeNoError("/home/src/workspaces/project/file1.js")
+						sys.removeNoError("/home/src/workspaces/project/file1.d.ts")
+					},
+				},
+			},
+		},
+		{
+			subScenario: `when multiple root files are consecutive`,
+			files: FileMap{
+				"/home/src/workspaces/project/file1.ts": `export const x = "hello";`,
+				"/home/src/workspaces/project/file2.ts": `export const y = "world";`,
+				"/home/src/workspaces/project/file3.ts": `export const y = "world";`,
+				"/home/src/workspaces/project/file4.ts": `export const y = "world";`,
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+                    "compilerOptions": { "composite": true },
+                    "include": ["*.ts"],
+                }`),
+			},
+			commandLineArgs: []string{"--b", "-v"},
+			edits: []*tscEdit{
+				{
+					caption: "delete file1",
+					edit: func(sys *testSys) {
+						sys.removeNoError("/home/src/workspaces/project/file1.ts")
+						sys.removeNoError("/home/src/workspaces/project/file1.js")
+						sys.removeNoError("/home/src/workspaces/project/file1.d.ts")
+					},
+				},
+			},
+		},
+		{
+			subScenario: `when files are not consecutive`,
+			files: FileMap{
+				"/home/src/workspaces/project/file1.ts":    `export const x = "hello";`,
+				"/home/src/workspaces/project/random.d.ts": `export const random = "world";`,
+				"/home/src/workspaces/project/file2.ts": stringtestutil.Dedent(`
+                    import { random } from "./random";
+                    export const y = "world";
+                `),
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+                    "compilerOptions": { "composite": true },
+                    "include": ["file*.ts"],
+                }`),
+			},
+			commandLineArgs: []string{"--b", "-v"},
+			edits: []*tscEdit{
+				{
+					caption: "delete file1",
+					edit: func(sys *testSys) {
+						sys.removeNoError("/home/src/workspaces/project/file1.ts")
+						sys.removeNoError("/home/src/workspaces/project/file1.js")
+						sys.removeNoError("/home/src/workspaces/project/file1.d.ts")
+					},
+				},
+			},
+		},
+		{
+			subScenario: `when consecutive and non consecutive are mixed`,
+			files: FileMap{
+				"/home/src/workspaces/project/file1.ts":    `export const x = "hello";`,
+				"/home/src/workspaces/project/file2.ts":    `export const y = "world";`,
+				"/home/src/workspaces/project/random.d.ts": `export const random = "hello";`,
+				"/home/src/workspaces/project/nonconsecutive.ts": stringtestutil.Dedent(`
+                import { random } from "./random";
+					export const nonConsecutive = "hello";
+				`),
+				"/home/src/workspaces/project/random1.d.ts": `export const random = "hello";`,
+				"/home/src/workspaces/project/asArray1.ts": stringtestutil.Dedent(`
+					import { random } from "./random1";
+					export const x = "hello";
+				`),
+				"/home/src/workspaces/project/asArray2.ts":  `export const x = "hello";`,
+				"/home/src/workspaces/project/asArray3.ts":  `export const x = "hello";`,
+				"/home/src/workspaces/project/random2.d.ts": `export const random = "hello";`,
+				"/home/src/workspaces/project/anotherNonConsecutive.ts": stringtestutil.Dedent(`
+					import { random } from "./random2";
+					export const nonConsecutive = "hello";
+				`),
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+                    "compilerOptions": { "composite": true },
+                    "include": ["file*.ts", "nonconsecutive*.ts", "asArray*.ts", "anotherNonConsecutive.ts"],
+                }`),
+			},
+			commandLineArgs: []string{"--b", "-v"},
+			edits: []*tscEdit{
+				{
+					caption: "delete file1",
+					edit: func(sys *testSys) {
+						sys.removeNoError("/home/src/workspaces/project/file1.ts")
+						sys.removeNoError("/home/src/workspaces/project/file1.js")
+						sys.removeNoError("/home/src/workspaces/project/file1.d.ts")
+					},
+				},
+			},
+		},
+		{
+			subScenario:     "when root file is from referenced project",
+			files:           getBuildRootsFromProjectReferencedProjectFileMap(true),
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--b", "projects/server", "-v", "--traceResolution", "--explainFiles"},
+			edits:           getBuildRootsFromProjectReferencedProjectTestEdits(),
+		},
+		{
+			subScenario:     "when root file is from referenced project and shared is first",
+			files:           getBuildRootsFromProjectReferencedProjectFileMap(false),
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--b", "projects/server", "-v", "--traceResolution", "--explainFiles"},
+			edits:           getBuildRootsFromProjectReferencedProjectTestEdits(),
+		},
+	}
+
+	for _, test := range testCases {
+		test.run(t, "roots")
+	}
+}
+
 func TestBuildSolutionProject(t *testing.T) {
 	t.Parallel()
 	testCases := []*tscInput{
@@ -1820,4 +1959,78 @@ func getBuildResolveJsonModuleTestCases(scenarios []*buildResolveJsonModuleScena
 		)
 	}
 	return testCases
+}
+
+func getBuildRootsFromProjectReferencedProjectFileMap(serverFirst bool) FileMap {
+	include := core.IfElse(serverFirst, `"src/**/*.ts", "../shared/src/**/*.ts"`, `"../shared/src/**/*.ts", "src/**/*.ts"`)
+	return FileMap{
+		"/home/src/workspaces/solution/tsconfig.json": stringtestutil.Dedent(`
+		{
+            "compilerOptions": {
+                "composite": true,
+            },
+            "references": [
+                { "path": "projects/server" },
+                { "path": "projects/shared" },
+            ],
+        }`),
+		"/home/src/workspaces/solution/projects/shared/src/myClass.ts": `export class MyClass { }`,
+		"/home/src/workspaces/solution/projects/shared/src/logging.ts": stringtestutil.Dedent(`
+            export function log(str: string) {
+                console.log(str);
+            }
+        `),
+		"/home/src/workspaces/solution/projects/shared/src/random.ts": stringtestutil.Dedent(`
+            export function randomFn(str: string) {
+                console.log(str);
+            }
+        `),
+		"/home/src/workspaces/solution/projects/shared/tsconfig.json": stringtestutil.Dedent(`
+		{
+            "extends": "../../tsconfig.json",
+            "compilerOptions": {
+                "outDir": "./dist",
+            },
+            "include": ["src/**/*.ts"],
+        }`),
+		"/home/src/workspaces/solution/projects/server/src/server.ts": stringtestutil.Dedent(`
+            import { MyClass } from ':shared/myClass.js';
+            console.log('Hello, world!');
+        `),
+		"/home/src/workspaces/solution/projects/server/tsconfig.json": stringtestutil.Dedent(fmt.Sprintf(`
+		{
+            "extends": "../../tsconfig.json",
+            "compilerOptions": {
+                "rootDir": "..",
+                "outDir": "./dist",
+                "paths": {
+                    ":shared/*": ["./src/../../shared/src/*"],
+                },
+            },
+            "include": [ %s ],
+            "references": [
+                { "path": "../shared" },
+            ],
+        }`, include)),
+	}
+}
+
+func getBuildRootsFromProjectReferencedProjectTestEdits() []*tscEdit {
+	return []*tscEdit{
+		noChange,
+		{
+			caption: "edit logging file",
+			edit: func(sys *testSys) {
+				sys.appendFile("/home/src/workspaces/solution/projects/shared/src/logging.ts", "export const x = 10;")
+			},
+		},
+		noChange,
+		{
+			caption: "delete random file",
+			edit: func(sys *testSys) {
+				sys.removeNoError("/home/src/workspaces/solution/projects/shared/src/random.ts")
+			},
+		},
+		noChange,
+	}
 }
