@@ -60,12 +60,15 @@ type PrivateIdentifierAccessorInfo struct {
 func (p *PrivateIdentifierAccessorInfo) Kind() PrivateIdentifierKind {
 	return p.kind
 }
+
 func (p *PrivateIdentifierAccessorInfo) IsValid() bool {
 	return p.PrivateIdentifierInfoBase.isValid
 }
+
 func (p *PrivateIdentifierAccessorInfo) IsStatic() bool {
 	return p.PrivateIdentifierInfoBase.isStatic
 }
+
 func (p *PrivateIdentifierAccessorInfo) BrandCheckIdentifier() *ast.Identifier {
 	return p.PrivateIdentifierInfoBase.brandCheckIdentifier
 }
@@ -93,12 +96,15 @@ type PrivateIdentifierMethodInfo struct {
 func (p *PrivateIdentifierMethodInfo) Kind() PrivateIdentifierKind {
 	return p.kind
 }
+
 func (p *PrivateIdentifierMethodInfo) IsValid() bool {
 	return p.PrivateIdentifierInfoBase.isValid
 }
+
 func (p *PrivateIdentifierMethodInfo) IsStatic() bool {
 	return p.PrivateIdentifierInfoBase.isStatic
 }
+
 func (p *PrivateIdentifierMethodInfo) BrandCheckIdentifier() *ast.Identifier {
 	return p.PrivateIdentifierInfoBase.brandCheckIdentifier
 }
@@ -134,12 +140,15 @@ func NewPrivateIdentifierInstanceFieldInfo(brandCheckIdentifier *ast.Identifier,
 func (p *PrivateIdentifierInstanceFieldInfo) Kind() PrivateIdentifierKind {
 	return p.kind
 }
+
 func (p *PrivateIdentifierInstanceFieldInfo) IsValid() bool {
 	return p.PrivateIdentifierInfoBase.isValid
 }
+
 func (p *PrivateIdentifierInstanceFieldInfo) IsStatic() bool {
 	return p.PrivateIdentifierInfoBase.isStatic
 }
+
 func (p *PrivateIdentifierInstanceFieldInfo) BrandCheckIdentifier() *ast.Identifier {
 	return p.PrivateIdentifierInfoBase.brandCheckIdentifier
 }
@@ -166,12 +175,15 @@ func NewPrivateIdentifierStaticFieldInfo(brandCheckIdentifier *ast.Identifier, v
 func (p *PrivateIdentifierStaticFieldInfo) Kind() PrivateIdentifierKind {
 	return p.kind
 }
+
 func (p *PrivateIdentifierStaticFieldInfo) IsValid() bool {
 	return p.PrivateIdentifierInfoBase.isValid
 }
+
 func (p *PrivateIdentifierStaticFieldInfo) IsStatic() bool {
 	return p.PrivateIdentifierInfoBase.isStatic
 }
+
 func (p *PrivateIdentifierStaticFieldInfo) BrandCheckIdentifier() *ast.Identifier {
 	return p.PrivateIdentifierInfoBase.brandCheckIdentifier
 }
@@ -195,12 +207,15 @@ func NewPrivateIdentifierUntransformedInfo(brandCheckIdentifier *ast.Identifier,
 func (p *PrivateIdentifierUntransformedInfo) Kind() PrivateIdentifierKind {
 	return p.kind
 }
+
 func (p *PrivateIdentifierUntransformedInfo) IsValid() bool {
 	return p.PrivateIdentifierInfoBase.isValid
 }
+
 func (p *PrivateIdentifierUntransformedInfo) IsStatic() bool {
 	return p.PrivateIdentifierInfoBase.isStatic
 }
+
 func (p *PrivateIdentifierUntransformedInfo) BrandCheckIdentifier() *ast.Identifier {
 	return p.PrivateIdentifierInfoBase.brandCheckIdentifier
 }

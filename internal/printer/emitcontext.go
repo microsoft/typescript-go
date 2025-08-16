@@ -388,7 +388,6 @@ func (c *EmitContext) isHoistedVariableStatement(node *ast.Statement) bool {
 }
 
 func (c *EmitContext) StartClassLexicalEnvironment(node *ast.ClassLikeDeclaration) {
-
 	// classContainer
 	classContainer := node
 

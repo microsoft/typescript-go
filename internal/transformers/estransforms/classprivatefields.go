@@ -220,7 +220,6 @@ func (tx *classPrivateFieldsTransformer) setCurrentClassElementAnd(classElement 
 }
 
 func (tx *classPrivateFieldsTransformer) transformClassMembers(node *ast.ClassLikeDeclaration) *ast.NodeList {
-
 	for _, member := range node.Members() {
 		if ast.IsPrivateIdentifierClassElementDeclaration(member) {
 			// !!! TODO: supports static and auto accessor private identifier class elements
@@ -438,7 +437,6 @@ func (tx *classPrivateFieldsTransformer) transformProperty(property *ast.Propert
 }
 
 func (tx *classPrivateFieldsTransformer) transformPropertyWorker(property *ast.PropertyDeclaration, receiver *ast.LeftHandSideExpression) *ast.Expression {
-
 	propertyName := property.Name()
 	if ast.HasAccessorModifier(property.AsNode()) {
 		propertyName = tx.Factory().NewGeneratedPrivateNameForNode(property.Name())
