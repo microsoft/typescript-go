@@ -1150,6 +1150,141 @@ func TestBuildProjectReferenceWithRootDirInParent(t *testing.T) {
 	}
 }
 
+func TestBuildResolveJsonModule(t *testing.T) {
+	t.Parallel()
+	scenarios := []*buildResolveJsonModuleScenario{
+		{
+			subScenario:   "include only",
+			tsconfigFiles: `"include": [ "src/**/*" ],`,
+		},
+		{
+			subScenario:   "include only without outDir",
+			tsconfigFiles: `"include": [ "src/**/*" ],`,
+			skipOutdir:    true,
+		},
+		{
+			subScenario:               "include only with json not in rootDir",
+			tsconfigFiles:             `"include": [ "src/**/*" ],`,
+			additionalCompilerOptions: `"rootDir": "src",`,
+			modifyFiles: func(files FileMap) {
+				text, _ := files["/home/src/workspaces/solution/project/src/hello.json"]
+				delete(files, "/home/src/workspaces/solution/project/src/hello.json")
+				files["/home/src/workspaces/solution/project/hello.json"] = text
+				text, _ = files["/home/src/workspaces/solution/project/src/index.ts"]
+				files["/home/src/workspaces/solution/project/src/index.ts"] = strings.Replace(text.(string), "./hello.json", "../hello.json", 1)
+			},
+		},
+		{
+			subScenario:   "include only with json without rootDir but outside configDirectory",
+			tsconfigFiles: `"include": [ "src/**/*" ],`,
+			modifyFiles: func(files FileMap) {
+				text, _ := files["/home/src/workspaces/solution/project/src/hello.json"]
+				delete(files, "/home/src/workspaces/solution/project/src/hello.json")
+				files["/home/src/workspaces/solution/hello.json"] = text
+				text, _ = files["/home/src/workspaces/solution/project/src/index.ts"]
+				files["/home/src/workspaces/solution/project/src/index.ts"] = strings.Replace(text.(string), "./hello.json", "../../hello.json", 1)
+			},
+		},
+		{
+			subScenario:   "include of json along with other include",
+			tsconfigFiles: `"include": [ "src/**/*", "src/**/*.json" ],`,
+		},
+		{
+			subScenario:   "include of json along with other include and file name matches ts file",
+			tsconfigFiles: `"include": [ "src/**/*", "src/**/*.json" ],`,
+			modifyFiles: func(files FileMap) {
+				text, _ := files["/home/src/workspaces/solution/project/src/hello.json"]
+				delete(files, "/home/src/workspaces/solution/project/src/hello.json")
+				files["/home/src/workspaces/solution/project/src/index.json"] = text
+				text, _ = files["/home/src/workspaces/solution/project/src/index.ts"]
+				files["/home/src/workspaces/solution/project/src/index.ts"] = strings.Replace(text.(string), "./hello.json", "./index.json", 1)
+			},
+		},
+		{
+			subScenario:   "files containing json file",
+			tsconfigFiles: `"files": [ "src/index.ts", "src/hello.json", ],`,
+		},
+		{
+			subScenario:   "include and files",
+			tsconfigFiles: `"files": [ "src/hello.json" ], "include": [ "src/**/*" ],`,
+		},
+		{
+			subScenario:               "sourcemap",
+			tsconfigFiles:             `"files": [ "src/index.ts", "src/hello.json", ],`,
+			additionalCompilerOptions: `"sourceMap": true,`,
+			edits:                     noChangeOnlyEdit,
+		},
+		{
+			subScenario:   "without outDir",
+			tsconfigFiles: `"files": [ "src/index.ts", "src/hello.json", ],`,
+			skipOutdir:    true,
+			edits:         noChangeOnlyEdit,
+		},
+	}
+	testCases := slices.Concat(
+		getBuildResolveJsonModuleTestCases(scenarios),
+		[]*tscInput{
+			{
+				subScenario: "importing json module from project reference",
+				files: FileMap{
+					"/home/src/workspaces/solution/project/strings/foo.json": stringtestutil.Dedent(`
+						{
+							"foo": "bar baz"
+						}
+					`),
+					"/home/src/workspaces/solution/project/strings/tsconfig.json": stringtestutil.Dedent(`
+						{
+							"extends": "../tsconfig.json",
+							"include": ["foo.json"],
+							"references": [],
+						}
+					`),
+					"/home/src/workspaces/solution/project/main/index.ts": stringtestutil.Dedent(`
+						import { foo } from '../strings/foo.json';
+						console.log(foo);
+					`),
+					"/home/src/workspaces/solution/project/main/tsconfig.json": stringtestutil.Dedent(`
+						{
+							"extends": "../tsconfig.json",
+							"include": [
+								"./**/*.ts",
+							],
+							"references": [{
+								"path": "../strings/tsconfig.json",
+							}],
+						}
+					`),
+					"/home/src/workspaces/solution/project/tsconfig.json": stringtestutil.Dedent(`
+						{
+							"compilerOptions": {
+								"target": "es5",
+								"module": "commonjs",
+								"rootDir": "./",
+								"composite": true,
+								"resolveJsonModule": true,
+								"strict": true,
+								"esModuleInterop": true,
+							},
+							"references": [
+								{ "path": "./strings/tsconfig.json" },
+								{ "path": "./main/tsconfig.json" },
+							],
+							"files": [],
+						}
+					`),
+				},
+				cwd:             "/home/src/workspaces/solution",
+				commandLineArgs: []string{"--b", "project", "--verbose", "--explainFiles"},
+				edits:           noChangeOnlyEdit,
+			},
+		},
+	)
+
+	for _, test := range testCases {
+		test.run(t, "resolveJsonModule")
+	}
+}
+
 func TestBuildSolutionProject(t *testing.T) {
 	t.Parallel()
 	testCases := []*tscInput{
@@ -1616,4 +1751,73 @@ func getBuildProjectReferenceWithRootDirInParentFileMap(modify func(files FileMa
 		modify(files)
 	}
 	return files
+}
+
+func getBuildResolveJsonModuleFileMap(composite bool, s *buildResolveJsonModuleScenario) FileMap {
+	var outDirStr string
+	if !s.skipOutdir {
+		outDirStr = `"outDir": "dist",`
+	}
+	files := FileMap{
+		"/home/src/workspaces/solution/project/src/hello.json": stringtestutil.Dedent(`
+		{
+			"hello": "world"
+		}`),
+		"/home/src/workspaces/solution/project/src/index.ts": stringtestutil.Dedent(`
+			import hello from "./hello.json"
+			export default hello.hello
+		`),
+		"/home/src/workspaces/solution/project/tsconfig.json": stringtestutil.Dedent(fmt.Sprintf(`
+		{
+			"compilerOptions": {
+				"composite": %t,
+				"moduleResolution": "node",
+				"module": "commonjs",
+				"resolveJsonModule": true,
+				"esModuleInterop": true,
+				"allowSyntheticDefaultImports": true,
+				%s
+				"skipDefaultLibCheck": true,
+				%s
+			},
+			%s
+		}`, composite, outDirStr, s.additionalCompilerOptions, s.tsconfigFiles)),
+	}
+	if s.modifyFiles != nil {
+		s.modifyFiles(files)
+	}
+	return files
+}
+
+type buildResolveJsonModuleScenario struct {
+	subScenario               string
+	tsconfigFiles             string
+	additionalCompilerOptions string
+	skipOutdir                bool
+	modifyFiles               func(files FileMap)
+	edits                     []*tscEdit
+}
+
+func getBuildResolveJsonModuleTestCases(scenarios []*buildResolveJsonModuleScenario) []*tscInput {
+	testCases := make([]*tscInput, 0, len(scenarios)*2)
+	for _, s := range scenarios {
+		testCases = append(
+			testCases,
+			&tscInput{
+				subScenario:     s.subScenario,
+				files:           getBuildResolveJsonModuleFileMap(true, s),
+				cwd:             "/home/src/workspaces/solution",
+				commandLineArgs: []string{"--b", "project", "--v", "--explainFiles", "--listEmittedFiles"},
+				edits:           s.edits,
+			},
+			&tscInput{
+				subScenario:     s.subScenario + " non-composite",
+				files:           getBuildResolveJsonModuleFileMap(false, s),
+				cwd:             "/home/src/workspaces/solution",
+				commandLineArgs: []string{"--b", "project", "--v", "--explainFiles", "--listEmittedFiles"},
+				edits:           s.edits,
+			},
+		)
+	}
+	return testCases
 }
