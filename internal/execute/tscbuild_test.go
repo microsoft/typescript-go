@@ -1041,6 +1041,115 @@ func TestBuildOutputPaths(t *testing.T) {
 	}
 }
 
+func TestBuildProjectReferenceWithRootDirInParent(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario:     "builds correctly",
+			files:           getBuildProjectReferenceWithRootDirInParentFileMap(nil),
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--b", "src/main", "/home/src/workspaces/solution/src/other"},
+		},
+		{
+			subScenario: "reports error for same tsbuildinfo file because no rootDir in the base",
+			files: getBuildProjectReferenceWithRootDirInParentFileMap(
+				func(files FileMap) {
+					text, _ := files["/home/src/workspaces/solution/tsconfig.base.json"]
+					files["/home/src/workspaces/solution/tsconfig.base.json"] = strings.Replace(text.(string), `"rootDir": "./src/",`, "", 1)
+				},
+			),
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--b", "src/main", "--verbose"},
+		},
+		{
+			subScenario: "reports error for same tsbuildinfo file",
+			files: getBuildProjectReferenceWithRootDirInParentFileMap(
+				func(files FileMap) {
+					files["/home/src/workspaces/solution/src/main/tsconfig.json"] = stringtestutil.Dedent(`
+                    {
+                        "compilerOptions": { "composite": true, "outDir": "../../dist/" },
+                        "references": [{ "path": "../other" }]
+                    }`)
+					files["/home/src/workspaces/solution/src/other/tsconfig.json"] = stringtestutil.Dedent(`
+                    {
+                        "compilerOptions": { "composite": true, "outDir": "../../dist/" },
+                    }`)
+				},
+			),
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--b", "src/main", "--verbose"},
+			edits:           noChangeOnlyEdit,
+		},
+		{
+			subScenario: "reports error for same tsbuildinfo file without incremental",
+			files: getBuildProjectReferenceWithRootDirInParentFileMap(
+				func(files FileMap) {
+					files["/home/src/workspaces/solution/src/main/tsconfig.json"] = stringtestutil.Dedent(`
+                    {
+                        "compilerOptions": { "outDir": "../../dist/" },
+                        "references": [{ "path": "../other" }]
+                    }`)
+					files["/home/src/workspaces/solution/src/other/tsconfig.json"] = stringtestutil.Dedent(`
+                    {
+                        "compilerOptions": { "composite": true, "outDir": "../../dist/" },
+                    }`)
+				},
+			),
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--b", "src/main", "--verbose"},
+		},
+		{
+			subScenario: "reports error for same tsbuildinfo file without incremental with tsc",
+			files: getBuildProjectReferenceWithRootDirInParentFileMap(
+				func(files FileMap) {
+					files["/home/src/workspaces/solution/src/main/tsconfig.json"] = stringtestutil.Dedent(`
+                    {
+                        "compilerOptions": { "outDir": "../../dist/" },
+                        "references": [{ "path": "../other" }]
+                    }`)
+					files["/home/src/workspaces/solution/src/other/tsconfig.json"] = stringtestutil.Dedent(`
+                    {
+                        "compilerOptions": { "composite": true, "outDir": "../../dist/" },
+                    }`)
+				},
+			),
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--b", "src/other", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption:         "Running tsc on main",
+					commandLineArgs: []string{"-p", "src/main"},
+				},
+			},
+		},
+		{
+			subScenario: "reports no error when tsbuildinfo differ",
+			files: getBuildProjectReferenceWithRootDirInParentFileMap(
+				func(files FileMap) {
+					delete(files, "/home/src/workspaces/solution/src/main/tsconfig.json")
+					delete(files, "/home/src/workspaces/solution/src/other/tsconfig.json")
+					files["/home/src/workspaces/solution/src/main/tsconfig.main.json"] = stringtestutil.Dedent(`
+                    {
+                        "compilerOptions": { "composite": true, "outDir": "../../dist/" },
+                        "references": [{ "path": "../other/tsconfig.other.json" }]
+                    }`)
+					files["/home/src/workspaces/solution/src/other/tsconfig.other.json"] = stringtestutil.Dedent(`
+                    {
+                        "compilerOptions": { "composite": true, "outDir": "../../dist/" },
+                    }`)
+				},
+			),
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--b", "src/main/tsconfig.main.json", "--verbose"},
+			edits:           noChangeOnlyEdit,
+		},
+	}
+
+	for _, test := range testCases {
+		test.run(t, "projectReferenceWithRootDirInParent")
+	}
+}
+
 func TestBuildSolutionProject(t *testing.T) {
 	t.Parallel()
 	testCases := []*tscInput{
@@ -1463,4 +1572,48 @@ func getBuildInferredTypeFromTransitiveModuleMap(isolatedModules bool, lazyExtra
                 },
             }`, isolatedModules)),
 	}
+}
+
+func getBuildProjectReferenceWithRootDirInParentFileMap(modify func(files FileMap)) FileMap {
+	files := FileMap{
+		"/home/src/workspaces/solution/src/main/a.ts": stringtestutil.Dedent(`
+			import { b } from './b';
+			const a = b;
+		`),
+		"/home/src/workspaces/solution/src/main/b.ts": stringtestutil.Dedent(`
+			export const b = 0;
+		`),
+		"/home/src/workspaces/solution/src/main/tsconfig.json": stringtestutil.Dedent(`
+		{
+			"extends": "../../tsconfig.base.json",
+			"references": [
+				{ "path": "../other" },
+			],
+		}`),
+		"/home/src/workspaces/solution/src/other/other.ts": stringtestutil.Dedent(`
+			export const Other = 0;
+		`),
+		"/home/src/workspaces/solution/src/other/tsconfig.json": stringtestutil.Dedent(`
+		{
+			"extends": "../../tsconfig.base.json",
+		}
+		`),
+		"/home/src/workspaces/solution/tsconfig.base.json": stringtestutil.Dedent(`
+		{
+			"compilerOptions": {
+				"composite": true,
+				"declaration": true,
+				"rootDir": "./src/",
+				"outDir": "./dist/",
+				"skipDefaultLibCheck": true,
+			},
+			"exclude": [
+				"node_modules",
+			],
+		}`),
+	}
+	if modify != nil {
+		modify(files)
+	}
+	return files
 }
