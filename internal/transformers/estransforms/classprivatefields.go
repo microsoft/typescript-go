@@ -64,7 +64,7 @@ func (tx *classPrivateFieldsTransformer) visitPrivateIdentifier(node *ast.Privat
 		return node.AsNode()
 	}
 
-	// !!! TODO: private identifer should be replaced in other cases.
+	// !!! TODO: private identifier should be replaced in other cases.
 	// e.g. constructor { this.#foo = 3 } -> constructor { this. = 3 }
 	if !ast.IsPropertyDeclaration(node.Parent) {
 		return node.AsNode()
