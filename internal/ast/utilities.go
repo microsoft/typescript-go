@@ -566,7 +566,7 @@ func IsClassElement(node *Node) bool {
 	return false
 }
 
-func isMethodOrAccessor(node *Node) bool {
+func IsMethodOrAccessor(node *Node) bool {
 	switch node.Kind {
 	case KindMethodDeclaration, KindGetAccessor, KindSetAccessor:
 		return true
@@ -575,7 +575,7 @@ func isMethodOrAccessor(node *Node) bool {
 }
 
 func IsPrivateIdentifierClassElementDeclaration(node *Node) bool {
-	return (IsPropertyDeclaration(node) || isMethodOrAccessor(node)) && IsPrivateIdentifier(node.Name())
+	return (IsPropertyDeclaration(node) || IsMethodOrAccessor(node)) && IsPrivateIdentifier(node.Name())
 }
 
 func IsObjectLiteralOrClassExpressionMethodOrAccessor(node *Node) bool {
@@ -1465,6 +1465,18 @@ func getAssignedName(node *Node) *Node {
 		}
 	}
 	return nil
+}
+
+func IsStaticPropertyDeclaration(member *ClassElement) bool {
+	return IsPropertyDeclaration(member) && HasStaticModifier(member)
+}
+
+func IsStaticPropertyDeclarationOrClassStaticBlockDeclaration(element *ClassElement) bool {
+	return IsStaticPropertyDeclaration(element) || IsClassStaticBlockDeclaration(element)
+}
+
+func GetStaticPropertiesAndClassStaticBlock(node *ClassLikeDeclaration) []*Node {
+	return core.Filter(node.Members(), IsStaticPropertyDeclarationOrClassStaticBlockDeclaration)
 }
 
 type JSDeclarationKind int
@@ -3852,4 +3864,17 @@ func GetRestIndicatorOfBindingOrAssignmentElement(bindingElement *Node) *Node {
 		return bindingElement
 	}
 	return nil
+}
+
+func GetEffectiveBaseTypeNode(node *Node) *Node {
+	baseType := GetClassExtendsHeritageElement(node)
+	// !!! TODO: JSDoc support
+	// if (baseType && isInJSFile(node)) {
+	//     // Prefer an @augments tag because it may have type parameters.
+	//     const tag = getJSDocAugmentsTag(node);
+	//     if (tag) {
+	//         return tag.class;
+	//     }
+	// }
+	return baseType
 }
