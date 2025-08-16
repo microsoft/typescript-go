@@ -7,7 +7,8 @@ a/**/
 
 ``````ts
 import {someVar} from "./a.ts";
-import {  anotherVar } from "./b.js";someVar;
+import { anotherVar } from "./b.js";
+someVar;
 a
 
 ```

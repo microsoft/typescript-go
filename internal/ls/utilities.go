@@ -41,13 +41,6 @@ func CompareRanges(lsRange, other *lsproto.Range) int {
 	return ComparePositions(lsRange.End, other.End)
 }
 
-func applyTextChanges(text string, changes []core.TextChange) string {
-	for i := len(changes) - 1; i >= 0; i-- {
-		text = changes[i].ApplyTo(text)
-	}
-	return text
-}
-
 var quoteReplacer = strings.NewReplacer("'", `\'`, `\"`, `"`)
 
 func IsInString(sourceFile *ast.SourceFile, position int, previousToken *ast.Node) bool {

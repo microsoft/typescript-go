@@ -99,8 +99,15 @@ func (ct *ChangeTrackerWriter) AssignPositionsToNode(node *ast.Node, factory *as
 		Visit:   func(n *ast.Node) *ast.Node { return ct.assignPositionsToNodeWorker(n, visitor) },
 		Factory: factory,
 		Hooks: ast.NodeVisitorHooks{
+			VisitNode:  ct.assignPositionsToNodeWorker,
 			VisitNodes: ct.assignPositionsToNodeArray,
 			VisitToken: ct.assignPositionsToNodeWorker,
+			VisitModifiers: func(modifiers *ast.ModifierList, v *ast.NodeVisitor) *ast.ModifierList {
+				if modifiers != nil {
+					ct.assignPositionsToNodeArray(&modifiers.NodeList, v)
+				}
+				return modifiers
+			},
 		},
 	}
 	return ct.assignPositionsToNodeWorker(node, visitor)
@@ -110,6 +117,9 @@ func (ct *ChangeTrackerWriter) assignPositionsToNodeWorker(
 	node *ast.Node,
 	v *ast.NodeVisitor,
 ) *ast.Node {
+	if node == nil {
+		return node
+	}
 	visited := node.VisitEachChild(v)
 	// create proxy node for non synthesized nodes
 	newNode := visited

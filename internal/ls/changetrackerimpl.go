@@ -62,9 +62,8 @@ func (ct *changeTracker) computeNewText(change *trackerEdit, targetSourceFile *a
 	}
 
 	pos := int(ct.ls.converters.LineAndCharacterToPosition(sourceFile, change.Range.Start))
-	targetFileLineMap := targetSourceFile.LineMap()
-	format := func(n *ast.Node) string {
-		return ct.getFormattedTextOfNode(n, targetSourceFile, sourceFile, pos, targetFileLineMap, change.options)
+	formatNode := func(n *ast.Node) string {
+		return ct.getFormattedTextOfNode(n, targetSourceFile, sourceFile, pos, change.options)
 	}
 
 	var text string
@@ -74,23 +73,23 @@ func (ct *changeTracker) computeNewText(change *trackerEdit, targetSourceFile *a
 		if change.options.joiner == "" {
 			change.options.joiner = ct.newLine
 		}
-		text = strings.Join(core.Map(change.nodes, func(n *ast.Node) string { return strings.TrimSuffix(format(n), ct.newLine) }), change.options.joiner)
+		text = strings.Join(core.Map(change.nodes, func(n *ast.Node) string { return strings.TrimSuffix(formatNode(n), ct.newLine) }), change.options.joiner)
 	case trackerEditKindReplaceWithSingleNode:
-		text = format(change.Node)
+		text = formatNode(change.Node)
 	default:
 		panic(fmt.Sprintf("change kind %d should have been handled earlier", change.kind))
 	}
 	// strip initial indentation (spaces or tabs) if text will be inserted in the middle of the line
 	noIndent := text
-	if !(change.options.indentation != nil && *change.options.indentation != 0 || scanner.GetLineStartPositionForPosition(pos, targetFileLineMap) == pos) {
+	if !(change.options.indentation != nil && *change.options.indentation != 0 || format.GetLineStartPositionForPosition(pos, targetSourceFile) == pos) {
 		noIndent = strings.TrimLeftFunc(text, unicode.IsSpace)
 	}
 	return change.options.prefix + noIndent // !!!  +((!options.suffix || endsWith(noIndent, options.suffix)) ? "" : options.suffix);
 }
 
 /** Note: this may mutate `nodeIn`. */
-func (ct *changeTracker) getFormattedTextOfNode(nodeIn *ast.Node, targetSourceFile *ast.SourceFile, sourceFile *ast.SourceFile, pos int, targetFileLineMap []core.TextPos, options changeNodeOptions) string {
-	text, node := ct.getNonformattedText(nodeIn, targetSourceFile)
+func (ct *changeTracker) getFormattedTextOfNode(nodeIn *ast.Node, targetSourceFile *ast.SourceFile, sourceFile *ast.SourceFile, pos int, options changeNodeOptions) string {
+	text, sourceFileLike := ct.getNonformattedText(nodeIn, targetSourceFile)
 	// !!! if (validate) validate(node, text);
 	formatOptions := getFormatCodeSettingsForWriting(ct.formatSettings, targetSourceFile)
 
@@ -108,9 +107,8 @@ func (ct *changeTracker) getFormattedTextOfNode(nodeIn *ast.Node, targetSourceFi
 		delta = formatOptions.IndentSize
 	}
 
-	// !!! sourcefilelike -- `targetSourceFile` is incorrect
-	changes := format.FormatNodeGivenIndentation(ct.ctx, node, targetSourceFile, targetSourceFile.LanguageVariant, initialIndentation, delta)
-	return applyTextChanges(text, changes)
+	changes := format.FormatNodeGivenIndentation(ct.ctx, sourceFileLike, sourceFileLike.AsSourceFile(), targetSourceFile.LanguageVariant, initialIndentation, delta)
+	return core.ApplyBulkEdits(text, changes)
 }
 
 func getFormatCodeSettingsForWriting(options *format.FormatCodeSettings, sourceFile *ast.SourceFile) *format.FormatCodeSettings {
@@ -125,8 +123,17 @@ func getFormatCodeSettingsForWriting(options *format.FormatCodeSettings, sourceF
 
 /** Note: output node may be mutated input node. */
 func (ct *changeTracker) getNonformattedText(node *ast.Node, sourceFile *ast.SourceFile) (string, *ast.Node) {
+	nodeIn := node
+	eofToken := ct.Factory.NewToken(ast.KindEndOfFile)
+	if ast.IsStatement(node) {
+		nodeIn = ct.Factory.NewSourceFile(
+			ast.SourceFileParseOptions{FileName: sourceFile.FileName(), Path: sourceFile.Path()},
+			"",
+			ct.Factory.NewNodeList([]*ast.Node{node}),
+			ct.Factory.NewToken(ast.KindEndOfFile),
+		)
+	}
 	writer := printer.NewChangeTrackerWriter(ct.newLine)
-
 	printer.NewPrinter(
 		printer.PrinterOptions{
 			NewLine:                       core.GetNewLineKind(ct.newLine),
@@ -136,11 +143,27 @@ func (ct *changeTracker) getNonformattedText(node *ast.Node, sourceFile *ast.Sou
 		},
 		writer.GetPrintHandlers(),
 		ct.EmitContext,
-	).Write(node, sourceFile, writer, nil)
+	).Write(nodeIn, sourceFile, writer, nil)
 
 	text := writer.String()
 
-	return text, writer.AssignPositionsToNode(node, ct.NodeFactory)
+	nodeOut := writer.AssignPositionsToNode(nodeIn, ct.NodeFactory)
+	var sourceFileLike *ast.Node
+	if !ast.IsStatement(node) {
+		nodeList := ct.Factory.NewNodeList([]*ast.Node{nodeOut})
+		nodeList.Loc = nodeOut.Loc
+		eofToken.Loc = core.NewTextRange(nodeOut.End(), nodeOut.End())
+		sourceFileLike = ct.Factory.NewSourceFile(
+			ast.SourceFileParseOptions{FileName: sourceFile.FileName(), Path: sourceFile.Path()},
+			text,
+			nodeList,
+			eofToken,
+		)
+		sourceFileLike.Loc = nodeOut.Loc
+	} else {
+		sourceFileLike = nodeOut
+	}
+	return text, sourceFileLike
 }
 
 // method on the changeTracker because use of converters
@@ -156,13 +179,12 @@ func (ct *changeTracker) getAdjustedRange(sourceFile *ast.SourceFile, startNode 
 func (ct *changeTracker) getAdjustedStartPosition(sourceFile *ast.SourceFile, node *ast.Node, leadingOption leadingTriviaOption, hasTrailingComment bool) int {
 	if leadingOption == leadingTriviaOptionJSDoc {
 		if JSDocComments := parser.GetJSDocCommentRanges(ct.NodeFactory, nil, node, sourceFile.Text()); len(JSDocComments) > 0 {
-			return scanner.GetLineStartPositionForPosition(JSDocComments[0].Pos(), sourceFile.LineMap())
+			return format.GetLineStartPositionForPosition(JSDocComments[0].Pos(), sourceFile)
 		}
 	}
 
 	start := astnav.GetStartOfNode(node, sourceFile, false)
-	lineStarts := sourceFile.LineMap()
-	startOfLinePos := scanner.GetLineStartPositionForPosition(start, lineStarts)
+	startOfLinePos := format.GetLineStartPositionForPosition(start, sourceFile)
 
 	switch leadingOption {
 	case leadingTriviaOptionExclude:
@@ -178,8 +200,9 @@ func (ct *changeTracker) getAdjustedStartPosition(sourceFile *ast.SourceFile, no
 	if fullStart == start {
 		return start
 	}
+	lineStarts := sourceFile.LineMap()
 	fullStartLineIndex := scanner.ComputeLineOfPosition(lineStarts, fullStart)
-	fullStartLinePos := scanner.GetLineStartPositionForPosition(fullStart, lineStarts)
+	fullStartLinePos := int(lineStarts[fullStartLineIndex])
 	if startOfLinePos == fullStartLinePos {
 		// full start and start of the node are on the same line
 		//   a,     b;

@@ -223,8 +223,7 @@ func (ct *changeTracker) insertNodeInListAfter(sourceFile *ast.SourceFile, after
 	}
 
 	afterStart := astnav.GetStartOfNode(after, sourceFile, false)
-	lineMap := sourceFile.LineMap()
-	afterStartLinePosition := scanner.GetLineStartPositionForPosition(afterStart, lineMap)
+	afterStartLinePosition := format.GetLineStartPositionForPosition(afterStart, sourceFile)
 
 	// insert element after the last element in the list that has more than one item
 	// pick the element preceding the after element to:
@@ -241,7 +240,7 @@ func (ct *changeTracker) insertNodeInListAfter(sourceFile *ast.SourceFile, after
 		tokenBeforeInsertPosition := astnav.FindPrecedingToken(sourceFile, after.Pos())
 		separator = core.IfElse(isSeparator(after, tokenBeforeInsertPosition), tokenBeforeInsertPosition.Kind, ast.KindCommaToken)
 		// determine if list is multiline by checking lines of after element and element that precedes it.
-		afterMinusOneStartLinePosition := scanner.GetLineStartPositionForPosition(astnav.GetStartOfNode(containingList[index-1], sourceFile, false), lineMap)
+		afterMinusOneStartLinePosition := format.GetLineStartPositionForPosition(astnav.GetStartOfNode(containingList[index-1], sourceFile, false), sourceFile)
 		multilineList = afterMinusOneStartLinePosition != afterStartLinePosition
 	}
 	if hasCommentsBeforeLineBreak(sourceFile.Text(), after.End()) || printer.GetLinesBetweenPositions(sourceFile, containingList[0].Pos(), containingList[len(containingList)-1].End()) != 0 {

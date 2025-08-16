@@ -21,24 +21,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-func applyBulkEdits(text string, edits []core.TextChange) string {
-	b := strings.Builder{}
-	b.Grow(len(text))
-	lastEnd := 0
-	for _, e := range edits {
-		start := e.TextRange.Pos()
-		if start != lastEnd {
-			b.WriteString(text[lastEnd:e.TextRange.Pos()])
-		}
-		b.WriteString(e.NewText)
-
-		lastEnd = e.TextRange.End()
-	}
-	b.WriteString(text[lastEnd:])
-
-	return b.String()
-}
-
 type CommandLineResult struct {
 	Status             ExitStatus
 	IncrementalProgram *incremental.Program
@@ -85,7 +67,7 @@ func fmtMain(sys System, input, output string) ExitStatus {
 		JSDocParsingMode: ast.JSDocParsingModeParseAll,
 	}, text, core.GetScriptKindFromFileName(string(pathified)))
 	edits := format.FormatDocument(ctx, sourceFile)
-	newText := applyBulkEdits(text, edits)
+	newText := core.ApplyBulkEdits(text, edits)
 
 	if err := sys.FS().WriteFile(output, newText, false); err != nil {
 		fmt.Fprintln(sys.Writer(), err.Error())
