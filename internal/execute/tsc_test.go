@@ -325,24 +325,6 @@ func TestTscListFilesOnly(t *testing.T) {
 	}
 }
 
-func TestNoEmit(t *testing.T) {
-	t.Parallel()
-	(&tscInput{
-		subScenario: "when project has strict true",
-		files: FileMap{
-			"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
-			{
-				"compilerOptions": {
-					"incremental": true,
-					"strict": true
-				}
-			}`),
-			"/home/src/workspaces/project/class1.ts": `export class class1 {}`,
-		},
-		commandLineArgs: []string{"--noEmit"},
-	}).run(t, "noEmit")
-}
-
 func TestTypeAcquisition(t *testing.T) {
 	t.Parallel()
 	(&tscInput{

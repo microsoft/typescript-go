@@ -92,3 +92,14 @@ SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/class1.ts
 Signatures::
+
+
+Edit [0]:: no change
+
+tsgo --noEmit
+ExitStatus:: Success
+Output::
+
+tsconfig.json::
+SemanticDiagnostics::
+Signatures::
