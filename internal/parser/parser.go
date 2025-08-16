@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"strings"
 	"sync"
 
@@ -205,7 +206,7 @@ func ParseIsolatedEntityName(text string) *ast.EntityName {
 
 func (p *Parser) initializeState(opts ast.SourceFileParseOptions, sourceText string, scriptKind core.ScriptKind) {
 	if scriptKind == core.ScriptKindUnknown {
-		panic("ScriptKind must be specified when parsing source files.")
+		panic(fmt.Errorf("ScriptKind must be specified when parsing source file: %s", opts.FileName))
 	}
 
 	if p.scanner == nil {
