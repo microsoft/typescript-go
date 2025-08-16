@@ -326,6 +326,235 @@ func TestProjectReferences(t *testing.T) {
 			cwd:             "/home/src/workspaces/solution",
 			commandLineArgs: []string{"--p", "src/services", "--pretty", "false"},
 		},
+		{
+			subScenario: "default setup was created correctly",
+			files: FileMap{
+				"/home/src/workspaces/project/primary/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"outDir": "bin",
+					}
+				}`),
+				"/home/src/workspaces/project/primary/a.ts": "export { };",
+				"/home/src/workspaces/project/secondary/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"outDir": "bin",
+					},
+					"references": [{
+						"path": "../primary"
+					}]
+				}`),
+				"/home/src/workspaces/project/secondary/b.ts": `import * as mod_1 from "../primary/a";`,
+			},
+			commandLineArgs: []string{"--p", "primary/tsconfig.json"},
+		},
+		{
+			subScenario: "errors when declaration = false",
+			files: FileMap{
+				"/home/src/workspaces/project/primary/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"outDir": "bin",
+						"declaration": false
+					}
+				}`),
+				"/home/src/workspaces/project/primary/a.ts": "export { };",
+			},
+			commandLineArgs: []string{"--p", "primary/tsconfig.json"},
+		},
+		{
+			subScenario: "errors when the referenced project doesnt have composite",
+			files: FileMap{
+				"/home/src/workspaces/project/primary/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": false,
+						"outDir": "bin",
+					}
+				}`),
+				"/home/src/workspaces/project/primary/a.ts": "export { };",
+				"/home/src/workspaces/project/reference/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"outDir": "bin",
+					},
+					"files": [ "b.ts" ],
+					"references": [ { "path": "../primary" } ]
+				}`),
+				"/home/src/workspaces/project/reference/b.ts": `import * as mod_1 from "../primary/a";`,
+			},
+			commandLineArgs: []string{"--p", "reference/tsconfig.json"},
+		},
+		{
+			subScenario: "does not error when the referenced project doesnt have composite if its a container project",
+			files: FileMap{
+				"/home/src/workspaces/project/primary/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": false,
+						"outDir": "bin",
+					}
+				}`),
+				"/home/src/workspaces/project/primary/a.ts": "export { };",
+				"/home/src/workspaces/project/reference/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"outDir": "bin",
+					},
+					"files": [ ],
+					"references": [{
+						"path": "../primary"
+					}]
+				}`),
+				"/home/src/workspaces/project/reference/b.ts": `import * as mod_1 from "../primary/a";`,
+			},
+			commandLineArgs: []string{"--p", "reference/tsconfig.json"},
+		},
+		{
+			subScenario: "errors when the file list is not exhaustive",
+			files: FileMap{
+				"/home/src/workspaces/project/primary/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"outDir": "bin",
+					},
+					"files": [ "a.ts" ]
+				}`),
+				"/home/src/workspaces/project/primary/a.ts": "import * as b from './b'",
+				"/home/src/workspaces/project/primary/b.ts": "export {}",
+			},
+			commandLineArgs: []string{"--p", "primary/tsconfig.json"},
+		},
+		{
+			subScenario: "errors when the referenced project doesnt exist",
+			files: FileMap{
+				"/home/src/workspaces/project/primary/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"outDir": "bin",
+					},
+					"references": [{
+						"path": "../foo"
+					}]
+				}`),
+				"/home/src/workspaces/project/primary/a.ts": "export { };",
+			},
+			commandLineArgs: []string{"--p", "primary/tsconfig.json"},
+		},
+		{
+			subScenario: "redirects to the output dts file",
+			files: FileMap{
+				"/home/src/workspaces/project/alpha/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"outDir": "bin",
+					}
+				}`),
+				"/home/src/workspaces/project/alpha/a.ts":       "export const m: number = 3;",
+				"/home/src/workspaces/project/alpha/bin/a.d.ts": "export { };",
+				"/home/src/workspaces/project/beta/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"outDir": "bin",
+					},
+					"references": [ { "path": "../alpha" } ]
+				}`),
+				"/home/src/workspaces/project/beta/b.ts": "import { m } from '../alpha/a'",
+			},
+			commandLineArgs: []string{"--p", "beta/tsconfig.json", "--explainFiles"},
+		},
+		{
+			subScenario: "issues a nice error when the input file is missing",
+			files: FileMap{
+				"/home/src/workspaces/project/alpha/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"outDir": "bin",
+					},
+					"references": []
+				}`),
+				"/home/src/workspaces/project/alpha/a.ts": "export const m: number = 3;",
+				"/home/src/workspaces/project/beta/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"outDir": "bin",
+					},
+					"references": [ { "path": "../alpha" } ]
+				}`),
+				"/home/src/workspaces/project/beta/b.ts": "import { m } from '../alpha/a'",
+			},
+			commandLineArgs: []string{"--p", "beta/tsconfig.json"},
+		},
+		{
+			subScenario: "issues a nice error when the input file is missing when module reference is not relative",
+			files: FileMap{
+				"/home/src/workspaces/project/alpha/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"outDir": "bin",
+					}
+				}`),
+				"/home/src/workspaces/project/alpha/a.ts": "export const m: number = 3;",
+				"/home/src/workspaces/project/beta/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"outDir": "bin",
+						"paths": {
+                            "@alpha/*": ["../alpha/*"],
+                        },
+					},
+					"references": [ { "path": "../alpha" } ]
+				}`),
+				"/home/src/workspaces/project/beta/b.ts": "import { m } from '@alpha/a'",
+			},
+			commandLineArgs: []string{"--p", "beta/tsconfig.json"},
+		},
+		{
+			subScenario: "doesnt infer the rootDir from source paths",
+			files: FileMap{
+				"/home/src/workspaces/project/alpha/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"outDir": "bin",
+					},
+					"references": []
+				}`),
+				"/home/src/workspaces/project/alpha/src/a.ts": "export const m: number = 3;",
+			},
+			commandLineArgs: []string{"--p", "alpha/tsconfig.json"},
+		},
+		{
+			// !!! sheetal rootDir error not reported
+			subScenario: "errors when a file is outside the rootdir",
+			files: FileMap{
+				"/home/src/workspaces/project/alpha/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"outDir": "bin",
+					},
+					"references": []
+				}`),
+				"/home/src/workspaces/project/alpha/src/a.ts": "import * as b from '../../beta/b'",
+				"/home/src/workspaces/project/beta/b.ts":      "export { }",
+			},
+			commandLineArgs: []string{"--p", "alpha/tsconfig.json"},
+		},
 	}
 
 	for _, c := range cases {
