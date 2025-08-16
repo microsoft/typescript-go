@@ -8,7 +8,9 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/testutil/stringtestutil"
+	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
+	"gotest.tools/v3/assert"
 )
 
 func TestBuildCommandLine(t *testing.T) {
@@ -909,6 +911,133 @@ func TestBuildModuleSpecifiers(t *testing.T) {
 
 	for _, test := range testCases {
 		test.run(t, "moduleSpecifiers")
+	}
+}
+
+type tscOutputPathScenario struct {
+	subScenario      string
+	files            FileMap
+	expectedDtsNames []string
+}
+
+func (s *tscOutputPathScenario) run(t *testing.T) {
+	t.Helper()
+	input := &tscInput{
+		subScenario:     s.subScenario,
+		files:           s.files,
+		commandLineArgs: []string{"-b", "-v"},
+		edits: []*tscEdit{
+			noChange,
+			{
+				caption:         "Normal build without change, that does not block emit on error to show files that get emitted",
+				commandLineArgs: []string{"-p", "/home/src/workspaces/project/tsconfig.json"},
+			},
+		},
+	}
+	input.run(t, "outputPaths")
+	t.Run("GetOutputFileNames/"+s.subScenario, func(t *testing.T) {
+		t.Parallel()
+		sys := newTestSys(input)
+		config, _ := tsoptions.GetParsedCommandLineOfConfigFile("/home/src/workspaces/project/tsconfig.json", &core.CompilerOptions{}, sys, nil)
+		assert.DeepEqual(t, slices.Collect(config.GetOutputFileNames()), s.expectedDtsNames)
+	})
+}
+
+func TestBuildOutputPaths(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscOutputPathScenario{
+		{
+			subScenario: "when rootDir is not specified",
+			files: FileMap{
+				"/home/src/workspaces/project/src/index.ts": "export const x = 10;",
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+                    "compilerOptions": {
+                        "outDir": "dist",
+                    },
+                }`),
+			},
+			expectedDtsNames: []string{
+				"/home/src/workspaces/project/dist/index.js",
+			},
+		},
+		{
+			subScenario: "when rootDir is not specified and is composite",
+			files: FileMap{
+				"/home/src/workspaces/project/src/index.ts": "export const x = 10;",
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+                    "compilerOptions": {
+                        "outDir": "dist",
+						"composite": true,
+                    },
+                }`),
+			},
+			expectedDtsNames: []string{
+				"/home/src/workspaces/project/dist/src/index.js",
+				"/home/src/workspaces/project/dist/src/index.d.ts",
+			},
+		},
+		{
+			subScenario: "when rootDir is specified",
+			files: FileMap{
+				"/home/src/workspaces/project/src/index.ts": "export const x = 10;",
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+                    "compilerOptions": {
+                        "outDir": "dist",
+						"rootDir": "src",
+                    },
+                }`),
+			},
+			expectedDtsNames: []string{
+				"/home/src/workspaces/project/dist/index.js",
+			},
+		},
+		{
+			// !!! sheetal error missing as not yet implemented
+			subScenario: "when rootDir is specified but not all files belong to rootDir",
+			files: FileMap{
+				"/home/src/workspaces/project/src/index.ts":  "export const x = 10;",
+				"/home/src/workspaces/project/types/type.ts": "export type t = string;",
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+                    "compilerOptions": {
+                        "outDir": "dist",
+						"rootDir": "src",
+                    },
+                }`),
+			},
+			expectedDtsNames: []string{
+				"/home/src/workspaces/project/dist/index.js",
+				"/home/src/workspaces/project/types/type.js",
+			},
+		},
+		{
+			// !!! sheetal error missing as not yet implemented
+			subScenario: "when rootDir is specified but not all files belong to rootDir and is composite",
+			files: FileMap{
+				"/home/src/workspaces/project/src/index.ts":  "export const x = 10;",
+				"/home/src/workspaces/project/types/type.ts": "export type t = string;",
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+                    "compilerOptions": {
+                        "outDir": "dist",
+						"rootDir": "src",
+						"composite": true
+                    },
+                }`),
+			},
+			expectedDtsNames: []string{
+				"/home/src/workspaces/project/dist/index.js",
+				"/home/src/workspaces/project/dist/index.d.ts",
+				"/home/src/workspaces/project/types/type.js",
+				"/home/src/workspaces/project/types/type.d.ts",
+			},
+		},
+	}
+	for _, test := range testCases {
+		test.run(t)
 	}
 }
 
