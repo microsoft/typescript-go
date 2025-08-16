@@ -63,7 +63,7 @@ func (test *tscInput) executeCommand(sys *testSys, baselineBuilder *strings.Buil
 
 func (test *tscInput) run(t *testing.T, scenario string) {
 	t.Helper()
-	t.Run(test.subScenario, func(t *testing.T) {
+	t.Run(test.getBaselineSubFolder()+"/"+test.subScenario, func(t *testing.T) {
 		t.Parallel()
 		// initial test tsc compile
 		baselineBuilder := &strings.Builder{}
@@ -79,7 +79,7 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 		sys.baselineFSwithDiff(baselineBuilder)
 		result := test.executeCommand(sys, baselineBuilder, test.commandLineArgs)
 		sys.serializeState(baselineBuilder)
-		sys.baselineProgram(baselineBuilder, result.IncrementalProgram, result.Watcher)
+		sys.baselinePrograms(baselineBuilder, result.IncrementalProgram, result.Watcher)
 		var unexpectedDiff string
 
 		for index, do := range test.edits {
@@ -101,7 +101,7 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 					result.Watcher.DoCycle()
 				}
 				sys.serializeState(baselineBuilder)
-				sys.baselineProgram(baselineBuilder, editResult.IncrementalProgram, result.Watcher)
+				sys.baselinePrograms(baselineBuilder, editResult.IncrementalProgram, result.Watcher)
 			})
 			wg.Queue(func() {
 				// Compute build with all the edits

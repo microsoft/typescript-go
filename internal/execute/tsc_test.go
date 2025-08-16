@@ -129,6 +129,202 @@ func TestTscCommandline(t *testing.T) {
 	}
 }
 
+func TestTscComposite(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario: "when setting composite false on command line",
+			files: FileMap{
+				"/home/src/workspaces/project/src/main.ts": "export const x = 10;",
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"target": "es5",
+						"module": "commonjs",
+						"composite": true,
+					},
+					"include": [
+						"src/**/*.ts",
+					],
+				}`),
+			},
+			commandLineArgs: []string{"--composite", "false"},
+		},
+		{
+			// !!! sheetal null is not reflected in final options
+			subScenario: "when setting composite null on command line",
+			files: FileMap{
+				"/home/src/workspaces/project/src/main.ts": "export const x = 10;",
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"target": "es5",
+						"module": "commonjs",
+						"composite": true,
+					},
+					"include": [
+						"src/**/*.ts",
+					],
+				}`),
+			},
+			commandLineArgs: []string{"--composite", "null"},
+		},
+		{
+			subScenario: "when setting composite false on command line but has tsbuild info in config",
+			files: FileMap{
+				"/home/src/workspaces/project/src/main.ts": "export const x = 10;",
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"target": "es5",
+						"module": "commonjs",
+						"composite": true,
+						"tsBuildInfoFile": "tsconfig.json.tsbuildinfo",
+					},
+					"include": [
+						"src/**/*.ts",
+					],
+				}`),
+			},
+			commandLineArgs: []string{"--composite", "false"},
+		},
+		{
+			subScenario: "when setting composite false and tsbuildinfo as null on command line but has tsbuild info in config",
+			files: FileMap{
+				"/home/src/workspaces/project/src/main.ts": "export const x = 10;",
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"target": "es5",
+						"module": "commonjs",
+						"composite": true,
+						"tsBuildInfoFile": "tsconfig.json.tsbuildinfo",
+					},
+					"include": [
+						"src/**/*.ts",
+					],
+				}`),
+			},
+			commandLineArgs: []string{"--composite", "false", "--tsBuildInfoFile", "null"},
+		},
+		{
+			subScenario: "converting to modules",
+			files: FileMap{
+				"/home/src/workspaces/project/src/main.ts": "const x = 10;",
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"module": "none",
+						"composite": true,
+					},
+				}`),
+			},
+			edits: []*tscEdit{
+				{
+					caption: "convert to modules",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/home/src/workspaces/project/tsconfig.json", "none", "es2015")
+					},
+				},
+			},
+		},
+		{
+			subScenario: "synthetic jsx import of ESM module from CJS module no crash no jsx element",
+			files: FileMap{
+				"/home/src/projects/project/src/main.ts": "export default 42;",
+				"/home/src/projects/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"module": "Node16",
+						"jsx": "react-jsx",
+						"jsxImportSource": "solid-js",
+					},
+				}`),
+				"/home/src/projects/project/node_modules/solid-js/package.json": stringtestutil.Dedent(`
+					{
+						"name": "solid-js",
+						"type": "module"
+					}
+				`),
+				"/home/src/projects/project/node_modules/solid-js/jsx-runtime.d.ts": stringtestutil.Dedent(`
+					export namespace JSX {
+						type IntrinsicElements = { div: {}; };
+					}
+				`),
+			},
+			cwd: "/home/src/projects/project",
+		},
+		{
+			subScenario: "synthetic jsx import of ESM module from CJS module error on jsx element",
+			files: FileMap{
+				"/home/src/projects/project/src/main.tsx": "export default <div/>;",
+				"/home/src/projects/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"module": "Node16",
+						"jsx": "react-jsx",
+						"jsxImportSource": "solid-js",
+					},
+				}`),
+				"/home/src/projects/project/node_modules/solid-js/package.json": stringtestutil.Dedent(`
+					{
+						"name": "solid-js",
+						"type": "module"
+					}
+				`),
+				"/home/src/projects/project/node_modules/solid-js/jsx-runtime.d.ts": stringtestutil.Dedent(`
+					export namespace JSX {
+						type IntrinsicElements = { div: {}; };
+					}
+				`),
+			},
+			cwd: "/home/src/projects/project",
+		},
+	}
+
+	for _, testCase := range testCases {
+		testCase.run(t, "composite")
+	}
+}
+
+func TestTscListFilesOnly(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario: "loose file",
+			files: FileMap{
+				"/home/src/workspaces/project/test.ts": "export const x = 1;",
+			},
+			commandLineArgs: []string{"test.ts", "--listFilesOnly"},
+		},
+		{
+			subScenario: "combined with incremental",
+			files: FileMap{
+				"/home/src/workspaces/project/test.ts":       "export const x = 1;",
+				"/home/src/workspaces/project/tsconfig.json": "{}",
+			},
+			commandLineArgs: []string{"--incremental", "--listFilesOnly"},
+			edits: []*tscEdit{
+				{
+					caption:         "incremental actual build",
+					commandLineArgs: []string{"--incremental"},
+				},
+				noChange,
+				{
+					caption:         "incremental should not build",
+					commandLineArgs: []string{"--incremental"},
+				},
+			},
+		},
+	}
+
+	for _, testCase := range testCases {
+		testCase.run(t, "listFilesOnly")
+	}
+}
+
 func TestNoEmit(t *testing.T) {
 	t.Parallel()
 	(&tscInput{
@@ -145,79 +341,6 @@ func TestNoEmit(t *testing.T) {
 		},
 		commandLineArgs: []string{"--noEmit"},
 	}).run(t, "noEmit")
-}
-
-func TestExtends(t *testing.T) {
-	t.Parallel()
-	extendsSysScenario := func(subScenario string, commandlineArgs []string) *tscInput {
-		return &tscInput{
-			subScenario:     subScenario,
-			commandLineArgs: commandlineArgs,
-			files: FileMap{
-				"/home/src/projects/configs/first/tsconfig.json": stringtestutil.Dedent(`
-				{
-					"extends": "../second/tsconfig.json",
-					"include": ["${configDir}/src"],
-					"compilerOptions": {
-						"typeRoots": ["root1", "${configDir}/root2", "root3"],
-						"types": [],
-					}
-				}`),
-				"/home/src/projects/configs/second/tsconfig.json": stringtestutil.Dedent(`
-				{
-					"files": ["${configDir}/main.ts"],
-					"compilerOptions": {
-						"declarationDir": "${configDir}/decls",
-						"paths": {
-							"@myscope/*": ["${configDir}/types/*"],
-							"other/*": ["other/*"],
-						},
-						"baseUrl": "${configDir}",
-					},
-					"watchOptions": {
-						"excludeFiles": ["${configDir}/main.ts"],
-					},
-				}`),
-				"/home/src/projects/myproject/tsconfig.json": stringtestutil.Dedent(`
-				{
-					"extends": "../configs/first/tsconfig.json",
-					"compilerOptions": {
-						"declaration": true,
-						"outDir": "outDir",
-						"traceResolution": true,
-					},
-				}`),
-				"/home/src/projects/myproject/main.ts": stringtestutil.Dedent(`
-					// some comment
-					export const y = 10;
-					import { x } from "@myscope/sometype";
-				`),
-				"/home/src/projects/myproject/src/secondary.ts": stringtestutil.Dedent(`
-					// some comment
-					export const z = 10;
-					import { k } from "other/sometype2";
-				`),
-				"/home/src/projects/myproject/types/sometype.ts": stringtestutil.Dedent(`
-					// some comment
-					export const x = 10;
-				`),
-				"/home/src/projects/myproject/root2/other/sometype2/index.d.ts": stringtestutil.Dedent(`
-					export const k = 10;
-				`),
-			},
-			cwd: "/home/src/projects/myproject",
-		}
-	}
-
-	cases := []*tscInput{
-		extendsSysScenario("configDir template", []string{"--explainFiles"}),
-		extendsSysScenario("configDir template showConfig", []string{"--showConfig"}),
-		extendsSysScenario("configDir template with commandline", []string{"--explainFiles", "--outDir", "${configDir}/outDir"}),
-	}
-
-	for _, c := range cases {
-		c.run(t, "extends")
-	}
 }
 
 func TestTypeAcquisition(t *testing.T) {
