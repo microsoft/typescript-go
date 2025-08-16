@@ -5,8 +5,10 @@ import (
 	"slices"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/testutil/stringtestutil"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -937,7 +939,7 @@ func (s *tscOutputPathScenario) run(t *testing.T) {
 	input.run(t, "outputPaths")
 	t.Run("GetOutputFileNames/"+s.subScenario, func(t *testing.T) {
 		t.Parallel()
-		sys := newTestSys(input)
+		sys := newTestSys(input, false)
 		config, _ := tsoptions.GetParsedCommandLineOfConfigFile("/home/src/workspaces/project/tsconfig.json", &core.CompilerOptions{}, sys, nil)
 		assert.DeepEqual(t, slices.Collect(config.GetOutputFileNames()), s.expectedDtsNames)
 	})
@@ -1421,6 +1423,506 @@ func TestBuildRoots(t *testing.T) {
 
 	for _, test := range testCases {
 		test.run(t, "roots")
+	}
+}
+
+func TestBuildSample(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario: "builds correctly when outDir is specified",
+			files: getBuildSampleFileMap(func(files FileMap) {
+				files["/user/username/projects/sample1/logic/tsconfig.json"] = stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"declaration": true,
+						"sourceMap": true,
+						"outDir": "outDir",
+					},
+					"references": [
+						{ "path": "../core" },
+					],
+				}`)
+			}),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "tests"},
+		},
+		{
+			subScenario: "builds correctly when declarationDir is specified",
+			files: getBuildSampleFileMap(func(files FileMap) {
+				files["/user/username/projects/sample1/logic/tsconfig.json"] = stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"declaration": true,
+						"sourceMap": true,
+						"declarationDir": "out/decls",
+					},
+					"references": [
+						{ "path": "../core" },
+					],
+				}`)
+			}),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "tests"},
+		},
+		{
+			subScenario: "builds correctly when project is not composite or doesnt have any references",
+			files: getBuildSampleFileMap(func(files FileMap) {
+				text, _ := files["/user/username/projects/sample1/core/tsconfig.json"]
+				files["/user/username/projects/sample1/core/tsconfig.json"] = strings.Replace(text.(string), `"composite": true,`, "", 1)
+			}),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "core", "--verbose"},
+		},
+		{
+			subScenario:     "does not write any files in a dry build",
+			files:           getBuildSampleFileMap(nil),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "tests", "--dry"},
+		},
+		{
+			subScenario:     "removes all files it built",
+			files:           getBuildSampleFileMap(nil),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "tests"},
+			edits: []*tscEdit{
+				{
+					caption:         "removes all files it built",
+					commandLineArgs: []string{"--b", "tests", "--clean"},
+				},
+				{
+					caption:         "no change --clean",
+					commandLineArgs: []string{"--b", "tests", "--clean"},
+				},
+			},
+		},
+		{
+			subScenario:     "cleaning project in not build order doesnt throw error",
+			files:           getBuildSampleFileMap(nil),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "logic2", "--clean"},
+		},
+		{
+			subScenario:     "always builds under with force option",
+			files:           getBuildSampleFileMap(nil),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "tests", "--force"},
+			edits:           noChangeOnlyEdit,
+		},
+		{
+			subScenario:     "can detect when and what to rebuild",
+			files:           getBuildSampleFileMap(nil),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "tests", "--verbose"},
+			edits: []*tscEdit{
+				noChange,
+				{
+					// Update a file in the leaf node (tests), only it should rebuild the last one
+					caption: "Only builds the leaf node project",
+					edit: func(sys *testSys) {
+						sys.writeFileNoError("/user/username/projects/sample1/tests/index.ts", "const m = 10;", false)
+					},
+				},
+				{
+					// Update a file in the parent (without affecting types), should get fast downstream builds
+					caption: "Detects type-only changes in upstream projects",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/user/username/projects/sample1/core/index.ts", "HELLO WORLD", "WELCOME PLANET")
+					},
+				},
+				{
+					caption: "rebuilds when tsconfig changes",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/user/username/projects/sample1/tests/tsconfig.json", `"composite": true`, `"composite": true, "target": "es2020"`)
+					},
+				},
+			},
+		},
+		{
+			subScenario:     "when input file text does not change but its modified time changes",
+			files:           getBuildSampleFileMap(nil),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "tests", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption: "upstream project changes without changing file text",
+					edit: func(sys *testSys) {
+						err := sys.FS().Chtimes("/user/username/projects/sample1/core/index.ts", time.Time{}, sys.Now())
+						if err != nil {
+							panic(err)
+						}
+					},
+				},
+			},
+		},
+		{
+			subScenario:     "when declarationMap changes",
+			files:           getBuildSampleFileMap(nil),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "tests", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption: "Disable declarationMap",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/user/username/projects/sample1/core/tsconfig.json", `"declarationMap": true,`, `"declarationMap": false,`)
+					},
+				},
+				{
+					caption: "Enable declarationMap",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/user/username/projects/sample1/core/tsconfig.json", `"declarationMap": false,`, `"declarationMap": true,`)
+					},
+				},
+			},
+		},
+		{
+			subScenario:     "indicates that it would skip builds during a dry build",
+			files:           getBuildSampleFileMap(nil),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "tests"},
+			edits: []*tscEdit{
+				{
+					caption:         "--dry",
+					commandLineArgs: []string{"--b", "tests", "--dry"},
+				},
+			},
+		},
+		{
+			subScenario:     "rebuilds from start if force option is set",
+			files:           getBuildSampleFileMap(nil),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "tests"},
+			edits: []*tscEdit{
+				{
+					caption:         "--force build",
+					commandLineArgs: []string{"--b", "tests", "--verbose", "--force"},
+				},
+			},
+		},
+		{
+			subScenario: "tsbuildinfo has error",
+			files: FileMap{
+				"/home/src/workspaces/project/main.ts":              "export const x = 10;",
+				"/home/src/workspaces/project/tsconfig.json":        "{}",
+				"/home/src/workspaces/project/tsconfig.tsbuildinfo": "Some random string",
+			},
+			commandLineArgs: []string{"--b", "-i", "-v"},
+			edits: []*tscEdit{
+				{
+					caption: "tsbuildinfo written has error",
+					edit: func(sys *testSys) {
+						// This is to ensure the non incremental doesnt crash - as it wont have tsbuildInfo
+						if !sys.forIncrementalCorrectness {
+							sys.prependFile("/home/src/workspaces/project/tsconfig.tsbuildinfo", "Some random string")
+							sys.replaceFileText("/home/src/workspaces/project/tsconfig.tsbuildinfo", fmt.Sprintf(`"version":"%s"`, core.Version()), fmt.Sprintf(`"version":"%s"`, harnessutil.FakeTSVersion)) // build info won't parse, need to manually sterilize for baseline
+						}
+					},
+				},
+			},
+		},
+		{
+			subScenario:     "rebuilds completely when version in tsbuildinfo doesnt match ts version",
+			files:           getBuildSampleFileMap(nil),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "tests", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption: "convert tsbuildInfo version to something that is say to previous version",
+					edit: func(sys *testSys) {
+						// This is to ensure the non incremental doesnt crash - as it wont have tsbuildInfo
+						if !sys.forIncrementalCorrectness {
+							sys.replaceFileText("/user/username/projects/sample1/core/tsconfig.tsbuildinfo", fmt.Sprintf(`"version":"%s"`, harnessutil.FakeTSVersion), fmt.Sprintf(`"version":"%s"`, "FakeTsPreviousVersion"))
+							sys.replaceFileText("/user/username/projects/sample1/logic/tsconfig.tsbuildinfo", fmt.Sprintf(`"version":"%s"`, harnessutil.FakeTSVersion), fmt.Sprintf(`"version":"%s"`, "FakeTsPreviousVersion"))
+							sys.replaceFileText("/user/username/projects/sample1/tests/tsconfig.tsbuildinfo", fmt.Sprintf(`"version":"%s"`, harnessutil.FakeTSVersion), fmt.Sprintf(`"version":"%s"`, "FakeTsPreviousVersion"))
+						}
+					},
+				},
+			},
+		},
+		{
+			subScenario: "rebuilds when extended config file changes",
+			files: getBuildSampleFileMap(func(files FileMap) {
+				files["/user/username/projects/sample1/tests/tsconfig.base.json"] = stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"target": "es5"
+					}
+				}`)
+				text, _ := files["/user/username/projects/sample1/tests/tsconfig.json"]
+				files["/user/username/projects/sample1/tests/tsconfig.json"] = strings.Replace(text.(string), `"references": [`, `"extends": "./tsconfig.base.json", "references": [`, 1)
+			}),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "tests", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption: "change extended file",
+					edit: func(sys *testSys) {
+						sys.writeFileNoError("/user/username/projects/sample1/tests/tsconfig.base.json", stringtestutil.Dedent(`
+						{
+							"compilerOptions": { }
+						}`), false)
+					},
+				},
+			},
+		},
+		{
+			subScenario:     "building project in not build order doesnt throw error",
+			files:           getBuildSampleFileMap(nil),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "logic2/tsconfig.json", "--verbose"},
+		},
+		{
+			subScenario: "builds downstream projects even if upstream projects have errors",
+			files: getBuildSampleFileMap(func(files FileMap) {
+				text, _ := files["/user/username/projects/sample1/logic/index.ts"]
+				files["/user/username/projects/sample1/logic/index.ts"] = strings.Replace(text.(string), "c.multiply(10, 15)", `c.muitply()`, 1)
+			}),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "tests", "--verbose"},
+			edits:           noChangeOnlyEdit,
+		},
+		{
+			subScenario: "skips builds downstream projects if upstream projects have errors with stopBuildOnErrors",
+			files: getBuildSampleFileMap(func(files FileMap) {
+				text, _ := files["/user/username/projects/sample1/core/index.ts"]
+				files["/user/username/projects/sample1/core/index.ts"] = text.(string) + `multiply();`
+			}),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "tests", "--verbose", "--stopBuildOnErrors"},
+			edits: []*tscEdit{
+				noChange,
+				{
+					caption: "fix error",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/user/username/projects/sample1/core/index.ts", "multiply();", "")
+					},
+				},
+			},
+		},
+		{
+			subScenario: "skips builds downstream projects if upstream projects have errors with stopBuildOnErrors when test does not reference core",
+			files: getBuildSampleFileMap(func(files FileMap) {
+				files["/user/username/projects/sample1/tests/tsconfig.json"] = stringtestutil.Dedent(`
+					{
+						"references": [
+							{ "path": "../logic" },
+						],
+						"files": ["index.ts"],
+						"compilerOptions": {
+							"composite": true,
+							"declaration": true,
+							"skipDefaultLibCheck": true,
+						},
+					}`)
+				text, _ := files["/user/username/projects/sample1/core/index.ts"]
+				files["/user/username/projects/sample1/core/index.ts"] = text.(string) + `multiply();`
+			}),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "tests", "--verbose", "--stopBuildOnErrors"},
+			edits: []*tscEdit{
+				noChange,
+				{
+					caption: "fix error",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/user/username/projects/sample1/core/index.ts", "multiply();", "")
+					},
+				},
+			},
+		},
+		{
+			subScenario:     "listFiles",
+			files:           getBuildSampleFileMap(nil),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "tests", "--listFiles"},
+			edits:           getBuildSampleCoreChangeEdits(),
+		},
+		{
+			subScenario:     "listEmittedFiles",
+			files:           getBuildSampleFileMap(nil),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "tests", "--listEmittedFiles"},
+			edits:           getBuildSampleCoreChangeEdits(),
+		},
+		{
+			subScenario:     "explainFiles",
+			files:           getBuildSampleFileMap(nil),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "tests", "--explainFiles", "--v"},
+			edits:           getBuildSampleCoreChangeEdits(),
+		},
+		{
+			subScenario:     "sample",
+			files:           getBuildSampleFileMap(nil),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "tests", "--verbose"},
+			edits: slices.Concat(
+				getBuildSampleCoreChangeEdits(),
+				[]*tscEdit{
+					{
+						caption: "when logic config changes declaration dir",
+						edit: func(sys *testSys) {
+							sys.replaceFileText(
+								"/user/username/projects/sample1/logic/tsconfig.json",
+								`"declaration": true,`,
+								`"declaration": true,
+        "declarationDir": "decls",`,
+							)
+						},
+					},
+					noChange,
+				},
+			),
+		},
+		{
+			subScenario: "when logic specifies tsBuildInfoFile",
+			files: getBuildSampleFileMap(func(files FileMap) {
+				text, _ := files["/user/username/projects/sample1/logic/tsconfig.json"]
+				files["/user/username/projects/sample1/logic/tsconfig.json"] = strings.Replace(
+					text.(string),
+					`"composite": true,`,
+					`"composite": true,
+    "tsBuildInfoFile": "ownFile.tsbuildinfo",`,
+					1,
+				)
+			}),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "tests", "--verbose"},
+		},
+		{
+			subScenario: "when declaration option changes",
+			files: getBuildSampleFileMap(func(files FileMap) {
+				files["/user/username/projects/sample1/core/tsconfig.json"] = stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"incremental": true,
+						"skipDefaultLibCheck": true,
+					},
+				}`)
+			}),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "core", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption: "incremental-declaration-changes",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/user/username/projects/sample1/core/tsconfig.json", `"incremental": true,`, `"incremental": true, "declaration": true,`)
+					},
+				},
+			},
+		},
+		{
+			subScenario: "when target option changes",
+			files: getBuildSampleFileMap(func(files FileMap) {
+				files[getTestLibPathFor("esnext.full")] = `/// <reference no-default-lib="true"/>
+/// <reference lib="esnext" />`
+				files[tscLibPath+"/lib.d.ts"] = `/// <reference no-default-lib="true"/>
+/// <reference lib="esnext" />`
+				files["/user/username/projects/sample1/core/tsconfig.json"] = stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"incremental": true,
+						"listFiles": true,
+						"listEmittedFiles": true,
+						"target": "esnext",
+					},
+				}`)
+			}),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "core", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption: "incremental-declaration-changes",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/user/username/projects/sample1/core/tsconfig.json", `esnext`, `es5`)
+					},
+				},
+			},
+		},
+		{
+			subScenario: "when module option changes",
+			files: getBuildSampleFileMap(func(files FileMap) {
+				files["/user/username/projects/sample1/core/tsconfig.json"] = stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"incremental": true,
+						"module": "node18",
+					},
+				}`)
+			}),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "core", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption: "incremental-declaration-changes",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/user/username/projects/sample1/core/tsconfig.json", `node18`, `nodenext`)
+					},
+				},
+			},
+		},
+		{
+			subScenario: "when esModuleInterop option changes",
+			files: getBuildSampleFileMap(func(files FileMap) {
+				files["/user/username/projects/sample1/tests/tsconfig.json"] = stringtestutil.Dedent(`
+				{
+					"references": [
+						{ "path": "../core" },
+						{ "path": "../logic" },
+					],
+					"files": ["index.ts"],
+					"compilerOptions": {
+						"composite": true,
+						"declaration": true,
+						"skipDefaultLibCheck": true,
+						"esModuleInterop": false,
+					},
+				}`)
+			}),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "tests", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption: "incremental-declaration-changes",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/user/username/projects/sample1/tests/tsconfig.json", `"esModuleInterop": false`, `"esModuleInterop": true`)
+					},
+				},
+			},
+		},
+		{
+			// !!! sheetal this is not reporting error as file not found is not yet implemented
+			subScenario: "reports error if input file is missing",
+			files: getBuildSampleFileMap(func(files FileMap) {
+				files["/user/username/projects/sample1/core/tsconfig.json"] = stringtestutil.Dedent(`
+				{
+					 "compilerOptions": { "composite": true },
+					 "files": ["anotherModule.ts", "index.ts", "some_decl.d.ts"],
+				}`)
+				delete(files, "/user/username/projects/sample1/core/anotherModule.ts")
+			}),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "tests", "--verbose"},
+		},
+		{
+			// !!! sheetal this is not reporting error as file not found is not yet implemented
+			subScenario: "reports error if input file is missing with force",
+			files: getBuildSampleFileMap(func(files FileMap) {
+				files["/user/username/projects/sample1/core/tsconfig.json"] = stringtestutil.Dedent(`
+				{
+					 "compilerOptions": { "composite": true },
+					 "files": ["anotherModule.ts", "index.ts", "some_decl.d.ts"],
+				}`)
+				delete(files, "/user/username/projects/sample1/core/anotherModule.ts")
+			}),
+			cwd:             "/user/username/projects/sample1",
+			commandLineArgs: []string{"--b", "tests", "--verbose", "--force"},
+		},
+	}
+
+	for _, test := range testCases {
+		test.run(t, "sample")
 	}
 }
 
@@ -2029,6 +2531,100 @@ func getBuildRootsFromProjectReferencedProjectTestEdits() []*tscEdit {
 			caption: "delete random file",
 			edit: func(sys *testSys) {
 				sys.removeNoError("/home/src/workspaces/solution/projects/shared/src/random.ts")
+			},
+		},
+		noChange,
+	}
+}
+
+func getBuildSampleFileMap(modify func(files FileMap)) FileMap {
+	files := FileMap{
+		"/user/username/projects/sample1/core/tsconfig.json": stringtestutil.Dedent(`
+		{
+            "compilerOptions": {
+                "composite": true,
+                "declaration": true,
+                "declarationMap": true,
+                "skipDefaultLibCheck": true,
+            },
+        }`),
+		"/user/username/projects/sample1/core/index.ts": stringtestutil.Dedent(`
+            export const someString: string = "HELLO WORLD";
+            export function leftPad(s: string, n: number) { return s + n; }
+            export function multiply(a: number, b: number) { return a * b; }
+        `),
+		"/user/username/projects/sample1/core/some_decl.d.ts":   `declare const dts: any;`,
+		"/user/username/projects/sample1/core/anotherModule.ts": `export const World = "hello";`,
+		"/user/username/projects/sample1/logic/tsconfig.json": stringtestutil.Dedent(`
+		{
+			"compilerOptions": {
+				"composite": true,
+				"declaration": true,
+				"sourceMap": true,
+				"skipDefaultLibCheck": true,
+			},
+			"references": [
+				{ "path": "../core" },
+			],
+		}`),
+		"/user/username/projects/sample1/logic/index.ts": stringtestutil.Dedent(`
+            import * as c from '../core/index';
+            export function getSecondsInDay() {
+                return c.multiply(10, 15);
+            }
+            import * as mod from '../core/anotherModule';
+            export const m = mod;
+        `),
+		"/user/username/projects/sample1/tests/tsconfig.json": stringtestutil.Dedent(`
+		{
+            "references": [
+				{ "path": "../core" },
+				{ "path": "../logic" },
+			],
+            "files": ["index.ts"],
+            "compilerOptions": {
+                "composite": true,
+                "declaration": true,
+                "skipDefaultLibCheck": true,
+            },
+        }`),
+		"/user/username/projects/sample1/tests/index.ts": stringtestutil.Dedent(`
+            import * as c from '../core/index';
+            import * as logic from '../logic/index';
+
+            c.leftPad("", 10);
+            logic.getSecondsInDay();
+
+            import * as mod from '../core/anotherModule';
+            export const m = mod;
+        `),
+	}
+	if modify != nil {
+		modify(files)
+	}
+	return files
+}
+
+func getBuildSampleCoreChangeEdits() []*tscEdit {
+	return []*tscEdit{
+		{
+			caption: "incremental-declaration-changes",
+			edit: func(sys *testSys) {
+				sys.appendFile(
+					"/user/username/projects/sample1/core/index.ts",
+					`
+export class someClass { }`,
+				)
+			},
+		},
+		{
+			caption: "incremental-declaration-doesnt-change",
+			edit: func(sys *testSys) {
+				sys.appendFile(
+					"/user/username/projects/sample1/core/index.ts",
+					`
+class someClass2 { }`,
+				)
 			},
 		},
 		noChange,

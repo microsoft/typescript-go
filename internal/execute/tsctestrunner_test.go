@@ -67,7 +67,7 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 		t.Parallel()
 		// initial test tsc compile
 		baselineBuilder := &strings.Builder{}
-		sys := newTestSys(test)
+		sys := newTestSys(test, false)
 		fmt.Fprint(
 			baselineBuilder,
 			"currentDirectory::",
@@ -105,7 +105,7 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 			})
 			wg.Queue(func() {
 				// Compute build with all the edits
-				nonIncrementalSys = newTestSys(test)
+				nonIncrementalSys = newTestSys(test, true)
 				for i := range index + 1 {
 					if test.edits[i].edit != nil {
 						test.edits[i].edit(nonIncrementalSys)

@@ -85,7 +85,7 @@ func (t *TestClock) SinceStart() time.Duration {
 	return t.Now().Sub(t.start)
 }
 
-func newTestSys(tscInput *tscInput) *testSys {
+func newTestSys(tscInput *tscInput, forIncrementalCorrectness bool) *testSys {
 	cwd := tscInput.cwd
 	if cwd == "" {
 		cwd = "/home/src/workspaces/project"
@@ -109,8 +109,9 @@ func newTestSys(tscInput *tscInput) *testSys {
 			UseCaseSensitiveFileNames: !tscInput.ignoreCase,
 			CurrentDirectory:          cwd,
 		}, currentWrite),
-		clock: clock,
-		env:   tscInput.env,
+		clock:                     clock,
+		env:                       tscInput.env,
+		forIncrementalCorrectness: forIncrementalCorrectness,
 	}
 
 	// Ensure the default library file is present
@@ -137,9 +138,10 @@ type snapshot struct {
 }
 
 type testSys struct {
-	currentWrite   *strings.Builder
-	tracer         *harnessutil.TracerForBaselining
-	serializedDiff *snapshot
+	currentWrite              *strings.Builder
+	tracer                    *harnessutil.TracerForBaselining
+	serializedDiff            *snapshot
+	forIncrementalCorrectness bool
 
 	fs                 *incrementaltestutil.FsHandlingBuildInfo
 	defaultLibraryPath string
