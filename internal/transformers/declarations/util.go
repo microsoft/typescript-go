@@ -211,19 +211,6 @@ func getFirstConstructorWithBody(node *ast.Node) *ast.Node {
 	return nil
 }
 
-func getEffectiveBaseTypeNode(node *ast.Node) *ast.Node {
-	baseType := ast.GetClassExtendsHeritageElement(node)
-	// !!! TODO: JSDoc support
-	// if (baseType && isInJSFile(node)) {
-	//     // Prefer an @augments tag because it may have type parameters.
-	//     const tag = getJSDocAugmentsTag(node);
-	//     if (tag) {
-	//         return tag.class;
-	//     }
-	// }
-	return baseType
-}
-
 func isScopeMarker(node *ast.Node) bool {
 	return ast.IsExportAssignment(node) || ast.IsExportDeclaration(node)
 }

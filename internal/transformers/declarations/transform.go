@@ -934,7 +934,7 @@ func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *a
 		assignment := tx.Factory().UpdateExportAssignment(input.AsExportAssignment(), input.Modifiers(), input.Type(), newId)
 		// Remove comments from the export declaration and copy them onto the synthetic _default declaration
 		tx.preserveJsDoc(statement, input)
-		tx.removeAllComments(assignment)
+		tx.EmitContext().RemoveAllComments(assignment)
 		return tx.Factory().NewSyntaxList([]*ast.Node{statement, assignment})
 	default:
 		result := tx.transformTopLevelDeclaration(input)
@@ -976,13 +976,6 @@ func (tx *DeclarationTransformer) preserveJsDoc(updated *ast.Node, original *ast
 	// 	updated.jsDoc = original.jsDoc;
 	// }
 	// return setCommentRange(updated, getCommentRange(original));
-}
-
-func (tx *DeclarationTransformer) removeAllComments(node *ast.Node) {
-	tx.EmitContext().AddEmitFlags(node, printer.EFNoComments)
-	// !!! TODO: Also remove synthetic trailing/leading comments added by transforms
-	// emitNode.leadingComments = undefined;
-	// emitNode.trailingComments = undefined;
 }
 
 func (tx *DeclarationTransformer) ensureType(node *ast.Node, ignorePrivate bool) *ast.Node {
@@ -1321,7 +1314,7 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 	}
 	members := tx.Factory().NewNodeList(memberNodes)
 
-	extendsClause := getEffectiveBaseTypeNode(input.AsNode())
+	extendsClause := ast.GetEffectiveBaseTypeNode(input.AsNode())
 
 	if extendsClause != nil && !ast.IsEntityNameExpression(extendsClause.AsExpressionWithTypeArguments().Expression) && extendsClause.AsExpressionWithTypeArguments().Expression.Kind != ast.KindNullKeyword {
 		oldId := "default"
