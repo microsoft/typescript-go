@@ -5,7 +5,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -190,33 +189,81 @@ func (f *defaultProjectFinder) tryFindDefaultConfiguredProjectFromReferences(
 	if len(config.ProjectReferences()) == 0 {
 		return false
 	}
-	wg := core.NewWorkGroup(false)
-	f.tryFindDefaultConfiguredProjectFromReferencesWorker(info, config, loadKind, result, wg)
-	wg.RunAndWait()
-	return result.isDone()
-}
 
-func (f *defaultProjectFinder) tryFindDefaultConfiguredProjectFromReferencesWorker(
-	info *ScriptInfo,
-	config *tsoptions.ParsedCommandLine,
-	loadKind projectLoadKind,
-	result *openScriptInfoProjectResult,
-	wg core.WorkGroup,
-) {
+	type configItem struct {
+		fileName string
+		path     tspath.Path
+		config   *tsoptions.ParsedCommandLine
+		loadKind projectLoadKind
+	}
+
+	type visitKey struct {
+		path     tspath.Path
+		loadKind projectLoadKind
+	}
+
+	var queue []configItem
+	visited := make(map[visitKey]bool)
+
+	initialLoadKind := loadKind
 	if config.CompilerOptions().DisableReferencedProjectLoad.IsTrue() {
-		loadKind = projectLoadKindFind
+		initialLoadKind = projectLoadKindFind
 	}
+
 	for _, childConfigFileName := range config.ResolvedProjectReferencePaths() {
-		wg.Queue(func() {
-			childConfigFilePath := f.service.toPath(childConfigFileName)
-			childConfig := f.findOrAcquireConfig(info, childConfigFileName, childConfigFilePath, loadKind)
-			if childConfig == nil || f.isDefaultConfigForScriptInfo(info, childConfigFileName, childConfigFilePath, childConfig, loadKind, result) {
-				return
+		childConfigFilePath := f.service.toPath(childConfigFileName)
+		key := visitKey{path: childConfigFilePath, loadKind: initialLoadKind}
+		if !visited[key] {
+			visited[key] = true
+			childConfig := f.findOrAcquireConfig(info, childConfigFileName, childConfigFilePath, initialLoadKind)
+			if childConfig != nil {
+				queue = append(queue, configItem{
+					fileName: childConfigFileName,
+					path:     childConfigFilePath,
+					config:   childConfig,
+					loadKind: initialLoadKind,
+				})
 			}
-			// Search in references if we cant find default project in current config
-			f.tryFindDefaultConfiguredProjectFromReferencesWorker(info, childConfig, loadKind, result, wg)
-		})
+		}
 	}
+
+	for len(queue) > 0 {
+		current := queue[0]
+		queue = queue[1:]
+
+		if f.isDefaultConfigForScriptInfo(info, current.fileName, current.path, current.config, current.loadKind, result) {
+			return true
+		}
+
+		if result.isDone() {
+			return true
+		}
+
+		childLoadKind := current.loadKind
+		if current.config.CompilerOptions().DisableReferencedProjectLoad.IsTrue() {
+			childLoadKind = projectLoadKindFind
+		}
+
+		for _, childConfigFileName := range current.config.ResolvedProjectReferencePaths() {
+			childConfigFilePath := f.service.toPath(childConfigFileName)
+			key := visitKey{path: childConfigFilePath, loadKind: childLoadKind}
+
+			if !visited[key] {
+				visited[key] = true
+				childConfig := f.findOrAcquireConfig(info, childConfigFileName, childConfigFilePath, childLoadKind)
+				if childConfig != nil {
+					queue = append(queue, configItem{
+						fileName: childConfigFileName,
+						path:     childConfigFilePath,
+						config:   childConfig,
+						loadKind: childLoadKind,
+					})
+				}
+			}
+		}
+	}
+
+	return result.isDone()
 }
 
 func (f *defaultProjectFinder) tryFindDefaultConfiguredProjectFromAncestor(
@@ -318,57 +365,70 @@ func (f *defaultProjectFinder) findDefaultConfiguredProject(scriptInfo *ScriptIn
 }
 
 type openScriptInfoProjectResult struct {
-	projectMu         sync.RWMutex
-	project           *Project
-	fallbackDefaultMu sync.RWMutex
-	fallbackDefault   *Project // use this if we cant find actual project
-	seenProjects      collections.SyncMap[*Project, projectLoadKind]
-	seenConfigs       collections.SyncMap[tspath.Path, projectLoadKind]
+	mu              sync.Mutex
+	project         *Project
+	fallbackDefault *Project // use this if we cant find actual project
+	seenProjects    map[*Project]projectLoadKind
+	seenConfigs     map[tspath.Path]projectLoadKind
 }
 
 func (r *openScriptInfoProjectResult) addSeenProject(project *Project, loadKind projectLoadKind) bool {
-	if kind, loaded := r.seenProjects.LoadOrStore(project, loadKind); loaded {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	if r.seenProjects == nil {
+		r.seenProjects = make(map[*Project]projectLoadKind)
+	}
+
+	if kind, exists := r.seenProjects[project]; exists {
 		if kind >= loadKind {
 			return false
 		}
-		r.seenProjects.Store(project, loadKind)
 	}
+	r.seenProjects[project] = loadKind
 	return true
 }
 
 func (r *openScriptInfoProjectResult) addSeenConfig(configPath tspath.Path, loadKind projectLoadKind) bool {
-	if kind, loaded := r.seenConfigs.LoadOrStore(configPath, loadKind); loaded {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	if r.seenConfigs == nil {
+		r.seenConfigs = make(map[tspath.Path]projectLoadKind)
+	}
+
+	if kind, exists := r.seenConfigs[configPath]; exists {
 		if kind >= loadKind {
 			return false
 		}
-		r.seenConfigs.Store(configPath, loadKind)
 	}
+	r.seenConfigs[configPath] = loadKind
 	return true
 }
 
 func (r *openScriptInfoProjectResult) isDone() bool {
-	r.projectMu.RLock()
-	defer r.projectMu.RUnlock()
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	return r.project != nil
 }
 
 func (r *openScriptInfoProjectResult) setProject(project *Project) {
-	r.projectMu.Lock()
-	defer r.projectMu.Unlock()
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	if r.project == nil {
 		r.project = project
 	}
 }
 
 func (r *openScriptInfoProjectResult) hasFallbackDefault() bool {
-	r.fallbackDefaultMu.RLock()
-	defer r.fallbackDefaultMu.RUnlock()
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	return r.fallbackDefault != nil
 }
 
 func (r *openScriptInfoProjectResult) setFallbackDefault(project *Project) {
-	r.fallbackDefaultMu.Lock()
-	defer r.fallbackDefaultMu.Unlock()
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	if r.fallbackDefault == nil {
 		r.fallbackDefault = project
 	}

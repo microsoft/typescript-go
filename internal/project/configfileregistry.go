@@ -28,12 +28,24 @@ type ExtendedConfigFileEntry struct {
 	configFiles collections.Set[tspath.Path]
 }
 
+type parseStatus struct {
+	wg *sync.WaitGroup
+}
+
 type ConfigFileRegistry struct {
 	Host                  ProjectHost
 	defaultProjectFinder  *defaultProjectFinder
 	ConfigFiles           collections.SyncMap[tspath.Path, *ConfigFileEntry]
 	ExtendedConfigCache   collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]
 	ExtendedConfigsUsedBy collections.SyncMap[tspath.Path, *ExtendedConfigFileEntry]
+
+	parseMu       sync.Mutex
+	activeParsing map[tspath.Path]*parseStatus
+}
+
+func NewConfigFileRegistry(registry *ConfigFileRegistry) *ConfigFileRegistry {
+	registry.activeParsing = make(map[tspath.Path]*parseStatus)
+	return registry
 }
 
 func (e *ConfigFileEntry) SetPendingReload(level PendingReload) bool {
@@ -74,41 +86,99 @@ func (c *ConfigFileRegistry) releaseConfig(path tspath.Path, project *Project) {
 }
 
 func (c *ConfigFileRegistry) acquireConfig(fileName string, path tspath.Path, project *Project, info *ScriptInfo) *tsoptions.ParsedCommandLine {
-	entry, ok := c.ConfigFiles.Load(path)
-	if !ok {
-		// Create parsed command line
+	if entry, ok := c.ConfigFiles.Load(path); ok {
+		entry.mu.RLock()
+		needsReload := entry.pendingReload != PendingReloadNone
+		commandLine := entry.commandLine
+		entry.mu.RUnlock()
+
+		if !needsReload && commandLine != nil {
+			entry.mu.Lock()
+			if project != nil {
+				entry.projects.Add(project)
+			} else if info != nil {
+				entry.infos.Add(info)
+			}
+			entry.mu.Unlock()
+			return commandLine
+		}
+	}
+
+	c.parseMu.Lock()
+	if status, ok := c.activeParsing[path]; ok {
+		c.parseMu.Unlock()
+		status.wg.Wait()
+
+		if entry, ok := c.ConfigFiles.Load(path); ok {
+			entry.mu.Lock()
+			defer entry.mu.Unlock()
+			if project != nil {
+				entry.projects.Add(project)
+			} else if info != nil {
+				entry.infos.Add(info)
+			}
+			return entry.commandLine
+		}
+	}
+
+	status := &parseStatus{wg: &sync.WaitGroup{}}
+	status.wg.Add(1)
+	c.activeParsing[path] = status
+	c.parseMu.Unlock()
+
+	defer func() {
+		status.wg.Done()
+		c.parseMu.Lock()
+		delete(c.activeParsing, path)
+		c.parseMu.Unlock()
+	}()
+
+	entry, loaded := c.ConfigFiles.Load(path)
+	if !loaded {
 		config, _ := tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, c.Host, &c.ExtendedConfigCache)
 		var rootFilesWatch *watchedFiles[[]string]
 		client := c.Host.Client()
 		if c.Host.IsWatchEnabled() && client != nil {
-			rootFilesWatch = newWatchedFiles(&configFileWatchHost{fileName: fileName, host: c.Host}, lsproto.WatchKindChange|lsproto.WatchKindCreate|lsproto.WatchKindDelete, core.Identity, "root files")
+			rootFilesWatch = newWatchedFiles(&configFileWatchHost{fileName: fileName, host: c.Host},
+				lsproto.WatchKindChange|lsproto.WatchKindCreate|lsproto.WatchKindDelete,
+				core.Identity, "root files")
 		}
-		entry, _ = c.ConfigFiles.LoadOrStore(path, &ConfigFileEntry{
+
+		newEntry := &ConfigFileEntry{
 			commandLine:    config,
-			pendingReload:  PendingReloadFull,
+			pendingReload:  PendingReloadNone, // Already parsed, no reload needed
 			rootFilesWatch: rootFilesWatch,
-		})
+		}
+
+		entry, loaded = c.ConfigFiles.LoadOrStore(path, newEntry)
+		if !loaded {
+			c.updateRootFilesWatch(fileName, entry)
+			c.updateExtendedConfigsUsedBy(path, entry, nil)
+		}
 	}
+
 	entry.mu.Lock()
 	defer entry.mu.Unlock()
+
 	if project != nil {
 		entry.projects.Add(project)
 	} else if info != nil {
 		entry.infos.Add(info)
 	}
-	if entry.pendingReload == PendingReloadNone {
-		return entry.commandLine
+
+	if entry.pendingReload != PendingReloadNone {
+		switch entry.pendingReload {
+		case PendingReloadFileNames:
+			entry.commandLine = entry.commandLine.ReloadFileNamesOfParsedCommandLine(c.Host.FS())
+		case PendingReloadFull:
+			oldCommandLine := entry.commandLine
+			entry.commandLine, _ = tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, c.Host, &c.ExtendedConfigCache)
+			c.updateExtendedConfigsUsedBy(path, entry, oldCommandLine)
+			c.updateRootFilesWatch(fileName, entry)
+		}
+		entry.pendingReload = PendingReloadNone
 	}
-	switch entry.pendingReload {
-	case PendingReloadFileNames:
-		entry.commandLine = entry.commandLine.ReloadFileNamesOfParsedCommandLine(c.Host.FS())
-	case PendingReloadFull:
-		oldCommandLine := entry.commandLine
-		entry.commandLine, _ = tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, c.Host, &c.ExtendedConfigCache)
-		c.updateExtendedConfigsUsedBy(path, entry, oldCommandLine)
-		c.updateRootFilesWatch(fileName, entry)
-	}
-	entry.pendingReload = PendingReloadNone
+
 	return entry.commandLine
 }
 
@@ -164,17 +234,19 @@ func (c *ConfigFileRegistry) updateExtendedConfigsUsedBy(path tspath.Path, entry
 		extendedEntry.configFiles.Add(path)
 		extendedEntry.mu.Unlock()
 	}
-	for _, extendedConfig := range oldCommandLine.ExtendedSourceFiles() {
-		extendedPath := tspath.ToPath(extendedConfig, c.Host.GetCurrentDirectory(), c.Host.FS().UseCaseSensitiveFileNames())
-		if !slices.Contains(newConfigs, extendedPath) {
-			extendedEntry, _ := c.ExtendedConfigsUsedBy.Load(extendedPath)
-			extendedEntry.mu.Lock()
-			extendedEntry.configFiles.Delete(path)
-			if extendedEntry.configFiles.Len() == 0 {
-				c.ExtendedConfigsUsedBy.Delete(extendedPath)
-				c.ExtendedConfigCache.Delete(extendedPath)
+	if oldCommandLine != nil {
+		for _, extendedConfig := range oldCommandLine.ExtendedSourceFiles() {
+			extendedPath := tspath.ToPath(extendedConfig, c.Host.GetCurrentDirectory(), c.Host.FS().UseCaseSensitiveFileNames())
+			if !slices.Contains(newConfigs, extendedPath) {
+				extendedEntry, _ := c.ExtendedConfigsUsedBy.Load(extendedPath)
+				extendedEntry.mu.Lock()
+				extendedEntry.configFiles.Delete(path)
+				if extendedEntry.configFiles.Len() == 0 {
+					c.ExtendedConfigsUsedBy.Delete(extendedPath)
+					c.ExtendedConfigCache.Delete(extendedPath)
+				}
+				extendedEntry.mu.Unlock()
 			}
-			extendedEntry.mu.Unlock()
 		}
 	}
 }

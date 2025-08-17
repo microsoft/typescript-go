@@ -65,9 +65,9 @@ func NewAPI(host APIHost, options APIOptions) *API {
 		},
 	})
 
-	api.configFileRegistry = &project.ConfigFileRegistry{
+	api.configFileRegistry = project.NewConfigFileRegistry(&project.ConfigFileRegistry{
 		Host: api,
-	}
+	})
 	return api
 }
 

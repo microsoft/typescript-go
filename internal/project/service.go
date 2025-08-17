@@ -90,10 +90,10 @@ func NewService(host ServiceHost, options ServiceOptions) *Service {
 		configFileForOpenFiles:          make(map[tspath.Path]string),
 		configFilesAncestorForOpenFiles: make(map[tspath.Path]map[string]string),
 	}
-	service.configFileRegistry = &ConfigFileRegistry{
+	service.configFileRegistry = NewConfigFileRegistry(&ConfigFileRegistry{
 		Host:                 service,
 		defaultProjectFinder: service.defaultProjectFinder,
-	}
+	})
 	service.converters = ls.NewConverters(options.PositionEncoding, func(fileName string) *ls.LineMap {
 		return service.documentStore.GetScriptInfoByPath(service.toPath(fileName)).LineMap()
 	})
@@ -497,14 +497,16 @@ func (s *Service) cleanupConfiguredProjects(openInfo *ScriptInfo, retainedByOpen
 		if r == nil {
 			return
 		}
-		r.seenProjects.Range(func(project *Project, _ projectLoadKind) bool {
-			delete(toRemoveProjects, project.configFilePath)
-			return true
-		})
-		r.seenConfigs.Range(func(config tspath.Path, _ projectLoadKind) bool {
-			delete(toRemoveConfigs, config)
-			return true
-		})
+		{
+			r.mu.Lock()
+			defer r.mu.Unlock()
+			for project := range r.seenProjects {
+				delete(toRemoveProjects, project.configFilePath)
+			}
+			for config := range r.seenConfigs {
+				delete(toRemoveConfigs, config)
+			}
+		}
 		// // Keep original projects used
 		// markOriginalProjectsAsUsed(project);
 		// // Keep all the references alive
