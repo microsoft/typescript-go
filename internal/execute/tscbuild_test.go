@@ -1926,6 +1926,40 @@ func TestBuildSample(t *testing.T) {
 	}
 }
 
+func TestBuildTransitiveReferences(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario:     "builds correctly",
+			files:           getBuildTransitiveReferencesFileMap(nil),
+			cwd:             "/user/username/projects/transitiveReferences",
+			commandLineArgs: []string{"--b", "tsconfig.c.json", "--listFiles"},
+		},
+		{
+			subScenario: "reports error about module not found with node resolution with external module name",
+			files: getBuildTransitiveReferencesFileMap(func(files FileMap) {
+				files["/user/username/projects/transitiveReferences/b.ts"] = `import {A} from 'a';
+export const b = new A();`
+				files["/user/username/projects/transitiveReferences/tsconfig.b.json"] = stringtestutil.Dedent(`
+				{
+					"files": ["b.ts"],
+					"compilerOptions": {
+						"composite": true,
+						"module": "nodenext",
+					},
+					"references": [{ "path": "tsconfig.a.json" }],
+				}`)
+			}),
+			cwd:             "/user/username/projects/transitiveReferences",
+			commandLineArgs: []string{"--b", "tsconfig.c.json", "--listFiles"},
+		},
+	}
+
+	for _, test := range testCases {
+		test.run(t, "transitiveReferences")
+	}
+}
+
 func TestBuildSolutionProject(t *testing.T) {
 	t.Parallel()
 	testCases := []*tscInput{
@@ -2629,4 +2663,58 @@ class someClass2 { }`,
 		},
 		noChange,
 	}
+}
+
+func getBuildTransitiveReferencesFileMap(modify func(files FileMap)) FileMap {
+	files := FileMap{
+		"/user/username/projects/transitiveReferences/refs/a.d.ts": stringtestutil.Dedent(`
+			export class X {}
+			export class A {}
+		`),
+		"/user/username/projects/transitiveReferences/a.ts": stringtestutil.Dedent(`
+            export class A {}
+        `),
+		"/user/username/projects/transitiveReferences/b.ts": stringtestutil.Dedent(`
+            import {A} from '@ref/a';
+            export const b = new A();
+        `),
+		"/user/username/projects/transitiveReferences/c.ts": stringtestutil.Dedent(`
+            import {b} from './b';
+            import {X} from "@ref/a";
+            b;
+            X;
+        `),
+		"/user/username/projects/transitiveReferences/tsconfig.a.json": stringtestutil.Dedent(`
+		{
+            "files": ["a.ts"],
+            "compilerOptions": {
+                "composite": true,
+            },
+        }`),
+		"/user/username/projects/transitiveReferences/tsconfig.b.json": stringtestutil.Dedent(`
+		{
+            "files": ["b.ts"],
+            "compilerOptions": {
+                "composite": true,
+                "paths": {
+                    "@ref/*": ["./*"],
+                },
+            },
+            "references": [{ "path": "tsconfig.a.json" }],
+        }`),
+		"/user/username/projects/transitiveReferences/tsconfig.c.json": stringtestutil.Dedent(`
+		{
+            "files": ["c.ts"],
+            "compilerOptions": {
+                "paths": {
+                    "@ref/*": ["./refs/*"],
+                },
+            },
+            "references": [{ "path": "tsconfig.b.json" }],
+        }`),
+	}
+	if modify != nil {
+		modify(files)
+	}
+	return files
 }
