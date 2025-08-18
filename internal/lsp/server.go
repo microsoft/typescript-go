@@ -57,6 +57,7 @@ func NewServer(opts *ServerOptions) *Server {
 		fs:                    opts.FS,
 		defaultLibraryPath:    opts.DefaultLibraryPath,
 		typingsLocation:       opts.TypingsLocation,
+		parseCache:            opts.ParseCache,
 	}
 }
 
@@ -153,6 +154,8 @@ type Server struct {
 
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	compilerOptionsForInferredProjects *core.CompilerOptions
+	// parseCache can be passed in so separate tests can share ASTs
+	parseCache *project.ParseCache
 }
 
 // WatchFiles implements project.Client.
@@ -639,6 +642,7 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 		Logger:      s.logger,
 		Client:      s,
 		NpmExecutor: s,
+		ParseCache:  s.parseCache,
 	})
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	if s.compilerOptionsForInferredProjects != nil {

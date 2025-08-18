@@ -112,6 +112,12 @@ func newLSPPipe() (*lspReader, *lspWriter) {
 
 const rootDir = "/"
 
+var parseCache = project.ParseCache{
+	Options: project.ParseCacheOptions{
+		DisableDeletion: true,
+	},
+}
+
 func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, content string) *FourslashTest {
 	if !bundled.Embedded {
 		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
@@ -147,11 +153,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		FS:                 fs,
 		DefaultLibraryPath: bundled.LibPath(),
 
-		ParseCache: &project.ParseCache{
-			Options: project.ParseCacheOptions{
-				DisableDeletion: true,
-			},
-		},
+		ParseCache: &parseCache,
 	})
 
 	go func() {
