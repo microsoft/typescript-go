@@ -382,7 +382,7 @@ func (e *emitter) getSourceMappingURL(mapOptions *core.CompilerOptions, sourceMa
 
 type SourceFileMayBeEmittedHost interface {
 	Options() *core.CompilerOptions
-	GetOutputAndProjectReference(path tspath.Path) *tsoptions.OutputDtsAndProjectReference
+	GetProjectReferenceFromSource(path tspath.Path) *tsoptions.SourceOutputAndProjectReference
 	IsSourceFileFromExternalLibrary(file *ast.SourceFile) bool
 	GetCurrentDirectory() string
 	UseCaseSensitiveFileNames() bool
@@ -415,7 +415,7 @@ func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host SourceFileMayBeEmit
 
 	// Check other conditions for file emit
 	// Source files from referenced projects are not emitted
-	if host.GetOutputAndProjectReference(sourceFile.Path()) != nil {
+	if host.GetProjectReferenceFromSource(sourceFile.Path()) != nil {
 		return false
 	}
 
