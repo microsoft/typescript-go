@@ -52,6 +52,8 @@ func (f *FsHandlingBuildInfo) WriteFile(path string, data string, writeByteOrder
 			if err := f.FS.WriteFile(path+".readable.baseline.txt", toReadableBuildInfo(&buildInfo, data), false); err != nil {
 				return fmt.Errorf("testFs.WriteFile: failed to write readable build info: %w", err)
 			}
+		} else {
+			panic("testFs.WriteFile: failed to unmarshal build info: - use underlying FS's write method if this is intended use for testcase" + err.Error())
 		}
 	}
 	return f.FS.WriteFile(path, data, writeByteOrderMark)

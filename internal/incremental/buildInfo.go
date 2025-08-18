@@ -393,12 +393,16 @@ func (b *BuildInfoEmitSignature) UnmarshalJSON(data []byte) error {
 			var signature string
 			var differsOnlyInDtsMap, differsInOptions bool
 			if signatureV, ok := fileIdAndSignature[1].(string); !ok {
-				if signatureList, ok := fileIdAndSignature[1].([]string); ok {
+				if signatureList, ok := fileIdAndSignature[1].([]any); ok {
 					if len(signatureList) == 0 {
 						differsOnlyInDtsMap = true
 					} else if len(signatureList) == 1 {
-						signature = signatureList[0]
-						differsInOptions = true
+						if sig, ok := signatureList[0].(string); ok {
+							signature = sig
+							differsInOptions = true
+						} else {
+							return fmt.Errorf("invalid signature in BuildInfoEmitSignature: expected string, got %T", signatureList[0])
+						}
 					} else {
 						return fmt.Errorf("invalid signature in BuildInfoEmitSignature: expected string or []string with 0 or 1 element, got %d elements", len(signatureList))
 					}
