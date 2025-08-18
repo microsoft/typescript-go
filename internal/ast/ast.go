@@ -897,6 +897,7 @@ func (n *Node) IsTypeOnly() bool {
 	return false
 }
 
+// If updating this function, also update `hasComment`.
 func (n *Node) CommentList() *NodeList {
 	switch n.Kind {
 	case KindJSDoc:
@@ -1033,6 +1034,8 @@ func (n *Node) ElementList() *NodeList {
 		return n.AsNamedImports().Elements
 	case KindNamedExports:
 		return n.AsNamedExports().Elements
+	case KindObjectBindingPattern, KindArrayBindingPattern:
+		return n.AsBindingPattern().Elements
 	}
 
 	panic("Unhandled case in Node.ElementList: " + n.Kind.String())
@@ -1058,6 +1061,32 @@ func (n *Node) QuestionDotToken() *Node {
 		return n.AsTaggedTemplateExpression().QuestionDotToken
 	}
 	panic("Unhandled case in Node.QuestionDotToken: " + n.Kind.String())
+}
+
+func (n *Node) TypeExpression() *Node {
+	switch n.Kind {
+	case KindJSDocPropertyTag, KindJSDocParameterTag:
+		return n.AsJSDocParameterOrPropertyTag().TypeExpression
+	case KindJSDocReturnTag:
+		return n.AsJSDocReturnTag().TypeExpression
+	case KindJSDocTypeTag:
+		return n.AsJSDocTypeTag().TypeExpression
+	case KindJSDocTypedefTag:
+		return n.AsJSDocTypedefTag().TypeExpression
+	case KindJSDocSatisfiesTag:
+		return n.AsJSDocSatisfiesTag().TypeExpression
+	}
+	panic("Unhandled case in Node.TypeExpression: " + n.Kind.String())
+}
+
+func (n *Node) ClassName() *Node {
+	switch n.Kind {
+	case KindJSDocAugmentsTag:
+		return n.AsJSDocAugmentsTag().ClassName
+	case KindJSDocImplementsTag:
+		return n.AsJSDocImplementsTag().ClassName
+	}
+	panic("Unhandled case in Node.ClassName: " + n.Kind.String())
 }
 
 // Determines if `n` contains `descendant` by walking up the `Parent` pointers from `descendant`. This method panics if
@@ -2049,6 +2078,8 @@ type (
 	NamedExportsNode                = Node
 	UnionType                       = Node
 	LiteralType                     = Node
+	JSDocNode                       = Node
+	BindingPatternNode              = Node
 )
 
 type (
@@ -2754,7 +2785,7 @@ func (node *ForInOrOfStatement) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Initializer) |
 		propagateSubtreeFacts(node.Expression) |
 		propagateSubtreeFacts(node.Statement) |
-		core.IfElse(node.AwaitModifier != nil, SubtreeContainsES2018, SubtreeFactsNone)
+		core.IfElse(node.AwaitModifier != nil, SubtreeContainsForAwaitOrAsyncGenerator, SubtreeFactsNone)
 }
 
 func IsForInStatement(node *Node) bool {
@@ -3651,7 +3682,7 @@ func (node *BindingElement) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.PropertyName) |
 		propagateSubtreeFacts(node.name) |
 		propagateSubtreeFacts(node.Initializer) |
-		core.IfElse(node.DotDotDotToken != nil, SubtreeContainsRest, SubtreeFactsNone)
+		core.IfElse(node.DotDotDotToken != nil, SubtreeContainsRestOrSpread, SubtreeFactsNone)
 }
 
 func IsBindingElement(node *Node) bool {
@@ -6039,7 +6070,7 @@ func (node *YieldExpression) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *YieldExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression) | SubtreeContainsES2018
+	return propagateSubtreeFacts(node.Expression) | SubtreeContainsForAwaitOrAsyncGenerator
 }
 
 // ArrowFunction
@@ -6661,7 +6692,7 @@ func (node *SpreadElement) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *SpreadElement) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression)
+	return propagateSubtreeFacts(node.Expression) | SubtreeContainsRestOrSpread
 }
 
 func IsSpreadElement(node *Node) bool {
@@ -6984,7 +7015,7 @@ func (node *SpreadAssignment) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *SpreadAssignment) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression) | SubtreeContainsES2018 | SubtreeContainsObjectRestOrSpread
+	return propagateSubtreeFacts(node.Expression) | SubtreeContainsESObjectRestOrSpread | SubtreeContainsObjectRestOrSpread
 }
 
 func IsSpreadAssignment(node *Node) bool {
@@ -9535,6 +9566,10 @@ func (node *JSDocTemplateTag) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocTemplateTag(node.TagName, node.Constraint, node.TypeParameters, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsJSDocTemplateTag(n *Node) bool {
+	return n.Kind == KindJSDocTemplateTag
+}
+
 // JSDocParameterOrPropertyTag
 type JSDocParameterOrPropertyTag struct {
 	JSDocTagBase
@@ -9599,6 +9634,10 @@ func (node *JSDocParameterOrPropertyTag) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *JSDocParameterOrPropertyTag) Name() *EntityName { return node.name }
+
+func IsJSDocParameterTag(node *Node) bool {
+	return node.Kind == KindJSDocParameterTag
+}
 
 // JSDocReturnTag
 type JSDocReturnTag struct {
@@ -9891,6 +9930,10 @@ func (node *JSDocImplementsTag) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *JSDocImplementsTag) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocImplementsTag(node.TagName, node.ClassName, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsJSDocImplementsTag(node *Node) bool {
+	return node.Kind == KindJSDocImplementsTag
 }
 
 // JSDocAugmentsTag
@@ -10372,10 +10415,6 @@ func (node *SourceFile) FileName() string {
 
 func (node *SourceFile) Path() tspath.Path {
 	return node.parseOptions.Path
-}
-
-func (node *SourceFile) OriginalFileName() string {
-	return node.FileName() // !!! redirect source files
 }
 
 func (node *SourceFile) Imports() []*LiteralLikeNode {

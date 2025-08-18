@@ -2784,7 +2784,7 @@ func (c *Checker) checkAccessorDeclaration(node *ast.Node) {
 
 func (c *Checker) checkTypeReferenceNode(node *ast.Node) {
 	c.checkGrammarTypeArguments(node, node.TypeArgumentList())
-	if ast.IsTypeReferenceNode(node) {
+	if ast.IsTypeReferenceNode(node) && node.Flags&ast.NodeFlagsJSDoc == 0 {
 		data := node.AsTypeReferenceNode()
 		if data.TypeArguments != nil && data.TypeName.End() != data.TypeArguments.Pos() {
 			// If there was a token between the type name and the type arguments, check if it was a DotToken
@@ -14497,7 +14497,9 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 		if ancestor == nil {
 			ancestor = ast.FindAncestor(location, ast.IsImportEqualsDeclaration)
 			if ancestor != nil {
-				contextSpecifier = ancestor.AsImportEqualsDeclaration().ModuleReference.AsExternalModuleReference().Expression
+				if moduleRefrence := ancestor.AsImportEqualsDeclaration().ModuleReference; moduleRefrence.Kind == ast.KindExternalModuleReference {
+					contextSpecifier = moduleRefrence.AsExternalModuleReference().Expression
+				}
 			}
 		}
 	}
@@ -30272,7 +30274,7 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 		// 4). type A = import("./f/*gotToDefinitionHere*/oo")
 		if (ast.IsExternalModuleImportEqualsDeclaration(grandParent) && ast.GetExternalModuleImportEqualsDeclarationExpression(grandParent) == node) ||
 			((parent.Kind == ast.KindImportDeclaration || parent.Kind == ast.KindJSImportDeclaration || parent.Kind == ast.KindExportDeclaration) && ast.GetExternalModuleName(parent) == node) ||
-			ast.IsVariableDeclarationInitializedToRequire(grandParent) ||
+			ast.IsVariableDeclarationInitializedToRequire(grandParent) || ast.IsImportCall(parent) ||
 			(ast.IsLiteralTypeNode(parent) && ast.IsLiteralImportTypeNode(grandParent) && grandParent.AsImportTypeNode().Argument == parent) {
 			return c.resolveExternalModuleName(node, node, ignoreErrors)
 		}

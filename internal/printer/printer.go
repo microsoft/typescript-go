@@ -45,7 +45,7 @@ type PrinterOptions struct {
 	OmitBraceSourceMapPositions bool
 	// ExtendedDiagnostics           bool
 	OnlyPrintJSDocStyle bool
-	// NeverAsciiEscape              bool
+	NeverAsciiEscape    bool
 	// StripInternal                 bool
 	PreserveSourceNewlines bool
 	// TerminateUnterminatedLiterals bool
@@ -785,7 +785,10 @@ func (p *Printer) shouldEmitBlockFunctionBodyOnSingleLine(body *ast.Block) bool 
 }
 
 func (p *Printer) shouldEmitOnNewLine(node *ast.Node, format ListFormat) bool {
-	// !!! if startsOnNewLine := getStartsOnNewLine(node); startsOnNewLine != nil { return *startsOnNewLine }
+	// !!! TODO: enable multiline emit
+	// if p.emitContext.EmitFlags(node)&EFStartOnNewLine != 0 {
+	// 	return true
+	// }
 	return format&LFPreferNewLine != 0
 }
 
@@ -974,7 +977,11 @@ func (p *Printer) emitTokenNodeEx(node *ast.TokenNode, flags tokenEmitFlags) {
 //	SyntaxKindTemplateMiddle
 //	SyntaxKindTemplateTail
 func (p *Printer) emitLiteral(node *ast.LiteralLikeNode, flags getLiteralTextFlags) {
-	// !!! Printer option to control whether to escape non-ASCII characters
+	// Add NeverAsciiEscape flag if the printer option is set
+	if p.Options.NeverAsciiEscape {
+		flags |= getLiteralTextFlagsNeverAsciiEscape
+	}
+
 	text := p.getLiteralTextOfNode(node, nil /*sourceFile*/, flags)
 
 	// !!! Printer option to control source map emit, which causes us to use a different write method on the
@@ -4403,6 +4410,9 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 		p.emitShebangIfNeeded(node)
 		index = p.emitPrologueDirectives(node.Statements)
 		p.emitHelpers(node.AsNode())
+		if node.IsDeclarationFile {
+			p.emitTripleSlashDirectives(node)
+		}
 	}
 
 	// !!! Emit triple-slash directives
@@ -4418,6 +4428,23 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 	p.emitDetachedCommentsAfterStatementList(node.AsNode(), node.Statements.Loc, state)
 	p.currentSourceFile = savedCurrentSourceFile
 	p.commentsDisabled = savedCommentsDisabled
+}
+
+func (p *Printer) emitTripleSlashDirectives(node *ast.SourceFile) {
+	p.emitDirective("path", node.ReferencedFiles)
+	p.emitDirective("types", node.TypeReferenceDirectives)
+	p.emitDirective("lib", node.LibReferenceDirectives)
+}
+
+func (p *Printer) emitDirective(kind string, refs []*ast.FileReference) {
+	for _, ref := range refs {
+		var resolutionMode string
+		if ref.ResolutionMode != core.ResolutionModeNone {
+			resolutionMode = fmt.Sprintf(`resolution-mode="%s" `, core.IfElse(ref.ResolutionMode == core.ResolutionModeESM, "import", "require"))
+		}
+		p.writeComment(fmt.Sprintf("/// <reference %s=\"%s\" %s%s/>", kind, ref.FileName, resolutionMode, core.IfElse(ref.Preserve, `preserve="true" `, "")))
+		p.writeLine()
+	}
 }
 
 //

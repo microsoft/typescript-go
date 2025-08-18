@@ -3,6 +3,7 @@ package compiler
 import (
 	"context"
 	"fmt"
+	"io"
 	"maps"
 	"slices"
 	"strings"
@@ -103,6 +104,17 @@ func (p *Program) GetPackageJsonInfo(pkgJsonPath string) modulespecifiers.Packag
 // GetRedirectTargets implements checker.Program.
 func (p *Program) GetRedirectTargets(path tspath.Path) []string {
 	return nil // !!! TODO: project references support
+}
+
+// gets the original file that was included in program
+// this returns original source file name when including output of project reference
+// otherwise same name
+// Equivalent to originalFileName on SourceFile in Strada
+func (p *Program) GetSourceOfProjectReferenceIfOutputIncluded(file ast.HasFileName) string {
+	if source, ok := p.outputFileToProjectReferenceSource[file.Path()]; ok {
+		return source
+	}
+	return file.FileName()
 }
 
 // GetOutputAndProjectReference implements checker.Program.
@@ -222,6 +234,7 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHos
 	result.files[index] = newFile
 	result.filesByPath = maps.Clone(result.filesByPath)
 	result.filesByPath[newFile.Path()] = newFile
+	updateFileIncludeProcessor(result)
 	return result, true
 }
 
@@ -410,7 +423,7 @@ func (p *Program) GetSuggestionDiagnostics(ctx context.Context, sourceFile *ast.
 }
 
 func (p *Program) GetProgramDiagnostics() []*ast.Diagnostic {
-	return SortAndDeduplicateDiagnostics(slices.Concat(p.programDiagnostics, p.fileLoadDiagnostics.GetDiagnostics()))
+	return SortAndDeduplicateDiagnostics(slices.Concat(p.programDiagnostics, p.includeProcessor.getDiagnostics(p).GetDiagnostics()))
 }
 
 func (p *Program) getSourceFilesToEmit(targetSourceFile *ast.SourceFile, forceDtsEmit bool) []*ast.SourceFile {
@@ -458,7 +471,7 @@ func (p *Program) verifyCompilerOptions() {
 
 	createOptionDiagnosticInObjectLiteralSyntax := func(objectLiteral *ast.ObjectLiteralExpression, onKey bool, key1 string, key2 string, message *diagnostics.Message, args ...any) *ast.Diagnostic {
 		diag := tsoptions.ForEachPropertyAssignment(objectLiteral, key1, func(property *ast.PropertyAssignment) *ast.Diagnostic {
-			return tsoptions.CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile(), core.IfElse(onKey, property.Name(), property.Initializer), message, args...)
+			return tsoptions.CreateDiagnosticForNodeInSourceFile(sourceFile(), core.IfElse(onKey, property.Name(), property.Initializer), message, args...)
 		}, key2)
 		if diag != nil {
 			p.programDiagnostics = append(p.programDiagnostics, diag)
@@ -470,7 +483,7 @@ func (p *Program) verifyCompilerOptions() {
 		compilerOptionsProperty := getCompilerOptionsPropertySyntax()
 		var diag *ast.Diagnostic
 		if compilerOptionsProperty != nil {
-			diag = tsoptions.CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile(), compilerOptionsProperty.Name(), message, args...)
+			diag = tsoptions.CreateDiagnosticForNodeInSourceFile(sourceFile(), compilerOptionsProperty.Name(), message, args...)
 		} else {
 			diag = ast.NewCompilerDiagnostic(message, args...)
 		}
@@ -532,7 +545,7 @@ func (p *Program) verifyCompilerOptions() {
 				relative = "./" + relative
 			}
 			suggestion := tspath.CombinePaths(relative, "*")
-			useInstead = fmt.Sprintf(`"paths": {"*": %s}`, core.Must(json.Marshal(suggestion)))
+			useInstead = fmt.Sprintf(`"paths": {"*": [%s]}`, core.Must(json.Marshal(suggestion)))
 		}
 		createRemovedOptionDiagnostic("baseUrl", "", useInstead)
 	}
@@ -602,13 +615,14 @@ func (p *Program) verifyCompilerOptions() {
 
 		for _, file := range p.files {
 			if sourceFileMayBeEmitted(file, p, false) && !rootPaths.Has(file.Path()) {
-				p.programDiagnostics = append(p.programDiagnostics, ast.NewDiagnostic(
-					file,
-					core.TextRange{},
-					diagnostics.File_0_is_not_listed_within_the_file_list_of_project_1_Projects_must_list_all_files_or_use_an_include_pattern,
-					file.FileName(),
-					configFilePath(),
-				))
+				p.includeProcessor.addProcessingDiagnostic(&processingDiagnostic{
+					kind: processingDiagnosticKindExplainingFileInclude,
+					data: &includeExplainingDiagnostic{
+						file:    file.Path(),
+						message: diagnostics.File_0_is_not_listed_within_the_file_list_of_project_1_Projects_must_list_all_files_or_use_an_include_pattern,
+						args:    []any{file.FileName(), configFilePath()},
+					},
+				})
 			}
 		}
 	}
@@ -638,7 +652,7 @@ func (p *Program) verifyCompilerOptions() {
 					if ast.IsArrayLiteralExpression(initializer) {
 						elements := initializer.AsArrayLiteralExpression().Elements
 						if elements != nil && len(elements.Nodes) > valueIndex {
-							diag := tsoptions.CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile(), elements.Nodes[valueIndex], message, args...)
+							diag := tsoptions.CreateDiagnosticForNodeInSourceFile(sourceFile(), elements.Nodes[valueIndex], message, args...)
 							p.programDiagnostics = append(p.programDiagnostics, diag)
 							return diag
 						}
@@ -724,6 +738,7 @@ func (p *Program) verifyCompilerOptions() {
 		options.SourceRoot != "" ||
 		options.MapRoot != "" ||
 		(options.GetEmitDeclarations() && options.DeclarationDir != "") {
+		// !!! sheetal checkSourceFilesBelongToPath - for root Dir and configFile - explaining why file is in the program
 		dir := p.CommonSourceDirectory()
 		if options.OutDir != "" && dir == "" && core.Some(p.files, func(f *ast.SourceFile) bool { return tspath.GetRootLength(f.FileName()) > 1 }) {
 			createDiagnosticForOptionName(diagnostics.Cannot_find_the_common_subdirectory_path_for_the_input_files, "outDir", "")
@@ -878,19 +893,7 @@ func (p *Program) IsEmitBlocked(emitFileName string) bool {
 func (p *Program) verifyProjectReferences() {
 	buildInfoFileName := core.IfElse(!p.Options().SuppressOutputPathCheck.IsTrue(), p.opts.Config.GetBuildInfoFileName(), "")
 	createDiagnosticForReference := func(config *tsoptions.ParsedCommandLine, index int, message *diagnostics.Message, args ...any) {
-		var sourceFile *ast.SourceFile
-		if config.ConfigFile != nil {
-			sourceFile = config.ConfigFile.SourceFile
-		}
-		diag := tsoptions.ForEachTsConfigPropArray(sourceFile, "references", func(property *ast.PropertyAssignment) *ast.Diagnostic {
-			if ast.IsArrayLiteralExpression(property.Initializer) {
-				value := property.Initializer.AsArrayLiteralExpression().Elements.Nodes
-				if len(value) > index {
-					return tsoptions.CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, value[index], message, args...)
-				}
-			}
-			return nil
-		})
+		diag := tsoptions.CreateDiagnosticAtReferenceSyntax(config, index, message, args...)
 		if diag == nil {
 			diag = ast.NewCompilerDiagnostic(message, args...)
 		}
@@ -1281,7 +1284,15 @@ func (p *Program) GetDefaultResolutionModeForFile(sourceFile ast.HasFileName) co
 }
 
 func (p *Program) IsSourceFileDefaultLibrary(path tspath.Path) bool {
-	return p.libFiles.Has(path)
+	_, ok := p.libFiles[path]
+	return ok
+}
+
+func (p *Program) GetDefaultLibFile(path tspath.Path) *LibFile {
+	if libFile, ok := p.libFiles[path]; ok {
+		return libFile
+	}
+	return nil
 }
 
 func (p *Program) CommonSourceDirectory() string {
@@ -1516,6 +1527,21 @@ func (p *Program) GetSourceFiles() []*ast.SourceFile {
 	return p.files
 }
 
+func (p *Program) ExplainFiles(w io.Writer) {
+	toRelativeFileName := func(fileName string) string {
+		return tspath.GetRelativePathFromDirectory(p.GetCurrentDirectory(), fileName, p.comparePathsOptions)
+	}
+	for _, file := range p.GetSourceFiles() {
+		fmt.Fprintln(w, toRelativeFileName(file.FileName()))
+		for _, reason := range p.includeProcessor.fileIncludeReasons[file.Path()] {
+			fmt.Fprintln(w, "  ", reason.toDiagnostic(p, true).Message())
+		}
+		for _, diag := range p.includeProcessor.explainRedirectAndImpliedFormat(p, file, toRelativeFileName) {
+			fmt.Fprintln(w, "  ", diag.Message())
+		}
+	}
+}
+
 func (p *Program) GetLibFileFromReference(ref *ast.FileReference) *ast.SourceFile {
 	path, ok := tsoptions.GetLibFileName(ref.FileName)
 	if !ok {
@@ -1549,25 +1575,6 @@ func (p *Program) getModeForTypeReferenceDirectiveInFile(ref *ast.FileReference,
 
 func (p *Program) IsSourceFileFromExternalLibrary(file *ast.SourceFile) bool {
 	return p.sourceFilesFoundSearchingNodeModules.Has(file.Path())
-}
-
-type FileIncludeKind int
-
-const (
-	FileIncludeKindRootFile FileIncludeKind = iota
-	FileIncludeKindSourceFromProjectReference
-	FileIncludeKindOutputFromProjectReference
-	FileIncludeKindImport
-	FileIncludeKindReferenceFile
-	FileIncludeKindTypeReferenceDirective
-	FileIncludeKindLibFile
-	FileIncludeKindLibReferenceDirective
-	FileIncludeKindAutomaticTypeDirectiveFile
-)
-
-type FileIncludeReason struct {
-	Kind  FileIncludeKind
-	Index int
 }
 
 // UnsupportedExtensions returns a list of all present "unsupported" extensions,
