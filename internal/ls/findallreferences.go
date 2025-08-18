@@ -15,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
 
@@ -1459,7 +1460,7 @@ func (state *refState) forEachRelatedSymbol(
 			panic("expected symbol.ValueDeclaration to be a parameter")
 		}
 		paramProp1, paramProp2 := state.checker.GetSymbolsOfParameterPropertyDeclaration(symbol.ValueDeclaration, symbol.Name)
-		// Debug.assert(paramProps.length == 2 && (paramProps[0].flags & SymbolFlags.FunctionScopedVariable) && (paramProps[1].flags & SymbolFlags.Property)); // is [parameter, property]
+		debug.Assert((paramProp1.Flags&ast.SymbolFlagsFunctionScopedVariable != 0) && (paramProp2.Flags&ast.SymbolFlagsProperty != 0)) // is [parameter, property]
 		if !(paramProp1.Flags&ast.SymbolFlagsFunctionScopedVariable != 0 && paramProp2.Flags&ast.SymbolFlagsProperty != 0) {
 			panic("Expected a parameter and a property")
 		}
@@ -1492,7 +1493,7 @@ func (state *refState) forEachRelatedSymbol(
 		return fromRoot(bindingElementPropertySymbol, entryKindSearchedPropertyFoundLocal)
 	}
 
-	// Debug.assert(isForRenamePopulateSearchSymbolSet);
+	debug.Assert(isForRenamePopulateSearchSymbolSet)
 
 	// due to the above assert and the arguments at the uses of this function,
 	// (onlyIncludeBindingElementAtReferenceLocation <=> !providePrefixAndSuffixTextForRename) holds

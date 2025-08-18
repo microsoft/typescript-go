@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
@@ -450,15 +451,15 @@ func (b *nodeBuilderImpl) symbolToNode(symbol *ast.Symbol, meaning ast.SymbolFla
 			if name != nil && ast.IsComputedPropertyName(name) {
 				return name
 			}
-			if b.ch.valueSymbolLinks.Has(symbol) {
-				nameType := b.ch.valueSymbolLinks.Get(symbol).nameType
-				if nameType != nil && nameType.flags&(TypeFlagsEnumLiteral|TypeFlagsUniqueESSymbol) != 0 {
-					oldEnclosing := b.ctx.enclosingDeclaration
-					b.ctx.enclosingDeclaration = nameType.symbol.ValueDeclaration
-					result := b.f.NewComputedPropertyName(b.symbolToExpression(nameType.symbol, meaning))
-					b.ctx.enclosingDeclaration = oldEnclosing
-					return result
-				}
+		}
+		if b.ch.valueSymbolLinks.Has(symbol) {
+			nameType := b.ch.valueSymbolLinks.Get(symbol).nameType
+			if nameType != nil && nameType.flags&(TypeFlagsEnumLiteral|TypeFlagsUniqueESSymbol) != 0 {
+				oldEnclosing := b.ctx.enclosingDeclaration
+				b.ctx.enclosingDeclaration = nameType.symbol.ValueDeclaration
+				result := b.f.NewComputedPropertyName(b.symbolToExpression(nameType.symbol, meaning))
+				b.ctx.enclosingDeclaration = oldEnclosing
+				return result
 			}
 		}
 	}
@@ -902,7 +903,7 @@ func (b *nodeBuilderImpl) getTypeParametersOfClassOrInterface(symbol *ast.Symbol
 }
 
 func (b *nodeBuilderImpl) lookupTypeParameterNodes(chain []*ast.Symbol, index int) *ast.TypeParameterList {
-	// Debug.assert(chain && 0 <= index && index < chain.length); // !!!
+	debug.Assert(chain != nil && 0 <= index && index < len(chain))
 	symbol := chain[index]
 	symbolId := ast.GetSymbolId(symbol)
 	if !b.ctx.hasCreatedTypeParameterSymbolList {
@@ -955,8 +956,8 @@ func (b *nodeBuilderImpl) lookupSymbolChainWorker(symbol *ast.Symbol, meaning as
 	if !isTypeParameter && (b.ctx.enclosingDeclaration != nil || b.ctx.flags&nodebuilder.FlagsUseFullyQualifiedType != 0) && (b.ctx.internalFlags&nodebuilder.InternalFlagsDoNotIncludeSymbolChain == 0) {
 		res := b.getSymbolChain(symbol, meaning /*endOfChain*/, true, yieldModuleSymbol)
 		chain = res
-		// Debug.checkDefined(chain) // !!!
-		// Debug.assert(chain && chain.length > 0); // !!!
+		debug.CheckDefined(chain)
+		debug.Assert(len(chain) > 0)
 	} else {
 		chain = append(chain, symbol)
 	}
@@ -972,7 +973,7 @@ type sortedSymbolNamePair struct {
 func (b *nodeBuilderImpl) getSymbolChain(symbol *ast.Symbol, meaning ast.SymbolFlags, endOfChain bool, yieldModuleSymbol bool) []*ast.Symbol {
 	accessibleSymbolChain := b.ch.getAccessibleSymbolChain(symbol, b.ctx.enclosingDeclaration, meaning, b.ctx.flags&nodebuilder.FlagsUseOnlyExternalAliasing != 0)
 	qualifierMeaning := meaning
-	if len(accessibleSymbolChain) > 0 {
+	if len(accessibleSymbolChain) > 1 {
 		qualifierMeaning = getQualifiedLeftMeaning(meaning)
 	}
 	if len(accessibleSymbolChain) == 0 ||
@@ -1134,7 +1135,7 @@ func tryGetModuleSpecifierFromDeclarationWorker(node *ast.Node) *ast.Node {
 		}
 		return nil
 	default:
-		// Debug.assertNever(node); // !!!
+		debug.AssertNever(node)
 		return nil
 	}
 }
@@ -1358,7 +1359,7 @@ func (b *nodeBuilderImpl) isHomomorphicMappedTypeWithNonHomomorphicInstantiation
 }
 
 func (b *nodeBuilderImpl) createMappedTypeNodeFromType(t *Type) *ast.TypeNode {
-	// Debug.assert(!!(type.flags & TypeFlags.Object)); // !!!
+	debug.Assert(t.Flags()&TypeFlagsObject != 0)
 	mapped := t.AsMappedType()
 	var readonlyToken *ast.Node
 	if mapped.declaration.ReadonlyToken != nil {
@@ -2958,7 +2959,7 @@ func (b *nodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 	objectFlags := t.objectFlags
 
 	if objectFlags&ObjectFlagsReference != 0 {
-		// Debug.assert(t.flags&TypeFlagsObject != 0) // !!!
+		debug.Assert(t.Flags()&TypeFlagsObject != 0)
 		if t.AsTypeReference().node != nil {
 			return b.visitAndTransformType(t, (*nodeBuilderImpl).typeReferenceToTypeNode)
 		} else {
@@ -3029,7 +3030,7 @@ func (b *nodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 		}
 	}
 	if objectFlags&(ObjectFlagsAnonymous|ObjectFlagsMapped) != 0 {
-		// Debug.assert(t.flags&TypeFlagsObject != 0) // !!!
+		debug.Assert(t.Flags()&TypeFlagsObject != 0)
 		// The type is an object literal type.
 		return b.createAnonymousTypeNode(t)
 	}

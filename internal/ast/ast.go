@@ -260,6 +260,8 @@ func (n *Node) LiteralLikeData() *LiteralLikeBase         { return n.data.Litera
 func (n *Node) TemplateLiteralLikeData() *TemplateLiteralLikeBase {
 	return n.data.TemplateLiteralLikeData()
 }
+func (n *Node) KindString() string { return n.Kind.String() }
+func (n *Node) KindValue() int16   { return int16(n.Kind) }
 
 type mutableNode Node
 
@@ -2797,7 +2799,7 @@ func (node *ForInOrOfStatement) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Initializer) |
 		propagateSubtreeFacts(node.Expression) |
 		propagateSubtreeFacts(node.Statement) |
-		core.IfElse(node.AwaitModifier != nil, SubtreeContainsES2018, SubtreeFactsNone)
+		core.IfElse(node.AwaitModifier != nil, SubtreeContainsForAwaitOrAsyncGenerator, SubtreeFactsNone)
 }
 
 func IsForInStatement(node *Node) bool {
@@ -3694,7 +3696,7 @@ func (node *BindingElement) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.PropertyName) |
 		propagateSubtreeFacts(node.name) |
 		propagateSubtreeFacts(node.Initializer) |
-		core.IfElse(node.DotDotDotToken != nil, SubtreeContainsRest, SubtreeFactsNone)
+		core.IfElse(node.DotDotDotToken != nil, SubtreeContainsRestOrSpread, SubtreeFactsNone)
 }
 
 func IsBindingElement(node *Node) bool {
@@ -6082,7 +6084,7 @@ func (node *YieldExpression) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *YieldExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression) | SubtreeContainsES2018
+	return propagateSubtreeFacts(node.Expression) | SubtreeContainsForAwaitOrAsyncGenerator
 }
 
 // ArrowFunction
@@ -6704,7 +6706,7 @@ func (node *SpreadElement) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *SpreadElement) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression)
+	return propagateSubtreeFacts(node.Expression) | SubtreeContainsRestOrSpread
 }
 
 func IsSpreadElement(node *Node) bool {
@@ -7027,7 +7029,7 @@ func (node *SpreadAssignment) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *SpreadAssignment) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression) | SubtreeContainsES2018 | SubtreeContainsObjectRestOrSpread
+	return propagateSubtreeFacts(node.Expression) | SubtreeContainsESObjectRestOrSpread | SubtreeContainsObjectRestOrSpread
 }
 
 func IsSpreadAssignment(node *Node) bool {

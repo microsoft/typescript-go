@@ -5,6 +5,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
@@ -60,6 +61,7 @@ type DeclarationTransformer struct {
 	rawLibReferenceDirectives        []*ast.FileReference
 }
 
+// TODO: Convert to transformers.TransformerFactory signature to allow more automatic composition with other transforms
 func NewDeclarationTransformer(host DeclarationEmitHost, context *printer.EmitContext, compilerOptions *core.CompilerOptions, declarationFilePath string, declarationMapPath string) *DeclarationTransformer {
 	resolver := host.GetEmitResolver()
 	state := &SymbolTrackerSharedState{isolatedDeclarations: compilerOptions.IsolatedDeclarations.IsTrue(), resolver: resolver}
@@ -508,7 +510,7 @@ func (tx *DeclarationTransformer) checkName(node *ast.Node) {
 		tx.state.getSymbolAccessibilityDiagnostic = createGetSymbolAccessibilityDiagnosticForNodeName(node)
 	}
 	tx.state.errorNameNode = node.Name()
-	// !!! Debug.assert(hasDynamicName(node as NamedDeclaration)); // Should only be called with dynamic names
+	debug.Assert(ast.HasDynamicName(node)) // Should only be called with dynamic names
 	entityName := node.Name().AsComputedPropertyName().Expression
 	tx.checkEntityNameVisibility(entityName, tx.enclosingDeclaration)
 	if !tx.suppressNewDiagnosticContexts {
@@ -1017,7 +1019,7 @@ func (tx *DeclarationTransformer) ensureType(node *ast.Node, ignorePrivate bool)
 	} else if ast.IsFunctionLike(node) {
 		typeNode = tx.resolver.CreateReturnTypeOfSignatureDeclaration(tx.EmitContext(), node, tx.enclosingDeclaration, declarationEmitNodeBuilderFlags, declarationEmitInternalNodeBuilderFlags, tx.tracker)
 	} else {
-		// Debug.assertNever(node); // !!!
+		debug.AssertNever(node)
 	}
 
 	tx.state.errorNameNode = oldErrorNameNode
@@ -1524,8 +1526,6 @@ func (tx *DeclarationTransformer) ensureTypeParams(node *ast.Node, params *ast.T
 				Nodes: nodes,
 			}
 		}
-	} else {
-		// Debug.assertNever(node); // !!!
 	}
 
 	tx.state.errorNameNode = oldErrorNameNode
