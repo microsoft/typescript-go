@@ -126,6 +126,10 @@ func (ct *ChangeTrackerWriter) assignPositionsToNodeWorker(
 	if !ast.NodeIsSynthesized(visited) {
 		newNode = visited.Clone(v.Factory)
 	}
+	newNode.ForEachChild(func(child *ast.Node) bool {
+		child.Parent = newNode
+		return true
+	})
 	newNode.Loc = core.NewTextRange(ct.getPos(node), ct.getEnd(node))
 	return newNode
 }
@@ -147,6 +151,7 @@ func (ct *ChangeTrackerWriter) assignPositionsToNodeArray(
 	if visited == nodes {
 		nodeArray = visited.Clone(v.Factory)
 	}
+
 	nodeArray.Loc = core.NewTextRange(ct.getPos(nodes), ct.getEnd(nodes))
 	return nodeArray
 }

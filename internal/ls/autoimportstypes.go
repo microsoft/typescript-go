@@ -193,8 +193,7 @@ func getNewPromoteTypeOnlyImport(typeOnlyAliasDeclaration *ast.Declaration) *Imp
 }
 
 /** Information needed to augment an existing import declaration. */
-// rename all fixes to say fix at end
-// rename to AddToExistingImportInfo
+// !!! after full implementation, rename to AddToExistingImportInfo
 type FixAddToExistingImportInfo struct {
 	declaration *ast.Declaration
 	importKind  ImportKind

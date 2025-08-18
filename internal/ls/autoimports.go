@@ -3,7 +3,6 @@ package ls
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -35,25 +34,18 @@ type symbolExportEntry struct {
 	moduleSymbol *ast.Symbol
 }
 
-type ExportMapInfoKey string
-
-func newExportMapInfoKey(importedName string, symbol *ast.Symbol, ambientModuleNameKey string, ch *checker.Checker) ExportMapInfoKey {
-	return ExportMapInfoKey(fmt.Sprintf("%s %d %s %s",
-		strconv.Itoa(len(importedName)),
-		ast.GetSymbolId(ch.SkipAlias(symbol)),
-		importedName,
-		ambientModuleNameKey,
-	))
+type ExportInfoMapKey struct {
+	SymbolName        string
+	SymbolId          ast.SymbolId
+	AmbientModuleName string
 }
 
-func (key ExportMapInfoKey) parse() (string, string) {
-	parts := strings.SplitN(string(key), " ", 3)
-	symbolNameLen, _ := strconv.Atoi(parts[0])
-
-	symbolName := parts[2][:symbolNameLen]
-	moduleKey := parts[2][symbolNameLen+1:]
-
-	return symbolName, moduleKey
+func newExportInfoMapKey(importedName string, symbol *ast.Symbol, ambientModuleNameKey string, ch *checker.Checker) ExportInfoMapKey {
+	return ExportInfoMapKey{
+		SymbolName:        importedName,
+		SymbolId:          ast.GetSymbolId(ch.SkipAlias(symbol)),
+		AmbientModuleName: ambientModuleNameKey,
+	}
 }
 
 type CachedSymbolExportInfo struct {
@@ -75,7 +67,7 @@ type CachedSymbolExportInfo struct {
 }
 
 type exportInfoMap struct {
-	exportInfo       collections.MultiMap[ExportMapInfoKey, CachedSymbolExportInfo]
+	exportInfo       collections.MultiMap[ExportInfoMapKey, CachedSymbolExportInfo]
 	symbols          map[int]symbolExportEntry
 	exportInfoId     int
 	usableByFileName tspath.Path
@@ -83,19 +75,17 @@ type exportInfoMap struct {
 
 	globalTypingsCacheLocation string
 
-	releaseSymbols func()
-	isEmpty        func() bool
-	/** @returns Whether the change resulted in the cache being cleared */
-	onFileChanged func(oldSourceFile *ast.SourceFile, newSourceFile *ast.SourceFile, typeAcquisitionEnabled bool) bool
+	// !!! releaseSymbols func()
+	// !!! onFileChanged func(oldSourceFile *ast.SourceFile, newSourceFile *ast.SourceFile, typeAcquisitionEnabled bool) bool
 }
 
 func (e *exportInfoMap) clear() {
 	e.symbols = map[int]symbolExportEntry{}
-	e.exportInfo = collections.MultiMap[ExportMapInfoKey, CachedSymbolExportInfo]{}
+	e.exportInfo = collections.MultiMap[ExportInfoMapKey, CachedSymbolExportInfo]{}
 	e.usableByFileName = ""
 }
 
-func (e *exportInfoMap) get(importingFile tspath.Path, ch *checker.Checker, key ExportMapInfoKey) []*SymbolExportInfo {
+func (e *exportInfoMap) get(importingFile tspath.Path, ch *checker.Checker, key ExportInfoMapKey) []*SymbolExportInfo {
 	if e.usableByFileName != importingFile {
 		return nil
 	}
@@ -191,7 +181,7 @@ func (e *exportInfoMap) add(
 	if moduleFile != nil {
 		moduleFileName = moduleFile.FileName()
 	}
-	e.exportInfo.Add(newExportMapInfoKey(symbolName, symbol, moduleKey, ch), CachedSymbolExportInfo{
+	e.exportInfo.Add(newExportInfoMapKey(symbolName, symbol, moduleKey, ch), CachedSymbolExportInfo{
 		id:                    id,
 		symbolTableKey:        symbolTableKey,
 		symbolName:            symbolName,
@@ -214,18 +204,17 @@ func (e *exportInfoMap) search(
 	importingFile tspath.Path,
 	preferCapitalized bool,
 	matches func(name string, targetFlags ast.SymbolFlags) bool,
-	action func(info []*SymbolExportInfo, symbolName string, isFromAmbientModule bool, key ExportMapInfoKey) []*SymbolExportInfo,
+	action func(info []*SymbolExportInfo, symbolName string, isFromAmbientModule bool, key ExportInfoMapKey) []*SymbolExportInfo,
 ) []*SymbolExportInfo {
 	if importingFile != e.usableByFileName {
 		return nil
 	}
 	for key, info := range e.exportInfo.M {
-		symbolName, ambientModuleName := key.parse()
-		name := symbolName
+		symbolName, ambientModuleName := key.SymbolName, key.AmbientModuleName
 		if preferCapitalized && info[0].capitalizedSymbolName != "" {
-			name = info[0].capitalizedSymbolName
+			symbolName = info[0].capitalizedSymbolName
 		}
-		if matches(name, info[0].targetFlags) {
+		if matches(symbolName, info[0].targetFlags) {
 			rehydrated := core.Map(info, func(info CachedSymbolExportInfo) *SymbolExportInfo {
 				return e.rehydrateCachedInfo(ch, info)
 			})
@@ -233,7 +222,7 @@ func (e *exportInfoMap) search(
 				return e.isNotShadowedByDeeperNodeModulesPackage(r, info[i].packageName)
 			})
 			if len(filtered) > 0 {
-				if res := action(filtered, name, ambientModuleName != "", key); res != nil {
+				if res := action(filtered, symbolName, ambientModuleName != "", key); res != nil {
 					return res
 				}
 			}
@@ -373,30 +362,18 @@ func (l *LanguageService) getImportCompletionAction(
 	moduleSymbol *ast.Symbol,
 	sourceFile *ast.SourceFile,
 	position int,
-	exportMapKey ExportMapInfoKey,
+	exportMapKey ExportInfoMapKey,
 	symbolName string, // !!! needs *string ?
 	isJsxTagName bool,
 	// formatContext *formattingContext,
 	preferences *UserPreferences,
 ) (string, codeAction) {
 	var exportInfos []*SymbolExportInfo
-	if exportMapKey != "" {
-		// The new way: `exportMapKey` should be in the `data` of each auto-import completion entry and
-		// sent back when asking for details.
-		exportInfos = l.getExportInfoMap(ch, sourceFile, preferences).get(sourceFile.Path(), ch, exportMapKey)
-		if len(exportInfos) == 0 {
-			panic("Some exportInfo should match the specified exportMapKey")
-		}
-	} else {
-		// The old way, kept alive for super old editors that don't give us `data` back.
-		if modulespecifiers.PathIsBareSpecifier(stringutil.StripQuotes(moduleSymbol.Name)) {
-			exportInfos = []*SymbolExportInfo{l.getSingleExportInfoForSymbol(ch, targetSymbol, symbolName, moduleSymbol)}
-		} else {
-			exportInfos = l.getAllExportInfoForSymbol(ch, sourceFile, targetSymbol, symbolName, moduleSymbol, isJsxTagName, preferences)
-		}
-		if exportInfos == nil {
-			panic("Some exportInfo should match the specified exportMapKey")
-		}
+	// The new way: `exportMapKey` should be in the `data` of each auto-import completion entry and
+	// sent back when asking for details.
+	exportInfos = l.getExportInfoMap(ch, sourceFile, preferences).get(sourceFile.Path(), ch, exportMapKey)
+	if len(exportInfos) == 0 {
+		panic("Some exportInfo should match the specified exportMapKey")
 	}
 
 	isValidTypeOnlyUseSite := ast.IsValidTypeOnlyAliasUseSite(astnav.GetTokenAtPosition(sourceFile, position))
@@ -412,7 +389,7 @@ func NewExportInfoMap(globalsTypingCacheLocation string) *exportInfoMap {
 	return &exportInfoMap{
 		packages:                   map[string]string{},
 		symbols:                    map[int]symbolExportEntry{},
-		exportInfo:                 collections.MultiMap[ExportMapInfoKey, CachedSymbolExportInfo]{},
+		exportInfo:                 collections.MultiMap[ExportInfoMapKey, CachedSymbolExportInfo]{},
 		globalTypingsCacheLocation: globalsTypingCacheLocation,
 	}
 }
@@ -506,7 +483,7 @@ func (l *LanguageService) getAllExportInfoForSymbol(ch *checker.Checker, importi
 		importingFile.Path(),
 		preferCapitalized,
 		func(name string, _ ast.SymbolFlags) bool { return name == symbolName },
-		func(info []*SymbolExportInfo, symbolName string, isFromAmbientModule bool, key ExportMapInfoKey) []*SymbolExportInfo {
+		func(info []*SymbolExportInfo, symbolName string, isFromAmbientModule bool, key ExportInfoMapKey) []*SymbolExportInfo {
 			if ch.GetMergedSymbol(ch.SkipAlias(info[0].symbol)) == symbol && (moduleSymbolExcluded || core.Some(info, func(i *SymbolExportInfo) bool {
 				return ch.GetMergedSymbol(i.moduleSymbol) == moduleSymbol || i.symbol.Parent == moduleSymbol
 			})) {

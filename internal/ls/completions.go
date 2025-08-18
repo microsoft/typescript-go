@@ -290,7 +290,7 @@ type symbolOriginInfoExport struct {
 	symbolName   string
 	moduleSymbol *ast.Symbol
 	exportName   string
-	exportMapKey ExportMapInfoKey
+	exportMapKey ExportInfoMapKey
 }
 
 func (s *symbolOriginInfo) asExport() *symbolOriginInfoExport {
@@ -301,7 +301,7 @@ type symbolOriginInfoResolvedExport struct {
 	symbolName      string
 	moduleSymbol    *ast.Symbol
 	exportName      string
-	exportMapKey    ExportMapInfoKey
+	exportMapKey    ExportInfoMapKey
 	moduleSpecifier string
 }
 
@@ -1266,7 +1266,7 @@ func (l *LanguageService) getCompletionData(program *compiler.Program, typeCheck
 						}
 						return charactersFuzzyMatchInString(symbolName, lowerCaseTokenText)
 					},
-					func(info []*SymbolExportInfo, symbolName string, isFromAmbientModule bool, exportMapKey ExportMapInfoKey) []*SymbolExportInfo {
+					func(info []*SymbolExportInfo, symbolName string, isFromAmbientModule bool, exportMapKey ExportInfoMapKey) []*SymbolExportInfo {
 						if itemData != nil && !core.Some(info, func(i *SymbolExportInfo) bool {
 							return stringutil.StripQuotes(i.moduleSymbol.Name) == itemData.Source
 						}) {
@@ -1932,9 +1932,8 @@ func (r *resolvingModuleSpecifiersForCompletions) tryResolve(ch *checker.Checker
 		return nil, "failed"
 	}
 
-	allowIncompleteCompletions := true // !!! preferences ptrIsTrue(r.resolver.UserPreferences.AllowIncompleteCompletions)
-	shouldResolveModuleSpecifier := r.needsFullResolution || allowIncompleteCompletions && r.resolvedCount < moduleSpecifierResolutionLimit
-	shouldGetModuleSpecifierFromCache := !shouldResolveModuleSpecifier && allowIncompleteCompletions && r.cacheAttemptCount < moduleSpecifierResolutionCacheAttemptLimit
+	shouldResolveModuleSpecifier := r.resolvedCount < moduleSpecifierResolutionLimit
+	shouldGetModuleSpecifierFromCache := !shouldResolveModuleSpecifier && r.cacheAttemptCount < moduleSpecifierResolutionCacheAttemptLimit
 
 	var result *ImportFix
 	if shouldResolveModuleSpecifier || shouldGetModuleSpecifierFromCache {
@@ -5174,7 +5173,7 @@ type completionEntryData struct {
 	 * in the case of InternalSymbolName.ExportEquals and InternalSymbolName.Default.
 	 */
 	ExportName      string           `json:"exportName"`
-	ExportMapKey    ExportMapInfoKey `json:"exportMapKey"`    // required if kind==unresolved
+	ExportMapKey    ExportInfoMapKey `json:"exportMapKey"`    // required if kind==unresolved
 	ModuleSpecifier string           `json:"moduleSpecifier"` // required if kind==resolved
 
 	/** The file name declaring the export's module symbol, if it was an external module */
@@ -5579,7 +5578,7 @@ func (l *LanguageService) getCompletionItemActions(ctx context.Context, ch *chec
 
 	moduleSymbol := symbolDetails.origin.moduleSymbol()
 
-	var exportMapkey ExportMapInfoKey
+	var exportMapkey ExportInfoMapKey
 	if itemData.AutoImport != nil {
 		exportMapkey = itemData.AutoImport.ExportMapKey
 	}

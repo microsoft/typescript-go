@@ -159,6 +159,10 @@ func (ct *changeTracker) getNonformattedText(node *ast.Node, sourceFile *ast.Sou
 			nodeList,
 			eofToken,
 		)
+		sourceFileLike.ForEachChild(func(child *ast.Node) bool {
+			child.Parent = sourceFileLike
+			return true
+		})
 		sourceFileLike.Loc = nodeOut.Loc
 	} else {
 		sourceFileLike = nodeOut

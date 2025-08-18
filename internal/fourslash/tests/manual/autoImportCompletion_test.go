@@ -28,7 +28,6 @@ a/**/
 		UserPreferences: &ls.UserPreferences{
 			IncludeCompletionsForModuleExports:    PtrTo(true),
 			IncludeCompletionsForImportStatements: PtrTo(true),
-			AllowIncompleteCompletions:            PtrTo(true),
 		},
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -59,7 +58,6 @@ a/**/
 		UserPreferences: &ls.UserPreferences{
 			IncludeCompletionsForModuleExports:    PtrTo(true),
 			IncludeCompletionsForImportStatements: PtrTo(true),
-			AllowIncompleteCompletions:            PtrTo(true),
 		},
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -91,7 +89,6 @@ b/**/
 		UserPreferences: &ls.UserPreferences{
 			IncludeCompletionsForModuleExports:    PtrTo(true),
 			IncludeCompletionsForImportStatements: PtrTo(true),
-			AllowIncompleteCompletions:            PtrTo(true),
 		},
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

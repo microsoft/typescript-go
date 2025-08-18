@@ -43,7 +43,6 @@ type UserPreferences struct {
 	ImportModuleSpecifierPreference       modulespecifiers.ImportModuleSpecifierPreference
 	ImportModuleSpecifierEndingPreference modulespecifiers.ImportModuleSpecifierEndingPreference
 	PreferTypeOnlyAutoImports             *bool
-	AllowIncompleteCompletions            *bool
 	AutoImportSpecifierExcludeRegexes     []string
 	AutoImportFileExcludePatterns         []string
 }
