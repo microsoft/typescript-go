@@ -28,7 +28,7 @@ const (
 	TestTypingsLocation = "/home/src/Library/Caches/typescript"
 )
 
-type TestTypingsInstallerOptions struct {
+type TypingsInstallerOptions struct {
 	TypesRegistry []string
 	PackageToFile map[string]string
 }
@@ -37,7 +37,7 @@ type SessionUtils struct {
 	fs          vfs.FS
 	client      *ClientMock
 	npmExecutor *NpmExecutorMock
-	testOptions *TestTypingsInstallerOptions
+	tiOptions   *TypingsInstallerOptions
 	logger      logging.LogCollector
 }
 
@@ -50,7 +50,7 @@ func (h *SessionUtils) NpmExecutor() *NpmExecutorMock {
 }
 
 func (h *SessionUtils) SetupNpmExecutorForTypingsInstaller() {
-	if h.testOptions == nil {
+	if h.tiOptions == nil {
 		return
 	}
 
@@ -86,7 +86,7 @@ func (h *SessionUtils) SetupNpmExecutorForTypingsInstaller() {
 			}
 			// Extract package name from @types/packageName
 			packageBaseName := atTypesPackage[7:] // Remove "@types/" prefix
-			content, ok := h.testOptions.PackageToFile[packageBaseName]
+			content, ok := h.tiOptions.PackageToFile[packageBaseName]
 			if !ok {
 				return nil, fmt.Errorf("content not provided for %s", packageBaseName)
 			}
@@ -158,12 +158,12 @@ func TypesRegistryConfig() map[string]string {
 func (h *SessionUtils) createTypesRegistryFileContent() string {
 	var builder strings.Builder
 	builder.WriteString("{\n  \"entries\": {")
-	for index, entry := range h.testOptions.TypesRegistry {
+	for index, entry := range h.tiOptions.TypesRegistry {
 		h.appendTypesRegistryConfig(&builder, index, entry)
 	}
-	index := len(h.testOptions.TypesRegistry)
-	for key := range h.testOptions.PackageToFile {
-		if !slices.Contains(h.testOptions.TypesRegistry, key) {
+	index := len(h.tiOptions.TypesRegistry)
+	for key := range h.tiOptions.PackageToFile {
+		if !slices.Contains(h.tiOptions.TypesRegistry, key) {
 			h.appendTypesRegistryConfig(&builder, index, key)
 			index++
 		}
@@ -180,18 +180,18 @@ func (h *SessionUtils) appendTypesRegistryConfig(builder *strings.Builder, index
 }
 
 func Setup(files map[string]any) (*project.Session, *SessionUtils) {
-	return SetupWithTypingsInstaller(files, nil)
+	return SetupWithTypingsInstaller(files, &TypingsInstallerOptions{})
 }
 
 func SetupWithOptions(files map[string]any, options *project.SessionOptions) (*project.Session, *SessionUtils) {
-	return SetupWithOptionsAndTypingsInstaller(files, options, nil)
+	return SetupWithOptionsAndTypingsInstaller(files, options, &TypingsInstallerOptions{})
 }
 
-func SetupWithTypingsInstaller(files map[string]any, tiOptions *TestTypingsInstallerOptions) (*project.Session, *SessionUtils) {
+func SetupWithTypingsInstaller(files map[string]any, tiOptions *TypingsInstallerOptions) (*project.Session, *SessionUtils) {
 	return SetupWithOptionsAndTypingsInstaller(files, nil, tiOptions)
 }
 
-func SetupWithOptionsAndTypingsInstaller(files map[string]any, options *project.SessionOptions, tiOptions *TestTypingsInstallerOptions) (*project.Session, *SessionUtils) {
+func SetupWithOptionsAndTypingsInstaller(files map[string]any, options *project.SessionOptions, tiOptions *TypingsInstallerOptions) (*project.Session, *SessionUtils) {
 	fs := bundled.WrapFS(vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/))
 	clientMock := &ClientMock{}
 	npmExecutorMock := &NpmExecutorMock{}
@@ -199,7 +199,7 @@ func SetupWithOptionsAndTypingsInstaller(files map[string]any, options *project.
 		fs:          fs,
 		client:      clientMock,
 		npmExecutor: npmExecutorMock,
-		testOptions: tiOptions,
+		tiOptions:   tiOptions,
 		logger:      logging.NewTestLogger(),
 	}
 
@@ -207,9 +207,8 @@ func SetupWithOptionsAndTypingsInstaller(files map[string]any, options *project.
 	sessionUtils.SetupNpmExecutorForTypingsInstaller()
 
 	// Use provided options or create default ones
-	sessionOptions := options
-	if sessionOptions == nil {
-		sessionOptions = &project.SessionOptions{
+	if options == nil {
+		options = &project.SessionOptions{
 			CurrentDirectory:   "/",
 			DefaultLibraryPath: bundled.LibPath(),
 			TypingsLocation:    TestTypingsLocation,
@@ -220,7 +219,7 @@ func SetupWithOptionsAndTypingsInstaller(files map[string]any, options *project.
 	}
 
 	session := project.NewSession(&project.SessionInit{
-		Options:     sessionOptions,
+		Options:     options,
 		FS:          fs,
 		Client:      clientMock,
 		NpmExecutor: npmExecutorMock,

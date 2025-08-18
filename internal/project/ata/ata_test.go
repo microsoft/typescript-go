@@ -28,7 +28,7 @@ func TestATA(t *testing.T) {
 			}`,
 		}
 
-		testOptions := &projecttestutil.TestTypingsInstallerOptions{
+		testOptions := &projecttestutil.TypingsInstallerOptions{
 			TypesRegistry: []string{"config"},
 		}
 
@@ -70,7 +70,7 @@ func TestATA(t *testing.T) {
 			}`,
 		}
 
-		session, utils := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TestTypingsInstallerOptions{
+		session, utils := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TypingsInstallerOptions{
 			PackageToFile: map[string]string{
 				"jquery": `declare const $: { x: number }`,
 			},
@@ -100,7 +100,7 @@ func TestATA(t *testing.T) {
 			}`,
 		}
 
-		session, utils := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TestTypingsInstallerOptions{
+		session, utils := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TypingsInstallerOptions{
 			PackageToFile: map[string]string{
 				"jquery": `declare const $: { x: number }`,
 			},
@@ -135,7 +135,7 @@ func TestATA(t *testing.T) {
 			}`,
 		}
 
-		session, utils := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TestTypingsInstallerOptions{
+		session, utils := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TypingsInstallerOptions{
 			TypesRegistry: []string{"jquery"},
 		})
 
@@ -168,7 +168,7 @@ func TestATA(t *testing.T) {
 			"/user/username/projects/project/node_modules/jquery/nested/package.json": `{ "name": "nested" }`,
 		}
 
-		session, utils := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TestTypingsInstallerOptions{
+		session, utils := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TypingsInstallerOptions{
 			TypesRegistry: []string{"nested", "commander"},
 			PackageToFile: map[string]string{
 				"jquery": "declare const jquery: { x: number }",
@@ -197,7 +197,7 @@ func TestATA(t *testing.T) {
 			"/user/username/projects/project/bower_components/jquery/bower.json": `{ "name": "jquery" }`,
 		}
 
-		session, utils := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TestTypingsInstallerOptions{
+		session, utils := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TypingsInstallerOptions{
 			PackageToFile: map[string]string{
 				"jquery": "declare const jquery: { x: number }",
 			},
@@ -234,7 +234,7 @@ func TestATA(t *testing.T) {
 			}`,
 		}
 
-		session, utils := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TestTypingsInstallerOptions{
+		session, utils := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TypingsInstallerOptions{
 			PackageToFile: map[string]string{
 				"jquery": "declare const jquery: { x: number }",
 			},
@@ -269,7 +269,7 @@ func TestATA(t *testing.T) {
 			`,
 		}
 
-		session, utils := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TestTypingsInstallerOptions{
+		session, utils := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TypingsInstallerOptions{
 			PackageToFile: map[string]string{
 				"node":             "export let node: number",
 				"commander":        "export let commander: number",
