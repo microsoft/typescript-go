@@ -158,6 +158,7 @@ type ExtendedConfigCache interface {
 type ExtendedConfigCacheEntry struct {
 	extendedResult *TsConfigSourceFile
 	extendedConfig *parsedTsconfig
+	errors         []*ast.Diagnostic
 }
 
 type parsedTsconfig struct {
@@ -938,15 +939,17 @@ func getExtendedConfig(
 
 	parse := func() *ExtendedConfigCacheEntry {
 		var extendedConfig *parsedTsconfig
+		var entryErrors []*ast.Diagnostic
 		extendedResult, err := readJsonConfigFile(extendedConfigFileName, extendedConfigPath, host.FS().ReadFile)
-		errors = append(errors, err...)
+		entryErrors = append(entryErrors, err...)
 		if len(extendedResult.SourceFile.Diagnostics()) == 0 {
 			extendedConfig, err = parseConfig(nil, extendedResult, host, tspath.GetDirectoryPath(extendedConfigFileName), tspath.GetBaseFileName(extendedConfigFileName), resolutionStack, extendedConfigCache)
-			errors = append(errors, err...)
+			entryErrors = append(entryErrors, err...)
 		}
 		return &ExtendedConfigCacheEntry{
 			extendedResult: extendedResult,
 			extendedConfig: extendedConfig,
+			errors:         entryErrors,
 		}
 	}
 
@@ -955,6 +958,10 @@ func getExtendedConfig(
 		cacheEntry = extendedConfigCache.GetExtendedConfig(extendedConfigFileName, extendedConfigPath, parse)
 	} else {
 		cacheEntry = parse()
+	}
+
+	if cacheEntry != nil && len(cacheEntry.errors) > 0 {
+		errors = append(errors, cacheEntry.errors...)
 	}
 
 	if sourceFile != nil {
