@@ -1236,6 +1236,7 @@ func TestExtendedConfigErrorsAppearOnCacheHit(t *testing.T) {
 	t.Parallel()
 
 	t.Run("single config parsed twice", func(t *testing.T) {
+		t.Parallel()
 		files := map[string]string{
 			"/tsconfig.json": `{
   "extends": "./base.json"
@@ -1276,6 +1277,7 @@ func TestExtendedConfigErrorsAppearOnCacheHit(t *testing.T) {
 	})
 
 	t.Run("two configs share same base", func(t *testing.T) {
+		t.Parallel()
 		files := map[string]string{
 			"/base.json": `{
   "excludes": ["**/*.ts"]
