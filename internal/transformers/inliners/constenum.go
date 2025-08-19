@@ -22,7 +22,7 @@ type ConstEnumInliningTransformer struct {
 func NewConstEnumInliningTransformer(opt *transformers.TransformOptions) *transformers.Transformer {
 	compilerOptions := opt.CompilerOptions
 	emitContext := opt.Context
-	if compilerOptions.IsolatedModules.IsTrue() {
+	if compilerOptions.GetIsolatedModules() {
 		debug.Fail("const enums are not inlined under isolated modules")
 	}
 	tx := &ConstEnumInliningTransformer{compilerOptions: compilerOptions, emitResolver: opt.EmitResolver}

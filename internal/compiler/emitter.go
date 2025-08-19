@@ -87,7 +87,7 @@ func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 
 	var emitResolver printer.EmitResolver
 	var referenceResolver binder.ReferenceResolver
-	if importElisionEnabled || options.GetJSXTransformEnabled() || !options.IsolatedModules.IsTrue() { // full emit resolver is needed for import ellision and const enum inlining
+	if importElisionEnabled || options.GetJSXTransformEnabled() || !options.GetIsolatedModules() { // full emit resolver is needed for import ellision and const enum inlining
 		emitResolver = host.GetEmitResolver()
 		emitResolver.MarkLinkedReferencesRecursively(sourceFile)
 		referenceResolver = emitResolver
@@ -131,7 +131,7 @@ func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 	tx = append(tx, getModuleTransformer(&opts))
 
 	// inlining (formerly done via substitutions)
-	if !options.IsolatedModules.IsTrue() {
+	if !options.GetIsolatedModules() {
 		tx = append(tx, inliners.NewConstEnumInliningTransformer(&opts))
 	}
 	return tx
