@@ -34,11 +34,12 @@ func (r *referenceMap) getReferencedBy(path tspath.Path) iter.Seq[tspath.Path] {
 		r.referencedBy = make(map[tspath.Path]*collections.Set[tspath.Path])
 		r.references.Range(func(key tspath.Path, value *collections.Set[tspath.Path]) bool {
 			for ref := range value.Keys() {
-				if set, ok := r.referencedBy[ref]; !ok {
+				set, ok := r.referencedBy[ref]
+				if !ok {
 					set = &collections.Set[tspath.Path]{}
 					r.referencedBy[ref] = set
 				}
-				r.referencedBy[ref].Add(key)
+				set.Add(key)
 			}
 			return true
 		})
