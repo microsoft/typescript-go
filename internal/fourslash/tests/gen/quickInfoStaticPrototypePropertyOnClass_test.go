@@ -9,7 +9,7 @@ import (
 
 func TestQuickInfoStaticPrototypePropertyOnClass(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class c1 {
 }
