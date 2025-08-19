@@ -2236,7 +2236,7 @@ func (b *nodeBuilderImpl) addPropertyToElementList(propertySymbol *ast.Symbol, t
 				name:          propertyName,
 				questionToken: optionalToken,
 			})
-			b.setCommentRange(methodDeclaration, core.Coalesce(signature.declaration, propertySymbol.ValueDeclaration)) // !!! missing JSDoc support formerly provided by preserveCommentsOn
+			b.setCommentRange(methodDeclaration, core.Coalesce(signature.declaration, propertySymbol.ValueDeclaration))
 			typeElements = append(typeElements, methodDeclaration)
 		}
 		if len(signatures) != 0 || optionalToken == nil {
@@ -2267,7 +2267,7 @@ func (b *nodeBuilderImpl) addPropertyToElementList(propertySymbol *ast.Symbol, t
 	}
 	propertySignature := b.f.NewPropertySignatureDeclaration(modifiers, propertyName, optionalToken, propertyTypeNode, nil)
 
-	b.setCommentRange(propertySignature, propertySymbol.ValueDeclaration) // !!! missing JSDoc support formerly provided by preserveCommentsOn
+	b.setCommentRange(propertySignature, propertySymbol.ValueDeclaration)
 	typeElements = append(typeElements, propertySignature)
 
 	return typeElements
