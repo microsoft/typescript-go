@@ -38,6 +38,9 @@ func getDeepCloneVisitor(f *NodeFactory, syntheticLocation bool) *NodeVisitor {
 				}
 				if syntheticLocation {
 					newList.Loc = core.NewTextRange(-1, -1)
+					if nodes.HasTrailingComma() {
+						newList.Nodes[len(newList.Nodes)-1].Loc = core.NewTextRange(-2, -2)
+					}
 				}
 				return newList
 			},
@@ -54,6 +57,9 @@ func getDeepCloneVisitor(f *NodeFactory, syntheticLocation bool) *NodeVisitor {
 				}
 				if syntheticLocation {
 					newList.Loc = core.NewTextRange(-1, -1)
+					if nodes.HasTrailingComma() {
+						newList.Nodes[len(newList.Nodes)-1].Loc = core.NewTextRange(-2, -2)
+					}
 				}
 				return newList
 			},
