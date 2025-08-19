@@ -73,7 +73,7 @@ declare const console: { log(msg: any): void; };
 //// [/home/src/workspaces/solution/project/index.js] *new* 
 import { E } from "../preserve";
 import { F } from "../no-preserve";
-E.A;
-F.A;
+1 /* E.A */;
+1 /* F.A */;
 
 
