@@ -1208,8 +1208,8 @@ func (l *LanguageService) getCompletionData(program *compiler.Program, typeCheck
 			return
 		}
 
+		debug.Assert(itemData == nil || itemData.AutoImport == nil, "Should not run 'collectAutoImports' when faster path is available via `data`");
 		if itemData != nil {
-			// Debug.assert(!detailsEntryId?.data, "Should not run 'collectAutoImports' when faster path is available via `data`");
 			if itemData.AutoImport != nil {
 				// !!!
 				// panic("Should not run 'collectAutoImports' when faster path is available via `AutoImport`")

@@ -4,6 +4,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 )
 
 type Import struct {
@@ -75,7 +76,7 @@ func (ct *changeTracker) doAddExistingFix(
 		}
 
 		if defaultImport != nil {
-			// Debug.assert(!clause.name, "Cannot add a default import to an import clause that already has one");
+			debug.Assert(clause.Name() == nil, "Cannot add a default import to an import clause that already has one");
 			ct.insertNodeAt(sourceFile, core.TextPos(astnav.GetStartOfNode(clause, sourceFile, false)), ct.NodeFactory.NewIdentifier(defaultImport.name), changeNodeOptions{suffix: ", "})
 		}
 

@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/module"
@@ -524,7 +525,7 @@ func (l *LanguageService) getSingleExportInfoForSymbol(ch *checker.Checker, symb
 		return mainProgramInfo
 	}
 	// !!! autoImportProvider := host.getPackageJsonAutoImportProvider?.()?
-	// return Debug.checkDefined(autoImportProvider && getInfoWithChecker(autoImportProvider, /*isFromPackageJson*/ true), `Could not find symbol in specified module for code actions`);
+	// return debug.CheckDefined(autoImportProvider && getInfoWithChecker(autoImportProvider, /*isFromPackageJson*/ true), `Could not find symbol in specified module for code actions`);
 	return nil
 }
 
@@ -993,8 +994,7 @@ func tryUseExistingNamespaceImport(existingImports []*FixAddToExistingImportInfo
 			}
 			namespacePrefix = importClause.NamedBindings.Name().Text()
 		default:
-			panic("never")
-			// Debug.assertNever(declaration);
+			debug.AssertNever(declaration)
 		}
 		if namespacePrefix == "" {
 			continue
