@@ -11,7 +11,7 @@ import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
 import { parseArgs } from "node:util";
-import os from "os";
+import os from "node:os";
 import pLimit from "p-limit";
 import pc from "picocolors";
 import which from "which";
@@ -1254,3 +1254,4 @@ export const installExtension = task({
         console.log(pc.whiteBright(`    "typescript.native-preview.tsdk": "${path.join(__dirname, "built", "local")}"\n`));
     },
 });
+
