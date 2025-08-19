@@ -230,7 +230,7 @@ Signatures::
 Edit [2]:: With declaration and declarationMap noEmit - Should report errors
 
 tsgo -b -v --noEmit --declaration --declarationMap
-ExitStatus:: Success
+ExitStatus:: DiagnosticsPresent_OutputsSkipped
 Output::
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
@@ -239,8 +239,20 @@ Output::
 
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
 
+[96ma.ts[0m:[93m1[0m:[93m7[0m - [91merror[0m[90m TS4094: [0mProperty 'p' of exported anonymous class type may not be private or protected.
+
+[7m1[0m const a = class { private p = 10; };
+[7m [0m [91m      ~[0m
+
+  [96ma.ts[0m:[93m1[0m:[93m7[0m - Add a type annotation to the variable a.
+    [7m1[0m const a = class { private p = 10; };
+    [7m [0m [96m      ~[0m
+
+
+Found 1 error in a.ts[90m:1[0m
+
 //// [/home/src/projects/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","root":[2],"fileNames":["lib.d.ts","./a.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"54435c7adb578d59d7e39dd2f567250e-const a = class { private p = 10; };","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"declaration":true,"declarationMap":true},"affectedFilesPendingEmit":[[2,49]]}
+{"version":"FakeTSVersion","root":[2],"fileNames":["lib.d.ts","./a.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"54435c7adb578d59d7e39dd2f567250e-const a = class { private p = 10; };","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"declaration":true,"declarationMap":true},"emitDiagnosticsPerFile":[[2,[{"pos":6,"end":7,"code":4094,"category":1,"message":"Property 'p' of exported anonymous class type may not be private or protected.","relatedInformation":[{"pos":6,"end":7,"code":9027,"category":1,"message":"Add a type annotation to the variable a."}]}]]],"affectedFilesPendingEmit":[[2,49]]}
 //// [/home/src/projects/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -286,6 +298,29 @@ Output::
     "declaration": true,
     "declarationMap": true
   },
+  "emitDiagnosticsPerFile": [
+    [
+      "./a.ts",
+      [
+        {
+          "pos": 6,
+          "end": 7,
+          "code": 4094,
+          "category": 1,
+          "message": "Property 'p' of exported anonymous class type may not be private or protected.",
+          "relatedInformation": [
+            {
+              "pos": 6,
+              "end": 7,
+              "code": 9027,
+              "category": 1,
+              "message": "Add a type annotation to the variable a."
+            }
+          ]
+        }
+      ]
+    ]
+  ],
   "affectedFilesPendingEmit": [
     [
       "./a.ts",
@@ -296,30 +331,13 @@ Output::
       ]
     ]
   ],
-  "size": 1077
+  "size": 1363
 }
 
 tsconfig.json::
 SemanticDiagnostics::
 Signatures::
 
-
-Diff:: !!! Unexpected diff, please review and either fix or write explanation as expectedDiff !!!
---- nonIncremental.output.txt
-+++ incremental.output.txt
-@@ -1,12 +0,0 @@
--[96ma.ts[0m:[93m1[0m:[93m7[0m - [91merror[0m[90m TS4094: [0mProperty 'p' of exported anonymous class type may not be private or protected.
--
--[7m1[0m const a = class { private p = 10; };
--[7m [0m [91m      ~[0m
--
--  [96ma.ts[0m:[93m1[0m:[93m7[0m - Add a type annotation to the variable a.
--    [7m1[0m const a = class { private p = 10; };
--    [7m [0m [96m      ~[0m
--
--
--Found 1 error in a.ts[90m:1[0m
--
 
 Edit [3]:: no change
 
@@ -342,7 +360,7 @@ Output::
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
-[[90mHH:MM:SS AM[0m] Project 'tsconfig.json' is out of date because buildinfo file 'tsconfig.tsbuildinfo' indicates that some of the changes were not emitted
+[[90mHH:MM:SS AM[0m] Project 'tsconfig.json' is out of date because buildinfo file 'tsconfig.tsbuildinfo' indicates that program needs to report errors.
 
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
 

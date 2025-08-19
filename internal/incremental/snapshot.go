@@ -96,7 +96,7 @@ func getPendingEmitKind(emitKind FileEmitKind, oldEmitKind FileEmitKind) FileEmi
 	}
 	// If dts errors pending, add dts errors flag
 	if (diff & FileEmitKindDtsErrors) != 0 {
-		result |= emitKind & FileEmitKindDtsErrors
+		result |= emitKind & FileEmitKindAllDts
 	}
 	// If there is diff in Dts emit, pending emit is dts emit flags
 	if (diff & FileEmitKindAllDtsEmit) != 0 {
@@ -239,7 +239,9 @@ func (s *snapshot) addFileToChangeSet(filePath tspath.Path) {
 func (s *snapshot) addFileToAffectedFilesPendingEmit(filePath tspath.Path, emitKind FileEmitKind) {
 	existingKind, _ := s.affectedFilesPendingEmit.Load(filePath)
 	s.affectedFilesPendingEmit.Store(filePath, existingKind|emitKind)
-	s.emitDiagnosticsPerFile.Delete(filePath)
+	if emitKind&FileEmitKindDtsErrors != 0 {
+		s.emitDiagnosticsPerFile.Delete(filePath)
+	}
 	s.buildInfoEmitPending.Store(true)
 }
 
