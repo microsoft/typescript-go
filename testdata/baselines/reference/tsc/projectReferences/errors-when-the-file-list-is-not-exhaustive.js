@@ -18,7 +18,6 @@ tsgo --p primary/tsconfig.json
 ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
 [96mprimary/a.ts[0m:[93m1[0m:[93m20[0m - [91merror[0m[90m TS6307: [0mFile '/home/src/workspaces/project/primary/b.ts' is not listed within the file list of project '/home/src/workspaces/project/primary/tsconfig.json'. Projects must list all files or use an 'include' pattern.
-  Imported via './b' from file '/home/src/workspaces/project/primary/a.ts'
 
 [7m1[0m import * as b from './b'
 [7m [0m [91m                   ~~~~~[0m

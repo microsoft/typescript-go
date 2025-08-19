@@ -124,13 +124,11 @@ Output::
 [[90mHH:MM:SS AM[0m] Building project 'core/tsconfig.json'...
 
 [96manimals/index.ts[0m:[93m1[0m:[93m20[0m - [91merror[0m[90m TS6307: [0mFile '/user/username/projects/demo/animals/animal.ts' is not listed within the file list of project '/user/username/projects/demo/core/tsconfig.json'. Projects must list all files or use an 'include' pattern.
-  Imported via './animal' from file '/user/username/projects/demo/animals/index.ts'
 
 [7m1[0m import Animal from './animal';
 [7m [0m [91m                   ~~~~~~~~~~[0m
 
 [96manimals/index.ts[0m:[93m4[0m:[93m32[0m - [91merror[0m[90m TS6307: [0mFile '/user/username/projects/demo/animals/dog.ts' is not listed within the file list of project '/user/username/projects/demo/core/tsconfig.json'. Projects must list all files or use an 'include' pattern.
-  Imported via './dog' from file '/user/username/projects/demo/animals/index.ts'
 
 [7m4[0m import { createDog, Dog } from './dog';
 [7m [0m [91m                               ~~~~~~~[0m

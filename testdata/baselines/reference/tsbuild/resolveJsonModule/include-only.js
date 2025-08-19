@@ -35,7 +35,6 @@ Output::
 [[90mHH:MM:SS AM[0m] Building project 'project/tsconfig.json'...
 
 [96mproject/src/index.ts[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TS6307: [0mFile '/home/src/workspaces/solution/project/src/hello.json' is not listed within the file list of project '/home/src/workspaces/solution/project/tsconfig.json'. Projects must list all files or use an 'include' pattern.
-  Imported via "./hello.json" from file '/home/src/workspaces/solution/project/src/index.ts'
 
 [7m1[0m import hello from "./hello.json"
 [7m [0m [91m                  ~~~~~~~~~~~~~~[0m
