@@ -342,6 +342,14 @@ func (b *projectCollectionBuilder) DidUpdateATAState(ataChanges map[tspath.Path]
 				// the set of typings files is actually different.
 				p.installedTypingsInfo = ataChange.TypingsInfo
 				p.typingsFiles = ataChange.TypingsFiles
+				fileWatchGlobs, directoryWatchGlobs := getTypingsLocationsGlobs(
+					ataChange.TypingsFilesToWatch,
+					b.sessionOptions.TypingsLocation,
+					p.currentDirectory,
+					b.fs.fs.UseCaseSensitiveFileNames(),
+				)
+				p.typingsFilesWatch = p.typingsFilesWatch.Clone(fileWatchGlobs)
+				p.typingsDirectoryWatch = p.typingsDirectoryWatch.Clone(directoryWatchGlobs)
 				p.dirty = true
 				p.dirtyFilePath = ""
 			},

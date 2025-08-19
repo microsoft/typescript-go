@@ -99,17 +99,22 @@ type TypingsInstallRequest struct {
 	Logger           logging.Logger
 }
 
-func (ti *TypingsInstaller) InstallTypings(request *TypingsInstallRequest) ([]string, error) {
-	// because we arent using buffers, no need to throttle for requests here
-	request.Logger.Log("ATA:: Got install request for: " + string(request.ProjectID))
-	typingsFiles, err := ti.discoverAndInstallTypings(request)
-	if err == nil {
-		slices.Sort(typingsFiles)
-	}
-	return typingsFiles, err
+type TypingsInstallResult struct {
+	TypingsFiles []string
+	FilesToWatch []string
 }
 
-func (ti *TypingsInstaller) discoverAndInstallTypings(request *TypingsInstallRequest) ([]string, error) {
+func (ti *TypingsInstaller) InstallTypings(request *TypingsInstallRequest) (*TypingsInstallResult, error) {
+	result, err := ti.discoverAndInstallTypings(request)
+	if err == nil {
+		slices.Sort(result.TypingsFiles)
+		slices.Sort(result.FilesToWatch)
+		request.Logger.Log("ATA:: Got install request for: " + string(request.ProjectID))
+	}
+	return result, err
+}
+
+func (ti *TypingsInstaller) discoverAndInstallTypings(request *TypingsInstallRequest) (*TypingsInstallResult, error) {
 	ti.init(string(request.ProjectID), request.FS, request.Logger)
 
 	cachedTypingPaths, newTypingNames, filesToWatch := DiscoverTypings(
@@ -122,24 +127,29 @@ func (ti *TypingsInstaller) discoverAndInstallTypings(request *TypingsInstallReq
 		ti.typesRegistry,
 	)
 
-	// !!!
-	if len(filesToWatch) > 0 {
-		request.Logger.Log(fmt.Sprintf("ATA:: Would watch typing locations: %v", filesToWatch))
-	}
-
 	requestId := ti.installRunCount.Add(1)
 	// install typings
 	if len(newTypingNames) > 0 {
 		filteredTypings := ti.filterTypings(request.ProjectID, request.Logger, newTypingNames)
 		if len(filteredTypings) != 0 {
-			return ti.installTypings(request.ProjectID, request.TypingsInfo, requestId, cachedTypingPaths, filteredTypings, request.Logger)
+			typingsFiles, err := ti.installTypings(request.ProjectID, request.TypingsInfo, requestId, cachedTypingPaths, filteredTypings, request.Logger)
+			if err != nil {
+				return nil, err
+			}
+			return &TypingsInstallResult{
+				TypingsFiles: typingsFiles,
+				FilesToWatch: filesToWatch,
+			}, nil
 		}
 		request.Logger.Log("ATA:: All typings are known to be missing or invalid - no need to install more typings")
 	} else {
 		request.Logger.Log("ATA:: No new typings were requested as a result of typings discovery")
 	}
 
-	return cachedTypingPaths, nil
+	return &TypingsInstallResult{
+		TypingsFiles: cachedTypingPaths,
+		FilesToWatch: filesToWatch,
+	}, nil
 	// !!! sheetal events to send
 	// this.event(response, "setTypings");
 }

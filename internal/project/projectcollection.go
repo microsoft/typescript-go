@@ -34,12 +34,10 @@ func (c *ProjectCollection) ConfiguredProject(path tspath.Path) *Project {
 }
 
 func (c *ProjectCollection) GetProjectByPath(projectPath tspath.Path) *Project {
-	// First check if it's a configured project
 	if project, ok := c.configuredProjects[projectPath]; ok {
 		return project
 	}
 
-	// Check if it's the inferred project path
 	if projectPath == inferredProjectName {
 		return c.inferredProject
 	}
@@ -47,6 +45,7 @@ func (c *ProjectCollection) GetProjectByPath(projectPath tspath.Path) *Project {
 	return nil
 }
 
+// ConfiguredProjects returns all configured projects in a stable order.
 func (c *ProjectCollection) ConfiguredProjects() []*Project {
 	projects := make([]*Project, 0, len(c.configuredProjects))
 	c.fillConfiguredProjects(&projects)
@@ -62,6 +61,22 @@ func (c *ProjectCollection) fillConfiguredProjects(projects *[]*Project) {
 	})
 }
 
+// ProjectsByPath returns an ordered map of configured projects keyed by their config file path,
+// plus the inferred project, if it exists, with the key `inferredProjectName`.
+func (c *ProjectCollection) ProjectsByPath() *collections.OrderedMap[tspath.Path, *Project] {
+	projects := collections.NewOrderedMapWithSizeHint[tspath.Path, *Project](
+		len(c.configuredProjects) + core.IfElse(c.inferredProject != nil, 1, 0),
+	)
+	for _, project := range c.ConfiguredProjects() {
+		projects.Set(project.configFilePath, project)
+	}
+	if c.inferredProject != nil {
+		projects.Set(inferredProjectName, c.inferredProject)
+	}
+	return projects
+}
+
+// Projects returns all projects, including the inferred project if it exists, in a stable order.
 func (c *ProjectCollection) Projects() []*Project {
 	if c.inferredProject == nil {
 		return c.ConfiguredProjects()

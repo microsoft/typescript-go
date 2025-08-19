@@ -2,6 +2,7 @@ package project
 
 import (
 	"fmt"
+	"maps"
 	"slices"
 	"strings"
 	"sync"
@@ -107,6 +108,10 @@ func (w *WatchedFiles[T]) Clone(input T) *WatchedFiles[T] {
 	}
 }
 
+func globMapperForTypingsInstaller(data map[tspath.Path]string) []string {
+	return slices.AppendSeq(make([]string, 0, len(data)), maps.Values(data))
+}
+
 func createResolutionLookupGlobMapper(currentDirectory string, useCaseSensitiveFileNames bool) func(data map[tspath.Path]string) []string {
 	rootPath := tspath.ToPath(currentDirectory, "", useCaseSensitiveFileNames)
 	rootPathComponents := tspath.GetPathComponents(string(rootPath), "")
@@ -152,6 +157,47 @@ func createResolutionLookupGlobMapper(currentDirectory string, useCaseSensitiveF
 		slices.Sort(globs)
 		return globs
 	}
+}
+
+func getTypingsLocationsGlobs(typingsFiles []string, typingsLocation string, currentDirectory string, useCaseSensitiveFileNames bool) (fileGlobs map[tspath.Path]string, directoryGlobs map[tspath.Path]string) {
+	comparePathsOptions := tspath.ComparePathsOptions{
+		CurrentDirectory:          currentDirectory,
+		UseCaseSensitiveFileNames: useCaseSensitiveFileNames,
+	}
+	for _, file := range typingsFiles {
+		basename := tspath.GetBaseFileName(file)
+		if basename == "package.json" || basename == "bower.json" {
+			// package.json or bower.json exists, watch the file to detect changes and update typings
+			if fileGlobs == nil {
+				fileGlobs = map[tspath.Path]string{}
+			}
+			fileGlobs[tspath.ToPath(file, currentDirectory, useCaseSensitiveFileNames)] = file
+		} else {
+			var globLocation string
+			// path in projectRoot, watch project root
+			if tspath.ContainsPath(currentDirectory, file, comparePathsOptions) {
+				currentDirectoryLen := len(currentDirectory) + 1
+				subDirectory := strings.IndexRune(file[currentDirectoryLen:], tspath.DirectorySeparator)
+				if subDirectory != -1 {
+					// Watch subDirectory
+					globLocation = file[0 : currentDirectoryLen+subDirectory]
+				} else {
+					// Watch the directory itself
+					globLocation = file
+				}
+			} else {
+				// path in global cache, watch global cache
+				// else watch node_modules or bower_components
+				globLocation = core.IfElse(tspath.ContainsPath(typingsLocation, file, comparePathsOptions), typingsLocation, file)
+			}
+			// package.json or bower.json exists, watch the file to detect changes and update typings
+			if directoryGlobs == nil {
+				directoryGlobs = map[tspath.Path]string{}
+			}
+			directoryGlobs[tspath.ToPath(globLocation, currentDirectory, useCaseSensitiveFileNames)] = fmt.Sprintf("%s/%s", globLocation, recursiveFileGlobPattern)
+		}
+	}
+	return fileGlobs, directoryGlobs
 }
 
 type directoryOfFailedLookupWatch struct {

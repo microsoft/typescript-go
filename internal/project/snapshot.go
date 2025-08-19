@@ -116,7 +116,9 @@ type ATAStateChange struct {
 	TypingsInfo *ata.TypingsInfo
 	// TypingsFiles is the new list of typing files for the project.
 	TypingsFiles []string
-	Logs         *logging.LogTree
+	// TypingsFilesToWatch is the new list of typing files to watch for changes.
+	TypingsFilesToWatch []string
+	Logs                *logging.LogTree
 }
 
 func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays map[tspath.Path]*overlay, session *Session) *Snapshot {

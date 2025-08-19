@@ -71,6 +71,8 @@ type Project struct {
 
 	failedLookupsWatch      *WatchedFiles[map[tspath.Path]string]
 	affectingLocationsWatch *WatchedFiles[map[tspath.Path]string]
+	typingsFilesWatch       *WatchedFiles[map[tspath.Path]string]
+	typingsDirectoryWatch   *WatchedFiles[map[tspath.Path]string]
 
 	checkerPool *checkerPool
 
@@ -151,9 +153,21 @@ func NewProject(
 		)
 		project.affectingLocationsWatch = NewWatchedFiles(
 			"affecting locations for "+configFileName,
-			lsproto.WatchKindCreate,
+			lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
 			createResolutionLookupGlobMapper(project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
 		)
+		if builder.sessionOptions.TypingsLocation != "" {
+			project.typingsFilesWatch = NewWatchedFiles(
+				"typings installer files",
+				lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
+				globMapperForTypingsInstaller,
+			)
+			project.typingsDirectoryWatch = NewWatchedFiles(
+				"typings installer directories",
+				lsproto.WatchKindCreate|lsproto.WatchKindDelete,
+				globMapperForTypingsInstaller,
+			)
+		}
 	}
 	return project
 }
@@ -209,6 +223,8 @@ func (p *Project) Clone() *Project {
 
 		failedLookupsWatch:      p.failedLookupsWatch,
 		affectingLocationsWatch: p.affectingLocationsWatch,
+		typingsFilesWatch:       p.typingsFilesWatch,
+		typingsDirectoryWatch:   p.typingsDirectoryWatch,
 
 		checkerPool: p.checkerPool,
 

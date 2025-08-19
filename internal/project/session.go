@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -515,16 +516,20 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 		},
 	)
 
-	core.DiffMaps(
-		oldSnapshot.ProjectCollection.configuredProjects,
-		newSnapshot.ProjectCollection.configuredProjects,
+	collections.DiffOrderedMaps(
+		oldSnapshot.ProjectCollection.ProjectsByPath(),
+		newSnapshot.ProjectCollection.ProjectsByPath(),
 		func(_ tspath.Path, addedProject *Project) {
 			errors = append(errors, updateWatch(ctx, s.client, s.logger, nil, addedProject.affectingLocationsWatch)...)
 			errors = append(errors, updateWatch(ctx, s.client, s.logger, nil, addedProject.failedLookupsWatch)...)
+			errors = append(errors, updateWatch(ctx, s.client, s.logger, nil, addedProject.typingsFilesWatch)...)
+			errors = append(errors, updateWatch(ctx, s.client, s.logger, nil, addedProject.typingsDirectoryWatch)...)
 		},
 		func(_ tspath.Path, removedProject *Project) {
 			errors = append(errors, updateWatch(ctx, s.client, s.logger, removedProject.affectingLocationsWatch, nil)...)
 			errors = append(errors, updateWatch(ctx, s.client, s.logger, removedProject.failedLookupsWatch, nil)...)
+			errors = append(errors, updateWatch(ctx, s.client, s.logger, removedProject.typingsFilesWatch, nil)...)
+			errors = append(errors, updateWatch(ctx, s.client, s.logger, removedProject.typingsDirectoryWatch, nil)...)
 		},
 		func(_ tspath.Path, oldProject, newProject *Project) {
 			if oldProject.affectingLocationsWatch.ID() != newProject.affectingLocationsWatch.ID() {
@@ -532,6 +537,12 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 			}
 			if oldProject.failedLookupsWatch.ID() != newProject.failedLookupsWatch.ID() {
 				errors = append(errors, updateWatch(ctx, s.client, s.logger, oldProject.failedLookupsWatch, newProject.failedLookupsWatch)...)
+			}
+			if oldProject.typingsFilesWatch.ID() != newProject.typingsFilesWatch.ID() {
+				errors = append(errors, updateWatch(ctx, s.client, s.logger, oldProject.typingsFilesWatch, newProject.typingsFilesWatch)...)
+			}
+			if oldProject.typingsDirectoryWatch.ID() != newProject.typingsDirectoryWatch.ID() {
+				errors = append(errors, updateWatch(ctx, s.client, s.logger, oldProject.typingsDirectoryWatch, newProject.typingsDirectoryWatch)...)
 			}
 		},
 	)
@@ -643,17 +654,18 @@ func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {
 					Logger:           logTree,
 				}
 
-				if typingsFiles, err := s.typingsInstaller.InstallTypings(request); err != nil && logTree != nil {
+				if result, err := s.typingsInstaller.InstallTypings(request); err != nil && logTree != nil {
 					s.logger.Log(fmt.Sprintf("ATA installation failed for project %s: %v", project.Name(), err))
 					s.logger.Log(logTree.String())
 				} else {
-					if !slices.Equal(typingsFiles, project.typingsFiles) {
+					if !slices.Equal(result.TypingsFiles, project.typingsFiles) {
 						s.pendingATAChangesMu.Lock()
 						defer s.pendingATAChangesMu.Unlock()
 						s.pendingATAChanges[project.configFilePath] = &ATAStateChange{
-							TypingsInfo:  &typingsInfo,
-							TypingsFiles: typingsFiles,
-							Logs:         logTree,
+							TypingsInfo:         &typingsInfo,
+							TypingsFiles:        result.TypingsFiles,
+							TypingsFilesToWatch: result.FilesToWatch,
+							Logs:                logTree,
 						}
 						s.ScheduleDiagnosticsRefresh()
 					}

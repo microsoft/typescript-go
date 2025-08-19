@@ -13,7 +13,7 @@ type LogCollector interface {
 
 type logCollector struct {
 	logger
-	builder strings.Builder
+	builder *strings.Builder
 }
 
 func (lc *logCollector) String() string {
@@ -29,6 +29,6 @@ func NewTestLogger() LogCollector {
 				return formatTime(time.Unix(1349085672, 0))
 			},
 		},
-		builder: builder,
+		builder: &builder,
 	}
 }
