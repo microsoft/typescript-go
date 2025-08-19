@@ -9,6 +9,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 )
+//go:generate go tool golang.org/x/tools/cmd/stringer -type=ExportKind -output=autoImports_stringer_generated.go
+//go:generate go tool mvdan.cc/gofumpt -lang=go1.25 -w autoImports_stringer_generated.go
 
 type ImportKind int
 
@@ -28,22 +30,6 @@ const (
 	ExportKindUMD          ExportKind = 3
 	ExportKindModule       ExportKind = 4
 )
-
-func (k ExportKind) String() string {
-	switch k {
-	case ExportKindNamed:
-		return "Named"
-	case ExportKindDefault:
-		return "Default"
-	case ExportKindExportEquals:
-		return "ExportEquals"
-	case ExportKindUMD:
-		return "UMD"
-	case ExportKindModule:
-		return "Module"
-	}
-	panic(fmt.Sprintf("unexpected export kind: %d", k))
-}
 
 type ImportFixKind int
 

@@ -27,7 +27,7 @@ type SymbolExportInfo struct {
 	moduleFileName    string
 	exportKind        ExportKind
 	targetFlags       ast.SymbolFlags
-	isFromPackageJson *bool
+	isFromPackageJson bool
 }
 
 type symbolExportEntry struct {
@@ -251,7 +251,7 @@ func (e *exportInfoMap) rehydrateCachedInfo(ch *checker.Checker, info CachedSymb
 			moduleFileName:    info.moduleFileName,
 			exportKind:        info.exportKind,
 			targetFlags:       info.targetFlags,
-			isFromPackageJson: ptrTo(info.isFromPackageJson),
+			isFromPackageJson: info.isFromPackageJson,
 		}
 	}
 	cached := e.symbols[info.id]
@@ -263,7 +263,7 @@ func (e *exportInfoMap) rehydrateCachedInfo(ch *checker.Checker, info CachedSymb
 			moduleFileName:    info.moduleFileName,
 			exportKind:        info.exportKind,
 			targetFlags:       info.targetFlags,
-			isFromPackageJson: ptrTo(info.isFromPackageJson),
+			isFromPackageJson: info.isFromPackageJson,
 		}
 	}
 
@@ -297,7 +297,7 @@ func (e *exportInfoMap) rehydrateCachedInfo(ch *checker.Checker, info CachedSymb
 		info.moduleFileName,
 		info.exportKind,
 		info.targetFlags,
-		ptrTo(info.isFromPackageJson),
+		info.isFromPackageJson,
 	}
 }
 
@@ -372,7 +372,7 @@ func (l *LanguageService) getImportCompletionAction(
 	var exportInfos []*SymbolExportInfo
 	// The new way: `exportMapKey` should be in the `data` of each auto-import completion entry and
 	// sent back when asking for details.
-	exportInfos = l.getExportInfoMap(ch, sourceFile, preferences).get(sourceFile.Path(), ch, exportMapKey)
+	exportInfos = l.getExportInfoMap(ctx, ch, sourceFile, preferences).get(sourceFile.Path(), ch, exportMapKey)
 	if len(exportInfos) == 0 {
 		panic("Some exportInfo should match the specified exportMapKey")
 	}
@@ -396,6 +396,7 @@ func NewExportInfoMap(globalsTypingCacheLocation string) *exportInfoMap {
 }
 
 func (l *LanguageService) getExportInfoMap(
+	ctx context.Context,
 	ch *checker.Checker,
 	importingFile *ast.SourceFile,
 	preferences *UserPreferences,
@@ -473,13 +474,13 @@ func (l *LanguageService) getExportInfoMap(
 	return expInfoMap
 }
 
-func (l *LanguageService) getAllExportInfoForSymbol(ch *checker.Checker, importingFile *ast.SourceFile, symbol *ast.Symbol, symbolName string, moduleSymbol *ast.Symbol, preferCapitalized bool, preferences *UserPreferences) []*SymbolExportInfo {
+func (l *LanguageService) getAllExportInfoForSymbol(ctx context.Context, ch *checker.Checker, importingFile *ast.SourceFile, symbol *ast.Symbol, symbolName string, moduleSymbol *ast.Symbol, preferCapitalized bool, preferences *UserPreferences) []*SymbolExportInfo {
 	// !!! isFileExcluded := len(preferences.AutoImportFileExcludePatterns) != 0 && getIsFileExcluded(host, preferences);
 	// mergedModuleSymbol := ch.GetMergedSymbol(moduleSymbol)
 	// moduleSourceFile := isFileExcluded && len(mergedModuleSymbol.Declarations) > 0 && ast.GetDeclarationOfKind(mergedModuleSymbol, SyntaxKind.SourceFile)
 	// moduleSymbolExcluded := moduleSourceFile && isFileExcluded(moduleSourceFile.AsSourceFile());
 	moduleSymbolExcluded := false
-	return l.getExportInfoMap(ch, importingFile, preferences).search(
+	return l.getExportInfoMap(ctx, ch, importingFile, preferences).search(
 		ch,
 		importingFile.Path(),
 		preferCapitalized,
@@ -505,7 +506,7 @@ func (l *LanguageService) getSingleExportInfoForSymbol(ch *checker.Checker, symb
 				moduleFileName:    "",
 				exportKind:        defaultInfo.exportKind,
 				targetFlags:       ch.SkipAlias(symbol).Flags,
-				isFromPackageJson: &isFromPackageJson,
+				isFromPackageJson: isFromPackageJson,
 			}
 		}
 		if named := ch.TryGetMemberInModuleExportsAndProperties(symbolName, moduleSymbol); named != nil && ch.SkipAlias(named) == symbol {
@@ -515,7 +516,7 @@ func (l *LanguageService) getSingleExportInfoForSymbol(ch *checker.Checker, symb
 				moduleFileName:    "",
 				exportKind:        ExportKindNamed,
 				targetFlags:       ch.SkipAlias(symbol).Flags,
-				isFromPackageJson: &isFromPackageJson,
+				isFromPackageJson: isFromPackageJson,
 			}
 		}
 		return nil
@@ -1455,7 +1456,6 @@ func (l *LanguageService) forEachExternalModuleToImportFrom(
 	// useAutoImportProvider bool,
 	cb func(module *ast.Symbol, moduleFile *ast.SourceFile, checker *checker.Checker, isFromPackageJson bool),
 ) {
-	// useCaseSensitiveFileNames := hostUsesCaseSensitiveFileNames(host)
 	// !!! excludePatterns
 	// excludePatterns := preferences.autoImportFileExcludePatterns && getIsExcludedPatterns(preferences, useCaseSensitiveFileNames)
 
