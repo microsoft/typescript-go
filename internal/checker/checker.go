@@ -15498,7 +15498,7 @@ func (c *Checker) ResolveAlias(symbol *ast.Symbol) (*ast.Symbol, bool) {
 
 func (c *Checker) resolveAlias(symbol *ast.Symbol) *ast.Symbol {
 	if symbol.Flags&ast.SymbolFlagsAlias == 0 {
-		debug.Fail("Should only get alias here")
+		panic("Should only get alias here")
 	}
 	links := c.aliasSymbolLinks.Get(symbol)
 	if links.aliasTarget == nil {
