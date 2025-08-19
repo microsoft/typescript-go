@@ -1801,13 +1801,6 @@ func (b *nodeBuilderImpl) signatureToSignatureDeclarationHelper(signature *Signa
 	// if typeArguments != nil {
 	// 	node.TypeArguments = b.f.NewNodeList(typeArguments)
 	// }
-	// !!! TODO: synthetic comment support
-	// if signature.declaration. /* ? */ kind == ast.KindJSDocSignature && signature.declaration.Parent.Kind == ast.KindJSDocOverloadTag {
-	// 	comment := getTextOfNode(signature.declaration.Parent.Parent, true /*includeTrivia*/).slice(2, -2).split(regexp.MustParse(`\r\n|\n|\r`)).map_(func(line string) string {
-	// 		return line.replace(regexp.MustParse(`^\s+`), " ")
-	// 	}).join("\n")
-	// 	addSyntheticLeadingComment(node, ast.KindMultiLineCommentTrivia, comment, true /*hasTrailingNewLine*/)
-	// }
 
 	cleanup()
 	return node
