@@ -3,6 +3,7 @@ package project
 import (
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -61,9 +62,11 @@ type Project struct {
 	dirty         bool
 	dirtyFilePath tspath.Path
 
-	host        *compilerHost
-	CommandLine *tsoptions.ParsedCommandLine
-	Program     *compiler.Program
+	host                            *compilerHost
+	CommandLine                     *tsoptions.ParsedCommandLine
+	commandLineWithTypingsFiles     *tsoptions.ParsedCommandLine
+	commandLineWithTypingsFilesOnce sync.Once
+	Program                         *compiler.Program
 	// The kind of update that was performed on the program last time it was updated.
 	ProgramUpdateKind ProgramUpdateKind
 	// The ID of the snapshot that created the program stored in this project.
@@ -215,11 +218,12 @@ func (p *Project) Clone() *Project {
 		dirty:         p.dirty,
 		dirtyFilePath: p.dirtyFilePath,
 
-		host:              p.host,
-		CommandLine:       p.CommandLine,
-		Program:           p.Program,
-		ProgramUpdateKind: ProgramUpdateKindNone,
-		ProgramLastUpdate: p.ProgramLastUpdate,
+		host:                        p.host,
+		CommandLine:                 p.CommandLine,
+		commandLineWithTypingsFiles: p.commandLineWithTypingsFiles,
+		Program:                     p.Program,
+		ProgramUpdateKind:           ProgramUpdateKindNone,
+		ProgramLastUpdate:           p.ProgramLastUpdate,
 
 		failedLookupsWatch:      p.failedLookupsWatch,
 		affectingLocationsWatch: p.affectingLocationsWatch,
@@ -234,7 +238,6 @@ func (p *Project) Clone() *Project {
 }
 
 // getCommandLineWithTypingsFiles returns the command line augmented with typing files if ATA is enabled.
-// !!! Need to cache this for equality comparison in CreateProgram
 func (p *Project) getCommandLineWithTypingsFiles() *tsoptions.ParsedCommandLine {
 	if len(p.typingsFiles) == 0 {
 		return p.CommandLine
@@ -246,21 +249,26 @@ func (p *Project) getCommandLineWithTypingsFiles() *tsoptions.ParsedCommandLine 
 		return p.CommandLine
 	}
 
-	// Create an augmented command line that includes typing files
-	originalRootNames := p.CommandLine.FileNames()
-	newRootNames := make([]string, 0, len(originalRootNames)+len(p.typingsFiles))
-	newRootNames = append(newRootNames, originalRootNames...)
-	newRootNames = append(newRootNames, p.typingsFiles...)
+	p.commandLineWithTypingsFilesOnce.Do(func() {
+		if p.commandLineWithTypingsFiles == nil {
+			// Create an augmented command line that includes typing files
+			originalRootNames := p.CommandLine.FileNames()
+			newRootNames := make([]string, 0, len(originalRootNames)+len(p.typingsFiles))
+			newRootNames = append(newRootNames, originalRootNames...)
+			newRootNames = append(newRootNames, p.typingsFiles...)
 
-	// Create a new ParsedCommandLine with the augmented root file names
-	return tsoptions.NewParsedCommandLine(
-		p.CommandLine.CompilerOptions(),
-		newRootNames,
-		tspath.ComparePathsOptions{
-			UseCaseSensitiveFileNames: p.host.FS().UseCaseSensitiveFileNames(),
-			CurrentDirectory:          p.currentDirectory,
-		},
-	)
+			// Create a new ParsedCommandLine with the augmented root file names
+			p.commandLineWithTypingsFiles = tsoptions.NewParsedCommandLine(
+				p.CommandLine.CompilerOptions(),
+				newRootNames,
+				tspath.ComparePathsOptions{
+					UseCaseSensitiveFileNames: p.host.FS().UseCaseSensitiveFileNames(),
+					CurrentDirectory:          p.currentDirectory,
+				},
+			)
+		}
+	})
+	return p.commandLineWithTypingsFiles
 }
 
 type CreateProgramResult struct {

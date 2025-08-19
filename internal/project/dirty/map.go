@@ -88,7 +88,6 @@ func (m *Map[K, V]) Add(key K, value V) {
 	}
 }
 
-// !!! Decide whether this, entry.Change(), or both should exist
 func (m *Map[K, V]) Change(key K, apply func(V)) {
 	if entry, ok := m.Get(key); ok {
 		entry.Change(apply)
