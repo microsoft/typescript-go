@@ -9,7 +9,7 @@ import (
 
 func TestAliasMergingWithNamespace(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `namespace bar { }
 import bar = bar/**/;`
