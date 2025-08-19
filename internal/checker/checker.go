@@ -15087,7 +15087,7 @@ func (c *Checker) resolveEntityName(name *ast.Node, meaning ast.SymbolFlags, ign
 				name.Parent != nil && name.Parent.Kind == ast.KindJSExportAssignment) {
 			c.markSymbolOfAliasDeclarationIfTypeOnly(getAliasDeclarationFromName(name), symbol, nil /*finalTarget*/, true /*overwriteEmpty*/, nil, "")
 		}
-		if symbol.Flags&meaning == 0 && !dontResolveAlias {
+		if symbol.Flags&meaning == 0 && !dontResolveAlias && symbol.Flags&ast.SymbolFlagsAlias != 0 {
 			return c.resolveAlias(symbol)
 		}
 	}
@@ -15498,7 +15498,7 @@ func (c *Checker) ResolveAlias(symbol *ast.Symbol) (*ast.Symbol, bool) {
 
 func (c *Checker) resolveAlias(symbol *ast.Symbol) *ast.Symbol {
 	if symbol.Flags&ast.SymbolFlagsAlias == 0 {
-		panic("Should only get alias here")
+		debug.Fail("Should only get alias here")
 	}
 	links := c.aliasSymbolLinks.Get(symbol)
 	if links.aliasTarget == nil {
