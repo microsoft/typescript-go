@@ -6,7 +6,7 @@ function baz([, z, , ]) { }
 >z : any
 
 function foo([, b, ]: [any, any]): void { }
->foo : ([, b,]: [any, any]) => void
+>foo : ([, b]: [any, any]) => void
 >b : any
 
 function bar([z, , , ]) { }
