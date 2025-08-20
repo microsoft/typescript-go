@@ -45,28 +45,28 @@ func (b *BuildInfoRoot) MarshalJSON() ([]byte, error) {
 
 func (b *BuildInfoRoot) UnmarshalJSON(data []byte) error {
 	var startAndEnd *[2]int
-	if err := json.Unmarshal(data, &startAndEnd); err == nil {
-		*b = BuildInfoRoot{
-			Start: BuildInfoFileId(startAndEnd[0]),
-			End:   BuildInfoFileId(startAndEnd[1]),
+	if err := json.Unmarshal(data, &startAndEnd); err != nil {
+		var start int
+		if err := json.Unmarshal(data, &start); err != nil {
+			var name string
+			if err := json.Unmarshal(data, &name); err != nil {
+				return fmt.Errorf("invalid BuildInfoRoot: %s", data)
+			}
+			*b = BuildInfoRoot{
+				NonIncremental: name,
+			}
+			return nil
 		}
-		return nil
-	}
-	var start int
-	if err := json.Unmarshal(data, &start); err == nil {
 		*b = BuildInfoRoot{
 			Start: BuildInfoFileId(start),
 		}
 		return nil
 	}
-	var name string
-	if err := json.Unmarshal(data, &name); err == nil {
-		*b = BuildInfoRoot{
-			NonIncremental: name,
-		}
-		return nil
+	*b = BuildInfoRoot{
+		Start: BuildInfoFileId(startAndEnd[0]),
+		End:   BuildInfoFileId(startAndEnd[1]),
 	}
-	return fmt.Errorf("invalid BuildInfoRoot: %s", data)
+	return nil
 }
 
 type buildInfoFileInfoNoSignature struct {
@@ -155,20 +155,20 @@ func (b *BuildInfoFileInfo) MarshalJSON() ([]byte, error) {
 
 func (b *BuildInfoFileInfo) UnmarshalJSON(data []byte) error {
 	var vSignature string
-	if err := json.Unmarshal(data, &vSignature); err == nil {
-		*b = BuildInfoFileInfo{signature: vSignature}
-		return nil
-	}
-	var noSignature buildInfoFileInfoNoSignature
-	if err := json.Unmarshal(data, &noSignature); err == nil && noSignature.NoSignature {
+	if err := json.Unmarshal(data, &vSignature); err != nil {
+		var noSignature buildInfoFileInfoNoSignature
+		if err := json.Unmarshal(data, &noSignature); err != nil || !noSignature.NoSignature {
+			var fileInfo buildInfoFileInfoWithSignature
+			if err := json.Unmarshal(data, &fileInfo); err != nil {
+				return fmt.Errorf("invalid BuildInfoFileInfo: %s", data)
+			}
+			*b = BuildInfoFileInfo{fileInfo: &fileInfo}
+			return nil
+		}
 		*b = BuildInfoFileInfo{noSignature: &noSignature}
 		return nil
 	}
-	var fileInfo buildInfoFileInfoWithSignature
-	if err := json.Unmarshal(data, &fileInfo); err != nil {
-		return fmt.Errorf("invalid BuildInfoFileInfo: %s", data)
-	}
-	*b = BuildInfoFileInfo{fileInfo: &fileInfo}
+	*b = BuildInfoFileInfo{signature: vSignature}
 	return nil
 }
 
@@ -259,20 +259,20 @@ func (b *BuildInfoSemanticDiagnostic) MarshalJSON() ([]byte, error) {
 
 func (b *BuildInfoSemanticDiagnostic) UnmarshalJSON(data []byte) error {
 	var fileId BuildInfoFileId
-	if err := json.Unmarshal(data, &fileId); err == nil {
-		*b = BuildInfoSemanticDiagnostic{
-			FileId: fileId,
+	if err := json.Unmarshal(data, &fileId); err != nil {
+		var diagnostics BuildInfoDiagnosticsOfFile
+		if err := json.Unmarshal(data, &diagnostics); err != nil {
+			return fmt.Errorf("invalid BuildInfoSemanticDiagnostic: %s", data)
 		}
-		return nil
-	}
-	var diagnostics BuildInfoDiagnosticsOfFile
-	if err := json.Unmarshal(data, &diagnostics); err == nil {
 		*b = BuildInfoSemanticDiagnostic{
 			Diagnostics: &diagnostics,
 		}
 		return nil
 	}
-	return fmt.Errorf("invalid BuildInfoSemanticDiagnostic: %s", data)
+	*b = BuildInfoSemanticDiagnostic{
+		FileId: fileId,
+	}
+	return nil
 }
 
 // fileId if pending emit is same as what compilerOptions suggest
@@ -297,30 +297,32 @@ func (b *BuildInfoFilePendingEmit) MarshalJSON() ([]byte, error) {
 
 func (b *BuildInfoFilePendingEmit) UnmarshalJSON(data []byte) error {
 	var fileId BuildInfoFileId
-	if err := json.Unmarshal(data, &fileId); err == nil {
-		*b = BuildInfoFilePendingEmit{
-			FileId: fileId,
+	if err := json.Unmarshal(data, &fileId); err != nil {
+		var intTuple []int
+		if err := json.Unmarshal(data, &intTuple); err != nil || len(intTuple) == 0 {
+			return fmt.Errorf("invalid BuildInfoFilePendingEmit: %s", data)
 		}
-		return nil
-	}
-	var intTuple []int
-	if err := json.Unmarshal(data, &intTuple); err == nil {
-		if len(intTuple) == 1 {
+		switch len(intTuple) {
+		case 1:
 			*b = BuildInfoFilePendingEmit{
 				FileId:   BuildInfoFileId(intTuple[0]),
 				EmitKind: FileEmitKindDts,
 			}
 			return nil
-		} else if len(intTuple) == 2 {
+		case 2:
 			*b = BuildInfoFilePendingEmit{
 				FileId:   BuildInfoFileId(intTuple[0]),
 				EmitKind: FileEmitKind(intTuple[1]),
 			}
 			return nil
+		default:
+			return fmt.Errorf("invalid BuildInfoFilePendingEmit: expected 1 or 2 integers, got %d", len(intTuple))
 		}
-		return fmt.Errorf("invalid BuildInfoFilePendingEmit: expected 1 or 2 integers, got %d", len(intTuple))
 	}
-	return fmt.Errorf("invalid BuildInfoFilePendingEmit: %s", data)
+	*b = BuildInfoFilePendingEmit{
+		FileId: fileId,
+	}
+	return nil
 }
 
 // [fileId, signature] if different from file's signature
@@ -375,54 +377,56 @@ func (b *BuildInfoEmitSignature) MarshalJSON() ([]byte, error) {
 
 func (b *BuildInfoEmitSignature) UnmarshalJSON(data []byte) error {
 	var fileId BuildInfoFileId
-	if err := json.Unmarshal(data, &fileId); err == nil {
+	if err := json.Unmarshal(data, &fileId); err != nil {
+		var fileIdAndSignature []any
+		if err := json.Unmarshal(data, &fileIdAndSignature); err != nil {
+			return fmt.Errorf("invalid BuildInfoEmitSignature: %s", data)
+		}
+		if len(fileIdAndSignature) != 2 {
+			return fmt.Errorf("invalid BuildInfoEmitSignature: expected 2 elements, got %d", len(fileIdAndSignature))
+		}
+		var fileId BuildInfoFileId
+		if id, ok := fileIdAndSignature[0].(float64); !ok {
+			return fmt.Errorf("invalid fileId in BuildInfoEmitSignature: expected float64, got %T", fileIdAndSignature[0])
+		} else {
+			fileId = BuildInfoFileId(id)
+		}
+		var signature string
+		var differsOnlyInDtsMap, differsInOptions bool
+		if signatureV, ok := fileIdAndSignature[1].(string); !ok {
+			if signatureList, ok := fileIdAndSignature[1].([]any); !ok {
+				return fmt.Errorf("invalid signature in BuildInfoEmitSignature: expected string or []string, got %T", fileIdAndSignature[1])
+			} else {
+				switch len(signatureList) {
+				case 0:
+					differsOnlyInDtsMap = true
+				case 1:
+					if sig, ok := signatureList[0].(string); !ok {
+						return fmt.Errorf("invalid signature in BuildInfoEmitSignature: expected string, got %T", signatureList[0])
+					} else {
+						signature = sig
+						differsInOptions = true
+					}
+				default:
+					return fmt.Errorf("invalid signature in BuildInfoEmitSignature: expected string or []string with 0 or 1 element, got %d elements", len(signatureList))
+				}
+			}
+		} else {
+			signature = signatureV
+		}
 		*b = BuildInfoEmitSignature{
-			FileId: fileId,
+			FileId:              fileId,
+			Signature:           signature,
+			DiffersOnlyInDtsMap: differsOnlyInDtsMap,
+			DiffersInOptions:    differsInOptions,
 		}
 		return nil
+
 	}
-	var fileIdAndSignature []any
-	if err := json.Unmarshal(data, &fileIdAndSignature); err == nil {
-		if len(fileIdAndSignature) == 2 {
-			var fileId BuildInfoFileId
-			if id, ok := fileIdAndSignature[0].(float64); ok {
-				fileId = BuildInfoFileId(id)
-			} else {
-				return fmt.Errorf("invalid fileId in BuildInfoEmitSignature: expected float64, got %T", fileIdAndSignature[0])
-			}
-			var signature string
-			var differsOnlyInDtsMap, differsInOptions bool
-			if signatureV, ok := fileIdAndSignature[1].(string); !ok {
-				if signatureList, ok := fileIdAndSignature[1].([]any); ok {
-					if len(signatureList) == 0 {
-						differsOnlyInDtsMap = true
-					} else if len(signatureList) == 1 {
-						if sig, ok := signatureList[0].(string); ok {
-							signature = sig
-							differsInOptions = true
-						} else {
-							return fmt.Errorf("invalid signature in BuildInfoEmitSignature: expected string, got %T", signatureList[0])
-						}
-					} else {
-						return fmt.Errorf("invalid signature in BuildInfoEmitSignature: expected string or []string with 0 or 1 element, got %d elements", len(signatureList))
-					}
-				} else {
-					return fmt.Errorf("invalid signature in BuildInfoEmitSignature: expected string or []string, got %T", fileIdAndSignature[1])
-				}
-			} else {
-				signature = signatureV
-			}
-			*b = BuildInfoEmitSignature{
-				FileId:              fileId,
-				Signature:           signature,
-				DiffersOnlyInDtsMap: differsOnlyInDtsMap,
-				DiffersInOptions:    differsInOptions,
-			}
-			return nil
-		}
-		return fmt.Errorf("invalid BuildInfoEmitSignature: expected 2 elements, got %d", len(fileIdAndSignature))
+	*b = BuildInfoEmitSignature{
+		FileId: fileId,
 	}
-	return fmt.Errorf("invalid BuildInfoEmitSignature: %s", data)
+	return nil
 }
 
 type BuildInfoResolvedRoot struct {
@@ -436,14 +440,14 @@ func (b *BuildInfoResolvedRoot) MarshalJSON() ([]byte, error) {
 
 func (b *BuildInfoResolvedRoot) UnmarshalJSON(data []byte) error {
 	var resolvedAndRoot [2]int
-	if err := json.Unmarshal(data, &resolvedAndRoot); err == nil {
-		*b = BuildInfoResolvedRoot{
-			Resolved: BuildInfoFileId(resolvedAndRoot[0]),
-			Root:     BuildInfoFileId(resolvedAndRoot[1]),
-		}
-		return nil
+	if err := json.Unmarshal(data, &resolvedAndRoot); err != nil {
+		return fmt.Errorf("invalid BuildInfoResolvedRoot: %s", data)
 	}
-	return fmt.Errorf("invalid BuildInfoResolvedRoot: %s", data)
+	*b = BuildInfoResolvedRoot{
+		Resolved: BuildInfoFileId(resolvedAndRoot[0]),
+		Root:     BuildInfoFileId(resolvedAndRoot[1]),
+	}
+	return nil
 }
 
 type BuildInfo struct {

@@ -94,14 +94,15 @@ func (r *readableBuildInfoDiagnosticsOfFile) UnmarshalJSON(data []byte) error {
 	if !ok {
 		return fmt.Errorf("invalid fileId in readableBuildInfoDiagnosticsOfFile: expected string, got %T", fileIdAndDiagnostics[0])
 	}
-	if diagnostics, ok := fileIdAndDiagnostics[1].([]*readableBuildInfoDiagnostic); ok {
+	if diagnostics, ok := fileIdAndDiagnostics[1].([]*readableBuildInfoDiagnostic); !ok {
+		return fmt.Errorf("invalid diagnostics in readableBuildInfoDiagnosticsOfFile: expected []*readableBuildInfoDiagnostic, got %T", fileIdAndDiagnostics[1])
+	} else {
 		*r = readableBuildInfoDiagnosticsOfFile{
 			file:        file,
 			diagnostics: diagnostics,
 		}
 		return nil
 	}
-	return fmt.Errorf("invalid diagnostics in readableBuildInfoDiagnosticsOfFile: expected []*readableBuildInfoDiagnostic, got %T", fileIdAndDiagnostics[1])
 }
 
 type readableBuildInfoSemanticDiagnostic struct {
@@ -118,20 +119,20 @@ func (r *readableBuildInfoSemanticDiagnostic) MarshalJSON() ([]byte, error) {
 
 func (r *readableBuildInfoSemanticDiagnostic) UnmarshalJSON(data []byte) error {
 	var file string
-	if err := json.Unmarshal(data, &file); err == nil {
-		*r = readableBuildInfoSemanticDiagnostic{
-			file: file,
+	if err := json.Unmarshal(data, &file); err != nil {
+		var diagnostics readableBuildInfoDiagnosticsOfFile
+		if err := json.Unmarshal(data, &diagnostics); err != nil {
+			return fmt.Errorf("invalid readableBuildInfoSemanticDiagnostic: %s", data)
 		}
-		return nil
-	}
-	var diagnostics readableBuildInfoDiagnosticsOfFile
-	if err := json.Unmarshal(data, &diagnostics); err == nil {
 		*r = readableBuildInfoSemanticDiagnostic{
 			diagnostics: &diagnostics,
 		}
 		return nil
 	}
-	return fmt.Errorf("invalid readableBuildInfoSemanticDiagnostic: %s", data)
+	*r = readableBuildInfoSemanticDiagnostic{
+		file: file,
+	}
+	return nil
 }
 
 type readableBuildInfoFilePendingEmit struct {
@@ -193,14 +194,14 @@ func (b *readableBuildInfoResolvedRoot) MarshalJSON() ([]byte, error) {
 
 func (b *readableBuildInfoResolvedRoot) UnmarshalJSON(data []byte) error {
 	var resolvedAndRoot [2]string
-	if err := json.Unmarshal(data, &resolvedAndRoot); err == nil {
-		*b = readableBuildInfoResolvedRoot{
-			Resolved: resolvedAndRoot[0],
-			Root:     resolvedAndRoot[1],
-		}
-		return nil
+	if err := json.Unmarshal(data, &resolvedAndRoot); err != nil {
+		return fmt.Errorf("invalid BuildInfoResolvedRoot: %s", data)
 	}
-	return fmt.Errorf("invalid BuildInfoResolvedRoot: %s", data)
+	*b = readableBuildInfoResolvedRoot{
+		Resolved: resolvedAndRoot[0],
+		Root:     resolvedAndRoot[1],
+	}
+	return nil
 }
 
 func toReadableBuildInfo(buildInfo *incremental.BuildInfo, buildInfoText string) string {
