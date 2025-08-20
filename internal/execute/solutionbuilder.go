@@ -3,7 +3,6 @@ package execute
 import (
 	"fmt"
 	"io"
-	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -25,54 +24,15 @@ type solutionBuilder struct {
 	opts                solutionBuilderOptions
 	comparePathsOptions tspath.ComparePathsOptions
 	host                *solutionBuilderHost
-	orderGenerator      *buildOrderGenerator
 }
 
-func (s *solutionBuilder) Build() CommandLineResult {
-	s.setup()
-	if s.opts.command.BuildOptions.Verbose.IsTrue() {
-		s.createBuilderStatusReporter(nil)(ast.NewCompilerDiagnostic(
-			diagnostics.Projects_in_this_build_Colon_0,
-			strings.Join(core.Map(s.orderGenerator.Order(), func(p string) string {
-				return "\r\n    * " + s.relativeFileName(p)
-			}), ""),
-		))
+func (s *solutionBuilder) buildOrClean(build bool) CommandLineResult {
+	s.host = &solutionBuilderHost{
+		builder: s,
+		host:    compiler.NewCachedFSCompilerHost(s.opts.sys.GetCurrentDirectory(), s.opts.sys.FS(), s.opts.sys.DefaultLibraryPath(), nil, nil),
 	}
-	var buildResult solutionBuilderResult
-	if len(s.orderGenerator.errors) == 0 {
-		wg := core.NewWorkGroup(s.opts.command.CompilerOptions.SingleThreaded.IsTrue())
-		s.buildProjects(wg, &buildResult)
-		wg.RunAndWait()
-		buildResult.statistics.projects = len(s.orderGenerator.Order())
-	} else {
-		s.buildResultOfCircularOrder(&buildResult)
-	}
-	buildResult.report(s)
-	return buildResult.result
-}
-
-func (s *solutionBuilder) Clean() CommandLineResult {
-	s.setup()
-	var buildResult solutionBuilderResult
-	if len(s.orderGenerator.errors) == 0 {
-		wg := core.NewWorkGroup(s.opts.command.CompilerOptions.SingleThreaded.IsTrue())
-		s.cleanProjects(wg, &buildResult)
-		wg.RunAndWait()
-		buildResult.statistics.projects = len(s.orderGenerator.Order())
-	} else {
-		s.buildResultOfCircularOrder(&buildResult)
-	}
-	buildResult.report(s)
-	return buildResult.result
-}
-
-func (s *solutionBuilder) buildResultOfCircularOrder(buildResult *solutionBuilderResult) {
-	buildResult.result.Status = ExitStatusProjectReferenceCycle_OutputsSkipped
-	reportDiagnostic := s.createDiagnosticReporter(nil)
-	for _, err := range s.orderGenerator.errors {
-		reportDiagnostic(err)
-	}
-	buildResult.errors = s.orderGenerator.errors
+	orderGenerator := NewBuildOrderGenerator(s.opts.command, s.host, s.opts.command.CompilerOptions.SingleThreaded.IsTrue())
+	return orderGenerator.buildOrClean(s, build)
 }
 
 func (s *solutionBuilder) relativeFileName(fileName string) string {
@@ -81,34 +41,6 @@ func (s *solutionBuilder) relativeFileName(fileName string) string {
 
 func (s *solutionBuilder) toPath(fileName string) tspath.Path {
 	return tspath.ToPath(fileName, s.comparePathsOptions.CurrentDirectory, s.comparePathsOptions.UseCaseSensitiveFileNames)
-}
-
-func (s *solutionBuilder) setup() {
-	s.host = &solutionBuilderHost{
-		builder: s,
-		host:    compiler.NewCachedFSCompilerHost(s.opts.sys.GetCurrentDirectory(), s.opts.sys.FS(), s.opts.sys.DefaultLibraryPath(), nil, nil),
-	}
-	s.orderGenerator = NewBuildOrderGenerator(s.opts.command, s.host, s.opts.command.CompilerOptions.SingleThreaded.IsTrue())
-}
-
-func (s *solutionBuilder) buildProjects(wg core.WorkGroup, buildResult *solutionBuilderResult) {
-	for _, config := range s.orderGenerator.Order() {
-		path := s.toPath(config)
-		wg.Queue(func() {
-			task, ok := s.orderGenerator.tasks.Load(path)
-			if !ok {
-				panic("No build task found for " + config)
-			}
-
-			taskReporter := s.buildProject(config, path, task)
-			// Wait for previous build task to complete reporting status, errors etc
-			if task.previousTaskReporter != nil {
-				<-task.previousTaskReporter
-			}
-			taskReporter.report(s, path, buildResult)
-			task.reporter <- taskReporter
-		})
-	}
 }
 
 func (s *solutionBuilder) getWriter(taskReporter *taskReporter) io.Writer {
@@ -605,26 +537,6 @@ func (s *solutionBuilder) updateTimeStamps(config string, task *buildTask, taskR
 		for outputFile := range task.resolved.GetOutputFileNames() {
 			updateTimeStamp(outputFile)
 		}
-	}
-}
-
-func (s *solutionBuilder) cleanProjects(wg core.WorkGroup, buildResult *solutionBuilderResult) {
-	for _, config := range s.orderGenerator.Order() {
-		path := s.toPath(config)
-		wg.Queue(func() {
-			task, ok := s.orderGenerator.tasks.Load(path)
-			if !ok {
-				panic("No build task found for " + config)
-			}
-
-			taskReporter := s.cleanProject(config, path, task)
-			// Wait for previous build task to complete reporting status, errors etc
-			if task.previousTaskReporter != nil {
-				<-task.previousTaskReporter
-			}
-			taskReporter.report(s, path, buildResult)
-			task.reporter <- taskReporter
-		})
 	}
 }
 

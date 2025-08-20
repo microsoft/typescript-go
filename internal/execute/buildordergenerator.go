@@ -365,3 +365,51 @@ func (b *buildOrderGenerator) analyzeConfig(
 		downStream.status = make(chan *upToDateStatus, 1)
 	}
 }
+
+func (b *buildOrderGenerator) buildOrClean(builder *solutionBuilder, build bool) CommandLineResult {
+	if build && builder.opts.command.BuildOptions.Verbose.IsTrue() {
+		builder.createBuilderStatusReporter(nil)(ast.NewCompilerDiagnostic(
+			diagnostics.Projects_in_this_build_Colon_0,
+			strings.Join(core.Map(b.Order(), func(p string) string {
+				return "\r\n    * " + builder.relativeFileName(p)
+			}), ""),
+		))
+	}
+	var buildResult solutionBuilderResult
+	if len(b.errors) == 0 {
+		wg := core.NewWorkGroup(builder.opts.command.CompilerOptions.SingleThreaded.IsTrue())
+		for _, config := range b.Order() {
+			path := builder.toPath(config)
+			wg.Queue(func() {
+				task, ok := b.tasks.Load(path)
+				if !ok {
+					panic("No build task found for " + config)
+				}
+
+				var taskReporter *taskReporter
+				if build {
+					taskReporter = builder.buildProject(config, path, task)
+				} else {
+					taskReporter = builder.cleanProject(config, path, task)
+				}
+				// Wait for previous build task to complete reporting status, errors etc
+				if task.previousTaskReporter != nil {
+					<-task.previousTaskReporter
+				}
+				taskReporter.report(builder, path, &buildResult)
+				task.reporter <- taskReporter
+			})
+		}
+		wg.RunAndWait()
+		buildResult.statistics.projects = len(b.Order())
+	} else {
+		buildResult.result.Status = ExitStatusProjectReferenceCycle_OutputsSkipped
+		reportDiagnostic := builder.createDiagnosticReporter(nil)
+		for _, err := range b.errors {
+			reportDiagnostic(err)
+		}
+		buildResult.errors = b.errors
+	}
+	buildResult.report(builder)
+	return buildResult.result
+}

@@ -130,11 +130,7 @@ func tscBuildCompilation(sys System, buildCommand *tsoptions.ParsedBuildCommandL
 		buildCommand,
 		testing,
 	})
-	if buildCommand.BuildOptions.Clean.IsTrue() {
-		return solutionBuilder.Clean()
-	} else {
-		return solutionBuilder.Build()
-	}
+	return solutionBuilder.buildOrClean(!buildCommand.BuildOptions.Clean.IsTrue())
 }
 
 func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testing CommandLineTesting) CommandLineResult {
