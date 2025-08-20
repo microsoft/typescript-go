@@ -41,7 +41,7 @@ func (s *solutionBuilder) Build() CommandLineResult {
 	var buildResult solutionBuilderResult
 	if len(s.orderGenerator.errors) == 0 {
 		wg := core.NewWorkGroup(s.opts.command.CompilerOptions.SingleThreaded.IsTrue())
-		s.buildProjects(wg, s.opts.command.ResolvedProjectPaths(), &buildResult, &collections.SyncSet[tspath.Path]{})
+		s.buildProjects(wg, &buildResult)
 		wg.RunAndWait()
 		buildResult.statistics.projects = len(s.orderGenerator.Order())
 	} else {
@@ -91,50 +91,24 @@ func (s *solutionBuilder) setup() {
 	s.orderGenerator = NewBuildOrderGenerator(s.opts.command, s.host, s.opts.command.CompilerOptions.SingleThreaded.IsTrue())
 }
 
-func (s *solutionBuilder) buildProjects(wg core.WorkGroup, projects []string, buildResult *solutionBuilderResult, seen *collections.SyncSet[tspath.Path]) {
-	for _, project := range projects {
-		s.startProjectBuild(wg, project, buildResult, seen)
-	}
-}
-
-func (s *solutionBuilder) startProjectBuild(wg core.WorkGroup, config string, buildResult *solutionBuilderResult, seen *collections.SyncSet[tspath.Path]) {
-	path := s.toPath(config)
-	if !seen.AddIfAbsent(path) {
-		return // Already seen this project
-	}
-	wg.Queue(func() {
-		task, ok := s.orderGenerator.tasks.Load(path)
-		if !ok {
-			panic("No build task found for " + config)
-		}
-
-		// Queue the upstream tasks
-		for _, upstream := range task.upStream {
-			if upstream.status != nil {
-				s.startProjectBuild(wg, upstream.config, buildResult, seen)
+func (s *solutionBuilder) buildProjects(wg core.WorkGroup, buildResult *solutionBuilderResult) {
+	for _, config := range s.orderGenerator.Order() {
+		path := s.toPath(config)
+		wg.Queue(func() {
+			task, ok := s.orderGenerator.tasks.Load(path)
+			if !ok {
+				panic("No build task found for " + config)
 			}
-		}
 
-		// Wait on upstream tasks to complete
-		upStreamStatus := make([]*upToDateStatus, len(task.upStream))
-		for i, upstream := range task.upStream {
-			if upstream.status != nil {
-				upStreamStatus[i] = <-upstream.status
+			taskReporter := s.buildProject(config, path, task)
+			// Wait for previous build task to complete reporting status, errors etc
+			if task.previousTaskReporter != nil {
+				<-task.previousTaskReporter
 			}
-		}
-
-		status, taskReporter := s.buildProject(config, path, task, upStreamStatus)
-		for _, downstream := range task.downStream {
-			downstream.status <- status
-		}
-
-		// Wait for previous build task to complete reporting status, errors etc
-		if task.previousTaskReporter != nil {
-			<-task.previousTaskReporter
-		}
-		taskReporter.report(s, path, buildResult)
-		task.reporter <- taskReporter
-	})
+			taskReporter.report(s, path, buildResult)
+			task.reporter <- taskReporter
+		})
+	}
 }
 
 func (s *solutionBuilder) getWriter(taskReporter *taskReporter) io.Writer {
@@ -159,13 +133,71 @@ func (s *solutionBuilder) createTaskReporter() *taskReporter {
 	return &taskReporter
 }
 
-func (s *solutionBuilder) buildProject(config string, path tspath.Path, task *buildTask, upStreamStatus []*upToDateStatus) (*upToDateStatus, *taskReporter) {
+func (s *solutionBuilder) buildProject(config string, path tspath.Path, task *buildTask) *taskReporter {
+	// Wait on upstream tasks to complete
+	upStreamStatus := make([]*upToDateStatus, len(task.upStream))
+	for i, upstream := range task.upStream {
+		if upstream.status != nil {
+			upStreamStatus[i] = <-upstream.status
+		}
+	}
+
 	status := s.getUpToDateStatus(config, path, task, upStreamStatus)
 	taskReporter := s.createTaskReporter()
 
 	s.reportUpToDateStatus(config, status, taskReporter)
-	handled := s.handleStatusThatDoesntRequireBuild(config, task, status, taskReporter)
-	if handled != nil {
+	if handled := s.handleStatusThatDoesntRequireBuild(config, task, status, taskReporter); handled == nil {
+		if s.opts.command.BuildOptions.Verbose.IsTrue() {
+			taskReporter.reportStatus(ast.NewCompilerDiagnostic(diagnostics.Building_project_0, s.relativeFileName(config)))
+		}
+
+		// Real build
+		var compileTimes compileTimes
+		configAndTime, _ := s.host.resolvedReferences.Load(path)
+		compileTimes.configTime = configAndTime.time
+		buildInfoReadStart := s.opts.sys.Now()
+		oldProgram := incremental.ReadBuildInfoProgram(task.resolved, s.host, s.host)
+		compileTimes.buildInfoReadTime = s.opts.sys.Now().Sub(buildInfoReadStart)
+		parseStart := s.opts.sys.Now()
+		program := compiler.NewProgram(compiler.ProgramOptions{
+			Config: task.resolved,
+			Host: &compilerHostForTaskReporter{
+				host:  s.host,
+				trace: getTraceWithWriterFromSys(&taskReporter.builder, s.opts.testing),
+			},
+			JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
+		})
+		compileTimes.parseTime = s.opts.sys.Now().Sub(parseStart)
+		changesComputeStart := s.opts.sys.Now()
+		taskReporter.program = incremental.NewProgram(program, oldProgram, s.host, s.opts.testing != nil)
+		compileTimes.changesComputeTime = s.opts.sys.Now().Sub(changesComputeStart)
+
+		result, statistics := emitAndReportStatistics(
+			s.opts.sys,
+			taskReporter.program,
+			program,
+			task.resolved,
+			taskReporter.reportDiagnostic,
+			quietDiagnosticsReporter,
+			&taskReporter.builder,
+			compileTimes,
+			s.opts.testing,
+		)
+		taskReporter.exitStatus = result.status
+		taskReporter.statistics = statistics
+		if (!program.Options().NoEmitOnError.IsTrue() || len(result.diagnostics) == 0) &&
+			(len(result.emitResult.EmittedFiles) > 0 || status.kind != upToDateStatusTypeOutOfDateBuildInfoWithErrors) {
+			// Update time stamps for rest of the outputs
+			s.updateTimeStamps(config, task, taskReporter, result.emitResult.EmittedFiles, diagnostics.Updating_unchanged_output_timestamps_of_project_0)
+		}
+
+		if result.status == ExitStatusDiagnosticsPresent_OutputsSkipped || result.status == ExitStatusDiagnosticsPresent_OutputsGenerated {
+			status = &upToDateStatus{kind: upToDateStatusTypeBuildErrors}
+		} else {
+			status = &upToDateStatus{kind: upToDateStatusTypeUpToDate}
+		}
+	} else {
+		status = handled
 		if task.resolved != nil {
 			for _, diagnostic := range task.resolved.GetConfigFileParsingDiagnostics() {
 				taskReporter.reportDiagnostic(diagnostic)
@@ -174,59 +206,11 @@ func (s *solutionBuilder) buildProject(config string, path tspath.Path, task *bu
 		if len(taskReporter.errors) > 0 {
 			taskReporter.exitStatus = ExitStatusDiagnosticsPresent_OutputsSkipped
 		}
-		return handled, taskReporter
 	}
-
-	if s.opts.command.BuildOptions.Verbose.IsTrue() {
-		taskReporter.reportStatus(ast.NewCompilerDiagnostic(diagnostics.Building_project_0, s.relativeFileName(config)))
+	for _, downstream := range task.downStream {
+		downstream.status <- status
 	}
-
-	// Real build
-	var compileTimes compileTimes
-	configAndTime, _ := s.host.resolvedReferences.Load(path)
-	compileTimes.configTime = configAndTime.time
-	buildInfoReadStart := s.opts.sys.Now()
-	oldProgram := incremental.ReadBuildInfoProgram(task.resolved, s.host, s.host)
-	compileTimes.buildInfoReadTime = s.opts.sys.Now().Sub(buildInfoReadStart)
-	parseStart := s.opts.sys.Now()
-	program := compiler.NewProgram(compiler.ProgramOptions{
-		Config: task.resolved,
-		Host: &compilerHostForTaskReporter{
-			host:  s.host,
-			trace: getTraceWithWriterFromSys(&taskReporter.builder, s.opts.testing),
-		},
-		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
-	})
-	compileTimes.parseTime = s.opts.sys.Now().Sub(parseStart)
-	changesComputeStart := s.opts.sys.Now()
-	taskReporter.program = incremental.NewProgram(program, oldProgram, s.host, s.opts.testing != nil)
-	compileTimes.changesComputeTime = s.opts.sys.Now().Sub(changesComputeStart)
-
-	result, statistics := emitAndReportStatistics(
-		s.opts.sys,
-		taskReporter.program,
-		program,
-		task.resolved,
-		taskReporter.reportDiagnostic,
-		quietDiagnosticsReporter,
-		&taskReporter.builder,
-		compileTimes,
-		s.opts.testing,
-	)
-	taskReporter.exitStatus = result.status
-	taskReporter.statistics = statistics
-	if (!program.Options().NoEmitOnError.IsTrue() || len(result.diagnostics) == 0) &&
-		(len(result.emitResult.EmittedFiles) > 0 || status.kind != upToDateStatusTypeOutOfDateBuildInfoWithErrors) {
-		// Update time stamps for rest of the outputs
-		s.updateTimeStamps(config, task, taskReporter, result.emitResult.EmittedFiles, diagnostics.Updating_unchanged_output_timestamps_of_project_0)
-	}
-
-	if result.status == ExitStatusDiagnosticsPresent_OutputsSkipped || result.status == ExitStatusDiagnosticsPresent_OutputsGenerated {
-		status = &upToDateStatus{kind: upToDateStatusTypeBuildErrors}
-	} else {
-		status = &upToDateStatus{kind: upToDateStatusTypeUpToDate}
-	}
-	return status, taskReporter
+	return taskReporter
 }
 
 func (s *solutionBuilder) handleStatusThatDoesntRequireBuild(config string, task *buildTask, status *upToDateStatus, taskReporter *taskReporter) *upToDateStatus {
