@@ -74,32 +74,32 @@ export function lastElementOf<T>(arr: T[]): T | undefined {
     },
 }
 //// [/user/username/projects/demo/tsconfig.json] *new* 
-   {
-       "files": [],
-       "references": [
-           {
-               "path": "./core"
-           },
-           {
-               "path": "./animals",
-           },
-           {
-               "path": "./zoo",
-           },
-       ],
+{
+    "files": [],
+    "references": [
+        {
+            "path": "./core"
+        },
+        {
+            "path": "./animals",
+        },
+        {
+            "path": "./zoo",
+        },
+    ],
 }
 //// [/user/username/projects/demo/zoo/tsconfig.json] *new* 
-   {
-       "extends": "../tsconfig-base.json",
-       "compilerOptions": {
-           "outDir": "../lib/zoo",
-           "rootDir": "."
-       },
-       "references": [
-           {
-               "path": "../animals"
-           }
-       ]
+{
+    "extends": "../tsconfig-base.json",
+    "compilerOptions": {
+        "outDir": "../lib/zoo",
+        "rootDir": "."
+    },
+    "references": [
+        {
+            "path": "../animals"
+        }
+    ]
 }
 //// [/user/username/projects/demo/zoo/zoo.ts] *new* 
 import { Dog, createDog } from '../animals/index';

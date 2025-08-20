@@ -17,6 +17,130 @@ import (
 
 func TestBuildCommandLine(t *testing.T) {
 	t.Parallel()
+	getBuildCommandLineDifferentOptionsMap := func(optionName string) FileMap {
+		return FileMap{
+			"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(fmt.Sprintf(`
+			{
+				"compilerOptions": {
+					"%s": true
+				}
+			}`, optionName)),
+			"/home/src/workspaces/project/a.ts": `export const a = 10;const aLocal = 10;`,
+			"/home/src/workspaces/project/b.ts": `export const b = 10;const bLocal = 10;`,
+			"/home/src/workspaces/project/c.ts": `import { a } from "./a";export const c = a;`,
+			"/home/src/workspaces/project/d.ts": `import { b } from "./b";export const d = b;`,
+		}
+	}
+	getBuildCommandLineEmitDeclarationOnlyMap := func(options []string) FileMap {
+		compilerOptionsStr := strings.Join(core.Map(options, func(opt string) string {
+			return fmt.Sprintf(`"%s": true`, opt)
+		}), ", ")
+		return FileMap{
+			"/home/src/workspaces/solution/project1/src/tsconfig.json": stringtestutil.Dedent(fmt.Sprintf(`
+			{
+				"compilerOptions": { %s }
+			}`, compilerOptionsStr)),
+			"/home/src/workspaces/solution/project1/src/a.ts": `export const a = 10;const aLocal = 10;`,
+			"/home/src/workspaces/solution/project1/src/b.ts": `export const b = 10;const bLocal = 10;`,
+			"/home/src/workspaces/solution/project1/src/c.ts": `import { a } from "./a";export const c = a;`,
+			"/home/src/workspaces/solution/project1/src/d.ts": `import { b } from "./b";export const d = b;`,
+			"/home/src/workspaces/solution/project2/src/tsconfig.json": stringtestutil.Dedent(fmt.Sprintf(`
+			{
+				"compilerOptions": { %s },
+				"references": [{ "path": "../../project1/src" }]
+			}`, compilerOptionsStr)),
+			"/home/src/workspaces/solution/project2/src/e.ts": `export const e = 10;`,
+			"/home/src/workspaces/solution/project2/src/f.ts": `import { a } from "../../project1/src/a"; export const f = a;`,
+			"/home/src/workspaces/solution/project2/src/g.ts": `import { b } from "../../project1/src/b"; export const g = b;`,
+		}
+	}
+	getBuildCommandLineEmitDeclarationOnlyTestCases := func(options []string, suffix string) []*tscInput {
+		return []*tscInput{
+			{
+				subScenario:     "emitDeclarationOnly on commandline" + suffix,
+				files:           getBuildCommandLineEmitDeclarationOnlyMap(options),
+				cwd:             "/home/src/workspaces/solution",
+				commandLineArgs: []string{"--b", "project2/src", "--verbose", "--emitDeclarationOnly"},
+				edits: []*tscEdit{
+					noChange,
+					{
+						caption: "local change",
+						edit: func(sys *testSys) {
+							sys.appendFile("/home/src/workspaces/solution/project1/src/a.ts", "const aa = 10;")
+						},
+					},
+					{
+						caption: "non local change",
+						edit: func(sys *testSys) {
+							sys.appendFile("/home/src/workspaces/solution/project1/src/a.ts", "export const aaa = 10;")
+						},
+					},
+					{
+						caption:         "emit js files",
+						commandLineArgs: []string{"--b", "project2/src", "--verbose"},
+					},
+					noChange,
+					{
+						caption: "js emit with change without emitDeclarationOnly",
+						edit: func(sys *testSys) {
+							sys.appendFile("/home/src/workspaces/solution/project1/src/b.ts", "const alocal = 10;")
+						},
+						commandLineArgs: []string{"--b", "project2/src", "--verbose"},
+					},
+					{
+						caption: "local change",
+						edit: func(sys *testSys) {
+							sys.appendFile("/home/src/workspaces/solution/project1/src/b.ts", "const aaaa = 10;")
+						},
+					},
+					{
+						caption: "non local change",
+						edit: func(sys *testSys) {
+							sys.appendFile("/home/src/workspaces/solution/project1/src/b.ts", "export const aaaaa = 10;")
+						},
+					},
+					{
+						caption: "js emit with change without emitDeclarationOnly",
+						edit: func(sys *testSys) {
+							sys.appendFile("/home/src/workspaces/solution/project1/src/b.ts", "export const a2 = 10;")
+						},
+						commandLineArgs: []string{"--b", "project2/src", "--verbose"},
+					},
+				},
+			},
+			{
+				subScenario:     "emitDeclarationOnly false on commandline" + suffix,
+				files:           getBuildCommandLineEmitDeclarationOnlyMap(slices.Concat(options, []string{"emitDeclarationOnly"})),
+				cwd:             "/home/src/workspaces/solution",
+				commandLineArgs: []string{"--b", "project2/src", "--verbose"},
+				edits: []*tscEdit{
+					noChange,
+					{
+						caption: "change",
+						edit: func(sys *testSys) {
+							sys.appendFile("/home/src/workspaces/solution/project1/src/a.ts", "const aa = 10;")
+						},
+					},
+					{
+						caption:         "emit js files",
+						commandLineArgs: []string{"--b", "project2/src", "--verbose", "--emitDeclarationOnly", "false"},
+					},
+					noChange,
+					{
+						caption:         "no change run with js emit",
+						commandLineArgs: []string{"--b", "project2/src", "--verbose", "--emitDeclarationOnly", "false"},
+					},
+					{
+						caption: "js emit with change",
+						edit: func(sys *testSys) {
+							sys.appendFile("/home/src/workspaces/solution/project1/src/b.ts", "const blocal = 10;")
+						},
+						commandLineArgs: []string{"--b", "project2/src", "--verbose", "--emitDeclarationOnly", "false"},
+					},
+				},
+			},
+		}
+	}
 	testCases := slices.Concat(
 		[]*tscInput{
 			{
@@ -273,8 +397,257 @@ func TestBuildConfigFileErrors(t *testing.T) {
 	}
 }
 
+func TestBuildDemoProject(t *testing.T) {
+	t.Parallel()
+
+	getBuildDemoFileMap := func(modify func(FileMap)) FileMap {
+		files := FileMap{
+			"/user/username/projects/demo/animals/animal.ts": stringtestutil.Dedent(`
+				export type Size = "small" | "medium" | "large";
+				export default interface Animal {
+					size: Size;
+				}
+			`),
+			"/user/username/projects/demo/animals/dog.ts": stringtestutil.Dedent(`
+				import Animal from '.';
+				import { makeRandomName } from '../core/utilities';
+
+				export interface Dog extends Animal {
+					woof(): void;
+					name: string;
+				}
+
+				export function createDog(): Dog {
+					return ({
+						size: "medium",
+						woof: function(this: Dog) {
+							console.log(` + "`" + `${ this.name } says "Woof"!` + "`" + `);
+						},
+						name: makeRandomName()
+					});
+				}
+			`),
+			"/user/username/projects/demo/animals/index.ts": stringtestutil.Dedent(`
+				import Animal from './animal';
+
+				export default Animal;
+				import { createDog, Dog } from './dog';
+				export { createDog, Dog };
+			`),
+			"/user/username/projects/demo/animals/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"extends": "../tsconfig-base.json",
+					"compilerOptions": {
+						"outDir": "../lib/animals",
+						"rootDir": "."
+					},
+					"references": [
+						{ "path": "../core" }
+					]
+				}
+			`),
+			"/user/username/projects/demo/core/utilities.ts": stringtestutil.Dedent(`
+
+				export function makeRandomName() {
+					return "Bob!?! ";
+				}
+
+				export function lastElementOf<T>(arr: T[]): T | undefined {
+					if (arr.length === 0) return undefined;
+					return arr[arr.length - 1];
+				}
+			`),
+			"/user/username/projects/demo/core/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"extends": "../tsconfig-base.json",
+					"compilerOptions": {
+						"outDir": "../lib/core",
+						"rootDir": "."
+					},
+				}
+			`),
+			"/user/username/projects/demo/zoo/zoo.ts": stringtestutil.Dedent(`
+				import { Dog, createDog } from '../animals/index';
+
+				export function createZoo(): Array<Dog> {
+					return [
+						createDog()
+					];
+				}
+			`),
+			"/user/username/projects/demo/zoo/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"extends": "../tsconfig-base.json",
+					"compilerOptions": {
+						"outDir": "../lib/zoo",
+						"rootDir": "."
+					},
+					"references": [
+						{
+							"path": "../animals"
+						}
+					]
+				}
+			`),
+			"/user/username/projects/demo/tsconfig-base.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"declaration": true,
+						"target": "es5",
+						"module": "commonjs",
+						"strict": true,
+						"noUnusedLocals": true,
+						"noUnusedParameters": true,
+						"noImplicitReturns": true,
+						"noFallthroughCasesInSwitch": true,
+						"composite": true,
+					},
+				}
+			`),
+			"/user/username/projects/demo/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"files": [],
+					"references": [
+						{
+							"path": "./core"
+						},
+						{
+							"path": "./animals",
+						},
+						{
+							"path": "./zoo",
+						},
+					],
+				}
+			`),
+		}
+		if modify != nil {
+			modify(files)
+		}
+		return files
+	}
+	testCases := []*tscInput{
+		{
+			subScenario:     "in master branch with everything setup correctly and reports no error",
+			files:           getBuildDemoFileMap(nil),
+			cwd:             "/user/username/projects/demo",
+			commandLineArgs: []string{"--b", "--verbose"},
+			edits:           noChangeOnlyEdit,
+		},
+		{
+			subScenario: "in circular branch reports the error about it by stopping build",
+			files: getBuildDemoFileMap(func(files FileMap) {
+				files["/user/username/projects/demo/core/tsconfig.json"] = stringtestutil.Dedent(`
+					{
+						"extends": "../tsconfig-base.json",
+						"compilerOptions": {
+							"outDir": "../lib/core",
+							"rootDir": "."
+						},
+						"references": [
+							{
+								"path": "../zoo",
+							}
+						]
+					}
+				`)
+			}),
+			cwd:             "/user/username/projects/demo",
+			commandLineArgs: []string{"--b", "--verbose"},
+		},
+		{
+			// !!! sheetal - this has missing errors from strada about files not in rootDir (3) and value is declared but not used (1)
+			subScenario: "in bad-ref branch reports the error about files not in rootDir at the import location",
+			files: getBuildDemoFileMap(func(files FileMap) {
+				files["/user/username/projects/demo/core/utilities.ts"] = `import * as A from '../animals'
+` + files["/user/username/projects/demo/core/utilities.ts"].(string)
+			}),
+			cwd:             "/user/username/projects/demo",
+			commandLineArgs: []string{"--b", "--verbose"},
+		},
+	}
+
+	for _, test := range testCases {
+		test.run(t, "demo")
+	}
+}
+
 func TestBuildEmitDeclarationOnly(t *testing.T) {
 	t.Parallel()
+	getBuildEmitDeclarationOnlyImportFileMap := func(declarationMap bool, circularRef bool) FileMap {
+		files := FileMap{
+			"/home/src/workspaces/project/src/a.ts": stringtestutil.Dedent(`
+				import { B } from "./b";
+
+				export interface A {
+					b: B;
+				}
+			`),
+			"/home/src/workspaces/project/src/b.ts": stringtestutil.Dedent(`
+				import { C } from "./c";
+
+				export interface B {
+					b: C;
+				}
+			`),
+			"/home/src/workspaces/project/src/c.ts": stringtestutil.Dedent(`
+				import { A } from "./a";
+
+				export interface C {
+					a: A;
+				}
+			`),
+			"/home/src/workspaces/project/src/index.ts": stringtestutil.Dedent(`
+				export { A } from "./a";
+				export { B } from "./b";
+				export { C } from "./c";
+			`),
+			"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(fmt.Sprintf(`
+				{
+					"compilerOptions": {
+						"incremental": true,
+						"target": "es5",
+						"module": "commonjs",
+						"declaration": true,
+						"declarationMap": %t,
+						"sourceMap": true,
+						"outDir": "./lib",
+						"composite": true,
+						"strict": true,
+						"esModuleInterop": true,
+						"alwaysStrict": true,
+						"rootDir": "src",
+						"emitDeclarationOnly": true,
+					},
+				}`, declarationMap)),
+		}
+		if !circularRef {
+			delete(files, "/home/src/workspaces/project/src/index.ts")
+			files["/home/src/workspaces/project/src/a.ts"] = stringtestutil.Dedent(`
+				export class B { prop = "hello"; }
+
+				export interface A {
+					b: B;
+				}
+			`)
+		}
+		return files
+	}
+	getBuildEmitDeclarationOnlyTestCase := func(declarationMap bool) *tscInput {
+		return &tscInput{
+			subScenario:     `only dts output in circular import project with emitDeclarationOnly` + core.IfElse(declarationMap, " and declarationMap", ""),
+			files:           getBuildEmitDeclarationOnlyImportFileMap(declarationMap, true),
+			commandLineArgs: []string{"--b", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption: "incremental-declaration-changes",
+					edit: func(sys *testSys) {
+						sys.replaceFileText("/home/src/workspaces/project/src/a.ts", "b: B;", "b: B; foo: any;")
+					},
+				},
+			},
+		}
+	}
 	testCases := []*tscInput{
 		getBuildEmitDeclarationOnlyTestCase(false),
 		getBuildEmitDeclarationOnlyTestCase(true),
@@ -397,6 +770,62 @@ func TestBuildFileDelete(t *testing.T) {
 
 func TestBuildInferredTypeFromTransitiveModule(t *testing.T) {
 	t.Parallel()
+	getBuildInferredTypeFromTransitiveModuleMap := func(isolatedModules bool, lazyExtraContents string) FileMap {
+		return FileMap{
+			"/home/src/workspaces/project/bar.ts": stringtestutil.Dedent(`
+				interface RawAction {
+					(...args: any[]): Promise<any> | void;
+				}
+				interface ActionFactory {
+					<T extends RawAction>(target: T): T;
+				}
+				declare function foo<U extends any[] = any[]>(): ActionFactory;
+				export default foo()(function foobar(param: string): void {
+				});
+			`),
+			"/home/src/workspaces/project/bundling.ts": stringtestutil.Dedent(`
+				export class LazyModule<TModule> {
+					constructor(private importCallback: () => Promise<TModule>) {}
+				}
+
+				export class LazyAction<
+					TAction extends (...args: any[]) => any,
+					TModule
+				>  {
+					constructor(_lazyModule: LazyModule<TModule>, _getter: (module: TModule) => TAction) {
+					}
+				}
+			`),
+			"/home/src/workspaces/project/global.d.ts": stringtestutil.Dedent(`
+				interface PromiseConstructor {
+					new <T>(): Promise<T>;
+				}
+				declare var Promise: PromiseConstructor;
+				interface Promise<T> {
+				}
+			`),
+			"/home/src/workspaces/project/index.ts": stringtestutil.Dedent(`
+				import { LazyAction, LazyModule } from './bundling';
+				const lazyModule = new LazyModule(() =>
+					import('./lazyIndex')
+				);
+				export const lazyBar = new LazyAction(lazyModule, m => m.bar);
+			`),
+			"/home/src/workspaces/project/lazyIndex.ts": stringtestutil.Dedent(`
+				export { default as bar } from './bar';
+			`) + lazyExtraContents,
+			"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(fmt.Sprintf(`
+				{
+					"compilerOptions": {
+						"target": "es5",
+						"declaration": true,
+						"outDir": "obj",
+						"incremental": true,
+						"isolatedModules": %t,
+					},
+				}`, isolatedModules)),
+		}
+	}
 	testCases := []*tscInput{
 		{
 			subScenario:     "inferred type from transitive module",
@@ -916,37 +1345,35 @@ func TestBuildModuleSpecifiers(t *testing.T) {
 	}
 }
 
-type tscOutputPathScenario struct {
-	subScenario      string
-	files            FileMap
-	expectedDtsNames []string
-}
-
-func (s *tscOutputPathScenario) run(t *testing.T) {
-	t.Helper()
-	input := &tscInput{
-		subScenario:     s.subScenario,
-		files:           s.files,
-		commandLineArgs: []string{"-b", "-v"},
-		edits: []*tscEdit{
-			noChange,
-			{
-				caption:         "Normal build without change, that does not block emit on error to show files that get emitted",
-				commandLineArgs: []string{"-p", "/home/src/workspaces/project/tsconfig.json"},
-			},
-		},
-	}
-	input.run(t, "outputPaths")
-	t.Run("GetOutputFileNames/"+s.subScenario, func(t *testing.T) {
-		t.Parallel()
-		sys := newTestSys(input, false)
-		config, _ := tsoptions.GetParsedCommandLineOfConfigFile("/home/src/workspaces/project/tsconfig.json", &core.CompilerOptions{}, sys, nil)
-		assert.DeepEqual(t, slices.Collect(config.GetOutputFileNames()), s.expectedDtsNames)
-	})
-}
-
 func TestBuildOutputPaths(t *testing.T) {
 	t.Parallel()
+	type tscOutputPathScenario struct {
+		subScenario      string
+		files            FileMap
+		expectedDtsNames []string
+	}
+	runOutputPaths := func(s *tscOutputPathScenario) {
+		t.Helper()
+		input := &tscInput{
+			subScenario:     s.subScenario,
+			files:           s.files,
+			commandLineArgs: []string{"-b", "-v"},
+			edits: []*tscEdit{
+				noChange,
+				{
+					caption:         "Normal build without change, that does not block emit on error to show files that get emitted",
+					commandLineArgs: []string{"-p", "/home/src/workspaces/project/tsconfig.json"},
+				},
+			},
+		}
+		input.run(t, "outputPaths")
+		t.Run("GetOutputFileNames/"+s.subScenario, func(t *testing.T) {
+			t.Parallel()
+			sys := newTestSys(input, false)
+			config, _ := tsoptions.GetParsedCommandLineOfConfigFile("/home/src/workspaces/project/tsconfig.json", &core.CompilerOptions{}, sys, nil)
+			assert.DeepEqual(t, slices.Collect(config.GetOutputFileNames()), s.expectedDtsNames)
+		})
+	}
 	testCases := []*tscOutputPathScenario{
 		{
 			subScenario: "when rootDir is not specified",
@@ -1039,12 +1466,55 @@ func TestBuildOutputPaths(t *testing.T) {
 		},
 	}
 	for _, test := range testCases {
-		test.run(t)
+		runOutputPaths(test)
 	}
 }
 
 func TestBuildProjectReferenceWithRootDirInParent(t *testing.T) {
 	t.Parallel()
+	getBuildProjectReferenceWithRootDirInParentFileMap := func(modify func(files FileMap)) FileMap {
+		files := FileMap{
+			"/home/src/workspaces/solution/src/main/a.ts": stringtestutil.Dedent(`
+				import { b } from './b';
+				const a = b;
+			`),
+			"/home/src/workspaces/solution/src/main/b.ts": stringtestutil.Dedent(`
+				export const b = 0;
+			`),
+			"/home/src/workspaces/solution/src/main/tsconfig.json": stringtestutil.Dedent(`
+			{
+				"extends": "../../tsconfig.base.json",
+				"references": [
+					{ "path": "../other" },
+				],
+			}`),
+			"/home/src/workspaces/solution/src/other/other.ts": stringtestutil.Dedent(`
+				export const Other = 0;
+			`),
+			"/home/src/workspaces/solution/src/other/tsconfig.json": stringtestutil.Dedent(`
+			{
+				"extends": "../../tsconfig.base.json",
+			}
+			`),
+			"/home/src/workspaces/solution/tsconfig.base.json": stringtestutil.Dedent(`
+			{
+				"compilerOptions": {
+					"composite": true,
+					"declaration": true,
+					"rootDir": "./src/",
+					"outDir": "./dist/",
+					"skipDefaultLibCheck": true,
+				},
+				"exclude": [
+					"node_modules",
+				],
+			}`),
+		}
+		if modify != nil {
+			modify(files)
+		}
+		return files
+	}
 	testCases := []*tscInput{
 		{
 			subScenario:     "builds correctly",
@@ -1154,6 +1624,72 @@ func TestBuildProjectReferenceWithRootDirInParent(t *testing.T) {
 
 func TestBuildResolveJsonModule(t *testing.T) {
 	t.Parallel()
+	type buildResolveJsonModuleScenario struct {
+		subScenario               string
+		tsconfigFiles             string
+		additionalCompilerOptions string
+		skipOutdir                bool
+		modifyFiles               func(files FileMap)
+		edits                     []*tscEdit
+	}
+	getBuildResolveJsonModuleFileMap := func(composite bool, s *buildResolveJsonModuleScenario) FileMap {
+		var outDirStr string
+		if !s.skipOutdir {
+			outDirStr = `"outDir": "dist",`
+		}
+		files := FileMap{
+			"/home/src/workspaces/solution/project/src/hello.json": stringtestutil.Dedent(`
+			{
+				"hello": "world"
+			}`),
+			"/home/src/workspaces/solution/project/src/index.ts": stringtestutil.Dedent(`
+				import hello from "./hello.json"
+				export default hello.hello
+			`),
+			"/home/src/workspaces/solution/project/tsconfig.json": stringtestutil.Dedent(fmt.Sprintf(`
+			{
+				"compilerOptions": {
+					"composite": %t,
+					"moduleResolution": "node",
+					"module": "commonjs",
+					"resolveJsonModule": true,
+					"esModuleInterop": true,
+					"allowSyntheticDefaultImports": true,
+					%s
+					"skipDefaultLibCheck": true,
+					%s
+				},
+				%s
+			}`, composite, outDirStr, s.additionalCompilerOptions, s.tsconfigFiles)),
+		}
+		if s.modifyFiles != nil {
+			s.modifyFiles(files)
+		}
+		return files
+	}
+	getBuildResolveJsonModuleTestCases := func(scenarios []*buildResolveJsonModuleScenario) []*tscInput {
+		testCases := make([]*tscInput, 0, len(scenarios)*2)
+		for _, s := range scenarios {
+			testCases = append(
+				testCases,
+				&tscInput{
+					subScenario:     s.subScenario,
+					files:           getBuildResolveJsonModuleFileMap(true, s),
+					cwd:             "/home/src/workspaces/solution",
+					commandLineArgs: []string{"--b", "project", "--v", "--explainFiles", "--listEmittedFiles"},
+					edits:           s.edits,
+				},
+				&tscInput{
+					subScenario:     s.subScenario + " non-composite",
+					files:           getBuildResolveJsonModuleFileMap(false, s),
+					cwd:             "/home/src/workspaces/solution",
+					commandLineArgs: []string{"--b", "project", "--v", "--explainFiles", "--listEmittedFiles"},
+					edits:           s.edits,
+				},
+			)
+		}
+		return testCases
+	}
 	scenarios := []*buildResolveJsonModuleScenario{
 		{
 			subScenario:   "include only",
@@ -1289,6 +1825,78 @@ func TestBuildResolveJsonModule(t *testing.T) {
 
 func TestBuildRoots(t *testing.T) {
 	t.Parallel()
+	getBuildRootsFromProjectReferencedProjectFileMap := func(serverFirst bool) FileMap {
+		include := core.IfElse(serverFirst, `"src/**/*.ts", "../shared/src/**/*.ts"`, `"../shared/src/**/*.ts", "src/**/*.ts"`)
+		return FileMap{
+			"/home/src/workspaces/solution/tsconfig.json": stringtestutil.Dedent(`
+			{
+				"compilerOptions": {
+					"composite": true,
+				},
+				"references": [
+					{ "path": "projects/server" },
+					{ "path": "projects/shared" },
+				],
+			}`),
+			"/home/src/workspaces/solution/projects/shared/src/myClass.ts": `export class MyClass { }`,
+			"/home/src/workspaces/solution/projects/shared/src/logging.ts": stringtestutil.Dedent(`
+				export function log(str: string) {
+					console.log(str);
+				}
+			`),
+			"/home/src/workspaces/solution/projects/shared/src/random.ts": stringtestutil.Dedent(`
+				export function randomFn(str: string) {
+					console.log(str);
+				}
+			`),
+			"/home/src/workspaces/solution/projects/shared/tsconfig.json": stringtestutil.Dedent(`
+			{
+				"extends": "../../tsconfig.json",
+				"compilerOptions": {
+					"outDir": "./dist",
+				},
+				"include": ["src/**/*.ts"],
+			}`),
+			"/home/src/workspaces/solution/projects/server/src/server.ts": stringtestutil.Dedent(`
+				import { MyClass } from ':shared/myClass.js';
+				console.log('Hello, world!');
+			`),
+			"/home/src/workspaces/solution/projects/server/tsconfig.json": stringtestutil.Dedent(fmt.Sprintf(`
+			{
+				"extends": "../../tsconfig.json",
+				"compilerOptions": {
+					"rootDir": "..",
+					"outDir": "./dist",
+					"paths": {
+						":shared/*": ["./src/../../shared/src/*"],
+					},
+				},
+				"include": [ %s ],
+				"references": [
+					{ "path": "../shared" },
+				],
+			}`, include)),
+		}
+	}
+	getBuildRootsFromProjectReferencedProjectTestEdits := func() []*tscEdit {
+		return []*tscEdit{
+			noChange,
+			{
+				caption: "edit logging file",
+				edit: func(sys *testSys) {
+					sys.appendFile("/home/src/workspaces/solution/projects/shared/src/logging.ts", "export const x = 10;")
+				},
+			},
+			noChange,
+			{
+				caption: "delete random file",
+				edit: func(sys *testSys) {
+					sys.removeNoError("/home/src/workspaces/solution/projects/shared/src/random.ts")
+				},
+			},
+			noChange,
+		}
+	}
 	testCases := []*tscInput{
 		{
 			subScenario: `when two root files are consecutive`,
@@ -1428,6 +2036,99 @@ func TestBuildRoots(t *testing.T) {
 
 func TestBuildSample(t *testing.T) {
 	t.Parallel()
+
+	getBuildSampleFileMap := func(modify func(files FileMap)) FileMap {
+		files := FileMap{
+			"/user/username/projects/sample1/core/tsconfig.json": stringtestutil.Dedent(`
+			{
+				"compilerOptions": {
+					"composite": true,
+					"declaration": true,
+					"declarationMap": true,
+					"skipDefaultLibCheck": true,
+				},
+			}`),
+			"/user/username/projects/sample1/core/index.ts": stringtestutil.Dedent(`
+				export const someString: string = "HELLO WORLD";
+				export function leftPad(s: string, n: number) { return s + n; }
+				export function multiply(a: number, b: number) { return a * b; }
+			`),
+			"/user/username/projects/sample1/core/some_decl.d.ts":   `declare const dts: any;`,
+			"/user/username/projects/sample1/core/anotherModule.ts": `export const World = "hello";`,
+			"/user/username/projects/sample1/logic/tsconfig.json": stringtestutil.Dedent(`
+			{
+				"compilerOptions": {
+					"composite": true,
+					"declaration": true,
+					"sourceMap": true,
+					"skipDefaultLibCheck": true,
+				},
+				"references": [
+					{ "path": "../core" },
+				],
+			}`),
+			"/user/username/projects/sample1/logic/index.ts": stringtestutil.Dedent(`
+				import * as c from '../core/index';
+				export function getSecondsInDay() {
+					return c.multiply(10, 15);
+				}
+				import * as mod from '../core/anotherModule';
+				export const m = mod;
+			`),
+			"/user/username/projects/sample1/tests/tsconfig.json": stringtestutil.Dedent(`
+			{
+				"references": [
+					{ "path": "../core" },
+					{ "path": "../logic" },
+				],
+				"files": ["index.ts"],
+				"compilerOptions": {
+					"composite": true,
+					"declaration": true,
+					"skipDefaultLibCheck": true,
+				},
+			}`),
+			"/user/username/projects/sample1/tests/index.ts": stringtestutil.Dedent(`
+				import * as c from '../core/index';
+				import * as logic from '../logic/index';
+
+				c.leftPad("", 10);
+				logic.getSecondsInDay();
+
+				import * as mod from '../core/anotherModule';
+				export const m = mod;
+			`),
+		}
+		if modify != nil {
+			modify(files)
+		}
+		return files
+	}
+	getBuildSampleCoreChangeEdits := func() []*tscEdit {
+		return []*tscEdit{
+			{
+				caption: "incremental-declaration-changes",
+				edit: func(sys *testSys) {
+					sys.appendFile(
+						"/user/username/projects/sample1/core/index.ts",
+						`
+export class someClass { }`,
+					)
+				},
+			},
+			{
+				caption: "incremental-declaration-doesnt-change",
+				edit: func(sys *testSys) {
+					sys.appendFile(
+						"/user/username/projects/sample1/core/index.ts",
+						`
+class someClass2 { }`,
+					)
+				},
+			},
+			noChange,
+		}
+	}
 	testCases := []*tscInput{
 		{
 			subScenario: "builds correctly when outDir is specified",
@@ -1928,6 +2629,60 @@ func TestBuildSample(t *testing.T) {
 
 func TestBuildTransitiveReferences(t *testing.T) {
 	t.Parallel()
+
+	getBuildTransitiveReferencesFileMap := func(modify func(files FileMap)) FileMap {
+		files := FileMap{
+			"/user/username/projects/transitiveReferences/refs/a.d.ts": stringtestutil.Dedent(`
+				export class X {}
+				export class A {}
+			`),
+			"/user/username/projects/transitiveReferences/a.ts": stringtestutil.Dedent(`
+				export class A {}
+			`),
+			"/user/username/projects/transitiveReferences/b.ts": stringtestutil.Dedent(`
+				import {A} from '@ref/a';
+				export const b = new A();
+			`),
+			"/user/username/projects/transitiveReferences/c.ts": stringtestutil.Dedent(`
+				import {b} from './b';
+				import {X} from "@ref/a";
+				b;
+				X;
+			`),
+			"/user/username/projects/transitiveReferences/tsconfig.a.json": stringtestutil.Dedent(`
+			{
+				"files": ["a.ts"],
+				"compilerOptions": {
+					"composite": true,
+				},
+			}`),
+			"/user/username/projects/transitiveReferences/tsconfig.b.json": stringtestutil.Dedent(`
+			{
+				"files": ["b.ts"],
+				"compilerOptions": {
+					"composite": true,
+					"paths": {
+						"@ref/*": ["./*"],
+					},
+				},
+				"references": [{ "path": "tsconfig.a.json" }],
+			}`),
+			"/user/username/projects/transitiveReferences/tsconfig.c.json": stringtestutil.Dedent(`
+			{
+				"files": ["c.ts"],
+				"compilerOptions": {
+					"paths": {
+						"@ref/*": ["./refs/*"],
+					},
+				},
+				"references": [{ "path": "tsconfig.b.json" }],
+			}`),
+		}
+		if modify != nil {
+			modify(files)
+		}
+		return files
+	}
 	testCases := []*tscInput{
 		{
 			subScenario:     "builds correctly",
@@ -2122,599 +2877,4 @@ func TestBuildSolutionProject(t *testing.T) {
 	for _, test := range testCases {
 		test.run(t, "solution")
 	}
-}
-
-func getBuildCommandLineDifferentOptionsMap(optionName string) FileMap {
-	return FileMap{
-		"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(fmt.Sprintf(`
-			{
-				"compilerOptions": {
-					"%s": true
-				}
-			}`, optionName)),
-		"/home/src/workspaces/project/a.ts": `export const a = 10;const aLocal = 10;`,
-		"/home/src/workspaces/project/b.ts": `export const b = 10;const bLocal = 10;`,
-		"/home/src/workspaces/project/c.ts": `import { a } from "./a";export const c = a;`,
-		"/home/src/workspaces/project/d.ts": `import { b } from "./b";export const d = b;`,
-	}
-}
-
-func getBuildCommandLineEmitDeclarationOnlyMap(options []string) FileMap {
-	compilerOptionsStr := strings.Join(core.Map(options, func(opt string) string {
-		return fmt.Sprintf(`"%s": true`, opt)
-	}), ", ")
-	return FileMap{
-		"/home/src/workspaces/solution/project1/src/tsconfig.json": stringtestutil.Dedent(fmt.Sprintf(`
-			{
-				"compilerOptions": { %s }
-			}`, compilerOptionsStr)),
-		"/home/src/workspaces/solution/project1/src/a.ts": `export const a = 10;const aLocal = 10;`,
-		"/home/src/workspaces/solution/project1/src/b.ts": `export const b = 10;const bLocal = 10;`,
-		"/home/src/workspaces/solution/project1/src/c.ts": `import { a } from "./a";export const c = a;`,
-		"/home/src/workspaces/solution/project1/src/d.ts": `import { b } from "./b";export const d = b;`,
-		"/home/src/workspaces/solution/project2/src/tsconfig.json": stringtestutil.Dedent(fmt.Sprintf(`
-			{
-				"compilerOptions": { %s },
-				"references": [{ "path": "../../project1/src" }]
-			}`, compilerOptionsStr)),
-		"/home/src/workspaces/solution/project2/src/e.ts": `export const e = 10;`,
-		"/home/src/workspaces/solution/project2/src/f.ts": `import { a } from "../../project1/src/a"; export const f = a;`,
-		"/home/src/workspaces/solution/project2/src/g.ts": `import { b } from "../../project1/src/b"; export const g = b;`,
-	}
-}
-
-func getBuildCommandLineEmitDeclarationOnlyTestCases(options []string, suffix string) []*tscInput {
-	return []*tscInput{
-		{
-			subScenario:     "emitDeclarationOnly on commandline" + suffix,
-			files:           getBuildCommandLineEmitDeclarationOnlyMap(options),
-			cwd:             "/home/src/workspaces/solution",
-			commandLineArgs: []string{"--b", "project2/src", "--verbose", "--emitDeclarationOnly"},
-			edits: []*tscEdit{
-				noChange,
-				{
-					caption: "local change",
-					edit: func(sys *testSys) {
-						sys.appendFile("/home/src/workspaces/solution/project1/src/a.ts", "const aa = 10;")
-					},
-				},
-				{
-					caption: "non local change",
-					edit: func(sys *testSys) {
-						sys.appendFile("/home/src/workspaces/solution/project1/src/a.ts", "export const aaa = 10;")
-					},
-				},
-				{
-					caption:         "emit js files",
-					commandLineArgs: []string{"--b", "project2/src", "--verbose"},
-				},
-				noChange,
-				{
-					caption: "js emit with change without emitDeclarationOnly",
-					edit: func(sys *testSys) {
-						sys.appendFile("/home/src/workspaces/solution/project1/src/b.ts", "const alocal = 10;")
-					},
-					commandLineArgs: []string{"--b", "project2/src", "--verbose"},
-				},
-				{
-					caption: "local change",
-					edit: func(sys *testSys) {
-						sys.appendFile("/home/src/workspaces/solution/project1/src/b.ts", "const aaaa = 10;")
-					},
-				},
-				{
-					caption: "non local change",
-					edit: func(sys *testSys) {
-						sys.appendFile("/home/src/workspaces/solution/project1/src/b.ts", "export const aaaaa = 10;")
-					},
-				},
-				{
-					caption: "js emit with change without emitDeclarationOnly",
-					edit: func(sys *testSys) {
-						sys.appendFile("/home/src/workspaces/solution/project1/src/b.ts", "export const a2 = 10;")
-					},
-					commandLineArgs: []string{"--b", "project2/src", "--verbose"},
-				},
-			},
-		},
-		{
-			subScenario:     "emitDeclarationOnly false on commandline" + suffix,
-			files:           getBuildCommandLineEmitDeclarationOnlyMap(slices.Concat(options, []string{"emitDeclarationOnly"})),
-			cwd:             "/home/src/workspaces/solution",
-			commandLineArgs: []string{"--b", "project2/src", "--verbose"},
-			edits: []*tscEdit{
-				noChange,
-				{
-					caption: "change",
-					edit: func(sys *testSys) {
-						sys.appendFile("/home/src/workspaces/solution/project1/src/a.ts", "const aa = 10;")
-					},
-				},
-				{
-					caption:         "emit js files",
-					commandLineArgs: []string{"--b", "project2/src", "--verbose", "--emitDeclarationOnly", "false"},
-				},
-				noChange,
-				{
-					caption:         "no change run with js emit",
-					commandLineArgs: []string{"--b", "project2/src", "--verbose", "--emitDeclarationOnly", "false"},
-				},
-				{
-					caption: "js emit with change",
-					edit: func(sys *testSys) {
-						sys.appendFile("/home/src/workspaces/solution/project1/src/b.ts", "const blocal = 10;")
-					},
-					commandLineArgs: []string{"--b", "project2/src", "--verbose", "--emitDeclarationOnly", "false"},
-				},
-			},
-		},
-	}
-}
-
-func getBuildEmitDeclarationOnlyImportFileMap(declarationMap bool, circularRef bool) FileMap {
-	files := FileMap{
-		"/home/src/workspaces/project/src/a.ts": stringtestutil.Dedent(`
-			import { B } from "./b";
-
-			export interface A {
-				b: B;
-			}
-		`),
-		"/home/src/workspaces/project/src/b.ts": stringtestutil.Dedent(`
-			import { C } from "./c";
-
-			export interface B {
-				b: C;
-			}
-		`),
-		"/home/src/workspaces/project/src/c.ts": stringtestutil.Dedent(`
-			import { A } from "./a";
-
-			export interface C {
-				a: A;
-			}
-		`),
-		"/home/src/workspaces/project/src/index.ts": stringtestutil.Dedent(`
-			export { A } from "./a";
-			export { B } from "./b";
-			export { C } from "./c";
-		`),
-		"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(fmt.Sprintf(`
-			{
-				"compilerOptions": {
-					"incremental": true,
-					"target": "es5",
-					"module": "commonjs",
-					"declaration": true,
-					"declarationMap": %t,
-					"sourceMap": true,
-					"outDir": "./lib",
-					"composite": true,
-					"strict": true,
-					"esModuleInterop": true,
-					"alwaysStrict": true,
-					"rootDir": "src",
-					"emitDeclarationOnly": true,
-				},
-			}`, declarationMap)),
-	}
-	if !circularRef {
-		delete(files, "/home/src/workspaces/project/src/index.ts")
-		files["/home/src/workspaces/project/src/a.ts"] = stringtestutil.Dedent(`
-			export class B { prop = "hello"; }
-
-			export interface A {
-				b: B;
-			}
-		`)
-	}
-	return files
-}
-
-func getBuildEmitDeclarationOnlyTestCase(declarationMap bool) *tscInput {
-	return &tscInput{
-		subScenario:     `only dts output in circular import project with emitDeclarationOnly` + core.IfElse(declarationMap, " and declarationMap", ""),
-		files:           getBuildEmitDeclarationOnlyImportFileMap(declarationMap, true),
-		commandLineArgs: []string{"--b", "--verbose"},
-		edits: []*tscEdit{
-			{
-				caption: "incremental-declaration-changes",
-				edit: func(sys *testSys) {
-					sys.replaceFileText("/home/src/workspaces/project/src/a.ts", "b: B;", "b: B; foo: any;")
-				},
-			},
-		},
-	}
-}
-
-func getBuildInferredTypeFromTransitiveModuleMap(isolatedModules bool, lazyExtraContents string) FileMap {
-	return FileMap{
-		"/home/src/workspaces/project/bar.ts": stringtestutil.Dedent(`
-			interface RawAction {
-				(...args: any[]): Promise<any> | void;
-			}
-			interface ActionFactory {
-				<T extends RawAction>(target: T): T;
-			}
-			declare function foo<U extends any[] = any[]>(): ActionFactory;
-			export default foo()(function foobar(param: string): void {
-			});
-		`),
-		"/home/src/workspaces/project/bundling.ts": stringtestutil.Dedent(`
-			export class LazyModule<TModule> {
-				constructor(private importCallback: () => Promise<TModule>) {}
-			}
-
-			export class LazyAction<
-				TAction extends (...args: any[]) => any,
-				TModule
-			>  {
-				constructor(_lazyModule: LazyModule<TModule>, _getter: (module: TModule) => TAction) {
-				}
-			}
-		`),
-		"/home/src/workspaces/project/global.d.ts": stringtestutil.Dedent(`
-			interface PromiseConstructor {
-				new <T>(): Promise<T>;
-			}
-			declare var Promise: PromiseConstructor;
-			interface Promise<T> {
-			}
-		`),
-		"/home/src/workspaces/project/index.ts": stringtestutil.Dedent(`
-			import { LazyAction, LazyModule } from './bundling';
-			const lazyModule = new LazyModule(() =>
-				import('./lazyIndex')
-			);
-			export const lazyBar = new LazyAction(lazyModule, m => m.bar);
-		`),
-		"/home/src/workspaces/project/lazyIndex.ts": stringtestutil.Dedent(`
-			export { default as bar } from './bar';
-		`) + lazyExtraContents,
-		"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(fmt.Sprintf(`
-			{
-                "compilerOptions": {
-                    "target": "es5",
-                    "declaration": true,
-                    "outDir": "obj",
-                    "incremental": true,
-					"isolatedModules": %t,
-                },
-            }`, isolatedModules)),
-	}
-}
-
-func getBuildProjectReferenceWithRootDirInParentFileMap(modify func(files FileMap)) FileMap {
-	files := FileMap{
-		"/home/src/workspaces/solution/src/main/a.ts": stringtestutil.Dedent(`
-			import { b } from './b';
-			const a = b;
-		`),
-		"/home/src/workspaces/solution/src/main/b.ts": stringtestutil.Dedent(`
-			export const b = 0;
-		`),
-		"/home/src/workspaces/solution/src/main/tsconfig.json": stringtestutil.Dedent(`
-		{
-			"extends": "../../tsconfig.base.json",
-			"references": [
-				{ "path": "../other" },
-			],
-		}`),
-		"/home/src/workspaces/solution/src/other/other.ts": stringtestutil.Dedent(`
-			export const Other = 0;
-		`),
-		"/home/src/workspaces/solution/src/other/tsconfig.json": stringtestutil.Dedent(`
-		{
-			"extends": "../../tsconfig.base.json",
-		}
-		`),
-		"/home/src/workspaces/solution/tsconfig.base.json": stringtestutil.Dedent(`
-		{
-			"compilerOptions": {
-				"composite": true,
-				"declaration": true,
-				"rootDir": "./src/",
-				"outDir": "./dist/",
-				"skipDefaultLibCheck": true,
-			},
-			"exclude": [
-				"node_modules",
-			],
-		}`),
-	}
-	if modify != nil {
-		modify(files)
-	}
-	return files
-}
-
-func getBuildResolveJsonModuleFileMap(composite bool, s *buildResolveJsonModuleScenario) FileMap {
-	var outDirStr string
-	if !s.skipOutdir {
-		outDirStr = `"outDir": "dist",`
-	}
-	files := FileMap{
-		"/home/src/workspaces/solution/project/src/hello.json": stringtestutil.Dedent(`
-		{
-			"hello": "world"
-		}`),
-		"/home/src/workspaces/solution/project/src/index.ts": stringtestutil.Dedent(`
-			import hello from "./hello.json"
-			export default hello.hello
-		`),
-		"/home/src/workspaces/solution/project/tsconfig.json": stringtestutil.Dedent(fmt.Sprintf(`
-		{
-			"compilerOptions": {
-				"composite": %t,
-				"moduleResolution": "node",
-				"module": "commonjs",
-				"resolveJsonModule": true,
-				"esModuleInterop": true,
-				"allowSyntheticDefaultImports": true,
-				%s
-				"skipDefaultLibCheck": true,
-				%s
-			},
-			%s
-		}`, composite, outDirStr, s.additionalCompilerOptions, s.tsconfigFiles)),
-	}
-	if s.modifyFiles != nil {
-		s.modifyFiles(files)
-	}
-	return files
-}
-
-type buildResolveJsonModuleScenario struct {
-	subScenario               string
-	tsconfigFiles             string
-	additionalCompilerOptions string
-	skipOutdir                bool
-	modifyFiles               func(files FileMap)
-	edits                     []*tscEdit
-}
-
-func getBuildResolveJsonModuleTestCases(scenarios []*buildResolveJsonModuleScenario) []*tscInput {
-	testCases := make([]*tscInput, 0, len(scenarios)*2)
-	for _, s := range scenarios {
-		testCases = append(
-			testCases,
-			&tscInput{
-				subScenario:     s.subScenario,
-				files:           getBuildResolveJsonModuleFileMap(true, s),
-				cwd:             "/home/src/workspaces/solution",
-				commandLineArgs: []string{"--b", "project", "--v", "--explainFiles", "--listEmittedFiles"},
-				edits:           s.edits,
-			},
-			&tscInput{
-				subScenario:     s.subScenario + " non-composite",
-				files:           getBuildResolveJsonModuleFileMap(false, s),
-				cwd:             "/home/src/workspaces/solution",
-				commandLineArgs: []string{"--b", "project", "--v", "--explainFiles", "--listEmittedFiles"},
-				edits:           s.edits,
-			},
-		)
-	}
-	return testCases
-}
-
-func getBuildRootsFromProjectReferencedProjectFileMap(serverFirst bool) FileMap {
-	include := core.IfElse(serverFirst, `"src/**/*.ts", "../shared/src/**/*.ts"`, `"../shared/src/**/*.ts", "src/**/*.ts"`)
-	return FileMap{
-		"/home/src/workspaces/solution/tsconfig.json": stringtestutil.Dedent(`
-		{
-            "compilerOptions": {
-                "composite": true,
-            },
-            "references": [
-                { "path": "projects/server" },
-                { "path": "projects/shared" },
-            ],
-        }`),
-		"/home/src/workspaces/solution/projects/shared/src/myClass.ts": `export class MyClass { }`,
-		"/home/src/workspaces/solution/projects/shared/src/logging.ts": stringtestutil.Dedent(`
-            export function log(str: string) {
-                console.log(str);
-            }
-        `),
-		"/home/src/workspaces/solution/projects/shared/src/random.ts": stringtestutil.Dedent(`
-            export function randomFn(str: string) {
-                console.log(str);
-            }
-        `),
-		"/home/src/workspaces/solution/projects/shared/tsconfig.json": stringtestutil.Dedent(`
-		{
-            "extends": "../../tsconfig.json",
-            "compilerOptions": {
-                "outDir": "./dist",
-            },
-            "include": ["src/**/*.ts"],
-        }`),
-		"/home/src/workspaces/solution/projects/server/src/server.ts": stringtestutil.Dedent(`
-            import { MyClass } from ':shared/myClass.js';
-            console.log('Hello, world!');
-        `),
-		"/home/src/workspaces/solution/projects/server/tsconfig.json": stringtestutil.Dedent(fmt.Sprintf(`
-		{
-            "extends": "../../tsconfig.json",
-            "compilerOptions": {
-                "rootDir": "..",
-                "outDir": "./dist",
-                "paths": {
-                    ":shared/*": ["./src/../../shared/src/*"],
-                },
-            },
-            "include": [ %s ],
-            "references": [
-                { "path": "../shared" },
-            ],
-        }`, include)),
-	}
-}
-
-func getBuildRootsFromProjectReferencedProjectTestEdits() []*tscEdit {
-	return []*tscEdit{
-		noChange,
-		{
-			caption: "edit logging file",
-			edit: func(sys *testSys) {
-				sys.appendFile("/home/src/workspaces/solution/projects/shared/src/logging.ts", "export const x = 10;")
-			},
-		},
-		noChange,
-		{
-			caption: "delete random file",
-			edit: func(sys *testSys) {
-				sys.removeNoError("/home/src/workspaces/solution/projects/shared/src/random.ts")
-			},
-		},
-		noChange,
-	}
-}
-
-func getBuildSampleFileMap(modify func(files FileMap)) FileMap {
-	files := FileMap{
-		"/user/username/projects/sample1/core/tsconfig.json": stringtestutil.Dedent(`
-		{
-            "compilerOptions": {
-                "composite": true,
-                "declaration": true,
-                "declarationMap": true,
-                "skipDefaultLibCheck": true,
-            },
-        }`),
-		"/user/username/projects/sample1/core/index.ts": stringtestutil.Dedent(`
-            export const someString: string = "HELLO WORLD";
-            export function leftPad(s: string, n: number) { return s + n; }
-            export function multiply(a: number, b: number) { return a * b; }
-        `),
-		"/user/username/projects/sample1/core/some_decl.d.ts":   `declare const dts: any;`,
-		"/user/username/projects/sample1/core/anotherModule.ts": `export const World = "hello";`,
-		"/user/username/projects/sample1/logic/tsconfig.json": stringtestutil.Dedent(`
-		{
-			"compilerOptions": {
-				"composite": true,
-				"declaration": true,
-				"sourceMap": true,
-				"skipDefaultLibCheck": true,
-			},
-			"references": [
-				{ "path": "../core" },
-			],
-		}`),
-		"/user/username/projects/sample1/logic/index.ts": stringtestutil.Dedent(`
-            import * as c from '../core/index';
-            export function getSecondsInDay() {
-                return c.multiply(10, 15);
-            }
-            import * as mod from '../core/anotherModule';
-            export const m = mod;
-        `),
-		"/user/username/projects/sample1/tests/tsconfig.json": stringtestutil.Dedent(`
-		{
-            "references": [
-				{ "path": "../core" },
-				{ "path": "../logic" },
-			],
-            "files": ["index.ts"],
-            "compilerOptions": {
-                "composite": true,
-                "declaration": true,
-                "skipDefaultLibCheck": true,
-            },
-        }`),
-		"/user/username/projects/sample1/tests/index.ts": stringtestutil.Dedent(`
-            import * as c from '../core/index';
-            import * as logic from '../logic/index';
-
-            c.leftPad("", 10);
-            logic.getSecondsInDay();
-
-            import * as mod from '../core/anotherModule';
-            export const m = mod;
-        `),
-	}
-	if modify != nil {
-		modify(files)
-	}
-	return files
-}
-
-func getBuildSampleCoreChangeEdits() []*tscEdit {
-	return []*tscEdit{
-		{
-			caption: "incremental-declaration-changes",
-			edit: func(sys *testSys) {
-				sys.appendFile(
-					"/user/username/projects/sample1/core/index.ts",
-					`
-export class someClass { }`,
-				)
-			},
-		},
-		{
-			caption: "incremental-declaration-doesnt-change",
-			edit: func(sys *testSys) {
-				sys.appendFile(
-					"/user/username/projects/sample1/core/index.ts",
-					`
-class someClass2 { }`,
-				)
-			},
-		},
-		noChange,
-	}
-}
-
-func getBuildTransitiveReferencesFileMap(modify func(files FileMap)) FileMap {
-	files := FileMap{
-		"/user/username/projects/transitiveReferences/refs/a.d.ts": stringtestutil.Dedent(`
-			export class X {}
-			export class A {}
-		`),
-		"/user/username/projects/transitiveReferences/a.ts": stringtestutil.Dedent(`
-            export class A {}
-        `),
-		"/user/username/projects/transitiveReferences/b.ts": stringtestutil.Dedent(`
-            import {A} from '@ref/a';
-            export const b = new A();
-        `),
-		"/user/username/projects/transitiveReferences/c.ts": stringtestutil.Dedent(`
-            import {b} from './b';
-            import {X} from "@ref/a";
-            b;
-            X;
-        `),
-		"/user/username/projects/transitiveReferences/tsconfig.a.json": stringtestutil.Dedent(`
-		{
-            "files": ["a.ts"],
-            "compilerOptions": {
-                "composite": true,
-            },
-        }`),
-		"/user/username/projects/transitiveReferences/tsconfig.b.json": stringtestutil.Dedent(`
-		{
-            "files": ["b.ts"],
-            "compilerOptions": {
-                "composite": true,
-                "paths": {
-                    "@ref/*": ["./*"],
-                },
-            },
-            "references": [{ "path": "tsconfig.a.json" }],
-        }`),
-		"/user/username/projects/transitiveReferences/tsconfig.c.json": stringtestutil.Dedent(`
-		{
-            "files": ["c.ts"],
-            "compilerOptions": {
-                "paths": {
-                    "@ref/*": ["./refs/*"],
-                },
-            },
-            "references": [{ "path": "tsconfig.b.json" }],
-        }`),
-	}
-	if modify != nil {
-		modify(files)
-	}
-	return files
 }

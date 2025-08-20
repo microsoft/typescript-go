@@ -14,7 +14,7 @@ const a = {
 console.log("hi");
 export { }
 //// [/user/username/projects/noEmitOnError/tsconfig.json] *new* 
- {
+{
     "compilerOptions": {
         "outDir": "./dev-build",
         "declaration": false,

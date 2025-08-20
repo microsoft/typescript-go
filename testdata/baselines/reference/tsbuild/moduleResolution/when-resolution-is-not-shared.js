@@ -39,7 +39,7 @@ export { a } from 'a';
 }
 //// [/home/src/workspaces/project/packages/b/tsconfig.json] *new* 
 {
-   "references": [{ "path": "../a" }],
+"references": [{ "path": "../a" }],
     "compilerOptions": {
         "checkJs": true,
         "module": "nodenext",

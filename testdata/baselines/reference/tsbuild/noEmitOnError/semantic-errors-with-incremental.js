@@ -12,7 +12,7 @@ const a: string = 10;
 console.log("hi");
 export { }
 //// [/user/username/projects/noEmitOnError/tsconfig.json] *new* 
- {
+{
     "compilerOptions": {
         "outDir": "./dev-build",
         "declaration": false,
