@@ -200,6 +200,8 @@ type taskReporter struct {
 	statistics         *statistics
 	program            *incremental.Program
 	filesToDelete      []string
+	prev               *taskReporter
+	done               chan struct{}
 }
 
 func (b *taskReporter) reportDiagnostic(err *ast.Diagnostic) {
@@ -208,6 +210,9 @@ func (b *taskReporter) reportDiagnostic(err *ast.Diagnostic) {
 }
 
 func (b *taskReporter) report(s *solutionBuilder, configPath tspath.Path, buildResult *solutionBuilderResult) {
+	if b.prev != nil {
+		<-b.prev.done
+	}
 	if len(b.errors) > 0 {
 		buildResult.errors = append(core.IfElse(buildResult.errors != nil, buildResult.errors, []*ast.Diagnostic{}), b.errors...)
 	}
@@ -223,16 +228,15 @@ func (b *taskReporter) report(s *solutionBuilder, configPath tspath.Path, buildR
 		buildResult.statistics.projectsBuilt++
 	}
 	buildResult.filesToDelete = append(buildResult.filesToDelete, b.filesToDelete...)
+	close(b.done)
 }
 
 type buildTask struct {
-	config               string
-	resolved             *tsoptions.ParsedCommandLine
-	upStream             []*statusTask
-	downStream           []*statusTask
-	taskReporter         taskReporter
-	previousTaskReporter chan *taskReporter
-	reporter             chan *taskReporter
+	config       string
+	resolved     *tsoptions.ParsedCommandLine
+	upStream     []*statusTask
+	downStream   []*statusTask
+	taskReporter taskReporter
 }
 
 func (t *buildTask) waitOnUpstream() []*upToDateStatus {
@@ -366,11 +370,11 @@ func (b *buildOrderGenerator) analyzeConfig(
 		}
 		circularityStack = circularityStack[:len(circularityStack)-1]
 		completed.Add(path)
-		task.reporter = make(chan *taskReporter, 1)
+		task.taskReporter.done = make(chan struct{})
 		prev := core.LastOrNil(b.order)
 		if prev != "" {
 			if prevTask, ok := b.tasks.Load(b.toPath(prev)); ok {
-				task.previousTaskReporter = prevTask.reporter
+				task.taskReporter.prev = &prevTask.taskReporter
 			} else {
 				panic("No previous task found for " + prev)
 			}
@@ -404,12 +408,7 @@ func (b *buildOrderGenerator) buildOrClean(builder *solutionBuilder, build bool)
 				} else {
 					builder.cleanProject(path, task)
 				}
-				// Wait for previous build task to complete reporting status, errors etc
-				if task.previousTaskReporter != nil {
-					<-task.previousTaskReporter
-				}
 				task.taskReporter.report(builder, path, &buildResult)
-				task.reporter <- &task.taskReporter
 			})
 			return true
 		})
