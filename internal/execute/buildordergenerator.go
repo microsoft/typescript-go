@@ -230,6 +230,7 @@ type buildTask struct {
 	resolved             *tsoptions.ParsedCommandLine
 	upStream             []*statusTask
 	downStream           []*statusTask
+	taskReporter         taskReporter
 	previousTaskReporter chan *taskReporter
 	reporter             chan *taskReporter
 }
@@ -394,28 +395,24 @@ func (b *buildOrderGenerator) buildOrClean(builder *solutionBuilder, build bool)
 	var buildResult solutionBuilderResult
 	if len(b.errors) == 0 {
 		wg := core.NewWorkGroup(builder.opts.command.CompilerOptions.SingleThreaded.IsTrue())
-		for _, config := range b.Order() {
-			path := builder.toPath(config)
+		b.tasks.Range(func(path tspath.Path, task *buildTask) bool {
+			task.taskReporter.reportStatus = builder.createBuilderStatusReporter(&task.taskReporter)
+			task.taskReporter.diagnosticReporter = builder.createDiagnosticReporter(&task.taskReporter)
 			wg.Queue(func() {
-				task, ok := b.tasks.Load(path)
-				if !ok {
-					panic("No build task found for " + config)
-				}
-
-				var taskReporter *taskReporter
 				if build {
-					taskReporter = builder.buildProject(config, path, task)
+					builder.buildProject(path, task)
 				} else {
-					taskReporter = builder.cleanProject(config, path, task)
+					builder.cleanProject(path, task)
 				}
 				// Wait for previous build task to complete reporting status, errors etc
 				if task.previousTaskReporter != nil {
 					<-task.previousTaskReporter
 				}
-				taskReporter.report(builder, path, &buildResult)
-				task.reporter <- taskReporter
+				task.taskReporter.report(builder, path, &buildResult)
+				task.reporter <- &task.taskReporter
 			})
-		}
+			return true
+		})
 		wg.RunAndWait()
 		buildResult.statistics.projects = len(b.Order())
 	} else {

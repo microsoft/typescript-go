@@ -58,24 +58,14 @@ func (s *solutionBuilder) createDiagnosticReporter(taskReporter *taskReporter) d
 	return createDiagnosticReporter(s.opts.sys, s.getWriter(taskReporter), s.opts.command.CompilerOptions)
 }
 
-func (s *solutionBuilder) createTaskReporter() *taskReporter {
-	var taskReporter taskReporter
-	taskReporter.reportStatus = s.createBuilderStatusReporter(&taskReporter)
-	taskReporter.diagnosticReporter = s.createDiagnosticReporter(&taskReporter)
-	return &taskReporter
-}
-
-func (s *solutionBuilder) buildProject(config string, path tspath.Path, task *buildTask) *taskReporter {
+func (s *solutionBuilder) buildProject(path tspath.Path, task *buildTask) {
 	// Wait on upstream tasks to complete
 	upStreamStatus := task.waitOnUpstream()
-
-	status := s.getUpToDateStatus(config, path, task, upStreamStatus)
-	taskReporter := s.createTaskReporter()
-
-	s.reportUpToDateStatus(config, status, taskReporter)
-	if handled := s.handleStatusThatDoesntRequireBuild(config, task, status, taskReporter); handled == nil {
+	status := s.getUpToDateStatus(path, task, upStreamStatus)
+	s.reportUpToDateStatus(task, status)
+	if handled := s.handleStatusThatDoesntRequireBuild(task, status); handled == nil {
 		if s.opts.command.BuildOptions.Verbose.IsTrue() {
-			taskReporter.reportStatus(ast.NewCompilerDiagnostic(diagnostics.Building_project_0, s.relativeFileName(config)))
+			task.taskReporter.reportStatus(ast.NewCompilerDiagnostic(diagnostics.Building_project_0, s.relativeFileName(task.config)))
 		}
 
 		// Real build
@@ -90,32 +80,32 @@ func (s *solutionBuilder) buildProject(config string, path tspath.Path, task *bu
 			Config: task.resolved,
 			Host: &compilerHostForTaskReporter{
 				host:  s.host,
-				trace: getTraceWithWriterFromSys(&taskReporter.builder, s.opts.testing),
+				trace: getTraceWithWriterFromSys(&task.taskReporter.builder, s.opts.testing),
 			},
 			JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
 		})
 		compileTimes.parseTime = s.opts.sys.Now().Sub(parseStart)
 		changesComputeStart := s.opts.sys.Now()
-		taskReporter.program = incremental.NewProgram(program, oldProgram, s.host, s.opts.testing != nil)
+		task.taskReporter.program = incremental.NewProgram(program, oldProgram, s.host, s.opts.testing != nil)
 		compileTimes.changesComputeTime = s.opts.sys.Now().Sub(changesComputeStart)
 
 		result, statistics := emitAndReportStatistics(
 			s.opts.sys,
-			taskReporter.program,
+			task.taskReporter.program,
 			program,
 			task.resolved,
-			taskReporter.reportDiagnostic,
+			task.taskReporter.reportDiagnostic,
 			quietDiagnosticsReporter,
-			&taskReporter.builder,
+			&task.taskReporter.builder,
 			compileTimes,
 			s.opts.testing,
 		)
-		taskReporter.exitStatus = result.status
-		taskReporter.statistics = statistics
+		task.taskReporter.exitStatus = result.status
+		task.taskReporter.statistics = statistics
 		if (!program.Options().NoEmitOnError.IsTrue() || len(result.diagnostics) == 0) &&
 			(len(result.emitResult.EmittedFiles) > 0 || status.kind != upToDateStatusTypeOutOfDateBuildInfoWithErrors) {
 			// Update time stamps for rest of the outputs
-			s.updateTimeStamps(config, task, taskReporter, result.emitResult.EmittedFiles, diagnostics.Updating_unchanged_output_timestamps_of_project_0)
+			s.updateTimeStamps(task, result.emitResult.EmittedFiles, diagnostics.Updating_unchanged_output_timestamps_of_project_0)
 		}
 
 		if result.status == ExitStatusDiagnosticsPresent_OutputsSkipped || result.status == ExitStatusDiagnosticsPresent_OutputsGenerated {
@@ -127,34 +117,33 @@ func (s *solutionBuilder) buildProject(config string, path tspath.Path, task *bu
 		status = handled
 		if task.resolved != nil {
 			for _, diagnostic := range task.resolved.GetConfigFileParsingDiagnostics() {
-				taskReporter.reportDiagnostic(diagnostic)
+				task.taskReporter.reportDiagnostic(diagnostic)
 			}
 		}
-		if len(taskReporter.errors) > 0 {
-			taskReporter.exitStatus = ExitStatusDiagnosticsPresent_OutputsSkipped
+		if len(task.taskReporter.errors) > 0 {
+			task.taskReporter.exitStatus = ExitStatusDiagnosticsPresent_OutputsSkipped
 		}
 	}
 	task.unblockDownstream(status)
-	return taskReporter
 }
 
-func (s *solutionBuilder) handleStatusThatDoesntRequireBuild(config string, task *buildTask, status *upToDateStatus, taskReporter *taskReporter) *upToDateStatus {
+func (s *solutionBuilder) handleStatusThatDoesntRequireBuild(task *buildTask, status *upToDateStatus) *upToDateStatus {
 	switch status.kind {
 	case upToDateStatusTypeUpToDate:
 		if s.opts.command.BuildOptions.Dry.IsTrue() {
-			taskReporter.reportStatus(ast.NewCompilerDiagnostic(diagnostics.Project_0_is_up_to_date, config))
+			task.taskReporter.reportStatus(ast.NewCompilerDiagnostic(diagnostics.Project_0_is_up_to_date, task.config))
 		}
 		return status
 	case upToDateStatusTypeUpstreamErrors:
 		upstreamStatus := status.data.(*upstreamErrors)
 		if s.opts.command.BuildOptions.Verbose.IsTrue() {
-			taskReporter.reportStatus(ast.NewCompilerDiagnostic(
+			task.taskReporter.reportStatus(ast.NewCompilerDiagnostic(
 				core.IfElse(
 					upstreamStatus.refHasUpstreamErrors,
 					diagnostics.Skipping_build_of_project_0_because_its_dependency_1_was_not_built,
 					diagnostics.Skipping_build_of_project_0_because_its_dependency_1_has_errors,
 				),
-				s.relativeFileName(config),
+				s.relativeFileName(task.config),
 				s.relativeFileName(upstreamStatus.ref),
 			))
 		}
@@ -162,32 +151,32 @@ func (s *solutionBuilder) handleStatusThatDoesntRequireBuild(config string, task
 	case upToDateStatusTypeSolution:
 		return status
 	case upToDateStatusTypeConfigFileNotFound:
-		taskReporter.reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.File_0_not_found, config))
+		task.taskReporter.reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.File_0_not_found, task.config))
 		return status
 	}
 
 	// update timestamps
 	if status.IsPseudoBuild() {
 		if s.opts.command.BuildOptions.Dry.IsTrue() {
-			taskReporter.reportStatus(ast.NewCompilerDiagnostic(diagnostics.A_non_dry_build_would_update_timestamps_for_output_of_project_0, config))
+			task.taskReporter.reportStatus(ast.NewCompilerDiagnostic(diagnostics.A_non_dry_build_would_update_timestamps_for_output_of_project_0, task.config))
 			status = &upToDateStatus{kind: upToDateStatusTypeUpToDate}
 			return status
 		}
 
-		s.updateTimeStamps(config, task, taskReporter, nil, diagnostics.Updating_output_timestamps_of_project_0)
+		s.updateTimeStamps(task, nil, diagnostics.Updating_output_timestamps_of_project_0)
 		status = &upToDateStatus{kind: upToDateStatusTypeUpToDate}
 		return status
 	}
 
 	if s.opts.command.BuildOptions.Dry.IsTrue() {
-		taskReporter.reportStatus(ast.NewCompilerDiagnostic(diagnostics.A_non_dry_build_would_build_project_0, config))
+		task.taskReporter.reportStatus(ast.NewCompilerDiagnostic(diagnostics.A_non_dry_build_would_build_project_0, task.config))
 		status = &upToDateStatus{kind: upToDateStatusTypeUpToDate}
 		return status
 	}
 	return nil
 }
 
-func (s *solutionBuilder) getUpToDateStatus(config string, configPath tspath.Path, task *buildTask, upStreamStatus []*upToDateStatus) *upToDateStatus {
+func (s *solutionBuilder) getUpToDateStatus(configPath tspath.Path, task *buildTask, upStreamStatus []*upToDateStatus) *upToDateStatus {
 	// Config file not found
 	if task.resolved == nil {
 		return &upToDateStatus{kind: upToDateStatusTypeConfigFileNotFound}
@@ -360,7 +349,7 @@ func (s *solutionBuilder) getUpToDateStatus(config string, configPath tspath.Pat
 		return &upToDateStatus{kind: upToDateStatusTypeInputFileNewer, data: &inputOutputName{task.resolved.ProjectReferences()[index].Path, oldestOutputFileAndTime.file}}
 	}
 
-	configStatus := s.checkInputFileTime(config, &oldestOutputFileAndTime)
+	configStatus := s.checkInputFileTime(task.config, &oldestOutputFileAndTime)
 	if configStatus != nil {
 		return configStatus
 	}
@@ -400,102 +389,102 @@ func (s *solutionBuilder) checkInputFileTime(inputFile string, oldestOutputFileA
 	return nil
 }
 
-func (s *solutionBuilder) reportUpToDateStatus(config string, status *upToDateStatus, taskReporter *taskReporter) {
+func (s *solutionBuilder) reportUpToDateStatus(task *buildTask, status *upToDateStatus) {
 	if !s.opts.command.BuildOptions.Verbose.IsTrue() {
 		return
 	}
 	switch status.kind {
 	case upToDateStatusTypeConfigFileNotFound:
-		taskReporter.reportStatus(ast.NewCompilerDiagnostic(
+		task.taskReporter.reportStatus(ast.NewCompilerDiagnostic(
 			diagnostics.Project_0_is_out_of_date_because_config_file_does_not_exist,
-			s.relativeFileName(config),
+			s.relativeFileName(task.config),
 		))
 	case upToDateStatusTypeUpstreamErrors:
 		upstreamStatus := status.data.(*upstreamErrors)
-		taskReporter.reportStatus(ast.NewCompilerDiagnostic(
+		task.taskReporter.reportStatus(ast.NewCompilerDiagnostic(
 			core.IfElse(
 				upstreamStatus.refHasUpstreamErrors,
 				diagnostics.Project_0_can_t_be_built_because_its_dependency_1_was_not_built,
 				diagnostics.Project_0_can_t_be_built_because_its_dependency_1_has_errors,
 			),
-			s.relativeFileName(config),
+			s.relativeFileName(task.config),
 			s.relativeFileName(upstreamStatus.ref),
 		))
 	case upToDateStatusTypeUpToDate:
 		inputOutputFileAndTime := status.data.(*inputOutputFileAndTime)
-		taskReporter.reportStatus(ast.NewCompilerDiagnostic(
+		task.taskReporter.reportStatus(ast.NewCompilerDiagnostic(
 			diagnostics.Project_0_is_up_to_date_because_newest_input_1_is_older_than_output_2,
-			s.relativeFileName(config),
+			s.relativeFileName(task.config),
 			s.relativeFileName(inputOutputFileAndTime.input.file),
 			s.relativeFileName(inputOutputFileAndTime.output.file),
 		))
 	case upToDateStatusTypeUpToDateWithUpstreamTypes:
-		taskReporter.reportStatus(ast.NewCompilerDiagnostic(
+		task.taskReporter.reportStatus(ast.NewCompilerDiagnostic(
 			diagnostics.Project_0_is_up_to_date_with_d_ts_files_from_its_dependencies,
-			s.relativeFileName(config),
+			s.relativeFileName(task.config),
 		))
 	case upToDateStatusTypeUpToDateWithInputFileText:
-		taskReporter.reportStatus(ast.NewCompilerDiagnostic(
+		task.taskReporter.reportStatus(ast.NewCompilerDiagnostic(
 			diagnostics.Project_0_is_up_to_date_but_needs_to_update_timestamps_of_output_files_that_are_older_than_input_files,
-			s.relativeFileName(config),
+			s.relativeFileName(task.config),
 		))
 	case upToDateStatusTypeInputFileMissing:
-		taskReporter.reportStatus(ast.NewCompilerDiagnostic(
+		task.taskReporter.reportStatus(ast.NewCompilerDiagnostic(
 			diagnostics.Project_0_is_out_of_date_because_input_1_does_not_exist,
-			s.relativeFileName(config),
+			s.relativeFileName(task.config),
 			s.relativeFileName(status.data.(string)),
 		))
 	case upToDateStatusTypeOutputMissing:
-		taskReporter.reportStatus(ast.NewCompilerDiagnostic(
+		task.taskReporter.reportStatus(ast.NewCompilerDiagnostic(
 			diagnostics.Project_0_is_out_of_date_because_output_file_1_does_not_exist,
-			s.relativeFileName(config),
+			s.relativeFileName(task.config),
 			s.relativeFileName(status.data.(string)),
 		))
 	case upToDateStatusTypeInputFileNewer:
 		inputOutput := status.data.(*inputOutputName)
-		taskReporter.reportStatus(ast.NewCompilerDiagnostic(
+		task.taskReporter.reportStatus(ast.NewCompilerDiagnostic(
 			diagnostics.Project_0_is_out_of_date_because_output_1_is_older_than_input_2,
-			s.relativeFileName(config),
+			s.relativeFileName(task.config),
 			s.relativeFileName(inputOutput.output),
 			s.relativeFileName(inputOutput.input),
 		))
 	case upToDateStatusTypeOutOfDateBuildInfoWithPendingEmit:
-		taskReporter.reportStatus(ast.NewCompilerDiagnostic(
+		task.taskReporter.reportStatus(ast.NewCompilerDiagnostic(
 			diagnostics.Project_0_is_out_of_date_because_buildinfo_file_1_indicates_that_some_of_the_changes_were_not_emitted,
-			s.relativeFileName(config),
+			s.relativeFileName(task.config),
 			s.relativeFileName(status.data.(string)),
 		))
 	case upToDateStatusTypeOutOfDateBuildInfoWithErrors:
-		taskReporter.reportStatus(ast.NewCompilerDiagnostic(
+		task.taskReporter.reportStatus(ast.NewCompilerDiagnostic(
 			diagnostics.Project_0_is_out_of_date_because_buildinfo_file_1_indicates_that_program_needs_to_report_errors,
-			s.relativeFileName(config),
+			s.relativeFileName(task.config),
 			s.relativeFileName(status.data.(string)),
 		))
 	case upToDateStatusTypeOutOfDateOptions:
-		taskReporter.reportStatus(ast.NewCompilerDiagnostic(
+		task.taskReporter.reportStatus(ast.NewCompilerDiagnostic(
 			diagnostics.Project_0_is_out_of_date_because_buildinfo_file_1_indicates_there_is_change_in_compilerOptions,
-			s.relativeFileName(config),
+			s.relativeFileName(task.config),
 			s.relativeFileName(status.data.(string)),
 		))
 	case upToDateStatusTypeOutOfDateRoots:
 		inputOutput := status.data.(*inputOutputName)
-		taskReporter.reportStatus(ast.NewCompilerDiagnostic(
+		task.taskReporter.reportStatus(ast.NewCompilerDiagnostic(
 			diagnostics.Project_0_is_out_of_date_because_buildinfo_file_1_indicates_that_file_2_was_root_file_of_compilation_but_not_any_more,
-			s.relativeFileName(config),
+			s.relativeFileName(task.config),
 			s.relativeFileName(inputOutput.output),
 			s.relativeFileName(inputOutput.input),
 		))
 	case upToDateStatusTypeTsVersionOutputOfDate:
-		taskReporter.reportStatus(ast.NewCompilerDiagnostic(
+		task.taskReporter.reportStatus(ast.NewCompilerDiagnostic(
 			diagnostics.Project_0_is_out_of_date_because_output_for_it_was_generated_with_version_1_that_differs_with_current_version_2,
-			s.relativeFileName(config),
+			s.relativeFileName(task.config),
 			s.relativeFileName(status.data.(string)),
 			core.Version(),
 		))
 	case upToDateStatusTypeForceBuild:
-		taskReporter.reportStatus(ast.NewCompilerDiagnostic(
+		task.taskReporter.reportStatus(ast.NewCompilerDiagnostic(
 			diagnostics.Project_0_is_being_forcibly_rebuilt,
-			s.relativeFileName(config),
+			s.relativeFileName(task.config),
 		))
 	case upToDateStatusTypeSolution:
 		// Does not need to report status
@@ -504,7 +493,7 @@ func (s *solutionBuilder) reportUpToDateStatus(config string, status *upToDateSt
 	}
 }
 
-func (s *solutionBuilder) updateTimeStamps(config string, task *buildTask, taskReporter *taskReporter, emittedFiles []string, verboseMessage *diagnostics.Message) {
+func (s *solutionBuilder) updateTimeStamps(task *buildTask, emittedFiles []string, verboseMessage *diagnostics.Message) {
 	if task.resolved.CompilerOptions().NoEmit.IsTrue() {
 		return
 	}
@@ -515,12 +504,12 @@ func (s *solutionBuilder) updateTimeStamps(config string, task *buildTask, taskR
 			return
 		}
 		if !verboseMessageReported && s.opts.command.BuildOptions.Verbose.IsTrue() {
-			taskReporter.reportStatus(ast.NewCompilerDiagnostic(verboseMessage, s.relativeFileName(config)))
+			task.taskReporter.reportStatus(ast.NewCompilerDiagnostic(verboseMessage, s.relativeFileName(task.config)))
 			verboseMessageReported = true
 		}
 		err := s.host.SetMTime(file, s.opts.sys.Now())
 		if err != nil {
-			taskReporter.reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Failed_to_update_timestamp_of_file_0, file))
+			task.taskReporter.reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Failed_to_update_timestamp_of_file_0, file))
 		}
 	}
 
@@ -533,23 +522,21 @@ func (s *solutionBuilder) updateTimeStamps(config string, task *buildTask, taskR
 	}
 }
 
-func (s *solutionBuilder) cleanProject(config string, path tspath.Path, task *buildTask) *taskReporter {
-	taskReporter := s.createTaskReporter()
+func (s *solutionBuilder) cleanProject(path tspath.Path, task *buildTask) {
 	if task.resolved == nil {
-		taskReporter.reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.File_0_not_found, config))
-		taskReporter.exitStatus = ExitStatusDiagnosticsPresent_OutputsSkipped
-		return taskReporter
+		task.taskReporter.reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.File_0_not_found, task.config))
+		task.taskReporter.exitStatus = ExitStatusDiagnosticsPresent_OutputsSkipped
+		return
 	}
 
 	inputs := collections.NewSetFromItems(core.Map(task.resolved.FileNames(), s.toPath)...)
 	for outputFile := range task.resolved.GetOutputFileNames() {
-		s.cleanProjectOutput(outputFile, inputs, taskReporter)
+		s.cleanProjectOutput(task, outputFile, inputs)
 	}
-	s.cleanProjectOutput(task.resolved.GetBuildInfoFileName(), inputs, taskReporter)
-	return taskReporter
+	s.cleanProjectOutput(task, task.resolved.GetBuildInfoFileName(), inputs)
 }
 
-func (s *solutionBuilder) cleanProjectOutput(outputFile string, inputs *collections.Set[tspath.Path], taskReporter *taskReporter) {
+func (s *solutionBuilder) cleanProjectOutput(task *buildTask, outputFile string, inputs *collections.Set[tspath.Path]) {
 	outputPath := s.toPath(outputFile)
 	// If output name is same as input file name, do not delete and ignore the error
 	if inputs.Has(outputPath) {
@@ -559,10 +546,10 @@ func (s *solutionBuilder) cleanProjectOutput(outputFile string, inputs *collecti
 		if !s.opts.command.BuildOptions.Dry.IsTrue() {
 			err := s.host.FS().Remove(outputFile)
 			if err != nil {
-				taskReporter.reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Failed_to_delete_file_0, outputFile))
+				task.taskReporter.reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Failed_to_delete_file_0, outputFile))
 			}
 		} else {
-			taskReporter.filesToDelete = append(taskReporter.filesToDelete, outputFile)
+			task.taskReporter.filesToDelete = append(task.taskReporter.filesToDelete, outputFile)
 		}
 	}
 }
