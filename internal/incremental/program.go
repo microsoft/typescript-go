@@ -305,7 +305,7 @@ func (p *Program) ensureHasErrorsForState(ctx context.Context, program *compiler
 	}) {
 		// Record this for only non incremental build info
 		p.snapshot.hasErrors = core.IfElse(p.snapshot.options.IsIncremental(), core.TSFalse, core.TSTrue)
-		// Dont need to encode semantic errors state!!
+		// Dont need to encode semantic errors state since the emit diagnostics are encoded
 		p.snapshot.hasSemanticErrors = false
 		return
 	}
@@ -316,7 +316,7 @@ func (p *Program) ensureHasErrorsForState(ctx context.Context, program *compiler
 		len(program.GetOptionsDiagnostics(ctx)) > 0 ||
 		len(program.GetGlobalDiagnostics(ctx)) > 0 {
 		p.snapshot.hasErrors = core.TSTrue
-		// Dont need to encode semantic errors state!!
+		// Dont need to encode semantic errors state since the syntax and program diagnostics are encoded as present
 		p.snapshot.hasSemanticErrors = false
 		return
 	}
