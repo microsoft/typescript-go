@@ -1,4 +1,4 @@
-package execute_test
+package build_test
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/execute"
+	"github.com/microsoft/typescript-go/internal/execute/build"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
@@ -81,7 +81,7 @@ func (b *buildOrderTestCase) run(t *testing.T) {
 		host := compiler.NewCompilerHost("/home/src/workspaces/project", vfstest.FromMap(files, true), "", nil, nil)
 		args := append([]string{"--build", "--dry"}, b.projects...)
 		buildCommand := tsoptions.ParseBuildCommandLine(args, host)
-		buildOrderGenerator := execute.NewBuildOrderGenerator(buildCommand, host, false)
+		buildOrderGenerator := build.NewBuildOrderGenerator(buildCommand, host, false)
 		buildOrder := core.Map(buildOrderGenerator.Order(), b.projectName)
 		assert.DeepEqual(t, buildOrder, b.expected)
 

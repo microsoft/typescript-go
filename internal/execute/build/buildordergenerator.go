@@ -1,4 +1,4 @@
-package execute
+package build
 
 import (
 	"strings"
@@ -21,8 +21,8 @@ type solutionBuilderResult struct {
 	filesToDelete []string
 }
 
-func (b *solutionBuilderResult) report(s *solutionBuilder) {
-	tsc.CreateReportErrorSummary(s.opts.sys, s.opts.command.CompilerOptions)(b.errors)
+func (b *solutionBuilderResult) report(s *Orchestrator) {
+	tsc.CreateReportErrorSummary(s.opts.Sys, s.opts.Command.CompilerOptions)(b.errors)
 	if b.filesToDelete != nil {
 		s.createBuilderStatusReporter(nil)(
 			ast.NewCompilerDiagnostic(
@@ -35,11 +35,11 @@ func (b *solutionBuilderResult) report(s *solutionBuilder) {
 	if len(b.programStats) == 0 {
 		return
 	}
-	if !s.opts.command.CompilerOptions.Diagnostics.IsTrue() && !s.opts.command.CompilerOptions.ExtendedDiagnostics.IsTrue() {
+	if !s.opts.Command.CompilerOptions.Diagnostics.IsTrue() && !s.opts.Command.CompilerOptions.ExtendedDiagnostics.IsTrue() {
 		return
 	}
-	b.statistics.Aggregate(b.programStats, s.opts.sys.SinceStart())
-	b.statistics.Report(s.opts.sys.Writer(), s.opts.testing)
+	b.statistics.Aggregate(b.programStats, s.opts.Sys.SinceStart())
+	b.statistics.Report(s.opts.Sys.Writer(), s.opts.Testing)
 }
 
 type buildOrderGenerator struct {
@@ -161,8 +161,8 @@ func (b *buildOrderGenerator) analyzeConfig(
 	return task
 }
 
-func (b *buildOrderGenerator) buildOrClean(builder *solutionBuilder, build bool) tsc.CommandLineResult {
-	if build && builder.opts.command.BuildOptions.Verbose.IsTrue() {
+func (b *buildOrderGenerator) buildOrClean(builder *Orchestrator, build bool) tsc.CommandLineResult {
+	if build && builder.opts.Command.BuildOptions.Verbose.IsTrue() {
 		builder.createBuilderStatusReporter(nil)(ast.NewCompilerDiagnostic(
 			diagnostics.Projects_in_this_build_Colon_0,
 			strings.Join(core.Map(b.Order(), func(p string) string {
@@ -172,7 +172,7 @@ func (b *buildOrderGenerator) buildOrClean(builder *solutionBuilder, build bool)
 	}
 	var buildResult solutionBuilderResult
 	if len(b.errors) == 0 {
-		wg := core.NewWorkGroup(builder.opts.command.CompilerOptions.SingleThreaded.IsTrue())
+		wg := core.NewWorkGroup(builder.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
 		b.tasks.Range(func(path tspath.Path, task *buildTask) bool {
 			task.taskReporter.reportStatus = builder.createBuilderStatusReporter(&task.taskReporter)
 			task.taskReporter.diagnosticReporter = builder.createDiagnosticReporter(&task.taskReporter)

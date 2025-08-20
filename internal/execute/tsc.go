@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/execute/build"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/incremental"
@@ -105,12 +106,12 @@ func tscBuildCompilation(sys tsc.System, buildCommand *tsoptions.ParsedBuildComm
 	}
 
 	// !!! sheetal watch mode
-	solutionBuilder := newSolutionBuilder(solutionBuilderOptions{
-		sys,
-		buildCommand,
-		testing,
+	solutionBuilder := build.NewOrchestrator(build.Options{
+		Sys:     sys,
+		Command: buildCommand,
+		Testing: testing,
 	})
-	return solutionBuilder.buildOrClean(!buildCommand.BuildOptions.Clean.IsTrue())
+	return solutionBuilder.Start()
 }
 
 func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, testing tsc.CommandLineTesting) tsc.CommandLineResult {

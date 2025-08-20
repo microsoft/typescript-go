@@ -1,4 +1,4 @@
-package execute
+package build
 
 import (
 	"fmt"
@@ -31,14 +31,14 @@ func (b *taskReporter) reportDiagnostic(err *ast.Diagnostic) {
 	b.diagnosticReporter(err)
 }
 
-func (b *taskReporter) report(s *solutionBuilder, configPath tspath.Path, buildResult *solutionBuilderResult) {
+func (b *taskReporter) report(s *Orchestrator, configPath tspath.Path, buildResult *solutionBuilderResult) {
 	if b.prev != nil {
 		<-b.prev.done
 	}
 	if len(b.errors) > 0 {
 		buildResult.errors = append(core.IfElse(buildResult.errors != nil, buildResult.errors, []*ast.Diagnostic{}), b.errors...)
 	}
-	fmt.Fprint(s.opts.sys.Writer(), b.builder.String())
+	fmt.Fprint(s.opts.Sys.Writer(), b.builder.String())
 	if b.exitStatus > buildResult.result.Status {
 		buildResult.result.Status = b.exitStatus
 	}

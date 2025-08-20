@@ -1,4 +1,4 @@
-package execute
+package build
 
 import (
 	"time"
@@ -23,7 +23,7 @@ type buildInfoAndConfig struct {
 }
 
 type solutionBuilderHost struct {
-	builder             *solutionBuilder
+	builder             *Orchestrator
 	host                compiler.CompilerHost
 	extendedConfigCache collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]
 	sourceFiles         collections.SyncMap[ast.SourceFileParseOptions, *ast.SourceFile]
@@ -121,9 +121,9 @@ func (h *solutionBuilderHost) GetResolvedProjectReference(fileName string, path 
 	if existing, loaded := h.resolvedReferences.Load(path); loaded {
 		return existing.resolved
 	}
-	configStart := h.builder.opts.sys.Now()
-	commandLine, _ := tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, h.builder.opts.command.CompilerOptions, h, &h.extendedConfigCache)
-	configTime := h.builder.opts.sys.Now().Sub(configStart)
+	configStart := h.builder.opts.Sys.Now()
+	commandLine, _ := tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, h.builder.opts.Command.CompilerOptions, h, &h.extendedConfigCache)
+	configTime := h.builder.opts.Sys.Now().Sub(configStart)
 	configAndTime, _ := h.resolvedReferences.LoadOrStore(path, &configAndTime{resolved: commandLine, time: configTime})
 	return configAndTime.resolved
 }
