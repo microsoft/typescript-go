@@ -171,7 +171,9 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testin
 	extendedConfigCache := &extendedConfigCache{}
 	var configTime time.Duration
 	if configFileName != "" {
+		configStart := sys.Now()
 		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(configFileName, compilerOptionsFromCommandLine, sys, extendedConfigCache)
+		configTime = sys.Now().Sub(configStart)
 		if len(errors) != 0 {
 			// these are unrecoverable errors--exit to report them as diagnostics
 			for _, e := range errors {
