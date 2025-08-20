@@ -187,6 +187,97 @@ func TestATA(t *testing.T) {
 		assert.Equal(t, calls[1].Args[2], "@types/jquery@latest")
 	})
 
+	t.Run("discover from node_modules empty types", func(t *testing.T) {
+		t.Parallel()
+
+		files := map[string]any{
+			"/user/username/projects/project/app.js":                                  "",
+			"/user/username/projects/project/package.json":                            `{"dependencies": {"jquery": "1.0.0"}}`,
+			"/user/username/projects/project/jsconfig.json":                           `{"compilerOptions": {"types": []}}`,
+			"/user/username/projects/project/node_modules/commander/index.js":         "",
+			"/user/username/projects/project/node_modules/commander/package.json":     `{ "name": "commander" }`,
+			"/user/username/projects/project/node_modules/jquery/index.js":            "",
+			"/user/username/projects/project/node_modules/jquery/package.json":        `{ "name": "jquery" }`,
+			"/user/username/projects/project/node_modules/jquery/nested/package.json": `{ "name": "nested" }`,
+		}
+
+		session, utils := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TypingsInstallerOptions{
+			TypesRegistry: []string{"nested", "commander"},
+			PackageToFile: map[string]string{
+				"jquery": "declare const jquery: { x: number }",
+			},
+		})
+
+		session.DidOpenFile(context.Background(), lsproto.DocumentUri("file:///user/username/projects/project/app.js"), 1, files["/user/username/projects/project/app.js"].(string), lsproto.LanguageKindJavaScript)
+		session.WaitForBackgroundTasks()
+
+		// Only types-registry should be installed
+		calls := utils.NpmExecutor().NpmInstallCalls()
+		assert.Equal(t, 1, len(calls))
+		assert.DeepEqual(t, calls[0].Args, []string{"install", "--ignore-scripts", "types-registry@latest"})
+	})
+
+	t.Run("discover from node_modules explicit types", func(t *testing.T) {
+		t.Parallel()
+
+		files := map[string]any{
+			"/user/username/projects/project/app.js":                                  "",
+			"/user/username/projects/project/package.json":                            `{"dependencies": {"jquery": "1.0.0"}}`,
+			"/user/username/projects/project/jsconfig.json":                           `{"compilerOptions": {"types": ["jquery"]}}`,
+			"/user/username/projects/project/node_modules/commander/index.js":         "",
+			"/user/username/projects/project/node_modules/commander/package.json":     `{ "name": "commander" }`,
+			"/user/username/projects/project/node_modules/jquery/index.js":            "",
+			"/user/username/projects/project/node_modules/jquery/package.json":        `{ "name": "jquery" }`,
+			"/user/username/projects/project/node_modules/jquery/nested/package.json": `{ "name": "nested" }`,
+		}
+
+		session, utils := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TypingsInstallerOptions{
+			TypesRegistry: []string{"nested", "commander"},
+			PackageToFile: map[string]string{
+				"jquery": "declare const jquery: { x: number }",
+			},
+		})
+
+		session.DidOpenFile(context.Background(), lsproto.DocumentUri("file:///user/username/projects/project/app.js"), 1, files["/user/username/projects/project/app.js"].(string), lsproto.LanguageKindJavaScript)
+		session.WaitForBackgroundTasks()
+
+		// Only types-registry should be installed
+		calls := utils.NpmExecutor().NpmInstallCalls()
+		assert.Equal(t, 1, len(calls))
+		assert.DeepEqual(t, calls[0].Args, []string{"install", "--ignore-scripts", "types-registry@latest"})
+	})
+
+	t.Run("discover from node_modules empty types has import", func(t *testing.T) {
+		t.Parallel()
+
+		files := map[string]any{
+			"/user/username/projects/project/app.js":                                  `import "jquery";`,
+			"/user/username/projects/project/package.json":                            `{"dependencies": {"jquery": "1.0.0"}}`,
+			"/user/username/projects/project/jsconfig.json":                           `{"compilerOptions": {"types": []}}`,
+			"/user/username/projects/project/node_modules/commander/index.js":         "",
+			"/user/username/projects/project/node_modules/commander/package.json":     `{ "name": "commander" }`,
+			"/user/username/projects/project/node_modules/jquery/index.js":            "",
+			"/user/username/projects/project/node_modules/jquery/package.json":        `{ "name": "jquery" }`,
+			"/user/username/projects/project/node_modules/jquery/nested/package.json": `{ "name": "nested" }`,
+		}
+
+		session, utils := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TypingsInstallerOptions{
+			TypesRegistry: []string{"nested", "commander"},
+			PackageToFile: map[string]string{
+				"jquery": "declare const jquery: { x: number }",
+			},
+		})
+
+		session.DidOpenFile(context.Background(), lsproto.DocumentUri("file:///user/username/projects/project/app.js"), 1, files["/user/username/projects/project/app.js"].(string), lsproto.LanguageKindJavaScript)
+		session.WaitForBackgroundTasks()
+
+		// types-registry + jquery types
+		calls := utils.NpmExecutor().NpmInstallCalls()
+		assert.Equal(t, 2, len(calls))
+		assert.DeepEqual(t, calls[0].Args, []string{"install", "--ignore-scripts", "types-registry@latest"})
+		assert.Assert(t, slices.Contains(calls[1].Args, "@types/jquery@latest"))
+	})
+
 	t.Run("discover from bower_components", func(t *testing.T) {
 		t.Parallel()
 
@@ -256,6 +347,224 @@ func TestATA(t *testing.T) {
 		assert.NilError(t, err)
 		jqueryTypesFile := ls.GetProgram().GetSourceFile(projecttestutil.TestTypingsLocation + "/node_modules/@types/jquery/index.d.ts")
 		assert.Assert(t, jqueryTypesFile != nil, "jquery types should be installed")
+	})
+
+	t.Run("Malformed package.json should be watched", func(t *testing.T) {
+		t.Parallel()
+
+		files := map[string]any{
+			"/user/username/projects/project/app.js":       "",
+			"/user/username/projects/project/package.json": `{"dependencies": { "co } }`,
+		}
+
+		session, utils := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TypingsInstallerOptions{
+			PackageToFile: map[string]string{
+				"commander": "export let x: number",
+			},
+		})
+
+		uri := lsproto.DocumentUri("file:///user/username/projects/project/app.js")
+		session.DidOpenFile(context.Background(), uri, 1, files["/user/username/projects/project/app.js"].(string), lsproto.LanguageKindJavaScript)
+		session.WaitForBackgroundTasks()
+
+		// Initially only types-registry update attempted
+		calls := utils.NpmExecutor().NpmInstallCalls()
+		assert.Equal(t, 1, len(calls))
+		assert.DeepEqual(t, calls[0].Args, []string{"install", "--ignore-scripts", "types-registry@latest"})
+
+		// Fix package.json and notify watcher
+		assert.NilError(t, utils.FS().WriteFile(
+			"/user/username/projects/project/package.json",
+			`{ "dependencies": { "commander": "0.0.2" } }`,
+			false,
+		))
+		session.DidChangeWatchedFiles(context.Background(), []*lsproto.FileEvent{{
+			Type: lsproto.FileChangeTypeChanged,
+			Uri:  lsproto.DocumentUri("file:///user/username/projects/project/package.json"),
+		}})
+		session.WaitForBackgroundTasks()
+
+		calls = utils.NpmExecutor().NpmInstallCalls()
+		assert.Equal(t, 2, len(calls))
+		assert.Assert(t, slices.Contains(calls[1].Args, "@types/commander@latest"))
+
+		// Verify types file present
+		ls, err := session.GetLanguageService(context.Background(), uri)
+		assert.NilError(t, err)
+		program := ls.GetProgram()
+		assert.Assert(t, program.GetSourceFile(projecttestutil.TestTypingsLocation+"/node_modules/@types/commander/index.d.ts") != nil)
+	})
+
+	t.Run("should redo resolution that resolved to '.js' file after typings are installed", func(t *testing.T) {
+		t.Parallel()
+
+		files := map[string]any{
+			"/user/username/projects/project/app.js":                  `\n                import * as commander from "commander";\n            `,
+			"/user/username/projects/node_modules/commander/index.js": "module.exports = 0",
+		}
+
+		session, utils := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TypingsInstallerOptions{
+			PackageToFile: map[string]string{
+				"commander": "export let commander: number",
+			},
+		})
+
+		uri := lsproto.DocumentUri("file:///user/username/projects/project/app.js")
+		session.DidOpenFile(context.Background(), uri, 1, files["/user/username/projects/project/app.js"].(string), lsproto.LanguageKindJavaScript)
+		session.WaitForBackgroundTasks()
+
+		calls := utils.NpmExecutor().NpmInstallCalls()
+		assert.Equal(t, 2, len(calls))
+		assert.Assert(t, slices.Contains(calls[1].Args, "@types/commander@latest"))
+
+		ls, err := session.GetLanguageService(context.Background(), uri)
+		assert.NilError(t, err)
+		program := ls.GetProgram()
+		// Types file present
+		assert.Assert(t, program.GetSourceFile(projecttestutil.TestTypingsLocation+"/node_modules/@types/commander/index.d.ts") != nil)
+		// JS resolution should be dropped
+		assert.Assert(t, program.GetSourceFile("/user/username/projects/node_modules/commander/index.js") == nil)
+	})
+
+	t.Run("expired cache entry (inferred project, should install typings)", func(t *testing.T) {
+		t.Parallel()
+
+		files := map[string]any{
+			"/user/username/projects/project/app.js":                                       "",
+			"/user/username/projects/project/package.json":                                 `{"name":"test","dependencies":{"jquery":"^3.1.0"}}`,
+			projecttestutil.TestTypingsLocation + "/node_modules/@types/jquery/index.d.ts": "export const x = 10;",
+			projecttestutil.TestTypingsLocation + "/package.json":                          `{"dependencies":{"types-registry":"^0.1.317"},"devDependencies":{"@types/jquery":"^1.0.0"}}`,
+			projecttestutil.TestTypingsLocation + "/package-lock.json":                     `{"dependencies":{"@types/jquery":{"version":"1.0.0"}}}`,
+		}
+
+		session, _ := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TypingsInstallerOptions{
+			PackageToFile: map[string]string{
+				"jquery": "export const y = 10",
+			},
+		})
+
+		uri := lsproto.DocumentUri("file:///user/username/projects/project/app.js")
+		session.DidOpenFile(context.Background(), uri, 1, files["/user/username/projects/project/app.js"].(string), lsproto.LanguageKindJavaScript)
+		session.WaitForBackgroundTasks()
+
+		ls, err := session.GetLanguageService(context.Background(), uri)
+		assert.NilError(t, err)
+		program := ls.GetProgram()
+		// Expect updated content from installed typings
+		assert.Equal(t, program.GetSourceFile(projecttestutil.TestTypingsLocation+"/node_modules/@types/jquery/index.d.ts").Text(), "export const y = 10")
+	})
+
+	t.Run("non-expired cache entry (inferred project, should not install typings)", func(t *testing.T) {
+		t.Parallel()
+
+		files := map[string]any{
+			"/user/username/projects/project/app.js":                                       "",
+			"/user/username/projects/project/package.json":                                 `{"name":"test","dependencies":{"jquery":"^3.1.0"}}`,
+			projecttestutil.TestTypingsLocation + "/node_modules/@types/jquery/index.d.ts": "export const x = 10;",
+			projecttestutil.TestTypingsLocation + "/package.json":                          `{"dependencies":{"types-registry":"^0.1.317"},"devDependencies":{"@types/jquery":"^1.3.0"}}`,
+			projecttestutil.TestTypingsLocation + "/package-lock.json":                     `{"dependencies":{"@types/jquery":{"version":"1.3.0"}}}`,
+		}
+
+		session, _ := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TypingsInstallerOptions{
+			TypesRegistry: []string{"jquery"},
+		})
+
+		uri := lsproto.DocumentUri("file:///user/username/projects/project/app.js")
+		session.DidOpenFile(context.Background(), uri, 1, files["/user/username/projects/project/app.js"].(string), lsproto.LanguageKindJavaScript)
+		session.WaitForBackgroundTasks()
+
+		ls, err := session.GetLanguageService(context.Background(), uri)
+		assert.NilError(t, err)
+		program := ls.GetProgram()
+		// Expect existing content unchanged
+		assert.Equal(t, program.GetSourceFile(projecttestutil.TestTypingsLocation+"/node_modules/@types/jquery/index.d.ts").Text(), "export const x = 10;")
+	})
+
+	t.Run("deduplicate from local @types packages", func(t *testing.T) {
+		t.Skip("Todo - implement removing local @types from include list")
+		t.Parallel()
+
+		files := map[string]any{
+			"/user/username/projects/project/app.js":                              "",
+			"/user/username/projects/project/node_modules/@types/node/index.d.ts": "declare var node;",
+			"/user/username/projects/project/jsconfig.json": `{
+				"typeAcquisition": { "include": ["node"] }
+			}`,
+		}
+
+		session, utils := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TypingsInstallerOptions{
+			TypesRegistry: []string{"node"},
+		})
+
+		uri := lsproto.DocumentUri("file:///user/username/projects/project/app.js")
+		session.DidOpenFile(context.Background(), uri, 1, files["/user/username/projects/project/app.js"].(string), lsproto.LanguageKindJavaScript)
+		session.WaitForBackgroundTasks()
+
+		// Only the types-registry should be installed; @types/node should NOT be installed since it exists locally
+		npmCalls := utils.NpmExecutor().NpmInstallCalls()
+		assert.Equal(t, len(npmCalls), 1)
+		assert.Equal(t, npmCalls[0].Cwd, projecttestutil.TestTypingsLocation)
+		assert.DeepEqual(t, npmCalls[0].Args, []string{"install", "--ignore-scripts", "types-registry@latest"})
+
+		// And the program should include the local @types/node declaration file
+		ls, err := session.GetLanguageService(context.Background(), uri)
+		assert.NilError(t, err)
+		program := ls.GetProgram()
+		assert.Assert(t, program.GetSourceFile("/user/username/projects/project/node_modules/@types/node/index.d.ts") != nil)
+	})
+
+	t.Run("expired cache entry (inferred project, should install typings) lockfile3", func(t *testing.T) {
+		t.Parallel()
+
+		files := map[string]any{
+			"/user/username/projects/project/app.js":                                       "",
+			"/user/username/projects/project/package.json":                                 `{"name":"test","dependencies":{"jquery":"^3.1.0"}}`,
+			projecttestutil.TestTypingsLocation + "/node_modules/@types/jquery/index.d.ts": "export const x = 10;",
+			projecttestutil.TestTypingsLocation + "/package.json":                          `{"dependencies":{"types-registry":"^0.1.317"},"devDependencies":{"@types/jquery":"^1.0.0"}}`,
+			projecttestutil.TestTypingsLocation + "/package-lock.json":                     `{"packages":{"node_modules/@types/jquery":{"version":"1.0.0"}}}`,
+		}
+
+		session, _ := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TypingsInstallerOptions{
+			PackageToFile: map[string]string{
+				"jquery": "export const y = 10",
+			},
+		})
+
+		uri := lsproto.DocumentUri("file:///user/username/projects/project/app.js")
+		session.DidOpenFile(context.Background(), uri, 1, files["/user/username/projects/project/app.js"].(string), lsproto.LanguageKindJavaScript)
+		session.WaitForBackgroundTasks()
+
+		ls, err := session.GetLanguageService(context.Background(), uri)
+		assert.NilError(t, err)
+		program := ls.GetProgram()
+		// Expect updated content from installed typings
+		assert.Equal(t, program.GetSourceFile(projecttestutil.TestTypingsLocation+"/node_modules/@types/jquery/index.d.ts").Text(), "export const y = 10")
+	})
+
+	t.Run("non-expired cache entry (inferred project, should not install typings) lockfile3", func(t *testing.T) {
+		t.Parallel()
+
+		files := map[string]any{
+			"/user/username/projects/project/app.js":                                       "",
+			"/user/username/projects/project/package.json":                                 `{"name":"test","dependencies":{"jquery":"^3.1.0"}}`,
+			projecttestutil.TestTypingsLocation + "/node_modules/@types/jquery/index.d.ts": "export const x = 10;",
+			projecttestutil.TestTypingsLocation + "/package.json":                          `{"dependencies":{"types-registry":"^0.1.317"},"devDependencies":{"@types/jquery":"^1.3.0"}}`,
+			projecttestutil.TestTypingsLocation + "/package-lock.json":                     `{"packages":{"node_modules/@types/jquery":{"version":"1.3.0"}}}`,
+		}
+
+		session, _ := projecttestutil.SetupWithTypingsInstaller(files, &projecttestutil.TypingsInstallerOptions{
+			TypesRegistry: []string{"jquery"},
+		})
+
+		uri := lsproto.DocumentUri("file:///user/username/projects/project/app.js")
+		session.DidOpenFile(context.Background(), uri, 1, files["/user/username/projects/project/app.js"].(string), lsproto.LanguageKindJavaScript)
+		session.WaitForBackgroundTasks()
+
+		ls, err := session.GetLanguageService(context.Background(), uri)
+		assert.NilError(t, err)
+		program := ls.GetProgram()
+		// Expect existing content unchanged
+		assert.Equal(t, program.GetSourceFile(projecttestutil.TestTypingsLocation+"/node_modules/@types/jquery/index.d.ts").Text(), "export const x = 10;")
 	})
 
 	t.Run("should install typings for unresolved imports", func(t *testing.T) {
