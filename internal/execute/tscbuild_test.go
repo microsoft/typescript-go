@@ -565,6 +565,63 @@ func TestBuildDemoProject(t *testing.T) {
 			cwd:             "/user/username/projects/demo",
 			commandLineArgs: []string{"--b", "--verbose"},
 		},
+		{
+			subScenario: "in circular is set in the reference",
+			files: getBuildDemoFileMap(func(files FileMap) {
+				files["/user/username/projects/demo/a/tsconfig.json"] = stringtestutil.Dedent(`
+				{
+					"extends": "../tsconfig-base.json",
+					"compilerOptions": {
+						"outDir": "../lib/a",
+						"rootDir": "."
+					},
+					"references": [
+						{
+							"path": "../b",
+							"circular": true
+						}
+					]
+				}`)
+				files["/user/username/projects/demo/b/tsconfig.json"] = stringtestutil.Dedent(`
+				{
+					"extends": "../tsconfig-base.json",
+					"compilerOptions": {
+						"outDir": "../lib/b",
+						"rootDir": "."
+					},
+					"references": [
+						{
+							"path": "../a",
+						}
+					]
+				}`)
+				files["/user/username/projects/demo/a/index.ts"] = "export const a = 10;"
+				files["/user/username/projects/demo/b/index.ts"] = "export const b = 10;"
+				files["/user/username/projects/demo/tsconfig.json"] = stringtestutil.Dedent(`
+				{
+					"files": [],
+					"references": [
+						{
+							"path": "./core"
+						},
+						{
+							"path": "./animals",
+						},
+						{
+							"path": "./zoo",
+						},
+						{
+							"path": "./a",
+						},
+						{
+							"path": "./b",
+						},
+					],
+				}`)
+			}),
+			cwd:             "/user/username/projects/demo",
+			commandLineArgs: []string{"--b", "--verbose"},
+		},
 	}
 
 	for _, test := range testCases {
