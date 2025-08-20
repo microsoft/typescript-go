@@ -67,12 +67,7 @@ func (s *solutionBuilder) createTaskReporter() *taskReporter {
 
 func (s *solutionBuilder) buildProject(config string, path tspath.Path, task *buildTask) *taskReporter {
 	// Wait on upstream tasks to complete
-	upStreamStatus := make([]*upToDateStatus, len(task.upStream))
-	for i, upstream := range task.upStream {
-		if upstream.status != nil {
-			upStreamStatus[i] = <-upstream.status
-		}
-	}
+	upStreamStatus := task.waitOnUpstream()
 
 	status := s.getUpToDateStatus(config, path, task, upStreamStatus)
 	taskReporter := s.createTaskReporter()
@@ -139,9 +134,7 @@ func (s *solutionBuilder) buildProject(config string, path tspath.Path, task *bu
 			taskReporter.exitStatus = ExitStatusDiagnosticsPresent_OutputsSkipped
 		}
 	}
-	for _, downstream := range task.downStream {
-		downstream.status <- status
-	}
+	task.unblockDownstream(status)
 	return taskReporter
 }
 

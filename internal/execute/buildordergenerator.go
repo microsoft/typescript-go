@@ -234,6 +234,22 @@ type buildTask struct {
 	reporter             chan *taskReporter
 }
 
+func (t *buildTask) waitOnUpstream() []*upToDateStatus {
+	upStreamStatus := make([]*upToDateStatus, len(t.upStream))
+	for i, upstream := range t.upStream {
+		if upstream.status != nil {
+			upStreamStatus[i] = <-upstream.status
+		}
+	}
+	return upStreamStatus
+}
+
+func (t *buildTask) unblockDownstream(status *upToDateStatus) {
+	for _, downstream := range t.downStream {
+		downstream.status <- status
+	}
+}
+
 type buildOrderGenerator struct {
 	host   compiler.CompilerHost
 	tasks  collections.SyncMap[tspath.Path, *buildTask]
