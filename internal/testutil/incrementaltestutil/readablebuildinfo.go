@@ -192,7 +192,7 @@ func (b *readableBuildInfoResolvedRoot) MarshalJSON() ([]byte, error) {
 }
 
 func (b *readableBuildInfoResolvedRoot) UnmarshalJSON(data []byte) error {
-	var resolvedAndRoot *[2]string
+	var resolvedAndRoot [2]string
 	if err := json.Unmarshal(data, &resolvedAndRoot); err == nil {
 		*b = readableBuildInfoResolvedRoot{
 			Resolved: resolvedAndRoot[0],

@@ -435,7 +435,7 @@ func (b *BuildInfoResolvedRoot) MarshalJSON() ([]byte, error) {
 }
 
 func (b *BuildInfoResolvedRoot) UnmarshalJSON(data []byte) error {
-	var resolvedAndRoot *[2]int
+	var resolvedAndRoot [2]int
 	if err := json.Unmarshal(data, &resolvedAndRoot); err == nil {
 		*b = BuildInfoResolvedRoot{
 			Resolved: BuildInfoFileId(resolvedAndRoot[0]),
