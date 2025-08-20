@@ -90,7 +90,7 @@ type upToDateStatus struct {
 	data any
 }
 
-func (s *upToDateStatus) IsError() bool {
+func (s *upToDateStatus) isError() bool {
 	switch s.kind {
 	case upToDateStatusTypeConfigFileNotFound,
 		upToDateStatusTypeBuildErrors,
@@ -101,24 +101,7 @@ func (s *upToDateStatus) IsError() bool {
 	}
 }
 
-func (s *upToDateStatus) NeedsBuild() bool {
-	switch s.kind {
-	case upToDateStatusTypeInputFileMissing,
-		upToDateStatusTypeOutputMissing,
-		upToDateStatusTypeInputFileNewer,
-		upToDateStatusTypeOutOfDateBuildInfoWithPendingEmit,
-		upToDateStatusTypeOutOfDateBuildInfoWithErrors,
-		upToDateStatusTypeOutOfDateOptions,
-		upToDateStatusTypeOutOfDateRoots,
-		upToDateStatusTypeTsVersionOutputOfDate,
-		upToDateStatusTypeForceBuild:
-		return true
-	default:
-		return false
-	}
-}
-
-func (s *upToDateStatus) IsPseudoBuild() bool {
+func (s *upToDateStatus) isPseudoBuild() bool {
 	switch s.kind {
 	case upToDateStatusTypeUpToDateWithUpstreamTypes,
 		upToDateStatusTypeUpToDateWithInputFileText:
@@ -128,7 +111,7 @@ func (s *upToDateStatus) IsPseudoBuild() bool {
 	}
 }
 
-func (s *upToDateStatus) InputOutputFileAndTime() *inputOutputFileAndTime {
+func (s *upToDateStatus) inputOutputFileAndTime() *inputOutputFileAndTime {
 	data, ok := s.data.(*inputOutputFileAndTime)
 	if !ok {
 		return nil

@@ -156,7 +156,7 @@ func (s *solutionBuilder) handleStatusThatDoesntRequireBuild(task *buildTask, st
 	}
 
 	// update timestamps
-	if status.IsPseudoBuild() {
+	if status.isPseudoBuild() {
 		if s.opts.command.BuildOptions.Dry.IsTrue() {
 			task.taskReporter.reportStatus(ast.NewCompilerDiagnostic(diagnostics.A_non_dry_build_would_update_timestamps_for_output_of_project_0, task.config))
 			status = &upToDateStatus{kind: upToDateStatusTypeUpToDate}
@@ -193,7 +193,7 @@ func (s *solutionBuilder) getUpToDateStatus(configPath tspath.Path, task *buildT
 			continue
 		}
 
-		if s.opts.command.BuildOptions.StopBuildOnErrors.IsTrue() && upstreamStatus.IsError() {
+		if s.opts.command.BuildOptions.StopBuildOnErrors.IsTrue() && upstreamStatus.isError() {
 			// Upstream project has errors, so we cannot build this project
 			return &upToDateStatus{kind: upToDateStatusTypeUpstreamErrors, data: &upstreamErrors{task.resolved.ProjectReferences()[index].Path, upstreamStatus.kind == upToDateStatusTypeUpstreamErrors}}
 		}
@@ -327,7 +327,7 @@ func (s *solutionBuilder) getUpToDateStatus(configPath tspath.Path, task *buildT
 		// we can't be out of date because of it
 		// inputTime will not be present if we just built this project or updated timestamps
 		// - in that case we do want to either build or update timestamps
-		refInputOutputFileAndTime := upstreamStatus.InputOutputFileAndTime()
+		refInputOutputFileAndTime := upstreamStatus.inputOutputFileAndTime()
 		if refInputOutputFileAndTime != nil && !refInputOutputFileAndTime.input.time.IsZero() && refInputOutputFileAndTime.input.time.Before(oldestOutputFileAndTime.time) {
 			continue
 		}
