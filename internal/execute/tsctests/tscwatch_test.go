@@ -1,4 +1,4 @@
-package execute_test
+package tsctests
 
 import (
 	"strings"
