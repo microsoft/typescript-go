@@ -63,12 +63,6 @@ func (b *buildOrderTestCase) run(t *testing.T) {
 			"I": {"J"},
 			"J": {"H", "E"},
 		}
-		reverseDeps := map[string][]string{}
-		for project, deps := range deps {
-			for _, dep := range deps {
-				reverseDeps[dep] = append(reverseDeps[dep], project)
-			}
-		}
 		for _, project := range []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"} {
 			files[fmt.Sprintf("/home/src/workspaces/project/%s/%s.ts", project, project)] = "export {}"
 			referencesStr := ""
@@ -100,17 +94,6 @@ func (b *buildOrderTestCase) run(t *testing.T) {
 					assert.Assert(t, slices.Contains(upstream, expected), fmt.Sprintf("Expected upstream for %s to contain %s", project, expected))
 				} else {
 					assert.Assert(t, !slices.Contains(upstream, expected), fmt.Sprintf("Expected upstream for %s to not contain %s", project, expected))
-				}
-			}
-
-			downstream := core.Map(buildOrderGenerator.Downstream(b.configName(project)), b.projectName)
-			expectedDownstream := reverseDeps[project]
-			assert.Assert(t, len(downstream) <= len(expectedDownstream), fmt.Sprintf("Expected downstream for %s to be at most %d, got %d", project, len(expectedDownstream), len(downstream)))
-			for _, expected := range expectedDownstream {
-				if slices.Contains(buildOrder[index+1:], expected) {
-					assert.Assert(t, slices.Contains(downstream, expected), fmt.Sprintf("Expected downstream for %s to contain %s", project, expected))
-				} else {
-					assert.Assert(t, !slices.Contains(downstream, expected), fmt.Sprintf("Expected downstream for %s to not contain %s", project, expected))
 				}
 			}
 		}

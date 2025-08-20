@@ -11,12 +11,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-type statusTask struct {
-	config       string
-	referencedBy string
-	status       chan *upToDateStatus
-}
-
 type taskReporter struct {
 	builder            strings.Builder
 	errors             []*ast.Diagnostic
@@ -60,23 +54,22 @@ func (b *taskReporter) report(s *solutionBuilder, configPath tspath.Path, buildR
 type buildTask struct {
 	config       string
 	resolved     *tsoptions.ParsedCommandLine
-	upStream     []*statusTask
-	downStream   []*statusTask
+	upStream     []*buildTask
+	status       *upToDateStatus
+	done         chan struct{}
 	taskReporter taskReporter
 }
 
 func (t *buildTask) waitOnUpstream() []*upToDateStatus {
 	upStreamStatus := make([]*upToDateStatus, len(t.upStream))
 	for i, upstream := range t.upStream {
-		if upstream.status != nil {
-			upStreamStatus[i] = <-upstream.status
-		}
+		<-upstream.done
+		upStreamStatus[i] = upstream.status
 	}
 	return upStreamStatus
 }
 
 func (t *buildTask) unblockDownstream(status *upToDateStatus) {
-	for _, downstream := range t.downStream {
-		downstream.status <- status
-	}
+	t.status = status
+	close(t.done)
 }

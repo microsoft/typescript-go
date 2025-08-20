@@ -78,19 +78,8 @@ func (b *buildOrderGenerator) Upstream(configName string) []string {
 	if !ok {
 		panic("No build task found for " + configName)
 	}
-	return core.MapFiltered(task.upStream, func(t *statusTask) (string, bool) {
-		return t.config, t.status != nil
-	})
-}
-
-func (b *buildOrderGenerator) Downstream(configName string) []string {
-	path := b.toPath(configName)
-	task, ok := b.tasks.Load(path)
-	if !ok {
-		panic("No build task found for " + configName)
-	}
-	return core.Map(task.downStream, func(t *statusTask) string {
-		return t.referencedBy
+	return core.Map(task.upStream, func(t *buildTask) string {
+		return t.config
 	})
 }
 
@@ -138,18 +127,17 @@ func (b *buildOrderGenerator) generateOrder(projects []string) {
 	analyzing := collections.Set[tspath.Path]{}
 	circularityStack := []string{}
 	for _, project := range projects {
-		b.analyzeConfig(project, nil, false, &completed, &analyzing, circularityStack)
+		b.analyzeConfig(project, false, &completed, &analyzing, circularityStack)
 	}
 }
 
 func (b *buildOrderGenerator) analyzeConfig(
 	configName string,
-	downStream *statusTask,
 	inCircularContext bool,
 	completed *collections.Set[tspath.Path],
 	analyzing *collections.Set[tspath.Path],
 	circularityStack []string,
-) {
+) *buildTask {
 	path := b.toPath(configName)
 	task, ok := b.tasks.Load(path)
 	if !ok {
@@ -163,15 +151,16 @@ func (b *buildOrderGenerator) analyzeConfig(
 					strings.Join(circularityStack, "\n"),
 				))
 			}
-			return
+			return nil
 		}
 		analyzing.Add(path)
 		circularityStack = append(circularityStack, configName)
 		if task.resolved != nil {
 			for index, subReference := range task.resolved.ResolvedProjectReferencePaths() {
-				statusTask := statusTask{config: subReference, referencedBy: configName}
-				task.upStream = append(task.upStream, &statusTask)
-				b.analyzeConfig(subReference, &statusTask, inCircularContext || task.resolved.ProjectReferences()[index].Circular, completed, analyzing, circularityStack)
+				upstream := b.analyzeConfig(subReference, inCircularContext || task.resolved.ProjectReferences()[index].Circular, completed, analyzing, circularityStack)
+				if upstream != nil {
+					task.upStream = append(task.upStream, upstream)
+				}
 			}
 		}
 		circularityStack = circularityStack[:len(circularityStack)-1]
@@ -185,12 +174,10 @@ func (b *buildOrderGenerator) analyzeConfig(
 				panic("No previous task found for " + prev)
 			}
 		}
+		task.done = make(chan struct{})
 		b.order = append(b.order, configName)
 	}
-	if downStream != nil {
-		task.downStream = append(task.downStream, downStream)
-		downStream.status = make(chan *upToDateStatus, 1)
-	}
+	return task
 }
 
 func (b *buildOrderGenerator) buildOrClean(builder *solutionBuilder, build bool) CommandLineResult {
