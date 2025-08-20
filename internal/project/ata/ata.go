@@ -191,6 +191,7 @@ func (ti *TypingsInstaller) installTypings(
 			typingFile := ti.typingToFileName(resolver, packageName)
 			if typingFile == "" {
 				logger.Log(fmt.Sprintf("ATA:: Failed to find typing file for package '%s'", packageName))
+				ti.missingTypingsSet.Store(packageName, true)
 				continue
 			}
 
@@ -433,9 +434,21 @@ func (ti *TypingsInstaller) processCacheLocation(projectID string, fs vfs.FS, lo
 				}
 				typingFile := ti.typingToFileName(resolver, packageName)
 				if typingFile == "" {
+					ti.missingTypingsSet.Store(packageName, true)
 					continue
 				}
-				newVersion := semver.MustParse(npmLockValue.Version)
+				if existingTypingFile, existingTypingsFilePresent := ti.packageNameToTypingLocation.Load(packageName); existingTypingsFilePresent {
+					if existingTypingFile.TypingsLocation == typingFile {
+						continue
+					}
+					logger.Log("ATA:: New typing for package " + packageName + " from " + typingFile + " conflicts with existing typing file " + existingTypingFile.TypingsLocation)
+				}
+				logger.Log("ATA:: Adding entry into typings cache: " + packageName + " => " + typingFile)
+				version := npmLockValue.Version
+				if version == "" {
+					continue
+				}
+				newVersion := semver.MustParse(version)
 				newTyping := &CachedTyping{TypingsLocation: typingFile, Version: &newVersion}
 				ti.packageNameToTypingLocation.Store(packageName, newTyping)
 			}
