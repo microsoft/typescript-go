@@ -37,7 +37,7 @@ type ProgramUpdateKind int
 const (
 	ProgramUpdateKindNone ProgramUpdateKind = iota
 	ProgramUpdateKindCloned
-	ProgramUpdateKindSameFiles
+	ProgramUpdateKindSameFileNames
 	ProgramUpdateKindNewFiles
 )
 
@@ -316,9 +316,10 @@ func (p *Project) CreateProgram() CreateProgramResult {
 				},
 			},
 		)
-		if p.Program != nil && p.Program.HasSameFileNames(newProgram) {
-			updateKind = ProgramUpdateKindSameFiles
-		}
+	}
+
+	if !programCloned && p.Program != nil && p.Program.HasSameFileNames(newProgram) {
+		updateKind = ProgramUpdateKindSameFileNames
 	}
 
 	newProgram.BindSourceFiles()

@@ -1520,7 +1520,10 @@ func (p *Program) GetSourceFileByPath(path tspath.Path) *ast.SourceFile {
 }
 
 func (p *Program) HasSameFileNames(other *Program) bool {
-	return maps.Equal(p.filesByPath, other.filesByPath)
+	return maps.EqualFunc(p.filesByPath, other.filesByPath, func(a, b *ast.SourceFile) bool {
+		// checks for casing differences on case-insensitive file systems
+		return a.FileName() == b.FileName()
+	})
 }
 
 func (p *Program) GetSourceFiles() []*ast.SourceFile {
