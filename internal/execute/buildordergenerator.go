@@ -8,20 +8,21 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type solutionBuilderResult struct {
-	result        CommandLineResult
+	result        tsc.CommandLineResult
 	errors        []*ast.Diagnostic
-	statistics    statistics
-	programStats  []*statistics
+	statistics    tsc.Statistics
+	programStats  []*tsc.Statistics
 	filesToDelete []string
 }
 
 func (b *solutionBuilderResult) report(s *solutionBuilder) {
-	createReportErrorSummary(s.opts.sys, s.opts.command.CompilerOptions)(b.errors)
+	tsc.CreateReportErrorSummary(s.opts.sys, s.opts.command.CompilerOptions)(b.errors)
 	if b.filesToDelete != nil {
 		s.createBuilderStatusReporter(nil)(
 			ast.NewCompilerDiagnostic(
@@ -37,28 +38,8 @@ func (b *solutionBuilderResult) report(s *solutionBuilder) {
 	if !s.opts.command.CompilerOptions.Diagnostics.IsTrue() && !s.opts.command.CompilerOptions.ExtendedDiagnostics.IsTrue() {
 		return
 	}
-	b.statistics.isAggregate = true
-	b.statistics.compileTimes = &compileTimes{}
-	for _, stat := range b.programStats {
-		// Aggregate statistics
-		b.statistics.files += stat.files
-		b.statistics.lines += stat.lines
-		b.statistics.identifiers += stat.identifiers
-		b.statistics.symbols += stat.symbols
-		b.statistics.types += stat.types
-		b.statistics.instantiations += stat.instantiations
-		b.statistics.memoryUsed += stat.memoryUsed
-		b.statistics.memoryAllocs += stat.memoryAllocs
-		b.statistics.compileTimes.configTime += stat.compileTimes.configTime
-		b.statistics.compileTimes.buildInfoReadTime += stat.compileTimes.buildInfoReadTime
-		b.statistics.compileTimes.parseTime += stat.compileTimes.parseTime
-		b.statistics.compileTimes.bindTime += stat.compileTimes.bindTime
-		b.statistics.compileTimes.checkTime += stat.compileTimes.checkTime
-		b.statistics.compileTimes.emitTime += stat.compileTimes.emitTime
-		b.statistics.compileTimes.changesComputeTime += stat.compileTimes.changesComputeTime
-	}
-	b.statistics.compileTimes.totalTime = s.opts.sys.SinceStart()
-	b.statistics.report(s.opts.sys.Writer(), s.opts.testing)
+	b.statistics.Aggregate(b.programStats, s.opts.sys.SinceStart())
+	b.statistics.Report(s.opts.sys.Writer(), s.opts.testing)
 }
 
 type buildOrderGenerator struct {
@@ -180,7 +161,7 @@ func (b *buildOrderGenerator) analyzeConfig(
 	return task
 }
 
-func (b *buildOrderGenerator) buildOrClean(builder *solutionBuilder, build bool) CommandLineResult {
+func (b *buildOrderGenerator) buildOrClean(builder *solutionBuilder, build bool) tsc.CommandLineResult {
 	if build && builder.opts.command.BuildOptions.Verbose.IsTrue() {
 		builder.createBuilderStatusReporter(nil)(ast.NewCompilerDiagnostic(
 			diagnostics.Projects_in_this_build_Colon_0,
@@ -206,9 +187,9 @@ func (b *buildOrderGenerator) buildOrClean(builder *solutionBuilder, build bool)
 			return true
 		})
 		wg.RunAndWait()
-		buildResult.statistics.projects = len(b.Order())
+		buildResult.statistics.Projects = len(b.Order())
 	} else {
-		buildResult.result.Status = ExitStatusProjectReferenceCycle_OutputsSkipped
+		buildResult.result.Status = tsc.ExitStatusProjectReferenceCycle_OutputsSkipped
 		reportDiagnostic := builder.createDiagnosticReporter(nil)
 		for _, err := range b.errors {
 			reportDiagnostic(err)

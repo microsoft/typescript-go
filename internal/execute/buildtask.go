@@ -6,6 +6,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/incremental"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -14,11 +15,12 @@ import (
 type taskReporter struct {
 	builder            strings.Builder
 	errors             []*ast.Diagnostic
-	reportStatus       diagnosticReporter
-	diagnosticReporter diagnosticReporter
-	exitStatus         ExitStatus
-	statistics         *statistics
+	reportStatus       tsc.DiagnosticReporter
+	diagnosticReporter tsc.DiagnosticReporter
+	exitStatus         tsc.ExitStatus
+	statistics         *tsc.Statistics
 	program            *incremental.Program
+	pseudoBuild        bool
 	filesToDelete      []string
 	prev               *taskReporter
 	done               chan struct{}
@@ -45,7 +47,10 @@ func (b *taskReporter) report(s *solutionBuilder, configPath tspath.Path, buildR
 	}
 	if b.program != nil {
 		buildResult.result.IncrementalProgram = append(buildResult.result.IncrementalProgram, b.program)
-		buildResult.statistics.projectsBuilt++
+		buildResult.statistics.ProjectsBuilt++
+	}
+	if b.pseudoBuild {
+		buildResult.statistics.TimestampUpdates++
 	}
 	buildResult.filesToDelete = append(buildResult.filesToDelete, b.filesToDelete...)
 	close(b.done)

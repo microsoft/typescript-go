@@ -1,239 +1,21 @@
-package execute
+package tsc
 
 import (
 	"fmt"
-	"io"
-	"runtime"
 	"slices"
-	"strconv"
 	"strings"
-	"time"
 
-	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
-	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
-	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
-	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-func getFormatOptsOfSys(sys System) *diagnosticwriter.FormattingOptions {
-	return &diagnosticwriter.FormattingOptions{
-		NewLine: "\n",
-		ComparePathsOptions: tspath.ComparePathsOptions{
-			CurrentDirectory:          sys.GetCurrentDirectory(),
-			UseCaseSensitiveFileNames: sys.FS().UseCaseSensitiveFileNames(),
-		},
-	}
-}
-
-type diagnosticReporter = func(*ast.Diagnostic)
-
-func quietDiagnosticReporter(diagnostic *ast.Diagnostic) {}
-func createDiagnosticReporter(sys System, w io.Writer, options *core.CompilerOptions) diagnosticReporter {
-	if options.Quiet.IsTrue() {
-		return quietDiagnosticReporter
-	}
-
-	formatOpts := getFormatOptsOfSys(sys)
-	writeDiagnostic := core.IfElse(shouldBePretty(sys, options), diagnosticwriter.FormatDiagnosticWithColorAndContext, diagnosticwriter.WriteFormatDiagnostic)
-	return func(diagnostic *ast.Diagnostic) {
-		writeDiagnostic(w, diagnostic, formatOpts)
-		fmt.Fprint(w, formatOpts.NewLine)
-	}
-}
-
-func defaultIsPretty(sys System) bool {
-	return sys.WriteOutputIsTTY() && sys.GetEnvironmentVariable("NO_COLOR") == ""
-}
-
-func shouldBePretty(sys System, options *core.CompilerOptions) bool {
-	if options == nil || options.Pretty.IsUnknown() {
-		return defaultIsPretty(sys)
-	}
-	return options.Pretty.IsTrue()
-}
-
-type colors struct {
-	showColors bool
-
-	isWindows            bool
-	isWindowsTerminal    bool
-	isVSCode             bool
-	supportsRicherColors bool
-}
-
-func createColors(sys System) *colors {
-	if !defaultIsPretty(sys) {
-		return &colors{showColors: false}
-	}
-
-	os := sys.GetEnvironmentVariable("OS")
-	isWindows := strings.Contains(strings.ToLower(os), "windows")
-	isWindowsTerminal := sys.GetEnvironmentVariable("WT_SESSION") != ""
-	isVSCode := sys.GetEnvironmentVariable("TERM_PROGRAM") == "vscode"
-	supportsRicherColors := sys.GetEnvironmentVariable("COLORTERM") == "truecolor" || sys.GetEnvironmentVariable("TERM") == "xterm-256color"
-
-	return &colors{
-		showColors:           true,
-		isWindows:            isWindows,
-		isWindowsTerminal:    isWindowsTerminal,
-		isVSCode:             isVSCode,
-		supportsRicherColors: supportsRicherColors,
-	}
-}
-
-func (c *colors) bold(str string) string {
-	if !c.showColors {
-		return str
-	}
-	return "\x1b[1m" + str + "\x1b[22m"
-}
-
-func (c *colors) blue(str string) string {
-	if !c.showColors {
-		return str
-	}
-
-	// Effectively Powershell and Command prompt users use cyan instead
-	// of blue because the default theme doesn't show blue with enough contrast.
-	if c.isWindows && !c.isWindowsTerminal && !c.isVSCode {
-		return c.brightWhite(str)
-	}
-	return "\x1b[94m" + str + "\x1b[39m"
-}
-
-func (c *colors) blueBackground(str string) string {
-	if !c.showColors {
-		return str
-	}
-	if c.supportsRicherColors {
-		return "\x1B[48;5;68m" + str + "\x1B[39;49m"
-	} else {
-		return "\x1b[44m" + str + "\x1B[39;49m"
-	}
-}
-
-func (c *colors) brightWhite(str string) string {
-	if !c.showColors {
-		return str
-	}
-	return "\x1b[97m" + str + "\x1b[39m"
-}
-
-type diagnosticsReporter = func(diagnostics []*ast.Diagnostic)
-
-func quietDiagnosticsReporter(diagnostics []*ast.Diagnostic) {}
-
-func createReportErrorSummary(sys System, options *core.CompilerOptions) diagnosticsReporter {
-	if shouldBePretty(sys, options) {
-		formatOpts := getFormatOptsOfSys(sys)
-		return func(diagnostics []*ast.Diagnostic) {
-			diagnosticwriter.WriteErrorSummaryText(sys.Writer(), diagnostics, formatOpts)
-		}
-	}
-	return quietDiagnosticsReporter
-}
-
-func createBuilderStatusReporter(sys System, w io.Writer, options *core.CompilerOptions, testing CommandLineTesting) diagnosticReporter {
-	if options.Quiet.IsTrue() {
-		return quietDiagnosticReporter
-	}
-
-	formatOpts := getFormatOptsOfSys(sys)
-	writeStatus := core.IfElse(shouldBePretty(sys, options), diagnosticwriter.FormatDiagnosticsStatusWithColorAndTime, diagnosticwriter.FormatDiagnosticsStatusAndTime)
-	return func(diagnostic *ast.Diagnostic) {
-		if testing != nil {
-			testing.OnBuildStatusReportStart(w)
-			defer testing.OnBuildStatusReportEnd(w)
-		}
-		writeStatus(w, sys.Now().Format("03:04:05 PM"), diagnostic, formatOpts)
-		fmt.Fprint(w, formatOpts.NewLine, formatOpts.NewLine)
-	}
-}
-
-type statistics struct {
-	isAggregate      bool
-	projects         int
-	projectsBuilt    int
-	timestampUpdates int
-	files            int
-	lines            int
-	identifiers      int
-	symbols          int
-	types            int
-	instantiations   int
-	memoryUsed       uint64
-	memoryAllocs     uint64
-	compileTimes     *compileTimes
-}
-
-func statisticsFromProgram(program *compiler.Program, compileTimes *compileTimes, memStats *runtime.MemStats) *statistics {
-	return &statistics{
-		files:          len(program.SourceFiles()),
-		lines:          program.LineCount(),
-		identifiers:    program.IdentifierCount(),
-		symbols:        program.SymbolCount(),
-		types:          program.TypeCount(),
-		instantiations: program.InstantiationCount(),
-		memoryUsed:     memStats.Alloc,
-		memoryAllocs:   memStats.Mallocs,
-		compileTimes:   compileTimes,
-	}
-}
-
-func (p *statistics) report(w io.Writer, testing CommandLineTesting) {
-	if testing != nil {
-		testing.OnStatisticsStart(w)
-		defer testing.OnStatisticsEnd(w)
-	}
-	var stats table
-	var prefix string
-
-	if p.isAggregate {
-		prefix = "Aggregate "
-		stats.add("Projects in scope", p.projects)
-		stats.add("Projects built", p.projectsBuilt)
-		stats.add("Timestamps only updates", p.timestampUpdates)
-	}
-	stats.add(prefix+"Files", p.files)
-	stats.add(prefix+"Lines", p.lines)
-	stats.add(prefix+"Identifiers", p.identifiers)
-	stats.add(prefix+"Symbols", p.symbols)
-	stats.add(prefix+"Types", p.types)
-	stats.add(prefix+"Instantiations", p.instantiations)
-	stats.add(prefix+"Memory used", fmt.Sprintf("%vK", p.memoryUsed/1024))
-	stats.add(prefix+"Memory allocs", strconv.FormatUint(p.memoryAllocs, 10))
-	if p.compileTimes.configTime != 0 {
-		stats.add(prefix+"Config time", p.compileTimes.configTime)
-	}
-	if p.compileTimes.buildInfoReadTime != 0 {
-		stats.add(prefix+"BuildInfo read time", p.compileTimes.buildInfoReadTime)
-	}
-	stats.add(prefix+"Parse time", p.compileTimes.parseTime)
-	if p.compileTimes.bindTime != 0 {
-		stats.add(prefix+"Bind time", p.compileTimes.bindTime)
-	}
-	if p.compileTimes.checkTime != 0 {
-		stats.add(prefix+"Check time", p.compileTimes.checkTime)
-	}
-	if p.compileTimes.emitTime != 0 {
-		stats.add(prefix+"Emit time", p.compileTimes.emitTime)
-	}
-	if p.compileTimes.changesComputeTime != 0 {
-		stats.add(prefix+"Changes compute time", p.compileTimes.changesComputeTime)
-	}
-	stats.add(prefix+"Total time", p.compileTimes.totalTime)
-	stats.print(w)
-}
-
-func printVersion(sys System) {
+func PrintVersion(sys System) {
 	fmt.Fprintln(sys.Writer(), diagnostics.Version_0.Format(core.Version()))
 }
 
-func printHelp(sys System, commandLine *tsoptions.ParsedCommandLine) {
+func PrintHelp(sys System, commandLine *tsoptions.ParsedCommandLine) {
 	if commandLine.CompilerOptions().All.IsFalseOrUnknown() {
 		printEasyHelp(sys, getOptionsForHelp(commandLine))
 	} else {
@@ -325,7 +107,7 @@ func printEasyHelp(sys System, simpleOptions []*tsoptions.CommandLineOption) {
 	}
 }
 
-func printBuildHelp(sys System, buildOptions []*tsoptions.CommandLineOption) {
+func PrintBuildHelp(sys System, buildOptions []*tsoptions.CommandLineOption) {
 	var output []string
 	output = append(output, getHeader(sys, diagnostics.X_tsc_Colon_The_TypeScript_Compiler.Format()+" - "+diagnostics.Version_0.Format(core.Version()))...)
 	before := diagnostics.Using_build_b_will_make_tsc_behave_more_like_a_build_orchestrator_than_a_compiler_This_is_used_to_trigger_building_composite_projects_which_you_can_learn_more_about_at_0.Format("https://aka.ms/tsc-composite-builds")
@@ -609,45 +391,4 @@ func getPrettyOutput(colors *colors, left string, right string, rightAlignOfLeft
 
 func getDisplayNameTextOfOption(option *tsoptions.CommandLineOption) string {
 	return "--" + option.Name + core.IfElse(option.ShortName != "", ", -"+option.ShortName, "")
-}
-
-type tableRow struct {
-	name  string
-	value string
-}
-
-type table struct {
-	rows []tableRow
-}
-
-func (t *table) add(name string, value any) {
-	if d, ok := value.(time.Duration); ok {
-		value = formatDuration(d)
-	}
-	t.rows = append(t.rows, tableRow{name, fmt.Sprint(value)})
-}
-
-func (t *table) print(w io.Writer) {
-	nameWidth := 0
-	valueWidth := 0
-	for _, r := range t.rows {
-		nameWidth = max(nameWidth, len(r.name))
-		valueWidth = max(valueWidth, len(r.value))
-	}
-
-	for _, r := range t.rows {
-		fmt.Fprintf(w, "%-*s %*s\n", nameWidth+1, r.name+":", valueWidth, r.value)
-	}
-}
-
-func formatDuration(d time.Duration) string {
-	return fmt.Sprintf("%.3fs", d.Seconds())
-}
-
-func identifierCount(p *compiler.Program) int {
-	count := 0
-	for _, file := range p.SourceFiles() {
-		count += file.IdentifierCount
-	}
-	return count
 }

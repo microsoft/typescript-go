@@ -9,6 +9,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/execute"
+	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -39,21 +40,21 @@ type tscInput struct {
 	windowsStyleRoot string
 }
 
-func (test *tscInput) executeCommand(sys *testSys, baselineBuilder *strings.Builder, commandLineArgs []string) execute.CommandLineResult {
+func (test *tscInput) executeCommand(sys *testSys, baselineBuilder *strings.Builder, commandLineArgs []string) tsc.CommandLineResult {
 	fmt.Fprint(baselineBuilder, "tsgo ", strings.Join(commandLineArgs, " "), "\n")
 	result := execute.CommandLine(sys, commandLineArgs, sys)
 	switch result.Status {
-	case execute.ExitStatusSuccess:
+	case tsc.ExitStatusSuccess:
 		baselineBuilder.WriteString("ExitStatus:: Success")
-	case execute.ExitStatusDiagnosticsPresent_OutputsSkipped:
+	case tsc.ExitStatusDiagnosticsPresent_OutputsSkipped:
 		baselineBuilder.WriteString("ExitStatus:: DiagnosticsPresent_OutputsSkipped")
-	case execute.ExitStatusDiagnosticsPresent_OutputsGenerated:
+	case tsc.ExitStatusDiagnosticsPresent_OutputsGenerated:
 		baselineBuilder.WriteString("ExitStatus:: DiagnosticsPresent_OutputsGenerated")
-	case execute.ExitStatusInvalidProject_OutputsSkipped:
+	case tsc.ExitStatusInvalidProject_OutputsSkipped:
 		baselineBuilder.WriteString("ExitStatus:: InvalidProject_OutputsSkipped")
-	case execute.ExitStatusProjectReferenceCycle_OutputsSkipped:
+	case tsc.ExitStatusProjectReferenceCycle_OutputsSkipped:
 		baselineBuilder.WriteString("ExitStatus:: ProjectReferenceCycle_OutputsSkipped")
-	case execute.ExitStatusNotImplemented:
+	case tsc.ExitStatusNotImplemented:
 		baselineBuilder.WriteString("ExitStatus:: NotImplemented")
 	default:
 		panic(fmt.Sprintf("UnknownExitStatus %d", result.Status))
@@ -94,7 +95,7 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 				}
 				sys.baselineFSwithDiff(baselineBuilder)
 
-				var editResult execute.CommandLineResult
+				var editResult tsc.CommandLineResult
 				if result.Watcher == nil {
 					editResult = test.executeCommand(sys, baselineBuilder, commandLineArgs)
 				} else {

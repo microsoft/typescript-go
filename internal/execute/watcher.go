@@ -9,18 +9,19 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/incremental"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type Watcher struct {
-	sys                System
+	sys                tsc.System
 	configFileName     string
 	options            *tsoptions.ParsedCommandLine
-	reportDiagnostic   diagnosticReporter
-	reportErrorSummary diagnosticsReporter
-	testing            CommandLineTesting
+	reportDiagnostic   tsc.DiagnosticReporter
+	reportErrorSummary tsc.DiagnosticsReporter
+	testing            tsc.CommandLineTesting
 
 	host           compiler.CompilerHost
 	program        *incremental.Program
@@ -28,7 +29,9 @@ type Watcher struct {
 	configModified bool
 }
 
-func createWatcher(sys System, configParseResult *tsoptions.ParsedCommandLine, reportDiagnostic diagnosticReporter, reportErrorSummary diagnosticsReporter, testing CommandLineTesting) *Watcher {
+var _ tsc.Watcher = (*Watcher)(nil)
+
+func createWatcher(sys tsc.System, configParseResult *tsoptions.ParsedCommandLine, reportDiagnostic tsc.DiagnosticReporter, reportErrorSummary tsc.DiagnosticsReporter, testing tsc.CommandLineTesting) *Watcher {
 	w := &Watcher{
 		sys:                sys,
 		options:            configParseResult,
@@ -90,7 +93,7 @@ func (w *Watcher) DoCycle() {
 func (w *Watcher) compileAndEmit() {
 	// !!! output/error reporting is currently the same as non-watch mode
 	// diagnostics, emitResult, exitStatus :=
-	emitFilesAndReportErrors(w.sys, w.program, w.program.GetProgram(), w.reportDiagnostic, w.reportErrorSummary, w.sys.Writer(), compileTimes{}, w.testing)
+	tsc.EmitFilesAndReportErrors(w.sys, w.program, w.program.GetProgram(), w.reportDiagnostic, w.reportErrorSummary, w.sys.Writer(), tsc.CompileTimes{}, w.testing)
 }
 
 func (w *Watcher) hasErrorsInTsConfig() bool {

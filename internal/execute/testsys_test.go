@@ -14,7 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/execute"
+	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/incremental"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/testutil/incrementaltestutil"
@@ -151,8 +151,8 @@ type testSys struct {
 }
 
 var (
-	_ execute.System             = (*testSys)(nil)
-	_ execute.CommandLineTesting = (*testSys)(nil)
+	_ tsc.System             = (*testSys)(nil)
+	_ tsc.CommandLineTesting = (*testSys)(nil)
 )
 
 func (s *testSys) Now() time.Time {
@@ -266,7 +266,7 @@ func (s *testSys) GetTrace(w io.Writer) func(str string) {
 	}
 }
 
-func (s *testSys) baselinePrograms(baseline *strings.Builder, programs []*incremental.Program, watcher *execute.Watcher) {
+func (s *testSys) baselinePrograms(baseline *strings.Builder, programs []*incremental.Program, watcher tsc.Watcher) {
 	if watcher != nil {
 		programs = []*incremental.Program{watcher.GetProgram()}
 	}

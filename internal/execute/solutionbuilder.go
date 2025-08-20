@@ -9,15 +9,16 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/incremental"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type solutionBuilderOptions struct {
-	sys     System
+	sys     tsc.System
 	command *tsoptions.ParsedBuildCommandLine
-	testing CommandLineTesting
+	testing tsc.CommandLineTesting
 }
 
 type solutionBuilder struct {
@@ -26,7 +27,7 @@ type solutionBuilder struct {
 	host                *solutionBuilderHost
 }
 
-func (s *solutionBuilder) buildOrClean(build bool) CommandLineResult {
+func (s *solutionBuilder) buildOrClean(build bool) tsc.CommandLineResult {
 	s.host = &solutionBuilderHost{
 		builder: s,
 		host:    compiler.NewCachedFSCompilerHost(s.opts.sys.GetCurrentDirectory(), s.opts.sys.FS(), s.opts.sys.DefaultLibraryPath(), nil, nil),
@@ -50,12 +51,12 @@ func (s *solutionBuilder) getWriter(taskReporter *taskReporter) io.Writer {
 	return &taskReporter.builder
 }
 
-func (s *solutionBuilder) createBuilderStatusReporter(taskReporter *taskReporter) diagnosticReporter {
-	return createBuilderStatusReporter(s.opts.sys, s.getWriter(taskReporter), s.opts.command.CompilerOptions, s.opts.testing)
+func (s *solutionBuilder) createBuilderStatusReporter(taskReporter *taskReporter) tsc.DiagnosticReporter {
+	return tsc.CreateBuilderStatusReporter(s.opts.sys, s.getWriter(taskReporter), s.opts.command.CompilerOptions, s.opts.testing)
 }
 
-func (s *solutionBuilder) createDiagnosticReporter(taskReporter *taskReporter) diagnosticReporter {
-	return createDiagnosticReporter(s.opts.sys, s.getWriter(taskReporter), s.opts.command.CompilerOptions)
+func (s *solutionBuilder) createDiagnosticReporter(taskReporter *taskReporter) tsc.DiagnosticReporter {
+	return tsc.CreateDiagnosticReporter(s.opts.sys, s.getWriter(taskReporter), s.opts.command.CompilerOptions)
 }
 
 func (s *solutionBuilder) buildProject(path tspath.Path, task *buildTask) {
@@ -69,46 +70,46 @@ func (s *solutionBuilder) buildProject(path tspath.Path, task *buildTask) {
 		}
 
 		// Real build
-		var compileTimes compileTimes
+		var compileTimes tsc.CompileTimes
 		configAndTime, _ := s.host.resolvedReferences.Load(path)
-		compileTimes.configTime = configAndTime.time
+		compileTimes.ConfigTime = configAndTime.time
 		buildInfoReadStart := s.opts.sys.Now()
 		oldProgram := incremental.ReadBuildInfoProgram(task.resolved, s.host, s.host)
-		compileTimes.buildInfoReadTime = s.opts.sys.Now().Sub(buildInfoReadStart)
+		compileTimes.BuildInfoReadTime = s.opts.sys.Now().Sub(buildInfoReadStart)
 		parseStart := s.opts.sys.Now()
 		program := compiler.NewProgram(compiler.ProgramOptions{
 			Config: task.resolved,
 			Host: &compilerHostForTaskReporter{
 				host:  s.host,
-				trace: getTraceWithWriterFromSys(&task.taskReporter.builder, s.opts.testing),
+				trace: tsc.GetTraceWithWriterFromSys(&task.taskReporter.builder, s.opts.testing),
 			},
 			JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
 		})
-		compileTimes.parseTime = s.opts.sys.Now().Sub(parseStart)
+		compileTimes.ParseTime = s.opts.sys.Now().Sub(parseStart)
 		changesComputeStart := s.opts.sys.Now()
 		task.taskReporter.program = incremental.NewProgram(program, oldProgram, s.host, s.opts.testing != nil)
-		compileTimes.changesComputeTime = s.opts.sys.Now().Sub(changesComputeStart)
+		compileTimes.ChangesComputeTime = s.opts.sys.Now().Sub(changesComputeStart)
 
-		result, statistics := emitAndReportStatistics(
+		result, statistics := tsc.EmitAndReportStatistics(
 			s.opts.sys,
 			task.taskReporter.program,
 			program,
 			task.resolved,
 			task.taskReporter.reportDiagnostic,
-			quietDiagnosticsReporter,
+			tsc.QuietDiagnosticsReporter,
 			&task.taskReporter.builder,
 			compileTimes,
 			s.opts.testing,
 		)
-		task.taskReporter.exitStatus = result.status
+		task.taskReporter.exitStatus = result.Status
 		task.taskReporter.statistics = statistics
-		if (!program.Options().NoEmitOnError.IsTrue() || len(result.diagnostics) == 0) &&
-			(len(result.emitResult.EmittedFiles) > 0 || status.kind != upToDateStatusTypeOutOfDateBuildInfoWithErrors) {
+		if (!program.Options().NoEmitOnError.IsTrue() || len(result.Diagnostics) == 0) &&
+			(len(result.EmitResult.EmittedFiles) > 0 || status.kind != upToDateStatusTypeOutOfDateBuildInfoWithErrors) {
 			// Update time stamps for rest of the outputs
-			s.updateTimeStamps(task, result.emitResult.EmittedFiles, diagnostics.Updating_unchanged_output_timestamps_of_project_0)
+			s.updateTimeStamps(task, result.EmitResult.EmittedFiles, diagnostics.Updating_unchanged_output_timestamps_of_project_0)
 		}
 
-		if result.status == ExitStatusDiagnosticsPresent_OutputsSkipped || result.status == ExitStatusDiagnosticsPresent_OutputsGenerated {
+		if result.Status == tsc.ExitStatusDiagnosticsPresent_OutputsSkipped || result.Status == tsc.ExitStatusDiagnosticsPresent_OutputsGenerated {
 			status = &upToDateStatus{kind: upToDateStatusTypeBuildErrors}
 		} else {
 			status = &upToDateStatus{kind: upToDateStatusTypeUpToDate}
@@ -121,7 +122,7 @@ func (s *solutionBuilder) buildProject(path tspath.Path, task *buildTask) {
 			}
 		}
 		if len(task.taskReporter.errors) > 0 {
-			task.taskReporter.exitStatus = ExitStatusDiagnosticsPresent_OutputsSkipped
+			task.taskReporter.exitStatus = tsc.ExitStatusDiagnosticsPresent_OutputsSkipped
 		}
 	}
 	task.unblockDownstream(status)
@@ -165,6 +166,7 @@ func (s *solutionBuilder) handleStatusThatDoesntRequireBuild(task *buildTask, st
 
 		s.updateTimeStamps(task, nil, diagnostics.Updating_output_timestamps_of_project_0)
 		status = &upToDateStatus{kind: upToDateStatusTypeUpToDate}
+		task.taskReporter.pseudoBuild = true
 		return status
 	}
 
@@ -525,7 +527,7 @@ func (s *solutionBuilder) updateTimeStamps(task *buildTask, emittedFiles []strin
 func (s *solutionBuilder) cleanProject(path tspath.Path, task *buildTask) {
 	if task.resolved == nil {
 		task.taskReporter.reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.File_0_not_found, task.config))
-		task.taskReporter.exitStatus = ExitStatusDiagnosticsPresent_OutputsSkipped
+		task.taskReporter.exitStatus = tsc.ExitStatusDiagnosticsPresent_OutputsSkipped
 		return
 	}
 
