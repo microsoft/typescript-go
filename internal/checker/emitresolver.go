@@ -552,7 +552,7 @@ func (r *emitResolver) isOptionalUninitializedParameterProperty(parameter *ast.N
 }
 
 func (r *emitResolver) isRequiredInitializedParameter(parameter *ast.Node, enclosingDeclaration *ast.Node) bool {
-	if r.checker.strictNullChecks || r.isOptionalParameter(parameter) || /*isJSDocParameterTag(parameter) ||*/ parameter.Initializer() == nil { // !!! TODO: JSDoc Support
+	if !r.checker.strictNullChecks || r.isOptionalParameter(parameter) || /*isJSDocParameterTag(parameter) ||*/ parameter.Initializer() == nil { // !!! TODO: JSDoc Support
 		return false
 	}
 	if ast.HasSyntacticModifier(parameter, ast.ModifierFlagsParameterPropertyModifier) {
@@ -1024,4 +1024,11 @@ func (r *emitResolver) GetResolutionModeOverride(node *ast.Node) core.Resolution
 	r.checkerMu.Lock()
 	defer r.checkerMu.Unlock()
 	return r.checker.GetResolutionModeOverride(node.AsImportAttributes(), false)
+}
+
+func (r *emitResolver) GetConstantValue(node *ast.Node) any {
+	// node = emitContext.ParseNode(node)
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+	return r.checker.GetConstantValue(node)
 }
