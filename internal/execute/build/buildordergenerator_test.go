@@ -6,11 +6,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/execute/build"
+	"github.com/microsoft/typescript-go/internal/execute/tsctests"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
-	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
 
@@ -53,7 +52,7 @@ func (b *buildOrderTestCase) run(t *testing.T) {
 	t.Helper()
 	t.Run(b.name+" - "+strings.Join(b.projects, ","), func(t *testing.T) {
 		t.Parallel()
-		files := make(map[string]string)
+		files := make(map[string]any)
 		deps := map[string][]string{
 			"A": {"B", "C"},
 			"B": {"C", "D"},
@@ -78,10 +77,14 @@ func (b *buildOrderTestCase) run(t *testing.T) {
             }`, project, referencesStr)
 		}
 
-		host := compiler.NewCompilerHost("/home/src/workspaces/project", vfstest.FromMap(files, true), "", nil, nil)
+		sys := tsctests.NewTscSystem(files, true, "/home/src/workspaces/project")
 		args := append([]string{"--build", "--dry"}, b.projects...)
-		buildCommand := tsoptions.ParseBuildCommandLine(args, host)
-		buildOrderGenerator := build.NewBuildOrderGenerator(buildCommand, host, false)
+		buildCommand := tsoptions.ParseBuildCommandLine(args, sys)
+		orchestrator := build.NewOrchestrator(build.Options{
+			Sys:     sys,
+			Command: buildCommand,
+		})
+		buildOrderGenerator := orchestrator.GetBuildOrderGenerator()
 		buildOrder := core.Map(buildOrderGenerator.Order(), b.projectName)
 		assert.DeepEqual(t, buildOrder, b.expected)
 

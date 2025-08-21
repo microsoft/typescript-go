@@ -85,6 +85,19 @@ func (t *TestClock) SinceStart() time.Duration {
 	return t.Now().Sub(t.start)
 }
 
+func NewTscSystem(files FileMap, useCaseSensitiveFileNames bool, cwd string) *testSys {
+	clock := &TestClock{start: time.Now()}
+	return &testSys{
+		fs: &incrementaltestutil.FsHandlingBuildInfo{
+			FS: &testFs{
+				FS: vfstest.FromMapWithClock(files, useCaseSensitiveFileNames, clock),
+			},
+		},
+		cwd:   cwd,
+		clock: clock,
+	}
+}
+
 func newTestSys(tscInput *tscInput, forIncrementalCorrectness bool) *testSys {
 	cwd := tscInput.cwd
 	if cwd == "" {
@@ -95,24 +108,15 @@ func newTestSys(tscInput *tscInput, forIncrementalCorrectness bool) *testSys {
 		libPath = tscInput.windowsStyleRoot + libPath[1:]
 	}
 	currentWrite := &strings.Builder{}
-	clock := &TestClock{start: time.Now()}
-	sys := &testSys{
-		fs: &incrementaltestutil.FsHandlingBuildInfo{
-			FS: &testFs{
-				FS: vfstest.FromMapWithClock(tscInput.files, !tscInput.ignoreCase, clock),
-			},
-		},
-		defaultLibraryPath: libPath,
-		cwd:                cwd,
-		currentWrite:       currentWrite,
-		tracer: harnessutil.NewTracerForBaselining(tspath.ComparePathsOptions{
-			UseCaseSensitiveFileNames: !tscInput.ignoreCase,
-			CurrentDirectory:          cwd,
-		}, currentWrite),
-		clock:                     clock,
-		env:                       tscInput.env,
-		forIncrementalCorrectness: forIncrementalCorrectness,
-	}
+	sys := NewTscSystem(tscInput.files, !tscInput.ignoreCase, cwd)
+	sys.defaultLibraryPath = libPath
+	sys.currentWrite = currentWrite
+	sys.tracer = harnessutil.NewTracerForBaselining(tspath.ComparePathsOptions{
+		UseCaseSensitiveFileNames: !tscInput.ignoreCase,
+		CurrentDirectory:          cwd,
+	}, currentWrite)
+	sys.env = tscInput.env
+	sys.forIncrementalCorrectness = forIncrementalCorrectness
 
 	// Ensure the default library file is present
 	sys.ensureLibPathExists("lib.d.ts")

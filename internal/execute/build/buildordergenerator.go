@@ -64,7 +64,7 @@ func (b *buildOrderGenerator) Upstream(configName string) []string {
 	})
 }
 
-func NewBuildOrderGenerator(command *tsoptions.ParsedBuildCommandLine, host compiler.CompilerHost, isSingleThreaded bool) *buildOrderGenerator {
+func newBuildOrderGenerator(command *tsoptions.ParsedBuildCommandLine, host compiler.CompilerHost, isSingleThreaded bool) *buildOrderGenerator {
 	b := &buildOrderGenerator{host: host}
 
 	projects := command.ResolvedProjectPaths()

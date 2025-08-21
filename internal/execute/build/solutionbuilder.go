@@ -27,12 +27,20 @@ type Orchestrator struct {
 	host                *solutionBuilderHost
 }
 
+func (s *Orchestrator) GetBuildOrderGenerator() *buildOrderGenerator {
+	s.host = &solutionBuilderHost{
+		builder: s,
+		host:    compiler.NewCachedFSCompilerHost(s.opts.Sys.GetCurrentDirectory(), s.opts.Sys.FS(), s.opts.Sys.DefaultLibraryPath(), nil, nil),
+	}
+	return newBuildOrderGenerator(s.opts.Command, s.host, s.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
+}
+
 func (s *Orchestrator) Start() tsc.CommandLineResult {
 	s.host = &solutionBuilderHost{
 		builder: s,
 		host:    compiler.NewCachedFSCompilerHost(s.opts.Sys.GetCurrentDirectory(), s.opts.Sys.FS(), s.opts.Sys.DefaultLibraryPath(), nil, nil),
 	}
-	orderGenerator := NewBuildOrderGenerator(s.opts.Command, s.host, s.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
+	orderGenerator := newBuildOrderGenerator(s.opts.Command, s.host, s.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
 	return orderGenerator.buildOrClean(s, !s.opts.Command.BuildOptions.Clean.IsTrue())
 }
 

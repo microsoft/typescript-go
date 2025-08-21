@@ -106,12 +106,12 @@ func tscBuildCompilation(sys tsc.System, buildCommand *tsoptions.ParsedBuildComm
 	}
 
 	// !!! sheetal watch mode
-	solutionBuilder := build.NewOrchestrator(build.Options{
+	orchestrator := build.NewOrchestrator(build.Options{
 		Sys:     sys,
 		Command: buildCommand,
 		Testing: testing,
 	})
-	return solutionBuilder.Start()
+	return orchestrator.Start()
 }
 
 func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, testing tsc.CommandLineTesting) tsc.CommandLineResult {
