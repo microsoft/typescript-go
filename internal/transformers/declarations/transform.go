@@ -1587,7 +1587,7 @@ func (tx *DeclarationTransformer) ensureParameter(p *ast.ParameterDeclaration) *
 func (tx *DeclarationTransformer) ensureNoInitializer(node *ast.Node) *ast.Node {
 	if tx.shouldPrintWithInitializer(node) {
 		unwrappedInitializer := unwrapParenthesizedExpression(node.Initializer())
-		if !isPrimitiveLiteralValue(unwrappedInitializer, true) {
+		if !ast.IsPrimitiveLiteralValue(unwrappedInitializer, true) {
 			tx.tracker.ReportInferenceFallback(node)
 		}
 		return tx.resolver.CreateLiteralConstValue(tx.EmitContext(), tx.EmitContext().ParseNode(node), tx.tracker)

@@ -2435,7 +2435,14 @@ func (b *nodeBuilderImpl) createAnonymousTypeNode(t *Type) *ast.TypeNode {
 		if isInstantiationExpressionType {
 			instantiationExpressionType := t.AsInstantiationExpressionType()
 			existing := instantiationExpressionType.node
-			if ast.IsTypeQueryNode(existing) {
+			//  instantiationExpressionType.node is unreliable for constituents of unions and intersections.
+			// declare const Err: typeof ErrImpl & (<T>() => T);
+			// type ErrAlias<U> = typeof Err<U>;
+			// declare const e: ErrAlias<number>;
+			// ErrAlias<number> = typeof Err<number> = typeof ErrImpl & (<number>() => number)
+			// The problem is each constituent of the intersection will be associated with typeof Err<number>
+			// And when extracting a type for typeof ErrImpl from typeof Err<number> does not make sense.
+			if ast.IsTypeQueryNode(existing) && b.getTypeFromTypeNode(existing, false) == t {
 				typeNode := b.tryReuseExistingNonParameterTypeNode(existing, t, nil, nil)
 				if typeNode != nil {
 					return typeNode

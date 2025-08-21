@@ -3860,3 +3860,76 @@ func IsJSDocNameReferenceContext(node *Node) bool {
 func IsImportOrImportEqualsDeclaration(node *Node) bool {
 	return IsImportDeclaration(node) || IsImportEqualsDeclaration(node)
 }
+
+type AllAccessorDeclarations struct {
+	FirstAccessor  *AccessorDeclaration
+	SecondAccessor *AccessorDeclaration
+	SetAccessor    *SetAccessorDeclaration
+	GetAccessor    *GetAccessorDeclaration
+}
+
+func GetAllAccessorDeclarationsForDeclaration(accessor *AccessorDeclaration, symbol *Symbol) AllAccessorDeclarations {
+	var otherKind Kind
+	if accessor.Kind == KindSetAccessor {
+		otherKind = KindGetAccessor
+	} else if accessor.Kind == KindGetAccessor {
+		otherKind = KindSetAccessor
+	} else {
+		panic(fmt.Sprintf("Unexpected node kind %q", accessor.Kind))
+	}
+	otherAccessor := GetDeclarationOfKind(symbol, otherKind)
+
+	var firstAccessor *AccessorDeclaration
+	var secondAccessor *AccessorDeclaration
+	if otherAccessor != nil && (otherAccessor.Pos() < accessor.Pos()) {
+		firstAccessor = otherAccessor
+		secondAccessor = accessor
+	} else {
+		firstAccessor = accessor
+		secondAccessor = otherAccessor
+	}
+
+	var setAccessor *SetAccessorDeclaration
+	var getAccessor *GetAccessorDeclaration
+	if accessor.Kind == KindSetAccessor {
+		setAccessor = accessor.AsSetAccessorDeclaration()
+		if otherAccessor != nil {
+			getAccessor = otherAccessor.AsGetAccessorDeclaration()
+		}
+	} else {
+		getAccessor = accessor.AsGetAccessorDeclaration()
+		if otherAccessor != nil {
+			setAccessor = otherAccessor.AsSetAccessorDeclaration()
+		}
+	}
+
+	return AllAccessorDeclarations{
+		FirstAccessor:  firstAccessor,
+		SecondAccessor: secondAccessor,
+		SetAccessor:    setAccessor,
+		GetAccessor:    getAccessor,
+	}
+}
+
+func IsPrimitiveLiteralValue(node *Node, includeBigInt bool) bool {
+	switch node.Kind {
+	case KindTrueKeyword,
+		KindFalseKeyword,
+		KindNumericLiteral,
+		KindStringLiteral,
+		KindNoSubstitutionTemplateLiteral:
+		return true
+	case KindBigIntLiteral:
+		return includeBigInt
+	case KindPrefixUnaryExpression:
+		if node.AsPrefixUnaryExpression().Operator == KindMinusToken {
+			return IsNumericLiteral(node.AsPrefixUnaryExpression().Operand) || (includeBigInt && IsBigIntLiteral(node.AsPrefixUnaryExpression().Operand))
+		}
+		if node.AsPrefixUnaryExpression().Operator == KindPlusToken {
+			return IsNumericLiteral(node.AsPrefixUnaryExpression().Operand)
+		}
+		return false
+	default:
+		return false
+	}
+}
