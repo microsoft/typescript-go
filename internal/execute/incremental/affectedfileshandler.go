@@ -21,12 +21,17 @@ func (c dtsMayChange) addFileToAffectedFilesPendingEmit(filePath tspath.Path, em
 	c[filePath] = emitKind
 }
 
+type updatedSignature struct {
+	mu        sync.Mutex
+	signature string
+	kind      SignatureUpdateKind
+}
+
 type affectedFilesHandler struct {
 	ctx                                    context.Context
 	program                                *Program
 	hasAllFilesExcludingDefaultLibraryFile atomic.Bool
-	updatedSignatures                      collections.SyncMap[tspath.Path, string]
-	updatedSignatureKinds                  *collections.SyncMap[tspath.Path, SignatureUpdateKind]
+	updatedSignatures                      collections.SyncMap[tspath.Path, *updatedSignature]
 	dtsMayChange                           []dtsMayChange
 	filesToRemoveDiagnostics               collections.SyncSet[tspath.Path]
 	cleanedDiagnosticsOfLibFiles           sync.Once
@@ -41,8 +46,10 @@ func (h *affectedFilesHandler) getDtsMayChange(affectedFilePath tspath.Path, aff
 
 func (h *affectedFilesHandler) isChangedSignature(path tspath.Path) bool {
 	newSignature, _ := h.updatedSignatures.Load(path)
+	// This method is called after updating signatures of that path, so signature is present in updatedSignatures
+	// And is already calculated, so no need to lock and unlock mutex on the entry
 	oldInfo, _ := h.program.snapshot.fileInfos.Load(path)
-	return newSignature != oldInfo.signature
+	return newSignature.signature != oldInfo.signature
 }
 
 func (h *affectedFilesHandler) removeSemanticDiagnosticsOf(path tspath.Path) {
@@ -76,28 +83,28 @@ func (h *affectedFilesHandler) computeDtsSignature(file *ast.SourceFile) string 
 }
 
 func (h *affectedFilesHandler) updateShapeSignature(file *ast.SourceFile, useFileVersionAsSignature bool) bool {
+	update := &updatedSignature{}
+	update.mu.Lock()
+	defer update.mu.Unlock()
 	// If we have cached the result for this file, that means hence forth we should assume file shape is uptodate
-	if _, ok := h.updatedSignatures.Load(file.Path()); ok {
+	if existing, ok := h.updatedSignatures.LoadOrStore(file.Path(), update); ok {
+		// Ensure calculations for existing ones are complete before using the value
+		existing.mu.Lock()
+		defer existing.mu.Unlock()
 		return false
 	}
 
 	info, _ := h.program.snapshot.fileInfos.Load(file.Path())
 	prevSignature := info.signature
-	var latestSignature string
-	var updateKind SignatureUpdateKind
 	if !file.IsDeclarationFile && !useFileVersionAsSignature {
-		latestSignature = h.computeDtsSignature(file)
+		update.signature = h.computeDtsSignature(file)
 	}
 	// Default is to use file version as signature
-	if latestSignature == "" {
-		latestSignature = info.version
-		updateKind = SignatureUpdateKindUsedVersion
+	if update.signature == "" {
+		update.signature = info.version
+		update.kind = SignatureUpdateKindUsedVersion
 	}
-	h.updatedSignatures.Store(file.Path(), latestSignature)
-	if h.updatedSignatureKinds != nil {
-		h.updatedSignatureKinds.Store(file.Path(), updateKind)
-	}
-	return latestSignature != prevSignature
+	return update.signature != prevSignature
 }
 
 func (h *affectedFilesHandler) getFilesAffectedBy(path tspath.Path) []*ast.SourceFile {
@@ -314,18 +321,15 @@ func (h *affectedFilesHandler) updateSnapshot() {
 	if h.ctx.Err() != nil {
 		return
 	}
-	h.updatedSignatures.Range(func(filePath tspath.Path, signature string) bool {
+	h.updatedSignatures.Range(func(filePath tspath.Path, update *updatedSignature) bool {
 		if info, ok := h.program.snapshot.fileInfos.Load(filePath); ok {
-			info.signature = signature
+			info.signature = update.signature
+			if h.program.updatedSignatureKinds != nil {
+				h.program.updatedSignatureKinds[filePath] = update.kind
+			}
 		}
 		return true
 	})
-	if h.updatedSignatureKinds != nil {
-		h.updatedSignatureKinds.Range(func(filePath tspath.Path, kind SignatureUpdateKind) bool {
-			h.program.updatedSignatureKinds[filePath] = kind
-			return true
-		})
-	}
 	h.filesToRemoveDiagnostics.Range(func(file tspath.Path) bool {
 		h.program.snapshot.semanticDiagnosticsPerFile.Delete(file)
 		return true
@@ -344,7 +348,7 @@ func collectAllAffectedFiles(ctx context.Context, program *Program) {
 		return
 	}
 
-	handler := affectedFilesHandler{ctx: ctx, program: program, updatedSignatureKinds: core.IfElse(program.updatedSignatureKinds == nil, nil, &collections.SyncMap[tspath.Path, SignatureUpdateKind]{})}
+	handler := affectedFilesHandler{ctx: ctx, program: program}
 	wg := core.NewWorkGroup(handler.program.program.SingleThreaded())
 	var result collections.SyncSet[*ast.SourceFile]
 	program.snapshot.changedFilesSet.Range(func(file tspath.Path) bool {
