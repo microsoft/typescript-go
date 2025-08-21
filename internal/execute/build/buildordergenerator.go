@@ -161,28 +161,28 @@ func (b *buildOrderGenerator) analyzeConfig(
 	return task
 }
 
-func (b *buildOrderGenerator) buildOrClean(builder *Orchestrator, build bool) tsc.CommandLineResult {
-	if build && builder.opts.Command.BuildOptions.Verbose.IsTrue() {
-		builder.createBuilderStatusReporter(nil)(ast.NewCompilerDiagnostic(
+func (b *buildOrderGenerator) buildOrClean(orchestrator *Orchestrator, build bool) tsc.CommandLineResult {
+	if build && orchestrator.opts.Command.BuildOptions.Verbose.IsTrue() {
+		orchestrator.createBuilderStatusReporter(nil)(ast.NewCompilerDiagnostic(
 			diagnostics.Projects_in_this_build_Colon_0,
 			strings.Join(core.Map(b.Order(), func(p string) string {
-				return "\r\n    * " + builder.relativeFileName(p)
+				return "\r\n    * " + orchestrator.relativeFileName(p)
 			}), ""),
 		))
 	}
 	var buildResult solutionBuilderResult
 	if len(b.errors) == 0 {
-		wg := core.NewWorkGroup(builder.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
+		wg := core.NewWorkGroup(orchestrator.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
 		b.tasks.Range(func(path tspath.Path, task *buildTask) bool {
-			task.reportStatus = builder.createBuilderStatusReporter(task)
-			task.diagnosticReporter = builder.createDiagnosticReporter(task)
+			task.reportStatus = orchestrator.createBuilderStatusReporter(task)
+			task.diagnosticReporter = orchestrator.createDiagnosticReporter(task)
 			wg.Queue(func() {
 				if build {
-					builder.buildProject(path, task)
+					task.buildProject(orchestrator, path)
 				} else {
-					builder.cleanProject(path, task)
+					task.cleanProject(orchestrator, path)
 				}
-				task.report(builder, path, &buildResult)
+				task.report(orchestrator, path, &buildResult)
 			})
 			return true
 		})
@@ -190,12 +190,12 @@ func (b *buildOrderGenerator) buildOrClean(builder *Orchestrator, build bool) ts
 		buildResult.statistics.Projects = len(b.Order())
 	} else {
 		buildResult.result.Status = tsc.ExitStatusProjectReferenceCycle_OutputsSkipped
-		reportDiagnostic := builder.createDiagnosticReporter(nil)
+		reportDiagnostic := orchestrator.createDiagnosticReporter(nil)
 		for _, err := range b.errors {
 			reportDiagnostic(err)
 		}
 		buildResult.errors = b.errors
 	}
-	buildResult.report(builder)
+	buildResult.report(orchestrator)
 	return buildResult.result
 }
