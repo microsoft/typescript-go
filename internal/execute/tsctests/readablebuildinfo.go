@@ -1,4 +1,4 @@
-package incrementaltestutil
+package tsctests
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
-	"github.com/microsoft/typescript-go/internal/incremental"
+	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/jsonutil"
 )
 

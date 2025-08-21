@@ -138,7 +138,7 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 func getDiffForIncremental(incrementalSys *testSys, nonIncrementalSys *testSys) string {
 	var diffBuilder strings.Builder
 
-	nonIncrementalOutputs := nonIncrementalSys.testFs().writtenFiles.ToSlice()
+	nonIncrementalOutputs := nonIncrementalSys.fs.writtenFiles.ToSlice()
 	slices.Sort(nonIncrementalOutputs)
 	for _, nonIncrementalOutput := range nonIncrementalOutputs {
 		if tspath.FileExtensionIs(nonIncrementalOutput, tspath.ExtensionTsBuildInfo) ||
