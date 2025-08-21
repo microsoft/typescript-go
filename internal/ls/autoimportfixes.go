@@ -76,7 +76,7 @@ func (ct *changeTracker) doAddExistingFix(
 		}
 
 		if defaultImport != nil {
-			debug.Assert(clause.Name() == nil, "Cannot add a default import to an import clause that already has one");
+			debug.Assert(clause.Name() == nil, "Cannot add a default import to an import clause that already has one")
 			ct.insertNodeAt(sourceFile, core.TextPos(astnav.GetStartOfNode(clause, sourceFile, false)), ct.NodeFactory.NewIdentifier(defaultImport.name), changeNodeOptions{suffix: ", "})
 		}
 

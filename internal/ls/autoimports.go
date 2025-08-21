@@ -420,8 +420,9 @@ func (l *LanguageService) getExportInfoMap(
 	// host.log?.("getExportInfoMap: expInfoMap miss or empty; calculating new results");
 	expInfoMap := NewExportInfoMap(l.GetProgram().GetGlobalTypingsCacheLocation())
 	moduleCount := 0
-	l.forEachExternalModuleToImportFrom(
+	forEachExternalModuleToImportFrom(
 		ch,
+		l.GetProgram(),
 		preferences,
 		// /*useAutoImportProvider*/ true,
 		func(moduleSymbol *ast.Symbol, moduleFile *ast.SourceFile, ch *checker.Checker, isFromPackageJson bool) {
@@ -474,27 +475,27 @@ func (l *LanguageService) getExportInfoMap(
 	return expInfoMap
 }
 
-func (l *LanguageService) getAllExportInfoForSymbol(ctx context.Context, ch *checker.Checker, importingFile *ast.SourceFile, symbol *ast.Symbol, symbolName string, moduleSymbol *ast.Symbol, preferCapitalized bool, preferences *UserPreferences) []*SymbolExportInfo {
-	// !!! isFileExcluded := len(preferences.AutoImportFileExcludePatterns) != 0 && getIsFileExcluded(host, preferences);
-	// mergedModuleSymbol := ch.GetMergedSymbol(moduleSymbol)
-	// moduleSourceFile := isFileExcluded && len(mergedModuleSymbol.Declarations) > 0 && ast.GetDeclarationOfKind(mergedModuleSymbol, SyntaxKind.SourceFile)
-	// moduleSymbolExcluded := moduleSourceFile && isFileExcluded(moduleSourceFile.AsSourceFile());
-	moduleSymbolExcluded := false
-	return l.getExportInfoMap(ctx, ch, importingFile, preferences).search(
-		ch,
-		importingFile.Path(),
-		preferCapitalized,
-		func(name string, _ ast.SymbolFlags) bool { return name == symbolName },
-		func(info []*SymbolExportInfo, symbolName string, isFromAmbientModule bool, key ExportInfoMapKey) []*SymbolExportInfo {
-			if ch.GetMergedSymbol(ch.SkipAlias(info[0].symbol)) == symbol && (moduleSymbolExcluded || core.Some(info, func(i *SymbolExportInfo) bool {
-				return ch.GetMergedSymbol(i.moduleSymbol) == moduleSymbol || i.symbol.Parent == moduleSymbol
-			})) {
-				return info
-			}
-			return nil
-		},
-	)
-}
+// func (l *LanguageService) getAllExportInfoForSymbol(ctx context.Context, ch *checker.Checker, importingFile *ast.SourceFile, symbol *ast.Symbol, symbolName string, moduleSymbol *ast.Symbol, preferCapitalized bool, preferences *UserPreferences) []*SymbolExportInfo {
+// 	// !!! isFileExcluded := len(preferences.AutoImportFileExcludePatterns) != 0 && getIsFileExcluded(host, preferences);
+// 	// mergedModuleSymbol := ch.GetMergedSymbol(moduleSymbol)
+// 	// moduleSourceFile := isFileExcluded && len(mergedModuleSymbol.Declarations) > 0 && ast.GetDeclarationOfKind(mergedModuleSymbol, SyntaxKind.SourceFile)
+// 	// moduleSymbolExcluded := moduleSourceFile && isFileExcluded(moduleSourceFile.AsSourceFile());
+// 	moduleSymbolExcluded := false
+// 	return l.getExportInfoMap(ctx, ch, importingFile, preferences).search(
+// 		ch,
+// 		importingFile.Path(),
+// 		preferCapitalized,
+// 		func(name string, _ ast.SymbolFlags) bool { return name == symbolName },
+// 		func(info []*SymbolExportInfo, symbolName string, isFromAmbientModule bool, key ExportInfoMapKey) []*SymbolExportInfo {
+// 			if ch.GetMergedSymbol(ch.SkipAlias(info[0].symbol)) == symbol && (moduleSymbolExcluded || core.Some(info, func(i *SymbolExportInfo) bool {
+// 				return ch.GetMergedSymbol(i.moduleSymbol) == moduleSymbol || i.symbol.Parent == moduleSymbol
+// 			})) {
+// 				return info
+// 			}
+// 			return nil
+// 		},
+// 	)
+// }
 
 func (l *LanguageService) getSingleExportInfoForSymbol(ch *checker.Checker, symbol *ast.Symbol, symbolName string, moduleSymbol *ast.Symbol) *SymbolExportInfo {
 	getInfoWithChecker := func(program *compiler.Program, isFromPackageJson bool) *SymbolExportInfo {
@@ -1450,8 +1451,9 @@ func getDefaultLikeExportNameFromDeclaration(symbol *ast.Symbol) string {
 	return ""
 }
 
-func (l *LanguageService) forEachExternalModuleToImportFrom(
+func forEachExternalModuleToImportFrom(
 	ch *checker.Checker,
+	program *compiler.Program,
 	preferences *UserPreferences,
 	// useAutoImportProvider bool,
 	cb func(module *ast.Symbol, moduleFile *ast.SourceFile, checker *checker.Checker, isFromPackageJson bool),
@@ -1461,7 +1463,7 @@ func (l *LanguageService) forEachExternalModuleToImportFrom(
 
 	forEachExternalModule(
 		ch,
-		l.GetProgram().GetSourceFiles(),
+		program.GetSourceFiles(),
 		// !!! excludePatterns,
 		func(module *ast.Symbol, file *ast.SourceFile) {
 			cb(module, file, ch, false)
@@ -1506,12 +1508,6 @@ func forEachExternalModule(
 }
 
 // ======================== generate code actions =======================
-// !!! change tracker
-// these functions use changetracker/should be updated to use the new lsproto.CodeAction
-
-func newCodeFixAction(description string, changes []*lsproto.TextEdit) codeAction {
-	return codeAction{description: description, changes: changes}
-}
 
 func (l *LanguageService) codeActionForFix(
 	ctx context.Context,
@@ -1524,8 +1520,7 @@ func (l *LanguageService) codeActionForFix(
 	tracker := l.newChangeTracker(ctx) // !!! changetracker.with
 	diag := l.codeActionForFixWorker(tracker, sourceFile, symbolName, fix, includeSymbolNameInDescription, preferences)
 	changes := tracker.getChanges()[sourceFile.FileName()]
-	// !!! codeaction
-	return newCodeFixAction(diag.Message(), changes)
+	return codeAction{description: diag.Message(), changes: changes}
 }
 
 func (l *LanguageService) codeActionForFixWorker(

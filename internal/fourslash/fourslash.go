@@ -483,10 +483,10 @@ func getLanguageKind(filename string) lsproto.LanguageKind {
 }
 
 type CompletionsExpectedList struct {
-	IsIncomplete bool
-	ItemDefaults *CompletionsExpectedItemDefaults
-	Items        *CompletionsExpectedItems
-	UserPreferences	*ls.UserPreferences  // !!! allow user preferences in fourslash
+	IsIncomplete    bool
+	ItemDefaults    *CompletionsExpectedItemDefaults
+	Items           *CompletionsExpectedItems
+	UserPreferences *ls.UserPreferences // !!! allow user preferences in fourslash
 }
 
 type Ignored = struct{}
