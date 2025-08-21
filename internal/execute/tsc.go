@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
@@ -189,11 +188,11 @@ func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, te
 	// !!! convert to options with absolute paths is usually done here, but for ease of implementation, it's done in `tsoptions.ParseCommandLine()`
 	compilerOptionsFromCommandLine := commandLine.CompilerOptions()
 	configForCompilation := commandLine
-	var extendedConfigCache collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]
+	extendedConfigCache := &tsc.ExtendedConfigCache{}
 	var compileTimes tsc.CompileTimes
 	if configFileName != "" {
 		configStart := sys.Now()
-		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(configFileName, compilerOptionsFromCommandLine, sys, &extendedConfigCache)
+		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(configFileName, compilerOptionsFromCommandLine, sys, extendedConfigCache)
 		compileTimes.ConfigTime = sys.Now().Sub(configStart)
 		if len(errors) != 0 {
 			// these are unrecoverable errors--exit to report them as diagnostics
@@ -222,7 +221,7 @@ func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, te
 			configForCompilation,
 			reportDiagnostic,
 			reportErrorSummary,
-			&extendedConfigCache,
+			extendedConfigCache,
 			compileTimes,
 			testing,
 		)
@@ -232,7 +231,7 @@ func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, te
 		configForCompilation,
 		reportDiagnostic,
 		reportErrorSummary,
-		&extendedConfigCache,
+		extendedConfigCache,
 		compileTimes,
 		testing,
 	)
@@ -261,7 +260,7 @@ func performIncrementalCompilation(
 	config *tsoptions.ParsedCommandLine,
 	reportDiagnostic tsc.DiagnosticReporter,
 	reportErrorSummary tsc.DiagnosticsReporter,
-	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
+	extendedConfigCache tsoptions.ExtendedConfigCache,
 	compileTimes tsc.CompileTimes,
 	testing tsc.CommandLineTesting,
 ) tsc.CommandLineResult {
@@ -302,7 +301,7 @@ func performCompilation(
 	config *tsoptions.ParsedCommandLine,
 	reportDiagnostic tsc.DiagnosticReporter,
 	reportErrorSummary tsc.DiagnosticsReporter,
-	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
+	extendedConfigCache tsoptions.ExtendedConfigCache,
 	compileTimes tsc.CompileTimes,
 	testing tsc.CommandLineTesting,
 ) tsc.CommandLineResult {

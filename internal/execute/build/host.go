@@ -7,6 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
+	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -25,7 +26,7 @@ type buildInfoAndConfig struct {
 type host struct {
 	builder             *Orchestrator
 	host                compiler.CompilerHost
-	extendedConfigCache collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]
+	extendedConfigCache tsc.ExtendedConfigCache
 	sourceFiles         collections.SyncMap[ast.SourceFileParseOptions, *ast.SourceFile]
 	resolvedReferences  collections.SyncMap[tspath.Path, *configAndTime]
 

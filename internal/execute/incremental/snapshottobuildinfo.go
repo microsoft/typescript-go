@@ -178,7 +178,7 @@ func (t *toBuildInfo) toBuildInfoDiagnosticsOfFile(filePath tspath.Path, diags *
 }
 
 func (t *toBuildInfo) collectRootFiles() {
-	for _, fileName := range t.program.GetRootFileNames() {
+	for _, fileName := range t.program.CommandLine().FileNames() {
 		var file *ast.SourceFile
 		if redirect := t.program.GetParseFileRedirect(fileName); redirect != "" {
 			file = t.program.GetSourceFile(redirect)
@@ -344,7 +344,7 @@ func (t *toBuildInfo) setAffectedFilesPendingEmit() {
 }
 
 func (t *toBuildInfo) setRootOfNonIncrementalProgram() {
-	t.buildInfo.Root = core.Map(t.program.GetRootFileNames(), func(fileName string) *BuildInfoRoot {
+	t.buildInfo.Root = core.Map(t.program.CommandLine().FileNames(), func(fileName string) *BuildInfoRoot {
 		return &BuildInfoRoot{
 			NonIncremental: t.relativeToBuildInfo(string(tspath.ToPath(fileName, t.comparePathsOptions.CurrentDirectory, t.comparePathsOptions.UseCaseSensitiveFileNames))),
 		}

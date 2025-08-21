@@ -11,13 +11,16 @@ func (s *SyncSet[T]) Has(key T) bool {
 	return ok
 }
 
+func (s *SyncSet[T]) Add(key T) {
+	s.AddIfAbsent(key)
+}
+
+// AddIfAbsent adds the key to the set if it is not already present
+// using LoadOrStore. It returns true if the key was not already present
+// (opposite of the return value of LoadOrStore).
 func (s *SyncSet[T]) AddIfAbsent(key T) bool {
 	_, loaded := s.m.LoadOrStore(key, struct{}{})
 	return !loaded
-}
-
-func (s *SyncSet[T]) Add(key T) {
-	s.AddIfAbsent(key)
 }
 
 func (s *SyncSet[T]) Delete(key T) {
