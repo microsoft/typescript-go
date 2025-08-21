@@ -1,7 +1,6 @@
 package build
 
 import (
-	"fmt"
 	"io"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -27,79 +26,79 @@ type Orchestrator struct {
 	host                *solutionBuilderHost
 }
 
-func (s *Orchestrator) GetBuildOrderGenerator() *buildOrderGenerator {
-	s.host = &solutionBuilderHost{
-		builder: s,
-		host:    compiler.NewCachedFSCompilerHost(s.opts.Sys.GetCurrentDirectory(), s.opts.Sys.FS(), s.opts.Sys.DefaultLibraryPath(), nil, nil),
+func (o *Orchestrator) GetBuildOrderGenerator() *buildOrderGenerator {
+	o.host = &solutionBuilderHost{
+		builder: o,
+		host:    compiler.NewCachedFSCompilerHost(o.opts.Sys.GetCurrentDirectory(), o.opts.Sys.FS(), o.opts.Sys.DefaultLibraryPath(), nil, nil),
 	}
-	return newBuildOrderGenerator(s.opts.Command, s.host, s.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
+	return newBuildOrderGenerator(o.opts.Command, o.host, o.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
 }
 
-func (s *Orchestrator) Start() tsc.CommandLineResult {
-	s.host = &solutionBuilderHost{
-		builder: s,
-		host:    compiler.NewCachedFSCompilerHost(s.opts.Sys.GetCurrentDirectory(), s.opts.Sys.FS(), s.opts.Sys.DefaultLibraryPath(), nil, nil),
+func (o *Orchestrator) Start() tsc.CommandLineResult {
+	o.host = &solutionBuilderHost{
+		builder: o,
+		host:    compiler.NewCachedFSCompilerHost(o.opts.Sys.GetCurrentDirectory(), o.opts.Sys.FS(), o.opts.Sys.DefaultLibraryPath(), nil, nil),
 	}
-	orderGenerator := newBuildOrderGenerator(s.opts.Command, s.host, s.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
-	return orderGenerator.buildOrClean(s, !s.opts.Command.BuildOptions.Clean.IsTrue())
+	orderGenerator := newBuildOrderGenerator(o.opts.Command, o.host, o.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
+	return orderGenerator.buildOrClean(o, !o.opts.Command.BuildOptions.Clean.IsTrue())
 }
 
-func (s *Orchestrator) relativeFileName(fileName string) string {
-	return tspath.ConvertToRelativePath(fileName, s.comparePathsOptions)
+func (o *Orchestrator) relativeFileName(fileName string) string {
+	return tspath.ConvertToRelativePath(fileName, o.comparePathsOptions)
 }
 
-func (s *Orchestrator) toPath(fileName string) tspath.Path {
-	return tspath.ToPath(fileName, s.comparePathsOptions.CurrentDirectory, s.comparePathsOptions.UseCaseSensitiveFileNames)
+func (o *Orchestrator) toPath(fileName string) tspath.Path {
+	return tspath.ToPath(fileName, o.comparePathsOptions.CurrentDirectory, o.comparePathsOptions.UseCaseSensitiveFileNames)
 }
 
-func (s *Orchestrator) getWriter(task *buildTask) io.Writer {
+func (o *Orchestrator) getWriter(task *buildTask) io.Writer {
 	if task == nil {
-		return s.opts.Sys.Writer()
+		return o.opts.Sys.Writer()
 	}
 	return &task.builder
 }
 
-func (s *Orchestrator) createBuilderStatusReporter(task *buildTask) tsc.DiagnosticReporter {
-	return tsc.CreateBuilderStatusReporter(s.opts.Sys, s.getWriter(task), s.opts.Command.CompilerOptions, s.opts.Testing)
+func (o *Orchestrator) createBuilderStatusReporter(task *buildTask) tsc.DiagnosticReporter {
+	return tsc.CreateBuilderStatusReporter(o.opts.Sys, o.getWriter(task), o.opts.Command.CompilerOptions, o.opts.Testing)
 }
 
-func (s *Orchestrator) createDiagnosticReporter(task *buildTask) tsc.DiagnosticReporter {
-	return tsc.CreateDiagnosticReporter(s.opts.Sys, s.getWriter(task), s.opts.Command.CompilerOptions)
+func (o *Orchestrator) createDiagnosticReporter(task *buildTask) tsc.DiagnosticReporter {
+	return tsc.CreateDiagnosticReporter(o.opts.Sys, o.getWriter(task), o.opts.Command.CompilerOptions)
 }
 
-func (s *Orchestrator) buildProject(path tspath.Path, task *buildTask) {
+func (o *Orchestrator) buildProject(path tspath.Path, task *buildTask) {
 	// Wait on upstream tasks to complete
 	upStreamStatus := task.waitOnUpstream()
-	status := s.getUpToDateStatus(path, task, upStreamStatus)
-	s.reportUpToDateStatus(task, status)
-	if handled := s.handleStatusThatDoesntRequireBuild(task, status); handled == nil {
-		if s.opts.Command.BuildOptions.Verbose.IsTrue() {
-			task.reportStatus(ast.NewCompilerDiagnostic(diagnostics.Building_project_0, s.relativeFileName(task.config)))
+	status := o.getUpToDateStatus(path, task, upStreamStatus)
+	task.reportUpToDateStatus(o, status)
+	if handled := o.handleStatusThatDoesntRequireBuild(task, status); handled == nil {
+		if o.opts.Command.BuildOptions.Verbose.IsTrue() {
+			task.reportStatus(ast.NewCompilerDiagnostic(diagnostics.Building_project_0, o.relativeFileName(task.config)))
 		}
 
 		// Real build
 		var compileTimes tsc.CompileTimes
-		configAndTime, _ := s.host.resolvedReferences.Load(path)
+		configAndTime, _ := o.host.resolvedReferences.Load(path)
 		compileTimes.ConfigTime = configAndTime.time
-		buildInfoReadStart := s.opts.Sys.Now()
-		oldProgram := incremental.ReadBuildInfoProgram(task.resolved, s.host, s.host)
-		compileTimes.BuildInfoReadTime = s.opts.Sys.Now().Sub(buildInfoReadStart)
-		parseStart := s.opts.Sys.Now()
+		buildInfoReadStart := o.opts.Sys.Now()
+		oldProgram := incremental.ReadBuildInfoProgram(task.resolved, o.host, o.host)
+		compileTimes.BuildInfoReadTime = o.opts.Sys.Now().Sub(buildInfoReadStart)
+		parseStart := o.opts.Sys.Now()
 		program := compiler.NewProgram(compiler.ProgramOptions{
 			Config: task.resolved,
 			Host: &compilerHostForTaskReporter{
-				host:  s.host,
-				trace: tsc.GetTraceWithWriterFromSys(&task.builder, s.opts.Testing),
+				host:  o.host,
+				trace: tsc.GetTraceWithWriterFromSys(&task.builder, o.opts.Testing),
 			},
 			JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
 		})
-		compileTimes.ParseTime = s.opts.Sys.Now().Sub(parseStart)
-		changesComputeStart := s.opts.Sys.Now()
-		task.program = incremental.NewProgram(program, oldProgram, s.host, s.opts.Testing != nil)
-		compileTimes.ChangesComputeTime = s.opts.Sys.Now().Sub(changesComputeStart)
+		compileTimes.ParseTime = o.opts.Sys.Now().Sub(parseStart)
+		changesComputeStart := o.opts.Sys.Now()
+		task.program = incremental.NewProgram(program, oldProgram, o.host, o.opts.Testing != nil)
+		compileTimes.ChangesComputeTime = o.opts.Sys.Now().Sub(changesComputeStart)
 
 		result, statistics := tsc.EmitAndReportStatistics(
-			s.opts.Sys,
+			o.opts.Sys,
 			task.program,
 			program,
 			task.resolved,
@@ -107,14 +106,14 @@ func (s *Orchestrator) buildProject(path tspath.Path, task *buildTask) {
 			tsc.QuietDiagnosticsReporter,
 			&task.builder,
 			compileTimes,
-			s.opts.Testing,
+			o.opts.Testing,
 		)
 		task.exitStatus = result.Status
 		task.statistics = statistics
 		if (!program.Options().NoEmitOnError.IsTrue() || len(result.Diagnostics) == 0) &&
 			(len(result.EmitResult.EmittedFiles) > 0 || status.kind != upToDateStatusTypeOutOfDateBuildInfoWithErrors) {
 			// Update time stamps for rest of the outputs
-			s.updateTimeStamps(task, result.EmitResult.EmittedFiles, diagnostics.Updating_unchanged_output_timestamps_of_project_0)
+			o.updateTimeStamps(task, result.EmitResult.EmittedFiles, diagnostics.Updating_unchanged_output_timestamps_of_project_0)
 		}
 
 		if result.Status == tsc.ExitStatusDiagnosticsPresent_OutputsSkipped || result.Status == tsc.ExitStatusDiagnosticsPresent_OutputsGenerated {
@@ -136,24 +135,24 @@ func (s *Orchestrator) buildProject(path tspath.Path, task *buildTask) {
 	task.unblockDownstream(status)
 }
 
-func (s *Orchestrator) handleStatusThatDoesntRequireBuild(task *buildTask, status *upToDateStatus) *upToDateStatus {
+func (o *Orchestrator) handleStatusThatDoesntRequireBuild(task *buildTask, status *upToDateStatus) *upToDateStatus {
 	switch status.kind {
 	case upToDateStatusTypeUpToDate:
-		if s.opts.Command.BuildOptions.Dry.IsTrue() {
+		if o.opts.Command.BuildOptions.Dry.IsTrue() {
 			task.reportStatus(ast.NewCompilerDiagnostic(diagnostics.Project_0_is_up_to_date, task.config))
 		}
 		return status
 	case upToDateStatusTypeUpstreamErrors:
 		upstreamStatus := status.data.(*upstreamErrors)
-		if s.opts.Command.BuildOptions.Verbose.IsTrue() {
+		if o.opts.Command.BuildOptions.Verbose.IsTrue() {
 			task.reportStatus(ast.NewCompilerDiagnostic(
 				core.IfElse(
 					upstreamStatus.refHasUpstreamErrors,
 					diagnostics.Skipping_build_of_project_0_because_its_dependency_1_was_not_built,
 					diagnostics.Skipping_build_of_project_0_because_its_dependency_1_has_errors,
 				),
-				s.relativeFileName(task.config),
-				s.relativeFileName(upstreamStatus.ref),
+				o.relativeFileName(task.config),
+				o.relativeFileName(upstreamStatus.ref),
 			))
 		}
 		return status
@@ -166,19 +165,19 @@ func (s *Orchestrator) handleStatusThatDoesntRequireBuild(task *buildTask, statu
 
 	// update timestamps
 	if status.isPseudoBuild() {
-		if s.opts.Command.BuildOptions.Dry.IsTrue() {
+		if o.opts.Command.BuildOptions.Dry.IsTrue() {
 			task.reportStatus(ast.NewCompilerDiagnostic(diagnostics.A_non_dry_build_would_update_timestamps_for_output_of_project_0, task.config))
 			status = &upToDateStatus{kind: upToDateStatusTypeUpToDate}
 			return status
 		}
 
-		s.updateTimeStamps(task, nil, diagnostics.Updating_output_timestamps_of_project_0)
+		o.updateTimeStamps(task, nil, diagnostics.Updating_output_timestamps_of_project_0)
 		status = &upToDateStatus{kind: upToDateStatusTypeUpToDate}
 		task.pseudoBuild = true
 		return status
 	}
 
-	if s.opts.Command.BuildOptions.Dry.IsTrue() {
+	if o.opts.Command.BuildOptions.Dry.IsTrue() {
 		task.reportStatus(ast.NewCompilerDiagnostic(diagnostics.A_non_dry_build_would_build_project_0, task.config))
 		status = &upToDateStatus{kind: upToDateStatusTypeUpToDate}
 		return status
@@ -186,7 +185,7 @@ func (s *Orchestrator) handleStatusThatDoesntRequireBuild(task *buildTask, statu
 	return nil
 }
 
-func (s *Orchestrator) getUpToDateStatus(configPath tspath.Path, task *buildTask, upStreamStatus []*upToDateStatus) *upToDateStatus {
+func (o *Orchestrator) getUpToDateStatus(configPath tspath.Path, task *buildTask, upStreamStatus []*upToDateStatus) *upToDateStatus {
 	// Config file not found
 	if task.resolved == nil {
 		return &upToDateStatus{kind: upToDateStatusTypeConfigFileNotFound}
@@ -203,19 +202,19 @@ func (s *Orchestrator) getUpToDateStatus(configPath tspath.Path, task *buildTask
 			continue
 		}
 
-		if s.opts.Command.BuildOptions.StopBuildOnErrors.IsTrue() && upstreamStatus.isError() {
+		if o.opts.Command.BuildOptions.StopBuildOnErrors.IsTrue() && upstreamStatus.isError() {
 			// Upstream project has errors, so we cannot build this project
 			return &upToDateStatus{kind: upToDateStatusTypeUpstreamErrors, data: &upstreamErrors{task.resolved.ProjectReferences()[index].Path, upstreamStatus.kind == upToDateStatusTypeUpstreamErrors}}
 		}
 	}
 
-	if s.opts.Command.BuildOptions.Force.IsTrue() {
+	if o.opts.Command.BuildOptions.Force.IsTrue() {
 		return &upToDateStatus{kind: upToDateStatusTypeForceBuild}
 	}
 
 	// Check the build info
 	buildInfoPath := task.resolved.GetBuildInfoFileName()
-	buildInfo := s.host.readOrStoreBuildInfo(configPath, buildInfoPath)
+	buildInfo := o.host.readOrStoreBuildInfo(configPath, buildInfoPath)
 	if buildInfo == nil {
 		return &upToDateStatus{kind: upToDateStatusTypeOutputMissing, data: buildInfoPath}
 	}
@@ -251,33 +250,33 @@ func (s *Orchestrator) getUpToDateStatus(configPath tspath.Path, task *buildTask
 		}
 
 		// Some of the emit files like source map or dts etc are not yet done
-		if buildInfo.IsEmitPending(task.resolved, tspath.GetDirectoryPath(tspath.GetNormalizedAbsolutePath(buildInfoPath, s.comparePathsOptions.CurrentDirectory))) {
+		if buildInfo.IsEmitPending(task.resolved, tspath.GetDirectoryPath(tspath.GetNormalizedAbsolutePath(buildInfoPath, o.comparePathsOptions.CurrentDirectory))) {
 			return &upToDateStatus{kind: upToDateStatusTypeOutOfDateOptions, data: buildInfoPath}
 		}
 	}
 	var inputTextUnchanged bool
-	oldestOutputFileAndTime := fileAndTime{buildInfoPath, s.host.GetMTime(buildInfoPath)}
+	oldestOutputFileAndTime := fileAndTime{buildInfoPath, o.host.GetMTime(buildInfoPath)}
 	var newestInputFileAndTime fileAndTime
 	var seenRoots collections.Set[tspath.Path]
 	var buildInfoRootInfoReader *incremental.BuildInfoRootInfoReader
 	for _, inputFile := range task.resolved.FileNames() {
-		inputTime := s.host.GetMTime(inputFile)
+		inputTime := o.host.GetMTime(inputFile)
 		if inputTime.IsZero() {
 			return &upToDateStatus{kind: upToDateStatusTypeInputFileMissing, data: inputFile}
 		}
-		inputPath := s.toPath(inputFile)
+		inputPath := o.toPath(inputFile)
 		if inputTime.After(oldestOutputFileAndTime.time) {
 			var version string
 			var currentVersion string
 			if buildInfo.IsIncremental() {
 				if buildInfoRootInfoReader == nil {
-					buildInfoRootInfoReader = buildInfo.GetBuildInfoRootInfoReader(tspath.GetDirectoryPath(tspath.GetNormalizedAbsolutePath(buildInfoPath, s.comparePathsOptions.CurrentDirectory)), s.comparePathsOptions)
+					buildInfoRootInfoReader = buildInfo.GetBuildInfoRootInfoReader(tspath.GetDirectoryPath(tspath.GetNormalizedAbsolutePath(buildInfoPath, o.comparePathsOptions.CurrentDirectory)), o.comparePathsOptions)
 				}
 				buildInfoFileInfo, resolvedInputPath := buildInfoRootInfoReader.GetBuildInfoFileInfo(inputPath)
 				if fileInfo := buildInfoFileInfo.GetFileInfo(); fileInfo != nil && fileInfo.Version() != "" {
 					version = fileInfo.Version()
-					if text, ok := s.host.FS().ReadFile(string(resolvedInputPath)); ok {
-						currentVersion = incremental.ComputeHash(text, s.opts.Testing != nil)
+					if text, ok := o.host.FS().ReadFile(string(resolvedInputPath)); ok {
+						currentVersion = incremental.ComputeHash(text, o.opts.Testing != nil)
 						if version == currentVersion {
 							inputTextUnchanged = true
 						}
@@ -296,7 +295,7 @@ func (s *Orchestrator) getUpToDateStatus(configPath tspath.Path, task *buildTask
 	}
 
 	if buildInfoRootInfoReader == nil {
-		buildInfoRootInfoReader = buildInfo.GetBuildInfoRootInfoReader(tspath.GetDirectoryPath(tspath.GetNormalizedAbsolutePath(buildInfoPath, s.comparePathsOptions.CurrentDirectory)), s.comparePathsOptions)
+		buildInfoRootInfoReader = buildInfo.GetBuildInfoRootInfoReader(tspath.GetDirectoryPath(tspath.GetNormalizedAbsolutePath(buildInfoPath, o.comparePathsOptions.CurrentDirectory)), o.comparePathsOptions)
 	}
 	for root := range buildInfoRootInfoReader.Roots() {
 		if !seenRoots.Has(root) {
@@ -308,7 +307,7 @@ func (s *Orchestrator) getUpToDateStatus(configPath tspath.Path, task *buildTask
 	if !task.resolved.CompilerOptions().IsIncremental() {
 		// Check output file stamps
 		for outputFile := range task.resolved.GetOutputFileNames() {
-			outputTime := s.host.GetMTime(outputFile)
+			outputTime := o.host.GetMTime(outputFile)
 			if outputTime.IsZero() {
 				// Output file missing
 				return &upToDateStatus{kind: upToDateStatusTypeOutputMissing, data: outputFile}
@@ -343,13 +342,13 @@ func (s *Orchestrator) getUpToDateStatus(configPath tspath.Path, task *buildTask
 		}
 
 		// Check if tsbuildinfo path is shared, then we need to rebuild
-		if s.host.hasConflictingBuildInfo(configPath) {
+		if o.host.hasConflictingBuildInfo(configPath) {
 			return &upToDateStatus{kind: upToDateStatusTypeInputFileNewer, data: &inputOutputName{task.resolved.ProjectReferences()[index].Path, oldestOutputFileAndTime.file}}
 		}
 
 		// If the upstream project has only change .d.ts files, and we've built
 		// *after* those files, then we're "pseudo up to date" and eligible for a fast rebuild
-		newestDtsChangeTime := s.host.getLatestChangedDtsMTime(task.resolved.ResolvedProjectReferencePaths()[index])
+		newestDtsChangeTime := o.host.getLatestChangedDtsMTime(task.resolved.ResolvedProjectReferencePaths()[index])
 		if !newestDtsChangeTime.IsZero() && newestDtsChangeTime.Before(oldestOutputFileAndTime.time) {
 			refDtsUnchanged = true
 			continue
@@ -359,13 +358,13 @@ func (s *Orchestrator) getUpToDateStatus(configPath tspath.Path, task *buildTask
 		return &upToDateStatus{kind: upToDateStatusTypeInputFileNewer, data: &inputOutputName{task.resolved.ProjectReferences()[index].Path, oldestOutputFileAndTime.file}}
 	}
 
-	configStatus := s.checkInputFileTime(task.config, &oldestOutputFileAndTime)
+	configStatus := o.checkInputFileTime(task.config, &oldestOutputFileAndTime)
 	if configStatus != nil {
 		return configStatus
 	}
 
 	for _, extendedConfig := range task.resolved.ExtendedSourceFiles() {
-		extendedConfigStatus := s.checkInputFileTime(extendedConfig, &oldestOutputFileAndTime)
+		extendedConfigStatus := o.checkInputFileTime(extendedConfig, &oldestOutputFileAndTime)
 		if extendedConfigStatus != nil {
 			return extendedConfigStatus
 		}
@@ -390,8 +389,8 @@ func (s *Orchestrator) getUpToDateStatus(configPath tspath.Path, task *buildTask
 	}
 }
 
-func (s *Orchestrator) checkInputFileTime(inputFile string, oldestOutputFileAndTime *fileAndTime) *upToDateStatus {
-	inputTime := s.host.GetMTime(inputFile)
+func (o *Orchestrator) checkInputFileTime(inputFile string, oldestOutputFileAndTime *fileAndTime) *upToDateStatus {
+	inputTime := o.host.GetMTime(inputFile)
 	if inputTime.After(oldestOutputFileAndTime.time) {
 		// Output file is older than input file
 		return &upToDateStatus{kind: upToDateStatusTypeInputFileNewer, data: &inputOutputName{inputFile, oldestOutputFileAndTime.file}}
@@ -399,111 +398,7 @@ func (s *Orchestrator) checkInputFileTime(inputFile string, oldestOutputFileAndT
 	return nil
 }
 
-func (s *Orchestrator) reportUpToDateStatus(task *buildTask, status *upToDateStatus) {
-	if !s.opts.Command.BuildOptions.Verbose.IsTrue() {
-		return
-	}
-	switch status.kind {
-	case upToDateStatusTypeConfigFileNotFound:
-		task.reportStatus(ast.NewCompilerDiagnostic(
-			diagnostics.Project_0_is_out_of_date_because_config_file_does_not_exist,
-			s.relativeFileName(task.config),
-		))
-	case upToDateStatusTypeUpstreamErrors:
-		upstreamStatus := status.data.(*upstreamErrors)
-		task.reportStatus(ast.NewCompilerDiagnostic(
-			core.IfElse(
-				upstreamStatus.refHasUpstreamErrors,
-				diagnostics.Project_0_can_t_be_built_because_its_dependency_1_was_not_built,
-				diagnostics.Project_0_can_t_be_built_because_its_dependency_1_has_errors,
-			),
-			s.relativeFileName(task.config),
-			s.relativeFileName(upstreamStatus.ref),
-		))
-	case upToDateStatusTypeUpToDate:
-		inputOutputFileAndTime := status.data.(*inputOutputFileAndTime)
-		task.reportStatus(ast.NewCompilerDiagnostic(
-			diagnostics.Project_0_is_up_to_date_because_newest_input_1_is_older_than_output_2,
-			s.relativeFileName(task.config),
-			s.relativeFileName(inputOutputFileAndTime.input.file),
-			s.relativeFileName(inputOutputFileAndTime.output.file),
-		))
-	case upToDateStatusTypeUpToDateWithUpstreamTypes:
-		task.reportStatus(ast.NewCompilerDiagnostic(
-			diagnostics.Project_0_is_up_to_date_with_d_ts_files_from_its_dependencies,
-			s.relativeFileName(task.config),
-		))
-	case upToDateStatusTypeUpToDateWithInputFileText:
-		task.reportStatus(ast.NewCompilerDiagnostic(
-			diagnostics.Project_0_is_up_to_date_but_needs_to_update_timestamps_of_output_files_that_are_older_than_input_files,
-			s.relativeFileName(task.config),
-		))
-	case upToDateStatusTypeInputFileMissing:
-		task.reportStatus(ast.NewCompilerDiagnostic(
-			diagnostics.Project_0_is_out_of_date_because_input_1_does_not_exist,
-			s.relativeFileName(task.config),
-			s.relativeFileName(status.data.(string)),
-		))
-	case upToDateStatusTypeOutputMissing:
-		task.reportStatus(ast.NewCompilerDiagnostic(
-			diagnostics.Project_0_is_out_of_date_because_output_file_1_does_not_exist,
-			s.relativeFileName(task.config),
-			s.relativeFileName(status.data.(string)),
-		))
-	case upToDateStatusTypeInputFileNewer:
-		inputOutput := status.data.(*inputOutputName)
-		task.reportStatus(ast.NewCompilerDiagnostic(
-			diagnostics.Project_0_is_out_of_date_because_output_1_is_older_than_input_2,
-			s.relativeFileName(task.config),
-			s.relativeFileName(inputOutput.output),
-			s.relativeFileName(inputOutput.input),
-		))
-	case upToDateStatusTypeOutOfDateBuildInfoWithPendingEmit:
-		task.reportStatus(ast.NewCompilerDiagnostic(
-			diagnostics.Project_0_is_out_of_date_because_buildinfo_file_1_indicates_that_some_of_the_changes_were_not_emitted,
-			s.relativeFileName(task.config),
-			s.relativeFileName(status.data.(string)),
-		))
-	case upToDateStatusTypeOutOfDateBuildInfoWithErrors:
-		task.reportStatus(ast.NewCompilerDiagnostic(
-			diagnostics.Project_0_is_out_of_date_because_buildinfo_file_1_indicates_that_program_needs_to_report_errors,
-			s.relativeFileName(task.config),
-			s.relativeFileName(status.data.(string)),
-		))
-	case upToDateStatusTypeOutOfDateOptions:
-		task.reportStatus(ast.NewCompilerDiagnostic(
-			diagnostics.Project_0_is_out_of_date_because_buildinfo_file_1_indicates_there_is_change_in_compilerOptions,
-			s.relativeFileName(task.config),
-			s.relativeFileName(status.data.(string)),
-		))
-	case upToDateStatusTypeOutOfDateRoots:
-		inputOutput := status.data.(*inputOutputName)
-		task.reportStatus(ast.NewCompilerDiagnostic(
-			diagnostics.Project_0_is_out_of_date_because_buildinfo_file_1_indicates_that_file_2_was_root_file_of_compilation_but_not_any_more,
-			s.relativeFileName(task.config),
-			s.relativeFileName(inputOutput.output),
-			s.relativeFileName(inputOutput.input),
-		))
-	case upToDateStatusTypeTsVersionOutputOfDate:
-		task.reportStatus(ast.NewCompilerDiagnostic(
-			diagnostics.Project_0_is_out_of_date_because_output_for_it_was_generated_with_version_1_that_differs_with_current_version_2,
-			s.relativeFileName(task.config),
-			s.relativeFileName(status.data.(string)),
-			core.Version(),
-		))
-	case upToDateStatusTypeForceBuild:
-		task.reportStatus(ast.NewCompilerDiagnostic(
-			diagnostics.Project_0_is_being_forcibly_rebuilt,
-			s.relativeFileName(task.config),
-		))
-	case upToDateStatusTypeSolution:
-		// Does not need to report status
-	default:
-		panic(fmt.Sprintf("Unknown up to date status kind: %v", status.kind))
-	}
-}
-
-func (s *Orchestrator) updateTimeStamps(task *buildTask, emittedFiles []string, verboseMessage *diagnostics.Message) {
+func (o *Orchestrator) updateTimeStamps(task *buildTask, emittedFiles []string, verboseMessage *diagnostics.Message) {
 	if task.resolved.CompilerOptions().NoEmit.IsTrue() {
 		return
 	}
@@ -513,11 +408,11 @@ func (s *Orchestrator) updateTimeStamps(task *buildTask, emittedFiles []string, 
 		if emitted.Has(file) {
 			return
 		}
-		if !verboseMessageReported && s.opts.Command.BuildOptions.Verbose.IsTrue() {
-			task.reportStatus(ast.NewCompilerDiagnostic(verboseMessage, s.relativeFileName(task.config)))
+		if !verboseMessageReported && o.opts.Command.BuildOptions.Verbose.IsTrue() {
+			task.reportStatus(ast.NewCompilerDiagnostic(verboseMessage, o.relativeFileName(task.config)))
 			verboseMessageReported = true
 		}
-		err := s.host.SetMTime(file, s.opts.Sys.Now())
+		err := o.host.SetMTime(file, o.opts.Sys.Now())
 		if err != nil {
 			task.reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Failed_to_update_timestamp_of_file_0, file))
 		}
@@ -532,29 +427,29 @@ func (s *Orchestrator) updateTimeStamps(task *buildTask, emittedFiles []string, 
 	}
 }
 
-func (s *Orchestrator) cleanProject(path tspath.Path, task *buildTask) {
+func (o *Orchestrator) cleanProject(path tspath.Path, task *buildTask) {
 	if task.resolved == nil {
 		task.reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.File_0_not_found, task.config))
 		task.exitStatus = tsc.ExitStatusDiagnosticsPresent_OutputsSkipped
 		return
 	}
 
-	inputs := collections.NewSetFromItems(core.Map(task.resolved.FileNames(), s.toPath)...)
+	inputs := collections.NewSetFromItems(core.Map(task.resolved.FileNames(), o.toPath)...)
 	for outputFile := range task.resolved.GetOutputFileNames() {
-		s.cleanProjectOutput(task, outputFile, inputs)
+		o.cleanProjectOutput(task, outputFile, inputs)
 	}
-	s.cleanProjectOutput(task, task.resolved.GetBuildInfoFileName(), inputs)
+	o.cleanProjectOutput(task, task.resolved.GetBuildInfoFileName(), inputs)
 }
 
-func (s *Orchestrator) cleanProjectOutput(task *buildTask, outputFile string, inputs *collections.Set[tspath.Path]) {
-	outputPath := s.toPath(outputFile)
+func (o *Orchestrator) cleanProjectOutput(task *buildTask, outputFile string, inputs *collections.Set[tspath.Path]) {
+	outputPath := o.toPath(outputFile)
 	// If output name is same as input file name, do not delete and ignore the error
 	if inputs.Has(outputPath) {
 		return
 	}
-	if s.host.FS().FileExists(outputFile) {
-		if !s.opts.Command.BuildOptions.Dry.IsTrue() {
-			err := s.host.FS().Remove(outputFile)
+	if o.host.FS().FileExists(outputFile) {
+		if !o.opts.Command.BuildOptions.Dry.IsTrue() {
+			err := o.host.FS().Remove(outputFile)
 			if err != nil {
 				task.reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Failed_to_delete_file_0, outputFile))
 			}
