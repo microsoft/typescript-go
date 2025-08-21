@@ -146,11 +146,11 @@ func (b *buildOrderGenerator) analyzeConfig(
 		}
 		circularityStack = circularityStack[:len(circularityStack)-1]
 		completed.Add(path)
-		task.taskReporter.done = make(chan struct{})
+		task.reportDone = make(chan struct{})
 		prev := core.LastOrNil(b.order)
 		if prev != "" {
 			if prevTask, ok := b.tasks.Load(b.toPath(prev)); ok {
-				task.taskReporter.prev = &prevTask.taskReporter
+				task.prevReporter = prevTask
 			} else {
 				panic("No previous task found for " + prev)
 			}
@@ -174,15 +174,15 @@ func (b *buildOrderGenerator) buildOrClean(builder *Orchestrator, build bool) ts
 	if len(b.errors) == 0 {
 		wg := core.NewWorkGroup(builder.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
 		b.tasks.Range(func(path tspath.Path, task *buildTask) bool {
-			task.taskReporter.reportStatus = builder.createBuilderStatusReporter(&task.taskReporter)
-			task.taskReporter.diagnosticReporter = builder.createDiagnosticReporter(&task.taskReporter)
+			task.reportStatus = builder.createBuilderStatusReporter(task)
+			task.diagnosticReporter = builder.createDiagnosticReporter(task)
 			wg.Queue(func() {
 				if build {
 					builder.buildProject(path, task)
 				} else {
 					builder.cleanProject(path, task)
 				}
-				task.taskReporter.report(builder, path, &buildResult)
+				task.report(builder, path, &buildResult)
 			})
 			return true
 		})
