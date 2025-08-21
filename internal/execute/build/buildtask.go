@@ -55,7 +55,7 @@ func (t *buildTask) reportDiagnostic(err *ast.Diagnostic) {
 	t.diagnosticReporter(err)
 }
 
-func (t *buildTask) report(orchestrator *Orchestrator, configPath tspath.Path, buildResult *solutionBuilderResult) {
+func (t *buildTask) report(orchestrator *Orchestrator, configPath tspath.Path, buildResult *orchestratorResult) {
 	if t.prevReporter != nil {
 		<-t.prevReporter.reportDone
 	}
@@ -100,7 +100,7 @@ func (t *buildTask) buildProject(orchestrator *Orchestrator, path tspath.Path) {
 		parseStart := orchestrator.opts.Sys.Now()
 		program := compiler.NewProgram(compiler.ProgramOptions{
 			Config: t.resolved,
-			Host: &compilerHostForTaskReporter{
+			Host: &compilerHost{
 				host:  orchestrator.host,
 				trace: tsc.GetTraceWithWriterFromSys(&t.builder, orchestrator.opts.Testing),
 			},

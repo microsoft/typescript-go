@@ -22,7 +22,7 @@ type buildInfoAndConfig struct {
 	config    tspath.Path
 }
 
-type solutionBuilderHost struct {
+type host struct {
 	builder             *Orchestrator
 	host                compiler.CompilerHost
 	extendedConfigCache collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]
@@ -35,29 +35,29 @@ type solutionBuilderHost struct {
 }
 
 var (
-	_ vfs.FS                      = (*solutionBuilderHost)(nil)
-	_ compiler.CompilerHost       = (*solutionBuilderHost)(nil)
-	_ incremental.BuildInfoReader = (*solutionBuilderHost)(nil)
-	_ incremental.BuildHost       = (*solutionBuilderHost)(nil)
+	_ vfs.FS                      = (*host)(nil)
+	_ compiler.CompilerHost       = (*host)(nil)
+	_ incremental.BuildInfoReader = (*host)(nil)
+	_ incremental.BuildHost       = (*host)(nil)
 )
 
-func (h *solutionBuilderHost) FS() vfs.FS {
+func (h *host) FS() vfs.FS {
 	return h
 }
 
-func (h *solutionBuilderHost) UseCaseSensitiveFileNames() bool {
+func (h *host) UseCaseSensitiveFileNames() bool {
 	return h.host.FS().UseCaseSensitiveFileNames()
 }
 
-func (h *solutionBuilderHost) FileExists(path string) bool {
+func (h *host) FileExists(path string) bool {
 	return h.host.FS().FileExists(path)
 }
 
-func (h *solutionBuilderHost) ReadFile(path string) (string, bool) {
+func (h *host) ReadFile(path string) (string, bool) {
 	return h.host.FS().ReadFile(path)
 }
 
-func (h *solutionBuilderHost) WriteFile(path string, data string, writeByteOrderMark bool) error {
+func (h *host) WriteFile(path string, data string, writeByteOrderMark bool) error {
 	err := h.host.FS().WriteFile(path, data, writeByteOrderMark)
 	if err == nil {
 		filePath := h.builder.toPath(path)
@@ -67,47 +67,47 @@ func (h *solutionBuilderHost) WriteFile(path string, data string, writeByteOrder
 	return err
 }
 
-func (h *solutionBuilderHost) Remove(path string) error {
+func (h *host) Remove(path string) error {
 	return h.host.FS().Remove(path)
 }
 
-func (h *solutionBuilderHost) Chtimes(path string, aTime time.Time, mTime time.Time) error {
+func (h *host) Chtimes(path string, aTime time.Time, mTime time.Time) error {
 	return h.host.FS().Chtimes(path, aTime, mTime)
 }
 
-func (h *solutionBuilderHost) DirectoryExists(path string) bool {
+func (h *host) DirectoryExists(path string) bool {
 	return h.host.FS().DirectoryExists(path)
 }
 
-func (h *solutionBuilderHost) GetAccessibleEntries(path string) vfs.Entries {
+func (h *host) GetAccessibleEntries(path string) vfs.Entries {
 	return h.host.FS().GetAccessibleEntries(path)
 }
 
-func (h *solutionBuilderHost) Stat(path string) vfs.FileInfo {
+func (h *host) Stat(path string) vfs.FileInfo {
 	return h.host.FS().Stat(path)
 }
 
-func (h *solutionBuilderHost) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
+func (h *host) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
 	return h.host.FS().WalkDir(root, walkFn)
 }
 
-func (h *solutionBuilderHost) Realpath(path string) string {
+func (h *host) Realpath(path string) string {
 	return h.host.FS().Realpath(path)
 }
 
-func (h *solutionBuilderHost) DefaultLibraryPath() string {
+func (h *host) DefaultLibraryPath() string {
 	return h.host.DefaultLibraryPath()
 }
 
-func (h *solutionBuilderHost) GetCurrentDirectory() string {
+func (h *host) GetCurrentDirectory() string {
 	return h.host.GetCurrentDirectory()
 }
 
-func (h *solutionBuilderHost) Trace(msg string) {
-	panic("solutionBuilderHost does not support tracing, use a different host for tracing")
+func (h *host) Trace(msg string) {
+	panic("build.Orchestrator.host does not support tracing, use a different host for tracing")
 }
 
-func (h *solutionBuilderHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
+func (h *host) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
 	if existing, loaded := h.sourceFiles.Load(opts); loaded {
 		return existing
 	}
@@ -117,7 +117,7 @@ func (h *solutionBuilderHost) GetSourceFile(opts ast.SourceFileParseOptions) *as
 	return file
 }
 
-func (h *solutionBuilderHost) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
+func (h *host) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
 	if existing, loaded := h.resolvedReferences.Load(path); loaded {
 		return existing.resolved
 	}
@@ -128,7 +128,7 @@ func (h *solutionBuilderHost) GetResolvedProjectReference(fileName string, path 
 	return configAndTime.resolved
 }
 
-func (h *solutionBuilderHost) ReadBuildInfo(buildInfoFileName string) *incremental.BuildInfo {
+func (h *host) ReadBuildInfo(buildInfoFileName string) *incremental.BuildInfo {
 	path := h.builder.toPath(buildInfoFileName)
 	if existing, loaded := h.buildInfos.Load(path); loaded {
 		return existing.buildInfo
@@ -136,7 +136,7 @@ func (h *solutionBuilderHost) ReadBuildInfo(buildInfoFileName string) *increment
 	return nil
 }
 
-func (h *solutionBuilderHost) readOrStoreBuildInfo(configPath tspath.Path, buildInfoFileName string) *incremental.BuildInfo {
+func (h *host) readOrStoreBuildInfo(configPath tspath.Path, buildInfoFileName string) *incremental.BuildInfo {
 	if existing, loaded := h.buildInfos.Load(h.builder.toPath(buildInfoFileName)); loaded {
 		return existing.buildInfo
 	}
@@ -147,14 +147,14 @@ func (h *solutionBuilderHost) readOrStoreBuildInfo(configPath tspath.Path, build
 	return entry.buildInfo
 }
 
-func (h *solutionBuilderHost) hasConflictingBuildInfo(configPath tspath.Path) bool {
+func (h *host) hasConflictingBuildInfo(configPath tspath.Path) bool {
 	if existing, loaded := h.buildInfos.Load(configPath); loaded {
 		return existing.config != configPath
 	}
 	return false
 }
 
-func (h *solutionBuilderHost) GetMTime(file string) time.Time {
+func (h *host) GetMTime(file string) time.Time {
 	path := h.builder.toPath(file)
 	if existing, loaded := h.mTimes.Load(path); loaded {
 		return existing
@@ -168,7 +168,7 @@ func (h *solutionBuilderHost) GetMTime(file string) time.Time {
 	return mTime
 }
 
-func (h *solutionBuilderHost) SetMTime(file string, mTime time.Time) error {
+func (h *host) SetMTime(file string, mTime time.Time) error {
 	path := h.builder.toPath(file)
 	err := h.host.FS().Chtimes(file, time.Time{}, mTime)
 	if err == nil {
@@ -177,7 +177,7 @@ func (h *solutionBuilderHost) SetMTime(file string, mTime time.Time) error {
 	return err
 }
 
-func (h *solutionBuilderHost) getLatestChangedDtsMTime(config string) time.Time {
+func (h *host) getLatestChangedDtsMTime(config string) time.Time {
 	path := h.builder.toPath(config)
 	if existing, loaded := h.latestChangedDtsFiles.Load(path); loaded {
 		return existing
@@ -199,35 +199,4 @@ func (h *solutionBuilderHost) getLatestChangedDtsMTime(config string) time.Time 
 
 	changedDtsMTime, _ = h.mTimes.LoadOrStore(path, changedDtsMTime)
 	return changedDtsMTime
-}
-
-type compilerHostForTaskReporter struct {
-	host  *solutionBuilderHost
-	trace func(msg string)
-}
-
-var _ compiler.CompilerHost = (*compilerHostForTaskReporter)(nil)
-
-func (h *compilerHostForTaskReporter) FS() vfs.FS {
-	return h.host.FS()
-}
-
-func (h *compilerHostForTaskReporter) DefaultLibraryPath() string {
-	return h.host.DefaultLibraryPath()
-}
-
-func (h *compilerHostForTaskReporter) GetCurrentDirectory() string {
-	return h.host.GetCurrentDirectory()
-}
-
-func (h *compilerHostForTaskReporter) Trace(msg string) {
-	h.trace(msg)
-}
-
-func (h *compilerHostForTaskReporter) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
-	return h.host.GetSourceFile(opts)
-}
-
-func (h *compilerHostForTaskReporter) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
-	return h.host.GetResolvedProjectReference(fileName, path)
 }

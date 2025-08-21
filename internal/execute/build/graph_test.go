@@ -84,12 +84,12 @@ func (b *buildOrderTestCase) run(t *testing.T) {
 			Sys:     sys,
 			Command: buildCommand,
 		})
-		buildOrderGenerator := orchestrator.GetBuildOrderGenerator()
-		buildOrder := core.Map(buildOrderGenerator.Order(), b.projectName)
+		orchestrator.GenerateGraph()
+		buildOrder := core.Map(orchestrator.Order(), b.projectName)
 		assert.DeepEqual(t, buildOrder, b.expected)
 
 		for index, project := range buildOrder {
-			upstream := core.Map(buildOrderGenerator.Upstream(b.configName(project)), b.projectName)
+			upstream := core.Map(orchestrator.Upstream(b.configName(project)), b.projectName)
 			expectedUpstream := deps[project]
 			assert.Assert(t, len(upstream) <= len(expectedUpstream), fmt.Sprintf("Expected upstream for %s to be at most %d, got %d", project, len(expectedUpstream), len(upstream)))
 			for _, expected := range expectedUpstream {
