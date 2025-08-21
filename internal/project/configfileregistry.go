@@ -235,7 +235,7 @@ func (c *ConfigFileRegistry) onConfigChange(path tspath.Path, changeKind lsproto
 	return true
 }
 
-func (c *ConfigFileRegistry) tryInvokeWildCardDirectories(fileName string, path tspath.Path) {
+func (c *ConfigFileRegistry) tryInvokeWildCardDirectories(fileName string) {
 	configFiles := c.ConfigFiles.ToMap()
 	for configPath, entry := range configFiles {
 		entry.mu.Lock()

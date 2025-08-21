@@ -216,7 +216,7 @@ func (s *Service) OpenFile(fileName string, fileContent string, scriptKind core.
 	s.openFiles[info.path] = projectRootPath
 	if existing == nil && info != nil && !info.isDynamic {
 		// Invoke wild card directory watcher to ensure that the file presence is reflected
-		s.configFileRegistry.tryInvokeWildCardDirectories(fileName, info.path)
+		s.configFileRegistry.tryInvokeWildCardDirectories(fileName)
 	}
 	result := s.assignProjectToOpenedScriptInfo(info)
 	s.cleanupProjectsAndScriptInfos(info, result)
@@ -331,7 +331,7 @@ func (s *Service) OnWatchedFilesChanged(ctx context.Context, changes []*lsproto.
 			for _, project := range s.inferredProjects {
 				project.onWatchEventForNilScriptInfo(fileName)
 			}
-			s.configFileRegistry.tryInvokeWildCardDirectories(fileName, path)
+			s.configFileRegistry.tryInvokeWildCardDirectories(fileName)
 		}
 	}
 
