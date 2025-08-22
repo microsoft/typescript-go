@@ -802,6 +802,26 @@ async function sign(filelist) {
         return;
     }
 
+    /** @type {Map<string, string>} */
+    const srcHashes = new Map();
+
+    for (const record of filelist.SignFileRecordList) {
+        for (const file of record.SignFileList) {
+            const src = file.SrcPath;
+            const dst = file.DstPath ?? src;
+
+            if (!fs.existsSync(src)) {
+                throw new Error(`Source file does not exist: ${src}`);
+            }
+
+            const hash = crypto.createHash("sha256").update(fs.readFileSync(src)).digest("hex");
+            srcHashes.set(src, hash);
+
+            console.log(`Will sign ${src} -> ${dst}`);
+            console.log(`  sha256: ${hash}`);
+        }
+    }
+
     const tmp = await getSignTempDir();
     const filelistPath = path.resolve(tmp, `signing-filelist-${signCount++}.json`);
     await fs.promises.writeFile(filelistPath, data);
@@ -828,12 +848,21 @@ async function sign(filelist) {
                 continue;
             }
 
+            const srcHash = srcHashes.get(src);
+            assert(srcHash);
+            const dstHash = crypto.createHash("sha256").update(fs.readFileSync(dst)).digest("hex");
+            if (srcHash && srcHash === dstHash) {
+                failures.push(`Signed file is identical to source file (not signed?): ${src} -> ${dst}`);
+                continue;
+            }
+
             if (src === dst) {
                 console.log(`Signed ${src}`);
             }
             else {
                 console.log(`Signed ${src} -> ${dst}`);
             }
+            console.log(`  sha256: ${dstHash}`);
         }
     }
 
