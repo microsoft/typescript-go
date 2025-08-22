@@ -718,8 +718,7 @@ export function lastElementOf<T>(arr: T[]): T | undefined {
     return arr[arr.length - 1];
 }
 
-tsgo --b -w --verbose
-ExitStatus:: DiagnosticsPresent_OutputsGenerated
+
 Output::
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * core/tsconfig.json
@@ -761,8 +760,6 @@ Output::
 [[90mHH:MM:SS AM[0m] Project 'animals/tsconfig.json' is up to date with .d.ts files from its dependencies
 
 [[90mHH:MM:SS AM[0m] Updating output timestamps of project 'animals/tsconfig.json'...
-
-[[90mHH:MM:SS AM[0m] Project 'zoo/tsconfig.json' is up to date because newest input 'zoo/zoo.ts' is older than output 'lib/zoo/tsconfig.tsbuildinfo'
 
 
 Found 4 errors in 2 files.

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"slices"
-	"time"
 
 	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -23,11 +22,6 @@ const (
 	SignatureUpdateKindStoredAtEmit
 	SignatureUpdateKindUsedVersion
 )
-
-type BuildHost interface {
-	GetMTime(fileName string) time.Time
-	SetMTime(fileName string, mTime time.Time) error
-}
 
 type Program struct {
 	snapshot *snapshot
@@ -84,6 +78,10 @@ func (p *Program) GetProgram() *compiler.Program {
 func (p *Program) MakeReadonly() {
 	p.program = nil
 	p.testingData = nil
+}
+
+func (p *Program) HasChangedDtsFile() bool {
+	return p.snapshot.hasChangedDtsFile
 }
 
 // Options implements compiler.AnyProgram interface.
