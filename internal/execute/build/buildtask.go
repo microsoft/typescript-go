@@ -2,7 +2,9 @@ package build
 
 import (
 	"fmt"
+	"slices"
 	"strings"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -34,6 +36,11 @@ type buildTask struct {
 	filesToDelete      []string
 	prevReporter       *buildTask
 	reportDone         chan struct{}
+
+	// Watching things
+	configTime           time.Time
+	extendedConfigTTimes []time.Time
+	inputFiles           []time.Time
 }
 
 func (t *buildTask) waitOnUpstream() []*upToDateStatus {
@@ -136,6 +143,7 @@ func (t *buildTask) buildProject(orchestrator *Orchestrator, path tspath.Path) {
 		if result.Status == tsc.ExitStatusDiagnosticsPresent_OutputsSkipped || result.Status == tsc.ExitStatusDiagnosticsPresent_OutputsGenerated {
 			status = &upToDateStatus{kind: upToDateStatusTypeBuildErrors}
 		} else {
+			// !!! sheetal - input output file names
 			status = &upToDateStatus{kind: upToDateStatusTypeUpToDate}
 		}
 	} else {
@@ -189,7 +197,7 @@ func (t *buildTask) handleStatusThatDoesntRequireBuild(orchestrator *Orchestrato
 		}
 
 		t.updateTimeStamps(orchestrator, nil, diagnostics.Updating_output_timestamps_of_project_0)
-		status = &upToDateStatus{kind: upToDateStatusTypeUpToDate}
+		status = &upToDateStatus{kind: upToDateStatusTypeUpToDate, data: status.data}
 		t.pseudoBuild = true
 		return status
 	}
@@ -578,4 +586,48 @@ func (t *buildTask) cleanProjectOutput(orchestrator *Orchestrator, outputFile st
 			t.filesToDelete = append(t.filesToDelete, outputFile)
 		}
 	}
+}
+
+func (t *buildTask) updateWatch(orchestrator *Orchestrator) {
+	t.configTime = orchestrator.host.GetMTime(t.config)
+	if t.resolved != nil {
+		t.extendedConfigTTimes = core.Map(t.resolved.ExtendedSourceFiles(), func(p string) time.Time {
+			return orchestrator.host.GetMTime(p)
+		})
+		t.inputFiles = core.Map(t.resolved.FileNames(), func(p string) time.Time {
+			return orchestrator.host.GetMTime(p)
+		})
+	}
+}
+
+type updateKind uint
+
+const (
+	updateKindNone updateKind = iota
+	updateKindConfig
+	updateKindInputFiles
+)
+
+func (t *buildTask) hasUpdate(orchestrator *Orchestrator) updateKind {
+	if configTime := orchestrator.host.GetMTime(t.config); configTime != t.configTime {
+		// !!! sheetal verify text as well?
+		// We need to update build tasks completely
+		return updateKindConfig
+	}
+	if t.resolved != nil {
+		for index, file := range t.resolved.ExtendedSourceFiles() {
+			if orchestrator.host.GetMTime(file) != t.extendedConfigTTimes[index] {
+				return updateKindConfig
+			}
+		}
+		if !slices.Equal(t.resolved.FileNames(), t.resolved.ReloadFileNamesOfParsedCommandLine(orchestrator.host.FS()).FileNames()) {
+			return updateKindInputFiles
+		}
+		for index, file := range t.resolved.FileNames() {
+			if orchestrator.host.GetMTime(file) != t.inputFiles[index] {
+				return updateKindInputFiles
+			}
+		}
+	}
+	return updateKindNone
 }

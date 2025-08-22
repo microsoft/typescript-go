@@ -36,7 +36,6 @@ const (
 
 type Watcher interface {
 	DoCycle()
-	GetProgram() *incremental.Program
 }
 
 type CommandLineResult struct {
