@@ -6694,8 +6694,9 @@ func (c *Checker) checkUnusedIdentifiers(potentiallyUnusedIdentifiers []*ast.Nod
 			// Only report unused parameters on the implementation, not overloads.
 			if node.Body() != nil {
 				c.checkUnusedLocalsAndParameters(node)
+				// Only report unused type parameters on the implementation, not overloads.
+				c.checkUnusedTypeParameters(node)
 			}
-			c.checkUnusedTypeParameters(node)
 		case ast.KindMethodSignature, ast.KindCallSignature, ast.KindConstructSignature, ast.KindFunctionType, ast.KindConstructorType,
 			ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindInterfaceDeclaration:
 			c.checkUnusedTypeParameters(node)

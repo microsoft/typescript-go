@@ -1,0 +1,50 @@
+//// [tests/cases/compiler/overloadUnusedTypeParameters.ts] ////
+
+=== overloadUnusedTypeParameters.ts ===
+export function tryParseJson<T>(text: string): unknown;
+>tryParseJson : { <T>(text: string): unknown; <T>(text: string, predicate: (parsed: unknown) => parsed is T): T | undefined; }
+>text : string
+
+export function tryParseJson<T>(text: string, predicate: (parsed: unknown) => parsed is T): T | undefined;
+>tryParseJson : { <T>(text: string): unknown; <T>(text: string, predicate: (parsed: unknown) => parsed is T): T | undefined; }
+>text : string
+>predicate : (parsed: unknown) => parsed is T
+>parsed : unknown
+
+export function tryParseJson<T>() {
+>tryParseJson : { <T>(text: string): unknown; <T>(text: string, predicate: (parsed: unknown) => parsed is T): T | undefined; }
+
+    throw new Error("noop")
+>new Error("noop") : Error
+>Error : ErrorConstructor
+>"noop" : "noop"
+}
+
+export function tryParseJson2<T>(text: string): unknown;
+>tryParseJson2 : { <T>(text: string): unknown; <T>(text: string, predicate: (parsed: unknown) => parsed is T): T | undefined; }
+>text : string
+
+export function tryParseJson2<T>(text: string, predicate: (parsed: unknown) => parsed is T): T | undefined;
+>tryParseJson2 : { <T>(text: string): unknown; <T>(text: string, predicate: (parsed: unknown) => parsed is T): T | undefined; }
+>text : string
+>predicate : (parsed: unknown) => parsed is T
+>parsed : unknown
+
+export function tryParseJson2() {
+>tryParseJson2 : { <T>(text: string): unknown; <T>(text: string, predicate: (parsed: unknown) => parsed is T): T | undefined; }
+
+    throw new Error("noop")
+>new Error("noop") : Error
+>Error : ErrorConstructor
+>"noop" : "noop"
+}
+
+export function tryParseJson3<T>(_text: string): unknown {
+>tryParseJson3 : <T>(_text: string) => unknown
+>_text : string
+
+    throw new Error("noop")
+>new Error("noop") : Error
+>Error : ErrorConstructor
+>"noop" : "noop"
+}

@@ -1,0 +1,24 @@
+overloadUnusedTypeParameters.ts(3,30): error TS6196: 'T' is declared but never used.
+overloadUnusedTypeParameters.ts(13,31): error TS6196: 'T' is declared but never used.
+
+
+==== overloadUnusedTypeParameters.ts (2 errors) ====
+    export function tryParseJson<T>(text: string): unknown;
+    export function tryParseJson<T>(text: string, predicate: (parsed: unknown) => parsed is T): T | undefined;
+    export function tryParseJson<T>() {
+                                 ~
+!!! error TS6196: 'T' is declared but never used.
+        throw new Error("noop")
+    }
+    
+    export function tryParseJson2<T>(text: string): unknown;
+    export function tryParseJson2<T>(text: string, predicate: (parsed: unknown) => parsed is T): T | undefined;
+    export function tryParseJson2() {
+        throw new Error("noop")
+    }
+    
+    export function tryParseJson3<T>(_text: string): unknown {
+                                  ~
+!!! error TS6196: 'T' is declared but never used.
+        throw new Error("noop")
+    }
