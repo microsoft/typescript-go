@@ -224,7 +224,6 @@ func (o *Orchestrator) Watch() {
 }
 
 func (o *Orchestrator) DoCycle() {
-	// !!! sheetal Figure out what changed
 	var needsUpdate atomic.Bool
 	wg := core.NewWorkGroup(o.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
 	o.tasks.Range(func(path tspath.Path, task *buildTask) bool {

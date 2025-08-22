@@ -143,7 +143,6 @@ func (t *buildTask) buildProject(orchestrator *Orchestrator, path tspath.Path) {
 		if result.Status == tsc.ExitStatusDiagnosticsPresent_OutputsSkipped || result.Status == tsc.ExitStatusDiagnosticsPresent_OutputsGenerated {
 			status = &upToDateStatus{kind: upToDateStatusTypeBuildErrors}
 		} else {
-			// !!! sheetal - input output file names
 			status = &upToDateStatus{kind: upToDateStatusTypeUpToDate}
 		}
 	} else {
@@ -197,7 +196,7 @@ func (t *buildTask) handleStatusThatDoesntRequireBuild(orchestrator *Orchestrato
 		}
 
 		t.updateTimeStamps(orchestrator, nil, diagnostics.Updating_output_timestamps_of_project_0)
-		status = &upToDateStatus{kind: upToDateStatusTypeUpToDate, data: status.data}
+		status = &upToDateStatus{kind: upToDateStatusTypeUpToDate}
 		t.pseudoBuild = true
 		return status
 	}
@@ -445,13 +444,17 @@ func (t *buildTask) reportUpToDateStatus(orchestrator *Orchestrator, status *upT
 			orchestrator.relativeFileName(upstreamStatus.ref),
 		))
 	case upToDateStatusTypeUpToDate:
-		inputOutputFileAndTime := status.data.(*inputOutputFileAndTime)
-		t.reportStatus(ast.NewCompilerDiagnostic(
-			diagnostics.Project_0_is_up_to_date_because_newest_input_1_is_older_than_output_2,
-			orchestrator.relativeFileName(t.config),
-			orchestrator.relativeFileName(inputOutputFileAndTime.input.file),
-			orchestrator.relativeFileName(inputOutputFileAndTime.output.file),
-		))
+		// This is to ensure skipping verbose log for projects that were built,
+		// and then some other package changed but this package doesnt need update
+		if status.data != nil {
+			inputOutputFileAndTime := status.data.(*inputOutputFileAndTime)
+			t.reportStatus(ast.NewCompilerDiagnostic(
+				diagnostics.Project_0_is_up_to_date_because_newest_input_1_is_older_than_output_2,
+				orchestrator.relativeFileName(t.config),
+				orchestrator.relativeFileName(inputOutputFileAndTime.input.file),
+				orchestrator.relativeFileName(inputOutputFileAndTime.output.file),
+			))
+		}
 	case upToDateStatusTypeUpToDateWithUpstreamTypes:
 		t.reportStatus(ast.NewCompilerDiagnostic(
 			diagnostics.Project_0_is_up_to_date_with_d_ts_files_from_its_dependencies,
