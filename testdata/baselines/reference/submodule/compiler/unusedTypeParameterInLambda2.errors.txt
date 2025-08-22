@@ -1,4 +1,4 @@
-unusedTypeParameterInLambda2.ts(3,17): error TS6196: 'T' is declared but never used.
+unusedTypeParameterInLambda2.ts(3,17): error TS6133: 'T' is declared but its value is never read.
 
 
 ==== unusedTypeParameterInLambda2.ts (1 errors) ====
@@ -6,7 +6,7 @@ unusedTypeParameterInLambda2.ts(3,17): error TS6196: 'T' is declared but never u
         public f1() {
             return <T, X>() => {
                     ~
-!!! error TS6196: 'T' is declared but never used.
+!!! error TS6133: 'T' is declared but its value is never read.
                 var a: X;
                 a;
             }

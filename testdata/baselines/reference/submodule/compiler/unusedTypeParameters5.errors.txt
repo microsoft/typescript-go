@@ -1,4 +1,4 @@
-unusedTypeParameters5.ts(6,16): error TS6196: 'K' is declared but never used.
+unusedTypeParameters5.ts(6,16): error TS6133: 'K' is declared but its value is never read.
 
 
 ==== unusedTypeParameters5.ts (1 errors) ====
@@ -9,5 +9,5 @@ unusedTypeParameters5.ts(6,16): error TS6196: 'K' is declared but never used.
     var x: {
         new <T, U, K>(a: T): A<U>;
                    ~
-!!! error TS6196: 'K' is declared but never used.
+!!! error TS6133: 'K' is declared but its value is never read.
     }
