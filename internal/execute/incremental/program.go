@@ -35,7 +35,7 @@ type Program struct {
 	host     BuildHost
 
 	// Testing data
-	testingData TestingData
+	testingData *TestingData
 }
 
 var _ compiler.ProgramLike = (*Program)(nil)
@@ -48,6 +48,7 @@ func NewProgram(program *compiler.Program, oldProgram *Program, buildHost BuildH
 	}
 
 	if testing {
+		incrementalProgram.testingData = &TestingData{}
 		incrementalProgram.testingData.SemanticDiagnosticsPerFile = &incrementalProgram.snapshot.semanticDiagnosticsPerFile
 		if oldProgram != nil {
 			incrementalProgram.testingData.OldProgramSemanticDiagnosticsPerFile = &oldProgram.snapshot.semanticDiagnosticsPerFile
@@ -55,10 +56,6 @@ func NewProgram(program *compiler.Program, oldProgram *Program, buildHost BuildH
 			incrementalProgram.testingData.OldProgramSemanticDiagnosticsPerFile = &collections.SyncMap[tspath.Path, *diagnosticsOrBuildInfoDiagnosticsWithFileName]{}
 		}
 		incrementalProgram.testingData.UpdatedSignatureKinds = make(map[tspath.Path]SignatureUpdateKind)
-		incrementalProgram.testingData.ConfigFilePath = program.Options().ConfigFilePath
-		incrementalProgram.testingData.Files = core.Map(program.GetSourceFiles(), func(file *ast.SourceFile) ast.HasFileName {
-			return ast.NewHasFileName(file.FileName(), file.Path())
-		})
 	}
 	return incrementalProgram
 }
@@ -67,11 +64,9 @@ type TestingData struct {
 	SemanticDiagnosticsPerFile           *collections.SyncMap[tspath.Path, *diagnosticsOrBuildInfoDiagnosticsWithFileName]
 	OldProgramSemanticDiagnosticsPerFile *collections.SyncMap[tspath.Path, *diagnosticsOrBuildInfoDiagnosticsWithFileName]
 	UpdatedSignatureKinds                map[tspath.Path]SignatureUpdateKind
-	ConfigFilePath                       string
-	Files                                []ast.HasFileName
 }
 
-func (p *Program) GetTestingData() TestingData {
+func (p *Program) GetTestingData() *TestingData {
 	return p.testingData
 }
 
@@ -88,6 +83,7 @@ func (p *Program) GetProgram() *compiler.Program {
 
 func (p *Program) MakeReadonly() {
 	p.program = nil
+	p.testingData = nil
 }
 
 // Options implements compiler.AnyProgram interface.
