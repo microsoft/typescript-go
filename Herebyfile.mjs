@@ -814,6 +814,32 @@ async function sign(filelist) {
     finally {
         await fs.promises.unlink(filelistPath);
     }
+
+    /** @type {string[]} */
+    let failures = [];
+
+    for (const record of filelist.SignFileRecordList) {
+        for (const file of record.SignFileList) {
+            const src = file.SrcPath;
+            const dst = file.DstPath ?? src;
+
+            if (!fs.existsSync(dst)) {
+                failures.push(`Signed file does not exist: ${dst}`);
+                continue;
+            }
+
+            if (src === dst) {
+                console.log(`Signed ${src}`);
+            }
+            else {
+                console.log(`Signed ${src} -> ${dst}`);
+            }
+        }
+    }
+
+    if (failures.length) {
+        throw new Error("Some files failed to sign:\n" + failures.map(f => " - " + f).join("\n"));
+    }
 }
 
 /**
