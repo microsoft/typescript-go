@@ -18,7 +18,7 @@ npx hereby format # Format the code
 npx hereby lint   # Run linters
 
 # To run a specific compiler test:
-go test -run='TestSubmodule/<test name>' ./internal/testrunner  # For preexisting "submodule" tests in _submodules/TypeScript
+go test -run='TestSubmodule/<test name>' ./internal/testrunner  # For pre-existing "submodule" tests in _submodules/TypeScript
 go test -run='TestLocal/<test name>' ./internal/testrunner      # For new "local" tests created in testdata/tests/cases
 ```
 
