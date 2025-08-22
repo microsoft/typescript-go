@@ -280,7 +280,7 @@ func (s *testSys) baselineProgram(baseline *strings.Builder, program *incrementa
 		return
 	}
 
-	testingData := program.GetTestingData(program.GetProgram())
+	testingData := program.GetTestingData()
 	if testingData.ConfigFilePath != "" {
 		baseline.WriteString(tspath.GetRelativePathFromDirectory(s.cwd, testingData.ConfigFilePath, tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: s.FS().UseCaseSensitiveFileNames(),
@@ -288,7 +288,7 @@ func (s *testSys) baselineProgram(baseline *strings.Builder, program *incrementa
 		}) + "::\n")
 	}
 	baseline.WriteString("SemanticDiagnostics::\n")
-	for _, file := range program.GetProgram().GetSourceFiles() {
+	for _, file := range testingData.Files {
 		if diagnostics, ok := testingData.SemanticDiagnosticsPerFile.Load(file.Path()); ok {
 			if oldDiagnostics, ok := testingData.OldProgramSemanticDiagnosticsPerFile.Load(file.Path()); !ok || oldDiagnostics != diagnostics {
 				baseline.WriteString("*refresh*    " + file.FileName() + "\n")
@@ -300,7 +300,7 @@ func (s *testSys) baselineProgram(baseline *strings.Builder, program *incrementa
 
 	// Write signature updates
 	baseline.WriteString("Signatures::\n")
-	for _, file := range program.GetProgram().GetSourceFiles() {
+	for _, file := range testingData.Files {
 		if kind, ok := testingData.UpdatedSignatureKinds[file.Path()]; ok {
 			switch kind {
 			case incremental.SignatureUpdateKindComputedDts:
