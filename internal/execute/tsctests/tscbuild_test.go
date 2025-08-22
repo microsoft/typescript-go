@@ -622,6 +622,61 @@ func TestBuildDemoProject(t *testing.T) {
 			cwd:             "/user/username/projects/demo",
 			commandLineArgs: []string{"--b", "--verbose"},
 		},
+		{
+			subScenario: "updates with circular reference",
+			files: getBuildDemoFileMap(func(files FileMap) {
+				files["/user/username/projects/demo/core/tsconfig.json"] = stringtestutil.Dedent(`
+					{
+						"extends": "../tsconfig-base.json",
+						"compilerOptions": {
+							"outDir": "../lib/core",
+							"rootDir": "."
+						},
+						"references": [
+							{
+								"path": "../zoo",
+							}
+						]
+					}
+				`)
+			}),
+			cwd:             "/user/username/projects/demo",
+			commandLineArgs: []string{"--b", "-w", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption: "Fix error",
+					edit: func(sys *testSys) {
+						sys.writeFileNoError("/user/username/projects/demo/core/tsconfig.json", stringtestutil.Dedent(`
+							{
+								"extends": "../tsconfig-base.json",
+								"compilerOptions": {
+									"outDir": "../lib/core",
+									"rootDir": "."
+								},
+							}
+						`), false)
+					},
+				},
+			},
+		},
+		{
+			// !!! sheetal - this has missing errors from strada about files not in rootDir (3)
+			subScenario: "updates with bad reference",
+			files: getBuildDemoFileMap(func(files FileMap) {
+				files["/user/username/projects/demo/core/utilities.ts"] = `import * as A from '../animals'
+` + files["/user/username/projects/demo/core/utilities.ts"].(string)
+			}),
+			cwd:             "/user/username/projects/demo",
+			commandLineArgs: []string{"--b", "-w", "--verbose"},
+			edits: []*tscEdit{
+				{
+					caption: "Prepend a line",
+					edit: func(sys *testSys) {
+						sys.prependFile("/user/username/projects/demo/core/utilities.ts", "\n")
+					},
+				},
+			},
+		},
 	}
 
 	for _, test := range testCases {
