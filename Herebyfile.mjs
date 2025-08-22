@@ -845,14 +845,20 @@ async function sign(filelist) {
 
             if (!fs.existsSync(dst)) {
                 failures.push(`Signed file does not exist: ${dst}`);
+                const newSrcHash = crypto.createHash("sha256").update(fs.readFileSync(src)).digest("hex");
+                const oldSrcHash = srcHashes.get(src);
+                assert(oldSrcHash);
+                if (oldSrcHash !== newSrcHash) {
+                    failures.push(`  Source file changed during signing: ${src}\n    before: ${oldSrcHash}\n    after:  ${newSrcHash}`);
+                }
                 continue;
             }
 
             const srcHash = srcHashes.get(src);
             assert(srcHash);
             const dstHash = crypto.createHash("sha256").update(fs.readFileSync(dst)).digest("hex");
-            if (srcHash && srcHash === dstHash) {
-                failures.push(`Signed file is identical to source file (not signed?): ${src} -> ${dst}`);
+            if (srcHash === dstHash) {
+                failures.push(`Signed file is identical to source file (not signed?): ${src} -> ${dst}\n  sha256: ${dstHash}`);
                 continue;
             }
 
