@@ -32,7 +32,7 @@ This is still a work in progress and is not yet at full feature parity with Type
 | Commandline and `tsconfig.json` parsing | mostly done | Missing --help, --init. |
 | Type resolution | done | Same types as TS 5.8. |
 | Type checking | done | Same errors, locations, and messages as TS 5.8. Types printback in errors may display differently. |
-| JavaScript-specific inference and JS Doc | in progress | Mostly complete, but intentionally lacking some features. Declaration emit not complete. |
+| JavaScript-specific inference and JSDoc | in progress | Mostly complete, but intentionally lacking some features. Declaration emit not complete. |
 | JSX | done | - |
 | Declaration emit | in progress | Most common features are in place, but some edge cases and feature flags are still unhandled. |
 | Emit (JS output) | in progress | `target: esnext` well-supported, other targets may have gaps. |
