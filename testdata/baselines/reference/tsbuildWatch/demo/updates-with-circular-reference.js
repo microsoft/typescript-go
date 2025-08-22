@@ -143,8 +143,7 @@ Edit [0]:: Fix error
     },
 }
 
-tsgo --b -w --verbose
-ExitStatus:: Success
+
 Output::
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * core/tsconfig.json

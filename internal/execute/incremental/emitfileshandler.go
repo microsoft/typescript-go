@@ -250,6 +250,7 @@ func (h *emitFilesHandler) updateSnapshot() []*compiler.EmitResult {
 		if latestChangedDtsFile, ok := h.latestChangedDtsFiles.Load(file.Path()); ok {
 			h.program.snapshot.latestChangedDtsFile = latestChangedDtsFile
 			h.program.snapshot.buildInfoEmitPending.Store(true)
+			h.program.snapshot.hasChangedDtsFile = true
 		}
 		if update, ok := h.emitUpdates.Load(file.Path()); ok {
 			if update.pendingKind == 0 {

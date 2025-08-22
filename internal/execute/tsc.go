@@ -86,7 +86,6 @@ func tscBuildCompilation(sys tsc.System, buildCommand *tsoptions.ParsedBuildComm
 		return tsc.CommandLineResult{Status: tsc.ExitStatusSuccess}
 	}
 
-	// !!! sheetal watch mode
 	orchestrator := build.NewOrchestrator(build.Options{
 		Sys:     sys,
 		Command: buildCommand,
@@ -259,7 +258,7 @@ func performIncrementalCompilation(
 	})
 	compileTimes.ParseTime = sys.Now().Sub(parseStart)
 	changesComputeStart := sys.Now()
-	incrementalProgram := incremental.NewProgram(program, oldProgram, nil, testing != nil)
+	incrementalProgram := incremental.NewProgram(program, oldProgram, incremental.CreateBuildHost(host), testing != nil)
 	compileTimes.ChangesComputeTime = sys.Now().Sub(changesComputeStart)
 	result, _ := tsc.EmitAndReportStatistics(
 		sys,

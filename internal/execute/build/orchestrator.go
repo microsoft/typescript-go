@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -58,7 +59,7 @@ type Orchestrator struct {
 	host                *host
 
 	// order generation result
-	tasks  collections.SyncMap[tspath.Path, *buildTask]
+	tasks  *collections.SyncMap[tspath.Path, *buildTask]
 	order  []string
 	errors []*ast.Diagnostic
 }
@@ -88,17 +89,45 @@ func (o *Orchestrator) Upstream(configName string) []string {
 	})
 }
 
-func (o *Orchestrator) createBuildTasks(configs []string, wg core.WorkGroup) {
+func (o *Orchestrator) Downstream(configName string) []string {
+	path := o.toPath(configName)
+	task, ok := o.tasks.Load(path)
+	if !ok {
+		panic("No build task found for " + configName)
+	}
+	return core.Map(task.downStream, func(t *buildTask) string {
+		return t.config
+	})
+}
+
+func (o *Orchestrator) createBuildTasks(oldTasks *collections.SyncMap[tspath.Path, *buildTask], configs []string, wg core.WorkGroup) {
 	for _, config := range configs {
 		wg.Queue(func() {
 			path := o.toPath(config)
-			task := &buildTask{config: config}
+			var task *buildTask
+			var program *incremental.Program
+			if oldTasks != nil {
+				if existing, ok := oldTasks.Load(path); ok {
+					if !existing.dirty {
+						// Reuse existing task if config is same
+						task = existing
+						task.upStream = nil
+					} else {
+						program = existing.program
+					}
+				}
+			}
+			if task == nil {
+				task = &buildTask{config: config, isInitialCycle: oldTasks == nil}
+				task.pending.Store(true)
+				task.program = program
+			}
 			if _, loaded := o.tasks.LoadOrStore(path, task); loaded {
 				return
 			}
 			task.resolved = o.host.GetResolvedProjectReference(config, path)
 			if task.resolved != nil {
-				o.createBuildTasks(task.resolved.ResolvedProjectReferencePaths(), wg)
+				o.createBuildTasks(oldTasks, task.resolved.ResolvedProjectReferencePaths(), wg)
 			}
 		})
 	}
@@ -106,6 +135,7 @@ func (o *Orchestrator) createBuildTasks(configs []string, wg core.WorkGroup) {
 
 func (o *Orchestrator) setupBuildTask(
 	configName string,
+	downStream *buildTask,
 	inCircularContext bool,
 	completed *collections.Set[tspath.Path],
 	analyzing *collections.Set[tspath.Path],
@@ -130,7 +160,7 @@ func (o *Orchestrator) setupBuildTask(
 		circularityStack = append(circularityStack, configName)
 		if task.resolved != nil {
 			for index, subReference := range task.resolved.ResolvedProjectReferencePaths() {
-				upstream := o.setupBuildTask(subReference, inCircularContext || task.resolved.ProjectReferences()[index].Circular, completed, analyzing, circularityStack)
+				upstream := o.setupBuildTask(subReference, task, inCircularContext || task.resolved.ProjectReferences()[index].Circular, completed, analyzing, circularityStack)
 				if upstream != nil {
 					task.upStream = append(task.upStream, upstream)
 				}
@@ -150,19 +180,25 @@ func (o *Orchestrator) setupBuildTask(
 		task.done = make(chan struct{})
 		o.order = append(o.order, configName)
 	}
+	if o.opts.Command.CompilerOptions.Watch.IsTrue() && downStream != nil {
+		task.downStream = append(task.downStream, downStream)
+	}
 	return task
 }
 
-func (o *Orchestrator) GenerateGraph() {
-	o.host = &host{
-		builder: o,
-		host:    compiler.NewCachedFSCompilerHost(o.opts.Sys.GetCurrentDirectory(), o.opts.Sys.FS(), o.opts.Sys.DefaultLibraryPath(), nil, nil),
-	}
+func (o *Orchestrator) GenerateGraphReusingOldTasks() {
+	tasks := o.tasks
+	o.tasks = &collections.SyncMap[tspath.Path, *buildTask]{}
+	o.order = nil
+	o.errors = nil
+	o.GenerateGraph(tasks)
+}
 
+func (o *Orchestrator) GenerateGraph(oldTasks *collections.SyncMap[tspath.Path, *buildTask]) {
 	projects := o.opts.Command.ResolvedProjectPaths()
 	// Parse all config files in parallel
 	wg := core.NewWorkGroup(o.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
-	o.createBuildTasks(projects, wg)
+	o.createBuildTasks(oldTasks, projects, wg)
 	wg.RunAndWait()
 
 	// Generate the graph
@@ -170,47 +206,22 @@ func (o *Orchestrator) GenerateGraph() {
 	analyzing := collections.Set[tspath.Path]{}
 	circularityStack := []string{}
 	for _, project := range projects {
-		o.setupBuildTask(project, false, &completed, &analyzing, circularityStack)
+		o.setupBuildTask(project, nil, false, &completed, &analyzing, circularityStack)
 	}
 }
 
 func (o *Orchestrator) Start() tsc.CommandLineResult {
-	o.GenerateGraph()
+	o.GenerateGraph(nil)
 	result := o.buildOrClean()
 	if o.opts.Command.CompilerOptions.Watch.IsTrue() {
 		o.Watch()
+		result.Watcher = o
 	}
 	return result
 }
 
 func (o *Orchestrator) Watch() {
-	wg := core.NewWorkGroup(o.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
-	o.tasks.Range(func(path tspath.Path, task *buildTask) bool {
-		wg.Queue(func() {
-			task.updateWatch(o)
-		})
-		// Watch for file changes
-		return true
-	})
-	wg.RunAndWait()
-
-	// Clean out all the caches
-
-	// sourceFiles         collections.SyncMap[ast.SourceFileParseOptions, *ast.SourceFile]
-	// resolvedReferences  collections.SyncMap[tspath.Path, *configAndTime]
-	// buildInfos            collections.SyncMap[tspath.Path, *buildInfoAndConfig]
-	// mTimes                collections.SyncMap[tspath.Path, time.Time]
-	// latestChangedDtsFiles collections.SyncMap[tspath.Path, time.Time]
-
-	// !!! sheetal for now clear out all caches and then later keep with ref counting
-	cachesVfs := o.host.host.FS().(*cachedvfs.FS)
-	cachesVfs.ClearCache()
-	o.host.extendedConfigCache = tsc.ExtendedConfigCache{}
-	o.host.sourceFiles = collections.SyncMap[ast.SourceFileParseOptions, *ast.SourceFile]{}
-	o.host.resolvedReferences = collections.SyncMap[tspath.Path, *configAndTime]{}
-	o.host.buildInfos = collections.SyncMap[tspath.Path, *buildInfoAndConfig]{}
-	o.host.mTimes = collections.SyncMap[tspath.Path, time.Time]{}
-	o.host.latestChangedDtsFiles = collections.SyncMap[tspath.Path, time.Time]{}
+	o.updateWatchAndResetCaches()
 
 	// Start watching for file changes
 	if o.opts.Testing == nil {
@@ -223,13 +234,44 @@ func (o *Orchestrator) Watch() {
 	}
 }
 
+func (o *Orchestrator) updateWatchAndResetCaches() {
+	wg := core.NewWorkGroup(o.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
+	o.tasks.Range(func(path tspath.Path, task *buildTask) bool {
+		wg.Queue(func() {
+			task.updateWatch(o)
+		})
+		return true
+	})
+	wg.RunAndWait()
+
+	// Clean out all the caches
+
+	// buildInfos            collections.SyncMap[tspath.Path, *buildInfoAndConfig]
+	// mTimes                collections.SyncMap[tspath.Path, time.Time]
+	// latestChangedDtsFiles collections.SyncMap[tspath.Path, time.Time]
+
+	// !!! sheetal for now clear out all caches and then later keep with ref counting
+	cachesVfs := o.host.host.FS().(*cachedvfs.FS)
+	cachesVfs.ClearCache()
+	o.host.extendedConfigCache = tsc.ExtendedConfigCache{}
+	o.host.sourceFiles.Reset()
+	o.host.configTimes = collections.SyncMap[tspath.Path, time.Duration]{}
+	o.host.buildInfos = collections.SyncMap[tspath.Path, *buildInfoAndConfig]{}
+	o.host.mTimes = collections.SyncMap[tspath.Path, time.Time]{}
+	o.host.latestChangedDtsFiles = collections.SyncMap[tspath.Path, time.Time]{}
+}
+
 func (o *Orchestrator) DoCycle() {
+	var needsConfigUpdate atomic.Bool
 	var needsUpdate atomic.Bool
 	wg := core.NewWorkGroup(o.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
 	o.tasks.Range(func(path tspath.Path, task *buildTask) bool {
 		wg.Queue(func() {
-			if updateKind := task.hasUpdate(o); updateKind != updateKindNone {
+			if updateKind := task.hasUpdate(o, path); updateKind != updateKindNone {
 				needsUpdate.Store(true)
+				if updateKind == updateKindConfig {
+					needsConfigUpdate.Store(true)
+				}
 			}
 		})
 		// Watch for file changes
@@ -241,12 +283,12 @@ func (o *Orchestrator) DoCycle() {
 		return
 	}
 
-	// Perform a single build cycle
-	o.tasks = collections.SyncMap[tspath.Path, *buildTask]{}
-	o.order = nil
-	o.errors = nil
-	o.GenerateGraph()
+	if needsConfigUpdate.Load() {
+		// Generate new tasks
+		o.GenerateGraphReusingOldTasks()
+	}
 	o.buildOrClean()
+	o.updateWatchAndResetCaches()
 }
 
 func (o *Orchestrator) buildOrClean() tsc.CommandLineResult {
@@ -305,11 +347,23 @@ func (o *Orchestrator) createDiagnosticReporter(task *buildTask) tsc.DiagnosticR
 }
 
 func NewOrchestrator(opts Options) *Orchestrator {
-	return &Orchestrator{
+	orchestrator := &Orchestrator{
 		opts: opts,
 		comparePathsOptions: tspath.ComparePathsOptions{
 			CurrentDirectory:          opts.Sys.GetCurrentDirectory(),
 			UseCaseSensitiveFileNames: opts.Sys.FS().UseCaseSensitiveFileNames(),
 		},
+		tasks: &collections.SyncMap[tspath.Path, *buildTask]{},
 	}
+	orchestrator.host = &host{
+		orchestrator: orchestrator,
+		host: compiler.NewCachedFSCompilerHost(
+			orchestrator.opts.Sys.GetCurrentDirectory(),
+			orchestrator.opts.Sys.FS(),
+			orchestrator.opts.Sys.DefaultLibraryPath(),
+			nil,
+			nil,
+		),
+	}
+	return orchestrator
 }
