@@ -1,9 +1,0 @@
-unusedTypeParameterCorrectBehavior.ts(1,23): error TS6133: 'T' is declared but its value is never read.
-
-
-==== unusedTypeParameterCorrectBehavior.ts (1 errors) ====
-    export function wowee<T>() {
-                          ~
-!!! error TS6133: 'T' is declared but its value is never read.
-      throw new Error("TODO");
-    }
