@@ -79,7 +79,7 @@ This is still a work in progress and is not yet at full feature parity with Type
 |---------|--------|-------|
 | Program creation | done | Same files and module resolution as TS5.8. Not all resolution modes supported yet. |
 | Parsing/scanning | done | Exact same syntax errors as TS5.8 |
-| Commandline and `tsconfig.json` parsing | mostly done | Entry point slightly different for now |
+| Commandline and `tsconfig.json` parsing | mostly done | Missing --help, --init. |
 | Type resolution | done | Same types as TS5.8 |
 | Type checking | done | Same errors, locations, and messages as TS5.8. Types printback in errors may display differently (in progress) |
 | JavaScript-specific inference and JS Doc | not ready | - |
@@ -87,9 +87,9 @@ This is still a work in progress and is not yet at full feature parity with Type
 | Declaration emit | in progress | Most common features are in place, but some edge cases and feature flags are still unhandled |
 | Emit (JS output) | in progress | `target: esnext` well-supported, other targets may have gaps |
 | Watch mode | prototype | Watches files and rebuilds, but no incremental rechecking |
-| Build mode / project references | not ready | - |
-| Incremental build | not ready | - |
-| Language service (LSP) | prototype | Minimal functionality (errors, hover, go to def). More features coming soon |
+| Build mode / project references | done | - |
+| Incremental build | done | - |
+| Language service (LSP) | in progress | Some functionality (errors, hover, go to def, refs, sig help). More features coming soon |
 | API | not ready | - |
 
 Definitions:
