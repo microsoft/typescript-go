@@ -3,6 +3,8 @@ package build
 import (
 	"io"
 	"strings"
+	"sync/atomic"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -12,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
 )
 
 type Options struct {
@@ -59,6 +62,8 @@ type Orchestrator struct {
 	order  []string
 	errors []*ast.Diagnostic
 }
+
+var _ tsc.Watcher = (*Orchestrator)(nil)
 
 func (o *Orchestrator) relativeFileName(fileName string) string {
 	return tspath.ConvertToRelativePath(fileName, o.comparePathsOptions)
@@ -171,6 +176,81 @@ func (o *Orchestrator) GenerateGraph() {
 
 func (o *Orchestrator) Start() tsc.CommandLineResult {
 	o.GenerateGraph()
+	result := o.buildOrClean()
+	if o.opts.Command.CompilerOptions.Watch.IsTrue() {
+		o.Watch()
+	}
+	return result
+}
+
+func (o *Orchestrator) Watch() {
+	wg := core.NewWorkGroup(o.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
+	o.tasks.Range(func(path tspath.Path, task *buildTask) bool {
+		wg.Queue(func() {
+			task.updateWatch(o)
+		})
+		// Watch for file changes
+		return true
+	})
+	wg.RunAndWait()
+
+	// Clean out all the caches
+
+	// sourceFiles         collections.SyncMap[ast.SourceFileParseOptions, *ast.SourceFile]
+	// resolvedReferences  collections.SyncMap[tspath.Path, *configAndTime]
+	// buildInfos            collections.SyncMap[tspath.Path, *buildInfoAndConfig]
+	// mTimes                collections.SyncMap[tspath.Path, time.Time]
+	// latestChangedDtsFiles collections.SyncMap[tspath.Path, time.Time]
+
+	// !!! sheetal for now clear out all caches and then later keep with ref counting
+	cachesVfs := o.host.host.FS().(*cachedvfs.FS)
+	cachesVfs.ClearCache()
+	o.host.extendedConfigCache = tsc.ExtendedConfigCache{}
+	o.host.sourceFiles = collections.SyncMap[ast.SourceFileParseOptions, *ast.SourceFile]{}
+	o.host.resolvedReferences = collections.SyncMap[tspath.Path, *configAndTime]{}
+	o.host.buildInfos = collections.SyncMap[tspath.Path, *buildInfoAndConfig]{}
+	o.host.mTimes = collections.SyncMap[tspath.Path, time.Time]{}
+	o.host.latestChangedDtsFiles = collections.SyncMap[tspath.Path, time.Time]{}
+
+	// Start watching for file changes
+	if o.opts.Testing == nil {
+		watchInterval := o.opts.Command.WatchOptions.WatchInterval()
+		for {
+			// Testing mode: run a single cycle and exit
+			time.Sleep(watchInterval)
+			o.DoCycle()
+		}
+	}
+}
+
+func (o *Orchestrator) DoCycle() {
+	// !!! sheetal Figure out what changed
+	var needsUpdate atomic.Bool
+	wg := core.NewWorkGroup(o.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
+	o.tasks.Range(func(path tspath.Path, task *buildTask) bool {
+		wg.Queue(func() {
+			if updateKind := task.hasUpdate(o); updateKind != updateKindNone {
+				needsUpdate.Store(true)
+			}
+		})
+		// Watch for file changes
+		return true
+	})
+	wg.RunAndWait()
+
+	if !needsUpdate.Load() {
+		return
+	}
+
+	// Perform a single build cycle
+	o.tasks = collections.SyncMap[tspath.Path, *buildTask]{}
+	o.order = nil
+	o.errors = nil
+	o.GenerateGraph()
+	o.buildOrClean()
+}
+
+func (o *Orchestrator) buildOrClean() tsc.CommandLineResult {
 	build := !o.opts.Command.BuildOptions.Clean.IsTrue()
 	if build && o.opts.Command.BuildOptions.Verbose.IsTrue() {
 		o.createBuilderStatusReporter(nil)(ast.NewCompilerDiagnostic(
