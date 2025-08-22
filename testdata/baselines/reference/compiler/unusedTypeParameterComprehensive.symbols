@@ -1,0 +1,46 @@
+//// [tests/cases/compiler/unusedTypeParameterComprehensive.ts] ////
+
+=== unusedTypeParameterComprehensive.ts ===
+// Unused type parameter in function (should get TS6133)
+export function wowee<T>() {
+>wowee : Symbol(wowee, Decl(unusedTypeParameterComprehensive.ts, 0, 0))
+>T : Symbol(T, Decl(unusedTypeParameterComprehensive.ts, 1, 22))
+
+  throw new Error("TODO");
+>Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
+}
+
+// Used type parameter in function (should NOT get error)
+export function used<T>(param: T): T {
+>used : Symbol(used, Decl(unusedTypeParameterComprehensive.ts, 3, 1))
+>T : Symbol(T, Decl(unusedTypeParameterComprehensive.ts, 6, 21))
+>param : Symbol(param, Decl(unusedTypeParameterComprehensive.ts, 6, 24))
+>T : Symbol(T, Decl(unusedTypeParameterComprehensive.ts, 6, 21))
+>T : Symbol(T, Decl(unusedTypeParameterComprehensive.ts, 6, 21))
+
+  return param;
+>param : Symbol(param, Decl(unusedTypeParameterComprehensive.ts, 6, 24))
+}
+
+// Type parameter used in constraint (should NOT get error)
+export function constrained<T extends string>(): T {
+>constrained : Symbol(constrained, Decl(unusedTypeParameterComprehensive.ts, 8, 1))
+>T : Symbol(T, Decl(unusedTypeParameterComprehensive.ts, 11, 28))
+>T : Symbol(T, Decl(unusedTypeParameterComprehensive.ts, 11, 28))
+
+  throw new Error("TODO");
+>Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
+}
+
+// Multiple type parameters - one used, one unused
+export function mixed<T, U>(param: T): T {
+>mixed : Symbol(mixed, Decl(unusedTypeParameterComprehensive.ts, 13, 1))
+>T : Symbol(T, Decl(unusedTypeParameterComprehensive.ts, 16, 22))
+>U : Symbol(U, Decl(unusedTypeParameterComprehensive.ts, 16, 24))
+>param : Symbol(param, Decl(unusedTypeParameterComprehensive.ts, 16, 28))
+>T : Symbol(T, Decl(unusedTypeParameterComprehensive.ts, 16, 22))
+>T : Symbol(T, Decl(unusedTypeParameterComprehensive.ts, 16, 22))
+
+  return param;
+>param : Symbol(param, Decl(unusedTypeParameterComprehensive.ts, 16, 28))
+}

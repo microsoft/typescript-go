@@ -1,0 +1,28 @@
+unusedTypeParameterComprehensive.ts(2,23): error TS6133: 'T' is declared but its value is never read.
+unusedTypeParameterComprehensive.ts(17,26): error TS6133: 'U' is declared but its value is never read.
+
+
+==== unusedTypeParameterComprehensive.ts (2 errors) ====
+    // Unused type parameter in function (should get TS6133)
+    export function wowee<T>() {
+                          ~
+!!! error TS6133: 'T' is declared but its value is never read.
+      throw new Error("TODO");
+    }
+    
+    // Used type parameter in function (should NOT get error)
+    export function used<T>(param: T): T {
+      return param;
+    }
+    
+    // Type parameter used in constraint (should NOT get error)
+    export function constrained<T extends string>(): T {
+      throw new Error("TODO");
+    }
+    
+    // Multiple type parameters - one used, one unused
+    export function mixed<T, U>(param: T): T {
+                             ~
+!!! error TS6133: 'U' is declared but its value is never read.
+      return param;
+    }

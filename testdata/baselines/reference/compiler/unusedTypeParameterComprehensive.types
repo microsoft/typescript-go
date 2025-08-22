@@ -1,0 +1,40 @@
+//// [tests/cases/compiler/unusedTypeParameterComprehensive.ts] ////
+
+=== unusedTypeParameterComprehensive.ts ===
+// Unused type parameter in function (should get TS6133)
+export function wowee<T>() {
+>wowee : <T>() => void
+
+  throw new Error("TODO");
+>new Error("TODO") : Error
+>Error : ErrorConstructor
+>"TODO" : "TODO"
+}
+
+// Used type parameter in function (should NOT get error)
+export function used<T>(param: T): T {
+>used : <T>(param: T) => T
+>param : T
+
+  return param;
+>param : T
+}
+
+// Type parameter used in constraint (should NOT get error)
+export function constrained<T extends string>(): T {
+>constrained : <T extends string>() => T
+
+  throw new Error("TODO");
+>new Error("TODO") : Error
+>Error : ErrorConstructor
+>"TODO" : "TODO"
+}
+
+// Multiple type parameters - one used, one unused
+export function mixed<T, U>(param: T): T {
+>mixed : <T, U>(param: T) => T
+>param : T
+
+  return param;
+>param : T
+}
