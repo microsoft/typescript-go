@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/url"
 	"os"
-	"regexp"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/compiler"
@@ -70,16 +69,14 @@ func (dsm *DefinitionSourceMapper) MapSingleLocation(location lsproto.Location) 
 // tryGetSourcePosition implements TypeScript's exact approach from sourcemaps.ts
 // This matches the tryGetSourcePosition function in TypeScript's SourceMapper
 func (dsm *DefinitionSourceMapper) tryGetSourcePosition(fileName string, location lsproto.Location) *lsproto.Location {
-	fs := dsm.program.Host().FS()
-	
 	// Step 1: Read the declaration file to get its content
-	content, ok := fs.ReadFile(fileName)
-	if !ok {
+	content, err := os.ReadFile(fileName)
+	if err != nil {
 		return nil
 	}
 	
 	// Step 2: Look for sourceMappingURL comment
-	mapURL := dsm.tryGetSourceMappingURL(content)
+	mapURL := dsm.tryGetSourceMappingURL(string(content))
 	if mapURL == "" {
 		return nil
 	}
@@ -93,35 +90,19 @@ func (dsm *DefinitionSourceMapper) tryGetSourcePosition(fileName string, locatio
 		mapFileName = tspath.CombinePaths(dir, mapURL)
 	}
 	
-	// Step 4: Check if map file exists
-	if !fs.FileExists(mapFileName) {
+	// Step 4: Read map file
+	mapContent, err := os.ReadFile(mapFileName)
+	if err != nil {
 		return nil
 	}
 	
-	// Step 5: Read map file (with VFS fallback to OS)
-	mapContent, ok := fs.ReadFile(mapFileName)
-	if !ok {
-		// Try direct OS file read as fallback for VFS issues
-		if osContent, err := os.ReadFile(mapFileName); err == nil {
-			mapContent = string(osContent)
-		} else {
-			return nil
-		}
-	}
-	
-	// Step 6: Parse source map to get sources
-	mapper := &simpleSourceMapMapper{
-		mapContent:   mapContent,
-		mapFileName:  mapFileName,
-		fs:           fs,
-	}
-	
-	sources := mapper.extractSourcesFromMap()
+	// Step 5: Parse source map to get sources
+	sources := extractSourcesFromMap(string(mapContent))
 	if len(sources) == 0 {
 		return nil
 	}
 	
-	// Step 7: Find existing source file and locate precise symbol position
+	// Step 6: Find existing source file and locate precise symbol position
 	mapDir := tspath.GetDirectoryPath(mapFileName)
 	for _, source := range sources {
 		var sourcePath string
@@ -131,21 +112,13 @@ func (dsm *DefinitionSourceMapper) tryGetSourcePosition(fileName string, locatio
 			sourcePath = tspath.CombinePaths(mapDir, source)
 		}
 		
-		if fs.FileExists(sourcePath) {
-			// Try to find the precise position of the symbol in the source file
-			symbolName := dsm.extractSymbolNameFromDeclaration(fileName, location)
-			sourcePosition := dsm.findSymbolInSourceFile(sourcePath, symbolName)
-			
-			if sourcePosition == nil {
-				// Fallback to line 0 if symbol not found
-				sourcePosition = &lsproto.Position{Line: 0, Character: 0}
-			}
-			
+		if _, err := os.Stat(sourcePath); err == nil {
+			// Return source file at line 0 (file-level mapping)
 			return &lsproto.Location{
 				Uri: FileNameToDocumentURI(sourcePath),
 				Range: lsproto.Range{
-					Start: *sourcePosition,
-					End:   *sourcePosition,
+					Start: lsproto.Position{Line: 0, Character: 0},
+					End:   lsproto.Position{Line: 0, Character: 0},
 				},
 			}
 		}
@@ -173,128 +146,16 @@ func (dsm *DefinitionSourceMapper) tryGetSourceMappingURL(content string) string
 
 
 
-// simpleSourceMapMapper is a simplified source map parser
-type simpleSourceMapMapper struct {
-	mapContent   string
-	mapFileName  string
-	fs           interface{ FileExists(path string) bool }
-}
-
 // SourceMap represents the structure of a source map JSON file
 type SourceMap struct {
 	Sources []string `json:"sources"`
 }
 
-// extractSourcesFromMap extracts source file paths from source map JSON
-func (s *simpleSourceMapMapper) extractSourcesFromMap() []string {
+// extractSourcesFromMap parses source map JSON and extracts source file paths
+func extractSourcesFromMap(mapContent string) []string {
 	var sourceMap SourceMap
-	if err := json.Unmarshal([]byte(s.mapContent), &sourceMap); err != nil {
+	if err := json.Unmarshal([]byte(mapContent), &sourceMap); err != nil {
 		return nil
 	}
 	return sourceMap.Sources
-}
-
-
-
-// extractSymbolNameFromDeclaration extracts the symbol name from a declaration file at the given position
-func (dsm *DefinitionSourceMapper) extractSymbolNameFromDeclaration(fileName string, location lsproto.Location) string {
-	fs := dsm.program.Host().FS()
-	content, ok := fs.ReadFile(fileName)
-	if !ok {
-		return ""
-	}
-	
-	lines := strings.Split(content, "\n")
-	lineNum := int(location.Range.Start.Line)
-	if lineNum >= len(lines) {
-		return ""
-	}
-	
-	line := lines[lineNum]
-	charPos := int(location.Range.Start.Character)
-	
-	// Extract identifier around the cursor position
-	return extractIdentifierAtPosition(line, charPos)
-}
-
-// findSymbolInSourceFile finds a symbol in a source file and returns its position
-func (dsm *DefinitionSourceMapper) findSymbolInSourceFile(sourcePath string, symbolName string) *lsproto.Position {
-	if symbolName == "" {
-		return nil
-	}
-	
-	// Try to read from VFS first, fallback to OS
-	var content string
-	if vfsContent, ok := dsm.program.Host().FS().ReadFile(sourcePath); ok {
-		content = vfsContent
-	} else if osContent, err := os.ReadFile(sourcePath); err == nil {
-		content = string(osContent)
-	} else {
-		return nil
-	}
-	
-	lines := strings.Split(content, "\n")
-	
-	// Search for various TypeScript/JavaScript patterns
-	patterns := []string{
-		// Export function/const/let/var
-		`export\s+(?:function\s+|const\s+|let\s+|var\s+)?` + regexp.QuoteMeta(symbolName) + `\b`,
-		// Function declaration
-		`function\s+` + regexp.QuoteMeta(symbolName) + `\b`,
-		// Const/let/var assignment
-		`(?:const|let|var)\s+` + regexp.QuoteMeta(symbolName) + `\b`,
-		// Class/interface
-		`(?:class|interface)\s+` + regexp.QuoteMeta(symbolName) + `\b`,
-		// Object property/method
-		regexp.QuoteMeta(symbolName) + `\s*[:=]`,
-	}
-	
-	for lineIndex, line := range lines {
-		for _, pattern := range patterns {
-			if matched, _ := regexp.MatchString(pattern, line); matched {
-				// Find the exact character position of the symbol
-				re := regexp.MustCompile(regexp.QuoteMeta(symbolName) + `\b`)
-				if match := re.FindStringIndex(line); match != nil {
-					return &lsproto.Position{
-						Line:      uint32(lineIndex),
-						Character: uint32(match[0]),
-					}
-				}
-			}
-		}
-	}
-	
-	return nil
-}
-
-// extractIdentifierAtPosition extracts an identifier from a line at the given character position
-func extractIdentifierAtPosition(line string, charPos int) string {
-	if charPos >= len(line) {
-		return ""
-	}
-	
-	// Find the start and end of the identifier at this position
-	start := charPos
-	end := charPos
-	
-	// Move start backwards to find the beginning of the identifier
-	for start > 0 && isIdentifierChar(line[start-1]) {
-		start--
-	}
-	
-	// Move end forwards to find the end of the identifier
-	for end < len(line) && isIdentifierChar(line[end]) {
-		end++
-	}
-	
-	if start == end {
-		return ""
-	}
-	
-	return line[start:end]
-}
-
-// isIdentifierChar checks if a character can be part of an identifier
-func isIdentifierChar(c byte) bool {
-	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_' || c == '$'
 }
