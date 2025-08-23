@@ -2,8 +2,6 @@ package ls
 
 import (
 	"encoding/json"
-	"net/url"
-	"os"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/compiler"
@@ -11,14 +9,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
-
-// DocumentURIToFileName converts a document URI to a file path
-func DocumentURIToFileName(uri lsproto.DocumentUri) string {
-	if parsed, err := url.Parse(string(uri)); err == nil && parsed.Scheme == "file" {
-		return parsed.Path
-	}
-	return string(uri)
-}
 
 // DefinitionSourceMapper handles mapping declaration file definitions to their source files
 // This follows TypeScript's exact SourceMapper approach using source maps and DocumentPositionMapper
@@ -53,7 +43,7 @@ func (dsm *DefinitionSourceMapper) MapDefinitionLocations(locations []lsproto.Lo
 // MapSingleLocation maps a single location from declaration file to source file
 // This follows TypeScript's exact approach using DocumentPositionMapper and source maps
 func (dsm *DefinitionSourceMapper) MapSingleLocation(location lsproto.Location) *lsproto.Location {
-	fileName := DocumentURIToFileName(location.Uri)
+	fileName := location.Uri.FileName()
 	
 	// Only process declaration files (matching TypeScript's isDeclarationFileName check)
 	if !strings.HasSuffix(fileName, ".d.ts") {
@@ -67,16 +57,19 @@ func (dsm *DefinitionSourceMapper) MapSingleLocation(location lsproto.Location) 
 
 
 // tryGetSourcePosition implements TypeScript's exact approach from sourcemaps.ts
-// This matches the tryGetSourcePosition function in TypeScript's SourceMapper
+// This matches the tryGetSourcePosition function in TypeScript's SourceMapper  
+// Uses VFS for all file access (matching TypeScript's host.readFile() pattern)
 func (dsm *DefinitionSourceMapper) tryGetSourcePosition(fileName string, location lsproto.Location) *lsproto.Location {
-	// Step 1: Read the declaration file to get its content
-	content, err := os.ReadFile(fileName)
-	if err != nil {
+	fs := dsm.program.Host().FS()
+	
+	// Step 1: Read the declaration file content
+	content, ok := fs.ReadFile(fileName)
+	if !ok {
 		return nil
 	}
 	
 	// Step 2: Look for sourceMappingURL comment
-	mapURL := dsm.tryGetSourceMappingURL(string(content))
+	mapURL := dsm.tryGetSourceMappingURL(content)
 	if mapURL == "" {
 		return nil
 	}
@@ -90,14 +83,14 @@ func (dsm *DefinitionSourceMapper) tryGetSourcePosition(fileName string, locatio
 		mapFileName = tspath.CombinePaths(dir, mapURL)
 	}
 	
-	// Step 4: Read map file
-	mapContent, err := os.ReadFile(mapFileName)
-	if err != nil {
+	// Step 4: Read map file (following TypeScript's host.readFile pattern)
+	mapContent, ok := fs.ReadFile(mapFileName)
+	if !ok {
 		return nil
 	}
 	
 	// Step 5: Parse source map to get sources
-	sources := extractSourcesFromMap(string(mapContent))
+	sources := extractSourcesFromMap(mapContent)
 	if len(sources) == 0 {
 		return nil
 	}
@@ -112,7 +105,8 @@ func (dsm *DefinitionSourceMapper) tryGetSourcePosition(fileName string, locatio
 			sourcePath = tspath.CombinePaths(mapDir, source)
 		}
 		
-		if _, err := os.Stat(sourcePath); err == nil {
+		// Check if source file exists
+		if fs.FileExists(sourcePath) {
 			// Return source file at line 0 (file-level mapping)
 			return &lsproto.Location{
 				Uri: FileNameToDocumentURI(sourcePath),
