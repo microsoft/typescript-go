@@ -751,8 +751,9 @@ let signCount = 0;
 /**
  * @typedef {{
  *   SignFileRecordList: {
- *     SignFileList: { SrcPath: string; DstPath: string | null; MacAppName: string | undefined }[];
+ *     SignFileList: { SrcPath: string; DstPath: string | null }[];
  *     Certs: Cert;
+ *     MacAppName: string | undefined
  *   }[]
  * }} DDSignFileList
  *
@@ -836,9 +837,9 @@ async function sign(filelist) {
                         return {
                             SrcPath: dstPathTemp,
                             DstPath: null,
-                            MacAppName: file.MacAppName,
                         };
                     }),
+                    MacAppName: list.MacAppName,
                 };
             }),
         };
@@ -1177,14 +1178,16 @@ export const signNativePreviewPackages = task({
             switch (cert) {
                 case "Microsoft400":
                     filelist.SignFileRecordList.push({
-                        SignFileList: filelistPaths.map(p => ({ SrcPath: p.path, DstPath: null, MacAppName: undefined })),
+                        SignFileList: filelistPaths.map(p => ({ SrcPath: p.path, DstPath: null })),
                         Certs: cert,
+                        MacAppName: undefined,
                     });
                     break;
                 case "LinuxSign":
                     filelist.SignFileRecordList.push({
-                        SignFileList: filelistPaths.map(p => ({ SrcPath: p.path, DstPath: p.path + ".sig", MacAppName: undefined })),
+                        SignFileList: filelistPaths.map(p => ({ SrcPath: p.path, DstPath: p.path + ".sig" })),
                         Certs: cert,
+                        MacAppName: undefined,
                     });
                     break;
                 case "MacDeveloperHarden":
@@ -1207,8 +1210,9 @@ export const signNativePreviewPackages = task({
                         });
                     }
                     filelist.SignFileRecordList.push({
-                        SignFileList: macZips.map(p => ({ SrcPath: p.unsignedZipPath, DstPath: p.signedZipPath, MacAppName: undefined })), // MacAppName is only for notarization
+                        SignFileList: macZips.map(p => ({ SrcPath: p.unsignedZipPath, DstPath: p.signedZipPath })),
                         Certs: cert,
+                        MacAppName: undefined, // MacAppName is only for notarization
                     });
                     break;
                 default:
@@ -1227,8 +1231,9 @@ export const signNativePreviewPackages = task({
             const notarizeFilelist = {
                 SignFileRecordList: [
                     {
-                        SignFileList: macZips.map(p => ({ SrcPath: p.signedZipPath, DstPath: p.notarizedZipPath, MacAppName: "MicrosoftTypeScript" })),
+                        SignFileList: macZips.map(p => ({ SrcPath: p.signedZipPath, DstPath: p.notarizedZipPath })),
                         Certs: "8020", // "MacNotarize" (friendly name not supported by the tooling)
+                        MacAppName: "MicrosoftTypeScript",
                     },
                 ],
             };
@@ -1346,8 +1351,9 @@ export const signNativePreviewExtensions = task({
         await sign({
             SignFileRecordList: [
                 {
-                    SignFileList: extensions.map(({ vsixSignaturePath }) => ({ SrcPath: vsixSignaturePath, DstPath: null, MacAppName: undefined })),
+                    SignFileList: extensions.map(({ vsixSignaturePath }) => ({ SrcPath: vsixSignaturePath, DstPath: null })),
                     Certs: "VSCodePublisher",
+                    MacAppName: undefined,
                 },
             ],
         });
