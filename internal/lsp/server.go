@@ -10,6 +10,7 @@ import (
 	"os/signal"
 	"runtime/debug"
 	"slices"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"syscall"
@@ -706,7 +707,64 @@ func (s *Server) handleSignatureHelp(ctx context.Context, languageService *ls.La
 }
 
 func (s *Server) handleDefinition(ctx context.Context, ls *ls.LanguageService, params *lsproto.DefinitionParams) (lsproto.DefinitionResponse, error) {
-	return ls.ProvideDefinition(ctx, params.TextDocument.Uri, params.Position)
+	// Get raw definitions from language service (may point to .d.ts files)
+	rawResponse, err := ls.ProvideDefinition(ctx, params.TextDocument.Uri, params.Position)
+	if err != nil {
+		return rawResponse, err
+	}
+	
+	// Apply TypeScript-style source mapping to convert .d.ts locations to source locations
+	// This matches TypeScript's session.mapDefinitionInfoLocations behavior  
+	if locations := rawResponse.Locations; locations != nil {
+		mappedLocations := s.mapDefinitionLocationsForProject(*locations, params.TextDocument.Uri)
+		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{
+			Locations: &mappedLocations,
+		}, nil
+	}
+	
+	return rawResponse, nil
+}
+
+// mapDefinitionLocationsForProject maps definition locations using the requesting project
+// This matches TypeScript's exact pattern: session.mapDefinitionInfoLocations(definitions, project)
+func (s *Server) mapDefinitionLocationsForProject(locations []lsproto.Location, requestingFileUri lsproto.DocumentUri) []lsproto.Location {
+	mappedLocations := make([]lsproto.Location, 0, len(locations))
+	
+	// Get the project for the file that made the request (like TypeScript does)
+	snapshot, release := s.session.Snapshot()
+	defer release()
+	
+	requestingProject := snapshot.GetDefaultProject(requestingFileUri)
+	if requestingProject == nil {
+		return locations // Return original locations if no project
+	}
+	
+	program := requestingProject.GetProgram()
+	if program == nil {
+		return locations
+	}
+	
+	sourceMapper := ls.NewDefinitionSourceMapper(program)
+	
+	for _, location := range locations {
+		fileName := location.Uri.FileName()
+		
+		// Check if it's a declaration file
+		if !strings.HasSuffix(fileName, ".d.ts") {
+			mappedLocations = append(mappedLocations, location)
+			continue
+		}
+		
+		// Try to map this location using the requesting project's source mapper
+		if mappedLocation := sourceMapper.MapSingleLocation(location); mappedLocation != nil {
+			mappedLocations = append(mappedLocations, *mappedLocation)
+		} else {
+			// Keep the original location
+			mappedLocations = append(mappedLocations, location)
+		}
+	}
+	
+	return mappedLocations
 }
 
 func (s *Server) handleTypeDefinition(ctx context.Context, ls *ls.LanguageService, params *lsproto.TypeDefinitionParams) (lsproto.TypeDefinitionResponse, error) {
