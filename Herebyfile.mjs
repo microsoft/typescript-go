@@ -826,7 +826,7 @@ async function sign(filelist) {
 
                         const src = file.SrcPath;
                         // File extensions must be preserved; use a prefix.
-                        const dstPathTemp = `copied-${dstPath}`;
+                        const dstPathTemp = `${path.dirname(dstPath)}/signing-temp-${path.basename(dstPath)}`;
 
                         console.log(`Copying: ${src} -> ${dstPathTemp}`);
                         fs.cpSync(src, dstPathTemp);
