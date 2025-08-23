@@ -759,7 +759,7 @@ let signCount = 0;
  * @param {DDSignFileList} filelist
  */
 async function sign(filelist) {
-    const data = JSON.stringify(filelist, undefined, 4);
+    let data = JSON.stringify(filelist, undefined, 4);
     console.log("filelist:", data);
 
     if (!process.env.MBSIGN_APPFOLDER) {
@@ -802,6 +802,49 @@ async function sign(filelist) {
         return;
     }
 
+    const signingWorkaround = true;
+
+    /** @type {{ source: string; target: string }[]} */
+    const signingWorkaroundFiles = [];
+
+    if (signingWorkaround) {
+        // DstPath is currently broken in the signing tool.
+        // Copy all of the files to a new tempdir and then leave DstPath unset
+        // so that it's overwritten, then move the file to the destination.
+        console.log("Working around DstPath bug");
+
+        /** @type {DDSignFileList} */
+        const newFileList = {
+            SignFileRecordList: filelist.SignFileRecordList.map(list => {
+                return {
+                    Certs: list.Certs,
+                    SignFileList: list.SignFileList.map(file => {
+                        const dstPath = file.DstPath;
+                        if (dstPath === null) {
+                            return file;
+                        }
+
+                        const src = file.SrcPath;
+                        const dstPathTemp = `${dstPath}.tmp`;
+
+                        console.log(`Copying: ${src} -> ${dstPathTemp}`);
+                        fs.cpSync(src, dstPathTemp);
+
+                        signingWorkaroundFiles.push({ source: dstPathTemp, target: dstPath });
+
+                        return {
+                            SrcPath: dstPathTemp,
+                            DstPath: null,
+                        };
+                    }),
+                };
+            }),
+        };
+
+        data = JSON.stringify(newFileList, undefined, 4);
+        console.log("new filelist:", data);
+    }
+
     /** @type {Map<string, string>} */
     const srcHashes = new Map();
 
@@ -833,6 +876,14 @@ async function sign(filelist) {
     }
     finally {
         await fs.promises.unlink(filelistPath);
+    }
+
+    if (signingWorkaround) {
+        // Now, copy the files back.
+        for (const { source, target } of signingWorkaroundFiles) {
+            console.log(`Moving signed file: ${source} -> ${target}`);
+            await fs.promises.rename(source, target);
+        }
     }
 
     /** @type {string[]} */
