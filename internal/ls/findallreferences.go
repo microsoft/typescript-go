@@ -107,10 +107,20 @@ type referenceEntry struct {
 }
 
 func (l *LanguageService) getRangeOfEntry(entry *referenceEntry) *lsproto.Range {
+	return l.resolveEntry(entry).textRange
+}
+
+func (l *LanguageService) getFileNameOfEntry(entry *referenceEntry) string {
+	return l.resolveEntry(entry).fileName
+}
+
+func (l *LanguageService) resolveEntry(entry *referenceEntry) *referenceEntry {
 	if entry.textRange == nil {
-		entry.textRange = l.getRangeOfNode(entry.node, nil, nil)
+		sourceFile := ast.GetSourceFileOfNode(entry.node)
+		entry.textRange = l.getRangeOfNode(entry.node, sourceFile, nil /*endNode*/)
+		entry.fileName = sourceFile.FileName()
 	}
-	return entry.textRange
+	return entry
 }
 
 func (l *LanguageService) newRangeEntry(file *ast.SourceFile, start, end int) *referenceEntry {
@@ -444,6 +454,82 @@ func (l *LanguageService) getImplementationReferenceEntries(ctx context.Context,
 	return core.FlatMap(symbolsAndEntries, func(s *SymbolAndEntries) []*referenceEntry { return s.references })
 }
 
+func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.RenameParams) (lsproto.WorkspaceEditOrNull, error) {
+	program, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
+	position := int(l.converters.LineAndCharacterToPosition(sourceFile, params.Position))
+	node := astnav.GetTouchingPropertyName(sourceFile, position)
+	if node.Kind != ast.KindIdentifier {
+		return lsproto.WorkspaceEditOrNull{}, nil
+	}
+	options := refOptions{use: referenceUseRename, useAliasesForRename: true}
+	symbolsAndEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil)
+	entries := core.FlatMap(symbolsAndEntries, func(s *SymbolAndEntries) []*referenceEntry { return s.references })
+	changes := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
+	checker, done := program.GetTypeChecker(ctx)
+	defer done()
+	for _, entry := range entries {
+		uri := FileNameToDocumentURI(l.getFileNameOfEntry(entry))
+		textEdit := &lsproto.TextEdit{
+			Range:   *l.getRangeOfEntry(entry),
+			NewText: l.getTextForRename(node, entry, params.NewName, checker),
+		}
+		changes[uri] = append(changes[uri], textEdit)
+	}
+	return lsproto.WorkspaceEditOrNull{
+		WorkspaceEdit: &lsproto.WorkspaceEdit{
+			Changes: &changes,
+		},
+	}, nil
+}
+
+func (l *LanguageService) getTextForRename(originalNode *ast.Node, entry *referenceEntry, newText string, checker *checker.Checker) string {
+	if entry.kind != entryKindRange && (ast.IsIdentifier(originalNode) || ast.IsStringLiteralLike(originalNode)) {
+		node := entry.node
+		kind := entry.kind
+		parent := node.Parent
+		name := originalNode.Text()
+		isShorthandAssignment := ast.IsShorthandPropertyAssignment(parent)
+		switch {
+		case isShorthandAssignment || (isObjectBindingElementWithoutPropertyName(parent) && parent.Name() == node && parent.AsBindingElement().DotDotDotToken == nil):
+			if kind == entryKindSearchedLocalFoundProperty {
+				return name + ": " + newText
+			}
+			if kind == entryKindSearchedPropertyFoundLocal {
+				return newText + ": " + name
+			}
+			// In `const o = { x }; o.x`, symbolAtLocation at `x` in `{ x }` is the property symbol.
+			// For a binding element `const { x } = o;`, symbolAtLocation at `x` is the property symbol.
+			if isShorthandAssignment {
+				grandParent := parent.Parent
+				if ast.IsObjectLiteralExpression(grandParent) && ast.IsBinaryExpression(grandParent.Parent) && ast.IsModuleExportsAccessExpression(grandParent.Parent.AsBinaryExpression().Left) {
+					return name + ": " + newText
+				}
+				return newText + ": " + name
+			}
+			return name + ": " + newText
+		case ast.IsImportSpecifier(parent) && parent.PropertyName() == nil:
+			// If the original symbol was using this alias, just rename the alias.
+			var originalSymbol *ast.Symbol
+			if ast.IsExportSpecifier(originalNode.Parent) {
+				originalSymbol = checker.GetExportSpecifierLocalTargetSymbol(originalNode.Parent)
+			} else {
+				originalSymbol = checker.GetSymbolAtLocation(originalNode)
+			}
+			if slices.Contains(originalSymbol.Declarations, parent) {
+				return name + " as " + newText
+			}
+			return newText
+		case ast.IsExportSpecifier(parent) && parent.PropertyName() == nil:
+			// If the symbol for the node is same as declared node symbol use prefix text
+			if originalNode == entry.node || checker.GetSymbolAtLocation(originalNode) == checker.GetSymbolAtLocation(entry.node) {
+				return name + " as " + newText
+			}
+			return newText + " as " + name
+		}
+	}
+	return newText
+}
+
 // == functions for conversions ==
 func (l *LanguageService) convertSymbolAndEntriesToLocations(s *SymbolAndEntries) []lsproto.Location {
 	return l.convertEntriesToLocations(s.references)
@@ -452,14 +538,9 @@ func (l *LanguageService) convertSymbolAndEntriesToLocations(s *SymbolAndEntries
 func (l *LanguageService) convertEntriesToLocations(entries []*referenceEntry) []lsproto.Location {
 	locations := make([]lsproto.Location, len(entries))
 	for i, entry := range entries {
-		if entry.textRange == nil {
-			sourceFile := ast.GetSourceFileOfNode(entry.node)
-			entry.textRange = l.getRangeOfNode(entry.node, sourceFile, nil /*endNode*/)
-			entry.fileName = sourceFile.FileName()
-		}
 		locations[i] = lsproto.Location{
-			Uri:   FileNameToDocumentURI(entry.fileName),
-			Range: *entry.textRange,
+			Uri:   FileNameToDocumentURI(l.getFileNameOfEntry(entry)),
+			Range: *l.getRangeOfEntry(entry),
 		}
 	}
 	return locations
@@ -981,39 +1062,18 @@ func getReferencedSymbolsForSymbol(originalSymbol *ast.Symbol, node *ast.Node, s
 		// !!! not implemented
 		// state.searchForImportsOfExport(node, symbol, &ExportInfo{exportingModuleSymbol: symbol.Parent, exportKind: ExportKindDefault})
 	} else {
-		search := state.createSearch(node, symbol, comingFromUnknown /*comingFrom*/, "", state.populateSearchSymbolSet(symbol, node, options.use == referenceUseRename, options.useAliasesForRename, options.implementations))
+		search := state.createSearch(node, symbol, ImpExpKindUnknown /*comingFrom*/, "", state.populateSearchSymbolSet(symbol, node, options.use == referenceUseRename, options.useAliasesForRename, options.implementations))
 		state.getReferencesInContainerOrFiles(symbol, search)
 	}
 
 	return state.result
 }
 
-type ExportKind int
-
-const (
-	ExportKindDefault      ExportKind = 0
-	ExportKindNamed        ExportKind = 1
-	ExportKindExportEquals ExportKind = 2
-)
-
-type ExportInfo struct {
-	exportingModuleSymbol *ast.Symbol
-	exportKind            ExportKind
-}
-
-type comingFromType int
-
-const (
-	comingFromUnknown comingFromType = 0
-	comingFromImport  comingFromType = 1
-	comingFromExport  comingFromType = 2
-)
-
 // Symbol that is currently being searched for.
 // This will be replaced if we find an alias for the symbol.
 type refSearch struct {
 	// If coming from an export, we will not recursively search for the imported symbol (since that's where we came from).
-	comingFrom comingFromType // import, export
+	comingFrom ImpExpKind // import, export
 
 	symbol      *ast.Symbol
 	text        string
@@ -1080,13 +1140,16 @@ func newState(sourceFiles []*ast.SourceFile, sourceFilesSet *collections.Set[str
 	}
 }
 
+func (state *refState) includesSourceFile(sourceFile *ast.SourceFile) bool {
+	return state.sourceFilesSet.Has(sourceFile.FileName())
+}
+
 // @param allSearchSymbols set of additional symbols for use by `includes`
-func (state *refState) createSearch(location *ast.Node, symbol *ast.Symbol, comingFrom comingFromType, text string, allSearchSymbols []*ast.Symbol) *refSearch {
+func (state *refState) createSearch(location *ast.Node, symbol *ast.Symbol, comingFrom ImpExpKind, text string, allSearchSymbols []*ast.Symbol) *refSearch {
 	// Note: if this is an external module symbol, the name doesn't include quotes.
 	// Note: getLocalSymbolForExportDefault handles `export default class C {}`, but not `export default C` or `export { C as default }`.
 	// The other two forms seem to be handled downstream (e.g. in `skipPastExportOrImportSpecifier`), so special-casing the first form
 	// here appears to be intentional).
-
 	symbolToSearchFor := binder.GetLocalSymbolForExportDefault(symbol)
 	if symbolToSearchFor == nil {
 		if s := getNonModuleSymbolOfMergedModuleSymbol(symbol); s != nil {
@@ -1211,7 +1274,6 @@ func (state *refState) addImplementationReferences(refNode *ast.Node, addRef fun
 func (state *refState) getReferencesInContainerOrFiles(symbol *ast.Symbol, search *refSearch) {
 	// Try to get the smallest valid scope that we can limit our search to;
 	// otherwise we'll need to search globally (i.e. include each file).
-
 	if scope := getSymbolScope(symbol); scope != nil {
 		state.getReferencesInContainer(scope, ast.GetSourceFileOfNode(scope), search /*addReferencesHere*/, !(scope.Kind == ast.KindSourceFile && !slices.Contains(state.sourceFiles, scope.AsSourceFile())))
 	} else {
@@ -1333,8 +1395,30 @@ func (state *refState) getReferencesAtLocation(sourceFile *ast.SourceFile, posit
 		}
 	}
 
-	// !!! not implemented
-	// state.getImportOrExportReferences(referenceLocation, referenceSymbol, search)
+	state.getImportOrExportReferences(referenceLocation, referenceSymbol, search)
+}
+
+func (state *refState) getImportOrExportReferences(referenceLocation *ast.Node, referenceSymbol *ast.Symbol, search *refSearch) {
+	importOrExport := getImportOrExportSymbol(referenceLocation, referenceSymbol, state.checker, search.comingFrom == ImpExpKindExport)
+	if importOrExport == nil {
+		return
+	}
+	if importOrExport.kind == ImpExpKindImport {
+		if !isForRenameWithPrefixAndSuffixText(state.options) {
+			state.searchForImportedSymbol(importOrExport.symbol)
+		}
+	} else {
+		// searchForImportsOfExport(referenceLocation, importOrExport.symbol, importOrExport.exportInfo, state)
+	}
+}
+
+// Go to the symbol we imported from and find references for it.
+func (state *refState) searchForImportedSymbol(symbol *ast.Symbol) {
+	for _, declaration := range symbol.Declarations {
+		exportingFile := ast.GetSourceFileOfNode(declaration)
+		// Need to search in the file even if it's not in the search-file set, because it might export the symbol.
+		state.getReferencesInSourceFile(exportingFile, state.createSearch(declaration, symbol, ImpExpKindImport, "", nil), state.includesSourceFile(exportingFile))
+	}
 }
 
 func (state *refState) getReferenceForShorthandProperty(referenceSymbol *ast.Symbol, search *refSearch) {
@@ -1372,8 +1456,7 @@ func (state *refState) populateSearchSymbolSet(symbol *ast.Symbol, location *ast
 					base = nil
 				}
 			}
-
-			result = append(result, core.CoalesceList(base, root, sym))
+			result = append(result, core.OrElse(base, core.OrElse(root, sym)))
 			return nil, entryKindNone
 		}, // when try to find implementation, implementations is true, and not allowed to find base class
 		/*allowBaseTypes*/ func(_ *ast.Symbol) bool { return !implementations },
@@ -1395,7 +1478,7 @@ func (state *refState) getRelatedSymbol(search *refSearch, referenceSymbol *ast.
 					baseSymbol = nil
 				}
 			}
-			searchSym := core.CoalesceList(baseSymbol, rootSymbol, sym)
+			searchSym := core.Coalesce(baseSymbol, core.Coalesce(rootSymbol, sym))
 			if searchSym != nil && search.includes(searchSym) {
 				if rootSymbol != nil && sym.CheckFlags&ast.CheckFlagsSynthetic == 0 {
 					return rootSymbol, kind
@@ -1449,9 +1532,50 @@ func (state *refState) forEachRelatedSymbol(
 			return nil
 		}), returnKind
 	}
-	// !!! not yet implemented
-	// const containingObjectLiteralElement = getContainingObjectLiteralElement(location);
-	// if (containingObjectLiteralElement) {}
+
+	if containingObjectLiteralElement := getContainingObjectLiteralElement(location); containingObjectLiteralElement != nil {
+		/* Because in short-hand property assignment, location has two meaning : property name and as value of the property
+		 * When we do findAllReference at the position of the short-hand property assignment, we would want to have references to position of
+		 * property name and variable declaration of the identifier.
+		 * Like in below example, when querying for all references for an identifier 'name', of the property assignment, the language service
+		 * should show both 'name' in 'obj' and 'name' in variable declaration
+		 *      const name = "Foo";
+		 *      const obj = { name };
+		 * In order to do that, we will populate the search set with the value symbol of the identifier as a value of the property assignment
+		 * so that when matching with potential reference symbol, both symbols from property declaration and variable declaration
+		 * will be included correctly.
+		 */
+		shorthandValueSymbol := state.checker.GetShorthandAssignmentValueSymbol(location.Parent)
+		// gets the local symbol
+		if shorthandValueSymbol != nil && isForRenamePopulateSearchSymbolSet {
+			// When renaming 'x' in `const o = { x }`, just rename the local variable, not the property.
+			return cbSymbol(shorthandValueSymbol, nil /*rootSymbol*/, nil /*baseSymbol*/, entryKindSearchedLocalFoundProperty)
+		}
+		// If the location is in a context sensitive location (i.e. in an object literal) try
+		// to get a contextual type for it, and add the property symbol from the contextual
+		// type to the search set
+		if contextualType := state.checker.GetContextualType(containingObjectLiteralElement.Parent, checker.ContextFlagsNone); contextualType != nil {
+			symbols := state.checker.GetPropertySymbolsFromContextualType(containingObjectLiteralElement, contextualType, true /*unionSymbolOk*/)
+			for _, sym := range symbols {
+				if res, kind := fromRoot(sym, entryKindSearchedPropertyFoundLocal); res != nil {
+					return res, kind
+				}
+			}
+		}
+		// If the location is name of property symbol from object literal destructuring pattern
+		// Search the property symbol
+		//      for ( { property: p2 } of elems) { }
+		if propertySymbol := state.checker.GetPropertySymbolOfDestructuringAssignment(location); propertySymbol != nil {
+			if res, kind := cbSymbol(propertySymbol, nil /*rootSymbol*/, nil /*baseSymbol*/, entryKindSearchedPropertyFoundLocal); res != nil {
+				return res, kind
+			}
+		}
+		if shorthandValueSymbol != nil {
+			if res, kind := cbSymbol(shorthandValueSymbol, nil /*rootSymbol*/, nil /*baseSymbol*/, entryKindSearchedLocalFoundProperty); res != nil {
+				return res, kind
+			}
+		}
+	}
 
 	if aliasedSymbol := getMergedAliasedSymbolOfNamespaceExportDeclaration(location, symbol, state.checker); aliasedSymbol != nil {
 		// In case of UMD module and global merging, search for global as well

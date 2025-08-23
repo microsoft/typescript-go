@@ -625,3 +625,21 @@ func CopyMapInto[M1 ~map[K]V, M2 ~map[K]V, K comparable, V any](dst M1, src M2) 
 	maps.Copy(dst, src)
 	return dst
 }
+
+func Deduplicate[T comparable](slice []T) []T {
+	if len(slice) > 1 {
+		for i, value := range slice {
+			if slices.Contains(slice[:i], value) {
+				result := slices.Clone(slice[:i])
+				for i++; i < len(slice); i++ {
+					value = slice[i]
+					if !slices.Contains(result, value) {
+						result = append(result, value)
+					}
+				}
+				return result
+			}
+		}
+	}
+	return slice
+}

@@ -1341,23 +1341,19 @@ func getAllSuperTypeNodes(node *ast.Node) []*ast.TypeNode {
 }
 
 func getParentSymbolsOfPropertyAccess(location *ast.Node, symbol *ast.Symbol, ch *checker.Checker) []*ast.Symbol {
-	propertyAccessExpression := core.IfElse(isRightSideOfPropertyAccess(location), location.Parent, nil)
-	if propertyAccessExpression == nil {
+	if !isRightSideOfPropertyAccess(location) {
 		return nil
 	}
-
-	lhsType := ch.GetTypeAtLocation(propertyAccessExpression.Expression())
+	lhsType := ch.GetTypeAtLocation(location.Parent.Expression())
 	if lhsType == nil {
 		return nil
 	}
-
 	var possibleSymbols []*checker.Type
-	if lhsType.Flags() != 0 {
+	if lhsType.Flags()&checker.TypeFlagsUnionOrIntersection != 0 {
 		possibleSymbols = lhsType.Types()
 	} else if lhsType.Symbol() != symbol.Parent {
 		possibleSymbols = []*checker.Type{lhsType}
 	}
-
 	return core.MapNonNil(possibleSymbols, func(t *checker.Type) *ast.Symbol {
 		if t.Symbol() != nil && t.Symbol().Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsInterface) != 0 {
 			return t.Symbol()
@@ -1658,4 +1654,31 @@ func getChildrenFromNonJSDocNode(node *ast.Node, sourceFile *ast.SourceFile) []*
 		scanner.Scan()
 	}
 	return children
+}
+
+// Returns the containing object literal property declaration given a possible name node, e.g. "a" in x = { "a": 1 }
+func getContainingObjectLiteralElement(node *ast.Node) *ast.Node {
+	element := getContainingObjectLiteralElementWorker(node)
+	if element != nil && (ast.IsObjectLiteralExpression(element.Parent) || ast.IsJsxAttributes(element.Parent)) {
+		return element
+	}
+	return nil
+}
+
+func getContainingObjectLiteralElementWorker(node *ast.Node) *ast.Node {
+	switch node.Kind {
+	case ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral, ast.KindNumericLiteral:
+		if node.Parent.Kind == ast.KindComputedPropertyName {
+			if ast.IsObjectLiteralElement(node.Parent.Parent) {
+				return node.Parent.Parent
+			}
+			return nil
+		}
+		fallthrough
+	case ast.KindIdentifier:
+		if ast.IsObjectLiteralElement(node.Parent) && (node.Parent.Parent.Kind == ast.KindObjectLiteralExpression || node.Parent.Parent.Kind == ast.KindJsxAttributes) && node.Parent.Name() == node {
+			return node.Parent
+		}
+	}
+	return nil
 }

@@ -10117,6 +10117,10 @@ func (node *JSDocCallbackTag) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocCallbackTag(node.TagName, node.TypeExpression, node.FullName, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsJSDocCallbackTag(node *Node) bool {
+	return node.Kind == KindJSDocCallbackTag
+}
+
 // JSDocOverloadTag
 type JSDocOverloadTag struct {
 	JSDocTagBase
@@ -10189,6 +10193,10 @@ func (node *JSDocTypedefTag) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *JSDocTypedefTag) Name() *DeclarationName { return node.name }
+
+func IsJSDocTypedefTag(node *Node) bool {
+	return node.Kind == KindJSDocTypedefTag
+}
 
 // JSDocTypeLiteral
 type JSDocTypeLiteral struct {
