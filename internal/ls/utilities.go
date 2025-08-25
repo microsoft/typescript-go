@@ -62,6 +62,14 @@ func IsInString(sourceFile *ast.SourceFile, position int, previousToken *ast.Nod
 	return false
 }
 
+func importFromModuleSpecifier(node *ast.Node) *ast.Node {
+	if result := tryGetImportFromModuleSpecifier(node); result != nil {
+		return result
+	}
+	debug.FailBadSyntaxKind(node.Parent)
+	return nil
+}
+
 func tryGetImportFromModuleSpecifier(node *ast.StringLiteralLike) *ast.Node {
 	switch node.Parent.Kind {
 	case ast.KindImportDeclaration, ast.KindJSImportDeclaration, ast.KindExportDeclaration:
@@ -1681,4 +1689,12 @@ func getContainingObjectLiteralElementWorker(node *ast.Node) *ast.Node {
 		}
 	}
 	return nil
+}
+
+// Return a function that returns true if the given node has not been seen
+func nodeSeenTracker() func(*ast.Node) bool {
+	var seen collections.Set[*ast.Node]
+	return func(node *ast.Node) bool {
+		return seen.AddIfAbsent(node)
+	}
 }

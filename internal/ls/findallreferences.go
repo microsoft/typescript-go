@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"slices"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
@@ -18,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -1089,18 +1089,6 @@ type refSearch struct {
 	includes func(symbol *ast.Symbol) bool
 }
 
-// type (
-// 	ImportTracker = func(exportSymbol *ast.Symbol, exportInfo ExportInfo, isForRename bool) ImportsResult
-// 	ImportsResult struct {
-// 		importSearches []struct {
-// 			importLocation *ast.ModuleExportName
-// 			importSymbol   *ast.Symbol
-// 		}
-// 		singleReferences []*ast.Node // ientifier | stringliteral
-// 		indirectUsers    []*ast.SourceFile
-// 	}
-// )
-
 type inheritKey struct {
 	symbol, parent ast.SymbolId
 }
@@ -1121,6 +1109,7 @@ type refState struct {
 	// importTracker             ImportTracker
 	symbolIdToReferences    map[ast.SymbolId]*SymbolAndEntries
 	sourceFileToSeenSymbols map[ast.NodeId]*collections.Set[ast.SymbolId]
+	importTracker           ImportTracker
 }
 
 func newState(sourceFiles []*ast.SourceFile, sourceFilesSet *collections.Set[string], node *ast.Node, checker *checker.Checker, searchMeaning ast.SemanticMeaning, options refOptions) *refState {
@@ -1144,40 +1133,43 @@ func (state *refState) includesSourceFile(sourceFile *ast.SourceFile) bool {
 	return state.sourceFilesSet.Has(sourceFile.FileName())
 }
 
+func (state *refState) getImportSearches(exportSymbol *ast.Symbol, exportInfo *ExportInfo) *ImportsResult {
+	if state.importTracker == nil {
+		state.importTracker = createImportTracker(state.sourceFiles, state.sourceFilesSet, state.checker)
+	}
+	return state.importTracker(exportSymbol, exportInfo, state.options.use == referenceUseRename)
+}
+
 // @param allSearchSymbols set of additional symbols for use by `includes`
 func (state *refState) createSearch(location *ast.Node, symbol *ast.Symbol, comingFrom ImpExpKind, text string, allSearchSymbols []*ast.Symbol) *refSearch {
 	// Note: if this is an external module symbol, the name doesn't include quotes.
 	// Note: getLocalSymbolForExportDefault handles `export default class C {}`, but not `export default C` or `export { C as default }`.
 	// The other two forms seem to be handled downstream (e.g. in `skipPastExportOrImportSpecifier`), so special-casing the first form
 	// here appears to be intentional).
-	symbolToSearchFor := binder.GetLocalSymbolForExportDefault(symbol)
-	if symbolToSearchFor == nil {
-		if s := getNonModuleSymbolOfMergedModuleSymbol(symbol); s != nil {
-			symbolToSearchFor = s
-		} else {
-			symbolToSearchFor = symbol
+	if text == "" {
+		s := binder.GetLocalSymbolForExportDefault(symbol)
+		if s == nil {
+			s = getNonModuleSymbolOfMergedModuleSymbol(symbol)
+			if s == nil {
+				s = symbol
+			}
 		}
+		text = stringutil.StripQuotes(ast.SymbolName(s))
 	}
-	text = func() string {
-		var name string = ast.SymbolName(symbolToSearchFor)
-		firstChar, _ := utf8.DecodeRuneInString(name)
-		lastChar, _ := utf8.DecodeLastRuneInString(name)
-		if firstChar == lastChar && (firstChar == '\'' || firstChar == '"' || firstChar == '`') {
-			return name[1 : len(name)-1]
-		}
-		return name
-	}()
-	escapedText := text
 	if len(allSearchSymbols) == 0 {
 		allSearchSymbols = []*ast.Symbol{symbol}
 	}
-	includes := func(sym *ast.Symbol) bool { return slices.Contains(allSearchSymbols, sym) }
-
-	search := &refSearch{symbol: symbol, comingFrom: comingFrom, text: text, escapedText: escapedText, allSearchSymbols: allSearchSymbols, includes: includes}
+	search := &refSearch{
+		symbol:           symbol,
+		comingFrom:       comingFrom,
+		text:             text,
+		escapedText:      text,
+		allSearchSymbols: allSearchSymbols,
+		includes:         func(sym *ast.Symbol) bool { return slices.Contains(allSearchSymbols, sym) },
+	}
 	if state.options.implementations && location != nil {
 		search.parents = getParentSymbolsOfPropertyAccess(location, symbol, state.checker)
 	}
-
 	return search
 }
 
@@ -1408,7 +1400,7 @@ func (state *refState) getImportOrExportReferences(referenceLocation *ast.Node, 
 			state.searchForImportedSymbol(importOrExport.symbol)
 		}
 	} else {
-		// searchForImportsOfExport(referenceLocation, importOrExport.symbol, importOrExport.exportInfo, state)
+		state.searchForImportsOfExport(referenceLocation, importOrExport.symbol, importOrExport.exportInfo)
 	}
 }
 
@@ -1419,6 +1411,63 @@ func (state *refState) searchForImportedSymbol(symbol *ast.Symbol) {
 		// Need to search in the file even if it's not in the search-file set, because it might export the symbol.
 		state.getReferencesInSourceFile(exportingFile, state.createSearch(declaration, symbol, ImpExpKindImport, "", nil), state.includesSourceFile(exportingFile))
 	}
+}
+
+// Search for all imports of a given exported symbol using `State.getImportSearches`. */
+func (state *refState) searchForImportsOfExport(exportLocation *ast.Node, exportSymbol *ast.Symbol, exportInfo *ExportInfo) {
+	r := state.getImportSearches(exportSymbol, exportInfo)
+
+	// For `import { foo as bar }` just add the reference to `foo`, and don't otherwise search in the file.
+	if len(r.singleReferences) != 0 {
+		addRef := state.referenceAdder(exportSymbol)
+		for _, singleRef := range r.singleReferences {
+			if state.shouldAddSingleReference(singleRef) {
+				addRef(singleRef, entryKindNode)
+			}
+		}
+	}
+
+	// For each import, find all references to that import in its source file.
+	for _, i := range r.importSearches {
+		state.getReferencesInSourceFile(ast.GetSourceFileOfNode(i.importLocation), state.createSearch(i.importLocation, i.importSymbol, ImpExpKindExport, "", nil), true /*addReferencesHere*/)
+	}
+
+	if len(r.indirectUsers) != 0 {
+		var indirectSearch *refSearch
+		switch exportInfo.exportKind {
+		case ExportKindNamed:
+			indirectSearch = state.createSearch(exportLocation, exportSymbol, ImpExpKindExport, "", nil)
+		case ExportKindDefault:
+			// Search for a property access to '.default'. This can't be renamed.
+			if state.options.use != referenceUseRename {
+				indirectSearch = state.createSearch(exportLocation, exportSymbol, ImpExpKindExport, "default", nil)
+			}
+		}
+		if indirectSearch != nil {
+			for _, indirectUser := range r.indirectUsers {
+				state.searchForName(indirectUser, indirectSearch)
+			}
+		}
+	}
+}
+
+func (state *refState) shouldAddSingleReference(singleRef *ast.Node) bool {
+	if !state.hasMatchingMeaning(singleRef) {
+		return false
+	}
+	if state.options.use != referenceUseRename {
+		return true
+	}
+	// Don't rename an import type `import("./module-name")` when renaming `name` in `export = name;`
+	if !ast.IsIdentifier(singleRef) && !ast.IsImportOrExportSpecifier(singleRef.Parent) {
+		return false
+	}
+	// At `default` in `import { default as x }` or `export { default as x }`, do add a reference, but do not rename.
+	return !(ast.IsImportOrExportSpecifier(singleRef.Parent) && ast.ModuleExportNameIsDefault(singleRef))
+}
+
+func (state *refState) hasMatchingMeaning(referenceLocation *ast.Node) bool {
+	return getMeaningFromLocation(referenceLocation)&state.searchMeaning != 0
 }
 
 func (state *refState) getReferenceForShorthandProperty(referenceSymbol *ast.Symbol, search *refSearch) {

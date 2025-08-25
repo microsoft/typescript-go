@@ -998,6 +998,16 @@ func (n *Node) ModuleSpecifier() *Expression {
 	panic("Unhandled case in Node.ModuleSpecifier: " + n.Kind.String())
 }
 
+func (n *Node) ImportClause() *Node {
+	switch n.Kind {
+	case KindImportDeclaration, KindJSImportDeclaration:
+		return n.AsImportDeclaration().ImportClause
+	case KindJSDocImportTag:
+		return n.AsJSDocImportTag().ImportClause
+	}
+	panic("Unhandled case in Node.ImportClause: " + n.Kind.String())
+}
+
 func (n *Node) Statement() *Statement {
 	switch n.Kind {
 	case KindDoStatement:
