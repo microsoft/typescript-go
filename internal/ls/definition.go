@@ -123,7 +123,12 @@ func (l *LanguageService) createLocationFromFileAndRange(file *ast.SourceFile, t
 
 func getDeclarationsFromLocation(c *checker.Checker, node *ast.Node) []*ast.Node {
 	if ast.IsIdentifier(node) && ast.IsShorthandPropertyAssignment(node.Parent) {
-		return c.GetResolvedSymbol(node).Declarations
+		if symbol := c.GetSymbolAtLocation(node); symbol != nil {
+			return symbol.Declarations
+		}
+		if symbol := c.GetResolvedSymbol(node); symbol != nil {
+			return symbol.Declarations
+		}
 	}
 	node = getDeclarationNameForKeyword(node)
 	if symbol := c.GetSymbolAtLocation(node); symbol != nil {

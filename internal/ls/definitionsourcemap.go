@@ -52,6 +52,12 @@ func (dsm *DefinitionSourceMapper) MapSingleLocation(location lsproto.Location) 
 		return nil
 	}
 
+	// Skip bundled library files - they don't have source maps and shouldn't be mapped
+	// Bundled files have URIs like "file://bundled%3A///libs/lib.dom.d.ts" which convert to paths starting with "^/bundled/"
+	if strings.HasPrefix(fileName, "^/bundled/") {
+		return nil
+	}
+
 	// TypeScript's approach: Use DocumentPositionMapper with source maps
 	return dsm.tryGetSourcePosition(fileName, location)
 }
