@@ -613,14 +613,14 @@ func (l *LanguageService) getReferencedSymbolsForNode(ctx context.Context, posit
 		}
 	}
 
+	checker, done := program.GetTypeChecker(ctx)
+	defer done()
+
 	if node.Kind == ast.KindSourceFile {
 		resolvedRef := getReferenceAtPosition(node.AsSourceFile(), position, program)
 		if resolvedRef.file == nil {
 			return nil
 		}
-
-		checker, done := program.GetTypeChecker(ctx)
-		defer done()
 
 		if moduleSymbol := checker.GetMergedSymbol(resolvedRef.file.Symbol); moduleSymbol != nil {
 			return getReferencedSymbolsForModule(program, moduleSymbol /*excludeImportTypeOfExportEquals*/, false, sourceFiles, sourceFilesSet)
@@ -643,9 +643,6 @@ func (l *LanguageService) getReferencedSymbolsForNode(ctx context.Context, posit
 			return special
 		}
 	}
-
-	checker, done := program.GetTypeChecker(ctx)
-	defer done()
 
 	// constructors should use the class symbol, detected by name, if present
 	symbol := checker.GetSymbolAtLocation(core.IfElse(node.Kind == ast.KindConstructor && node.Parent.Name() != nil, node.Parent.Name(), node))
@@ -677,19 +674,19 @@ func (l *LanguageService) getReferencedSymbolsForNode(ctx context.Context, posit
 		return getReferencedSymbolsForModule(program, symbol.Parent, false /*excludeImportTypeOfExportEquals*/, sourceFiles, sourceFilesSet)
 	}
 
-	moduleReferences := l.getReferencedSymbolsForModuleIfDeclaredBySourceFile(ctx, symbol, program, sourceFiles, options, sourceFilesSet) // !!! cancellationToken
+	moduleReferences := l.getReferencedSymbolsForModuleIfDeclaredBySourceFile(ctx, symbol, program, sourceFiles, checker, options, sourceFilesSet) // !!! cancellationToken
 	if moduleReferences != nil && symbol.Flags&ast.SymbolFlagsTransient != 0 {
 		return moduleReferences
 	}
 
 	aliasedSymbol := getMergedAliasedSymbolOfNamespaceExportDeclaration(node, symbol, checker)
-	moduleReferencesOfExportTarget := l.getReferencedSymbolsForModuleIfDeclaredBySourceFile(ctx, aliasedSymbol, program, sourceFiles, options, sourceFilesSet) // !!! cancellationToken
+	moduleReferencesOfExportTarget := l.getReferencedSymbolsForModuleIfDeclaredBySourceFile(ctx, aliasedSymbol, program, sourceFiles, checker, options, sourceFilesSet) // !!! cancellationToken
 
 	references := getReferencedSymbolsForSymbol(symbol, node, sourceFiles, sourceFilesSet, checker, options) // !!! cancellationToken
 	return l.mergeReferences(program, moduleReferences, references, moduleReferencesOfExportTarget)
 }
 
-func (l *LanguageService) getReferencedSymbolsForModuleIfDeclaredBySourceFile(ctx context.Context, symbol *ast.Symbol, program *compiler.Program, sourceFiles []*ast.SourceFile, options refOptions, sourceFilesSet *collections.Set[string]) []*SymbolAndEntries {
+func (l *LanguageService) getReferencedSymbolsForModuleIfDeclaredBySourceFile(ctx context.Context, symbol *ast.Symbol, program *compiler.Program, sourceFiles []*ast.SourceFile, checker *checker.Checker, options refOptions, sourceFilesSet *collections.Set[string]) []*SymbolAndEntries {
 	moduleSourceFileName := ""
 	if symbol == nil || !((symbol.Flags&ast.SymbolFlagsModule != 0) && len(symbol.Declarations) != 0) {
 		return nil
@@ -705,10 +702,6 @@ func (l *LanguageService) getReferencedSymbolsForModuleIfDeclaredBySourceFile(ct
 	if exportEquals == nil || !sourceFilesSet.Has(moduleSourceFileName) {
 		return moduleReferences
 	}
-	// Continue to get references to 'export ='.
-	checker, done := program.GetTypeChecker(ctx)
-	defer done()
-
 	symbol, _ = checker.ResolveAlias(exportEquals)
 	return l.mergeReferences(program, moduleReferences, getReferencedSymbolsForSymbol(symbol /*node*/, nil, sourceFiles, sourceFilesSet, checker /*, cancellationToken*/, options))
 }

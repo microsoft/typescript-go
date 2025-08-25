@@ -83,7 +83,7 @@ func forEachImport(sourceFile *ast.SourceFile, action func(importStatement *ast.
 	} else {
 		forEachPossibleImportOrExportStatement(sourceFile.AsNode(), func(node *ast.Node) bool {
 			switch node.Kind {
-			case ast.KindExportDeclaration, ast.KindImportDeclaration:
+			case ast.KindExportDeclaration, ast.KindImportDeclaration, ast.KindJSImportDeclaration:
 				if specifier := node.ModuleSpecifier(); specifier != nil && ast.IsStringLiteral(specifier) {
 					action(node, specifier)
 				}
@@ -228,7 +228,7 @@ func getImportersForExport(
 				// Nothing
 			case ast.KindImportEqualsDeclaration:
 				handleNamespaceImport(direct, direct.Name(), ast.HasSyntacticModifier(direct, ast.ModifierFlagsExport), false /*alreadyAddedDirect*/)
-			case ast.KindImportDeclaration, ast.KindJSDocImportTag:
+			case ast.KindImportDeclaration, ast.KindJSImportDeclaration, ast.KindJSDocImportTag:
 				directImports = append(directImports, direct)
 				if importClause := direct.ImportClause(); importClause != nil {
 					if namedBindings := importClause.AsImportClause().NamedBindings; namedBindings != nil && ast.IsNamespaceImport(namedBindings) {

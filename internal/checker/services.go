@@ -417,20 +417,16 @@ func (c *Checker) GetExportSpecifierLocalTargetSymbol(node *ast.Node) *ast.Symbo
 		if node.Parent.Parent.AsExportDeclaration().ModuleSpecifier != nil {
 			return c.getExternalModuleMember(node.Parent.Parent, node, false /*dontResolveAlias*/)
 		}
-		name := node.PropertyName()
-		if name == nil {
-			name = node.Name()
-		}
+		name := node.PropertyNameOrName()
 		if name.Kind == ast.KindStringLiteral {
 			// Skip for invalid syntax like this: export { "x" }
 			return nil
 		}
+		return c.resolveEntityName(name, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias, true /*ignoreErrors*/, false, nil)
 	case ast.KindIdentifier:
-		// do nothing (don't panic)
-	default:
-		panic("Unhandled case in getExportSpecifierLocalTargetSymbol, node should be ExportSpecifier | Identifier")
+		return c.resolveEntityName(node, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias, true /*ignoreErrors*/, false, nil)
 	}
-	return c.resolveEntityName(node, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias, true /*ignoreErrors*/, false, nil)
+	panic("Unhandled case in getExportSpecifierLocalTargetSymbol, node should be ExportSpecifier | Identifier")
 }
 
 func (c *Checker) GetShorthandAssignmentValueSymbol(location *ast.Node) *ast.Symbol {
