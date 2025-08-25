@@ -1,0 +1,56 @@
+//// [tests/cases/compiler/overloadUnusedTypeParameters.ts] ////
+
+=== overloadUnusedTypeParameters.ts ===
+export function tryParseJson<T>(text: string): unknown;
+>tryParseJson : Symbol(tryParseJson, Decl(overloadUnusedTypeParameters.ts, 0, 0), Decl(overloadUnusedTypeParameters.ts, 0, 55), Decl(overloadUnusedTypeParameters.ts, 1, 106))
+>T : Symbol(T, Decl(overloadUnusedTypeParameters.ts, 0, 29))
+>text : Symbol(text, Decl(overloadUnusedTypeParameters.ts, 0, 32))
+
+export function tryParseJson<T>(text: string, predicate: (parsed: unknown) => parsed is T): T | undefined;
+>tryParseJson : Symbol(tryParseJson, Decl(overloadUnusedTypeParameters.ts, 0, 0), Decl(overloadUnusedTypeParameters.ts, 0, 55), Decl(overloadUnusedTypeParameters.ts, 1, 106))
+>T : Symbol(T, Decl(overloadUnusedTypeParameters.ts, 1, 29))
+>text : Symbol(text, Decl(overloadUnusedTypeParameters.ts, 1, 32))
+>predicate : Symbol(predicate, Decl(overloadUnusedTypeParameters.ts, 1, 45))
+>parsed : Symbol(parsed, Decl(overloadUnusedTypeParameters.ts, 1, 58))
+>parsed : Symbol(parsed, Decl(overloadUnusedTypeParameters.ts, 1, 58))
+>T : Symbol(T, Decl(overloadUnusedTypeParameters.ts, 1, 29))
+>T : Symbol(T, Decl(overloadUnusedTypeParameters.ts, 1, 29))
+
+export function tryParseJson<T>() {
+>tryParseJson : Symbol(tryParseJson, Decl(overloadUnusedTypeParameters.ts, 0, 0), Decl(overloadUnusedTypeParameters.ts, 0, 55), Decl(overloadUnusedTypeParameters.ts, 1, 106))
+>T : Symbol(T, Decl(overloadUnusedTypeParameters.ts, 2, 29))
+
+    throw new Error("noop")
+>Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
+}
+
+export function tryParseJson2<T>(text: string): unknown;
+>tryParseJson2 : Symbol(tryParseJson2, Decl(overloadUnusedTypeParameters.ts, 4, 1), Decl(overloadUnusedTypeParameters.ts, 6, 56), Decl(overloadUnusedTypeParameters.ts, 7, 107))
+>T : Symbol(T, Decl(overloadUnusedTypeParameters.ts, 6, 30))
+>text : Symbol(text, Decl(overloadUnusedTypeParameters.ts, 6, 33))
+
+export function tryParseJson2<T>(text: string, predicate: (parsed: unknown) => parsed is T): T | undefined;
+>tryParseJson2 : Symbol(tryParseJson2, Decl(overloadUnusedTypeParameters.ts, 4, 1), Decl(overloadUnusedTypeParameters.ts, 6, 56), Decl(overloadUnusedTypeParameters.ts, 7, 107))
+>T : Symbol(T, Decl(overloadUnusedTypeParameters.ts, 7, 30))
+>text : Symbol(text, Decl(overloadUnusedTypeParameters.ts, 7, 33))
+>predicate : Symbol(predicate, Decl(overloadUnusedTypeParameters.ts, 7, 46))
+>parsed : Symbol(parsed, Decl(overloadUnusedTypeParameters.ts, 7, 59))
+>parsed : Symbol(parsed, Decl(overloadUnusedTypeParameters.ts, 7, 59))
+>T : Symbol(T, Decl(overloadUnusedTypeParameters.ts, 7, 30))
+>T : Symbol(T, Decl(overloadUnusedTypeParameters.ts, 7, 30))
+
+export function tryParseJson2() {
+>tryParseJson2 : Symbol(tryParseJson2, Decl(overloadUnusedTypeParameters.ts, 4, 1), Decl(overloadUnusedTypeParameters.ts, 6, 56), Decl(overloadUnusedTypeParameters.ts, 7, 107))
+
+    throw new Error("noop")
+>Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
+}
+
+export function tryParseJson3<T>(_text: string): unknown {
+>tryParseJson3 : Symbol(tryParseJson3, Decl(overloadUnusedTypeParameters.ts, 10, 1))
+>T : Symbol(T, Decl(overloadUnusedTypeParameters.ts, 12, 30))
+>_text : Symbol(_text, Decl(overloadUnusedTypeParameters.ts, 12, 33))
+
+    throw new Error("noop")
+>Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2022.error.d.ts, --, --))
+}
