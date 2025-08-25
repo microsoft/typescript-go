@@ -720,6 +720,7 @@ func (b *projectCollectionBuilder) updateInferredProjectRoots(rootFileNames []st
 					logger.Log(fmt.Sprintf("Updating inferred project config with %d root files", len(rootFileNames)))
 				}
 				p.CommandLine = newCommandLine
+				p.commandLineWithTypingsFiles = nil
 				p.dirty = true
 				p.dirtyFilePath = ""
 			},
@@ -753,7 +754,10 @@ func (b *projectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 					filesChanged = true
 					return
 				}
-				entry.Change(func(p *Project) { p.CommandLine = commandLine })
+				entry.Change(func(p *Project) {
+					p.CommandLine = commandLine
+					p.commandLineWithTypingsFiles = nil
+				})
 			}
 		}
 		if !updateProgram {
