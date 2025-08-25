@@ -62,6 +62,10 @@ type Program struct {
 
 	sourceFilesToEmitOnce sync.Once
 	sourceFilesToEmit     []*ast.SourceFile
+
+	// Cached unresolved imports for ATA
+	unresolvedImportsOnce sync.Once
+	unresolvedImports     *collections.Set[string]
 }
 
 // FileExists implements checker.Program.
@@ -113,9 +117,9 @@ func (p *Program) GetSourceOfProjectReferenceIfOutputIncluded(file ast.HasFileNa
 	return file.FileName()
 }
 
-// GetOutputAndProjectReference implements checker.Program.
-func (p *Program) GetOutputAndProjectReference(path tspath.Path) *tsoptions.OutputDtsAndProjectReference {
-	return p.projectReferenceFileMapper.getOutputAndProjectReference(path)
+// GetProjectReferenceFromSource implements checker.Program.
+func (p *Program) GetProjectReferenceFromSource(path tspath.Path) *tsoptions.SourceOutputAndProjectReference {
+	return p.projectReferenceFileMapper.getProjectReferenceFromSource(path)
 }
 
 // IsSourceFromProjectReference implements checker.Program.
@@ -123,8 +127,8 @@ func (p *Program) IsSourceFromProjectReference(path tspath.Path) bool {
 	return p.projectReferenceFileMapper.isSourceFromProjectReference(path)
 }
 
-func (p *Program) GetSourceAndProjectReference(path tspath.Path) *tsoptions.SourceAndProjectReference {
-	return p.projectReferenceFileMapper.getSourceAndProjectReference(path)
+func (p *Program) GetProjectReferenceFromOutputDts(path tspath.Path) *tsoptions.SourceOutputAndProjectReference {
+	return p.projectReferenceFileMapper.getProjectReferenceFromOutputDts(path)
 }
 
 func (p *Program) GetResolvedProjectReferenceFor(path tspath.Path) (*tsoptions.ParsedCommandLine, bool) {
@@ -132,7 +136,8 @@ func (p *Program) GetResolvedProjectReferenceFor(path tspath.Path) (*tsoptions.P
 }
 
 func (p *Program) GetRedirectForResolution(file ast.HasFileName) *tsoptions.ParsedCommandLine {
-	return p.projectReferenceFileMapper.getRedirectForResolution(file)
+	redirect, _ := p.projectReferenceFileMapper.getRedirectForResolution(file)
+	return redirect
 }
 
 func (p *Program) GetParseFileRedirect(fileName string) string {
@@ -210,20 +215,23 @@ func NewProgram(opts ProgramOptions) *Program {
 
 // Return an updated program for which it is known that only the file with the given path has changed.
 // In addition to a new program, return a boolean indicating whether the data of the old program was reused.
-func (p *Program) UpdateProgram(changedFilePath tspath.Path) (*Program, bool) {
+func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHost) (*Program, bool) {
 	oldFile := p.filesByPath[changedFilePath]
-	newFile := p.Host().GetSourceFile(oldFile.ParseOptions())
+	newOpts := p.opts
+	newOpts.Host = newHost
+	newFile := newHost.GetSourceFile(oldFile.ParseOptions())
 	if !canReplaceFileInProgram(oldFile, newFile) {
-		return NewProgram(p.opts), false
+		return NewProgram(newOpts), false
 	}
 	// TODO: reverify compiler options when config has changed?
 	result := &Program{
-		opts:                        p.opts,
+		opts:                        newOpts,
 		comparePathsOptions:         p.comparePathsOptions,
 		processedFiles:              p.processedFiles,
 		usesUriStyleNodeCoreModules: p.usesUriStyleNodeCoreModules,
 		programDiagnostics:          p.programDiagnostics,
 		hasEmitBlockingDiagnostics:  p.hasEmitBlockingDiagnostics,
+		unresolvedImports:           p.unresolvedImports,
 	}
 	result.initCheckerPool()
 	index := core.FindIndex(result.files, func(file *ast.SourceFile) bool { return file.Path() == newFile.Path() })
@@ -272,11 +280,52 @@ func equalCheckJSDirectives(d1 *ast.CheckJsDirective, d2 *ast.CheckJsDirective) 
 	return d1 == nil && d2 == nil || d1 != nil && d2 != nil && d1.Enabled == d2.Enabled
 }
 
-func (p *Program) SourceFiles() []*ast.SourceFile { return p.files }
-func (p *Program) Options() *core.CompilerOptions { return p.opts.Config.CompilerOptions() }
-func (p *Program) Host() CompilerHost             { return p.opts.Host }
+func (p *Program) SourceFiles() []*ast.SourceFile            { return p.files }
+func (p *Program) Options() *core.CompilerOptions            { return p.opts.Config.CompilerOptions() }
+func (p *Program) CommandLine() *tsoptions.ParsedCommandLine { return p.opts.Config }
+func (p *Program) Host() CompilerHost                        { return p.opts.Host }
 func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 	return slices.Clip(p.opts.Config.GetConfigFileParsingDiagnostics())
+}
+
+// GetUnresolvedImports returns the unresolved imports for this program.
+// The result is cached and computed only once.
+func (p *Program) GetUnresolvedImports() *collections.Set[string] {
+	p.unresolvedImportsOnce.Do(func() {
+		if p.unresolvedImports == nil {
+			p.unresolvedImports = p.extractUnresolvedImports()
+		}
+	})
+
+	return p.unresolvedImports
+}
+
+func (p *Program) extractUnresolvedImports() *collections.Set[string] {
+	unresolvedSet := &collections.Set[string]{}
+
+	for _, sourceFile := range p.files {
+		unresolvedImports := p.extractUnresolvedImportsFromSourceFile(sourceFile)
+		for _, imp := range unresolvedImports {
+			unresolvedSet.Add(imp)
+		}
+	}
+
+	return unresolvedSet
+}
+
+func (p *Program) extractUnresolvedImportsFromSourceFile(file *ast.SourceFile) []string {
+	var unresolvedImports []string
+
+	resolvedModules := p.resolvedModules[file.Path()]
+	for cacheKey, resolution := range resolvedModules {
+		resolved := resolution.IsResolved()
+		if (!resolved || !tspath.ExtensionIsOneOf(resolution.Extension, tspath.SupportedTSExtensionsWithJsonFlat)) &&
+			!tspath.IsExternalModuleNameRelative(cacheKey.Name) {
+			unresolvedImports = append(unresolvedImports, cacheKey.Name)
+		}
+	}
+
+	return unresolvedImports
 }
 
 func (p *Program) SingleThreaded() bool {
@@ -379,7 +428,9 @@ func (p *Program) GetSuggestionDiagnostics(ctx context.Context, sourceFile *ast.
 }
 
 func (p *Program) GetProgramDiagnostics() []*ast.Diagnostic {
-	return SortAndDeduplicateDiagnostics(slices.Concat(p.programDiagnostics, p.includeProcessor.getDiagnostics(p).GetDiagnostics()))
+	return SortAndDeduplicateDiagnostics(slices.Concat(
+		p.programDiagnostics,
+		p.includeProcessor.getDiagnostics(p).GetGlobalDiagnostics()))
 }
 
 func (p *Program) getSourceFilesToEmit(targetSourceFile *ast.SourceFile, forceDtsEmit bool) []*ast.SourceFile {
@@ -866,7 +917,7 @@ func (p *Program) verifyProjectReferences() {
 		}
 		refOptions := config.CompilerOptions()
 		if !refOptions.Composite.IsTrue() || refOptions.NoEmit.IsTrue() {
-			if len(config.FileNames()) > 0 {
+			if len(parent.FileNames()) > 0 {
 				if !refOptions.Composite.IsTrue() {
 					createDiagnosticForReference(parent, index, diagnostics.Referenced_project_0_must_have_setting_composite_Colon_true, ref.Path)
 				}
@@ -979,7 +1030,8 @@ func (p *Program) getSemanticDiagnosticsForFileNotFilter(ctx context.Context, so
 		fileChecker, done = p.checkerPool.GetCheckerForFile(ctx, sourceFile)
 		defer done()
 	}
-	diags := slices.Clip(sourceFile.BindDiagnostics())
+	diags := slices.Clip(p.includeProcessor.getDiagnostics(p).GetDiagnosticsForFile(sourceFile.FileName()))
+	diags = append(diags, sourceFile.BindDiagnostics()...)
 	checkers, closeCheckers := p.checkerPool.GetAllCheckers(ctx)
 	defer closeCheckers()
 
@@ -1272,11 +1324,10 @@ func (p *Program) CommonSourceDirectory() string {
 }
 
 type WriteFileData struct {
-	SourceMapUrlPos  int
-	BuildInfo        any
-	Diagnostics      []*ast.Diagnostic
-	DiffersOnlyInMap bool
-	SkippedDtsWrite  bool
+	SourceMapUrlPos int
+	BuildInfo       any
+	Diagnostics     []*ast.Diagnostic
+	SkippedDtsWrite bool
 }
 
 type EmitOptions struct {
@@ -1368,9 +1419,7 @@ func CombineEmitResults(results []*EmitResult) *EmitResult {
 			result.EmitSkipped = true
 		}
 		result.Diagnostics = append(result.Diagnostics, emitResult.Diagnostics...)
-		if emitResult.EmittedFiles != nil {
-			result.EmittedFiles = append(result.EmittedFiles, emitResult.EmittedFiles...)
-		}
+		result.EmittedFiles = append(result.EmittedFiles, emitResult.EmittedFiles...)
 		if emitResult.SourceMaps != nil {
 			result.SourceMaps = append(result.SourceMaps, emitResult.SourceMaps...)
 		}
@@ -1473,6 +1522,13 @@ func (p *Program) GetSourceFileForResolvedModule(fileName string) *ast.SourceFil
 
 func (p *Program) GetSourceFileByPath(path tspath.Path) *ast.SourceFile {
 	return p.filesByPath[path]
+}
+
+func (p *Program) HasSameFileNames(other *Program) bool {
+	return maps.EqualFunc(p.filesByPath, other.filesByPath, func(a, b *ast.SourceFile) bool {
+		// checks for casing differences on case-insensitive file systems
+		return a.FileName() == b.FileName()
+	})
 }
 
 func (p *Program) GetSourceFiles() []*ast.SourceFile {

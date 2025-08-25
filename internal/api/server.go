@@ -6,13 +6,17 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"runtime/debug"
 	"strconv"
 	"sync"
+	"time"
 
 	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
+	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 )
@@ -64,10 +68,7 @@ type ServerOptions struct {
 	DefaultLibraryPath string
 }
 
-var (
-	_ APIHost = (*Server)(nil)
-	_ vfs.FS  = (*Server)(nil)
-)
+var _ vfs.FS = (*Server)(nil)
 
 type Server struct {
 	r      *bufio.Reader
@@ -81,7 +82,7 @@ type Server struct {
 
 	callbackMu       sync.Mutex
 	enabledCallbacks Callback
-	logger           *project.Logger
+	logger           logging.Logger
 	api              *API
 
 	requestId int
@@ -100,12 +101,18 @@ func NewServer(options *ServerOptions) *Server {
 		fs:                 bundled.WrapFS(osvfs.FS()),
 		defaultLibraryPath: options.DefaultLibraryPath,
 	}
-	logger := project.NewLogger([]io.Writer{options.Err}, "", project.LogLevelVerbose)
-	api := NewAPI(server, APIOptions{
-		Logger: logger,
-	})
+	logger := logging.NewLogger(options.Err)
 	server.logger = logger
-	server.api = api
+	server.api = NewAPI(&APIInit{
+		Logger: logger,
+		FS:     server,
+		SessionOptions: &project.SessionOptions{
+			CurrentDirectory:   options.Cwd,
+			DefaultLibraryPath: options.DefaultLibraryPath,
+			PositionEncoding:   lsproto.PositionEncodingKindUTF8,
+			LoggingEnabled:     true,
+		},
+	})
 	return server
 }
 
@@ -133,6 +140,16 @@ func (s *Server) Run() error {
 
 		switch messageType {
 		case MessageTypeRequest:
+			defer func() {
+				if r := recover(); r != nil {
+					stack := debug.Stack()
+					err = fmt.Errorf("panic handling request: %v\n%s", r, string(stack))
+					if fatalErr := s.sendError(method, err); fatalErr != nil {
+						panic("fatal error sending panic response")
+					}
+				}
+			}()
+
 			result, err := s.handleRequest(method, payload)
 
 			if err != nil {
@@ -265,10 +282,11 @@ func (s *Server) handleConfigure(payload []byte) error {
 			return err
 		}
 	}
+	// !!!
 	if params.LogFile != "" {
-		s.logger.SetFile(params.LogFile)
+		// s.logger.SetFile(params.LogFile)
 	} else {
-		s.logger.SetFile("")
+		// s.logger.SetFile("")
 	}
 	return nil
 }
@@ -470,5 +488,10 @@ func (s *Server) Stat(path string) vfs.FileInfo {
 
 // Remove implements vfs.FS.
 func (s *Server) Remove(path string) error {
+	panic("unimplemented")
+}
+
+// Chtimes implements vfs.FS.
+func (s *Server) Chtimes(path string, aTime time.Time, mTime time.Time) error {
 	panic("unimplemented")
 }
