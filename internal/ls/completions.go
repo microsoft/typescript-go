@@ -1185,10 +1185,6 @@ func (l *LanguageService) getCompletionData(
 			lowerCaseTokenText = strings.ToLower(previousToken.Text())
 		}
 
-		// !!! moduleSpecifierCache := host.getModuleSpecifierCache();
-		// !!! packageJsonAutoImportProvider := host.getPackageJsonAutoImportProvider();
-		exportInfo := l.getExportInfoMap(ctx, typeChecker, file, preferences)
-
 		// !!! timestamp
 		// Under `--moduleResolution nodenext` or `bundler`, we have to resolve module specifiers up front, because
 		// package.json exports can mean we *can't* resolve a module specifier (that doesn't include a
@@ -1207,8 +1203,10 @@ func (l *LanguageService) getCompletionData(
 		context.needsFullResolution = context.isForImportStatementCompletion ||
 			l.GetProgram().Options().GetResolvePackageJsonExports() ||
 			len(preferences.AutoImportSpecifierExcludeRegexes) > 0
-
-		exportInfo.search(
+			
+		// !!! moduleSpecifierCache := host.getModuleSpecifierCache();
+		// !!! packageJsonAutoImportProvider := host.getPackageJsonAutoImportProvider();
+		l.getExportInfoMap(ctx, typeChecker, file, preferences).search(
 			typeChecker,
 			file.Path(),
 			/*preferCapitalized*/ isRightOfOpenTag,
@@ -1915,40 +1913,6 @@ func (r *resolvingModuleSpecifiersForCompletions) tryResolve(ch *checker.Checker
 		return nil, "failed"
 	}
 	return nil, "skipped"
-}
-
-func (l *LanguageService) resolvingModuleSpecifiers(
-	logPrefix string,
-	resolver *importSpecifierResolverForCompletions,
-	position int,
-	isForImportStatementCompletion bool,
-	isValidTypeOnlyUseSite bool,
-	cb func(*resolvingModuleSpecifiersForCompletions) *ImportFix,
-) *ImportFix {
-	// !!! timestamp
-	// Under `--moduleResolution nodenext` or `bundler`, we have to resolve module specifiers up front, because
-	// package.json exports can mean we *can't* resolve a module specifier (that doesn't include a
-	// relative path into node_modules), and we want to filter those completions out entirely.
-	// Import statement completions always need specifier resolution because the module specifier is
-	// part of their `insertText`, not the `codeActions` creating edits away from the cursor.
-	// Finally, `autoImportSpecifierExcludeRegexes` necessitates eagerly resolving module specifiers
-	// because completion items are being explcitly filtered out by module specifier.
-	r := &resolvingModuleSpecifiersForCompletions{
-		logPrefix:                      logPrefix,
-		resolver:                       resolver,
-		position:                       position,
-		isForImportStatementCompletion: isForImportStatementCompletion,
-		isValidTypeOnlyUseSite:         isValidTypeOnlyUseSite,
-
-		needsFullResolution: isForImportStatementCompletion ||
-			l.GetProgram().Options().GetResolvePackageJsonExports() ||
-			len(resolver.UserPreferences.AutoImportSpecifierExcludeRegexes) > 0,
-	}
-
-	result := cb(r)
-	// !!! logging
-
-	return result
 }
 
 func getDefaultCommitCharacters(isNewIdentifierLocation bool) []string {
