@@ -12,12 +12,14 @@ class A extends B {
 
 
 //// [privateNameLateSuper.js]
+var _A_x;
 class B {
 }
 class A extends B {
-    #x;
     constructor() {
+        _A_x.set(this, void 0);
         void 0;
         super();
     }
 }
+_A_x = new WeakMap();

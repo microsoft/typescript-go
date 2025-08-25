@@ -16,9 +16,11 @@ class A {
 
 
 //// [privateNameES5Ban.js]
+var _A_field;
 class A {
-    constructor() { }
-    #field = 123;
+    constructor() {
+        _A_field.set(this, 123);
+    }
     #method() { }
     static #sField = "hello world";
     static #sMethod() { }
@@ -27,3 +29,4 @@ class A {
     static get #sAcc() { return 0; }
     static set #sAcc(x) { }
 }
+_A_field = new WeakMap();
