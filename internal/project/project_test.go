@@ -138,6 +138,7 @@ func TestProject(t *testing.T) {
 	}
 
 	t.Run("commandLineWithTypingsFiles is reset on CommandLine change", func(t *testing.T) {
+		t.Parallel()
 		files := map[string]any{
 			"/user/username/projects/project1/app.js":       ``,
 			"/user/username/projects/project1/package.json": `{"name":"p1","dependencies":{"jquery":"^3.1.0"}}`,
@@ -161,6 +162,7 @@ func TestProject(t *testing.T) {
 		npmCalls := utils.NpmExecutor().NpmInstallCalls()
 		assert.Assert(t, len(npmCalls) > 0, "expected at least one npm install call from ATA")
 		_, err := session.GetLanguageService(context.Background(), uri1)
+		assert.NilError(t, err)
 
 		// 3) Open another inferred project file
 		uri2 := lsproto.DocumentUri("file:///user/username/projects/project2/app.js")
