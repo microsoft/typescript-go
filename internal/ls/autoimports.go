@@ -426,7 +426,7 @@ func (l *LanguageService) getExportInfoMap(
 		preferences,
 		// /*useAutoImportProvider*/ true,
 		func(moduleSymbol *ast.Symbol, moduleFile *ast.SourceFile, ch *checker.Checker, isFromPackageJson bool) {
-			if moduleCount = moduleCount + 1; moduleCount%100 == 0 {
+			if moduleCount = moduleCount + 1; moduleCount%100 == 0 && ctx.Err() != nil {
 				return
 			}
 			seenExports := collections.Set[string]{}
