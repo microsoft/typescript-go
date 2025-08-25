@@ -22,6 +22,22 @@ func NewDefinitionSourceMapper(program *compiler.Program) *DefinitionSourceMappe
 	}
 }
 
+// FallbackFileReader is an optional interface that VFS implementations can implement
+// to provide fallback file reading for files not tracked by the program.
+type FallbackFileReader interface {
+	ReadFileWithFallback(path string) (string, bool)
+}
+
+// readFileWithFallback tries to read a file from the program's FS first,
+// and falls back to underlying FS for files not tracked by the program
+// (like .d.ts.map files or source files outside the TypeScript program).
+func (dsm *DefinitionSourceMapper) readFileWithFallback(fileName string) (string, bool) {
+	if fallbackFS, ok := dsm.program.Host().FS().(FallbackFileReader); ok {
+		return fallbackFS.ReadFileWithFallback(fileName)
+	}
+	return "", false
+}
+
 func (dsm *DefinitionSourceMapper) MapDefinitionLocations(locations []lsproto.Location) []lsproto.Location {
 	mappedLocations := make([]lsproto.Location, 0, len(locations))
 
@@ -51,9 +67,7 @@ func (dsm *DefinitionSourceMapper) MapSingleLocation(location lsproto.Location) 
 }
 
 func (dsm *DefinitionSourceMapper) tryGetSourcePosition(fileName string, location lsproto.Location) *lsproto.Location {
-	fs := dsm.program.Host().FS()
-
-	content, ok := fs.ReadFile(fileName)
+	content, ok := dsm.readFileWithFallback(fileName)
 	if !ok {
 		return nil
 	}
@@ -71,7 +85,7 @@ func (dsm *DefinitionSourceMapper) tryGetSourcePosition(fileName string, locatio
 		mapFileName = tspath.CombinePaths(dir, mapURL)
 	}
 
-	mapContent, ok := fs.ReadFile(mapFileName)
+	mapContent, ok := dsm.readFileWithFallback(mapFileName)
 	if !ok {
 		return nil
 	}
@@ -94,7 +108,7 @@ func (dsm *DefinitionSourceMapper) tryGetSourcePosition(fileName string, locatio
 		return nil
 	}
 
-	sourceFileContent, ok := fs.ReadFile(sourceRange.FileName)
+	sourceFileContent, ok := dsm.readFileWithFallback(sourceRange.FileName)
 	if !ok {
 		return nil
 	}
@@ -123,7 +137,7 @@ func (dsm *DefinitionSourceMapper) getSourceRangeFromMappings(loc DocumentPositi
 		return nil
 	}
 
-	declContent, ok := dsm.program.Host().FS().ReadFile(loc.FileName)
+	declContent, ok := dsm.readFileWithFallback(loc.FileName)
 	if !ok {
 		return nil
 	}
@@ -169,7 +183,7 @@ func (dsm *DefinitionSourceMapper) getSourceRangeFromMappings(loc DocumentPositi
 	startLine := currentMapping.SourcePosition / 10000
 	startColumn := currentMapping.SourcePosition % 10000
 
-	sourceContent, ok := dsm.program.Host().FS().ReadFile(sourcePath)
+	sourceContent, ok := dsm.readFileWithFallback(sourcePath)
 	if !ok {
 		return &SourceRange{
 			FileName: sourcePath,
@@ -192,7 +206,7 @@ func (dsm *DefinitionSourceMapper) getSourceRangeFromMappings(loc DocumentPositi
 			declNextPos = mappings[targetIndex+1].GeneratedPosition
 		}
 		rangeLen := declNextPos - currentMapping.GeneratedPosition
-		
+
 		sourceEndPos = sourceStartPos + rangeLen
 		if sourceEndPos > len(sourceContent) {
 			sourceEndPos = len(sourceContent)

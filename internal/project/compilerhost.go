@@ -144,7 +144,15 @@ func (fs *compilerFS) ReadFile(path string) (contents string, ok bool) {
 	if fh := fs.source.GetFile(path); fh != nil {
 		return fh.Content(), true
 	}
-	// Fallback to underlying FS for files not tracked by the program (like .d.ts.map)
+	return "", false
+}
+
+// ReadFileWithFallback implements vfs.FS.
+// This reads the file from the underlying FS if it's not tracked by the program.
+func (fs *compilerFS) ReadFileWithFallback(path string) (contents string, ok bool) {
+	if fh := fs.source.GetFile(path); fh != nil {
+		return fh.Content(), true
+	}
 	return fs.source.FS().ReadFile(path)
 }
 
