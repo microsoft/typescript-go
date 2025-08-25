@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -132,11 +133,29 @@ func (dsm *DefinitionSourceMapper) tryGetSourcePosition(fileName string, locatio
 	sourceLineStarts := computeLineStarts(sourceFileContent)
 	sourceLineChar := computeLineAndCharacterOfPosition(sourceLineStarts, sourcePos.Pos)
 
+	s := scanner.NewScanner()
+	s.SetText(sourceFileContent)
+	s.ResetTokenState(sourcePos.Pos)
+	s.Scan()
+	tokenRange := s.TokenRange()
+	if tokenRange.Pos() == tokenRange.End() {
+		return &lsproto.Location{
+			Uri: FileNameToDocumentURI(sourcePos.FileName),
+			Range: lsproto.Range{
+				Start: lsproto.Position{Line: uint32(sourceLineChar.Line), Character: uint32(sourceLineChar.Character)},
+				End:   lsproto.Position{Line: uint32(sourceLineChar.Line), Character: uint32(sourceLineChar.Character)},
+			},
+		}
+	}
+
+	tokenStartLineChar := computeLineAndCharacterOfPosition(sourceLineStarts, tokenRange.Pos())
+	tokenEndLineChar := computeLineAndCharacterOfPosition(sourceLineStarts, tokenRange.End())
+
 	return &lsproto.Location{
 		Uri: FileNameToDocumentURI(sourcePos.FileName),
 		Range: lsproto.Range{
-			Start: lsproto.Position{Line: uint32(sourceLineChar.Line), Character: uint32(sourceLineChar.Character)},
-			End:   lsproto.Position{Line: uint32(sourceLineChar.Line), Character: uint32(sourceLineChar.Character)},
+			Start: lsproto.Position{Line: uint32(tokenStartLineChar.Line), Character: uint32(tokenStartLineChar.Character)},
+			End:   lsproto.Position{Line: uint32(tokenEndLineChar.Line), Character: uint32(tokenEndLineChar.Character)},
 		},
 	}
 }

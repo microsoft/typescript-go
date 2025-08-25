@@ -1,7 +1,7 @@
 // === goToDefinition ===
 // === /BaseClass/Source.ts ===
 
-// class [||]Control{
+// class [|Control|]{
 //     constructor(){
 //         return;
 //     }
@@ -29,7 +29,7 @@
 //         return;
 //     }
 //     /** this is a super var */
-//     public [||]myVar: boolean | 'yeah' = true;
+//     public [|myVar|]: boolean | 'yeah' = true;
 // }
 
 
