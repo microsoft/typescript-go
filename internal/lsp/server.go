@@ -10,6 +10,7 @@ import (
 	"os/signal"
 	"runtime/debug"
 	"slices"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"syscall"
@@ -706,7 +707,62 @@ func (s *Server) handleSignatureHelp(ctx context.Context, languageService *ls.La
 }
 
 func (s *Server) handleDefinition(ctx context.Context, ls *ls.LanguageService, params *lsproto.DefinitionParams) (lsproto.DefinitionResponse, error) {
-	return ls.ProvideDefinition(ctx, params.TextDocument.Uri, params.Position)
+	rawResponse, err := ls.ProvideDefinition(ctx, params.TextDocument.Uri, params.Position)
+	if err != nil {
+		return rawResponse, err
+	}
+
+	if locations := rawResponse.Locations; locations != nil {
+		mappedLocations := s.mapDefinitionLocationsForProject(*locations, params.TextDocument.Uri)
+		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{
+			Locations: &mappedLocations,
+		}, nil
+	}
+
+	return rawResponse, nil
+}
+
+func (s *Server) mapDefinitionLocationsForProject(locations []lsproto.Location, requestingFileUri lsproto.DocumentUri) []lsproto.Location {
+	mappedLocations := make([]lsproto.Location, 0, len(locations))
+
+	snapshot, release := s.session.Snapshot()
+	defer release()
+
+	requestingProject := snapshot.GetDefaultProject(requestingFileUri)
+	if requestingProject == nil {
+		return locations
+	}
+
+	program := requestingProject.GetProgram()
+	if program == nil {
+		return locations
+	}
+
+	sourceMapper := ls.NewDefinitionSourceMapper(program)
+
+	for _, location := range locations {
+		// Skip bundled library URIs that have invalid URL encoding
+		// These URIs contain "%3A" which causes panics in FileName()
+		uriString := string(location.Uri)
+		if strings.Contains(uriString, "bundled%3A") {
+			mappedLocations = append(mappedLocations, location)
+			continue
+		}
+
+		fileName := location.Uri.FileName()
+		if !strings.HasSuffix(fileName, ".d.ts") {
+			mappedLocations = append(mappedLocations, location)
+			continue
+		}
+
+		if mappedLocation := sourceMapper.MapSingleLocation(location); mappedLocation != nil {
+			mappedLocations = append(mappedLocations, *mappedLocation)
+		} else {
+			mappedLocations = append(mappedLocations, location)
+		}
+	}
+
+	return mappedLocations
 }
 
 func (s *Server) handleTypeDefinition(ctx context.Context, ls *ls.LanguageService, params *lsproto.TypeDefinitionParams) (lsproto.TypeDefinitionResponse, error) {

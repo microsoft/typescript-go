@@ -144,7 +144,8 @@ func (fs *compilerFS) ReadFile(path string) (contents string, ok bool) {
 	if fh := fs.source.GetFile(path); fh != nil {
 		return fh.Content(), true
 	}
-	return "", false
+	// Fallback to underlying FS for files not tracked by the program (like .d.ts.map)
+	return fs.source.FS().ReadFile(path)
 }
 
 // Realpath implements vfs.FS.
