@@ -741,8 +741,15 @@ func (s *Server) mapDefinitionLocationsForProject(locations []lsproto.Location, 
 	sourceMapper := ls.NewDefinitionSourceMapper(program)
 
 	for _, location := range locations {
-		fileName := location.Uri.FileName()
+		// Skip bundled library URIs that have invalid URL encoding
+		// These URIs contain "%3A" which causes panics in FileName()
+		uriString := string(location.Uri)
+		if strings.Contains(uriString, "bundled%3A") {
+			mappedLocations = append(mappedLocations, location)
+			continue
+		}
 
+		fileName := location.Uri.FileName()
 		if !strings.HasSuffix(fileName, ".d.ts") {
 			mappedLocations = append(mappedLocations, location)
 			continue

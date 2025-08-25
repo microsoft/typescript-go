@@ -6,5 +6,5 @@
 // }
 // 
 // let x: Foo = {
-//     f/*GO TO DEFINITION*/[|foo|]
+//     f/*GO TO DEFINITION*/oo
 // }

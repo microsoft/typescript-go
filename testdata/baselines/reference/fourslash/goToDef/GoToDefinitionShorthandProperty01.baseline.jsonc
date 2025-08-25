@@ -4,7 +4,7 @@
 // var name = "hello";
 // var id = 100000;
 // declare var id;
-// var obj = {/*GO TO DEFINITION*/[|name|], id};
+// var obj = {/*GO TO DEFINITION*/name, id};
 // obj.name;
 // obj.id;
 
@@ -15,9 +15,9 @@
 // === /goToDefinitionShorthandProperty01.ts ===
 
 // var name = "hello";
-// var id = 100000;
-// declare var id;
-// var obj = {name, /*GO TO DEFINITION*/[|id|]};
+// var [|id|] = 100000;
+// declare var [|id|];
+// var obj = {name, /*GO TO DEFINITION*/id};
 // obj.name;
 // obj.id;
 
