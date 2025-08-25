@@ -8,7 +8,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -59,7 +58,7 @@ func (dsm *DefinitionSourceMapper) tryGetSourcePosition(fileName string, locatio
 		return nil
 	}
 
-	mapURL := dsm.tryGetSourceMappingURL(content)
+	mapURL := tryGetSourceMappingURL(content)
 	if mapURL == "" {
 		return nil
 	}
@@ -77,90 +76,140 @@ func (dsm *DefinitionSourceMapper) tryGetSourcePosition(fileName string, locatio
 		return nil
 	}
 
-	var fullSourceMap SourceMap
-	if err := json.Unmarshal([]byte(mapContent), &fullSourceMap); err != nil {
+	var sourceMap SourceMap
+	if err := json.Unmarshal([]byte(mapContent), &sourceMap); err != nil {
 		return nil
 	}
 
-	if len(fullSourceMap.Sources) == 0 {
+	if len(sourceMap.Sources) == 0 {
 		return nil
 	}
 
 	mapDir := tspath.GetDirectoryPath(mapFileName)
-	var targetSourcePath string
-	for _, source := range fullSourceMap.Sources {
-		var sourcePath string
-		if strings.HasPrefix(source, "/") {
-			sourcePath = source
-		} else {
-			sourcePath = tspath.CombinePaths(mapDir, source)
-		}
+	declLineStarts := core.ComputeLineStarts(content)
+	declPos := int(declLineStarts[location.Range.Start.Line]) + int(location.Range.Start.Character)
 
-		if fs.FileExists(sourcePath) {
-			targetSourcePath = sourcePath
-			break
-		}
-	}
-
-	if targetSourcePath == "" {
+	sourceRange := dsm.getSourceRangeFromMappings(DocumentPosition{FileName: fileName, Pos: declPos}, sourceMap, mapDir)
+	if sourceRange == nil {
 		return nil
 	}
 
-	declFileContent, ok := fs.ReadFile(fileName)
+	sourceFileContent, ok := fs.ReadFile(sourceRange.FileName)
 	if !ok {
 		return nil
 	}
 
-	declLineStarts := computeLineStarts(declFileContent)
-	declPos := computePositionOfLineAndCharacter(declLineStarts, int(location.Range.Start.Line), int(location.Range.Start.Character))
-
-	sourcePos := dsm.getSourcePosition(DocumentPosition{FileName: fileName, Pos: declPos}, fullSourceMap, mapDir)
-	if sourcePos == nil {
-		return &lsproto.Location{
-			Uri: FileNameToDocumentURI(targetSourcePath),
-			Range: lsproto.Range{
-				Start: lsproto.Position{Line: 0, Character: 0},
-				End:   lsproto.Position{Line: 0, Character: 0},
-			},
-		}
-	}
-
-	sourceFileContent, ok := fs.ReadFile(sourcePos.FileName)
-	if !ok {
-		return nil
-	}
-
-	sourceLineStarts := computeLineStarts(sourceFileContent)
-	sourceLineChar := computeLineAndCharacterOfPosition(sourceLineStarts, sourcePos.Pos)
-
-	s := scanner.NewScanner()
-	s.SetText(sourceFileContent)
-	s.ResetTokenState(sourcePos.Pos)
-	s.Scan()
-	tokenRange := s.TokenRange()
-	if tokenRange.Pos() == tokenRange.End() {
-		return &lsproto.Location{
-			Uri: FileNameToDocumentURI(sourcePos.FileName),
-			Range: lsproto.Range{
-				Start: lsproto.Position{Line: uint32(sourceLineChar.Line), Character: uint32(sourceLineChar.Character)},
-				End:   lsproto.Position{Line: uint32(sourceLineChar.Line), Character: uint32(sourceLineChar.Character)},
-			},
-		}
-	}
-
-	tokenStartLineChar := computeLineAndCharacterOfPosition(sourceLineStarts, tokenRange.Pos())
-	tokenEndLineChar := computeLineAndCharacterOfPosition(sourceLineStarts, tokenRange.End())
+	sourceLineStarts := core.ComputeLineStarts(sourceFileContent)
+	sourceStartLine, sourceStartChar := core.PositionToLineAndCharacter(sourceRange.Start, sourceLineStarts)
+	sourceEndLine, sourceEndChar := core.PositionToLineAndCharacter(sourceRange.End, sourceLineStarts)
 
 	return &lsproto.Location{
-		Uri: FileNameToDocumentURI(sourcePos.FileName),
+		Uri: FileNameToDocumentURI(sourceRange.FileName),
 		Range: lsproto.Range{
-			Start: lsproto.Position{Line: uint32(tokenStartLineChar.Line), Character: uint32(tokenStartLineChar.Character)},
-			End:   lsproto.Position{Line: uint32(tokenEndLineChar.Line), Character: uint32(tokenEndLineChar.Character)},
+			Start: lsproto.Position{Line: uint32(sourceStartLine), Character: uint32(sourceStartChar)},
+			End:   lsproto.Position{Line: uint32(sourceEndLine), Character: uint32(sourceEndChar)},
 		},
 	}
 }
 
-func (dsm *DefinitionSourceMapper) tryGetSourceMappingURL(content string) string {
+type SourceRange struct {
+	FileName string
+	Start    int
+	End      int
+}
+
+func (dsm *DefinitionSourceMapper) getSourceRangeFromMappings(loc DocumentPosition, sourceMap SourceMap, mapDir string) *SourceRange {
+	if len(sourceMap.Sources) == 0 || sourceMap.Mappings == "" {
+		return nil
+	}
+
+	declContent, ok := dsm.program.Host().FS().ReadFile(loc.FileName)
+	if !ok {
+		return nil
+	}
+	declLineStarts := core.ComputeLineStarts(declContent)
+
+	mappings := decodeMappings(sourceMap.Mappings, declLineStarts)
+	if len(mappings) == 0 {
+		return nil
+	}
+
+	targetIndex := sort.Search(len(mappings), func(i int) bool {
+		return mappings[i].GeneratedPosition > loc.Pos
+	}) - 1
+
+	if targetIndex < 0 {
+		targetIndex = 0
+	}
+	if targetIndex >= len(mappings) {
+		targetIndex = len(mappings) - 1
+	}
+
+	currentMapping := mappings[targetIndex]
+	if currentMapping.SourceIndex < 0 || currentMapping.SourceIndex >= len(sourceMap.Sources) {
+		return nil
+	}
+
+	var endMapping *MappedPosition
+	if targetIndex+1 < len(mappings) {
+		nextMapping := mappings[targetIndex+1]
+		if nextMapping.SourceIndex == currentMapping.SourceIndex {
+			endMapping = &nextMapping
+		}
+	}
+
+	var sourcePath string
+	source := sourceMap.Sources[currentMapping.SourceIndex]
+	if strings.HasPrefix(source, "/") {
+		sourcePath = source
+	} else {
+		sourcePath = tspath.CombinePaths(mapDir, source)
+	}
+
+	startLine := currentMapping.SourcePosition / 10000
+	startColumn := currentMapping.SourcePosition % 10000
+
+	sourceContent, ok := dsm.program.Host().FS().ReadFile(sourcePath)
+	if !ok {
+		return &SourceRange{
+			FileName: sourcePath,
+			Start:    0,
+			End:      0,
+		}
+	}
+
+	sourceLineStarts := core.ComputeLineStarts(sourceContent)
+	sourceStartPos := int(sourceLineStarts[startLine]) + startColumn
+
+	var sourceEndPos int
+	if endMapping != nil {
+		endLine := endMapping.SourcePosition / 10000
+		endColumn := endMapping.SourcePosition % 10000
+		sourceEndPos = int(sourceLineStarts[endLine]) + endColumn
+	} else {
+		declNextPos := len(declContent)
+		if targetIndex+1 < len(mappings) {
+			declNextPos = mappings[targetIndex+1].GeneratedPosition
+		}
+		rangeLen := declNextPos - currentMapping.GeneratedPosition
+		
+		sourceEndPos = sourceStartPos + rangeLen
+		if sourceEndPos > len(sourceContent) {
+			sourceEndPos = len(sourceContent)
+		}
+		if sourceEndPos <= sourceStartPos {
+			sourceEndPos = sourceStartPos + 1
+		}
+	}
+
+	return &SourceRange{
+		FileName: sourcePath,
+		Start:    sourceStartPos,
+		End:      sourceEndPos,
+	}
+}
+
+func tryGetSourceMappingURL(content string) string {
 	lines := strings.Split(content, "\n")
 	for i := len(lines) - 1; i >= 0; i-- {
 		line := strings.TrimSpace(lines[i])
@@ -193,66 +242,14 @@ type MappedPosition struct {
 	SourcePosition    int
 }
 
-func extractSourcesFromMap(mapContent string) []string {
-	var sourceMap SourceMap
-	if err := json.Unmarshal([]byte(mapContent), &sourceMap); err != nil {
-		return nil
-	}
-	return sourceMap.Sources
-}
-
-type LineAndCharacter struct {
-	Line      int
-	Character int
-}
-
-func computeLineStarts(text string) []int {
-	lineStarts := []int{0}
-
-	for i, char := range text {
-		if char == '\n' {
-			lineStarts = append(lineStarts, i+1)
-		}
-	}
-
-	return lineStarts
-}
-
-func computePositionOfLineAndCharacter(lineStarts []int, line int, character int) int {
-	if line < 0 || line >= len(lineStarts) {
-		return 0
-	}
-	return lineStarts[line] + character
-}
-
-func computeLineAndCharacterOfPosition(lineStarts []int, position int) LineAndCharacter {
-	lineNumber := computeLineOfPosition(lineStarts, position)
-	return LineAndCharacter{
-		Line:      lineNumber,
-		Character: position - lineStarts[lineNumber],
-	}
-}
-
-func computeLineOfPosition(lineStarts []int, position int) int {
-	lineNumber := sort.Search(len(lineStarts), func(i int) bool {
-		return lineStarts[i] > position
-	}) - 1
-
-	if lineNumber < 0 {
-		lineNumber = 0
-	}
-
-	return lineNumber
-}
-
-func decodeMappings(mappings string, declLineStarts []int) []MappedPosition {
+func decodeMappings(mappings string, declLineStarts []core.TextPos) []MappedPosition {
 	var result []MappedPosition
 
 	decoder := sourcemap.DecodeMappings(mappings)
 
 	for mapping, done := decoder.Next(); !done; mapping, done = decoder.Next() {
 		if mapping.IsSourceMapping() {
-			generatedPos := computePositionOfLineAndCharacter(declLineStarts, mapping.GeneratedLine, mapping.GeneratedCharacter)
+			generatedPos := int(declLineStarts[mapping.GeneratedLine]) + mapping.GeneratedCharacter
 
 			result = append(result, MappedPosition{
 				GeneratedPosition: generatedPos,
@@ -271,65 +268,4 @@ func decodeMappings(mappings string, declLineStarts []int) []MappedPosition {
 	})
 
 	return result
-}
-
-func (dsm *DefinitionSourceMapper) getSourcePosition(loc DocumentPosition, sourceMap SourceMap, mapDir string) *DocumentPosition {
-	if len(sourceMap.Sources) == 0 || sourceMap.Mappings == "" {
-		return nil
-	}
-
-	declContent, ok := dsm.program.Host().FS().ReadFile(loc.FileName)
-	if !ok {
-		return nil
-	}
-	declLineStarts := computeLineStarts(declContent)
-
-	mappings := decodeMappings(sourceMap.Mappings, declLineStarts)
-	if len(mappings) == 0 {
-		return nil
-	}
-
-	targetIndex := sort.Search(len(mappings), func(i int) bool {
-		return mappings[i].GeneratedPosition > loc.Pos
-	}) - 1
-
-	if targetIndex < 0 {
-		targetIndex = 0
-	}
-
-	if targetIndex >= len(mappings) {
-		targetIndex = len(mappings) - 1
-	}
-
-	mapping := mappings[targetIndex]
-	if mapping.SourceIndex < 0 || mapping.SourceIndex >= len(sourceMap.Sources) {
-		return nil
-	}
-
-	var sourcePath string
-	source := sourceMap.Sources[mapping.SourceIndex]
-	if strings.HasPrefix(source, "/") {
-		sourcePath = source
-	} else {
-		sourcePath = tspath.CombinePaths(mapDir, source)
-	}
-
-	sourceLine := mapping.SourcePosition / 10000
-	sourceColumn := mapping.SourcePosition % 10000
-
-	sourceContent, ok := dsm.program.Host().FS().ReadFile(sourcePath)
-	if !ok {
-		return &DocumentPosition{
-			FileName: sourcePath,
-			Pos:      0,
-		}
-	}
-
-	sourceLineStarts := computeLineStarts(sourceContent)
-	sourcePos := computePositionOfLineAndCharacter(sourceLineStarts, sourceLine, sourceColumn)
-
-	return &DocumentPosition{
-		FileName: sourcePath,
-		Pos:      sourcePos,
-	}
 }
