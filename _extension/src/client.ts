@@ -113,7 +113,6 @@ export class Client {
             "typescript.native-preview",
             "typescript.native-preview-lsp",
             serverOptions,
-            // could probs move this to constructor.
             {
                 ...this.clientOptions,
                 initializationOptions: {
