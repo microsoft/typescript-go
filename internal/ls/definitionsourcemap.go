@@ -175,9 +175,9 @@ func (dsm *DefinitionSourceMapper) getSourceRangeFromMappings(loc DocumentPositi
 	var sourcePath string
 	source := sourceMap.Sources[currentMapping.SourceIndex]
 	if strings.HasPrefix(source, "/") {
-		sourcePath = source
+		sourcePath = tspath.NormalizePath(source)
 	} else {
-		sourcePath = tspath.CombinePaths(mapDir, source)
+		sourcePath = tspath.ResolvePath(mapDir, source)
 	}
 
 	startLine := currentMapping.SourcePosition / 10000
