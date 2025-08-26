@@ -19,7 +19,7 @@ export async function activate(context: vscode.ExtensionContext) {
             // Delay because the command to change the config setting will restart
             // the extension host, so no need to show a message
             setTimeout(async () => {
-                const selected = await vscode.window.showInformationMessage("TypeScript Native Preview setting's have changed. Restart extensions to apply changes.", "Restart Extensions");
+                const selected = await vscode.window.showInformationMessage("TypeScript Native Preview settings have changed. Restart extensions to apply changes.", "Restart Extensions");
                 if (selected) {
                     vscode.commands.executeCommand("workbench.action.restartExtensionHost");
                 }

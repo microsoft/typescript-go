@@ -416,6 +416,7 @@ func (c *configFileRegistryBuilder) computeConfigFileName(fileName string, skipS
 			if !skipSearchInDirectoryOfFile && c.FS().FileExists(customConfigFilePath) {
 				return customConfigFilePath, true
 			}
+			skipSearchInDirectoryOfFile = false
 			return "", false
 		})
 		logger.Logf("computeConfigFileName:: File: %s:: Result: %s", fileName, result)
