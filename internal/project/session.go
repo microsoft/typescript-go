@@ -44,6 +44,7 @@ type SessionOptions struct {
 	WatchEnabled       bool
 	LoggingEnabled     bool
 	DebounceDelay      time.Duration
+	CustomConfigFileName string
 }
 
 type SessionInit struct {

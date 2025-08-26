@@ -19,8 +19,10 @@ export async function activate(context: vscode.ExtensionContext) {
     let disposeLanguageFeatures: vscode.Disposable | undefined;
 
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(async event => {
-        if (event.affectsConfiguration("typescript.experimental.useTsgo")) {
-            if (needsExtHostRestartOnChange()) {
+        if (event.affectsConfiguration("typescript.experimental.useTsgo") ||
+            event.affectsConfiguration("typescript.native-preview.configNames")) {
+            // Always require restart if configNames changed, or if environment requires restart
+            if (event.affectsConfiguration("typescript.native-preview.configNames") || needsExtHostRestartOnChange()) {
                 // Delay because the command to change the config setting will restart
                 // the extension host, so no need to show a message
                 setTimeout(async () => {
@@ -29,14 +31,13 @@ export async function activate(context: vscode.ExtensionContext) {
                         vscode.commands.executeCommand("workbench.action.restartExtensionHost");
                     }
                 }, 100);
-            }
-            else {
+            } else {
+                // Toggle language features dynamically when useTsgo changes and restart not required
                 const useTsgo = vscode.workspace.getConfiguration("typescript").get<boolean>("experimental.useTsgo");
                 if (useTsgo) {
                     disposeLanguageFeatures = await activateLanguageFeatures(context, output, traceOutput);
                     context.subscriptions.push(disposeLanguageFeatures);
-                }
-                else {
+                } else {
                     disposeLanguageFeatures?.dispose();
                     disposeLanguageFeatures = undefined;
                 }
