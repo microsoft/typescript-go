@@ -1377,7 +1377,7 @@ func getParentSymbolsOfPropertyAccess(location *ast.Node, symbol *ast.Symbol, ch
 //
 //	The value of previousIterationSymbol is undefined when the function is first called.
 func getPropertySymbolsFromBaseTypes(symbol *ast.Symbol, propertyName string, checker *checker.Checker, cb func(base *ast.Symbol) *ast.Symbol) *ast.Symbol {
-	seen := collections.Set[*ast.Symbol]{}
+	var seen collections.Set[*ast.Symbol]
 	var recur func(*ast.Symbol) *ast.Symbol
 	recur = func(symbol *ast.Symbol) *ast.Symbol {
 		// Use `addToSeen` to ensure we don't infinitely recurse in this situation:
@@ -1387,23 +1387,24 @@ func getPropertySymbolsFromBaseTypes(symbol *ast.Symbol, propertyName string, ch
 		if symbol.Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsInterface) == 0 || !seen.AddIfAbsent(symbol) {
 			return nil
 		}
-
-		return core.FirstNonNil(symbol.Declarations, func(declaration *ast.Declaration) *ast.Symbol {
-			return core.FirstNonNil(getAllSuperTypeNodes(declaration), func(typeReference *ast.TypeNode) *ast.Symbol {
-				propertyType := checker.GetTypeAtLocation(typeReference)
-				if propertyType == nil || propertyType.Symbol() == nil {
-					return nil
-				}
-				propertySymbol := checker.GetPropertyOfType(propertyType, propertyName)
-				// Visit the typeReference as well to see if it directly or indirectly uses that property
-				if propertySymbol != nil {
-					if r := core.FirstNonNil(checker.GetRootSymbols(propertySymbol), cb); r != nil {
-						return r
+		for _, declaration := range symbol.Declarations {
+			for _, typeReference := range getAllSuperTypeNodes(declaration) {
+				if propertyType := checker.GetTypeAtLocation(typeReference); propertyType != nil && propertyType.Symbol() != nil {
+					// Visit the typeReference as well to see if it directly or indirectly uses that property
+					if propertySymbol := checker.GetPropertyOfType(propertyType, propertyName); propertySymbol != nil {
+						for _, rootSymbol := range checker.GetRootSymbols(propertySymbol) {
+							if result := cb(rootSymbol); result != nil {
+								return result
+							}
+						}
+					}
+					if result := recur(propertyType.Symbol()); result != nil {
+						return result
 					}
 				}
-				return recur(propertyType.Symbol())
-			})
-		})
+			}
+		}
+		return nil
 	}
 	return recur(symbol)
 }
