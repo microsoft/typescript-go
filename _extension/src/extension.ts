@@ -15,7 +15,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(event => {
         if (event.affectsConfiguration("typescript.experimental.useTsgo") ||
-            event.affectsConfiguration("typescript.native-preview.configNames")) {
+            event.affectsConfiguration("typescript.native-preview.customConfigFileName")) {
             // Delay because the command to change the config setting will restart
             // the extension host, so no need to show a message
             setTimeout(async () => {
