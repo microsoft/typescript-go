@@ -14,11 +14,12 @@ export async function activate(context: vscode.ExtensionContext) {
     registerCommands(context, client, output, traceOutput);
 
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(event => {
-        if (event.affectsConfiguration("typescript.experimental.useTsgo")) {
+        if (event.affectsConfiguration("typescript.experimental.useTsgo") ||
+            event.affectsConfiguration("typescript.native-preview.configNames")) {
             // Delay because the command to change the config setting will restart
             // the extension host, so no need to show a message
             setTimeout(async () => {
-                const selected = await vscode.window.showInformationMessage("TypeScript Native Preview setting has changed. Restart extensions to apply changes.", "Restart Extensions");
+                const selected = await vscode.window.showInformationMessage("TypeScript Native Preview setting's have changed. Restart extensions to apply changes.", "Restart Extensions");
                 if (selected) {
                     vscode.commands.executeCommand("workbench.action.restartExtensionHost");
                 }
