@@ -233,7 +233,7 @@ func getImportersForExport(
 				if importClause := direct.ImportClause(); importClause != nil {
 					if namedBindings := importClause.AsImportClause().NamedBindings; namedBindings != nil && ast.IsNamespaceImport(namedBindings) {
 						handleNamespaceImport(direct, namedBindings.Name(), false /*isReExport*/, true /*alreadyAddedDirect*/)
-						return
+						break
 					}
 				}
 				if !isAvailableThroughGlobal && ast.IsDefaultImport(direct) {
