@@ -351,12 +351,6 @@ func Coalesce[T *U, U any](a T, b T) T {
 	}
 }
 
-// Returns the first element that is not `nil`; CoalesceList(a, b, c) is roughly analogous to `a ?? b ?? c` in JS, except that it
-// non-shortcutting, so it is advised to only use a constant or precomputed value for non-first values in the list
-func CoalesceList[T *U, U any](a ...T) T {
-	return FirstNonNil(a, func(t T) T { return t })
-}
-
 func ComputeLineStarts(text string) []TextPos {
 	result := make([]TextPos, 0, strings.Count(text, "\n")+1)
 	return slices.AppendSeq(result, ComputeLineStartsSeq(text))
