@@ -292,6 +292,7 @@ func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOption
 		}
 	}
 	p.snapshot.buildInfoEmitPending.Store(false)
+	p.host.OnBuildInfoEmit(p.program.CommandLine(), buildInfo, p.snapshot.hasChangedDtsFile)
 	return &compiler.EmitResult{
 		EmitSkipped:  false,
 		EmittedFiles: []string{buildInfoFileName},

@@ -13,22 +13,18 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
-type buildInfoAndConfig struct {
-	buildInfo *incremental.BuildInfo
-	config    tspath.Path
-}
-
 type host struct {
-	orchestrator        *Orchestrator
-	host                compiler.CompilerHost
+	orchestrator *Orchestrator
+	host         compiler.CompilerHost
+
+	// Caches that last only for build cycle and then cleared out
 	extendedConfigCache tsc.ExtendedConfigCache
 	sourceFiles         parseCache[ast.SourceFileParseOptions, *ast.SourceFile]
-	resolvedReferences  parseCache[tspath.Path, *tsoptions.ParsedCommandLine]
 	configTimes         collections.SyncMap[tspath.Path, time.Duration]
 
-	buildInfos            collections.SyncMap[tspath.Path, *buildInfoAndConfig]
-	mTimes                collections.SyncMap[tspath.Path, time.Time]
-	latestChangedDtsFiles collections.SyncMap[tspath.Path, time.Time]
+	// caches that stay as long as they are needed
+	resolvedReferences parseCache[tspath.Path, *tsoptions.ParsedCommandLine]
+	mTimes             collections.SyncMap[tspath.Path, time.Time]
 }
 
 var (
@@ -58,7 +54,6 @@ func (h *host) WriteFile(path string, data string, writeByteOrderMark bool) erro
 	err := h.host.FS().WriteFile(path, data, writeByteOrderMark)
 	if err == nil {
 		filePath := h.orchestrator.toPath(path)
-		h.buildInfos.Delete(filePath)
 		h.mTimes.Delete(filePath)
 	}
 	return err
@@ -124,30 +119,11 @@ func (h *host) GetResolvedProjectReference(fileName string, path tspath.Path) *t
 	return resolved
 }
 
-func (h *host) ReadBuildInfo(buildInfoFileName string) *incremental.BuildInfo {
-	path := h.orchestrator.toPath(buildInfoFileName)
-	if existing, loaded := h.buildInfos.Load(path); loaded {
-		return existing.buildInfo
-	}
-	return nil
-}
-
-func (h *host) readOrStoreBuildInfo(configPath tspath.Path, buildInfoFileName string) *incremental.BuildInfo {
-	if existing, loaded := h.buildInfos.Load(h.orchestrator.toPath(buildInfoFileName)); loaded {
-		return existing.buildInfo
-	}
-
-	buildInfo := incremental.NewBuildInfoReader(h).ReadBuildInfo(buildInfoFileName)
-	entry := &buildInfoAndConfig{buildInfo, configPath}
-	entry, _ = h.buildInfos.LoadOrStore(h.orchestrator.toPath(buildInfoFileName), entry)
-	return entry.buildInfo
-}
-
-func (h *host) hasConflictingBuildInfo(configPath tspath.Path) bool {
-	if existing, loaded := h.buildInfos.Load(configPath); loaded {
-		return existing.config != configPath
-	}
-	return false
+func (h *host) ReadBuildInfo(config *tsoptions.ParsedCommandLine) *incremental.BuildInfo {
+	configPath := h.orchestrator.toPath(config.ConfigName())
+	task := h.orchestrator.getTask(configPath)
+	buildInfo, _ := task.loadOrStoreBuildInfo(h.orchestrator, h.orchestrator.toPath(config.ConfigName()), config.GetBuildInfoFileName())
+	return buildInfo
 }
 
 func (h *host) GetMTime(file string) time.Time {
@@ -169,26 +145,8 @@ func (h *host) SetMTime(file string, mTime time.Time) error {
 	return err
 }
 
-func (h *host) getLatestChangedDtsMTime(config string) time.Time {
-	path := h.orchestrator.toPath(config)
-	if existing, loaded := h.latestChangedDtsFiles.Load(path); loaded {
-		return existing
-	}
-
-	var changedDtsMTime time.Time
-	if resolved, loaded := h.resolvedReferences.Load(path); loaded {
-		buildInfoPath := resolved.GetBuildInfoFileName()
-		buildInfo := h.readOrStoreBuildInfo(path, buildInfoPath)
-		if buildInfo != nil && buildInfo.LatestChangedDtsFile != "" {
-			changedDtsMTime = h.GetMTime(
-				tspath.GetNormalizedAbsolutePath(
-					buildInfo.LatestChangedDtsFile,
-					tspath.GetDirectoryPath(tspath.GetNormalizedAbsolutePath(buildInfoPath, h.GetCurrentDirectory())),
-				),
-			)
-		}
-	}
-
-	changedDtsMTime, _ = h.mTimes.LoadOrStore(path, changedDtsMTime)
-	return changedDtsMTime
+func (h *host) OnBuildInfoEmit(config *tsoptions.ParsedCommandLine, buildInfo *incremental.BuildInfo, hasChangedDtsFile bool) {
+	configPath := h.orchestrator.toPath(config.ConfigName())
+	task := h.orchestrator.getTask(configPath)
+	task.onBuildInfoEmit(h.orchestrator, config, buildInfo, hasChangedDtsFile)
 }
