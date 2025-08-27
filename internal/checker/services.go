@@ -347,14 +347,14 @@ func runWithoutResolvedSignatureCaching[T any](c *Checker, node *ast.Node, fn fu
 
 func (c *Checker) GetRootSymbols(symbol *ast.Symbol) []*ast.Symbol {
 	roots := c.getImmediateRootSymbols(symbol)
-	if roots != nil {
-		var result []*ast.Symbol
-		for _, root := range roots {
-			result = append(result, c.GetRootSymbols(root)...)
-		}
-		return result
+	if len(roots) == 0 {
+		return []*ast.Symbol{symbol}
 	}
-	return []*ast.Symbol{symbol}
+	var result []*ast.Symbol
+	for _, root := range roots {
+		result = append(result, c.GetRootSymbols(root)...)
+	}
+	return result
 }
 
 func (c *Checker) getImmediateRootSymbols(symbol *ast.Symbol) []*ast.Symbol {

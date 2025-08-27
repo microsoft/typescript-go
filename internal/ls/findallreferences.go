@@ -1482,7 +1482,7 @@ func (state *refState) populateSearchSymbolSet(symbol *ast.Symbol, location *ast
 		location,
 		isForRename,
 		!(isForRename && providePrefixAndSuffixText),
-		func(sym *ast.Symbol, root *ast.Symbol, base *ast.Symbol, _ entryKind) (*ast.Symbol, entryKind) {
+		func(sym *ast.Symbol, root *ast.Symbol, base *ast.Symbol) *ast.Symbol {
 			// static method/property and instance method/property might have the same name. Only include static or only include instance.
 			if base != nil {
 				if isStaticSymbol(symbol) != isStaticSymbol(base) {
@@ -1490,7 +1490,7 @@ func (state *refState) populateSearchSymbolSet(symbol *ast.Symbol, location *ast
 				}
 			}
 			result = append(result, core.OrElse(base, core.OrElse(root, sym)))
-			return nil, entryKindNone
+			return nil
 		}, // when try to find implementation, implementations is true, and not allowed to find base class
 		/*allowBaseTypes*/ func(_ *ast.Symbol) bool { return !implementations },
 	)
@@ -1503,7 +1503,7 @@ func (state *refState) getRelatedSymbol(search *refSearch, referenceSymbol *ast.
 		referenceLocation,
 		false, /*isForRenamePopulateSearchSymbolSet*/
 		state.options.use != referenceUseRename || state.options.useAliasesForRename, /*onlyIncludeBindingElementAtReferenceLocation*/
-		func(sym *ast.Symbol, rootSymbol *ast.Symbol, baseSymbol *ast.Symbol, kind entryKind) (*ast.Symbol, entryKind) {
+		func(sym *ast.Symbol, rootSymbol *ast.Symbol, baseSymbol *ast.Symbol) *ast.Symbol {
 			// check whether the symbol used to search itself is just the searched one.
 			if baseSymbol != nil {
 				// static method/property and instance method/property might have the same name. Only check static or only check instance.
@@ -1514,12 +1514,12 @@ func (state *refState) getRelatedSymbol(search *refSearch, referenceSymbol *ast.
 			searchSym := core.Coalesce(baseSymbol, core.Coalesce(rootSymbol, sym))
 			if searchSym != nil && search.includes(searchSym) {
 				if rootSymbol != nil && sym.CheckFlags&ast.CheckFlagsSynthetic == 0 {
-					return rootSymbol, kind
+					return rootSymbol
 				}
-				return sym, kind
+				return sym
 			}
 			// For a base type, use the symbol for the derived type. For a synthetic (e.g. union) property, use the union symbol.
-			return nil, entryKindNone
+			return nil
 		},
 		func(rootSymbol *ast.Symbol) bool {
 			return !(len(search.parents) != 0 && !core.Some(search.parents, func(parent *ast.Symbol) bool {
@@ -1536,34 +1536,31 @@ func (state *refState) forEachRelatedSymbol(
 	location *ast.Node,
 	isForRenamePopulateSearchSymbolSet,
 	onlyIncludeBindingElementAtReferenceLocation bool,
-	cbSymbol func(*ast.Symbol, *ast.Symbol, *ast.Symbol, entryKind) (*ast.Symbol, entryKind),
+	cbSymbol func(*ast.Symbol, *ast.Symbol, *ast.Symbol) *ast.Symbol,
 	allowBaseTypes func(*ast.Symbol) bool,
 ) (*ast.Symbol, entryKind) {
-	fromRoot := func(sym *ast.Symbol, kind entryKind) (*ast.Symbol, entryKind) {
+	fromRoot := func(sym *ast.Symbol) *ast.Symbol {
 		// If this is a union property:
 		//   - In populateSearchSymbolsSet we will add all the symbols from all its source symbols in all unioned types.
 		//   - In findRelatedSymbol, we will just use the union symbol if any source symbol is included in the search.
 		// If the symbol is an instantiation from a another symbol (e.g. widened symbol):
 		//   - In populateSearchSymbolsSet, add the root the list
 		//   - In findRelatedSymbol, return the source symbol if that is in the search. (Do not return the instantiation symbol.)
-		returnKind := entryKindNone
-		return core.FirstNonNil(state.checker.GetRootSymbols(sym), func(rootSymbol *ast.Symbol) *ast.Symbol {
-			if s, currKind := cbSymbol(sym, rootSymbol, nil /*baseSymbol*/, kind); s != nil {
-				returnKind = currKind
-				return s
+		for _, rootSymbol := range state.checker.GetRootSymbols(sym) {
+			if result := cbSymbol(sym, rootSymbol, nil /*baseSymbol*/); result != nil {
+				return result
 			}
 			// Add symbol of properties/methods of the same name in base classes and implemented interfaces definitions
 			if rootSymbol.Parent != nil && rootSymbol.Parent.Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsInterface) != 0 && allowBaseTypes(rootSymbol) {
-				return getPropertySymbolsFromBaseTypes(rootSymbol.Parent, rootSymbol.Name, state.checker, func(base *ast.Symbol) *ast.Symbol {
-					s, currKind := cbSymbol(sym, rootSymbol, base, kind)
-					if s != nil {
-						returnKind = currKind
-					}
-					return s
+				result := getPropertySymbolsFromBaseTypes(rootSymbol.Parent, rootSymbol.Name, state.checker, func(base *ast.Symbol) *ast.Symbol {
+					return cbSymbol(sym, rootSymbol, base)
 				})
+				if result != nil {
+					return result
+				}
 			}
-			return nil
-		}), returnKind
+		}
+		return nil
 	}
 
 	if containingObjectLiteralElement := getContainingObjectLiteralElement(location); containingObjectLiteralElement != nil {
@@ -1582,7 +1579,7 @@ func (state *refState) forEachRelatedSymbol(
 		// gets the local symbol
 		if shorthandValueSymbol != nil && isForRenamePopulateSearchSymbolSet {
 			// When renaming 'x' in `const o = { x }`, just rename the local variable, not the property.
-			return cbSymbol(shorthandValueSymbol, nil /*rootSymbol*/, nil /*baseSymbol*/, entryKindSearchedLocalFoundProperty)
+			return cbSymbol(shorthandValueSymbol, nil /*rootSymbol*/, nil /*baseSymbol*/), entryKindSearchedLocalFoundProperty
 		}
 		// If the location is in a context sensitive location (i.e. in an object literal) try
 		// to get a contextual type for it, and add the property symbol from the contextual
@@ -1590,8 +1587,8 @@ func (state *refState) forEachRelatedSymbol(
 		if contextualType := state.checker.GetContextualType(containingObjectLiteralElement.Parent, checker.ContextFlagsNone); contextualType != nil {
 			symbols := state.checker.GetPropertySymbolsFromContextualType(containingObjectLiteralElement, contextualType, true /*unionSymbolOk*/)
 			for _, sym := range symbols {
-				if res, kind := fromRoot(sym, entryKindSearchedPropertyFoundLocal); res != nil {
-					return res, kind
+				if res := fromRoot(sym); res != nil {
+					return res, entryKindSearchedPropertyFoundLocal
 				}
 			}
 		}
@@ -1599,26 +1596,26 @@ func (state *refState) forEachRelatedSymbol(
 		// Search the property symbol
 		//      for ( { property: p2 } of elems) { }
 		if propertySymbol := state.checker.GetPropertySymbolOfDestructuringAssignment(location); propertySymbol != nil {
-			if res, kind := cbSymbol(propertySymbol, nil /*rootSymbol*/, nil /*baseSymbol*/, entryKindSearchedPropertyFoundLocal); res != nil {
-				return res, kind
+			if res := cbSymbol(propertySymbol, nil /*rootSymbol*/, nil /*baseSymbol*/); res != nil {
+				return res, entryKindSearchedPropertyFoundLocal
 			}
 		}
 		if shorthandValueSymbol != nil {
-			if res, kind := cbSymbol(shorthandValueSymbol, nil /*rootSymbol*/, nil /*baseSymbol*/, entryKindSearchedLocalFoundProperty); res != nil {
-				return res, kind
+			if res := cbSymbol(shorthandValueSymbol, nil /*rootSymbol*/, nil /*baseSymbol*/); res != nil {
+				return res, entryKindSearchedLocalFoundProperty
 			}
 		}
 	}
 
 	if aliasedSymbol := getMergedAliasedSymbolOfNamespaceExportDeclaration(location, symbol, state.checker); aliasedSymbol != nil {
 		// In case of UMD module and global merging, search for global as well
-		if res, kind := cbSymbol(aliasedSymbol, nil /*rootSymbol*/, nil /*baseSymbol*/, entryKindNode); res != nil {
-			return res, kind
+		if res := cbSymbol(aliasedSymbol, nil /*rootSymbol*/, nil /*baseSymbol*/); res != nil {
+			return res, entryKindNode
 		}
 	}
 
-	if res, kind := fromRoot(symbol, entryKindNone); res != nil {
-		return res, core.IfElse(kind != entryKindNone, kind, entryKindNode)
+	if res := fromRoot(symbol); res != nil {
+		return res, entryKindNone
 	}
 
 	if symbol.ValueDeclaration != nil && ast.IsParameterPropertyDeclaration(symbol.ValueDeclaration, symbol.ValueDeclaration.Parent) {
@@ -1631,13 +1628,13 @@ func (state *refState) forEachRelatedSymbol(
 		if !(paramProp1.Flags&ast.SymbolFlagsFunctionScopedVariable != 0 && paramProp2.Flags&ast.SymbolFlagsProperty != 0) {
 			panic("Expected a parameter and a property")
 		}
-		return fromRoot(core.IfElse(symbol.Flags&ast.SymbolFlagsFunctionScopedVariable != 0, paramProp2, paramProp1), entryKindNone)
+		return fromRoot(core.IfElse(symbol.Flags&ast.SymbolFlagsFunctionScopedVariable != 0, paramProp2, paramProp1)), entryKindNone
 	}
 
 	if exportSpecifier := ast.GetDeclarationOfKind(symbol, ast.KindExportSpecifier); exportSpecifier != nil && (!isForRenamePopulateSearchSymbolSet || exportSpecifier.PropertyName() == nil) {
 		if localSymbol := state.checker.GetExportSpecifierLocalTargetSymbol(exportSpecifier); localSymbol != nil {
-			if res, kind := cbSymbol(localSymbol, nil /*rootSymbol*/, nil /*baseSymbol*/, entryKindNode); res != nil {
-				return res, kind
+			if res := cbSymbol(localSymbol, nil /*rootSymbol*/, nil /*baseSymbol*/); res != nil {
+				return res, entryKindNode
 			}
 		}
 	}
@@ -1657,7 +1654,7 @@ func (state *refState) forEachRelatedSymbol(
 		if bindingElementPropertySymbol == nil {
 			return nil, entryKindNone
 		}
-		return fromRoot(bindingElementPropertySymbol, entryKindSearchedPropertyFoundLocal)
+		return fromRoot(bindingElementPropertySymbol), entryKindSearchedPropertyFoundLocal
 	}
 
 	debug.Assert(isForRenamePopulateSearchSymbolSet)
@@ -1668,7 +1665,7 @@ func (state *refState) forEachRelatedSymbol(
 
 	if includeOriginalSymbolOfBindingElement {
 		if bindingElementPropertySymbol := getPropertySymbolOfObjectBindingPatternWithoutPropertyName(symbol, state.checker); bindingElementPropertySymbol != nil {
-			return fromRoot(bindingElementPropertySymbol, entryKindSearchedPropertyFoundLocal)
+			return fromRoot(bindingElementPropertySymbol), entryKindSearchedPropertyFoundLocal
 		}
 	}
 	return nil, entryKindNone
