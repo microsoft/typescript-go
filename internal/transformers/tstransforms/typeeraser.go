@@ -343,6 +343,12 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		}
 		return node
 
+	case ast.KindEnumDeclaration:
+		if ast.IsEnumConst(node) {
+			return node
+		}
+		return tx.Visitor().VisitEachChild(node)
+
 	default:
 		return tx.Visitor().VisitEachChild(node)
 	}

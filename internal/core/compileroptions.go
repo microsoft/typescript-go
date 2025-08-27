@@ -277,7 +277,7 @@ func (options *CompilerOptions) GetResolveJsonModule() bool {
 }
 
 func (options *CompilerOptions) ShouldPreserveConstEnums() bool {
-	return options.PreserveConstEnums == TSTrue || options.IsolatedModules == TSTrue
+	return options.PreserveConstEnums == TSTrue || options.IsolatedModules == TSTrue || options.VerbatimModuleSyntax == TSTrue
 }
 
 func (options *CompilerOptions) GetAllowJS() bool {
