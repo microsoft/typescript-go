@@ -640,13 +640,13 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 
 	s.session = project.NewSession(&project.SessionInit{
 		Options: &project.SessionOptions{
-			CurrentDirectory:   s.cwd,
-			DefaultLibraryPath: s.defaultLibraryPath,
-			TypingsLocation:    s.typingsLocation,
-			PositionEncoding:   s.positionEncoding,
-			WatchEnabled:       s.watchEnabled,
-			LoggingEnabled:     true,
-			DebounceDelay:      500 * time.Millisecond,
+			CurrentDirectory:     s.cwd,
+			DefaultLibraryPath:   s.defaultLibraryPath,
+			TypingsLocation:      s.typingsLocation,
+			PositionEncoding:     s.positionEncoding,
+			WatchEnabled:         s.watchEnabled,
+			LoggingEnabled:       true,
+			DebounceDelay:        500 * time.Millisecond,
 			CustomConfigFileName: customConfigFileName,
 		},
 		FS:          s.fs,
