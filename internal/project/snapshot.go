@@ -95,6 +95,7 @@ type APISnapshotRequest struct {
 }
 
 type SnapshotChange struct {
+	reason UpdateReason
 	// fileChanges are the changes that have occurred since the last snapshot.
 	fileChanges FileChangeSummary
 	// requestedURIs are URIs that were requested by the client.
@@ -123,8 +124,31 @@ type ATAStateChange struct {
 
 func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays map[tspath.Path]*overlay, session *Session) *Snapshot {
 	var logger *logging.LogTree
+
+	// Print in-progress logs immediately if cloning fails
+	if session.options.LoggingEnabled {
+		defer func() {
+			if r := recover(); r != nil {
+				session.logger.Write(logger.String())
+				panic(r)
+			}
+		}()
+	}
+
 	if session.options.LoggingEnabled {
 		logger = logging.NewLogTree(fmt.Sprintf("Cloning snapshot %d", s.id))
+		switch change.reason {
+		case UpdateReasonDidOpenFile:
+			logger.Logf("Reason: DidOpenFile - %s", change.fileChanges.Opened)
+		case UpdateReasonDidChangeCompilerOptionsForInferredProjects:
+			logger.Logf("Reason: DidChangeCompilerOptionsForInferredProjects")
+		case UpdateReasonRequestedLanguageServicePendingChanges:
+			logger.Logf("Reason: RequestedLanguageService (pending file changes) - %v", change.requestedURIs)
+		case UpdateReasonRequestedLanguageServiceProjectNotLoaded:
+			logger.Logf("Reason: RequestedLanguageService (project not loaded) - %v", change.requestedURIs)
+		case UpdateReasonRequestedLanguageServiceProjectDirty:
+			logger.Logf("Reason: RequestedLanguageService (project dirty) - %v", change.requestedURIs)
+		}
 	}
 
 	start := time.Now()

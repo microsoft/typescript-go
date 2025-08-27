@@ -21,6 +21,17 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
+type UpdateReason int
+
+const (
+	UpdateReasonUnknown UpdateReason = iota
+	UpdateReasonDidOpenFile
+	UpdateReasonDidChangeCompilerOptionsForInferredProjects
+	UpdateReasonRequestedLanguageServicePendingChanges
+	UpdateReasonRequestedLanguageServiceProjectNotLoaded
+	UpdateReasonRequestedLanguageServiceProjectDirty
+)
+
 // SessionOptions are the immutable initialization options for a session.
 // Snapshots may reference them as a pointer since they never change.
 type SessionOptions struct {
@@ -90,14 +101,6 @@ type Session struct {
 	// installations and applied to the next snapshot update.
 	pendingATAChanges   map[tspath.Path]*ATAStateChange
 	pendingATAChangesMu sync.Mutex
-
-	// snapshotUpdateCancel is the cancelation function for a scheduled
-	// snapshot update. Snapshot updates are debounced after file watch
-	// changes since many watch events can occur in quick succession
-	// during `npm install` or git operations.
-	// !!! This can probably be replaced by ScheduleDiagnosticsRefresh()
-	snapshotUpdateCancel context.CancelFunc
-	snapshotUpdateMu     sync.Mutex
 
 	// diagnosticsRefreshCancel is the cancelation function for a scheduled
 	// diagnostics refresh. Diagnostics refreshes are scheduled and debounced
@@ -185,6 +188,7 @@ func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, vers
 	changes, overlays := s.flushChangesLocked(ctx)
 	s.pendingFileChangesMu.Unlock()
 	s.UpdateSnapshot(ctx, overlays, SnapshotChange{
+		reason:        UpdateReasonDidOpenFile,
 		fileChanges:   changes,
 		requestedURIs: []lsproto.DocumentUri{uri},
 	})
@@ -247,65 +251,15 @@ func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.
 	s.pendingFileChanges = append(s.pendingFileChanges, fileChanges...)
 	s.pendingFileChangesMu.Unlock()
 
-	// Schedule a debounced snapshot update
-	s.ScheduleSnapshotUpdate()
+	// Schedule a debounced diagnostics refresh
+	s.ScheduleDiagnosticsRefresh()
 }
 
 func (s *Session) DidChangeCompilerOptionsForInferredProjects(ctx context.Context, options *core.CompilerOptions) {
 	s.compilerOptionsForInferredProjects = options
 	s.UpdateSnapshot(ctx, s.fs.Overlays(), SnapshotChange{
+		reason:                             UpdateReasonDidChangeCompilerOptionsForInferredProjects,
 		compilerOptionsForInferredProjects: options,
-	})
-}
-
-// ScheduleSnapshotUpdate schedules a debounced snapshot update.
-// If there's already a pending update, it will be cancelled and a new one scheduled.
-// This is useful for batching rapid changes like file watch events.
-func (s *Session) ScheduleSnapshotUpdate() {
-	s.snapshotUpdateMu.Lock()
-	defer s.snapshotUpdateMu.Unlock()
-
-	// Cancel any existing scheduled update
-	if s.snapshotUpdateCancel != nil {
-		s.snapshotUpdateCancel()
-		s.logger.Log("Delaying scheduled snapshot update...")
-	} else {
-		s.logger.Log("Scheduling new snapshot update...")
-	}
-
-	// Create a new cancellable context for the debounce task
-	debounceCtx, cancel := context.WithCancel(context.Background())
-	s.snapshotUpdateCancel = cancel
-
-	// Enqueue the debounced snapshot update
-	s.backgroundQueue.Enqueue(debounceCtx, func(ctx context.Context) {
-		// Sleep for the debounce delay
-		select {
-		case <-time.After(s.options.DebounceDelay):
-			// Delay completed, proceed with update
-		case <-ctx.Done():
-			// Context was cancelled, newer events arrived
-			return
-		}
-
-		// Clear the cancel function since we're about to execute the update
-		s.snapshotUpdateMu.Lock()
-		s.snapshotUpdateCancel = nil
-		s.snapshotUpdateMu.Unlock()
-
-		// Process the accumulated changes
-		changeSummary, overlays, ataChanges := s.flushChanges(context.Background())
-		if !changeSummary.IsEmpty() || len(ataChanges) > 0 {
-			if s.options.LoggingEnabled {
-				s.logger.Log("Running scheduled snapshot update")
-			}
-			s.UpdateSnapshot(context.Background(), overlays, SnapshotChange{
-				fileChanges: changeSummary,
-				ataChanges:  ataChanges,
-			})
-		} else if s.options.LoggingEnabled {
-			s.logger.Log("Scheduled snapshot update skipped (no changes)")
-		}
 	})
 }
 
@@ -386,6 +340,7 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 		// If there are pending file changes, we need to update the snapshot.
 		// Sending the requested URI ensures that the project for this URI is loaded.
 		snapshot = s.UpdateSnapshot(ctx, overlays, SnapshotChange{
+			reason:        UpdateReasonRequestedLanguageServicePendingChanges,
 			fileChanges:   fileChanges,
 			ataChanges:    ataChanges,
 			requestedURIs: []lsproto.DocumentUri{uri},
@@ -402,7 +357,10 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 		// The current snapshot does not have an up to date project for the URI,
 		// so we need to update the snapshot to ensure the project is loaded.
 		// !!! Allow multiple projects to update in parallel
-		snapshot = s.UpdateSnapshot(ctx, overlays, SnapshotChange{requestedURIs: []lsproto.DocumentUri{uri}})
+		snapshot = s.UpdateSnapshot(ctx, overlays, SnapshotChange{
+			reason:        core.IfElse(project == nil, UpdateReasonRequestedLanguageServiceProjectNotLoaded, UpdateReasonRequestedLanguageServiceProjectDirty),
+			requestedURIs: []lsproto.DocumentUri{uri},
+		})
 		project = snapshot.GetDefaultProject(uri)
 	}
 	if project == nil {
@@ -412,15 +370,6 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 }
 
 func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*overlay, change SnapshotChange) *Snapshot {
-	// Cancel any pending scheduled update since we're doing an immediate update
-	s.snapshotUpdateMu.Lock()
-	if s.snapshotUpdateCancel != nil {
-		s.logger.Log("Canceling scheduled snapshot update and performing one now")
-		s.snapshotUpdateCancel()
-		s.snapshotUpdateCancel = nil
-	}
-	s.snapshotUpdateMu.Unlock()
-
 	s.snapshotMu.Lock()
 	oldSnapshot := s.snapshot
 	newSnapshot := oldSnapshot.Clone(ctx, change, overlays, s)
@@ -448,9 +397,6 @@ func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 			if err := s.updateWatches(oldSnapshot, newSnapshot); err != nil && s.options.LoggingEnabled {
 				s.logger.Log(err)
 			}
-		}
-		if change.fileChanges.IncludesWatchChangesOnly {
-			s.ScheduleDiagnosticsRefresh()
 		}
 	})
 
@@ -554,13 +500,8 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 }
 
 func (s *Session) Close() {
-	// Cancel any pending snapshot update
-	s.snapshotUpdateMu.Lock()
-	if s.snapshotUpdateCancel != nil {
-		s.snapshotUpdateCancel()
-		s.snapshotUpdateCancel = nil
-	}
-	s.snapshotUpdateMu.Unlock()
+	// Cancel any pending diagnostics refresh
+	s.cancelDiagnosticsRefresh()
 	s.backgroundQueue.Close()
 }
 
@@ -597,9 +538,9 @@ func (s *Session) logProjectChanges(oldSnapshot *Snapshot, newSnapshot *Snapshot
 		project.print(s.logger.IsVerbose() /*writeFileNames*/, s.logger.IsVerbose() /*writeFileExplanation*/, &builder)
 		s.logger.Log(builder.String())
 	}
-	core.DiffMaps(
-		oldSnapshot.ProjectCollection.configuredProjects,
-		newSnapshot.ProjectCollection.configuredProjects,
+	collections.DiffOrderedMaps(
+		oldSnapshot.ProjectCollection.ProjectsByPath(),
+		newSnapshot.ProjectCollection.ProjectsByPath(),
 		func(path tspath.Path, addedProject *Project) {
 			// New project added
 			logProject(addedProject)
@@ -615,17 +556,6 @@ func (s *Session) logProjectChanges(oldSnapshot *Snapshot, newSnapshot *Snapshot
 			}
 		},
 	)
-
-	oldInferred := oldSnapshot.ProjectCollection.inferredProject
-	newInferred := newSnapshot.ProjectCollection.inferredProject
-
-	if oldInferred != nil && newInferred == nil {
-		// Inferred project removed
-		s.logger.Logf("\nProject '%s' removed\n%s", oldInferred.Name(), hr)
-	} else if newInferred != nil && newInferred.ProgramUpdateKind == ProgramUpdateKindNewFiles {
-		// Inferred project updated
-		logProject(newInferred)
-	}
 }
 
 func (s *Session) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error) {
