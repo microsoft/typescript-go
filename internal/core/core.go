@@ -452,6 +452,10 @@ func GetScriptKindFromFileName(fileName string) ScriptKind {
 	return ScriptKindUnknown
 }
 
+type SpellingSuggestionBuffers struct {
+	previous, current []float64
+}
+
 // Given a name and a list of names that are *not* equal to the name, return a spelling suggestion if there is one that is close enough.
 // Names less than length 3 only check for case-insensitive equality.
 //
@@ -465,7 +469,7 @@ func GetScriptKindFromFileName(fileName string) ScriptKind {
 //	     and 1 insertion/deletion at 3 characters)
 //
 // @internal
-func GetSpellingSuggestion[T any](name string, candidates []T, getName func(T) string) T {
+func GetSpellingSuggestion[T any](name string, candidates []T, getName func(T) string, buffers *SpellingSuggestionBuffers) T {
 	maximumLengthDifference := max(2, int(float64(len(name))*0.34))
 	bestDistance := math.Floor(float64(len(name))*0.4) + 1 // If the best result is worse than this, don't bother.
 	runeName := []rune(name)
@@ -483,7 +487,7 @@ func GetSpellingSuggestion[T any](name string, candidates []T, getName func(T) s
 			if len(candidateName) < 3 && !strings.EqualFold(candidateName, name) {
 				continue
 			}
-			distance := levenshteinWithMax(runeName, []rune(candidateName), bestDistance-0.1)
+			distance := levenshteinWithMax(runeName, []rune(candidateName), bestDistance-0.1, buffers)
 			if distance < 0 {
 				continue
 			}
@@ -495,9 +499,24 @@ func GetSpellingSuggestion[T any](name string, candidates []T, getName func(T) s
 	return bestCandidate
 }
 
-func levenshteinWithMax(s1 []rune, s2 []rune, maxValue float64) float64 {
-	previous := make([]float64, len(s2)+1)
-	current := make([]float64, len(s2)+1)
+func ensureSize(slice []float64, desired int) []float64 {
+	if cap(slice) < desired {
+		return make([]float64, desired)
+	}
+	return slice[:desired]
+}
+
+func levenshteinWithMax(s1 []rune, s2 []rune, maxValue float64, buffers *SpellingSuggestionBuffers) float64 {
+	if buffers == nil {
+		buffers = &SpellingSuggestionBuffers{}
+	}
+
+	buffers.previous = ensureSize(buffers.previous, len(s2)+1)
+	previous := buffers.previous
+
+	buffers.current = ensureSize(buffers.current, len(s2)+1)
+	current := buffers.current
+
 	big := maxValue + 0.01
 	for i := range previous {
 		previous[i] = float64(i)
@@ -521,10 +540,10 @@ func levenshteinWithMax(s1 []rune, s2 []rune, maxValue float64) float64 {
 			if c1 == s2[j-1] {
 				dist = previous[j-1]
 			} else {
-				dist = math.Min(previous[j]+1, math.Min(current[j-1]+1, substitutionDistance))
+				dist = min(previous[j]+1, min(current[j-1]+1, substitutionDistance))
 			}
 			current[j] = dist
-			colMin = math.Min(colMin, dist)
+			colMin = min(colMin, dist)
 		}
 		for j := maxJ + 1; j <= len(s2); j++ {
 			current[j] = big
