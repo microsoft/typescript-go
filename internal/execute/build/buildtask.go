@@ -35,10 +35,21 @@ const (
 	buildKindProgram
 )
 
+type upstreamTask struct {
+	task     *buildTask
+	refIndex int
+}
+type buildInfoEntry struct {
+	buildInfo *incremental.BuildInfo
+	path      tspath.Path
+	mTime     time.Time
+	dtsTime   *time.Time
+}
+
 type buildTask struct {
 	config     string
 	resolved   *tsoptions.ParsedCommandLine
-	upStream   []*buildTask
+	upStream   []*upstreamTask
 	downStream []*buildTask // Only set and used in watch mode
 	status     *upToDateStatus
 	done       chan struct{}
@@ -61,19 +72,19 @@ type buildTask struct {
 	extendedConfigTimes []time.Time
 	inputFiles          []time.Time
 
+	buildInfoEntry   *buildInfoEntry
+	buildInfoEntryMu sync.Mutex
+
 	pending            atomic.Bool
 	isInitialCycle     bool
 	downStreamUpdateMu sync.Mutex
 	dirty              bool
 }
 
-func (t *buildTask) waitOnUpstream() []*upToDateStatus {
-	upStreamStatus := make([]*upToDateStatus, len(t.upStream))
-	for i, upstream := range t.upStream {
-		<-upstream.done
-		upStreamStatus[i] = upstream.status
+func (t *buildTask) waitOnUpstream() {
+	for _, upstream := range t.upStream {
+		<-upstream.task.done
 	}
-	return upStreamStatus
 }
 
 func (t *buildTask) unblockDownstream() {
@@ -123,9 +134,9 @@ func (t *buildTask) report(orchestrator *Orchestrator, configPath tspath.Path, b
 
 func (t *buildTask) buildProject(orchestrator *Orchestrator, path tspath.Path) {
 	// Wait on upstream tasks to complete
-	upStreamStatus := t.waitOnUpstream()
+	t.waitOnUpstream()
 	if t.pending.Load() {
-		t.status = t.getUpToDateStatus(orchestrator, path, upStreamStatus)
+		t.status = t.getUpToDateStatus(orchestrator, path)
 		t.reportUpToDateStatus(orchestrator)
 		if !t.handleStatusThatDoesntRequireBuild(orchestrator) {
 			t.compileAndEmit(orchestrator, path)
@@ -200,10 +211,12 @@ func (t *buildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 	compileTimes.ConfigTime = configTime
 	buildInfoReadStart := orchestrator.opts.Sys.Now()
 	var oldProgram *incremental.Program
-	if t.program != nil {
-		oldProgram = t.program
-	} else {
-		oldProgram = incremental.ReadBuildInfoProgram(t.resolved, orchestrator.host, orchestrator.host)
+	if !orchestrator.opts.Command.BuildOptions.Force.IsTrue() {
+		if t.program != nil {
+			oldProgram = t.program
+		} else {
+			oldProgram = incremental.ReadBuildInfoProgram(t.resolved, orchestrator.host, orchestrator.host)
+		}
 	}
 	compileTimes.BuildInfoReadTime = orchestrator.opts.Sys.Now().Sub(buildInfoReadStart)
 	parseStart := orchestrator.opts.Sys.Now()
@@ -302,7 +315,7 @@ func (t *buildTask) handleStatusThatDoesntRequireBuild(orchestrator *Orchestrato
 	return false
 }
 
-func (t *buildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tspath.Path, upStreamStatus []*upToDateStatus) *upToDateStatus {
+func (t *buildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tspath.Path) *upToDateStatus {
 	if t.status != nil {
 		return t.status
 	}
@@ -316,15 +329,10 @@ func (t *buildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 		return &upToDateStatus{kind: upToDateStatusTypeSolution}
 	}
 
-	for index, upstreamStatus := range upStreamStatus {
-		if upstreamStatus == nil {
-			// Not dependent on this upstream project (expected cycle was detected and hence skipped)
-			continue
-		}
-
-		if orchestrator.opts.Command.BuildOptions.StopBuildOnErrors.IsTrue() && upstreamStatus.isError() {
+	for _, upstream := range t.upStream {
+		if orchestrator.opts.Command.BuildOptions.StopBuildOnErrors.IsTrue() && upstream.task.status.isError() {
 			// Upstream project has errors, so we cannot build this project
-			return &upToDateStatus{kind: upToDateStatusTypeUpstreamErrors, data: &upstreamErrors{t.resolved.ProjectReferences()[index].Path, upstreamStatus.kind == upToDateStatusTypeUpstreamErrors}}
+			return &upToDateStatus{kind: upToDateStatusTypeUpstreamErrors, data: &upstreamErrors{t.resolved.ProjectReferences()[upstream.refIndex].Path, upstream.task.status.kind == upToDateStatusTypeUpstreamErrors}}
 		}
 	}
 
@@ -334,7 +342,7 @@ func (t *buildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 
 	// Check the build info
 	buildInfoPath := t.resolved.GetBuildInfoFileName()
-	buildInfo := orchestrator.host.readOrStoreBuildInfo(configPath, buildInfoPath)
+	buildInfo, buildInfoTime := t.loadOrStoreBuildInfo(orchestrator, configPath, buildInfoPath)
 	if buildInfo == nil {
 		return &upToDateStatus{kind: upToDateStatusTypeOutputMissing, data: buildInfoPath}
 	}
@@ -375,7 +383,7 @@ func (t *buildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 		}
 	}
 	var inputTextUnchanged bool
-	oldestOutputFileAndTime := fileAndTime{buildInfoPath, orchestrator.host.GetMTime(buildInfoPath)}
+	oldestOutputFileAndTime := fileAndTime{buildInfoPath, buildInfoTime}
 	var newestInputFileAndTime fileAndTime
 	var seenRoots collections.Set[tspath.Path]
 	var buildInfoRootInfoReader *incremental.BuildInfoRootInfoReader
@@ -445,8 +453,8 @@ func (t *buildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 	}
 
 	var refDtsUnchanged bool
-	for index, upstreamStatus := range upStreamStatus {
-		if upstreamStatus == nil || upstreamStatus.kind == upToDateStatusTypeSolution {
+	for _, upstream := range t.upStream {
+		if upstream.task.status.kind == upToDateStatusTypeSolution {
 			// Not dependent on the status or this upstream project
 			// (eg: expected cycle was detected and hence skipped, or is solution)
 			continue
@@ -456,26 +464,27 @@ func (t *buildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 		// we can't be out of date because of it
 		// inputTime will not be present if we just built this project or updated timestamps
 		// - in that case we do want to either build or update timestamps
-		refInputOutputFileAndTime := upstreamStatus.inputOutputFileAndTime()
+		refInputOutputFileAndTime := upstream.task.status.inputOutputFileAndTime()
 		if refInputOutputFileAndTime != nil && !refInputOutputFileAndTime.input.time.IsZero() && refInputOutputFileAndTime.input.time.Before(oldestOutputFileAndTime.time) {
 			continue
 		}
 
 		// Check if tsbuildinfo path is shared, then we need to rebuild
-		if orchestrator.host.hasConflictingBuildInfo(configPath) {
-			return &upToDateStatus{kind: upToDateStatusTypeInputFileNewer, data: &inputOutputName{t.resolved.ProjectReferences()[index].Path, oldestOutputFileAndTime.file}}
+		if t.hasConflictingBuildInfo(orchestrator, upstream.task) {
+			// We have an output older than an upstream output - we are out of date
+			return &upToDateStatus{kind: upToDateStatusTypeInputFileNewer, data: &inputOutputName{t.resolved.ProjectReferences()[upstream.refIndex].Path, oldestOutputFileAndTime.file}}
 		}
 
 		// If the upstream project has only change .d.ts files, and we've built
 		// *after* those files, then we're "pseudo up to date" and eligible for a fast rebuild
-		newestDtsChangeTime := orchestrator.host.getLatestChangedDtsMTime(t.resolved.ResolvedProjectReferencePaths()[index])
+		newestDtsChangeTime := upstream.task.getLatestChangedDtsMTime(orchestrator)
 		if !newestDtsChangeTime.IsZero() && newestDtsChangeTime.Before(oldestOutputFileAndTime.time) {
 			refDtsUnchanged = true
 			continue
 		}
 
 		// We have an output older than an upstream output - we are out of date
-		return &upToDateStatus{kind: upToDateStatusTypeInputFileNewer, data: &inputOutputName{t.resolved.ProjectReferences()[index].Path, oldestOutputFileAndTime.file}}
+		return &upToDateStatus{kind: upToDateStatusTypeInputFileNewer, data: &inputOutputName{t.resolved.ProjectReferences()[upstream.refIndex].Path, oldestOutputFileAndTime.file}}
 	}
 
 	checkInputFileTime := func(inputFile string) *upToDateStatus {
@@ -636,6 +645,8 @@ func (t *buildTask) updateTimeStamps(orchestrator *Orchestrator, emittedFiles []
 	}
 	emitted := collections.NewSetFromItems(emittedFiles...)
 	var verboseMessageReported bool
+	buildInfoName := t.resolved.GetBuildInfoFileName()
+	now := orchestrator.opts.Sys.Now()
 	updateTimeStamp := func(file string) {
 		if emitted.Has(file) {
 			return
@@ -644,9 +655,15 @@ func (t *buildTask) updateTimeStamps(orchestrator *Orchestrator, emittedFiles []
 			t.reportStatus(ast.NewCompilerDiagnostic(verboseMessage, orchestrator.relativeFileName(t.config)))
 			verboseMessageReported = true
 		}
-		err := orchestrator.host.SetMTime(file, orchestrator.opts.Sys.Now())
+		err := orchestrator.host.SetMTime(file, now)
 		if err != nil {
 			t.reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Failed_to_update_timestamp_of_file_0, file))
+		} else if file == buildInfoName {
+			t.buildInfoEntryMu.Lock()
+			if t.buildInfoEntry != nil {
+				t.buildInfoEntry.mTime = now
+			}
+			t.buildInfoEntryMu.Unlock()
 		}
 	}
 
@@ -745,4 +762,64 @@ func (t *buildTask) hasUpdate(orchestrator *Orchestrator, path tspath.Path) upda
 		}
 	}
 	return updateKindNone
+}
+
+func (t *buildTask) loadOrStoreBuildInfo(orchestrator *Orchestrator, configPath tspath.Path, buildInfoFileName string) (*incremental.BuildInfo, time.Time) {
+	path := orchestrator.toPath(buildInfoFileName)
+	t.buildInfoEntryMu.Lock()
+	defer t.buildInfoEntryMu.Unlock()
+	if t.buildInfoEntry != nil && t.buildInfoEntry.path == path {
+		return t.buildInfoEntry.buildInfo, t.buildInfoEntry.mTime
+	}
+	t.buildInfoEntry = &buildInfoEntry{
+		buildInfo: incremental.NewBuildInfoReader(orchestrator.host).ReadBuildInfo(t.resolved),
+		path:      path,
+	}
+	var mTime time.Time
+	if t.buildInfoEntry.buildInfo != nil {
+		mTime = orchestrator.host.GetMTime(buildInfoFileName)
+	}
+	t.buildInfoEntry.mTime = mTime
+	return t.buildInfoEntry.buildInfo, mTime
+}
+
+func (t *buildTask) onBuildInfoEmit(orchestrator *Orchestrator, config *tsoptions.ParsedCommandLine, buildInfo *incremental.BuildInfo, hasChangedDtsFile bool) {
+	t.buildInfoEntryMu.Lock()
+	defer t.buildInfoEntryMu.Unlock()
+	var dtsTime *time.Time
+	mTime := orchestrator.opts.Sys.Now()
+	if hasChangedDtsFile {
+		dtsTime = &mTime
+	} else if t.buildInfoEntry != nil {
+		dtsTime = t.buildInfoEntry.dtsTime
+	}
+	t.buildInfoEntry = &buildInfoEntry{
+		buildInfo: buildInfo,
+		path:      orchestrator.toPath(config.GetBuildInfoFileName()),
+		mTime:     mTime,
+		dtsTime:   dtsTime,
+	}
+}
+
+func (t *buildTask) hasConflictingBuildInfo(orchestrator *Orchestrator, upstream *buildTask) bool {
+	if t.buildInfoEntry != nil && upstream.buildInfoEntry != nil {
+		return t.buildInfoEntry.path == upstream.buildInfoEntry.path
+	}
+	return false
+}
+
+func (t *buildTask) getLatestChangedDtsMTime(orchestrator *Orchestrator) time.Time {
+	t.buildInfoEntryMu.Lock()
+	defer t.buildInfoEntryMu.Unlock()
+	if t.buildInfoEntry.dtsTime != nil {
+		return *t.buildInfoEntry.dtsTime
+	}
+	dtsTime := orchestrator.host.GetMTime(
+		tspath.GetNormalizedAbsolutePath(
+			t.buildInfoEntry.buildInfo.LatestChangedDtsFile,
+			tspath.GetDirectoryPath(string(t.buildInfoEntry.path)),
+		),
+	)
+	t.buildInfoEntry.dtsTime = &dtsTime
+	return dtsTime
 }

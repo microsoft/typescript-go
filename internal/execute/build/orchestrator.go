@@ -80,24 +80,26 @@ func (o *Orchestrator) Order() []string {
 
 func (o *Orchestrator) Upstream(configName string) []string {
 	path := o.toPath(configName)
-	task, ok := o.tasks.Load(path)
-	if !ok {
-		panic("No build task found for " + configName)
-	}
-	return core.Map(task.upStream, func(t *buildTask) string {
-		return t.config
+	task := o.getTask(path)
+	return core.Map(task.upStream, func(t *upstreamTask) string {
+		return t.task.config
 	})
 }
 
 func (o *Orchestrator) Downstream(configName string) []string {
 	path := o.toPath(configName)
-	task, ok := o.tasks.Load(path)
-	if !ok {
-		panic("No build task found for " + configName)
-	}
+	task := o.getTask(path)
 	return core.Map(task.downStream, func(t *buildTask) string {
 		return t.config
 	})
+}
+
+func (o *Orchestrator) getTask(path tspath.Path) *buildTask {
+	task, ok := o.tasks.Load(path)
+	if !ok {
+		panic("No build task found for " + path)
+	}
+	return task
 }
 
 func (o *Orchestrator) createBuildTasks(oldTasks *collections.SyncMap[tspath.Path, *buildTask], configs []string, wg core.WorkGroup) {
@@ -106,6 +108,7 @@ func (o *Orchestrator) createBuildTasks(oldTasks *collections.SyncMap[tspath.Pat
 			path := o.toPath(config)
 			var task *buildTask
 			var program *incremental.Program
+			var buildInfo *buildInfoEntry
 			if oldTasks != nil {
 				if existing, ok := oldTasks.Load(path); ok {
 					if !existing.dirty {
@@ -114,6 +117,7 @@ func (o *Orchestrator) createBuildTasks(oldTasks *collections.SyncMap[tspath.Pat
 						task.upStream = nil
 					} else {
 						program = existing.program
+						buildInfo = existing.buildInfoEntry
 					}
 				}
 			}
@@ -121,6 +125,7 @@ func (o *Orchestrator) createBuildTasks(oldTasks *collections.SyncMap[tspath.Pat
 				task = &buildTask{config: config, isInitialCycle: oldTasks == nil}
 				task.pending.Store(true)
 				task.program = program
+				task.buildInfoEntry = buildInfo
 			}
 			if _, loaded := o.tasks.LoadOrStore(path, task); loaded {
 				return
@@ -142,10 +147,7 @@ func (o *Orchestrator) setupBuildTask(
 	circularityStack []string,
 ) *buildTask {
 	path := o.toPath(configName)
-	task, ok := o.tasks.Load(path)
-	if !ok {
-		panic("No build task found for " + configName)
-	}
+	task := o.getTask(path)
 	if !completed.Has(path) {
 		if analyzing.Has(path) {
 			if !inCircularContext {
@@ -162,7 +164,7 @@ func (o *Orchestrator) setupBuildTask(
 			for index, subReference := range task.resolved.ResolvedProjectReferencePaths() {
 				upstream := o.setupBuildTask(subReference, task, inCircularContext || task.resolved.ProjectReferences()[index].Circular, completed, analyzing, circularityStack)
 				if upstream != nil {
-					task.upStream = append(task.upStream, upstream)
+					task.upStream = append(task.upStream, &upstreamTask{task: upstream, refIndex: index})
 				}
 			}
 		}
@@ -171,11 +173,7 @@ func (o *Orchestrator) setupBuildTask(
 		task.reportDone = make(chan struct{})
 		prev := core.LastOrNil(o.order)
 		if prev != "" {
-			if prevTask, ok := o.tasks.Load(o.toPath(prev)); ok {
-				task.prevReporter = prevTask
-			} else {
-				panic("No previous task found for " + prev)
-			}
+			task.prevReporter = o.getTask(o.toPath(prev))
 		}
 		task.done = make(chan struct{})
 		o.order = append(o.order, configName)
@@ -246,9 +244,7 @@ func (o *Orchestrator) updateWatchAndResetCaches() {
 
 	// Clean out all the caches
 
-	// buildInfos            collections.SyncMap[tspath.Path, *buildInfoAndConfig]
 	// mTimes                collections.SyncMap[tspath.Path, time.Time]
-	// latestChangedDtsFiles collections.SyncMap[tspath.Path, time.Time]
 
 	// !!! sheetal for now clear out all caches and then later keep with ref counting
 	cachesVfs := o.host.host.FS().(*cachedvfs.FS)
@@ -256,9 +252,7 @@ func (o *Orchestrator) updateWatchAndResetCaches() {
 	o.host.extendedConfigCache = tsc.ExtendedConfigCache{}
 	o.host.sourceFiles.Reset()
 	o.host.configTimes = collections.SyncMap[tspath.Path, time.Duration]{}
-	o.host.buildInfos = collections.SyncMap[tspath.Path, *buildInfoAndConfig]{}
 	o.host.mTimes = collections.SyncMap[tspath.Path, time.Time]{}
-	o.host.latestChangedDtsFiles = collections.SyncMap[tspath.Path, time.Time]{}
 }
 
 func (o *Orchestrator) DoCycle() {
