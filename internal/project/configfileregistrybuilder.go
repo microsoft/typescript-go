@@ -495,16 +495,17 @@ func (c *configFileRegistryBuilder) handleConfigChange(entry *dirty.SyncMapEntry
 
 func (c *configFileRegistryBuilder) computeConfigFileName(fileName string, skipSearchInDirectoryOfFile bool, logger *logging.LogTree) string {
 	searchPath := tspath.GetDirectoryPath(fileName)
+	skip := skipSearchInDirectoryOfFile
+	var result string
 	// If custom config file is provided, search for it in directory of file and its ancestors first.
 	// If a custom config file is provided and not found, default to tsconfig.json/jsconfig.json.
-	var result string
 	if c.sessionOptions.CustomConfigFileName != "" {
 		result, _ = tspath.ForEachAncestorDirectory(searchPath, func(directory string) (result string, stop bool) {
 			customConfigFilePath := tspath.CombinePaths(directory, c.sessionOptions.CustomConfigFileName)
-			if !skipSearchInDirectoryOfFile && c.FS().FileExists(customConfigFilePath) {
+			if !skip && c.FS().FileExists(customConfigFilePath) {
 				return customConfigFilePath, true
 			}
-			skipSearchInDirectoryOfFile = false
+			skip = false
 			return "", false
 		})
 	}
@@ -514,19 +515,22 @@ func (c *configFileRegistryBuilder) computeConfigFileName(fileName string, skipS
 		return result
 	}
 
+	// Reset skip to original value.
+	skip = skipSearchInDirectoryOfFile
+
 	result, _ = tspath.ForEachAncestorDirectory(searchPath, func(directory string) (result string, stop bool) {
 		tsconfigPath := tspath.CombinePaths(directory, "tsconfig.json")
-		if !skipSearchInDirectoryOfFile && c.FS().FileExists(tsconfigPath) {
+		if !skip && c.FS().FileExists(tsconfigPath) {
 			return tsconfigPath, true
 		}
 		jsconfigPath := tspath.CombinePaths(directory, "jsconfig.json")
-		if !skipSearchInDirectoryOfFile && c.FS().FileExists(jsconfigPath) {
+		if !skip && c.FS().FileExists(jsconfigPath) {
 			return jsconfigPath, true
 		}
 		if strings.HasSuffix(directory, "/node_modules") {
 			return "", true
 		}
-		skipSearchInDirectoryOfFile = false
+		skip = false
 		return "", false
 	})
 	logger.Logf("computeConfigFileName:: File: %s:: Result: %s", fileName, result)
