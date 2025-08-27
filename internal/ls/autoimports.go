@@ -39,6 +39,7 @@ type ExportInfoMapKey struct {
 	SymbolName        string
 	SymbolId          ast.SymbolId
 	AmbientModuleName string
+	ModuleFile        tspath.Path
 }
 
 func newExportInfoMapKey(importedName string, symbol *ast.Symbol, ambientModuleNameKey string, ch *checker.Checker) ExportInfoMapKey {
@@ -102,6 +103,8 @@ func (e *exportInfoMap) add(
 	exportKind ExportKind,
 	isFromPackageJson bool,
 	ch *checker.Checker,
+	symbolNameMatch func(string) bool,
+	flagMatch func(ast.SymbolFlags) bool,
 ) {
 	if importingFile != e.usableByFileName {
 		e.clear()
@@ -151,6 +154,10 @@ func (e *exportInfoMap) add(
 	}
 
 	symbolName := names[0]
+	if symbolNameMatch != nil && !symbolNameMatch(symbolName) {
+		return
+	}
+
 	capitalizedSymbolName := ""
 	if len(names) > 1 {
 		capitalizedSymbolName = names[1]
@@ -159,6 +166,10 @@ func (e *exportInfoMap) add(
 	moduleName := stringutil.StripQuotes(moduleSymbol.Name)
 	id := e.exportInfoId + 1
 	target := ch.SkipAlias(symbol)
+
+	if flagMatch != nil && !flagMatch(target.Flags) {
+		return
+	}
 
 	var storedSymbol, storedModuleSymbol *ast.Symbol
 
@@ -370,9 +381,8 @@ func (l *LanguageService) getImportCompletionAction(
 	preferences *UserPreferences,
 ) (string, codeAction) {
 	var exportInfos []*SymbolExportInfo
-	// The new way: `exportMapKey` should be in the `data` of each auto-import completion entry and
-	// sent back when asking for details.
-	exportInfos = l.getExportInfoMap(ctx, ch, sourceFile, preferences).get(sourceFile.Path(), ch, exportMapKey)
+	// `exportMapKey` should be in the `itemData` of each auto-import completion entry and sent in resolving completion entry requests
+	exportInfos = l.getExportInfos(ctx, ch, sourceFile, preferences, exportMapKey)
 	if len(exportInfos) == 0 {
 		panic("Some exportInfo should match the specified exportMapKey")
 	}
@@ -393,142 +403,6 @@ func NewExportInfoMap(globalsTypingCacheLocation string) *exportInfoMap {
 		exportInfo:                 collections.MultiMap[ExportInfoMapKey, CachedSymbolExportInfo]{},
 		globalTypingsCacheLocation: globalsTypingCacheLocation,
 	}
-}
-
-func (l *LanguageService) getExportInfoMap(
-	ctx context.Context,
-	ch *checker.Checker,
-	importingFile *ast.SourceFile,
-	preferences *UserPreferences,
-) *exportInfoMap {
-	// Pulling the AutoImportProvider project will trigger its updateGraph if pending,
-	// which will invalidate the export map cache if things change, so pull it before
-	// checking the cache.
-	// l.GetPackageJsonAutoImportProvider?.();
-	// cache := host.getCachedExportInfoMap()
-	// || createCacheableExportInfoMap({
-	//     getCurrentProgram: () => program,
-	//     getPackageJsonAutoImportProvider: () => host.getPackageJsonAutoImportProvider?.(),
-	//     getGlobalTypingsCacheLocation: () => host.getGlobalTypingsCacheLocation?.(),
-	// });
-
-	// if (cache.isUsableByFile(importingFile.path)) {
-	//     host.log?.("getExportInfoMap: cache hit");
-	//     return cache;
-	// }
-
-	// host.log?.("getExportInfoMap: expInfoMap miss or empty; calculating new results");
-	expInfoMap := NewExportInfoMap(l.GetProgram().GetGlobalTypingsCacheLocation())
-	moduleCount := 0
-	forEachExternalModuleToImportFrom(
-		ch,
-		l.GetProgram(),
-		preferences,
-		// /*useAutoImportProvider*/ true,
-		func(moduleSymbol *ast.Symbol, moduleFile *ast.SourceFile, ch *checker.Checker, isFromPackageJson bool) {
-			if moduleCount = moduleCount + 1; moduleCount%100 == 0 && ctx.Err() != nil {
-				return
-			}
-			seenExports := collections.Set[string]{}
-			defaultInfo := getDefaultLikeExportInfo(moduleSymbol, ch)
-			// Note: I think we shouldn't actually see resolved module symbols here, but weird merges
-			// can cause it to happen: see 'completionsImport_mergedReExport.ts'
-			if defaultInfo != nil && isImportableSymbol(defaultInfo.exportingModuleSymbol, ch) {
-				expInfoMap.add(
-					importingFile.Path(),
-					defaultInfo.exportingModuleSymbol,
-					core.IfElse(defaultInfo.exportKind == ExportKindDefault, ast.InternalSymbolNameDefault, ast.InternalSymbolNameExportEquals),
-					moduleSymbol,
-					moduleFile,
-					defaultInfo.exportKind,
-					isFromPackageJson,
-					ch,
-				)
-			}
-			var exportingModuleSymbol *ast.Symbol
-			if defaultInfo != nil {
-				exportingModuleSymbol = defaultInfo.exportingModuleSymbol
-			}
-			ch.ForEachExportAndPropertyOfModule(moduleSymbol, func(exported *ast.Symbol, key string) {
-				if exported != exportingModuleSymbol && isImportableSymbol(exported, ch) && seenExports.AddIfAbsent(key) {
-					expInfoMap.add(
-						importingFile.Path(),
-						exported,
-						key,
-						moduleSymbol,
-						moduleFile,
-						ExportKindNamed,
-						isFromPackageJson,
-						ch,
-					)
-				}
-			})
-		})
-
-	// catch (err) {
-	//     // Ensure cache is reset if operation is cancelled
-	//     cache.clear();
-	//     throw err;
-	// }
-
-	// host.log?.(`getExportInfoMap: done in ${timestamp() - start} ms`);
-	return expInfoMap
-}
-
-// func (l *LanguageService) getAllExportInfoForSymbol(ctx context.Context, ch *checker.Checker, importingFile *ast.SourceFile, symbol *ast.Symbol, symbolName string, moduleSymbol *ast.Symbol, preferCapitalized bool, preferences *UserPreferences) []*SymbolExportInfo {
-// 	// !!! isFileExcluded := len(preferences.AutoImportFileExcludePatterns) != 0 && getIsFileExcluded(host, preferences);
-// 	// mergedModuleSymbol := ch.GetMergedSymbol(moduleSymbol)
-// 	// moduleSourceFile := isFileExcluded && len(mergedModuleSymbol.Declarations) > 0 && ast.GetDeclarationOfKind(mergedModuleSymbol, SyntaxKind.SourceFile)
-// 	// moduleSymbolExcluded := moduleSourceFile && isFileExcluded(moduleSourceFile.AsSourceFile());
-// 	moduleSymbolExcluded := false
-// 	return l.getExportInfoMap(ctx, ch, importingFile, preferences).search(
-// 		ch,
-// 		importingFile.Path(),
-// 		preferCapitalized,
-// 		func(name string, _ ast.SymbolFlags) bool { return name == symbolName },
-// 		func(info []*SymbolExportInfo, symbolName string, isFromAmbientModule bool, key ExportInfoMapKey) []*SymbolExportInfo {
-// 			if ch.GetMergedSymbol(ch.SkipAlias(info[0].symbol)) == symbol && (moduleSymbolExcluded || core.Some(info, func(i *SymbolExportInfo) bool {
-// 				return ch.GetMergedSymbol(i.moduleSymbol) == moduleSymbol || i.symbol.Parent == moduleSymbol
-// 			})) {
-// 				return info
-// 			}
-// 			return nil
-// 		},
-// 	)
-// }
-
-func (l *LanguageService) getSingleExportInfoForSymbol(ch *checker.Checker, symbol *ast.Symbol, symbolName string, moduleSymbol *ast.Symbol) *SymbolExportInfo {
-	getInfoWithChecker := func(program *compiler.Program, isFromPackageJson bool) *SymbolExportInfo {
-		defaultInfo := getDefaultLikeExportInfo(moduleSymbol, ch)
-		if defaultInfo != nil && ch.SkipAlias(defaultInfo.exportingModuleSymbol) == symbol {
-			return &SymbolExportInfo{
-				symbol:            defaultInfo.exportingModuleSymbol,
-				moduleSymbol:      moduleSymbol,
-				moduleFileName:    "",
-				exportKind:        defaultInfo.exportKind,
-				targetFlags:       ch.SkipAlias(symbol).Flags,
-				isFromPackageJson: isFromPackageJson,
-			}
-		}
-		if named := ch.TryGetMemberInModuleExportsAndProperties(symbolName, moduleSymbol); named != nil && ch.SkipAlias(named) == symbol {
-			return &SymbolExportInfo{
-				symbol:            named,
-				moduleSymbol:      moduleSymbol,
-				moduleFileName:    "",
-				exportKind:        ExportKindNamed,
-				targetFlags:       ch.SkipAlias(symbol).Flags,
-				isFromPackageJson: isFromPackageJson,
-			}
-		}
-		return nil
-	}
-
-	if mainProgramInfo := getInfoWithChecker(l.GetProgram() /*isFromPackageJson*/, false); mainProgramInfo != nil {
-		return mainProgramInfo
-	}
-	// !!! autoImportProvider := host.getPackageJsonAutoImportProvider?.()?
-	// return debug.CheckDefined(autoImportProvider && getInfoWithChecker(autoImportProvider, /*isFromPackageJson*/ true), `Could not find symbol in specified module for code actions`);
-	return nil
 }
 
 func (l *LanguageService) isImportable(
@@ -1354,12 +1228,12 @@ func getUmdImportKind(importingFile *ast.SourceFile /* | FutureSourceFile */, pr
 	// When a synthetic `default` is unavailable, use `import..require` if the module kind supports it.
 	moduleKind := program.Options().GetEmitModuleKind()
 	switch moduleKind {
-	case core.ModuleKindAMD, core.ModuleKindCommonJS, core.ModuleKindUMD:
+	case core.ModuleKindCommonJS:
 		if tspath.HasJSFileExtension(importingFile.FileName()) && (importingFile.ExternalModuleIndicator != nil || forceImportKeyword) {
 			return ImportKindNamespace
 		}
 		return ImportKindCommonJS
-	case core.ModuleKindSystem, core.ModuleKindES2015, core.ModuleKindES2020, core.ModuleKindES2022, core.ModuleKindESNext, core.ModuleKindNone, core.ModuleKindPreserve:
+	case core.ModuleKindES2015, core.ModuleKindES2020, core.ModuleKindES2022, core.ModuleKindESNext, core.ModuleKindNone, core.ModuleKindPreserve:
 		// Fall back to the `import * as ns` style import.
 		return ImportKindNamespace
 	case core.ModuleKindNode16, core.ModuleKindNode18, core.ModuleKindNodeNext:
@@ -1497,7 +1371,7 @@ func forEachExternalModule(
 
 	for _, ambient := range ch.GetAmbientModules() {
 		if !strings.Contains(ambient.Name, "*") /*  && !(excludePatterns && ambient.Declarations.every(func (d){ return isExcluded(d.getSourceFile())})) */ {
-			cb(ambient /*sourceFile*/, nil)
+			cb(ambient, nil /*sourceFile*/)
 		}
 	}
 	for _, sourceFile := range allSourceFiles {
@@ -1587,6 +1461,7 @@ func (l *LanguageService) codeActionForFixWorker(
 		}
 		return diagnostics.FormatMessage(diagnostics.Add_import_from_0, fix.moduleSpecifier)
 	case ImportFixKindPromoteTypeOnly:
+		// !!! type only
 		// promotedDeclaration := promoteFromTypeOnly(changes, fix.typeOnlyAliasDeclaration, program, sourceFile, preferences);
 		// if promotedDeclaration.Kind == ast.KindImportSpecifier {
 		// return diagnostics.FormatMessage(diagnostics.Remove_type_from_import_of_0_from_1, symbolName, getModuleSpecifierText(promotedDeclaration.parent.parent))
