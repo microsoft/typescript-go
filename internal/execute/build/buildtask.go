@@ -241,6 +241,9 @@ func (t *buildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 		t.reportDiagnostic,
 		tsc.QuietDiagnosticsReporter,
 		&t.builder,
+		func(fileName, text string, writeByteOrderMark bool, data *compiler.WriteFileData) error {
+			return t.writeFile(orchestrator, fileName, text, writeByteOrderMark, data)
+		},
 		&compileTimes,
 		orchestrator.opts.Testing,
 	)
@@ -783,7 +786,7 @@ func (t *buildTask) loadOrStoreBuildInfo(orchestrator *Orchestrator, configPath 
 	return t.buildInfoEntry.buildInfo, mTime
 }
 
-func (t *buildTask) onBuildInfoEmit(orchestrator *Orchestrator, config *tsoptions.ParsedCommandLine, buildInfo *incremental.BuildInfo, hasChangedDtsFile bool) {
+func (t *buildTask) onBuildInfoEmit(orchestrator *Orchestrator, buildInfoFileName string, buildInfo *incremental.BuildInfo, hasChangedDtsFile bool) {
 	t.buildInfoEntryMu.Lock()
 	defer t.buildInfoEntryMu.Unlock()
 	var dtsTime *time.Time
@@ -795,7 +798,7 @@ func (t *buildTask) onBuildInfoEmit(orchestrator *Orchestrator, config *tsoption
 	}
 	t.buildInfoEntry = &buildInfoEntry{
 		buildInfo: buildInfo,
-		path:      orchestrator.toPath(config.GetBuildInfoFileName()),
+		path:      orchestrator.toPath(buildInfoFileName),
 		mTime:     mTime,
 		dtsTime:   dtsTime,
 	}
@@ -822,4 +825,16 @@ func (t *buildTask) getLatestChangedDtsMTime(orchestrator *Orchestrator) time.Ti
 	)
 	t.buildInfoEntry.dtsTime = &dtsTime
 	return dtsTime
+}
+
+func (t *buildTask) writeFile(orchestrator *Orchestrator, fileName string, text string, writeByteOrderMark bool, data *compiler.WriteFileData) error {
+	err := orchestrator.host.WriteFile(fileName, text, writeByteOrderMark)
+	if err == nil {
+		if data != nil && data.BuildInfo != nil {
+			t.onBuildInfoEmit(orchestrator, fileName, data.BuildInfo.(*incremental.BuildInfo), t.program.HasChangedDtsFile())
+		} else if !t.resolved.CompilerOptions().IsIncremental() {
+			// Store time stamps
+		}
+	}
+	return err
 }
