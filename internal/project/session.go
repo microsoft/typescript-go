@@ -11,6 +11,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -533,10 +534,12 @@ func (s *Session) flushChangesLocked(ctx context.Context) (FileChangeSummary, ma
 
 // logProjectChanges logs information about projects that have changed between snapshots
 func (s *Session) logProjectChanges(oldSnapshot *Snapshot, newSnapshot *Snapshot) {
+	var loggedProjectChanges bool
 	logProject := func(project *Project) {
 		var builder strings.Builder
 		project.print(s.logger.IsVerbose() /*writeFileNames*/, s.logger.IsVerbose() /*writeFileExplanation*/, &builder)
 		s.logger.Log(builder.String())
+		loggedProjectChanges = true
 	}
 	collections.DiffOrderedMaps(
 		oldSnapshot.ProjectCollection.ProjectsByPath(),
@@ -556,6 +559,40 @@ func (s *Session) logProjectChanges(oldSnapshot *Snapshot, newSnapshot *Snapshot
 			}
 		},
 	)
+
+	if loggedProjectChanges || s.logger.IsVerbose() {
+		s.logCacheStats(newSnapshot)
+	}
+}
+
+func (s *Session) logCacheStats(snapshot *Snapshot) {
+	var parseCacheSize int
+	var programCount int
+	var extendedConfigCount int
+	if s.logger.IsVerbose() {
+		s.parseCache.entries.Range(func(_ parseCacheKey, _ *parseCacheEntry) bool {
+			parseCacheSize++
+			return true
+		})
+		s.programCounter.refs.Range(func(_ *compiler.Program, _ *atomic.Int32) bool {
+			programCount++
+			return true
+		})
+		s.extendedConfigCache.entries.Range(func(_ tspath.Path, _ *extendedConfigCacheEntry) bool {
+			extendedConfigCount++
+			return true
+		})
+	}
+	s.logger.Write("\n======== Cache Statistics ========")
+	s.logger.Logf("Open file count:   %6d", len(snapshot.fs.overlays))
+	s.logger.Logf("Cached disk files: %6d", len(snapshot.fs.diskFiles))
+	s.logger.Logf("Project count:     %6d", len(snapshot.ProjectCollection.Projects()))
+	s.logger.Logf("Config count:      %6d", len(snapshot.ConfigFileRegistry.configs))
+	if s.logger.IsVerbose() {
+		s.logger.Logf("Parse cache size:           %6d", parseCacheSize)
+		s.logger.Logf("Program count:              %6d", programCount)
+		s.logger.Logf("Extended config cache size: %6d", extendedConfigCount)
+	}
 }
 
 func (s *Session) NpmInstall(cwd string, npmInstallArgs []string) ([]byte, error) {
