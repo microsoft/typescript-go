@@ -1005,10 +1005,6 @@ func (p *Program) getBindDiagnosticsForFile(ctx context.Context, sourceFile *ast
 }
 
 func FilterNoEmitSemanticDiagnostics(diagnostics []*ast.Diagnostic, options *core.CompilerOptions) []*ast.Diagnostic {
-	if diagnostics == nil {
-		return diagnostics
-	}
-
 	if !options.NoEmit.IsTrue() {
 		return diagnostics
 	}
