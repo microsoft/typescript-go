@@ -180,7 +180,7 @@ func (h *emitFilesHandler) getEmitOptions(options compiler.EmitOptions) compiler
 			} else {
 				err = h.program.program.Host().FS().WriteFile(fileName, text, writeByteOrderMark)
 			}
-			if err != nil && differsOnlyInMap {
+			if err == nil && differsOnlyInMap {
 				// Revert the time to original one
 				err = h.program.host.SetMTime(fileName, aTime)
 			}
