@@ -3123,6 +3123,10 @@ func (node *ThrowStatement) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression)
 }
 
+func IsThrowStatement(node *Node) bool {
+	return node.Kind == KindThrowStatement
+}
+
 // TryStatement
 
 type TryStatement struct {
@@ -6083,6 +6087,10 @@ func (node *YieldExpression) Clone(f NodeFactoryCoercible) *Node {
 
 func (node *YieldExpression) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) | SubtreeContainsForAwaitOrAsyncGenerator
+}
+
+func IsYieldExpression(node *Node) bool {
+	return node.Kind == KindYieldExpression
 }
 
 // ArrowFunction
