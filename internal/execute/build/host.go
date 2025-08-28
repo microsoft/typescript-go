@@ -24,67 +24,17 @@ type host struct {
 
 	// caches that stay as long as they are needed
 	resolvedReferences parseCache[tspath.Path, *tsoptions.ParsedCommandLine]
-	mTimes             collections.SyncMap[tspath.Path, time.Time]
+	mTimes             *collections.SyncMap[tspath.Path, time.Time]
 }
 
 var (
-	_ vfs.FS                      = (*host)(nil)
 	_ compiler.CompilerHost       = (*host)(nil)
 	_ incremental.BuildInfoReader = (*host)(nil)
 	_ incremental.Host            = (*host)(nil)
 )
 
 func (h *host) FS() vfs.FS {
-	return h
-}
-
-func (h *host) UseCaseSensitiveFileNames() bool {
-	return h.host.FS().UseCaseSensitiveFileNames()
-}
-
-func (h *host) FileExists(path string) bool {
-	return h.host.FS().FileExists(path)
-}
-
-func (h *host) ReadFile(path string) (string, bool) {
-	return h.host.FS().ReadFile(path)
-}
-
-func (h *host) WriteFile(path string, data string, writeByteOrderMark bool) error {
-	err := h.host.FS().WriteFile(path, data, writeByteOrderMark)
-	if err == nil {
-		filePath := h.orchestrator.toPath(path)
-		h.mTimes.Delete(filePath)
-	}
-	return err
-}
-
-func (h *host) Remove(path string) error {
-	return h.host.FS().Remove(path)
-}
-
-func (h *host) Chtimes(path string, aTime time.Time, mTime time.Time) error {
-	return h.host.FS().Chtimes(path, aTime, mTime)
-}
-
-func (h *host) DirectoryExists(path string) bool {
-	return h.host.FS().DirectoryExists(path)
-}
-
-func (h *host) GetAccessibleEntries(path string) vfs.Entries {
-	return h.host.FS().GetAccessibleEntries(path)
-}
-
-func (h *host) Stat(path string) vfs.FileInfo {
-	return h.host.FS().Stat(path)
-}
-
-func (h *host) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
-	return h.host.FS().WalkDir(root, walkFn)
-}
-
-func (h *host) Realpath(path string) string {
-	return h.host.FS().Realpath(path)
+	return h.host.FS()
 }
 
 func (h *host) DefaultLibraryPath() string {
@@ -127,20 +77,40 @@ func (h *host) ReadBuildInfo(config *tsoptions.ParsedCommandLine) *incremental.B
 }
 
 func (h *host) GetMTime(file string) time.Time {
+	return h.loadOrStoreMTime(file, nil, true)
+}
+
+func (h *host) SetMTime(file string, mTime time.Time) error {
+	return h.FS().Chtimes(file, time.Time{}, mTime)
+}
+
+func (h *host) loadOrStoreMTime(file string, oldCache *collections.SyncMap[tspath.Path, time.Time], store bool) time.Time {
 	path := h.orchestrator.toPath(file)
 	if existing, loaded := h.mTimes.Load(path); loaded {
 		return existing
 	}
-	mTime := incremental.GetMTime(h.host, file)
-	mTime, _ = h.mTimes.LoadOrStore(path, mTime)
+	var found bool
+	var mTime time.Time
+	if oldCache != nil {
+		mTime, found = oldCache.Load(path)
+	}
+	if !found {
+		mTime = incremental.GetMTime(h.host, file)
+	}
+	if store {
+		mTime, _ = h.mTimes.LoadOrStore(path, mTime)
+	}
 	return mTime
 }
 
-func (h *host) SetMTime(file string, mTime time.Time) error {
+func (h *host) storeMTime(file string, mTime time.Time) {
 	path := h.orchestrator.toPath(file)
-	err := incremental.SetMTime(h.host, file, mTime)
-	if err == nil {
+	h.mTimes.Store(path, mTime)
+}
+
+func (h *host) storeMTimeFromOldCache(file string, oldCache *collections.SyncMap[tspath.Path, time.Time]) {
+	path := h.orchestrator.toPath(file)
+	if mTime, found := oldCache.Load(path); found {
 		h.mTimes.Store(path, mTime)
 	}
-	return err
 }

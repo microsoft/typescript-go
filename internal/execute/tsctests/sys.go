@@ -223,6 +223,7 @@ func (s *testSys) OnEmittedFiles(result *compiler.EmitResult) {
 		for _, file := range result.EmittedFiles {
 			// Ensure that the timestamp for emitted files is in the order
 			now := s.Now()
+			// !!! sheetal TODO this on buildHost so that watch can cache these times
 			if err := s.fsFromFileMap().Chtimes(file, time.Time{}, now); err != nil {
 				panic("Failed to change time for emitted file: " + file + ": " + err.Error())
 			}

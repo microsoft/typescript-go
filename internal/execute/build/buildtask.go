@@ -191,7 +191,7 @@ func (t *buildTask) updateDownstream(orchestrator *Orchestrator, path tspath.Pat
 				upstreamErrors := downStream.status.upstreamErrors()
 				refConfig := core.ResolveConfigFileNameOfProjectReference(upstreamErrors.ref)
 				if orchestrator.toPath(refConfig) == path {
-					downStream.resetStatus(updateKindUpdate)
+					downStream.resetStatus()
 				}
 			}
 		}
@@ -667,6 +667,8 @@ func (t *buildTask) updateTimeStamps(orchestrator *Orchestrator, emittedFiles []
 				t.buildInfoEntry.mTime = now
 			}
 			t.buildInfoEntryMu.Unlock()
+		} else if t.storeOutputTimeStamp(orchestrator) {
+			orchestrator.host.storeMTime(file, now)
 		}
 	}
 
@@ -711,60 +713,71 @@ func (t *buildTask) cleanProjectOutput(orchestrator *Orchestrator, outputFile st
 	}
 }
 
-func (t *buildTask) updateWatch(orchestrator *Orchestrator) {
-	t.configTime = orchestrator.host.GetMTime(t.config)
+func (t *buildTask) updateWatch(orchestrator *Orchestrator, oldCache *collections.SyncMap[tspath.Path, time.Time]) {
+	t.configTime = orchestrator.host.loadOrStoreMTime(t.config, oldCache, false)
 	if t.resolved != nil {
 		t.extendedConfigTimes = core.Map(t.resolved.ExtendedSourceFiles(), func(p string) time.Time {
-			return orchestrator.host.GetMTime(p)
+			return orchestrator.host.loadOrStoreMTime(p, oldCache, false)
 		})
 		t.inputFiles = core.Map(t.resolved.FileNames(), func(p string) time.Time {
-			return orchestrator.host.GetMTime(p)
+			return orchestrator.host.loadOrStoreMTime(p, oldCache, false)
 		})
+		if !t.resolved.CompilerOptions().IsIncremental() {
+			for outputFile := range t.resolved.GetOutputFileNames() {
+				orchestrator.host.storeMTimeFromOldCache(outputFile, oldCache)
+			}
+		}
 	}
 }
 
-func (t *buildTask) resetStatus(updateKind updateKind) updateKind {
+func (t *buildTask) resetStatus() {
 	t.status = nil
 	t.pending.Store(true)
 	t.errors = nil
-	return updateKind
 }
 
-func (t *buildTask) resetConfig(orchestrator *Orchestrator, path tspath.Path) updateKind {
+func (t *buildTask) resetConfig(orchestrator *Orchestrator, path tspath.Path) {
 	t.dirty = true
 	orchestrator.host.resolvedReferences.Delete(path)
-	return t.resetStatus(updateKindConfig)
 }
 
 func (t *buildTask) hasUpdate(orchestrator *Orchestrator, path tspath.Path) updateKind {
+	var needsConfigUpdate bool
+	var needsUpdate bool
 	if configTime := orchestrator.host.GetMTime(t.config); configTime != t.configTime {
-		return t.resetConfig(orchestrator, path)
+		t.resetConfig(orchestrator, path)
+		needsConfigUpdate = true
 	}
 	if t.resolved != nil {
 		for index, file := range t.resolved.ExtendedSourceFiles() {
 			if orchestrator.host.GetMTime(file) != t.extendedConfigTimes[index] {
-				return t.resetConfig(orchestrator, path)
+				t.resetConfig(orchestrator, path)
+				needsConfigUpdate = true
 			}
-		}
-		configStart := orchestrator.opts.Sys.Now()
-		newConfig := t.resolved.ReloadFileNamesOfParsedCommandLine(orchestrator.host.FS())
-		configTime := orchestrator.opts.Sys.Now().Sub(configStart)
-		// Make new channels if needed later
-		t.reportDone = make(chan struct{})
-		t.done = make(chan struct{})
-		if !slices.Equal(t.resolved.FileNames(), newConfig.FileNames()) {
-			orchestrator.host.resolvedReferences.Store(path, newConfig)
-			orchestrator.host.configTimes.Store(path, configTime)
-			t.resolved = newConfig
-			return t.resetStatus(updateKindUpdate)
 		}
 		for index, file := range t.resolved.FileNames() {
 			if orchestrator.host.GetMTime(file) != t.inputFiles[index] {
-				return t.resetStatus(updateKindUpdate)
+				t.resetStatus()
+				needsUpdate = true
+			}
+		}
+		if !needsConfigUpdate {
+			configStart := orchestrator.opts.Sys.Now()
+			newConfig := t.resolved.ReloadFileNamesOfParsedCommandLine(orchestrator.host.FS())
+			configTime := orchestrator.opts.Sys.Now().Sub(configStart)
+			// Make new channels if needed later
+			t.reportDone = make(chan struct{})
+			t.done = make(chan struct{})
+			if !slices.Equal(t.resolved.FileNames(), newConfig.FileNames()) {
+				orchestrator.host.resolvedReferences.Store(path, newConfig)
+				orchestrator.host.configTimes.Store(path, configTime)
+				t.resolved = newConfig
+				t.resetStatus()
+				needsUpdate = true
 			}
 		}
 	}
-	return updateKindNone
+	return core.IfElse(needsConfigUpdate, updateKindConfig, core.IfElse(needsUpdate, updateKindUpdate, updateKindNone))
 }
 
 func (t *buildTask) loadOrStoreBuildInfo(orchestrator *Orchestrator, configPath tspath.Path, buildInfoFileName string) (*incremental.BuildInfo, time.Time) {
@@ -827,13 +840,18 @@ func (t *buildTask) getLatestChangedDtsMTime(orchestrator *Orchestrator) time.Ti
 	return dtsTime
 }
 
+func (t *buildTask) storeOutputTimeStamp(orchestrator *Orchestrator) bool {
+	return orchestrator.opts.Command.CompilerOptions.Watch.IsTrue() && !t.resolved.CompilerOptions().IsIncremental()
+}
+
 func (t *buildTask) writeFile(orchestrator *Orchestrator, fileName string, text string, writeByteOrderMark bool, data *compiler.WriteFileData) error {
-	err := orchestrator.host.WriteFile(fileName, text, writeByteOrderMark)
+	err := orchestrator.host.FS().WriteFile(fileName, text, writeByteOrderMark)
 	if err == nil {
 		if data != nil && data.BuildInfo != nil {
 			t.onBuildInfoEmit(orchestrator, fileName, data.BuildInfo.(*incremental.BuildInfo), t.program.HasChangedDtsFile())
-		} else if !t.resolved.CompilerOptions().IsIncremental() {
+		} else if t.storeOutputTimeStamp(orchestrator) {
 			// Store time stamps
+			orchestrator.host.storeMTime(fileName, orchestrator.opts.Sys.Now())
 		}
 	}
 	return err

@@ -22,7 +22,7 @@ func (b *host) GetMTime(fileName string) time.Time {
 }
 
 func (b *host) SetMTime(fileName string, mTime time.Time) error {
-	return SetMTime(b.host, fileName, mTime)
+	return b.host.FS().Chtimes(fileName, time.Time{}, mTime)
 }
 
 func CreateHost(compilerHost compiler.CompilerHost) Host {
@@ -36,8 +36,4 @@ func GetMTime(host compiler.CompilerHost, fileName string) time.Time {
 		mTime = stat.ModTime()
 	}
 	return mTime
-}
-
-func SetMTime(host compiler.CompilerHost, fileName string, mTime time.Time) error {
-	return host.FS().Chtimes(fileName, time.Time{}, mTime)
 }
