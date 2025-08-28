@@ -909,7 +909,7 @@ func (c *EmitContext) VisitIterationBody(body *ast.Statement, visitor *ast.NodeV
 	}
 
 	c.StartLexicalEnvironment()
-	updated := visitor.VisitEmbeddedStatement(body)
+	updated := c.VisitEmbeddedStatement(body, visitor)
 	if updated == nil {
 		panic("Expected visitor to return a statement.")
 	}
