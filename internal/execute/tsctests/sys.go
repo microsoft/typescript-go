@@ -218,14 +218,28 @@ func (s *testSys) GetEnvironmentVariable(name string) string {
 	return s.env[name]
 }
 
-func (s *testSys) OnEmittedFiles(result *compiler.EmitResult) {
+func (s *testSys) OnEmittedFiles(result *compiler.EmitResult, mTimesCache *collections.SyncMap[tspath.Path, time.Time]) {
 	if result != nil {
 		for _, file := range result.EmittedFiles {
+			modTime := s.mapFs().GetModTime(file)
+			if s.serializedDiff != nil {
+				if diff, ok := s.serializedDiff.snap[file]; ok && diff.mTime.Equal(modTime) {
+					// Even though written, timestamp was reverted
+					continue
+				}
+			}
+
 			// Ensure that the timestamp for emitted files is in the order
 			now := s.Now()
-			// !!! sheetal TODO this on buildHost so that watch can cache these times
 			if err := s.fsFromFileMap().Chtimes(file, time.Time{}, now); err != nil {
 				panic("Failed to change time for emitted file: " + file + ": " + err.Error())
+			}
+			// Update the mTime cache in --b mode to store the updated timestamp so tests will behave deteministically when finding newest output
+			if mTimesCache != nil {
+				path := tspath.ToPath(file, s.GetCurrentDirectory(), s.FS().UseCaseSensitiveFileNames())
+				if _, found := mTimesCache.Load(path); found {
+					mTimesCache.Store(path, now)
+				}
 			}
 		}
 	}
@@ -307,9 +321,6 @@ func (s *testSys) OnProgram(program *incremental.Program) {
 func (s *testSys) baselinePrograms(baseline *strings.Builder) {
 	baseline.WriteString(s.programBaselines.String())
 	s.programBaselines.Reset()
-}
-
-func (s *testSys) baselineProgram(program *incremental.Program) {
 }
 
 func (s *testSys) serializeState(baseline *strings.Builder) {

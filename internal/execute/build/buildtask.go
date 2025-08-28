@@ -233,20 +233,21 @@ func (t *buildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 	t.program = incremental.NewProgram(program, oldProgram, orchestrator.host, orchestrator.opts.Testing != nil)
 	compileTimes.ChangesComputeTime = orchestrator.opts.Sys.Now().Sub(changesComputeStart)
 
-	result, statistics := tsc.EmitAndReportStatistics(
-		orchestrator.opts.Sys,
-		t.program,
-		program,
-		t.resolved,
-		t.reportDiagnostic,
-		tsc.QuietDiagnosticsReporter,
-		&t.builder,
-		func(fileName, text string, writeByteOrderMark bool, data *compiler.WriteFileData) error {
+	result, statistics := tsc.EmitAndReportStatistics(tsc.EmitInput{
+		Sys:                orchestrator.opts.Sys,
+		ProgramLike:        t.program,
+		Program:            program,
+		Config:             t.resolved,
+		ReportDiagnostic:   t.reportDiagnostic,
+		ReportErrorSummary: tsc.QuietDiagnosticsReporter,
+		Writer:             &t.builder,
+		WriteFile: func(fileName, text string, writeByteOrderMark bool, data *compiler.WriteFileData) error {
 			return t.writeFile(orchestrator, fileName, text, writeByteOrderMark, data)
 		},
-		&compileTimes,
-		orchestrator.opts.Testing,
-	)
+		CompileTimes:       &compileTimes,
+		Testing:            orchestrator.opts.Testing,
+		TestingMTimesCache: orchestrator.host.mTimes,
+	})
 	t.exitStatus = result.Status
 	t.statistics = statistics
 	if (!program.Options().NoEmitOnError.IsTrue() || len(result.Diagnostics) == 0) &&

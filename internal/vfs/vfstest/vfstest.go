@@ -565,6 +565,18 @@ func (m *MapFS) GetTargetOfSymlink(path string) (string, bool) {
 	return "", false
 }
 
+func (m *MapFS) GetModTime(path string) time.Time {
+	path, _ = strings.CutPrefix(path, "/")
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	canonical := m.getCanonicalPath(path)
+	canonicalString := string(canonical)
+	if fileInfo, ok := m.m[canonicalString]; ok {
+		return fileInfo.ModTime
+	}
+	return time.Time{}
+}
+
 func (m *MapFS) Entries() iter.Seq2[string, *fstest.MapFile] {
 	return func(yield func(string, *fstest.MapFile) bool) {
 		m.mu.RLock()
