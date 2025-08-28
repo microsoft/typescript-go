@@ -759,7 +759,7 @@ let signCount = 0;
  *
  * @param {DDSignFileList} filelist
  */
-async function sign(filelist) {
+async function sign(filelist, unchangedOutputOkay = false) {
     let data = JSON.stringify(filelist, undefined, 4);
     console.log("filelist:", data);
 
@@ -912,8 +912,14 @@ async function sign(filelist) {
             assert(srcHash);
             const dstHash = crypto.createHash("sha256").update(fs.readFileSync(dst)).digest("hex");
             if (srcHash === dstHash) {
-                failures.push(`Signed file is identical to source file (not signed?): ${src} -> ${dst}\n  sha256: ${dstHash}`);
-                continue;
+                const message = `Signed file is identical to source file (not signed?): ${src} -> ${dst}\n  sha256: ${dstHash}`;
+                if (unchangedOutputOkay) {
+                    console.log(message);
+                }
+                else {
+                    failures.push(message);
+                    continue;
+                }
             }
 
             if (src === dst) {
@@ -1238,7 +1244,9 @@ export const signNativePreviewPackages = task({
                 ],
             };
 
-            await sign(notarizeFilelist);
+            // Notarizing does not change the file, it just sends it to Apple, so ignore the case
+            // where the input files are the same as the output files.
+            await sign(notarizeFilelist, /*unchangedOutputOkay*/ true);
 
             // Finally, unzip the notarized files and move them back to their original locations.
 
