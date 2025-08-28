@@ -1734,6 +1734,75 @@ func TestBuildProjectReferenceWithRootDirInParent(t *testing.T) {
 	}
 }
 
+func TestBuildReexport(t *testing.T) {
+	t.Parallel()
+	testCases := []*tscInput{
+		{
+			subScenario: "Reports errors correctly",
+			files: FileMap{
+				"/user/username/projects/reexport/src/tsconfig.json": stringtestutil.Dedent(`
+				{
+                    "files": [],
+                    "include": [],
+                    "references": [{ "path": "./pure" }, { "path": "./main" }],
+                }`),
+				"/user/username/projects/reexport/src/main/tsconfig.json": stringtestutil.Dedent(`
+				{
+                    "compilerOptions": {
+                        "outDir": "../../out",
+                        "rootDir": "../",
+                    },
+                    "include": ["**/*.ts"],
+                    "references": [{ "path": "../pure" }],
+                }`),
+				"/user/username/projects/reexport/src/main/index.ts": stringtestutil.Dedent(`
+                    import { Session } from "../pure";
+
+                    export const session: Session = {
+                        foo: 1
+                    };
+                `),
+				"/user/username/projects/reexport/src/pure/tsconfig.json": stringtestutil.Dedent(`
+				{
+                    "compilerOptions": {
+                        "composite": true,
+                        "outDir": "../../out",
+                        "rootDir": "../",
+                    },
+                    "include": ["**/*.ts"],
+                }`),
+				"/user/username/projects/reexport/src/pure/index.ts": `export * from "./session";`,
+				"/user/username/projects/reexport/src/pure/session.ts": stringtestutil.Dedent(`
+                    export interface Session {
+                        foo: number;
+                        // bar: number;
+                    }
+                `),
+			},
+			cwd:             `/user/username/projects/reexport`,
+			commandLineArgs: []string{"-b", "-w", "-verbose", "src"},
+			edits: []*tscEdit{
+				{
+					caption: "Introduce error",
+					edit: func(sys *testSys) {
+						sys.replaceFileText(`/user/username/projects/reexport/src/pure/session.ts`, "// ", "")
+					},
+				},
+				{
+					caption: "Fix error",
+					edit: func(sys *testSys) {
+						sys.replaceFileText(`/user/username/projects/reexport/src/pure/session.ts`, "bar: ", "// bar: ")
+					},
+				},
+			},
+		},
+	}
+
+	for _, test := range testCases {
+		test.run(t, "reexport")
+	}
+}
+
 func TestBuildResolveJsonModule(t *testing.T) {
 	t.Parallel()
 	type buildResolveJsonModuleScenario struct {
