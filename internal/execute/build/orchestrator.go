@@ -233,10 +233,12 @@ func (o *Orchestrator) Watch() {
 }
 
 func (o *Orchestrator) updateWatchAndResetCaches() {
+	oldCache := o.host.mTimes
+	o.host.mTimes = &collections.SyncMap[tspath.Path, time.Time]{}
 	wg := core.NewWorkGroup(o.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
 	o.tasks.Range(func(path tspath.Path, task *buildTask) bool {
 		wg.Queue(func() {
-			task.updateWatch(o)
+			task.updateWatch(o, oldCache)
 		})
 		return true
 	})
@@ -248,7 +250,6 @@ func (o *Orchestrator) updateWatchAndResetCaches() {
 	o.host.extendedConfigCache = tsc.ExtendedConfigCache{}
 	o.host.sourceFiles.Reset()
 	o.host.configTimes = collections.SyncMap[tspath.Path, time.Duration]{}
-	o.host.mTimes = collections.SyncMap[tspath.Path, time.Time]{} // !!! sheetal
 }
 
 func (o *Orchestrator) DoCycle() {
@@ -354,6 +355,7 @@ func NewOrchestrator(opts Options) *Orchestrator {
 			nil,
 			nil,
 		),
+		mTimes: &collections.SyncMap[tspath.Path, time.Time]{},
 	}
 	return orchestrator
 }
