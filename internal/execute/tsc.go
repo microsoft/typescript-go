@@ -268,6 +268,7 @@ func performIncrementalCompilation(
 		reportDiagnostic,
 		reportErrorSummary,
 		sys.Writer(),
+		nil,
 		compileTimes,
 		testing,
 	)
@@ -305,6 +306,7 @@ func performCompilation(
 		reportDiagnostic,
 		reportErrorSummary,
 		sys.Writer(),
+		nil,
 		compileTimes,
 		testing,
 	)

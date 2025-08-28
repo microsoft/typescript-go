@@ -1341,10 +1341,12 @@ type WriteFileData struct {
 	SkippedDtsWrite bool
 }
 
+type WriteFile func(fileName string, text string, writeByteOrderMark bool, data *WriteFileData) error
+
 type EmitOptions struct {
 	TargetSourceFile *ast.SourceFile // Single file to emit. If `nil`, emits all files
 	EmitOnly         EmitOnly
-	WriteFile        func(fileName string, text string, writeByteOrderMark bool, data *WriteFileData) error
+	WriteFile        WriteFile
 }
 
 type EmitResult struct {

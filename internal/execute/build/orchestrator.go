@@ -243,16 +243,12 @@ func (o *Orchestrator) updateWatchAndResetCaches() {
 	wg.RunAndWait()
 
 	// Clean out all the caches
-
-	// mTimes                collections.SyncMap[tspath.Path, time.Time]
-
-	// !!! sheetal for now clear out all caches and then later keep with ref counting
 	cachesVfs := o.host.host.FS().(*cachedvfs.FS)
 	cachesVfs.ClearCache()
 	o.host.extendedConfigCache = tsc.ExtendedConfigCache{}
 	o.host.sourceFiles.Reset()
 	o.host.configTimes = collections.SyncMap[tspath.Path, time.Duration]{}
-	o.host.mTimes = collections.SyncMap[tspath.Path, time.Time]{}
+	o.host.mTimes = collections.SyncMap[tspath.Path, time.Time]{} // !!! sheetal
 }
 
 func (o *Orchestrator) DoCycle() {

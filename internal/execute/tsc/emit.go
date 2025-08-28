@@ -30,11 +30,12 @@ func EmitAndReportStatistics(
 	reportDiagnostic DiagnosticReporter,
 	reportErrorSummary DiagnosticsReporter,
 	w io.Writer,
+	writeFile compiler.WriteFile,
 	compileTimes *CompileTimes,
 	testing CommandLineTesting,
 ) (CompileAndEmitResult, *Statistics) {
 	var statistics *Statistics
-	result := EmitFilesAndReportErrors(sys, programLike, program, reportDiagnostic, reportErrorSummary, w, compileTimes, testing)
+	result := EmitFilesAndReportErrors(sys, programLike, program, reportDiagnostic, reportErrorSummary, w, writeFile, compileTimes, testing)
 	if result.Status != ExitStatusSuccess {
 		// compile exited early
 		return result, nil
@@ -67,6 +68,7 @@ func EmitFilesAndReportErrors(
 	reportDiagnostic DiagnosticReporter,
 	reportErrorSummary DiagnosticsReporter,
 	w io.Writer,
+	writeFile compiler.WriteFile,
 	compileTimes *CompileTimes,
 	testing CommandLineTesting,
 ) (result CompileAndEmitResult) {
@@ -98,7 +100,9 @@ func EmitFilesAndReportErrors(
 	emitResult := &compiler.EmitResult{EmitSkipped: true, Diagnostics: []*ast.Diagnostic{}}
 	if !programLike.Options().ListFilesOnly.IsTrue() {
 		emitStart := sys.Now()
-		emitResult = programLike.Emit(ctx, compiler.EmitOptions{})
+		emitResult = programLike.Emit(ctx, compiler.EmitOptions{
+			WriteFile: writeFile,
+		})
 		result.times.emitTime = sys.Now().Sub(emitStart)
 	}
 	if emitResult != nil {

@@ -278,7 +278,7 @@ func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOption
 	}
 	if options.WriteFile != nil {
 		err = options.WriteFile(buildInfoFileName, string(text), false, &compiler.WriteFileData{
-			BuildInfo: &buildInfo,
+			BuildInfo: buildInfo,
 		})
 	} else {
 		err = p.program.Host().FS().WriteFile(buildInfoFileName, string(text), false)
@@ -292,7 +292,6 @@ func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOption
 		}
 	}
 	p.snapshot.buildInfoEmitPending.Store(false)
-	p.host.OnBuildInfoEmit(p.program.CommandLine(), buildInfo, p.snapshot.hasChangedDtsFile)
 	return &compiler.EmitResult{
 		EmitSkipped:  false,
 		EmittedFiles: []string{buildInfoFileName},

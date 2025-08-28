@@ -4,13 +4,11 @@ import (
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/tsoptions"
 )
 
 type BuildHost interface {
 	GetMTime(fileName string) time.Time
 	SetMTime(fileName string, mTime time.Time) error
-	OnBuildInfoEmit(config *tsoptions.ParsedCommandLine, buildInfo *BuildInfo, hasChangedDtsFile bool)
 }
 
 type buildHost struct {
@@ -25,10 +23,6 @@ func (b *buildHost) GetMTime(fileName string) time.Time {
 
 func (b *buildHost) SetMTime(fileName string, mTime time.Time) error {
 	return SetMTime(b.host, fileName, mTime)
-}
-
-func (b *buildHost) OnBuildInfoEmit(config *tsoptions.ParsedCommandLine, buildInfo *BuildInfo, hasChangedDtsFile bool) {
-	// no-op
 }
 
 func CreateBuildHost(host compiler.CompilerHost) BuildHost {

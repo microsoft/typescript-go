@@ -144,9 +144,3 @@ func (h *host) SetMTime(file string, mTime time.Time) error {
 	}
 	return err
 }
-
-func (h *host) OnBuildInfoEmit(config *tsoptions.ParsedCommandLine, buildInfo *incremental.BuildInfo, hasChangedDtsFile bool) {
-	configPath := h.orchestrator.toPath(config.ConfigName())
-	task := h.orchestrator.getTask(configPath)
-	task.onBuildInfoEmit(h.orchestrator, config, buildInfo, hasChangedDtsFile)
-}
