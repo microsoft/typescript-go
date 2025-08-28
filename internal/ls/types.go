@@ -17,6 +17,14 @@ const (
 	JsxAttributeCompletionStyleNone   JsxAttributeCompletionStyle = "none"
 )
 
+type InlayHintParameterNameHints string
+
+const (
+	InlayHintParameterNameHintsNone     InlayHintParameterNameHints = "none"
+	InlayHintParameterNameHintsLiterals InlayHintParameterNameHints = "literals"
+	InlayHintParameterNameHintsAll      InlayHintParameterNameHints = "all"
+)
+
 type UserPreferences struct {
 	// Enables auto-import-style completions on partially-typed import statements. E.g., allows
 	// `import write|` to be completed to `import { writeFile } from "fs"`.
@@ -40,4 +48,14 @@ type UserPreferences struct {
 	IncludeCompletionsWithObjectLiteralMethodSnippets *bool
 
 	JsxAttributeCompletionStyle *JsxAttributeCompletionStyle
+
+	IncludeInlayParameterNameHints                        *InlayHintParameterNameHints
+	IncludeInlayParameterNameHintsWhenArgumentMatchesName *bool
+	IncludeInlayFunctionParameterTypeHints                *bool
+	IncludeInlayVariableTypeHints                         *bool
+	IncludeInlayVariableTypeHintsWhenTypeMatchesName      *bool
+	IncludeInlayPropertyDeclarationTypeHints              *bool
+	IncludeInlayFunctionLikeReturnTypeHints               *bool
+	IncludeInlayEnumMemberValueHints                      *bool
+	InteractiveInlayHints                                 *bool
 }

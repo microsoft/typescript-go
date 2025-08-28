@@ -1159,10 +1159,6 @@ func reverseAccessKind(a AccessKind) AccessKind {
 	panic("Unhandled case in reverseAccessKind")
 }
 
-func isInfinityOrNaNString(name string) bool {
-	return name == "Infinity" || name == "-Infinity" || name == "NaN"
-}
-
 func (c *Checker) isConstantVariable(symbol *ast.Symbol) bool {
 	return symbol.Flags&ast.SymbolFlagsVariable != 0 && (c.getDeclarationNodeFlagsFromSymbol(symbol)&ast.NodeFlagsConstant) != 0
 }
@@ -1222,25 +1218,6 @@ func getBindingElementPropertyName(node *ast.Node) *ast.Node {
 		return name
 	}
 	return node.Name()
-}
-
-func hasContextSensitiveParameters(node *ast.Node) bool {
-	// Functions with type parameters are not context sensitive.
-	if node.TypeParameters() == nil {
-		// Functions with any parameters that lack type annotations are context sensitive.
-		if core.Some(node.Parameters(), func(p *ast.Node) bool { return p.Type() == nil }) {
-			return true
-		}
-		if !ast.IsArrowFunction(node) {
-			// If the first parameter is not an explicit 'this' parameter, then the function has
-			// an implicit 'this' parameter which is subject to contextual typing.
-			parameter := core.FirstOrNil(node.Parameters())
-			if parameter == nil || !ast.IsThisParameter(parameter) {
-				return true
-			}
-		}
-	}
-	return false
 }
 
 func isCallChain(node *ast.Node) bool {

@@ -12,7 +12,7 @@ func createPrinterWithDefaults(emitContext *printer.EmitContext) *printer.Printe
 	return printer.NewPrinter(printer.PrinterOptions{}, printer.PrintHandlers{}, emitContext)
 }
 
-func createPrinterWithRemoveComments(emitContext *printer.EmitContext) *printer.Printer {
+func CreatePrinterWithRemoveComments(emitContext *printer.EmitContext) *printer.Printer {
 	return printer.NewPrinter(printer.PrinterOptions{RemoveComments: true}, printer.PrintHandlers{}, emitContext)
 }
 
@@ -199,7 +199,7 @@ func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags 
 	if t == c.unresolvedType {
 		printer = createPrinterWithDefaults(nodeBuilder.EmitContext())
 	} else {
-		printer = createPrinterWithRemoveComments(nodeBuilder.EmitContext())
+		printer = CreatePrinterWithRemoveComments(nodeBuilder.EmitContext())
 	}
 	var sourceFile *ast.SourceFile
 	if enclosingDeclaration != nil {
@@ -262,7 +262,7 @@ func (c *Checker) symbolToStringEx(symbol *ast.Symbol, enclosingDeclaration *ast
 	if enclosingDeclaration != nil && enclosingDeclaration.Kind == ast.KindSourceFile {
 		printer_ = createPrinterWithRemoveCommentsNeverAsciiEscape(nodeBuilder.EmitContext())
 	} else {
-		printer_ = createPrinterWithRemoveComments(nodeBuilder.EmitContext())
+		printer_ = CreatePrinterWithRemoveComments(nodeBuilder.EmitContext())
 	}
 
 	var builder func(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
@@ -325,7 +325,7 @@ func (c *Checker) typePredicateToStringEx(typePredicate *TypePredicate, enclosin
 	nodeBuilder := c.getNodeBuilder()
 	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsWriteTypeParametersInQualifiedName
 	predicate := nodeBuilder.TypePredicateToTypePredicateNode(typePredicate, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil) // TODO: GH#18217
-	printer_ := createPrinterWithRemoveComments(nodeBuilder.EmitContext())
+	printer_ := CreatePrinterWithRemoveComments(nodeBuilder.EmitContext())
 	var sourceFile *ast.SourceFile
 	if enclosingDeclaration != nil {
 		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)

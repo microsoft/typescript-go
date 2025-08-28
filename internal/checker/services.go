@@ -683,3 +683,7 @@ func (c *Checker) GetFirstTypeArgumentFromKnownType(t *Type) *Type {
 	}
 	return nil
 }
+
+func (c *Checker) GetSignatureFromDeclaration(node *ast.Node) *Signature {
+	return c.getSignatureFromDeclaration(node)
+}
