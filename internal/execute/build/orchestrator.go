@@ -219,7 +219,8 @@ func (o *Orchestrator) Start() tsc.CommandLineResult {
 }
 
 func (o *Orchestrator) Watch() {
-	o.updateWatchAndResetCaches()
+	o.updateWatch()
+	o.resetCaches()
 
 	// Start watching for file changes
 	if o.opts.Testing == nil {
@@ -232,7 +233,7 @@ func (o *Orchestrator) Watch() {
 	}
 }
 
-func (o *Orchestrator) updateWatchAndResetCaches() {
+func (o *Orchestrator) updateWatch() {
 	oldCache := o.host.mTimes
 	o.host.mTimes = &collections.SyncMap[tspath.Path, time.Time]{}
 	wg := core.NewWorkGroup(o.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
@@ -243,7 +244,9 @@ func (o *Orchestrator) updateWatchAndResetCaches() {
 		return true
 	})
 	wg.RunAndWait()
+}
 
+func (o *Orchestrator) resetCaches() {
 	// Clean out all the caches
 	cachesVfs := o.host.host.FS().(*cachedvfs.FS)
 	cachesVfs.ClearCache()
@@ -255,6 +258,7 @@ func (o *Orchestrator) updateWatchAndResetCaches() {
 func (o *Orchestrator) DoCycle() {
 	var needsConfigUpdate atomic.Bool
 	var needsUpdate atomic.Bool
+	mTimes := o.host.mTimes.Clone()
 	wg := core.NewWorkGroup(o.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
 	o.tasks.Range(func(path tspath.Path, task *buildTask) bool {
 		wg.Queue(func() {
@@ -271,6 +275,8 @@ func (o *Orchestrator) DoCycle() {
 	wg.RunAndWait()
 
 	if !needsUpdate.Load() {
+		o.host.mTimes = mTimes
+		o.resetCaches()
 		return
 	}
 
@@ -279,7 +285,8 @@ func (o *Orchestrator) DoCycle() {
 		o.GenerateGraphReusingOldTasks()
 	}
 	o.buildOrClean()
-	o.updateWatchAndResetCaches()
+	o.updateWatch()
+	o.resetCaches()
 }
 
 func (o *Orchestrator) buildOrClean() tsc.CommandLineResult {
