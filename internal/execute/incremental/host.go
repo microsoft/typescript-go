@@ -6,27 +6,27 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 )
 
-type BuildHost interface {
+type Host interface {
 	GetMTime(fileName string) time.Time
 	SetMTime(fileName string, mTime time.Time) error
 }
 
-type buildHost struct {
+type host struct {
 	host compiler.CompilerHost
 }
 
-var _ BuildHost = (*buildHost)(nil)
+var _ Host = (*host)(nil)
 
-func (b *buildHost) GetMTime(fileName string) time.Time {
+func (b *host) GetMTime(fileName string) time.Time {
 	return GetMTime(b.host, fileName)
 }
 
-func (b *buildHost) SetMTime(fileName string, mTime time.Time) error {
+func (b *host) SetMTime(fileName string, mTime time.Time) error {
 	return SetMTime(b.host, fileName, mTime)
 }
 
-func CreateBuildHost(host compiler.CompilerHost) BuildHost {
-	return &buildHost{host: host}
+func CreateHost(compilerHost compiler.CompilerHost) Host {
+	return &host{host: compilerHost}
 }
 
 func GetMTime(host compiler.CompilerHost, fileName string) time.Time {

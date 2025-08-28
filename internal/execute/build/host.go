@@ -31,7 +31,7 @@ var (
 	_ vfs.FS                      = (*host)(nil)
 	_ compiler.CompilerHost       = (*host)(nil)
 	_ incremental.BuildInfoReader = (*host)(nil)
-	_ incremental.BuildHost       = (*host)(nil)
+	_ incremental.Host            = (*host)(nil)
 )
 
 func (h *host) FS() vfs.FS {
