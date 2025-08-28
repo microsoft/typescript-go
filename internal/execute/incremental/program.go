@@ -26,7 +26,7 @@ const (
 type Program struct {
 	snapshot *snapshot
 	program  *compiler.Program
-	host     BuildHost
+	host     Host
 
 	// Testing data
 	testingData *TestingData
@@ -34,11 +34,11 @@ type Program struct {
 
 var _ compiler.ProgramLike = (*Program)(nil)
 
-func NewProgram(program *compiler.Program, oldProgram *Program, buildHost BuildHost, testing bool) *Program {
+func NewProgram(program *compiler.Program, oldProgram *Program, host Host, testing bool) *Program {
 	incrementalProgram := &Program{
 		snapshot: programToSnapshot(program, oldProgram, testing),
 		program:  program,
-		host:     buildHost,
+		host:     host,
 	}
 
 	if testing {
