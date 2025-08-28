@@ -2139,6 +2139,20 @@ func TestBuildRoots(t *testing.T) {
 			commandLineArgs: []string{"--b", "projects/server", "-v", "--traceResolution", "--explainFiles"},
 			edits:           getBuildRootsFromProjectReferencedProjectTestEdits(),
 		},
+		{
+			subScenario:     "when root file is from referenced project",
+			files:           getBuildRootsFromProjectReferencedProjectFileMap(true),
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--b", "-w", "projects/server", "-v", "--traceResolution", "--explainFiles"},
+			edits:           getBuildRootsFromProjectReferencedProjectTestEdits(),
+		},
+		{
+			subScenario:     "when root file is from referenced project and shared is first",
+			files:           getBuildRootsFromProjectReferencedProjectFileMap(false),
+			cwd:             "/home/src/workspaces/solution",
+			commandLineArgs: []string{"--b", "-w", "projects/server", "-v", "--traceResolution", "--explainFiles"},
+			edits:           getBuildRootsFromProjectReferencedProjectTestEdits(),
+		},
 	}
 
 	for _, test := range testCases {
