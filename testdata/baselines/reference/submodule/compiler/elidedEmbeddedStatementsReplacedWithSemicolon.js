@@ -28,7 +28,9 @@ with (window)
 
 //// [elidedEmbeddedStatementsReplacedWithSemicolon.js]
 if (1)
+    ;
 else
+    ;
 do
 while (0);
 while (0)
@@ -37,3 +39,4 @@ for (let _ in [])
 for (let _ of [])
 // @ts-ignore suppress `with` statement error
 with (window)
+    ;

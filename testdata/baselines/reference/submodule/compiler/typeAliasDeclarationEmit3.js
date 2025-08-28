@@ -31,5 +31,6 @@ function f2() {
 }
 function f3() {
     if (true)
+        ;
     console.log('f3');
 }

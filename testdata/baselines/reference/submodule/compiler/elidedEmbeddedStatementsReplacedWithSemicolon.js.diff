@@ -1,12 +1,8 @@
 --- old.elidedEmbeddedStatementsReplacedWithSemicolon.js
 +++ new.elidedEmbeddedStatementsReplacedWithSemicolon.js
-@@= skipped -27, +27 lines =@@
-
- //// [elidedEmbeddedStatementsReplacedWithSemicolon.js]
- if (1)
--    ;
+@@= skipped -31, +31 lines =@@
  else
--    ;
+     ;
  do
 -    ;
  while (0);
@@ -20,4 +16,4 @@
 -    ;
  // @ts-ignore suppress `with` statement error
  with (window)
--    ;
+     ;

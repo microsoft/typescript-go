@@ -11,5 +11,8 @@ else
 
 //// [constEnum4.js]
 if (1)
+    ;
 else if (2)
+    ;
 else
+    ;
