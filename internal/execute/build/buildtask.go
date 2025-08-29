@@ -740,7 +740,6 @@ func (t *buildTask) resetStatus() {
 func (t *buildTask) resetConfig(orchestrator *Orchestrator, path tspath.Path) {
 	t.dirty = true
 	orchestrator.host.resolvedReferences.Delete(path)
-	t.pending.Store(true)
 }
 
 func (t *buildTask) hasUpdate(orchestrator *Orchestrator, path tspath.Path) updateKind {
