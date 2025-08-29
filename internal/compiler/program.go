@@ -1071,7 +1071,7 @@ func (p *Program) getSemanticDiagnosticsForFileNotFilter(ctx context.Context, so
 }
 
 func (p *Program) getDiagnosticsWithPrecedingDirectives(sourceFile *ast.SourceFile, diags []*ast.Diagnostic) ([]*ast.Diagnostic, map[int]ast.CommentDirective) {
-	if len(diags) == 0 || len(sourceFile.CommentDirectives) == 0 {
+	if len(sourceFile.CommentDirectives) == 0 {
 		return diags, nil
 	}
 	// Build map of directives by line number
