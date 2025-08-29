@@ -8,88 +8,88 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 )
 
-type BreadthFirstSearchResult[N comparable] struct {
+type BreadthFirstSearchResult[N any] struct {
 	Stopped bool
 	Path    []N
 }
 
-type breadthFirstSearchJob[N comparable] struct {
+type breadthFirstSearchJob[N any] struct {
 	node   N
 	parent *breadthFirstSearchJob[N]
 }
 
-type BreadthFirstSearchLevel[N comparable] struct {
-	jobs *collections.OrderedMap[N, *breadthFirstSearchJob[N]]
+type BreadthFirstSearchLevel[K comparable, N interface{ Key() K }] struct {
+	jobs *collections.OrderedMap[K, *breadthFirstSearchJob[N]]
 }
 
-func (l *BreadthFirstSearchLevel[N]) Has(node N) bool {
-	return l.jobs.Has(node)
+func (l *BreadthFirstSearchLevel[K, N]) Has(node N) bool {
+	return l.jobs.Has(node.Key())
 }
 
-func (l *BreadthFirstSearchLevel[N]) Delete(node N) {
-	l.jobs.Delete(node)
+func (l *BreadthFirstSearchLevel[K, N]) Delete(node N) {
+	l.jobs.Delete(node.Key())
 }
 
-func (l *BreadthFirstSearchLevel[N]) Range(f func(node N) bool) {
-	for node := range l.jobs.Keys() {
-		if !f(node) {
+func (l *BreadthFirstSearchLevel[K, N]) Range(f func(node N) bool) {
+	for job := range l.jobs.Values() {
+		if !f(job.node) {
 			return
 		}
 	}
 }
 
-type BreadthFirstSearchOptions[N comparable] struct {
+type BreadthFirstSearchOptions[K comparable, N interface{ Key() K }] struct {
 	// Visited is a set of nodes that have already been visited.
 	// If nil, a new set will be created.
-	Visited *collections.SyncSet[N]
+	Visited *collections.SyncSet[K]
 	// PreprocessLevel is a function that, if provided, will be called
 	// before each level, giving the caller an opportunity to remove nodes.
-	PreprocessLevel func(*BreadthFirstSearchLevel[N])
+	PreprocessLevel func(*BreadthFirstSearchLevel[K, N])
 }
 
 // BreadthFirstSearchParallel performs a breadth-first search on a graph
 // starting from the given node. It processes nodes in parallel and returns the path
 // from the first node that satisfies the `visit` function back to the start node.
-func BreadthFirstSearchParallel[N comparable](
+func BreadthFirstSearchParallel[K comparable, N interface{ Key() K }](
 	start N,
 	neighbors func(N) []N,
 	visit func(node N) (isResult bool, stop bool),
 ) BreadthFirstSearchResult[N] {
-	return BreadthFirstSearchParallelEx(start, neighbors, visit, BreadthFirstSearchOptions[N]{})
+	return BreadthFirstSearchParallelEx(start, neighbors, visit, BreadthFirstSearchOptions[K, N]{})
 }
 
 // BreadthFirstSearchParallelEx is an extension of BreadthFirstSearchParallel that allows
 // the caller to pass a pre-seeded set of already-visited nodes and a preprocessing function
 // that can be used to remove nodes from each level before parallel processing.
-func BreadthFirstSearchParallelEx[N comparable](
+func BreadthFirstSearchParallelEx[K comparable, N interface{ Key() K }](
 	start N,
 	neighbors func(N) []N,
 	visit func(node N) (isResult bool, stop bool),
-	options BreadthFirstSearchOptions[N],
+	options BreadthFirstSearchOptions[K, N],
 ) BreadthFirstSearchResult[N] {
 	visited := options.Visited
 	if visited == nil {
-		visited = &collections.SyncSet[N]{}
+		visited = &collections.SyncSet[K]{}
 	}
 
 	type result struct {
 		stop bool
 		job  *breadthFirstSearchJob[N]
-		next *collections.OrderedMap[N, *breadthFirstSearchJob[N]]
+		next *collections.OrderedMap[K, *breadthFirstSearchJob[N]]
 	}
 
 	var fallback *breadthFirstSearchJob[N]
 	// processLevel processes each node at the current level in parallel.
 	// It produces either a list of jobs to be processed in the next level,
 	// or a result if the visit function returns true for any node.
-	processLevel := func(index int, jobs *collections.OrderedMap[N, *breadthFirstSearchJob[N]]) result {
+	processLevel := func(index int, jobs *collections.OrderedMap[K, *breadthFirstSearchJob[N]]) result {
 		var lowestFallback atomic.Int64
 		var lowestGoal atomic.Int64
 		var nextJobCount atomic.Int64
 		lowestGoal.Store(math.MaxInt64)
 		lowestFallback.Store(math.MaxInt64)
 		if options.PreprocessLevel != nil {
-			options.PreprocessLevel(&BreadthFirstSearchLevel[N]{jobs: jobs})
+			options.PreprocessLevel(&BreadthFirstSearchLevel[K, N]{jobs: jobs})
 		}
 		next := make([][]*breadthFirstSearchJob[N], jobs.Size())
 		var wg sync.WaitGroup
@@ -103,7 +103,7 @@ func BreadthFirstSearchParallelEx[N comparable](
 				}
 
 				// If we have already visited this node, skip it.
-				if !visited.AddIfAbsent(j.node) {
+				if !visited.AddIfAbsent(j.node.Key()) {
 					// Note that if we are here, we already visited this node at a
 					// previous *level*, which means `visit` must have returned false,
 					// so we don't need to update our result indices. This holds true
@@ -152,13 +152,13 @@ func BreadthFirstSearchParallelEx[N comparable](
 				_, fallback, _ = jobs.EntryAt(int(index))
 			}
 		}
-		nextJobs := collections.NewOrderedMapWithSizeHint[N, *breadthFirstSearchJob[N]](int(nextJobCount.Load()))
+		nextJobs := collections.NewOrderedMapWithSizeHint[K, *breadthFirstSearchJob[N]](int(nextJobCount.Load()))
 		for _, jobs := range next {
 			for _, j := range jobs {
-				if !nextJobs.Has(j.node) {
+				if !nextJobs.Has(j.node.Key()) {
 					// Deduplicate synchronously to avoid messy locks and spawning
 					// unnecessary goroutines.
-					nextJobs.Set(j.node, j)
+					nextJobs.Set(j.node.Key(), j)
 				}
 			}
 		}
@@ -175,8 +175,8 @@ func BreadthFirstSearchParallelEx[N comparable](
 	}
 
 	levelIndex := 0
-	level := collections.NewOrderedMapFromList([]collections.MapEntry[N, *breadthFirstSearchJob[N]]{
-		{Key: start, Value: &breadthFirstSearchJob[N]{node: start}},
+	level := collections.NewOrderedMapFromList([]collections.MapEntry[K, *breadthFirstSearchJob[N]]{
+		{Key: start.Key(), Value: &breadthFirstSearchJob[N]{node: start}},
 	})
 	for level.Size() > 0 {
 		result := processLevel(levelIndex, level)

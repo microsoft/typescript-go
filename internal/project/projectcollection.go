@@ -179,7 +179,7 @@ func (c *ProjectCollection) findDefaultConfiguredProjectWorker(fileName string, 
 			}
 			return false, false
 		},
-		core.BreadthFirstSearchOptions[*Project]{
+		core.BreadthFirstSearchOptions[*Project, *Project]{
 			Visited: visited,
 		},
 	)
