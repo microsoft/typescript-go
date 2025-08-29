@@ -776,19 +776,7 @@ Output::
 [[90mHH:MM:SS AM[0m] Project 'project3.tsconfig.json' is up to date because newest input 'other2.ts' is older than output 'project3.tsconfig.tsbuildinfo'
 
 [91merror[0m[90m TS5083: [0mCannot read file '/user/username/projects/project/extendsConfig2.tsconfig.json'.
-[91merror[0m[90m TS5083: [0mCannot read file '/user/username/projects/project/extendsConfig2.tsconfig.json'.
 
-Found 2 errors.
-
+Found 1 error.
 
 
-
-Diff:: !!! Unexpected diff, please review and either fix or write explanation as expectedDiff !!!
---- nonIncremental.output.txt
-+++ incremental.output.txt
-@@ -1,4 +1,5 @@
- [91merror[0m[90m TS5083: [0mCannot read file '/user/username/projects/project/extendsConfig2.tsconfig.json'.
-+[91merror[0m[90m TS5083: [0mCannot read file '/user/username/projects/project/extendsConfig2.tsconfig.json'.
-
--Found 1 error.
-+Found 2 errors.
