@@ -115,7 +115,7 @@ func (s *upToDateStatus) inputOutputName() *inputOutputName {
 }
 
 func (s *upToDateStatus) oldestOutputFileName() string {
-	if !s.isPseudoBuild() || s.kind != upToDateStatusTypeUpToDate {
+	if !s.isPseudoBuild() && s.kind != upToDateStatusTypeUpToDate {
 		panic("only valid for up to date status of pseudo-build or up to date")
 	}
 
