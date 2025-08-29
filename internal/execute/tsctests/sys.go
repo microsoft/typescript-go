@@ -551,6 +551,15 @@ func (s *testSys) replaceFileText(path string, oldText string, newText string) {
 	s.writeFileNoError(path, content, false)
 }
 
+func (s *testSys) replaceFileTextAll(path string, oldText string, newText string) {
+	content, ok := s.fsFromFileMap().ReadFile(path)
+	if !ok {
+		panic("File not found: " + path)
+	}
+	content = strings.ReplaceAll(content, oldText, newText)
+	s.writeFileNoError(path, content, false)
+}
+
 func (s *testSys) appendFile(path string, text string) {
 	content, ok := s.fsFromFileMap().ReadFile(path)
 	if !ok {
