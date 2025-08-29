@@ -1,17 +1,13 @@
 //// [tests/cases/compiler/panicSatisfiesOnExportEqualsDeclaration.ts] ////
 
-=== types.d.ts ===
-
-export interface SupportVersionTraceMap {}
-
 === panicSatisfiesOnExportEqualsDeclaration.js ===
 /**
- * @satisfies {import('./types').SupportVersionTraceMap}
+ * @satisfies {Record<string, never>}
  */
 module.exports = {};
->module.exports = {} : any
->module.exports : any
->module : { "export=": any; }
->exports : any
+>module.exports = {} : {}
+>module.exports : {}
+>module : { "export=": {}; }
+>exports : {}
 >{} : {}
 
