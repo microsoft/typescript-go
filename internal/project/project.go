@@ -195,11 +195,6 @@ func (p *Project) ConfigFilePath() tspath.Path {
 	return p.configFilePath
 }
 
-// Needed for BreadthFirstSearch
-func (p *Project) Key() *Project {
-	return p
-}
-
 // GetProgram implements ls.Host.
 func (p *Project) GetProgram() *compiler.Program {
 	return p.Program

@@ -18,16 +18,16 @@ type breadthFirstSearchJob[N any] struct {
 	parent *breadthFirstSearchJob[N]
 }
 
-type BreadthFirstSearchLevel[K comparable, N interface{ Key() K }] struct {
+type BreadthFirstSearchLevel[K comparable, N any] struct {
 	jobs *collections.OrderedMap[K, *breadthFirstSearchJob[N]]
 }
 
-func (l *BreadthFirstSearchLevel[K, N]) Has(node N) bool {
-	return l.jobs.Has(node.Key())
+func (l *BreadthFirstSearchLevel[K, N]) Has(key K) bool {
+	return l.jobs.Has(key)
 }
 
-func (l *BreadthFirstSearchLevel[K, N]) Delete(node N) {
-	l.jobs.Delete(node.Key())
+func (l *BreadthFirstSearchLevel[K, N]) Delete(key K) {
+	l.jobs.Delete(key)
 }
 
 func (l *BreadthFirstSearchLevel[K, N]) Range(f func(node N) bool) {
@@ -38,7 +38,7 @@ func (l *BreadthFirstSearchLevel[K, N]) Range(f func(node N) bool) {
 	}
 }
 
-type BreadthFirstSearchOptions[K comparable, N interface{ Key() K }] struct {
+type BreadthFirstSearchOptions[K comparable, N any] struct {
 	// Visited is a set of nodes that have already been visited.
 	// If nil, a new set will be created.
 	Visited *collections.SyncSet[K]
@@ -50,22 +50,23 @@ type BreadthFirstSearchOptions[K comparable, N interface{ Key() K }] struct {
 // BreadthFirstSearchParallel performs a breadth-first search on a graph
 // starting from the given node. It processes nodes in parallel and returns the path
 // from the first node that satisfies the `visit` function back to the start node.
-func BreadthFirstSearchParallel[K comparable, N interface{ Key() K }](
+func BreadthFirstSearchParallel[N comparable](
 	start N,
 	neighbors func(N) []N,
 	visit func(node N) (isResult bool, stop bool),
 ) BreadthFirstSearchResult[N] {
-	return BreadthFirstSearchParallelEx(start, neighbors, visit, BreadthFirstSearchOptions[K, N]{})
+	return BreadthFirstSearchParallelEx(start, neighbors, visit, BreadthFirstSearchOptions[N, N]{}, Identity)
 }
 
 // BreadthFirstSearchParallelEx is an extension of BreadthFirstSearchParallel that allows
 // the caller to pass a pre-seeded set of already-visited nodes and a preprocessing function
 // that can be used to remove nodes from each level before parallel processing.
-func BreadthFirstSearchParallelEx[K comparable, N interface{ Key() K }](
+func BreadthFirstSearchParallelEx[K comparable, N any](
 	start N,
 	neighbors func(N) []N,
 	visit func(node N) (isResult bool, stop bool),
 	options BreadthFirstSearchOptions[K, N],
+	getKey func(N) K,
 ) BreadthFirstSearchResult[N] {
 	visited := options.Visited
 	if visited == nil {
@@ -103,7 +104,7 @@ func BreadthFirstSearchParallelEx[K comparable, N interface{ Key() K }](
 				}
 
 				// If we have already visited this node, skip it.
-				if !visited.AddIfAbsent(j.node.Key()) {
+				if !visited.AddIfAbsent(getKey(j.node)) {
 					// Note that if we are here, we already visited this node at a
 					// previous *level*, which means `visit` must have returned false,
 					// so we don't need to update our result indices. This holds true
@@ -155,10 +156,10 @@ func BreadthFirstSearchParallelEx[K comparable, N interface{ Key() K }](
 		nextJobs := collections.NewOrderedMapWithSizeHint[K, *breadthFirstSearchJob[N]](int(nextJobCount.Load()))
 		for _, jobs := range next {
 			for _, j := range jobs {
-				if !nextJobs.Has(j.node.Key()) {
+				if !nextJobs.Has(getKey(j.node)) {
 					// Deduplicate synchronously to avoid messy locks and spawning
 					// unnecessary goroutines.
-					nextJobs.Set(j.node.Key(), j)
+					nextJobs.Set(getKey(j.node), j)
 				}
 			}
 		}
@@ -176,7 +177,7 @@ func BreadthFirstSearchParallelEx[K comparable, N interface{ Key() K }](
 
 	levelIndex := 0
 	level := collections.NewOrderedMapFromList([]collections.MapEntry[K, *breadthFirstSearchJob[N]]{
-		{Key: start.Key(), Value: &breadthFirstSearchJob[N]{node: start}},
+		{Key: getKey(start), Value: &breadthFirstSearchJob[N]{node: start}},
 	})
 	for level.Size() > 0 {
 		result := processLevel(levelIndex, level)

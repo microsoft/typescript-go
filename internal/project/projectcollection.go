@@ -182,6 +182,7 @@ func (c *ProjectCollection) findDefaultConfiguredProjectWorker(fileName string, 
 		core.BreadthFirstSearchOptions[*Project, *Project]{
 			Visited: visited,
 		},
+		core.Identity,
 	)
 
 	if search.Stopped {

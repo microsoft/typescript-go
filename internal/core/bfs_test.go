@@ -1,7 +1,7 @@
 package core_test
 
 import (
-	"slices"
+	"sort"
 	"sync"
 	"testing"
 
@@ -10,41 +10,37 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-type node string
-
-func (n node) Key() node { return n }
-
 func TestBreadthFirstSearchParallel(t *testing.T) {
 	t.Parallel()
 	t.Run("basic functionality", func(t *testing.T) {
 		t.Parallel()
 		// Test basic functionality with a simple DAG
 		// Graph: A -> B, A -> C, B -> D, C -> D
-		graph := map[node][]node{
+		graph := map[string][]string{
 			"A": {"B", "C"},
 			"B": {"D"},
 			"C": {"D"},
 			"D": {},
 		}
 
-		children := func(node node) []node {
+		children := func(node string) []string {
 			return graph[node]
 		}
 
 		t.Run("find specific node", func(t *testing.T) {
 			t.Parallel()
-			result := core.BreadthFirstSearchParallel(node("A"), children, func(node node) (bool, bool) {
+			result := core.BreadthFirstSearchParallel("A", children, func(node string) (bool, bool) {
 				return node == "D", true
 			})
 			assert.Equal(t, result.Stopped, true, "Expected search to stop at D")
-			assert.DeepEqual(t, result.Path, []node{"D", "B", "A"})
+			assert.DeepEqual(t, result.Path, []string{"D", "B", "A"})
 		})
 
 		t.Run("visit all nodes", func(t *testing.T) {
 			t.Parallel()
 			var mu sync.Mutex
-			var visitedNodes []node
-			result := core.BreadthFirstSearchParallel("A", children, func(node node) (bool, bool) {
+			var visitedNodes []string
+			result := core.BreadthFirstSearchParallel("A", children, func(node string) (bool, bool) {
 				mu.Lock()
 				defer mu.Unlock()
 				visitedNodes = append(visitedNodes, node)
@@ -56,8 +52,8 @@ func TestBreadthFirstSearchParallel(t *testing.T) {
 			assert.Assert(t, result.Path == nil, "Expected nil path when visit function never returns true")
 
 			// Should visit all nodes exactly once
-			slices.Sort(visitedNodes)
-			expected := []node{"A", "B", "C", "D"}
+			sort.Strings(visitedNodes)
+			expected := []string{"A", "B", "C", "D"}
 			assert.DeepEqual(t, visitedNodes, expected)
 		})
 	})
@@ -65,7 +61,7 @@ func TestBreadthFirstSearchParallel(t *testing.T) {
 	t.Run("early termination", func(t *testing.T) {
 		t.Parallel()
 		// Test that nodes below the target level are not visited
-		graph := map[node][]node{
+		graph := map[string][]string{
 			"Root": {"L1A", "L1B"},
 			"L1A":  {"L2A", "L2B"},
 			"L1B":  {"L2C"},
@@ -75,16 +71,17 @@ func TestBreadthFirstSearchParallel(t *testing.T) {
 			"L3A":  {},
 		}
 
-		children := func(node node) []node {
+		children := func(node string) []string {
 			return graph[node]
 		}
 
-		var visited collections.SyncSet[node]
-		core.BreadthFirstSearchParallelEx("Root", children, func(node node) (bool, bool) {
+		var visited collections.SyncSet[string]
+		core.BreadthFirstSearchParallelEx("Root", children, func(node string) (bool, bool) {
 			return node == "L2B", true // Stop at level 2
-		}, core.BreadthFirstSearchOptions[node, node]{
+		}, core.BreadthFirstSearchOptions[string, string]{
 			Visited: &visited,
-		})
+		},
+			core.Identity)
 
 		assert.Assert(t, visited.Has("Root"), "Expected to visit Root")
 		assert.Assert(t, visited.Has("L1A"), "Expected to visit L1A")
@@ -98,26 +95,27 @@ func TestBreadthFirstSearchParallel(t *testing.T) {
 	t.Run("returns fallback when no other result found", func(t *testing.T) {
 		t.Parallel()
 		// Test that fallback behavior works correctly
-		graph := map[node][]node{
+		graph := map[string][]string{
 			"A": {"B", "C"},
 			"B": {"D"},
 			"C": {"D"},
 			"D": {},
 		}
 
-		children := func(node node) []node {
+		children := func(node string) []string {
 			return graph[node]
 		}
 
-		var visited collections.SyncSet[node]
-		result := core.BreadthFirstSearchParallelEx("A", children, func(node node) (bool, bool) {
+		var visited collections.SyncSet[string]
+		result := core.BreadthFirstSearchParallelEx("A", children, func(node string) (bool, bool) {
 			return node == "A", false // Record A as a fallback, but do not stop
-		}, core.BreadthFirstSearchOptions[node, node]{
+		}, core.BreadthFirstSearchOptions[string, string]{
 			Visited: &visited,
-		})
+		},
+			core.Identity)
 
 		assert.Equal(t, result.Stopped, false, "Expected search to not stop early")
-		assert.DeepEqual(t, result.Path, []node{"A"})
+		assert.DeepEqual(t, result.Path, []string{"A"})
 		assert.Assert(t, visited.Has("B"), "Expected to visit B")
 		assert.Assert(t, visited.Has("C"), "Expected to visit C")
 		assert.Assert(t, visited.Has("D"), "Expected to visit D")
@@ -126,18 +124,18 @@ func TestBreadthFirstSearchParallel(t *testing.T) {
 	t.Run("returns a stop result over a fallback", func(t *testing.T) {
 		t.Parallel()
 		// Test that a stop result is preferred over a fallback
-		graph := map[node][]node{
+		graph := map[string][]string{
 			"A": {"B", "C"},
 			"B": {"D"},
 			"C": {"D"},
 			"D": {},
 		}
 
-		children := func(node node) []node {
+		children := func(node string) []string {
 			return graph[node]
 		}
 
-		result := core.BreadthFirstSearchParallel("A", children, func(node node) (bool, bool) {
+		result := core.BreadthFirstSearchParallel("A", children, func(node string) (bool, bool) {
 			switch node {
 			case "A":
 				return true, false // Record fallback
@@ -149,6 +147,6 @@ func TestBreadthFirstSearchParallel(t *testing.T) {
 		})
 
 		assert.Equal(t, result.Stopped, true, "Expected search to stop at D")
-		assert.DeepEqual(t, result.Path, []node{"D", "B", "A"})
+		assert.DeepEqual(t, result.Path, []string{"D", "B", "A"})
 	})
 }

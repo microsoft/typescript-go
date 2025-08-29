@@ -473,10 +473,6 @@ type searchNode struct {
 	logger         *logging.LogTree
 }
 
-func (n searchNode) Key() searchNodeKey {
-	return searchNodeKey{configFileName: n.configFileName, loadKind: n.loadKind}
-}
-
 type searchNodeKey struct {
 	configFileName string
 	loadKind       projectLoadKind
@@ -571,13 +567,16 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 			Visited: visited,
 			PreprocessLevel: func(level *core.BreadthFirstSearchLevel[searchNodeKey, searchNode]) {
 				level.Range(func(node searchNode) bool {
-					if node.loadKind == projectLoadKindFind && level.Has(searchNode{configFileName: node.configFileName, loadKind: projectLoadKindCreate, logger: node.logger}) {
+					if node.loadKind == projectLoadKindFind && level.Has(searchNodeKey{configFileName: node.configFileName, loadKind: projectLoadKindCreate}) {
 						// Remove find requests when a create request for the same project is already present.
-						level.Delete(node)
+						level.Delete(searchNodeKey{configFileName: node.configFileName, loadKind: node.loadKind})
 					}
 					return true
 				})
 			},
+		},
+		func(node searchNode) searchNodeKey {
+			return searchNodeKey{configFileName: node.configFileName, loadKind: node.loadKind}
 		},
 	)
 
