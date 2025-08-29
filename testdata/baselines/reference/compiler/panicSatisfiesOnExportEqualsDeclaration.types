@@ -1,0 +1,55 @@
+//// [tests/cases/compiler/panicSatisfiesOnExportEqualsDeclaration.ts] ////
+
+=== types.d.ts ===
+export interface SupportVersionTraceMap {
+    zlib?: any;
+>zlib : any
+
+    'node:zlib'?: any;
+>'node:zlib' : any
+}
+
+=== panicSatisfiesOnExportEqualsDeclaration.js ===
+const zlib = {};
+>zlib : {}
+>{} : {}
+
+const READ = Symbol('read');
+>READ : any
+>Symbol('read') : any
+>Symbol : any
+>'read' : "read"
+
+/**
+ * @satisfies {import('./types').SupportVersionTraceMap}
+ */
+module.exports = {
+>module.exports = {    zlib: zlib,    'node:zlib': {        ...zlib,        [READ]: { supported: ['14.13.1', '12.20.0'] },    },} : any
+>module.exports : any
+>module : { "export=": any; }
+>exports : any
+>{    zlib: zlib,    'node:zlib': {        ...zlib,        [READ]: { supported: ['14.13.1', '12.20.0'] },    },} : { zlib: {}; "node:zlib": {}; }
+
+    zlib: zlib,
+>zlib : {}
+>zlib : {}
+
+    'node:zlib': {
+>'node:zlib' : {}
+>{        ...zlib,        [READ]: { supported: ['14.13.1', '12.20.0'] },    } : {}
+
+        ...zlib,
+>zlib : {}
+
+        [READ]: { supported: ['14.13.1', '12.20.0'] },
+>[READ] : { supported: string[]; }
+>READ : any
+>{ supported: ['14.13.1', '12.20.0'] } : { supported: string[]; }
+>supported : string[]
+>['14.13.1', '12.20.0'] : string[]
+>'14.13.1' : "14.13.1"
+>'12.20.0' : "12.20.0"
+
+    },
+};
+
