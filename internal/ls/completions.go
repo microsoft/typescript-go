@@ -1186,16 +1186,7 @@ func (l *LanguageService) getCompletionData(
 		// part of their `insertText`, not the `codeActions` creating edits away from the cursor.
 		// Finally, `autoImportSpecifierExcludeRegexes` necessitates eagerly resolving module specifiers
 		// because completion items are being explcitly filtered out by module specifier.
-		context := &resolvingModuleSpecifiersForCompletions{
-			logPrefix:                      "collectAutoImports",
-			resolver:                       importSpecifierResolver,
-			position:                       position,
-			isForImportStatementCompletion: importStatementCompletion != nil,
-			isValidTypeOnlyUseSite:         ast.IsValidTypeOnlyAliasUseSite(location),
-		}
-		context.needsFullResolution = context.isForImportStatementCompletion ||
-			l.GetProgram().Options().GetResolvePackageJsonExports() ||
-			len(preferences.AutoImportSpecifierExcludeRegexes) > 0
+		isValidTypeOnlyUseSite := ast.IsValidTypeOnlyAliasUseSite(location)
 
 		// !!! moduleSpecifierCache := host.getModuleSpecifierCache();
 		// !!! packageJsonAutoImportProvider := host.getPackageJsonAutoImportProvider();
@@ -1205,31 +1196,29 @@ func (l *LanguageService) getCompletionData(
 			// module resolution modes, getting past this point guarantees that we'll be
 			// able to generate a suitable module specifier, so we can safely show a completion,
 			// even if we defer computing the module specifier.
-			isImportableExportInfo := func(info *SymbolExportInfo) bool {
+			info = core.Filter(info, func(i *SymbolExportInfo) bool {
 				var toFile *ast.SourceFile
-				if ast.IsSourceFile(info.moduleSymbol.ValueDeclaration) {
-					toFile = info.moduleSymbol.ValueDeclaration.AsSourceFile()
+				if ast.IsSourceFile(i.moduleSymbol.ValueDeclaration) {
+					toFile = i.moduleSymbol.ValueDeclaration.AsSourceFile()
 				}
 				return l.isImportable(
 					file,
 					toFile,
-					info.moduleSymbol,
+					i.moduleSymbol,
 					preferences,
 					importSpecifierResolver.packageJsonImportFilter(),
 				)
-			}
-			info = core.Filter(info, isImportableExportInfo)
+			})
 			if len(info) == 0 {
 				return nil
 			}
 
 			// In node16+, module specifier resolution can fail due to modules being blocked
 			// by package.json `exports`. If that happens, don't show a completion item.
-			// N.B. in this resolution mode we always try to resolve module specifiers here,
-			// because we have to know now if it's going to fail so we can omit the completion
-			// from the list.
-			result, ok := context.tryResolve(typeChecker, info, isFromAmbientModule)
-			if ok == "failed" {
+			// N.B. We always try to resolve module specifiers here, because we have to know
+			// now if it's going to fail so we can omit the completion from the list.
+			result := importSpecifierResolver.getModuleSpecifierForBestExportInfo(typeChecker, info, position, isValidTypeOnlyUseSite)
+			if result == nil {
 				return nil
 			}
 
@@ -1238,13 +1227,10 @@ func (l *LanguageService) getCompletionData(
 			// it should be identical regardless of which one is used. During the subsequent
 			// `CompletionEntryDetails` request, we'll get all the ExportInfos again and pick
 			// the best one based on the module specifier it produces.
+			moduleSpecifier := result.moduleSpecifier
 			exportInfo := info[0]
-			var moduleSpecifier string
-			if ok != "skipped" {
-				if result.exportInfo != nil {
-					exportInfo = result.exportInfo
-				}
-				moduleSpecifier = result.moduleSpecifier
+			if result.exportInfo != nil {
+				exportInfo = result.exportInfo
 			}
 
 			isDefaultExport := exportInfo.exportKind == ExportKindDefault
@@ -1285,18 +1271,15 @@ func (l *LanguageService) getCompletionData(
 		l.searchExportInfosForCompletions(ctx,
 			typeChecker,
 			file,
-			context,
 			preferences,
+			importStatementCompletion != nil,
 			isRightOfOpenTag,
 			isTypeOnlyLocation,
 			lowerCaseTokenText,
 			addSymbolToList,
 		)
 
-		hasUnresolvedAutoImports = context.skippedAny
 		// !!! completionInfoFlags
-		// flags |= core.IfElse(context.resolvedCount > 0, completionInfoFlagsResolvedModuleSpecifiers, 0)
-		// flags |= core.IfElse(context.resolvedCount > moduleSpecifierResolutionLimit, completionInfoFlagsResolvedModuleSpecifiersBeyondLimit, 0)
 		// !!! logging
 	}
 
@@ -1831,57 +1814,6 @@ func keywordCompletionData(
 		keywordCompletions:      getKeywordCompletions(keywordFilters, filterOutTSOnlyKeywords),
 		isNewIdentifierLocation: isNewIdentifierLocation,
 	}
-}
-
-type resolvingModuleSpecifiersForCompletions struct {
-	logPrefix                      string
-	resolver                       *importSpecifierResolverForCompletions
-	position                       int
-	isForImportStatementCompletion bool
-	isValidTypeOnlyUseSite         bool
-
-	needsFullResolution    bool
-	skippedAny             bool
-	ambientCount           int
-	resolvedCount          int
-	resolvedFromCacheCount int
-	cacheAttemptCount      int
-}
-
-func (r *resolvingModuleSpecifiersForCompletions) tryResolve(ch *checker.Checker, exportInfo []*SymbolExportInfo, isFromAmbientModule bool) (*ImportFix, string) {
-	if isFromAmbientModule {
-		if result := r.resolver.getModuleSpecifierForBestExportInfo(ch, exportInfo, r.position, r.isValidTypeOnlyUseSite); result != nil {
-			r.ambientCount++
-			return result, ""
-		}
-		return nil, "failed"
-	}
-
-	shouldResolveModuleSpecifier := r.resolvedCount < moduleSpecifierResolutionLimit
-	shouldGetModuleSpecifierFromCache := !shouldResolveModuleSpecifier && r.cacheAttemptCount < moduleSpecifierResolutionCacheAttemptLimit
-
-	var result *ImportFix
-	if shouldResolveModuleSpecifier || shouldGetModuleSpecifierFromCache {
-		result = r.resolver.getModuleSpecifierForBestExportInfo(ch, exportInfo, r.position, r.isValidTypeOnlyUseSite)
-	}
-
-	if !shouldResolveModuleSpecifier && !shouldGetModuleSpecifierFromCache || shouldGetModuleSpecifierFromCache && result == nil {
-		r.skippedAny = true
-	}
-
-	// r.resolvedCount += result?.computedWithoutCacheCount || 0;
-	r.resolvedFromCacheCount += len(exportInfo) // - (result?.computedWithoutCacheCount || 0);
-	if shouldGetModuleSpecifierFromCache {
-		r.cacheAttemptCount++
-	}
-
-	if result != nil {
-		return result, ""
-	}
-	if r.needsFullResolution {
-		return nil, "failed"
-	}
-	return nil, "skipped"
 }
 
 func getDefaultCommitCharacters(isNewIdentifierLocation bool) []string {

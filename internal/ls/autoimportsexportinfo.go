@@ -80,8 +80,8 @@ func (l *LanguageService) searchExportInfosForCompletions(
 	ctx context.Context,
 	ch *checker.Checker,
 	importingFile *ast.SourceFile,
-	context *resolvingModuleSpecifiersForCompletions,
 	preferences *UserPreferences,
+	isForImportStatementCompletion bool,
 	isRightOfOpenTag bool,
 	isTypeOnlyLocation bool,
 	lowerCaseTokenText string,
@@ -110,7 +110,7 @@ func (l *LanguageService) searchExportInfosForCompletions(
 		return symbolNameMatches[symbolName]
 	}
 	flagMatch := func(targetFlags ast.SymbolFlags) bool {
-		if !isTypeOnlyLocation && !context.isForImportStatementCompletion && (targetFlags&ast.SymbolFlagsValue) == 0 {
+		if !isTypeOnlyLocation && !isForImportStatementCompletion && (targetFlags&ast.SymbolFlagsValue) == 0 {
 			return false
 		}
 		if isTypeOnlyLocation && (targetFlags&(ast.SymbolFlagsModule|ast.SymbolFlagsType) == 0) {
