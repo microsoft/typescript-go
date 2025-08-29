@@ -541,13 +541,6 @@ func (p *Program) verifyCompilerOptions() {
 		}
 	}
 
-	getStrictOptionValue := func(value core.Tristate) bool {
-		if value != core.TSUnknown {
-			return value == core.TSTrue
-		}
-		return options.Strict == core.TSTrue
-	}
-
 	// Removed in TS7
 
 	if options.BaseUrl != "" {
@@ -585,10 +578,10 @@ func (p *Program) verifyCompilerOptions() {
 		createRemovedOptionDiagnostic("module", "UMD", "")
 	}
 
-	if options.StrictPropertyInitialization.IsTrue() && !getStrictOptionValue(options.StrictNullChecks) {
+	if options.StrictPropertyInitialization.IsTrue() && !options.GetStrictOptionValue(options.StrictNullChecks) {
 		createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1, "strictPropertyInitialization", "strictNullChecks")
 	}
-	if options.ExactOptionalPropertyTypes.IsTrue() && !getStrictOptionValue(options.StrictNullChecks) {
+	if options.ExactOptionalPropertyTypes.IsTrue() && !options.GetStrictOptionValue(options.StrictNullChecks) {
 		createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1, "exactOptionalPropertyTypes", "strictNullChecks")
 	}
 
