@@ -1,29 +1,14 @@
-panicSatisfiesOnExportEqualsDeclaration.js(2,14): error TS2585: 'Symbol' only refers to a type, but is being used as a value here. Do you need to change your target library? Try changing the 'lib' compiler option to es2015 or later.
-panicSatisfiesOnExportEqualsDeclaration.js(5,23): error TS2307: Cannot find module './types' or its corresponding type declarations.
+panicSatisfiesOnExportEqualsDeclaration.js(2,23): error TS2307: Cannot find module './types' or its corresponding type declarations.
 
 
 ==== types.d.ts (0 errors) ====
-    export interface SupportVersionTraceMap {
-        zlib?: any;
-        'node:zlib'?: any;
-    }
+    export interface SupportVersionTraceMap {}
     
-==== panicSatisfiesOnExportEqualsDeclaration.js (2 errors) ====
-    const zlib = {};
-    const READ = Symbol('read');
-                 ~~~~~~
-!!! error TS2585: 'Symbol' only refers to a type, but is being used as a value here. Do you need to change your target library? Try changing the 'lib' compiler option to es2015 or later.
-    
+==== panicSatisfiesOnExportEqualsDeclaration.js (1 errors) ====
     /**
      * @satisfies {import('./types').SupportVersionTraceMap}
                           ~~~~~~~~~
 !!! error TS2307: Cannot find module './types' or its corresponding type declarations.
      */
-    module.exports = {
-        zlib: zlib,
-        'node:zlib': {
-            ...zlib,
-            [READ]: { supported: ['14.13.1', '12.20.0'] },
-        },
-    };
+    module.exports = {};
     
