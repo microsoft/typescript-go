@@ -185,7 +185,6 @@ func (t *buildTask) updateDownstream(orchestrator *Orchestrator, path tspath.Pat
 				upToDateStatusTypeUpToDateWithInputFileText:
 				if t.program.HasChangedDtsFile() {
 					downStream.status = &upToDateStatus{kind: upToDateStatusTypeInputFileNewer, data: &inputOutputName{t.config, downStream.status.oldestOutputFileName()}}
-					downStream.errors = nil
 				}
 			case upToDateStatusTypeUpstreamErrors:
 				upstreamErrors := downStream.status.upstreamErrors()
@@ -201,6 +200,7 @@ func (t *buildTask) updateDownstream(orchestrator *Orchestrator, path tspath.Pat
 }
 
 func (t *buildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path) {
+	t.errors = nil
 	if orchestrator.opts.Command.BuildOptions.Verbose.IsTrue() {
 		t.reportStatus(ast.NewCompilerDiagnostic(diagnostics.Building_project_0, orchestrator.relativeFileName(t.config)))
 	}
@@ -740,6 +740,7 @@ func (t *buildTask) resetStatus() {
 func (t *buildTask) resetConfig(orchestrator *Orchestrator, path tspath.Path) {
 	t.dirty = true
 	orchestrator.host.resolvedReferences.Delete(path)
+	t.pending.Store(true)
 }
 
 func (t *buildTask) hasUpdate(orchestrator *Orchestrator, path tspath.Path) updateKind {
