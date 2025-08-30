@@ -409,7 +409,27 @@ func (c *configFileRegistryBuilder) handleConfigChange(entry *dirty.SyncMapEntry
 
 func (c *configFileRegistryBuilder) computeConfigFileName(fileName string, skipSearchInDirectoryOfFile bool, logger *logging.LogTree) string {
 	searchPath := tspath.GetDirectoryPath(fileName)
-	result, _ := tspath.ForEachAncestorDirectory(searchPath, func(directory string) (result string, stop bool) {
+	skipSearchInDirectoryOfFileForCustomConfig := skipSearchInDirectoryOfFile
+	var result string
+	// If custom config file is provided, search for it in directory of file and its ancestors first.
+	// If a custom config file is provided and not found, default to tsconfig.json/jsconfig.json.
+	if c.sessionOptions.CustomConfigFileName != "" {
+		result, _ = tspath.ForEachAncestorDirectory(searchPath, func(directory string) (result string, stop bool) {
+			customConfigFilePath := tspath.CombinePaths(directory, c.sessionOptions.CustomConfigFileName)
+			if !skipSearchInDirectoryOfFileForCustomConfig && c.FS().FileExists(customConfigFilePath) {
+				return customConfigFilePath, true
+			}
+			skipSearchInDirectoryOfFileForCustomConfig = false
+			return "", false
+		})
+	}
+
+	if result != "" {
+		logger.Logf("computeConfigFileName:: File: %s:: Result: %s", fileName, result)
+		return result
+	}
+
+	result, _ = tspath.ForEachAncestorDirectory(searchPath, func(directory string) (result string, stop bool) {
 		tsconfigPath := tspath.CombinePaths(directory, "tsconfig.json")
 		if !skipSearchInDirectoryOfFile && c.FS().FileExists(tsconfigPath) {
 			return tsconfigPath, true
