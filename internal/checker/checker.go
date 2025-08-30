@@ -727,7 +727,7 @@ type Checker struct {
 	unknownSignature                            *Signature
 	resolvingSignature                          *Signature
 	silentNeverSignature                        *Signature
-	cachedArgumentsReferenced                   map[*ast.Node]bool
+	cachedArgumentsReferenced                   collections.Set[*ast.Node]
 	enumNumberIndexInfo                         *IndexInfo
 	anyBaseTypeIndexInfo                        *IndexInfo
 	patternAmbientModules                       []*ast.PatternAmbientModule
@@ -1002,7 +1002,7 @@ func NewChecker(program Program) *Checker {
 	c.unknownSignature = c.newSignature(SignatureFlagsNone, nil, nil, nil, nil, c.errorType, nil, 0)
 	c.resolvingSignature = c.newSignature(SignatureFlagsNone, nil, nil, nil, nil, c.anyType, nil, 0)
 	c.silentNeverSignature = c.newSignature(SignatureFlagsNone, nil, nil, nil, nil, c.silentNeverType, nil, 0)
-	c.cachedArgumentsReferenced = make(map[*ast.Node]bool)
+	c.cachedArgumentsReferenced = collections.Set[*ast.Node]{}
 	c.enumNumberIndexInfo = &IndexInfo{keyType: c.numberType, valueType: c.stringType, isReadonly: true}
 	c.anyBaseTypeIndexInfo = &IndexInfo{keyType: c.stringType, valueType: c.anyType, isReadonly: false}
 	c.emptyStringType = c.getStringLiteralType("")
@@ -30697,8 +30697,8 @@ func (c *Checker) containsArgumentsReference(node *ast.Node) bool {
 		return false
 	}
 
-	if containsArguments, ok := c.cachedArgumentsReferenced[node]; ok {
-		return containsArguments
+	if c.cachedArgumentsReferenced.Has(node) {
+		return true
 	}
 
 	var visit func(node *ast.Node) bool
@@ -30725,7 +30725,9 @@ func (c *Checker) containsArgumentsReference(node *ast.Node) bool {
 	}
 
 	containsArguments := visit(node.Body())
-	c.cachedArgumentsReferenced[node] = containsArguments
+	if containsArguments {
+		c.cachedArgumentsReferenced.Add(node)
+	}
 	return containsArguments
 }
 
