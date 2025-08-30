@@ -54,6 +54,7 @@ type NodeBuilderSymbolLinks struct {
 	specifierCache module.ModeAwareCache[string]
 }
 type NodeBuilderContext struct {
+	host                            Host
 	tracker                         nodebuilder.SymbolTracker
 	approximateLength               int
 	encounteredError                bool
@@ -1152,7 +1153,7 @@ func (b *nodeBuilderImpl) getSpecifierForModuleSymbol(symbol *ast.Symbol, overri
 			return stringutil.StripQuotes(symbol.Name)
 		}
 	}
-	if b.ctx.enclosingFile == nil || b.ctx.tracker.GetModuleSpecifierGenerationHost() == nil {
+	if b.ctx.enclosingFile == nil {
 		if isAmbientModuleSymbolName(symbol.Name) {
 			return stringutil.StripQuotes(symbol.Name)
 		}
@@ -1185,7 +1186,7 @@ func (b *nodeBuilderImpl) getSpecifierForModuleSymbol(symbol *ast.Symbol, overri
 	// just like how the declaration emitter does for the ambient module declarations - we can easily accomplish this
 	// using the `baseUrl` compiler option (which we would otherwise never use in declaration emit) and a non-relative
 	// specifier preference
-	host := b.ctx.tracker.GetModuleSpecifierGenerationHost()
+	host := b.ctx.host
 	specifierCompilerOptions := b.ch.compilerOptions
 	specifierPref := modulespecifiers.ImportModuleSpecifierPreferenceProjectRelative
 	endingPref := modulespecifiers.ImportModuleSpecifierEndingPreferenceNone
