@@ -200,11 +200,7 @@ var E;
     E[E["B"] = 1] = "B";
 })(E || (E = {}));`},
 
-		{title: "const enum", input: "const enum E {A, B}", output: `var E;
-(function (E) {
-    E[E["A"] = 0] = "A";
-    E[E["B"] = 1] = "B";
-})(E || (E = {}));`},
+		{title: "const enum", input: "const enum E {A, B}", output: ""},
 
 		{title: "merged enum", input: "enum E {A} enum E {B=A}", output: `var E;
 (function (E) {
