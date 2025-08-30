@@ -856,6 +856,7 @@ type Checker struct {
 	activeTypeMappersCaches                     []map[string]*Type
 	ambientModulesOnce                          sync.Once
 	ambientModules                              []*ast.Symbol
+	spellingSuggestionBuffers                   *core.SpellingSuggestionBuffers
 }
 
 func NewChecker(program Program) *Checker {
@@ -1007,6 +1008,7 @@ func NewChecker(program Program) *Checker {
 	c.anyBaseTypeIndexInfo = &IndexInfo{keyType: c.stringType, valueType: c.anyType, isReadonly: false}
 	c.emptyStringType = c.getStringLiteralType("")
 	c.zeroType = c.getNumberLiteralType(0)
+	c.spellingSuggestionBuffers = &core.SpellingSuggestionBuffers{}
 	c.zeroBigIntType = c.getBigIntLiteralType(jsnum.PseudoBigInt{})
 	c.typeofType = c.getUnionType(core.Map(slices.Sorted(maps.Keys(typeofNEFacts)), c.getStringLiteralType))
 	c.flowLoopCache = make(map[FlowLoopKey]*Type)
@@ -1716,7 +1718,7 @@ func (c *Checker) getSpellingSuggestionForName(name string, symbols []*ast.Symbo
 		}
 		return ""
 	}
-	return core.GetSpellingSuggestion(name, symbols, getCandidateName)
+	return core.GetSpellingSuggestion(name, symbols, getCandidateName, c.spellingSuggestionBuffers)
 }
 
 func (c *Checker) onSuccessfullyResolvedSymbol(errorLocation *ast.Node, result *ast.Symbol, meaning ast.SymbolFlags, lastLocation *ast.Node, associatedDeclarationForContainingInitializerOrBindingName *ast.Node, withinDeferredContext bool) {
@@ -26236,7 +26238,7 @@ func (c *Checker) getSuggestionForNonexistentIndexSignature(objectType *Type, ex
 
 func (c *Checker) getSuggestedTypeForNonexistentStringLiteralType(source *Type, target *Type) *Type {
 	candidates := core.Filter(target.Types(), func(t *Type) bool { return t.flags&TypeFlagsStringLiteral != 0 })
-	return core.GetSpellingSuggestion(getStringLiteralValue(source), candidates, getStringLiteralValue)
+	return core.GetSpellingSuggestion(getStringLiteralValue(source), candidates, getStringLiteralValue, c.spellingSuggestionBuffers)
 }
 
 func getIndexNodeForAccessExpression(accessNode *ast.Node) *ast.Node {
