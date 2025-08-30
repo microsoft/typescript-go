@@ -464,7 +464,7 @@ func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.Ren
 	options := refOptions{use: referenceUseRename, useAliasesForRename: true}
 	symbolsAndEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil)
 	entries := core.FlatMap(symbolsAndEntries, func(s *SymbolAndEntries) []*referenceEntry { return s.references })
-	changes := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
+	changes := make(map[lsproto.DocumentUri][]*lsproto.TextEdit, len(entries))
 	checker, done := program.GetTypeChecker(ctx)
 	defer done()
 	for _, entry := range entries {
