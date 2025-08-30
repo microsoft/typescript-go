@@ -38,6 +38,7 @@ class C {
 }
 
 //// [esDecorators-classDeclaration-outerThisReference.js]
+var _C_a;
 // `this` should point to the outer `this` in both cases.
 @dec(this)
 class A {
@@ -59,7 +60,10 @@ class B {
 // private names.
 @dec(this)
 class C {
-    #a = 1;
+    constructor() {
+        _C_a.set(this, 1);
+    }
     @dec(this, (x) => x.#a)
     b = 2;
 }
+_C_a = new WeakMap();
