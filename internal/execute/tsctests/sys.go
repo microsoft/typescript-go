@@ -542,36 +542,32 @@ func (s *testSys) removeNoError(path string) {
 	}
 }
 
-func (s *testSys) replaceFileText(path string, oldText string, newText string) {
+func (s *testSys) readFileNoError(path string) string {
 	content, ok := s.fsFromFileMap().ReadFile(path)
 	if !ok {
 		panic("File not found: " + path)
 	}
+	return content
+}
+
+func (s *testSys) replaceFileText(path string, oldText string, newText string) {
+	content := s.readFileNoError(path)
 	content = strings.Replace(content, oldText, newText, 1)
 	s.writeFileNoError(path, content, false)
 }
 
 func (s *testSys) replaceFileTextAll(path string, oldText string, newText string) {
-	content, ok := s.fsFromFileMap().ReadFile(path)
-	if !ok {
-		panic("File not found: " + path)
-	}
+	content := s.readFileNoError(path)
 	content = strings.ReplaceAll(content, oldText, newText)
 	s.writeFileNoError(path, content, false)
 }
 
 func (s *testSys) appendFile(path string, text string) {
-	content, ok := s.fsFromFileMap().ReadFile(path)
-	if !ok {
-		panic("File not found: " + path)
-	}
+	content := s.readFileNoError(path)
 	s.writeFileNoError(path, content+text, false)
 }
 
 func (s *testSys) prependFile(path string, text string) {
-	content, ok := s.fsFromFileMap().ReadFile(path)
-	if !ok {
-		panic("File not found: " + path)
-	}
+	content := s.readFileNoError(path)
 	s.writeFileNoError(path, text+content, false)
 }

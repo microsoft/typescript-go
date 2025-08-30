@@ -2864,6 +2864,69 @@ func TestTscNoEmitOnError(t *testing.T) {
 		}
 		return testCases
 	}
+	getTscWatchNoEmitOnErrorTestCases := func(scenarios []*tscNoEmitOnErrorScenario, commandLineArgs []string) []*tscInput {
+		var edits []*tscEdit
+		for _, scenario := range scenarios {
+			if edits != nil {
+				edits = append(edits, &tscEdit{
+					caption: scenario.subScenario,
+					edit: func(sys *testSys) {
+						sys.writeFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`, scenario.mainErrorContent, false)
+					},
+				})
+			}
+			edits = append(edits,
+				&tscEdit{
+					caption: "No Change",
+					edit: func(sys *testSys) {
+						sys.writeFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`, sys.readFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`), false)
+					},
+				},
+				&tscEdit{
+					caption: "Fix " + scenario.subScenario,
+					edit: func(sys *testSys) {
+						sys.writeFileNoError("/user/username/projects/noEmitOnError/src/main.ts", scenario.fixedErrorContent, false)
+					},
+				},
+				&tscEdit{
+					caption: "No Change",
+					edit: func(sys *testSys) {
+						sys.writeFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`, sys.readFileNoError(`/user/username/projects/noEmitOnError/src/main.ts`), false)
+					},
+				},
+			)
+		}
+		return []*tscInput{
+			{
+				subScenario:     "noEmitOnError",
+				files:           getTscNoEmitOnErrorFileMap(scenarios[0], false, false),
+				cwd:             "/user/username/projects/noEmitOnError",
+				commandLineArgs: commandLineArgs,
+				edits:           edits,
+			},
+			{
+				subScenario:     "noEmitOnError with declaration",
+				files:           getTscNoEmitOnErrorFileMap(scenarios[0], true, false),
+				cwd:             "/user/username/projects/noEmitOnError",
+				commandLineArgs: commandLineArgs,
+				edits:           edits,
+			},
+			{
+				subScenario:     "noEmitOnError with incremental",
+				files:           getTscNoEmitOnErrorFileMap(scenarios[0], false, true),
+				cwd:             "/user/username/projects/noEmitOnError",
+				commandLineArgs: commandLineArgs,
+				edits:           edits,
+			},
+			{
+				subScenario:     "noEmitOnError with declaration with incremental",
+				files:           getTscNoEmitOnErrorFileMap(scenarios[0], true, true),
+				cwd:             "/user/username/projects/noEmitOnError",
+				commandLineArgs: commandLineArgs,
+				edits:           edits,
+			},
+		}
+	}
 	scenarios := []*tscNoEmitOnErrorScenario{
 		{
 			subScenario: "syntax errors",
@@ -2959,6 +3022,7 @@ func TestTscNoEmitOnError(t *testing.T) {
 				},
 			},
 		},
+		getTscWatchNoEmitOnErrorTestCases(scenarios, []string{"-b", "-w", "-v"}),
 	)
 
 	for _, test := range testCases {
