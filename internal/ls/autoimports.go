@@ -859,13 +859,13 @@ func tryUseExistingNamespaceImport(existingImports []*FixAddToExistingImportInfo
 		declaration := existingImport.declaration
 		switch declaration.Kind {
 		case ast.KindVariableDeclaration, ast.KindImportEqualsDeclaration:
-			if declaration.Kind == ast.KindVariableDeclaration && declaration.Name().Kind != ast.KindIdentifier {
+			if declaration.Kind == ast.KindVariableDeclaration && (declaration.Name() == nil || declaration.Name().Kind != ast.KindIdentifier) {
 				continue
 			}
 			namespacePrefix = declaration.Name().Text()
 		case ast.KindJSDocImportTag, ast.KindImportDeclaration:
 			importClause := ast.GetImportClauseOfDeclaration(declaration)
-			if importClause == nil || importClause.NamedBindings.Kind != ast.KindNamespaceImport {
+			if importClause == nil || importClause.NamedBindings == nil || importClause.NamedBindings.Kind != ast.KindNamespaceImport {
 				continue
 			}
 			namespacePrefix = importClause.NamedBindings.Name().Text()
