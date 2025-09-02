@@ -17,9 +17,25 @@ To use this, set this in your VS Code settings:
 
 ```json
 {
-    "typescript.experimental.useTsgo": true
+  "typescript.experimental.useTsgo": true
 }
 ```
+
+## Quick Start
+
+### Prerequisites
+
+To use `tsgo`, make sure you have the following installed:
+
+- **Node.js** v20.17.x (LTS) or v22.9.x+
+- **npm** v11.5.2
+- **Go** v1.25+
+- **Rust** (latest stable, with `cargo` available in PATH)
+
+### Installation
+
+```bash
+npm install @typescript/native-preview
 
 ## What Works So Far?
 
@@ -77,3 +93,4 @@ trademarks or logos is subject to and must follow
 [Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/legal/intellectualproperty/trademarks/usage/general).
 Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
 Any use of third-party trademarks or logos are subject to those third-party's policies.
+```
