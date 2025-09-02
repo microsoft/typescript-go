@@ -167,6 +167,9 @@ Output::
 
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
 
+[[90mHH:MM:SS AM[0m] Updating unchanged output timestamps of project 'tsconfig.json'...
+
+//// [/home/src/projects/project/tsconfig.tsbuildinfo] *mTime changed*
 
 tsconfig.json::
 SemanticDiagnostics::

@@ -130,6 +130,9 @@ Output::
 
 [[90mHH:MM:SS AM[0m] Project 'tsconfig.json' is up to date but needs to update timestamps of output files that are older than input files
 
+[[90mHH:MM:SS AM[0m] Updating output timestamps of project 'tsconfig.json'...
+
+//// [/user/username/projects/myproject/tsconfig.tsbuildinfo] *mTime changed*
 
 
 

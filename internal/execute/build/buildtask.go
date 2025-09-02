@@ -643,10 +643,11 @@ func (t *buildTask) reportUpToDateStatus(orchestrator *Orchestrator) {
 	}
 }
 
+func (t *buildTask) canUpdateJsDtsOutputTimestamps() bool {
+	return !t.resolved.CompilerOptions().NoEmit.IsTrue() && !t.resolved.CompilerOptions().IsIncremental()
+}
+
 func (t *buildTask) updateTimeStamps(orchestrator *Orchestrator, emittedFiles []string, verboseMessage *diagnostics.Message) {
-	if t.resolved.CompilerOptions().NoEmit.IsTrue() {
-		return
-	}
 	emitted := collections.NewSetFromItems(emittedFiles...)
 	var verboseMessageReported bool
 	buildInfoName := t.resolved.GetBuildInfoFileName()
@@ -673,7 +674,7 @@ func (t *buildTask) updateTimeStamps(orchestrator *Orchestrator, emittedFiles []
 		}
 	}
 
-	if !t.resolved.CompilerOptions().IsIncremental() {
+	if t.canUpdateJsDtsOutputTimestamps() {
 		for outputFile := range t.resolved.GetOutputFileNames() {
 			updateTimeStamp(outputFile)
 		}
@@ -722,7 +723,7 @@ func (t *buildTask) updateWatch(orchestrator *Orchestrator, oldCache *collection
 		t.inputFiles = core.Map(t.resolved.FileNames(), func(p string) time.Time {
 			return orchestrator.host.loadOrStoreMTime(p, oldCache, false)
 		})
-		if !t.resolved.CompilerOptions().IsIncremental() {
+		if t.canUpdateJsDtsOutputTimestamps() {
 			for outputFile := range t.resolved.GetOutputFileNames() {
 				orchestrator.host.storeMTimeFromOldCache(outputFile, oldCache)
 			}

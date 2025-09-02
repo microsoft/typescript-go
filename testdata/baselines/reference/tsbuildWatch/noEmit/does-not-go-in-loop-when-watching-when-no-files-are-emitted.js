@@ -88,6 +88,9 @@ Output::
 
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
 
+[[90mHH:MM:SS AM[0m] Updating unchanged output timestamps of project 'tsconfig.json'...
+
+//// [/user/username/projects/myproject/tsconfig.tsbuildinfo] *mTime changed*
 
 tsconfig.json::
 SemanticDiagnostics::
@@ -100,4 +103,19 @@ const x = 10;
 
 
 Output::
+[[90mHH:MM:SS AM[0m] Projects in this build: 
+    * tsconfig.json
 
+[[90mHH:MM:SS AM[0m] Project 'tsconfig.json' is out of date because output 'tsconfig.tsbuildinfo' is older than input 'a.js'
+
+[[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
+
+//// [/user/username/projects/myproject/tsconfig.tsbuildinfo] *rewrite with same content*
+//// [/user/username/projects/myproject/tsconfig.tsbuildinfo.readable.baseline.txt] *rewrite with same content*
+
+tsconfig.json::
+SemanticDiagnostics::
+*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
+*refresh*    /user/username/projects/myproject/a.js
+Signatures::
+(computed .d.ts) /user/username/projects/myproject/a.js
