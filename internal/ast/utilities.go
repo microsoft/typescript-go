@@ -2678,7 +2678,7 @@ func findImportOrRequire(text string, start int) (index int, size int) {
 			expected = "require"
 		}
 		if index+size <= n && text[index:index+size] == expected {
-			return
+			return index, size
 		}
 		index++
 	}

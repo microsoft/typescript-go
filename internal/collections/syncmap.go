@@ -12,7 +12,7 @@ type SyncMap[K comparable, V any] struct {
 func (s *SyncMap[K, V]) Load(key K) (value V, ok bool) {
 	val, ok := s.m.Load(key)
 	if !ok {
-		return
+		return value, ok
 	}
 	return val.(V), true
 }
