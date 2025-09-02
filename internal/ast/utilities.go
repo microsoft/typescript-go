@@ -1764,8 +1764,7 @@ func GetThisContainer(node *Node, includeArrowFunctions bool, includeClassComput
 }
 
 func GetSuperContainer(node *Node, stopOnFunctions bool) *Node {
-	for node != nil {
-		node = node.Parent
+	for node = node.Parent; node != nil; node = node.Parent {
 		switch node.Kind {
 		case KindComputedPropertyName:
 			node = node.Parent
