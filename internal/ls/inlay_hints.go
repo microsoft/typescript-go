@@ -25,12 +25,11 @@ func (l *LanguageService) ProvideInlayHint(
 	preferences *UserPreferences,
 ) (lsproto.InlayHintResponse, error) {
 	program, file := l.getProgramAndFile(params.TextDocument.Uri)
-	fileText := file.Text()
 	quotePreference := getQuotePreference(file, preferences)
 
 	checker, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
-	inlayHintCtx := &inlayHintState{
+	inlayHintState := &inlayHintState{
 		span:            l.converters.FromLSPRange(file, params.Range),
 		preferences:     preferences,
 		quotePreference: quotePreference,
@@ -38,11 +37,12 @@ func (l *LanguageService) ProvideInlayHint(
 		checker:         checker,
 		converters:      l.converters,
 	}
-	visit(inlayHintCtx, file.AsNode())
-	return lsproto.InlayHintsOrNull{InlayHints: &inlayHintCtx.result}, nil
+	inlayHintState.visit(file.AsNode())
+	return lsproto.InlayHintsOrNull{InlayHints: &inlayHintState.result}, nil
 }
 
 type inlayHintState struct {
+	ctx             context.Context
 	span            core.TextRange
 	preferences     *UserPreferences
 	quotePreference quotePreference
@@ -52,51 +52,83 @@ type inlayHintState struct {
 	result          []*lsproto.InlayHint
 }
 
-func visit(ctx *inlayHintState, node *ast.Node) *bool {
+func (s *inlayHintState) visit(node *ast.Node) bool {
 	if node == nil || node.End()-node.Pos() == 0 {
-		return nil
+		return false
 	}
 
 	switch node.Kind {
 	case ast.KindModuleDeclaration, ast.KindClassDeclaration, ast.KindInterfaceDeclaration,
 		ast.KindFunctionDeclaration, ast.KindClassExpression, ast.KindFunctionExpression,
 		ast.KindMethodDeclaration, ast.KindArrowFunction:
-		// !!! cancellation
-		// cancellationToken.throwIfCancellationRequested();
+		if s.ctx.Err() != nil {
+			return true
+		}
 	}
 
-	if !ctx.span.Intersects(node.Loc) {
-		return nil
+	if !s.span.Intersects(node.Loc) {
+		return false
 	}
 
 	if ast.IsTypeNode(node) && !ast.IsExpressionWithTypeArguments(node) {
-		return nil
+		return false
 	}
 
-	if ptrIsTrue(ctx.preferences.IncludeInlayVariableTypeHints) && ast.IsVariableDeclaration(node) {
-		ctx.visitVariableLikeDeclaration(node)
-	} else if ptrIsTrue(ctx.preferences.IncludeInlayPropertyDeclarationTypeHints) && ast.IsPropertyDeclaration(node) {
-		ctx.visitVariableLikeDeclaration(node)
-	} else if ptrIsTrue(ctx.preferences.IncludeInlayEnumMemberValueHints) && ast.IsEnumMember(node) {
-		ctx.visitEnumMember(node)
-	} else if shouldShowParameterNameHints(ctx.preferences) && (ast.IsCallExpression(node) || ast.IsNewExpression(node)) {
-		ctx.visitCallOrNewExpression(node)
+	if ptrIsTrue(s.preferences.IncludeInlayVariableTypeHints) && ast.IsVariableDeclaration(node) {
+		s.visitVariableLikeDeclaration(node)
+	} else if ptrIsTrue(s.preferences.IncludeInlayPropertyDeclarationTypeHints) && ast.IsPropertyDeclaration(node) {
+		s.visitVariableLikeDeclaration(node)
+	} else if ptrIsTrue(s.preferences.IncludeInlayEnumMemberValueHints) && ast.IsEnumMember(node) {
+		s.visitEnumMember(node)
+	} else if shouldShowParameterNameHints(s.preferences) && (ast.IsCallExpression(node) || ast.IsNewExpression(node)) {
+		s.visitCallOrNewExpression(node)
 	} else {
-		if ptrIsTrue(ctx.preferences.IncludeInlayFunctionParameterTypeHints) &&
+		if ptrIsTrue(s.preferences.IncludeInlayFunctionParameterTypeHints) &&
 			ast.IsFunctionLikeDeclaration(node) &&
 			ast.HasContextSensitiveParameters(node) {
-			visitFunctionLikeForParameterType(ctx, node)
+			s.visitFunctionLikeForParameterType(node)
 		}
-		if ptrIsTrue(ctx.preferences.IncludeInlayFunctionLikeReturnTypeHints) &&
+		if ptrIsTrue(s.preferences.IncludeInlayFunctionLikeReturnTypeHints) &&
 			isSignatureSupportingReturnAnnotation(node) {
-			ctx.visitFunctionDeclarationLikeForReturnType(node)
+			s.visitFunctionDeclarationLikeForReturnType(node)
 		}
 	}
-	return ptrTo(node.ForEachChild(visit))
+	return node.ForEachChild(s.visit)
 }
 
-func (s *inlayHintState) visitFunctionDeclarationLikeForReturnType(node *ast.Node) {
-	// !!! HERE
+// FunctionDeclaration | MethodDeclaration | GetAccessorDeclaration | FunctionExpression | ArrowFunction
+func (s *inlayHintState) visitFunctionDeclarationLikeForReturnType(decl *ast.FunctionLikeDeclaration) {
+	if ast.IsArrowFunction(decl) {
+		if findChildOfKind(decl, ast.KindOpenParenToken, s.file) == nil {
+			return
+		}
+	}
+
+	typeAnnotation := decl.Type()
+	if typeAnnotation != nil || decl.Body() == nil {
+		return
+	}
+
+	signature := s.checker.GetSignatureFromDeclaration(decl)
+	if signature == nil {
+		return
+	}
+
+	typePredicate := s.checker.GetTypePredicateOfSignature(signature)
+
+	if typePredicate != nil && typePredicate.Type() != nil {
+		hintParts := s.typePredicateToInlayHintParts(typePredicate)
+		s.addTypeHints(hintParts, s.getTypeAnnotationPosition(decl))
+		return
+	}
+
+	returnType := s.checker.GetReturnTypeOfSignature(signature)
+	if isModuleReferenceType(returnType) {
+		return
+	}
+
+	hintParts := s.typeToInlayHintParts(returnType)
+	s.addTypeHints(hintParts, s.getTypeAnnotationPosition(decl))
 }
 
 func (s *inlayHintState) visitCallOrNewExpression(expr *ast.CallOrNewExpression) {
@@ -193,7 +225,7 @@ func (s *inlayHintState) visitVariableLikeDeclaration(decl *ast.VariableOrProper
 		return
 	}
 
-	hintParts := typeToInlayHintParts(s, declarationType)
+	hintParts := s.typeToInlayHintParts(declarationType)
 	var hintText string
 	if hintParts.String != nil {
 		hintText = *hintParts.String
@@ -208,11 +240,11 @@ func (s *inlayHintState) visitVariableLikeDeclaration(decl *ast.VariableOrProper
 		stringutil.EquateStringCaseInsensitive(decl.Name().Text(), hintText) {
 		return
 	}
-	addTypeHints(s, hintParts, decl.Name().End())
+	s.addTypeHints(hintParts, decl.Name().End())
 }
 
-func visitFunctionLikeForParameterType(ctx *inlayHintState, node *ast.FunctionLikeDeclaration) {
-	signature := ctx.checker.GetSignatureFromDeclaration(node)
+func (s *inlayHintState) visitFunctionLikeForParameterType(node *ast.FunctionLikeDeclaration) {
+	signature := s.checker.GetSignatureFromDeclaration(node)
 	if signature == nil {
 		return
 	}
@@ -226,7 +258,7 @@ func visitFunctionLikeForParameterType(ctx *inlayHintState, node *ast.FunctionLi
 			} else {
 				symbol = signature.Parameters()[pos]
 			}
-			addParameterTypeHint(ctx, param, symbol)
+			s.addParameterTypeHint(param, symbol)
 		}
 		if ast.IsThisParameter(param) {
 			continue
@@ -235,12 +267,12 @@ func visitFunctionLikeForParameterType(ctx *inlayHintState, node *ast.FunctionLi
 	}
 }
 
-func addParameterTypeHint(ctx *inlayHintState, node *ast.ParameterDeclarationNode, symbol *ast.Symbol) {
+func (s *inlayHintState) addParameterTypeHint(node *ast.ParameterDeclarationNode, symbol *ast.Symbol) {
 	typeAnnotation := node.Type()
 	if typeAnnotation != nil || symbol == nil {
 		return
 	}
-	typeHints := getParameterDeclarationTypeHints(ctx, symbol)
+	typeHints := s.getParameterDeclarationTypeHints(symbol)
 	if typeHints == nil {
 		return
 	}
@@ -250,58 +282,84 @@ func addParameterTypeHint(ctx *inlayHintState, node *ast.ParameterDeclarationNod
 	} else {
 		pos = node.Name().End()
 	}
-	addTypeHints(ctx, *typeHints, pos)
+	s.addTypeHints(*typeHints, pos)
 }
 
-func getParameterDeclarationTypeHints(ctx *inlayHintState, symbol *ast.Symbol) *lsproto.StringOrInlayHintLabelParts {
+func (s *inlayHintState) getParameterDeclarationTypeHints(symbol *ast.Symbol) *lsproto.StringOrInlayHintLabelParts {
 	valueDeclaration := symbol.ValueDeclaration
 	if valueDeclaration == nil || !ast.IsParameter(valueDeclaration) {
 		return nil
 	}
 
-	signatureParamType := ctx.checker.GetTypeOfSymbolAtLocation(symbol, valueDeclaration)
+	signatureParamType := s.checker.GetTypeOfSymbolAtLocation(symbol, valueDeclaration)
 	if isModuleReferenceType(signatureParamType) {
 		return nil
 	}
 
-	return ptrTo(typeToInlayHintParts(ctx, signatureParamType))
+	return ptrTo(s.typeToInlayHintParts(signatureParamType))
 }
 
-func typeToInlayHintParts(ctx *inlayHintState, t *checker.Type) lsproto.StringOrInlayHintLabelParts {
-	if !shouldUseInteractiveInlayHints(ctx.preferences) {
-		return lsproto.StringOrInlayHintLabelParts{String: ptrTo(printTypeInSingleLine(ctx, t))}
+func (s *inlayHintState) typeToInlayHintParts(t *checker.Type) lsproto.StringOrInlayHintLabelParts {
+	if !shouldUseInteractiveInlayHints(s.preferences) {
+		return lsproto.StringOrInlayHintLabelParts{String: ptrTo(s.printTypeInSingleLine(t))}
 	}
 
 	flags := nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsAllowUniqueESSymbolType |
 		nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope
-	typeNode := ctx.checker.TypeToTypeNode(t, nil /*enclosingDeclaration*/, flags)
+	typeNode := s.checker.TypeToTypeNode(t, nil /*enclosingDeclaration*/, flags)
 	debug.AssertIsDefined(typeNode, "should always get typenode")
 	return lsproto.StringOrInlayHintLabelParts{
-		InlayHintLabelParts: ptrTo(getInlayHintLabelParts(ctx, typeNode)),
+		InlayHintLabelParts: ptrTo(s.getInlayHintLabelParts(typeNode)),
 	}
 }
 
-func printTypeInSingleLine(ctx *inlayHintState, t *checker.Type) string {
+func (s *inlayHintState) typePredicateToInlayHintParts(typePredicate *checker.TypePredicate) lsproto.StringOrInlayHintLabelParts {
+	if !shouldUseInteractiveInlayHints(s.preferences) {
+		return lsproto.StringOrInlayHintLabelParts{String: ptrTo(s.printTypePredicateInSingleLine(typePredicate))}
+	}
+
+	flags := nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsAllowUniqueESSymbolType |
+		nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope
+	typeNode := s.checker.TypePredicateToTypePredicateNode(typePredicate, nil /*enclosingDeclaration*/, flags)
+	debug.AssertIsDefined(typeNode, "should always get typePredicateNode")
+	return lsproto.StringOrInlayHintLabelParts{
+		InlayHintLabelParts: ptrTo(s.getInlayHintLabelParts(typeNode)),
+	}
+}
+
+func (s *inlayHintState) printTypePredicateInSingleLine(typePredicate *checker.TypePredicate) string {
 	flags := nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsAllowUniqueESSymbolType |
 		nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope
 	p := checker.CreatePrinterWithRemoveComments(nil /*emitContext*/)
 	writer, done := printer.GetSingleLineStringWriter()
 	defer done()
-	typeNode := ctx.checker.TypeToTypeNode(t, nil /*enclosingDeclaration*/, flags)
-	debug.AssertIsDefined(typeNode, "should always get typenode")
-	p.Write(typeNode, ctx.file, writer, nil /*sourceMapGenerator*/)
+	typeNode := s.checker.TypePredicateToTypePredicateNode(typePredicate, nil /*enclosingDeclaration*/, flags)
+	debug.AssertIsDefined(typeNode, "should always get typePredicateNode")
+	p.Write(typeNode, s.file, writer, nil /*sourceMapGenerator*/)
 	return writer.String()
 }
 
-func addTypeHints(ctx *inlayHintState, hint lsproto.StringOrInlayHintLabelParts, position int) {
+func (s *inlayHintState) printTypeInSingleLine(t *checker.Type) string {
+	flags := nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsAllowUniqueESSymbolType |
+		nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope
+	p := checker.CreatePrinterWithRemoveComments(nil /*emitContext*/)
+	writer, done := printer.GetSingleLineStringWriter()
+	defer done()
+	typeNode := s.checker.TypeToTypeNode(t, nil /*enclosingDeclaration*/, flags)
+	debug.AssertIsDefined(typeNode, "should always get typeNode")
+	p.Write(typeNode, s.file, writer, nil /*sourceMapGenerator*/)
+	return writer.String()
+}
+
+func (s *inlayHintState) addTypeHints(hint lsproto.StringOrInlayHintLabelParts, position int) {
 	if hint.String != nil {
 		hint.String = ptrTo(": " + *hint.String)
 	} else {
 		hint.InlayHintLabelParts = ptrTo(append([]*lsproto.InlayHintLabelPart{{Value: ": "}}, *hint.InlayHintLabelParts...))
 	}
-	ctx.result = append(ctx.result, &lsproto.InlayHint{
+	s.result = append(s.result, &lsproto.InlayHint{
 		Label:       hint,
-		Position:    ctx.converters.PositionToLineAndCharacter(ctx.file, core.TextPos(position)),
+		Position:    s.converters.PositionToLineAndCharacter(s.file, core.TextPos(position)),
 		Kind:        ptrTo(lsproto.InlayHintKindType),
 		PaddingLeft: ptrTo(true),
 	})
@@ -391,7 +449,7 @@ func isModuleReferenceType(t *checker.Type) bool {
 	return symbol != nil && symbol.Flags&ast.SymbolFlagsModule != 0
 }
 
-func getInlayHintLabelParts(ctx *inlayHintState, node *ast.Node) []*lsproto.InlayHintLabelPart {
+func (s *inlayHintState) getInlayHintLabelParts(node *ast.Node) []*lsproto.InlayHintLabelPart {
 	var parts []*lsproto.InlayHintLabelPart
 
 	var visitForDisplayParts func(node *ast.Node)
@@ -410,7 +468,7 @@ func getInlayHintLabelParts(ctx *inlayHintState, node *ast.Node) []*lsproto.Inla
 		}
 
 		if ast.IsLiteralExpression(node) {
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: getLiteralText(ctx, node)})
+			parts = append(parts, &lsproto.InlayHintLabelPart{Value: s.getLiteralText(node)})
 			return
 		}
 
@@ -422,7 +480,7 @@ func getInlayHintLabelParts(ctx *inlayHintState, node *ast.Node) []*lsproto.Inla
 				name = ast.GetNameOfDeclaration(node.Symbol().Declarations[0])
 			}
 			if name != nil {
-				parts = append(parts, ctx.getNodeDisplayPart(identifierText, name))
+				parts = append(parts, s.getNodeDisplayPart(identifierText, name))
 			} else {
 				parts = append(parts, &lsproto.InlayHintLabelPart{Value: identifierText})
 			}
@@ -678,12 +736,12 @@ func getInlayHintLabelParts(ctx *inlayHintState, node *ast.Node) []*lsproto.Inla
 				visitForDisplayParts(span)
 			}
 		case ast.KindTemplateHead:
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: getLiteralText(ctx, node)})
+			parts = append(parts, &lsproto.InlayHintLabelPart{Value: s.getLiteralText(node)})
 		case ast.KindTemplateLiteralTypeSpan:
 			visitForDisplayParts(node.Type())
 			visitForDisplayParts(node.AsTemplateLiteralTypeSpan().Literal)
 		case ast.KindTemplateMiddle, ast.KindTemplateTail:
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: getLiteralText(ctx, node)})
+			parts = append(parts, &lsproto.InlayHintLabelPart{Value: s.getLiteralText(node)})
 		case ast.KindThisType:
 			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "this"})
 		default:
@@ -726,10 +784,10 @@ func (s *inlayHintState) getNodeDisplayPart(text string, node *ast.Node) *lsprot
 	}
 }
 
-func getLiteralText(ctx *inlayHintState, node *ast.LiteralLikeNode) string {
+func (s *inlayHintState) getLiteralText(node *ast.LiteralLikeNode) string {
 	switch node.Kind {
 	case ast.KindStringLiteral:
-		if ctx.quotePreference == quotePreferenceSingle {
+		if s.quotePreference == quotePreferenceSingle {
 			return `'` + printer.EscapeString(node.Text(), printer.QuoteCharSingleQuote) + `'`
 		}
 		return `"` + printer.EscapeString(node.Text(), printer.QuoteCharDoubleQuote) + `"`
@@ -852,4 +910,12 @@ func (s *inlayHintState) leadingCommentsContainsParameterName(node *ast.Node, na
 	}
 
 	return false
+}
+
+func (s *inlayHintState) getTypeAnnotationPosition(decl *ast.FunctionLikeDeclaration) int {
+	closeParenToken := findChildOfKind(decl, ast.KindCloseParenToken, s.file)
+	if closeParenToken != nil {
+		return closeParenToken.End()
+	}
+	return decl.ParameterList().End()
 }

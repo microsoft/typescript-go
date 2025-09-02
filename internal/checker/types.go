@@ -1198,6 +1198,10 @@ type TypePredicate struct {
 	t              *Type
 }
 
+func (typePredicate *TypePredicate) Type() *Type {
+	return typePredicate.t
+}
+
 // IndexInfo
 
 type IndexInfo struct {

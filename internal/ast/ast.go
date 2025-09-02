@@ -2098,6 +2098,7 @@ type (
 	LiteralType                     = Node
 	JSDocNode                       = Node
 	BindingPatternNode              = Node
+	TypePredicateNodeNode           = Node
 )
 
 type (
