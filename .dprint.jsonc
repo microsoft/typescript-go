@@ -39,9 +39,9 @@
     },
     "exec": {
         "cwd": "${configDir}",
-        "cacheKey": "4",
+        "cacheKey": "5",
         "commands": [
-            { "command": "go tool mvdan.cc/gofumpt -lang=go1.25", "exts": ["go"] }
+            { "command": "go tool mvdan.cc/gofumpt", "exts": ["go"] }
         ]
     },
     "excludes": [
