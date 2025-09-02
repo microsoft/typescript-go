@@ -219,6 +219,7 @@ Output::
 //// [/user/username/projects/noEmitOnError/dev-build/shared/types/db.js] *mTime changed*
 //// [/user/username/projects/noEmitOnError/dev-build/src/main.js] *mTime changed*
 //// [/user/username/projects/noEmitOnError/dev-build/src/other.js] *mTime changed*
+//// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo] *mTime changed*
 
 tsconfig.json::
 SemanticDiagnostics::
@@ -384,6 +385,7 @@ Output::
 //// [/user/username/projects/noEmitOnError/dev-build/shared/types/db.js] *mTime changed*
 //// [/user/username/projects/noEmitOnError/dev-build/src/main.js] *mTime changed*
 //// [/user/username/projects/noEmitOnError/dev-build/src/other.js] *mTime changed*
+//// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo] *mTime changed*
 
 tsconfig.json::
 SemanticDiagnostics::
@@ -444,6 +446,7 @@ Output::
 //// [/user/username/projects/noEmitOnError/dev-build/shared/types/db.js] *mTime changed*
 //// [/user/username/projects/noEmitOnError/dev-build/src/main.js] *mTime changed*
 //// [/user/username/projects/noEmitOnError/dev-build/src/other.js] *mTime changed*
+//// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo] *mTime changed*
 
 tsconfig.json::
 SemanticDiagnostics::
@@ -496,6 +499,7 @@ Output::
 //// [/user/username/projects/noEmitOnError/dev-build/shared/types/db.js] *mTime changed*
 //// [/user/username/projects/noEmitOnError/dev-build/src/main.js] *mTime changed*
 //// [/user/username/projects/noEmitOnError/dev-build/src/other.js] *mTime changed*
+//// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo] *mTime changed*
 
 tsconfig.json::
 SemanticDiagnostics::

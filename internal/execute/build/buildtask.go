@@ -673,13 +673,12 @@ func (t *buildTask) updateTimeStamps(orchestrator *Orchestrator, emittedFiles []
 		}
 	}
 
-	if t.resolved.CompilerOptions().IsIncremental() {
-		updateTimeStamp(t.resolved.GetBuildInfoFileName())
-	} else {
+	if !t.resolved.CompilerOptions().IsIncremental() {
 		for outputFile := range t.resolved.GetOutputFileNames() {
 			updateTimeStamp(outputFile)
 		}
 	}
+	updateTimeStamp(t.resolved.GetBuildInfoFileName())
 }
 
 func (t *buildTask) cleanProject(orchestrator *Orchestrator, path tspath.Path) {
