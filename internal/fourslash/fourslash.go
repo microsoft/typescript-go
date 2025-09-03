@@ -1469,7 +1469,7 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 	prefix := fmt.Sprintf("At position (Ln %d, Col %d): ", lspRange.Start.Line, lspRange.Start.Character)
 	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentInlayHintInfo, params)
 	if resMsg == nil {
-		t.Fatalf(prefix + "Nil response received for inlay hints request")
+		t.Fatal(prefix + "Nil response received for inlay hints request")
 	}
 	if !resultOk {
 		t.Fatalf(prefix+"Unexpected response type for inlay hints request: %T", resMsg.AsResponse().Result)
@@ -1485,7 +1485,6 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 				if part.Location != nil && tspath.IsDeclarationFileName(part.Location.Uri.FileName()) {
 					part.Location.Range.Start = lsproto.Position{Line: 0, Character: 0} // !!! here: verify
 				}
-
 			}
 		}
 
