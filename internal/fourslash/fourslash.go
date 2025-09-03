@@ -1535,3 +1535,15 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 	}
 	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
 }
+
+func (f *FourslashTest) VerifyBaselineRename(
+	t *testing.T,
+	markers ...string,
+) {
+}
+
+func (f *FourslashTest) VerifyBaselineRenameAtRangesWithText(
+	t *testing.T,
+	texts ...string,
+) {
+}

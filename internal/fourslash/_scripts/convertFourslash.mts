@@ -182,6 +182,10 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                     //  - `verify.baselineGetDefinitionAtPosition(...)` called getDefinitionAtPosition
                     // LSP doesn't have two separate commands though. It's unclear how we would model bound spans though.
                     return parseBaselineGoToDefinitionArgs(callExpression.arguments);
+                case "baselineRename":
+                case "baselineRenameAtRangesWithText":
+                    // `verify.baselineRename...(...)`
+                    return parseBaselineRenameArgs(func.text, callExpression.arguments);
             }
         }
         // `goTo....`
@@ -793,6 +797,27 @@ function parseBaselineGoToDefinitionArgs(args: readonly ts.Expression[]): [Verif
     }];
 }
 
+function parseBaselineRenameArgs(funcName: string, args: readonly ts.Expression[]): [VerifyBaselineRenameCmd] | undefined {
+    let newArgs: string[] = []
+    for (const arg of args) {
+        let typedArg;
+        if (ts.isStringLiteral(arg)) {
+            newArgs.push(getGoStringLiteral(arg.text))
+        }
+        else if ((typedArg = getArrayLiteralExpression(arg)) && typedArg.elements.every(ts.isStringLiteral)) {
+            newArgs = newArgs.concat(typedArg.elements.map(e => getGoStringLiteral((e as ts.StringLiteral).text)))
+        }
+        else {
+            console.error(`Unrecognized argument in verify.baselineRename: ${arg.getText()}`);
+            return undefined;
+        }
+    }
+    return [{
+        kind: funcName === "baselineRenameAtRangesWithText" ? "verifyBaselineRenameAtRangesWithText" : "verifyBaselineRename",
+        args: newArgs
+    }]
+}
+
 function parseBaselineQuickInfo(args: ts.NodeArray<ts.Expression>): VerifyBaselineQuickInfoCmd {
     if (args.length !== 0) {
         // All calls are currently empty!
@@ -1097,6 +1122,11 @@ interface VerifyBaselineSignatureHelpCmd {
     kind: "verifyBaselineSignatureHelp";
 }
 
+interface VerifyBaselineRenameCmd {
+    kind: "verifyBaselineRename" | "verifyBaselineRenameAtRangesWithText";
+    args: string[];
+}
+
 interface GoToCmd {
     kind: "goTo";
     // !!! `selectRange` and `rangeStart` require parsing variables and `test.ranges()[n]`
@@ -1124,7 +1154,8 @@ type Cmd =
     | VerifyBaselineSignatureHelpCmd
     | GoToCmd
     | EditCmd
-    | VerifyQuickInfoCmd;
+    | VerifyQuickInfoCmd
+    | VerifyBaselineRenameCmd;
 
 function generateVerifyCompletions({ marker, args, isNewIdentifierLocation }: VerifyCompletionsCmd): string {
     let expectedList: string;
@@ -1185,6 +1216,15 @@ function generateQuickInfoCommand({ kind, marker, text, docs }: VerifyQuickInfoC
     }
 }
 
+function generateBaselineRename({ kind, args }: VerifyBaselineRenameCmd): string {
+    switch (kind) {
+        case "verifyBaselineRename":
+            return `f.VerifyBaselineRename(t, ${args.join(", ")})`;
+        case "verifyBaselineRenameAtRangesWithText":
+            return `f.VerifyBaselineRenameAtRangesWithText(t, ${args.join(", ")})`;
+    }
+}
+
 function generateCmd(cmd: Cmd): string {
     switch (cmd.kind) {
         case "verifyCompletions":
@@ -1207,6 +1247,9 @@ function generateCmd(cmd: Cmd): string {
         case "quickInfoExists":
         case "notQuickInfoExists":
             return generateQuickInfoCommand(cmd);
+        case "verifyBaselineRename":
+        case "verifyBaselineRenameAtRangesWithText":
+            return generateBaselineRename(cmd)
         default:
             let neverCommand: never = cmd;
             throw new Error(`Unknown command kind: ${neverCommand as Cmd["kind"]}`);
