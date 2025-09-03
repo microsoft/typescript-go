@@ -557,6 +557,10 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 }
 
 func (tx *RuntimeSyntaxTransformer) visitModuleDeclaration(node *ast.ModuleDeclaration) *ast.Node {
+	if !tx.shouldEmitModuleDeclaration(node) {
+		return tx.Factory().NewNotEmittedStatement()
+	}
+
 	statements := []*ast.Statement{}
 
 	// If needed, we should emit a variable declaration for the module:
@@ -1136,6 +1140,15 @@ func (tx *RuntimeSyntaxTransformer) evaluateEntity(node *ast.Node, location *ast
 
 func (tx *RuntimeSyntaxTransformer) shouldEmitEnumDeclaration(node *ast.EnumDeclaration) bool {
 	return !ast.IsEnumConst(node.AsNode()) || tx.compilerOptions.ShouldPreserveConstEnums()
+}
+
+func (tx *RuntimeSyntaxTransformer) shouldEmitModuleDeclaration(node *ast.ModuleDeclaration) bool {
+	pn := tx.EmitContext().ParseNode(node.AsNode())
+	if pn == nil {
+		// If we can't find a parse tree node, assume the node is instantiated.
+		return true
+	}
+	return isInstantiatedModule(node.AsNode(), tx.compilerOptions.ShouldPreserveConstEnums())
 }
 
 func getInnermostModuleDeclarationFromDottedModule(moduleDeclaration *ast.ModuleDeclaration) *ast.ModuleDeclaration {

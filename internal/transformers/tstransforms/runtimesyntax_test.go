@@ -246,9 +246,7 @@ func TestNamespaceTransformer(t *testing.T) {
 		input  string
 		output string
 	}{
-		{title: "empty namespace", input: "namespace N {}", output: `var N;
-(function (N) {
-})(N || (N = {}));`},
+		{title: "empty namespace", input: "namespace N {}", output: ``},
 
 		{title: "export var", input: "namespace N { export var x = 1; }", output: `var N;
 (function (N) {
@@ -359,19 +357,9 @@ func TestNamespaceTransformer(t *testing.T) {
     })(E = N.E || (N.E = {}));
 })(N || (N = {}));`},
 
-		{title: "export namespace", input: "namespace N { export namespace N2 {} }", output: `var N;
-(function (N) {
-    let N2;
-    (function (N2) {
-    })(N2 = N.N2 || (N.N2 = {}));
-})(N || (N = {}));`},
+		{title: "export namespace", input: "namespace N { export namespace N2 {} }", output: ``},
 
-		{title: "nested namespace", input: "namespace N.N2 { }", output: `var N;
-(function (N) {
-    let N2;
-    (function (N2) {
-    })(N2 = N.N2 || (N.N2 = {}));
-})(N || (N = {}));`},
+		{title: "nested namespace", input: "namespace N.N2 { }", output: ``},
 
 		{title: "import=", input: "import X = Y.X;", output: `var X = Y.X;`},
 
