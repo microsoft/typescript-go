@@ -119,8 +119,8 @@ func TestParsedCommandLine(t *testing.T) {
 					`{
 						"files": [
 							"a.ts",
+							"a.ts",
 							"b.ts",
-							"a.ts"
 						]
 					}`,
 					files,
