@@ -1540,6 +1540,57 @@ func (f *FourslashTest) VerifyBaselineRename(
 	t *testing.T,
 	markers ...string,
 ) {
+	markerOrRanges := f.lookupMarkersOrGetRanges(t, markers)
+
+	if f.baseline != nil {
+		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
+	} else {
+		f.baseline = &baselineFromTest{
+			content:      &strings.Builder{},
+			baselineName: "rename/" + strings.TrimPrefix(t.Name(), "Test"),
+			ext:          ".baseline.jsonc",
+		}
+	}
+
+	defer func() {
+		f.baseline = nil
+	}()
+
+	for _, markerOrRange := range markerOrRanges {
+		f.GoToMarkerOrRange(t, markerOrRange)
+
+		// !!! options
+		params := &lsproto.RenameParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: ls.FileNameToDocumentURI(f.activeFilename),
+			},
+			Position: f.currentCaretPosition,
+			NewName:  "?",
+		}
+
+		prefix := f.getCurrentPositionPrefix()
+		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentRenameInfo, params)
+		if resMsg == nil {
+			t.Fatalf(prefix+"Nil response received for rename request at pos %v", f.currentCaretPosition)
+		}
+		if !resultOk {
+			t.Fatalf(prefix+"Unexpected rename response type at pos %v: %T", f.currentCaretPosition, resMsg.AsResponse().Result)
+		}
+
+		// !!! include options in string?
+		// !!! HERE: use already-grouped by document version
+		f.baseline.addResult(
+			"findRenameLocations",
+			f.getBaselineForLocationsWithFileContents(
+				result,
+				baselineFourslashLocationsOptions{
+					marker:     markerOrRange.GetMarker(),
+					markerName: "/*RENAME*/",
+					endMarker:  "RENAME|]",
+				},
+			),
+		)
+	}
 }
 
 func (f *FourslashTest) VerifyBaselineRenameAtRangesWithText(
