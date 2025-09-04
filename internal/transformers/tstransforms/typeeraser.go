@@ -35,10 +35,7 @@ func (tx *TypeEraserTransformer) popNode(grandparentNode *ast.Node) {
 }
 
 func (tx *TypeEraserTransformer) elide(node *ast.Statement) *ast.Statement {
-	statement := tx.Factory().NewNotEmittedStatement()
-	tx.EmitContext().SetOriginal(statement, node)
-	statement.Loc = node.Loc
-	return statement
+	return tx.EmitContext().NewNotEmittedStatement(node.AsNode())
 }
 
 func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {

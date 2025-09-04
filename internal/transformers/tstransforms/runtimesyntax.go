@@ -310,7 +310,7 @@ func (tx *RuntimeSyntaxTransformer) addVarForDeclaration(statements []*ast.State
 
 func (tx *RuntimeSyntaxTransformer) visitEnumDeclaration(node *ast.EnumDeclaration) *ast.Node {
 	if !tx.shouldEmitEnumDeclaration(node) {
-		return tx.Factory().NewNotEmittedStatement()
+		return tx.EmitContext().NewNotEmittedStatement(node.AsNode())
 	}
 
 	statements := []*ast.Statement{}
@@ -558,7 +558,7 @@ func (tx *RuntimeSyntaxTransformer) transformEnumMember(
 
 func (tx *RuntimeSyntaxTransformer) visitModuleDeclaration(node *ast.ModuleDeclaration) *ast.Node {
 	if !tx.shouldEmitModuleDeclaration(node) {
-		return tx.Factory().NewNotEmittedStatement()
+		return tx.EmitContext().NewNotEmittedStatement(node.AsNode())
 	}
 
 	statements := []*ast.Statement{}

@@ -973,3 +973,10 @@ func (c *EmitContext) VisitEmbeddedStatement(node *ast.Statement, visitor *ast.N
 	}
 	return updated
 }
+
+func (c *EmitContext) NewNotEmittedStatement(node *ast.Node) *ast.Statement {
+	statement := c.Factory.NewNotEmittedStatement()
+	c.SetOriginal(statement.AsNode(), node)
+	statement.Loc = node.Loc
+	return statement
+}
