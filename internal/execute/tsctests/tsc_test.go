@@ -824,7 +824,7 @@ func TestTscExtends(t *testing.T) {
 			commandLineArgs: []string{builtType, "src", "--extendedDiagnostics"},
 		}
 	}
-	getTscExtendsConfigDirTestCase := func(subScenarioSufix string, commandLineArgs []string) *tscInput {
+	getTscExtendsConfigDirTestCase := func(subScenarioSufix string, commandLineArgs []string, edits []*tscEdit) *tscInput {
 		return &tscInput{
 			subScenario: "configDir template" + subScenarioSufix,
 			files: FileMap{
@@ -870,6 +870,7 @@ func TestTscExtends(t *testing.T) {
 			},
 			cwd:             "/home/src/projects/myproject",
 			commandLineArgs: commandLineArgs,
+			edits:           edits,
 		}
 	}
 	testCases := []*tscInput{
@@ -887,10 +888,30 @@ func TestTscExtends(t *testing.T) {
 		},
 		getTscExtendsWithSymlinkTestCase("-p"),
 		getTscExtendsWithSymlinkTestCase("-b"),
-		getTscExtendsConfigDirTestCase("", []string{"--explainFiles"}),
-		getTscExtendsConfigDirTestCase(" showConfig", []string{"--showConfig"}),
-		getTscExtendsConfigDirTestCase(" with commandline", []string{"--explainFiles", "--outDir", "${configDir}/outDir"}),
-		getTscExtendsConfigDirTestCase("", []string{"--b", "--explainFiles", "--v"}),
+		getTscExtendsConfigDirTestCase("", []string{"--explainFiles"}, nil),
+		getTscExtendsConfigDirTestCase(" showConfig", []string{"--showConfig"}, nil),
+		getTscExtendsConfigDirTestCase(" with commandline", []string{"--explainFiles", "--outDir", "${configDir}/outDir"}, nil),
+		getTscExtendsConfigDirTestCase("", []string{"--b", "--explainFiles", "--v"}, nil),
+		getTscExtendsConfigDirTestCase("", []string{"--b", "-w", "--explainFiles", "--v"}, []*tscEdit{
+			{
+				caption: "edit extended config file",
+				edit: func(sys *testSys) {
+					sys.writeFileNoError(
+						"/home/src/projects/configs/first/tsconfig.json",
+						stringtestutil.Dedent(`
+						{
+							"extends": "../second/tsconfig.json",
+							"include": ["${configDir}/src"],
+							"compilerOptions": {
+								"typeRoots": ["${configDir}/root2"],
+								"types": [],
+							},
+						}`),
+						false,
+					)
+				},
+			},
+		}),
 	}
 
 	for _, test := range testCases {
