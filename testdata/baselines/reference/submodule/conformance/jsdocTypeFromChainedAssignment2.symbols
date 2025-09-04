@@ -26,9 +26,9 @@ mod.i(1)
 /** @param {number} n */
 exports.f = exports.g = function fg(n) {
 >exports.f : Symbol(f, Decl(mod.js, 0, 0))
->exports : Symbol("mod", Decl(mod.js, 0, 0))
+>exports : Symbol("./mod", Decl(mod.js, 0, 0))
 >f : Symbol(f, Decl(mod.js, 0, 0))
->exports : Symbol("mod", Decl(mod.js, 0, 0))
+>exports : Symbol("./mod", Decl(mod.js, 0, 0))
 >fg : Symbol(fg, Decl(mod.js, 1, 23))
 >n : Symbol(n, Decl(mod.js, 1, 36))
 
@@ -38,13 +38,13 @@ exports.f = exports.g = function fg(n) {
 /** @param {string} mom */
 module.exports.h = module.exports.i = function hi(mom) {
 >module.exports.h : Symbol(h, Decl(mod.js, 3, 1))
->module.exports : Symbol("mod", Decl(mod.js, 0, 0))
+>module.exports : Symbol("./mod", Decl(mod.js, 0, 0))
 >module : Symbol(module.exports)
->exports : Symbol("mod", Decl(mod.js, 0, 0))
+>exports : Symbol("./mod", Decl(mod.js, 0, 0))
 >h : Symbol(h, Decl(mod.js, 3, 1))
->module.exports : Symbol("mod", Decl(mod.js, 0, 0))
+>module.exports : Symbol("./mod", Decl(mod.js, 0, 0))
 >module : Symbol(module.exports)
->exports : Symbol("mod", Decl(mod.js, 0, 0))
+>exports : Symbol("./mod", Decl(mod.js, 0, 0))
 >hi : Symbol(hi, Decl(mod.js, 5, 37))
 >mom : Symbol(mom, Decl(mod.js, 5, 50))
 
