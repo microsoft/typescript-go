@@ -1705,6 +1705,7 @@ func TestTscLibraryResolution(t *testing.T) {
 	testCases := slices.Concat(
 		getTscLibResolutionTestCases([]string{"-b", "project1", "project2", "project3", "project4", "--verbose", "--explainFiles"}),
 		getTscLibResolutionTestCases([]string{"-p", "project1", "--explainFiles"}),
+		getTscLibResolutionTestCases([]string{"-b", "-w", "project1", "project2", "project3", "project4", "--verbose", "--explainFiles"}),
 		[]*tscInput{
 			{
 				subScenario:     "unknown lib",
