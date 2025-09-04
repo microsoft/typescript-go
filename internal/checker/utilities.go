@@ -1717,6 +1717,10 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 		"Uint8Array": {
 			{lib: "es2022", props: []string{"at"}},
 			{lib: "es2023", props: []string{"findLastIndex", "findLast", "toReversed", "toSorted", "toSpliced", "with"}},
+			{lib: "esnext", props: []string{"toBase64", "setFromBase64", "toHex", "setFromHex"}},
+		},
+		"Uint8ArrayConstructor": {
+			{lib: "esnext", props: []string{"fromBase64", "fromHex"}},
 		},
 		"Uint8ClampedArray": {
 			{lib: "es2022", props: []string{"at"}},
