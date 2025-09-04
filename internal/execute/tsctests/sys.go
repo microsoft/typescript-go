@@ -473,8 +473,7 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 	}
 	if s.serializedDiff != nil {
 		for path := range s.serializedDiff.snap {
-			_, ok := s.fsFromFileMap().ReadFile(path)
-			if !ok {
+			if fileInfo := s.mapFs().GetFileInfo(path); fileInfo == nil {
 				// report deleted
 				s.addFsEntryDiff(diffs, nil, path)
 			}

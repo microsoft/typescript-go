@@ -115,7 +115,6 @@ interface Symbol {
     readonly [Symbol.toStringTag]: string;
 }
 declare const console: { log(msg: any): void; };
-//// [/user/username/projects/myproject/node_modules/pkg2] *deleted*
 //// [/user/username/projects/myproject/packages/pkg1/build/index.js] *new* 
 export const theNum = 42;
 
@@ -243,7 +242,6 @@ Signatures::
 
 
 Edit [0]:: reports import errors after change to package file
-//// [/user/username/projects/myproject/node_modules/pkg2] *deleted*
 //// [/user/username/projects/myproject/packages/pkg1/package.json] *modified* 
 {
     "name": "pkg1",
@@ -254,7 +252,6 @@ Edit [0]:: reports import errors after change to package file
 
 
 Output::
-//// [/user/username/projects/myproject/node_modules/pkg2] *deleted*
 
 
 
@@ -281,7 +278,6 @@ Diff:: Package.json watch pending, so no change detected yet
 -
 
 Edit [1]:: removes those errors when a package file is changed back
-//// [/user/username/projects/myproject/node_modules/pkg2] *deleted*
 //// [/user/username/projects/myproject/packages/pkg1/package.json] *modified* 
 {
     "name": "pkg1",
@@ -292,12 +288,10 @@ Edit [1]:: removes those errors when a package file is changed back
 
 
 Output::
-//// [/user/username/projects/myproject/node_modules/pkg2] *deleted*
 
 
 
 Edit [2]:: reports import errors after change to package file
-//// [/user/username/projects/myproject/node_modules/pkg2] *deleted*
 //// [/user/username/projects/myproject/packages/pkg1/package.json] *modified* 
 {
     "name": "pkg1",
@@ -308,7 +302,6 @@ Edit [2]:: reports import errors after change to package file
 
 
 Output::
-//// [/user/username/projects/myproject/node_modules/pkg2] *deleted*
 
 
 
@@ -335,7 +328,6 @@ Diff:: Package.json watch pending, so no change detected yet
 -
 
 Edit [3]:: removes those errors when a package file is changed to cjs extensions
-//// [/user/username/projects/myproject/node_modules/pkg2] *deleted*
 //// [/user/username/projects/myproject/packages/pkg2/index.cts] *new* 
 export type { TheNum } from './const.cjs';
 //// [/user/username/projects/myproject/packages/pkg2/index.ts] *deleted*
@@ -400,7 +392,6 @@ Loading module as file / folder, candidate module location '/user/username/proje
 File name '/user/username/projects/myproject/packages/pkg2/const.cjs' has a '.cjs' extension - stripping it.
 File '/user/username/projects/myproject/packages/pkg2/const.cts' exists - use it as a name resolution result.
 ======== Module name './const.cjs' was successfully resolved to '/user/username/projects/myproject/packages/pkg2/const.cts'. ========
-//// [/user/username/projects/myproject/node_modules/pkg2] *deleted*
 //// [/user/username/projects/myproject/packages/pkg1/build/index.js] *modified* 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });

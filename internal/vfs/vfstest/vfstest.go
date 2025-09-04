@@ -597,6 +597,15 @@ func (m *MapFS) Entries() iter.Seq2[string, *fstest.MapFile] {
 	}
 }
 
+func (m *MapFS) GetFileInfo(path string) *fstest.MapFile {
+	path, _ = strings.CutPrefix(path, "/")
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	canonical := m.getCanonicalPath(path)
+	canonicalString := string(canonical)
+	return m.m[canonicalString]
+}
+
 func must[T any](v T, err error) T {
 	if err != nil {
 		panic(err)
