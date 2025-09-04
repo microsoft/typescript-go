@@ -2325,6 +2325,181 @@ func TestTscModuleResolution(t *testing.T) {
 				},
 			},
 		},
+		{
+			subScenario: "handles the cache correctly when two projects use different module resolution settings",
+			files: FileMap{
+				`/user/username/projects/myproject/project1/index.ts`:                     `import { foo } from "file";`,
+				`/user/username/projects/myproject/project1/node_modules/file/index.d.ts`: "export const foo = 10;",
+				`/user/username/projects/myproject/project1/tsconfig.json`: stringtestutil.Dedent(`
+				   {
+                       "compilerOptions": {
+						   "composite": true,
+						   "types": ["foo", "bar"]
+					   },
+                       "files": ["index.ts"],
+                   }`),
+				`/user/username/projects/myproject/project2/index.ts`:                     `import { foo } from "file";`,
+				`/user/username/projects/myproject/project2/node_modules/file/index.d.ts`: "export const foo = 10;",
+				`/user/username/projects/myproject/project2/tsconfig.json`: stringtestutil.Dedent(`
+				   {
+                       "compilerOptions": {
+						   "composite": true,
+						   "types": ["foo"],
+						   "module": "nodenext",
+						   "moduleResolution": "nodenext"
+					   },
+                       "files": ["index.ts"],
+                   }`),
+				`/user/username/projects/myproject/node_modules/@types/foo/index.d.ts`: "export const foo = 10;",
+				`/user/username/projects/myproject/node_modules/@types/bar/index.d.ts`: "export const bar = 10;",
+				`/user/username/projects/myproject/tsconfig.json`: stringtestutil.Dedent(`
+				   {
+						"files": [],
+						"references": [
+							{ "path": "./project1" },
+							{ "path": "./project2" },
+						],
+                   }`),
+			},
+			cwd:             "/user/username/projects/myproject",
+			commandLineArgs: []string{"--b", "-w", "-v"},
+			edits: []*tscEdit{
+				{
+					caption: "Append text",
+					edit: func(sys *testSys) {
+						sys.appendFile(`/user/username/projects/myproject/project1/index.ts`, "const bar = 10;")
+					},
+				},
+			},
+		},
+		{
+			// !!! sheetal package.json watches not yet implemented
+			subScenario: `resolves specifier in output declaration file from referenced project correctly with cts and mts extensions`,
+			files: FileMap{
+				`/user/username/projects/myproject/packages/pkg1/package.json`: stringtestutil.Dedent(`
+					{
+						"name": "pkg1",
+						"version": "1.0.0",
+						"main": "build/index.js",
+						"type": "module"
+					}`),
+				`/user/username/projects/myproject/packages/pkg1/index.ts`: stringtestutil.Dedent(`
+					import type { TheNum } from 'pkg2'
+					export const theNum: TheNum = 42;`),
+				`/user/username/projects/myproject/packages/pkg1/tsconfig.json`: stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"outDir": "build",
+							"module": "node16",
+						},
+						"references": [{ "path": "../pkg2" }],
+					}`),
+				`/user/username/projects/myproject/packages/pkg2/const.cts`: `export type TheNum = 42;`,
+				`/user/username/projects/myproject/packages/pkg2/index.ts`:  `export type { TheNum } from './const.cjs';`,
+				`/user/username/projects/myproject/packages/pkg2/tsconfig.json`: stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"composite": true,
+							"outDir": "build",
+							"module": "node16",
+						},
+					}`),
+				`/user/username/projects/myproject/packages/pkg2/package.json`: stringtestutil.Dedent(`
+					{
+						"name": "pkg2",
+						"version": "1.0.0",
+						"main": "build/index.js",
+						"type": "module"
+					}`),
+				`/user/username/projects/myproject/node_modules/pkg2`: vfstest.Symlink(`/user/username/projects/myproject/packages/pkg2`),
+			},
+			cwd:             "/user/username/projects/myproject",
+			commandLineArgs: []string{"-b", "packages/pkg1", "-w", "--verbose", "--traceResolution"},
+			edits: []*tscEdit{
+				{
+					caption: "reports import errors after change to package file",
+					edit: func(sys *testSys) {
+						sys.replaceFileText(`/user/username/projects/myproject/packages/pkg1/package.json`, `"module"`, `"commonjs"`)
+					},
+					expectedDiff: "Package.json watch pending, so no change detected yet",
+				},
+				{
+					caption: "removes those errors when a package file is changed back",
+					edit: func(sys *testSys) {
+						sys.replaceFileText(`/user/username/projects/myproject/packages/pkg1/package.json`, `"commonjs"`, `"module"`)
+					},
+				},
+				{
+					caption: "reports import errors after change to package file",
+					edit: func(sys *testSys) {
+						sys.replaceFileText(`/user/username/projects/myproject/packages/pkg1/package.json`, `"module"`, `"commonjs"`)
+					},
+					expectedDiff: "Package.json watch pending, so no change detected yet",
+				},
+				{
+					caption: "removes those errors when a package file is changed to cjs extensions",
+					edit: func(sys *testSys) {
+						sys.replaceFileText(`/user/username/projects/myproject/packages/pkg2/package.json`, `"build/index.js"`, `"build/index.cjs"`)
+						sys.renameFileNoError(`/user/username/projects/myproject/packages/pkg2/index.ts`, `/user/username/projects/myproject/packages/pkg2/index.cts`)
+					},
+				},
+			},
+		},
+		{
+			subScenario: `build mode watches for changes to package-json main fields`,
+			files: FileMap{
+				`/user/username/projects/myproject/packages/pkg1/package.json`: stringtestutil.Dedent(`
+					{
+                        "name": "pkg1",
+                        "version": "1.0.0",
+                        "main": "build/index.js"
+                    }`),
+				`/user/username/projects/myproject/packages/pkg1/index.ts`: stringtestutil.Dedent(`
+                    import type { TheNum } from 'pkg2'
+                    export const theNum: TheNum = 42;`),
+				`/user/username/projects/myproject/packages/pkg1/tsconfig.json`: stringtestutil.Dedent(`
+					{
+                        "compilerOptions": {
+                            "outDir": "build",
+                        },
+                        "references": [{ "path": "../pkg2" }],
+                    }`),
+				`/user/username/projects/myproject/packages/pkg2/tsconfig.json`: stringtestutil.Dedent(`
+					{
+                        "compilerOptions": {
+                            "composite": true,
+                            "outDir": "build",
+                        },
+                    }`),
+				`/user/username/projects/myproject/packages/pkg2/const.ts`: `export type TheNum = 42;`,
+				`/user/username/projects/myproject/packages/pkg2/index.ts`: `export type { TheNum } from './const.js';`,
+				`/user/username/projects/myproject/packages/pkg2/other.ts`: `export type TheStr = string;`,
+				`/user/username/projects/myproject/packages/pkg2/package.json`: stringtestutil.Dedent(`
+					{
+						"name": "pkg2",
+                        "version": "1.0.0",
+                        "main": "build/index.js"
+                    }`),
+				`/user/username/projects/myproject/node_modules/pkg2`: vfstest.Symlink(`/user/username/projects/myproject/packages/pkg2`),
+			},
+			cwd:             "/user/username/projects/myproject",
+			commandLineArgs: []string{"-b", "packages/pkg1", "--verbose", "-w", "--traceResolution"},
+			edits: []*tscEdit{
+				{
+					caption: "reports import errors after change to package file",
+					edit: func(sys *testSys) {
+						sys.replaceFileText(`/user/username/projects/myproject/packages/pkg2/package.json`, `index.js`, `other.js`)
+					},
+					expectedDiff: "Package.json watch pending, so no change detected yet",
+				},
+				{
+					caption: "removes those errors when a package file is changed back",
+					edit: func(sys *testSys) {
+						sys.replaceFileText(`/user/username/projects/myproject/packages/pkg2/package.json`, `other.js`, `index.js`)
+					},
+				},
+			},
+		},
 	}
 
 	for _, test := range testCases {

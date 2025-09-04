@@ -550,6 +550,11 @@ func (s *testSys) readFileNoError(path string) string {
 	return content
 }
 
+func (s *testSys) renameFileNoError(oldPath string, newPath string) {
+	s.writeFileNoError(newPath, s.readFileNoError(oldPath), false)
+	s.removeNoError(oldPath)
+}
+
 func (s *testSys) replaceFileText(path string, oldText string, newText string) {
 	content := s.readFileNoError(path)
 	content = strings.Replace(content, oldText, newText, 1)
