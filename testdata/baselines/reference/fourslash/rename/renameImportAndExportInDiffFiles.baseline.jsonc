@@ -1,0 +1,28 @@
+// === findRenameLocations ===
+// === /a.ts ===
+
+// export var /*RENAME*/[|aRENAME|];
+
+
+// === /b.ts ===
+
+// import { [|aRENAME|] } from './a';
+// export { a };
+
+
+
+
+// === findRenameLocations ===
+// === /b.ts ===
+
+// import { /*RENAME*/[|aRENAME|] } from './a';
+// export { a };
+
+
+
+
+// === findRenameLocations ===
+// === /b.ts ===
+
+// import { [|aRENAME|] } from './a';
+// export { /*RENAME*/a };

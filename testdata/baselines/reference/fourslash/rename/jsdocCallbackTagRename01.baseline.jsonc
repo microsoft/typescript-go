@@ -1,0 +1,8 @@
+// === findRenameLocations ===
+// === /jsDocCallback.js ===
+
+// /*RENAME*//**
+//  * @callback FooCallback
+//  * @param {string} eventName - Rename should work
+//  */
+// // --- (line: 5) skipped ---

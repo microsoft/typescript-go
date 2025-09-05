@@ -1,0 +1,16 @@
+// === findRenameLocations ===
+// === /renameAlias.ts ===
+
+// module SomeModule { export class SomeClass { } }
+// import /*RENAME*/[|MRENAME|] = SomeModule;
+// import C = [|MRENAME|].SomeClass;
+
+
+
+
+// === findRenameLocations ===
+// === /renameAlias.ts ===
+
+// /*RENAME*/module SomeModule { export class SomeClass { } }
+// import M = SomeModule;
+// import C = M.SomeClass;

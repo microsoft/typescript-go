@@ -1,0 +1,27 @@
+// === findRenameLocations ===
+// === /renameImportOfExportEquals.ts ===
+
+// declare namespace /*RENAME*/[|NRENAME|] {
+//     export var x: number;
+// }
+// declare module "mod" {
+//     export = [|NRENAME|];
+// }
+// declare module "a" {
+//     import * as [|NRENAME|] from "mod";
+//     export { N }; // Renaming N here would rename
+// }
+// declare module "b" {
+// // --- (line: 12) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameImportOfExportEquals.ts ===
+
+// /*RENAME*/declare namespace N {
+//     export var x: number;
+// }
+// declare module "mod" {
+// // --- (line: 5) skipped ---

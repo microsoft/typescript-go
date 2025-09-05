@@ -1,0 +1,9 @@
+// === goToDefinition ===
+// === /file.tsx ===
+
+// --- (line: 10) skipped ---
+//    }
+//  }
+// 
+//  var [|nn|]: {name?: string; size?: number};
+//  var x = <MyClass {...n/*GO TO DEFINITION*/n}></MyClass>;

@@ -1,0 +1,132 @@
+// === findRenameLocations ===
+// === /renameModifiers.ts ===
+
+// /*RENAME*/declare abstract class C1 {
+//     static a;
+//     readonly b;
+//     public c;
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameModifiers.ts ===
+
+// declare abstract class /*RENAME*/[|C1RENAME|] {
+//     static a;
+//     readonly b;
+//     public c;
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameModifiers.ts ===
+
+// /*RENAME*/declare abstract class C1 {
+//     static a;
+//     readonly b;
+//     public c;
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameModifiers.ts ===
+
+// /*RENAME*/declare abstract class C1 {
+//     static a;
+//     readonly b;
+//     public c;
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameModifiers.ts ===
+
+// /*RENAME*/declare abstract class C1 {
+//     static a;
+//     readonly b;
+//     public c;
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameModifiers.ts ===
+
+// /*RENAME*/declare abstract class C1 {
+//     static a;
+//     readonly b;
+//     public c;
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameModifiers.ts ===
+
+// /*RENAME*/declare abstract class C1 {
+//     static a;
+//     readonly b;
+//     public c;
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameModifiers.ts ===
+
+// --- (line: 4) skipped ---
+//     protected d;
+//     private e;
+// }
+// const enum /*RENAME*/[|ERENAME|] {
+// }
+// async function fn() {}
+// export default class C2 {}
+
+
+
+
+// === findRenameLocations ===
+// === /renameModifiers.ts ===
+
+// --- (line: 6) skipped ---
+// }
+// const enum E {
+// }
+// async function /*RENAME*/[|fnRENAME|]() {}
+// export default class C2 {}
+
+
+
+
+// === findRenameLocations ===
+// === /renameModifiers.ts ===
+
+// /*RENAME*/declare abstract class C1 {
+//     static a;
+//     readonly b;
+//     public c;
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameModifiers.ts ===
+
+// --- (line: 7) skipped ---
+// const enum E {
+// }
+// async function fn() {}
+// export default class /*RENAME*/[|C2RENAME|] {}

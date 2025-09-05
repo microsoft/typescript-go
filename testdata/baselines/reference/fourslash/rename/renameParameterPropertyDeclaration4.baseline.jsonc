@@ -1,0 +1,20 @@
+// === findRenameLocations ===
+// === /renameParameterPropertyDeclaration4.ts ===
+
+// /*RENAME*/class Foo {
+//     constructor(protected { protectedParam }) {
+//         let myProtectedParam = protectedParam;
+//     }
+// }
+
+
+
+
+// === findRenameLocations ===
+// === /renameParameterPropertyDeclaration4.ts ===
+
+// /*RENAME*/class Foo {
+//     constructor(protected { protectedParam }) {
+//         let myProtectedParam = protectedParam;
+//     }
+// }

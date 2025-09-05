@@ -1,0 +1,14 @@
+// === findRenameLocations ===
+// === /b.ts ===
+
+// import /*RENAME*/[|MRENAME|] = require("./a");
+// import C = [|MRENAME|].SomeClass;
+
+
+
+
+// === findRenameLocations ===
+// === /b.ts ===
+
+// /*RENAME*/import M = require("./a");
+// import C = M.SomeClass;

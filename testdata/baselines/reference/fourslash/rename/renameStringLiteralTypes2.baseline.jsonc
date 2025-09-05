@@ -1,0 +1,116 @@
+// === findRenameLocations ===
+// === /renameStringLiteralTypes2.ts ===
+
+// /*RENAME*/type Foo = "a" | "b";
+// 
+// class C {
+//     p: Foo = "a";
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameStringLiteralTypes2.ts ===
+
+// /*RENAME*/type Foo = "a" | "b";
+// 
+// class C {
+//     p: Foo = "a";
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameStringLiteralTypes2.ts ===
+
+// /*RENAME*/type Foo = "a" | "b";
+// 
+// class C {
+//     p: Foo = "a";
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameStringLiteralTypes2.ts ===
+
+// /*RENAME*/type Foo = "a" | "b";
+// 
+// class C {
+//     p: Foo = "a";
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameStringLiteralTypes2.ts ===
+
+// /*RENAME*/type Foo = "a" | "b";
+// 
+// class C {
+//     p: Foo = "a";
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameStringLiteralTypes2.ts ===
+
+// /*RENAME*/type Foo = "a" | "b";
+// 
+// class C {
+//     p: Foo = "a";
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameStringLiteralTypes2.ts ===
+
+// /*RENAME*/type Foo = "a" | "b";
+// 
+// class C {
+//     p: Foo = "a";
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameStringLiteralTypes2.ts ===
+
+// /*RENAME*/type Foo = "a" | "b";
+// 
+// class C {
+//     p: Foo = "a";
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameStringLiteralTypes2.ts ===
+
+// /*RENAME*/type Foo = "a" | "b";
+// 
+// class C {
+//     p: Foo = "a";
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameStringLiteralTypes2.ts ===
+
+// /*RENAME*/type Foo = "a" | "b";
+// 
+// class C {
+//     p: Foo = "a";
+// // --- (line: 5) skipped ---

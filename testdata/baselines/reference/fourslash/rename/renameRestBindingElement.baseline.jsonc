@@ -1,0 +1,8 @@
+// === findRenameLocations ===
+// === /renameRestBindingElement.ts ===
+
+// /*RENAME*/interface I {
+//     a: number;
+//     b: number;
+//     c: number;
+// // --- (line: 5) skipped ---

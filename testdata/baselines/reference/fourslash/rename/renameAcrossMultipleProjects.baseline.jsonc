@@ -1,0 +1,34 @@
+// === findRenameLocations ===
+// === /a.ts ===
+
+// var /*RENAME*/[|xRENAME|]: number;
+
+
+// === /b.ts ===
+
+// /// <reference path="a.ts" />
+// [|xRENAME|]++;
+
+
+// === /c.ts ===
+
+// /// <reference path="a.ts" />
+// [|xRENAME|]++;
+
+
+
+
+// === findRenameLocations ===
+// === /b.ts ===
+
+// /*RENAME*//// <reference path="a.ts" />
+// x++;
+
+
+
+
+// === findRenameLocations ===
+// === /c.ts ===
+
+// /*RENAME*//// <reference path="a.ts" />
+// x++;

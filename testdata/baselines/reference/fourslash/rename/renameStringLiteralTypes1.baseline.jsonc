@@ -1,0 +1,20 @@
+// === findRenameLocations ===
+// === /renameStringLiteralTypes1.ts ===
+
+// /*RENAME*/interface AnimationOptions {
+//     deltaX: number;
+//     deltaY: number;
+//     easing: "ease-in" | "ease-out" | "ease-in-out";
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameStringLiteralTypes1.ts ===
+
+// /*RENAME*/interface AnimationOptions {
+//     deltaX: number;
+//     deltaY: number;
+//     easing: "ease-in" | "ease-out" | "ease-in-out";
+// // --- (line: 5) skipped ---

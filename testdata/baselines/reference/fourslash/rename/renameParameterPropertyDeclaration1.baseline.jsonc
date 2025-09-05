@@ -1,0 +1,35 @@
+// === findRenameLocations ===
+// === /renameParameterPropertyDeclaration1.ts ===
+
+// class Foo {
+//     constructor(private /*RENAME*/[|privateParamRENAME|]: number) {
+//         let localPrivate = [|privateParamRENAME|];
+//         this.[|privateParamRENAME|] += 10;
+//     }
+// }
+
+
+
+
+// === findRenameLocations ===
+// === /renameParameterPropertyDeclaration1.ts ===
+
+// /*RENAME*/class Foo {
+//     constructor(private privateParam: number) {
+//         let localPrivate = privateParam;
+//         this.privateParam += 10;
+//     }
+// }
+
+
+
+
+// === findRenameLocations ===
+// === /renameParameterPropertyDeclaration1.ts ===
+
+// /*RENAME*/class Foo {
+//     constructor(private privateParam: number) {
+//         let localPrivate = privateParam;
+//         this.privateParam += 10;
+//     }
+// }

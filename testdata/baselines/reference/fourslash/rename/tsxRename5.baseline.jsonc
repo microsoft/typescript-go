@@ -1,0 +1,21 @@
+// === findRenameLocations ===
+// === /file.tsx ===
+
+// --- (line: 9) skipped ---
+//      size?: number;
+//  }
+// 
+//  var /*RENAME*/[|nnRENAME|]: string;
+//  var x = <MyClass name={[|nnRENAME|]}></MyClass>;
+
+
+
+
+// === findRenameLocations ===
+// === /file.tsx ===
+
+// /*RENAME*/ declare module JSX {
+//      interface Element { }
+//      interface IntrinsicElements {
+//      }
+// // --- (line: 5) skipped ---

@@ -1,0 +1,14 @@
+// === findRenameLocations ===
+// === /renameImportNamespaceAndShorthand.ts ===
+
+// /*RENAME*/import * as foo from 'bar';
+// const bar = { foo };
+
+
+
+
+// === findRenameLocations ===
+// === /renameImportNamespaceAndShorthand.ts ===
+
+// /*RENAME*/import * as foo from 'bar';
+// const bar = { foo };

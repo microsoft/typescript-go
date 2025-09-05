@@ -1,0 +1,56 @@
+// === findRenameLocations ===
+// === /renameDestructuringClassProperty.ts ===
+
+// /*RENAME*/class A {
+//     foo: string;
+// }
+// class B {
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameDestructuringClassProperty.ts ===
+
+// /*RENAME*/class A {
+//     foo: string;
+// }
+// class B {
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameDestructuringClassProperty.ts ===
+
+// /*RENAME*/class A {
+//     foo: string;
+// }
+// class B {
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameDestructuringClassProperty.ts ===
+
+// /*RENAME*/class A {
+//     foo: string;
+// }
+// class B {
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameDestructuringClassProperty.ts ===
+
+// /*RENAME*/class A {
+//     foo: string;
+// }
+// class B {
+// // --- (line: 5) skipped ---
