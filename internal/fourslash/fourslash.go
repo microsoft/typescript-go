@@ -13,6 +13,7 @@ import (
 	"github.com/go-json-experiment/json"
 	"github.com/google/go-cmp/cmp"
 	"github.com/microsoft/typescript-go/internal/bundled"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp"
@@ -43,6 +44,8 @@ type FourslashTest struct {
 	lastKnownMarkerName  *string
 	activeFilename       string
 	selectionEnd         *lsproto.Position
+
+	rangesByText *collections.MultiMap[string, *RangeMarker]
 }
 
 type scriptInfo struct {
@@ -1235,7 +1238,7 @@ func (f *FourslashTest) editScriptAndUpdateMarkers(t *testing.T, fileName string
 			rangeMarker.LSRange = f.converters.ToLSPRange(script, rangeMarker.Range)
 		}
 	}
-	// !!! clean up ranges by text
+	f.rangesByText = nil
 }
 
 func updatePosition(pos int, editStart int, editEnd int, newText string) int {
@@ -1536,18 +1539,47 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
 }
 
+// string | *Marker | *RangeMarker
+type MarkerOrRangeOrName = any
+
 func (f *FourslashTest) VerifyBaselineRename(
 	t *testing.T,
-	markers ...string,
+	markerOrNameOrRanges ...MarkerOrRangeOrName,
 ) {
-	markerOrRanges := f.lookupMarkersOrGetRanges(t, markers)
+	var markerOrRanges []MarkerOrRange
+	for _, markerOrNameOrRange := range markerOrNameOrRanges {
+		switch markerOrNameOrRange := markerOrNameOrRange.(type) {
+		case string:
+			marker, ok := f.testData.MarkerPositions[markerOrNameOrRange]
+			if !ok {
+				t.Fatalf("Marker '%s' not found", markerOrNameOrRange)
+			}
+			markerOrRanges = append(markerOrRanges, marker)
+		case *Marker:
+			markerOrRanges = append(markerOrRanges, markerOrNameOrRange)
+		case *RangeMarker:
+			markerOrRanges = append(markerOrRanges, markerOrNameOrRange)
+		default:
+			t.Fatalf("Invalid marker or range type: %T. Expected string, *Marker, or *RangeMarker.", markerOrNameOrRange)
+		}
+	}
 
+	f.verifyBaselineRename(t, markerOrRanges)
+}
+
+func (f *FourslashTest) verifyBaselineRename(
+	t *testing.T,
+	markerOrRanges []MarkerOrRange,
+) {
 	if f.baseline != nil {
 		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
 	} else {
+		testName := strings.TrimPrefix(t.Name(), "Test")
+		_, size := utf8.DecodeRuneInString(testName)
+		testName = strings.ToLower(testName[:size]) + testName[size:]
 		f.baseline = &baselineFromTest{
 			content:      &strings.Builder{},
-			baselineName: "rename/" + strings.TrimPrefix(t.Name(), "Test"),
+			baselineName: "rename/" + testName,
 			ext:          ".baseline.jsonc",
 		}
 	}
@@ -1577,12 +1609,21 @@ func (f *FourslashTest) VerifyBaselineRename(
 			t.Fatalf(prefix+"Unexpected rename response type at pos %v: %T", f.currentCaretPosition, resMsg.AsResponse().Result)
 		}
 
-		// !!! include options in string?
-		// !!! HERE: use already-grouped by document version
+		var changes map[lsproto.DocumentUri][]*lsproto.TextEdit
+		if result.WorkspaceEdit != nil && result.WorkspaceEdit.Changes != nil {
+			changes = *result.WorkspaceEdit.Changes
+		}
+		fileToRange := collections.MultiMap[lsproto.DocumentUri, lsproto.Range]{}
+		for uri, edits := range changes {
+			for _, edit := range edits {
+				fileToRange.Add(uri, edit.Range)
+			}
+		}
+		// !!! TODO include options in string?
 		f.baseline.addResult(
 			"findRenameLocations",
-			f.getBaselineForLocationsWithFileContents(
-				result,
+			f.getBaselineForGroupedLocationsWithFileContents(
+				&fileToRange,
 				baselineFourslashLocationsOptions{
 					marker:     markerOrRange.GetMarker(),
 					markerName: "/*RENAME*/",
@@ -1591,10 +1632,43 @@ func (f *FourslashTest) VerifyBaselineRename(
 			),
 		)
 	}
+
+	var baselineContent string
+	if f.baseline.content.Len() == 0 {
+		baselineContent = baseline.NoContent
+	} else {
+		baselineContent = f.baseline.content.String()
+	}
+
+	baseline.Run(t, f.baseline.getBaselineFileName(), baselineContent, baseline.Options{})
 }
 
 func (f *FourslashTest) VerifyBaselineRenameAtRangesWithText(
 	t *testing.T,
 	texts ...string,
 ) {
+	var markerOrRanges []MarkerOrRange
+	for _, text := range texts {
+		ranges := core.Map(f.GetRangesByText().Get(text), func(r *RangeMarker) MarkerOrRange { return r })
+		markerOrRanges = append(markerOrRanges, ranges...)
+	}
+	f.verifyBaselineRename(t, markerOrRanges)
+}
+
+func (f *FourslashTest) GetRangesByText() *collections.MultiMap[string, *RangeMarker] {
+	if f.rangesByText != nil {
+		return f.rangesByText
+	}
+	rangesByText := collections.MultiMap[string, *RangeMarker]{}
+	for _, r := range f.testData.Ranges {
+		rangeText := f.getRangeText(r)
+		rangesByText.Add(rangeText, r)
+	}
+	f.rangesByText = &rangesByText
+	return &rangesByText
+}
+
+func (f *FourslashTest) getRangeText(r *RangeMarker) string {
+	script := f.getScriptInfo(r.FileName())
+	return script.content[r.Range.Pos():r.Range.End()]
 }
