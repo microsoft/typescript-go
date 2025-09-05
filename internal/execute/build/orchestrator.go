@@ -114,7 +114,6 @@ func (o *Orchestrator) createBuildTasks(oldTasks *collections.SyncMap[tspath.Pat
 					if !existing.dirty {
 						// Reuse existing task if config is same
 						task = existing
-						task.upStream = nil
 					} else {
 						program = existing.program
 						buildInfo = existing.buildInfoEntry
@@ -131,6 +130,7 @@ func (o *Orchestrator) createBuildTasks(oldTasks *collections.SyncMap[tspath.Pat
 				return
 			}
 			task.resolved = o.host.GetResolvedProjectReference(config, path)
+			task.upStream = nil
 			if task.resolved != nil {
 				o.createBuildTasks(oldTasks, task.resolved.ResolvedProjectReferencePaths(), wg)
 			}
