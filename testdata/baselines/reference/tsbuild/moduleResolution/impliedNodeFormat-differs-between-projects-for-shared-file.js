@@ -149,7 +149,7 @@ declare const console: { log(msg: any): void; };
 //// [/home/src/workspaces/project/a/src/index.js] *new* 
 
 //// [/home/src/workspaces/project/a/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":["./src/index.ts"]}
+{"version":"FakeTSVersion","root":["./src/index.ts"],"packageJsons":["../node_modules/@types/pg/package.json"]}
 //// [/home/src/workspaces/project/a/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -161,14 +161,17 @@ declare const console: { log(msg: any): void; };
       "original": "./src/index.ts"
     }
   ],
-  "size": 53
+  "packageJsons": [
+    "../node_modules/@types/pg/package.json"
+  ],
+  "size": 111
 }
 //// [/home/src/workspaces/project/b/src/index.js] *new* 
 import pg from "pg";
 pg.foo();
 
 //// [/home/src/workspaces/project/b/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":["./src/index.ts"]}
+{"version":"FakeTSVersion","root":["./src/index.ts"],"packageJsons":["./package.json","../node_modules/@types/pg/package.json"]}
 //// [/home/src/workspaces/project/b/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -180,7 +183,11 @@ pg.foo();
       "original": "./src/index.ts"
     }
   ],
-  "size": 53
+  "packageJsons": [
+    "./package.json",
+    "../node_modules/@types/pg/package.json"
+  ],
+  "size": 128
 }
 
 a/tsconfig.json::

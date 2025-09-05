@@ -14,7 +14,11 @@ func (s *SyncMap[K, V]) Load(key K) (value V, ok bool) {
 	if !ok {
 		return
 	}
-	return val.(V), true
+	if value, ok := val.(V); ok {
+		return value, true
+	}
+	var zero V
+	return zero, true
 }
 
 func (s *SyncMap[K, V]) Store(key K, value V) {
