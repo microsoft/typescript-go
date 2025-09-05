@@ -67,7 +67,7 @@ var (
 )
 
 func (p *ParsedCommandLine) ConfigName() string {
-	if p == nil {
+	if p == nil || p.ConfigFile == nil {
 		return ""
 	}
 	return p.ConfigFile.SourceFile.FileName()
