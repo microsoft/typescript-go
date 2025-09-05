@@ -92,6 +92,7 @@ func (c *EmitContext) NewNodeVisitor(visit func(node *ast.Node) *ast.Node) *ast.
 		VisitFunctionBody:       c.VisitFunctionBody,
 		VisitIterationBody:      c.VisitIterationBody,
 		VisitTopLevelStatements: c.VisitVariableEnvironment,
+		VisitEmbeddedStatement:  c.VisitEmbeddedStatement,
 	})
 }
 
@@ -908,7 +909,7 @@ func (c *EmitContext) VisitIterationBody(body *ast.Statement, visitor *ast.NodeV
 	}
 
 	c.StartLexicalEnvironment()
-	updated := visitor.VisitEmbeddedStatement(body)
+	updated := c.VisitEmbeddedStatement(body, visitor)
 	if updated == nil {
 		panic("Expected visitor to return a statement.")
 	}
@@ -960,4 +961,22 @@ func (c *EmitContext) GetSyntheticTrailingComments(node *ast.Node) []Synthesized
 		return c.emitNodes.Get(node).trailingComments
 	}
 	return nil
+}
+
+func (c *EmitContext) VisitEmbeddedStatement(node *ast.Statement, visitor *ast.NodeVisitor) *ast.Statement {
+	updated := visitor.VisitEmbeddedStatement(node)
+	if updated == nil {
+		return nil
+	}
+	if ast.IsNotEmittedStatement(updated) {
+		return visitor.Factory.NewEmptyStatement()
+	}
+	return updated
+}
+
+func (c *EmitContext) NewNotEmittedStatement(node *ast.Node) *ast.Statement {
+	statement := c.Factory.NewNotEmittedStatement()
+	c.SetOriginal(statement.AsNode(), node)
+	statement.Loc = node.Loc
+	return statement
 }
