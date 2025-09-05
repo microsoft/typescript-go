@@ -51,22 +51,19 @@ func (h *host) Trace(msg string) {
 
 func (h *host) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
 	// Cache dts and json files as they will be reused
-	file, _ := h.sourceFiles.LoadOrStoreNewIf(opts, func() (*ast.SourceFile, bool) {
-		file := h.host.GetSourceFile(opts)
-		return file, file != nil && (tspath.IsDeclarationFileName(opts.FileName) || tspath.FileExtensionIs(opts.FileName, tspath.ExtensionJson))
+	return h.sourceFiles.loadOrStoreNewIf(opts, h.host.GetSourceFile, func(value *ast.SourceFile) bool {
+		return value != nil && (tspath.IsDeclarationFileName(opts.FileName) || tspath.FileExtensionIs(opts.FileName, tspath.ExtensionJson))
 	})
-	return file
 }
 
 func (h *host) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
-	resolved, _ := h.resolvedReferences.LoadOrStoreNew(path, func() *tsoptions.ParsedCommandLine {
+	return h.resolvedReferences.loadOrStoreNew(path, func(path tspath.Path) *tsoptions.ParsedCommandLine {
 		configStart := h.orchestrator.opts.Sys.Now()
 		commandLine, _ := tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, h.orchestrator.opts.Command.CompilerOptions, h, &h.extendedConfigCache)
 		configTime := h.orchestrator.opts.Sys.Now().Sub(configStart)
 		h.configTimes.Store(path, configTime)
 		return commandLine
 	})
-	return resolved
 }
 
 func (h *host) ReadBuildInfo(config *tsoptions.ParsedCommandLine) *incremental.BuildInfo {

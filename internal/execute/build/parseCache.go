@@ -9,58 +9,40 @@ import (
 type parseCacheEntry[V any] struct {
 	value V
 	mu    sync.Mutex
-	dirty bool
 }
 
 type parseCache[K comparable, V any] struct {
 	entries collections.SyncMap[K, *parseCacheEntry[V]]
 }
 
-func (c *parseCache[K, V]) LoadOrStoreNew(key K, parse func() V) (V, bool) {
-	return c.LoadOrStoreNewIf(key, func() (V, bool) {
-		return parse(), true
-	})
+func (c *parseCache[K, V]) loadOrStoreNew(key K, parse func(K) V) V {
+	return c.loadOrStoreNewIf(key, parse, func(value V) bool { return true })
 }
 
-func (c *parseCache[K, V]) LoadOrStoreNewIf(key K, parse func() (V, bool)) (V, bool) {
+func (c *parseCache[K, V]) loadOrStoreNewIf(key K, parse func(K) V, canCacheValue func(V) bool) V {
 	newEntry := &parseCacheEntry[V]{}
 	newEntry.mu.Lock()
 	defer newEntry.mu.Unlock()
-	if entry, loaded := c.entries.LoadOrStore(key, newEntry); loaded && !entry.dirty {
-		// Ensure it was parsed before returning
+	if entry, loaded := c.entries.LoadOrStore(key, newEntry); loaded {
 		entry.mu.Lock()
 		defer entry.mu.Unlock()
-		return entry.value, true
+		if canCacheValue(entry.value) {
+			return entry.value
+		}
+		newEntry = entry
 	}
-	value, ok := parse()
-	if ok {
-		newEntry.value = value
-	} else {
-		// Dont use the cache entry
-		newEntry.dirty = true
-		c.entries.Delete(key)
-	}
-	return value, false
+	newEntry.value = parse(key)
+	return newEntry.value
 }
 
-func (c *parseCache[K, V]) Load(key K) (V, bool) {
-	if entry, ok := c.entries.Load(key); ok && !entry.dirty {
-		entry.mu.Lock()
-		defer entry.mu.Unlock()
-		return entry.value, true
-	}
-	var zero V
-	return zero, false
-}
-
-func (c *parseCache[K, V]) Store(key K, value V) {
+func (c *parseCache[K, V]) store(key K, value V) {
 	c.entries.Store(key, &parseCacheEntry[V]{value: value})
 }
 
-func (c *parseCache[K, V]) Delete(key K) {
+func (c *parseCache[K, V]) delete(key K) {
 	c.entries.Delete(key)
 }
 
-func (c *parseCache[K, V]) Reset() {
+func (c *parseCache[K, V]) reset() {
 	c.entries = collections.SyncMap[K, *parseCacheEntry[V]]{}
 }

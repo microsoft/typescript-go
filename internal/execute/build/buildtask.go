@@ -739,7 +739,7 @@ func (t *buildTask) resetStatus() {
 
 func (t *buildTask) resetConfig(orchestrator *Orchestrator, path tspath.Path) {
 	t.dirty = true
-	orchestrator.host.resolvedReferences.Delete(path)
+	orchestrator.host.resolvedReferences.delete(path)
 }
 
 func (t *buildTask) hasUpdate(orchestrator *Orchestrator, path tspath.Path) updateKind {
@@ -770,7 +770,7 @@ func (t *buildTask) hasUpdate(orchestrator *Orchestrator, path tspath.Path) upda
 			t.reportDone = make(chan struct{})
 			t.done = make(chan struct{})
 			if !slices.Equal(t.resolved.FileNames(), newConfig.FileNames()) {
-				orchestrator.host.resolvedReferences.Store(path, newConfig)
+				orchestrator.host.resolvedReferences.store(path, newConfig)
 				orchestrator.host.configTimes.Store(path, configTime)
 				t.resolved = newConfig
 				t.resetStatus()

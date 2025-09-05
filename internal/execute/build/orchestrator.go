@@ -251,7 +251,7 @@ func (o *Orchestrator) resetCaches() {
 	cachesVfs := o.host.host.FS().(*cachedvfs.FS)
 	cachesVfs.ClearCache()
 	o.host.extendedConfigCache = tsc.ExtendedConfigCache{}
-	o.host.sourceFiles.Reset()
+	o.host.sourceFiles.reset()
 	o.host.configTimes = collections.SyncMap[tspath.Path, time.Duration]{}
 }
 
