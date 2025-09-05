@@ -62,6 +62,7 @@ func (t *toProgramSnapshot) reuseFromOldProgram() {
 		t.snapshot.buildInfoEmitPending.Store(t.oldProgram.snapshot.buildInfoEmitPending.Load())
 		t.snapshot.hasErrorsFromOldState = t.oldProgram.snapshot.hasErrors
 		t.snapshot.hasSemanticErrorsFromOldState = t.oldProgram.snapshot.hasSemanticErrors
+		t.snapshot.packageJsonsFromOldState = t.oldProgram.snapshot.packageJsons
 	} else {
 		t.snapshot.buildInfoEmitPending.Store(t.snapshot.options.IsIncremental())
 	}

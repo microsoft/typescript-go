@@ -71,6 +71,7 @@ type buildTask struct {
 	configTime          time.Time
 	extendedConfigTimes []time.Time
 	inputFiles          []time.Time
+	packageJsonTimes    []time.Time
 
 	buildInfoEntry   *buildInfoEntry
 	buildInfoEntryMu sync.Mutex
@@ -346,6 +347,9 @@ func (t *buildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 
 	// Check the build info
 	buildInfoPath := t.resolved.GetBuildInfoFileName()
+	getBuildInfoDirectory := core.Memoize(func() string {
+		return tspath.GetDirectoryPath(tspath.GetNormalizedAbsolutePath(buildInfoPath, orchestrator.comparePathsOptions.CurrentDirectory))
+	})
 	buildInfo, buildInfoTime := t.loadOrStoreBuildInfo(orchestrator, configPath, buildInfoPath)
 	if buildInfo == nil {
 		return &upToDateStatus{kind: upToDateStatusTypeOutputMissing, data: buildInfoPath}
@@ -382,7 +386,7 @@ func (t *buildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 		}
 
 		// Some of the emit files like source map or dts etc are not yet done
-		if buildInfo.IsEmitPending(t.resolved, tspath.GetDirectoryPath(tspath.GetNormalizedAbsolutePath(buildInfoPath, orchestrator.comparePathsOptions.CurrentDirectory))) {
+		if buildInfo.IsEmitPending(t.resolved, getBuildInfoDirectory()) {
 			return &upToDateStatus{kind: upToDateStatusTypeOutOfDateOptions, data: buildInfoPath}
 		}
 	}
@@ -390,7 +394,9 @@ func (t *buildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 	oldestOutputFileAndTime := fileAndTime{buildInfoPath, buildInfoTime}
 	var newestInputFileAndTime fileAndTime
 	var seenRoots collections.Set[tspath.Path]
-	var buildInfoRootInfoReader *incremental.BuildInfoRootInfoReader
+	getBuildInfoRootInfoReader := core.Memoize(func() *incremental.BuildInfoRootInfoReader {
+		return buildInfo.GetBuildInfoRootInfoReader(getBuildInfoDirectory(), orchestrator.comparePathsOptions)
+	})
 	for _, inputFile := range t.resolved.FileNames() {
 		inputTime := orchestrator.host.GetMTime(inputFile)
 		if inputTime.IsZero() {
@@ -401,10 +407,7 @@ func (t *buildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 			var version string
 			var currentVersion string
 			if buildInfo.IsIncremental() {
-				if buildInfoRootInfoReader == nil {
-					buildInfoRootInfoReader = buildInfo.GetBuildInfoRootInfoReader(tspath.GetDirectoryPath(tspath.GetNormalizedAbsolutePath(buildInfoPath, orchestrator.comparePathsOptions.CurrentDirectory)), orchestrator.comparePathsOptions)
-				}
-				buildInfoFileInfo, resolvedInputPath := buildInfoRootInfoReader.GetBuildInfoFileInfo(inputPath)
+				buildInfoFileInfo, resolvedInputPath := getBuildInfoRootInfoReader().GetBuildInfoFileInfo(inputPath)
 				if fileInfo := buildInfoFileInfo.GetFileInfo(); fileInfo != nil && fileInfo.Version() != "" {
 					version = fileInfo.Version()
 					if text, ok := orchestrator.host.FS().ReadFile(string(resolvedInputPath)); ok {
@@ -426,10 +429,7 @@ func (t *buildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 		seenRoots.Add(inputPath)
 	}
 
-	if buildInfoRootInfoReader == nil {
-		buildInfoRootInfoReader = buildInfo.GetBuildInfoRootInfoReader(tspath.GetDirectoryPath(tspath.GetNormalizedAbsolutePath(buildInfoPath, orchestrator.comparePathsOptions.CurrentDirectory)), orchestrator.comparePathsOptions)
-	}
-	for root := range buildInfoRootInfoReader.Roots() {
+	for root := range getBuildInfoRootInfoReader().Roots() {
 		if !seenRoots.Has(root) {
 			// File was root file when project was built but its not any more
 			return &upToDateStatus{kind: upToDateStatusTypeOutOfDateRoots, data: &inputOutputName{string(root), buildInfoPath}}
@@ -512,14 +512,12 @@ func (t *buildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 		}
 	}
 
-	// !!! sheetal TODO : watch??
-	// // Check package file time
-	// const packageJsonLookups = state.lastCachedPackageJsonLookups.get(resolvedPath);
-	// const dependentPackageFileStatus = packageJsonLookups && forEachKey(
-	//     packageJsonLookups,
-	//     path => checkConfigFileUpToDateStatus(state, path, oldestOutputFileTime, oldestOutputFileName),
-	// );
-	// if (dependentPackageFileStatus) return dependentPackageFileStatus;
+	for packageJson := range buildInfo.GetPackageJsons(getBuildInfoDirectory()) {
+		packageJsonStatus := checkInputFileTime(packageJson)
+		if packageJsonStatus != nil {
+			return packageJsonStatus
+		}
+	}
 
 	return &upToDateStatus{
 		kind: core.IfElse(
@@ -729,6 +727,11 @@ func (t *buildTask) updateWatch(orchestrator *Orchestrator, oldCache *collection
 			}
 		}
 	}
+	if t.buildInfoEntry != nil && t.buildInfoEntry.buildInfo != nil {
+		for file := range t.buildInfoEntry.buildInfo.GetPackageJsons(tspath.GetDirectoryPath(string(t.buildInfoEntry.path))) {
+			t.packageJsonTimes = append(t.packageJsonTimes, orchestrator.host.loadOrStoreMTime(file, oldCache, false))
+		}
+	}
 }
 
 func (t *buildTask) resetStatus() {
@@ -776,6 +779,16 @@ func (t *buildTask) hasUpdate(orchestrator *Orchestrator, path tspath.Path) upda
 				t.resetStatus()
 				needsUpdate = true
 			}
+		}
+	}
+	if t.buildInfoEntry != nil && t.buildInfoEntry.buildInfo != nil {
+		index := 0
+		for file := range t.buildInfoEntry.buildInfo.GetPackageJsons(tspath.GetDirectoryPath(string(t.buildInfoEntry.path))) {
+			if orchestrator.host.GetMTime(file) != t.packageJsonTimes[index] {
+				t.resetStatus()
+				needsUpdate = true
+			}
+			index++
 		}
 	}
 	return core.IfElse(needsConfigUpdate, updateKindConfig, core.IfElse(needsUpdate, updateKindUpdate, updateKindNone))

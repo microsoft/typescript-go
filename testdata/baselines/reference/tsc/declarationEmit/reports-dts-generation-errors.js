@@ -151,7 +151,7 @@ Found 1 error in index.ts[90m:2[0m
 //// [/home/src/workspaces/project/index.d.ts] *rewrite with same content*
 //// [/home/src/workspaces/project/index.js] *rewrite with same content*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","errors":true,"root":["./index.ts"]}
+{"version":"FakeTSVersion","errors":true,"root":["./index.ts"],"packageJsons":["./node_modules/ky/package.json","./package.json"]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -164,7 +164,11 @@ Found 1 error in index.ts[90m:2[0m
       "original": "./index.ts"
     }
   ],
-  "size": 63
+  "packageJsons": [
+    "./node_modules/ky/package.json",
+    "./package.json"
+  ],
+  "size": 130
 }
 
 tsconfig.json::

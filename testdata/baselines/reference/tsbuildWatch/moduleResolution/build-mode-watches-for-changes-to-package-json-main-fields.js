@@ -127,7 +127,7 @@ exports.theNum = void 0;
 exports.theNum = 42;
 
 //// [/user/username/projects/myproject/packages/pkg1/build/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":["../index.ts"]}
+{"version":"FakeTSVersion","root":["../index.ts"],"packageJsons":["../package.json","../../pkg2/package.json"]}
 //// [/user/username/projects/myproject/packages/pkg1/build/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -139,7 +139,11 @@ exports.theNum = 42;
       "original": "../index.ts"
     }
   ],
-  "size": 50
+  "packageJsons": [
+    "../package.json",
+    "../../pkg2/package.json"
+  ],
+  "size": 111
 }
 //// [/user/username/projects/myproject/packages/pkg2/build/const.d.ts] *new* 
 export type TheNum = 42;
@@ -281,18 +285,78 @@ Edit [0]:: reports import errors after change to package file
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
 
+[[90mHH:MM:SS AM[0m] Projects in this build: 
+    * packages/pkg2/tsconfig.json
+    * packages/pkg1/tsconfig.json
 
+[[90mHH:MM:SS AM[0m] Project 'packages/pkg1/tsconfig.json' is out of date because output 'packages/pkg1/build/tsconfig.tsbuildinfo' is older than input 'packages/pkg2/package.json'
 
-Diff:: Package.json watch pending, so no change detected yet
---- nonIncremental.output.txt
-+++ incremental.output.txt
-@@ -1,5 +0,0 @@
--[96mpackages/pkg1/index.ts[0m:[93m1[0m:[93m15[0m - [91merror[0m[90m TS2305: [0mModule '"pkg2"' has no exported member 'TheNum'.
--
--[7m1[0m import type { TheNum } from 'pkg2'
--[7m [0m [91m              ~~~~~~[0m
--
+[[90mHH:MM:SS AM[0m] Building project 'packages/pkg1/tsconfig.json'...
+
+======== Resolving module 'pkg2' from '/user/username/projects/myproject/packages/pkg1/index.ts'. ========
+Module resolution kind is not specified, using 'Bundler'.
+Resolving in CJS mode with conditions 'require', 'types'.
+Found 'package.json' at '/user/username/projects/myproject/packages/pkg1/package.json'.
+Loading module 'pkg2' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration, JSON.
+Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
+Directory '/user/username/projects/myproject/packages/pkg1/node_modules' does not exist, skipping all lookups in it.
+Directory '/user/username/projects/myproject/packages/pkg1/node_modules/@types' does not exist, skipping all lookups in it.
+Directory '/user/username/projects/myproject/packages/node_modules' does not exist, skipping all lookups in it.
+Directory '/user/username/projects/myproject/packages/node_modules/@types' does not exist, skipping all lookups in it.
+Found 'package.json' at '/user/username/projects/myproject/node_modules/pkg2/package.json'.
+File '/user/username/projects/myproject/node_modules/pkg2.ts' does not exist.
+File '/user/username/projects/myproject/node_modules/pkg2.tsx' does not exist.
+File '/user/username/projects/myproject/node_modules/pkg2.d.ts' does not exist.
+'package.json' does not have a 'typesVersions' field.
+'package.json' does not have a 'typings' field.
+'package.json' does not have a 'types' field.
+'package.json' has 'main' field 'build/other.js' that references '/user/username/projects/myproject/node_modules/pkg2/build/other.js'.
+File name '/user/username/projects/myproject/node_modules/pkg2/build/other.js' has a '.js' extension - stripping it.
+File '/user/username/projects/myproject/node_modules/pkg2/build/other.ts' does not exist.
+File '/user/username/projects/myproject/node_modules/pkg2/build/other.tsx' does not exist.
+File '/user/username/projects/myproject/node_modules/pkg2/build/other.d.ts' exists - use it as a name resolution result.
+'package.json' does not have a 'peerDependencies' field.
+Resolving real path for '/user/username/projects/myproject/node_modules/pkg2/build/other.d.ts', result '/user/username/projects/myproject/packages/pkg2/build/other.d.ts'.
+======== Module name 'pkg2' was successfully resolved to '/user/username/projects/myproject/packages/pkg2/build/other.d.ts' with Package ID 'pkg2@1.0.0'. ========
+[96mpackages/pkg1/index.ts[0m:[93m1[0m:[93m15[0m - [91merror[0m[90m TS2305: [0mModule '"pkg2"' has no exported member 'TheNum'.
+
+[7m1[0m import type { TheNum } from 'pkg2'
+[7m [0m [91m              ~~~~~~[0m
+
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
+
+//// [/user/username/projects/myproject/packages/pkg1/build/index.js] *rewrite with same content*
+//// [/user/username/projects/myproject/packages/pkg1/build/tsconfig.tsbuildinfo] *modified* 
+{"version":"FakeTSVersion","root":["../index.ts"],"packageJsons":["../package.json","../../pkg2/package.json"],"semanticErrors":true}
+//// [/user/username/projects/myproject/packages/pkg1/build/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
+{
+  "version": "FakeTSVersion",
+  "root": [
+    {
+      "files": [
+        "../index.ts"
+      ],
+      "original": "../index.ts"
+    }
+  ],
+  "packageJsons": [
+    "../package.json",
+    "../../pkg2/package.json"
+  ],
+  "size": 133,
+  "semanticErrors": true
+}
+
+packages/pkg1/tsconfig.json::
+SemanticDiagnostics::
+*refresh*    /user/username/projects/myproject/packages/pkg2/build/other.d.ts
+*refresh*    /user/username/projects/myproject/packages/pkg1/index.ts
+Signatures::
+(used version)   /user/username/projects/myproject/packages/pkg2/build/other.d.ts
+(computed .d.ts) /user/username/projects/myproject/packages/pkg1/index.ts
+
 
 Edit [1]:: removes those errors when a package file is changed back
 //// [/user/username/projects/myproject/packages/pkg2/package.json] *modified* 
@@ -304,4 +368,78 @@ Edit [1]:: removes those errors when a package file is changed back
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
 
+[[90mHH:MM:SS AM[0m] Projects in this build: 
+    * packages/pkg2/tsconfig.json
+    * packages/pkg1/tsconfig.json
+
+[[90mHH:MM:SS AM[0m] Project 'packages/pkg1/tsconfig.json' is out of date because buildinfo file 'packages/pkg1/build/tsconfig.tsbuildinfo' indicates that program needs to report errors.
+
+[[90mHH:MM:SS AM[0m] Building project 'packages/pkg1/tsconfig.json'...
+
+======== Resolving module 'pkg2' from '/user/username/projects/myproject/packages/pkg1/index.ts'. ========
+Module resolution kind is not specified, using 'Bundler'.
+Resolving in CJS mode with conditions 'require', 'types'.
+Found 'package.json' at '/user/username/projects/myproject/packages/pkg1/package.json'.
+Loading module 'pkg2' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration, JSON.
+Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
+Directory '/user/username/projects/myproject/packages/pkg1/node_modules' does not exist, skipping all lookups in it.
+Directory '/user/username/projects/myproject/packages/pkg1/node_modules/@types' does not exist, skipping all lookups in it.
+Directory '/user/username/projects/myproject/packages/node_modules' does not exist, skipping all lookups in it.
+Directory '/user/username/projects/myproject/packages/node_modules/@types' does not exist, skipping all lookups in it.
+Found 'package.json' at '/user/username/projects/myproject/node_modules/pkg2/package.json'.
+File '/user/username/projects/myproject/node_modules/pkg2.ts' does not exist.
+File '/user/username/projects/myproject/node_modules/pkg2.tsx' does not exist.
+File '/user/username/projects/myproject/node_modules/pkg2.d.ts' does not exist.
+'package.json' does not have a 'typesVersions' field.
+'package.json' does not have a 'typings' field.
+'package.json' does not have a 'types' field.
+'package.json' has 'main' field 'build/index.js' that references '/user/username/projects/myproject/node_modules/pkg2/build/index.js'.
+File name '/user/username/projects/myproject/node_modules/pkg2/build/index.js' has a '.js' extension - stripping it.
+File '/user/username/projects/myproject/node_modules/pkg2/build/index.ts' does not exist.
+File '/user/username/projects/myproject/node_modules/pkg2/build/index.tsx' does not exist.
+File '/user/username/projects/myproject/node_modules/pkg2/build/index.d.ts' exists - use it as a name resolution result.
+'package.json' does not have a 'peerDependencies' field.
+Resolving real path for '/user/username/projects/myproject/node_modules/pkg2/build/index.d.ts', result '/user/username/projects/myproject/packages/pkg2/build/index.d.ts'.
+======== Module name 'pkg2' was successfully resolved to '/user/username/projects/myproject/packages/pkg2/build/index.d.ts' with Package ID 'pkg2@1.0.0'. ========
+======== Resolving module './const.js' from '/user/username/projects/myproject/packages/pkg2/index.ts'. ========
+Using compiler options of project reference redirect '/user/username/projects/myproject/packages/pkg2/tsconfig.json'.
+Module resolution kind is not specified, using 'Bundler'.
+Resolving in CJS mode with conditions 'require', 'types'.
+Loading module as file / folder, candidate module location '/user/username/projects/myproject/packages/pkg2/const.js', target file types: TypeScript, JavaScript, Declaration, JSON.
+File name '/user/username/projects/myproject/packages/pkg2/const.js' has a '.js' extension - stripping it.
+File '/user/username/projects/myproject/packages/pkg2/const.ts' exists - use it as a name resolution result.
+======== Module name './const.js' was successfully resolved to '/user/username/projects/myproject/packages/pkg2/const.ts'. ========
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
+//// [/user/username/projects/myproject/packages/pkg1/build/index.js] *rewrite with same content*
+//// [/user/username/projects/myproject/packages/pkg1/build/tsconfig.tsbuildinfo] *modified* 
+{"version":"FakeTSVersion","root":["../index.ts"],"packageJsons":["../package.json","../../pkg2/package.json"]}
+//// [/user/username/projects/myproject/packages/pkg1/build/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
+{
+  "version": "FakeTSVersion",
+  "root": [
+    {
+      "files": [
+        "../index.ts"
+      ],
+      "original": "../index.ts"
+    }
+  ],
+  "packageJsons": [
+    "../package.json",
+    "../../pkg2/package.json"
+  ],
+  "size": 111
+}
+
+packages/pkg1/tsconfig.json::
+SemanticDiagnostics::
+*refresh*    /user/username/projects/myproject/packages/pkg2/build/const.d.ts
+*refresh*    /user/username/projects/myproject/packages/pkg2/build/index.d.ts
+*refresh*    /user/username/projects/myproject/packages/pkg1/index.ts
+Signatures::
+(used version)   /user/username/projects/myproject/packages/pkg2/build/const.d.ts
+(used version)   /user/username/projects/myproject/packages/pkg2/build/index.d.ts
+(computed .d.ts) /user/username/projects/myproject/packages/pkg1/index.ts

@@ -20,6 +20,7 @@ type readableBuildInfo struct {
 	Errors       bool                     `json:"errors,omitzero"`
 	CheckPending bool                     `json:"checkPending,omitzero"`
 	Root         []*readableBuildInfoRoot `json:"root,omitzero"`
+	PackageJsons []string                 `json:"packageJsons,omitzero"`
 
 	// IncrementalProgram info
 	FileNames                  []string                                  `json:"fileNames,omitzero"`
@@ -214,6 +215,7 @@ func toReadableBuildInfo(buildInfo *incremental.BuildInfo, buildInfoText string)
 		Options:              buildInfo.Options,
 		LatestChangedDtsFile: buildInfo.LatestChangedDtsFile,
 		SemanticErrors:       buildInfo.SemanticErrors,
+		PackageJsons:         buildInfo.PackageJsons,
 		Size:                 len(buildInfoText),
 	}
 	readable.setFileInfos()
