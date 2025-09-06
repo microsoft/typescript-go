@@ -41,3 +41,29 @@ export type DoneCB = (failures: number) ;
  * @callback DoneCB
  * @param {number} failures - Number of failures that occurred.
  */ 
+
+
+//// [DtsFileErrors]
+
+
+out/source.d.ts(1,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
+out/source.d.ts(1,10): error TS2304: Cannot find name 'MyClass'.
+out/source.d.ts(2,41): error TS1005: '=>' expected.
+
+
+==== out/source.d.ts (3 errors) ====
+    export = MyClass;
+    ~~~~~~~~~~~~~~~~~
+!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
+             ~~~~~~~
+!!! error TS2304: Cannot find name 'MyClass'.
+    export type DoneCB = (failures: number) ;
+                                            ~
+!!! error TS1005: '=>' expected.
+    /**
+     * Callback to be invoked when test execution is complete.
+     *
+     * @callback DoneCB
+     * @param {number} failures - Number of failures that occurred.
+     */ 
+    

@@ -1,8 +1,7 @@
-source.js(15,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 source.js(16,16): error TS2339: Property 'Strings' does not exist on type 'typeof Handler'.
 
 
-==== source.js (2 errors) ====
+==== source.js (1 errors) ====
     class Handler {
     	static get OPTIONS() {
     		return 1;
@@ -18,8 +17,6 @@ source.js(16,16): error TS2339: Property 'Strings' does not exist on type 'typeo
     }
     
     module.exports = Handler;
-    ~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
     module.exports.Strings = Strings
                    ~~~~~~~
 !!! error TS2339: Property 'Strings' does not exist on type 'typeof Handler'.
