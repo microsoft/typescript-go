@@ -175,6 +175,15 @@ func (fs *compilerFS) ReadFile(path string) (contents string, ok bool) {
 	return "", false
 }
 
+// ReadFileWithFallback implements vfs.FS.
+// This reads the file from the underlying FS if it's not tracked by the program.
+func (fs *compilerFS) ReadFileWithFallback(path string) (contents string, ok bool) {
+	if fh := fs.source.GetFile(path); fh != nil {
+		return fh.Content(), true
+	}
+	return fs.source.FS().ReadFile(path)
+}
+
 // Realpath implements vfs.FS.
 func (fs *compilerFS) Realpath(path string) string {
 	return fs.source.FS().Realpath(path)
