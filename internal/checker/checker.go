@@ -5424,7 +5424,7 @@ func (c *Checker) checkExternalModuleExports(node *ast.Node) {
 		exportEqualsSymbol := moduleSymbol.Exports[ast.InternalSymbolNameExportEquals]
 		if exportEqualsSymbol != nil && c.hasExportedMembers(moduleSymbol) {
 			declaration := core.OrElse(c.getDeclarationOfAliasSymbol(exportEqualsSymbol), exportEqualsSymbol.ValueDeclaration)
-			if declaration != nil && !isTopLevelInExternalModuleAugmentation(declaration) {
+			if declaration != nil && !isTopLevelInExternalModuleAugmentation(declaration) && !ast.IsInJSFile(declaration) {
 				c.error(declaration, diagnostics.An_export_assignment_cannot_be_used_in_a_module_with_other_exported_elements)
 			}
 		}
