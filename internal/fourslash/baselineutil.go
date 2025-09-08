@@ -17,21 +17,17 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
-type baselineFromTest struct {
-	content *strings.Builder
-
-	baselineName, ext string
-}
-
-func (b *baselineFromTest) addResult(command, actual string) {
-	if b.content.Len() != 0 {
-		b.content.WriteString("\n\n\n\n")
+func getBaselineExtension(command string) string {
+	switch command {
+	case "QuickInfo", "SignatureHelp":
+		return "baseline"
+	case "Auto Imports":
+		return "baseline.md"
+	case "findAllReferences", "goToDefinition", "findRenameLocations":
+		return "baseline.jsonc"
+	default:
+		return "baseline.jsonc"
 	}
-	b.content.WriteString(`// === ` + command + " ===\n" + actual)
-}
-
-func (b *baselineFromTest) getBaselineFileName() string {
-	return "fourslash/" + b.baselineName + b.ext
 }
 
 type baselineFourslashLocationsOptions struct {
