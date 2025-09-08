@@ -3,6 +3,7 @@ package tsctests
 import (
 	"fmt"
 	"slices"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -1543,7 +1544,7 @@ func TestProjectsBuilding(t *testing.T) {
 	}
 	addSolution := func(files FileMap, count int) {
 		var pkgReferences []string
-		for i := 0; i < count; i++ {
+		for i := range count {
 			pkgReferences = append(pkgReferences, fmt.Sprintf(`{ "path": "./pkg%d" }`, i))
 		}
 		files[`/user/username/projects/myproject/tsconfig.json`] = stringtestutil.Dedent(fmt.Sprintf(`
@@ -1556,7 +1557,7 @@ func TestProjectsBuilding(t *testing.T) {
 	}
 	files := func(count int) FileMap {
 		files := FileMap{}
-		for i := 0; i < count; i++ {
+		for i := range count {
 			addPackageFiles(files, i)
 		}
 		addSolution(files, count)
@@ -1592,7 +1593,7 @@ func TestProjectsBuilding(t *testing.T) {
 				subScenario:     fmt.Sprintf(`when there are %d projects in a solution with maxConcurrentProjects %d`, pkgCount, maxBuilding),
 				files:           files(pkgCount),
 				cwd:             "/user/username/projects/myproject",
-				commandLineArgs: []string{"-b", "-v", "--maxConcurrentProjects", fmt.Sprintf("%d", maxBuilding)},
+				commandLineArgs: []string{"-b", "-v", "--maxConcurrentProjects", strconv.Itoa(maxBuilding)},
 				edits:           edits,
 			},
 		}

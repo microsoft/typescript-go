@@ -308,9 +308,6 @@ func (s *testSys) baselinePrograms(baseline *strings.Builder) {
 	s.programBaselines.Reset()
 }
 
-func (s *testSys) baselineProgram(program *incremental.Program) {
-}
-
 func (s *testSys) serializeState(baseline *strings.Builder) {
 	s.baselineOutput(baseline)
 	s.baselineFSwithDiff(baseline)

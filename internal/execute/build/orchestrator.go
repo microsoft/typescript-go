@@ -234,10 +234,10 @@ func NewOrchestrator(opts Options) *Orchestrator {
 			UseCaseSensitiveFileNames: opts.Sys.FS().UseCaseSensitiveFileNames(),
 		},
 	}
-	max := tsoptions.TscMaxConcurrentProjectsOption.DefaultValueDescription.(int)
+	maxConcurrentProjects := tsoptions.TscMaxConcurrentProjectsOption.DefaultValueDescription.(int)
 	if opts.Command.BuildOptions.MaxConcurrentProjects != nil {
-		max = *opts.Command.BuildOptions.MaxConcurrentProjects
+		maxConcurrentProjects = *opts.Command.BuildOptions.MaxConcurrentProjects
 	}
-	orchestrator.buildSemaphore = make(chan struct{}, max)
+	orchestrator.buildSemaphore = make(chan struct{}, maxConcurrentProjects)
 	return orchestrator
 }
