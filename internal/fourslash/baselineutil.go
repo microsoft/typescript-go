@@ -14,8 +14,39 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
+
+func (f *FourslashTest) addResultToBaseline(t *testing.T, command string, actual string) {
+	b, ok := f.baselines[command]
+	if !ok {
+		f.baselines[command] = &strings.Builder{}
+		b = f.baselines[command]
+	}
+	if b.Len() != 0 {
+		b.WriteString("\n\n\n\n")
+	}
+	b.WriteString(`// === ` + command + " ===\n" + actual)
+}
+
+func (f *FourslashTest) writeToBaseline(command string, content string) {
+	b, ok := f.baselines[command]
+	if !ok {
+		f.baselines[command] = &strings.Builder{}
+		b = f.baselines[command]
+	}
+	b.WriteString(content)
+}
+
+// !!! HERE
+func getBaselineFileName(t *testing.T, command string) string {
+	return "fourslash/" + command + "/" + getBaseFileNameFromTest(t) + "." + getBaselineExtension(command)
+}
+
+func getSubmoduleBaselineFileName(t *testing.T, command string) string {
+	return getBaseFileNameFromTest(t) + "." + getBaselineExtension(command)
+}
 
 func getBaselineExtension(command string) string {
 	switch command {
@@ -27,6 +58,50 @@ func getBaselineExtension(command string) string {
 		return "baseline.jsonc"
 	default:
 		return "baseline.jsonc"
+	}
+}
+
+func getBaselineOptions(command string) baseline.Options {
+	switch command {
+	case "findRenameLocations":
+		return baseline.Options{
+			Subfolder:   "fourslash/" + command,
+			IsSubmodule: true,
+			DiffFixupOld: func(s string) string {
+				var commandLines []string
+				commandPrefix := regexp.MustCompile(`// === ([a-z\sA-Z]*) ===`)
+				testFilePrefix := "/tests/cases/fourslash"
+				contextSpanOpening := "<|"
+				contextSpanClosing := "|>"
+				replacer := strings.NewReplacer(
+					contextSpanOpening, "",
+					contextSpanClosing, "",
+					testFilePrefix, "",
+				)
+				lines := strings.Split(s, "\n")
+				var isInCommand bool
+				for _, line := range lines {
+					matches := commandPrefix.FindStringSubmatch(line)
+					if len(matches) > 0 {
+						commandName := matches[1]
+						if commandName == command {
+							isInCommand = true
+						} else {
+							isInCommand = false
+						}
+					}
+					if isInCommand {
+						fixedLine := replacer.Replace(line)
+						commandLines = append(commandLines, fixedLine)
+					}
+				}
+				return strings.Join(commandLines, "\n")
+			},
+		}
+	default:
+		return baseline.Options{
+			Subfolder: "fourslash/" + command,
+		}
 	}
 }
 
@@ -278,7 +353,7 @@ func newTextWithContext(fileName string, content string) *textWithContext {
 	t.converters = ls.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *ls.LineMap {
 		return t.lineStarts
 	})
-	t.readableContents.WriteString("// === " + fileName + " ===\n")
+	t.readableContents.WriteString("// === " + fileName + " ===")
 	return t
 }
 
@@ -350,8 +425,11 @@ func (t *textWithContext) add(detail *baselineDetail) {
 }
 
 func (t *textWithContext) readableJsoncBaseline(text string) {
-	for _, line := range lineSplitter.Split(text, -1) {
-		t.readableContents.WriteString(`// ` + line + "\n")
+	for i, line := range lineSplitter.Split(text, -1) {
+		if i > 0 {
+			t.readableContents.WriteString("\n")
+		}
+		t.readableContents.WriteString(`// ` + line)
 	}
 }
 

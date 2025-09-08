@@ -1598,31 +1598,6 @@ func (f *FourslashTest) getRangeText(r *RangeMarker) string {
 
 func (f *FourslashTest) verifyBaselines(t *testing.T) {
 	for command, content := range f.baselines {
-		baseline.Run(t, getBaselineFileName(t, command), content.String(), baseline.Options{}) // !!! options
+		baseline.Run(t, getSubmoduleBaselineFileName(t, command), content.String(), getBaselineOptions(command))
 	}
-}
-
-func (f *FourslashTest) addResultToBaseline(t *testing.T, command string, actual string) {
-	b, ok := f.baselines[command]
-	if !ok {
-		f.baselines[command] = &strings.Builder{}
-		b = f.baselines[command]
-	}
-	if b.Len() != 0 {
-		b.WriteString("\n\n\n\n")
-	}
-	b.WriteString(`// === ` + command + " ===\n" + actual)
-}
-
-func (f *FourslashTest) writeToBaseline(command string, content string) {
-	b, ok := f.baselines[command]
-	if !ok {
-		f.baselines[command] = &strings.Builder{}
-		b = f.baselines[command]
-	}
-	b.WriteString(content)
-}
-
-func getBaselineFileName(t *testing.T, command string) string {
-	return "fourslash/" + command + "/" + getBaseFileNameFromTest(t) + "." + getBaselineExtension(command)
 }
