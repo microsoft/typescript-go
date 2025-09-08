@@ -40,7 +40,7 @@ func (b *nodeBuilderImpl) psuedoTypeToNode(t *psuedochecker.PsuedoType) *ast.Nod
 		if !b.ch.strictNullChecks {
 			return b.f.NewKeywordTypeNode(ast.KindAnyKeyword)
 		}
-		return b.f.NewKeywordTypeNode(ast.KindNullKeyword)
+		return b.f.NewLiteralTypeNode(b.f.NewKeywordExpression(ast.KindNullKeyword))
 	case psuedochecker.PsuedoTypeKindAny:
 		return b.f.NewKeywordTypeNode(ast.KindAnyKeyword)
 	case psuedochecker.PsuedoTypeKindString:
@@ -52,9 +52,9 @@ func (b *nodeBuilderImpl) psuedoTypeToNode(t *psuedochecker.PsuedoType) *ast.Nod
 	case psuedochecker.PsuedoTypeKindBoolean:
 		return b.f.NewKeywordTypeNode(ast.KindBooleanKeyword)
 	case psuedochecker.PsuedoTypeKindFalse:
-		return b.f.NewKeywordTypeNode(ast.KindFalseKeyword)
+		return b.f.NewLiteralTypeNode(b.f.NewKeywordExpression(ast.KindFalseKeyword))
 	case psuedochecker.PsuedoTypeKindTrue:
-		return b.f.NewKeywordTypeNode(ast.KindTrueKeyword)
+		return b.f.NewLiteralTypeNode(b.f.NewKeywordExpression(ast.KindTrueKeyword))
 	case psuedochecker.PsuedoTypeKindSingleCallSignature:
 		d := t.Data.(*psuedochecker.PsuedoTypeSingleCallSignature)
 		var typeParams *ast.NodeList
@@ -146,7 +146,9 @@ func (b *nodeBuilderImpl) psuedoTypeToNode(t *psuedochecker.PsuedoType) *ast.Nod
 					nil,
 				)
 			}
-			b.e.SetCommentRange(newProp, e.Name.Parent.Loc)
+			if b.ctx.enclosingFile == ast.GetSourceFileOfNode(e.Name) {
+				b.e.SetCommentRange(newProp, e.Name.Parent.Loc)
+			}
 			newElements = append(newElements, newProp)
 		}
 		result := b.f.NewTypeLiteralNode(b.f.NewNodeList(newElements))
