@@ -9,7 +9,7 @@ import (
 func (ch *PsuedoChecker) GetReturnTypeOfSignature(signatureNode *ast.Node) *PsuedoType {
 	switch signatureNode.Kind {
 	case ast.KindGetAccessor:
-		return ch.GetTypeOfAccessor(signatureNode.AsGetAccessorDeclaration())
+		return ch.GetTypeOfAccessor(signatureNode)
 	case ast.KindMethodDeclaration, ast.KindFunctionDeclaration, ast.KindConstructor,
 		ast.KindMethodSignature, ast.KindCallSignature, ast.KindConstructSignature,
 		ast.KindSetAccessor, ast.KindIndexSignature, ast.KindFunctionType, ast.KindConstructorType,
@@ -21,10 +21,10 @@ func (ch *PsuedoChecker) GetReturnTypeOfSignature(signatureNode *ast.Node) *Psue
 	}
 }
 
-func (ch *PsuedoChecker) GetTypeOfAccessor(accessor *ast.GetAccessorDeclaration) *PsuedoType {
+func (ch *PsuedoChecker) GetTypeOfAccessor(accessor *ast.Node) *PsuedoType {
 	annotated := ch.typeFromAccessor(accessor)
 	if annotated.Kind == PsuedoTypeKindNoResult {
-		return ch.inferAccessorType(accessor.AsNode())
+		return ch.inferAccessorType(accessor)
 	}
 	return annotated
 }
@@ -106,16 +106,16 @@ func (ch *PsuedoChecker) typeFromVariable(declaration *ast.VariableDeclaration) 
 	return NewPsuedoTypeNoResult(declaration.AsNode())
 }
 
-func (ch *PsuedoChecker) typeFromAccessor(accessor *ast.GetAccessorDeclaration) *PsuedoType {
-	accessorDeclarations := ast.GetAllAccessorDeclarationsForDeclaration(accessor.AsNode(), accessor.Symbol)
-	accessorType := ch.getTypeAnnotationFromAllAccessorDeclarations(accessor.AsNode(), accessorDeclarations)
+func (ch *PsuedoChecker) typeFromAccessor(accessor *ast.Node) *PsuedoType {
+	accessorDeclarations := ast.GetAllAccessorDeclarationsForDeclaration(accessor, accessor.DeclarationData().Symbol)
+	accessorType := ch.getTypeAnnotationFromAllAccessorDeclarations(accessor, accessorDeclarations)
 	if accessorType != nil && !ast.IsTypePredicateNode(accessorType) {
 		return NewPsuedoTypeDirect(accessorType)
 	}
 	if accessorDeclarations.GetAccessor != nil {
 		return ch.createReturnFromSignature(accessorDeclarations.GetAccessor.AsNode())
 	}
-	return NewPsuedoTypeNoResult(accessor.AsNode())
+	return NewPsuedoTypeNoResult(accessor)
 }
 
 func (ch *PsuedoChecker) inferAccessorType(node *ast.Node) *PsuedoType {
@@ -334,7 +334,7 @@ func (ch *PsuedoChecker) typeFromObjectLiteral(node *ast.ObjectLiteralExpression
 			results = append(results, NewPsuedoGetAccessor(
 				e.Name(),
 				false,
-				ch.typeFromAccessor(e.AsGetAccessorDeclaration()),
+				ch.typeFromAccessor(e),
 			))
 		}
 	}
@@ -471,7 +471,7 @@ func (ch *PsuedoChecker) cloneTypeParameters(nodes *ast.NodeList) []*ast.TypePar
 func (ch *PsuedoChecker) typeFromParameter(node *ast.ParameterDeclaration) *PsuedoType {
 	parent := node.Parent
 	if parent.Kind == ast.KindSetAccessor {
-		return ch.GetTypeOfAccessor(parent.AsGetAccessorDeclaration())
+		return ch.GetTypeOfAccessor(parent)
 	}
 	declaredType := node.Type
 	if declaredType != nil {

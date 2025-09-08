@@ -48,6 +48,7 @@ type PsuedoType struct {
 func NewPsuedoType(kind PsuedoTypeKind, data psuedoTypeData) *PsuedoType {
 	n := data.AsPsuedoType()
 	n.Kind = kind
+	n.Data = data
 	return n
 }
 

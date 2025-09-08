@@ -48,30 +48,6 @@ func canProduceDiagnostics(node *ast.Node) bool {
 	/* ast.IsJSDocTypeAlias(node); */
 }
 
-func hasInferredType(node *ast.Node) bool {
-	// Debug.type<HasInferredType>(node); // !!!
-	switch node.Kind {
-	case ast.KindParameter,
-		ast.KindPropertySignature,
-		ast.KindPropertyDeclaration,
-		ast.KindBindingElement,
-		ast.KindPropertyAccessExpression,
-		ast.KindElementAccessExpression,
-		ast.KindBinaryExpression,
-		ast.KindVariableDeclaration,
-		ast.KindExportAssignment,
-		ast.KindJSExportAssignment,
-		ast.KindPropertyAssignment,
-		ast.KindShorthandPropertyAssignment,
-		ast.KindJSDocParameterTag,
-		ast.KindJSDocPropertyTag:
-		return true
-	default:
-		// assertType<never>(node); // !!!
-		return false
-	}
-}
-
 func isDeclarationAndNotVisible(emitContext *printer.EmitContext, resolver printer.EmitResolver, node *ast.Node) bool {
 	node = emitContext.ParseNode(node)
 	switch node.Kind {
