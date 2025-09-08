@@ -102,6 +102,7 @@ func (p *Program) GetPackageJsonInfo(pkgJsonPath string) modulespecifiers.Packag
 	return nil
 }
 
+// Iterates on all package json cache entries
 func (p *Program) PackageJsonCacheEntries(f func(key tspath.Path, value *packagejson.InfoCacheEntry) bool) {
 	p.resolver.PackageJsonCacheEntries(f)
 }
