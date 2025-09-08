@@ -36,13 +36,10 @@ type buildTask struct {
 	reportDone         chan struct{}
 }
 
-func (t *buildTask) waitOnUpstream() []*upToDateStatus {
-	upStreamStatus := make([]*upToDateStatus, len(t.upStream))
-	for i, upstream := range t.upStream {
+func (t *buildTask) waitOnUpstream() {
+	for _, upstream := range t.upStream {
 		<-upstream.done
-		upStreamStatus[i] = upstream.status
 	}
-	return upStreamStatus
 }
 
 func (t *buildTask) unblockDownstream(status *upToDateStatus) {
@@ -85,59 +82,11 @@ func (t *buildTask) report(orchestrator *Orchestrator, configPath tspath.Path, b
 
 func (t *buildTask) buildProject(orchestrator *Orchestrator, path tspath.Path) {
 	// Wait on upstream tasks to complete
-	upStreamStatus := t.waitOnUpstream()
-	status := t.getUpToDateStatus(orchestrator, path, upStreamStatus)
+	t.waitOnUpstream()
+	status := t.getUpToDateStatus(orchestrator, path)
 	t.reportUpToDateStatus(orchestrator, status)
 	if handled := t.handleStatusThatDoesntRequireBuild(orchestrator, status); handled == nil {
-		if orchestrator.opts.Command.BuildOptions.Verbose.IsTrue() {
-			t.reportStatus(ast.NewCompilerDiagnostic(diagnostics.Building_project_0, orchestrator.relativeFileName(t.config)))
-		}
-
-		// Real build
-		var compileTimes tsc.CompileTimes
-		configAndTime, _ := orchestrator.host.resolvedReferences.Load(path)
-		compileTimes.ConfigTime = configAndTime.time
-		buildInfoReadStart := orchestrator.opts.Sys.Now()
-		oldProgram := incremental.ReadBuildInfoProgram(t.resolved, orchestrator.host, orchestrator.host)
-		compileTimes.BuildInfoReadTime = orchestrator.opts.Sys.Now().Sub(buildInfoReadStart)
-		parseStart := orchestrator.opts.Sys.Now()
-		program := compiler.NewProgram(compiler.ProgramOptions{
-			Config: t.resolved,
-			Host: &compilerHost{
-				host:  orchestrator.host,
-				trace: tsc.GetTraceWithWriterFromSys(&t.builder, orchestrator.opts.Testing),
-			},
-			JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
-		})
-		compileTimes.ParseTime = orchestrator.opts.Sys.Now().Sub(parseStart)
-		changesComputeStart := orchestrator.opts.Sys.Now()
-		t.program = incremental.NewProgram(program, oldProgram, orchestrator.host, orchestrator.opts.Testing != nil)
-		compileTimes.ChangesComputeTime = orchestrator.opts.Sys.Now().Sub(changesComputeStart)
-
-		result, statistics := tsc.EmitAndReportStatistics(
-			orchestrator.opts.Sys,
-			t.program,
-			program,
-			t.resolved,
-			t.reportDiagnostic,
-			tsc.QuietDiagnosticsReporter,
-			&t.builder,
-			&compileTimes,
-			orchestrator.opts.Testing,
-		)
-		t.exitStatus = result.Status
-		t.statistics = statistics
-		if (!program.Options().NoEmitOnError.IsTrue() || len(result.Diagnostics) == 0) &&
-			(len(result.EmitResult.EmittedFiles) > 0 || status.kind != upToDateStatusTypeOutOfDateBuildInfoWithErrors) {
-			// Update time stamps for rest of the outputs
-			t.updateTimeStamps(orchestrator, result.EmitResult.EmittedFiles, diagnostics.Updating_unchanged_output_timestamps_of_project_0)
-		}
-
-		if result.Status == tsc.ExitStatusDiagnosticsPresent_OutputsSkipped || result.Status == tsc.ExitStatusDiagnosticsPresent_OutputsGenerated {
-			status = &upToDateStatus{kind: upToDateStatusTypeBuildErrors}
-		} else {
-			status = &upToDateStatus{kind: upToDateStatusTypeUpToDate}
-		}
+		status = t.compileAndEmit(orchestrator, path, status)
 	} else {
 		status = handled
 		if t.resolved != nil {
@@ -150,6 +99,58 @@ func (t *buildTask) buildProject(orchestrator *Orchestrator, path tspath.Path) {
 		}
 	}
 	t.unblockDownstream(status)
+}
+
+func (t *buildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path, status *upToDateStatus) *upToDateStatus {
+	if orchestrator.opts.Command.BuildOptions.Verbose.IsTrue() {
+		t.reportStatus(ast.NewCompilerDiagnostic(diagnostics.Building_project_0, orchestrator.relativeFileName(t.config)))
+	}
+
+	// Real build
+	var compileTimes tsc.CompileTimes
+	configAndTime, _ := orchestrator.host.resolvedReferences.Load(path)
+	compileTimes.ConfigTime = configAndTime.time
+	buildInfoReadStart := orchestrator.opts.Sys.Now()
+	oldProgram := incremental.ReadBuildInfoProgram(t.resolved, orchestrator.host, orchestrator.host)
+	compileTimes.BuildInfoReadTime = orchestrator.opts.Sys.Now().Sub(buildInfoReadStart)
+	parseStart := orchestrator.opts.Sys.Now()
+	program := compiler.NewProgram(compiler.ProgramOptions{
+		Config: t.resolved,
+		Host: &compilerHost{
+			host:  orchestrator.host,
+			trace: tsc.GetTraceWithWriterFromSys(&t.builder, orchestrator.opts.Testing),
+		},
+		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
+	})
+	compileTimes.ParseTime = orchestrator.opts.Sys.Now().Sub(parseStart)
+	changesComputeStart := orchestrator.opts.Sys.Now()
+	t.program = incremental.NewProgram(program, oldProgram, orchestrator.host, orchestrator.opts.Testing != nil)
+	compileTimes.ChangesComputeTime = orchestrator.opts.Sys.Now().Sub(changesComputeStart)
+
+	result, statistics := tsc.EmitAndReportStatistics(
+		orchestrator.opts.Sys,
+		t.program,
+		program,
+		t.resolved,
+		t.reportDiagnostic,
+		tsc.QuietDiagnosticsReporter,
+		&t.builder,
+		&compileTimes,
+		orchestrator.opts.Testing,
+	)
+	t.exitStatus = result.Status
+	t.statistics = statistics
+	if (!program.Options().NoEmitOnError.IsTrue() || len(result.Diagnostics) == 0) &&
+		(len(result.EmitResult.EmittedFiles) > 0 || status.kind != upToDateStatusTypeOutOfDateBuildInfoWithErrors) {
+		// Update time stamps for rest of the outputs
+		t.updateTimeStamps(orchestrator, result.EmitResult.EmittedFiles, diagnostics.Updating_unchanged_output_timestamps_of_project_0)
+	}
+
+	if result.Status == tsc.ExitStatusDiagnosticsPresent_OutputsSkipped || result.Status == tsc.ExitStatusDiagnosticsPresent_OutputsGenerated {
+		return &upToDateStatus{kind: upToDateStatusTypeBuildErrors}
+	} else {
+		return &upToDateStatus{kind: upToDateStatusTypeUpToDate}
+	}
 }
 
 func (t *buildTask) handleStatusThatDoesntRequireBuild(orchestrator *Orchestrator, status *upToDateStatus) *upToDateStatus {
@@ -202,7 +203,7 @@ func (t *buildTask) handleStatusThatDoesntRequireBuild(orchestrator *Orchestrato
 	return nil
 }
 
-func (t *buildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tspath.Path, upStreamStatus []*upToDateStatus) *upToDateStatus {
+func (t *buildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tspath.Path) *upToDateStatus {
 	// Config file not found
 	if t.resolved == nil {
 		return &upToDateStatus{kind: upToDateStatusTypeConfigFileNotFound}
@@ -213,15 +214,10 @@ func (t *buildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 		return &upToDateStatus{kind: upToDateStatusTypeSolution}
 	}
 
-	for index, upstreamStatus := range upStreamStatus {
-		if upstreamStatus == nil {
-			// Not dependent on this upstream project (expected cycle was detected and hence skipped)
-			continue
-		}
-
-		if orchestrator.opts.Command.BuildOptions.StopBuildOnErrors.IsTrue() && upstreamStatus.isError() {
+	for index, upstream := range t.upStream {
+		if orchestrator.opts.Command.BuildOptions.StopBuildOnErrors.IsTrue() && upstream.status.isError() {
 			// Upstream project has errors, so we cannot build this project
-			return &upToDateStatus{kind: upToDateStatusTypeUpstreamErrors, data: &upstreamErrors{t.resolved.ProjectReferences()[index].Path, upstreamStatus.kind == upToDateStatusTypeUpstreamErrors}}
+			return &upToDateStatus{kind: upToDateStatusTypeUpstreamErrors, data: &upstreamErrors{t.resolved.ProjectReferences()[index].Path, upstream.status.kind == upToDateStatusTypeUpstreamErrors}}
 		}
 	}
 
@@ -342,8 +338,8 @@ func (t *buildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 	}
 
 	var refDtsUnchanged bool
-	for index, upstreamStatus := range upStreamStatus {
-		if upstreamStatus == nil || upstreamStatus.kind == upToDateStatusTypeSolution {
+	for index, upstream := range t.upStream {
+		if upstream.status.kind == upToDateStatusTypeSolution {
 			// Not dependent on the status or this upstream project
 			// (eg: expected cycle was detected and hence skipped, or is solution)
 			continue
@@ -353,7 +349,7 @@ func (t *buildTask) getUpToDateStatus(orchestrator *Orchestrator, configPath tsp
 		// we can't be out of date because of it
 		// inputTime will not be present if we just built this project or updated timestamps
 		// - in that case we do want to either build or update timestamps
-		refInputOutputFileAndTime := upstreamStatus.inputOutputFileAndTime()
+		refInputOutputFileAndTime := upstream.status.inputOutputFileAndTime()
 		if refInputOutputFileAndTime != nil && !refInputOutputFileAndTime.input.time.IsZero() && refInputOutputFileAndTime.input.time.Before(oldestOutputFileAndTime.time) {
 			continue
 		}
