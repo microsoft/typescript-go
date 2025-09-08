@@ -1,0 +1,6 @@
+// === findRenameLocations ===
+// === /renameLabel1.ts ===
+
+// [|fooRENAME|]: {
+//     break /*RENAME*/[|fooRENAME|];
+// }

@@ -1,0 +1,44 @@
+// === findRenameLocations ===
+// === /renameObjectSpreadAssignment.ts ===
+
+// /*RENAME*/interface A1 { a: number };
+// interface A2 { a?: number };
+// let a1: A1;
+// let a2: A2;
+// let a12 = { ...a1, ...a2 };
+
+
+
+
+// === findRenameLocations ===
+// === /renameObjectSpreadAssignment.ts ===
+
+// /*RENAME*/interface A1 { a: number };
+// interface A2 { a?: number };
+// let a1: A1;
+// let a2: A2;
+// let a12 = { ...a1, ...a2 };
+
+
+
+
+// === findRenameLocations ===
+// === /renameObjectSpreadAssignment.ts ===
+
+// /*RENAME*/interface A1 { a: number };
+// interface A2 { a?: number };
+// let a1: A1;
+// let a2: A2;
+// let a12 = { ...a1, ...a2 };
+
+
+
+
+// === findRenameLocations ===
+// === /renameObjectSpreadAssignment.ts ===
+
+// /*RENAME*/interface A1 { a: number };
+// interface A2 { a?: number };
+// let a1: A1;
+// let a2: A2;
+// let a12 = { ...a1, ...a2 };

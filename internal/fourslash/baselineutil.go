@@ -24,7 +24,6 @@ type baselineFromTest struct {
 }
 
 func (b *baselineFromTest) addResult(command, actual string) {
-	// state.baseline(command, actual) in strada
 	if b.content.Len() != 0 {
 		b.content.WriteString("\n\n\n\n")
 	}

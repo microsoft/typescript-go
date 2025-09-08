@@ -1,0 +1,80 @@
+// === findRenameLocations ===
+// === /renameBindingElementInitializerExternal.ts ===
+
+// const /*RENAME*/[|externalRENAME|] = true;
+// 
+// function f({
+//     lvl1 = external,
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameBindingElementInitializerExternal.ts ===
+
+// /*RENAME*/const external = true;
+// 
+// function f({
+//     lvl1 = external,
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameBindingElementInitializerExternal.ts ===
+
+// /*RENAME*/const external = true;
+// 
+// function f({
+//     lvl1 = external,
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameBindingElementInitializerExternal.ts ===
+
+// /*RENAME*/const external = true;
+// 
+// function f({
+//     lvl1 = external,
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameBindingElementInitializerExternal.ts ===
+
+// /*RENAME*/const external = true;
+// 
+// function f({
+//     lvl1 = external,
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameBindingElementInitializerExternal.ts ===
+
+// /*RENAME*/const external = true;
+// 
+// function f({
+//     lvl1 = external,
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameBindingElementInitializerExternal.ts ===
+
+// /*RENAME*/const external = true;
+// 
+// function f({
+//     lvl1 = external,
+// // --- (line: 5) skipped ---

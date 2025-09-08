@@ -1,0 +1,27 @@
+// === findAllReferences ===
+// === /a.js ===
+
+// exports.[|area|] = function (r) { return r * r; }
+
+
+// === /b.js ===
+
+// var mod = require('./a');
+// var t = mod./*FIND ALL REFS*/area(10);
+
+
+
+
+// === findRenameLocations ===
+// === /a.js ===
+
+// exports./*RENAME*/[|areaRENAME|] = function (r) { return r * r; }
+
+
+
+
+// === findRenameLocations ===
+// === /b.js ===
+
+// /*RENAME*/var mod = require('./a');
+// var t = mod.area(10);

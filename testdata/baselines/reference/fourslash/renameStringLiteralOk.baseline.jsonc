@@ -1,0 +1,32 @@
+// === findRenameLocations ===
+// === /renameStringLiteralOk.ts ===
+
+// /*RENAME*/interface Foo {
+//     f: 'foo' | 'bar'
+// }
+// const d: 'foo' = 'foo'
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameStringLiteralOk.ts ===
+
+// /*RENAME*/interface Foo {
+//     f: 'foo' | 'bar'
+// }
+// const d: 'foo' = 'foo'
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameStringLiteralOk.ts ===
+
+// /*RENAME*/interface Foo {
+//     f: 'foo' | 'bar'
+// }
+// const d: 'foo' = 'foo'
+// // --- (line: 5) skipped ---

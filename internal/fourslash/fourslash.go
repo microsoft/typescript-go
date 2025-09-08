@@ -34,8 +34,9 @@ type FourslashTest struct {
 	id     int32
 	vfs    vfs.FS
 
-	testData *TestData // !!! consolidate test files from test data and script info
-	baseline *baselineFromTest
+	testData     *TestData // !!! consolidate test files from test data and script info
+	baseline     *baselineFromTest
+	rangesByText *collections.MultiMap[string, *RangeMarker]
 
 	scriptInfos map[string]*scriptInfo
 	converters  *ls.Converters
@@ -44,8 +45,6 @@ type FourslashTest struct {
 	lastKnownMarkerName  *string
 	activeFilename       string
 	selectionEnd         *lsproto.Position
-
-	rangesByText *collections.MultiMap[string, *RangeMarker]
 }
 
 type scriptInfo struct {
@@ -127,7 +126,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		// Just skip this for now.
 		t.Skip("bundled files are not embedded")
 	}
-	fileName := getFileNameFromTest(t)
+	fileName := getBaseFileNameFromTest(t) + tspath.ExtensionTs
 	testfs := make(map[string]string)
 	scriptInfos := make(map[string]*scriptInfo)
 	testData := ParseTestData(t, content, fileName)
@@ -198,14 +197,15 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 
 	t.Cleanup(func() {
 		inputWriter.Close()
+		f.verifyBaselines(t)
 	})
 	return f
 }
 
-func getFileNameFromTest(t *testing.T) string {
+func getBaseFileNameFromTest(t *testing.T) string {
 	name := strings.TrimPrefix(t.Name(), "Test")
 	char, size := utf8.DecodeRuneInString(name)
-	return string(unicode.ToLower(char)) + name[size:] + tspath.ExtensionTs
+	return string(unicode.ToLower(char)) + name[size:]
 }
 
 func (f *FourslashTest) nextID() int32 {
@@ -767,21 +767,6 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 ) {
 	referenceLocations := f.lookupMarkersOrGetRanges(t, markers)
 
-	if f.baseline != nil {
-		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
-	} else {
-		f.baseline = &baselineFromTest{
-			content:      &strings.Builder{},
-			baselineName: "findAllRef/" + strings.TrimPrefix(t.Name(), "Test"),
-			ext:          ".baseline.jsonc",
-		}
-	}
-
-	// empty baseline after test completes
-	defer func() {
-		f.baseline = nil
-	}()
-
 	for _, markerOrRange := range referenceLocations {
 		// worker in `baselineEachMarkerOrRange`
 		f.GoToMarkerOrRange(t, markerOrRange)
@@ -809,14 +794,12 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 			}
 		}
 
-		f.baseline.addResult("findAllReferences", f.getBaselineForLocationsWithFileContents(*result.Locations, baselineFourslashLocationsOptions{
+		f.addToBaseline(t, "findAllReferences", f.getBaselineForLocationsWithFileContents(*result.Locations, baselineFourslashLocationsOptions{
 			marker:     markerOrRange.GetMarker(),
 			markerName: "/*FIND ALL REFS*/",
 		}))
 
 	}
-
-	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
 }
 
 func (f *FourslashTest) VerifyBaselineGoToDefinition(
@@ -824,21 +807,6 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 	markers ...string,
 ) {
 	referenceLocations := f.lookupMarkersOrGetRanges(t, markers)
-
-	if f.baseline != nil {
-		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
-	} else {
-		f.baseline = &baselineFromTest{
-			content:      &strings.Builder{},
-			baselineName: "goToDef/" + strings.TrimPrefix(t.Name(), "Test"),
-			ext:          ".baseline.jsonc",
-		}
-	}
-
-	// empty baseline after test completes
-	defer func() {
-		f.baseline = nil
-	}()
 
 	for _, markerOrRange := range referenceLocations {
 		// worker in `baselineEachMarkerOrRange`
@@ -876,31 +844,14 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 			t.Fatalf("Unexpected definition response type at marker '%s': %T", *f.lastKnownMarkerName, result.DefinitionLinks)
 		}
 
-		f.baseline.addResult("goToDefinition", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
+		f.addToBaseline(t, "goToDefinition", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
 			marker:     markerOrRange.GetMarker(),
 			markerName: "/*GO TO DEFINITION*/",
 		}))
 	}
-
-	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
 }
 
 func (f *FourslashTest) VerifyBaselineHover(t *testing.T) {
-	if f.baseline != nil {
-		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
-	} else {
-		f.baseline = &baselineFromTest{
-			content:      &strings.Builder{},
-			baselineName: "hover/" + strings.TrimPrefix(t.Name(), "Test"),
-			ext:          ".baseline",
-		}
-	}
-
-	// empty baseline after test completes
-	defer func() {
-		f.baseline = nil
-	}()
-
 	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.Hover], bool) {
 		if marker.Name == nil {
 			return markerAndItem[*lsproto.Hover]{}, false
@@ -956,13 +907,12 @@ func (f *FourslashTest) VerifyBaselineHover(t *testing.T) {
 		return result
 	}
 
-	f.baseline.addResult("QuickInfo", annotateContentWithTooltips(t, f, markersAndItems, "quickinfo", getRange, getTooltipLines))
+	f.addToBaseline(t, "QuickInfo", annotateContentWithTooltips(t, f, markersAndItems, "quickinfo", getRange, getTooltipLines))
 	if jsonStr, err := core.StringifyJson(markersAndItems, "", "  "); err == nil {
 		f.baseline.content.WriteString(jsonStr)
 	} else {
 		t.Fatalf("Failed to stringify markers and items for baseline: %v", err)
 	}
-	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
 }
 
 func appendLinesForMarkedStringWithLanguage(result []string, ms *lsproto.MarkedStringWithLanguage) []string {
@@ -973,21 +923,6 @@ func appendLinesForMarkedStringWithLanguage(result []string, ms *lsproto.MarkedS
 }
 
 func (f *FourslashTest) VerifyBaselineSignatureHelp(t *testing.T) {
-	if f.baseline != nil {
-		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
-	} else {
-		f.baseline = &baselineFromTest{
-			content:      &strings.Builder{},
-			baselineName: "signatureHelp/" + strings.TrimPrefix(t.Name(), "Test"),
-			ext:          ".baseline",
-		}
-	}
-
-	// empty baseline after test completes
-	defer func() {
-		f.baseline = nil
-	}()
-
 	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.SignatureHelp], bool) {
 		if marker.Name == nil {
 			return markerAndItem[*lsproto.SignatureHelp]{}, false
@@ -1087,13 +1022,12 @@ func (f *FourslashTest) VerifyBaselineSignatureHelp(t *testing.T) {
 		return result
 	}
 
-	f.baseline.addResult("SignatureHelp", annotateContentWithTooltips(t, f, markersAndItems, "signaturehelp", getRange, getTooltipLines))
+	f.addToBaseline(t, "SignatureHelp", annotateContentWithTooltips(t, f, markersAndItems, "signaturehelp", getRange, getTooltipLines))
 	if jsonStr, err := core.StringifyJson(markersAndItems, "", "  "); err == nil {
 		f.baseline.content.WriteString(jsonStr)
 	} else {
 		t.Fatalf("Failed to stringify markers and items for baseline: %v", err)
 	}
-	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
 }
 
 // Collects all named markers if provided, or defaults to anonymous ranges
@@ -1536,7 +1470,6 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 			f.baseline.content.WriteString(codeFence(lang, newFileContent) + "\n\n")
 		}
 	}
-	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
 }
 
 // string | *Marker | *RangeMarker
@@ -1571,23 +1504,6 @@ func (f *FourslashTest) verifyBaselineRename(
 	t *testing.T,
 	markerOrRanges []MarkerOrRange,
 ) {
-	if f.baseline != nil {
-		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
-	} else {
-		testName := strings.TrimPrefix(t.Name(), "Test")
-		_, size := utf8.DecodeRuneInString(testName)
-		testName = strings.ToLower(testName[:size]) + testName[size:]
-		f.baseline = &baselineFromTest{
-			content:      &strings.Builder{},
-			baselineName: "rename/" + testName,
-			ext:          ".baseline.jsonc",
-		}
-	}
-
-	defer func() {
-		f.baseline = nil
-	}()
-
 	for _, markerOrRange := range markerOrRanges {
 		f.GoToMarkerOrRange(t, markerOrRange)
 
@@ -1603,10 +1519,10 @@ func (f *FourslashTest) verifyBaselineRename(
 		prefix := f.getCurrentPositionPrefix()
 		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentRenameInfo, params)
 		if resMsg == nil {
-			t.Fatalf(prefix+"Nil response received for rename request at pos %v", f.currentCaretPosition)
+			t.Fatal(prefix + "Nil response received for rename request")
 		}
 		if !resultOk {
-			t.Fatalf(prefix+"Unexpected rename response type at pos %v: %T", f.currentCaretPosition, resMsg.AsResponse().Result)
+			t.Fatalf(prefix+"Unexpected rename response type: %T", resMsg.AsResponse().Result)
 		}
 
 		var changes map[lsproto.DocumentUri][]*lsproto.TextEdit
@@ -1619,8 +1535,8 @@ func (f *FourslashTest) verifyBaselineRename(
 				fileToRange.Add(uri, edit.Range)
 			}
 		}
-		// !!! TODO include options in string?
-		f.baseline.addResult(
+		// !!! include options in string
+		f.addToBaseline(t,
 			"findRenameLocations",
 			f.getBaselineForGroupedLocationsWithFileContents(
 				&fileToRange,
@@ -1632,15 +1548,30 @@ func (f *FourslashTest) verifyBaselineRename(
 			),
 		)
 	}
+}
 
-	var baselineContent string
-	if f.baseline.content.Len() == 0 {
-		baselineContent = baseline.NoContent
-	} else {
-		baselineContent = f.baseline.content.String()
+func (f *FourslashTest) VerifyRenameSucceeded(t *testing.T) {
+	// !!! options
+	params := &lsproto.RenameParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: ls.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+		NewName:  "?",
 	}
 
-	baseline.Run(t, f.baseline.getBaselineFileName(), baselineContent, baseline.Options{})
+	prefix := f.getCurrentPositionPrefix()
+	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentRenameInfo, params)
+	if resMsg == nil {
+		t.Fatal(prefix + "Nil response received for rename request")
+	}
+	if !resultOk {
+		t.Fatalf(prefix+"Unexpected rename response type: %T", resMsg.AsResponse().Result)
+	}
+
+	if result.WorkspaceEdit == nil || result.WorkspaceEdit.Changes == nil || len(*result.WorkspaceEdit.Changes) == 0 {
+		t.Fatal(prefix + "Expected rename to be succeed, but got no changes")
+	}
 }
 
 func (f *FourslashTest) VerifyBaselineRenameAtRangesWithText(
@@ -1671,4 +1602,21 @@ func (f *FourslashTest) GetRangesByText() *collections.MultiMap[string, *RangeMa
 func (f *FourslashTest) getRangeText(r *RangeMarker) string {
 	script := f.getScriptInfo(r.FileName())
 	return script.content[r.Range.Pos():r.Range.End()]
+}
+
+func (f *FourslashTest) verifyBaselines(t *testing.T) {
+	if f.baseline != nil {
+		baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{}) // !!! options
+	}
+}
+
+func (f *FourslashTest) addToBaseline(t *testing.T, command string, actual string) {
+	if f.baseline == nil {
+		f.baseline = &baselineFromTest{
+			content:      &strings.Builder{},
+			baselineName: getBaseFileNameFromTest(t),
+			ext:          ".baseline.jsonc",
+		}
+	}
+	f.baseline.addResult(command, actual)
 }

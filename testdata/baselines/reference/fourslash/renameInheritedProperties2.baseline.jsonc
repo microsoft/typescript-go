@@ -1,0 +1,22 @@
+// === findRenameLocations ===
+// === /renameInheritedProperties2.ts ===
+
+//  class class1 extends class1 {
+//     /*RENAME*/[|doStuffRENAME|]() { }
+//  }
+// 
+//  var v: class1;
+//  v.[|doStuffRENAME|]();
+
+
+
+
+// === findRenameLocations ===
+// === /renameInheritedProperties2.ts ===
+
+// /*RENAME*/ class class1 extends class1 {
+//     doStuff() { }
+//  }
+// 
+//  var v: class1;
+//  v.doStuff();

@@ -1,0 +1,14 @@
+// === findRenameLocations ===
+// === /renameNumericalIndexSingleQuoted.ts ===
+
+// /*RENAME*/const foo = { 0: true };
+// foo[0];
+
+
+
+
+// === findRenameLocations ===
+// === /renameNumericalIndexSingleQuoted.ts ===
+
+// /*RENAME*/const foo = { 0: true };
+// foo[0];

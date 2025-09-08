@@ -1,0 +1,6 @@
+// === findAllReferences ===
+// === /findAllRefsExportDefaultClassConstructor.ts ===
+
+// export default class {
+//     /*FIND ALL REFS*/constructor() {}
+// }

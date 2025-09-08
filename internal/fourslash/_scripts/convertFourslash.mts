@@ -186,6 +186,8 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                 case "baselineRenameAtRangesWithText":
                     // `verify.baselineRename...(...)`
                     return parseBaselineRenameArgs(func.text, callExpression.arguments);
+                case "renameInfoSucceeded":
+                    return [{ kind: "renameInfoSucceeded" }];
             }
         }
         // `goTo....`
@@ -1211,6 +1213,10 @@ interface VerifyQuickInfoCmd {
     docs?: string;
 }
 
+interface VerifyRenameInfoSucceededCmd {
+    kind: "renameInfoSucceeded";
+}
+
 type Cmd =
     | VerifyCompletionsCmd
     | VerifyBaselineFindAllReferencesCmd
@@ -1220,7 +1226,8 @@ type Cmd =
     | GoToCmd
     | EditCmd
     | VerifyQuickInfoCmd
-    | VerifyBaselineRenameCmd;
+    | VerifyBaselineRenameCmd
+    | VerifyRenameInfoSucceededCmd;
 
 function generateVerifyCompletions({ marker, args, isNewIdentifierLocation }: VerifyCompletionsCmd): string {
     let expectedList: string;
@@ -1315,6 +1322,8 @@ function generateCmd(cmd: Cmd): string {
         case "verifyBaselineRename":
         case "verifyBaselineRenameAtRangesWithText":
             return generateBaselineRename(cmd);
+        case "renameInfoSucceeded":
+            return `f.VerifyRenameSucceeded(t)`;
         default:
             let neverCommand: never = cmd;
             throw new Error(`Unknown command kind: ${neverCommand as Cmd["kind"]}`);

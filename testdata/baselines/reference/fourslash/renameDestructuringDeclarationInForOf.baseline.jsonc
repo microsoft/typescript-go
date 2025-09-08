@@ -1,0 +1,44 @@
+// === findRenameLocations ===
+// === /renameDestructuringDeclarationInForOf.ts ===
+
+// /*RENAME*/interface I {
+//     property1: number;
+//     property2: string;
+// }
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameDestructuringDeclarationInForOf.ts ===
+
+// /*RENAME*/interface I {
+//     property1: number;
+//     property2: string;
+// }
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameDestructuringDeclarationInForOf.ts ===
+
+// /*RENAME*/interface I {
+//     property1: number;
+//     property2: string;
+// }
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameDestructuringDeclarationInForOf.ts ===
+
+// /*RENAME*/interface I {
+//     property1: number;
+//     property2: string;
+// }
+// // --- (line: 5) skipped ---

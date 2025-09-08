@@ -1,0 +1,5 @@
+// === findRenameLocations ===
+// === /a.ts ===
+
+// const [|nameRENAME|] = {};
+// export { name/*RENAME*/ };

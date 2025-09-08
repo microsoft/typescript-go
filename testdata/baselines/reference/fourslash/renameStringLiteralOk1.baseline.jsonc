@@ -1,0 +1,20 @@
+// === findRenameLocations ===
+// === /renameStringLiteralOk1.ts ===
+
+// /*RENAME*/declare function f(): 'foo' | 'bar'
+// class Foo {
+//     f = f()
+// }
+// // --- (line: 5) skipped ---
+
+
+
+
+// === findRenameLocations ===
+// === /renameStringLiteralOk1.ts ===
+
+// /*RENAME*/declare function f(): 'foo' | 'bar'
+// class Foo {
+//     f = f()
+// }
+// // --- (line: 5) skipped ---

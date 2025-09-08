@@ -1,0 +1,32 @@
+// === findRenameLocations ===
+// === /jsDocSee_rename1.ts ===
+
+// /*RENAME*/interface A {}
+// /**
+//  * @see {A}
+//  */
+// declare const a: A
+
+
+
+
+// === findRenameLocations ===
+// === /jsDocSee_rename1.ts ===
+
+// /*RENAME*/interface A {}
+// /**
+//  * @see {A}
+//  */
+// declare const a: A
+
+
+
+
+// === findRenameLocations ===
+// === /jsDocSee_rename1.ts ===
+
+// /*RENAME*/interface A {}
+// /**
+//  * @see {A}
+//  */
+// declare const a: A

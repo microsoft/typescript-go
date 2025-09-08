@@ -1,0 +1,10 @@
+// === findRenameLocations ===
+// === /a.ts ===
+
+// enum E {
+//     /** {@link /*RENAME*/[|FooRENAME|]} */
+//     [|FooRENAME|]
+// }
+// interface Foo {
+//     foo: E.[|FooRENAME|];
+// }

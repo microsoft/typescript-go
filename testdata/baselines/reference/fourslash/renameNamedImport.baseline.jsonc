@@ -1,0 +1,5 @@
+// === findRenameLocations ===
+// === /home/src/workspaces/project/src/index.ts ===
+
+// import { /*RENAME*/[|someExportedVariableRENAME|] } from '../lib/index';
+// [|someExportedVariableRENAME|];

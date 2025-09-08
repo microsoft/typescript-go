@@ -1,0 +1,18 @@
+// === findRenameLocations ===
+// === /a.js ===
+
+// function bar() {
+// }
+// bar./*RENAME*/[|fooRENAME|] = "foo";
+// console.log(bar.[|fooRENAME|]);
+
+
+
+
+// === findRenameLocations ===
+// === /a.js ===
+
+// /*RENAME*/function bar() {
+// }
+// bar.foo = "foo";
+// console.log(bar.foo);
