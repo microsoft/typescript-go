@@ -188,6 +188,7 @@ func NewPsuedoObjectElement(kind PsuedoObjectElementKind, name *ast.Node, option
 	e.Kind = kind
 	e.Name = name
 	e.Optional = optional
+	e.Data = data
 	return e
 }
 

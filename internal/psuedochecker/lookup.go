@@ -43,7 +43,7 @@ func (ch *PsuedoChecker) GetTypeOfDeclaration(node *ast.Node) *PsuedoType {
 		return ch.typeFromProperty(node)
 	case ast.KindBindingElement:
 		return NewPsuedoTypeNoResult(node)
-	case ast.KindExportAssignment:
+	case ast.KindExportAssignment, ast.KindJSExportAssignment:
 		return ch.typeFromExpression(node.AsExportAssignment().Expression)
 	case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression, ast.KindBinaryExpression:
 		return ch.typeFromExpandoProperty(node)
@@ -412,7 +412,7 @@ func (ch *PsuedoChecker) isInConstContext(node *ast.Node) bool {
 }
 
 func (ch *PsuedoChecker) typeFromPrimitiveLiteralPrefix(node *ast.PrefixUnaryExpression) *PsuedoType {
-	inner := node.Expression()
+	inner := node.Operand
 	if inner.Kind == ast.KindBigIntLiteral {
 		if ch.isInConstContext(node.AsNode()) {
 			return NewPsuedoTypeBigIntLiteral(node.AsNode())

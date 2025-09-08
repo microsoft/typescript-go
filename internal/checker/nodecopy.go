@@ -7,8 +7,7 @@ import (
 )
 
 func (b *nodeBuilderImpl) reuseNode(node *ast.Node) *ast.Node {
-	// !!!
-	return node
+	return b.f.DeepCloneNode(node) // !!! TODO: validate refs, apply some .Locs from original nodes where safe
 }
 
 type recoveryBoundary struct {
