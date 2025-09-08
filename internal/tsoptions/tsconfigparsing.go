@@ -1264,9 +1264,9 @@ func parseJsonConfigFileContentWorker(
 		sourceFile.configFileSpecs = &configFileSpecs
 	}
 
-	getFileNames := func(basePath string) []string {
+	getFileNames := func(basePath string) ([]string, int) {
 		parsedConfigOptions := parsedConfig.options
-		fileNames := getFileNamesFromConfigSpecs(configFileSpecs, basePath, parsedConfigOptions, host.FS(), extraFileExtensions)
+		fileNames, literalFileNamesLen := getFileNamesFromConfigSpecs(configFileSpecs, basePath, parsedConfigOptions, host.FS(), extraFileExtensions)
 		if shouldReportNoInputFiles(fileNames, canJsonReportNoInputFiles(rawConfig), resolutionStack) {
 			includeSpecs := configFileSpecs.includeSpecs
 			excludeSpecs := configFileSpecs.excludeSpecs
@@ -1278,7 +1278,7 @@ func parseJsonConfigFileContentWorker(
 			}
 			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2, configFileName, core.Must(core.StringifyJson(includeSpecs, "", "")), core.Must(core.StringifyJson(excludeSpecs, "", ""))))
 		}
-		return fileNames
+		return fileNames, literalFileNamesLen
 	}
 
 	getProjectReferences := func(basePath string) []*core.ProjectReference {
@@ -1305,12 +1305,13 @@ func parseJsonConfigFileContentWorker(
 		return projectReferences
 	}
 
+	fileNames, literalFileNamesLen := getFileNames(basePathForFileNames)
 	return &ParsedCommandLine{
 		ParsedConfig: &core.ParsedOptions{
 			CompilerOptions: parsedConfig.options,
 			TypeAcquisition: parsedConfig.typeAcquisition,
 			// WatchOptions:      nil,
-			FileNames:         getFileNames(basePathForFileNames),
+			FileNames:         fileNames,
 			ProjectReferences: getProjectReferences(basePathForFileNames),
 		},
 		ConfigFile: sourceFile,
@@ -1322,6 +1323,7 @@ func parseJsonConfigFileContentWorker(
 			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
 			CurrentDirectory:          basePathForFileNames,
 		},
+		literalFileNamesLen: literalFileNamesLen,
 	}
 }
 
@@ -1603,7 +1605,7 @@ func getFileNamesFromConfigSpecs(
 	options *core.CompilerOptions,
 	host vfs.FS,
 	extraFileExtensions []FileExtensionInfo,
-) []string {
+) ([]string, int) {
 	extraFileExtensions = []FileExtensionInfo{}
 	basePath = tspath.NormalizePath(basePath)
 	keyMappper := func(value string) string { return tspath.GetCanonicalFileName(value, host.UseCaseSensitiveFileNames()) }
@@ -1691,7 +1693,7 @@ func getFileNamesFromConfigSpecs(
 	for file := range wildCardJsonFileMap.Values() {
 		files = append(files, file)
 	}
-	return files
+	return files, literalFileMap.Size()
 }
 
 func GetSupportedExtensions(compilerOptions *core.CompilerOptions, extraFileExtensions []FileExtensionInfo) [][]string {
