@@ -3940,3 +3940,27 @@ func IsPrimitiveLiteralValue(node *Node, includeBigInt bool) bool {
 		return false
 	}
 }
+
+func HasInferredType(node *Node) bool {
+	// Debug.type<HasInferredType>(node); // !!!
+	switch node.Kind {
+	case KindParameter,
+		KindPropertySignature,
+		KindPropertyDeclaration,
+		KindBindingElement,
+		KindPropertyAccessExpression,
+		KindElementAccessExpression,
+		KindBinaryExpression,
+		KindVariableDeclaration,
+		KindExportAssignment,
+		KindJSExportAssignment,
+		KindPropertyAssignment,
+		KindShorthandPropertyAssignment,
+		KindJSDocParameterTag,
+		KindJSDocPropertyTag:
+		return true
+	default:
+		// assertType<never>(node); // !!!
+		return false
+	}
+}

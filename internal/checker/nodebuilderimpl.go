@@ -15,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
+	"github.com/microsoft/typescript-go/internal/psuedochecker"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -88,6 +89,7 @@ type nodeBuilderImpl struct {
 	f  *ast.NodeFactory
 	ch *Checker
 	e  *printer.EmitContext
+	pc *psuedochecker.PsuedoChecker
 
 	// cache
 	links       core.LinkStore[*ast.Node, NodeBuilderLinks]
@@ -108,7 +110,7 @@ const (
 // Node builder utility functions
 
 func newNodeBuilderImpl(ch *Checker, e *printer.EmitContext) *nodeBuilderImpl {
-	b := &nodeBuilderImpl{f: e.Factory.AsNodeFactory(), ch: ch, e: e}
+	b := &nodeBuilderImpl{f: e.Factory.AsNodeFactory(), ch: ch, e: e, pc: psuedochecker.NewPsuedoChecker()}
 	b.cloneBindingNameVisitor = ast.NewNodeVisitor(b.cloneBindingName, b.f, ast.NodeVisitorHooks{})
 	return b
 }
@@ -332,10 +334,6 @@ func (b *nodeBuilderImpl) setCommentRange(node *ast.Node, range_ *ast.Node) {
 		// Copy comments to node for declaration emit
 		b.e.AssignCommentRange(node, range_)
 	}
-}
-
-func (b *nodeBuilderImpl) tryReuseExistingTypeNodeHelper(existing *ast.TypeNode) *ast.TypeNode {
-	return nil // !!!
 }
 
 func (b *nodeBuilderImpl) tryReuseExistingTypeNode(typeNode *ast.TypeNode, t *Type, host *ast.Node, addUndefined bool) *ast.TypeNode {
@@ -1549,7 +1547,7 @@ func (b *nodeBuilderImpl) symbolToParameterDeclaration(parameterSymbol *ast.Symb
 	parameterDeclaration := getEffectiveParameterDeclaration(parameterSymbol)
 
 	parameterType := b.ch.getTypeOfSymbol(parameterSymbol)
-	parameterTypeNode := b.serializeTypeForDeclaration(parameterDeclaration, parameterType, parameterSymbol)
+	parameterTypeNode := b.serializeTypeForDeclaration(parameterDeclaration, parameterType, parameterSymbol, true)
 	var modifiers *ast.ModifierList
 	if b.ctx.flags&nodebuilder.FlagsOmitParameterModifiers == 0 && preserveModifierFlags && parameterDeclaration != nil && ast.CanHaveModifiers(parameterDeclaration) {
 		originals := core.Filter(parameterDeclaration.Modifiers().Nodes, ast.IsModifier)
@@ -1978,8 +1976,16 @@ func (b *nodeBuilderImpl) indexInfoToIndexSignatureDeclarationHelper(indexInfo *
 * @param type - The type to write; an existing annotation must match this type if it's used, otherwise this is the type serialized as a new type node
 * @param symbol - The symbol is used both to find an existing annotation if declaration is not provided, and to determine if `unique symbol` should be printed
  */
-func (b *nodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declaration, t *Type, symbol *ast.Symbol) *ast.Node {
-	// !!! node reuse logic
+func (b *nodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declaration, t *Type, symbol *ast.Symbol, tryReuse bool) *ast.Node {
+	if declaration == nil {
+		if symbol != nil {
+			declaration = symbol.ValueDeclaration
+			if declaration == nil {
+				// TODO: prefer annotated declarations like in strada (but does this ever even matter in practice? All callers should supply a declaration!)
+				declaration = core.FirstOrNil(symbol.Declarations)
+			}
+		}
+	}
 	if symbol == nil {
 		symbol = b.ch.getSymbolOfDeclaration(declaration)
 	}
@@ -2008,8 +2014,26 @@ func (b *nodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 	})) {
 		b.ctx.flags |= nodebuilder.FlagsAllowUniqueESSymbolType
 	}
-	result := b.typeToTypeNode(t) // !!! expressionOrTypeToTypeNode
+	var result *ast.Node
+	// !!! expandable hover support
+	if tryReuse && declaration != nil && (ast.IsAccessor(declaration) || (ast.HasInferredType(declaration) && !ast.NodeIsSynthesized(declaration) && (t.ObjectFlags()&ObjectFlagsRequiresWidening) == 0)) {
+		remove := b.addSymbolTypeToContext(symbol, t)
+		if ast.IsAccessor(declaration) {
+			pt := b.pc.GetTypeOfAccessor(declaration)
+			result = b.psuedoTypeToNode(pt)
+		} else {
+			pt := b.pc.GetTypeOfDeclaration(declaration)
+			result = b.psuedoTypeToNode(pt)
+		}
+		remove()
+	}
+	if result == nil {
+		result = b.typeToTypeNode(t)
+	}
 	restoreFlags()
+	if result == nil {
+		return b.f.NewKeywordTypeNode(ast.KindAnyKeyword)
+	}
 	return result
 }
 
@@ -2253,7 +2277,7 @@ func (b *nodeBuilderImpl) addPropertyToElementList(propertySymbol *ast.Symbol, t
 			b.ctx.reverseMappedStack = append(b.ctx.reverseMappedStack, propertySymbol)
 		}
 		if propertyType != nil {
-			propertyTypeNode = b.serializeTypeForDeclaration(nil /*declaration*/, propertyType, propertySymbol)
+			propertyTypeNode = b.serializeTypeForDeclaration(nil /*declaration*/, propertyType, propertySymbol, true)
 		} else {
 			propertyTypeNode = b.f.NewKeywordTypeNode(ast.KindAnyKeyword)
 		}
