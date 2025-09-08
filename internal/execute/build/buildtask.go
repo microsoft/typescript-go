@@ -102,6 +102,8 @@ func (t *buildTask) buildProject(orchestrator *Orchestrator, path tspath.Path) {
 }
 
 func (t *buildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path, status *upToDateStatus) *upToDateStatus {
+	orchestrator.buildSemaphore <- struct{}{}        // Acquire a slot
+	defer func() { <-orchestrator.buildSemaphore }() // Release the slot
 	if orchestrator.opts.Command.BuildOptions.Verbose.IsTrue() {
 		t.reportStatus(ast.NewCompilerDiagnostic(diagnostics.Building_project_0, orchestrator.relativeFileName(t.config)))
 	}

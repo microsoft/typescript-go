@@ -528,6 +528,8 @@ func ParseBuildOptions(key string, value any, allOptions *core.BuildOptions) []*
 		allOptions.StopBuildOnErrors = parseTristate(value)
 	case "verbose":
 		allOptions.Verbose = parseTristate(value)
+	case "maxConcurrentProjects":
+		allOptions.MaxConcurrentProjects = parseNumber(value)
 	}
 	return nil
 }

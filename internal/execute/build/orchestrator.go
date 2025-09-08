@@ -55,9 +55,10 @@ type Orchestrator struct {
 	host                *host
 
 	// order generation result
-	tasks  collections.SyncMap[tspath.Path, *buildTask]
-	order  []string
-	errors []*ast.Diagnostic
+	tasks          collections.SyncMap[tspath.Path, *buildTask]
+	order          []string
+	errors         []*ast.Diagnostic
+	buildSemaphore chan struct{}
 }
 
 func (o *Orchestrator) relativeFileName(fileName string) string {
@@ -226,11 +227,17 @@ func (o *Orchestrator) createDiagnosticReporter(task *buildTask) tsc.DiagnosticR
 }
 
 func NewOrchestrator(opts Options) *Orchestrator {
-	return &Orchestrator{
+	orchestrator := &Orchestrator{
 		opts: opts,
 		comparePathsOptions: tspath.ComparePathsOptions{
 			CurrentDirectory:          opts.Sys.GetCurrentDirectory(),
 			UseCaseSensitiveFileNames: opts.Sys.FS().UseCaseSensitiveFileNames(),
 		},
 	}
+	max := tsoptions.TscMaxConcurrentProjectsOption.DefaultValueDescription.(int)
+	if opts.Command.BuildOptions.MaxConcurrentProjects != nil {
+		max = *opts.Command.BuildOptions.MaxConcurrentProjects
+	}
+	orchestrator.buildSemaphore = make(chan struct{}, max)
+	return orchestrator
 }

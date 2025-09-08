@@ -2214,6 +2214,8 @@ var This_member_cannot_have_a_JSDoc_comment_with_an_override_tag_because_its_nam
 
 var The_current_host_does_not_support_the_0_option = &Message{code: 5001, category: CategoryError, key: "The_current_host_does_not_support_the_0_option_5001", text: "The current host does not support the '{0}' option."}
 
+var Option_0_requires_value_to_be_greater_than_0 = &Message{code: 5002, category: CategoryError, key: "Option_0_requires_value_to_be_greater_than_0_5002", text: "Option '{0}' requires value to be greater than 0."}
+
 var Cannot_find_the_common_subdirectory_path_for_the_input_files = &Message{code: 5009, category: CategoryError, key: "Cannot_find_the_common_subdirectory_path_for_the_input_files_5009", text: "Cannot find the common subdirectory path for the input files."}
 
 var File_specification_cannot_end_in_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0 = &Message{code: 5010, category: CategoryError, key: "File_specification_cannot_end_in_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0_5010", text: "File specification cannot end in a recursive directory wildcard ('**'): '{0}'."}
@@ -3229,6 +3231,8 @@ var Require_sufficient_annotation_on_exports_so_other_tools_can_trivially_genera
 var Built_in_iterators_are_instantiated_with_a_TReturn_type_of_undefined_instead_of_any = &Message{code: 6720, category: CategoryMessage, key: "Built_in_iterators_are_instantiated_with_a_TReturn_type_of_undefined_instead_of_any_6720", text: "Built-in iterators are instantiated with a 'TReturn' type of 'undefined' instead of 'any'."}
 
 var Do_not_allow_runtime_constructs_that_are_not_part_of_ECMAScript = &Message{code: 6721, category: CategoryMessage, key: "Do_not_allow_runtime_constructs_that_are_not_part_of_ECMAScript_6721", text: "Do not allow runtime constructs that are not part of ECMAScript."}
+
+var Specify_the_maximum_number_of_projects_that_can_be_built_concurrently = &Message{code: 6730, category: CategoryMessage, key: "Specify_the_maximum_number_of_projects_that_can_be_built_concurrently_6730", text: "Specify the maximum number of projects that can be built concurrently."}
 
 var Default_catch_clause_variables_as_unknown_instead_of_any = &Message{code: 6803, category: CategoryMessage, key: "Default_catch_clause_variables_as_unknown_instead_of_any_6803", text: "Default catch clause variables as 'unknown' instead of 'any'."}
 

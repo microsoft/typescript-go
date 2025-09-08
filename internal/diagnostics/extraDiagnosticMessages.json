@@ -38,5 +38,13 @@
     "Failed to update timestamp of file '{0}'.": {
         "category": "Message",
         "code": 5074
+    },
+    "Option '{0}' requires value to be greater than 0.": {
+        "category": "Error",
+        "code": 5002
+    },
+    "Specify the maximum number of projects that can be built concurrently.": {
+        "category": "Message",
+        "code": 6730
     }
 }

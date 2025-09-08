@@ -138,6 +138,9 @@ Build all projects, including those that appear to be up to date.
 [94m--clean[39m
 Delete the outputs of all projects.
 
+[94m--maxConcurrentProjects[39m
+Specify the maximum number of projects that can be built concurrently.
+
 [94m--stopBuildOnErrors[39m
 Skip building downstream projects on error in upstream project.
 
