@@ -1409,6 +1409,16 @@ func GetNameOfDeclaration(declaration *Node) *Node {
 	return nil
 }
 
+func GetImportClauseOfDeclaration(declaration *Declaration) *ImportClause {
+	switch declaration.Kind {
+	case KindImportDeclaration:
+		return declaration.AsImportDeclaration().ImportClause.AsImportClause()
+	case KindJSDocImportTag:
+		return declaration.AsJSDocImportTag().ImportClause.AsImportClause()
+	}
+	return nil
+}
+
 func GetNonAssignedNameOfDeclaration(declaration *Node) *Node {
 	// !!!
 	switch declaration.Kind {
@@ -1754,21 +1764,15 @@ func GetThisContainer(node *Node, includeArrowFunctions bool, includeClassComput
 }
 
 func GetSuperContainer(node *Node, stopOnFunctions bool) *Node {
-	for {
-		node = node.Parent
-		if node == nil {
-			return nil
-		}
+	for node = node.Parent; node != nil; node = node.Parent {
 		switch node.Kind {
 		case KindComputedPropertyName:
 			node = node.Parent
-			break
 		case KindFunctionDeclaration, KindFunctionExpression, KindArrowFunction:
 			if !stopOnFunctions {
 				continue
 			}
-			// falls through
-
+			return node
 		case KindPropertyDeclaration, KindPropertySignature, KindMethodDeclaration, KindMethodSignature, KindConstructor, KindGetAccessor, KindSetAccessor, KindClassStaticBlockDeclaration:
 			return node
 		case KindDecorator:
@@ -1782,9 +1786,9 @@ func GetSuperContainer(node *Node, stopOnFunctions bool) *Node {
 				// from the parent class declaration.
 				node = node.Parent
 			}
-			break
 		}
 	}
+	return nil
 }
 
 func GetImmediatelyInvokedFunctionExpression(fn *Node) *Node {
@@ -2721,6 +2725,15 @@ func IsRequireCall(node *Node, requireStringLiteralLikeArgument bool) bool {
 		return false
 	}
 	return !requireStringLiteralLikeArgument || IsStringLiteralLike(call.Arguments.Nodes[0])
+}
+
+func IsRequireVariableStatement(node *Node) bool {
+	if IsVariableStatement(node) {
+		if declarations := node.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes; len(declarations) > 0 {
+			return core.Every(declarations, IsVariableDeclarationInitializedToRequire)
+		}
+	}
+	return false
 }
 
 func GetJSXImplicitImportBase(compilerOptions *core.CompilerOptions, file *SourceFile) string {

@@ -155,6 +155,10 @@ func (p *Program) UseCaseSensitiveFileNames() bool {
 	return p.Host().FS().UseCaseSensitiveFileNames()
 }
 
+func (p *Program) UsesUriStyleNodeCoreModules() bool {
+	return p.usesUriStyleNodeCoreModules.IsTrue()
+}
+
 var _ checker.Program = (*Program)(nil)
 
 /** This should have similar behavior to 'processSourceFile' without diagnostics or mutation. */
@@ -427,6 +431,14 @@ func (p *Program) GetProgramDiagnostics() []*ast.Diagnostic {
 	return SortAndDeduplicateDiagnostics(slices.Concat(
 		p.programDiagnostics,
 		p.includeProcessor.getDiagnostics(p).GetGlobalDiagnostics()))
+}
+
+func (p *Program) GetIncludeProcessorDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	if checker.SkipTypeChecking(sourceFile, p.Options(), p, false) {
+		return nil
+	}
+	filtered, _ := p.getDiagnosticsWithPrecedingDirectives(sourceFile, p.includeProcessor.getDiagnostics(p).GetDiagnosticsForFile(sourceFile.FileName()))
+	return filtered
 }
 
 func (p *Program) getSourceFilesToEmit(targetSourceFile *ast.SourceFile, forceDtsEmit bool) []*ast.SourceFile {
@@ -1007,11 +1019,10 @@ func FilterNoEmitSemanticDiagnostics(diagnostics []*ast.Diagnostic, options *cor
 }
 
 func (p *Program) getSemanticDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	diagnostics := p.getSemanticDiagnosticsForFileNotFilter(ctx, sourceFile)
-	if diagnostics == nil {
-		return nil
-	}
-	return FilterNoEmitSemanticDiagnostics(diagnostics, p.Options())
+	return slices.Concat(
+		FilterNoEmitSemanticDiagnostics(p.getSemanticDiagnosticsForFileNotFilter(ctx, sourceFile), p.Options()),
+		p.GetIncludeProcessorDiagnostics(sourceFile),
+	)
 }
 
 func (p *Program) getSemanticDiagnosticsForFileNotFilter(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
@@ -1026,8 +1037,7 @@ func (p *Program) getSemanticDiagnosticsForFileNotFilter(ctx context.Context, so
 		fileChecker, done = p.checkerPool.GetCheckerForFile(ctx, sourceFile)
 		defer done()
 	}
-	diags := slices.Clip(p.includeProcessor.getDiagnostics(p).GetDiagnosticsForFile(sourceFile.FileName()))
-	diags = append(diags, sourceFile.BindDiagnostics()...)
+	diags := slices.Clip(sourceFile.BindDiagnostics())
 	checkers, closeCheckers := p.checkerPool.GetAllCheckers(ctx)
 	defer closeCheckers()
 
@@ -1053,8 +1063,20 @@ func (p *Program) getSemanticDiagnosticsForFileNotFilter(ctx context.Context, so
 		})
 	}
 
+	filtered, directivesByLine := p.getDiagnosticsWithPrecedingDirectives(sourceFile, diags)
+	for _, directive := range directivesByLine {
+		// Above we changed all used directive kinds to @ts-ignore, so any @ts-expect-error directives that
+		// remain are unused and thus errors.
+		if directive.Kind == ast.CommentDirectiveKindExpectError {
+			filtered = append(filtered, ast.NewDiagnostic(sourceFile, directive.Loc, diagnostics.Unused_ts_expect_error_directive))
+		}
+	}
+	return filtered
+}
+
+func (p *Program) getDiagnosticsWithPrecedingDirectives(sourceFile *ast.SourceFile, diags []*ast.Diagnostic) ([]*ast.Diagnostic, map[int]ast.CommentDirective) {
 	if len(sourceFile.CommentDirectives) == 0 {
-		return diags
+		return diags, nil
 	}
 	// Build map of directives by line number
 	directivesByLine := make(map[int]ast.CommentDirective)
@@ -1084,14 +1106,7 @@ func (p *Program) getSemanticDiagnosticsForFileNotFilter(ctx context.Context, so
 			filtered = append(filtered, diagnostic)
 		}
 	}
-	for _, directive := range directivesByLine {
-		// Above we changed all used directive kinds to @ts-ignore, so any @ts-expect-error directives that
-		// remain are unused and thus errors.
-		if directive.Kind == ast.CommentDirectiveKindExpectError {
-			filtered = append(filtered, ast.NewDiagnostic(sourceFile, directive.Loc, diagnostics.Unused_ts_expect_error_directive))
-		}
-	}
-	return filtered
+	return filtered, directivesByLine
 }
 
 func (p *Program) getDeclarationDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {

@@ -6,6 +6,7 @@ import (
 	"iter"
 	"slices"
 	"strings"
+	"unicode"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
@@ -18,6 +19,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsutil"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 // Implements a cmp.Compare like function for two lsproto.Position
@@ -116,6 +118,45 @@ func getNonModuleSymbolOfMergedModuleSymbol(symbol *ast.Symbol) *ast.Symbol {
 		return decl.Symbol()
 	}
 	return nil
+}
+
+func moduleSymbolToValidIdentifier(moduleSymbol *ast.Symbol, target core.ScriptTarget, forceCapitalize bool) string {
+	return moduleSpecifierToValidIdentifier(stringutil.StripQuotes(moduleSymbol.Name), target, forceCapitalize)
+}
+
+func moduleSpecifierToValidIdentifier(moduleSpecifier string, target core.ScriptTarget, forceCapitalize bool) string {
+	baseName := tspath.GetBaseFileName(strings.TrimSuffix(tspath.RemoveFileExtension(moduleSpecifier), "/index"))
+	res := []rune{}
+	lastCharWasValid := true
+	baseNameRunes := []rune(baseName)
+	if len(baseNameRunes) > 0 && scanner.IsIdentifierStart(baseNameRunes[0]) {
+		if forceCapitalize {
+			res = append(res, unicode.ToUpper(baseNameRunes[0]))
+		} else {
+			res = append(res, baseNameRunes[0])
+		}
+	} else {
+		lastCharWasValid = false
+	}
+
+	for i := 1; i < len(baseNameRunes); i++ {
+		isValid := scanner.IsIdentifierPart(baseNameRunes[i])
+		if isValid {
+			if !lastCharWasValid {
+				res = append(res, unicode.ToUpper(baseNameRunes[i]))
+			} else {
+				res = append(res, baseNameRunes[i])
+			}
+		}
+		lastCharWasValid = isValid
+	}
+
+	// Need `"_"` to ensure result isn't empty.
+	resString := string(res)
+	if resString != "" && !isNonContextualKeyword(scanner.StringToToken(resString)) {
+		return resString
+	}
+	return "_" + resString
 }
 
 func getLocalSymbolForExportSpecifier(referenceLocation *ast.Identifier, referenceSymbol *ast.Symbol, exportSpecifier *ast.ExportSpecifier, ch *checker.Checker) *ast.Symbol {
@@ -246,16 +287,12 @@ func getPossibleTypeArgumentsInfo(tokenIn *ast.Node, sourceFile *ast.SourceFile)
 				}
 			}
 			remainingLessThanTokens--
-			break
 		case ast.KindGreaterThanGreaterThanGreaterThanToken:
 			remainingLessThanTokens = +3
-			break
 		case ast.KindGreaterThanGreaterThanToken:
 			remainingLessThanTokens = +2
-			break
 		case ast.KindGreaterThanToken:
 			remainingLessThanTokens++
-			break
 		case ast.KindCloseBraceToken:
 			// This can be object type, skip until we find the matching open brace token
 			// Skip until the matching open brace token
@@ -263,7 +300,6 @@ func getPossibleTypeArgumentsInfo(tokenIn *ast.Node, sourceFile *ast.SourceFile)
 			if token == nil {
 				return nil
 			}
-			break
 		case ast.KindCloseParenToken:
 			// This can be object type, skip until we find the matching open brace token
 			// Skip until the matching open brace token
@@ -271,7 +307,6 @@ func getPossibleTypeArgumentsInfo(tokenIn *ast.Node, sourceFile *ast.SourceFile)
 			if token == nil {
 				return nil
 			}
-			break
 		case ast.KindCloseBracketToken:
 			// This can be object type, skip until we find the matching open brace token
 			// Skip until the matching open brace token
@@ -279,22 +314,18 @@ func getPossibleTypeArgumentsInfo(tokenIn *ast.Node, sourceFile *ast.SourceFile)
 			if token == nil {
 				return nil
 			}
-			break
-
-			// Valid tokens in a type name. Skip.
 		case ast.KindCommaToken:
+			// Valid tokens in a type name. Skip.
 			nTypeArguments++
-			break
 		case ast.KindEqualsGreaterThanToken, ast.KindIdentifier, ast.KindStringLiteral, ast.KindNumericLiteral,
 			ast.KindBigIntLiteral, ast.KindTrueKeyword, ast.KindFalseKeyword, ast.KindTypeOfKeyword, ast.KindExtendsKeyword,
 			ast.KindKeyOfKeyword, ast.KindDotToken, ast.KindBarToken, ast.KindQuestionToken, ast.KindColonToken:
-			break
+			// do nothing
 		default:
-			if ast.IsTypeNode(token) {
-				break
+			if !ast.IsTypeNode(token) {
+				// Invalid token in type
+				return nil
 			}
-			// Invalid token in type
-			return nil
 		}
 		token = astnav.FindPrecedingToken(sourceFile, token.Pos())
 	}
@@ -520,6 +551,10 @@ var typeKeywords *collections.Set[ast.Kind] = collections.NewSetFromItems(
 
 func isTypeKeyword(kind ast.Kind) bool {
 	return typeKeywords.Has(kind)
+}
+
+func isSeparator(node *ast.Node, candidate *ast.Node) bool {
+	return candidate != nil && node.Parent != nil && (candidate.Kind == ast.KindCommaToken || (candidate.Kind == ast.KindSemicolonToken && node.Parent.Kind == ast.KindObjectLiteralExpression))
 }
 
 // Returns a map of all names in the file to their positions.
@@ -1170,15 +1205,18 @@ func getAdjustedLocationForImportDeclaration(node *ast.ImportDeclaration, forRen
 		// import /**/type { propertyName as [|name|] } from ...;
 		// import /**/type * as [|name|] from ...;
 		if namedBindings := node.ImportClause.AsImportClause().NamedBindings; namedBindings != nil {
-			if namedBindings.Kind == ast.KindNamedImports {
+			switch namedBindings.Kind {
+			case ast.KindNamedImports:
 				// do nothing if there is more than one binding
 				elements := namedBindings.AsNamedImports().Elements
 				if len(elements.Nodes) != 1 {
 					return nil
 				}
 				return elements.Nodes[0].Name()
-			} else if namedBindings.Kind == ast.KindNamespaceImport {
+
+			case ast.KindNamespaceImport:
 				return namedBindings.Name()
+
 			}
 		}
 	}
@@ -1199,14 +1237,15 @@ func getAdjustedLocationForExportDeclaration(node *ast.ExportDeclaration, forRen
 		// export /**/type { [|name|] } from ...
 		// export /**/type { propertyName as [|name|] } from ...
 		// export /**/type * as [|name|] ...
-		if node.ExportClause.Kind == ast.KindNamedExports {
+		switch node.ExportClause.Kind {
+		case ast.KindNamedExports:
 			// do nothing if there is more than one binding
 			elements := node.ExportClause.AsNamedExports().Elements
 			if len(elements.Nodes) != 1 {
 				return nil
 			}
 			return elements.Nodes[0].Name()
-		} else if node.ExportClause.Kind == ast.KindNamespaceExport {
+		case ast.KindNamespaceExport:
 			return node.ExportClause.Name()
 		}
 	}
@@ -1596,12 +1635,13 @@ func findPrecedingMatchingToken(token *ast.Node, matchingTokenKind ast.Kind, sou
 			return nil
 		}
 		token = preceding
-		if token.Kind == matchingTokenKind {
+		switch token.Kind {
+		case matchingTokenKind:
 			if remainingMatchingTokens == 0 {
 				return token
 			}
 			remainingMatchingTokens--
-		} else if token.Kind == tokenKind {
+		case tokenKind:
 			remainingMatchingTokens++
 		}
 	}

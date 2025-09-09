@@ -779,6 +779,8 @@ func (n *Node) Initializer() *Node {
 		return n.AsForInOrOfStatement().Initializer
 	case KindJsxAttribute:
 		return n.AsJsxAttribute().Initializer
+	case KindCommonJSExport:
+		return n.AsCommonJSExport().Initializer
 	}
 	panic("Unhandled case in Node.Initializer")
 }
@@ -806,6 +808,8 @@ func (m *mutableNode) SetInitializer(initializer *Node) {
 		n.AsForInOrOfStatement().Initializer = initializer
 	case KindJsxAttribute:
 		n.AsJsxAttribute().Initializer = initializer
+	case KindCommonJSExport:
+		n.AsCommonJSExport().Initializer = initializer
 	default:
 		panic("Unhandled case in mutableNode.SetInitializer")
 	}
@@ -994,6 +998,8 @@ func (n *Node) ModuleSpecifier() *Expression {
 		return n.AsImportDeclaration().ModuleSpecifier
 	case KindExportDeclaration:
 		return n.AsExportDeclaration().ModuleSpecifier
+	case KindJSDocImportTag:
+		return n.AsJSDocImportTag().ModuleSpecifier
 	}
 	panic("Unhandled case in Node.ModuleSpecifier: " + n.Kind.String())
 }
