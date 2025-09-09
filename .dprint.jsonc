@@ -40,7 +40,7 @@
     "exec": {
         "cwd": "${configDir}",
         "commands": [
-            { "command": "go tool mvdan.cc/gofumpt", "exts": ["go"], "cacheKeyFiles": ["go.mod", "go.sum"] }
+            { "command": "go tool mvdan.cc/gofumpt", "exts": ["go"], "cacheKeyFiles": ["go.mod"] }
         ]
     },
     "excludes": [
