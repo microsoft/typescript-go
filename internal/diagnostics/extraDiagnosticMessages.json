@@ -39,6 +39,10 @@
         "category": "Message",
         "code": 5074
     },
+    "Project '{0}' is out of date because it has errors.": {
+        "category": "Message",
+        "code": 6423
+    },
     "Option '{0}' requires value to be greater than 0.": {
         "category": "Error",
         "code": 5002
