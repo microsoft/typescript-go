@@ -33,7 +33,7 @@ func TestParsePseudoBigInt(t *testing.T) {
 
 	// TODO(jakebailey): tests for other bases
 
-		t.Run("parse non-decimal bases (small numbers)", func(t *testing.T) {
+	t.Run("parse non-decimal bases (small numbers)", func(t *testing.T) {
 		t.Parallel()
 
 		type tc struct {
@@ -77,4 +77,3 @@ func TestParsePseudoBigInt(t *testing.T) {
 		assert.Equal(t, ParsePseudoBigInt("0x18ee90ff6c373e0ee4e3f0ad2n"), "123456789012345678901234567890")
 	})
 }
-
