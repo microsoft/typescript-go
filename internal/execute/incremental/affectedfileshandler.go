@@ -152,7 +152,7 @@ func (h *affectedFilesHandler) forEachFileReferencedBy(file *ast.SourceFile, fn 
 	seenFileNamesMap := map[tspath.Path]*ast.SourceFile{}
 	// Start with the paths this file was referenced by
 	seenFileNamesMap[file.Path()] = file
-	queue := slices.Collect(h.program.snapshot.referencedMap.getReferencedBy(file.Path()))
+	queue := slices.Clip(h.program.snapshot.referencedMap.getReferencedBy(file.Path()))
 	for len(queue) > 0 {
 		currentPath := queue[len(queue)-1]
 		queue = queue[:len(queue)-1]
@@ -164,7 +164,7 @@ func (h *affectedFilesHandler) forEachFileReferencedBy(file *ast.SourceFile, fn 
 				return seenFileNamesMap
 			}
 			if queueForFile {
-				for ref := range h.program.snapshot.referencedMap.getReferencedBy(currentFile.Path()) {
+				for _, ref := range h.program.snapshot.referencedMap.getReferencedBy(currentFile.Path()) {
 					queue = append(queue, ref)
 				}
 			}
@@ -250,11 +250,11 @@ func (h *affectedFilesHandler) handleDtsMayChangeOfAffectedFile(dtsMayChange dts
 	}
 
 	// Go through files that reference affected file and handle dts emit and semantic diagnostics for them and their references
-	for exportedFromPath := range h.program.snapshot.referencedMap.getReferencedBy(affectedFile.Path()) {
+	for _, exportedFromPath := range h.program.snapshot.referencedMap.getReferencedBy(affectedFile.Path()) {
 		if h.handleDtsMayChangeOfGlobalScope(dtsMayChange, exportedFromPath, invalidateJsFiles) {
 			return
 		}
-		for filePath := range h.program.snapshot.referencedMap.getReferencedBy(exportedFromPath) {
+		for _, filePath := range h.program.snapshot.referencedMap.getReferencedBy(exportedFromPath) {
 			if h.handleDtsMayChangeOfFileAndExportsOfFile(dtsMayChange, filePath, invalidateJsFiles) {
 				return
 			}
@@ -272,7 +272,7 @@ func (h *affectedFilesHandler) handleDtsMayChangeOfFileAndExportsOfFile(dtsMayCh
 	h.handleDtsMayChangeOf(dtsMayChange, filePath, invalidateJsFiles)
 
 	// Remove the diagnostics of files that import this file and handle all its exports too
-	for referencingFilePath := range h.program.snapshot.referencedMap.getReferencedBy(filePath) {
+	for _, referencingFilePath := range h.program.snapshot.referencedMap.getReferencedBy(filePath) {
 		if h.handleDtsMayChangeOfFileAndExportsOfFile(dtsMayChange, referencingFilePath, invalidateJsFiles) {
 			return true
 		}

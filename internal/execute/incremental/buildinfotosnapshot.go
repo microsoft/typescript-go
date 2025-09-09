@@ -3,7 +3,6 @@ package incremental
 import (
 	"strings"
 
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -15,7 +14,7 @@ func buildInfoToSnapshot(buildInfo *BuildInfo, config *tsoptions.ParsedCommandLi
 		buildInfo:          buildInfo,
 		buildInfoDirectory: tspath.GetDirectoryPath(tspath.GetNormalizedAbsolutePath(config.GetBuildInfoFileName(), config.GetCurrentDirectory())),
 		filePaths:          make([]tspath.Path, 0, len(buildInfo.FileNames)),
-		filePathSet:        make([]*collections.Set[tspath.Path], 0, len(buildInfo.FileIdsList)),
+		filePathSet:        make([][]tspath.Path, 0, len(buildInfo.FileIdsList)),
 	}
 	to.filePaths = core.Map(buildInfo.FileNames, func(fileName string) tspath.Path {
 		if !strings.HasPrefix(fileName, ".") {
@@ -23,12 +22,8 @@ func buildInfoToSnapshot(buildInfo *BuildInfo, config *tsoptions.ParsedCommandLi
 		}
 		return tspath.ToPath(fileName, to.buildInfoDirectory, config.UseCaseSensitiveFileNames())
 	})
-	to.filePathSet = core.Map(buildInfo.FileIdsList, func(fileIdList []BuildInfoFileId) *collections.Set[tspath.Path] {
-		fileSet := collections.NewSetWithSizeHint[tspath.Path](len(fileIdList))
-		for _, fileId := range fileIdList {
-			fileSet.Add(to.toFilePath(fileId))
-		}
-		return fileSet
+	to.filePathSet = core.Map(buildInfo.FileIdsList, func(fileIdList []BuildInfoFileId) []tspath.Path {
+		return core.Map(fileIdList, to.toFilePath)
 	})
 	to.setCompilerOptions()
 	to.setFileInfoAndEmitSignatures()
@@ -51,7 +46,7 @@ type toSnapshot struct {
 	buildInfoDirectory string
 	snapshot           snapshot
 	filePaths          []tspath.Path
-	filePathSet        []*collections.Set[tspath.Path]
+	filePathSet        [][]tspath.Path
 }
 
 func (t *toSnapshot) toAbsolutePath(path string) string {
@@ -62,7 +57,7 @@ func (t *toSnapshot) toFilePath(fileId BuildInfoFileId) tspath.Path {
 	return t.filePaths[fileId-1]
 }
 
-func (t *toSnapshot) toFilePathSet(fileIdListId BuildInfoFileIdListId) *collections.Set[tspath.Path] {
+func (t *toSnapshot) toFilePathSet(fileIdListId BuildInfoFileIdListId) []tspath.Path {
 	return t.filePathSet[fileIdListId-1]
 }
 
@@ -122,6 +117,7 @@ func (t *toSnapshot) setFileInfoAndEmitSignatures() {
 }
 
 func (t *toSnapshot) setReferencedMap() {
+	t.snapshot.referencedMap.makeReferences(len(t.buildInfo.ReferencedMap))
 	for _, entry := range t.buildInfo.ReferencedMap {
 		t.snapshot.referencedMap.storeReferences(t.toFilePath(entry.FileId), t.toFilePathSet(entry.FileIdListId))
 	}

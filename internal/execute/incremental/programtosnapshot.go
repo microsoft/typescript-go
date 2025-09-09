@@ -2,6 +2,9 @@ package incremental
 
 import (
 	"context"
+	"maps"
+	"slices"
+	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
@@ -86,6 +89,8 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 
 	files := t.program.GetSourceFiles()
 	wg := core.NewWorkGroup(t.program.SingleThreaded())
+	var references collections.SyncMap[tspath.Path, []tspath.Path]
+	var filesWithReferences atomic.Int32
 	for _, file := range files {
 		wg.Queue(func() {
 			version := t.snapshot.computeHash(file.Text())
@@ -94,18 +99,19 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 			var signature string
 			newReferences := getReferencedFiles(t.program, file)
 			if newReferences != nil {
-				t.snapshot.referencedMap.storeReferences(file.Path(), newReferences)
+				references.Store(file.Path(), newReferences)
+				filesWithReferences.Add(1)
 			}
 			if t.oldProgram != nil {
 				if oldFileInfo, ok := t.oldProgram.snapshot.fileInfos.Load(file.Path()); ok {
 					signature = oldFileInfo.signature
 					if oldFileInfo.version != version || oldFileInfo.affectsGlobalScope != affectsGlobalScope || oldFileInfo.impliedNodeFormat != impliedNodeFormat {
 						t.snapshot.addFileToChangeSet(file.Path())
-					} else if oldReferences, _ := t.oldProgram.snapshot.referencedMap.getReferences(file.Path()); !newReferences.Equals(oldReferences) {
+					} else if oldReferences := t.oldProgram.snapshot.referencedMap.getReferences(file.Path()); !slices.Equal(newReferences, oldReferences) {
 						// Referenced files changed
 						t.snapshot.addFileToChangeSet(file.Path())
-					} else if newReferences != nil {
-						for refPath := range newReferences.Keys() {
+					} else {
+						for _, refPath := range newReferences {
 							if t.program.GetSourceFileByPath(refPath) == nil {
 								if _, ok := t.oldProgram.snapshot.fileInfos.Load(refPath); ok {
 									// Referenced file was deleted in the new program
@@ -150,6 +156,11 @@ func (t *toProgramSnapshot) computeProgramFileChanges() {
 		})
 	}
 	wg.RunAndWait()
+	t.snapshot.referencedMap.makeReferences(int(filesWithReferences.Load()))
+	references.Range(func(key tspath.Path, value []tspath.Path) bool {
+		t.snapshot.referencedMap.storeReferences(key, value)
+		return true
+	})
 }
 
 func (t *toProgramSnapshot) handleFileDelete() {
@@ -258,7 +269,7 @@ func addReferencedFileFromFileName(program *compiler.Program, fileName string, r
 }
 
 // Gets the referenced files for a file from the program with values for the keys as referenced file's path to be true
-func getReferencedFiles(program *compiler.Program, file *ast.SourceFile) *collections.Set[tspath.Path] {
+func getReferencedFiles(program *compiler.Program, file *ast.SourceFile) []tspath.Path {
 	referencedFiles := collections.Set[tspath.Path]{}
 
 	// We need to use a set here since the code can contain the same import twice,
@@ -297,5 +308,8 @@ func getReferencedFiles(program *compiler.Program, file *ast.SourceFile) *collec
 	for _, ambientModule := range checker.GetAmbientModules() {
 		addReferencedFilesFromSymbol(file, &referencedFiles, ambientModule)
 	}
-	return core.IfElse(referencedFiles.Len() > 0, &referencedFiles, nil)
+
+	result := slices.Clip(slices.Collect(maps.Keys(referencedFiles.Keys())))
+	slices.Sort(result)
+	return result
 }

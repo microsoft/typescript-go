@@ -1,52 +1,47 @@
 package incremental
 
 import (
-	"iter"
 	"maps"
 	"slices"
 	"sync"
 
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type referenceMap struct {
-	references   collections.SyncMap[tspath.Path, *collections.Set[tspath.Path]]
-	referencedBy map[tspath.Path]*collections.Set[tspath.Path]
-	referenceBy  sync.Once
+	references       map[tspath.Path][]tspath.Path
+	referencedBy     map[tspath.Path][]tspath.Path
+	referencedByOnce sync.Once
 }
 
-func (r *referenceMap) storeReferences(path tspath.Path, refs *collections.Set[tspath.Path]) {
-	r.references.Store(path, refs)
+func (r *referenceMap) makeReferences(size int) {
+	if size != 0 {
+		r.references = make(map[tspath.Path][]tspath.Path, size)
+	}
 }
 
-func (r *referenceMap) getReferences(path tspath.Path) (*collections.Set[tspath.Path], bool) {
-	refs, ok := r.references.Load(path)
-	return refs, ok
+func (r *referenceMap) storeReferences(path tspath.Path, refs []tspath.Path) {
+	r.references[path] = refs
+}
+
+func (r *referenceMap) getReferences(path tspath.Path) []tspath.Path {
+	return r.references[path]
 }
 
 func (r *referenceMap) getPathsWithReferences() []tspath.Path {
-	return slices.Collect(r.references.Keys())
+	return slices.Collect(maps.Keys(r.references))
 }
 
-func (r *referenceMap) getReferencedBy(path tspath.Path) iter.Seq[tspath.Path] {
-	r.referenceBy.Do(func() {
-		r.referencedBy = make(map[tspath.Path]*collections.Set[tspath.Path])
-		r.references.Range(func(key tspath.Path, value *collections.Set[tspath.Path]) bool {
-			for ref := range value.Keys() {
-				set, ok := r.referencedBy[ref]
-				if !ok {
-					set = &collections.Set[tspath.Path]{}
-					r.referencedBy[ref] = set
-				}
-				set.Add(key)
+func (r *referenceMap) getReferencedBy(path tspath.Path) []tspath.Path {
+	r.referencedByOnce.Do(func() {
+		referencedBy := make(map[tspath.Path][]tspath.Path)
+		for key, value := range r.references {
+			for _, ref := range value {
+				referencedBy[ref] = append(referencedBy[ref], key)
 			}
-			return true
-		})
+		}
+		r.referencedBy = make(map[tspath.Path][]tspath.Path, len(referencedBy))
+		maps.Copy(r.referencedBy, referencedBy)
 	})
-	refs, ok := r.referencedBy[path]
-	if ok {
-		return maps.Keys(refs.Keys())
-	}
-	return func(yield func(tspath.Path) bool) {}
+	return r.referencedBy[path]
 }

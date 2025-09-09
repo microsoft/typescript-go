@@ -81,9 +81,8 @@ func (t *toBuildInfo) toFileId(path tspath.Path) BuildInfoFileId {
 	return fileId
 }
 
-func (t *toBuildInfo) toFileIdListId(set *collections.Set[tspath.Path]) BuildInfoFileIdListId {
-	fileIds := core.Map(slices.Collect(maps.Keys(set.Keys())), t.toFileId)
-	slices.Sort(fileIds)
+func (t *toBuildInfo) toFileIdListId(paths []tspath.Path) BuildInfoFileIdListId {
+	fileIds := core.Map(paths, t.toFileId)
 	key := strings.Join(core.Map(fileIds, func(id BuildInfoFileId) string {
 		return fmt.Sprintf("%d", id)
 	}), ",")
@@ -283,7 +282,7 @@ func (t *toBuildInfo) setReferencedMap() {
 	keys := t.snapshot.referencedMap.getPathsWithReferences()
 	slices.Sort(keys)
 	t.buildInfo.ReferencedMap = core.Map(keys, func(filePath tspath.Path) *BuildInfoReferenceMapEntry {
-		references, _ := t.snapshot.referencedMap.getReferences(filePath)
+		references := t.snapshot.referencedMap.getReferences(filePath)
 		return &BuildInfoReferenceMapEntry{
 			FileId:       t.toFileId(filePath),
 			FileIdListId: t.toFileIdListId(references),
