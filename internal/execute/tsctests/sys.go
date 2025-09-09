@@ -269,6 +269,14 @@ func (s *testSys) OnBuildStatusReportEnd(w io.Writer) {
 	fmt.Fprintln(w, buildStatusReportEnd)
 }
 
+func (s *testSys) OnWatchStatusReportStart() {
+	fmt.Fprintln(s.Writer(), watchStatusReportStart)
+}
+
+func (s *testSys) OnWatchStatusReportEnd() {
+	fmt.Fprintln(s.Writer(), watchStatusReportEnd)
+}
+
 func (s *testSys) GetTrace(w io.Writer) func(str string) {
 	return func(str string) {
 		fmt.Fprintln(w, traceStart)
@@ -346,6 +354,8 @@ var (
 	statisticsEnd          = "!!! Statistics end"
 	buildStatusReportStart = "!!! Build Status Report Start"
 	buildStatusReportEnd   = "!!! Build Status Report End"
+	watchStatusReportStart = "!!! Watch Status Report Start"
+	watchStatusReportEnd   = "!!! Watch Status Report End"
 	traceStart             = "!!! Trace start"
 	traceEnd               = "!!! Trace end"
 )
@@ -400,7 +410,8 @@ func (o *outputSanitizer) transformLines() string {
 		if !o.addOrSkipLinesForComparing(listFileStart, listFileEnd, false, nil) &&
 			!o.addOrSkipLinesForComparing(statisticsStart, statisticsEnd, true, nil) &&
 			!o.addOrSkipLinesForComparing(traceStart, traceEnd, false, nil) &&
-			!o.addOrSkipLinesForComparing(buildStatusReportStart, buildStatusReportEnd, false, o.sanitizeBuildStatusTimeStamp) {
+			!o.addOrSkipLinesForComparing(buildStatusReportStart, buildStatusReportEnd, false, o.sanitizeBuildStatusTimeStamp) &&
+			!o.addOrSkipLinesForComparing(watchStatusReportStart, watchStatusReportEnd, false, o.sanitizeBuildStatusTimeStamp) {
 			o.addOutputLine(line)
 		}
 	}

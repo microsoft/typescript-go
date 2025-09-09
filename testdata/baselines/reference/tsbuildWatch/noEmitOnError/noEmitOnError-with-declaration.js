@@ -26,6 +26,8 @@ export { }
 tsgo -b -w -v
 ExitStatus:: DiagnosticsPresent_OutputsSkipped
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] Starting compilation in watch mode...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
@@ -38,8 +40,7 @@ Output::
 [7m4[0m ;
 [7m [0m [91m~[0m
 
-
-Found 1 error in src/main.ts[90m:4[0m
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -107,6 +108,8 @@ Edit [0]:: No Change
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
@@ -119,8 +122,7 @@ Output::
 [7m4[0m ;
 [7m [0m [91m~[0m
 
-
-Found 1 error in src/main.ts[90m:4[0m
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 
 tsconfig.json::
@@ -141,12 +143,16 @@ const a = {
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
 [[90mHH:MM:SS AM[0m] Project 'tsconfig.json' is out of date because buildinfo file 'dev-build/tsconfig.tsbuildinfo' indicates that program needs to report errors.
 
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
 //// [/user/username/projects/noEmitOnError/dev-build/shared/types/db.d.ts] *new* 
 export interface A {
@@ -220,6 +226,8 @@ Edit [2]:: No Change
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
@@ -228,6 +236,8 @@ Output::
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
 
 [[90mHH:MM:SS AM[0m] Updating unchanged output timestamps of project 'tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
 //// [/user/username/projects/noEmitOnError/dev-build/shared/types/db.d.ts] *mTime changed*
 //// [/user/username/projects/noEmitOnError/dev-build/shared/types/db.js] *mTime changed*
@@ -249,6 +259,8 @@ const a: string = 10;
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
@@ -261,8 +273,7 @@ Output::
 [7m2[0m const a: string = 10;
 [7m [0m [91m      ~[0m
 
-
-Found 1 error in src/main.ts[90m:2[0m
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 //// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo] *modified* 
 {"version":"FakeTSVersion","root":["../shared/types/db.ts","../src/main.ts","../src/other.ts"],"semanticErrors":true}
@@ -305,6 +316,8 @@ Edit [4]:: No Change
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
@@ -317,8 +330,7 @@ Output::
 [7m2[0m const a: string = 10;
 [7m [0m [91m      ~[0m
 
-
-Found 1 error in src/main.ts[90m:2[0m
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 
 tsconfig.json::
@@ -333,6 +345,8 @@ const a: string = "hello";
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
@@ -341,6 +355,8 @@ Output::
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
 
 [[90mHH:MM:SS AM[0m] Updating unchanged output timestamps of project 'tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
 //// [/user/username/projects/noEmitOnError/dev-build/shared/types/db.d.ts] *mTime changed*
 //// [/user/username/projects/noEmitOnError/dev-build/shared/types/db.js] *mTime changed*
@@ -392,6 +408,8 @@ Edit [6]:: No Change
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
@@ -400,6 +418,8 @@ Output::
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
 
 [[90mHH:MM:SS AM[0m] Updating unchanged output timestamps of project 'tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
 //// [/user/username/projects/noEmitOnError/dev-build/shared/types/db.d.ts] *mTime changed*
 //// [/user/username/projects/noEmitOnError/dev-build/shared/types/db.js] *mTime changed*
@@ -421,6 +441,8 @@ export const a = class { private p = 10; };
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
@@ -437,8 +459,7 @@ Output::
     [7m2[0m export const a = class { private p = 10; };
     [7m [0m [96m             ~[0m
 
-
-Found 1 error in src/main.ts[90m:2[0m
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 //// [/user/username/projects/noEmitOnError/dev-build/tsconfig.tsbuildinfo] *modified* 
 {"version":"FakeTSVersion","errors":true,"root":["../shared/types/db.ts","../src/main.ts","../src/other.ts"]}
@@ -481,6 +502,8 @@ Edit [8]:: No Change
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
@@ -497,8 +520,7 @@ Output::
     [7m2[0m export const a = class { private p = 10; };
     [7m [0m [96m             ~[0m
 
-
-Found 1 error in src/main.ts[90m:2[0m
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 
 tsconfig.json::
@@ -513,6 +535,8 @@ export const a = class { p = 10; };
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
@@ -521,6 +545,8 @@ Output::
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
 
 [[90mHH:MM:SS AM[0m] Updating unchanged output timestamps of project 'tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
 //// [/user/username/projects/noEmitOnError/dev-build/shared/types/db.d.ts] *mTime changed*
 //// [/user/username/projects/noEmitOnError/dev-build/shared/types/db.js] *mTime changed*
@@ -582,6 +608,8 @@ Edit [10]:: No Change
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
@@ -590,6 +618,8 @@ Output::
 [[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
 
 [[90mHH:MM:SS AM[0m] Updating unchanged output timestamps of project 'tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
 //// [/user/username/projects/noEmitOnError/dev-build/shared/types/db.d.ts] *mTime changed*
 //// [/user/username/projects/noEmitOnError/dev-build/shared/types/db.js] *mTime changed*

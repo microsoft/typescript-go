@@ -32,10 +32,14 @@ type orchestratorResult struct {
 	filesToDelete []string
 }
 
-func (b *orchestratorResult) report(s *Orchestrator) {
-	tsc.CreateReportErrorSummary(s.opts.Sys, s.opts.Command.CompilerOptions)(b.errors)
+func (b *orchestratorResult) report(o *Orchestrator) {
+	if o.opts.Command.CompilerOptions.Watch.IsTrue() {
+		o.watchStatusReporter(ast.NewCompilerDiagnostic(core.IfElse(len(b.errors) == 1, diagnostics.Found_1_error_Watching_for_file_changes, diagnostics.Found_0_errors_Watching_for_file_changes), len(b.errors)))
+	} else {
+		o.errorSummaryReporter(b.errors)
+	}
 	if b.filesToDelete != nil {
-		s.createBuilderStatusReporter(nil)(
+		o.createBuilderStatusReporter(nil)(
 			ast.NewCompilerDiagnostic(
 				diagnostics.A_non_dry_build_would_delete_the_following_files_Colon_0,
 				strings.Join(core.Map(b.filesToDelete, func(f string) string {
@@ -46,11 +50,11 @@ func (b *orchestratorResult) report(s *Orchestrator) {
 	if len(b.programStats) == 0 {
 		return
 	}
-	if !s.opts.Command.CompilerOptions.Diagnostics.IsTrue() && !s.opts.Command.CompilerOptions.ExtendedDiagnostics.IsTrue() {
+	if !o.opts.Command.CompilerOptions.Diagnostics.IsTrue() && !o.opts.Command.CompilerOptions.ExtendedDiagnostics.IsTrue() {
 		return
 	}
-	b.statistics.Aggregate(b.programStats, s.opts.Sys.SinceStart())
-	b.statistics.Report(s.opts.Sys.Writer(), s.opts.Testing)
+	b.statistics.Aggregate(b.programStats, o.opts.Sys.SinceStart())
+	b.statistics.Report(o.opts.Sys.Writer(), o.opts.Testing)
 }
 
 type Orchestrator struct {
@@ -62,6 +66,9 @@ type Orchestrator struct {
 	tasks  *collections.SyncMap[tspath.Path, *buildTask]
 	order  []string
 	errors []*ast.Diagnostic
+
+	errorSummaryReporter tsc.DiagnosticsReporter
+	watchStatusReporter  tsc.DiagnosticReporter
 }
 
 var _ tsc.Watcher = (*Orchestrator)(nil)
@@ -209,6 +216,9 @@ func (o *Orchestrator) GenerateGraph(oldTasks *collections.SyncMap[tspath.Path, 
 }
 
 func (o *Orchestrator) Start() tsc.CommandLineResult {
+	if o.opts.Command.CompilerOptions.Watch.IsTrue() {
+		o.watchStatusReporter(ast.NewCompilerDiagnostic(diagnostics.Starting_compilation_in_watch_mode))
+	}
 	o.GenerateGraph(nil)
 	result := o.buildOrClean()
 	if o.opts.Command.CompilerOptions.Watch.IsTrue() {
@@ -280,10 +290,12 @@ func (o *Orchestrator) DoCycle() {
 		return
 	}
 
+	o.watchStatusReporter(ast.NewCompilerDiagnostic(diagnostics.File_change_detected_Starting_incremental_compilation))
 	if needsConfigUpdate.Load() {
 		// Generate new tasks
 		o.GenerateGraphReusingOldTasks()
 	}
+
 	o.buildOrClean()
 	o.updateWatch()
 	o.resetCaches()
@@ -363,6 +375,11 @@ func NewOrchestrator(opts Options) *Orchestrator {
 			nil,
 		),
 		mTimes: &collections.SyncMap[tspath.Path, time.Time]{},
+	}
+	if opts.Command.CompilerOptions.Watch.IsTrue() {
+		orchestrator.watchStatusReporter = tsc.CreateWatchStatusReporter(opts.Sys, opts.Command.CompilerOptions, opts.Testing)
+	} else {
+		orchestrator.errorSummaryReporter = tsc.CreateReportErrorSummary(opts.Sys, opts.Command.CompilerOptions)
 	}
 	return orchestrator
 }

@@ -42,6 +42,8 @@ export interface Session {
 tsgo -b -w -verbose src
 ExitStatus:: Success
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] Starting compilation in watch mode...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * src/pure/tsconfig.json
     * src/main/tsconfig.json
@@ -54,6 +56,8 @@ Output::
 [[90mHH:MM:SS AM[0m] Project 'src/main/tsconfig.json' is out of date because output file 'out/main/tsconfig.tsbuildinfo' does not exist
 
 [[90mHH:MM:SS AM[0m] Building project 'src/main/tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -236,6 +240,8 @@ export interface Session {
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * src/pure/tsconfig.json
     * src/main/tsconfig.json
@@ -260,8 +266,7 @@ Output::
 
 [[90mHH:MM:SS AM[0m] Updating unchanged output timestamps of project 'src/main/tsconfig.json'...
 
-
-Found 1 error in src/main/index.ts[90m:3[0m
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 //// [/user/username/projects/reexport/out/main/index.js] *mTime changed*
 //// [/user/username/projects/reexport/out/main/tsconfig.tsbuildinfo] *modified* 
@@ -393,6 +398,8 @@ export interface Session {
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * src/pure/tsconfig.json
     * src/main/tsconfig.json
@@ -407,6 +414,8 @@ Output::
 [[90mHH:MM:SS AM[0m] Building project 'src/main/tsconfig.json'...
 
 [[90mHH:MM:SS AM[0m] Updating unchanged output timestamps of project 'src/main/tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
 //// [/user/username/projects/reexport/out/main/index.js] *mTime changed*
 //// [/user/username/projects/reexport/out/main/tsconfig.tsbuildinfo] *modified* 

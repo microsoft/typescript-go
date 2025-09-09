@@ -62,6 +62,8 @@ export const m = mod;
 tsgo --b tests --verbose --stopBuildOnErrors --watch
 ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] Starting compilation in watch mode...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * core/tsconfig.json
     * logic/tsconfig.json
@@ -88,8 +90,7 @@ Output::
 
 [[90mHH:MM:SS AM[0m] Skipping build of project 'tests/tsconfig.json' because its dependency 'logic' was not built
 
-
-Found 1 error in core/index.ts[90m:3[0m
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -267,6 +268,8 @@ export function multiply(a: number, b: number) { return a * b; }
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * core/tsconfig.json
     * logic/tsconfig.json
@@ -283,6 +286,8 @@ Output::
 [[90mHH:MM:SS AM[0m] Project 'tests/tsconfig.json' is out of date because output file 'tests/tsconfig.tsbuildinfo' does not exist
 
 [[90mHH:MM:SS AM[0m] Building project 'tests/tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
 //// [/user/username/projects/sample1/core/index.d.ts.map] *rewrite with same content*
 //// [/user/username/projects/sample1/core/index.js] *modified* 

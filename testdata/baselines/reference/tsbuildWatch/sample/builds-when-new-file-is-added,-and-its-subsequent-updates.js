@@ -63,6 +63,10 @@ export const m = mod;
 tsgo --b -w tests
 ExitStatus:: Success
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] Starting compilation in watch mode...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
@@ -434,6 +438,10 @@ export const newFileConst = 30;
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 //// [/user/username/projects/sample1/core/newfile.d.ts] *new* 
 export declare const newFileConst = 30;
 //# sourceMappingURL=newfile.d.ts.map
@@ -564,6 +572,10 @@ export class someClass2 { }
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 //// [/user/username/projects/sample1/core/newfile.d.ts] *modified* 
 export declare class someClass2 {
 }

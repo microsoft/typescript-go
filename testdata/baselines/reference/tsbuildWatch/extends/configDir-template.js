@@ -42,6 +42,8 @@ export const x = 10;
 tsgo --b -w --explainFiles --v
 ExitStatus:: Success
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] Starting compilation in watch mode...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
@@ -64,6 +66,8 @@ types/sometype.ts
    Imported via "@myscope/sometype" from file 'main.ts'
 main.ts
    Part of 'files' list in tsconfig.json
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 //// [/home/src/projects/myproject/decls/main.d.ts] *new* 
 // some comment
 export declare const y = 10;
@@ -146,6 +150,8 @@ Edit [0]:: edit extended config file
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
@@ -169,6 +175,8 @@ types/sometype.ts
 main.ts
    Part of 'files' list in tsconfig.json
 [[90mHH:MM:SS AM[0m] Updating unchanged output timestamps of project 'tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
 //// [/home/src/projects/myproject/decls/main.d.ts] *mTime changed*
 //// [/home/src/projects/myproject/outDir/main.js] *mTime changed*

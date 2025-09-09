@@ -30,6 +30,10 @@ export function createSomeObject(): SomeObject
 tsgo -b -w App
 ExitStatus:: Success
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] Starting compilation in watch mode...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
@@ -171,6 +175,8 @@ export function createSomeObject(): SomeObject
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [96mApp/app.ts[0m:[93m2[0m:[93m20[0m - [91merror[0m[90m TS2551: [0mProperty 'message' does not exist on type 'SomeObject'. Did you mean 'message2'?
 
 [7m2[0m createSomeObject().message;
@@ -180,8 +186,7 @@ Output::
     [7m2[0m     message2: string;
     [7m [0m [96m    ~~~~~~~~[0m
 
-
-Found 1 error in App/app.ts[90m:2[0m
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 //// [/user/username/projects/sample1/App/app.js] *rewrite with same content*
 //// [/user/username/projects/sample1/App/tsconfig.tsbuildinfo] *modified* 
@@ -297,6 +302,10 @@ export function createSomeObject(): SomeObject
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 //// [/user/username/projects/sample1/App/app.js] *rewrite with same content*
 //// [/user/username/projects/sample1/App/tsconfig.tsbuildinfo] *modified* 
 {"version":"FakeTSVersion","root":["./app.ts"]}

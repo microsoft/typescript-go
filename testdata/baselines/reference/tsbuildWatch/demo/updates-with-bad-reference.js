@@ -113,6 +113,8 @@ export function createZoo(): Array<Dog> {
 tsgo --b -w --verbose
 ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] Starting compilation in watch mode...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * core/tsconfig.json
     * animals/tsconfig.json
@@ -158,12 +160,7 @@ Output::
 
 [[90mHH:MM:SS AM[0m] Building project 'zoo/tsconfig.json'...
 
-
-Found 4 errors in 2 files.
-
-Errors  Files
-     2  animals/index.ts[90m:1[0m
-     2  core/utilities.ts[90m:1[0m
+[[90mHH:MM:SS AM[0m] Found 4 errors. Watching for file changes.
 
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -720,6 +717,8 @@ export function lastElementOf<T>(arr: T[]): T | undefined {
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * core/tsconfig.json
     * animals/tsconfig.json
@@ -761,12 +760,7 @@ Output::
 
 [[90mHH:MM:SS AM[0m] Updating output timestamps of project 'animals/tsconfig.json'...
 
-
-Found 4 errors in 2 files.
-
-Errors  Files
-     2  animals/index.ts[90m:1[0m
-     2  core/utilities.ts[90m:2[0m
+[[90mHH:MM:SS AM[0m] Found 4 errors. Watching for file changes.
 
 //// [/user/username/projects/demo/lib/animals/tsconfig.tsbuildinfo] *mTime changed*
 //// [/user/username/projects/demo/lib/core/tsconfig.tsbuildinfo] *modified* 

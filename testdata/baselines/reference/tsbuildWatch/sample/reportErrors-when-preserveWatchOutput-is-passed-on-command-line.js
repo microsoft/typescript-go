@@ -63,6 +63,10 @@ export const m = mod;
 tsgo -b -w tests --preserveWatchOutput
 ExitStatus:: Success
 Output::
+[[90mHH:MM:SS AM[0m] Starting compilation in watch mode...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
@@ -440,13 +444,14 @@ let y: string = 10;
 
 
 Output::
+[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [96mlogic/index.ts[0m:[93m7[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
 
 [7m7[0m let y: string = 10;
 [7m [0m [91m    ~[0m
 
-
-Found 1 error in logic/index.ts[90m:7[0m
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 //// [/user/username/projects/sample1/logic/index.js] *modified* 
 "use strict";
@@ -572,6 +577,8 @@ let x: string = 10;
 
 
 Output::
+[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [96mcore/index.ts[0m:[93m4[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
 
 [7m4[0m let x: string = 10;
@@ -582,12 +589,7 @@ Output::
 [7m7[0m let y: string = 10;
 [7m [0m [91m    ~[0m
 
-
-Found 2 errors in 2 files.
-
-Errors  Files
-     1  core/index.ts[90m:4[0m
-     1  logic/index.ts[90m:7[0m
+[[90mHH:MM:SS AM[0m] Found 2 errors. Watching for file changes.
 
 //// [/user/username/projects/sample1/core/index.d.ts.map] *rewrite with same content*
 //// [/user/username/projects/sample1/core/index.js] *modified* 
@@ -721,13 +723,14 @@ export const m = mod;
 
 
 Output::
+[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [96mcore/index.ts[0m:[93m4[0m:[93m5[0m - [91merror[0m[90m TS2322: [0mType 'number' is not assignable to type 'string'.
 
 [7m4[0m let x: string = 10;
 [7m [0m [91m    ~[0m
 
-
-Found 1 error in core/index.ts[90m:4[0m
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 //// [/user/username/projects/sample1/logic/index.js] *modified* 
 "use strict";

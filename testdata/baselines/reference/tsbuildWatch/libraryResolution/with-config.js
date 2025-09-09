@@ -76,6 +76,8 @@ export const y = 10;
 tsgo -b -w project1 project2 project3 project4 --verbose --explainFiles
 ExitStatus:: Success
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] Starting compilation in watch mode...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * project1/tsconfig.json
     * project2/tsconfig.json
@@ -153,6 +155,8 @@ project4/index.ts
    Matched by default include pattern '**/*'
 project4/utils.d.ts
    Matched by default include pattern '**/*'
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 //// [/home/src/tslibs/TS/Lib/lib.es5.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}

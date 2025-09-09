@@ -63,6 +63,10 @@ export const m = mod;
 tsgo --b -w tests
 ExitStatus:: Success
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] Starting compilation in watch mode...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
@@ -437,6 +441,10 @@ export class someClass { }
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 //// [/user/username/projects/sample1/core/index.d.ts] *modified* 
 export declare const someString: string;
 export declare function leftPad(s: string, n: number): string;
@@ -743,6 +751,10 @@ export function multiply(a: number, b: number) { return a * b; }
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 //// [/user/username/projects/sample1/core/index.d.ts] *modified* 
 export declare const someString: string;
 export declare function leftPad(s: string, n: number): string;
@@ -1046,6 +1058,10 @@ export class someClass2 { }
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 //// [/user/username/projects/sample1/core/index.d.ts] *modified* 
 export declare const someString: string;
 export declare function leftPad(s: string, n: number): string;

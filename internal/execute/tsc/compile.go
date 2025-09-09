@@ -54,6 +54,8 @@ type CommandLineTesting interface {
 	OnStatisticsEnd(w io.Writer)
 	OnBuildStatusReportStart(w io.Writer)
 	OnBuildStatusReportEnd(w io.Writer)
+	OnWatchStatusReportStart()
+	OnWatchStatusReportEnd()
 	GetTrace(w io.Writer) func(msg string)
 	OnProgram(program *incremental.Program)
 }

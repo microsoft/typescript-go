@@ -43,6 +43,8 @@ export type { TheNum } from './const.cjs';
 tsgo -b packages/pkg1 -w --verbose --traceResolution
 ExitStatus:: Success
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] Starting compilation in watch mode...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * packages/pkg2/tsconfig.json
     * packages/pkg1/tsconfig.json
@@ -92,6 +94,8 @@ Loading module as file / folder, candidate module location '/user/username/proje
 File name '/user/username/projects/myproject/packages/pkg2/const.cjs' has a '.cjs' extension - stripping it.
 File '/user/username/projects/myproject/packages/pkg2/const.cts' exists - use it as a name resolution result.
 ======== Module name './const.cjs' was successfully resolved to '/user/username/projects/myproject/packages/pkg2/const.cts'. ========
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 //// [/home/src/tslibs/TS/Lib/lib.es2022.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
@@ -266,15 +270,12 @@ Diff:: Package.json watch pending, so no change detected yet
 +export const theNum = 42;
 --- nonIncremental.output.txt
 +++ incremental.output.txt
-@@ -1,9 +0,0 @@
+@@ -1,6 +0,0 @@
 -[96mpackages/pkg1/index.ts[0m:[93m1[0m:[93m29[0m - [91merror[0m[90m TS1541: [0mType-only import of an ECMAScript module from a CommonJS module must have a 'resolution-mode' attribute.
 -  To convert this file to an ECMAScript module, change its file extension to '.mts' or create a local package.json file with `{ "type": "module" }`.
 -
 -[7m1[0m import type { TheNum } from 'pkg2'
 -[7m [0m [91m                            ~~~~~~[0m
--
--
--Found 1 error in packages/pkg1/index.ts[90m:1[0m
 -
 
 Edit [1]:: removes those errors when a package file is changed back
@@ -316,15 +317,12 @@ Diff:: Package.json watch pending, so no change detected yet
 +export const theNum = 42;
 --- nonIncremental.output.txt
 +++ incremental.output.txt
-@@ -1,9 +0,0 @@
+@@ -1,6 +0,0 @@
 -[96mpackages/pkg1/index.ts[0m:[93m1[0m:[93m29[0m - [91merror[0m[90m TS1541: [0mType-only import of an ECMAScript module from a CommonJS module must have a 'resolution-mode' attribute.
 -  To convert this file to an ECMAScript module, change its file extension to '.mts' or create a local package.json file with `{ "type": "module" }`.
 -
 -[7m1[0m import type { TheNum } from 'pkg2'
 -[7m [0m [91m                            ~~~~~~[0m
--
--
--Found 1 error in packages/pkg1/index.ts[90m:1[0m
 -
 
 Edit [3]:: removes those errors when a package file is changed to cjs extensions
@@ -341,6 +339,8 @@ export type { TheNum } from './const.cjs';
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * packages/pkg2/tsconfig.json
     * packages/pkg1/tsconfig.json
@@ -392,6 +392,8 @@ Loading module as file / folder, candidate module location '/user/username/proje
 File name '/user/username/projects/myproject/packages/pkg2/const.cjs' has a '.cjs' extension - stripping it.
 File '/user/username/projects/myproject/packages/pkg2/const.cts' exists - use it as a name resolution result.
 ======== Module name './const.cjs' was successfully resolved to '/user/username/projects/myproject/packages/pkg2/const.cts'. ========
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 //// [/user/username/projects/myproject/packages/pkg1/build/index.js] *modified* 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });

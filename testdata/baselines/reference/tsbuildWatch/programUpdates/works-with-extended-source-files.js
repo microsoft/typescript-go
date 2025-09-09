@@ -65,6 +65,8 @@ let k = 0;
 tsgo -b -w -v project1.tsconfig.json project2.tsconfig.json project3.tsconfig.json
 ExitStatus:: Success
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] Starting compilation in watch mode...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * project1.tsconfig.json
     * project2.tsconfig.json
@@ -81,6 +83,8 @@ Output::
 [[90mHH:MM:SS AM[0m] Project 'project3.tsconfig.json' is out of date because output file 'project3.tsconfig.tsbuildinfo' does not exist
 
 [[90mHH:MM:SS AM[0m] Building project 'project3.tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -293,6 +297,8 @@ Edit [0]:: Modify alpha config
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * project1.tsconfig.json
     * project2.tsconfig.json
@@ -305,6 +311,8 @@ Output::
 [[90mHH:MM:SS AM[0m] Project 'project2.tsconfig.json' is out of date because output 'project2.tsconfig.tsbuildinfo' is older than input 'alpha.tsconfig.json'
 
 [[90mHH:MM:SS AM[0m] Building project 'project2.tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
 //// [/user/username/projects/project/commonFile1.js] *rewrite with same content*
 //// [/user/username/projects/project/commonFile2.js] *rewrite with same content*
@@ -453,6 +461,8 @@ Edit [1]:: change bravo config
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * project1.tsconfig.json
     * project2.tsconfig.json
@@ -461,6 +471,8 @@ Output::
 [[90mHH:MM:SS AM[0m] Project 'project2.tsconfig.json' is out of date because output 'project2.tsconfig.tsbuildinfo' is older than input 'bravo.tsconfig.json'
 
 [[90mHH:MM:SS AM[0m] Building project 'project2.tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
 //// [/user/username/projects/project/other.js] *rewrite with same content*
 //// [/user/username/projects/project/project2.tsconfig.tsbuildinfo] *modified* 
@@ -530,6 +542,8 @@ Edit [2]:: project 2 extends alpha
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * project1.tsconfig.json
     * project2.tsconfig.json
@@ -538,6 +552,8 @@ Output::
 [[90mHH:MM:SS AM[0m] Project 'project2.tsconfig.json' is out of date because output 'other2.js' is older than input 'project2.tsconfig.json'
 
 [[90mHH:MM:SS AM[0m] Building project 'project2.tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
 //// [/user/username/projects/project/commonFile1.js] *rewrite with same content*
 //// [/user/username/projects/project/commonFile2.js] *rewrite with same content*
@@ -596,6 +612,8 @@ Edit [3]:: update aplha config
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * project1.tsconfig.json
     * project2.tsconfig.json
@@ -608,6 +626,8 @@ Output::
 [[90mHH:MM:SS AM[0m] Project 'project2.tsconfig.json' is out of date because output 'project2.tsconfig.tsbuildinfo' is older than input 'alpha.tsconfig.json'
 
 [[90mHH:MM:SS AM[0m] Building project 'project2.tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
 //// [/user/username/projects/project/commonFile1.js] *rewrite with same content*
 //// [/user/username/projects/project/commonFile2.js] *rewrite with same content*
@@ -709,6 +729,8 @@ Edit [4]:: Modify extendsConfigFile2
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * project1.tsconfig.json
     * project2.tsconfig.json
@@ -719,6 +741,8 @@ Output::
 [[90mHH:MM:SS AM[0m] Building project 'project3.tsconfig.json'...
 
 [[90mHH:MM:SS AM[0m] Updating unchanged output timestamps of project 'project3.tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
 //// [/user/username/projects/project/other2.js] *mTime changed*
 //// [/user/username/projects/project/project3.tsconfig.tsbuildinfo] *rewrite with same content*
@@ -741,6 +765,8 @@ Edit [5]:: Modify project 3
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * project1.tsconfig.json
     * project2.tsconfig.json
@@ -751,6 +777,8 @@ Output::
 [[90mHH:MM:SS AM[0m] Building project 'project3.tsconfig.json'...
 
 [[90mHH:MM:SS AM[0m] Updating unchanged output timestamps of project 'project3.tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
 //// [/user/username/projects/project/other2.js] *mTime changed*
 //// [/user/username/projects/project/project3.tsconfig.tsbuildinfo] *rewrite with same content*
@@ -768,6 +796,8 @@ Edit [6]:: Delete extendedConfigFile2 and report error
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * project1.tsconfig.json
     * project2.tsconfig.json
@@ -776,7 +806,6 @@ Output::
 [[90mHH:MM:SS AM[0m] Project 'project3.tsconfig.json' is up to date because newest input 'other2.ts' is older than output 'project3.tsconfig.tsbuildinfo'
 
 [91merror[0m[90m TS5083: [0mCannot read file '/user/username/projects/project/extendsConfig2.tsconfig.json'.
-
-Found 1 error.
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 

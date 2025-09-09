@@ -63,6 +63,10 @@ export const m = mod;
 tsgo --b -w tests
 ExitStatus:: Success
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] Starting compilation in watch mode...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
@@ -437,6 +441,10 @@ function foo() { }
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 //// [/user/username/projects/sample1/core/index.d.ts.map] *rewrite with same content*
 //// [/user/username/projects/sample1/core/index.js] *modified* 
 "use strict";

@@ -19,13 +19,14 @@ export function bar() { }
 tsgo --b -w
 ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] Starting compilation in watch mode...
+
 [96mtsconfig.json[0m:[93m7[0m:[93m9[0m - [91merror[0m[90m TS1005: [0m',' expected.
 
 [7m7[0m         "b.ts"
 [7m [0m [91m        ~~~~~~[0m
 
-
-Found 1 error in tsconfig.json[90m:7[0m
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -163,13 +164,14 @@ Edit [0]:: reports syntax errors after change to config file
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [96mtsconfig.json[0m:[93m7[0m:[93m9[0m - [91merror[0m[90m TS1005: [0m',' expected.
 
 [7m7[0m         "b.ts"
 [7m [0m [91m        ~~~~~~[0m
 
-
-Found 1 error in tsconfig.json[90m:7[0m
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 
 tsconfig.json::
@@ -186,13 +188,14 @@ export function foo() { }export function fooBar() { }
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [96mtsconfig.json[0m:[93m7[0m:[93m9[0m - [91merror[0m[90m TS1005: [0m',' expected.
 
 [7m7[0m         "b.ts"
 [7m [0m [91m        ~~~~~~[0m
 
-
-Found 1 error in tsconfig.json[90m:7[0m
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 //// [/home/src/workspaces/project/a.d.ts] *modified* 
 export declare function foo(): void;
@@ -292,13 +295,14 @@ Edit [2]:: reports error when there is no change to tsconfig file
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [96mtsconfig.json[0m:[93m7[0m:[93m9[0m - [91merror[0m[90m TS1005: [0m',' expected.
 
 [7m7[0m         "b.ts"
 [7m [0m [91m        ~~~~~~[0m
 
-
-Found 1 error in tsconfig.json[90m:7[0m
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 
 tsconfig.json::
@@ -323,6 +327,10 @@ Edit [3]:: builds after fixing config file errors
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
 {"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.d.ts","./a.ts","./b.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"12981c250647eb82bb45c5fb79732976-export function foo() { }export function fooBar() { }","signature":"f3ff291f5185ac75eeeb6de19fc28a01-export declare function foo(): void;\nexport declare function fooBar(): void;\n","impliedNodeFormat":1},{"version":"492f7ec5be310332dc7e2ef503772d24-export function bar() { }","signature":"2f1e9992435d5724d3e1da8bdbc17eae-export declare function bar(): void;\n","impliedNodeFormat":1}],"options":{"composite":true,"declaration":true},"latestChangedDtsFile":"./a.d.ts"}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 

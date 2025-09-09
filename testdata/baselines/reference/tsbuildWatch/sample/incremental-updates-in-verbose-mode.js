@@ -63,6 +63,8 @@ export const m = mod;
 tsgo --b -w tests --verbose
 ExitStatus:: Success
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] Starting compilation in watch mode...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * core/tsconfig.json
     * logic/tsconfig.json
@@ -79,6 +81,8 @@ Output::
 [[90mHH:MM:SS AM[0m] Project 'tests/tsconfig.json' is out of date because output file 'tests/tsconfig.tsbuildinfo' does not exist
 
 [[90mHH:MM:SS AM[0m] Building project 'tests/tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -457,6 +461,8 @@ function someFn() { }
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * core/tsconfig.json
     * logic/tsconfig.json
@@ -469,6 +475,8 @@ Output::
 [[90mHH:MM:SS AM[0m] Project 'tests/tsconfig.json' is up to date with .d.ts files from its dependencies
 
 [[90mHH:MM:SS AM[0m] Updating output timestamps of project 'tests/tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
 //// [/user/username/projects/sample1/logic/index.js] *modified* 
 "use strict";
@@ -583,6 +591,8 @@ export function someFn() { }
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * core/tsconfig.json
     * logic/tsconfig.json
@@ -595,6 +605,8 @@ Output::
 [[90mHH:MM:SS AM[0m] Project 'tests/tsconfig.json' is out of date because output 'tests/index.js' is older than input 'logic/tsconfig.json'
 
 [[90mHH:MM:SS AM[0m] Building project 'tests/tsconfig.json'...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
 
 //// [/user/username/projects/sample1/logic/index.d.ts] *modified* 
 export declare function getSecondsInDay(): number;

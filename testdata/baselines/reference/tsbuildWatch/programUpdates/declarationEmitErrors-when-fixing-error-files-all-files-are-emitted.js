@@ -18,6 +18,8 @@ export class myClass { }
 tsgo -b -w app
 ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] Starting compilation in watch mode...
+
 [96mapp/fileWithError.ts[0m:[93m1[0m:[93m12[0m - [91merror[0m[90m TS4094: [0mProperty 'p' of exported anonymous class type may not be private or protected.
 
 [7m1[0m export var myClassWithError = class {
@@ -27,8 +29,7 @@ Output::
     [7m1[0m export var myClassWithError = class {
     [7m [0m [96m           ~~~~~~~~~~~~~~~~[0m
 
-
-Found 1 error in app/fileWithError.ts[90m:1[0m
+[[90mHH:MM:SS AM[0m] Found 1 error. Watching for file changes.
 
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -200,6 +201,10 @@ export var myClassWithError = class {
 
 
 Output::
+[2J[3J[H[[90mHH:MM:SS AM[0m] File change detected. Starting incremental compilation...
+
+[[90mHH:MM:SS AM[0m] Found 0 errors. Watching for file changes.
+
 //// [/user/username/projects/solution/app/fileWithError.d.ts] *modified* 
 export declare var myClassWithError: {
     new (): {
