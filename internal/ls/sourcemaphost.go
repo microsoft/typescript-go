@@ -2,6 +2,7 @@ package ls
 
 import (
 	"strings"
+	"unicode/utf16"
 
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -154,7 +155,6 @@ func tryMapLocation(sourceMapper sourcemap.SourceMapper, host *sourcemapHost, lo
 			},
 		}
 	} else {
-		// Source file not in program, fall back to core functions
 		sourceContent, ok := host.readFileWithFallback(startResult.FileName)
 		if !ok {
 			return nil
@@ -164,9 +164,20 @@ func tryMapLocation(sourceMapper sourcemap.SourceMapper, host *sourcemapHost, lo
 			sourceEndPos = len(sourceContent)
 		}
 		
-		sourceLineStarts := core.ComputeLineStarts(sourceContent)
-		sourceStartLine, sourceStartChar := core.PositionToLineAndCharacter(startResult.Pos, sourceLineStarts)
-		sourceEndLine, sourceEndChar := core.PositionToLineAndCharacter(sourceEndPos, sourceLineStarts)
+		sourceLineMap := ComputeLineStarts(sourceContent)
+		sourceStartLine := sourceLineMap.ComputeIndexOfLineStart(core.TextPos(startResult.Pos))
+		sourceEndLine := sourceLineMap.ComputeIndexOfLineStart(core.TextPos(sourceEndPos))
+		
+		sourceStartChar := startResult.Pos - int(sourceLineMap.LineStarts[sourceStartLine])
+		sourceEndChar := sourceEndPos - int(sourceLineMap.LineStarts[sourceEndLine])
+		
+		if !sourceLineMap.AsciiOnly {
+			lineStartPos := int(sourceLineMap.LineStarts[sourceStartLine])
+			sourceStartChar = utf16CharacterCount(sourceContent[lineStartPos:startResult.Pos])
+			
+			lineEndStartPos := int(sourceLineMap.LineStarts[sourceEndLine])
+			sourceEndChar = utf16CharacterCount(sourceContent[lineEndStartPos:sourceEndPos])
+		}
 
 		return &lsproto.Location{
 			Uri: FileNameToDocumentURI(startResult.FileName),
@@ -176,4 +187,12 @@ func tryMapLocation(sourceMapper sourcemap.SourceMapper, host *sourcemapHost, lo
 			},
 		}
 	}
+}
+
+func utf16CharacterCount(text string) int {
+	var count int
+	for _, r := range text {
+		count += utf16.RuneLen(r)
+	}
+	return count
 }
