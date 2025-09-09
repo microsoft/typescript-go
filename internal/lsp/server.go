@@ -742,8 +742,6 @@ func (s *Server) mapDefinitionLocationsForProject(locations []lsproto.Location, 
 		return locations
 	}
 
-	sourceMapper := ls.NewDefinitionSourceMapper(program)
-
 	for _, location := range locations {
 		// Skip bundled library URIs that have invalid URL encoding
 		// These URIs contain "%3A" which causes panics in FileName()
@@ -759,7 +757,8 @@ func (s *Server) mapDefinitionLocationsForProject(locations []lsproto.Location, 
 			continue
 		}
 
-		if mappedLocation := sourceMapper.MapSingleLocation(location); mappedLocation != nil {
+		// Only call the source mapping for .d.ts files
+		if mappedLocation := ls.MapSingleDefinitionLocation(program, location); mappedLocation != nil {
 			mappedLocations = append(mappedLocations, *mappedLocation)
 		} else {
 			mappedLocations = append(mappedLocations, location)
