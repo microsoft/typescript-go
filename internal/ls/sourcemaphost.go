@@ -99,10 +99,6 @@ func MapSingleDefinitionLocation(program *compiler.Program, location lsproto.Loc
 		return nil
 	}
 
-	if strings.HasPrefix(fileName, "^/bundled/") {
-		return nil
-	}
-
 	host := &sourcemapHost{program: program}
 	sourceMapper := CreateSourceMapperForProgram(program)
 	
@@ -111,14 +107,28 @@ func MapSingleDefinitionLocation(program *compiler.Program, location lsproto.Loc
 
 func tryMapLocation(sourceMapper sourcemap.SourceMapper, host *sourcemapHost, location lsproto.Location, languageService *LanguageService) *lsproto.Location {
 	fileName := location.Uri.FileName()
+	program := host.program
 	
-	declContent, ok := host.readFileWithFallback(fileName)
-	if !ok {
-		return nil
+	declFile := program.GetSourceFile(fileName)
+	var declStartPos, declEndPos int
+	
+	if declFile != nil {
+		declStartPos = int(languageService.converters.LineAndCharacterToPosition(declFile, location.Range.Start))
+		declEndPos = int(languageService.converters.LineAndCharacterToPosition(declFile, location.Range.End))
+	} else {
+		declContent, ok := host.readFileWithFallback(fileName)
+		if !ok {
+			return nil
+		}
+		
+		declScript := &textScript{
+			fileName: fileName,
+			text:     declContent,
+		}
+		
+		declStartPos = int(languageService.converters.LineAndCharacterToPosition(declScript, location.Range.Start))
+		declEndPos = int(languageService.converters.LineAndCharacterToPosition(declScript, location.Range.End))
 	}
-
-	declLineStarts := core.ComputeLineStarts(declContent)
-	declStartPos := int(declLineStarts[location.Range.Start.Line]) + int(location.Range.Start.Character)
 	
 	startInput := sourcemap.DocumentPosition{
 		FileName: fileName,
@@ -130,17 +140,14 @@ func tryMapLocation(sourceMapper sourcemap.SourceMapper, host *sourcemapHost, lo
 		return nil
 	}
 
-	declEndPos := int(declLineStarts[location.Range.End.Line]) + int(location.Range.End.Character)
 	originalRangeLength := declEndPos - declStartPos
 	sourceEndPos := startResult.Pos + originalRangeLength
 	
-	program := host.program
 	sourceFile := program.GetSourceFile(startResult.FileName)
 	var sourceStartLSP lsproto.Position
 	var sourceEndLSP lsproto.Position
 	
 	if sourceFile != nil {
-		// Source file is in the program, use LS converters
 		if sourceEndPos > len(sourceFile.Text()) {
 			sourceEndPos = len(sourceFile.Text())
 		}
