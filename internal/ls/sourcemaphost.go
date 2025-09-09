@@ -92,7 +92,7 @@ func CreateSourceMapperForProgram(program *compiler.Program) sourcemap.SourceMap
 
 
 // Maps a single definition location using source maps.
-func MapSingleDefinitionLocation(program *compiler.Program, location lsproto.Location) *lsproto.Location {
+func MapSingleDefinitionLocation(program *compiler.Program, location lsproto.Location, languageService *LanguageService) *lsproto.Location {
 	fileName := location.Uri.FileName()
 
 	if !strings.HasSuffix(fileName, ".d.ts") {
@@ -106,25 +106,19 @@ func MapSingleDefinitionLocation(program *compiler.Program, location lsproto.Loc
 	host := &sourcemapHost{program: program}
 	sourceMapper := CreateSourceMapperForProgram(program)
 	
-	return tryMapLocation(sourceMapper, host, location)
+	return tryMapLocation(sourceMapper, host, location, languageService)
 }
 
-func tryMapLocation(sourceMapper sourcemap.SourceMapper, host *sourcemapHost, location lsproto.Location) *lsproto.Location {
+func tryMapLocation(sourceMapper sourcemap.SourceMapper, host *sourcemapHost, location lsproto.Location, languageService *LanguageService) *lsproto.Location {
 	fileName := location.Uri.FileName()
 	
 	declContent, ok := host.readFileWithFallback(fileName)
 	if !ok {
 		return nil
 	}
-	
+
 	declLineStarts := core.ComputeLineStarts(declContent)
-	
-	if int(location.Range.Start.Line) >= len(declLineStarts) || int(location.Range.End.Line) >= len(declLineStarts) {
-		return nil
-	}
-	
 	declStartPos := int(declLineStarts[location.Range.Start.Line]) + int(location.Range.Start.Character)
-	declEndPos := int(declLineStarts[location.Range.End.Line]) + int(location.Range.End.Character)
 	
 	startInput := sourcemap.DocumentPosition{
 		FileName: fileName,
@@ -136,77 +130,50 @@ func tryMapLocation(sourceMapper sourcemap.SourceMapper, host *sourcemapHost, lo
 		return nil
 	}
 
-	sourceContent, ok := host.readFileWithFallback(startResult.FileName)
-	if !ok {
-		return nil
-	}
-	
-	sourceLineStarts := core.ComputeLineStarts(sourceContent)
-	
-	sourceStartLine, sourceStartChar := core.PositionToLineAndCharacter(startResult.Pos, sourceLineStarts)
-	
+	declEndPos := int(declLineStarts[location.Range.End.Line]) + int(location.Range.End.Character)
 	originalRangeLength := declEndPos - declStartPos
-	
-	if declStartPos >= 0 && declEndPos <= len(declContent) {
-		originalText := strings.TrimSpace(declContent[declStartPos:declEndPos])
-		
-		if isSimpleIdentifier(originalText) {
-			sourceEndPos := startResult.Pos + len(originalText)
-			
-			if sourceEndPos > len(sourceContent) {
-				sourceEndPos = len(sourceContent)
-			}
-			
-			sourceEndLine, sourceEndChar := core.PositionToLineAndCharacter(sourceEndPos, sourceLineStarts)
-			
-			return &lsproto.Location{
-				Uri: FileNameToDocumentURI(startResult.FileName),
-				Range: lsproto.Range{
-					Start: lsproto.Position{Line: uint32(sourceStartLine), Character: uint32(sourceStartChar)},
-					End:   lsproto.Position{Line: uint32(sourceEndLine), Character: uint32(sourceEndChar)},
-				},
-			}
-		}
-	}
-	
 	sourceEndPos := startResult.Pos + originalRangeLength
 	
-	if sourceEndPos > len(sourceContent) {
-		sourceEndPos = len(sourceContent)
-	}
+	program := host.program
+	sourceFile := program.GetSourceFile(startResult.FileName)
 	
-	sourceEndLine, sourceEndChar := core.PositionToLineAndCharacter(sourceEndPos, sourceLineStarts)
+	if sourceFile != nil {
+		// Source file is in the program, use LS converters
+		if sourceEndPos > len(sourceFile.Text()) {
+			sourceEndPos = len(sourceFile.Text())
+		}
+		
+		sourceStartLSP := languageService.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(startResult.Pos))
+		sourceEndLSP := languageService.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(sourceEndPos))
 
-	return &lsproto.Location{
-		Uri: FileNameToDocumentURI(startResult.FileName),
-		Range: lsproto.Range{
-			Start: lsproto.Position{Line: uint32(sourceStartLine), Character: uint32(sourceStartChar)},
-			End:   lsproto.Position{Line: uint32(sourceEndLine), Character: uint32(sourceEndChar)},
-		},
-	}
-}
+		return &lsproto.Location{
+			Uri: FileNameToDocumentURI(startResult.FileName),
+			Range: lsproto.Range{
+				Start: sourceStartLSP,
+				End:   sourceEndLSP,
+			},
+		}
+	} else {
+		// Source file not in program, fall back to core functions
+		sourceContent, ok := host.readFileWithFallback(startResult.FileName)
+		if !ok {
+			return nil
+		}
+		
+		if sourceEndPos > len(sourceContent) {
+			sourceEndPos = len(sourceContent)
+		}
+		
+		sourceLineStarts := core.ComputeLineStarts(sourceContent)
+		sourceStartLine, sourceStartChar := core.PositionToLineAndCharacter(startResult.Pos, sourceLineStarts)
+		sourceEndLine, sourceEndChar := core.PositionToLineAndCharacter(sourceEndPos, sourceLineStarts)
 
-
-func isIdentifierChar(ch byte) bool {
-	return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || 
-		   (ch >= '0' && ch <= '9') || ch == '_' || ch == '$'
-}
-
-func isSimpleIdentifier(text string) bool {
-	if len(text) == 0 {
-		return false
-	}
-	
-	first := text[0]
-	if !((first >= 'a' && first <= 'z') || (first >= 'A' && first <= 'Z') || first == '_' || first == '$') {
-		return false
-	}
-	
-	for i := 1; i < len(text); i++ {
-		if !isIdentifierChar(text[i]) {
-			return false
+		return &lsproto.Location{
+			Uri: FileNameToDocumentURI(startResult.FileName),
+			Range: lsproto.Range{
+				Start: lsproto.Position{Line: uint32(sourceStartLine), Character: uint32(sourceStartChar)},
+				End:   lsproto.Position{Line: uint32(sourceEndLine), Character: uint32(sourceEndChar)},
+			},
 		}
 	}
-	
-	return true
 }

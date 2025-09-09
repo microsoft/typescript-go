@@ -717,7 +717,7 @@ func (s *Server) handleDefinition(ctx context.Context, ls *ls.LanguageService, p
 	}
 
 	if locations := rawResponse.Locations; locations != nil {
-		mappedLocations := s.mapDefinitionLocationsForProject(*locations, params.TextDocument.Uri)
+		mappedLocations := s.mapDefinitionLocationsForProject(*locations, params.TextDocument.Uri, ls)
 		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{
 			Locations: &mappedLocations,
 		}, nil
@@ -726,7 +726,7 @@ func (s *Server) handleDefinition(ctx context.Context, ls *ls.LanguageService, p
 	return rawResponse, nil
 }
 
-func (s *Server) mapDefinitionLocationsForProject(locations []lsproto.Location, requestingFileUri lsproto.DocumentUri) []lsproto.Location {
+func (s *Server) mapDefinitionLocationsForProject(locations []lsproto.Location, requestingFileUri lsproto.DocumentUri, languageService *ls.LanguageService) []lsproto.Location {
 	mappedLocations := make([]lsproto.Location, 0, len(locations))
 
 	snapshot, release := s.session.Snapshot()
@@ -758,7 +758,7 @@ func (s *Server) mapDefinitionLocationsForProject(locations []lsproto.Location, 
 		}
 
 		// Only call the source mapping for .d.ts files
-		if mappedLocation := ls.MapSingleDefinitionLocation(program, location); mappedLocation != nil {
+		if mappedLocation := ls.MapSingleDefinitionLocation(program, location, languageService); mappedLocation != nil {
 			mappedLocations = append(mappedLocations, *mappedLocation)
 		} else {
 			mappedLocations = append(mappedLocations, location)
