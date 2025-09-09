@@ -107,8 +107,8 @@ func getBaselineOptions(command string) baseline.Options {
 
 type baselineFourslashLocationsOptions struct {
 	// markerInfo
-	marker     *Marker // location
-	markerName string  // name of the marker to be printed in baseline
+	marker     MarkerOrRange // location
+	markerName string        // name of the marker to be printed in baseline
 
 	endMarker string
 
@@ -204,7 +204,7 @@ func (f *FourslashTest) getBaselineContentForFile(
 	canDetermineContextIdInline := true
 
 	if options.marker != nil && options.marker.FileName() == fileName {
-		details = append(details, &baselineDetail{pos: options.marker.LSPosition, positionMarker: options.markerName})
+		details = append(details, &baselineDetail{pos: options.marker.LSPos(), positionMarker: options.markerName})
 	}
 
 	for _, span := range spansInFile {

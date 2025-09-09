@@ -300,8 +300,7 @@ func (f *FourslashTest) readMsg(t *testing.T) *lsproto.Message {
 }
 
 func (f *FourslashTest) GoToMarkerOrRange(t *testing.T, markerOrRange MarkerOrRange) {
-	// GoToRangeStart
-	f.goToMarker(t, markerOrRange.GetMarker())
+	f.goToMarker(t, markerOrRange)
 }
 
 func (f *FourslashTest) GoToMarker(t *testing.T, markerName string) {
@@ -312,10 +311,10 @@ func (f *FourslashTest) GoToMarker(t *testing.T, markerName string) {
 	f.goToMarker(t, marker)
 }
 
-func (f *FourslashTest) goToMarker(t *testing.T, marker *Marker) {
-	f.ensureActiveFile(t, marker.FileName())
-	f.goToPosition(t, marker.LSPosition)
-	f.lastKnownMarkerName = marker.Name
+func (f *FourslashTest) goToMarker(t *testing.T, markerOrRange MarkerOrRange) {
+	f.ensureActiveFile(t, markerOrRange.FileName())
+	f.goToPosition(t, markerOrRange.LSPos())
+	f.lastKnownMarkerName = markerOrRange.GetName()
 }
 
 func (f *FourslashTest) GoToEOF(t *testing.T) {
@@ -796,7 +795,7 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 		}
 
 		f.addResultToBaseline(t, "findAllReferences", f.getBaselineForLocationsWithFileContents(*result.Locations, baselineFourslashLocationsOptions{
-			marker:     markerOrRange.GetMarker(),
+			marker:     markerOrRange,
 			markerName: "/*FIND ALL REFS*/",
 		}))
 
@@ -846,7 +845,7 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 		}
 
 		f.addResultToBaseline(t, "goToDefinition", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
-			marker:     markerOrRange.GetMarker(),
+			marker:     markerOrRange,
 			markerName: "/*GO TO DEFINITION*/",
 		}))
 	}
@@ -1533,7 +1532,7 @@ func (f *FourslashTest) verifyBaselineRename(
 			f.getBaselineForGroupedLocationsWithFileContents(
 				&fileToRange,
 				baselineFourslashLocationsOptions{
-					marker:     markerOrRange.GetMarker(),
+					marker:     markerOrRange,
 					markerName: "/*RENAME*/",
 					endMarker:  "RENAME|]",
 				},
