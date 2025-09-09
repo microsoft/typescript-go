@@ -794,7 +794,7 @@ func fixupWhitespaceAndDecodeEntities(text string) string {
 	// Last non-whitespace character on this line.
 	lastNonWhitespace := -1
 	// These initial values are special because the first line is:
-	// firstNonWhitespace = 0 to indicate that we want leading whitsepace,
+	// firstNonWhitespace = 0 to indicate that we want leading whitespace,
 	// but lastNonWhitespace = -1 as a special flag to indicate that we *don't* include the line if it's all whitespace.
 	for i := 0; i < len(text); i++ {
 		c, size := utf8.DecodeRuneInString(text[i:])
@@ -802,7 +802,7 @@ func fixupWhitespaceAndDecodeEntities(text string) string {
 			// If we've seen any non-whitespace characters on this line, add the 'trim' of the line.
 			// (lastNonWhitespace === -1 is a special flag to detect whether the first line is all whitespace.)
 			if firstNonWhitespace != -1 && lastNonWhitespace != -1 {
-				addLineOfJsxText(acc, text[firstNonWhitespace:lastNonWhitespace], initial)
+				addLineOfJsxText(acc, text[firstNonWhitespace:lastNonWhitespace+1], initial)
 				initial = false
 			}
 
@@ -839,23 +839,22 @@ func (tx *JSXTransformer) visitJsxExpression(expression *ast.JsxExpression) *ast
 var htmlEntityMatcher = regexp2.MustCompile(`&((#((\d+)|x([\da-fA-F]+)))|(\w+));`, regexp2.ECMAScript)
 
 func htmlEntityReplacer(m regexp2.Match) string {
-	decimal := m.GroupByNumber(3)
-	if decimal != nil {
+	decimal := m.GroupByNumber(4)
+	if decimal != nil && decimal.Capture.String() != "" {
 		parsed, err := strconv.ParseInt(decimal.Capture.String(), 10, 32)
 		if err == nil {
 			return string(rune(parsed))
 		}
 	}
-	hex := m.GroupByNumber(4)
-	if hex != nil {
+	hex := m.GroupByNumber(5)
+	if hex != nil && hex.Capture.String() != "" {
 		parsed, err := strconv.ParseInt(hex.Capture.String(), 16, 32)
 		if err == nil {
 			return string(rune(parsed))
 		}
 	}
-	word := m.GroupByNumber(5)
-	if word != nil {
-		// If this is not a valid entity, then just use `match` (replace it with itself, i.e. don't replace)
+	word := m.GroupByNumber(6)
+	if word != nil && word.Capture.String() != "" {
 		res, ok := entities[word.Capture.String()]
 		if ok {
 			return string(res)
