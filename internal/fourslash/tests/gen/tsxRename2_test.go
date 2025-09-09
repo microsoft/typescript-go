@@ -12,17 +12,17 @@ func TestTsxRename2(t *testing.T) {
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@Filename: file.tsx
- declare module JSX {
-     interface Element { }
-     interface IntrinsicElements {
-         div: {
-             [|[|{| "contextRangeIndex": 0 |}name|]?: string;|]
-             isOpen?: boolean;
-         };
-         span: { n: string; };
-     }
- }
- var x = <div [|[|{| "contextRangeIndex": 2 |}name|]="hello"|] />;`
+declare module JSX {
+    interface Element { }
+    interface IntrinsicElements {
+        div: {
+            [|[|{| "contextRangeIndex": 0 |}name|]?: string;|]
+            isOpen?: boolean;
+        };
+        span: { n: string; };
+    }
+}
+var x = <div [|[|{| "contextRangeIndex": 2 |}name|]="hello"|] />;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyBaselineRenameAtRangesWithText(t, "name")
 }

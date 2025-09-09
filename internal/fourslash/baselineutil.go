@@ -69,7 +69,7 @@ func getBaselineOptions(command string) baseline.Options {
 			IsSubmodule: true,
 			DiffFixupOld: func(s string) string {
 				var commandLines []string
-				commandPrefix := regexp.MustCompile(`// === ([a-z\sA-Z]*) ===`)
+				commandPrefix := regexp.MustCompile(`^// === ([a-z\sA-Z]*) ===`)
 				testFilePrefix := "/tests/cases/fourslash"
 				contextSpanOpening := "<|"
 				contextSpanClosing := "|>"
