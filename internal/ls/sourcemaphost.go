@@ -2,7 +2,6 @@ package ls
 
 import (
 	"strings"
-	"unicode/utf16"
 
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -137,6 +136,8 @@ func tryMapLocation(sourceMapper sourcemap.SourceMapper, host *sourcemapHost, lo
 	
 	program := host.program
 	sourceFile := program.GetSourceFile(startResult.FileName)
+	var sourceStartLSP lsproto.Position
+	var sourceEndLSP lsproto.Position
 	
 	if sourceFile != nil {
 		// Source file is in the program, use LS converters
@@ -144,16 +145,9 @@ func tryMapLocation(sourceMapper sourcemap.SourceMapper, host *sourcemapHost, lo
 			sourceEndPos = len(sourceFile.Text())
 		}
 		
-		sourceStartLSP := languageService.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(startResult.Pos))
-		sourceEndLSP := languageService.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(sourceEndPos))
+		sourceStartLSP = languageService.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(startResult.Pos))
+		sourceEndLSP = languageService.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(sourceEndPos))
 
-		return &lsproto.Location{
-			Uri: FileNameToDocumentURI(startResult.FileName),
-			Range: lsproto.Range{
-				Start: sourceStartLSP,
-				End:   sourceEndLSP,
-			},
-		}
 	} else {
 		sourceContent, ok := host.readFileWithFallback(startResult.FileName)
 		if !ok {
@@ -164,35 +158,33 @@ func tryMapLocation(sourceMapper sourcemap.SourceMapper, host *sourcemapHost, lo
 			sourceEndPos = len(sourceContent)
 		}
 		
-		sourceLineMap := ComputeLineStarts(sourceContent)
-		sourceStartLine := sourceLineMap.ComputeIndexOfLineStart(core.TextPos(startResult.Pos))
-		sourceEndLine := sourceLineMap.ComputeIndexOfLineStart(core.TextPos(sourceEndPos))
-		
-		sourceStartChar := startResult.Pos - int(sourceLineMap.LineStarts[sourceStartLine])
-		sourceEndChar := sourceEndPos - int(sourceLineMap.LineStarts[sourceEndLine])
-		
-		if !sourceLineMap.AsciiOnly {
-			lineStartPos := int(sourceLineMap.LineStarts[sourceStartLine])
-			sourceStartChar = utf16CharacterCount(sourceContent[lineStartPos:startResult.Pos])
-			
-			lineEndStartPos := int(sourceLineMap.LineStarts[sourceEndLine])
-			sourceEndChar = utf16CharacterCount(sourceContent[lineEndStartPos:sourceEndPos])
+		textScript := &textScript{
+			fileName: startResult.FileName,
+			text:     sourceContent,
 		}
-
-		return &lsproto.Location{
-			Uri: FileNameToDocumentURI(startResult.FileName),
-			Range: lsproto.Range{
-				Start: lsproto.Position{Line: uint32(sourceStartLine), Character: uint32(sourceStartChar)},
-				End:   lsproto.Position{Line: uint32(sourceEndLine), Character: uint32(sourceEndChar)},
-			},
-		}
+		
+		sourceStartLSP = languageService.converters.PositionToLineAndCharacter(textScript, core.TextPos(startResult.Pos))
+		sourceEndLSP = languageService.converters.PositionToLineAndCharacter(textScript, core.TextPos(sourceEndPos))
+	}
+	return &lsproto.Location{
+		Uri: FileNameToDocumentURI(startResult.FileName),
+		Range: lsproto.Range{
+			Start: sourceStartLSP,
+			End:   sourceEndLSP,
+		},
 	}
 }
 
-func utf16CharacterCount(text string) int {
-	var count int
-	for _, r := range text {
-		count += utf16.RuneLen(r)
-	}
-	return count
+// textScript is a simple wrapper that implements the Script interface for raw text content
+type textScript struct {
+	fileName string
+	text     string
+}
+
+func (t *textScript) FileName() string {
+	return t.fileName
+}
+
+func (t *textScript) Text() string {
+	return t.text
 }

@@ -23,6 +23,7 @@ type Script interface {
 	Text() string
 }
 
+
 func NewConverters(positionEncoding lsproto.PositionEncodingKind, getLineMap func(fileName string) *LineMap) *Converters {
 	return &Converters{
 		getLineMap:       getLineMap,
@@ -174,6 +175,11 @@ func (c *Converters) PositionToLineAndCharacter(script Script, position core.Tex
 	// UTF-8 offset to UTF-8/16 0-indexed line and character
 
 	lineMap := c.getLineMap(script.FileName())
+	
+	// If lineMap is nil (file not in cache), create a temporary one from the script text
+	if lineMap == nil {
+		lineMap = ComputeLineStarts(script.Text())
+	}
 
 	line, isLineStart := slices.BinarySearch(lineMap.LineStarts, position)
 	if !isLineStart {
