@@ -25,8 +25,7 @@
 -}
 -declare function _exports(options: Options): void;
 -export = _exports;
--type Options = {
-+export type Options = {
+ type Options = {
      opt: string;
  };
 +declare const _default: (options: any) => void;

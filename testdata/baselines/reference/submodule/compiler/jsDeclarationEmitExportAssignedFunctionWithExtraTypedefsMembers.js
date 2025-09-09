@@ -34,7 +34,7 @@ module.exports = function loader(options) { };
 
 
 //// [index.d.ts]
-export type Options = {
+type Options = {
     opt: string;
 };
 declare const _default: (options: any) => void;

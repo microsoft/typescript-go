@@ -147,18 +147,18 @@ module.exports = Hook;
 //// [timer.d.ts]
 export = Timer;
 //// [context.d.ts]
-export type Timer = import("./timer");
-export type Hook = import("./hook");
-export type HookHandler = import("./hook").HookHandler;
-export type Input = {
+type Timer = import("./timer");
+type Hook = import("./hook");
+type HookHandler = import("./hook").HookHandler;
+type Input = {
     timer: Timer;
     hook: Hook;
 };
-export type State = {
+type State = {
     timer: Timer;
     hook: Hook;
 };
 export = Context;
 //// [hook.d.ts]
-export type HookHandler = (arg: import("./context")) => void;
+type HookHandler = (arg: import("./context")) => void;
 export = Hook;

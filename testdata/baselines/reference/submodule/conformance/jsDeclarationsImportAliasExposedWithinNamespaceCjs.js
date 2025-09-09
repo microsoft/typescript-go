@@ -69,7 +69,7 @@ export type myTypes = myTypes.typeB | Function;
 /** @typedef {myTypes.typeB|Function} myTypes.typeC */
 export var myTypes = myTypes;
 //// [file2.d.ts]
-export type testFnTypes = boolean | myTypes.typeC;
+type testFnTypes = boolean | myTypes.typeC;
 /** @typedef {boolean|myTypes.typeC} testFnTypes.input */
 /**
  * @function testFn
