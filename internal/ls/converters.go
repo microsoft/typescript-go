@@ -23,7 +23,6 @@ type Script interface {
 	Text() string
 }
 
-
 func NewConverters(positionEncoding lsproto.PositionEncodingKind, getLineMap func(fileName string) *LineMap) *Converters {
 	return &Converters{
 		getLineMap:       getLineMap,
