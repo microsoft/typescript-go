@@ -20,7 +20,6 @@ export const FOO: string = 'THEFOOEXPORT';
 tsgo --b
 ExitStatus:: Success
 Output::
-[94mmessage[0m[90m TS5074: [0mFailed to update timestamp of file '/home/src/workspaces/project/lib/foo.js'.
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
@@ -150,7 +149,6 @@ export const FOO: string = 'THEFOOEXPORT';const Bar = 10;
 tsgo --b
 ExitStatus:: Success
 Output::
-[94mmessage[0m[90m TS5074: [0mFailed to update timestamp of file '/home/src/workspaces/project/lib/foo.js'.
 //// [/home/src/workspaces/project/index.js] *rewrite with same content*
 //// [/home/src/workspaces/project/lib/dist/foo.js] *modified* 
 "use strict";
