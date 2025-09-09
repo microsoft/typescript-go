@@ -1097,6 +1097,12 @@ interface VerifyBaselineSignatureHelpCmd {
     kind: "verifyBaselineSignatureHelp";
 }
 
+interface VerifyBaselineDocumentHighlightsCmd {
+    kind: "verifyBaselineDocumentHighlights";
+    markers: string[];
+    ranges?: boolean;
+}
+
 interface GoToCmd {
     kind: "goTo";
     // !!! `selectRange` and `rangeStart` require parsing variables and `test.ranges()[n]`
@@ -1119,6 +1125,7 @@ interface VerifyQuickInfoCmd {
 type Cmd =
     | VerifyCompletionsCmd
     | VerifyBaselineFindAllReferencesCmd
+    | VerifyBaselineDocumentHighlightsCmd
     | VerifyBaselineGoToDefinitionCmd
     | VerifyBaselineQuickInfoCmd
     | VerifyBaselineSignatureHelpCmd
@@ -1160,6 +1167,13 @@ function generateBaselineFindAllReferences({ markers, ranges }: VerifyBaselineFi
     return `f.VerifyBaselineFindAllReferences(t, ${markers.join(", ")})`;
 }
 
+function generateBaselineDocumentHighlights({ markers, ranges }: VerifyBaselineDocumentHighlightsCmd): string {
+    if (ranges || markers.length === 0) {
+        return `f.VerifyBaselineDocumentHighlights(t)`;
+    }
+    return `f.VerifyBaselineDocumentHighlights(t, ${markers.join(", ")})`;
+}
+
 function generateBaselineGoToDefinition({ markers, ranges }: VerifyBaselineGoToDefinitionCmd): string {
     if (ranges || markers.length === 0) {
         return `f.VerifyBaselineGoToDefinition(t)`;
@@ -1191,6 +1205,8 @@ function generateCmd(cmd: Cmd): string {
             return generateVerifyCompletions(cmd);
         case "verifyBaselineFindAllReferences":
             return generateBaselineFindAllReferences(cmd);
+        case "verifyBaselineDocumentHighlights":
+            return generateBaselineDocumentHighlights(cmd);
         case "verifyBaselineGoToDefinition":
             return generateBaselineGoToDefinition(cmd);
         case "verifyBaselineQuickInfo":

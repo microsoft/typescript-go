@@ -48,7 +48,6 @@ func (l *LanguageService) ProvideDocumentHighlights(ctx context.Context, documen
 	return lsproto.DocumentHighlightsOrNull{DocumentHighlights: &documentHighlights}, nil
 }
 
-// TODO: capitalize get ?
 func (l *LanguageService) getSemanticDocumentHighlights(ctx context.Context, position int, node *ast.Node, program *compiler.Program, sourceFile *ast.SourceFile) []*lsproto.DocumentHighlight {
 	var highlights []*lsproto.DocumentHighlight
 	options := refOptions{use: referenceUseReferences}
