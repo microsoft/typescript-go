@@ -929,6 +929,21 @@ func (c *EmitContext) VisitIterationBody(body *ast.Statement, visitor *ast.NodeV
 	return updated
 }
 
+func (c *EmitContext) VisitEmbeddedStatement(node *ast.Statement, visitor *ast.NodeVisitor) *ast.Statement {
+	embeddedStatement := visitor.VisitEmbeddedStatement(node)
+	if embeddedStatement == nil {
+		return nil
+	}
+	if ast.IsNotEmittedStatement(embeddedStatement) {
+		emptyStatement := visitor.Factory.NewEmptyStatement()
+		emptyStatement.Loc = node.Loc
+		c.SetOriginal(emptyStatement, node)
+		c.AssignCommentRange(emptyStatement, node)
+		return emptyStatement
+	}
+	return embeddedStatement
+}
+
 func (c *EmitContext) SetSyntheticLeadingComments(node *ast.Node, comments []SynthesizedComment) *ast.Node {
 	c.emitNodes.Get(node).leadingComments = comments
 	return node
@@ -963,20 +978,10 @@ func (c *EmitContext) GetSyntheticTrailingComments(node *ast.Node) []Synthesized
 	return nil
 }
 
-func (c *EmitContext) VisitEmbeddedStatement(node *ast.Statement, visitor *ast.NodeVisitor) *ast.Statement {
-	updated := visitor.VisitEmbeddedStatement(node)
-	if updated == nil {
-		return nil
-	}
-	if ast.IsNotEmittedStatement(updated) {
-		return visitor.Factory.NewEmptyStatement()
-	}
-	return updated
-}
-
 func (c *EmitContext) NewNotEmittedStatement(node *ast.Node) *ast.Statement {
 	statement := c.Factory.NewNotEmittedStatement()
-	c.SetOriginal(statement.AsNode(), node)
 	statement.Loc = node.Loc
+	c.SetOriginal(statement, node)
+	c.AssignCommentRange(statement, node)
 	return statement
 }
