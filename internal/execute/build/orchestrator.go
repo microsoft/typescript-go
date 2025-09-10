@@ -64,7 +64,7 @@ type Orchestrator struct {
 
 	// order generation result
 	tasks  *collections.SyncMap[tspath.Path, *buildTask]
-	order  []string
+	order  []*buildTask
 	errors []*ast.Diagnostic
 
 	errorSummaryReporter tsc.DiagnosticsReporter
@@ -82,7 +82,9 @@ func (o *Orchestrator) toPath(fileName string) tspath.Path {
 }
 
 func (o *Orchestrator) Order() []string {
-	return o.order
+	return core.Map(o.order, func(t *buildTask) string {
+		return t.config
+	})
 }
 
 func (o *Orchestrator) Upstream(configName string) []string {
@@ -179,11 +181,12 @@ func (o *Orchestrator) setupBuildTask(
 		completed.Add(path)
 		task.reportDone = make(chan struct{})
 		prev := core.LastOrNil(o.order)
-		if prev != "" {
-			task.prevReporter = &prevReporter{o.getTask(o.toPath(prev)), len(o.order)}
+		if prev != nil {
+			task.prevReporter = &prevReporter{prev, len(o.order)}
 		}
 		task.done = make(chan struct{})
-		o.order = append(o.order, configName)
+		task.config = configName
+		o.order = append(o.order, task)
 	}
 	if o.opts.Command.CompilerOptions.Watch.IsTrue() && downStream != nil {
 		task.downStream = append(task.downStream, downStream)
@@ -313,22 +316,27 @@ func (o *Orchestrator) buildOrClean() tsc.CommandLineResult {
 	}
 	var buildResult orchestratorResult
 	if len(o.errors) == 0 {
-		wg := core.NewWorkGroup(o.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
-		o.tasks.Range(func(path tspath.Path, task *buildTask) bool {
-			task.reportStatus = o.createBuilderStatusReporter(task)
-			task.diagnosticReporter = o.createDiagnosticReporter(task)
-			wg.Queue(func() {
-				if build {
-					task.buildProject(o, path)
-				} else {
+		if build {
+			for _, task := range o.order {
+				task.reportStatus = o.createBuilderStatusReporter(task)
+				task.diagnosticReporter = o.createDiagnosticReporter(task)
+				task.buildProject(o, o.toPath(task.config))
+				task.report(o, o.toPath(task.config), &buildResult)
+			}
+		} else {
+			wg := core.NewWorkGroup(o.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
+			o.tasks.Range(func(path tspath.Path, task *buildTask) bool {
+				task.reportStatus = o.createBuilderStatusReporter(task)
+				task.diagnosticReporter = o.createDiagnosticReporter(task)
+				wg.Queue(func() {
 					task.cleanProject(o, path)
-				}
-				task.report(o, path, &buildResult)
+					task.report(o, path, &buildResult)
+				})
+				return true
 			})
-			return true
-		})
-		wg.RunAndWait()
-		buildResult.statistics.Projects = len(o.Order())
+			wg.RunAndWait()
+			buildResult.statistics.Projects = len(o.Order())
+		}
 	} else {
 		buildResult.result.Status = tsc.ExitStatusProjectReferenceCycle_OutputsSkipped
 		reportDiagnostic := o.createDiagnosticReporter(nil)

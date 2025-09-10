@@ -88,15 +88,15 @@ type buildTask struct {
 }
 
 func (t *buildTask) waitOnUpstream() {
-	for _, upstream := range t.upStream {
-		<-upstream.task.done
-	}
+	// for _, upstream := range t.upStream {
+	// 	<-upstream.task.done
+	// }
 }
 
 func (t *buildTask) unblockDownstream() {
 	t.pending.Store(false)
 	t.isInitialCycle = false
-	close(t.done)
+	// close(t.done)
 }
 
 func (t *buildTask) reportDiagnostic(err *ast.Diagnostic) {
