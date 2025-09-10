@@ -1,0 +1,9 @@
+// === findRenameLocations ===
+// === /renameCommentsAndStrings4.ts ===
+// ///<reference path="./Bar.ts" />
+// function Bar() {
+//     // This is a reference to /*RENAME*/Bar in a comment.
+//     "this is a reference to Bar in a string";
+//     `Foo Bar Baz.`;
+//     {
+// // --- (line: 7) skipped ---

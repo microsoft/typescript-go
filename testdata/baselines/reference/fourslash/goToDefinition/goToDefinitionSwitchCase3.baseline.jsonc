@@ -1,8 +1,7 @@
 // === goToDefinition ===
 // === /goToDefinitionSwitchCase3.ts ===
-
 // [|switch|] (null) {
-//   /*GO TO DEFINITION*/default: {
+//   /*GOTO DEF*/default: {
 //     switch (null) {
 //       default: break;
 //     }
@@ -11,14 +10,12 @@
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionSwitchCase3.ts ===
-
 // switch (null) {
 //   default: {
 //     [|switch|] (null) {
-//       /*GO TO DEFINITION*/default: break;
+//       /*GOTO DEF*/default: break;
 //     }
 //   };
 // }

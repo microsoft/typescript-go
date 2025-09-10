@@ -1,0 +1,21 @@
+--- old.renameModuleExportsProperties1.baseline.jsonc
++++ new.renameModuleExportsProperties1.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+ // === findRenameLocations ===
+-// @providePrefixAndSuffixTextForRename: true
+-
+ // === /renameModuleExportsProperties1.ts ===
+-// class /*RENAME*/[|ARENAME|] {}
+-// module.exports = { /*START PREFIX*/A: [|ARENAME|] }
++// /*RENAME*/class A {}
++// module.exports = { A }
+
+
+
+ // === findRenameLocations ===
+-// @providePrefixAndSuffixTextForRename: true
+-
+ // === /renameModuleExportsProperties1.ts ===
+ // class [|ARENAME|] {}
+-// module.exports = { /*START PREFIX*/A: /*RENAME*/[|ARENAME|] }
++// module.exports = { /*RENAME*/[|ARENAME|] }

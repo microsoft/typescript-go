@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport01.ts ===
-
 // /*FIND ALL REFS*/export default class DefaultExportedClass {
 // }
 // 
@@ -10,10 +9,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport01.ts ===
-
 // export default class /*FIND ALL REFS*/[|DefaultExportedClass|] {
 // }
 // 
@@ -23,10 +20,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport01.ts ===
-
 // export default class [|DefaultExportedClass|] {
 // }
 // 
@@ -36,10 +31,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport01.ts ===
-
 // export default class [|DefaultExportedClass|] {
 // }
 // 

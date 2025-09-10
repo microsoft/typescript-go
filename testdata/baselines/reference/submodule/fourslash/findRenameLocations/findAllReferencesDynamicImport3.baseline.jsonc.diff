@@ -1,0 +1,17 @@
+--- old.findAllReferencesDynamicImport3.baseline.jsonc
++++ new.findAllReferencesDynamicImport3.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+ // === findRenameLocations ===
+ // === /foo.ts ===
+-// export function /*RENAME*/[|barRENAME|]() { return "bar"; }
+-// import('./foo').then(({ [|barRENAME|]: bar/*END SUFFIX*/ }) => undefined);
++// /*RENAME*/export function bar() { return "bar"; }
++// import('./foo').then(({ bar }) => undefined);
+
+
+
+ // === findRenameLocations ===
+ // === /foo.ts ===
+ // export function bar() { return "bar"; }
+-// import('./foo').then(({ /*START PREFIX*/bar: /*RENAME*/[|barRENAME|] }) => undefined);
++// import('./foo').then((/*RENAME*/{ bar }) => undefined);

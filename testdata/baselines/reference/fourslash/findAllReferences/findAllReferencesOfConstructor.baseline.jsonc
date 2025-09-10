@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /a.ts ===
-
 // export class [|C|] {
 //     /*FIND ALL REFS*/constructor(n: number);
 //     constructor();
@@ -14,15 +13,11 @@
 // const D = [|C|];
 // new D();
 
-
 // === /b.ts ===
-
 // import { [|C|] } from "./a";
 // new [|C|]();
 
-
 // === /c.ts ===
-
 // import { [|C|] } from "./a";
 // class D extends [|C|] {
 //     constructor() {
@@ -35,19 +30,15 @@
 //     constructor() { super(); }
 // }
 
-
 // === /d.ts ===
-
 // import * as a from "./a";
 // new a.[|C|]();
 // class d extends a.[|C|] { constructor() { super(); }
 
 
 
-
 // === findAllReferences ===
 // === /a.ts ===
-
 // export class [|C|] {
 //     constructor(n: number);
 //     /*FIND ALL REFS*/constructor();
@@ -61,15 +52,11 @@
 // const D = [|C|];
 // new D();
 
-
 // === /b.ts ===
-
 // import { [|C|] } from "./a";
 // new [|C|]();
 
-
 // === /c.ts ===
-
 // import { [|C|] } from "./a";
 // class D extends [|C|] {
 //     constructor() {
@@ -82,19 +69,15 @@
 //     constructor() { super(); }
 // }
 
-
 // === /d.ts ===
-
 // import * as a from "./a";
 // new a.[|C|]();
 // class d extends a.[|C|] { constructor() { super(); }
 
 
 
-
 // === findAllReferences ===
 // === /a.ts ===
-
 // export class [|C|] {
 //     constructor(n: number);
 //     constructor();
@@ -108,15 +91,11 @@
 // const D = [|C|];
 // new D();
 
-
 // === /b.ts ===
-
 // import { [|C|] } from "./a";
 // new [|C|]();
 
-
 // === /c.ts ===
-
 // import { [|C|] } from "./a";
 // class D extends [|C|] {
 //     constructor() {
@@ -129,9 +108,7 @@
 //     constructor() { super(); }
 // }
 
-
 // === /d.ts ===
-
 // import * as a from "./a";
 // new a.[|C|]();
 // class d extends a.[|C|] { constructor() { super(); }

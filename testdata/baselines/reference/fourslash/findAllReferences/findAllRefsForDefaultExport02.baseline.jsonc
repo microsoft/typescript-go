@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport02.ts ===
-
 // /*FIND ALL REFS*/export default function DefaultExportedFunction() {
 //     return DefaultExportedFunction;
 // }
@@ -9,10 +8,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport02.ts ===
-
 // export default function /*FIND ALL REFS*/[|DefaultExportedFunction|]() {
 //     return [|DefaultExportedFunction|];
 // }
@@ -26,10 +23,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport02.ts ===
-
 // export default function [|DefaultExportedFunction|]() {
 //     return /*FIND ALL REFS*/[|DefaultExportedFunction|];
 // }
@@ -43,10 +38,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport02.ts ===
-
 // export default function [|DefaultExportedFunction|]() {
 //     return [|DefaultExportedFunction|];
 // }
@@ -60,10 +53,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport02.ts ===
-
 // export default function [|DefaultExportedFunction|]() {
 //     return [|DefaultExportedFunction|];
 // }
@@ -77,10 +68,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport02.ts ===
-
 // --- (line: 5) skipped ---
 // 
 // var y = DefaultExportedFunction();
@@ -90,10 +79,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForDefaultExport02.ts ===
-
 // --- (line: 5) skipped ---
 // 
 // var y = DefaultExportedFunction();

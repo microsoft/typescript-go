@@ -1,0 +1,17 @@
+--- old.renameRestBindingElement.baseline.jsonc
++++ new.renameRestBindingElement.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+ // === findRenameLocations ===
+-// @providePrefixAndSuffixTextForRename: true
+-
+ // === /renameRestBindingElement.ts ===
+ // interface I {
+ //     a: number;
+ //     b: number;
+ //     c: number;
+ // }
+-// function foo({ a, .../*RENAME*/[|restRENAME|] }: I) {
+-//     [|restRENAME|];
++// function foo(/*RENAME*/{ a, ...rest }: I) {
++//     rest;
+ // }

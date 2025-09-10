@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForLabel5.ts ===
-
 // /*FIND ALL REFS*/[|label|]:  while (true) {
 //             if (false) break [|label|];
 //             function blah() {
@@ -13,10 +12,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForLabel5.ts ===
-
 // label:  while (true) {
 //             if (false) /*FIND ALL REFS*/break label;
 //             function blah() {
@@ -26,10 +23,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForLabel5.ts ===
-
 // [|label|]:  while (true) {
 //             if (false) break /*FIND ALL REFS*/[|label|];
 //             function blah() {
@@ -42,10 +37,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForLabel5.ts ===
-
 // label:  while (true) {
 //             if (false) break label;
 //             function blah() {
@@ -58,10 +51,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForLabel5.ts ===
-
 // label:  while (true) {
 //             if (false) break label;
 //             function blah() {
@@ -74,10 +65,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForLabel5.ts ===
-
 // label:  while (true) {
 //             if (false) break label;
 //             function blah() {
@@ -90,10 +79,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForLabel5.ts ===
-
 // --- (line: 4) skipped ---
 //                     if (false) break label;
 //                 }
@@ -103,10 +90,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForLabel5.ts ===
-
 // [|label|]:  while (true) {
 //             if (false) break [|label|];
 //             function blah() {

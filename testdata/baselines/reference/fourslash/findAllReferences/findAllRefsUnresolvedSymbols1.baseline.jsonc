@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsUnresolvedSymbols1.ts ===
-
 // let a: /*FIND ALL REFS*/[|Bar|];
 // let b: [|Bar|]<string>;
 // let c: [|Bar|]<string, number>;
@@ -10,10 +9,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnresolvedSymbols1.ts ===
-
 // let a: [|Bar|];
 // let b: /*FIND ALL REFS*/[|Bar|]<string>;
 // let c: [|Bar|]<string, number>;
@@ -23,10 +20,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnresolvedSymbols1.ts ===
-
 // let a: [|Bar|];
 // let b: [|Bar|]<string>;
 // let c: /*FIND ALL REFS*/[|Bar|]<string, number>;
@@ -36,10 +31,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnresolvedSymbols1.ts ===
-
 // let a: Bar;
 // let b: Bar<string>;
 // let c: Bar<string, number>;
@@ -49,10 +42,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnresolvedSymbols1.ts ===
-
 // let a: Bar;
 // let b: Bar<string>;
 // let c: Bar<string, number>;
@@ -62,10 +53,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnresolvedSymbols1.ts ===
-
 // let a: Bar;
 // let b: Bar<string>;
 // let c: Bar<string, number>;
@@ -75,10 +64,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnresolvedSymbols1.ts ===
-
 // let a: Bar;
 // let b: Bar<string>;
 // let c: Bar<string, number>;
@@ -88,10 +75,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnresolvedSymbols1.ts ===
-
 // let a: Bar;
 // let b: Bar<string>;
 // let c: Bar<string, number>;
@@ -101,10 +86,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnresolvedSymbols1.ts ===
-
 // let a: Bar;
 // let b: Bar<string>;
 // let c: Bar<string, number>;
@@ -114,10 +97,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnresolvedSymbols1.ts ===
-
 // let a: Bar;
 // let b: Bar<string>;
 // let c: Bar<string, number>;

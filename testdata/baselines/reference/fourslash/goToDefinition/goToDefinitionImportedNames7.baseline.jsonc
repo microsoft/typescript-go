@@ -1,12 +1,9 @@
 // === goToDefinition ===
 // === /a.ts ===
-
 // class [|Class|] {
 //     private f;
 // }
 // export default Class;
 
-
 // === /b.ts ===
-
-// import /*GO TO DEFINITION*/defaultExport from "./a";
+// import /*GOTO DEF*/defaultExport from "./a";

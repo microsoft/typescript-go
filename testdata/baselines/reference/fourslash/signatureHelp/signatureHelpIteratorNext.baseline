@@ -1,63 +1,63 @@
 // === SignatureHelp ===
 === /signatureHelpIteratorNext.ts ===
-//  declare const iterator: Iterator<string, void, number>;
+// declare const iterator: Iterator<string, void, number>;
 // 
-//  iterator.next();
+// iterator.next();
+//               ^
+// | ----------------------------------------------------------------------
+// | next(): IteratorResult<string, void>
+// | ----------------------------------------------------------------------
+// iterator.next( 0);
+//               ^
+// | ----------------------------------------------------------------------
+// | next(**value: number**): IteratorResult<string, void>
+// | ----------------------------------------------------------------------
+// 
+// declare const generator: Generator<string, void, number>;
+// 
+// generator.next();
 //                ^
 // | ----------------------------------------------------------------------
 // | next(): IteratorResult<string, void>
 // | ----------------------------------------------------------------------
-//  iterator.next( 0);
+// generator.next( 0);
 //                ^
 // | ----------------------------------------------------------------------
 // | next(**value: number**): IteratorResult<string, void>
 // | ----------------------------------------------------------------------
 // 
-//  declare const generator: Generator<string, void, number>;
+// declare const asyncIterator: AsyncIterator<string, void, number>;
 // 
-//  generator.next();
-//                 ^
-// | ----------------------------------------------------------------------
-// | next(): IteratorResult<string, void>
-// | ----------------------------------------------------------------------
-//  generator.next( 0);
-//                 ^
-// | ----------------------------------------------------------------------
-// | next(**value: number**): IteratorResult<string, void>
-// | ----------------------------------------------------------------------
-// 
-//  declare const asyncIterator: AsyncIterator<string, void, number>;
-// 
-//  asyncIterator.next();
-//                     ^
+// asyncIterator.next();
+//                    ^
 // | ----------------------------------------------------------------------
 // | next(): Promise<IteratorResult<string, void>>
 // | ----------------------------------------------------------------------
-//  asyncIterator.next( 0);
-//                     ^
+// asyncIterator.next( 0);
+//                    ^
 // | ----------------------------------------------------------------------
 // | next(**value: number**): Promise<IteratorResult<string, void>>
 // | ----------------------------------------------------------------------
 // 
-//  declare const asyncGenerator: AsyncGenerator<string, void, number>;
+// declare const asyncGenerator: AsyncGenerator<string, void, number>;
 // 
-//  asyncGenerator.next();
-//                      ^
+// asyncGenerator.next();
+//                     ^
 // | ----------------------------------------------------------------------
 // | next(): Promise<IteratorResult<string, void>>
 // | ----------------------------------------------------------------------
-//  asyncGenerator.next( 0);
-//                      ^
+// asyncGenerator.next( 0);
+//                     ^
 // | ----------------------------------------------------------------------
 // | next(**value: number**): Promise<IteratorResult<string, void>>
 // | ----------------------------------------------------------------------
 [
   {
     "marker": {
-      "Position": 73,
+      "Position": 71,
       "LSPosition": {
         "line": 2,
-        "character": 15
+        "character": 14
       },
       "Name": "1",
       "Data": {}
@@ -83,10 +83,10 @@
   },
   {
     "marker": {
-      "Position": 91,
+      "Position": 88,
       "LSPosition": {
         "line": 3,
-        "character": 15
+        "character": 14
       },
       "Name": "2",
       "Data": {}
@@ -112,10 +112,10 @@
   },
   {
     "marker": {
-      "Position": 173,
+      "Position": 168,
       "LSPosition": {
         "line": 7,
-        "character": 16
+        "character": 15
       },
       "Name": "3",
       "Data": {}
@@ -141,10 +141,10 @@
   },
   {
     "marker": {
-      "Position": 192,
+      "Position": 186,
       "LSPosition": {
         "line": 8,
-        "character": 16
+        "character": 15
       },
       "Name": "4",
       "Data": {}
@@ -170,10 +170,10 @@
   },
   {
     "marker": {
-      "Position": 286,
+      "Position": 278,
       "LSPosition": {
         "line": 12,
-        "character": 20
+        "character": 19
       },
       "Name": "5",
       "Data": {}
@@ -199,10 +199,10 @@
   },
   {
     "marker": {
-      "Position": 309,
+      "Position": 300,
       "LSPosition": {
         "line": 13,
-        "character": 20
+        "character": 19
       },
       "Name": "6",
       "Data": {}
@@ -228,10 +228,10 @@
   },
   {
     "marker": {
-      "Position": 406,
+      "Position": 395,
       "LSPosition": {
         "line": 17,
-        "character": 21
+        "character": 20
       },
       "Name": "7",
       "Data": {}
@@ -257,10 +257,10 @@
   },
   {
     "marker": {
-      "Position": 430,
+      "Position": 418,
       "LSPosition": {
         "line": 18,
-        "character": 21
+        "character": 20
       },
       "Name": "8",
       "Data": {}

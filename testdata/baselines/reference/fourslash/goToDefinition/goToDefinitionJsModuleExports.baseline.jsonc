@@ -1,18 +1,15 @@
 // === goToDefinition ===
 // === /foo.js ===
-
 // x.test = () => { }
-// x./*GO TO DEFINITION*/test();
+// x./*GOTO DEF*/test();
 // x.test3 = function () { }
 // x.test3();
 
 
 
-
 // === goToDefinition ===
 // === /foo.js ===
-
 // x.test = () => { }
 // x.test();
 // x.test3 = function () { }
-// x./*GO TO DEFINITION*/test3();
+// x./*GOTO DEF*/test3();

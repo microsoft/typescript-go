@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsForObjectLiteralProperties.ts ===
-
 // var x = {
 //     /*FIND ALL REFS*/[|property|]: {}
 // };
@@ -11,10 +10,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForObjectLiteralProperties.ts ===
-
 // var x = {
 //     [|property|]: {}
 // };
@@ -25,10 +22,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForObjectLiteralProperties.ts ===
-
 // --- (line: 3) skipped ---
 // 
 // x.property;
@@ -37,10 +32,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForObjectLiteralProperties.ts ===
-
 // var x = {
 //     [|property|]: {}
 // };

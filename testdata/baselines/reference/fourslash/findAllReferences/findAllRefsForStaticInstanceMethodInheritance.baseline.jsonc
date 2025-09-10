@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsForStaticInstanceMethodInheritance.ts ===
-
 // class X{
 // 	/*FIND ALL REFS*/[|foo|](): void{}
 // }
@@ -25,10 +24,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForStaticInstanceMethodInheritance.ts ===
-
 // class X{
 // 	foo(): void{}
 // }
@@ -40,7 +37,6 @@
 // class Z extends Y{
 // // --- (line: 10) skipped ---
 
-
 // --- (line: 16) skipped ---
 // x.foo();
 // y.foo();
@@ -50,10 +46,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForStaticInstanceMethodInheritance.ts ===
-
 // --- (line: 6) skipped ---
 // }
 // 
@@ -64,7 +58,6 @@
 // 
 // // --- (line: 14) skipped ---
 
-
 // --- (line: 17) skipped ---
 // y.foo();
 // z.foo();
@@ -73,10 +66,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForStaticInstanceMethodInheritance.ts ===
-
 // class X{
 // 	[|foo|](): void{}
 // }

@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsParameterPropertyDeclaration2.ts ===
-
 // class Foo {
 //     constructor(public /*FIND ALL REFS*/[|publicParam|]: number) {
 //         let localPublic = [|publicParam|];
@@ -10,10 +9,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsParameterPropertyDeclaration2.ts ===
-
 // class Foo {
 //     constructor(public [|publicParam|]: number) {
 //         let localPublic = /*FIND ALL REFS*/[|publicParam|];
@@ -23,10 +20,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsParameterPropertyDeclaration2.ts ===
-
 // class Foo {
 //     constructor(public [|publicParam|]: number) {
 //         let localPublic = [|publicParam|];

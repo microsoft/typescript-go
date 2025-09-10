@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForInheritedProperties8.ts ===
-
 // interface C extends D {
 //     /*FIND ALL REFS*/[|propD|]: number;
 // }
@@ -14,10 +13,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForInheritedProperties8.ts ===
-
 // interface C extends D {
 //     propD: number;
 // }

@@ -1,0 +1,82 @@
+--- old.renameDestructuringNestedBindingElement.baseline.jsonc
++++ new.renameDestructuringNestedBindingElement.baseline.jsonc
+@@= skipped -10, +10 lines =@@
+ // for (let { skills: {[|primaryRENAME|]: primaryA, secondary: secondaryA } } of multiRobots) {
+ //     console.log(primaryA);
+ // }
+-// for (let { skills: {[|primaryRENAME|]: primary/*END SUFFIX*/, secondary } } of multiRobots) {
++// for (let { skills: {[|primaryRENAME|], secondary } } of multiRobots) {
+ //     console.log(primary);
+ // }
+
+@@= skipped -8, +8 lines =@@
+
+ // === findRenameLocations ===
+ // === /renameDestructuringNestedBindingElement.ts ===
+-// interface MultiRobot {
+-//     name: string;
+-//     skills: {
+-//         [|primaryRENAME|]: string;
+-//         secondary: string;
++// --- (line: 5) skipped ---
+ //     };
+ // }
+ // let multiRobots: MultiRobot[];
+-// for (let { skills: {/*RENAME*/[|primaryRENAME|]: primaryA, secondary: secondaryA } } of multiRobots) {
+-//     console.log(primaryA);
+-// }
+-// for (let { skills: {[|primaryRENAME|]: primary/*END SUFFIX*/, secondary } } of multiRobots) {
+-//     console.log(primary);
+-// }
+-
+-
+-
+-// === findRenameLocations ===
+-// === /renameDestructuringNestedBindingElement.ts ===
+-// --- (line: 8) skipped ---
+-// for (let { skills: {primary: primaryA, secondary: secondaryA } } of multiRobots) {
+-//     console.log(primaryA);
+-// }
+-// for (let { skills: {/*START PREFIX*/primary: /*RENAME*/[|primaryRENAME|], secondary } } of multiRobots) {
+-//     console.log([|primaryRENAME|]);
+-// }
+-
+-
+-
+-// === findRenameLocations ===
+-// === /renameDestructuringNestedBindingElement.ts ===
+-// --- (line: 8) skipped ---
+-// for (let { skills: {primary: primaryA, secondary: secondaryA } } of multiRobots) {
+-//     console.log(primaryA);
+-// }
+-// for (let { skills: {/*START PREFIX*/primary: [|primaryRENAME|], secondary } } of multiRobots) {
++// for (/*RENAME*/let { skills: {primary: primaryA, secondary: secondaryA } } of multiRobots) {
++//     console.log(primaryA);
++// }
++// for (let { skills: {primary, secondary } } of multiRobots) {
++//     console.log(primary);
++// }
++
++
++
++// === findRenameLocations ===
++// === /renameDestructuringNestedBindingElement.ts ===
++// --- (line: 8) skipped ---
++// for (let { skills: {primary: primaryA, secondary: secondaryA } } of multiRobots) {
++//     console.log(primaryA);
++// }
++// for (/*RENAME*/let { skills: {primary, secondary } } of multiRobots) {
++//     console.log(primary);
++// }
++
++
++
++// === findRenameLocations ===
++// === /renameDestructuringNestedBindingElement.ts ===
++// --- (line: 8) skipped ---
++// for (let { skills: {primary: primaryA, secondary: secondaryA } } of multiRobots) {
++//     console.log(primaryA);
++// }
++// for (let { skills: {[|primaryRENAME|], secondary } } of multiRobots) {
+ //     console.log(/*RENAME*/[|primaryRENAME|]);
+ // }

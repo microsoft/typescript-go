@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForGlobals_1.ts ===
-
 // /*FIND ALL REFS*/var global = 2;
 // 
 // class foo {
@@ -9,10 +8,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForGlobals_1.ts ===
-
 // var /*FIND ALL REFS*/[|global|] = 2;
 // 
 // class foo {
@@ -32,17 +29,13 @@
 // 
 // var k = [|global|];
 
-
 // === /referencesForGlobals_2.ts ===
-
 // var m = [|global|];
-
 
 
 
 // === findAllReferences ===
 // === /referencesForGlobals_1.ts ===
-
 // var [|global|] = 2;
 // 
 // class foo {
@@ -62,17 +55,13 @@
 // 
 // var k = [|global|];
 
-
 // === /referencesForGlobals_2.ts ===
-
 // var m = [|global|];
-
 
 
 
 // === findAllReferences ===
 // === /referencesForGlobals_1.ts ===
-
 // var [|global|] = 2;
 // 
 // class foo {
@@ -92,17 +81,13 @@
 // 
 // var k = /*FIND ALL REFS*/[|global|];
 
-
 // === /referencesForGlobals_2.ts ===
-
 // var m = [|global|];
-
 
 
 
 // === findAllReferences ===
 // === /referencesForGlobals_1.ts ===
-
 // var [|global|] = 2;
 // 
 // class foo {
@@ -122,7 +107,5 @@
 // 
 // var k = [|global|];
 
-
 // === /referencesForGlobals_2.ts ===
-
 // var m = /*FIND ALL REFS*/[|global|];

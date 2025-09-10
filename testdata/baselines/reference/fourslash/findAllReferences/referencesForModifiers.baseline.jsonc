@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForModifiers.ts ===
-
 // /*FIND ALL REFS*/declare abstract class C1 {
 //     static a;
 //     readonly b;
@@ -9,10 +8,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForModifiers.ts ===
-
 // declare /*FIND ALL REFS*/abstract class C1 {
 //     static a;
 //     readonly b;
@@ -21,10 +18,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForModifiers.ts ===
-
 // declare abstract class C1 {
 //     /*FIND ALL REFS*/static a;
 //     readonly b;
@@ -34,10 +29,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForModifiers.ts ===
-
 // declare abstract class C1 {
 //     static a;
 //     /*FIND ALL REFS*/readonly b;
@@ -48,10 +41,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForModifiers.ts ===
-
 // declare abstract class C1 {
 //     static a;
 //     readonly b;
@@ -63,10 +54,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForModifiers.ts ===
-
 // declare abstract class C1 {
 //     static a;
 //     readonly b;
@@ -79,10 +68,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForModifiers.ts ===
-
 // declare abstract class C1 {
 //     static a;
 //     readonly b;
@@ -97,10 +84,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForModifiers.ts ===
-
 // --- (line: 4) skipped ---
 //     protected d;
 //     private e;
@@ -112,10 +97,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForModifiers.ts ===
-
 // --- (line: 6) skipped ---
 // }
 // const enum E {
@@ -125,10 +108,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForModifiers.ts ===
-
 // --- (line: 7) skipped ---
 // const enum E {
 // }
@@ -137,10 +118,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForModifiers.ts ===
-
 // --- (line: 7) skipped ---
 // const enum E {
 // }

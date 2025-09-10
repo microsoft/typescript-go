@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsRootSymbols.ts ===
-
 // interface I { /*FIND ALL REFS*/[|x|]: {}; }
 // interface J { x: {}; }
 // declare const o: (I | J) & { x: string };
@@ -8,10 +7,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsRootSymbols.ts ===
-
 // interface I { x: {}; }
 // interface J { /*FIND ALL REFS*/[|x|]: {}; }
 // declare const o: (I | J) & { x: string };
@@ -19,10 +16,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsRootSymbols.ts ===
-
 // interface I { x: {}; }
 // interface J { x: {}; }
 // declare const o: (I | J) & { /*FIND ALL REFS*/[|x|]: string };
@@ -30,10 +25,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsRootSymbols.ts ===
-
 // interface I { [|x|]: {}; }
 // interface J { [|x|]: {}; }
 // declare const o: (I | J) & { [|x|]: string };

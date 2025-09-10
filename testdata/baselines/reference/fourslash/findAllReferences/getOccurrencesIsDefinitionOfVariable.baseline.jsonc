@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfVariable.ts ===
-
 // /*FIND ALL REFS*/var x = 0;
 // var assignmentRightHandSide = x;
 // var assignmentRightHandSide2 = 1 + x;
@@ -9,10 +8,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfVariable.ts ===
-
 // var /*FIND ALL REFS*/[|x|] = 0;
 // var assignmentRightHandSide = [|x|];
 // var assignmentRightHandSide2 = 1 + [|x|];
@@ -33,10 +30,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfVariable.ts ===
-
 // var [|x|] = 0;
 // var assignmentRightHandSide = /*FIND ALL REFS*/[|x|];
 // var assignmentRightHandSide2 = 1 + [|x|];
@@ -57,10 +52,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfVariable.ts ===
-
 // var [|x|] = 0;
 // var assignmentRightHandSide = [|x|];
 // var assignmentRightHandSide2 = 1 + /*FIND ALL REFS*/[|x|];
@@ -81,10 +74,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfVariable.ts ===
-
 // var [|x|] = 0;
 // var assignmentRightHandSide = [|x|];
 // var assignmentRightHandSide2 = 1 + [|x|];
@@ -105,10 +96,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfVariable.ts ===
-
 // var [|x|] = 0;
 // var assignmentRightHandSide = [|x|];
 // var assignmentRightHandSide2 = 1 + [|x|];
@@ -129,10 +118,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfVariable.ts ===
-
 // var [|x|] = 0;
 // var assignmentRightHandSide = [|x|];
 // var assignmentRightHandSide2 = 1 + [|x|];
@@ -153,10 +140,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfVariable.ts ===
-
 // var [|x|] = 0;
 // var assignmentRightHandSide = [|x|];
 // var assignmentRightHandSide2 = 1 + [|x|];
@@ -177,10 +162,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfVariable.ts ===
-
 // var [|x|] = 0;
 // var assignmentRightHandSide = [|x|];
 // var assignmentRightHandSide2 = 1 + [|x|];
@@ -201,10 +184,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfVariable.ts ===
-
 // var [|x|] = 0;
 // var assignmentRightHandSide = [|x|];
 // var assignmentRightHandSide2 = 1 + [|x|];
@@ -225,10 +206,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfVariable.ts ===
-
 // var [|x|] = 0;
 // var assignmentRightHandSide = [|x|];
 // var assignmentRightHandSide2 = 1 + [|x|];
@@ -249,10 +228,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfVariable.ts ===
-
 // var [|x|] = 0;
 // var assignmentRightHandSide = [|x|];
 // var assignmentRightHandSide2 = 1 + [|x|];
@@ -273,10 +250,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfVariable.ts ===
-
 // var [|x|] = 0;
 // var assignmentRightHandSide = [|x|];
 // var assignmentRightHandSide2 = 1 + [|x|];
@@ -297,10 +272,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfVariable.ts ===
-
 // var [|x|] = 0;
 // var assignmentRightHandSide = [|x|];
 // var assignmentRightHandSide2 = 1 + [|x|];
@@ -321,10 +294,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfVariable.ts ===
-
 // var [|x|] = 0;
 // var assignmentRightHandSide = [|x|];
 // var assignmentRightHandSide2 = 1 + [|x|];
@@ -345,10 +316,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfVariable.ts ===
-
 // var [|x|] = 0;
 // var assignmentRightHandSide = [|x|];
 // var assignmentRightHandSide2 = 1 + [|x|];

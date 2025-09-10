@@ -1,6 +1,5 @@
 // === goToDefinition ===
 // === /goToDefinitionObjectLiteralProperties.ts ===
-
 // var o = {
 //     [|value|]: 0,
 //     get getter() {return 0 },
@@ -9,7 +8,7 @@
 //     es6StyleMethod() { }
 // };
 // 
-// o./*GO TO DEFINITION*/value;
+// o./*GOTO DEF*/value;
 // o.getter;
 // o.setter;
 // o.method;
@@ -17,10 +16,8 @@
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionObjectLiteralProperties.ts ===
-
 // var o = {
 //     value: 0,
 //     get [|getter|]() {return 0 },
@@ -30,17 +27,15 @@
 // };
 // 
 // o.value;
-// o./*GO TO DEFINITION*/getter;
+// o./*GOTO DEF*/getter;
 // o.setter;
 // o.method;
 // o.es6StyleMethod;
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionObjectLiteralProperties.ts ===
-
 // var o = {
 //     value: 0,
 //     get getter() {return 0 },
@@ -51,16 +46,14 @@
 // 
 // o.value;
 // o.getter;
-// o./*GO TO DEFINITION*/setter;
+// o./*GOTO DEF*/setter;
 // o.method;
 // o.es6StyleMethod;
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionObjectLiteralProperties.ts ===
-
 // var o = {
 //     value: 0,
 //     get getter() {return 0 },
@@ -72,15 +65,13 @@
 // o.value;
 // o.getter;
 // o.setter;
-// o./*GO TO DEFINITION*/method;
+// o./*GOTO DEF*/method;
 // o.es6StyleMethod;
-
 
 
 
 // === goToDefinition ===
 // === /goToDefinitionObjectLiteralProperties.ts ===
-
 // var o = {
 //     value: 0,
 //     get getter() {return 0 },
@@ -93,4 +84,4 @@
 // o.getter;
 // o.setter;
 // o.method;
-// o./*GO TO DEFINITION*/es6StyleMethod;
+// o./*GOTO DEF*/es6StyleMethod;

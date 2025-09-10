@@ -1,6 +1,5 @@
 // === goToDefinition ===
 // === /a.ts ===
-
 // export module Module {
 // }
 // export class [|Class|] {
@@ -10,7 +9,5 @@
 //     x;
 // }
 
-
 // === /b.ts ===
-
-// export {/*GO TO DEFINITION*/Class} from "./a";
+// export {/*GOTO DEF*/Class} from "./a";

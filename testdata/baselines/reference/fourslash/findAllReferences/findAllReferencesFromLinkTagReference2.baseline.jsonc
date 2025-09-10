@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /a.ts ===
-
 // enum E {
 //     /** {@link /*FIND ALL REFS*/[|Foo|]} */
 //     [|Foo|]

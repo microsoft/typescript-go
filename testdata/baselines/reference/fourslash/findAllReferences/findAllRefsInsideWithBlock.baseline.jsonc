@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsInsideWithBlock.ts ===
-
 // /*FIND ALL REFS*/var x = 0;
 // 
 // with ({}) {
@@ -9,10 +8,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsInsideWithBlock.ts ===
-
 // var /*FIND ALL REFS*/[|x|] = 0;
 // 
 // with ({}) {
@@ -24,10 +21,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsInsideWithBlock.ts ===
-
 // var [|x|] = 0;
 // 
 // with ({}) {
@@ -39,10 +34,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsInsideWithBlock.ts ===
-
 // var [|x|] = 0;
 // 
 // with ({}) {

@@ -1,6 +1,5 @@
 // === goToDefinition ===
 // === /a.ts ===
-
 // export module Module {
 // }
 // export class [|Class|] {
@@ -10,18 +9,14 @@
 //     x;
 // }
 
-
 // === /e.ts ===
-
 //  import {M, C, I} from "./d";
-//  var c = new /*GO TO DEFINITION*/C();
-
+//  var c = new /*GOTO DEF*/C();
 
 
 
 // === goToDefinition ===
 // === /a.ts ===
-
 // export module Module {
 // }
 // export class [|Class|] {
@@ -31,8 +26,6 @@
 //     x;
 // }
 
-
 // === /e.ts ===
-
-//  import {M, /*GO TO DEFINITION*/C, I} from "./d";
+//  import {M, /*GOTO DEF*/C, I} from "./d";
 //  var c = new C();

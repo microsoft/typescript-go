@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForImports.ts ===
-
 // declare module "jquery" {
 //     function $(s: string): any;
 //     export = $;
@@ -11,10 +10,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForImports.ts ===
-
 // declare module "jquery" {
 //     function $(s: string): any;
 //     export = $;
@@ -25,10 +22,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForImports.ts ===
-
 // declare module "jquery" {
 //     function $(s: string): any;
 //     export = $;
@@ -39,10 +34,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForImports.ts ===
-
 // --- (line: 3) skipped ---
 // }
 // import $ = require("jquery");
@@ -51,10 +44,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForImports.ts ===
-
 // --- (line: 3) skipped ---
 // }
 // import $ = require("jquery");

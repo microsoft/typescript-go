@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForClassLocal.ts ===
-
 // var n = 14;
 // 
 // class foo {
@@ -12,10 +11,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForClassLocal.ts ===
-
 // var n = 14;
 // 
 // class foo {
@@ -34,10 +31,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForClassLocal.ts ===
-
 // var n = 14;
 // 
 // class foo {
@@ -56,10 +51,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForClassLocal.ts ===
-
 // var n = 14;
 // 
 // class foo {

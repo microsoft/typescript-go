@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForClassParameter.ts ===
-
 // var p = 2;
 // 
 // class p { }
@@ -14,10 +13,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForClassParameter.ts ===
-
 // var p = 2;
 // 
 // class p { }
@@ -37,10 +34,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForClassParameter.ts ===
-
 // var p = 2;
 // 
 // class p { }
@@ -60,10 +55,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForClassParameter.ts ===
-
 // var p = 2;
 // 
 // class p { }

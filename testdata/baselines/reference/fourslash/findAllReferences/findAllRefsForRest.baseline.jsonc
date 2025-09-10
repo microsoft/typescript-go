@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsForRest.ts ===
-
 // interface Gen {
 //     x: number
 //     /*FIND ALL REFS*/[|parent|]: Gen;
@@ -12,10 +11,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForRest.ts ===
-
 // interface Gen {
 //     x: number
 //     [|parent|]: Gen;

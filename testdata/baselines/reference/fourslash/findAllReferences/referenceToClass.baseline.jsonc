@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referenceToClass_1.ts ===
-
 // class /*FIND ALL REFS*/[|foo|] {
 //     public n: [|foo|];
 //     public foo: number;
@@ -15,17 +14,13 @@
 //     var k: [|foo|] = null;
 // }
 
-
 // === /referenceToClass_2.ts ===
-
 // var k: [|foo|];
-
 
 
 
 // === findAllReferences ===
 // === /referenceToClass_1.ts ===
-
 // class [|foo|] {
 //     public n: /*FIND ALL REFS*/[|foo|];
 //     public foo: number;
@@ -40,17 +35,13 @@
 //     var k: [|foo|] = null;
 // }
 
-
 // === /referenceToClass_2.ts ===
-
 // var k: [|foo|];
-
 
 
 
 // === findAllReferences ===
 // === /referenceToClass_1.ts ===
-
 // class [|foo|] {
 //     public n: [|foo|];
 //     public foo: number;
@@ -65,17 +56,13 @@
 //     var k: [|foo|] = null;
 // }
 
-
 // === /referenceToClass_2.ts ===
-
 // var k: [|foo|];
-
 
 
 
 // === findAllReferences ===
 // === /referenceToClass_1.ts ===
-
 // class [|foo|] {
 //     public n: [|foo|];
 //     public foo: number;
@@ -90,17 +77,13 @@
 //     var k: [|foo|] = null;
 // }
 
-
 // === /referenceToClass_2.ts ===
-
 // var k: [|foo|];
-
 
 
 
 // === findAllReferences ===
 // === /referenceToClass_1.ts ===
-
 // class [|foo|] {
 //     public n: [|foo|];
 //     public foo: number;
@@ -115,17 +98,13 @@
 //     var k: /*FIND ALL REFS*/[|foo|] = null;
 // }
 
-
 // === /referenceToClass_2.ts ===
-
 // var k: [|foo|];
-
 
 
 
 // === findAllReferences ===
 // === /referenceToClass_1.ts ===
-
 // class [|foo|] {
 //     public n: [|foo|];
 //     public foo: number;
@@ -140,7 +119,5 @@
 //     var k: [|foo|] = null;
 // }
 
-
 // === /referenceToClass_2.ts ===
-
 // var k: /*FIND ALL REFS*/[|foo|];

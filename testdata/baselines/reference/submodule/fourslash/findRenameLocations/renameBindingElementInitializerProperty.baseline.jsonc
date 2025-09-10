@@ -1,0 +1,52 @@
+// === findRenameLocations ===
+// === /renameBindingElementInitializerProperty.ts ===
+// function f({required, optional = /*RENAME*/[|requiredRENAME|], optional = [|requiredRENAME|]}: {required: number, optional?: number}) {
+//     console.log("required", [|requiredRENAME|]);
+//     console.log("optional", optional);
+// }
+// 
+// f({required: 10});
+
+
+
+// === findRenameLocations ===
+// === /renameBindingElementInitializerProperty.ts ===
+// function f({required, optional = required}: {/*RENAME*/[|requiredRENAME|], optional = required}: {[|requiredRENAME|]: number, optional?: number}) {
+//     console.log("required", required);
+//     console.log("optional", optional);
+// }
+// 
+// f({[|requiredRENAME|]: 10});
+
+
+
+// === findRenameLocations ===
+// === /renameBindingElementInitializerProperty.ts ===
+// function f({[|requiredRENAME|], optional = [|requiredRENAME|]}: {required: number, optional?: number}) {
+//     console.log("required", /*RENAME*/[|requiredRENAME|]);
+//     console.log("optional", optional);
+// }
+// 
+// f({required: 10});
+
+
+
+// === findRenameLocations ===
+// === /renameBindingElementInitializerProperty.ts ===
+// function f(/*RENAME*/{required, optional = required}: {required: number, optional?: number}) {
+//     console.log("required", required);
+//     console.log("optional", optional);
+// }
+// 
+// f({required: 10});
+
+
+
+// === findRenameLocations ===
+// === /renameBindingElementInitializerProperty.ts ===
+// function f({[|requiredRENAME|], optional = required}: {[|requiredRENAME|]: number, optional?: number}) {
+//     console.log("required", required);
+//     console.log("optional", optional);
+// }
+// 
+// f({/*RENAME*/[|requiredRENAME|]: 10});

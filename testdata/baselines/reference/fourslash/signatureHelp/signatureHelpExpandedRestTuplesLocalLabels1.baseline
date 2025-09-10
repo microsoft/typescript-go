@@ -1,187 +1,187 @@
 // === SignatureHelp ===
 === /signatureHelpExpandedRestTuplesLocalLabels1.ts ===
-//  interface AppleInfo {
-//    color: "green" | "red";
-//  }
+// interface AppleInfo {
+//   color: "green" | "red";
+// }
 // 
-//  interface BananaInfo {
-//    curvature: number;
-//  }
+// interface BananaInfo {
+//   curvature: number;
+// }
 // 
-//  type FruitAndInfo1 = ["apple", AppleInfo] | ["banana", BananaInfo];
+// type FruitAndInfo1 = ["apple", AppleInfo] | ["banana", BananaInfo];
 // 
-//  function logFruitTuple1(...[fruit, info]: FruitAndInfo1) {}
-//  logFruitTuple1();
-//                 ^
+// function logFruitTuple1(...[fruit, info]: FruitAndInfo1) {}
+// logFruitTuple1();
+//                ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple1(**fruit: "apple"**, info: AppleInfo): void
 // | ----------------------------------------------------------------------
 // 
-//  function logFruitTuple2(...[, info]: FruitAndInfo1) {}
-//  logFruitTuple2();
-//                 ^
+// function logFruitTuple2(...[, info]: FruitAndInfo1) {}
+// logFruitTuple2();
+//                ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple2(**arg_0: "apple"**, info: AppleInfo): void
 // | ----------------------------------------------------------------------
-//  logFruitTuple2("apple", );
-//                          ^
+// logFruitTuple2("apple", );
+//                         ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple2(arg_0: "apple", **info: AppleInfo**): void
 // | ----------------------------------------------------------------------
 // 
-//  function logFruitTuple3(...[fruit, ...rest]: FruitAndInfo1) {}
-//  logFruitTuple3();
-//                 ^
+// function logFruitTuple3(...[fruit, ...rest]: FruitAndInfo1) {}
+// logFruitTuple3();
+//                ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple3(**fruit: "apple"**, rest_0: AppleInfo): void
 // | ----------------------------------------------------------------------
-//  logFruitTuple3("apple", );
-//                          ^
+// logFruitTuple3("apple", );
+//                         ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple3(fruit: "apple", **rest_0: AppleInfo**): void
 // | ----------------------------------------------------------------------
-//  function logFruitTuple4(...[fruit, ...[info]]: FruitAndInfo1) {}
-//  logFruitTuple4();
-//                 ^
+// function logFruitTuple4(...[fruit, ...[info]]: FruitAndInfo1) {}
+// logFruitTuple4();
+//                ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple4(**fruit: "apple"**, info: AppleInfo): void
 // | ----------------------------------------------------------------------
-//  logFruitTuple4("apple", );
-//                          ^
+// logFruitTuple4("apple", );
+//                         ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple4(fruit: "apple", **info: AppleInfo**): void
 // | ----------------------------------------------------------------------
 // 
-//  type FruitAndInfo2 = ["apple", ...AppleInfo[]] | ["banana", ...BananaInfo[]];
+// type FruitAndInfo2 = ["apple", ...AppleInfo[]] | ["banana", ...BananaInfo[]];
 // 
-//  function logFruitTuple5(...[fruit, firstInfo]: FruitAndInfo2) {}
-//  logFruitTuple5();
-//                 ^
+// function logFruitTuple5(...[fruit, firstInfo]: FruitAndInfo2) {}
+// logFruitTuple5();
+//                ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple5(**fruit: "apple"**, ...firstInfo_n: AppleInfo[]): void
 // | ----------------------------------------------------------------------
-//  logFruitTuple5("apple", );
-//                          ^
+// logFruitTuple5("apple", );
+//                         ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple5(fruit: "apple", **...firstInfo_n: AppleInfo[]**): void
 // | ----------------------------------------------------------------------
 // 
-//  function logFruitTuple6(...[fruit, ...fruitInfo]: FruitAndInfo2) {}
-//  logFruitTuple6();
-//                 ^
+// function logFruitTuple6(...[fruit, ...fruitInfo]: FruitAndInfo2) {}
+// logFruitTuple6();
+//                ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple6(**fruit: "apple"**, ...fruitInfo: AppleInfo[]): void
 // | ----------------------------------------------------------------------
-//  logFruitTuple6("apple", );
-//                          ^
+// logFruitTuple6("apple", );
+//                         ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple6(fruit: "apple", **...fruitInfo: AppleInfo[]**): void
 // | ----------------------------------------------------------------------
 // 
-//  type FruitAndInfo3 = ["apple", ...AppleInfo[], number] | ["banana", ...BananaInfo[], number];
+// type FruitAndInfo3 = ["apple", ...AppleInfo[], number] | ["banana", ...BananaInfo[], number];
 // 
-//  function logFruitTuple7(...[fruit, fruitInfoOrNumber, secondFruitInfoOrNumber]: FruitAndInfo3) {}
-//  logFruitTuple7();
-//                 ^
+// function logFruitTuple7(...[fruit, fruitInfoOrNumber, secondFruitInfoOrNumber]: FruitAndInfo3) {}
+// logFruitTuple7();
+//                ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple7(**fruit: "apple"**, ...fruitInfoOrNumber_n: AppleInfo[], secondFruitInfoOrNumber: number): void
 // | ----------------------------------------------------------------------
-//  logFruitTuple7("apple", );
-//                          ^
+// logFruitTuple7("apple", );
+//                         ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple7(fruit: "apple", **...fruitInfoOrNumber_n: AppleInfo[]**, secondFruitInfoOrNumber: number): void
 // | ----------------------------------------------------------------------
-//  logFruitTuple7("apple", { color: "red" }, );
-//                                            ^
+// logFruitTuple7("apple", { color: "red" }, );
+//                                           ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple7(fruit: "apple", ...fruitInfoOrNumber_n: AppleInfo[], **secondFruitInfoOrNumber: number**): void
 // | ----------------------------------------------------------------------
 // 
-//  function logFruitTuple8(...[fruit, , secondFruitInfoOrNumber]: FruitAndInfo3) {}
-//  logFruitTuple8();
-//                 ^
+// function logFruitTuple8(...[fruit, , secondFruitInfoOrNumber]: FruitAndInfo3) {}
+// logFruitTuple8();
+//                ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple8(**fruit: "apple"**, ...arg_1: AppleInfo[], secondFruitInfoOrNumber: number): void
 // | ----------------------------------------------------------------------
-//  logFruitTuple8("apple", );
-//                          ^
+// logFruitTuple8("apple", );
+//                         ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple8(fruit: "apple", **...arg_1: AppleInfo[]**, secondFruitInfoOrNumber: number): void
 // | ----------------------------------------------------------------------
-//  logFruitTuple8("apple", { color: "red" }, );
-//                                            ^
+// logFruitTuple8("apple", { color: "red" }, );
+//                                           ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple8(fruit: "apple", ...arg_1: AppleInfo[], **secondFruitInfoOrNumber: number**): void
 // | ----------------------------------------------------------------------
 // 
-//  function logFruitTuple9(...[...[fruit, fruitInfoOrNumber, secondFruitInfoOrNumber]]: FruitAndInfo3) {}
-//  logFruitTuple9();
-//                 ^
+// function logFruitTuple9(...[...[fruit, fruitInfoOrNumber, secondFruitInfoOrNumber]]: FruitAndInfo3) {}
+// logFruitTuple9();
+//                ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple9(**fruit: "apple"**, ...fruitInfoOrNumber_n: AppleInfo[], secondFruitInfoOrNumber: number): void
 // | ----------------------------------------------------------------------
-//  logFruitTuple9("apple", );
-//                          ^
+// logFruitTuple9("apple", );
+//                         ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple9(fruit: "apple", **...fruitInfoOrNumber_n: AppleInfo[]**, secondFruitInfoOrNumber: number): void
 // | ----------------------------------------------------------------------
-//  logFruitTuple9("apple", { color: "red" }, );
-//                                            ^
+// logFruitTuple9("apple", { color: "red" }, );
+//                                           ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple9(fruit: "apple", ...fruitInfoOrNumber_n: AppleInfo[], **secondFruitInfoOrNumber: number**): void
 // | ----------------------------------------------------------------------
 // 
-//  function logFruitTuple10(...[fruit, {}, secondFruitInfoOrNumber]: FruitAndInfo3) {}
-//  logFruitTuple10();
-//                  ^
+// function logFruitTuple10(...[fruit, {}, secondFruitInfoOrNumber]: FruitAndInfo3) {}
+// logFruitTuple10();
+//                 ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple10(**fruit: "apple"**, ...arg_1: AppleInfo[], secondFruitInfoOrNumber: number): void
 // | ----------------------------------------------------------------------
-//  logFruitTuple10("apple", );
-//                           ^
+// logFruitTuple10("apple", );
+//                          ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple10(fruit: "apple", **...arg_1: AppleInfo[]**, secondFruitInfoOrNumber: number): void
 // | ----------------------------------------------------------------------
-//  logFruitTuple10("apple", { color: "red" }, );
-//                                             ^
+// logFruitTuple10("apple", { color: "red" }, );
+//                                            ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple10(fruit: "apple", ...arg_1: AppleInfo[], **secondFruitInfoOrNumber: number**): void
 // | ----------------------------------------------------------------------
 // 
-//  function logFruitTuple11(...{}: FruitAndInfo3) {}
-//  logFruitTuple11();
-//                  ^
+// function logFruitTuple11(...{}: FruitAndInfo3) {}
+// logFruitTuple11();
+//                 ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple11(**arg_0: "apple"**, ...arg_1: AppleInfo[], arg_2: number): void
 // | ----------------------------------------------------------------------
-//  logFruitTuple11("apple", );
-//                           ^
+// logFruitTuple11("apple", );
+//                          ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple11(arg_0: "apple", **...arg_1: AppleInfo[]**, arg_2: number): void
 // | ----------------------------------------------------------------------
-//  logFruitTuple11("apple", { color: "red" }, );
-//                                             ^
+// logFruitTuple11("apple", { color: "red" }, );
+//                                            ^
 // | ----------------------------------------------------------------------
 // | logFruitTuple11(arg_0: "apple", ...arg_1: AppleInfo[], **arg_2: number**): void
 // | ----------------------------------------------------------------------
-//  function withPair(...[first, second]: [number, named: string]) {}
-//  withPair();
-//           ^
+// function withPair(...[first, second]: [number, named: string]) {}
+// withPair();
+//          ^
 // | ----------------------------------------------------------------------
 // | withPair(**first: number**, named: string): void
 // | ----------------------------------------------------------------------
-//  withPair(101, );
-//                ^
+// withPair(101, );
+//               ^
 // | ----------------------------------------------------------------------
 // | withPair(first: number, **named: string**): void
 // | ----------------------------------------------------------------------
 [
   {
     "marker": {
-      "Position": 251,
+      "Position": 242,
       "LSPosition": {
         "line": 11,
-        "character": 16
+        "character": 15
       },
       "Name": "1",
       "Data": {}
@@ -217,10 +217,10 @@
   },
   {
     "marker": {
-      "Position": 327,
+      "Position": 316,
       "LSPosition": {
         "line": 14,
-        "character": 16
+        "character": 15
       },
       "Name": "2",
       "Data": {}
@@ -256,10 +256,10 @@
   },
   {
     "marker": {
-      "Position": 355,
+      "Position": 343,
       "LSPosition": {
         "line": 15,
-        "character": 25
+        "character": 24
       },
       "Name": "3",
       "Data": {}
@@ -295,10 +295,10 @@
   },
   {
     "marker": {
-      "Position": 439,
+      "Position": 425,
       "LSPosition": {
         "line": 18,
-        "character": 16
+        "character": 15
       },
       "Name": "4",
       "Data": {}
@@ -334,10 +334,10 @@
   },
   {
     "marker": {
-      "Position": 467,
+      "Position": 452,
       "LSPosition": {
         "line": 19,
-        "character": 25
+        "character": 24
       },
       "Name": "5",
       "Data": {}
@@ -373,10 +373,10 @@
   },
   {
     "marker": {
-      "Position": 552,
+      "Position": 535,
       "LSPosition": {
         "line": 21,
-        "character": 16
+        "character": 15
       },
       "Name": "6",
       "Data": {}
@@ -412,10 +412,10 @@
   },
   {
     "marker": {
-      "Position": 580,
+      "Position": 562,
       "LSPosition": {
         "line": 22,
-        "character": 25
+        "character": 24
       },
       "Name": "7",
       "Data": {}
@@ -451,10 +451,10 @@
   },
   {
     "marker": {
-      "Position": 746,
+      "Position": 725,
       "LSPosition": {
         "line": 27,
-        "character": 16
+        "character": 15
       },
       "Name": "8",
       "Data": {}
@@ -490,10 +490,10 @@
   },
   {
     "marker": {
-      "Position": 774,
+      "Position": 752,
       "LSPosition": {
         "line": 28,
-        "character": 25
+        "character": 24
       },
       "Name": "9",
       "Data": {}
@@ -529,10 +529,10 @@
   },
   {
     "marker": {
-      "Position": 863,
+      "Position": 839,
       "LSPosition": {
         "line": 31,
-        "character": 16
+        "character": 15
       },
       "Name": "10",
       "Data": {}
@@ -568,10 +568,10 @@
   },
   {
     "marker": {
-      "Position": 891,
+      "Position": 866,
       "LSPosition": {
         "line": 32,
-        "character": 25
+        "character": 24
       },
       "Name": "11",
       "Data": {}
@@ -607,10 +607,10 @@
   },
   {
     "marker": {
-      "Position": 1106,
+      "Position": 1078,
       "LSPosition": {
         "line": 37,
-        "character": 16
+        "character": 15
       },
       "Name": "12",
       "Data": {}
@@ -652,10 +652,10 @@
   },
   {
     "marker": {
-      "Position": 1134,
+      "Position": 1105,
       "LSPosition": {
         "line": 38,
-        "character": 25
+        "character": 24
       },
       "Name": "13",
       "Data": {}
@@ -697,10 +697,10 @@
   },
   {
     "marker": {
-      "Position": 1180,
+      "Position": 1150,
       "LSPosition": {
         "line": 39,
-        "character": 43
+        "character": 42
       },
       "Name": "14",
       "Data": {}
@@ -742,10 +742,10 @@
   },
   {
     "marker": {
-      "Position": 1282,
+      "Position": 1250,
       "LSPosition": {
         "line": 42,
-        "character": 16
+        "character": 15
       },
       "Name": "15",
       "Data": {}
@@ -787,10 +787,10 @@
   },
   {
     "marker": {
-      "Position": 1310,
+      "Position": 1277,
       "LSPosition": {
         "line": 43,
-        "character": 25
+        "character": 24
       },
       "Name": "16",
       "Data": {}
@@ -832,10 +832,10 @@
   },
   {
     "marker": {
-      "Position": 1356,
+      "Position": 1322,
       "LSPosition": {
         "line": 44,
-        "character": 43
+        "character": 42
       },
       "Name": "17",
       "Data": {}
@@ -877,10 +877,10 @@
   },
   {
     "marker": {
-      "Position": 1480,
+      "Position": 1444,
       "LSPosition": {
         "line": 47,
-        "character": 16
+        "character": 15
       },
       "Name": "18",
       "Data": {}
@@ -922,10 +922,10 @@
   },
   {
     "marker": {
-      "Position": 1508,
+      "Position": 1471,
       "LSPosition": {
         "line": 48,
-        "character": 25
+        "character": 24
       },
       "Name": "19",
       "Data": {}
@@ -967,10 +967,10 @@
   },
   {
     "marker": {
-      "Position": 1554,
+      "Position": 1516,
       "LSPosition": {
         "line": 49,
-        "character": 43
+        "character": 42
       },
       "Name": "20",
       "Data": {}
@@ -1012,10 +1012,10 @@
   },
   {
     "marker": {
-      "Position": 1660,
+      "Position": 1620,
       "LSPosition": {
         "line": 52,
-        "character": 17
+        "character": 16
       },
       "Name": "21",
       "Data": {}
@@ -1057,10 +1057,10 @@
   },
   {
     "marker": {
-      "Position": 1689,
+      "Position": 1648,
       "LSPosition": {
         "line": 53,
-        "character": 26
+        "character": 25
       },
       "Name": "22",
       "Data": {}
@@ -1102,10 +1102,10 @@
   },
   {
     "marker": {
-      "Position": 1736,
+      "Position": 1694,
       "LSPosition": {
         "line": 54,
-        "character": 44
+        "character": 43
       },
       "Name": "23",
       "Data": {}
@@ -1147,10 +1147,10 @@
   },
   {
     "marker": {
-      "Position": 1808,
+      "Position": 1764,
       "LSPosition": {
         "line": 57,
-        "character": 17
+        "character": 16
       },
       "Name": "24",
       "Data": {}
@@ -1192,10 +1192,10 @@
   },
   {
     "marker": {
-      "Position": 1837,
+      "Position": 1792,
       "LSPosition": {
         "line": 58,
-        "character": 26
+        "character": 25
       },
       "Name": "25",
       "Data": {}
@@ -1237,10 +1237,10 @@
   },
   {
     "marker": {
-      "Position": 1884,
+      "Position": 1838,
       "LSPosition": {
         "line": 59,
-        "character": 44
+        "character": 43
       },
       "Name": "26",
       "Data": {}
@@ -1282,10 +1282,10 @@
   },
   {
     "marker": {
-      "Position": 1964,
+      "Position": 1916,
       "LSPosition": {
         "line": 61,
-        "character": 10
+        "character": 9
       },
       "Name": "27",
       "Data": {}
@@ -1310,10 +1310,10 @@
   },
   {
     "marker": {
-      "Position": 1982,
+      "Position": 1933,
       "LSPosition": {
         "line": 62,
-        "character": 15
+        "character": 14
       },
       "Name": "28",
       "Data": {}

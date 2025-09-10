@@ -1,6 +1,5 @@
 // === goToDefinition ===
 // === /goToDefinitionShorthandProperty02.ts ===
-
 // let x = {
-//     f/*GO TO DEFINITION*/oo
+//     f/*GOTO DEF*/oo
 // }

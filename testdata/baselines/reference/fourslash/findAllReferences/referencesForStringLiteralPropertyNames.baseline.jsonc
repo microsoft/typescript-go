@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForStringLiteralPropertyNames.ts ===
-
 // class Foo {
 //     public "/*FIND ALL REFS*/[|ss|]": any;
 // }

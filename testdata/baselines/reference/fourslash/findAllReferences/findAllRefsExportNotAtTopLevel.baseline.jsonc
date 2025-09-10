@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsExportNotAtTopLevel.ts ===
-
 // {
 //     /*FIND ALL REFS*/export const x = 0;
 //     x;
@@ -8,10 +7,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsExportNotAtTopLevel.ts ===
-
 // {
 //     export const /*FIND ALL REFS*/[|x|] = 0;
 //     [|x|];
@@ -19,10 +16,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsExportNotAtTopLevel.ts ===
-
 // {
 //     export const [|x|] = 0;
 //     /*FIND ALL REFS*/[|x|];

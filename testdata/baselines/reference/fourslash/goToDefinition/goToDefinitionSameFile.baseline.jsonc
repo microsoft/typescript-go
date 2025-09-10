@@ -1,6 +1,5 @@
 // === goToDefinition ===
 // === /goToDefinitionSameFile.ts ===
-
 // var [|localVariable|];
 // function localFunction() { }
 // class localClass { }
@@ -8,7 +7,7 @@
 // module localModule{ export var foo = 1;}
 // 
 // 
-// /*GO TO DEFINITION*/localVariable = 1;
+// /*GOTO DEF*/localVariable = 1;
 // localFunction();
 // var foo = new localClass();
 // class fooCls implements localInterface { }
@@ -16,10 +15,8 @@
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionSameFile.ts ===
-
 // var localVariable;
 // function [|localFunction|]() { }
 // class localClass { }
@@ -28,17 +25,15 @@
 // 
 // 
 // localVariable = 1;
-// /*GO TO DEFINITION*/localFunction();
+// /*GOTO DEF*/localFunction();
 // var foo = new localClass();
 // class fooCls implements localInterface { }
 // var fooVar = localModule.foo;
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionSameFile.ts ===
-
 // var localVariable;
 // function localFunction() { }
 // class [|localClass|] { }
@@ -48,16 +43,14 @@
 // 
 // localVariable = 1;
 // localFunction();
-// var foo = new /*GO TO DEFINITION*/localClass();
+// var foo = new /*GOTO DEF*/localClass();
 // class fooCls implements localInterface { }
 // var fooVar = localModule.foo;
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionSameFile.ts ===
-
 // var localVariable;
 // function localFunction() { }
 // class localClass { }
@@ -68,15 +61,13 @@
 // localVariable = 1;
 // localFunction();
 // var foo = new localClass();
-// class fooCls implements /*GO TO DEFINITION*/localInterface { }
+// class fooCls implements /*GOTO DEF*/localInterface { }
 // var fooVar = localModule.foo;
-
 
 
 
 // === goToDefinition ===
 // === /goToDefinitionSameFile.ts ===
-
 // var localVariable;
 // function localFunction() { }
 // class localClass { }
@@ -88,4 +79,4 @@
 // localFunction();
 // var foo = new localClass();
 // class fooCls implements localInterface { }
-// var fooVar = /*GO TO DEFINITION*/localModule.foo;
+// var fooVar = /*GOTO DEF*/localModule.foo;

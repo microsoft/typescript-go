@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForInheritedProperties.ts ===
-
 // interface interface1 {
 //     /*FIND ALL REFS*/[|doStuff|](): void;
 // }
@@ -24,10 +23,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForInheritedProperties.ts ===
-
 // interface interface1 {
 //     [|doStuff|](): void;
 // }
@@ -51,10 +48,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForInheritedProperties.ts ===
-
 // interface interface1 {
 //     [|doStuff|](): void;
 // }
@@ -78,10 +73,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForInheritedProperties.ts ===
-
 // interface interface1 {
 //     [|doStuff|](): void;
 // }

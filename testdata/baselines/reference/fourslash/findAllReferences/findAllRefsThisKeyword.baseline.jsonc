@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsThisKeyword.ts ===
-
 // /*FIND ALL REFS*/[|this|];
 // function f(this) {
 //     return this;
@@ -9,10 +8,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsThisKeyword.ts ===
-
 // this;
 // function f(/*FIND ALL REFS*/[|this|]) {
 //     return [|this|];
@@ -23,10 +20,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsThisKeyword.ts ===
-
 // this;
 // function f([|this|]) {
 //     return /*FIND ALL REFS*/[|this|];
@@ -37,10 +32,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsThisKeyword.ts ===
-
 // this;
 // function f(this) {
 //     return this;
@@ -52,10 +45,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsThisKeyword.ts ===
-
 // this;
 // function f(this) {
 //     return this;
@@ -67,10 +58,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsThisKeyword.ts ===
-
 // --- (line: 4) skipped ---
 // }
 // class C {
@@ -86,10 +75,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsThisKeyword.ts ===
-
 // --- (line: 4) skipped ---
 // }
 // class C {
@@ -105,10 +92,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsThisKeyword.ts ===
-
 // --- (line: 10) skipped ---
 //         () => this;
 //     }
@@ -125,10 +110,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsThisKeyword.ts ===
-
 // --- (line: 10) skipped ---
 //         () => this;
 //     }
@@ -145,10 +128,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsThisKeyword.ts ===
-
 // --- (line: 17) skipped ---
 //     }
 // }
@@ -158,10 +139,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsThisKeyword.ts ===
-
 // --- (line: 17) skipped ---
 //     }
 // }

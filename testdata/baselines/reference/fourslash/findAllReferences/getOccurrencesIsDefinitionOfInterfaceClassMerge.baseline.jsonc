@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfInterfaceClassMerge.ts ===
-
 // /*FIND ALL REFS*/interface Numbers {
 //     p: number;
 // }
@@ -9,10 +8,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfInterfaceClassMerge.ts ===
-
 // interface /*FIND ALL REFS*/[|Numbers|] {
 //     p: number;
 // }
@@ -29,10 +26,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfInterfaceClassMerge.ts ===
-
 // interface Numbers {
 //     p: number;
 // }
@@ -44,10 +39,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfInterfaceClassMerge.ts ===
-
 // interface [|Numbers|] {
 //     p: number;
 // }
@@ -64,10 +57,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfInterfaceClassMerge.ts ===
-
 // --- (line: 3) skipped ---
 // interface Numbers {
 //     m: number;
@@ -80,10 +71,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfInterfaceClassMerge.ts ===
-
 // interface [|Numbers|] {
 //     p: number;
 // }
@@ -100,10 +89,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfInterfaceClassMerge.ts ===
-
 // interface [|Numbers|] {
 //     p: number;
 // }
@@ -120,10 +107,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfInterfaceClassMerge.ts ===
-
 // interface [|Numbers|] {
 //     p: number;
 // }

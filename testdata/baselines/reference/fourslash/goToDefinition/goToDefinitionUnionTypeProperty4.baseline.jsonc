@@ -1,6 +1,5 @@
 // === goToDefinition ===
 // === /goToDefinitionUnionTypeProperty4.ts ===
-
 // interface SnapCrackle {
 //     [|pop|](): string;
 // }
@@ -17,4 +16,4 @@
 // var magnitude: Magnitude;
 // var snapcrackle: SnapCrackle;
 // 
-// var x = (snapcrackle || magnitude || art)./*GO TO DEFINITION*/pop;
+// var x = (snapcrackle || magnitude || art)./*GOTO DEF*/pop;

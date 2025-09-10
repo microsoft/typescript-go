@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllReferencesLinkTag1.ts ===
-
 // class C {
 //     m/*FIND ALL REFS*/[|m|]() { }
 //     n = 1
@@ -20,10 +19,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllReferencesLinkTag1.ts ===
-
 // class C {
 //     m() { }
 //     n/*FIND ALL REFS*/[|n|] = 1
@@ -31,7 +28,6 @@
 //     /**
 //      * {@link m}
 // // --- (line: 7) skipped ---
-
 
 // --- (line: 19) skipped ---
 //      * @see {C.n}
@@ -45,10 +41,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllReferencesLinkTag1.ts ===
-
 // class C {
 //     m() { }
 //     n = 1
@@ -57,7 +51,6 @@
 //      * {@link m}
 //      * @see {m}
 // // --- (line: 8) skipped ---
-
 
 // --- (line: 26) skipped ---
 //     /**
@@ -71,10 +64,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllReferencesLinkTag1.ts ===
-
 // --- (line: 33) skipped ---
 // }
 // 
@@ -87,10 +78,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllReferencesLinkTag1.ts ===
-
 // --- (line: 34) skipped ---
 // 
 // interface I {
@@ -103,10 +92,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllReferencesLinkTag1.ts ===
-
 // --- (line: 54) skipped ---
 // }
 // 
@@ -120,10 +107,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllReferencesLinkTag1.ts ===
-
 // class C/*FIND ALL REFS*/[|C|] {
 //     m() { }
 //     n = 1
@@ -161,10 +146,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllReferencesLinkTag1.ts ===
-
 // --- (line: 32) skipped ---
 //     r() { }
 // }

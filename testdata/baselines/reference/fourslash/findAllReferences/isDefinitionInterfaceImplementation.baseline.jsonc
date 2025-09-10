@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /isDefinitionInterfaceImplementation.ts ===
-
 // interface I {
 //     /*FIND ALL REFS*/[|M|](): void;
 // }
@@ -14,10 +13,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /isDefinitionInterfaceImplementation.ts ===
-
 // interface I {
 //     [|M|](): void;
 // }

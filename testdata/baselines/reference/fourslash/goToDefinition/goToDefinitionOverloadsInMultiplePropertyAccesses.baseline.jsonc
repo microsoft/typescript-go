@@ -1,6 +1,5 @@
 // === goToDefinition ===
 // === /goToDefinitionOverloadsInMultiplePropertyAccesses.ts ===
-
 // namespace A {
 //     export namespace B {
 //         export function f(value: number): void;
@@ -8,4 +7,4 @@
 //         export function f(value: number | string) {}
 //     }
 // }
-// A.B./*GO TO DEFINITION*/f("");
+// A.B./*GOTO DEF*/f("");

@@ -1,59 +1,46 @@
 // === goToDefinition ===
 // === /a.ts ===
-
-// im/*GO TO DEFINITION*/port.meta;
+// im/*GOTO DEF*/port.meta;
 // function f() { new.target; }
 
 
 
-
 // === goToDefinition ===
 // === /a.ts ===
-
-// import.met/*GO TO DEFINITION*/a;
+// import.met/*GOTO DEF*/a;
 // function f() { new.target; }
 
 
 
-
 // === goToDefinition ===
 // === /a.ts ===
-
 // import.meta;
-// function f() { n/*GO TO DEFINITION*/ew.target; }
-
+// function f() { n/*GOTO DEF*/ew.target; }
 
 
 
 // === goToDefinition ===
 // === /a.ts ===
-
 // import.meta;
-// function f() { new.t/*GO TO DEFINITION*/[|f|]() { new.target; }
-
+// function f() { new.t/*GOTO DEF*/[|f|]() { new.target; }
 
 
 
 // === goToDefinition ===
 // === /b.ts ===
-
-// im/*GO TO DEFINITION*/port.m;
+// im/*GOTO DEF*/port.m;
 // class c { constructor() { new.target; } }
 
 
 
-
 // === goToDefinition ===
 // === /b.ts ===
-
 // import.m;
-// class c { constructor() { n/*GO TO DEFINITION*/ew.target; } }
-
+// class c { constructor() { n/*GOTO DEF*/ew.target; } }
 
 
 
 // === goToDefinition ===
 // === /b.ts ===
-
 // import.m;
-// class c { constructor() { new.t/*GO TO DEFINITION*/[|c|] { constructor() { new.target; } }
+// class c { constructor() { new.t/*GOTO DEF*/[|c|] { constructor() { new.target; } }

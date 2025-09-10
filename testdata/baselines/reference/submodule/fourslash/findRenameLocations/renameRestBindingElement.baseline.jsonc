@@ -1,0 +1,10 @@
+// === findRenameLocations ===
+// === /renameRestBindingElement.ts ===
+// interface I {
+//     a: number;
+//     b: number;
+//     c: number;
+// }
+// function foo(/*RENAME*/{ a, ...rest }: I) {
+//     rest;
+// }

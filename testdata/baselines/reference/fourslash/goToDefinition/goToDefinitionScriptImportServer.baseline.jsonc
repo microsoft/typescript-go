@@ -1,26 +1,21 @@
 // === goToDefinition ===
 // === /home/src/workspaces/project/moduleThing.ts ===
-
-// import /*GO TO DEFINITION*/"./scriptThing";
+// import /*GOTO DEF*/"./scriptThing";
 // import "./stylez.css";
 // import "./foo.txt";
 
 
 
-
 // === goToDefinition ===
 // === /home/src/workspaces/project/moduleThing.ts ===
-
 // import "./scriptThing";
-// import /*GO TO DEFINITION*/"./stylez.css";
+// import /*GOTO DEF*/"./stylez.css";
 // import "./foo.txt";
 
 
 
-
 // === goToDefinition ===
 // === /home/src/workspaces/project/moduleThing.ts ===
-
 // import "./scriptThing";
 // import "./stylez.css";
-// import /*GO TO DEFINITION*/"./foo.txt";
+// import /*GOTO DEF*/"./foo.txt";

@@ -1,0 +1,11 @@
+// === findRenameLocations ===
+// === /foo.ts ===
+// /*RENAME*/export function bar() { return "bar"; }
+// import('./foo').then(({ bar }) => undefined);
+
+
+
+// === findRenameLocations ===
+// === /foo.ts ===
+// export function bar() { return "bar"; }
+// import('./foo').then((/*RENAME*/{ bar }) => undefined);

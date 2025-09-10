@@ -1,0 +1,17 @@
+// === findRenameLocations ===
+// === /a.ts ===
+// /*RENAME*/export var a;
+
+
+
+// === findRenameLocations ===
+// === /b.ts ===
+// /*RENAME*/import { a } from './a';
+// export { a };
+
+
+
+// === findRenameLocations ===
+// === /b.ts ===
+// import { a } from './a';
+// /*RENAME*/export { a };

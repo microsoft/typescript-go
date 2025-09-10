@@ -1,6 +1,5 @@
 // === goToDefinition ===
 // === /goToDefinitionIndexSignature.ts ===
-
 // interface I {
 //     [|[x: string]: boolean;|]
 // }
@@ -12,7 +11,7 @@
 //     [x: `${string}b`]: string;
 // }
 // declare const i: I;
-// i./*GO TO DEFINITION*/foo;
+// i./*GOTO DEF*/foo;
 // declare const ij: I | J;
 // ij.foo;
 // declare const k: K;
@@ -20,10 +19,8 @@
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionIndexSignature.ts ===
-
 // interface I {
 //     [|[x: string]: boolean;|]
 // }
@@ -37,7 +34,7 @@
 // declare const i: I;
 // i.foo;
 // declare const ij: I | J;
-// ij./*GO TO DEFINITION*/foo;
+// ij./*GOTO DEF*/foo;
 // declare const k: K;
 // k.a;
 // k.b;
@@ -45,10 +42,8 @@
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionIndexSignature.ts ===
-
 // --- (line: 4) skipped ---
 //     [x: string]: number;
 // }
@@ -61,16 +56,14 @@
 // declare const ij: I | J;
 // ij.foo;
 // declare const k: K;
-// k./*GO TO DEFINITION*/a;
+// k./*GOTO DEF*/a;
 // k.b;
 // k.ab;
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionIndexSignature.ts ===
-
 // --- (line: 5) skipped ---
 // }
 // interface K {
@@ -83,15 +76,13 @@
 // ij.foo;
 // declare const k: K;
 // k.a;
-// k./*GO TO DEFINITION*/b;
+// k./*GOTO DEF*/b;
 // k.ab;
-
 
 
 
 // === goToDefinition ===
 // === /goToDefinitionIndexSignature.ts ===
-
 // --- (line: 4) skipped ---
 //     [x: string]: number;
 // }
@@ -106,4 +97,4 @@
 // declare const k: K;
 // k.a;
 // k.b;
-// k./*GO TO DEFINITION*/ab;
+// k./*GOTO DEF*/ab;

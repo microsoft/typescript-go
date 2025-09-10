@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsDestructureGeneric.ts ===
-
 // interface I<T> {
 //     /*FIND ALL REFS*/[|x|]: boolean;
 // }
@@ -9,10 +8,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsDestructureGeneric.ts ===
-
 // interface I<T> {
 //     [|x|]: boolean;
 // }

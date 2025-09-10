@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsForComputedProperties2.ts ===
-
 // interface I {
 //     [/*FIND ALL REFS*/[|42|]](): void;
 // }
@@ -15,10 +14,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForComputedProperties2.ts ===
-
 // interface I {
 //     [[|42|]](): void;
 // }
@@ -33,10 +30,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForComputedProperties2.ts ===
-
 // interface I {
 //     [[|42|]](): void;
 // }

@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForContextuallyTypedObjectLiteralProperties.ts ===
-
 // interface IFoo { /*FIND ALL REFS*/[|xy|]: number; }
 // 
 // // Assignment

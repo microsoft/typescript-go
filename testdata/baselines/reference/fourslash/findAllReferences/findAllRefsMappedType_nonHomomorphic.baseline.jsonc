@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsMappedType_nonHomomorphic.ts ===
-
 // function f(x: { [K in "m"]: number; }) {
 //     x./*FIND ALL REFS*/[|m|];
 //     x.[|m|]
@@ -8,10 +7,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsMappedType_nonHomomorphic.ts ===
-
 // function f(x: { [K in "m"]: number; }) {
 //     x.[|m|];
 //     x./*FIND ALL REFS*/[|m|]

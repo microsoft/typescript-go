@@ -1,6 +1,5 @@
 // === goToDefinition ===
 // === /goToDefinitionRest.ts ===
-
 // interface Gen {
 //     x: number;
 //     [|parent|]: Gen;
@@ -8,4 +7,4 @@
 // }
 // let t: Gen;
 // var { x, ...rest } = t;
-// rest./*GO TO DEFINITION*/parent;
+// rest./*GOTO DEF*/parent;

@@ -1,8 +1,8 @@
 // === QuickInfo ===
 === /quickInfoOnParameterProperties.ts ===
 // interface IFoo {
-//   /** this is the name of blabla 
-//    *  - use blabla 
+//   /** this is the name of blabla
+//    *  - use blabla
 //    *  @example blabla
 //    */
 //   name?: string;
@@ -12,7 +12,7 @@
 // class Foo implements IFoo {
 //   //public name: string = '';
 //   constructor(
-//     public name: string, // documentation should leech and work ! 
+//     public name: string, // documentation should leech and work !
 //              ^
 // | ----------------------------------------------------------------------
 // | ```tsx
@@ -26,7 +26,7 @@
 // 
 // // test2 work
 // class Foo2 implements IFoo {
-//   public name: string = ''; // documentation leeched and work ! 
+//   public name: string = ''; // documentation leeched and work !
 //            ^
 // | ----------------------------------------------------------------------
 // | ```tsx
@@ -42,7 +42,7 @@
 [
   {
     "marker": {
-      "Position": 226,
+      "Position": 224,
       "LSPosition": {
         "line": 12,
         "character": 13
@@ -59,7 +59,7 @@
   },
   {
     "marker": {
-      "Position": 347,
+      "Position": 344,
       "LSPosition": {
         "line": 19,
         "character": 11

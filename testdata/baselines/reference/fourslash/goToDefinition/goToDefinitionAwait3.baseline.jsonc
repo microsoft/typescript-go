@@ -1,9 +1,8 @@
 // === goToDefinition ===
 // === /goToDefinitionAwait3.ts ===
-
 // class C {
 //     [|notAsync|]() {
-//       /*GO TO DEFINITION*/await Promise.resolve(0);
+//       /*GOTO DEF*/await Promise.resolve(0);
 //     }
 // 
 //     async foo() {
@@ -11,16 +10,14 @@
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionAwait3.ts ===
-
 // class C {
 //     notAsync() {
 //       await Promise.resolve(0);
 //     }
 // 
 //     async [|foo|]() {
-//       /*GO TO DEFINITION*/await Promise.resolve(0);
+//       /*GOTO DEF*/await Promise.resolve(0);
 //     }
 // }

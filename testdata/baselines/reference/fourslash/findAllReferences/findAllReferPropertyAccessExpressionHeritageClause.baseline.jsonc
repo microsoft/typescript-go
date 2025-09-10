@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllReferPropertyAccessExpressionHeritageClause.ts ===
-
 // class B {}
 // function foo() {
 //     return {/*FIND ALL REFS*/[|B|]: B};
@@ -10,10 +9,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllReferPropertyAccessExpressionHeritageClause.ts ===
-
 // class B {}
 // function foo() {
 //     return {[|B|]: B};
@@ -23,10 +20,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllReferPropertyAccessExpressionHeritageClause.ts ===
-
 // class B {}
 // function foo() {
 //     return {[|B|]: B};

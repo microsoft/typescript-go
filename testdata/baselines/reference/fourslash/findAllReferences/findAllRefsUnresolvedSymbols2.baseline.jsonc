@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsUnresolvedSymbols2.ts ===
-
 // import { /*FIND ALL REFS*/[|Bar|] } from "does-not-exist";
 // 
 // let a: [|Bar|];
@@ -12,10 +11,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnresolvedSymbols2.ts ===
-
 // import { [|Bar|] } from "does-not-exist";
 // 
 // let a: /*FIND ALL REFS*/[|Bar|];
@@ -27,10 +24,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnresolvedSymbols2.ts ===
-
 // import { [|Bar|] } from "does-not-exist";
 // 
 // let a: [|Bar|];
@@ -42,10 +37,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnresolvedSymbols2.ts ===
-
 // import { [|Bar|] } from "does-not-exist";
 // 
 // let a: [|Bar|];
@@ -57,10 +50,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnresolvedSymbols2.ts ===
-
 // import { [|Bar|] } from "does-not-exist";
 // 
 // let a: [|Bar|];
@@ -72,10 +63,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnresolvedSymbols2.ts ===
-
 // import { [|Bar|] } from "does-not-exist";
 // 
 // let a: [|Bar|];
@@ -87,10 +76,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnresolvedSymbols2.ts ===
-
 // import { [|Bar|] } from "does-not-exist";
 // 
 // let a: [|Bar|];
@@ -102,10 +89,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnresolvedSymbols2.ts ===
-
 // import { Bar } from "does-not-exist";
 // 
 // let a: Bar;
@@ -117,10 +102,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnresolvedSymbols2.ts ===
-
 // import { Bar } from "does-not-exist";
 // 
 // let a: Bar;
@@ -132,10 +115,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnresolvedSymbols2.ts ===
-
 // --- (line: 4) skipped ---
 // let c: Bar<string, number>;
 // let d: Bar.X;
@@ -144,10 +125,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnresolvedSymbols2.ts ===
-
 // --- (line: 4) skipped ---
 // let c: Bar<string, number>;
 // let d: Bar.X;

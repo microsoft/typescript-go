@@ -1,13 +1,11 @@
 // === findAllReferences ===
 // === /referencesForUnionProperties.ts ===
-
 // interface One {
 //     common: { /*FIND ALL REFS*/[|a|]: number; };
 // }
 // 
 // interface Base {
 // // --- (line: 6) skipped ---
-
 
 // --- (line: 17) skipped ---
 // 
@@ -17,10 +15,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForUnionProperties.ts ===
-
 // interface One {
 //     common: { a: number; };
 // }
@@ -45,10 +41,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForUnionProperties.ts ===
-
 // interface One {
 //     common: { [|a|]: number; };
 // }

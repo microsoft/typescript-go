@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForInheritedProperties2.ts ===
-
 // interface interface1 {
 //     /*FIND ALL REFS*/[|doStuff|](): void;
 // }

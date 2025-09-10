@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForNoContext.ts ===
-
 // module modTest {
 //     //Declare
 //     export var modVar:number;
@@ -12,10 +11,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForNoContext.ts ===
-
 // --- (line: 6) skipped ---
 //     modVar++;
 // 
@@ -28,10 +25,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForNoContext.ts ===
-
 // --- (line: 12) skipped ---
 //     function testFn(){
 //         //Increments
@@ -44,10 +39,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForNoContext.ts ===
-
 // --- (line: 13) skipped ---
 //         //Increments
 //         modVar++;

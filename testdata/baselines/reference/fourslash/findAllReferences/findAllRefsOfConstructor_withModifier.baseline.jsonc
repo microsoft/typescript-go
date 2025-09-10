@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsOfConstructor_withModifier.ts ===
-
 // class [|X|] {
 //     public /*FIND ALL REFS*/constructor() {}
 // }

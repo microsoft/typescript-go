@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesOnStatic_1.ts ===
-
 // var n = 43;
 // 
 // class foo {
@@ -12,10 +11,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesOnStatic_1.ts ===
-
 // var n = 43;
 // 
 // class foo {
@@ -40,17 +37,13 @@
 //     }
 // }
 
-
 // === /referencesOnStatic_2.ts ===
-
 // var q = foo.[|n|];
-
 
 
 
 // === findAllReferences ===
 // === /referencesOnStatic_1.ts ===
-
 // var n = 43;
 // 
 // class foo {
@@ -75,17 +68,13 @@
 //     }
 // }
 
-
 // === /referencesOnStatic_2.ts ===
-
 // var q = foo.[|n|];
-
 
 
 
 // === findAllReferences ===
 // === /referencesOnStatic_1.ts ===
-
 // var n = 43;
 // 
 // class foo {
@@ -110,17 +99,13 @@
 //     }
 // }
 
-
 // === /referencesOnStatic_2.ts ===
-
 // var q = foo.[|n|];
-
 
 
 
 // === findAllReferences ===
 // === /referencesOnStatic_1.ts ===
-
 // var n = 43;
 // 
 // class foo {
@@ -145,17 +130,13 @@
 //     }
 // }
 
-
 // === /referencesOnStatic_2.ts ===
-
 // var q = foo.[|n|];
-
 
 
 
 // === findAllReferences ===
 // === /referencesOnStatic_1.ts ===
-
 // var n = 43;
 // 
 // class foo {
@@ -180,17 +161,13 @@
 //     }
 // }
 
-
 // === /referencesOnStatic_2.ts ===
-
 // var q = foo.[|n|];
-
 
 
 
 // === findAllReferences ===
 // === /referencesOnStatic_1.ts ===
-
 // var n = 43;
 // 
 // class foo {
@@ -215,17 +192,13 @@
 //     }
 // }
 
-
 // === /referencesOnStatic_2.ts ===
-
 // var q = foo.[|n|];
-
 
 
 
 // === findAllReferences ===
 // === /referencesOnStatic_1.ts ===
-
 // var n = 43;
 // 
 // class foo {
@@ -250,17 +223,13 @@
 //     }
 // }
 
-
 // === /referencesOnStatic_2.ts ===
-
 // var q = foo.[|n|];
-
 
 
 
 // === findAllReferences ===
 // === /referencesOnStatic_1.ts ===
-
 // var n = 43;
 // 
 // class foo {
@@ -285,7 +254,5 @@
 //     }
 // }
 
-
 // === /referencesOnStatic_2.ts ===
-
 // var q = foo./*FIND ALL REFS*/[|n|];

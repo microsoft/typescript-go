@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /home/src/workspaces/project/a/index.ts ===
-
 // namespace NS {
 //     export function /*FIND ALL REFS*/[|FA|]() {
 //         FB();
@@ -10,10 +9,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /home/src/workspaces/project/a/index.ts ===
-
 // --- (line: 3) skipped ---
 //     }
 // }
@@ -30,10 +27,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /home/src/workspaces/project/a/index.ts ===
-
 // --- (line: 4) skipped ---
 // }
 // 
@@ -49,10 +44,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /home/src/workspaces/project/b/index.ts ===
-
 // namespace NS {
 //     export function /*FIND ALL REFS*/[|FB|]() {}
 // }
@@ -62,10 +55,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /home/src/workspaces/project/b/index.ts ===
-
 // namespace NS {
 //     export function FB() {}
 // }
@@ -78,10 +69,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /home/src/workspaces/project/b/index.ts ===
-
 // namespace NS {
 //     export function FB() {}
 // }
@@ -94,10 +83,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /home/src/workspaces/project/c/index.ts ===
-
 // namespace NS {
 //     export function /*FIND ALL REFS*/[|FC|]() {}
 // }
@@ -107,10 +94,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /home/src/workspaces/project/c/index.ts ===
-
 // namespace NS {
 //     export function FC() {}
 // }
@@ -123,10 +108,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /home/src/workspaces/project/c/index.ts ===
-
 // namespace NS {
 //     export function FC() {}
 // }

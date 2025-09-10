@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForDeclarationKeywords.ts ===
-
 // class Base {}
 // interface Implemented1 {}
 // /*FIND ALL REFS*/class C1 extends Base implements Implemented1 {
@@ -11,10 +10,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForDeclarationKeywords.ts ===
-
 // class Base {}
 // interface Implemented1 {}
 // class C1 /*FIND ALL REFS*/extends Base implements Implemented1 {
@@ -25,10 +22,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForDeclarationKeywords.ts ===
-
 // class Base {}
 // interface Implemented1 {}
 // class C1 extends Base /*FIND ALL REFS*/implements Implemented1 {
@@ -39,10 +34,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForDeclarationKeywords.ts ===
-
 // --- (line: 14) skipped ---
 // const z = 1;
 // interface Implemented2 {}
@@ -52,10 +45,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForDeclarationKeywords.ts ===
-
 // class Base {}
 // interface Implemented1 {}
 // class C1 extends Base implements Implemented1 {
@@ -67,10 +58,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForDeclarationKeywords.ts ===
-
 // class Base {}
 // interface Implemented1 {}
 // class C1 extends Base implements Implemented1 {
@@ -83,10 +72,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForDeclarationKeywords.ts ===
-
 // --- (line: 3) skipped ---
 //     get e() { return 1; }
 //     set e(v) {}
@@ -99,10 +86,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForDeclarationKeywords.ts ===
-
 // --- (line: 3) skipped ---
 //     get e() { return 1; }
 //     set e(v) {}
@@ -115,10 +100,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForDeclarationKeywords.ts ===
-
 // --- (line: 15) skipped ---
 // interface Implemented2 {}
 // interface Implemented3 {}
@@ -127,10 +110,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForDeclarationKeywords.ts ===
-
 // --- (line: 4) skipped ---
 //     set e(v) {}
 // }
@@ -143,10 +124,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForDeclarationKeywords.ts ===
-
 // --- (line: 5) skipped ---
 // }
 // interface I1 extends Base { }
@@ -159,10 +138,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForDeclarationKeywords.ts ===
-
 // --- (line: 6) skipped ---
 // interface I1 extends Base { }
 // type T = { }
@@ -175,10 +152,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForDeclarationKeywords.ts ===
-
 // --- (line: 7) skipped ---
 // type T = { }
 // enum E { }
@@ -191,10 +166,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForDeclarationKeywords.ts ===
-
 // --- (line: 8) skipped ---
 // enum E { }
 // namespace N { }
@@ -207,10 +180,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForDeclarationKeywords.ts ===
-
 // --- (line: 9) skipped ---
 // namespace N { }
 // module M { }
@@ -223,10 +194,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForDeclarationKeywords.ts ===
-
 // --- (line: 10) skipped ---
 // module M { }
 // function fn() {}
@@ -240,10 +209,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForDeclarationKeywords.ts ===
-
 // --- (line: 11) skipped ---
 // function fn() {}
 // var x;

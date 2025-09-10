@@ -1,9 +1,8 @@
 // === goToDefinition ===
 // === /goToDefinitionOverrideJsdoc.ts ===
-
 // export class C extends CompletelyUndefined {
 //     /**
-//      * @override/*GO TO DEFINITION*/
+//      * @override/*GOTO DEF*/
 //      * @returns {{}}
 //      */
 //     static foo() {

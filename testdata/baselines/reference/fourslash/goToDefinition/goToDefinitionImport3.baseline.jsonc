@@ -1,4 +1,3 @@
 // === goToDefinition ===
 // === /a.ts ===
-
-// import { foo } from     /*GO TO DEFINITION*/ "./b";
+// import { foo } from     /*GOTO DEF*/ "./b";

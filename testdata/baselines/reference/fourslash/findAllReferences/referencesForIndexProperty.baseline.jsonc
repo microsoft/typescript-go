@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForIndexProperty.ts ===
-
 // class Foo {
 //     /*FIND ALL REFS*/[|property|]: number;
 //     method(): void { }
@@ -12,10 +11,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForIndexProperty.ts ===
-
 // class Foo {
 //     property: number;
 //     /*FIND ALL REFS*/[|method|](): void { }
@@ -27,10 +24,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForIndexProperty.ts ===
-
 // class Foo {
 //     [|property|]: number;
 //     method(): void { }
@@ -42,10 +37,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForIndexProperty.ts ===
-
 // class Foo {
 //     property: number;
 //     [|method|](): void { }

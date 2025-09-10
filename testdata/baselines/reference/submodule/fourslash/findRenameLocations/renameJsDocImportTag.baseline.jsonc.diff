@@ -1,0 +1,15 @@
+--- old.renameJsDocImportTag.baseline.jsonc
++++ new.renameJsDocImportTag.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+ // === findRenameLocations ===
+ // === /a.js ===
+ // /**
+-//  * @import { /*START PREFIX*/A as [|ARENAME|] } from "./b";
++//  * @import { A } from "./b";
+ //  */
+ // 
+ // /**
+-//  * @param { [|ARENAME|]/*RENAME*/ } a
++//  * @param { A/*RENAME*/[|ARENAME|] } a
+ //  */
+ // function f(a) {}

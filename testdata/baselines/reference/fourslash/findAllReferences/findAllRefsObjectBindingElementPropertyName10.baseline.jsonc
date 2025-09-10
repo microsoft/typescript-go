@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsObjectBindingElementPropertyName10.ts ===
-
 // interface Recursive {
 //     /*FIND ALL REFS*/[|next|]?: Recursive;
 //     value: any;
@@ -11,10 +10,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsObjectBindingElementPropertyName10.ts ===
-
 // interface Recursive {
 //     next?: Recursive;
 //     value: any;
@@ -25,10 +22,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsObjectBindingElementPropertyName10.ts ===
-
 // interface Recursive {
 //     [|next|]?: Recursive;
 //     value: any;
@@ -39,10 +34,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsObjectBindingElementPropertyName10.ts ===
-
 // interface Recursive {
 //     [|next|]?: Recursive;
 //     value: any;

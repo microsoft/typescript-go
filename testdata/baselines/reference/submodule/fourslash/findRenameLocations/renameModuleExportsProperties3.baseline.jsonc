@@ -1,0 +1,11 @@
+// === findRenameLocations ===
+// === /a.js ===
+// /*RENAME*/class A {}
+// module.exports = { A }
+
+
+
+// === findRenameLocations ===
+// === /a.js ===
+// class [|ARENAME|] {}
+// module.exports = { /*RENAME*/[|ARENAME|] }

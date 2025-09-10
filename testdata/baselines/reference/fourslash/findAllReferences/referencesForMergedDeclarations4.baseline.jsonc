@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForMergedDeclarations4.ts ===
-
 // /*FIND ALL REFS*/class testClass {
 //     static staticMethod() { }
 //     method() { }
@@ -9,10 +8,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForMergedDeclarations4.ts ===
-
 // class /*FIND ALL REFS*/[|testClass|] {
 //     static staticMethod() { }
 //     method() { }
@@ -35,10 +32,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForMergedDeclarations4.ts ===
-
 // class testClass {
 //     static staticMethod() { }
 //     method() { }
@@ -52,10 +47,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForMergedDeclarations4.ts ===
-
 // class [|testClass|] {
 //     static staticMethod() { }
 //     method() { }
@@ -78,10 +71,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForMergedDeclarations4.ts ===
-
 // class [|testClass|] {
 //     static staticMethod() { }
 //     method() { }
@@ -104,10 +95,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForMergedDeclarations4.ts ===
-
 // class [|testClass|] {
 //     static staticMethod() { }
 //     method() { }
@@ -130,10 +119,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForMergedDeclarations4.ts ===
-
 // class [|testClass|] {
 //     static staticMethod() { }
 //     method() { }
@@ -156,10 +143,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForMergedDeclarations4.ts ===
-
 // class [|testClass|] {
 //     static staticMethod() { }
 //     method() { }
@@ -182,10 +167,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForMergedDeclarations4.ts ===
-
 // class [|testClass|] {
 //     static staticMethod() { }
 //     method() { }
@@ -208,10 +191,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForMergedDeclarations4.ts ===
-
 // class [|testClass|] {
 //     static staticMethod() { }
 //     method() { }
@@ -234,10 +215,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForMergedDeclarations4.ts ===
-
 // class [|testClass|] {
 //     static staticMethod() { }
 //     method() { }

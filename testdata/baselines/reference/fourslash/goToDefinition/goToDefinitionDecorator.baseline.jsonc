@@ -1,6 +1,5 @@
 // === goToDefinition ===
 // === /a.ts ===
-
 // function [|decorator|](target) {
 //     return target;
 // }
@@ -8,10 +7,8 @@
 //     return target => target;
 // }
 
-
 // === /b.ts ===
-
-// @/*GO TO DEFINITION*/decorator
+// @/*GOTO DEF*/decorator
 // class C {
 //     @decoratorFactory(a, "22", true)
 //     method() {}
@@ -19,10 +16,8 @@
 
 
 
-
 // === goToDefinition ===
 // === /a.ts ===
-
 // function decorator(target) {
 //     return target;
 // }
@@ -30,11 +25,9 @@
 //     return target => target;
 // }
 
-
 // === /b.ts ===
-
 // @decorator
 // class C {
-//     @decora/*GO TO DEFINITION*/torFactory(a, "22", true)
+//     @decora/*GOTO DEF*/torFactory(a, "22", true)
 //     method() {}
 // }

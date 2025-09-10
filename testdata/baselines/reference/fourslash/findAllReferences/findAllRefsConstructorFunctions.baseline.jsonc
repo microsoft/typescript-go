@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /a.js ===
-
 // function f() {
 //     /*FIND ALL REFS*/[|this|].x = 0;
 // }
@@ -11,10 +10,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /a.js ===
-
 // function f() {
 //     this./*FIND ALL REFS*/x = 0;
 // }
@@ -25,10 +22,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /a.js ===
-
 // function f() {
 //     this.x = 0;
 // }
@@ -39,10 +34,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /a.js ===
-
 // function f() {
 //     this.x = 0;
 // }
@@ -53,10 +46,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /a.js ===
-
 // --- (line: 3) skipped ---
 // f.prototype.setX = function() {
 //     this.x = 1;

@@ -1,11 +1,10 @@
 // === goToDefinition ===
 // === /foo.ts ===
-
 // --- (line: 5) skipped ---
 //         baz: Foo
 //     }
 // }
-// /** {@link /*GO TO DEFINITION*/Foo} foooo*/
+// /** {@link /*GOTO DEF*/Foo} foooo*/
 // const a = ""
 // /** {@link NS.Bar} ns.bar*/
 // const b = ""
@@ -13,15 +12,13 @@
 
 
 
-
 // === goToDefinition ===
 // === /foo.ts ===
-
 // --- (line: 7) skipped ---
 // }
 // /** {@link Foo} foooo*/
 // const a = ""
-// /** {@link NS./*GO TO DEFINITION*/Bar} ns.bar*/
+// /** {@link NS./*GOTO DEF*/Bar} ns.bar*/
 // const b = ""
 // /** {@link Foo f1}*/
 // const c = ""
@@ -29,15 +26,13 @@
 
 
 
-
 // === goToDefinition ===
 // === /foo.ts ===
-
 // --- (line: 9) skipped ---
 // const a = ""
 // /** {@link NS.Bar} ns.bar*/
 // const b = ""
-// /** {@link /*GO TO DEFINITION*/Foo f1}*/
+// /** {@link /*GOTO DEF*/Foo f1}*/
 // const c = ""
 // /** {@link NS.Bar ns.bar}*/
 // const d = ""
@@ -45,15 +40,13 @@
 
 
 
-
 // === goToDefinition ===
 // === /foo.ts ===
-
 // --- (line: 11) skipped ---
 // const b = ""
 // /** {@link Foo f1}*/
 // const c = ""
-// /** {@link NS./*GO TO DEFINITION*/Bar ns.bar}*/
+// /** {@link NS./*GOTO DEF*/Bar ns.bar}*/
 // const d = ""
 // /** {@link d }dd*/
 // const e = ""
@@ -62,38 +55,32 @@
 
 
 
-
 // === goToDefinition ===
 // === /foo.ts ===
-
 // --- (line: 12) skipped ---
 // /** {@link Foo f1}*/
 // const c = ""
 // /** {@link NS.Bar ns.bar}*/
 // const [|d|] = ""
-// /** {@link /*GO TO DEFINITION*/d }dd*/
+// /** {@link /*GOTO DEF*/d }dd*/
 // const e = ""
 // /** @param x {@link Foo} */
 // function foo(x) { }
 
 
 
-
 // === goToDefinition ===
 // === /foo.ts ===
-
 // --- (line: 15) skipped ---
 // const d = ""
 // /** {@link d }dd*/
 // const e = ""
-// /** @param x {@link /*GO TO DEFINITION*/Foo} */
+// /** @param x {@link /*GOTO DEF*/Foo} */
 // function foo(x) { }
-
 
 
 
 // === goToDefinition ===
 // === /bar.ts ===
-
-// /** {@link /*GO TO DEFINITION*/Foo }dd*/
+// /** {@link /*GOTO DEF*/Foo }dd*/
 // const f = ""

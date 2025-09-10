@@ -1,0 +1,47 @@
+// === findRenameLocations ===
+// === /a.ts ===
+// /*RENAME*/import e = require("mod4");
+// e;
+// a = { e };
+// export { e };
+
+
+
+// === findRenameLocations ===
+// === /a.ts ===
+// import [|eRENAME|] = require("mod4");
+// /*RENAME*/[|eRENAME|];
+// a = { [|eRENAME|] };
+// export { e };
+
+
+
+// === findRenameLocations ===
+// === /a.ts ===
+// import [|eRENAME|] = require("mod4");
+// [|eRENAME|];
+// a = { /*RENAME*/[|eRENAME|] };
+// export { e };
+
+
+
+// === findRenameLocations ===
+// === /a.ts ===
+// import e = require("mod4");
+// e;
+// a = { e };
+// /*RENAME*/export { e };
+
+
+
+// === findRenameLocations ===
+// === /b.ts ===
+// /*RENAME*/import { e } from "./a";
+// export { e };
+
+
+
+// === findRenameLocations ===
+// === /b.ts ===
+// import { e } from "./a";
+// /*RENAME*/export { e };

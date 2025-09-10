@@ -1,0 +1,11 @@
+--- old.jsdocSatisfiesTagRename.baseline.jsonc
++++ new.jsdocSatisfiesTagRename.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+ // === findRenameLocations ===
+ // === /a.js ===
+ // /**
+-//  * @typedef {Object} [|TRENAME|]
++//  * @typedef {Object} T
+ //  * @property {number} a
+ //  */
+ // 

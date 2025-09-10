@@ -1,0 +1,4 @@
+// === findRenameLocations ===
+// === /file1.ts ===
+// /*RENAME*/var test = "foo";
+// console.log(test);

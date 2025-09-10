@@ -1,9 +1,8 @@
 // === goToDefinition ===
 // === /goToDefinitionYield3.ts ===
-
 // class C {
 //     [|notAGenerator|]() {
-//       /*GO TO DEFINITION*/yield 0;
+//       /*GOTO DEF*/yield 0;
 //     }
 // 
 //     foo*() {
@@ -11,16 +10,14 @@
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionYield3.ts ===
-
 // class C {
 //     notAGenerator() {
 //       yield 0;
 //     }
 // 
 //     foo*[||]() {
-//       /*GO TO DEFINITION*/yield 0;
+//       /*GOTO DEF*/yield 0;
 //     }
 // }

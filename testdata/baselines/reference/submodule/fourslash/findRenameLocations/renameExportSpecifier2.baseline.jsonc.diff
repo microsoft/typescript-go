@@ -1,0 +1,14 @@
+--- old.renameExportSpecifier2.baseline.jsonc
++++ new.renameExportSpecifier2.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+ // === findRenameLocations ===
+-// @providePrefixAndSuffixTextForRename: false
+-
+ // === /a.ts ===
+ // const [|nameRENAME|] = {};
+-// export { [|nameRENAME|]/*RENAME*/ };
+-
+-// === /b.ts ===
+-// import { [|nameRENAME|] } from './a';
+-// const x = [|nameRENAME|].toString();
++// export { name/*RENAME*/ };

@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /a.js ===
-
 // import { infer } from "./infer";
 // infer({
 //     m: {
@@ -11,9 +10,7 @@
 //     }
 // });
 
-
 // === /b.ts ===
-
 // import { infer } from "./infer";
 // infer({
 //     m: {
@@ -24,17 +21,13 @@
 //     }
 // });
 
-
 // === /infer.d.ts ===
-
 // export declare function infer(o: { m: Record<string, Function> } & ThisType<{ [|x|]: number }>): void;
-
 
 
 
 // === findAllReferences ===
 // === /a.js ===
-
 // import { infer } from "./infer";
 // infer({
 //     m: {
@@ -45,9 +38,7 @@
 //     }
 // });
 
-
 // === /b.ts ===
-
 // import { infer } from "./infer";
 // infer({
 //     m: {
@@ -58,7 +49,5 @@
 //     }
 // });
 
-
 // === /infer.d.ts ===
-
 // export declare function infer(o: { m: Record<string, Function> } & ThisType<{ [|x|]: number }>): void;

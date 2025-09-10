@@ -1,0 +1,19 @@
+--- old.renameJsOverloadedFunctionParameter.baseline.jsonc
++++ new.renameJsOverloadedFunctionParameter.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+ // === findRenameLocations ===
+ // === /foo.js ===
+-// --- (line: 6) skipped ---
+-//  * @param {string} x
+-//  * @returns {string} 
+-//  *
+-//  * @param {unknown} [|xRENAME|]
+-//  * @returns {unknown} 
++// --- (line: 9) skipped ---
++//  * @param {unknown} x
++//  * @returns {unknown}
+ //  */
+-// function foo([|xRENAME|]/*RENAME*/) {
++// function foo(x/*RENAME*/[|xRENAME|]) {
+ //   return [|xRENAME|];
+ // }

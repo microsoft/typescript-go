@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForMergedDeclarations8.ts ===
-
 // interface Foo { }
 // module Foo {
 //     export interface Bar { }
@@ -13,10 +12,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForMergedDeclarations8.ts ===
-
 // interface Foo { }
 // module Foo {
 //     export interface Bar { }
@@ -29,10 +26,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForMergedDeclarations8.ts ===
-
 // interface Foo { }
 // module Foo {
 //     export interface [|Bar|] { }

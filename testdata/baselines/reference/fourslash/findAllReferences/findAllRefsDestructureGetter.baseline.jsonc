@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsDestructureGetter.ts ===
-
 // class Test {
 //     get /*FIND ALL REFS*/[|x|]() { return 0; }
 // 
@@ -11,10 +10,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsDestructureGetter.ts ===
-
 // class Test {
 //     get [|x|]() { return 0; }
 // 
@@ -25,10 +22,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsDestructureGetter.ts ===
-
 // class Test {
 //     get x() { return 0; }
 // 
@@ -39,10 +34,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsDestructureGetter.ts ===
-
 // class Test {
 //     get x() { return 0; }
 // 
@@ -53,10 +46,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsDestructureGetter.ts ===
-
 // class Test {
 //     get x() { return 0; }
 // 
@@ -67,10 +58,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsDestructureGetter.ts ===
-
 // class Test {
 //     get x() { return 0; }
 // 

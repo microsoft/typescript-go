@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForGlobalsInExternalModule.ts ===
-
 // /*FIND ALL REFS*/var topLevelVar = 2;
 // var topLevelVar2 = topLevelVar;
 // 
@@ -9,10 +8,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForGlobalsInExternalModule.ts ===
-
 // var /*FIND ALL REFS*/[|topLevelVar|] = 2;
 // var topLevelVar2 = [|topLevelVar|];
 // 
@@ -22,10 +19,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForGlobalsInExternalModule.ts ===
-
 // var [|topLevelVar|] = 2;
 // var topLevelVar2 = /*FIND ALL REFS*/[|topLevelVar|];
 // 
@@ -35,10 +30,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForGlobalsInExternalModule.ts ===
-
 // var topLevelVar = 2;
 // var topLevelVar2 = topLevelVar;
 // 
@@ -50,10 +43,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForGlobalsInExternalModule.ts ===
-
 // var topLevelVar = 2;
 // var topLevelVar2 = topLevelVar;
 // 
@@ -66,10 +57,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForGlobalsInExternalModule.ts ===
-
 // var topLevelVar = 2;
 // var topLevelVar2 = topLevelVar;
 // 
@@ -82,10 +71,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForGlobalsInExternalModule.ts ===
-
 // --- (line: 3) skipped ---
 // class topLevelClass { }
 // var c = new topLevelClass();
@@ -98,10 +85,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForGlobalsInExternalModule.ts ===
-
 // --- (line: 3) skipped ---
 // class topLevelClass { }
 // var c = new topLevelClass();
@@ -115,10 +100,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForGlobalsInExternalModule.ts ===
-
 // --- (line: 3) skipped ---
 // class topLevelClass { }
 // var c = new topLevelClass();
@@ -132,10 +115,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForGlobalsInExternalModule.ts ===
-
 // --- (line: 6) skipped ---
 // interface topLevelInterface { }
 // var i: topLevelInterface;
@@ -149,10 +130,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForGlobalsInExternalModule.ts ===
-
 // --- (line: 6) skipped ---
 // interface topLevelInterface { }
 // var i: topLevelInterface;
@@ -166,10 +145,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForGlobalsInExternalModule.ts ===
-
 // --- (line: 6) skipped ---
 // interface topLevelInterface { }
 // var i: topLevelInterface;

@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsIsDefinition.ts ===
-
 // declare function [|foo|](a: number): number;
 // declare function [|foo|](a: string): string;
 // declare function foo/*FIND ALL REFS*/[|foo|](a: string | number): string | number;
@@ -19,10 +18,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsIsDefinition.ts ===
-
 // declare function foo(a: number): number;
 // declare function foo(a: string): string;
 // declare function foo(a: string | number): string | number;
@@ -41,10 +38,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsIsDefinition.ts ===
-
 // --- (line: 9) skipped ---
 // 
 // foo; foon;
@@ -58,10 +53,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsIsDefinition.ts ===
-
 // --- (line: 13) skipped ---
 // console.log({ bar });
 // 
@@ -78,10 +71,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsIsDefinition.ts ===
-
 // --- (line: 15) skipped ---
 // interface IFoo {
 //     foo(): void;
@@ -96,10 +87,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsIsDefinition.ts ===
-
 // --- (line: 13) skipped ---
 // console.log({ bar });
 // 

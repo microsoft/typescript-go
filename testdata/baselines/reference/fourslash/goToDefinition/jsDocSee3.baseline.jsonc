@@ -1,9 +1,8 @@
 // === goToDefinition ===
 // === /jsDocSee3.ts ===
-
 // function foo (a: string) {
 //     /**
-//      * @see {/*GO TO DEFINITION*/a}
+//      * @see {/*GOTO DEF*/a}
 //      */
 //     function bar (a: string) {
 //     }

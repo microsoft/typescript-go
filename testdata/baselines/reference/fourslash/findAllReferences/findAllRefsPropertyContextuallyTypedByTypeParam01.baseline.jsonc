@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsPropertyContextuallyTypedByTypeParam01.ts ===
-
 // interface IFoo {
 //     /*FIND ALL REFS*/[|a|]: string;
 // }

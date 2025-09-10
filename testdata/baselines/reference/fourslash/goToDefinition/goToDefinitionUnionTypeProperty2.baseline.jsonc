@@ -1,6 +1,5 @@
 // === goToDefinition ===
 // === /goToDefinitionUnionTypeProperty2.ts ===
-
 // interface HasAOrB {
 //     [|a|]: string;
 //     b: string;
@@ -16,4 +15,4 @@
 // 
 // var x : One | Two;
 // 
-// x.common./*GO TO DEFINITION*/a;
+// x.common./*GOTO DEF*/a;

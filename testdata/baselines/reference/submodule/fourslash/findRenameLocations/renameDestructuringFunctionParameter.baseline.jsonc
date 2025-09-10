@@ -1,0 +1,21 @@
+// === findRenameLocations ===
+// === /renameDestructuringFunctionParameter.ts ===
+// function f({a}: {/*RENAME*/[|aRENAME|]}: {[|aRENAME|]}) {
+//     f({[|aRENAME|]});
+// }
+
+
+
+// === findRenameLocations ===
+// === /renameDestructuringFunctionParameter.ts ===
+// function f({[|aRENAME|]}: {a}) {
+//     f({/*RENAME*/[|aRENAME|]});
+// }
+
+
+
+// === findRenameLocations ===
+// === /renameDestructuringFunctionParameter.ts ===
+// function f(/*RENAME*/{a}: {a}) {
+//     f({a});
+// }

@@ -1,15 +1,12 @@
 // === findAllReferences ===
 // === /component.js ===
-
 // export class [|Component|] {
 //   constructor() {
 //     this.id_ = Math.random();
 //   }
 // // --- (line: 5) skipped ---
 
-
 // === /player.js ===
-
 // import { [|Component|] } from './component.js';
 // 
 // /**
@@ -17,9 +14,7 @@
 //  */
 // export class Player extends [|Component|] {}
 
-
 // === /spatial-navigation.js ===
-
 // /** @import { Component } from './component.js' */
 // 
 // export class SpatialNavigation {

@@ -1,0 +1,9 @@
+// === findRenameLocations ===
+// === /findAllRefsClassWithStaticThisAccess.ts ===
+// class C {
+//     static s() {
+//         /*RENAME*/this;
+//     }
+//     static get f() {
+//         return this;
+// // --- (line: 7) skipped ---

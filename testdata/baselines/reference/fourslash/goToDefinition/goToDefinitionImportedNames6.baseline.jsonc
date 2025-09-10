@@ -1,6 +1,5 @@
 // === goToDefinition ===
 // === /a.ts ===
-
 // [|export module Module {
 // }
 // export class Class {
@@ -10,7 +9,5 @@
 //     x;
 // }|]
 
-
 // === /b.ts ===
-
-// import /*GO TO DEFINITION*/alias = require("./a");
+// import /*GOTO DEF*/alias = require("./a");

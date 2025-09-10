@@ -1,4 +1,3 @@
 // === goToDefinition ===
 // === /b.ts ===
-
-// import n = require('unknown/*GO TO DEFINITION*/');
+// import n = require('unknown/*GOTO DEF*/');

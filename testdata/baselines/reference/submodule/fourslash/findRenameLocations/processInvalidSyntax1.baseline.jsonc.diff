@@ -1,0 +1,24 @@
+--- old.processInvalidSyntax1.baseline.jsonc
++++ new.processInvalidSyntax1.baseline.jsonc
+@@= skipped -1, +1 lines =@@
+ // === /decl.js ===
+ // var [|objRENAME|] = {};
+
++// === /forof.js ===
++// for (obj/*RENAME*/[|objRENAME|].prop of arr) {
++// 
++// }
++
+ // === /unicode1.js ===
+ // [|objRENAME|].𝒜 ;
+
+ // === /unicode2.js ===
+ // [|objRENAME|].¬ ;
+-
+-// === /unicode3.js ===
+-// [|objRENAME|]¬
+-
+-// === /forof.js ===
+-// for ([|objRENAME|]/*RENAME*/.prop of arr) {
+-// 
+-// }

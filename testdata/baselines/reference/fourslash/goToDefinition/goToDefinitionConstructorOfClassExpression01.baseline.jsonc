@@ -1,9 +1,8 @@
 // === goToDefinition ===
 // === /goToDefinitionConstructorOfClassExpression01.ts ===
-
 // var x = class [|C|] {
 //     [|constructor() {
-//         var other = new /*GO TO DEFINITION*/C;
+//         var other = new /*GOTO DEF*/C;
 //     }|]
 // }
 // 
@@ -12,10 +11,8 @@
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionConstructorOfClassExpression01.ts ===
-
 // --- (line: 3) skipped ---
 //     }
 // }
@@ -23,7 +20,7 @@
 // var y = class [|C|] extends x {
 //     [|constructor() {
 //         super();
-//         var other = new /*GO TO DEFINITION*/C;
+//         var other = new /*GOTO DEF*/C;
 //     }|]
 // }
 // var z = class C extends x {
@@ -32,10 +29,8 @@
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionConstructorOfClassExpression01.ts ===
-
 // var x = class C {
 //     [|constructor() {
 //         var other = new C;
@@ -50,7 +45,7 @@
 // }
 // var z = class [|C|] extends x {
 //     m() {
-//         return new /*GO TO DEFINITION*/C;
+//         return new /*GOTO DEF*/C;
 //     }
 // }
 // 
@@ -58,25 +53,21 @@
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionConstructorOfClassExpression01.ts ===
-
 // --- (line: 15) skipped ---
 //     }
 // }
 // 
-// var x1 = new /*GO TO DEFINITION*/C();
+// var x1 = new /*GOTO DEF*/C();
 // var x2 = new x();
 // var y1 = new y();
 // var z1 = new z();
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionConstructorOfClassExpression01.ts ===
-
 // var [|x|] = class C {
 //     [|constructor() {
 //         var other = new C;
@@ -86,21 +77,18 @@
 // var y = class C extends x {
 // // --- (line: 8) skipped ---
 
-
 // --- (line: 16) skipped ---
 // }
 // 
 // var x1 = new C();
-// var x2 = new /*GO TO DEFINITION*/x();
+// var x2 = new /*GOTO DEF*/x();
 // var y1 = new y();
 // var z1 = new z();
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionConstructorOfClassExpression01.ts ===
-
 // --- (line: 3) skipped ---
 //     }
 // }
@@ -119,15 +107,13 @@
 // 
 // var x1 = new C();
 // var x2 = new x();
-// var y1 = new /*GO TO DEFINITION*/y();
+// var y1 = new /*GOTO DEF*/y();
 // var z1 = new z();
-
 
 
 
 // === goToDefinition ===
 // === /goToDefinitionConstructorOfClassExpression01.ts ===
-
 // var x = class C {
 //     [|constructor() {
 //         var other = new C;
@@ -149,4 +135,4 @@
 // var x1 = new C();
 // var x2 = new x();
 // var y1 = new y();
-// var z1 = new /*GO TO DEFINITION*/z();
+// var z1 = new /*GOTO DEF*/z();

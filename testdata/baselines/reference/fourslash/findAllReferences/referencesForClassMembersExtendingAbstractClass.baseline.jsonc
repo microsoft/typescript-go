@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForClassMembersExtendingAbstractClass.ts ===
-
 // abstract class Base {
 //     abstract /*FIND ALL REFS*/[|a|]: number;
 //     abstract method(): void;
@@ -16,10 +15,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForClassMembersExtendingAbstractClass.ts ===
-
 // abstract class Base {
 //     abstract [|a|]: number;
 //     abstract method(): void;
@@ -35,10 +32,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForClassMembersExtendingAbstractClass.ts ===
-
 // abstract class Base {
 //     abstract [|a|]: number;
 //     abstract method(): void;
@@ -54,10 +49,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForClassMembersExtendingAbstractClass.ts ===
-
 // abstract class Base {
 //     abstract a: number;
 //     abstract /*FIND ALL REFS*/[|method|](): void;
@@ -73,10 +66,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForClassMembersExtendingAbstractClass.ts ===
-
 // abstract class Base {
 //     abstract a: number;
 //     abstract [|method|](): void;
@@ -92,10 +83,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForClassMembersExtendingAbstractClass.ts ===
-
 // abstract class Base {
 //     abstract a: number;
 //     abstract [|method|](): void;

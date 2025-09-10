@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsCatchClause.ts ===
-
 // try { }
 // catch (/*FIND ALL REFS*/[|err|]) {
 //     [|err|];
@@ -8,10 +7,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsCatchClause.ts ===
-
 // try { }
 // catch ([|err|]) {
 //     /*FIND ALL REFS*/[|err|];

@@ -1,13 +1,10 @@
 // === goToDefinition ===
 // === /a.ts ===
-
 // interface [|IFoo|] {
 //     instance1: number;
 // }
 
-
 // === /b.ts ===
-
 // interface [|IFoo|] {
 //     instance2: number;
 // }
@@ -16,26 +13,20 @@
 //     instance3: number;
 // }
 // 
-// var ifoo: IFo/*GO TO DEFINITION*/o;
-
+// var ifoo: IFo/*GOTO DEF*/o;
 
 
 
 // === goToDefinition ===
 // === /c.ts ===
-
 // module [|Module|] {
 //     export class c1 { }
 // }
 
-
 // === /d.ts ===
-
 // module [|Module|] {
 //     export class c2 { }
 // }
 
-
 // === /e.ts ===
-
-// Modul/*GO TO DEFINITION*/e;
+// Modul/*GOTO DEF*/e;

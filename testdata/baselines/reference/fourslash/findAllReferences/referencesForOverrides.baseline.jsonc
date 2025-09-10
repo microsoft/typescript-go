@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForOverrides.ts ===
-
 // module FindRef3 {
 // 	module SimpleClassTest {
 // 		export class Foo {
@@ -14,7 +13,6 @@
 // 	}
 // // --- (line: 12) skipped ---
 
-
 // --- (line: 58) skipped ---
 // 
 // 	function test() {
@@ -27,10 +25,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForOverrides.ts ===
-
 // --- (line: 11) skipped ---
 // 
 // 	module SimpleInterfaceTest {
@@ -44,7 +40,6 @@
 // 
 // // --- (line: 22) skipped ---
 
-
 // --- (line: 61) skipped ---
 // 		x.foo();
 // 
@@ -57,10 +52,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForOverrides.ts ===
-
 // --- (line: 20) skipped ---
 // 
 // 	module SimpleClassInterfaceTest {
@@ -74,7 +67,6 @@
 // 	}
 // // --- (line: 31) skipped ---
 
-
 // --- (line: 64) skipped ---
 // 		y.ifoo();
 // 
@@ -87,10 +79,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForOverrides.ts ===
-
 // --- (line: 30) skipped ---
 // 
 // 	module Test {
@@ -123,7 +113,6 @@
 // 
 // // --- (line: 60) skipped ---
 
-
 // --- (line: 67) skipped ---
 //         w.icfoo();
 // 
@@ -135,10 +124,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForOverrides.ts ===
-
 // --- (line: 31) skipped ---
 // 	module Test {
 // 		export interface IBase {
@@ -148,7 +135,6 @@
 // 
 // 		export interface IBlah extends IBase {
 // // --- (line: 39) skipped ---
-
 
 // --- (line: 43) skipped ---
 // 		}
@@ -164,7 +150,6 @@
 // 
 // 		export class BarBlah extends Bar {
 // // --- (line: 56) skipped ---
-
 
 // --- (line: 68) skipped ---
 // 

@@ -1,12 +1,9 @@
 // === findAllReferences ===
 // === /RedditSubmission.ts ===
-
 // export const [|SubmissionComp|] = (submission: SubmissionProps) =>
 //     <div style={{ fontFamily: "sans-serif" }}></div>;
 
-
 // === /index.tsx ===
-
 // import { /*FIND ALL REFS*/[|SubmissionComp|] } from "./RedditSubmission"
 // function displaySubreddit(subreddit: string) {
 //     let components = submissions
@@ -15,16 +12,12 @@
 
 
 
-
 // === findAllReferences ===
 // === /RedditSubmission.ts ===
-
 // export const /*FIND ALL REFS*/[|SubmissionComp|] = (submission: SubmissionProps) =>
 //     <div style={{ fontFamily: "sans-serif" }}></div>;
 
-
 // === /index.tsx ===
-
 // import { [|SubmissionComp|] } from "./RedditSubmission"
 // function displaySubreddit(subreddit: string) {
 //     let components = submissions

@@ -1,12 +1,11 @@
 // === goToDefinition ===
 // === /jsDocSee4.ts ===
-
 // class A {
 //     foo () { }
 // }
 // declare const a: A;
 // /**
-//  * @see {/*GO TO DEFINITION*/A#foo}
+//  * @see {/*GOTO DEF*/A#foo}
 //  */
 // const t1 = 1
 // /**
@@ -14,15 +13,13 @@
 
 
 
-
 // === goToDefinition ===
 // === /jsDocSee4.ts ===
-
 // --- (line: 6) skipped ---
 //  */
 // const t1 = 1
 // /**
-//  * @see {/*GO TO DEFINITION*/a.foo()}
+//  * @see {/*GOTO DEF*/a.foo()}
 //  */
 // const t2 = 1
 // /**
@@ -30,10 +27,8 @@
 
 
 
-
 // === goToDefinition ===
 // === /jsDocSee4.ts ===
-
 // class A {
 //     foo () { }
 // }
@@ -47,6 +42,6 @@
 //  */
 // const t2 = 1
 // /**
-//  * @see {@link /*GO TO DEFINITION*/a.foo()}
+//  * @see {@link /*GOTO DEF*/a.foo()}
 //  */
 // const t3 = 1

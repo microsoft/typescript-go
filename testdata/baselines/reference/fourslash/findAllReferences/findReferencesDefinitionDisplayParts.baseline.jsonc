@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findReferencesDefinitionDisplayParts.ts ===
-
 // class Gre/*FIND ALL REFS*/[|Greeter|] {
 //     someFunction() { this;  }
 // }
@@ -9,10 +8,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findReferencesDefinitionDisplayParts.ts ===
-
 // class Greeter {
 //     someFunction() { th/*FIND ALL REFS*/[|this|];  }
 // }
@@ -22,10 +19,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findReferencesDefinitionDisplayParts.ts ===
-
 // class Greeter {
 //     someFunction() { this;  }
 // }
@@ -38,10 +33,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findReferencesDefinitionDisplayParts.ts ===
-
 // --- (line: 4) skipped ---
 // type Options = "option 1" | "option 2";
 // let myOption: Options = "option 1";

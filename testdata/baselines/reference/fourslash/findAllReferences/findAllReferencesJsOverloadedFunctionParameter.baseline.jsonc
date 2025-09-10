@@ -1,9 +1,8 @@
 // === findAllReferences ===
 // === /foo.js ===
-
 // --- (line: 9) skipped ---
 //  * @param {unknown} x
-//  * @returns {unknown} 
+//  * @returns {unknown}
 //  */
 // function foo(x/*FIND ALL REFS*/[|x|]) {
 //   return [|x|];

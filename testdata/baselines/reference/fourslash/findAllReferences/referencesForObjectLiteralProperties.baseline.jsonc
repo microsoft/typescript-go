@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForObjectLiteralProperties.ts ===
-
 // var x = { /*FIND ALL REFS*/[|add|]: 0, b: "string" };
 // x["[|add|]"];
 // x.[|add|];
@@ -9,10 +8,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForObjectLiteralProperties.ts ===
-
 // var x = { [|add|]: 0, b: "string" };
 // x["/*FIND ALL REFS*/[|add|]"];
 // x.[|add|];
@@ -21,10 +18,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForObjectLiteralProperties.ts ===
-
 // var x = { [|add|]: 0, b: "string" };
 // x["[|add|]"];
 // x./*FIND ALL REFS*/[|add|];
@@ -33,10 +28,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForObjectLiteralProperties.ts ===
-
 // var x = { [|add|]: 0, b: "string" };
 // x["[|add|]"];
 // x.[|add|];

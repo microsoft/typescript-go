@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsObjectBindingElementPropertyName04.ts ===
-
 // interface I {
 //     /*FIND ALL REFS*/[|property1|]: number;
 //     property2: string;
@@ -15,10 +14,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsObjectBindingElementPropertyName04.ts ===
-
 // interface I {
 //     [|property1|]: number;
 //     property2: string;
@@ -33,10 +30,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsObjectBindingElementPropertyName04.ts ===
-
 // interface I {
 //     [|property1|]: number;
 //     property2: string;
@@ -51,10 +46,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsObjectBindingElementPropertyName04.ts ===
-
 // --- (line: 3) skipped ---
 // }
 // 

@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForAmbients.ts ===
-
 // /*FIND ALL REFS*/declare module "foo" {
 //     var f: number;
 // }
@@ -9,10 +8,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForAmbients.ts ===
-
 // declare module "/*FIND ALL REFS*/[|foo|]" {
 //     var f: number;
 // }
@@ -26,10 +23,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForAmbients.ts ===
-
 // declare module "foo" {
 //     /*FIND ALL REFS*/var f: number;
 // }
@@ -39,10 +34,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForAmbients.ts ===
-
 // declare module "foo" {
 //     var /*FIND ALL REFS*/[|f|]: number;
 // }
@@ -57,10 +50,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForAmbients.ts ===
-
 // declare module "foo" {
 //     var f: number;
 // }
@@ -73,10 +64,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForAmbients.ts ===
-
 // declare module "foo" {
 //     var f: number;
 // }
@@ -93,10 +82,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForAmbients.ts ===
-
 // declare module "foo" {
 //     var f: number;
 // }
@@ -110,10 +97,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForAmbients.ts ===
-
 // declare module "foo" {
 //     var f: number;
 // }
@@ -130,10 +115,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForAmbients.ts ===
-
 // declare module "[|foo|]" {
 //     var f: number;
 // }
@@ -147,10 +130,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForAmbients.ts ===
-
 // declare module "foo" {
 //     var f: number;
 // }
@@ -167,10 +148,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForAmbients.ts ===
-
 // declare module "foo" {
 //     var [|f|]: number;
 // }
@@ -185,10 +164,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForAmbients.ts ===
-
 // --- (line: 7) skipped ---
 // }
 // 
@@ -199,10 +176,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForAmbients.ts ===
-
 // declare module "foo" {
 //     var f: number;
 // }
@@ -219,10 +194,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForAmbients.ts ===
-
 // declare module "foo" {
 //     var f: number;
 // }

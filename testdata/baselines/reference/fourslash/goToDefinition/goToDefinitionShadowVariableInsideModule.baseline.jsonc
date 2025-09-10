@@ -1,7 +1,6 @@
 // === goToDefinition ===
 // === /goToDefinitionShadowVariableInsideModule.ts ===
-
 // module shdModule {
 //     var [|shdVar|];
-//     /*GO TO DEFINITION*/shdVar = 1;
+//     /*GOTO DEF*/shdVar = 1;
 // }

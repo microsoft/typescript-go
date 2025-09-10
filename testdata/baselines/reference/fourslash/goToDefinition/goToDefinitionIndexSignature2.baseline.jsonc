@@ -1,5 +1,4 @@
 // === goToDefinition ===
 // === /a.js ===
-
 // const o = {};
-// o./*GO TO DEFINITION*/foo;
+// o./*GOTO DEF*/foo;

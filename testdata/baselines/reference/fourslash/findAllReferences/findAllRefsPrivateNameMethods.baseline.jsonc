@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsPrivateNameMethods.ts ===
-
 // class C {
 //     /*FIND ALL REFS*/[|#foo|](){ }
 //     constructor() {
@@ -12,10 +11,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsPrivateNameMethods.ts ===
-
 // class C {
 //     [|#foo|](){ }
 //     constructor() {
@@ -27,10 +24,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsPrivateNameMethods.ts ===
-
 // --- (line: 10) skipped ---
 //     }
 // }
@@ -43,10 +38,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsPrivateNameMethods.ts ===
-
 // --- (line: 10) skipped ---
 //     }
 // }

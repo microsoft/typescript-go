@@ -1,7 +1,6 @@
 // === goToDefinition ===
 // === /file.d.ts ===
-
-// namespace /*GO TO DEFINITION*/[|Foo|] {
+// namespace /*GOTO DEF*/[|Foo|] {
 // 
 // 
 // 

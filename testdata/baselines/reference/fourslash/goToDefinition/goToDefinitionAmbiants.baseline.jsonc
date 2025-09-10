@@ -1,6 +1,5 @@
 // === goToDefinition ===
 // === /goToDefinitionAmbiants.ts ===
-
 // declare var [|ambientVar|];
 // declare function ambientFunction();
 // declare class ambientClass {
@@ -9,7 +8,7 @@
 //     public method();
 // }
 // 
-// /*GO TO DEFINITION*/ambientVar = 1;
+// /*GOTO DEF*/ambientVar = 1;
 // ambientFunction();
 // var ambientClassVariable = new ambientClass();
 // ambientClass.method();
@@ -17,10 +16,8 @@
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionAmbiants.ts ===
-
 // declare var ambientVar;
 // declare function [|ambientFunction|]();
 // declare class ambientClass {
@@ -30,17 +27,15 @@
 // }
 // 
 // ambientVar = 1;
-// /*GO TO DEFINITION*/ambientFunction();
+// /*GOTO DEF*/ambientFunction();
 // var ambientClassVariable = new ambientClass();
 // ambientClass.method();
 // ambientClassVariable.method();
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionAmbiants.ts ===
-
 // declare var ambientVar;
 // declare function ambientFunction();
 // declare class [|ambientClass|] {
@@ -51,16 +46,14 @@
 // 
 // ambientVar = 1;
 // ambientFunction();
-// var ambientClassVariable = new /*GO TO DEFINITION*/ambientClass();
+// var ambientClassVariable = new /*GOTO DEF*/ambientClass();
 // ambientClass.method();
 // ambientClassVariable.method();
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionAmbiants.ts ===
-
 // declare var ambientVar;
 // declare function ambientFunction();
 // declare class ambientClass {
@@ -72,15 +65,13 @@
 // ambientVar = 1;
 // ambientFunction();
 // var ambientClassVariable = new ambientClass();
-// ambientClass./*GO TO DEFINITION*/method();
+// ambientClass./*GOTO DEF*/method();
 // ambientClassVariable.method();
-
 
 
 
 // === goToDefinition ===
 // === /goToDefinitionAmbiants.ts ===
-
 // declare var ambientVar;
 // declare function ambientFunction();
 // declare class ambientClass {
@@ -93,4 +84,4 @@
 // ambientFunction();
 // var ambientClassVariable = new ambientClass();
 // ambientClass.method();
-// ambientClassVariable./*GO TO DEFINITION*/method();
+// ambientClassVariable./*GOTO DEF*/method();

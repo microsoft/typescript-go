@@ -1,0 +1,22 @@
+--- old.renameParameterPropertyDeclaration4.baseline.jsonc
++++ new.renameParameterPropertyDeclaration4.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+ // === findRenameLocations ===
+ // === /renameParameterPropertyDeclaration4.ts ===
+ // class Foo {
+-//     constructor(protected { /*START PREFIX*/protectedParam: /*RENAME*/[|protectedParamRENAME|] }) {
+-//         let myProtectedParam = [|protectedParamRENAME|];
++//     constructor(/*RENAME*/protected { protectedParam }) {
++//         let myProtectedParam = protectedParam;
+ //     }
+ // }
+
+@@= skipped -10, +10 lines =@@
+ // === findRenameLocations ===
+ // === /renameParameterPropertyDeclaration4.ts ===
+ // class Foo {
+-//     constructor(protected { /*START PREFIX*/protectedParam: [|protectedParamRENAME|] }) {
++//     constructor(protected { [|protectedParamRENAME|] }) {
+ //         let myProtectedParam = /*RENAME*/[|protectedParamRENAME|];
+ //     }
+ // }

@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForIndexProperty3.ts ===
-
 // interface Object {
 //     /*FIND ALL REFS*/[|toMyString|]();
 // }
@@ -13,10 +12,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForIndexProperty3.ts ===
-
 // interface Object {
 //     [|toMyString|]();
 // }
@@ -29,10 +26,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForIndexProperty3.ts ===
-
 // interface Object {
 //     [|toMyString|]();
 // }

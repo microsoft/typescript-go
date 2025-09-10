@@ -1,0 +1,75 @@
+// === findRenameLocations ===
+// === /renameDestructuringAssignmentNestedInForOf2.ts ===
+// interface MultiRobot {
+//     name: string;
+//     skills: {
+//         /*RENAME*/[|primaryRENAME|]: string;
+//         secondary: string;
+//     };
+// }
+// let multiRobots: MultiRobot[], primary: string;
+// for ({ skills: { [|primaryRENAME|]: primaryA, secondary: secondaryA } } of multiRobots) {
+//     console.log(primaryA);
+// }
+// for ({ skills: { [|primaryRENAME|], secondary } } of multiRobots) {
+//     console.log(primary);
+// }
+
+
+
+// === findRenameLocations ===
+// === /renameDestructuringAssignmentNestedInForOf2.ts ===
+// --- (line: 5) skipped ---
+//     };
+// }
+// let multiRobots: MultiRobot[], primary: string;
+// for (/*RENAME*/{ skills: { primary: primaryA, secondary: secondaryA } } of multiRobots) {
+//     console.log(primaryA);
+// }
+// for ({ skills: { primary, secondary } } of multiRobots) {
+//     console.log(primary);
+// }
+
+
+
+// === findRenameLocations ===
+// === /renameDestructuringAssignmentNestedInForOf2.ts ===
+// --- (line: 4) skipped ---
+//         secondary: string;
+//     };
+// }
+// let multiRobots: MultiRobot[], /*RENAME*/[|primaryRENAME|]: string;
+// for ({ skills: { primary: primaryA, secondary: secondaryA } } of multiRobots) {
+//     console.log(primaryA);
+// }
+// for ({ skills: { [|primaryRENAME|], secondary } } of multiRobots) {
+//     console.log([|primaryRENAME|]);
+// }
+
+
+
+// === findRenameLocations ===
+// === /renameDestructuringAssignmentNestedInForOf2.ts ===
+// --- (line: 8) skipped ---
+// for ({ skills: { primary: primaryA, secondary: secondaryA } } of multiRobots) {
+//     console.log(primaryA);
+// }
+// for (/*RENAME*/{ skills: { primary, secondary } } of multiRobots) {
+//     console.log(primary);
+// }
+
+
+
+// === findRenameLocations ===
+// === /renameDestructuringAssignmentNestedInForOf2.ts ===
+// --- (line: 4) skipped ---
+//         secondary: string;
+//     };
+// }
+// let multiRobots: MultiRobot[], [|primaryRENAME|]: string;
+// for ({ skills: { primary: primaryA, secondary: secondaryA } } of multiRobots) {
+//     console.log(primaryA);
+// }
+// for ({ skills: { [|primaryRENAME|], secondary } } of multiRobots) {
+//     console.log(/*RENAME*/[|primaryRENAME|]);
+// }

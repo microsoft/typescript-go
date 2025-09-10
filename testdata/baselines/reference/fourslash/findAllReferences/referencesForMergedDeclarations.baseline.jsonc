@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForMergedDeclarations.ts ===
-
 // /*FIND ALL REFS*/interface Foo {
 // }
 // 
@@ -9,16 +8,13 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForMergedDeclarations.ts ===
-
 // interface /*FIND ALL REFS*/[|Foo|] {
 // }
 // 
 // module Foo {
 // // --- (line: 5) skipped ---
-
 
 // --- (line: 8) skipped ---
 // }
@@ -29,10 +25,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForMergedDeclarations.ts ===
-
 // interface Foo {
 // }
 // 
@@ -44,10 +38,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForMergedDeclarations.ts ===
-
 // interface Foo {
 // }
 // 
@@ -64,10 +56,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForMergedDeclarations.ts ===
-
 // --- (line: 4) skipped ---
 //     export interface Bar { }
 // }
@@ -81,10 +71,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForMergedDeclarations.ts ===
-
 // --- (line: 4) skipped ---
 //     export interface Bar { }
 // }
@@ -98,10 +86,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForMergedDeclarations.ts ===
-
 // interface Foo {
 // }
 // 
@@ -118,16 +104,13 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForMergedDeclarations.ts ===
-
 // interface [|Foo|] {
 // }
 // 
 // module Foo {
 // // --- (line: 5) skipped ---
-
 
 // --- (line: 8) skipped ---
 // }
@@ -138,10 +121,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForMergedDeclarations.ts ===
-
 // --- (line: 4) skipped ---
 //     export interface Bar { }
 // }

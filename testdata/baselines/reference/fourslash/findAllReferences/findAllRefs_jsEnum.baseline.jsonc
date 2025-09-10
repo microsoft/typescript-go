@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /a.js ===
-
 // /** @enum {string} */
 // /*FIND ALL REFS*/const E = { A: "" };
 // E["A"];
@@ -9,10 +8,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /a.js ===
-
 // /** @enum {string} */
 // const /*FIND ALL REFS*/[|E|] = { A: "" };
 // [|E|]["A"];
@@ -21,10 +18,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /a.js ===
-
 // /** @enum {string} */
 // const [|E|] = { A: "" };
 // /*FIND ALL REFS*/[|E|]["A"];
@@ -33,10 +28,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /a.js ===
-
 // /** @enum {string} */
 // const E = { A: "" };
 // E["A"];
@@ -45,10 +38,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /a.js ===
-
 // /** @enum {string} */
 // const [|E|] = { A: "" };
 // [|E|]["A"];

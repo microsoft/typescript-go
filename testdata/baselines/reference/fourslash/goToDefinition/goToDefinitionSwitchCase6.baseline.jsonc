@@ -1,26 +1,21 @@
 // === goToDefinition ===
 // === /goToDefinitionSwitchCase6.ts ===
-
-// export default { /*GO TO DEFINITION*/[|case|] };
+// export default { /*GOTO DEF*/[|case|] };
 // default;
 // case 42;
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionSwitchCase6.ts ===
-
 // export default { case };
-// /*GO TO DEFINITION*/default;
+// /*GOTO DEF*/default;
 // case 42;
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionSwitchCase6.ts ===
-
 // export default { case };
 // default;
-// /*GO TO DEFINITION*/case 42;
+// /*GOTO DEF*/case 42;

@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsParameterPropertyDeclaration3.ts ===
-
 // class Foo {
 //     constructor(protected /*FIND ALL REFS*/[|protectedParam|]: number) {
 //         let localProtected = [|protectedParam|];
@@ -10,10 +9,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsParameterPropertyDeclaration3.ts ===
-
 // class Foo {
 //     constructor(protected [|protectedParam|]: number) {
 //         let localProtected = /*FIND ALL REFS*/[|protectedParam|];
@@ -23,10 +20,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsParameterPropertyDeclaration3.ts ===
-
 // class Foo {
 //     constructor(protected [|protectedParam|]: number) {
 //         let localProtected = [|protectedParam|];

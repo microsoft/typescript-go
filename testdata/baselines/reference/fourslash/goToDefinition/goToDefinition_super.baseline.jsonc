@@ -1,6 +1,5 @@
 // === goToDefinition ===
 // === /goToDefinition_super.ts ===
-
 // class A {
 //     [|constructor() {}|]
 //     x() {}
@@ -8,7 +7,7 @@
 // class [|B|] extends A {}
 // class C extends B {
 //     constructor() {
-//         /*GO TO DEFINITION*/super();
+//         /*GOTO DEF*/super();
 //     }
 //     method() {
 //         super.x();
@@ -16,10 +15,8 @@
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinition_super.ts ===
-
 // class A {
 //     constructor() {}
 //     x() {}
@@ -30,7 +27,7 @@
 //         super();
 //     }
 //     method() {
-//         /*GO TO DEFINITION*/super.x();
+//         /*GOTO DEF*/super.x();
 //     }
 // }
 // class D {
@@ -38,14 +35,12 @@
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinition_super.ts ===
-
 // --- (line: 12) skipped ---
 // }
 // class D {
 //     constructor() {
-//         /*GO TO DEFINITION*/super();
+//         /*GOTO DEF*/super();
 //     }
 // }

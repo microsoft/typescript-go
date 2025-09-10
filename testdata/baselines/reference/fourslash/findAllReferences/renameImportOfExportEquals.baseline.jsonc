@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /renameImportOfExportEquals.ts ===
-
 // declare namespace /*FIND ALL REFS*/[|N|] {
 //     export var x: number;
 // }
@@ -16,10 +15,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /renameImportOfExportEquals.ts ===
-
 // declare namespace [|N|] {
 //     export var x: number;
 // }
@@ -35,10 +32,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /renameImportOfExportEquals.ts ===
-
 // declare namespace [|N|] {
 //     export var x: number;
 // }
@@ -56,17 +51,14 @@
 
 
 
-
 // === findAllReferences ===
 // === /renameImportOfExportEquals.ts ===
-
 // declare namespace N {
 //     export var /*FIND ALL REFS*/[|x|]: number;
 // }
 // declare module "mod" {
 //     export = N;
 // // --- (line: 6) skipped ---
-
 
 // --- (line: 9) skipped ---
 // }

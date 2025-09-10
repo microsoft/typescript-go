@@ -1,11 +1,10 @@
 // === goToDefinition ===
 // === /jsDocSee1.ts ===
-
 // --- (line: 5) skipped ---
 //         baz: Foo
 //     }
 // }
-// /** @see {/*GO TO DEFINITION*/Foo} foooo*/
+// /** @see {/*GOTO DEF*/Foo} foooo*/
 // const a = ""
 // /** @see {NS.Bar} ns.bar*/
 // const b = ""
@@ -13,15 +12,13 @@
 
 
 
-
 // === goToDefinition ===
 // === /jsDocSee1.ts ===
-
 // --- (line: 7) skipped ---
 // }
 // /** @see {Foo} foooo*/
 // const a = ""
-// /** @see {NS./*GO TO DEFINITION*/Bar} ns.bar*/
+// /** @see {NS./*GOTO DEF*/Bar} ns.bar*/
 // const b = ""
 // /** @see Foo f1*/
 // const c = ""
@@ -29,15 +26,13 @@
 
 
 
-
 // === goToDefinition ===
 // === /jsDocSee1.ts ===
-
 // --- (line: 9) skipped ---
 // const a = ""
 // /** @see {NS.Bar} ns.bar*/
 // const b = ""
-// /** @see /*GO TO DEFINITION*/Foo f1*/
+// /** @see /*GOTO DEF*/Foo f1*/
 // const c = ""
 // /** @see NS.Bar ns.bar*/
 // const d = ""
@@ -46,28 +41,24 @@
 
 
 
-
 // === goToDefinition ===
 // === /jsDocSee1.ts ===
-
 // --- (line: 11) skipped ---
 // const b = ""
 // /** @see Foo f1*/
 // const c = ""
-// /** @see NS./*GO TO DEFINITION*/Bar ns.bar*/
+// /** @see NS./*GOTO DEF*/Bar ns.bar*/
 // const d = ""
 // /** @see d dd*/
 // const e = ""
 
 
 
-
 // === goToDefinition ===
 // === /jsDocSee1.ts ===
-
 // --- (line: 13) skipped ---
 // const c = ""
 // /** @see NS.Bar ns.bar*/
 // const d = ""
-// /** @see /*GO TO DEFINITION*/d dd*/
+// /** @see /*GOTO DEF*/d dd*/
 // const e = ""

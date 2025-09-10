@@ -1,6 +1,5 @@
 // === goToDefinition ===
 // === /goToDefinitionConstructorOfClassWhenClassIsPrecededByNamespace01.ts ===
-
 // namespace [|Foo|] {
 //     export var x;
 // }
@@ -10,4 +9,4 @@
 //     }|]
 // }
 // 
-// var x = new /*GO TO DEFINITION*/Foo();
+// var x = new /*GOTO DEF*/Foo();

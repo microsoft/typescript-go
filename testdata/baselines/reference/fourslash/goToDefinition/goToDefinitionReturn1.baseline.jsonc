@@ -1,6 +1,5 @@
 // === goToDefinition ===
 // === /goToDefinitionReturn1.ts ===
-
 // function [|foo|]() {
-//     /*GO TO DEFINITION*/return 10;
+//     /*GOTO DEF*/return 10;
 // }

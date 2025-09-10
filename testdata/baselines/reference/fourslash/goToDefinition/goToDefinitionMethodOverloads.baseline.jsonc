@@ -1,6 +1,5 @@
 // === goToDefinition ===
 // === /goToDefinitionMethodOverloads.ts ===
-
 // class MethodOverload {
 //     static [|method|]();
 //     static method(foo: string);
@@ -10,7 +9,7 @@
 //     public method(foo?: any) { return "foo" }
 // }
 // // static method
-// MethodOverload./*GO TO DEFINITION*/method();
+// MethodOverload./*GOTO DEF*/method();
 // MethodOverload.method("123");
 // // instance method
 // var methodOverload = new MethodOverload();
@@ -19,10 +18,8 @@
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionMethodOverloads.ts ===
-
 // class MethodOverload {
 //     static method();
 //     static [|method|](foo: string);
@@ -33,7 +30,7 @@
 // }
 // // static method
 // MethodOverload.method();
-// MethodOverload./*GO TO DEFINITION*/method("123");
+// MethodOverload./*GOTO DEF*/method("123");
 // // instance method
 // var methodOverload = new MethodOverload();
 // methodOverload.method();
@@ -41,10 +38,8 @@
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionMethodOverloads.ts ===
-
 // class MethodOverload {
 //     static method();
 //     static method(foo: string);
@@ -58,15 +53,13 @@
 // MethodOverload.method("123");
 // // instance method
 // var methodOverload = new MethodOverload();
-// methodOverload./*GO TO DEFINITION*/method();
+// methodOverload./*GOTO DEF*/method();
 // methodOverload.method("456");
-
 
 
 
 // === goToDefinition ===
 // === /goToDefinitionMethodOverloads.ts ===
-
 // class MethodOverload {
 //     static method();
 //     static method(foo: string);
@@ -81,16 +74,14 @@
 // // instance method
 // var methodOverload = new MethodOverload();
 // methodOverload.method();
-// methodOverload./*GO TO DEFINITION*/method("456");
-
+// methodOverload./*GOTO DEF*/method("456");
 
 
 
 // === goToDefinition ===
 // === /goToDefinitionMethodOverloads.ts ===
-
 // class MethodOverload {
-//     static /*GO TO DEFINITION*/[|method|]();
+//     static /*GOTO DEF*/[|method|]();
 //     static [|method|](foo: string);
 //     static [|method|](foo?: any) { }
 //     public method(): any;
@@ -100,15 +91,13 @@
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionMethodOverloads.ts ===
-
 // class MethodOverload {
 //     static method();
 //     static method(foo: string);
 //     static method(foo?: any) { }
-//     public /*GO TO DEFINITION*/[|method|](): any;
+//     public /*GOTO DEF*/[|method|](): any;
 //     public [|method|](foo: string);
 //     public [|method|](foo?: any) { return "foo" }
 // }

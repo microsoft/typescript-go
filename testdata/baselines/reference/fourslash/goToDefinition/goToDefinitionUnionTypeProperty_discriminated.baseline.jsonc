@@ -1,6 +1,5 @@
 // === goToDefinition ===
 // === /goToDefinitionUnionTypeProperty_discriminated.ts ===
-
 // type U = A | B;
 // 
 // interface A {
@@ -14,7 +13,7 @@
 // }
 // 
 // const u: U = {
-//   /*GO TO DEFINITION*/kind: "a",
+//   /*GOTO DEF*/kind: "a",
 //   prop: 0,
 // };
 // const u2: U = {
@@ -22,10 +21,8 @@
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionUnionTypeProperty_discriminated.ts ===
-
 // type U = A | B;
 // 
 // interface A {
@@ -40,7 +37,7 @@
 // 
 // const u: U = {
 //   kind: "a",
-//   /*GO TO DEFINITION*/prop: 0,
+//   /*GOTO DEF*/prop: 0,
 // };
 // const u2: U = {
 //   kind: "bogus",
@@ -49,10 +46,8 @@
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionUnionTypeProperty_discriminated.ts ===
-
 // type U = A | B;
 // 
 // interface A {
@@ -70,16 +65,14 @@
 //   prop: 0,
 // };
 // const u2: U = {
-//   /*GO TO DEFINITION*/kind: "bogus",
+//   /*GOTO DEF*/kind: "bogus",
 //   prop: 0,
 // };
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionUnionTypeProperty_discriminated.ts ===
-
 // type U = A | B;
 // 
 // interface A {
@@ -98,5 +91,5 @@
 // };
 // const u2: U = {
 //   kind: "bogus",
-//   /*GO TO DEFINITION*/prop: 0,
+//   /*GOTO DEF*/prop: 0,
 // };

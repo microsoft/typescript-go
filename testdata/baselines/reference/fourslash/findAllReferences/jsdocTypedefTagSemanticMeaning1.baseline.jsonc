@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /a.js ===
-
 // /** @typedef {number} */
 // /*FIND ALL REFS*/const T = 1;
 // /** @type {T} */
@@ -8,10 +7,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /a.js ===
-
 // /** @typedef {number} */
 // const /*FIND ALL REFS*/[|T|] = 1;
 // /** @type {T} */
@@ -19,10 +16,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /a.js ===
-
 // /** @typedef {number} */
 // const T = 1;
 // /** @type {/*FIND ALL REFS*/[|T|]} */
@@ -30,10 +25,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /a.js ===
-
 // /** @typedef {number} */
 // const [|T|] = 1;
 // /** @type {T} */

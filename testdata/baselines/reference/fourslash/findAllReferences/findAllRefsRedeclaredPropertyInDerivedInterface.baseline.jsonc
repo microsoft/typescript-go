@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsRedeclaredPropertyInDerivedInterface.ts ===
-
 // interface A {
 //     readonly /*FIND ALL REFS*/[|x|]: number | string;
 // }
@@ -12,10 +11,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsRedeclaredPropertyInDerivedInterface.ts ===
-
 // interface A {
 //     readonly [|x|]: number | string;
 // }
@@ -27,10 +24,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsRedeclaredPropertyInDerivedInterface.ts ===
-
 // interface A {
 //     readonly [|x|]: number | string;
 // }
@@ -42,10 +37,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsRedeclaredPropertyInDerivedInterface.ts ===
-
 // interface A {
 //     readonly [|x|]: number | string;
 // }

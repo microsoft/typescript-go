@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /a.js ===
-
 // /**
 //  * @typedef I {Object}
 //  * /*FIND ALL REFS*/@prop p {number}
@@ -12,10 +11,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /a.js ===
-
 // /**
 //  * @typedef I {Object}
 //  * @prop /*FIND ALL REFS*/p {number}
@@ -27,10 +24,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /a.js ===
-
 // --- (line: 4) skipped ---
 // 
 // /** @type {I} */

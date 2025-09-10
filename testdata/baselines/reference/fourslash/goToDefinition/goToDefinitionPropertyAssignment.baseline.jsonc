@@ -1,22 +1,19 @@
 // === goToDefinition ===
 // === /goToDefinitionPropertyAssignment.ts ===
-
-//  export const [|Component|] = () => { return "OK"}
-//  Component.displayName = 'Component'
+// export const [|Component|] = () => { return "OK"}
+// Component.displayName = 'Component'
 // 
-//  /*GO TO DEFINITION*/Component
+// /*GOTO DEF*/Component
 // 
-//  Component.displayName
-
+// Component.displayName
 
 
 
 // === goToDefinition ===
 // === /goToDefinitionPropertyAssignment.ts ===
-
-//  export const Component = () => { return "OK"}
-//  Component.[|displayName|] = 'Component'
+// export const Component = () => { return "OK"}
+// Component.[|displayName|] = 'Component'
 // 
-//  Component
+// Component
 // 
-//  Component./*GO TO DEFINITION*/displayName
+// Component./*GOTO DEF*/displayName

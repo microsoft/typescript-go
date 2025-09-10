@@ -6,7 +6,7 @@
 //  * @property {string=} y
 //  * @property {string} [z]
 //  * @property {string} [w="hi"]
-//  * 
+//  *
 //  * @param {Opts} opts
 //  */
 // function foo(opts) {
@@ -26,7 +26,7 @@
 //  * @property {string=} y
 //  * @property {string} [z]
 //  * @property {string} [w="hi"]
-//  * 
+//  *
 //  * @param {Opts1} opts
 //  */
 // function foo1(opts1) {
@@ -43,7 +43,7 @@
 [
   {
     "marker": {
-      "Position": 179,
+      "Position": 178,
       "LSPosition": {
         "line": 9,
         "character": 13
@@ -60,7 +60,7 @@
   },
   {
     "marker": {
-      "Position": 400,
+      "Position": 398,
       "LSPosition": {
         "line": 22,
         "character": 14

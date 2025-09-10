@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsClassWithStaticThisAccess.ts ===
-
 // class /*FIND ALL REFS*/[|C|] {
 //     static s() {
 //         this;
@@ -9,10 +8,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsClassWithStaticThisAccess.ts ===
-
 // class C {
 //     static s() {
 //         /*FIND ALL REFS*/[|this|];
@@ -27,10 +24,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsClassWithStaticThisAccess.ts ===
-
 // class C {
 //     static s() {
 //         [|this|];

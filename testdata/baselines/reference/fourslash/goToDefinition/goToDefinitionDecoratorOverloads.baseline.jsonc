@@ -1,6 +1,5 @@
 // === goToDefinition ===
 // === /goToDefinitionDecoratorOverloads.ts ===
-
 // async function f() {}
 // 
 // function [|dec|](target: any, propertyKey: string): void;
@@ -9,16 +8,14 @@
 // 
 // declare const s: symbol;
 // class C {
-//     @/*GO TO DEFINITION*/dec f() {}
+//     @/*GOTO DEF*/dec f() {}
 //     @dec [s]() {}
 // }
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionDecoratorOverloads.ts ===
-
 // async function f() {}
 // 
 // function dec(target: any, propertyKey: string): void;
@@ -28,5 +25,5 @@
 // declare const s: symbol;
 // class C {
 //     @dec f() {}
-//     @/*GO TO DEFINITION*/dec [s]() {}
+//     @/*GOTO DEF*/dec [s]() {}
 // }

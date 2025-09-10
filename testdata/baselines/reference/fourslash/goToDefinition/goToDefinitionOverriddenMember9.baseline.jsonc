@@ -1,6 +1,5 @@
 // === goToDefinition ===
 // === /goToDefinitionOverriddenMember9.ts ===
-
 // interface I {
 //     m(): void;
 // }
@@ -8,5 +7,5 @@
 //     [|m|]() {};
 // }
 // class B extends A implements I {
-//    /*GO TO DEFINITION*/override m() {}
+//    /*GOTO DEF*/override m() {}
 // }

@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsObjectBindingElementPropertyName01.ts ===
-
 // interface I {
 //     /*FIND ALL REFS*/[|property1|]: number;
 //     property2: string;
@@ -11,10 +10,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsObjectBindingElementPropertyName01.ts ===
-
 // --- (line: 3) skipped ---
 // }
 // 
@@ -23,10 +20,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsObjectBindingElementPropertyName01.ts ===
-
 // interface I {
 //     [|property1|]: number;
 //     property2: string;

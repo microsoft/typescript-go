@@ -1,66 +1,57 @@
 // === goToDefinition ===
 // === /a.js ===
-
 // class Foo {
 //     m() {}
 // }
 // class Bar extends Foo {
-//     /** @over/*GO TO DEFINITION*/ride see {@link https://test.com} description */
+//     /** @over/*GOTO DEF*/ride see {@link https://test.com} description */
 //     m() {}
 // }
-
 
 
 
 // === goToDefinition ===
 // === /a.js ===
-
 // class Foo {
 //     m() {}
 // }
 // class Bar extends Foo {
-//     /** @override se/*GO TO DEFINITION*/e {@link https://test.com} description */
+//     /** @override se/*GOTO DEF*/e {@link https://test.com} description */
 //     m() {}
 // }
-
 
 
 
 // === goToDefinition ===
 // === /a.js ===
-
 // class Foo {
 //     m() {}
 // }
 // class Bar extends Foo {
-//     /** @override see {@li/*GO TO DEFINITION*/nk https://test.com} description */
+//     /** @override see {@li/*GOTO DEF*/nk https://test.com} description */
 //     m() {}
 // }
-
 
 
 
 // === goToDefinition ===
 // === /a.js ===
-
 // class Foo {
 //     m() {}
 // }
 // class Bar extends Foo {
-//     /** @override see {@link https://test.c/*GO TO DEFINITION*/om} description */
+//     /** @override see {@link https://test.c/*GOTO DEF*/om} description */
 //     m() {}
 // }
-
 
 
 
 // === goToDefinition ===
 // === /a.js ===
-
 // class Foo {
 //     m() {}
 // }
 // class Bar extends Foo {
-//     /** @override see {@link https://test.com} /*GO TO DEFINITION*/description */
+//     /** @override see {@link https://test.com} /*GOTO DEF*/description */
 //     m() {}
 // }

@@ -3,7 +3,7 @@
 // abstract class BaseClass {
 //     /**
 //      * Useful description always applicable
-//      * 
+//      *
 //      * @returns {string} Useful description of return value always applicable.
 //      */
 //     public static doSomethingUseful(stuff?: any): string {
@@ -31,7 +31,7 @@
 // 
 //     /**
 //      * @inheritDoc
-//      * 
+//      *
 //      * @param {{ tiger: string; lion: string; }} [mySpecificStuff] Description of my specific parameter.
 //      */
 //     public static doSomethingUseful(mySpecificStuff?: { tiger: string; lion: string; }): string {
@@ -97,7 +97,7 @@
 [
   {
     "marker": {
-      "Position": 817,
+      "Position": 815,
       "LSPosition": {
         "line": 34,
         "character": 18
@@ -114,7 +114,7 @@
   },
   {
     "marker": {
-      "Position": 1143,
+      "Position": 1141,
       "LSPosition": {
         "line": 47,
         "character": 18
@@ -131,7 +131,7 @@
   },
   {
     "marker": {
-      "Position": 1282,
+      "Position": 1280,
       "LSPosition": {
         "line": 55,
         "character": 27

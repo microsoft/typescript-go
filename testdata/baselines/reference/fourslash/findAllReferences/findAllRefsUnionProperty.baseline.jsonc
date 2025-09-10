@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsUnionProperty.ts ===
-
 // type T =
 //     | { /*FIND ALL REFS*/[|type|]: "a", prop: number }
 //     | { [|type|]: "b", prop: string };
@@ -17,10 +16,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnionProperty.ts ===
-
 // type T =
 //     | { [|type|]: "a", prop: number }
 //     | { /*FIND ALL REFS*/[|type|]: "b", prop: string };
@@ -37,10 +34,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnionProperty.ts ===
-
 // type T =
 //     | { [|type|]: "a", prop: number }
 //     | { [|type|]: "b", prop: string };
@@ -57,10 +52,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnionProperty.ts ===
-
 // type T =
 //     | { [|type|]: "a", prop: number }
 //     | { [|type|]: "b", prop: string };
@@ -77,10 +70,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnionProperty.ts ===
-
 // type T =
 //     | { [|type|]: "a", prop: number }
 //     | { [|type|]: "b", prop: string };
@@ -97,10 +88,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnionProperty.ts ===
-
 // type T =
 //     | { [|type|]: "a", prop: number }
 //     | { type: "b", prop: string };
@@ -117,10 +106,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnionProperty.ts ===
-
 // type T =
 //     | { type: "a", /*FIND ALL REFS*/[|prop|]: number }
 //     | { type: "b", [|prop|]: string };
@@ -134,10 +121,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnionProperty.ts ===
-
 // type T =
 //     | { type: "a", [|prop|]: number }
 //     | { type: "b", /*FIND ALL REFS*/[|prop|]: string };
@@ -151,10 +136,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsUnionProperty.ts ===
-
 // type T =
 //     | { type: "a", [|prop|]: number }
 //     | { type: "b", prop: string };

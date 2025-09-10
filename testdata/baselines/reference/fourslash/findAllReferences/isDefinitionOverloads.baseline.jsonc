@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /isDefinitionOverloads.ts ===
-
 // function /*FIND ALL REFS*/[|f|](x: number): void;
 // function [|f|](x: string): void;
 // function [|f|](x: number | string) { }
@@ -10,10 +9,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /isDefinitionOverloads.ts ===
-
 // function [|f|](x: number): void;
 // function /*FIND ALL REFS*/[|f|](x: string): void;
 // function [|f|](x: number | string) { }
@@ -23,10 +20,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /isDefinitionOverloads.ts ===
-
 // function [|f|](x: number): void;
 // function [|f|](x: string): void;
 // function /*FIND ALL REFS*/[|f|](x: number | string) { }

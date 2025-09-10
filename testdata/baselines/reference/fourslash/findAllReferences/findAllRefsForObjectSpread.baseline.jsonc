@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsForObjectSpread.ts ===
-
 // interface A1 { readonly /*FIND ALL REFS*/[|a|]: string };
 // interface A2 { a?: number };
 // let a1: A1;
@@ -11,10 +10,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForObjectSpread.ts ===
-
 // interface A1 { readonly a: string };
 // interface A2 { /*FIND ALL REFS*/[|a|]?: number };
 // let a1: A1;
@@ -25,10 +22,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForObjectSpread.ts ===
-
 // interface A1 { readonly [|a|]: string };
 // interface A2 { [|a|]?: number };
 // let a1: A1;
@@ -39,10 +34,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForObjectSpread.ts ===
-
 // interface A1 { readonly [|a|]: string };
 // interface A2 { a?: number };
 // let a1: A1;

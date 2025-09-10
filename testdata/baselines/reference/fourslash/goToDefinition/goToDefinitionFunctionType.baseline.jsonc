@@ -1,8 +1,7 @@
 // === goToDefinition ===
 // === /goToDefinitionFunctionType.ts ===
-
 // const [|c|]: () => void;
-// /*GO TO DEFINITION*/c();
+// /*GOTO DEF*/c();
 // function test(cb: () => void) {
 //     cb();
 // }
@@ -10,14 +9,12 @@
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionFunctionType.ts ===
-
 // const c: () => void;
 // c();
 // function test([|cb|]: () => void) {
-//     /*GO TO DEFINITION*/cb();
+//     /*GOTO DEF*/cb();
 // }
 // class C {
 //     prop: () => void;
@@ -25,16 +22,14 @@
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionFunctionType.ts ===
-
 // --- (line: 3) skipped ---
 //     cb();
 // }
 // class C {
 //     [|prop|]: () => void;
 //     m() {
-//         this./*GO TO DEFINITION*/prop();
+//         this./*GOTO DEF*/prop();
 //     }
 // }

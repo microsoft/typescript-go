@@ -1,7 +1,6 @@
 // === goToDefinition ===
 // === /jsDocSee2.ts ===
-
-// /** @see {/*GO TO DEFINITION*/foooo} unknown reference*/
+// /** @see {/*GOTO DEF*/foooo} unknown reference*/
 // const a = ""
 // /** @see {@bar} invalid tag*/
 // const b = ""
@@ -9,13 +8,11 @@
 
 
 
-
 // === goToDefinition ===
 // === /jsDocSee2.ts ===
-
 // /** @see {foooo} unknown reference*/
 // const a = ""
-// /** @see {/*GO TO DEFINITION*/@bar} invalid tag*/
+// /** @see {/*GOTO DEF*/@bar} invalid tag*/
 // const b = ""
 // /** @see foooo unknown reference without brace*/
 // const c = ""
@@ -23,15 +20,13 @@
 
 
 
-
 // === goToDefinition ===
 // === /jsDocSee2.ts ===
-
 // /** @see {foooo} unknown reference*/
 // const a = ""
 // /** @see {@bar} invalid tag*/
 // const b = ""
-// /** @see /*GO TO DEFINITION*/foooo unknown reference without brace*/
+// /** @see /*GOTO DEF*/foooo unknown reference without brace*/
 // const c = ""
 // /** @see @bar invalid tag without brace*/
 // const d = ""
@@ -39,15 +34,13 @@
 
 
 
-
 // === goToDefinition ===
 // === /jsDocSee2.ts ===
-
 // --- (line: 3) skipped ---
 // const b = ""
 // /** @see foooo unknown reference without brace*/
 // const c = ""
-// /** @see /*GO TO DEFINITION*/@bar invalid tag without brace*/
+// /** @see /*GOTO DEF*/@bar invalid tag without brace*/
 // const d = ""
 // /** @see {d@fff} partial reference */
 // const e = ""
@@ -55,15 +48,13 @@
 
 
 
-
 // === goToDefinition ===
 // === /jsDocSee2.ts ===
-
 // --- (line: 5) skipped ---
 // const c = ""
 // /** @see @bar invalid tag without brace*/
 // const d = ""
-// /** @see {/*GO TO DEFINITION*/d@fff} partial reference */
+// /** @see {/*GOTO DEF*/d@fff} partial reference */
 // const e = ""
 // /** @see @@@@@@ total invalid tag*/
 // const f = ""
@@ -72,28 +63,24 @@
 
 
 
-
 // === goToDefinition ===
 // === /jsDocSee2.ts ===
-
 // --- (line: 7) skipped ---
 // const d = ""
 // /** @see {d@fff} partial reference */
 // const e = ""
-// /** @see /*GO TO DEFINITION*/@@@@@@ total invalid tag*/
+// /** @see /*GOTO DEF*/@@@@@@ total invalid tag*/
 // const f = ""
 // /** @see d@{fff} partial reference */
 // const g = ""
 
 
 
-
 // === goToDefinition ===
 // === /jsDocSee2.ts ===
-
 // --- (line: 9) skipped ---
 // const e = ""
 // /** @see @@@@@@ total invalid tag*/
 // const f = ""
-// /** @see d@{/*GO TO DEFINITION*/fff} partial reference */
+// /** @see d@{/*GOTO DEF*/fff} partial reference */
 // const g = ""

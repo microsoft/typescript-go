@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsObjectBindingElementPropertyName05.ts ===
-
 // interface I {
 //     property1: number;
 //     property2: string;

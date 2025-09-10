@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsWithLeadingUnderscoreNames6.ts ===
-
 // class Foo {
 //     public _bar;
 //     /*FIND ALL REFS*/public __bar;
@@ -11,10 +10,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsWithLeadingUnderscoreNames6.ts ===
-
 // class Foo {
 //     public _bar;
 //     public /*FIND ALL REFS*/[|__bar|];
@@ -30,10 +27,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsWithLeadingUnderscoreNames6.ts ===
-
 // class Foo {
 //     public _bar;
 //     public [|__bar|];

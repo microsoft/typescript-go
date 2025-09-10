@@ -1,9 +1,8 @@
 // === goToDefinition ===
 // === /goToDefinitionLabels.ts ===
-
 // [|label1|]: while (true) {
 //     label2: while (true) {
-//         break /*GO TO DEFINITION*/label1;
+//         break /*GOTO DEF*/label1;
 //         continue label2;
 //         () => { break label1; }
 //         continue unknownLabel;
@@ -12,14 +11,12 @@
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionLabels.ts ===
-
 // label1: while (true) {
 //     [|label2|]: while (true) {
 //         break label1;
-//         continue /*GO TO DEFINITION*/label2;
+//         continue /*GOTO DEF*/label2;
 //         () => { break label1; }
 //         continue unknownLabel;
 //     }
@@ -27,30 +24,26 @@
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionLabels.ts ===
-
 // [|label1|]: while (true) {
 //     label2: while (true) {
 //         break label1;
 //         continue label2;
-//         () => { break /*GO TO DEFINITION*/label1; }
+//         () => { break /*GOTO DEF*/label1; }
 //         continue unknownLabel;
 //     }
 // }
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionLabels.ts ===
-
 // label1: while (true) {
 //     label2: while (true) {
 //         break label1;
 //         continue label2;
 //         () => { break label1; }
-//         continue /*GO TO DEFINITION*/unknownLabel;
+//         continue /*GOTO DEF*/unknownLabel;
 //     }
 // }

@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForPropertiesOfGenericType.ts ===
-
 // interface IFoo<T> {
 //     /*FIND ALL REFS*/[|doSomething|](v: T): T;
 // }
@@ -13,10 +12,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForPropertiesOfGenericType.ts ===
-
 // interface IFoo<T> {
 //     [|doSomething|](v: T): T;
 // }
@@ -29,10 +26,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForPropertiesOfGenericType.ts ===
-
 // interface IFoo<T> {
 //     [|doSomething|](v: T): T;
 // }

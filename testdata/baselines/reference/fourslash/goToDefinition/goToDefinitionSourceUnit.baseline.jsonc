@@ -1,9 +1,8 @@
 // === goToDefinition ===
 // === /a.ts ===
-
 //  //MyFile Comments
 //  //more comments
-//  /// <reference path="so/*GO TO DEFINITION*/mePath.ts" />
+//  /// <reference path="so/*GOTO DEF*/mePath.ts" />
 //  /// <reference path="b.ts" />
 // 
 //  class clsInOverload {
@@ -11,14 +10,12 @@
 
 
 
-
 // === goToDefinition ===
 // === /a.ts ===
-
 //  //MyFile Comments
 //  //more comments
 //  /// <reference path="somePath.ts" />
-//  /// <reference path="b/*GO TO DEFINITION*/.ts" />
+//  /// <reference path="b/*GOTO DEF*/.ts" />
 // 
 //  class clsInOverload {
 //      static fnOverload();

@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForClassMembersExtendingGenericClass.ts ===
-
 // class Base<T> {
 //     /*FIND ALL REFS*/[|a|]: this;
 //     method<U>(a?:T, b?:U): this { }
@@ -16,10 +15,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForClassMembersExtendingGenericClass.ts ===
-
 // class Base<T> {
 //     [|a|]: this;
 //     method<U>(a?:T, b?:U): this { }
@@ -35,10 +32,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForClassMembersExtendingGenericClass.ts ===
-
 // class Base<T> {
 //     [|a|]: this;
 //     method<U>(a?:T, b?:U): this { }
@@ -54,10 +49,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForClassMembersExtendingGenericClass.ts ===
-
 // class Base<T> {
 //     a: this;
 //     /*FIND ALL REFS*/[|method|]<U>(a?:T, b?:U): this { }
@@ -73,10 +66,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForClassMembersExtendingGenericClass.ts ===
-
 // class Base<T> {
 //     a: this;
 //     [|method|]<U>(a?:T, b?:U): this { }
@@ -92,10 +83,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForClassMembersExtendingGenericClass.ts ===
-
 // class Base<T> {
 //     a: this;
 //     [|method|]<U>(a?:T, b?:U): this { }

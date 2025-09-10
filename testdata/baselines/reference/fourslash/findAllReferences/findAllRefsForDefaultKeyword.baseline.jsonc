@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsForDefaultKeyword.ts ===
-
 // function f(value: string, /*FIND ALL REFS*/default: string) {}
 // 
 // const default = 1;
@@ -9,10 +8,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForDefaultKeyword.ts ===
-
 // function f(value: string, default: string) {}
 // 
 // const /*FIND ALL REFS*/default = 1;
@@ -23,10 +20,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForDefaultKeyword.ts ===
-
 // function f(value: string, default: string) {}
 // 
 // const default = 1;
@@ -39,10 +34,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForDefaultKeyword.ts ===
-
 // --- (line: 3) skipped ---
 // 
 // function default() {}
@@ -55,10 +48,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsForDefaultKeyword.ts ===
-
 // --- (line: 6) skipped ---
 // class default {}
 // 

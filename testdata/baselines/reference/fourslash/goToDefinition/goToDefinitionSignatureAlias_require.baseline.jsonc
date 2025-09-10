@@ -1,24 +1,17 @@
 // === goToDefinition ===
 // === /a.js ===
-
 // [|module.exports = function f() {}|][|f|]() {}
 
-
 // === /b.js ===
-
 // const f = require("./a");
-// /*GO TO DEFINITION*/f();
-
+// /*GOTO DEF*/f();
 
 
 
 // === goToDefinition ===
 // === /a.js ===
-
 // [|module.exports = function f() {}|][|f|]() {}
 
-
 // === /bar.ts ===
-
 // import f = require("./a");
-// /*GO TO DEFINITION*/f();
+// /*GOTO DEF*/f();

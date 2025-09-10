@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsPrivateNameProperties.ts ===
-
 // class C {
 //     /*FIND ALL REFS*/[|#foo|] = 10;
 //     constructor() {
@@ -13,10 +12,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsPrivateNameProperties.ts ===
-
 // class C {
 //     [|#foo|] = 10;
 //     constructor() {
@@ -29,10 +26,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsPrivateNameProperties.ts ===
-
 // class C {
 //     [|#foo|] = 10;
 //     constructor() {
@@ -45,10 +40,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsPrivateNameProperties.ts ===
-
 // --- (line: 11) skipped ---
 //     }
 // }
@@ -61,10 +54,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsPrivateNameProperties.ts ===
-
 // --- (line: 11) skipped ---
 //     }
 // }

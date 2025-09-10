@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForExpressionKeywords.ts ===
-
 // class C {
 //     static x = 1;
 // }
@@ -12,10 +11,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForExpressionKeywords.ts ===
-
 // class C {
 //     static x = 1;
 // }
@@ -28,10 +25,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForExpressionKeywords.ts ===
-
 // class C {
 //     static x = 1;
 // }
@@ -45,10 +40,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForExpressionKeywords.ts ===
-
 // --- (line: 5) skipped ---
 // typeof C;
 // delete C.x;
@@ -62,10 +55,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForExpressionKeywords.ts ===
-
 // --- (line: 6) skipped ---
 // delete C.x;
 // async function* f() {
@@ -78,10 +69,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForExpressionKeywords.ts ===
-
 // --- (line: 8) skipped ---
 //     yield C;
 //     await C;
@@ -92,10 +81,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForExpressionKeywords.ts ===
-
 // class [|C|] {
 //     static x = 1;
 // }
@@ -113,10 +100,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForExpressionKeywords.ts ===
-
 // --- (line: 10) skipped ---
 // }
 // "x" in C;
@@ -125,10 +110,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForExpressionKeywords.ts ===
-
 // --- (line: 3) skipped ---
 // new C();
 // void C;

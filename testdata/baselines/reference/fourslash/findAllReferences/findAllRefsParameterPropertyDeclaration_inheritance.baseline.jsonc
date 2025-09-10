@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /findAllRefsParameterPropertyDeclaration_inheritance.ts ===
-
 // class C {
 // 	constructor(public /*FIND ALL REFS*/[|x|]: string) {
 // 		[|x|];
@@ -14,10 +13,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsParameterPropertyDeclaration_inheritance.ts ===
-
 // class C {
 // 	constructor(public [|x|]: string) {
 // 		/*FIND ALL REFS*/[|x|];
@@ -28,10 +25,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsParameterPropertyDeclaration_inheritance.ts ===
-
 // class C {
 // 	constructor(public [|x|]: string) {
 // 		[|x|];
@@ -45,10 +40,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /findAllRefsParameterPropertyDeclaration_inheritance.ts ===
-
 // class C {
 // 	constructor(public [|x|]: string) {
 // 		[|x|];

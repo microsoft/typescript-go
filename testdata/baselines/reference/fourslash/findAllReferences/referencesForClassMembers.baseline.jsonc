@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForClassMembers.ts ===
-
 // class Base {
 //     /*FIND ALL REFS*/[|a|]: number;
 //     method(): void { }
@@ -16,10 +15,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForClassMembers.ts ===
-
 // class Base {
 //     [|a|]: number;
 //     method(): void { }
@@ -35,10 +32,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForClassMembers.ts ===
-
 // class Base {
 //     [|a|]: number;
 //     method(): void { }
@@ -54,10 +49,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForClassMembers.ts ===
-
 // class Base {
 //     a: number;
 //     /*FIND ALL REFS*/[|method|](): void { }
@@ -73,10 +66,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForClassMembers.ts ===
-
 // class Base {
 //     a: number;
 //     [|method|](): void { }
@@ -92,10 +83,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForClassMembers.ts ===
-
 // class Base {
 //     a: number;
 //     [|method|](): void { }

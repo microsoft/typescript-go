@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /foo.ts ===
-
 // export function /*FIND ALL REFS*/[|bar|]() { return "bar"; }
 // var x = import("./foo");
 // x.then(foo => {
@@ -9,10 +8,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /foo.ts ===
-
 // export function [|bar|]() { return "bar"; }
 // var x = import("./foo");
 // x.then(foo => {

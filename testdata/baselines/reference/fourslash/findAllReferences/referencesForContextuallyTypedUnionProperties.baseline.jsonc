@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForContextuallyTypedUnionProperties.ts ===
-
 // interface A {
 //     a: number;
 //     /*FIND ALL REFS*/[|common|]: string;
@@ -37,10 +36,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForContextuallyTypedUnionProperties.ts ===
-
 // --- (line: 4) skipped ---
 // 
 // interface B {
@@ -74,10 +71,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForContextuallyTypedUnionProperties.ts ===
-
 // interface A {
 //     a: number;
 //     [|common|]: string;
@@ -114,10 +109,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForContextuallyTypedUnionProperties.ts ===
-
 // interface A {
 //     a: number;
 //     [|common|]: string;
@@ -154,10 +147,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForContextuallyTypedUnionProperties.ts ===
-
 // interface A {
 //     a: number;
 //     [|common|]: string;
@@ -194,10 +185,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForContextuallyTypedUnionProperties.ts ===
-
 // interface A {
 //     a: number;
 //     [|common|]: string;
@@ -234,10 +223,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForContextuallyTypedUnionProperties.ts ===
-
 // interface A {
 //     a: number;
 //     [|common|]: string;
@@ -274,10 +261,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForContextuallyTypedUnionProperties.ts ===
-
 // interface A {
 //     a: number;
 //     [|common|]: string;
@@ -314,10 +299,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForContextuallyTypedUnionProperties.ts ===
-
 // interface A {
 //     a: number;
 //     [|common|]: string;
@@ -354,10 +337,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForContextuallyTypedUnionProperties.ts ===
-
 // interface A {
 //     a: number;
 //     [|common|]: string;

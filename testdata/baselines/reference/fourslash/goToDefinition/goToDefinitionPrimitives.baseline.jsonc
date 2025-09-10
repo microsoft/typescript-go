@@ -1,4 +1,3 @@
 // === goToDefinition ===
 // === /goToDefinitionPrimitives.ts ===
-
-// var x: st/*GO TO DEFINITION*/ring;
+// var x: st/*GOTO DEF*/ring;

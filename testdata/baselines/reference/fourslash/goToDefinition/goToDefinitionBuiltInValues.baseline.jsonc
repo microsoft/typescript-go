@@ -1,7 +1,6 @@
 // === goToDefinition ===
 // === /goToDefinitionBuiltInValues.ts ===
-
-// var u = /*GO TO DEFINITION*/undefined;
+// var u = /*GOTO DEF*/undefined;
 // var n = null;
 // var a = function() { return arguments; };
 // var t = true;
@@ -9,48 +8,40 @@
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionBuiltInValues.ts ===
-
 // var u = undefined;
-// var n = /*GO TO DEFINITION*/null;
+// var n = /*GOTO DEF*/null;
 // var a = function() { return arguments; };
 // var t = true;
 // var f = false;
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionBuiltInValues.ts ===
-
 // var u = undefined;
 // var n = null;
-// var a = function() { return /*GO TO DEFINITION*/arguments; };
+// var a = function() { return /*GOTO DEF*/arguments; };
 // var t = true;
 // var f = false;
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionBuiltInValues.ts ===
-
 // var u = undefined;
 // var n = null;
 // var a = function() { return arguments; };
-// var t = /*GO TO DEFINITION*/true;
+// var t = /*GOTO DEF*/true;
 // var f = false;
 
 
 
-
 // === goToDefinition ===
 // === /goToDefinitionBuiltInValues.ts ===
-
 // var u = undefined;
 // var n = null;
 // var a = function() { return arguments; };
 // var t = true;
-// var f = /*GO TO DEFINITION*/false;
+// var f = /*GOTO DEF*/false;

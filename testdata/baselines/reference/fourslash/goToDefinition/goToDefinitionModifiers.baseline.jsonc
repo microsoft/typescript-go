@@ -1,230 +1,199 @@
 // === goToDefinition ===
 // === /a.ts ===
-
-//  /*GO TO DEFINITION*/export class [|A|] {
-//  
-//      private z: string;
+// /*GOTO DEF*/export class [|A|] {
+// 
+//     private z: string;
 // 
 // // --- (line: 5) skipped ---
 
 
 
-
 // === goToDefinition ===
 // === /a.ts ===
-
-//  export class A/*GO TO DEFINITION*/[|A|] {
-//  
-//      private z: string;
+// export class A/*GOTO DEF*/[|A|] {
+// 
+//     private z: string;
 // 
 // // --- (line: 5) skipped ---
 
 
 
-
 // === goToDefinition ===
 // === /a.ts ===
-
-//  export class A {
-//  
-//      /*GO TO DEFINITION*/private [|z|]: string;
+// export class A {
 // 
-//      readonly x: string;
-//  
+//     /*GOTO DEF*/private [|z|]: string;
+// 
+//     readonly x: string;
+// 
 // // --- (line: 7) skipped ---
 
 
 
-
 // === goToDefinition ===
 // === /a.ts ===
-
-//  export class A {
-//  
-//      private z/*GO TO DEFINITION*/[|z|]: string;
+// export class A {
 // 
-//      readonly x: string;
-//  
+//     private z/*GOTO DEF*/[|z|]: string;
+// 
+//     readonly x: string;
+// 
 // // --- (line: 7) skipped ---
 
 
 
-
 // === goToDefinition ===
 // === /a.ts ===
-
-//  export class A {
-//  
-//      private z: string;
+// export class A {
 // 
-//      /*GO TO DEFINITION*/readonly [|x|]: string;
-//  
-//      async a() {  }
-//  
+//     private z: string;
+// 
+//     /*GOTO DEF*/readonly [|x|]: string;
+// 
+//     async a() {  }
+// 
 // // --- (line: 9) skipped ---
 
 
 
-
 // === goToDefinition ===
 // === /a.ts ===
-
-//  export class A {
-//  
-//      private z: string;
+// export class A {
 // 
-//      readonly x/*GO TO DEFINITION*/[|x|]: string;
-//  
-//      async a() {  }
-//  
+//     private z: string;
+// 
+//     readonly x/*GOTO DEF*/[|x|]: string;
+// 
+//     async a() {  }
+// 
 // // --- (line: 9) skipped ---
 
 
 
-
 // === goToDefinition ===
 // === /a.ts ===
-
 // --- (line: 3) skipped ---
 // 
-//      readonly x: string;
-//  
-//      /*GO TO DEFINITION*/async [|a|]() {  }
-//  
-//      override b() {}
-//  
+//     readonly x: string;
+// 
+//     /*GOTO DEF*/async [|a|]() {  }
+// 
+//     override b() {}
+// 
 // // --- (line: 11) skipped ---
 
 
 
-
 // === goToDefinition ===
 // === /a.ts ===
-
 // --- (line: 3) skipped ---
 // 
-//      readonly x: string;
-//  
-//      async a/*GO TO DEFINITION*/[|a|]() {  }
-//  
-//      override b() {}
-//  
+//     readonly x: string;
+// 
+//     async a/*GOTO DEF*/[|a|]() {  }
+// 
+//     override b() {}
+// 
 // // --- (line: 11) skipped ---
 
 
 
-
 // === goToDefinition ===
 // === /a.ts ===
-
 // --- (line: 5) skipped ---
-//  
-//      async a() {  }
-//  
-//      /*GO TO DEFINITION*/override [|b|]() {}
-//  
-//      public async c() { }
-//  }
 // 
-//  export function foo() { }
-
+//     async a() {  }
+// 
+//     /*GOTO DEF*/override [|b|]() {}
+// 
+//     public async c() { }
+// }
+// 
+// export function foo() { }
 
 
 
 // === goToDefinition ===
 // === /a.ts ===
-
 // --- (line: 5) skipped ---
-//  
-//      async a() {  }
-//  
-//      override b/*GO TO DEFINITION*/[|b|]() {}
-//  
-//      public async c() { }
-//  }
 // 
-//  export function foo() { }
-
+//     async a() {  }
+// 
+//     override b/*GOTO DEF*/[|b|]() {}
+// 
+//     public async c() { }
+// }
+// 
+// export function foo() { }
 
 
 
 // === goToDefinition ===
 // === /a.ts ===
-
 // --- (line: 7) skipped ---
-//  
-//      override b() {}
-//  
-//      /*GO TO DEFINITION*/public async [|c|]() { }
-//  }
 // 
-//  export function foo() { }
-
+//     override b() {}
+// 
+//     /*GOTO DEF*/public async [|c|]() { }
+// }
+// 
+// export function foo() { }
 
 
 
 // === goToDefinition ===
 // === /a.ts ===
-
 // --- (line: 7) skipped ---
-//  
-//      override b() {}
-//  
-//      public/*GO TO DEFINITION*/ async [|c|]() { }
-//  }
 // 
-//  export function foo() { }
-
+//     override b() {}
+// 
+//     public/*GOTO DEF*/ async [|c|]() { }
+// }
+// 
+// export function foo() { }
 
 
 
 // === goToDefinition ===
 // === /a.ts ===
-
 // --- (line: 7) skipped ---
-//  
-//      override b() {}
-//  
-//      public as/*GO TO DEFINITION*/ync [|c|]() { }
-//  }
 // 
-//  export function foo() { }
-
+//     override b() {}
+// 
+//     public as/*GOTO DEF*/ync [|c|]() { }
+// }
+// 
+// export function foo() { }
 
 
 
 // === goToDefinition ===
 // === /a.ts ===
-
 // --- (line: 7) skipped ---
-//  
-//      override b() {}
-//  
-//      public async c/*GO TO DEFINITION*/[|c|]() { }
-//  }
 // 
-//  export function foo() { }
-
+//     override b() {}
+// 
+//     public async c/*GOTO DEF*/[|c|]() { }
+// }
+// 
+// export function foo() { }
 
 
 
 // === goToDefinition ===
 // === /a.ts ===
-
 // --- (line: 10) skipped ---
-//      public async c() { }
-//  }
+//     public async c() { }
+// }
 // 
-//  exp/*GO TO DEFINITION*/ort function [|foo|]() { }
-
+// exp/*GOTO DEF*/ort function [|foo|]() { }
 
 
 
 // === goToDefinition ===
 // === /a.ts ===
-
 // --- (line: 10) skipped ---
-//      public async c() { }
-//  }
+//     public async c() { }
+// }
 // 
-//  export function foo/*GO TO DEFINITION*/[|foo|]() { }
+// export function foo/*GOTO DEF*/[|foo|]() { }

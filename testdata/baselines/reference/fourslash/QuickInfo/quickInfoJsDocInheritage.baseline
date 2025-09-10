@@ -99,12 +99,12 @@
 // 
 // class Base1 {
 //     /**
-//      * @description Base1.foo1 
+//      * @description Base1.foo1
 //      */
 //     foo1: number = 1;
 // 
 //     /**
-//      * 
+//      *
 //      * @param q Base1.foo2 parameter
 //      * @returns Base1.foo2 return
 //      */
@@ -155,11 +155,11 @@
 // 
 // class Base2 {
 //     /**
-//      * @description Base2.foo1 
+//      * @description Base2.foo1
 //      */
 //     foo1: number = 1;
 //     /**
-//      * 
+//      *
 //      * @param q Base2.foo2 parameter
 //      * @returns Base2.foo2 return
 //      */
@@ -411,7 +411,7 @@
   },
   {
     "marker": {
-      "Position": 1069,
+      "Position": 1067,
       "LSPosition": {
         "line": 58,
         "character": 4
@@ -428,7 +428,7 @@
   },
   {
     "marker": {
-      "Position": 1091,
+      "Position": 1089,
       "LSPosition": {
         "line": 59,
         "character": 4
@@ -445,7 +445,7 @@
   },
   {
     "marker": {
-      "Position": 1263,
+      "Position": 1261,
       "LSPosition": {
         "line": 65,
         "character": 4
@@ -462,7 +462,7 @@
   },
   {
     "marker": {
-      "Position": 1285,
+      "Position": 1283,
       "LSPosition": {
         "line": 66,
         "character": 4
@@ -479,7 +479,7 @@
   },
   {
     "marker": {
-      "Position": 1681,
+      "Position": 1677,
       "LSPosition": {
         "line": 85,
         "character": 4
@@ -496,7 +496,7 @@
   },
   {
     "marker": {
-      "Position": 1703,
+      "Position": 1699,
       "LSPosition": {
         "line": 86,
         "character": 4
@@ -513,7 +513,7 @@
   },
   {
     "marker": {
-      "Position": 1875,
+      "Position": 1871,
       "LSPosition": {
         "line": 92,
         "character": 4
@@ -530,7 +530,7 @@
   },
   {
     "marker": {
-      "Position": 1897,
+      "Position": 1893,
       "LSPosition": {
         "line": 93,
         "character": 4
@@ -547,7 +547,7 @@
   },
   {
     "marker": {
-      "Position": 1955,
+      "Position": 1951,
       "LSPosition": {
         "line": 96,
         "character": 14
@@ -564,7 +564,7 @@
   },
   {
     "marker": {
-      "Position": 1975,
+      "Position": 1971,
       "LSPosition": {
         "line": 97,
         "character": 14
@@ -581,7 +581,7 @@
   },
   {
     "marker": {
-      "Position": 1995,
+      "Position": 1991,
       "LSPosition": {
         "line": 98,
         "character": 14
@@ -598,7 +598,7 @@
   },
   {
     "marker": {
-      "Position": 2015,
+      "Position": 2011,
       "LSPosition": {
         "line": 99,
         "character": 14
@@ -615,7 +615,7 @@
   },
   {
     "marker": {
-      "Position": 2035,
+      "Position": 2031,
       "LSPosition": {
         "line": 100,
         "character": 14
@@ -632,7 +632,7 @@
   },
   {
     "marker": {
-      "Position": 2055,
+      "Position": 2051,
       "LSPosition": {
         "line": 101,
         "character": 14
@@ -649,7 +649,7 @@
   },
   {
     "marker": {
-      "Position": 2075,
+      "Position": 2071,
       "LSPosition": {
         "line": 102,
         "character": 14
@@ -666,7 +666,7 @@
   },
   {
     "marker": {
-      "Position": 2095,
+      "Position": 2091,
       "LSPosition": {
         "line": 103,
         "character": 14

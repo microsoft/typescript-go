@@ -1,6 +1,5 @@
 // === findAllReferences ===
 // === /referencesForEnums.ts ===
-
 // enum E {
 //     /*FIND ALL REFS*/[|value1|] = 1,
 //     "value2" = [|value1|],
@@ -14,10 +13,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForEnums.ts ===
-
 // enum E {
 //     value1 = 1,
 //     /*FIND ALL REFS*/"[|value2|]" = value1,
@@ -31,10 +28,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForEnums.ts ===
-
 // enum E {
 //     value1 = 1,
 //     "/*FIND ALL REFS*/[|value2|]" = value1,
@@ -48,10 +43,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForEnums.ts ===
-
 // enum E {
 //     [|value1|] = 1,
 //     "value2" = /*FIND ALL REFS*/[|value1|],
@@ -65,10 +58,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForEnums.ts ===
-
 // enum E {
 //     value1 = 1,
 //     "value2" = value1,
@@ -82,10 +73,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForEnums.ts ===
-
 // enum E {
 //     [|value1|] = 1,
 //     "value2" = [|value1|],
@@ -99,10 +88,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForEnums.ts ===
-
 // enum E {
 //     value1 = 1,
 //     "[|value2|]" = value1,
@@ -116,10 +103,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForEnums.ts ===
-
 // enum E {
 //     value1 = 1,
 //     "[|value2|]" = value1,
@@ -133,10 +118,8 @@
 
 
 
-
 // === findAllReferences ===
 // === /referencesForEnums.ts ===
-
 // enum E {
 //     value1 = 1,
 //     "value2" = value1,
