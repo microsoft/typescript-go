@@ -1636,103 +1636,6 @@ func TestBuildOutputPaths(t *testing.T) {
 	}
 }
 
-func TestProjectsBuilding(t *testing.T) {
-	t.Parallel()
-	addPackageFiles := func(files FileMap, index int) {
-		files[fmt.Sprintf(`/user/username/projects/myproject/pkg%d/index.ts`, index)] = fmt.Sprintf(`export const pkg%d = %d;`, index, index)
-		var references string
-		if index > 0 {
-			references = `"references": [{ "path": "../pkg0" }],`
-		}
-		files[fmt.Sprintf(`/user/username/projects/myproject/pkg%d/tsconfig.json`, index)] = stringtestutil.Dedent(fmt.Sprintf(`
-		{
-			"compilerOptions": { "composite": true },
-			%s
-		}`, references))
-	}
-	addSolution := func(files FileMap, count int) {
-		var pkgReferences []string
-		for i := range count {
-			pkgReferences = append(pkgReferences, fmt.Sprintf(`{ "path": "./pkg%d" }`, i))
-		}
-		files[`/user/username/projects/myproject/tsconfig.json`] = stringtestutil.Dedent(fmt.Sprintf(`
-		{
-			"compilerOptions": { "composite": true },
-			"references": [
-				%s
-			]
-		}`, strings.Join(pkgReferences, ",\n\t\t\t\t")))
-	}
-	files := func(count int) FileMap {
-		files := FileMap{}
-		for i := range count {
-			addPackageFiles(files, i)
-		}
-		addSolution(files, count)
-		return files
-	}
-
-	getTestCases := func(pkgCount int, maxBuilding int) []*tscInput {
-		edits := []*tscEdit{
-			{
-				caption: "dts doesn't change",
-				edit: func(sys *testSys) {
-					sys.appendFile(`/user/username/projects/myproject/pkg0/index.ts`, `const someConst2 = 10;`)
-				},
-			},
-			noChange,
-			{
-				caption: "dts change",
-				edit: func(sys *testSys) {
-					sys.appendFile(`/user/username/projects/myproject/pkg0/index.ts`, `export const someConst = 10;`)
-				},
-			},
-			noChange,
-		}
-		return []*tscInput{
-			{
-				subScenario:     fmt.Sprintf(`when there are %d projects in a solution`, pkgCount),
-				files:           files(pkgCount),
-				cwd:             "/user/username/projects/myproject",
-				commandLineArgs: []string{"-b", "-v"},
-				edits:           edits,
-			},
-			{
-				subScenario:     fmt.Sprintf(`when there are %d projects in a solution with maxConcurrentProjects %d`, pkgCount, maxBuilding),
-				files:           files(pkgCount),
-				cwd:             "/user/username/projects/myproject",
-				commandLineArgs: []string{"-b", "-v", "--maxConcurrentProjects", strconv.Itoa(maxBuilding)},
-				edits:           edits,
-			},
-			{
-				subScenario:     fmt.Sprintf(`when there are %d projects in a solution`, pkgCount),
-				files:           files(pkgCount),
-				cwd:             "/user/username/projects/myproject",
-				commandLineArgs: []string{"-b", "-w", "-v"},
-				edits:           edits,
-			},
-			{
-				subScenario:     fmt.Sprintf(`when there are %d projects in a solution with maxConcurrentProjects %d`, pkgCount, maxBuilding),
-				files:           files(pkgCount),
-				cwd:             "/user/username/projects/myproject",
-				commandLineArgs: []string{"-b", "-w", "-v", "--maxConcurrentProjects", strconv.Itoa(maxBuilding)},
-				edits:           edits,
-			},
-		}
-	}
-
-	testCases := slices.Concat(
-		getTestCases(3, 2),
-		getTestCases(5, 2),
-		getTestCases(8, 3),
-		getTestCases(23, 3),
-	)
-
-	for _, test := range testCases {
-		test.run(t, "projectsBuilding")
-	}
-}
-
 func TestBuildProgramUpdates(t *testing.T) {
 	t.Parallel()
 	testCases := []*tscInput{
@@ -2160,9 +2063,165 @@ func TestBuildProgramUpdates(t *testing.T) {
 			cwd:             "/user/username/projects/project",
 			commandLineArgs: []string{"--b", "-i", "-w"},
 		},
+		{
+			subScenario: "when root is source from project reference",
+			files: FileMap{
+				"/home/src/workspaces/project/lib/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"composite": true,
+							"outDir": "./dist"
+						}
+					}`),
+				"/home/src/workspaces/project/lib/foo.ts": `export const FOO: string = 'THEFOOEXPORT';`,
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"references": [ { "path": "./lib" } ]
+					}`),
+				"/home/src/workspaces/project/index.ts": `import { FOO } from "./lib/foo";`,
+			},
+			commandLineArgs: []string{"--b"},
+			edits: []*tscEdit{
+				{
+					caption: "dts doesnt change",
+					edit: func(sys *testSys) {
+						sys.appendFile("/home/src/workspaces/project/lib/foo.ts", "const Bar = 10;")
+					},
+				},
+			},
+			cwd: "/home/src/workspaces/project",
+		},
+		{
+			subScenario: "when root is source from project reference with composite",
+			files: FileMap{
+				"/home/src/workspaces/project/lib/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"composite": true,
+							"outDir": "./dist"
+						}
+					}`),
+				"/home/src/workspaces/project/lib/foo.ts": `export const FOO: string = 'THEFOOEXPORT';`,
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+					{
+						"compilerOptions": {
+							"composite": true,
+						},
+						"references": [ { "path": "./lib" } ]
+					}`),
+				"/home/src/workspaces/project/index.ts": `import { FOO } from "./lib/foo";`,
+			},
+			commandLineArgs: []string{"--b"},
+			edits: []*tscEdit{
+				{
+					caption: "dts doesnt change",
+					edit: func(sys *testSys) {
+						sys.appendFile("/home/src/workspaces/project/lib/foo.ts", "const Bar = 10;")
+					},
+				},
+			},
+			cwd: "/home/src/workspaces/project",
+		},
 	}
 	for _, test := range testCases {
 		test.run(t, "programUpdates")
+	}
+}
+
+func TestBuildProjectsBuilding(t *testing.T) {
+	t.Parallel()
+	addPackageFiles := func(files FileMap, index int) {
+		files[fmt.Sprintf(`/user/username/projects/myproject/pkg%d/index.ts`, index)] = fmt.Sprintf(`export const pkg%d = %d;`, index, index)
+		var references string
+		if index > 0 {
+			references = `"references": [{ "path": "../pkg0" }],`
+		}
+		files[fmt.Sprintf(`/user/username/projects/myproject/pkg%d/tsconfig.json`, index)] = stringtestutil.Dedent(fmt.Sprintf(`
+		{
+			"compilerOptions": { "composite": true },
+			%s
+		}`, references))
+	}
+	addSolution := func(files FileMap, count int) {
+		var pkgReferences []string
+		for i := range count {
+			pkgReferences = append(pkgReferences, fmt.Sprintf(`{ "path": "./pkg%d" }`, i))
+		}
+		files[`/user/username/projects/myproject/tsconfig.json`] = stringtestutil.Dedent(fmt.Sprintf(`
+		{
+			"compilerOptions": { "composite": true },
+			"references": [
+				%s
+			]
+		}`, strings.Join(pkgReferences, ",\n\t\t\t\t")))
+	}
+	files := func(count int) FileMap {
+		files := FileMap{}
+		for i := range count {
+			addPackageFiles(files, i)
+		}
+		addSolution(files, count)
+		return files
+	}
+
+	getTestCases := func(pkgCount int, maxBuilding int) []*tscInput {
+		edits := []*tscEdit{
+			{
+				caption: "dts doesn't change",
+				edit: func(sys *testSys) {
+					sys.appendFile(`/user/username/projects/myproject/pkg0/index.ts`, `const someConst2 = 10;`)
+				},
+			},
+			noChange,
+			{
+				caption: "dts change",
+				edit: func(sys *testSys) {
+					sys.appendFile(`/user/username/projects/myproject/pkg0/index.ts`, `export const someConst = 10;`)
+				},
+			},
+			noChange,
+		}
+		return []*tscInput{
+			{
+				subScenario:     fmt.Sprintf(`when there are %d projects in a solution`, pkgCount),
+				files:           files(pkgCount),
+				cwd:             "/user/username/projects/myproject",
+				commandLineArgs: []string{"-b", "-v"},
+				edits:           edits,
+			},
+			{
+				subScenario:     fmt.Sprintf(`when there are %d projects in a solution with maxConcurrentProjects %d`, pkgCount, maxBuilding),
+				files:           files(pkgCount),
+				cwd:             "/user/username/projects/myproject",
+				commandLineArgs: []string{"-b", "-v", "--maxConcurrentProjects", strconv.Itoa(maxBuilding)},
+				edits:           edits,
+			},
+			{
+				subScenario:     fmt.Sprintf(`when there are %d projects in a solution`, pkgCount),
+				files:           files(pkgCount),
+				cwd:             "/user/username/projects/myproject",
+				commandLineArgs: []string{"-b", "-w", "-v"},
+				edits:           edits,
+			},
+			{
+				subScenario:     fmt.Sprintf(`when there are %d projects in a solution with maxConcurrentProjects %d`, pkgCount, maxBuilding),
+				files:           files(pkgCount),
+				cwd:             "/user/username/projects/myproject",
+				commandLineArgs: []string{"-b", "-w", "-v", "--maxConcurrentProjects", strconv.Itoa(maxBuilding)},
+				edits:           edits,
+			},
+		}
+	}
+
+	testCases := slices.Concat(
+		getTestCases(3, 2),
+		getTestCases(5, 2),
+		getTestCases(8, 3),
+		getTestCases(23, 3),
+	)
+
+	for _, test := range testCases {
+		test.run(t, "projectsBuilding")
 	}
 }
 
