@@ -5,7 +5,10 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime"
 	"runtime/pprof"
+
+	"github.com/microsoft/typescript-go/internal/core"
 )
 
 type profileSession struct {
@@ -60,4 +63,35 @@ func (p *profileSession) Stop() {
 
 	fmt.Fprintf(p.logWriter, "CPU profile: %v\n", p.cpuFilePath)
 	fmt.Fprintf(p.logWriter, "Memory profile: %v\n", p.memFilePath)
+}
+
+func WriteHeapProfile(runGC bool, name string) (string, error) {
+	// if profileDir == "" {
+	pid := os.Getpid()
+	profileDir := filepath.Join(core.Must(os.Getwd()), fmt.Sprintf("pprof/%d/%s", pid, name))
+	// }
+	if err := os.MkdirAll(profileDir, 0o755); err != nil {
+		return "", err
+	}
+
+	if runGC {
+		runtime.GC()
+		runtime.GC()
+	}
+
+	// Generate unique filename using PID and counter
+	filePath := filepath.Join(profileDir, "heapprofile.pb.gz")
+
+	file, err := os.Create(filePath)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	err = pprof.Lookup("heap").WriteTo(file, 0)
+	if err != nil {
+		return "", err
+	}
+
+	return filePath, nil
 }

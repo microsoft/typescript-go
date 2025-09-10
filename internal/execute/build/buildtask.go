@@ -15,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
+	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -46,6 +47,11 @@ type buildInfoEntry struct {
 	dtsTime   *time.Time
 }
 
+type prevReporter struct {
+	task  *buildTask
+	index int
+}
+
 type buildTask struct {
 	config     string
 	resolved   *tsoptions.ParsedCommandLine
@@ -64,7 +70,7 @@ type buildTask struct {
 	program            *incremental.Program
 	buildKind          buildKind
 	filesToDelete      []string
-	prevReporter       *buildTask
+	prevReporter       *prevReporter
 	reportDone         chan struct{}
 
 	// Watching things
@@ -100,7 +106,7 @@ func (t *buildTask) reportDiagnostic(err *ast.Diagnostic) {
 
 func (t *buildTask) report(orchestrator *Orchestrator, configPath tspath.Path, buildResult *orchestratorResult) {
 	if t.prevReporter != nil {
-		<-t.prevReporter.reportDone
+		<-t.prevReporter.task.reportDone
 	}
 	if len(t.errors) > 0 {
 		buildResult.errors = append(core.IfElse(buildResult.errors != nil, buildResult.errors, []*ast.Diagnostic{}), t.errors...)
@@ -129,6 +135,14 @@ func (t *buildTask) report(orchestrator *Orchestrator, configPath tspath.Path, b
 		t.buildKind = buildKindNone
 	}
 	buildResult.filesToDelete = append(buildResult.filesToDelete, t.filesToDelete...)
+	if !orchestrator.opts.Command.BuildOptions.Clean.IsTrue() {
+		pprof.WriteHeapProfile(true, orchestrator.relativeFileName(t.config)+"/reportComplete")
+	}
+	index := 0
+	if t.prevReporter != nil {
+		index = t.prevReporter.index + 1
+	}
+	fmt.Printf("[%d/%d] Completed build of project: %s\n", index, len(orchestrator.order), orchestrator.relativeFileName(t.config))
 	close(t.reportDone)
 }
 
@@ -160,6 +174,7 @@ func (t *buildTask) buildProject(orchestrator *Orchestrator, path tspath.Path) {
 			}
 		}
 	}
+	pprof.WriteHeapProfile(true, orchestrator.relativeFileName(t.config))
 	t.unblockDownstream()
 }
 

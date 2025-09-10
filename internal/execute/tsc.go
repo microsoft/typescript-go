@@ -91,7 +91,9 @@ func tscBuildCompilation(sys tsc.System, buildCommand *tsoptions.ParsedBuildComm
 		Command: buildCommand,
 		Testing: testing,
 	})
-	return orchestrator.Start()
+	result := orchestrator.Start()
+	pprof.WriteHeapProfile(true, "BuildEnd")
+	return result
 }
 
 func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, testing tsc.CommandLineTesting) tsc.CommandLineResult {

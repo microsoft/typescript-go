@@ -180,7 +180,7 @@ func (o *Orchestrator) setupBuildTask(
 		task.reportDone = make(chan struct{})
 		prev := core.LastOrNil(o.order)
 		if prev != "" {
-			task.prevReporter = o.getTask(o.toPath(prev))
+			task.prevReporter = &prevReporter{o.getTask(o.toPath(prev)), len(o.order)}
 		}
 		task.done = make(chan struct{})
 		o.order = append(o.order, configName)
