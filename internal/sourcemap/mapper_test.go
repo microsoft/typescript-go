@@ -101,7 +101,7 @@ func TestDocumentPositionMapper_GetSourcePosition(t *testing.T) {
 	// Test mapping from declaration file to source file
 	// Position should be somewhere in the methodName declaration in the .d.ts file
 	declLineStarts := core.ComputeLineStarts(testDeclarationContent)
-	
+
 	// Find the position of "methodName" in the declaration file
 	// This is on line 2 (0-indexed), around character 4
 	methodNamePosInDecl := int(declLineStarts[2]) + 4

@@ -27,7 +27,6 @@ type DocumentPositionMapperHost interface {
 	Log(text string)
 }
 
-
 // MappedPosition represents a position mapping with additional metadata
 type MappedPosition struct {
 	GeneratedPosition core.TextPos
@@ -54,22 +53,22 @@ func createDocumentPositionMapperFromRawMap(host DocumentPositionMapperHost, sou
 	} else {
 		sourceRoot = mapDirectory
 	}
-	
+
 	generatedAbsoluteFilePath := tspath.GetNormalizedAbsolutePath(sourceMap.File, mapDirectory)
 	generatedFile := host.GetSource(generatedAbsoluteFilePath)
-	
+
 	sourceFileAbsolutePaths := make([]string, len(sourceMap.Sources))
 	for i, source := range sourceMap.Sources {
 		sourceFileAbsolutePaths[i] = tspath.GetNormalizedAbsolutePath(source, sourceRoot)
 	}
 
 	return &documentPositionMapper{
-		host:                      host,
-		sourceMap:                 sourceMap,
-		mapPath:                   mapPath,
-		generatedFile:             generatedFile,
-		sourceFileAbsolutePaths:   sourceFileAbsolutePaths,
-		sourceToSourceIndexMap:    createSourceIndexMap(sourceFileAbsolutePaths, host.GetCanonicalFileName),
+		host:                    host,
+		sourceMap:               sourceMap,
+		mapPath:                 mapPath,
+		generatedFile:           generatedFile,
+		sourceFileAbsolutePaths: sourceFileAbsolutePaths,
+		sourceToSourceIndexMap:  createSourceIndexMap(sourceFileAbsolutePaths, host.GetCanonicalFileName),
 	}
 }
 
@@ -88,12 +87,12 @@ type documentPositionMapper struct {
 	generatedFile           Source
 	sourceFileAbsolutePaths []string
 	sourceToSourceIndexMap  map[string]int
-	
+
 	// Cached mappings
-	decodedMappings    []MappedPosition
-	generatedMappings  []MappedPosition
-	sourceMappings     [][]MappedPosition
-	mappingsDecoded    bool
+	decodedMappings   []MappedPosition
+	generatedMappings []MappedPosition
+	sourceMappings    [][]MappedPosition
+	mappingsDecoded   bool
 }
 
 func (mapper *documentPositionMapper) GetSourcePosition(input DocumentPosition) DocumentPosition {
@@ -170,7 +169,7 @@ func (mapper *documentPositionMapper) ensureMappingsDecoded() bool {
 	}
 
 	mapper.mappingsDecoded = true
-	
+
 	if mapper.sourceMap.Mappings == "" {
 		return false
 	}

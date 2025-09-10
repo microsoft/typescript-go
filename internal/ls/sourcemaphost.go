@@ -14,7 +14,6 @@ type sourcemapHost struct {
 	program *compiler.Program
 }
 
-
 func (h *sourcemapHost) GetSource(fileName string) sourcemap.Source {
 	if content, ok := h.readFileWithFallback(fileName); ok {
 		return sourcemap.NewSimpleSourceFile(fileName, content)
@@ -50,15 +49,13 @@ func (h *sourcemapHost) readFileWithFallback(fileName string) (string, bool) {
 	if content, ok := h.program.Host().FS().ReadFile(fileName); ok {
 		return content, true
 	}
-	
+
 	if fallbackFS, ok := h.program.Host().FS().(sourcemap.FallbackFileReader); ok {
 		return fallbackFS.ReadFileWithFallback(fileName)
 	}
-	
+
 	return "", false
 }
-
-
 
 type sourcemapFileReader struct {
 	host *sourcemapHost
@@ -75,7 +72,6 @@ func CreateSourceMapperForProgram(program *compiler.Program) sourcemap.SourceMap
 	return sourcemap.CreateSourceMapper(host, fileReader)
 }
 
-
 // Maps a single definition location using source maps.
 func MapSingleDefinitionLocation(program *compiler.Program, location lsproto.Location, languageService *LanguageService) *lsproto.Location {
 	fileName := location.Uri.FileName()
@@ -86,17 +82,17 @@ func MapSingleDefinitionLocation(program *compiler.Program, location lsproto.Loc
 
 	host := &sourcemapHost{program: program}
 	sourceMapper := CreateSourceMapperForProgram(program)
-	
+
 	return tryMapLocation(sourceMapper, host, location, languageService)
 }
 
 func tryMapLocation(sourceMapper sourcemap.SourceMapper, host *sourcemapHost, location lsproto.Location, languageService *LanguageService) *lsproto.Location {
 	fileName := location.Uri.FileName()
 	program := host.program
-	
+
 	declFile := program.GetSourceFile(fileName)
 	var declStartPos, declEndPos core.TextPos
-	
+
 	// Get the script interface for the declaration file
 	var declScript Script
 	if declFile != nil {
@@ -106,17 +102,17 @@ func tryMapLocation(sourceMapper sourcemap.SourceMapper, host *sourcemapHost, lo
 		if !ok {
 			return nil
 		}
-		
+
 		declScript = &textScript{
 			fileName: fileName,
 			text:     declContent,
 		}
 	}
-	
+
 	// Convert both positions using the same script interface
 	declStartPos = languageService.converters.LineAndCharacterToPosition(declScript, location.Range.Start)
 	declEndPos = languageService.converters.LineAndCharacterToPosition(declScript, location.Range.End)
-	
+
 	startInput := sourcemap.DocumentPosition{
 		FileName: fileName,
 		Pos:      declStartPos,
@@ -132,7 +128,7 @@ func tryMapLocation(sourceMapper sourcemap.SourceMapper, host *sourcemapHost, lo
 		FileName: fileName,
 		Pos:      declEndPos,
 	}
-	
+
 	endResult := sourceMapper.TryGetSourcePosition(endInput)
 	var sourceEndPos core.TextPos
 	if endResult != nil && endResult.FileName == startResult.FileName {
@@ -143,7 +139,7 @@ func tryMapLocation(sourceMapper sourcemap.SourceMapper, host *sourcemapHost, lo
 		originalRangeLength := declEndPos - declStartPos
 		sourceEndPos = startResult.Pos + originalRangeLength
 	}
-	
+
 	// Get the script interface for the source file
 	sourceFile := program.GetSourceFile(startResult.FileName)
 	var sourceScript Script
@@ -154,13 +150,13 @@ func tryMapLocation(sourceMapper sourcemap.SourceMapper, host *sourcemapHost, lo
 		if !ok {
 			return nil
 		}
-		
+
 		sourceScript = &textScript{
 			fileName: startResult.FileName,
 			text:     sourceContent,
 		}
 	}
-	
+
 	// Convert both positions using the same script interface
 	sourceStartLSP := languageService.converters.PositionToLineAndCharacter(sourceScript, startResult.Pos)
 	sourceEndLSP := languageService.converters.PositionToLineAndCharacter(sourceScript, sourceEndPos)

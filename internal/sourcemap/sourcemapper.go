@@ -36,17 +36,17 @@ type FallbackFileReader interface {
 
 // sourceMapper implements the SourceMapper interface
 type sourceMapper struct {
-	host                     SourceMapperHost
-	fileReader               FileReader
-	getCanonicalFileName     func(string) string
-	currentDirectory         string
-	documentPositionMappers  map[string]DocumentPositionMapper
+	host                    SourceMapperHost
+	fileReader              FileReader
+	getCanonicalFileName    func(string) string
+	currentDirectory        string
+	documentPositionMappers map[string]DocumentPositionMapper
 }
 
 // CreateSourceMapper creates a new SourceMapper instance
 func CreateSourceMapper(host SourceMapperHost, fileReader FileReader) SourceMapper {
 	getCanonicalFileName := createGetCanonicalFileName(host.UseCaseSensitiveFileNames())
-	
+
 	return &sourceMapper{
 		host:                    host,
 		fileReader:              fileReader,
@@ -75,7 +75,7 @@ func (sm *sourceMapper) TryGetSourcePosition(info DocumentPosition) *DocumentPos
 	if mapped := sm.TryGetSourcePosition(newLoc); mapped != nil {
 		return mapped
 	}
-	
+
 	return &newLoc
 }
 
@@ -142,7 +142,7 @@ func (sm *sourceMapper) GetSource(fileName string) Source {
 	if !ok {
 		return nil
 	}
-	
+
 	return NewSimpleSourceFile(fileName, content)
 }
 

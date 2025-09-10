@@ -174,7 +174,7 @@ func (c *Converters) PositionToLineAndCharacter(script Script, position core.Tex
 	// UTF-8 offset to UTF-8/16 0-indexed line and character
 
 	lineMap := c.getLineMap(script.FileName())
-	
+
 	// If lineMap is nil (file not in cache), create a temporary one from the script text
 	if lineMap == nil {
 		lineMap = ComputeLineStarts(script.Text())
