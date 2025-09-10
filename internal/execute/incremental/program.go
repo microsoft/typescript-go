@@ -284,6 +284,10 @@ func (p *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOption
 	} else {
 		err = p.program.Host().FS().WriteFile(buildInfoFileName, string(text), false)
 	}
+
+	readableBuildInfo := toReadableBuildInfo(buildInfo, string(text))
+	p.program.Host().FS().WriteFile(buildInfoFileName+".readable.baseline.txt", readableBuildInfo, false)
+
 	if err != nil {
 		return &compiler.EmitResult{
 			EmitSkipped: true,
