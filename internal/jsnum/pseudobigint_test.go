@@ -31,8 +31,6 @@ func TestParsePseudoBigInt(t *testing.T) {
 		}
 	})
 
-	// TODO(jakebailey): tests for other bases
-
 	t.Run("parse non-decimal bases (small numbers)", func(t *testing.T) {
 		t.Parallel()
 
