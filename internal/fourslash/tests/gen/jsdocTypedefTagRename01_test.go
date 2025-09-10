@@ -15,13 +15,13 @@ func TestJsdocTypedefTagRename01(t *testing.T) {
 	const content = `// @allowNonTsExtensions: true
 // @Filename: jsDocTypedef_form1.js
 
- /** @typedef {(string | number)} */
- [|var [|{| "contextRangeIndex": 0 |}NumberLike|];|]
+/** @typedef {(string | number)} */
+[|var [|{| "contextRangeIndex": 0 |}NumberLike|];|]
 
- [|NumberLike|] = 10;
+[|NumberLike|] = 10;
 
- /** @type {[|NumberLike|]} */
- var numberLike;`
+/** @type {[|NumberLike|]} */
+var numberLike;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyBaselineRename(t, ToAny(f.Ranges()[1:])...)
 }

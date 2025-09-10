@@ -18,7 +18,7 @@ func TestJsDocPropertyDescription9(t *testing.T) {
     static [key: ` + "`" + `prefix${number}` + "`" + `]: number;
 }
 function literalClass(e: typeof LiteralClass) {
-    console.log(e./*literal1Class*/prefixMember); 
+    console.log(e./*literal1Class*/prefixMember);
     console.log(e./*literal2Class*/anything);
     console.log(e./*literal3Class*/prefix0);
 }`

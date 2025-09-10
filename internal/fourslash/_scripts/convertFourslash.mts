@@ -97,7 +97,7 @@ function parseFileContent(filename: string, content: string): GoTest | undefined
 }
 
 function getTestInput(content: string): string {
-    const lines = content.split("\n");
+    const lines = content.split("\n").map(line => line.trimEnd());
     let testInput: string[] = [];
     for (const line of lines) {
         let newLine = "";
@@ -118,7 +118,14 @@ function getTestInput(content: string): string {
     }
 
     // chomp leading spaces
-    if (!testInput.some(line => line.length != 0 && !line.startsWith(" ") && !line.startsWith("// ") && !line.startsWith("//@"))) {
+    if (
+        !testInput.some(line =>
+            line.length != 0 &&
+            !line.startsWith(" ") &&
+            !line.startsWith("// ") &&
+            !line.startsWith("//@")
+        )
+    ) {
         testInput = testInput.map(line => {
             if (line.startsWith(" ")) return line.substring(1);
             return line;

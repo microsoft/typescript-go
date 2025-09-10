@@ -17,7 +17,7 @@ func TestQuickInfoInheritDoc(t *testing.T) {
 abstract class BaseClass {
     /**
      * Useful description always applicable
-     * 
+     *
      * @returns {string} Useful description of return value always applicable.
      */
     public static doSomethingUseful(stuff?: any): string {
@@ -45,7 +45,7 @@ class SubClass extends BaseClass {
 
     /**
      * @inheritDoc
-     * 
+     *
      * @param {{ tiger: string; lion: string; }} [mySpecificStuff] Description of my specific parameter.
      */
     public static /*1*/doSomethingUseful(mySpecificStuff?: { tiger: string; lion: string; }): string {

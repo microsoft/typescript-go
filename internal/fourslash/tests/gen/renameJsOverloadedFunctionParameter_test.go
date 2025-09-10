@@ -21,10 +21,10 @@ func TestRenameJsOverloadedFunctionParameter(t *testing.T) {
  *
  * @overload
  * @param {string} x
- * @returns {string} 
+ * @returns {string}
  *
  * @param {unknown} x
- * @returns {unknown} 
+ * @returns {unknown}
  */
 function foo(x/**/) {
   return x;

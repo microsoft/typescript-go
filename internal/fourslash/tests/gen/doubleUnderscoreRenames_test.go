@@ -12,13 +12,13 @@ func TestDoubleUnderscoreRenames(t *testing.T) {
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: fileA.ts
- [|export function [|{| "contextRangeIndex": 0 |}__foo|]() {
- }|]
+[|export function [|{| "contextRangeIndex": 0 |}__foo|]() {
+}|]
 
 // @Filename: fileB.ts
- [|import { [|{| "contextRangeIndex": 2 |}__foo|] as bar } from "./fileA";|]
+[|import { [|{| "contextRangeIndex": 2 |}__foo|] as bar } from "./fileA";|]
 
- bar();`
+bar();`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyBaselineRenameAtRangesWithText(t, "__foo")
 }

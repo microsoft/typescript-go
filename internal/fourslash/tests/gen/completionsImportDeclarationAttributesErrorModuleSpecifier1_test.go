@@ -14,7 +14,7 @@ func TestCompletionsImportDeclarationAttributesErrorModuleSpecifier1(t *testing.
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 // @filename: global.d.ts
-interface ImportAttributes { 
+interface ImportAttributes {
   type: "json";
 }
 // @filename: index.ts

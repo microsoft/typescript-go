@@ -846,7 +846,7 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 
 		f.addResultToBaseline(t, "goToDefinition", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
 			marker:     markerOrRange,
-			markerName: "/*GO TO DEFINITION*/",
+			markerName: "/*GOTO DEF*/",
 		}))
 	}
 }

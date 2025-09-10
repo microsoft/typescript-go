@@ -71,12 +71,14 @@ func getBaselineOptions(command string) baseline.Options {
 				var commandLines []string
 				commandPrefix := regexp.MustCompile(`^// === ([a-z\sA-Z]*) ===`)
 				testFilePrefix := "/tests/cases/fourslash"
+				serverTestFilePrefix := "/server"
 				contextSpanOpening := "<|"
 				contextSpanClosing := "|>"
 				replacer := strings.NewReplacer(
 					contextSpanOpening, "",
 					contextSpanClosing, "",
 					testFilePrefix, "",
+					serverTestFilePrefix, "",
 				)
 				lines := strings.Split(s, "\n")
 				var isInCommand bool

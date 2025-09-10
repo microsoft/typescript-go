@@ -15,15 +15,15 @@ func TestJsdocTypedefTagRename03(t *testing.T) {
 	const content = `// @allowNonTsExtensions: true
 // @Filename: jsDocTypedef_form3.js
 
- /**
-  * [|@typedef /*1*/[|{| "contextRangeIndex": 0 |}Person|]
-  * @type {Object}
-  * @property {number} age
-  * @property {string} name
-  |]*/
+/**
+ * [|@typedef /*1*/[|{| "contextRangeIndex": 0 |}Person|]
+ * @type {Object}
+ * @property {number} age
+ * @property {string} name
+ |]*/
 
- /** @type {/*2*/[|Person|]} */
- var person;`
+/** @type {/*2*/[|Person|]} */
+var person;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.GoToFile(t, "jsDocTypedef_form3.js")
 	f.VerifyBaselineRename(t, ToAny(f.GetRangesByText().Get("Person"))...)
