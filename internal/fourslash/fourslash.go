@@ -1561,7 +1561,7 @@ func (f *FourslashTest) VerifyRenameSucceeded(t *testing.T) {
 	}
 
 	if result.WorkspaceEdit == nil || result.WorkspaceEdit.Changes == nil || len(*result.WorkspaceEdit.Changes) == 0 {
-		t.Fatal(prefix + "Expected rename to be succeed, but got no changes")
+		t.Fatal(prefix + "Expected rename to succeed, but got no changes")
 	}
 }
 

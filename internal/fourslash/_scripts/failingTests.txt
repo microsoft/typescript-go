@@ -253,6 +253,7 @@ TestJsDocPropertyDescription6
 TestJsDocPropertyDescription7
 TestJsDocPropertyDescription8
 TestJsDocPropertyDescription9
+TestJsDocSee_rename1
 TestJsDocTagsWithHyphen
 TestJsQuickInfoGenerallyAcceptableSize
 TestJsRequireQuickInfo
@@ -261,6 +262,7 @@ TestJsdocLink2
 TestJsdocLink3
 TestJsdocLink6
 TestJsdocLink_findAllReferences1
+TestJsdocLink_rename1
 TestJsdocTemplatePrototypeCompletions
 TestJsdocThrowsTagCompletion
 TestJsdocTypedefTag
@@ -442,6 +444,10 @@ TestReferencesInComment
 TestReferencesInEmptyFile
 TestReferencesIsAvailableThroughGlobalNoCrash
 TestRegexDetection
+TestRenameCrossJsTs01
+TestRenameForAliasingExport02
+TestRenameFromNodeModulesDep3
+TestRenamePrivateFields
 TestReverseMappedTypeQuickInfo
 TestSelfReferencedExternalModule
 TestSignatureHelpInferenceJsDocImportTag
