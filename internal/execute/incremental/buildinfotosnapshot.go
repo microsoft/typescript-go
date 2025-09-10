@@ -43,6 +43,7 @@ func buildInfoToSnapshot(buildInfo *BuildInfo, config *tsoptions.ParsedCommandLi
 	to.snapshot.hasErrors = core.IfElse(buildInfo.Errors, core.TSTrue, core.TSFalse)
 	to.snapshot.hasSemanticErrors = buildInfo.SemanticErrors
 	to.snapshot.checkPending = buildInfo.CheckPending
+	to.setPackageJsons()
 	return &to.snapshot
 }
 
@@ -167,5 +168,13 @@ func (t *toSnapshot) setAffectedFilesPendingEmit() {
 	ownOptionsEmitKind := GetFileEmitKind(t.snapshot.options)
 	for _, pendingEmit := range t.buildInfo.AffectedFilesPendingEmit {
 		t.snapshot.affectedFilesPendingEmit.Store(t.toFilePath(pendingEmit.FileId), core.IfElse(pendingEmit.EmitKind == 0, ownOptionsEmitKind, pendingEmit.EmitKind))
+	}
+}
+
+func (t *toSnapshot) setPackageJsons() {
+	if t.buildInfo.PackageJsons != nil {
+		t.snapshot.packageJsons = core.Map(t.buildInfo.PackageJsons, t.toAbsolutePath)
+	} else {
+		t.snapshot.packageJsons = make([]string, 0)
 	}
 }

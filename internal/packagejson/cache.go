@@ -146,3 +146,7 @@ func (p *InfoCache) Set(packageJsonPath string, info *InfoCacheEntry) *InfoCache
 	actual, _ := p.cache.LoadOrStore(key, info)
 	return actual
 }
+
+func (p *InfoCache) Range(f func(key tspath.Path, value *InfoCacheEntry) bool) {
+	p.cache.Range(f)
+}

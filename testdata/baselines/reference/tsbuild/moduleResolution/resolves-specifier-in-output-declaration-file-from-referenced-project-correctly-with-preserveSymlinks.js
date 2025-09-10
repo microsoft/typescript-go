@@ -129,7 +129,7 @@ exports.theNum = void 0;
 exports.theNum = 42;
 
 //// [/user/username/projects/myproject/packages/pkg1/build/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":["../index.ts"]}
+{"version":"FakeTSVersion","root":["../index.ts"],"packageJsons":["../../pkg2/package.json"]}
 //// [/user/username/projects/myproject/packages/pkg1/build/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -141,7 +141,10 @@ exports.theNum = 42;
       "original": "../index.ts"
     }
   ],
-  "size": 50
+  "packageJsons": [
+    "../../pkg2/package.json"
+  ],
+  "size": 93
 }
 //// [/user/username/projects/myproject/packages/pkg2/build/const.d.ts] *new* 
 export type TheNum = 42;

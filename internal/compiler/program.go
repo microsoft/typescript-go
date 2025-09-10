@@ -19,6 +19,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
+	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -99,6 +100,11 @@ func (p *Program) GetPackageJsonInfo(pkgJsonPath string) modulespecifiers.Packag
 		return scoped
 	}
 	return nil
+}
+
+// Iterates on all package json cache entries
+func (p *Program) PackageJsonCacheEntries(f func(key tspath.Path, value *packagejson.InfoCacheEntry) bool) {
+	p.resolver.PackageJsonCacheEntries(f)
 }
 
 // GetRedirectTargets implements checker.Program.
