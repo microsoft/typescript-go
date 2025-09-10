@@ -15,13 +15,18 @@ export {}
 
 //// [main.js]
 "use strict";
+var _Foo_field;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Foo = void 0;
+const tslib_1 = require("tslib");
 class Foo {
-    #field = true;
+    constructor() {
+        _Foo_field.set(this, true);
+    }
     f() {
-        this.#field = this.#field;
+        tslib_1.__classPrivateFieldSet(this, _Foo_field, tslib_1.__classPrivateFieldGet(this, _Foo_field, "f"), "f");
         #field in this;
     }
 }
 exports.Foo = Foo;
+_Foo_field = new WeakMap();

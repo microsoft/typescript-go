@@ -10,8 +10,12 @@ class A {
 
 
 //// [privateNameAndStaticInitializer.js]
+var _A_foo, _A_prop;
 class A {
-    #foo = 1;
+    constructor() {
+        _A_foo.set(this, 1);
+        _A_prop.set(this, 2);
+    }
     static inst = new A();
-    #prop = 2;
 }
+_A_foo = new WeakMap(), _A_prop = new WeakMap();
