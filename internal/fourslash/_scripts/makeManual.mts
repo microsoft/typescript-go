@@ -23,15 +23,19 @@ function main() {
     let testKind: "gen" | "submodule" | "submoduleServer" | undefined;
     if (fs.existsSync(genTestFile)) {
         testKind = "gen";
-    } else if (fs.existsSync(submoduleTestFile)) {
+    }
+    else if (fs.existsSync(submoduleTestFile)) {
         testKind = "submodule";
-    } else if (fs.existsSync(submoduleServerTestFile)) {
+    }
+    else if (fs.existsSync(submoduleServerTestFile)) {
         testKind = "submoduleServer";
     }
 
     if (!testKind) {
-        console.error(`Could not find test neither as '${genTestFile}', nor as '${submoduleTestFile}' or '${submoduleServerTestFile}'.` +
-            `Make sure the test exists in the gen directory or in the submodule.`);
+        console.error(
+            `Could not find test neither as '${genTestFile}', nor as '${submoduleTestFile}' or '${submoduleServerTestFile}'.` +
+                `Make sure the test exists in the gen directory or in the submodule.`,
+        );
         process.exit(1);
     }
 

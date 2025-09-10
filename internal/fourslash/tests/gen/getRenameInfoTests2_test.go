@@ -7,21 +7,14 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestRenameForDefaultExport05(t *testing.T) {
+func TestGetRenameInfoTests2(t *testing.T) {
 	t.Parallel()
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: foo.ts
-export default class DefaultExportedClass {
-}
-/*
- *  Commenting DefaultExportedClass
- */
+	const content = `class C /**/extends null {
 
-var x: /**/[|DefaultExportedClass|];
-
-var y = new DefaultExportedClass;`
+}`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.GoToMarker(t, "")
-	f.VerifyRenameSucceeded(t)
+	f.VerifyRenameFailed(t, nil /*preferences*/)
 }

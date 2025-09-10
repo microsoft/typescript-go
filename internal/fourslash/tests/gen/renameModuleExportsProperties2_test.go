@@ -14,5 +14,5 @@ func TestRenameModuleExportsProperties2(t *testing.T) {
 	const content = `[|class [|{| "contextRangeIndex": 0 |}A|] {}|]
 module.exports = { B: [|A|] }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRename(t, f.Ranges()[1], f.Ranges()[2])
+	f.VerifyBaselineRename(t, nil /*preferences*/, f.Ranges()[1], f.Ranges()[2])
 }

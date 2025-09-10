@@ -24,5 +24,5 @@ for ([|let { [|{| "contextRangeIndex": 4 |}property1|] } = elems[0]|]; p2 < 100;
     [|property1|] = p2;
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRename(t, f.Ranges()[1], f.Ranges()[3], f.Ranges()[5], f.Ranges()[6])
+	f.VerifyBaselineRename(t, nil /*preferences*/, f.Ranges()[1], f.Ranges()[3], f.Ranges()[5], f.Ranges()[6])
 }

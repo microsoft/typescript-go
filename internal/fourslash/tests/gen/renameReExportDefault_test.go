@@ -22,5 +22,5 @@ import { default as bee } from "./b";
 [|const [|{| "contextRangeIndex": 6 |}b|] = 0;|]
 [|export default [|{| "contextRangeIndex": 8 |}b|];|]`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRename(t, f.Ranges()[1], f.Ranges()[3], f.Ranges()[5], f.Ranges()[7], f.Ranges()[9])
+	f.VerifyBaselineRename(t, nil /*preferences*/, f.Ranges()[1], f.Ranges()[3], f.Ranges()[5], f.Ranges()[7], f.Ranges()[9])
 }

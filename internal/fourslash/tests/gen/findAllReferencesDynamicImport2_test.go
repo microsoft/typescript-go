@@ -19,5 +19,5 @@ x.then(foo => {
 })`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyBaselineFindAllReferences(t, "1", "2")
-	f.VerifyBaselineRenameAtRangesWithText(t, "bar")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "bar")
 }

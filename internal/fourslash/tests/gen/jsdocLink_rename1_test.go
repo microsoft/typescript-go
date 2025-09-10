@@ -17,5 +17,5 @@ func TestJsdocLink_rename1(t *testing.T) {
  */
 declare const a: A`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRename(t, "")
+	f.VerifyBaselineRename(t, nil /*preferences*/, "")
 }

@@ -17,5 +17,5 @@ interface A2 { a?: number };
 [|let [|{| "contextRangeIndex": 2 |}a2|]: A2;|]
 let a12 = { ...[|a1|], ...[|a2|] };`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRename(t, f.Ranges()[1], f.Ranges()[4], f.Ranges()[3], f.Ranges()[5])
+	f.VerifyBaselineRename(t, nil /*preferences*/, f.Ranges()[1], f.Ranges()[4], f.Ranges()[3], f.Ranges()[5])
 }

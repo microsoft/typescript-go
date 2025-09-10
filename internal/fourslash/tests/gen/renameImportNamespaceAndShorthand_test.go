@@ -14,5 +14,5 @@ func TestRenameImportNamespaceAndShorthand(t *testing.T) {
 	const content = `[|import * as [|{| "contextRangeIndex": 0 |}foo|] from 'bar';|]
 const bar = { [|foo|] };`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRename(t, f.Ranges()[1], f.Ranges()[2])
+	f.VerifyBaselineRename(t, nil /*preferences*/, f.Ranges()[1], f.Ranges()[2])
 }

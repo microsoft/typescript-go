@@ -17,5 +17,5 @@ func TestRenameCommentsAndStrings1(t *testing.T) {
     "this is a reference to Bar in a string"
 }|]`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "Bar")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "Bar")
 }

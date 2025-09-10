@@ -19,5 +19,5 @@ export function doTheOtherThing(): void;
 /// <reference path="0.d.ts" />
 [|myLib|].doThing();`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "myLib")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "myLib")
 }

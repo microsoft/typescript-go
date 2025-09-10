@@ -18,5 +18,5 @@ var a: I;
 var x;
 ([|{ [|{| "contextRangeIndex": 2 |}x|]: x } = a|]);`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "x")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "x")
 }

@@ -25,7 +25,7 @@ type RangeMarker struct {
 	fileName string
 	Range    core.TextRange
 	LSRange  lsproto.Range
-	marker   *Marker
+	Marker   *Marker
 }
 
 func (r *RangeMarker) LSPos() lsproto.Position {
@@ -37,10 +37,10 @@ func (r *RangeMarker) FileName() string {
 }
 
 func (r *RangeMarker) GetName() *string {
-	if r.marker == nil {
+	if r.Marker == nil {
 		return nil
 	}
-	return r.marker.Name
+	return r.Marker.Name
 }
 
 type Marker struct {
@@ -251,7 +251,7 @@ func parseFileContent(fileName string, content string, fileOptions map[string]st
 				closedRange := &RangeMarker{
 					fileName: fileName,
 					Range:    core.NewTextRange(rangeStart.position, (i-1)-difference),
-					marker:   rangeStart.marker,
+					Marker:   rangeStart.marker,
 				}
 
 				rangeMarkers = append(rangeMarkers, closedRange)

@@ -1468,6 +1468,7 @@ type MarkerOrRangeOrName = any
 
 func (f *FourslashTest) VerifyBaselineRename(
 	t *testing.T,
+	preferences *ls.UserPreferences,
 	markerOrNameOrRanges ...MarkerOrRangeOrName,
 ) {
 	var markerOrRanges []MarkerOrRange
@@ -1488,17 +1489,18 @@ func (f *FourslashTest) VerifyBaselineRename(
 		}
 	}
 
-	f.verifyBaselineRename(t, markerOrRanges)
+	f.verifyBaselineRename(t, preferences, markerOrRanges)
 }
 
 func (f *FourslashTest) verifyBaselineRename(
 	t *testing.T,
+	preferences *ls.UserPreferences,
 	markerOrRanges []MarkerOrRange,
 ) {
 	for _, markerOrRange := range markerOrRanges {
 		f.GoToMarkerOrRange(t, markerOrRange)
 
-		// !!! options
+		// !!! set preferences
 		params := &lsproto.RenameParams{
 			TextDocument: lsproto.TextDocumentIdentifier{
 				Uri: ls.FileNameToDocumentURI(f.activeFilename),
@@ -1526,7 +1528,7 @@ func (f *FourslashTest) verifyBaselineRename(
 				fileToRange.Add(uri, edit.Range)
 			}
 		}
-		// !!! include options in string
+		// !!! include preferences in string
 		f.addResultToBaseline(t,
 			"findRenameLocations",
 			f.getBaselineForGroupedLocationsWithFileContents(
@@ -1541,8 +1543,8 @@ func (f *FourslashTest) verifyBaselineRename(
 	}
 }
 
-func (f *FourslashTest) VerifyRenameSucceeded(t *testing.T) {
-	// !!! options
+func (f *FourslashTest) VerifyRenameSucceeded(t *testing.T, preferences *ls.UserPreferences) {
+	// !!! set preferences
 	params := &lsproto.RenameParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: ls.FileNameToDocumentURI(f.activeFilename),
@@ -1565,8 +1567,33 @@ func (f *FourslashTest) VerifyRenameSucceeded(t *testing.T) {
 	}
 }
 
+func (f *FourslashTest) VerifyRenameFailed(t *testing.T, preferences *ls.UserPreferences) {
+	// !!! set preferences
+	params := &lsproto.RenameParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: ls.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+		NewName:  "?",
+	}
+
+	prefix := f.getCurrentPositionPrefix()
+	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentRenameInfo, params)
+	if resMsg == nil {
+		t.Fatal(prefix + "Nil response received for rename request")
+	}
+	if !resultOk {
+		t.Fatalf(prefix+"Unexpected rename response type: %T", resMsg.AsResponse().Result)
+	}
+
+	if result.WorkspaceEdit != nil {
+		t.Fatalf(prefix+"Expected rename to fail, but got changes: %s", cmp.Diff(result.WorkspaceEdit, nil))
+	}
+}
+
 func (f *FourslashTest) VerifyBaselineRenameAtRangesWithText(
 	t *testing.T,
+	preferences *ls.UserPreferences,
 	texts ...string,
 ) {
 	var markerOrRanges []MarkerOrRange
@@ -1574,7 +1601,7 @@ func (f *FourslashTest) VerifyBaselineRenameAtRangesWithText(
 		ranges := core.Map(f.GetRangesByText().Get(text), func(r *RangeMarker) MarkerOrRange { return r })
 		markerOrRanges = append(markerOrRanges, ranges...)
 	}
-	f.verifyBaselineRename(t, markerOrRanges)
+	f.verifyBaselineRename(t, preferences, markerOrRanges)
 }
 
 func (f *FourslashTest) GetRangesByText() *collections.MultiMap[string, *RangeMarker] {

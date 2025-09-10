@@ -21,5 +21,5 @@ var x = [|function [|{| "contextRangeIndex": 0 |}f|](g: any, h: any) {
     let foo = () => [|f|]([|f|], g);
 }|]`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "f")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "f")
 }

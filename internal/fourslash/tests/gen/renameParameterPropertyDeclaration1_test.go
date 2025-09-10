@@ -18,5 +18,5 @@ func TestRenameParameterPropertyDeclaration1(t *testing.T) {
     }
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "privateParam")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "privateParam")
 }

@@ -26,5 +26,5 @@ lib.someExportedVariable;
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.GoToFile(t, "/home/src/workspaces/project/lib/index.ts")
 	f.GoToFile(t, "/home/src/workspaces/project/src/index.ts")
-	f.VerifyBaselineRename(t, "i")
+	f.VerifyBaselineRename(t, nil /*preferences*/, "i")
 }

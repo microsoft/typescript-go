@@ -31,5 +31,5 @@ var y = class {
 }
 var z = class Foo {}`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "Foo")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "Foo")
 }

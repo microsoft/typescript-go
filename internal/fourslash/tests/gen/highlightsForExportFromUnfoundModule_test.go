@@ -23,5 +23,5 @@ export {
 } from './a';`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.GoToMarker(t, "")
-	f.VerifyBaselineRename(t, "")
+	f.VerifyBaselineRename(t, nil /*preferences*/, "")
 }

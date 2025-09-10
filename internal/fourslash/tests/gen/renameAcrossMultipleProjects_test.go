@@ -20,5 +20,5 @@ func TestRenameAcrossMultipleProjects(t *testing.T) {
 /// <reference path="a.ts" />
 [|x|]++;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "x")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "x")
 }

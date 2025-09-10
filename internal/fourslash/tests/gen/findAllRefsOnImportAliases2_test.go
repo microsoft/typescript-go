@@ -20,5 +20,5 @@ var c = new /*c2_1*/[|C2|]();
 [|export { /*class2*/[|{| "contextRangeIndex": 6 |}Class|] as /*c3*/[|{| "isWriteAccess": true, "isDefinition": true, "contextRangeIndex": 6 |}C3|] } from "./a";|]`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyBaselineFindAllReferences(t, "class0", "class1", "class2", "c2_0", "c2_1", "c3")
-	f.VerifyBaselineRenameAtRangesWithText(t, "Class", "C2", "C3")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "Class", "C2", "C3")
 }

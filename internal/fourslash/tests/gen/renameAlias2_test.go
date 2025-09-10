@@ -15,5 +15,5 @@ func TestRenameAlias2(t *testing.T) {
 import M = [|SomeModule|];
 import C = M.SomeClass;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "SomeModule")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "SomeModule")
 }

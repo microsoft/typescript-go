@@ -48,5 +48,5 @@ obj[` + "`" + `[|num|]` + "`" + `];
 obj.[|bool|];
 obj[` + "`" + `[|bool|]` + "`" + `];`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "num", "bool")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "num", "bool")
 }

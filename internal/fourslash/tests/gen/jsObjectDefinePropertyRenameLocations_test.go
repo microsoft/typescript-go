@@ -25,5 +25,5 @@ var CircularList = (function () {
     return CircularList;
 })()`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t)
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/)
 }

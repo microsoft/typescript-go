@@ -15,5 +15,5 @@ func TestRenameDestructuringFunctionParameter(t *testing.T) {
     f({[|a|]});
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRename(t, f.Ranges()[1], f.Ranges()[3], f.Ranges()[2])
+	f.VerifyBaselineRename(t, nil /*preferences*/, f.Ranges()[1], f.Ranges()[3], f.Ranges()[2])
 }

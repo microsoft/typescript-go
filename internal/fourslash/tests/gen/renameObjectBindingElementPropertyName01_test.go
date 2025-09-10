@@ -19,5 +19,5 @@ func TestRenameObjectBindingElementPropertyName01(t *testing.T) {
 var foo: I;
 [|var { [|{| "contextRangeIndex": 2 |}property1|]: prop1 } = foo;|]`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "property1")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "property1")
 }

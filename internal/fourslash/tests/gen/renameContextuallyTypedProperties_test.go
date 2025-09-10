@@ -66,5 +66,5 @@ var o10: I = {
     set ["prop2"](v) { }
 };`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "prop1")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "prop1")
 }

@@ -24,5 +24,5 @@ func TestFindAllRefsClassWithStaticThisAccess(t *testing.T) {
 }|]`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyBaselineFindAllReferences(t, "0", "1", "2")
-	f.VerifyBaselineRename(t, f.Ranges()[1])
+	f.VerifyBaselineRename(t, nil /*preferences*/, f.Ranges()[1])
 }

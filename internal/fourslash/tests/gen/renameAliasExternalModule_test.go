@@ -18,5 +18,5 @@ export = SomeModule;
 [|import [|{| "contextRangeIndex": 0 |}M|] = require("./a");|]
 import C = [|M|].SomeClass;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "M")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "M")
 }

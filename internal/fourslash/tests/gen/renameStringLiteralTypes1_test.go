@@ -21,5 +21,5 @@ function animate(o: AnimationOptions) { }
 
 animate({ deltaX: 100, deltaY: 100, easing: "[|ease-in-out|]" });`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "ease-in-out")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "ease-in-out")
 }

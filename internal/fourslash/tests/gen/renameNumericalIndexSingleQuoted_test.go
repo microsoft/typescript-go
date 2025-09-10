@@ -14,5 +14,5 @@ func TestRenameNumericalIndexSingleQuoted(t *testing.T) {
 	const content = `const foo = { [|0|]: true };
 foo[[|0|]];`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "0")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "0")
 }

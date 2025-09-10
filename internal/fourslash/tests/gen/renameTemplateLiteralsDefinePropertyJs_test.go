@@ -26,5 +26,5 @@ obj['[|prop|]'];
 obj["[|prop|]"];
 obj[` + "`" + `[|prop|]` + "`" + `];`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "prop")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "prop")
 }

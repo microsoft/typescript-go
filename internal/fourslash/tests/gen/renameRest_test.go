@@ -20,5 +20,5 @@ let t: Gen;
 var { x, ...rest } = t;
 rest.[|parent|];`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "parent")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "parent")
 }

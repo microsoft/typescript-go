@@ -20,5 +20,5 @@ func TestRenamePrivateAccessor(t *testing.T) {
    }
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRename(t, ToAny(f.GetRangesByText().Get("#foo"))...)
+	f.VerifyBaselineRename(t, nil /*preferences*/, ToAny(f.GetRangesByText().Get("#foo"))...)
 }

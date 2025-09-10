@@ -18,5 +18,5 @@ func TestRenameBindingElementInitializerProperty(t *testing.T) {
 
 f({[|[|{| "contextRangeIndex": 6 |}required|]: 10|]});`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRename(t, f.Ranges()[1], f.Ranges()[2], f.Ranges()[5], f.Ranges()[4], f.Ranges()[7])
+	f.VerifyBaselineRename(t, nil /*preferences*/, f.Ranges()[1], f.Ranges()[2], f.Ranges()[5], f.Ranges()[4], f.Ranges()[7])
 }

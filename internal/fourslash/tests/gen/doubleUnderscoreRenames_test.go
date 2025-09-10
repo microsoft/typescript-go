@@ -20,5 +20,5 @@ func TestDoubleUnderscoreRenames(t *testing.T) {
 
 bar();`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "__foo")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "__foo")
 }

@@ -18,5 +18,5 @@ function foo() {
 class C extends (foo()).[|B|] {}
 class C1 extends foo().[|B|] {}`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "B")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "B")
 }

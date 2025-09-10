@@ -15,5 +15,5 @@ func TestRenameDefaultLibDontWork(t *testing.T) {
 [|var [|{| "contextRangeIndex": 0 |}test|] = "foo";|]
 console.log([|test|]);`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRename(t, f.Ranges()[1])
+	f.VerifyBaselineRename(t, nil /*preferences*/, f.Ranges()[1])
 }

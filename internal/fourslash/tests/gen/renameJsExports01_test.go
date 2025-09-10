@@ -19,5 +19,5 @@ var mod = require('./a');
 var t = mod./*1*/[|area|](10);`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyBaselineFindAllReferences(t, "1")
-	f.VerifyBaselineRenameAtRangesWithText(t, "area")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "area")
 }

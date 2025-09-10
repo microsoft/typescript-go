@@ -19,5 +19,5 @@ func TestRenamePrivateFields1(t *testing.T) {
    }
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "#foo")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "#foo")
 }

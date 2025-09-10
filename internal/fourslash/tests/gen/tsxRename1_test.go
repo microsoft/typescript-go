@@ -24,5 +24,5 @@ declare module JSX {
 }
 var x = [|<[|{| "contextRangeIndex": 2 |}div|] />|];`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "div")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "div")
 }

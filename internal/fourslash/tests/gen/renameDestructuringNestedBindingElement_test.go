@@ -26,5 +26,5 @@ for ([|let { skills: {[|{| "contextRangeIndex": 4|}primary|], secondary } } of m
     console.log([|primary|]);
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRename(t, f.Ranges()[1], f.Ranges()[3], f.Ranges()[5], f.Ranges()[6])
+	f.VerifyBaselineRename(t, nil /*preferences*/, f.Ranges()[1], f.Ranges()[3], f.Ranges()[5], f.Ranges()[6])
 }

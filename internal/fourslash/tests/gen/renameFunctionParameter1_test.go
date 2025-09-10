@@ -20,5 +20,5 @@ func TestRenameFunctionParameter1(t *testing.T) {
     }
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRename(t, "")
+	f.VerifyBaselineRename(t, nil /*preferences*/, "")
 }

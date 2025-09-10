@@ -27,9 +27,9 @@ declare module "b" {
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyBaselineFindAllReferences(t, "N", "a", "b", "x")
-	f.VerifyBaselineRename(t, f.Ranges()[1], f.Ranges()[5])
-	f.VerifyBaselineRename(t, f.Ranges()[7])
-	f.VerifyBaselineRename(t, f.Ranges()[9])
-	f.VerifyBaselineRename(t, f.Ranges()[11], f.Ranges()[12])
-	f.VerifyBaselineRename(t, f.Ranges()[3], f.Ranges()[13])
+	f.VerifyBaselineRename(t, nil /*preferences*/, f.Ranges()[1], f.Ranges()[5])
+	f.VerifyBaselineRename(t, nil /*preferences*/, f.Ranges()[7])
+	f.VerifyBaselineRename(t, nil /*preferences*/, f.Ranges()[9])
+	f.VerifyBaselineRename(t, nil /*preferences*/, f.Ranges()[11], f.Ranges()[12])
+	f.VerifyBaselineRename(t, nil /*preferences*/, f.Ranges()[3], f.Ranges()[13])
 }

@@ -19,5 +19,5 @@ declare const fn: <K extends keyof T>(p: K) => void
 
 fn("Prop 1"/**/)`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRename(t, "")
+	f.VerifyBaselineRename(t, nil /*preferences*/, "")
 }

@@ -25,5 +25,5 @@ class C {
     }
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "a")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "a")
 }

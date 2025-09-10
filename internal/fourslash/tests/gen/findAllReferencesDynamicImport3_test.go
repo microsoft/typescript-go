@@ -16,5 +16,5 @@ func TestFindAllReferencesDynamicImport3(t *testing.T) {
 import('./foo').then(([|{ /*1*/[|{| "isWriteAccess": true, "isDefinition": true, "contextRangeIndex": 2 |}bar|] }|]) => undefined);`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyBaselineFindAllReferences(t, "0", "1")
-	f.VerifyBaselineRename(t, f.Ranges()[1], f.Ranges()[3])
+	f.VerifyBaselineRename(t, nil /*preferences*/, f.Ranges()[1], f.Ranges()[3])
 }

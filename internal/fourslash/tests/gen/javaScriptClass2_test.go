@@ -23,5 +23,5 @@ class Foo {
 var x = new Foo();
 x.[|union|];`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "union")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "union")
 }

@@ -19,5 +19,5 @@ func TestRenameNoDefaultLib(t *testing.T) {
 const [|/**/foo|] = 1;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.GoToMarker(t, "")
-	f.VerifyRenameSucceeded(t)
+	f.VerifyRenameSucceeded(t, nil /*preferences*/)
 }

@@ -26,5 +26,5 @@ func TestJsdocTypedefTagRename03(t *testing.T) {
 var person;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.GoToFile(t, "jsDocTypedef_form3.js")
-	f.VerifyBaselineRename(t, ToAny(f.GetRangesByText().Get("Person"))...)
+	f.VerifyBaselineRename(t, nil /*preferences*/, ToAny(f.GetRangesByText().Get("Person"))...)
 }

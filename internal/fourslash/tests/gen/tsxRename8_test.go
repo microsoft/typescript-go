@@ -32,5 +32,5 @@ let opt2 = <Opt propx={100} optional/>;
 let opt3 = <Opt [|wrong|] />;
 let opt4 = <Opt propx={100} propString="hi" />;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRename(t)
+	f.VerifyBaselineRename(t, nil /*preferences*/)
 }

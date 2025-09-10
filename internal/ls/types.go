@@ -45,6 +45,8 @@ type UserPreferences struct {
 	PreferTypeOnlyAutoImports             *bool
 	AutoImportSpecifierExcludeRegexes     []string
 	AutoImportFileExcludePatterns         []string
+
+	UseAliasesForRename *bool
 }
 
 func (p *UserPreferences) ModuleSpecifierPreferences() modulespecifiers.UserPreferences {

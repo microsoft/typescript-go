@@ -28,6 +28,6 @@ class MyClass {
 [|var [|/*dst*/{| "contextRangeIndex": 0 |}nn|]: {name?: string; size?: number};|]
 var x = <MyClass {...[|n/*src*/n|]}></MyClass>;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "nn")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "nn")
 	f.VerifyBaselineGoToDefinition(t, "src")
 }

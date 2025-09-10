@@ -25,5 +25,5 @@ const {
     oldName: newName = [|external|]
 } = obj;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "external")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "external")
 }

@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
+	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -18,5 +20,5 @@ export { name as name/**/ };
 import { name } from './a';
 const x = name.toString();`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRename(t, "")
+	f.VerifyBaselineRename(t, &ls.UserPreferences{UseAliasesForRename: PtrTo(false)}, "")
 }

@@ -18,5 +18,5 @@ func TestRenameAliasExternalModule2(t *testing.T) {
 [|import [|{| "contextRangeIndex": 4 |}M|] = require("./a");|]
 import C = [|M|].SomeClass;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRename(t, f.Ranges()[1], f.Ranges()[3], f.Ranges()[5], f.Ranges()[6])
+	f.VerifyBaselineRename(t, nil /*preferences*/, f.Ranges()[1], f.Ranges()[3], f.Ranges()[5], f.Ranges()[6])
 }

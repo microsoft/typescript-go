@@ -19,5 +19,5 @@ function f() {
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.GoToFile(t, "/a.js")
-	f.VerifyBaselineRename(t, "1", "2")
+	f.VerifyBaselineRename(t, nil /*preferences*/, "1", "2")
 }

@@ -22,5 +22,5 @@ class C {
 var t = new C(12);
 [|t.[|{| "contextRangeIndex": 2 |}z|] = 11;|]`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "z")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "z")
 }

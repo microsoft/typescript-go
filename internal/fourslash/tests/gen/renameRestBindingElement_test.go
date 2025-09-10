@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
+	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -20,5 +22,5 @@ function foo([|{ a, ...[|{| "contextRangeIndex": 0 |}rest|] }: I|]) {
     [|rest|];
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRename(t, f.Ranges()[1])
+	f.VerifyBaselineRename(t, &ls.UserPreferences{UseAliasesForRename: PtrTo(true)}, f.Ranges()[1])
 }

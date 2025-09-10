@@ -20,5 +20,5 @@ export as namespace /**/[|myLib|];
 myLib.doThing();`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.GoToMarker(t, "")
-	f.VerifyRenameSucceeded(t)
+	f.VerifyRenameSucceeded(t, nil /*preferences*/)
 }

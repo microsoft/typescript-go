@@ -15,5 +15,5 @@ func TestRenameLocationsForFunctionExpression01(t *testing.T) {
     [|f|]([|f|], g);
 }|]`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "f")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "f")
 }

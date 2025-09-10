@@ -16,5 +16,5 @@ export interface /**/Ginger {}
 // @Filename: dry.ts
 import { Ginger as Ale } from './canada';`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRename(t, "")
+	f.VerifyBaselineRename(t, nil /*preferences*/, "")
 }

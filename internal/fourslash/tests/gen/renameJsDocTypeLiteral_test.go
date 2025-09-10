@@ -22,5 +22,5 @@ func TestRenameJsDocTypeLiteral(t *testing.T) {
 function foo(/**/options) {}`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.GoToFile(t, "/a.js")
-	f.VerifyBaselineRename(t, "")
+	f.VerifyBaselineRename(t, nil /*preferences*/, "")
 }

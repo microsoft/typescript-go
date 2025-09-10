@@ -22,5 +22,5 @@ const foo = {
     }
 };`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRename(t)
+	f.VerifyBaselineRename(t, nil /*preferences*/)
 }

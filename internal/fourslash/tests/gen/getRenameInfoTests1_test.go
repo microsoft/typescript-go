@@ -16,5 +16,5 @@ func TestGetRenameInfoTests1(t *testing.T) {
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.GoToMarker(t, "")
-	f.VerifyRenameSucceeded(t)
+	f.VerifyRenameSucceeded(t, nil /*preferences*/)
 }

@@ -194,7 +194,8 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                     // `verify.baselineRename...(...)`
                     return parseBaselineRenameArgs(func.text, callExpression.arguments);
                 case "renameInfoSucceeded":
-                    return [{ kind: "renameInfoSucceeded" }];
+                case "renameInfoFailed":
+                    return parseRenameInfo(func.text, callExpression.arguments);
             }
         }
         // `goTo....`
@@ -806,8 +807,36 @@ function parseBaselineGoToDefinitionArgs(args: readonly ts.Expression[]): [Verif
     }];
 }
 
+function parseRenameInfo(funcName: "renameInfoSucceeded" | "renameInfoFailed", args: readonly ts.Expression[]): [VerifyRenameInfoCmd] | undefined {
+    let preferences = "nil /*preferences*/";
+    let prefArg;
+    switch (funcName) {
+        case "renameInfoSucceeded":
+            if (args[6]) {
+                prefArg = args[6];
+            }
+        case "renameInfoFailed":
+            if (args[1]) {
+                prefArg = args[1];
+            }
+    }
+    if (prefArg) {
+        if (!ts.isObjectLiteralExpression(prefArg)) {
+            console.error(`Expected object literal expression for preferences, got ${prefArg.getText()}`);
+            return undefined;
+        }
+        const parsedPreferences = parseUserPreferences(prefArg);
+        if (!parsedPreferences) {
+            console.error(`Unrecognized user preferences in ${funcName}: ${prefArg.getText()}`);
+            return undefined;
+        }
+    }
+    return [{ kind: funcName, preferences }];
+}
+
 function parseBaselineRenameArgs(funcName: string, args: readonly ts.Expression[]): [VerifyBaselineRenameCmd] | undefined {
     let newArgs: string[] = [];
+    let preferences: string | undefined;
     for (const arg of args) {
         let typedArg;
         if ((typedArg = getArrayLiteralExpression(arg))) {
@@ -820,7 +849,11 @@ function parseBaselineRenameArgs(funcName: string, args: readonly ts.Expression[
             }
         }
         else if (ts.isObjectLiteralExpression(arg)) {
-            // !!! TODO: parse options
+            preferences = parseUserPreferences(arg);
+            if (!preferences) {
+                console.error(`Unrecognized user preferences in verify.baselineRename: ${arg.getText()}`);
+                return undefined;
+            }
             continue;
         }
         else if (typedArg = parseBaselineRenameArg(arg)) {
@@ -833,7 +866,28 @@ function parseBaselineRenameArgs(funcName: string, args: readonly ts.Expression[
     return [{
         kind: funcName === "baselineRenameAtRangesWithText" ? "verifyBaselineRenameAtRangesWithText" : "verifyBaselineRename",
         args: newArgs,
+        preferences: preferences ? preferences : "nil /*preferences*/",
     }];
+}
+
+function parseUserPreferences(arg: ts.ObjectLiteralExpression): string | undefined {
+    const preferences: string[] = [];
+    for (const prop of arg.properties) {
+        if (ts.isPropertyAssignment(prop)) {
+            switch (prop.name.getText()) {
+                // !!! other preferences
+                case "providePrefixAndSuffixTextForRename":
+                    preferences.push(`UseAliasesForRename: PtrTo(${prop.initializer.getText()})`);
+            }
+        }
+        else {
+            return undefined;
+        }
+    }
+    if (preferences.length === 0) {
+        return "nil /*preferences*/";
+    }
+    return `&ls.UserPreferences{${preferences.join(",")}}`;
 }
 
 function parseBaselineRenameArg(arg: ts.Expression): string | undefined {
@@ -1199,6 +1253,7 @@ interface VerifyBaselineSignatureHelpCmd {
 interface VerifyBaselineRenameCmd {
     kind: "verifyBaselineRename" | "verifyBaselineRenameAtRangesWithText";
     args: string[];
+    preferences: string;
 }
 
 interface GoToCmd {
@@ -1220,8 +1275,9 @@ interface VerifyQuickInfoCmd {
     docs?: string;
 }
 
-interface VerifyRenameInfoSucceededCmd {
-    kind: "renameInfoSucceeded";
+interface VerifyRenameInfoCmd {
+    kind: "renameInfoSucceeded" | "renameInfoFailed";
+    preferences: string;
 }
 
 type Cmd =
@@ -1234,7 +1290,7 @@ type Cmd =
     | EditCmd
     | VerifyQuickInfoCmd
     | VerifyBaselineRenameCmd
-    | VerifyRenameInfoSucceededCmd;
+    | VerifyRenameInfoCmd;
 
 function generateVerifyCompletions({ marker, args, isNewIdentifierLocation }: VerifyCompletionsCmd): string {
     let expectedList: string;
@@ -1295,12 +1351,12 @@ function generateQuickInfoCommand({ kind, marker, text, docs }: VerifyQuickInfoC
     }
 }
 
-function generateBaselineRename({ kind, args }: VerifyBaselineRenameCmd): string {
+function generateBaselineRename({ kind, args, preferences }: VerifyBaselineRenameCmd): string {
     switch (kind) {
         case "verifyBaselineRename":
-            return `f.VerifyBaselineRename(t, ${args.join(", ")})`;
+            return `f.VerifyBaselineRename(t, ${preferences}, ${args.join(", ")})`;
         case "verifyBaselineRenameAtRangesWithText":
-            return `f.VerifyBaselineRenameAtRangesWithText(t, ${args.join(", ")})`;
+            return `f.VerifyBaselineRenameAtRangesWithText(t, ${preferences}, ${args.join(", ")})`;
     }
 }
 
@@ -1330,7 +1386,9 @@ function generateCmd(cmd: Cmd): string {
         case "verifyBaselineRenameAtRangesWithText":
             return generateBaselineRename(cmd);
         case "renameInfoSucceeded":
-            return `f.VerifyRenameSucceeded(t)`;
+            return `f.VerifyRenameSucceeded(t, ${cmd.preferences})`;
+        case "renameInfoFailed":
+            return `f.VerifyRenameFailed(t, ${cmd.preferences})`;
         default:
             let neverCommand: never = cmd;
             throw new Error(`Unknown command kind: ${neverCommand as Cmd["kind"]}`);

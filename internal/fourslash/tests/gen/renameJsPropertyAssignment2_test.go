@@ -18,5 +18,5 @@ class Minimatch {
 [|Minimatch.[|{| "contextRangeIndex": 0 |}staticProperty|] = "string";|]
 console.log(Minimatch.[|staticProperty|]);`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRenameAtRangesWithText(t, "staticProperty")
+	f.VerifyBaselineRenameAtRangesWithText(t, nil /*preferences*/, "staticProperty")
 }

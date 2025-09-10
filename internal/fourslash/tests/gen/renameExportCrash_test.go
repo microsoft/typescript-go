@@ -17,5 +17,5 @@ let a;
 module.exports = /**/a;
 exports["foo"] = a;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRename(t, "")
+	f.VerifyBaselineRename(t, nil /*preferences*/, "")
 }

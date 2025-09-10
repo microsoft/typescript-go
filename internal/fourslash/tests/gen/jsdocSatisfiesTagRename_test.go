@@ -23,5 +23,5 @@ func TestJsdocSatisfiesTagRename(t *testing.T) {
 /** @satisfies {/**/T} comment */
 const foo = { a: 1 };`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyBaselineRename(t, "")
+	f.VerifyBaselineRename(t, nil /*preferences*/, "")
 }
