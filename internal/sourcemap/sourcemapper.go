@@ -137,16 +137,13 @@ func (sm *sourceMapper) toPath(fileName string) string {
 }
 
 // DocumentPositionMapperHost implementation
-func (sm *sourceMapper) GetSourceFileLike(fileName string) SourceFileLike {
+func (sm *sourceMapper) GetSource(fileName string) Source {
 	content, ok := sm.fileReader.ReadFile(fileName)
 	if !ok {
 		return nil
 	}
 	
-	return &sourceFileLike{
-		text:       content,
-		lineStarts: core.ComputeLineStarts(content),
-	}
+	return NewSimpleSourceFile(fileName, content)
 }
 
 func (sm *sourceMapper) GetCanonicalFileName(path string) string {
@@ -158,18 +155,32 @@ func (sm *sourceMapper) Log(text string) {
 	// For now, we'll keep it simple
 }
 
-// sourceFileLike implements SourceFileLike interface
-type sourceFileLike struct {
-	text       string
-	lineStarts []core.TextPos
+// SimpleSourceFile implements Source interface for raw text content
+type SimpleSourceFile struct {
+	fileName string
+	text     string
+	lineMap  []core.TextPos
 }
 
-func (sf *sourceFileLike) Text() string {
+func (sf *SimpleSourceFile) FileName() string {
+	return sf.fileName
+}
+
+func (sf *SimpleSourceFile) Text() string {
 	return sf.text
 }
 
-func (sf *sourceFileLike) LineStarts() []core.TextPos {
-	return sf.lineStarts
+func (sf *SimpleSourceFile) LineMap() []core.TextPos {
+	return sf.lineMap
+}
+
+// NewSimpleSourceFile creates a SimpleSourceFile from fileName and text content
+func NewSimpleSourceFile(fileName, text string) *SimpleSourceFile {
+	return &SimpleSourceFile{
+		fileName: fileName,
+		text:     text,
+		lineMap:  core.ComputeLineStarts(text),
+	}
 }
 
 // Helper functions

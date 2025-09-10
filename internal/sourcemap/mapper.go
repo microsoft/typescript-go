@@ -22,15 +22,9 @@ type DocumentPositionMapper interface {
 
 // DocumentPositionMapperHost provides file system access for position mapping
 type DocumentPositionMapperHost interface {
-	GetSourceFileLike(fileName string) SourceFileLike
+	GetSource(fileName string) Source
 	GetCanonicalFileName(path string) string
 	Log(text string)
-}
-
-// SourceFileLike represents a file with text content and line information
-type SourceFileLike interface {
-	Text() string
-	LineStarts() []core.TextPos
 }
 
 
@@ -46,7 +40,6 @@ type MappedPosition struct {
 func CreateDocumentPositionMapper(host DocumentPositionMapperHost, mapContent string, mapPath string) DocumentPositionMapper {
 	var sourceMap RawSourceMap
 	if err := json.Unmarshal([]byte(mapContent), &sourceMap); err != nil {
-		host.Log("Failed to parse source map: " + err.Error())
 		return &identityMapper{}
 	}
 
@@ -63,7 +56,7 @@ func createDocumentPositionMapperFromRawMap(host DocumentPositionMapperHost, sou
 	}
 	
 	generatedAbsoluteFilePath := tspath.GetNormalizedAbsolutePath(sourceMap.File, mapDirectory)
-	generatedFile := host.GetSourceFileLike(generatedAbsoluteFilePath)
+	generatedFile := host.GetSource(generatedAbsoluteFilePath)
 	
 	sourceFileAbsolutePaths := make([]string, len(sourceMap.Sources))
 	for i, source := range sourceMap.Sources {
@@ -92,7 +85,7 @@ type documentPositionMapper struct {
 	host                    DocumentPositionMapperHost
 	sourceMap               *RawSourceMap
 	mapPath                 string
-	generatedFile           SourceFileLike
+	generatedFile           Source
 	sourceFileAbsolutePaths []string
 	sourceToSourceIndexMap  map[string]int
 	
@@ -185,7 +178,7 @@ func (mapper *documentPositionMapper) ensureMappingsDecoded() bool {
 	decoder := DecodeMappings(mapper.sourceMap.Mappings)
 	var generatedLineStarts []core.TextPos
 	if mapper.generatedFile != nil {
-		generatedLineStarts = mapper.generatedFile.LineStarts()
+		generatedLineStarts = mapper.generatedFile.LineMap()
 	}
 
 	for mapping, done := decoder.Next(); !done; mapping, done = decoder.Next() {
@@ -200,10 +193,10 @@ func (mapper *documentPositionMapper) ensureMappingsDecoded() bool {
 			generatedPos = -1
 		}
 
-		sourceFile := mapper.host.GetSourceFileLike(mapper.sourceFileAbsolutePaths[mapping.SourceIndex])
+		sourceFile := mapper.host.GetSource(mapper.sourceFileAbsolutePaths[mapping.SourceIndex])
 		var sourcePos core.TextPos
 		if sourceFile != nil {
-			sourceLineStarts := sourceFile.LineStarts()
+			sourceLineStarts := sourceFile.LineMap()
 			if mapping.SourceLine < len(sourceLineStarts) {
 				sourcePos = sourceLineStarts[mapping.SourceLine] + core.TextPos(mapping.SourceCharacter)
 			} else {

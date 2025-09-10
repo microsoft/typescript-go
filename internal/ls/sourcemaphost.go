@@ -15,12 +15,9 @@ type sourcemapHost struct {
 }
 
 
-func (h *sourcemapHost) GetSourceFileLike(fileName string) sourcemap.SourceFileLike {
+func (h *sourcemapHost) GetSource(fileName string) sourcemap.Source {
 	if content, ok := h.readFileWithFallback(fileName); ok {
-		return &sourcemapSourceFile{
-			text:       content,
-			lineStarts: core.ComputeLineStarts(content),
-		}
+		return sourcemap.NewSimpleSourceFile(fileName, content)
 	}
 	return nil
 }
@@ -62,18 +59,6 @@ func (h *sourcemapHost) readFileWithFallback(fileName string) (string, bool) {
 }
 
 
-type sourcemapSourceFile struct {
-	text       string
-	lineStarts []core.TextPos
-}
-
-func (f *sourcemapSourceFile) Text() string {
-	return f.text
-}
-
-func (f *sourcemapSourceFile) LineStarts() []core.TextPos {
-	return f.lineStarts
-}
 
 type sourcemapFileReader struct {
 	host *sourcemapHost

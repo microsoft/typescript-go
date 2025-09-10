@@ -49,14 +49,15 @@ type testHost struct {
 	files map[string]string
 }
 
-func (h *testHost) GetSourceFileLike(fileName string) SourceFileLike {
+func (h *testHost) GetSource(fileName string) Source {
 	content, exists := h.files[fileName]
 	if !exists {
 		return nil
 	}
 	return &testSourceFile{
-		text:       content,
-		lineStarts: core.ComputeLineStarts(content),
+		fileName: fileName,
+		text:     content,
+		lineMap:  core.ComputeLineStarts(content),
 	}
 }
 
@@ -69,16 +70,21 @@ func (h *testHost) Log(text string) {
 }
 
 type testSourceFile struct {
-	text       string
-	lineStarts []core.TextPos
+	fileName string
+	text     string
+	lineMap  []core.TextPos
+}
+
+func (f *testSourceFile) FileName() string {
+	return f.fileName
 }
 
 func (f *testSourceFile) Text() string {
 	return f.text
 }
 
-func (f *testSourceFile) LineStarts() []core.TextPos {
-	return f.lineStarts
+func (f *testSourceFile) LineMap() []core.TextPos {
+	return f.lineMap
 }
 
 func TestDocumentPositionMapper_GetSourcePosition(t *testing.T) {
@@ -209,18 +215,20 @@ func (r *testFileReader) ReadFile(path string) (string, bool) {
 
 type testSourceMapperHost struct{}
 
-func (h *testSourceMapperHost) GetSourceFileLike(fileName string) SourceFileLike {
+func (h *testSourceMapperHost) GetSource(fileName string) Source {
 	// This would normally read from files, but for testing we'll create mock data
 	switch fileName {
 	case "/indexdef.d.ts":
 		return &testSourceFile{
-			text:       testDeclarationContent,
-			lineStarts: core.ComputeLineStarts(testDeclarationContent),
+			fileName: fileName,
+			text:     testDeclarationContent,
+			lineMap:  core.ComputeLineStarts(testDeclarationContent),
 		}
 	case "/index.ts":
 		return &testSourceFile{
-			text:       testSourceContent,
-			lineStarts: core.ComputeLineStarts(testSourceContent),
+			fileName: fileName,
+			text:     testSourceContent,
+			lineMap:  core.ComputeLineStarts(testSourceContent),
 		}
 	}
 	return nil
