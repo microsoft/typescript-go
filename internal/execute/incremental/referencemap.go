@@ -11,9 +11,9 @@ import (
 )
 
 type referenceMap struct {
-	references   collections.SyncMap[tspath.Path, *collections.Set[tspath.Path]]
-	referencedBy map[tspath.Path]*collections.Set[tspath.Path]
-	referenceBy  sync.Once
+	references       collections.SyncMap[tspath.Path, *collections.Set[tspath.Path]]
+	referencedBy     map[tspath.Path]*collections.Set[tspath.Path]
+	referencedByOnce sync.Once
 }
 
 func (r *referenceMap) storeReferences(path tspath.Path, refs *collections.Set[tspath.Path]) {
@@ -30,7 +30,7 @@ func (r *referenceMap) getPathsWithReferences() []tspath.Path {
 }
 
 func (r *referenceMap) getReferencedBy(path tspath.Path) iter.Seq[tspath.Path] {
-	r.referenceBy.Do(func() {
+	r.referencedByOnce.Do(func() {
 		r.referencedBy = make(map[tspath.Path]*collections.Set[tspath.Path])
 		r.references.Range(func(key tspath.Path, value *collections.Set[tspath.Path]) bool {
 			for ref := range value.Keys() {

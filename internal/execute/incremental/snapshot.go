@@ -312,3 +312,8 @@ func diagnosticToStringBuilder(diagnostic *ast.Diagnostic, file *ast.SourceFile,
 func (s *snapshot) computeHash(text string) string {
 	return ComputeHash(text, s.hashWithText)
 }
+
+func (s *snapshot) makeReadonly() {
+	s.allFilesExcludingDefaultLibraryFile = nil
+	s.referencedMap.referencedBy = nil
+}
