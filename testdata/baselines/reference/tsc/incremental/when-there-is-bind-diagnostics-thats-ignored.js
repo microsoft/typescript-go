@@ -50,11 +50,10 @@ exports.a = void 0;
 exports.a = 10;
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","errors":true,"root":[[2,3]],"fileNames":["lib.d.ts","./a.ts","./b.d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"3a1e9965f8602302ee6ae53756eac8be-export const a = 10;",{"version":"53a40371b72faeca3dac96d61d6fb24f-interface NoName {\n    Profiler: new ({ sampleInterval: number, maxBufferSize: number }) => {\n        stop: () => Promise<any>;\n    };\n}","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"skipLibCheck":true}}
+{"version":"FakeTSVersion","root":[[2,3]],"fileNames":["lib.d.ts","./a.ts","./b.d.ts"],"fileInfos":[{"version":"8859c12c614ce56ba9a18e58384a198f-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare var Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare const console: { log(msg: any): void; };","affectsGlobalScope":true,"impliedNodeFormat":1},"3a1e9965f8602302ee6ae53756eac8be-export const a = 10;",{"version":"53a40371b72faeca3dac96d61d6fb24f-interface NoName {\n    Profiler: new ({ sampleInterval: number, maxBufferSize: number }) => {\n        stop: () => Promise<any>;\n    };\n}","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"skipLibCheck":true}}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
-  "errors": true,
   "root": [
     {
       "files": [
@@ -107,7 +106,7 @@ exports.a = 10;
   "options": {
     "skipLibCheck": true
   },
-  "size": 1209
+  "size": 1195
 }
 
 tsconfig.json::
@@ -137,11 +136,6 @@ Output::
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * tsconfig.json
 
-[[90mHH:MM:SS AM[0m] Project 'tsconfig.json' is out of date because buildinfo file 'tsconfig.tsbuildinfo' indicates that program needs to report errors.
-
-[[90mHH:MM:SS AM[0m] Building project 'tsconfig.json'...
+[[90mHH:MM:SS AM[0m] Project 'tsconfig.json' is up to date because newest input 'b.d.ts' is older than output 'tsconfig.tsbuildinfo'
 
 
-tsconfig.json::
-SemanticDiagnostics::
-Signatures::
