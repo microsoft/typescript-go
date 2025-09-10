@@ -246,7 +246,7 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 				}
 			} else if c.legacyDecorators && (node.Kind == ast.KindGetAccessor || node.Kind == ast.KindSetAccessor) {
 				accessors := c.getAllAccessorDeclarationsForDeclaration(node)
-				if ast.HasDecorators(accessors.firstAccessor) && node == accessors.secondAccessor {
+				if ast.HasDecorators(accessors.FirstAccessor) && node == accessors.SecondAccessor {
 					return c.grammarErrorOnFirstToken(node, diagnostics.Decorators_cannot_be_applied_to_multiple_get_Slashset_accessors_of_the_same_name)
 				}
 			}
@@ -1265,7 +1265,7 @@ func (c *Checker) checkGrammarForInOrForOfStatement(forInOrOfStatement *ast.ForI
 					diagnostic := createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.X_for_await_loops_are_only_allowed_within_async_functions_and_at_the_top_levels_of_modules)
 					containingFunc := getContainingFunction(forInOrOfStatement.AsNode())
 					if containingFunc != nil && containingFunc.Kind != ast.KindConstructor {
-						debug.Assert((getFunctionFlags(containingFunc)&FunctionFlagsAsync) == 0, "Enclosing function should never be an async function.")
+						debug.Assert((ast.GetFunctionFlags(containingFunc)&ast.FunctionFlagsAsync) == 0, "Enclosing function should never be an async function.")
 						if hasAsyncModifier(containingFunc) {
 							panic("Enclosing function should never be an async function.")
 						}
