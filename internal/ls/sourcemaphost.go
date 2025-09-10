@@ -110,25 +110,27 @@ func tryMapLocation(sourceMapper sourcemap.SourceMapper, host *sourcemapHost, lo
 	program := host.program
 	
 	declFile := program.GetSourceFile(fileName)
-	var declStartPos, declEndPos int
+	var declStartPos, declEndPos core.TextPos
 	
+	// Get the script interface for the declaration file
+	var declScript Script
 	if declFile != nil {
-		declStartPos = int(languageService.converters.LineAndCharacterToPosition(declFile, location.Range.Start))
-		declEndPos = int(languageService.converters.LineAndCharacterToPosition(declFile, location.Range.End))
+		declScript = declFile
 	} else {
 		declContent, ok := host.readFileWithFallback(fileName)
 		if !ok {
 			return nil
 		}
 		
-		declScript := &textScript{
+		declScript = &textScript{
 			fileName: fileName,
 			text:     declContent,
 		}
-		
-		declStartPos = int(languageService.converters.LineAndCharacterToPosition(declScript, location.Range.Start))
-		declEndPos = int(languageService.converters.LineAndCharacterToPosition(declScript, location.Range.End))
 	}
+	
+	// Convert both positions using the same script interface
+	declStartPos = languageService.converters.LineAndCharacterToPosition(declScript, location.Range.Start)
+	declEndPos = languageService.converters.LineAndCharacterToPosition(declScript, location.Range.End)
 	
 	startInput := sourcemap.DocumentPosition{
 		FileName: fileName,
@@ -140,39 +142,43 @@ func tryMapLocation(sourceMapper sourcemap.SourceMapper, host *sourcemapHost, lo
 		return nil
 	}
 
-	originalRangeLength := declEndPos - declStartPos
-	sourceEndPos := startResult.Pos + originalRangeLength
+	// Map the end position individually through the source map
+	endInput := sourcemap.DocumentPosition{
+		FileName: fileName,
+		Pos:      declEndPos,
+	}
 	
+	endResult := sourceMapper.TryGetSourcePosition(endInput)
+	var sourceEndPos core.TextPos
+	if endResult != nil && endResult.FileName == startResult.FileName {
+		// Both positions mapped to the same source file
+		sourceEndPos = endResult.Pos
+	} else {
+		// Fallback: use original range length (this shouldn't happen often)
+		originalRangeLength := declEndPos - declStartPos
+		sourceEndPos = startResult.Pos + originalRangeLength
+	}
+	
+	// Get the script interface for the source file
 	sourceFile := program.GetSourceFile(startResult.FileName)
-	var sourceStartLSP lsproto.Position
-	var sourceEndLSP lsproto.Position
-	
+	var sourceScript Script
 	if sourceFile != nil {
-		if sourceEndPos > len(sourceFile.Text()) {
-			sourceEndPos = len(sourceFile.Text())
-		}
-		
-		sourceStartLSP = languageService.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(startResult.Pos))
-		sourceEndLSP = languageService.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(sourceEndPos))
-
+		sourceScript = sourceFile
 	} else {
 		sourceContent, ok := host.readFileWithFallback(startResult.FileName)
 		if !ok {
 			return nil
 		}
 		
-		if sourceEndPos > len(sourceContent) {
-			sourceEndPos = len(sourceContent)
-		}
-		
-		textScript := &textScript{
+		sourceScript = &textScript{
 			fileName: startResult.FileName,
 			text:     sourceContent,
 		}
-		
-		sourceStartLSP = languageService.converters.PositionToLineAndCharacter(textScript, core.TextPos(startResult.Pos))
-		sourceEndLSP = languageService.converters.PositionToLineAndCharacter(textScript, core.TextPos(sourceEndPos))
 	}
+	
+	// Convert both positions using the same script interface
+	sourceStartLSP := languageService.converters.PositionToLineAndCharacter(sourceScript, startResult.Pos)
+	sourceEndLSP := languageService.converters.PositionToLineAndCharacter(sourceScript, sourceEndPos)
 	return &lsproto.Location{
 		Uri: FileNameToDocumentURI(startResult.FileName),
 		Range: lsproto.Range{

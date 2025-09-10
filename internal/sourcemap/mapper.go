@@ -11,7 +11,7 @@ import (
 // DocumentPosition represents a position in a document
 type DocumentPosition struct {
 	FileName string
-	Pos      int
+	Pos      core.TextPos
 }
 
 // DocumentPositionMapper maps positions between source and generated files
@@ -36,9 +36,9 @@ type SourceFileLike interface {
 
 // MappedPosition represents a position mapping with additional metadata
 type MappedPosition struct {
-	GeneratedPosition int
+	GeneratedPosition core.TextPos
 	SourceIndex       int
-	SourcePosition    int
+	SourcePosition    core.TextPos
 	SourceFileName    string // Resolved source file name
 }
 
@@ -193,19 +193,19 @@ func (mapper *documentPositionMapper) ensureMappingsDecoded() bool {
 			continue
 		}
 
-		var generatedPos int
+		var generatedPos core.TextPos
 		if generatedLineStarts != nil && mapping.GeneratedLine < len(generatedLineStarts) {
-			generatedPos = int(generatedLineStarts[mapping.GeneratedLine]) + mapping.GeneratedCharacter
+			generatedPos = generatedLineStarts[mapping.GeneratedLine] + core.TextPos(mapping.GeneratedCharacter)
 		} else {
 			generatedPos = -1
 		}
 
 		sourceFile := mapper.host.GetSourceFileLike(mapper.sourceFileAbsolutePaths[mapping.SourceIndex])
-		var sourcePos int
+		var sourcePos core.TextPos
 		if sourceFile != nil {
 			sourceLineStarts := sourceFile.LineStarts()
 			if mapping.SourceLine < len(sourceLineStarts) {
-				sourcePos = int(sourceLineStarts[mapping.SourceLine]) + mapping.SourceCharacter
+				sourcePos = sourceLineStarts[mapping.SourceLine] + core.TextPos(mapping.SourceCharacter)
 			} else {
 				sourcePos = -1
 			}

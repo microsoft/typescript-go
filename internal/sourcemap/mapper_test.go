@@ -102,7 +102,7 @@ func TestDocumentPositionMapper_GetSourcePosition(t *testing.T) {
 
 	input := DocumentPosition{
 		FileName: "/indexdef.d.ts",
-		Pos:      methodNamePosInDecl,
+		Pos:      core.TextPos(methodNamePosInDecl),
 	}
 
 	result := mapper.GetSourcePosition(input)
@@ -134,7 +134,7 @@ func TestDocumentPositionMapper_NoMapping(t *testing.T) {
 
 	input := DocumentPosition{
 		FileName: "/test.d.ts",
-		Pos:      10,
+		Pos:      core.TextPos(10),
 	}
 
 	result := mapper.GetSourcePosition(input)
@@ -156,7 +156,7 @@ func TestDocumentPositionMapper_InvalidSourceMap(t *testing.T) {
 
 	input := DocumentPosition{
 		FileName: "/test.d.ts",
-		Pos:      10,
+		Pos:      core.TextPos(10),
 	}
 
 	result := mapper.GetSourcePosition(input)
@@ -186,7 +186,7 @@ func TestCreateSourceMapper(t *testing.T) {
 	// Test mapping from declaration to source
 	input := DocumentPosition{
 		FileName: "/indexdef.d.ts",
-		Pos:      50, // Some position in the declaration file
+		Pos:      core.TextPos(50), // Some position in the declaration file
 	}
 
 	result := sourceMapper.TryGetSourcePosition(input)
