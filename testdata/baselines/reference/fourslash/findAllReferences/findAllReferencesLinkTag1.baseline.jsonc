@@ -5,17 +5,18 @@
 //     n = 1
 //     static s() { }
 //     /**
-//      * {@link m}
-//      * @see {m}
-//      * {@link C.m}
-//      * @see {C.m}
-//      * {@link C#m}
-//      * @see {C#m}
+//      * {@link [|m|]}
+//      * @see {[|m|]}
+//      * {@link C.[|m|]}
+//      * @see {C.[|m|]}
+//      * {@link C#[|m|]}
+//      * @see {C#[|m|]}
 //      * {@link C.prototype.[|m|]}
-//      * @see {C.prototype.m}
+//      * @see {C.prototype.[|m|]}
 //      */
 //     p() { }
-// // --- (line: 16) skipped ---
+//     /**
+// // --- (line: 17) skipped ---
 
 
 
@@ -29,15 +30,22 @@
 //      * {@link m}
 // // --- (line: 7) skipped ---
 
-// --- (line: 19) skipped ---
-//      * @see {C.n}
-//      * {@link C#n}
-//      * @see {C#n}
+// --- (line: 13) skipped ---
+//      */
+//     p() { }
+//     /**
+//      * {@link [|n|]}
+//      * @see {[|n|]}
+//      * {@link C.[|n|]}
+//      * @see {C.[|n|]}
+//      * {@link C#[|n|]}
+//      * @see {C#[|n|]}
 //      * {@link C.prototype.[|n|]}
-//      * @see {C.prototype.n}
+//      * @see {C.prototype.[|n|]}
 //      */
 //     q() { }
-// // --- (line: 27) skipped ---
+//     /**
+// // --- (line: 28) skipped ---
 
 
 
@@ -52,15 +60,18 @@
 //      * @see {m}
 // // --- (line: 8) skipped ---
 
-// --- (line: 26) skipped ---
+// --- (line: 24) skipped ---
+//      */
+//     q() { }
 //     /**
-//      * {@link s}
-//      * @see {s}
+//      * {@link [|s|]}
+//      * @see {[|s|]}
 //      * {@link C.[|s|]}
-//      * @see {C.s}
+//      * @see {C.[|s|]}
 //      */
 //     r() { }
-// // --- (line: 34) skipped ---
+// }
+// // --- (line: 35) skipped ---
 
 
 
@@ -73,8 +84,16 @@
 //     [|a|]/*FIND ALL REFS*/()
 //     b: 1
 //     /**
-//      * {@link a}
-// // --- (line: 41) skipped ---
+//      * {@link [|a|]}
+//      * @see {[|a|]}
+//      * {@link I.[|a|]}
+//      * @see {I.[|a|]}
+//      * {@link I#[|a|]}
+//      * @see {I#[|a|]}
+//      */
+//     c()
+//     /**
+// // --- (line: 49) skipped ---
 
 
 
@@ -90,6 +109,19 @@
 //      * @see {a}
 // // --- (line: 42) skipped ---
 
+// --- (line: 45) skipped ---
+//      */
+//     c()
+//     /**
+//      * {@link [|b|]}
+//      * @see {[|b|]}
+//      * {@link I.[|b|]}
+//      * @see {I.[|b|]}
+//      */
+//     d()
+// }
+// // --- (line: 56) skipped ---
+
 
 
 // === findAllReferences ===
@@ -100,7 +132,7 @@
 // function nestor() {
 //     /** {@link [|r2|]} */
 //     function ref() { }
-//     /** @see {r2} */
+//     /** @see {[|r2|]} */
 //     function d3() { }
 //     function [|r2|]/*FIND ALL REFS*/() { }
 // }
@@ -117,32 +149,33 @@
 //      * {@link m}
 //      * @see {m}
 //      * {@link [|C|].m}
-//      * @see {C.m}
+//      * @see {[|C|].m}
 //      * {@link [|C|]#m}
-//      * @see {C#m}
+//      * @see {[|C|]#m}
 //      * {@link [|C|].prototype.m}
-//      * @see {C.prototype.m}
+//      * @see {[|C|].prototype.m}
 //      */
 //     p() { }
 //     /**
 //      * {@link n}
 //      * @see {n}
 //      * {@link [|C|].n}
-//      * @see {C.n}
+//      * @see {[|C|].n}
 //      * {@link [|C|]#n}
-//      * @see {C#n}
+//      * @see {[|C|]#n}
 //      * {@link [|C|].prototype.n}
-//      * @see {C.prototype.n}
+//      * @see {[|C|].prototype.n}
 //      */
 //     q() { }
 //     /**
 //      * {@link s}
 //      * @see {s}
 //      * {@link [|C|].s}
-//      * @see {C.s}
+//      * @see {[|C|].s}
 //      */
 //     r() { }
-// // --- (line: 34) skipped ---
+// }
+// // --- (line: 35) skipped ---
 
 
 
@@ -156,4 +189,20 @@
 //     a()
 //     b: 1
 //     /**
-// // --- (line: 40) skipped ---
+//      * {@link a}
+//      * @see {a}
+//      * {@link [|I|].a}
+//      * @see {[|I|].a}
+//      * {@link [|I|]#a}
+//      * @see {[|I|]#a}
+//      */
+//     c()
+//     /**
+//      * {@link b}
+//      * @see {b}
+//      * {@link [|I|].b}
+//      * @see {[|I|].b}
+//      */
+//     d()
+// }
+// // --- (line: 56) skipped ---

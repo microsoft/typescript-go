@@ -9,8 +9,12 @@
 // === findAllReferences ===
 // === /a.js ===
 // module.exports = 0;
-// /** @typedef {number} /*FIND ALL REFS*/Foo */
+// /** @typedef {number} /*FIND ALL REFS*/[|Foo|] */
 // const dummy = 0;
+
+// === /b.js ===
+// /** @type {import('./a').[|Foo|]} */
+// const x = 0;
 
 
 

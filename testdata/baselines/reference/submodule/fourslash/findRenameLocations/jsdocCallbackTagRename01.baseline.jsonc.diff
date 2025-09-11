@@ -6,11 +6,5 @@
  // === /jsDocCallback.js ===
 -// 
  // /**
--//  * @callback /*RENAME*/[|FooCallbackRENAME|]
-+//  * @callback /*RENAME*/FooCallback
+ //  * @callback /*RENAME*/[|FooCallbackRENAME|]
  //  * @param {string} eventName - Rename should work
- //  */
- // 
--// /** @type {[|FooCallbackRENAME|]} */
-+// /** @type {FooCallback} */
- // var t;

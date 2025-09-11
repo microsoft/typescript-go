@@ -5,22 +5,16 @@
 -
  // === /jsDocTypedef_form2.js ===
 -// 
--// /** @typedef {(string | number)} /*RENAME*/[|NumberLikeRENAME|] */
--// 
--// /** @type {[|NumberLikeRENAME|]} */
-+// /** @typedef {(string | number)} /*RENAME*/NumberLike */
-+// 
-+// /** @type {NumberLike} */
- // var numberLike;
-
+ // /** @typedef {(string | number)} /*RENAME*/[|NumberLikeRENAME|] */
+ // 
+ // /** @type {[|NumberLikeRENAME|]} */
+@@= skipped -9, +7 lines =@@
 
 
  // === findRenameLocations ===
 -
  // === /jsDocTypedef_form2.js ===
 -// 
--// /** @typedef {(string | number)} [|NumberLikeRENAME|] */
-+// /** @typedef {(string | number)} NumberLike */
+ // /** @typedef {(string | number)} [|NumberLikeRENAME|] */
  // 
  // /** @type {/*RENAME*/[|NumberLikeRENAME|]} */
- // var numberLike;

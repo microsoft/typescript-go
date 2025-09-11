@@ -1,7 +1,7 @@
 // === findRenameLocations ===
 // === /a.js ===
 // /**
-//  * @import { A } from "./b";
+//  * @import { /*START PREFIX*/A as [|ARENAME|] } from "./b";
 //  */
 // 
 // /**

@@ -437,7 +437,8 @@ func (p *Program) GetIncludeProcessorDiagnostics(sourceFile *ast.SourceFile) []*
 	if checker.SkipTypeChecking(sourceFile, p.Options(), p, false) {
 		return nil
 	}
-	return p.includeProcessor.getDiagnostics(p).GetDiagnosticsForFile(sourceFile.FileName())
+	filtered, _ := p.getDiagnosticsWithPrecedingDirectives(sourceFile, p.includeProcessor.getDiagnostics(p).GetDiagnosticsForFile(sourceFile.FileName()))
+	return filtered
 }
 
 func (p *Program) getSourceFilesToEmit(targetSourceFile *ast.SourceFile, forceDtsEmit bool) []*ast.SourceFile {
@@ -541,13 +542,6 @@ func (p *Program) verifyCompilerOptions() {
 		}
 	}
 
-	getStrictOptionValue := func(value core.Tristate) bool {
-		if value != core.TSUnknown {
-			return value == core.TSTrue
-		}
-		return options.Strict == core.TSTrue
-	}
-
 	// Removed in TS7
 
 	if options.BaseUrl != "" {
@@ -585,10 +579,10 @@ func (p *Program) verifyCompilerOptions() {
 		createRemovedOptionDiagnostic("module", "UMD", "")
 	}
 
-	if options.StrictPropertyInitialization.IsTrue() && !getStrictOptionValue(options.StrictNullChecks) {
+	if options.StrictPropertyInitialization.IsTrue() && !options.GetStrictOptionValue(options.StrictNullChecks) {
 		createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1, "strictPropertyInitialization", "strictNullChecks")
 	}
-	if options.ExactOptionalPropertyTypes.IsTrue() && !getStrictOptionValue(options.StrictNullChecks) {
+	if options.ExactOptionalPropertyTypes.IsTrue() && !options.GetStrictOptionValue(options.StrictNullChecks) {
 		createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1, "exactOptionalPropertyTypes", "strictNullChecks")
 	}
 
@@ -1062,8 +1056,20 @@ func (p *Program) getSemanticDiagnosticsForFileNotFilter(ctx context.Context, so
 		})
 	}
 
+	filtered, directivesByLine := p.getDiagnosticsWithPrecedingDirectives(sourceFile, diags)
+	for _, directive := range directivesByLine {
+		// Above we changed all used directive kinds to @ts-ignore, so any @ts-expect-error directives that
+		// remain are unused and thus errors.
+		if directive.Kind == ast.CommentDirectiveKindExpectError {
+			filtered = append(filtered, ast.NewDiagnostic(sourceFile, directive.Loc, diagnostics.Unused_ts_expect_error_directive))
+		}
+	}
+	return filtered
+}
+
+func (p *Program) getDiagnosticsWithPrecedingDirectives(sourceFile *ast.SourceFile, diags []*ast.Diagnostic) ([]*ast.Diagnostic, map[int]ast.CommentDirective) {
 	if len(sourceFile.CommentDirectives) == 0 {
-		return diags
+		return diags, nil
 	}
 	// Build map of directives by line number
 	directivesByLine := make(map[int]ast.CommentDirective)
@@ -1093,14 +1099,7 @@ func (p *Program) getSemanticDiagnosticsForFileNotFilter(ctx context.Context, so
 			filtered = append(filtered, diagnostic)
 		}
 	}
-	for _, directive := range directivesByLine {
-		// Above we changed all used directive kinds to @ts-ignore, so any @ts-expect-error directives that
-		// remain are unused and thus errors.
-		if directive.Kind == ast.CommentDirectiveKindExpectError {
-			filtered = append(filtered, ast.NewDiagnostic(sourceFile, directive.Loc, diagnostics.Unused_ts_expect_error_directive))
-		}
-	}
-	return filtered
+	return filtered, directivesByLine
 }
 
 func (p *Program) getDeclarationDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
@@ -1335,10 +1334,12 @@ type WriteFileData struct {
 	SkippedDtsWrite bool
 }
 
+type WriteFile func(fileName string, text string, writeByteOrderMark bool, data *WriteFileData) error
+
 type EmitOptions struct {
 	TargetSourceFile *ast.SourceFile // Single file to emit. If `nil`, emits all files
 	EmitOnly         EmitOnly
-	WriteFile        func(fileName string, text string, writeByteOrderMark bool, data *WriteFileData) error
+	WriteFile        WriteFile
 }
 
 type EmitResult struct {

@@ -6,11 +6,17 @@
 -// --- (line: 6) skipped ---
 -//  * @param {string} x
 -//  * @returns {string} 
--//  *
--//  * @param {unknown} [|xRENAME|]
++// /**
++//  * @overload
++//  * @param {number} [|xRENAME|]
++//  * @returns {number}
++//  *
++//  * @overload
++//  * @param {string} [|xRENAME|]
++//  * @returns {string}
+ //  *
+ //  * @param {unknown} [|xRENAME|]
 -//  * @returns {unknown} 
-+// --- (line: 9) skipped ---
-+//  * @param {unknown} x
 +//  * @returns {unknown}
  //  */
  // function foo([|xRENAME|]/*RENAME*/) {

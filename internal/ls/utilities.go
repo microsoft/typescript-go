@@ -287,16 +287,12 @@ func getPossibleTypeArgumentsInfo(tokenIn *ast.Node, sourceFile *ast.SourceFile)
 				}
 			}
 			remainingLessThanTokens--
-			break
 		case ast.KindGreaterThanGreaterThanGreaterThanToken:
 			remainingLessThanTokens = +3
-			break
 		case ast.KindGreaterThanGreaterThanToken:
 			remainingLessThanTokens = +2
-			break
 		case ast.KindGreaterThanToken:
 			remainingLessThanTokens++
-			break
 		case ast.KindCloseBraceToken:
 			// This can be object type, skip until we find the matching open brace token
 			// Skip until the matching open brace token
@@ -304,7 +300,6 @@ func getPossibleTypeArgumentsInfo(tokenIn *ast.Node, sourceFile *ast.SourceFile)
 			if token == nil {
 				return nil
 			}
-			break
 		case ast.KindCloseParenToken:
 			// This can be object type, skip until we find the matching open brace token
 			// Skip until the matching open brace token
@@ -312,7 +307,6 @@ func getPossibleTypeArgumentsInfo(tokenIn *ast.Node, sourceFile *ast.SourceFile)
 			if token == nil {
 				return nil
 			}
-			break
 		case ast.KindCloseBracketToken:
 			// This can be object type, skip until we find the matching open brace token
 			// Skip until the matching open brace token
@@ -320,22 +314,18 @@ func getPossibleTypeArgumentsInfo(tokenIn *ast.Node, sourceFile *ast.SourceFile)
 			if token == nil {
 				return nil
 			}
-			break
-
-			// Valid tokens in a type name. Skip.
 		case ast.KindCommaToken:
+			// Valid tokens in a type name. Skip.
 			nTypeArguments++
-			break
 		case ast.KindEqualsGreaterThanToken, ast.KindIdentifier, ast.KindStringLiteral, ast.KindNumericLiteral,
 			ast.KindBigIntLiteral, ast.KindTrueKeyword, ast.KindFalseKeyword, ast.KindTypeOfKeyword, ast.KindExtendsKeyword,
 			ast.KindKeyOfKeyword, ast.KindDotToken, ast.KindBarToken, ast.KindQuestionToken, ast.KindColonToken:
-			break
+			// do nothing
 		default:
-			if ast.IsTypeNode(token) {
-				break
+			if !ast.IsTypeNode(token) {
+				// Invalid token in type
+				return nil
 			}
-			// Invalid token in type
-			return nil
 		}
 		token = astnav.FindPrecedingToken(sourceFile, token.Pos())
 	}
@@ -1215,15 +1205,18 @@ func getAdjustedLocationForImportDeclaration(node *ast.ImportDeclaration, forRen
 		// import /**/type { propertyName as [|name|] } from ...;
 		// import /**/type * as [|name|] from ...;
 		if namedBindings := node.ImportClause.AsImportClause().NamedBindings; namedBindings != nil {
-			if namedBindings.Kind == ast.KindNamedImports {
+			switch namedBindings.Kind {
+			case ast.KindNamedImports:
 				// do nothing if there is more than one binding
 				elements := namedBindings.AsNamedImports().Elements
 				if len(elements.Nodes) != 1 {
 					return nil
 				}
 				return elements.Nodes[0].Name()
-			} else if namedBindings.Kind == ast.KindNamespaceImport {
+
+			case ast.KindNamespaceImport:
 				return namedBindings.Name()
+
 			}
 		}
 	}
@@ -1244,14 +1237,15 @@ func getAdjustedLocationForExportDeclaration(node *ast.ExportDeclaration, forRen
 		// export /**/type { [|name|] } from ...
 		// export /**/type { propertyName as [|name|] } from ...
 		// export /**/type * as [|name|] ...
-		if node.ExportClause.Kind == ast.KindNamedExports {
+		switch node.ExportClause.Kind {
+		case ast.KindNamedExports:
 			// do nothing if there is more than one binding
 			elements := node.ExportClause.AsNamedExports().Elements
 			if len(elements.Nodes) != 1 {
 				return nil
 			}
 			return elements.Nodes[0].Name()
-		} else if node.ExportClause.Kind == ast.KindNamespaceExport {
+		case ast.KindNamespaceExport:
 			return node.ExportClause.Name()
 		}
 	}
@@ -1265,14 +1259,14 @@ func getAdjustedLocationForExportDeclaration(node *ast.ExportDeclaration, forRen
 
 func getMeaningFromLocation(node *ast.Node) ast.SemanticMeaning {
 	// todo: check if this function needs to be changed for jsdoc updates
-
 	node = getAdjustedLocation(node, false /*forRename*/, nil)
 	parent := node.Parent
-	if node.Kind == ast.KindSourceFile {
+	switch {
+	case ast.IsSourceFile(node):
 		return ast.SemanticMeaningValue
-	} else if ast.NodeKindIs(node, ast.KindExportAssignment, ast.KindExportSpecifier, ast.KindExternalModuleReference, ast.KindImportSpecifier, ast.KindImportClause) || parent.Kind == ast.KindImportEqualsDeclaration && node == parent.Name() {
+	case ast.NodeKindIs(node, ast.KindExportAssignment, ast.KindExportSpecifier, ast.KindExternalModuleReference, ast.KindImportSpecifier, ast.KindImportClause) || parent.Kind == ast.KindImportEqualsDeclaration && node == parent.Name():
 		return ast.SemanticMeaningAll
-	} else if isInRightSideOfInternalImportEqualsDeclaration(node) {
+	case isInRightSideOfInternalImportEqualsDeclaration(node):
 		//     import a = |b|; // Namespace
 		//     import a = |b.c|; // Value, type, namespace
 		//     import a = |b.c|.d; // Namespace
@@ -1284,22 +1278,20 @@ func getMeaningFromLocation(node *ast.Node) ast.SemanticMeaning {
 			return ast.SemanticMeaningNamespace
 		}
 		return ast.SemanticMeaningAll
-	} else if ast.IsDeclarationName(node) {
+	case ast.IsDeclarationName(node):
 		return getMeaningFromDeclaration(parent)
-	} else if ast.IsEntityName(node) && ast.FindAncestor(node, func(*ast.Node) bool {
-		return node.Kind == ast.KindJSDocNameReference || ast.IsJSDocLinkLike(node) || node.Kind == ast.KindJSDocMemberName
-	}) != nil {
+	case ast.IsEntityName(node) && ast.IsJSDocNameReferenceContext(node):
 		return ast.SemanticMeaningAll
-	} else if isTypeReference(node) {
+	case isTypeReference(node):
 		return ast.SemanticMeaningType
-	} else if isNamespaceReference(node) {
+	case isNamespaceReference(node):
 		return ast.SemanticMeaningNamespace
-	} else if parent.Kind == ast.KindTypeParameter {
+	case ast.IsTypeParameterDeclaration(parent):
 		return ast.SemanticMeaningType
-	} else if parent.Kind == ast.KindLiteralType {
+	case ast.IsLiteralTypeNode(parent):
 		// This might be T["name"], which is actually referencing a property and not a type. So allow both meanings.
 		return ast.SemanticMeaningType | ast.SemanticMeaningValue
-	} else {
+	default:
 		return ast.SemanticMeaningValue
 	}
 }
@@ -1641,12 +1633,13 @@ func findPrecedingMatchingToken(token *ast.Node, matchingTokenKind ast.Kind, sou
 			return nil
 		}
 		token = preceding
-		if token.Kind == matchingTokenKind {
+		switch token.Kind {
+		case matchingTokenKind:
 			if remainingMatchingTokens == 0 {
 				return token
 			}
 			remainingMatchingTokens--
-		} else if token.Kind == tokenKind {
+		case tokenKind:
 			remainingMatchingTokens++
 		}
 	}

@@ -29,8 +29,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
-	"golang.org/x/text/collate"
-	"golang.org/x/text/language"
 )
 
 func (l *LanguageService) ProvideCompletion(
@@ -1378,9 +1376,10 @@ func (l *LanguageService) getCompletionData(
 		}
 
 		var importAttributes *ast.ImportAttributesNode
-		if contextToken.Kind == ast.KindOpenBraceToken || contextToken.Kind == ast.KindCommaToken {
+		switch contextToken.Kind {
+		case ast.KindOpenBraceToken, ast.KindCommaToken:
 			importAttributes = core.IfElse(ast.IsImportAttributes(contextToken.Parent), contextToken.Parent, nil)
-		} else if contextToken.Kind == ast.KindColonToken {
+		case ast.KindColonToken:
 			importAttributes = core.IfElse(ast.IsImportAttributes(contextToken.Parent.Parent), contextToken.Parent.Parent, nil)
 		}
 
@@ -1884,7 +1883,6 @@ func (l *LanguageService) completionInfoFromData(
 		clientOptions,
 	)
 
-	compareCompletionEntries := getCompareCompletionEntries(ctx)
 	if data.keywordFilters != KeywordCompletionFiltersNone {
 		keywordCompletions := getKeywordCompletions(data.keywordFilters, !data.insideJSDocTagTypeExpression && ast.IsSourceFileJS(file))
 		for _, keywordEntry := range keywordCompletions {
@@ -1958,7 +1956,6 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 	// true otherwise. Based on the order we add things we will always see locals first, then globals, then module exports.
 	// So adding a completion for a local will prevent us from adding completions for external module exports sharing the same name.
 	uniques := make(uniqueNamesMap)
-	compareCompletionEntries := getCompareCompletionEntries(ctx)
 	for _, symbol := range data.symbols {
 		symbolId := ast.GetSymbolId(symbol)
 		origin := data.symbolToOriginInfoMap[symbolId]
@@ -3295,25 +3292,6 @@ func getCompletionsSymbolKind(kind ScriptElementKind) lsproto.CompletionItemKind
 	}
 }
 
-var collatorCache collections.SyncMap[language.Tag, *sync.Pool]
-
-func getCollator(tag language.Tag) *collate.Collator {
-	pool, ok := collatorCache.Load(tag)
-	if !ok {
-		pool, _ = collatorCache.LoadOrStore(tag, &sync.Pool{
-			New: func() any {
-				return collate.New(tag)
-			},
-		})
-	}
-	return pool.Get().(*collate.Collator)
-}
-
-func putCollator(tag language.Tag, collator *collate.Collator) {
-	pool, _ := collatorCache.Load(tag)
-	pool.Put(collator)
-}
-
 // Editors will use the `sortText` and then fall back to `name` for sorting, but leave ties in response order.
 // So, it's important that we sort those ties in the order we want them displayed if it matters. We don't
 // strictly need to sort by name or SortText here since clients are going to do it anyway, but we have to
@@ -3321,33 +3299,28 @@ func putCollator(tag language.Tag, collator *collate.Collator) {
 // by the language service consistent with what TS Server does and what editors typically do. This also makes
 // completions tests make more sense. We used to sort only alphabetically and only in the server layer, but
 // this made tests really weird, since most fourslash tests don't use the server.
-func getCompareCompletionEntries(ctx context.Context) func(entryInSlice *lsproto.CompletionItem, entryToInsert *lsproto.CompletionItem) int {
-	return func(entryInSlice *lsproto.CompletionItem, entryToInsert *lsproto.CompletionItem) int {
-		locale := core.GetLocale(ctx)
-		collator := getCollator(locale)
-		defer putCollator(locale, collator)
-		compareStrings := collator.CompareString
-		result := compareStrings(*entryInSlice.SortText, *entryToInsert.SortText)
-		if result == stringutil.ComparisonEqual {
-			result = compareStrings(entryInSlice.Label, entryToInsert.Label)
-		}
-		if result == stringutil.ComparisonEqual && entryInSlice.Data != nil && entryToInsert.Data != nil {
-			sliceEntryData, ok1 := (*entryInSlice.Data).(*completionEntryData)
-			insertEntryData, ok2 := (*entryToInsert.Data).(*completionEntryData)
-			if ok1 && ok2 && sliceEntryData.ModuleSpecifier != "" && insertEntryData.ModuleSpecifier != "" {
-				// Sort same-named auto-imports by module specifier
-				result = compareNumberOfDirectorySeparators(
-					sliceEntryData.ModuleSpecifier,
-					insertEntryData.ModuleSpecifier,
-				)
-			}
-		}
-		if result == stringutil.ComparisonEqual {
-			// Fall back to symbol order - if we return `EqualTo`, `insertSorted` will put later symbols first.
-			return stringutil.ComparisonLessThan
-		}
-		return result
+func compareCompletionEntries(entryInSlice *lsproto.CompletionItem, entryToInsert *lsproto.CompletionItem) int {
+	compareStrings := stringutil.CompareStringsCaseInsensitiveThenSensitive
+	result := compareStrings(*entryInSlice.SortText, *entryToInsert.SortText)
+	if result == stringutil.ComparisonEqual {
+		result = compareStrings(entryInSlice.Label, entryToInsert.Label)
 	}
+	if result == stringutil.ComparisonEqual && entryInSlice.Data != nil && entryToInsert.Data != nil {
+		sliceEntryData, ok1 := (*entryInSlice.Data).(*completionEntryData)
+		insertEntryData, ok2 := (*entryToInsert.Data).(*completionEntryData)
+		if ok1 && ok2 && sliceEntryData.ModuleSpecifier != "" && insertEntryData.ModuleSpecifier != "" {
+			// Sort same-named auto-imports by module specifier
+			result = compareNumberOfDirectorySeparators(
+				sliceEntryData.ModuleSpecifier,
+				insertEntryData.ModuleSpecifier,
+			)
+		}
+	}
+	if result == stringutil.ComparisonEqual {
+		// Fall back to symbol order - if we return `EqualTo`, `insertSorted` will put later symbols first.
+		return stringutil.ComparisonLessThan
+	}
+	return result
 }
 
 // True if the first character of `lowercaseCharacters` is the first character
@@ -3582,7 +3555,6 @@ func (l *LanguageService) getJSCompletionEntries(
 	uniqueNames *collections.Set[string],
 	sortedEntries []*lsproto.CompletionItem,
 ) []*lsproto.CompletionItem {
-	compareCompletionEntries := getCompareCompletionEntries(ctx)
 	nameTable := getNameTable(file)
 	for name, pos := range nameTable {
 		// Skip identifiers produced only from the current location
@@ -4283,6 +4255,12 @@ func tryGetContainingJsxElement(contextToken *ast.Node, file *ast.SourceFile) *a
 				}
 			}
 			return parent
+		} else if parent != nil && parent.Kind == ast.KindJsxAttribute {
+			// Currently we parse JsxOpeningLikeElement as:
+			//      JsxOpeningLikeElement
+			//          attributes: JsxAttributes
+			//             properties: NodeArray<JsxAttributeLike>
+			return parent.Parent.Parent
 		}
 	// The context token is the closing } or " of an attribute, which means
 	// its parent is a JsxExpression, whose parent is a JsxAttribute,
@@ -4929,11 +4907,6 @@ func hasCompletionItem(clientOptions *lsproto.CompletionClientCapabilities) bool
 	return clientOptions != nil && clientOptions.CompletionItem != nil
 }
 
-// strada TODO: this function is, at best, poorly named. Use sites are pretty suspicious.
-func compilerOptionsIndicateEsModules(options *core.CompilerOptions) bool {
-	return options.Module == core.ModuleKindNone || options.GetEmitScriptTarget() >= core.ScriptTargetES2015 || options.NoEmit.IsTrue()
-}
-
 func clientSupportsItemLabelDetails(clientOptions *lsproto.CompletionClientCapabilities) bool {
 	return hasCompletionItem(clientOptions) && ptrIsTrue(clientOptions.CompletionItem.LabelDetailsSupport)
 }
@@ -5373,7 +5346,7 @@ func (l *LanguageService) getCompletionItemActions(ctx context.Context, ch *chec
 		symbol = symbol.ExportSymbol
 	}
 	targetSymbol := ch.GetMergedSymbol(ch.SkipAlias(symbol))
-	isJsxOpeningTagName := symbolDetails.contextToken.Kind == ast.KindLessThanToken && ast.IsJsxOpeningLikeElement(symbolDetails.contextToken.Parent)
+	isJsxOpeningTagName := symbolDetails.contextToken != nil && symbolDetails.contextToken.Kind == ast.KindLessThanToken && ast.IsJsxOpeningLikeElement(symbolDetails.contextToken.Parent)
 	if symbolDetails.previousToken != nil && ast.IsIdentifier(symbolDetails.previousToken) {
 		// If the previous token is an identifier, we can use its start position.
 		position = astnav.GetStartOfNode(symbolDetails.previousToken, file, false)

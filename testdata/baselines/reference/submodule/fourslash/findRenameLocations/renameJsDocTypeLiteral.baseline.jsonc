@@ -1,7 +1,7 @@
 // === findRenameLocations ===
 // === /a.js ===
 // /**
-//  * @param {Object} options
+//  * @param {Object} [|optionsRENAME|]
 //  * @param {string} options.foo
 //  * @param {number} options.bar
 //  */
