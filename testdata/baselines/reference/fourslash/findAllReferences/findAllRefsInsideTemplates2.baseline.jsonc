@@ -22,11 +22,11 @@
 // === findAllReferences ===
 // === /findAllRefsInsideTemplates2.ts ===
 // function [|f|](...rest: any[]) { }
-// f `${ /*FIND ALL REFS*/[|f|] `${ [|f|] } ${ [|f|] }`
+// [|f|] `${ /*FIND ALL REFS*/[|f|] } ${ [|f|] }`
 
 
 
 // === findAllReferences ===
 // === /findAllRefsInsideTemplates2.ts ===
 // function [|f|](...rest: any[]) { }
-// f `${ f } ${ /*FIND ALL REFS*/[|f|] `${ [|f|] } ${ [|f|] }`
+// [|f|] `${ [|f|] } ${ /*FIND ALL REFS*/[|f|] }`

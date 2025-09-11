@@ -3,7 +3,7 @@
 // var [|objRENAME|] = {};
 
 // === /forof.js ===
-// for (obj/*RENAME*/[|objRENAME|].prop of arr) {
+// for ([|objRENAME|]/*RENAME*/.prop of arr) {
 // 
 // }
 

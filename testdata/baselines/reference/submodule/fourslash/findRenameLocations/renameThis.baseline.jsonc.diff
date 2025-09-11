@@ -11,9 +11,3 @@
  // }
  // this;
  // const _ = { this: 0 }.this;
-@@= skipped -24, +24 lines =@@
- //     return this;
- // }
- // this;
--// const _ = { [|thisRENAME|]: 0 }./*RENAME*/[|thisRENAME|];
-+// const _ = { this: 0 }./*RENAME*/[|thisRENAME|]: 0 }.[|thisRENAME|];

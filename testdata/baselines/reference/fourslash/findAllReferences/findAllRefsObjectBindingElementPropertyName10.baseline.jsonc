@@ -41,5 +41,5 @@
 //     value: any;
 // }
 // 
-// function f ({ next: { /*FIND ALL REFS*/[|next|]: { [|next|]: x} }: Recursive) {
+// function f ({ [|next|]: { /*FIND ALL REFS*/[|next|]: x} }: Recursive) {
 // }

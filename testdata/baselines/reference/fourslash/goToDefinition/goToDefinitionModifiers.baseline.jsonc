@@ -10,7 +10,7 @@
 
 // === goToDefinition ===
 // === /a.ts ===
-// export class A/*GOTO DEF*/[|A|] {
+// export class [|A|]/*GOTO DEF*/ {
 // 
 //     private z: string;
 // 
@@ -34,7 +34,7 @@
 // === /a.ts ===
 // export class A {
 // 
-//     private z/*GOTO DEF*/[|z|]: string;
+//     private [|z|]/*GOTO DEF*/: string;
 // 
 //     readonly x: string;
 // 
@@ -62,7 +62,7 @@
 // 
 //     private z: string;
 // 
-//     readonly x/*GOTO DEF*/[|x|]: string;
+//     readonly [|x|]/*GOTO DEF*/: string;
 // 
 //     async a() {  }
 // 
@@ -90,7 +90,7 @@
 // 
 //     readonly x: string;
 // 
-//     async a/*GOTO DEF*/[|a|]() {  }
+//     async [|a|]/*GOTO DEF*/() {  }
 // 
 //     override b() {}
 // 
@@ -119,7 +119,7 @@
 // 
 //     async a() {  }
 // 
-//     override b/*GOTO DEF*/[|b|]() {}
+//     override [|b|]/*GOTO DEF*/() {}
 // 
 //     public async c() { }
 // }
@@ -173,7 +173,7 @@
 // 
 //     override b() {}
 // 
-//     public async c/*GOTO DEF*/[|c|]() { }
+//     public async [|c|]/*GOTO DEF*/() { }
 // }
 // 
 // export function foo() { }
@@ -196,4 +196,4 @@
 //     public async c() { }
 // }
 // 
-// export function foo/*GOTO DEF*/[|foo|]() { }
+// export function [|foo|]/*GOTO DEF*/() { }

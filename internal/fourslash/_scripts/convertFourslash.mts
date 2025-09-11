@@ -815,10 +815,12 @@ function parseRenameInfo(funcName: "renameInfoSucceeded" | "renameInfoFailed", a
             if (args[6]) {
                 prefArg = args[6];
             }
+            break;
         case "renameInfoFailed":
             if (args[1]) {
                 prefArg = args[1];
             }
+            break;
     }
     if (prefArg) {
         if (!ts.isObjectLiteralExpression(prefArg)) {
@@ -878,6 +880,10 @@ function parseUserPreferences(arg: ts.ObjectLiteralExpression): string | undefin
                 // !!! other preferences
                 case "providePrefixAndSuffixTextForRename":
                     preferences.push(`UseAliasesForRename: PtrTo(${prop.initializer.getText()})`);
+                    break;
+                case "quotePreference":
+                    preferences.push(`QuotePreference: PtrTo(ls.QuotePreference(${prop.initializer.getText()}))`);
+                    break;
             }
         }
         else {

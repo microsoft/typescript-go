@@ -17,5 +17,5 @@
 // === findRenameLocations ===
 // === /renameLocationsForFunctionExpression01.ts ===
 // var x = function [|fRENAME|](g: any, h: any) {
-//     f(/*RENAME*/[|fRENAME|]([|fRENAME|], g);
+//     [|fRENAME|](/*RENAME*/[|fRENAME|], g);
 // }

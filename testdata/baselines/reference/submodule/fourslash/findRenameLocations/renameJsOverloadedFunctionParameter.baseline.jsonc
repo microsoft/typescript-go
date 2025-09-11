@@ -4,6 +4,6 @@
 //  * @param {unknown} x
 //  * @returns {unknown}
 //  */
-// function foo(x/*RENAME*/[|xRENAME|]) {
+// function foo([|xRENAME|]/*RENAME*/) {
 //   return [|xRENAME|];
 // }

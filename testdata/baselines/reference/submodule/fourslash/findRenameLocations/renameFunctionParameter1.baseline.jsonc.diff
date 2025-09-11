@@ -7,8 +7,5 @@
 -//      * @param {number} [|pRENAME|]
 +//      * @param {number} p
  //      */
--//     this.foo = function foo([|pRENAME|]/*RENAME*/) {
-+//     this.foo = function foo(p/*RENAME*/[|pRENAME|]) {
+ //     this.foo = function foo([|pRENAME|]/*RENAME*/) {
  //         return [|pRENAME|];
- //     }
- // }

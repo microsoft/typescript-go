@@ -9,7 +9,3 @@
  //  */
  // 
  // /**
--//  * @param { [|ARENAME|]/*RENAME*/ } a
-+//  * @param { A/*RENAME*/[|ARENAME|] } a
- //  */
- // function f(a) {}

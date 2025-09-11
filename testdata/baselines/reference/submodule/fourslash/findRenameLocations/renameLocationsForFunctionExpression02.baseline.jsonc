@@ -35,5 +35,5 @@
 // 
 //     let helper = function f(): any { f(); }
 // 
-//     let foo = () => f(/*RENAME*/[|fRENAME|]([|fRENAME|], g);
+//     let foo = () => [|fRENAME|](/*RENAME*/[|fRENAME|], g);
 // }

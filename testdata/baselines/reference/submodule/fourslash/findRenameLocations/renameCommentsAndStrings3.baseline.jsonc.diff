@@ -2,13 +2,11 @@
 +++ new.renameCommentsAndStrings3.baseline.jsonc
 @@= skipped -0, +0 lines =@@
  // === findRenameLocations ===
--// @findInComments: true
 -
  // === /renameCommentsAndStrings3.ts ===
  // ///<reference path="./Bar.ts" />
--// function /*RENAME*/[|BarRENAME|]() {
+ // function /*RENAME*/[|BarRENAME|]() {
 -//     // This is a reference to [|BarRENAME|] in a comment.
-+// function Bar() {
-+//     // This is a reference to /*RENAME*/Bar in a comment.
++//     // This is a reference to Bar in a comment.
  //     "this is a reference to Bar in a string"
  // }

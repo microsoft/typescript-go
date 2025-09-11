@@ -1,6 +1,9 @@
 // === findRenameLocations ===
 // === /referencesForGlobals_1.ts ===
-// /*RENAME*/var globalName = 0;
+// var /*RENAME*/[|globalNameRENAME|] = 0;
+
+// === /referencesForGlobals_2.ts ===
+// var y = [|globalNameRENAME|];
 
 
 

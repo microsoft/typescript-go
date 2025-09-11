@@ -1,7 +1,7 @@
 // === findRenameLocations ===
 // === /renameModuleExportsProperties2.ts ===
-// /*RENAME*/class A {}
-// module.exports = { B: A }
+// class /*RENAME*/[|ARENAME|] {}
+// module.exports = { B: [|ARENAME|] }
 
 
 

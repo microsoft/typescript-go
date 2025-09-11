@@ -3,15 +3,15 @@
 @@= skipped -0, +0 lines =@@
  // === findRenameLocations ===
  // === /renameImportAndExport.ts ===
--// import /*RENAME*/[|aRENAME|] from "module";
+ // import /*RENAME*/[|aRENAME|] from "module";
 -// export { [|aRENAME|] as a/*END SUFFIX*/ };
-+// /*RENAME*/import a from "module";
 +// export { a };
 
 
 
  // === findRenameLocations ===
  // === /renameImportAndExport.ts ===
- // import a from "module";
+-// import a from "module";
 -// export { /*START PREFIX*/a as /*RENAME*/[|aRENAME|] };
-+// /*RENAME*/export { a };
++// import [|aRENAME|] from "module";
++// export { /*RENAME*/a };

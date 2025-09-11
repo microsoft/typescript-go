@@ -29,5 +29,5 @@
 // }
 // class C {
 //     constructor() { return this; }
-//     get self(this: number) { return /*GOTO DEF*/[|this|]: number) { return this; }
+//     get self([|this|]: number) { return /*GOTO DEF*/this; }
 // }

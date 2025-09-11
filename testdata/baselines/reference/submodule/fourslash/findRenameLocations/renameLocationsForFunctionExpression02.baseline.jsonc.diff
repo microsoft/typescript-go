@@ -1,9 +1,0 @@
---- old.renameLocationsForFunctionExpression02.baseline.jsonc
-+++ new.renameLocationsForFunctionExpression02.baseline.jsonc
-@@= skipped -34, +34 lines =@@
- // 
- //     let helper = function f(): any { f(); }
- // 
--//     let foo = () => [|fRENAME|](/*RENAME*/[|fRENAME|], g);
-+//     let foo = () => f(/*RENAME*/[|fRENAME|]([|fRENAME|], g);
- // }

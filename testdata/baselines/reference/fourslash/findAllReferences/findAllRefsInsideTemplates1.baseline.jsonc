@@ -22,4 +22,4 @@
 // === findAllReferences ===
 // === /findAllRefsInsideTemplates1.ts ===
 // var [|x|] = 10;
-// var y = `${ x } ${ /*FIND ALL REFS*/[|x|] } ${ [|x|] }`
+// var y = `${ [|x|] } ${ /*FIND ALL REFS*/[|x|] }`

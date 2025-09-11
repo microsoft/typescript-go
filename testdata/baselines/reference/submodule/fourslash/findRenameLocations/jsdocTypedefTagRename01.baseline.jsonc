@@ -1,9 +1,9 @@
 // === findRenameLocations ===
 // === /jsDocTypedef_form1.js ===
 // /** @typedef {(string | number)} */
-// /*RENAME*/var NumberLike;
+// var /*RENAME*/[|NumberLikeRENAME|];
 // 
-// NumberLike = 10;
+// [|NumberLikeRENAME|] = 10;
 // 
 // /** @type {NumberLike} */
 // var numberLike;

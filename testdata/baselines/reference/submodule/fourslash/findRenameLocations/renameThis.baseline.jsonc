@@ -34,4 +34,4 @@
 //     return this;
 // }
 // this;
-// const _ = { this: 0 }./*RENAME*/[|thisRENAME|]: 0 }.[|thisRENAME|];
+// const _ = { [|thisRENAME|]: 0 }./*RENAME*/[|thisRENAME|];

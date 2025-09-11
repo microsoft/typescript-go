@@ -13,7 +13,5 @@
 +//  * @param {unknown} x
 +//  * @returns {unknown}
  //  */
--// function foo([|xRENAME|]/*RENAME*/) {
-+// function foo(x/*RENAME*/[|xRENAME|]) {
+ // function foo([|xRENAME|]/*RENAME*/) {
  //   return [|xRENAME|];
- // }

@@ -5,7 +5,7 @@
 //         This = class {
 //             show() { }
 //         }
-//         m/*FIND ALL REFS*/[|m|]() { }
+//         [|m|]/*FIND ALL REFS*/() { }
 //     }
 //     /**
 //      * @see {Consider.prototype.m}
@@ -18,7 +18,7 @@
 // namespace NPR {
 //     export class Consider {
 //         This = class {
-//             show/*FIND ALL REFS*/[|show|]() { }
+//             [|show|]/*FIND ALL REFS*/() { }
 //         }
 //         m() { }
 //     }
@@ -30,7 +30,7 @@
 // === /findAllReferencesLinkTag2.ts ===
 // namespace NPR {
 //     export class Consider {
-//         This/*FIND ALL REFS*/[|This|] = class {
+//         [|This|]/*FIND ALL REFS*/ = class {
 //             show() { }
 //         }
 //         m() { }
@@ -41,7 +41,7 @@
 // === findAllReferences ===
 // === /findAllReferencesLinkTag2.ts ===
 // namespace NPR {
-//     export class Consider/*FIND ALL REFS*/[|Consider|] {
+//     export class [|Consider|]/*FIND ALL REFS*/ {
 //         This = class {
 //             show() { }
 //         }
@@ -71,7 +71,7 @@
 
 // === findAllReferences ===
 // === /findAllReferencesLinkTag2.ts ===
-// namespace NPR/*FIND ALL REFS*/[|NPR|] {
+// namespace [|NPR|]/*FIND ALL REFS*/ {
 //     export class Consider {
 //         This = class {
 //             show() { }

@@ -5,6 +5,6 @@
 //  */
 // 
 // /**
-//  * @param { A/*FIND ALL REFS*/[|A|] } a
+//  * @param { [|A|]/*FIND ALL REFS*/ } a
 //  */
 // function f(a) {}

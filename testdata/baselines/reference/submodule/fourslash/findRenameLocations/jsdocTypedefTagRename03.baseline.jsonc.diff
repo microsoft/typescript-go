@@ -2,7 +2,6 @@
 +++ new.jsdocTypedefTagRename03.baseline.jsonc
 @@= skipped -0, +0 lines =@@
  // === findRenameLocations ===
--// @findInComments: true
 -
  // === /jsDocTypedef_form3.js ===
 -// 
@@ -21,7 +20,6 @@
 
 
  // === findRenameLocations ===
--// @findInComments: true
 -
  // === /jsDocTypedef_form3.js ===
 -// 

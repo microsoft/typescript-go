@@ -5,6 +5,6 @@
 //  */
 // 
 // /**
-//  * @param { A/*RENAME*/[|ARENAME|] } a
+//  * @param { [|ARENAME|]/*RENAME*/ } a
 //  */
 // function f(a) {}

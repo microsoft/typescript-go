@@ -18,4 +18,4 @@
 // }
 // 
 // var foo: I;
-// var [ { property1: prop1 }, { /*FIND ALL REFS*/[|property1|]: prop1 }, { [|property1|], property2 } ] = [foo, foo];
+// var [ { [|property1|]: prop1 }, { /*FIND ALL REFS*/[|property1|], property2 } ] = [foo, foo];

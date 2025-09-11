@@ -12,6 +12,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
@@ -74,15 +75,21 @@ func getBaselineOptions(command string) baseline.Options {
 				serverTestFilePrefix := "/server"
 				contextSpanOpening := "<|"
 				contextSpanClosing := "|>"
+				oldPreference := "providePrefixAndSuffixTextForRename"
+				newPreference := "useAliasesForRename"
 				replacer := strings.NewReplacer(
 					contextSpanOpening, "",
 					contextSpanClosing, "",
 					testFilePrefix, "",
 					serverTestFilePrefix, "",
+					oldPreference, newPreference,
 				)
 				lines := strings.Split(s, "\n")
 				var isInCommand bool
 				for _, line := range lines {
+					if strings.HasPrefix(line, "// @findInStrings: ") || strings.HasPrefix(line, "// @findInComments: ") {
+						continue
+					}
 					matches := commandPrefix.FindStringSubmatch(line)
 					if len(matches) > 0 {
 						commandName := matches[1]
@@ -114,8 +121,8 @@ type baselineFourslashLocationsOptions struct {
 
 	endMarker string
 
-	startMarkerPrefix func(span lsproto.Location) string
-	endMarkerSuffix   func(span lsproto.Location) string
+	startMarkerPrefix func(span lsproto.Location) *string
+	endMarkerSuffix   func(span lsproto.Location) *string
 }
 
 func (f *FourslashTest) getBaselineForLocationsWithFileContents(spans []lsproto.Location, options baselineFourslashLocationsOptions) string {
@@ -201,20 +208,47 @@ func (f *FourslashTest) getBaselineContentForFile(
 	options baselineFourslashLocationsOptions,
 ) string {
 	details := []*baselineDetail{}
-	detailPrefixes := map[baselineDetail]string{}
-	detailSuffixes := map[baselineDetail]string{}
+	detailPrefixes := map[*baselineDetail]string{}
+	detailSuffixes := map[*baselineDetail]string{}
 	canDetermineContextIdInline := true
+	uri := ls.FileNameToDocumentURI(fileName)
 
 	if options.marker != nil && options.marker.FileName() == fileName {
 		details = append(details, &baselineDetail{pos: options.marker.LSPos(), positionMarker: options.markerName})
 	}
 
 	for _, span := range spansInFile {
+		textSpanIndex := len(details)
 		details = append(details,
 			&baselineDetail{pos: span.Start, positionMarker: "[|", span: &span, kind: "textStart"},
 			&baselineDetail{pos: span.End, positionMarker: core.OrElse(options.endMarker, "|]"), span: &span, kind: "textEnd"},
 		)
+
+		if options.startMarkerPrefix != nil {
+			startPrefix := options.startMarkerPrefix(lsproto.Location{Uri: uri, Range: span})
+			if startPrefix != nil {
+				// Special case: if this span starts at the same position as the provided marker,
+				// we want the span's prefix to appear before the marker name.
+				// i.e. We want `/*START PREFIX*/A: /*RENAME*/[|ARENAME|]`,
+				// not `/*RENAME*//*START PREFIX*/A: [|ARENAME|]`
+				if options.marker != nil && fileName == options.marker.FileName() && span.Start == options.marker.LSPos() {
+					_, ok := detailPrefixes[details[0]]
+					debug.Assert(!ok, "Expected only single prefix at marker location")
+					detailPrefixes[details[0]] = *startPrefix
+				} else {
+					detailPrefixes[details[textSpanIndex]] = *startPrefix
+				}
+			}
+		}
+
+		if options.endMarkerSuffix != nil {
+			endSuffix := options.endMarkerSuffix(lsproto.Location{Uri: uri, Range: span})
+			if endSuffix != nil {
+				detailSuffixes[details[textSpanIndex+1]] = *endSuffix
+			}
+		}
 	}
+
 	slices.SortStableFunc(details, func(d1, d2 *baselineDetail) int {
 		return ls.ComparePositions(d1.pos, d2.pos)
 	})
@@ -249,7 +283,7 @@ func (f *FourslashTest) getBaselineContentForFile(
 		textWithContext.add(detail)
 		textWithContext.pos = detail.pos
 		// Prefix
-		prefix := detailPrefixes[*detail]
+		prefix := detailPrefixes[detail]
 		if prefix != "" {
 			textWithContext.newContent.WriteString(prefix)
 		}
@@ -257,7 +291,7 @@ func (f *FourslashTest) getBaselineContentForFile(
 		if detail.span != nil {
 			switch detail.kind {
 			case "textStart":
-				text := prefix
+				var text string
 				if contextId, ok := spanToContextId[*detail.span]; ok {
 					isAfterContextStart := false
 					for textStartIndex := index - 1; textStartIndex >= 0; textStartIndex-- {
@@ -296,7 +330,7 @@ func (f *FourslashTest) getBaselineContentForFile(
 				detail = details[0] // Marker detail
 			}
 		}
-		if suffix, ok := detailSuffixes[*detail]; ok {
+		if suffix, ok := detailSuffixes[detail]; ok {
 			textWithContext.newContent.WriteString(suffix)
 		}
 	}

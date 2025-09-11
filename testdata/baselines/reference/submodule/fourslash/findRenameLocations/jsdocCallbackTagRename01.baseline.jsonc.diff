@@ -2,14 +2,12 @@
 +++ new.jsdocCallbackTagRename01.baseline.jsonc
 @@= skipped -0, +0 lines =@@
  // === findRenameLocations ===
--// @findInStrings: false
--// @findInComments: true
 -
  // === /jsDocCallback.js ===
 -// 
  // /**
 -//  * @callback /*RENAME*/[|FooCallbackRENAME|]
-+//  * /*RENAME*/@callback FooCallback
++//  * @callback /*RENAME*/FooCallback
  //  * @param {string} eventName - Rename should work
  //  */
  // 

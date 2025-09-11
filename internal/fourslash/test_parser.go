@@ -2,6 +2,7 @@ package fourslash
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 	"testing"
 	"unicode/utf8"
@@ -379,6 +380,13 @@ func parseFileContent(fileName string, content string, fileOptions map[string]st
 		Content:  outputString,
 		emit:     emit,
 	}
+
+	slices.SortStableFunc(rangeMarkers, func(a, b *RangeMarker) int {
+		if a.Range.Pos() != b.Range.Pos() {
+			return a.Range.Pos() - b.Range.Pos()
+		}
+		return b.Range.End() - a.Range.End()
+	})
 
 	for _, marker := range markers {
 		marker.LSPosition = converters.PositionToLineAndCharacter(testFileInfo, core.TextPos(marker.Position))

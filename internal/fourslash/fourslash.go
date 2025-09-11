@@ -1522,23 +1522,60 @@ func (f *FourslashTest) verifyBaselineRename(
 		if result.WorkspaceEdit != nil && result.WorkspaceEdit.Changes != nil {
 			changes = *result.WorkspaceEdit.Changes
 		}
+		locationToText := map[lsproto.Location]string{}
 		fileToRange := collections.MultiMap[lsproto.DocumentUri, lsproto.Range]{}
 		for uri, edits := range changes {
 			for _, edit := range edits {
 				fileToRange.Add(uri, edit.Range)
+				locationToText[lsproto.Location{Uri: uri, Range: edit.Range}] = edit.NewText
 			}
 		}
-		// !!! include preferences in string
+
+		var renameOptions strings.Builder
+		if preferences != nil {
+			if preferences.UseAliasesForRename != nil {
+				fmt.Fprintf(&renameOptions, "// @useAliasesForRename: %v\n", *preferences.UseAliasesForRename)
+			}
+			if preferences.QuotePreference != nil {
+				fmt.Fprintf(&renameOptions, "// @quotePreference: %v\n", *preferences.QuotePreference)
+			}
+		}
+
+		baselineFileContent := f.getBaselineForGroupedLocationsWithFileContents(
+			&fileToRange,
+			baselineFourslashLocationsOptions{
+				marker:     markerOrRange,
+				markerName: "/*RENAME*/",
+				endMarker:  "RENAME|]",
+				startMarkerPrefix: func(span lsproto.Location) *string {
+					text := locationToText[span]
+					prefixAndSuffix := strings.Split(text, "?")
+					if prefixAndSuffix[0] != "" {
+						return ptrTo("/*START PREFIX*/" + prefixAndSuffix[0])
+					}
+					return nil
+				},
+				endMarkerSuffix: func(span lsproto.Location) *string {
+					text := locationToText[span]
+					prefixAndSuffix := strings.Split(text, "?")
+					if prefixAndSuffix[1] != "" {
+						return ptrTo(prefixAndSuffix[1] + "/*END SUFFIX*/")
+					}
+					return nil
+				},
+			},
+		)
+
+		var baselineResult string
+		if renameOptions.Len() > 0 {
+			baselineResult = renameOptions.String() + "\n" + baselineFileContent
+		} else {
+			baselineResult = baselineFileContent
+		}
+
 		f.addResultToBaseline(t,
 			"findRenameLocations",
-			f.getBaselineForGroupedLocationsWithFileContents(
-				&fileToRange,
-				baselineFourslashLocationsOptions{
-					marker:     markerOrRange,
-					markerName: "/*RENAME*/",
-					endMarker:  "RENAME|]",
-				},
-			),
+			baselineResult,
 		)
 	}
 }

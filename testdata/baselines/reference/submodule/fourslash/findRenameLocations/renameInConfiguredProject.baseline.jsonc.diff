@@ -2,21 +2,14 @@
 +++ new.renameInConfiguredProject.baseline.jsonc
 @@= skipped -0, +0 lines =@@
  // === findRenameLocations ===
--// @findInStrings: true
--// @findInComments: true
 -
  // === /referencesForGlobals_1.ts ===
--// var /*RENAME*/[|globalNameRENAME|] = 0;
--
--// === /referencesForGlobals_2.ts ===
--// var y = [|globalNameRENAME|];
-+// /*RENAME*/var globalName = 0;
+ // var /*RENAME*/[|globalNameRENAME|] = 0;
 
+@@= skipped -8, +7 lines =@@
 
 
  // === findRenameLocations ===
--// @findInStrings: true
--// @findInComments: true
 -
  // === /referencesForGlobals_1.ts ===
  // var [|globalNameRENAME|] = 0;

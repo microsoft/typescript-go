@@ -1,54 +1,6 @@
 --- old.renameDestructuringClassProperty.baseline.jsonc
 +++ new.renameDestructuringClassProperty.baseline.jsonc
-@@= skipped -4, +4 lines =@@
- // }
- // class B {
- //     syntax1(a: A): void {
--//         let { [|fooRENAME|]: foo/*END SUFFIX*/ } = a;
-+//         let { [|fooRENAME|] } = a;
- //     }
- //     syntax2(a: A): void {
- //         let { [|fooRENAME|]: foo } = a;
- //     }
- //     syntax11(a: A): void {
--//         let { [|fooRENAME|]: foo/*END SUFFIX*/ } = a;
-+//         let { [|fooRENAME|] } = a;
- //         foo = "newString";
- //     }
- // }
-@@= skipped -15, +15 lines =@@
-
- // === findRenameLocations ===
- // === /renameDestructuringClassProperty.ts ===
--// class A {
--//     [|fooRENAME|]: string;
--// }
--// class B {
--//     syntax1(a: A): void {
--//         let { [|fooRENAME|]: foo/*END SUFFIX*/ } = a;
-+// --- (line: 5) skipped ---
-+//         let { foo } = a;
- //     }
- //     syntax2(a: A): void {
--//         let { /*RENAME*/[|fooRENAME|]: foo } = a;
-+//         /*RENAME*/let { foo: foo } = a;
- //     }
- //     syntax11(a: A): void {
--//         let { [|fooRENAME|]: foo/*END SUFFIX*/ } = a;
--//         foo = "newString";
--//     }
--// }
-+//         let { foo } = a;
-+// // --- (line: 13) skipped ---
-
-
-
-@@= skipped -25, +19 lines =@@
- // }
- // class B {
- //     syntax1(a: A): void {
--//         let { /*START PREFIX*/foo: /*RENAME*/[|fooRENAME|] } = a;
-+//         /*RENAME*/let { foo } = a;
+@@= skipped -48, +48 lines =@@
  //     }
  //     syntax2(a: A): void {
  //         let { foo: foo } = a;
@@ -56,24 +8,3 @@
 +// // --- (line: 10) skipped ---
 
 
-
-@@= skipped -14, +14 lines =@@
- //         let { foo: foo } = a;
- //     }
- //     syntax11(a: A): void {
--//         let { /*START PREFIX*/foo: /*RENAME*/[|fooRENAME|] } = a;
--//         [|fooRENAME|] = "newString";
-+//         /*RENAME*/let { foo } = a;
-+//         foo = "newString";
- //     }
- // }
-
-@@= skipped -13, +13 lines =@@
- //         let { foo: foo } = a;
- //     }
- //     syntax11(a: A): void {
--//         let { /*START PREFIX*/foo: [|fooRENAME|] } = a;
-+//         let { [|fooRENAME|] } = a;
- //         /*RENAME*/[|fooRENAME|] = "newString";
- //     }
- // }

@@ -7,7 +7,5 @@
 -//  * @param {number} [|pRENAME|]
 +//  * @param {number} p
  //  */
--// const foo = function foo([|pRENAME|]/*RENAME*/) {
-+// const foo = function foo(p/*RENAME*/[|pRENAME|]) {
+ // const foo = function foo([|pRENAME|]/*RENAME*/) {
  //     return [|pRENAME|];
- // }

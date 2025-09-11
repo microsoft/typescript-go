@@ -1,11 +1,15 @@
 // === findRenameLocations ===
+// @useAliasesForRename: true
+
 // === /renameModuleExportsProperties1.ts ===
-// /*RENAME*/class A {}
-// module.exports = { A }
+// class /*RENAME*/[|ARENAME|] {}
+// module.exports = { /*START PREFIX*/A: [|ARENAME|] }
 
 
 
 // === findRenameLocations ===
+// @useAliasesForRename: true
+
 // === /renameModuleExportsProperties1.ts ===
 // class [|ARENAME|] {}
-// module.exports = { /*RENAME*/[|ARENAME|] }
+// module.exports = { /*START PREFIX*/A: /*RENAME*/[|ARENAME|] }

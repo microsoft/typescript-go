@@ -2,4 +2,4 @@
 // === /findAllReferencesImportMeta.ts ===
 // // Haha that's so meta!
 // 
-// let x = import.meta/*FIND ALL REFS*/[|meta|];
+// let x = import.[|meta|]/*FIND ALL REFS*/;

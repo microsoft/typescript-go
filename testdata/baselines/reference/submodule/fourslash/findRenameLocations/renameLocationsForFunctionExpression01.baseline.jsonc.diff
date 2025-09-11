@@ -1,9 +1,0 @@
---- old.renameLocationsForFunctionExpression01.baseline.jsonc
-+++ new.renameLocationsForFunctionExpression01.baseline.jsonc
-@@= skipped -16, +16 lines =@@
- // === findRenameLocations ===
- // === /renameLocationsForFunctionExpression01.ts ===
- // var x = function [|fRENAME|](g: any, h: any) {
--//     [|fRENAME|](/*RENAME*/[|fRENAME|], g);
-+//     f(/*RENAME*/[|fRENAME|]([|fRENAME|], g);
- // }

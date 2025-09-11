@@ -1,7 +1,7 @@
 // === goToDefinition ===
 // === /goToDefinitionTypePredicate.ts ===
 // class A {}
-// function f(parameter: any): /*GOTO DEF*/[|parameter|]: any): parameter is A {
+// function f([|parameter|]: any): /*GOTO DEF*/parameter is A {
 //     return typeof parameter === "string";
 // }
 

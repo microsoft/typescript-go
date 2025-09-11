@@ -15,4 +15,4 @@
 // === findAllReferences ===
 // === /findAllRefsEnumMember.ts ===
 // enum E { [|A|], B }
-// const e: E.A = E./*FIND ALL REFS*/[|A|] = E.[|A|];
+// const e: E.[|A|] = E./*FIND ALL REFS*/[|A|];

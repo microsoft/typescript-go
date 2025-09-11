@@ -5,13 +5,13 @@
 // }
 // class B {
 //     syntax1(a: A): void {
-//         let { [|fooRENAME|] } = a;
+//         let { [|fooRENAME|]: foo/*END SUFFIX*/ } = a;
 //     }
 //     syntax2(a: A): void {
 //         let { [|fooRENAME|]: foo } = a;
 //     }
 //     syntax11(a: A): void {
-//         let { [|fooRENAME|] } = a;
+//         let { [|fooRENAME|]: foo/*END SUFFIX*/ } = a;
 //         foo = "newString";
 //     }
 // }
@@ -20,15 +20,21 @@
 
 // === findRenameLocations ===
 // === /renameDestructuringClassProperty.ts ===
-// --- (line: 5) skipped ---
-//         let { foo } = a;
+// class A {
+//     [|fooRENAME|]: string;
+// }
+// class B {
+//     syntax1(a: A): void {
+//         let { [|fooRENAME|]: foo/*END SUFFIX*/ } = a;
 //     }
 //     syntax2(a: A): void {
-//         /*RENAME*/let { foo: foo } = a;
+//         let { /*RENAME*/[|fooRENAME|]: foo } = a;
 //     }
 //     syntax11(a: A): void {
-//         let { foo } = a;
-// // --- (line: 13) skipped ---
+//         let { [|fooRENAME|]: foo/*END SUFFIX*/ } = a;
+//         foo = "newString";
+//     }
+// }
 
 
 
@@ -39,7 +45,7 @@
 // }
 // class B {
 //     syntax1(a: A): void {
-//         /*RENAME*/let { foo } = a;
+//         let { /*START PREFIX*/foo: /*RENAME*/[|fooRENAME|] } = a;
 //     }
 //     syntax2(a: A): void {
 //         let { foo: foo } = a;
@@ -53,8 +59,8 @@
 //         let { foo: foo } = a;
 //     }
 //     syntax11(a: A): void {
-//         /*RENAME*/let { foo } = a;
-//         foo = "newString";
+//         let { /*START PREFIX*/foo: /*RENAME*/[|fooRENAME|] } = a;
+//         [|fooRENAME|] = "newString";
 //     }
 // }
 
@@ -66,7 +72,7 @@
 //         let { foo: foo } = a;
 //     }
 //     syntax11(a: A): void {
-//         let { [|fooRENAME|] } = a;
+//         let { /*START PREFIX*/foo: [|fooRENAME|] } = a;
 //         /*RENAME*/[|fooRENAME|] = "newString";
 //     }
 // }

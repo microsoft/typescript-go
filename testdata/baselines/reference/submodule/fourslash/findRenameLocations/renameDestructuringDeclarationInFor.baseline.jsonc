@@ -9,7 +9,7 @@
 // var p2: number, property1: number;
 // for (let { [|property1RENAME|]: p2 } = elems[0]; p2 < 100; p2++) {
 // }
-// for (let { [|property1RENAME|] } = elems[0]; p2 < 100; p2++) {
+// for (let { [|property1RENAME|]: property1/*END SUFFIX*/ } = elems[0]; p2 < 100; p2++) {
 //     property1 = p2;
 // }
 
@@ -17,13 +17,16 @@
 
 // === findRenameLocations ===
 // === /renameDestructuringDeclarationInFor.ts ===
-// --- (line: 4) skipped ---
+// interface I {
+//     [|property1RENAME|]: number;
+//     property2: string;
+// }
 // var elems: I[];
 // 
 // var p2: number, property1: number;
-// for (/*RENAME*/let { property1: p2 } = elems[0]; p2 < 100; p2++) {
+// for (let { /*RENAME*/[|property1RENAME|]: p2 } = elems[0]; p2 < 100; p2++) {
 // }
-// for (let { property1 } = elems[0]; p2 < 100; p2++) {
+// for (let { [|property1RENAME|]: property1/*END SUFFIX*/ } = elems[0]; p2 < 100; p2++) {
 //     property1 = p2;
 // }
 
@@ -35,8 +38,8 @@
 // var p2: number, property1: number;
 // for (let { property1: p2 } = elems[0]; p2 < 100; p2++) {
 // }
-// for (/*RENAME*/let { property1 } = elems[0]; p2 < 100; p2++) {
-//     property1 = p2;
+// for (let { /*START PREFIX*/property1: /*RENAME*/[|property1RENAME|] } = elems[0]; p2 < 100; p2++) {
+//     [|property1RENAME|] = p2;
 // }
 
 
@@ -47,6 +50,6 @@
 // var p2: number, property1: number;
 // for (let { property1: p2 } = elems[0]; p2 < 100; p2++) {
 // }
-// for (let { [|property1RENAME|] } = elems[0]; p2 < 100; p2++) {
+// for (let { /*START PREFIX*/property1: [|property1RENAME|] } = elems[0]; p2 < 100; p2++) {
 //     /*RENAME*/[|property1RENAME|] = p2;
 // }

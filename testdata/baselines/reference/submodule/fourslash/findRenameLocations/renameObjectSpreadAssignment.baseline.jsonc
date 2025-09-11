@@ -2,9 +2,9 @@
 // === /renameObjectSpreadAssignment.ts ===
 // interface A1 { a: number };
 // interface A2 { a?: number };
-// /*RENAME*/let a1: A1;
+// let /*RENAME*/[|a1RENAME|]: A1;
 // let a2: A2;
-// let a12 = { ...a1, ...a2 };
+// let a12 = { ...[|a1RENAME|], ...a2 };
 
 
 
@@ -23,8 +23,8 @@
 // interface A1 { a: number };
 // interface A2 { a?: number };
 // let a1: A1;
-// /*RENAME*/let a2: A2;
-// let a12 = { ...a1, ...a2 };
+// let /*RENAME*/[|a2RENAME|]: A2;
+// let a12 = { ...a1, ...[|a2RENAME|] };
 
 
 

@@ -1,10 +1,12 @@
 // === findRenameLocations ===
+// @useAliasesForRename: true
+
 // === /renameRestBindingElement.ts ===
 // interface I {
 //     a: number;
 //     b: number;
 //     c: number;
 // }
-// function foo(/*RENAME*/{ a, ...rest }: I) {
-//     rest;
+// function foo({ a, .../*RENAME*/[|restRENAME|] }: I) {
+//     [|restRENAME|];
 // }

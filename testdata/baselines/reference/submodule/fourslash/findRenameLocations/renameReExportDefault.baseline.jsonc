@@ -1,7 +1,7 @@
 // === findRenameLocations ===
 // === /a.ts ===
 // export { default } from "./b";
-// /*RENAME*/export { default as b } from "./b";
+// export { default as /*RENAME*/b } from "./b";
 // export { default as bee } from "./b";
 // import { default as b } from "./b";
 // import { default as bee } from "./b";
@@ -14,7 +14,7 @@
 // export { default } from "./b";
 // export { default as b } from "./b";
 // export { default as bee } from "./b";
-// /*RENAME*/import { default as b } from "./b";
+// import { default as /*RENAME*/[|bRENAME|] } from "./b";
 // import { default as bee } from "./b";
 // import b from "./b";
 
@@ -27,18 +27,34 @@
 // export { default as bee } from "./b";
 // import { default as b } from "./b";
 // import { default as bee } from "./b";
-// /*RENAME*/import b from "./b";
+// import /*RENAME*/[|bRENAME|] from "./b";
 
 
 
 // === findRenameLocations ===
+// === /a.ts ===
+// export { default } from "./b";
+// export { default as b } from "./b";
+// export { default as bee } from "./b";
+// import { default as [|bRENAME|] } from "./b";
+// import { default as bee } from "./b";
+// import [|bRENAME|] from "./b";
+
 // === /b.ts ===
-// /*RENAME*/const b = 0;
-// export default b;
+// const /*RENAME*/[|bRENAME|] = 0;
+// export default [|bRENAME|];
 
 
 
 // === findRenameLocations ===
+// === /a.ts ===
+// export { default } from "./b";
+// export { default as b } from "./b";
+// export { default as bee } from "./b";
+// import { default as [|bRENAME|] } from "./b";
+// import { default as bee } from "./b";
+// import [|bRENAME|] from "./b";
+
 // === /b.ts ===
-// const b = 0;
-// /*RENAME*/export default b;
+// const [|bRENAME|] = 0;
+// export default /*RENAME*/[|bRENAME|];

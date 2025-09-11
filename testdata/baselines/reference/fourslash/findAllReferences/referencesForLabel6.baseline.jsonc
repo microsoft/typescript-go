@@ -28,6 +28,6 @@
 // === findAllReferences ===
 // === /referencesForLabel6.ts ===
 // labela: while (true) {
-// labelb:     while (false) { break /*FIND ALL REFS*/[|labelb|]:     while (false) { break [|labelb|]; }
+// [|labelb|]:     while (false) { break /*FIND ALL REFS*/[|labelb|]; }
 //             break labelc;
 // }

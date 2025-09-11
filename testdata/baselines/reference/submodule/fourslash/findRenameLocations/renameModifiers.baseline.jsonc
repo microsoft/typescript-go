@@ -1,6 +1,6 @@
 // === findRenameLocations ===
 // === /renameModifiers.ts ===
-// declare /*RENAME*/abstract class C1 {
+// /*RENAME*/declare abstract class C1 {
 //     static a;
 //     readonly b;
 //     public c;
@@ -10,7 +10,7 @@
 
 // === findRenameLocations ===
 // === /renameModifiers.ts ===
-// declare abstract class /*RENAME*/[|C1RENAME|] {
+// declare /*RENAME*/abstract class C1 {
 //     static a;
 //     readonly b;
 //     public c;
@@ -90,7 +90,7 @@
 //     protected d;
 //     private e;
 // }
-// const enum /*RENAME*/[|ERENAME|] {
+// /*RENAME*/const enum E {
 // }
 // async function fn() {}
 // export default class C2 {}
@@ -103,7 +103,7 @@
 // }
 // const enum E {
 // }
-// async function /*RENAME*/[|fnRENAME|]() {}
+// /*RENAME*/async function fn() {}
 // export default class C2 {}
 
 
@@ -114,7 +114,7 @@
 // const enum E {
 // }
 // async function fn() {}
-// export /*RENAME*/default class C2 {}
+// /*RENAME*/export default class C2 {}
 
 
 
@@ -124,4 +124,4 @@
 // const enum E {
 // }
 // async function fn() {}
-// export default class /*RENAME*/[|C2RENAME|] {}
+// export /*RENAME*/default class C2 {}

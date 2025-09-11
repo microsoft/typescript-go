@@ -15,4 +15,4 @@
 // === findAllReferences ===
 // === /isDefinitionShorthandProperty.ts ===
 // const [|x|] = 1;
-// const y: { x: number } = { /*FIND ALL REFS*/[|x|]: number } = { [|x|] };
+// const y: { [|x|]: number } = { /*FIND ALL REFS*/[|x|] };

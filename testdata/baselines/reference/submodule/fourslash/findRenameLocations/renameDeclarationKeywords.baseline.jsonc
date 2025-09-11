@@ -2,7 +2,7 @@
 // === /renameDeclarationKeywords.ts ===
 // class Base {}
 // interface Implemented1 {}
-// class /*RENAME*/[|C1RENAME|] extends Base implements Implemented1 {
+// /*RENAME*/class C1 extends Base implements Implemented1 {
 //     get e() { return 1; }
 //     set e(v) {}
 // }
@@ -12,25 +12,21 @@
 
 // === findRenameLocations ===
 // === /renameDeclarationKeywords.ts ===
-// class [|BaseRENAME|] {}
+// class Base {}
 // interface Implemented1 {}
-// class C1 extends /*RENAME*/[|BaseRENAME|] implements Implemented1 {
+// class C1 /*RENAME*/extends Base implements Implemented1 {
 //     get e() { return 1; }
 //     set e(v) {}
 // }
-// interface I1 extends [|BaseRENAME|] { }
-// type T = { }
-// enum E { }
-// namespace N { }
-// // --- (line: 11) skipped ---
+// // --- (line: 7) skipped ---
 
 
 
 // === findRenameLocations ===
 // === /renameDeclarationKeywords.ts ===
 // class Base {}
-// interface [|Implemented1RENAME|] {}
-// class C1 extends Base implements /*RENAME*/[|Implemented1RENAME|] {
+// interface Implemented1 {}
+// class C1 extends Base /*RENAME*/implements Implemented1 {
 //     get e() { return 1; }
 //     set e(v) {}
 // }
@@ -71,7 +67,7 @@
 //     get e() { return 1; }
 //     set e(v) {}
 // }
-// interface /*RENAME*/[|I1RENAME|] extends Base { }
+// /*RENAME*/interface I1 extends Base { }
 // type T = { }
 // enum E { }
 // namespace N { }
@@ -81,13 +77,11 @@
 
 // === findRenameLocations ===
 // === /renameDeclarationKeywords.ts ===
-// class [|BaseRENAME|] {}
-// interface Implemented1 {}
-// class C1 extends [|BaseRENAME|] implements Implemented1 {
+// --- (line: 3) skipped ---
 //     get e() { return 1; }
 //     set e(v) {}
 // }
-// interface I1 extends /*RENAME*/[|BaseRENAME|] { }
+// interface I1 /*RENAME*/extends Base { }
 // type T = { }
 // enum E { }
 // namespace N { }
@@ -101,7 +95,7 @@
 //     set e(v) {}
 // }
 // interface I1 extends Base { }
-// type /*RENAME*/[|TRENAME|] = { }
+// /*RENAME*/type T = { }
 // enum E { }
 // namespace N { }
 // module M { }
@@ -115,7 +109,7 @@
 // }
 // interface I1 extends Base { }
 // type T = { }
-// enum /*RENAME*/[|ERENAME|] { }
+// /*RENAME*/enum E { }
 // namespace N { }
 // module M { }
 // function fn() {}
@@ -129,7 +123,7 @@
 // interface I1 extends Base { }
 // type T = { }
 // enum E { }
-// namespace /*RENAME*/[|NRENAME|] { }
+// /*RENAME*/namespace N { }
 // module M { }
 // function fn() {}
 // var x;
@@ -144,7 +138,7 @@
 // type T = { }
 // enum E { }
 // namespace N { }
-// module /*RENAME*/[|MRENAME|] { }
+// /*RENAME*/module M { }
 // function fn() {}
 // var x;
 // let y;
@@ -158,7 +152,7 @@
 // enum E { }
 // namespace N { }
 // module M { }
-// function /*RENAME*/[|fnRENAME|]() {}
+// /*RENAME*/function fn() {}
 // var x;
 // let y;
 // const z = 1;
@@ -171,7 +165,7 @@
 // namespace N { }
 // module M { }
 // function fn() {}
-// var /*RENAME*/[|xRENAME|];
+// /*RENAME*/var x;
 // let y;
 // const z = 1;
 
@@ -183,7 +177,7 @@
 // module M { }
 // function fn() {}
 // var x;
-// let /*RENAME*/[|yRENAME|];
+// /*RENAME*/let y;
 // const z = 1;
 
 
@@ -194,4 +188,4 @@
 // function fn() {}
 // var x;
 // let y;
-// const /*RENAME*/[|zRENAME|] = 1;
+// /*RENAME*/const z = 1;
