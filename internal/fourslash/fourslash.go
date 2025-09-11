@@ -1661,6 +1661,6 @@ func (f *FourslashTest) getRangeText(r *RangeMarker) string {
 
 func (f *FourslashTest) verifyBaselines(t *testing.T) {
 	for command, content := range f.baselines {
-		baseline.Run(t, getSubmoduleBaselineFileName(t, command), content.String(), getBaselineOptions(command))
+		baseline.Run(t, getBaselineFileName(t, command), content.String(), getBaselineOptions(command))
 	}
 }

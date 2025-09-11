@@ -40,12 +40,7 @@ func (f *FourslashTest) writeToBaseline(command string, content string) {
 	b.WriteString(content)
 }
 
-// !!! HERE
 func getBaselineFileName(t *testing.T, command string) string {
-	return "fourslash/" + command + "/" + getBaseFileNameFromTest(t) + "." + getBaselineExtension(command)
-}
-
-func getSubmoduleBaselineFileName(t *testing.T, command string) string {
 	return getBaseFileNameFromTest(t) + "." + getBaselineExtension(command)
 }
 
