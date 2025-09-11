@@ -52,7 +52,7 @@ export interface ValueProducerFromTs {
 }
 
 tsgo --b consumer --traceResolution -v
-ExitStatus:: DiagnosticsPresent_OutputsGenerated
+ExitStatus:: Success
 Output::
 [[90mHH:MM:SS AM[0m] Projects in this build: 
     * producer/tsconfig.json
@@ -118,54 +118,14 @@ Trying substitution '../common.d.ts', candidate module location: '../common.d.ts
 File '/home/src/workspaces/project/common.d.ts' exists - use it as a name resolution result.
 ======== Module name '@common' was successfully resolved to '/home/src/workspaces/project/common.d.ts'. ========
 ======== Resolving module '@common' from '/home/src/workspaces/project/producer/in-js.d.ts'. ========
+Using compiler options of project reference redirect '/home/src/workspaces/project/producer/tsconfig.json'.
 Explicitly specified module resolution kind: 'NodeNext'.
 Resolving in CJS mode with conditions 'require', 'types', 'node'.
 'paths' option is specified, looking for a pattern to match module name '@common'.
-File '/home/src/workspaces/project/producer/package.json' does not exist.
-File '/home/src/workspaces/project/package.json' does not exist.
-File '/home/src/workspaces/package.json' does not exist.
-File '/home/src/package.json' does not exist.
-File '/home/package.json' does not exist.
-File '/package.json' does not exist.
-Loading module '@common' from 'node_modules' folder, target file types: TypeScript, JavaScript, Declaration.
-Searching all ancestor node_modules directories for preferred extensions: TypeScript, Declaration.
-Directory '/home/src/workspaces/project/producer/node_modules' does not exist, skipping all lookups in it.
-Directory '/home/src/workspaces/project/producer/node_modules/@types' does not exist, skipping all lookups in it.
-Directory '/home/src/workspaces/project/node_modules' does not exist, skipping all lookups in it.
-Directory '/home/src/workspaces/project/node_modules/@types' does not exist, skipping all lookups in it.
-Directory '/home/src/workspaces/node_modules' does not exist, skipping all lookups in it.
-Directory '/home/src/workspaces/node_modules/@types' does not exist, skipping all lookups in it.
-Directory '/home/src/node_modules' does not exist, skipping all lookups in it.
-Directory '/home/src/node_modules/@types' does not exist, skipping all lookups in it.
-Directory '/home/node_modules' does not exist, skipping all lookups in it.
-Directory '/home/node_modules/@types' does not exist, skipping all lookups in it.
-Directory '/node_modules' does not exist, skipping all lookups in it.
-Directory '/node_modules/@types' does not exist, skipping all lookups in it.
-Searching all ancestor node_modules directories for fallback extensions: JavaScript.
-Directory '/home/src/workspaces/project/producer/node_modules' does not exist, skipping all lookups in it.
-Directory '/home/src/workspaces/project/node_modules' does not exist, skipping all lookups in it.
-Directory '/home/src/workspaces/node_modules' does not exist, skipping all lookups in it.
-Directory '/home/src/node_modules' does not exist, skipping all lookups in it.
-Directory '/home/node_modules' does not exist, skipping all lookups in it.
-Directory '/node_modules' does not exist, skipping all lookups in it.
-======== Module name '@common' was not resolved. ========
-[96mconsumer/index.ts[0m:[93m4[0m:[93m14[0m - [91merror[0m[90m TS7006: [0mParameter 'n' implicitly has an 'any' type.
-
-[7m4[0m v.onValue = (n) => {
-[7m [0m [91m             ~[0m
-
-[96mproducer/in-js.d.ts[0m:[93m1[0m:[93m25[0m - [91merror[0m[90m TS2307: [0mCannot find module '@common' or its corresponding type declarations.
-
-[7m1[0m import { OnValue } from "@common"
-[7m [0m [91m                        ~~~~~~~~~[0m
-
-
-Found 2 errors in 2 files.
-
-Errors  Files
-     1  consumer/index.ts[90m:4[0m
-     1  producer/in-js.d.ts[90m:1[0m
-
+Module name '@common', matched pattern '@common'.
+Trying substitution '../common.d.ts', candidate module location: '../common.d.ts'.
+File '/home/src/workspaces/project/common.d.ts' exists - use it as a name resolution result.
+======== Module name '@common' was successfully resolved to '/home/src/workspaces/project/common.d.ts'. ========
 //// [/home/src/tslibs/TS/Lib/lib.esnext.full.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
 interface Boolean {}
@@ -199,7 +159,7 @@ v2.onValue = (n) => {
 };
 
 //// [/home/src/workspaces/project/consumer/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","root":["./index.ts"],"semanticErrors":true}
+{"version":"FakeTSVersion","root":["./index.ts"]}
 //// [/home/src/workspaces/project/consumer/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -211,8 +171,7 @@ v2.onValue = (n) => {
       "original": "./index.ts"
     }
   ],
-  "size": 71,
-  "semanticErrors": true
+  "size": 49
 }
 //// [/home/src/workspaces/project/producer/index.d.ts] *new* 
 export { ValueProducerDeclaration } from "./in-js";
@@ -324,8 +283,8 @@ Signatures::
 consumer/tsconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.esnext.full.d.ts
-*refresh*    /home/src/workspaces/project/producer/in-js.d.ts
 *refresh*    /home/src/workspaces/project/common.d.ts
+*refresh*    /home/src/workspaces/project/producer/in-js.d.ts
 *refresh*    /home/src/workspaces/project/producer/index.d.ts
 *refresh*    /home/src/workspaces/project/consumer/index.ts
 Signatures::
