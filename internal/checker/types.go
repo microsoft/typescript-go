@@ -1192,6 +1192,14 @@ type TypePredicate struct {
 	t              *Type
 }
 
+func (t *TypePredicate) Kind() TypePredicateKind { return t.kind }
+
+func (t *TypePredicate) ParameterIndex() int32 { return t.parameterIndex }
+
+func (t *TypePredicate) ParameterName() string { return t.parameterName }
+
+func (t *TypePredicate) Type() *Type { return t.t }
+
 // IndexInfo
 
 type IndexInfo struct {
