@@ -3,7 +3,6 @@ package ls
 import (
 	"context"
 	"math"
-	"path/filepath"
 	"slices"
 	"strings"
 
@@ -112,7 +111,7 @@ func (l *LanguageService) createLocationsFromDeclarations(declarations []*ast.No
 		name := core.OrElse(ast.GetNameOfDeclaration(decl), decl)
 
 		fileName := file.FileName()
-		if strings.HasSuffix(fileName, ".d.ts") {
+		if tspath.IsDeclarationFileName(fileName) {
 			if mappedLocation := l.tryMapToOriginalSource(file, name); mappedLocation != nil {
 				locations = core.AppendIfUnique(locations, *mappedLocation)
 				continue
@@ -270,7 +269,7 @@ func (l *LanguageService) tryMapToOriginalSource(declFile *ast.SourceFile, node 
 		return nil
 	}
 
-	sourceMapPath := tspath.NormalizePath(filepath.Join(filepath.Dir(declFileName), sourceMappingURL))
+	sourceMapPath := tspath.NormalizePath(tspath.CombinePaths(tspath.GetDirectoryPath(declFileName), sourceMappingURL))
 	sourceMapContent, ok := fs.ReadFile(sourceMapPath)
 	if !ok {
 		return nil
@@ -308,11 +307,11 @@ func (l *LanguageService) tryMapToOriginalSource(declFile *ast.SourceFile, node 
 	}
 
 	sourceFileName := sourceMapData.Sources[bestMapping.SourceIndex]
-	if !filepath.IsAbs(sourceFileName) {
+	if !tspath.PathIsAbsolute(sourceFileName) {
 		if sourceMapData.SourceRoot != "" {
-			sourceFileName = filepath.Join(sourceMapData.SourceRoot, sourceFileName)
+			sourceFileName = tspath.CombinePaths(sourceMapData.SourceRoot, sourceFileName)
 		}
-		sourceFileName = tspath.NormalizePath(filepath.Join(filepath.Dir(declFileName), sourceFileName))
+		sourceFileName = tspath.NormalizePath(tspath.CombinePaths(tspath.GetDirectoryPath(declFileName), sourceFileName))
 	}
 
 	if !fs.FileExists(sourceFileName) {
