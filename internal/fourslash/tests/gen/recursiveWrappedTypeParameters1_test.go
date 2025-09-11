@@ -23,7 +23,7 @@ var b/*3*/b = x.b;
 var c/*4*/c = x.c;
 var d/*5*/d = x.c.a;
 var e/*6*/e = x.c.b;
-var f/*7*/f = x.c.c; `
+var f/*7*/f = x.c.c;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyQuickInfoAt(t, "1", "var yy: I<I<I<I<I<I<number>>>>>>", "")
 	f.VerifyQuickInfoAt(t, "2", "var aa: number", "")

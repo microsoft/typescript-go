@@ -19,7 +19,7 @@ func TestPromiseTyping2(t *testing.T) {
     done? <U>(success?: (value: T) => any, error?: (error: any) => any, progress?: (progress: any) => void ): void;
 }
 var p1: IPromise<number> = null;
-p/*1*/1.then(function (x/*2*/x) { }); 
+p/*1*/1.then(function (x/*2*/x) { });
 var p/*3*/2 = p1.then(function (x/*4*/x) { return "hello"; })
 var p/*5*/3 = p2.then(function (x/*6*/x) {
     return x/*7*/x;

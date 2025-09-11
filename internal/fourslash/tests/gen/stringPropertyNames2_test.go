@@ -15,7 +15,7 @@ func TestStringPropertyNames2(t *testing.T) {
    "artist": T;
 }
 var a: Album<number>;
-var /**/x = a['artist']; `
+var /**/x = a['artist'];`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyQuickInfoAt(t, "", "var x: number", "")
 }

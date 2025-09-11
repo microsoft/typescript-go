@@ -19,7 +19,7 @@ function Foo(fred: any[], name: string[], age: number[]);
 function Foo(fred:         any, name: string[], age: number[]); // Extraneous spaces should get removed
 function Foo(fred: any, name: boolean, age: number[]);
 function Foo(dave: boolean, name: string);
-function Foo(fred: any, mandy: {(): number}, age: number[]);    // Embedded interface will get converted to shorthand notation, () => 
+function Foo(fred: any, mandy: {(): number}, age: number[]);    // Embedded interface will get converted to shorthand notation, () =>
 function Foo(fred: any, name: string, age: { });
 function Foo(fred: any, name: string, age: number[]);
 function Foo(test: string, name, age: number);

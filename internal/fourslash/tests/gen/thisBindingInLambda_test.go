@@ -12,7 +12,7 @@ func TestThisBindingInLambda(t *testing.T) {
 	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Greeter {
-    constructor() { 
+    constructor() {
 		[].forEach((anything)=>{
 			console.log(th/**/is);
 		});
