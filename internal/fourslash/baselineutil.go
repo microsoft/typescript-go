@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
+	"os"
 	"regexp"
 	"slices"
 	"strings"
@@ -142,6 +143,7 @@ func (f *FourslashTest) getBaselineContentForFile(
 	spanToContextId map[documentSpan]int,
 	options baselineFourslashLocationsOptions,
 ) string {
+	fmt.Fprintf(os.Stderr, "TC\n")
 	details := []*baselineDetail{}
 	detailPrefixes := map[baselineDetail]string{}
 	detailSuffixes := map[baselineDetail]string{}
@@ -245,6 +247,7 @@ func (f *FourslashTest) getBaselineContentForFile(
 				continue
 			}
 		}
+		fmt.Fprintf(os.Stderr, "Detail: %+v\n", detail)
 		textWithContext.add(detail)
 		textWithContext.pos = detail.pos
 		// Prefix

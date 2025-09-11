@@ -1093,6 +1093,75 @@ func (f *FourslashTest) VerifyBaselineSignatureHelp(t *testing.T) {
 	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
 }
 
+func (f *FourslashTest) VerifyBaselineDocumentHighlights(
+	t *testing.T,
+	markers ...string,
+) {
+	t.Logf("Inside doc highlights\n")
+	referenceLocations := f.lookupMarkersOrGetRanges(t, markers)
+
+	if f.baseline != nil {
+		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
+	} else {
+		f.baseline = &baselineFromTest{
+			content:      &strings.Builder{},
+			baselineName: "documentHighlights/" + strings.TrimPrefix(t.Name(), "Test"),
+			ext:          ".baseline.jsonc",
+		}
+	}
+
+	defer func() {
+		f.baseline = nil
+	}()
+
+	for _, markerOrRange := range referenceLocations {
+		f.GoToMarkerOrRange(t, markerOrRange)
+
+		params := &lsproto.DocumentHighlightParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: ls.FileNameToDocumentURI(f.activeFilename),
+			},
+			Position: f.currentCaretPosition,
+		}
+		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentDocumentHighlightInfo, params)
+		if resMsg == nil {
+			if f.lastKnownMarkerName == nil {
+				t.Fatalf("Nil response received for document highlights request at pos %v", f.currentCaretPosition)
+			} else {
+				t.Fatalf("Nil response received for document highlights request at marker '%s'", *f.lastKnownMarkerName)
+			}
+		}
+		if !resultOk {
+			if f.lastKnownMarkerName == nil {
+				t.Fatalf("Unexpected document highlights response type at pos %v: %T", f.currentCaretPosition, resMsg.AsResponse().Result)
+			} else {
+				t.Fatalf("Unexpected document highlights response type at marker '%s': %T", *f.lastKnownMarkerName, resMsg.AsResponse().Result)
+			}
+		}
+
+		highlights := result.DocumentHighlights
+		if highlights == nil {
+			highlights = &[]*lsproto.DocumentHighlight{}
+		}
+
+		var spans []lsproto.Location
+		for _, h := range *highlights {
+			spans = append(spans, lsproto.Location{
+				Uri:   ls.FileNameToDocumentURI(f.activeFilename),
+				Range: h.Range,
+			})
+		}
+
+		// Add result to baseline
+		f.baseline.addResult("documentHighlights", f.getBaselineForLocationsWithFileContents(spans, baselineFourslashLocationsOptions{
+			marker:     markerOrRange.GetMarker(),
+			markerName: "/*HIGHLIGHTS*/",
+		}))
+	}
+
+	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
+}
+
 // Collects all named markers if provided, or defaults to anonymous ranges
 func (f *FourslashTest) lookupMarkersOrGetRanges(t *testing.T, markers []string) []MarkerOrRange {
 	var referenceLocations []MarkerOrRange
