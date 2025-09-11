@@ -260,7 +260,7 @@ func (s *Server) readLoop(ctx context.Context) error {
 		if s.initializeParams == nil && msg.Kind == lsproto.MessageKindRequest {
 			req := msg.AsRequest()
 			if req.Method == lsproto.MethodInitialize {
-				resp, err := s.handleInitialize(ctx, req.Params.(*lsproto.InitializeParams), func() {})
+				resp, err := s.handleInitialize(ctx, req.Params.(*lsproto.InitializeParams), req)
 				if err != nil {
 					return err
 				}
@@ -445,6 +445,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerNotificationHandler(handlers, lsproto.TextDocumentDidSaveInfo, (*Server).handleDidSave)
 	registerNotificationHandler(handlers, lsproto.TextDocumentDidCloseInfo, (*Server).handleDidClose)
 	registerNotificationHandler(handlers, lsproto.WorkspaceDidChangeWatchedFilesInfo, (*Server).handleDidChangeWatchedFiles)
+	registerNotificationHandler(handlers, lsproto.SetTraceInfo, (*Server).handleSetTrace)
 
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDiagnosticInfo, (*Server).handleDocumentDiagnostic)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentHoverInfo, (*Server).handleHover)
@@ -458,6 +459,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentRangeFormattingInfo, (*Server).handleDocumentRangeFormat)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentOnTypeFormattingInfo, (*Server).handleDocumentOnTypeFormat)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDocumentSymbolInfo, (*Server).handleDocumentSymbol)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*Server).handleRename)
 	registerRequestHandler(handlers, lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
 	registerRequestHandler(handlers, lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
 
@@ -478,16 +480,18 @@ func registerNotificationHandler[Req any](handlers handlerMap, info lsproto.Noti
 	}
 }
 
-func registerRequestHandler[Req, Resp any](handlers handlerMap, info lsproto.RequestInfo[Req, Resp], fn func(*Server, context.Context, Req, func()) (Resp, error)) {
+func registerRequestHandler[Req, Resp any](
+	handlers handlerMap,
+	info lsproto.RequestInfo[Req, Resp],
+	fn func(*Server, context.Context, Req, *lsproto.RequestMessage) (Resp, error),
+) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
 		var params Req
 		// Ignore empty params.
 		if req.Params != nil {
 			params = req.Params.(Req)
 		}
-		resp, err := fn(s, ctx, params, func() {
-			s.recover(req)
-		})
+		resp, err := fn(s, ctx, params, req)
 		if err != nil {
 			return err
 		}
@@ -535,7 +539,7 @@ func (s *Server) recover(req *lsproto.RequestMessage) {
 	}
 }
 
-func (s *Server) handleInitialize(ctx context.Context, params *lsproto.InitializeParams, _ func()) (lsproto.InitializeResponse, error) {
+func (s *Server) handleInitialize(ctx context.Context, params *lsproto.InitializeParams, _ *lsproto.RequestMessage) (lsproto.InitializeResponse, error) {
 	if s.initializeParams != nil {
 		return nil, lsproto.ErrInvalidRequest
 	}
@@ -555,6 +559,10 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			return nil, err
 		}
 		s.locale = locale
+	}
+
+	if s.initializeParams.Trace != nil && *s.initializeParams.Trace == "verbose" {
+		s.logger.SetVerbose(true)
 	}
 
 	response := &lsproto.InitializeResult{
@@ -617,6 +625,9 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			DocumentSymbolProvider: &lsproto.BooleanOrDocumentSymbolOptions{
 				Boolean: ptrTo(true),
 			},
+			RenameProvider: &lsproto.BooleanOrRenameOptions{
+				Boolean: ptrTo(true),
+			},
 		},
 	}
 
@@ -652,7 +663,7 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	return nil
 }
 
-func (s *Server) handleShutdown(ctx context.Context, params any, _ func()) (lsproto.ShutdownResponse, error) {
+func (s *Server) handleShutdown(ctx context.Context, params any, _ *lsproto.RequestMessage) (lsproto.ShutdownResponse, error) {
 	s.session.Close()
 	return lsproto.ShutdownResponse{}, nil
 }
@@ -683,6 +694,21 @@ func (s *Server) handleDidClose(ctx context.Context, params *lsproto.DidCloseTex
 
 func (s *Server) handleDidChangeWatchedFiles(ctx context.Context, params *lsproto.DidChangeWatchedFilesParams) error {
 	s.session.DidChangeWatchedFiles(ctx, params.Changes)
+	return nil
+}
+
+func (s *Server) handleSetTrace(ctx context.Context, params *lsproto.SetTraceParams) error {
+	switch params.Value {
+	case "verbose":
+		s.logger.SetVerbose(true)
+	case "messages":
+		s.logger.SetVerbose(false)
+	case "off":
+		// !!! logging cannot be completely turned off for now
+		s.logger.SetVerbose(false)
+	default:
+		return fmt.Errorf("unknown trace value: %s", params.Value)
+	}
 	return nil
 }
 
@@ -731,10 +757,13 @@ func (s *Server) handleCompletion(ctx context.Context, languageService *ls.Langu
 		params.Position,
 		params.Context,
 		getCompletionClientCapabilities(s.initializeParams),
-		&ls.UserPreferences{})
+		&ls.UserPreferences{
+			IncludeCompletionsForModuleExports:    ptrTo(true),
+			IncludeCompletionsForImportStatements: ptrTo(true),
+		})
 }
 
-func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsproto.CompletionItem, recoverAndSendError func()) (lsproto.CompletionResolveResponse, error) {
+func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsproto.CompletionItem, reqMsg *lsproto.RequestMessage) (lsproto.CompletionResolveResponse, error) {
 	data, err := ls.GetCompletionItemData(params)
 	if err != nil {
 		return nil, err
@@ -743,13 +772,16 @@ func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsprot
 	if err != nil {
 		return nil, err
 	}
-	defer recoverAndSendError()
+	defer s.recover(reqMsg)
 	return languageService.ResolveCompletionItem(
 		ctx,
 		params,
 		data,
 		getCompletionClientCapabilities(s.initializeParams),
-		&ls.UserPreferences{},
+		&ls.UserPreferences{
+			IncludeCompletionsForModuleExports:    ptrTo(true),
+			IncludeCompletionsForImportStatements: ptrTo(true),
+		},
 	)
 }
 
@@ -780,16 +812,20 @@ func (s *Server) handleDocumentOnTypeFormat(ctx context.Context, ls *ls.Language
 	)
 }
 
-func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.WorkspaceSymbolParams, recoverAndSendError func()) (lsproto.WorkspaceSymbolResponse, error) {
+func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.WorkspaceSymbolParams, reqMsg *lsproto.RequestMessage) (lsproto.WorkspaceSymbolResponse, error) {
 	snapshot, release := s.session.Snapshot()
 	defer release()
-	defer recoverAndSendError()
+	defer s.recover(reqMsg)
 	programs := core.Map(snapshot.ProjectCollection.Projects(), (*project.Project).GetProgram)
 	return ls.ProvideWorkspaceSymbols(ctx, programs, snapshot.Converters(), params.Query)
 }
 
 func (s *Server) handleDocumentSymbol(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentSymbolParams) (lsproto.DocumentSymbolResponse, error) {
 	return ls.ProvideDocumentSymbols(ctx, params.TextDocument.Uri)
+}
+
+func (s *Server) handleRename(ctx context.Context, ls *ls.LanguageService, params *lsproto.RenameParams) (lsproto.RenameResponse, error) {
+	return ls.ProvideRename(ctx, params)
 }
 
 func (s *Server) Log(msg ...any) {

@@ -176,6 +176,17 @@ func Every[T any](slice []T, f func(T) bool) bool {
 	return true
 }
 
+func Or[T any](funcs ...func(T) bool) func(T) bool {
+	return func(input T) bool {
+		for _, f := range funcs {
+			if f(input) {
+				return true
+			}
+		}
+		return false
+	}
+}
+
 func Find[T any](slice []T, f func(T) bool) T {
 	for _, value := range slice {
 		if f(value) {
@@ -349,12 +360,6 @@ func Coalesce[T *U, U any](a T, b T) T {
 	} else {
 		return a
 	}
-}
-
-// Returns the first element that is not `nil`; CoalesceList(a, b, c) is roughly analogous to `a ?? b ?? c` in JS, except that it
-// non-shortcutting, so it is advised to only use a constant or precomputed value for non-first values in the list
-func CoalesceList[T *U, U any](a ...T) T {
-	return FirstNonNil(a, func(t T) T { return t })
 }
 
 func ComputeLineStarts(text string) []TextPos {
@@ -624,4 +629,22 @@ func CopyMapInto[M1 ~map[K]V, M2 ~map[K]V, K comparable, V any](dst M1, src M2) 
 	}
 	maps.Copy(dst, src)
 	return dst
+}
+
+func Deduplicate[T comparable](slice []T) []T {
+	if len(slice) > 1 {
+		for i, value := range slice {
+			if slices.Contains(slice[:i], value) {
+				result := slices.Clone(slice[:i])
+				for i++; i < len(slice); i++ {
+					value = slice[i]
+					if !slices.Contains(result, value) {
+						result = append(result, value)
+					}
+				}
+				return result
+			}
+		}
+	}
+	return slice
 }

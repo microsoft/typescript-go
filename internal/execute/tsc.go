@@ -20,24 +20,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-func applyBulkEdits(text string, edits []core.TextChange) string {
-	b := strings.Builder{}
-	b.Grow(len(text))
-	lastEnd := 0
-	for _, e := range edits {
-		start := e.TextRange.Pos()
-		if start != lastEnd {
-			b.WriteString(text[lastEnd:e.TextRange.Pos()])
-		}
-		b.WriteString(e.NewText)
-
-		lastEnd = e.TextRange.End()
-	}
-	b.WriteString(text[lastEnd:])
-
-	return b.String()
-}
-
 func CommandLine(sys tsc.System, commandLineArgs []string, testing tsc.CommandLineTesting) tsc.CommandLineResult {
 	if len(commandLineArgs) > 0 {
 		// !!! build mode
@@ -69,7 +51,7 @@ func fmtMain(sys tsc.System, input, output string) tsc.ExitStatus {
 		JSDocParsingMode: ast.JSDocParsingModeParseAll,
 	}, text, core.GetScriptKindFromFileName(string(pathified)))
 	edits := format.FormatDocument(ctx, sourceFile)
-	newText := applyBulkEdits(text, edits)
+	newText := core.ApplyBulkEdits(text, edits)
 
 	if err := sys.FS().WriteFile(output, newText, false); err != nil {
 		fmt.Fprintln(sys.Writer(), err.Error())
@@ -104,7 +86,6 @@ func tscBuildCompilation(sys tsc.System, buildCommand *tsoptions.ParsedBuildComm
 		return tsc.CommandLineResult{Status: tsc.ExitStatusSuccess}
 	}
 
-	// !!! sheetal watch mode
 	orchestrator := build.NewOrchestrator(build.Options{
 		Sys:     sys,
 		Command: buildCommand,
@@ -277,19 +258,19 @@ func performIncrementalCompilation(
 	})
 	compileTimes.ParseTime = sys.Now().Sub(parseStart)
 	changesComputeStart := sys.Now()
-	incrementalProgram := incremental.NewProgram(program, oldProgram, nil, testing != nil)
+	incrementalProgram := incremental.NewProgram(program, oldProgram, incremental.CreateHost(host), testing != nil)
 	compileTimes.ChangesComputeTime = sys.Now().Sub(changesComputeStart)
-	result, _ := tsc.EmitAndReportStatistics(
-		sys,
-		incrementalProgram,
-		incrementalProgram.GetProgram(),
-		config,
-		reportDiagnostic,
-		reportErrorSummary,
-		sys.Writer(),
-		compileTimes,
-		testing,
-	)
+	result, _ := tsc.EmitAndReportStatistics(tsc.EmitInput{
+		Sys:                sys,
+		ProgramLike:        incrementalProgram,
+		Program:            incrementalProgram.GetProgram(),
+		Config:             config,
+		ReportDiagnostic:   reportDiagnostic,
+		ReportErrorSummary: reportErrorSummary,
+		Writer:             sys.Writer(),
+		CompileTimes:       compileTimes,
+		Testing:            testing,
+	})
 	if testing != nil {
 		testing.OnProgram(incrementalProgram)
 	}
@@ -316,17 +297,17 @@ func performCompilation(
 		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
 	})
 	compileTimes.ParseTime = sys.Now().Sub(parseStart)
-	result, _ := tsc.EmitAndReportStatistics(
-		sys,
-		program,
-		program,
-		config,
-		reportDiagnostic,
-		reportErrorSummary,
-		sys.Writer(),
-		compileTimes,
-		testing,
-	)
+	result, _ := tsc.EmitAndReportStatistics(tsc.EmitInput{
+		Sys:                sys,
+		ProgramLike:        program,
+		Program:            program,
+		Config:             config,
+		ReportDiagnostic:   reportDiagnostic,
+		ReportErrorSummary: reportErrorSummary,
+		Writer:             sys.Writer(),
+		CompileTimes:       compileTimes,
+		Testing:            testing,
+	})
 	return tsc.CommandLineResult{
 		Status: result.Status,
 	}

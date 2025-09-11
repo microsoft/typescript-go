@@ -258,6 +258,7 @@ func (b *projectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 				b.deleteConfiguredProject(p, logger)
 			}
 		}
+		slices.Sort(inferredProjectFiles)
 		b.updateInferredProjectRoots(inferredProjectFiles, logger)
 		b.configFileRegistryBuilder.Cleanup()
 	}
@@ -472,6 +473,11 @@ type searchNode struct {
 	logger         *logging.LogTree
 }
 
+type searchNodeKey struct {
+	configFileName string
+	loadKind       projectLoadKind
+}
+
 type searchResult struct {
 	project *dirty.SyncMapEntry[tspath.Path, *Project]
 	retain  collections.Set[tspath.Path]
@@ -482,13 +488,13 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 	path tspath.Path,
 	configFileName string,
 	loadKind projectLoadKind,
-	visited *collections.SyncSet[searchNode],
+	visited *collections.SyncSet[searchNodeKey],
 	fallback *searchResult,
 	logger *logging.LogTree,
 ) searchResult {
 	var configs collections.SyncMap[tspath.Path, *tsoptions.ParsedCommandLine]
 	if visited == nil {
-		visited = &collections.SyncSet[searchNode]{}
+		visited = &collections.SyncSet[searchNodeKey]{}
 	}
 
 	search := core.BreadthFirstSearchParallelEx(
@@ -515,6 +521,7 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 			configFilePath := b.toPath(node.configFileName)
 			config := b.configFileRegistryBuilder.findOrAcquireConfigForOpenFile(node.configFileName, configFilePath, path, node.loadKind, node.logger.Fork("Acquiring config for open file"))
 			if config == nil {
+				node.logger.Log("Config file for project does not already exist")
 				return false, false
 			}
 			configs.Store(configFilePath, config)
@@ -536,7 +543,7 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 
 			project := b.findOrCreateProject(node.configFileName, configFilePath, node.loadKind, node.logger)
 			if project == nil {
-				node.logger.Log("Project not found")
+				node.logger.Log("Project does not already exist")
 				return false, false
 			}
 
@@ -556,17 +563,20 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 			node.logger.Log("Project does not contain file")
 			return false, false
 		},
-		core.BreadthFirstSearchOptions[searchNode]{
+		core.BreadthFirstSearchOptions[searchNodeKey, searchNode]{
 			Visited: visited,
-			PreprocessLevel: func(level *core.BreadthFirstSearchLevel[searchNode]) {
+			PreprocessLevel: func(level *core.BreadthFirstSearchLevel[searchNodeKey, searchNode]) {
 				level.Range(func(node searchNode) bool {
-					if node.loadKind == projectLoadKindFind && level.Has(searchNode{configFileName: node.configFileName, loadKind: projectLoadKindCreate, logger: node.logger}) {
+					if node.loadKind == projectLoadKindFind && level.Has(searchNodeKey{configFileName: node.configFileName, loadKind: projectLoadKindCreate}) {
 						// Remove find requests when a create request for the same project is already present.
-						level.Delete(node)
+						level.Delete(searchNodeKey{configFileName: node.configFileName, loadKind: node.loadKind})
 					}
 					return true
 				})
 			},
+		},
+		func(node searchNode) searchNodeKey {
+			return searchNodeKey{configFileName: node.configFileName, loadKind: node.loadKind}
 		},
 	)
 
@@ -624,7 +634,7 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 	// If we didn't find anything, we can retain everything we visited,
 	// since the whole graph must have been traversed (i.e., the set of
 	// retained projects is guaranteed to be deterministic).
-	visited.Range(func(node searchNode) bool {
+	visited.Range(func(node searchNodeKey) bool {
 		retain.Add(b.toPath(node.configFileName))
 		return true
 	})
@@ -725,6 +735,7 @@ func (b *projectCollectionBuilder) updateInferredProjectRoots(rootFileNames []st
 					logger.Log(fmt.Sprintf("Updating inferred project config with %d root files", len(rootFileNames)))
 				}
 				p.CommandLine = newCommandLine
+				p.commandLineWithTypingsFiles = nil
 				p.dirty = true
 				p.dirtyFilePath = ""
 			},
@@ -758,7 +769,10 @@ func (b *projectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 					filesChanged = true
 					return
 				}
-				entry.Change(func(p *Project) { p.CommandLine = commandLine })
+				entry.Change(func(p *Project) {
+					p.CommandLine = commandLine
+					p.commandLineWithTypingsFiles = nil
+				})
 			}
 		}
 		if !updateProgram {
@@ -766,12 +780,16 @@ func (b *projectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 		}
 		if updateProgram {
 			entry.Change(func(project *Project) {
+				oldHost := project.host
 				project.host = newCompilerHost(project.currentDirectory, project, b, logger.Fork("CompilerHost"))
 				result := project.CreateProgram()
 				project.Program = result.Program
 				project.checkerPool = result.CheckerPool
 				project.ProgramUpdateKind = result.UpdateKind
 				project.ProgramLastUpdate = b.newSnapshotID
+				if result.UpdateKind == ProgramUpdateKindCloned {
+					project.host.seenFiles = oldHost.seenFiles
+				}
 				if result.UpdateKind == ProgramUpdateKindNewFiles {
 					filesChanged = true
 					if b.sessionOptions.WatchEnabled {
