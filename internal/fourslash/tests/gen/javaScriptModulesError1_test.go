@@ -14,7 +14,7 @@ func TestJavaScriptModulesError1(t *testing.T) {
 	const content = `// @allowNonTsExtensions: true
 // @Filename: Foo.js
 define('mod1', ['a'], /**/function(a, b) {
-
+	
 });`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.GoToMarker(t, "")

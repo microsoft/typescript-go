@@ -111,7 +111,7 @@ function sum(/*16aq*/a: number, /*17aq*/b: number) {
 }
 s/*16q*/um(10, 20);
 /** This is multiplication function
- * @param
+ * @param 
  * @param a first number
  * @param b
  * @param c {

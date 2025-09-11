@@ -13,39 +13,39 @@ func TestCommentsLinePreservation(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** This is firstLine
   * This is second Line
-  *
+  * 
   * This is fourth Line
   */
 var /*a*/a: string;
-/**
+/** 
   * This is firstLine
   * This is second Line
-  *
+  * 
   * This is fourth Line
   */
 var /*b*/b: string;
-/**
+/** 
   * This is firstLine
   * This is second Line
-  *
+  * 
   * This is fourth Line
   *
   */
 var /*c*/c: string;
-/**
+/** 
   * This is firstLine
   * This is second Line
   * @param param
   * @random tag This should be third line
   */
 function /*d*/d(param: string) { /*1*/param = "hello"; }
-/**
+/** 
   * This is firstLine
   * This is second Line
   * @param param
   */
 function /*e*/e(param: string) { /*2*/param = "hello"; }
-/**
+/** 
   * This is firstLine
   * This is second Line
   * @param param1 first line of param
@@ -54,7 +54,7 @@ function /*e*/e(param: string) { /*2*/param = "hello"; }
   * @random tag This should be third line
   */
 function /*f*/f(param1: string) { /*3*/param1 = "hello"; }
-/**
+/** 
   * This is firstLine
   * This is second Line
   * @param param1
@@ -63,7 +63,7 @@ function /*f*/f(param1: string) { /*3*/param1 = "hello"; }
   * @random tag This should be third line
   */
 function /*g*/g(param1: string) { /*4*/param1 = "hello"; }
-/**
+/** 
   * This is firstLine
   * This is second Line
   * @param param1
@@ -74,7 +74,7 @@ function /*g*/g(param1: string) { /*4*/param1 = "hello"; }
   * @random tag This should be third line
   */
 function /*h*/h(param1: string) { /*5*/param1 = "hello"; }
-/**
+/** 
   * This is firstLine
   * This is second Line
   * @param param1
@@ -85,7 +85,7 @@ function /*h*/h(param1: string) { /*5*/param1 = "hello"; }
   *
   */
 function /*i*/i(param1: string) { /*6*/param1 = "hello"; }
-/**
+/** 
   * This is firstLine
   * This is second Line
   * @param param1
@@ -95,28 +95,28 @@ function /*i*/i(param1: string) { /*6*/param1 = "hello"; }
   *  param information third line
   */
 function /*j*/j(param1: string) { /*7*/param1 = "hello"; }
-/**
+/** 
   * This is firstLine
   * This is second Line
-  * @param param1 hello   @randomtag
+  * @param param1 hello   @randomtag 
   *
   *  random information first line
   *
   *  random information third line
   */
 function /*k*/k(param1: string) { /*8*/param1 = "hello"; }
-/**
+/** 
   * This is firstLine
   * This is second Line
   * @param param1 first Line text
   *
-  * @param param1
+  * @param param1 
   *
-  * blank line that shouldnt be shown when starting this
+  * blank line that shouldnt be shown when starting this 
   * second time information about the param again
   */
 function /*l*/l(param1: string) { /*9*/param1 = "hello"; }
-     /**
+     /** 
        * This is firstLine
  This is second Line
  [1]: third * line

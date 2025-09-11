@@ -12,8 +12,8 @@ func TestQuickInfoOnParameterProperties(t *testing.T) {
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface IFoo {
-  /** this is the name of blabla
-   *  - use blabla
+  /** this is the name of blabla 
+   *  - use blabla 
    *  @example blabla
    */
   name?: string;
@@ -23,14 +23,14 @@ func TestQuickInfoOnParameterProperties(t *testing.T) {
 class Foo implements IFoo {
   //public name: string = '';
   constructor(
-    public na/*1*/me: string, // documentation should leech and work !
+    public na/*1*/me: string, // documentation should leech and work ! 
   ) {
   }
 }
 
 // test2 work
 class Foo2 implements IFoo {
-  public na/*2*/me: string = ''; // documentation leeched and work !
+  public na/*2*/me: string = ''; // documentation leeched and work ! 
   constructor(
     //public name: string,
   ) {

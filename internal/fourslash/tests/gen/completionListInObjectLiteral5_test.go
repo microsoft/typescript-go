@@ -12,7 +12,7 @@ func TestCompletionListInObjectLiteral5(t *testing.T) {
 	t.Parallel()
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `const o = 'something'
+	const content = `const o = 'something' 
 const obj = {
     prop: o/*1*/,
     pro() {

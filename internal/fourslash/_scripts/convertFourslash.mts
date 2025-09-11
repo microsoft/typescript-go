@@ -97,7 +97,7 @@ function parseFileContent(filename: string, content: string): GoTest | undefined
 }
 
 function getTestInput(content: string): string {
-    const lines = content.split("\n").map(line => line.trimEnd());
+    const lines = content.split("\n").map(line => line.endsWith("\r") ? line.slice(0, -1) : line);
     let testInput: string[] = [];
     for (const line of lines) {
         let newLine = "";

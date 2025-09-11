@@ -16,7 +16,7 @@ func TestCompletionsWithOverride2(t *testing.T) {
     baz () {}
 }
 class A {
-    foo () {}
+    foo () {} 
     bar () {}
 }
 class B extends A implements I {

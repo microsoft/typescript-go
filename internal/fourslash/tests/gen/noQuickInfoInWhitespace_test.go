@@ -14,7 +14,7 @@ func TestNoQuickInfoInWhitespace(t *testing.T) {
 	const content = `class C {
 /*1*/    private _mspointerupHandler(args) {
         if (args.button === 3) {
-            return null;
+            return null; 
 /*2*/        } else if (args.button === 4) {
 /*3*/            return null;
         }

@@ -5,7 +5,6 @@
  // === /foo.js ===
 -// --- (line: 6) skipped ---
 -//  * @param {string} x
--//  * @returns {string} 
 +// /**
 +//  * @overload
 +//  * @param {number} [|xRENAME|]
@@ -13,11 +12,6 @@
 +//  *
 +//  * @overload
 +//  * @param {string} [|xRENAME|]
-+//  * @returns {string}
+ //  * @returns {string} 
  //  *
  //  * @param {unknown} [|xRENAME|]
--//  * @returns {unknown} 
-+//  * @returns {unknown}
- //  */
- // function foo([|xRENAME|]/*RENAME*/) {
- //   return [|xRENAME|];

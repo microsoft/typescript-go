@@ -19,7 +19,7 @@ func TestJsDocTypedefQuickInfo1(t *testing.T) {
  * @property {string=} y
  * @property {string} [z]
  * @property {string} [w="hi"]
- *
+ * 
  * @param {Opts} opts
  */
 function foo(/*1*/opts) {
@@ -32,7 +32,7 @@ foo({x: 'abc'});
  * @property {string=} y
  * @property {string} [z]
  * @property {string} [w="hi"]
- *
+ * 
  * @param {Opts1} opts
  */
 function foo1(/*2*/opts1) {

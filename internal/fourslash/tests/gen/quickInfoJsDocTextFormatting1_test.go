@@ -24,25 +24,25 @@ function f1(var1, var2) { }
 function f2(var1, var2) { }
 
 /**
- * @param {number} var1
+ * @param {number} var1 
  * *Regular text with an asterisk
- * @param {string} var2
+ * @param {string} var2 
  * Another *Regular text with an asterisk
 */
 function f3(var1, var2) { }
 
 /**
- * @param {number} var1
+ * @param {number} var1 
  * **Highlighted text**
- * @param {string} var2
+ * @param {string} var2 
  * Another **Highlighted text**
 */
 function f4(var1, var2) { }
 
 /**
- * @param {number} var1
+ * @param {number} var1 
    **Highlighted text**
- * @param {string} var2
+ * @param {string} var2 
    Another **Highlighted text**
 */
 function f5(var1, var2) { }

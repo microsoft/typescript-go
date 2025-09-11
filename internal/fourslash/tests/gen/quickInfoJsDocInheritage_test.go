@@ -54,12 +54,12 @@ new D()./*8*/foo2;
 
 class Base1 {
     /**
-     * @description Base1.foo1
+     * @description Base1.foo1 
      */
     foo1: number = 1;
 
     /**
-     *
+     * 
      * @param q Base1.foo2 parameter
      * @returns Base1.foo2 return
      */
@@ -82,11 +82,11 @@ class Drived2 extends Base1 implements B {
 
 class Base2 {
     /**
-     * @description Base2.foo1
+     * @description Base2.foo1 
      */
     foo1: number = 1;
     /**
-     *
+     * 
      * @param q Base2.foo2 parameter
      * @returns Base2.foo2 return
      */

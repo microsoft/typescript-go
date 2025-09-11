@@ -11,7 +11,7 @@ func TestEmptyArrayInference(t *testing.T) {
 	t.Parallel()
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `var x/*1*/x = true ? [1] : [undefined];
+	const content = `var x/*1*/x = true ? [1] : [undefined]; 
 var y/*2*/y = true ? [1] : [];`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyQuickInfoAt(t, "1", "var xx: number[]", "")

@@ -21,10 +21,10 @@ func TestFindAllReferencesJsOverloadedFunctionParameter(t *testing.T) {
  *
  * @overload
  * @param {string} x
- * @returns {string}
+ * @returns {string} 
  *
  * @param {unknown} x
- * @returns {unknown}
+ * @returns {unknown} 
  */
 function foo(x/*1*/) {
   return x;

@@ -13,13 +13,13 @@ func TestJsDocPropertyDescription1(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface StringExample {
     /** Something generic */
-    [p: string]: any;
+    [p: string]: any; 
     /** Something specific */
     property: number;
 }
 function stringExample(e: StringExample) {
     console.log(e./*property*/property);
-    console.log(e./*string*/anything);
+    console.log(e./*string*/anything); 
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyQuickInfoAt(t, "property", "(property) StringExample.property: number", "Something specific")

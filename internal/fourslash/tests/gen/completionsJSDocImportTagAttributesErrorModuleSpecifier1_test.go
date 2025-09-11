@@ -16,7 +16,7 @@ func TestCompletionsJSDocImportTagAttributesErrorModuleSpecifier1(t *testing.T) 
 // @checkJs: true
 // @allowJs: true
 // @filename: global.d.ts
-interface ImportAttributes {
+interface ImportAttributes { 
   type: "json";
 }
 // @filename: index.js

@@ -13,7 +13,7 @@ func TestCompletionsWithOverride1(t *testing.T) {
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class A {
-    foo () {}
+    foo () {} 
     bar () {}
 }
 class B extends A {
