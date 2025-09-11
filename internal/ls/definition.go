@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -342,9 +343,32 @@ func (l *LanguageService) tryMapToOriginalSource(declFile *ast.SourceFile, node 
 	}
 	if symbolName != "" {
 		sourceBytePos := l.converters.LineAndCharacterToPosition(sourceFileScript, sourceLspPosition)
-		if symbolStart := findSymbolNearPosition(sourceContent, symbolName, int(sourceBytePos)); symbolStart != -1 {
-			sourceStartPos := core.TextPos(symbolStart)
-			sourceEndPos := core.TextPos(symbolStart + len(symbolName))
+		targetPos := int(sourceBytePos)
+
+		sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+			FileName: sourceFileName,
+			Path:     tspath.ToPath(sourceFileName, "", true),
+		}, sourceContent, core.GetScriptKindFromFileName(sourceFileName))
+
+		positions := getPossibleSymbolReferencePositions(sourceFile, symbolName, nil)
+
+		// Find the closest position to our target
+		bestMatch := -1
+		bestDistance := math.MaxInt
+		for _, pos := range positions {
+			distance := targetPos - pos
+			if distance < 0 {
+				distance = -distance
+			}
+			if distance < bestDistance {
+				bestDistance = distance
+				bestMatch = pos
+			}
+		}
+
+		if bestMatch != -1 {
+			sourceStartPos := core.TextPos(bestMatch)
+			sourceEndPos := core.TextPos(bestMatch + len(symbolName))
 			sourceStartLsp = l.converters.PositionToLineAndCharacter(sourceFileScript, sourceStartPos)
 			sourceEndLsp = l.converters.PositionToLineAndCharacter(sourceFileScript, sourceEndPos)
 		}
@@ -380,41 +404,4 @@ func (s *sourceFileScript) Text() string {
 
 func (s *sourceFileScript) LineMap() []core.TextPos {
 	return s.lineMap
-}
-
-func findSymbolNearPosition(text, symbolName string, targetPos int) int {
-	if symbolName == "" {
-		return -1
-	}
-
-	symbolLen := len(symbolName)
-	textLen := len(text)
-	bestMatch := -1
-	bestDistance := math.MaxInt
-
-	pos := strings.Index(text, symbolName)
-	for pos >= 0 {
-		if (pos == 0 || !scanner.IsIdentifierPart(rune(text[pos-1]))) &&
-			(pos+symbolLen >= textLen || !scanner.IsIdentifierPart(rune(text[pos+symbolLen]))) {
-
-			distance := targetPos - pos
-			if distance < 0 {
-				distance = -distance
-			}
-
-			if distance < bestDistance {
-				bestDistance = distance
-				bestMatch = pos
-			}
-		}
-
-		nextPos := strings.Index(text[pos+1:], symbolName)
-		if nextPos >= 0 {
-			pos = pos + 1 + nextPos
-		} else {
-			pos = -1
-		}
-	}
-
-	return bestMatch
 }
