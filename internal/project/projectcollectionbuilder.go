@@ -535,6 +535,11 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 			}
 
 			project := b.findOrCreateProject(node.configFileName, configFilePath, node.loadKind, node.logger)
+			if project == nil {
+				node.logger.Log("Project not found")
+				return false, false
+			}
+
 			if node.loadKind == projectLoadKindCreate {
 				// Ensure project is up to date before checking for file inclusion
 				b.updateProgram(project, node.logger)

@@ -1,12 +1,11 @@
 // === goToDefinition ===
-// === /BaseClass/Source.d.ts ===
+// === /BaseClass/Source.ts ===
 
-// declare class [|Control|] {
-//     constructor();
-//     /** this is a super var */
-//     myVar: boolean | 'yeah';
-// }
-// //# sourceMappingURL=Source.d.ts.map
+// class [|Control|]{
+//     constructor(){
+//         return;
+//     }
+// // --- (line: 5) skipped ---
 
 
 // === /buttonClass/Source.ts ===

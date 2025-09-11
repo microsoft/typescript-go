@@ -142,6 +142,9 @@ func (c *Converters) LineAndCharacterToPosition(script Script, lineAndCharacter 
 	// UTF-8/16 0-indexed line and character to UTF-8 offset
 
 	lineMap := c.getLineMap(script.FileName())
+	if lineMap == nil {
+		lineMap = ComputeLineStarts(script.Text())
+	}
 
 	line := core.TextPos(lineAndCharacter.Line)
 	char := core.TextPos(lineAndCharacter.Character)
@@ -174,6 +177,9 @@ func (c *Converters) PositionToLineAndCharacter(script Script, position core.Tex
 	// UTF-8 offset to UTF-8/16 0-indexed line and character
 
 	lineMap := c.getLineMap(script.FileName())
+	if lineMap == nil {
+		lineMap = ComputeLineStarts(script.Text())
+	}
 
 	line, isLineStart := slices.BinarySearch(lineMap.LineStarts, position)
 	if !isLineStart {

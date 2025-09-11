@@ -2,14 +2,20 @@ package ls
 
 import (
 	"context"
+	"math"
+	"path/filepath"
 	"slices"
+	"strings"
 
+	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/sourcemap"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 func (l *LanguageService) ProvideDefinition(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position) (lsproto.DefinitionResponse, error) {
@@ -104,8 +110,16 @@ func (l *LanguageService) createLocationsFromDeclarations(declarations []*ast.No
 	for _, decl := range declarations {
 		file := ast.GetSourceFileOfNode(decl)
 		name := core.OrElse(ast.GetNameOfDeclaration(decl), decl)
+
+		fileName := file.FileName()
+		if strings.HasSuffix(fileName, ".d.ts") {
+			if mappedLocation := l.tryMapToOriginalSource(file, name); mappedLocation != nil {
+				locations = core.AppendIfUnique(locations, *mappedLocation)
+				continue
+			}
+		}
 		locations = core.AppendIfUnique(locations, lsproto.Location{
-			Uri:   FileNameToDocumentURI(file.FileName()),
+			Uri:   FileNameToDocumentURI(fileName),
 			Range: *l.createLspRangeFromNode(name, file),
 		})
 	}
@@ -234,4 +248,174 @@ func getDeclarationsFromType(t *checker.Type) []*ast.Node {
 		}
 	}
 	return result
+}
+
+func (l *LanguageService) tryMapToOriginalSource(declFile *ast.SourceFile, node *ast.Node) *lsproto.Location {
+	fs := l.GetProgram().Host().FS()
+
+	declFileName := declFile.FileName()
+	declContent, ok := fs.ReadFile(declFileName)
+	if !ok {
+		return nil
+	}
+
+	lineMap := l.converters.getLineMap(declFileName)
+	if lineMap == nil {
+		lineMap = ComputeLineStarts(declContent)
+	}
+	lineInfo := sourcemap.GetLineInfo(declContent, lineMap.LineStarts)
+
+	sourceMappingURL := sourcemap.TryGetSourceMappingURL(lineInfo)
+	if sourceMappingURL == "" || strings.HasPrefix(sourceMappingURL, "data:") {
+		return nil
+	}
+
+	sourceMapPath := tspath.NormalizePath(filepath.Join(filepath.Dir(declFileName), sourceMappingURL))
+	sourceMapContent, ok := fs.ReadFile(sourceMapPath)
+	if !ok {
+		return nil
+	}
+
+	var sourceMapData struct {
+		SourceRoot string   `json:"sourceRoot"`
+		Sources    []string `json:"sources"`
+		Mappings   string   `json:"mappings"`
+	}
+	if err := json.Unmarshal([]byte(sourceMapContent), &sourceMapData); err != nil {
+		return nil
+	}
+
+	decoder := sourcemap.DecodeMappings(sourceMapData.Mappings)
+	if decoder.Error() != nil {
+		return nil
+	}
+
+	declPosition := l.converters.PositionToLineAndCharacter(declFile, core.TextPos(node.Pos()))
+
+	var bestMapping *sourcemap.Mapping
+	for mapping := range decoder.Values() {
+		if mapping.GeneratedLine == int(declPosition.Line) &&
+			mapping.GeneratedCharacter <= int(declPosition.Character) &&
+			mapping.IsSourceMapping() {
+			if bestMapping == nil || mapping.GeneratedCharacter > bestMapping.GeneratedCharacter {
+				bestMapping = mapping
+			}
+		}
+	}
+
+	if bestMapping == nil || int(bestMapping.SourceIndex) >= len(sourceMapData.Sources) {
+		return nil
+	}
+
+	sourceFileName := sourceMapData.Sources[bestMapping.SourceIndex]
+	if !filepath.IsAbs(sourceFileName) {
+		if sourceMapData.SourceRoot != "" {
+			sourceFileName = filepath.Join(sourceMapData.SourceRoot, sourceFileName)
+		}
+		sourceFileName = tspath.NormalizePath(filepath.Join(filepath.Dir(declFileName), sourceFileName))
+	}
+
+	if !fs.FileExists(sourceFileName) {
+		return nil
+	}
+
+	sourceContent, ok := fs.ReadFile(sourceFileName)
+	if !ok {
+		return nil
+	}
+
+	sourceFileScript := &sourceFileScript{
+		fileName: sourceFileName,
+		text:     sourceContent,
+		lineMap:  ComputeLineStarts(sourceContent).LineStarts,
+	}
+
+	sourceLspPosition := lsproto.Position{
+		Line:      uint32(bestMapping.SourceLine),
+		Character: uint32(bestMapping.SourceCharacter),
+	}
+
+	var sourceStartLsp, sourceEndLsp lsproto.Position
+
+	var symbolName string
+	if node.Kind == ast.KindIdentifier || node.Kind == ast.KindPrivateIdentifier {
+		symbolName = node.Text()
+	}
+	if symbolName != "" {
+		sourceBytePos := l.converters.LineAndCharacterToPosition(sourceFileScript, sourceLspPosition)
+		if symbolStart := findSymbolNearPosition(sourceContent, symbolName, int(sourceBytePos)); symbolStart != -1 {
+			sourceStartPos := core.TextPos(symbolStart)
+			sourceEndPos := core.TextPos(symbolStart + len(symbolName))
+			sourceStartLsp = l.converters.PositionToLineAndCharacter(sourceFileScript, sourceStartPos)
+			sourceEndLsp = l.converters.PositionToLineAndCharacter(sourceFileScript, sourceEndPos)
+		}
+	}
+
+	if sourceStartLsp == (lsproto.Position{}) {
+		sourceStartLsp = sourceLspPosition
+		sourceEndLsp = sourceLspPosition
+	}
+
+	return &lsproto.Location{
+		Uri: FileNameToDocumentURI(sourceFileName),
+		Range: lsproto.Range{
+			Start: sourceStartLsp,
+			End:   sourceEndLsp,
+		},
+	}
+}
+
+type sourceFileScript struct {
+	fileName string
+	text     string
+	lineMap  []core.TextPos
+}
+
+func (s *sourceFileScript) FileName() string {
+	return s.fileName
+}
+
+func (s *sourceFileScript) Text() string {
+	return s.text
+}
+
+func (s *sourceFileScript) LineMap() []core.TextPos {
+	return s.lineMap
+}
+
+func findSymbolNearPosition(text, symbolName string, targetPos int) int {
+	if symbolName == "" {
+		return -1
+	}
+
+	symbolLen := len(symbolName)
+	textLen := len(text)
+	bestMatch := -1
+	bestDistance := math.MaxInt
+
+	pos := strings.Index(text, symbolName)
+	for pos >= 0 {
+		if (pos == 0 || !scanner.IsIdentifierPart(rune(text[pos-1]))) &&
+			(pos+symbolLen >= textLen || !scanner.IsIdentifierPart(rune(text[pos+symbolLen]))) {
+
+			distance := targetPos - pos
+			if distance < 0 {
+				distance = -distance
+			}
+
+			if distance < bestDistance {
+				bestDistance = distance
+				bestMatch = pos
+			}
+		}
+
+		nextPos := strings.Index(text[pos+1:], symbolName)
+		if nextPos >= 0 {
+			pos = pos + 1 + nextPos
+		} else {
+			pos = -1
+		}
+	}
+
+	return bestMatch
 }

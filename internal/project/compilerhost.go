@@ -144,7 +144,7 @@ func (fs *compilerFS) ReadFile(path string) (contents string, ok bool) {
 	if fh := fs.source.GetFile(path); fh != nil {
 		return fh.Content(), true
 	}
-	return "", false
+	return fs.source.FS().ReadFile(path)
 }
 
 // Realpath implements vfs.FS.
