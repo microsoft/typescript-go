@@ -1077,7 +1077,7 @@ export const buildNativePreviewPackages = task({
         const inputPackageJson = JSON.parse(fs.readFileSync(path.join(inputDir, "package.json"), "utf8"));
         inputPackageJson.version = getVersion();
         delete inputPackageJson.private;
-        delete inputPackageJson.engines.node;
+        delete inputPackageJson.engines;
 
         const { stdout: gitHead } = await $pipe`git rev-parse HEAD`;
         inputPackageJson.gitHead = gitHead;
