@@ -2,5 +2,6 @@ completionListInClosedFunction05
 completionsAtIncompleteObjectLiteralProperty
 completionsSelfDeclaring1
 completionsWithDeprecatedTag4
-tsxCompletion12
+renameDefaultKeyword
 renameForDefaultExport01
+tsxCompletion12
