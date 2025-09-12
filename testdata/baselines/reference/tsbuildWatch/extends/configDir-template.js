@@ -133,8 +133,6 @@ SemanticDiagnostics::
 *refresh*    /home/src/projects/myproject/types/sometype.ts
 *refresh*    /home/src/projects/myproject/main.ts
 Signatures::
-(stored at emit) /home/src/projects/myproject/types/sometype.ts
-(stored at emit) /home/src/projects/myproject/main.ts
 
 
 Edit [0]:: edit extended config file
@@ -189,5 +187,3 @@ SemanticDiagnostics::
 *refresh*    /home/src/projects/myproject/types/sometype.ts
 *refresh*    /home/src/projects/myproject/main.ts
 Signatures::
-(stored at emit) /home/src/projects/myproject/types/sometype.ts
-(stored at emit) /home/src/projects/myproject/main.ts

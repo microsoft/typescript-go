@@ -157,7 +157,6 @@ SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/projects/project/a.ts
 Signatures::
-(stored at emit) /home/src/projects/project/a.ts
 
 
 Edit [2]:: no Emit run after fixing error
@@ -293,7 +292,6 @@ SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/projects/project/a.ts
 Signatures::
-(stored at emit) /home/src/projects/project/a.ts
 
 
 Edit [5]:: no Emit run when error

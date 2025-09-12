@@ -218,9 +218,6 @@ SemanticDiagnostics::
 *refresh*    /user/username/projects/noEmitOnError/src/main.ts
 *refresh*    /user/username/projects/noEmitOnError/src/other.ts
 Signatures::
-(stored at emit) /user/username/projects/noEmitOnError/shared/types/db.ts
-(stored at emit) /user/username/projects/noEmitOnError/src/main.ts
-(stored at emit) /user/username/projects/noEmitOnError/src/other.ts
 
 
 Edit [2]:: No Change
@@ -255,9 +252,6 @@ SemanticDiagnostics::
 *refresh*    /user/username/projects/noEmitOnError/src/main.ts
 *refresh*    /user/username/projects/noEmitOnError/src/other.ts
 Signatures::
-(stored at emit) /user/username/projects/noEmitOnError/shared/types/db.ts
-(stored at emit) /user/username/projects/noEmitOnError/src/main.ts
-(stored at emit) /user/username/projects/noEmitOnError/src/other.ts
 
 
 Edit [3]:: semantic errors
@@ -417,9 +411,6 @@ SemanticDiagnostics::
 *refresh*    /user/username/projects/noEmitOnError/src/main.ts
 *refresh*    /user/username/projects/noEmitOnError/src/other.ts
 Signatures::
-(stored at emit) /user/username/projects/noEmitOnError/shared/types/db.ts
-(stored at emit) /user/username/projects/noEmitOnError/src/main.ts
-(stored at emit) /user/username/projects/noEmitOnError/src/other.ts
 
 
 Edit [6]:: No Change
@@ -454,9 +445,6 @@ SemanticDiagnostics::
 *refresh*    /user/username/projects/noEmitOnError/src/main.ts
 *refresh*    /user/username/projects/noEmitOnError/src/other.ts
 Signatures::
-(stored at emit) /user/username/projects/noEmitOnError/shared/types/db.ts
-(stored at emit) /user/username/projects/noEmitOnError/src/main.ts
-(stored at emit) /user/username/projects/noEmitOnError/src/other.ts
 
 
 Edit [7]:: dts errors
@@ -634,9 +622,6 @@ SemanticDiagnostics::
 *refresh*    /user/username/projects/noEmitOnError/src/main.ts
 *refresh*    /user/username/projects/noEmitOnError/src/other.ts
 Signatures::
-(stored at emit) /user/username/projects/noEmitOnError/shared/types/db.ts
-(stored at emit) /user/username/projects/noEmitOnError/src/main.ts
-(stored at emit) /user/username/projects/noEmitOnError/src/other.ts
 
 
 Edit [10]:: No Change
@@ -671,6 +656,3 @@ SemanticDiagnostics::
 *refresh*    /user/username/projects/noEmitOnError/src/main.ts
 *refresh*    /user/username/projects/noEmitOnError/src/other.ts
 Signatures::
-(stored at emit) /user/username/projects/noEmitOnError/shared/types/db.ts
-(stored at emit) /user/username/projects/noEmitOnError/src/main.ts
-(stored at emit) /user/username/projects/noEmitOnError/src/other.ts

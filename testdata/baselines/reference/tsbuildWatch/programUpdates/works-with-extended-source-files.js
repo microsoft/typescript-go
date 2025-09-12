@@ -601,9 +601,6 @@ SemanticDiagnostics::
 *refresh*    /user/username/projects/project/other.ts
 *refresh*    /user/username/projects/project/other2.ts
 Signatures::
-(computed .d.ts) /user/username/projects/project/commonFile1.ts
-(computed .d.ts) /user/username/projects/project/commonFile2.ts
-(computed .d.ts) /user/username/projects/project/other2.ts
 
 
 Edit [3]:: update aplha config
