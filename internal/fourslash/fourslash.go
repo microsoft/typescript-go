@@ -837,33 +837,23 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 		}
 
 		var resultAsLocations []lsproto.Location
-		var additionalSpan *lsproto.Location
 		if result.Locations != nil {
 			resultAsLocations = *result.Locations
 		} else if result.Location != nil {
 			resultAsLocations = []lsproto.Location{*result.Location}
 		} else if result.DefinitionLinks != nil {
-			// For DefinitionLinks, extract the target locations and optionally set additionalSpan
+			// For DefinitionLinks, extract the target locations
 			resultAsLocations = core.Map(*result.DefinitionLinks, func(link *lsproto.LocationLink) lsproto.Location {
 				return lsproto.Location{
 					Uri:   link.TargetUri,
 					Range: link.TargetSelectionRange,
 				}
 			})
-
-			// If there's a single result and it has an origin selection range, use it as additionalSpan
-			if len(*result.DefinitionLinks) == 1 && (*result.DefinitionLinks)[0].OriginSelectionRange != nil {
-				additionalSpan = &lsproto.Location{
-					Uri:   ls.FileNameToDocumentURI(markerOrRange.GetMarker().FileName()),
-					Range: *(*result.DefinitionLinks)[0].OriginSelectionRange,
-				}
-			}
 		}
 
 		f.addResultToBaseline(t, "goToDefinition", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
-			marker:         markerOrRange,
-			markerName:     "/*GOTO DEF*/",
-			additionalSpan: additionalSpan,
+			marker:     markerOrRange,
+			markerName: "/*GOTO DEF*/",
 		}))
 	}
 }

@@ -144,62 +144,6 @@ func (l *LanguageService) createLocationLinksFromDeclarations(declarations []*as
 	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{DefinitionLinks: &links}
 }
 
-func (l *LanguageService) createDefinitionResponse(declarations []*ast.Node, originNode *ast.Node, originFile *ast.SourceFile, clientCapabilities *lsproto.DefinitionClientCapabilities) lsproto.DefinitionResponse {
-	// Check if client supports LocationLink
-	if clientCapabilities != nil && clientCapabilities.LinkSupport != nil && *clientCapabilities.LinkSupport {
-		return l.createLocationLinksFromDeclarations(declarations, originNode, originFile)
-	}
-	// Fall back to traditional Location response
-	return l.createLocationsFromDeclarations(declarations)
-}
-
-func (l *LanguageService) createLocationLinksFromDeclarations(declarations []*ast.Node, originNode *ast.Node, originFile *ast.SourceFile) lsproto.DefinitionResponse {
-	links := make([]*lsproto.LocationLink, 0, len(declarations))
-	
-	// Calculate origin selection range (the "bound span")
-	originSelectionRange := l.createLspRangeFromNode(originNode, originFile)
-	
-	for _, decl := range declarations {
-		file := ast.GetSourceFileOfNode(decl)
-		name := core.OrElse(ast.GetNameOfDeclaration(decl), decl)
-		
-		// For targetRange, use the full declaration range
-		var targetRange *lsproto.Range
-		if decl.Body() != nil {
-			// For declarations with body, include the full declaration
-			targetRange = l.createLspRangeFromBounds(scanner.GetTokenPosOfNode(decl, file, false), decl.End(), file)
-		} else {
-			// For declarations without body, use the declaration itself
-			targetRange = l.createLspRangeFromNode(decl, file)
-		}
-		
-		// For targetSelectionRange, use just the name/identifier part
-		targetSelectionRange := l.createLspRangeFromNode(name, file)
-		
-		link := &lsproto.LocationLink{
-			OriginSelectionRange: originSelectionRange,
-			TargetUri:            FileNameToDocumentURI(file.FileName()),
-			TargetRange:          *targetRange,
-			TargetSelectionRange: *targetSelectionRange,
-		}
-		
-		// Add unique links only (matching the AppendIfUnique logic from createLocationsFromDeclarations)
-		isUnique := true
-		for _, existing := range links {
-			if existing.TargetUri == link.TargetUri && 
-			   existing.TargetSelectionRange.Start == link.TargetSelectionRange.Start &&
-			   existing.TargetSelectionRange.End == link.TargetSelectionRange.End {
-				isUnique = false
-				break
-			}
-		}
-		if isUnique {
-			links = append(links, link)
-		}
-	}
-	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{DefinitionLinks: &links}
-}
-
 func (l *LanguageService) createLocationsFromDeclarations(declarations []*ast.Node) lsproto.DefinitionResponse {
 	locations := make([]lsproto.Location, 0, len(declarations))
 	for _, decl := range declarations {
