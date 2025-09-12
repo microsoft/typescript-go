@@ -290,7 +290,7 @@ func (s *testSys) GetTrace(w io.Writer) func(str string) {
 
 func (s *testSys) writeHeaderToBaseline(builder *strings.Builder, program *incremental.Program) {
 	if builder.Len() != 0 {
-		builder.Write([]byte("\n"))
+		builder.WriteString("\n")
 	}
 
 	if configFilePath := program.Options().ConfigFilePath; configFilePath != "" {
