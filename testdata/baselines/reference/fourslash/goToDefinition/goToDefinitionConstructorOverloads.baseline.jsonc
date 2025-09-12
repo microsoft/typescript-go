@@ -34,8 +34,8 @@
 // === goToDefinition ===
 // === /goToDefinitionConstructorOverloads.ts ===
 // class ConstructorOverload {
-//     /*GOTO DEF*/[|constructor();|]
-//     [|constructor(foo: string);|]
+//     /*GOTO DEF*/constructor();
+//     constructor(foo: string);
 //     [|constructor(foo: any)  { }|]
 // }
 // 
