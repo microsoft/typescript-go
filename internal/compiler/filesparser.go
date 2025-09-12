@@ -240,6 +240,9 @@ func (w *filesParser) collect(loader *fileLoader, tasks []*parseTask, iterate fu
 
 func (w *filesParser) collectWorker(loader *fileLoader, tasks []*parseTask, iterate func(*parseTask), seen collections.Set[*parseTask]) {
 	for _, task := range tasks {
+		// Exclude automatic type directive tasks from include reason processing,
+		// as these are internal implementation details and should not contribute
+		// to the reasons for including files.
 		if task.redirectedParseTask == nil && !task.isForAutomaticTypeDirective {
 			includeReason := task.includeReason
 			if task.loadedTask != nil {
