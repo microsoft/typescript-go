@@ -242,13 +242,19 @@ func (w *filesParser) collectWorker(loader *fileLoader, tasks []*parseTask, iter
 	for _, task := range tasks {
 		if task.redirectedParseTask == nil {
 			includeReason := task.includeReason
+			path := task.path
 			if task.loadedTask != nil {
 				task = task.loadedTask
+				if task.redirectedParseTask != nil {
+					path = task.redirectedParseTask.path
+				} else {
+					path = task.path
+				}
 			}
-			if existing, ok := loader.includeProcessor.fileIncludeReasons[task.path]; ok {
-				loader.includeProcessor.fileIncludeReasons[task.path] = append(existing, includeReason)
+			if existing, ok := loader.includeProcessor.fileIncludeReasons[path]; ok {
+				loader.includeProcessor.fileIncludeReasons[path] = append(existing, includeReason)
 			} else {
-				loader.includeProcessor.fileIncludeReasons[task.path] = []*fileIncludeReason{includeReason}
+				loader.includeProcessor.fileIncludeReasons[path] = []*fileIncludeReason{includeReason}
 			}
 		}
 		// ensure we only walk each task once
