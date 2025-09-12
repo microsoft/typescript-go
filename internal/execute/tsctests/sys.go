@@ -362,7 +362,7 @@ func (s *testSys) baselinePrograms(baseline *strings.Builder, header string) str
 	s.programBaselines.Reset()
 	var result string
 	if s.programIncludeBaselines.Len() > 0 {
-		result += fmt.Sprintf("\n\n%s\n!!! Include reasons expectations dont match pls review!!!\n", header)
+		result += fmt.Sprintf("\n\n%s\n!!! Include reasons expectations don't match pls review!!!\n", header)
 		result += s.programIncludeBaselines.String()
 		s.programIncludeBaselines.Reset()
 		baseline.WriteString(result)
