@@ -2,6 +2,7 @@ package ls
 
 import (
 	"context"
+	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
@@ -46,42 +47,14 @@ func (l *LanguageService) ProvideDefinition(ctx context.Context, documentURI lsp
 		}
 	}
 
-	if calledDeclaration := tryGetSignatureDeclaration(c, node); calledDeclaration != nil {
-		return l.createDefinitionResponse([]*ast.Node{calledDeclaration}, node, file, clientCapabilities), nil
+	declarations := getDeclarationsFromLocation(c, node)
+	calledDeclaration := tryGetSignatureDeclaration(c, node)
+	if calledDeclaration != nil {
+		// If we can resolve a call signature, remove all function-like declarations and add that signature.
+		nonFunctionDeclarations := core.Filter(slices.Clip(declarations), func(node *ast.Node) bool { return !ast.IsFunctionLike(node) })
+		declarations = append(nonFunctionDeclarations, calledDeclaration)
 	}
-
-	if ast.IsIdentifier(node) && ast.IsShorthandPropertyAssignment(node.Parent) {
-		return l.createDefinitionResponse(c.GetResolvedSymbol(node).Declarations, node, file, clientCapabilities), nil
-	}
-
-	node = getDeclarationNameForKeyword(node)
-
-	if symbol := c.GetSymbolAtLocation(node); symbol != nil {
-		if symbol.Flags&ast.SymbolFlagsClass != 0 && symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsVariable) == 0 && node.Kind == ast.KindConstructorKeyword {
-			if constructor := symbol.Members[ast.InternalSymbolNameConstructor]; constructor != nil {
-				symbol = constructor
-			}
-		}
-		if symbol.Flags&ast.SymbolFlagsAlias != 0 {
-			if resolved, ok := c.ResolveAlias(symbol); ok {
-				symbol = resolved
-			}
-		}
-		if symbol.Flags&(ast.SymbolFlagsProperty|ast.SymbolFlagsMethod|ast.SymbolFlagsAccessor) != 0 && symbol.Parent != nil && symbol.Parent.Flags&ast.SymbolFlagsObjectLiteral != 0 {
-			if objectLiteral := core.FirstOrNil(symbol.Parent.Declarations); objectLiteral != nil {
-				if declarations := c.GetContextualDeclarationsForObjectLiteralElement(objectLiteral, symbol.Name); len(declarations) != 0 {
-					return l.createDefinitionResponse(declarations, node, file, clientCapabilities), nil
-				}
-			}
-		}
-		return l.createDefinitionResponse(symbol.Declarations, node, file, clientCapabilities), nil
-	}
-
-	if indexInfos := c.GetIndexSignaturesAtLocation(node); len(indexInfos) != 0 {
-		return l.createDefinitionResponse(indexInfos, node, file, clientCapabilities), nil
-	}
-
-	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{}, nil
+	return l.createDefinitionResponse(declarations, node, file, clientCapabilities), nil
 }
 
 func (l *LanguageService) ProvideTypeDefinition(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position) (lsproto.DefinitionResponse, error) {
@@ -171,18 +144,71 @@ func (l *LanguageService) createLocationLinksFromDeclarations(declarations []*as
 	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{DefinitionLinks: &links}
 }
 
+func (l *LanguageService) createDefinitionResponse(declarations []*ast.Node, originNode *ast.Node, originFile *ast.SourceFile, clientCapabilities *lsproto.DefinitionClientCapabilities) lsproto.DefinitionResponse {
+	// Check if client supports LocationLink
+	if clientCapabilities != nil && clientCapabilities.LinkSupport != nil && *clientCapabilities.LinkSupport {
+		return l.createLocationLinksFromDeclarations(declarations, originNode, originFile)
+	}
+	// Fall back to traditional Location response
+	return l.createLocationsFromDeclarations(declarations)
+}
+
+func (l *LanguageService) createLocationLinksFromDeclarations(declarations []*ast.Node, originNode *ast.Node, originFile *ast.SourceFile) lsproto.DefinitionResponse {
+	links := make([]*lsproto.LocationLink, 0, len(declarations))
+	
+	// Calculate origin selection range (the "bound span")
+	originSelectionRange := l.createLspRangeFromNode(originNode, originFile)
+	
+	for _, decl := range declarations {
+		file := ast.GetSourceFileOfNode(decl)
+		name := core.OrElse(ast.GetNameOfDeclaration(decl), decl)
+		
+		// For targetRange, use the full declaration range
+		var targetRange *lsproto.Range
+		if decl.Body() != nil {
+			// For declarations with body, include the full declaration
+			targetRange = l.createLspRangeFromBounds(scanner.GetTokenPosOfNode(decl, file, false), decl.End(), file)
+		} else {
+			// For declarations without body, use the declaration itself
+			targetRange = l.createLspRangeFromNode(decl, file)
+		}
+		
+		// For targetSelectionRange, use just the name/identifier part
+		targetSelectionRange := l.createLspRangeFromNode(name, file)
+		
+		link := &lsproto.LocationLink{
+			OriginSelectionRange: originSelectionRange,
+			TargetUri:            FileNameToDocumentURI(file.FileName()),
+			TargetRange:          *targetRange,
+			TargetSelectionRange: *targetSelectionRange,
+		}
+		
+		// Add unique links only (matching the AppendIfUnique logic from createLocationsFromDeclarations)
+		isUnique := true
+		for _, existing := range links {
+			if existing.TargetUri == link.TargetUri && 
+			   existing.TargetSelectionRange.Start == link.TargetSelectionRange.Start &&
+			   existing.TargetSelectionRange.End == link.TargetSelectionRange.End {
+				isUnique = false
+				break
+			}
+		}
+		if isUnique {
+			links = append(links, link)
+		}
+	}
+	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{DefinitionLinks: &links}
+}
+
 func (l *LanguageService) createLocationsFromDeclarations(declarations []*ast.Node) lsproto.DefinitionResponse {
-	someHaveBody := core.Some(declarations, func(node *ast.Node) bool { return node.Body() != nil })
 	locations := make([]lsproto.Location, 0, len(declarations))
 	for _, decl := range declarations {
-		if !someHaveBody || decl.Body() != nil {
-			file := ast.GetSourceFileOfNode(decl)
-			name := core.OrElse(ast.GetNameOfDeclaration(decl), decl)
-			locations = append(locations, lsproto.Location{
-				Uri:   FileNameToDocumentURI(file.FileName()),
-				Range: *l.createLspRangeFromNode(name, file),
-			})
-		}
+		file := ast.GetSourceFileOfNode(decl)
+		name := core.OrElse(ast.GetNameOfDeclaration(decl), decl)
+		locations = core.AppendIfUnique(locations, lsproto.Location{
+			Uri:   FileNameToDocumentURI(file.FileName()),
+			Range: *l.createLspRangeFromNode(name, file),
+		})
 	}
 	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{Locations: &locations}
 }
@@ -196,7 +222,38 @@ func (l *LanguageService) createLocationFromFileAndRange(file *ast.SourceFile, t
 	}
 }
 
-/** Returns a CallLikeExpression where `node` is the target being invoked. */
+func getDeclarationsFromLocation(c *checker.Checker, node *ast.Node) []*ast.Node {
+	if ast.IsIdentifier(node) && ast.IsShorthandPropertyAssignment(node.Parent) {
+		return c.GetResolvedSymbol(node).Declarations
+	}
+	node = getDeclarationNameForKeyword(node)
+	if symbol := c.GetSymbolAtLocation(node); symbol != nil {
+		if symbol.Flags&ast.SymbolFlagsClass != 0 && symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsVariable) == 0 && node.Kind == ast.KindConstructorKeyword {
+			if constructor := symbol.Members[ast.InternalSymbolNameConstructor]; constructor != nil {
+				symbol = constructor
+			}
+		}
+		if symbol.Flags&ast.SymbolFlagsAlias != 0 {
+			if resolved, ok := c.ResolveAlias(symbol); ok {
+				symbol = resolved
+			}
+		}
+		if symbol.Flags&(ast.SymbolFlagsProperty|ast.SymbolFlagsMethod|ast.SymbolFlagsAccessor) != 0 && symbol.Parent != nil && symbol.Parent.Flags&ast.SymbolFlagsObjectLiteral != 0 {
+			if objectLiteral := core.FirstOrNil(symbol.Parent.Declarations); objectLiteral != nil {
+				if declarations := c.GetContextualDeclarationsForObjectLiteralElement(objectLiteral, symbol.Name); len(declarations) != 0 {
+					return declarations
+				}
+			}
+		}
+		return symbol.Declarations
+	}
+	if indexInfos := c.GetIndexSignaturesAtLocation(node); len(indexInfos) != 0 {
+		return indexInfos
+	}
+	return nil
+}
+
+// Returns a CallLikeExpression where `node` is the target being invoked.
 func getAncestorCallLikeExpression(node *ast.Node) *ast.Node {
 	target := ast.FindAncestor(node, func(n *ast.Node) bool {
 		return !isRightSideOfPropertyAccess(n)

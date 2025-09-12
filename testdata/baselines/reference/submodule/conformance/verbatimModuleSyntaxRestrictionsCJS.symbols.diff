@@ -10,6 +10,7 @@
 
  import("./decl"); // error
 ->"./decl" : Symbol("/decl", Decl(decl.d.ts, 0, 0))
--
++>"./decl" : Symbol(esmy2, Decl(decl.d.ts, 0, 0))
+
  type T = typeof import("./decl"); // ok
  >T : Symbol(T, Decl(main.ts, 4, 17))

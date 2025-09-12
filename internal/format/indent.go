@@ -7,6 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
@@ -45,7 +46,7 @@ func getIndentationForNodeWorker(
 		if useActualIndentation {
 			// check if current node is a list item - if yes, take indentation from it
 			var firstListChild *ast.Node
-			containerList := getContainingList(current, sourceFile)
+			containerList := GetContainingList(current, sourceFile)
 			if containerList != nil {
 				firstListChild = core.FirstOrNil(containerList.Nodes)
 			}
@@ -139,7 +140,7 @@ func getActualIndentationForListItem(node *ast.Node, sourceFile *ast.SourceFile,
 		// VariableDeclarationList has no wrapping tokens
 		return -1
 	}
-	containingList := getContainingList(node, sourceFile)
+	containingList := GetContainingList(node, sourceFile)
 	if containingList != nil {
 		index := core.FindIndex(containingList.Nodes, func(e *ast.Node) bool { return e == node })
 		if index != -1 {
@@ -170,7 +171,7 @@ func getActualIndentationForListStartLine(list *ast.NodeList, sourceFile *ast.So
 }
 
 func deriveActualIndentationFromList(list *ast.NodeList, index int, sourceFile *ast.SourceFile, options *FormatCodeSettings) int {
-	// Debug.assert(index >= 0 && index < list.length); // !!!
+	debug.Assert(list != nil && index >= 0 && index < len(list.Nodes))
 
 	node := list.Nodes[index]
 
@@ -196,10 +197,10 @@ func deriveActualIndentationFromList(list *ast.NodeList, index int, sourceFile *
 
 func findColumnForFirstNonWhitespaceCharacterInLine(line int, char int, sourceFile *ast.SourceFile, options *FormatCodeSettings) int {
 	lineStart := scanner.GetPositionOfLineAndCharacter(sourceFile, line, 0)
-	return findFirstNonWhitespaceColumn(lineStart, lineStart+char, sourceFile, options)
+	return FindFirstNonWhitespaceColumn(lineStart, lineStart+char, sourceFile, options)
 }
 
-func findFirstNonWhitespaceColumn(startPos int, endPos int, sourceFile *ast.SourceFile, options *FormatCodeSettings) int {
+func FindFirstNonWhitespaceColumn(startPos int, endPos int, sourceFile *ast.SourceFile, options *FormatCodeSettings) int {
 	_, col := findFirstNonWhitespaceCharacterAndColumn(startPos, endPos, sourceFile, options)
 	return col
 }
@@ -238,7 +239,7 @@ func findFirstNonWhitespaceCharacterAndColumn(startPos int, endPos int, sourceFi
 func childStartsOnTheSameLineWithElseInIfStatement(parent *ast.Node, child *ast.Node, childStartLine int, sourceFile *ast.SourceFile) bool {
 	if parent.Kind == ast.KindIfStatement && parent.AsIfStatement().ElseStatement == child {
 		elseKeyword := astnav.FindPrecedingToken(sourceFile, child.Pos())
-		// Debug.assert(elseKeyword !== undefined); // !!!
+		debug.AssertIsDefined(elseKeyword)
 		elseKeywordStartLine, _ := getStartLineAndCharacterForNode(elseKeyword, sourceFile)
 		return elseKeywordStartLine == childStartLine
 	}
@@ -249,7 +250,7 @@ func getStartLineAndCharacterForNode(n *ast.Node, sourceFile *ast.SourceFile) (l
 	return scanner.GetLineAndCharacterOfPosition(sourceFile, scanner.GetTokenPosOfNode(n, sourceFile, false))
 }
 
-func getContainingList(node *ast.Node, sourceFile *ast.SourceFile) *ast.NodeList {
+func GetContainingList(node *ast.Node, sourceFile *ast.SourceFile) *ast.NodeList {
 	if node.Parent == nil {
 		return nil
 	}
@@ -348,7 +349,7 @@ func getVisualListRange(node *ast.Node, list core.TextRange, sourceFile *ast.Sou
 }
 
 func getContainingListOrParentStart(parent *ast.Node, child *ast.Node, sourceFile *ast.SourceFile) (line int, character int) {
-	containingList := getContainingList(child, sourceFile)
+	containingList := GetContainingList(child, sourceFile)
 	var startPos int
 	if containingList != nil {
 		startPos = containingList.Loc.Pos()

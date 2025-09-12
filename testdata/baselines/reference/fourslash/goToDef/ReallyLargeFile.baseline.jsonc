@@ -1,8 +1,0 @@
-// === goToDefinition ===
-// === /file.d.ts ===
-
-// namespace /*GO TO DEFINITION*/[|{ textSpan: true |}Foo|] {
-// 
-// 
-// 
-// // --- (line: 5) skipped ---

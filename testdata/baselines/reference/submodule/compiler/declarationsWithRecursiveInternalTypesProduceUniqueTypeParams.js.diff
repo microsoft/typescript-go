@@ -6,30 +6,10 @@
  "use strict";
 -// Note that both of the following have an `any` in their return type from where we bottom out the type printout
 -// for having too many instances of the same symbol nesting.
--var __assign = (this && this.__assign) || function () {
--    __assign = Object.assign || function(t) {
--        for (var s, i = 1, n = arguments.length; i < n; i++) {
--            s = arguments[i];
--            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
--                t[p] = s[p];
--        }
--        return t;
--    };
--    return __assign.apply(this, arguments);
--};
- Object.defineProperty(exports, "__esModule", { value: true });
- exports.testRecFun = exports.updateIfChanged = void 0;
- const updateIfChanged = (t) => {
-@@= skipped -29, +16 lines =@@
- const testRecFun = (parent) => {
-     return {
-         result: parent,
--        deeper: (child) => (0, exports.testRecFun)(__assign(__assign({}, parent), child))
-+        deeper: (child) => (0, exports.testRecFun)({ ...parent, ...child })
-     };
- };
- exports.testRecFun = testRecFun;
-@@= skipped -16, +16 lines =@@
+ var __assign = (this && this.__assign) || function () {
+     __assign = Object.assign || function(t) {
+         for (var s, i = 1, n = arguments.length; i < n; i++) {
+@@= skipped -45, +43 lines =@@
 
 
  //// [declarationsWithRecursiveInternalTypesProduceUniqueTypeParams.d.ts]
@@ -68,7 +48,7 @@
 -}) & {
 -    map: (updater: (u: Value<K_1, Value<K, T>>) => Value<K_1, Value<K, T>>) => T;
 -    set: (newU: Value<K_1, Value<K, T>>) => T;
-+export declare const updateIfChanged: <T>(t: T) => (<K extends keyof T>(key: K) => (<K extends keyof Value<K_1, T>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, T>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, T>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, T>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, T>>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, Value<K_6, T>>>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, Value<K_6, Value<K_7, T>>>>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, Value<K_6, Value<K_7, Value<K_8, T>>>>>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, Value<K_6, Value<K_7, Value<K_8, Value<K_9, T>>>>>>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, Value<K_6, Value<K_7, Value<K_8, Value<K_9, Value<K_10, T>>>>>>>>>>>(key: K) => any & {
++export declare const updateIfChanged: <T>(t: T) => (<K extends keyof T>(key: K) => (<K extends keyof Value<K_1, T>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, T>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, T>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, T>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, T>>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, Value<K_6, T>>>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, Value<K_6, Value<K_7, T>>>>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, Value<K_6, Value<K_7, Value<K_8, T>>>>>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, Value<K_6, Value<K_7, Value<K_8, Value<K_9, T>>>>>>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, Value<K_6, Value<K_7, Value<K_8, Value<K_9, Value<K_10, T>>>>>>>>>>>(key: K) => /*elided*/ any & {
 +    map: (updater: (u: Value<K, Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, Value<K_6, Value<K_7, Value<K_8, Value<K_9, Value<K_10, T>>>>>>>>>>>) => Value<K, Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, Value<K_6, Value<K_7, Value<K_8, Value<K_9, Value<K_10, T>>>>>>>>>>>) => T;
 +    set: (newU: Value<K, Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, Value<K_6, Value<K_7, Value<K_8, Value<K_9, Value<K_10, T>>>>>>>>>>>) => T;
 +}) & {
@@ -147,7 +127,7 @@
 +                                        result: T & U_1 & U_2 & U_3 & U_4 & U_5 & U_6 & U_7 & U_8 & U;
 +                                        deeper: <U extends Object>(child: U) => {
 +                                            result: T & U_1 & U_2 & U_3 & U_4 & U_5 & U_6 & U_7 & U_8 & U_9 & U;
-+                                            deeper: <U extends Object>(child: U) => any;
++                                            deeper: <U extends Object>(child: U) => /*elided*/ any;
                                          };
                                      };
                                  };
@@ -433,7 +413,7 @@
 +    // Slightly simplified repro from https://github.com/microsoft/TypeScript/issues/30732 so it's easier to read and debug
 +    export type Key<U> = keyof U;
 +    export type Value<K extends Key<U>, U> = U[K];
-+    export declare const updateIfChanged: <T>(t: T) => (<K extends keyof T>(key: K) => (<K extends keyof Value<K_1, T>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, T>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, T>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, T>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, T>>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, Value<K_6, T>>>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, Value<K_6, Value<K_7, T>>>>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, Value<K_6, Value<K_7, Value<K_8, T>>>>>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, Value<K_6, Value<K_7, Value<K_8, Value<K_9, T>>>>>>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, Value<K_6, Value<K_7, Value<K_8, Value<K_9, Value<K_10, T>>>>>>>>>>>(key: K) => any & {
++    export declare const updateIfChanged: <T>(t: T) => (<K extends keyof T>(key: K) => (<K extends keyof Value<K_1, T>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, T>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, T>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, T>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, T>>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, Value<K_6, T>>>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, Value<K_6, Value<K_7, T>>>>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, Value<K_6, Value<K_7, Value<K_8, T>>>>>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, Value<K_6, Value<K_7, Value<K_8, Value<K_9, T>>>>>>>>>>(key: K) => (<K extends keyof Value<K_1, Value<K_2, Value<K_3, Value<K_4, Value<K_5, Value<K_6, Value<K_7, Value<K_8, Value<K_9, Value<K_10, T>>>>>>>>>>>(key: K) => /*elided*/ any & {
 +                                                                                                               ~~~
 +!!! error TS2304: Cannot find name 'K_1'.
 +                                                                                                                                                           ~~~
@@ -1023,7 +1003,7 @@
 +!!! error TS2304: Cannot find name 'U_8'.
 +                                                                                                            ~~~
 +!!! error TS2304: Cannot find name 'U_9'.
-+                                                deeper: <U extends Object>(child: U) => any;
++                                                deeper: <U extends Object>(child: U) => /*elided*/ any;
 +                                            };
 +                                        };
 +                                    };

@@ -105,8 +105,30 @@ func TestParsedCommandLine(t *testing.T) {
 					"/dev/b.ts",
 				})
 
-				emptyParsedCommandLine := tsoptions.ReloadFileNamesOfParsedCommandLine(parsedCommandLine, noFilesFS)
+				emptyParsedCommandLine := parsedCommandLine.ReloadFileNamesOfParsedCommandLine(noFilesFS)
 				assertMatches(t, emptyParsedCommandLine, noFiles, []string{
+					"/dev/a.ts",
+					"/dev/b.ts",
+				})
+			})
+
+			t.Run("duplicates", func(t *testing.T) {
+				t.Parallel()
+				parsedCommandLine := tsoptionstest.GetParsedCommandLine(
+					t,
+					`{
+						"files": [
+							"a.ts",
+							"a.ts",
+							"b.ts",
+						]
+					}`,
+					files,
+					"/dev",
+					/*useCaseSensitiveFileNames*/ true,
+				)
+
+				assert.DeepEqual(t, parsedCommandLine.LiteralFileNames(), []string{
 					"/dev/a.ts",
 					"/dev/b.ts",
 				})
@@ -135,7 +157,7 @@ func TestParsedCommandLine(t *testing.T) {
 					"/dev/b.ts",
 				})
 
-				emptyParsedCommandLine := tsoptions.ReloadFileNamesOfParsedCommandLine(parsedCommandLine, noFilesFS)
+				emptyParsedCommandLine := parsedCommandLine.ReloadFileNamesOfParsedCommandLine(noFilesFS)
 				assertMatches(t, emptyParsedCommandLine, noFiles, []string{
 					"/dev/a.ts",
 					"/dev/b.ts",
@@ -159,7 +181,7 @@ func TestParsedCommandLine(t *testing.T) {
 
 				assertMatches(t, parsedCommandLine, files, []string{})
 
-				emptyParsedCommandLine := tsoptions.ReloadFileNamesOfParsedCommandLine(parsedCommandLine, noFilesFS)
+				emptyParsedCommandLine := parsedCommandLine.ReloadFileNamesOfParsedCommandLine(noFilesFS)
 				assertMatches(t, emptyParsedCommandLine, noFiles, []string{})
 			})
 
@@ -185,7 +207,7 @@ func TestParsedCommandLine(t *testing.T) {
 					"/dev/a.ts",
 				})
 
-				emptyParsedCommandLine := tsoptions.ReloadFileNamesOfParsedCommandLine(parsedCommandLine, noFilesFS)
+				emptyParsedCommandLine := parsedCommandLine.ReloadFileNamesOfParsedCommandLine(noFilesFS)
 				assertMatches(t, emptyParsedCommandLine, noFiles, []string{
 					"/dev/a.ts",
 				})
@@ -220,7 +242,7 @@ func TestParsedCommandLine(t *testing.T) {
 					"/dev/z/aba.ts",
 				})
 
-				emptyParsedCommandLine := tsoptions.ReloadFileNamesOfParsedCommandLine(parsedCommandLine, noFilesFS)
+				emptyParsedCommandLine := parsedCommandLine.ReloadFileNamesOfParsedCommandLine(noFilesFS)
 				assertMatches(t, emptyParsedCommandLine, noFiles, []string{
 					"/dev/z/a.ts",
 					"/dev/z/aba.ts",
@@ -251,7 +273,7 @@ func TestParsedCommandLine(t *testing.T) {
 					})
 
 					// a.d.ts matches if a.ts is not already included
-					emptyParsedCommandLine := tsoptions.ReloadFileNamesOfParsedCommandLine(parsedCommandLine, noFilesFS)
+					emptyParsedCommandLine := parsedCommandLine.ReloadFileNamesOfParsedCommandLine(noFilesFS)
 					assertMatches(t, emptyParsedCommandLine, noFiles, []string{
 						"/dev/a.ts",
 						"/dev/a.d.ts",
@@ -279,7 +301,7 @@ func TestParsedCommandLine(t *testing.T) {
 						"/dev/x/b.ts",
 					})
 
-					emptyParsedCommandLine := tsoptions.ReloadFileNamesOfParsedCommandLine(parsedCommandLine, noFilesFS)
+					emptyParsedCommandLine := parsedCommandLine.ReloadFileNamesOfParsedCommandLine(noFilesFS)
 					assertMatches(t, emptyParsedCommandLine, noFiles, []string{
 						"/dev/x/a.ts",
 						"/dev/x/b.ts",
@@ -302,7 +324,7 @@ func TestParsedCommandLine(t *testing.T) {
 
 					assertMatches(t, parsedCommandLine, files, []string{})
 
-					emptyParsedCommandLine := tsoptions.ReloadFileNamesOfParsedCommandLine(parsedCommandLine, noFilesFS)
+					emptyParsedCommandLine := parsedCommandLine.ReloadFileNamesOfParsedCommandLine(noFilesFS)
 					assertMatches(t, emptyParsedCommandLine, noFiles, []string{})
 				})
 
@@ -328,7 +350,7 @@ func TestParsedCommandLine(t *testing.T) {
 						"/dev/js/b.js",
 					})
 
-					emptyParsedCommandLine := tsoptions.ReloadFileNamesOfParsedCommandLine(parsedCommandLine, noFilesFS)
+					emptyParsedCommandLine := parsedCommandLine.ReloadFileNamesOfParsedCommandLine(noFilesFS)
 					assertMatches(t, emptyParsedCommandLine, noFiles, []string{
 						"/dev/js/a.js",
 						"/dev/js/b.js",
@@ -357,7 +379,7 @@ func TestParsedCommandLine(t *testing.T) {
 						"/dev/js/ab.min.js",
 					})
 
-					emptyParsedCommandLine := tsoptions.ReloadFileNamesOfParsedCommandLine(parsedCommandLine, noFilesFS)
+					emptyParsedCommandLine := parsedCommandLine.ReloadFileNamesOfParsedCommandLine(noFilesFS)
 					assertMatches(t, emptyParsedCommandLine, noFiles, []string{
 						"/dev/js/d.min.js",
 						"/dev/js/ab.min.js",

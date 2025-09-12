@@ -1,7 +1,7 @@
 package core
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=Tristate -output=tristate_stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w tristate_stringer_generated.go
+//go:generate go tool mvdan.cc/gofumpt -w tristate_stringer_generated.go
 
 // Tristate
 
@@ -27,6 +27,10 @@ func (t Tristate) IsFalse() bool {
 
 func (t Tristate) IsFalseOrUnknown() bool {
 	return t == TSFalse || t == TSUnknown
+}
+
+func (t Tristate) IsUnknown() bool {
+	return t == TSUnknown
 }
 
 func (t Tristate) DefaultIfUnknown(value Tristate) Tristate {

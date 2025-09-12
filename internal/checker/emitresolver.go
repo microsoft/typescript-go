@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/evaluator"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
@@ -518,7 +519,7 @@ func (r *emitResolver) requiresAddingImplicitUndefined(declaration *ast.Node, sy
 		}
 		t := r.checker.getTypeOfSymbol(symbol)
 		r.checker.mappedSymbolLinks.Has(symbol)
-		return !!((symbol.Flags&ast.SymbolFlagsProperty != 0) && (symbol.Flags&ast.SymbolFlagsOptional != 0) && isOptionalDeclaration(declaration) && r.checker.ReverseMappedSymbolLinks.Has(symbol) && r.checker.ReverseMappedSymbolLinks.Get(symbol).mappedType != nil && containsNonMissingUndefinedType(r.checker, t))
+		return (symbol.Flags&ast.SymbolFlagsProperty != 0) && (symbol.Flags&ast.SymbolFlagsOptional != 0) && isOptionalDeclaration(declaration) && r.checker.ReverseMappedSymbolLinks.Has(symbol) && r.checker.ReverseMappedSymbolLinks.Get(symbol).mappedType != nil && containsNonMissingUndefinedType(r.checker, t)
 	case ast.KindParameter, ast.KindJSDocParameterTag:
 		return r.requiresAddingImplicitUndefinedWorker(declaration, enclosingDeclaration)
 	default:
@@ -551,7 +552,7 @@ func (r *emitResolver) isOptionalUninitializedParameterProperty(parameter *ast.N
 }
 
 func (r *emitResolver) isRequiredInitializedParameter(parameter *ast.Node, enclosingDeclaration *ast.Node) bool {
-	if r.checker.strictNullChecks || r.isOptionalParameter(parameter) || /*isJSDocParameterTag(parameter) ||*/ parameter.Initializer() == nil { // !!! TODO: JSDoc Support
+	if !r.checker.strictNullChecks || r.isOptionalParameter(parameter) || /*isJSDocParameterTag(parameter) ||*/ parameter.Initializer() == nil { // !!! TODO: JSDoc Support
 		return false
 	}
 	if ast.HasSyntacticModifier(parameter, ast.ModifierFlagsParameterPropertyModifier) {
@@ -574,7 +575,7 @@ func (r *emitResolver) isOptionalParameter(node *ast.Node) bool {
 	if node.Initializer() != nil {
 		signature := r.checker.getSignatureFromDeclaration(node.Parent)
 		parameterIndex := core.FindIndex(node.Parent.Parameters(), func(p *ast.ParameterDeclarationNode) bool { return p == node })
-		// Debug.assert(parameterIndex >= 0); // !!!
+		debug.Assert(parameterIndex >= 0)
 		// Only consider syntactic or instantiated parameters as optional, not `void` parameters as this function is used
 		// in grammar checks and checking for `void` too early results in parameter types widening too early
 		// and causes some noImplicitAny errors to be lost.
@@ -1023,4 +1024,11 @@ func (r *emitResolver) GetResolutionModeOverride(node *ast.Node) core.Resolution
 	r.checkerMu.Lock()
 	defer r.checkerMu.Unlock()
 	return r.checker.GetResolutionModeOverride(node.AsImportAttributes(), false)
+}
+
+func (r *emitResolver) GetConstantValue(node *ast.Node) any {
+	// node = emitContext.ParseNode(node)
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+	return r.checker.GetConstantValue(node)
 }

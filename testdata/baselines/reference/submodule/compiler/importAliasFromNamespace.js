@@ -47,7 +47,7 @@ var SomeOther;
             _which;
             constructor() {
                 Internal.getThing();
-                Internal.WhichThing.A ? "foo" : "bar";
+                0 /* Internal.WhichThing.A */ ? "foo" : "bar";
             }
         }
         Thing.Foo = Foo;
@@ -65,6 +65,7 @@ declare namespace My.Internal {
     }
 }
 //// [usage.d.ts]
+/// <reference path="internal.d.ts" preserve="true" />
 declare namespace SomeOther.Thing {
     class Foo {
         private _which;

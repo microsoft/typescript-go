@@ -1,0 +1,48 @@
+name: Create CI cache
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  schedule:
+    # Run every day at 10:00 UTC / 03:00 PST
+    - cron: '0 10 * * *'
+
+permissions:
+  contents: read
+
+# Ensure scripts are run with pipefail. See:
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#exit-codes-and-error-action-preference
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  cache:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+        go-version:
+          - '>=1.25.0'
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - run: git config --system core.longpaths true
+        if: ${{ matrix.os == 'windows-latest' }}
+
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          submodules: true
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+      - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
+
+      - uses: ./.github/actions/setup-go
+        with:
+          go-version: ${{ matrix.go-version }}
+          create: 'true'
