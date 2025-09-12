@@ -240,7 +240,7 @@ func (w *filesParser) collect(loader *fileLoader, tasks []*parseTask, iterate fu
 
 func (w *filesParser) collectWorker(loader *fileLoader, tasks []*parseTask, iterate func(*parseTask), seen collections.Set[*parseTask]) {
 	for _, task := range tasks {
-		if task.redirectedParseTask == nil {
+		if task.redirectedParseTask == nil && !task.isForAutomaticTypeDirective {
 			includeReason := task.includeReason
 			path := task.path
 			if task.loadedTask != nil {
