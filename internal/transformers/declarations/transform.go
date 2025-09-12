@@ -1498,6 +1498,9 @@ func (tx *DeclarationTransformer) ensureModifierFlags(node *ast.Node) ast.Modifi
 		mask ^= ast.ModifierFlagsAmbient
 		additions = ast.ModifierFlagsNone
 	}
+	if tx.shouldSuppressExport(node) {
+		mask ^= ast.ModifierFlagsExport
+	}
 	return maskModifierFlags(tx.host, node, mask, additions)
 }
 
@@ -1795,4 +1798,23 @@ func (tx *DeclarationTransformer) transformJSDocOptionalType(input *ast.JSDocOpt
 	}))
 	tx.EmitContext().SetOriginal(replacement, input.AsNode())
 	return replacement
+}
+
+func (tx *DeclarationTransformer) shouldSuppressExport(node *ast.Node) bool {
+	if node.Kind == ast.KindJSTypeAliasDeclaration && ast.IsSourceFile(node.Parent) && ast.IsExternalOrCommonJSModule(node.Parent.AsSourceFile()) {
+		sourceFile := node.Parent.AsSourceFile()
+		exports := []*ast.Node{
+			sourceFile.CommonJSModuleIndicator,
+			sourceFile.ExternalModuleIndicator,
+		}
+		for _, export := range exports {
+			if export == nil {
+				continue
+			}
+			if ast.IsAnyExportAssignment(export) && export.AsExportAssignment().IsExportEquals {
+				return true
+			}
+		}
+	}
+	return false
 }

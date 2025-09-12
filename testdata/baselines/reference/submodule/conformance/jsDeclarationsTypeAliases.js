@@ -132,7 +132,7 @@ export type Identity<T> = (x: T) => T;
  * @returns {T}
  */
 //// [mixed.d.ts]
-export type SomeType = {
+type SomeType = {
     x: string;
 } | number | LocalThing | ExportedThing;
 /**

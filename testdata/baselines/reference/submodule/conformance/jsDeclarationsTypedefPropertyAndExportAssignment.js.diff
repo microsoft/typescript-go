@@ -28,8 +28,9 @@
 
  //// [module.d.ts]
 -export type TaskGroupIds = "parseHTML" | "styleLayout";
-+export type TaskGroupIds = 'parseHTML' | 'styleLayout';
- export type TaskGroup = {
+-export type TaskGroup = {
++type TaskGroupIds = 'parseHTML' | 'styleLayout';
++type TaskGroup = {
      id: TaskGroupIds;
      label: string;
      traceEventNames: string[];
@@ -86,15 +87,12 @@
 -    export { TaskGroup, TaskNode, PriorTaskData };
 -}
 -type TaskGroup = import("./module.js").TaskGroup;
--type TaskNode = {
-+export type TaskGroup = import('./module.js').TaskGroup;
-+export type TaskNode = {
++type TaskGroup = import('./module.js').TaskGroup;
+ type TaskNode = {
      children: TaskNode[];
      parent: TaskNode | undefined;
-     group: TaskGroup;
- };
--type PriorTaskData = {
-+export type PriorTaskData = {
+@@= skipped -57, +35 lines =@@
+ type PriorTaskData = {
      timers: Map<string, TaskNode>;
  };
 +export = MainThreadTasks;

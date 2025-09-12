@@ -67,8 +67,11 @@
 + * @returns {T}
 + */
  //// [mixed.d.ts]
- export type SomeType = {
+-export type SomeType = {
++type SomeType = {
      x: string;
+ } | number | LocalThing | ExportedThing;
+ /**
 @@= skipped -39, +52 lines =@@
   * @param {number} x
   * @returns {SomeType}

@@ -69,10 +69,10 @@ module.exports = {
 
 
 //// [conn.d.ts]
-export type Whatever = string | number;
+type Whatever = string | number;
 export = Conn;
 //// [usage.d.ts]
-export type Conn = import("./conn");
+type Conn = import("./conn");
 /**
  * @typedef {import("./conn")} Conn
  */

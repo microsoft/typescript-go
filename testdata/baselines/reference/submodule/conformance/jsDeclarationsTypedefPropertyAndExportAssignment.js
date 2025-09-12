@@ -107,8 +107,8 @@ module.exports = MainThreadTasks;
 
 
 //// [module.d.ts]
-export type TaskGroupIds = 'parseHTML' | 'styleLayout';
-export type TaskGroup = {
+type TaskGroupIds = 'parseHTML' | 'styleLayout';
+type TaskGroup = {
     id: TaskGroupIds;
     label: string;
     traceEventNames: string[];
@@ -128,13 +128,13 @@ declare const _default: {
 };
 export = _default;
 //// [index.d.ts]
-export type TaskGroup = import('./module.js').TaskGroup;
-export type TaskNode = {
+type TaskGroup = import('./module.js').TaskGroup;
+type TaskNode = {
     children: TaskNode[];
     parent: TaskNode | undefined;
     group: TaskGroup;
 };
-export type PriorTaskData = {
+type PriorTaskData = {
     timers: Map<string, TaskNode>;
 };
 export = MainThreadTasks;
