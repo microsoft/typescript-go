@@ -242,20 +242,10 @@ func (w *filesParser) collectWorker(loader *fileLoader, tasks []*parseTask, iter
 	for _, task := range tasks {
 		if task.redirectedParseTask == nil && !task.isForAutomaticTypeDirective {
 			includeReason := task.includeReason
-			path := task.path
 			if task.loadedTask != nil {
 				task = task.loadedTask
-				if task.redirectedParseTask != nil {
-					path = task.redirectedParseTask.path
-				} else {
-					path = task.path
-				}
 			}
-			if existing, ok := loader.includeProcessor.fileIncludeReasons[path]; ok {
-				loader.includeProcessor.fileIncludeReasons[path] = append(existing, includeReason)
-			} else {
-				loader.includeProcessor.fileIncludeReasons[path] = []*fileIncludeReason{includeReason}
-			}
+			w.addIncludeReason(loader, task, includeReason)
 		}
 		// ensure we only walk each task once
 		if !task.loaded || !seen.AddIfAbsent(task) {
@@ -271,5 +261,17 @@ func (w *filesParser) collectWorker(loader *fileLoader, tasks []*parseTask, iter
 			w.collectWorker(loader, subTasks, iterate, seen)
 		}
 		iterate(task)
+	}
+}
+
+func (w *filesParser) addIncludeReason(loader *fileLoader, task *parseTask, reason *fileIncludeReason) {
+	if task.redirectedParseTask != nil {
+		w.addIncludeReason(loader, task.redirectedParseTask, reason)
+	} else if task.loaded {
+		if existing, ok := loader.includeProcessor.fileIncludeReasons[task.path]; ok {
+			loader.includeProcessor.fileIncludeReasons[task.path] = append(existing, reason)
+		} else {
+			loader.includeProcessor.fileIncludeReasons[task.path] = []*fileIncludeReason{reason}
+		}
 	}
 }
