@@ -11,7 +11,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
-	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -114,7 +113,6 @@ func (o *Orchestrator) createBuildTasks(oldTasks *collections.SyncMap[tspath.Pat
 		wg.Queue(func() {
 			path := o.toPath(config)
 			var task *buildTask
-			var program *incremental.Program
 			var buildInfo *buildInfoEntry
 			if oldTasks != nil {
 				if existing, ok := oldTasks.Load(path); ok {
@@ -122,7 +120,6 @@ func (o *Orchestrator) createBuildTasks(oldTasks *collections.SyncMap[tspath.Pat
 						// Reuse existing task if config is same
 						task = existing
 					} else {
-						program = existing.program
 						buildInfo = existing.buildInfoEntry
 					}
 				}
@@ -130,7 +127,6 @@ func (o *Orchestrator) createBuildTasks(oldTasks *collections.SyncMap[tspath.Pat
 			if task == nil {
 				task = &buildTask{config: config, isInitialCycle: oldTasks == nil}
 				task.pending.Store(true)
-				task.program = program
 				task.buildInfoEntry = buildInfo
 			}
 			if _, loaded := o.tasks.LoadOrStore(path, task); loaded {

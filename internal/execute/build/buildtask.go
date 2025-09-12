@@ -121,7 +121,7 @@ func (t *buildTask) report(orchestrator *Orchestrator, configPath tspath.Path, b
 		if orchestrator.opts.Testing != nil {
 			orchestrator.opts.Testing.OnProgram(t.program)
 		}
-		t.program.MakeReadonly()
+		t.program = nil
 		buildResult.statistics.ProjectsBuilt++
 		t.buildKind = buildKindNone
 	case buildKindPseudo:
@@ -212,11 +212,7 @@ func (t *buildTask) compileAndEmit(orchestrator *Orchestrator, path tspath.Path)
 	buildInfoReadStart := orchestrator.opts.Sys.Now()
 	var oldProgram *incremental.Program
 	if !orchestrator.opts.Command.BuildOptions.Force.IsTrue() {
-		if t.program != nil {
-			oldProgram = t.program
-		} else {
-			oldProgram = incremental.ReadBuildInfoProgram(t.resolved, orchestrator.host, orchestrator.host)
-		}
+		oldProgram = incremental.ReadBuildInfoProgram(t.resolved, orchestrator.host, orchestrator.host)
 	}
 	compileTimes.BuildInfoReadTime = orchestrator.opts.Sys.Now().Sub(buildInfoReadStart)
 	parseStart := orchestrator.opts.Sys.Now()

@@ -75,11 +75,6 @@ func (p *Program) GetProgram() *compiler.Program {
 	return p.program
 }
 
-func (p *Program) MakeReadonly() {
-	p.program = nil
-	p.testingData = nil
-}
-
 func (p *Program) HasChangedDtsFile() bool {
 	return p.snapshot.hasChangedDtsFile
 }
