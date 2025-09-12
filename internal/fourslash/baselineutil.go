@@ -15,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -58,10 +59,11 @@ func getBaselineExtension(command string) string {
 }
 
 func getBaselineOptions(command string) baseline.Options {
+	subfolder := "fourslash/" + normalizeCommandName(command)
 	switch command {
 	case "findRenameLocations":
 		return baseline.Options{
-			Subfolder:   "fourslash/" + command,
+			Subfolder:   subfolder,
 			IsSubmodule: true,
 			DiffFixupOld: func(s string) string {
 				var commandLines []string
@@ -104,9 +106,15 @@ func getBaselineOptions(command string) baseline.Options {
 		}
 	default:
 		return baseline.Options{
-			Subfolder: "fourslash/" + command,
+			Subfolder: subfolder,
 		}
 	}
+}
+
+func normalizeCommandName(command string) string {
+	words := strings.Fields(command)
+	command = strings.Join(words, "")
+	return stringutil.LowerFirstChar(command)
 }
 
 type baselineFourslashLocationsOptions struct {

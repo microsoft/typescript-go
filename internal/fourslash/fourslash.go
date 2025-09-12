@@ -7,7 +7,6 @@ import (
 	"slices"
 	"strings"
 	"testing"
-	"unicode"
 	"unicode/utf8"
 
 	"github.com/go-json-experiment/json"
@@ -20,6 +19,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/repo"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -207,8 +207,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 
 func getBaseFileNameFromTest(t *testing.T) string {
 	name := strings.TrimPrefix(t.Name(), "Test")
-	char, size := utf8.DecodeRuneInString(name)
-	return string(unicode.ToLower(char)) + name[size:]
+	return stringutil.LowerFirstChar(name)
 }
 
 func (f *FourslashTest) nextID() int32 {
