@@ -18,6 +18,14 @@ var TscBuildOption = CommandLineOption{
 	DefaultValueDescription:  false,
 }
 
+var TscMaxConcurrentProjectsOption = &CommandLineOption{
+	Name:                    "maxConcurrentProjects",
+	Category:                diagnostics.Command_line_Options,
+	Description:             diagnostics.Specify_the_maximum_number_of_projects_that_can_be_built_concurrently,
+	Kind:                    "number",
+	DefaultValueDescription: 4,
+}
+
 var optionsForBuild = []*CommandLineOption{
 	&TscBuildOption,
 	{
@@ -51,6 +59,7 @@ var optionsForBuild = []*CommandLineOption{
 		Kind:                    "boolean",
 		DefaultValueDescription: false,
 	},
+	TscMaxConcurrentProjectsOption,
 	{
 		Name:                    "stopBuildOnErrors",
 		Category:                diagnostics.Command_line_Options,

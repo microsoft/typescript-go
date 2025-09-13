@@ -63,9 +63,10 @@ type Orchestrator struct {
 	host                *host
 
 	// order generation result
-	tasks  *collections.SyncMap[tspath.Path, *buildTask]
-	order  []string
-	errors []*ast.Diagnostic
+	tasks          *collections.SyncMap[tspath.Path, *buildTask]
+	order          []string
+	errors         []*ast.Diagnostic
+	buildSemaphore chan struct{}
 
 	errorSummaryReporter tsc.DiagnosticsReporter
 	watchStatusReporter  tsc.DiagnosticReporter
@@ -381,5 +382,10 @@ func NewOrchestrator(opts Options) *Orchestrator {
 	} else {
 		orchestrator.errorSummaryReporter = tsc.CreateReportErrorSummary(opts.Sys, opts.Command.CompilerOptions)
 	}
+	maxConcurrentProjects := tsoptions.TscMaxConcurrentProjectsOption.DefaultValueDescription.(int)
+	if opts.Command.BuildOptions.MaxConcurrentProjects != nil {
+		maxConcurrentProjects = *opts.Command.BuildOptions.MaxConcurrentProjects
+	}
+	orchestrator.buildSemaphore = make(chan struct{}, maxConcurrentProjects)
 	return orchestrator
 }
