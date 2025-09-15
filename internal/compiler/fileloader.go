@@ -254,6 +254,7 @@ func processAllProgramFiles(
 		unsupportedExtensions:                unsupportedExtensions,
 		sourceFilesFoundSearchingNodeModules: sourceFilesFoundSearchingNodeModules,
 		libFiles:                             libFilesMap,
+		missingFiles:                         missingFiles,
 		includeProcessor:                     loader.includeProcessor,
 		outputFileToProjectReferenceSource:   outputFileToProjectReferenceSource,
 	}
@@ -356,7 +357,7 @@ func (p *fileLoader) addProjectReferenceTasks(singleThreaded bool) {
 					})
 				}
 			} else {
-				for outputDts := range resolved.GetOutputDeclarationFileNames() {
+				for outputDts := range resolved.GetOutputDeclarationAndSourceFileNames() {
 					if outputDts != "" {
 						p.rootTasks = append(p.rootTasks, &parseTask{
 							normalizedFilePath: outputDts,

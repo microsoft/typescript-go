@@ -1602,6 +1602,34 @@ func TestTscIncremental(t *testing.T) {
 				},
 			},
 		},
+		{
+			subScenario: "when there is bind diagnostics thats ignored",
+			files: FileMap{
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"skipLibCheck": true,
+						"incremental": true,
+					}
+				}`),
+				"/home/src/workspaces/project/a.ts": `export const a = 10;`,
+				"/home/src/workspaces/project/b.d.ts": stringtestutil.Dedent(`
+					interface NoName {
+						Profiler: new ({ sampleInterval: number, maxBufferSize: number }) => {
+							stop: () => Promise<any>;
+						};
+					}
+				`),
+			},
+			commandLineArgs: []string{""},
+			edits: []*tscEdit{
+				noChange,
+				{
+					caption:         "no change and tsc -b",
+					commandLineArgs: []string{"-b", "-v"},
+				},
+			},
+		},
 	}
 
 	for _, test := range testCases {
@@ -2521,6 +2549,62 @@ func TestTscModuleResolution(t *testing.T) {
 					},
 				},
 			},
+		},
+		{
+			subScenario: "resolution from d.ts of referenced project",
+			files: FileMap{
+				"/home/src/workspaces/project/common.d.ts": "export type OnValue = (value: number) => void",
+				"/home/src/workspaces/project/producer/index.ts": stringtestutil.Dedent(`
+                    export { ValueProducerDeclaration } from "./in-js"
+                    import { OnValue } from "@common"
+                    export interface ValueProducerFromTs {
+                        onValue: OnValue;
+                    }
+                `),
+				"/home/src/workspaces/project/producer/in-js.d.ts": stringtestutil.Dedent(`
+                    import { OnValue } from "@common"
+                    export interface ValueProducerDeclaration {
+                        onValue: OnValue;
+                    }
+                `),
+				"/home/src/workspaces/project/producer/tsconfig.json": stringtestutil.Dedent(`
+				{
+                    "compilerOptions": {
+                        "strict": true,
+                        "composite": true,
+                        "module": "nodenext",
+                        "moduleResolution": "nodenext",
+                        "paths": {
+                            "@common": ["../common.d.ts"],
+                        },
+                    },
+                }`),
+				"/home/src/workspaces/project/consumer/index.ts": stringtestutil.Dedent(`
+                    import { ValueProducerDeclaration, ValueProducerFromTs } from "@producer"
+                    declare let v: ValueProducerDeclaration;
+					// n is implicitly any because onValue is actually any (despite what the tooltip says)
+					v.onValue = (n) => {
+                    }
+                    // n is implicitly number as expected
+                    declare let v2: ValueProducerFromTs;
+                    v2.onValue = (n) => {
+                    }`),
+				"/home/src/workspaces/project/consumer/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"strict": true,
+						"module": "nodenext",
+						"moduleResolution": "nodenext",
+						"paths": {
+							"@producer": ["../producer/index"],
+						},
+					},
+					"references": [
+						{ "path": "../producer" },
+                    ],
+                }`),
+			},
+			commandLineArgs: []string{"--b", "consumer", "--traceResolution", "-v"},
 		},
 	}
 
