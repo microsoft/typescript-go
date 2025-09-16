@@ -114,7 +114,7 @@ func (t *buildTask) report(orchestrator *Orchestrator, configPath tspath.Path, b
 		buildResult.result.Status = t.result.exitStatus
 	}
 	if t.result.statistics != nil {
-		buildResult.programStats = append(buildResult.programStats, t.result.statistics)
+		buildResult.statistics.Aggregate(t.result.statistics)
 	}
 	// If we built the program, or updated timestamps, or had errors, we need to
 	// delete files that are no longer needed

@@ -27,7 +27,6 @@ type orchestratorResult struct {
 	result        tsc.CommandLineResult
 	errors        []*ast.Diagnostic
 	statistics    tsc.Statistics
-	programStats  []*tsc.Statistics
 	filesToDelete []string
 }
 
@@ -46,13 +45,10 @@ func (b *orchestratorResult) report(o *Orchestrator) {
 				}), ""),
 			))
 	}
-	if len(b.programStats) == 0 {
-		return
-	}
 	if !o.opts.Command.CompilerOptions.Diagnostics.IsTrue() && !o.opts.Command.CompilerOptions.ExtendedDiagnostics.IsTrue() {
 		return
 	}
-	b.statistics.Aggregate(b.programStats, o.opts.Sys.SinceStart())
+	b.statistics.SetTotalTime(o.opts.Sys.SinceStart())
 	b.statistics.Report(o.opts.Sys.Writer(), o.opts.Testing)
 }
 
