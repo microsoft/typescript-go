@@ -339,8 +339,9 @@ func (o *Orchestrator) buildOrClean() tsc.CommandLineResult {
 }
 
 func (o *Orchestrator) buildOrCleanProject(task *buildTask, path tspath.Path, buildResult *orchestratorResult) {
-	task.reportStatus = o.createBuilderStatusReporter(task)
-	task.diagnosticReporter = o.createDiagnosticReporter(task)
+	task.result = &taskResult{}
+	task.result.reportStatus = o.createBuilderStatusReporter(task)
+	task.result.diagnosticReporter = o.createDiagnosticReporter(task)
 	if !o.opts.Command.BuildOptions.Clean.IsTrue() {
 		task.buildProject(o, path)
 	} else {
@@ -353,7 +354,7 @@ func (o *Orchestrator) getWriter(task *buildTask) io.Writer {
 	if task == nil {
 		return o.opts.Sys.Writer()
 	}
-	return &task.builder
+	return &task.result.builder
 }
 
 func (o *Orchestrator) createBuilderStatusReporter(task *buildTask) tsc.DiagnosticReporter {
