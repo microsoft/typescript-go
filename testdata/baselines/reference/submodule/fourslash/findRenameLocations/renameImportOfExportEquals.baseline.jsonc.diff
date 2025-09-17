@@ -45,11 +45,16 @@
 
 
 
-@@= skipped -15, +13 lines =@@
+ // === findRenameLocations ===
+ // === /renameImportOfExportEquals.ts ===
+-// --- (line: 5) skipped ---
++// --- (line: 4) skipped ---
++//     export = N;
  // }
  // declare module "a" {
- //     import * as N from "mod";
+-//     import * as N from "mod";
 -//     export { /*START PREFIX*/N as /*RENAME*/[|NRENAME|] }; // Renaming N here would rename
++//     import * as [|NRENAME|] from "mod";
 +//     export { /*RENAME*/N }; // Renaming N here would rename
  // }
  // declare module "b" {
@@ -60,7 +65,7 @@
  // }
 
 
-@@= skipped -40, +40 lines =@@
+@@= skipped -55, +54 lines =@@
  // }
  // declare module "mod" {
  //     export = N;

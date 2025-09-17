@@ -11,6 +11,7 @@
 
  // === findRenameLocations ===
  // === /renameImportAndExport.ts ===
- // import a from "module";
+-// import a from "module";
 -// export { /*START PREFIX*/a as /*RENAME*/[|aRENAME|] };
++// import [|aRENAME|] from "module";
 +// export { /*RENAME*/a };

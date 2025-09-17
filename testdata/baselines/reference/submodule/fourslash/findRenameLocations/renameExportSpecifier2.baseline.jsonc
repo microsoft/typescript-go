@@ -2,5 +2,5 @@
 // @useAliasesForRename: false
 
 // === /a.ts ===
-// const name = {};
+// const [|nameRENAME|] = {};
 // export { name/*RENAME*/ };
