@@ -217,6 +217,101 @@ func (s *Server) RefreshDiagnostics(ctx context.Context) error {
 	return nil
 }
 
+func (s *Server) Configure(ctx context.Context) (*ls.UserPreferences, error) {
+	result, err := s.sendRequest(ctx, lsproto.MethodWorkspaceConfiguration, &lsproto.ConfigurationParams{
+		Items: []*lsproto.ConfigurationItem{
+			{
+				Section: ptrTo("typescript"),
+			},
+		},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("configure request failed: %w", err)
+	}
+	configs := result.([]any)
+	userPreferences := &ls.UserPreferences{}
+	for _, config := range configs {
+		if config == nil {
+			continue
+		}
+		if item, ok := config.(map[string]any); ok {
+			for name, values := range item {
+				switch name {
+				case "inlayHints":
+					inlayHintsPreferences := values.(map[string]any)
+					if v, ok := inlayHintsPreferences["parameterNames"].(map[string]any); ok && v != nil {
+						if enabled, ok := v["enabled"]; ok {
+							if enabledStr, ok := enabled.(string); ok {
+								userPreferences.IncludeInlayParameterNameHints = enabledStr
+							} else {
+								userPreferences.IncludeInlayParameterNameHints = ""
+							}
+						}
+						if supressWhenArgumentMatchesName, ok := v["suppressWhenArgumentMatchesName"]; ok {
+							userPreferences.IncludeInlayParameterNameHintsWhenArgumentMatchesName = ptrTo(!supressWhenArgumentMatchesName.(bool))
+						}
+					}
+					if v, ok := inlayHintsPreferences["parameterTypes"].(map[string]any); ok && v != nil {
+						if enabled, ok := v["enabled"]; ok {
+							userPreferences.IncludeInlayFunctionParameterTypeHints = ptrTo(enabled.(bool))
+						}
+					}
+					if v, ok := inlayHintsPreferences["variableTypes"].(map[string]any); ok && v != nil {
+						if enabled, ok := v["enabled"]; ok {
+							userPreferences.IncludeInlayVariableTypeHints = ptrTo(enabled.(bool))
+						}
+						if supressWhenTypeMatchesName, ok := v["suppressWhenTypeMatchesName"]; ok {
+							userPreferences.IncludeInlayVariableTypeHintsWhenTypeMatchesName = ptrTo(!supressWhenTypeMatchesName.(bool))
+						}
+					}
+					if v, ok := inlayHintsPreferences["propertyDeclarationTypes"].(map[string]any); ok && v != nil {
+						if enabled, ok := v["enabled"]; ok {
+							userPreferences.IncludeInlayPropertyDeclarationTypeHints = ptrTo(enabled.(bool))
+						}
+					}
+					if v, ok := inlayHintsPreferences["functionLikeReturnTypes"].(map[string]any); ok && v != nil {
+						if enabled, ok := v["enabled"]; ok {
+							userPreferences.IncludeInlayFunctionLikeReturnTypeHints = ptrTo(enabled.(bool))
+						}
+					}
+					if v, ok := inlayHintsPreferences["enumMemberValues"].(map[string]any); ok && v != nil {
+						if enabled, ok := v["enabled"]; ok {
+							userPreferences.IncludeInlayEnumMemberValueHints = ptrTo(enabled.(bool))
+						}
+					}
+					userPreferences.InteractiveInlayHints = ptrTo(true)
+				case "tsserver":
+					// !!!
+				case "unstable":
+					// !!!
+				case "tsc":
+					// !!!
+				case "updateImportsOnFileMove":
+					// !!! moveToFile
+				case "preferences":
+					// !!!
+				case "experimental":
+					// !!!
+				case "organizeImports":
+					// !!!
+				case "importModuleSpecifierEnding":
+					// !!!
+				}
+			}
+			continue
+		}
+		if item, ok := config.(ls.UserPreferences); ok {
+			// case for fourslash
+			userPreferences = &item
+			break
+		}
+	}
+	// !!! set defaults for services, remove after extension is updated
+	userPreferences.IncludeCompletionsForModuleExports = ptrTo(true)
+	userPreferences.IncludeCompletionsForImportStatements = ptrTo(true)
+	return userPreferences, nil
+}
+
 func (s *Server) Run() error {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
@@ -440,6 +535,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerRequestHandler(handlers, lsproto.ShutdownInfo, (*Server).handleShutdown)
 	registerNotificationHandler(handlers, lsproto.ExitInfo, (*Server).handleExit)
 
+	registerNotificationHandler(handlers, lsproto.WorkspaceDidChangeConfigurationInfo, (*Server).handleDidChangeWorkspaceConfiguration)
 	registerNotificationHandler(handlers, lsproto.TextDocumentDidOpenInfo, (*Server).handleDidOpen)
 	registerNotificationHandler(handlers, lsproto.TextDocumentDidChangeInfo, (*Server).handleDidChange)
 	registerNotificationHandler(handlers, lsproto.TextDocumentDidSaveInfo, (*Server).handleDidSave)
@@ -638,7 +734,6 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	if shouldEnableWatch(s.initializeParams) {
 		s.watchEnabled = true
 	}
-
 	s.session = project.NewSession(&project.SessionInit{
 		Options: &project.SessionOptions{
 			CurrentDirectory:   s.cwd,
@@ -655,6 +750,11 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 		NpmExecutor: s,
 		ParseCache:  s.parseCache,
 	})
+	userPreferences, err := s.Configure(ctx)
+	if err != nil {
+		return err
+	}
+	s.session.Configure(userPreferences)
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	if s.compilerOptionsForInferredProjects != nil {
 		s.session.DidChangeCompilerOptionsForInferredProjects(ctx, s.compilerOptionsForInferredProjects)
@@ -670,6 +770,16 @@ func (s *Server) handleShutdown(ctx context.Context, params any, _ *lsproto.Requ
 
 func (s *Server) handleExit(ctx context.Context, params any) error {
 	return io.EOF
+}
+
+func (s *Server) handleDidChangeWorkspaceConfiguration(ctx context.Context, params *lsproto.DidChangeConfigurationParams) error {
+	// !!! update user preferences
+	// !!! only usable by fourslash
+	if item, ok := params.Settings.(*ls.UserPreferences); ok {
+		// case for fourslash
+		s.session.Configure(item)
+	}
+	return nil
 }
 
 func (s *Server) handleDidOpen(ctx context.Context, params *lsproto.DidOpenTextDocumentParams) error {
@@ -757,10 +867,8 @@ func (s *Server) handleCompletion(ctx context.Context, languageService *ls.Langu
 		params.Position,
 		params.Context,
 		getCompletionClientCapabilities(s.initializeParams),
-		&ls.UserPreferences{
-			IncludeCompletionsForModuleExports:    ptrTo(true),
-			IncludeCompletionsForImportStatements: ptrTo(true),
-		})
+		languageService.UserPreferences(),
+	)
 }
 
 func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsproto.CompletionItem, reqMsg *lsproto.RequestMessage) (lsproto.CompletionResolveResponse, error) {
@@ -778,10 +886,7 @@ func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsprot
 		params,
 		data,
 		getCompletionClientCapabilities(s.initializeParams),
-		&ls.UserPreferences{
-			IncludeCompletionsForModuleExports:    ptrTo(true),
-			IncludeCompletionsForImportStatements: ptrTo(true),
-		},
+		languageService.UserPreferences(),
 	)
 }
 
@@ -810,6 +915,13 @@ func (s *Server) handleDocumentOnTypeFormat(ctx context.Context, ls *ls.Language
 		params.Position,
 		params.Ch,
 	)
+}
+
+func (s *Server) handleInlayHints(ctx context.Context, ls *ls.LanguageService, params *lsproto.InlayHintParams) (lsproto.InlayHintResponse, error) {
+	// !!!
+	// userPreferences, _ := s.Configure(ctx)
+	// return ls.ProvideInlayHints(ctx, params, userPreferences), nil
+	panic("unimplemented")
 }
 
 func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.WorkspaceSymbolParams, reqMsg *lsproto.RequestMessage) (lsproto.WorkspaceSymbolResponse, error) {
@@ -855,7 +967,9 @@ func isBlockingMethod(method lsproto.Method) bool {
 		lsproto.MethodTextDocumentDidChange,
 		lsproto.MethodTextDocumentDidSave,
 		lsproto.MethodTextDocumentDidClose,
-		lsproto.MethodWorkspaceDidChangeWatchedFiles:
+		lsproto.MethodWorkspaceDidChangeWatchedFiles,
+		lsproto.MethodWorkspaceDidChangeConfiguration,
+		lsproto.MethodWorkspaceConfiguration:
 		return true
 	}
 	return false

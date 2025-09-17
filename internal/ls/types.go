@@ -56,6 +56,24 @@ type UserPreferences struct {
 	AutoImportFileExcludePatterns         []string
 
 	UseAliasesForRename *bool
+
+	// Inlay Hints
+	IncludeInlayParameterNameHints                        string
+	IncludeInlayParameterNameHintsWhenArgumentMatchesName *bool
+	IncludeInlayFunctionParameterTypeHints                *bool
+	IncludeInlayVariableTypeHints                         *bool
+	IncludeInlayVariableTypeHintsWhenTypeMatchesName      *bool
+	IncludeInlayPropertyDeclarationTypeHints              *bool
+	IncludeInlayFunctionLikeReturnTypeHints               *bool
+	IncludeInlayEnumMemberValueHints                      *bool
+	InteractiveInlayHints                                 *bool
+}
+
+func (p *UserPreferences) GetOrDefault() UserPreferences {
+	if p == nil {
+		return UserPreferences{}
+	}
+	return *p
 }
 
 func (p *UserPreferences) ModuleSpecifierPreferences() modulespecifiers.UserPreferences {

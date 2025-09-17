@@ -39,6 +39,19 @@ a/**/
 		},
 	})
 	f.BaselineAutoImportsCompletions(t, []string{""})
+	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
+		UserPreferences: &ls.UserPreferences{
+			// completion autoimport preferences off; this tests if fourslash server communication correctly registers changes in user preferences
+		},
+		IsIncomplete: false,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
+		},
+		Items: &fourslash.CompletionsExpectedItems{
+			Excludes: []string{"anotherVar"},
+		},
+	})
 }
 
 func TestAutoImportCompletion2(t *testing.T) {

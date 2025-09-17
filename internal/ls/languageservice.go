@@ -7,19 +7,29 @@ import (
 )
 
 type LanguageService struct {
-	host       Host
-	converters *Converters
+	host            Host
+	converters      *Converters
+	userPreferences *UserPreferences
 }
 
-func NewLanguageService(host Host, converters *Converters) *LanguageService {
+func NewLanguageService(host Host, converters *Converters, preferences *UserPreferences) *LanguageService {
 	return &LanguageService{
-		host:       host,
-		converters: converters,
+		host:            host,
+		converters:      converters,
+		userPreferences: preferences,
 	}
 }
 
 func (l *LanguageService) GetProgram() *compiler.Program {
 	return l.host.GetProgram()
+}
+
+func (l *LanguageService) UpdateUserPreferences(preferences *UserPreferences) {
+	l.userPreferences = preferences
+}
+
+func (l *LanguageService) UserPreferences() *UserPreferences {
+	return l.userPreferences
 }
 
 func (l *LanguageService) tryGetProgramAndFile(fileName string) (*compiler.Program, *ast.SourceFile) {

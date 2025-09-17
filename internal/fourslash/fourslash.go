@@ -38,6 +38,7 @@ type FourslashTest struct {
 	testData     *TestData // !!! consolidate test files from test data and script info
 	baselines    map[string]*strings.Builder
 	rangesByText *collections.MultiMap[string, *RangeMarker]
+	config       *ls.UserPreferences
 
 	scriptInfos map[string]*scriptInfo
 	converters  *ls.Converters
@@ -271,6 +272,29 @@ func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.
 	if resp == nil {
 		return nil, *new(Resp), false
 	}
+
+	// currently, the only request that may be sent by the server during a client request is one `config` request
+	// !!! remove if `config` is handled in initialization and there are no other server-initiated requests
+	if resp.Kind == lsproto.MessageKindRequest {
+		req := resp.AsRequest()
+		switch req.Method {
+		case lsproto.MethodWorkspaceConfiguration:
+			req := lsproto.ResponseMessage{
+				ID:      req.ID,
+				JSONRPC: req.JSONRPC,
+				Result:  []any{&f.config},
+			}
+			f.writeMsg(t, req.Message())
+			resp = f.readMsg(t)
+		default:
+			// other types of responses not yet used in fourslash; implement them if needed
+			t.Fatalf("Unexpected request received: %s", req)
+		}
+	}
+
+	if resp == nil {
+		return nil, *new(Resp), false
+	}
 	result, ok := resp.AsResponse().Result.(Resp)
 	return resp, result, ok
 }
@@ -298,6 +322,13 @@ func (f *FourslashTest) readMsg(t *testing.T) *lsproto.Message {
 	}
 	assert.NilError(t, json.MarshalWrite(io.Discard, msg), "failed to encode message as JSON")
 	return msg
+}
+
+func (f *FourslashTest) configure(t *testing.T, config *ls.UserPreferences) {
+	f.config = config
+	sendNotification(t, f, lsproto.WorkspaceDidChangeConfigurationInfo, &lsproto.DidChangeConfigurationParams{
+		Settings: config,
+	})
 }
 
 func (f *FourslashTest) GoToMarkerOrRange(t *testing.T, markerOrRange MarkerOrRange) {
@@ -540,6 +571,11 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *Completi
 		},
 		Position: f.currentCaretPosition,
 		Context:  &lsproto.CompletionContext{},
+	}
+	if expected == nil {
+		f.configure(t, nil)
+	} else {
+		f.configure(t, expected.UserPreferences)
 	}
 	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentCompletionInfo, params)
 	if resMsg == nil {
