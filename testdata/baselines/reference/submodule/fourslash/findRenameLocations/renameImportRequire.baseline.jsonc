@@ -27,9 +27,9 @@
 
 // === findRenameLocations ===
 // === /a.ts ===
-// import [|eRENAME|] = require("mod4");
-// [|eRENAME|];
-// a = { /*START PREFIX*/e: [|eRENAME|] };
+// import e = require("mod4");
+// e;
+// a = { e };
 // export { /*RENAME*/e };
 
 
@@ -43,5 +43,5 @@
 
 // === findRenameLocations ===
 // === /b.ts ===
-// import { /*START PREFIX*/e as [|eRENAME|] } from "./a";
+// import { e } from "./a";
 // export { /*RENAME*/e };

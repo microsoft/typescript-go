@@ -1,0 +1,37 @@
+// === documentHighlights ===
+// === /documentHighlights.ts ===
+// /*HIGHLIGHTS*/function f(x: typeof f) { 
+// 	f(f);
+// }
+
+
+
+// === documentHighlights ===
+// === /documentHighlights.ts ===
+// function /*HIGHLIGHTS*/[|f|](x: typeof [|f|]) { 
+// 	[|f|]([|f|]);
+// }
+
+
+
+// === documentHighlights ===
+// === /documentHighlights.ts ===
+// function [|f|](x: typeof /*HIGHLIGHTS*/[|f|]) { 
+// 	[|f|]([|f|]);
+// }
+
+
+
+// === documentHighlights ===
+// === /documentHighlights.ts ===
+// function [|f|](x: typeof [|f|]) { 
+// 	/*HIGHLIGHTS*/[|f|]([|f|]);
+// }
+
+
+
+// === documentHighlights ===
+// === /documentHighlights.ts ===
+// function [|f|](x: typeof [|f|]) { 
+// 	[|f|](/*HIGHLIGHTS*/[|f|]);
+// }

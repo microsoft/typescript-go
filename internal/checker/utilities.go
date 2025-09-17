@@ -1078,7 +1078,7 @@ func isWriteOnlyAccess(node *ast.Node) bool {
 	return accessKind(node) == AccessKindWrite
 }
 
-func isWriteAccess(node *ast.Node) bool {
+func IsWriteAccess(node *ast.Node) bool {
 	return accessKind(node) != AccessKindRead
 }
 

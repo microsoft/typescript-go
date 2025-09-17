@@ -17,5 +17,5 @@
 
 // === findRenameLocations ===
 // === /b.ts ===
-// import { /*START PREFIX*/a as [|aRENAME|] } from './a';
+// import { a } from './a';
 // export { /*RENAME*/a };

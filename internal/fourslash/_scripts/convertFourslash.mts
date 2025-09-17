@@ -178,6 +178,8 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                 case "baselineFindAllReferences":
                     // `verify.baselineFindAllReferences(...)`
                     return parseBaselineFindAllReferencesArgs(callExpression.arguments);
+                case "baselineDocumentHighlights":
+                    return parseBaselineDocumentHighlightsArgs(callExpression.arguments);
                 case "baselineQuickInfo":
                     return [parseBaselineQuickInfo(callExpression.arguments)];
                 case "baselineSignatureHelp":
@@ -778,6 +780,90 @@ function parseBaselineFindAllReferencesArgs(args: readonly ts.Expression[]): [Ve
     }];
 }
 
+function parseBaselineDocumentHighlightsArgs(args: readonly ts.Expression[]): [VerifyBaselineDocumentHighlightsCmd] | undefined {
+    const newArgs: string[] = [];
+    let preferences: string | undefined;
+    for (const arg of args) {
+        let strArg;
+        if (strArg = getArrayLiteralExpression(arg)) {
+            for (const elem of strArg.elements) {
+                const newArg = parseBaselineDocumentHighlightsArg(elem);
+                if (!newArg) {
+                    return undefined;
+                }
+                newArgs.push(newArg);
+            }
+        }
+        else if (ts.isObjectLiteralExpression(arg)) {
+            // User preferences case, but multiple files isn't implemented in corsa yet
+        }
+        else if (strArg = parseBaselineDocumentHighlightsArg(arg)) {
+            newArgs.push(strArg);
+        }
+        else {
+            console.error(`Unrecognized argument in verify.baselineDocumentHighlights: ${arg.getText()}`);
+            return undefined;
+        }
+    }
+
+    if (newArgs.length === 0) {
+        newArgs.push("ToAny(f.Ranges())...");
+    }
+
+    return [{
+        kind: "verifyBaselineDocumentHighlights",
+        args: newArgs,
+        preferences: preferences ? preferences : "nil /*preferences*/",
+    }];
+}
+
+function parseBaselineDocumentHighlightsArg(arg: ts.Expression): string | undefined {
+    if (ts.isStringLiteral(arg)) {
+        return getGoStringLiteral(arg.text);
+    }
+    else if (ts.isIdentifier(arg) || (ts.isElementAccessExpression(arg) && ts.isIdentifier(arg.expression))) {
+        const argName = ts.isIdentifier(arg) ? arg.text : (arg.expression as ts.Identifier).text;
+        const file = arg.getSourceFile();
+        const varStmts = file.statements.filter(ts.isVariableStatement);
+        for (const varStmt of varStmts) {
+            for (const decl of varStmt.declarationList.declarations) {
+                if (ts.isArrayBindingPattern(decl.name) && decl.initializer?.getText().includes("ranges")) {
+                    for (let i = 0; i < decl.name.elements.length; i++) {
+                        const elem = decl.name.elements[i];
+                        if (ts.isBindingElement(elem) && ts.isIdentifier(elem.name) && elem.name.text === argName) {
+                            // `const [range_0, ..., range_n, ...] = test.ranges();` and arg is `range_n`
+                            if (elem.dotDotDotToken === undefined) {
+                                return `f.Ranges()[${i}]`;
+                            }
+                            // `const [range_0, ..., ...rest] = test.ranges();` and arg is `rest[n]`
+                            if (ts.isElementAccessExpression(arg)) {
+                                return `f.Ranges()[${i + parseInt(arg.argumentExpression!.getText())}]`;
+                            }
+                            // `const [range_0, ..., ...rest] = test.ranges();` and arg is `rest`
+                            return `ToAny(f.Ranges()[${i}:])...`;
+                        }
+                    }
+                }
+            }
+        }
+        const init = getNodeOfKind(arg, ts.isCallExpression);
+        if (init) {
+            const result = getRangesByTextArg(init);
+            if (result) {
+                return result;
+            }
+        }
+    }
+    else if (ts.isCallExpression(arg)) {
+        const result = getRangesByTextArg(arg);
+        if (result) {
+            return result;
+        }
+    }
+    console.error(`Unrecognized argument in verify.baselineRename: ${arg.getText()}`);
+    return undefined;
+}
+
 function parseBaselineGoToDefinitionArgs(args: readonly ts.Expression[]): [VerifyBaselineGoToDefinitionCmd] | undefined {
     const newArgs = [];
     for (const arg of args) {
@@ -1264,8 +1350,8 @@ interface VerifyBaselineRenameCmd {
 
 interface VerifyBaselineDocumentHighlightsCmd {
     kind: "verifyBaselineDocumentHighlights";
-    markers: string[];
-    ranges?: boolean;
+    args: string[];
+    preferences: string;
 }
 
 interface GoToCmd {
@@ -1339,11 +1425,8 @@ function generateBaselineFindAllReferences({ markers, ranges }: VerifyBaselineFi
     return `f.VerifyBaselineFindAllReferences(t, ${markers.join(", ")})`;
 }
 
-function generateBaselineDocumentHighlights({ markers, ranges }: VerifyBaselineDocumentHighlightsCmd): string {
-    if (ranges || markers.length === 0) {
-        return `f.VerifyBaselineDocumentHighlights(t)`;
-    }
-    return `f.VerifyBaselineDocumentHighlights(t, ${markers.join(", ")})`;
+function generateBaselineDocumentHighlights({ args, preferences }: VerifyBaselineDocumentHighlightsCmd): string {
+    return `f.VerifyBaselineDocumentHighlights(t, ${preferences}, ${args.join(", ")})`;
 }
 
 function generateBaselineGoToDefinition({ markers, ranges }: VerifyBaselineGoToDefinitionCmd): string {

@@ -1033,27 +1033,37 @@ func (f *FourslashTest) VerifyBaselineSignatureHelp(t *testing.T) {
 
 func (f *FourslashTest) VerifyBaselineDocumentHighlights(
 	t *testing.T,
-	markers ...string,
+	preferences *ls.UserPreferences,
+	markerOrRangeOrNames ...MarkerOrRangeOrName,
 ) {
-	t.Logf("Inside doc highlights\n")
-	referenceLocations := f.lookupMarkersOrGetRanges(t, markers)
-
-	if f.baseline != nil {
-		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
-	} else {
-		f.baseline = &baselineFromTest{
-			content:      &strings.Builder{},
-			baselineName: "documentHighlights/" + strings.TrimPrefix(t.Name(), "Test"),
-			ext:          ".baseline.jsonc",
+	var markerOrRanges []MarkerOrRange
+	for _, markerOrRangeOrName := range markerOrRangeOrNames {
+		switch markerOrNameOrRange := markerOrRangeOrName.(type) {
+		case string:
+			marker, ok := f.testData.MarkerPositions[markerOrNameOrRange]
+			if !ok {
+				t.Fatalf("Marker '%s' not found", markerOrNameOrRange)
+			}
+			markerOrRanges = append(markerOrRanges, marker)
+		case *Marker:
+			markerOrRanges = append(markerOrRanges, markerOrNameOrRange)
+		case *RangeMarker:
+			markerOrRanges = append(markerOrRanges, markerOrNameOrRange)
+		default:
+			t.Fatalf("Invalid marker or range type: %T. Expected string, *Marker, or *RangeMarker.", markerOrNameOrRange)
 		}
 	}
 
-	defer func() {
-		f.baseline = nil
-	}()
+	f.verifyBaselineDocumentHighlights(t, preferences, markerOrRanges)
+}
 
-	for _, markerOrRange := range referenceLocations {
-		f.GoToMarkerOrRange(t, markerOrRange)
+func (f *FourslashTest) verifyBaselineDocumentHighlights(
+	t *testing.T,
+	preferences *ls.UserPreferences,
+	markerOrRanges []MarkerOrRange,
+) {
+	for _, markerOrRange := range markerOrRanges {
+		f.goToMarker(t, markerOrRange)
 
 		params := &lsproto.DocumentHighlightParams{
 			TextDocument: lsproto.TextDocumentIdentifier{
@@ -1091,13 +1101,11 @@ func (f *FourslashTest) VerifyBaselineDocumentHighlights(
 		}
 
 		// Add result to baseline
-		f.baseline.addResult("documentHighlights", f.getBaselineForLocationsWithFileContents(spans, baselineFourslashLocationsOptions{
-			marker:     markerOrRange.GetMarker(),
+		f.addResultToBaseline(t, "documentHighlights", f.getBaselineForLocationsWithFileContents(spans, baselineFourslashLocationsOptions{
+			marker:     markerOrRange,
 			markerName: "/*HIGHLIGHTS*/",
 		}))
 	}
-
-	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
 }
 
 // Collects all named markers if provided, or defaults to anonymous ranges

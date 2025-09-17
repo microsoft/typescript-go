@@ -5,6 +5,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
+	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/lsutil"
@@ -21,7 +22,6 @@ func (l *LanguageService) ProvideDocumentHighlights(ctx context.Context, documen
 
 	if node.Parent.Kind == ast.KindJsxOpeningElement || (node.Parent.Kind == ast.KindJsxClosingElement && node.Parent.TagName() == node) {
 		documentHighlights := []*lsproto.DocumentHighlight{}
-		// does doc highlights use KindRead for everything ?
 		kind := lsproto.DocumentHighlightKindRead
 		if node.Parent.Kind == ast.KindJsxOpeningElement {
 			documentHighlights = append(documentHighlights, &lsproto.DocumentHighlight{
@@ -58,23 +58,48 @@ func (l *LanguageService) getSemanticDocumentHighlights(ctx context.Context, pos
 
 	for _, entry := range referenceEntries {
 		for _, ref := range entry.references {
-			kind := lsproto.DocumentHighlightKindRead
 			if ref.node != nil {
-				highlights = append(highlights, &lsproto.DocumentHighlight{
-					Range: *l.createLspRangeFromNode(ref.node, sourceFile),
-					Kind:  &kind,
-				})
+				fileName, highlight := l.toDocumentHighlight(ref)
+				if fileName == sourceFile.FileName() {
+					highlights = append(highlights, highlight)
+				}
 			}
 		}
 	}
 	return highlights
 }
 
+func (l *LanguageService) toDocumentHighlight(entry *referenceEntry) (string, *lsproto.DocumentHighlight) {
+	entry = l.resolveEntry(entry)
+
+	// If this is a plain range (Span), always treat it as a reference.
+	kind := lsproto.DocumentHighlightKindText
+	if entry.kind == entryKindRange {
+		return entry.fileName, &lsproto.DocumentHighlight{
+			Range: *entry.textRange,
+			Kind:  &kind,
+		}
+	}
+
+	// Determine write access for node references.
+	if checker.IsWriteAccess(entry.node) {
+		kind = lsproto.DocumentHighlightKindWrite
+	}
+
+	dh := &lsproto.DocumentHighlight{
+		Range: *entry.textRange,
+		Kind:  &kind,
+	}
+
+	return entry.fileName, dh
+}
+
 func (l *LanguageService) getSyntacticDocumentHighlights(node *ast.Node, sourceFile *ast.SourceFile) []*lsproto.DocumentHighlight {
 	switch node.Kind {
 	case ast.KindIfKeyword, ast.KindElseKeyword:
 		if ast.IsIfStatement(node.Parent) {
-			return l.getIfElseOccurrences(node.Parent.AsIfStatement(), sourceFile)
+			result := l.getIfElseOccurrences(node.Parent.AsIfStatement(), sourceFile)
+			return result
 		}
 		return nil
 	case ast.KindReturnKeyword:
@@ -100,7 +125,7 @@ func (l *LanguageService) getSyntacticDocumentHighlights(node *ast.Node, sourceF
 		return l.useParent(node.Parent, ast.IsBreakOrContinueStatement, getBreakOrContinueStatementOccurrences, sourceFile)
 	case ast.KindForKeyword, ast.KindWhileKeyword, ast.KindDoKeyword:
 		return l.useParent(node.Parent, func(n *ast.Node) bool {
-			return ast.IsIterationStatement(n, false)
+			return ast.IsIterationStatement(n, true)
 		}, getLoopBreakContinueOccurrences, sourceFile)
 	case ast.KindConstructorKeyword:
 		return l.getFromAllDeclarations(ast.IsConstructorDeclaration, []ast.Kind{ast.KindConstructorKeyword}, node, sourceFile)
@@ -185,7 +210,11 @@ func (l *LanguageService) getIfElseOccurrences(ifStatement *ast.IfStatement, sou
 			shouldCombine := true
 
 			// Avoid recalculating getStart() by iterating backwards.
-			for j := ifKeyword.Pos() - 1; j >= elseKeyword.End(); j-- {
+			ifTokenStart := scanner.GetTokenPosOfNode(ifKeyword, sourceFile, false)
+			if ifTokenStart < 0 {
+				ifTokenStart = ifKeyword.Pos()
+			}
+			for j := ifTokenStart - 1; j >= elseKeyword.End(); j-- {
 				if !stringutil.IsWhiteSpaceSingleLine(rune(sourceFile.Text()[j])) {
 					shouldCombine = false
 					break
@@ -281,7 +310,9 @@ func aggregateOwnedThrowStatements(node *ast.Node, sourceFile *ast.SourceFile) [
 		catchClause := statement.CatchClause
 		finallyBlock := statement.FinallyBlock
 
-		if catchClause == nil && tryBlock != nil {
+		if catchClause != nil {
+			result = append(result, aggregateOwnedThrowStatements(catchClause, sourceFile)...)
+		} else if tryBlock != nil {
 			result = append(result, aggregateOwnedThrowStatements(tryBlock, sourceFile)...)
 		}
 		if finallyBlock != nil {
@@ -422,7 +453,7 @@ func aggregateAllBreakAndContinueStatements(node *ast.Node, sourceFile *ast.Sour
 	if ast.IsFunctionLike(node) {
 		return []*ast.Node{}
 	}
-	return flatMapChildren(node, nil, aggregateAllBreakAndContinueStatements)
+	return flatMapChildren(node, sourceFile, aggregateAllBreakAndContinueStatements)
 }
 
 func ownsBreakOrContinueStatement(owner *ast.Node, statement *ast.Node) bool {
@@ -435,11 +466,11 @@ func ownsBreakOrContinueStatement(owner *ast.Node, statement *ast.Node) bool {
 
 func getBreakOrContinueOwner(statement *ast.Node) *ast.Node {
 	// Walk up ancestors to find the owner node.
-	return ast.FindAncestor(statement, func(node *ast.Node) bool {
+	return ast.FindAncestorOrQuit(statement, func(node *ast.Node) ast.FindAncestorResult {
 		switch node.Kind {
 		case ast.KindSwitchStatement:
 			if statement.Kind == ast.KindContinueStatement {
-				return false
+				return ast.FindAncestorFalse
 			}
 			// falls through
 			fallthrough
@@ -449,24 +480,30 @@ func getBreakOrContinueOwner(statement *ast.Node) *ast.Node {
 			ast.KindWhileStatement,
 			ast.KindDoStatement:
 			// If the statement is labeled, check if the node is labeled by the statement's label.
-			if statement.Label() == nil {
-				return true
+			if statement.Label() == nil || isLabeledBy(node, statement.Label().Text()) {
+				return ast.FindAncestorTrue
 			}
-			return isLabeledBy(node, statement.Label().Text())
+			return ast.FindAncestorFalse
 		default:
 			// Don't cross function boundaries.
-			return ast.IsFunctionLike(node)
+			if ast.IsFunctionLike(node) {
+				return ast.FindAncestorQuit
+			}
+			return ast.FindAncestorFalse
 		}
 	})
 }
 
 // Helper function to check if a node is labeled by a given label name.
 func isLabeledBy(node *ast.Node, labelName string) bool {
-	return ast.FindAncestor(node.Parent, func(owner *ast.Node) bool {
+	return ast.FindAncestorOrQuit(node.Parent, func(owner *ast.Node) ast.FindAncestorResult {
 		if !ast.IsLabeledStatement(owner) {
-			return false
+			return ast.FindAncestorQuit
 		}
-		return owner.Label().Text() == labelName
+		if owner.Label().Text() == labelName {
+			return ast.FindAncestorTrue
+		}
+		return ast.FindAncestorFalse
 	}) != nil
 }
 
@@ -493,6 +530,7 @@ func getLoopBreakContinueOccurrences(node *ast.Node, sourceFile *ast.SourceFile)
 			loopTokens := getChildrenFromNonJSDocNode(node, sourceFile)
 			for i := len(loopTokens) - 1; i >= 0; i-- {
 				if loopTokens[i].Kind == ast.KindWhileKeyword {
+					keywords = append(keywords, loopTokens[i])
 					break
 				}
 			}

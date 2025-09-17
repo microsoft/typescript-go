@@ -1037,7 +1037,7 @@ func getReferencedSymbolsForSymbol(originalSymbol *ast.Symbol, node *ast.Node, s
 	state := newState(sourceFiles, sourceFilesSet, node, checker /*, cancellationToken*/, searchMeaning, options)
 
 	var exportSpecifier *ast.Node
-	if !isForRenameWithPrefixAndSuffixText(options) || len(symbol.Declarations) == 0 {
+	if isForRenameWithPrefixAndSuffixText(options) && len(symbol.Declarations) != 0 {
 		exportSpecifier = core.Find(symbol.Declarations, ast.IsExportSpecifier)
 	}
 	if exportSpecifier != nil {
