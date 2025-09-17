@@ -83,14 +83,8 @@ export declare class Holder {
     static [staticField]: () => {
         static: string;
     };
-    static [x: string]: Holder | (() => {
-        static: boolean;
-    }) | (() => {
-        static: string;
-    });
     [classFieldName]: () => string;
     [otherField]: () => number;
-    [x: string]: (() => string) | (() => number);
 }
 /**
  * Could be `"prototype"`, so all static string indexers include the instance type

@@ -120,7 +120,6 @@ export declare class C {
     [noParamAnnotationStringName]: (v: any) => void;
     [noAnnotationStringName]: number;
     [noParamAnnotationStringName]: any;
-    [x: string]: any;
     [x: number]: number;
 }
 export interface I {

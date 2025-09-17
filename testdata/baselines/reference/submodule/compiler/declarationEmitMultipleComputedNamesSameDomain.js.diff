@@ -20,11 +20,3 @@
 
 
  //// [declarationEmitMultipleComputedNamesSameDomain.d.ts]
-@@= skipped -18, +14 lines =@@
- declare const y: "y";
- export declare class Test {
-     [x]: number;
-+    [x: string]: number;
-     [y]: number;
- }
- export {};

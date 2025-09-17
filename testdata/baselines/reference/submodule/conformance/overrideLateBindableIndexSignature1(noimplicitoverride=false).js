@@ -32,23 +32,18 @@ class Derived3 extends Base3 {
 declare const sym: symbol;
 declare class Base1 {
     [sym]: () => void;
-    [x: symbol]: () => void;
 }
 declare class Derived1 extends Base1 {
     [sym]: () => void;
-    [x: symbol]: () => void;
 }
 declare class Base2 {
     [sym]: () => void;
-    [x: symbol]: () => void;
 }
 declare class Derived2 extends Base2 {
     [sym]: () => void;
-    [x: symbol]: () => void;
 }
 declare class Base3 {
 }
 declare class Derived3 extends Base3 {
     [sym]: () => void;
-    [x: symbol]: () => void;
 }

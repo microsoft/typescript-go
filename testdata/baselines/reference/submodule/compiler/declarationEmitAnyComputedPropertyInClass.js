@@ -27,5 +27,4 @@ exports.C = C;
 import Test from "abcdefgh";
 export declare class C {
     [Test.someKey]: () => void;
-    [x: number]: () => void;
 }

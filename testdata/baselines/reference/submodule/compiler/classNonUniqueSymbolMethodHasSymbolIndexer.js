@@ -30,7 +30,6 @@ export const Mixer = Mix(class {
 declare const a: symbol;
 export declare class A {
     [a]: () => number;
-    [x: symbol]: () => number;
 }
 export declare const Mixer: {
     new (): {

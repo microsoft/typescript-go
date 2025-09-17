@@ -1045,6 +1045,7 @@ func (r *emitResolver) CreateLateBoundIndexSignatures(emitContext *printer.EmitC
 						)
 						result = append(result, decl)
 					}
+					continue
 				}
 			}
 			node := requestNodeBuilder.IndexInfoToIndexSignatureDeclaration(info, enclosingDeclaration, flags, internalFlags, tracker)

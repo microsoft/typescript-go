@@ -25,7 +25,6 @@ declare const x: string;
 declare const y: "y";
 export declare class Test {
     [x]: number;
-    [x: string]: number;
     [y]: number;
 }
 export {};
