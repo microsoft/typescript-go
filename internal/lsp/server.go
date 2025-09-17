@@ -917,13 +917,6 @@ func (s *Server) handleDocumentOnTypeFormat(ctx context.Context, ls *ls.Language
 	)
 }
 
-func (s *Server) handleInlayHints(ctx context.Context, ls *ls.LanguageService, params *lsproto.InlayHintParams) (lsproto.InlayHintResponse, error) {
-	// !!!
-	// userPreferences, _ := s.Configure(ctx)
-	// return ls.ProvideInlayHints(ctx, params, userPreferences), nil
-	panic("unimplemented")
-}
-
 func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.WorkspaceSymbolParams, reqMsg *lsproto.RequestMessage) (lsproto.WorkspaceSymbolResponse, error) {
 	snapshot, release := s.session.Snapshot()
 	defer release()
