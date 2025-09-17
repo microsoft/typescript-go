@@ -29,6 +29,7 @@ exports.a = (new WithData())["ahahahaahah"]();
 //// [declarationEmitComputedNameWithQuestionToken.d.ts]
 export declare const dataSomething: `data-${string}`;
 export declare class WithData {
+    [dataSomething]?: () => string;
     [x: string]: () => string;
 }
 export declare const a: string;

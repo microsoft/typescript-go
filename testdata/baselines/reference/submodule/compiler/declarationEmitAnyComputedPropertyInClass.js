@@ -24,6 +24,8 @@ exports.C = C;
 
 
 //// [main.d.ts]
+import Test from "abcdefgh";
 export declare class C {
+    [Test.someKey]: () => void;
     [x: number]: () => void;
 }

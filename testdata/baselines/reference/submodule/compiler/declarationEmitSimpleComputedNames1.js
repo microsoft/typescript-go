@@ -73,12 +73,23 @@ export declare const fieldName: string;
 export declare const conatainer: {
     [x: string]: () => string;
 };
+declare const classFieldName: string;
+declare const otherField: string;
+declare const staticField: string;
 export declare class Holder {
+    static [staticField]: () => {
+        static: boolean;
+    };
+    static [staticField]: () => {
+        static: string;
+    };
     static [x: string]: Holder | (() => {
         static: boolean;
     }) | (() => {
         static: string;
     });
+    [classFieldName]: () => string;
+    [otherField]: () => number;
     [x: string]: (() => string) | (() => number);
 }
 /**
@@ -90,3 +101,4 @@ export declare const staticLookup: Holder | (() => {
     static: string;
 });
 export declare const instanceLookup: (() => string) | (() => number);
+export {};

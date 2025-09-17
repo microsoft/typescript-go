@@ -1,10 +1,9 @@
 --- old.declarationEmitComputedNameWithQuestionToken.js
 +++ new.declarationEmitComputedNameWithQuestionToken.js
-@@= skipped -28, +28 lines =@@
- //// [declarationEmitComputedNameWithQuestionToken.d.ts]
+@@= skipped -29, +29 lines =@@
  export declare const dataSomething: `data-${string}`;
  export declare class WithData {
--    [dataSomething]?: () => string;
+     [dataSomething]?: () => string;
 +    [x: string]: () => string;
  }
  export declare const a: string;

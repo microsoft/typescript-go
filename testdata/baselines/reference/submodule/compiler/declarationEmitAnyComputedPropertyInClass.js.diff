@@ -9,12 +9,9 @@
  class C {
      [abcdefgh_1.default.someKey]() { }
      ;
-@@= skipped -9, +9 lines =@@
-
-
- //// [main.d.ts]
--import Test from "abcdefgh";
+@@= skipped -12, +12 lines =@@
+ import Test from "abcdefgh";
  export declare class C {
--    [Test.someKey]: () => void;
+     [Test.someKey]: () => void;
 +    [x: number]: () => void;
  }
