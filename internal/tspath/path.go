@@ -2,6 +2,7 @@ package tspath
 
 import (
 	"cmp"
+	"slices"
 	"strings"
 	"unicode"
 
@@ -1022,4 +1023,97 @@ func SplitVolumePath(path string) (volume string, rest string, ok bool) {
 		return strings.ToLower(path[0:2]), path[2:], true
 	}
 	return "", path, false
+}
+
+// GetCommonParents returns the smallest set of directories that are parents of all paths with
+// at least `minComponents` directory components. Any path that has `minComponents` or fewer directory components
+// will be returned in the set as-is. Examples:
+//
+//	/a/b/c/d, /a/b/c/e, /a/b/f/g  =>  /a/b
+//	/a/b/c/d, /a/b/c/e, /a/b/f/g, /x/y  =>  /
+//	/a/b/c/d, /a/b/c/e, /a/b/f/g, /x/y  (minComponents: 2)	=>  /a/b, /x/y
+//	c:/a/b/c/d, d:/a/b/c/d =>	c:/a/b/c/d, d:/a/b/c/d
+func GetCommonParents(paths []string, minComponents int, options ComparePathsOptions) []string {
+	if minComponents < 1 {
+		panic("minComponents must be at least 1")
+	}
+	if len(paths) == 0 {
+		return nil
+	}
+	if len(paths) == 1 {
+		return paths
+	}
+	pathComponents := make([][]string, len(paths))
+	for i, path := range paths {
+		pathComponents[i] = reducePathComponents(GetPathComponents(path, options.CurrentDirectory))
+	}
+
+	results := getCommonParentsWorker(pathComponents, minComponents, options)
+	resultPaths := make([]string, len(results))
+	for i, comps := range results {
+		resultPaths[i] = GetPathFromPathComponents(comps)
+	}
+
+	return resultPaths
+}
+
+func getCommonParentsWorker(componentGroups [][]string, minComponents int, options ComparePathsOptions) [][]string {
+	if len(componentGroups) == 0 {
+		return nil
+	}
+	// Determine the maximum depth we can consider
+	maxDepth := len(componentGroups[0])
+	for _, comps := range componentGroups[1:] {
+		if l := len(comps); l < maxDepth {
+			maxDepth = l
+		}
+	}
+	if maxDepth <= 0 { // Only a root component exists
+		return [][]string{componentGroups[0][:1]}
+	}
+
+	equality := options.getEqualityComparer()
+	var lastCommonIndex int
+outer:
+	for lastCommonIndex = 0; lastCommonIndex < maxDepth; lastCommonIndex++ {
+		candidate := componentGroups[0][lastCommonIndex]
+		for j, comps := range componentGroups[1:] {
+			if !equality(candidate, comps[lastCommonIndex]) { // divergence
+				if lastCommonIndex < minComponents {
+					// Not enough components, we need to fan out
+					orderedGroups := make([]Path, 0, len(componentGroups)-j)
+					newGroups := make(map[Path]struct {
+						head  []string
+						tails [][]string
+					})
+					for _, g := range componentGroups {
+						key := ToPath(g[lastCommonIndex], options.CurrentDirectory, options.UseCaseSensitiveFileNames)
+						if _, ok := newGroups[key]; !ok {
+							orderedGroups = append(orderedGroups, key)
+						}
+						newGroups[key] = struct {
+							head  []string
+							tails [][]string
+						}{
+							head:  g[:lastCommonIndex],
+							tails: append(newGroups[key].tails, g[lastCommonIndex:]),
+						}
+					}
+					slices.Sort(orderedGroups)
+					result := make([][]string, 0, len(newGroups))
+					for _, key := range orderedGroups {
+						group := newGroups[key]
+						subResults := getCommonParentsWorker(group.tails, minComponents-lastCommonIndex, options)
+						for _, sr := range subResults {
+							result = append(result, append(group.head, sr...))
+						}
+					}
+					return result
+				}
+				break outer
+			}
+		}
+	}
+
+	return [][]string{componentGroups[0][:lastCommonIndex]}
 }

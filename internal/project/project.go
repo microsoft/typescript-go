@@ -74,8 +74,7 @@ type Project struct {
 
 	failedLookupsWatch      *WatchedFiles[map[tspath.Path]string]
 	affectingLocationsWatch *WatchedFiles[map[tspath.Path]string]
-	typingsFilesWatch       *WatchedFiles[map[tspath.Path]string]
-	typingsDirectoryWatch   *WatchedFiles[map[tspath.Path]string]
+	typingsWatch            *WatchedFiles[map[tspath.Path]string]
 
 	checkerPool *checkerPool
 
@@ -152,22 +151,17 @@ func NewProject(
 		project.failedLookupsWatch = NewWatchedFiles(
 			"failed lookups for "+configFileName,
 			lsproto.WatchKindCreate,
-			createResolutionLookupGlobMapper(project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
+			createResolutionLookupGlobMapper(builder.sessionOptions.CurrentDirectory, project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
 		)
 		project.affectingLocationsWatch = NewWatchedFiles(
 			"affecting locations for "+configFileName,
 			lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
-			createResolutionLookupGlobMapper(project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
+			createResolutionLookupGlobMapper(builder.sessionOptions.CurrentDirectory, project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
 		)
 		if builder.sessionOptions.TypingsLocation != "" {
-			project.typingsFilesWatch = NewWatchedFiles(
+			project.typingsWatch = NewWatchedFiles(
 				"typings installer files",
 				lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
-				globMapperForTypingsInstaller,
-			)
-			project.typingsDirectoryWatch = NewWatchedFiles(
-				"typings installer directories",
-				lsproto.WatchKindCreate|lsproto.WatchKindDelete,
 				globMapperForTypingsInstaller,
 			)
 		}
@@ -227,8 +221,7 @@ func (p *Project) Clone() *Project {
 
 		failedLookupsWatch:      p.failedLookupsWatch,
 		affectingLocationsWatch: p.affectingLocationsWatch,
-		typingsFilesWatch:       p.typingsFilesWatch,
-		typingsDirectoryWatch:   p.typingsDirectoryWatch,
+		typingsWatch:            p.typingsWatch,
 
 		checkerPool: p.checkerPool,
 
