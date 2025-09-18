@@ -2188,6 +2188,91 @@ type (
 	JsxAttributeList                = NodeList // NodeList[*JsxAttributeLike]
 )
 
+func IsWriteOnlyAccess(node *Node) bool {
+	return accessKind(node) == AccessKindWrite
+}
+
+func IsWriteAccess(node *Node) bool {
+	return accessKind(node) != AccessKindRead
+}
+
+func accessKind(node *Node) AccessKind {
+	parent := node.Parent
+	switch parent.Kind {
+	case KindParenthesizedExpression:
+		return accessKind(parent)
+	case KindPrefixUnaryExpression:
+		operator := parent.AsPrefixUnaryExpression().Operator
+		if operator == KindPlusPlusToken || operator == KindMinusMinusToken {
+			return AccessKindReadWrite
+		}
+		return AccessKindRead
+	case KindPostfixUnaryExpression:
+		operator := parent.AsPostfixUnaryExpression().Operator
+		if operator == KindPlusPlusToken || operator == KindMinusMinusToken {
+			return AccessKindReadWrite
+		}
+		return AccessKindRead
+	case KindBinaryExpression:
+		if parent.AsBinaryExpression().Left == node {
+			operator := parent.AsBinaryExpression().OperatorToken
+			if IsAssignmentOperator(operator.Kind) {
+				if operator.Kind == KindEqualsToken {
+					return AccessKindWrite
+				}
+				return AccessKindReadWrite
+			}
+		}
+		return AccessKindRead
+	case KindPropertyAccessExpression:
+		if parent.AsPropertyAccessExpression().Name() != node {
+			return AccessKindRead
+		}
+		return accessKind(parent)
+	case KindPropertyAssignment:
+		parentAccess := accessKind(parent.Parent)
+		// In `({ x: varname }) = { x: 1 }`, the left `x` is a read, the right `x` is a write.
+		if node == parent.AsPropertyAssignment().Name() {
+			return reverseAccessKind(parentAccess)
+		}
+		return parentAccess
+	case KindShorthandPropertyAssignment:
+		// Assume it's the local variable being accessed, since we don't check public properties for --noUnusedLocals.
+		if node == parent.AsShorthandPropertyAssignment().ObjectAssignmentInitializer {
+			return AccessKindRead
+		}
+		return accessKind(parent.Parent)
+	case KindArrayLiteralExpression:
+		return accessKind(parent)
+	case KindForInStatement, KindForOfStatement:
+		if node == parent.AsForInOrOfStatement().Initializer {
+			return AccessKindWrite
+		}
+		return AccessKindRead
+	}
+	return AccessKindRead
+}
+
+func reverseAccessKind(a AccessKind) AccessKind {
+	switch a {
+	case AccessKindRead:
+		return AccessKindWrite
+	case AccessKindWrite:
+		return AccessKindRead
+	case AccessKindReadWrite:
+		return AccessKindReadWrite
+	}
+	panic("Unhandled case in reverseAccessKind")
+}
+
+type AccessKind int32
+
+const (
+	AccessKindRead      AccessKind = iota // Only reads from a variable
+	AccessKindWrite                       // Only writes to a variable without ever reading it. E.g.: `x=1;`.
+	AccessKindReadWrite                   // Reads from and writes to a variable. E.g.: `f(x++);`, `x/=1`.
+)
+
 // DeclarationBase
 
 type DeclarationBase struct {

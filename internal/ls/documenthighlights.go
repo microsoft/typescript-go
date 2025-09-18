@@ -5,7 +5,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
-	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/lsutil"
@@ -82,7 +81,7 @@ func (l *LanguageService) toDocumentHighlight(entry *referenceEntry) (string, *l
 	}
 
 	// Determine write access for node references.
-	if checker.IsWriteAccess(entry.node) {
+	if ast.IsWriteAccess(entry.node) {
 		kind = lsproto.DocumentHighlightKindWrite
 	}
 
