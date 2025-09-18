@@ -21,7 +21,7 @@ func (l *LanguageService) ProvideDocumentHighlights(ctx context.Context, documen
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
 
 	if node.Parent.Kind == ast.KindJsxOpeningElement || (node.Parent.Kind == ast.KindJsxClosingElement && node.Parent.TagName() == node) {
-		documentHighlights := []*lsproto.DocumentHighlight{}
+		var documentHighlights []*lsproto.DocumentHighlight
 		kind := lsproto.DocumentHighlightKindRead
 		if node.Parent.Kind == ast.KindJsxOpeningElement {
 			documentHighlights = append(documentHighlights, &lsproto.DocumentHighlight{
@@ -41,7 +41,7 @@ func (l *LanguageService) ProvideDocumentHighlights(ctx context.Context, documen
 	}
 
 	documentHighlights := l.getSemanticDocumentHighlights(ctx, position, node, program, sourceFile)
-	if documentHighlights == nil {
+	if len(documentHighlights) == 0 {
 		documentHighlights = l.getSyntacticDocumentHighlights(node, sourceFile)
 	}
 	// if nil is passed here we never generate an error, just pass an empty higlight
@@ -173,7 +173,7 @@ func (l *LanguageService) highlightSpans(nodes []*ast.Node, sourceFile *ast.Sour
 
 func (l *LanguageService) getFromAllDeclarations(nodeTest func(*ast.Node) bool, keywords []ast.Kind, node *ast.Node, sourceFile *ast.SourceFile) []*lsproto.DocumentHighlight {
 	return l.useParent(node.Parent, nodeTest, func(decl *ast.Node, sf *ast.SourceFile) []*ast.Node {
-		symbolDecls := []*ast.Node{}
+		var symbolDecls []*ast.Node
 		if ast.CanHaveSymbol(decl) {
 			symbol := decl.Symbol()
 			if ast.CanHaveSymbol(decl) && symbol != nil && symbol.Declarations != nil {
