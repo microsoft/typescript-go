@@ -69,11 +69,20 @@ type UserPreferences struct {
 	InteractiveInlayHints                                 *bool
 }
 
-func (p *UserPreferences) GetOrDefault() UserPreferences {
+func (p *UserPreferences) Copy() *UserPreferences {
+	// not a true deep copy
 	if p == nil {
-		return UserPreferences{}
+		return nil
 	}
-	return *p
+	copy := *p
+	return &copy
+}
+
+func (p *UserPreferences) CopyOrDefault() *UserPreferences {
+	if p == nil {
+		return &UserPreferences{}
+	}
+	return p.Copy()
 }
 
 func (p *UserPreferences) ModuleSpecifierPreferences() modulespecifiers.UserPreferences {

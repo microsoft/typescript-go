@@ -24,10 +24,6 @@ func (l *LanguageService) GetProgram() *compiler.Program {
 	return l.host.GetProgram()
 }
 
-func (l *LanguageService) UpdateUserPreferences(preferences *UserPreferences) {
-	l.userPreferences = preferences
-}
-
 func (l *LanguageService) UserPreferences() *UserPreferences {
 	return l.userPreferences
 }

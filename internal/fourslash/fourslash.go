@@ -38,11 +38,11 @@ type FourslashTest struct {
 	testData     *TestData // !!! consolidate test files from test data and script info
 	baselines    map[string]*strings.Builder
 	rangesByText *collections.MultiMap[string, *RangeMarker]
-	config       *ls.UserPreferences
 
 	scriptInfos map[string]*scriptInfo
 	converters  *ls.Converters
 
+	userPreferences      *ls.UserPreferences
 	currentCaretPosition lsproto.Position
 	lastKnownMarkerName  *string
 	activeFilename       string
@@ -282,7 +282,7 @@ func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.
 			req := lsproto.ResponseMessage{
 				ID:      req.ID,
 				JSONRPC: req.JSONRPC,
-				Result:  []any{&f.config},
+				Result:  []any{&f.userPreferences},
 			}
 			f.writeMsg(t, req.Message())
 			resp = f.readMsg(t)
@@ -324,11 +324,19 @@ func (f *FourslashTest) readMsg(t *testing.T) *lsproto.Message {
 	return msg
 }
 
-func (f *FourslashTest) configure(t *testing.T, config *ls.UserPreferences) {
-	f.config = config
+func (f *FourslashTest) Configure(t *testing.T, config *ls.UserPreferences) {
+	f.userPreferences = config
 	sendNotification(t, f, lsproto.WorkspaceDidChangeConfigurationInfo, &lsproto.DidChangeConfigurationParams{
 		Settings: config,
 	})
+}
+
+func (f *FourslashTest) ConfigureWithReset(t *testing.T, config *ls.UserPreferences) (reset func()) {
+	originalConfig := f.userPreferences.Copy()
+	f.Configure(t, config)
+	return func() {
+		f.Configure(t, originalConfig)
+	}
 }
 
 func (f *FourslashTest) GoToMarkerOrRange(t *testing.T, markerOrRange MarkerOrRange) {
@@ -572,10 +580,9 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *Completi
 		Position: f.currentCaretPosition,
 		Context:  &lsproto.CompletionContext{},
 	}
-	if expected == nil {
-		f.configure(t, nil)
-	} else {
-		f.configure(t, expected.UserPreferences)
+	if expected != nil && expected.UserPreferences != nil {
+		reset := f.ConfigureWithReset(t, expected.UserPreferences)
+		defer reset()
 	}
 	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentCompletionInfo, params)
 	if resMsg == nil {
@@ -1408,6 +1415,12 @@ func (f *FourslashTest) getCurrentPositionPrefix() string {
 }
 
 func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames []string) {
+	reset := f.ConfigureWithReset(t, &ls.UserPreferences{
+		IncludeCompletionsForModuleExports:    ptrTo(true),
+		IncludeCompletionsForImportStatements: ptrTo(true),
+	})
+	defer reset()
+
 	for _, markerName := range markerNames {
 		f.GoToMarker(t, markerName)
 		params := &lsproto.CompletionParams{

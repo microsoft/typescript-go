@@ -32,7 +32,7 @@ type Snapshot struct {
 	ProjectCollection                  *ProjectCollection
 	ConfigFileRegistry                 *ConfigFileRegistry
 	compilerOptionsForInferredProjects *core.CompilerOptions
-	userPreferences                    ls.UserPreferences
+	userPreferences                    *ls.UserPreferences
 
 	builderLogs *logging.LogTree
 	apiError    error
@@ -60,7 +60,7 @@ func NewSnapshot(
 		ConfigFileRegistry:                 configFileRegistry,
 		ProjectCollection:                  &ProjectCollection{toPath: toPath},
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
-		userPreferences:                    userPreferences.GetOrDefault(),
+		userPreferences:                    userPreferences.CopyOrDefault(),
 	}
 	s.converters = ls.NewConverters(s.sessionOptions.PositionEncoding, s.LineMap)
 	s.refCount.Store(1)
@@ -85,7 +85,7 @@ func (s *Snapshot) LineMap(fileName string) *ls.LineMap {
 }
 
 func (s *Snapshot) UserPreferences() *ls.UserPreferences {
-	return &s.userPreferences
+	return s.userPreferences
 }
 
 func (s *Snapshot) Converters() *ls.Converters {
