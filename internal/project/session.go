@@ -475,6 +475,7 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 
 func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) error {
 	var errors []error
+	start := time.Now()
 	ctx := context.Background()
 	core.DiffMapsFunc(
 		oldSnapshot.ConfigFileRegistry.configs,
@@ -521,6 +522,8 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 
 	if len(errors) > 0 {
 		return fmt.Errorf("errors updating watches: %v", errors)
+	} else if s.options.LoggingEnabled {
+		s.logger.Log(fmt.Sprintf("Updated watches in %v", time.Since(start)))
 	}
 	return nil
 }
