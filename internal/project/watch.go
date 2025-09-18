@@ -388,7 +388,7 @@ func canWatchDirectoryOrFile(pathComponents []string) bool {
 		return false
 	}
 	perceivedOsRootLength := perceivedOsRootLengthForWatching(pathComponents, length)
-	return length > perceivedOsRootLength+1
+	return length > perceivedOsRootLength
 }
 
 func isDosStyleNextPart(part string) bool {

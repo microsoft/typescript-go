@@ -203,6 +203,9 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 		globs = append(globs, fmt.Sprintf("%s/%s", tsconfigDir, recursiveFileGlobPattern))
 	}
 	for _, fileName := range entry.commandLine.ExtendedSourceFiles() {
+		if includeWorkspace && tspath.ContainsPath(c.sessionOptions.CurrentDirectory, fileName, comparePathsOptions) {
+			continue
+		}
 		globs = append(globs, fileName)
 	}
 	if len(externalFiles) > 0 {
