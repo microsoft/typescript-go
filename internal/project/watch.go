@@ -8,6 +8,7 @@ import (
 	"sync"
 	"sync/atomic"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/glob"
@@ -21,6 +22,27 @@ const (
 	recursiveFileGlobPattern = "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json}"
 	minWatchLocationDepth    = 2
 )
+
+type fileSystemWatcherKey struct {
+	pattern string
+	kind    lsproto.WatchKind
+}
+
+type fileSystemWatcherValue struct {
+	count int
+	id    WatcherID
+}
+
+func toFileSystemWatcherKey(w *lsproto.FileSystemWatcher) fileSystemWatcherKey {
+	if w.GlobPattern.RelativePattern != nil {
+		panic("relative globs not implemented")
+	}
+	kind := w.Kind
+	if kind == nil {
+		kind = ptrTo(lsproto.WatchKindCreate | lsproto.WatchKindChange | lsproto.WatchKindDelete)
+	}
+	return fileSystemWatcherKey{pattern: *w.GlobPattern.Pattern, kind: *kind}
+}
 
 type WatcherID string
 
@@ -446,4 +468,31 @@ func extractLookups[T resolutionWithLookupLocations](
 			}
 		}
 	}
+}
+
+func getNonRootFileGlobs(workspaceDir string, sourceFiles []*ast.SourceFile, rootFiles map[tspath.Path]string, comparePathsOptions tspath.ComparePathsOptions) []string {
+	var globs []string
+	var includeWorkspace bool
+	canWatchWorkspace := canWatchDirectoryOrFile(tspath.GetPathComponents(workspaceDir, ""))
+	externalDirectories := make([]string, 0, max(0, len(sourceFiles)-len(rootFiles)))
+	for _, sourceFile := range sourceFiles {
+		if _, ok := rootFiles[sourceFile.Path()]; !ok {
+			if canWatchWorkspace && tspath.ContainsPath(workspaceDir, sourceFile.FileName(), comparePathsOptions) {
+				includeWorkspace = true
+				continue
+			}
+			externalDirectories = append(externalDirectories, tspath.GetDirectoryPath(sourceFile.FileName()))
+		}
+	}
+
+	if includeWorkspace {
+		globs = append(globs, workspaceDir+"/"+recursiveFileGlobPattern)
+	}
+	if len(externalDirectories) > 0 {
+		commonParents := tspath.GetCommonParents(externalDirectories, minWatchLocationDepth, comparePathsOptions)
+		globs = append(globs, core.Map(commonParents, func(dir string) string {
+			return dir + "/" + recursiveFileGlobPattern
+		})...)
+	}
+	return globs
 }

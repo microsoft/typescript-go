@@ -166,7 +166,7 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 	}
 
 	var globs []string
-	var externalFiles []string
+	var externalDirectories []string
 	var includeWorkspace bool
 	var includeTsconfigDir bool
 	canWatchWorkspace := canWatchDirectoryOrFile(tspath.GetPathComponents(c.sessionOptions.CurrentDirectory, ""))
@@ -183,7 +183,7 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 		} else if canWatchTsconfigDir && tspath.ContainsPath(tsconfigDir, dir, comparePathsOptions) {
 			includeTsconfigDir = true
 		} else {
-			externalFiles = append(externalFiles, dir)
+			externalDirectories = append(externalDirectories, dir)
 		}
 	}
 	for _, fileName := range entry.commandLine.LiteralFileNames() {
@@ -192,7 +192,7 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 		} else if canWatchTsconfigDir && tspath.ContainsPath(tsconfigDir, fileName, comparePathsOptions) {
 			includeTsconfigDir = true
 		} else {
-			externalFiles = append(externalFiles, fileName)
+			externalDirectories = append(externalDirectories, tspath.GetDirectoryPath(fileName))
 		}
 	}
 
@@ -208,8 +208,8 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 		}
 		globs = append(globs, fileName)
 	}
-	if len(externalFiles) > 0 {
-		for _, parent := range tspath.GetCommonParents(externalFiles, minWatchLocationDepth, comparePathsOptions) {
+	if len(externalDirectories) > 0 {
+		for _, parent := range tspath.GetCommonParents(externalDirectories, minWatchLocationDepth, comparePathsOptions) {
 			globs = append(globs, fmt.Sprintf("%s/%s", parent, recursiveFileGlobPattern))
 		}
 	}
