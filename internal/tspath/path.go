@@ -1075,7 +1075,7 @@ func getCommonParentsWorker(componentGroups [][]string, minComponents int, optio
 	equality := options.getEqualityComparer()
 	var lastCommonIndex int
 outer:
-	for lastCommonIndex = 0; lastCommonIndex < maxDepth; lastCommonIndex++ {
+	for lastCommonIndex := range maxDepth {
 		candidate := componentGroups[0][lastCommonIndex]
 		for j, comps := range componentGroups[1:] {
 			if !equality(candidate, comps[lastCommonIndex]) { // divergence
