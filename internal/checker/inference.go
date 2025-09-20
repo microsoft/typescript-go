@@ -1654,6 +1654,14 @@ func (c *Checker) inferFromLiteralToIndexedAccess(n *InferenceState, source *Typ
 		// Look for a union member where the indexed access type matches the source literal
 		indexType := target.indexType
 		for _, unionMember := range constraint.Types() {
+			// Early check: skip if this union member is the blocked string type
+			// This type is used as a sentinel to represent cases where string inference should not occur,
+			// such as when a string index signature would lead to overly broad or incorrect inference.
+			// Blocking it here avoids unsound or unintended type inference results.
+			if unionMember == c.blockedStringType {
+				continue
+			}
+
 			// Try to get the type of the indexed property from this union member
 			memberIndexedType := c.getIndexedAccessType(unionMember, indexType)
 
@@ -1666,13 +1674,6 @@ func (c *Checker) inferFromLiteralToIndexedAccess(n *InferenceState, source *Typ
 			if c.isTypeIdenticalTo(source, memberIndexedType) {
 				// Found a match! Infer this union member as a candidate for the type parameter
 				candidate := unionMember
-				// Prevent inferring the blocked string type as a candidate.
-				// This type is used as a sentinel to represent cases where string inference should not occur,
-				// such as when a string index signature would lead to overly broad or incorrect inference.
-				// Blocking it here avoids unsound or unintended type inference results.
-				if candidate == c.blockedStringType {
-					return
-				}
 
 				if n.priority < inference.priority {
 					inference.candidates = nil
