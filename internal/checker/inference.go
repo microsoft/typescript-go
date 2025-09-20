@@ -1631,9 +1631,9 @@ func (c *Checker) mergeInferences(target []*InferenceInfo, source []*InferenceIn
 //   3. For each union member, checking if the indexed property type matches the source literal.
 //   4. If a match is found, inferring that union member as a candidate for the type parameter.
 func (c *Checker) inferFromLiteralToIndexedAccess(n *InferenceState, source *Type, target *IndexedAccessType) {
-	// Only proceed if the object type is a type parameter that we're inferring
+	// Only proceed if the object type is a type variable that we're inferring
 	objectType := target.objectType
-	if objectType.flags&TypeFlagsTypeParameter != 0 {
+	if objectType.flags&TypeFlagsTypeVariable != 0 {
 		// Get the inference info for the type parameter
 		inference := getInferenceInfoForType(n, objectType)
 		if inference == nil || inference.isFixed {
