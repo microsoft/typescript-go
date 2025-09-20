@@ -1611,9 +1611,8 @@ func (c *Checker) mergeInferences(target []*InferenceInfo, source []*InferenceIn
 }
 
 // inferFromLiteralToIndexedAccess implements a reverse inference algorithm for indexed access types.
-//
-// This function is used during type inference when a literal value is assigned to an indexed access type,
-// Infers a type parameter from a literal assigned to an indexed access, e.g. T['type'] = 'Declaration'.
+// This function is used during type inference when a literal value is assigned to an indexed access type.
+// It infers a type parameter from a literal assigned to an indexed access, e.g. T['type'] = 'Declaration'.
 func (c *Checker) inferFromLiteralToIndexedAccess(n *InferenceState, source *Type, target *IndexedAccessType) {
 	// Only proceed if the object type is a type variable that we're inferring
 	objectType := target.objectType
