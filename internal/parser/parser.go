@@ -1407,7 +1407,7 @@ func (p *Parser) parseVariableStatement(pos int, hasJSDoc bool, modifiers *ast.M
 	p.parseSemicolon()
 	result := p.finishNode(p.factory.NewVariableStatement(modifiers, declarationList), pos)
 	p.withJSDoc(result, hasJSDoc)
-	p.checkNoJSExtraModifiers(result)
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -1478,13 +1478,14 @@ func (p *Parser) parseVariableDeclarationWorker(allowExclamation bool) *ast.Node
 	if allowExclamation && name.Kind == ast.KindIdentifier && p.token == ast.KindExclamationToken && !p.hasPrecedingLineBreak() {
 		exclamationToken = p.parseTokenNode()
 	}
-	typeNode := p.checkNoJSTypeAnnotation(p.parseTypeAnnotation())
+	typeNode := p.parseTypeAnnotation()
 	var initializer *ast.Expression
 	if p.token != ast.KindInKeyword && p.token != ast.KindOfKeyword {
 		initializer = p.parseInitializer()
 	}
 	result := p.finishNode(p.factory.NewVariableDeclaration(name, exclamationToken, typeNode, initializer), pos)
 	p.withJSDoc(result, hasJSDoc)
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -1584,14 +1585,12 @@ func (p *Parser) parseFunctionDeclaration(pos int, hasJSDoc bool, modifiers *ast
 		p.setContextFlags(ast.NodeFlagsAwaitContext, true)
 	}
 	parameters := p.parseParameters(signatureFlags)
-	returnType := p.checkNoJSTypeAnnotation(p.parseReturnType(ast.KindColonToken, false /*isType*/))
+	returnType := p.parseReturnType(ast.KindColonToken, false /*isType*/)
 	body := p.parseFunctionBlockOrSemicolon(signatureFlags, diagnostics.X_or_expected)
 	p.contextFlags = saveContextFlags
 	result := p.finishNode(p.factory.NewFunctionDeclaration(modifiers, asteriskToken, name, typeParameters, parameters, returnType, nil /*fullSignature*/, body), pos)
 	p.withJSDoc(result, hasJSDoc)
-	p.checkNoJSExtraModifiers(result)
-	p.checkNoJSTypeParameters(result)
-	p.checkNoJSSignature(result)
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -1636,13 +1635,12 @@ func (p *Parser) parseClassDeclarationOrExpression(pos int, hasJSDoc bool, modif
 	p.finishNode(result, pos)
 	p.withJSDoc(result, hasJSDoc)
 	if result.Flags&ast.NodeFlagsJavaScriptFile != 0 {
-		p.checkNoJSExtraModifiers(result)
-		p.checkNoJSTypeParameters(result)
+		p.checkJSSyntax(result)
 		if heritageClauses != nil {
 			for _, clause := range heritageClauses.Nodes {
 				if clause.AsHeritageClause().Token == ast.KindExtendsKeyword {
 					for _, expr := range clause.AsHeritageClause().Types.Nodes {
-						p.checkNoJSTypeArguments(expr)
+						p.checkJSSyntax(expr)
 					}
 				}
 			}
@@ -1735,7 +1733,7 @@ func (p *Parser) parseClassElement() *ast.Node {
 		}
 	}
 	if p.isIndexSignature() {
-		return p.checkNoJSSignature(p.parseIndexSignatureDeclaration(pos, hasJSDoc, modifiers))
+		return p.checkJSSyntax(p.parseIndexSignatureDeclaration(pos, hasJSDoc, modifiers))
 	}
 	// It is very important that we check this *after* checking indexers because
 	// the [ token can start an index signature or a computed property name
@@ -1784,21 +1782,14 @@ func (p *Parser) parseClassStaticBlockBody() *ast.Node {
 func (p *Parser) tryParseConstructorDeclaration(pos int, hasJSDoc bool, modifiers *ast.ModifierList) *ast.Node {
 	state := p.mark()
 	if p.token == ast.KindConstructorKeyword || p.token == ast.KindStringLiteral && p.scanner.TokenValue() == "constructor" && p.lookAhead((*Parser).nextTokenIsOpenParen) {
-		errorRange := core.NewTextRange(p.scanner.TokenStart(), p.scanner.TokenEnd())
 		p.nextToken()
 		typeParameters := p.parseTypeParameters()
 		parameters := p.parseParameters(ParseFlagsNone)
-		returnType := p.checkNoJSTypeAnnotation(p.parseReturnType(ast.KindColonToken, false /*isType*/))
+		returnType := p.parseReturnType(ast.KindColonToken, false /*isType*/)
 		body := p.parseFunctionBlockOrSemicolon(ParseFlagsNone, diagnostics.X_or_expected)
 		result := p.finishNode(p.factory.NewConstructorDeclaration(modifiers, typeParameters, parameters, returnType, nil /*fullSignature*/, body), pos)
 		p.withJSDoc(result, hasJSDoc)
-		if result.Flags&ast.NodeFlagsJavaScriptFile != 0 {
-			p.checkNoJSExtraModifiers(result)
-			p.checkNoJSTypeParameters(result)
-			if result.Body() == nil {
-				p.jsErrorAtRange(errorRange, diagnostics.Signature_declarations_can_only_be_used_in_TypeScript_files)
-			}
-		}
+		p.checkJSSyntax(result)
 		return result
 	}
 	p.rewind(state)
@@ -1814,7 +1805,7 @@ func (p *Parser) parsePropertyOrMethodDeclaration(pos int, hasJSDoc bool, modifi
 	name := p.parsePropertyName()
 	// Note: this is not legal as per the grammar.  But we allow it in the parser and
 	// report an error in the grammar checker.
-	questionToken := p.checkNoJSQuestionToken(p.parseOptionalToken(ast.KindQuestionToken))
+	questionToken := p.parseOptionalToken(ast.KindQuestionToken)
 	if asteriskToken != nil || p.token == ast.KindOpenParenToken || p.token == ast.KindLessThanToken {
 		return p.parseMethodDeclaration(pos, hasJSDoc, modifiers, asteriskToken, name, questionToken, diagnostics.X_or_expected)
 	}
@@ -1825,13 +1816,11 @@ func (p *Parser) parseMethodDeclaration(pos int, hasJSDoc bool, modifiers *ast.M
 	signatureFlags := core.IfElse(asteriskToken != nil, ParseFlagsYield, ParseFlagsNone) | core.IfElse(modifierListHasAsync(modifiers), ParseFlagsAwait, ParseFlagsNone)
 	typeParameters := p.parseTypeParameters()
 	parameters := p.parseParameters(signatureFlags)
-	typeNode := p.checkNoJSTypeAnnotation(p.parseReturnType(ast.KindColonToken, false /*isType*/))
+	typeNode := p.parseReturnType(ast.KindColonToken, false /*isType*/)
 	body := p.parseFunctionBlockOrSemicolon(signatureFlags, diagnosticMessage)
 	result := p.finishNode(p.factory.NewMethodDeclaration(modifiers, asteriskToken, name, questionToken, typeParameters, parameters, typeNode, nil /*fullSignature*/, body), pos)
 	p.withJSDoc(result, hasJSDoc)
-	p.checkNoJSExtraModifiers(result)
-	p.checkNoJSTypeParameters(result)
-	p.checkNoJSSignature(result)
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -1844,12 +1833,12 @@ func (p *Parser) parsePropertyDeclaration(pos int, hasJSDoc bool, modifiers *ast
 	if postfixToken == nil && !p.hasPrecedingLineBreak() {
 		postfixToken = p.parseOptionalToken(ast.KindExclamationToken)
 	}
-	typeNode := p.checkNoJSTypeAnnotation(p.parseTypeAnnotation())
+	typeNode := p.parseTypeAnnotation()
 	initializer := doInContext(p, ast.NodeFlagsYieldContext|ast.NodeFlagsAwaitContext|ast.NodeFlagsDisallowInContext, false, (*Parser).parseInitializer)
 	p.parseSemicolonAfterPropertyName(name, typeNode, initializer)
 	result := p.finishNode(p.factory.NewPropertyDeclaration(modifiers, name, postfixToken, typeNode, initializer), pos)
 	p.withJSDoc(result, hasJSDoc)
-	p.checkNoJSExtraModifiers(result)
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -3175,12 +3164,8 @@ func (p *Parser) parseParametersWorker(flags ParseFlags, allowAmbiguity bool) *a
 	p.setContextFlags(ast.NodeFlagsAwaitContext, flags&ParseFlagsAwait != 0)
 	parameters := p.parseDelimitedList(PCParameters, func(p *Parser) *ast.Node {
 		parameter := p.parseParameterEx(inAwaitContext, allowAmbiguity)
-		if parameter != nil && parameter.Flags&ast.NodeFlagsJavaScriptFile != 0 && parameter.Flags&ast.NodeFlagsJSDoc == 0 && flags&ParseFlagsType == 0 {
-			if core.Some(parameter.ModifierNodes(), ast.IsModifier) {
-				p.jsErrorAtRange(parameter.Modifiers().Loc, diagnostics.Parameter_modifiers_can_only_be_used_in_TypeScript_files)
-			}
-			p.checkNoJSQuestionToken(parameter.PostfixToken())
-			p.checkNoJSTypeAnnotation(parameter.Type())
+		if parameter != nil && flags&ParseFlagsType == 0 {
+			p.checkJSSyntax(parameter)
 		}
 		return parameter
 	})
@@ -3317,10 +3302,7 @@ func (p *Parser) parseAccessorDeclaration(pos int, hasJSDoc bool, modifiers *ast
 	}
 	p.withJSDoc(p.finishNode(result, pos), hasJSDoc)
 	if flags&ParseFlagsType == 0 {
-		p.checkNoJSExtraModifiers(result)
-		p.checkNoJSTypeParameters(result)
-		p.checkNoJSTypeAnnotation(returnType)
-		p.checkNoJSSignature(result)
+		p.checkJSSyntax(result)
 	}
 	return result
 }
@@ -4313,9 +4295,7 @@ func (p *Parser) parseParenthesizedArrowFunctionExpression(allowAmbiguity bool, 
 	}
 	result := p.finishNode(p.factory.NewArrowFunction(modifiers, typeParameters, parameters, returnType, nil /*fullSignature*/, equalsGreaterThanToken, body), pos)
 	p.withJSDoc(result, hasJSDoc)
-	p.checkNoJSExtraModifiers(result)
-	p.checkNoJSTypeParameters(result)
-	p.checkNoJSTypeAnnotation(returnType)
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -5344,7 +5324,7 @@ func (p *Parser) parseCallExpressionRest(pos int, expression *ast.Expression) *a
 			inner := expression
 			argumentList := p.parseArgumentList()
 			isOptionalChain := questionDotToken != nil || p.tryReparseOptionalChain(expression)
-			expression = p.checkNoJSTypeArguments(p.finishNode(p.factory.NewCallExpression(expression, questionDotToken, typeArguments, argumentList, core.IfElse(isOptionalChain, ast.NodeFlagsOptionalChain, ast.NodeFlagsNone)), pos))
+			expression = p.checkJSSyntax(p.finishNode(p.factory.NewCallExpression(expression, questionDotToken, typeArguments, argumentList, core.IfElse(isOptionalChain, ast.NodeFlagsOptionalChain, ast.NodeFlagsNone)), pos))
 			p.unparseExpressionWithTypeArguments(inner, typeArguments, expression)
 			continue
 		}
@@ -5396,7 +5376,7 @@ func (p *Parser) parseTaggedTemplateRest(pos int, tag *ast.Expression, questionD
 		template = p.parseTemplateExpression(true /*isTaggedTemplate*/)
 	}
 	isOptionalChain := questionDotToken != nil || tag.Flags&ast.NodeFlagsOptionalChain != 0
-	return p.checkNoJSTypeArguments(p.finishNode(p.factory.NewTaggedTemplateExpression(tag, questionDotToken, typeArguments, template, core.IfElse(isOptionalChain, ast.NodeFlagsOptionalChain, ast.NodeFlagsNone)), pos))
+	return p.checkJSSyntax(p.finishNode(p.factory.NewTaggedTemplateExpression(tag, questionDotToken, typeArguments, template, core.IfElse(isOptionalChain, ast.NodeFlagsOptionalChain, ast.NodeFlagsNone)), pos))
 }
 
 func (p *Parser) parseTemplateExpression(isTaggedTemplate bool) *ast.Expression {
@@ -5581,14 +5561,13 @@ func (p *Parser) parseFunctionExpression() *ast.Expression {
 	}
 	typeParameters := p.parseTypeParameters()
 	parameters := p.parseParameters(signatureFlags)
-	returnType := p.checkNoJSTypeAnnotation(p.parseReturnType(ast.KindColonToken, false /*isType*/))
+	returnType := p.parseReturnType(ast.KindColonToken, false /*isType*/)
 	body := p.parseFunctionBlock(signatureFlags, nil /*diagnosticMessage*/)
 	p.contextFlags = saveContexFlags
 	result := p.factory.NewFunctionExpression(modifiers, asteriskToken, name, typeParameters, parameters, returnType, nil /*fullSignature*/, body)
 	p.finishNode(result, pos)
 	p.withJSDoc(result, hasJSDoc)
-	p.checkNoJSExtraModifiers(result)
-	p.checkNoJSTypeParameters(result)
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -5644,7 +5623,7 @@ func (p *Parser) parseNewExpressionOrNewDotTarget() *ast.Node {
 	if p.token == ast.KindOpenParenToken {
 		argumentList = p.parseArgumentList()
 	}
-	result := p.checkNoJSTypeArguments(p.finishNode(p.factory.NewNewExpression(expression, typeArguments, argumentList), pos))
+	result := p.checkJSSyntax(p.finishNode(p.factory.NewNewExpression(expression, typeArguments, argumentList), pos))
 	p.unparseExpressionWithTypeArguments(expression, typeArguments, result)
 	return result
 }
@@ -6531,8 +6510,77 @@ func parseResolutionMode(mode string, pos int, end int /*reportDiagnostic: Pragm
 	// return undefined;
 }
 
-func (p *Parser) checkNoJSExtraModifiers(node *ast.Node) *ast.Node {
-	if node.Flags&ast.NodeFlagsJavaScriptFile != 0 && node.Flags&ast.NodeFlagsJSDoc == 0 {
+func (p *Parser) jsErrorAtRange(loc core.TextRange, message *diagnostics.Message, args ...any) {
+	p.jsDiagnostics = append(p.jsDiagnostics, ast.NewDiagnostic(nil, core.NewTextRange(scanner.SkipTrivia(p.sourceText, loc.Pos()), loc.End()), message, args...))
+}
+
+func (p *Parser) checkJSSyntax(node *ast.Node) *ast.Node {
+	if node.Flags&ast.NodeFlagsJavaScriptFile == 0 || node.Flags&(ast.NodeFlagsJSDoc|ast.NodeFlagsReparsed) != 0 {
+		return node
+	}
+	switch node.Kind {
+	case ast.KindParameter, ast.KindPropertyDeclaration, ast.KindMethodDeclaration:
+		if token := node.PostfixToken(); token != nil && token.Flags&ast.NodeFlagsReparsed == 0 && ast.IsQuestionToken(token) {
+			p.jsErrorAtRange(token.Loc, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, "?")
+		}
+		fallthrough
+	case ast.KindMethodSignature, ast.KindConstructor, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindFunctionExpression,
+		ast.KindFunctionDeclaration, ast.KindArrowFunction, ast.KindVariableDeclaration, ast.KindIndexSignature:
+		if ast.IsFunctionLike(node) && node.Body() == nil {
+			p.jsErrorAtRange(node.Loc, diagnostics.Signature_declarations_can_only_be_used_in_TypeScript_files)
+		} else if t := node.Type(); t != nil && t.Flags&ast.NodeFlagsReparsed == 0 {
+			p.jsErrorAtRange(t.Loc, diagnostics.Type_annotations_can_only_be_used_in_TypeScript_files)
+		}
+	case ast.KindImportDeclaration:
+		if clause := node.AsImportDeclaration().ImportClause; clause != nil && clause.IsTypeOnly() {
+			p.jsErrorAtRange(node.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "import type")
+		}
+	case ast.KindExportDeclaration:
+		if node.IsTypeOnly() {
+			p.jsErrorAtRange(node.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "export type")
+		}
+	case ast.KindImportSpecifier:
+		if node.IsTypeOnly() {
+			p.jsErrorAtRange(node.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "import...type")
+		}
+	case ast.KindExportSpecifier:
+		if node.IsTypeOnly() {
+			p.jsErrorAtRange(node.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "export...type")
+		}
+	case ast.KindImportEqualsDeclaration:
+		p.jsErrorAtRange(node.Loc, diagnostics.X_import_can_only_be_used_in_TypeScript_files)
+	case ast.KindExportAssignment:
+		if node.AsExportAssignment().IsExportEquals {
+			p.jsErrorAtRange(node.Loc, diagnostics.X_export_can_only_be_used_in_TypeScript_files)
+		}
+	case ast.KindHeritageClause:
+		if node.AsHeritageClause().Token == ast.KindImplementsKeyword {
+			p.jsErrorAtRange(node.Loc, diagnostics.X_implements_clauses_can_only_be_used_in_TypeScript_files)
+		}
+	case ast.KindInterfaceDeclaration:
+		p.jsErrorAtRange(node.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "interface")
+	case ast.KindModuleDeclaration:
+		p.jsErrorAtRange(node.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, scanner.TokenToString(node.AsModuleDeclaration().Keyword))
+	case ast.KindTypeAliasDeclaration:
+		p.jsErrorAtRange(node.Loc, diagnostics.Type_aliases_can_only_be_used_in_TypeScript_files)
+	case ast.KindEnumDeclaration:
+		p.jsErrorAtRange(node.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "enum")
+	case ast.KindNonNullExpression:
+		p.jsErrorAtRange(node.Loc, diagnostics.Non_null_assertions_can_only_be_used_in_TypeScript_files)
+	case ast.KindAsExpression:
+		p.jsErrorAtRange(node.Type().Loc, diagnostics.Type_assertion_expressions_can_only_be_used_in_TypeScript_files)
+	case ast.KindSatisfiesExpression:
+		p.jsErrorAtRange(node.Type().Loc, diagnostics.Type_satisfaction_expressions_can_only_be_used_in_TypeScript_files)
+	}
+	// Check absence of type parameters, type arguments and non-JavaScript modifiers
+	switch node.Kind {
+	case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindMethodDeclaration, ast.KindConstructor, ast.KindGetAccessor,
+		ast.KindSetAccessor, ast.KindFunctionExpression, ast.KindFunctionDeclaration, ast.KindArrowFunction:
+		if list := node.TypeParameterList(); list != nil && core.Some(list.Nodes, func(n *ast.Node) bool { return n.Flags&ast.NodeFlagsReparsed == 0 }) {
+			p.jsErrorAtRange(list.Loc, diagnostics.Type_parameter_declarations_can_only_be_used_in_TypeScript_files)
+		}
+		fallthrough
+	case ast.KindVariableStatement, ast.KindPropertyDeclaration:
 		if modifiers := node.Modifiers(); modifiers != nil {
 			for _, modifier := range modifiers.Nodes {
 				if modifier.Flags&ast.NodeFlagsReparsed == 0 && modifier.Kind != ast.KindDecorator && ast.ModifierToFlag(modifier.Kind)&ast.ModifierFlagsJavaScript == 0 {
@@ -6540,49 +6588,15 @@ func (p *Parser) checkNoJSExtraModifiers(node *ast.Node) *ast.Node {
 				}
 			}
 		}
-	}
-	return node
-}
-
-func (p *Parser) checkNoJSQuestionToken(node *ast.Node) *ast.Node {
-	if node != nil && node.Flags&ast.NodeFlagsJavaScriptFile != 0 && node.Flags&ast.NodeFlagsJSDoc == 0 {
-		p.jsErrorAtRange(node.Loc, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, "?")
-	}
-	return node
-}
-
-func (p *Parser) checkNoJSTypeParameters(node *ast.Node) *ast.Node {
-	if node.Flags&ast.NodeFlagsJavaScriptFile != 0 && node.Flags&ast.NodeFlagsJSDoc == 0 && node.TypeParameterList() != nil {
-		if list := node.TypeParameterList(); list != nil && core.Some(list.Nodes, func(n *ast.Node) bool { return n.Flags&ast.NodeFlagsReparsed == 0 }) {
-			p.jsErrorAtRange(list.Loc, diagnostics.Type_parameter_declarations_can_only_be_used_in_TypeScript_files)
+	case ast.KindParameter:
+		if core.Some(node.ModifierNodes(), ast.IsModifier) {
+			p.jsErrorAtRange(node.Modifiers().Loc, diagnostics.Parameter_modifiers_can_only_be_used_in_TypeScript_files)
 		}
-	}
-	return node
-}
-
-func (p *Parser) checkNoJSTypeAnnotation(node *ast.Node) *ast.Node {
-	if node != nil && node.Flags&ast.NodeFlagsJavaScriptFile != 0 && node.Flags&ast.NodeFlagsJSDoc == 0 {
-		p.jsErrorAtRange(node.Loc, diagnostics.Type_annotations_can_only_be_used_in_TypeScript_files)
-	}
-	return node
-}
-
-func (p *Parser) checkNoJSTypeArguments(node *ast.Node) *ast.Node {
-	if node.Flags&ast.NodeFlagsJavaScriptFile != 0 && node.Flags&ast.NodeFlagsJSDoc == 0 && node.TypeArgumentList() != nil {
+	case ast.KindCallExpression, ast.KindNewExpression, ast.KindExpressionWithTypeArguments, ast.KindJsxSelfClosingElement,
+		ast.KindJsxOpeningElement, ast.KindTaggedTemplateExpression:
 		if list := node.TypeArgumentList(); list != nil && core.Some(list.Nodes, func(n *ast.Node) bool { return n.Flags&ast.NodeFlagsReparsed == 0 }) {
 			p.jsErrorAtRange(list.Loc, diagnostics.Type_arguments_can_only_be_used_in_TypeScript_files)
 		}
 	}
 	return node
-}
-
-func (p *Parser) checkNoJSSignature(node *ast.Node) *ast.Node {
-	if node.Flags&ast.NodeFlagsJavaScriptFile != 0 && node.Flags&ast.NodeFlagsJSDoc == 0 && node.Body() == nil {
-		p.jsErrorAtRange(core.OrElse(node.Name(), node).Loc, diagnostics.Signature_declarations_can_only_be_used_in_TypeScript_files)
-	}
-	return node
-}
-
-func (p *Parser) jsErrorAtRange(loc core.TextRange, message *diagnostics.Message, args ...any) {
-	p.jsDiagnostics = append(p.jsDiagnostics, ast.NewDiagnostic(nil, core.NewTextRange(scanner.SkipTrivia(p.sourceText, loc.Pos()), loc.End()), message, args...))
 }
