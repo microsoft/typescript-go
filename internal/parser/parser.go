@@ -1690,11 +1690,7 @@ func (p *Parser) parseHeritageClause() *ast.Node {
 	kind := p.token
 	p.nextToken()
 	types := p.parseDelimitedList(PCHeritageClauseElement, (*Parser).parseExpressionWithTypeArguments)
-	result := p.finishNode(p.factory.NewHeritageClause(kind, types), pos)
-	if result.Flags&ast.NodeFlagsJavaScriptFile != 0 && kind == ast.KindImplementsKeyword {
-		p.jsErrorAtRange(result.Loc, diagnostics.X_implements_clauses_can_only_be_used_in_TypeScript_files)
-	}
-	return result
+	return p.checkJSSyntax(p.finishNode(p.factory.NewHeritageClause(kind, types), pos))
 }
 
 func (p *Parser) parseExpressionWithTypeArguments() *ast.Node {
@@ -1951,9 +1947,7 @@ func (p *Parser) parseInterfaceDeclaration(pos int, hasJSDoc bool, modifiers *as
 	members := p.parseObjectTypeMembers()
 	result := p.finishNode(p.factory.NewInterfaceDeclaration(modifiers, name, typeParameters, heritageClauses, members), pos)
 	p.withJSDoc(result, hasJSDoc)
-	if result.Flags&ast.NodeFlagsJavaScriptFile != 0 {
-		p.jsErrorAtRange(name.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "interface")
-	}
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -1974,9 +1968,7 @@ func (p *Parser) parseTypeAliasDeclaration(pos int, hasJSDoc bool, modifiers *as
 	p.parseSemicolon()
 	result := p.finishNode(p.factory.NewTypeAliasDeclaration(modifiers, name, typeParameters, typeNode), pos)
 	p.withJSDoc(result, hasJSDoc)
-	if result.Flags&ast.NodeFlagsJavaScriptFile != 0 {
-		p.jsErrorAtRange(name.Loc, diagnostics.Type_aliases_can_only_be_used_in_TypeScript_files)
-	}
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -2014,9 +2006,7 @@ func (p *Parser) parseEnumDeclaration(pos int, hasJSDoc bool, modifiers *ast.Mod
 	}
 	result := p.finishNode(p.factory.NewEnumDeclaration(modifiers, name, members), pos)
 	p.withJSDoc(result, hasJSDoc)
-	if result.Flags&ast.NodeFlagsJavaScriptFile != 0 {
-		p.jsErrorAtRange(name.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "enum")
-	}
+	p.checkJSSyntax(result)
 	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
 	return result
 }
@@ -2093,9 +2083,7 @@ func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, hasJSDoc bool, modif
 	}
 	result := p.finishNode(p.factory.NewModuleDeclaration(modifiers, keyword, name, body), pos)
 	p.withJSDoc(result, hasJSDoc)
-	if result.Flags&ast.NodeFlagsJavaScriptFile != 0 {
-		p.jsErrorAtRange(name.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, scanner.TokenToString(keyword))
-	}
+	p.checkJSSyntax(result)
 	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
 	return result
 }
@@ -2120,11 +2108,8 @@ func (p *Parser) parseImportDeclarationOrImportEqualsDeclaration(pos int, hasJSD
 		}
 	}
 	if identifier != nil && !p.tokenAfterImportedIdentifierDefinitelyProducesImportDeclaration() {
-		importEquals := p.parseImportEqualsDeclaration(pos, hasJSDoc, modifiers, identifier, isTypeOnly)
+		importEquals := p.checkJSSyntax(p.parseImportEqualsDeclaration(pos, hasJSDoc, modifiers, identifier, isTypeOnly))
 		p.statementHasAwaitIdentifier = saveHasAwaitIdentifier // Import= declaration is always parsed in an Await context, no need to reparse
-		if importEquals.Flags&ast.NodeFlagsJavaScriptFile != 0 {
-			p.jsErrorAtRange(importEquals.Loc, diagnostics.X_import_can_only_be_used_in_TypeScript_files)
-		}
 		return importEquals
 	}
 	importClause := p.tryParseImportClause(identifier, afterImportPos, isTypeOnly, false /*skipJSDocLeadingAsterisks*/)
@@ -2134,9 +2119,7 @@ func (p *Parser) parseImportDeclarationOrImportEqualsDeclaration(pos int, hasJSD
 	p.parseSemicolon()
 	result := p.finishNode(p.factory.NewImportDeclaration(modifiers, importClause, moduleSpecifier, attributes), pos)
 	p.withJSDoc(result, hasJSDoc)
-	if result.Flags&ast.NodeFlagsJavaScriptFile != 0 && isTypeOnly {
-		p.jsErrorAtRange(result.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "import type")
-	}
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -2266,10 +2249,7 @@ func (p *Parser) parseImportSpecifier() *ast.Node {
 		identifierName = p.newIdentifier("")
 		p.finishNode(identifierName, name.Pos())
 	}
-	result := p.finishNode(p.factory.NewImportSpecifier(isTypeOnly, propertyName, identifierName), pos)
-	if result.Flags&ast.NodeFlagsJavaScriptFile != 0 && isTypeOnly {
-		p.jsErrorAtRange(result.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "import...type")
-	}
+	result := p.checkJSSyntax(p.finishNode(p.factory.NewImportSpecifier(isTypeOnly, propertyName, identifierName), pos))
 	return result
 }
 
@@ -2384,9 +2364,7 @@ func (p *Parser) parseExportAssignment(pos int, hasJSDoc bool, modifiers *ast.Mo
 	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
 	result := p.finishNode(p.factory.NewExportAssignment(modifiers, isExportEquals, nil /*typeNode*/, expression), pos)
 	p.withJSDoc(result, hasJSDoc)
-	if result.Flags&ast.NodeFlagsJavaScriptFile != 0 && isExportEquals {
-		p.jsErrorAtRange(result.Loc, diagnostics.X_export_can_only_be_used_in_TypeScript_files)
-	}
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -2436,9 +2414,7 @@ func (p *Parser) parseExportDeclaration(pos int, hasJSDoc bool, modifiers *ast.M
 	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
 	result := p.finishNode(p.factory.NewExportDeclaration(modifiers, isTypeOnly, exportClause, moduleSpecifier, attributes), pos)
 	p.withJSDoc(result, hasJSDoc)
-	if result.Flags&ast.NodeFlagsJavaScriptFile != 0 && isTypeOnly {
-		p.jsErrorAtRange(result.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "export type")
-	}
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -2463,9 +2439,7 @@ func (p *Parser) parseExportSpecifier() *ast.Node {
 	isTypeOnly, propertyName, name := p.parseImportOrExportSpecifier(ast.KindExportSpecifier)
 	result := p.finishNode(p.factory.NewExportSpecifier(isTypeOnly, propertyName, name), pos)
 	p.withJSDoc(result, hasJSDoc)
-	if result.Flags&ast.NodeFlagsJavaScriptFile != 0 && isTypeOnly {
-		p.jsErrorAtRange(result.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "export...type")
-	}
+	p.checkJSSyntax(result)
 	return result
 }
 
@@ -4503,19 +4477,11 @@ func (p *Parser) parseBinaryExpressionRest(precedence ast.OperatorPrecedence, le
 }
 
 func (p *Parser) makeSatisfiesExpression(expression *ast.Expression, typeNode *ast.TypeNode) *ast.Node {
-	result := p.finishNode(p.factory.NewSatisfiesExpression(expression, typeNode), expression.Pos())
-	if result.Flags&ast.NodeFlagsJavaScriptFile != 0 {
-		p.jsErrorAtRange(typeNode.Loc, diagnostics.Type_satisfaction_expressions_can_only_be_used_in_TypeScript_files)
-	}
-	return result
+	return p.checkJSSyntax(p.finishNode(p.factory.NewSatisfiesExpression(expression, typeNode), expression.Pos()))
 }
 
 func (p *Parser) makeAsExpression(left *ast.Expression, right *ast.TypeNode) *ast.Node {
-	result := p.finishNode(p.factory.NewAsExpression(left, right), left.Pos())
-	if result.Flags&ast.NodeFlagsJavaScriptFile != 0 {
-		p.jsErrorAtRange(right.Loc, diagnostics.Type_assertion_expressions_can_only_be_used_in_TypeScript_files)
-	}
-	return result
+	return p.checkJSSyntax(p.finishNode(p.factory.NewAsExpression(left, right), left.Pos()))
 }
 
 func (p *Parser) makeBinaryExpression(left *ast.Expression, operatorToken *ast.Node, right *ast.Expression, pos int) *ast.Node {
@@ -5217,10 +5183,7 @@ func (p *Parser) parseMemberExpressionRest(pos int, expression *ast.Expression, 
 		if questionDotToken == nil {
 			if p.token == ast.KindExclamationToken && !p.hasPrecedingLineBreak() {
 				p.nextToken()
-				expression = p.finishNode(p.factory.NewNonNullExpression(expression, ast.NodeFlagsNone), pos)
-				if expression.Flags&ast.NodeFlagsJavaScriptFile != 0 {
-					p.jsErrorAtRange(expression.Loc, diagnostics.Non_null_assertions_can_only_be_used_in_TypeScript_files)
-				}
+				expression = p.checkJSSyntax(p.finishNode(p.factory.NewNonNullExpression(expression, ast.NodeFlagsNone), pos))
 				continue
 			}
 			typeArguments := p.tryParseTypeArgumentsInExpression()
@@ -6558,13 +6521,13 @@ func (p *Parser) checkJSSyntax(node *ast.Node) *ast.Node {
 			p.jsErrorAtRange(node.Loc, diagnostics.X_implements_clauses_can_only_be_used_in_TypeScript_files)
 		}
 	case ast.KindInterfaceDeclaration:
-		p.jsErrorAtRange(node.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "interface")
+		p.jsErrorAtRange(node.Name().Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "interface")
 	case ast.KindModuleDeclaration:
-		p.jsErrorAtRange(node.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, scanner.TokenToString(node.AsModuleDeclaration().Keyword))
+		p.jsErrorAtRange(node.Name().Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, scanner.TokenToString(node.AsModuleDeclaration().Keyword))
 	case ast.KindTypeAliasDeclaration:
-		p.jsErrorAtRange(node.Loc, diagnostics.Type_aliases_can_only_be_used_in_TypeScript_files)
+		p.jsErrorAtRange(node.Name().Loc, diagnostics.Type_aliases_can_only_be_used_in_TypeScript_files)
 	case ast.KindEnumDeclaration:
-		p.jsErrorAtRange(node.Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "enum")
+		p.jsErrorAtRange(node.Name().Loc, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "enum")
 	case ast.KindNonNullExpression:
 		p.jsErrorAtRange(node.Loc, diagnostics.Non_null_assertions_can_only_be_used_in_TypeScript_files)
 	case ast.KindAsExpression:
