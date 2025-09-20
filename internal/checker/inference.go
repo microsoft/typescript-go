@@ -1666,6 +1666,10 @@ func (c *Checker) inferFromLiteralToIndexedAccess(n *InferenceState, source *Typ
 			if c.isTypeIdenticalTo(source, memberIndexedType) {
 				// Found a match! Infer this union member as a candidate for the type parameter
 				candidate := unionMember
+				// Prevent inferring the blocked string type as a candidate.
+				// This type is used as a sentinel to represent cases where string inference should not occur,
+				// such as when a string index signature would lead to overly broad or incorrect inference.
+				// Blocking it here avoids unsound or unintended type inference results.
 				if candidate == c.blockedStringType {
 					return
 				}
