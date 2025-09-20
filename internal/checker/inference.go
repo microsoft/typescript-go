@@ -1651,7 +1651,7 @@ func (c *Checker) inferFromLiteralToIndexedAccess(n *InferenceState, source *Typ
 		// Check if this member's indexed property type matches our literal source
 		if c.isTypeIdenticalTo(source, memberIndexedType) {
 			// Found a match! Infer this union member as a candidate for the type parameter
-			candidate := core.OrElse(n.propagationType, unionMember)
+			candidate := unionMember
 			if candidate == c.blockedStringType {
 				return
 			}
