@@ -1616,62 +1616,60 @@ func (c *Checker) mergeInferences(target []*InferenceInfo, source []*InferenceIn
 func (c *Checker) inferFromLiteralToIndexedAccess(n *InferenceState, source *Type, target *IndexedAccessType) {
 	// Only proceed if the object type is a type parameter that we're inferring
 	objectType := target.objectType
-	if objectType.flags&TypeFlagsTypeParameter == 0 {
-		return
-	}
-
-	// Get the inference info for the type parameter
-	inference := getInferenceInfoForType(n, objectType)
-	if inference == nil || inference.isFixed {
-		return
-	}
-
-	// Get the constraint of the type parameter (e.g., ASTNode)
-	constraint := c.getBaseConstraintOfType(inference.typeParameter)
-	if constraint == nil {
-		return
-	}
-
-	// Only handle union constraints (discriminated unions)
-	if constraint.flags&TypeFlagsUnion == 0 {
-		return
-	}
-
-	// Look for a union member where the indexed access type matches the source literal
-	indexType := target.indexType
-	for _, unionMember := range constraint.Types() {
-		// Try to get the type of the indexed property from this union member
-		memberIndexedType := c.getIndexedAccessType(unionMember, indexType)
-
-		// Skip if we can't resolve the indexed access
-		if memberIndexedType == nil || c.isErrorType(memberIndexedType) {
-			continue
+	if objectType.flags&TypeFlagsTypeParameter != 0 {
+		// Get the inference info for the type parameter
+		inference := getInferenceInfoForType(n, objectType)
+		if inference == nil || inference.isFixed {
+			return
 		}
 
-		// Check if this member's indexed property type matches our literal source
-		if c.isTypeIdenticalTo(source, memberIndexedType) {
-			// Found a match! Infer this union member as a candidate for the type parameter
-			candidate := unionMember
-			if candidate == c.blockedStringType {
+		// Get the constraint of the type parameter (e.g., ASTNode)
+		constraint := c.getBaseConstraintOfType(inference.typeParameter)
+		if constraint == nil {
+			return
+		}
+
+		// Only handle union constraints (discriminated unions)
+		if constraint.flags&TypeFlagsUnion == 0 {
+			return
+		}
+
+		// Look for a union member where the indexed access type matches the source literal
+		indexType := target.indexType
+		for _, unionMember := range constraint.Types() {
+			// Try to get the type of the indexed property from this union member
+			memberIndexedType := c.getIndexedAccessType(unionMember, indexType)
+
+			// Skip if we can't resolve the indexed access
+			if memberIndexedType == nil || c.isErrorType(memberIndexedType) {
+				continue
+			}
+
+			// Check if this member's indexed property type matches our literal source
+			if c.isTypeIdenticalTo(source, memberIndexedType) {
+				// Found a match! Infer this union member as a candidate for the type parameter
+				candidate := unionMember
+				if candidate == c.blockedStringType {
+					return
+				}
+
+				if n.priority < inference.priority {
+					inference.candidates = nil
+					inference.contraCandidates = nil
+					inference.topLevel = true
+					inference.priority = n.priority
+				}
+
+				if n.priority == inference.priority {
+					if !slices.Contains(inference.candidates, candidate) {
+						inference.candidates = append(inference.candidates, candidate)
+						clearCachedInferences(n.inferences)
+					}
+				}
+
+				n.inferencePriority = min(n.inferencePriority, n.priority)
 				return
 			}
-
-			if n.priority < inference.priority {
-				inference.candidates = nil
-				inference.contraCandidates = nil
-				inference.topLevel = true
-				inference.priority = n.priority
-			}
-
-			if n.priority == inference.priority {
-				if !slices.Contains(inference.candidates, candidate) {
-					inference.candidates = append(inference.candidates, candidate)
-					clearCachedInferences(n.inferences)
-				}
-			}
-
-			n.inferencePriority = min(n.inferencePriority, n.priority)
-			return
 		}
 	}
 }
