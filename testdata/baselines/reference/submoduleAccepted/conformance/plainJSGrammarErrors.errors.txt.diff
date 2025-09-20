@@ -6,7 +6,7 @@
  plainJSGrammarErrors.js(29,5): error TS1031: 'export' modifier cannot appear on class elements of this kind.
 -plainJSGrammarErrors.js(29,5): error TS8009: The 'export' modifier can only be used in TypeScript files.
  plainJSGrammarErrors.js(30,5): error TS1031: 'export' modifier cannot appear on class elements of this kind.
-+plainJSGrammarErrors.js(34,9): error TS8017: Signature declarations can only be used in TypeScript files.
++plainJSGrammarErrors.js(34,5): error TS8017: Signature declarations can only be used in TypeScript files.
  plainJSGrammarErrors.js(34,22): error TS1005: '{' expected.
  plainJSGrammarErrors.js(35,9): error TS1054: A 'get' accessor cannot have parameters.
  plainJSGrammarErrors.js(36,9): error TS1049: A 'set' accessor must have exactly one parameter.
@@ -18,20 +18,12 @@
  plainJSGrammarErrors.js(64,1): error TS1042: 'async' modifier cannot be used here.
  plainJSGrammarErrors.js(65,1): error TS1042: 'async' modifier cannot be used here.
  plainJSGrammarErrors.js(66,1): error TS1042: 'async' modifier cannot be used here.
-@@= skipped -29, +28 lines =@@
- plainJSGrammarErrors.js(106,5): error TS1042: 'export' modifier cannot be used here.
- plainJSGrammarErrors.js(108,25): error TS1162: An object member cannot be declared optional.
- plainJSGrammarErrors.js(109,6): error TS1162: An object member cannot be declared optional.
--plainJSGrammarErrors.js(109,6): error TS8009: The '?' modifier can only be used in TypeScript files.
- plainJSGrammarErrors.js(110,15): error TS1255: A definite assignment assertion '!' is not permitted in this context.
- plainJSGrammarErrors.js(111,19): error TS1255: A definite assignment assertion '!' is not permitted in this context.
- plainJSGrammarErrors.js(114,16): error TS1312: Did you mean to use a ':'? An '=' can only follow a property name when the containing object literal is part of a destructuring pattern.
-@@= skipped -35, +34 lines =@@
+@@= skipped -64, +63 lines =@@
  plainJSGrammarErrors.js(205,36): error TS1325: Argument of dynamic import cannot be spread element.
 
 
 -==== plainJSGrammarErrors.js (102 errors) ====
-+==== plainJSGrammarErrors.js (100 errors) ====
++==== plainJSGrammarErrors.js (101 errors) ====
      class C {
          // #private mistakes
          q = #unbound
@@ -48,7 +40,7 @@
      
          // accessor mistakes
          get incorporeal();
-+            ~~~~~~~~~~~
++        ~~~~~~~~~~~~~~~~~~
 +!!! error TS8017: Signature declarations can only be used in TypeScript files.
                           ~
  !!! error TS1005: '{' expected.
@@ -62,12 +54,3 @@
      }
      async const cantAsyncConst = 2
      ~~~~~
-@@= skipped -105, +103 lines =@@
-         m?() { return 12 },
-          ~
- !!! error TS1162: An object member cannot be declared optional.
--         ~
--!!! error TS8009: The '?' modifier can only be used in TypeScript files.
-         definitely!,
-                   ~
- !!! error TS1255: A definite assignment assertion '!' is not permitted in this context.
