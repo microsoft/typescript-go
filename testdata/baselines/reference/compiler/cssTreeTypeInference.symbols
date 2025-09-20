@@ -1,0 +1,128 @@
+//// [tests/cases/compiler/cssTreeTypeInference.ts] ////
+
+=== cssTreeTypeInference.ts ===
+// Simplified reproduction of css-tree type inference issue
+// https://github.com/microsoft/typescript-go/issues/1727
+
+interface Declaration {
+>Declaration : Symbol(Declaration, Decl(cssTreeTypeInference.ts, 0, 0))
+
+    type: 'Declaration';
+>type : Symbol(Declaration.type, Decl(cssTreeTypeInference.ts, 3, 23))
+
+    property: string;
+>property : Symbol(Declaration.property, Decl(cssTreeTypeInference.ts, 4, 24))
+
+    value: string;
+>value : Symbol(Declaration.value, Decl(cssTreeTypeInference.ts, 5, 21))
+}
+
+interface Rule {
+>Rule : Symbol(Rule, Decl(cssTreeTypeInference.ts, 7, 1))
+
+    type: 'Rule';
+>type : Symbol(Rule.type, Decl(cssTreeTypeInference.ts, 9, 16))
+
+    selector: string;
+>selector : Symbol(Rule.selector, Decl(cssTreeTypeInference.ts, 10, 17))
+
+    children: Declaration[];
+>children : Symbol(Rule.children, Decl(cssTreeTypeInference.ts, 11, 21))
+>Declaration : Symbol(Declaration, Decl(cssTreeTypeInference.ts, 0, 0))
+}
+
+type ASTNode = Declaration | Rule;
+>ASTNode : Symbol(ASTNode, Decl(cssTreeTypeInference.ts, 13, 1))
+>Declaration : Symbol(Declaration, Decl(cssTreeTypeInference.ts, 0, 0))
+>Rule : Symbol(Rule, Decl(cssTreeTypeInference.ts, 7, 1))
+
+interface WalkOptions<T extends ASTNode> {
+>WalkOptions : Symbol(WalkOptions, Decl(cssTreeTypeInference.ts, 15, 34))
+>T : Symbol(T, Decl(cssTreeTypeInference.ts, 17, 22))
+>ASTNode : Symbol(ASTNode, Decl(cssTreeTypeInference.ts, 13, 1))
+
+    visit: T['type'];
+>visit : Symbol(WalkOptions.visit, Decl(cssTreeTypeInference.ts, 17, 42))
+>T : Symbol(T, Decl(cssTreeTypeInference.ts, 17, 22))
+
+    enter(node: T): void;
+>enter : Symbol(WalkOptions.enter, Decl(cssTreeTypeInference.ts, 18, 21))
+>node : Symbol(node, Decl(cssTreeTypeInference.ts, 19, 10))
+>T : Symbol(T, Decl(cssTreeTypeInference.ts, 17, 22))
+}
+
+declare function walk<T extends ASTNode>(ast: ASTNode, options: WalkOptions<T>): void;
+>walk : Symbol(walk, Decl(cssTreeTypeInference.ts, 20, 1))
+>T : Symbol(T, Decl(cssTreeTypeInference.ts, 22, 22))
+>ASTNode : Symbol(ASTNode, Decl(cssTreeTypeInference.ts, 13, 1))
+>ast : Symbol(ast, Decl(cssTreeTypeInference.ts, 22, 41))
+>ASTNode : Symbol(ASTNode, Decl(cssTreeTypeInference.ts, 13, 1))
+>options : Symbol(options, Decl(cssTreeTypeInference.ts, 22, 54))
+>WalkOptions : Symbol(WalkOptions, Decl(cssTreeTypeInference.ts, 15, 34))
+>T : Symbol(T, Decl(cssTreeTypeInference.ts, 22, 22))
+
+// Test case 1: Simple type inference
+const ast: ASTNode = {
+>ast : Symbol(ast, Decl(cssTreeTypeInference.ts, 25, 5))
+>ASTNode : Symbol(ASTNode, Decl(cssTreeTypeInference.ts, 13, 1))
+
+    type: 'Declaration',
+>type : Symbol(type, Decl(cssTreeTypeInference.ts, 25, 22))
+
+    property: 'color',
+>property : Symbol(property, Decl(cssTreeTypeInference.ts, 26, 24))
+
+    value: 'red'
+>value : Symbol(value, Decl(cssTreeTypeInference.ts, 27, 22))
+
+};
+
+// This should infer node as Declaration type
+walk(ast, {
+>walk : Symbol(walk, Decl(cssTreeTypeInference.ts, 20, 1))
+>ast : Symbol(ast, Decl(cssTreeTypeInference.ts, 25, 5))
+
+    visit: 'Declaration',
+>visit : Symbol(visit, Decl(cssTreeTypeInference.ts, 32, 11))
+
+    enter(node) {
+>enter : Symbol(enter, Decl(cssTreeTypeInference.ts, 33, 25))
+>node : Symbol(node, Decl(cssTreeTypeInference.ts, 34, 10))
+
+        console.log(node.property); // Should not error - node should be inferred as Declaration
+>console.log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
+>console : Symbol(console, Decl(lib.dom.d.ts, --, --))
+>log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
+>node.property : Symbol(Declaration.property, Decl(cssTreeTypeInference.ts, 4, 24))
+>node : Symbol(node, Decl(cssTreeTypeInference.ts, 34, 10))
+>property : Symbol(Declaration.property, Decl(cssTreeTypeInference.ts, 4, 24))
+
+    },
+});
+
+// Test case 2: More complex scenario
+declare const complexAst: Rule;
+>complexAst : Symbol(complexAst, Decl(cssTreeTypeInference.ts, 40, 13))
+>Rule : Symbol(Rule, Decl(cssTreeTypeInference.ts, 7, 1))
+
+walk(complexAst, {
+>walk : Symbol(walk, Decl(cssTreeTypeInference.ts, 20, 1))
+>complexAst : Symbol(complexAst, Decl(cssTreeTypeInference.ts, 40, 13))
+
+    visit: 'Declaration',
+>visit : Symbol(visit, Decl(cssTreeTypeInference.ts, 42, 18))
+
+    enter(node) {
+>enter : Symbol(enter, Decl(cssTreeTypeInference.ts, 43, 25))
+>node : Symbol(node, Decl(cssTreeTypeInference.ts, 44, 10))
+
+        console.log(node.value); // Should infer node as Declaration
+>console.log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
+>console : Symbol(console, Decl(lib.dom.d.ts, --, --))
+>log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
+>node.value : Symbol(Declaration.value, Decl(cssTreeTypeInference.ts, 5, 21))
+>node : Symbol(node, Decl(cssTreeTypeInference.ts, 44, 10))
+>value : Symbol(Declaration.value, Decl(cssTreeTypeInference.ts, 5, 21))
+
+    },
+});

@@ -1,0 +1,120 @@
+//// [tests/cases/compiler/cssTreeTypeInference.ts] ////
+
+=== cssTreeTypeInference.ts ===
+// Simplified reproduction of css-tree type inference issue
+// https://github.com/microsoft/typescript-go/issues/1727
+
+interface Declaration {
+    type: 'Declaration';
+>type : "Declaration"
+
+    property: string;
+>property : string
+
+    value: string;
+>value : string
+}
+
+interface Rule {
+    type: 'Rule';
+>type : "Rule"
+
+    selector: string;
+>selector : string
+
+    children: Declaration[];
+>children : Declaration[]
+}
+
+type ASTNode = Declaration | Rule;
+>ASTNode : ASTNode
+
+interface WalkOptions<T extends ASTNode> {
+    visit: T['type'];
+>visit : T["type"]
+
+    enter(node: T): void;
+>enter : (node: T) => void
+>node : T
+}
+
+declare function walk<T extends ASTNode>(ast: ASTNode, options: WalkOptions<T>): void;
+>walk : <T extends ASTNode>(ast: ASTNode, options: WalkOptions<T>) => void
+>ast : ASTNode
+>options : WalkOptions<T>
+
+// Test case 1: Simple type inference
+const ast: ASTNode = {
+>ast : ASTNode
+>{    type: 'Declaration',    property: 'color',    value: 'red'} : { type: "Declaration"; property: string; value: string; }
+
+    type: 'Declaration',
+>type : "Declaration"
+>'Declaration' : "Declaration"
+
+    property: 'color',
+>property : string
+>'color' : "color"
+
+    value: 'red'
+>value : string
+>'red' : "red"
+
+};
+
+// This should infer node as Declaration type
+walk(ast, {
+>walk(ast, {    visit: 'Declaration',    enter(node) {        console.log(node.property); // Should not error - node should be inferred as Declaration    },}) : void
+>walk : <T extends ASTNode>(ast: ASTNode, options: WalkOptions<T>) => void
+>ast : Declaration
+>{    visit: 'Declaration',    enter(node) {        console.log(node.property); // Should not error - node should be inferred as Declaration    },} : { visit: "Declaration"; enter(node: Declaration): void; }
+
+    visit: 'Declaration',
+>visit : "Declaration"
+>'Declaration' : "Declaration"
+
+    enter(node) {
+>enter : (node: Declaration) => void
+>node : Declaration
+
+        console.log(node.property); // Should not error - node should be inferred as Declaration
+>console.log(node.property) : void
+>console.log : (...data: any[]) => void
+>console : Console
+>log : (...data: any[]) => void
+>node.property : string
+>node : Declaration
+>property : string
+
+    },
+});
+
+// Test case 2: More complex scenario
+declare const complexAst: Rule;
+>complexAst : Rule
+
+walk(complexAst, {
+>walk(complexAst, {    visit: 'Declaration',    enter(node) {        console.log(node.value); // Should infer node as Declaration    },}) : void
+>walk : <T extends ASTNode>(ast: ASTNode, options: WalkOptions<T>) => void
+>complexAst : Rule
+>{    visit: 'Declaration',    enter(node) {        console.log(node.value); // Should infer node as Declaration    },} : { visit: "Declaration"; enter(node: Declaration): void; }
+
+    visit: 'Declaration',
+>visit : "Declaration"
+>'Declaration' : "Declaration"
+
+    enter(node) {
+>enter : (node: Declaration) => void
+>node : Declaration
+
+        console.log(node.value); // Should infer node as Declaration
+>console.log(node.value) : void
+>console.log : (...data: any[]) => void
+>console : Console
+>log : (...data: any[]) => void
+>node.value : string
+>node : Declaration
+>value : string
+
+    },
+});
