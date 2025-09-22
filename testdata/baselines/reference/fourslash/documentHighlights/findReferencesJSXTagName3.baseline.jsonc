@@ -28,8 +28,11 @@
 //     [|</*HIGHLIGHTS*/div>|]
 //         Some content
 //         <div>More content</div>
-//     </div>;
-// // --- (line: 13) skipped ---
+//     [|</div>|];
+// 
+// const x = <Comp>
+//     Content
+// </Comp>;
 
 
 
@@ -39,7 +42,7 @@
 // const Comp = () =>
 //     <div>
 //         Some content
-//         [|</*HIGHLIGHTS*/div>|]More content</div>
+//         [|</*HIGHLIGHTS*/div>|]More content[|</div>|]
 //     </div>;
 // 
 // const x = <Comp>
@@ -54,7 +57,7 @@
 // const Comp = () =>
 //     <div>
 //         Some content
-//         <div>More content[|<//*HIGHLIGHTS*/div>|]
+//         [|<div>|]More content[|<//*HIGHLIGHTS*/div>|]
 //     </div>;
 // 
 // const x = <Comp>
@@ -65,8 +68,11 @@
 
 // === documentHighlights ===
 // === /a.tsx ===
-// --- (line: 8) skipped ---
-//     <div>
+// --- (line: 5) skipped ---
+// }
+// 
+// const Comp = () =>
+//     [|<div>|]
 //         Some content
 //         <div>More content</div>
 //     [|<//*HIGHLIGHTS*/div>|];
@@ -103,14 +109,16 @@
 // 
 // const x = [|</*HIGHLIGHTS*/Comp>|]
 //     Content
-// </Comp>;
+// [|</Comp>|];
 
 
 
 // === documentHighlights ===
 // === /a.tsx ===
-// --- (line: 12) skipped ---
+// --- (line: 10) skipped ---
+//         <div>More content</div>
+//     </div>;
 // 
-// const x = <Comp>
+// const x = [|<Comp>|]
 //     Content
 // [|<//*HIGHLIGHTS*/Comp>|];

@@ -19,18 +19,23 @@ func (l *LanguageService) ProvideDocumentHighlights(ctx context.Context, documen
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
 
-	if node.Parent.Kind == ast.KindJsxOpeningElement || (node.Parent.Kind == ast.KindJsxClosingElement && node.Parent.TagName() == node) {
+	if node.Parent != nil && (node.Parent.Kind == ast.KindJsxClosingElement || (node.Parent.Kind == ast.KindJsxOpeningElement && node.Parent.TagName() == node)) {
 		var documentHighlights []*lsproto.DocumentHighlight
+		var openingElement, closingElement *ast.Node
 		kind := lsproto.DocumentHighlightKindRead
-		if node.Parent.Kind == ast.KindJsxOpeningElement {
+		if ast.IsJsxElement(node.Parent.Parent) {
+			openingElement = node.Parent.Parent.AsJsxElement().OpeningElement
+			closingElement = node.Parent.Parent.AsJsxElement().ClosingElement
+		}
+		if openingElement != nil {
 			documentHighlights = append(documentHighlights, &lsproto.DocumentHighlight{
-				Range: *l.createLspRangeFromNode(node.Parent, sourceFile),
+				Range: *l.createLspRangeFromNode(openingElement, sourceFile),
 				Kind:  &kind,
 			})
 		}
-		if node.Parent.Kind == ast.KindJsxClosingElement {
+		if closingElement != nil {
 			documentHighlights = append(documentHighlights, &lsproto.DocumentHighlight{
-				Range: *l.createLspRangeFromNode(node.Parent, sourceFile),
+				Range: *l.createLspRangeFromNode(closingElement, sourceFile),
 				Kind:  &kind,
 			})
 		}
