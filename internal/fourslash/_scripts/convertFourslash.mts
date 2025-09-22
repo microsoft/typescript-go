@@ -787,7 +787,7 @@ function parseBaselineDocumentHighlightsArgs(args: readonly ts.Expression[]): [V
         let strArg;
         if (strArg = getArrayLiteralExpression(arg)) {
             for (const elem of strArg.elements) {
-                const newArg = parseBaselineDocumentHighlightsArg(elem);
+                const newArg = parseBaselineMarkerOrRangeArg(elem);
                 if (!newArg) {
                     return undefined;
                 }
@@ -797,7 +797,7 @@ function parseBaselineDocumentHighlightsArgs(args: readonly ts.Expression[]): [V
         else if (ts.isObjectLiteralExpression(arg)) {
             // User preferences case, but multiple files isn't implemented in corsa yet
         }
-        else if (strArg = parseBaselineDocumentHighlightsArg(arg)) {
+        else if (strArg = parseBaselineMarkerOrRangeArg(arg)) {
             newArgs.push(strArg);
         }
         else {
@@ -815,53 +815,6 @@ function parseBaselineDocumentHighlightsArgs(args: readonly ts.Expression[]): [V
         args: newArgs,
         preferences: preferences ? preferences : "nil /*preferences*/",
     }];
-}
-
-function parseBaselineDocumentHighlightsArg(arg: ts.Expression): string | undefined {
-    if (ts.isStringLiteral(arg)) {
-        return getGoStringLiteral(arg.text);
-    }
-    else if (ts.isIdentifier(arg) || (ts.isElementAccessExpression(arg) && ts.isIdentifier(arg.expression))) {
-        const argName = ts.isIdentifier(arg) ? arg.text : (arg.expression as ts.Identifier).text;
-        const file = arg.getSourceFile();
-        const varStmts = file.statements.filter(ts.isVariableStatement);
-        for (const varStmt of varStmts) {
-            for (const decl of varStmt.declarationList.declarations) {
-                if (ts.isArrayBindingPattern(decl.name) && decl.initializer?.getText().includes("ranges")) {
-                    for (let i = 0; i < decl.name.elements.length; i++) {
-                        const elem = decl.name.elements[i];
-                        if (ts.isBindingElement(elem) && ts.isIdentifier(elem.name) && elem.name.text === argName) {
-                            // `const [range_0, ..., range_n, ...] = test.ranges();` and arg is `range_n`
-                            if (elem.dotDotDotToken === undefined) {
-                                return `f.Ranges()[${i}]`;
-                            }
-                            // `const [range_0, ..., ...rest] = test.ranges();` and arg is `rest[n]`
-                            if (ts.isElementAccessExpression(arg)) {
-                                return `f.Ranges()[${i + parseInt(arg.argumentExpression!.getText())}]`;
-                            }
-                            // `const [range_0, ..., ...rest] = test.ranges();` and arg is `rest`
-                            return `ToAny(f.Ranges()[${i}:])...`;
-                        }
-                    }
-                }
-            }
-        }
-        const init = getNodeOfKind(arg, ts.isCallExpression);
-        if (init) {
-            const result = getRangesByTextArg(init);
-            if (result) {
-                return result;
-            }
-        }
-    }
-    else if (ts.isCallExpression(arg)) {
-        const result = getRangesByTextArg(arg);
-        if (result) {
-            return result;
-        }
-    }
-    console.error(`Unrecognized argument in verify.baselineRename: ${arg.getText()}`);
-    return undefined;
 }
 
 function parseBaselineGoToDefinitionArgs(args: readonly ts.Expression[]): [VerifyBaselineGoToDefinitionCmd] | undefined {
@@ -929,7 +882,7 @@ function parseBaselineRenameArgs(funcName: string, args: readonly ts.Expression[
         let typedArg;
         if ((typedArg = getArrayLiteralExpression(arg))) {
             for (const elem of typedArg.elements) {
-                const newArg = parseBaselineRenameArg(elem);
+                const newArg = parseBaselineMarkerOrRangeArg(elem);
                 if (!newArg) {
                     return undefined;
                 }
@@ -944,7 +897,7 @@ function parseBaselineRenameArgs(funcName: string, args: readonly ts.Expression[
             }
             continue;
         }
-        else if (typedArg = parseBaselineRenameArg(arg)) {
+        else if (typedArg = parseBaselineMarkerOrRangeArg(arg)) {
             newArgs.push(typedArg);
         }
         else {
@@ -982,7 +935,7 @@ function parseUserPreferences(arg: ts.ObjectLiteralExpression): string | undefin
     return `&ls.UserPreferences{${preferences.join(",")}}`;
 }
 
-function parseBaselineRenameArg(arg: ts.Expression): string | undefined {
+function parseBaselineMarkerOrRangeArg(arg: ts.Expression): string | undefined {
     if (ts.isStringLiteral(arg)) {
         return getGoStringLiteral(arg.text);
     }
