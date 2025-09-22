@@ -16,9 +16,13 @@ import (
 )
 
 func snapshotToBuildInfo(snapshot *snapshot, program *compiler.Program, buildInfoFileName string) *BuildInfo {
+	buildInfo := &BuildInfo{
+		Version: core.Version(),
+	}
 	to := &toBuildInfo{
 		snapshot:           snapshot,
 		program:            program,
+		buildInfo:          buildInfo,
 		buildInfoDirectory: tspath.GetDirectoryPath(buildInfoFileName),
 		comparePathsOptions: tspath.ComparePathsOptions{
 			CurrentDirectory:          program.GetCurrentDirectory(),
@@ -29,7 +33,6 @@ func snapshotToBuildInfo(snapshot *snapshot, program *compiler.Program, buildInf
 		roots:                   make(map[*ast.SourceFile]tspath.Path),
 	}
 
-	to.buildInfo.Version = core.Version()
 	if snapshot.options.IsIncremental() {
 		to.collectRootFiles()
 		to.setFileInfoAndEmitSignatures()
@@ -41,21 +44,21 @@ func snapshotToBuildInfo(snapshot *snapshot, program *compiler.Program, buildInf
 		to.setEmitDiagnostics()
 		to.setAffectedFilesPendingEmit()
 		if snapshot.latestChangedDtsFile != "" {
-			to.buildInfo.LatestChangedDtsFile = to.relativeToBuildInfo(snapshot.latestChangedDtsFile)
+			buildInfo.LatestChangedDtsFile = to.relativeToBuildInfo(snapshot.latestChangedDtsFile)
 		}
 	} else {
 		to.setRootOfNonIncrementalProgram()
 	}
-	to.buildInfo.Errors = snapshot.hasErrors.IsTrue()
-	to.buildInfo.SemanticErrors = snapshot.hasSemanticErrors
-	to.buildInfo.CheckPending = snapshot.checkPending
-	return &to.buildInfo
+	buildInfo.Errors = snapshot.hasErrors.IsTrue()
+	buildInfo.SemanticErrors = snapshot.hasSemanticErrors
+	buildInfo.CheckPending = snapshot.checkPending
+	return buildInfo
 }
 
 type toBuildInfo struct {
 	snapshot                *snapshot
 	program                 *compiler.Program
-	buildInfo               BuildInfo
+	buildInfo               *BuildInfo
 	buildInfoDirectory      string
 	comparePathsOptions     tspath.ComparePathsOptions
 	fileNameToFileId        map[string]BuildInfoFileId

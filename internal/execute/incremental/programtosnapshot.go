@@ -16,14 +16,14 @@ func programToSnapshot(program *compiler.Program, oldProgram *Program, hashWithT
 	if oldProgram != nil && oldProgram.program == program {
 		return oldProgram.snapshot
 	}
-
+	snapshot := &snapshot{
+		options:      program.Options(),
+		hashWithText: hashWithText,
+	}
 	to := &toProgramSnapshot{
 		program:    program,
 		oldProgram: oldProgram,
-		snapshot: &snapshot{
-			options:      program.Options(),
-			hashWithText: hashWithText,
-		},
+		snapshot:   snapshot,
 	}
 
 	to.reuseFromOldProgram()
@@ -31,7 +31,7 @@ func programToSnapshot(program *compiler.Program, oldProgram *Program, hashWithT
 	to.handleFileDelete()
 	to.handlePendingEmit()
 	to.handlePendingCheck()
-	return to.snapshot
+	return snapshot
 }
 
 type toProgramSnapshot struct {
