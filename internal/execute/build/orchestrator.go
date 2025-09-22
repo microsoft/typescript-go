@@ -309,22 +309,23 @@ func (o *Orchestrator) buildOrClean() tsc.CommandLineResult {
 	}
 	var buildResult orchestratorResult
 	if len(o.errors) == 0 {
-		wg := core.NewWorkGroup(o.opts.Command.CompilerOptions.SingleThreaded.IsTrue())
-		o.tasks.Range(func(path tspath.Path, task *buildTask) bool {
-			task.reportStatus = o.createBuilderStatusReporter(task)
-			task.diagnosticReporter = o.createDiagnosticReporter(task)
-			wg.Queue(func() {
-				if build {
-					task.buildProject(o, path)
-				} else {
-					task.cleanProject(o, path)
-				}
-				task.report(o, path, &buildResult)
-			})
-			return true
-		})
-		wg.RunAndWait()
 		buildResult.statistics.Projects = len(o.Order())
+		if o.opts.Command.CompilerOptions.SingleThreaded.IsTrue() {
+			for _, config := range o.Order() {
+				path := o.toPath(config)
+				task := o.getTask(path)
+				o.buildOrCleanProject(task, path, &buildResult)
+			}
+		} else {
+			wg := core.NewWorkGroup(false)
+			o.tasks.Range(func(path tspath.Path, task *buildTask) bool {
+				wg.Queue(func() {
+					o.buildOrCleanProject(task, path, &buildResult)
+				})
+				return true
+			})
+			wg.RunAndWait()
+		}
 	} else {
 		buildResult.result.Status = tsc.ExitStatusProjectReferenceCycle_OutputsSkipped
 		reportDiagnostic := o.createDiagnosticReporter(nil)
@@ -335,6 +336,17 @@ func (o *Orchestrator) buildOrClean() tsc.CommandLineResult {
 	}
 	buildResult.report(o)
 	return buildResult.result
+}
+
+func (o *Orchestrator) buildOrCleanProject(task *buildTask, path tspath.Path, buildResult *orchestratorResult) {
+	task.reportStatus = o.createBuilderStatusReporter(task)
+	task.diagnosticReporter = o.createDiagnosticReporter(task)
+	if !o.opts.Command.BuildOptions.Clean.IsTrue() {
+		task.buildProject(o, path)
+	} else {
+		task.cleanProject(o, path)
+	}
+	task.report(o, path, buildResult)
 }
 
 func (o *Orchestrator) getWriter(task *buildTask) io.Writer {
