@@ -1073,8 +1073,6 @@ func getCommonParentsWorker(componentGroups [][]string, minComponents int, optio
 	}
 
 	equality := options.getEqualityComparer()
-	var lastCommonIndex int
-outer:
 	for lastCommonIndex := range maxDepth {
 		candidate := componentGroups[0][lastCommonIndex]
 		for j, comps := range componentGroups[1:] {
@@ -1095,25 +1093,25 @@ outer:
 							head  []string
 							tails [][]string
 						}{
-							head:  g[:lastCommonIndex],
-							tails: append(newGroups[key].tails, g[lastCommonIndex:]),
+							head:  g[:lastCommonIndex+1],
+							tails: append(newGroups[key].tails, g[lastCommonIndex+1:]),
 						}
 					}
 					slices.Sort(orderedGroups)
 					result := make([][]string, 0, len(newGroups))
 					for _, key := range orderedGroups {
 						group := newGroups[key]
-						subResults := getCommonParentsWorker(group.tails, minComponents-lastCommonIndex, options)
+						subResults := getCommonParentsWorker(group.tails, minComponents-(lastCommonIndex+1), options)
 						for _, sr := range subResults {
 							result = append(result, append(group.head, sr...))
 						}
 					}
 					return result
 				}
-				break outer
+				return [][]string{componentGroups[0][:lastCommonIndex]}
 			}
 		}
 	}
 
-	return [][]string{componentGroups[0][:lastCommonIndex]}
+	return [][]string{componentGroups[0][:maxDepth]}
 }
