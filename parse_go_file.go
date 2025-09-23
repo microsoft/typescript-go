@@ -38,7 +38,7 @@ func main() {
 	}
 
 	// Modify the AST to add print statements
-	modifyFunctions(node)
+	addPrintsToFile(node)
 
 	writeModifiedFile(fset, node, filename)
 	fmt.Printf("Modified file written to: %s\n", filename)
@@ -51,25 +51,32 @@ func (v *visitor) Visit(node ast.Node) ast.Visitor {
 	return v
 }
 
-// modifyFunctions adds print statements to all functions in the AST
-func modifyFunctions(node *ast.File) {
-	// Add fmt import if not already present
-	addFmtImport(node)
+func addPrintsToFile(node *ast.File) {
+	// Add fmt/os imports if not already present
+	addImports(node)
 
 	v := &visitor{}
 	ast.Walk(v, node)
 }
 
-// addFmtImport adds the fmt import if it's not already present
-func addFmtImport(node *ast.File) {
+func addImports(node *ast.File) {
 	// Check if fmt is already imported
+	hasFmt := false
+	hasOs := false
 	for _, imp := range node.Imports {
-		if strings.Trim(imp.Path.Value, `"`) == "fmt" {
-			return // fmt already imported
+		importStr := strings.Trim(imp.Path.Value, `"`)
+		if importStr == "fmt" {
+			hasFmt = true
+		}
+		if importStr == "os" {
+			hasOs = true
 		}
 	}
 
-	// Create new fmt import
+	if hasFmt && hasOs {
+		return
+	}
+
 	fmtImport := &ast.ImportSpec{
 		Path: &ast.BasicLit{
 			Kind:  token.STRING,
@@ -77,36 +84,55 @@ func addFmtImport(node *ast.File) {
 		},
 	}
 
-	// Add to imports
-	node.Imports = append(node.Imports, fmtImport)
+	osImport := &ast.ImportSpec{
+		Path: &ast.BasicLit{
+			Kind:  token.STRING,
+			Value: `"os"`,
+		},
+	}
 
-	// // Also add to declarations if needed
-	// found := false
-	// for _, decl := range node.Decls {
-	// 	if genDecl, ok := decl.(*ast.GenDecl); ok && genDecl.Tok == token.IMPORT {
-	// 		genDecl.Specs = append(genDecl.Specs, fmtImport)
-	// 		found = true
-	// 		break
-	// 	}
-	// }
+	if !hasFmt {
+		node.Imports = append(node.Imports, fmtImport)
+	}
+	if !hasOs {
+		node.Imports = append(node.Imports, osImport)
+	}
 
-	// // If no import declaration exists, create one
-	// if !found {
-	// 	importDecl := &ast.GenDecl{
-	// 		Tok:   token.IMPORT,
-	// 		Specs: []ast.Spec{fmtImport},
-	// 	}
-	// 	// Insert at the beginning of declarations (after package)
-	// 	newDecls := make([]ast.Decl, 0, len(node.Decls)+1)
-	// 	newDecls = append(newDecls, importDecl)
-	// 	newDecls = append(newDecls, node.Decls...)
-	// 	node.Decls = newDecls
-	// }
+	// Also add to declarations if needed
+	found := false
+	for _, decl := range node.Decls {
+		if genDecl, ok := decl.(*ast.GenDecl); ok && genDecl.Tok == token.IMPORT {
+			if !hasFmt {
+				genDecl.Specs = append(genDecl.Specs, fmtImport)
+			}
+			if !hasOs {
+				genDecl.Specs = append(genDecl.Specs, osImport)
+			}
+			found = true
+			break
+		}
+	}
+
+	// If no import declaration exists, create one
+	if !found {
+		importDecl := &ast.GenDecl{
+			Tok:   token.IMPORT,
+			Specs: []ast.Spec{fmtImport, osImport},
+		}
+		// Insert at the beginning of declarations (after package)
+		newDecls := make([]ast.Decl, 0, len(node.Decls)+1)
+		newDecls = append(newDecls, importDecl)
+		newDecls = append(newDecls, node.Decls...)
+		node.Decls = newDecls
+	}
 }
 
 func addPrints(n *ast.Node) {
 	switch n := (*n).(type) {
 	case *ast.FuncDecl:
+		if strings.EqualFold(n.Name.Name, "ptrTo") {
+			return
+		}
 		addPrintBody(n.Body, n.Name.Name)
 	case *ast.AssignStmt:
 		for i, expr := range n.Rhs {
@@ -152,17 +178,21 @@ func addPrintBody(fnBody *ast.BlockStmt, fnName string) {
 func createPrintStmt(fnName string, enter bool) *ast.ExprStmt {
 	var printStr string
 	if enter {
-		printStr = `"> %s\n"`
+		printStr = `"<%s>\n"`
 	} else {
-		printStr = `"< %s\n"`
+		printStr = `"</%s>\n"`
 	}
 	return &ast.ExprStmt{
 		X: &ast.CallExpr{
 			Fun: &ast.SelectorExpr{
 				X:   &ast.Ident{Name: "fmt"},
-				Sel: &ast.Ident{Name: "Printf"},
+				Sel: &ast.Ident{Name: "Fprintf"},
 			},
 			Args: []ast.Expr{
+				&ast.SelectorExpr{
+					X:   &ast.Ident{Name: "os"},
+					Sel: &ast.Ident{Name: "Stderr"},
+				},
 				&ast.BasicLit{
 					Kind:  token.STRING,
 					Value: printStr,

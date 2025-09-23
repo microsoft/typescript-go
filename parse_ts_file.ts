@@ -90,7 +90,7 @@ function addLogToFunction<T extends ts.FunctionLikeDeclaration>(node: T, functio
         return node;
     }
 
-    const logStatement = createLogStatement(functionName, /*enter*/ true);
+    const logStatement = createLogStatement(functionName);
     const newStatements = [logStatement, ...node.body.statements.map(stmt => visitNode(stmt))];
     
     const newBody = ts.factory.updateBlock(node.body, newStatements);
@@ -171,15 +171,15 @@ function updateFunctionLikeDeclaration<T extends ts.FunctionLikeDeclaration>(nod
     }
 }
 
-function createLogStatement(functionName: string, enter: boolean): ts.ExpressionStatement {
+function createLogStatement(functionName: string): ts.ExpressionStatement {
     const logStmt = ts.factory.createExpressionStatement(
         ts.factory.createCallExpression(
             ts.factory.createPropertyAccessExpression(
-                ts.factory.createIdentifier('console'),
-                ts.factory.createIdentifier('log')
+                ts.factory.createIdentifier("console"),
+                ts.factory.createIdentifier("error")
             ),
             undefined,
-            [ts.factory.createStringLiteral(`${enter ? ">" : "<"} ${functionName}`)]
+            [ts.factory.createStringLiteral(`<${functionName}>`)]
         )
     );
     
@@ -189,7 +189,7 @@ function createLogStatement(functionName: string, enter: boolean): ts.Expression
 function createLogHelper(): ts.FunctionDeclaration {
     /*
         function logReturn<T>(fnName: string, e: T): T {
-            console.log(`> ${fnName}`);
+            console.log(`</${fnName}>`);
             return e;
         }
     */
@@ -224,14 +224,14 @@ function createLogHelper(): ts.FunctionDeclaration {
                         ts.factory.createCallExpression(
                             ts.factory.createPropertyAccessExpression(
                                 ts.factory.createIdentifier("console"),
-                                ts.factory.createIdentifier("log")
+                                ts.factory.createIdentifier("error")
                             ),
                             undefined,
                             [ts.factory.createTemplateExpression(
-                                ts.factory.createTemplateHead("> "),
+                                ts.factory.createTemplateHead("</"),
                                 [ts.factory.createTemplateSpan(
                                     ts.factory.createIdentifier("fnName"),
-                                    ts.factory.createTemplateTail(""),
+                                    ts.factory.createTemplateTail(">"),
                                 )],
                             )],
                     )),
