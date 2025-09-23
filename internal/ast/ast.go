@@ -791,6 +791,8 @@ func (n *Node) Initializer() *Node {
 		return n.AsForInOrOfStatement().Initializer
 	case KindJsxAttribute:
 		return n.AsJsxAttribute().Initializer
+	case KindCommonJSExport:
+		return n.AsCommonJSExport().Initializer
 	}
 	panic("Unhandled case in Node.Initializer")
 }
@@ -818,6 +820,8 @@ func (m *mutableNode) SetInitializer(initializer *Node) {
 		n.AsForInOrOfStatement().Initializer = initializer
 	case KindJsxAttribute:
 		n.AsJsxAttribute().Initializer = initializer
+	case KindCommonJSExport:
+		n.AsCommonJSExport().Initializer = initializer
 	default:
 		panic("Unhandled case in mutableNode.SetInitializer")
 	}
@@ -1006,8 +1010,20 @@ func (n *Node) ModuleSpecifier() *Expression {
 		return n.AsImportDeclaration().ModuleSpecifier
 	case KindExportDeclaration:
 		return n.AsExportDeclaration().ModuleSpecifier
+	case KindJSDocImportTag:
+		return n.AsJSDocImportTag().ModuleSpecifier
 	}
 	panic("Unhandled case in Node.ModuleSpecifier: " + n.Kind.String())
+}
+
+func (n *Node) ImportClause() *Node {
+	switch n.Kind {
+	case KindImportDeclaration, KindJSImportDeclaration:
+		return n.AsImportDeclaration().ImportClause
+	case KindJSDocImportTag:
+		return n.AsJSDocImportTag().ImportClause
+	}
+	panic("Unhandled case in Node.ImportClause: " + n.Kind.String())
 }
 
 func (n *Node) Statement() *Statement {
@@ -1063,6 +1079,48 @@ func (n *Node) Elements() []*Node {
 	return nil
 }
 
+func (n *Node) postfixToken() *Node {
+	switch n.Kind {
+	case KindEnumMember:
+		return n.AsEnumMember().PostfixToken
+	case KindPropertyAssignment:
+		return n.AsPropertyAssignment().PostfixToken
+	case KindShorthandPropertyAssignment:
+		return n.AsShorthandPropertyAssignment().PostfixToken
+	case KindPropertySignature:
+		return n.AsPropertySignatureDeclaration().PostfixToken
+	case KindPropertyDeclaration:
+		return n.AsPropertyDeclaration().PostfixToken
+	case KindMethodSignature:
+		return n.AsMethodSignatureDeclaration().PostfixToken
+	case KindMethodDeclaration:
+		return n.AsMethodDeclaration().PostfixToken
+	case KindGetAccessor:
+		return n.AsGetAccessorDeclaration().PostfixToken
+	case KindSetAccessor:
+		return n.AsSetAccessorDeclaration().PostfixToken
+	}
+	return nil
+}
+
+func (n *Node) QuestionToken() *TokenNode {
+	switch n.Kind {
+	case KindParameter:
+		return n.AsParameterDeclaration().QuestionToken
+	case KindConditionalExpression:
+		return n.AsConditionalExpression().QuestionToken
+	case KindMappedType:
+		return n.AsMappedTypeNode().QuestionToken
+	case KindNamedTupleMember:
+		return n.AsNamedTupleMember().QuestionToken
+	}
+	postfix := n.postfixToken()
+	if postfix != nil && postfix.Kind == KindQuestionToken {
+		return postfix
+	}
+	return nil
+}
+
 func (n *Node) QuestionDotToken() *Node {
 	switch n.Kind {
 	case KindElementAccessExpression:
@@ -1101,6 +1159,26 @@ func (n *Node) ClassName() *Node {
 		return n.AsJSDocImplementsTag().ClassName
 	}
 	panic("Unhandled case in Node.ClassName: " + n.Kind.String())
+}
+
+func (n *Node) PostfixToken() *Node {
+	switch n.Kind {
+	case KindParameter:
+		return n.AsParameterDeclaration().QuestionToken
+	case KindMethodDeclaration:
+		return n.AsMethodDeclaration().PostfixToken
+	case KindShorthandPropertyAssignment:
+		return n.AsShorthandPropertyAssignment().PostfixToken
+	case KindMethodSignature:
+		return n.AsMethodSignatureDeclaration().PostfixToken
+	case KindPropertySignature:
+		return n.AsPropertySignatureDeclaration().PostfixToken
+	case KindPropertyAssignment:
+		return n.AsPropertyAssignment().PostfixToken
+	case KindPropertyDeclaration:
+		return n.AsPropertyDeclaration().PostfixToken
+	}
+	return nil
 }
 
 // Determines if `n` contains `descendant` by walking up the `Parent` pointers from `descendant`. This method panics if
@@ -9658,6 +9736,10 @@ func IsJSDocParameterTag(node *Node) bool {
 	return node.Kind == KindJSDocParameterTag
 }
 
+func IsJSDocPropertyTag(node *Node) bool {
+	return node.Kind == KindJSDocPropertyTag
+}
+
 // JSDocReturnTag
 type JSDocReturnTag struct {
 	JSDocTagBase
@@ -10134,6 +10216,12 @@ func (node *JSDocCallbackTag) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocCallbackTag(node.TagName, node.TypeExpression, node.FullName, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func (node *JSDocCallbackTag) Name() *DeclarationName { return node.FullName }
+
+func IsJSDocCallbackTag(node *Node) bool {
+	return node.Kind == KindJSDocCallbackTag
+}
+
 // JSDocOverloadTag
 type JSDocOverloadTag struct {
 	JSDocTagBase
@@ -10207,6 +10295,10 @@ func (node *JSDocTypedefTag) Clone(f NodeFactoryCoercible) *Node {
 
 func (node *JSDocTypedefTag) Name() *DeclarationName { return node.name }
 
+func IsJSDocTypedefTag(node *Node) bool {
+	return node.Kind == KindJSDocTypedefTag
+}
+
 // JSDocTypeLiteral
 type JSDocTypeLiteral struct {
 	TypeNodeBase
@@ -10275,6 +10367,10 @@ func (node *JSDocSignature) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocSignature(node.TypeParameters, node.Parameters, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsJSDocSignature(node *Node) bool {
+	return node.Kind == KindJSDocSignature
+}
+
 // JSDocNameReference
 type JSDocNameReference struct {
 	TypeNodeBase
@@ -10307,6 +10403,10 @@ func (node *JSDocNameReference) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *JSDocNameReference) Name() *EntityName { return node.name }
+
+func IsJSDocNameReference(node *Node) bool {
+	return node.Kind == KindJSDocNameReference
+}
 
 // PatternAmbientModule
 
@@ -10361,6 +10461,7 @@ type SourceFile struct {
 
 	// Fields set by parser
 	diagnostics                 []*Diagnostic
+	jsDiagnostics               []*Diagnostic
 	jsdocDiagnostics            []*Diagnostic
 	LanguageVariant             core.LanguageVariant
 	ScriptKind                  core.ScriptKind
@@ -10446,6 +10547,14 @@ func (node *SourceFile) Diagnostics() []*Diagnostic {
 
 func (node *SourceFile) SetDiagnostics(diags []*Diagnostic) {
 	node.diagnostics = diags
+}
+
+func (node *SourceFile) JSDiagnostics() []*Diagnostic {
+	return node.jsDiagnostics
+}
+
+func (node *SourceFile) SetJSDiagnostics(diags []*Diagnostic) {
+	node.jsDiagnostics = diags
 }
 
 func (node *SourceFile) JSDocDiagnostics() []*Diagnostic {

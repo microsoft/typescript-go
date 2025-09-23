@@ -80,8 +80,7 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 		sys.baselineFSwithDiff(baselineBuilder)
 		result := test.executeCommand(sys, baselineBuilder, test.commandLineArgs)
 		sys.serializeState(baselineBuilder)
-		sys.baselinePrograms(baselineBuilder)
-		var unexpectedDiff string
+		unexpectedDiff := sys.baselinePrograms(baselineBuilder, "Initial build")
 
 		for index, do := range test.edits {
 			sys.clearOutput()
@@ -96,12 +95,12 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 				sys.baselineFSwithDiff(baselineBuilder)
 
 				if result.Watcher == nil {
-					result = test.executeCommand(sys, baselineBuilder, commandLineArgs)
+					test.executeCommand(sys, baselineBuilder, commandLineArgs)
 				} else {
 					result.Watcher.DoCycle()
 				}
 				sys.serializeState(baselineBuilder)
-				sys.baselinePrograms(baselineBuilder)
+				unexpectedDiff += sys.baselinePrograms(baselineBuilder, fmt.Sprintf("Edit [%d]:: %s\n", index, do.caption))
 			})
 			wg.Queue(func() {
 				// Compute build with all the edits

@@ -1024,7 +1024,7 @@ func (b *nodeBuilderImpl) getSymbolChain(symbol *ast.Symbol, meaning ast.SymbolF
 		// If a parent symbol is an anonymous type, don't write it.
 		(symbol.Flags&(ast.SymbolFlagsTypeLiteral|ast.SymbolFlagsObjectLiteral) == 0) {
 		// If a parent symbol is an external module, don't write it. (We prefer just `x` vs `"foo/bar".x`.)
-		if !endOfChain && !yieldModuleSymbol && !!core.Some(symbol.Declarations, hasNonGlobalAugmentationExternalModuleSymbol) {
+		if !endOfChain && !yieldModuleSymbol && core.Some(symbol.Declarations, hasNonGlobalAugmentationExternalModuleSymbol) {
 			return nil
 		}
 		return []*ast.Symbol{symbol}
@@ -1076,7 +1076,7 @@ func canHaveModuleSpecifier(node *ast.Node) bool {
 	return false
 }
 
-func tryGetModuleSpecifierFromDeclaration(node *ast.Node) *ast.Node {
+func TryGetModuleSpecifierFromDeclaration(node *ast.Node) *ast.Node {
 	res := tryGetModuleSpecifierFromDeclarationWorker(node)
 	if res == nil || !ast.IsStringLiteral(res) {
 		return nil
@@ -1162,7 +1162,7 @@ func (b *nodeBuilderImpl) getSpecifierForModuleSymbol(symbol *ast.Symbol, overri
 	enclosingDeclaration := b.e.MostOriginal(b.ctx.enclosingDeclaration)
 	var originalModuleSpecifier *ast.Node
 	if canHaveModuleSpecifier(enclosingDeclaration) {
-		originalModuleSpecifier = tryGetModuleSpecifierFromDeclaration(enclosingDeclaration)
+		originalModuleSpecifier = TryGetModuleSpecifierFromDeclaration(enclosingDeclaration)
 	}
 	contextFile := b.ctx.enclosingFile
 	resolutionMode := overrideImportMode
@@ -1213,6 +1213,7 @@ func (b *nodeBuilderImpl) getSpecifierForModuleSymbol(symbol *ast.Symbol, overri
 		modulespecifiers.ModuleSpecifierOptions{
 			OverrideImportMode: overrideImportMode,
 		},
+		false, /*forAutoImports*/
 	)
 	specifier := allSpecifiers[0]
 	links.specifierCache[cacheKey] = specifier
@@ -1739,7 +1740,7 @@ func (b *nodeBuilderImpl) signatureToSignatureDeclarationHelper(signature *Signa
 		typeParamList = b.f.NewNodeList(typeParameters)
 	}
 	var modifierList *ast.ModifierList
-	if modifiers != nil && len(modifiers) > 0 {
+	if len(modifiers) > 0 {
 		modifierList = b.f.NewModifierList(modifiers)
 	}
 	var name *ast.Node

@@ -37,6 +37,7 @@ type ParsedCommandLine struct {
 	resolvedProjectReferencePaths     []string
 	resolvedProjectReferencePathsOnce sync.Once
 
+	literalFileNamesLen int
 	fileNamesByPath     map[tspath.Path]string // maps file names to their paths, used for quick lookups
 	fileNamesByPathOnce sync.Once
 }
@@ -86,7 +87,7 @@ func (p *ParsedCommandLine) ParseInputOutputNames() {
 		sourceToOutput := map[tspath.Path]*SourceOutputAndProjectReference{}
 		outputDtsToSource := map[tspath.Path]*SourceOutputAndProjectReference{}
 
-		for outputDts, source := range p.GetOutputDeclarationFileNames() {
+		for outputDts, source := range p.GetOutputDeclarationAndSourceFileNames() {
 			path := tspath.ToPath(source, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
 			projectReference := &SourceOutputAndProjectReference{
 				Source:    source,
@@ -130,14 +131,11 @@ func (p *ParsedCommandLine) UseCaseSensitiveFileNames() bool {
 	return p.comparePathsOptions.UseCaseSensitiveFileNames
 }
 
-func (p *ParsedCommandLine) GetOutputDeclarationFileNames() iter.Seq2[string, string] {
+func (p *ParsedCommandLine) GetOutputDeclarationAndSourceFileNames() iter.Seq2[string, string] {
 	return func(yield func(dtsName string, inputName string) bool) {
 		for _, fileName := range p.ParsedConfig.FileNames {
-			if tspath.IsDeclarationFileName(fileName) {
-				continue
-			}
 			var outputDts string
-			if !tspath.FileExtensionIs(fileName, tspath.ExtensionJson) {
+			if !tspath.IsDeclarationFileName(fileName) && !tspath.FileExtensionIs(fileName, tspath.ExtensionJson) {
 				outputDts = outputpaths.GetOutputDeclarationFileNameWorker(fileName, p.CompilerOptions(), p)
 			}
 			if !yield(outputDts, fileName) {
@@ -217,7 +215,7 @@ func (p *ParsedCommandLine) WildcardDirectories() map[string]bool {
 // Normalized file names explicitly specified in `files`
 func (p *ParsedCommandLine) LiteralFileNames() []string {
 	if p != nil && p.ConfigFile != nil {
-		return p.FileNames()[0:len(p.ConfigFile.configFileSpecs.validatedFilesSpec)]
+		return p.FileNames()[0:p.literalFileNamesLen]
 	}
 	return nil
 }
@@ -349,13 +347,14 @@ func (p *ParsedCommandLine) GetMatchedIncludeSpec(fileName string) (string, bool
 
 func (p *ParsedCommandLine) ReloadFileNamesOfParsedCommandLine(fs vfs.FS) *ParsedCommandLine {
 	parsedConfig := *p.ParsedConfig
-	parsedConfig.FileNames = getFileNamesFromConfigSpecs(
+	fileNames, literalFileNamesLen := getFileNamesFromConfigSpecs(
 		*p.ConfigFile.configFileSpecs,
 		p.GetCurrentDirectory(),
 		p.CompilerOptions(),
 		fs,
 		p.extraFileExtensions,
 	)
+	parsedConfig.FileNames = fileNames
 	parsedCommandLine := ParsedCommandLine{
 		ParsedConfig:        &parsedConfig,
 		ConfigFile:          p.ConfigFile,
@@ -365,6 +364,7 @@ func (p *ParsedCommandLine) ReloadFileNamesOfParsedCommandLine(fs vfs.FS) *Parse
 		comparePathsOptions: p.comparePathsOptions,
 		wildcardDirectories: p.wildcardDirectories,
 		extraFileExtensions: p.extraFileExtensions,
+		literalFileNamesLen: literalFileNamesLen,
 	}
 	return &parsedCommandLine
 }

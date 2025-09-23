@@ -11,7 +11,7 @@ import (
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=ModuleKind -trimprefix=ModuleKind -output=modulekind_stringer_generated.go
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=ScriptTarget -trimprefix=ScriptTarget -output=scripttarget_stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -lang=go1.25 -w modulekind_stringer_generated.go scripttarget_stringer_generated.go
+//go:generate go tool mvdan.cc/gofumpt -w modulekind_stringer_generated.go scripttarget_stringer_generated.go
 
 type CompilerOptions struct {
 	_ noCopy
@@ -277,7 +277,7 @@ func (options *CompilerOptions) GetResolveJsonModule() bool {
 }
 
 func (options *CompilerOptions) ShouldPreserveConstEnums() bool {
-	return options.PreserveConstEnums == TSTrue || options.IsolatedModules == TSTrue
+	return options.PreserveConstEnums == TSTrue || options.GetIsolatedModules()
 }
 
 func (options *CompilerOptions) GetAllowJS() bool {
@@ -290,6 +290,13 @@ func (options *CompilerOptions) GetAllowJS() bool {
 func (options *CompilerOptions) GetJSXTransformEnabled() bool {
 	jsx := options.Jsx
 	return jsx == JsxEmitReact || jsx == JsxEmitReactJSX || jsx == JsxEmitReactJSXDev
+}
+
+func (options *CompilerOptions) GetStrictOptionValue(value Tristate) bool {
+	if value != TSUnknown {
+		return value == TSTrue
+	}
+	return options.Strict == TSTrue
 }
 
 func (options *CompilerOptions) GetEffectiveTypeRoots(currentDirectory string) (result []string, fromConfig bool) {
@@ -476,6 +483,17 @@ const (
 	NewLineKindCRLF NewLineKind = 1
 	NewLineKindLF   NewLineKind = 2
 )
+
+func GetNewLineKind(s string) NewLineKind {
+	switch s {
+	case "\r\n":
+		return NewLineKindCRLF
+	case "\n":
+		return NewLineKindLF
+	default:
+		return NewLineKindNone
+	}
+}
 
 func (newLine NewLineKind) GetNewLineCharacter() string {
 	switch newLine {

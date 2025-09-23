@@ -2276,7 +2276,7 @@ var Unknown_build_option_0 = &Message{code: 5072, category: CategoryError, key: 
 
 var Build_option_0_requires_a_value_of_type_1 = &Message{code: 5073, category: CategoryError, key: "Build_option_0_requires_a_value_of_type_1_5073", text: "Build option '{0}' requires a value of type {1}."}
 
-var Failed_to_update_timestamp_of_file_0 = &Message{code: 5074, category: CategoryMessage, key: "Failed_to_update_timestamp_of_file_0_5074", text: "Failed to update timestamp of file '{0}'."}
+var Option_incremental_can_only_be_specified_using_tsconfig_emitting_to_single_file_or_when_option_tsBuildInfoFile_is_specified = &Message{code: 5074, category: CategoryError, key: "Option_incremental_can_only_be_specified_using_tsconfig_emitting_to_single_file_or_when_option_tsBui_5074", text: "Option '--incremental' can only be specified using tsconfig, emitting to single file or when option '--tsBuildInfoFile' is specified."}
 
 var X_0_is_assignable_to_the_constraint_of_type_1_but_1_could_be_instantiated_with_a_different_subtype_of_constraint_2 = &Message{code: 5075, category: CategoryError, key: "_0_is_assignable_to_the_constraint_of_type_1_but_1_could_be_instantiated_with_a_different_subtype_of_5075", text: "'{0}' is assignable to the constraint of type '{1}', but '{1}' could be instantiated with a different subtype of constraint '{2}'."}
 
@@ -2979,6 +2979,8 @@ var Project_0_is_out_of_date_because_buildinfo_file_1_indicates_that_program_nee
 var Project_0_is_out_of_date_because_input_1_does_not_exist = &Message{code: 6420, category: CategoryMessage, key: "Project_0_is_out_of_date_because_input_1_does_not_exist_6420", text: "Project '{0}' is out of date because input '{1}' does not exist."}
 
 var Rewrite_ts_tsx_mts_and_cts_file_extensions_in_relative_import_paths_to_their_JavaScript_equivalent_in_output_files = &Message{code: 6421, category: CategoryMessage, key: "Rewrite_ts_tsx_mts_and_cts_file_extensions_in_relative_import_paths_to_their_JavaScript_equivalent_i_6421", text: "Rewrite '.ts', '.tsx', '.mts', and '.cts' file extensions in relative import paths to their JavaScript equivalent in output files."}
+
+var Project_0_is_out_of_date_because_it_has_errors = &Message{code: 6423, category: CategoryMessage, key: "Project_0_is_out_of_date_because_it_has_errors_6423", text: "Project '{0}' is out of date because it has errors."}
 
 var The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1 = &Message{code: 6500, category: CategoryMessage, key: "The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1_6500", text: "The expected type comes from property '{0}' which is declared here on type '{1}'"}
 

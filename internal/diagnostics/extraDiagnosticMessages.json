@@ -35,8 +35,8 @@
         "category": "Message",
         "code": 6420
     },
-    "Failed to update timestamp of file '{0}'.": {
+    "Project '{0}' is out of date because it has errors.": {
         "category": "Message",
-        "code": 5074
+        "code": 6423
     }
 }

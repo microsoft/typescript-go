@@ -141,6 +141,7 @@ type snapshot struct {
 type testSys struct {
 	currentWrite              *strings.Builder
 	programBaselines          strings.Builder
+	programIncludeBaselines   strings.Builder
 	tracer                    *harnessutil.TracerForBaselining
 	serializedDiff            *snapshot
 	forIncrementalCorrectness bool
@@ -218,13 +219,28 @@ func (s *testSys) GetEnvironmentVariable(name string) string {
 	return s.env[name]
 }
 
-func (s *testSys) OnEmittedFiles(result *compiler.EmitResult) {
+func (s *testSys) OnEmittedFiles(result *compiler.EmitResult, mTimesCache *collections.SyncMap[tspath.Path, time.Time]) {
 	if result != nil {
 		for _, file := range result.EmittedFiles {
+			modTime := s.mapFs().GetModTime(file)
+			if s.serializedDiff != nil {
+				if diff, ok := s.serializedDiff.snap[file]; ok && diff.mTime.Equal(modTime) {
+					// Even though written, timestamp was reverted
+					continue
+				}
+			}
+
 			// Ensure that the timestamp for emitted files is in the order
 			now := s.Now()
 			if err := s.fsFromFileMap().Chtimes(file, time.Time{}, now); err != nil {
 				panic("Failed to change time for emitted file: " + file + ": " + err.Error())
+			}
+			// Update the mTime cache in --b mode to store the updated timestamp so tests will behave deteministically when finding newest output
+			if mTimesCache != nil {
+				path := tspath.ToPath(file, s.GetCurrentDirectory(), s.FS().UseCaseSensitiveFileNames())
+				if _, found := mTimesCache.Load(path); found {
+					mTimesCache.Store(path, now)
+				}
 			}
 		}
 	}
@@ -254,6 +270,14 @@ func (s *testSys) OnBuildStatusReportEnd(w io.Writer) {
 	fmt.Fprintln(w, buildStatusReportEnd)
 }
 
+func (s *testSys) OnWatchStatusReportStart() {
+	fmt.Fprintln(s.Writer(), watchStatusReportStart)
+}
+
+func (s *testSys) OnWatchStatusReportEnd() {
+	fmt.Fprintln(s.Writer(), watchStatusReportEnd)
+}
+
 func (s *testSys) GetTrace(w io.Writer) func(str string) {
 	return func(str string) {
 		fmt.Fprintln(w, traceStart)
@@ -264,18 +288,23 @@ func (s *testSys) GetTrace(w io.Writer) func(str string) {
 	}
 }
 
-func (s *testSys) OnProgram(program *incremental.Program) {
-	if s.programBaselines.Len() != 0 {
-		s.programBaselines.WriteString("\n")
+func (s *testSys) writeHeaderToBaseline(builder *strings.Builder, program *incremental.Program) {
+	if builder.Len() != 0 {
+		builder.WriteString("\n")
 	}
 
-	testingData := program.GetTestingData()
 	if configFilePath := program.Options().ConfigFilePath; configFilePath != "" {
-		s.programBaselines.WriteString(tspath.GetRelativePathFromDirectory(s.cwd, configFilePath, tspath.ComparePathsOptions{
+		builder.WriteString(tspath.GetRelativePathFromDirectory(s.cwd, configFilePath, tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: s.FS().UseCaseSensitiveFileNames(),
 			CurrentDirectory:          s.GetCurrentDirectory(),
 		}) + "::\n")
 	}
+}
+
+func (s *testSys) OnProgram(program *incremental.Program) {
+	s.writeHeaderToBaseline(&s.programBaselines, program)
+
+	testingData := program.GetTestingData()
 	s.programBaselines.WriteString("SemanticDiagnostics::\n")
 	for _, file := range program.GetProgram().GetSourceFiles() {
 		if diagnostics, ok := testingData.SemanticDiagnosticsPerFile.Load(file.Path()); ok {
@@ -301,14 +330,44 @@ func (s *testSys) OnProgram(program *incremental.Program) {
 			}
 		}
 	}
+
+	var filesWithoutIncludeReason []string
+	var fileNotInProgramWithIncludeReason []string
+	includeReasons := program.GetProgram().GetIncludeReasons()
+	for _, file := range program.GetProgram().GetSourceFiles() {
+		if _, ok := includeReasons[file.Path()]; !ok {
+			filesWithoutIncludeReason = append(filesWithoutIncludeReason, string(file.Path()))
+		}
+	}
+	for path := range includeReasons {
+		if program.GetProgram().GetSourceFileByPath(path) == nil && !program.GetProgram().IsMissingPath(path) {
+			fileNotInProgramWithIncludeReason = append(fileNotInProgramWithIncludeReason, string(path))
+		}
+	}
+	if len(filesWithoutIncludeReason) > 0 || len(fileNotInProgramWithIncludeReason) > 0 {
+		s.writeHeaderToBaseline(&s.programIncludeBaselines, program)
+		s.programIncludeBaselines.WriteString("!!! Expected all files to have include reasons\nfilesWithoutIncludeReason::\n")
+		for _, file := range filesWithoutIncludeReason {
+			s.programIncludeBaselines.WriteString("  " + file + "\n")
+		}
+		s.programIncludeBaselines.WriteString("filesNotInProgramWithIncludeReason::\n")
+		for _, file := range fileNotInProgramWithIncludeReason {
+			s.programIncludeBaselines.WriteString("  " + file + "\n")
+		}
+	}
 }
 
-func (s *testSys) baselinePrograms(baseline *strings.Builder) {
+func (s *testSys) baselinePrograms(baseline *strings.Builder, header string) string {
 	baseline.WriteString(s.programBaselines.String())
 	s.programBaselines.Reset()
-}
-
-func (s *testSys) baselineProgram(program *incremental.Program) {
+	var result string
+	if s.programIncludeBaselines.Len() > 0 {
+		result += fmt.Sprintf("\n\n%s\n!!! Include reasons expectations don't match pls review!!!\n", header)
+		result += s.programIncludeBaselines.String()
+		s.programIncludeBaselines.Reset()
+		baseline.WriteString(result)
+	}
+	return result
 }
 
 func (s *testSys) serializeState(baseline *strings.Builder) {
@@ -334,6 +393,8 @@ var (
 	statisticsEnd          = "!!! Statistics end"
 	buildStatusReportStart = "!!! Build Status Report Start"
 	buildStatusReportEnd   = "!!! Build Status Report End"
+	watchStatusReportStart = "!!! Watch Status Report Start"
+	watchStatusReportEnd   = "!!! Watch Status Report End"
 	traceStart             = "!!! Trace start"
 	traceEnd               = "!!! Trace end"
 )
@@ -388,7 +449,8 @@ func (o *outputSanitizer) transformLines() string {
 		if !o.addOrSkipLinesForComparing(listFileStart, listFileEnd, false, nil) &&
 			!o.addOrSkipLinesForComparing(statisticsStart, statisticsEnd, true, nil) &&
 			!o.addOrSkipLinesForComparing(traceStart, traceEnd, false, nil) &&
-			!o.addOrSkipLinesForComparing(buildStatusReportStart, buildStatusReportEnd, false, o.sanitizeBuildStatusTimeStamp) {
+			!o.addOrSkipLinesForComparing(buildStatusReportStart, buildStatusReportEnd, false, o.sanitizeBuildStatusTimeStamp) &&
+			!o.addOrSkipLinesForComparing(watchStatusReportStart, watchStatusReportEnd, false, o.sanitizeBuildStatusTimeStamp) {
 			o.addOutputLine(line)
 		}
 	}
@@ -461,8 +523,7 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 	}
 	if s.serializedDiff != nil {
 		for path := range s.serializedDiff.snap {
-			_, ok := s.fsFromFileMap().ReadFile(path)
-			if !ok {
+			if fileInfo := s.mapFs().GetFileInfo(path); fileInfo == nil {
 				// report deleted
 				s.addFsEntryDiff(diffs, nil, path)
 			}
@@ -530,27 +591,37 @@ func (s *testSys) removeNoError(path string) {
 	}
 }
 
-func (s *testSys) replaceFileText(path string, oldText string, newText string) {
+func (s *testSys) readFileNoError(path string) string {
 	content, ok := s.fsFromFileMap().ReadFile(path)
 	if !ok {
 		panic("File not found: " + path)
 	}
+	return content
+}
+
+func (s *testSys) renameFileNoError(oldPath string, newPath string) {
+	s.writeFileNoError(newPath, s.readFileNoError(oldPath), false)
+	s.removeNoError(oldPath)
+}
+
+func (s *testSys) replaceFileText(path string, oldText string, newText string) {
+	content := s.readFileNoError(path)
 	content = strings.Replace(content, oldText, newText, 1)
 	s.writeFileNoError(path, content, false)
 }
 
+func (s *testSys) replaceFileTextAll(path string, oldText string, newText string) {
+	content := s.readFileNoError(path)
+	content = strings.ReplaceAll(content, oldText, newText)
+	s.writeFileNoError(path, content, false)
+}
+
 func (s *testSys) appendFile(path string, text string) {
-	content, ok := s.fsFromFileMap().ReadFile(path)
-	if !ok {
-		panic("File not found: " + path)
-	}
+	content := s.readFileNoError(path)
 	s.writeFileNoError(path, content+text, false)
 }
 
 func (s *testSys) prependFile(path string, text string) {
-	content, ok := s.fsFromFileMap().ReadFile(path)
-	if !ok {
-		panic("File not found: " + path)
-	}
+	content := s.readFileNoError(path)
 	s.writeFileNoError(path, text+content, false)
 }
