@@ -86,7 +86,7 @@ func (l *LanguageService) toDocumentHighlight(entry *referenceEntry) (string, *l
 	}
 
 	// Determine write access for node references.
-	if ast.IsWriteAccess(entry.node) {
+	if ast.IsWriteAccessForReference(entry.node) {
 		kind = lsproto.DocumentHighlightKindWrite
 	}
 

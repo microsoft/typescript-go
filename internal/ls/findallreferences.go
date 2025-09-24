@@ -245,7 +245,7 @@ func getContextNode(node *ast.Node) *ast.Node {
 		return nil
 
 	case ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment:
-		if isArrayLiteralOrObjectLiteralDestructuringPattern(node.Parent) {
+		if ast.IsArrayLiteralOrObjectLiteralDestructuringPattern(node.Parent) {
 			return getContextNode(ast.FindAncestor(node.Parent, func(node *ast.Node) bool {
 				return node.Kind == ast.KindBinaryExpression || ast.IsForInOrOfStatement(node)
 			}))

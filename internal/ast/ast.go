@@ -2196,6 +2196,159 @@ func IsWriteAccess(node *Node) bool {
 	return accessKind(node) != AccessKindRead
 }
 
+func IsWriteAccessForReference(node *Node) bool {
+	decl := getDeclarationFromName(node)
+	return (decl != nil && declarationIsWriteAccess(decl)) || node.Kind == KindDefaultKeyword || IsWriteAccess(node)
+}
+
+func getDeclarationFromName(name *Node) *Declaration {
+	if name == nil || name.Parent == nil {
+		return nil
+	}
+	parent := name.Parent
+	switch name.Kind {
+	case KindStringLiteral, KindNoSubstitutionTemplateLiteral, KindNumericLiteral:
+		if IsComputedPropertyName(parent) {
+			return parent.Parent
+		}
+		fallthrough
+	case KindIdentifier:
+		if IsDeclaration(parent) {
+			if parent.Name() == name {
+				return parent
+			}
+			return nil
+		}
+		if IsQualifiedName(parent) {
+			tag := parent.Parent
+			if IsJSDocParameterTag(tag) && tag.Name() == parent {
+				return tag
+			}
+			return nil
+		}
+		binExp := parent.Parent
+		if IsBinaryExpression(binExp) && GetAssignmentDeclarationKind(binExp.AsBinaryExpression()) != JSDeclarationKindNone {
+			// (binExp.left as BindableStaticNameExpression).symbol || binExp.symbol
+			leftHasSymbol := false
+			if binExp.AsBinaryExpression().Left != nil && binExp.AsBinaryExpression().Left.Symbol() != nil {
+				leftHasSymbol = true
+			}
+			if leftHasSymbol || binExp.Symbol() != nil {
+				if GetNameOfDeclaration(binExp.AsNode()) == name {
+					return binExp.AsNode()
+				}
+			}
+		}
+	case KindPrivateIdentifier:
+		if IsDeclaration(parent) && parent.Name() == name {
+			return parent
+		}
+	}
+	return nil
+}
+
+func declarationIsWriteAccess(decl *Node) bool {
+	if decl == nil {
+		return false
+	}
+	// Consider anything in an ambient declaration to be a write access since it may be coming from JS.
+	if decl.Flags&NodeFlagsAmbient != 0 {
+		return true
+	}
+
+	switch decl.Kind {
+	case KindBinaryExpression,
+		KindBindingElement,
+		KindClassDeclaration,
+		KindClassExpression,
+		KindDefaultKeyword,
+		KindEnumDeclaration,
+		KindEnumMember,
+		KindExportSpecifier,
+		KindImportClause, // default import
+		KindImportEqualsDeclaration,
+		KindImportSpecifier,
+		KindInterfaceDeclaration,
+		KindJSDocCallbackTag,
+		KindJSDocTypedefTag,
+		KindJsxAttribute,
+		KindModuleDeclaration,
+		KindNamespaceExportDeclaration,
+		KindNamespaceImport,
+		KindNamespaceExport,
+		KindParameter,
+		KindShorthandPropertyAssignment,
+		KindTypeAliasDeclaration,
+		KindTypeParameter:
+		return true
+
+	case KindPropertyAssignment:
+		// In `({ x: y } = 0);`, `x` is not a write access.
+		return !IsArrayLiteralOrObjectLiteralDestructuringPattern(decl.Parent)
+
+	case KindFunctionDeclaration, KindFunctionExpression, KindConstructor, KindMethodDeclaration, KindGetAccessor, KindSetAccessor:
+		// functions considered write if they provide a value (have a body)
+		switch decl.Kind {
+		case KindFunctionDeclaration:
+			return decl.AsFunctionDeclaration().Body != nil
+		case KindFunctionExpression:
+			return decl.AsFunctionExpression().Body != nil
+		case KindConstructor:
+			// constructor node stores body on the parent? treat same as others
+			return decl.AsConstructorDeclaration().Body != nil
+		case KindMethodDeclaration:
+			return decl.AsMethodDeclaration().Body != nil
+		case KindGetAccessor:
+			return decl.AsGetAccessorDeclaration().Body != nil
+		case KindSetAccessor:
+			return decl.AsSetAccessorDeclaration().Body != nil
+		}
+		return false
+
+	case KindVariableDeclaration, KindPropertyDeclaration:
+		// variable/property write if initializer present or is in catch clause
+		var hasInit bool
+		switch decl.Kind {
+		case KindVariableDeclaration:
+			hasInit = decl.AsVariableDeclaration().Initializer != nil
+		case KindPropertyDeclaration:
+			hasInit = decl.AsPropertyDeclaration().Initializer != nil
+		}
+		return hasInit || IsCatchClause(decl.Parent)
+
+	case KindMethodSignature, KindPropertySignature, KindJSDocPropertyTag, KindJSDocParameterTag:
+		return false
+
+	default:
+		// preserve TS behavior: crash on unexpected kinds
+		panic("Unhandled case in declarationIsWriteAccess")
+	}
+}
+
+func IsArrayLiteralOrObjectLiteralDestructuringPattern(node *Node) bool {
+	if !(IsArrayLiteralExpression(node) || IsObjectLiteralExpression(node)) {
+		return false
+	}
+	parent := node.Parent
+	// [a,b,c] from:
+	// [a, b, c] = someExpression;
+	if IsBinaryExpression(parent) && parent.AsBinaryExpression().Left == node && parent.AsBinaryExpression().OperatorToken.Kind == KindEqualsToken {
+		return true
+	}
+	// [a, b, c] from:
+	// for([a, b, c] of expression)
+	if IsForOfStatement(parent) && parent.Initializer() == node {
+		return true
+	}
+	// {x, a: {a, b, c} } = someExpression
+	if IsPropertyAssignment(parent) {
+		return IsArrayLiteralOrObjectLiteralDestructuringPattern(parent.Parent)
+	}
+	// [a, b, c] of
+	// [x, [a, b, c] ] = someExpression
+	return IsArrayLiteralOrObjectLiteralDestructuringPattern(parent)
+}
+
 func accessKind(node *Node) AccessKind {
 	parent := node.Parent
 	switch parent.Kind {
