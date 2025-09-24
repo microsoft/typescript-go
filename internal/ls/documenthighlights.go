@@ -76,8 +76,7 @@ func (l *LanguageService) getSemanticDocumentHighlights(ctx context.Context, pos
 func (l *LanguageService) toDocumentHighlight(entry *referenceEntry) (string, *lsproto.DocumentHighlight) {
 	entry = l.resolveEntry(entry)
 
-	// If this is a plain range (Span), always treat it as a reference.
-	kind := lsproto.DocumentHighlightKindText
+	kind := lsproto.DocumentHighlightKindRead
 	if entry.kind == entryKindRange {
 		return entry.fileName, &lsproto.DocumentHighlight{
 			Range: *entry.textRange,

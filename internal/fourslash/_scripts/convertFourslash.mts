@@ -795,7 +795,7 @@ function parseBaselineDocumentHighlightsArgs(args: readonly ts.Expression[]): [V
             }
         }
         else if (ts.isObjectLiteralExpression(arg)) {
-            // User preferences case, but multiple files isn't implemented in corsa yet
+            // !! todo when multiple files supported in lsp
         }
         else if (strArg = parseBaselineMarkerOrRangeArg(arg)) {
             newArgs.push(strArg);
