@@ -20,13 +20,13 @@ func (l *LanguageService) ProvideDocumentHighlights(ctx context.Context, documen
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
 
 	if node.Parent != nil && (node.Parent.Kind == ast.KindJsxClosingElement || (node.Parent.Kind == ast.KindJsxOpeningElement && node.Parent.TagName() == node)) {
-		var documentHighlights []*lsproto.DocumentHighlight
 		var openingElement, closingElement *ast.Node
-		kind := lsproto.DocumentHighlightKindRead
 		if ast.IsJsxElement(node.Parent.Parent) {
 			openingElement = node.Parent.Parent.AsJsxElement().OpeningElement
 			closingElement = node.Parent.Parent.AsJsxElement().ClosingElement
 		}
+		var documentHighlights []*lsproto.DocumentHighlight
+		kind := lsproto.DocumentHighlightKindRead
 		if openingElement != nil {
 			documentHighlights = append(documentHighlights, &lsproto.DocumentHighlight{
 				Range: *l.createLspRangeFromNode(openingElement, sourceFile),
@@ -53,13 +53,13 @@ func (l *LanguageService) ProvideDocumentHighlights(ctx context.Context, documen
 }
 
 func (l *LanguageService) getSemanticDocumentHighlights(ctx context.Context, position int, node *ast.Node, program *compiler.Program, sourceFile *ast.SourceFile) []*lsproto.DocumentHighlight {
-	var highlights []*lsproto.DocumentHighlight
 	options := refOptions{use: referenceUseReferences}
 	referenceEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, []*ast.SourceFile{sourceFile}, options, &collections.Set[string]{})
 	if referenceEntries == nil {
 		return nil
 	}
 
+	var highlights []*lsproto.DocumentHighlight
 	for _, entry := range referenceEntries {
 		for _, ref := range entry.references {
 			if ref.node != nil {
@@ -101,8 +101,7 @@ func (l *LanguageService) getSyntacticDocumentHighlights(node *ast.Node, sourceF
 	switch node.Kind {
 	case ast.KindIfKeyword, ast.KindElseKeyword:
 		if ast.IsIfStatement(node.Parent) {
-			result := l.getIfElseOccurrences(node.Parent.AsIfStatement(), sourceFile)
-			return result
+			return l.getIfElseOccurrences(node.Parent.AsIfStatement(), sourceFile)
 		}
 		return nil
 	case ast.KindReturnKeyword:
@@ -178,8 +177,7 @@ func (l *LanguageService) getFromAllDeclarations(nodeTest func(*ast.Node) bool, 
 	return l.useParent(node.Parent, nodeTest, func(decl *ast.Node, sf *ast.SourceFile) []*ast.Node {
 		var symbolDecls []*ast.Node
 		if ast.CanHaveSymbol(decl) {
-			symbol := decl.Symbol()
-			if ast.CanHaveSymbol(decl) && symbol != nil && symbol.Declarations != nil {
+			if symbol := decl.Symbol(); symbol != nil {
 				for _, d := range symbol.Declarations {
 					if nodeTest(d) {
 					outer:
@@ -242,13 +240,13 @@ func (l *LanguageService) getIfElseOccurrences(ifStatement *ast.IfStatement, sou
 }
 
 func getIfElseKeywords(ifStatement *ast.IfStatement, sourceFile *ast.SourceFile) []*ast.Node {
-	var keywords []*ast.Node
-
 	// Traverse upwards through all parent if-statements linked by their else-branches.
 	// Is this cast error safe or should i be checking if elseStatement exists first?
 	for ast.IsIfStatement(ifStatement.Parent) && ifStatement.Parent.AsIfStatement().ElseStatement.AsIfStatement() == ifStatement {
 		ifStatement = ifStatement.Parent.AsIfStatement()
 	}
+
+	var keywords []*ast.Node
 
 	// Traverse back down through the else branches, aggregating if/else keywords of if-statements.
 	for {
@@ -306,17 +304,17 @@ func aggregateOwnedThrowStatements(node *ast.Node, sourceFile *ast.SourceFile) [
 		return []*ast.Node{node}
 	}
 	if ast.IsTryStatement(node) {
-		var result []*ast.Node
 		// Exceptions thrown within a try block lacking a catch clause are "owned" in the current context.
 		statement := node.AsTryStatement()
 		tryBlock := statement.TryBlock
 		catchClause := statement.CatchClause
 		finallyBlock := statement.FinallyBlock
 
+		var result []*ast.Node
 		if catchClause != nil {
-			result = append(result, aggregateOwnedThrowStatements(catchClause, sourceFile)...)
+			result = aggregateOwnedThrowStatements(catchClause, sourceFile)
 		} else if tryBlock != nil {
-			result = append(result, aggregateOwnedThrowStatements(tryBlock, sourceFile)...)
+			result = aggregateOwnedThrowStatements(tryBlock, sourceFile)
 		}
 		if finallyBlock != nil {
 			result = append(result, aggregateOwnedThrowStatements(finallyBlock, sourceFile)...)
@@ -332,6 +330,7 @@ func aggregateOwnedThrowStatements(node *ast.Node, sourceFile *ast.SourceFile) [
 
 func flatMapChildren[T any](node *ast.Node, sourceFile *ast.SourceFile, cb func(child *ast.Node, sourceFile *ast.SourceFile) []T) []T {
 	var result []T
+
 	node.ForEachChild(func(child *ast.Node) bool {
 		value := cb(child, sourceFile)
 		if value != nil {
@@ -359,7 +358,8 @@ func getThrowOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node
 		}
 	}
 
-	// If the owner is a function block, also include return keywords.
+	// If the "owner" is a function, then we equate 'return' and 'throw' statements in their
+	// ability to "jump out" of the function, and include occurrences for both
 	if ast.IsFunctionBlock(owner) {
 		ast.ForEachReturnStatement(owner, func(ret *ast.Node) bool {
 			keyword := findChildOfKind(ret, ast.KindReturnKeyword, sourceFile)
@@ -373,6 +373,9 @@ func getThrowOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node
 	return keywords
 }
 
+// For lack of a better name, this function takes a throw statement and returns the
+// nearest ancestor that is a try-block (whose try statement has a catch clause),
+// function-block, or source file.
 func getThrowStatementOwner(throwStatement *ast.Node) *ast.Node {
 	child := throwStatement
 	for child.Parent != nil {
@@ -397,9 +400,9 @@ func getThrowStatementOwner(throwStatement *ast.Node) *ast.Node {
 }
 
 func getTryCatchFinallyOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
-	var keywords []*ast.Node
 	tryStatement := node.AsTryStatement()
 
+	var keywords []*ast.Node
 	token := lsutil.GetFirstToken(node, sourceFile)
 	if token.Kind == ast.KindTryKeyword {
 		keywords = append(keywords, token)
@@ -423,9 +426,9 @@ func getTryCatchFinallyOccurrences(node *ast.Node, sourceFile *ast.SourceFile) [
 }
 
 func getSwitchCaseDefaultOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
-	var keywords []*ast.Node
 	switchStatement := node.AsSwitchStatement()
 
+	var keywords []*ast.Node
 	token := lsutil.GetFirstToken(node, sourceFile)
 	if token.Kind == ast.KindSwitchKeyword {
 		keywords = append(keywords, token)
@@ -440,7 +443,7 @@ func getSwitchCaseDefaultOccurrences(node *ast.Node, sourceFile *ast.SourceFile)
 
 		breakAndContinueStatements := aggregateAllBreakAndContinueStatements(clause, sourceFile)
 		for _, statement := range breakAndContinueStatements {
-			if ownsBreakOrContinueStatement(switchStatement.AsNode(), statement) && statement.Kind == ast.KindBreakStatement {
+			if statement.Kind == ast.KindBreakStatement && ownsBreakOrContinueStatement(switchStatement.AsNode(), statement) {
 				keywords = append(keywords, lsutil.GetFirstToken(statement, sourceFile))
 			}
 		}
@@ -454,7 +457,7 @@ func aggregateAllBreakAndContinueStatements(node *ast.Node, sourceFile *ast.Sour
 		return []*ast.Node{node}
 	}
 	if ast.IsFunctionLike(node) {
-		return []*ast.Node{}
+		return nil
 	}
 	return flatMapChildren(node, sourceFile, aggregateAllBreakAndContinueStatements)
 }
@@ -468,14 +471,12 @@ func ownsBreakOrContinueStatement(owner *ast.Node, statement *ast.Node) bool {
 }
 
 func getBreakOrContinueOwner(statement *ast.Node) *ast.Node {
-	// Walk up ancestors to find the owner node.
 	return ast.FindAncestorOrQuit(statement, func(node *ast.Node) ast.FindAncestorResult {
 		switch node.Kind {
 		case ast.KindSwitchStatement:
 			if statement.Kind == ast.KindContinueStatement {
 				return ast.FindAncestorFalse
 			}
-			// falls through
 			fallthrough
 		case ast.KindForStatement,
 			ast.KindForInStatement,
@@ -497,7 +498,8 @@ func getBreakOrContinueOwner(statement *ast.Node) *ast.Node {
 	})
 }
 
-// Helper function to check if a node is labeled by a given label name.
+// Whether or not a 'node' is preceded by a label of the given string.
+// Note: 'node' cannot be a SourceFile.
 func isLabeledBy(node *ast.Node, labelName string) bool {
 	return ast.FindAncestorOrQuit(node.Parent, func(owner *ast.Node) ast.FindAncestorResult {
 		if !ast.IsLabeledStatement(owner) {
@@ -511,8 +513,7 @@ func isLabeledBy(node *ast.Node, labelName string) bool {
 }
 
 func getBreakOrContinueStatementOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
-	owner := getBreakOrContinueOwner(node)
-	if owner != nil {
+	if owner := getBreakOrContinueOwner(node); owner != nil {
 		switch owner.Kind {
 		case ast.KindForStatement, ast.KindForInStatement, ast.KindForOfStatement, ast.KindDoStatement, ast.KindWhileStatement:
 			return getLoopBreakContinueOccurrences(owner, sourceFile)
@@ -558,9 +559,10 @@ func getAsyncAndAwaitOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*
 	}
 
 	var keywords []*ast.Node
-	modifiers := parentFunc.Modifiers().Nodes
-	if len(modifiers) != 0 {
-		for _, modifier := range modifiers {
+
+	modifiers := parentFunc.Modifiers()
+	if modifiers != nil {
+		for _, modifier := range modifiers.Nodes {
 			if modifier.Kind == ast.KindAsyncKeyword {
 				keywords = append(keywords, modifier)
 			}
@@ -582,13 +584,14 @@ func getAsyncAndAwaitOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*
 	return keywords
 }
 
-func getYieldOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node { /* TODO */
+func getYieldOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
 	parentFunc := ast.FindAncestor(node.Parent, ast.IsFunctionLike).AsFunctionDeclaration()
 	if parentFunc == nil {
 		return nil
 	}
 
 	var keywords []*ast.Node
+
 	parentFunc.ForEachChild(func(child *ast.Node) bool {
 		traverseWithoutCrossingFunction(child, sourceFile, func(child *ast.Node) {
 			if ast.IsYieldExpression(child) {
@@ -614,10 +617,10 @@ func traverseWithoutCrossingFunction(node *ast.Node, sourceFile *ast.SourceFile,
 	}
 }
 
-func getModifierOccurrences(kind ast.Kind, node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node { /* TODO */
+func getModifierOccurrences(kind ast.Kind, node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
 	var result []*ast.Node
 
-	nodesToSearch := getNodesToSearchForModifier(node, modifierToFlag(kind))
+	nodesToSearch := getNodesToSearchForModifier(node, ast.ModifierToFlag(kind))
 	for _, n := range nodesToSearch {
 		modifier := findModifier(n, kind)
 		if modifier != nil {
@@ -635,14 +638,14 @@ func getNodesToSearchForModifier(declaration *ast.Node, modifierFlag ast.Modifie
 		return nil
 	}
 
+	// Types of node whose children might have modifiers.
 	switch container.Kind {
 	case ast.KindModuleBlock, ast.KindSourceFile, ast.KindBlock, ast.KindCaseClause, ast.KindDefaultClause:
-		// If abstract modifier and class declaration, include members and the declaration itself
+		// Container is either a class declaration or the declaration is a classDeclaration
 		if (modifierFlag&ast.ModifierFlagsAbstract) != 0 && ast.IsClassDeclaration(declaration) {
-			result = append(result, declaration)
-			result = append(result, declaration.Members()...)
+			return append(append(result, declaration.Members()...), declaration)
 		} else {
-			result = append(result, container.Statements()...)
+			return append(result, container.Statements()...)
 		}
 	case ast.KindConstructor, ast.KindMethodDeclaration, ast.KindFunctionDeclaration:
 		// Parameters and, if inside a class, also class members
@@ -650,10 +653,15 @@ func getNodesToSearchForModifier(declaration *ast.Node, modifierFlag ast.Modifie
 		if ast.IsClassLike(container.Parent) {
 			result = append(result, container.Parent.Members()...)
 		}
+		return result
 	case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration, ast.KindTypeLiteral:
 		nodes := container.Members()
+		result = append(result, nodes...)
+		// If we're an accessibility modifier, we're in an instance member and should search
+		// the constructor's parameter list for instance members as well.
 		if (modifierFlag & (ast.ModifierFlagsAccessibilityModifier | ast.ModifierFlagsReadonly)) != 0 {
 			var constructor *ast.Node
+
 			for _, member := range nodes {
 				if ast.IsConstructorDeclaration(member) {
 					constructor = member
@@ -661,57 +669,21 @@ func getNodesToSearchForModifier(declaration *ast.Node, modifierFlag ast.Modifie
 				}
 			}
 			if constructor != nil {
-				result = append(result, nodes...)
 				result = append(result, constructor.Parameters()...)
-			} else {
-				result = append(result, nodes...)
 			}
 		} else if (modifierFlag & ast.ModifierFlagsAbstract) != 0 {
-			result = append(result, nodes...)
 			result = append(result, container)
-		} else {
-			result = append(result, nodes...)
 		}
+		return result
 	default:
 		// Syntactically invalid positions or unsupported containers
 		return nil
 	}
-
-	return result
-}
-
-func modifierToFlag(kind ast.Kind) ast.ModifierFlags {
-	switch kind {
-	case ast.KindPublicKeyword:
-		return ast.ModifierFlagsPublic
-	case ast.KindPrivateKeyword:
-		return ast.ModifierFlagsPrivate
-	case ast.KindProtectedKeyword:
-		return ast.ModifierFlagsProtected
-	case ast.KindStaticKeyword:
-		return ast.ModifierFlagsStatic
-	case ast.KindReadonlyKeyword:
-		return ast.ModifierFlagsReadonly
-	case ast.KindAbstractKeyword:
-		return ast.ModifierFlagsAbstract
-	case ast.KindExportKeyword:
-		return ast.ModifierFlagsExport
-	case ast.KindDeclareKeyword:
-		return ast.ModifierFlagsAmbient
-	case ast.KindDefaultKeyword:
-		return ast.ModifierFlagsDefault
-	case ast.KindConstKeyword:
-		return ast.ModifierFlagsConst
-	case ast.KindAsyncKeyword:
-		return ast.ModifierFlagsAsync
-	default:
-		return ast.ModifierFlagsNone
-	}
 }
 
 func findModifier(node *ast.Node, kind ast.Kind) *ast.Node {
-	if ast.CanHaveModifiers(node) && node.Modifiers() != nil {
-		for _, modifier := range node.Modifiers().Nodes {
+	if modifiers := node.Modifiers(); modifiers != nil {
+		for _, modifier := range modifiers.Nodes {
 			if modifier.Kind == kind {
 				return modifier
 			}
