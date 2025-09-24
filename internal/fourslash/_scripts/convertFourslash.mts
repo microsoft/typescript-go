@@ -796,7 +796,6 @@ function parseBaselineDocumentHighlightsArgs(args: readonly ts.Expression[]): [V
         }
         else if (ts.isObjectLiteralExpression(arg)) {
             // !!! todo when multiple files supported in lsp
-
         }
         else if (strArg = parseBaselineMarkerOrRangeArg(arg)) {
             newArgs.push(strArg);
