@@ -723,11 +723,6 @@ func (p *Printer) shouldEmitComments(node *ast.Node) bool {
 }
 
 func (p *Printer) shouldWriteComment(comment ast.CommentRange) bool {
-	// For declaration files, only write JSDoc-style comments (/** */) and pinned comments (/*! */)
-	if p.currentSourceFile != nil && p.currentSourceFile.IsDeclarationFile {
-		return p.currentSourceFile != nil && isJSDocLikeText(p.currentSourceFile.Text(), comment) ||
-			p.currentSourceFile != nil && IsPinnedComment(p.currentSourceFile.Text(), comment)
-	}
 	return !p.Options.OnlyPrintJSDocStyle ||
 		p.currentSourceFile != nil && isJSDocLikeText(p.currentSourceFile.Text(), comment) ||
 		p.currentSourceFile != nil && IsPinnedComment(p.currentSourceFile.Text(), comment)
