@@ -34,5 +34,8 @@ declare class A {
     };
 }
 declare class B extends A {
+    /**
+     * @param {object} [foo={}]
+     */
     m(foo?: object): void;
 }

@@ -30,5 +30,8 @@ declare const bar: {
     arguments: {};
 };
 declare class A {
+    /**
+     * @param {object} [foo={}]
+     */
     m(foo?: object): void;
 }

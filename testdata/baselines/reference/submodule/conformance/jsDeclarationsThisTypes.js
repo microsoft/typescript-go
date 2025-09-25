@@ -32,8 +32,10 @@ exports.default = Base;
 
 //// [index.d.ts]
 export declare class A {
+    /** @returns {this} */
     method(): this;
 }
 export default class Base extends A {
+    // This method is required to reproduce #35932
     verify(): void;
 }

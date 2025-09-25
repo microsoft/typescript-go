@@ -5,11 +5,11 @@
 
  //// [index.d.ts]
 -export class Super {
--    /**
--     * @param {string} firstArg
--     * @param {string} secondArg
--     */
 +export declare class Super {
+     /**
+      * @param {string} firstArg
+      * @param {string} secondArg
+      */
      constructor(firstArg: string, secondArg: string);
  }
 -export class Sub extends Super {

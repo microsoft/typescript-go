@@ -715,6 +715,7 @@ declare const obj: {
     fn: () => boolean;
 };
 declare const a: boolean;
+// repro from https://github.com/microsoft/TypeScript/issues/53267
 declare class Utils {
     static isDefined<T>(value: T): value is NonNullable<T>;
 }

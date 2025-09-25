@@ -55,5 +55,6 @@ declare abstract class AbstractBase {
     abstract abstractBaseMethod(): void;
 }
 declare const MixedBase: typeof AbstractBase & (abstract new (...args: any) => Mixin);
+// error expected: Non-abstract class 'DerivedFromAbstract' does not implement inherited abstract member 'abstractBaseMethod' from class 'AbstractBase & Mixin'.
 declare class DerivedFromAbstract extends MixedBase {
 }

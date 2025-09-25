@@ -287,13 +287,15 @@ class C13 {
 
 
 //// [strictPropertyInitialization.d.ts]
+// Properties with non-undefined types require initialization
 declare class C1 {
     #private;
-    a: number;
+    a: number; // Error
     b: number | undefined;
-    c: number | null;
+    c: number | null; // Error
     d?: number;
 }
+// No strict initialization checks in ambient contexts
 declare class C2 {
     #private;
     a: number;
@@ -301,26 +303,30 @@ declare class C2 {
     c: number | null;
     d?: number;
 }
+// No strict initialization checks for static members
 declare class C3 {
     static a: number;
     static b: number | undefined;
     static c: number | null;
     static d?: number;
 }
+// Initializer satisfies strict initialization check
 declare class C4 {
     #private;
     a: number;
     b: number;
     c: string;
 }
+// Assignment in constructor satisfies strict initialization check
 declare class C5 {
     #private;
     a: number;
     constructor();
 }
+// All code paths must contain assignment
 declare class C6 {
     #private;
-    a: number;
+    a: number; // Error
     constructor(cond: boolean);
 }
 declare class C7 {
@@ -328,17 +334,21 @@ declare class C7 {
     a: number;
     constructor(cond: boolean);
 }
+// Properties with string literal names aren't checked
 declare class C8 {
-    a: number;
+    a: number; // Error
     "b": number;
     0: number;
 }
+// No strict initialization checks for abstract members
 declare abstract class C9 {
     abstract a: number;
     abstract b: number | undefined;
     abstract c: number | null;
     abstract d?: number;
 }
+// Properties with non-undefined types must be assigned before they can be accessed
+// within their constructor
 declare class C10 {
     #private;
     a: number;

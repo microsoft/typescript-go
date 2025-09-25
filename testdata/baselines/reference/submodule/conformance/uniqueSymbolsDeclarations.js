@@ -453,6 +453,7 @@ declare function asyncFuncReturnVarCall(): Promise<symbol>;
 declare function asyncGenFuncYieldConstCall(): AsyncGenerator<symbol, void, unknown>;
 declare function asyncGenFuncYieldLetCall(): AsyncGenerator<symbol, void, unknown>;
 declare function asyncGenFuncYieldVarCall(): AsyncGenerator<symbol, void, unknown>;
+// classes
 declare class C {
     static readonly readonlyStaticCall: unique symbol;
     static readonly readonlyStaticType: unique symbol;
@@ -524,6 +525,7 @@ declare const o2: {
     method4(): Generator<symbol, void, unknown>;
     method5(p?: symbol): symbol;
 };
+// property initializers
 declare class C0 {
     static readonly a: symbol;
     static readonly b: symbol;

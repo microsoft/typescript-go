@@ -22,11 +22,14 @@ class B3 {
 declare class A {
     constructor();
 }
+/** @implements A*/
 declare class B implements A {
 }
+/** @implements A*/
 declare class B2 implements A {
     x: number;
 }
+/** @implements {A}*/
 declare class B3 implements A {
     constructor();
 }

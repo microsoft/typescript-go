@@ -25,6 +25,9 @@ export class TextElement extends HTMLElement {
 
 //// [thisPropertyAssignmentInherited.d.ts]
 export declare class Element {
+    /**
+     * @returns {String}
+     */
     get textContent(): String;
     set textContent(x: String);
     cloneNode(): this;

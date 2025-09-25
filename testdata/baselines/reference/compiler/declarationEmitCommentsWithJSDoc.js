@@ -45,7 +45,17 @@ exports.DbObject = DbObject;
 
 
 //// [declarationEmitCommentsWithJSDoc.d.ts]
+/**
+ * JSDoc comment - should be preserved
+ */
 export declare class DbObject {
+    /**
+     * JSDoc property comment
+     */
     id: string;
+    /**
+     * JSDoc method comment
+     * @returns void
+     */
     method(): void;
 }

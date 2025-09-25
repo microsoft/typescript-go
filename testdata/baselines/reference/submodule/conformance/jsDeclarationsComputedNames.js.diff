@@ -73,6 +73,9 @@
 -     */
 -    constructor(_p?: typeof TopLevelSym | typeof InnerSym);
      [InnerSym]: string;
++    /**
++     * @param {typeof TopLevelSym | typeof InnerSym} _p
++     */
 +    constructor(_p?: typeof TopLevelSym | typeof InnerSym);
  }
 -declare const InnerSym: unique symbol;

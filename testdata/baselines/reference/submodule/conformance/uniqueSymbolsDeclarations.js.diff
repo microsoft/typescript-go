@@ -108,7 +108,11 @@
  declare function asyncGenFuncYieldConstCall(): AsyncGenerator<symbol, void, unknown>;
  declare function asyncGenFuncYieldLetCall(): AsyncGenerator<symbol, void, unknown>;
  declare function asyncGenFuncYieldVarCall(): AsyncGenerator<symbol, void, unknown>;
-@@= skipped -39, +46 lines =@@
++// classes
+ declare class C {
+     static readonly readonlyStaticCall: unique symbol;
+     static readonly readonlyStaticType: unique symbol;
+@@= skipped -39, +47 lines =@@
  declare const constInitToCReadwriteCallWithTypeQuery: typeof c.readwriteCall;
  declare const constInitToCReadonlyCallWithIndexedAccess: C["readonlyCall"];
  declare const constInitToCReadwriteCallWithIndexedAccess: C["readwriteCall"];
@@ -143,7 +147,15 @@
  declare const o2: {
      a: symbol;
      b: symbol;
-@@= skipped -35, +36 lines =@@
+@@= skipped -10, +11 lines =@@
+     method4(): Generator<symbol, void, unknown>;
+     method5(p?: symbol): symbol;
+ };
++// property initializers
+ declare class C0 {
+     static readonly a: symbol;
+     static readonly b: symbol;
+@@= skipped -25, +26 lines =@@
      [s]: "a";
      [N.s]: "b";
  }

@@ -32,5 +32,10 @@ declare const bar: {
     arguments: {};
 };
 declare class A {
+    /**
+     * Constructor
+     *
+     * @param {object} [foo={}]
+     */
     constructor(foo?: object);
 }

@@ -33,6 +33,9 @@ exports.default = A;
 
 
 //// [index.d.ts]
+/**
+ * @module A
+ */
 declare class A {
 }
 /**

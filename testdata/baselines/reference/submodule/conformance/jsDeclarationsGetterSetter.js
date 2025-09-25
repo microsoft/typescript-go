@@ -242,6 +242,9 @@ export declare class A {
     get x(): number;
 }
 export declare class B {
+    /**
+     * @param {number} _arg
+     */
     set x(_arg: number);
 }
 export declare class C {

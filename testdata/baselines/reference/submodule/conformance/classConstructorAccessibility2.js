@@ -136,15 +136,15 @@ declare class DerivedB extends BaseB {
     x: number;
     constructor(x: number);
     createInstance(): void;
-    createBaseInstance(): void;
-    static staticBaseInstance(): void;
+    createBaseInstance(): void; // ok
+    static staticBaseInstance(): void; // ok
 }
 declare class DerivedC extends BaseC {
     x: number;
     constructor(x: number);
     createInstance(): void;
-    createBaseInstance(): void;
-    static staticBaseInstance(): void;
+    createBaseInstance(): void; // error
+    static staticBaseInstance(): void; // error
 }
 declare var ba: BaseA;
 declare var bb: any; // error

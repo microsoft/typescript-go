@@ -5,28 +5,27 @@
   * @param {string} b
   */
 -export function foo(a: number, b: string): void;
--/**
-- * Legacy - DO NOT USE
-- */
--export class Aleph {
--    /**
--     * Impossible to construct.
--     * @param {Aleph} a
--     * @param {null} b
--     */
 +export declare function foo(a: number, b: string): void;
+ /**
+  * Legacy - DO NOT USE
+  */
+-export class Aleph {
 +export declare class Aleph {
+     /**
+      * Impossible to construct.
+      * @param {Aleph} a
+@@= skipped -12, +12 lines =@@
+      */
      constructor(a: Aleph, b: null);
--    /**
+     /**
 -     * Field is always null
 -     */
 -    field: any;
 -    /**
--     * Doesn't actually do anything
--     * @returns {void}
--     */
-     doIt(): void;
- }
+      * Doesn't actually do anything
+      * @returns {void}
+      */
+@@= skipped -12, +8 lines =@@
  /**
   * Not the speed of light
   */

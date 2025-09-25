@@ -98,6 +98,18 @@ p.use(x, y, z);
 //// [typeTagForMultipleVariableDeclarations.d.ts]
 declare class Node {
 }
+/**
+ * @template {Node | undefined} [ParseTree=undefined]
+ *   Output of `parse` (optional).
+ * @template {Node | undefined} [HeadTree=undefined]
+ *   Input for `run` (optional).
+ * @template {Node | undefined} [TailTree=undefined]
+ *   Output for `run` (optional).
+ * @template {Node | undefined} [CompileTree=undefined]
+ *   Input of `stringify` (optional).
+ * @template {string | undefined} [CompileResult=undefined]
+ *   Output of `stringify` (optional).
+ */
 export declare class Processor<ParseTree extends Node | undefined = undefined, HeadTree extends Node | undefined = undefined, TailTree extends Node | undefined = undefined, CompileTree extends Node | undefined = undefined, CompileResult extends string | undefined = undefined> {
     /**
      * @overload

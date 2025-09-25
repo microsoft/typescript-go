@@ -141,23 +141,28 @@ function f4() {
 
 
 //// [definiteAssignmentAssertions.d.ts]
+// Suppress strict property initialization check
 declare class C1 {
     a!: number;
-    b: string;
+    b: string; // Error
 }
+// Suppress definite assignment check in constructor
 declare class C2 {
     a!: number;
     constructor();
 }
+// Definite assignment assertion requires type annotation, no initializer, no static modifier
 declare class C3 {
     a!: number;
     b!: number;
     static c!: number;
     d!: any;
 }
+// Definite assignment assertion not permitted in ambient context
 declare class C4 {
     a!: number;
 }
+// Definite assignment assertion not permitted on abstract property
 declare abstract class C5 {
     abstract a!: number;
 }

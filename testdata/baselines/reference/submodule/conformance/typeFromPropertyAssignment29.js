@@ -205,14 +205,12 @@ declare namespace Ns {
     export function foo(): typeof ExpandoNamespace;
     export {};
 }
-// Should not work in Typescript -- must be const
 declare var ExpandoExpr2: (n: number) => string;
 declare var n: number;
 declare class ExpandoClass {
     n: number;
 }
 declare var n: number;
-// Class expressions shouldn't work in typescript either
 declare var ExpandoExpr3: {
     new (): {
         n: number;

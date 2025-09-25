@@ -130,5 +130,11 @@ C2.staticProp = function (x, y) {
 //// [jsDeclarationsClassMethod.d.ts]
 declare function C1(): void;
 declare class C2 {
+    /**
+     * A comment method1
+     * @param {number} x
+     * @param {number} y
+     * @returns {number}
+     */
     method1(x: number, y: number): number;
 }

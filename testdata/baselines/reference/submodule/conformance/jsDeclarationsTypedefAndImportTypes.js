@@ -73,7 +73,13 @@ export type Whatever = string | number;
 export = Conn;
 //// [usage.d.ts]
 export type Conn = import("./conn");
+/**
+ * @typedef {import("./conn")} Conn
+ */
 declare class Wrap {
+    /**
+     * @param {Conn} c
+     */
     constructor(c: Conn);
 }
 declare const _default: {

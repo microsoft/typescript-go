@@ -26,6 +26,7 @@
  //// [index1.d.ts]
 -export type Cls = string | number;
 -export default Cls;
++// merge type alias and alias (should error, see #32367)
  declare class Cls {
 -    static y: string;
      x: number;
@@ -37,6 +38,7 @@
 + * @typedef {string | number} default
 + */
  //// [index2.d.ts]
++// merge type alias and class (error message improvement needed, see #32368)
  export default class C {
  }
 +export type default = string | number;
