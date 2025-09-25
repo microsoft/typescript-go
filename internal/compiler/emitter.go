@@ -195,7 +195,7 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 
 	printerOptions := printer.PrinterOptions{
 		RemoveComments:      options.RemoveComments.IsTrue(),
-		OnlyPrintJSDocStyle: true, // For declaration files, only emit JSDoc-style comments
+		OnlyPrintJSDocStyle: true,
 		NewLine:             options.NewLine,
 		NoEmitHelpers:       options.NoEmitHelpers.IsTrue(),
 		SourceMap:           options.DeclarationMap.IsTrue(),
