@@ -77,11 +77,11 @@ exports.C4 = C4;
 
 //// [declarationEmitClassMemberNameConflict.d.ts]
 export declare class C1 {
-    C1(): void; // has to be the same as the class name
+    C1(): void;
     bar(): (t: typeof C1) => void;
 }
 export declare class C2 {
-    C2: any; // has to be the same as the class name
+    C2: any;
     bar(): (t: typeof C2) => void;
 }
 export declare class C3 {

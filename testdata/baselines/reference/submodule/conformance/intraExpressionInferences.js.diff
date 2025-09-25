@@ -48,14 +48,7 @@
  type Chain<R1, R2> = {
      a(): R1;
      b(a: R1): R2;
-     c(b: R2): void;
- };
- declare function test<R1, R2>(foo: Chain<R1, R2>): void;
-+// Repro from #41712
- declare class Wrapper<T = any> {
-     value?: T;
- }
-@@= skipped -40, +46 lines =@@
+@@= skipped -40, +45 lines =@@
      map?: (inputs: Unwrap<I>) => Unwrap<O>;
  };
  declare function createMappingComponent<I extends WrappedMap, O extends WrappedMap>(def: MappingComponent<I, O>): void;

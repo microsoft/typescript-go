@@ -308,7 +308,6 @@ declare namespace m7.m8 {
         /** Exported class comment*/
         class c {
         }
-        // class e
         class e {
         }
     }

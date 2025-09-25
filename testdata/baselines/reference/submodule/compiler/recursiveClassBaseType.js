@@ -48,7 +48,6 @@ declare const C_base: new () => {
 };
 declare class C extends C_base {
 }
-// Repro from #44359
 declare abstract class Base1 {
     abstract root(): Derived1;
 }

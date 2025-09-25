@@ -547,7 +547,6 @@ type Chain<R1, R2> = {
     c(b: R2): void;
 };
 declare function test<R1, R2>(foo: Chain<R1, R2>): void;
-// Repro from #41712
 declare class Wrapper<T = any> {
     value?: T;
 }

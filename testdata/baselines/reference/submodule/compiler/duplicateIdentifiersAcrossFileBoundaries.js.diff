@@ -8,20 +8,16 @@
  }
  var N;
  (function (N) {
-@@= skipped -38, +39 lines =@@
- }
- //// [file2.d.ts]
+@@= skipped -40, +41 lines =@@
  declare class I {
--}
-+} // error -- cannot merge interface with non-ambient class
+ }
  interface C1 {
 -}
 -declare function C2(): void;
 +} // error -- cannot merge interface with non-ambient class
 +declare function C2(): void; // error -- cannot merge function with non-ambient class
  declare class f {
--}
-+} // error -- cannot merge function with non-ambient class
+ }
  declare var v: number;
  declare namespace Foo {
 -    var x: number;

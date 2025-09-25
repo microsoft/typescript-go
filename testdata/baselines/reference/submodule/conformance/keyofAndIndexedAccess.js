@@ -1181,7 +1181,6 @@ type S2 = {
 declare function f90<T extends S2, K extends keyof S2>(x1: S2[keyof S2], x2: T[keyof S2], x3: S2[K]): void;
 declare function f91<T, K extends keyof T>(x: T, y: T[keyof T], z: T[K]): void;
 declare function f92<T, K extends keyof T>(x: T, y: T[keyof T], z: T[K]): void;
-// Repros from #12011
 declare class Base {
     get<K extends keyof this>(prop: K): this[K];
     set<K extends keyof this>(prop: K, value: this[K]): void;
@@ -1286,7 +1285,6 @@ declare function updateIds2<T extends {
 }): void;
 // Repro from #13514
 declare function head<T extends Array<any>>(list: T): T[0];
-// Repro from #13604
 declare class A<T> {
     props: T & {
         foo: string;
@@ -1297,12 +1295,10 @@ declare class B extends A<{
 }> {
     f(p: this["props"]): void;
 }
-// Repro from #13749
 declare class Form<T> {
     private childFormFactories;
     set<K extends keyof T>(prop: K, value: T[K]): void;
 }
-// Repro from #13787
 declare class SampleClass<P> {
     props: Readonly<P>;
     constructor(props: P);
@@ -1377,7 +1373,6 @@ interface I {
 }
 declare function take<T>(p: T): void;
 declare function fn<T extends I, K extends keyof T>(o: T, k: K): void;
-// Repro from #23133
 declare class Unbounded<T> {
     foo(x: T[keyof T]): void;
 }

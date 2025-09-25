@@ -91,7 +91,6 @@ interface E2 extends Base {
 interface E3<T> extends Base {
     foo: Partial<T>; // or other mapped type
 }
-// Repro from #13747
 declare class Form<T> {
     private values;
 }

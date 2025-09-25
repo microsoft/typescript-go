@@ -181,15 +181,7 @@
  declare function f40(c: C): void;
  declare function f50<T>(k: keyof T, s: string): void;
  declare function f51<T, K extends keyof T>(k: K, s: string): void;
-@@= skipped -47, +49 lines =@@
- declare function f90<T extends S2, K extends keyof S2>(x1: S2[keyof S2], x2: T[keyof S2], x3: S2[K]): void;
- declare function f91<T, K extends keyof T>(x: T, y: T[keyof T], z: T[K]): void;
- declare function f92<T, K extends keyof T>(x: T, y: T[keyof T], z: T[K]): void;
-+// Repros from #12011
- declare class Base {
-     get<K extends keyof this>(prop: K): this[K];
-     set<K extends keyof this>(prop: K, value: this[K]): void;
-@@= skipped -14, +15 lines =@@
+@@= skipped -61, +63 lines =@@
      constructor(parts: number);
      getParts(): this["parts"];
  }
@@ -271,24 +263,9 @@
  }): void;
 +// Repro from #13514
  declare function head<T extends Array<any>>(list: T): T[0];
-+// Repro from #13604
  declare class A<T> {
      props: T & {
-         foo: string;
-@@= skipped -28, +34 lines =@@
- }> {
-     f(p: this["props"]): void;
- }
-+// Repro from #13749
- declare class Form<T> {
-     private childFormFactories;
-     set<K extends keyof T>(prop: K, value: T[K]): void;
- }
-+// Repro from #13787
- declare class SampleClass<P> {
-     props: Readonly<P>;
-     constructor(props: P);
-@@= skipped -16, +18 lines =@@
+@@= skipped -44, +49 lines =@@
      constructor(props: T);
      brokenMethod(): void;
  }
@@ -318,9 +295,7 @@
  interface I {
      foo: string;
  }
- declare function take<T>(p: T): void;
- declare function fn<T extends I, K extends keyof T>(o: T, k: K): void;
-+// Repro from #23133
+@@= skipped -8, +9 lines =@@
  declare class Unbounded<T> {
      foo(x: T[keyof T]): void;
  }
@@ -334,7 +309,7 @@
  type Dict<T extends string> = {
      [key in T]: number;
  };
-@@= skipped -21, +25 lines =@@
+@@= skipped -13, +15 lines =@@
  };
  declare function ff1<V extends string, T extends string>(dd: DictDict<V, T>, k1: V, k2: T): number;
  declare function ff2<V extends string, T extends string>(dd: DictDict<V, T>, k1: V, k2: T): number;

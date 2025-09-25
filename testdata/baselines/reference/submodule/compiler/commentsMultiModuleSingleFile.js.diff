@@ -1,10 +1,6 @@
 --- old.commentsMultiModuleSingleFile.js
 +++ new.commentsMultiModuleSingleFile.js
-@@= skipped -58, +58 lines =@@
-     /** class b*/
-     class b {
-     }
-+    // class d
+@@= skipped -61, +61 lines =@@
      class d {
      }
  }
@@ -12,8 +8,3 @@
  declare namespace multiM {
      /** class c comment*/
      class c {
-     }
-+    /// class e
-     class e {
-     }
- }

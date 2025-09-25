@@ -584,7 +584,6 @@ declare class Inferrer implements NumberInferrer {
 }
 declare let numOrStr: number | string;
 declare const inf: Inferrer;
-// Type predicates are not inferred on "this"
 declare class C1 {
     isC2(): boolean;
 }

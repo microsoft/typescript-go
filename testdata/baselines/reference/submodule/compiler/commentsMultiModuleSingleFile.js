@@ -59,7 +59,6 @@ declare namespace multiM {
     /** class b*/
     class b {
     }
-    // class d
     class d {
     }
 }
@@ -68,7 +67,6 @@ declare namespace multiM {
     /** class c comment*/
     class c {
     }
-    /// class e
     class e {
     }
 }

@@ -101,11 +101,3 @@
  }
  /** module comment of m5.m6.m7*/
  declare namespace m5.m6.m7 {
-@@= skipped -49, +50 lines =@@
-         /** Exported class comment*/
-         class c {
-         }
-+        // class e
-         class e {
-         }
-     }

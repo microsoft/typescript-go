@@ -208,7 +208,6 @@ declare namespace Ns {
 // Should not work in Typescript -- must be const
 declare var ExpandoExpr2: (n: number) => string;
 declare var n: number;
-// Should not work in typescript -- classes already have statics
 declare class ExpandoClass {
     n: number;
 }

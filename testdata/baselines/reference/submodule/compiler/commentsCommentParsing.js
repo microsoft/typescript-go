@@ -381,6 +381,5 @@ declare function divide(a: number, b: number): void;
 *@param c it is third parameter
 */
 declare function jsDocParamTest(/** this is inline comment for a */ a: number, /** this is inline comment for b*/ b: number, c: number, d: number): number;
-/**/
 declare class NoQuickInfoClass {
 }

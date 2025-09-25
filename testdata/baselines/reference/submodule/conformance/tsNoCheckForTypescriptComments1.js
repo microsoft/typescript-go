@@ -33,5 +33,5 @@ export interface Aleph {
     q: number;
 }
 export declare class Bet implements Aleph {
-    q: string; // And so will this implements error
+    q: string;
 }

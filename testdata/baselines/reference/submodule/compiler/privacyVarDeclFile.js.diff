@@ -227,16 +227,6 @@
  }
  export interface publicInterfaceWithPublicPropertyTypes {
      myProperty: publicClass;
- }
- export declare class publicClassWithWithPrivatePropertyTypes {
--    static myPublicStaticProperty: privateClass;
-+    static myPublicStaticProperty: privateClass; // Error
-     private static myPrivateStaticProperty;
--    myPublicProperty: privateClass;
-+    myPublicProperty: privateClass; // Error
-     private myPrivateProperty;
- }
- export declare class publicClassWithWithPublicPropertyTypes {
 @@= skipped -17, +17 lines =@@
      myPublicProperty: publicClass;
      private myPrivateProperty;
@@ -252,10 +242,8 @@
 +    myProperty: privateModule.publicClass; // Error
  }
  export declare class publicClassWithPrivateModulePropertyTypes {
--    static myPublicStaticProperty: privateModule.publicClass;
--    myPublicProperty: privateModule.publicClass;
-+    static myPublicStaticProperty: privateModule.publicClass; // Error
-+    myPublicProperty: privateModule.publicClass; // Error
+     static myPublicStaticProperty: privateModule.publicClass;
+     myPublicProperty: privateModule.publicClass;
  }
 -export declare var publicVarWithPrivateModulePropertyTypes: privateModule.publicClass;
 -export declare var publicAmbientVarWithPrivateModulePropertyTypes: privateModule.publicClass;
@@ -272,16 +260,6 @@
      }
      export interface publicInterfaceWithPublicPropertyTypes {
          myProperty: publicClass;
-     }
-     export class publicClassWithWithPrivatePropertyTypes {
--        static myPublicStaticProperty: privateClass;
-+        static myPublicStaticProperty: privateClass; // Error
-         private static myPrivateStaticProperty;
--        myPublicProperty: privateClass;
-+        myPublicProperty: privateClass; // Error
-         private myPrivateProperty;
-     }
-     export class publicClassWithWithPublicPropertyTypes {
 @@= skipped -36, +36 lines =@@
          myPublicProperty: publicClass;
          private myPrivateProperty;
@@ -297,10 +275,8 @@
 +        myProperty: privateModule.publicClass; // Error
      }
      export class publicClassWithPrivateModulePropertyTypes {
--        static myPublicStaticProperty: privateModule.publicClass;
--        myPublicProperty: privateModule.publicClass;
-+        static myPublicStaticProperty: privateModule.publicClass; // Error
-+        myPublicProperty: privateModule.publicClass; // Error
+         static myPublicStaticProperty: privateModule.publicClass;
+         myPublicProperty: privateModule.publicClass;
      }
 -    export var publicVarWithPrivateModulePropertyTypes: privateModule.publicClass;
 -    export var publicAmbientVarWithPrivateModulePropertyTypes: privateModule.publicClass;
@@ -318,16 +294,6 @@
      }
      export interface publicInterfaceWithPublicPropertyTypes {
          myProperty: publicClass;
-     }
-     export class publicClassWithWithPrivatePropertyTypes {
--        static myPublicStaticProperty: privateClass;
-+        static myPublicStaticProperty: privateClass; // Error
-         private static myPrivateStaticProperty;
--        myPublicProperty: privateClass;
-+        myPublicProperty: privateClass; // Error
-         private myPrivateProperty;
-     }
-     export class publicClassWithWithPublicPropertyTypes {
 @@= skipped -17, +17 lines =@@
          myPublicProperty: publicClass;
          private myPrivateProperty;
@@ -343,10 +309,8 @@
 +        myProperty: privateModule.publicClass; // Error
      }
      export class publicClassWithPrivateModulePropertyTypes {
--        static myPublicStaticProperty: privateModule.publicClass;
--        myPublicProperty: privateModule.publicClass;
-+        static myPublicStaticProperty: privateModule.publicClass; // Error
-+        myPublicProperty: privateModule.publicClass; // Error
+         static myPublicStaticProperty: privateModule.publicClass;
+         myPublicProperty: privateModule.publicClass;
      }
 -    export var publicVarWithPrivateModulePropertyTypes: privateModule.publicClass;
 -    export var publicAmbientVarWithPrivateModulePropertyTypes: privateModule.publicClass;

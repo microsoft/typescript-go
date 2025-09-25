@@ -72,7 +72,7 @@ interface T4<T extends T4<T>> {
     x: T4<T>["x"]; // Error
 }
 declare class C1 {
-    x: C1["x"]; // Error
+    x: C1["x"];
 }
 declare class C2 {
     x: this["y"];

@@ -34,11 +34,8 @@
 +    x: T4<T>["x"]; // Error
  }
  declare class C1 {
--    x: C1["x"];
-+    x: C1["x"]; // Error
- }
- declare class C2 {
-     x: this["y"];
+     x: C1["x"];
+@@= skipped -10, +10 lines =@@
      y: this["z"];
      z: this["x"];
  }

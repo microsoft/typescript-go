@@ -356,7 +356,6 @@ declare function fooBat(x: {
 type Extract2<T, U, V> = T extends U ? T extends V ? T : never : never;
 declare function f20<T>(x: Extract<Extract<T, Foo>, Bar>, y: Extract<T, Foo & Bar>, z: Extract2<T, Foo, Bar>): void;
 declare function f21<T>(x: Extract<Extract<T, Foo>, Bar>, y: Extract<T, Foo & Bar>, z: Extract2<T, Foo, Bar>): void;
-// Repros from #22860
 declare class Opt<T> {
     toVector(): Vector<T>;
 }

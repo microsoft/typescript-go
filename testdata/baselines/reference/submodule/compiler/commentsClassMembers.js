@@ -472,15 +472,12 @@ declare class c1 {
     static nc_s2(b: number): number;
     static get nc_s3(): number;
     static set nc_s3(value: number);
-    // p1 is property of c1
     a_p1: number;
-    // sum with property
     a_p2(b: number): number;
     // getter property
     get a_p3(): number;
     // setter property
     set a_p3(value: number);
-    // pp1 is property of c1
     private a_pp1;
     // sum with property
     private a_pp2;
@@ -488,9 +485,7 @@ declare class c1 {
     private get a_pp3();
     // setter property
     private set a_pp3(value);
-    // s1 is static property of c1
     static a_s1: number;
-    // static sum with property
     static a_s2(b: number): number;
     // static getter property
     static get a_s3(): number;
@@ -549,7 +544,7 @@ declare class cProperties {
     /**setter only property*/
     set p2(value: number);
     set nc_p2(value: number); /* trailing comment of setter only*/
-    x: number; /*trailing comment for property*/
-    private y; // trailing comment of // style
+    x: number;
+    private y;
 }
 declare var cProperties_i: cProperties;

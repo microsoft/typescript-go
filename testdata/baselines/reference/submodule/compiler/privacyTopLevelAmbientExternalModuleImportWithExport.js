@@ -104,7 +104,6 @@ declare module 'm2' {
     }
 }
 //// [privacyTopLevelAmbientExternalModuleImportWithExport_require.d.ts]
-// Public elements
 export declare class c_public {
     foo: string;
 }

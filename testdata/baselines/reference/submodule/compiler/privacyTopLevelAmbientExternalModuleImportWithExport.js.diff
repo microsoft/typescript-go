@@ -25,15 +25,7 @@
  declare module 'm' {
      class c_private {
          baz: string;
-@@= skipped -12, +14 lines =@@
-     }
- }
- //// [privacyTopLevelAmbientExternalModuleImportWithExport_require.d.ts]
-+// Public elements
- export declare class c_public {
-     foo: string;
- }
-@@= skipped -8, +9 lines =@@
+@@= skipped -20, +22 lines =@@
      bar: string;
  }
  //// [privacyTopLevelAmbientExternalModuleImportWithExport_core.d.ts]

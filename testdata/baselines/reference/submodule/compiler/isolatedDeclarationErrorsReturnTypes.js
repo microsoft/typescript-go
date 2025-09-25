@@ -378,10 +378,8 @@ export declare let fnExpressionLetVariableOk: () => number;
 export declare let fnArrowLetVariableOk: (cb?: () => void) => string;
 export declare var fnExpressionVarVariableOk: () => number;
 export declare var fnArrowVarVariableOk: (cb?: () => void) => string;
-// Function Fields
 export declare class ExportedClass {
     #private;
-    // Should Error
     fnExpression: () => number;
     fnArrow: () => string;
     protected fnExpressionProtected: () => number;
@@ -390,7 +388,6 @@ export declare class ExportedClass {
     static fnStaticArrow: () => string;
     protected static fnStaticExpressionProtected: () => number;
     protected static fnStaticArrowProtected: () => string;
-    // Have annotation, so ok 
     fnExpressionOk: () => number;
     fnArrowOK: () => string;
     protected fnExpressionProtectedOk: () => number;
@@ -399,13 +396,11 @@ export declare class ExportedClass {
     static fnStaticArrowOk: () => string;
     protected static fnStaticExpressionProtectedOk: () => number;
     protected static fnStaticArrowProtectedOk: () => string;
-    // No Error not in declarations
     private fnExpressionPrivate;
     private fnArrowPrivate;
     private static fnStaticExpressionPrivate;
     private static fnStaticArrowPrivate;
 }
-// Should error
 declare class IndirectlyExportedClass {
     #private;
     fnExpression: () => number;
@@ -448,10 +443,8 @@ export declare let fnParamExpressionLetVariableInternal: (cb?: () => void) => nu
 export declare let fnParamArrowLetVariableInternal: (cb?: () => number) => string;
 export declare var fnParamExpressionVarVariableInternal: (cb?: () => void) => number;
 export declare var fnParamArrowVarVariableInternal: (cb?: () => number) => string;
-// In Function Fields
 export declare class FnParamsExportedClass {
     #private;
-    // Should Error
     fnExpression: (cb?: () => void) => number;
     fnArrow: (cb?: () => void) => string;
     protected fnExpressionProtected: (cb?: () => void) => number;
@@ -460,7 +453,6 @@ export declare class FnParamsExportedClass {
     static fnStaticArrow: (cb?: () => void) => string;
     protected static fnStaticExpressionProtected: (cb?: () => void) => number;
     protected static fnStaticArrowProtected: (cb?: () => void) => string;
-    // Have annotation on owner
     fnExpressionMethodHasReturn: (cb?: () => void) => number;
     fnArrowMethodHasReturn: (cb?: () => void) => string;
     protected fnExpressionProtectedMethodHasReturn: (cb?: () => void) => number;
@@ -469,7 +461,6 @@ export declare class FnParamsExportedClass {
     static fnStaticArrowMethodHasReturn: (cb?: () => void) => string;
     protected static fnStaticExpressionProtectedMethodHasReturn: (cb?: () => void) => number;
     protected static fnStaticArrowProtectedMethodHasReturn: (cb?: () => void) => string;
-    // Have annotation only on parameter
     fnExpressionOnlyOnParam: (cb?: () => void) => number;
     fnArrowOnlyOnParam: (cb?: () => void) => string;
     protected fnExpressionProtectedOnlyOnParam: (cb?: () => void) => number;
@@ -478,7 +469,6 @@ export declare class FnParamsExportedClass {
     static fnStaticArrowOnlyOnParam: (cb?: () => void) => string;
     protected static fnStaticExpressionProtectedOnlyOnParam: (cb?: () => void) => number;
     protected static fnStaticArrowProtectedOnlyOnParam: (cb?: () => void) => string;
-    // Have annotation, so ok 
     fnExpressionOk: (cb?: () => void) => number;
     fnArrowOK: (cb?: () => void) => string;
     protected fnExpressionProtectedOk: (cb?: () => void) => number;
@@ -487,7 +477,6 @@ export declare class FnParamsExportedClass {
     static fnStaticArrowOk: (cb?: () => void) => string;
     protected static fnStaticExpressionProtectedOk: (cb?: () => void) => number;
     protected static fnStaticArrowProtectedOk: (cb?: () => void) => string;
-    // No Error, not in declarations
     private fnExpressionPrivate;
     private fnArrowPrivate;
     private static fnStaticExpressionPrivate;

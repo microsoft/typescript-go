@@ -279,8 +279,8 @@ type T23<out in T> = T; // Error
 declare function f1<in T>(x: T): void; // Error
 declare function f2<out T>(): T; // Error
 declare class C {
-    in a: number; // Error
-    out b: number; // Error
+    in a: number;
+    out b: number;
 }
 // Interface merging
 interface Baz<out T> {
@@ -301,7 +301,6 @@ interface Child<A, B = unknown> extends Parent<A> {
 declare function fn<A>(inp: Child<A>): void;
 declare const pu: Parent<unknown>;
 declare const notString: Parent<string>; // Error
-// Repro from comment in #44572
 declare class StateNode<TContext, in out TEvent extends {
     type: string;
 }> {

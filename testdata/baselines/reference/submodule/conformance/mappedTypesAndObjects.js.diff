@@ -30,7 +30,5 @@
 -    foo: Partial<T>;
 +    foo: Partial<T>; // or other mapped type
  }
-+// Repro from #13747
  declare class Form<T> {
      private values;
- }
