@@ -1,0 +1,16 @@
+//// [tests/cases/compiler/declarationEmitCommentsPreservation.ts] ////
+
+=== declarationEmitCommentsPreservation.ts ===
+// Comment
+export class DbObject {
+>DbObject : DbObject
+
+    // Comment
+    id: string = ""; // Comment
+>id : string
+>"" : ""
+
+    // Comment
+    method() { }
+>method : () => void
+}

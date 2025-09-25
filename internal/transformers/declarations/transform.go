@@ -741,7 +741,7 @@ func (tx *DeclarationTransformer) transformPropertyDeclaration(input *ast.Proper
 	if ast.IsPrivateIdentifier(input.Name()) {
 		return nil
 	}
-	return tx.Factory().UpdatePropertyDeclaration(
+	result := tx.Factory().UpdatePropertyDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
 		input.Name(),
@@ -749,6 +749,9 @@ func (tx *DeclarationTransformer) transformPropertyDeclaration(input *ast.Proper
 		tx.ensureType(input.AsNode(), false),
 		tx.ensureNoInitializer(input.AsNode()),
 	)
+	tx.preserveJsDoc(result, input.AsNode())
+	tx.removeAllComments(result)
+	return result
 }
 
 func (tx *DeclarationTransformer) transformSetAccessorDeclaration(input *ast.SetAccessorDeclaration) *ast.Node {
@@ -883,7 +886,7 @@ func (tx *DeclarationTransformer) transformMethodDeclaration(input *ast.MethodDe
 	} else if ast.IsPrivateIdentifier(input.Name()) {
 		return nil
 	} else {
-		return tx.Factory().UpdateMethodDeclaration(
+		result := tx.Factory().UpdateMethodDeclaration(
 			input,
 			tx.ensureModifiers(input.AsNode()),
 			nil,
@@ -895,6 +898,9 @@ func (tx *DeclarationTransformer) transformMethodDeclaration(input *ast.MethodDe
 			nil,
 			nil,
 		)
+		tx.preserveJsDoc(result, input.AsNode())
+		tx.removeAllComments(result)
+		return result
 	}
 }
 
@@ -1383,20 +1389,24 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 		}
 		heritageClauses := tx.Factory().NewNodeList(heritageList)
 
+		classDecl := tx.Factory().UpdateClassDeclaration(
+			input,
+			modifiers,
+			input.Name(),
+			typeParameters,
+			heritageClauses,
+			members,
+		)
+		tx.preserveJsDoc(classDecl, input.AsNode())
+		tx.removeAllComments(classDecl)
+
 		return tx.Factory().NewSyntaxList([]*ast.Node{
 			statement,
-			tx.Factory().UpdateClassDeclaration(
-				input,
-				modifiers,
-				input.Name(),
-				typeParameters,
-				heritageClauses,
-				members,
-			),
+			classDecl,
 		})
 	}
 
-	return tx.Factory().UpdateClassDeclaration(
+	result := tx.Factory().UpdateClassDeclaration(
 		input,
 		modifiers,
 		input.Name(),
@@ -1404,6 +1414,9 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 		tx.Visitor().VisitNodes(input.HeritageClauses),
 		members,
 	)
+	tx.preserveJsDoc(result, input.AsNode())
+	tx.removeAllComments(result)
+	return result
 }
 
 func (tx *DeclarationTransformer) transformVariableStatement(input *ast.VariableStatement) *ast.Node {
