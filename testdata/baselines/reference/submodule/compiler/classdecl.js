@@ -159,6 +159,7 @@ class e {
 
 //// [classdecl.d.ts]
 declare class a {
+    //constructor ();
     constructor(n: number);
     constructor(s: string);
     pgF(): void;

@@ -80,12 +80,12 @@ declare namespace N {
 }
 //// [file2.d.ts]
 declare class I {
-}
+} // error -- cannot merge interface with non-ambient class
 interface C1 {
 } // error -- cannot merge interface with non-ambient class
 declare function C2(): void; // error -- cannot merge function with non-ambient class
 declare class f {
-}
+} // error -- cannot merge function with non-ambient class
 declare var v: number;
 declare namespace Foo {
     var x: number; // error for redeclaring var in a different parent

@@ -679,7 +679,7 @@ export interface publicInterfaceWithPublicPropertyTypes {
     myProperty: publicClass;
 }
 export declare class publicClassWithWithPrivatePropertyTypes {
-    static myPublicStaticProperty: privateClass;
+    static myPublicStaticProperty: privateClass; // Error
     private static myPrivateStaticProperty;
     myPublicProperty: privateClass;
     private myPrivateProperty;
@@ -698,7 +698,7 @@ export interface publicInterfaceWithPrivateModulePropertyTypes {
     myProperty: privateModule.publicClass; // Error
 }
 export declare class publicClassWithPrivateModulePropertyTypes {
-    static myPublicStaticProperty: privateModule.publicClass;
+    static myPublicStaticProperty: privateModule.publicClass; // Error
     myPublicProperty: privateModule.publicClass;
 }
 export declare var publicVarWithPrivateModulePropertyTypes: privateModule.publicClass; // Error
@@ -715,7 +715,7 @@ export declare namespace publicModule {
         myProperty: publicClass;
     }
     export class publicClassWithWithPrivatePropertyTypes {
-        static myPublicStaticProperty: privateClass;
+        static myPublicStaticProperty: privateClass; // Error
         private static myPrivateStaticProperty;
         myPublicProperty: privateClass;
         private myPrivateProperty;
@@ -734,7 +734,7 @@ export declare namespace publicModule {
         myProperty: privateModule.publicClass; // Error
     }
     export class publicClassWithPrivateModulePropertyTypes {
-        static myPublicStaticProperty: privateModule.publicClass;
+        static myPublicStaticProperty: privateModule.publicClass; // Error
         myPublicProperty: privateModule.publicClass;
     }
     export var publicVarWithPrivateModulePropertyTypes: privateModule.publicClass; // Error
@@ -844,7 +844,7 @@ declare namespace publicModuleInGlobal {
         myProperty: publicClass;
     }
     export class publicClassWithWithPrivatePropertyTypes {
-        static myPublicStaticProperty: privateClass;
+        static myPublicStaticProperty: privateClass; // Error
         private static myPrivateStaticProperty;
         myPublicProperty: privateClass;
         private myPrivateProperty;
@@ -863,7 +863,7 @@ declare namespace publicModuleInGlobal {
         myProperty: privateModule.publicClass; // Error
     }
     export class publicClassWithPrivateModulePropertyTypes {
-        static myPublicStaticProperty: privateModule.publicClass;
+        static myPublicStaticProperty: privateModule.publicClass; // Error
         myPublicProperty: privateModule.publicClass;
     }
     export var publicVarWithPrivateModulePropertyTypes: privateModule.publicClass; // Error

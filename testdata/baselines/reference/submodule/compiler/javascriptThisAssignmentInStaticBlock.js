@@ -41,5 +41,6 @@ ElementsArray.isArray(new ElementsArray());
 //// [a.d.ts]
 declare class Thing {
 }
+// GH#46468
 declare class ElementsArray extends Array {
 }

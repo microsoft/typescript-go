@@ -290,9 +290,9 @@ class C13 {
 // Properties with non-undefined types require initialization
 declare class C1 {
     #private;
-    a: number; // Error
+    a: number;
     b: number | undefined;
-    c: number | null; // Error
+    c: number | null;
     d?: number;
 }
 // No strict initialization checks in ambient contexts
@@ -326,7 +326,7 @@ declare class C5 {
 // All code paths must contain assignment
 declare class C6 {
     #private;
-    a: number; // Error
+    a: number;
     constructor(cond: boolean);
 }
 declare class C7 {
@@ -336,7 +336,7 @@ declare class C7 {
 }
 // Properties with string literal names aren't checked
 declare class C8 {
-    a: number; // Error
+    a: number;
     "b": number;
     0: number;
 }

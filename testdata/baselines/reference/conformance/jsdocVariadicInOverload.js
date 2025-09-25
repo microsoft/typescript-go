@@ -96,6 +96,7 @@ p.use(x, y, z);
 
 
 //// [typeTagForMultipleVariableDeclarations.d.ts]
+// based on code from unifiedjs/unified
 declare class Node {
 }
 /**

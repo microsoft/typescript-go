@@ -97,7 +97,13 @@ class Example {
 
 
 //// [jsFileMethodOverloads.d.ts]
+/**
+ * @template T
+ */
 declare class Example<T> {
+    /**
+     * @param {T} value
+     */
     constructor(value: T);
     /**
      * @overload

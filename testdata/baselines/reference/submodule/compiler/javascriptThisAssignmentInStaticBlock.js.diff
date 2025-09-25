@@ -39,5 +39,6 @@
 -    constructor(arrayLength?: number);
 -    constructor(arrayLength: number);
 -    constructor(...items: any[]);
++// GH#46468
 +declare class ElementsArray extends Array {
  }

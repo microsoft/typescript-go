@@ -24,4 +24,4 @@ declare module "foo" {
     }
     export = Point;
 }
-declare const x: import("fo");
+declare const x: import("fo"); // typo, error

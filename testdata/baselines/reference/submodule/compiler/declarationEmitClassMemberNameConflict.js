@@ -77,7 +77,7 @@ exports.C4 = C4;
 
 //// [declarationEmitClassMemberNameConflict.d.ts]
 export declare class C1 {
-    C1(): void;
+    C1(): void; // has to be the same as the class name
     bar(): (t: typeof C1) => void;
 }
 export declare class C2 {
@@ -85,10 +85,10 @@ export declare class C2 {
     bar(): (t: typeof C2) => void;
 }
 export declare class C3 {
-    get C3(): number;
+    get C3(): number; // has to be the same as the class name
     bar(): (t: typeof C3) => void;
 }
 export declare class C4 {
-    set C4(v: any);
+    set C4(v: any); // has to be the same as the class name
     bar(): (t: typeof C4) => void;
 }

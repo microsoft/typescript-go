@@ -55,10 +55,10 @@ declare abstract class AB {
 declare abstract class AD1 extends AB {
 }
 declare abstract class AD2 extends AB {
-    abstract foo(v: ''): void;
+    abstract foo(v: ''): void; // need override?
 }
 declare abstract class AD3 extends AB {
-    foo(v: ''): void;
+    foo(v: ''): void; // need override?
     abstract bar(): void;
     baz(): void;
 }

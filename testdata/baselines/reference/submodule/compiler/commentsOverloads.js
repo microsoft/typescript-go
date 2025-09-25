@@ -324,13 +324,19 @@ interface i4 {
 declare class c {
     prop1(a: number): number;
     prop1(b: string): number;
+    /** prop2 1*/
     prop2(a: number): number;
     prop2(b: string): number;
     prop3(a: number): number;
+    /** prop3 2*/
     prop3(b: string): number;
+    /** prop4 1*/
     prop4(a: number): number;
+    /** prop4 2*/
     prop4(b: string): number;
+    /** prop5 1*/
     prop5(a: number): number;
+    /** prop5 2*/
     prop5(b: string): number;
 }
 declare class c1 {
@@ -338,19 +344,26 @@ declare class c1 {
     constructor(b: string);
 }
 declare class c2 {
+    /** c2 1*/
     constructor(a: number);
+    // c2 2
     constructor(b: string);
 }
 declare class c3 {
     constructor(a: number);
+    /** c3 2*/
     constructor(b: string);
 }
 declare class c4 {
+    /** c4 1*/
     constructor(a: number);
+    /** c4 2*/
     constructor(b: string);
 }
 declare class c5 {
+    /** c5 1*/
     constructor(a: number);
+    /** c5 2*/
     constructor(b: string);
 }
 declare var c_i: c;

@@ -15,5 +15,8 @@ class C {
 
 //// [a.d.ts]
 declare class C {
+    /**
+     * @param {any} a
+     */
     foo(a: any): void;
 }

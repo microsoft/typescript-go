@@ -432,21 +432,34 @@ cProperties_i.nc_p2 = cProperties_i.nc_p1;
 
 
 //// [commentsClassMembers.d.ts]
+/** This is comment for c1*/
 declare class c1 {
+    /** p1 is property of c1*/
     p1: number;
-    p2(/** number to add*/ b: number): number;
-    get p3(): number;
-    set p3(/** this is value*/ value: number);
+    /** sum with property*/
+    p2(/** number to add*/ b: number): number; /* trailing comment of method*/
+    /** getter property*/
+    get p3(): number; // trailing comment Getter
+    /** setter property*/
+    set p3(/** this is value*/ value: number); // trailing comment Setter
+    /** pp1 is property of c1*/
     private pp1;
     /** sum with property*/
     private pp2;
+    /** getter property*/
     private get pp3();
+    /** setter property*/
     private set pp3(value);
+    /** Constructor method*/
     constructor();
+    /** s1 is static property of c1*/
     static s1: number;
+    /** static sum with property*/
     static s2(/** number to add*/ b: number): number;
-    static get s3(): number;
-    static set s3(/** this is value*/ value: number);
+    /** static getter property*/
+    static get s3(): number; /*trailing comment 1 getter*/
+    /** setter property*/
+    static set s3(/** this is value*/ value: number); /*trailing comment 2 */ /*setter*/
     nc_p1: number;
     nc_p2(b: number): number;
     get nc_p3(): number;
@@ -459,31 +472,55 @@ declare class c1 {
     static nc_s2(b: number): number;
     static get nc_s3(): number;
     static set nc_s3(value: number);
+    // p1 is property of c1
     a_p1: number;
+    // sum with property
     a_p2(b: number): number;
+    // getter property
     get a_p3(): number;
+    // setter property
     set a_p3(value: number);
+    // pp1 is property of c1
     private a_pp1;
     // sum with property
     private a_pp2;
+    // getter property
     private get a_pp3();
+    // setter property
     private set a_pp3(value);
+    // s1 is static property of c1
     static a_s1: number;
+    // static sum with property
     static a_s2(b: number): number;
+    // static getter property
     static get a_s3(): number;
+    // setter property
     static set a_s3(value: number);
+    /** p1 is property of c1 */
     b_p1: number;
+    /** sum with property */
     b_p2(b: number): number;
+    /** getter property */
     get b_p3(): number;
+    /** setter property */
     set b_p3(value: number);
+    /** pp1 is property of c1 */
     private b_pp1;
     /** sum with property */
     private b_pp2;
+    /** getter property */
     private get b_pp3();
+    /** setter property */
     private set b_pp3(value);
+    /** s1 is static property of c1 */
     static b_s1: number;
+    /** static sum with property */
     static b_s2(b: number): number;
+    /** static getter property
+    */
     static get b_s3(): number;
+    /** setter property
+    */
     static set b_s3(value: number);
 }
 declare var i1: c1;
@@ -506,11 +543,13 @@ declare var i1_s_ncprop: number;
 declare var i1_c: typeof c1;
 declare class cProperties {
     private val;
-    get p1(): number;
+    /** getter only property*/
+    get p1(): number; // trailing comment of only getter
     get nc_p1(): number;
+    /**setter only property*/
     set p2(value: number);
-    set nc_p2(value: number);
-    x: number;
-    private y;
+    set nc_p2(value: number); /* trailing comment of setter only*/
+    x: number; /*trailing comment for property*/
+    private y; // trailing comment of // style
 }
 declare var cProperties_i: cProperties;

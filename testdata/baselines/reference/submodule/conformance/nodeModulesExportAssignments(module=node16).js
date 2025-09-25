@@ -31,8 +31,10 @@ export {};
 
 
 //// [index.d.ts]
+// cjs format file
 declare const a: {};
 export = a;
 //// [index.d.ts]
+// esm format file
 declare const a: {};
 export = a;

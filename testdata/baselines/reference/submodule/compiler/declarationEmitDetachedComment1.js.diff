@@ -1,24 +1,17 @@
 --- old.declarationEmitDetachedComment1.js
 +++ new.declarationEmitDetachedComment1.js
-@@= skipped -54, +54 lines =@@
-
-
- //// [test1.d.ts]
--/*! Copyright 2015 MyCompany Inc. */
--/**
-- * Hello class
-- */
+@@= skipped -61, +61 lines =@@
  declare class Hello {
  }
  //// [test2.d.ts]
--/**
-- * Hi class
-- */
++/* A comment at the top of the file. */
+ /**
+  * Hi class
+  */
  declare class Hi {
  }
  //// [test3.d.ts]
--/**
-- * Hola class
-- */
- declare class Hola {
- }
++// A one-line comment at the top of the file.
+ /**
+  * Hola class
+  */

@@ -323,7 +323,9 @@ class c2 {
 
 //// [declFileMethods_0.d.ts]
 export declare class c1 {
+    /** This comment should appear for foo*/
     foo(): void;
+    /** This is comment for function signature*/
     fooWithParameters(/** this is comment about a*/ a: string, 
     /** this is comment for b*/
     b: number): void;
@@ -336,7 +338,9 @@ export declare class c1 {
     private privateFooWithParameters;
     private privateFooWithRestParameters;
     private privateFooWithOverloads;
+    /** This comment should appear for static foo*/
     static staticFoo(): void;
+    /** This is comment for function signature*/
     static staticFooWithParameters(/** this is comment about a*/ a: string, 
     /** this is comment for b*/
     b: number): void;
@@ -363,7 +367,9 @@ export interface I1 {
 }
 //// [declFileMethods_1.d.ts]
 declare class c2 {
+    /** This comment should appear for foo*/
     foo(): void;
+    /** This is comment for function signature*/
     fooWithParameters(/** this is comment about a*/ a: string, 
     /** this is comment for b*/
     b: number): void;
@@ -376,7 +382,9 @@ declare class c2 {
     private privateFooWithParameters;
     private privateFooWithRestParameters;
     private privateFooWithOverloads;
+    /** This comment should appear for static foo*/
     static staticFoo(): void;
+    /** This is comment for function signature*/
     static staticFooWithParameters(/** this is comment about a*/ a: string, 
     /** this is comment for b*/
     b: number): void;

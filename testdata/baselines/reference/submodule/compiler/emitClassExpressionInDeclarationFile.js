@@ -83,6 +83,7 @@ export declare var circularReference: {
         tags(c: any): any;
     };
 };
+// repro from #15066
 export declare class FooItem {
     foo(): void;
     name?: string;

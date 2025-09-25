@@ -5,11 +5,8 @@
 
  //// [foo.d.ts]
 -export class Foo {
--    /**
--     * Bar.
--     *
--     * @param {string} baz Baz.
--     */
++// https://github.com/microsoft/TypeScript/issues/55391
 +export declare class Foo {
-     set bar(baz: string);
- }
+     /**
+      * Bar.
+      *

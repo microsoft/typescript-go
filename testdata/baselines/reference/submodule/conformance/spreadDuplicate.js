@@ -44,6 +44,7 @@ let d2 = __assign({ a: 123 }, (t ? d : {})); // string | number
 
 
 //// [spreadDuplicate.d.ts]
+// Repro from #44438
 declare let a: {
     a: string;
 };
@@ -59,25 +60,25 @@ declare let d: {
 declare let t: boolean;
 declare let a1: {
     a: string;
-};
+}; // string (Error)
 declare let b1: {
     a: string | number;
-};
+}; // string | number
 declare let c1: {
     a: string | undefined;
-};
+}; // string | undefined (Error)
 declare let d1: {
     a: string | number;
-};
+}; // string | number
 declare let a2: {
     a: string | number;
-};
+}; // string | number
 declare let b2: {
     a: string | number;
-};
+}; // string | number
 declare let c2: {
     a: string | number;
-};
+}; // string | number
 declare let d2: {
     a: string | number;
-};
+}; // string | number

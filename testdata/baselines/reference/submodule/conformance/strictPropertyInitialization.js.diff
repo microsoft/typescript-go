@@ -173,18 +173,16 @@
 +// Properties with non-undefined types require initialization
  declare class C1 {
      #private;
--    a: number;
-+    a: number; // Error
-     b: number | undefined;
--    c: number | null;
-+    c: number | null; // Error
+     a: number;
+@@= skipped -15, +16 lines =@@
+     c: number | null;
      d?: number;
  }
 +// No strict initialization checks in ambient contexts
  declare class C2 {
      #private;
      a: number;
-@@= skipped -22, +24 lines =@@
+@@= skipped -7, +8 lines =@@
      c: number | null;
      d?: number;
  }
@@ -211,19 +209,14 @@
 +// All code paths must contain assignment
  declare class C6 {
      #private;
--    a: number;
-+    a: number; // Error
-     constructor(cond: boolean);
- }
- declare class C7 {
+     a: number;
 @@= skipped -27, +31 lines =@@
      a: number;
      constructor(cond: boolean);
  }
 +// Properties with string literal names aren't checked
  declare class C8 {
--    a: number;
-+    a: number; // Error
+     a: number;
      "b": number;
      0: number;
  }

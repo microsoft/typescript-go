@@ -5,12 +5,7 @@
 
  //// [foo.d.ts]
 -export class Foo {
--    /**
--     * Bar.
--     *
--     * @param {{ prop: string | undefined }} baz Baz.
--     */
 +export declare class Foo {
-     set bar({ prop }: {
-         prop: string | undefined;
-     });
+     /**
+      * Bar.
+      *

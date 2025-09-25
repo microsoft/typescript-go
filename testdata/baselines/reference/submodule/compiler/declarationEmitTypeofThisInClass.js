@@ -16,7 +16,7 @@ class Foo {
 //// [declarationEmitTypeofThisInClass.d.ts]
 declare class Foo {
     foo!: string;
-    bar!: typeof this.foo;
+    bar!: typeof this.foo; //Public property 'bar' of exported class has or is using private name 'this'.(4031)
 }
 
 
@@ -32,7 +32,7 @@ declarationEmitTypeofThisInClass.d.ts(3,8): error TS1255: A definite assignment 
         foo!: string;
            ~
 !!! error TS1255: A definite assignment assertion '!' is not permitted in this context.
-        bar!: typeof this.foo;
+        bar!: typeof this.foo; //Public property 'bar' of exported class has or is using private name 'this'.(4031)
            ~
 !!! error TS1255: A definite assignment assertion '!' is not permitted in this context.
     }

@@ -24,7 +24,10 @@ exports.DbObject = DbObject;
 
 
 //// [declarationEmitCommentsPreservation.d.ts]
+// Comment
 export declare class DbObject {
-    id: string;
+    // Comment
+    id: string; // Comment
+    // Comment
     method(): void;
 }

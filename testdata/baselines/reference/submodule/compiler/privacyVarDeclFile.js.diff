@@ -227,6 +227,13 @@
  }
  export interface publicInterfaceWithPublicPropertyTypes {
      myProperty: publicClass;
+ }
+ export declare class publicClassWithWithPrivatePropertyTypes {
+-    static myPublicStaticProperty: privateClass;
++    static myPublicStaticProperty: privateClass; // Error
+     private static myPrivateStaticProperty;
+     myPublicProperty: privateClass;
+     private myPrivateProperty;
 @@= skipped -17, +17 lines =@@
      myPublicProperty: publicClass;
      private myPrivateProperty;
@@ -242,7 +249,8 @@
 +    myProperty: privateModule.publicClass; // Error
  }
  export declare class publicClassWithPrivateModulePropertyTypes {
-     static myPublicStaticProperty: privateModule.publicClass;
+-    static myPublicStaticProperty: privateModule.publicClass;
++    static myPublicStaticProperty: privateModule.publicClass; // Error
      myPublicProperty: privateModule.publicClass;
  }
 -export declare var publicVarWithPrivateModulePropertyTypes: privateModule.publicClass;
@@ -260,6 +268,13 @@
      }
      export interface publicInterfaceWithPublicPropertyTypes {
          myProperty: publicClass;
+     }
+     export class publicClassWithWithPrivatePropertyTypes {
+-        static myPublicStaticProperty: privateClass;
++        static myPublicStaticProperty: privateClass; // Error
+         private static myPrivateStaticProperty;
+         myPublicProperty: privateClass;
+         private myPrivateProperty;
 @@= skipped -36, +36 lines =@@
          myPublicProperty: publicClass;
          private myPrivateProperty;
@@ -275,7 +290,8 @@
 +        myProperty: privateModule.publicClass; // Error
      }
      export class publicClassWithPrivateModulePropertyTypes {
-         static myPublicStaticProperty: privateModule.publicClass;
+-        static myPublicStaticProperty: privateModule.publicClass;
++        static myPublicStaticProperty: privateModule.publicClass; // Error
          myPublicProperty: privateModule.publicClass;
      }
 -    export var publicVarWithPrivateModulePropertyTypes: privateModule.publicClass;
@@ -294,6 +310,13 @@
      }
      export interface publicInterfaceWithPublicPropertyTypes {
          myProperty: publicClass;
+     }
+     export class publicClassWithWithPrivatePropertyTypes {
+-        static myPublicStaticProperty: privateClass;
++        static myPublicStaticProperty: privateClass; // Error
+         private static myPrivateStaticProperty;
+         myPublicProperty: privateClass;
+         private myPrivateProperty;
 @@= skipped -17, +17 lines =@@
          myPublicProperty: publicClass;
          private myPrivateProperty;
@@ -309,7 +332,8 @@
 +        myProperty: privateModule.publicClass; // Error
      }
      export class publicClassWithPrivateModulePropertyTypes {
-         static myPublicStaticProperty: privateModule.publicClass;
+-        static myPublicStaticProperty: privateModule.publicClass;
++        static myPublicStaticProperty: privateModule.publicClass; // Error
          myPublicProperty: privateModule.publicClass;
      }
 -    export var publicVarWithPrivateModulePropertyTypes: privateModule.publicClass;

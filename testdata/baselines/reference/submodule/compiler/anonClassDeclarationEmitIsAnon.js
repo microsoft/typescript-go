@@ -90,6 +90,7 @@ declare const _default: {
     };
 };
 export default _default;
+// Simple class
 export declare class User {
     name: string;
 }
@@ -98,6 +99,7 @@ declare const TimestampedUser_base: {
         timestamp: number;
     };
 } & typeof User;
+// User that is Timestamped
 export declare class TimestampedUser extends TimestampedUser_base {
     constructor();
 }

@@ -91,7 +91,14 @@ class Example {
 
 
 //// [jsFileMethodOverloads2.d.ts]
+// Also works if all @overload tags are combined in one comment.
+/**
+ * @template T
+ */
 declare class Example<T> {
+    /**
+     * @param {T} value
+     */
     constructor(value: T);
     /**
      * @overload

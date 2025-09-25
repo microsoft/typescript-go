@@ -107,6 +107,10 @@ export declare const foo: (p: string) => {
     bar2(s: number): void;
 };
 export declare class Foo {
+    /**
+     * comment4
+     * @param s
+     */
     bar(s: number): void;
 }
 export declare let 

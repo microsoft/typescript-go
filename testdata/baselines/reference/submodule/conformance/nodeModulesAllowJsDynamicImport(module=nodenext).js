@@ -39,6 +39,8 @@ export async function main() {
 
 
 //// [index.d.ts]
+// cjs format file
 export declare function main(): Promise<void>;
 //// [index.d.ts]
+// esm format file
 export declare function main(): Promise<void>;

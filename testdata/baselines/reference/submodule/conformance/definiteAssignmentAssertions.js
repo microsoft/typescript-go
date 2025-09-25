@@ -144,7 +144,7 @@ function f4() {
 // Suppress strict property initialization check
 declare class C1 {
     a!: number;
-    b: string; // Error
+    b: string;
 }
 // Suppress definite assignment check in constructor
 declare class C2 {

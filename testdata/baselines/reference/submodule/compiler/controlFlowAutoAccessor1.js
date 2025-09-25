@@ -119,6 +119,7 @@ declare class Example2 {
     constructor(test: number | undefined);
     getTest(): number;
 }
+// https://github.com/microsoft/TypeScript/issues/59728
 declare class Example3 {
     accessor value: number | null;
     constructor(n: number);
@@ -128,5 +129,5 @@ declare class Example4 {
     static accessor value: number | null;
 }
 declare class Example5 {
-    static accessor value: any;
+    static accessor value: any; // error
 }

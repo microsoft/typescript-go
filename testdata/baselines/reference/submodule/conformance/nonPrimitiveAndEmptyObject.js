@@ -25,6 +25,7 @@ fooProps.barProp;
 
 
 //// [nonPrimitiveAndEmptyObject.d.ts]
+// Repro from #49480
 export interface BarProps {
     barProp?: string;
 }

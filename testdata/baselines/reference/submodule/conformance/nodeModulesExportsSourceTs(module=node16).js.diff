@@ -1,8 +1,15 @@
 --- old.nodeModulesExportsSourceTs(module=node16).js
 +++ new.nodeModulesExportsSourceTs(module=node16).js
-@@= skipped -41, +41 lines =@@
+@@= skipped -36, +36 lines =@@
+
+
+ //// [other.d.ts]
++// esm format file
+ export interface Thing {
+ }
  export declare const x: () => Thing;
  //// [index.d.ts]
++// esm format file
  export { x } from "./other.js";
 +//// [index.d.ts]
 +export declare const a: any;

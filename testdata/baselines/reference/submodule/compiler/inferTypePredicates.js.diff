@@ -108,7 +108,15 @@
  interface NumberInferrer {
      isNumber(x: number | string): x is number;
  }
-@@= skipped -38, +50 lines =@@
+@@= skipped -27, +39 lines =@@
+ }
+ declare let numOrStr: number | string;
+ declare const inf: Inferrer;
++// Type predicates are not inferred on "this"
+ declare class C1 {
+     isC2(): boolean;
+ }
+@@= skipped -11, +12 lines =@@
      x: number | null;
      y: number;
  }): boolean;

@@ -21,6 +21,7 @@
 
  //// [index.d.ts]
 -export = a;
++// cjs format file
  declare const a: {};
 +export = a;
  //// [file.d.ts]
@@ -28,9 +29,11 @@
 -declare const a: {};
  //// [index.d.ts]
 -export = a;
++// esm format file
  declare const a: {};
 +export = a;
  //// [file.d.ts]
 -export {};
++// esm format file
 +import "fs";
 +export = a;

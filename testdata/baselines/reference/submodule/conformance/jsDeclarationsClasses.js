@@ -402,9 +402,6 @@ export declare class D {
  * @template T,U
  */
 export declare class E<T, U> {
-    /**
-     * @type {T & U}
-     */
     field: T & U;
     // @readonly is currently unsupported, it seems - included here just in case that changes
     /**
@@ -466,9 +463,6 @@ export declare class E<T, U> {
  * @template T,U
  */
 export declare class F<T, U> {
-    /**
-     * @type {T & U}
-     */
     field: T & U;
     /**
      * @param {T} a

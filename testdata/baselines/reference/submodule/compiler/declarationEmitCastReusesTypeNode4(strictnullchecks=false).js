@@ -62,15 +62,16 @@ export declare class C {
     field: {
         name?: string;
     };
-    optField: {
+    /** @optional */ optField: {
         name?: string;
-    };
-    readonly roFiled: {
+    }; // not a thing
+    /** @readonly */ readonly roFiled: {
         name?: string;
     };
     method(p?: {
         name?: string;
     }): void;
+    /** @param {number} req */
     methodWithRequiredDefault(p: {
         name?: string;
     }, req: number): void;

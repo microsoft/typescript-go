@@ -75,6 +75,7 @@ export declare var noPrivates: {
     getTags(): void;
     ps: number;
 };
+// altered repro from #15066 to add private property
 export declare class FooItem {
     foo(): void;
     name?: string;

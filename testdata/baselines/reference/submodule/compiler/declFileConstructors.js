@@ -205,9 +205,11 @@ class GlobalConstructorWithParameterInitializer {
 
 //// [declFileConstructors_0.d.ts]
 export declare class SimpleConstructor {
+    /** This comment should appear for foo*/
     constructor();
 }
 export declare class ConstructorWithParameters {
+    /** This is comment for function signature*/
     constructor(/** this is comment about a*/ a: string, 
     /** this is comment for b*/
     b: number);
@@ -237,9 +239,11 @@ export declare class ConstructorWithParameterInitializer {
 }
 //// [declFileConstructors_1.d.ts]
 declare class GlobalSimpleConstructor {
+    /** This comment should appear for foo*/
     constructor();
 }
 declare class GlobalConstructorWithParameters {
+    /** This is comment for function signature*/
     constructor(/** this is comment about a*/ a: string, 
     /** this is comment for b*/
     b: number);

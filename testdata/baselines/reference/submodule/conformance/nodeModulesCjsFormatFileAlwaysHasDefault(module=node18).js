@@ -31,6 +31,7 @@ mod;
 
 
 //// [index.d.ts]
+// cjs format file
 export declare const a = 1;
 //// [index.d.ts]
 export {};
