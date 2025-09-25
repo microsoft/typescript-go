@@ -48,13 +48,7 @@
  }
 
 
-@@= skipped -46, +41 lines =@@
-     x: number;
- }
- declare class C {
--    a: number;
-+    a!: number;
-     b: number;
+@@= skipped -51, +46 lines =@@
  }
  declare class Foo {
      private bar;

@@ -142,24 +142,24 @@ function f4() {
 
 //// [definiteAssignmentAssertions.d.ts]
 declare class C1 {
-    a!: number;
+    a: number;
     b: string;
 }
 declare class C2 {
-    a!: number;
+    a: number;
     constructor();
 }
 declare class C3 {
-    a!: number;
-    b!: number;
-    static c!: number;
-    d!: any;
+    a: number;
+    b: number;
+    static c: number;
+    d: any;
 }
 declare class C4 {
-    a!: number;
+    a: number;
 }
 declare abstract class C5 {
-    abstract a!: number;
+    abstract a: number;
 }
 declare function f1(): void;
 declare function f2(): void;
