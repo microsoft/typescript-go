@@ -1,0 +1,9 @@
+//// [tests/cases/compiler/definiteAssignmentAssertionInDeclaration.ts] ////
+
+=== definiteAssignmentAssertionInDeclaration.ts ===
+export class DbObject {
+>DbObject : DbObject
+
+    id!: string;
+>id : string
+}
