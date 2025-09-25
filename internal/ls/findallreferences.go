@@ -945,6 +945,9 @@ func getPossibleSymbolReferencePositions(sourceFile *ast.SourceFile, symbolName 
 			positions = append(positions, position)
 		}
 		startIndex := position + symbolNameLength + 1
+		if startIndex > len(text) {
+			break
+		}
 		if foundIndex := strings.Index(text[startIndex:], symbolName); foundIndex != -1 {
 			position = startIndex + foundIndex
 		} else {
