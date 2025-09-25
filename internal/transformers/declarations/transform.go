@@ -727,12 +727,10 @@ func (tx *DeclarationTransformer) transformPropertySignatureDeclaration(input *a
 	if ast.IsPrivateIdentifier(input.Name()) {
 		return nil
 	}
-	// Remove definite assignment assertion (!) in declaration files
-	var postfixToken *ast.TokenNode
-	if input.PostfixToken != nil && input.PostfixToken.Kind == ast.KindExclamationToken {
+	// Remove definite assignment assertion (!) from declaration files
+	postfixToken := input.PostfixToken
+	if postfixToken != nil && postfixToken.Kind == ast.KindExclamationToken {
 		postfixToken = nil
-	} else {
-		postfixToken = input.PostfixToken
 	}
 	return tx.Factory().UpdatePropertySignatureDeclaration(
 		input,
@@ -748,12 +746,10 @@ func (tx *DeclarationTransformer) transformPropertyDeclaration(input *ast.Proper
 	if ast.IsPrivateIdentifier(input.Name()) {
 		return nil
 	}
-	// Remove definite assignment assertion (!) in declaration files
-	var postfixToken *ast.TokenNode
-	if input.PostfixToken != nil && input.PostfixToken.Kind == ast.KindExclamationToken {
+	// Remove definite assignment assertion (!) from declaration files
+	postfixToken := input.PostfixToken
+	if postfixToken != nil && postfixToken.Kind == ast.KindExclamationToken {
 		postfixToken = nil
-	} else {
-		postfixToken = input.PostfixToken
 	}
 	return tx.Factory().UpdatePropertyDeclaration(
 		input,
