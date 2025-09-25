@@ -723,15 +723,6 @@ func (tx *DeclarationTransformer) transformCallSignatureDeclaration(input *ast.C
 	)
 }
 
-// removeExclamationTokenFromPostfix removes definite assignment assertion (!) tokens from declaration files
-// while preserving other postfix tokens like optional (?) tokens
-func (tx *DeclarationTransformer) removeExclamationTokenFromPostfix(postfixToken *ast.TokenNode) *ast.TokenNode {
-	if postfixToken != nil && postfixToken.Kind == ast.KindExclamationToken {
-		return nil
-	}
-	return postfixToken
-}
-
 func (tx *DeclarationTransformer) transformPropertySignatureDeclaration(input *ast.PropertySignatureDeclaration) *ast.Node {
 	if ast.IsPrivateIdentifier(input.Name()) {
 		return nil
@@ -740,7 +731,7 @@ func (tx *DeclarationTransformer) transformPropertySignatureDeclaration(input *a
 		input,
 		tx.ensureModifiers(input.AsNode()),
 		input.Name(),
-		tx.removeExclamationTokenFromPostfix(input.PostfixToken),
+		input.PostfixToken,
 		tx.ensureType(input.AsNode(), false),
 		tx.ensureNoInitializer(input.AsNode()), // TODO: possible strada bug (fixed here) - const property signatures never initialized
 	)
@@ -750,11 +741,16 @@ func (tx *DeclarationTransformer) transformPropertyDeclaration(input *ast.Proper
 	if ast.IsPrivateIdentifier(input.Name()) {
 		return nil
 	}
+	// Remove definite assignment assertion (!) from declaration files
+	postfixToken := input.PostfixToken
+	if postfixToken != nil && postfixToken.Kind == ast.KindExclamationToken {
+		postfixToken = nil
+	}
 	return tx.Factory().UpdatePropertyDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
 		input.Name(),
-		tx.removeExclamationTokenFromPostfix(input.PostfixToken),
+		postfixToken,
 		tx.ensureType(input.AsNode(), false),
 		tx.ensureNoInitializer(input.AsNode()),
 	)
