@@ -45,17 +45,14 @@ exports.DbObject = DbObject;
 
 
 //// [declarationEmitCommentsWithJSDoc.d.ts]
-// Regular comment - should be removed
 /**
  * JSDoc comment - should be preserved
  */
 export declare class DbObject {
-    // Regular comment - should be removed
     /**
      * JSDoc property comment
      */
-    id: string; // Trailing comment - should be removed
-    // Regular comment - should be removed
+    id: string;
     /**
      * JSDoc method comment
      * @returns void

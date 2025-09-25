@@ -741,7 +741,7 @@ func (tx *DeclarationTransformer) transformPropertyDeclaration(input *ast.Proper
 	if ast.IsPrivateIdentifier(input.Name()) {
 		return nil
 	}
-	result := tx.Factory().UpdatePropertyDeclaration(
+	return tx.Factory().UpdatePropertyDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
 		input.Name(),
@@ -749,9 +749,6 @@ func (tx *DeclarationTransformer) transformPropertyDeclaration(input *ast.Proper
 		tx.ensureType(input.AsNode(), false),
 		tx.ensureNoInitializer(input.AsNode()),
 	)
-	tx.preserveJsDoc(result, input.AsNode())
-	tx.removeAllComments(input.AsNode())
-	return result
 }
 
 func (tx *DeclarationTransformer) transformSetAccessorDeclaration(input *ast.SetAccessorDeclaration) *ast.Node {
@@ -759,7 +756,7 @@ func (tx *DeclarationTransformer) transformSetAccessorDeclaration(input *ast.Set
 		return nil
 	}
 
-	result := tx.Factory().UpdateSetAccessorDeclaration(
+	return tx.Factory().UpdateSetAccessorDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
 		input.Name(),
@@ -769,16 +766,13 @@ func (tx *DeclarationTransformer) transformSetAccessorDeclaration(input *ast.Set
 		nil,
 		nil,
 	)
-	tx.preserveJsDoc(result, input.AsNode())
-	tx.removeAllComments(input.AsNode())
-	return result
 }
 
 func (tx *DeclarationTransformer) transformGetAccesorDeclaration(input *ast.GetAccessorDeclaration) *ast.Node {
 	if ast.IsPrivateIdentifier(input.Name()) {
 		return nil
 	}
-	result := tx.Factory().UpdateGetAccessorDeclaration(
+	return tx.Factory().UpdateGetAccessorDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
 		input.Name(),
@@ -788,9 +782,6 @@ func (tx *DeclarationTransformer) transformGetAccesorDeclaration(input *ast.GetA
 		nil,
 		nil,
 	)
-	tx.preserveJsDoc(result, input.AsNode())
-	tx.removeAllComments(input.AsNode())
-	return result
 }
 
 const defaultModifierFlagsMask = ast.ModifierFlagsAll ^ ast.ModifierFlagsPublic
@@ -834,7 +825,7 @@ func (tx *DeclarationTransformer) updateAccessorParamList(input *ast.Node, isPri
 
 func (tx *DeclarationTransformer) transformConstructorDeclaration(input *ast.ConstructorDeclaration) *ast.Node {
 	// A constructor declaration may not have a type annotation
-	result := tx.Factory().UpdateConstructorDeclaration(
+	return tx.Factory().UpdateConstructorDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
 		nil, // no type params
@@ -843,9 +834,6 @@ func (tx *DeclarationTransformer) transformConstructorDeclaration(input *ast.Con
 		nil,
 		nil,
 	)
-	tx.preserveJsDoc(result, input.AsNode())
-	tx.removeAllComments(input.AsNode())
-	return result
 }
 
 func (tx *DeclarationTransformer) transformConstructSignatureDeclaration(input *ast.ConstructSignatureDeclaration) *ast.Node {
@@ -895,7 +883,7 @@ func (tx *DeclarationTransformer) transformMethodDeclaration(input *ast.MethodDe
 	} else if ast.IsPrivateIdentifier(input.Name()) {
 		return nil
 	} else {
-		result := tx.Factory().UpdateMethodDeclaration(
+		return tx.Factory().UpdateMethodDeclaration(
 			input,
 			tx.ensureModifiers(input.AsNode()),
 			nil,
@@ -907,9 +895,6 @@ func (tx *DeclarationTransformer) transformMethodDeclaration(input *ast.MethodDe
 			nil,
 			nil,
 		)
-		tx.preserveJsDoc(result, input.AsNode())
-		tx.removeAllComments(input.AsNode())
-		return result
 	}
 }
 
@@ -999,38 +984,11 @@ func (tx *DeclarationTransformer) tryGetResolutionModeOverride(node *ast.Node) *
 }
 
 func (tx *DeclarationTransformer) preserveJsDoc(updated *ast.Node, original *ast.Node) {
-	// Get the source file to access JSDoc cache
-	sourceFile := tx.state.currentSourceFile
-	if sourceFile == nil {
-		return
-	}
-	
-	// Check if original node has JSDoc comments
-	if original.Flags&ast.NodeFlagsHasJSDoc == 0 {
-		return
-	}
-	
-	// Get JSDoc from original node
-	jsdoc := original.JSDoc(sourceFile)
-	if len(jsdoc) == 0 {
-		return
-	}
-	
-	// Copy JSDoc to the updated node
-	cache := sourceFile.JSDocCache()
-	if cache == nil {
-		cache = make(map[*ast.Node][]*ast.Node)
-		sourceFile.SetJSDocCache(cache)
-	}
-	
-	// Set JSDoc on the updated node
-	cache[updated] = jsdoc
-	updated.Flags |= ast.NodeFlagsHasJSDoc
-	
-	// If there was a deprecated tag, preserve that too
-	if original.Flags&ast.NodeFlagsDeprecated != 0 {
-		updated.Flags |= ast.NodeFlagsDeprecated
-	}
+	// !!! TODO: JSDoc comment support
+	// if (hasJSDocNodes(updated) && hasJSDocNodes(original)) {
+	// 	updated.jsDoc = original.jsDoc;
+	// }
+	// return setCommentRange(updated, getCommentRange(original));
 }
 
 func (tx *DeclarationTransformer) removeAllComments(node *ast.Node) {
@@ -1425,24 +1383,20 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 		}
 		heritageClauses := tx.Factory().NewNodeList(heritageList)
 
-		classDecl := tx.Factory().UpdateClassDeclaration(
-			input,
-			modifiers,
-			input.Name(),
-			typeParameters,
-			heritageClauses,
-			members,
-		)
-		tx.preserveJsDoc(classDecl, input.AsNode())
-		tx.removeAllComments(input.AsNode())
-
 		return tx.Factory().NewSyntaxList([]*ast.Node{
 			statement,
-			classDecl,
+			tx.Factory().UpdateClassDeclaration(
+				input,
+				modifiers,
+				input.Name(),
+				typeParameters,
+				heritageClauses,
+				members,
+			),
 		})
 	}
 
-	result := tx.Factory().UpdateClassDeclaration(
+	return tx.Factory().UpdateClassDeclaration(
 		input,
 		modifiers,
 		input.Name(),
@@ -1450,9 +1404,6 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 		tx.Visitor().VisitNodes(input.HeritageClauses),
 		members,
 	)
-	tx.preserveJsDoc(result, input.AsNode())
-	tx.removeAllComments(input.AsNode())
-	return result
 }
 
 func (tx *DeclarationTransformer) transformVariableStatement(input *ast.VariableStatement) *ast.Node {
