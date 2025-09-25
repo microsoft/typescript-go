@@ -392,94 +392,28 @@ export declare class C {
     };
 }
 export declare class D {
-    /**
-     * @param {number} a
-     * @param {number} b
-     */
     constructor(a: number, b: number);
 }
-/**
- * @template T,U
- */
 export declare class E<T, U> {
-    /**
-     * @type {T & U}
-     */
     field: T & U;
-    // @readonly is currently unsupported, it seems - included here just in case that changes
-    /**
-     * @type {T & U}
-     * @readonly
-     */
     readonly readonlyField: T & U;
     initializedField: number;
-    /**
-     * @return {U}
-     */
     get f1(): U;
-    /**
-     * @param {U} _p
-     */
     set f1(_p: U);
-    /**
-     * @return {U}
-     */
     get f2(): U;
-    /**
-     * @param {U} _p
-     */
     set f3(_p: U);
-    /**
-     * @param {T} a
-     * @param {U} b
-     */
     constructor(a: T, b: U);
-    /**
-     * @type {string}
-     */
     static staticField: string;
-    // @readonly is currently unsupported, it seems - included here just in case that changes
-    /**
-     * @type {string}
-     * @readonly
-     */
     static readonly staticReadonlyField: string;
     static staticInitializedField: number;
-    /**
-     * @return {string}
-     */
     static get s1(): string;
-    /**
-     * @param {string} _p
-     */
     static set s1(_p: string);
-    /**
-     * @return {string}
-     */
     static get s2(): string;
-    /**
-     * @param {string} _p
-     */
     static set s3(_p: string);
 }
-/**
- * @template T,U
- */
 export declare class F<T, U> {
-    /**
-     * @type {T & U}
-     */
     field: T & U;
-    /**
-     * @param {T} a
-     * @param {U} b
-     */
     constructor(a: T, b: U);
-    /**
-     * @template A,B
-     * @param {A} a
-     * @param {B} b
-     */
     static create<A, B>(a: A, b: B): F<A, B>;
 }
 declare class G {
@@ -503,23 +437,10 @@ export declare class L extends K {
 export declare class M extends null {
     constructor();
 }
-/**
- * @template T
- */
 export declare class N<T> extends L {
-    /**
-     * @param {T} param
-     */
     constructor(param: T);
 }
-/**
- * @template U
- * @extends {N<U>}
- */
 export declare class O<U> extends N<U> {
-    /**
-     * @param {U} param
-     */
     constructor(param: U);
 }
 declare var x: any;

@@ -48,12 +48,6 @@ NewAjax.prototype.case6_unexpectedlyResolvesPathToNodeModules;
 
 //// [index.d.ts]
 export type LionRequestInit = import('@lion/ajax').LionRequestInit;
-/**
- * @typedef {import('@lion/ajax').LionRequestInit} LionRequestInit
- */
 export declare class NewAjax {
-    /**
-     * @param {LionRequestInit} [init]
-     */
     case5_unexpectedlyResolvesPathToNodeModules(init?: LionRequestInit): void;
 }

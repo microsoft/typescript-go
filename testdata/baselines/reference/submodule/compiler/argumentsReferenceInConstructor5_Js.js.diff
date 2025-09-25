@@ -11,11 +11,11 @@
 +    arguments: {};
 +};
  declare class A {
-     /**
-      * Constructor
-@@= skipped -10, +10 lines =@@
-      * @param {object} [foo={}]
-      */
+-    /**
+-     * Constructor
+-     *
+-     * @param {object} [foo={}]
+-     */
      constructor(foo?: object);
 -    /**
 -     * @type object

@@ -148,21 +148,13 @@ declare var myVariable: number;
 declare function foo(/** parameter comment*/ p: number): void;
 /** variable with function type comment*/
 declare var fooVar: () => void;
-/**class comment*/
 declare class c {
-    /** constructor comment*/
     constructor();
-    /** property comment */
     b: number;
-    /** function comment */
     myFoo(): number;
-    /** getter comment*/
     get prop1(): number;
-    /** setter comment*/
     set prop1(val: number);
-    /** overload signature1*/
     foo1(a: number): string;
-    /** Overload signature 2*/
     foo1(b: string): string;
 }
 /**instance comment*/
@@ -184,7 +176,6 @@ interface i1 {
 declare var i1_i: i1;
 /** this is module comment*/
 declare namespace m1 {
-    /** class b */
     class b {
         x: number;
         constructor(x: number);

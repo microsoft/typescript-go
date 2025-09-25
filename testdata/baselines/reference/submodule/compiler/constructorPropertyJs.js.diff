@@ -1,0 +1,11 @@
+--- old.constructorPropertyJs.js
++++ new.constructorPropertyJs.js
+@@= skipped -14, +14 lines =@@
+
+ //// [a.d.ts]
+ declare class C {
+-    /**
+-     * @param {any} a
+-     */
+     foo(a: any): void;
+ }

@@ -13,6 +13,5 @@ class B  {
 
 
 //// [a.d.ts]
-/** @implements {Sig} */
 declare class B implements Sig {
 }

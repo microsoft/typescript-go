@@ -749,10 +749,9 @@ func (tx *DeclarationTransformer) transformPropertyDeclaration(input *ast.Proper
 		tx.ensureType(input.AsNode(), false),
 		tx.ensureNoInitializer(input.AsNode()),
 	)
-	// Only remove all comments if there's no JSDoc to preserve
-	if input.AsNode().Flags&ast.NodeFlagsHasJSDoc == 0 {
-		tx.removeAllComments(result)
-	} else {
+	// Always remove all comments first, then preserve JSDoc if present
+	tx.removeAllComments(result)
+	if input.AsNode().Flags&ast.NodeFlagsHasJSDoc != 0 {
 		tx.preserveJsDoc(result, input.AsNode())
 	}
 	return result
@@ -763,7 +762,7 @@ func (tx *DeclarationTransformer) transformSetAccessorDeclaration(input *ast.Set
 		return nil
 	}
 
-	return tx.Factory().UpdateSetAccessorDeclaration(
+	result := tx.Factory().UpdateSetAccessorDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
 		input.Name(),
@@ -773,13 +772,19 @@ func (tx *DeclarationTransformer) transformSetAccessorDeclaration(input *ast.Set
 		nil,
 		nil,
 	)
+	// Always remove all comments first, then preserve JSDoc if present
+	tx.removeAllComments(result)
+	if input.AsNode().Flags&ast.NodeFlagsHasJSDoc != 0 {
+		tx.preserveJsDoc(result, input.AsNode())
+	}
+	return result
 }
 
 func (tx *DeclarationTransformer) transformGetAccesorDeclaration(input *ast.GetAccessorDeclaration) *ast.Node {
 	if ast.IsPrivateIdentifier(input.Name()) {
 		return nil
 	}
-	return tx.Factory().UpdateGetAccessorDeclaration(
+	result := tx.Factory().UpdateGetAccessorDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
 		input.Name(),
@@ -789,6 +794,12 @@ func (tx *DeclarationTransformer) transformGetAccesorDeclaration(input *ast.GetA
 		nil,
 		nil,
 	)
+	// Always remove all comments first, then preserve JSDoc if present
+	tx.removeAllComments(result)
+	if input.AsNode().Flags&ast.NodeFlagsHasJSDoc != 0 {
+		tx.preserveJsDoc(result, input.AsNode())
+	}
+	return result
 }
 
 const defaultModifierFlagsMask = ast.ModifierFlagsAll ^ ast.ModifierFlagsPublic
@@ -832,7 +843,7 @@ func (tx *DeclarationTransformer) updateAccessorParamList(input *ast.Node, isPri
 
 func (tx *DeclarationTransformer) transformConstructorDeclaration(input *ast.ConstructorDeclaration) *ast.Node {
 	// A constructor declaration may not have a type annotation
-	return tx.Factory().UpdateConstructorDeclaration(
+	result := tx.Factory().UpdateConstructorDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
 		nil, // no type params
@@ -841,6 +852,12 @@ func (tx *DeclarationTransformer) transformConstructorDeclaration(input *ast.Con
 		nil,
 		nil,
 	)
+	// Always remove all comments first, then preserve JSDoc if present
+	tx.removeAllComments(result)
+	if input.AsNode().Flags&ast.NodeFlagsHasJSDoc != 0 {
+		tx.preserveJsDoc(result, input.AsNode())
+	}
+	return result
 }
 
 func (tx *DeclarationTransformer) transformConstructSignatureDeclaration(input *ast.ConstructSignatureDeclaration) *ast.Node {
@@ -902,10 +919,9 @@ func (tx *DeclarationTransformer) transformMethodDeclaration(input *ast.MethodDe
 			nil,
 			nil,
 		)
-		// Only remove all comments if there's no JSDoc to preserve
-		if input.AsNode().Flags&ast.NodeFlagsHasJSDoc == 0 {
-			tx.removeAllComments(result)
-		} else {
+		// Always remove all comments first, then preserve JSDoc if present
+		tx.removeAllComments(result)
+		if input.AsNode().Flags&ast.NodeFlagsHasJSDoc != 0 {
 			tx.preserveJsDoc(result, input.AsNode())
 		}
 		return result
@@ -1432,10 +1448,9 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 			heritageClauses,
 			members,
 		)
-		// Only remove all comments if there's no JSDoc to preserve
-		if input.AsNode().Flags&ast.NodeFlagsHasJSDoc == 0 {
-			tx.removeAllComments(classDecl)
-		} else {
+		// Always remove all comments first, then preserve JSDoc if present
+		tx.removeAllComments(classDecl)
+		if input.AsNode().Flags&ast.NodeFlagsHasJSDoc != 0 {
 			tx.preserveJsDoc(classDecl, input.AsNode())
 		}
 
@@ -1453,10 +1468,9 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 		tx.Visitor().VisitNodes(input.HeritageClauses),
 		members,
 	)
-	// Only remove all comments if there's no JSDoc to preserve
-	if input.AsNode().Flags&ast.NodeFlagsHasJSDoc == 0 {
-		tx.removeAllComments(result)
-	} else {
+	// Always remove all comments first, then preserve JSDoc if present
+	tx.removeAllComments(result)
+	if input.AsNode().Flags&ast.NodeFlagsHasJSDoc != 0 {
 		tx.preserveJsDoc(result, input.AsNode())
 	}
 	return result

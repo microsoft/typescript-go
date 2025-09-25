@@ -5,10 +5,10 @@
 
  //// [bug38550.d.ts]
 -export class Clazz {
-+export declare class Clazz {
-     /**
-      * @param {function(this:Object, ...*):*} functionDeclaration
-      */
+-    /**
+-     * @param {function(this:Object, ...*):*} functionDeclaration
+-     */
 -    method(functionDeclaration: (this: any, ...args: any[]) => any): void;
++export declare class Clazz {
 +    method(functionDeclaration: any): void;
  }

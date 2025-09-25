@@ -76,13 +76,7 @@ export declare class Base {
 //// [argument.d.ts]
 import { Base } from "./base.js";
 export declare class Argument extends Base {
-    /**
-     * @param {*} tokeniser
-     */
     static parse(tokeniser: any): void;
     get type(): string;
-    /**
-     * @param {*} defs
-     */
     validate(defs: any): Generator<never, void, unknown>;
 }

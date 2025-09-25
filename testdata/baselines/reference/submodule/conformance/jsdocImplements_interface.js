@@ -25,14 +25,11 @@ class B3 {
 
 
 //// [a.d.ts]
-/** @implements A */
 declare class B implements A {
     mNumber(): number;
 }
-/** @implements {A} */
 declare class B2 implements A {
     mNumber(): string;
 }
-/** @implements A */
 declare class B3 implements A {
 }

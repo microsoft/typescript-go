@@ -41,15 +41,12 @@ export declare class A<T> {
 }
 //// [b.d.ts]
 import { A } from './a.js';
-/** @extends {A} */
 export declare class B1 extends A {
     constructor();
 }
-/** @extends {A<string>} */
 export declare class B2 extends A<string> {
     constructor();
 }
-/** @extends {A<string, string>} */
 export declare class B3 extends A<string, string> {
     constructor();
 }

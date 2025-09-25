@@ -24,8 +24,5 @@ exports.Clazz = Clazz;
 
 //// [bug38550.d.ts]
 export declare class Clazz {
-    /**
-     * @param {function(this:Object, ...*):*} functionDeclaration
-     */
     method(functionDeclaration: any): void;
 }

@@ -23,12 +23,6 @@ export class VFile {
 
 //// [index.d.ts]
 export declare class VFile {
-    /**
-     * @returns {string}
-     */
     get path(): string;
-    /**
-     * @param {URL | string} path
-     */
     set path(path: URL | string);
 }

@@ -27,11 +27,9 @@ class BAT {
 
 
 //// [a.d.ts]
-/** @implements N.A */
 declare class B implements N.A {
     mNumber(): number;
 }
-/** @implements {N.AT<string>} */
 declare class BAT implements N.AT<string> {
     gen(): string;
 }

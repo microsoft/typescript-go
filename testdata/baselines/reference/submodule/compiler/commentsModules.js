@@ -250,7 +250,6 @@ declare namespace m1 {
     var b: number;
     /** m2 comments*/
     namespace m2 {
-        /** class comment;*/
         class c {
         }
         /** i*/
@@ -268,20 +267,17 @@ declare namespace m1 {
 declare var myvar: m1.m2.c;
 /** module comment of m2.m3*/
 declare namespace m2.m3 {
-    /** Exported class comment*/
     class c {
     }
 } /* trailing dotted module comment*/
 /** module comment of m3.m4.m5*/
 declare namespace m3.m4.m5 {
-    /** Exported class comment*/
     class c {
     }
 } // trailing dotted module 2
 /** module comment of m4.m5.m6*/
 declare namespace m4.m5.m6 {
     namespace m7 {
-        /** Exported class comment*/
         class c {
         }
     } /* trailing inner module */ /* multiple comments*/
@@ -290,14 +286,12 @@ declare namespace m4.m5.m6 {
 declare namespace m5.m6.m7 {
     /** module m8 comment*/
     namespace m8 {
-        /** Exported class comment*/
         class c {
         }
     }
 }
 declare namespace m6.m7 {
     namespace m8 {
-        /** Exported class comment*/
         class c {
         }
     }
@@ -305,7 +299,6 @@ declare namespace m6.m7 {
 declare namespace m7.m8 {
     /** module m9 comment*/
     namespace m9 {
-        /** Exported class comment*/
         class c {
         }
         class e {

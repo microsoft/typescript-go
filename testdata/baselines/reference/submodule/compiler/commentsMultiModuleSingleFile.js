@@ -56,7 +56,6 @@ new multiM.c();
 //// [commentsMultiModuleSingleFile.d.ts]
 /** this is multi declare module*/
 declare namespace multiM {
-    /** class b*/
     class b {
     }
     class d {
@@ -64,7 +63,6 @@ declare namespace multiM {
 }
 /// this is multi module 2
 declare namespace multiM {
-    /** class c comment*/
     class c {
     }
     class e {

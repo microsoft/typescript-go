@@ -1,0 +1,17 @@
+--- old.jsdocImplements_interface.js
++++ new.jsdocImplements_interface.js
+@@= skipped -24, +24 lines =@@
+
+
+ //// [a.d.ts]
+-/** @implements A */
+ declare class B implements A {
+     mNumber(): number;
+ }
+-/** @implements {A} */
+ declare class B2 implements A {
+     mNumber(): string;
+ }
+-/** @implements A */
+ declare class B3 implements A {
+ }

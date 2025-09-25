@@ -38,10 +38,5 @@ declare class A {
     };
 }
 declare class B extends A {
-    /**
-     * Constructor
-     *
-     * @param {object} [foo={}]
-     */
     constructor(foo?: object);
 }

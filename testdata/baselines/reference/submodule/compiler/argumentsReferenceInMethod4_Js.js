@@ -44,9 +44,6 @@ class A {
 
 //// [a.d.ts]
 declare class A {
-    /**
-     * @param {object} [foo={}]
-     */
     m(foo?: object): void;
     get arguments(): {
         bar: {};

@@ -30,11 +30,12 @@
 -    function staticProp(x: number, y: number): number;
 -}
  declare class C2 {
-     /**
-      * A comment method1
-@@= skipped -33, +8 lines =@@
-      * @returns {number}
-      */
+-    /**
+-     * A comment method1
+-     * @param {number} x
+-     * @param {number} y
+-     * @returns {number}
+-     */
      method1(x: number, y: number): number;
 -    /**
 -     * A comment method2

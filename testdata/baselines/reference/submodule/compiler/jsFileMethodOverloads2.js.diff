@@ -4,13 +4,13 @@
 
 
  //// [jsFileMethodOverloads2.d.ts]
-+// Also works if all @overload tags are combined in one comment.
- /**
-  * @template T
-  */
-@@= skipped -8, +9 lines =@@
-      * @param {T} value
-      */
+-/**
+- * @template T
+- */
+ declare class Example<T> {
+-    /**
+-     * @param {T} value
+-     */
      constructor(value: T);
 -    value: T;
 -    /**
@@ -64,7 +64,7 @@
      /**
       * @template U
       * @overload
-@@= skipped -50, +49 lines =@@
+@@= skipped -58, +51 lines =@@
       * @param {(y: T) => unknown} [fn]
       * @returns {unknown}
       */

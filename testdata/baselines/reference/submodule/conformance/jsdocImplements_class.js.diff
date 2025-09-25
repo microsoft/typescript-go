@@ -1,7 +1,22 @@
 --- old.jsdocImplements_class.js
 +++ new.jsdocImplements_class.js
-@@= skipped -72, +72 lines =@@
- /** @implements {A} */
+@@= skipped -57, +57 lines =@@
+
+ //// [a.d.ts]
+ declare class A {
+-    /** @return {number} */
+     method(): number;
+ }
+-/** @implements {A} */
+ declare class B implements A {
+     method(): number;
+ }
+-/** @implements A */
+ declare class B2 implements A {
+-    /** @return {string} */
+     method(): string;
+ }
+-/** @implements {A} */
  declare class B3 implements A {
  }
 -declare namespace Ns {
@@ -36,9 +51,11 @@
 +    };
 +};
  declare class CC {
-     /** @implements {A} */
+-    /** @implements {A} */
      C4: {
-@@= skipped -26, +33 lines =@@
+         new (): {
+             method(): number;
+@@= skipped -41, +42 lines =@@
      };
  }
  declare var C5: any;

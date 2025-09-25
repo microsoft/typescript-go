@@ -58,19 +58,14 @@ Ns.C5 = C5 || class {
 
 //// [a.d.ts]
 declare class A {
-    /** @return {number} */
     method(): number;
 }
-/** @implements {A} */
 declare class B implements A {
     method(): number;
 }
-/** @implements A */
 declare class B2 implements A {
-    /** @return {string} */
     method(): string;
 }
-/** @implements {A} */
 declare class B3 implements A {
 }
 declare var Ns: {
@@ -98,7 +93,6 @@ declare var o: {
     };
 };
 declare class CC {
-    /** @implements {A} */
     C4: {
         new (): {
             method(): number;

@@ -19,13 +19,13 @@
 -     * @type {Rectangle[]}
 -     */
 -    objects: Rectangle[];
+-    /**
+-     * Adds a rectangle
+-     *
+-     * @returns {Rectangle} the rect
+-     */
 +declare class Render {
 +    constructor();
-     /**
-      * Adds a rectangle
-      *
-@@= skipped -16, +17 lines =@@
-      */
      addRectangle(): Rectangle;
  }
 -import { Rectangle } from "./rectangle";

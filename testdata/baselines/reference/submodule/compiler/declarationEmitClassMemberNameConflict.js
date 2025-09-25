@@ -85,10 +85,10 @@ export declare class C2 {
     bar(): (t: typeof C2) => void;
 }
 export declare class C3 {
-    get C3(): number; // has to be the same as the class name
+    get C3(): number;
     bar(): (t: typeof C3) => void;
 }
 export declare class C4 {
-    set C4(v: any); // has to be the same as the class name
+    set C4(v: any);
     bar(): (t: typeof C4) => void;
 }

@@ -52,11 +52,6 @@ export = _default;
 //// [index.d.ts]
 declare class Render {
     constructor();
-    /**
-     * Adds a rectangle
-     *
-     * @returns {Rectangle} the rect
-     */
     addRectangle(): Rectangle;
 }
 declare const _default: {

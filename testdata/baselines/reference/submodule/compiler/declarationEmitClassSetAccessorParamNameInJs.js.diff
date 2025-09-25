@@ -5,7 +5,11 @@
 
  //// [foo.d.ts]
 -export class Foo {
+-    /**
+-     * Bar.
+-     *
+-     * @param {string} baz Baz.
+-     */
 +export declare class Foo {
-     /**
-      * Bar.
-      *
+     set bar(baz: string);
+ }

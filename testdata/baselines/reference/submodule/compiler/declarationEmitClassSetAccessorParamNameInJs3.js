@@ -15,11 +15,6 @@ export class Foo {
 
 //// [foo.d.ts]
 export declare class Foo {
-    /**
-     * Bar.
-     *
-     * @param {{ prop: string | undefined }} baz Baz.
-     */
     set bar({ prop }: {
         prop: string | undefined;
     });

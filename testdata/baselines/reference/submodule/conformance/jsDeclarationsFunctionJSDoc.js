@@ -83,20 +83,8 @@ exports.c = 12;
  * @param {string} b
  */
 export declare function foo(a: number, b: string): void;
-/**
- * Legacy - DO NOT USE
- */
 export declare class Aleph {
-    /**
-     * Impossible to construct.
-     * @param {Aleph} a
-     * @param {null} b
-     */
     constructor(a: Aleph, b: null);
-    /**
-     * Doesn't actually do anything
-     * @returns {void}
-     */
     doIt(): void;
 }
 /**

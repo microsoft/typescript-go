@@ -6,11 +6,11 @@
  //// [thisPropertyAssignmentInherited.d.ts]
 -export class Element {
 -    set textContent(x: string);
-+export declare class Element {
-     /**
-      * @returns {String}
-      */
+-    /**
+-     * @returns {String}
+-     */
 -    get textContent(): string;
++export declare class Element {
 +    get textContent(): String;
 +    set textContent(x: String);
      cloneNode(): this;

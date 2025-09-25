@@ -55,14 +55,7 @@ export interface Encoder<T> {
     encode(value: T): Uint8Array;
 }
 //// [lib.d.ts]
-/**
- * @template T
- * @implements {IEncoder<T>}
- */
 export declare class Encoder<T> implements IEncoder<T> {
-    /**
-     * @param {T} value
-     */
     encode(value: T): Uint8Array<ArrayBuffer>;
 }
 export type IEncoder<T> = import('./interface').Encoder<T>;

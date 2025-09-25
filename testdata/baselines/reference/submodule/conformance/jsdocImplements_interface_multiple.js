@@ -33,18 +33,10 @@ class BadSquare {
 
 
 //// [a.d.ts]
-/**
- * @implements {Drawable}
- * @implements Sizable
- **/
 declare class Square implements Drawable, Sizable {
     draw(): number;
     size(): number;
 }
-/**
- * @implements Drawable
- * @implements {Sizable}
- **/
 declare class BadSquare implements Drawable, Sizable {
     size(): number;
 }

@@ -17,10 +17,5 @@ export class Foo {
 
 //// [foo.d.ts]
 export declare class Foo {
-    /**
-     * Bar.
-     *
-     * @param {string} baz Baz.
-     */
     set bar(baz: string);
 }

@@ -25,7 +25,6 @@ exports.Preferences = Preferences;
 //// [typedefOnSemicolonClassElement.d.ts]
 export declare class Preferences {
     export type A = string;
-    /** @type {A} */
     a: A;
 }
 
@@ -34,8 +33,8 @@ export declare class Preferences {
 
 
 dist/typedefOnSemicolonClassElement.d.ts(2,5): error TS1068: Unexpected token. A constructor, method, accessor, or property was expected.
-dist/typedefOnSemicolonClassElement.d.ts(4,8): error TS2693: 'A' only refers to a type, but is being used as a value here.
-dist/typedefOnSemicolonClassElement.d.ts(5,1): error TS1128: Declaration or statement expected.
+dist/typedefOnSemicolonClassElement.d.ts(3,8): error TS2693: 'A' only refers to a type, but is being used as a value here.
+dist/typedefOnSemicolonClassElement.d.ts(4,1): error TS1128: Declaration or statement expected.
 
 
 ==== dist/typedefOnSemicolonClassElement.d.ts (3 errors) ====
@@ -43,7 +42,6 @@ dist/typedefOnSemicolonClassElement.d.ts(5,1): error TS1128: Declaration or stat
         export type A = string;
         ~~~~~~
 !!! error TS1068: Unexpected token. A constructor, method, accessor, or property was expected.
-        /** @type {A} */
         a: A;
            ~
 !!! error TS2693: 'A' only refers to a type, but is being used as a value here.

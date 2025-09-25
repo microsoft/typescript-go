@@ -11,9 +11,9 @@
 +    arguments: {};
 +};
  declare class A {
-     /**
-      * @param {object} [foo={}]
-      */
+-    /**
+-     * @param {object} [foo={}]
+-     */
      m(foo?: object): void;
 -    /**
 -     * @type object

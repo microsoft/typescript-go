@@ -137,7 +137,6 @@ export declare namespace m1 {
     var b: number;
     /** m2 comments*/
     namespace m2 {
-        /** class comment;*/
         class c {
         }
         /** i*/
@@ -153,7 +152,6 @@ export declare namespace m4 {
     /** m2 comments
     */
     namespace m2 {
-        /** class comment; */
         class c {
         }
         /** i */

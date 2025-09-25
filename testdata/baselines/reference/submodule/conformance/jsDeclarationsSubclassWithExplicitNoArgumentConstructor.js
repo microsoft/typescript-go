@@ -37,10 +37,6 @@ exports.Sub = Sub;
 
 //// [index.d.ts]
 export declare class Super {
-    /**
-     * @param {string} firstArg
-     * @param {string} secondArg
-     */
     constructor(firstArg: string, secondArg: string);
 }
 export declare class Sub extends Super {

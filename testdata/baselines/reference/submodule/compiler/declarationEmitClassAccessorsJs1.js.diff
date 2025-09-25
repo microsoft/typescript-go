@@ -9,13 +9,10 @@
 -     * @param {URL | string} path
 -     */
 -    set path(path: URL | string);
+-    /**
+-     * @returns {string}
+-     */
 +export declare class VFile {
-     /**
-      * @returns {string}
-      */
      get path(): string;
-+    /**
-+     * @param {URL | string} path
-+     */
 +    set path(path: URL | string);
  }

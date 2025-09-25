@@ -1,0 +1,9 @@
+--- old.jsdocImplements_signatures.js
++++ new.jsdocImplements_signatures.js
+@@= skipped -12, +12 lines =@@
+
+
+ //// [a.d.ts]
+-/** @implements {Sig} */
+ declare class B implements Sig {
+ }
