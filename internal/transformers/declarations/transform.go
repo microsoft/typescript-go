@@ -749,8 +749,12 @@ func (tx *DeclarationTransformer) transformPropertyDeclaration(input *ast.Proper
 		tx.ensureType(input.AsNode(), false),
 		tx.ensureNoInitializer(input.AsNode()),
 	)
-	tx.preserveJsDoc(result, input.AsNode())
-	tx.removeAllComments(result)
+	// Only remove all comments if there's no JSDoc to preserve
+	if input.AsNode().Flags&ast.NodeFlagsHasJSDoc == 0 {
+		tx.removeAllComments(result)
+	} else {
+		tx.preserveJsDoc(result, input.AsNode())
+	}
 	return result
 }
 
@@ -898,8 +902,12 @@ func (tx *DeclarationTransformer) transformMethodDeclaration(input *ast.MethodDe
 			nil,
 			nil,
 		)
-		tx.preserveJsDoc(result, input.AsNode())
-		tx.removeAllComments(result)
+		// Only remove all comments if there's no JSDoc to preserve
+		if input.AsNode().Flags&ast.NodeFlagsHasJSDoc == 0 {
+			tx.removeAllComments(result)
+		} else {
+			tx.preserveJsDoc(result, input.AsNode())
+		}
 		return result
 	}
 }
@@ -990,11 +998,38 @@ func (tx *DeclarationTransformer) tryGetResolutionModeOverride(node *ast.Node) *
 }
 
 func (tx *DeclarationTransformer) preserveJsDoc(updated *ast.Node, original *ast.Node) {
-	// !!! TODO: JSDoc comment support
-	// if (hasJSDocNodes(updated) && hasJSDocNodes(original)) {
-	// 	updated.jsDoc = original.jsDoc;
-	// }
-	// return setCommentRange(updated, getCommentRange(original));
+	// Get the source file to access JSDoc cache
+	sourceFile := tx.state.currentSourceFile
+	if sourceFile == nil {
+		return
+	}
+
+	// Check if original node has JSDoc comments
+	if original.Flags&ast.NodeFlagsHasJSDoc == 0 {
+		return
+	}
+
+	// Get JSDoc from original node
+	jsdoc := original.JSDoc(sourceFile)
+	if len(jsdoc) == 0 {
+		return
+	}
+
+	// Copy JSDoc to the updated node
+	cache := sourceFile.JSDocCache()
+	if cache == nil {
+		cache = make(map[*ast.Node][]*ast.Node)
+		sourceFile.SetJSDocCache(cache)
+	}
+
+	// Set JSDoc on the updated node
+	cache[updated] = jsdoc
+	updated.Flags |= ast.NodeFlagsHasJSDoc
+
+	// If there was a deprecated tag, preserve that too
+	if original.Flags&ast.NodeFlagsDeprecated != 0 {
+		updated.Flags |= ast.NodeFlagsDeprecated
+	}
 }
 
 func (tx *DeclarationTransformer) removeAllComments(node *ast.Node) {
@@ -1397,8 +1432,12 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 			heritageClauses,
 			members,
 		)
-		tx.preserveJsDoc(classDecl, input.AsNode())
-		tx.removeAllComments(classDecl)
+		// Only remove all comments if there's no JSDoc to preserve
+		if input.AsNode().Flags&ast.NodeFlagsHasJSDoc == 0 {
+			tx.removeAllComments(classDecl)
+		} else {
+			tx.preserveJsDoc(classDecl, input.AsNode())
+		}
 
 		return tx.Factory().NewSyntaxList([]*ast.Node{
 			statement,
@@ -1414,8 +1453,12 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 		tx.Visitor().VisitNodes(input.HeritageClauses),
 		members,
 	)
-	tx.preserveJsDoc(result, input.AsNode())
-	tx.removeAllComments(result)
+	// Only remove all comments if there's no JSDoc to preserve
+	if input.AsNode().Flags&ast.NodeFlagsHasJSDoc == 0 {
+		tx.removeAllComments(result)
+	} else {
+		tx.preserveJsDoc(result, input.AsNode())
+	}
 	return result
 }
 
