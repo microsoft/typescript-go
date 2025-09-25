@@ -314,6 +314,7 @@ func (h *emitFilesHandler) updateSnapshot() []*compiler.EmitResult {
 func emitFiles(ctx context.Context, program *Program, options compiler.EmitOptions, isForDtsErrors bool) *compiler.EmitResult {
 	emitHandler := &emitFilesHandler{ctx: ctx, program: program, isForDtsErrors: isForDtsErrors}
 
+	// Single file emit - do direct from program
 	if !isForDtsErrors && options.TargetSourceFile != nil {
 		result := program.program.Emit(ctx, emitHandler.getEmitOptions(options))
 		if ctx.Err() != nil {
