@@ -18,7 +18,6 @@ func (l *LanguageService) ProvideDocumentHighlights(ctx context.Context, documen
 	program, sourceFile := l.getProgramAndFile(documentUri)
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
-
 	if node.Parent != nil && (node.Parent.Kind == ast.KindJsxClosingElement || (node.Parent.Kind == ast.KindJsxOpeningElement && node.Parent.TagName() == node)) {
 		var openingElement, closingElement *ast.Node
 		if ast.IsJsxElement(node.Parent.Parent) {
@@ -43,7 +42,6 @@ func (l *LanguageService) ProvideDocumentHighlights(ctx context.Context, documen
 			DocumentHighlights: &documentHighlights,
 		}, nil
 	}
-
 	documentHighlights := l.getSemanticDocumentHighlights(ctx, position, node, program, sourceFile)
 	if len(documentHighlights) == 0 {
 		documentHighlights = l.getSyntacticDocumentHighlights(node, sourceFile)
@@ -58,7 +56,6 @@ func (l *LanguageService) getSemanticDocumentHighlights(ctx context.Context, pos
 	if referenceEntries == nil {
 		return nil
 	}
-
 	var highlights []*lsproto.DocumentHighlight
 	for _, entry := range referenceEntries {
 		for _, ref := range entry.references {
@@ -553,11 +550,11 @@ func getLoopBreakContinueOccurrences(node *ast.Node, sourceFile *ast.SourceFile)
 }
 
 func getAsyncAndAwaitOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
-	parentFunc := ast.FindAncestor(node.Parent, ast.IsFunctionLike).AsFunctionDeclaration()
-	if parentFunc == nil {
+	parent := ast.FindAncestor(node.Parent, ast.IsFunctionLike)
+	if parent == nil {
 		return nil
 	}
-
+	parentFunc := parent.AsFunctionDeclaration()
 	var keywords []*ast.Node
 
 	modifiers := parentFunc.Modifiers()
