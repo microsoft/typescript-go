@@ -727,11 +727,18 @@ func (tx *DeclarationTransformer) transformPropertySignatureDeclaration(input *a
 	if ast.IsPrivateIdentifier(input.Name()) {
 		return nil
 	}
+	// Remove definite assignment assertion (!) in declaration files
+	var postfixToken *ast.TokenNode
+	if input.PostfixToken != nil && input.PostfixToken.Kind == ast.KindExclamationToken {
+		postfixToken = nil
+	} else {
+		postfixToken = input.PostfixToken
+	}
 	return tx.Factory().UpdatePropertySignatureDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
 		input.Name(),
-		input.PostfixToken,
+		postfixToken,
 		tx.ensureType(input.AsNode(), false),
 		tx.ensureNoInitializer(input.AsNode()), // TODO: possible strada bug (fixed here) - const property signatures never initialized
 	)
@@ -741,11 +748,18 @@ func (tx *DeclarationTransformer) transformPropertyDeclaration(input *ast.Proper
 	if ast.IsPrivateIdentifier(input.Name()) {
 		return nil
 	}
+	// Remove definite assignment assertion (!) in declaration files
+	var postfixToken *ast.TokenNode
+	if input.PostfixToken != nil && input.PostfixToken.Kind == ast.KindExclamationToken {
+		postfixToken = nil
+	} else {
+		postfixToken = input.PostfixToken
+	}
 	return tx.Factory().UpdatePropertyDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
 		input.Name(),
-		input.PostfixToken,
+		postfixToken,
 		tx.ensureType(input.AsNode(), false),
 		tx.ensureNoInitializer(input.AsNode()),
 	)

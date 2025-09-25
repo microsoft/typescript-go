@@ -1,0 +1,33 @@
+//// [tests/cases/compiler/definiteAssignmentAssertionInDeclarationExtended.ts] ////
+
+=== definiteAssignmentAssertionInDeclarationExtended.ts ===
+export class DbObject {
+>DbObject : DbObject
+
+    id!: string;
+>id : string
+
+    name?: string;
+>name : string | undefined
+
+    count: number = 0;
+>count : number
+>0 : 0
+
+    private secret!: string;
+>secret : string
+
+    protected value!: number;
+>value : number
+
+    static config!: boolean;
+>config : boolean
+}
+
+export interface IConfig {
+    setting?: boolean; 
+>setting : boolean | undefined
+
+    optionalSetting?: string;
+>optionalSetting : string | undefined
+}
