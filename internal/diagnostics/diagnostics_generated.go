@@ -920,6 +920,8 @@ var Importing_a_JSON_file_into_an_ECMAScript_module_requires_a_type_Colon_json_i
 
 var Named_imports_from_a_JSON_file_into_an_ECMAScript_module_are_not_allowed_when_module_is_set_to_0 = &Message{code: 1544, category: CategoryError, key: "Named_imports_from_a_JSON_file_into_an_ECMAScript_module_are_not_allowed_when_module_is_set_to_0_1544", text: "Named imports from a JSON file into an ECMAScript module are not allowed when 'module' is set to '{0}'."}
 
+var Ignore_the_tsconfig_found_and_build_with_commandline_options_and_files = &Message{code: 1547, category: CategoryMessage, key: "Ignore_the_tsconfig_found_and_build_with_commandline_options_and_files_1547", text: "Ignore the tsconfig found and build with commandline options and files."}
+
 var The_types_of_0_are_incompatible_between_these_types = &Message{code: 2200, category: CategoryError, key: "The_types_of_0_are_incompatible_between_these_types_2200", text: "The types of '{0}' are incompatible between these types."}
 
 var The_types_returned_by_0_are_incompatible_between_these_types = &Message{code: 2201, category: CategoryError, key: "The_types_returned_by_0_are_incompatible_between_these_types_2201", text: "The types returned by '{0}' are incompatible between these types."}
@@ -2343,6 +2345,8 @@ var Option_0_1_has_been_removed_Please_remove_it_from_your_configuration = &Mess
 var Option_moduleResolution_must_be_set_to_0_or_left_unspecified_when_option_module_is_set_to_1 = &Message{code: 5109, category: CategoryError, key: "Option_moduleResolution_must_be_set_to_0_or_left_unspecified_when_option_module_is_set_to_1_5109", text: "Option 'moduleResolution' must be set to '{0}' (or left unspecified) when option 'module' is set to '{1}'."}
 
 var Option_module_must_be_set_to_0_when_option_moduleResolution_is_set_to_1 = &Message{code: 5110, category: CategoryError, key: "Option_module_must_be_set_to_0_when_option_moduleResolution_is_set_to_1_5110", text: "Option 'module' must be set to '{0}' when option 'moduleResolution' is set to '{1}'."}
+
+var X_tsconfig_json_is_present_but_will_not_be_loaded_if_files_are_specified_on_commandline_Use_ignoreConfig_to_skip_this_error = &Message{code: 5111, category: CategoryError, key: "tsconfig_json_is_present_but_will_not_be_loaded_if_files_are_specified_on_commandline_Use_ignoreConf_5111", text: "tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error."}
 
 var Generates_a_sourcemap_for_each_corresponding_d_ts_file = &Message{code: 6000, category: CategoryMessage, key: "Generates_a_sourcemap_for_each_corresponding_d_ts_file_6000", text: "Generates a sourcemap for each corresponding '.d.ts' file."}
 
