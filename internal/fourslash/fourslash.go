@@ -1665,3 +1665,63 @@ func (f *FourslashTest) verifyBaselines(t *testing.T) {
 		baseline.Run(t, getBaselineFileName(t, command), content.String(), getBaselineOptions(command))
 	}
 }
+
+// !!! user preferences
+func (f *FourslashTest) VerifyBaselineInlayHints(
+	t *testing.T,
+	span *lsproto.Range,
+	preferences *ls.UserPreferences,
+) {
+	fileName := f.activeFilename
+	var lspRange lsproto.Range
+	if span == nil {
+		lspRange = f.converters.ToLSPRange(f.getScriptInfo(fileName), core.NewTextRange(0, len(f.scriptInfos[fileName].content)))
+	} else {
+		lspRange = *span
+	}
+
+	params := &lsproto.InlayHintParams{
+		TextDocument: lsproto.TextDocumentIdentifier{Uri: ls.FileNameToDocumentURI(fileName)},
+		Range:        lspRange,
+	}
+
+	// !!! here: set preferences
+	prefix := fmt.Sprintf("At position (Ln %d, Col %d): ", lspRange.Start.Line, lspRange.Start.Character)
+	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentInlayHintInfo, params)
+	if resMsg == nil {
+		t.Fatal(prefix + "Nil response received for inlay hints request")
+	}
+	if !resultOk {
+		t.Fatalf(prefix+"Unexpected response type for inlay hints request: %T", resMsg.AsResponse().Result)
+	}
+
+	fileLines := strings.Split(f.getScriptInfo(fileName).content, "\n")
+	slices.SortFunc(*result.InlayHints, func(a, b *lsproto.InlayHint) int {
+		return ls.ComparePositions(a.Position, b.Position)
+	})
+	annotations := core.Map(*result.InlayHints, func(hint *lsproto.InlayHint) string {
+		if hint.Label.InlayHintLabelParts != nil {
+			for _, part := range *hint.Label.InlayHintLabelParts {
+				if part.Location != nil && tspath.IsDeclarationFileName(part.Location.Uri.FileName()) {
+					part.Location.Range.Start = lsproto.Position{Line: 0, Character: 0} // !!! here: verify
+				}
+			}
+		}
+
+		underline := strings.Repeat(" ", int(hint.Position.Character)) + "^"
+		hintJson, err := core.StringifyJson(hint, "", "  ")
+		if err != nil {
+			t.Fatalf(prefix+"Failed to stringify inlay hint for baseline: %v", err)
+		}
+		annotation := fileLines[hint.Position.Line]
+		annotation += "\n" + underline + "\n" + hintJson
+		return annotation
+	})
+
+	if len(annotations) == 0 {
+		annotations = append(annotations, "=== No inlay hints ===")
+	}
+
+	f.addResultToBaseline(t, "InlayHints", strings.Join(annotations, "\n\n"))
+	// !!! diff submodule
+}

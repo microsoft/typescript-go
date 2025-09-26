@@ -833,3 +833,7 @@ func isArrayLiteralOrObjectLiteralDestructuringPattern(node *ast.Node) bool {
 	// [x, [a, b, c] ] = someExpression
 	return isArrayLiteralOrObjectLiteralDestructuringPattern(parent)
 }
+
+func (c *Checker) GetSignatureFromDeclaration(node *ast.Node) *Signature {
+	return c.getSignatureFromDeclaration(node)
+}

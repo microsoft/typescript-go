@@ -20,6 +20,14 @@ const (
 	QuotePreferenceSingle QuotePreference = "single"
 )
 
+type InlayHintParameterNameHints string
+
+const (
+	InlayHintParameterNameHintsNone     InlayHintParameterNameHints = "none"
+	InlayHintParameterNameHintsLiterals InlayHintParameterNameHints = "literals"
+	InlayHintParameterNameHintsAll      InlayHintParameterNameHints = "all"
+)
+
 type UserPreferences struct {
 	QuotePreference *QuotePreference
 	// If enabled, TypeScript will search through all external modules' exports and add them to the completions list.
@@ -56,6 +64,16 @@ type UserPreferences struct {
 	AutoImportFileExcludePatterns         []string
 
 	UseAliasesForRename *bool
+
+	IncludeInlayParameterNameHints                        *InlayHintParameterNameHints
+	IncludeInlayParameterNameHintsWhenArgumentMatchesName *bool
+	IncludeInlayFunctionParameterTypeHints                *bool
+	IncludeInlayVariableTypeHints                         *bool
+	IncludeInlayVariableTypeHintsWhenTypeMatchesName      *bool
+	IncludeInlayPropertyDeclarationTypeHints              *bool
+	IncludeInlayFunctionLikeReturnTypeHints               *bool
+	IncludeInlayEnumMemberValueHints                      *bool
+	InteractiveInlayHints                                 *bool
 }
 
 func (p *UserPreferences) ModuleSpecifierPreferences() modulespecifiers.UserPreferences {
