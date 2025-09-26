@@ -8,6 +8,7 @@ import (
 	"sync"
 	"sync/atomic"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/glob"
@@ -19,7 +20,29 @@ import (
 const (
 	fileGlobPattern          = "*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json}"
 	recursiveFileGlobPattern = "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json}"
+	minWatchLocationDepth    = 2
 )
+
+type fileSystemWatcherKey struct {
+	pattern string
+	kind    lsproto.WatchKind
+}
+
+type fileSystemWatcherValue struct {
+	count int
+	id    WatcherID
+}
+
+func toFileSystemWatcherKey(w *lsproto.FileSystemWatcher) fileSystemWatcherKey {
+	if w.GlobPattern.RelativePattern != nil {
+		panic("relative globs not implemented")
+	}
+	kind := w.Kind
+	if kind == nil {
+		kind = ptrTo(lsproto.WatchKindCreate | lsproto.WatchKindChange | lsproto.WatchKindDelete)
+	}
+	return fileSystemWatcherKey{pattern: *w.GlobPattern.Pattern, kind: *kind}
+}
 
 type WatcherID string
 
@@ -112,21 +135,32 @@ func globMapperForTypingsInstaller(data map[tspath.Path]string) []string {
 	return slices.AppendSeq(make([]string, 0, len(data)), maps.Values(data))
 }
 
-func createResolutionLookupGlobMapper(currentDirectory string, useCaseSensitiveFileNames bool) func(data map[tspath.Path]string) []string {
+func createResolutionLookupGlobMapper(workspaceDirectory string, currentDirectory string, useCaseSensitiveFileNames bool) func(data map[tspath.Path]string) []string {
+	isWorkspaceWatchable := canWatchDirectoryOrFile(tspath.GetPathComponents(workspaceDirectory, ""))
 	rootPath := tspath.ToPath(currentDirectory, "", useCaseSensitiveFileNames)
 	rootPathComponents := tspath.GetPathComponents(string(rootPath), "")
 	isRootWatchable := canWatchDirectoryOrFile(rootPathComponents)
+	comparePathsOptions := tspath.ComparePathsOptions{
+		CurrentDirectory:          currentDirectory,
+		UseCaseSensitiveFileNames: useCaseSensitiveFileNames,
+	}
 
 	return func(data map[tspath.Path]string) []string {
 		// dir -> recursive
 		globSet := make(map[string]bool)
 		var seenDirs collections.Set[string]
+		var includeWorkspace bool
 
 		for path, fileName := range data {
 			// Assuming all of the input paths are filenames, we can avoid
 			// duplicate work by only taking one file per dir, since their outputs
 			// will always be the same.
 			if !seenDirs.AddIfAbsent(tspath.GetDirectoryPath(string(path))) {
+				continue
+			}
+
+			if isWorkspaceWatchable && tspath.ContainsPath(workspaceDirectory, fileName, comparePathsOptions) {
+				includeWorkspace = true
 				continue
 			}
 
@@ -146,6 +180,9 @@ func createResolutionLookupGlobMapper(currentDirectory string, useCaseSensitiveF
 		}
 
 		globs := make([]string, 0, len(globSet))
+		if includeWorkspace {
+			globs = append(globs, workspaceDirectory+"/"+recursiveFileGlobPattern)
+		}
 		for dir, recursive := range globSet {
 			if recursive {
 				globs = append(globs, dir+"/"+recursiveFileGlobPattern)
@@ -159,45 +196,43 @@ func createResolutionLookupGlobMapper(currentDirectory string, useCaseSensitiveF
 	}
 }
 
-func getTypingsLocationsGlobs(typingsFiles []string, typingsLocation string, currentDirectory string, useCaseSensitiveFileNames bool) (fileGlobs map[tspath.Path]string, directoryGlobs map[tspath.Path]string) {
+func getTypingsLocationsGlobs(
+	typingsFiles []string,
+	typingsLocation string,
+	workspaceDirectory string,
+	currentDirectory string,
+	useCaseSensitiveFileNames bool,
+) map[tspath.Path]string {
+	var includeTypingsLocation, includeWorkspace bool
+	externalDirectories := make(map[tspath.Path]string)
+	isWorkspaceWatchable := canWatchDirectoryOrFile(tspath.GetPathComponents(workspaceDirectory, ""))
+	globs := make(map[tspath.Path]string)
 	comparePathsOptions := tspath.ComparePathsOptions{
 		CurrentDirectory:          currentDirectory,
 		UseCaseSensitiveFileNames: useCaseSensitiveFileNames,
 	}
 	for _, file := range typingsFiles {
-		basename := tspath.GetBaseFileName(file)
-		if basename == "package.json" || basename == "bower.json" {
-			// package.json or bower.json exists, watch the file to detect changes and update typings
-			if fileGlobs == nil {
-				fileGlobs = map[tspath.Path]string{}
-			}
-			fileGlobs[tspath.ToPath(file, currentDirectory, useCaseSensitiveFileNames)] = file
+		if tspath.ContainsPath(typingsLocation, file, comparePathsOptions) {
+			includeTypingsLocation = true
+		} else if !isWorkspaceWatchable || !tspath.ContainsPath(workspaceDirectory, file, comparePathsOptions) {
+			directory := tspath.GetDirectoryPath(file)
+			externalDirectories[tspath.ToPath(directory, currentDirectory, useCaseSensitiveFileNames)] = directory
 		} else {
-			var globLocation string
-			// path in projectRoot, watch project root
-			if tspath.ContainsPath(currentDirectory, file, comparePathsOptions) {
-				currentDirectoryLen := len(currentDirectory) + 1
-				subDirectory := strings.IndexRune(file[currentDirectoryLen:], tspath.DirectorySeparator)
-				if subDirectory != -1 {
-					// Watch subDirectory
-					globLocation = file[0 : currentDirectoryLen+subDirectory]
-				} else {
-					// Watch the directory itself
-					globLocation = file
-				}
-			} else {
-				// path in global cache, watch global cache
-				// else watch node_modules or bower_components
-				globLocation = core.IfElse(tspath.ContainsPath(typingsLocation, file, comparePathsOptions), typingsLocation, file)
-			}
-			// package.json or bower.json exists, watch the file to detect changes and update typings
-			if directoryGlobs == nil {
-				directoryGlobs = map[tspath.Path]string{}
-			}
-			directoryGlobs[tspath.ToPath(globLocation, currentDirectory, useCaseSensitiveFileNames)] = fmt.Sprintf("%s/%s", globLocation, recursiveFileGlobPattern)
+			includeWorkspace = true
 		}
 	}
-	return fileGlobs, directoryGlobs
+	externalDirectoryParents := tspath.GetCommonParents(slices.Collect(maps.Values(externalDirectories)), minWatchLocationDepth, comparePathsOptions)
+	slices.Sort(externalDirectoryParents)
+	if includeWorkspace {
+		globs[tspath.ToPath(workspaceDirectory, currentDirectory, useCaseSensitiveFileNames)] = workspaceDirectory + "/" + recursiveFileGlobPattern
+	}
+	if includeTypingsLocation {
+		globs[tspath.ToPath(typingsLocation, currentDirectory, useCaseSensitiveFileNames)] = typingsLocation + "/" + recursiveFileGlobPattern
+	}
+	for _, dir := range externalDirectoryParents {
+		globs[tspath.ToPath(dir, currentDirectory, useCaseSensitiveFileNames)] = dir + "/" + recursiveFileGlobPattern
+	}
+	return globs
 }
 
 type directoryOfFailedLookupWatch struct {
@@ -371,11 +406,11 @@ func canWatchDirectoryOrFile(pathComponents []string) bool {
 	length := len(pathComponents)
 	// Ignore "/", "c:/"
 	// ignore "/user", "c:/users" or "c:/folderAtRoot"
-	if length < 2 {
+	if length < minWatchLocationDepth {
 		return false
 	}
 	perceivedOsRootLength := perceivedOsRootLengthForWatching(pathComponents, length)
-	return length > perceivedOsRootLength+1
+	return length > perceivedOsRootLength
 }
 
 func isDosStyleNextPart(part string) bool {
@@ -433,4 +468,31 @@ func extractLookups[T resolutionWithLookupLocations](
 			}
 		}
 	}
+}
+
+func getNonRootFileGlobs(workspaceDir string, sourceFiles []*ast.SourceFile, rootFiles map[tspath.Path]string, comparePathsOptions tspath.ComparePathsOptions) []string {
+	var globs []string
+	var includeWorkspace bool
+	canWatchWorkspace := canWatchDirectoryOrFile(tspath.GetPathComponents(workspaceDir, ""))
+	externalDirectories := make([]string, 0, max(0, len(sourceFiles)-len(rootFiles)))
+	for _, sourceFile := range sourceFiles {
+		if _, ok := rootFiles[sourceFile.Path()]; !ok {
+			if canWatchWorkspace && tspath.ContainsPath(workspaceDir, sourceFile.FileName(), comparePathsOptions) {
+				includeWorkspace = true
+				continue
+			}
+			externalDirectories = append(externalDirectories, tspath.GetDirectoryPath(sourceFile.FileName()))
+		}
+	}
+
+	if includeWorkspace {
+		globs = append(globs, workspaceDir+"/"+recursiveFileGlobPattern)
+	}
+	if len(externalDirectories) > 0 {
+		commonParents := tspath.GetCommonParents(externalDirectories, minWatchLocationDepth, comparePathsOptions)
+		globs = append(globs, core.Map(commonParents, func(dir string) string {
+			return dir + "/" + recursiveFileGlobPattern
+		})...)
+	}
+	return globs
 }
