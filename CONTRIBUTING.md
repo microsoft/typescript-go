@@ -35,7 +35,7 @@ Additional tasks are a work in progress.
 
 ### Running `tsgo`
 
-After running `hereby build`, you can run `built/local/tsgo`, which behaves mostly the same as `tsc`.
+After running `hereby build`, you can run `built/local/tsgo`, which behaves mostly the same as `tsgo`.
 
 ### LSP Server
 
