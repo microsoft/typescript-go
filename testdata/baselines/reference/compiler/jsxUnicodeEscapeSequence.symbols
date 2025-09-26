@@ -1,0 +1,29 @@
+//// [tests/cases/compiler/jsxUnicodeEscapeSequence.tsx] ////
+
+=== jsxUnicodeEscapeSequence.tsx ===
+export const InlineUnicodeChar = () => {
+>InlineUnicodeChar : Symbol(InlineUnicodeChar, Decl(jsxUnicodeEscapeSequence.tsx, 0, 12))
+
+    // This should work correctly - inline character with other content
+    return <div><span>Warning: ⚠ Error</span></div>;
+};
+
+export const StandaloneUnicodeChar = () => {
+>StandaloneUnicodeChar : Symbol(StandaloneUnicodeChar, Decl(jsxUnicodeEscapeSequence.tsx, 5, 12))
+
+    // This should reproduce the issue - unicode character on its own line
+    return (<div><span>⚠</span>
+        ⚠
+    </div>);
+};
+
+export const MultipleUnicodeChars = () => {
+>MultipleUnicodeChars : Symbol(MultipleUnicodeChars, Decl(jsxUnicodeEscapeSequence.tsx, 12, 12))
+
+    // Test multiple unicode characters
+    return (<div>
+        ⚠
+        ⛔
+        🚨
+    </div>);
+};
