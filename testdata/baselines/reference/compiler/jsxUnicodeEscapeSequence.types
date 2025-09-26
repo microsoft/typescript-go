@@ -1,0 +1,54 @@
+//// [tests/cases/compiler/jsxUnicodeEscapeSequence.tsx] ////
+
+=== jsxUnicodeEscapeSequence.tsx ===
+export const InlineUnicodeChar = () => {
+>InlineUnicodeChar : () => any
+>() => {    // This should work correctly - inline character with other content    return <div><span>Warning: ⚠ Error</span></div>;} : () => any
+
+    // This should work correctly - inline character with other content
+    return <div><span>Warning: ⚠ Error</span></div>;
+><div><span>Warning: ⚠ Error</span></div> : any
+>div : any
+><span>Warning: ⚠ Error</span> : any
+>span : any
+>span : any
+>div : any
+
+};
+
+export const StandaloneUnicodeChar = () => {
+>StandaloneUnicodeChar : () => any
+>() => {    // This should reproduce the issue - unicode character on its own line    return (<div><span>⚠</span>        ⚠    </div>);} : () => any
+
+    // This should reproduce the issue - unicode character on its own line
+    return (<div><span>⚠</span>
+>(<div><span>⚠</span>        ⚠    </div>) : any
+><div><span>⚠</span>        ⚠    </div> : any
+>div : any
+><span>⚠</span> : any
+>span : any
+>span : any
+
+        ⚠
+    </div>);
+>div : any
+
+};
+
+export const MultipleUnicodeChars = () => {
+>MultipleUnicodeChars : () => any
+>() => {    // Test multiple unicode characters    return (<div>        ⚠        ⛔        🚨    </div>);} : () => any
+
+    // Test multiple unicode characters
+    return (<div>
+>(<div>        ⚠        ⛔        🚨    </div>) : any
+><div>        ⚠        ⛔        🚨    </div> : any
+>div : any
+
+        ⚠
+        ⛔
+        🚨
+    </div>);
+>div : any
+
+};
