@@ -1,6 +1,9 @@
 package project
 
 import (
+	"sync"
+
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -24,6 +27,12 @@ type snapshotFS struct {
 	fs        vfs.FS
 	overlays  map[tspath.Path]*overlay
 	diskFiles map[tspath.Path]*diskFile
+	readFiles collections.SyncMap[tspath.Path, memoizedFileEntry]
+}
+
+// !!! newtype?
+type memoizedFileEntry struct {
+	read func() *diskFile
 }
 
 func (s *snapshotFS) FS() vfs.FS {
@@ -36,6 +45,17 @@ func (s *snapshotFS) GetFile(fileName string) FileHandle {
 	}
 	if file, ok := s.diskFiles[s.toPath(fileName)]; ok {
 		return file
+	}
+	newEntry := memoizedFileEntry{
+		read: sync.OnceValue(func() *diskFile {
+			if contents, ok := s.fs.ReadFile(fileName); ok {
+				return newDiskFile(fileName, contents)
+			}
+			return nil
+		}),
+	}
+	if entry, ok := s.readFiles.LoadOrStore(s.toPath(fileName), newEntry); ok {
+		return entry.read()
 	}
 	return nil
 }

@@ -7,7 +7,7 @@ type LineInfo struct {
 	lineStarts []core.TextPos
 }
 
-func GetLineInfo(text string, lineStarts []core.TextPos) *LineInfo {
+func CreateLineInfo(text string, lineStarts []core.TextPos) *LineInfo {
 	return &LineInfo{
 		text:       text,
 		lineStarts: lineStarts,

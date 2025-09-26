@@ -4,17 +4,29 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/sourcemap"
 )
 
 type LanguageService struct {
-	host       Host
-	converters *Converters
+	host                      Host
+	converters                *Converters
+	documentPositionMappers   map[string]sourcemap.DocumentPositionMapper // !!! TODO: needs sync?
+	useCaseSensitiveFileNames bool
+	readFile                  func(path string) (contents string, ok bool)
 }
 
-func NewLanguageService(host Host, converters *Converters) *LanguageService {
+func NewLanguageService(
+	host Host,
+	converters *Converters,
+	readFile func(path string) (contents string, ok bool),
+	useCaseSensitiveFileNames bool,
+) *LanguageService {
 	return &LanguageService{
-		host:       host,
-		converters: converters,
+		host:                      host,
+		converters:                converters,
+		readFile:                  readFile,
+		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
+		documentPositionMappers:   map[string]sourcemap.DocumentPositionMapper{},
 	}
 }
 
@@ -35,4 +47,33 @@ func (l *LanguageService) getProgramAndFile(documentURI lsproto.DocumentUri) (*c
 		panic("file not found: " + fileName)
 	}
 	return program, file
+}
+
+func (l *LanguageService) GetDocumentPositionMapper(fileName string) sourcemap.DocumentPositionMapper {
+	d, ok := l.documentPositionMappers[fileName]
+	if !ok {
+		d = sourcemap.GetDocumentPositionMapper(l, fileName)
+		l.documentPositionMappers[fileName] = d
+	}
+	return d
+}
+
+func (l *LanguageService) ReadFile(fileName string) (string, bool) {
+	return l.readFile(fileName)
+}
+
+func (l *LanguageService) UseCaseSensitiveFileNames() bool {
+	return l.useCaseSensitiveFileNames
+}
+
+func (l *LanguageService) GetLineInfo(fileName string) *sourcemap.LineInfo {
+	text, ok := l.ReadFile(fileName)
+	if !ok {
+		return nil
+	}
+	lineMap := l.converters.getLineMap(fileName)
+	if lineMap == nil {
+		return nil
+	}
+	return sourcemap.CreateLineInfo(text, lineMap.LineStarts)
 }

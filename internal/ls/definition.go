@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
@@ -22,28 +23,54 @@ func (l *LanguageService) ProvideDefinition(ctx context.Context, documentURI lsp
 	c, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
 
+	return l.getMappedDefinition(l.provideDefinitions(c, node)), nil
+}
+
+func (l *LanguageService) getMappedDefinition(definitions lsproto.DefinitionResponse) lsproto.DefinitionResponse {
+	if definitions.Location != nil {
+		definitions.Location = l.getMappedLocation(definitions.Location)
+	}
+	if definitions.Locations != nil {
+		for i, loc := range *definitions.Locations {
+			(*definitions.Locations)[i] = *l.getMappedLocation(&loc)
+		}
+	}
+	if definitions.DefinitionLinks != nil {
+		for i, link := range *definitions.DefinitionLinks {
+			mappedTarget := l.getMappedLocation(&lsproto.Location{Uri: link.TargetUri, Range: link.TargetRange})
+			mappedSelection := l.getMappedLocation(&lsproto.Location{Uri: link.TargetUri, Range: link.TargetSelectionRange})
+			debug.Assert(mappedTarget.Uri == mappedSelection.Uri, "target and selection should be in same file")
+			(*definitions.DefinitionLinks)[i].TargetUri = mappedTarget.Uri
+			(*definitions.DefinitionLinks)[i].TargetRange = mappedTarget.Range
+			(*definitions.DefinitionLinks)[i].TargetSelectionRange = mappedSelection.Range
+		}
+	}
+	return definitions
+}
+
+func (l *LanguageService) provideDefinitions(c *checker.Checker, node *ast.Node) lsproto.DefinitionResponse {
 	if node.Kind == ast.KindOverrideKeyword {
 		if sym := getSymbolForOverriddenMember(c, node); sym != nil {
-			return l.createLocationsFromDeclarations(sym.Declarations), nil
+			return l.createLocationsFromDeclarations(sym.Declarations)
 		}
 	}
 
 	if ast.IsJumpStatementTarget(node) {
 		if label := getTargetLabel(node.Parent, node.Text()); label != nil {
-			return l.createLocationsFromDeclarations([]*ast.Node{label}), nil
+			return l.createLocationsFromDeclarations([]*ast.Node{label})
 		}
 	}
 
 	if node.Kind == ast.KindCaseKeyword || node.Kind == ast.KindDefaultKeyword && ast.IsDefaultClause(node.Parent) {
 		if stmt := ast.FindAncestor(node.Parent, ast.IsSwitchStatement); stmt != nil {
 			file := ast.GetSourceFileOfNode(stmt)
-			return l.createLocationFromFileAndRange(file, scanner.GetRangeOfTokenAtPosition(file, stmt.Pos())), nil
+			return l.createLocationFromFileAndRange(file, scanner.GetRangeOfTokenAtPosition(file, stmt.Pos()))
 		}
 	}
 
 	if node.Kind == ast.KindReturnKeyword || node.Kind == ast.KindYieldKeyword || node.Kind == ast.KindAwaitKeyword {
 		if fn := ast.FindAncestor(node, ast.IsFunctionLikeDeclaration); fn != nil {
-			return l.createLocationsFromDeclarations([]*ast.Node{fn}), nil
+			return l.createLocationsFromDeclarations([]*ast.Node{fn})
 		}
 	}
 
@@ -54,7 +81,7 @@ func (l *LanguageService) ProvideDefinition(ctx context.Context, documentURI lsp
 		nonFunctionDeclarations := core.Filter(slices.Clip(declarations), func(node *ast.Node) bool { return !ast.IsFunctionLike(node) })
 		declarations = append(nonFunctionDeclarations, calledDeclaration)
 	}
-	return l.createLocationsFromDeclarations(declarations), nil
+	return l.createLocationsFromDeclarations(declarations)
 }
 
 func (l *LanguageService) ProvideTypeDefinition(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position) (lsproto.DefinitionResponse, error) {

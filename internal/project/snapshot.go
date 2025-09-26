@@ -89,6 +89,18 @@ func (s *Snapshot) ID() uint64 {
 	return s.id
 }
 
+func (s *Snapshot) UseCaseSensitiveFileNames() bool {
+	return s.fs.fs.UseCaseSensitiveFileNames()
+}
+
+func (s *Snapshot) ReadFile(fileName string) (string, bool) {
+	handle := s.GetFile(fileName)
+	if handle == nil {
+		return "", false
+	}
+	return handle.Content(), true
+}
+
 type APISnapshotRequest struct {
 	OpenProjects   *collections.Set[string]
 	CloseProjects  *collections.Set[tspath.Path]
