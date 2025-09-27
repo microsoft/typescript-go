@@ -117,16 +117,27 @@ func (e *exportInfoMap) add(
 			topLevelNodeModulesIndex := nodeModulesPathParts.TopLevelNodeModulesIndex
 			topLevelPackageNameIndex := nodeModulesPathParts.TopLevelPackageNameIndex
 			packageRootIndex := nodeModulesPathParts.PackageRootIndex
-			packageName = module.UnmangleScopedPackageName(modulespecifiers.GetPackageNameFromTypesPackageName(moduleFile.FileName()[topLevelPackageNameIndex+1 : packageRootIndex]))
-			if strings.HasPrefix(string(importingFile), string(moduleFile.Path())[0:topLevelNodeModulesIndex]) {
-				nodeModulesPath := moduleFile.FileName()[0 : topLevelPackageNameIndex+1]
-				if prevDeepestNodeModulesPath, ok := e.packages[packageName]; ok {
-					prevDeepestNodeModulesIndex := strings.Index(prevDeepestNodeModulesPath, "/node_modules/")
-					if topLevelNodeModulesIndex > prevDeepestNodeModulesIndex {
+
+			// Bounds check to prevent slice bounds out of range panic
+			fileName := moduleFile.FileName()
+			if topLevelPackageNameIndex+1 >= 0 && packageRootIndex >= 0 && topLevelPackageNameIndex+1 <= packageRootIndex && packageRootIndex <= len(fileName) {
+				packageName = module.UnmangleScopedPackageName(modulespecifiers.GetPackageNameFromTypesPackageName(fileName[topLevelPackageNameIndex+1 : packageRootIndex]))
+			}
+
+			// Bounds check for module path slice
+			modulePath := string(moduleFile.Path())
+			if topLevelNodeModulesIndex >= 0 && topLevelNodeModulesIndex <= len(modulePath) && strings.HasPrefix(string(importingFile), modulePath[0:topLevelNodeModulesIndex]) {
+				// Bounds check for node modules path slice
+				if topLevelPackageNameIndex+1 >= 0 && topLevelPackageNameIndex+1 <= len(fileName) {
+					nodeModulesPath := fileName[0 : topLevelPackageNameIndex+1]
+					if prevDeepestNodeModulesPath, ok := e.packages[packageName]; ok {
+						prevDeepestNodeModulesIndex := strings.Index(prevDeepestNodeModulesPath, "/node_modules/")
+						if topLevelNodeModulesIndex > prevDeepestNodeModulesIndex {
+							e.packages[packageName] = nodeModulesPath
+						}
+					} else {
 						e.packages[packageName] = nodeModulesPath
 					}
-				} else {
-					e.packages[packageName] = nodeModulesPath
 				}
 			}
 		}
