@@ -2376,7 +2376,14 @@ var wordSeparators = collections.NewSetFromItems(
 // e.g. for "abc def.ghi|jkl", the word length is 3 and the word start is 'g'.
 func getWordLengthAndStart(sourceFile *ast.SourceFile, position int) (wordLength int, wordStart rune) {
 	// !!! Port other case of vscode's `DEFAULT_WORD_REGEXP` that covers words that start like numbers, e.g. -123.456abcd.
-	text := sourceFile.Text()[:position]
+
+	// Bounds check to prevent slice bounds out of range panic
+	sourceText := sourceFile.Text()
+	if position < 0 || position > len(sourceText) {
+		return 0, 0
+	}
+
+	text := sourceText[:position]
 	totalSize := 0
 	var firstRune rune
 	for r, size := utf8.DecodeLastRuneInString(text); size != 0; r, size = utf8.DecodeLastRuneInString(text[:len(text)-totalSize]) {
@@ -2485,7 +2492,13 @@ func getFilterText(
 
 // Ported from vscode's `provideCompletionItems`.
 func getDotAccessor(file *ast.SourceFile, position int) string {
-	text := file.Text()[:position]
+	// Bounds check to prevent slice bounds out of range panic
+	fileText := file.Text()
+	if position < 0 || position > len(fileText) {
+		return ""
+	}
+
+	text := fileText[:position]
 	totalSize := 0
 	if strings.HasSuffix(text, "?.") {
 		totalSize += 2
