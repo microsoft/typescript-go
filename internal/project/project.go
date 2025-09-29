@@ -72,10 +72,10 @@ type Project struct {
 	// The ID of the snapshot that created the program stored in this project.
 	ProgramLastUpdate uint64
 
-	programFilesWatch       *WatchedFiles[[]string]
+	programFilesWatch       *WatchedFiles[patternsAndIgnored]
 	failedLookupsWatch      *WatchedFiles[map[tspath.Path]string]
 	affectingLocationsWatch *WatchedFiles[map[tspath.Path]string]
-	typingsWatch            *WatchedFiles[map[tspath.Path]string]
+	typingsWatch            *WatchedFiles[patternsAndIgnored]
 
 	checkerPool *checkerPool
 
@@ -168,7 +168,7 @@ func NewProject(
 			project.typingsWatch = NewWatchedFiles(
 				"typings installer files",
 				lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
-				globMapperForTypingsInstaller,
+				core.Identity,
 			)
 		}
 	}
@@ -331,7 +331,7 @@ func (p *Project) CreateProgram() CreateProgramResult {
 	}
 }
 
-func (p *Project) CloneWatchers(workspaceDir string) (programFilesWatch *WatchedFiles[[]string], failedLookupsWatch *WatchedFiles[map[tspath.Path]string], affectingLocationsWatch *WatchedFiles[map[tspath.Path]string]) {
+func (p *Project) CloneWatchers(workspaceDir string) (programFilesWatch *WatchedFiles[patternsAndIgnored], failedLookupsWatch *WatchedFiles[map[tspath.Path]string], affectingLocationsWatch *WatchedFiles[map[tspath.Path]string]) {
 	failedLookups := make(map[tspath.Path]string)
 	affectingLocations := make(map[tspath.Path]string)
 	programFiles := getNonRootFileGlobs(workspaceDir, p.Program.GetSourceFiles(), p.CommandLine.FileNamesByPath(), tspath.ComparePathsOptions{

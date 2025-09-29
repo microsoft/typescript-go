@@ -165,6 +165,7 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 		return
 	}
 
+	var ignored map[string]struct{}
 	var globs []string
 	var externalDirectories []string
 	var includeWorkspace bool
@@ -197,10 +198,10 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 	}
 
 	if includeWorkspace {
-		globs = append(globs, fmt.Sprintf("%s/%s", c.sessionOptions.CurrentDirectory, recursiveFileGlobPattern))
+		globs = append(globs, getRecursiveGlobPattern(c.sessionOptions.CurrentDirectory))
 	}
 	if includeTsconfigDir {
-		globs = append(globs, fmt.Sprintf("%s/%s", tsconfigDir, recursiveFileGlobPattern))
+		globs = append(globs, getRecursiveGlobPattern(tsconfigDir))
 	}
 	for _, fileName := range entry.commandLine.ExtendedSourceFiles() {
 		if includeWorkspace && tspath.ContainsPath(c.sessionOptions.CurrentDirectory, fileName, comparePathsOptions) {
@@ -209,13 +210,18 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 		globs = append(globs, fileName)
 	}
 	if len(externalDirectories) > 0 {
-		for _, parent := range tspath.GetCommonParents(externalDirectories, minWatchLocationDepth, comparePathsOptions) {
-			globs = append(globs, fmt.Sprintf("%s/%s", parent, recursiveFileGlobPattern))
+		commonParents, ignoredExternalDirs := tspath.GetCommonParents(externalDirectories, minWatchLocationDepth, getPathComponentsForWatching, comparePathsOptions)
+		for _, parent := range commonParents {
+			globs = append(globs, getRecursiveGlobPattern(parent))
 		}
+		ignored = ignoredExternalDirs
 	}
 
 	slices.Sort(globs)
-	entry.rootFilesWatch = entry.rootFilesWatch.Clone(globs)
+	entry.rootFilesWatch = entry.rootFilesWatch.Clone(patternsAndIgnored{
+		patterns: globs,
+		ignored:  ignored,
+	})
 }
 
 // acquireConfigForProject loads a config file entry from the cache, or parses it if not already

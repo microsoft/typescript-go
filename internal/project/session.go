@@ -449,6 +449,14 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 					logger.Log("")
 				}
 			}
+			if len(newWatcher.ignored) > 0 {
+				logger.Logf("%d paths ineligible for watching", len(newWatcher.ignored))
+				if logger.IsVerbose() {
+					for path := range newWatcher.ignored {
+						logger.Log("\t" + path)
+					}
+				}
+			}
 		}
 	}
 	if oldWatcher != nil {

@@ -1026,26 +1026,41 @@ func SplitVolumePath(path string) (volume string, rest string, ok bool) {
 }
 
 // GetCommonParents returns the smallest set of directories that are parents of all paths with
-// at least `minComponents` directory components. Any path that has `minComponents` or fewer directory components
-// will be returned in the set as-is. Examples:
+// at least `minComponents` directory components. Any path that has fewer than `minComponents` directory components
+// will be returned in the second return value. Examples:
 //
 //	/a/b/c/d, /a/b/c/e, /a/b/f/g  =>  /a/b
 //	/a/b/c/d, /a/b/c/e, /a/b/f/g, /x/y  =>  /
 //	/a/b/c/d, /a/b/c/e, /a/b/f/g, /x/y  (minComponents: 2)	=>  /a/b, /x/y
 //	c:/a/b/c/d, d:/a/b/c/d =>	c:/a/b/c/d, d:/a/b/c/d
-func GetCommonParents(paths []string, minComponents int, options ComparePathsOptions) []string {
+func GetCommonParents(
+	paths []string,
+	minComponents int,
+	getPathComponents func(path string, currentDirectory string) []string,
+	options ComparePathsOptions,
+) (parents []string, ignored map[string]struct{}) {
 	if minComponents < 1 {
 		panic("minComponents must be at least 1")
 	}
 	if len(paths) == 0 {
-		return nil
+		return nil, nil
 	}
 	if len(paths) == 1 {
-		return paths
+		if len(reducePathComponents(getPathComponents(paths[0], options.CurrentDirectory))) < minComponents {
+			return nil, map[string]struct{}{paths[0]: {}}
+		}
+		return paths, nil
 	}
-	pathComponents := make([][]string, len(paths))
-	for i, path := range paths {
-		pathComponents[i] = reducePathComponents(GetPathComponents(path, options.CurrentDirectory))
+
+	ignored = make(map[string]struct{})
+	pathComponents := make([][]string, 0, len(paths))
+	for _, path := range paths {
+		components := reducePathComponents(getPathComponents(path, options.CurrentDirectory))
+		if len(components) < minComponents {
+			ignored[path] = struct{}{}
+		} else {
+			pathComponents = append(pathComponents, components)
+		}
 	}
 
 	results := getCommonParentsWorker(pathComponents, minComponents, options)
@@ -1054,7 +1069,7 @@ func GetCommonParents(paths []string, minComponents int, options ComparePathsOpt
 		resultPaths[i] = GetPathFromPathComponents(comps)
 	}
 
-	return resultPaths
+	return resultPaths, ignored
 }
 
 func getCommonParentsWorker(componentGroups [][]string, minComponents int, options ComparePathsOptions) [][]string {
@@ -1067,9 +1082,6 @@ func getCommonParentsWorker(componentGroups [][]string, minComponents int, optio
 		if l := len(comps); l < maxDepth {
 			maxDepth = l
 		}
-	}
-	if maxDepth <= 0 { // Only a root component exists
-		return [][]string{componentGroups[0][:1]}
 	}
 
 	equality := options.getEqualityComparer()
