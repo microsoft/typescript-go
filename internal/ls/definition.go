@@ -57,28 +57,6 @@ func (l *LanguageService) ProvideDefinition(ctx context.Context, documentURI lsp
 	return l.createLocationsFromDeclarations(declarations), nil
 }
 
-// func (l *LanguageService) getMappedDefinition(definitions lsproto.DefinitionResponse) lsproto.DefinitionResponse {
-// 	if definitions.Location != nil {
-// 		definitions.Location = l.getMappedLocation(definitions.Location)
-// 	}
-// 	if definitions.Locations != nil {
-// 		for i, loc := range *definitions.Locations {
-// 			(*definitions.Locations)[i] = *l.getMappedLocation(&loc)
-// 		}
-// 	}
-// 	if definitions.DefinitionLinks != nil {
-// 		for i, link := range *definitions.DefinitionLinks {
-// 			mappedTarget := l.getMappedLocation(&lsproto.Location{Uri: link.TargetUri, Range: link.TargetRange})
-// 			mappedSelection := l.getMappedLocation(&lsproto.Location{Uri: link.TargetUri, Range: link.TargetSelectionRange})
-// 			debug.Assert(mappedTarget.Uri == mappedSelection.Uri, "target and selection should be in same file")
-// 			(*definitions.DefinitionLinks)[i].TargetUri = mappedTarget.Uri
-// 			(*definitions.DefinitionLinks)[i].TargetRange = mappedTarget.Range
-// 			(*definitions.DefinitionLinks)[i].TargetSelectionRange = mappedSelection.Range
-// 		}
-// 	}
-// 	return definitions
-// }
-
 func (l *LanguageService) ProvideTypeDefinition(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position) (lsproto.DefinitionResponse, error) {
 	program, file := l.getProgramAndFile(documentURI)
 	node := astnav.GetTouchingPropertyName(file, int(l.converters.LineAndCharacterToPosition(file, position)))
