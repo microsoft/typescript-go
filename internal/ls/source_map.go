@@ -8,22 +8,23 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-func (l *LanguageService) getMappedLocation(location *lsproto.Location) *lsproto.Location {
-	uriStart, start := l.tryGetSourceLSPPosition(location.Uri.FileName(), &location.Range.Start)
-	if uriStart == nil {
-		return location
+func (l *LanguageService) getMappedLocation(fileName string, fileRange core.TextRange) lsproto.Location {
+	startPos := l.tryGetSourcePosition(fileName, core.TextPos(fileRange.Pos()))
+	if startPos == nil {
+		lspRange := l.createLspRangeFromRange(fileRange, l.getScript(fileName))
+		return lsproto.Location{
+			Uri:   FileNameToDocumentURI(fileName),
+			Range: *lspRange,
+		}
 	}
-	uriEnd, end := l.tryGetSourceLSPPosition(location.Uri.FileName(), &location.Range.End)
-	debug.Assert(uriEnd == uriStart, "start and end should be in same file")
-	debug.Assert(end != nil, "end position should be valid")
-	return &lsproto.Location{
-		Uri:   *uriStart,
-		Range: lsproto.Range{Start: *start, End: *end},
+	endPos := l.tryGetSourcePosition(fileName, core.TextPos(fileRange.End()))
+	debug.Assert(endPos.FileName == startPos.FileName, "start and end should be in same file")
+	newRange := core.NewTextRange(startPos.Pos, endPos.Pos)
+	lspRange := l.createLspRangeFromRange(newRange, l.getScript(startPos.FileName))
+	return lsproto.Location{
+		Uri:   FileNameToDocumentURI(startPos.FileName),
+		Range: *lspRange,
 	}
-}
-
-func (l *LanguageService) getMappedPosition() {
-	// !!! HERE
 }
 
 type script struct {
@@ -39,45 +40,41 @@ func (s *script) Text() string {
 	return s.text
 }
 
-func (l *LanguageService) tryGetSourceLSPPosition(
-	genFileName string,
-	position *lsproto.Position,
-) (*lsproto.DocumentUri, *lsproto.Position) {
-	genText, ok := l.ReadFile(genFileName)
+func (l *LanguageService) getScript(fileName string) *script {
+	text, ok := l.readFile(fileName)
 	if !ok {
-		return nil, nil // That shouldn't happen
+		return nil
 	}
-	genPos := l.converters.LineAndCharacterToPosition(&script{fileName: genFileName, text: genText}, *position)
-	documentPos := l.tryGetSourcePosition(genFileName, genPos)
-	if documentPos == nil {
-		return nil, nil
-	}
-	documentURI := FileNameToDocumentURI(documentPos.FileName)
-	sourceText, ok := l.ReadFile(documentPos.FileName)
-	if !ok {
-		return nil, nil
-	}
-	sourcePos := l.converters.PositionToLineAndCharacter(
-		&script{fileName: documentPos.FileName, text: sourceText},
-		core.TextPos(documentPos.Pos),
-	)
-	return &documentURI, &sourcePos
+	return &script{fileName: fileName, text: text}
 }
 
 func (l *LanguageService) tryGetSourcePosition(
 	fileName string,
-	genPosition core.TextPos,
+	position core.TextPos,
+) *sourcemap.DocumentPosition {
+	newPos := l.tryGetSourcePositionWorker(fileName, position)
+	if newPos != nil {
+		if !l.fileExists(newPos.FileName) {
+			return nil
+		}
+	}
+	return newPos
+}
+
+func (l *LanguageService) tryGetSourcePositionWorker(
+	fileName string,
+	position core.TextPos,
 ) *sourcemap.DocumentPosition {
 	if !tspath.IsDeclarationFileName(fileName) {
 		return nil
 	}
 
 	positionMapper := l.GetDocumentPositionMapper(fileName)
-	documentPos := positionMapper.GetSourcePosition(&sourcemap.DocumentPosition{FileName: fileName, Pos: int(genPosition)})
+	documentPos := positionMapper.GetSourcePosition(&sourcemap.DocumentPosition{FileName: fileName, Pos: int(position)})
 	if documentPos == nil {
 		return nil
 	}
-	if newPos := l.tryGetSourcePosition(documentPos.FileName, core.TextPos(documentPos.Pos)); newPos != nil {
+	if newPos := l.tryGetSourcePositionWorker(documentPos.FileName, core.TextPos(documentPos.Pos)); newPos != nil {
 		return newPos
 	}
 	return documentPos

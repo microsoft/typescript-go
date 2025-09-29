@@ -10,23 +10,26 @@ import (
 type LanguageService struct {
 	host                      Host
 	converters                *Converters
-	documentPositionMappers   map[string]sourcemap.DocumentPositionMapper // !!! TODO: needs sync?
+	documentPositionMappers   map[string]*sourcemap.DocumentPositionMapper
 	useCaseSensitiveFileNames bool
 	readFile                  func(path string) (contents string, ok bool)
+	fileExists                func(path string) bool
 }
 
 func NewLanguageService(
 	host Host,
 	converters *Converters,
 	readFile func(path string) (contents string, ok bool),
+	fileExists func(path string) bool,
 	useCaseSensitiveFileNames bool,
 ) *LanguageService {
 	return &LanguageService{
 		host:                      host,
 		converters:                converters,
 		readFile:                  readFile,
+		fileExists:                fileExists,
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
-		documentPositionMappers:   map[string]sourcemap.DocumentPositionMapper{},
+		documentPositionMappers:   map[string]*sourcemap.DocumentPositionMapper{},
 	}
 }
 
@@ -49,7 +52,7 @@ func (l *LanguageService) getProgramAndFile(documentURI lsproto.DocumentUri) (*c
 	return program, file
 }
 
-func (l *LanguageService) GetDocumentPositionMapper(fileName string) sourcemap.DocumentPositionMapper {
+func (l *LanguageService) GetDocumentPositionMapper(fileName string) *sourcemap.DocumentPositionMapper {
 	d, ok := l.documentPositionMappers[fileName]
 	if !ok {
 		d = sourcemap.GetDocumentPositionMapper(l, fileName)

@@ -19,12 +19,6 @@ type Host interface {
 	ReadFile(fileName string) (string, bool)
 }
 
-// Maps source positions to generated positions and vice versa.
-type DocumentPositionMapper interface {
-	GetSourcePosition(*DocumentPosition) *DocumentPosition
-	GetGeneratedPosition(*DocumentPosition) *DocumentPosition
-}
-
 // Similar to `Mapping`, but position-based.
 type MappedPosition struct {
 	generatedPosition int
@@ -43,7 +37,8 @@ func (m *MappedPosition) isSourceMappedPosition() bool {
 
 type SourceMappedPosition = MappedPosition
 
-type documentPositionMapper struct {
+// Maps source positions to generated positions and vice versa.
+type DocumentPositionMapper struct {
 	useCaseSensitiveFileNames bool
 
 	sourceFileAbsolutePaths   []string
@@ -54,11 +49,11 @@ type documentPositionMapper struct {
 	sourceMappings    map[SourceIndex][]*SourceMappedPosition
 }
 
-func createDocumentPositionMapper(host Host, sourceMap *RawSourceMap, mapPath string) DocumentPositionMapper {
+func createDocumentPositionMapper(host Host, sourceMap *RawSourceMap, mapPath string) *DocumentPositionMapper {
 	mapDirectory := tspath.GetDirectoryPath(mapPath)
 	var sourceRoot string
 	if sourceMap.SourceRoot != "" {
-		tspath.GetNormalizedAbsolutePath(sourceMap.SourceRoot, mapDirectory)
+		sourceRoot = tspath.GetNormalizedAbsolutePath(sourceMap.SourceRoot, mapDirectory)
 	} else {
 		sourceRoot = mapDirectory
 	}
@@ -83,14 +78,26 @@ func createDocumentPositionMapper(host Host, sourceMap *RawSourceMap, mapPath st
 		generatedPosition := -1
 		lineInfo := host.GetLineInfo(generatedAbsoluteFilePath)
 		if lineInfo != nil {
-			generatedPosition = scanner.ComputePositionOfLineAndCharacter(lineInfo.lineStarts, mapping.GeneratedLine, mapping.GeneratedCharacter)
+			generatedPosition = scanner.ComputePositionOfLineAndCharacterEx(
+				lineInfo.lineStarts,
+				mapping.GeneratedLine,
+				mapping.GeneratedCharacter,
+				&lineInfo.text,
+				true, /*allowEdits*/
+			)
 		}
 
 		sourcePosition := -1
 		if mapping.IsSourceMapping() {
 			lineInfo := host.GetLineInfo(sourceFileAbsolutePaths[mapping.SourceIndex])
 			if lineInfo != nil {
-				pos := scanner.ComputePositionOfLineAndCharacter(lineInfo.lineStarts, mapping.SourceLine, mapping.SourceCharacter)
+				pos := scanner.ComputePositionOfLineAndCharacterEx(
+					lineInfo.lineStarts,
+					mapping.SourceLine,
+					mapping.SourceCharacter,
+					&lineInfo.text,
+					true, /*allowEdits*/
+				)
 				sourcePosition = pos
 			}
 		}
@@ -144,7 +151,7 @@ func createDocumentPositionMapper(host Host, sourceMap *RawSourceMap, mapPath st
 			a.sourcePosition == b.sourcePosition
 	})
 
-	return &documentPositionMapper{
+	return &DocumentPositionMapper{
 		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
 		sourceFileAbsolutePaths:   sourceFileAbsolutePaths,
 		sourceToSourceIndexMap:    sourceToSourceIndexMap,
@@ -159,7 +166,7 @@ type DocumentPosition struct {
 	Pos      int
 }
 
-func (d *documentPositionMapper) GetSourcePosition(loc *DocumentPosition) *DocumentPosition {
+func (d *DocumentPositionMapper) GetSourcePosition(loc *DocumentPosition) *DocumentPosition {
 	if d == nil {
 		return nil
 	}
@@ -187,7 +194,7 @@ func (d *documentPositionMapper) GetSourcePosition(loc *DocumentPosition) *Docum
 	}
 }
 
-func (d *documentPositionMapper) GetGeneratedPosition(loc *DocumentPosition) *DocumentPosition {
+func (d *DocumentPositionMapper) GetGeneratedPosition(loc *DocumentPosition) *DocumentPosition {
 	if d == nil {
 		return nil
 	}
@@ -219,7 +226,7 @@ func (d *documentPositionMapper) GetGeneratedPosition(loc *DocumentPosition) *Do
 	}
 }
 
-func GetDocumentPositionMapper(host Host, generatedFileName string) DocumentPositionMapper {
+func GetDocumentPositionMapper(host Host, generatedFileName string) *DocumentPositionMapper {
 	mapFileName := tryGetSourceMappingURL(host, generatedFileName)
 	if mapFileName != "" {
 		if base64Object, matched := tryParseBase46Url(mapFileName); matched {
@@ -247,7 +254,7 @@ func GetDocumentPositionMapper(host Host, generatedFileName string) DocumentPosi
 	return nil
 }
 
-func convertDocumentToSourceMapper(host Host, contents string, mapFileName string) DocumentPositionMapper {
+func convertDocumentToSourceMapper(host Host, contents string, mapFileName string) *DocumentPositionMapper {
 	sourceMap := tryParseRawSourceMap(contents)
 	if sourceMap == nil || len(sourceMap.Sources) == 0 || sourceMap.File == "" || sourceMap.Mappings == "" {
 		// invalid map
