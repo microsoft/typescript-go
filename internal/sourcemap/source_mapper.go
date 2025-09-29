@@ -229,7 +229,7 @@ func (d *DocumentPositionMapper) GetGeneratedPosition(loc *DocumentPosition) *Do
 func GetDocumentPositionMapper(host Host, generatedFileName string) *DocumentPositionMapper {
 	mapFileName := tryGetSourceMappingURL(host, generatedFileName)
 	if mapFileName != "" {
-		if base64Object, matched := tryParseBase46Url(mapFileName); matched {
+		if base64Object, matched := tryParseBase64Url(mapFileName); matched {
 			if base64Object != "" {
 				if decoded, err := base64.StdEncoding.DecodeString(base64Object); err == nil {
 					return convertDocumentToSourceMapper(host, string(decoded), generatedFileName)
@@ -288,7 +288,7 @@ func tryGetSourceMappingURL(host Host, fileName string) string {
 
 // Originally: /^data:(?:application\/json;charset=[uU][tT][fF]-8;base64,([A-Za-z0-9+/=]+)$)?/
 // Should have been /^data:(?:application\/json;(?:charset=[uU][tT][fF]-8;)?base64,([A-Za-z0-9+/=]+)$)?/
-func tryParseBase46Url(url string) (parseableUrl string, isBase64Url bool) {
+func tryParseBase64Url(url string) (parseableUrl string, isBase64Url bool) {
 	var found bool
 	if url, found = strings.CutPrefix(url, `data:`); !found {
 		return "", false
