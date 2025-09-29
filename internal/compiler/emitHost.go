@@ -103,10 +103,22 @@ func (host *emitHost) GetSourceFileFromReference(origin *ast.SourceFile, ref *as
 	return host.program.GetSourceFileFromReference(origin, ref)
 }
 
-func (host *emitHost) Options() *core.CompilerOptions { return host.program.Options() }
-func (host *emitHost) SourceFiles() []*ast.SourceFile { return host.program.SourceFiles() }
-func (host *emitHost) GetCurrentDirectory() string    { return host.program.GetCurrentDirectory() }
-func (host *emitHost) CommonSourceDirectory() string  { return host.program.CommonSourceDirectory() }
+func (host *emitHost) Options() *core.CompilerOptions {
+	return host.program.Options() 
+}
+
+func (host *emitHost) SourceFiles() []*ast.SourceFile {
+	return host.program.SourceFiles()
+}
+
+func (host *emitHost) GetCurrentDirectory() string    {
+	return host.program.GetCurrentDirectory()
+}
+
+func (host *emitHost) CommonSourceDirectory() string  {
+	return host.program.CommonSourceDirectory()
+}
+
 func (host *emitHost) UseCaseSensitiveFileNames() bool {
 	return host.program.UseCaseSensitiveFileNames()
 }
