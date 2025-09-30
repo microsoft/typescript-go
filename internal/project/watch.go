@@ -80,18 +80,17 @@ func (w *WatchedFiles[T]) Watchers() (WatcherID, []*lsproto.FileSystemWatcher) {
 		ignored := result.ignored
 		// ignored is only used for logging and doesn't affect watcher identity
 		w.ignored = ignored
-		newWatchers := core.Map(globs, func(glob string) *lsproto.FileSystemWatcher {
-			return &lsproto.FileSystemWatcher{
-				GlobPattern: lsproto.PatternOrRelativePattern{
-					Pattern: &glob,
-				},
-				Kind: &w.watchKind,
-			}
-		})
-		if !slices.EqualFunc(w.watchers, newWatchers, func(a, b *lsproto.FileSystemWatcher) bool {
-			return *a.GlobPattern.Pattern == *b.GlobPattern.Pattern
+		if !slices.EqualFunc(w.watchers, globs, func(a *lsproto.FileSystemWatcher, b string) bool {
+			return *a.GlobPattern.Pattern == b
 		}) {
-			w.watchers = newWatchers
+			w.watchers = core.Map(globs, func(glob string) *lsproto.FileSystemWatcher {
+				return &lsproto.FileSystemWatcher{
+					GlobPattern: lsproto.PatternOrRelativePattern{
+						Pattern: &glob,
+					},
+					Kind: &w.watchKind,
+				}
+			})
 			w.id = watcherID.Add(1)
 		}
 	})
@@ -134,6 +133,7 @@ func (w *WatchedFiles[T]) Clone(input T) *WatchedFiles[T] {
 		name:                w.name,
 		watchKind:           w.watchKind,
 		computeGlobPatterns: w.computeGlobPatterns,
+		watchers:            w.watchers,
 		input:               input,
 		parsedGlobs:         w.parsedGlobs,
 	}
@@ -303,5 +303,5 @@ func getNonRootFileGlobs(workspaceDir string, sourceFiles []*ast.SourceFile, roo
 }
 
 func getRecursiveGlobPattern(directory string) string {
-	return fmt.Sprintf("%s/%s", directory, "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json}")
+	return fmt.Sprintf("%s/%s", tspath.RemoveTrailingDirectorySeparator(directory), "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json}")
 }

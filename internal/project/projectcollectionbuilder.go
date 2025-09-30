@@ -535,7 +535,7 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 				// For composite projects, we can get an early negative result.
 				// !!! what about declaration files in node_modules? wouldn't it be better to
 				//     check project inclusion if the project is already loaded?
-				if !config.MatchesFileName(fileName) {
+				if _, ok := config.FileNamesByPath()[path]; !ok {
 					node.logger.Log("Project does not contain file (by composite config inclusion)")
 					return false, false
 				}
