@@ -170,27 +170,25 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 	var externalDirectories []string
 	var includeWorkspace bool
 	var includeTsconfigDir bool
-	canWatchWorkspace := canWatchDirectoryOrFile(tspath.GetPathComponents(c.sessionOptions.CurrentDirectory, ""))
 	tsconfigDir := tspath.GetDirectoryPath(fileName)
-	canWatchTsconfigDir := canWatchDirectoryOrFile(tspath.GetPathComponents(tsconfigDir, ""))
 	wildcardDirectories := entry.commandLine.WildcardDirectories()
 	comparePathsOptions := tspath.ComparePathsOptions{
 		CurrentDirectory:          c.sessionOptions.CurrentDirectory,
 		UseCaseSensitiveFileNames: c.FS().UseCaseSensitiveFileNames(),
 	}
 	for dir := range wildcardDirectories {
-		if canWatchWorkspace && tspath.ContainsPath(c.sessionOptions.CurrentDirectory, dir, comparePathsOptions) {
+		if tspath.ContainsPath(c.sessionOptions.CurrentDirectory, dir, comparePathsOptions) {
 			includeWorkspace = true
-		} else if canWatchTsconfigDir && tspath.ContainsPath(tsconfigDir, dir, comparePathsOptions) {
+		} else if tspath.ContainsPath(tsconfigDir, dir, comparePathsOptions) {
 			includeTsconfigDir = true
 		} else {
 			externalDirectories = append(externalDirectories, dir)
 		}
 	}
 	for _, fileName := range entry.commandLine.LiteralFileNames() {
-		if canWatchWorkspace && tspath.ContainsPath(c.sessionOptions.CurrentDirectory, fileName, comparePathsOptions) {
+		if tspath.ContainsPath(c.sessionOptions.CurrentDirectory, fileName, comparePathsOptions) {
 			includeWorkspace = true
-		} else if canWatchTsconfigDir && tspath.ContainsPath(tsconfigDir, fileName, comparePathsOptions) {
+		} else if tspath.ContainsPath(tsconfigDir, fileName, comparePathsOptions) {
 			includeTsconfigDir = true
 		} else {
 			externalDirectories = append(externalDirectories, tspath.GetDirectoryPath(fileName))
@@ -210,7 +208,7 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 		globs = append(globs, fileName)
 	}
 	if len(externalDirectories) > 0 {
-		commonParents, ignoredExternalDirs := tspath.GetCommonParents(externalDirectories, minWatchLocationDepth, getPathComponentsForWatching, comparePathsOptions)
+		commonParents, ignoredExternalDirs := tspath.GetCommonParents(externalDirectories, minWatchLocationDepth, comparePathsOptions)
 		for _, parent := range commonParents {
 			globs = append(globs, getRecursiveGlobPattern(parent))
 		}

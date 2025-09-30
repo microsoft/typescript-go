@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"maps"
 	"slices"
-	"strings"
 	"sync"
 	"sync/atomic"
 
@@ -141,10 +140,8 @@ func (w *WatchedFiles[T]) Clone(input T) *WatchedFiles[T] {
 }
 
 func createResolutionLookupGlobMapper(workspaceDirectory string, currentDirectory string, useCaseSensitiveFileNames bool) func(data map[tspath.Path]string) patternsAndIgnored {
-	isWorkspaceWatchable := canWatchDirectoryOrFile(tspath.GetPathComponents(workspaceDirectory, ""))
 	rootPath := tspath.ToPath(currentDirectory, "", useCaseSensitiveFileNames)
 	rootPathComponents := tspath.GetPathComponents(string(rootPath), "")
-	isRootWatchable := canWatchDirectoryOrFile(rootPathComponents)
 	comparePathsOptions := tspath.ComparePathsOptions{
 		CurrentDirectory:          currentDirectory,
 		UseCaseSensitiveFileNames: useCaseSensitiveFileNames,
@@ -164,10 +161,10 @@ func createResolutionLookupGlobMapper(workspaceDirectory string, currentDirector
 				continue
 			}
 
-			if isWorkspaceWatchable && tspath.ContainsPath(workspaceDirectory, fileName, comparePathsOptions) {
+			if tspath.ContainsPath(workspaceDirectory, fileName, comparePathsOptions) {
 				includeWorkspace = true
 				continue
-			} else if isRootWatchable && tspath.ContainsPath(rootPathComponents[0], fileName, comparePathsOptions) {
+			} else if tspath.ContainsPath(rootPathComponents[0], fileName, comparePathsOptions) {
 				includeRoot = true
 				continue
 			} else {
@@ -186,7 +183,7 @@ func createResolutionLookupGlobMapper(workspaceDirectory string, currentDirector
 			globs = append(globs, getRecursiveGlobPattern(currentDirectory))
 		}
 		if len(externalDirectories) > 0 {
-			externalDirectoryParents, ignoredExternalDirs := tspath.GetCommonParents(slices.Collect(maps.Values(externalDirectories)), minWatchLocationDepth, getPathComponentsForWatching, comparePathsOptions)
+			externalDirectoryParents, ignoredExternalDirs := tspath.GetCommonParents(slices.Collect(maps.Values(externalDirectories)), minWatchLocationDepth, comparePathsOptions)
 			slices.Sort(externalDirectoryParents)
 			ignored = ignoredExternalDirs
 			for _, dir := range externalDirectoryParents {
@@ -201,13 +198,6 @@ func createResolutionLookupGlobMapper(workspaceDirectory string, currentDirector
 	}
 }
 
-func getPathComponentsForWatching(path string, currentDirectory string) []string {
-	components := tspath.GetPathComponents(path, currentDirectory)
-	rootLength := perceivedOsRootLengthForWatching(components)
-	newRoot := tspath.CombinePaths(components[0], components[1:rootLength]...)
-	return append([]string{newRoot}, components[rootLength:]...)
-}
-
 func getTypingsLocationsGlobs(
 	typingsFiles []string,
 	typingsLocation string,
@@ -217,7 +207,6 @@ func getTypingsLocationsGlobs(
 ) patternsAndIgnored {
 	var includeTypingsLocation, includeWorkspace bool
 	externalDirectories := make(map[tspath.Path]string)
-	isWorkspaceWatchable := canWatchDirectoryOrFile(tspath.GetPathComponents(workspaceDirectory, ""))
 	globs := make(map[tspath.Path]string)
 	comparePathsOptions := tspath.ComparePathsOptions{
 		CurrentDirectory:          currentDirectory,
@@ -226,14 +215,14 @@ func getTypingsLocationsGlobs(
 	for _, file := range typingsFiles {
 		if tspath.ContainsPath(typingsLocation, file, comparePathsOptions) {
 			includeTypingsLocation = true
-		} else if !isWorkspaceWatchable || !tspath.ContainsPath(workspaceDirectory, file, comparePathsOptions) {
+		} else if !tspath.ContainsPath(workspaceDirectory, file, comparePathsOptions) {
 			directory := tspath.GetDirectoryPath(file)
 			externalDirectories[tspath.ToPath(directory, currentDirectory, useCaseSensitiveFileNames)] = directory
 		} else {
 			includeWorkspace = true
 		}
 	}
-	externalDirectoryParents, ignored := tspath.GetCommonParents(slices.Collect(maps.Values(externalDirectories)), minWatchLocationDepth, getPathComponentsForWatching, comparePathsOptions)
+	externalDirectoryParents, ignored := tspath.GetCommonParents(slices.Collect(maps.Values(externalDirectories)), minWatchLocationDepth, comparePathsOptions)
 	slices.Sort(externalDirectoryParents)
 	if includeWorkspace {
 		globs[tspath.ToPath(workspaceDirectory, currentDirectory, useCaseSensitiveFileNames)] = getRecursiveGlobPattern(workspaceDirectory)
@@ -248,54 +237,6 @@ func getTypingsLocationsGlobs(
 		patterns: slices.Collect(maps.Values(globs)),
 		ignored:  ignored,
 	}
-}
-
-func perceivedOsRootLengthForWatching(pathComponents []string) int {
-	length := len(pathComponents)
-	// Ignore "/", "c:/"
-	if length <= 1 {
-		return 1
-	}
-	indexAfterOsRoot := 1
-	firstComponent := pathComponents[0]
-	isDosStyle := len(firstComponent) >= 2 && tspath.IsVolumeCharacter(firstComponent[0]) && firstComponent[1] == ':'
-	if firstComponent != "/" && !isDosStyle && isDosStyleNextPart(pathComponents[1]) {
-		// ignore "//vda1cs4850/c$/folderAtRoot"
-		if length == 2 {
-			return 2
-		}
-		indexAfterOsRoot = 2
-		isDosStyle = true
-	}
-
-	afterOsRoot := pathComponents[indexAfterOsRoot]
-	if isDosStyle && !strings.EqualFold(afterOsRoot, "users") {
-		// Paths like c:/notUsers
-		return indexAfterOsRoot
-	}
-
-	if strings.EqualFold(afterOsRoot, "workspaces") {
-		// Paths like: /workspaces as codespaces hoist the repos in /workspaces so we have to exempt these from "2" level from root rule
-		return indexAfterOsRoot + 1
-	}
-
-	// Paths like: c:/users/username or /home/username
-	return indexAfterOsRoot + 2
-}
-
-func canWatchDirectoryOrFile(pathComponents []string) bool {
-	length := len(pathComponents)
-	// Ignore "/", "c:/"
-	// ignore "/user", "c:/users" or "c:/folderAtRoot"
-	if length < minWatchLocationDepth {
-		return false
-	}
-	perceivedOsRootLength := perceivedOsRootLengthForWatching(pathComponents)
-	return (length - perceivedOsRootLength) >= minWatchLocationDepth
-}
-
-func isDosStyleNextPart(part string) bool {
-	return len(part) == 2 && tspath.IsVolumeCharacter(part[0]) && part[1] == '$'
 }
 
 func ptrTo[T any](v T) *T {
@@ -334,11 +275,10 @@ func getNonRootFileGlobs(workspaceDir string, sourceFiles []*ast.SourceFile, roo
 	var globs []string
 	var includeWorkspace bool
 	var ignored map[string]struct{}
-	canWatchWorkspace := canWatchDirectoryOrFile(tspath.GetPathComponents(workspaceDir, ""))
 	externalDirectories := make([]string, 0, max(0, len(sourceFiles)-len(rootFiles)))
 	for _, sourceFile := range sourceFiles {
 		if _, ok := rootFiles[sourceFile.Path()]; !ok {
-			if canWatchWorkspace && tspath.ContainsPath(workspaceDir, sourceFile.FileName(), comparePathsOptions) {
+			if tspath.ContainsPath(workspaceDir, sourceFile.FileName(), comparePathsOptions) {
 				includeWorkspace = true
 				continue
 			}
@@ -350,7 +290,7 @@ func getNonRootFileGlobs(workspaceDir string, sourceFiles []*ast.SourceFile, roo
 		globs = append(globs, getRecursiveGlobPattern(workspaceDir))
 	}
 	if len(externalDirectories) > 0 {
-		commonParents, ignoredDirs := tspath.GetCommonParents(externalDirectories, minWatchLocationDepth, getPathComponentsForWatching, comparePathsOptions)
+		commonParents, ignoredDirs := tspath.GetCommonParents(externalDirectories, minWatchLocationDepth, comparePathsOptions)
 		globs = append(globs, core.Map(commonParents, func(dir string) string {
 			return getRecursiveGlobPattern(dir)
 		})...)

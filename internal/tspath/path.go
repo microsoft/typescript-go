@@ -1036,7 +1036,6 @@ func SplitVolumePath(path string) (volume string, rest string, ok bool) {
 func GetCommonParents(
 	paths []string,
 	minComponents int,
-	getPathComponents func(path string, currentDirectory string) []string,
 	options ComparePathsOptions,
 ) (parents []string, ignored map[string]struct{}) {
 	if minComponents < 1 {
@@ -1046,7 +1045,7 @@ func GetCommonParents(
 		return nil, nil
 	}
 	if len(paths) == 1 {
-		if len(reducePathComponents(getPathComponents(paths[0], options.CurrentDirectory))) < minComponents {
+		if len(reducePathComponents(GetPathComponents(paths[0], options.CurrentDirectory))) < minComponents {
 			return nil, map[string]struct{}{paths[0]: {}}
 		}
 		return paths, nil
@@ -1055,7 +1054,7 @@ func GetCommonParents(
 	ignored = make(map[string]struct{})
 	pathComponents := make([][]string, 0, len(paths))
 	for _, path := range paths {
-		components := reducePathComponents(getPathComponents(path, options.CurrentDirectory))
+		components := reducePathComponents(GetPathComponents(path, options.CurrentDirectory))
 		if len(components) < minComponents {
 			ignored[path] = struct{}{}
 		} else {
