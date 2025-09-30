@@ -1167,23 +1167,21 @@ func (c *Checker) mapTypesByKeyProperty(types []*Type, keyPropertyName string) m
 	for _, t := range types {
 		if t.flags&(TypeFlagsObject|TypeFlagsIntersection|TypeFlagsInstantiableNonPrimitive) != 0 {
 			discriminant := c.getTypeOfPropertyOfType(t, keyPropertyName)
-			if discriminant != nil {
-				if !isLiteralType(discriminant) {
-					return nil
+			if discriminant == nil || !isLiteralType(discriminant) {
+				return nil
+			}
+			duplicate := false
+			for _, d := range discriminant.Distributed() {
+				key := c.getRegularTypeOfLiteralType(d)
+				if existing := typesByKey[key]; existing == nil {
+					typesByKey[key] = t
+				} else if existing != c.unknownType {
+					typesByKey[key] = c.unknownType
+					duplicate = true
 				}
-				duplicate := false
-				for _, d := range discriminant.Distributed() {
-					key := c.getRegularTypeOfLiteralType(d)
-					if existing := typesByKey[key]; existing == nil {
-						typesByKey[key] = t
-					} else if existing != c.unknownType {
-						typesByKey[key] = c.unknownType
-						duplicate = true
-					}
-				}
-				if !duplicate {
-					count++
-				}
+			}
+			if !duplicate {
+				count++
 			}
 		}
 	}
@@ -4156,13 +4154,10 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 	if isObjectLiteralType(target) {
 		for _, sourceProp := range excludeProperties(r.c.getPropertiesOfType(source), excludedProperties) {
 			if r.c.getPropertyOfObjectType(target, sourceProp.Name) == nil {
-				sourceType := r.c.getTypeOfSymbol(sourceProp)
-				if sourceType.flags&TypeFlagsUndefined == 0 {
-					if reportErrors {
-						r.reportError(diagnostics.Property_0_does_not_exist_on_type_1, r.c.symbolToString(sourceProp), r.c.TypeToString(target))
-					}
-					return TernaryFalse
+				if reportErrors {
+					r.reportError(diagnostics.Property_0_does_not_exist_on_type_1, r.c.symbolToString(sourceProp), r.c.TypeToString(target))
 				}
+				return TernaryFalse
 			}
 		}
 	}
