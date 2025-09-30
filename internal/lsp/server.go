@@ -861,7 +861,7 @@ func (s *Server) handleExecuteCommand(ctx context.Context, params *lsproto.Execu
 
 func (s *Server) handleOrganizeImportsCommand(ctx context.Context, params *lsproto.ExecuteCommandParams) (lsproto.ExecuteCommandResponse, error) {
 	if params.Arguments == nil || len(*params.Arguments) == 0 {
-		return lsproto.LSPAnyOrNull{}, fmt.Errorf("organizeImports command requires a document URI argument")
+		return lsproto.LSPAnyOrNull{}, errors.New("organizeImports command requires a document URI argument")
 	}
 
 	var documentURI lsproto.DocumentUri
@@ -869,7 +869,8 @@ func (s *Server) handleOrganizeImportsCommand(ctx context.Context, params *lspro
 	if err != nil {
 		return lsproto.LSPAnyOrNull{}, fmt.Errorf("failed to marshal argument: %w", err)
 	}
-	if err := json.Unmarshal(argBytes, &documentURI); err != nil {
+	err = json.Unmarshal(argBytes, &documentURI)
+	if err != nil {
 		return lsproto.LSPAnyOrNull{}, fmt.Errorf("invalid document URI: %w", err)
 	}
 
