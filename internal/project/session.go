@@ -460,7 +460,7 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 		}
 	}
 	if oldWatcher != nil {
-		if _, watchers := oldWatcher.Watchers(); len(watchers) > 0 {
+		if _, watchers, _ := oldWatcher.Watchers(); len(watchers) > 0 {
 			var removedWatchers []WatcherID
 			for _, watcher := range watchers {
 				key := toFileSystemWatcherKey(watcher)

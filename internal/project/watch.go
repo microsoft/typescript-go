@@ -104,7 +104,7 @@ func (w *WatchedFiles[T]) ID() WatcherID {
 	if w == nil {
 		return ""
 	}
-	id, _ := w.Watchers()
+	id, _, _ := w.Watchers()
 	return id
 }
 
