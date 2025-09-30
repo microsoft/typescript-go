@@ -104,18 +104,18 @@ func (host *emitHost) GetSourceFileFromReference(origin *ast.SourceFile, ref *as
 }
 
 func (host *emitHost) Options() *core.CompilerOptions {
-	return host.program.Options() 
+	return host.program.Options()
 }
 
 func (host *emitHost) SourceFiles() []*ast.SourceFile {
 	return host.program.SourceFiles()
 }
 
-func (host *emitHost) GetCurrentDirectory() string    {
+func (host *emitHost) GetCurrentDirectory() string {
 	return host.program.GetCurrentDirectory()
 }
 
-func (host *emitHost) CommonSourceDirectory() string  {
+func (host *emitHost) CommonSourceDirectory() string {
 	return host.program.CommonSourceDirectory()
 }
 
