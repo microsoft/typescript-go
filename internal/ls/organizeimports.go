@@ -100,8 +100,7 @@ func compareModuleSpecifiersWorker(m1, m2 *ast.Expression, comparer func(a, b st
 	if name1 != "" && name2 != "" {
 		isRelative1 := tspath.IsExternalModuleNameRelative(name1)
 		isRelative2 := tspath.IsExternalModuleNameRelative(name2)
-		// compareBooleans returns -1 if first is true and second is false
-		// We want relative (true) to come after non-relative (false), so reverse the comparison
+		// Reverse parameter order because we want absolute imports (isRelative=false) before relative imports (isRelative=true)
 		if comparison := compareBooleans(isRelative2, isRelative1); comparison != 0 {
 			return comparison
 		}
