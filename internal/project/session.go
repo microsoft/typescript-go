@@ -421,7 +421,7 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 	session.watchesMu.Lock()
 	defer session.watchesMu.Unlock()
 	if newWatcher != nil {
-		if id, watchers := newWatcher.Watchers(); len(watchers) > 0 {
+		if id, watchers, ignored := newWatcher.Watchers(); len(watchers) > 0 {
 			var newWatchers collections.OrderedMap[WatcherID, *lsproto.FileSystemWatcher]
 			for i, watcher := range watchers {
 				key := toFileSystemWatcherKey(watcher)
@@ -449,10 +449,10 @@ func updateWatch[T any](ctx context.Context, session *Session, logger logging.Lo
 					logger.Log("")
 				}
 			}
-			if len(newWatcher.ignored) > 0 {
-				logger.Logf("%d paths ineligible for watching", len(newWatcher.ignored))
+			if len(ignored) > 0 {
+				logger.Logf("%d paths ineligible for watching", len(ignored))
 				if logger.IsVerbose() {
-					for path := range newWatcher.ignored {
+					for path := range ignored {
 						logger.Log("\t" + path)
 					}
 				}

@@ -54,6 +54,7 @@ type WatchedFiles[T any] struct {
 	watchKind           lsproto.WatchKind
 	computeGlobPatterns func(input T) patternsAndIgnored
 
+	mu                  sync.RWMutex
 	input               T
 	computeWatchersOnce sync.Once
 	watchers            []*lsproto.FileSystemWatcher
@@ -70,8 +71,10 @@ func NewWatchedFiles[T any](name string, watchKind lsproto.WatchKind, computeGlo
 	}
 }
 
-func (w *WatchedFiles[T]) Watchers() (WatcherID, []*lsproto.FileSystemWatcher) {
+func (w *WatchedFiles[T]) Watchers() (WatcherID, []*lsproto.FileSystemWatcher, map[string]struct{}) {
 	w.computeWatchersOnce.Do(func() {
+		w.mu.Lock()
+		defer w.mu.Unlock()
 		result := w.computeGlobPatterns(w.input)
 		globs := result.patterns
 		ignored := result.ignored
@@ -91,7 +94,10 @@ func (w *WatchedFiles[T]) Watchers() (WatcherID, []*lsproto.FileSystemWatcher) {
 			w.id = watcherID.Add(1)
 		}
 	})
-	return WatcherID(fmt.Sprintf("%s watcher %d", w.name, w.id)), w.watchers
+
+	w.mu.RLock()
+	defer w.mu.RUnlock()
+	return WatcherID(fmt.Sprintf("%s watcher %d", w.name, w.id)), w.watchers, w.ignored
 }
 
 func (w *WatchedFiles[T]) ID() WatcherID {
@@ -111,6 +117,8 @@ func (w *WatchedFiles[T]) WatchKind() lsproto.WatchKind {
 }
 
 func (w *WatchedFiles[T]) Clone(input T) *WatchedFiles[T] {
+	w.mu.RLock()
+	defer w.mu.RUnlock()
 	return &WatchedFiles[T]{
 		name:                w.name,
 		watchKind:           w.watchKind,
