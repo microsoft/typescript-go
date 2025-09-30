@@ -8,33 +8,26 @@ import (
 )
 
 type LanguageService struct {
-	host                      Host
-	converters                *Converters
-	documentPositionMappers   map[string]*sourcemap.DocumentPositionMapper
-	useCaseSensitiveFileNames bool
-	readFile                  func(path string) (contents string, ok bool)
-	fileExists                func(path string) bool
+	host                    Host
+	program                 *compiler.Program
+	converters              *Converters
+	documentPositionMappers map[string]*sourcemap.DocumentPositionMapper
 }
 
 func NewLanguageService(
+	program *compiler.Program,
 	host Host,
-	converters *Converters,
-	readFile func(path string) (contents string, ok bool),
-	fileExists func(path string) bool,
-	useCaseSensitiveFileNames bool,
 ) *LanguageService {
 	return &LanguageService{
-		host:                      host,
-		converters:                converters,
-		readFile:                  readFile,
-		fileExists:                fileExists,
-		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
-		documentPositionMappers:   map[string]*sourcemap.DocumentPositionMapper{},
+		host:                    host,
+		program:                 program,
+		converters:              host.Converters(),
+		documentPositionMappers: map[string]*sourcemap.DocumentPositionMapper{},
 	}
 }
 
 func (l *LanguageService) GetProgram() *compiler.Program {
-	return l.host.GetProgram()
+	return l.program
 }
 
 func (l *LanguageService) tryGetProgramAndFile(fileName string) (*compiler.Program, *ast.SourceFile) {
@@ -62,11 +55,11 @@ func (l *LanguageService) GetDocumentPositionMapper(fileName string) *sourcemap.
 }
 
 func (l *LanguageService) ReadFile(fileName string) (string, bool) {
-	return l.readFile(fileName)
+	return l.host.ReadFile(fileName)
 }
 
 func (l *LanguageService) UseCaseSensitiveFileNames() bool {
-	return l.useCaseSensitiveFileNames
+	return l.host.UseCaseSensitiveFileNames()
 }
 
 func (l *LanguageService) GetLineInfo(fileName string) *sourcemap.LineInfo {

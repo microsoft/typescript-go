@@ -41,7 +41,7 @@ func (s *script) Text() string {
 }
 
 func (l *LanguageService) getScript(fileName string) *script {
-	text, ok := l.readFile(fileName)
+	text, ok := l.host.ReadFile(fileName)
 	if !ok {
 		return nil
 	}
@@ -54,7 +54,7 @@ func (l *LanguageService) tryGetSourcePosition(
 ) *sourcemap.DocumentPosition {
 	newPos := l.tryGetSourcePositionWorker(fileName, position)
 	if newPos != nil {
-		if !l.fileExists(newPos.FileName) {
+		if !l.host.FileExists(newPos.FileName) {
 			return nil
 		}
 	}

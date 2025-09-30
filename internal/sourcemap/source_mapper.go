@@ -286,8 +286,7 @@ func tryGetSourceMappingURL(host Host, fileName string) string {
 	return TryGetSourceMappingURL(lineInfo)
 }
 
-// Originally: /^data:(?:application\/json;charset=[uU][tT][fF]-8;base64,([A-Za-z0-9+/=]+)$)?/
-// Should have been /^data:(?:application\/json;(?:charset=[uU][tT][fF]-8;)?base64,([A-Za-z0-9+/=]+)$)?/
+// Equivalent to /^data:(?:application\/json;(?:charset=[uU][tT][fF]-8;)?base64,([A-Za-z0-9+/=]+)$)?/
 func tryParseBase64Url(url string) (parseableUrl string, isBase64Url bool) {
 	var found bool
 	if url, found = strings.CutPrefix(url, `data:`); !found {
