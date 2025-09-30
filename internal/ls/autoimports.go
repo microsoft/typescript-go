@@ -128,7 +128,7 @@ func (e *exportInfoMap) add(
 			modulePath := string(moduleFile.Path())
 			if topLevelNodeModulesIndex >= 0 && topLevelNodeModulesIndex <= len(modulePath) && strings.HasPrefix(string(importingFile), modulePath[0:topLevelNodeModulesIndex]) {
 				// Bounds check for node modules path slice
-				if topLevelPackageNameIndex+1 >= 0 && topLevelPackageNameIndex+1 <= len(fileName) {
+				if topLevelPackageNameIndex >= 0 && topLevelPackageNameIndex+1 <= len(fileName) {
 					nodeModulesPath := fileName[0 : topLevelPackageNameIndex+1]
 					if prevDeepestNodeModulesPath, ok := e.packages[packageName]; ok {
 						prevDeepestNodeModulesIndex := strings.Index(prevDeepestNodeModulesPath, "/node_modules/")
