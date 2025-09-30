@@ -387,11 +387,8 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 					}
 					logger.Logf("Checking if any of %d created files match root files for config %s", len(createdFiles), entry.Key())
 					for _, fileName := range createdFiles {
-						parsedGlobs := config.commandLine.WildcardDirectoryGlobs()
-						for _, g := range parsedGlobs {
-							if g.Match(fileName) {
-								return true
-							}
+						if config.commandLine.PossiblyMatchesFileName(fileName) {
+							return true
 						}
 					}
 					return false

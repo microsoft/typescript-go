@@ -10,7 +10,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/glob"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -55,13 +54,11 @@ type WatchedFiles[T any] struct {
 	watchKind           lsproto.WatchKind
 	computeGlobPatterns func(input T) patternsAndIgnored
 
-	input                  T
-	computeWatchersOnce    sync.Once
-	watchers               []*lsproto.FileSystemWatcher
-	ignored                map[string]struct{}
-	computeParsedGlobsOnce sync.Once
-	parsedGlobs            []*glob.Glob
-	id                     uint64
+	input               T
+	computeWatchersOnce sync.Once
+	watchers            []*lsproto.FileSystemWatcher
+	ignored             map[string]struct{}
+	id                  uint64
 }
 
 func NewWatchedFiles[T any](name string, watchKind lsproto.WatchKind, computeGlobPatterns func(input T) patternsAndIgnored) *WatchedFiles[T] {
@@ -113,21 +110,6 @@ func (w *WatchedFiles[T]) WatchKind() lsproto.WatchKind {
 	return w.watchKind
 }
 
-func (w *WatchedFiles[T]) ParsedGlobs() []*glob.Glob {
-	w.computeParsedGlobsOnce.Do(func() {
-		_, watchers := w.Watchers()
-		w.parsedGlobs = make([]*glob.Glob, 0, len(watchers))
-		for _, watcher := range watchers {
-			if g, err := glob.Parse(*watcher.GlobPattern.Pattern); err == nil {
-				w.parsedGlobs = append(w.parsedGlobs, g)
-			} else {
-				panic("failed to parse glob pattern: " + *watcher.GlobPattern.Pattern)
-			}
-		}
-	})
-	return w.parsedGlobs
-}
-
 func (w *WatchedFiles[T]) Clone(input T) *WatchedFiles[T] {
 	return &WatchedFiles[T]{
 		name:                w.name,
@@ -135,7 +117,6 @@ func (w *WatchedFiles[T]) Clone(input T) *WatchedFiles[T] {
 		computeGlobPatterns: w.computeGlobPatterns,
 		watchers:            w.watchers,
 		input:               input,
-		parsedGlobs:         w.parsedGlobs,
 	}
 }
 
