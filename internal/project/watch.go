@@ -121,8 +121,6 @@ func (w *WatchedFiles[T]) Clone(input T) *WatchedFiles[T] {
 }
 
 func createResolutionLookupGlobMapper(workspaceDirectory string, currentDirectory string, useCaseSensitiveFileNames bool) func(data map[tspath.Path]string) patternsAndIgnored {
-	rootPath := tspath.ToPath(currentDirectory, "", useCaseSensitiveFileNames)
-	rootPathComponents := tspath.GetPathComponents(string(rootPath), "")
 	comparePathsOptions := tspath.ComparePathsOptions{
 		CurrentDirectory:          currentDirectory,
 		UseCaseSensitiveFileNames: useCaseSensitiveFileNames,
@@ -145,7 +143,7 @@ func createResolutionLookupGlobMapper(workspaceDirectory string, currentDirector
 			if tspath.ContainsPath(workspaceDirectory, fileName, comparePathsOptions) {
 				includeWorkspace = true
 				continue
-			} else if tspath.ContainsPath(rootPathComponents[0], fileName, comparePathsOptions) {
+			} else if tspath.ContainsPath(currentDirectory, fileName, comparePathsOptions) {
 				includeRoot = true
 				continue
 			} else {
