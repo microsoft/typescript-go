@@ -731,7 +731,7 @@ func TestGetCommonParents(t *testing.T) {
 		t.Parallel()
 		paths := []string{"/a/b/c/d", "/a/b/c/e", "/a/b/f/g", "/x/y"}
 		got, ignored := GetCommonParents(paths, 4, opts)
-		assert.DeepEqual(t, ignored, []string{"/x/y"})
+		assert.DeepEqual(t, ignored, map[string]struct{}{"/x/y": {}})
 		expected := []string{"/a/b/c", "/a/b/f/g"}
 		assert.DeepEqual(t, got, expected)
 	})
