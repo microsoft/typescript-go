@@ -73,16 +73,16 @@ func TestCompareImportsOrRequireStatements_ModuleSpecifiers(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			
+
 			imports1 := parseImports(t, tt.import1)
 			imports2 := parseImports(t, tt.import2)
-			
+
 			assert.Assert(t, len(imports1) == 1, "Expected 1 import in import1")
 			assert.Assert(t, len(imports2) == 1, "Expected 1 import in import2")
-			
+
 			comparer := strings.Compare
 			result := ls.CompareImportsOrRequireStatements(imports1[0], imports2[0], comparer)
-			
+
 			if tt.expected == 0 {
 				assert.Equal(t, 0, result, "Expected imports to be equal")
 			} else if tt.expected < 0 {
@@ -132,16 +132,16 @@ func TestCompareImportsOrRequireStatements_ImportKind(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			
+
 			imports1 := parseImports(t, tt.import1)
 			imports2 := parseImports(t, tt.import2)
-			
+
 			assert.Assert(t, len(imports1) == 1, "Expected 1 import in import1")
 			assert.Assert(t, len(imports2) == 1, "Expected 1 import in import2")
-			
+
 			comparer := strings.Compare
 			result := ls.CompareImportsOrRequireStatements(imports1[0], imports2[0], comparer)
-			
+
 			if tt.expected < 0 {
 				assert.Assert(t, result < 0, "Expected import1 < import2, got %d", result)
 			} else if tt.expected > 0 {
@@ -175,7 +175,7 @@ import * as namespace from "namespace-lib";
 	}
 
 	index := ls.GetImportDeclarationInsertIndex(imports, newImports[0], comparer)
-	assert.Assert(t, index >= 0 && index <= len(imports), 
+	assert.Assert(t, index >= 0 && index <= len(imports),
 		"Insert index %d out of range [0, %d]", index, len(imports))
 }
 
@@ -222,7 +222,7 @@ func TestCompareImports_RelativeVsAbsolute(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			
+
 			var imports []*ast.Statement
 			for _, imp := range tt.imports {
 				parsed := parseImports(t, imp)
@@ -233,7 +233,7 @@ func TestCompareImports_RelativeVsAbsolute(t *testing.T) {
 			comparer := func(a, b *ast.Statement) int {
 				return ls.CompareImportsOrRequireStatements(a, b, strings.Compare)
 			}
-			
+
 			for i := 0; i < len(imports); i++ {
 				for j := i + 1; j < len(imports); j++ {
 					if comparer(imports[i], imports[j]) > 0 {
@@ -245,14 +245,14 @@ func TestCompareImports_RelativeVsAbsolute(t *testing.T) {
 			for i, want := range tt.want {
 				wantImports := parseImports(t, want)
 				assert.Assert(t, len(wantImports) == 1, "Expected 1 wanted import")
-				
+
 				gotSpec := ls.GetModuleSpecifierExpression(imports[i])
 				wantSpec := ls.GetModuleSpecifierExpression(wantImports[0])
-				
+
 				if gotSpec != nil && wantSpec != nil {
 					assert.Assert(t, ast.IsStringLiteral(gotSpec), "Expected string literal in got")
 					assert.Assert(t, ast.IsStringLiteral(wantSpec), "Expected string literal in want")
-					
+
 					gotText := gotSpec.AsStringLiteral().Text
 					wantText := wantSpec.AsStringLiteral().Text
 					assert.Equal(t, wantText, gotText, "Import at position %d doesn't match", i)
@@ -315,10 +315,10 @@ func TestGetModuleSpecifierExpression(t *testing.T) {
 
 			stmt := sourceFile.Statements.Nodes[0]
 			expr := ls.GetModuleSpecifierExpression(stmt)
-			
+
 			assert.Assert(t, expr != nil, "Expected non-nil module specifier")
 			assert.Assert(t, ast.IsStringLiteral(expr), "Expected string literal")
-			
+
 			gotText := expr.AsStringLiteral().Text
 			assert.Equal(t, tt.expected, gotText)
 		})

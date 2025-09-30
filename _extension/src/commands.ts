@@ -77,10 +77,11 @@ async function sortImports(client: Client): Promise<void> {
         // Execute the sort imports command on the server via LSP
         await client.executeCommand(
             "typescript-go.organizeImports",
-            document.uri.toString()
+            document.uri.toString(),
         );
         vscode.window.showInformationMessage("Imports sorted successfully");
-    } catch (error) {
+    }
+    catch (error) {
         vscode.window.showErrorMessage(`Failed to sort imports: ${error}`);
     }
 }
