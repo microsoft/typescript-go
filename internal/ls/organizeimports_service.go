@@ -154,16 +154,18 @@ func (l *LanguageService) hasBlankLineBeforeStatement(file *ast.SourceFile, stmt
 	pos := stmt.Pos()
 	newlineCount := 0
 
-	for i := pos; i < stmt.End() && i < len(text); i++ {
+	i := pos - 1
+	for i >= 0 {
 		ch := text[i]
 		if ch == '\n' {
 			newlineCount++
-		} else if ch == '\r' {
-			if i+1 < len(text) && text[i+1] == '\n' {
-				i++
+			i--
+			if i >= 0 && text[i] == '\r' {
+				i--
 			}
-			newlineCount++
-		} else if ch != ' ' && ch != '\t' {
+		} else if ch == ' ' || ch == '\t' || ch == '\r' {
+			i--
+		} else {
 			break
 		}
 	}
