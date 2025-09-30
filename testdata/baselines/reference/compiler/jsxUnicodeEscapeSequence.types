@@ -1,15 +1,17 @@
 //// [tests/cases/compiler/jsxUnicodeEscapeSequence.tsx] ////
 
 === jsxUnicodeEscapeSequence.tsx ===
+/// <reference path="react16.d.ts" />
+
 export const InlineUnicodeChar = () => {
->InlineUnicodeChar : () => any
->() => {    // This should work correctly - inline character with other content    return <div><span>Warning: ⚠ Error</span></div>;} : () => any
+>InlineUnicodeChar : () => JSX.Element
+>() => {    // This should work correctly - inline character with other content    return <div><span>Warning: ⚠ Error</span></div>;} : () => JSX.Element
 
     // This should work correctly - inline character with other content
     return <div><span>Warning: ⚠ Error</span></div>;
-><div><span>Warning: ⚠ Error</span></div> : any
+><div><span>Warning: ⚠ Error</span></div> : JSX.Element
 >div : any
-><span>Warning: ⚠ Error</span> : any
+><span>Warning: ⚠ Error</span> : JSX.Element
 >span : any
 >span : any
 >div : any
@@ -17,15 +19,15 @@ export const InlineUnicodeChar = () => {
 };
 
 export const StandaloneUnicodeChar = () => {
->StandaloneUnicodeChar : () => any
->() => {    // This should reproduce the issue - unicode character on its own line    return (<div><span>⚠</span>        ⚠    </div>);} : () => any
+>StandaloneUnicodeChar : () => JSX.Element
+>() => {    // This should reproduce the issue - unicode character on its own line    return (<div><span>⚠</span>        ⚠    </div>);} : () => JSX.Element
 
     // This should reproduce the issue - unicode character on its own line
     return (<div><span>⚠</span>
->(<div><span>⚠</span>        ⚠    </div>) : any
-><div><span>⚠</span>        ⚠    </div> : any
+>(<div><span>⚠</span>        ⚠    </div>) : JSX.Element
+><div><span>⚠</span>        ⚠    </div> : JSX.Element
 >div : any
-><span>⚠</span> : any
+><span>⚠</span> : JSX.Element
 >span : any
 >span : any
 
@@ -36,13 +38,13 @@ export const StandaloneUnicodeChar = () => {
 };
 
 export const MultipleUnicodeChars = () => {
->MultipleUnicodeChars : () => any
->() => {    // Test multiple unicode characters    return (<div>        ⚠        ⛔        🚨    </div>);} : () => any
+>MultipleUnicodeChars : () => JSX.Element
+>() => {    // Test multiple unicode characters    return (<div>        ⚠        ⛔        🚨    </div>);} : () => JSX.Element
 
     // Test multiple unicode characters
     return (<div>
->(<div>        ⚠        ⛔        🚨    </div>) : any
-><div>        ⚠        ⛔        🚨    </div> : any
+>(<div>        ⚠        ⛔        🚨    </div>) : JSX.Element
+><div>        ⚠        ⛔        🚨    </div> : JSX.Element
 >div : any
 
         ⚠
@@ -52,3 +54,4 @@ export const MultipleUnicodeChars = () => {
 >div : any
 
 };
+

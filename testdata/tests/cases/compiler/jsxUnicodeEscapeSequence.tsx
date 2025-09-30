@@ -9,6 +9,8 @@
 
 // @filename: jsxUnicodeEscapeSequence.tsx
 
+/// <reference path="/.lib/react16.d.ts" />
+
 export const InlineUnicodeChar = () => {
     // This should work correctly - inline character with other content
     return <div><span>Warning: ⚠ Error</span></div>;
