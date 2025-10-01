@@ -43,21 +43,3 @@
 
 
  //// [privateFieldsInClassExpressionDeclaration.d.ts]
- export declare const ClassExpression: {
-     new (): {
--        "__#private@#context": number;
--        "__#private@#method"(): number;
-+        "\uFFFD#124907@#context": number;
-+        "\uFFFD#124907@#method"(): number;
-         value: number;
-     };
- };
- export declare const ClassExpressionStatic: {
-     new (): {
--        "__#private@#instancePrivate": boolean;
-+        "\uFFFD#124908@#instancePrivate": boolean;
-         exposed: string;
-     };
--    "__#private@#staticPrivate": string;
-+    "\uFFFD#124908@#staticPrivate": string;
- };
