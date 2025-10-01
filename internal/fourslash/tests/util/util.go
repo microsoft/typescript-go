@@ -238,6 +238,11 @@ var CompletionGlobalVars = []fourslash.CompletionsExpectedItem{
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
+		Label:    "CSPViolationReportBody",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
 		Label:    "CSS",
 		Kind:     PtrTo(lsproto.CompletionItemKindModule),
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
@@ -609,6 +614,21 @@ var CompletionGlobalVars = []fourslash.CompletionsExpectedItem{
 	},
 	&lsproto.CompletionItem{
 		Label:    "ConvolverNode",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieChangeEvent",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieStore",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieStoreManager",
 		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
@@ -1463,6 +1483,11 @@ var CompletionGlobalVars = []fourslash.CompletionsExpectedItem{
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
+		Label:    "ImageCapture",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
 		Label:    "ImageData",
 		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
@@ -1789,6 +1814,11 @@ var CompletionGlobalVars = []fourslash.CompletionsExpectedItem{
 	},
 	&lsproto.CompletionItem{
 		Label:    "Navigator",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "NavigatorLogin",
 		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
@@ -3403,6 +3433,11 @@ var CompletionGlobalVars = []fourslash.CompletionsExpectedItem{
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
+		Label:    "cookieStore",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
 		Label:    "console",
 		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
@@ -3619,6 +3654,11 @@ var CompletionGlobalVars = []fourslash.CompletionsExpectedItem{
 	},
 	&lsproto.CompletionItem{
 		Label:    "onbeforeinput",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "onbeforematch",
 		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
@@ -3973,6 +4013,11 @@ var CompletionGlobalVars = []fourslash.CompletionsExpectedItem{
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
+		Label:    "onpointerrawupdate",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
 		Label:    "onpointermove",
 		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
@@ -4169,6 +4214,11 @@ var CompletionGlobalVars = []fourslash.CompletionsExpectedItem{
 	},
 	&lsproto.CompletionItem{
 		Label:    "origin",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "originAgentCluster",
 		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
@@ -4410,7 +4460,7 @@ var CompletionGlobalVars = []fourslash.CompletionsExpectedItem{
 	&lsproto.CompletionItem{
 		Label:    "HTMLDocument",
 		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
-		SortText: PtrTo(string(ls.DeprecateSortText(ls.SortTextGlobalsOrKeywords))),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
 		Label:    "HTMLFontElement",
@@ -5591,6 +5641,11 @@ var CompletionGlobalTypeDecls = []fourslash.CompletionsExpectedItem{
 	&lsproto.CompletionItem{
 		Label:    "COSEAlgorithmIdentifier",
 		Kind:     PtrTo(lsproto.CompletionItemKindClass),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CSPViolationReportBody",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
@@ -8216,6 +8271,11 @@ var CompletionGlobalTypeDecls = []fourslash.CompletionsExpectedItem{
 	&lsproto.CompletionItem{
 		Label:    "ImageBufferSource",
 		Kind:     PtrTo(lsproto.CompletionItemKindClass),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "ImageCapture",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
@@ -12996,7 +13056,7 @@ var CompletionGlobalTypeDecls = []fourslash.CompletionsExpectedItem{
 	&lsproto.CompletionItem{
 		Label:    "HTMLDocument",
 		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
-		SortText: PtrTo(string(ls.DeprecateSortText(ls.SortTextGlobalsOrKeywords))),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
 		Label:    "HTMLFontElement",
@@ -13082,6 +13142,166 @@ var CompletionGlobalTypeDecls = []fourslash.CompletionsExpectedItem{
 		Label:    "TextEvent",
 		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
 		SortText: PtrTo(string(ls.DeprecateSortText(ls.SortTextGlobalsOrKeywords))),
+	},
+	&lsproto.CompletionItem{
+		Label:    "AuthenticationExtensionsLargeBlobInputs",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "AuthenticationExtensionsLargeBlobInputsJSON",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "AuthenticationExtensionsLargeBlobOutputs",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "AuthenticationExtensionsPRFInputsJSON",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "AuthenticationExtensionsPRFValuesJSON",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieChangeEvent",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieChangeEventInit",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieInit",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieList",
+		Kind:     PtrTo(lsproto.CompletionItemKindClass),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieListItem",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieSameSite",
+		Kind:     PtrTo(lsproto.CompletionItemKindClass),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieStore",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieStoreDeleteOptions",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieStoreEventMap",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieStoreGetOptions",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieStoreManager",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "FillLightMode",
+		Kind:     PtrTo(lsproto.CompletionItemKindClass),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "GetComposedRangesOptions",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "ImageDataArray",
+		Kind:     PtrTo(lsproto.CompletionItemKindClass),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "ImportNodeOptions",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "KeySystemTrackConfiguration",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "LoginStatus",
+		Kind:     PtrTo(lsproto.CompletionItemKindClass),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "MediaCapabilitiesKeySystemConfiguration",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "MediaSettingsRange",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "NavigatorLogin",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "PhotoCapabilities",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "PhotoSettings",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "RedEyeReduction",
+		Kind:     PtrTo(lsproto.CompletionItemKindClass),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "RTCEncodedFrameMetadata",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "RTCLocalIceCandidateInit",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "StartViewTransitionOptions",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "WebTransportSendOptions",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
 }
 
