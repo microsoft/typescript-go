@@ -30,6 +30,7 @@ func (l *LanguageService) ProvideInlayHint(
 	checker, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
 	inlayHintState := &inlayHintState{
+		ctx:             ctx,
 		span:            l.converters.FromLSPRange(file, params.Range),
 		preferences:     preferences,
 		quotePreference: quotePreference,
