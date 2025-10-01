@@ -625,26 +625,6 @@ func (f *FourslashTest) verifyCompletionsItems(t *testing.T, prefix string, actu
 			t.Fatal(prefix + "Expected exact completion list but also specified 'unsorted'.")
 		}
 		if len(actual) != len(expected.Exact) {
-			actualNames := core.Map(actual, func(item *lsproto.CompletionItem) string {
-				return item.Label
-			})
-
-			expectedNames := core.Map(expected.Exact, func(item CompletionsExpectedItem) string {
-				return getExpectedLabel(t, item)
-			})
-
-			for _, name := range actualNames {
-				if !slices.Contains(expectedNames, name) {
-					t.Logf("%sUnexpected completion item: %s", prefix, name)
-				}
-			}
-
-			for _, name := range expectedNames {
-				if !slices.Contains(actualNames, name) {
-					t.Logf("%sMissing expected completion item: %s", prefix, name)
-				}
-			}
-
 			t.Fatalf(prefix+"Expected %d exact completion items but got %d: %s", len(expected.Exact), len(actual), cmp.Diff(actual, expected.Exact))
 		}
 		if len(actual) > 0 {
