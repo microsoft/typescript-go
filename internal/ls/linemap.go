@@ -12,7 +12,7 @@ import (
 type LSPLineStarts []core.TextPos
 
 type LSPLineMap struct {
-	LineStarts []core.TextPos
+	LineStarts LSPLineStarts
 	AsciiOnly  bool // TODO(jakebailey): collect ascii-only info per line
 }
 
