@@ -164,6 +164,10 @@ func (e *exportInfoMap) add(
 		names = getNamesForExportedSymbol(namedSymbol, ch, core.ScriptTargetNone)
 	}
 
+	// Bounds check to prevent slice bounds out of range panic
+	if len(names) == 0 {
+		return
+	}
 	symbolName := names[0]
 	if symbolNameMatch != nil && !symbolNameMatch(symbolName) {
 		return
@@ -674,12 +678,23 @@ func (l *LanguageService) createPackageJsonImportFilter(fromFile *ast.SourceFile
 	sourceFileCache := map[*ast.SourceFile]packageJsonFilterResult{}
 
 	getNodeModuleRootSpecifier := func(fullSpecifier string) string {
-		components := tspath.GetPathComponents(modulespecifiers.GetPackageNameFromTypesPackageName(fullSpecifier), "")[1:]
+		components := tspath.GetPathComponents(modulespecifiers.GetPackageNameFromTypesPackageName(fullSpecifier), "")
+		// Bounds check to prevent slice bounds out of range panic
+		if len(components) < 2 {
+			return ""
+		}
+		components = components[1:]
 		// Scoped packages
-		if strings.HasPrefix(components[0], "@") {
+		if len(components) > 0 && strings.HasPrefix(components[0], "@") {
+			if len(components) < 2 {
+				return components[0]
+			}
 			return fmt.Sprintf("%s/%s", components[0], components[1])
 		}
-		return components[0]
+		if len(components) > 0 {
+			return components[0]
+		}
+		return ""
 	}
 
 	moduleSpecifierIsCoveredByPackageJson := func(specifier string) bool {
