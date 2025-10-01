@@ -1921,7 +1921,7 @@ func (c *Checker) checkGrammarProperty(node *ast.Node /*Union[PropertyDeclaratio
 		if c.languageVersion < core.ScriptTargetES2015 && ast.IsPrivateIdentifier(propertyName) {
 			return c.grammarErrorOnNode(propertyName, diagnostics.Private_identifiers_are_only_available_when_targeting_ECMAScript_2015_and_higher)
 		}
-		if c.languageVersion < core.ScriptTargetES2015 && ast.IsAutoAccessorPropertyDeclaration(node) {
+		if c.languageVersion < core.ScriptTargetES2015 && ast.IsAutoAccessorPropertyDeclaration(node) && node.Flags&ast.NodeFlagsAmbient == 0 {
 			return c.grammarErrorOnNode(propertyName, diagnostics.Properties_with_the_accessor_modifier_are_only_available_when_targeting_ECMAScript_2015_and_higher)
 		}
 		if ast.IsAutoAccessorPropertyDeclaration(node) && c.checkGrammarForInvalidQuestionMark(node.AsPropertyDeclaration().PostfixToken, diagnostics.An_accessor_property_cannot_be_declared_optional) {
