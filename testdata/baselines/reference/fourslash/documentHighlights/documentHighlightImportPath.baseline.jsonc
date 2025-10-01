@@ -1,3 +1,0 @@
-// === documentHighlights ===
-// === /b.ts ===
-// import { foo } from "/*HIGHLIGHTS*/my-module";
