@@ -47,7 +47,7 @@ async function updateUseTsgoSetting(enable: boolean): Promise<void> {
     if (useTsgo) {
         target = useTsgo.workspaceFolderValue !== undefined ? vscode.ConfigurationTarget.WorkspaceFolder :
             useTsgo.workspaceValue !== undefined ? vscode.ConfigurationTarget.Workspace :
-                useTsgo.globalValue !== undefined ? vscode.ConfigurationTarget.Global : undefined;
+            useTsgo.globalValue !== undefined ? vscode.ConfigurationTarget.Global : undefined;
     }
     // Update the setting and restart the extension host (needed to change the state of the built-in TS extension)
     await tsConfig.update("experimental.useTsgo", enable, target);

@@ -6,8 +6,8 @@ import {
     registerLanguageCommands,
 } from "./commands";
 import { setupStatusBar } from "./statusBar";
-import { setupVersionStatusItem } from "./versionStatusItem";
 import { needsExtHostRestartOnChange } from "./util";
+import { setupVersionStatusItem } from "./versionStatusItem";
 
 export async function activate(context: vscode.ExtensionContext) {
     await vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", false);
