@@ -5,7 +5,6 @@ import "github.com/microsoft/typescript-go/internal/sourcemap"
 type Host interface {
 	UseCaseSensitiveFileNames() bool
 	ReadFile(path string) (contents string, ok bool)
-	FileExists(path string) bool
 	Converters() *Converters
 	GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo
 }

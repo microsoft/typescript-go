@@ -54,7 +54,7 @@ func (l *LanguageService) tryGetSourcePosition(
 ) *sourcemap.DocumentPosition {
 	newPos := l.tryGetSourcePositionWorker(fileName, position)
 	if newPos != nil {
-		if !l.host.FileExists(newPos.FileName) {
+		if _, ok := l.ReadFile(newPos.FileName); !ok { // File doesn't exist
 			return nil
 		}
 	}

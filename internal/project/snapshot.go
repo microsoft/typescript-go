@@ -109,10 +109,6 @@ func (s *Snapshot) ReadFile(fileName string) (string, bool) {
 	return handle.Content(), true
 }
 
-func (s *Snapshot) FileExists(fileName string) bool {
-	return s.fs.fs.FileExists(fileName)
-}
-
 type APISnapshotRequest struct {
 	OpenProjects   *collections.Set[string]
 	CloseProjects  *collections.Set[tspath.Path]
