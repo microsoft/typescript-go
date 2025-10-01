@@ -1,11 +1,11 @@
-error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'ModuleKind(102)'.
+error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'Node20'.
 index.cts(5,33): error TS2339: Property 'name' does not exist on type 'string'.
 index.ts(1,34): error TS2856: Import attributes are not allowed on statements that compile to CommonJS 'require' calls.
 index.ts(3,38): error TS2856: Import attributes are not allowed on statements that compile to CommonJS 'require' calls.
 index.ts(5,33): error TS2339: Property 'name' does not exist on type 'string'.
 
 
-!!! error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'ModuleKind(102)'.
+!!! error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'Node20'.
 ==== index.ts (3 errors) ====
     import pkg from "./package.json" with { type: "json" };
                                      ~~~~~~~~~~~~~~~~~~~~~

@@ -1,4 +1,4 @@
-error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'ModuleKind(102)'.
+error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'Node20'.
 error TS2468: Cannot find global value 'Promise'.
 index.cjs(51,1): error TS8002: 'import ... =' can only be used in TypeScript files.
 index.cjs(52,1): error TS8002: 'import ... =' can only be used in TypeScript files.
@@ -68,7 +68,7 @@ index.mjs(83,14): error TS2712: A dynamic import call in ES5 requires the 'Promi
 index.mjs(84,14): error TS2712: A dynamic import call in ES5 requires the 'Promise' constructor.  Make sure you have a declaration for the 'Promise' constructor or include 'ES2015' in your '--lib' option.
 
 
-!!! error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'ModuleKind(102)'.
+!!! error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'Node20'.
 !!! error TS2468: Cannot find global value 'Promise'.
 ==== subfolder/index.js (0 errors) ====
     // cjs format file

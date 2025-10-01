@@ -1,7 +1,7 @@
 --- old.nodeModulesImportAttributes(module=node20).errors.txt
 +++ new.nodeModulesImportAttributes(module=node20).errors.txt
 @@= skipped -0, +0 lines =@@
-+error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'ModuleKind(102)'.
++error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'Node20'.
 +error TS2468: Cannot find global value 'Promise'.
 +index.ts(1,35): error TS2856: Import attributes are not allowed on statements that compile to CommonJS 'require' calls.
  otherc.cts(1,35): error TS2856: Import attributes are not allowed on statements that compile to CommonJS 'require' calls.
@@ -12,7 +12,7 @@
 +otherc.cts(2,40): error TS1324: Dynamic imports only support a second argument when the '--module' option is set to 'esnext', 'node16', 'node18', 'node20', 'nodenext', or 'preserve'.
 +
 +
-+!!! error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'ModuleKind(102)'.
++!!! error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'Node20'.
 +!!! error TS2468: Cannot find global value 'Promise'.
 +==== index.ts (1 errors) ====
      import json from "./package.json" with { type: "json" };

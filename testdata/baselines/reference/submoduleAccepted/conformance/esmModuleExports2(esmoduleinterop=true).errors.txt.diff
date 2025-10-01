@@ -1,7 +1,7 @@
 --- old.esmModuleExports2(esmoduleinterop=true).errors.txt
 +++ new.esmModuleExports2(esmoduleinterop=true).errors.txt
 @@= skipped -0, +0 lines =@@
-+error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'ModuleKind(102)'.
++error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'Node20'.
  /importer-cjs.cjs(2,5): error TS2351: This expression is not constructable.
 -  Type 'String' has no construct signatures.
 +  Type 'typeof import("/exporter")' has no construct signatures.
@@ -16,7 +16,7 @@
  /importer-cts.cts(10,10): error TS2614: Module '"./exporter.mjs"' has no exported member 'Oops'. Did you mean to use 'import Oops from "./exporter.mjs"' instead?
 
 
-+!!! error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'ModuleKind(102)'.
++!!! error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'Node20'.
  ==== /importer-cjs.cjs (1 errors) ====
      const Foo = require("./exporter.mjs");
      new Foo();

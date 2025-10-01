@@ -4,10 +4,10 @@
 -node_modules/inner/index.d.ts(2,13): error TS2303: Circular definition of import alias 'cjs'.
 -
 -
-+error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'ModuleKind(102)'.
++error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'Node20'.
 +
 +
-+!!! error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'ModuleKind(102)'.
++!!! error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'Node20'.
  ==== index.js (0 errors) ====
      // esm format file
      import * as cjsi from "inner/cjs/index";

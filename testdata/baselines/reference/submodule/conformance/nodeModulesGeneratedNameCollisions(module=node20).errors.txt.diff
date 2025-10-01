@@ -1,7 +1,7 @@
 --- old.nodeModulesGeneratedNameCollisions(module=node20).errors.txt
 +++ new.nodeModulesGeneratedNameCollisions(module=node20).errors.txt
 @@= skipped -0, +0 lines =@@
-+error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'ModuleKind(102)'.
++error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'Node20'.
 +index.ts(2,10): error TS2441: Duplicate identifier 'require'. Compiler reserves name 'require' in top level scope of a module.
 +index.ts(3,7): error TS2441: Duplicate identifier 'exports'. Compiler reserves name 'exports' in top level scope of a module.
 +index.ts(5,14): error TS1216: Identifier expected. '__esModule' is reserved as an exported marker when transforming ECMAScript modules.
@@ -12,7 +12,7 @@
 
 
 -==== subfolder/index.ts (4 errors) ====
-+!!! error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'ModuleKind(102)'.
++!!! error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'Node20'.
 +==== subfolder/index.ts (3 errors) ====
      // cjs format file
      function require() {}

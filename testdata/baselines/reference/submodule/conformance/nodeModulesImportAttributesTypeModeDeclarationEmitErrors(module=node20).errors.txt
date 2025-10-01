@@ -1,4 +1,4 @@
-error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'ModuleKind(102)'.
+error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'Node20'.
 error TS2468: Cannot find global value 'Promise'.
 /index.ts(2,49): error TS1453: `resolution-mode` should be either `require` or `import`.
 /index.ts(5,76): error TS1453: `resolution-mode` should be either `require` or `import`.
@@ -81,7 +81,7 @@ error TS2468: Cannot find global value 'Promise'.
 /other5.ts(6,62): error TS2694: Namespace '"/node_modules/pkg/require"' has no exported member 'ImportInterface'.
 
 
-!!! error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'ModuleKind(102)'.
+!!! error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'Node20'.
 !!! error TS2468: Cannot find global value 'Promise'.
 ==== /node_modules/pkg/package.json (0 errors) ====
     {

@@ -2,11 +2,11 @@
 +++ new.nodeModulesCjsFormatFileAlwaysHasDefault(module=node20).errors.txt
 @@= skipped -0, +0 lines =@@
 -<no content>
-+error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'ModuleKind(102)'.
++error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'Node20'.
 +index.ts(2,8): error TS1192: Module '"subfolder/index"' has no default export.
 +
 +
-+!!! error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'ModuleKind(102)'.
++!!! error TS5109: Option 'moduleResolution' must be set to 'Node16' (or left unspecified) when option 'module' is set to 'Node20'.
 +==== subfolder/index.ts (0 errors) ====
 +    // cjs format file
 +    export const a = 1;
