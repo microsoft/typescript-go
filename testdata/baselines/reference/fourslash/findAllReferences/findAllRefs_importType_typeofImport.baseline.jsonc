@@ -1,4 +1,0 @@
-// === findAllReferences ===
-// === /b.ts ===
-// /*FIND ALL REFS*/const x: typeof import("./a") = { x: 0 };
-// const y: typeof import("./a") = { x: 0 };
