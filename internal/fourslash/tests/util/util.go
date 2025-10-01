@@ -13258,10 +13258,13 @@ var CompletionClassElementKeywords = []fourslash.CompletionsExpectedItem{
 
 var CompletionClassElementInJSKeywords = getInJSKeywords(CompletionClassElementKeywords)
 
-var CompletionGlobals = sortCompletionItems(append(
-	append(CompletionGlobalVars, CompletionGlobalKeywords...),
-	CompletionGlobalThisItem,
-	CompletionUndefinedVarItem,
+var CompletionGlobals = sortCompletionItems(slices.Concat(
+	CompletionGlobalVars,
+	CompletionGlobalKeywords,
+	[]fourslash.CompletionsExpectedItem{
+		CompletionGlobalThisItem,
+		CompletionUndefinedVarItem,
+	},
 ))
 
 func sortCompletionItems(items []fourslash.CompletionsExpectedItem) []fourslash.CompletionsExpectedItem {
@@ -13313,26 +13316,24 @@ func sortCompletionItems(items []fourslash.CompletionsExpectedItem) []fourslash.
 func CompletionGlobalsPlus(items []fourslash.CompletionsExpectedItem, noLib bool) []fourslash.CompletionsExpectedItem {
 	var all []fourslash.CompletionsExpectedItem
 	if noLib {
-		all = append(
-			append(items, CompletionGlobalThisItem, CompletionUndefinedVarItem),
-			CompletionGlobalKeywords...,
+		all = slices.Concat(
+			items,
+			[]fourslash.CompletionsExpectedItem{CompletionGlobalThisItem, CompletionUndefinedVarItem},
+			CompletionGlobalKeywords,
 		)
 	} else {
-		all = append(items, CompletionGlobals...)
+		all = slices.Concat(items, CompletionGlobals)
 	}
 	return sortCompletionItems(all)
 }
 
 func CompletionGlobalTypesPlus(items []fourslash.CompletionsExpectedItem) []fourslash.CompletionsExpectedItem {
-	return sortCompletionItems(
-		append(
-			append(
-				append(CompletionGlobalTypeDecls, CompletionGlobalThisItem),
-				CompletionTypeKeywords...,
-			),
-			items...,
-		),
-	)
+	return sortCompletionItems(slices.Concat(
+		CompletionGlobalTypeDecls,
+		[]fourslash.CompletionsExpectedItem{CompletionGlobalThisItem},
+		CompletionTypeKeywords,
+		items,
+	))
 }
 
 var CompletionGlobalTypes = CompletionGlobalTypesPlus(nil)
@@ -13364,10 +13365,10 @@ func getInJSKeywords(keywords []fourslash.CompletionsExpectedItem) []fourslash.C
 var CompletionGlobalInJSKeywords = getInJSKeywords(CompletionGlobalKeywords)
 
 func CompletionGlobalsInJSPlus(items []fourslash.CompletionsExpectedItem, noLib bool) []fourslash.CompletionsExpectedItem {
-	var all []fourslash.CompletionsExpectedItem
-	all = append(
-		append(items, CompletionGlobalThisItem, CompletionUndefinedVarItem),
-		CompletionGlobalInJSKeywords...,
+	all := slices.Concat(
+		items,
+		[]fourslash.CompletionsExpectedItem{CompletionGlobalThisItem, CompletionUndefinedVarItem},
+		CompletionGlobalInJSKeywords,
 	)
 	if !noLib {
 		all = append(all, CompletionGlobalVars...)
@@ -13436,35 +13437,37 @@ var CompletionFunctionMembers = []fourslash.CompletionsExpectedItem{
 
 func CompletionFunctionMembersPlus(items []fourslash.CompletionsExpectedItem) []fourslash.CompletionsExpectedItem {
 	return sortCompletionItems(
-		append(
+		slices.Concat(
 			CompletionFunctionMembers,
-			items...,
+			items,
 		),
 	)
 }
 
-var CompletionFunctionMembersWithPrototype = sortCompletionItems(append(
+var CompletionFunctionMembersWithPrototype = sortCompletionItems(slices.Concat(
 	CompletionFunctionMembers,
-	&lsproto.CompletionItem{
-		Label: "prototype",
-		Kind:  PtrTo(lsproto.CompletionItemKindField),
+	[]fourslash.CompletionsExpectedItem{
+		&lsproto.CompletionItem{
+			Label: "prototype",
+			Kind:  PtrTo(lsproto.CompletionItemKindField),
+		},
 	},
 ))
 
 func CompletionFunctionMembersWithPrototypePlus(items []fourslash.CompletionsExpectedItem) []fourslash.CompletionsExpectedItem {
 	return sortCompletionItems(
-		append(
+		slices.Concat(
 			CompletionFunctionMembersWithPrototype,
-			items...,
+			items,
 		),
 	)
 }
 
 func CompletionTypeKeywordsPlus(items []fourslash.CompletionsExpectedItem) []fourslash.CompletionsExpectedItem {
 	return sortCompletionItems(
-		append(
+		slices.Concat(
 			CompletionTypeKeywords,
-			items...,
+			items,
 		),
 	)
 }
