@@ -15,7 +15,7 @@ import (
 
 type Host interface {
 	UseCaseSensitiveFileNames() bool
-	GetLineInfo(fileName string) *LineInfo
+	GetECMALineInfo(fileName string) *ECMALineInfo
 	ReadFile(fileName string) (string, bool)
 }
 
@@ -76,7 +76,7 @@ func createDocumentPositionMapper(host Host, sourceMap *RawSourceMap, mapPath st
 	for mapping := range decoder.Values() {
 		// processMapping()
 		generatedPosition := -1
-		lineInfo := host.GetLineInfo(generatedAbsoluteFilePath)
+		lineInfo := host.GetECMALineInfo(generatedAbsoluteFilePath)
 		if lineInfo != nil {
 			generatedPosition = scanner.ComputePositionOfLineAndCharacterEx(
 				lineInfo.lineStarts,
@@ -89,7 +89,7 @@ func createDocumentPositionMapper(host Host, sourceMap *RawSourceMap, mapPath st
 
 		sourcePosition := -1
 		if mapping.IsSourceMapping() {
-			lineInfo := host.GetLineInfo(sourceFileAbsolutePaths[mapping.SourceIndex])
+			lineInfo := host.GetECMALineInfo(sourceFileAbsolutePaths[mapping.SourceIndex])
 			if lineInfo != nil {
 				pos := scanner.ComputePositionOfLineAndCharacterEx(
 					lineInfo.lineStarts,
@@ -282,7 +282,7 @@ func tryParseRawSourceMap(contents string) *RawSourceMap {
 }
 
 func tryGetSourceMappingURL(host Host, fileName string) string {
-	lineInfo := host.GetLineInfo(fileName)
+	lineInfo := host.GetECMALineInfo(fileName)
 	return TryGetSourceMappingURL(lineInfo)
 }
 

@@ -62,14 +62,6 @@ func (l *LanguageService) UseCaseSensitiveFileNames() bool {
 	return l.host.UseCaseSensitiveFileNames()
 }
 
-func (l *LanguageService) GetLineInfo(fileName string) *sourcemap.LineInfo {
-	text, ok := l.ReadFile(fileName)
-	if !ok {
-		return nil
-	}
-	lineMap := l.converters.getLineMap(fileName)
-	if lineMap == nil {
-		return nil
-	}
-	return sourcemap.CreateLineInfo(text, lineMap.LineStarts)
+func (l *LanguageService) GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo {
+	return l.host.GetECMALineInfo(fileName)
 }
