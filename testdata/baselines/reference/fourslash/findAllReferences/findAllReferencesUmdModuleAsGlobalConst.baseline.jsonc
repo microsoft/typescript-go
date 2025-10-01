@@ -1,0 +1,4 @@
+// === findAllReferences ===
+// === /node_modules/@types/three/index.d.ts ===
+// export * from "./three-core";
+// export as namespace /*FIND ALL REFS*/[|THREE|];

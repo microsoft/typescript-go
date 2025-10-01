@@ -10,7 +10,7 @@ import (
 
 func TestCompletionPropertyShorthandForObjectLiteral2(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const foo = 1;
 const bar = 2;

@@ -1,0 +1,25 @@
+// === findAllReferences ===
+// === /findAllRefsForDefaultExport03.ts ===
+// /*FIND ALL REFS*/function f() {
+//     return 100;
+// }
+// 
+// // --- (line: 5) skipped ---
+
+
+
+// === findAllReferences ===
+// === /findAllRefsForDefaultExport03.ts ===
+// function /*FIND ALL REFS*/[|f|]() {
+//     return 100;
+// }
+// 
+// export default [|f|];
+// 
+// var x: typeof [|f|];
+// 
+// var y = [|f|]();
+// 
+// namespace [|f|] {
+//     var local = 100;
+// }
