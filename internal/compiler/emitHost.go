@@ -74,8 +74,12 @@ func (host *emitHost) GetPackageJsonInfo(pkgJsonPath string) modulespecifiers.Pa
 	return host.program.GetPackageJsonInfo(pkgJsonPath)
 }
 
-func (host *emitHost) GetOutputAndProjectReference(path tspath.Path) *tsoptions.OutputDtsAndProjectReference {
-	return host.program.GetOutputAndProjectReference(path)
+func (host *emitHost) GetSourceOfProjectReferenceIfOutputIncluded(file ast.HasFileName) string {
+	return host.program.GetSourceOfProjectReferenceIfOutputIncluded(file)
+}
+
+func (host *emitHost) GetProjectReferenceFromSource(path tspath.Path) *tsoptions.SourceOutputAndProjectReference {
+	return host.program.GetProjectReferenceFromSource(path)
 }
 
 func (host *emitHost) GetRedirectTargets(path tspath.Path) []string {

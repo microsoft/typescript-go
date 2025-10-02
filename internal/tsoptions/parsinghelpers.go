@@ -156,6 +156,18 @@ func (o *typeAcquisitionParser) UnknownOptionDiagnostic() *diagnostics.Message {
 	return extraKeyDiagnostics("typeAcquisition")
 }
 
+type buildOptionsParser struct {
+	*core.BuildOptions
+}
+
+func (o *buildOptionsParser) ParseOption(key string, value any) []*ast.Diagnostic {
+	return ParseBuildOptions(key, value, o.BuildOptions)
+}
+
+func (o *buildOptionsParser) UnknownOptionDiagnostic() *diagnostics.Message {
+	return extraKeyDiagnostics("buildOptions")
+}
+
 func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOptions) []*ast.Diagnostic {
 	if value == nil {
 		return nil
@@ -391,8 +403,6 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.TsBuildInfoFile = parseString(value)
 	case "typeRoots":
 		allOptions.TypeRoots = parseStringArray(value)
-	case "tscBuild":
-		allOptions.TscBuild = parseTristate(value)
 	case "types":
 		allOptions.Types = parseStringArray(value)
 	case "useDefineForClassFields":
@@ -496,6 +506,32 @@ func ParseTypeAcquisition(key string, value any, allOptions *core.TypeAcquisitio
 	return nil
 }
 
+func ParseBuildOptions(key string, value any, allOptions *core.BuildOptions) []*ast.Diagnostic {
+	if value == nil {
+		return nil
+	}
+	if allOptions == nil {
+		return nil
+	}
+	option := BuildNameMap.Get(key)
+	if option != nil {
+		key = option.Name
+	}
+	switch key {
+	case "clean":
+		allOptions.Clean = parseTristate(value)
+	case "dry":
+		allOptions.Dry = parseTristate(value)
+	case "force":
+		allOptions.Force = parseTristate(value)
+	case "stopBuildOnErrors":
+		allOptions.StopBuildOnErrors = parseTristate(value)
+	case "verbose":
+		allOptions.Verbose = parseTristate(value)
+	}
+	return nil
+}
+
 // mergeCompilerOptions merges the source compiler options into the target compiler options
 // with optional awareness of explicitly set null values in the raw JSON.
 // Fields in the source options will overwrite the corresponding fields in the target options,
@@ -564,17 +600,21 @@ func convertToOptionsWithAbsolutePaths(optionsBase *collections.OrderedMap[strin
 
 func ConvertOptionToAbsolutePath(o string, v any, optionMap CommandLineOptionNameMap, cwd string) (any, bool) {
 	option := optionMap.Get(o)
-	if option == nil || !option.IsFilePath {
+	if option == nil {
 		return nil, false
 	}
 	if option.Kind == "list" {
-		if arr, ok := v.([]string); ok {
-			return core.Map(arr, func(item string) string {
-				return tspath.GetNormalizedAbsolutePath(item, cwd)
-			}), true
+		if option.Elements().IsFilePath {
+			if arr, ok := v.([]string); ok {
+				return core.Map(arr, func(item string) string {
+					return tspath.GetNormalizedAbsolutePath(item, cwd)
+				}), true
+			}
 		}
-	} else {
-		return tspath.GetNormalizedAbsolutePath(v.(string), cwd), true
+	} else if option.IsFilePath {
+		if value, ok := v.(string); ok {
+			return tspath.GetNormalizedAbsolutePath(value, cwd), true
+		}
 	}
 	return nil, false
 }

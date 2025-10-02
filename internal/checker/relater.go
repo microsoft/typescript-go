@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -86,17 +87,13 @@ type ErrorOutputContainer struct {
 
 type ErrorReporter func(message *diagnostics.Message, args ...any)
 
-type RecursionIdKind uint32
-
-const (
-	RecursionIdKindNode RecursionIdKind = iota
-	RecursionIdKindSymbol
-	RecursionIdKindType
-)
-
 type RecursionId struct {
-	kind RecursionIdKind
-	id   uint32
+	value any
+}
+
+// This function exists to constrain the types of values that can be used as recursion IDs.
+func asRecursionId[T *ast.Node | *ast.Symbol | *Type](value T) RecursionId {
+	return RecursionId{value: value}
 }
 
 type Relation struct {
@@ -836,21 +833,21 @@ func getRecursionIdentity(t *Type) RecursionId {
 			// Deferred type references are tracked through their associated AST node. This gives us finer
 			// granularity than using their associated target because each manifest type reference has a
 			// unique AST node.
-			return RecursionId{kind: RecursionIdKindNode, id: uint32(ast.GetNodeId(t.AsTypeReference().node))}
+			return asRecursionId(t.AsTypeReference().node)
 		}
 		if t.symbol != nil && !(t.objectFlags&ObjectFlagsAnonymous != 0 && t.symbol.Flags&ast.SymbolFlagsClass != 0) {
 			// We track object types that have a symbol by that symbol (representing the origin of the type), but
 			// exclude the static side of a class since it shares its symbol with the instance side.
-			return RecursionId{kind: RecursionIdKindSymbol, id: uint32(ast.GetSymbolId(t.symbol))}
+			return asRecursionId(t.symbol)
 		}
 		if isTupleType(t) {
-			return RecursionId{kind: RecursionIdKindType, id: uint32(t.Target().id)}
+			return asRecursionId(t.Target())
 		}
 	}
 	if t.flags&TypeFlagsTypeParameter != 0 && t.symbol != nil {
 		// We use the symbol of the type parameter such that all "fresh" instantiations of that type parameter
 		// have the same recursion identity.
-		return RecursionId{kind: RecursionIdKindSymbol, id: uint32(ast.GetSymbolId(t.symbol))}
+		return asRecursionId(t.symbol)
 	}
 	if t.flags&TypeFlagsIndexedAccess != 0 {
 		// Identity is the leftmost object type in a chain of indexed accesses, eg, in A[P1][P2][P3] it is A.
@@ -858,13 +855,13 @@ func getRecursionIdentity(t *Type) RecursionId {
 		for t.flags&TypeFlagsIndexedAccess != 0 {
 			t = t.AsIndexedAccessType().objectType
 		}
-		return RecursionId{kind: RecursionIdKindType, id: uint32(t.id)}
+		return asRecursionId(t)
 	}
 	if t.flags&TypeFlagsConditional != 0 {
 		// The root object represents the origin of the conditional type
-		return RecursionId{kind: RecursionIdKindNode, id: uint32(ast.GetNodeId(t.AsConditionalType().root.node.AsNode()))}
+		return asRecursionId(t.AsConditionalType().root.node.AsNode())
 	}
-	return RecursionId{kind: RecursionIdKindType, id: uint32(t.id)}
+	return asRecursionId(t)
 }
 
 func (c *Checker) getBestMatchingType(source *Type, target *Type, isRelatedTo func(source *Type, target *Type) Ternary) *Type {
@@ -1170,23 +1167,21 @@ func (c *Checker) mapTypesByKeyProperty(types []*Type, keyPropertyName string) m
 	for _, t := range types {
 		if t.flags&(TypeFlagsObject|TypeFlagsIntersection|TypeFlagsInstantiableNonPrimitive) != 0 {
 			discriminant := c.getTypeOfPropertyOfType(t, keyPropertyName)
-			if discriminant != nil {
-				if !isLiteralType(discriminant) {
-					return nil
+			if discriminant == nil || !isLiteralType(discriminant) {
+				return nil
+			}
+			duplicate := false
+			for _, d := range discriminant.Distributed() {
+				key := c.getRegularTypeOfLiteralType(d)
+				if existing := typesByKey[key]; existing == nil {
+					typesByKey[key] = t
+				} else if existing != c.unknownType {
+					typesByKey[key] = c.unknownType
+					duplicate = true
 				}
-				duplicate := false
-				for _, d := range discriminant.Distributed() {
-					key := c.getRegularTypeOfLiteralType(d)
-					if existing := typesByKey[key]; existing == nil {
-						typesByKey[key] = t
-					} else if existing != c.unknownType {
-						typesByKey[key] = c.unknownType
-						duplicate = true
-					}
-				}
-				if !duplicate {
-					count++
-				}
+			}
+			if !duplicate {
+				count++
 			}
 		}
 	}
@@ -4159,13 +4154,10 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 	if isObjectLiteralType(target) {
 		for _, sourceProp := range excludeProperties(r.c.getPropertiesOfType(source), excludedProperties) {
 			if r.c.getPropertyOfObjectType(target, sourceProp.Name) == nil {
-				sourceType := r.c.getTypeOfSymbol(sourceProp)
-				if sourceType.flags&TypeFlagsUndefined == 0 {
-					if reportErrors {
-						r.reportError(diagnostics.Property_0_does_not_exist_on_type_1, r.c.symbolToString(sourceProp), r.c.TypeToString(target))
-					}
-					return TernaryFalse
+				if reportErrors {
+					r.reportError(diagnostics.Property_0_does_not_exist_on_type_1, r.c.symbolToString(sourceProp), r.c.TypeToString(target))
 				}
+				return TernaryFalse
 			}
 		}
 	}
@@ -4676,7 +4668,7 @@ func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type
 	// to be displayed for use-cases like 'assertNever'.
 	if target.flags&TypeFlagsNever == 0 && isLiteralType(source) && !r.c.typeCouldHaveTopLevelSingletonTypes(target) {
 		generalizedSource = r.c.getBaseTypeOfLiteralType(source)
-		// Debug.assert(!c.isTypeAssignableTo(generalizedSource, target), "generalized source shouldn't be assignable")
+		debug.Assert(!r.c.isTypeAssignableTo(generalizedSource, target), "generalized source shouldn't be assignable")
 		generalizedSourceType = r.c.getTypeNameForErrorDisplay(generalizedSource)
 	}
 	// If `target` is of indexed access type (and `source` it is not), we use the object type of `target` for better error reporting
@@ -4731,16 +4723,16 @@ func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type
 			return
 		}
 	// Suppress if next message is a missing property message for source and target and we're not
-	// reporting on interface implementation
+	// reporting on conversion or interface implementation
 	case diagnostics.Property_0_is_missing_in_type_1_but_required_in_type_2:
-		if !isInterfaceImplementationMessage(message) && r.chainArgsMatch(nil, generalizedSourceType, targetType) {
+		if !isConversionOrInterfaceImplementationMessage(message) && r.chainArgsMatch(nil, generalizedSourceType, targetType) {
 			return
 		}
 	// Suppress if next message is a missing property message for source and target and we're not
-	// reporting on interface implementation
+	// reporting on conversion or interface implementation
 	case diagnostics.Type_0_is_missing_the_following_properties_from_type_1_Colon_2_and_3_more,
 		diagnostics.Type_0_is_missing_the_following_properties_from_type_1_Colon_2:
-		if !isInterfaceImplementationMessage(message) && r.chainArgsMatch(generalizedSourceType, targetType) {
+		if !isConversionOrInterfaceImplementationMessage(message) && r.chainArgsMatch(generalizedSourceType, targetType) {
 			return
 		}
 	}
@@ -4850,9 +4842,10 @@ func getPropertyNameArg(arg any) string {
 	return s
 }
 
-func isInterfaceImplementationMessage(message *diagnostics.Message) bool {
+func isConversionOrInterfaceImplementationMessage(message *diagnostics.Message) bool {
 	return message == diagnostics.Class_0_incorrectly_implements_interface_1 ||
-		message == diagnostics.Class_0_incorrectly_implements_class_1_Did_you_mean_to_extend_1_and_inherit_its_members_as_a_subclass
+		message == diagnostics.Class_0_incorrectly_implements_class_1_Did_you_mean_to_extend_1_and_inherit_its_members_as_a_subclass ||
+		message == diagnostics.Conversion_of_type_0_to_type_1_may_be_a_mistake_because_neither_type_sufficiently_overlaps_with_the_other_If_this_was_intentional_convert_the_expression_to_unknown_first
 }
 
 func chainDepth(chain *ErrorChain) int {

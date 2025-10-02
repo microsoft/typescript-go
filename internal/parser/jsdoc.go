@@ -39,7 +39,7 @@ func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) []*ast.Node {
 	}
 	// Should only be called once per node
 	p.hasDeprecatedTag = false
-	ranges := getJSDocCommentRanges(&p.factory, p.jsdocCommentRangesSpace, node, p.sourceText)
+	ranges := GetJSDocCommentRanges(&p.factory, p.jsdocCommentRangesSpace, node, p.sourceText)
 	p.jsdocCommentRangesSpace = ranges[:0]
 	jsdoc := p.nodeSlicePool.NewSlice(len(ranges))[:0]
 	pos := node.Pos()
@@ -918,7 +918,7 @@ func (p *Parser) parseTypedefTag(start int, tagName *ast.IdentifierNode, indent 
 			if childTypeTag != nil && childTypeTag.TypeExpression != nil && !isObjectOrObjectArrayTypeReference(childTypeTag.TypeExpression.Type()) {
 				typeExpression = childTypeTag.TypeExpression
 			} else {
-				typeExpression = p.finishNode(jsdocTypeLiteral, start)
+				typeExpression = p.finishNode(jsdocTypeLiteral, jsdocPropertyTags[0].Pos())
 			}
 		}
 	}
@@ -989,7 +989,7 @@ func (p *Parser) parseCallbackTag(start int, tagName *ast.IdentifierNode, indent
 	fullName := p.parseJSDocIdentifierName(nil)
 	p.skipWhitespace()
 	comment := p.parseTagComments(indent, nil)
-	typeExpression := p.parseJSDocSignature(start, indent)
+	typeExpression := p.parseJSDocSignature(p.nodePos(), indent)
 	if comment == nil {
 		comment = p.parseTrailingTagComments(start, p.nodePos(), indent, indentText)
 	}

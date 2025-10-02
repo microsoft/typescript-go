@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -149,7 +150,7 @@ func (b *Binder) declareSymbol(symbolTable ast.SymbolTable, parent *ast.Symbol, 
 }
 
 func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol, node *ast.Node, includes ast.SymbolFlags, excludes ast.SymbolFlags, isReplaceableByMethod bool, isComputedName bool) *ast.Symbol {
-	// Debug.assert(isComputedName || !ast.HasDynamicName(node))
+	debug.Assert(isComputedName || !ast.HasDynamicName(node))
 	isDefaultExport := ast.HasSyntacticModifier(node, ast.ModifierFlagsDefault) || ast.IsExportSpecifier(node) && ast.ModuleExportNameIsDefault(node.AsExportSpecifier().Name())
 	// The exported symbol for an export default function/class node is always named "default"
 	var name string
@@ -2242,12 +2243,12 @@ func (b *Binder) bindBinaryExpressionFlow(node *ast.Node) {
 		b.bind(expr.Left)
 		b.bind(expr.Type)
 		if operator == ast.KindCommaToken {
-			b.maybeBindExpressionFlowIfCall(node)
+			b.maybeBindExpressionFlowIfCall(expr.Left)
 		}
 		b.bind(expr.OperatorToken)
 		b.bind(expr.Right)
 		if operator == ast.KindCommaToken {
-			b.maybeBindExpressionFlowIfCall(node)
+			b.maybeBindExpressionFlowIfCall(expr.Right)
 		}
 		if ast.IsAssignmentOperator(operator) && !ast.IsAssignmentTarget(node) {
 			b.bindAssignmentTargetFlow(expr.Left)

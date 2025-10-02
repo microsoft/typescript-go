@@ -7,6 +7,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/parser"
@@ -516,14 +517,13 @@ func (c *Checker) getJSXFragmentType(node *ast.Node) *Type {
 	if jsxFactorySymbol.Flags&ast.SymbolFlagsAlias != 0 {
 		resolvedAlias = c.resolveAlias(jsxFactorySymbol)
 	}
-	if jsxFactorySymbol != nil {
-		reactExports := c.getExportsOfSymbol(resolvedAlias)
-		typeSymbol := c.getSymbol(reactExports, ReactNames.Fragment, ast.SymbolFlagsBlockScopedVariable)
-		if typeSymbol != nil {
-			links.jsxFragmentType = c.getTypeOfSymbol(typeSymbol)
-		} else {
-			links.jsxFragmentType = c.errorType
-		}
+
+	reactExports := c.getExportsOfSymbol(resolvedAlias)
+	typeSymbol := c.getSymbol(reactExports, ReactNames.Fragment, ast.SymbolFlagsBlockScopedVariable)
+	if typeSymbol != nil {
+		links.jsxFragmentType = c.getTypeOfSymbol(typeSymbol)
+	} else {
+		links.jsxFragmentType = c.errorType
 	}
 	return links.jsxFragmentType
 }
@@ -748,13 +748,13 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 				}
 				if contextualType != nil && checkMode&CheckModeInferential != 0 && checkMode&CheckModeSkipContextSensitive == 0 && c.isContextSensitive(attributeDecl) {
 					inferenceContext := c.getInferenceContext(attributes)
-					// Debug.assert(inferenceContext)
+					debug.AssertIsDefined(inferenceContext)
 					// In CheckMode.Inferential we should always have an inference context
 					inferenceNode := attributeDecl.Initializer().Expression()
 					c.addIntraExpressionInferenceSite(inferenceContext, inferenceNode, exprType)
 				}
 			} else {
-				// Debug.assert(attributeDecl.Kind == ast.KindJsxSpreadAttribute)
+				debug.Assert(attributeDecl.Kind == ast.KindJsxSpreadAttribute)
 				if len(attributesTable) != 0 {
 					spread = c.getSpreadType(spread, createJsxAttributesType(), attributesSymbol, objectFlags, false /*readonly*/)
 					attributesTable = make(ast.SymbolTable)
@@ -1175,7 +1175,7 @@ func (c *Checker) createSignatureForJSXIntrinsic(node *ast.Node, result *Type) *
 // The function is intended to be called from a function which has checked that the opening element is an intrinsic element.
 // @param node an intrinsic JSX opening-like element
 func (c *Checker) getIntrinsicAttributesTypeFromJsxOpeningLikeElement(node *ast.Node) *Type {
-	// Debug.assert(c.isJsxIntrinsicTagName(node.TagName()))
+	debug.Assert(isJsxIntrinsicTagName(node.TagName()))
 	links := c.jsxElementLinks.Get(node)
 	if links.resolvedJsxElementAttributesType != nil {
 		return links.resolvedJsxElementAttributesType

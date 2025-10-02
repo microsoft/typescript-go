@@ -191,7 +191,7 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 	if jsSignature.Type() != nil && jsSignature.Type().AsJSDocReturnTag().TypeExpression != nil {
 		signature.FunctionLikeData().Type = p.factory.DeepCloneReparse(jsSignature.Type().AsJSDocReturnTag().TypeExpression.Type())
 	}
-	loc := tag
+	loc := jsSignature
 	if tag.Kind == ast.KindJSDocOverloadTag {
 		loc = tag.AsJSDocOverloadTag().TagName
 	}
@@ -213,7 +213,7 @@ func (p *Parser) reparseJSDocTypeLiteral(t *ast.TypeNode) *ast.Node {
 			if name.Kind == ast.KindQualifiedName {
 				name = name.AsQualifiedName().Right
 			}
-			property := p.factory.NewPropertySignatureDeclaration(nil, name, p.makeQuestionIfOptional(jsprop), nil, nil)
+			property := p.factory.NewPropertySignatureDeclaration(nil, p.factory.DeepCloneReparse(name), p.makeQuestionIfOptional(jsprop), nil, nil)
 			if jsprop.TypeExpression != nil {
 				property.AsPropertySignatureDeclaration().Type = p.reparseJSDocTypeLiteral(jsprop.TypeExpression.Type())
 			}
@@ -357,7 +357,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 				}
 			}
 		case ast.KindVariableDeclaration,
-			ast.KindCommonJSExport, ast.KindExportAssignment, ast.KindJSExportAssignment,
+			ast.KindCommonJSExport,
 			ast.KindPropertyDeclaration, ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment:
 			if parent.Initializer() != nil && tag.AsJSDocSatisfiesTag().TypeExpression != nil {
 				parent.AsMutable().SetInitializer(p.makeNewCast(
@@ -366,7 +366,8 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 					false /*isAssertion*/))
 				p.finishMutatedNode(parent)
 			}
-		case ast.KindReturnStatement, ast.KindParenthesizedExpression:
+		case ast.KindReturnStatement, ast.KindParenthesizedExpression,
+			ast.KindExportAssignment, ast.KindJSExportAssignment:
 			if parent.Expression() != nil && tag.AsJSDocSatisfiesTag().TypeExpression != nil {
 				parent.AsMutable().SetExpression(p.makeNewCast(
 					p.factory.DeepCloneReparse(tag.AsJSDocSatisfiesTag().TypeExpression.Type()),

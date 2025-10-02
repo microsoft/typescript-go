@@ -2,6 +2,7 @@ package cachedvfs
 
 import (
 	"sync/atomic"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -114,6 +115,10 @@ func (fsys *FS) Realpath(path string) string {
 
 func (fsys *FS) Remove(path string) error {
 	return fsys.fs.Remove(path)
+}
+
+func (fsys *FS) Chtimes(path string, aTime time.Time, mTime time.Time) error {
+	return fsys.fs.Chtimes(path, aTime, mTime)
 }
 
 func (fsys *FS) Stat(path string) vfs.FileInfo {
