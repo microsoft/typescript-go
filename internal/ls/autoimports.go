@@ -224,7 +224,6 @@ func (e *exportInfoMap) add(
 		targetFlags:       target.Flags,
 		isFromPackageJson: isFromPackageJson,
 	})
-	e.exportInfoId = id
 }
 
 func (e *exportInfoMap) search(
