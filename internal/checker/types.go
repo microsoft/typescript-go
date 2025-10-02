@@ -578,7 +578,6 @@ func (t *Type) AsIntrinsicType() *IntrinsicType             { return t.data.(*In
 func (t *Type) AsLiteralType() *LiteralType                 { return t.data.(*LiteralType) }
 func (t *Type) AsUniqueESSymbolType() *UniqueESSymbolType   { return t.data.(*UniqueESSymbolType) }
 func (t *Type) AsTupleType() *TupleType                     { return t.data.(*TupleType) }
-func (t *Type) AsSingleSignatureType() *SingleSignatureType { return t.data.(*SingleSignatureType) }
 func (t *Type) AsInstantiationExpressionType() *InstantiationExpressionType {
 	return t.data.(*InstantiationExpressionType)
 }
@@ -838,9 +837,7 @@ func (t *StructuredType) Properties() []*ast.Symbol {
 // ObjectFlagsAnonymous|ObjectFlagsInstantiationExpression: Originating instantiation expression type
 // ObjectFlagsAnonymous|ObjectFlagsInstantiated|ObjectFlagsInstantiationExpression: Instantiated instantiation expression type
 
-// SingleSignatureType:
-// ObjectFlagsAnonymous|ObjectFlagsSingleSignatureType: Originating single signature type
-// ObjectFlagsAnonymous|ObjectFlagsInstantiated|ObjectFlagsSingleSignatureType: Instantiated single signature type
+// Note: ObjectFlagsSingleSignatureType types are AnonymousType with the flag set (no separate struct)
 
 // ReverseMappedType:
 // ObjectFlagsAnonymous|ObjectFlagsReverseMapped: Reverse mapped type
@@ -946,13 +943,6 @@ func (t *TupleType) ElementFlags() []ElementFlags {
 		elementFlags[i] = info.flags
 	}
 	return elementFlags
-}
-
-// SingleSignatureType
-
-type SingleSignatureType struct {
-	ObjectType
-	outerTypeParameters []*Type
 }
 
 // InstantiationExpressionType
