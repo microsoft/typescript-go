@@ -2266,7 +2266,7 @@ func TestBuildProjectReferenceWithRootDirInParent(t *testing.T) {
 			subScenario: "reports error for same tsbuildinfo file because no rootDir in the base",
 			files: getBuildProjectReferenceWithRootDirInParentFileMap(
 				func(files FileMap) {
-					text, _ := files["/home/src/workspaces/solution/tsconfig.base.json"]
+					text := files["/home/src/workspaces/solution/tsconfig.base.json"]
 					files["/home/src/workspaces/solution/tsconfig.base.json"] = strings.Replace(text.(string), `"rootDir": "./src/",`, "", 1)
 				},
 			),
@@ -2514,10 +2514,10 @@ func TestBuildResolveJsonModule(t *testing.T) {
 			tsconfigFiles:             `"include": [ "src/**/*" ],`,
 			additionalCompilerOptions: `"rootDir": "src",`,
 			modifyFiles: func(files FileMap) {
-				text, _ := files["/home/src/workspaces/solution/project/src/hello.json"]
+				text := files["/home/src/workspaces/solution/project/src/hello.json"]
 				delete(files, "/home/src/workspaces/solution/project/src/hello.json")
 				files["/home/src/workspaces/solution/project/hello.json"] = text
-				text, _ = files["/home/src/workspaces/solution/project/src/index.ts"]
+				text = files["/home/src/workspaces/solution/project/src/index.ts"]
 				files["/home/src/workspaces/solution/project/src/index.ts"] = strings.Replace(text.(string), "./hello.json", "../hello.json", 1)
 			},
 		},
@@ -2525,10 +2525,10 @@ func TestBuildResolveJsonModule(t *testing.T) {
 			subScenario:   "include only with json without rootDir but outside configDirectory",
 			tsconfigFiles: `"include": [ "src/**/*" ],`,
 			modifyFiles: func(files FileMap) {
-				text, _ := files["/home/src/workspaces/solution/project/src/hello.json"]
+				text := files["/home/src/workspaces/solution/project/src/hello.json"]
 				delete(files, "/home/src/workspaces/solution/project/src/hello.json")
 				files["/home/src/workspaces/solution/hello.json"] = text
-				text, _ = files["/home/src/workspaces/solution/project/src/index.ts"]
+				text = files["/home/src/workspaces/solution/project/src/index.ts"]
 				files["/home/src/workspaces/solution/project/src/index.ts"] = strings.Replace(text.(string), "./hello.json", "../../hello.json", 1)
 			},
 		},
@@ -2540,10 +2540,10 @@ func TestBuildResolveJsonModule(t *testing.T) {
 			subScenario:   "include of json along with other include and file name matches ts file",
 			tsconfigFiles: `"include": [ "src/**/*", "src/**/*.json" ],`,
 			modifyFiles: func(files FileMap) {
-				text, _ := files["/home/src/workspaces/solution/project/src/hello.json"]
+				text := files["/home/src/workspaces/solution/project/src/hello.json"]
 				delete(files, "/home/src/workspaces/solution/project/src/hello.json")
 				files["/home/src/workspaces/solution/project/src/index.json"] = text
-				text, _ = files["/home/src/workspaces/solution/project/src/index.ts"]
+				text = files["/home/src/workspaces/solution/project/src/index.ts"]
 				files["/home/src/workspaces/solution/project/src/index.ts"] = strings.Replace(text.(string), "./hello.json", "./index.json", 1)
 			},
 		},
@@ -2937,7 +2937,7 @@ func TestBuildSample(t *testing.T) {
 			{
 				subScenario: "skips builds downstream projects if upstream projects have errors with stopBuildOnErrors",
 				files: getBuildSampleFileMap(func(files FileMap) {
-					text, _ := files["/user/username/projects/sample1/core/index.ts"]
+					text := files["/user/username/projects/sample1/core/index.ts"]
 					files["/user/username/projects/sample1/core/index.ts"] = text.(string) + `multiply();`
 				}),
 				cwd:             "/user/username/projects/sample1",
@@ -2969,7 +2969,7 @@ func TestBuildSample(t *testing.T) {
 							"skipDefaultLibCheck": true,
 						},
 					}`)
-					text, _ := files["/user/username/projects/sample1/core/index.ts"]
+					text := files["/user/username/projects/sample1/core/index.ts"]
 					files["/user/username/projects/sample1/core/index.ts"] = text.(string) + `multiply();`
 				}),
 				cwd:             "/user/username/projects/sample1",
@@ -3152,7 +3152,7 @@ class someClass2 { }`,
 		{
 			subScenario: "builds correctly when project is not composite or doesnt have any references",
 			files: getBuildSampleFileMap(func(files FileMap) {
-				text, _ := files["/user/username/projects/sample1/core/tsconfig.json"]
+				text := files["/user/username/projects/sample1/core/tsconfig.json"]
 				files["/user/username/projects/sample1/core/tsconfig.json"] = strings.Replace(text.(string), `"composite": true,`, "", 1)
 			}),
 			cwd:             "/user/username/projects/sample1",
@@ -3332,7 +3332,7 @@ class someClass2 { }`,
 						"target": "es5"
 					}
 				}`)
-				text, _ := files["/user/username/projects/sample1/tests/tsconfig.json"]
+				text := files["/user/username/projects/sample1/tests/tsconfig.json"]
 				files["/user/username/projects/sample1/tests/tsconfig.json"] = strings.Replace(text.(string), `"references": [`, `"extends": "./tsconfig.base.json", "references": [`, 1)
 			}),
 			cwd:             "/user/username/projects/sample1",
@@ -3358,7 +3358,7 @@ class someClass2 { }`,
 		{
 			subScenario: "builds downstream projects even if upstream projects have errors",
 			files: getBuildSampleFileMap(func(files FileMap) {
-				text, _ := files["/user/username/projects/sample1/logic/index.ts"]
+				text := files["/user/username/projects/sample1/logic/index.ts"]
 				files["/user/username/projects/sample1/logic/index.ts"] = strings.Replace(text.(string), "c.multiply(10, 15)", `c.muitply()`, 1)
 			}),
 			cwd:             "/user/username/projects/sample1",
@@ -3412,7 +3412,7 @@ class someClass2 { }`,
 		{
 			subScenario: "when logic specifies tsBuildInfoFile",
 			files: getBuildSampleFileMap(func(files FileMap) {
-				text, _ := files["/user/username/projects/sample1/logic/tsconfig.json"]
+				text := files["/user/username/projects/sample1/logic/tsconfig.json"]
 				files["/user/username/projects/sample1/logic/tsconfig.json"] = strings.Replace(
 					text.(string),
 					`"composite": true,`,

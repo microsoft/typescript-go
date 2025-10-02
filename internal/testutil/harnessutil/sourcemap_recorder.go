@@ -17,7 +17,7 @@ type writerAggregator struct {
 }
 
 func (w *writerAggregator) WriteStringF(format string, args ...any) {
-	w.WriteString(fmt.Sprintf(format, args...))
+	fmt.Fprintf(w, format, args...)
 }
 
 func (w *writerAggregator) WriteLine(s string) {
@@ -58,7 +58,7 @@ func (d *sourceMapDecoder) decodeNextEncodedSourceMapSpan() *decodedMapping {
 			sourceMapSpan: d.mappings.State(),
 		}
 		if mapping.error == nil {
-			mapping.error = errors.New("No encoded entry found")
+			mapping.error = errors.New("no encoded entry found")
 		}
 		return mapping
 	}

@@ -446,7 +446,7 @@ func (t *textWithContext) add(detail *baselineDetail) {
 				if t.isLibFile {
 					t.newContent.WriteString("--- (line: --) skipped ---\n")
 				} else {
-					t.newContent.WriteString(fmt.Sprintf("--- (line: %v) skipped ---\n", locationLineIndex-t.nLinesContext+1))
+					fmt.Fprintf(t.newContent, "--- (line: %v) skipped ---\n", locationLineIndex-t.nLinesContext+1)
 				}
 				t.newContent.WriteString(t.sliceOfContent(
 					t.getIndex(t.lineStarts.LineStarts[locationLineIndex-t.nLinesContext+1]),
@@ -586,7 +586,7 @@ func (t *textWithContext) sliceOfContent(start *int, end *int) string {
 	return t.content[*start:*end]
 }
 
-func (t *textWithContext) getIndex(i interface{}) *int {
+func (t *textWithContext) getIndex(i any) *int {
 	switch i := i.(type) {
 	case *int:
 		return i
