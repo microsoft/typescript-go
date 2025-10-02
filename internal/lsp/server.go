@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	// "go/printer"
 	"io"
 	"os"
 	"os/exec"
@@ -770,8 +771,8 @@ func (s *Server) handleCompletion(ctx context.Context, languageService *ls.Langu
 		params.Context,
 		getCompletionClientCapabilities(s.initializeParams),
 		&ls.UserPreferences{
-			IncludeCompletionsForModuleExports:    ptrTo(true),
-			IncludeCompletionsForImportStatements: ptrTo(true),
+			IncludeCompletionsForModuleExports:    core.TSTrue,
+			IncludeCompletionsForImportStatements: core.TSTrue,
 		})
 }
 
@@ -791,8 +792,8 @@ func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsprot
 		data,
 		getCompletionClientCapabilities(s.initializeParams),
 		&ls.UserPreferences{
-			IncludeCompletionsForModuleExports:    ptrTo(true),
-			IncludeCompletionsForImportStatements: ptrTo(true),
+			IncludeCompletionsForModuleExports:    core.TSTrue,
+			IncludeCompletionsForImportStatements: core.TSTrue,
 		},
 	)
 }
