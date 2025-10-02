@@ -14,5 +14,7 @@ function Test() {
 
 //// [jsxNestedIndentation.js]
 function Test() {
-    return React.createElement(Child, null, React.createElement(Child, null, React.createElement(Child, null)));
+    return React.createElement(Child, null,
+        React.createElement(Child, null,
+            React.createElement(Child, null)));
 }

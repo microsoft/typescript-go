@@ -39,11 +39,13 @@ function Todo(prop) {
     return React.createElement("div", null, prop.key.toString() + prop.todo);
 }
 function TodoList({ todos }) {
-    return React.createElement("div", null, ...React.createElement(Todo, { key: todos[0].id, todo: todos[0].todo }));
+    return React.createElement("div", null,
+        ...React.createElement(Todo, { key: todos[0].id, todo: todos[0].todo }));
 }
 function TodoListNoError({ todos }) {
     // any is not checked
-    return React.createElement("div", null, ...React.createElement(Todo, { key: todos[0].id, todo: todos[0].todo }));
+    return React.createElement("div", null,
+        ...React.createElement(Todo, { key: todos[0].id, todo: todos[0].todo }));
 }
 let x;
 React.createElement(TodoList, Object.assign({}, x));

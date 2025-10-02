@@ -1,0 +1,11 @@
+--- old.commentsOnJSXExpressionsArePreserved(jsx=react,module=commonjs,moduledetection=force).js
++++ new.commentsOnJSXExpressionsArePreserved(jsx=react,module=commonjs,moduledetection=force).js
+@@= skipped -26, +26 lines =@@
+ Object.defineProperty(exports, "__esModule", { value: true });
+ class Component {
+     render() {
+-        return React.createElement("div", null, null /* preserved */);
++        return React.createElement("div", null,
++            null /* preserved */);
+     }
+ }
