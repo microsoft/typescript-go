@@ -25,7 +25,6 @@ class Component {
 //// [commentsOnJSXExpressionsArePreserved.js]
 class Component {
     render() {
-        return React.createElement("div", null,
-            null /* preserved */);
+        return React.createElement("div", null, null /* preserved */);
     }
 }

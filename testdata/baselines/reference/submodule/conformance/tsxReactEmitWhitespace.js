@@ -78,11 +78,9 @@ React.createElement("div", null,
     p,
     "    ");
 // Emit only p
-React.createElement("div", null,
-    p);
+React.createElement("div", null, p);
 // Emit only p
-React.createElement("div", null,
-    p);
+React.createElement("div", null, p);
 // Emit "  3"
 React.createElement("div", null, "  3");
 // Emit "  3  "

@@ -32,5 +32,4 @@ const React = require("react");
 const classes = "";
 const rest = {};
 const children = [];
-React.createElement(Tag, __assign({ className: classes }, rest),
-    children);
+React.createElement(Tag, __assign({ className: classes }, rest), children);

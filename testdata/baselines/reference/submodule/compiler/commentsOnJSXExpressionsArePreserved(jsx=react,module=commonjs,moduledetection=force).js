@@ -27,7 +27,6 @@ class Component {
 Object.defineProperty(exports, "__esModule", { value: true });
 class Component {
     render() {
-        return React.createElement("div", null,
-            null /* preserved */);
+        return React.createElement("div", null, null /* preserved */);
     }
 }

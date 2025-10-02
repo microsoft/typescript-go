@@ -37,11 +37,10 @@ function TabLayout(props) {
 }
 class App extends React.Component {
     render() {
-        return React.createElement(TabLayout, null,
-            [
-                ['Users', React.createElement("div", null)],
-                ['Products', React.createElement("div", null)]
-            ]);
+        return React.createElement(TabLayout, null, [
+            ['Users', React.createElement("div", null)],
+            ['Products', React.createElement("div", null)]
+        ]);
     }
 }
 exports.App = App;
