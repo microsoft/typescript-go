@@ -56,6 +56,33 @@ type UserPreferences struct {
 	AutoImportFileExcludePatterns         []string
 
 	UseAliasesForRename *bool
+
+	// Inlay Hints
+	IncludeInlayParameterNameHints                        string
+	IncludeInlayParameterNameHintsWhenArgumentMatchesName *bool
+	IncludeInlayFunctionParameterTypeHints                *bool
+	IncludeInlayVariableTypeHints                         *bool
+	IncludeInlayVariableTypeHintsWhenTypeMatchesName      *bool
+	IncludeInlayPropertyDeclarationTypeHints              *bool
+	IncludeInlayFunctionLikeReturnTypeHints               *bool
+	IncludeInlayEnumMemberValueHints                      *bool
+	InteractiveInlayHints                                 *bool
+}
+
+func (p *UserPreferences) Copy() *UserPreferences {
+	// not a true deep copy
+	if p == nil {
+		return nil
+	}
+	copy := *p
+	return &copy
+}
+
+func (p *UserPreferences) CopyOrDefault() *UserPreferences {
+	if p == nil {
+		return &UserPreferences{}
+	}
+	return p.Copy()
 }
 
 func (p *UserPreferences) ModuleSpecifierPreferences() modulespecifiers.UserPreferences {

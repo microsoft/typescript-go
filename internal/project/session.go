@@ -79,6 +79,7 @@ type Session struct {
 	// released from the parseCache.
 	programCounter *programCounter
 
+	userPreferences                    *ls.UserPreferences
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	typingsInstaller                   *ata.TypingsInstaller
 	backgroundQueue                    *background.Queue
@@ -91,6 +92,9 @@ type Session struct {
 	// snapshot is the current immutable state of all projects.
 	snapshot   *Snapshot
 	snapshotMu sync.RWMutex
+
+	pendingConfigChanges   bool
+	pendingConfigChangesMu sync.Mutex
 
 	// pendingFileChanges are accumulated from textDocument/* events delivered
 	// by the LSP server through DidOpenFile(), DidChangeFile(), etc. They are
@@ -146,6 +150,7 @@ func NewSession(init *SessionInit) *Session {
 			extendedConfigCache,
 			&ConfigFileRegistry{},
 			nil,
+			nil,
 			toPath,
 		),
 		pendingATAChanges: make(map[tspath.Path]*ATAStateChange),
@@ -174,6 +179,13 @@ func (s *Session) GetCurrentDirectory() string {
 // Trace implements module.ResolutionHost
 func (s *Session) Trace(msg string) {
 	panic("ATA module resolution should not use tracing")
+}
+
+func (s *Session) Configure(userPreferences *ls.UserPreferences) {
+	s.pendingConfigChangesMu.Lock()
+	defer s.pendingConfigChangesMu.Unlock()
+	s.pendingConfigChanges = true
+	s.userPreferences = userPreferences
 }
 
 func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, version int32, content string, languageKind lsproto.LanguageKind) {
@@ -335,8 +347,8 @@ func (s *Session) Snapshot() (*Snapshot, func()) {
 
 func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
 	var snapshot *Snapshot
-	fileChanges, overlays, ataChanges := s.flushChanges(ctx)
-	updateSnapshot := !fileChanges.IsEmpty() || len(ataChanges) > 0
+	fileChanges, overlays, ataChanges, updateConfig := s.flushChanges(ctx)
+	updateSnapshot := !fileChanges.IsEmpty() || len(ataChanges) > 0 || updateConfig
 	if updateSnapshot {
 		// If there are pending file changes, we need to update the snapshot.
 		// Sending the requested URI ensures that the project for this URI is loaded.
@@ -367,7 +379,7 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 	if project == nil {
 		return nil, fmt.Errorf("no project found for URI %s", uri)
 	}
-	return ls.NewLanguageService(project, snapshot.Converters()), nil
+	return ls.NewLanguageService(project, snapshot.Converters(), snapshot.UserPreferences()), nil
 }
 
 func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*overlay, change SnapshotChange) *Snapshot {
@@ -388,6 +400,7 @@ func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 	}
 
 	// Enqueue logging, watch updates, and diagnostic refresh tasks
+	// !!! userPreferences/configuration updates
 	s.backgroundQueue.Enqueue(context.Background(), func(ctx context.Context) {
 		if s.options.LoggingEnabled {
 			s.logger.Write(newSnapshot.builderLogs.String())
@@ -506,7 +519,7 @@ func (s *Session) Close() {
 	s.backgroundQueue.Close()
 }
 
-func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspath.Path]*overlay, map[tspath.Path]*ATAStateChange) {
+func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspath.Path]*overlay, map[tspath.Path]*ATAStateChange, bool) {
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
 	s.pendingATAChangesMu.Lock()
@@ -514,7 +527,11 @@ func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspa
 	pendingATAChanges := s.pendingATAChanges
 	s.pendingATAChanges = make(map[tspath.Path]*ATAStateChange)
 	fileChanges, overlays := s.flushChangesLocked(ctx)
-	return fileChanges, overlays, pendingATAChanges
+	s.pendingConfigChangesMu.Lock()
+	updateConfig := s.pendingConfigChanges
+	s.pendingConfigChanges = false
+	defer s.pendingConfigChangesMu.Unlock()
+	return fileChanges, overlays, pendingATAChanges, updateConfig
 }
 
 // flushChangesLocked should only be called with s.pendingFileChangesMu held.
