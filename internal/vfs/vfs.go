@@ -2,10 +2,11 @@ package vfs
 
 import (
 	"io/fs"
+	"time"
 )
 
 //go:generate go tool github.com/matryer/moq -fmt goimports -out vfsmock/mock_generated.go -pkg vfsmock . FS
-//go:generate go tool mvdan.cc/gofumpt -lang=go1.25 -w vfsmock/mock_generated.go
+//go:generate go tool mvdan.cc/gofumpt -w vfsmock/mock_generated.go
 
 // FS is a file system abstraction.
 type FS interface {
@@ -23,6 +24,9 @@ type FS interface {
 
 	// Removes `path` and all its contents. Will return the first error it encounters.
 	Remove(path string) error
+
+	// Chtimes changes the access and modification times of the named
+	Chtimes(path string, aTime time.Time, mTime time.Time) error
 
 	// DirectoryExists returns true if the path is a directory.
 	DirectoryExists(path string) bool

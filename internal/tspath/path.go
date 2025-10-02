@@ -965,8 +965,29 @@ func ContainsPath(parent string, child string, options ComparePathsOptions) bool
 	return true
 }
 
+func (p Path) ContainsPath(child Path) bool {
+	return ContainsPath(string(p), string(child), ComparePathsOptions{UseCaseSensitiveFileNames: true})
+}
+
 func FileExtensionIs(path string, extension string) bool {
 	return len(path) > len(extension) && strings.HasSuffix(path, extension)
+}
+
+// Calls `callback` on `directory` and every ancestor directory it has, returning the first defined result.
+// Stops at global cache location
+func ForEachAncestorDirectoryStoppingAtGlobalCache[T any](
+	globalCacheLocation string,
+	directory string,
+	callback func(directory string) (result T, stop bool),
+) T {
+	result, _ := ForEachAncestorDirectory(directory, func(ancestorDirectory string) (T, bool) {
+		result, stop := callback(ancestorDirectory)
+		if stop || ancestorDirectory == globalCacheLocation {
+			return result, true
+		}
+		return result, false
+	})
+	return result
 }
 
 func ForEachAncestorDirectory[T any](directory string, callback func(directory string) (result T, stop bool)) (result T, ok bool) {
@@ -994,4 +1015,11 @@ func ForEachAncestorDirectoryPath[T any](directory Path, callback func(directory
 
 func HasExtension(fileName string) bool {
 	return strings.Contains(GetBaseFileName(fileName), ".")
+}
+
+func SplitVolumePath(path string) (volume string, rest string, ok bool) {
+	if len(path) >= 2 && IsVolumeCharacter(path[0]) && path[1] == ':' {
+		return strings.ToLower(path[0:2]), path[2:], true
+	}
+	return "", path, false
 }

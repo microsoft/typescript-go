@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/evaluator"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
@@ -497,6 +498,30 @@ func (r *emitResolver) IsImportRequiredByAugmentation(decl *ast.ImportDeclaratio
 	return false
 }
 
+func (r *emitResolver) IsDefinitelyReferenceToGlobalSymbolObject(node *ast.Node) bool {
+	if !ast.IsPropertyAccessExpression(node) ||
+		!ast.IsIdentifier(node.Name()) ||
+		!ast.IsPropertyAccessExpression(node.Expression()) && !ast.IsIdentifier(node.Expression()) {
+		return false
+	}
+	if node.Expression().Kind == ast.KindIdentifier {
+		if node.Expression().AsIdentifier().Text != "Symbol" {
+			return false
+		}
+		r.checkerMu.Lock()
+		defer r.checkerMu.Unlock()
+		// Exactly `Symbol.something` and `Symbol` either does not resolve or definitely resolves to the global Symbol
+		return r.checker.getResolvedSymbol(node.Expression()) == r.checker.getGlobalSymbol("Symbol", ast.SymbolFlagsValue|ast.SymbolFlagsExportValue, nil /*diagnostic*/)
+	}
+	if node.Expression().Expression().Kind != ast.KindIdentifier || node.Expression().Expression().AsIdentifier().Text != "globalThis" || node.Expression().Name().Text() != "Symbol" {
+		return false
+	}
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+	// Exactly `globalThis.Symbol.something` and `globalThis` resolves to the global `globalThis`
+	return r.checker.getResolvedSymbol(node.Expression().Expression()) == r.checker.globalThisSymbol
+}
+
 func (r *emitResolver) RequiresAddingImplicitUndefined(declaration *ast.Node, symbol *ast.Symbol, enclosingDeclaration *ast.Node) bool {
 	if !ast.IsParseTreeNode(declaration) {
 		return false
@@ -518,7 +543,7 @@ func (r *emitResolver) requiresAddingImplicitUndefined(declaration *ast.Node, sy
 		}
 		t := r.checker.getTypeOfSymbol(symbol)
 		r.checker.mappedSymbolLinks.Has(symbol)
-		return !!((symbol.Flags&ast.SymbolFlagsProperty != 0) && (symbol.Flags&ast.SymbolFlagsOptional != 0) && isOptionalDeclaration(declaration) && r.checker.ReverseMappedSymbolLinks.Has(symbol) && r.checker.ReverseMappedSymbolLinks.Get(symbol).mappedType != nil && containsNonMissingUndefinedType(r.checker, t))
+		return (symbol.Flags&ast.SymbolFlagsProperty != 0) && (symbol.Flags&ast.SymbolFlagsOptional != 0) && isOptionalDeclaration(declaration) && r.checker.ReverseMappedSymbolLinks.Has(symbol) && r.checker.ReverseMappedSymbolLinks.Get(symbol).mappedType != nil && containsNonMissingUndefinedType(r.checker, t)
 	case ast.KindParameter, ast.KindJSDocParameterTag:
 		return r.requiresAddingImplicitUndefinedWorker(declaration, enclosingDeclaration)
 	default:
@@ -551,7 +576,7 @@ func (r *emitResolver) isOptionalUninitializedParameterProperty(parameter *ast.N
 }
 
 func (r *emitResolver) isRequiredInitializedParameter(parameter *ast.Node, enclosingDeclaration *ast.Node) bool {
-	if r.checker.strictNullChecks || r.isOptionalParameter(parameter) || /*isJSDocParameterTag(parameter) ||*/ parameter.Initializer() == nil { // !!! TODO: JSDoc Support
+	if !r.checker.strictNullChecks || r.isOptionalParameter(parameter) || /*isJSDocParameterTag(parameter) ||*/ parameter.Initializer() == nil { // !!! TODO: JSDoc Support
 		return false
 	}
 	if ast.HasSyntacticModifier(parameter, ast.ModifierFlagsParameterPropertyModifier) {
@@ -574,7 +599,7 @@ func (r *emitResolver) isOptionalParameter(node *ast.Node) bool {
 	if node.Initializer() != nil {
 		signature := r.checker.getSignatureFromDeclaration(node.Parent)
 		parameterIndex := core.FindIndex(node.Parent.Parameters(), func(p *ast.ParameterDeclarationNode) bool { return p == node })
-		// Debug.assert(parameterIndex >= 0); // !!!
+		debug.Assert(parameterIndex >= 0)
 		// Only consider syntactic or instantiated parameters as optional, not `void` parameters as this function is used
 		// in grammar checks and checking for `void` too early results in parameter types widening too early
 		// and causes some noImplicitAny errors to be lost.
@@ -985,9 +1010,44 @@ func (r *emitResolver) CreateLateBoundIndexSignatures(emitContext *printer.EmitC
 			if info == r.checker.anyBaseTypeIndexInfo {
 				continue // inherited, but looks like a late-bound signature because it has no declarations
 			}
-			// if info.components {
-			// !!! TODO: Complete late-bound index info support - getObjectLiteralIndexInfo does not yet add late bound components to index signatures
-			// }
+			if len(info.components) != 0 {
+				// !!! TODO: Complete late-bound index info support - getObjectLiteralIndexInfo does not yet add late bound components to index signatures
+				allComponentComputedNamesSerializable := enclosingDeclaration != nil && core.Every(info.components, func(c *ast.Node) bool {
+					return c.Name() != nil &&
+						ast.IsComputedPropertyName(c.Name()) &&
+						ast.IsEntityNameExpression(c.Name().AsComputedPropertyName().Expression) &&
+						r.isEntityNameVisible(c.Name().AsComputedPropertyName().Expression, enclosingDeclaration, false).Accessibility == printer.SymbolAccessibilityAccessible
+				})
+				if allComponentComputedNamesSerializable {
+					for _, c := range info.components {
+						if r.checker.hasLateBindableName(c) {
+							// skip late bound props that contribute to the index signature - they'll be preserved via other means
+							continue
+						}
+
+						firstIdentifier := ast.GetFirstIdentifier(c.Name().Expression())
+						name := r.checker.resolveName(firstIdentifier, firstIdentifier.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsExportValue, nil /*nameNotFoundMessage*/, true /*isUse*/, false /*excludeGlobals*/)
+						if name != nil {
+							tracker.TrackSymbol(name, enclosingDeclaration, ast.SymbolFlagsValue)
+						}
+
+						mods := core.IfElse(isStatic, []*ast.Node{emitContext.Factory.NewModifier(ast.KindStaticKeyword)}, nil)
+						if info.isReadonly {
+							mods = append(mods, emitContext.Factory.NewModifier(ast.KindReadonlyKeyword))
+						}
+
+						decl := emitContext.Factory.NewPropertyDeclaration(
+							core.IfElse(mods != nil, emitContext.Factory.NewModifierList(mods), nil),
+							c.Name(),
+							c.QuestionToken(),
+							requestNodeBuilder.TypeToTypeNode(r.checker.getTypeOfSymbol(c.Symbol()), enclosingDeclaration, flags, internalFlags, tracker),
+							nil,
+						)
+						result = append(result, decl)
+					}
+					continue
+				}
+			}
 			node := requestNodeBuilder.IndexInfoToIndexSignatureDeclaration(info, enclosingDeclaration, flags, internalFlags, tracker)
 			if node != nil && isStatic {
 				modNodes := []*ast.Node{emitContext.Factory.NewModifier(ast.KindStaticKeyword)}
@@ -1023,4 +1083,11 @@ func (r *emitResolver) GetResolutionModeOverride(node *ast.Node) core.Resolution
 	r.checkerMu.Lock()
 	defer r.checkerMu.Unlock()
 	return r.checker.GetResolutionModeOverride(node.AsImportAttributes(), false)
+}
+
+func (r *emitResolver) GetConstantValue(node *ast.Node) any {
+	// node = emitContext.ParseNode(node)
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+	return r.checker.GetConstantValue(node)
 }

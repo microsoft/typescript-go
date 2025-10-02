@@ -53,6 +53,17 @@ let e4 = f({ a: 2 }, data);
 
 
 //// [objectLiteralNormalization.js]
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 // Object literals in unions are normalized upon widening
 let a1 = [{ a: 0 }, { a: 1, b: "x" }, { a: 2, b: "y", c: true }][0];
 a1.a; // number
@@ -70,8 +81,8 @@ a2 = { a: "def" };
 a2 = {};
 a2 = { a: "def", b: 20 }; // Error
 a2 = { a: 1 }; // Error
-let b2 = { ...b1, z: 55 };
-let b3 = { ...b2 };
+let b2 = __assign(__assign({}, b1), { z: 55 });
+let b3 = __assign({}, b2);
 let c1 = !true ? {} : opts;
 let c2 = !true ? opts : {};
 let c3 = !true ? { a: 0, b: 0 } : {};
@@ -92,7 +103,6 @@ let e4 = f({ a: 2 }, data);
 
 
 //// [objectLiteralNormalization.d.ts]
-// Object literals in unions are normalized upon widening
 declare let a1: {
     a: number;
     b?: undefined;
@@ -116,7 +126,6 @@ declare let a2: {
     b?: undefined;
     a?: undefined;
 };
-// Object literals containing spreads are not normalized
 declare let b1: {
     a: string;
     b: string;
@@ -142,8 +151,6 @@ declare let b3: {
     c: string;
     z: number;
 };
-// Before widening {} acts like { [x: string]: undefined }, which is a
-// subtype of types with all optional properties
 declare let opts: {
     foo?: string;
     bar?: string;
@@ -173,7 +180,6 @@ declare let c4: {
     a: number;
     b: number;
 };
-// Normalization applies to nested properties
 declare let d1: {
     kind: string;
     pos: {
@@ -202,7 +208,6 @@ declare let data: {
     b: "abc";
     c: true;
 };
-// Object literals are inferred as a single normalized union type
 declare let e1: {
     a: number;
     b: number;

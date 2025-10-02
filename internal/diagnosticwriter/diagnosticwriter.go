@@ -10,6 +10,7 @@ import (
 	"unicode"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -39,7 +40,6 @@ func FormatDiagnosticsWithColorAndContext(output io.Writer, diags []*ast.Diagnos
 	if len(diags) == 0 {
 		return
 	}
-
 	for i, diagnostic := range diags {
 		if i > 0 {
 			fmt.Fprint(output, formatOpts.NewLine)
@@ -84,13 +84,13 @@ func FormatDiagnosticWithColorAndContext(output io.Writer, diagnostic *ast.Diagn
 }
 
 func writeCodeSnippet(writer io.Writer, sourceFile *ast.SourceFile, start int, length int, squiggleColor string, indent string, formatOpts *FormattingOptions) {
-	firstLine, firstLineChar := scanner.GetLineAndCharacterOfPosition(sourceFile, start)
-	lastLine, lastLineChar := scanner.GetLineAndCharacterOfPosition(sourceFile, start+length)
+	firstLine, firstLineChar := scanner.GetECMALineAndCharacterOfPosition(sourceFile, start)
+	lastLine, lastLineChar := scanner.GetECMALineAndCharacterOfPosition(sourceFile, start+length)
 	if length == 0 {
 		lastLineChar++ // When length is zero, squiggle the character right after the start position.
 	}
 
-	lastLineOfFile, _ := scanner.GetLineAndCharacterOfPosition(sourceFile, len(sourceFile.Text()))
+	lastLineOfFile, _ := scanner.GetECMALineAndCharacterOfPosition(sourceFile, len(sourceFile.Text()))
 
 	hasMoreThanFiveLines := lastLine-firstLine >= 4
 	gutterWidth := len(strconv.Itoa(lastLine + 1))
@@ -113,10 +113,10 @@ func writeCodeSnippet(writer io.Writer, sourceFile *ast.SourceFile, start int, l
 			i = lastLine - 1
 		}
 
-		lineStart := scanner.GetPositionOfLineAndCharacter(sourceFile, i, 0)
+		lineStart := scanner.GetECMAPositionOfLineAndCharacter(sourceFile, i, 0)
 		var lineEnd int
 		if i < lastLineOfFile {
-			lineEnd = scanner.GetPositionOfLineAndCharacter(sourceFile, i+1, 0)
+			lineEnd = scanner.GetECMAPositionOfLineAndCharacter(sourceFile, i+1, 0)
 		} else {
 			lineEnd = sourceFile.Loc.End()
 		}
@@ -140,7 +140,8 @@ func writeCodeSnippet(writer io.Writer, sourceFile *ast.SourceFile, start int, l
 		fmt.Fprint(writer, resetEscapeSequence)
 		fmt.Fprint(writer, gutterSeparator)
 		fmt.Fprint(writer, squiggleColor)
-		if i == firstLine {
+		switch i {
+		case firstLine:
 			// If we're on the last line, then limit it to the last character of the last line.
 			// Otherwise, we'll just squiggle the rest of the line, giving 'slice' no end position.
 			var lastCharForLine int
@@ -154,10 +155,10 @@ func writeCodeSnippet(writer io.Writer, sourceFile *ast.SourceFile, start int, l
 			// then squiggle the remainder of the line.
 			fmt.Fprint(writer, strings.Repeat(" ", firstLineChar))
 			fmt.Fprint(writer, strings.Repeat("~", lastCharForLine-firstLineChar))
-		} else if i == lastLine {
+		case lastLine:
 			// Squiggle until the final character.
 			fmt.Fprint(writer, strings.Repeat("~", lastLineChar))
-		} else {
+		default:
 			// Squiggle the entire line.
 			fmt.Fprint(writer, strings.Repeat("~", len(lineContent)))
 		}
@@ -215,7 +216,7 @@ func writeWithStyleAndReset(output io.Writer, text string, formatStyle string) {
 }
 
 func WriteLocation(output io.Writer, file *ast.SourceFile, pos int, formatOpts *FormattingOptions, writeWithStyleAndReset FormattedWriter) {
-	firstLine, firstChar := scanner.GetLineAndCharacterOfPosition(file, pos)
+	firstLine, firstChar := scanner.GetECMALineAndCharacterOfPosition(file, pos)
 	var relativeFileName string
 	if formatOpts != nil {
 		relativeFileName = tspath.ConvertToRelativePath(file.FileName(), formatOpts.ComparePathsOptions)
@@ -264,13 +265,14 @@ func WriteErrorSummaryText(output io.Writer, allDiagnostics []*ast.Diagnostic, f
 			message = diagnostics.Found_1_error_in_0.Format(firstFileName)
 		}
 	} else {
-		if numErroringFiles == 0 {
+		switch numErroringFiles {
+		case 0:
 			// No file-specific errors.
 			message = diagnostics.Found_0_errors.Format(totalErrorCount)
-		} else if numErroringFiles == 1 {
+		case 1:
 			// One file with errors.
 			message = diagnostics.Found_0_errors_in_the_same_file_starting_at_Colon_1.Format(totalErrorCount, firstFileName)
-		} else {
+		default:
 			// Multiple files with errors.
 			message = diagnostics.Found_0_errors_in_1_files.Format(totalErrorCount, numErroringFiles)
 		}
@@ -355,7 +357,7 @@ func prettyPathForFileError(file *ast.SourceFile, fileErrors []*ast.Diagnostic, 
 	if file == nil || len(fileErrors) == 0 {
 		return ""
 	}
-	line, _ := scanner.GetLineAndCharacterOfPosition(file, fileErrors[0].Loc().Pos())
+	line, _ := scanner.GetECMALineAndCharacterOfPosition(file, fileErrors[0].Loc().Pos())
 	fileName := file.FileName()
 	if tspath.PathIsAbsolute(fileName) && tspath.PathIsAbsolute(formatOpts.CurrentDirectory) {
 		fileName = tspath.ConvertToRelativePath(file.FileName(), formatOpts.ComparePathsOptions)
@@ -376,7 +378,7 @@ func WriteFormatDiagnostics(output io.Writer, diagnostics []*ast.Diagnostic, for
 
 func WriteFormatDiagnostic(output io.Writer, diagnostic *ast.Diagnostic, formatOpts *FormattingOptions) {
 	if diagnostic.File() != nil {
-		line, character := scanner.GetLineAndCharacterOfPosition(diagnostic.File(), diagnostic.Loc().Pos())
+		line, character := scanner.GetECMALineAndCharacterOfPosition(diagnostic.File(), diagnostic.Loc().Pos())
 		fileName := diagnostic.File().FileName()
 		relativeFileName := tspath.ConvertToRelativePath(fileName, formatOpts.ComparePathsOptions)
 		fmt.Fprintf(output, "%s(%d,%d): ", relativeFileName, line+1, character+1)
@@ -385,4 +387,32 @@ func WriteFormatDiagnostic(output io.Writer, diagnostic *ast.Diagnostic, formatO
 	fmt.Fprintf(output, "%s TS%d: ", diagnostic.Category().Name(), diagnostic.Code())
 	WriteFlattenedDiagnosticMessage(output, diagnostic, formatOpts.NewLine)
 	fmt.Fprint(output, formatOpts.NewLine)
+}
+
+func FormatDiagnosticsStatusWithColorAndTime(output io.Writer, time string, diag *ast.Diagnostic, formatOpts *FormattingOptions) {
+	fmt.Fprint(output, "[")
+	writeWithStyleAndReset(output, time, foregroundColorEscapeGrey)
+	fmt.Fprint(output, "] ")
+	WriteFlattenedDiagnosticMessage(output, diag, formatOpts.NewLine)
+}
+
+func FormatDiagnosticsStatusAndTime(output io.Writer, time string, diag *ast.Diagnostic, formatOpts *FormattingOptions) {
+	fmt.Fprint(output, time, " - ")
+	WriteFlattenedDiagnosticMessage(output, diag, formatOpts.NewLine)
+}
+
+var ScreenStartingCodes = []int32{
+	diagnostics.Starting_compilation_in_watch_mode.Code(),
+	diagnostics.File_change_detected_Starting_incremental_compilation.Code(),
+}
+
+func TryClearScreen(output io.Writer, diag *ast.Diagnostic, options *core.CompilerOptions) bool {
+	if !options.PreserveWatchOutput.IsTrue() &&
+		!options.ExtendedDiagnostics.IsTrue() &&
+		!options.Diagnostics.IsTrue() &&
+		slices.Contains(ScreenStartingCodes, diag.Code()) {
+		fmt.Fprint(output, "\x1B[2J\x1B[3J\x1B[H") // Clear screen and move cursor to home position
+		return true
+	}
+	return false
 }

@@ -1,13 +1,8 @@
 package ls
 
 import (
-	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 )
-
-type Location struct {
-	FileName string
-	Range    core.TextRange
-}
 
 type JsxAttributeCompletionStyle string
 
@@ -17,7 +12,20 @@ const (
 	JsxAttributeCompletionStyleNone   JsxAttributeCompletionStyle = "none"
 )
 
+type QuotePreference string
+
+const (
+	QuotePreferenceAuto   QuotePreference = "auto"
+	QuotePreferenceDouble QuotePreference = "double"
+	QuotePreferenceSingle QuotePreference = "single"
+)
+
 type UserPreferences struct {
+	QuotePreference *QuotePreference
+	// If enabled, TypeScript will search through all external modules' exports and add them to the completions list.
+	// This affects lone identifier completions but not completions on the right hand side of `obj.`.
+	IncludeCompletionsForModuleExports *bool
+
 	// Enables auto-import-style completions on partially-typed import statements. E.g., allows
 	// `import write|` to be completed to `import { writeFile } from "fs"`.
 	IncludeCompletionsForImportStatements *bool
@@ -40,4 +48,20 @@ type UserPreferences struct {
 	IncludeCompletionsWithObjectLiteralMethodSnippets *bool
 
 	JsxAttributeCompletionStyle *JsxAttributeCompletionStyle
+
+	ImportModuleSpecifierPreference       modulespecifiers.ImportModuleSpecifierPreference
+	ImportModuleSpecifierEndingPreference modulespecifiers.ImportModuleSpecifierEndingPreference
+	PreferTypeOnlyAutoImports             *bool
+	AutoImportSpecifierExcludeRegexes     []string
+	AutoImportFileExcludePatterns         []string
+
+	UseAliasesForRename *bool
+}
+
+func (p *UserPreferences) ModuleSpecifierPreferences() modulespecifiers.UserPreferences {
+	return modulespecifiers.UserPreferences{
+		ImportModuleSpecifierPreference:       p.ImportModuleSpecifierPreference,
+		ImportModuleSpecifierEndingPreference: p.ImportModuleSpecifierEndingPreference,
+		AutoImportSpecifierExcludeRegexes:     p.AutoImportSpecifierExcludeRegexes,
+	}
 }

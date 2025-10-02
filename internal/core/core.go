@@ -2,6 +2,7 @@ package core
 
 import (
 	"iter"
+	"maps"
 	"math"
 	"slices"
 	"sort"
@@ -9,6 +10,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/jsonutil"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -172,6 +174,17 @@ func Every[T any](slice []T, f func(T) bool) bool {
 		}
 	}
 	return true
+}
+
+func Or[T any](funcs ...func(T) bool) func(T) bool {
+	return func(input T) bool {
+		for _, f := range funcs {
+			if f(input) {
+				return true
+			}
+		}
+		return false
+	}
 }
 
 func Find[T any](slice []T, f func(T) bool) T {
@@ -349,18 +362,12 @@ func Coalesce[T *U, U any](a T, b T) T {
 	}
 }
 
-// Returns the first element that is not `nil`; CoalesceList(a, b, c) is roughly analogous to `a ?? b ?? c` in JS, except that it
-// non-shortcutting, so it is advised to only use a constant or precomputed value for non-first values in the list
-func CoalesceList[T *U, U any](a ...T) T {
-	return FirstNonNil(a, func(t T) T { return t })
-}
-
-func ComputeLineStarts(text string) []TextPos {
+func ComputeECMALineStarts(text string) []TextPos {
 	result := make([]TextPos, 0, strings.Count(text, "\n")+1)
-	return slices.AppendSeq(result, ComputeLineStartsSeq(text))
+	return slices.AppendSeq(result, ComputeECMALineStartsSeq(text))
 }
 
-func ComputeLineStartsSeq(text string) iter.Seq[TextPos] {
+func ComputeECMALineStartsSeq(text string) iter.Seq[TextPos] {
 	return func(yield func(TextPos) bool) {
 		textLen := TextPos(len(text))
 		var pos TextPos
@@ -485,7 +492,7 @@ func GetSpellingSuggestion[T any](name string, candidates []T, getName func(T) s
 			if distance < 0 {
 				continue
 			}
-			// Debug.assert(distance < bestDistance) // Else `levenshteinWithMax` should return undefined
+			debug.Assert(distance < bestDistance) // Else `levenshteinWithMax` should return undefined
 			bestDistance = distance
 			bestCandidate = candidate
 		}
@@ -586,4 +593,58 @@ func ConcatenateSeq[T any](seqs ...iter.Seq[T]) iter.Seq[T] {
 			}
 		}
 	}
+}
+
+func comparableValuesEqual[T comparable](a, b T) bool {
+	return a == b
+}
+
+func DiffMaps[K comparable, V comparable](m1 map[K]V, m2 map[K]V, onAdded func(K, V), onRemoved func(K, V), onChanged func(K, V, V)) {
+	DiffMapsFunc(m1, m2, comparableValuesEqual, onAdded, onRemoved, onChanged)
+}
+
+func DiffMapsFunc[K comparable, V any](m1 map[K]V, m2 map[K]V, equalValues func(V, V) bool, onAdded func(K, V), onRemoved func(K, V), onChanged func(K, V, V)) {
+	for k, v1 := range m1 {
+		if v2, ok := m2[k]; ok {
+			if !equalValues(v1, v2) {
+				onChanged(k, v1, v2)
+			}
+		} else {
+			onRemoved(k, v1)
+		}
+	}
+
+	for k, v2 := range m2 {
+		if _, ok := m1[k]; !ok {
+			onAdded(k, v2)
+		}
+	}
+}
+
+// CopyMapInto is maps.Copy, unless dst is nil, in which case it clones and returns src.
+// Use CopyMapInto anywhere you would use maps.Copy preceded by a nil check and map initialization.
+func CopyMapInto[M1 ~map[K]V, M2 ~map[K]V, K comparable, V any](dst M1, src M2) map[K]V {
+	if dst == nil {
+		return maps.Clone(src)
+	}
+	maps.Copy(dst, src)
+	return dst
+}
+
+func Deduplicate[T comparable](slice []T) []T {
+	if len(slice) > 1 {
+		for i, value := range slice {
+			if slices.Contains(slice[:i], value) {
+				result := slices.Clone(slice[:i])
+				for i++; i < len(slice); i++ {
+					value = slice[i]
+					if !slices.Contains(result, value) {
+						result = append(result, value)
+					}
+				}
+				return result
+			}
+		}
+	}
+	return slice
 }

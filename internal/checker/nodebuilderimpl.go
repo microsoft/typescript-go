@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
@@ -209,8 +210,7 @@ func (b *nodeBuilderImpl) createElidedInformationPlaceholder() *ast.TypeNode {
 	if b.ctx.flags&nodebuilder.FlagsNoTruncation == 0 {
 		return b.f.NewTypeReferenceNode(b.f.NewIdentifier("..."), nil /*typeArguments*/)
 	}
-	// addSyntheticLeadingComment(b.f.NewKeywordTypeNode(ast.KindAnyKeyword), ast.KindMultiLineCommentTrivia, "elided") // !!!
-	return b.f.NewKeywordTypeNode(ast.KindAnyKeyword)
+	return b.e.AddSyntheticLeadingComment(b.f.NewKeywordTypeNode(ast.KindAnyKeyword), ast.KindMultiLineCommentTrivia, "elided", false /*hasTrailingNewLine*/)
 }
 
 func (b *nodeBuilderImpl) mapToTypeNodes(list []*Type, isBareList bool) *ast.NodeList {
@@ -222,8 +222,7 @@ func (b *nodeBuilderImpl) mapToTypeNodes(list []*Type, isBareList bool) *ast.Nod
 		if !isBareList {
 			var node *ast.Node
 			if b.ctx.flags&nodebuilder.FlagsNoTruncation != 0 {
-				// addSyntheticLeadingComment(factory.createKeywordTypeNode(SyntaxKind.AnyKeyword), SyntaxKind.MultiLineCommentTrivia, `... ${types.length} elided ...`)
-				node = b.f.NewKeywordTypeNode(ast.KindAnyKeyword)
+				node = b.e.AddSyntheticLeadingComment(b.f.NewKeywordTypeNode(ast.KindAnyKeyword), ast.KindMultiLineCommentTrivia, "elided", false /*hasTrailingNewLine*/)
 			} else {
 				node = b.f.NewTypeReferenceNode(b.f.NewIdentifier("..."), nil /*typeArguments*/)
 			}
@@ -236,8 +235,7 @@ func (b *nodeBuilderImpl) mapToTypeNodes(list []*Type, isBareList bool) *ast.Nod
 			}
 
 			if b.ctx.flags&nodebuilder.FlagsNoTruncation != 0 {
-				// addSyntheticLeadingComment(factory.createKeywordTypeNode(SyntaxKind.AnyKeyword), SyntaxKind.MultiLineCommentTrivia, `... ${types.length - 2} more elided ...`)
-				nodes[1] = b.f.NewKeywordTypeNode(ast.KindAnyKeyword)
+				nodes[1] = b.e.AddSyntheticLeadingComment(b.f.NewKeywordTypeNode(ast.KindAnyKeyword), ast.KindMultiLineCommentTrivia, fmt.Sprintf("... %d more elided ...", len(list)-2), false /*hasTrailingNewLine*/)
 			} else {
 				text := fmt.Sprintf("... %d more ...", len(list)-2)
 				nodes[1] = b.f.NewTypeReferenceNode(b.f.NewIdentifier(text), nil /*typeArguments*/)
@@ -261,8 +259,7 @@ func (b *nodeBuilderImpl) mapToTypeNodes(list []*Type, isBareList bool) *ast.Nod
 	for i, t := range list {
 		if b.checkTruncationLength() && (i+2 < len(list)-1) {
 			if b.ctx.flags&nodebuilder.FlagsNoTruncation != 0 {
-				// addSyntheticLeadingComment(factory.createKeywordTypeNode(SyntaxKind.AnyKeyword), SyntaxKind.MultiLineCommentTrivia, `... ${types.length} elided ...`)
-				result = append(result, b.f.NewKeywordTypeNode(ast.KindAnyKeyword))
+				result = append(result, b.e.AddSyntheticLeadingComment(b.f.NewKeywordTypeNode(ast.KindAnyKeyword), ast.KindMultiLineCommentTrivia, fmt.Sprintf("... %d more elided ...", len(list)-i), false /*hasTrailingNewLine*/))
 			} else {
 				text := fmt.Sprintf("... %d more ...", len(list)-i)
 				result = append(result, b.f.NewTypeReferenceNode(b.f.NewIdentifier(text), nil /*typeArguments*/))
@@ -450,15 +447,15 @@ func (b *nodeBuilderImpl) symbolToNode(symbol *ast.Symbol, meaning ast.SymbolFla
 			if name != nil && ast.IsComputedPropertyName(name) {
 				return name
 			}
-			if b.ch.valueSymbolLinks.Has(symbol) {
-				nameType := b.ch.valueSymbolLinks.Get(symbol).nameType
-				if nameType != nil && nameType.flags&(TypeFlagsEnumLiteral|TypeFlagsUniqueESSymbol) != 0 {
-					oldEnclosing := b.ctx.enclosingDeclaration
-					b.ctx.enclosingDeclaration = nameType.symbol.ValueDeclaration
-					result := b.f.NewComputedPropertyName(b.symbolToExpression(nameType.symbol, meaning))
-					b.ctx.enclosingDeclaration = oldEnclosing
-					return result
-				}
+		}
+		if b.ch.valueSymbolLinks.Has(symbol) {
+			nameType := b.ch.valueSymbolLinks.Get(symbol).nameType
+			if nameType != nil && nameType.flags&(TypeFlagsEnumLiteral|TypeFlagsUniqueESSymbol) != 0 {
+				oldEnclosing := b.ctx.enclosingDeclaration
+				b.ctx.enclosingDeclaration = nameType.symbol.ValueDeclaration
+				result := b.f.NewComputedPropertyName(b.symbolToExpression(nameType.symbol, meaning))
+				b.ctx.enclosingDeclaration = oldEnclosing
+				return result
 			}
 		}
 	}
@@ -902,7 +899,7 @@ func (b *nodeBuilderImpl) getTypeParametersOfClassOrInterface(symbol *ast.Symbol
 }
 
 func (b *nodeBuilderImpl) lookupTypeParameterNodes(chain []*ast.Symbol, index int) *ast.TypeParameterList {
-	// Debug.assert(chain && 0 <= index && index < chain.length); // !!!
+	debug.Assert(chain != nil && 0 <= index && index < len(chain))
 	symbol := chain[index]
 	symbolId := ast.GetSymbolId(symbol)
 	if !b.ctx.hasCreatedTypeParameterSymbolList {
@@ -955,8 +952,8 @@ func (b *nodeBuilderImpl) lookupSymbolChainWorker(symbol *ast.Symbol, meaning as
 	if !isTypeParameter && (b.ctx.enclosingDeclaration != nil || b.ctx.flags&nodebuilder.FlagsUseFullyQualifiedType != 0) && (b.ctx.internalFlags&nodebuilder.InternalFlagsDoNotIncludeSymbolChain == 0) {
 		res := b.getSymbolChain(symbol, meaning /*endOfChain*/, true, yieldModuleSymbol)
 		chain = res
-		// Debug.checkDefined(chain) // !!!
-		// Debug.assert(chain && chain.length > 0); // !!!
+		debug.CheckDefined(chain)
+		debug.Assert(len(chain) > 0)
 	} else {
 		chain = append(chain, symbol)
 	}
@@ -972,7 +969,7 @@ type sortedSymbolNamePair struct {
 func (b *nodeBuilderImpl) getSymbolChain(symbol *ast.Symbol, meaning ast.SymbolFlags, endOfChain bool, yieldModuleSymbol bool) []*ast.Symbol {
 	accessibleSymbolChain := b.ch.getAccessibleSymbolChain(symbol, b.ctx.enclosingDeclaration, meaning, b.ctx.flags&nodebuilder.FlagsUseOnlyExternalAliasing != 0)
 	qualifierMeaning := meaning
-	if len(accessibleSymbolChain) > 0 {
+	if len(accessibleSymbolChain) > 1 {
 		qualifierMeaning = getQualifiedLeftMeaning(meaning)
 	}
 	if len(accessibleSymbolChain) == 0 ||
@@ -1027,7 +1024,7 @@ func (b *nodeBuilderImpl) getSymbolChain(symbol *ast.Symbol, meaning ast.SymbolF
 		// If a parent symbol is an anonymous type, don't write it.
 		(symbol.Flags&(ast.SymbolFlagsTypeLiteral|ast.SymbolFlagsObjectLiteral) == 0) {
 		// If a parent symbol is an external module, don't write it. (We prefer just `x` vs `"foo/bar".x`.)
-		if !endOfChain && !yieldModuleSymbol && !!core.Some(symbol.Declarations, hasNonGlobalAugmentationExternalModuleSymbol) {
+		if !endOfChain && !yieldModuleSymbol && core.Some(symbol.Declarations, hasNonGlobalAugmentationExternalModuleSymbol) {
 			return nil
 		}
 		return []*ast.Symbol{symbol}
@@ -1079,7 +1076,7 @@ func canHaveModuleSpecifier(node *ast.Node) bool {
 	return false
 }
 
-func tryGetModuleSpecifierFromDeclaration(node *ast.Node) *ast.Node {
+func TryGetModuleSpecifierFromDeclaration(node *ast.Node) *ast.Node {
 	res := tryGetModuleSpecifierFromDeclarationWorker(node)
 	if res == nil || !ast.IsStringLiteral(res) {
 		return nil
@@ -1134,7 +1131,7 @@ func tryGetModuleSpecifierFromDeclarationWorker(node *ast.Node) *ast.Node {
 		}
 		return nil
 	default:
-		// Debug.assertNever(node); // !!!
+		debug.AssertNever(node)
 		return nil
 	}
 }
@@ -1165,7 +1162,7 @@ func (b *nodeBuilderImpl) getSpecifierForModuleSymbol(symbol *ast.Symbol, overri
 	enclosingDeclaration := b.e.MostOriginal(b.ctx.enclosingDeclaration)
 	var originalModuleSpecifier *ast.Node
 	if canHaveModuleSpecifier(enclosingDeclaration) {
-		originalModuleSpecifier = tryGetModuleSpecifierFromDeclaration(enclosingDeclaration)
+		originalModuleSpecifier = TryGetModuleSpecifierFromDeclaration(enclosingDeclaration)
 	}
 	contextFile := b.ctx.enclosingFile
 	resolutionMode := overrideImportMode
@@ -1216,6 +1213,7 @@ func (b *nodeBuilderImpl) getSpecifierForModuleSymbol(symbol *ast.Symbol, overri
 		modulespecifiers.ModuleSpecifierOptions{
 			OverrideImportMode: overrideImportMode,
 		},
+		false, /*forAutoImports*/
 	)
 	specifier := allSpecifiers[0]
 	links.specifierCache[cacheKey] = specifier
@@ -1357,7 +1355,7 @@ func (b *nodeBuilderImpl) isHomomorphicMappedTypeWithNonHomomorphicInstantiation
 }
 
 func (b *nodeBuilderImpl) createMappedTypeNodeFromType(t *Type) *ast.TypeNode {
-	// Debug.assert(!!(type.flags & TypeFlags.Object)); // !!!
+	debug.Assert(t.Flags()&TypeFlagsObject != 0)
 	mapped := t.AsMappedType()
 	var readonlyToken *ast.Node
 	if mapped.declaration.ReadonlyToken != nil {
@@ -1742,7 +1740,7 @@ func (b *nodeBuilderImpl) signatureToSignatureDeclarationHelper(signature *Signa
 		typeParamList = b.f.NewNodeList(typeParameters)
 	}
 	var modifierList *ast.ModifierList
-	if modifiers != nil && len(modifiers) > 0 {
+	if len(modifiers) > 0 {
 		modifierList = b.f.NewModifierList(modifiers)
 	}
 	var name *ast.Node
@@ -1803,13 +1801,6 @@ func (b *nodeBuilderImpl) signatureToSignatureDeclarationHelper(signature *Signa
 	// !!! TODO: Smuggle type arguments of signatures out for quickinfo
 	// if typeArguments != nil {
 	// 	node.TypeArguments = b.f.NewNodeList(typeArguments)
-	// }
-	// !!! TODO: synthetic comment support
-	// if signature.declaration. /* ? */ kind == ast.KindJSDocSignature && signature.declaration.Parent.Kind == ast.KindJSDocOverloadTag {
-	// 	comment := getTextOfNode(signature.declaration.Parent.Parent, true /*includeTrivia*/).slice(2, -2).split(regexp.MustParse(`\r\n|\n|\r`)).map_(func(line string) string {
-	// 		return line.replace(regexp.MustParse(`^\s+`), " ")
-	// 	}).join("\n")
-	// 	addSyntheticLeadingComment(node, ast.KindMultiLineCommentTrivia, comment, true /*hasTrailingNewLine*/)
 	// }
 
 	cleanup()
@@ -2003,11 +1994,12 @@ func (b *nodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 				t = b.ch.errorType
 			}
 		}
-		// !!! TODO: JSDoc, getEmitResolver call is unfortunate layering for the helper - hoist it into checker
-		addUndefinedForParameter := declaration != nil && (ast.IsParameter(declaration) /*|| ast.IsJSDocParameterTag(declaration)*/) && b.ch.GetEmitResolver().requiresAddingImplicitUndefined(declaration, symbol, b.ctx.enclosingDeclaration)
-		if addUndefinedForParameter {
-			t = b.ch.getOptionalType(t, false)
-		}
+	}
+
+	// !!! TODO: JSDoc, getEmitResolver call is unfortunate layering for the helper - hoist it into checker
+	addUndefinedForParameter := declaration != nil && (ast.IsParameter(declaration) /*|| ast.IsJSDocParameterTag(declaration)*/) && b.ch.GetEmitResolver().requiresAddingImplicitUndefined(declaration, symbol, b.ctx.enclosingDeclaration)
+	if addUndefinedForParameter {
+		t = b.ch.getOptionalType(t, false)
 	}
 
 	restoreFlags := b.saveRestoreFlags()
@@ -2246,7 +2238,7 @@ func (b *nodeBuilderImpl) addPropertyToElementList(propertySymbol *ast.Symbol, t
 				name:          propertyName,
 				questionToken: optionalToken,
 			})
-			b.setCommentRange(methodDeclaration, core.Coalesce(signature.declaration, propertySymbol.ValueDeclaration)) // !!! missing JSDoc support formerly provided by preserveCommentsOn
+			b.setCommentRange(methodDeclaration, core.Coalesce(signature.declaration, propertySymbol.ValueDeclaration))
 			typeElements = append(typeElements, methodDeclaration)
 		}
 		if len(signatures) != 0 || optionalToken == nil {
@@ -2277,7 +2269,7 @@ func (b *nodeBuilderImpl) addPropertyToElementList(propertySymbol *ast.Symbol, t
 	}
 	propertySignature := b.f.NewPropertySignatureDeclaration(modifiers, propertyName, optionalToken, propertyTypeNode, nil)
 
-	b.setCommentRange(propertySignature, propertySymbol.ValueDeclaration) // !!! missing JSDoc support formerly provided by preserveCommentsOn
+	b.setCommentRange(propertySignature, propertySymbol.ValueDeclaration)
 	typeElements = append(typeElements, propertySignature)
 
 	return typeElements
@@ -2287,9 +2279,7 @@ func (b *nodeBuilderImpl) createTypeNodesFromResolvedType(resolvedType *Structur
 	if b.checkTruncationLength() {
 		if b.ctx.flags&nodebuilder.FlagsNoTruncation != 0 {
 			elem := b.f.NewNotEmittedTypeElement()
-			// TODO: attach synthetic comment
-			// b.e.addSyntheticTrailingComment(elem, ast.KindMultiLineCommentTrivia, "elided")
-			return b.f.NewNodeList([]*ast.TypeElement{elem})
+			return b.f.NewNodeList([]*ast.TypeElement{b.e.AddSyntheticLeadingComment(elem, ast.KindMultiLineCommentTrivia, "elided", false /*hasTrailingNewLine*/)})
 		}
 		return b.f.NewNodeList([]*ast.Node{b.f.NewPropertySignatureDeclaration(nil, b.f.NewIdentifier("..."), nil, nil, nil)})
 	}
@@ -2325,11 +2315,7 @@ func (b *nodeBuilderImpl) createTypeNodesFromResolvedType(resolvedType *Structur
 		}
 		if b.checkTruncationLength() && (i+2 < len(properties)-1) {
 			if b.ctx.flags&nodebuilder.FlagsNoTruncation != 0 {
-				// !!! synthetic comment support - missing middle silently elided without
-				// typeElement := typeElements[len(typeElements) - 1].Clone()
-				// typeElements = typeElements[0:len(typeElements)-1]
-				// b.e.addSyntheticTrailingComment(typeElement, ast.KindMultiLineCommentTrivia, __TEMPLATE__("... ", properties.length-i, " more elided ..."))
-				// typeElements = append(typeElements, typeElement)
+				typeElements[len(typeElements)-1] = b.e.AddSyntheticLeadingComment(typeElements[len(typeElements)-1], ast.KindMultiLineCommentTrivia, fmt.Sprintf("... %d more elided ...", len(properties)-i), false /*hasTrailingNewLine*/)
 			} else {
 				text := fmt.Sprintf("... %d more ...", len(properties)-i)
 				typeElements = append(typeElements, b.f.NewPropertySignatureDeclaration(nil, b.f.NewIdentifier(text), nil, nil, nil))
@@ -2819,10 +2805,9 @@ func (b *nodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 		if t.alias != nil {
 			return t.alias.ToTypeReferenceNode(b)
 		}
-		// !!! TODO: add comment once synthetic comment additions to nodes are supported
-		// if t == b.ch.unresolvedType {
-		// 	return e.AddSyntheticLeadingComment(b.f.NewKeywordTypeNode(ast.KindAnyKeyword), ast.KindMultiLineCommentTrivia, "unresolved")
-		// }
+		if t == b.ch.unresolvedType {
+			return b.e.AddSyntheticLeadingComment(b.f.NewKeywordTypeNode(ast.KindAnyKeyword), ast.KindMultiLineCommentTrivia, "unresolved", false /*hasTrailingNewLine*/)
+		}
 		b.ctx.approximateLength += 3
 		return b.f.NewKeywordTypeNode(core.IfElse(t == b.ch.intrinsicMarkerType, ast.KindIntrinsicKeyword, ast.KindAnyKeyword))
 	}
@@ -2957,7 +2942,7 @@ func (b *nodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 	objectFlags := t.objectFlags
 
 	if objectFlags&ObjectFlagsReference != 0 {
-		// Debug.assert(t.flags&TypeFlagsObject != 0) // !!!
+		debug.Assert(t.Flags()&TypeFlagsObject != 0)
 		if t.AsTypeReference().node != nil {
 			return b.visitAndTransformType(t, (*nodeBuilderImpl).typeReferenceToTypeNode)
 		} else {
@@ -3028,7 +3013,7 @@ func (b *nodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 		}
 	}
 	if objectFlags&(ObjectFlagsAnonymous|ObjectFlagsMapped) != 0 {
-		// Debug.assert(t.flags&TypeFlagsObject != 0) // !!!
+		debug.Assert(t.Flags()&TypeFlagsObject != 0)
 		// The type is an object literal type.
 		return b.createAnonymousTypeNode(t)
 	}
