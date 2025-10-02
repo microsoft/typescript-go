@@ -85,9 +85,19 @@ const (
 	ImportModuleSpecifierEndingPreferenceJs      ImportModuleSpecifierEndingPreference = "js"
 )
 
+type IncludePackageJsonAutoImports string
+
+const (
+	IncludePackageJsonAutoImportsNone IncludePackageJsonAutoImports = ""
+	IncludePackageJsonAutoImportsAuto IncludePackageJsonAutoImports = "auto"
+	IncludePackageJsonAutoImportsOn   IncludePackageJsonAutoImports = "on"
+	IncludePackageJsonAutoImportsOff  IncludePackageJsonAutoImports = "off"
+)
+
 type UserPreferences struct {
 	ImportModuleSpecifierPreference       ImportModuleSpecifierPreference
 	ImportModuleSpecifierEndingPreference ImportModuleSpecifierEndingPreference
+	IncludePackageJsonAutoImports         IncludePackageJsonAutoImports
 	AutoImportSpecifierExcludeRegexes     []string
 }
 
@@ -111,6 +121,14 @@ const (
 	ModuleSpecifierEndingIndex
 	ModuleSpecifierEndingJsExtension
 	ModuleSpecifierEndingTsExtension
+)
+
+type PackageJsonAutoImports uint8
+
+const (
+	PackageJsonAutoImportsAuto PackageJsonAutoImports = iota
+	PackageJsonAutoImportsOn
+	PackageJsonAutoImportsOff
 )
 
 type MatchingMode uint8

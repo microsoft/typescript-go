@@ -493,7 +493,7 @@ func getLocalModuleSpecifier(
 	}
 
 	var fromPackageJsonImports string
-	if !pathsOnly {
+	if !pathsOnly && preferences.packageJsonAutoImports != PackageJsonAutoImportsOff {
 		fromPackageJsonImports = tryGetModuleNameFromPackageJsonImports(
 			moduleFileName,
 			sourceDirectory,

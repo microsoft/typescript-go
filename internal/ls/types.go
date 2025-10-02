@@ -51,6 +51,7 @@ type UserPreferences struct {
 
 	ImportModuleSpecifierPreference       modulespecifiers.ImportModuleSpecifierPreference
 	ImportModuleSpecifierEndingPreference modulespecifiers.ImportModuleSpecifierEndingPreference
+	IncludePackageJsonAutoImports         modulespecifiers.IncludePackageJsonAutoImports
 	PreferTypeOnlyAutoImports             *bool
 	AutoImportSpecifierExcludeRegexes     []string
 	AutoImportFileExcludePatterns         []string
@@ -62,6 +63,7 @@ func (p *UserPreferences) ModuleSpecifierPreferences() modulespecifiers.UserPref
 	return modulespecifiers.UserPreferences{
 		ImportModuleSpecifierPreference:       p.ImportModuleSpecifierPreference,
 		ImportModuleSpecifierEndingPreference: p.ImportModuleSpecifierEndingPreference,
+		IncludePackageJsonAutoImports:         p.IncludePackageJsonAutoImports,
 		AutoImportSpecifierExcludeRegexes:     p.AutoImportSpecifierExcludeRegexes,
 	}
 }
