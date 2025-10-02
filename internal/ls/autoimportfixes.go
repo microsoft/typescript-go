@@ -77,7 +77,7 @@ func (ct *changeTracker) doAddExistingFix(
 
 		if defaultImport != nil {
 			debug.Assert(clause.Name() == nil, "Cannot add a default import to an import clause that already has one")
-			ct.insertNodeAt(sourceFile, core.TextPos(astnav.GetStartOfNode(clause, sourceFile, false)), ct.NodeFactory.NewIdentifier(defaultImport.name), changeNodeOptions{suffix: ", "})
+			ct.insertNodeAt(sourceFile, core.TextPos(astnav.GetStartOfNode(clause, sourceFile, false)), ct.NewIdentifier(defaultImport.name), changeNodeOptions{suffix: ", "})
 		}
 
 		if len(namedImports) > 0 {
@@ -88,10 +88,10 @@ func (ct *changeTracker) doAddExistingFix(
 				if namedImport.propertyName != "" {
 					identifier = ct.NodeFactory.NewIdentifier(namedImport.propertyName).AsIdentifier().AsNode()
 				}
-				return ct.NodeFactory.NewImportSpecifier(
+				return ct.NewImportSpecifier(
 					(!importClause.IsTypeOnly || promoteFromTypeOnly) && shouldUseTypeOnly(namedImport.addAsTypeOnly, preferences),
 					identifier,
-					ct.NodeFactory.NewIdentifier(namedImport.name),
+					ct.NewIdentifier(namedImport.name),
 				)
 			}) // !!! sort with specifierComparer
 
@@ -137,7 +137,7 @@ func (ct *changeTracker) doAddExistingFix(
 				}
 			} else {
 				if len(newSpecifiers) > 0 {
-					namedImports := ct.NodeFactory.NewNamedImports(ct.NodeFactory.NewNodeList(newSpecifiers))
+					namedImports := ct.NewNamedImports(ct.NewNodeList(newSpecifiers))
 					if importClause.NamedBindings != nil {
 						ct.replaceNode(sourceFile, importClause.NamedBindings, namedImports, nil)
 					} else {
@@ -174,9 +174,9 @@ func (ct *changeTracker) addElementToBindingPattern(sourceFile *ast.SourceFile, 
 	if len(bindingPattern.Elements()) > 0 {
 		ct.insertNodeInListAfter(sourceFile, bindingPattern.Elements()[len(bindingPattern.Elements())-1], element, nil)
 	} else {
-		ct.replaceNode(sourceFile, bindingPattern, ct.NodeFactory.NewBindingPattern(
+		ct.replaceNode(sourceFile, bindingPattern, ct.NewBindingPattern(
 			ast.KindObjectBindingPattern,
-			ct.NodeFactory.NewNodeList([]*ast.Node{element}),
+			ct.NewNodeList([]*ast.Node{element}),
 		), nil)
 	}
 }
@@ -184,12 +184,12 @@ func (ct *changeTracker) addElementToBindingPattern(sourceFile *ast.SourceFile, 
 func (ct *changeTracker) newBindingElementFromNameAndPropertyName(name string, propertyName *string) *ast.Node {
 	var newPropertyNameIdentifier *ast.Node
 	if propertyName != nil {
-		newPropertyNameIdentifier = ct.NodeFactory.NewIdentifier(*propertyName)
+		newPropertyNameIdentifier = ct.NewIdentifier(*propertyName)
 	}
-	return ct.NodeFactory.NewBindingElement(
+	return ct.NewBindingElement(
 		nil, /*dotDotDotToken*/
 		newPropertyNameIdentifier,
-		ct.NodeFactory.NewIdentifier(name),
+		ct.NewIdentifier(name),
 		nil, /* initializer */
 	)
 }
@@ -241,13 +241,13 @@ func (ct *changeTracker) insertImports(sourceFile *ast.SourceFile, imports []*as
 func (ct *changeTracker) makeImport(defaultImport *ast.IdentifierNode, namedImports []*ast.Node, moduleSpecifier *ast.Expression, isTypeOnly bool) *ast.Statement {
 	var newNamedImports *ast.Node
 	if len(namedImports) > 0 {
-		newNamedImports = ct.NodeFactory.NewNamedImports(ct.NodeFactory.NewNodeList(namedImports))
+		newNamedImports = ct.NewNamedImports(ct.NewNodeList(namedImports))
 	}
 	var importClause *ast.Node
 	if defaultImport != nil || newNamedImports != nil {
-		importClause = ct.NodeFactory.NewImportClause(isTypeOnly, defaultImport, newNamedImports)
+		importClause = ct.NewImportClause(isTypeOnly, defaultImport, newNamedImports)
 	}
-	return ct.NodeFactory.NewImportDeclaration( /*modifiers*/ nil, importClause, moduleSpecifier, nil /*attributes*/)
+	return ct.NewImportDeclaration( /*modifiers*/ nil, importClause, moduleSpecifier, nil /*attributes*/)
 }
 
 func (ct *changeTracker) getNewImports(
@@ -259,7 +259,7 @@ func (ct *changeTracker) getNewImports(
 	compilerOptions *core.CompilerOptions,
 	preferences *UserPreferences,
 ) []*ast.Statement {
-	moduleSpecifierStringLiteral := ct.NodeFactory.NewStringLiteral(moduleSpecifier)
+	moduleSpecifierStringLiteral := ct.NewStringLiteral(moduleSpecifier)
 	var statements []*ast.Statement // []AnyImportSyntax
 	if defaultImport != nil || len(namedImports) > 0 {
 		// `verbatimModuleSyntax` should prefer top-level `import type` -
@@ -271,18 +271,18 @@ func (ct *changeTracker) getNewImports(
 
 		var defaultImportNode *ast.Node
 		if defaultImport != nil {
-			defaultImportNode = ct.NodeFactory.NewIdentifier(defaultImport.name)
+			defaultImportNode = ct.NewIdentifier(defaultImport.name)
 		}
 
 		statements = append(statements, ct.makeImport(defaultImportNode, core.Map(namedImports, func(namedImport *Import) *ast.Node {
 			var namedImportPropertyName *ast.Node
 			if namedImport.propertyName != "" {
-				namedImportPropertyName = ct.NodeFactory.NewIdentifier(namedImport.propertyName)
+				namedImportPropertyName = ct.NewIdentifier(namedImport.propertyName)
 			}
-			return ct.NodeFactory.NewImportSpecifier(
+			return ct.NewImportSpecifier(
 				!topLevelTypeOnly && shouldUseTypeOnly(namedImport.addAsTypeOnly, preferences),
 				namedImportPropertyName,
-				ct.NodeFactory.NewIdentifier(namedImport.name),
+				ct.NewIdentifier(namedImport.name),
 			)
 		}), moduleSpecifierStringLiteral, topLevelTypeOnly))
 	}
@@ -290,19 +290,19 @@ func (ct *changeTracker) getNewImports(
 	if namespaceLikeImport != nil {
 		var declaration *ast.Statement
 		if namespaceLikeImport.kind == ImportKindCommonJS {
-			declaration = ct.NodeFactory.NewImportEqualsDeclaration(
+			declaration = ct.NewImportEqualsDeclaration(
 				/*modifiers*/ nil,
 				shouldUseTypeOnly(namespaceLikeImport.addAsTypeOnly, preferences),
-				ct.NodeFactory.NewIdentifier(namespaceLikeImport.name),
-				ct.NodeFactory.NewExternalModuleReference(moduleSpecifierStringLiteral),
+				ct.NewIdentifier(namespaceLikeImport.name),
+				ct.NewExternalModuleReference(moduleSpecifierStringLiteral),
 			)
 		} else {
-			declaration = ct.NodeFactory.NewImportDeclaration(
+			declaration = ct.NewImportDeclaration(
 				/*modifiers*/ nil,
-				ct.NodeFactory.NewImportClause(
+				ct.NewImportClause(
 					shouldUseTypeOnly(namespaceLikeImport.addAsTypeOnly, preferences),
 					/*name*/ nil,
-					ct.NodeFactory.NewNamespaceImport(ct.NodeFactory.NewIdentifier(namespaceLikeImport.name)),
+					ct.NewNamespaceImport(ct.NewIdentifier(namespaceLikeImport.name)),
 				),
 				moduleSpecifierStringLiteral,
 				/*attributes*/ nil,

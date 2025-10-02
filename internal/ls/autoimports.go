@@ -380,9 +380,7 @@ func (l *LanguageService) getImportCompletionAction(
 	// formatContext *formattingContext,
 	preferences *UserPreferences,
 ) (string, codeAction) {
-	var exportInfos []*SymbolExportInfo
-	// `exportMapKey` should be in the `itemData` of each auto-import completion entry and sent in resolving completion entry requests
-	exportInfos = l.getExportInfos(ctx, ch, sourceFile, preferences, exportMapKey)
+	var exportInfos []*SymbolExportInfo = l.getExportInfos(ctx, ch, sourceFile, preferences, exportMapKey)
 	if len(exportInfos) == 0 {
 		panic("Some exportInfo should match the specified exportMapKey")
 	}
