@@ -302,7 +302,7 @@ func (ct *changeTracker) getAdjustedEndPosition(sourceFile *ast.SourceFile, node
 // ============= utilities =============
 
 func hasCommentsBeforeLineBreak(text string, start int) bool {
-	for _, ch := range []rune(text[start:]) {
+	for _, ch := range text[start:] {
 		if !stringutil.IsWhiteSpaceSingleLine(ch) {
 			return ch == '/'
 		}

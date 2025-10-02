@@ -3347,7 +3347,7 @@ func charactersFuzzyMatchInString(identifierString string, lowercaseCharacters s
 	lowerCaseRunes := []rune(lowercaseCharacters)
 	testChar := lowerCaseRunes[characterIndex]
 
-	for _, strChar := range []rune(identifierString) {
+	for _, strChar := range identifierString {
 		if strChar == testChar || strChar == unicode.ToUpper(testChar) {
 			willMatchFirstChar := prevChar == 0 || // Beginning of word
 				'a' <= prevChar && prevChar <= 'z' && 'A' <= strChar && strChar <= 'Z' || // camelCase transition

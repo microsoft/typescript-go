@@ -99,7 +99,7 @@ func TestRefCountingCaches(t *testing.T) {
 			assert.NilError(t, err)
 			assert.Equal(t, utilsEntry.refCount, 1)
 			assert.Equal(t, mainEntry.refCount, 0)
-			mainEntry, ok := session.parseCache.entries.Load(newParseCacheKey(main.ParseOptions(), main.ScriptKind))
+			_, ok := session.parseCache.entries.Load(newParseCacheKey(main.ParseOptions(), main.ScriptKind))
 			assert.Equal(t, ok, false)
 		})
 	})
