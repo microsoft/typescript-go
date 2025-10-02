@@ -380,7 +380,7 @@ func (l *LanguageService) getImportCompletionAction(
 	// formatContext *formattingContext,
 	preferences *UserPreferences,
 ) (string, codeAction) {
-	var exportInfos []*SymbolExportInfo = l.getExportInfos(ctx, ch, sourceFile, preferences, exportMapKey)
+	exportInfos := l.getExportInfos(ctx, ch, sourceFile, preferences, exportMapKey)
 	if len(exportInfos) == 0 {
 		panic("Some exportInfo should match the specified exportMapKey")
 	}
