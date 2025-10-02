@@ -5146,9 +5146,9 @@ func (c *Checker) checkImportAttributes(declaration *ast.Node) {
 
 	if !c.moduleKind.SupportsImportAttributes() {
 		if isImportAttributes {
-			c.grammarErrorOnNode(node, diagnostics.Import_attributes_are_only_supported_when_the_module_option_is_set_to_esnext_node18_nodenext_or_preserve)
+			c.grammarErrorOnNode(node, diagnostics.Import_attributes_are_only_supported_when_the_module_option_is_set_to_esnext_node18_node20_nodenext_or_preserve)
 		} else {
-			c.grammarErrorOnNode(node, diagnostics.Import_assertions_are_only_supported_when_the_module_option_is_set_to_esnext_node18_nodenext_or_preserve)
+			c.grammarErrorOnNode(node, diagnostics.Import_assertions_are_only_supported_when_the_module_option_is_set_to_esnext_node18_node20_nodenext_or_preserve)
 		}
 		return
 	}
@@ -5378,7 +5378,7 @@ func (c *Checker) checkExportAssignment(node *ast.Node) {
 		c.checkExpressionCached(node.Expression())
 	}
 	if isIllegalExportDefaultInCJS {
-		c.error(node, diagnostics.ESM_syntax_is_not_allowed_in_a_CommonJS_module_when_verbatimModuleSyntax_is_enabled)
+		c.error(node, getVerbatimModuleSyntaxErrorMessage(node))
 	}
 	c.checkExternalModuleExports(container)
 	if typeNode := node.Type(); typeNode != nil && node.Kind == ast.KindExportAssignment {
@@ -5399,6 +5399,18 @@ func (c *Checker) checkExportAssignment(node *ast.Node) {
 			c.grammarErrorOnNode(node, diagnostics.Export_assignment_is_not_supported_when_module_flag_is_system)
 		}
 	}
+}
+
+func getVerbatimModuleSyntaxErrorMessage(node *ast.Node) *diagnostics.Message {
+	sourceFile := ast.GetSourceFileOfNode(node)
+	fileName := sourceFile.FileName()
+
+	// Check if the file is .cts or .cjs (CommonJS-specific extensions)
+	if tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionCts, tspath.ExtensionCjs}) {
+		return diagnostics.ECMAScript_imports_and_exports_cannot_be_written_in_a_CommonJS_file_under_verbatimModuleSyntax
+	}
+	// For .ts, .tsx, .js, etc.
+	return diagnostics.ECMAScript_imports_and_exports_cannot_be_written_in_a_CommonJS_file_under_verbatimModuleSyntax_Adjust_the_type_field_in_the_nearest_package_json_to_make_this_file_an_ECMAScript_module_or_adjust_your_verbatimModuleSyntax_module_and_moduleResolution_settings_in_TypeScript
 }
 
 func (c *Checker) checkExternalModuleExports(node *ast.Node) {
@@ -6487,13 +6499,13 @@ func (c *Checker) checkAliasSymbol(node *ast.Node) {
 			}
 		}
 		if c.compilerOptions.VerbatimModuleSyntax.IsTrue() && !ast.IsImportEqualsDeclaration(node) && !ast.IsInJSFile(node) && c.program.GetEmitModuleFormatOfFile(ast.GetSourceFileOfNode(node)) == core.ModuleKindCommonJS {
-			c.error(node, diagnostics.ESM_syntax_is_not_allowed_in_a_CommonJS_module_when_verbatimModuleSyntax_is_enabled)
+			c.error(node, getVerbatimModuleSyntaxErrorMessage(node))
 		} else if c.moduleKind == core.ModuleKindPreserve && !ast.IsImportEqualsDeclaration(node) && !ast.IsVariableDeclaration(node) && c.program.GetEmitModuleFormatOfFile(ast.GetSourceFileOfNode(node)) == core.ModuleKindCommonJS {
 			// In `--module preserve`, ESM input syntax emits ESM output syntax, but there will be times
 			// when we look at the `impliedNodeFormat` of this file and decide it's CommonJS (i.e., currently,
 			// only if the file extension is .cjs/.cts). To avoid that inconsistency, we disallow ESM syntax
 			// in files that are unambiguously CommonJS in this mode.
-			c.error(node, diagnostics.ESM_syntax_is_not_allowed_in_a_CommonJS_module_when_module_is_set_to_preserve)
+			c.error(node, diagnostics.ECMAScript_module_syntax_is_not_allowed_in_a_CommonJS_module_when_module_is_set_to_preserve)
 		}
 		if c.compilerOptions.VerbatimModuleSyntax.IsTrue() && !ast.IsTypeOnlyImportOrExportDeclaration(node) && node.Flags&ast.NodeFlagsAmbient == 0 && targetFlags&ast.SymbolFlagsConstEnum != 0 {
 			constEnumDeclaration := target.ValueDeclaration
@@ -8053,7 +8065,6 @@ func (c *Checker) checkCallExpression(node *ast.Node, checkMode CheckMode) *Type
 		if !ast.IsDottedName(node.Expression()) {
 			c.error(node.Expression(), diagnostics.Assertions_require_the_call_target_to_be_an_identifier_or_qualified_name)
 		} else if c.getEffectsSignature(node) == nil {
-			c.error(node.Expression(), diagnostics.Assertions_require_every_name_in_the_call_target_to_be_declared_with_an_explicit_type_annotation)
 			diagnostic := c.error(node.Expression(), diagnostics.Assertions_require_every_name_in_the_call_target_to_be_declared_with_an_explicit_type_annotation)
 			c.getTypeOfDottedName(node.Expression(), diagnostic)
 		}
@@ -10312,7 +10323,7 @@ func (c *Checker) checkImportMetaProperty(node *ast.Node) *Type {
 			c.error(node, diagnostics.The_import_meta_meta_property_is_not_allowed_in_files_which_will_build_into_CommonJS_output)
 		}
 	} else if c.moduleKind < core.ModuleKindES2020 && c.moduleKind != core.ModuleKindSystem {
-		c.error(node, diagnostics.The_import_meta_meta_property_is_only_allowed_when_the_module_option_is_es2020_es2022_esnext_system_node16_node18_or_nodenext)
+		c.error(node, diagnostics.The_import_meta_meta_property_is_only_allowed_when_the_module_option_is_es2020_es2022_esnext_system_node16_node18_node20_or_nodenext)
 	}
 	file := ast.GetSourceFileOfNode(node)
 	debug.Assert(file.Flags&ast.NodeFlagsPossiblyContainsImportMeta != 0, "Containing file is missing import meta node flag.")
@@ -10566,7 +10577,7 @@ func (c *Checker) checkIdentifier(node *ast.Node, checkMode CheckMode) *Type {
 	}
 	if symbol == c.argumentsSymbol {
 		if c.isInPropertyInitializerOrClassStaticBlock(node) {
-			c.error(node, diagnostics.X_arguments_cannot_be_referenced_in_property_initializers)
+			c.error(node, diagnostics.X_arguments_cannot_be_referenced_in_property_initializers_or_class_static_initialization_blocks)
 			return c.errorType
 		}
 		return c.getTypeOfSymbol(symbol)
@@ -18332,6 +18343,11 @@ func (c *Checker) getBaseTypes(t *Type) []*Type {
 				}
 			}
 		}
+		// In general, base type resolution always precedes member resolution. However, it is possible
+		// for resolution of type parameter defaults to cause circularity errors, possibly leaving
+		// members partially resolved. Here we ensure any such partial resolution is reset.
+		// See https://github.com/microsoft/TypeScript/issues/16861 for an example.
+		t.objectFlags &^= ObjectFlagsMembersResolved
 		data.baseTypesResolved = true
 	}
 	return data.resolvedBaseTypes
@@ -18395,14 +18411,6 @@ func (c *Checker) resolveBaseTypesOfClass(t *Type) {
 		c.error(t.symbol.ValueDeclaration, diagnostics.Type_0_recursively_references_itself_as_a_base_type, c.TypeToString(t))
 		return
 	}
-	// !!! This logic is suspicious. We really shouldn't be un-resolving members after they've been resolved.
-	// if t.resolvedBaseTypes == resolvingEmptyArray {
-	// 	// Circular reference, likely through instantiation of default parameters
-	// 	// (otherwise there'd be an error from hasBaseType) - this is fine, but `.members` should be reset
-	// 	// as `getIndexedAccessType` via `instantiateType` via `getTypeFromClassOrInterfaceReference` forces a
-	// 	// partial instantiation of the members without the base types fully resolved
-	// 	t.members = nil
-	// }
 	t.AsInterfaceType().resolvedBaseTypes = []*Type{reducedBaseType}
 }
 
