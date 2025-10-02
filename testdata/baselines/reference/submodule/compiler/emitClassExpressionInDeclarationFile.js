@@ -75,15 +75,14 @@ export declare var simpleExample: {
 };
 export declare var circularReference: {
     new (): {
-        tags(c: any): any;
+        tags(c: /*elided*/ any): /*elided*/ any;
     };
     getTags(c: {
-        tags(c: any): any;
+        tags(c: /*elided*/ any): /*elided*/ any;
     }): {
         tags(c: any): any;
     };
 };
-// repro from #15066
 export declare class FooItem {
     foo(): void;
     name?: string;

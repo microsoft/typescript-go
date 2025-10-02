@@ -29,16 +29,8 @@ function foo1() {
     })(E || (E = {}));
 }
 function foo2() {
-    return E.A;
-    let E;
-    (function (E) {
-        E[E["A"] = 0] = "A";
-    })(E || (E = {}));
+    return 0 /* E.A */;
 }
 const config = {
-    a: AfterObject.A,
+    a: 2 /* AfterObject.A */,
 };
-var AfterObject;
-(function (AfterObject) {
-    AfterObject[AfterObject["A"] = 2] = "A";
-})(AfterObject || (AfterObject = {}));

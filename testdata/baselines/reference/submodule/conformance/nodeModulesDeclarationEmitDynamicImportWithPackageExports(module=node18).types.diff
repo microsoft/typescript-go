@@ -7,9 +7,9 @@
 ->a : { default: typeof import("index"); }
 ->await import("package/cjs") : { default: typeof import("index"); }
 ->import("package/cjs") : Promise<{ default: typeof import("index"); }>
-+>a : typeof import("package/cjs")
-+>await import("package/cjs") : typeof import("package/cjs")
-+>import("package/cjs") : Promise<typeof import("package/cjs")>
++>a : { default: typeof import("package/cjs"); }
++>await import("package/cjs") : { default: typeof import("package/cjs"); }
++>import("package/cjs") : Promise<{ default: typeof import("package/cjs"); }>
  >"package/cjs" : "package/cjs"
 
  export const b = await import("package/mjs");
@@ -34,9 +34,9 @@
 ->f : { cjsMain: true; default: typeof import("node_modules/inner/index"); }
 ->await import("inner") : { cjsMain: true; default: typeof import("node_modules/inner/index"); }
 ->import("inner") : Promise<{ cjsMain: true; default: typeof import("node_modules/inner/index"); }>
-+>f : typeof import("inner")
-+>await import("inner") : typeof import("inner")
-+>import("inner") : Promise<typeof import("inner")>
++>f : { cjsMain: true; default: typeof import("inner"); }
++>await import("inner") : { cjsMain: true; default: typeof import("inner"); }
++>import("inner") : Promise<{ cjsMain: true; default: typeof import("inner"); }>
  >"inner" : "inner"
 
  === other2.ts ===
@@ -45,9 +45,9 @@
 ->d : { cjsNonmain: true; default: typeof import("node_modules/inner/index"); }
 ->await import("inner/cjs") : { cjsNonmain: true; default: typeof import("node_modules/inner/index"); }
 ->import("inner/cjs") : Promise<{ cjsNonmain: true; default: typeof import("node_modules/inner/index"); }>
-+>d : typeof import("inner/cjs")
-+>await import("inner/cjs") : typeof import("inner/cjs")
-+>import("inner/cjs") : Promise<typeof import("inner/cjs")>
++>d : { cjsNonmain: true; default: typeof import("inner/cjs"); }
++>await import("inner/cjs") : { cjsNonmain: true; default: typeof import("inner/cjs"); }
++>import("inner/cjs") : Promise<{ cjsNonmain: true; default: typeof import("inner/cjs"); }>
  >"inner/cjs" : "inner/cjs"
 
  export const e = await import("inner/mjs");
@@ -65,9 +65,9 @@
 ->a : { default: typeof import("index"); }
 ->await import("package/cjs") : { default: typeof import("index"); }
 ->import("package/cjs") : Promise<{ default: typeof import("index"); }>
-+>a : typeof import("package/cjs")
-+>await import("package/cjs") : typeof import("package/cjs")
-+>import("package/cjs") : Promise<typeof import("package/cjs")>
++>a : { default: typeof import("package/cjs"); }
++>await import("package/cjs") : { default: typeof import("package/cjs"); }
++>import("package/cjs") : Promise<{ default: typeof import("package/cjs"); }>
  >"package/cjs" : "package/cjs"
 
  export const b = await import("package/mjs");
@@ -92,9 +92,9 @@
 ->f : { cjsMain: true; default: typeof import("node_modules/inner/index"); }
 ->await import("inner") : { cjsMain: true; default: typeof import("node_modules/inner/index"); }
 ->import("inner") : Promise<{ cjsMain: true; default: typeof import("node_modules/inner/index"); }>
-+>f : typeof import("inner")
-+>await import("inner") : typeof import("inner")
-+>import("inner") : Promise<typeof import("inner")>
++>f : { cjsMain: true; default: typeof import("inner"); }
++>await import("inner") : { cjsMain: true; default: typeof import("inner"); }
++>import("inner") : Promise<{ cjsMain: true; default: typeof import("inner"); }>
  >"inner" : "inner"
 
  === other2.mts ===
@@ -103,9 +103,9 @@
 ->d : { cjsNonmain: true; default: typeof import("node_modules/inner/index"); }
 ->await import("inner/cjs") : { cjsNonmain: true; default: typeof import("node_modules/inner/index"); }
 ->import("inner/cjs") : Promise<{ cjsNonmain: true; default: typeof import("node_modules/inner/index"); }>
-+>d : typeof import("inner/cjs")
-+>await import("inner/cjs") : typeof import("inner/cjs")
-+>import("inner/cjs") : Promise<typeof import("inner/cjs")>
++>d : { cjsNonmain: true; default: typeof import("inner/cjs"); }
++>await import("inner/cjs") : { cjsNonmain: true; default: typeof import("inner/cjs"); }
++>import("inner/cjs") : Promise<{ cjsNonmain: true; default: typeof import("inner/cjs"); }>
  >"inner/cjs" : "inner/cjs"
 
  export const e = await import("inner/mjs");
@@ -122,8 +122,8 @@
  export const a = import("package/cjs");
 ->a : Promise<{ default: typeof import("index"); }>
 ->import("package/cjs") : Promise<{ default: typeof import("index"); }>
-+>a : Promise<typeof import("./index.cts")>
-+>import("package/cjs") : Promise<typeof import("./index.cts")>
++>a : Promise<{ default: typeof import("./index.cts"); }>
++>import("package/cjs") : Promise<{ default: typeof import("./index.cts"); }>
  >"package/cjs" : "package/cjs"
 
  export const b = import("package/mjs");
@@ -143,8 +143,8 @@
  export const f = import("inner");
 ->f : Promise<{ cjsMain: true; default: typeof import("node_modules/inner/index"); }>
 ->import("inner") : Promise<{ cjsMain: true; default: typeof import("node_modules/inner/index"); }>
-+>f : Promise<typeof import("inner")>
-+>import("inner") : Promise<typeof import("inner")>
++>f : Promise<{ cjsMain: true; default: typeof import("inner"); }>
++>import("inner") : Promise<{ cjsMain: true; default: typeof import("inner"); }>
  >"inner" : "inner"
 
  === other2.cts ===
@@ -152,8 +152,8 @@
  export const d = import("inner/cjs");
 ->d : Promise<{ cjsNonmain: true; default: typeof import("node_modules/inner/index"); }>
 ->import("inner/cjs") : Promise<{ cjsNonmain: true; default: typeof import("node_modules/inner/index"); }>
-+>d : Promise<typeof import("inner/cjs")>
-+>import("inner/cjs") : Promise<typeof import("inner/cjs")>
++>d : Promise<{ cjsNonmain: true; default: typeof import("inner/cjs"); }>
++>import("inner/cjs") : Promise<{ cjsNonmain: true; default: typeof import("inner/cjs"); }>
  >"inner/cjs" : "inner/cjs"
 
  export const e = import("inner/mjs");

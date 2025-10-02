@@ -49,22 +49,64 @@ func ParseCommandLine(
 	optionsWithAbsolutePaths := convertToOptionsWithAbsolutePaths(parser.options, CommandLineCompilerOptionsMap, host.GetCurrentDirectory())
 	compilerOptions := convertMapToOptions(optionsWithAbsolutePaths, &compilerOptionsParser{&core.CompilerOptions{}}).CompilerOptions
 	watchOptions := convertMapToOptions(optionsWithAbsolutePaths, &watchOptionsParser{&core.WatchOptions{}}).WatchOptions
-	return &ParsedCommandLine{
-		ParsedConfig: &core.ParsedOptions{
-			CompilerOptions: compilerOptions,
-			WatchOptions:    watchOptions,
-			FileNames:       parser.fileNames,
-		},
-		ConfigFile:    nil,
-		Errors:        parser.errors,
-		Raw:           parser.options, // !!! keep optionsBase incase needed later. todo: figure out if this is still needed
-		CompileOnSave: nil,
+	result := NewParsedCommandLine(compilerOptions, parser.fileNames, tspath.ComparePathsOptions{
+		UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
+		CurrentDirectory:          host.GetCurrentDirectory(),
+	})
+	result.ParsedConfig.WatchOptions = watchOptions
+	result.Errors = parser.errors
+	result.Raw = parser.options
+	return result
+}
+
+func ParseBuildCommandLine(
+	commandLine []string,
+	host ParseConfigHost,
+) *ParsedBuildCommandLine {
+	if commandLine == nil {
+		commandLine = []string{}
+	}
+	parser := parseCommandLineWorker(buildOptionsDidYouMeanDiagnostics, commandLine, host.FS())
+	compilerOptions := &core.CompilerOptions{}
+	for key, value := range parser.options.Entries() {
+		buildOption := BuildNameMap.Get(key)
+		if buildOption == &TscBuildOption || buildOption == CompilerNameMap.Get(key) {
+			ParseCompilerOptions(key, value, compilerOptions)
+		}
+	}
+	result := &ParsedBuildCommandLine{
+		BuildOptions:    convertMapToOptions(parser.options, &buildOptionsParser{&core.BuildOptions{}}).BuildOptions,
+		CompilerOptions: compilerOptions,
+		WatchOptions:    convertMapToOptions(parser.options, &watchOptionsParser{&core.WatchOptions{}}).WatchOptions,
+		Projects:        parser.fileNames,
+		Errors:          parser.errors,
 
 		comparePathsOptions: tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
 			CurrentDirectory:          host.GetCurrentDirectory(),
 		},
 	}
+
+	if len(result.Projects) == 0 {
+		// tsc -b invoked with no extra arguments; act as if invoked with "tsc -b ."
+		result.Projects = append(result.Projects, ".")
+	}
+
+	// Nonsensical combinations
+	if result.BuildOptions.Clean.IsTrue() && result.BuildOptions.Force.IsTrue() {
+		result.Errors = append(result.Errors, ast.NewCompilerDiagnostic(diagnostics.Options_0_and_1_cannot_be_combined, "clean", "force"))
+	}
+	if result.BuildOptions.Clean.IsTrue() && result.BuildOptions.Verbose.IsTrue() {
+		result.Errors = append(result.Errors, ast.NewCompilerDiagnostic(diagnostics.Options_0_and_1_cannot_be_combined, "clean", "verbose"))
+	}
+	if result.BuildOptions.Clean.IsTrue() && result.CompilerOptions.Watch.IsTrue() {
+		result.Errors = append(result.Errors, ast.NewCompilerDiagnostic(diagnostics.Options_0_and_1_cannot_be_combined, "clean", "watch"))
+	}
+	if result.CompilerOptions.Watch.IsTrue() && result.BuildOptions.Dry.IsTrue() {
+		result.Errors = append(result.Errors, ast.NewCompilerDiagnostic(diagnostics.Options_0_and_1_cannot_be_combined, "watch", "dry"))
+	}
+
+	return result
 }
 
 func parseCommandLineWorker(
@@ -116,7 +158,7 @@ func (p *commandLineParser) parseStrings(args []string) {
 
 func getInputOptionName(input string) string {
 	// removes at most two leading '-' from the input string
-	return strings.ToLower(strings.TrimPrefix(strings.TrimPrefix(input, "-"), "-"))
+	return strings.TrimPrefix(strings.TrimPrefix(input, "-"), "-")
 }
 
 func (p *commandLineParser) parseResponseFile(fileName string) {

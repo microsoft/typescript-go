@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/module"
@@ -151,9 +152,14 @@ type FileExtensionInfo struct {
 	ScriptKind     core.ScriptKind
 }
 
+type ExtendedConfigCache interface {
+	GetExtendedConfig(fileName string, path tspath.Path, parse func() *ExtendedConfigCacheEntry) *ExtendedConfigCacheEntry
+}
+
 type ExtendedConfigCacheEntry struct {
 	extendedResult *TsConfigSourceFile
 	extendedConfig *parsedTsconfig
+	errors         []*ast.Diagnostic
 }
 
 type parsedTsconfig struct {
@@ -682,7 +688,7 @@ func ParseJsonSourceFileConfigFileContent(
 	configFileName string,
 	resolutionStack []tspath.Path,
 	extraFileExtensions []FileExtensionInfo,
-	extendedConfigCache *collections.SyncMap[tspath.Path, *ExtendedConfigCacheEntry],
+	extendedConfigCache ExtendedConfigCache,
 ) *ParsedCommandLine {
 	// tracing?.push(tracing.Phase.Parse, "parseJsonSourceFileConfigFileContent", { path: sourceFile.fileName });
 	result := parseJsonConfigFileContentWorker(nil /*json*/, sourceFile, host, basePath, existingOptions, configFileName, resolutionStack, extraFileExtensions, extendedConfigCache)
@@ -822,7 +828,7 @@ func convertPropertyValueToJson(sourceFile *ast.SourceFile, valueExpression *ast
 // jsonNode: The contents of the config file to parse
 // host: Instance of ParseConfigHost used to enumerate files in folder.
 // basePath: A root directory to resolve relative path entries in the config file to. e.g. outDir
-func ParseJsonConfigFileContent(json any, host ParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []FileExtensionInfo, extendedConfigCache *collections.SyncMap[tspath.Path, *ExtendedConfigCacheEntry]) *ParsedCommandLine {
+func ParseJsonConfigFileContent(json any, host ParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []FileExtensionInfo, extendedConfigCache ExtendedConfigCache) *ParsedCommandLine {
 	result := parseJsonConfigFileContentWorker(parseJsonToStringKey(json), nil /*sourceFile*/, host, basePath, existingOptions, configFileName, resolutionStack, extraFileExtensions, extendedConfigCache)
 	return result
 }
@@ -923,56 +929,51 @@ func readJsonConfigFile(fileName string, path tspath.Path, readFile func(fileNam
 
 func getExtendedConfig(
 	sourceFile *TsConfigSourceFile,
-	extendedConfigPath string,
+	extendedConfigFileName string,
 	host ParseConfigHost,
 	resolutionStack []string,
-	extendedConfigCache *collections.SyncMap[tspath.Path, *ExtendedConfigCacheEntry],
+	extendedConfigCache ExtendedConfigCache,
 	result *extendsResult,
 ) (*parsedTsconfig, []*ast.Diagnostic) {
-	path := tspath.ToPath(extendedConfigPath, host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames())
-	var extendedResult *TsConfigSourceFile
-	var extendedConfig *parsedTsconfig
 	var errors []*ast.Diagnostic
-	var cacheEntry *ExtendedConfigCacheEntry
-	if extendedConfigCache != nil {
-		entry, ok := extendedConfigCache.Load(path)
-		if ok && entry != nil {
-			cacheEntry = entry
-			extendedResult = cacheEntry.extendedResult
-			extendedConfig = cacheEntry.extendedConfig
+	extendedConfigPath := tspath.ToPath(extendedConfigFileName, host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames())
+
+	parse := func() *ExtendedConfigCacheEntry {
+		var extendedConfig *parsedTsconfig
+		var entryErrors []*ast.Diagnostic
+		extendedResult, err := readJsonConfigFile(extendedConfigFileName, extendedConfigPath, host.FS().ReadFile)
+		entryErrors = append(entryErrors, err...)
+		if len(extendedResult.SourceFile.Diagnostics()) == 0 {
+			extendedConfig, err = parseConfig(nil, extendedResult, host, tspath.GetDirectoryPath(extendedConfigFileName), tspath.GetBaseFileName(extendedConfigFileName), resolutionStack, extendedConfigCache)
+			entryErrors = append(entryErrors, err...)
+		}
+		return &ExtendedConfigCacheEntry{
+			extendedResult: extendedResult,
+			extendedConfig: extendedConfig,
+			errors:         entryErrors,
 		}
 	}
-	if cacheEntry == nil {
-		var err []*ast.Diagnostic
-		extendedResult, err = readJsonConfigFile(extendedConfigPath, path, host.FS().ReadFile)
-		errors = append(errors, err...)
-		if len(extendedResult.SourceFile.Diagnostics()) == 0 {
-			extendedConfig, err = parseConfig(nil, extendedResult, host, tspath.GetDirectoryPath(extendedConfigPath), tspath.GetBaseFileName(extendedConfigPath), resolutionStack, extendedConfigCache)
-			errors = append(errors, err...)
-		}
-		if extendedConfigCache != nil {
-			entry, loaded := extendedConfigCache.LoadOrStore(path, &ExtendedConfigCacheEntry{
-				extendedResult: extendedResult,
-				extendedConfig: extendedConfig,
-			})
-			if loaded {
-				// If we loaded an entry, we can use the cached result
-				extendedResult = entry.extendedResult
-				extendedConfig = entry.extendedConfig
+
+	var cacheEntry *ExtendedConfigCacheEntry
+	if extendedConfigCache != nil {
+		cacheEntry = extendedConfigCache.GetExtendedConfig(extendedConfigFileName, extendedConfigPath, parse)
+	} else {
+		cacheEntry = parse()
+	}
+
+	if len(cacheEntry.errors) > 0 {
+		errors = append(errors, cacheEntry.errors...)
+	}
+
+	if cacheEntry.extendedResult != nil {
+		if sourceFile != nil {
+			result.extendedSourceFiles.Add(cacheEntry.extendedResult.SourceFile.FileName())
+			for _, extendedSourceFile := range cacheEntry.extendedResult.ExtendedSourceFiles {
+				result.extendedSourceFiles.Add(extendedSourceFile)
 			}
 		}
 	}
-	if sourceFile != nil {
-		result.extendedSourceFiles.Add(extendedResult.SourceFile.FileName())
-		for _, extendedSourceFile := range extendedResult.ExtendedSourceFiles {
-			result.extendedSourceFiles.Add(extendedSourceFile)
-		}
-	}
-	if len(extendedResult.SourceFile.Diagnostics()) != 0 {
-		errors = append(errors, extendedResult.SourceFile.Diagnostics()...)
-		return nil, errors
-	}
-	return extendedConfig, errors
+	return cacheEntry.extendedConfig, errors
 }
 
 // parseConfig just extracts options/include/exclude/files out of a config file.
@@ -984,7 +985,7 @@ func parseConfig(
 	basePath string,
 	configFileName string,
 	resolutionStack []string,
-	extendedConfigCache *collections.SyncMap[tspath.Path, *ExtendedConfigCacheEntry],
+	extendedConfigCache ExtendedConfigCache,
 ) (*parsedTsconfig, []*ast.Diagnostic) {
 	basePath = tspath.NormalizeSlashes(basePath)
 	resolvedPath := tspath.GetNormalizedAbsolutePath(configFileName, basePath)
@@ -1129,9 +1130,9 @@ func parseJsonConfigFileContentWorker(
 	configFileName string,
 	resolutionStack []tspath.Path,
 	extraFileExtensions []FileExtensionInfo,
-	extendedConfigCache *collections.SyncMap[tspath.Path, *ExtendedConfigCacheEntry],
+	extendedConfigCache ExtendedConfigCache,
 ) *ParsedCommandLine {
-	// Debug.assert((json === undefined && sourceFile !== undefined) || (json !== undefined && sourceFile === undefined));
+	debug.Assert((json == nil && sourceFile != nil) || (json != nil && sourceFile == nil))
 
 	basePathForFileNames := ""
 	if configFileName != "" {
@@ -1263,9 +1264,9 @@ func parseJsonConfigFileContentWorker(
 		sourceFile.configFileSpecs = &configFileSpecs
 	}
 
-	getFileNames := func(basePath string) []string {
+	getFileNames := func(basePath string) ([]string, int) {
 		parsedConfigOptions := parsedConfig.options
-		fileNames := getFileNamesFromConfigSpecs(configFileSpecs, basePath, parsedConfigOptions, host.FS(), extraFileExtensions)
+		fileNames, literalFileNamesLen := getFileNamesFromConfigSpecs(configFileSpecs, basePath, parsedConfigOptions, host.FS(), extraFileExtensions)
 		if shouldReportNoInputFiles(fileNames, canJsonReportNoInputFiles(rawConfig), resolutionStack) {
 			includeSpecs := configFileSpecs.includeSpecs
 			excludeSpecs := configFileSpecs.excludeSpecs
@@ -1277,13 +1278,14 @@ func parseJsonConfigFileContentWorker(
 			}
 			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exclude_paths_were_2, configFileName, core.Must(core.StringifyJson(includeSpecs, "", "")), core.Must(core.StringifyJson(excludeSpecs, "", ""))))
 		}
-		return fileNames
+		return fileNames, literalFileNamesLen
 	}
 
 	getProjectReferences := func(basePath string) []*core.ProjectReference {
-		var projectReferences []*core.ProjectReference = []*core.ProjectReference{}
+		var projectReferences []*core.ProjectReference
 		newReferencesOfRaw := getPropFromRaw("references", func(element any) bool { return reflect.TypeOf(element) == orderedMapType }, "object")
 		if newReferencesOfRaw.sliceValue != nil {
+			projectReferences = []*core.ProjectReference{}
 			for _, reference := range newReferencesOfRaw.sliceValue {
 				for _, ref := range parseProjectReference(reference) {
 					if reflect.TypeOf(ref.Path).Kind() != reflect.String {
@@ -1303,12 +1305,13 @@ func parseJsonConfigFileContentWorker(
 		return projectReferences
 	}
 
+	fileNames, literalFileNamesLen := getFileNames(basePathForFileNames)
 	return &ParsedCommandLine{
 		ParsedConfig: &core.ParsedOptions{
 			CompilerOptions: parsedConfig.options,
 			TypeAcquisition: parsedConfig.typeAcquisition,
 			// WatchOptions:      nil,
-			FileNames:         getFileNames(basePathForFileNames),
+			FileNames:         fileNames,
 			ProjectReferences: getProjectReferences(basePathForFileNames),
 		},
 		ConfigFile: sourceFile,
@@ -1320,6 +1323,7 @@ func parseJsonConfigFileContentWorker(
 			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
 			CurrentDirectory:          basePathForFileNames,
 		},
+		literalFileNamesLen: literalFileNamesLen,
 	}
 }
 
@@ -1601,7 +1605,7 @@ func getFileNamesFromConfigSpecs(
 	options *core.CompilerOptions,
 	host vfs.FS,
 	extraFileExtensions []FileExtensionInfo,
-) []string {
+) ([]string, int) {
 	extraFileExtensions = []FileExtensionInfo{}
 	basePath = tspath.NormalizePath(basePath)
 	keyMappper := func(value string) string { return tspath.GetCanonicalFileName(value, host.UseCaseSensitiveFileNames()) }
@@ -1689,7 +1693,7 @@ func getFileNamesFromConfigSpecs(
 	for file := range wildCardJsonFileMap.Values() {
 		files = append(files, file)
 	}
-	return files
+	return files, literalFileMap.Size()
 }
 
 func GetSupportedExtensions(compilerOptions *core.CompilerOptions, extraFileExtensions []FileExtensionInfo) [][]string {
@@ -1736,7 +1740,7 @@ func GetParsedCommandLineOfConfigFile(
 	configFileName string,
 	options *core.CompilerOptions,
 	sys ParseConfigHost,
-	extendedConfigCache *collections.SyncMap[tspath.Path, *ExtendedConfigCacheEntry],
+	extendedConfigCache ExtendedConfigCache,
 ) (*ParsedCommandLine, []*ast.Diagnostic) {
 	configFileName = tspath.GetNormalizedAbsolutePath(configFileName, sys.GetCurrentDirectory())
 	return GetParsedCommandLineOfConfigFilePath(configFileName, tspath.ToPath(configFileName, sys.GetCurrentDirectory(), sys.FS().UseCaseSensitiveFileNames()), options, sys, extendedConfigCache)
@@ -1747,7 +1751,7 @@ func GetParsedCommandLineOfConfigFilePath(
 	path tspath.Path,
 	options *core.CompilerOptions,
 	sys ParseConfigHost,
-	extendedConfigCache *collections.SyncMap[tspath.Path, *ExtendedConfigCacheEntry],
+	extendedConfigCache ExtendedConfigCache,
 ) (*ParsedCommandLine, []*ast.Diagnostic) {
 	errors := []*ast.Diagnostic{}
 	configFileText, errors := tryReadFile(configFileName, sys.FS().ReadFile, errors)

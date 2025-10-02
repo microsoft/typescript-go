@@ -8,23 +8,3 @@
  // https://github.com/microsoft/TypeScript/issues/60175
  function f1() {
      if (true)
--        ;
-     console.log("");
- }
- function f2() {
-@@= skipped -14, +12 lines =@@
- }
- function f3() {
-     if (true)
--        ;
-     console.log("");
- }
- function f4() {
-@@= skipped -11, +10 lines =@@
-
-
- //// [typeInterfaceDeclarationsInBlockStatements1.d.ts]
-+// https://github.com/microsoft/TypeScript/issues/60175
- declare function f1(): void;
- declare function f2(): void;
- declare function f3(): void;

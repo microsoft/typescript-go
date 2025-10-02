@@ -537,6 +537,20 @@ func (m *MapFS) Remove(path string) error {
 	return m.remove(path)
 }
 
+func (m *MapFS) Chtimes(path string, aTime time.Time, mTime time.Time) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	canonical := m.getCanonicalPath(path)
+	canonicalString := string(canonical)
+	fileInfo := m.m[canonicalString]
+	if fileInfo == nil {
+		// file does not exist
+		return fs.ErrNotExist
+	}
+	fileInfo.ModTime = mTime
+	return nil
+}
+
 func (m *MapFS) GetTargetOfSymlink(path string) (string, bool) {
 	path, _ = strings.CutPrefix(path, "/")
 	m.mu.RLock()
@@ -549,6 +563,18 @@ func (m *MapFS) GetTargetOfSymlink(path string) (string, bool) {
 		}
 	}
 	return "", false
+}
+
+func (m *MapFS) GetModTime(path string) time.Time {
+	path, _ = strings.CutPrefix(path, "/")
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	canonical := m.getCanonicalPath(path)
+	canonicalString := string(canonical)
+	if fileInfo, ok := m.m[canonicalString]; ok {
+		return fileInfo.ModTime
+	}
+	return time.Time{}
 }
 
 func (m *MapFS) Entries() iter.Seq2[string, *fstest.MapFile] {
@@ -569,6 +595,15 @@ func (m *MapFS) Entries() iter.Seq2[string, *fstest.MapFile] {
 			}
 		}
 	}
+}
+
+func (m *MapFS) GetFileInfo(path string) *fstest.MapFile {
+	path, _ = strings.CutPrefix(path, "/")
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	canonical := m.getCanonicalPath(path)
+	canonicalString := string(canonical)
+	return m.m[canonicalString]
 }
 
 func must[T any](v T, err error) T {

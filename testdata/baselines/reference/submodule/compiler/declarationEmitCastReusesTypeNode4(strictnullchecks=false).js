@@ -64,7 +64,7 @@ export declare class C {
     };
     /** @optional */ optField: {
         name?: string;
-    }; // not a thing
+    };
     /** @readonly */ readonly roFiled: {
         name?: string;
     };
@@ -89,12 +89,9 @@ declare const _default: {
     name?: string;
 };
 export default /** @type {P} */ _default;
-// allows `undefined` on the input side, thanks to the initializer
 /**
  *
  * @param {P} x
  * @param {number} b
  */
-export declare function fnWithPartialAnnotationOnDefaultparam(x: {
-    name?: string;
-}, b: number): void;
+export declare function fnWithPartialAnnotationOnDefaultparam(x: P, b: number): void;
