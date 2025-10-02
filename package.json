@@ -9,17 +9,16 @@
         "@types/which": "^3.0.4",
         "adm-zip": "^0.5.16",
         "chokidar": "^4.0.3",
-        "dprint": "^0.50.0",
+        "dprint": "^0.50.1",
         "execa": "^9.6.0",
         "glob": "^10.4.5",
         "hereby": "^1.11.0",
         "p-limit": "^6.2.0",
         "picocolors": "^1.1.1",
-        "typescript": "^5.8.3",
+        "typescript": "^5.9.2",
         "which": "^5.0.0"
     },
     "scripts": {
-        "postinstall": "hereby postinstall",
         "build": "hereby build",
         "build:watch": "hereby build:watch",
         "build:watch:debug": "hereby build:watch --debug",
@@ -28,7 +27,9 @@
         "extension:build": "npm run -w _extension build",
         "extension:watch": "npm run -w _extension watch",
         "node": "node --no-warnings --conditions @typescript/source",
-        "convertfourslash": "node --experimental-strip-types --no-warnings internal/fourslash/_scripts/convertFourslash.mts"
+        "convertfourslash": "node --experimental-strip-types --no-warnings internal/fourslash/_scripts/convertFourslash.mts",
+        "updatefailing": "node --experimental-strip-types --no-warnings internal/fourslash/_scripts/updateFailing.mts",
+        "makemanual": "node --experimental-strip-types --no-warnings internal/fourslash/_scripts/makeManual.mts"
     },
     "workspaces": [
         "./_extension",

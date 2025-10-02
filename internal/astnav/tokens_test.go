@@ -20,8 +20,6 @@ import (
 )
 
 var testFiles = []string{
-	// !!! EOFToken JSDoc parsing is missing
-	// filepath.Join(repo.TestDataPath, "fixtures/astnav/eofJSDoc.ts"),
 	filepath.Join(repo.TypeScriptSubmodulePath, "src/services/mapCode.ts"),
 }
 
@@ -242,7 +240,7 @@ func tsGetTouchingPropertyName(t testing.TB, fileText string, positions []int) [
 }
 
 func writeRangeDiff(output *strings.Builder, file *ast.SourceFile, diff tokenDiff, rng core.TextRange, position int) {
-	lines := file.LineMap()
+	lines := file.ECMALineMap()
 
 	tsTokenPos := position
 	goTokenPos := position

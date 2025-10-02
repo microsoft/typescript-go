@@ -25,12 +25,14 @@ type importRequireStatements struct {
 	requireHelperName *ast.IdentifierNode
 }
 
-func NewESModuleTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, resolver binder.ReferenceResolver, getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind) *transformers.Transformer {
+func NewESModuleTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
+	compilerOptions := opts.CompilerOptions
+	resolver := opts.Resolver
 	if resolver == nil {
 		resolver = binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
 	}
-	tx := &ESModuleTransformer{compilerOptions: compilerOptions, resolver: resolver, getEmitModuleFormatOfFile: getEmitModuleFormatOfFile}
-	return tx.NewTransformer(tx.visit, emitContext)
+	tx := &ESModuleTransformer{compilerOptions: compilerOptions, resolver: resolver, getEmitModuleFormatOfFile: opts.GetEmitModuleFormatOfFile}
+	return tx.NewTransformer(tx.visit, opts.Context)
 }
 
 // Visits source elements that are not top-level or top-level nested statements.
@@ -79,7 +81,7 @@ func (tx *ESModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 		statements = append(statements, rest...)
 		statementList := tx.Factory().NewNodeList(statements)
 		statementList.Loc = result.Statements.Loc
-		result = tx.Factory().UpdateSourceFile(result, statementList).AsSourceFile()
+		result = tx.Factory().UpdateSourceFile(result, statementList, node.EndOfFileToken).AsSourceFile()
 	}
 
 	if ast.IsExternalModule(result) &&
@@ -89,7 +91,7 @@ func (tx *ESModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 		statements = append(statements, createEmptyImports(tx.Factory()))
 		statementList := tx.Factory().NewNodeList(statements)
 		statementList.Loc = result.Statements.Loc
-		result = tx.Factory().UpdateSourceFile(result, statementList).AsSourceFile()
+		result = tx.Factory().UpdateSourceFile(result, statementList, node.EndOfFileToken).AsSourceFile()
 	}
 
 	tx.importRequireStatements = nil

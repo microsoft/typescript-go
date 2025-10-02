@@ -4,13 +4,14 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestCompletionsWithStringReplacementMode1(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface TFunction {
     (_: 'login.title', __?: {}): string;
@@ -33,13 +34,159 @@ func TestCompletionsWithStringReplacementMode1(t *testing.T) {
 const f: TFunction = (() => {}) as any;
 f('[|login./**/|]')`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{&lsproto.CompletionItem{Label: "login.title"}, &lsproto.CompletionItem{Label: "login.description"}, &lsproto.CompletionItem{Label: "login.sendEmailAgree"}, &lsproto.CompletionItem{Label: "login.termsOfUse"}, &lsproto.CompletionItem{Label: "login.privacyPolicy"}, &lsproto.CompletionItem{Label: "login.sendEmailButton"}, &lsproto.CompletionItem{Label: "login.emailInputPlaceholder"}, &lsproto.CompletionItem{Label: "login.errorWrongEmailTitle"}, &lsproto.CompletionItem{Label: "login.errorWrongEmailDescription"}, &lsproto.CompletionItem{Label: "login.errorGeneralEmailTitle"}, &lsproto.CompletionItem{Label: "login.errorGeneralEmailDescription"}, &lsproto.CompletionItem{Label: "login.loginErrorTitle"}, &lsproto.CompletionItem{Label: "login.loginErrorDescription"}, &lsproto.CompletionItem{Label: "login.openEmailAppErrorTitle"}, &lsproto.CompletionItem{Label: "login.openEmailAppErrorDescription"}, &lsproto.CompletionItem{Label: "login.openEmailAppErrorConfirm"}},
+		Items: &fourslash.CompletionsExpectedItems{
+			Exact: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label: "login.title",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "login.title",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
+				},
+				&lsproto.CompletionItem{
+					Label: "login.description",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "login.description",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
+				},
+				&lsproto.CompletionItem{
+					Label: "login.sendEmailAgree",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "login.sendEmailAgree",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
+				},
+				&lsproto.CompletionItem{
+					Label: "login.termsOfUse",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "login.termsOfUse",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
+				},
+				&lsproto.CompletionItem{
+					Label: "login.privacyPolicy",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "login.privacyPolicy",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
+				},
+				&lsproto.CompletionItem{
+					Label: "login.sendEmailButton",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "login.sendEmailButton",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
+				},
+				&lsproto.CompletionItem{
+					Label: "login.emailInputPlaceholder",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "login.emailInputPlaceholder",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
+				},
+				&lsproto.CompletionItem{
+					Label: "login.errorWrongEmailTitle",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "login.errorWrongEmailTitle",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
+				},
+				&lsproto.CompletionItem{
+					Label: "login.errorWrongEmailDescription",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "login.errorWrongEmailDescription",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
+				},
+				&lsproto.CompletionItem{
+					Label: "login.errorGeneralEmailTitle",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "login.errorGeneralEmailTitle",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
+				},
+				&lsproto.CompletionItem{
+					Label: "login.errorGeneralEmailDescription",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "login.errorGeneralEmailDescription",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
+				},
+				&lsproto.CompletionItem{
+					Label: "login.loginErrorTitle",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "login.loginErrorTitle",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
+				},
+				&lsproto.CompletionItem{
+					Label: "login.loginErrorDescription",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "login.loginErrorDescription",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
+				},
+				&lsproto.CompletionItem{
+					Label: "login.openEmailAppErrorTitle",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "login.openEmailAppErrorTitle",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
+				},
+				&lsproto.CompletionItem{
+					Label: "login.openEmailAppErrorDescription",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "login.openEmailAppErrorDescription",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
+				},
+				&lsproto.CompletionItem{
+					Label: "login.openEmailAppErrorConfirm",
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "login.openEmailAppErrorConfirm",
+							Range:   f.Ranges()[0].LSRange,
+						},
+					},
+				},
+			},
 		},
 	})
 }

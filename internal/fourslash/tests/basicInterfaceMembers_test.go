@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
@@ -20,31 +21,17 @@ interface Point {
 declare const p: Point;
 p./*a*/`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "a", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "a", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{
+		Items: &fourslash.CompletionsExpectedItems{
+			Exact: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label:      "x",
-					Kind:       ptrTo(lsproto.CompletionItemKindField),
-					SortText:   ptrTo(string(ls.SortTextLocationPriority)),
-					FilterText: ptrTo(".x"),
-					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
-						InsertReplaceEdit: &lsproto.InsertReplaceEdit{
-							NewText: "x",
-							Insert: lsproto.Range{
-								Start: lsproto.Position{Line: 6, Character: 2},
-								End:   lsproto.Position{Line: 6, Character: 2},
-							},
-							Replace: lsproto.Range{
-								Start: lsproto.Position{Line: 6, Character: 2},
-								End:   lsproto.Position{Line: 6, Character: 2},
-							},
-						},
-					},
+					Label:    "x",
+					Kind:     PtrTo(lsproto.CompletionItemKindField),
+					SortText: PtrTo(string(ls.SortTextLocationPriority)),
 				},
 				"y",
 			},

@@ -7,17 +7,5 @@
 -"use strict";
 -// Repro from #46021
  function Menu(data) {
--    var _a;
--    const listItemVariant = (_a = data.menuItemsVariant) !== null && _a !== void 0 ? _a : ListItemVariant.OneLine;
-+    const listItemVariant = data.menuItemsVariant ?? ListItemVariant.OneLine;
-     return <ListItem variant={listItemVariant}/>;
- }
- var ListItemVariant;
-@@= skipped -18, +15 lines =@@
-
-
- //// [discriminatedUnionJsxElement.d.ts]
-+// Repro from #46021
- interface IData<MenuItemVariant extends ListItemVariant = ListItemVariant.OneLine> {
-     menuItemsVariant?: MenuItemVariant;
- }
+     var _a;
+     const listItemVariant = (_a = data.menuItemsVariant) !== null && _a !== void 0 ? _a : ListItemVariant.OneLine;

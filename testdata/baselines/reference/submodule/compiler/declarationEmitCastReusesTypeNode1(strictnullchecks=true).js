@@ -31,9 +31,6 @@ export function fnWithPartialAnnotationOnDefaultparam(x: P = null! as P, b: numb
 
 
 //// [declarationEmitCastReusesTypeNode1.d.ts]
-type P = {} & {
-    name: string;
-};
 export declare let vLet: {
     name: string;
 };
@@ -45,11 +42,11 @@ export declare function fn(p?: {
 }): void;
 export declare function fnWithRequiredDefaultParam(p: {
     name: string;
-}, req: number): void;
+} | undefined, req: number): void;
 export declare class C {
     ctorField: {
         name: string;
-    } | undefined;
+    };
     field: {
         name: string;
     };
@@ -64,10 +61,10 @@ export declare class C {
     }): void;
     methodWithRequiredDefault(p: {
         name: string;
-    }, req: number): void;
+    } | undefined, req: number): void;
     constructor(ctorField?: {
         name: string;
-    } | undefined);
+    });
     get x(): {
         name: string;
     };
@@ -79,5 +76,6 @@ declare const _default: {
     name: string;
 };
 export default _default;
-// allows `undefined` on the input side, thanks to the initializer
-export declare function fnWithPartialAnnotationOnDefaultparam(x: P, b: number): void;
+export declare function fnWithPartialAnnotationOnDefaultparam(x: {
+    name: string;
+} | undefined, b: number): void;

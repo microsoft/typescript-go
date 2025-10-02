@@ -19,9 +19,9 @@ type usingDeclarationTransformer struct {
 	exportEqualsBinding  *ast.IdentifierNode
 }
 
-func newUsingDeclarationTransformer(emitContext *printer.EmitContext) *transformers.Transformer {
+func newUsingDeclarationTransformer(opts *transformers.TransformOptions) *transformers.Transformer {
 	tx := &usingDeclarationTransformer{}
-	return tx.NewTransformer(tx.visit, emitContext)
+	return tx.NewTransformer(tx.visit, opts.Context)
 }
 
 type usingKind uint
@@ -173,7 +173,7 @@ func (tx *usingDeclarationTransformer) visitSourceFile(node *ast.SourceFile) *as
 			))
 		}
 
-		visited = tx.Factory().UpdateSourceFile(node, tx.Factory().NewNodeList(topLevelStatements))
+		visited = tx.Factory().UpdateSourceFile(node, tx.Factory().NewNodeList(topLevelStatements), node.EndOfFileToken)
 	} else {
 		visited = tx.Visitor().VisitEachChild(node.AsNode())
 	}

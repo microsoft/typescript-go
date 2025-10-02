@@ -107,7 +107,7 @@ Vec.prototype = {
     magnitude() {
         let sum = 0;
         for (let i = 0; i < this.storage.length; i++) {
-            sum += (this.storage[i] ** 2);
+            sum += (Math.pow(this.storage[i], 2));
         }
         return Math.sqrt(sum);
     }
@@ -166,4 +166,3 @@ export declare function Vec(len: number): void;
 export declare function Point2D(x: number, y: number): any;
 //// [referencer.d.ts]
 export declare const origin: any;
-// export const res = Point2D(2, 3).dot(origin); // TODO: when __proto__ works, validate this

@@ -26,6 +26,26 @@ func (c *Checker) GetMergedSymbol(symbol *ast.Symbol) *ast.Symbol {
 	return c.getMergedSymbol(symbol)
 }
 
+func (c *Checker) TryFindAmbientModule(moduleName string) *ast.Symbol {
+	return c.tryFindAmbientModule(moduleName, true /* withAugmentations */)
+}
+
+func (c *Checker) GetImmediateAliasedSymbol(symbol *ast.Symbol) *ast.Symbol {
+	return c.getImmediateAliasedSymbol(symbol)
+}
+
+func (c *Checker) GetTypeOnlyAliasDeclaration(symbol *ast.Symbol) *ast.Node {
+	return c.getTypeOnlyAliasDeclaration(symbol)
+}
+
+func (c *Checker) ResolveExternalModuleName(moduleSpecifier *ast.Node) *ast.Symbol {
+	return c.resolveExternalModuleName(moduleSpecifier, moduleSpecifier, true /*ignoreErrors*/)
+}
+
+func (c *Checker) ResolveExternalModuleSymbol(moduleSymbol *ast.Symbol) *ast.Symbol {
+	return c.resolveExternalModuleSymbol(moduleSymbol, false /*dontResolveAlias*/)
+}
+
 func (c *Checker) GetTypeFromTypeNode(node *ast.Node) *Type {
 	return c.getTypeFromTypeNode(node)
 }
@@ -141,4 +161,12 @@ func (c *Checker) GetTypeOfPropertyOfType(t *Type, name string) *Type {
 
 func (c *Checker) GetContextualTypeForArgumentAtIndex(node *ast.Node, argIndex int) *Type {
 	return c.getContextualTypeForArgumentAtIndex(node, argIndex)
+}
+
+func (c *Checker) GetIndexSignaturesAtLocation(node *ast.Node) []*ast.Node {
+	return c.getIndexSignaturesAtLocation(node)
+}
+
+func (c *Checker) GetResolvedSymbol(node *ast.Node) *ast.Symbol {
+	return c.getResolvedSymbol(node)
 }

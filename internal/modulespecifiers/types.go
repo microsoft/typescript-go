@@ -12,7 +12,6 @@ import (
 type SourceFileForSpecifierGeneration interface {
 	Path() tspath.Path
 	FileName() string
-	OriginalFileName() string
 	Imports() []*ast.StringLiteralLike
 	IsJS() bool
 }
@@ -53,8 +52,9 @@ type ModuleSpecifierGenerationHost interface {
 	UseCaseSensitiveFileNames() bool
 	GetCurrentDirectory() string
 
-	GetOutputAndProjectReference(path tspath.Path) *tsoptions.OutputDtsAndProjectReference
+	GetProjectReferenceFromSource(path tspath.Path) *tsoptions.SourceOutputAndProjectReference
 	GetRedirectTargets(path tspath.Path) []string
+	GetSourceOfProjectReferenceIfOutputIncluded(file ast.HasFileName) string
 
 	FileExists(path string) bool
 

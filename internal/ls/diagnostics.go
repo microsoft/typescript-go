@@ -10,27 +10,22 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
-func (l *LanguageService) GetDocumentDiagnostics(ctx context.Context, documentURI lsproto.DocumentUri) (*lsproto.DocumentDiagnosticReport, error) {
-	program, file := l.getProgramAndFile(documentURI)
+func (l *LanguageService) ProvideDiagnostics(ctx context.Context, uri lsproto.DocumentUri) (lsproto.DocumentDiagnosticResponse, error) {
+	program, file := l.getProgramAndFile(uri)
 
-	diagnostics := make([][]*ast.Diagnostic, 0, 3)
-	if syntaxDiagnostics := program.GetSyntacticDiagnostics(ctx, file); len(syntaxDiagnostics) != 0 {
-		diagnostics = append(diagnostics, syntaxDiagnostics)
-	} else {
-		diagnostics = append(diagnostics, program.GetSemanticDiagnostics(ctx, file))
-		// !!! user preference for suggestion diagnostics; keep only unnecessary/deprecated?
-		// See: https://github.com/microsoft/vscode/blob/3dbc74129aaae102e5cb485b958fa5360e8d3e7a/extensions/typescript-language-features/src/languageFeatures/diagnostics.ts#L114
-		diagnostics = append(diagnostics, program.GetSuggestionDiagnostics(ctx, file))
-		if program.Options().GetEmitDeclarations() {
-			diagnostics = append(diagnostics, program.GetDeclarationDiagnostics(ctx, file))
-		}
+	diagnostics := make([][]*ast.Diagnostic, 0, 4)
+	diagnostics = append(diagnostics, program.GetSyntacticDiagnostics(ctx, file))
+	diagnostics = append(diagnostics, program.GetSemanticDiagnostics(ctx, file))
+	// !!! user preference for suggestion diagnostics; keep only unnecessary/deprecated?
+	// See: https://github.com/microsoft/vscode/blob/3dbc74129aaae102e5cb485b958fa5360e8d3e7a/extensions/typescript-language-features/src/languageFeatures/diagnostics.ts#L114
+	diagnostics = append(diagnostics, program.GetSuggestionDiagnostics(ctx, file))
+	if program.Options().GetEmitDeclarations() {
+		diagnostics = append(diagnostics, program.GetDeclarationDiagnostics(ctx, file))
 	}
 
-	return &lsproto.DocumentDiagnosticReport{
-		RelatedFullDocumentDiagnosticReport: &lsproto.RelatedFullDocumentDiagnosticReport{
-			FullDocumentDiagnosticReport: lsproto.FullDocumentDiagnosticReport{
-				Items: toLSPDiagnostics(l.converters, diagnostics...),
-			},
+	return lsproto.RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{
+		FullDocumentDiagnosticReport: &lsproto.RelatedFullDocumentDiagnosticReport{
+			Items: toLSPDiagnostics(l.converters, diagnostics...),
 		},
 	}, nil
 }

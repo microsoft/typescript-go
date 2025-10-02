@@ -1,27 +1,23 @@
 package ls
 
 import (
-	"context"
-
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
 type LanguageService struct {
-	ctx        context.Context
 	host       Host
 	converters *Converters
 }
 
-func NewLanguageService(ctx context.Context, host Host) *LanguageService {
+func NewLanguageService(host Host, converters *Converters) *LanguageService {
 	return &LanguageService{
 		host:       host,
-		converters: NewConverters(host.GetPositionEncoding(), host.GetLineMap),
+		converters: converters,
 	}
 }
 
-// GetProgram updates the program if the project version has changed.
 func (l *LanguageService) GetProgram() *compiler.Program {
 	return l.host.GetProgram()
 }
@@ -33,7 +29,7 @@ func (l *LanguageService) tryGetProgramAndFile(fileName string) (*compiler.Progr
 }
 
 func (l *LanguageService) getProgramAndFile(documentURI lsproto.DocumentUri) (*compiler.Program, *ast.SourceFile) {
-	fileName := DocumentURIToFileName(documentURI)
+	fileName := documentURI.FileName()
 	program, file := l.tryGetProgramAndFile(fileName)
 	if file == nil {
 		panic("file not found: " + fileName)

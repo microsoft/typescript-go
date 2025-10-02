@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
@@ -23,13 +24,39 @@ interface Foo {
 function partialFoo<T extends Partial<Foo>>(t: T) {return t}
 partialFoo({ /*1*/ });`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "1", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Includes: []fourslash.ExpectedCompletionItem{&lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextOptionalMember)), Label: "a_a?", InsertText: ptrTo("a_a"), FilterText: ptrTo("a_a")}, &lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextOptionalMember)), Label: "a_b?", InsertText: ptrTo("a_b"), FilterText: ptrTo("a_b")}, &lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextOptionalMember)), Label: "a_c?", InsertText: ptrTo("a_c"), FilterText: ptrTo("a_c")}, &lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextOptionalMember)), Label: "b_a?", InsertText: ptrTo("b_a"), FilterText: ptrTo("b_a")}},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label:      "a_a?",
+					InsertText: PtrTo("a_a"),
+					FilterText: PtrTo("a_a"),
+					SortText:   PtrTo(string(ls.SortTextOptionalMember)),
+				},
+				&lsproto.CompletionItem{
+					Label:      "a_b?",
+					InsertText: PtrTo("a_b"),
+					FilterText: PtrTo("a_b"),
+					SortText:   PtrTo(string(ls.SortTextOptionalMember)),
+				},
+				&lsproto.CompletionItem{
+					Label:      "a_c?",
+					InsertText: PtrTo("a_c"),
+					FilterText: PtrTo("a_c"),
+					SortText:   PtrTo(string(ls.SortTextOptionalMember)),
+				},
+				&lsproto.CompletionItem{
+					Label:      "b_a?",
+					InsertText: PtrTo("b_a"),
+					FilterText: PtrTo("b_a"),
+					SortText:   PtrTo(string(ls.SortTextOptionalMember)),
+				},
+			},
 		},
 	})
 }

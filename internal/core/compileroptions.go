@@ -9,8 +9,9 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-//go:generate go tool golang.org/x/tools/cmd/stringer -type=ModuleKind,ScriptTarget -output=compileroptions_stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w compileroptions_stringer_generated.go
+//go:generate go tool golang.org/x/tools/cmd/stringer -type=ModuleKind -trimprefix=ModuleKind -output=modulekind_stringer_generated.go
+//go:generate go tool golang.org/x/tools/cmd/stringer -type=ScriptTarget -trimprefix=ScriptTarget -output=scripttarget_stringer_generated.go
+//go:generate go tool mvdan.cc/gofumpt -w modulekind_stringer_generated.go scripttarget_stringer_generated.go
 
 type CompilerOptions struct {
 	_ noCopy
@@ -25,8 +26,6 @@ type CompilerOptions struct {
 	AllowUnusedLabels                         Tristate                                  `json:"allowUnusedLabels,omitzero"`
 	AssumeChangesOnlyAffectDirectDependencies Tristate                                  `json:"assumeChangesOnlyAffectDirectDependencies,omitzero"`
 	AlwaysStrict                              Tristate                                  `json:"alwaysStrict,omitzero"`
-	BaseUrl                                   string                                    `json:"baseUrl,omitzero"`
-	Build                                     Tristate                                  `json:"build,omitzero"`
 	CheckJs                                   Tristate                                  `json:"checkJs,omitzero"`
 	CustomConditions                          []string                                  `json:"customConditions,omitzero"`
 	Composite                                 Tristate                                  `json:"composite,omitzero"`
@@ -58,7 +57,6 @@ type CompilerOptions struct {
 	JsxFactory                                string                                    `json:"jsxFactory,omitzero"`
 	JsxFragmentFactory                        string                                    `json:"jsxFragmentFactory,omitzero"`
 	JsxImportSource                           string                                    `json:"jsxImportSource,omitzero"`
-	KeyofStringsOnly                          Tristate                                  `json:"keyofStringsOnly,omitzero"`
 	Lib                                       []string                                  `json:"lib,omitzero"`
 	LibReplacement                            Tristate                                  `json:"libReplacement,omitzero"`
 	Locale                                    string                                    `json:"locale,omitzero"`
@@ -85,9 +83,7 @@ type CompilerOptions struct {
 	NoResolve                                 Tristate                                  `json:"noResolve,omitzero"`
 	NoImplicitOverride                        Tristate                                  `json:"noImplicitOverride,omitzero"`
 	NoUncheckedSideEffectImports              Tristate                                  `json:"noUncheckedSideEffectImports,omitzero"`
-	Out                                       string                                    `json:"out,omitzero"`
 	OutDir                                    string                                    `json:"outDir,omitzero"`
-	OutFile                                   string                                    `json:"outFile,omitzero"`
 	Paths                                     *collections.OrderedMap[string, []string] `json:"paths,omitzero"`
 	PreserveConstEnums                        Tristate                                  `json:"preserveConstEnums,omitzero"`
 	PreserveSymlinks                          Tristate                                  `json:"preserveSymlinks,omitzero"`
@@ -122,6 +118,11 @@ type CompilerOptions struct {
 	VerbatimModuleSyntax                      Tristate                                  `json:"verbatimModuleSyntax,omitzero"`
 	MaxNodeModuleJsDepth                      *int                                      `json:"maxNodeModuleJsDepth,omitzero"`
 
+	// Deprecated: Do not use outside of options parsing and validation.
+	BaseUrl string `json:"baseUrl,omitzero"`
+	// Deprecated: Do not use outside of options parsing and validation.
+	OutFile string `json:"outFile,omitzero"`
+
 	// Internal fields
 	ConfigFilePath      string   `json:"configFilePath,omitzero"`
 	NoDtsResolution     Tristate `json:"noDtsResolution,omitzero"`
@@ -140,7 +141,7 @@ type CompilerOptions struct {
 	Version             Tristate `json:"version,omitzero"`
 	Watch               Tristate `json:"watch,omitzero"`
 	ShowConfig          Tristate `json:"showConfig,omitzero"`
-	TscBuild            Tristate `json:"tscBuild,omitzero"`
+	Build               Tristate `json:"build,omitzero"`
 	Help                Tristate `json:"help,omitzero"`
 	All                 Tristate `json:"all,omitzero"`
 
@@ -253,7 +254,7 @@ func (options *CompilerOptions) GetESModuleInterop() bool {
 		return options.ESModuleInterop == TSTrue
 	}
 	switch options.GetEmitModuleKind() {
-	case ModuleKindNode16, ModuleKindNodeNext, ModuleKindPreserve:
+	case ModuleKindNode16, ModuleKindNode18, ModuleKindNodeNext, ModuleKindPreserve:
 		return true
 	}
 	return false
@@ -276,7 +277,7 @@ func (options *CompilerOptions) GetResolveJsonModule() bool {
 }
 
 func (options *CompilerOptions) ShouldPreserveConstEnums() bool {
-	return options.PreserveConstEnums == TSTrue || options.IsolatedModules == TSTrue
+	return options.PreserveConstEnums == TSTrue || options.GetIsolatedModules()
 }
 
 func (options *CompilerOptions) GetAllowJS() bool {
@@ -289,6 +290,13 @@ func (options *CompilerOptions) GetAllowJS() bool {
 func (options *CompilerOptions) GetJSXTransformEnabled() bool {
 	jsx := options.Jsx
 	return jsx == JsxEmitReact || jsx == JsxEmitReactJSX || jsx == JsxEmitReactJSXDev
+}
+
+func (options *CompilerOptions) GetStrictOptionValue(value Tristate) bool {
+	if value != TSUnknown {
+		return value == TSTrue
+	}
+	return options.Strict == TSTrue
 }
 
 func (options *CompilerOptions) GetEffectiveTypeRoots(currentDirectory string) (result []string, fromConfig bool) {
@@ -317,6 +325,10 @@ func (options *CompilerOptions) GetEffectiveTypeRoots(currentDirectory string) (
 
 func (options *CompilerOptions) GetIsolatedModules() bool {
 	return options.IsolatedModules == TSTrue || options.VerbatimModuleSyntax == TSTrue
+}
+
+func (options *CompilerOptions) IsIncremental() bool {
+	return options.Incremental.IsTrue() || options.Composite.IsTrue()
 }
 
 func (options *CompilerOptions) GetEmitStandardClassFields() bool {
@@ -384,9 +396,12 @@ type ModuleKind int32
 const (
 	ModuleKindNone     ModuleKind = 0
 	ModuleKindCommonJS ModuleKind = 1
-	ModuleKindAMD      ModuleKind = 2
-	ModuleKindUMD      ModuleKind = 3
-	ModuleKindSystem   ModuleKind = 4
+	// Deprecated: Do not use outside of options parsing and validation.
+	ModuleKindAMD ModuleKind = 2
+	// Deprecated: Do not use outside of options parsing and validation.
+	ModuleKindUMD ModuleKind = 3
+	// Deprecated: Do not use outside of options parsing and validation.
+	ModuleKindSystem ModuleKind = 4
 	// NOTE: ES module kinds should be contiguous to more easily check whether a module kind is *any* ES module kind.
 	//       Non-ES module kinds should not come between ES2015 (the earliest ES module kind) and ESNext (the last ES
 	//       module kind).
@@ -434,6 +449,11 @@ const (
 	ModuleResolutionKindBundler  ModuleResolutionKind = 100
 )
 
+var ModuleKindToModuleResolutionKind = map[ModuleKind]ModuleResolutionKind{
+	ModuleKindNode16:   ModuleResolutionKindNode16,
+	ModuleKindNodeNext: ModuleResolutionKindNodeNext,
+}
+
 // We don't use stringer on this for now, because these values
 // are user-facing in --traceResolution, and stringer currently
 // lacks the ability to remove the "ModuleResolutionKind" prefix
@@ -463,6 +483,17 @@ const (
 	NewLineKindCRLF NewLineKind = 1
 	NewLineKindLF   NewLineKind = 2
 )
+
+func GetNewLineKind(s string) NewLineKind {
+	switch s {
+	case "\r\n":
+		return NewLineKindCRLF
+	case "\n":
+		return NewLineKindLF
+	default:
+		return NewLineKindNone
+	}
+}
 
 func (newLine NewLineKind) GetNewLineCharacter() string {
 	switch newLine {

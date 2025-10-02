@@ -5,6 +5,7 @@
 
  //// [types.d.ts]
 +export {};
++export type ParamStateRecord = Record<Keyword, ParamValueTyped>;
  /**
 - * a Record containing
 + * @typedef {Record<Keyword, ParamValueTyped>} ParamStateRecord a Record containing
@@ -16,6 +17,6 @@
 +export declare const blah: {
      publicMixin: {
 -        getGovernedParams: () => globalThis.ERef<import("./types.js").ParamStateRecord>;
-+        getGovernedParams: () => any;
++        getGovernedParams: () => globalThis.ERef<globalThis.ParamStateRecord>;
      };
  };

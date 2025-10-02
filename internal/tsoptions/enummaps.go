@@ -8,7 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-var libMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
+var LibMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
 	// JavaScript only
 	{Key: "es5", Value: "lib.es5.d.ts"},
 	{Key: "es6", Value: "lib.es2015.d.ts"},
@@ -113,8 +113,8 @@ var libMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, an
 })
 
 var (
-	Libs        = slices.Collect(libMap.Keys())
-	LibFilesSet = collections.NewSetFromItems(core.Map(slices.Collect(libMap.Values()), func(s any) string { return s.(string) })...)
+	Libs        = slices.Collect(LibMap.Keys())
+	LibFilesSet = collections.NewSetFromItems(core.Map(slices.Collect(LibMap.Values()), func(s any) string { return s.(string) })...)
 )
 
 func GetLibFileName(libName string) (string, bool) {
@@ -123,7 +123,7 @@ func GetLibFileName(libName string) (string, bool) {
 	if LibFilesSet.Has(libName) {
 		return libName, true
 	}
-	lib, ok := libMap.Get(libName)
+	lib, ok := LibMap.Get(libName)
 	if !ok {
 		return "", false
 	}
@@ -187,6 +187,17 @@ var jsxOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[stri
 	{Key: "react-jsxdev", Value: core.JsxEmitReactJSXDev},
 })
 
+var InverseJsxOptionMap = collections.NewOrderedMapFromList(func() []collections.MapEntry[core.JsxEmit, string] {
+	entries := make([]collections.MapEntry[core.JsxEmit, string], 0, jsxOptionMap.Size())
+	for key, value := range jsxOptionMap.Entries() {
+		entries = append(entries, collections.MapEntry[core.JsxEmit, string]{
+			Key:   value.(core.JsxEmit),
+			Value: key,
+		})
+	}
+	return entries
+}())
+
 var newLineOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
 	{Key: "crlf", Value: core.NewLineKindCRLF},
 	{Key: "lf", Value: core.NewLineKindLF},
@@ -204,6 +215,10 @@ var targetToLibMap = map[core.ScriptTarget]string{
 	core.ScriptTargetES2017: "lib.es2017.full.d.ts",
 	core.ScriptTargetES2016: "lib.es2016.full.d.ts",
 	core.ScriptTargetES2015: "lib.es6.d.ts", // We don't use lib.es2015.full.d.ts due to breaking change.
+}
+
+func TargetToLibMap() map[core.ScriptTarget]string {
+	return targetToLibMap
 }
 
 func GetDefaultLibFileName(options *core.CompilerOptions) string {

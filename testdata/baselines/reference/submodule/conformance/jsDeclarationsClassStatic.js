@@ -54,6 +54,9 @@ module.exports.Strings = Strings;
 //// [source.d.ts]
 export = Handler;
 export var Strings = Strings;
+export type HandlerOptions = {
+    name: String;
+};
 /**
  * @typedef {Object} HandlerOptions
  * @property {String} name

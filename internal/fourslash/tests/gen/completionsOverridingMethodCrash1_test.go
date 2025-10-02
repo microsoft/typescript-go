@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
@@ -23,13 +24,21 @@ class SubComponent extends Component<{}> {
     /*$*/
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "$", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "$", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        Ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Includes: []fourslash.ExpectedCompletionItem{&lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextLocationPriority)), Label: "setState", InsertText: ptrTo("setState(stateHandler: (oldState: {}, newState: {}) => void): void {\n}"), FilterText: ptrTo("setState")}},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label:      "setState",
+					InsertText: PtrTo("setState(stateHandler: (oldState: {}, newState: {}) => void): void {\n}"),
+					FilterText: PtrTo("setState"),
+					SortText:   PtrTo(string(ls.SortTextLocationPriority)),
+				},
+			},
 		},
 	})
 }

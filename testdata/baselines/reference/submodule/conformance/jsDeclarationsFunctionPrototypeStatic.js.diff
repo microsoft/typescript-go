@@ -4,11 +4,13 @@
   */
 
  //// [source.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
 +export = MyClass;
  module.exports = MyClass;
  function MyClass() { }
  MyClass.staticMethod = function () { };
-@@= skipped -15, +16 lines =@@
+@@= skipped -15, +18 lines =@@
 
  //// [source.d.ts]
  export = MyClass;
@@ -21,6 +23,7 @@
 -}
 -declare function staticMethod(): void;
 -declare var staticProperty: number;
++export type DoneCB = (failures: number) ;
  /**
   * Callback to be invoked when test execution is complete.
 - */
@@ -29,22 +32,3 @@
 + * @callback DoneCB
 + * @param {number} failures - Number of failures that occurred.
 + */ 
-+
-+
-+//// [DtsFileErrors]
-+
-+
-+out/source.d.ts(1,10): error TS2304: Cannot find name 'MyClass'.
-+
-+
-+==== out/source.d.ts (1 errors) ====
-+    export = MyClass;
-+             ~~~~~~~
-+!!! error TS2304: Cannot find name 'MyClass'.
-+    /**
-+     * Callback to be invoked when test execution is complete.
-+     *
-+     * @callback DoneCB
-+     * @param {number} failures - Number of failures that occurred.
-+     */ 
-+    

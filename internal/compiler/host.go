@@ -2,7 +2,6 @@ package compiler
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -15,50 +14,47 @@ type CompilerHost interface {
 	FS() vfs.FS
 	DefaultLibraryPath() string
 	GetCurrentDirectory() string
-	NewLine() string
 	Trace(msg string)
 	GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile
 	GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine
 }
 
-type FileInfo struct {
-	Name string
-	Size int64
-}
-
 var _ CompilerHost = (*compilerHost)(nil)
 
 type compilerHost struct {
-	options             *core.CompilerOptions
 	currentDirectory    string
 	fs                  vfs.FS
 	defaultLibraryPath  string
-	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]
+	extendedConfigCache tsoptions.ExtendedConfigCache
+	trace               func(msg string)
 }
 
 func NewCachedFSCompilerHost(
-	options *core.CompilerOptions,
 	currentDirectory string,
 	fs vfs.FS,
 	defaultLibraryPath string,
-	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
+	extendedConfigCache tsoptions.ExtendedConfigCache,
+	trace func(msg string),
 ) CompilerHost {
-	return NewCompilerHost(options, currentDirectory, cachedvfs.From(fs), defaultLibraryPath, extendedConfigCache)
+	return NewCompilerHost(currentDirectory, cachedvfs.From(fs), defaultLibraryPath, extendedConfigCache, trace)
 }
 
 func NewCompilerHost(
-	options *core.CompilerOptions,
 	currentDirectory string,
 	fs vfs.FS,
 	defaultLibraryPath string,
-	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
+	extendedConfigCache tsoptions.ExtendedConfigCache,
+	trace func(msg string),
 ) CompilerHost {
+	if trace == nil {
+		trace = func(msg string) {}
+	}
 	return &compilerHost{
-		options:             options,
 		currentDirectory:    currentDirectory,
 		fs:                  fs,
 		defaultLibraryPath:  defaultLibraryPath,
 		extendedConfigCache: extendedConfigCache,
+		trace:               trace,
 	}
 }
 
@@ -70,23 +66,12 @@ func (h *compilerHost) DefaultLibraryPath() string {
 	return h.defaultLibraryPath
 }
 
-func (h *compilerHost) SetOptions(options *core.CompilerOptions) {
-	h.options = options
-}
-
 func (h *compilerHost) GetCurrentDirectory() string {
 	return h.currentDirectory
 }
 
-func (h *compilerHost) NewLine() string {
-	if h.options == nil {
-		return "\n"
-	}
-	return h.options.NewLine.GetNewLineCharacter()
-}
-
 func (h *compilerHost) Trace(msg string) {
-	//!!! TODO: implement
+	h.trace(msg)
 }
 
 func (h *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
@@ -98,6 +83,6 @@ func (h *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.Sourc
 }
 
 func (h *compilerHost) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
-	commandLine, _ := tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, h, nil)
+	commandLine, _ := tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, h, h.extendedConfigCache)
 	return commandLine
 }

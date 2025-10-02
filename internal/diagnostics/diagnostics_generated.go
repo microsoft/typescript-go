@@ -2306,7 +2306,7 @@ var The_inferred_type_of_0_references_a_type_with_a_cyclic_structure_which_canno
 
 var Option_0_cannot_be_specified_when_option_jsx_is_1 = &Message{code: 5089, category: CategoryError, key: "Option_0_cannot_be_specified_when_option_jsx_is_1_5089", text: "Option '{0}' cannot be specified when option 'jsx' is '{1}'."}
 
-var Non_relative_paths_are_not_allowed_when_baseUrl_is_not_set_Did_you_forget_a_leading_Slash = &Message{code: 5090, category: CategoryError, key: "Non_relative_paths_are_not_allowed_when_baseUrl_is_not_set_Did_you_forget_a_leading_Slash_5090", text: "Non-relative paths are not allowed when 'baseUrl' is not set. Did you forget a leading './'?"}
+var Non_relative_paths_are_not_allowed_Did_you_forget_a_leading_Slash = &Message{code: 5090, category: CategoryError, key: "Non_relative_paths_are_not_allowed_Did_you_forget_a_leading_Slash_5090", text: "Non-relative paths are not allowed. Did you forget a leading './'?"}
 
 var Option_preserveConstEnums_cannot_be_disabled_when_0_is_enabled = &Message{code: 5091, category: CategoryError, key: "Option_preserveConstEnums_cannot_be_disabled_when_0_is_enabled_5091", text: "Option 'preserveConstEnums' cannot be disabled when '{0}' is enabled."}
 
@@ -2858,7 +2858,7 @@ var Project_0_is_up_to_date_because_newest_input_1_is_older_than_output_2 = &Mes
 
 var Project_0_is_out_of_date_because_output_file_1_does_not_exist = &Message{code: 6352, category: CategoryMessage, key: "Project_0_is_out_of_date_because_output_file_1_does_not_exist_6352", text: "Project '{0}' is out of date because output file '{1}' does not exist"}
 
-var Project_0_is_out_of_date_because_its_dependency_1_is_out_of_date = &Message{code: 6353, category: CategoryMessage, key: "Project_0_is_out_of_date_because_its_dependency_1_is_out_of_date_6353", text: "Project '{0}' is out of date because its dependency '{1}' is out of date"}
+var Failed_to_delete_file_0 = &Message{code: 6353, category: CategoryMessage, key: "Failed_to_delete_file_0_6353", text: "Failed to delete file '{0}'."}
 
 var Project_0_is_up_to_date_with_d_ts_files_from_its_dependencies = &Message{code: 6354, category: CategoryMessage, key: "Project_0_is_up_to_date_with_d_ts_files_from_its_dependencies_6354", text: "Project '{0}' is up to date with .d.ts files from its dependencies"}
 
@@ -2938,7 +2938,7 @@ var Project_0_is_out_of_date_because_buildinfo_file_1_indicates_that_some_of_the
 
 var Project_0_is_up_to_date_but_needs_to_update_timestamps_of_output_files_that_are_older_than_input_files = &Message{code: 6400, category: CategoryMessage, key: "Project_0_is_up_to_date_but_needs_to_update_timestamps_of_output_files_that_are_older_than_input_fil_6400", text: "Project '{0}' is up to date but needs to update timestamps of output files that are older than input files"}
 
-var Project_0_is_out_of_date_because_there_was_error_reading_file_1 = &Message{code: 6401, category: CategoryMessage, key: "Project_0_is_out_of_date_because_there_was_error_reading_file_1_6401", text: "Project '{0}' is out of date because there was error reading file '{1}'"}
+var Project_0_is_out_of_date_because_config_file_does_not_exist = &Message{code: 6401, category: CategoryMessage, key: "Project_0_is_out_of_date_because_config_file_does_not_exist_6401", text: "Project '{0}' is out of date because config file does not exist."}
 
 var Resolving_in_0_mode_with_conditions_1 = &Message{code: 6402, category: CategoryMessage, key: "Resolving_in_0_mode_with_conditions_1_6402", text: "Resolving in {0} mode with conditions {1}."}
 
@@ -2976,9 +2976,11 @@ var Searching_all_ancestor_node_modules_directories_for_fallback_extensions_Colo
 
 var Project_0_is_out_of_date_because_buildinfo_file_1_indicates_that_program_needs_to_report_errors = &Message{code: 6419, category: CategoryMessage, key: "Project_0_is_out_of_date_because_buildinfo_file_1_indicates_that_program_needs_to_report_errors_6419", text: "Project '{0}' is out of date because buildinfo file '{1}' indicates that program needs to report errors."}
 
-var Project_0_is_out_of_date_because_1 = &Message{code: 6420, category: CategoryMessage, key: "Project_0_is_out_of_date_because_1_6420", text: "Project '{0}' is out of date because {1}."}
+var Project_0_is_out_of_date_because_input_1_does_not_exist = &Message{code: 6420, category: CategoryMessage, key: "Project_0_is_out_of_date_because_input_1_does_not_exist_6420", text: "Project '{0}' is out of date because input '{1}' does not exist."}
 
 var Rewrite_ts_tsx_mts_and_cts_file_extensions_in_relative_import_paths_to_their_JavaScript_equivalent_in_output_files = &Message{code: 6421, category: CategoryMessage, key: "Rewrite_ts_tsx_mts_and_cts_file_extensions_in_relative_import_paths_to_their_JavaScript_equivalent_i_6421", text: "Rewrite '.ts', '.tsx', '.mts', and '.cts' file extensions in relative import paths to their JavaScript equivalent in output files."}
+
+var Project_0_is_out_of_date_because_it_has_errors = &Message{code: 6423, category: CategoryMessage, key: "Project_0_is_out_of_date_because_it_has_errors_6423", text: "Project '{0}' is out of date because it has errors."}
 
 var The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1 = &Message{code: 6500, category: CategoryMessage, key: "The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1_6500", text: "The expected type comes from property '{0}' which is declared here on type '{1}'"}
 
@@ -3466,7 +3468,7 @@ var JSDoc_may_only_appear_in_the_last_parameter_of_a_signature = &Message{code: 
 
 var JSDoc_param_tag_has_name_0_but_there_is_no_parameter_with_that_name_It_would_match_arguments_if_it_had_an_array_type = &Message{code: 8029, category: CategoryError, key: "JSDoc_param_tag_has_name_0_but_there_is_no_parameter_with_that_name_It_would_match_arguments_if_it_h_8029", text: "JSDoc '@param' tag has name '{0}', but there is no parameter with that name. It would match 'arguments' if it had an array type."}
 
-var The_type_of_a_function_declaration_must_match_the_function_s_signature = &Message{code: 8030, category: CategoryError, key: "The_type_of_a_function_declaration_must_match_the_function_s_signature_8030", text: "The type of a function declaration must match the function's signature."}
+var A_JSDoc_type_tag_on_a_function_must_have_a_signature_with_the_correct_number_of_arguments = &Message{code: 8030, category: CategoryError, key: "A_JSDoc_type_tag_on_a_function_must_have_a_signature_with_the_correct_number_of_arguments_8030", text: "A JSDoc '@type' tag on a function must have a signature with the correct number of arguments."}
 
 var You_cannot_rename_a_module_via_a_global_import = &Message{code: 8031, category: CategoryError, key: "You_cannot_rename_a_module_via_a_global_import_8031", text: "You cannot rename a module via a global import."}
 
@@ -3485,6 +3487,8 @@ var Type_satisfaction_expressions_can_only_be_used_in_TypeScript_files = &Messag
 var Decorators_may_not_appear_after_export_or_export_default_if_they_also_appear_before_export = &Message{code: 8038, category: CategoryError, key: "Decorators_may_not_appear_after_export_or_export_default_if_they_also_appear_before_export_8038", text: "Decorators may not appear after 'export' or 'export default' if they also appear before 'export'."}
 
 var A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag = &Message{code: 8039, category: CategoryError, key: "A_JSDoc_template_tag_may_not_follow_a_typedef_callback_or_overload_tag_8039", text: "A JSDoc '@template' tag may not follow a '@typedef', '@callback', or '@overload' tag"}
+
+var A_JSDoc_type_tag_may_not_occur_with_a_param_or_returns_tag = &Message{code: 8040, category: CategoryError, key: "A_JSDoc_type_tag_may_not_occur_with_a_param_or_returns_tag_8040", text: "A JSDoc '@type' tag may not occur with a '@param' or '@returns' tag."}
 
 var Declaration_emit_for_this_file_requires_using_private_name_0_An_explicit_type_annotation_may_unblock_declaration_emit = &Message{code: 9005, category: CategoryError, key: "Declaration_emit_for_this_file_requires_using_private_name_0_An_explicit_type_annotation_may_unblock_9005", text: "Declaration emit for this file requires using private name '{0}'. An explicit type annotation may unblock declaration emit."}
 

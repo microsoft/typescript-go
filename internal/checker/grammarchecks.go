@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -37,6 +38,17 @@ func (c *Checker) grammarErrorOnNode(node *ast.Node, message *diagnostics.Messag
 	sourceFile := ast.GetSourceFileOfNode(node)
 	if !c.hasParseDiagnostics(sourceFile) {
 		c.diagnostics.Add(NewDiagnosticForNode(node, message, args...))
+		return true
+	}
+	return false
+}
+
+func (c *Checker) grammarErrorOnNodeSkippedOnNoEmit(node *ast.Node, message *diagnostics.Message, args ...any) bool {
+	sourceFile := ast.GetSourceFileOfNode(node)
+	if !c.hasParseDiagnostics(sourceFile) {
+		d := NewDiagnosticForNode(node, message, args...)
+		d.SetSkippedOnNoEmit()
+		c.diagnostics.Add(d)
 		return true
 	}
 	return false
@@ -802,8 +814,8 @@ func (c *Checker) checkGrammarArrowFunction(node *ast.Node, file *ast.SourceFile
 	}
 
 	equalsGreaterThanToken := arrowFunc.EqualsGreaterThanToken
-	startLine, _ := scanner.GetLineAndCharacterOfPosition(file, equalsGreaterThanToken.Pos())
-	endLine, _ := scanner.GetLineAndCharacterOfPosition(file, equalsGreaterThanToken.End())
+	startLine, _ := scanner.GetECMALineAndCharacterOfPosition(file, equalsGreaterThanToken.Pos())
+	endLine, _ := scanner.GetECMALineAndCharacterOfPosition(file, equalsGreaterThanToken.End())
 	return startLine != endLine && c.grammarErrorOnNode(equalsGreaterThanToken, diagnostics.Line_terminator_not_permitted_before_arrow)
 }
 
@@ -1253,7 +1265,7 @@ func (c *Checker) checkGrammarForInOrForOfStatement(forInOrOfStatement *ast.ForI
 					diagnostic := createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.X_for_await_loops_are_only_allowed_within_async_functions_and_at_the_top_levels_of_modules)
 					containingFunc := getContainingFunction(forInOrOfStatement.AsNode())
 					if containingFunc != nil && containingFunc.Kind != ast.KindConstructor {
-						// Debug.assert((getFunctionFlags(containingFunc)&FunctionFlagsAsync) == 0, "Enclosing function should never be an async function.")
+						debug.Assert((getFunctionFlags(containingFunc)&FunctionFlagsAsync) == 0, "Enclosing function should never be an async function.")
 						if hasAsyncModifier(containingFunc) {
 							panic("Enclosing function should never be an async function.")
 						}
@@ -1394,7 +1406,7 @@ func (c *Checker) checkGrammarTypeOperatorNode(node *ast.TypeOperatorNode) bool 
 		if innerType.Kind != ast.KindSymbolKeyword {
 			return c.grammarErrorOnNode(innerType, diagnostics.X_0_expected, scanner.TokenToString(ast.KindSymbolKeyword))
 		}
-		parent := ast.GetEffectiveTypeParent(ast.WalkUpParenthesizedTypes(node.Parent))
+		parent := ast.WalkUpParenthesizedTypes(node.Parent)
 		switch parent.Kind {
 		case ast.KindVariableDeclaration:
 			decl := parent.AsVariableDeclaration()
@@ -1648,7 +1660,7 @@ func (c *Checker) checkGrammarVariableDeclaration(node *ast.VariableDeclaration)
 func (c *Checker) checkGrammarForEsModuleMarkerInBindingName(name *ast.Node) bool {
 	if ast.IsIdentifier(name) {
 		if name.Text() == "__esModule" {
-			return c.grammarErrorOnNode(name, diagnostics.Identifier_expected_esModule_is_reserved_as_an_exported_marker_when_transforming_ECMAScript_modules)
+			return c.grammarErrorOnNodeSkippedOnNoEmit(name, diagnostics.Identifier_expected_esModule_is_reserved_as_an_exported_marker_when_transforming_ECMAScript_modules)
 		}
 	} else {
 		for _, element := range name.AsBindingPattern().Elements.Nodes {
@@ -2089,7 +2101,7 @@ func (c *Checker) checkGrammarStatementInAmbientContext(node *ast.Node) bool {
 		} else {
 			// We must be parented by a statement.  If so, there's no need
 			// to report the error as our parent will have already done it.
-			// Debug.assert(isStatement(node.parent));
+			// debug.Assert(ast.IsStatement(node.Parent)) // !!! commented out in strada - fails if uncommented
 		}
 	}
 	return false

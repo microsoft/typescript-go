@@ -112,7 +112,7 @@ export const cjsSource = true;
         "./types": {
             "types": {
                 "import": "./index.d.mts",
-                "require": "./index.d.cts",
+                "require": "./index.d.cts"
             },
             "node": {
                 "import": "./index.mjs",
@@ -122,6 +122,23 @@ export const cjsSource = true;
     }
 }
 
+
+//// [index.js]
+// esm format file
+import * as cjs from "package/cjs";
+import * as mjs from "package/mjs";
+import * as type from "package";
+cjs;
+mjs;
+type;
+import * as cjsi from "inner/a";
+import * as mjsi from "inner/b";
+import * as typei from "inner";
+import * as ts from "inner/types";
+cjsi.mjsSource;
+mjsi.mjsSource;
+typei.mjsSource;
+ts.mjsSource;
 //// [index.mjs]
 // esm format file
 import * as cjs from "package/cjs";
@@ -189,27 +206,11 @@ cjsi.cjsSource;
 mjsi.cjsSource;
 typei.implicitCjsSource;
 ts.cjsSource;
-//// [index.js]
-// esm format file
-import * as cjs from "package/cjs";
-import * as mjs from "package/mjs";
-import * as type from "package";
-cjs;
-mjs;
-type;
-import * as cjsi from "inner/a";
-import * as mjsi from "inner/b";
-import * as typei from "inner";
-import * as ts from "inner/types";
-cjsi.mjsSource;
-mjsi.mjsSource;
-typei.mjsSource;
-ts.mjsSource;
 
 
+//// [index.d.ts]
+export {};
 //// [index.d.mts]
 export {};
 //// [index.d.cts]
-export {};
-//// [index.d.ts]
 export {};

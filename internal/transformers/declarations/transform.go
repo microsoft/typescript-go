@@ -5,12 +5,12 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
-	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/transformers"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -35,6 +35,7 @@ type DeclarationEmitHost interface {
 	GetOutputPathsFor(file *ast.SourceFile, forceDtsPaths bool) OutputPaths
 	GetResolutionModeOverride(node *ast.Node) core.ResolutionMode
 	GetEffectiveDeclarationFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags
+	GetEmitResolver() printer.EmitResolver
 }
 
 type DeclarationTransformer struct {
@@ -60,7 +61,9 @@ type DeclarationTransformer struct {
 	rawLibReferenceDirectives        []*ast.FileReference
 }
 
-func NewDeclarationTransformer(host DeclarationEmitHost, resolver printer.EmitResolver, context *printer.EmitContext, compilerOptions *core.CompilerOptions, declarationFilePath string, declarationMapPath string) *DeclarationTransformer {
+// TODO: Convert to transformers.TransformerFactory signature to allow more automatic composition with other transforms
+func NewDeclarationTransformer(host DeclarationEmitHost, context *printer.EmitContext, compilerOptions *core.CompilerOptions, declarationFilePath string, declarationMapPath string) *DeclarationTransformer {
+	resolver := host.GetEmitResolver()
 	state := &SymbolTrackerSharedState{isolatedDeclarations: compilerOptions.IsolatedDeclarations.IsTrue(), resolver: resolver}
 	tracker := NewSymbolTracker(host, resolver, state)
 	// TODO: Use new host GetOutputPathsFor method instead of passing in entrypoint paths (which will also better support bundled emit)
@@ -193,10 +196,9 @@ func (tx *DeclarationTransformer) transformSourceFile(node *ast.SourceFile) *ast
 		combinedStatements = withMarker
 	}
 	outputFilePath := tspath.GetDirectoryPath(tspath.NormalizeSlashes(tx.declarationFilePath))
-	result := tx.Factory().UpdateSourceFile(node, combinedStatements)
+	result := tx.Factory().UpdateSourceFile(node, combinedStatements, node.EndOfFileToken)
 	result.AsSourceFile().LibReferenceDirectives = tx.getLibReferences()
 	result.AsSourceFile().TypeReferenceDirectives = tx.getTypeReferences()
-	result.AsSourceFile().HasNoDefaultLib = node.HasNoDefaultLib
 	result.AsSourceFile().IsDeclarationFile = true
 	result.AsSourceFile().ReferencedFiles = tx.getReferencedFiles(outputFilePath)
 	return result.AsNode()
@@ -382,8 +384,20 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 		}
 		if ast.HasDynamicName(input) {
 			if tx.state.isolatedDeclarations {
-				// !!! isolatedDeclarations support
-				return nil
+				// Classes and object literals usually elide properties with computed names that are not of a literal type
+				// In isolated declarations TSC needs to error on these as we don't know the type in a DTE.
+				if !tx.resolver.IsDefinitelyReferenceToGlobalSymbolObject(input.Name().Expression()) {
+					if ast.IsClassDeclaration(input.Parent) || ast.IsObjectLiteralExpression(input.Parent) {
+						// !!! TODO: isolatedDeclarations diagnostics
+						// context.addDiagnostic(createDiagnosticForNode(input, diagnostics.Computed_property_names_on_class_or_object_literals_cannot_be_inferred_with_isolatedDeclarations))
+						return nil
+					} else if (ast.IsInterfaceDeclaration(input.Parent) || ast.IsTypeLiteralNode(input.Parent)) && !ast.IsEntityNameExpression(input.Name().Expression()) {
+						// Type declarations just need to double-check that the input computed name is an entity name expression
+						// !!! TODO: isolatedDeclarations diagnostics
+						// context.addDiagnostic(createDiagnosticForNode(input, diagnostics.Computed_properties_must_be_number_or_string_literals_variables_or_dotted_expressions_with_isolatedDeclarations))
+						return nil
+					}
+				}
 			} else if !tx.resolver.IsLateBound(tx.EmitContext().ParseNode(input)) || !ast.IsEntityNameExpression(input.Name().AsComputedPropertyName().Expression) {
 				return nil
 			}
@@ -467,9 +481,7 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 	case ast.KindTupleType:
 		result = tx.Visitor().VisitEachChild(input)
 		if result != nil {
-			startLine, _ := scanner.GetLineAndCharacterOfPosition(tx.state.currentSourceFile, input.Loc.Pos())
-			endLine, _ := scanner.GetLineAndCharacterOfPosition(tx.state.currentSourceFile, input.Loc.End())
-			if startLine == endLine {
+			if transformers.IsOriginalNodeSingleLine(tx.EmitContext(), input) {
 				tx.EmitContext().AddEmitFlags(result, printer.EFSingleLine)
 			}
 		}
@@ -510,7 +522,7 @@ func (tx *DeclarationTransformer) checkName(node *ast.Node) {
 		tx.state.getSymbolAccessibilityDiagnostic = createGetSymbolAccessibilityDiagnosticForNodeName(node)
 	}
 	tx.state.errorNameNode = node.Name()
-	// !!! Debug.assert(hasDynamicName(node as NamedDeclaration)); // Should only be called with dynamic names
+	debug.Assert(ast.HasDynamicName(node)) // Should only be called with dynamic names
 	entityName := node.Name().AsComputedPropertyName().Expression
 	tx.checkEntityNameVisibility(entityName, tx.enclosingDeclaration)
 	if !tx.suppressNewDiagnosticContexts {
@@ -666,15 +678,12 @@ func (tx *DeclarationTransformer) recreateBindingPattern(input *ast.BindingPatte
 		return nil
 	}
 	if len(results) == 1 {
-		return results[1]
+		return results[0]
 	}
 	return tx.Factory().NewSyntaxList(results)
 }
 
 func (tx *DeclarationTransformer) recreateBindingElement(e *ast.BindingElement) *ast.Node {
-	if e.Kind == ast.KindBindingElement {
-		return nil
-	}
 	if e.Name() == nil {
 		return nil
 	}
@@ -732,11 +741,16 @@ func (tx *DeclarationTransformer) transformPropertyDeclaration(input *ast.Proper
 	if ast.IsPrivateIdentifier(input.Name()) {
 		return nil
 	}
+	// Remove definite assignment assertion (!) from declaration files
+	postfixToken := input.PostfixToken
+	if postfixToken != nil && postfixToken.Kind == ast.KindExclamationToken {
+		postfixToken = nil
+	}
 	return tx.Factory().UpdatePropertyDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
 		input.Name(),
-		input.PostfixToken,
+		postfixToken,
 		tx.ensureType(input.AsNode(), false),
 		tx.ensureNoInitializer(input.AsNode()),
 	)
@@ -755,6 +769,7 @@ func (tx *DeclarationTransformer) transformSetAccessorDeclaration(input *ast.Set
 		tx.updateAccessorParamList(input.AsNode(), tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(input.AsNode()), ast.ModifierFlagsPrivate) != 0),
 		nil,
 		nil,
+		nil,
 	)
 }
 
@@ -769,6 +784,7 @@ func (tx *DeclarationTransformer) transformGetAccesorDeclaration(input *ast.GetA
 		nil, // accessors shouldn't have type params
 		tx.updateAccessorParamList(input.AsNode(), tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(input.AsNode()), ast.ModifierFlagsPrivate) != 0),
 		tx.ensureType(input.AsNode(), false),
+		nil,
 		nil,
 	)
 }
@@ -821,6 +837,7 @@ func (tx *DeclarationTransformer) transformConstructorDeclaration(input *ast.Con
 		tx.updateParamList(input.AsNode(), input.Parameters),
 		nil, // no return type
 		nil,
+		nil,
 	)
 }
 
@@ -829,7 +846,7 @@ func (tx *DeclarationTransformer) transformConstructSignatureDeclaration(input *
 		input,
 		tx.ensureTypeParams(input.AsNode(), input.TypeParameters),
 		tx.updateParamList(input.AsNode(), input.Parameters),
-		nil, // no return type
+		tx.ensureType(input.AsNode(), false),
 	)
 }
 
@@ -880,6 +897,7 @@ func (tx *DeclarationTransformer) transformMethodDeclaration(input *ast.MethodDe
 			tx.ensureTypeParams(input.AsNode(), input.TypeParameters),
 			tx.updateParamList(input.AsNode(), input.Parameters),
 			tx.ensureType(input.AsNode(), false),
+			nil,
 			nil,
 		)
 	}
@@ -932,7 +950,7 @@ func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *a
 		statement := tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{varDecl})))
 
 		assignment := tx.Factory().UpdateExportAssignment(input.AsExportAssignment(), input.Modifiers(), input.Type(), newId)
-		// Remove coments from the export declaration and copy them onto the synthetic _default declaration
+		// Remove comments from the export declaration and copy them onto the synthetic _default declaration
 		tx.preserveJsDoc(statement, input)
 		tx.removeAllComments(assignment)
 		return tx.Factory().NewSyntaxList([]*ast.Node{statement, assignment})
@@ -1018,7 +1036,7 @@ func (tx *DeclarationTransformer) ensureType(node *ast.Node, ignorePrivate bool)
 	} else if ast.IsFunctionLike(node) {
 		typeNode = tx.resolver.CreateReturnTypeOfSignatureDeclaration(tx.EmitContext(), node, tx.enclosingDeclaration, declarationEmitNodeBuilderFlags, declarationEmitInternalNodeBuilderFlags, tx.tracker)
 	} else {
-		// Debug.assertNever(node); // !!!
+		debug.AssertNever(node)
 	}
 
 	tx.state.errorNameNode = oldErrorNameNode
@@ -1143,6 +1161,7 @@ func (tx *DeclarationTransformer) transformFunctionDeclaration(input *ast.Functi
 		tx.ensureTypeParams(input.AsNode(), input.TypeParameters),
 		tx.updateParamList(input.AsNode(), input.Parameters),
 		tx.ensureType(input.AsNode(), false),
+		nil, /*fullSignature*/
 		nil,
 	)
 	if updated == nil || !tx.resolver.IsExpandoFunctionDeclaration(input.AsNode()) || !shouldEmitFunctionProperties(input) {
@@ -1503,7 +1522,34 @@ func (tx *DeclarationTransformer) ensureTypeParams(node *ast.Node, params *ast.T
 	if tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(node), ast.ModifierFlagsPrivate) != 0 {
 		return nil
 	}
-	return tx.Visitor().VisitNodes(params)
+	var typeParameters *ast.TypeParameterList
+	if typeParameters = tx.Visitor().VisitNodes(params); typeParameters != nil {
+		return typeParameters
+	}
+	oldErrorNameNode := tx.state.errorNameNode
+	tx.state.errorNameNode = node.Name()
+	var oldDiag GetSymbolAccessibilityDiagnostic
+	if !tx.suppressNewDiagnosticContexts {
+		oldDiag = tx.state.getSymbolAccessibilityDiagnostic
+		if canProduceDiagnostics(node) {
+			tx.state.getSymbolAccessibilityDiagnostic = createGetSymbolAccessibilityDiagnosticForNode(node)
+		}
+	}
+
+	if data := node.FunctionLikeData(); data != nil && data.FullSignature != nil {
+		if nodes := tx.resolver.CreateTypeParametersOfSignatureDeclaration(tx.EmitContext(), node, tx.enclosingDeclaration, declarationEmitNodeBuilderFlags, declarationEmitInternalNodeBuilderFlags, tx.tracker); nodes != nil {
+			typeParameters = &ast.TypeParameterList{
+				Loc:   node.Loc,
+				Nodes: nodes,
+			}
+		}
+	}
+
+	tx.state.errorNameNode = oldErrorNameNode
+	if !tx.suppressNewDiagnosticContexts {
+		tx.state.getSymbolAccessibilityDiagnostic = oldDiag
+	}
+	return typeParameters
 }
 
 func (tx *DeclarationTransformer) updateParamList(node *ast.Node, params *ast.ParameterList) *ast.ParameterList {

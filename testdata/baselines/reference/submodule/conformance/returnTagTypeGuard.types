@@ -7,9 +7,9 @@ class Entry {
     constructor() {
         this.c = 1
 >this.c = 1 : 1
->this.c : number
+>this.c : any
 >this : this
->c : number
+>c : any
 >1 : 1
     }
     /**
@@ -30,9 +30,9 @@ class Group {
     constructor() {
         this.d = 'no'
 >this.d = 'no' : "no"
->this.d : string
+>this.d : any
 >this : this
->d : string
+>d : any
 >'no' : "no"
     }
     /**
@@ -109,11 +109,11 @@ function foo(val) {
 
 /** @type {Cb} */
 function isNumber(x) { return typeof x === "number" }
->isNumber : (x: any) => x is number
->x : any
+>isNumber : (x: unknown) => x is number
+>x : unknown
 >typeof x === "number" : boolean
 >typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
->x : any
+>x : unknown
 >"number" : "number"
 
 /** @param {unknown} x */
@@ -123,7 +123,7 @@ function g(x) {
 
     if (isNumber(x)) {
 >isNumber(x) : boolean
->isNumber : (x: any) => x is number
+>isNumber : (x: unknown) => x is number
 >x : unknown
 
         x * 2;

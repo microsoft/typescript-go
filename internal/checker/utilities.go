@@ -23,7 +23,7 @@ func NewDiagnosticForNode(node *ast.Node, message *diagnostics.Message, args ...
 	var loc core.TextRange
 	if node != nil {
 		file = ast.GetSourceFileOfNode(node)
-		loc = binder.GetErrorRangeForNode(file, node)
+		loc = scanner.GetErrorRangeForNode(file, node)
 	}
 	return ast.NewDiagnostic(file, loc, message, args...)
 }
@@ -42,13 +42,6 @@ func findInMap[K comparable, V any](m map[K]V, predicate func(V) bool) V {
 		}
 	}
 	return *new(V)
-}
-
-func boolToTristate(b bool) core.Tristate {
-	if b {
-		return core.TSTrue
-	}
-	return core.TSFalse
 }
 
 func isCompoundAssignment(token ast.Kind) bool {
@@ -1081,91 +1074,6 @@ func isThisInitializedDeclaration(node *ast.Node) bool {
 	return node != nil && ast.IsVariableDeclaration(node) && node.AsVariableDeclaration().Initializer != nil && node.AsVariableDeclaration().Initializer.Kind == ast.KindThisKeyword
 }
 
-func isWriteOnlyAccess(node *ast.Node) bool {
-	return accessKind(node) == AccessKindWrite
-}
-
-func isWriteAccess(node *ast.Node) bool {
-	return accessKind(node) != AccessKindRead
-}
-
-type AccessKind int32
-
-const (
-	AccessKindRead      AccessKind = iota // Only reads from a variable
-	AccessKindWrite                       // Only writes to a variable without ever reading it. E.g.: `x=1;`.
-	AccessKindReadWrite                   // Reads from and writes to a variable. E.g.: `f(x++);`, `x/=1`.
-)
-
-func accessKind(node *ast.Node) AccessKind {
-	parent := node.Parent
-	switch parent.Kind {
-	case ast.KindParenthesizedExpression:
-		return accessKind(parent)
-	case ast.KindPrefixUnaryExpression:
-		operator := parent.AsPrefixUnaryExpression().Operator
-		if operator == ast.KindPlusPlusToken || operator == ast.KindMinusMinusToken {
-			return AccessKindReadWrite
-		}
-		return AccessKindRead
-	case ast.KindPostfixUnaryExpression:
-		operator := parent.AsPostfixUnaryExpression().Operator
-		if operator == ast.KindPlusPlusToken || operator == ast.KindMinusMinusToken {
-			return AccessKindReadWrite
-		}
-		return AccessKindRead
-	case ast.KindBinaryExpression:
-		if parent.AsBinaryExpression().Left == node {
-			operator := parent.AsBinaryExpression().OperatorToken
-			if ast.IsAssignmentOperator(operator.Kind) {
-				if operator.Kind == ast.KindEqualsToken {
-					return AccessKindWrite
-				}
-				return AccessKindReadWrite
-			}
-		}
-		return AccessKindRead
-	case ast.KindPropertyAccessExpression:
-		if parent.AsPropertyAccessExpression().Name() != node {
-			return AccessKindRead
-		}
-		return accessKind(parent)
-	case ast.KindPropertyAssignment:
-		parentAccess := accessKind(parent.Parent)
-		// In `({ x: varname }) = { x: 1 }`, the left `x` is a read, the right `x` is a write.
-		if node == parent.AsPropertyAssignment().Name() {
-			return reverseAccessKind(parentAccess)
-		}
-		return parentAccess
-	case ast.KindShorthandPropertyAssignment:
-		// Assume it's the local variable being accessed, since we don't check public properties for --noUnusedLocals.
-		if node == parent.AsShorthandPropertyAssignment().ObjectAssignmentInitializer {
-			return AccessKindRead
-		}
-		return accessKind(parent.Parent)
-	case ast.KindArrayLiteralExpression:
-		return accessKind(parent)
-	case ast.KindForInStatement, ast.KindForOfStatement:
-		if node == parent.AsForInOrOfStatement().Initializer {
-			return AccessKindWrite
-		}
-		return AccessKindRead
-	}
-	return AccessKindRead
-}
-
-func reverseAccessKind(a AccessKind) AccessKind {
-	switch a {
-	case AccessKindRead:
-		return AccessKindWrite
-	case AccessKindWrite:
-		return AccessKindRead
-	case AccessKindReadWrite:
-		return AccessKindReadWrite
-	}
-	panic("Unhandled case in reverseAccessKind")
-}
-
 func isInfinityOrNaNString(name string) bool {
 	return name == "Infinity" || name == "-Infinity" || name == "NaN"
 }
@@ -1467,10 +1375,10 @@ func forEachYieldExpression(body *ast.Node, visitor func(expr *ast.Node)) {
 	traverse(body)
 }
 
-func SkipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions, host Program) bool {
-	return options.NoCheck.IsTrue() ||
+func SkipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions, host Program, ignoreNoCheck bool) bool {
+	return (!ignoreNoCheck && options.NoCheck.IsTrue()) ||
 		options.SkipLibCheck.IsTrue() && sourceFile.IsDeclarationFile ||
-		options.SkipDefaultLibCheck.IsTrue() && sourceFile.HasNoDefaultLib ||
+		options.SkipDefaultLibCheck.IsTrue() && host.IsSourceFileDefaultLibrary(sourceFile.Path()) ||
 		host.IsSourceFromProjectReference(sourceFile.Path()) ||
 		!canIncludeBindAndCheckDiagnostics(sourceFile, options)
 }
@@ -1849,9 +1757,6 @@ func getAnyImportSyntax(node *ast.Node) *ast.Node {
 	default:
 		return nil
 	}
-	if importNode.Kind == ast.KindJSDocImportTag {
-		return importNode.AsJSDocImportTag().JSImportDeclaration.AsNode()
-	}
 	return importNode
 }
 
@@ -1951,4 +1856,13 @@ func ValueToString(value any) string {
 		return value.String() + "n"
 	}
 	panic("unhandled value type in valueToString")
+}
+
+func nodeStartsNewLexicalEnvironment(node *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindConstructor, ast.KindFunctionExpression, ast.KindFunctionDeclaration, ast.KindArrowFunction,
+		ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindModuleDeclaration, ast.KindSourceFile:
+		return true
+	}
+	return false
 }

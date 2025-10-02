@@ -10,7 +10,7 @@ import (
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=SignatureKind -output=stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w stringer_generated.go
+//go:generate go tool mvdan.cc/gofumpt -w stringer_generated.go
 
 // ParseFlags
 
@@ -297,34 +297,6 @@ const (
 	AccessFlagsPersistent                             = AccessFlagsIncludeUndefined
 )
 
-type AssignmentDeclarationKind = int32
-
-const (
-	AssignmentDeclarationKindNone = AssignmentDeclarationKind(iota)
-	/// exports.name = expr
-	/// module.exports.name = expr
-	AssignmentDeclarationKindExportsProperty
-	/// module.exports = expr
-	AssignmentDeclarationKindModuleExports
-	/// className.prototype.name = expr
-	AssignmentDeclarationKindPrototypeProperty
-	/// this.name = expr
-	AssignmentDeclarationKindThisProperty
-	// F.name = expr
-	AssignmentDeclarationKindProperty
-	// F.prototype = { ... }
-	AssignmentDeclarationKindPrototype
-	// Object.defineProperty(x, 'name', { value: any, writable?: boolean (false by default) });
-	// Object.defineProperty(x, 'name', { get: Function, set: Function });
-	// Object.defineProperty(x, 'name', { get: Function });
-	// Object.defineProperty(x, 'name', { set: Function });
-	AssignmentDeclarationKindObjectDefinePropertyValue
-	// Object.defineProperty(exports || module.exports, 'name', ...);
-	AssignmentDeclarationKindObjectDefinePropertyExports
-	// Object.defineProperty(Foo.prototype, 'name', ...);
-	AssignmentDeclarationKindObjectDefinePrototypeProperty
-)
-
 type NodeCheckFlags uint32
 
 const (
@@ -408,6 +380,12 @@ type SignatureLinks struct {
 
 type TypeFlags uint32
 
+// Note that for types of different kinds, the numeric values of TypeFlags determine the order
+// computed by the CompareTypes function and therefore the order of constituent types in union types.
+// Since union type processing often bails out early when a result is known, it is important to order
+// TypeFlags in increasing order of potential type complexity. In particular, indexed access and
+// conditional types should sort last as those types are potentially recursive and possibly infinite.
+
 const (
 	TypeFlagsNone            TypeFlags = 0
 	TypeFlagsAny             TypeFlags = 1 << 0
@@ -432,11 +410,11 @@ const (
 	TypeFlagsTypeParameter   TypeFlags = 1 << 19 // Type parameter
 	TypeFlagsObject          TypeFlags = 1 << 20 // Object type
 	TypeFlagsIndex           TypeFlags = 1 << 21 // keyof T
-	TypeFlagsIndexedAccess   TypeFlags = 1 << 22 // T[K]
-	TypeFlagsConditional     TypeFlags = 1 << 23 // T extends U ? X : Y
+	TypeFlagsTemplateLiteral TypeFlags = 1 << 22 // Template literal type
+	TypeFlagsStringMapping   TypeFlags = 1 << 23 // Uppercase/Lowercase type
 	TypeFlagsSubstitution    TypeFlags = 1 << 24 // Type parameter substitution
-	TypeFlagsTemplateLiteral TypeFlags = 1 << 25 // Template literal type
-	TypeFlagsStringMapping   TypeFlags = 1 << 26 // Uppercase/Lowercase type
+	TypeFlagsIndexedAccess   TypeFlags = 1 << 25 // T[K]
+	TypeFlagsConditional     TypeFlags = 1 << 26 // T extends U ? X : Y
 	TypeFlagsUnion           TypeFlags = 1 << 27 // Union (T | U)
 	TypeFlagsIntersection    TypeFlags = 1 << 28 // Intersection (T & U)
 	TypeFlagsReserved1       TypeFlags = 1 << 29 // Used by union/intersection type construction
@@ -1220,7 +1198,8 @@ type IndexInfo struct {
 	keyType     *Type
 	valueType   *Type
 	isReadonly  bool
-	declaration *ast.Node // IndexSignatureDeclaration
+	declaration *ast.Node   // IndexSignatureDeclaration
+	components  []*ast.Node // ElementWithComputedPropertyName
 }
 
 /**

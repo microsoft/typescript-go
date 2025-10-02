@@ -14,14 +14,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-type WriteFileData struct {
-	SourceMapUrlPos int
-	// BuildInfo BuildInfo
-	Diagnostics      []*ast.Diagnostic
-	DiffersOnlyInMap bool
-	SkippedDtsWrite  bool
-}
-
 // NOTE: EmitHost operations must be thread-safe
 type EmitHost interface {
 	printer.EmitHost
@@ -32,14 +24,22 @@ type EmitHost interface {
 	GetCurrentDirectory() string
 	CommonSourceDirectory() string
 	IsEmitBlocked(file string) bool
-	GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) printer.EmitResolver
 }
 
 var _ EmitHost = (*emitHost)(nil)
 
 // NOTE: emitHost operations must be thread-safe
 type emitHost struct {
-	program *Program
+	program      *Program
+	emitResolver printer.EmitResolver
+}
+
+func newEmitHost(ctx context.Context, program *Program, file *ast.SourceFile) (*emitHost, func()) {
+	checker, done := program.GetTypeCheckerForFile(ctx, file)
+	return &emitHost{
+		program:      program,
+		emitResolver: checker.GetEmitResolver(),
+	}, done
 }
 
 func (host *emitHost) GetModeForUsageLocation(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) core.ResolutionMode {
@@ -74,8 +74,12 @@ func (host *emitHost) GetPackageJsonInfo(pkgJsonPath string) modulespecifiers.Pa
 	return host.program.GetPackageJsonInfo(pkgJsonPath)
 }
 
-func (host *emitHost) GetOutputAndProjectReference(path tspath.Path) *tsoptions.OutputDtsAndProjectReference {
-	return host.program.GetOutputAndProjectReference(path)
+func (host *emitHost) GetSourceOfProjectReferenceIfOutputIncluded(file ast.HasFileName) string {
+	return host.program.GetSourceOfProjectReferenceIfOutputIncluded(file)
+}
+
+func (host *emitHost) GetProjectReferenceFromSource(path tspath.Path) *tsoptions.SourceOutputAndProjectReference {
+	return host.program.GetProjectReferenceFromSource(path)
 }
 
 func (host *emitHost) GetRedirectTargets(path tspath.Path) []string {
@@ -83,7 +87,7 @@ func (host *emitHost) GetRedirectTargets(path tspath.Path) []string {
 }
 
 func (host *emitHost) GetEffectiveDeclarationFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags {
-	return host.GetEmitResolver(ast.GetSourceFileOfNode(node), true).GetEffectiveDeclarationFlags(node, flags)
+	return host.GetEmitResolver().GetEffectiveDeclarationFlags(node, flags)
 }
 
 func (host *emitHost) GetOutputPathsFor(file *ast.SourceFile, forceDtsPaths bool) declarations.OutputPaths {
@@ -92,7 +96,7 @@ func (host *emitHost) GetOutputPathsFor(file *ast.SourceFile, forceDtsPaths bool
 }
 
 func (host *emitHost) GetResolutionModeOverride(node *ast.Node) core.ResolutionMode {
-	return host.GetEmitResolver(ast.GetSourceFileOfNode(node), true).GetResolutionModeOverride(node)
+	return host.GetEmitResolver().GetResolutionModeOverride(node)
 }
 
 func (host *emitHost) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.FileReference) *ast.SourceFile {
@@ -108,21 +112,15 @@ func (host *emitHost) UseCaseSensitiveFileNames() bool {
 }
 
 func (host *emitHost) IsEmitBlocked(file string) bool {
-	// !!!
-	return false
+	return host.program.IsEmitBlocked(file)
 }
 
-func (host *emitHost) WriteFile(fileName string, text string, writeByteOrderMark bool, _ []*ast.SourceFile, _ *printer.WriteFileData) error {
+func (host *emitHost) WriteFile(fileName string, text string, writeByteOrderMark bool) error {
 	return host.program.Host().FS().WriteFile(fileName, text, writeByteOrderMark)
 }
 
-func (host *emitHost) GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) printer.EmitResolver {
-	// The context and done function don't matter in tsc, currently the only caller of this function.
-	// But if this ever gets used by LSP code, we'll need to thread the context properly and pass the
-	// done function to the caller to ensure resources are cleaned up at the end of the request.
-	checker, done := host.program.GetTypeCheckerForFile(context.TODO(), file)
-	defer done()
-	return checker.GetEmitResolver(file, skipDiagnostics)
+func (host *emitHost) GetEmitResolver() printer.EmitResolver {
+	return host.emitResolver
 }
 
 func (host *emitHost) IsSourceFileFromExternalLibrary(file *ast.SourceFile) bool {
