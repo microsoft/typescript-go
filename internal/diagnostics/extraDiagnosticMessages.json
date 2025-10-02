@@ -38,5 +38,13 @@
     "Project '{0}' is out of date because it has errors.": {
         "category": "Message",
         "code": 6423
+    },
+    "Ignore the tsconfig found and build with commandline options and files.": {
+        "category": "Message",
+        "code": 1547
+    },
+    "tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.": {
+        "category": "Error",
+        "code": 5111
     }
 }
