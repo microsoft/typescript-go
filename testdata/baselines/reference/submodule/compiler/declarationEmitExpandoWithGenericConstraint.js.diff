@@ -1,0 +1,10 @@
+--- old.declarationEmitExpandoWithGenericConstraint.js
++++ new.declarationEmitExpandoWithGenericConstraint.js
+@@= skipped -37, +37 lines =@@
+ }
+ export declare const Point: {
+     (x: number, y: number): Point;
+-    zero(): Point;
++    zero: () => Point;
+ };
+ export declare const Rect: <p extends Point>(a: p, b: p) => Rect<p>;
