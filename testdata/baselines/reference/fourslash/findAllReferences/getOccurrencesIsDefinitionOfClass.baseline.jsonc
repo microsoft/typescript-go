@@ -10,13 +10,11 @@
 
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfClass.ts ===
-// class /*FIND ALL REFS*/[|C|] {
+// class /*FIND ALL REFS*/C {
 //     n: number;
 //     constructor() {
 //         this.n = 12;
-//     }
-// }
-// let c = new [|C|]();
+// // --- (line: 5) skipped ---
 
 
 

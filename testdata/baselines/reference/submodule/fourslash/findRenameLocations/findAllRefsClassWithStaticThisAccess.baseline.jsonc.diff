@@ -1,6 +1,10 @@
 --- old.findAllRefsClassWithStaticThisAccess.baseline.jsonc
 +++ new.findAllRefsClassWithStaticThisAccess.baseline.jsonc
-@@= skipped -3, +3 lines =@@
+@@= skipped -0, +0 lines =@@
+ // === findRenameLocations ===
+ // === /findAllRefsClassWithStaticThisAccess.ts ===
+-// class /*RENAME*/[|CRENAME|] {
++// class /*RENAME*/C {
  //     static s() {
  //         this;
  //     }

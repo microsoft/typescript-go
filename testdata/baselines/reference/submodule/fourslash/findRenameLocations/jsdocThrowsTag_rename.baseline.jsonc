@@ -1,6 +1,6 @@
 // === findRenameLocations ===
 // === /jsdocThrowsTag_rename.ts ===
-// class /*RENAME*/[|ERENAME|] extends Error {}
+// class /*RENAME*/E extends Error {}
 // /**
 //  * @throws {E}
 //  */

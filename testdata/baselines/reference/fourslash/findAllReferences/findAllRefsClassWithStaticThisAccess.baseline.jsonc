@@ -1,6 +1,6 @@
 // === findAllReferences ===
 // === /findAllRefsClassWithStaticThisAccess.ts ===
-// class /*FIND ALL REFS*/[|C|] {
+// class /*FIND ALL REFS*/C {
 //     static s() {
 //         this;
 //     }

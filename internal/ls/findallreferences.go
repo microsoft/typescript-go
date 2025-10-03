@@ -727,8 +727,7 @@ func getReferencedSymbolsSpecial(node *ast.Node, sourceFiles []*ast.SourceFile) 
 	}
 
 	if ast.IsImportMeta(node.Parent) && node.Parent.Name() == node {
-		// !!! unimplemented
-		return nil // getAllReferencesForImportMeta(sourceFiles /*, cancellationToken*/)
+		return getAllReferencesForImportMeta(sourceFiles)
 	}
 
 	if node.Kind == ast.KindStaticKeyword && node.Parent.Kind == ast.KindClassStaticBlockDeclaration {
@@ -885,6 +884,22 @@ func getReferencesForSuperKeyword(superKeyword *ast.Node) []*SymbolAndEntries {
 	})
 
 	return []*SymbolAndEntries{NewSymbolAndEntries(definitionKindSymbol, nil, searchSpaceNode.Symbol(), references)}
+}
+
+func getAllReferencesForImportMeta(sourceFiles []*ast.SourceFile) []*SymbolAndEntries {
+	references := core.FlatMap(sourceFiles, func(sourceFile *ast.SourceFile) []*referenceEntry {
+		return core.MapNonNil(getPossibleSymbolReferenceNodes(sourceFile, "meta", sourceFile.AsNode()), func(node *ast.Node) *referenceEntry {
+			parent := node.Parent
+			if ast.IsImportMeta(parent) {
+				return newNodeEntry(parent)
+			}
+			return nil
+		})
+	})
+	if len(references) == 0 {
+		return nil
+	}
+	return []*SymbolAndEntries{{definition: &Definition{Kind: definitionKindKeyword, node: references[0].node}, references: references}}
 }
 
 func getAllReferencesForKeyword(sourceFiles []*ast.SourceFile, keywordKind ast.Kind, filterReadOnlyTypeOperator bool) []*SymbolAndEntries {
@@ -1117,6 +1132,24 @@ func getReferenceAtPosition(sourceFile *ast.SourceFile, position int, program *c
 }
 
 // -- Core algorithm for find all references --
+func getSpecialSearchKind(node *ast.Node) string {
+	if node == nil {
+		return "none"
+	}
+	switch node.Kind {
+	case ast.KindConstructor, ast.KindConstructorKeyword:
+		return "constructor"
+	case ast.KindIdentifier:
+		if ast.IsClassLike(node.Parent) {
+			debug.Assert(node.Parent.Name() == node)
+			return "class"
+		}
+		fallthrough
+	default:
+		return "none"
+	}
+}
+
 func getReferencedSymbolsForSymbol(originalSymbol *ast.Symbol, node *ast.Node, sourceFiles []*ast.SourceFile, sourceFilesSet *collections.Set[string], checker *checker.Checker, options refOptions) []*SymbolAndEntries {
 	// Core find-all-references algorithm for a normal symbol.
 
@@ -1137,8 +1170,7 @@ func getReferencedSymbolsForSymbol(originalSymbol *ast.Symbol, node *ast.Node, s
 		// state.getReferencesAtExportSpecifier(exportSpecifier.Name(), symbol, exportSpecifier.AsExportSpecifier(), state.createSearch(node, originalSymbol, comingFromUnknown /*comingFrom*/, "", nil), true /*addReferencesHere*/, true /*alwaysGetReferences*/)
 	} else if node != nil && node.Kind == ast.KindDefaultKeyword && symbol.Name == ast.InternalSymbolNameDefault && symbol.Parent != nil {
 		state.addReference(node, symbol, entryKindNone)
-		// !!! not implemented
-		// state.searchForImportsOfExport(node, symbol, &ExportInfo{exportingModuleSymbol: symbol.Parent, exportKind: ExportKindDefault})
+		state.searchForImportsOfExport(node, symbol, &ExportInfo{exportingModuleSymbol: symbol.Parent, exportKind: ExportKindDefault})
 	} else {
 		search := state.createSearch(node, symbol, ImpExpKindUnknown /*comingFrom*/, "", state.populateSearchSymbolSet(symbol, node, options.use == referenceUseRename, options.useAliasesForRename, options.implementations))
 		state.getReferencesInContainerOrFiles(symbol, search)
@@ -1193,7 +1225,7 @@ func newState(sourceFiles []*ast.SourceFile, sourceFilesSet *collections.Set[str
 	return &refState{
 		sourceFiles:       sourceFiles,
 		sourceFilesSet:    sourceFilesSet,
-		specialSearchKind: "none", // !!! other search kinds not implemented
+		specialSearchKind: getSpecialSearchKind(node),
 		checker:           checker,
 		searchMeaning:     searchMeaning,
 		options:           options,
@@ -1275,6 +1307,21 @@ func (state *refState) addReference(referenceLocation *ast.Node, symbol *ast.Sym
 	}
 }
 
+func getReferenceEntriesForShorthandPropertyAssignment(node *ast.Node, checker *checker.Checker, addReference func(*ast.Node)) {
+	refSymbol := checker.GetSymbolAtLocation(node)
+	if refSymbol == nil || refSymbol.ValueDeclaration == nil {
+		return
+	}
+	shorthandSymbol := checker.GetShorthandAssignmentValueSymbol(refSymbol.ValueDeclaration)
+	if shorthandSymbol != nil && len(shorthandSymbol.Declarations) > 0 {
+		for _, declaration := range shorthandSymbol.Declarations {
+			if getMeaningFromDeclaration(declaration)&ast.SemanticMeaningValue != 0 {
+				addReference(declaration)
+			}
+		}
+	}
+}
+
 func (state *refState) addImplementationReferences(refNode *ast.Node, addRef func(*ast.Node)) {
 	// Check if we found a function/propertyAssignment/method with an implementation or initializer
 	if ast.IsDeclarationName(refNode) && isImplementation(refNode.Parent) {
@@ -1288,9 +1335,7 @@ func (state *refState) addImplementationReferences(refNode *ast.Node, addRef fun
 
 	if refNode.Parent.Kind == ast.KindShorthandPropertyAssignment {
 		// Go ahead and dereference the shorthand assignment by going to its definition
-
-		// !!! not implemented
-		// getReferenceEntriesForShorthandPropertyAssignment(refNode, state.checker, addRef);
+		getReferenceEntriesForShorthandPropertyAssignment(refNode, state.checker, addRef)
 	}
 
 	// Check if the node is within an extends or implements clause

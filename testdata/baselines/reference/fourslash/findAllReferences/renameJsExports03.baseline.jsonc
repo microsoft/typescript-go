@@ -1,18 +1,18 @@
 // === findAllReferences ===
 // === /a.js ===
-// class /*FIND ALL REFS*/[|A|] {
+// class /*FIND ALL REFS*/A {
 //     constructor() { }
 // }
-// module.exports = [|A|];
+// module.exports = A;
 
 
 
 // === findAllReferences ===
 // === /a.js ===
-// class [|A|] {
+// class A {
 //     /*FIND ALL REFS*/constructor() { }
 // }
-// module.exports = [|A|];
+// module.exports = A;
 
 
 

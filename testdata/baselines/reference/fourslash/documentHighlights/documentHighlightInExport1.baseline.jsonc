@@ -1,6 +1,6 @@
 // === documentHighlights ===
 // === /documentHighlightInExport1.ts ===
-// class /*HIGHLIGHTS*/[|C|] {}
+// class /*HIGHLIGHTS*/C {}
 // export { C as D };
 
 

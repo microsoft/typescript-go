@@ -1,6 +1,6 @@
 // === findRenameLocations ===
 // === /findAllRefsClassWithStaticThisAccess.ts ===
-// class /*RENAME*/[|CRENAME|] {
+// class /*RENAME*/C {
 //     static s() {
 //         this;
 //     }

@@ -1,8 +1,10 @@
 --- old.jsdocThrowsTag_rename.baseline.jsonc
 +++ new.jsdocThrowsTag_rename.baseline.jsonc
-@@= skipped -1, +1 lines =@@
+@@= skipped -0, +0 lines =@@
+ // === findRenameLocations ===
  // === /jsdocThrowsTag_rename.ts ===
- // class /*RENAME*/[|ERENAME|] extends Error {}
+-// class /*RENAME*/[|ERENAME|] extends Error {}
++// class /*RENAME*/E extends Error {}
  // /**
 -//  * @throws {[|ERENAME|]}
 +//  * @throws {E}

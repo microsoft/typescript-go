@@ -1,14 +1,10 @@
 // === findRenameLocations ===
 // === /renameForDefaultExport01.ts ===
-// export default class /*RENAME*/[|DefaultExportedClassRENAME|] {
+// export default class /*RENAME*/DefaultExportedClass {
 // }
 // /*
 //  *  Commenting DefaultExportedClass
-//  */
-// 
-// var x: [|DefaultExportedClassRENAME|];
-// 
-// var y = new [|DefaultExportedClassRENAME|];
+// // --- (line: 5) skipped ---
 
 
 

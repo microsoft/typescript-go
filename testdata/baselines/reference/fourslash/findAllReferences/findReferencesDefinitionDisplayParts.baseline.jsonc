@@ -1,6 +1,6 @@
 // === findAllReferences ===
 // === /findReferencesDefinitionDisplayParts.ts ===
-// class [|Gre/*FIND ALL REFS*/eter|] {
+// class Gre/*FIND ALL REFS*/eter {
 //     someFunction() { this;  }
 // }
 // 

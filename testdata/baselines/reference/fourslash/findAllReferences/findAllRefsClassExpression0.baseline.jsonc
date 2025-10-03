@@ -1,12 +1,8 @@
 // === findAllReferences ===
 // === /a.ts ===
-// export = class /*FIND ALL REFS*/[|A|] {
-//     m() { [|A|]; }
+// export = class /*FIND ALL REFS*/A {
+//     m() { A; }
 // };
-
-// === /b.ts ===
-// import [|A|] = require("./a");
-// [|A|];
 
 
 

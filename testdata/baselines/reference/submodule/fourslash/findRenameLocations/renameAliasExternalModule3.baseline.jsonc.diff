@@ -1,13 +1,16 @@
 --- old.renameAliasExternalModule3.baseline.jsonc
 +++ new.renameAliasExternalModule3.baseline.jsonc
-@@= skipped -2, +2 lines =@@
- // module SomeModule { export class /*RENAME*/[|SomeClassRENAME|] { } }
+@@= skipped -0, +0 lines =@@
+ // === findRenameLocations ===
+ // === /a.ts ===
+-// module SomeModule { export class /*RENAME*/[|SomeClassRENAME|] { } }
++// module SomeModule { export class /*RENAME*/SomeClass { } }
  // export = SomeModule;
-
+-
 -// === /b.ts ===
 -// import M = require("./a");
 -// import C = M.[|SomeClassRENAME|];
--
+
 
 
  // === findRenameLocations ===

@@ -1,5 +1,22 @@
 --- old.findAllRefsOnImportAliases2.baseline.jsonc
 +++ new.findAllRefsOnImportAliases2.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+ // === findRenameLocations ===
+-// === /a.ts ===
+-// export class /*RENAME*/[|ClassRENAME|] {}
+-
+ // === /b.ts ===
+ // import { [|ClassRENAME|] as C2 } from "./a";
+ // var c = new C2();
+
+ // === /c.ts ===
+ // export { [|ClassRENAME|] as C3 } from "./a";
++
++// === /a.ts ===
++// export class /*RENAME*/Class {}
+
+
+
 @@= skipped -52, +52 lines =@@
 
  // === findRenameLocations ===

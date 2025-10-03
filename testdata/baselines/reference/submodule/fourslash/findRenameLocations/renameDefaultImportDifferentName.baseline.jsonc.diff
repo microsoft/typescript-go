@@ -1,5 +1,13 @@
 --- old.renameDefaultImportDifferentName.baseline.jsonc
 +++ new.renameDefaultImportDifferentName.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+ // === findRenameLocations ===
+ // === /B.ts ===
+-// export default class /*RENAME*/[|CRENAME|] {
++// export default class /*RENAME*/C {
+ //     test() {
+ //     }
+ // }
 @@= skipped -19, +19 lines =@@
  // import [|BRENAME|] from "./B";
  // let b = new /*RENAME*/[|BRENAME|]();

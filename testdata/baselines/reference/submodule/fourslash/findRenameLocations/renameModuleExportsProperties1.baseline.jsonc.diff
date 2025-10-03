@@ -1,0 +1,12 @@
+--- old.renameModuleExportsProperties1.baseline.jsonc
++++ new.renameModuleExportsProperties1.baseline.jsonc
+@@= skipped -1, +1 lines =@@
+ // @useAliasesForRename: true
+
+ // === /renameModuleExportsProperties1.ts ===
+-// class /*RENAME*/[|ARENAME|] {}
+-// module.exports = { /*START PREFIX*/A: [|ARENAME|] }
++// class /*RENAME*/A {}
++// module.exports = { A }
+
+
