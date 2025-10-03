@@ -496,16 +496,18 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDefinitionInfo, (*Server).handleDefinition)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentTypeDefinitionInfo, (*Server).handleTypeDefinition)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentCompletionInfo, (*Server).handleCompletion)
-	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*Server).handleReferences)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentImplementationInfo, (*Server).handleImplementations)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSignatureHelpInfo, (*Server).handleSignatureHelp)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentFormattingInfo, (*Server).handleDocumentFormat)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentRangeFormattingInfo, (*Server).handleDocumentRangeFormat)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentOnTypeFormattingInfo, (*Server).handleDocumentOnTypeFormat)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDocumentSymbolInfo, (*Server).handleDocumentSymbol)
-	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*Server).handleRename)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDocumentHighlightInfo, (*Server).handleDocumentHighlight)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSelectionRangeInfo, (*Server).handleSelectionRange)
+
+	registerMultiProjectDocumentRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*Server).handleReferences)
+	registerMultiProjectDocumentRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*Server).handleRename)
+
 	registerRequestHandler(handlers, lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
 	registerRequestHandler(handlers, lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
 
@@ -564,6 +566,32 @@ func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentUR
 		if req.Params != nil {
 			params = req.Params.(Req)
 		}
+		ls, err := s.session.GetLanguageService(ctx, params.TextDocumentURI())
+		if err != nil {
+			return err
+		}
+		defer s.recover(req)
+		resp, err := fn(s, ctx, ls, params)
+		if err != nil {
+			return err
+		}
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		s.sendResult(req.ID, resp)
+		return nil
+	}
+}
+
+func registerMultiProjectDocumentRequestHandler[Req lsproto.HasTextDocumentURI, Resp any](handlers handlerMap, info lsproto.RequestInfo[Req, Resp], fn func(*Server, context.Context, *ls.LanguageService, Req) (Resp, error)) {
+	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
+		var params Req
+		// Ignore empty params.
+		if req.Params != nil {
+			params = req.Params.(Req)
+		}
+		// !!! sheetal: multiple projects that contain the file through symlinks
+		// !!! multiple projects that contain the file directly
 		ls, err := s.session.GetLanguageService(ctx, params.TextDocumentURI())
 		if err != nil {
 			return err
@@ -922,6 +950,7 @@ func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.Work
 	defer release()
 	defer s.recover(reqMsg)
 	programs := core.Map(snapshot.ProjectCollection.Projects(), (*project.Project).GetProgram)
+	// !!! sheetal: additional projects that can be loaded but were delayed
 	return ls.ProvideWorkspaceSymbols(ctx, programs, snapshot.Converters(), params.Query)
 }
 
