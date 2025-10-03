@@ -104,7 +104,7 @@ func newSourceMapSpanWriter(sourceMapRecorder *writerAggregator, sourceMap *sour
 
 	sourceMapRecorder.WriteLine("===================================================================")
 	sourceMapRecorder.WriteLinef("JsFile: %s", sourceMap.File)
-	sourceMapRecorder.WriteLinef("mapUrl: %s", sourcemap.TryGetSourceMappingURL(sourcemap.GetECMALineInfo(jsFile.Content, writer.jsLineMap)))
+	sourceMapRecorder.WriteLinef("mapUrl: %s", sourcemap.TryGetSourceMappingURL(sourcemap.CreateECMALineInfo(jsFile.Content, writer.jsLineMap)))
 	sourceMapRecorder.WriteLinef("sourceRoot: %s", sourceMap.SourceRoot)
 	sourceMapRecorder.WriteLinef("sources: %s", strings.Join(sourceMap.Sources, ","))
 	if len(sourceMap.SourcesContent) > 0 {
