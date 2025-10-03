@@ -39,6 +39,9 @@ export function activate(context: vscode.ExtensionContext) {
         },
     };
 
+    const config = vscode.workspace.getConfiguration("typescript-go");
+    const memoryLimit = config.get<string>("memoryLimit");
+
     const clientOptions: LanguageClientOptions = {
         documentSelector: [
             { scheme: "file", language: "typescript" },
@@ -52,6 +55,7 @@ export function activate(context: vscode.ExtensionContext) {
         ],
         outputChannel: output,
         traceOutputChannel: traceOutput,
+        ...(memoryLimit ? { initializationOptions: { memoryLimit: memoryLimit } } : {}),
         diagnosticPullOptions: {
             onChange: true,
             onSave: true,

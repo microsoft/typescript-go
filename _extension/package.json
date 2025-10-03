@@ -30,6 +30,13 @@
                         ],
                         "default": "verbose",
                         "description": "Trace TypeScript Go server communication."
+                    },
+                    "typescript-go.memoryLimit": {
+                        "type": "string",
+                        "default": "",
+                        "description": "Memory limit for the TypeScript Go language server (e.g., '2GiB', '500MiB'). Leave empty for no limit.",
+                        "pattern": "^([0-9]+(\\.[0-9]+)?([KMGT]i)?B)?$",
+                        "patternErrorMessage": "Must be a valid memory size (e.g., '2GiB', '500MiB', '1024B')"
                     }
                 }
             }

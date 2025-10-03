@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"runtime/debug"
+	"strconv"
 	"strings"
 	"time"
 
@@ -211,6 +213,21 @@ func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
 
 func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 	s.initializeParams = req.Params.(*lsproto.InitializeParams)
+	
+	// Handle memory limit from initialization options
+	if s.initializeParams.InitializationOptions != nil {
+		if opts, ok := (*s.initializeParams.InitializationOptions).(map[string]any); ok {
+			if memLimitStr, ok := opts["memoryLimit"].(string); ok && memLimitStr != "" {
+				if limit, err := parseMemoryLimit(memLimitStr); err != nil {
+					s.Log("Failed to parse memory limit:", err)
+				} else {
+					debug.SetMemoryLimit(limit)
+					s.Log(fmt.Sprintf("Set memory limit to %s (%d bytes)", memLimitStr, limit))
+				}
+			}
+		}
+	}
+	
 	return s.sendResult(req.ID, &lsproto.InitializeResult{
 		ServerInfo: &lsproto.ServerInfo{
 			Name:    "typescript-go",
@@ -396,4 +413,37 @@ func codeFence(lang string, code string) string {
 		result.WriteByte('`')
 	}
 	return result.String()
+}
+
+// parseMemoryLimit parses a memory limit string (e.g., "2GiB", "500MiB") into bytes.
+// Supports: B, KiB, MiB, GiB, TiB (IEC binary prefixes).
+func parseMemoryLimit(s string) (int64, error) {
+	if s == "" {
+		return -1, fmt.Errorf("empty memory limit")
+	}
+	
+	multipliers := map[string]int64{
+		"B":   1,
+		"KiB": 1024,
+		"MiB": 1024 * 1024,
+		"GiB": 1024 * 1024 * 1024,
+		"TiB": 1024 * 1024 * 1024 * 1024,
+	}
+	
+	// Try each suffix
+	for suffix, multiplier := range multipliers {
+		if strings.HasSuffix(s, suffix) {
+			numStr := strings.TrimSuffix(s, suffix)
+			num, err := strconv.ParseFloat(numStr, 64)
+			if err != nil {
+				return -1, fmt.Errorf("invalid number in memory limit %q: %w", s, err)
+			}
+			if num <= 0 {
+				return -1, fmt.Errorf("memory limit must be positive: %q", s)
+			}
+			return int64(num * float64(multiplier)), nil
+		}
+	}
+	
+	return -1, fmt.Errorf("invalid memory limit format %q (expected suffix: B, KiB, MiB, GiB, or TiB)", s)
 }
