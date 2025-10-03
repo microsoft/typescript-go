@@ -18,11 +18,14 @@
 //     }
 //     interface ElementAttributesProperty { props }
 // }
-// class /*FIND ALL REFS*/MyClass {
+// class /*FIND ALL REFS*/[|MyClass|] {
 //   props: {
 //     name?: string;
 //     size?: number;
-// // --- (line: 11) skipped ---
+// }
+// 
+// 
+// var x = <[|MyClass|] name='hello'></[|MyClass|]>;
 
 
 

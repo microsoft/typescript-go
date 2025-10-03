@@ -2,8 +2,8 @@
 // @useAliasesForRename: true
 
 // === /renameModuleExportsProperties1.ts ===
-// class /*RENAME*/A {}
-// module.exports = { A }
+// class /*RENAME*/[|ARENAME|] {}
+// module.exports = { /*START PREFIX*/A: [|ARENAME|] }
 
 
 

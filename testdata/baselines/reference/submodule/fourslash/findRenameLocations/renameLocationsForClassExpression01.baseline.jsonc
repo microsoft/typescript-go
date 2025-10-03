@@ -3,11 +3,17 @@
 // class Foo {
 // }
 // 
-// var x = class /*RENAME*/Foo {
+// var x = class /*RENAME*/[|FooRENAME|] {
 //     doIt() {
-//         return Foo;
+//         return [|FooRENAME|];
 //     }
-// // --- (line: 8) skipped ---
+// 
+//     static doItStatically() {
+//         return [|FooRENAME|].y;
+//     }
+// }
+// 
+// // --- (line: 14) skipped ---
 
 
 

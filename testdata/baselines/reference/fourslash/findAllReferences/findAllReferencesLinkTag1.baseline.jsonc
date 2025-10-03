@@ -141,11 +141,41 @@
 
 // === findAllReferences ===
 // === /findAllReferencesLinkTag1.ts ===
-// class C/*FIND ALL REFS*/ {
+// class [|C|]/*FIND ALL REFS*/ {
 //     m() { }
 //     n = 1
 //     static s() { }
-// // --- (line: 5) skipped ---
+//     /**
+//      * {@link m}
+//      * @see {m}
+//      * {@link [|C|].m}
+//      * @see {[|C|].m}
+//      * {@link [|C|]#m}
+//      * @see {[|C|]#m}
+//      * {@link [|C|].prototype.m}
+//      * @see {[|C|].prototype.m}
+//      */
+//     p() { }
+//     /**
+//      * {@link n}
+//      * @see {n}
+//      * {@link [|C|].n}
+//      * @see {[|C|].n}
+//      * {@link [|C|]#n}
+//      * @see {[|C|]#n}
+//      * {@link [|C|].prototype.n}
+//      * @see {[|C|].prototype.n}
+//      */
+//     q() { }
+//     /**
+//      * {@link s}
+//      * @see {s}
+//      * {@link [|C|].s}
+//      * @see {[|C|].s}
+//      */
+//     r() { }
+// }
+// // --- (line: 35) skipped ---
 
 
 

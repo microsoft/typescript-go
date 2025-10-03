@@ -1,10 +1,21 @@
 // === findAllReferences ===
 // === /referenceToClass_1.ts ===
-// class /*FIND ALL REFS*/foo {
-//     public n: foo;
+// class /*FIND ALL REFS*/[|foo|] {
+//     public n: [|foo|];
 //     public foo: number;
 // }
-// // --- (line: 5) skipped ---
+// 
+// class bar {
+//     public n: [|foo|];
+//     public k = new [|foo|]();
+// }
+// 
+// module mod {
+//     var k: [|foo|] = null;
+// }
+
+// === /referenceToClass_2.ts ===
+// var k: [|foo|];
 
 
 

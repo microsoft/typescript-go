@@ -1,13 +1,13 @@
 // === findAllReferences ===
+// === /a.ts ===
+// export class /*FIND ALL REFS*/[|Class|] {}
+
 // === /b.ts ===
-// import { [|Class|] as C2 } from "./a";
-// var c = new C2();
+// import { [|Class|] as [|C2|] } from "./a";
+// var c = new [|C2|]();
 
 // === /c.ts ===
 // export { [|Class|] as C3 } from "./a";
-
-// === /a.ts ===
-// export class /*FIND ALL REFS*/Class {}
 
 
 

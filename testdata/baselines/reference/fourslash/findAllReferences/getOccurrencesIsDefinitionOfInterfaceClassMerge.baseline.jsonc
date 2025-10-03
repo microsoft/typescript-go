@@ -73,15 +73,19 @@
 
 // === findAllReferences ===
 // === /getOccurrencesIsDefinitionOfInterfaceClassMerge.ts ===
-// --- (line: 3) skipped ---
-// interface Numbers {
+// interface [|Numbers|] {
+//     p: number;
+// }
+// interface [|Numbers|] {
 //     m: number;
 // }
-// class /*FIND ALL REFS*/Numbers {
+// class /*FIND ALL REFS*/[|Numbers|] {
 //     f(n: number) {
 //         return this.p + this.m + n;
 //     }
-// // --- (line: 11) skipped ---
+// }
+// let i: [|Numbers|] = new [|Numbers|]();
+// let x = i.f(i.p + i.m);
 
 
 

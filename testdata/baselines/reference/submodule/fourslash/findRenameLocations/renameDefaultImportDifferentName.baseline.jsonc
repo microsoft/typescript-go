@@ -1,6 +1,6 @@
 // === findRenameLocations ===
 // === /B.ts ===
-// export default class /*RENAME*/C {
+// export default class /*RENAME*/[|CRENAME|] {
 //     test() {
 //     }
 // }

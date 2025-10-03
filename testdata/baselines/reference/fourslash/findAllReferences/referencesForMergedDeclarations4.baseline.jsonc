@@ -10,11 +10,25 @@
 
 // === findAllReferences ===
 // === /referencesForMergedDeclarations4.ts ===
-// class /*FIND ALL REFS*/testClass {
+// class /*FIND ALL REFS*/[|testClass|] {
 //     static staticMethod() { }
 //     method() { }
 // }
-// // --- (line: 5) skipped ---
+// 
+// module [|testClass|] {
+//     export interface Bar {
+// 
+//     }
+//     export var s = 0;
+// }
+// 
+// var c1: [|testClass|];
+// var c2: [|testClass|].Bar;
+// [|testClass|].staticMethod();
+// [|testClass|].prototype.method();
+// [|testClass|].bind(this);
+// [|testClass|].s;
+// new [|testClass|]();
 
 
 

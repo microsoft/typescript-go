@@ -1322,6 +1322,105 @@ func getReferenceEntriesForShorthandPropertyAssignment(node *ast.Node, checker *
 	}
 }
 
+func climbPastPropertyAccess(node *ast.Node) *ast.Node {
+	if isRightSideOfPropertyAccess(node) {
+		return node.Parent
+	}
+	return node
+}
+
+func isNewExpressionTarget(node *ast.Node) bool {
+	if node.Parent == nil {
+		return false
+	}
+	return node.Parent.Kind == ast.KindNewExpression && node.Parent.AsNewExpression().Expression == node
+}
+
+func isCallExpressionTarget(node *ast.Node) bool {
+	if node.Parent == nil {
+		return false
+	}
+	return node.Parent.Kind == ast.KindCallExpression && node.Parent.AsCallExpression().Expression == node
+}
+
+func isMethodOrAccessor(node *ast.Node) bool {
+	return node.Kind == ast.KindMethodDeclaration || node.Kind == ast.KindGetAccessor || node.Kind == ast.KindSetAccessor
+}
+
+func tryGetClassByExtendingIdentifier(node *ast.Node) *ast.ClassLikeDeclaration {
+	return ast.TryGetClassExtendingExpressionWithTypeArguments(climbPastPropertyAccess(node).Parent)
+}
+
+func getClassConstructorSymbol(classSymbol *ast.Symbol) *ast.Symbol {
+	if classSymbol.Members == nil {
+		return nil
+	}
+	return classSymbol.Members[ast.InternalSymbolNameConstructor]
+}
+
+func hasOwnConstructor(classDeclaration *ast.ClassLikeDeclaration) bool {
+	return getClassConstructorSymbol(classDeclaration.Symbol()) != nil
+}
+
+func findOwnConstructorReferences(classSymbol *ast.Symbol, sourceFile *ast.SourceFile, addNode func(*ast.Node)) {
+	constructorSymbol := getClassConstructorSymbol(classSymbol)
+	if constructorSymbol != nil && len(constructorSymbol.Declarations) > 0 {
+		for _, decl := range constructorSymbol.Declarations {
+			if decl.Kind == ast.KindConstructor {
+				if ctrKeyword := findChildOfKind(decl, ast.KindConstructorKeyword, sourceFile); ctrKeyword != nil {
+					addNode(ctrKeyword)
+				}
+			}
+		}
+	}
+
+	if classSymbol.Exports != nil {
+		for _, member := range classSymbol.Exports {
+			decl := member.ValueDeclaration
+			if decl != nil && decl.Kind == ast.KindMethodDeclaration {
+				body := decl.Body()
+				if body != nil {
+					forEachDescendantOfKind(body, ast.KindThisKeyword, func(thisKeyword *ast.Node) {
+						if isNewExpressionTarget(thisKeyword) {
+							addNode(thisKeyword)
+						}
+					})
+				}
+			}
+		}
+	}
+}
+
+func findSuperConstructorAccesses(classDeclaration *ast.ClassLikeDeclaration, addNode func(*ast.Node)) {
+	constructorSymbol := getClassConstructorSymbol(classDeclaration.Symbol())
+	if constructorSymbol == nil || len(constructorSymbol.Declarations) == 0 {
+		return
+	}
+
+	for _, decl := range constructorSymbol.Declarations {
+		if decl.Kind == ast.KindConstructor {
+			body := decl.Body()
+			if body != nil {
+				forEachDescendantOfKind(body, ast.KindSuperKeyword, func(node *ast.Node) {
+					if isCallExpressionTarget(node) {
+						addNode(node)
+					}
+				})
+			}
+		}
+	}
+}
+
+func forEachDescendantOfKind(node *ast.Node, kind ast.Kind, action func(*ast.Node)) {
+	node.ForEachChild(func(child *ast.Node) bool {
+		if child.Kind == kind {
+			action(child)
+		}
+		forEachDescendantOfKind(child, kind, action)
+		return false
+	})
+}
+
 func (state *refState) addImplementationReferences(refNode *ast.Node, addRef func(*ast.Node)) {
 	// Check if we found a function/propertyAssignment/method with an implementation or initializer
 	if ast.IsDeclarationName(refNode) && isImplementation(refNode.Parent) {
@@ -1483,11 +1582,9 @@ func (state *refState) getReferencesAtLocation(sourceFile *ast.SourceFile, posit
 			state.addReference(referenceLocation, relatedSymbol, relatedSymbolKind)
 		}
 	case "constructor":
-		// !!! not implemented
-		// state.addConstructorReferences(referenceLocation, sourceFile, search)
+		state.addConstructorReferences(referenceLocation, relatedSymbol, search, addReferencesHere)
 	case "class":
-		// !!! not implemented
-		// state.addClassStaticThisReferences(referenceLocation, search)
+		state.addClassStaticThisReferences(referenceLocation, relatedSymbol, search, addReferencesHere)
 	}
 
 	// Use the parent symbol if the location is commonjs require syntax on javascript files only.
@@ -1502,6 +1599,78 @@ func (state *refState) getReferencesAtLocation(sourceFile *ast.SourceFile, posit
 	}
 
 	state.getImportOrExportReferences(referenceLocation, referenceSymbol, search)
+}
+
+func (state *refState) addConstructorReferences(referenceLocation *ast.Node, symbol *ast.Symbol, search *refSearch, addReferencesHere bool) {
+	if isNewExpressionTarget(referenceLocation) && addReferencesHere {
+		state.addReference(referenceLocation, symbol, entryKindNone)
+	}
+
+	pusher := func() func(*ast.Node, entryKind) {
+		return state.referenceAdder(search.symbol)
+	}
+
+	if ast.IsClassLike(referenceLocation.Parent) {
+		// This is the class declaration containing the constructor.
+		sourceFile := ast.GetSourceFileOfNode(referenceLocation)
+		findOwnConstructorReferences(search.symbol, sourceFile, func(n *ast.Node) {
+			pusher()(n, entryKindNone)
+		})
+	} else {
+		// If this class appears in `extends C`, then the extending class' "super" calls are references.
+		if classExtending := tryGetClassByExtendingIdentifier(referenceLocation); classExtending != nil {
+			findSuperConstructorAccesses(classExtending, func(n *ast.Node) {
+				pusher()(n, entryKindNone)
+			})
+			state.findInheritedConstructorReferences(classExtending)
+		}
+	}
+}
+
+func (state *refState) addClassStaticThisReferences(referenceLocation *ast.Node, symbol *ast.Symbol, search *refSearch, addReferencesHere bool) {
+	if addReferencesHere {
+		state.addReference(referenceLocation, symbol, entryKindNone)
+	}
+
+	classLike := referenceLocation.Parent
+	if state.options.use == referenceUseRename || !ast.IsClassLike(classLike) {
+		return
+	}
+
+	addRef := state.referenceAdder(search.symbol)
+	members := classLike.Members()
+	if members == nil {
+		return
+	}
+	for _, member := range members {
+		if !(isMethodOrAccessor(member) && ast.HasStaticModifier(member)) {
+			continue
+		}
+		body := member.Body()
+		if body != nil {
+			var cb func(*ast.Node)
+			cb = func(node *ast.Node) {
+				if node.Kind == ast.KindThisKeyword {
+					addRef(node, entryKindNone)
+				} else if !ast.IsFunctionLike(node) && !ast.IsClassLike(node) {
+					node.ForEachChild(func(child *ast.Node) bool {
+						cb(child)
+						return false
+					})
+				}
+			}
+			cb(body)
+		}
+	}
+}
+
+func (state *refState) findInheritedConstructorReferences(classDeclaration *ast.ClassLikeDeclaration) {
+	if hasOwnConstructor(classDeclaration) {
+		return
+	}
+	classSymbol := classDeclaration.Symbol()
+	search := state.createSearch(nil, classSymbol, ImpExpKindUnknown, "", nil)
+	state.getReferencesInContainerOrFiles(classSymbol, search)
 }
 
 func (state *refState) getImportOrExportReferences(referenceLocation *ast.Node, referenceSymbol *ast.Symbol, search *refSearch) {
