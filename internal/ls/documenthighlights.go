@@ -47,7 +47,8 @@ func (l *LanguageService) ProvideDocumentHighlights(ctx context.Context, documen
 		documentHighlights = l.getSyntacticDocumentHighlights(node, sourceFile)
 	}
 	// if nil is passed here we never generate an error, just pass an empty higlight
-	return lsproto.DocumentHighlightsOrNull{DocumentHighlights: &documentHighlights}, nil
+	resp := lsproto.DocumentHighlightsOrNull{DocumentHighlights: &documentHighlights}
+	return resp, nil
 }
 
 func (l *LanguageService) getSemanticDocumentHighlights(ctx context.Context, position int, node *ast.Node, program *compiler.Program, sourceFile *ast.SourceFile) []*lsproto.DocumentHighlight {
