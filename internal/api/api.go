@@ -277,7 +277,7 @@ func (api *API) GetDiagnostics(ctx context.Context, projectId Handle[project.Pro
 		return nil, errors.New("project not found")
 	}
 
-	languageService := ls.NewLanguageService(project, snapshot.Converters())
+	languageService := ls.NewLanguageService(project.GetProgram(), snapshot)
 	diagnostics := languageService.GetDiagnostics(ctx)
 
 	api.symbolsMu.Lock()

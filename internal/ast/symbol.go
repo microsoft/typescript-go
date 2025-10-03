@@ -467,7 +467,7 @@ func (c *DenoForkContext) CombinedGlobals() SymbolTable {
 }
 
 func (c *DenoForkContext) HasNodeSourceFile(node *Node) bool {
-	if node == nil {
+	if node == nil || c == nil || c.isNodeSourceFile == nil {
 		return false
 	}
 	sourceFile := GetSourceFileOfNode(node)

@@ -428,6 +428,9 @@ func (r *NameResolver) getSymbolOfDeclaration(node *ast.Node) *ast.Symbol {
 }
 
 func (r *NameResolver) lookup(symbols ast.SymbolTable, name string, meaning ast.SymbolFlags) *ast.Symbol {
+	if symbols == nil {
+		return nil
+	}
 	if r.Lookup != nil {
 		return r.Lookup(symbols, name, meaning)
 	}
