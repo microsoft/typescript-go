@@ -976,7 +976,93 @@ func getMergedAliasedSymbolOfNamespaceExportDeclaration(node *ast.Node, symbol *
 }
 
 func getReferencedSymbolsForModule(program *compiler.Program, symbol *ast.Symbol, excludeImportTypeOfExportEquals bool, sourceFiles []*ast.SourceFile, sourceFilesSet *collections.Set[string]) []*SymbolAndEntries {
-	// !!! not implemented
+	debug.Assert(symbol.ValueDeclaration != nil)
+
+	checker, done := program.GetTypeChecker(nil)
+	defer done()
+
+	references := core.MapNonNil(findModuleReferences(program, sourceFiles, symbol, checker), func(reference ModuleReference) *referenceEntry {
+		switch reference.kind {
+		case ModuleReferenceKindImport:
+			parent := reference.literal.Parent
+			if ast.IsLiteralTypeNode(parent) {
+				importType := parent.Parent
+				if ast.IsImportTypeNode(importType) {
+					importTypeNode := importType.AsImportTypeNode()
+					if excludeImportTypeOfExportEquals && importTypeNode.Qualifier == nil {
+						return nil
+					}
+				}
+			}
+			// import("foo") with no qualifier will reference the `export =` of the module, which may be referenced anyway.
+			return newNodeEntry(reference.literal)
+		case ModuleReferenceKindImplicit:
+			// For implicit references (e.g., JSX runtime imports), return the first statement or the whole file.
+			// We skip the complex JSX detection for now and just use the first statement or the file itself.
+			var rangeNode *ast.Node
+			if reference.referencingFile.Statements != nil && len(reference.referencingFile.Statements.Nodes) > 0 {
+				rangeNode = reference.referencingFile.Statements.Nodes[0]
+			} else {
+				rangeNode = reference.referencingFile.AsNode()
+			}
+			return newNodeEntry(rangeNode)
+		case ModuleReferenceKindReference:
+			// <reference path> or <reference types>
+			// We can't easily create a proper range entry here without access to LanguageService,
+			// but we can create a node-based entry pointing to the source file which will be resolved later
+			return newNodeEntry(reference.referencingFile.AsNode())
+		}
+		return nil
+	})
+
+	// Add references to the module declarations themselves
+	if len(symbol.Declarations) > 0 {
+		for _, decl := range symbol.Declarations {
+			switch decl.Kind {
+			case ast.KindSourceFile:
+				// Don't include the source file itself. (This may not be ideal behavior, but awkward to include an entire file as a reference.)
+				continue
+			case ast.KindModuleDeclaration:
+				if sourceFilesSet.Has(ast.GetSourceFileOfNode(decl).FileName()) {
+					references = append(references, newNodeEntry(decl.AsModuleDeclaration().Name()))
+				}
+			default:
+				// This may be merged with something.
+				debug.Assert(symbol.Flags&ast.SymbolFlagsTransient != 0, "Expected a module symbol to be declared by a SourceFile or ModuleDeclaration.")
+			}
+		}
+	}
+
+	// Handle export equals declarations
+	exported := symbol.Exports[ast.InternalSymbolNameExportEquals]
+	if exported != nil && len(exported.Declarations) > 0 {
+		for _, decl := range exported.Declarations {
+			sourceFile := ast.GetSourceFileOfNode(decl)
+			if sourceFilesSet.Has(sourceFile.FileName()) {
+				var node *ast.Node
+				// At `module.exports = ...`, reference node is `module`
+				if ast.IsBinaryExpression(decl) && ast.IsPropertyAccessExpression(decl.AsBinaryExpression().Left) {
+					node = decl.AsBinaryExpression().Left.AsPropertyAccessExpression().Expression
+				} else if ast.IsExportAssignment(decl) {
+					// Find the export keyword - for now, just use the declaration itself
+					node = decl
+				} else {
+					node = ast.GetNameOfDeclaration(decl)
+					if node == nil {
+						node = decl
+					}
+				}
+				references = append(references, newNodeEntry(node))
+			}
+		}
+	}
+
+	if len(references) > 0 {
+		return []*SymbolAndEntries{{
+			definition: &Definition{Kind: definitionKindSymbol, symbol: symbol},
+			references: references,
+		}}
+	}
 	return nil
 }
 
