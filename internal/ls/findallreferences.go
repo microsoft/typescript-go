@@ -1199,21 +1199,21 @@ type refSearch struct {
 	includes func(symbol *ast.Symbol) bool
 }
 
-// type inheritKey struct {
-// 	symbol *ast.Symbol
-// 	parent *ast.Symbol
-// }
+type inheritKey struct {
+	symbol *ast.Symbol
+	parent *ast.Symbol
+}
 
 type refState struct {
 	sourceFiles       []*ast.SourceFile
 	sourceFilesSet    *collections.Set[string]
-	specialSearchKind string // !!! none, constructor, class
+	specialSearchKind string // "none", "constructor", or "class"
 	checker           *checker.Checker
 	// cancellationToken CancellationToken
-	searchMeaning ast.SemanticMeaning
-	options       refOptions
-	result        []*SymbolAndEntries
-	// inheritsFromCache            map[inheritKey]bool
+	searchMeaning                ast.SemanticMeaning
+	options                      refOptions
+	result                       []*SymbolAndEntries
+	inheritsFromCache            map[inheritKey]bool
 	seenContainingTypeReferences collections.Set[*ast.Node] // node seen tracker
 	// seenReExportRHS           *collections.Set[*ast.Node] // node seen tracker
 	importTracker           ImportTracker
@@ -1229,7 +1229,7 @@ func newState(sourceFiles []*ast.SourceFile, sourceFilesSet *collections.Set[str
 		checker:           checker,
 		searchMeaning:     searchMeaning,
 		options:           options,
-		// inheritsFromCache: map[inheritKey]bool{},
+		inheritsFromCache: map[inheritKey]bool{},
 		// seenReExportRHS:           &collections.Set[*ast.Node]{},
 		symbolToReferences:      map[*ast.Symbol]*SymbolAndEntries{},
 		sourceFileToSeenSymbols: map[*ast.SourceFile]*collections.Set[*ast.Symbol]{},
@@ -1281,7 +1281,6 @@ func (state *refState) createSearch(location *ast.Node, symbol *ast.Symbol, comi
 }
 
 func (state *refState) referenceAdder(searchSymbol *ast.Symbol) func(*ast.Node, entryKind) {
-	// !!! after find all references is fully implemented, rename this to something like 'getReferenceAdder'
 	symbolAndEntries := state.symbolToReferences[searchSymbol]
 	if symbolAndEntries == nil {
 		symbolAndEntries = NewSymbolAndEntries(definitionKindSymbol, nil, searchSymbol, nil)
@@ -1822,9 +1821,7 @@ func (state *refState) getRelatedSymbol(search *refSearch, referenceSymbol *ast.
 		},
 		func(rootSymbol *ast.Symbol) bool {
 			return !(len(search.parents) != 0 && !core.Some(search.parents, func(parent *ast.Symbol) bool {
-				return false
-				// !!! not implemented
-				// return state.explicitlyInheritsFrom(rootSymbol.Parent, parent)
+				return state.explicitlyInheritsFrom(rootSymbol.Parent, parent)
 			}))
 		},
 	)
@@ -1975,4 +1972,35 @@ func (state *refState) searchForName(sourceFile *ast.SourceFile, search *refSear
 	if _, ok := getNameTable(sourceFile)[search.escapedText]; ok {
 		state.getReferencesInSourceFile(sourceFile, search, true /*addReferencesHere*/)
 	}
+}
+
+func (state *refState) explicitlyInheritsFrom(symbol *ast.Symbol, parent *ast.Symbol) bool {
+	if symbol == parent {
+		return true
+	}
+
+	// Check cache first
+	key := inheritKey{symbol: symbol, parent: parent}
+	if cached, ok := state.inheritsFromCache[key]; ok {
+		return cached
+	}
+
+	// Set to false initially to prevent infinite recursion
+	state.inheritsFromCache[key] = false
+
+	if symbol.Declarations == nil {
+		return false
+	}
+
+	inherits := core.Some(symbol.Declarations, func(declaration *ast.Node) bool {
+		superTypeNodes := getAllSuperTypeNodes(declaration)
+		return core.Some(superTypeNodes, func(typeReference *ast.TypeNode) bool {
+			typ := state.checker.GetTypeAtLocation(typeReference.AsNode())
+			return typ != nil && typ.Symbol() != nil && state.explicitlyInheritsFrom(typ.Symbol(), parent)
+		})
+	})
+
+	// Update cache with the actual result
+	state.inheritsFromCache[key] = inherits
+	return inherits
 }
