@@ -673,7 +673,7 @@ func (l *LanguageService) getReferencedSymbolsForNode(ctx context.Context, posit
 	}
 
 	moduleReferences := l.getReferencedSymbolsForModuleIfDeclaredBySourceFile(ctx, symbol, program, sourceFiles, checker, options, sourceFilesSet) // !!! cancellationToken
-	if moduleReferences != nil && symbol.Flags&ast.SymbolFlagsTransient == 0 {
+	if moduleReferences != nil && symbol.Flags&ast.SymbolFlagsTransient != 0 {
 		return moduleReferences
 	}
 
@@ -976,44 +976,8 @@ func getMergedAliasedSymbolOfNamespaceExportDeclaration(node *ast.Node, symbol *
 }
 
 func getReferencedSymbolsForModule(program *compiler.Program, symbol *ast.Symbol, excludeImportTypeOfExportEquals bool, sourceFiles []*ast.SourceFile, sourceFilesSet *collections.Set[string]) []*SymbolAndEntries {
-	// Minimal implementation to prevent crashes when highlighting import paths.
-	// This returns module declarations as references, which allows the early return
-	// in getReferencedSymbolsForNode to work properly and avoid the panic in
-	// skipPastExportOrImportSpecifierOrUnion.
-
-	var references []*referenceEntry
-
-	// Add the module declarations themselves as references
-	if symbol.Declarations != nil {
-		for _, decl := range symbol.Declarations {
-			switch decl.Kind {
-			case ast.KindSourceFile:
-				// Don't include the source file itself
-			case ast.KindModuleDeclaration:
-				sourceFile := ast.GetSourceFileOfNode(decl)
-				if sourceFilesSet.Has(sourceFile.FileName()) {
-					references = append(references, &referenceEntry{
-						kind:     entryKindNode,
-						node:     decl.AsModuleDeclaration().Name(),
-						fileName: sourceFile.FileName(),
-					})
-				}
-			default:
-				// This may be merged with something
-				// TypeScript: Debug.assert(!!(symbol.flags & SymbolFlags.Transient))
-			}
-		}
-	}
-
-	// Return as SymbolAndEntries even if there are no references
-	// This ensures the condition check in getReferencedSymbolsForNode works properly
-	return []*SymbolAndEntries{{
-		definition: &Definition{
-			Kind:   definitionKindSymbol,
-			symbol: symbol,
-		},
-		references: references,
-	}}
+	// !!! not implemented
+	return nil
 }
 
 func getReferenceAtPosition(sourceFile *ast.SourceFile, position int, program *compiler.Program) *refInfo {
