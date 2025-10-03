@@ -574,10 +574,10 @@ func (t *Type) ObjectFlags() ObjectFlags {
 
 // Casts for concrete struct types
 
-func (t *Type) AsIntrinsicType() *IntrinsicType             { return t.data.(*IntrinsicType) }
-func (t *Type) AsLiteralType() *LiteralType                 { return t.data.(*LiteralType) }
-func (t *Type) AsUniqueESSymbolType() *UniqueESSymbolType   { return t.data.(*UniqueESSymbolType) }
-func (t *Type) AsTupleType() *TupleType                     { return t.data.(*TupleType) }
+func (t *Type) AsIntrinsicType() *IntrinsicType           { return t.data.(*IntrinsicType) }
+func (t *Type) AsLiteralType() *LiteralType               { return t.data.(*LiteralType) }
+func (t *Type) AsUniqueESSymbolType() *UniqueESSymbolType { return t.data.(*UniqueESSymbolType) }
+func (t *Type) AsTupleType() *TupleType                   { return t.data.(*TupleType) }
 func (t *Type) AsInstantiationExpressionType() *InstantiationExpressionType {
 	return t.data.(*InstantiationExpressionType)
 }
