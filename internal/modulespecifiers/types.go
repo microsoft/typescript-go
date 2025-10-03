@@ -123,14 +123,6 @@ const (
 	ModuleSpecifierEndingTsExtension
 )
 
-type PackageJsonAutoImports uint8
-
-const (
-	PackageJsonAutoImportsAuto PackageJsonAutoImports = iota
-	PackageJsonAutoImportsOn
-	PackageJsonAutoImportsOff
-)
-
 type MatchingMode uint8
 
 const (

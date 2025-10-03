@@ -141,6 +141,7 @@ func getPreferredEnding(
 type ModuleSpecifierPreferences struct {
 	relativePreference                RelativePreferenceKind
 	getAllowedEndingsInPreferredOrder func(syntaxImpliedNodeFormat core.ResolutionMode) []ModuleSpecifierEnding
+	packageJsonAutoImports            IncludePackageJsonAutoImports
 	excludeRegexes                    []string
 }
 
@@ -227,6 +228,7 @@ func getModuleSpecifierPreferences(
 	}
 
 	return ModuleSpecifierPreferences{
+		packageJsonAutoImports:            prefs.IncludePackageJsonAutoImports,
 		excludeRegexes:                    excludes,
 		relativePreference:                relativePreference,
 		getAllowedEndingsInPreferredOrder: getAllowedEndingsInPreferredOrder,
