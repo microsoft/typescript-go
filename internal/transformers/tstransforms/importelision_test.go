@@ -165,6 +165,10 @@ func (p *fakeProgram) IsSourceFileDefaultLibrary(path tspath.Path) bool {
 	return false
 }
 
+func (p *fakeProgram) IsNodeSourceFile(path tspath.Path) bool {
+	return false
+}
+
 func TestImportElision(t *testing.T) {
 	t.Parallel()
 	data := []struct {

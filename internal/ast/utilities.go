@@ -45,7 +45,7 @@ func GetSymbolId(symbol *Symbol) SymbolId {
 
 func GetSymbolTable(data *SymbolTable) SymbolTable {
 	if *data == nil {
-		*data = make(SymbolTable)
+		*data = NewSymbolTable()
 	}
 	return *data
 }

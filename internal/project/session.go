@@ -43,6 +43,7 @@ type SessionOptions struct {
 	WatchEnabled       bool
 	LoggingEnabled     bool
 	DebounceDelay      time.Duration
+	MakeHost           func(currentDirectory string, project *Project, builder *ProjectCollectionBuilder, logger *logging.LogTree) ProjectHost
 }
 
 type SessionInit struct {
@@ -108,6 +109,8 @@ type Session struct {
 	// after file watch changes and ATA updates.
 	diagnosticsRefreshCancel context.CancelFunc
 	diagnosticsRefreshMu     sync.Mutex
+
+	makeHost func(currentDirectory string, project *Project, builder *ProjectCollectionBuilder, logger *logging.LogTree) ProjectHost
 }
 
 func NewSession(init *SessionInit) *Session {
@@ -137,7 +140,7 @@ func NewSession(init *SessionInit) *Session {
 		snapshotID:          atomic.Uint64{},
 		snapshot: NewSnapshot(
 			uint64(0),
-			&snapshotFS{
+			&SnapshotFS{
 				toPath: toPath,
 				fs:     init.FS,
 			},
@@ -149,6 +152,7 @@ func NewSession(init *SessionInit) *Session {
 			toPath,
 		),
 		pendingATAChanges: make(map[tspath.Path]*ATAStateChange),
+		makeHost:          init.Options.MakeHost,
 	}
 
 	if init.Options.TypingsLocation != "" && init.NpmExecutor != nil {

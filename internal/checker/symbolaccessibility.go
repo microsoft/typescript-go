@@ -144,13 +144,14 @@ func (ch *Checker) getWithAlternativeContainers(container *ast.Symbol, symbol *a
 		container.Flags&ast.SymbolFlagsType != 0 &&
 		ch.getDeclaredTypeOfSymbol(container).flags&TypeFlagsObject != 0 {
 		ch.someSymbolTableInScope(enclosingDeclaration, func(t ast.SymbolTable, _ bool, _ bool, _ *ast.Node) bool {
-			for _, s := range t {
-				if s.Flags&leftMeaning != 0 && ch.getTypeOfSymbol(s) == ch.getDeclaredTypeOfSymbol(container) {
+			found := false
+			t.Each(func(name string, s *ast.Symbol) {
+				if !found && s.Flags&leftMeaning != 0 && ch.getTypeOfSymbol(s) == ch.getDeclaredTypeOfSymbol(container) {
 					firstVariableMatch = s
-					return true
+					found = true
 				}
-			}
-			return false
+			})
+			return found
 		})
 	}
 
@@ -265,7 +266,7 @@ func (ch *Checker) getFileSymbolIfFileSymbolExportEqualsContainer(d *ast.Node, c
 	if fileSymbol == nil || fileSymbol.Exports == nil {
 		return nil
 	}
-	exported, ok := fileSymbol.Exports[ast.InternalSymbolNameExportEquals]
+	exported, ok := fileSymbol.Exports.Get2(ast.InternalSymbolNameExportEquals)
 	if !ok || exported == nil {
 		return nil
 	}
@@ -349,18 +350,18 @@ func (ch *Checker) getAliasForSymbolInContainer(container *ast.Symbol, symbol *a
 	// Check if container is a thing with an `export=` which points directly at `symbol`, and if so, return
 	// the container itself as the alias for the symbol
 	if container.Exports != nil {
-		exportEquals, ok := container.Exports[ast.InternalSymbolNameExportEquals]
+		exportEquals, ok := container.Exports.Get2(ast.InternalSymbolNameExportEquals)
 		if ok && exportEquals != nil && ch.getSymbolIfSameReference(exportEquals, symbol) != nil {
 			return container
 		}
 	}
 	exports := ch.getExportsOfSymbol(container)
-	quick, ok := exports[symbol.Name]
+	quick, ok := exports.Get2(symbol.Name)
 	if ok && quick != nil && ch.getSymbolIfSameReference(quick, symbol) != nil {
 		return quick
 	}
 	var candidates []*ast.Symbol
-	for _, exported := range exports {
+	for _, exported := range exports.Iter() {
 		if ch.getSymbolIfSameReference(exported, symbol) != nil {
 			candidates = append(candidates, exported)
 		}
@@ -466,14 +467,14 @@ func (ch *Checker) trySymbolTable(
 	isLocalNameLookup bool,
 ) []*ast.Symbol {
 	// If symbol is directly available by its name in the symbol table
-	res, ok := symbols[ctx.symbol.Name]
+	res, ok := symbols.Get2(ctx.symbol.Name)
 	if ok && res != nil && ch.isAccessible(ctx, res /*resolvedAliasSymbol*/, nil, ignoreQualification) {
 		return []*ast.Symbol{ctx.symbol}
 	}
 
 	var candidateChains [][]*ast.Symbol
 	// collect all possible chains to sort them and return the shortest/best
-	for _, symbolFromSymbolTable := range symbols {
+	for _, symbolFromSymbolTable := range symbols.Iter() {
 		// for every non-default, non-export= alias symbol in scope, check if it refers to or can chain to the target symbol
 		if symbolFromSymbolTable.Flags&ast.SymbolFlagsAlias != 0 &&
 			symbolFromSymbolTable.Name != ast.InternalSymbolNameExportEquals &&
@@ -506,8 +507,11 @@ func (ch *Checker) trySymbolTable(
 	}
 
 	// If there's no result and we're looking at the global symbol table, treat `globalThis` like an alias and try to lookup thru that
-	if reflect.ValueOf(ch.globals).UnsafePointer() == reflect.ValueOf(symbols).UnsafePointer() {
-		return ch.getCandidateListForSymbol(ctx, ch.globalThisSymbol, ch.globalThisSymbol, ignoreQualification)
+	if reflect.ValueOf(ch.denoGlobals).UnsafePointer() == reflect.ValueOf(symbols).UnsafePointer() {
+		return ch.getCandidateListForSymbol(ctx, ch.denoGlobalThisSymbol, ch.denoGlobalThisSymbol, ignoreQualification)
+	}
+	if reflect.ValueOf(ch.nodeGlobals).UnsafePointer() == reflect.ValueOf(symbols).UnsafePointer() {
+		return ch.getCandidateListForSymbol(ctx, ch.nodeGlobalThisSymbol, ch.nodeGlobalThisSymbol, ignoreQualification)
 	}
 	return nil
 }
@@ -608,7 +612,7 @@ func (ch *Checker) needsQualification(symbol *ast.Symbol, enclosingDeclaration *
 	qualify := false
 	ch.someSymbolTableInScope(enclosingDeclaration, func(symbolTable ast.SymbolTable, _ bool, _ bool, _ *ast.Node) bool {
 		// If symbol of this name is not available in the symbol table we are ok
-		res, ok := symbolTable[symbol.Name]
+		res, ok := symbolTable.Get2(symbol.Name)
 		if !ok || res == nil {
 			return false
 		}
@@ -693,12 +697,12 @@ func (ch *Checker) someSymbolTableInScope(
 			var table ast.SymbolTable
 			sym := ch.getSymbolOfDeclaration(location)
 			// TODO: Should this filtered table be cached in some way?
-			for key, memberSymbol := range sym.Members {
+			for key, memberSymbol := range sym.Members.Iter() {
 				if memberSymbol.Flags&(ast.SymbolFlagsType & ^ast.SymbolFlagsAssignment) != 0 {
 					if table == nil {
-						table = make(ast.SymbolTable)
+						table = ast.NewSymbolTable()
 					}
-					table[key] = memberSymbol
+					table.Set(key, memberSymbol)
 				}
 			}
 			if table != nil && callback(table, false, false, location) {
@@ -707,7 +711,7 @@ func (ch *Checker) someSymbolTableInScope(
 		}
 	}
 
-	return callback(ch.globals, false, true, nil)
+	return callback(ch.denoGlobals, false, true, nil)
 }
 
 /**

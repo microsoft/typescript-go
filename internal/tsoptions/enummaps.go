@@ -112,6 +112,24 @@ var LibMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, an
 	{Key: "esnext.sharedmemory", Value: "lib.esnext.sharedmemory.d.ts"},
 	{Key: "decorators", Value: "lib.decorators.d.ts"},
 	{Key: "decorators.legacy", Value: "lib.decorators.legacy.d.ts"},
+	{Key: "deno.window", Value: "lib.deno.window.d.ts"},
+	{Key: "deno.worker", Value: "lib.deno.worker.d.ts"},
+	{Key: "deno.ns", Value: "lib.deno.ns.d.ts"},
+
+	{Key: "deno.console", Value: "lib.deno.console.d.ts"},
+	{Key: "deno.url", Value: "lib.deno.url.d.ts"},
+	{Key: "deno.web", Value: "lib.deno.web.d.ts"},
+	{Key: "deno.fetch", Value: "lib.deno.fetch.d.ts"},
+	{Key: "deno.websocket", Value: "lib.deno.websocket.d.ts"},
+	{Key: "deno.webstorage", Value: "lib.deno.webstorage.d.ts"},
+	{Key: "deno.canvas", Value: "lib.deno.canvas.d.ts"},
+	{Key: "deno.crypto", Value: "lib.deno.crypto.d.ts"},
+	{Key: "deno.broadcast_channel", Value: "lib.deno.broadcast_channel.d.ts"},
+	{Key: "deno.net", Value: "lib.deno.net.d.ts"},
+	{Key: "deno.cache", Value: "lib.deno.cache.d.ts"},
+	{Key: "deno.webgpu", Value: "lib.deno.webgpu.d.ts"},
+	{Key: "deno.shared_globals", Value: "lib.deno.shared_globals.d.ts"},
+	{Key: "deno.unstable", Value: "lib.deno.unstable.d.ts"},
 })
 
 var (

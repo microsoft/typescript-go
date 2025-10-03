@@ -123,6 +123,9 @@ func newNode(kind Kind, data nodeData, hooks NodeFactoryHooks) *Node {
 	n.Loc = core.UndefinedTextRange()
 	n.Kind = kind
 	n.data = data
+	if data.LocalsContainerData() != nil && data.LocalsContainerData().Locals == nil {
+		data.LocalsContainerData().Locals = NewSymbolTable()
+	}
 	if hooks.OnCreate != nil {
 		hooks.OnCreate(n)
 	}
@@ -287,6 +290,9 @@ func (n *Node) LocalSymbol() *Symbol {
 func (n *Node) Locals() SymbolTable {
 	data := n.LocalsContainerData()
 	if data != nil {
+		if data.Locals == nil {
+			data.Locals = NewSymbolTable()
+		}
 		return data.Locals
 	}
 	return nil
@@ -10747,6 +10753,7 @@ func (f *NodeFactory) NewSourceFile(opts SourceFileParseOptions, text string, st
 	data.text = text
 	data.Statements = statements
 	data.EndOfFileToken = endOfFileToken
+	data.Locals = NewSymbolTable()
 	return f.newNode(KindSourceFile, data)
 }
 

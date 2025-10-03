@@ -1,0 +1,154 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    name: Build ${{ matrix.archive_suffix }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+            archive_suffix: linux-x64
+            binary_name: tsgo
+          - goos: linux
+            goarch: arm64
+            archive_suffix: linux-arm64
+            binary_name: tsgo
+          - goos: darwin
+            goarch: amd64
+            archive_suffix: macos-x64
+            binary_name: tsgo
+          - goos: darwin
+            goarch: arm64
+            archive_suffix: macos-arm64
+            binary_name: tsgo
+          - goos: windows
+            goarch: amd64
+            archive_suffix: windows-x64
+            binary_name: tsgo.exe
+
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - uses: ./.github/actions/setup-go
+
+      - name: Determine version
+        id: version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Build release archive
+        id: package
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: 0
+        run: |
+          set -euo pipefail
+
+          VERSION="${VERSION:?}"
+          TARGET="typescript-go-${VERSION}-${{ matrix.archive_suffix }}"
+          OUT_DIR="dist/${TARGET}"
+          BIN_NAME="${{ matrix.binary_name }}"
+
+          mkdir -p "$OUT_DIR"
+
+          go build \
+            -trimpath \
+            -tags "noembed,release" \
+            -ldflags "-s -w -X github.com/microsoft/typescript-go/internal/core.version=${VERSION}" \
+            -o "$OUT_DIR/$BIN_NAME" \
+            ./cmd/tsgo
+
+          cp LICENSE "$OUT_DIR/"
+          cp NOTICE.txt "$OUT_DIR/"
+
+          ARCHIVE_NAME="${TARGET}.zip"
+          mkdir -p artifacts
+          zip -9 -j "artifacts/${ARCHIVE_NAME}" "$OUT_DIR"/*
+
+          echo "archive-path=artifacts/${ARCHIVE_NAME}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload release artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: tsgo-${{ matrix.archive_suffix }}-${{ steps.version.outputs.version }}
+          path: ${{ steps.package.outputs.archive-path }}
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        with:
+          path: release
+          merge-multiple: true
+
+      - name: Create source archive
+        run: |
+          set -euo pipefail
+
+          RAW_TAG="${GITHUB_REF_NAME}"
+          VERSION="${RAW_TAG#v}"
+          ARCHIVE_FOLDER="typescript-go-${VERSION}"
+          ARCHIVE_NAME="${ARCHIVE_FOLDER}-source.zip"
+          TMP_DIR="$(mktemp -d)"
+          SOURCE_DIR="${TMP_DIR}/${ARCHIVE_FOLDER}"
+
+          mkdir -p "${SOURCE_DIR}"
+
+          rsync -a \
+            --exclude='.git/' \
+            --exclude='release/' \
+            --exclude='node_modules/' \
+            --exclude='testdata/' \
+            ./ "${SOURCE_DIR}/"
+
+          mkdir -p release
+          (cd "${TMP_DIR}" && zip -9 -r "${GITHUB_WORKSPACE}/release/${ARCHIVE_NAME}" "${ARCHIVE_FOLDER}")
+
+      - name: Create or update GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          RAW_TAG="${GITHUB_REF_NAME}"
+          VERSION="${RAW_TAG#v}"
+          TITLE="TypeScript Go ${VERSION}"
+          NOTES="Release ${VERSION}"
+          REPO="${GITHUB_REPOSITORY}"
+
+          shopt -s nullglob
+          ASSETS=(release/*.zip)
+          if [ ${#ASSETS[@]} -eq 0 ]; then
+            echo "No release assets found" >&2
+            exit 1
+          fi
+
+          if gh release view "$RAW_TAG" --repo "$REPO" >/dev/null 2>&1; then
+            gh release edit "$RAW_TAG" --repo "$REPO" --title "$TITLE" --notes "$NOTES"
+            gh release upload "$RAW_TAG" "${ASSETS[@]}" --repo "$REPO" --clobber
+          else
+            gh release create "$RAW_TAG" "${ASSETS[@]}" --repo "$REPO" --title "$TITLE" --notes "$NOTES" --latest --verify-tag
+          fi

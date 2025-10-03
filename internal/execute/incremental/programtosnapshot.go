@@ -293,7 +293,7 @@ func getReferencedFiles(program *compiler.Program, file *ast.SourceFile) *collec
 	}
 
 	// From ambient modules
-	for _, ambientModule := range checker.GetAmbientModules() {
+	for _, ambientModule := range checker.GetAmbientModules(file) {
 		addReferencedFilesFromSymbol(file, &referencedFiles, ambientModule)
 	}
 	return core.IfElse(referencedFiles.Len() > 0, &referencedFiles, nil)

@@ -60,20 +60,20 @@ func (p *PackageId) PackageName() string {
 }
 
 type LookupLocations struct {
-	FailedLookupLocations []string
-	AffectingLocations    []string
-	ResolutionDiagnostics []*ast.Diagnostic
+	FailedLookupLocations []string          `json:"failedLookupLocations"`
+	AffectingLocations    []string          `json:"affectingLocations"`
+	ResolutionDiagnostics []*ast.Diagnostic `json:"resolutionDiagnostics"`
 }
 
 type ResolvedModule struct {
 	LookupLocations
-	ResolvedFileName         string
-	OriginalPath             string
-	Extension                string
-	ResolvedUsingTsExtension bool
-	PackageId                PackageId
-	IsExternalLibraryImport  bool
-	AlternateResult          string
+	ResolvedFileName         string    `json:"resolvedFileName"`
+	OriginalPath             string    `json:"originalPath"`
+	Extension                string    `json:"extension"`
+	ResolvedUsingTsExtension bool      `json:"resolvedUsingTsExtension"`
+	PackageId                PackageId `json:"packageId"`
+	IsExternalLibraryImport  bool      `json:"isExternalLibraryImport"`
+	AlternateResult          string    `json:"alternateResult"`
 }
 
 func (r *ResolvedModule) IsResolved() bool {
@@ -86,11 +86,11 @@ func (r *ResolvedModule) GetLookupLocations() *LookupLocations {
 
 type ResolvedTypeReferenceDirective struct {
 	LookupLocations
-	Primary                 bool
-	ResolvedFileName        string
-	OriginalPath            string
-	PackageId               PackageId
-	IsExternalLibraryImport bool
+	Primary                 bool      `json:"primary"`
+	ResolvedFileName        string    `json:"resolvedFileName"`
+	OriginalPath            string    `json:"originalPath"`
+	PackageId               PackageId `json:"packageId"`
+	IsExternalLibraryImport bool      `json:"isExternalLibraryImport"`
 }
 
 func (r *ResolvedTypeReferenceDirective) IsResolved() bool {

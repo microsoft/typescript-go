@@ -59,7 +59,7 @@ type Project struct {
 	dirty         bool
 	dirtyFilePath tspath.Path
 
-	host                            *compilerHost
+	host                            ProjectHost
 	CommandLine                     *tsoptions.ParsedCommandLine
 	commandLineWithTypingsFiles     *tsoptions.ParsedCommandLine
 	commandLineWithTypingsFilesOnce sync.Once
@@ -86,7 +86,7 @@ type Project struct {
 func NewConfiguredProject(
 	configFileName string,
 	configFilePath tspath.Path,
-	builder *projectCollectionBuilder,
+	builder *ProjectCollectionBuilder,
 	logger *logging.LogTree,
 ) *Project {
 	return NewProject(configFileName, KindConfigured, tspath.GetDirectoryPath(configFileName), builder, logger)
@@ -96,7 +96,7 @@ func NewInferredProject(
 	currentDirectory string,
 	compilerOptions *core.CompilerOptions,
 	rootFileNames []string,
-	builder *projectCollectionBuilder,
+	builder *ProjectCollectionBuilder,
 	logger *logging.LogTree,
 ) *Project {
 	p := NewProject(inferredProjectName, KindInferred, currentDirectory, builder, logger)
@@ -131,7 +131,7 @@ func NewProject(
 	configFileName string,
 	kind Kind,
 	currentDirectory string,
-	builder *projectCollectionBuilder,
+	builder *ProjectCollectionBuilder,
 	logger *logging.LogTree,
 ) *Project {
 	if logger != nil {
@@ -290,14 +290,14 @@ func (p *Project) CreateProgram() CreateProgramResult {
 				if file.Path() != p.dirtyFilePath {
 					// UpdateProgram only called host.GetSourceFile for the dirty file.
 					// Increment ref count for all other files.
-					p.host.builder.parseCache.Ref(file)
+					p.host.Builder().parseCache.Ref(file)
 				}
 			}
 		}
 	} else {
 		var typingsLocation string
-		if p.GetTypeAcquisition().Enable.IsTrue() {
-			typingsLocation = p.host.sessionOptions.TypingsLocation
+		if acq := p.GetTypeAcquisition(); acq != nil && acq.Enable.IsTrue() {
+			typingsLocation = p.host.SessionOptions().TypingsLocation
 		}
 		newProgram = compiler.NewProgram(
 			compiler.ProgramOptions{

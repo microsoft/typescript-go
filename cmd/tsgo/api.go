@@ -21,12 +21,15 @@ func runAPI(args []string) int {
 
 	defaultLibraryPath := bundled.LibPath()
 
+	logEnabled := os.Getenv("TSGO_LOG_ENABLED") == "1"
+
 	s := api.NewServer(&api.ServerOptions{
 		In:                 os.Stdin,
 		Out:                os.Stdout,
 		Err:                os.Stderr,
 		Cwd:                *cwd,
 		DefaultLibraryPath: defaultLibraryPath,
+		LogEnabled:         logEnabled,
 	})
 
 	if err := s.Run(); err != nil && !errors.Is(err, io.EOF) {

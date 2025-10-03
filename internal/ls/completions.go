@@ -1429,13 +1429,13 @@ func (l *LanguageService) getCompletionData(
 		if localSymbol != nil {
 			localExports = localSymbol.Exports
 		}
-		for name, symbol := range localsContainer.Locals() {
+		localsContainer.Locals().Each(func(name string, symbol *ast.Symbol) {
 			symbols = append(symbols, symbol)
-			if _, ok := localExports[name]; ok {
+			if _, ok := localExports.Get2(name); ok {
 				symbolId := ast.GetSymbolId(symbol)
 				symbolToSortTextMap[symbolId] = SortTextOptionalMember
 			}
-		}
+		})
 
 		return globalsSearchSuccess
 	}

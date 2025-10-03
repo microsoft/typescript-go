@@ -1370,7 +1370,7 @@ func forEachExternalModule(
 	// !!! excludePatterns
 	// isExcluded := excludePatterns && getIsExcluded(excludePatterns, host)
 
-	for _, ambient := range ch.GetAmbientModules() {
+	for _, ambient := range ch.GetAmbientModules(nil) {
 		if !strings.Contains(ambient.Name, "*") /*  && !(excludePatterns && ambient.Declarations.every(func (d){ return isExcluded(d.getSourceFile())})) */ {
 			cb(ambient, nil /*sourceFile*/)
 		}

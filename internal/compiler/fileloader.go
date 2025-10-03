@@ -29,7 +29,7 @@ type LibFile struct {
 
 type fileLoader struct {
 	opts                ProgramOptions
-	resolver            *module.Resolver
+	resolver            module.ResolverInterface
 	defaultLibraryPath  string
 	comparePathsOptions tspath.ComparePathsOptions
 	supportedExtensions []string
@@ -52,7 +52,7 @@ type fileLoader struct {
 }
 
 type processedFiles struct {
-	resolver                      *module.Resolver
+	resolver                      module.ResolverInterface
 	files                         []*ast.SourceFile
 	filesByPath                   map[tspath.Path]*ast.SourceFile
 	projectReferenceFileMapper    *projectReferenceFileMapper
@@ -104,7 +104,7 @@ func processAllProgramFiles(
 		includeProcessor:    &includeProcessor{},
 	}
 	loader.addProjectReferenceTasks(singleThreaded)
-	loader.resolver = module.NewResolver(loader.projectReferenceFileMapper.host, compilerOptions, opts.TypingsLocation, opts.ProjectName)
+	loader.resolver = loader.opts.Host.MakeResolver(loader.projectReferenceFileMapper.host, compilerOptions, opts.TypingsLocation, opts.ProjectName)
 	for index, rootFile := range rootFiles {
 		loader.addRootTask(rootFile, nil, &fileIncludeReason{kind: fileIncludeKindRootFile, data: index})
 	}
@@ -408,7 +408,7 @@ func (p *fileLoader) loadSourceFileMetaData(fileName string) ast.SourceFileMetaD
 			packageJsonType = value
 		}
 	}
-	impliedNodeFormat := ast.GetImpliedNodeFormatForFile(fileName, packageJsonType)
+	impliedNodeFormat := p.resolver.GetImpliedNodeFormatForFile(fileName, packageJsonType)
 	return ast.SourceFileMetaData{
 		PackageJsonType:      packageJsonType,
 		PackageJsonDirectory: packageJsonDirectory,
@@ -607,12 +607,20 @@ func (p *fileLoader) createSyntheticImport(text string, file *ast.SourceFile) *a
 	return externalHelpersModuleReference
 }
 
+func isDenoLibFile(name string) bool {
+	return strings.HasPrefix(name, "lib.deno")
+}
+
 func (p *fileLoader) pathForLibFile(name string) *LibFile {
 	if cached, ok := p.pathForLibFileCache.Load(name); ok {
 		return cached
 	}
 
 	path := tspath.CombinePaths(p.defaultLibraryPath, name)
+	if isDenoLibFile(name) {
+		libFileName, _ := tsoptions.GetLibFileName(name)
+		path = tspath.CombinePaths("asset:///", libFileName)
+	}
 	replaced := false
 	if p.opts.Config.CompilerOptions().LibReplacement.IsTrue() && name != "lib.d.ts" {
 		libraryName := getLibraryNameFromLibFileName(name)

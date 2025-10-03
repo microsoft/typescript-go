@@ -117,7 +117,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 	}
 	declaration := symbol.ValueDeclaration
 	if symbol.Flags&ast.SymbolFlagsClass != 0 && inConstructorContext(node) {
-		if s := symbol.Members[ast.InternalSymbolNameConstructor]; s != nil {
+		if s := symbol.Members.Get(ast.InternalSymbolNameConstructor); s != nil {
 			symbol = s
 			declaration = core.Find(symbol.Declarations, func(d *ast.Node) bool {
 				return ast.IsConstructorDeclaration(d) || ast.IsConstructSignatureDeclaration(d)

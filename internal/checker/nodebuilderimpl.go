@@ -641,17 +641,17 @@ func (b *nodeBuilderImpl) createAccessFromSymbolChain(chain []*ast.Symbol, index
 			exports := b.ch.getExportsOfSymbol(parent)
 			if exports != nil {
 				// avoid exhaustive iteration in the common case
-				res, ok := exports[symbol.Name]
+				res, ok := exports.Get2(symbol.Name)
 				if symbol.Name != ast.InternalSymbolNameExportEquals && !isLateBoundName(symbol.Name) && ok && res != nil && b.ch.getSymbolIfSameReference(res, symbol) != nil {
 					symbolName = symbol.Name
 				} else {
 					results := make(map[*ast.Symbol]string, 1)
-					for name, ex := range exports {
+					exports.Each(func(name string, ex *ast.Symbol) {
 						if b.ch.getSymbolIfSameReference(ex, symbol) != nil && !isLateBoundName(name) && name != ast.InternalSymbolNameExportEquals {
 							results[ex] = name
 							// break // must collect all results and sort them - exports are randomly iterated
 						}
-					}
+					})
 					resultSymbols := slices.Collect(maps.Keys(results))
 					if len(resultSymbols) > 0 {
 						b.ch.sortSymbols(resultSymbols)
@@ -685,8 +685,8 @@ func (b *nodeBuilderImpl) createAccessFromSymbolChain(chain []*ast.Symbol, index
 	b.ctx.approximateLength += len(symbolName) + 1
 
 	if (b.ctx.flags&nodebuilder.FlagsForbidIndexedAccessSymbolReferences == 0) && parent != nil &&
-		b.ch.getMembersOfSymbol(parent) != nil && b.ch.getMembersOfSymbol(parent)[symbol.Name] != nil &&
-		b.ch.getSymbolIfSameReference(b.ch.getMembersOfSymbol(parent)[symbol.Name], symbol) != nil {
+		b.ch.getMembersOfSymbol(parent) != nil && b.ch.getMembersOfSymbol(parent).Get(symbol.Name) != nil &&
+		b.ch.getSymbolIfSameReference(b.ch.getMembersOfSymbol(parent).Get(symbol.Name), symbol) != nil {
 		// Should use an indexed access
 		lhs := b.createAccessFromSymbolChain(chain, index-1, stopper, overrideTypeArguments)
 		if ast.IsIndexedAccessTypeNode(lhs) {
@@ -993,7 +993,7 @@ func (b *nodeBuilderImpl) getSymbolChain(symbol *ast.Symbol, meaning ast.SymbolF
 				parentChain := b.getSymbolChain(parent, getQualifiedLeftMeaning(meaning), false, yieldModuleSymbol)
 				if len(parentChain) > 0 {
 					if parent.Exports != nil {
-						exported, ok := parent.Exports[ast.InternalSymbolNameExportEquals]
+						exported, ok := parent.Exports.Get2(ast.InternalSymbolNameExportEquals)
 						if ok && b.ch.getSymbolIfSameReference(exported, symbol) != nil {
 							// parentChain root _is_ symbol - symbol is a module export=, so it kinda looks like it's own parent
 							// No need to lookup an alias for the symbol in itself
