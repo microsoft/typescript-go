@@ -1,7 +1,7 @@
 // === findAllReferences ===
 // === /packages/playwright-core/bundles/utils/node_modules/@types/debug/index.d.ts ===
 // declare var [|debug|]: [|debug|].Debug & { debug: [|debug|].Debug; default: [|debug|].Debug };
-// [|export = [|debug|];|]
+// [|export|] = [|debug|];
 // export as namespace debug;
 // declare namespace [|debug|] {
 //     interface Debug {

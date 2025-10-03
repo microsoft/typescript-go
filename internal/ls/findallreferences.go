@@ -973,6 +973,33 @@ func getPossibleSymbolReferencePositions(sourceFile *ast.SourceFile, symbolName 
 	return positions
 }
 
+// findFirstJsxNode recursively searches for the first JSX element, self-closing element, or fragment
+func findFirstJsxNode(root *ast.Node) *ast.Node {
+	var visit func(*ast.Node) *ast.Node
+	visit = func(node *ast.Node) *ast.Node {
+		// Check if this is a JSX node we're looking for
+		switch node.Kind {
+		case ast.KindJsxElement, ast.KindJsxSelfClosingElement, ast.KindJsxFragment:
+			return node
+		}
+
+		// Skip subtree if it doesn't contain JSX
+		if node.SubtreeFacts()&ast.SubtreeContainsJsx == 0 {
+			return nil
+		}
+
+		// Traverse children to find JSX node
+		var result *ast.Node
+		node.ForEachChild(func(child *ast.Node) bool {
+			result = visit(child)
+			return result != nil // Stop if found
+		})
+		return result
+	}
+
+	return visit(root)
+}
+
 func getReferencesForNonModule(referencedFile *ast.SourceFile, program *compiler.Program) []*referenceEntry {
 	// !!! not implemented
 	return []*referenceEntry{}
@@ -1013,13 +1040,21 @@ func getReferencedSymbolsForModule(ctx context.Context, program *compiler.Progra
 			// import("foo") with no qualifier will reference the `export =` of the module, which may be referenced anyway.
 			return newNodeEntry(reference.literal)
 		case ModuleReferenceKindImplicit:
-			// For implicit references (e.g., JSX runtime imports), return the first statement or the whole file.
-			// We skip the complex JSX detection for now and just use the first statement or the file itself.
+			// For implicit references (e.g., JSX runtime imports), return the first JSX node,
+			// the first statement, or the whole file
 			var rangeNode *ast.Node
-			if reference.referencingFile.Statements != nil && len(reference.referencingFile.Statements.Nodes) > 0 {
-				rangeNode = reference.referencingFile.Statements.Nodes[0]
-			} else {
-				rangeNode = reference.referencingFile.AsNode()
+
+			// Skip the JSX search for tslib imports
+			if reference.literal.Text() != "tslib" {
+				rangeNode = findFirstJsxNode(reference.referencingFile.AsNode())
+			}
+
+			if rangeNode == nil {
+				if reference.referencingFile.Statements != nil && len(reference.referencingFile.Statements.Nodes) > 0 {
+					rangeNode = reference.referencingFile.Statements.Nodes[0]
+				} else {
+					rangeNode = reference.referencingFile.AsNode()
+				}
 			}
 			return newNodeEntry(rangeNode)
 		case ModuleReferenceKindReference:
@@ -1060,8 +1095,9 @@ func getReferencedSymbolsForModule(ctx context.Context, program *compiler.Progra
 				if ast.IsBinaryExpression(decl) && ast.IsPropertyAccessExpression(decl.AsBinaryExpression().Left) {
 					node = decl.AsBinaryExpression().Left.AsPropertyAccessExpression().Expression
 				} else if ast.IsExportAssignment(decl) {
-					// Find the export keyword - for now, just use the declaration itself
-					node = decl
+					// Find the export keyword
+					node = findChildOfKind(decl, ast.KindExportKeyword, sourceFile)
+					debug.Assert(node != nil, "Expected to find export keyword")
 				} else {
 					node = ast.GetNameOfDeclaration(decl)
 					if node == nil {
