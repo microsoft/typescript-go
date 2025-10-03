@@ -51,6 +51,11 @@
                         "type": "string",
                         "description": "Path to the @typescript/native-preview package or tsgo binary directory. If not specified, the extension will look for it in the default location.",
                         "tags": ["experimental"]
+                    },
+                    "typescript.native-preview.goMemLimit": {
+                        "type": "string",
+                        "description": "Set GOMEMLIMIT for the language server (e.g., '2048MiB', '4GiB'). See https://pkg.go.dev/runtime#hdr-Environment_Variables for more information.",
+                        "tags": ["experimental"]
                     }
                 }
             }
