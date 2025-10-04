@@ -60,11 +60,7 @@
 
  === node_modules/inner/index.d.ts ===
  // cjs format file
- import * as cjs from "inner/cjs/index.cjs";
-->cjs : any
-+>cjs : typeof cjs
-
- import * as mjs from "inner/mjs/index.mjs";
+@@= skipped -23, +23 lines =@@
  >mjs : typeof mjs
 
  import * as type from "inner/js/index.js";
@@ -72,10 +68,8 @@
 +>type : typeof type
 
  export { cjs };
-->cjs : any
-+>cjs : typeof cjs
-
- export { mjs };
+ >cjs : any
+@@= skipped -9, +9 lines =@@
  >mjs : typeof mjs
 
  export { type };
@@ -84,7 +78,7 @@
 
  === node_modules/inner/index.d.mts ===
  // esm format file
-@@= skipped -40, +40 lines =@@
+@@= skipped -8, +8 lines =@@
  >cjs : typeof cjs
 
  import * as mjs from "inner/mjs/index.mjs";

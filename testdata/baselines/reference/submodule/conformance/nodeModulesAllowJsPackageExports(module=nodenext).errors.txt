@@ -8,6 +8,7 @@ index.js(4,23): error TS2307: Cannot find module 'package' or its corresponding 
 index.mjs(2,22): error TS2307: Cannot find module 'package/cjs' or its corresponding type declarations.
 index.mjs(3,22): error TS2307: Cannot find module 'package/mjs' or its corresponding type declarations.
 index.mjs(4,23): error TS2307: Cannot find module 'package' or its corresponding type declarations.
+node_modules/inner/index.d.ts(2,13): error TS2303: Circular definition of import alias 'cjs'.
 
 
 !!! error TS2209: The project root is ambiguous, but is required to resolve export map entry '.' in file 'package.json'. Supply the `rootDir` compiler option to disambiguate.
@@ -71,9 +72,11 @@ index.mjs(4,23): error TS2307: Cannot find module 'package' or its corresponding
     cjsi;
     mjsi;
     typei;
-==== node_modules/inner/index.d.ts (0 errors) ====
+==== node_modules/inner/index.d.ts (1 errors) ====
     // cjs format file
     import * as cjs from "inner/cjs";
+                ~~~
+!!! error TS2303: Circular definition of import alias 'cjs'.
     import * as mjs from "inner/mjs";
     import * as type from "inner";
     export { cjs };

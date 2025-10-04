@@ -105,81 +105,25 @@
  >implicitCjsSource : true
 
  ts.cjsSource;
-@@= skipped -11, +11 lines =@@
- === node_modules/inner/index.d.ts ===
- // cjs format file
- import * as cjs from "inner/a";
-->cjs : any
-+>cjs : typeof cjs
-
- import * as mjs from "inner/b";
-->mjs : typeof mjs
-+>mjs : typeof cjs
+@@= skipped -17, +17 lines =@@
+ >mjs : typeof mjs
 
  import * as type from "inner";
 ->type : typeof mjs.type
 +>type : typeof type
 
  import * as ts from "inner/types";
-->ts : typeof mjs
-+>ts : typeof cjs
-
- export { cjs };
-->cjs : any
-+>cjs : typeof cjs
-
- export { mjs };
-->mjs : typeof mjs
-+>mjs : typeof cjs
+ >ts : typeof mjs
+@@= skipped -12, +12 lines =@@
+ >mjs : typeof mjs
 
  export { type };
 ->type : typeof mjs.type
 +>type : typeof type
 
  export { ts };
-->ts : typeof mjs
-+>ts : typeof cjs
-
- export const implicitCjsSource = true;
- >implicitCjsSource : true
-@@= skipped -30, +30 lines =@@
- === node_modules/inner/index.d.mts ===
- // esm format file
- import * as cjs from "inner/a";
-->cjs : any
-+>cjs : typeof cjs
-
- import * as mjs from "inner/b";
-->mjs : typeof mjs
-+>mjs : typeof cjs
-
- import * as type from "inner";
-->type : typeof mjs
-+>type : typeof cjs
-
- import * as ts from "inner/types";
-->ts : typeof mjs
-+>ts : typeof cjs
-
- export { cjs };
-->cjs : any
-+>cjs : typeof cjs
-
- export { mjs };
-->mjs : typeof mjs
-+>mjs : typeof cjs
-
- export { type };
-->type : typeof mjs
-+>type : typeof cjs
-
- export { ts };
-->ts : typeof mjs
-+>ts : typeof cjs
-
- export const mjsSource = true;
- >mjsSource : true
-@@= skipped -36, +36 lines =@@
+ >ts : typeof mjs
+@@= skipped -48, +48 lines =@@
  >mjs : typeof cjs
 
  import * as type from "inner";

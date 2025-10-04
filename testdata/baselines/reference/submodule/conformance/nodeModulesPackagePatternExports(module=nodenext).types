@@ -63,7 +63,7 @@ typei;
 === node_modules/inner/index.d.ts ===
 // cjs format file
 import * as cjs from "inner/cjs/index";
->cjs : typeof cjs
+>cjs : any
 
 import * as mjs from "inner/mjs/index";
 >mjs : typeof mjs
@@ -72,7 +72,7 @@ import * as type from "inner/js/index";
 >type : typeof type
 
 export { cjs };
->cjs : typeof cjs
+>cjs : any
 
 export { mjs };
 >mjs : typeof mjs

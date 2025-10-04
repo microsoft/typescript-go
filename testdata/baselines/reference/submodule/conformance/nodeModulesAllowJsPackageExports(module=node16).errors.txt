@@ -10,6 +10,7 @@ index.mjs(2,22): error TS2307: Cannot find module 'package/cjs' or its correspon
 index.mjs(3,22): error TS2307: Cannot find module 'package/mjs' or its corresponding type declarations.
 index.mjs(4,23): error TS2307: Cannot find module 'package' or its corresponding type declarations.
 node_modules/inner/index.d.cts(3,22): error TS1479: The current file is a CommonJS module whose imports will produce 'require' calls; however, the referenced file is an ECMAScript module and cannot be imported with 'require'. Consider writing a dynamic 'import("inner/mjs")' call instead.
+node_modules/inner/index.d.ts(2,13): error TS2303: Circular definition of import alias 'cjs'.
 node_modules/inner/index.d.ts(3,22): error TS1479: The current file is a CommonJS module whose imports will produce 'require' calls; however, the referenced file is an ECMAScript module and cannot be imported with 'require'. Consider writing a dynamic 'import("inner/mjs")' call instead.
 
 
@@ -76,9 +77,11 @@ node_modules/inner/index.d.ts(3,22): error TS1479: The current file is a CommonJ
     cjsi;
     mjsi;
     typei;
-==== node_modules/inner/index.d.ts (1 errors) ====
+==== node_modules/inner/index.d.ts (2 errors) ====
     // cjs format file
     import * as cjs from "inner/cjs";
+                ~~~
+!!! error TS2303: Circular definition of import alias 'cjs'.
     import * as mjs from "inner/mjs";
                          ~~~~~~~~~~~
 !!! error TS1479: The current file is a CommonJS module whose imports will produce 'require' calls; however, the referenced file is an ECMAScript module and cannot be imported with 'require'. Consider writing a dynamic 'import("inner/mjs")' call instead.

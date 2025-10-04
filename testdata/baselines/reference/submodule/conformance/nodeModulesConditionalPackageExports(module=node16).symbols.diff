@@ -37,24 +37,8 @@
 
  === node_modules/inner/index.d.mts ===
  // esm format file
-@@= skipped -29, +29 lines =@@
- >ts : Symbol(ts, Decl(index.d.mts, 4, 6))
-
- export { cjs };
-->cjs : Symbol(mjs.cjs, Decl(index.d.mts, 5, 8))
-+>cjs : Symbol(cjs.cjs, Decl(index.d.mts, 5, 8))
-
- export { mjs };
-->mjs : Symbol(mjs.mjs, Decl(index.d.mts, 6, 8))
-+>mjs : Symbol(cjs.mjs, Decl(index.d.mts, 6, 8))
-
- export { type };
-->type : Symbol(mjs.type, Decl(index.d.mts, 7, 8))
-+>type : Symbol(cjs.type, Decl(index.d.mts, 7, 8))
-
- export { ts };
-->ts : Symbol(mjs.ts, Decl(index.d.mts, 8, 8))
-+>ts : Symbol(cjs.ts, Decl(index.d.mts, 8, 8))
+@@= skipped -41, +41 lines =@@
+ >ts : Symbol(mjs.ts, Decl(index.d.mts, 8, 8))
 
  export const mjsSource = true;
 ->mjsSource : Symbol(mjs.mjsSource, Decl(index.d.mts, 9, 12))
@@ -62,7 +46,7 @@
 
  === node_modules/inner/index.d.cts ===
  // cjs format file
-@@= skipped -41, +41 lines =@@
+@@= skipped -29, +29 lines =@@
  >ts : Symbol(cjs.ts, Decl(index.d.cts, 8, 8))
 
  export const cjsSource = true;
