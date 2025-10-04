@@ -7,6 +7,7 @@ import (
 	"slices"
 	"sort"
 	"strings"
+	"sync"
 	"unicode"
 	"unicode/utf8"
 
@@ -502,9 +503,28 @@ func GetSpellingSuggestion[T any](name string, candidates []T, getName func(T) s
 	return bestCandidate
 }
 
+type levenshteinBuffers struct {
+	previous []float64
+	current  []float64
+}
+
+var levenshteinBuffersPool = sync.Pool{
+	New: func() any {
+		return &levenshteinBuffers{}
+	},
+}
+
 func levenshteinWithMax(s1 []rune, s2 []rune, maxValue float64) float64 {
-	previous := make([]float64, len(s2)+1)
-	current := make([]float64, len(s2)+1)
+	buffers := levenshteinBuffersPool.Get().(*levenshteinBuffers)
+	defer levenshteinBuffersPool.Put(buffers)
+
+	bufferSize := len(s2) + 1
+	buffers.previous = slices.Grow(buffers.previous[:0], bufferSize)[:bufferSize]
+	buffers.current = slices.Grow(buffers.current[:0], bufferSize)[:bufferSize]
+
+	previous := buffers.previous
+	current := buffers.current
+
 	big := maxValue + 0.01
 	for i := range previous {
 		previous[i] = float64(i)
