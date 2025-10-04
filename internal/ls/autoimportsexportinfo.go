@@ -100,6 +100,10 @@ func (l *LanguageService) searchExportInfosForCompletions(
 			return false
 		}
 		// Do not try to auto-import something with a lowercase first letter for a JSX tag
+		if len(symbolName) == 0 {
+			symbolNameMatches[symbolName] = false
+			return false
+		}
 		firstChar := rune(symbolName[0])
 		if isRightOfOpenTag && (firstChar < 'A' || firstChar > 'Z') {
 			symbolNameMatches[symbolName] = false
