@@ -9,8 +9,8 @@ function A() {
 >T : typeof T
 
      a = arguments
->a : any
->arguments : any
+>a : IArguments
+>arguments : IArguments
   }
 }
 
@@ -23,8 +23,8 @@ function A1() {
 >T : typeof T
 
      a = arguments
->a : any
->arguments : any
+>a : IArguments
+>arguments : IArguments
   }
 }
 
@@ -36,10 +36,10 @@ function B() {
 >T : typeof T
 
      a = { b: arguments }
->a : { b: any; }
->{ b: arguments } : { b: any; }
->b : any
->arguments : any
+>a : { b: IArguments; }
+>{ b: arguments } : { b: IArguments; }
+>b : IArguments
+>arguments : IArguments
   }
 }
 
@@ -52,10 +52,10 @@ function B1() {
 >T : typeof T
 
      a = { b: arguments }
->a : { b: any; }
->{ b: arguments } : { b: any; }
->b : any
->arguments : any
+>a : { b: IArguments; }
+>{ b: arguments } : { b: IArguments; }
+>b : IArguments
+>arguments : IArguments
   }
 }
 
@@ -81,9 +81,9 @@ function D() {
 >T : typeof T
 
      a = () => arguments  // should error
->a : () => any
->() => arguments : () => any
->arguments : any
+>a : () => IArguments
+>() => arguments : () => IArguments
+>arguments : IArguments
   }
 }
 
@@ -99,14 +99,14 @@ function D1() {
 >() => {      arguments;    // should error      const b = () => {        return arguments;     // should error      }      function f() {        return arguments;      // ok      }    } : () => void
 
       arguments;    // should error
->arguments : any
+>arguments : IArguments
 
       const b = () => {
->b : () => any
->() => {        return arguments;     // should error      } : () => any
+>b : () => IArguments
+>() => {        return arguments;     // should error      } : () => IArguments
 
         return arguments;     // should error
->arguments : any
+>arguments : IArguments
       }
 
       function f() {
@@ -169,13 +169,13 @@ function D3() {
 
     static {
       arguments;  // should error
->arguments : any
+>arguments : IArguments
 
       while(1) {
 >1 : 1
 
         arguments // should error
->arguments : any
+>arguments : IArguments
       }
     }
   }
@@ -208,11 +208,11 @@ function D5() {
 >T : typeof T
 
      a = (() => { return arguments; })()  // should error
->a : any
->(() => { return arguments; })() : any
->(() => { return arguments; }) : () => any
->() => { return arguments; } : () => any
->arguments : any
+>a : IArguments
+>(() => { return arguments; })() : IArguments
+>(() => { return arguments; }) : () => IArguments
+>() => { return arguments; } : () => IArguments
+>arguments : IArguments
   }
 }
 
@@ -224,10 +224,10 @@ function D6() {
 >T : typeof T
 
      a = (x = arguments) => {}    // should error
->a : (x?: any) => void
->(x = arguments) => {} : (x?: any) => void
->x : any
->arguments : any
+>a : (x?: IArguments) => void
+>(x = arguments) => {} : (x?: IArguments) => void
+>x : IArguments
+>arguments : IArguments
   }
 }
 

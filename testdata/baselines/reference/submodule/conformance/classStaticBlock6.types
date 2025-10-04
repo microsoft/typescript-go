@@ -84,7 +84,7 @@ async function foo () {
 
         static {
             arguments;
->arguments : any
+>arguments : IArguments
 
             await;
 >await : any
@@ -113,7 +113,7 @@ function foo1 () {
 
         static {
             arguments;
->arguments : any
+>arguments : IArguments
 
             function ff () {
 >ff : () => void

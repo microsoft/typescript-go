@@ -1,0 +1,20 @@
+--- old.classStaticBlock6.types
++++ new.classStaticBlock6.types
+@@= skipped -83, +83 lines =@@
+
+         static {
+             arguments;
+->arguments : any
++>arguments : IArguments
+
+             await;
+ >await : any
+@@= skipped -29, +29 lines =@@
+
+         static {
+             arguments;
+->arguments : any
++>arguments : IArguments
+
+             function ff () {
+ >ff : () => void
