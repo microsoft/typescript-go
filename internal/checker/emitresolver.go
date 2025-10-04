@@ -413,7 +413,7 @@ func (r *emitResolver) hasVisibleDeclarations(symbol *ast.Symbol, shouldComputeA
 					if ast.IsParameter(rootDeclaration) {
 						return nil
 					}
-					variableStatement := rootDeclaration.Parent.Parent;
+					variableStatement := rootDeclaration.Parent.Parent
 					if !ast.IsVariableStatement(variableStatement) {
 						return nil
 					}
