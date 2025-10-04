@@ -1187,7 +1187,9 @@ func (l *LanguageService) getCompletionData(
 		isValidTypeOnlyUseSite := ast.IsValidTypeOnlyAliasUseSite(location)
 
 		// !!! moduleSpecifierCache := host.getModuleSpecifierCache();
-		// !!! packageJsonAutoImportProvider := host.getPackageJsonAutoImportProvider();
+		// !!! if preferences.includePackageJsonAutoImports != "off" {
+		// 		!!! packageJsonAutoImportProvider := host.getPackageJsonAutoImportProvider();
+		// !!! }
 		addSymbolToList := func(info []*SymbolExportInfo, symbolName string, isFromAmbientModule bool, exportMapKey ExportInfoMapKey) []*SymbolExportInfo {
 			// Do a relatively cheap check to bail early if all re-exports are non-importable
 			// due to file location or package.json dependency filtering. For non-node16+
