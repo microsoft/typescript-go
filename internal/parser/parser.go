@@ -4338,6 +4338,7 @@ func (p *Parser) parseArrowFunctionExpressionBody(isAsync bool, allowReturnTypeI
 	}
 	saveContextFlags := p.contextFlags
 	p.setContextFlags(ast.NodeFlagsAwaitContext, isAsync)
+	p.setContextFlags(ast.NodeFlagsYieldContext, false)
 	node := p.parseAssignmentExpressionOrHigherWorker(allowReturnTypeInArrowFunction)
 	p.contextFlags = saveContextFlags
 	return node
