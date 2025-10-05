@@ -52,7 +52,7 @@ type FourslashTest struct {
 type scriptInfo struct {
 	fileName string
 	content  string
-	lineMap  *ls.LineMap
+	lineMap  *ls.LSPLineMap
 	version  int32
 }
 
@@ -60,14 +60,14 @@ func newScriptInfo(fileName string, content string) *scriptInfo {
 	return &scriptInfo{
 		fileName: fileName,
 		content:  content,
-		lineMap:  ls.ComputeLineStarts(content),
+		lineMap:  ls.ComputeLSPLineStarts(content),
 		version:  1,
 	}
 }
 
 func (s *scriptInfo) editContent(start int, end int, newText string) {
 	s.content = s.content[:start] + newText + s.content[end:]
-	s.lineMap = ls.ComputeLineStarts(s.content)
+	s.lineMap = ls.ComputeLSPLineStarts(s.content)
 	s.version++
 }
 
@@ -171,7 +171,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		}
 	}()
 
-	converters := ls.NewConverters(lsproto.PositionEncodingKindUTF8, func(fileName string) *ls.LineMap {
+	converters := ls.NewConverters(lsproto.PositionEncodingKindUTF8, func(fileName string) *ls.LSPLineMap {
 		scriptInfo, ok := scriptInfos[fileName]
 		if !ok {
 			return nil
@@ -1074,6 +1074,83 @@ func (f *FourslashTest) VerifyBaselineSignatureHelp(t *testing.T) {
 	}
 }
 
+func (f *FourslashTest) VerifyBaselineDocumentHighlights(
+	t *testing.T,
+	preferences *ls.UserPreferences,
+	markerOrRangeOrNames ...MarkerOrRangeOrName,
+) {
+	var markerOrRanges []MarkerOrRange
+	for _, markerOrRangeOrName := range markerOrRangeOrNames {
+		switch markerOrNameOrRange := markerOrRangeOrName.(type) {
+		case string:
+			marker, ok := f.testData.MarkerPositions[markerOrNameOrRange]
+			if !ok {
+				t.Fatalf("Marker '%s' not found", markerOrNameOrRange)
+			}
+			markerOrRanges = append(markerOrRanges, marker)
+		case *Marker:
+			markerOrRanges = append(markerOrRanges, markerOrNameOrRange)
+		case *RangeMarker:
+			markerOrRanges = append(markerOrRanges, markerOrNameOrRange)
+		default:
+			t.Fatalf("Invalid marker or range type: %T. Expected string, *Marker, or *RangeMarker.", markerOrNameOrRange)
+		}
+	}
+
+	f.verifyBaselineDocumentHighlights(t, preferences, markerOrRanges)
+}
+
+func (f *FourslashTest) verifyBaselineDocumentHighlights(
+	t *testing.T,
+	preferences *ls.UserPreferences,
+	markerOrRanges []MarkerOrRange,
+) {
+	for _, markerOrRange := range markerOrRanges {
+		f.goToMarker(t, markerOrRange)
+
+		params := &lsproto.DocumentHighlightParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: ls.FileNameToDocumentURI(f.activeFilename),
+			},
+			Position: f.currentCaretPosition,
+		}
+		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentDocumentHighlightInfo, params)
+		if resMsg == nil {
+			if f.lastKnownMarkerName == nil {
+				t.Fatalf("Nil response received for document highlights request at pos %v", f.currentCaretPosition)
+			} else {
+				t.Fatalf("Nil response received for document highlights request at marker '%s'", *f.lastKnownMarkerName)
+			}
+		}
+		if !resultOk {
+			if f.lastKnownMarkerName == nil {
+				t.Fatalf("Unexpected document highlights response type at pos %v: %T", f.currentCaretPosition, resMsg.AsResponse().Result)
+			} else {
+				t.Fatalf("Unexpected document highlights response type at marker '%s': %T", *f.lastKnownMarkerName, resMsg.AsResponse().Result)
+			}
+		}
+
+		highlights := result.DocumentHighlights
+		if highlights == nil {
+			highlights = &[]*lsproto.DocumentHighlight{}
+		}
+
+		var spans []lsproto.Location
+		for _, h := range *highlights {
+			spans = append(spans, lsproto.Location{
+				Uri:   ls.FileNameToDocumentURI(f.activeFilename),
+				Range: h.Range,
+			})
+		}
+
+		// Add result to baseline
+		f.addResultToBaseline(t, "documentHighlights", f.getBaselineForLocationsWithFileContents(spans, baselineFourslashLocationsOptions{
+			marker:     markerOrRange,
+			markerName: "/*HIGHLIGHTS*/",
+		}))
+	}
+}
+
 // Collects all named markers if provided, or defaults to anonymous ranges
 func (f *FourslashTest) lookupMarkersOrGetRanges(t *testing.T, markers []string) []MarkerOrRange {
 	var referenceLocations []MarkerOrRange
@@ -1416,8 +1493,8 @@ func (f *FourslashTest) getCurrentPositionPrefix() string {
 
 func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames []string) {
 	reset := f.ConfigureWithReset(t, &ls.UserPreferences{
-		IncludeCompletionsForModuleExports:    ptrTo(true),
-		IncludeCompletionsForImportStatements: ptrTo(true),
+		IncludeCompletionsForModuleExports:    core.TSTrue,
+		IncludeCompletionsForImportStatements: core.TSTrue,
 	})
 	defer reset()
 
@@ -1456,7 +1533,7 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 		)))
 
 		currentFile := newScriptInfo(f.activeFilename, fileContent)
-		converters := ls.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *ls.LineMap {
+		converters := ls.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *ls.LSPLineMap {
 			return currentFile.lineMap
 		})
 		var list []*lsproto.CompletionItem
@@ -1583,11 +1660,11 @@ func (f *FourslashTest) verifyBaselineRename(
 
 		var renameOptions strings.Builder
 		if preferences != nil {
-			if preferences.UseAliasesForRename != nil {
-				fmt.Fprintf(&renameOptions, "// @useAliasesForRename: %v\n", *preferences.UseAliasesForRename)
+			if preferences.UseAliasesForRename != core.TSUnknown {
+				fmt.Fprintf(&renameOptions, "// @useAliasesForRename: %v\n", preferences.UseAliasesForRename.IsTrue())
 			}
-			if preferences.QuotePreference != nil {
-				fmt.Fprintf(&renameOptions, "// @quotePreference: %v\n", *preferences.QuotePreference)
+			if preferences.QuotePreference != ls.QuotePreferenceUnknown {
+				fmt.Fprintf(&renameOptions, "// @quotePreference: %v\n", preferences.QuotePreference)
 			}
 		}
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	// "go/printer"
 	"io"
 	"os"
 	"os/exec"
@@ -242,46 +243,46 @@ func (s *Server) Configure(ctx context.Context) (*ls.UserPreferences, error) {
 					if v, ok := inlayHintsPreferences["parameterNames"].(map[string]any); ok && v != nil {
 						if enabled, ok := v["enabled"]; ok {
 							if enabledStr, ok := enabled.(string); ok {
-								userPreferences.IncludeInlayParameterNameHints = enabledStr
+								userPreferences.IncludeInlayParameterNameHints = ls.IncludeInlayParameterNameHints(enabledStr)
 							} else {
-								userPreferences.IncludeInlayParameterNameHints = ""
+								userPreferences.IncludeInlayParameterNameHints = ls.IncludeInlayParameterNameHintsNone
 							}
 						}
 						if supressWhenArgumentMatchesName, ok := v["suppressWhenArgumentMatchesName"]; ok {
-							userPreferences.IncludeInlayParameterNameHintsWhenArgumentMatchesName = ptrTo(!supressWhenArgumentMatchesName.(bool))
+							userPreferences.IncludeInlayParameterNameHintsWhenArgumentMatchesName = !supressWhenArgumentMatchesName.(bool)
 						}
 					}
 					if v, ok := inlayHintsPreferences["parameterTypes"].(map[string]any); ok && v != nil {
 						if enabled, ok := v["enabled"]; ok {
-							userPreferences.IncludeInlayFunctionParameterTypeHints = ptrTo(enabled.(bool))
+							userPreferences.IncludeInlayFunctionParameterTypeHints = enabled.(bool)
 						}
 					}
 					if v, ok := inlayHintsPreferences["variableTypes"].(map[string]any); ok && v != nil {
 						if enabled, ok := v["enabled"]; ok {
-							userPreferences.IncludeInlayVariableTypeHints = ptrTo(enabled.(bool))
+							userPreferences.IncludeInlayVariableTypeHints = enabled.(bool)
 						}
 						if supressWhenTypeMatchesName, ok := v["suppressWhenTypeMatchesName"]; ok {
-							userPreferences.IncludeInlayVariableTypeHintsWhenTypeMatchesName = ptrTo(!supressWhenTypeMatchesName.(bool))
+							userPreferences.IncludeInlayVariableTypeHintsWhenTypeMatchesName = !supressWhenTypeMatchesName.(bool)
 						}
 					}
 					if v, ok := inlayHintsPreferences["propertyDeclarationTypes"].(map[string]any); ok && v != nil {
 						if enabled, ok := v["enabled"]; ok {
-							userPreferences.IncludeInlayPropertyDeclarationTypeHints = ptrTo(enabled.(bool))
+							userPreferences.IncludeInlayPropertyDeclarationTypeHints = enabled.(bool)
 						}
 					}
 					if v, ok := inlayHintsPreferences["functionLikeReturnTypes"].(map[string]any); ok && v != nil {
 						if enabled, ok := v["enabled"]; ok {
-							userPreferences.IncludeInlayFunctionLikeReturnTypeHints = ptrTo(enabled.(bool))
+							userPreferences.IncludeInlayFunctionLikeReturnTypeHints = enabled.(bool)
 						}
 					}
 					if v, ok := inlayHintsPreferences["enumMemberValues"].(map[string]any); ok && v != nil {
 						if enabled, ok := v["enabled"]; ok {
-							userPreferences.IncludeInlayEnumMemberValueHints = ptrTo(enabled.(bool))
+							userPreferences.IncludeInlayEnumMemberValueHints = enabled.(bool)
 						}
 					}
-					userPreferences.InteractiveInlayHints = ptrTo(true)
+					userPreferences.InteractiveInlayHints = true
 				case "tsserver":
-					// !!!
+					// 
 				case "unstable":
 					// !!!
 				case "tsc":
@@ -307,8 +308,8 @@ func (s *Server) Configure(ctx context.Context) (*ls.UserPreferences, error) {
 		}
 	}
 	// !!! set defaults for services, remove after extension is updated
-	userPreferences.IncludeCompletionsForModuleExports = ptrTo(true)
-	userPreferences.IncludeCompletionsForImportStatements = ptrTo(true)
+	userPreferences.IncludeCompletionsForModuleExports = core.TSTrue
+	userPreferences.IncludeCompletionsForImportStatements = core.TSTrue
 	return userPreferences, nil
 }
 
@@ -556,6 +557,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentOnTypeFormattingInfo, (*Server).handleDocumentOnTypeFormat)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDocumentSymbolInfo, (*Server).handleDocumentSymbol)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*Server).handleRename)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDocumentHighlightInfo, (*Server).handleDocumentHighlight)
 	registerRequestHandler(handlers, lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
 	registerRequestHandler(handlers, lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
 
@@ -564,6 +566,10 @@ var handlers = sync.OnceValue(func() handlerMap {
 
 func registerNotificationHandler[Req any](handlers handlerMap, info lsproto.NotificationInfo[Req], fn func(*Server, context.Context, Req) error) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
+		if s.session == nil && req.Method != lsproto.MethodInitialized {
+			return lsproto.ErrServerNotInitialized
+		}
+
 		var params Req
 		// Ignore empty params; all generated params are either pointers or any.
 		if req.Params != nil {
@@ -582,6 +588,10 @@ func registerRequestHandler[Req, Resp any](
 	fn func(*Server, context.Context, Req, *lsproto.RequestMessage) (Resp, error),
 ) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
+		if s.session == nil && req.Method != lsproto.MethodInitialize {
+			return lsproto.ErrServerNotInitialized
+		}
+
 		var params Req
 		// Ignore empty params.
 		if req.Params != nil {
@@ -722,6 +732,9 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 				Boolean: ptrTo(true),
 			},
 			RenameProvider: &lsproto.BooleanOrRenameOptions{
+				Boolean: ptrTo(true),
+			},
+			DocumentHighlightProvider: &lsproto.BooleanOrDocumentHighlightOptions{
 				Boolean: ptrTo(true),
 			},
 		},
@@ -931,6 +944,10 @@ func (s *Server) handleDocumentSymbol(ctx context.Context, ls *ls.LanguageServic
 
 func (s *Server) handleRename(ctx context.Context, ls *ls.LanguageService, params *lsproto.RenameParams) (lsproto.RenameResponse, error) {
 	return ls.ProvideRename(ctx, params)
+}
+
+func (s *Server) handleDocumentHighlight(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentHighlightParams) (lsproto.DocumentHighlightResponse, error) {
+	return ls.ProvideDocumentHighlights(ctx, params.TextDocument.Uri, params.Position)
 }
 
 func (s *Server) Log(msg ...any) {

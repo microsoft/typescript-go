@@ -433,8 +433,17 @@ func (l *LanguageService) createLspRangeFromNode(node *ast.Node, file *ast.Sourc
 	return l.createLspRangeFromBounds(scanner.GetTokenPosOfNode(node, file, false /*includeJSDoc*/), node.End(), file)
 }
 
+func createRangeFromNode(node *ast.Node, file *ast.SourceFile) core.TextRange {
+	return core.NewTextRange(scanner.GetTokenPosOfNode(node, file, false /*includeJSDoc*/), node.End())
+}
+
 func (l *LanguageService) createLspRangeFromBounds(start, end int, file *ast.SourceFile) *lsproto.Range {
 	lspRange := l.converters.ToLSPRange(file, core.NewTextRange(start, end))
+	return &lspRange
+}
+
+func (l *LanguageService) createLspRangeFromRange(textRange core.TextRange, script Script) *lsproto.Range {
+	lspRange := l.converters.ToLSPRange(script, textRange)
 	return &lspRange
 }
 
@@ -490,10 +499,10 @@ func probablyUsesSemicolons(file *ast.SourceFile) bool {
 			if lastToken != nil && lastToken.Kind == ast.KindSemicolonToken {
 				withSemicolon++
 			} else if lastToken != nil && lastToken.Kind != ast.KindCommaToken {
-				lastTokenLine, _ := scanner.GetLineAndCharacterOfPosition(
+				lastTokenLine, _ := scanner.GetECMALineAndCharacterOfPosition(
 					file,
 					astnav.GetStartOfNode(lastToken, file, false /*includeJSDoc*/))
-				nextTokenLine, _ := scanner.GetLineAndCharacterOfPosition(
+				nextTokenLine, _ := scanner.GetECMALineAndCharacterOfPosition(
 					file,
 					scanner.GetRangeOfTokenAtPosition(file, lastToken.End()).Pos())
 				// Avoid counting missing semicolon in single-line objects:
@@ -669,32 +678,6 @@ func isImplementationExpression(node *ast.Node) bool {
 	default:
 		return false
 	}
-}
-
-func isArrayLiteralOrObjectLiteralDestructuringPattern(node *ast.Node) bool {
-	if node.Kind == ast.KindArrayLiteralExpression || node.Kind == ast.KindObjectLiteralExpression {
-		// [a,b,c] from:
-		// [a, b, c] = someExpression;
-		if node.Parent.Kind == ast.KindBinaryExpression && node.Parent.AsBinaryExpression().Left == node && node.Parent.AsBinaryExpression().OperatorToken.Kind == ast.KindEqualsToken {
-			return true
-		}
-
-		// [a, b, c] from:
-		// for([a, b, c] of expression)
-		if node.Parent.Kind == ast.KindForOfStatement && node.Parent.AsForInOrOfStatement().Initializer == node {
-			return true
-		}
-
-		// [a, b, c] of
-		// [x, [a, b, c] ] = someExpression
-		// or
-		// {x, a: {a, b, c} } = someExpression
-		if isArrayLiteralOrObjectLiteralDestructuringPattern(core.IfElse(node.Parent.Kind == ast.KindPropertyAssignment, node.Parent.Parent, node.Parent)) {
-			return true
-		}
-	}
-
-	return false
 }
 
 func isReadonlyTypeOperator(node *ast.Node) bool {
