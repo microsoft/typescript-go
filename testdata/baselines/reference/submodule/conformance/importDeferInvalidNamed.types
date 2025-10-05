@@ -15,9 +15,6 @@ export function foo() {
 === b.ts ===
 import defer { foo } from "a";
 >foo : any
-> : any
->from : any
->"a" : "a"
 
 foo();
 >foo() : any

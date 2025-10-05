@@ -2,7 +2,7 @@
 +++ new.importDefaultBindingDefer.errors.txt
 @@= skipped -0, +0 lines =@@
 -<no content>
-+b.ts(3,1): error TS2304: Cannot find name 'defer'.
++b.ts(1,19): error TS2307: Cannot find module 'a' or its corresponding type declarations.
 +
 +
 +==== a.ts (0 errors) ====
@@ -12,7 +12,7 @@
 +    
 +==== b.ts (1 errors) ====
 +    import defer from "a";
++                      ~~~
++!!! error TS2307: Cannot find module 'a' or its corresponding type declarations.
 +    
 +    defer();
-+    ~~~~~
-+!!! error TS2304: Cannot find name 'defer'.

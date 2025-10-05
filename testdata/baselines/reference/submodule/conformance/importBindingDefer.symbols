@@ -5,6 +5,6 @@
 export default 2;
 
 === b.ts ===
-
 import defer from "./a.js";
+>defer : Symbol(defer, Decl(b.ts, 0, 6))
 

@@ -8,10 +8,7 @@ export interface Foo {
 
 === b.ts ===
 import defer * as ns from "./a.js";
->as : any
->ns : any
->from : any
->"./a.js" : "./a.js"
+>ns : typeof ns
 
 export type X = { foo: ns.Foo };
 >X : X

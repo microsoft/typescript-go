@@ -10,6 +10,4 @@ export {};
 //// [a.js]
 export {};
 //// [b.js]
-from; /*7*/
-"a" /*8*/;
 export {};

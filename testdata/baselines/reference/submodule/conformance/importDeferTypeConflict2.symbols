@@ -12,5 +12,5 @@ export function foo() {
 
 === b.ts ===
 import defer type * as ns1 from "a";
->ns1 : Symbol(ns1, Decl(b.ts, 0, 17))
+>type : Symbol(type, Decl(b.ts, 0, 6))
 

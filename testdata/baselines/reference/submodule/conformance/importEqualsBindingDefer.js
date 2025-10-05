@@ -7,6 +7,9 @@ export = 2;
 import defer = require("./a");
 
 
+//// [a.js]
+"use strict";
+module.exports = 2;
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });

@@ -2,7 +2,9 @@
 
 === b.ts ===
 import defer = require("./a");
->require : any
->("./a") : "./a"
->"./a" : "./a"
+>defer : 2
+
+=== a.ts ===
+
+export = 2;
 

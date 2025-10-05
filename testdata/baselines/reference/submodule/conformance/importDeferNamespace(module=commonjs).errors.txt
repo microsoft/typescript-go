@@ -1,8 +1,4 @@
-b.ts(1,19): error TS1005: 'from' expected.
-b.ts(1,19): error TS1141: String literal expected.
-b.ts(1,23): error TS1005: ';' expected.
-b.ts(1,23): error TS2304: Cannot find name 'from'.
-b.ts(3,1): error TS2304: Cannot find name 'aNs'.
+b.ts(1,8): error TS18060: Deferred imports are only supported when the '--module' flag is set to 'esnext' or 'preserve'.
 
 
 ==== a.ts (0 errors) ====
@@ -10,17 +6,9 @@ b.ts(3,1): error TS2304: Cannot find name 'aNs'.
         console.log("foo from a");
     }
     
-==== b.ts (5 errors) ====
+==== b.ts (1 errors) ====
     import defer * as aNs from "./a.js";
-                      ~~~
-!!! error TS1005: 'from' expected.
-                      ~~~
-!!! error TS1141: String literal expected.
-                          ~~~~
-!!! error TS1005: ';' expected.
-                          ~~~~
-!!! error TS2304: Cannot find name 'from'.
+           ~~~~~~~~~~~~~~
+!!! error TS18060: Deferred imports are only supported when the '--module' flag is set to 'esnext' or 'preserve'.
     
     aNs.foo();
-    ~~~
-!!! error TS2304: Cannot find name 'aNs'.

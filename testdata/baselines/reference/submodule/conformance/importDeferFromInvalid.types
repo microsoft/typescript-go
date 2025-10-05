@@ -6,5 +6,5 @@ export default 2;
 
 === b.ts ===
 import defer from from "./a.js";
->defer : 2
+>from : 2
 

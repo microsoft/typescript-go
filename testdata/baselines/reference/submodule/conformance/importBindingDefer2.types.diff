@@ -1,9 +1,0 @@
---- old.importBindingDefer2.types
-+++ new.importBindingDefer2.types
-@@= skipped -4, +4 lines =@@
- export default 2;
-
- === b.ts ===
-+
- import defer, {} from "./a.js";
-->defer : 2

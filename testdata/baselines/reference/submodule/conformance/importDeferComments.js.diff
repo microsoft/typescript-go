@@ -1,9 +1,0 @@
---- old.importDeferComments.js
-+++ new.importDeferComments.js
-@@= skipped -9, +9 lines =@@
- //// [a.js]
- export {};
- //// [b.js]
-+from; /*7*/
-+"a" /*8*/;
- export {};

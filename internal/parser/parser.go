@@ -2109,11 +2109,21 @@ func (p *Parser) parseImportDeclarationOrImportEqualsDeclaration(pos int, hasJSD
 		if p.isIdentifier() {
 			identifier = p.parseIdentifier()
 		}
-	} else if identifier != nil && identifier.AsIdentifier().Text == "defer" && p.nextToken() != ast.KindFromKeyword {
-		phaseModifier = ast.KindDeferKeyword
-		identifier = nil
-		if p.isIdentifier() {
-			identifier = p.parseIdentifier()
+	} else if identifier != nil && identifier.AsIdentifier().Text == "defer" {
+		var shouldParseAsDeferModifier bool
+		if p.token == ast.KindFromKeyword {
+			shouldParseAsDeferModifier = !p.lookAhead(func(p *Parser) bool {
+				return p.nextTokenIsTokenStringLiteral()
+			})
+		} else {
+			shouldParseAsDeferModifier = p.token != ast.KindCommaToken && p.token != ast.KindEqualsToken
+		}
+		if shouldParseAsDeferModifier {
+			phaseModifier = ast.KindDeferKeyword
+			identifier = nil
+			if p.isIdentifier() {
+				identifier = p.parseIdentifier()
+			}
 		}
 	}
 	if identifier != nil && !p.tokenAfterImportedIdentifierDefinitelyProducesImportDeclaration() && phaseModifier != ast.KindDeferKeyword {
