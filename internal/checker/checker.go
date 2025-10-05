@@ -12401,10 +12401,10 @@ func (c *Checker) getSyntacticTruthySemantics(node *ast.Node) PredicateSemantics
 
 func (c *Checker) checkNullishCoalesceOperands(left *ast.Node, right *ast.Node) {
 	if ast.IsBinaryExpression(left.Parent.Parent) {
-		operatorToken := left.Parent.Parent.AsBinaryExpression().OperatorToken
-		left := left.Parent.Parent.AsBinaryExpression().Left
-		if ast.IsBinaryExpression(left) && operatorToken.Kind == ast.KindBarBarToken {
-			c.grammarErrorOnNode(left, diagnostics.X_0_and_1_operations_cannot_be_mixed_without_parentheses, scanner.TokenToString(ast.KindQuestionQuestionToken), scanner.TokenToString(operatorToken.Kind))
+		grandparentLeft := left.Parent.Parent.AsBinaryExpression().Left
+		grandparentOperatorToken := left.Parent.Parent.AsBinaryExpression().OperatorToken
+		if ast.IsBinaryExpression(grandparentLeft) && grandparentOperatorToken.Kind == ast.KindBarBarToken {
+			c.grammarErrorOnNode(grandparentLeft, diagnostics.X_0_and_1_operations_cannot_be_mixed_without_parentheses, scanner.TokenToString(ast.KindQuestionQuestionToken), scanner.TokenToString(grandparentOperatorToken.Kind))
 		}
 	} else if ast.IsBinaryExpression(left) {
 		operatorToken := left.AsBinaryExpression().OperatorToken
