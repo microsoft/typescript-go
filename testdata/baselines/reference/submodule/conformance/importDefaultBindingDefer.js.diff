@@ -1,0 +1,9 @@
+--- old.importDefaultBindingDefer.js
++++ new.importDefaultBindingDefer.js
+@@= skipped -14, +14 lines =@@
+     console.log("defer from a");
+ }
+ //// [b.js]
+-import defer from "a";
++import "a";
+ defer();

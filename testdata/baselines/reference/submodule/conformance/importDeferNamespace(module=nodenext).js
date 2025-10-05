@@ -20,8 +20,6 @@ function foo() {
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
- * as;
-aNs;
 from;
 "./a.js";
 aNs.foo();

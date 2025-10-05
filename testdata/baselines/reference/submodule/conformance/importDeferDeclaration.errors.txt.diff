@@ -2,11 +2,9 @@
 +++ new.importDeferDeclaration.errors.txt
 @@= skipped -0, +0 lines =@@
 -<no content>
-+b.ts(1,14): error TS1005: '=' expected.
-+b.ts(1,16): error TS2304: Cannot find name 'as'.
-+b.ts(1,19): error TS1005: ';' expected.
-+b.ts(1,19): error TS2304: Cannot find name 'ns'.
-+b.ts(1,22): error TS1434: Unexpected keyword or identifier.
++b.ts(1,19): error TS1005: 'from' expected.
++b.ts(1,19): error TS1141: String literal expected.
++b.ts(1,22): error TS1005: ';' expected.
 +b.ts(1,22): error TS2304: Cannot find name 'from'.
 +b.ts(3,24): error TS2503: Cannot find namespace 'ns'.
 +
@@ -16,18 +14,14 @@
 +      x: number;
 +    }
 +    
-+==== b.ts (7 errors) ====
++==== b.ts (5 errors) ====
 +    import defer * as ns from "./a.js";
-+                 ~
-+!!! error TS1005: '=' expected.
-+                   ~~
-+!!! error TS2304: Cannot find name 'as'.
 +                      ~~
-+!!! error TS1005: ';' expected.
++!!! error TS1005: 'from' expected.
 +                      ~~
-+!!! error TS2304: Cannot find name 'ns'.
++!!! error TS1141: String literal expected.
 +                         ~~~~
-+!!! error TS1434: Unexpected keyword or identifier.
++!!! error TS1005: ';' expected.
 +                         ~~~~
 +!!! error TS2304: Cannot find name 'from'.
 +    

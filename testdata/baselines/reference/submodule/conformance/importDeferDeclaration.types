@@ -8,10 +8,6 @@ export interface Foo {
 
 === b.ts ===
 import defer * as ns from "./a.js";
->defer : any
-> : any
->* as : number
-> : any
 >as : any
 >ns : any
 >from : any

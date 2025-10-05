@@ -5,7 +5,7 @@
  === b.ts ===
  import defer * as ns from "./a.js";
 ->ns : Symbol(ns, Decl(b.ts, 0, 12))
-+>defer : Symbol(defer, Decl(b.ts, 0, 0))
++>as : Symbol(as, Decl(b.ts, 0, 6))
 
  export type X = { foo: ns.Foo };
  >X : Symbol(X, Decl(b.ts, 0, 35))

@@ -5,6 +5,5 @@
  }
  //// [b.js]
 -import defer foo from "a";
-+from;
-+"a";
  foo();
++export {};

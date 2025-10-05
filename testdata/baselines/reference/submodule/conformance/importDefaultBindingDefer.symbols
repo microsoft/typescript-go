@@ -11,9 +11,7 @@ export default function defer() {
 }
 
 === b.ts ===
+
 import defer from "a";
->defer : Symbol(defer, Decl(b.ts, 0, 6))
 
 defer();
->defer : Symbol(defer, Decl(b.ts, 0, 6))
-

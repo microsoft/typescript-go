@@ -5,8 +5,6 @@
  }
  //// [b.js]
 -import defer * as aNs from "./a.js";
-+ * as;
-+aNs;
 +from;
 +"./a.js";
  aNs.foo();

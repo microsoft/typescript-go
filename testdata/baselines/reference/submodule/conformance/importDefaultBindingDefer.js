@@ -15,5 +15,5 @@ export default function defer() {
     console.log("defer from a");
 }
 //// [b.js]
-import defer from "a";
+import "a";
 defer();

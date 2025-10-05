@@ -5,10 +5,6 @@
  === b.ts ===
  import defer * as aNs from "./a.js";
 ->aNs : typeof aNs
-+>defer : any
-+> : any
-+>* as : number
-+> : any
 +>as : any
 +>aNs : any
 +>from : any

@@ -18,8 +18,8 @@ function foo() {
     console.log("foo from a");
 }
 //// [b.js]
- * as;
-aNs;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 from;
 "./a.js";
 aNs.foo();

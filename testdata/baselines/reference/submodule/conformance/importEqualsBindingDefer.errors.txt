@@ -1,0 +1,14 @@
+b.ts(1,23): error TS1005: 'from' expected.
+b.ts(1,23): error TS1141: String literal expected.
+
+
+==== b.ts (2 errors) ====
+    import defer = require("./a");
+                          ~
+!!! error TS1005: 'from' expected.
+                          ~~~~~~~
+!!! error TS1141: String literal expected.
+    
+==== a.ts (0 errors) ====
+    export = 2;
+    

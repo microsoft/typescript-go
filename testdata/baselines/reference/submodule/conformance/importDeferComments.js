@@ -10,7 +10,6 @@ export {};
 //// [a.js]
 export {};
 //// [b.js]
- * /*4*/ as; /*5*/
-aNs; /*6*/
 from; /*7*/
 "a" /*8*/;
+export {};

@@ -1,0 +1,8 @@
+--- old.importBindingDefer.js
++++ new.importBindingDefer.js
+@@= skipped -9, +9 lines =@@
+ //// [a.js]
+ export default 2;
+ //// [b.js]
+-export {};
++import "./a.js";

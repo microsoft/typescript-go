@@ -4,14 +4,12 @@
  //// [a.js]
  export {};
  //// [b.js]
-+ * as;
-+ns;
 +from;
 +"./a.js";
  export {};
 
 
-@@= skipped -8, +12 lines =@@
+@@= skipped -8, +10 lines =@@
      x: number;
  }
  //// [b.d.ts]

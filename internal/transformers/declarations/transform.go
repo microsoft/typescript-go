@@ -1681,7 +1681,7 @@ func (tx *DeclarationTransformer) transformImportDeclaration(decl *ast.ImportDec
 			decl.Modifiers(),
 			tx.Factory().UpdateImportClause(
 				decl.ImportClause.AsImportClause(),
-				decl.ImportClause.AsImportClause().IsTypeOnly,
+				decl.ImportClause.AsImportClause().PhaseModifier,
 				visibleDefaultBinding,
 				/*namedBindings*/ nil,
 			),
@@ -1703,7 +1703,7 @@ func (tx *DeclarationTransformer) transformImportDeclaration(decl *ast.ImportDec
 			decl.Modifiers(),
 			tx.Factory().UpdateImportClause(
 				decl.ImportClause.AsImportClause(),
-				decl.ImportClause.AsImportClause().IsTypeOnly,
+				decl.ImportClause.AsImportClause().PhaseModifier,
 				visibleDefaultBinding,
 				namedBindings,
 			),
@@ -1731,7 +1731,7 @@ func (tx *DeclarationTransformer) transformImportDeclaration(decl *ast.ImportDec
 			decl.Modifiers(),
 			tx.Factory().UpdateImportClause(
 				decl.ImportClause.AsImportClause(),
-				decl.ImportClause.AsImportClause().IsTypeOnly,
+				decl.ImportClause.AsImportClause().PhaseModifier,
 				visibleDefaultBinding,
 				namedImports,
 			),

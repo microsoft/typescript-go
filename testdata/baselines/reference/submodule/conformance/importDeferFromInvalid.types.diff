@@ -5,6 +5,4 @@
  === b.ts ===
  import defer from from "./a.js";
 ->from : 2
-+>defer : any
-+>from : any
-+>"./a.js" : "./a.js"
++>defer : 2

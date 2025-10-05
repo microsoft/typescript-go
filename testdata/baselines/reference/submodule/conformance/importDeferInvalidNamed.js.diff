@@ -5,9 +5,7 @@
  }
  //// [b.js]
 -import defer { foo } from "a";
-+{
-+    foo;
-+}
++import defer foo from ;
 +from;
 +"a";
  foo();

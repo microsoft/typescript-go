@@ -14,8 +14,6 @@ export type X = { foo: ns.Foo };
 //// [a.js]
 export {};
 //// [b.js]
- * as;
-ns;
 from;
 "./a.js";
 export {};

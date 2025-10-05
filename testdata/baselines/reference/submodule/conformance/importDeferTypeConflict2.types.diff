@@ -4,7 +4,10 @@
 
  === b.ts ===
  import defer type * as ns1 from "a";
-+>defer : any
- >type : any
- >* as : number
- > : any
+->type : any
+->* as : number
+-> : any
+->as : any
+ >ns1 : any
+->from : any
+->"a" : "a"

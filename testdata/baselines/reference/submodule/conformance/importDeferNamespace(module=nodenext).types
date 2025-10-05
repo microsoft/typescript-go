@@ -14,10 +14,6 @@ export function foo() {
 
 === b.ts ===
 import defer * as aNs from "./a.js";
->defer : any
-> : any
->* as : number
-> : any
 >as : any
 >aNs : any
 >from : any

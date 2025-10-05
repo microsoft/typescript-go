@@ -39,8 +39,6 @@
 -})();
  Object.defineProperty(exports, "__esModule", { value: true });
 -const aNs = __importStar(require("./a.js"));
-+ * as;
-+aNs;
 +from;
 +"./a.js";
  aNs.foo();

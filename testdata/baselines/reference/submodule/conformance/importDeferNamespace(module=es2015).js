@@ -15,8 +15,7 @@ export function foo() {
     console.log("foo from a");
 }
 //// [b.js]
- * as;
-aNs;
 from;
 "./a.js";
 aNs.foo();
+export {};
