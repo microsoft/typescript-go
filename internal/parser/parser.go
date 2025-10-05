@@ -2112,9 +2112,7 @@ func (p *Parser) parseImportDeclarationOrImportEqualsDeclaration(pos int, hasJSD
 	} else if identifier != nil && identifier.AsIdentifier().Text == "defer" {
 		var shouldParseAsDeferModifier bool
 		if p.token == ast.KindFromKeyword {
-			shouldParseAsDeferModifier = !p.lookAhead(func(p *Parser) bool {
-				return p.nextTokenIsTokenStringLiteral()
-			})
+			shouldParseAsDeferModifier = !p.lookAhead((*Parser).nextTokenIsTokenStringLiteral)
 		} else {
 			shouldParseAsDeferModifier = p.token != ast.KindCommaToken && p.token != ast.KindEqualsToken
 		}

@@ -2847,13 +2847,11 @@ func GetLeftmostAccessExpression(expr *Node) *Node {
 func IsTypeOnlyImportDeclaration(node *Node) bool {
 	switch node.Kind {
 	case KindImportSpecifier:
-		return node.AsImportSpecifier().IsTypeOnly || node.Parent.Parent.AsImportClause().PhaseModifier == KindTypeKeyword
+		return node.IsTypeOnly() || node.Parent.Parent.IsTypeOnly()
 	case KindNamespaceImport:
-		return node.Parent.AsImportClause().PhaseModifier == KindTypeKeyword
-	case KindImportClause:
-		return node.AsImportClause().PhaseModifier == KindTypeKeyword
-	case KindImportEqualsDeclaration:
-		return node.AsImportEqualsDeclaration().IsTypeOnly
+		return node.Parent.IsTypeOnly()
+	case KindImportClause, KindImportEqualsDeclaration:
+		return node.IsTypeOnly()
 	}
 	return false
 }
