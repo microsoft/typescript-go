@@ -12404,17 +12404,17 @@ func (c *Checker) checkNullishCoalesceOperands(left *ast.Node, right *ast.Node) 
 		operatorToken := left.Parent.Parent.AsBinaryExpression().OperatorToken
 		left := left.Parent.Parent.AsBinaryExpression().Left
 		if ast.IsBinaryExpression(left) && operatorToken.Kind == ast.KindBarBarToken {
-			c.grammarErrorOnNode(left, diagnostics.X_0_and_1_operations_cannot_be_mixed_without_parentheses, scanner.TokenToString(ast.KindQuestionQuestionToken), scanner.TokenToString(operatorToken.Kind))	
+			c.grammarErrorOnNode(left, diagnostics.X_0_and_1_operations_cannot_be_mixed_without_parentheses, scanner.TokenToString(ast.KindQuestionQuestionToken), scanner.TokenToString(operatorToken.Kind))
 		}
 	} else if ast.IsBinaryExpression(left) {
 		operatorToken := left.AsBinaryExpression().OperatorToken
 		if operatorToken.Kind == ast.KindBarBarToken || operatorToken.Kind == ast.KindAmpersandAmpersandToken {
-			c.grammarErrorOnNode(left, diagnostics.X_0_and_1_operations_cannot_be_mixed_without_parentheses, scanner.TokenToString(operatorToken.Kind), scanner.TokenToString(ast.KindQuestionQuestionToken))	
+			c.grammarErrorOnNode(left, diagnostics.X_0_and_1_operations_cannot_be_mixed_without_parentheses, scanner.TokenToString(operatorToken.Kind), scanner.TokenToString(ast.KindQuestionQuestionToken))
 		}
 	} else if ast.IsBinaryExpression(right) {
 		operatorToken := right.AsBinaryExpression().OperatorToken
 		if operatorToken.Kind == ast.KindAmpersandAmpersandToken {
-			c.grammarErrorOnNode(right, diagnostics.X_0_and_1_operations_cannot_be_mixed_without_parentheses, scanner.TokenToString(ast.KindQuestionQuestionToken), scanner.TokenToString(operatorToken.Kind))	
+			c.grammarErrorOnNode(right, diagnostics.X_0_and_1_operations_cannot_be_mixed_without_parentheses, scanner.TokenToString(ast.KindQuestionQuestionToken), scanner.TokenToString(operatorToken.Kind))
 		}
 	}
 	leftTarget := ast.SkipOuterExpressions(left, ast.OEKAll)
