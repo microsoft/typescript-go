@@ -31,24 +31,39 @@
  };
  ExpandoExpr3.prop = 3;
  ExpandoExpr3.m = function (n) {
-@@= skipped -13, +11 lines =@@
-
+@@= skipped -14, +12 lines =@@
  //// [typeFromPropertyAssignment29.d.ts]
  declare function ExpandoDecl(n: number): string;
--declare namespace ExpandoDecl {
+ declare namespace ExpandoDecl {
 -    var prop: number;
 -    var m: (n: number) => number;
--}
++    const prop: 2;
++}
++declare namespace ExpandoDecl {
++    const m: (n: number) => number;
+ }
  declare var n: number;
  declare const ExpandoExpr: {
-     (n: number): string;
-@@= skipped -14, +10 lines =@@
+@@= skipped -13, +15 lines =@@
          x?: undefined;
          y: string;
      };
 -    m(n: number): number;
 +    m: (n: number) => number;
  };
++declare namespace ExpandoExpr {
++    const prop: {
++        x: number;
++    };
++}
++declare namespace ExpandoExpr {
++    const prop: {
++        y: string;
++    };
++}
++declare namespace ExpandoExpr {
++    const m: (n: number) => number;
++}
  declare var n: number;
  declare const ExpandoArrow: {
      (n: number): string;
@@ -56,28 +71,35 @@
 -    m(n: number): number;
 +    m: (n: number) => number;
  };
++declare namespace ExpandoArrow {
++    const prop: 2;
++}
++declare namespace ExpandoArrow {
++    const m: (n: number) => number;
++}
  declare function ExpandoNested(n: number): {
      (m: number): number;
      total: number;
  };
--declare namespace ExpandoNested {
+ declare namespace ExpandoNested {
 -    var also: number;
--}
++    const also: -1;
+ }
  declare function ExpandoMerge(n: number): number;
  declare namespace ExpandoMerge {
 -    var p1: number;
--}
--declare namespace ExpandoMerge {
-     var p2: number;
++    const p1: 111;
  }
  declare namespace ExpandoMerge {
-@@= skipped -28, +22 lines =@@
+     var p2: number;
+@@= skipped -28, +47 lines =@@
  declare var n: number;
  declare namespace Ns {
      function ExpandoNamespace(): void;
 -    namespace ExpandoNamespace {
 -        var p6: number;
--    }
++    declare namespace ExpandoNamespace {
++        const p6: 42;
+     }
      export function foo(): typeof ExpandoNamespace;
      export {};
- }

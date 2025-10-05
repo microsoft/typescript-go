@@ -1,10 +1,9 @@
 --- old.nullPropertyName.js
 +++ new.nullPropertyName.js
-@@= skipped -170, +170 lines =@@
-
+@@= skipped -171, +171 lines =@@
  //// [nullPropertyName.d.ts]
  declare function foo(): void;
--declare namespace foo {
+ declare namespace foo {
 -    export var x: number;
 -    export var y: number;
 -    var _a: number;
@@ -84,4 +83,281 @@
 -    export var bigint: number;
 -    export var of: number;
 -    export { _a as break, _b as case, _c as catch, _d as class, _e as const, _f as continue, _g as debugger, _h as default, _j as delete, _k as do, _l as else, _m as enum, _o as export, _p as extends, _q as false, _r as finally, _s as for, _t as function, _u as if, _v as import, _w as in, _x as instanceof, _y as new, _z as null, _0 as return, _1 as super, _2 as switch, _3 as this, _4 as throw, _5 as true, _6 as try, _7 as typeof, _8 as var, _9 as void, _10 as while, _11 as with, _12 as implements, _13 as interface, _14 as let, _15 as package, _16 as private, _17 as protected, _18 as public, _19 as static, _20 as yield };
--}
++    const x: 1;
++}
++declare namespace foo {
++    const y: 1;
++}
++declare namespace foo {
++    const break_1: 1;
++    export { break_1 as break };
++}
++declare namespace foo {
++    const case_1: 1;
++    export { case_1 as case };
++}
++declare namespace foo {
++    const catch_1: 1;
++    export { catch_1 as catch };
++}
++declare namespace foo {
++    const class_1: 1;
++    export { class_1 as class };
++}
++declare namespace foo {
++    const const_1: 1;
++    export { const_1 as const };
++}
++declare namespace foo {
++    const continue_1: 1;
++    export { continue_1 as continue };
++}
++declare namespace foo {
++    const debugger_1: 1;
++    export { debugger_1 as debugger };
++}
++declare namespace foo {
++    const default_1: 1;
++    export { default_1 as default };
++}
++declare namespace foo {
++    const delete_1: 1;
++    export { delete_1 as delete };
++}
++declare namespace foo {
++    const do_1: 1;
++    export { do_1 as do };
++}
++declare namespace foo {
++    const else_1: 1;
++    export { else_1 as else };
++}
++declare namespace foo {
++    const enum_1: 1;
++    export { enum_1 as enum };
++}
++declare namespace foo {
++    const export_1: 1;
++    export { export_1 as export };
++}
++declare namespace foo {
++    const extends_1: 1;
++    export { extends_1 as extends };
++}
++declare namespace foo {
++    const false_1: 1;
++    export { false_1 as false };
++}
++declare namespace foo {
++    const finally_1: 1;
++    export { finally_1 as finally };
++}
++declare namespace foo {
++    const for_1: 1;
++    export { for_1 as for };
++}
++declare namespace foo {
++    const function_1: 1;
++    export { function_1 as function };
++}
++declare namespace foo {
++    const if_1: 1;
++    export { if_1 as if };
++}
++declare namespace foo {
++    const import_1: 1;
++    export { import_1 as import };
++}
++declare namespace foo {
++    const in_1: 1;
++    export { in_1 as in };
++}
++declare namespace foo {
++    const instanceof_1: 1;
++    export { instanceof_1 as instanceof };
++}
++declare namespace foo {
++    const new_1: 1;
++    export { new_1 as new };
++}
++declare namespace foo {
++    const null_1: 1;
++    export { null_1 as null };
++}
++declare namespace foo {
++    const return_1: 1;
++    export { return_1 as return };
++}
++declare namespace foo {
++    const super_1: 1;
++    export { super_1 as super };
++}
++declare namespace foo {
++    const switch_1: 1;
++    export { switch_1 as switch };
++}
++declare namespace foo {
++    const this_1: 1;
++    export { this_1 as this };
++}
++declare namespace foo {
++    const throw_1: 1;
++    export { throw_1 as throw };
++}
++declare namespace foo {
++    const true_1: 1;
++    export { true_1 as true };
++}
++declare namespace foo {
++    const try_1: 1;
++    export { try_1 as try };
++}
++declare namespace foo {
++    const typeof_1: 1;
++    export { typeof_1 as typeof };
++}
++declare namespace foo {
++    const var_1: 1;
++    export { var_1 as var };
++}
++declare namespace foo {
++    const void_1: 1;
++    export { void_1 as void };
++}
++declare namespace foo {
++    const while_1: 1;
++    export { while_1 as while };
++}
++declare namespace foo {
++    const with_1: 1;
++    export { with_1 as with };
++}
++declare namespace foo {
++    const implements_1: 1;
++    export { implements_1 as implements };
++}
++declare namespace foo {
++    const interface_1: 1;
++    export { interface_1 as interface };
++}
++declare namespace foo {
++    const let_1: 1;
++    export { let_1 as let };
++}
++declare namespace foo {
++    const package_1: 1;
++    export { package_1 as package };
++}
++declare namespace foo {
++    const private_1: 1;
++    export { private_1 as private };
++}
++declare namespace foo {
++    const protected_1: 1;
++    export { protected_1 as protected };
++}
++declare namespace foo {
++    const public_1: 1;
++    export { public_1 as public };
++}
++declare namespace foo {
++    const static_1: 1;
++    export { static_1 as static };
++}
++declare namespace foo {
++    const yield_1: 1;
++    export { yield_1 as yield };
++}
++declare namespace foo {
++    const abstract: 1;
++}
++declare namespace foo {
++    const as: 1;
++}
++declare namespace foo {
++    const asserts: 1;
++}
++declare namespace foo {
++    const any: 1;
++}
++declare namespace foo {
++    const async: 1;
++}
++declare namespace foo {
++    const await: 1;
++}
++declare namespace foo {
++    const boolean: 1;
++}
++declare namespace foo {
++    const constructor: 1;
++}
++declare namespace foo {
++    const declare: 1;
++}
++declare namespace foo {
++    const get: 1;
++}
++declare namespace foo {
++    const infer: 1;
++}
++declare namespace foo {
++    const is: 1;
++}
++declare namespace foo {
++    const keyof: 1;
++}
++declare namespace foo {
++    const module: 1;
++}
++declare namespace foo {
++    const namespace: 1;
++}
++declare namespace foo {
++    const never: 1;
++}
++declare namespace foo {
++    const readonly: 1;
++}
++declare namespace foo {
++    const require: 1;
++}
++declare namespace foo {
++    const number: 1;
++}
++declare namespace foo {
++    const object: 1;
++}
++declare namespace foo {
++    const set: 1;
++}
++declare namespace foo {
++    const string: 1;
++}
++declare namespace foo {
++    const symbol: 1;
++}
++declare namespace foo {
++    const type: 1;
++}
++declare namespace foo {
++    const undefined: 1;
++}
++declare namespace foo {
++    const unique: 1;
++}
++declare namespace foo {
++    const unknown: 1;
++}
++declare namespace foo {
++    const from: 1;
++}
++declare namespace foo {
++    const global: 1;
++}
++declare namespace foo {
++    const bigint: 1;
++}
++declare namespace foo {
++    const of: 1;
+ }

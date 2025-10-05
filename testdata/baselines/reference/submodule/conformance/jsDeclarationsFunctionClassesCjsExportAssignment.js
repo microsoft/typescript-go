@@ -158,6 +158,16 @@ export type State = {
     timer: Timer;
     hook: Hook;
 };
+declare namespace Context {
+    const prototype: {
+        /**
+         * @param {Input} input
+         * @param {HookHandler=} handle
+         * @returns {State}
+         */
+        construct(input: Input, handle?: any): State;
+    };
+}
 export = Context;
 //// [hook.d.ts]
 export type HookHandler = (arg: import("./context")) => void;

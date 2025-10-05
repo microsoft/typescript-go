@@ -195,6 +195,16 @@ declare const TabbedShowLayout: {
         tabs: undefined;
     };
 };
+declare namespace TabbedShowLayout {
+    const propTypes: {
+        version: PropTypes.Requireable<number>;
+    };
+}
+declare namespace TabbedShowLayout {
+    const defaultProps: {
+        tabs: undefined;
+    };
+}
 export default TabbedShowLayout;
 //// [jsDeclarationsReactComponents2.d.ts]
 import React from "react";
@@ -202,6 +212,11 @@ import React from "react";
  * @type {React.SFC}
  */
 declare const TabbedShowLayout: React.SFC;
+declare namespace TabbedShowLayout {
+    const defaultProps: {
+        tabs: string;
+    };
+}
 export default TabbedShowLayout;
 //// [jsDeclarationsReactComponents3.d.ts]
 /**
@@ -214,6 +229,11 @@ declare const TabbedShowLayout: {
 } & ((props?: {
     elem: string;
 }) => JSX.Element);
+declare namespace TabbedShowLayout {
+    const defaultProps: {
+        tabs: string;
+    };
+}
 export default TabbedShowLayout;
 //// [jsDeclarationsReactComponents4.d.ts]
 declare const TabbedShowLayout: {
@@ -224,9 +244,149 @@ declare const TabbedShowLayout: {
         tabs: string;
     };
 };
+declare namespace TabbedShowLayout {
+    const defaultProps: {
+        tabs: string;
+    };
+}
 export default TabbedShowLayout;
 //// [jsDeclarationsReactComponents5.d.ts]
+import PropTypes from 'prop-types';
 declare function Tree({ allowDropOnRoot }: {
     allowDropOnRoot: any;
 }): JSX.Element;
+declare namespace Tree {
+    const propTypes: {
+        classes: PropTypes.Requireable<object>;
+    };
+}
+declare namespace Tree {
+    const defaultProps: {
+        classes: {};
+        parentSource: string;
+    };
+}
 export default Tree;
+
+
+//// [DtsFileErrors]
+
+
+out/jsDeclarationsReactComponents1.d.ts(3,15): error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+out/jsDeclarationsReactComponents1.d.ts(12,19): error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+out/jsDeclarationsReactComponents1.d.ts(17,19): error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+out/jsDeclarationsReactComponents2.d.ts(5,15): error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+out/jsDeclarationsReactComponents2.d.ts(6,19): error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+out/jsDeclarationsReactComponents3.d.ts(4,15): error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+out/jsDeclarationsReactComponents3.d.ts(11,19): error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+out/jsDeclarationsReactComponents4.d.ts(1,15): error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+out/jsDeclarationsReactComponents4.d.ts(9,19): error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+
+
+==== out/jsDeclarationsReactComponents1.d.ts (3 errors) ====
+    /// <reference path="../../.lib/react16.d.ts" preserve="true" />
+    import PropTypes from "prop-types";
+    declare const TabbedShowLayout: {
+                  ~~~~~~~~~~~~~~~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+        ({}: {}): JSX.Element;
+        propTypes: {
+            version: PropTypes.Requireable<number>;
+        };
+        defaultProps: {
+            tabs: undefined;
+        };
+    };
+    declare namespace TabbedShowLayout {
+                      ~~~~~~~~~~~~~~~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+        const propTypes: {
+            version: PropTypes.Requireable<number>;
+        };
+    }
+    declare namespace TabbedShowLayout {
+                      ~~~~~~~~~~~~~~~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+        const defaultProps: {
+            tabs: undefined;
+        };
+    }
+    export default TabbedShowLayout;
+    
+==== out/jsDeclarationsReactComponents2.d.ts (2 errors) ====
+    import React from "react";
+    /**
+     * @type {React.SFC}
+     */
+    declare const TabbedShowLayout: React.SFC;
+                  ~~~~~~~~~~~~~~~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+    declare namespace TabbedShowLayout {
+                      ~~~~~~~~~~~~~~~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+        const defaultProps: {
+            tabs: string;
+        };
+    }
+    export default TabbedShowLayout;
+    
+==== out/jsDeclarationsReactComponents3.d.ts (2 errors) ====
+    /**
+     * @type {{defaultProps: {tabs: string}} & ((props?: {elem: string}) => JSX.Element)}
+     */
+    declare const TabbedShowLayout: {
+                  ~~~~~~~~~~~~~~~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+        defaultProps: {
+            tabs: string;
+        };
+    } & ((props?: {
+        elem: string;
+    }) => JSX.Element);
+    declare namespace TabbedShowLayout {
+                      ~~~~~~~~~~~~~~~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+        const defaultProps: {
+            tabs: string;
+        };
+    }
+    export default TabbedShowLayout;
+    
+==== out/jsDeclarationsReactComponents4.d.ts (2 errors) ====
+    declare const TabbedShowLayout: {
+                  ~~~~~~~~~~~~~~~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+        (prop: {
+            className: string;
+        }): JSX.Element;
+        defaultProps: {
+            tabs: string;
+        };
+    };
+    declare namespace TabbedShowLayout {
+                      ~~~~~~~~~~~~~~~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
+        const defaultProps: {
+            tabs: string;
+        };
+    }
+    export default TabbedShowLayout;
+    
+==== out/jsDeclarationsReactComponents5.d.ts (0 errors) ====
+    import PropTypes from 'prop-types';
+    declare function Tree({ allowDropOnRoot }: {
+        allowDropOnRoot: any;
+    }): JSX.Element;
+    declare namespace Tree {
+        const propTypes: {
+            classes: PropTypes.Requireable<object>;
+        };
+    }
+    declare namespace Tree {
+        const defaultProps: {
+            classes: {};
+            parentSource: string;
+        };
+    }
+    export default Tree;
+    

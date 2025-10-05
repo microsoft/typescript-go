@@ -16,17 +16,11 @@ module.exports = foo;
 
 
 //// [index.d.ts]
+declare namespace foo {
+    const foo: typeof import(".");
+}
+declare namespace foo {
+    const default_1: typeof import(".");
+    export { default_1 as default };
+}
 export = foo;
-
-
-//// [DtsFileErrors]
-
-
-out/index.d.ts(1,10): error TS2304: Cannot find name 'foo'.
-
-
-==== out/index.d.ts (1 errors) ====
-    export = foo;
-             ~~~
-!!! error TS2304: Cannot find name 'foo'.
-    

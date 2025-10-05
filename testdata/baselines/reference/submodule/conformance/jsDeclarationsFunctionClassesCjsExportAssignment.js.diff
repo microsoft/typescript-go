@@ -46,18 +46,7 @@
 -    timeout: number;
 -}
  //// [context.d.ts]
-+export type Timer = import("./timer");
-+export type Hook = import("./hook");
-+export type HookHandler = import("./hook").HookHandler;
-+export type Input = {
-+    timer: Timer;
-+    hook: Hook;
-+};
-+export type State = {
-+    timer: Timer;
-+    hook: Hook;
-+};
- export = Context;
+-export = Context;
 -/**
 - * Imports
 - *
@@ -123,9 +112,28 @@
 -     */
 -    construct(input: Input, handle?: HookHandler | undefined): State;
 -}
--declare namespace Context {
++export type Timer = import("./timer");
++export type Hook = import("./hook");
++export type HookHandler = import("./hook").HookHandler;
++export type Input = {
++    timer: Timer;
++    hook: Hook;
++};
++export type State = {
++    timer: Timer;
++    hook: Hook;
++};
+ declare namespace Context {
 -    export { Timer, Hook, HookHandler, Input, State };
--}
++    const prototype: {
++        /**
++         * @param {Input} input
++         * @param {HookHandler=} handle
++         * @returns {State}
++         */
++        construct(input: Input, handle?: any): State;
++    };
+ }
 -/**
 - * Imports
 - */
@@ -152,6 +160,7 @@
 -    timer: Timer;
 -    hook: Hook;
 -};
++export = Context;
  //// [hook.d.ts]
 +export type HookHandler = (arg: import("./context")) => void;
  export = Hook;

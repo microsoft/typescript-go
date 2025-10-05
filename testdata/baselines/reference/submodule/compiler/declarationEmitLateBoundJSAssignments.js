@@ -26,3 +26,6 @@ const a = foo[dashStrMem];
 
 //// [file.d.ts]
 export declare function foo(): void;
+export declare namespace foo {
+    const bar: 12;
+}
