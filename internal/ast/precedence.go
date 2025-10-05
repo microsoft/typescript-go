@@ -43,6 +43,10 @@ const (
 	//     ShortCircuitExpression
 	//     ShortCircuitExpression `?` AssignmentExpression `:` AssignmentExpression
 	OperatorPrecedenceConditional
+	// LogicalORExpression:
+	//     LogicalANDExpression
+	//     LogicalORExpression `||` LogicalANDExpression
+	OperatorPrecedenceLogicalOR
 	// ShortCircuitExpression:
 	//     LogicalORExpression
 	//     CoalesceExpression
@@ -52,10 +56,6 @@ const (
 	//     CoalesceExpression
 	//     BitwiseORExpression
 	OperatorPrecedenceCoalesce
-	// LogicalORExpression:
-	//     LogicalANDExpression
-	//     LogicalORExpression `||` LogicalANDExpression
-	OperatorPrecedenceLogicalOR
 	// LogicalANDExpression:
 	//     BitwiseORExpression
 	//     LogicalANDExprerssion `&&` BitwiseORExpression
