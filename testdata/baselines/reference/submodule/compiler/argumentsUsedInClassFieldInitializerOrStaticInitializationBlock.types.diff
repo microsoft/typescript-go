@@ -1,70 +1,65 @@
 --- old.argumentsUsedInClassFieldInitializerOrStaticInitializationBlock.types
 +++ new.argumentsUsedInClassFieldInitializerOrStaticInitializationBlock.types
-@@= skipped -8, +8 lines =@@
+@@= skipped -80, +80 lines =@@
  >T : typeof T
 
-      a = arguments
-->a : any
-->arguments : any
-+>a : IArguments
-+>arguments : IArguments
+      a = () => arguments  // should error
+->a : () => IArguments
+->() => arguments : () => IArguments
+->arguments : IArguments
++>a : () => any
++>() => arguments : () => any
++>arguments : any
    }
  }
 
-@@= skipped -14, +14 lines =@@
+@@= skipped -18, +18 lines =@@
+ >() => {      arguments;    // should error      const b = () => {        return arguments;     // should error      }      function f() {        return arguments;      // ok      }    } : () => void
+
+       arguments;    // should error
+->arguments : IArguments
++>arguments : any
+
+       const b = () => {
+->b : () => IArguments
+->() => {        return arguments;     // should error      } : () => IArguments
++>b : () => any
++>() => {        return arguments;     // should error      } : () => any
+
+         return arguments;     // should error
+->arguments : IArguments
++>arguments : any
+       }
+
+       function f() {
+@@= skipped -109, +109 lines =@@
  >T : typeof T
 
-      a = arguments
-->a : any
-->arguments : any
-+>a : IArguments
-+>arguments : IArguments
-   }
- }
-
-@@= skipped -13, +13 lines =@@
- >T : typeof T
-
-      a = { b: arguments }
-->a : { b: any; }
-->{ b: arguments } : { b: any; }
-->b : any
-->arguments : any
-+>a : { b: IArguments; }
-+>{ b: arguments } : { b: IArguments; }
-+>b : IArguments
-+>arguments : IArguments
+      a = (() => { return arguments; })()  // should error
+->a : IArguments
+->(() => { return arguments; })() : IArguments
+->(() => { return arguments; }) : () => IArguments
+->() => { return arguments; } : () => IArguments
+->arguments : IArguments
++>a : any
++>(() => { return arguments; })() : any
++>(() => { return arguments; }) : () => any
++>() => { return arguments; } : () => any
++>arguments : any
    }
  }
 
 @@= skipped -16, +16 lines =@@
  >T : typeof T
 
-      a = { b: arguments }
-->a : { b: any; }
-->{ b: arguments } : { b: any; }
-->b : any
-->arguments : any
-+>a : { b: IArguments; }
-+>{ b: arguments } : { b: IArguments; }
-+>b : IArguments
-+>arguments : IArguments
+      a = (x = arguments) => {}    // should error
+->a : (x?: IArguments) => void
+->(x = arguments) => {} : (x?: IArguments) => void
+->x : IArguments
+->arguments : IArguments
++>a : (x?: any) => void
++>(x = arguments) => {} : (x?: any) => void
++>x : any
++>arguments : any
    }
  }
-
-@@= skipped -117, +117 lines =@@
-
-     static {
-       arguments;  // should error
-->arguments : any
-+>arguments : IArguments
-
-       while(1) {
- >1 : 1
-
-         arguments // should error
-->arguments : any
-+>arguments : IArguments
-       }
-     }
-   }
