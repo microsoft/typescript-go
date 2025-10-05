@@ -37,7 +37,7 @@ func (c *Checker) grammarErrorAtPos(nodeForSourceFile *ast.Node, start int, leng
 func (c *Checker) grammarErrorOnNode(node *ast.Node, message *diagnostics.Message, args ...any) bool {
 	sourceFile := ast.GetSourceFileOfNode(node)
 	if !c.hasParseDiagnostics(sourceFile) {
-		c.diagnostics.Add(NewDiagnosticForNode(node, message, args...))
+		c.error(node, message, args...)
 		return true
 	}
 	return false
@@ -1700,8 +1700,13 @@ func (c *Checker) checkGrammarVariableDeclarationList(declarationList *ast.Varia
 	}
 
 	blockScopeFlags := declarationList.Flags & ast.NodeFlagsBlockScoped
-	if (blockScopeFlags == ast.NodeFlagsUsing || blockScopeFlags == ast.NodeFlagsAwaitUsing) && ast.IsForInStatement(declarationList.Parent) {
-		return c.grammarErrorOnNode(declarationList.AsNode(), core.IfElse(blockScopeFlags == ast.NodeFlagsUsing, diagnostics.The_left_hand_side_of_a_for_in_statement_cannot_be_a_using_declaration, diagnostics.The_left_hand_side_of_a_for_in_statement_cannot_be_an_await_using_declaration))
+	if blockScopeFlags == ast.NodeFlagsUsing || blockScopeFlags == ast.NodeFlagsAwaitUsing {
+		if ast.IsForInStatement(declarationList.Parent) {
+			return c.grammarErrorOnNode(declarationList.AsNode(), core.IfElse(blockScopeFlags == ast.NodeFlagsUsing, diagnostics.The_left_hand_side_of_a_for_in_statement_cannot_be_a_using_declaration, diagnostics.The_left_hand_side_of_a_for_in_statement_cannot_be_an_await_using_declaration))
+		}
+		if declarationList.Flags&ast.NodeFlagsAmbient != 0 {
+			return c.grammarErrorOnNode(declarationList.AsNode(), core.IfElse(blockScopeFlags == ast.NodeFlagsUsing, diagnostics.X_using_declarations_are_not_allowed_in_ambient_contexts, diagnostics.X_await_using_declarations_are_not_allowed_in_ambient_contexts))
+		}
 	}
 
 	if blockScopeFlags == ast.NodeFlagsAwaitUsing {
@@ -1841,7 +1846,7 @@ func (c *Checker) checkGrammarForDisallowedBlockScopedVariableStatement(node *as
 			default:
 				panic("Unknown BlockScope flag")
 			}
-			return c.grammarErrorOnNode(node.AsNode(), diagnostics.X_0_declarations_can_only_be_declared_inside_a_block, keyword)
+			c.error(node.AsNode(), diagnostics.X_0_declarations_can_only_be_declared_inside_a_block, keyword)
 		}
 	}
 
@@ -2140,7 +2145,8 @@ func (c *Checker) checkGrammarNumericLiteral(node *ast.NumericLiteral) {
 func (c *Checker) checkGrammarBigIntLiteral(node *ast.BigIntLiteral) bool {
 	literalType := ast.IsLiteralTypeNode(node.Parent) || ast.IsPrefixUnaryExpression(node.Parent) && ast.IsLiteralTypeNode(node.Parent.Parent)
 	if !literalType {
-		if c.languageVersion < core.ScriptTargetES2020 {
+		// Don't error on BigInt literals in ambient contexts
+		if node.Flags&ast.NodeFlagsAmbient == 0 && c.languageVersion < core.ScriptTargetES2020 {
 			if c.grammarErrorOnNode(node.AsNode(), diagnostics.BigInt_literals_are_not_available_when_targeting_lower_than_ES2020) {
 				return true
 			}
