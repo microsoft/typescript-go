@@ -22,7 +22,7 @@ export interface Foo {
     x: number;
 }
 //// [b.d.ts]
-import defer * as ns from "./a.js";
+import * as ns from "./a.js";
 export type X = {
     foo: ns.Foo;
 };
