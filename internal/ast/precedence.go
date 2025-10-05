@@ -47,15 +47,6 @@ const (
 	//     LogicalANDExpression
 	//     LogicalORExpression `||` LogicalANDExpression
 	OperatorPrecedenceLogicalOR
-	// ShortCircuitExpression:
-	//     LogicalORExpression
-	//     CoalesceExpression
-	// CoalesceExpression:
-	//     CoalesceExpressionHead `??` BitwiseORExpression
-	// CoalesceExpressionHead:
-	//     CoalesceExpression
-	//     BitwiseORExpression
-	OperatorPrecedenceCoalesce
 	// LogicalANDExpression:
 	//     BitwiseORExpression
 	//     LogicalANDExprerssion `&&` BitwiseORExpression
@@ -181,6 +172,15 @@ const (
 	OperatorPrecedenceLowest        = OperatorPrecedenceComma
 	OperatorPrecedenceHighest       = OperatorPrecedenceParentheses
 	OperatorPrecedenceDisallowComma = OperatorPrecedenceYield
+	// ShortCircuitExpression:
+	//     LogicalORExpression
+	//     CoalesceExpression
+	// CoalesceExpression:
+	//     CoalesceExpressionHead `??` BitwiseORExpression
+	// CoalesceExpressionHead:
+	//     CoalesceExpression
+	//     BitwiseORExpression
+	OperatorPrecedenceCoalesce = OperatorPrecedenceLogicalOR
 	// -1 is lower than all other precedences. Returning it will cause binary expression
 	// parsing to stop.
 	OperatorPrecedenceInvalid OperatorPrecedence = -1
