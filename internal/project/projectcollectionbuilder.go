@@ -793,7 +793,7 @@ func (b *projectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 				if result.UpdateKind == ProgramUpdateKindNewFiles {
 					filesChanged = true
 					if b.sessionOptions.WatchEnabled {
-						programFilesWatch, failedLookupsWatch, affectingLocationsWatch := project.CloneWatchers(b.sessionOptions.CurrentDirectory)
+						programFilesWatch, failedLookupsWatch, affectingLocationsWatch := project.CloneWatchers(b.sessionOptions.CurrentDirectory, b.sessionOptions.DefaultLibraryPath)
 						project.programFilesWatch = programFilesWatch
 						project.failedLookupsWatch = failedLookupsWatch
 						project.affectingLocationsWatch = affectingLocationsWatch

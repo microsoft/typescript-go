@@ -157,12 +157,12 @@ func NewProject(
 		project.failedLookupsWatch = NewWatchedFiles(
 			"failed lookups for "+configFileName,
 			lsproto.WatchKindCreate,
-			createResolutionLookupGlobMapper(builder.sessionOptions.CurrentDirectory, project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
+			createResolutionLookupGlobMapper(builder.sessionOptions.CurrentDirectory, builder.sessionOptions.DefaultLibraryPath, project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
 		)
 		project.affectingLocationsWatch = NewWatchedFiles(
 			"affecting locations for "+configFileName,
 			lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
-			createResolutionLookupGlobMapper(builder.sessionOptions.CurrentDirectory, project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
+			createResolutionLookupGlobMapper(builder.sessionOptions.CurrentDirectory, builder.sessionOptions.DefaultLibraryPath, project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
 		)
 		if builder.sessionOptions.TypingsLocation != "" {
 			project.typingsWatch = NewWatchedFiles(
@@ -331,10 +331,10 @@ func (p *Project) CreateProgram() CreateProgramResult {
 	}
 }
 
-func (p *Project) CloneWatchers(workspaceDir string) (programFilesWatch *WatchedFiles[patternsAndIgnored], failedLookupsWatch *WatchedFiles[map[tspath.Path]string], affectingLocationsWatch *WatchedFiles[map[tspath.Path]string]) {
+func (p *Project) CloneWatchers(workspaceDir string, libDir string) (programFilesWatch *WatchedFiles[patternsAndIgnored], failedLookupsWatch *WatchedFiles[map[tspath.Path]string], affectingLocationsWatch *WatchedFiles[map[tspath.Path]string]) {
 	failedLookups := make(map[tspath.Path]string)
 	affectingLocations := make(map[tspath.Path]string)
-	programFiles := getNonRootFileGlobs(workspaceDir, p.Program.GetSourceFiles(), p.CommandLine.FileNamesByPath(), tspath.ComparePathsOptions{
+	programFiles := getNonRootFileGlobs(workspaceDir, libDir, p.Program.GetSourceFiles(), p.CommandLine.FileNamesByPath(), tspath.ComparePathsOptions{
 		UseCaseSensitiveFileNames: p.host.FS().UseCaseSensitiveFileNames(),
 		CurrentDirectory:          p.currentDirectory,
 	})

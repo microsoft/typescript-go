@@ -208,7 +208,7 @@ func (c *configFileRegistryBuilder) updateRootFilesWatch(fileName string, entry 
 		globs = append(globs, fileName)
 	}
 	if len(externalDirectories) > 0 {
-		commonParents, ignoredExternalDirs := tspath.GetCommonParents(externalDirectories, minWatchLocationDepth, comparePathsOptions)
+		commonParents, ignoredExternalDirs := tspath.GetCommonParents(externalDirectories, minWatchLocationDepth, getPathComponentsForWatching, comparePathsOptions)
 		for _, parent := range commonParents {
 			globs = append(globs, getRecursiveGlobPattern(parent))
 		}
