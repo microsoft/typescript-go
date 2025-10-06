@@ -24,14 +24,14 @@ declare const SomeConstructor2: {
     staticMember: string;
 };
 declare namespace SomeConstructor2 {
-    const staticMember: "str";
+    const staticMember: string;
 }
 declare const SomeConstructor3: {
     (): void;
     staticMember: string;
 };
 declare namespace SomeConstructor3 {
-    const staticMember: "str";
+    const staticMember: string;
 }
 
 
@@ -55,7 +55,7 @@ file.d.ts(13,19): error TS2451: Cannot redeclare block-scoped variable 'SomeCons
     declare namespace SomeConstructor2 {
                       ~~~~~~~~~~~~~~~~
 !!! error TS2451: Cannot redeclare block-scoped variable 'SomeConstructor2'.
-        const staticMember: "str";
+        const staticMember: string;
     }
     declare const SomeConstructor3: {
                   ~~~~~~~~~~~~~~~~
@@ -66,6 +66,6 @@ file.d.ts(13,19): error TS2451: Cannot redeclare block-scoped variable 'SomeCons
     declare namespace SomeConstructor3 {
                       ~~~~~~~~~~~~~~~~
 !!! error TS2451: Cannot redeclare block-scoped variable 'SomeConstructor3'.
-        const staticMember: "str";
+        const staticMember: string;
     }
     

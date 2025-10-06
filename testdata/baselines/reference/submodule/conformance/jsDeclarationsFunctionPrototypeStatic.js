@@ -38,7 +38,7 @@ declare namespace MyClass {
     const staticMethod: () => void;
 }
 declare namespace MyClass {
-    const staticProperty: 123;
+    const staticProperty: number;
 }
 export type DoneCB = (failures: number) ;
 /**

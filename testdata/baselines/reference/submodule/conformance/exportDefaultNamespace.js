@@ -22,5 +22,5 @@ someFunc.someProp = 'yo';
 declare function someFunc(): string;
 export default someFunc;
 declare namespace someFunc {
-    const someProp: "yo";
+    const someProp: string;
 }

@@ -28,7 +28,7 @@
 +export declare function a(): void;
 +export declare function b(): void;
 +export declare namespace b {
-+    const cat: "cat";
++    const cat: string;
  }
 -export function c(): void;
 -export namespace c {

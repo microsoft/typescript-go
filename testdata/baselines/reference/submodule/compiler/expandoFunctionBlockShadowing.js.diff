@@ -17,5 +17,5 @@
  export declare function Y(): void;
  export declare namespace Y {
 -    var test: string;
-+    const test: "foo";
++    const test: string;
  }

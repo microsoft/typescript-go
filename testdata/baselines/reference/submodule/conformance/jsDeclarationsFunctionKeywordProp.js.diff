@@ -6,17 +6,17 @@
  declare namespace foo {
 -    let _null: boolean;
 -    export { _null as null };
-+    const null_1: true;
-+    export { null_1 as null };
++    const _a: boolean;
++    export { _a as null };
  }
  declare function bar(): void;
  declare namespace bar {
 -    let async: boolean;
 -    let normal: boolean;
-+    const async: true;
++    const async: boolean;
 +}
 +declare namespace bar {
-+    const normal: false;
++    const normal: boolean;
  }
  declare function baz(): void;
  declare namespace baz {
@@ -24,9 +24,9 @@
 -    export { _class as class };
 -    let normal_1: boolean;
 -    export { normal_1 as normal };
-+    const class_1: true;
-+    export { class_1 as class };
++    const _b: boolean;
++    export { _b as class };
 +}
 +declare namespace baz {
-+    const normal: false;
++    const normal: boolean;
  }

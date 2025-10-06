@@ -16,7 +16,7 @@
 +};
  declare namespace SomeConstructor2 {
 -    let staticMember: string;
-+    const staticMember: "str";
++    const staticMember: string;
  }
 -declare function SomeConstructor3(): void;
 +declare const SomeConstructor3: {
@@ -30,7 +30,7 @@
 -declare class SomeConstructor3 {
 -    x: number;
 -}
-+    const staticMember: "str";
++    const staticMember: string;
 +}
 +
 +
@@ -54,7 +54,7 @@
 +    declare namespace SomeConstructor2 {
 +                      ~~~~~~~~~~~~~~~~
 +!!! error TS2451: Cannot redeclare block-scoped variable 'SomeConstructor2'.
-+        const staticMember: "str";
++        const staticMember: string;
 +    }
 +    declare const SomeConstructor3: {
 +                  ~~~~~~~~~~~~~~~~
@@ -65,6 +65,6 @@
 +    declare namespace SomeConstructor3 {
 +                      ~~~~~~~~~~~~~~~~
 +!!! error TS2451: Cannot redeclare block-scoped variable 'SomeConstructor3'.
-+        const staticMember: "str";
++        const staticMember: string;
 +    }
 +    

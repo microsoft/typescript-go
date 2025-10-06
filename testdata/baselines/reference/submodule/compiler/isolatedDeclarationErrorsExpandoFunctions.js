@@ -41,10 +41,10 @@ export declare namespace foo {
     const toString: () => void;
 }
 export declare namespace foo {
-    const length: 10;
+    const length: number;
 }
 export declare namespace foo {
-    const length: 10;
+    const length: number;
 }
 
 
@@ -73,12 +73,12 @@ isolatedDeclarationErrorsExpandoFunctions.d.ts(21,11): error TS2451: Cannot rede
         const toString: () => void;
     }
     export declare namespace foo {
-        const length: 10;
+        const length: number;
               ~~~~~~
 !!! error TS2451: Cannot redeclare block-scoped variable 'length'.
     }
     export declare namespace foo {
-        const length: 10;
+        const length: number;
               ~~~~~~
 !!! error TS2451: Cannot redeclare block-scoped variable 'length'.
     }

@@ -5,5 +5,5 @@
  declare function f(a: 1): 1;
  declare namespace f {
 -    var x: number;
-+    const x: 2;
++    const x: number;
  }

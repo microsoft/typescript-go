@@ -6,5 +6,5 @@
  export declare namespace foo {
 -    var bar: number;
 -    var strMemName: string;
-+    const bar: 12;
++    const bar: number;
  }

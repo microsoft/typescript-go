@@ -37,7 +37,7 @@
  declare namespace ExpandoDecl {
 -    var prop: number;
 -    var m: (n: number) => number;
-+    const prop: 2;
++    const prop: number;
 +}
 +declare namespace ExpandoDecl {
 +    const m: (n: number) => number;
@@ -54,10 +54,18 @@
 +declare namespace ExpandoExpr {
 +    const prop: {
 +        x: number;
++        y?: undefined;
++    } | {
++        x?: undefined;
++        y: string;
 +    };
 +}
 +declare namespace ExpandoExpr {
 +    const prop: {
++        x: number;
++        y?: undefined;
++    } | {
++        x?: undefined;
 +        y: string;
 +    };
 +}
@@ -72,7 +80,7 @@
 +    m: (n: number) => number;
  };
 +declare namespace ExpandoArrow {
-+    const prop: 2;
++    const prop: number;
 +}
 +declare namespace ExpandoArrow {
 +    const m: (n: number) => number;
@@ -83,23 +91,23 @@
  };
  declare namespace ExpandoNested {
 -    var also: number;
-+    const also: -1;
++    const also: number;
  }
  declare function ExpandoMerge(n: number): number;
  declare namespace ExpandoMerge {
 -    var p1: number;
-+    const p1: 111;
++    const p1: number;
  }
  declare namespace ExpandoMerge {
      var p2: number;
-@@= skipped -28, +47 lines =@@
+@@= skipped -28, +55 lines =@@
  declare var n: number;
  declare namespace Ns {
      function ExpandoNamespace(): void;
 -    namespace ExpandoNamespace {
 -        var p6: number;
 +    declare namespace ExpandoNamespace {
-+        const p6: 42;
++        const p6: number;
      }
      export function foo(): typeof ExpandoNamespace;
      export {};

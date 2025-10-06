@@ -213,9 +213,7 @@ import React from "react";
  */
 declare const TabbedShowLayout: React.SFC;
 declare namespace TabbedShowLayout {
-    const defaultProps: {
-        tabs: string;
-    };
+    const defaultProps: Partial<{}> | undefined;
 }
 export default TabbedShowLayout;
 //// [jsDeclarationsReactComponents3.d.ts]
@@ -324,9 +322,7 @@ out/jsDeclarationsReactComponents4.d.ts(9,19): error TS2451: Cannot redeclare bl
     declare namespace TabbedShowLayout {
                       ~~~~~~~~~~~~~~~~
 !!! error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
-        const defaultProps: {
-            tabs: string;
-        };
+        const defaultProps: Partial<{}> | undefined;
     }
     export default TabbedShowLayout;
     

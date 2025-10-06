@@ -30,19 +30,19 @@ declare const SomeConstructor2: {
     staticMember: string;
 };
 declare namespace SomeConstructor2 {
-    const staticMember: "str";
+    const staticMember: string;
 }
 declare const SomeConstructor3: {
     (): void;
     staticMember: string;
 };
 declare namespace SomeConstructor3 {
-    const staticMember: "str";
+    const staticMember: string;
 }
 declare const SelfReference: {
     (): any;
     staticMember: string;
 };
 declare namespace SelfReference {
-    const staticMember: "str";
+    const staticMember: string;
 }

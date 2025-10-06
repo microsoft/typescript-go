@@ -124,7 +124,7 @@ function j() { }
 export declare function a(): void;
 export declare function b(): void;
 export declare namespace b {
-    const cat: "cat";
+    const cat: string;
 }
 export declare function c(): void;
 export declare namespace c {

@@ -48,7 +48,7 @@ assignmentToVoidZero2_1.j + assignmentToVoidZero2_1.k;
 export var j = 1;
 export var k = void 0;
 declare namespace o {
-    const x: 1;
+    const x: number;
 }
 declare namespace o {
     const y: any;

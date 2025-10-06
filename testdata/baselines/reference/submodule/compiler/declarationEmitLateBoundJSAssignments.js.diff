@@ -10,5 +10,5 @@
 -    let strMemName: string;
 +export declare function foo(): void;
 +export declare namespace foo {
-+    const bar: 12;
++    const bar: number;
  }

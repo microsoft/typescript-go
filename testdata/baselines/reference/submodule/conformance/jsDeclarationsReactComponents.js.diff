@@ -96,9 +96,7 @@
 + */
 +declare const TabbedShowLayout: React.SFC;
 +declare namespace TabbedShowLayout {
-+    const defaultProps: {
-+        tabs: string;
-+    };
++    const defaultProps: Partial<{}> | undefined;
 +}
 +export default TabbedShowLayout;
  //// [jsDeclarationsReactComponents3.d.ts]
@@ -106,7 +104,7 @@
  /**
   * @type {{defaultProps: {tabs: string}} & ((props?: {elem: string}) => JSX.Element)}
   */
-@@= skipped -30, +44 lines =@@
+@@= skipped -30, +42 lines =@@
  } & ((props?: {
      elem: string;
  }) => JSX.Element);
@@ -223,9 +221,7 @@
 +    declare namespace TabbedShowLayout {
 +                      ~~~~~~~~~~~~~~~~
 +!!! error TS2451: Cannot redeclare block-scoped variable 'TabbedShowLayout'.
-+        const defaultProps: {
-+            tabs: string;
-+        };
++        const defaultProps: Partial<{}> | undefined;
 +    }
 +    export default TabbedShowLayout;
 +    

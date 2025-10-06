@@ -20,7 +20,7 @@ declare namespace foo {
     const foo: typeof import(".");
 }
 declare namespace foo {
-    const default_1: typeof import(".");
-    export { default_1 as default };
+    const _a: typeof import(".");
+    export { _a as default };
 }
 export = foo;

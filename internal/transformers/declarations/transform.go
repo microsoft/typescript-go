@@ -1836,7 +1836,6 @@ func (tx *DeclarationTransformer) visitExpressionStatement(node *ast.ExpressionS
 
 func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExpression) *ast.Node {
 	left := node.Left
-	right := node.Right
 
 	if ast.IsElementAccessExpression(left) {
 		return nil
@@ -1874,13 +1873,13 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 
 	saveDiag := tx.state.getSymbolAccessibilityDiagnostic
 	tx.state.getSymbolAccessibilityDiagnostic = createGetSymbolAccessibilityDiagnosticForNode(node.AsNode())
-	t := tx.resolver.CreateTypeOfExpression(tx.EmitContext(), right, synthesizedNamespace, declarationEmitNodeBuilderFlags, declarationEmitInternalNodeBuilderFlags|nodebuilder.InternalFlagsNoSyntacticPrinter, tx.tracker)
+	t := tx.resolver.CreateTypeOfExpression(tx.EmitContext(), left, synthesizedNamespace, declarationEmitNodeBuilderFlags, declarationEmitInternalNodeBuilderFlags|nodebuilder.InternalFlagsNoSyntacticPrinter, tx.tracker)
 	tx.state.getSymbolAccessibilityDiagnostic = saveDiag
 
 	nameToken := scanner.StringToToken(left.Name().Text())
 	isNonContextualKeywordName := ast.IsNonContextualKeyword(nameToken)
 
-	exportName := core.IfElse(isNonContextualKeywordName, tx.Factory().NewGeneratedNameForNode(left.Name()), tx.Factory().NewIdentifier(left.Name().Text()))
+	exportName := core.IfElse(isNonContextualKeywordName, tx.Factory().NewGeneratedNameForNode(left), tx.Factory().NewIdentifier(left.Name().Text()))
 	statements := []*ast.Statement{
 		tx.Factory().NewVariableStatement(
 			nil, /*modifiers*/

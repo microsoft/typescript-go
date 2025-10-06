@@ -5,5 +5,5 @@
  export declare function foo(): void;
  export declare namespace foo {
 -    var bar: number;
-+    const bar: 12;
++    const bar: number;
  }
