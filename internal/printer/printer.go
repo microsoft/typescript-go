@@ -629,7 +629,7 @@ func (p *Printer) writeCommentRange(comment ast.CommentRange) {
 	}
 
 	text := p.currentSourceFile.Text()
-	lineMap := p.currentSourceFile.LineMap()
+	lineMap := p.currentSourceFile.ECMALineMap()
 	p.writeCommentRangeWorker(text, lineMap, comment.Kind, comment.TextRange)
 }
 
@@ -2716,14 +2716,6 @@ func (p *Printer) getBinaryExpressionPrecedence(node *ast.BinaryExpression) (lef
 	case ast.OperatorPrecedenceAssignment:
 		// assignment is right-associative
 		leftPrec = ast.OperatorPrecedenceLeftHandSide
-	case ast.OperatorPrecedenceCoalesce:
-		// allow coalesce on the left, but short circuit to BitwiseOR
-		if isBinaryOperation(node.Left, ast.KindQuestionQuestionToken) {
-			leftPrec = ast.OperatorPrecedenceCoalesce
-		} else {
-			leftPrec = ast.OperatorPrecedenceBitwiseOR
-		}
-		rightPrec = ast.OperatorPrecedenceBitwiseOR
 	case ast.OperatorPrecedenceLogicalOR:
 		rightPrec = ast.OperatorPrecedenceLogicalAND
 	case ast.OperatorPrecedenceLogicalAND:
@@ -3661,8 +3653,8 @@ func (p *Printer) emitImportDeclaration(node *ast.ImportDeclaration) {
 
 func (p *Printer) emitImportClause(node *ast.ImportClause) {
 	state := p.enterNode(node.AsNode())
-	if node.IsTypeOnly {
-		p.emitToken(ast.KindTypeKeyword, node.Pos(), WriteKindKeyword, node.AsNode())
+	if node.PhaseModifier != ast.KindUnknown {
+		p.emitToken(node.PhaseModifier, node.Pos(), WriteKindKeyword, node.AsNode())
 		p.writeSpace()
 	}
 	if name := node.Name(); name != nil {
@@ -5227,7 +5219,7 @@ func (p *Printer) writeSynthesizedComment(comment SynthesizedComment) {
 	text := formatSynthesizedComment(comment)
 	var lineMap []core.TextPos
 	if comment.Kind == ast.KindMultiLineCommentTrivia {
-		lineMap = core.ComputeLineStarts(text)
+		lineMap = core.ComputeECMALineStarts(text)
 	}
 	p.writeCommentRangeWorker(text, lineMap, comment.Kind, core.NewTextRange(0, len(text)))
 }
@@ -5294,7 +5286,7 @@ func (p *Printer) shouldEmitNewLineBeforeLeadingCommentOfPosition(pos int, comme
 	// If the leading comments start on different line than the start of node, write new line
 	return p.currentSourceFile != nil &&
 		pos != commentPos &&
-		scanner.ComputeLineOfPosition(p.currentSourceFile.LineMap(), pos) != scanner.ComputeLineOfPosition(p.currentSourceFile.LineMap(), commentPos)
+		scanner.ComputeLineOfPosition(p.currentSourceFile.ECMALineMap(), pos) != scanner.ComputeLineOfPosition(p.currentSourceFile.ECMALineMap(), commentPos)
 }
 
 func (p *Printer) emitTrailingComments(pos int, commentSeparator commentSeparator) {
@@ -5329,7 +5321,7 @@ func (p *Printer) emitDetachedComments(textRange core.TextRange) (result detache
 	}
 
 	text := p.currentSourceFile.Text()
-	lineMap := p.currentSourceFile.LineMap()
+	lineMap := p.currentSourceFile.ECMALineMap()
 
 	var leadingComments []ast.CommentRange
 	if p.commentsDisabled {
@@ -5482,7 +5474,7 @@ func (p *Printer) emitPos(pos int) {
 		return
 	}
 
-	sourceLine, sourceCharacter := scanner.GetLineAndCharacterOfPosition(p.sourceMapSource, pos)
+	sourceLine, sourceCharacter := scanner.GetECMALineAndCharacterOfPosition(p.sourceMapSource, pos)
 	if err := p.sourceMapGenerator.AddSourceMapping(
 		p.writer.GetLine(),
 		p.writer.GetColumn(),

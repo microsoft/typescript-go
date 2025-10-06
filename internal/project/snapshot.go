@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/project/logging"
+	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -59,7 +60,7 @@ func NewSnapshot(
 		ProjectCollection:                  &ProjectCollection{toPath: toPath},
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
 	}
-	s.converters = ls.NewConverters(s.sessionOptions.PositionEncoding, s.LineMap)
+	s.converters = ls.NewConverters(s.sessionOptions.PositionEncoding, s.LSPLineMap)
 	s.refCount.Store(1)
 	return s
 }
@@ -74,9 +75,16 @@ func (s *Snapshot) GetFile(fileName string) FileHandle {
 	return s.fs.GetFile(fileName)
 }
 
-func (s *Snapshot) LineMap(fileName string) *ls.LineMap {
+func (s *Snapshot) LSPLineMap(fileName string) *ls.LSPLineMap {
 	if file := s.fs.GetFile(fileName); file != nil {
-		return file.LineMap()
+		return file.LSPLineMap()
+	}
+	return nil
+}
+
+func (s *Snapshot) GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo {
+	if file := s.fs.GetFile(fileName); file != nil {
+		return file.ECMALineInfo()
 	}
 	return nil
 }
@@ -87,6 +95,18 @@ func (s *Snapshot) Converters() *ls.Converters {
 
 func (s *Snapshot) ID() uint64 {
 	return s.id
+}
+
+func (s *Snapshot) UseCaseSensitiveFileNames() bool {
+	return s.fs.fs.UseCaseSensitiveFileNames()
+}
+
+func (s *Snapshot) ReadFile(fileName string) (string, bool) {
+	handle := s.GetFile(fileName)
+	if handle == nil {
+		return "", false
+	}
+	return handle.Content(), true
 }
 
 type APISnapshotRequest struct {

@@ -741,11 +741,16 @@ func (tx *DeclarationTransformer) transformPropertyDeclaration(input *ast.Proper
 	if ast.IsPrivateIdentifier(input.Name()) {
 		return nil
 	}
+	// Remove definite assignment assertion (!) from declaration files
+	postfixToken := input.PostfixToken
+	if postfixToken != nil && postfixToken.Kind == ast.KindExclamationToken {
+		postfixToken = nil
+	}
 	return tx.Factory().UpdatePropertyDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
 		input.Name(),
-		input.PostfixToken,
+		postfixToken,
 		tx.ensureType(input.AsNode(), false),
 		tx.ensureNoInitializer(input.AsNode()),
 	)
@@ -1661,6 +1666,10 @@ func (tx *DeclarationTransformer) transformImportDeclaration(decl *ast.ImportDec
 			tx.tryGetResolutionModeOverride(decl.Attributes),
 		)
 	}
+	phaseModifier := decl.ImportClause.AsImportClause().PhaseModifier
+	if phaseModifier == ast.KindDeferKeyword {
+		phaseModifier = ast.KindUnknown
+	}
 	// The `importClause` visibility corresponds to the default's visibility.
 	var visibleDefaultBinding *ast.Node
 	if decl.ImportClause != nil && decl.ImportClause.Name() != nil && tx.resolver.IsDeclarationVisible(decl.ImportClause) {
@@ -1676,7 +1685,7 @@ func (tx *DeclarationTransformer) transformImportDeclaration(decl *ast.ImportDec
 			decl.Modifiers(),
 			tx.Factory().UpdateImportClause(
 				decl.ImportClause.AsImportClause(),
-				decl.ImportClause.AsImportClause().IsTypeOnly,
+				phaseModifier,
 				visibleDefaultBinding,
 				/*namedBindings*/ nil,
 			),
@@ -1698,7 +1707,7 @@ func (tx *DeclarationTransformer) transformImportDeclaration(decl *ast.ImportDec
 			decl.Modifiers(),
 			tx.Factory().UpdateImportClause(
 				decl.ImportClause.AsImportClause(),
-				decl.ImportClause.AsImportClause().IsTypeOnly,
+				phaseModifier,
 				visibleDefaultBinding,
 				namedBindings,
 			),
@@ -1726,7 +1735,7 @@ func (tx *DeclarationTransformer) transformImportDeclaration(decl *ast.ImportDec
 			decl.Modifiers(),
 			tx.Factory().UpdateImportClause(
 				decl.ImportClause.AsImportClause(),
-				decl.ImportClause.AsImportClause().IsTypeOnly,
+				phaseModifier,
 				visibleDefaultBinding,
 				namedImports,
 			),

@@ -254,7 +254,7 @@ func (options *CompilerOptions) GetESModuleInterop() bool {
 		return options.ESModuleInterop == TSTrue
 	}
 	switch options.GetEmitModuleKind() {
-	case ModuleKindNode16, ModuleKindNodeNext, ModuleKindPreserve:
+	case ModuleKindNode16, ModuleKindNode18, ModuleKindNodeNext, ModuleKindPreserve:
 		return true
 	}
 	return false
@@ -412,6 +412,7 @@ const (
 	// Node16+ is an amalgam of commonjs (albeit updated) and es2022+, and represents a distinct module system from es2020/esnext
 	ModuleKindNode16   ModuleKind = 100
 	ModuleKindNode18   ModuleKind = 101
+	ModuleKindNode20   ModuleKind = 102
 	ModuleKindNodeNext ModuleKind = 199
 	// Emit as written
 	ModuleKindPreserve ModuleKind = 200
