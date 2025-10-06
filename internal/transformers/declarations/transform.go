@@ -1906,8 +1906,8 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 	replacement := make([]*ast.Node, 0)
 
 	flags := ast.GetCombinedModifierFlags(declaration)
-	if flags & ast.ModifierFlagsExport != 0 {
-		if flags & ast.ModifierFlagsDefault != 0 {
+	if flags&ast.ModifierFlagsExport != 0 {
+		if flags&ast.ModifierFlagsDefault != 0 {
 			if n := tx.transformExpandoHost(name, declaration); n != nil {
 				replacement = append(replacement, n)
 			}
