@@ -41,7 +41,7 @@ export declare const Point: {
     zero: () => Point;
 };
 export declare const Rect: <p extends Point>(a: p, b: p) => Rect<p>;
-declare namespace Point {
+export declare namespace Point {
     const zero: () => Point;
 }
 
@@ -50,13 +50,11 @@ declare namespace Point {
 
 
 declarationEmitExpandoWithGenericConstraint.d.ts(1,18): error TS2451: Cannot redeclare block-scoped variable 'Point'.
-declarationEmitExpandoWithGenericConstraint.d.ts(9,22): error TS2395: Individual declarations in merged declaration 'Point' must be all exported or all local.
 declarationEmitExpandoWithGenericConstraint.d.ts(9,22): error TS2451: Cannot redeclare block-scoped variable 'Point'.
-declarationEmitExpandoWithGenericConstraint.d.ts(14,19): error TS2395: Individual declarations in merged declaration 'Point' must be all exported or all local.
-declarationEmitExpandoWithGenericConstraint.d.ts(14,19): error TS2451: Cannot redeclare block-scoped variable 'Point'.
+declarationEmitExpandoWithGenericConstraint.d.ts(14,26): error TS2451: Cannot redeclare block-scoped variable 'Point'.
 
 
-==== declarationEmitExpandoWithGenericConstraint.d.ts (5 errors) ====
+==== declarationEmitExpandoWithGenericConstraint.d.ts (3 errors) ====
     export interface Point {
                      ~~~~~
 !!! error TS2451: Cannot redeclare block-scoped variable 'Point'.
@@ -69,17 +67,13 @@ declarationEmitExpandoWithGenericConstraint.d.ts(14,19): error TS2451: Cannot re
     }
     export declare const Point: {
                          ~~~~~
-!!! error TS2395: Individual declarations in merged declaration 'Point' must be all exported or all local.
-                         ~~~~~
 !!! error TS2451: Cannot redeclare block-scoped variable 'Point'.
         (x: number, y: number): Point;
         zero: () => Point;
     };
     export declare const Rect: <p extends Point>(a: p, b: p) => Rect<p>;
-    declare namespace Point {
-                      ~~~~~
-!!! error TS2395: Individual declarations in merged declaration 'Point' must be all exported or all local.
-                      ~~~~~
+    export declare namespace Point {
+                             ~~~~~
 !!! error TS2451: Cannot redeclare block-scoped variable 'Point'.
         const zero: () => Point;
     }
