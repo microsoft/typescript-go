@@ -56,12 +56,10 @@ func TestSnapshot(t *testing.T) {
 				},
 			},
 		})
-		_, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/index.ts")
+		_, _, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/index.ts")
 		assert.NilError(t, err)
 		snapshotAfter, release := session.Snapshot()
 		defer release()
-
-		// Configured project was updated by a clone
 		assert.Equal(t, snapshotAfter.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")).ProgramUpdateKind, ProgramUpdateKindCloned)
 		// Inferred project wasn't updated last snapshot change, so its program update kind is still NewFiles
 		assert.Equal(t, snapshotBefore.ProjectCollection.InferredProject(), snapshotAfter.ProjectCollection.InferredProject())

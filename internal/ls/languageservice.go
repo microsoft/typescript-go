@@ -8,10 +8,9 @@ import (
 )
 
 type LanguageService struct {
-	host                    Host
-	program                 *compiler.Program
-	converters              *Converters
-	documentPositionMappers map[string]*sourcemap.DocumentPositionMapper
+	host       Host
+	program    *compiler.Program
+	converters *Converters
 }
 
 func NewLanguageService(
@@ -19,10 +18,9 @@ func NewLanguageService(
 	host Host,
 ) *LanguageService {
 	return &LanguageService{
-		host:                    host,
-		program:                 program,
-		converters:              host.Converters(),
-		documentPositionMappers: map[string]*sourcemap.DocumentPositionMapper{},
+		host:       host,
+		program:    program,
+		converters: host.Converters(),
 	}
 }
 
@@ -46,22 +44,12 @@ func (l *LanguageService) getProgramAndFile(documentURI lsproto.DocumentUri) (*c
 }
 
 func (l *LanguageService) GetDocumentPositionMapper(fileName string) *sourcemap.DocumentPositionMapper {
-	d, ok := l.documentPositionMappers[fileName]
-	if !ok {
-		d = sourcemap.GetDocumentPositionMapper(l, fileName)
-		l.documentPositionMappers[fileName] = d
-	}
-	return d
-}
-
-func (l *LanguageService) ReadFile(fileName string) (string, bool) {
-	return l.host.ReadFile(fileName)
-}
-
-func (l *LanguageService) UseCaseSensitiveFileNames() bool {
-	return l.host.UseCaseSensitiveFileNames()
-}
-
-func (l *LanguageService) GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo {
-	return l.host.GetECMALineInfo(fileName)
+	// d, ok := l.documentPositionMappers[fileName]
+	// if !ok {
+	// 	d = sourcemap.GetDocumentPositionMapper(l, fileName)
+	// 	l.documentPositionMappers[fileName] = d
+	// }
+	// return d
+	// !!!
+	return nil
 }

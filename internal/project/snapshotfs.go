@@ -1,11 +1,9 @@
 package project
 
 import (
-	"sync"
-
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
+	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
@@ -27,10 +25,7 @@ type snapshotFS struct {
 	fs        vfs.FS
 	overlays  map[tspath.Path]*overlay
 	diskFiles map[tspath.Path]*diskFile
-	readFiles collections.SyncMap[tspath.Path, memoizedDiskFile]
 }
-
-type memoizedDiskFile func() *diskFile
 
 func (s *snapshotFS) FS() vfs.FS {
 	return s.fs
@@ -43,14 +38,24 @@ func (s *snapshotFS) GetFile(fileName string) FileHandle {
 	if file, ok := s.diskFiles[s.toPath(fileName)]; ok {
 		return file
 	}
-	newEntry := memoizedDiskFile(sync.OnceValue(func() *diskFile {
-		if contents, ok := s.fs.ReadFile(fileName); ok {
-			return newDiskFile(fileName, contents)
+	return nil
+}
+
+func (s *snapshotFS) GetDocumentPositionMapper(fileName string) *sourcemap.DocumentPositionMapper {
+	var sourceMapInfo *sourceMapInfo
+	if file, ok := s.overlays[s.toPath(fileName)]; ok {
+		sourceMapInfo = file.sourceMapInfo
+	}
+	if file, ok := s.diskFiles[s.toPath(fileName)]; ok {
+		sourceMapInfo = file.sourceMapInfo
+	}
+	if sourceMapInfo != nil {
+		if sourceMapInfo.documentMapper != nil {
+			return sourceMapInfo.documentMapper.m
 		}
-		return nil
-	}))
-	if entry, ok := s.readFiles.LoadOrStore(s.toPath(fileName), newEntry); ok {
-		return entry()
+		if sourceMapInfo.sourceMapPath != "" {
+			return s.GetDocumentPositionMapper(sourceMapInfo.sourceMapPath)
+		}
 	}
 	return nil
 }
@@ -93,6 +98,16 @@ func (s *snapshotFSBuilder) Finalize() (*snapshotFS, bool) {
 	}, changed
 }
 
+func (s *snapshotFSBuilder) Finalize2() (*snapshotFS, bool, map[tspath.Path]*dirty.Change[*diskFile]) {
+	diskFiles, changed, changes := s.diskFiles.Finalize2()
+	return &snapshotFS{
+		fs:        s.fs,
+		overlays:  s.overlays,
+		diskFiles: diskFiles,
+		toPath:    s.toPath,
+	}, changed, changes
+}
+
 func (s *snapshotFSBuilder) GetFile(fileName string) FileHandle {
 	path := s.toPath(fileName)
 	return s.GetFileByPath(fileName, path)
@@ -111,6 +126,9 @@ func (s *snapshotFSBuilder) GetFileByPath(fileName string, path tspath.Path) Fil
 						file.content = content
 						file.hash = xxh3.Hash128([]byte(content))
 						file.needsReload = false
+						// This should not ever be needed while updating a snapshot with source maps
+						file.sourceMapInfo = nil
+						file.lineInfo = nil
 					})
 				} else {
 					entry.Delete()
@@ -138,6 +156,123 @@ func (s *snapshotFSBuilder) markDirtyFiles(change FileChangeSummary) {
 		if entry, ok := s.diskFiles.Load(path); ok {
 			entry.Change(func(file *diskFile) {
 				file.needsReload = true
+			})
+		}
+	}
+}
+
+// UseCaseSensitiveFileNames implements sourcemap.Host.
+func (s *snapshotFSBuilder) UseCaseSensitiveFileNames() bool {
+	return s.fs.UseCaseSensitiveFileNames()
+}
+
+// GetECMALineInfo implements sourcemap.Host.
+func (s *snapshotFSBuilder) GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo {
+	if file := s.GetFile(fileName); file != nil {
+		return file.ECMALineInfo()
+	}
+	return nil
+}
+
+// ReadFile implements sourcemap.Host.
+func (s *snapshotFSBuilder) ReadFile(fileName string) (contents string, ok bool) {
+	if file := s.GetFile(fileName); file != nil {
+		return file.Content(), true
+	}
+	return "", false
+}
+
+// !!! TODO: consolidate this and `GetFileByPath`
+func (s *snapshotFSBuilder) getDiskFileByPath(fileName string, path tspath.Path) *diskFile {
+	entry, _ := s.diskFiles.LoadOrStore(path, &diskFile{fileBase: fileBase{fileName: fileName}, needsReload: true})
+	if entry != nil {
+		entry.Locked(func(entry dirty.Value[*diskFile]) {
+			if entry.Value() != nil && !entry.Value().MatchesDiskText() {
+				if content, ok := s.fs.ReadFile(fileName); ok {
+					entry.Change(func(file *diskFile) {
+						file.content = content
+						file.hash = xxh3.Hash128([]byte(content))
+						file.needsReload = false
+						// This should not ever be needed while updating a snapshot with source maps
+						file.sourceMapInfo = nil
+						file.lineInfo = nil
+					})
+				} else {
+					entry.Delete()
+				}
+			}
+		})
+	}
+	if entry == nil || entry.Value() == nil {
+		return nil
+	}
+	return entry.Value()
+}
+
+func (s *snapshotFSBuilder) computeDocumentPositionMapper(genFileName string) {
+	// !!! TODO: What if file is in overlay?
+	genFilePath := s.toPath(genFileName)
+	entry, _ := s.diskFiles.Load(genFilePath)
+	if entry == nil {
+		return
+	}
+	file := entry.Value()
+	if file == nil {
+		return
+	}
+	// Source map information already computed
+	if file.sourceMapInfo != nil {
+		return
+	}
+	// Compute source map information
+	url, isInline := sourcemap.GetSourceMapURL(s, genFileName)
+	if isInline {
+		// Store document mapper directly in disk file for an inline source map
+		docMapper := sourcemap.ConvertDocumentToSourceMapper(s, url, genFileName)
+		entry.Change(func(file *diskFile) {
+			file.sourceMapInfo = &sourceMapInfo{documentMapper: &documentMapper{m: docMapper}}
+		})
+	} else {
+		// Store path to map file
+		entry.Change(func(file *diskFile) {
+			file.sourceMapInfo = &sourceMapInfo{sourceMapPath: url}
+		})
+	}
+	if url != "" {
+		s.computeDocumentPositionMapperForMap(url)
+	}
+}
+
+func (s *snapshotFSBuilder) computeDocumentPositionMapperForMap(mapFileName string) {
+	mapFilePath := s.toPath(mapFileName)
+	mapFile := s.getDiskFileByPath(mapFileName, mapFilePath)
+	if mapFile == nil {
+		return
+	}
+	if mapFile.sourceMapInfo != nil {
+		return
+	}
+	docMapper := sourcemap.ConvertDocumentToSourceMapper(s, mapFile.Content(), mapFileName)
+	entry, _ := s.diskFiles.Load(mapFilePath)
+	entry.Change(func(file *diskFile) {
+		file.sourceMapInfo = &sourceMapInfo{documentMapper: &documentMapper{m: docMapper}}
+	})
+}
+
+func (s *snapshotFSBuilder) applyDiskFileChanges(changes map[tspath.Path]*dirty.Change[*diskFile]) {
+	for path, change := range changes {
+		if change.Deleted {
+			if change.Old != nil {
+				panic("Deleting files not supported")
+			}
+			continue
+		}
+		entry, _ := s.diskFiles.Load(path)
+		if entry != nil {
+			entry.Change(func(file *diskFile) {
+				if file.Hash() == change.Old.Hash() {
+					file.sourceMapInfo = change.New.sourceMapInfo
+				}
 			})
 		}
 	}

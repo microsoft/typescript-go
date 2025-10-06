@@ -8,20 +8,19 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-func (l *LanguageService) getMappedLocation(fileName string, fileRange core.TextRange) lsproto.Location {
-	startPos := l.tryGetSourcePosition(fileName, core.TextPos(fileRange.Pos()))
+func (l *LanguageService) getMappedLocation(location *lsproto.Location) *lsproto.Location {
+	script := l.getScript(location.Uri.FileName())
+	rangeStart := l.converters.LineAndCharacterToPosition(script, location.Range.Start)
+	rangeEnd := l.converters.LineAndCharacterToPosition(script, location.Range.End)
+	startPos := l.tryGetSourcePosition(location.Uri.FileName(), core.TextPos(rangeStart))
 	if startPos == nil {
-		lspRange := l.createLspRangeFromRange(fileRange, l.getScript(fileName))
-		return lsproto.Location{
-			Uri:   FileNameToDocumentURI(fileName),
-			Range: *lspRange,
-		}
+		return location
 	}
-	endPos := l.tryGetSourcePosition(fileName, core.TextPos(fileRange.End()))
+	endPos := l.tryGetSourcePosition(location.Uri.FileName(), core.TextPos(rangeEnd))
 	debug.Assert(endPos.FileName == startPos.FileName, "start and end should be in same file")
 	newRange := core.NewTextRange(startPos.Pos, endPos.Pos)
 	lspRange := l.createLspRangeFromRange(newRange, l.getScript(startPos.FileName))
-	return lsproto.Location{
+	return &lsproto.Location{
 		Uri:   FileNameToDocumentURI(startPos.FileName),
 		Range: *lspRange,
 	}
@@ -54,7 +53,7 @@ func (l *LanguageService) tryGetSourcePosition(
 ) *sourcemap.DocumentPosition {
 	newPos := l.tryGetSourcePositionWorker(fileName, position)
 	if newPos != nil {
-		if _, ok := l.ReadFile(newPos.FileName); !ok { // File doesn't exist
+		if _, ok := l.host.ReadFile(newPos.FileName); !ok { // File doesn't exist
 			return nil
 		}
 	}
