@@ -1085,7 +1085,7 @@ func getReferencedSymbolsForModule(ctx context.Context, program *compiler.Progra
 	}
 
 	// Handle export equals declarations
-	exported := symbol.Exports[ast.InternalSymbolNameExportEquals]
+	exported := symbol.Exports.Get(ast.InternalSymbolNameExportEquals)
 	if exported != nil && len(exported.Declarations) > 0 {
 		for _, decl := range exported.Declarations {
 			sourceFile := ast.GetSourceFileOfNode(decl)
@@ -1393,7 +1393,7 @@ func getClassConstructorSymbol(classSymbol *ast.Symbol) *ast.Symbol {
 	if classSymbol.Members == nil {
 		return nil
 	}
-	return classSymbol.Members[ast.InternalSymbolNameConstructor]
+	return classSymbol.Members.Get(ast.InternalSymbolNameConstructor)
 }
 
 func hasOwnConstructor(classDeclaration *ast.ClassLikeDeclaration) bool {
@@ -1413,7 +1413,7 @@ func findOwnConstructorReferences(classSymbol *ast.Symbol, sourceFile *ast.Sourc
 	}
 
 	if classSymbol.Exports != nil {
-		for _, member := range classSymbol.Exports {
+		for _, member := range classSymbol.Exports.Iter() {
 			decl := member.ValueDeclaration
 			if decl != nil && decl.Kind == ast.KindMethodDeclaration {
 				body := decl.Body()
