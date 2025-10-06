@@ -17,7 +17,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/project/background"
-	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -653,21 +652,21 @@ func (s *Session) GetLanguageServiceWithMappedFiles(ctx context.Context, uri lsp
 		// This should not happen, since we ensured the project was loaded the first time a language service was requested.
 		return nil, fmt.Errorf("no project found for URI %s", uri)
 	}
-	snapshotWithFiles, addedFiles := snapshot.CloneWithSourceMaps(files, s)
-	// go s.updateSnapshotWithAddedFiles(addedFiles)
-	s.updateSnapshotWithAddedFiles(addedFiles)
+	snapshotWithFiles, changes := snapshot.CloneWithSourceMaps(files, s)
+	go s.updateSnapshotWithAddedFiles(changes)
 	return ls.NewLanguageService(project.GetProgram(), snapshotWithFiles), nil
 }
 
-func (s *Session) updateSnapshotWithAddedFiles(addedFiles map[tspath.Path]*dirty.Change[*diskFile]) {
+func (s *Session) updateSnapshotWithAddedFiles(changes *builderFileChanges) {
+	overlays := s.fs.processBuilderChanges(changes.overlayChanges)
 	s.snapshotMu.Lock()
 	oldSnapshot := s.snapshot
-	newSnapshot := oldSnapshot.CloneWithChanges(addedFiles, s)
+	newSnapshot := oldSnapshot.CloneWithChanges(changes.diskChanges, overlays, s)
 	s.snapshot = newSnapshot
 	s.snapshotMu.Unlock()
 
 	// We don't need to dispose the old snapshot here because the new snapshot will have the same programs
 	// and config files as the old snapshot, so the reference counts will be the same.
 
-	// !!! TODO: update file watchers with patch
+	// !!! TODO: update file watchers (`updateWatches`)
 }

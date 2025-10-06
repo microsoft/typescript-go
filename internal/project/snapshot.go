@@ -3,8 +3,6 @@ package project
 import (
 	"context"
 	"fmt"
-	"maps"
-	"slices"
 	"sync/atomic"
 	"time"
 
@@ -295,7 +293,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 // Creates a clone of the snapshot that ensures source maps are computed for the given files.
 // Returns the new snapshot and a patch of changes made to diskFiles.
-func (s *Snapshot) CloneWithSourceMaps(genFiles []string, session *Session) (*Snapshot, map[tspath.Path]*dirty.Change[*diskFile]) {
+func (s *Snapshot) CloneWithSourceMaps(genFiles []string, session *Session) (*Snapshot, *builderFileChanges) {
 	fs := newSnapshotFSBuilder(s.fs.fs, s.fs.overlays, s.fs.diskFiles, s.sessionOptions.PositionEncoding, s.toPath)
 	for _, genFile := range genFiles {
 		fs.computeDocumentPositionMapper(genFile)
@@ -322,8 +320,9 @@ func (s *Snapshot) CloneWithSourceMaps(genFiles []string, session *Session) (*Sn
 	return newSnapshot, changes
 }
 
-func (s *Snapshot) CloneWithChanges(changes map[tspath.Path]*dirty.Change[*diskFile], session *Session) *Snapshot {
-	fs := newSnapshotFSBuilder(s.fs.fs, s.fs.overlays, s.fs.diskFiles, s.sessionOptions.PositionEncoding, s.toPath)
+func (s *Snapshot) CloneWithChanges(changes map[tspath.Path]*dirty.Change[*diskFile], overlays map[tspath.Path]*overlay, session *Session) *Snapshot {
+	// !!! Log time
+	fs := newSnapshotFSBuilder(s.fs.fs, overlays, s.fs.diskFiles, s.sessionOptions.PositionEncoding, s.toPath)
 	fs.applyDiskFileChanges(changes)
 	snapshotFS, _ := fs.Finalize()
 	newId := session.snapshotID.Add(1)
@@ -339,7 +338,7 @@ func (s *Snapshot) CloneWithChanges(changes map[tspath.Path]*dirty.Change[*diskF
 	)
 	var logger *logging.LogTree
 	if session.options.LoggingEnabled {
-		logger = logging.NewLogTree(fmt.Sprintf("Cloning snapshot %d with changes %v", s.id, slices.Collect(maps.Keys(changes))))
+		logger = logging.NewLogTree(fmt.Sprintf("Cloning snapshot %d with changes", s.id))
 	}
 	newSnapshot.parentId = s.id
 	newSnapshot.ProjectCollection = s.ProjectCollection

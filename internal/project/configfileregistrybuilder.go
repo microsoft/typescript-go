@@ -443,7 +443,7 @@ func (c *configFileRegistryBuilder) getConfigFileNameForFile(fileName string, pa
 
 	configName := c.computeConfigFileName(fileName, false, logger)
 
-	if _, ok := c.fs.overlays[path]; ok {
+	if _, ok := c.fs.overlays.Load(path); ok {
 		c.configFileNames.Add(path, &configFileNames{
 			nearestConfigFileName: configName,
 		})
@@ -471,7 +471,7 @@ func (c *configFileRegistryBuilder) getAncestorConfigFileName(fileName string, p
 	// Look for config in parent folders of config file
 	result := c.computeConfigFileName(configFileName, true, logger)
 
-	if _, ok := c.fs.overlays[path]; ok {
+	if _, ok := c.fs.overlays.Load(path); ok {
 		entry.Change(func(value *configFileNames) {
 			if value.ancestors == nil {
 				value.ancestors = make(map[string]string)

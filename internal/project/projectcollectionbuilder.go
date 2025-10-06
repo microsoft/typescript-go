@@ -151,11 +151,13 @@ func (b *projectCollectionBuilder) HandleAPIRequest(apiRequest *APISnapshotReque
 		}
 	}
 
-	for _, overlay := range b.fs.overlays {
-		if entry := b.findDefaultConfiguredProject(overlay.FileName(), b.toPath(overlay.FileName())); entry != nil {
+	b.fs.overlays.Range(func(overlay *dirty.SyncMapEntry[tspath.Path, *overlay]) bool {
+		fileName := overlay.Value().FileName()
+		if entry := b.findDefaultConfiguredProject(fileName, b.toPath(fileName)); entry != nil {
 			delete(projectsToClose, entry.Value().configFilePath)
 		}
-	}
+		return true
+	})
 
 	for projectPath := range projectsToClose {
 		if entry, ok := b.configuredProjects.Load(projectPath); ok {
@@ -239,13 +241,15 @@ func (b *projectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 		})
 
 		var inferredProjectFiles []string
-		for _, overlay := range b.fs.overlays {
-			if p := b.findDefaultConfiguredProject(overlay.FileName(), b.toPath(overlay.FileName())); p != nil {
+		b.fs.overlays.Range(func(overlay *dirty.SyncMapEntry[tspath.Path, *overlay]) bool {
+			fileName := overlay.Value().FileName()
+			if p := b.findDefaultConfiguredProject(fileName, b.toPath(fileName)); p != nil {
 				toRemoveProjects.Delete(p.Value().configFilePath)
 			} else {
-				inferredProjectFiles = append(inferredProjectFiles, overlay.FileName())
+				inferredProjectFiles = append(inferredProjectFiles, fileName)
 			}
-		}
+			return true
+		})
 
 		for projectPath := range toRemoveProjects.Keys() {
 			if openFileResult.retain.Has(projectPath) {
@@ -298,11 +302,14 @@ func (b *projectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, logge
 		// If the structure of other projects changed, we might need to move files
 		// in/out of the inferred project.
 		var inferredProjectFiles []string
-		for path, overlay := range b.fs.overlays {
-			if b.findDefaultConfiguredProject(overlay.FileName(), path) == nil {
-				inferredProjectFiles = append(inferredProjectFiles, overlay.FileName())
+		b.fs.overlays.Range(func(overlay *dirty.SyncMapEntry[tspath.Path, *overlay]) bool {
+			path := overlay.Key()
+			fileName := overlay.Value().FileName()
+			if b.findDefaultConfiguredProject(fileName, path) == nil {
+				inferredProjectFiles = append(inferredProjectFiles, fileName)
 			}
-		}
+			return true
+		})
 		if len(inferredProjectFiles) > 0 {
 			b.updateInferredProjectRoots(inferredProjectFiles, logger)
 		}
@@ -395,7 +402,8 @@ func (b *projectCollectionBuilder) markProjectsAffectedByConfigChanges(
 	// Recompute default projects for open files that now have different config file presence.
 	var hasChanges bool
 	for path := range configChangeResult.affectedFiles {
-		fileName := b.fs.overlays[path].FileName()
+		overlay, _ := b.fs.overlays.Load(path)
+		fileName := overlay.Value().FileName()
 		_ = b.ensureConfiguredProjectAndAncestorsForOpenFile(fileName, path, logger)
 		hasChanges = true
 	}
