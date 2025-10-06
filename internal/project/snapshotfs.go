@@ -49,10 +49,12 @@ func (s *snapshotFS) GetFile(fileName string) FileHandle {
 		}
 		return nil
 	}))
-	if entry, ok := s.readFiles.LoadOrStore(s.toPath(fileName), newEntry); ok {
-		return entry()
+	entry, _ := s.readFiles.LoadOrStore(s.toPath(fileName), newEntry)
+	file := entry()
+	if file == nil {
+		return nil
 	}
-	return nil
+	return file
 }
 
 type snapshotFSBuilder struct {
