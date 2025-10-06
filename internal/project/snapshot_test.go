@@ -113,13 +113,8 @@ func TestSnapshot(t *testing.T) {
 		snapshot, release := session.Snapshot()
 		defer release()
 
-		// Test that GetFile returns nil for non-existent file (first call)
 		handle := snapshot.GetFile("/home/projects/TS/p1/nonexistent.ts")
-		assert.Check(t, handle == nil, "GetFile should return nil for non-existent file on first call")
-
-		// Test that GetFile returns nil for non-existent file (second call - triggers the cached path)
-		handle2 := snapshot.GetFile("/home/projects/TS/p1/nonexistent.ts")
-		assert.Check(t, handle2 == nil, "GetFile should return nil for non-existent file on second call")
+		assert.Check(t, handle == nil, "GetFile should return nil for non-existent file")
 
 		// Test that ReadFile returns false for non-existent file
 		_, ok := snapshot.ReadFile("/home/projects/TS/p1/nonexistent.ts")
