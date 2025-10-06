@@ -27,14 +27,6 @@ type OutputPaths interface {
 	JsFilePath() string
 }
 
-type DeclareModifier uint8
-
-const (
-	DeclareModifierNone     DeclareModifier = 0
-	DeclareModifierEligible DeclareModifier = 1
-	DeclareModifierEnforced DeclareModifier = 2
-)
-
 // Used to be passed in the TransformationContext, which is now just an EmitContext
 type DeclarationEmitHost interface {
 	modulespecifiers.ModuleSpecifierGenerationHost
@@ -1860,6 +1852,8 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 	}
 
 	name := tx.Factory().NewIdentifier(ns.Text())
+	tx.transformExpandoHost(name, declaration)
+
 	synthesizedNamespace := tx.Factory().NewModuleDeclaration(nil /*modifiers*/, ast.KindNamespaceKeyword, name, tx.Factory().NewModuleBlock(tx.Factory().NewNodeList([]*ast.Node{})))
 	synthesizedNamespace.Parent = tx.enclosingDeclaration
 
@@ -1898,8 +1892,6 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 		))
 		statements = append(statements, tx.Factory().NewExportDeclaration(nil /*modifiers*/, false /*isTypeOnly*/, namedExports, nil /*moduleSpecifier*/, nil /*attributes*/))
 	}
-
-	tx.transformExpandoHost(name, declaration)
 
 	flags := tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(declaration), ast.ModifierFlagsAll)
 	modifierFlags := ast.ModifierFlagsAmbient
@@ -1940,41 +1932,13 @@ func (tx *DeclarationTransformer) transformExpandoHost(name *ast.Node, declarati
 	modifiers := tx.Factory().NewModifierList(ast.CreateModifiersFromModifierFlags(modifierFlags, tx.Factory().NewModifier))
 	replacement := make([]*ast.Node, 0)
 
-	var typeParameters *ast.TypeParameterList
-	var parameters *ast.ParameterList
-	var returnType *ast.Node
-	var asteriskToken *ast.TokenNode
-
 	if ast.IsFunctionDeclaration(declaration) {
-		fn := declaration.AsFunctionDeclaration()
-		typeParameters = tx.ensureTypeParams(fn.AsNode(), fn.TypeParameters)
-		parameters = tx.updateParamList(fn.AsNode(), fn.Parameters)
-		returnType = tx.ensureType(fn.AsNode(), false)
-		asteriskToken = fn.AsteriskToken
+		typeParameters, parameters, asteriskToken := extractExpandoHostParams(declaration)
+		replacement = append(replacement, tx.Factory().UpdateFunctionDeclaration(declaration.AsFunctionDeclaration(), modifiers, asteriskToken, declaration.Name(), tx.ensureTypeParams(declaration, typeParameters), tx.updateParamList(declaration, parameters), tx.ensureType(declaration, false), nil /*fullSignature*/, nil /*body*/))
 	} else if ast.IsVariableDeclaration(declaration) && ast.IsFunctionExpressionOrArrowFunction(declaration.Initializer()) {
-		if ast.IsFunctionExpression(declaration.Initializer()) {
-			fn := declaration.Initializer().AsFunctionExpression()
-			typeParameters = tx.ensureTypeParams(fn.AsNode(), fn.TypeParameters)
-			parameters = tx.updateParamList(fn.AsNode(), fn.Parameters)
-			returnType = tx.ensureType(fn.AsNode(), false)
-			asteriskToken = fn.AsteriskToken
-		} else if ast.IsArrowFunction(declaration.Initializer()) {
-			fn := declaration.Initializer().AsArrowFunction()
-			typeParameters = tx.ensureTypeParams(fn.AsNode(), fn.TypeParameters)
-			parameters = tx.updateParamList(fn.AsNode(), fn.Parameters)
-			returnType = tx.ensureType(fn.AsNode(), false)
-			asteriskToken = fn.AsteriskToken
-		} else {
-			return
-		}
-	} else {
-		return
-	}
-
-	if ast.IsFunctionDeclaration(declaration) {
-		replacement = append(replacement, tx.Factory().UpdateFunctionDeclaration(root.AsFunctionDeclaration(), modifiers, asteriskToken, root.Name(), typeParameters, parameters, returnType, nil /*fullSignature*/, nil /*body*/))
-	} else if ast.IsVariableDeclaration(declaration) {
-		replacement = append(replacement, tx.Factory().NewFunctionDeclaration(modifiers, asteriskToken, tx.Factory().NewIdentifier(name.Text()), typeParameters, parameters, returnType, nil /*fullSignature*/, nil /*body*/))
+		fn := declaration.Initializer()
+		typeParameters, parameters, asteriskToken := extractExpandoHostParams(fn)
+		replacement = append(replacement, tx.Factory().NewFunctionDeclaration(modifiers, asteriskToken, tx.Factory().NewIdentifier(name.Text()), tx.ensureTypeParams(fn, typeParameters), tx.updateParamList(fn, parameters), tx.ensureType(fn, false), nil /*fullSignature*/, nil /*body*/))
 	} else {
 		return
 	}
@@ -1985,4 +1949,18 @@ func (tx *DeclarationTransformer) transformExpandoHost(name *ast.Node, declarati
 
 	tx.expandoHosts.Add(id)
 	tx.lateStatementReplacementMap[id] = tx.Factory().NewSyntaxList(replacement)
+}
+
+func extractExpandoHostParams(node *ast.Node) (typeParameters *ast.TypeParameterList, parameters *ast.ParameterList, asteriskToken *ast.TokenNode) {
+	switch node.Kind {
+	case ast.KindFunctionExpression:
+		fn := node.AsFunctionExpression()
+		return fn.TypeParameters, fn.Parameters, fn.AsteriskToken
+	case ast.KindArrowFunction:
+		fn := node.AsArrowFunction()
+		return fn.TypeParameters, fn.Parameters, fn.AsteriskToken
+	default:
+		fn := node.AsFunctionDeclaration()
+		return fn.TypeParameters, fn.Parameters, fn.AsteriskToken
+	}
 }
