@@ -53,6 +53,7 @@ export {};
 declare class Base {
     constructor();
 }
+declare function BaseFactory(): Base;
 declare namespace BaseFactory {
     const Base: typeof Base;
 }

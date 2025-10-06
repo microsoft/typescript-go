@@ -16,6 +16,7 @@ module.exports = foo;
 
 
 //// [index.d.ts]
+declare function foo(): void;
 declare namespace foo {
     const foo: typeof import(".");
 }

@@ -25,56 +25,11 @@ declare function errorOnAssignmentBelowDecl(): void;
 declare namespace errorOnAssignmentBelowDecl {
     const a: string;
 }
-declare const errorOnAssignmentBelow: {
-    (): void;
-    a: string;
-};
+declare function errorOnAssignmentBelow(): void;
 declare namespace errorOnAssignmentBelow {
     const a: string;
 }
-declare const errorOnMissingReturn: {
-    (): void;
-    a: string;
-};
+declare function errorOnMissingReturn(): void;
 declare namespace errorOnMissingReturn {
     const a: string;
 }
-
-
-//// [DtsFileErrors]
-
-
-isolatedDeclarationErrors.d.ts(5,15): error TS2451: Cannot redeclare block-scoped variable 'errorOnAssignmentBelow'.
-isolatedDeclarationErrors.d.ts(9,19): error TS2451: Cannot redeclare block-scoped variable 'errorOnAssignmentBelow'.
-isolatedDeclarationErrors.d.ts(12,15): error TS2451: Cannot redeclare block-scoped variable 'errorOnMissingReturn'.
-isolatedDeclarationErrors.d.ts(16,19): error TS2451: Cannot redeclare block-scoped variable 'errorOnMissingReturn'.
-
-
-==== isolatedDeclarationErrors.d.ts (4 errors) ====
-    declare function errorOnAssignmentBelowDecl(): void;
-    declare namespace errorOnAssignmentBelowDecl {
-        const a: string;
-    }
-    declare const errorOnAssignmentBelow: {
-                  ~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2451: Cannot redeclare block-scoped variable 'errorOnAssignmentBelow'.
-        (): void;
-        a: string;
-    };
-    declare namespace errorOnAssignmentBelow {
-                      ~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2451: Cannot redeclare block-scoped variable 'errorOnAssignmentBelow'.
-        const a: string;
-    }
-    declare const errorOnMissingReturn: {
-                  ~~~~~~~~~~~~~~~~~~~~
-!!! error TS2451: Cannot redeclare block-scoped variable 'errorOnMissingReturn'.
-        (): void;
-        a: string;
-    };
-    declare namespace errorOnMissingReturn {
-                      ~~~~~~~~~~~~~~~~~~~~
-!!! error TS2451: Cannot redeclare block-scoped variable 'errorOnMissingReturn'.
-        const a: string;
-    }
-    

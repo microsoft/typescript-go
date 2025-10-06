@@ -34,6 +34,7 @@ MyClass.staticProperty = 123;
 
 //// [source.d.ts]
 export = MyClass;
+declare function MyClass(): void;
 declare namespace MyClass {
     const staticMethod: () => void;
 }

@@ -9,16 +9,16 @@
 
 
  //// [index.d.ts]
-+declare namespace foo {
+-export = foo;
+ declare function foo(): void;
+ declare namespace foo {
+-    export { foo };
+-    export { foo as default };
+-}
 +    const foo: typeof import(".");
 +}
 +declare namespace foo {
 +    const _a: typeof import(".");
 +    export { _a as default };
 +}
- export = foo;
--declare function foo(): void;
--declare namespace foo {
--    export { foo };
--    export { foo as default };
--}
++export = foo;
