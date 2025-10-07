@@ -133,6 +133,7 @@ type SnapshotChange struct {
 	// It should only be set the value in the next snapshot should be changed. If nil, the
 	// value from the previous snapshot will be copied to the new snapshot.
 	compilerOptionsForInferredProjects *core.CompilerOptions
+	newConfig						*ls.UserPreferences
 	// ataChanges contains ATA-related changes to apply to projects in the new snapshot.
 	ataChanges map[tspath.Path]*ATAStateChange
 	apiRequest *APISnapshotRequest
@@ -251,6 +252,11 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			}
 		}
 	}
+	
+	userPreferences := s.userPreferences
+	if change.newConfig != nil {
+		userPreferences = change.newConfig
+	}
 
 	snapshotFS, _ := fs.Finalize()
 	newSnapshot := NewSnapshot(
@@ -261,7 +267,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		session.extendedConfigCache,
 		nil,
 		compilerOptionsForInferredProjects,
-		session.userPreferences,
+		userPreferences,
 		s.toPath,
 	)
 	newSnapshot.parentId = s.id

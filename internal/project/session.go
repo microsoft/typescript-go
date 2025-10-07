@@ -347,8 +347,8 @@ func (s *Session) Snapshot() (*Snapshot, func()) {
 
 func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
 	var snapshot *Snapshot
-	fileChanges, overlays, ataChanges, updateConfig := s.flushChanges(ctx)
-	updateSnapshot := !fileChanges.IsEmpty() || len(ataChanges) > 0 || updateConfig
+	fileChanges, overlays, ataChanges, newConfig := s.flushChanges(ctx)
+	updateSnapshot := !fileChanges.IsEmpty() || len(ataChanges) > 0 || newConfig != nil
 	if updateSnapshot {
 		// If there are pending file changes, we need to update the snapshot.
 		// Sending the requested URI ensures that the project for this URI is loaded.
@@ -356,6 +356,7 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 			reason:        UpdateReasonRequestedLanguageServicePendingChanges,
 			fileChanges:   fileChanges,
 			ataChanges:    ataChanges,
+			newConfig:     newConfig,
 			requestedURIs: []lsproto.DocumentUri{uri},
 		})
 	} else {
@@ -519,7 +520,7 @@ func (s *Session) Close() {
 	s.backgroundQueue.Close()
 }
 
-func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspath.Path]*overlay, map[tspath.Path]*ATAStateChange, bool) {
+func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspath.Path]*overlay, map[tspath.Path]*ATAStateChange, *ls.UserPreferences) {
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
 	s.pendingATAChangesMu.Lock()
@@ -528,10 +529,13 @@ func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspa
 	s.pendingATAChanges = make(map[tspath.Path]*ATAStateChange)
 	fileChanges, overlays := s.flushChangesLocked(ctx)
 	s.pendingConfigChangesMu.Lock()
-	updateConfig := s.pendingConfigChanges
+	var newConfig *ls.UserPreferences
+	if s.pendingConfigChanges {
+		newConfig = s.userPreferences.Copy()
+	}
 	s.pendingConfigChanges = false
 	defer s.pendingConfigChangesMu.Unlock()
-	return fileChanges, overlays, pendingATAChanges, updateConfig
+	return fileChanges, overlays, pendingATAChanges, newConfig
 }
 
 // flushChangesLocked should only be called with s.pendingFileChangesMu held.
