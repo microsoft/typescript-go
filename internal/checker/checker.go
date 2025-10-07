@@ -16321,9 +16321,6 @@ func (c *Checker) getConstraintOfType(t *Type) *Type {
 }
 
 func (c *Checker) getConstraintOfTypeParameter(typeParameter *Type) *Type {
-	if typeParameter.flags&TypeFlagsTypeParameter == 0 {
-		return nil
-	}
 	if c.hasNonCircularBaseConstraint(typeParameter) {
 		return c.getConstraintFromTypeParameter(typeParameter)
 	}
@@ -16336,6 +16333,10 @@ func (c *Checker) hasNonCircularBaseConstraint(t *Type) bool {
 
 // This is a worker function. Use getConstraintOfTypeParameter which guards against circular constraints
 func (c *Checker) getConstraintFromTypeParameter(t *Type) *Type {
+	if t.Flags()&TypeFlagsTypeParameter == 0 {
+		return nil
+	}
+
 	tp := t.AsTypeParameter()
 	if tp.constraint == nil {
 		var constraint *Type
