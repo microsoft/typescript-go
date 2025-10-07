@@ -104,6 +104,50 @@ func getBaselineOptions(command string) baseline.Options {
 				return strings.Join(commandLines, "\n")
 			},
 		}
+	case "goToDefinition":
+		return baseline.Options{
+			Subfolder:   subfolder,
+			IsSubmodule: true,
+			DiffFixupOld: func(s string) string {
+				var commandLines []string
+				commandPrefix := regexp.MustCompile(`^// === ([a-z\sA-Z]*) ===`)
+				testFilePrefix := "/tests/cases/fourslash"
+				serverTestFilePrefix := "/server"
+				contextSpanOpening := "<|"
+				contextSpanClosing := "|>"
+				replacer := strings.NewReplacer(
+					contextSpanOpening, "",
+					contextSpanClosing, "",
+					testFilePrefix, "",
+					serverTestFilePrefix, "",
+				)
+				var defIdRegex = regexp.MustCompile(`{\| defId: [0-9]+ \|}`)
+				detailsStr := "// === Details ==="
+				lines := strings.Split(s, "\n")
+				var isInCommand bool
+				var isInDetails bool
+				for _, line := range lines {
+					matches := commandPrefix.FindStringSubmatch(line)
+					if len(matches) > 0 {
+						isInDetails = false
+						commandName := matches[1]
+						if commandName == command {
+							isInCommand = true
+						} else {
+							isInCommand = false
+						}
+					} else if strings.Contains(line, detailsStr) {
+						isInDetails = true
+					}
+					if isInCommand && !isInDetails {
+						fixedLine := replacer.Replace(line)
+						fixedLine = defIdRegex.ReplaceAllString(fixedLine, "")
+						commandLines = append(commandLines, fixedLine)
+					}
+				}
+				return strings.Join(commandLines, "\n")
+			},
+		}
 	default:
 		return baseline.Options{
 			Subfolder: subfolder,
