@@ -21464,7 +21464,7 @@ func (c *Checker) instantiateTypeWorker(t *Type, m *TypeMapper, alias *TypeAlias
 }
 
 // Handles instantiation of the following object types:
-// AnonymousType (ObjectFlagsAnonymous)
+// AnonymousType (ObjectFlagsAnonymous|)
 // TypeReference with node != nil (ObjectFlagsReference)
 // InstantiationExpressionType (ObjectFlagsInstantiationExpressionType)
 // MappedType (ObjectFlagsMapped)
