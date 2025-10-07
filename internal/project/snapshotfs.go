@@ -125,7 +125,10 @@ func (s *snapshotFSBuilder) GetFileByPath(fileName string, path tspath.Path) Fil
 	if file, ok := s.overlays[path]; ok {
 		return file
 	}
-	return s.getDiskFileByPath(fileName, path)
+	if file := s.getDiskFileByPath(fileName, path); file != nil {
+		return file
+	}
+	return nil
 }
 
 func (s *snapshotFSBuilder) markDirtyFiles(change FileChangeSummary) {

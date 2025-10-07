@@ -226,34 +226,6 @@ func (d *DocumentPositionMapper) GetGeneratedPosition(loc *DocumentPosition) *Do
 	}
 }
 
-func GetDocumentPositionMapper(host Host, generatedFileName string) *DocumentPositionMapper {
-	mapFileName := tryGetSourceMappingURL(host, generatedFileName)
-	if mapFileName != "" {
-		if base64Object, matched := tryParseBase64Url(mapFileName); matched {
-			if base64Object != "" {
-				if decoded, err := base64.StdEncoding.DecodeString(base64Object); err == nil {
-					return ConvertDocumentToSourceMapper(host, string(decoded), generatedFileName)
-				}
-			}
-			// Not a data URL we can parse, skip it
-			mapFileName = ""
-		}
-	}
-
-	var possibleMapLocations []string
-	if mapFileName != "" {
-		possibleMapLocations = append(possibleMapLocations, mapFileName)
-	}
-	possibleMapLocations = append(possibleMapLocations, generatedFileName+".map")
-	for _, location := range possibleMapLocations {
-		mapFileName := tspath.GetNormalizedAbsolutePath(location, tspath.GetDirectoryPath(generatedFileName))
-		if mapFileContents, ok := host.ReadFile(mapFileName); ok {
-			return ConvertDocumentToSourceMapper(host, mapFileContents, mapFileName)
-		}
-	}
-	return nil
-}
-
 func GetSourceMapURL(host Host, generatedFileName string) (url string, isInline bool) {
 	mapFileName := tryGetSourceMappingURL(host, generatedFileName)
 	if mapFileName != "" {

@@ -579,7 +579,7 @@ func TestSession(t *testing.T) {
 						LoggingEnabled:     true,
 					})
 					session.DidOpenFile(context.Background(), "file:///home/projects/TS/p1/src/index.ts", 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
-					lsBefore, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+					lsBefore, _, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 					assert.NilError(t, err)
 					programBefore := lsBefore.GetProgram()
 					session.WaitForBackgroundTasks()
@@ -606,7 +606,7 @@ func TestSession(t *testing.T) {
 						},
 					})
 
-					lsAfter, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
+					lsAfter, _, err := session.GetLanguageService(context.Background(), "file:///home/projects/TS/p1/src/index.ts")
 					assert.NilError(t, err)
 					assert.Check(t, lsAfter.GetProgram() != programBefore)
 				})
