@@ -282,7 +282,7 @@ func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.
 			req := lsproto.ResponseMessage{
 				ID:      req.ID,
 				JSONRPC: req.JSONRPC,
-				Result:  []any{&f.userPreferences},
+				Result:  []any{f.userPreferences},
 			}
 			f.writeMsg(t, req.Message())
 			resp = f.readMsg(t)

@@ -176,6 +176,10 @@ func (s *Session) GetCurrentDirectory() string {
 	return s.options.CurrentDirectory
 }
 
+func (s *Session) UserPreferences() *ls.UserPreferences {
+	return s.userPreferences
+}
+
 // Trace implements module.ResolutionHost
 func (s *Session) Trace(msg string) {
 	panic("ATA module resolution should not use tracing")

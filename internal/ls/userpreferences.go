@@ -349,7 +349,21 @@ func (p *UserPreferences) ModuleSpecifierPreferences() modulespecifiers.UserPref
 }
 
 // ------ Parsing Config Response -------
-func (p *UserPreferences) Parse(config map[string]interface{}) {
+
+// returns non-nil if should break loop
+func (p *UserPreferences) Parse(item any) *UserPreferences {
+	if item == nil {
+		// continue
+	} else if config, ok := item.(map[string]any); ok {
+		p.parseWorker(config)
+	} else if item, ok := item.(*UserPreferences); ok {
+		// case for fourslash
+		return item.CopyOrDefault()
+	}
+	return nil
+}
+
+func (p *UserPreferences) parseWorker(config map[string]interface{}) {
 	// Process unstable preferences first so that they do not overwrite stable properties
 	if unstable, ok := config["unstable"]; ok {
 		// unstable properties must be named the same as userPreferences
@@ -526,14 +540,21 @@ func parseBoolWithDefault(val any, defaultV bool) bool {
 	return defaultV
 }
 
+func parseIntWithDefault(val any, defaultV int) int {
+	if v, ok := val.(int); ok {
+		return v
+	}
+	return defaultV
+}
+
 func (p *UserPreferences) set(name string, value any) {
 	switch strings.ToLower(name) {
 	case "quotePreference":
 		p.QuotePreference = parseQuotePreference(value)
 	case "lazyconfiguredprojectsfromexternalproject":
 		p.LazyConfiguredProjectsFromExternalProject = parseBoolWithDefault(value, false)
-	// case "maximumhoverlength":
-	// 	p.MaximumHoverLength = tsoptions.ParseInt(value, 500)
+	case "maximumhoverlength":
+		p.MaximumHoverLength = parseIntWithDefault(value, 500)
 	case "includecompletionsformoduleexports":
 		p.IncludeCompletionsForModuleExports = tsoptions.ParseTristate(value)
 	case "includecompletionsforimportstatements":

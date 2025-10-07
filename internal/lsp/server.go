@@ -218,7 +218,7 @@ func (s *Server) RefreshDiagnostics(ctx context.Context) error {
 	return nil
 }
 
-func (s *Server) Configure(ctx context.Context) (*ls.UserPreferences, error) {
+func (s *Server) RequestConfiguration(ctx context.Context) (*ls.UserPreferences, error) {
 	result, err := s.sendRequest(ctx, lsproto.MethodWorkspaceConfiguration, &lsproto.ConfigurationParams{
 		Items: []*lsproto.ConfigurationItem{
 			{
@@ -233,14 +233,8 @@ func (s *Server) Configure(ctx context.Context) (*ls.UserPreferences, error) {
 	s.Log(fmt.Sprintf("\n\nconfiguration: %+v, %T\n\n", configs, configs))
 	userPreferences := ls.NewDefaultUserPreferences()
 	for _, item := range configs {
-		if item == nil {
-			// continue
-		} else if config, ok := item.(map[string]any); ok {
-			userPreferences.Parse(config)
-		} else if item, ok := item.(ls.UserPreferences); ok {
-			// case for fourslash
-			userPreferences = &item
-			break
+		if parsed := userPreferences.Parse(item); parsed != nil {
+			return parsed, nil
 		}
 	}
 	return userPreferences, nil
@@ -696,11 +690,15 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 		NpmExecutor: s,
 		ParseCache:  s.parseCache,
 	})
-	userPreferences, err := s.Configure(ctx)
-	if err != nil {
-		return err
+
+	// request userPreferences if not provided at initialization
+	if s.session.UserPreferences() == nil {
+		userPreferences, err := s.RequestConfiguration(ctx)
+		if err != nil {
+			return err
+		}
+		s.session.Configure(userPreferences)
 	}
-	s.session.Configure(userPreferences)
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	if s.compilerOptionsForInferredProjects != nil {
 		s.session.DidChangeCompilerOptionsForInferredProjects(ctx, s.compilerOptionsForInferredProjects)
@@ -719,12 +717,11 @@ func (s *Server) handleExit(ctx context.Context, params any) error {
 }
 
 func (s *Server) handleDidChangeWorkspaceConfiguration(ctx context.Context, params *lsproto.DidChangeConfigurationParams) error {
-	// !!! update user preferences
-	// !!! only usable by fourslash
-	if item, ok := params.Settings.(*ls.UserPreferences); ok {
-		// case for fourslash
-		s.session.Configure(item)
+	userPreferences := s.session.UserPreferences().CopyOrDefault()
+	if parsed := userPreferences.Parse(params.Settings); parsed != nil {
+		userPreferences = parsed
 	}
+	s.session.Configure(userPreferences)
 	return nil
 }
 
