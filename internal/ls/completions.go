@@ -37,7 +37,6 @@ func (l *LanguageService) ProvideCompletion(
 	LSPPosition lsproto.Position,
 	context *lsproto.CompletionContext,
 	clientOptions *lsproto.CompletionClientCapabilities,
-	preferences *UserPreferences,
 ) (lsproto.CompletionResponse, error) {
 	_, file := l.getProgramAndFile(documentURI)
 	var triggerCharacter *string
@@ -50,7 +49,6 @@ func (l *LanguageService) ProvideCompletion(
 		file,
 		position,
 		triggerCharacter,
-		preferences,
 		clientOptions,
 	)
 	completionList = ensureItemData(file.FileName(), position, completionList)
@@ -344,7 +342,6 @@ func (l *LanguageService) getCompletionsAtPosition(
 	file *ast.SourceFile,
 	position int,
 	triggerCharacter *string,
-	preferences *UserPreferences,
 	clientOptions *lsproto.CompletionClientCapabilities,
 ) *lsproto.CompletionList {
 	_, previousToken := getRelevantTokens(position, file)
@@ -354,7 +351,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 
 	if triggerCharacter != nil && *triggerCharacter == " " {
 		// `isValidTrigger` ensures we are at `import |`
-		if preferences.IncludeCompletionsForImportStatements.IsTrue() {
+		if l.UserPreferences().IncludeCompletionsForImportStatements.IsTrue() {
 			return &lsproto.CompletionList{
 				IsIncomplete: true,
 			}
@@ -372,7 +369,6 @@ func (l *LanguageService) getCompletionsAtPosition(
 		position,
 		previousToken,
 		compilerOptions,
-		preferences,
 		clientOptions,
 	)
 	if stringCompletions != nil {
@@ -394,6 +390,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 
 	checker, done := l.GetProgram().GetTypeCheckerForFile(ctx, file)
 	defer done()
+	preferences := l.UserPreferences()
 	data := l.getCompletionData(ctx, checker, file, position, preferences)
 	if data == nil {
 		return nil
@@ -408,7 +405,6 @@ func (l *LanguageService) getCompletionsAtPosition(
 			file,
 			compilerOptions,
 			data,
-			preferences,
 			position,
 			clientOptions,
 			optionalReplacementSpan,
@@ -1204,7 +1200,6 @@ func (l *LanguageService) getCompletionData(
 					file,
 					toFile,
 					i.moduleSymbol,
-					preferences,
 					importSpecifierResolver.packageJsonImportFilter(),
 				)
 			})
@@ -1270,7 +1265,6 @@ func (l *LanguageService) getCompletionData(
 		l.searchExportInfosForCompletions(ctx,
 			typeChecker,
 			file,
-			preferences,
 			importStatementCompletion != nil,
 			isRightOfOpenTag,
 			isTypeOnlyLocation,
@@ -1829,7 +1823,6 @@ func (l *LanguageService) completionInfoFromData(
 	file *ast.SourceFile,
 	compilerOptions *core.CompilerOptions,
 	data *completionDataData,
-	preferences *UserPreferences,
 	position int,
 	clientOptions *lsproto.CompletionClientCapabilities,
 	optionalReplacementSpan *lsproto.Range,
@@ -1838,6 +1831,7 @@ func (l *LanguageService) completionInfoFromData(
 	isNewIdentifierLocation := data.isNewIdentifierLocation
 	contextToken := data.contextToken
 	literals := data.literals
+	preferences := l.UserPreferences()
 
 	// Verify if the file is JSX language variant
 	if file.LanguageVariant == core.LanguageVariantJSX {
@@ -1879,7 +1873,6 @@ func (l *LanguageService) completionInfoFromData(
 		nil, /*replacementToken*/
 		position,
 		file,
-		preferences,
 		compilerOptions,
 		clientOptions,
 	)
@@ -1943,7 +1936,6 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 	replacementToken *ast.Node,
 	position int,
 	file *ast.SourceFile,
-	preferences *UserPreferences,
 	compilerOptions *core.CompilerOptions,
 	clientOptions *lsproto.CompletionClientCapabilities,
 ) (uniqueNames collections.Set[string], sortedEntries []*lsproto.CompletionItem) {
@@ -2003,7 +1995,6 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			origin,
 			useSemicolons,
 			compilerOptions,
-			preferences,
 			clientOptions,
 			isMemberCompletion,
 		)
@@ -2070,7 +2061,6 @@ func (l *LanguageService) createCompletionItem(
 	origin *symbolOriginInfo,
 	useSemicolons bool,
 	compilerOptions *core.CompilerOptions,
-	preferences *UserPreferences,
 	clientOptions *lsproto.CompletionClientCapabilities,
 	isMemberCompletion bool,
 ) *lsproto.CompletionItem {
@@ -2081,7 +2071,7 @@ func (l *LanguageService) createCompletionItem(
 	var isSnippet, hasAction bool
 	source := getSourceFromOrigin(origin)
 	var labelDetails *lsproto.CompletionItemLabelDetails
-
+	preferences := l.UserPreferences()
 	insertQuestionDot := originIsNullableMember(origin)
 	useBraces := originIsSymbolMember(origin) || needsConvertPropertyAccess
 	if originIsThisType(origin) {
@@ -5014,7 +5004,6 @@ func (l *LanguageService) ResolveCompletionItem(
 	item *lsproto.CompletionItem,
 	data *itemData,
 	clientOptions *lsproto.CompletionClientCapabilities,
-	preferences *UserPreferences,
 ) (*lsproto.CompletionItem, error) {
 	if data == nil {
 		return nil, errors.New("completion item data is nil")
@@ -5025,7 +5014,7 @@ func (l *LanguageService) ResolveCompletionItem(
 		return nil, fmt.Errorf("file not found: %s", data.FileName)
 	}
 
-	return l.getCompletionItemDetails(ctx, program, data.Position, file, item, data, clientOptions, preferences), nil
+	return l.getCompletionItemDetails(ctx, program, data.Position, file, item, data, clientOptions), nil
 }
 
 func GetCompletionItemData(item *lsproto.CompletionItem) (*itemData, error) {
@@ -5048,7 +5037,6 @@ func (l *LanguageService) getCompletionItemDetails(
 	item *lsproto.CompletionItem,
 	itemData *itemData,
 	clientOptions *lsproto.CompletionClientCapabilities,
-	preferences *UserPreferences,
 ) *lsproto.CompletionItem {
 	checker, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
@@ -5062,7 +5050,6 @@ func (l *LanguageService) getCompletionItemDetails(
 			file,
 			position,
 			contextToken,
-			preferences,
 		)
 	}
 
@@ -5074,8 +5061,9 @@ func (l *LanguageService) getCompletionItemDetails(
 		position,
 		itemData,
 		clientOptions,
-		preferences,
 	)
+	preferences := l.UserPreferences()
+
 	switch {
 	case symbolCompletion.request != nil:
 		request := *symbolCompletion.request
@@ -5098,7 +5086,7 @@ func (l *LanguageService) getCompletionItemDetails(
 		}
 	case symbolCompletion.symbol != nil:
 		symbolDetails := symbolCompletion.symbol
-		actions := l.getCompletionItemActions(ctx, checker, file, position, itemData, symbolDetails, preferences)
+		actions := l.getCompletionItemActions(ctx, checker, file, position, itemData, symbolDetails)
 		return createCompletionDetailsForSymbol(
 			item,
 			symbolDetails.symbol,
@@ -5147,7 +5135,6 @@ func (l *LanguageService) getSymbolCompletionFromItemData(
 	position int,
 	itemData *itemData,
 	clientOptions *lsproto.CompletionClientCapabilities,
-	preferences *UserPreferences,
 ) detailsData {
 	if itemData.Source == SourceSwitchCases {
 		return detailsData{
@@ -5177,6 +5164,7 @@ func (l *LanguageService) getSymbolCompletionFromItemData(
 
 	data := completionData.(*completionDataData)
 
+	preferences := l.UserPreferences()
 	var literal literalValue
 	for _, l := range data.literals {
 		if completionNameForLiteral(file, preferences, l) == itemData.Name {
@@ -5318,7 +5306,7 @@ func createCompletionDetailsForSymbol(
 }
 
 // !!! snippets
-func (l *LanguageService) getCompletionItemActions(ctx context.Context, ch *checker.Checker, file *ast.SourceFile, position int, itemData *itemData, symbolDetails *symbolDetails, preferences *UserPreferences) []codeAction {
+func (l *LanguageService) getCompletionItemActions(ctx context.Context, ch *checker.Checker, file *ast.SourceFile, position int, itemData *itemData, symbolDetails *symbolDetails) []codeAction {
 	if itemData.AutoImport != nil && itemData.AutoImport.ModuleSpecifier != "" && symbolDetails.previousToken != nil {
 		// Import statement completion: 'import c|'
 		if symbolDetails.contextToken != nil && l.getImportStatementCompletionInfo(symbolDetails.contextToken, file).replacementSpan != nil {
@@ -5363,7 +5351,6 @@ func (l *LanguageService) getCompletionItemActions(ctx context.Context, ch *chec
 		itemData.Name,
 		isJsxOpeningTagName,
 		// formatContext,
-		preferences,
 	)
 
 	if !(moduleSpecifier == itemData.AutoImport.ModuleSpecifier || itemData.AutoImport.ModuleSpecifier == "") {

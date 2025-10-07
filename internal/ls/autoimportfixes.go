@@ -24,7 +24,6 @@ func (ct *changeTracker) doAddExistingFix(
 	defaultImport *Import,
 	namedImports []*Import,
 	// removeExistingImportSpecifiers *core.Set[ImportSpecifier | BindingElement] // !!! remove imports not implemented
-	preferences *UserPreferences,
 ) {
 	switch clause.Kind {
 	case ast.KindObjectBindingPattern:
@@ -89,7 +88,7 @@ func (ct *changeTracker) doAddExistingFix(
 					identifier = ct.NodeFactory.NewIdentifier(namedImport.propertyName).AsIdentifier().AsNode()
 				}
 				return ct.NodeFactory.NewImportSpecifier(
-					(!importClause.IsTypeOnly() || promoteFromTypeOnly) && shouldUseTypeOnly(namedImport.addAsTypeOnly, preferences),
+					(!importClause.IsTypeOnly() || promoteFromTypeOnly) && shouldUseTypeOnly(namedImport.addAsTypeOnly, ct.ls.UserPreferences()),
 					identifier,
 					ct.NodeFactory.NewIdentifier(namedImport.name),
 				)
@@ -194,7 +193,7 @@ func (ct *changeTracker) newBindingElementFromNameAndPropertyName(name string, p
 	)
 }
 
-func (ct *changeTracker) insertImports(sourceFile *ast.SourceFile, imports []*ast.Statement, blankLineBetween bool, preferences *UserPreferences) {
+func (ct *changeTracker) insertImports(sourceFile *ast.SourceFile, imports []*ast.Statement, blankLineBetween bool) {
 	var existingImportStatements []*ast.Statement
 
 	if imports[0].Kind == ast.KindVariableStatement {
@@ -257,7 +256,6 @@ func (ct *changeTracker) getNewImports(
 	namedImports []*Import,
 	namespaceLikeImport *Import, // { importKind: ImportKind.CommonJS | ImportKind.Namespace; }
 	compilerOptions *core.CompilerOptions,
-	preferences *UserPreferences,
 ) []*ast.Statement {
 	moduleSpecifierStringLiteral := ct.NodeFactory.NewStringLiteral(moduleSpecifier)
 	var statements []*ast.Statement // []AnyImportSyntax
@@ -266,7 +264,7 @@ func (ct *changeTracker) getNewImports(
 		// even though it's not an error, it would add unnecessary runtime emit.
 		topLevelTypeOnly := (defaultImport == nil || needsTypeOnly(defaultImport.addAsTypeOnly)) &&
 			core.Every(namedImports, func(i *Import) bool { return needsTypeOnly(i.addAsTypeOnly) }) ||
-			(compilerOptions.VerbatimModuleSyntax.IsTrue() || preferences.PreferTypeOnlyAutoImports) &&
+			(compilerOptions.VerbatimModuleSyntax.IsTrue() || ct.ls.UserPreferences().PreferTypeOnlyAutoImports) &&
 				defaultImport != nil && defaultImport.addAsTypeOnly != AddAsTypeOnlyNotAllowed && !core.Some(namedImports, func(i *Import) bool { return i.addAsTypeOnly == AddAsTypeOnlyNotAllowed })
 
 		var defaultImportNode *ast.Node
@@ -280,7 +278,7 @@ func (ct *changeTracker) getNewImports(
 				namedImportPropertyName = ct.NodeFactory.NewIdentifier(namedImport.propertyName)
 			}
 			return ct.NodeFactory.NewImportSpecifier(
-				!topLevelTypeOnly && shouldUseTypeOnly(namedImport.addAsTypeOnly, preferences),
+				!topLevelTypeOnly && shouldUseTypeOnly(namedImport.addAsTypeOnly, ct.ls.UserPreferences()),
 				namedImportPropertyName,
 				ct.NodeFactory.NewIdentifier(namedImport.name),
 			)
@@ -292,7 +290,7 @@ func (ct *changeTracker) getNewImports(
 		if namespaceLikeImport.kind == ImportKindCommonJS {
 			declaration = ct.NodeFactory.NewImportEqualsDeclaration(
 				/*modifiers*/ nil,
-				shouldUseTypeOnly(namespaceLikeImport.addAsTypeOnly, preferences),
+				shouldUseTypeOnly(namespaceLikeImport.addAsTypeOnly, ct.ls.UserPreferences()),
 				ct.NodeFactory.NewIdentifier(namespaceLikeImport.name),
 				ct.NodeFactory.NewExternalModuleReference(moduleSpecifierStringLiteral),
 			)
@@ -300,7 +298,7 @@ func (ct *changeTracker) getNewImports(
 			declaration = ct.NodeFactory.NewImportDeclaration(
 				/*modifiers*/ nil,
 				ct.NodeFactory.NewImportClause(
-					/*phaseModifier*/ core.IfElse(shouldUseTypeOnly(namespaceLikeImport.addAsTypeOnly, preferences), ast.KindTypeKeyword, ast.KindUnknown),
+					/*phaseModifier*/ core.IfElse(shouldUseTypeOnly(namespaceLikeImport.addAsTypeOnly, ct.ls.UserPreferences()), ast.KindTypeKeyword, ast.KindUnknown),
 					/*name*/ nil,
 					ct.NodeFactory.NewNamespaceImport(ct.NodeFactory.NewIdentifier(namespaceLikeImport.name)),
 				),

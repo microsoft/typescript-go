@@ -20,12 +20,10 @@ func getImportDeclarationInsertIndex(sortedImports []*ast.Statement, newImport *
 // returns `-1` if `a` is better than `b`
 //
 //	note: this sorts in descending order of preference; different than convention in other cmp-like functions
-func compareModuleSpecifiers(
+func (l *LanguageService)compareModuleSpecifiers(
 	a *ImportFix, // !!! ImportFixWithModuleSpecifier
 	b *ImportFix, // !!! ImportFixWithModuleSpecifier
 	importingFile *ast.SourceFile, // | FutureSourceFile,
-	program *compiler.Program,
-	preferences UserPreferences,
 	allowsImportingSpecifier func(specifier string) bool,
 	toPath func(fileName string) tspath.Path,
 ) int {
@@ -38,10 +36,10 @@ func compareModuleSpecifiers(
 	); comparison != 0 {
 		return comparison
 	}
-	if comparison := compareModuleSpecifierRelativity(a, b, preferences); comparison != 0 {
+	if comparison := compareModuleSpecifierRelativity(a, b, l.UserPreferences()); comparison != 0 {
 		return comparison
 	}
-	if comparison := compareNodeCoreModuleSpecifiers(a.moduleSpecifier, b.moduleSpecifier, importingFile, program); comparison != 0 {
+	if comparison := compareNodeCoreModuleSpecifiers(a.moduleSpecifier, b.moduleSpecifier, importingFile, l.GetProgram()); comparison != 0 {
 		return comparison
 	}
 	if comparison := compareBooleans(isFixPossiblyReExportingImportingFile(a, importingFile.Path(), toPath), isFixPossiblyReExportingImportingFile(b, importingFile.Path(), toPath)); comparison != 0 {
@@ -64,7 +62,7 @@ func compareBooleans(a, b bool) int {
 }
 
 // returns `-1` if `a` is better than `b`
-func compareModuleSpecifierRelativity(a *ImportFix, b *ImportFix, preferences UserPreferences) int {
+func compareModuleSpecifierRelativity(a *ImportFix, b *ImportFix, preferences *UserPreferences) int {
 	switch preferences.ImportModuleSpecifierPreference {
 	case modulespecifiers.ImportModuleSpecifierPreferenceNonRelative, modulespecifiers.ImportModuleSpecifierPreferenceProjectRelative:
 		return compareBooleans(a.moduleSpecifierKind == modulespecifiers.ResultKindRelative, b.moduleSpecifierKind == modulespecifiers.ResultKindRelative)

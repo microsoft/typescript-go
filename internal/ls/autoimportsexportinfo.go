@@ -14,7 +14,6 @@ func (l *LanguageService) getExportInfos(
 	ctx context.Context,
 	ch *checker.Checker,
 	importingFile *ast.SourceFile,
-	preferences *UserPreferences,
 	exportMapKey ExportInfoMapKey,
 ) []*SymbolExportInfo {
 	expInfoMap := NewExportInfoMap(l.GetProgram().GetGlobalTypingsCacheLocation())
@@ -25,7 +24,6 @@ func (l *LanguageService) getExportInfos(
 	forEachExternalModuleToImportFrom(
 		ch,
 		l.GetProgram(),
-		preferences,
 		// /*useAutoImportProvider*/ true,
 		func(moduleSymbol *ast.Symbol, moduleFile *ast.SourceFile, ch *checker.Checker, isFromPackageJson bool) {
 			if moduleCount = moduleCount + 1; moduleCount%100 == 0 && ctx.Err() != nil {
@@ -80,7 +78,6 @@ func (l *LanguageService) searchExportInfosForCompletions(
 	ctx context.Context,
 	ch *checker.Checker,
 	importingFile *ast.SourceFile,
-	preferences *UserPreferences,
 	isForImportStatementCompletion bool,
 	isRightOfOpenTag bool,
 	isTypeOnlyLocation bool,
@@ -124,7 +121,6 @@ func (l *LanguageService) searchExportInfosForCompletions(
 	forEachExternalModuleToImportFrom(
 		ch,
 		l.GetProgram(),
-		preferences,
 		// /*useAutoImportProvider*/ true,
 		func(moduleSymbol *ast.Symbol, moduleFile *ast.SourceFile, ch *checker.Checker, isFromPackageJson bool) {
 			if moduleCount = moduleCount + 1; moduleCount%100 == 0 && ctx.Err() != nil {

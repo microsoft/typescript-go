@@ -802,7 +802,6 @@ func (s *Server) handleSignatureHelp(ctx context.Context, languageService *ls.La
 		params.Position,
 		params.Context,
 		s.initializeParams.Capabilities.TextDocument.SignatureHelp,
-		&ls.UserPreferences{},
 	)
 }
 
@@ -825,14 +824,12 @@ func (s *Server) handleImplementations(ctx context.Context, ls *ls.LanguageServi
 }
 
 func (s *Server) handleCompletion(ctx context.Context, languageService *ls.LanguageService, params *lsproto.CompletionParams) (lsproto.CompletionResponse, error) {
-	// !!! get user preferences
 	return languageService.ProvideCompletion(
 		ctx,
 		params.TextDocument.Uri,
 		params.Position,
 		params.Context,
 		getCompletionClientCapabilities(s.initializeParams),
-		languageService.UserPreferences(),
 	)
 }
 
@@ -851,7 +848,6 @@ func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsprot
 		params,
 		data,
 		getCompletionClientCapabilities(s.initializeParams),
-		languageService.UserPreferences(),
 	)
 }
 

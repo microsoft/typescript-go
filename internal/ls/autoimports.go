@@ -378,22 +378,21 @@ func (l *LanguageService) getImportCompletionAction(
 	symbolName string, // !!! needs *string ?
 	isJsxTagName bool,
 	// formatContext *formattingContext,
-	preferences *UserPreferences,
 ) (string, codeAction) {
 	var exportInfos []*SymbolExportInfo
 	// `exportMapKey` should be in the `itemData` of each auto-import completion entry and sent in resolving completion entry requests
-	exportInfos = l.getExportInfos(ctx, ch, sourceFile, preferences, exportMapKey)
+	exportInfos = l.getExportInfos(ctx, ch, sourceFile, exportMapKey)
 	if len(exportInfos) == 0 {
 		panic("Some exportInfo should match the specified exportMapKey")
 	}
 
 	isValidTypeOnlyUseSite := ast.IsValidTypeOnlyAliasUseSite(astnav.GetTokenAtPosition(sourceFile, position))
-	fix := l.getImportFixForSymbol(ch, sourceFile, exportInfos, position, ptrTo(isValidTypeOnlyUseSite), preferences)
+	fix := l.getImportFixForSymbol(ch, sourceFile, exportInfos, position, ptrTo(isValidTypeOnlyUseSite))
 	if fix == nil {
 		lineAndChar := l.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(position))
 		panic(fmt.Sprintf("expected importFix at %s: (%v,%v)", sourceFile.FileName(), lineAndChar.Line, lineAndChar.Character))
 	}
-	return fix.moduleSpecifier, l.codeActionForFix(ctx, sourceFile, symbolName, fix /*includeSymbolNameInDescription*/, false, preferences)
+	return fix.moduleSpecifier, l.codeActionForFix(ctx, sourceFile, symbolName, fix /*includeSymbolNameInDescription*/, false)
 }
 
 func NewExportInfoMap(globalsTypingCacheLocation string) *exportInfoMap {
@@ -409,7 +408,6 @@ func (l *LanguageService) isImportable(
 	fromFile *ast.SourceFile,
 	toFile *ast.SourceFile,
 	toModule *ast.Symbol,
-	preferences *UserPreferences,
 	packageJsonFilter *packageJsonImportFilter,
 	// moduleSpecifierResolutionHost ModuleSpecifierResolutionHost,
 	// moduleSpecifierCache ModuleSpecifierCache,
@@ -529,7 +527,7 @@ type importSpecifierResolverForCompletions struct {
 
 func (r *importSpecifierResolverForCompletions) packageJsonImportFilter() *packageJsonImportFilter {
 	if r.filter == nil {
-		r.filter = r.l.createPackageJsonImportFilter(r.SourceFile, *r.UserPreferences)
+		r.filter = r.l.createPackageJsonImportFilter(r.SourceFile)
 	}
 	return r.filter
 }
@@ -542,15 +540,9 @@ func (i *importSpecifierResolverForCompletions) getModuleSpecifierForBestExportI
 ) *ImportFix {
 	// !!! caching
 	//  used in completions, usually calculated once per `getCompletionData` call
-	var userPreferences UserPreferences
-	if i.UserPreferences == nil {
-		userPreferences = UserPreferences{}
-	} else {
-		userPreferences = *i.UserPreferences
-	}
 	packageJsonImportFilter := i.packageJsonImportFilter()
-	_, fixes := i.l.getImportFixes(ch, exportInfo, ptrTo(i.l.converters.PositionToLineAndCharacter(i.SourceFile, core.TextPos(position))), ptrTo(isValidTypeOnlyUseSite), ptrTo(false), i.SourceFile, userPreferences, false /* fromCacheOnly */)
-	return i.l.getBestFix(fixes, i.SourceFile, packageJsonImportFilter.allowsImportingSpecifier, userPreferences)
+	_, fixes := i.l.getImportFixes(ch, exportInfo, ptrTo(i.l.converters.PositionToLineAndCharacter(i.SourceFile, core.TextPos(position))), ptrTo(isValidTypeOnlyUseSite), ptrTo(false), i.SourceFile, false /* fromCacheOnly */)
+	return i.l.getBestFix(fixes, i.SourceFile, packageJsonImportFilter.allowsImportingSpecifier)
 }
 
 func (l *LanguageService) getImportFixForSymbol(
@@ -559,23 +551,17 @@ func (l *LanguageService) getImportFixForSymbol(
 	exportInfos []*SymbolExportInfo,
 	position int,
 	isValidTypeOnlySite *bool,
-	preferences *UserPreferences,
 ) *ImportFix {
-	var userPreferences UserPreferences
-	if preferences != nil {
-		userPreferences = *preferences
-	}
-
 	if isValidTypeOnlySite == nil {
 		isValidTypeOnlySite = ptrTo(ast.IsValidTypeOnlyAliasUseSite(astnav.GetTokenAtPosition(sourceFile, position)))
 	}
 	useRequire := getShouldUseRequire(sourceFile, l.GetProgram())
-	packageJsonImportFilter := l.createPackageJsonImportFilter(sourceFile, userPreferences)
-	_, fixes := l.getImportFixes(ch, exportInfos, ptrTo(l.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(position))), isValidTypeOnlySite, &useRequire, sourceFile, userPreferences, false /* fromCacheOnly */)
-	return l.getBestFix(fixes, sourceFile, packageJsonImportFilter.allowsImportingSpecifier, userPreferences)
+	packageJsonImportFilter := l.createPackageJsonImportFilter(sourceFile)
+	_, fixes := l.getImportFixes(ch, exportInfos, ptrTo(l.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(position))), isValidTypeOnlySite, &useRequire, sourceFile, false /* fromCacheOnly */)
+	return l.getBestFix(fixes, sourceFile, packageJsonImportFilter.allowsImportingSpecifier)
 }
 
-func (l *LanguageService) getBestFix(fixes []*ImportFix, sourceFile *ast.SourceFile, allowsImportingSpecifier func(moduleSpecifier string) bool, preferences UserPreferences) *ImportFix {
+func (l *LanguageService) getBestFix(fixes []*ImportFix, sourceFile *ast.SourceFile, allowsImportingSpecifier func(moduleSpecifier string) bool) *ImportFix {
 	if len(fixes) == 0 {
 		return nil
 	}
@@ -588,12 +574,10 @@ func (l *LanguageService) getBestFix(fixes []*ImportFix, sourceFile *ast.SourceF
 	best := fixes[0]
 	for _, fix := range fixes {
 		// Takes true branch of conditional if `fix` is better than `best`
-		if compareModuleSpecifiers(
+		if l.compareModuleSpecifiers(
 			fix,
 			best,
 			sourceFile,
-			l.GetProgram(),
-			preferences,
 			allowsImportingSpecifier,
 			func(fileName string) tspath.Path {
 				return tspath.ToPath(fileName, l.GetProgram().GetCurrentDirectory(), l.GetProgram().UseCaseSensitiveFileNames())
@@ -613,7 +597,6 @@ func (l *LanguageService) getImportFixes(
 	isValidTypeOnlyUseSite *bool,
 	useRequire *bool,
 	sourceFile *ast.SourceFile, // | FutureSourceFile,
-	preferences UserPreferences,
 	// importMap *importMap,
 	fromCacheOnly bool,
 ) (int, []*ImportFix) {
@@ -642,7 +625,6 @@ func (l *LanguageService) getImportFixes(
 		usagePosition,
 		*isValidTypeOnlyUseSite,
 		*useRequire,
-		preferences,
 		fromCacheOnly,
 	)
 	computedWithoutCacheCount := 0
@@ -652,7 +634,7 @@ func (l *LanguageService) getImportFixes(
 	return computedWithoutCacheCount, append(useNamespace, result...)
 }
 
-func (l *LanguageService) createPackageJsonImportFilter(fromFile *ast.SourceFile, preferences UserPreferences) *packageJsonImportFilter {
+func (l *LanguageService) createPackageJsonImportFilter(fromFile *ast.SourceFile) *packageJsonImportFilter {
 	packageJsons := []*projectPackageJsonInfo{}
 	// packageJsons := (
 	//     (host.getPackageJsonsVisibleToFile && host.getPackageJsonsVisibleToFile(fromFile.fileName)) || getPackageJsonsVisibleToFile(fromFile.fileName, host)
@@ -706,7 +688,7 @@ func (l *LanguageService) createPackageJsonImportFilter(fromFile *ast.SourceFile
 			fromFile,
 			importedFileName,
 			moduleSpecifierResolutionHost,
-			preferences.ModuleSpecifierPreferences(),
+			l.UserPreferences().ModuleSpecifierPreferences(),
 			modulespecifiers.ModuleSpecifierOptions{},
 		)
 		if specifier == "" {
@@ -978,7 +960,6 @@ func (l *LanguageService) getFixesForAddImport(
 	usagePosition *lsproto.Position,
 	isValidTypeOnlyUseSite bool,
 	useRequire bool,
-	preferences UserPreferences,
 	fromCacheOnly bool,
 ) []*ImportFix {
 	// tries to create a new import statement using an existing import specifier
@@ -995,7 +976,7 @@ func (l *LanguageService) getFixesForAddImport(
 		return []*ImportFix{importWithExistingSpecifier}
 	}
 
-	return l.getNewImportFixes(ch, sourceFile, usagePosition, isValidTypeOnlyUseSite, useRequire, exportInfos, preferences, fromCacheOnly)
+	return l.getNewImportFixes(ch, sourceFile, usagePosition, isValidTypeOnlyUseSite, useRequire, exportInfos, fromCacheOnly)
 }
 
 func (l *LanguageService) getNewImportFixes(
@@ -1005,7 +986,6 @@ func (l *LanguageService) getNewImportFixes(
 	isValidTypeOnlyUseSite bool,
 	useRequire bool,
 	exportInfos []*SymbolExportInfo, // !!! (SymbolExportInfo | FutureSymbolExportInfo)[],
-	preferences UserPreferences,
 	fromCacheOnly bool,
 ) []*ImportFix /* FixAddNewImport | FixAddJsdocTypeImport */ {
 	isJs := tspath.HasJSFileExtension(sourceFile.FileName())
@@ -1014,7 +994,7 @@ func (l *LanguageService) getNewImportFixes(
 	// getChecker := createGetChecker(program, host)// memoized typechecker based on `isFromPackageJson` bool
 
 	getModuleSpecifiers := func(moduleSymbol *ast.Symbol, checker *checker.Checker) ([]string, modulespecifiers.ResultKind) {
-		return modulespecifiers.GetModuleSpecifiersWithInfo(moduleSymbol, checker, compilerOptions, sourceFile, l.GetProgram(), preferences.ModuleSpecifierPreferences(), modulespecifiers.ModuleSpecifierOptions{}, true /*forAutoImport*/)
+		return modulespecifiers.GetModuleSpecifiersWithInfo(moduleSymbol, checker, compilerOptions, sourceFile, l.GetProgram(), l.UserPreferences().ModuleSpecifierPreferences(), modulespecifiers.ModuleSpecifierOptions{}, true /*forAutoImport*/)
 	}
 	// fromCacheOnly
 	//     ? (exportInfo: SymbolExportInfo | FutureSymbolExportInfo) => moduleSpecifiers.tryGetModuleSpecifiersFromCache(exportInfo.moduleSymbol, sourceFile, moduleSpecifierResolutionHost, preferences)
@@ -1329,7 +1309,6 @@ func getDefaultLikeExportNameFromDeclaration(symbol *ast.Symbol) string {
 func forEachExternalModuleToImportFrom(
 	ch *checker.Checker,
 	program *compiler.Program,
-	preferences *UserPreferences,
 	// useAutoImportProvider bool,
 	cb func(module *ast.Symbol, moduleFile *ast.SourceFile, checker *checker.Checker, isFromPackageJson bool),
 ) {
@@ -1390,10 +1369,9 @@ func (l *LanguageService) codeActionForFix(
 	symbolName string,
 	fix *ImportFix,
 	includeSymbolNameInDescription bool,
-	preferences *UserPreferences,
 ) codeAction {
 	tracker := l.newChangeTracker(ctx) // !!! changetracker.with
-	diag := l.codeActionForFixWorker(tracker, sourceFile, symbolName, fix, includeSymbolNameInDescription, preferences)
+	diag := l.codeActionForFixWorker(tracker, sourceFile, symbolName, fix, includeSymbolNameInDescription)
 	changes := tracker.getChanges()[sourceFile.FileName()]
 	return codeAction{description: diag.Message(), changes: changes}
 }
@@ -1404,7 +1382,6 @@ func (l *LanguageService) codeActionForFixWorker(
 	symbolName string,
 	fix *ImportFix,
 	includeSymbolNameInDescription bool,
-	preferences *UserPreferences,
 ) *diagnostics.Message {
 	switch fix.kind {
 	case ImportFixKindUseNamespace:
@@ -1421,7 +1398,6 @@ func (l *LanguageService) codeActionForFixWorker(
 			core.IfElse(fix.importKind == ImportKindDefault, &Import{name: symbolName, addAsTypeOnly: fix.addAsTypeOnly}, nil),
 			core.IfElse(fix.importKind == ImportKindNamed, []*Import{{name: symbolName, addAsTypeOnly: fix.addAsTypeOnly}}, nil),
 			// nil /*removeExistingImportSpecifiers*/,
-			preferences,
 		)
 		moduleSpecifierWithoutQuotes := stringutil.StripQuotes(fix.moduleSpecifier)
 		if includeSymbolNameInDescription {
@@ -1443,16 +1419,15 @@ func (l *LanguageService) codeActionForFixWorker(
 
 		if fix.useRequire {
 			// !!! require
-			// declarations = getNewRequires(fixAddNew.moduleSpecifier, quotePreference, defaultImport, namedImports, namespaceLikeImport, l.GetProgram().Options(), preferences)
+			// declarations = getNewRequires(fixAddNew.moduleSpecifier, quotePreference, defaultImport, namedImports, namespaceLikeImport, l.GetProgram().Options())
 		} else {
-			declarations = changeTracker.getNewImports(fix.moduleSpecifier, defaultImport, namedImports, namespaceLikeImport, l.GetProgram().Options(), preferences)
+			declarations = changeTracker.getNewImports(fix.moduleSpecifier, defaultImport, namedImports, namespaceLikeImport, l.GetProgram().Options())
 		}
 
 		changeTracker.insertImports(
 			sourceFile,
 			declarations,
 			/*blankLineBetween*/ true,
-			preferences,
 		)
 		if qualification != nil {
 			changeTracker.addNamespaceQualifier(sourceFile, qualification)
