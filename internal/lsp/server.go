@@ -16,7 +16,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -712,13 +711,16 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	})
 
 	// request userPreferences if not provided at initialization
-	if s.session.UserPreferences() == nil {
+	if s.initializeParams.InitializationOptions == nil {
 		userPreferences, err := s.RequestConfiguration(ctx)
 		if err != nil {
 			return err
 		}
 		s.session.Configure(userPreferences)
+	} else {
+		// !!! handle userPreferences from initalization
 	}
+
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	if s.compilerOptionsForInferredProjects != nil {
 		s.session.DidChangeCompilerOptionsForInferredProjects(ctx, s.compilerOptionsForInferredProjects)
