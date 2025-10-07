@@ -230,86 +230,19 @@ func (s *Server) Configure(ctx context.Context) (*ls.UserPreferences, error) {
 		return nil, fmt.Errorf("configure request failed: %w", err)
 	}
 	configs := result.([]any)
-	userPreferences := &ls.UserPreferences{}
-	for _, config := range configs {
-		if config == nil {
-			continue
-		}
-		if item, ok := config.(map[string]any); ok {
-			for name, values := range item {
-				switch name {
-				case "inlayHints":
-					inlayHintsPreferences := values.(map[string]any)
-					if v, ok := inlayHintsPreferences["parameterNames"].(map[string]any); ok && v != nil {
-						if enabled, ok := v["enabled"]; ok {
-							if enabledStr, ok := enabled.(string); ok {
-								userPreferences.IncludeInlayParameterNameHints = ls.IncludeInlayParameterNameHints(enabledStr)
-							} else {
-								userPreferences.IncludeInlayParameterNameHints = ls.IncludeInlayParameterNameHintsNone
-							}
-						}
-						if supressWhenArgumentMatchesName, ok := v["suppressWhenArgumentMatchesName"]; ok {
-							userPreferences.IncludeInlayParameterNameHintsWhenArgumentMatchesName = !supressWhenArgumentMatchesName.(bool)
-						}
-					}
-					if v, ok := inlayHintsPreferences["parameterTypes"].(map[string]any); ok && v != nil {
-						if enabled, ok := v["enabled"]; ok {
-							userPreferences.IncludeInlayFunctionParameterTypeHints = enabled.(bool)
-						}
-					}
-					if v, ok := inlayHintsPreferences["variableTypes"].(map[string]any); ok && v != nil {
-						if enabled, ok := v["enabled"]; ok {
-							userPreferences.IncludeInlayVariableTypeHints = enabled.(bool)
-						}
-						if supressWhenTypeMatchesName, ok := v["suppressWhenTypeMatchesName"]; ok {
-							userPreferences.IncludeInlayVariableTypeHintsWhenTypeMatchesName = !supressWhenTypeMatchesName.(bool)
-						}
-					}
-					if v, ok := inlayHintsPreferences["propertyDeclarationTypes"].(map[string]any); ok && v != nil {
-						if enabled, ok := v["enabled"]; ok {
-							userPreferences.IncludeInlayPropertyDeclarationTypeHints = enabled.(bool)
-						}
-					}
-					if v, ok := inlayHintsPreferences["functionLikeReturnTypes"].(map[string]any); ok && v != nil {
-						if enabled, ok := v["enabled"]; ok {
-							userPreferences.IncludeInlayFunctionLikeReturnTypeHints = enabled.(bool)
-						}
-					}
-					if v, ok := inlayHintsPreferences["enumMemberValues"].(map[string]any); ok && v != nil {
-						if enabled, ok := v["enabled"]; ok {
-							userPreferences.IncludeInlayEnumMemberValueHints = enabled.(bool)
-						}
-					}
-					userPreferences.InteractiveInlayHints = true
-				case "tsserver":
-					// 
-				case "unstable":
-					// !!!
-				case "tsc":
-					// !!!
-				case "updateImportsOnFileMove":
-					// !!! moveToFile
-				case "preferences":
-					// !!!
-				case "experimental":
-					// !!!
-				case "organizeImports":
-					// !!!
-				case "importModuleSpecifierEnding":
-					// !!!
-				}
-			}
-			continue
-		}
-		if item, ok := config.(ls.UserPreferences); ok {
+	s.Log(fmt.Sprintf("\n\nconfiguration: %+v, %T\n\n", configs, configs))
+	userPreferences := ls.NewDefaultUserPreferences()
+	for _, item := range configs {
+		if item == nil {
+			// continue
+		} else if config, ok := item.(map[string]any); ok {
+			userPreferences.Parse(config)
+		} else if item, ok := item.(ls.UserPreferences); ok {
 			// case for fourslash
 			userPreferences = &item
 			break
 		}
 	}
-	// !!! set defaults for services, remove after extension is updated
-	userPreferences.IncludeCompletionsForModuleExports = core.TSTrue
-	userPreferences.IncludeCompletionsForImportStatements = core.TSTrue
 	return userPreferences, nil
 }
 
