@@ -1353,12 +1353,11 @@ func (c *Checker) getMapperFromContext(n *InferenceContext) *TypeMapper {
 // to their inferences at the time of creation.
 func (c *Checker) createOuterReturnMapper(context *InferenceContext) *TypeMapper {
 	if context.outerReturnMapper == nil {
-		clonedMapper := c.getMapperFromContext(c.cloneInferenceContext(context, InferenceFlagsNone))
+		mapper := c.cloneInferenceContext(context, InferenceFlagsNone).mapper
 		if context.returnMapper != nil {
-			context.outerReturnMapper = newMergedTypeMapper(context.returnMapper, clonedMapper)
-		} else {
-			context.outerReturnMapper = clonedMapper
+			mapper = newMergedTypeMapper(context.returnMapper, mapper)
 		}
+		context.outerReturnMapper = mapper
 	}
 	return context.outerReturnMapper
 }
