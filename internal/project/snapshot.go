@@ -84,6 +84,13 @@ func (s *Snapshot) LSPLineMap(fileName string) *ls.LSPLineMap {
 	return nil
 }
 
+func (s *Snapshot) GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo {
+	if file := s.fs.GetFile(fileName); file != nil {
+		return file.ECMALineInfo()
+	}
+	return nil
+}
+
 func (s *Snapshot) Converters() *ls.Converters {
 	return s.converters
 }
@@ -92,6 +99,13 @@ func (s *Snapshot) ID() uint64 {
 	return s.id
 }
 
+<<<<<<< HEAD
+=======
+func (s *Snapshot) UseCaseSensitiveFileNames() bool {
+	return s.fs.fs.UseCaseSensitiveFileNames()
+}
+
+>>>>>>> main
 func (s *Snapshot) ReadFile(fileName string) (string, bool) {
 	handle := s.GetFile(fileName)
 	if handle == nil {
@@ -100,10 +114,13 @@ func (s *Snapshot) ReadFile(fileName string) (string, bool) {
 	return handle.Content(), true
 }
 
+<<<<<<< HEAD
 func (s *Snapshot) GetDocumentPositionMapper(fileName string) *sourcemap.DocumentPositionMapper {
 	return s.fs.GetDocumentPositionMapper(fileName)
 }
 
+=======
+>>>>>>> main
 type APISnapshotRequest struct {
 	OpenProjects   *collections.Set[string]
 	CloseProjects  *collections.Set[tspath.Path]

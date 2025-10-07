@@ -37,7 +37,7 @@ func (c *Checker) grammarErrorAtPos(nodeForSourceFile *ast.Node, start int, leng
 func (c *Checker) grammarErrorOnNode(node *ast.Node, message *diagnostics.Message, args ...any) bool {
 	sourceFile := ast.GetSourceFileOfNode(node)
 	if !c.hasParseDiagnostics(sourceFile) {
-		c.diagnostics.Add(NewDiagnosticForNode(node, message, args...))
+		c.error(node, message, args...)
 		return true
 	}
 	return false
@@ -1256,7 +1256,7 @@ func (c *Checker) checkGrammarForInOrForOfStatement(forInOrOfStatement *ast.ForI
 						}
 						fallthrough
 					default:
-						c.diagnostics.Add(createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.Top_level_for_await_loops_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_node18_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher))
+						c.diagnostics.Add(createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.Top_level_for_await_loops_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_node18_node20_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher))
 					}
 				}
 			} else {
@@ -1700,8 +1700,13 @@ func (c *Checker) checkGrammarVariableDeclarationList(declarationList *ast.Varia
 	}
 
 	blockScopeFlags := declarationList.Flags & ast.NodeFlagsBlockScoped
-	if (blockScopeFlags == ast.NodeFlagsUsing || blockScopeFlags == ast.NodeFlagsAwaitUsing) && ast.IsForInStatement(declarationList.Parent) {
-		return c.grammarErrorOnNode(declarationList.AsNode(), core.IfElse(blockScopeFlags == ast.NodeFlagsUsing, diagnostics.The_left_hand_side_of_a_for_in_statement_cannot_be_a_using_declaration, diagnostics.The_left_hand_side_of_a_for_in_statement_cannot_be_an_await_using_declaration))
+	if blockScopeFlags == ast.NodeFlagsUsing || blockScopeFlags == ast.NodeFlagsAwaitUsing {
+		if ast.IsForInStatement(declarationList.Parent) {
+			return c.grammarErrorOnNode(declarationList.AsNode(), core.IfElse(blockScopeFlags == ast.NodeFlagsUsing, diagnostics.The_left_hand_side_of_a_for_in_statement_cannot_be_a_using_declaration, diagnostics.The_left_hand_side_of_a_for_in_statement_cannot_be_an_await_using_declaration))
+		}
+		if declarationList.Flags&ast.NodeFlagsAmbient != 0 {
+			return c.grammarErrorOnNode(declarationList.AsNode(), core.IfElse(blockScopeFlags == ast.NodeFlagsUsing, diagnostics.X_using_declarations_are_not_allowed_in_ambient_contexts, diagnostics.X_await_using_declarations_are_not_allowed_in_ambient_contexts))
+		}
 	}
 
 	if blockScopeFlags == ast.NodeFlagsAwaitUsing {
@@ -1772,9 +1777,9 @@ func (c *Checker) checkGrammarAwaitOrAwaitUsing(node *ast.Node) bool {
 					}
 					var message *diagnostics.Message
 					if ast.IsAwaitExpression(node) {
-						message = diagnostics.Top_level_await_expressions_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_node18_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher
+						message = diagnostics.Top_level_await_expressions_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_node18_node20_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher
 					} else {
-						message = diagnostics.Top_level_await_using_statements_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_node18_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher
+						message = diagnostics.Top_level_await_using_statements_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_node18_node20_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher
 					}
 					c.diagnostics.Add(ast.NewDiagnostic(sourceFile, span, message))
 					hasError = true
@@ -1841,7 +1846,7 @@ func (c *Checker) checkGrammarForDisallowedBlockScopedVariableStatement(node *as
 			default:
 				panic("Unknown BlockScope flag")
 			}
-			return c.grammarErrorOnNode(node.AsNode(), diagnostics.X_0_declarations_can_only_be_declared_inside_a_block, keyword)
+			c.error(node.AsNode(), diagnostics.X_0_declarations_can_only_be_declared_inside_a_block, keyword)
 		}
 	}
 
@@ -1876,7 +1881,17 @@ func (c *Checker) checkGrammarMetaProperty(node *ast.MetaProperty) bool {
 		}
 	case ast.KindImportKeyword:
 		if nameText != "meta" {
-			return c.grammarErrorOnNode(nodeName, diagnostics.X_0_is_not_a_valid_meta_property_for_keyword_1_Did_you_mean_2, nameText, scanner.TokenToString(node.KeywordToken), "meta")
+			isCallee := ast.IsCallExpression(node.Parent) && node.Parent.AsCallExpression().Expression == node.AsNode()
+			if nameText == "defer" {
+				if !isCallee {
+					return c.grammarErrorAtPos(node.AsNode(), node.AsNode().End(), 0, diagnostics.X_0_expected, "(")
+				}
+			} else {
+				if isCallee {
+					return c.grammarErrorOnNode(nodeName, diagnostics.X_0_is_not_a_valid_meta_property_for_keyword_import_Did_you_mean_meta_or_defer, nameText)
+				}
+				return c.grammarErrorOnNode(nodeName, diagnostics.X_0_is_not_a_valid_meta_property_for_keyword_1_Did_you_mean_2, nameText, scanner.TokenToString(node.KeywordToken), "meta")
+			}
 		}
 	}
 
@@ -1921,7 +1936,7 @@ func (c *Checker) checkGrammarProperty(node *ast.Node /*Union[PropertyDeclaratio
 		if c.languageVersion < core.ScriptTargetES2015 && ast.IsPrivateIdentifier(propertyName) {
 			return c.grammarErrorOnNode(propertyName, diagnostics.Private_identifiers_are_only_available_when_targeting_ECMAScript_2015_and_higher)
 		}
-		if c.languageVersion < core.ScriptTargetES2015 && ast.IsAutoAccessorPropertyDeclaration(node) {
+		if c.languageVersion < core.ScriptTargetES2015 && ast.IsAutoAccessorPropertyDeclaration(node) && node.Flags&ast.NodeFlagsAmbient == 0 {
 			return c.grammarErrorOnNode(propertyName, diagnostics.Properties_with_the_accessor_modifier_are_only_available_when_targeting_ECMAScript_2015_and_higher)
 		}
 		if ast.IsAutoAccessorPropertyDeclaration(node) && c.checkGrammarForInvalidQuestionMark(node.AsPropertyDeclaration().PostfixToken, diagnostics.An_accessor_property_cannot_be_declared_optional) {
@@ -2140,7 +2155,8 @@ func (c *Checker) checkGrammarNumericLiteral(node *ast.NumericLiteral) {
 func (c *Checker) checkGrammarBigIntLiteral(node *ast.BigIntLiteral) bool {
 	literalType := ast.IsLiteralTypeNode(node.Parent) || ast.IsPrefixUnaryExpression(node.Parent) && ast.IsLiteralTypeNode(node.Parent.Parent)
 	if !literalType {
-		if c.languageVersion < core.ScriptTargetES2020 {
+		// Don't error on BigInt literals in ambient contexts
+		if node.Flags&ast.NodeFlagsAmbient == 0 && c.languageVersion < core.ScriptTargetES2020 {
 			if c.grammarErrorOnNode(node.AsNode(), diagnostics.BigInt_literals_are_not_available_when_targeting_lower_than_ES2020) {
 				return true
 			}
@@ -2150,11 +2166,24 @@ func (c *Checker) checkGrammarBigIntLiteral(node *ast.BigIntLiteral) bool {
 }
 
 func (c *Checker) checkGrammarImportClause(node *ast.ImportClause) bool {
-	if node.Flags&ast.NodeFlagsJSDoc == 0 && node.IsTypeOnly && node.Name() != nil && node.NamedBindings != nil {
-		return c.grammarErrorOnNode(&node.Node, diagnostics.A_type_only_import_can_specify_a_default_import_or_named_bindings_but_not_both)
-	}
-	if node.IsTypeOnly && node.NamedBindings != nil && node.NamedBindings.Kind == ast.KindNamedImports {
-		return c.checkGrammarTypeOnlyNamedImportsOrExports(node.NamedBindings)
+	switch node.PhaseModifier {
+	case ast.KindTypeKeyword:
+		if node.Flags&ast.NodeFlagsJSDoc == 0 && node.Name() != nil && node.NamedBindings != nil {
+			return c.grammarErrorOnNode(&node.Node, diagnostics.A_type_only_import_can_specify_a_default_import_or_named_bindings_but_not_both)
+		}
+		if node.NamedBindings != nil && node.NamedBindings.Kind == ast.KindNamedImports {
+			return c.checkGrammarTypeOnlyNamedImportsOrExports(node.NamedBindings)
+		}
+	case ast.KindDeferKeyword:
+		if node.Name() != nil {
+			return c.grammarErrorOnNode(&node.Node, diagnostics.Default_imports_are_not_allowed_in_a_deferred_import)
+		}
+		if node.NamedBindings != nil && node.NamedBindings.Kind == ast.KindNamedImports {
+			return c.grammarErrorOnNode(&node.Node, diagnostics.Named_imports_are_not_allowed_in_a_deferred_import)
+		}
+		if c.moduleKind != core.ModuleKindESNext && c.moduleKind != core.ModuleKindPreserve {
+			return c.grammarErrorOnNode(&node.Node, diagnostics.Deferred_imports_are_only_supported_when_the_module_flag_is_set_to_esnext_or_preserve)
+		}
 	}
 	return false
 }
@@ -2188,11 +2217,15 @@ func (c *Checker) checkGrammarTypeOnlyNamedImportsOrExports(namedBindings *ast.N
 
 func (c *Checker) checkGrammarImportCallExpression(node *ast.Node) bool {
 	if c.compilerOptions.VerbatimModuleSyntax == core.TSTrue && c.moduleKind == core.ModuleKindCommonJS {
-		return c.grammarErrorOnNode(node, diagnostics.ESM_syntax_is_not_allowed_in_a_CommonJS_module_when_verbatimModuleSyntax_is_enabled)
+		return c.grammarErrorOnNode(node, getVerbatimModuleSyntaxErrorMessage(node))
 	}
 
-	if c.moduleKind == core.ModuleKindES2015 {
-		return c.grammarErrorOnNode(node, diagnostics.Dynamic_imports_are_only_supported_when_the_module_flag_is_set_to_es2020_es2022_esnext_commonjs_amd_system_umd_node16_node18_or_nodenext)
+	if node.Expression().Kind == ast.KindMetaProperty {
+		if c.moduleKind != core.ModuleKindESNext && c.moduleKind != core.ModuleKindPreserve {
+			return c.grammarErrorOnNode(node, diagnostics.Deferred_imports_are_only_supported_when_the_module_flag_is_set_to_esnext_or_preserve)
+		}
+	} else if c.moduleKind == core.ModuleKindES2015 {
+		return c.grammarErrorOnNode(node, diagnostics.Dynamic_imports_are_only_supported_when_the_module_flag_is_set_to_es2020_es2022_esnext_commonjs_amd_system_umd_node16_node18_node20_or_nodenext)
 	}
 
 	nodeAsCall := node.AsCallExpression()
@@ -2208,7 +2241,7 @@ func (c *Checker) checkGrammarImportCallExpression(node *ast.Node) bool {
 
 		if len(argumentNodes) > 1 {
 			importAttributesArgument := argumentNodes[1]
-			return c.grammarErrorOnNode(importAttributesArgument, diagnostics.Dynamic_imports_only_support_a_second_argument_when_the_module_option_is_set_to_esnext_node16_node18_nodenext_or_preserve)
+			return c.grammarErrorOnNode(importAttributesArgument, diagnostics.Dynamic_imports_only_support_a_second_argument_when_the_module_option_is_set_to_esnext_node16_node18_node20_nodenext_or_preserve)
 		}
 	}
 
