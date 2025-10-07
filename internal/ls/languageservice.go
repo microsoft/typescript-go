@@ -44,12 +44,5 @@ func (l *LanguageService) getProgramAndFile(documentURI lsproto.DocumentUri) (*c
 }
 
 func (l *LanguageService) GetDocumentPositionMapper(fileName string) *sourcemap.DocumentPositionMapper {
-	// d, ok := l.documentPositionMappers[fileName]
-	// if !ok {
-	// 	d = sourcemap.GetDocumentPositionMapper(l, fileName)
-	// 	l.documentPositionMappers[fileName] = d
-	// }
-	// return d
-	// !!!
-	return nil
+	return l.host.GetDocumentPositionMapper(fileName)
 }

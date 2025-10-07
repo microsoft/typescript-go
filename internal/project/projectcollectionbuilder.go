@@ -242,11 +242,11 @@ func (b *projectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 
 		var inferredProjectFiles []string
 		b.fs.overlays.Range(func(overlay *dirty.SyncMapEntry[tspath.Path, *overlay]) bool {
-			fileName := overlay.Value().FileName()
-			if p := b.findDefaultConfiguredProject(fileName, b.toPath(fileName)); p != nil {
+			overlayName := overlay.Value().FileName()
+			if p := b.findDefaultConfiguredProject(overlayName, b.toPath(overlayName)); p != nil {
 				toRemoveProjects.Delete(p.Value().configFilePath)
 			} else {
-				inferredProjectFiles = append(inferredProjectFiles, fileName)
+				inferredProjectFiles = append(inferredProjectFiles, overlayName)
 			}
 			return true
 		})
@@ -303,10 +303,10 @@ func (b *projectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, logge
 		// in/out of the inferred project.
 		var inferredProjectFiles []string
 		b.fs.overlays.Range(func(overlay *dirty.SyncMapEntry[tspath.Path, *overlay]) bool {
-			path := overlay.Key()
-			fileName := overlay.Value().FileName()
-			if b.findDefaultConfiguredProject(fileName, path) == nil {
-				inferredProjectFiles = append(inferredProjectFiles, fileName)
+			overlayPath := overlay.Key()
+			overlayFileName := overlay.Value().FileName()
+			if b.findDefaultConfiguredProject(overlayFileName, overlayPath) == nil {
+				inferredProjectFiles = append(inferredProjectFiles, overlayFileName)
 			}
 			return true
 		})

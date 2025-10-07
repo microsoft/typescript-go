@@ -12,11 +12,11 @@ func (l *LanguageService) getMappedLocation(location *lsproto.Location) *lsproto
 	script := l.getScript(location.Uri.FileName())
 	rangeStart := l.converters.LineAndCharacterToPosition(script, location.Range.Start)
 	rangeEnd := l.converters.LineAndCharacterToPosition(script, location.Range.End)
-	startPos := l.tryGetSourcePosition(location.Uri.FileName(), core.TextPos(rangeStart))
+	startPos := l.tryGetSourcePosition(location.Uri.FileName(), rangeStart)
 	if startPos == nil {
 		return location
 	}
-	endPos := l.tryGetSourcePosition(location.Uri.FileName(), core.TextPos(rangeEnd))
+	endPos := l.tryGetSourcePosition(location.Uri.FileName(), rangeEnd)
 	debug.Assert(endPos.FileName == startPos.FileName, "start and end should be in same file")
 	newRange := core.NewTextRange(startPos.Pos, endPos.Pos)
 	lspRange := l.createLspRangeFromRange(newRange, l.getScript(startPos.FileName))
