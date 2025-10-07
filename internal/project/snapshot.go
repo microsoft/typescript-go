@@ -295,6 +295,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 // Creates a clone of the snapshot that ensures source maps are computed for the given files.
 // Returns the new snapshot and a patch of changes made to diskFiles.
+// The changes only include additional files that were read, or source map information added to existing files.
 func (s *Snapshot) CloneWithSourceMaps(genFiles []string, session *Session) (*Snapshot, map[tspath.Path]*dirty.Change[*diskFile]) {
 	fs := newSnapshotFSBuilder(s.fs.fs, s.fs.overlays, s.fs.diskFiles, s.sessionOptions.PositionEncoding, s.toPath)
 	for _, genFile := range genFiles {
@@ -322,7 +323,7 @@ func (s *Snapshot) CloneWithSourceMaps(genFiles []string, session *Session) (*Sn
 	return newSnapshot, changes
 }
 
-func (s *Snapshot) CloneWithChanges(changes map[tspath.Path]*dirty.Change[*diskFile], session *Session) *Snapshot {
+func (s *Snapshot) CloneWithDiskChanges(changes map[tspath.Path]*dirty.Change[*diskFile], session *Session) *Snapshot {
 	fs := newSnapshotFSBuilder(s.fs.fs, s.fs.overlays, s.fs.diskFiles, s.sessionOptions.PositionEncoding, s.toPath)
 	fs.applyDiskFileChanges(changes)
 	snapshotFS, _ := fs.Finalize()

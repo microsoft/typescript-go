@@ -42,19 +42,14 @@ func (s *snapshotFS) GetFile(fileName string) FileHandle {
 }
 
 func (s *snapshotFS) GetDocumentPositionMapper(fileName string) *sourcemap.DocumentPositionMapper {
-	var sourceMapInfo *sourceMapInfo
-	if file, ok := s.overlays[s.toPath(fileName)]; ok {
-		sourceMapInfo = file.sourceMapInfo
-	}
 	if file, ok := s.diskFiles[s.toPath(fileName)]; ok {
-		sourceMapInfo = file.sourceMapInfo
-	}
-	if sourceMapInfo != nil {
-		if sourceMapInfo.documentMapper != nil {
-			return sourceMapInfo.documentMapper.m
-		}
-		if sourceMapInfo.sourceMapPath != "" {
-			return s.GetDocumentPositionMapper(sourceMapInfo.sourceMapPath)
+		if file.sourceMapInfo != nil {
+			if file.sourceMapInfo.documentMapper != nil {
+				return file.sourceMapInfo.documentMapper.m
+			}
+			if file.sourceMapInfo.sourceMapPath != "" {
+				return s.GetDocumentPositionMapper(file.sourceMapInfo.sourceMapPath)
+			}
 		}
 	}
 	return nil
@@ -117,29 +112,7 @@ func (s *snapshotFSBuilder) GetFileByPath(fileName string, path tspath.Path) Fil
 	if file, ok := s.overlays[path]; ok {
 		return file
 	}
-	entry, _ := s.diskFiles.LoadOrStore(path, &diskFile{fileBase: fileBase{fileName: fileName}, needsReload: true})
-	if entry != nil {
-		entry.Locked(func(entry dirty.Value[*diskFile]) {
-			if entry.Value() != nil && !entry.Value().MatchesDiskText() {
-				if content, ok := s.fs.ReadFile(fileName); ok {
-					entry.Change(func(file *diskFile) {
-						file.content = content
-						file.hash = xxh3.Hash128([]byte(content))
-						file.needsReload = false
-						// This should not ever be needed while updating a snapshot with source maps
-						file.sourceMapInfo = nil
-						file.lineInfo = nil
-					})
-				} else {
-					entry.Delete()
-				}
-			}
-		})
-	}
-	if entry == nil || entry.Value() == nil {
-		return nil
-	}
-	return entry.Value()
+	return s.getDiskFileByPath(fileName, path)
 }
 
 func (s *snapshotFSBuilder) markDirtyFiles(change FileChangeSummary) {
@@ -168,7 +141,7 @@ func (s *snapshotFSBuilder) UseCaseSensitiveFileNames() bool {
 
 // GetECMALineInfo implements sourcemap.Host.
 func (s *snapshotFSBuilder) GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo {
-	if file := s.GetFile(fileName); file != nil {
+	if file := s.getDiskFile(fileName); file != nil {
 		return file.ECMALineInfo()
 	}
 	return nil
@@ -176,13 +149,16 @@ func (s *snapshotFSBuilder) GetECMALineInfo(fileName string) *sourcemap.ECMALine
 
 // ReadFile implements sourcemap.Host.
 func (s *snapshotFSBuilder) ReadFile(fileName string) (contents string, ok bool) {
-	if file := s.GetFile(fileName); file != nil {
+	if file := s.getDiskFile(fileName); file != nil {
 		return file.Content(), true
 	}
 	return "", false
 }
 
-// !!! TODO: consolidate this and `GetFileByPath`
+func (s *snapshotFSBuilder) getDiskFile(fileName string) *diskFile {
+	return s.getDiskFileByPath(fileName, s.toPath(fileName))
+}
+
 func (s *snapshotFSBuilder) getDiskFileByPath(fileName string, path tspath.Path) *diskFile {
 	entry, _ := s.diskFiles.LoadOrStore(path, &diskFile{fileBase: fileBase{fileName: fileName}, needsReload: true})
 	if entry != nil {
@@ -190,12 +166,12 @@ func (s *snapshotFSBuilder) getDiskFileByPath(fileName string, path tspath.Path)
 			if entry.Value() != nil && !entry.Value().MatchesDiskText() {
 				if content, ok := s.fs.ReadFile(fileName); ok {
 					entry.Change(func(file *diskFile) {
+						if file.sourceMapInfo != nil || file.lineInfo != nil {
+							panic("Should not have source map info or line info when reloading file")
+						}
 						file.content = content
 						file.hash = xxh3.Hash128([]byte(content))
 						file.needsReload = false
-						// This should not ever be needed while updating a snapshot with source maps
-						file.sourceMapInfo = nil
-						file.lineInfo = nil
 					})
 				} else {
 					entry.Delete()
@@ -210,8 +186,12 @@ func (s *snapshotFSBuilder) getDiskFileByPath(fileName string, path tspath.Path)
 }
 
 func (s *snapshotFSBuilder) computeDocumentPositionMapper(genFileName string) {
-	// !!! TODO: What if file is in overlay?
 	genFilePath := s.toPath(genFileName)
+	// For simplicity of implementation, we always use the disk file for computing and storing source map information.
+	// If the file is in the overlays (i.e. open in the editor) and matches the disk text, using the disk file is ok.
+	// If the file is in the overlays and does not match the disk text, we are in a bad state:
+	// the .d.ts file has been edited in the editor, so the source map, if present, is out of date.
+	s.getDiskFileByPath(genFileName, genFilePath)
 	entry, _ := s.diskFiles.Load(genFilePath)
 	if entry == nil {
 		return
@@ -224,7 +204,6 @@ func (s *snapshotFSBuilder) computeDocumentPositionMapper(genFileName string) {
 	if file.sourceMapInfo != nil {
 		return
 	}
-	// Compute source map information
 	url, isInline := sourcemap.GetSourceMapURL(s, genFileName)
 	if isInline {
 		// Store document mapper directly in disk file for an inline source map
@@ -259,14 +238,23 @@ func (s *snapshotFSBuilder) computeDocumentPositionMapperForMap(mapFileName stri
 	})
 }
 
-func (s *snapshotFSBuilder) applyDiskFileChanges(changes map[tspath.Path]*dirty.Change[*diskFile]) {
-	for path, change := range changes {
+func (s *snapshotFSBuilder) applyDiskFileChanges(
+	diskChanges map[tspath.Path]*dirty.Change[*diskFile],
+) {
+	for path, change := range diskChanges {
 		if change.Deleted {
 			if change.Old != nil {
 				panic("Deleting files not supported")
 			}
+			// Failed file read
 			continue
 		}
+		// New file
+		if change.Old == nil {
+			s.diskFiles.LoadOrStore(path, change.New)
+			continue
+		}
+		// Updated file
 		entry, _ := s.diskFiles.Load(path)
 		if entry != nil {
 			entry.Change(func(file *diskFile) {

@@ -662,7 +662,7 @@ func (s *Session) GetLanguageServiceWithMappedFiles(ctx context.Context, uri lsp
 func (s *Session) updateSnapshotWithAddedFiles(addedFiles map[tspath.Path]*dirty.Change[*diskFile]) {
 	s.snapshotMu.Lock()
 	oldSnapshot := s.snapshot
-	newSnapshot := oldSnapshot.CloneWithChanges(addedFiles, s)
+	newSnapshot := oldSnapshot.CloneWithDiskChanges(addedFiles, s)
 	s.snapshot = newSnapshot
 	s.snapshotMu.Unlock()
 
