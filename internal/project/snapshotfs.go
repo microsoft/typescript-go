@@ -62,7 +62,7 @@ func (s *snapshotFS) GetDocumentPositionMapper(fileName string) *sourcemap.Docum
 
 type snapshotFSBuilder struct {
 	fs        vfs.FS
-	overlays  *dirty.SyncMap[tspath.Path, *overlay]
+	overlays  map[tspath.Path]*overlay
 	diskFiles *dirty.SyncMap[tspath.Path, *diskFile]
 	toPath    func(string) tspath.Path
 }
@@ -78,7 +78,7 @@ func newSnapshotFSBuilder(
 	cachedFS.Enable()
 	return &snapshotFSBuilder{
 		fs:        cachedFS,
-		overlays:  dirty.NewSyncMap(overlays, nil),
+		overlays:  overlays,
 		diskFiles: dirty.NewSyncMap(diskFiles, nil),
 		toPath:    toPath,
 	}
@@ -89,30 +89,23 @@ func (s *snapshotFSBuilder) FS() vfs.FS {
 }
 
 func (s *snapshotFSBuilder) Finalize() (*snapshotFS, bool) {
-	diskFiles, diskChanged := s.diskFiles.Finalize()
-	overlays, overlayChanged := s.overlays.Finalize()
+	diskFiles, changed := s.diskFiles.Finalize()
 	return &snapshotFS{
 		fs:        s.fs,
-		overlays:  overlays,
+		overlays:  s.overlays,
 		diskFiles: diskFiles,
 		toPath:    s.toPath,
-	}, diskChanged || overlayChanged
+	}, changed
 }
 
-type builderFileChanges struct {
-	diskChanges    map[tspath.Path]*dirty.Change[*diskFile]
-	overlayChanges map[tspath.Path]*dirty.Change[*overlay]
-}
-
-func (s *snapshotFSBuilder) Finalize2() (*snapshotFS, bool, *builderFileChanges) {
-	diskFiles, diskChanged, diskChanges := s.diskFiles.Finalize2()
-	overlays, overlayChanged, overlayChanges := s.overlays.Finalize2()
+func (s *snapshotFSBuilder) Finalize2() (*snapshotFS, bool, map[tspath.Path]*dirty.Change[*diskFile]) {
+	diskFiles, changed, changes := s.diskFiles.Finalize2()
 	return &snapshotFS{
 		fs:        s.fs,
-		overlays:  overlays,
+		overlays:  s.overlays,
 		diskFiles: diskFiles,
 		toPath:    s.toPath,
-	}, diskChanged || overlayChanged, &builderFileChanges{diskChanges, overlayChanges}
+	}, changed, changes
 }
 
 func (s *snapshotFSBuilder) GetFile(fileName string) FileHandle {
@@ -121,8 +114,8 @@ func (s *snapshotFSBuilder) GetFile(fileName string) FileHandle {
 }
 
 func (s *snapshotFSBuilder) GetFileByPath(fileName string, path tspath.Path) FileHandle {
-	if entry, ok := s.overlays.Load(path); ok {
-		return entry.Value()
+	if file, ok := s.overlays[path]; ok {
+		return file
 	}
 	entry, _ := s.diskFiles.LoadOrStore(path, &diskFile{fileBase: fileBase{fileName: fileName}, needsReload: true})
 	if entry != nil {
@@ -217,36 +210,10 @@ func (s *snapshotFSBuilder) getDiskFileByPath(fileName string, path tspath.Path)
 }
 
 func (s *snapshotFSBuilder) computeDocumentPositionMapper(genFileName string) {
+	// !!! TODO: What if file is in overlay?
 	genFilePath := s.toPath(genFileName)
-	if entry, ok := s.overlays.Load(genFilePath); ok {
-		file := entry.Value()
-		if file == nil {
-			return
-		}
-		// Source map information already computed
-		if file.sourceMapInfo != nil {
-			return
-		}
-		// Compute source map information
-		url, isInline := sourcemap.GetSourceMapURL(s, genFileName)
-		if isInline {
-			// Store document mapper directly in disk file for an inline source map
-			docMapper := sourcemap.ConvertDocumentToSourceMapper(s, url, genFileName)
-			entry.Change(func(file *overlay) {
-				file.sourceMapInfo = &sourceMapInfo{documentMapper: &documentMapper{m: docMapper}}
-			})
-		} else {
-			// Store path to map file
-			entry.Change(func(file *overlay) {
-				file.sourceMapInfo = &sourceMapInfo{sourceMapPath: url}
-			})
-		}
-		if url != "" {
-			s.computeDocumentPositionMapperForMap(url)
-		}
-	}
-	entry, ok := s.diskFiles.Load(genFilePath)
-	if !ok {
+	entry, _ := s.diskFiles.Load(genFilePath)
+	if entry == nil {
 		return
 	}
 	file := entry.Value()
@@ -292,23 +259,14 @@ func (s *snapshotFSBuilder) computeDocumentPositionMapperForMap(mapFileName stri
 	})
 }
 
-func (s *snapshotFSBuilder) applyDiskFileChanges(
-	diskChanges map[tspath.Path]*dirty.Change[*diskFile],
-) {
-	for path, change := range diskChanges {
+func (s *snapshotFSBuilder) applyDiskFileChanges(changes map[tspath.Path]*dirty.Change[*diskFile]) {
+	for path, change := range changes {
 		if change.Deleted {
 			if change.Old != nil {
 				panic("Deleting files not supported")
 			}
-			// Failed file read
 			continue
 		}
-		// New file
-		if change.Old == nil {
-			s.diskFiles.LoadOrStore(path, change.New)
-			continue
-		}
-		// Updated file
 		entry, _ := s.diskFiles.Load(path)
 		if entry != nil {
 			entry.Change(func(file *diskFile) {

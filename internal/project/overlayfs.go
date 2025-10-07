@@ -7,7 +7,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -39,8 +38,6 @@ type fileBase struct {
 	lineMap      *ls.LSPLineMap
 	lineInfoOnce sync.Once
 	lineInfo     *sourcemap.ECMALineInfo
-
-	sourceMapInfo *sourceMapInfo
 }
 
 func (f *fileBase) FileName() string {
@@ -72,7 +69,8 @@ func (f *fileBase) ECMALineInfo() *sourcemap.ECMALineInfo {
 
 type diskFile struct {
 	fileBase
-	needsReload bool
+	needsReload   bool
+	sourceMapInfo *sourceMapInfo
 }
 
 type sourceMapInfo struct {
@@ -176,19 +174,6 @@ func (o *overlay) IsOverlay() bool {
 
 func (o *overlay) Kind() core.ScriptKind {
 	return o.kind
-}
-
-func (o *overlay) Clone() *overlay {
-	return &overlay{
-		fileBase: fileBase{
-			fileName: o.fileName,
-			content:  o.content,
-			hash:     o.hash,
-		},
-		version:         o.version,
-		kind:            o.kind,
-		matchesDiskText: o.matchesDiskText,
-	}
 }
 
 type overlayFS struct {
@@ -397,34 +382,4 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 
 	fs.overlays = newOverlays
 	return result, newOverlays
-}
-
-func (fs *overlayFS) processBuilderChanges(changes map[tspath.Path]*dirty.Change[*overlay]) map[tspath.Path]*overlay {
-	fs.mu.Lock()
-	defer fs.mu.Unlock()
-	newOverlays := maps.Clone(fs.overlays)
-	for path, change := range changes {
-		if change.Deleted {
-			if change.Old != nil {
-				panic("Deleting files not supported")
-			}
-			// Failed file read
-			continue
-		}
-		// New file
-		if change.Old == nil {
-			if _, ok := newOverlays[path]; !ok {
-				newOverlays[path] = change.New
-			}
-			continue
-		}
-		// Updated file
-		if overlay, ok := newOverlays[path]; ok {
-			if overlay.Hash() == change.Old.Hash() {
-				overlay.sourceMapInfo = change.New.sourceMapInfo
-			}
-		}
-	}
-	fs.overlays = newOverlays
-	return newOverlays
 }
