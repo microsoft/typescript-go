@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	// "go/printer"
 	"io"
 	"os"
 	"os/exec"
@@ -719,7 +718,7 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 		}
 		s.session.Configure(userPreferences)
 	} else {
-		// !!! handle userPreferences from initalization
+		// !!! handle userPreferences from initialization
 	}
 
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
