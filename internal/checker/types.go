@@ -837,8 +837,6 @@ func (t *StructuredType) Properties() []*ast.Symbol {
 // ObjectFlagsAnonymous|ObjectFlagsInstantiationExpression: Originating instantiation expression type
 // ObjectFlagsAnonymous|ObjectFlagsInstantiated|ObjectFlagsInstantiationExpression: Instantiated instantiation expression type
 
-// Note: ObjectFlagsSingleSignatureType types are AnonymousType with the flag set (no separate struct)
-
 // ReverseMappedType:
 // ObjectFlagsAnonymous|ObjectFlagsReverseMapped: Reverse mapped type
 

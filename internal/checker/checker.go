@@ -21464,11 +21464,10 @@ func (c *Checker) instantiateTypeWorker(t *Type, m *TypeMapper, alias *TypeAlias
 }
 
 // Handles instantiation of the following object types:
-// AnonymousType (ObjectFlagsAnonymous|)
+// AnonymousType (ObjectFlagsAnonymous|ObjectFlagsSingleSignatureType)
 // TypeReference with node != nil (ObjectFlagsReference)
 // InstantiationExpressionType (ObjectFlagsInstantiationExpressionType)
 // MappedType (ObjectFlagsMapped)
-// Note: ObjectFlagsSingleSignatureType types are handled as anonymous types
 func (c *Checker) getObjectTypeInstantiation(t *Type, m *TypeMapper, alias *TypeAlias) *Type {
 	var declaration *ast.Node
 	var target *Type
