@@ -21,6 +21,11 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
+// isValidSliceRange checks if the given start and end indices are valid for slicing a string/slice of the given length.
+func isValidSliceRange(start, end, length int) bool {
+	return start >= 0 && end >= 0 && start <= end && end <= length
+}
+
 type SymbolExportInfo struct {
 	symbol            *ast.Symbol
 	moduleSymbol      *ast.Symbol
@@ -120,7 +125,7 @@ func (e *exportInfoMap) add(
 
 			// Bounds check to prevent slice bounds out of range panic
 			fileName := moduleFile.FileName()
-			if topLevelPackageNameIndex+1 >= 0 && packageRootIndex >= 0 && topLevelPackageNameIndex+1 <= packageRootIndex && packageRootIndex <= len(fileName) {
+			if isValidSliceRange(topLevelPackageNameIndex+1, packageRootIndex, len(fileName)) {
 				packageName = module.UnmangleScopedPackageName(modulespecifiers.GetPackageNameFromTypesPackageName(fileName[topLevelPackageNameIndex+1 : packageRootIndex]))
 			}
 
