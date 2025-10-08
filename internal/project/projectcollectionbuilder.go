@@ -338,6 +338,25 @@ func (b *ProjectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri, logge
 	}
 }
 
+func (b *ProjectCollectionBuilder) DidRequestProject(projectId tspath.Path, logger *logging.LogTree) {
+	startTime := time.Now()
+	if projectId == inferredProjectName {
+		// Update inferred project
+		if b.inferredProject.Value() != nil {
+			b.updateProgram(b.inferredProject, logger)
+		}
+	} else {
+		if entry, ok := b.configuredProjects.Load(projectId); ok {
+			b.updateProgram(entry, logger)
+		}
+	}
+
+	if logger != nil {
+		elapsed := time.Since(startTime)
+		logger.Log(fmt.Sprintf("Completed project update request for %s in %v", projectId, elapsed))
+	}
+}
+
 func (b *ProjectCollectionBuilder) DidUpdateATAState(ataChanges map[tspath.Path]*ATAStateChange, logger *logging.LogTree) {
 	updateProject := func(project dirty.Value[*Project], ataChange *ATAStateChange) {
 		project.ChangeIf(

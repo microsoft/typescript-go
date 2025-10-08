@@ -371,7 +371,7 @@ func (s *Session) Snapshot() (*Snapshot, func()) {
 	}
 }
 
-func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
+func (s *Session) getSnapshot(ctx context.Context, uri lsproto.DocumentUri, projectId tspath.Path) (*Snapshot, map[tspath.Path]*Overlay, bool) {
 	var snapshot *Snapshot
 	fileChanges, overlays, ataChanges, newConfig := s.flushChanges(ctx)
 	updateSnapshot := !fileChanges.IsEmpty() || len(ataChanges) > 0 || newConfig != nil
@@ -379,11 +379,12 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 		// If there are pending file changes, we need to update the snapshot.
 		// Sending the requested URI ensures that the project for this URI is loaded.
 		snapshot = s.UpdateSnapshot(ctx, overlays, SnapshotChange{
-			reason:        UpdateReasonRequestedLanguageServicePendingChanges,
-			fileChanges:   fileChanges,
-			ataChanges:    ataChanges,
-			newConfig:     newConfig,
-			requestedURIs: []lsproto.DocumentUri{uri},
+			reason:                  UpdateReasonRequestedLanguageServicePendingChanges,
+			fileChanges:             fileChanges,
+			ataChanges:              ataChanges,
+			newConfig:               newConfig,
+			requestedURIs:           core.IfElse(uri != "", []lsproto.DocumentUri{uri}, nil),
+			requestedProjectUpdates: core.IfElse(projectId != "", []tspath.Path{projectId}, nil),
 		})
 	} else {
 		// If there are no pending file changes, we can try to use the current snapshot.
@@ -391,9 +392,13 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 		snapshot = s.snapshot
 		s.snapshotMu.RUnlock()
 	}
+	return snapshot, overlays, updateSnapshot
+}
 
+func (s *Session) getSnapshotAndDefaultProject(ctx context.Context, uri lsproto.DocumentUri) (*Snapshot, *Project, *ls.LanguageService, error) {
+	snapshot, overlays, updatedSnapshot := s.getSnapshot(ctx, uri, "")
 	project := snapshot.GetDefaultProject(uri)
-	if project == nil && !updateSnapshot || project != nil && project.dirty {
+	if project == nil && !updatedSnapshot || project != nil && project.dirty {
 		// The current snapshot does not have an up to date project for the URI,
 		// so we need to update the snapshot to ensure the project is loaded.
 		// !!! Allow multiple projects to update in parallel
@@ -404,9 +409,51 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 		project = snapshot.GetDefaultProject(uri)
 	}
 	if project == nil {
-		return nil, fmt.Errorf("no project found for URI %s", uri)
+		return nil, nil, nil, fmt.Errorf("no project found for URI %s", uri)
 	}
-	return ls.NewLanguageService(project.GetProgram(), snapshot), nil
+	return snapshot, project, ls.NewLanguageService(project.GetProgram(), snapshot), nil
+}
+
+func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
+	_, _, languageService, err := s.getSnapshotAndDefaultProject(ctx, uri)
+	if err != nil {
+		return nil, err
+	}
+	return languageService, nil
+}
+
+func (s *Session) GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) (*Project, *ls.LanguageService, []*Project, error) {
+	snapshot, project, defaultLs, err := s.getSnapshotAndDefaultProject(ctx, uri)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	// !!! TODO: sheetal:  Get other projects that contain the file with symlink
+	allProjects := snapshot.GetProjectsContainingFile(uri)
+	return project, defaultLs, allProjects, nil
+}
+
+func (s *Session) GetLanguageServiceForProjectWithFile(ctx context.Context, project *Project, uri lsproto.DocumentUri) *ls.LanguageService {
+	snapshot, overlays, updatedSnapshot := s.getSnapshot(ctx, "", project.Id())
+	// update the snapshot
+	if !updatedSnapshot && project.dirty {
+		// The current snapshot does not have an up to date project for the URI,
+		// so we need to update the snapshot to ensure the project is loaded.
+		// !!! Allow multiple projects to update in parallel
+		snapshot = s.UpdateSnapshot(ctx, overlays, SnapshotChange{
+			reason:                  UpdateReasonRequestedLanguageServiceProjectDirty,
+			requestedProjectUpdates: []tspath.Path{project.Id()},
+		})
+	}
+	// Ensure we have updated project
+	project = snapshot.ProjectCollection.GetProjectByPath(project.Id())
+	if project == nil {
+		return nil
+	}
+	// if program doesnt contain this file any more ignore it
+	if path := s.toPath(uri.FileName()); !project.containsFile(path) {
+		return nil
+	}
+	return ls.NewLanguageService(project.GetProgram(), snapshot)
 }
 
 func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*Overlay, change SnapshotChange) *Snapshot {
