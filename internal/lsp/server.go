@@ -461,8 +461,8 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDocumentSymbolInfo, (*Server).handleDocumentSymbol)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDocumentHighlightInfo, (*Server).handleDocumentHighlight)
 
-	registerMultiProjectDocumentRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*Server).handleReferences)
-	registerMultiProjectDocumentRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*Server).handleRename)
+	registerMultiProjectDocumentRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*Server).handleReferences, combineReferences)
+	registerMultiProjectDocumentRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*Server).handleRename, combineRenameResponse)
 
 	registerRequestHandler(handlers, lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
 	registerRequestHandler(handlers, lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
@@ -539,7 +539,12 @@ func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentUR
 	}
 }
 
-func registerMultiProjectDocumentRequestHandler[Req lsproto.HasTextDocumentURI, Resp any](handlers handlerMap, info lsproto.RequestInfo[Req, Resp], fn func(*Server, context.Context, *ls.LanguageService, Req) (Resp, error)) {
+func registerMultiProjectDocumentRequestHandler[Req lsproto.HasTextDocumentURI, Resp any](
+	handlers handlerMap,
+	info lsproto.RequestInfo[Req, Resp],
+	fn func(*Server, context.Context, *ls.LanguageService, Req) (Resp, error),
+	combineResults func(*project.Project, *collections.SyncMap[*project.Project, Resp]) Resp,
+) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
 		var params Req
 		// Ignore empty params.
@@ -548,18 +553,54 @@ func registerMultiProjectDocumentRequestHandler[Req lsproto.HasTextDocumentURI, 
 		}
 		// !!! sheetal: multiple projects that contain the file through symlinks
 		// !!! multiple projects that contain the file directly
-		ls, err := s.session.GetLanguageService(ctx, params.TextDocumentURI())
+		projectAndLsGetters, err := s.session.GetProjectsAndLanguageServices(ctx, params.TextDocumentURI())
 		if err != nil {
 			return err
 		}
 		defer s.recover(req)
-		resp, err := fn(s, ctx, ls, params)
-		if err != nil {
-			return err
+		var results collections.SyncMap[*project.Project, Resp]
+		var workInProgress collections.SyncMap[*project.Project, bool]
+		var defaultProject *project.Project
+		wg := core.NewWorkGroup(false)
+		for index, getProjectAndLs := range projectAndLsGetters {
+			if index == 0 {
+				project, getLs := getProjectAndLs()
+				defaultProject = project
+				defaultLs := getLs()
+				workInProgress.Store(defaultProject, true)
+				wg.Queue(func() {
+					resp, err := fn(s, ctx, defaultLs, params)
+					if err != nil {
+						return
+					}
+					results.Store(defaultProject, resp)
+					// TODO:: if default location needs to be add more projects to request
+				})
+			} else {
+				wg.Queue(func() {
+					if ctx.Err() != nil {
+						return
+					}
+					project, getLs := getProjectAndLs()
+					if _, loaded := workInProgress.LoadOrStore(project, true); loaded {
+						return
+					}
+					ls := getLs()
+					if ls != nil {
+						resp, err := fn(s, ctx, ls, params)
+						if err != nil {
+							return
+						}
+						results.Store(project, resp)
+					}
+				})
+			}
 		}
+		wg.RunAndWait()
 		if ctx.Err() != nil {
 			return ctx.Err()
 		}
+		resp := combineResults(defaultProject, &results)
 		s.sendResult(req.ID, resp)
 		return nil
 	}
@@ -798,9 +839,36 @@ func (s *Server) handleTypeDefinition(ctx context.Context, ls *ls.LanguageServic
 	return ls.ProvideTypeDefinition(ctx, params.TextDocument.Uri, params.Position)
 }
 
-func (s *Server) handleReferences(ctx context.Context, ls *ls.LanguageService, params *lsproto.ReferenceParams) (lsproto.ReferencesResponse, error) {
+func (s *Server) handleReferences(ctx context.Context, defaultLs *ls.LanguageService, params *lsproto.ReferenceParams) (lsproto.ReferencesResponse, error) {
 	// findAllReferences
-	return ls.ProvideReferences(ctx, params)
+	return defaultLs.ProvideReferences(ctx, params)
+}
+
+func combineReferences(defaultProject *project.Project, results *collections.SyncMap[*project.Project, lsproto.ReferencesResponse]) lsproto.ReferencesResponse {
+	var combined []lsproto.Location
+	var seenLocations collections.Set[lsproto.Location]
+	if resp, ok := results.Load(defaultProject); ok {
+		if resp.Locations != nil {
+			for _, loc := range *resp.Locations {
+				seenLocations.Add(loc)
+				combined = append(combined, loc)
+			}
+		}
+	}
+	results.Range(func(project *project.Project, resp lsproto.ReferencesResponse) bool {
+		if project != defaultProject {
+			if resp.Locations != nil {
+				for _, loc := range *resp.Locations {
+					if !seenLocations.Has(loc) {
+						seenLocations.Add(loc)
+						combined = append(combined, loc)
+					}
+				}
+			}
+		}
+		return true
+	})
+	return lsproto.LocationsOrNull{Locations: &combined}
 }
 
 func (s *Server) handleImplementations(ctx context.Context, ls *ls.LanguageService, params *lsproto.ImplementationParams) (lsproto.ImplementationResponse, error) {
@@ -886,6 +954,62 @@ func (s *Server) handleDocumentSymbol(ctx context.Context, ls *ls.LanguageServic
 
 func (s *Server) handleRename(ctx context.Context, ls *ls.LanguageService, params *lsproto.RenameParams) (lsproto.RenameResponse, error) {
 	return ls.ProvideRename(ctx, params)
+}
+
+func combineRenameResponse(defaultProject *project.Project, results *collections.SyncMap[*project.Project, lsproto.RenameResponse]) lsproto.RenameResponse {
+	combined := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
+	seenChanges := make(map[lsproto.DocumentUri]*collections.Set[lsproto.TextEdit])
+	// !!! this is not used any more so we will skip this part of deduplication and combining
+	// 	DocumentChanges *[]TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile `json:"documentChanges,omitzero"`
+	// 	ChangeAnnotations *map[string]*ChangeAnnotation `json:"changeAnnotations,omitzero"`
+
+	if resp, ok := results.Load(defaultProject); ok {
+		if resp.WorkspaceEdit != nil {
+			for doc, changes := range *resp.WorkspaceEdit.Changes {
+				seenSet := collections.Set[lsproto.TextEdit]{}
+				seenChanges[doc] = &seenSet
+				var changesForDoc []*lsproto.TextEdit
+				for _, change := range changes {
+					seenSet.Add(*change)
+					changesForDoc = append(changesForDoc, change)
+				}
+				combined[doc] = changesForDoc
+			}
+		}
+	}
+	results.Range(func(project *project.Project, resp lsproto.RenameResponse) bool {
+		if project != defaultProject {
+			if resp.WorkspaceEdit != nil {
+				for doc, changes := range *resp.WorkspaceEdit.Changes {
+					seenSet, ok := seenChanges[doc]
+					if !ok {
+						seenSet = &collections.Set[lsproto.TextEdit]{}
+						seenChanges[doc] = seenSet
+					}
+					changesForDoc, exists := combined[doc]
+					if !exists {
+						changesForDoc = []*lsproto.TextEdit{}
+					}
+					for _, change := range changes {
+						if !seenSet.Has(*change) {
+							seenSet.Add(*change)
+							changesForDoc = append(changesForDoc, change)
+						}
+					}
+					combined[doc] = changesForDoc
+				}
+			}
+		}
+		return true
+	})
+	if len(combined) > 0 {
+		return lsproto.RenameResponse{
+			WorkspaceEdit: &lsproto.WorkspaceEdit{
+				Changes: &combined,
+			},
+		}
+	}
+	return lsproto.RenameResponse{}
 }
 
 func (s *Server) handleDocumentHighlight(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentHighlightParams) (lsproto.DocumentHighlightResponse, error) {

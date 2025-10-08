@@ -71,6 +71,13 @@ func (s *Snapshot) GetDefaultProject(uri lsproto.DocumentUri) *Project {
 	return s.ProjectCollection.GetDefaultProject(fileName, path)
 }
 
+func (s *Snapshot) GetProjectsContainingFile(uri lsproto.DocumentUri) []*Project {
+	fileName := uri.FileName()
+	path := s.toPath(fileName)
+	// TODO!! sheetal may be change this to handle symlinks!!
+	return s.ProjectCollection.GetProjectsContainingFile(path)
+}
+
 func (s *Snapshot) GetFile(fileName string) FileHandle {
 	return s.fs.GetFile(fileName)
 }
@@ -122,6 +129,9 @@ type SnapshotChange struct {
 	// requestedURIs are URIs that were requested by the client.
 	// The new snapshot should ensure projects for these URIs have loaded programs.
 	requestedURIs []lsproto.DocumentUri
+	// Update requested projects.
+	// this is used when we want to get LS and from all the projects the file can be part of
+	requestedProjectUpdates []string
 	// compilerOptionsForInferredProjects is the compiler options to use for inferred projects.
 	// It should only be set the value in the next snapshot should be changed. If nil, the
 	// value from the previous snapshot will be copied to the new snapshot.
@@ -164,11 +174,11 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		case UpdateReasonDidChangeCompilerOptionsForInferredProjects:
 			logger.Logf("Reason: DidChangeCompilerOptionsForInferredProjects")
 		case UpdateReasonRequestedLanguageServicePendingChanges:
-			logger.Logf("Reason: RequestedLanguageService (pending file changes) - %v", change.requestedURIs)
+			logger.Logf("Reason: RequestedLanguageService (pending file changes) - %v, %v", change.requestedURIs, change.requestedProjectUpdates)
 		case UpdateReasonRequestedLanguageServiceProjectNotLoaded:
 			logger.Logf("Reason: RequestedLanguageService (project not loaded) - %v", change.requestedURIs)
 		case UpdateReasonRequestedLanguageServiceProjectDirty:
-			logger.Logf("Reason: RequestedLanguageService (project dirty) - %v", change.requestedURIs)
+			logger.Logf("Reason: RequestedLanguageService (project dirty) - %v, %v", change.requestedURIs, change.requestedProjectUpdates)
 		}
 	}
 
@@ -211,6 +221,10 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	for _, uri := range change.requestedURIs {
 		projectCollectionBuilder.DidRequestFile(uri, logger.Fork("DidRequestFile"))
+	}
+
+	for _, projectName := range change.requestedProjectUpdates {
+		projectCollectionBuilder.DidRequestProject(projectName, logger.Fork("DidRequestProject"))
 	}
 
 	projectCollection, configFileRegistry := projectCollectionBuilder.Finalize(logger)
