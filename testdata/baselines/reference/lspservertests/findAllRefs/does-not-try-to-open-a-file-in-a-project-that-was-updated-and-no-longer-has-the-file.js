@@ -116,6 +116,14 @@ Projects::
     }
   }
 }
+Projects::
+  [/home/src/projects/project/packages/babel-loader/tsconfig.json] *modified*
+    /home/src/projects/project/packages/babel-loader/src/index.ts *modified*
+    /home/src/projects/project/packages/core/src/loading-indicator.ts *deleted*
+    /home/src/projects/project/packages/core/src/index.ts *deleted*
+  [/home/src/projects/project/packages/core/tsconfig.json] 
+    /home/src/projects/project/packages/core/src/loading-indicator.ts
+    /home/src/projects/project/packages/core/src/index.ts
 // === /home/src/projects/project/packages/core/src/index.ts ===
 // import { Bar } from "./loading-indicator.js";
 // export type Foo = {};

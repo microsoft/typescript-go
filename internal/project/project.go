@@ -192,6 +192,10 @@ func (p *Project) ConfigFilePath() tspath.Path {
 	return p.configFilePath
 }
 
+func (p *Project) Id() tspath.Path {
+	return p.configFilePath
+}
+
 func (p *Project) GetProgram() *compiler.Program {
 	return p.Program
 }

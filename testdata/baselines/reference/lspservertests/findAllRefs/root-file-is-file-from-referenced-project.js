@@ -101,3 +101,9 @@ Projects::
 // === /user/username/projects/project/src/common/input/keyboard.ts ===
 // function bar() { return "just a random function so .d.ts location doesnt match"; }
 // export function /*FIND ALL REFS*/[|evaluateKeyboardEvent|]() { }
+
+// === /user/username/projects/project/src/terminal.ts ===
+// import { [|evaluateKeyboardEvent|] } from 'common/input/keyboard';
+// function foo() {
+//     return [|evaluateKeyboardEvent|]();
+// }
