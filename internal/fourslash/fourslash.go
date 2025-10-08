@@ -267,12 +267,19 @@ func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.
 		params,
 	)
 	f.writeMsg(t, req.Message())
-	resp := f.readMsg(t)
-	if resp == nil {
-		return nil, *new(Resp), false
+	for {
+		resp := f.readMsg(t)
+		if resp == nil {
+			return nil, *new(Resp), false
+		}
+		// Ignore file watching requests: fourslash client already sends a notification for every file changed.
+		if resp.Kind == lsproto.MessageKindRequest && (resp.AsRequest().Method == lsproto.MethodClientRegisterCapability ||
+			resp.AsRequest().Method == lsproto.MethodClientUnregisterCapability) {
+			continue
+		}
+		result, ok := resp.AsResponse().Result.(Resp)
+		return resp, result, ok
 	}
-	result, ok := resp.AsResponse().Result.(Resp)
-	return resp, result, ok
 }
 
 func sendNotification[Params any](t *testing.T, f *FourslashTest, info lsproto.NotificationInfo[Params], params Params) {
