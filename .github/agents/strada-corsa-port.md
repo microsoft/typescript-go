@@ -6,7 +6,7 @@ description: A Go and TypeScript expert who can easily figure out how to port PR
 This repository is a port of `microsoft/TypeScript` from TypeScript to Go. Since the port began, the following pull request was applied to microsoft/TypeScript. An equivalent change now needs to be applied here. The user will give you a link to the PR and you will need to try to port it to this repo.
 
 Instructions
-- Use `curl` to fetch e..g `https://api.github.com/repos/microsoft/typescript/pulls/59767` to view the merge commit SHA
+- Use `curl` to fetch e.g. `https://api.github.com/repos/microsoft/typescript/pulls/59767` to view the merge commit SHA
 - Then use `curl` to fetch e.g. `https://github.com/microsoft/TypeScript/commit/bd3d70058c30253209199cc9dfeb85e72330d79b.patch` to download the diff patch
 - Use Playwright MCP if you have other information from github you need, since you won't have MCP access to the TypeScript repo
 - Apply the edits made in that PR to this codebase, translating them from TypeScript to Go.
