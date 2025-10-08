@@ -1,9 +1,6 @@
 package project
 
 import (
-	"sync"
-
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
@@ -28,10 +25,7 @@ type snapshotFS struct {
 	fs        vfs.FS
 	overlays  map[tspath.Path]*overlay
 	diskFiles map[tspath.Path]*diskFile
-	readFiles collections.SyncMap[tspath.Path, memoizedDiskFile]
 }
-
-type memoizedDiskFile func() FileHandle
 
 func (s *snapshotFS) FS() vfs.FS {
 	return s.fs
@@ -44,14 +38,7 @@ func (s *snapshotFS) GetFile(fileName string) FileHandle {
 	if file, ok := s.diskFiles[s.toPath(fileName)]; ok {
 		return file
 	}
-	newEntry := memoizedDiskFile(sync.OnceValue(func() FileHandle {
-		if contents, ok := s.fs.ReadFile(fileName); ok {
-			return newDiskFile(fileName, contents)
-		}
-		return nil
-	}))
-	entry, _ := s.readFiles.LoadOrStore(s.toPath(fileName), newEntry)
-	return entry()
+	return nil
 }
 
 func (s *snapshotFS) GetDocumentPositionMapper(fileName string) *sourcemap.DocumentPositionMapper {
