@@ -93,6 +93,19 @@ func (c *ProjectCollection) InferredProject() *Project {
 	return c.inferredProject
 }
 
+func (c *ProjectCollection) GetProjectsContainingFile(path tspath.Path) []*Project {
+	var projects []*Project
+	for _, project := range c.ConfiguredProjects() {
+		if project.containsFile(path) {
+			projects = append(projects, project)
+		}
+	}
+	if c.inferredProject != nil && c.inferredProject.containsFile(path) {
+		projects = append(projects, c.inferredProject)
+	}
+	return projects
+}
+
 // !!! result could be cached
 func (c *ProjectCollection) GetDefaultProject(fileName string, path tspath.Path) *Project {
 	if result, ok := c.fileDefaultProjects[path]; ok {
