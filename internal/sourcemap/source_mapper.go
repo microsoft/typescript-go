@@ -49,6 +49,10 @@ type DocumentPositionMapper struct {
 	sourceMappings    map[SourceIndex][]*SourceMappedPosition
 }
 
+func (d *DocumentPositionMapper) GetSourceFiles() []string {
+	return d.sourceFileAbsolutePaths
+}
+
 func createDocumentPositionMapper(host Host, sourceMap *RawSourceMap, mapPath string) *DocumentPositionMapper {
 	mapDirectory := tspath.GetDirectoryPath(mapPath)
 	var sourceRoot string

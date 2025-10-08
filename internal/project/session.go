@@ -700,21 +700,26 @@ func (s *Session) GetLanguageServiceWithMappedFiles(ctx context.Context, uri lsp
 		// This should not happen, since we ensured the project was loaded the first time a language service was requested.
 		return nil, fmt.Errorf("no project found for URI %s", uri)
 	}
-	snapshotWithFiles, addedFiles := snapshot.CloneWithSourceMaps(files, s)
-	// go s.updateSnapshotWithAddedFiles(addedFiles)
-	s.updateSnapshotWithAddedFiles(addedFiles)
+	snapshotWithFiles, changes := snapshot.CloneWithSourceMaps(files, s)
+	s.backgroundQueue.Enqueue(ctx, func(ctx context.Context) {
+		s.updateSnapshotWithDiskChanges(changes)
+	})
 	return ls.NewLanguageService(project.GetProgram(), snapshotWithFiles), nil
 }
 
-func (s *Session) updateSnapshotWithAddedFiles(addedFiles map[tspath.Path]*dirty.Change[*diskFile]) {
+func (s *Session) updateSnapshotWithDiskChanges(changes map[tspath.Path]*dirty.Change[*diskFile]) {
 	s.snapshotMu.Lock()
 	oldSnapshot := s.snapshot
-	newSnapshot := oldSnapshot.CloneWithDiskChanges(addedFiles, s)
+	newSnapshot := oldSnapshot.CloneWithDiskChanges(changes, s)
 	s.snapshot = newSnapshot
 	s.snapshotMu.Unlock()
 
 	// We don't need to dispose the old snapshot here because the new snapshot will have the same programs
 	// and config files as the old snapshot, so the reference counts will be the same.
 
-	// !!! TODO: update file watchers with patch
+	ctx := context.Background()
+	err := updateWatch(ctx, s, s.logger, oldSnapshot.extraDiskFilesWatch, newSnapshot.extraDiskFilesWatch)
+	if err != nil && s.options.LoggingEnabled {
+		s.logger.Log(fmt.Errorf("error updating extra disk file watches: %v", err))
+	}
 }
