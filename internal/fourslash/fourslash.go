@@ -1204,6 +1204,11 @@ func (f *FourslashTest) getSelection() core.TextRange {
 	)
 }
 
+func (f *FourslashTest) ReplaceAll(t *testing.T, text string) {
+	script := f.getScriptInfo(f.activeFilename)
+	f.editScriptAndUpdateMarkers(t, f.activeFilename, 0, len(script.content), text)
+}
+
 func (f *FourslashTest) Replace(t *testing.T, start int, length int, text string) {
 	f.editScriptAndUpdateMarkers(t, f.activeFilename, start, start+length, text)
 	// f.checkPostEditInvariants() // !!! do we need this?
