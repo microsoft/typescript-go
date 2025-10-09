@@ -38,5 +38,16 @@ The testdata contains `.diff` files showing differences between the Go implement
 2. The TypeScript submodule baselines haven't been regenerated yet (shallow clone)
 3. The test framework correctly handles these differences
 
+## History
+The change from PR #62549 was actually ported **before** it was merged into TypeScript!
+
+- **Oct 5, 2025**: @Andarist opened PR #1828 to port microsoft/TypeScript#48172 which added the `ignoreArrowFunctions` parameter
+- **In PR #1828**: The Go implementation was already passing `true` for `ignoreArrowFunctions` in the arguments check
+- **Oct 5, 2025**: @Andarist opened microsoft/TypeScript#62549 to make TypeScript match the Go behavior
+- **Oct 5, 2025**: PR #62549 was merged into TypeScript
+
+As noted in the [PR #1828 review](https://github.com/microsoft/typescript-go/pull/1828#discussion_r2404688959):
+> "this has some seemingly unwanted diffs but I think this is basically desired and I opened a PR to Strada to close this gap: microsoft/TypeScript#62549"
+
 ## Conclusion
-No action needed. The change has been correctly ported and is functioning as expected.
+No action needed. The change has been correctly ported and is functioning as expected. In fact, the Go port led the way, and TypeScript followed!
