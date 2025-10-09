@@ -571,13 +571,19 @@ func (tx *DeclarationTransformer) transformImportTypeNode(input *ast.ImportTypeN
 	if !ast.IsLiteralImportTypeNode(input.AsNode()) {
 		return input.AsNode()
 	}
+	specifier := tx.rewriteModuleSpecifier(input.AsNode(), input.Argument.AsLiteralTypeNode().Literal)
+	var argument *ast.Node
+	if specifier == input.Argument.AsLiteralTypeNode().Literal {
+		// No change to the specifier, reuse the original argument to avoid creating new nodes
+		argument = input.Argument
+	} else {
+		// Specifier changed, create a new literal type node
+		argument = tx.Factory().NewLiteralTypeNode(specifier)
+	}
 	return tx.Factory().UpdateImportTypeNode(
 		input,
 		input.IsTypeOf,
-		tx.Factory().UpdateLiteralTypeNode(
-			input.Argument.AsLiteralTypeNode(),
-			tx.rewriteModuleSpecifier(input.AsNode(), input.Argument.AsLiteralTypeNode().Literal),
-		),
+		argument,
 		input.Attributes,
 		input.Qualifier,
 		tx.Visitor().VisitNodes(input.TypeArguments),
