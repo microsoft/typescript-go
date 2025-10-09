@@ -112,7 +112,20 @@ func printAllHelp(sys System, options []*tsoptions.CommandLineOption) {
 	msg := diagnostics.X_tsc_Colon_The_TypeScript_Compiler.Format() + " - " + diagnostics.Version_0.Format(core.Version())
 	output = append(output, getHeader(sys, msg)...)
 
-	output = append(output, generateSectionOptionsOutput(sys, diagnostics.ALL_COMPILER_OPTIONS.Format(), options, true, nil, nil)...)
+	// ALL COMPILER OPTIONS section
+	afterCompilerOptions := diagnostics.You_can_learn_about_all_of_the_compiler_options_at_0.Format("https://aka.ms/tsc")
+	output = append(output, generateSectionOptionsOutput(sys, diagnostics.ALL_COMPILER_OPTIONS.Format(), options, true, nil, &afterCompilerOptions)...)
+
+	// WATCH OPTIONS section
+	beforeWatchOptions := diagnostics.Including_watch_w_will_start_watching_the_current_project_for_the_file_changes_Once_set_you_can_config_watch_mode_with_Colon.Format()
+	output = append(output, generateSectionOptionsOutput(sys, diagnostics.WATCH_OPTIONS.Format(), tsoptions.OptionsForWatch, false, &beforeWatchOptions, nil)...)
+
+	// BUILD OPTIONS section
+	beforeBuildOptions := diagnostics.Using_build_b_will_make_tsc_behave_more_like_a_build_orchestrator_than_a_compiler_This_is_used_to_trigger_building_composite_projects_which_you_can_learn_more_about_at_0.Format("https://aka.ms/tsc-composite-builds")
+	buildOptions := core.Filter(tsoptions.OptionsForBuild, func(option *tsoptions.CommandLineOption) bool {
+		return option != &tsoptions.TscBuildOption
+	})
+	output = append(output, generateSectionOptionsOutput(sys, diagnostics.BUILD_OPTIONS.Format(), buildOptions, false, &beforeBuildOptions, nil)...)
 
 	for _, chunk := range output {
 		fmt.Fprint(sys.Writer(), chunk)
