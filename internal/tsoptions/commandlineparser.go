@@ -1,6 +1,8 @@
 package tsoptions
 
 import (
+	"fmt"
+	"reflect"
 	"strconv"
 	"strings"
 
@@ -392,4 +394,174 @@ func convertJsonOptionOfEnumType(
 		return validateJsonOptionValue(opt, val, valueExpression, sourceFile)
 	}
 	return nil, []*ast.Diagnostic{createDiagnosticForInvalidEnumType(opt, sourceFile, valueExpression)}
+}
+
+// GenerateTSConfig generates a tsconfig.json configuration when running command line "--init"
+func GenerateTSConfig(options *core.CompilerOptions, newLine string) string {
+	tab := "  "
+	result := []string{}
+	
+	result = append(result, "{")
+	result = append(result, tab+"// "+diagnostics.Visit_https_Colon_Slash_Slashaka_ms_Slashtsconfig_to_read_more_about_this_file.Format())
+	result = append(result, tab+"\"compilerOptions\": {")
+	
+	emitHeader := func(header *diagnostics.Message) {
+		result = append(result, tab+tab+"// "+header.Format())
+	}
+	
+	newline := func() {
+		result = append(result, "")
+	}
+	
+	emitOption := func(setting string, defaultValue any, commented ...string) {
+		commentMode := "never"
+		if len(commented) > 0 {
+			commentMode = commented[0]
+		}
+		
+		var comment bool
+		if commentMode == "always" {
+			comment = true
+		} else if commentMode == "never" {
+			comment = false
+		} else {
+			// "optional" - always comment out for the template
+			comment = true
+		}
+		
+		formattedValue := formatValueOrArray(setting, defaultValue)
+		
+		if comment {
+			result = append(result, tab+tab+"// \""+setting+"\": "+formattedValue+",")
+		} else {
+			result = append(result, tab+tab+"\""+setting+"\": "+formattedValue+",")
+		}
+	}
+	
+	// File Layout
+	emitHeader(diagnostics.File_Layout)
+	emitOption("rootDir", "./src", "optional")
+	emitOption("outDir", "./dist", "optional")
+	
+	newline()
+	
+	// Environment Settings
+	emitHeader(diagnostics.Environment_Settings)
+	emitHeader(diagnostics.See_also_https_Colon_Slash_Slashaka_ms_Slashtsconfig_Slashmodule)
+	emitOption("module", core.ModuleKindNodeNext)
+	emitOption("target", core.ScriptTargetESNext)
+	emitOption("types", []any{})
+	if options.Lib != nil && len(options.Lib) > 0 {
+		emitOption("lib", options.Lib)
+	}
+	emitHeader(diagnostics.For_nodejs_Colon)
+	result = append(result, tab+tab+"// \"lib\": [\"esnext\"],")
+	result = append(result, tab+tab+"// \"types\": [\"node\"],")
+	emitHeader(diagnostics.X_and_npm_install_D_types_Slashnode)
+	
+	newline()
+	
+	// Other Outputs
+	emitHeader(diagnostics.Other_Outputs)
+	emitOption("sourceMap", true)
+	emitOption("declaration", true)
+	emitOption("declarationMap", true)
+	
+	newline()
+	
+	// Stricter Typechecking Options
+	emitHeader(diagnostics.Stricter_Typechecking_Options)
+	emitOption("noUncheckedIndexedAccess", true)
+	emitOption("exactOptionalPropertyTypes", true)
+	
+	newline()
+	
+	// Style Options
+	emitHeader(diagnostics.Style_Options)
+	emitOption("noImplicitReturns", true, "optional")
+	emitOption("noImplicitOverride", true, "optional")
+	emitOption("noUnusedLocals", true, "optional")
+	emitOption("noUnusedParameters", true, "optional")
+	emitOption("noFallthroughCasesInSwitch", true, "optional")
+	emitOption("noPropertyAccessFromIndexSignature", true, "optional")
+	
+	newline()
+	
+	// Recommended Options
+	emitHeader(diagnostics.Recommended_Options)
+	emitOption("strict", true)
+	emitOption("jsx", core.JsxEmitReactJSX)
+	emitOption("verbatimModuleSyntax", true)
+	emitOption("isolatedModules", true)
+	emitOption("noUncheckedSideEffectImports", true)
+	emitOption("moduleDetection", core.ModuleDetectionKindForce)
+	// Last option - no trailing comma
+	result = append(result, tab+tab+"\"skipLibCheck\": true")
+	
+	result = append(result, tab+"}")
+	result = append(result, "}")
+	result = append(result, "")
+	
+	return strings.Join(result, newLine)
+}
+
+func formatValueOrArray(settingName string, value any) string {
+	option := CommandLineCompilerOptionsMap.Get(settingName)
+	if option == nil {
+		// Fallback for unknown options
+		return formatSingleValue(value, nil)
+	}
+	
+	typeMap := option.EnumMap()
+	
+	// Handle array values
+	if v, ok := value.([]any); ok {
+		var elementMap *collections.OrderedMap[string, any]
+		if element := option.Elements(); element != nil {
+			elementMap = element.EnumMap()
+		}
+		formattedValues := make([]string, len(v))
+		for i, item := range v {
+			formattedValues[i] = formatSingleValue(item, elementMap)
+		}
+		return "[" + strings.Join(formattedValues, ", ") + "]"
+	}
+	
+	// Handle string array (lib option)
+	if v, ok := value.([]string); ok {
+		formattedValues := make([]string, len(v))
+		for i, item := range v {
+			formattedValues[i] = formatSingleValue(item, nil)
+		}
+		return "[" + strings.Join(formattedValues, ", ") + "]"
+	}
+	
+	return formatSingleValue(value, typeMap)
+}
+
+func formatSingleValue(value any, typeMap *collections.OrderedMap[string, any]) string {
+	if typeMap != nil {
+		// Find the key for this enum value
+		for k, v := range typeMap.Entries() {
+			if v == value {
+				value = k
+				break
+			}
+		}
+	}
+	
+	// Handle different types
+	switch v := value.(type) {
+	case string:
+		return strconv.Quote(v)
+	case bool:
+		return strconv.FormatBool(v)
+	case int, int32, int64:
+		return strconv.FormatInt(reflect.ValueOf(v).Int(), 10)
+	case float32, float64:
+		return strconv.FormatFloat(reflect.ValueOf(v).Float(), 'f', -1, 64)
+	default:
+		// For unknown types, use string representation
+		return strconv.Quote(fmt.Sprintf("%v", v))
+	}
 }
