@@ -182,9 +182,6 @@ func isExportSpecifierAlias(referenceLocation *ast.Identifier, exportSpecifier *
 }
 
 func isInComment(file *ast.SourceFile, position int, tokenAtPosition *ast.Node) *ast.CommentRange {
-	if tokenAtPosition == nil {
-		tokenAtPosition = astnav.GetTokenAtPosition(file, position)
-	}
 	return getRangeOfEnclosingComment(file, position, astnav.FindPrecedingToken(file, position), tokenAtPosition)
 }
 

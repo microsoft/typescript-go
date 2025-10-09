@@ -113,7 +113,8 @@ func (l *LanguageService) getFormattingEditsAfterKeystroke(
 ) []core.TextChange {
 	ctx = format.WithFormatCodeSettings(ctx, options, options.NewLineCharacter)
 
-	if isInComment(file, position, nil) == nil {
+	tokenAtPosition := astnav.GetTokenAtPosition(file, position)
+	if isInComment(file, position, tokenAtPosition) == nil {
 		switch key {
 		case "{":
 			return format.FormatOnOpeningCurly(ctx, file, position)
@@ -140,9 +141,6 @@ func getRangeOfEnclosingComment(
 	precedingToken *ast.Node,
 	tokenAtPosition *ast.Node,
 ) *ast.CommentRange {
-	if tokenAtPosition == nil {
-		return nil
-	}
 	jsdoc := ast.FindAncestor(tokenAtPosition, (*ast.Node).IsJSDoc)
 	if jsdoc != nil {
 		tokenAtPosition = jsdoc.Parent
