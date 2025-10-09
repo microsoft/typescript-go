@@ -2947,8 +2947,38 @@ func (p *Printer) emitPartiallyEmittedExpression(node *ast.PartiallyEmittedExpre
 	}
 }
 
+func (p *Printer) commentWillEmitNewLine(comment ast.CommentRange) bool {
+	return comment.Kind == ast.KindSingleLineCommentTrivia || comment.HasTrailingNewLine
+}
+
 func (p *Printer) willEmitLeadingNewLine(node *ast.Expression) bool {
-	return false // !!! check if node will emit a leading comment that contains a trailing newline
+	if p.currentSourceFile == nil {
+		return false
+	}
+
+	leadingCommentRanges := scanner.GetLeadingCommentRanges(p.emitContext.Factory.AsNodeFactory(), p.currentSourceFile.Text(), node.Pos())
+	for comment := range leadingCommentRanges {
+		// Check if the comment will emit a newline
+		if p.commentWillEmitNewLine(comment) {
+			return true
+		}
+	}
+
+	// For PartiallyEmittedExpression, recursively check the inner expression
+	if node.Kind == ast.KindPartiallyEmittedExpression {
+		pee := node.AsPartiallyEmittedExpression()
+		if node.Pos() != pee.Expression.Pos() {
+			trailingCommentRanges := scanner.GetTrailingCommentRanges(p.emitContext.Factory.AsNodeFactory(), p.currentSourceFile.Text(), pee.Expression.Pos())
+			for comment := range trailingCommentRanges {
+				if p.commentWillEmitNewLine(comment) {
+					return true
+				}
+			}
+		}
+		return p.willEmitLeadingNewLine(pee.Expression)
+	}
+
+	return false
 }
 
 func (p *Printer) emitExpressionNoASI(node *ast.Expression, precedence ast.OperatorPrecedence) {
