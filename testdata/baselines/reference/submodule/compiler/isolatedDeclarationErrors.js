@@ -23,13 +23,13 @@ errorOnMissingReturn.a = "";
 //// [isolatedDeclarationErrors.d.ts]
 declare function errorOnAssignmentBelowDecl(): void;
 declare namespace errorOnAssignmentBelowDecl {
-    const a: string;
+    var a: string;
 }
 declare function errorOnAssignmentBelow(): void;
 declare namespace errorOnAssignmentBelow {
-    const a: string;
+    var a: string;
 }
 declare function errorOnMissingReturn(): void;
 declare namespace errorOnMissingReturn {
-    const a: string;
+    var a: string;
 }

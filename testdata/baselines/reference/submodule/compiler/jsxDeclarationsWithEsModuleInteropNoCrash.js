@@ -31,12 +31,12 @@ declare function Foo({ bar }: {
     bar: any;
 }): JSX.Element;
 declare namespace Foo {
-    const propTypes: {
+    var propTypes: {
         bar: PropTypes.Requireable<boolean>;
     };
 }
 declare namespace Foo {
-    const defaultProps: {
+    var defaultProps: {
         bar: boolean;
     };
 }

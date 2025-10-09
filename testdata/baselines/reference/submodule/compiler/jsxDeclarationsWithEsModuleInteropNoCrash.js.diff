@@ -21,12 +21,12 @@
 -    export { bar_1 as bar };
 -}
 -import PropTypes from 'prop-types';
-+    const propTypes: {
++    var propTypes: {
 +        bar: PropTypes.Requireable<boolean>;
 +    };
 +}
 +declare namespace Foo {
-+    const defaultProps: {
++    var defaultProps: {
 +        bar: boolean;
 +    };
 +}

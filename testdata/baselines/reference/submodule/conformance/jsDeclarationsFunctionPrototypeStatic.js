@@ -36,10 +36,10 @@ MyClass.staticProperty = 123;
 export = MyClass;
 declare function MyClass(): void;
 declare namespace MyClass {
-    const staticMethod: () => void;
+    var staticMethod: () => void;
 }
 declare namespace MyClass {
-    const staticProperty: number;
+    var staticProperty: number;
 }
 export type DoneCB = (failures: number) ;
 /**

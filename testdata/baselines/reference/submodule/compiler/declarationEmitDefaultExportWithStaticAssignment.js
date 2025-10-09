@@ -85,7 +85,7 @@ export declare class Foo {
 declare function Example(): void;
 export default Example;
 declare namespace Example {
-    const Foo: typeof import("./foo").Foo;
+    var Foo: typeof import("./foo").Foo;
 }
 //// [index2.d.ts]
 import { Foo } from './foo';
@@ -93,7 +93,7 @@ export { Foo };
 declare function Example(): void;
 export default Example;
 declare namespace Example {
-    const Foo: typeof import("./foo").Foo;
+    var Foo: typeof import("./foo").Foo;
 }
 //// [index3.d.ts]
 export declare class Bar {
@@ -101,13 +101,13 @@ export declare class Bar {
 declare function Example(): void;
 export default Example;
 declare namespace Example {
-    const Bar: typeof import("./index3").Bar;
+    var Bar: typeof import("./index3").Bar;
 }
 //// [index4.d.ts]
 export declare function C(): any;
 export declare namespace C {
-    const A: () => void;
+    var A: () => void;
 }
 export declare namespace C {
-    const B: () => void;
+    var B: () => void;
 }

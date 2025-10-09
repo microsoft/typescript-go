@@ -23,7 +23,7 @@
 -    new (): {
 -        values(): /*elided*/ any;
 +declare namespace NS {
-+    const K: {
++    var K: {
 +        new (): {
 +            values(): /*elided*/ any;
 +        };

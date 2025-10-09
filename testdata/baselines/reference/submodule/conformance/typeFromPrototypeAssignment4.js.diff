@@ -15,7 +15,7 @@
 -    addon(): void;
 -    __underscores__(): void;
 +declare namespace Multimap4 {
-+    const prototype: {
++    var prototype: {
 +        /**
 +         * @param {string} key
 +         * @returns {number} the value ok

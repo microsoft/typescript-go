@@ -23,10 +23,10 @@
 -declare function staticMethod(): void;
 -declare var staticProperty: number;
 +declare namespace MyClass {
-+    const staticMethod: () => void;
++    var staticMethod: () => void;
 +}
 +declare namespace MyClass {
-+    const staticProperty: number;
++    var staticProperty: number;
 +}
 +export type DoneCB = (failures: number) ;
  /**

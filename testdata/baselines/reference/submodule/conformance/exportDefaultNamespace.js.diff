@@ -6,7 +6,6 @@
  declare function someFunc(): string;
 +export default someFunc;
  declare namespace someFunc {
--    var someProp: string;
-+    const someProp: string;
+     var someProp: string;
  }
 -export default someFunc;

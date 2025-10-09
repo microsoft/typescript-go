@@ -26,21 +26,21 @@ baz.normal = false;
 //// [declarationEmitFunctionKeywordProp.d.ts]
 declare function foo(): void;
 declare namespace foo {
-    const _a: boolean;
+    var _a: boolean;
     export { _a as null };
 }
 declare function bar(): void;
 declare namespace bar {
-    const async: boolean;
+    var async: boolean;
 }
 declare namespace bar {
-    const normal: boolean;
+    var normal: boolean;
 }
 declare function baz(): void;
 declare namespace baz {
-    const _b: boolean;
+    var _b: boolean;
     export { _b as class };
 }
 declare namespace baz {
-    const normal: boolean;
+    var normal: boolean;
 }

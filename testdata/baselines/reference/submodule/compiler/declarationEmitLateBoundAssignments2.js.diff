@@ -1,16 +1,7 @@
 --- old.declarationEmitLateBoundAssignments2.js
 +++ new.declarationEmitLateBoundAssignments2.js
-@@= skipped -121, +121 lines =@@
- //// [declarationEmitLateBoundAssignments2.d.ts]
- export declare function decl(): void;
- export declare namespace decl {
--    var B: string;
-+    const B: string;
- }
- export declare function decl2(): void;
- export declare namespace decl2 {
--    var C: number;
-+    const C: number;
+@@= skipped -128, +128 lines =@@
+     var C: number;
  }
  export declare function decl3(): void;
 -export declare namespace decl3 { }
@@ -38,11 +29,11 @@
 -};
 +export declare function arrow(): void;
 +export declare namespace arrow {
-+    const B: string;
++    var B: string;
 +}
 +export declare function arrow2(): void;
 +export declare namespace arrow2 {
-+    const C: number;
++    var C: number;
 +}
  export declare const arrow3: {
      (): void;

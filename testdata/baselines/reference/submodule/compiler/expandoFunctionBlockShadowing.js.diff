@@ -12,10 +12,3 @@
  function X() { }
  if (Math.random()) {
      const X = {};
-@@= skipped -24, +24 lines =@@
- export declare function X(): void;
- export declare function Y(): void;
- export declare namespace Y {
--    var test: string;
-+    const test: string;
- }

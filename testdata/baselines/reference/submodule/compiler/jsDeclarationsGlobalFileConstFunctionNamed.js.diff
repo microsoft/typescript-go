@@ -12,7 +12,7 @@
  declare function SomeConstructor2(): void;
  declare namespace SomeConstructor2 {
 -    let staticMember: string;
-+    const staticMember: string;
++    var staticMember: string;
  }
  declare function SomeConstructor3(): void;
  declare namespace SomeConstructor3 {
@@ -23,7 +23,7 @@
 -    x: number;
 -}
 -declare function SelfReference(): SelfReference;
-+    const staticMember: string;
++    var staticMember: string;
 +}
 +declare function SelfReference(): any;
  declare namespace SelfReference {
@@ -32,5 +32,5 @@
 -}
 -declare class SelfReference {
 -    x: number;
-+    const staticMember: string;
++    var staticMember: string;
  }

@@ -24,8 +24,7 @@
  declare function Example(): void;
 +export default Example;
  declare namespace Example {
--    var Foo: typeof import("./foo").Foo;
-+    const Foo: typeof import("./foo").Foo;
+     var Foo: typeof import("./foo").Foo;
  }
 -export default Example;
  //// [index2.d.ts]
@@ -34,8 +33,7 @@
  declare function Example(): void;
 +export default Example;
  declare namespace Example {
--    var Foo: typeof import("./foo").Foo;
-+    const Foo: typeof import("./foo").Foo;
+     var Foo: typeof import("./foo").Foo;
  }
 -export default Example;
  //// [index3.d.ts]
@@ -44,17 +42,14 @@
  declare function Example(): void;
 +export default Example;
  declare namespace Example {
--    var Bar: typeof import("./index3").Bar;
-+    const Bar: typeof import("./index3").Bar;
+     var Bar: typeof import("./index3").Bar;
  }
 -export default Example;
  //// [index4.d.ts]
  export declare function C(): any;
  export declare namespace C {
--    var A: () => void;
--    var B: () => void;
-+    const A: () => void;
+     var A: () => void;
 +}
 +export declare namespace C {
-+    const B: () => void;
+     var B: () => void;
  }

@@ -41,7 +41,7 @@
 -     * Should be able to export a type alias at the same time.
 -     */
 -    name: string;
-+    const statische: () => void;
++    var statische: () => void;
 +}
 +export = Handler;
 +export var Strings = Strings;

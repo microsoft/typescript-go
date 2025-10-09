@@ -17,7 +17,7 @@
  declare namespace Ns {
 -    export { C1 };
 -    export let C5: {
-+    const C1: {
++    var C1: {
          new (): {
              method(): number;
          };
@@ -49,5 +49,5 @@
 -declare class C3 implements A {
 -    method(): number;
 +declare namespace Ns {
-+    const C5: any;
++    var C5: any;
  }

@@ -26,60 +26,23 @@ foo.length = 10;
 //// [isolatedDeclarationErrorsExpandoFunctions.d.ts]
 export declare function foo(): void;
 export declare namespace foo {
-    const apply: () => void;
+    var apply: () => void;
 }
 export declare namespace foo {
-    const call: () => void;
+    var call: () => void;
 }
 export declare namespace foo {
-    const bind: () => void;
+    var bind: () => void;
 }
 export declare namespace foo {
-    const caller: () => void;
+    var caller: () => void;
 }
 export declare namespace foo {
-    const toString: () => void;
+    var toString: () => void;
 }
 export declare namespace foo {
-    const length: number;
+    var length: number;
 }
 export declare namespace foo {
-    const length: number;
+    var length: number;
 }
-
-
-//// [DtsFileErrors]
-
-
-isolatedDeclarationErrorsExpandoFunctions.d.ts(18,11): error TS2451: Cannot redeclare block-scoped variable 'length'.
-isolatedDeclarationErrorsExpandoFunctions.d.ts(21,11): error TS2451: Cannot redeclare block-scoped variable 'length'.
-
-
-==== isolatedDeclarationErrorsExpandoFunctions.d.ts (2 errors) ====
-    export declare function foo(): void;
-    export declare namespace foo {
-        const apply: () => void;
-    }
-    export declare namespace foo {
-        const call: () => void;
-    }
-    export declare namespace foo {
-        const bind: () => void;
-    }
-    export declare namespace foo {
-        const caller: () => void;
-    }
-    export declare namespace foo {
-        const toString: () => void;
-    }
-    export declare namespace foo {
-        const length: number;
-              ~~~~~~
-!!! error TS2451: Cannot redeclare block-scoped variable 'length'.
-    }
-    export declare namespace foo {
-        const length: number;
-              ~~~~~~
-!!! error TS2451: Cannot redeclare block-scoped variable 'length'.
-    }
-    

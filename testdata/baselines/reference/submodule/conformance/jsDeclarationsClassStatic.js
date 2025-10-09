@@ -53,7 +53,7 @@ module.exports.Strings = Strings;
 
 //// [source.d.ts]
 declare namespace Handler {
-    const statische: () => void;
+    var statische: () => void;
 }
 export = Handler;
 export var Strings = Strings;

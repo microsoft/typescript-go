@@ -26,10 +26,10 @@
 +export var j = 1;
 +export var k = void 0;
 +declare namespace o {
-+    const x: number;
++    var x: number;
 +}
 +declare namespace o {
-+    const y: any;
++    var y: any;
 +}
 +export {};
  //// [importer.d.ts]

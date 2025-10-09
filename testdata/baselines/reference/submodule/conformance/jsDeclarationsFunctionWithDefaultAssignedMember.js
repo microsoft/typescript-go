@@ -18,10 +18,10 @@ module.exports = foo;
 //// [index.d.ts]
 declare function foo(): void;
 declare namespace foo {
-    const foo: typeof import(".");
+    var foo: typeof import(".");
 }
 declare namespace foo {
-    const _a: typeof import(".");
+    var _a: typeof import(".");
     export { _a as default };
 }
 export = foo;

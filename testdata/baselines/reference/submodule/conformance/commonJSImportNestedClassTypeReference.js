@@ -39,7 +39,7 @@ function f(k) {
 
 //// [mod1.d.ts]
 declare namespace NS {
-    const K: {
+    var K: {
         new (): {
             values(): /*elided*/ any;
         };

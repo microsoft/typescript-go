@@ -27,13 +27,13 @@ SelfReference.staticMember = "str";
 declare const SomeConstructor: () => void;
 declare function SomeConstructor2(): void;
 declare namespace SomeConstructor2 {
-    const staticMember: string;
+    var staticMember: string;
 }
 declare function SomeConstructor3(): void;
 declare namespace SomeConstructor3 {
-    const staticMember: string;
+    var staticMember: string;
 }
 declare function SelfReference(): any;
 declare namespace SelfReference {
-    const staticMember: string;
+    var staticMember: string;
 }

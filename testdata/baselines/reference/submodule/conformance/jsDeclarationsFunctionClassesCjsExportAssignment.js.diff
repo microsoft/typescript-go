@@ -106,7 +106,7 @@
 +declare function Context(input: Input): any;
  declare namespace Context {
 -    export { Timer, Hook, HookHandler, Input, State };
-+    const prototype: {
++    var prototype: {
 +        /**
 +         * @param {Input} input
 +         * @param {HookHandler=} handle

@@ -39,5 +39,5 @@ export interface Rect<p extends Point> {
 export declare function Point(x: number, y: number): Point;
 export declare const Rect: <p extends Point>(a: p, b: p) => Rect<p>;
 export declare namespace Point {
-    const zero: () => Point;
+    var zero: () => Point;
 }

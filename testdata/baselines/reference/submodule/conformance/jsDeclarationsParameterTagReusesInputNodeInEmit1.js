@@ -67,7 +67,7 @@ declare class Base {
 }
 declare function BaseFactory(): Base;
 declare namespace BaseFactory {
-    const Base: typeof Base;
+    var Base: typeof Base;
 }
 export = BaseFactory;
 //// [file.d.ts]

@@ -66,12 +66,12 @@
  import PropTypes from "prop-types";
 +declare function TabbedShowLayout({}: {}): JSX.Element;
 +declare namespace TabbedShowLayout {
-+    const propTypes: {
++    var propTypes: {
 +        version: PropTypes.Requireable<number>;
 +    };
 +}
 +declare namespace TabbedShowLayout {
-+    const defaultProps: {
++    var defaultProps: {
 +        tabs: undefined;
 +    };
 +}
@@ -85,7 +85,7 @@
  import React from "react";
 +declare function TabbedShowLayout(): JSX.Element;
 +declare namespace TabbedShowLayout {
-+    const defaultProps: Partial<{}> | undefined;
++    var defaultProps: Partial<{}> | undefined;
 +}
 +export default TabbedShowLayout;
  //// [jsDeclarationsReactComponents3.d.ts]
@@ -97,7 +97,7 @@
 -    defaultProps: {
 +declare function TabbedShowLayout(): JSX.Element;
 +declare namespace TabbedShowLayout {
-+    const defaultProps: {
++    var defaultProps: {
          tabs: string;
      };
 -} & ((props?: {
@@ -115,7 +115,7 @@
 -    namespace defaultProps {
 -        let tabs: string;
 -    }
-+    const defaultProps: {
++    var defaultProps: {
 +        tabs: string;
 +    };
  }
@@ -137,12 +137,12 @@
 -    }
 -}
 -import PropTypes from 'prop-types';
-+    const propTypes: {
++    var propTypes: {
 +        classes: PropTypes.Requireable<object>;
 +    };
 +}
 +declare namespace Tree {
-+    const defaultProps: {
++    var defaultProps: {
 +        classes: {};
 +        parentSource: string;
 +    };

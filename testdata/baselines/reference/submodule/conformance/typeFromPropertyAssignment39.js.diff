@@ -15,12 +15,12 @@
 +    };
 +};
 +declare namespace foo {
-+    const baz: {
++    var baz: {
 +        blah: number;
 +    };
 +}
 +declare namespace foo {
-+    const blah: number;
++    var blah: number;
 +}
 +
 +
@@ -43,13 +43,13 @@
 +    declare namespace foo {
 +                      ~~~
 +!!! error TS2451: Cannot redeclare block-scoped variable 'foo'.
-+        const baz: {
++        var baz: {
 +            blah: number;
 +        };
 +    }
 +    declare namespace foo {
 +                      ~~~
 +!!! error TS2451: Cannot redeclare block-scoped variable 'foo'.
-+        const blah: number;
++        var blah: number;
 +    }
 +    

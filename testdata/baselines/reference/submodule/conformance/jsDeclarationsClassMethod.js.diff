@@ -28,7 +28,7 @@
 -     * @returns {number}
 -     */
 -    function staticProp(x: number, y: number): number;
-+    const staticProp: (x: any, y: any) => any;
++    var staticProp: (x: any, y: any) => any;
  }
  declare class C2 {
      /**
@@ -52,5 +52,5 @@
 -     * @returns {number}
 -     */
 -    function staticProp(x: number, y: number): number;
-+    const staticProp: (x: any, y: any) => any;
++    var staticProp: (x: any, y: any) => any;
  }
