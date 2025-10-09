@@ -1842,13 +1842,6 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 		return nil
 	}
 
-	if ast.IsVariableDeclaration(declaration) {
-		id := ast.GetNodeId(tx.EmitContext().MostOriginal(declaration.Parent.Parent))
-		if tx.lateStatementReplacementMap[id] != nil {
-			return nil
-		}
-	}
-
 	host := declaration.Symbol()
 	if host == nil {
 		return nil
@@ -1861,6 +1854,11 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 	}
 
 	tx.transformExpandoHost(name, declaration)
+
+	if ast.IsFunctionDeclaration(declaration) && !shouldEmitFunctionProperties(declaration.AsFunctionDeclaration()) {
+		return nil
+	}
+
 	isNonContextualKeywordName := ast.IsNonContextualKeyword(scanner.StringToToken(property))
 	exportName := core.IfElse(isNonContextualKeywordName, tx.Factory().NewGeneratedNameForNode(left), tx.Factory().NewIdentifier(property))
 

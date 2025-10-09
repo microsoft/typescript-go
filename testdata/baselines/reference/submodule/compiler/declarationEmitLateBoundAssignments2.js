@@ -136,14 +136,14 @@ export declare function decl7(): void;
 export declare function decl8(): void;
 export declare function decl9(): void;
 export declare function decl10(): void;
-export declare const arrow: {
-    (): void;
-    B: string;
-};
-export declare const arrow2: {
-    (): void;
-    C: number;
-};
+export declare function arrow(): void;
+export declare namespace arrow {
+    const B: string;
+}
+export declare function arrow2(): void;
+export declare namespace arrow2 {
+    const C: number;
+}
 export declare const arrow3: {
     (): void;
     77: number;

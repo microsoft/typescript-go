@@ -28,6 +28,22 @@
 -export declare namespace decl9 { }
  export declare function decl10(): void;
 -export declare namespace decl10 { }
- export declare const arrow: {
+-export declare const arrow: {
+-    (): void;
+-    B: string;
+-};
+-export declare const arrow2: {
+-    (): void;
+-    C: number;
+-};
++export declare function arrow(): void;
++export declare namespace arrow {
++    const B: string;
++}
++export declare function arrow2(): void;
++export declare namespace arrow2 {
++    const C: number;
++}
+ export declare const arrow3: {
      (): void;
-     B: string;
+     77: number;

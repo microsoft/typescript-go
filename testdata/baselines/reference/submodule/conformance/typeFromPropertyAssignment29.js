@@ -177,23 +177,36 @@ declare namespace ExpandoDecl {
     const m: (n: number) => number;
 }
 declare var n: number;
-declare const ExpandoExpr: {
-    (n: number): string;
-    prop: {
+declare function ExpandoExpr(n: number): string;
+declare namespace ExpandoExpr {
+    const prop: {
         x: number;
         y?: undefined;
     } | {
         x?: undefined;
         y: string;
     };
-    m: (n: number) => number;
-};
+}
+declare namespace ExpandoExpr {
+    const prop: {
+        x: number;
+        y?: undefined;
+    } | {
+        x?: undefined;
+        y: string;
+    };
+}
+declare namespace ExpandoExpr {
+    const m: (n: number) => number;
+}
 declare var n: number;
-declare const ExpandoArrow: {
-    (n: number): string;
-    prop: number;
-    m: (n: number) => number;
-};
+declare function ExpandoArrow(n: number): string;
+declare namespace ExpandoArrow {
+    const prop: number;
+}
+declare namespace ExpandoArrow {
+    const m: (n: number) => number;
+}
 declare function ExpandoNested(n: number): {
     (m: number): number;
     total: number;
