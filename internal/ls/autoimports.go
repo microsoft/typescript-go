@@ -264,6 +264,9 @@ func (e *exportInfoMap) isNotShadowedByDeeperNodeModulesPackage(info *SymbolExpo
 	return !ok || strings.HasPrefix(info.moduleFileName, packageDeepestNodeModulesPath)
 }
 
+// rehydrateCachedInfo attempts to restore a SymbolExportInfo from cached data.
+// Returns (info, true) if successful, or (nil, false) if the symbol or module
+// can no longer be found (e.g., due to module resolution changes or removed exports).
 func (e *exportInfoMap) rehydrateCachedInfo(ch *checker.Checker, info CachedSymbolExportInfo) (*SymbolExportInfo, bool) {
 	if info.symbol != nil && info.moduleSymbol != nil {
 		return &SymbolExportInfo{

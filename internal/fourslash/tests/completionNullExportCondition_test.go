@@ -10,8 +10,12 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-// Regression test for panic when completing with null export conditions
-// Issue: https://github.com/microsoft/typescript-go/issues/XXXX
+// Regression test for panic when rehydrating cached export info fails.
+// This can happen when:
+// - Module resolution changes (e.g., null export conditions)
+// - Symbols are removed/renamed in a module
+// - Modules become unavailable
+// The language service should handle this gracefully instead of panicking.
 func TestCompletionNullExportCondition(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
