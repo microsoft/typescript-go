@@ -41,12 +41,18 @@ func isNonFinite(x float64) bool {
 }
 
 // https://tc39.es/ecma262/2024/multipage/abstract-operations.html#sec-touint32
-func (n Number) toUint32() uint32 {
+func (x Number) toUint32() uint32 {
+	// The only difference between ToUint32 and ToInt32 is the interpretation of the bits.
+	return uint32(x.toInt32())
+}
+
+// https://tc39.es/ecma262/2024/multipage/abstract-operations.html#sec-toint32
+func (n Number) toInt32() int32 {
 	x := float64(n)
 	// Fast path: if the number is the range (-2^31, 2^32), i.e. an SMI,
 	// then we don't need to do any special mapping.
 	if smi := int32(x); float64(smi) == x {
-		return uint32(smi)
+		return smi
 	}
 
 	// If the number is non-finite (NaN, +Inf, -Inf; exp=0x7FF), it maps to zero.
@@ -56,16 +62,12 @@ func (n Number) toUint32() uint32 {
 
 	// Otherwise, take x modulo 2^32, mapping positive numbers
 	// to [0, 2^32) and negative numbers to (-2^32, -0.0].
-	x = math.Mod(x, 1<<32)
 
-	// Convert to uint32, which will wrap negative numbers.
-	return uint32(x)
-}
-
-// https://tc39.es/ecma262/2024/multipage/abstract-operations.html#sec-toint32
-func (x Number) toInt32() int32 {
-	// The only difference between ToUint32 and ToInt32 is the interpretation of the bits.
-	return int32(x.toUint32())
+	i := int32(uint32(math.Mod(math.Abs(x), 1<<32)))
+	if math.Signbit(x) {
+		return -i
+	}
+	return i
 }
 
 func (x Number) toShiftCount() uint32 {
