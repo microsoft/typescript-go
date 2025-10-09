@@ -186,42 +186,44 @@ exports.default = Tree;
 //// [jsDeclarationsReactComponents1.d.ts]
 /// <reference path="../..react16.d.ts" preserve="true" />
 import PropTypes from "prop-types";
-declare function TabbedShowLayout({}: {}): JSX.Element;
-declare namespace TabbedShowLayout {
-    const propTypes: {
+declare const TabbedShowLayout: {
+    ({}: {}): JSX.Element;
+    propTypes: {
         version: PropTypes.Requireable<number>;
     };
-}
-declare namespace TabbedShowLayout {
-    const defaultProps: {
+    defaultProps: {
         tabs: undefined;
     };
-}
+};
 export default TabbedShowLayout;
 //// [jsDeclarationsReactComponents2.d.ts]
 import React from "react";
-declare function TabbedShowLayout(): JSX.Element;
-declare namespace TabbedShowLayout {
-    const defaultProps: Partial<{}> | undefined;
-}
+/**
+ * @type {React.SFC}
+ */
+declare const TabbedShowLayout: React.SFC;
 export default TabbedShowLayout;
 //// [jsDeclarationsReactComponents3.d.ts]
-declare function TabbedShowLayout(): JSX.Element;
-declare namespace TabbedShowLayout {
-    const defaultProps: {
+/**
+ * @type {{defaultProps: {tabs: string}} & ((props?: {elem: string}) => JSX.Element)}
+ */
+declare const TabbedShowLayout: {
+    defaultProps: {
         tabs: string;
     };
-}
+} & ((props?: {
+    elem: string;
+}) => JSX.Element);
 export default TabbedShowLayout;
 //// [jsDeclarationsReactComponents4.d.ts]
-declare function TabbedShowLayout(/** @type {{className: string}}*/ prop: {
-    className: string;
-}): JSX.Element;
-declare namespace TabbedShowLayout {
-    const defaultProps: {
+declare const TabbedShowLayout: {
+    (prop: {
+        className: string;
+    }): JSX.Element;
+    defaultProps: {
         tabs: string;
     };
-}
+};
 export default TabbedShowLayout;
 //// [jsDeclarationsReactComponents5.d.ts]
 import PropTypes from 'prop-types';

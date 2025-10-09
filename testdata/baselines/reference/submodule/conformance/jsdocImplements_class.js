@@ -106,6 +106,3 @@ declare class CC {
     };
 }
 declare var C5: any;
-declare namespace Ns {
-    const C5: any;
-}

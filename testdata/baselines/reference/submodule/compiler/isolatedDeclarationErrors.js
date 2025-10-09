@@ -25,11 +25,11 @@ declare function errorOnAssignmentBelowDecl(): void;
 declare namespace errorOnAssignmentBelowDecl {
     const a: string;
 }
-declare function errorOnAssignmentBelow(): void;
-declare namespace errorOnAssignmentBelow {
-    const a: string;
-}
-declare function errorOnMissingReturn(): void;
-declare namespace errorOnMissingReturn {
-    const a: string;
-}
+declare const errorOnAssignmentBelow: {
+    (): void;
+    a: string;
+};
+declare const errorOnMissingReturn: {
+    (): void;
+    a: string;
+};

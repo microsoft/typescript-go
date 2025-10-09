@@ -1826,14 +1826,9 @@ func (tx *DeclarationTransformer) visitExpressionStatement(node *ast.ExpressionS
 
 func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExpression) *ast.Node {
 	left := node.Left
-	right := node.Right
 
 	symbol := node.Symbol
 	if symbol == nil || symbol.Flags&ast.SymbolFlagsAssignment == 0 {
-		return nil
-	}
-
-	if ast.IsExpandoInitializer(right) {
 		return nil
 	}
 
@@ -1845,6 +1840,13 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 	declaration := tx.resolver.GetReferencedValueDeclaration(ns)
 	if declaration == nil {
 		return nil
+	}
+
+	if ast.IsVariableDeclaration(declaration) {
+		id := ast.GetNodeId(tx.EmitContext().MostOriginal(declaration.Parent.Parent))
+		if tx.lateStatementReplacementMap[id] != nil {
+			return nil
+		}
 	}
 
 	host := declaration.Symbol()

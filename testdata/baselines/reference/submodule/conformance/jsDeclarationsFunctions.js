@@ -127,6 +127,11 @@ export declare namespace b {
     const cat: string;
 }
 export declare function c(): void;
+export declare namespace c {
+    const Cls: {
+        new (): {};
+    };
+}
 /**
  * @param {number} a
  * @param {number} b

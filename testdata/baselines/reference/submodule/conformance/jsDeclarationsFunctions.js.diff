@@ -25,17 +25,20 @@
 -export function b(): void;
 -export namespace b {
 -    let cat: string;
--}
--export function c(): void;
--export namespace c {
--    export { Cls };
--}
 +export declare function a(): void;
 +export declare function b(): void;
 +export declare namespace b {
 +    const cat: string;
-+}
+ }
+-export function c(): void;
+-export namespace c {
+-    export { Cls };
 +export declare function c(): void;
++export declare namespace c {
++    const Cls: {
++        new (): {};
++    };
+ }
  /**
   * @param {number} a
   * @param {number} b
@@ -82,7 +85,7 @@
  /**
   * @param {{x: string}} a
   * @param {{y: typeof b}} b
-@@= skipped -50, +44 lines =@@
+@@= skipped -50, +49 lines =@@
  declare function hh(a: {
      x: string;
  }, b: {
