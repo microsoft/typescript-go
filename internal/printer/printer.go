@@ -2716,14 +2716,6 @@ func (p *Printer) getBinaryExpressionPrecedence(node *ast.BinaryExpression) (lef
 	case ast.OperatorPrecedenceAssignment:
 		// assignment is right-associative
 		leftPrec = ast.OperatorPrecedenceLeftHandSide
-	case ast.OperatorPrecedenceCoalesce:
-		// allow coalesce on the left, but short circuit to BitwiseOR
-		if isBinaryOperation(node.Left, ast.KindQuestionQuestionToken) {
-			leftPrec = ast.OperatorPrecedenceCoalesce
-		} else {
-			leftPrec = ast.OperatorPrecedenceBitwiseOR
-		}
-		rightPrec = ast.OperatorPrecedenceBitwiseOR
 	case ast.OperatorPrecedenceLogicalOR:
 		rightPrec = ast.OperatorPrecedenceLogicalAND
 	case ast.OperatorPrecedenceLogicalAND:
@@ -3661,8 +3653,8 @@ func (p *Printer) emitImportDeclaration(node *ast.ImportDeclaration) {
 
 func (p *Printer) emitImportClause(node *ast.ImportClause) {
 	state := p.enterNode(node.AsNode())
-	if node.IsTypeOnly {
-		p.emitToken(ast.KindTypeKeyword, node.Pos(), WriteKindKeyword, node.AsNode())
+	if node.PhaseModifier != ast.KindUnknown {
+		p.emitToken(node.PhaseModifier, node.Pos(), WriteKindKeyword, node.AsNode())
 		p.writeSpace()
 	}
 	if name := node.Name(); name != nil {
