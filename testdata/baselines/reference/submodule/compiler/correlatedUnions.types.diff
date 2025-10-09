@@ -95,7 +95,35 @@
 
  processEvents([
  >processEvents([    { name: "click", callback: ev => console.log(ev) },    { name: "scroll", callback: ev => console.log(ev) },]) : void
-@@= skipped -180, +180 lines =@@
+@@= skipped -55, +55 lines =@@
+ >Keys : keyof { sum: [a: number, b: number]; concat: [a: string, b: string, c: string]; }
+
+     const funs: { [P in Keys]: (...args: ArgMap[P]) => void } = {
+->funs : { concat: (a: string, b: string, c: string) => void; sum: (a: number, b: number) => void; }
++>funs : { concat: (...args: [a: string, b: string, c: string]) => void; sum: (...args: [a: number, b: number]) => void; }
+ >args : { sum: [a: number, b: number]; concat: [a: string, b: string, c: string]; }[P]
+ >{        sum: (a, b) => a + b,        concat: (a, b, c) => a + b + c    } : { sum: (a: number, b: number) => number; concat: (a: string, b: string, c: string) => string; }
+
+@@= skipped -31, +31 lines =@@
+ >args : { sum: [a: number, b: number]; concat: [a: string, b: string, c: string]; }[K]
+
+         const fn = funs[funKey];
+->fn : { concat: (a: string, b: string, c: string) => void; sum: (a: number, b: number) => void; }[K]
+->funs[funKey] : { concat: (a: string, b: string, c: string) => void; sum: (a: number, b: number) => void; }[K]
+->funs : { concat: (a: string, b: string, c: string) => void; sum: (a: number, b: number) => void; }
++>fn : { concat: (...args: [a: string, b: string, c: string]) => void; sum: (...args: [a: number, b: number]) => void; }[K]
++>funs[funKey] : { concat: (...args: [a: string, b: string, c: string]) => void; sum: (...args: [a: number, b: number]) => void; }[K]
++>funs : { concat: (...args: [a: string, b: string, c: string]) => void; sum: (...args: [a: number, b: number]) => void; }
+ >funKey : K
+
+         fn(...args);
+ >fn(...args) : void
+->fn : { concat: (a: string, b: string, c: string) => void; sum: (a: number, b: number) => void; }[K]
++>fn : { concat: (...args: [a: string, b: string, c: string]) => void; sum: (...args: [a: number, b: number]) => void; }[K]
+ >...args : string | number
+ >args : { sum: [a: number, b: number]; concat: [a: string, b: string, c: string]; }[K]
+     }
+@@= skipped -94, +94 lines =@@
  }
 
  function f4<K extends keyof ArgMap>(x: Funcs[keyof ArgMap], y: Funcs[K]) {
