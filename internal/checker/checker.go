@@ -16431,7 +16431,7 @@ func (c *Checker) hasNonCircularBaseConstraint(t *Type) bool {
 
 // This is a worker function. Use getConstraintOfTypeParameter which guards against circular constraints
 func (c *Checker) getConstraintFromTypeParameter(t *Type) *Type {
-	if t.Flags()&TypeFlagsTypeParameter == 0 {
+	if t.flags&TypeFlagsTypeParameter == 0 {
 		return nil
 	}
 
@@ -24269,8 +24269,6 @@ func (c *Checker) newObjectType(objectFlags ObjectFlags, symbol *ast.Symbol) *Ty
 		data = &EvolvingArrayType{}
 	case objectFlags&ObjectFlagsInstantiationExpressionType != 0:
 		data = &InstantiationExpressionType{}
-	case objectFlags&ObjectFlagsSingleSignatureType != 0:
-		data = &ObjectType{}
 	case objectFlags&ObjectFlagsAnonymous != 0:
 		data = &ObjectType{}
 	default:
