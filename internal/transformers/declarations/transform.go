@@ -655,7 +655,7 @@ func (tx *DeclarationTransformer) transformTypeParameterDeclaration(input *ast.T
 	}
 	
 	// Visit children to transform constraint and default type
-	modifiers := tx.Visitor().VisitNodes(input.Modifiers())
+	modifiers := tx.Visitor().VisitModifiers(input.Modifiers())
 	constraint := tx.Visitor().VisitNode(input.Constraint)
 	defaultType := tx.Visitor().VisitNode(input.DefaultType)
 	
