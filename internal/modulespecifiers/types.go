@@ -98,6 +98,7 @@ type UserPreferences struct {
 	ImportModuleSpecifierPreference   ImportModuleSpecifierPreference
 	ImportModuleSpecifierEnding       ImportModuleSpecifierEndingPreference
 	IncludePackageJsonAutoImports     IncludePackageJsonAutoImports
+	allowRenameOfImportPath           core.Tristate
 	AutoImportSpecifierExcludeRegexes []string
 }
 
