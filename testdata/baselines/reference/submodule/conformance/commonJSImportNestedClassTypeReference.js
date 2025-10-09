@@ -38,13 +38,6 @@ function f(k) {
 
 
 //// [mod1.d.ts]
-declare namespace NS {
-    const K: {
-        new (): {
-            values(): /*elided*/ any;
-        };
-    };
-}
 export var K = NS.K;
 export {};
 //// [main.d.ts]

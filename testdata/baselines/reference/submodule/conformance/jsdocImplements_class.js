@@ -83,13 +83,6 @@ declare var Ns: {
     /** @implements {A} */
     C5: any;
 };
-declare namespace Ns {
-    const C1: {
-        new (): {
-            method(): number;
-        };
-    };
-}
 /** @implements {A} */
 declare var C2: {
     new (): {
