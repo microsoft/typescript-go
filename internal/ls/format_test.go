@@ -13,6 +13,7 @@ import (
 // Test for issue: Panic Handling textDocument/onTypeFormatting
 // This reproduces the panic when pressing enter in an empty file
 func TestGetFormattingEditsAfterKeystroke_EmptyFile(t *testing.T) {
+	t.Parallel()
 	// Create an empty file
 	text := ""
 	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
@@ -42,6 +43,7 @@ func TestGetFormattingEditsAfterKeystroke_EmptyFile(t *testing.T) {
 
 // Test with a simple statement
 func TestGetFormattingEditsAfterKeystroke_SimpleStatement(t *testing.T) {
+	t.Parallel()
 	// Create a file with a simple statement
 	text := "const x = 1"
 	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
