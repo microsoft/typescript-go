@@ -1052,11 +1052,11 @@ func (c *Checker) findMatchingDiscriminantType(source *Type, target *Type, isRel
 		if match := c.getMatchingUnionConstituentForType(target, source); match != nil {
 			return match
 		}
-		discriminantProperties := c.findDiscriminantProperties(c.getPropertiesOfType(source), target)
-		discriminator := &TypeDiscriminator{c: c, props: discriminantProperties, isRelatedTo: isRelatedTo}
-		discriminated := c.discriminateTypeByDiscriminableItems(target, discriminator)
-		if discriminated != target {
-			return discriminated
+		if discriminantProperties := c.findDiscriminantProperties(c.getPropertiesOfType(source), target); len(discriminantProperties) != 0 {
+			discriminator := &TypeDiscriminator{c: c, props: discriminantProperties, isRelatedTo: isRelatedTo}
+			if discriminated := c.discriminateTypeByDiscriminableItems(target, discriminator); discriminated != target {
+				return discriminated
+			}
 		}
 	}
 	return nil
@@ -3298,6 +3298,22 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 					return result
 				}
 			}
+		case source.flags&TypeFlagsTemplateLiteral != 0:
+			if slices.Equal(source.AsTemplateLiteralType().texts, target.AsTemplateLiteralType().texts) {
+				result = TernaryTrue
+				for i, sourceType := range source.AsTemplateLiteralType().types {
+					targetType := target.AsTemplateLiteralType().types[i]
+					result &= r.isRelatedTo(sourceType, targetType, RecursionFlagsBoth, false /*reportErrors*/)
+					if result == TernaryFalse {
+						return result
+					}
+				}
+				return result
+			}
+		case source.flags&TypeFlagsStringMapping != 0:
+			if source.AsStringMappingType().Symbol() == target.AsStringMappingType().Symbol() {
+				return r.isRelatedTo(source.AsStringMappingType().target, target.AsStringMappingType().target, RecursionFlagsBoth, false /*reportErrors*/)
+			}
 		}
 		if source.flags&TypeFlagsObject == 0 {
 			return TernaryFalse
@@ -4248,6 +4264,10 @@ func (r *Relater) propertyRelatedTo(source *Type, target *Type, sourceProp *ast.
 func (r *Relater) isPropertySymbolTypeRelated(sourceProp *ast.Symbol, targetProp *ast.Symbol, getTypeOfSourceProperty func(sym *ast.Symbol) *Type, reportErrors bool, intersectionState IntersectionState) Ternary {
 	targetIsOptional := r.c.strictNullChecks && targetProp.CheckFlags&ast.CheckFlagsPartial != 0
 	effectiveTarget := r.c.addOptionalityEx(r.c.getNonMissingTypeOfSymbol(targetProp), false /*isProperty*/, targetIsOptional)
+	// source could resolve to `any` and that's not related to `unknown` target under strict subtype relation
+	if effectiveTarget.flags&core.IfElse(r.relation == r.c.strictSubtypeRelation, TypeFlagsAny, TypeFlagsAnyOrUnknown) != 0 {
+		return TernaryTrue
+	}
 	effectiveSource := getTypeOfSourceProperty(sourceProp)
 	return r.isRelatedToEx(effectiveSource, effectiveTarget, RecursionFlagsBoth, reportErrors, nil /*headMessage*/, intersectionState)
 }
