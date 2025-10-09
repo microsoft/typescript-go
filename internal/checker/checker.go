@@ -21188,6 +21188,9 @@ func (c *Checker) getDefaultTypeArgumentType(isInJavaScriptFile bool) *Type {
 // this gets the instantiated default type of its target. If the type parameter has no default type or
 // the default is circular, `undefined` is returned.
 func (c *Checker) getDefaultFromTypeParameter(t *Type) *Type {
+	if t.flags&TypeFlagsTypeParameter == 0 {
+		return nil
+	}
 	defaultType := c.getResolvedTypeParameterDefault(t)
 	if defaultType != c.noConstraintType && defaultType != c.circularConstraintType {
 		return defaultType
