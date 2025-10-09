@@ -573,6 +573,8 @@ func (tx *DeclarationTransformer) transformImportTypeNode(input *ast.ImportTypeN
 	}
 	specifier := tx.rewriteModuleSpecifier(input.AsNode(), input.Argument.AsLiteralTypeNode().Literal)
 	var argument *ast.Node
+	// Use pointer equality to check if the specifier changed - rewriteModuleSpecifier
+	// returns the same node instance when no rewriting is needed
 	if specifier == input.Argument.AsLiteralTypeNode().Literal {
 		// No change to the specifier, reuse the original argument to avoid creating new nodes
 		argument = input.Argument
