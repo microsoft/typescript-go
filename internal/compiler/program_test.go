@@ -1,4 +1,4 @@
-package compiler
+package compiler_test
 
 import (
 	"path/filepath"
@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -110,6 +111,8 @@ var esnextLibs = []string{
 	"lib.esnext.decorators.d.ts",
 	"lib.esnext.iterator.d.ts",
 	"lib.esnext.float16.d.ts",
+	"lib.esnext.error.d.ts",
+	"lib.esnext.sharedmemory.d.ts",
 	"lib.decorators.d.ts",
 	"lib.decorators.legacy.d.ts",
 	"lib.esnext.full.d.ts",
@@ -233,14 +236,14 @@ func TestProgram(t *testing.T) {
 
 			opts := core.CompilerOptions{Target: testCase.target}
 
-			program := NewProgram(ProgramOptions{
+			program := compiler.NewProgram(compiler.ProgramOptions{
 				Config: &tsoptions.ParsedCommandLine{
 					ParsedConfig: &core.ParsedOptions{
 						FileNames:       []string{"c:/dev/src/index.ts"},
 						CompilerOptions: &opts,
 					},
 				},
-				Host: NewCompilerHost("c:/dev/src", fs, bundled.LibPath()),
+				Host: compiler.NewCompilerHost("c:/dev/src", fs, bundled.LibPath(), nil, nil),
 			})
 
 			actualFiles := []string{}
@@ -270,18 +273,18 @@ func BenchmarkNewProgram(b *testing.B) {
 			}
 
 			opts := core.CompilerOptions{Target: testCase.target}
-			programOpts := ProgramOptions{
+			programOpts := compiler.ProgramOptions{
 				Config: &tsoptions.ParsedCommandLine{
 					ParsedConfig: &core.ParsedOptions{
 						FileNames:       []string{"c:/dev/src/index.ts"},
 						CompilerOptions: &opts,
 					},
 				},
-				Host: NewCompilerHost("c:/dev/src", fs, bundled.LibPath()),
+				Host: compiler.NewCompilerHost("c:/dev/src", fs, bundled.LibPath(), nil, nil),
 			}
 
 			for b.Loop() {
-				NewProgram(programOpts)
+				compiler.NewProgram(programOpts)
 			}
 		})
 	}
@@ -294,18 +297,18 @@ func BenchmarkNewProgram(b *testing.B) {
 		fs := osvfs.FS()
 		fs = bundled.WrapFS(fs)
 
-		host := NewCompilerHost(rootPath, fs, bundled.LibPath())
+		host := compiler.NewCompilerHost(rootPath, fs, bundled.LibPath(), nil, nil)
 
 		parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile(tspath.CombinePaths(rootPath, "tsconfig.json"), nil, host, nil)
 		assert.Equal(b, len(errors), 0, "Expected no errors in parsed command line")
 
-		opts := ProgramOptions{
+		opts := compiler.ProgramOptions{
 			Config: parsed,
 			Host:   host,
 		}
 
 		for b.Loop() {
-			NewProgram(opts)
+			compiler.NewProgram(opts)
 		}
 	})
 }

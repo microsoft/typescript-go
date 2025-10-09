@@ -3,7 +3,6 @@ package tstransforms
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/transformers"
 )
 
@@ -14,7 +13,9 @@ type TypeEraserTransformer struct {
 	currentNode     *ast.Node
 }
 
-func NewTypeEraserTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions) *transformers.Transformer {
+func NewTypeEraserTransformer(opt *transformers.TransformOptions) *transformers.Transformer {
+	compilerOptions := opt.CompilerOptions
+	emitContext := opt.Context
 	tx := &TypeEraserTransformer{compilerOptions: compilerOptions}
 	return tx.NewTransformer(tx.visit, emitContext)
 }
@@ -24,7 +25,7 @@ func (tx *TypeEraserTransformer) pushNode(node *ast.Node) (grandparentNode *ast.
 	grandparentNode = tx.parentNode
 	tx.parentNode = tx.currentNode
 	tx.currentNode = node
-	return
+	return grandparentNode
 }
 
 // Pops the last child node off the ancestor tracking stack, restoring the grandparent node.
@@ -34,10 +35,7 @@ func (tx *TypeEraserTransformer) popNode(grandparentNode *ast.Node) {
 }
 
 func (tx *TypeEraserTransformer) elide(node *ast.Statement) *ast.Statement {
-	statement := tx.Factory().NewNotEmittedStatement()
-	tx.EmitContext().SetOriginal(statement, node)
-	statement.Loc = node.Loc
-	return statement
+	return tx.EmitContext().NewNotEmittedStatement(node.AsNode())
 }
 
 func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
@@ -136,7 +134,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			// TypeScript overloads are elided
 			return nil
 		}
-		return tx.Factory().UpdateConstructorDeclaration(n, nil, nil, tx.Visitor().VisitNodes(n.Parameters), nil, tx.Visitor().VisitNode(n.Body))
+		return tx.Factory().UpdateConstructorDeclaration(n, nil, nil, tx.Visitor().VisitNodes(n.Parameters), nil, nil, tx.Visitor().VisitNode(n.Body))
 
 	case ast.KindMethodDeclaration:
 		n := node.AsMethodDeclaration()
@@ -144,7 +142,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			// TypeScript overloads are elided
 			return nil
 		}
-		return tx.Factory().UpdateMethodDeclaration(n, tx.Visitor().VisitModifiers(n.Modifiers()), n.AsteriskToken, tx.Visitor().VisitNode(n.Name()), nil, nil, tx.Visitor().VisitNodes(n.Parameters), nil, tx.Visitor().VisitNode(n.Body))
+		return tx.Factory().UpdateMethodDeclaration(n, tx.Visitor().VisitModifiers(n.Modifiers()), n.AsteriskToken, tx.Visitor().VisitNode(n.Name()), nil, nil, tx.Visitor().VisitNodes(n.Parameters), nil, nil, tx.Visitor().VisitNode(n.Body))
 
 	case ast.KindGetAccessor:
 		n := node.AsGetAccessorDeclaration()
@@ -152,7 +150,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			// TypeScript overloads are elided
 			return nil
 		}
-		return tx.Factory().UpdateGetAccessorDeclaration(n, tx.Visitor().VisitModifiers(n.Modifiers()), tx.Visitor().VisitNode(n.Name()), nil, tx.Visitor().VisitNodes(n.Parameters), nil, tx.Visitor().VisitNode(n.Body))
+		return tx.Factory().UpdateGetAccessorDeclaration(n, tx.Visitor().VisitModifiers(n.Modifiers()), tx.Visitor().VisitNode(n.Name()), nil, tx.Visitor().VisitNodes(n.Parameters), nil, nil, tx.Visitor().VisitNode(n.Body))
 
 	case ast.KindSetAccessor:
 		n := node.AsSetAccessorDeclaration()
@@ -160,7 +158,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			// TypeScript overloads are elided
 			return nil
 		}
-		return tx.Factory().UpdateSetAccessorDeclaration(n, tx.Visitor().VisitModifiers(n.Modifiers()), tx.Visitor().VisitNode(n.Name()), nil, tx.Visitor().VisitNodes(n.Parameters), nil, tx.Visitor().VisitNode(n.Body))
+		return tx.Factory().UpdateSetAccessorDeclaration(n, tx.Visitor().VisitModifiers(n.Modifiers()), tx.Visitor().VisitNode(n.Name()), nil, tx.Visitor().VisitNodes(n.Parameters), nil, nil, tx.Visitor().VisitNode(n.Body))
 
 	case ast.KindVariableDeclaration:
 		n := node.AsVariableDeclaration()
@@ -188,15 +186,15 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			// TypeScript overloads are elided
 			return tx.elide(node)
 		}
-		return tx.Factory().UpdateFunctionDeclaration(n, tx.Visitor().VisitModifiers(n.Modifiers()), n.AsteriskToken, tx.Visitor().VisitNode(n.Name()), nil, tx.Visitor().VisitNodes(n.Parameters), nil, tx.Visitor().VisitNode(n.Body))
+		return tx.Factory().UpdateFunctionDeclaration(n, tx.Visitor().VisitModifiers(n.Modifiers()), n.AsteriskToken, tx.Visitor().VisitNode(n.Name()), nil, tx.Visitor().VisitNodes(n.Parameters), nil, nil, tx.Visitor().VisitNode(n.Body))
 
 	case ast.KindFunctionExpression:
 		n := node.AsFunctionExpression()
-		return tx.Factory().UpdateFunctionExpression(n, tx.Visitor().VisitModifiers(n.Modifiers()), n.AsteriskToken, tx.Visitor().VisitNode(n.Name()), nil, tx.Visitor().VisitNodes(n.Parameters), nil, tx.Visitor().VisitNode(n.Body))
+		return tx.Factory().UpdateFunctionExpression(n, tx.Visitor().VisitModifiers(n.Modifiers()), n.AsteriskToken, tx.Visitor().VisitNode(n.Name()), nil, tx.Visitor().VisitNodes(n.Parameters), nil, nil, tx.Visitor().VisitNode(n.Body))
 
 	case ast.KindArrowFunction:
 		n := node.AsArrowFunction()
-		return tx.Factory().UpdateArrowFunction(n, tx.Visitor().VisitModifiers(n.Modifiers()), nil, tx.Visitor().VisitNodes(n.Parameters), nil, n.EqualsGreaterThanToken, tx.Visitor().VisitNode(n.Body))
+		return tx.Factory().UpdateArrowFunction(n, tx.Visitor().VisitModifiers(n.Modifiers()), nil, tx.Visitor().VisitNodes(n.Parameters), nil, nil, n.EqualsGreaterThanToken, tx.Visitor().VisitNode(n.Body))
 
 	case ast.KindParameter:
 		if ast.IsThisParameter(node) {
@@ -271,7 +269,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 
 	case ast.KindImportClause:
 		n := node.AsImportClause()
-		if n.IsTypeOnly {
+		if n.IsTypeOnly() {
 			// Always elide type-only imports
 			return nil
 		}
@@ -281,7 +279,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			// all import bindings were elided
 			return nil
 		}
-		return tx.Factory().UpdateImportClause(n, false /*isTypeOnly*/, name, namedBindings)
+		return tx.Factory().UpdateImportClause(n, n.PhaseModifier, name, namedBindings)
 
 	case ast.KindNamedImports:
 		n := node.AsNamedImports()
@@ -341,6 +339,12 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			return nil
 		}
 		return node
+
+	case ast.KindEnumDeclaration:
+		if ast.IsEnumConst(node) {
+			return node
+		}
+		return tx.Visitor().VisitEachChild(node)
 
 	default:
 		return tx.Visitor().VisitEachChild(node)

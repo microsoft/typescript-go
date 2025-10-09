@@ -1,8 +1,7 @@
 package module_test
 
 import (
-	"bytes"
-	"encoding/json"
+	"io"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -10,7 +9,10 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/go-json-experiment/json"
+	"github.com/go-json-experiment/json/jsontext"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/jsonutil"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
@@ -263,7 +265,7 @@ func doCall(t *testing.T, resolver *module.Resolver, call functionCall, skipLoca
 
 		errorMessageArgs := []any{call.args.Name, call.args.ContainingFile}
 		if call.call == "resolveModuleName" {
-			resolved := resolver.ResolveModuleName(call.args.Name, call.args.ContainingFile, core.ModuleKind(call.args.ResolutionMode), redirectedReference)
+			resolved, _ := resolver.ResolveModuleName(call.args.Name, call.args.ContainingFile, core.ModuleKind(call.args.ResolutionMode), redirectedReference)
 			assert.Check(t, resolved != nil, "ResolveModuleName should not return nil", errorMessageArgs)
 			if expectedResolvedModule, ok := call.returnValue["resolvedModule"].(map[string]any); ok {
 				assert.Check(t, resolved.IsResolved(), errorMessageArgs)
@@ -275,7 +277,7 @@ func doCall(t *testing.T, resolver *module.Resolver, call functionCall, skipLoca
 				assert.Check(t, !resolved.IsResolved(), errorMessageArgs)
 			}
 		} else {
-			resolved := resolver.ResolveTypeReferenceDirective(call.args.Name, call.args.ContainingFile, core.ModuleKind(call.args.ResolutionMode), redirectedReference)
+			resolved, _ := resolver.ResolveTypeReferenceDirective(call.args.Name, call.args.ContainingFile, core.ModuleKind(call.args.ResolutionMode), redirectedReference)
 			assert.Check(t, resolved != nil, "ResolveTypeReferenceDirective should not return nil", errorMessageArgs)
 			if expectedResolvedTypeReferenceDirective, ok := call.returnValue["resolvedTypeReferenceDirective"].(map[string]any); ok {
 				assert.Check(t, resolved.IsResolved(), errorMessageArgs)
@@ -325,17 +327,14 @@ func runTraceBaseline(t *testing.T, test traceTestCase) {
 
 		if test.trace {
 			t.Run("trace", func(t *testing.T) {
-				var buf bytes.Buffer
-				encoder := json.NewEncoder(&buf)
-				encoder.SetIndent("", "    ")
-				encoder.SetEscapeHTML(false)
-				if err := encoder.Encode(host.traces); err != nil {
+				output, err := jsonutil.MarshalIndent(resolver, "", "    ")
+				if err != nil {
 					t.Fatal(err)
 				}
 				baseline.Run(
 					t,
 					tspath.RemoveFileExtension(test.name)+".trace.json",
-					sanitizeTraceOutput(buf.String()),
+					sanitizeTraceOutput(string(output)),
 					baseline.Options{Subfolder: "module/resolver"},
 				)
 			})
@@ -354,41 +353,46 @@ func TestModuleResolver(t *testing.T) {
 	t.Cleanup(func() {
 		file.Close()
 	})
-	decoder := json.NewDecoder(file)
+	decoder := jsontext.NewDecoder(file)
 	var currentTestCase traceTestCase
 	for {
-		var json rawTest
-		if err := decoder.Decode(&json); err != nil {
-			if err.Error() == "EOF" {
+		if decoder.PeekKind() == 0 {
+			_, err := decoder.ReadToken()
+			if err == io.EOF { //nolint:errorlint
 				break
 			}
 			t.Fatal(err)
 		}
-		if json.Files != nil {
+
+		var testJSON rawTest
+		if err := json.UnmarshalDecode(decoder, &testJSON); err != nil {
+			t.Fatal(err)
+		}
+		if testJSON.Files != nil {
 			if currentTestCase.name != "" && !slices.Contains(skip, currentTestCase.name) {
 				runTraceBaseline(t, currentTestCase)
 			}
 			currentTestCase = traceTestCase{
-				name:             json.Test,
-				currentDirectory: json.CurrentDirectory,
+				name:             testJSON.Test,
+				currentDirectory: testJSON.CurrentDirectory,
 				// !!! no traces are passing yet because of missing cache implementation
 				trace: false,
-				files: make(map[string]string, len(json.Files)),
+				files: make(map[string]string, len(testJSON.Files)),
 			}
-			for _, file := range json.Files {
+			for _, file := range testJSON.Files {
 				currentTestCase.files[file.Name] = file.Content
 			}
-		} else if json.Call != "" {
+		} else if testJSON.Call != "" {
 			currentTestCase.calls = append(currentTestCase.calls, functionCall{
-				call:        json.Call,
-				args:        json.Args,
-				returnValue: json.Return,
+				call:        testJSON.Call,
+				args:        testJSON.Args,
+				returnValue: testJSON.Return,
 			})
-			if currentTestCase.compilerOptions == nil && json.Args.CompilerOptions != nil {
-				currentTestCase.compilerOptions = json.Args.CompilerOptions
+			if currentTestCase.compilerOptions == nil && testJSON.Args.CompilerOptions != nil {
+				currentTestCase.compilerOptions = testJSON.Args.CompilerOptions
 			}
 		} else {
-			t.Fatalf("Unexpected JSON: %v", json)
+			t.Fatalf("Unexpected JSON: %v", testJSON)
 		}
 	}
 }

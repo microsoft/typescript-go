@@ -78,9 +78,13 @@ func createUnknownOptionError(
 	return CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, node, unknownOptionDiagnostic, unknownOptionErrorText)
 }
 
+func CreateDiagnosticForNodeInSourceFile(sourceFile *ast.SourceFile, node *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
+	return ast.NewDiagnostic(sourceFile, core.NewTextRange(scanner.SkipTrivia(sourceFile.Text(), node.Loc.Pos()), node.End()), message, args...)
+}
+
 func CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile *ast.SourceFile, node *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
 	if sourceFile != nil && node != nil {
-		return ast.NewDiagnostic(sourceFile, core.NewTextRange(scanner.SkipTrivia(sourceFile.Text(), node.Loc.Pos()), node.End()), message, args...)
+		return CreateDiagnosticForNodeInSourceFile(sourceFile, node, message, args...)
 	}
 	return ast.NewCompilerDiagnostic(message, args...)
 }
@@ -93,6 +97,8 @@ func extraKeyDiagnostics(s string) *diagnostics.Message {
 		return diagnostics.Unknown_watch_option_0
 	case "typeAcquisition":
 		return diagnostics.Unknown_type_acquisition_option_0
+	case "buildOptions":
+		return diagnostics.Unknown_build_option_0
 	default:
 		return nil
 	}

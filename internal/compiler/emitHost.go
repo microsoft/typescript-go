@@ -14,14 +14,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-type WriteFileData struct {
-	SourceMapUrlPos int
-	// BuildInfo BuildInfo
-	Diagnostics      []*ast.Diagnostic
-	DiffersOnlyInMap bool
-	SkippedDtsWrite  bool
-}
-
 // NOTE: EmitHost operations must be thread-safe
 type EmitHost interface {
 	printer.EmitHost
@@ -82,8 +74,12 @@ func (host *emitHost) GetPackageJsonInfo(pkgJsonPath string) modulespecifiers.Pa
 	return host.program.GetPackageJsonInfo(pkgJsonPath)
 }
 
-func (host *emitHost) GetOutputAndProjectReference(path tspath.Path) *tsoptions.OutputDtsAndProjectReference {
-	return host.program.GetOutputAndProjectReference(path)
+func (host *emitHost) GetSourceOfProjectReferenceIfOutputIncluded(file ast.HasFileName) string {
+	return host.program.GetSourceOfProjectReferenceIfOutputIncluded(file)
+}
+
+func (host *emitHost) GetProjectReferenceFromSource(path tspath.Path) *tsoptions.SourceOutputAndProjectReference {
+	return host.program.GetProjectReferenceFromSource(path)
 }
 
 func (host *emitHost) GetRedirectTargets(path tspath.Path) []string {
@@ -116,11 +112,10 @@ func (host *emitHost) UseCaseSensitiveFileNames() bool {
 }
 
 func (host *emitHost) IsEmitBlocked(file string) bool {
-	// !!!
-	return false
+	return host.program.IsEmitBlocked(file)
 }
 
-func (host *emitHost) WriteFile(fileName string, text string, writeByteOrderMark bool, _ []*ast.SourceFile, _ *printer.WriteFileData) error {
+func (host *emitHost) WriteFile(fileName string, text string, writeByteOrderMark bool) error {
 	return host.program.Host().FS().WriteFile(fileName, text, writeByteOrderMark)
 }
 

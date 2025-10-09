@@ -7,9 +7,9 @@ import (
 )
 
 type NodeBuilder struct {
-	ctxStack []*NodeBuilderContext
-	host     Host
-	impl     *nodeBuilderImpl
+	ctxStack  []*NodeBuilderContext
+	basicHost Host
+	impl      *nodeBuilderImpl
 }
 
 // EmitContext implements NodeBuilderInterface.
@@ -32,10 +32,15 @@ func (b *NodeBuilder) enterContext(enclosingDeclaration *ast.Node, flags nodebui
 		enclosingSymbolTypes:     make(map[ast.SymbolId]*Type),
 		remappedSymbolReferences: make(map[ast.SymbolId]*ast.Symbol),
 	}
-	if tracker == nil {
-		tracker = NewSymbolTrackerImpl(b.impl.ctx, nil, b.host)
-		b.impl.ctx.tracker = tracker
+	// TODO: always provide this; see https://github.com/microsoft/typescript-go/pull/1588#pullrequestreview-3125218673
+	var moduleResolverHost Host
+	if tracker != nil {
+		moduleResolverHost = tracker.GetModuleSpecifierGenerationHost()
+	} else if internalFlags&nodebuilder.InternalFlagsDoNotIncludeSymbolChain != 0 {
+		moduleResolverHost = b.basicHost
 	}
+	tracker = NewSymbolTrackerImpl(b.impl.ctx, tracker, moduleResolverHost)
+	b.impl.ctx.tracker = tracker
 }
 
 func (b *NodeBuilder) popContext() {
@@ -88,6 +93,13 @@ func (b *NodeBuilder) SerializeReturnTypeForSignature(signatureDeclaration *ast.
 		returnType = b.impl.ch.instantiateType(b.impl.ch.getReturnTypeOfSignature(signature), b.impl.ctx.mapper)
 	}
 	return b.exitContext(b.impl.serializeInferredReturnTypeForSignature(signature, returnType))
+}
+
+func (b *NodeBuilder) SerializeTypeParametersForSignature(signatureDeclaration *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node {
+	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
+	symbol := b.impl.ch.getSymbolOfDeclaration(signatureDeclaration)
+	typeParams := b.SymbolToTypeParameterDeclarations(symbol, enclosingDeclaration, flags, internalFlags, tracker)
+	return b.exitContextSlice(typeParams)
 }
 
 // SerializeTypeForDeclaration implements NodeBuilderInterface.
@@ -166,7 +178,7 @@ func (b *NodeBuilder) TypeToTypeNode(typ *Type, enclosingDeclaration *ast.Node, 
 
 func NewNodeBuilder(ch *Checker, e *printer.EmitContext) *NodeBuilder {
 	impl := newNodeBuilderImpl(ch, e)
-	return &NodeBuilder{impl: impl, ctxStack: make([]*NodeBuilderContext, 0, 1), host: ch.program}
+	return &NodeBuilder{impl: impl, ctxStack: make([]*NodeBuilderContext, 0, 1), basicHost: ch.program}
 }
 
 func (c *Checker) getNodeBuilder() *NodeBuilder {

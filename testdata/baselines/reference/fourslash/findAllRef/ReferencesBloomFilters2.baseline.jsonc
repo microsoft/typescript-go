@@ -1,4 +1,0 @@
-// === findAllReferences ===
-// === /declaration.ts ===
-
-// var container = { /*FIND ALL REFS*/[|42|]: 1 };

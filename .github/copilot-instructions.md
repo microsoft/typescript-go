@@ -9,17 +9,17 @@ Most of our development takes place in the `internal` directory, and most behavi
 
 Most development on the codebase is in Go.
 Standard Go commands and practices apply, but we primarily use a tool called `hereby` to build, run tests, and other tasks.
-Run `npx hereby --list` to see all available commands.
+Run `npx hereby --tasks` to see all available commands.
 
 ```sh
-npx hereby build  # Build the project
+npx hereby build  # Build the tsgo binary (not required for tests)
 npx hereby test   # Run tests
 npx hereby format # Format the code
 npx hereby lint   # Run linters
 
 # To run a specific compiler test:
-go test -run='TestSubmodule/<test name>' ./internal/testrunner  # For submodule tests in _submodules/TypeScript
-go test -run='TestLocal/<test name>' ./internal/testrunner     # For local tests in testdata/tests/cases
+go test -run='TestSubmodule/<test name>' ./internal/testrunner  # For pre-existing "submodule" tests in _submodules/TypeScript
+go test -run='TestLocal/<test name>' ./internal/testrunner      # For new "local" tests created in testdata/tests/cases
 ```
 
 Always make sure code is formatted, linted, and tested before sending a pull request.
@@ -71,6 +71,8 @@ function greet(person) {
 }
 ```
 
+**New compiler tests should always enable strict mode (`@strict: true`) unless the bug specifically involves non-strict mode behavior.**
+
 Tests don't always need the above `@option`s specified, but they are common to specify or modify.
 Tests can be run with multiple settings for a given option by using a comma-separated list (e.g. `@option: settingA,settingB`).
 `@filename` is only required when a test has multiple files, or when writing a test for a single JavaScript file (where `allowJs` or `checkJs` is enabled).
@@ -107,4 +109,4 @@ The TypeScript submodule serves as the reference implementation for behavior and
 # Other Instructions
 
 - Do not add or change existing dependencies unless asked to.
- 
+- Do not remove any debug assertions or panic calls. Existing assertions are never too strict or incorrect.

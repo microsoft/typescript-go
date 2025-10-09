@@ -2,6 +2,7 @@ package tspath
 
 import (
 	"cmp"
+	"slices"
 	"strings"
 	"unicode"
 
@@ -470,28 +471,73 @@ func simpleNormalizePath(path string) (string, bool) {
 	return "", false
 }
 
+// hasRelativePathSegment reports whether p contains ".", "..", "./", "../", "/.", "/..", "//", "/./", or "/../".
 func hasRelativePathSegment(p string) bool {
+	n := len(p)
+	if n == 0 {
+		return false
+	}
+
 	if p == "." || p == ".." {
 		return true
 	}
 
-	if strings.HasPrefix(p, "./") || strings.HasPrefix(p, "../") {
-		return true
+	// Leading "./" OR "../"
+	if p[0] == '.' {
+		if n >= 2 && p[1] == '/' {
+			return true
+		}
+		// Leading "../"
+		if n >= 3 && p[1] == '.' && p[2] == '/' {
+			return true
+		}
+	}
+	// Trailing "/." OR "/.."
+	if p[n-1] == '.' {
+		if n >= 2 && p[n-2] == '/' {
+			return true
+		}
+		if n >= 3 && p[n-2] == '.' && p[n-3] == '/' {
+			return true
+		}
 	}
 
-	if strings.HasSuffix(p, "/.") || strings.HasSuffix(p, "/..") {
-		return true
+	// Now look for any `//` or `/./` or `/../`
+
+	prevSlash := false
+	segLen := 0   // length of current segment since last slash
+	dotCount := 0 // consecutive dots at start of the current segment; -1 => not only dots
+
+	for i := range n {
+		c := p[i]
+		if c == '/' {
+			// "//"
+			if prevSlash {
+				return true
+			}
+			// "/./" or "/../"
+			if (segLen == 1 && dotCount == 1) || (segLen == 2 && dotCount == 2) {
+				return true
+			}
+			prevSlash = true
+			segLen = 0
+			dotCount = 0
+			continue
+		}
+
+		if c == '.' {
+			if dotCount >= 0 {
+				dotCount++
+			}
+		} else {
+			dotCount = -1
+		}
+		segLen++
+		prevSlash = false
 	}
 
-	if strings.Contains(p, "//") {
-		return true
-	}
-
-	if strings.Contains(p, "/./") || strings.Contains(p, "/../") {
-		return true
-	}
-
-	return false
+	// Trailing "/." or "/.."
+	return (segLen == 1 && dotCount == 1) || (segLen == 2 && dotCount == 2)
 }
 
 func NormalizePath(path string) string {
@@ -534,8 +580,38 @@ func GetCanonicalFileName(fileName string, useCaseSensitiveFileNames bool) strin
 // they have corresponding upper case character so they dont need special handling
 
 func ToFileNameLowerCase(fileName string) string {
+	const IWithDot = '\u0130'
+
+	ascii := true
+	needsLower := false
+	fileNameLen := len(fileName)
+	for i := range fileNameLen {
+		c := fileName[i]
+		if c >= 0x80 {
+			ascii = false
+			break
+		}
+		if 'A' <= c && c <= 'Z' {
+			needsLower = true
+		}
+	}
+	if ascii {
+		if !needsLower {
+			return fileName
+		}
+		b := make([]byte, fileNameLen)
+		for i := range fileNameLen {
+			c := fileName[i]
+			if 'A' <= c && c <= 'Z' {
+				c += 'a' - 'A' // +32
+			}
+			b[i] = c
+		}
+		return string(b)
+	}
+
 	return strings.Map(func(r rune) rune {
-		if r == '\u0130' {
+		if r == IWithDot {
 			return r
 		}
 		return unicode.ToLower(r)
@@ -890,8 +966,29 @@ func ContainsPath(parent string, child string, options ComparePathsOptions) bool
 	return true
 }
 
+func (p Path) ContainsPath(child Path) bool {
+	return ContainsPath(string(p), string(child), ComparePathsOptions{UseCaseSensitiveFileNames: true})
+}
+
 func FileExtensionIs(path string, extension string) bool {
 	return len(path) > len(extension) && strings.HasSuffix(path, extension)
+}
+
+// Calls `callback` on `directory` and every ancestor directory it has, returning the first defined result.
+// Stops at global cache location
+func ForEachAncestorDirectoryStoppingAtGlobalCache[T any](
+	globalCacheLocation string,
+	directory string,
+	callback func(directory string) (result T, stop bool),
+) T {
+	result, _ := ForEachAncestorDirectory(directory, func(ancestorDirectory string) (T, bool) {
+		result, stop := callback(ancestorDirectory)
+		if stop || ancestorDirectory == globalCacheLocation {
+			return result, true
+		}
+		return result, false
+	})
+	return result
 }
 
 func ForEachAncestorDirectory[T any](directory string, callback func(directory string) (result T, stop bool)) (result T, ok bool) {
@@ -919,4 +1016,114 @@ func ForEachAncestorDirectoryPath[T any](directory Path, callback func(directory
 
 func HasExtension(fileName string) bool {
 	return strings.Contains(GetBaseFileName(fileName), ".")
+}
+
+func SplitVolumePath(path string) (volume string, rest string, ok bool) {
+	if len(path) >= 2 && IsVolumeCharacter(path[0]) && path[1] == ':' {
+		return strings.ToLower(path[0:2]), path[2:], true
+	}
+	return "", path, false
+}
+
+// GetCommonParents returns the smallest set of directories that are parents of all paths with
+// at least `minComponents` directory components. Any path that has fewer than `minComponents` directory components
+// will be returned in the second return value. Examples:
+//
+//	/a/b/c/d, /a/b/c/e, /a/b/f/g  =>  /a/b
+//	/a/b/c/d, /a/b/c/e, /a/b/f/g, /x/y  =>  /
+//	/a/b/c/d, /a/b/c/e, /a/b/f/g, /x/y  (minComponents: 2)	=>  /a/b, /x/y
+//	c:/a/b/c/d, d:/a/b/c/d =>	c:/a/b/c/d, d:/a/b/c/d
+func GetCommonParents(
+	paths []string,
+	minComponents int,
+	getPathComponents func(path string, currentDirectory string) []string,
+	options ComparePathsOptions,
+) (parents []string, ignored map[string]struct{}) {
+	if minComponents < 1 {
+		panic("minComponents must be at least 1")
+	}
+	if len(paths) == 0 {
+		return nil, nil
+	}
+	if len(paths) == 1 {
+		if len(reducePathComponents(getPathComponents(paths[0], options.CurrentDirectory))) < minComponents {
+			return nil, map[string]struct{}{paths[0]: {}}
+		}
+		return paths, nil
+	}
+
+	ignored = make(map[string]struct{})
+	pathComponents := make([][]string, 0, len(paths))
+	for _, path := range paths {
+		components := reducePathComponents(getPathComponents(path, options.CurrentDirectory))
+		if len(components) < minComponents {
+			ignored[path] = struct{}{}
+		} else {
+			pathComponents = append(pathComponents, components)
+		}
+	}
+
+	results := getCommonParentsWorker(pathComponents, minComponents, options)
+	resultPaths := make([]string, len(results))
+	for i, comps := range results {
+		resultPaths[i] = GetPathFromPathComponents(comps)
+	}
+
+	return resultPaths, ignored
+}
+
+func getCommonParentsWorker(componentGroups [][]string, minComponents int, options ComparePathsOptions) [][]string {
+	if len(componentGroups) == 0 {
+		return nil
+	}
+	// Determine the maximum depth we can consider
+	maxDepth := len(componentGroups[0])
+	for _, comps := range componentGroups[1:] {
+		if l := len(comps); l < maxDepth {
+			maxDepth = l
+		}
+	}
+
+	equality := options.getEqualityComparer()
+	for lastCommonIndex := range maxDepth {
+		candidate := componentGroups[0][lastCommonIndex]
+		for j, comps := range componentGroups[1:] {
+			if !equality(candidate, comps[lastCommonIndex]) { // divergence
+				if lastCommonIndex < minComponents {
+					// Not enough components, we need to fan out
+					orderedGroups := make([]Path, 0, len(componentGroups)-j)
+					newGroups := make(map[Path]struct {
+						head  []string
+						tails [][]string
+					})
+					for _, g := range componentGroups {
+						key := ToPath(g[lastCommonIndex], options.CurrentDirectory, options.UseCaseSensitiveFileNames)
+						if _, ok := newGroups[key]; !ok {
+							orderedGroups = append(orderedGroups, key)
+						}
+						newGroups[key] = struct {
+							head  []string
+							tails [][]string
+						}{
+							head:  g[:lastCommonIndex+1],
+							tails: append(newGroups[key].tails, g[lastCommonIndex+1:]),
+						}
+					}
+					slices.Sort(orderedGroups)
+					result := make([][]string, 0, len(newGroups))
+					for _, key := range orderedGroups {
+						group := newGroups[key]
+						subResults := getCommonParentsWorker(group.tails, minComponents-(lastCommonIndex+1), options)
+						for _, sr := range subResults {
+							result = append(result, append(group.head, sr...))
+						}
+					}
+					return result
+				}
+				return [][]string{componentGroups[0][:lastCommonIndex]}
+			}
+		}
+	}
+
+	return [][]string{componentGroups[0][:maxDepth]}
 }

@@ -15,30 +15,32 @@ import (
 
 const (
 	symbolFormatFlags = checker.SymbolFormatFlagsWriteTypeParametersOrArguments | checker.SymbolFormatFlagsUseOnlyExternalAliasing | checker.SymbolFormatFlagsAllowAnyNodeKind | checker.SymbolFormatFlagsUseAliasDefinedOutsideCurrentScope
-	typeFormatFlags   = checker.TypeFormatFlagsNone
+	typeFormatFlags   = checker.TypeFormatFlagsUseAliasDefinedOutsideCurrentScope
 )
 
-func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position) (*lsproto.Hover, error) {
+func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position) (lsproto.HoverResponse, error) {
 	program, file := l.getProgramAndFile(documentURI)
 	node := astnav.GetTouchingPropertyName(file, int(l.converters.LineAndCharacterToPosition(file, position)))
 	if node.Kind == ast.KindSourceFile {
 		// Avoid giving quickInfo for the sourceFile as a whole.
-		return nil, nil
+		return lsproto.HoverOrNull{}, nil
 	}
 	c, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
 	quickInfo, documentation := getQuickInfoAndDocumentation(c, node)
-	if quickInfo != "" {
-		return &lsproto.Hover{
-			Contents: lsproto.MarkupContentOrMarkedStringOrMarkedStrings{
+	if quickInfo == "" {
+		return lsproto.HoverOrNull{}, nil
+	}
+	return lsproto.HoverOrNull{
+		Hover: &lsproto.Hover{
+			Contents: lsproto.MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings{
 				MarkupContent: &lsproto.MarkupContent{
 					Kind:  lsproto.MarkupKindMarkdown,
 					Value: formatQuickInfo(quickInfo) + documentation,
 				},
 			},
-		}, nil
-	}
-	return nil, nil
+		},
+	}, nil
 }
 
 func getQuickInfoAndDocumentation(c *checker.Checker, node *ast.Node) (string, string) {
@@ -353,7 +355,7 @@ func getJSDocOrTag(node *ast.Node) *ast.Node {
 		return getMatchingJSDocTag(node.Parent, node.Name().Text(), isMatchingParameterTag)
 	case ast.IsTypeParameterDeclaration(node):
 		return getMatchingJSDocTag(node.Parent, node.Name().Text(), isMatchingTemplateTag)
-	case ast.IsVariableDeclaration(node) && core.FirstOrNil(node.Parent.AsVariableDeclarationList().Declarations.Nodes) == node:
+	case ast.IsVariableDeclaration(node) && ast.IsVariableDeclarationList(node.Parent) && core.FirstOrNil(node.Parent.AsVariableDeclarationList().Declarations.Nodes) == node:
 		return getJSDocOrTag(node.Parent.Parent)
 	case (ast.IsFunctionExpressionOrArrowFunction(node) || ast.IsClassExpression(node)) &&
 		(ast.IsVariableDeclaration(node.Parent) || ast.IsPropertyDeclaration(node.Parent) || ast.IsPropertyAssignment(node.Parent)) && node.Parent.Initializer() == node:
