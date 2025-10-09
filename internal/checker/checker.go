@@ -4549,9 +4549,9 @@ func (c *Checker) checkIndexConstraints(t *Type, symbol *ast.Symbol, isStaticInd
 	typeDeclaration := symbol.ValueDeclaration
 	if typeDeclaration != nil && ast.IsClassLike(typeDeclaration) {
 		for _, member := range typeDeclaration.Members() {
-			// Only process instance properties with computed names here. Static properties cannot be in conflict with indexers,
-			// and properties with literal names were already checked.
-			if !ast.IsStatic(member) && !c.hasBindableName(member) {
+			// Only process instance properties against instance index signatures and static properties against static index signatures
+			if ((!isStaticIndex && !ast.IsStatic(member)) ||
+				(isStaticIndex && ast.IsStatic(member))) && !c.hasBindableName(member) {
 				symbol := c.getSymbolOfDeclaration(member)
 				c.checkIndexConstraintForProperty(t, symbol, c.getTypeOfExpression(member.Name().Expression()), c.getNonMissingTypeOfSymbol(symbol))
 			}
