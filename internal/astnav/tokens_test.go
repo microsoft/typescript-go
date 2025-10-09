@@ -43,6 +43,27 @@ func TestGetTokenAtPosition(t *testing.T) {
 		)
 	})
 
+	t.Run("JSDoc type assertion", func(t *testing.T) {
+		t.Parallel()
+		fileText := `function foo(x) {
+    const s = /**@type {string}*/(x)
+}`
+		file := parser.ParseSourceFile(ast.SourceFileParseOptions{
+			FileName: "/test.js",
+			Path:     "/test.js",
+		}, fileText, core.ScriptKindJS)
+		
+		// Position of 'x' inside the parenthesized expression (position 52)
+		position := 52
+		
+		// This should not panic
+		token := astnav.GetTouchingPropertyName(file, position)
+		if token == nil {
+			t.Fatal("Expected to get a token, got nil")
+		}
+		t.Logf("Got token: kind=%s, pos=%d, end=%d", token.Kind, token.Pos(), token.End())
+	})
+
 	t.Run("pointer equality", func(t *testing.T) {
 		t.Parallel()
 		fileText := `
