@@ -634,16 +634,39 @@ func (tx *DeclarationTransformer) transformExpressionWithTypeArguments(input *as
 }
 
 func (tx *DeclarationTransformer) transformTypeParameterDeclaration(input *ast.TypeParameterDeclaration) *ast.Node {
+	// Track the type parameter name to handle shadowing
+	tpName := tx.resolver.TrackExistingEntityName(
+		tx.EmitContext(),
+		input.Name(),
+		tx.enclosingDeclaration,
+		declarationEmitNodeBuilderFlags,
+		declarationEmitInternalNodeBuilderFlags,
+		tx.tracker,
+	)
+	
 	if isPrivateMethodTypeParameter(tx.host, input) && (input.DefaultType != nil || input.Constraint != nil) {
 		return tx.Factory().UpdateTypeParameterDeclaration(
 			input,
 			input.Modifiers(),
-			input.Name(),
+			tpName,
 			nil,
 			nil,
 		)
 	}
-	return tx.Visitor().VisitEachChild(input.AsNode())
+	
+	// Visit children to transform constraint and default type
+	modifiers := tx.Visitor().VisitNodes(input.Modifiers())
+	constraint := tx.Visitor().VisitNode(input.Constraint)
+	defaultType := tx.Visitor().VisitNode(input.DefaultType)
+	
+	// Update the type parameter declaration with the potentially renamed name
+	return tx.Factory().UpdateTypeParameterDeclaration(
+		input,
+		modifiers,
+		tpName,
+		constraint,
+		defaultType,
+	)
 }
 
 func (tx *DeclarationTransformer) transformVariableDeclaration(input *ast.VariableDeclaration) *ast.Node {

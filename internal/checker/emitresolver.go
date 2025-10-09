@@ -1078,6 +1078,19 @@ func (r *emitResolver) CreateLateBoundIndexSignatures(emitContext *printer.EmitC
 	return result
 }
 
+func (r *emitResolver) TrackExistingEntityName(emitContext *printer.EmitContext, node *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
+	original := emitContext.ParseNode(node)
+	if original == nil {
+		return node
+	}
+
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+	
+	requestNodeBuilder := NewNodeBuilder(r.checker, emitContext) // TODO: cache per-context
+	return requestNodeBuilder.TrackExistingEntityName(original, enclosingDeclaration, flags, internalFlags, tracker)
+}
+
 func (r *emitResolver) GetEffectiveDeclarationFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags {
 	// node = emitContext.ParseNode(node)
 	r.checkerMu.Lock()
