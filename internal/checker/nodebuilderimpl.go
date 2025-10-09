@@ -1637,6 +1637,13 @@ func (b *nodeBuilderImpl) symbolTableToDeclarationStatements(symbolTable *ast.Sy
 	panic("unimplemented") // !!!
 }
 
+// getJSDocTypeAssertionType extracts the type node from a JSDoc type assertion.
+// Currently stubbed since ast.IsJSDocTypeAssertion always returns false.
+func getJSDocTypeAssertionType(node *ast.Node) *ast.TypeNode {
+	// !!! TODO: Implement when JSDoc type assertions are fully supported
+	return nil
+}
+
 func (b *nodeBuilderImpl) serializeTypeForExpression(expr *ast.Node) *ast.Node {
 	// !!! TODO: shim, add node reuse
 	t := b.ch.instantiateType(b.ch.getWidenedType(b.ch.getRegularTypeOfExpression(expr)), b.ctx.mapper)
@@ -1987,6 +1994,43 @@ func (b *nodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 	if symbol == nil {
 		symbol = b.ch.getSymbolOfDeclaration(declaration)
 	}
+
+	// Check for PropertyAssignment with type assertion that can be reused (PR #60576)
+	if declaration != nil && declaration.Kind == ast.KindPropertyAssignment {
+		initializer := declaration.AsPropertyAssignment().Initializer
+		var assertionNode *ast.TypeNode
+
+		// Check if initializer is a JSDoc type assertion
+		if ast.IsJSDocTypeAssertion(initializer) {
+			assertionNode = getJSDocTypeAssertionType(initializer)
+		} else if initializer.Kind == ast.KindAsExpression || initializer.Kind == ast.KindTypeAssertionExpression {
+			// Extract the type node from AsExpression or TypeAssertion
+			if initializer.Kind == ast.KindAsExpression {
+				assertionNode = initializer.AsAsExpression().Type
+			} else {
+				assertionNode = initializer.AsTypeAssertion().Type
+			}
+		}
+
+		// If we have an assertion node, check if we can reuse it
+		if assertionNode != nil && !isConstTypeReference(assertionNode) {
+			// Try to reuse the existing type node if it's equivalent
+			if t == nil {
+				t = b.ctx.enclosingSymbolTypes[ast.GetSymbolId(symbol)]
+				if t == nil && symbol != nil && (symbol.Flags&(ast.SymbolFlagsTypeLiteral|ast.SymbolFlagsSignature) == 0) {
+					t = b.ch.instantiateType(b.ch.getWidenedLiteralType(b.ch.getTypeOfSymbol(symbol)), b.ctx.mapper)
+				}
+			}
+
+			if t != nil {
+				reusedNode := b.tryReuseExistingTypeNode(assertionNode, t, declaration, false)
+				if reusedNode != nil {
+					return reusedNode
+				}
+			}
+		}
+	}
+
 	if t == nil {
 		t = b.ctx.enclosingSymbolTypes[ast.GetSymbolId(symbol)]
 		if t == nil {
