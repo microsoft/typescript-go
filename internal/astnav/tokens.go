@@ -99,7 +99,7 @@ func getTokenAtPosition(
 			// should still be navigable to reach identifiers.
 			isSpecialReparsed := node.Flags&ast.NodeFlagsReparsed != 0 &&
 				(node.Kind == ast.KindAsExpression || node.Kind == ast.KindSatisfiesExpression)
-			
+
 			if node.Flags&ast.NodeFlagsReparsed == 0 || isSpecialReparsed || allowReparsed {
 				result := testNode(node)
 				switch result {

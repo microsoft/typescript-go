@@ -52,17 +52,17 @@ func TestGetTokenAtPosition(t *testing.T) {
 			FileName: "/test.js",
 			Path:     "/test.js",
 		}, fileText, core.ScriptKindJS)
-		
+
 		// Position of 'x' inside the parenthesized expression (position 52)
 		position := 52
-		
+
 		// This should not panic - it previously panicked with:
 		// "did not expect KindParenthesizedExpression to have KindIdentifier in its trivia"
 		token := astnav.GetTouchingPropertyName(file, position)
 		if token == nil {
 			t.Fatal("Expected to get a token, got nil")
 		}
-		
+
 		// The function may return either the identifier itself or the containing
 		// parenthesized expression, depending on how the AST is structured
 		if token.Kind != ast.KindIdentifier && token.Kind != ast.KindParenthesizedExpression {
@@ -80,10 +80,10 @@ func TestGetTokenAtPosition(t *testing.T) {
 			FileName: "/test.js",
 			Path:     "/test.js",
 		}, fileText, core.ScriptKindJS)
-		
+
 		// Find position of 'x' in the type assertion
 		xPos := 52 // Position of 'x' in (x)
-		
+
 		// This should not panic
 		token := astnav.GetTouchingPropertyName(file, xPos)
 		assert.Assert(t, token != nil, "Expected to get a token")
