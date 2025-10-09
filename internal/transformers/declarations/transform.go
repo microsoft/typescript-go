@@ -1826,18 +1826,13 @@ func (tx *DeclarationTransformer) visitExpressionStatement(node *ast.ExpressionS
 
 func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExpression) *ast.Node {
 	left := node.Left
-
-	if ast.IsElementAccessExpression(left) {
-		return nil
-	}
-
 	symbol := node.Symbol
 	if symbol == nil || symbol.Flags&ast.SymbolFlagsAssignment == 0 {
 		return nil
 	}
 
-	ns := ast.GetFirstIdentifier(left)
-	if ns == nil {
+	ns := ast.GetLeftmostAccessExpression(left)
+	if ns == nil || ns.Kind != ast.KindIdentifier {
 		return nil
 	}
 
@@ -1852,7 +1847,14 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 	}
 
 	name := tx.Factory().NewIdentifier(ns.Text())
+	property := tx.tryGetPropertyName(left)
+	if property == "" || !scanner.IsIdentifierText(property, core.LanguageVariantStandard) {
+		return nil
+	}
+
 	tx.transformExpandoHost(name, declaration)
+	isNonContextualKeywordName := ast.IsNonContextualKeyword(scanner.StringToToken(property))
+	exportName := core.IfElse(isNonContextualKeywordName, tx.Factory().NewGeneratedNameForNode(left), tx.Factory().NewIdentifier(property))
 
 	synthesizedNamespace := tx.Factory().NewModuleDeclaration(nil /*modifiers*/, ast.KindNamespaceKeyword, name, tx.Factory().NewModuleBlock(tx.Factory().NewNodeList([]*ast.Node{})))
 	synthesizedNamespace.Parent = tx.enclosingDeclaration
@@ -1868,10 +1870,6 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 	t := tx.resolver.CreateTypeOfExpression(tx.EmitContext(), left, synthesizedNamespace, declarationEmitNodeBuilderFlags, declarationEmitInternalNodeBuilderFlags|nodebuilder.InternalFlagsNoSyntacticPrinter, tx.tracker)
 	tx.state.getSymbolAccessibilityDiagnostic = saveDiag
 
-	nameToken := scanner.StringToToken(left.Name().Text())
-	isNonContextualKeywordName := ast.IsNonContextualKeyword(nameToken)
-
-	exportName := core.IfElse(isNonContextualKeywordName, tx.Factory().NewGeneratedNameForNode(left), tx.Factory().NewIdentifier(left.Name().Text()))
 	statements := []*ast.Statement{
 		tx.Factory().NewVariableStatement(
 			nil, /*modifiers*/
@@ -1963,4 +1961,14 @@ func extractExpandoHostParams(node *ast.Node) (typeParameters *ast.TypeParameter
 		fn := node.AsFunctionDeclaration()
 		return fn.TypeParameters, fn.Parameters, fn.AsteriskToken
 	}
+}
+
+func (tx *DeclarationTransformer) tryGetPropertyName(node *ast.Node) string {
+	if ast.IsElementAccessExpression(node) {
+		return tx.resolver.GetElementAccessExpressionName(node.AsElementAccessExpression())
+	}
+	if ast.IsPropertyAccessExpression(node) {
+		return node.Name().Text()
+	}
+	return ""
 }

@@ -7,4 +7,7 @@
 -    var bar: number;
 -    var strMemName: string;
 +    const bar: number;
++}
++export declare namespace foo {
++    const strMemName: string;
  }
