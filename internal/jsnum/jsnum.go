@@ -49,25 +49,24 @@ func (x Number) toUint32() uint32 {
 // https://tc39.es/ecma262/2024/multipage/abstract-operations.html#sec-toint32
 func (n Number) toInt32() int32 {
 	x := float64(n)
+
 	// Fast path: if the number is the range (-2^31, 2^32), i.e. an SMI,
 	// then we don't need to do any special mapping.
 	if smi := int32(x); float64(smi) == x {
 		return smi
 	}
 
-	// If the number is non-finite (NaN, +Inf, -Inf; exp=0x7FF), it maps to zero.
-	if isNonFinite(x) {
+	// 2. If number is not finite or number is either +0𝔽 or -0𝔽, return +0𝔽.
+	if x == 0 || isNonFinite(x) {
 		return 0
 	}
 
-	// Otherwise, take x modulo 2^32, mapping positive numbers
-	// to [0, 2^32) and negative numbers to (-2^32, -0.0].
-
-	i := int32(uint32(math.Mod(math.Abs(x), 1<<32)))
-	if math.Signbit(x) {
-		return -i
-	}
-	return i
+	// Let int be truncate(ℝ(number)).
+	x = math.Trunc(x)
+	// Let int32bit be int modulo 2**32.
+	x = math.Mod(x, 1<<32)
+	// If int32bit ≥ 2**31, return 𝔽(int32bit - 2**32); otherwise return 𝔽(int32bit).
+	return int32(int64(x))
 }
 
 func (x Number) toShiftCount() uint32 {
