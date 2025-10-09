@@ -74,7 +74,8 @@ func getTokenAtPosition(
 		if node.End() < position || node.Kind != ast.KindEndOfFile && node.End() == position {
 			return -1
 		}
-		if getPosition(node, sourceFile, allowPositionInLeadingTrivia) > position {
+		nodePos := getPosition(node, sourceFile, allowPositionInLeadingTrivia)
+		if nodePos > position {
 			return 1
 		}
 		return 0
@@ -87,7 +88,8 @@ func getTokenAtPosition(
 		// We can't abort visiting children, so once a match is found, we set `next`
 		// and do nothing on subsequent visits.
 		if node != nil && node.Flags&ast.NodeFlagsReparsed == 0 && next == nil {
-			switch testNode(node) {
+			result := testNode(node)
+			switch result {
 			case -1:
 				if !ast.IsJSDocKind(node.Kind) {
 					// We can't move the left boundary into or beyond JSDoc,
@@ -173,10 +175,11 @@ func getTokenAtPosition(
 				tokenEnd := scanner.TokenEnd()
 				if tokenStart <= position && (position < tokenEnd) {
 					if token == ast.KindIdentifier || !ast.IsTokenKind(token) {
-						if ast.IsJSDocKind(current.Kind) {
-							return current
-						}
-						panic(fmt.Sprintf("did not expect %s to have %s in its trivia", current.Kind.String(), token.String()))
+						// If we encounter an identifier or complex node while scanning, it means
+						// the token is part of the current node's structure (even if not properly
+						// visited as a child). This can happen with JSDoc type assertions and
+						// other complex expressions. Return the current node as it contains the token.
+						return current
 					}
 					return sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current)
 				}

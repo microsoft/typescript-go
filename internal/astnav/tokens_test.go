@@ -56,12 +56,18 @@ func TestGetTokenAtPosition(t *testing.T) {
 		// Position of 'x' inside the parenthesized expression (position 52)
 		position := 52
 		
-		// This should not panic
+		// This should not panic - it previously panicked with:
+		// "did not expect KindParenthesizedExpression to have KindIdentifier in its trivia"
 		token := astnav.GetTouchingPropertyName(file, position)
 		if token == nil {
 			t.Fatal("Expected to get a token, got nil")
 		}
-		t.Logf("Got token: kind=%s, pos=%d, end=%d", token.Kind, token.Pos(), token.End())
+		
+		// The function may return either the identifier itself or the containing
+		// parenthesized expression, depending on how the AST is structured
+		if token.Kind != ast.KindIdentifier && token.Kind != ast.KindParenthesizedExpression {
+			t.Errorf("Expected identifier or parenthesized expression, got %s", token.Kind)
+		}
 	})
 
 	t.Run("pointer equality", func(t *testing.T) {
