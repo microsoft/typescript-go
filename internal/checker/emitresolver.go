@@ -1086,7 +1086,7 @@ func (r *emitResolver) TrackExistingEntityName(emitContext *printer.EmitContext,
 
 	r.checkerMu.Lock()
 	defer r.checkerMu.Unlock()
-	
+
 	requestNodeBuilder := NewNodeBuilder(r.checker, emitContext) // TODO: cache per-context
 	return requestNodeBuilder.TrackExistingEntityName(original, enclosingDeclaration, flags, internalFlags, tracker)
 }

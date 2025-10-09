@@ -1350,13 +1350,13 @@ func (b *nodeBuilderImpl) trackExistingEntityName(node *ast.Node) *ast.Node {
 	if node == nil || !ast.IsIdentifier(node) {
 		return node
 	}
-	
+
 	// Get the symbol for this identifier
 	symbol := b.ch.getSymbolOfNode(node)
 	if symbol == nil {
 		return node
 	}
-	
+
 	// If it's a type parameter, use typeParameterToName to get a potentially renamed version
 	if symbol.Flags&ast.SymbolFlagsTypeParameter != 0 {
 		typeParam := b.ch.getDeclaredTypeOfSymbol(symbol)
@@ -1364,7 +1364,7 @@ func (b *nodeBuilderImpl) trackExistingEntityName(node *ast.Node) *ast.Node {
 			return b.typeParameterToName(typeParam).AsNode()
 		}
 	}
-	
+
 	// For non-type-parameter identifiers, return a clone
 	return node.Clone(b.f)
 }

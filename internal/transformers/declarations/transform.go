@@ -643,7 +643,7 @@ func (tx *DeclarationTransformer) transformTypeParameterDeclaration(input *ast.T
 		declarationEmitInternalNodeBuilderFlags,
 		tx.tracker,
 	)
-	
+
 	if isPrivateMethodTypeParameter(tx.host, input) && (input.DefaultType != nil || input.Constraint != nil) {
 		return tx.Factory().UpdateTypeParameterDeclaration(
 			input,
@@ -653,12 +653,12 @@ func (tx *DeclarationTransformer) transformTypeParameterDeclaration(input *ast.T
 			nil,
 		)
 	}
-	
+
 	// Visit children to transform constraint and default type
 	modifiers := tx.Visitor().VisitModifiers(input.Modifiers())
 	constraint := tx.Visitor().VisitNode(input.Constraint)
 	defaultType := tx.Visitor().VisitNode(input.DefaultType)
-	
+
 	// Update the type parameter declaration with the potentially renamed name
 	return tx.Factory().UpdateTypeParameterDeclaration(
 		input,
