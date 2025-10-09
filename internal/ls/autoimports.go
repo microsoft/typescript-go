@@ -91,7 +91,9 @@ func (e *exportInfoMap) get(importingFile tspath.Path, ch *checker.Checker, key 
 	if e.usableByFileName != importingFile {
 		return nil
 	}
-	return core.Map(e.exportInfo.Get(key), func(info CachedSymbolExportInfo) *SymbolExportInfo { return e.rehydrateCachedInfo(ch, info) })
+	return core.MapFiltered(e.exportInfo.Get(key), func(info CachedSymbolExportInfo) (*SymbolExportInfo, bool) {
+		return e.rehydrateCachedInfo(ch, info)
+	})
 }
 
 func (e *exportInfoMap) add(
@@ -227,12 +229,20 @@ func (e *exportInfoMap) search(
 			symbolName = info[0].capitalizedSymbolName
 		}
 		if matches(symbolName, info[0].targetFlags) {
-			rehydrated := core.Map(info, func(info CachedSymbolExportInfo) *SymbolExportInfo {
-				return e.rehydrateCachedInfo(ch, info)
-			})
-			filtered := core.FilterIndex(rehydrated, func(r *SymbolExportInfo, i int, _ []*SymbolExportInfo) bool {
-				return e.isNotShadowedByDeeperNodeModulesPackage(r, info[i].packageName)
-			})
+			// Rehydrate and filter in one pass to maintain correspondence between cached and rehydrated info
+			var rehydrated []*SymbolExportInfo
+			for i, cachedInfo := range info {
+				rehydratedInfo, ok := e.rehydrateCachedInfo(ch, cachedInfo)
+				if !ok {
+					// Symbol or module is no longer available, skip it
+					continue
+				}
+				if !e.isNotShadowedByDeeperNodeModulesPackage(rehydratedInfo, info[i].packageName) {
+					continue
+				}
+				rehydrated = append(rehydrated, rehydratedInfo)
+			}
+			filtered := rehydrated
 			if len(filtered) > 0 {
 				if res := action(filtered, symbolName, ambientModuleName != "", key); res != nil {
 					return res
@@ -254,7 +264,7 @@ func (e *exportInfoMap) isNotShadowedByDeeperNodeModulesPackage(info *SymbolExpo
 	return !ok || strings.HasPrefix(info.moduleFileName, packageDeepestNodeModulesPath)
 }
 
-func (e *exportInfoMap) rehydrateCachedInfo(ch *checker.Checker, info CachedSymbolExportInfo) *SymbolExportInfo {
+func (e *exportInfoMap) rehydrateCachedInfo(ch *checker.Checker, info CachedSymbolExportInfo) (*SymbolExportInfo, bool) {
 	if info.symbol != nil && info.moduleSymbol != nil {
 		return &SymbolExportInfo{
 			symbol:            info.symbol,
@@ -263,7 +273,7 @@ func (e *exportInfoMap) rehydrateCachedInfo(ch *checker.Checker, info CachedSymb
 			exportKind:        info.exportKind,
 			targetFlags:       info.targetFlags,
 			isFromPackageJson: info.isFromPackageJson,
-		}
+		}, true
 	}
 	cached := e.symbols[info.id]
 	cachedSymbol, cachedModuleSymbol := cached.symbol, cached.moduleSymbol
@@ -275,7 +285,7 @@ func (e *exportInfoMap) rehydrateCachedInfo(ch *checker.Checker, info CachedSymb
 			exportKind:        info.exportKind,
 			targetFlags:       info.targetFlags,
 			isFromPackageJson: info.isFromPackageJson,
-		}
+		}, true
 	}
 
 	moduleSymbol := core.Coalesce(info.moduleSymbol, cachedModuleSymbol)
@@ -287,7 +297,9 @@ func (e *exportInfoMap) rehydrateCachedInfo(ch *checker.Checker, info CachedSymb
 		}
 	}
 	if moduleSymbol == nil {
-		panic(fmt.Sprintf("Could not find module symbol for %s in exportInfoMap", info.moduleName))
+		// Module is no longer available - this can happen when module resolution changes
+		// or the module is removed. Just skip this cached entry.
+		return nil, false
 	}
 	symbol := core.Coalesce(info.symbol, cachedSymbol)
 	if symbol == nil {
@@ -299,7 +311,9 @@ func (e *exportInfoMap) rehydrateCachedInfo(ch *checker.Checker, info CachedSymb
 	}
 
 	if symbol == nil {
-		panic(fmt.Sprintf("Could not find symbol '%s' by key '%s' in module %s", info.symbolName, info.symbolTableKey, moduleSymbol.Name))
+		// Symbol is no longer available in the module - this can happen when exports change
+		// or the symbol is removed/renamed. Just skip this cached entry.
+		return nil, false
 	}
 	e.symbols[info.id] = symbolExportEntry{symbol, moduleSymbol}
 	return &SymbolExportInfo{
@@ -309,7 +323,7 @@ func (e *exportInfoMap) rehydrateCachedInfo(ch *checker.Checker, info CachedSymb
 		info.exportKind,
 		info.targetFlags,
 		info.isFromPackageJson,
-	}
+	}, true
 }
 
 func getNamesForExportedSymbol(defaultExport *ast.Symbol, ch *checker.Checker, scriptTarget core.ScriptTarget) []string {
