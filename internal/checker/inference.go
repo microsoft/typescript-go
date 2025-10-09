@@ -1292,11 +1292,14 @@ func (c *Checker) getInferredType(n *InferenceContext, index int) *Type {
 				// succeeds, meaning there is no error for not having inference candidates. An
 				// inference error only occurs when there are *conflicting* candidates, i.e.
 				// candidates with no common supertype.
-				defaultType := c.getDefaultFromTypeParameter(inference.typeParameter)
-				if defaultType != nil {
-					// Instantiate the default type. Any forward reference to a type
-					// parameter should be instantiated to the empty object type.
-					inferredType = c.instantiateType(defaultType, mergeTypeMappers(c.newBackreferenceMapper(n, index), n.nonFixingMapper))
+
+				if inference.typeParameter.flags&TypeFlagsTypeParameter != 0 {
+					defaultType := c.getDefaultFromTypeParameter(inference.typeParameter)
+					if defaultType != nil {
+						// Instantiate the default type. Any forward reference to a type
+						// parameter should be instantiated to the empty object type.
+						inferredType = c.instantiateType(defaultType, mergeTypeMappers(c.newBackreferenceMapper(n, index), n.nonFixingMapper))
+					}
 				}
 			}
 		} else {
