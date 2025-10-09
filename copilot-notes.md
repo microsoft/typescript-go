@@ -122,48 +122,48 @@ KindParenthesizedExpression [31..54)
 
 In this case, the `AsExpression` IS the only child (besides the JSDoc). When it's skipped, there's NO other path to the identifier.
 
-## Step 5: The Solution
+## Step 5: The Solution (Revised)
 
-The issue is that when navigating into a JSDoc type assertion, we need to be able to navigate through reparsed nodes to reach the actual identifiers within them. The current code correctly skips reparsed nodes to avoid returning positions within JSDoc comments, but it doesn't handle the case where the reparsed node is the ONLY way to reach a real token.
+After feedback from @andrewbranch, the solution was refined to be more targeted. Instead of a general fallback mechanism for all reparsed nodes, the fix specifically handles `AsExpression` and `SatisfiesExpression`.
 
-Looking at `visitNodeList`, there's already special handling for reparsed nodes:
+**Key Insight:** `AsExpression` and `SatisfiesExpression` are special cases among reparsed nodes. While most reparsed nodes are synthetic and exist outside the "real" tree with no real position in the file, these two node kinds can have the `Reparsed` flag when they come from JSDoc type assertions, but their `.Expression` child should still be visited.
+
+**The Fix:** Modify `visitNode` to special-case `AsExpression` and `SatisfiesExpression`:
+
+1. Check if a node is `AsExpression` or `SatisfiesExpression` when deciding whether to skip reparsed nodes
+2. When we navigate into one of these special nodes, set an `allowReparsed` flag that allows visiting all their reparsed children
+3. This allows recursive navigation through the reparsed tree structure to reach the actual identifier
+
+The logic:
 ```go
-if match && nodes[index].Flags&ast.NodeFlagsReparsed != 0 {
-    // filter and search again
-    nodes = core.Filter(nodes, func(node *ast.Node) bool {
-        return node.Flags&ast.NodeFlagsReparsed == 0
-    })
-    // ... search again without reparsed nodes
+// Skip reparsed nodes unless:
+// 1. The node itself is AsExpression or SatisfiesExpression, OR
+// 2. We're already inside an AsExpression or SatisfiesExpression (allowReparsed=true)
+isSpecialReparsed := node.Flags&ast.NodeFlagsReparsed != 0 &&
+    (node.Kind == ast.KindAsExpression || node.Kind == ast.KindSatisfiesExpression)
+
+if node.Flags&ast.NodeFlagsReparsed == 0 || isSpecialReparsed || allowReparsed {
+    // Process the node
 }
 ```
 
-The problem is that `visitNode` (used for single children) doesn't have this fallback logic. It just skips reparsed nodes unconditionally.
-
-**The Fix:** Modify `visitNode` to match the behavior of `visitNodeList`. When a reparsed node is encountered that would match the position, we should still process it if there are no non-reparsed alternatives. This allows navigation through JSDoc type assertions while maintaining the invariant that identifiers never appear in trivia.
-
-Specifically, the fix is to:
-1. When `visitNode` encounters a reparsed node that matches, don't immediately skip it - instead, save it in a `reparsedNext` variable
-2. After visiting all children, if no non-reparsed match was found (`next == nil`), use the reparsed match
-3. Reset `reparsedNext` at the end of each iteration
-
-This way:
-- Normal cases continue to prefer non-reparsed nodes (e.g., when a parameter has both a JSDoc type and a real identifier)
-- JSDoc type assertion cases can navigate through the reparsed AsExpression to reach the identifier
-- The invariant is maintained: we never return an identifier found in trivia
+When we navigate into an `AsExpression` or `SatisfiesExpression`, we set `allowReparsed = true` for the next iteration, which allows their reparsed children (like the identifier) to be visited.
 
 ## Implementation
 
 The changes made to `internal/astnav/tokens.go`:
 
-1. Added `reparsedNext` variable to track reparsed node matches as a fallback
+1. Added `allowReparsed` flag to track when we're inside an AsExpression or SatisfiesExpression
 2. Modified `visitNode` to:
-   - Still test reparsed nodes
-   - Save matching reparsed nodes in `reparsedNext` instead of skipping them entirely
-   - Prefer non-reparsed nodes by only setting `next` for non-reparsed matches
-3. Added logic after `VisitEachChildAndJSDoc` to use `reparsedNext` if `next` is nil
-4. Reset both `next` and `reparsedNext` at the end of each loop iteration
+   - Allow AsExpression and SatisfiesExpression nodes even if they're reparsed
+   - Allow any reparsed node if `allowReparsed` is true (we're inside a special node)
+3. Set `allowReparsed = true` when navigating into AsExpression or SatisfiesExpression
 
-This maintains backward compatibility while fixing the JSDoc type assertion panic. The panic condition is kept intact - identifiers should never appear in trivia.
+This targeted approach:
+- Only affects the specific node types that need special handling
+- Maintains the strict reparsed node filtering for all other cases
+- Keeps the panic intact - identifiers should never appear in actual trivia
+- Maintains backward compatibility with all existing code
 
 ## Testing
 
@@ -174,5 +174,6 @@ All existing tests pass, including:
 
 The fix correctly handles:
 - JSDoc type assertions like `/**@type {string}*/(x)`
+- JSDoc satisfies expressions
 - Regular JSDoc comments (unchanged behavior)
 - All other token position lookups (unchanged behavior)

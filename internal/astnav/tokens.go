@@ -60,14 +60,15 @@ func getTokenAtPosition(
 	// only if `includePrecedingTokenAtEndPosition` is provided. Once set, the next
 	// iteration of the loop will test the rightmost token of `prevSubtree` to see
 	// if it should be returned.
-	// `reparsedNext` tracks a reparsed node that matches, used as a fallback if no
-	// non-reparsed node is found. This handles JSDoc type assertions where the
-	// reparsed AsExpression is the only path to the identifier.
-	var next, prevSubtree, reparsedNext *ast.Node
+	var next, prevSubtree *ast.Node
 	current := sourceFile.AsNode()
 	// `left` tracks the lower boundary of the node/token that could be returned,
 	// and is eventually the scanner's start position, if the scanner is used.
 	left := 0
+	// `allowReparsed` is set when we're navigating inside an AsExpression or
+	// SatisfiesExpression, which allows visiting their reparsed children to reach
+	// the actual identifier from JSDoc type assertions.
+	allowReparsed := false
 
 	testNode := func(node *ast.Node) int {
 		if node.Kind != ast.KindEndOfFile && node.End() == position && includePrecedingTokenAtEndPosition != nil {
@@ -91,16 +92,16 @@ func getTokenAtPosition(
 		// We can't abort visiting children, so once a match is found, we set `next`
 		// and do nothing on subsequent visits.
 		if node != nil && next == nil {
-			result := testNode(node)
-			if node.Flags&ast.NodeFlagsReparsed != 0 {
-				// This is a reparsed node (from JSDoc). We prefer non-reparsed nodes,
-				// but track this as a fallback in case there are no non-reparsed matches.
-				// This handles JSDoc type assertions like /**@type {string}*/(x) where
-				// the AsExpression child is reparsed but is the only path to the identifier.
-				if result == 0 && reparsedNext == nil {
-					reparsedNext = node
-				}
-			} else {
+			// Skip reparsed nodes unless:
+			// 1. The node itself is AsExpression or SatisfiesExpression, OR
+			// 2. We're already inside an AsExpression or SatisfiesExpression (allowReparsed=true)
+			// These are special cases where reparsed nodes from JSDoc type assertions
+			// should still be navigable to reach identifiers.
+			isSpecialReparsed := node.Flags&ast.NodeFlagsReparsed != 0 &&
+				(node.Kind == ast.KindAsExpression || node.Kind == ast.KindSatisfiesExpression)
+			
+			if node.Flags&ast.NodeFlagsReparsed == 0 || isSpecialReparsed || allowReparsed {
+				result := testNode(node)
 				switch result {
 				case -1:
 					if !ast.IsJSDocKind(node.Kind) {
@@ -173,14 +174,6 @@ func getTokenAtPosition(
 			prevSubtree = nil
 		}
 
-		// If no non-reparsed node was found but we have a reparsed match, use it.
-		// This handles JSDoc type assertions where the only path to an identifier
-		// is through a reparsed AsExpression node.
-		if next == nil && reparsedNext != nil {
-			next = reparsedNext
-			reparsedNext = nil
-		}
-
 		// No node was found that contains the target position, so we've gone as deep as
 		// we can in the AST. We've either found a token, or we need to run the scanner
 		// to construct one that isn't stored in the AST.
@@ -217,7 +210,11 @@ func getTokenAtPosition(
 		current = next
 		left = current.Pos()
 		next = nil
-		reparsedNext = nil
+		// When navigating into AsExpression or SatisfiesExpression, allow visiting
+		// their reparsed children to reach identifiers from JSDoc type assertions.
+		if current.Kind == ast.KindAsExpression || current.Kind == ast.KindSatisfiesExpression {
+			allowReparsed = true
+		}
 	}
 }
 
