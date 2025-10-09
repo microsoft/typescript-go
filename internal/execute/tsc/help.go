@@ -19,7 +19,7 @@ func PrintHelp(sys System, commandLine *tsoptions.ParsedCommandLine) {
 	if commandLine.CompilerOptions().All.IsFalseOrUnknown() {
 		printEasyHelp(sys, getOptionsForHelp(commandLine))
 	} else {
-		// !!! printAllHelp(sys, getOptionsForHelp(commandLine))
+		printAllHelp(sys, getOptionsForHelp(commandLine))
 	}
 }
 
@@ -107,6 +107,18 @@ func printEasyHelp(sys System, simpleOptions []*tsoptions.CommandLineOption) {
 	}
 }
 
+func printAllHelp(sys System, options []*tsoptions.CommandLineOption) {
+	var output []string
+	msg := diagnostics.X_tsc_Colon_The_TypeScript_Compiler.Format() + " - " + diagnostics.Version_0.Format(core.Version())
+	output = append(output, getHeader(sys, msg)...)
+
+	output = append(output, generateSectionOptionsOutput(sys, diagnostics.ALL_COMPILER_OPTIONS.Format(), options, true, nil, nil)...)
+
+	for _, chunk := range output {
+		fmt.Fprint(sys.Writer(), chunk)
+	}
+}
+
 func PrintBuildHelp(sys System, buildOptions []*tsoptions.CommandLineOption) {
 	var output []string
 	output = append(output, getHeader(sys, diagnostics.X_tsc_Colon_The_TypeScript_Compiler.Format()+" - "+diagnostics.Version_0.Format(core.Version()))...)
@@ -142,14 +154,19 @@ func generateSectionOptionsOutput(
 		return output
 	}
 	categoryMap := make(map[string][]*tsoptions.CommandLineOption)
+	var categoryOrder []string
 	for _, option := range options {
 		if option.Category == nil {
 			continue
 		}
 		curCategory := option.Category.Format()
+		if _, exists := categoryMap[curCategory]; !exists {
+			categoryOrder = append(categoryOrder, curCategory)
+		}
 		categoryMap[curCategory] = append(categoryMap[curCategory], option)
 	}
-	for key, value := range categoryMap {
+	for _, key := range categoryOrder {
+		value := categoryMap[key]
 		output = append(output, "### ", key, "\n", "\n")
 		output = append(output, generateGroupOptionOutput(sys, value)...)
 	}
