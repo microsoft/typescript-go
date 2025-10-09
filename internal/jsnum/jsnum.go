@@ -57,7 +57,8 @@ func (n Number) toInt32() int32 {
 	}
 
 	// 2. If number is not finite or number is either +0𝔽 or -0𝔽, return +0𝔽.
-	if x == 0 || isNonFinite(x) {
+	// Zero was covered by the test above.
+	if isNonFinite(x) {
 		return 0
 	}
 
