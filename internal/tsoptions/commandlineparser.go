@@ -495,8 +495,7 @@ func GenerateTSConfig(options *core.CompilerOptions, newLine string) string {
 	emitOption("isolatedModules", true)
 	emitOption("noUncheckedSideEffectImports", true)
 	emitOption("moduleDetection", core.ModuleDetectionKindForce)
-	// Last option - no trailing comma
-	result = append(result, tab+tab+"\"skipLibCheck\": true")
+	emitOption("skipLibCheck", true)
 	
 	result = append(result, tab+"}")
 	result = append(result, "}")
