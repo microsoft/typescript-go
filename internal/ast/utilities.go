@@ -3886,3 +3886,7 @@ func IsExpandoInitializer(initializer *Node) bool {
 	}
 	return false
 }
+
+func GetContainingFunction(node *Node) *Node {
+	return FindAncestor(node.Parent, IsFunctionLike)
+}
