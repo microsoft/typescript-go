@@ -1,0 +1,43 @@
+--- old.arrayAssignmentTest2.errors.txt
++++ new.arrayAssignmentTest2.errors.txt
+@@= skipped -5, +5 lines =@@
+   Property 'CM3M1' is missing in type 'I1' but required in type 'C3'.
+ arrayAssignmentTest2.ts(51,1): error TS2322: Type '() => C1' is not assignable to type 'any[]'.
+ arrayAssignmentTest2.ts(52,1): error TS2322: Type '() => any' is not assignable to type 'any[]'.
+-arrayAssignmentTest2.ts(53,1): error TS2740: Type '{ one: number; }' is missing the following properties from type 'any[]': length, pop, push, concat, and 25 more.
+-arrayAssignmentTest2.ts(55,1): error TS2740: Type 'C1' is missing the following properties from type 'any[]': length, pop, push, concat, and 25 more.
+-arrayAssignmentTest2.ts(56,1): error TS2740: Type 'C2' is missing the following properties from type 'any[]': length, pop, push, concat, and 25 more.
+-arrayAssignmentTest2.ts(57,1): error TS2740: Type 'C3' is missing the following properties from type 'any[]': length, pop, push, concat, and 25 more.
+-arrayAssignmentTest2.ts(58,1): error TS2740: Type 'I1' is missing the following properties from type 'any[]': length, pop, push, concat, and 25 more.
++arrayAssignmentTest2.ts(53,1): error TS2740: Type '{ one: number; }' is missing the following properties from type 'any[]': length, pop, push, concat, and 16 more.
++arrayAssignmentTest2.ts(55,1): error TS2740: Type 'C1' is missing the following properties from type 'any[]': length, pop, push, concat, and 16 more.
++arrayAssignmentTest2.ts(56,1): error TS2740: Type 'C2' is missing the following properties from type 'any[]': length, pop, push, concat, and 16 more.
++arrayAssignmentTest2.ts(57,1): error TS2740: Type 'C3' is missing the following properties from type 'any[]': length, pop, push, concat, and 16 more.
++arrayAssignmentTest2.ts(58,1): error TS2740: Type 'I1' is missing the following properties from type 'any[]': length, pop, push, concat, and 16 more.
+
+
+ ==== arrayAssignmentTest2.ts (10 errors) ====
+@@= skipped -78, +78 lines =@@
+ !!! error TS2322: Type '() => any' is not assignable to type 'any[]'.
+     arr_any = o1; // should be an error - is
+     ~~~~~~~
+-!!! error TS2740: Type '{ one: number; }' is missing the following properties from type 'any[]': length, pop, push, concat, and 25 more.
++!!! error TS2740: Type '{ one: number; }' is missing the following properties from type 'any[]': length, pop, push, concat, and 16 more.
+     arr_any = a1; // should be ok - is
+     arr_any = c1; // should be an error - is
+     ~~~~~~~
+-!!! error TS2740: Type 'C1' is missing the following properties from type 'any[]': length, pop, push, concat, and 25 more.
++!!! error TS2740: Type 'C1' is missing the following properties from type 'any[]': length, pop, push, concat, and 16 more.
+     arr_any = c2; // should be an error - is
+     ~~~~~~~
+-!!! error TS2740: Type 'C2' is missing the following properties from type 'any[]': length, pop, push, concat, and 25 more.
++!!! error TS2740: Type 'C2' is missing the following properties from type 'any[]': length, pop, push, concat, and 16 more.
+     arr_any = c3; // should be an error - is
+     ~~~~~~~
+-!!! error TS2740: Type 'C3' is missing the following properties from type 'any[]': length, pop, push, concat, and 25 more.
++!!! error TS2740: Type 'C3' is missing the following properties from type 'any[]': length, pop, push, concat, and 16 more.
+     arr_any = i1; // should be an error - is
+     ~~~~~~~
+-!!! error TS2740: Type 'I1' is missing the following properties from type 'any[]': length, pop, push, concat, and 25 more.
++!!! error TS2740: Type 'I1' is missing the following properties from type 'any[]': length, pop, push, concat, and 16 more.
+     

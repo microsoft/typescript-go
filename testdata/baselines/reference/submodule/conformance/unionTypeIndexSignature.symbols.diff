@@ -1,0 +1,29 @@
+--- old.unionTypeIndexSignature.symbols
++++ new.unionTypeIndexSignature.symbols
+@@= skipped -2, +2 lines =@@
+ === unionTypeIndexSignature.ts ===
+ var numOrDate: number | Date;
+ >numOrDate : Symbol(numOrDate, Decl(unionTypeIndexSignature.ts, 0, 3))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+ var anyVar: number;
+ >anyVar : Symbol(anyVar, Decl(unionTypeIndexSignature.ts, 1, 3))
+@@= skipped -12, +12 lines =@@
+ >unionOfDifferentReturnType : Symbol(unionOfDifferentReturnType, Decl(unionTypeIndexSignature.ts, 6, 3))
+ >a : Symbol(a, Decl(unionTypeIndexSignature.ts, 6, 35))
+ >a : Symbol(a, Decl(unionTypeIndexSignature.ts, 6, 62))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+ numOrDate = unionOfDifferentReturnType["hello"]; // number | Date
+ >numOrDate : Symbol(numOrDate, Decl(unionTypeIndexSignature.ts, 0, 3))
+@@= skipped -28, +28 lines =@@
+ >unionOfDifferentReturnType1 : Symbol(unionOfDifferentReturnType1, Decl(unionTypeIndexSignature.ts, 16, 3))
+ >a : Symbol(a, Decl(unionTypeIndexSignature.ts, 16, 36))
+ >a : Symbol(a, Decl(unionTypeIndexSignature.ts, 16, 63))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+ numOrDate = unionOfDifferentReturnType1["hello"]; // any
+ >numOrDate : Symbol(numOrDate, Decl(unionTypeIndexSignature.ts, 0, 3))

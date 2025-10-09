@@ -1,16 +1,42 @@
 --- old.infinitelyExpandingOverloads.js
 +++ new.infinitelyExpandingOverloads.js
-@@= skipped -29, +29 lines =@@
+@@= skipped -28, +28 lines =@@
+ }
 
  //// [infinitelyExpandingOverloads.js]
- class Validator2 {
-+    _subscription;
- }
- class ViewModel {
--    constructor() {
+-var Validator2 = /** @class */ (function () {
+-    function Validator2() {
+-    }
+-    return Validator2;
+-}());
+-var ViewModel = /** @class */ (function () {
+-    function ViewModel() {
 -        this.validationPlacements = new Array();
 -    }
+-    return ViewModel;
+-}());
+-var Widget = /** @class */ (function () {
+-    function Widget(viewModelType) {
+-    }
+-    Object.defineProperty(Widget.prototype, "options", {
+-        get: function () {
+-            return null;
+-        },
+-        enumerable: false,
+-        configurable: true
+-    });
+-    return Widget;
+-}());
++class Validator2 {
++    _subscription;
++}
++class ViewModel {
 +    validationPlacements = new Array();
- }
- class Widget {
-     constructor(viewModelType) {
++}
++class Widget {
++    constructor(viewModelType) {
++    }
++    get options() {
++        return null;
++    }
++}

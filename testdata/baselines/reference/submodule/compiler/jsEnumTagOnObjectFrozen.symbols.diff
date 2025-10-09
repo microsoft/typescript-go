@@ -1,6 +1,15 @@
 --- old.jsEnumTagOnObjectFrozen.symbols
 +++ new.jsEnumTagOnObjectFrozen.symbols
-@@= skipped -42, +42 lines =@@
+@@= skipped -30, +30 lines =@@
+         time: Date.now(),
+ >time : Symbol(time, Decl(usage.js, 12, 22))
+ >Date.now : Symbol(DateConstructor.now, Decl(lib.es5.d.ts, --, --))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ >now : Symbol(DateConstructor.now, Decl(lib.es5.d.ts, --, --))
+
+         type,
+@@= skipped -12, +12 lines =@@
  === index.js ===
  /** @enum {string} */
  const Thing = Object.freeze({

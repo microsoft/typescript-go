@@ -1,11 +1,15 @@
 --- old.incorrectClassOverloadChain.js
 +++ new.incorrectClassOverloadChain.js
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
+ }
 
  //// [incorrectClassOverloadChain.js]
- class C {
--    constructor() {
+-var C = /** @class */ (function () {
+-    function C() {
 -        this.x = 1;
 -    }
+-    return C;
+-}());
++class C {
 +    x = 1;
- }
++}

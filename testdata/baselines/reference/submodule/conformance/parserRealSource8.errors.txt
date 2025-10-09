@@ -135,7 +135,7 @@ parserRealSource8.ts(454,35): error TS2552: Cannot find name 'Catch'. Did you me
     
     ///<reference path='typescript.ts' />
     
-    module TypeScript {
+    namespace TypeScript {
     
         export class AssignScopeContext {
             constructor (public scopeChain: ScopeChain,

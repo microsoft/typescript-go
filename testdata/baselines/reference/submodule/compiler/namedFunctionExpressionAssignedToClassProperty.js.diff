@@ -1,13 +1,18 @@
 --- old.namedFunctionExpressionAssignedToClassProperty.js
 +++ new.namedFunctionExpressionAssignedToClassProperty.js
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
+
 
  //// [namedFunctionExpressionAssignedToClassProperty.js]
- class Foo {
-+    a = function bar() {
-+    }; // this shouldn't crash the compiler...
-     constructor() {
+-var Foo = /** @class */ (function () {
+-    function Foo() {
 -        this.a = function bar() {
 -        }; // this shouldn't crash the compiler...
++class Foo {
++    a = function bar() {
++    }; // this shouldn't crash the compiler...
++    constructor() {
      }
- }
+-    return Foo;
+-}());
++}

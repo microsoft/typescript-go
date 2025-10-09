@@ -1,12 +1,18 @@
 --- old.classAbstractProperties.js
 +++ new.classAbstractProperties.js
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
+ }
 
  //// [classAbstractProperties.js]
- class A {
+-var A = /** @class */ (function () {
+-    function A() {
+-    }
+-    return A;
+-}());
++class A {
 +    x;
 +    y;
 +    z;
 +    w;
 +    m;
- }
++}

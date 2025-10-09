@@ -1,0 +1,35 @@
+--- old.bestChoiceType.symbols
++++ new.bestChoiceType.symbols
+@@= skipped -4, +4 lines =@@
+
+ (''.match(/ /) || []).map(s => s.toLowerCase());
+ >(''.match(/ /) || []).map : Symbol(Array.map, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+->''.match : Symbol(String.match, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+->match : Symbol(String.match, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>''.match : Symbol(String.match, Decl(lib.es5.d.ts, --, --))
++>match : Symbol(String.match, Decl(lib.es5.d.ts, --, --))
+ >map : Symbol(Array.map, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >s : Symbol(s, Decl(bestChoiceType.ts, 2, 26))
+ >s : Symbol(s, Decl(bestChoiceType.ts, 2, 26))
+@@= skipped -13, +13 lines =@@
+
+     let x = ''.match(/ /);
+ >x : Symbol(x, Decl(bestChoiceType.ts, 7, 7))
+->''.match : Symbol(String.match, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+->match : Symbol(String.match, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>''.match : Symbol(String.match, Decl(lib.es5.d.ts, --, --))
++>match : Symbol(String.match, Decl(lib.es5.d.ts, --, --))
+
+     let y = x || [];
+ >y : Symbol(y, Decl(bestChoiceType.ts, 8, 7))
+@@= skipped -21, +21 lines =@@
+
+     let x = ''.match(/ /);
+ >x : Symbol(x, Decl(bestChoiceType.ts, 13, 7))
+->''.match : Symbol(String.match, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+->match : Symbol(String.match, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>''.match : Symbol(String.match, Decl(lib.es5.d.ts, --, --))
++>match : Symbol(String.match, Decl(lib.es5.d.ts, --, --))
+
+     let y = x ? x : [];
+ >y : Symbol(y, Decl(bestChoiceType.ts, 14, 7))

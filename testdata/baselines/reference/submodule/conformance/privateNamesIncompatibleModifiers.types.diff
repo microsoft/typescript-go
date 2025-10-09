@@ -1,0 +1,11 @@
+--- old.privateNamesIncompatibleModifiers.types
++++ new.privateNamesIncompatibleModifiers.types
+@@= skipped -50, +50 lines =@@
+ >1 : 1
+
+     async *#asyncGenMethod() { return 1; }     //OK
+->#asyncGenMethod : () => AsyncIterableIterator<never, number, unknown>
++>#asyncGenMethod : () => {}
+ >1 : 1
+
+     public get #fooProp() { return  3; }         // Error

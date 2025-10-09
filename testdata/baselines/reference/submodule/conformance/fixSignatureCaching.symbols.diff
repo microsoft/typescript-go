@@ -1,6 +1,56 @@
 --- old.fixSignatureCaching.symbols
 +++ new.fixSignatureCaching.symbols
-@@= skipped -1674, +1674 lines =@@
+@@= skipped -794, +794 lines =@@
+
+     isArray = ('isArray' in Array) ?
+ >isArray : Symbol(isArray, Decl(fixSignatureCaching.ts, 289, 53))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+         Array.isArray : function (value) { return Object.prototype.toString.call(value) === '[object Array]'; };
+ >Array.isArray : Symbol(ArrayConstructor.isArray, Decl(lib.es5.d.ts, --, --))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >isArray : Symbol(ArrayConstructor.isArray, Decl(lib.es5.d.ts, --, --))
+ >value : Symbol(value, Decl(fixSignatureCaching.ts, 297, 34))
+ >Object.prototype.toString.call : Symbol(Function.call, Decl(lib.es5.d.ts, --, --))
+@@= skipped -18, +18 lines =@@
+
+     isArray = 'isArray' in Array
+ >isArray : Symbol(isArray, Decl(fixSignatureCaching.ts, 289, 53))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+         ? function (value) { return Object.prototype.toString.call(value) === '[object Array]'; }
+ >value : Symbol(value, Decl(fixSignatureCaching.ts, 299, 20))
+@@= skipped -14, +14 lines =@@
+ >value : Symbol(value, Decl(fixSignatureCaching.ts, 299, 20))
+
+         : Array.isArray;
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+     function equalIC(a, b) {
+ >equalIC : Symbol(equalIC, Decl(fixSignatureCaching.ts, 300, 24))
+@@= skipped -70, +70 lines =@@
+                 object[key] = new RegExp(object[key], 'i');
+ >object : Symbol(object, Decl(fixSignatureCaching.ts, 320, 34))
+ >key : Symbol(key, Decl(fixSignatureCaching.ts, 321, 16))
+->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >object : Symbol(object, Decl(fixSignatureCaching.ts, 320, 34))
+ >key : Symbol(key, Decl(fixSignatureCaching.ts, 321, 16))
+             }
+@@= skipped -76, +76 lines =@@
+                     values[i] = new RegExp(value, 'i');
+ >values : Symbol(values, Decl(fixSignatureCaching.ts, 329, 16))
+ >i : Symbol(i, Decl(fixSignatureCaching.ts, 329, 31))
+->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >value : Symbol(value, Decl(fixSignatureCaching.ts, 329, 24))
+                 }
+                 mobileDetectRules.props[key] = values;
+@@= skipped -702, +702 lines =@@
      }
 
      MobileDetect.prototype = {
@@ -12,3 +62,17 @@
 
          constructor: MobileDetect,
  >constructor : Symbol(constructor, Decl(fixSignatureCaching.ts, 680, 30))
+@@= skipped -317, +317 lines =@@
+
+             if (!(pattern instanceof RegExp)) {
+ >pattern : Symbol(pattern, Decl(fixSignatureCaching.ts, 925, 25))
+->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+                 pattern = new RegExp(pattern, 'i');
+ >pattern : Symbol(pattern, Decl(fixSignatureCaching.ts, 925, 25))
+->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >pattern : Symbol(pattern, Decl(fixSignatureCaching.ts, 925, 25))
+             }
+             return pattern.test(this.ua);

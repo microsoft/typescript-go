@@ -7,7 +7,7 @@ class c {
 class g<T> {
 >g : g<T>
 }
-module m {
+namespace m {
 >m : typeof m
 
     export class c {

@@ -1,0 +1,11 @@
+--- old.arrayConcat2.symbols
++++ new.arrayConcat2.symbols
+@@= skipped -15, +15 lines =@@
+
+ var b = new Array<string>();
+ >b : Symbol(b, Decl(arrayConcat2.ts, 5, 3))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+ b.concat('hello');
+ >b.concat : Symbol(Array.concat, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))

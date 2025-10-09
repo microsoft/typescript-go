@@ -1,25 +1,27 @@
 --- old.typesVersions.emptyTypes.errors.txt
 +++ new.typesVersions.emptyTypes.errors.txt
 @@= skipped -0, +0 lines =@@
--<no content>
+-error TS5101: Option 'baseUrl' is deprecated and will stop functioning in TypeScript 7.0. Specify compilerOption '"ignoreDeprecations": "6.0"' to silence this error.
+-  Visit https://aka.ms/ts6 for migration information.
+-
+-
+-!!! error TS5101: Option 'baseUrl' is deprecated and will stop functioning in TypeScript 7.0. Specify compilerOption '"ignoreDeprecations": "6.0"' to silence this error.
+-!!! error TS5101:   Visit https://aka.ms/ts6 for migration information.
 +error TS5102: Option 'baseUrl' has been removed. Please remove it from your configuration.
 +/b/user.ts(1,19): error TS2307: Cannot find module 'a' or its corresponding type declarations.
 +
 +
 +!!! error TS5102: Option 'baseUrl' has been removed. Please remove it from your configuration.
-+==== /a/package.json (0 errors) ====
-+    {
-+        "types": "",
-+        "typesVersions": {
-+            ">=3.1.0-0": { "*" : ["ts3.1/*"] }
-+        }
-+    }
-+    
-+==== /a/ts3.1/index.d.ts (0 errors) ====
-+    export const a = 0;
-+    
+ ==== /a/package.json (0 errors) ====
+     {
+         "types": "",
+@@= skipped -14, +13 lines =@@
+ ==== /a/ts3.1/index.d.ts (0 errors) ====
+     export const a = 0;
+     
+-==== /b/user.ts (0 errors) ====
 +==== /b/user.ts (1 errors) ====
-+    import { a } from "a";
+     import { a } from "a";
 +                      ~~~
 +!!! error TS2307: Cannot find module 'a' or its corresponding type declarations.
-+    
+     

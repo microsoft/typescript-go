@@ -1,0 +1,14 @@
+--- old.parserES5SymbolProperty6.types
++++ new.parserES5SymbolProperty6.types
+@@= skipped -5, +5 lines =@@
+
+     [Symbol.toStringTag]: string = "";
+ >[Symbol.toStringTag] : string
+->Symbol.toStringTag : unique symbol
+->Symbol : SymbolConstructor
+->toStringTag : unique symbol
++>Symbol.toStringTag : any
++>Symbol : any
++>toStringTag : any
+ >"" : ""
+ }

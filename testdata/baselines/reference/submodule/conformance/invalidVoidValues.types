@@ -64,7 +64,7 @@ x = { f() {} }
 >{ f() {} } : { f(): void; }
 >f : () => void
 
-module M { export var x = 1; }
+namespace M { export var x = 1; }
 >M : typeof M
 >x : number
 >1 : 1

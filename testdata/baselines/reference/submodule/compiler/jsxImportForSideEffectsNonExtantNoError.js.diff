@@ -7,4 +7,5 @@
 -var React = require("react");
 +const React = require("react");
  require("./App.css"); // doesn't actually exist
- const tag = React.createElement("div", null);
+-var tag = React.createElement("div", null);
++const tag = React.createElement("div", null);

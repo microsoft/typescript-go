@@ -1,0 +1,102 @@
+--- old.argumentsSpreadRestIterables(target=es5).types
++++ new.argumentsSpreadRestIterables(target=es5).types
+@@= skipped -5, +5 lines =@@
+
+ ;(function(...rest) {})(...itNum)
+ >(function(...rest) {})(...itNum) : void
+->(function(...rest) {}) : (...rest: any[]) => void
+->function(...rest) {} : (...rest: any[]) => void
+->rest : any[]
+->...itNum : any
++>(function(...rest) {}) : (...rest: Iterable<number>) => void
++>function(...rest) {} : (...rest: Iterable<number>) => void
++>rest : Iterable<number>
++>...itNum : Iterable<number>
+ >itNum : Iterable<number>
+
+ ;(function(a, ...rest) {})('', ...itNum)
+ >(function(a, ...rest) {})('', ...itNum) : void
+->(function(a, ...rest) {}) : (a: string, ...rest: any[]) => void
+->function(a, ...rest) {} : (a: string, ...rest: any[]) => void
++>(function(a, ...rest) {}) : (a: string, ...rest: Iterable<number>) => void
++>function(a, ...rest) {} : (a: string, ...rest: Iterable<number>) => void
+ >a : string
+->rest : any[]
++>rest : Iterable<number>
+ >'' : ""
+->...itNum : any
++>...itNum : Iterable<number>
+ >itNum : Iterable<number>
+
+ ;(function(a, ...rest) {})('', true, ...itNum)
+ >(function(a, ...rest) {})('', true, ...itNum) : void
+->(function(a, ...rest) {}) : (a: string, rest_0: boolean, ...rest: any[]) => void
+->function(a, ...rest) {} : (a: string, rest_0: boolean, ...rest: any[]) => void
++>(function(a, ...rest) {}) : (a: string, rest_0: boolean, ...rest: Iterable<number>[]) => void
++>function(a, ...rest) {} : (a: string, rest_0: boolean, ...rest: Iterable<number>[]) => void
+ >a : string
+->rest : [boolean, ...any[]]
++>rest : [boolean, ...Iterable<number>[]]
+ >'' : ""
+ >true : true
+->...itNum : any
++>...itNum : Iterable<number>
+ >itNum : Iterable<number>
+
+ declare function fn1<const T extends readonly unknown[]>(...args: T): T;
+@@= skipped -39, +39 lines =@@
+ >"hello" : "hello"
+
+ const res2 = fn1(...itNum);
+->res2 : readonly any[]
+->fn1(...itNum) : readonly any[]
++>res2 : Iterable<number>
++>fn1(...itNum) : Iterable<number>
+ >fn1 : <const T extends readonly unknown[]>(...args: T) => T
+->...itNum : any
++>...itNum : Iterable<number>
+ >itNum : Iterable<number>
+
+ const res3 = fn1(true, ..."hello");
+@@= skipped -15, +15 lines =@@
+ >"hello" : "hello"
+
+ const res4 = fn1(true, ...itNum);
+->res4 : readonly [true, ...any[]]
+->fn1(true, ...itNum) : readonly [true, ...any[]]
++>res4 : readonly [true, ...Iterable<number>[]]
++>fn1(true, ...itNum) : readonly [true, ...Iterable<number>[]]
+ >fn1 : <const T extends readonly unknown[]>(...args: T) => T
+ >true : true
+->...itNum : any
++>...itNum : Iterable<number>
+ >itNum : Iterable<number>
+
+ // repro from #52781
+@@= skipped -20, +20 lines =@@
+ >"hello" : "hello"
+
+ const p2 = foo(...itNum);
+->p2 : any[]
+->foo(...itNum) : any[]
++>p2 : Iterable<number>
++>foo(...itNum) : Iterable<number>
+ >foo : <T extends unknown[]>(...args: T) => T
+->...itNum : any
++>...itNum : Iterable<number>
+ >itNum : Iterable<number>
+
+ const p3 = foo(true, ..."hello");
+@@= skipped -15, +15 lines =@@
+ >"hello" : "hello"
+
+ const p4 = foo(true, ...itNum);
+->p4 : [boolean, ...any[]]
+->foo(true, ...itNum) : [boolean, ...any[]]
++>p4 : [boolean, ...Iterable<number>[]]
++>foo(true, ...itNum) : [boolean, ...Iterable<number>[]]
+ >foo : <T extends unknown[]>(...args: T) => T
+ >true : true
+->...itNum : any
++>...itNum : Iterable<number>
+ >itNum : Iterable<number>

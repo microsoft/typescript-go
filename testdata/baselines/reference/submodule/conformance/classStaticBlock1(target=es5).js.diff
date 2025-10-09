@@ -1,15 +1,22 @@
 --- old.classStaticBlock1(target=es5).js
 +++ new.classStaticBlock1(target=es5).js
-@@= skipped -14, +14 lines =@@
+@@= skipped -12, +12 lines =@@
+
+
  //// [classStaticBlock1.js]
- const a = 2;
- class C {
+-var a = 2;
+-var C = /** @class */ (function () {
+-    function C() {
++const a = 2;
++class C {
 +    static {
 +        const a = 1;
 +        a;
-+    }
- }
--(() => {
--    const a = 1;
+     }
+-    return C;
+-}());
+-(function () {
+-    var a = 1;
 -    a;
 -})();
++}

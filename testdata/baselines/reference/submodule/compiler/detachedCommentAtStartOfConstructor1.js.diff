@@ -1,11 +1,22 @@
 --- old.detachedCommentAtStartOfConstructor1.js
 +++ new.detachedCommentAtStartOfConstructor1.js
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
+ }
 
  //// [detachedCommentAtStartOfConstructor1.js]
- class TestFile {
+-var TestFile = /** @class */ (function () {
+-    function TestFile(message) {
+-        var _this = this;
++class TestFile {
 +    message;
 +    name;
-     constructor(message) {
++    constructor(message) {
          /// <summary>Test summary</summary>
          /// <param name="message" type="String" />
+-        var getMessage = function () { return message + _this.name; };
++        var getMessage = () => message + this.name;
+         this.message = getMessage();
+     }
+-    return TestFile;
+-}());
++}

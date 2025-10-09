@@ -1,14 +1,19 @@
 --- old.ClassDeclaration26.js
 +++ new.ClassDeclaration26.js
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
+ }
 
  //// [ClassDeclaration26.js]
- class C {
--    constructor() {
+-var C = /** @class */ (function () {
+-    function C() {
 -        this.foo = 10;
 -    }
+-    return C;
+-}());
++class C {
 +    var;
 +    export foo = 10;
- }
++}
  var constructor;
- () => { };
+-(function () { });
++() => { };

@@ -1,0 +1,11 @@
+--- old.importAliasFromNamespace.types
++++ new.importAliasFromNamespace.types
+@@= skipped -25, +25 lines =@@
+ >getThing : () => void
+
+             Internal.WhichThing.A ? "foo" : "bar";
+->Internal.WhichThing.A ? "foo" : "bar" : "foo" | "bar"
++>Internal.WhichThing.A ? "foo" : "bar" : "bar" | "foo"
+ >Internal.WhichThing.A : Internal.WhichThing.A
+ >Internal.WhichThing : typeof Internal.WhichThing
+ >Internal : typeof Internal

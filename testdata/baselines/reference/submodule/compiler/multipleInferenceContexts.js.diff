@@ -5,6 +5,13 @@
 
  //// [multipleInferenceContexts.js]
 -"use strict";
- const r2 = Moon({
+-var r2 = Moon({
++const r2 = Moon({
      data: { msg: "" },
-     render() {
+-    render: function () {
+-        var h = function (x) { return x; };
++    render() {
++        const h = (x) => x;
+         return h(this.get("msg"));
+     },
+ });

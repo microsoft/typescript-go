@@ -36,7 +36,7 @@
 -                        ~~~~~~~~~~~~~
 -!!! error TS6053: File 'typescript.ts' not found.
      
-     module TypeScript {
+     namespace TypeScript {
          export class TypeCollectionContext {
 @@= skipped -61, +59 lines =@@
  !!! error TS2304: Cannot find name 'ModuleDeclaration'.

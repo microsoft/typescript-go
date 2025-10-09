@@ -1,0 +1,11 @@
+--- old.errorConstructorSubtypes.symbols
++++ new.errorConstructorSubtypes.symbols
+@@= skipped -9, +9 lines =@@
+ >targetObject : Symbol(targetObject, Decl(errorConstructorSubtypes.ts, 2, 20))
+ >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >constructorOpt : Symbol(constructorOpt, Decl(errorConstructorSubtypes.ts, 2, 41))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ }
+
+ declare var x: ErrorConstructor

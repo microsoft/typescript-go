@@ -1,0 +1,8 @@
+--- old.parserIndexSignature8.symbols
++++ new.parserIndexSignature8.symbols
+@@= skipped -7, +7 lines =@@
+ var foo2: { [index: RegExp]; }; // expect an error here
+ >foo2 : Symbol(foo2, Decl(parserIndexSignature8.ts, 1, 3))
+ >index : Symbol(index, Decl(parserIndexSignature8.ts, 1, 13))
+->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))

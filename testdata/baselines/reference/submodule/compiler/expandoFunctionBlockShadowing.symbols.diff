@@ -1,6 +1,15 @@
 --- old.expandoFunctionBlockShadowing.symbols
 +++ new.expandoFunctionBlockShadowing.symbols
-@@= skipped -21, +21 lines =@@
+@@= skipped -7, +7 lines =@@
+
+ if (Math.random()) {
+ >Math.random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+->Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+
+   const X: { test?: any } = {};
+@@= skipped -14, +14 lines =@@
  }
 
  export function Y() {}
@@ -20,3 +29,8 @@
 
  if (Math.random()) {
  >Math.random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+->Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+
+   const Y = function Y() {}

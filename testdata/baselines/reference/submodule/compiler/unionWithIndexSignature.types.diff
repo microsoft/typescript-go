@@ -18,3 +18,9 @@
  >arr : number | TypedArray
 
        arr[1];
+ >arr[1] : number
+->arr : Int32Array<ArrayBuffer> | Uint8Array<ArrayBuffer>
++>arr : TypedArray
+ >1 : 1
+   }
+ }

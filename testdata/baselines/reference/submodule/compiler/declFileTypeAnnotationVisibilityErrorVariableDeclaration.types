@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/declFileTypeAnnotationVisibilityErrorVariableDeclaration.ts] ////
 
 === declFileTypeAnnotationVisibilityErrorVariableDeclaration.ts ===
-module m {
+namespace m {
 >m : typeof m
 
     class private1 {
@@ -45,7 +45,7 @@ module m {
 >new public1() : public1
 >public1 : typeof public1
 
-    module m2 {
+    namespace m2 {
 >m2 : typeof m2
 
         export class public2 {

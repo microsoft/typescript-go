@@ -111,7 +111,7 @@
 -!!! error TS6053: File 'formatting.ts' not found.
      
      
-     module Formatting {
+     namespace Formatting {
 @@= skipped -58, +56 lines =@@
                                                                      ~~~~~~~~~
  !!! error TS2304: Cannot find name 'TokenSpan'.

@@ -1,8 +1,14 @@
 --- old.parserIndexMemberDeclaration5.js
 +++ new.parserIndexMemberDeclaration5.js
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
+ }
 
  //// [parserIndexMemberDeclaration5.js]
- class C {
+-var C = /** @class */ (function () {
+-    function C() {
+-    }
+-    return C;
+-}());
++class C {
 +    v;
- }
++}

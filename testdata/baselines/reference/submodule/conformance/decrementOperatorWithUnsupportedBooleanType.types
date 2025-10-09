@@ -19,7 +19,7 @@ class A {
 >foo : () => boolean
 >true : true
 }
-module M {
+namespace M {
 >M : typeof M
 
     export var n: boolean;

@@ -1,15 +1,28 @@
 --- old.propertyAndFunctionWithSameName.js
 +++ new.propertyAndFunctionWithSameName.js
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
+ }
 
  //// [propertyAndFunctionWithSameName.js]
- class C {
+-var C = /** @class */ (function () {
+-    function C() {
+-    }
+-    C.prototype.x = function () {
++class C {
 +    x;
-     x() {
++    x() {
          return 1;
+-    };
+-    return C;
+-}());
+-var D = /** @class */ (function () {
+-    function D() {
      }
- }
- class D {
+-    D.prototype.x = function (v) { }; // error
+-    return D;
+-}());
++}
++class D {
 +    x;
-     x(v) { } // error
- }
++    x(v) { } // error
++}

@@ -1,6 +1,15 @@
 --- old.noCircularitySelfReferentialGetter1.types
 +++ new.noCircularitySelfReferentialGetter1.types
-@@= skipped -25, +25 lines =@@
+@@= skipped -4, +4 lines =@@
+
+ interface ZodType {
+   optional: "true" | "false";
+->optional : "true" | "false"
++>optional : "false" | "true"
+
+   output: any;
+ >output : any
+@@= skipped -21, +21 lines =@@
  >Prettify : { [K in keyof T]: T[K]; }
 
  type InferObjectType<Shape extends ZodShape> = Prettify<

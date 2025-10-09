@@ -8,11 +8,28 @@
  /**
   * @typedef Oops
   * @template T
-@@= skipped -47, +48 lines =@@
+@@= skipped -16, +17 lines =@@
+  * @template T
+  * @type {Call<T>}
+  */
+-var identity = function (x) { return x; };
++const identity = x => x;
+ /**
+  * @typedef Nested
+  * @property {Object} oh
+@@= skipped -27, +27 lines =@@
+  * @param {(x: unknown) => unknown} iterable
+  * @returns {unknown[]}
+  */
+-function flatMap(array, iterable) {
+-    if (iterable === void 0) { iterable = identity; }
++function flatMap(array, iterable = identity) {
      /** @type {unknown[]} */
-     const result = [];
-     for (let i = 0; i < array.length; i += 1) {
--        result.push(... /** @type {unknown[]} */(iterable(array[i])));
+-    var result = [];
+-    for (var i = 0; i < array.length; i += 1) {
+-        result.push.apply(result, /** @type {unknown[]} */ (iterable(array[i])));
++    const result = [];
++    for (let i = 0; i < array.length; i += 1) {
 +        result.push(... /** @type {unknown[]} */iterable(array[i]));
      }
      return result;

@@ -146,7 +146,7 @@ parserindenter.ts(736,38): error TS2304: Cannot find name 'TypeScript'.
     ///<reference path='formatting.ts' />
     
     
-    module Formatting {
+    namespace Formatting {
         export class Indenter implements ILineIndenationResolver  {
                                          ~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2304: Cannot find name 'ILineIndenationResolver'.

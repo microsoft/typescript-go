@@ -1,0 +1,10 @@
+--- old.sourceMapValidationDestructuringParametertArrayBindingPatternDefaultValues.types
++++ new.sourceMapValidationDestructuringParametertArrayBindingPatternDefaultValues.types
+@@= skipped -19, +19 lines =@@
+
+ function foo1([, nameA = "noName"]: Robot = [-1, "name", "skill"]) {
+ >foo1 : ([, nameA]?: Robot) => void
+-> : undefined
+ >nameA : string
+ >"noName" : "noName"
+ >[-1, "name", "skill"] : [number, string, string]

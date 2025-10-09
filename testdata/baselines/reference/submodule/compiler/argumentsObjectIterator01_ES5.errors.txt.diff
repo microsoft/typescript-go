@@ -1,0 +1,17 @@
+--- old.argumentsObjectIterator01_ES5.errors.txt
++++ new.argumentsObjectIterator01_ES5.errors.txt
+@@= skipped -0, +0 lines =@@
+-argumentsObjectIterator01_ES5.ts(3,21): error TS2802: Type 'IArguments' can only be iterated through when using the '--downlevelIteration' flag or with a '--target' of 'es2015' or higher.
++argumentsObjectIterator01_ES5.ts(3,21): error TS2495: Type 'IArguments' is not an array type or a string type.
+
+
+ ==== argumentsObjectIterator01_ES5.ts (1 errors) ====
+@@= skipped -5, +5 lines =@@
+         let result = [];
+         for (let arg of arguments) {
+                         ~~~~~~~~~
+-!!! error TS2802: Type 'IArguments' can only be iterated through when using the '--downlevelIteration' flag or with a '--target' of 'es2015' or higher.
++!!! error TS2495: Type 'IArguments' is not an array type or a string type.
+             result.push(arg + arg);
+         }
+         return <[any, any, any]>result;

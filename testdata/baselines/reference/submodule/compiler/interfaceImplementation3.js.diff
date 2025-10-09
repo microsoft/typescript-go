@@ -1,10 +1,17 @@
 --- old.interfaceImplementation3.js
 +++ new.interfaceImplementation3.js
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
+
 
  //// [interfaceImplementation3.js]
- class C4 {
+-var C4 = /** @class */ (function () {
+-    function C4() {
+-    }
+-    C4.prototype.iFn = function () { };
+-    return C4;
+-}());
++class C4 {
 +    iObj;
 +    iNum;
-     iFn() { }
- }
++    iFn() { }
++}

@@ -1,10 +1,18 @@
 --- old.thisExpressionOfGenericObject.js
 +++ new.thisExpressionOfGenericObject.js
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
+
 
  //// [thisExpressionOfGenericObject.js]
- class MyClass1 {
+-var MyClass1 = /** @class */ (function () {
+-    function MyClass1() {
+-        var _this = this;
+-        (function () { return _this; });
++class MyClass1 {
 +    obj;
-     constructor() {
-         () => this;
++    constructor() {
++        () => this;
      }
+-    return MyClass1;
+-}());
++}

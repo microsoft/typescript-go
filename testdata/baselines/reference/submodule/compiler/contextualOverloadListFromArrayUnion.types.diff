@@ -1,6 +1,25 @@
 --- old.contextualOverloadListFromArrayUnion.types
 +++ new.contextualOverloadListFromArrayUnion.types
-@@= skipped -150, +150 lines =@@
+@@= skipped -1, +1 lines =@@
+
+ === one.ts ===
+ declare const y: never[] | string[];
+->y : never[] | string[]
++>y : string[] | never[]
+
+ export const yThen = y.map(item => item.length);
+ >yThen : number[]
+ >y.map(item => item.length) : number[]
+->y.map : (<U>(callbackfn: (value: never, index: number, array: never[]) => U, thisArg?: any) => U[]) | (<U>(callbackfn: (value: string, index: number, array: string[]) => U, thisArg?: any) => U[])
+->y : never[] | string[]
+->map : (<U>(callbackfn: (value: never, index: number, array: never[]) => U, thisArg?: any) => U[]) | (<U>(callbackfn: (value: string, index: number, array: string[]) => U, thisArg?: any) => U[])
++>y.map : (<U>(callbackfn: (value: string, index: number, array: string[]) => U, thisArg?: any) => U[]) | (<U>(callbackfn: (value: never, index: number, array: never[]) => U, thisArg?: any) => U[])
++>y : string[] | never[]
++>map : (<U>(callbackfn: (value: string, index: number, array: string[]) => U, thisArg?: any) => U[]) | (<U>(callbackfn: (value: never, index: number, array: never[]) => U, thisArg?: any) => U[])
+ >item => item.length : (item: string) => number
+ >item : string
+ >item.length : number
+@@= skipped -149, +149 lines =@@
  >cb => setTimeout(() => cb(null, 1), 300) : (cb: Callback<unknown>) => number
  >cb : Callback<unknown>
  >setTimeout(() => cb(null, 1), 300) : number

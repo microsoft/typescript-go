@@ -1,0 +1,11 @@
+--- old.for-inStatementsInvalid.symbols
++++ new.for-inStatementsInvalid.symbols
+@@= skipped -14, +14 lines =@@
+
+ var aRegExp: RegExp;
+ >aRegExp : Symbol(aRegExp, Decl(for-inStatementsInvalid.ts, 6, 3))
+->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+ for (aRegExp in {}) { }
+ >aRegExp : Symbol(aRegExp, Decl(for-inStatementsInvalid.ts, 6, 3))

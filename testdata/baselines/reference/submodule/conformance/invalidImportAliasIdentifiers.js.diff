@@ -5,10 +5,15 @@
  // none of these should work, since non are actually modules
  var V = 12;
 -var v = V;
- class C {
-+    name;
- }
+-var C = /** @class */ (function () {
+-    function C() {
+-    }
+-    return C;
+-}());
 -var c = C;
++class C {
++    name;
++}
  var E;
  (function (E) {
      E[E["Red"] = 0] = "Red";

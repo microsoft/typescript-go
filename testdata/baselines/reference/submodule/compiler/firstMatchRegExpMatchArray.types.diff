@@ -1,0 +1,14 @@
+--- old.firstMatchRegExpMatchArray.types
++++ new.firstMatchRegExpMatchArray.types
+@@= skipped -3, +3 lines =@@
+ const match = ''.match(/ /)
+ >match : RegExpMatchArray | null
+ >''.match(/ /) : RegExpMatchArray | null
+->''.match : { (regexp: string | RegExp): RegExpMatchArray | null; (matcher: { [Symbol.match](string: string): RegExpMatchArray | null; }): RegExpMatchArray | null; }
++>''.match : (regexp: string | RegExp) => RegExpMatchArray | null
+ >'' : ""
+->match : { (regexp: string | RegExp): RegExpMatchArray | null; (matcher: { [Symbol.match](string: string): RegExpMatchArray | null; }): RegExpMatchArray | null; }
++>match : (regexp: string | RegExp) => RegExpMatchArray | null
+ >/ / : RegExp
+
+ if (match !== null) {

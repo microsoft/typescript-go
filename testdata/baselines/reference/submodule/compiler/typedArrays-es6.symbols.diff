@@ -1,0 +1,11 @@
+--- old.typedArrays-es6.symbols
++++ new.typedArrays-es6.symbols
+@@= skipped -37, +37 lines =@@
+
+ const nodeList = new NodeList();
+ >nodeList : Symbol(nodeList, Decl(typedArrays-es6.ts, 15, 5))
+->NodeList : Symbol(NodeList, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))
++>NodeList : Symbol(NodeList, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --), Decl(lib.dom.iterable.d.ts, --, --))
+
+ [...nodeList];
+ >nodeList : Symbol(nodeList, Decl(typedArrays-es6.ts, 15, 5))

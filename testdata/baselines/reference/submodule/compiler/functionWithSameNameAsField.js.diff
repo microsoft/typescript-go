@@ -1,10 +1,20 @@
 --- old.functionWithSameNameAsField.js
 +++ new.functionWithSameNameAsField.js
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
+
 
  //// [functionWithSameNameAsField.js]
- class TestProgressBar {
+-var TestProgressBar = /** @class */ (function () {
+-    function TestProgressBar() {
+-    }
+-    TestProgressBar.prototype.total = function (total) {
++class TestProgressBar {
 +    total;
-     total(total) {
++    total(total) {
          this.total = total;
          return this;
+-    };
+-    return TestProgressBar;
+-}());
++    }
++}

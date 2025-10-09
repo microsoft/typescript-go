@@ -1,0 +1,32 @@
+--- old.contextualTypeShouldBeLiteral.types
++++ new.contextualTypeShouldBeLiteral.types
+@@= skipped -16, +16 lines =@@
+ >type : "y"
+
+     value: 'none' | 'done';
+->value : "none" | "done"
++>value : "done" | "none"
+
+     method(): void;
+ >method : () => void
+@@= skipped -35, +35 lines =@@
+ >type : "y"
+
+         this.value;
+->this.value : "none" | "done"
++>this.value : "done" | "none"
+ >this : Y
+->value : "none" | "done"
++>value : "done" | "none"
+     }
+ });
+
+@@= skipped -22, +22 lines =@@
+ >type2 : "y"
+
+     value: 'none' | 'done';
+->value : "none" | "done"
++>value : "done" | "none"
+
+     method(): void;
+ >method : () => void

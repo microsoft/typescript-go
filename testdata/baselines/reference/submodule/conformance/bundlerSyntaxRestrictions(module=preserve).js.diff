@@ -1,10 +1,16 @@
 --- old.bundlerSyntaxRestrictions(module=preserve).js
 +++ new.bundlerSyntaxRestrictions(module=preserve).js
-@@= skipped -33, +33 lines =@@
+@@= skipped -31, +31 lines =@@
+
+
  //// [a.js]
- export const a = "a";
+-export var a = "a";
++export const a = "a";
  //// [mainJs.js]
 +import {} from "./a";
  import("./a");
- const _ = require("./a");
+-var _ = require("./a");
++const _ = require("./a");
  _.a; // any
+ //// [main.js]
+ module.exports = {};

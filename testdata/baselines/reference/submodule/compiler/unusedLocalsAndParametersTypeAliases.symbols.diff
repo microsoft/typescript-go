@@ -1,0 +1,11 @@
+--- old.unusedLocalsAndParametersTypeAliases.symbols
++++ new.unusedLocalsAndParametersTypeAliases.symbols
+@@= skipped -51, +51 lines =@@
+
+ var y: Array<handler6>;
+ >y : Symbol(y, Decl(unusedLocalsAndParametersTypeAliases.ts, 23, 3))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >handler6 : Symbol(handler6, Decl(unusedLocalsAndParametersTypeAliases.ts, 19, 4))
+
+ y[0]();

@@ -1,10 +1,19 @@
 --- old.noUnusedLocals_writeOnlyProperty.js
 +++ new.noUnusedLocals_writeOnlyProperty.js
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
+
 
  //// [noUnusedLocals_writeOnlyProperty.js]
- class C {
+-var C = /** @class */ (function () {
+-    function C() {
+-    }
+-    C.prototype.m = function () {
++class C {
 +    x;
-     m() {
++    m() {
          this.x = 0;
-     }
+-    };
+-    return C;
+-}());
++    }
++}

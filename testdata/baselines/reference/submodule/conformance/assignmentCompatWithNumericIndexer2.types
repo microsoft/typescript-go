@@ -48,7 +48,7 @@ b2 = a; // error
 >b2 : { [x: number]: Derived2; }
 >a : A
 
-module Generics {
+namespace Generics {
 >Generics : typeof Generics
 
     interface A<T extends Base> {

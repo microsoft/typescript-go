@@ -1,10 +1,16 @@
 --- old.computedPropertiesTransformedInOtherwiseNonTSClasses.js
 +++ new.computedPropertiesTransformedInOtherwiseNonTSClasses.js
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
+ var NS;
  (function (NS) {
      NS.x = Symbol();
-     class NotTransformed {
-+        [NS.x];
-     }
+-    var NotTransformed = /** @class */ (function () {
+-        function NotTransformed() {
+-        }
+-        return NotTransformed;
+-    }());
 -    NS.x;
++    class NotTransformed {
++        [NS.x];
++    }
  })(NS || (NS = {}));

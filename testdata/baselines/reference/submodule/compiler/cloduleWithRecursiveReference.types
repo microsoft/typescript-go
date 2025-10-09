@@ -7,7 +7,7 @@ module M
   export class C {  }
 >C : C
 
-  export module C {
+  export namespace C {
 >C : typeof M.C
 
     export var C = M.C

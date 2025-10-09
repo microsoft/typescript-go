@@ -1,0 +1,10 @@
+--- old.checkForObjectTooStrict.symbols
++++ new.checkForObjectTooStrict.symbols
+@@= skipped -35, +35 lines =@@
+     constructor () { // ERROR, as expected
+
+         super();
+->super : Symbol(ObjectConstructor, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --))
++>super : Symbol(ObjectConstructor, Decl(lib.es5.d.ts, --, --))
+
+     }

@@ -1,8 +1,14 @@
 --- old.typeParametersInStaticProperties.js
 +++ new.typeParametersInStaticProperties.js
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
+ } 
 
  //// [typeParametersInStaticProperties.js]
- class foo {
+-var foo = /** @class */ (function () {
+-    function foo() {
+-    }
+-    return foo;
+-}());
++class foo {
 +    static P;
- }
++}

@@ -351,7 +351,7 @@ var propAcc1: { m: any; }
 >m : any
 
 // Property access of module member
-module M2 {
+namespace M2 {
 >M2 : typeof M2
 
     export var x = M2.x;

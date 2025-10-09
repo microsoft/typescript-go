@@ -1,0 +1,38 @@
+--- old.sourceMapValidationForIn.symbols
++++ new.sourceMapValidationForIn.symbols
+@@= skipped -2, +2 lines =@@
+ === sourceMapValidationForIn.ts ===
+ for (var x in String) {
+ >x : Symbol(x, Decl(sourceMapValidationForIn.ts, 0, 8))
+->String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --) ... and 1 more)
++>String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+     WScript.Echo(x);
+ >WScript.Echo : Symbol(Echo, Decl(lib.scripthost.d.ts, --, --))
+@@= skipped -10, +10 lines =@@
+ }
+ for (x in String) {
+ >x : Symbol(x, Decl(sourceMapValidationForIn.ts, 0, 8))
+->String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --) ... and 1 more)
++>String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+     WScript.Echo(x);
+ >WScript.Echo : Symbol(Echo, Decl(lib.scripthost.d.ts, --, --))
+@@= skipped -10, +10 lines =@@
+ }
+ for (var x2 in String)
+ >x2 : Symbol(x2, Decl(sourceMapValidationForIn.ts, 6, 8))
+->String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --) ... and 1 more)
++>String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ {
+     WScript.Echo(x2);
+ >WScript.Echo : Symbol(Echo, Decl(lib.scripthost.d.ts, --, --))
+@@= skipped -10, +10 lines =@@
+ }
+ for (x in String)
+ >x : Symbol(x, Decl(sourceMapValidationForIn.ts, 0, 8))
+->String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --) ... and 1 more)
++>String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ {
+     WScript.Echo(x);
+ >WScript.Echo : Symbol(Echo, Decl(lib.scripthost.d.ts, --, --))

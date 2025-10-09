@@ -1,0 +1,9 @@
+--- old.nonPrimitiveAccessProperty.js
++++ new.nonPrimitiveAccessProperty.js
+@@= skipped -23, +23 lines =@@
+ var a;
+ a.toString();
+ a.nonExist(); // error
+-var destructuring = a.destructuring; // error
++var { destructuring } = a; // error
+ var rest = __rest(a, []); // ok

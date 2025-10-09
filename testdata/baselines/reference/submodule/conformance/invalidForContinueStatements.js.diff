@@ -1,0 +1,11 @@
+--- old.invalidForContinueStatements.js
++++ new.invalidForContinueStatements.js
+@@= skipped -47, +47 lines =@@
+     continue TWO;
+ // continue from inside function
+ TWO: for (;;) {
+-    var x = function () {
++    var x = () => {
+         continue TWO;
+     };
+ }

@@ -1,6 +1,14 @@
 --- old.returnTagTypeGuard.types
 +++ new.returnTagTypeGuard.types
-@@= skipped -87, +87 lines =@@
+@@= skipped -80, +80 lines =@@
+
+     return typeof value === "boolean";
+ >typeof value === "boolean" : boolean
+->typeof value : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof value : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >value : any
+ >"boolean" : "boolean"
+ }
 
  /** @param {boolean | number} val */
  function foo(val) {
@@ -9,3 +17,11 @@
  >val : number | boolean
 
      if (isBoolean(val)) {
+@@= skipped -31, +31 lines =@@
+ >isNumber : (x: unknown) => x is number
+ >x : unknown
+ >typeof x === "number" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : unknown
+ >"number" : "number"

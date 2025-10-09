@@ -1,6 +1,20 @@
 --- old.declarationEmitNameConflicts.js
 +++ new.declarationEmitNameConflicts.js
-@@= skipped -61, +61 lines =@@
+@@= skipped -52, +52 lines =@@
+ "use strict";
+ var f;
+ (function (f) {
+-    var c = /** @class */ (function () {
+-        function c() {
+-        }
+-        return c;
+-    }());
++    class c {
++    }
+     f.c = c;
+ })(f || (f = {}));
+ module.exports = f;
+@@= skipped -12, +9 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.M = void 0;
@@ -9,7 +23,21 @@
  var M;
  (function (M) {
      function f() { }
-@@= skipped -20, +20 lines =@@
+     M.f = f;
+-    var C = /** @class */ (function () {
+-        function C() {
+-        }
+-        return C;
+-    }());
++    class C {
++    }
+     M.C = C;
+-    var N;
++    let N;
+     (function (N) {
+         function g() { }
+         N.g = g;
+@@= skipped -23, +20 lines =@@
      M.d = im;
  })(M || (exports.M = M = {}));
  (function (M) {
@@ -18,7 +46,20 @@
      (function (P) {
          function f() { }
          P.f = f;
-@@= skipped -22, +22 lines =@@
+-        var C = /** @class */ (function () {
+-            function C() {
+-            }
+-            return C;
+-        }());
++        class C {
++        }
+         P.C = C;
+-        var N;
++        let N;
+         (function (N) {
+             function g() { }
+             N.g = g;
+@@= skipped -25, +22 lines =@@
      })(P = M.P || (M.P = {}));
  })(M || (exports.M = M = {}));
  (function (M) {
@@ -27,7 +68,20 @@
      (function (Q) {
          function f() { }
          Q.f = f;
-@@= skipped -52, +52 lines =@@
+-        var C = /** @class */ (function () {
+-            function C() {
+-            }
+-            return C;
+-        }());
++        class C {
++        }
+         Q.C = C;
+-        var N;
++        let N;
+         (function (N) {
+             function g() { }
+             N.g = g;
+@@= skipped -55, +52 lines =@@
      var a: typeof M.f;
      var b: typeof M.C;
      var c: typeof M.N;

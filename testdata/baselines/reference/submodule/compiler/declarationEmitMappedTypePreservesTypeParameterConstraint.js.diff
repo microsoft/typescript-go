@@ -7,12 +7,17 @@
 -// repro from https://github.com/microsoft/TypeScript/issues/54560
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.entriesOf = exports.buildSchema = void 0;
--const buildSchema = (version) => ({});
+-var buildSchema = function (version) { return ({}); };
 +const buildSchema = (version) => (({}));
  exports.buildSchema = buildSchema;
- const entriesOf = (o) => Object.entries(o);
+-var entriesOf = function (o) {
+-    return Object.entries(o);
+-};
++const entriesOf = (o) => Object.entries(o);
  exports.entriesOf = entriesOf;
-@@= skipped -31, +30 lines =@@
+
+
+@@= skipped -33, +30 lines =@@
  export declare type ZodRawShape = {
      [k: string]: ZodTypeAny;
  };

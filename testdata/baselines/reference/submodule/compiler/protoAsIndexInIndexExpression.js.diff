@@ -1,11 +1,15 @@
 --- old.protoAsIndexInIndexExpression.js
 +++ new.protoAsIndexInIndexExpression.js
-@@= skipped -34, +34 lines =@@
+@@= skipped -33, +33 lines =@@
+ var o = {
      "__proto__": 0
  };
- class C {
--    constructor() {
+-var C = /** @class */ (function () {
+-    function C() {
 -        this["__proto__"] = 0;
 -    }
+-    return C;
+-}());
++class C {
 +    "__proto__" = 0;
- }
++}

@@ -1,0 +1,12 @@
+--- old.argumentsUsedInClassFieldInitializerOrStaticInitializationBlock.symbols
++++ new.argumentsUsedInClassFieldInitializerOrStaticInitializationBlock.symbols
+@@= skipped -132, +132 lines =@@
+     }
+     [Symbol.iterator]() {
+ >[Symbol.iterator] : Symbol((Anonymous class)[Symbol.iterator], Decl(argumentsUsedInClassFieldInitializerOrStaticInitializationBlock.ts, 64, 5))
+->Symbol.iterator : Symbol(SymbolConstructor.iterator, Decl(lib.es2015.iterable.d.ts, --, --))
+->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+->iterator : Symbol(SymbolConstructor.iterator, Decl(lib.es2015.iterable.d.ts, --, --))
+
+       arguments;  // ok
+ >arguments : Symbol(arguments)

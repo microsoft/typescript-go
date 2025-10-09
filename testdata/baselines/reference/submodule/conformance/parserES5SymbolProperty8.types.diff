@@ -1,0 +1,18 @@
+--- old.parserES5SymbolProperty8.types
++++ new.parserES5SymbolProperty8.types
+@@= skipped -1, +1 lines =@@
+
+ === parserES5SymbolProperty8.ts ===
+ var x: {
+->x : { [Symbol.toPrimitive](): string; }
++>x : { [x: number]: () => string; }
+
+     [Symbol.toPrimitive](): string
+ >[Symbol.toPrimitive] : () => string
+->Symbol.toPrimitive : unique symbol
+->Symbol : SymbolConstructor
+->toPrimitive : unique symbol
++>Symbol.toPrimitive : any
++>Symbol : any
++>toPrimitive : any
+ }

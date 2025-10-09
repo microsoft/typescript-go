@@ -1,0 +1,19 @@
+--- old.tsxRename1.baseline.jsonc
++++ new.tsxRename1.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+ // === findRenameLocations ===
+ // === /file.tsx ===
+-// declare namespace JSX {
++// declare module JSX {
+ //     interface Element { }
+ //     interface IntrinsicElements {
+ //         /*RENAME*/[|divRENAME|]: {
+@@= skipped -15, +15 lines =@@
+
+ // === findRenameLocations ===
+ // === /file.tsx ===
+-// declare namespace JSX {
++// declare module JSX {
+ //     interface Element { }
+ //     interface IntrinsicElements {
+ //         [|divRENAME|]: {

@@ -1,0 +1,13 @@
+--- old.modularizeLibrary_Dom.asynciterable.symbols
++++ new.modularizeLibrary_Dom.asynciterable.symbols
+@@= skipped -16, +16 lines =@@
+ >directory : Symbol(directory, Decl(modularizeLibrary_Dom.asynciterable.ts, 0, 43))
+
+         handle.kind;
+->handle.kind : Symbol(kind, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))
++>handle.kind : Symbol(FileSystemHandle.kind, Decl(lib.dom.d.ts, --, --))
+ >handle : Symbol(handle, Decl(modularizeLibrary_Dom.asynciterable.ts, 1, 26))
+->kind : Symbol(kind, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))
++>kind : Symbol(FileSystemHandle.kind, Decl(lib.dom.d.ts, --, --))
+     }
+ });

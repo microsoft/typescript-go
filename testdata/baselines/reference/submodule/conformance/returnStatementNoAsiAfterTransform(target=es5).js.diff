@@ -1,8 +1,13 @@
 --- old.returnStatementNoAsiAfterTransform(target=es5).js
 +++ new.returnStatementNoAsiAfterTransform(target=es5).js
-@@= skipped -66, +66 lines =@@
+@@= skipped -65, +65 lines =@@
+
 
  //// [returnStatementNoAsiAfterTransform.js]
+-var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
+-    if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
+-    return cooked;
+-};
  function t1() {
 -    return (
 +    return 
@@ -49,7 +54,7 @@
 -    return (
 +    return 
      // comment
--    a) ``;
+-    a)(__makeTemplateObject([""], [""]));
 +    a ``;
  }
  function t8() {

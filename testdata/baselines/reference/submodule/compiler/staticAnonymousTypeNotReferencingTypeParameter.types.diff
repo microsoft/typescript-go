@@ -1,6 +1,18 @@
 --- old.staticAnonymousTypeNotReferencingTypeParameter.types
 +++ new.staticAnonymousTypeNotReferencingTypeParameter.types
-@@= skipped -589, +589 lines =@@
+@@= skipped -455, +455 lines =@@
+
+     list.fill(value, start, end === null ? list.length : end);
+ >list.fill(value, start, end === null ? list.length : end) : void
+->list.fill : { (value: any, start?: number, end?: number): any[]; (value: any, start: number, end: number): void; }
++>list.fill : (value: any, start: number, end: number) => void
+ >list : any[]
+->fill : { (value: any, start?: number, end?: number): any[]; (value: any, start: number, end: number): void; }
++>fill : (value: any, start: number, end: number) => void
+ >value : any
+ >start : number
+ >end === null ? list.length : end : number
+@@= skipped -134, +134 lines =@@
  >ListWrapper : typeof ListWrapper
  >l : T[]
  >JSON.stringify(l) : string
@@ -12,3 +24,12 @@
  >l : T[]
 
    static maximum<T>(dit: typeof ListWrapper, list: T[], predicate: (t: T) => number): T {
+@@= skipped -105, +105 lines =@@
+
+ interface Array<T> {
+ 	fill(value: any, start: number, end: number): void;
+->fill : { (value: T, start?: number, end?: number): this; (value: any, start: number, end: number): void; }
++>fill : (value: any, start: number, end: number) => void
+ >value : any
+ >start : number
+ >end : number

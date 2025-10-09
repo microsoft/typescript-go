@@ -122,7 +122,7 @@ namespace Merged2 {
 >b : E.b
 >c : E.c
     }
-    export module E {
+    export namespace E {
 >E : typeof E
 
         export let d = 5;

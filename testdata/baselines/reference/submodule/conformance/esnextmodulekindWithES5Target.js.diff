@@ -10,16 +10,14 @@
 -    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
 -    return c > 3 && r && Object.defineProperty(target, key, r), r;
 -};
--let C = (() => {
--    class C {
--        constructor() {
--            this.p = 1;
--        }
--        method() { }
+-var C = /** @class */ (function () {
+-    function C() {
+-        this.p = 1;
 -    }
+-    C.prototype.method = function () { };
 -    C.s = 0;
 -    return C;
--})();
+-}());
 -export { C };
 +export class C {
 +    static s = 0;
@@ -27,19 +25,17 @@
 +    method() { }
 +}
  export { C as C2 };
--let D = (() => {
--    let D = class D {
--        constructor() {
--            this.p = 1;
--        }
--        method() { }
--    };
+-var D = /** @class */ (function () {
+-    function D() {
+-        this.p = 1;
+-    }
+-    D.prototype.method = function () { };
 -    D.s = 0;
 -    D = __decorate([
 -        foo
 -    ], D);
 -    return D;
--})();
+-}());
 -export { D };
 +@foo
 +export class D {
@@ -48,5 +44,11 @@
 +    method() { }
 +}
  export { D as D2 };
- class E {
- }
+-var E = /** @class */ (function () {
+-    function E() {
+-    }
+-    return E;
+-}());
++class E {
++}
+ export { E };

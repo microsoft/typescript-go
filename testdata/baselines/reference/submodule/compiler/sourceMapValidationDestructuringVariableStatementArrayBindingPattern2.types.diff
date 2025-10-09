@@ -1,0 +1,9 @@
+--- old.sourceMapValidationDestructuringVariableStatementArrayBindingPattern2.types
++++ new.sourceMapValidationDestructuringVariableStatementArrayBindingPattern2.types
+@@= skipped -27, +27 lines =@@
+ >"edging" : "edging"
+
+ let [, skillA] = multiRobotA;
+-> : undefined
+ >skillA : [string, string]
+ >multiRobotA : MultiSkilledRobot

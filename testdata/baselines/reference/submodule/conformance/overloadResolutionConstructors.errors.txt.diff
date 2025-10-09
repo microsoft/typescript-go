@@ -25,7 +25,11 @@
 +  The last overload gave the following error.
      Argument of type 'boolean' is not assignable to parameter of type 'string'.
  overloadResolutionConstructors.ts(100,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'n' must be of type 'number', but here has type 'string'.
- overloadResolutionConstructors.ts(100,26): error TS2339: Property 'toFixed' does not exist on type 'string'.
+-overloadResolutionConstructors.ts(100,26): error TS2551: Property 'toFixed' does not exist on type 'string'. Did you mean 'fixed'?
++overloadResolutionConstructors.ts(100,26): error TS2339: Property 'toFixed' does not exist on type 'string'.
+
+
+ ==== overloadResolutionConstructors.ts (10 errors) ====
 @@= skipped -43, +39 lines =@@
      new fn1({}); // Error
              ~~
@@ -61,3 +65,12 @@
      
      // Non - generic overloads where contextual typing of function arguments has errors
      interface fn5 {
+@@= skipped -23, +21 lines =@@
+ !!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'n' must be of type 'number', but here has type 'string'.
+ !!! related TS6203 overloadResolutionConstructors.ts:58:5: 'n' was also declared here.
+                              ~~~~~~~
+-!!! error TS2551: Property 'toFixed' does not exist on type 'string'. Did you mean 'fixed'?
+-!!! related TS2728 lib.es2015.core.d.ts:--:--: 'fixed' is declared here.
++!!! error TS2339: Property 'toFixed' does not exist on type 'string'.
+     var s = new fn5((n) => n.substr(0));
+     

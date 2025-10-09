@@ -1,0 +1,55 @@
+--- old.typeGuardOfFormTypeOfPrimitiveSubtype.types
++++ new.typeGuardOfFormTypeOfPrimitiveSubtype.types
+@@= skipped -9, +9 lines =@@
+
+ if (typeof a === "number") {
+ >typeof a === "number" : boolean
+->typeof a : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof a : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >a : {}
+ >"number" : "number"
+
+@@= skipped -10, +10 lines =@@
+ }
+ if (typeof a === "string") {
+ >typeof a === "string" : boolean
+->typeof a : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof a : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >a : {}
+ >"string" : "string"
+
+@@= skipped -10, +10 lines =@@
+ }
+ if (typeof a === "boolean") {
+ >typeof a === "boolean" : boolean
+->typeof a : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof a : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >a : {}
+ >"boolean" : "boolean"
+
+@@= skipped -11, +11 lines =@@
+
+ if (typeof b === "number") {
+ >typeof b === "number" : boolean
+->typeof b : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof b : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >b : { toString(): string; }
+ >"number" : "number"
+
+@@= skipped -10, +10 lines =@@
+ }
+ if (typeof b === "string") {
+ >typeof b === "string" : boolean
+->typeof b : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof b : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >b : { toString(): string; }
+ >"string" : "string"
+
+@@= skipped -10, +10 lines =@@
+ }
+ if (typeof b === "boolean") {
+ >typeof b === "boolean" : boolean
+->typeof b : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof b : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >b : { toString(): string; }
+ >"boolean" : "boolean"

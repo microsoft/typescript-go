@@ -1,0 +1,8 @@
+--- old.objectBindingPattern_restElementWithPropertyName.js
++++ new.objectBindingPattern_restElementWithPropertyName.js
+@@= skipped -15, +15 lines =@@
+         }
+     return t;
+ };
+-var b = __rest({}, []);
++const b = __rest({}, []);

@@ -18,3 +18,12 @@
  >{ b: true } : { b: boolean; }
  >b : boolean
  >true : true
+@@= skipped -70, +70 lines =@@
+ >c : any
+
+     d4({x, y, c}) { }
+->d4 : ({ x, y, c }: { x: any; y: any; c: any; }) => void
++>d4 : ({ x, y, c }: { c: any; x: any; y: any; }) => void
+ >x : any
+ >y : any
+ >c : any

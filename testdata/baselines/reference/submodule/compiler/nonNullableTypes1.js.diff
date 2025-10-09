@@ -6,16 +6,38 @@
  //// [nonNullableTypes1.js]
 -"use strict";
  function f1(x) {
-     let y = x || "hello"; // NonNullable<T> | string
+-    var y = x || "hello"; // NonNullable<T> | string
++    let y = x || "hello"; // NonNullable<T> | string
  }
-@@= skipped -25, +24 lines =@@
+ function error() {
+     throw new Error();
+@@= skipped -11, +10 lines =@@
+     return x || error();
+ }
+ function f3(x) {
+-    var y = x; // {}
++    let y = x; // {}
+ }
+ function f4(obj) {
+     if ((obj === null || obj === void 0 ? void 0 : obj.x) === "hello") {
+@@= skipped -13, +13 lines =@@
+         obj; // NonNullable<T>
      }
  }
- class A {
--    constructor() {
+-var A = /** @class */ (function () {
+-    function A() {
 -        this.x = "hello";
--    }
++class A {
 +    x = "hello";
-     foo() {
-         let zz = this === null || this === void 0 ? void 0 : this.x; // string
++    foo() {
++        let zz = this === null || this === void 0 ? void 0 : this.x; // string
      }
+-    A.prototype.foo = function () {
+-        var zz = this === null || this === void 0 ? void 0 : this.x; // string
+-    };
+-    return A;
+-}());
++}
+
+
+ //// [nonNullableTypes1.d.ts]

@@ -1,0 +1,26 @@
+--- old.library_ArraySlice.symbols
++++ new.library_ArraySlice.symbols
+@@= skipped -4, +4 lines =@@
+ Array.prototype.slice();
+ >Array.prototype.slice : Symbol(Array.slice, Decl(lib.es5.d.ts, --, --))
+ >Array.prototype : Symbol(ArrayConstructor.prototype, Decl(lib.es5.d.ts, --, --))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >prototype : Symbol(ArrayConstructor.prototype, Decl(lib.es5.d.ts, --, --))
+ >slice : Symbol(Array.slice, Decl(lib.es5.d.ts, --, --))
+
+ Array.prototype.slice(0);
+ >Array.prototype.slice : Symbol(Array.slice, Decl(lib.es5.d.ts, --, --))
+ >Array.prototype : Symbol(ArrayConstructor.prototype, Decl(lib.es5.d.ts, --, --))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >prototype : Symbol(ArrayConstructor.prototype, Decl(lib.es5.d.ts, --, --))
+ >slice : Symbol(Array.slice, Decl(lib.es5.d.ts, --, --))
+
+ Array.prototype.slice(0, 1);
+ >Array.prototype.slice : Symbol(Array.slice, Decl(lib.es5.d.ts, --, --))
+ >Array.prototype : Symbol(ArrayConstructor.prototype, Decl(lib.es5.d.ts, --, --))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >prototype : Symbol(ArrayConstructor.prototype, Decl(lib.es5.d.ts, --, --))
+ >slice : Symbol(Array.slice, Decl(lib.es5.d.ts, --, --))

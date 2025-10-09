@@ -1,10 +1,32 @@
 --- old.setterBeforeGetter.js
 +++ new.setterBeforeGetter.js
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
+
 
  //// [setterBeforeGetter.js]
- class Foo {
+-var Foo = /** @class */ (function () {
+-    function Foo() {
+-    }
+-    Object.defineProperty(Foo.prototype, "bar", {
+-        get: function () {
+-            return this._bar;
+-        },
+-        // should not be an error to order them this way
+-        set: function (thing) {
+-            this._bar = thing;
+-        },
+-        enumerable: false,
+-        configurable: true
+-    });
+-    return Foo;
+-}());
++class Foo {
 +    _bar;
-     // should not be an error to order them this way
-     set bar(thing) {
-         this._bar = thing;
++    // should not be an error to order them this way
++    set bar(thing) {
++        this._bar = thing;
++    }
++    get bar() {
++        return this._bar;
++    }
++}

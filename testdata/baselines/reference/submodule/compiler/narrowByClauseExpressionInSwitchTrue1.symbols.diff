@@ -1,0 +1,20 @@
+--- old.narrowByClauseExpressionInSwitchTrue1.symbols
++++ new.narrowByClauseExpressionInSwitchTrue1.symbols
+@@= skipped -111, +111 lines =@@
+ function processInput(input: string | RegExp | SomeType) {
+ >processInput : Symbol(processInput, Decl(narrowByClauseExpressionInSwitchTrue1.ts, 39, 55))
+ >input : Symbol(input, Decl(narrowByClauseExpressionInSwitchTrue1.ts, 41, 22))
+->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >SomeType : Symbol(SomeType, Decl(narrowByClauseExpressionInSwitchTrue1.ts, 36, 1))
+
+   switch (true) {
+@@= skipped -13, +13 lines =@@
+       break;
+     case input instanceof RegExp:
+ >input : Symbol(input, Decl(narrowByClauseExpressionInSwitchTrue1.ts, 41, 22))
+->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+       input;
+ >input : Symbol(input, Decl(narrowByClauseExpressionInSwitchTrue1.ts, 41, 22))

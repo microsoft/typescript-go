@@ -1,0 +1,34 @@
+--- old.ES5SymbolProperty4.types
++++ new.ES5SymbolProperty4.types
+@@= skipped -1, +1 lines =@@
+
+ === ES5SymbolProperty4.ts ===
+ var Symbol: { iterator: string };
+->Symbol : SymbolConstructor
++>Symbol : { iterator: string; }
+ >iterator : string
+
+ class C {
+@@= skipped -8, +8 lines =@@
+
+     [Symbol.iterator]() { }
+ >[Symbol.iterator] : () => void
+->Symbol.iterator : unique symbol
+->Symbol : SymbolConstructor
+->iterator : unique symbol
++>Symbol.iterator : string
++>Symbol : { iterator: string; }
++>iterator : string
+ }
+
+ (new C)[Symbol.iterator]
+@@= skipped -10, +10 lines =@@
+ >(new C) : C
+ >new C : C
+ >C : typeof C
+->Symbol.iterator : unique symbol
+->Symbol : SymbolConstructor
+->iterator : unique symbol
++>Symbol.iterator : string
++>Symbol : { iterator: string; }
++>iterator : string

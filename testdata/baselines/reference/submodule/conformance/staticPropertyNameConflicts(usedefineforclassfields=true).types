@@ -585,7 +585,7 @@ var StaticArgumentsFn_Anonymous2 = class {
 // === Static properties on default exported classes ===
 
 // name
-module TestOnDefaultExportedClass_1 {
+namespace TestOnDefaultExportedClass_1 {
 >TestOnDefaultExportedClass_1 : typeof TestOnDefaultExportedClass_1
 
     class StaticName {
@@ -615,7 +615,7 @@ export class ExportedStaticName {
 >name : "name"
 }
 
-module TestOnDefaultExportedClass_2 {
+namespace TestOnDefaultExportedClass_2 {
 >TestOnDefaultExportedClass_2 : typeof TestOnDefaultExportedClass_2
 
     class StaticNameFn {
@@ -646,7 +646,7 @@ export class ExportedStaticNameFn {
 }
 
 // length
-module TestOnDefaultExportedClass_3 {
+namespace TestOnDefaultExportedClass_3 {
 >TestOnDefaultExportedClass_3 : typeof TestOnDefaultExportedClass_3
 
     export default class StaticLength {
@@ -676,7 +676,7 @@ export class ExportedStaticLength {
 >length : "length"
 }
 
-module TestOnDefaultExportedClass_4 {
+namespace TestOnDefaultExportedClass_4 {
 >TestOnDefaultExportedClass_4 : typeof TestOnDefaultExportedClass_4
 
     export default class StaticLengthFn {
@@ -707,7 +707,7 @@ export class ExportedStaticLengthFn {
 }
 
 // prototype
-module TestOnDefaultExportedClass_5 {
+namespace TestOnDefaultExportedClass_5 {
 >TestOnDefaultExportedClass_5 : typeof TestOnDefaultExportedClass_5
 
     export default class StaticPrototype {
@@ -737,7 +737,7 @@ export class ExportedStaticPrototype {
 >prototype : "prototype"
 }
 
-module TestOnDefaultExportedClass_6 {
+namespace TestOnDefaultExportedClass_6 {
 >TestOnDefaultExportedClass_6 : typeof TestOnDefaultExportedClass_6
 
     export default class StaticPrototypeFn {
@@ -768,7 +768,7 @@ export class ExportedStaticPrototypeFn {
 }
 
 // caller
-module TestOnDefaultExportedClass_7 {
+namespace TestOnDefaultExportedClass_7 {
 >TestOnDefaultExportedClass_7 : typeof TestOnDefaultExportedClass_7
 
     export default class StaticCaller {
@@ -798,7 +798,7 @@ export class ExportedStaticCaller {
 >caller : "caller"
 }
 
-module TestOnDefaultExportedClass_8 {
+namespace TestOnDefaultExportedClass_8 {
 >TestOnDefaultExportedClass_8 : typeof TestOnDefaultExportedClass_8
 
     export default class StaticCallerFn {
@@ -829,7 +829,7 @@ export class ExportedStaticCallerFn {
 }
 
 // arguments
-module TestOnDefaultExportedClass_9 {
+namespace TestOnDefaultExportedClass_9 {
 >TestOnDefaultExportedClass_9 : typeof TestOnDefaultExportedClass_9
 
     export default class StaticArguments {
@@ -859,7 +859,7 @@ export class ExportedStaticArguments {
 >arguments : "arguments"
 }
 
-module TestOnDefaultExportedClass_10 {
+namespace TestOnDefaultExportedClass_10 {
 >TestOnDefaultExportedClass_10 : typeof TestOnDefaultExportedClass_10
 
     export default class StaticArgumentsFn {

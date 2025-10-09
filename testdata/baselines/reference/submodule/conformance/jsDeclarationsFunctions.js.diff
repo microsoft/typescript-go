@@ -1,6 +1,18 @@
 --- old.jsDeclarationsFunctions.js
 +++ new.jsDeclarationsFunctions.js
-@@= skipped -85, +85 lines =@@
+@@= skipped -78, +78 lines =@@
+ function b() { }
+ b.cat = "cat";
+ function c() { }
+-c.Cls = /** @class */ (function () {
+-    function Cls() {
+-    }
+-    return Cls;
+-}());
++c.Cls = class {
++};
+ /**
+  * @param {number} a
   * @param {number} b
   * @return {string}
   */
@@ -17,7 +29,7 @@
  /**
   * @template T
   * @param {T} a
-@@= skipped -35, +35 lines =@@
+@@= skipped -45, +42 lines =@@
 
 
  //// [index.d.ts]

@@ -1,0 +1,19 @@
+--- old.scopeResolutionIdentifiers.symbols
++++ new.scopeResolutionIdentifiers.symbols
+@@= skipped -52, +52 lines =@@
+
+     s: Date;
+ >s : Symbol(C.s, Decl(scopeResolutionIdentifiers.ts, 21, 9))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+     n = this.s;
+ >n : Symbol(C.n, Decl(scopeResolutionIdentifiers.ts, 22, 12))
+@@= skipped -19, +19 lines =@@
+
+         var p: Date;
+ >p : Symbol(p, Decl(scopeResolutionIdentifiers.ts, 25, 11), Decl(scopeResolutionIdentifiers.ts, 26, 11))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+     }
+ }

@@ -1,0 +1,8 @@
+--- old.deprecatedCompilerOptions1.js
++++ new.deprecatedCompilerOptions1.js
+@@= skipped -4, +4 lines =@@
+
+
+ //// [a.js]
+-var a = 1;
++const a = 1;

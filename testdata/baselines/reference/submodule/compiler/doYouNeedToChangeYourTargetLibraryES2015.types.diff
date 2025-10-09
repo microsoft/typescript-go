@@ -1,0 +1,996 @@
+--- old.doYouNeedToChangeYourTargetLibraryES2015.types
++++ new.doYouNeedToChangeYourTargetLibraryES2015.types
+@@= skipped -6, +6 lines =@@
+ >() => {} : () => void
+
+ const testReflectApply = Reflect.apply(noOp, this, []);
+->testReflectApply : void
+->Reflect.apply(noOp, this, []) : void
+->Reflect.apply : { <T, A extends readonly any[], R>(target: (this: T, ...args: A) => R, thisArgument: T, argumentsList: Readonly<A>): R; (target: Function, thisArgument: any, argumentsList: ArrayLike<any>): any; }
+->Reflect : typeof Reflect
+->apply : { <T, A extends readonly any[], R>(target: (this: T, ...args: A) => R, thisArgument: T, argumentsList: Readonly<A>): R; (target: Function, thisArgument: any, argumentsList: ArrayLike<any>): any; }
++>testReflectApply : any
++>Reflect.apply(noOp, this, []) : any
++>Reflect.apply : any
++>Reflect : any
++>apply : any
+ >noOp : () => void
+ >this : typeof globalThis
+->[] : []
++>[] : undefined[]
+
+ const testReflectConstruct = Reflect.construct(noOp, []);
+ >testReflectConstruct : any
+ >Reflect.construct(noOp, []) : any
+->Reflect.construct : { <A extends readonly any[], R>(target: new (...args: A) => R, argumentsList: Readonly<A>, newTarget?: new (...args: any) => any): R; (target: Function, argumentsList: ArrayLike<any>, newTarget?: Function): any; }
+->Reflect : typeof Reflect
+->construct : { <A extends readonly any[], R>(target: new (...args: A) => R, argumentsList: Readonly<A>, newTarget?: new (...args: any) => any): R; (target: Function, argumentsList: ArrayLike<any>, newTarget?: Function): any; }
++>Reflect.construct : any
++>Reflect : any
++>construct : any
+ >noOp : () => void
+ >[] : undefined[]
+
+ const testReflectDefineProperty = Reflect.defineProperty({}, "", {});
+->testReflectDefineProperty : boolean
+->Reflect.defineProperty({}, "", {}) : boolean
+->Reflect.defineProperty : (target: object, propertyKey: PropertyKey, attributes: PropertyDescriptor & ThisType<any>) => boolean
+->Reflect : typeof Reflect
+->defineProperty : (target: object, propertyKey: PropertyKey, attributes: PropertyDescriptor & ThisType<any>) => boolean
++>testReflectDefineProperty : any
++>Reflect.defineProperty({}, "", {}) : any
++>Reflect.defineProperty : any
++>Reflect : any
++>defineProperty : any
+ >{} : {}
+ >"" : ""
+ >{} : {}
+
+ const testReflectDeleteProperty = Reflect.deleteProperty({}, "");
+->testReflectDeleteProperty : boolean
+->Reflect.deleteProperty({}, "") : boolean
+->Reflect.deleteProperty : (target: object, propertyKey: PropertyKey) => boolean
+->Reflect : typeof Reflect
+->deleteProperty : (target: object, propertyKey: PropertyKey) => boolean
++>testReflectDeleteProperty : any
++>Reflect.deleteProperty({}, "") : any
++>Reflect.deleteProperty : any
++>Reflect : any
++>deleteProperty : any
+ >{} : {}
+ >"" : ""
+
+ const testReflectGet = Reflect.get({}, "");
+ >testReflectGet : any
+ >Reflect.get({}, "") : any
+->Reflect.get : <T extends object, P extends PropertyKey>(target: T, propertyKey: P, receiver?: unknown) => P extends keyof T ? T[P] : any
+->Reflect : typeof Reflect
+->get : <T extends object, P extends PropertyKey>(target: T, propertyKey: P, receiver?: unknown) => P extends keyof T ? T[P] : any
++>Reflect.get : any
++>Reflect : any
++>get : any
+ >{} : {}
+ >"" : ""
+
+ const testReflectGetOwnPropertyDescriptor = Reflect.getOwnPropertyDescriptor({}, "");
+->testReflectGetOwnPropertyDescriptor : TypedPropertyDescriptor<any>
+->Reflect.getOwnPropertyDescriptor({}, "") : TypedPropertyDescriptor<any>
+->Reflect.getOwnPropertyDescriptor : <T extends object, P extends PropertyKey>(target: T, propertyKey: P) => TypedPropertyDescriptor<P extends keyof T ? T[P] : any> | undefined
+->Reflect : typeof Reflect
+->getOwnPropertyDescriptor : <T extends object, P extends PropertyKey>(target: T, propertyKey: P) => TypedPropertyDescriptor<P extends keyof T ? T[P] : any> | undefined
++>testReflectGetOwnPropertyDescriptor : any
++>Reflect.getOwnPropertyDescriptor({}, "") : any
++>Reflect.getOwnPropertyDescriptor : any
++>Reflect : any
++>getOwnPropertyDescriptor : any
+ >{} : {}
+ >"" : ""
+
+ const testReflectGetPrototypeOf = Reflect.getPrototypeOf({});
+->testReflectGetPrototypeOf : object
+->Reflect.getPrototypeOf({}) : object
+->Reflect.getPrototypeOf : (target: object) => object | null
+->Reflect : typeof Reflect
+->getPrototypeOf : (target: object) => object | null
++>testReflectGetPrototypeOf : any
++>Reflect.getPrototypeOf({}) : any
++>Reflect.getPrototypeOf : any
++>Reflect : any
++>getPrototypeOf : any
+ >{} : {}
+
+ const testReflectIsExtensible = Reflect.isExtensible({});
+->testReflectIsExtensible : boolean
+->Reflect.isExtensible({}) : boolean
+->Reflect.isExtensible : (target: object) => boolean
+->Reflect : typeof Reflect
+->isExtensible : (target: object) => boolean
++>testReflectIsExtensible : any
++>Reflect.isExtensible({}) : any
++>Reflect.isExtensible : any
++>Reflect : any
++>isExtensible : any
+ >{} : {}
+
+ const testReflectOwnKeys = Reflect.ownKeys({});
+->testReflectOwnKeys : (string | symbol)[]
+->Reflect.ownKeys({}) : (string | symbol)[]
+->Reflect.ownKeys : (target: object) => (string | symbol)[]
+->Reflect : typeof Reflect
+->ownKeys : (target: object) => (string | symbol)[]
++>testReflectOwnKeys : any
++>Reflect.ownKeys({}) : any
++>Reflect.ownKeys : any
++>Reflect : any
++>ownKeys : any
+ >{} : {}
+
+ const testReflectPreventExtensions = Reflect.preventExtensions({});
+->testReflectPreventExtensions : boolean
+->Reflect.preventExtensions({}) : boolean
+->Reflect.preventExtensions : (target: object) => boolean
+->Reflect : typeof Reflect
+->preventExtensions : (target: object) => boolean
++>testReflectPreventExtensions : any
++>Reflect.preventExtensions({}) : any
++>Reflect.preventExtensions : any
++>Reflect : any
++>preventExtensions : any
+ >{} : {}
+
+ const testReflectSet = Reflect.set({}, "", 0);
+->testReflectSet : boolean
+->Reflect.set({}, "", 0) : boolean
+->Reflect.set : { <T extends object, P extends PropertyKey>(target: T, propertyKey: P, value: P extends keyof T ? T[P] : any, receiver?: any): boolean; (target: object, propertyKey: PropertyKey, value: any, receiver?: any): boolean; }
+->Reflect : typeof Reflect
+->set : { <T extends object, P extends PropertyKey>(target: T, propertyKey: P, value: P extends keyof T ? T[P] : any, receiver?: any): boolean; (target: object, propertyKey: PropertyKey, value: any, receiver?: any): boolean; }
++>testReflectSet : any
++>Reflect.set({}, "", 0) : any
++>Reflect.set : any
++>Reflect : any
++>set : any
+ >{} : {}
+ >"" : ""
+ >0 : 0
+
+ const testReflectSetPrototypeOf = Reflect.setPrototypeOf({}, {}); 
+->testReflectSetPrototypeOf : boolean
+->Reflect.setPrototypeOf({}, {}) : boolean
+->Reflect.setPrototypeOf : (target: object, proto: object | null) => boolean
+->Reflect : typeof Reflect
+->setPrototypeOf : (target: object, proto: object | null) => boolean
++>testReflectSetPrototypeOf : any
++>Reflect.setPrototypeOf({}, {}) : any
++>Reflect.setPrototypeOf : any
++>Reflect : any
++>setPrototypeOf : any
+ >{} : {}
+ >{} : {}
+
+ const testArrayFind = [""].find((val, idx, obj) => {
+->testArrayFind : string
+->[""].find((val, idx, obj) => {    return true;}) : string
+->[""].find : { <S extends string>(predicate: (value: string, index: number, obj: string[]) => value is S, thisArg?: any): S; (predicate: (value: string, index: number, obj: string[]) => unknown, thisArg?: any): string; }
++>testArrayFind : any
++>[""].find((val, idx, obj) => {    return true;}) : any
++>[""].find : any
+ >[""] : string[]
+ >"" : ""
+->find : { <S extends string>(predicate: (value: string, index: number, obj: string[]) => value is S, thisArg?: any): S; (predicate: (value: string, index: number, obj: string[]) => unknown, thisArg?: any): string; }
+->(val, idx, obj) => {    return true;} : (val: string, idx: number, obj: string[]) => true
+->val : string
+->idx : number
+->obj : string[]
++>find : any
++>(val, idx, obj) => {    return true;} : (val: any, idx: any, obj: any) => boolean
++>val : any
++>idx : any
++>obj : any
+
+     return true;
+ >true : true
+
+ });
+ const testArrayFindIndex = [""].findIndex((val, idx, obj) => {
+->testArrayFindIndex : number
+->[""].findIndex((val, idx, obj) => {    return true;}) : number
+->[""].findIndex : (predicate: (value: string, index: number, obj: string[]) => unknown, thisArg?: any) => number
++>testArrayFindIndex : any
++>[""].findIndex((val, idx, obj) => {    return true;}) : any
++>[""].findIndex : any
+ >[""] : string[]
+ >"" : ""
+->findIndex : (predicate: (value: string, index: number, obj: string[]) => unknown, thisArg?: any) => number
+->(val, idx, obj) => {    return true;} : (val: string, idx: number, obj: string[]) => boolean
+->val : string
+->idx : number
+->obj : string[]
++>findIndex : any
++>(val, idx, obj) => {    return true;} : (val: any, idx: any, obj: any) => boolean
++>val : any
++>idx : any
++>obj : any
+
+     return true;
+ >true : true
+
+ });
+ const testArrayFill = [""].fill("fill");
+->testArrayFill : string[]
+->[""].fill("fill") : string[]
+->[""].fill : (value: string, start?: number, end?: number) => string[]
++>testArrayFill : any
++>[""].fill("fill") : any
++>[""].fill : any
+ >[""] : string[]
+ >"" : ""
+->fill : (value: string, start?: number, end?: number) => string[]
++>fill : any
+ >"fill" : "fill"
+
+ const testArrayCopyWithin = [""].copyWithin(0, 0);
+->testArrayCopyWithin : string[]
+->[""].copyWithin(0, 0) : string[]
+->[""].copyWithin : (target: number, start: number, end?: number) => string[]
++>testArrayCopyWithin : any
++>[""].copyWithin(0, 0) : any
++>[""].copyWithin : any
+ >[""] : string[]
+ >"" : ""
+->copyWithin : (target: number, start: number, end?: number) => string[]
++>copyWithin : any
+ >0 : 0
+ >0 : 0
+
+ const testArrayEntries = [""].entries();
+->testArrayEntries : ArrayIterator<[number, string]>
+->[""].entries() : ArrayIterator<[number, string]>
+->[""].entries : () => ArrayIterator<[number, string]>
++>testArrayEntries : any
++>[""].entries() : any
++>[""].entries : any
+ >[""] : string[]
+ >"" : ""
+->entries : () => ArrayIterator<[number, string]>
++>entries : any
+
+ const testArrayKeys = [""].keys();
+->testArrayKeys : ArrayIterator<number>
+->[""].keys() : ArrayIterator<number>
+->[""].keys : () => ArrayIterator<number>
++>testArrayKeys : any
++>[""].keys() : any
++>[""].keys : any
+ >[""] : string[]
+ >"" : ""
+->keys : () => ArrayIterator<number>
++>keys : any
+
+ const testArrayValues = [""].values();
+->testArrayValues : ArrayIterator<string>
+->[""].values() : ArrayIterator<string>
+->[""].values : () => ArrayIterator<string>
++>testArrayValues : any
++>[""].values() : any
++>[""].values : any
+ >[""] : string[]
+ >"" : ""
+->values : () => ArrayIterator<string>
++>values : any
+
+ const testArrayConstructorFrom = Array.from([]);
+->testArrayConstructorFrom : any[]
+->Array.from([]) : any[]
+->Array.from : { <T>(arrayLike: ArrayLike<T>): T[]; <T, U>(arrayLike: ArrayLike<T>, mapfn: (v: T, k: number) => U, thisArg?: any): U[]; <T>(iterable: Iterable<T> | ArrayLike<T>): T[]; <T, U>(iterable: Iterable<T> | ArrayLike<T>, mapfn: (v: T, k: number) => U, thisArg?: any): U[]; }
++>testArrayConstructorFrom : any
++>Array.from([]) : any
++>Array.from : any
+ >Array : ArrayConstructor
+->from : { <T>(arrayLike: ArrayLike<T>): T[]; <T, U>(arrayLike: ArrayLike<T>, mapfn: (v: T, k: number) => U, thisArg?: any): U[]; <T>(iterable: Iterable<T> | ArrayLike<T>): T[]; <T, U>(iterable: Iterable<T> | ArrayLike<T>, mapfn: (v: T, k: number) => U, thisArg?: any): U[]; }
++>from : any
+ >[] : undefined[]
+
+ const testArrayConstructorOf = Array.of([]);
+->testArrayConstructorOf : any[][]
+->Array.of([]) : any[][]
+->Array.of : <T>(...items: T[]) => T[]
++>testArrayConstructorOf : any
++>Array.of([]) : any
++>Array.of : any
+ >Array : ArrayConstructor
+->of : <T>(...items: T[]) => T[]
++>of : any
+ >[] : undefined[]
+
+ const testObjectConstructorAssign = Object.assign({}, {});
+->testObjectConstructorAssign : {}
+->Object.assign({}, {}) : {}
+->Object.assign : { <T extends {}, U>(target: T, source: U): T & U; <T extends {}, U, V>(target: T, source1: U, source2: V): T & U & V; <T extends {}, U, V, W>(target: T, source1: U, source2: V, source3: W): T & U & V & W; (target: object, ...sources: any[]): any; }
++>testObjectConstructorAssign : any
++>Object.assign({}, {}) : any
++>Object.assign : any
+ >Object : ObjectConstructor
+->assign : { <T extends {}, U>(target: T, source: U): T & U; <T extends {}, U, V>(target: T, source1: U, source2: V): T & U & V; <T extends {}, U, V, W>(target: T, source1: U, source2: V, source3: W): T & U & V & W; (target: object, ...sources: any[]): any; }
++>assign : any
+ >{} : {}
+ >{} : {}
+
+ const testObjectConstructorGetOwnPropertySymbols = Object.getOwnPropertySymbols({});
+->testObjectConstructorGetOwnPropertySymbols : symbol[]
+->Object.getOwnPropertySymbols({}) : symbol[]
+->Object.getOwnPropertySymbols : (o: any) => symbol[]
++>testObjectConstructorGetOwnPropertySymbols : any
++>Object.getOwnPropertySymbols({}) : any
++>Object.getOwnPropertySymbols : any
+ >Object : ObjectConstructor
+->getOwnPropertySymbols : (o: any) => symbol[]
++>getOwnPropertySymbols : any
+ >{} : {}
+
+ const testObjectConstructorKeys = Object.keys({});
+ >testObjectConstructorKeys : string[]
+ >Object.keys({}) : string[]
+->Object.keys : { (o: object): string[]; (o: {}): string[]; }
++>Object.keys : (o: object) => string[]
+ >Object : ObjectConstructor
+->keys : { (o: object): string[]; (o: {}): string[]; }
++>keys : (o: object) => string[]
+ >{} : {}
+
+ const testObjectConstructorIs = Object.is({}, {});
+->testObjectConstructorIs : boolean
+->Object.is({}, {}) : boolean
+->Object.is : (value1: any, value2: any) => boolean
++>testObjectConstructorIs : any
++>Object.is({}, {}) : any
++>Object.is : any
+ >Object : ObjectConstructor
+->is : (value1: any, value2: any) => boolean
++>is : any
+ >{} : {}
+ >{} : {}
+
+ const testObjectConstructorSetPrototypeOf = Object.setPrototypeOf({}, {});
+ >testObjectConstructorSetPrototypeOf : any
+ >Object.setPrototypeOf({}, {}) : any
+->Object.setPrototypeOf : (o: any, proto: object | null) => any
++>Object.setPrototypeOf : any
+ >Object : ObjectConstructor
+->setPrototypeOf : (o: any, proto: object | null) => any
++>setPrototypeOf : any
+ >{} : {}
+ >{} : {}
+
+ const testNumberConstructorIsFinite = Number.isFinite(0);
+->testNumberConstructorIsFinite : boolean
+->Number.isFinite(0) : boolean
+->Number.isFinite : (number: unknown) => boolean
++>testNumberConstructorIsFinite : any
++>Number.isFinite(0) : any
++>Number.isFinite : any
+ >Number : NumberConstructor
+->isFinite : (number: unknown) => boolean
++>isFinite : any
+ >0 : 0
+
+ const testNumberConstructorIsInteger = Number.isInteger(0);
+->testNumberConstructorIsInteger : boolean
+->Number.isInteger(0) : boolean
+->Number.isInteger : (number: unknown) => boolean
++>testNumberConstructorIsInteger : any
++>Number.isInteger(0) : any
++>Number.isInteger : any
+ >Number : NumberConstructor
+->isInteger : (number: unknown) => boolean
++>isInteger : any
+ >0 : 0
+
+ const testNumberConstructorIsNan = Number.isNaN(0);
+->testNumberConstructorIsNan : boolean
+->Number.isNaN(0) : boolean
+->Number.isNaN : (number: unknown) => boolean
++>testNumberConstructorIsNan : any
++>Number.isNaN(0) : any
++>Number.isNaN : any
+ >Number : NumberConstructor
+->isNaN : (number: unknown) => boolean
++>isNaN : any
+ >0 : 0
+
+ const testNumberConstructorIsSafeInteger = Number.isSafeInteger(0);
+->testNumberConstructorIsSafeInteger : boolean
+->Number.isSafeInteger(0) : boolean
+->Number.isSafeInteger : (number: unknown) => boolean
++>testNumberConstructorIsSafeInteger : any
++>Number.isSafeInteger(0) : any
++>Number.isSafeInteger : any
+ >Number : NumberConstructor
+->isSafeInteger : (number: unknown) => boolean
++>isSafeInteger : any
+ >0 : 0
+
+ const testNumberConstructorParseFloat = Number.parseFloat("0");
+->testNumberConstructorParseFloat : number
+->Number.parseFloat("0") : number
+->Number.parseFloat : (string: string) => number
++>testNumberConstructorParseFloat : any
++>Number.parseFloat("0") : any
++>Number.parseFloat : any
+ >Number : NumberConstructor
+->parseFloat : (string: string) => number
++>parseFloat : any
+ >"0" : "0"
+
+ const testNumberConstructorParseInt = Number.parseInt("0");
+->testNumberConstructorParseInt : number
+->Number.parseInt("0") : number
+->Number.parseInt : (string: string, radix?: number) => number
++>testNumberConstructorParseInt : any
++>Number.parseInt("0") : any
++>Number.parseInt : any
+ >Number : NumberConstructor
+->parseInt : (string: string, radix?: number) => number
++>parseInt : any
+ >"0" : "0"
+
+ const testMathClz32 = Math.clz32(0);
+->testMathClz32 : number
+->Math.clz32(0) : number
+->Math.clz32 : (x: number) => number
++>testMathClz32 : any
++>Math.clz32(0) : any
++>Math.clz32 : any
+ >Math : Math
+->clz32 : (x: number) => number
++>clz32 : any
+ >0 : 0
+
+ const testMathImul = Math.imul(0,0);
+->testMathImul : number
+->Math.imul(0,0) : number
+->Math.imul : (x: number, y: number) => number
++>testMathImul : any
++>Math.imul(0,0) : any
++>Math.imul : any
+ >Math : Math
+->imul : (x: number, y: number) => number
++>imul : any
+ >0 : 0
+ >0 : 0
+
+ const testMathSign = Math.sign(0);
+->testMathSign : number
+->Math.sign(0) : number
+->Math.sign : (x: number) => number
++>testMathSign : any
++>Math.sign(0) : any
++>Math.sign : any
+ >Math : Math
+->sign : (x: number) => number
++>sign : any
+ >0 : 0
+
+ const testMathLog10 = Math.log10(0);
+->testMathLog10 : number
+->Math.log10(0) : number
+->Math.log10 : (x: number) => number
++>testMathLog10 : any
++>Math.log10(0) : any
++>Math.log10 : any
+ >Math : Math
+->log10 : (x: number) => number
++>log10 : any
+ >0 : 0
+
+ const testMathLog2 = Math.log2(0);
+->testMathLog2 : number
+->Math.log2(0) : number
+->Math.log2 : (x: number) => number
++>testMathLog2 : any
++>Math.log2(0) : any
++>Math.log2 : any
+ >Math : Math
+->log2 : (x: number) => number
++>log2 : any
+ >0 : 0
+
+ const testMathLog1p = Math.log1p(0);
+->testMathLog1p : number
+->Math.log1p(0) : number
+->Math.log1p : (x: number) => number
++>testMathLog1p : any
++>Math.log1p(0) : any
++>Math.log1p : any
+ >Math : Math
+->log1p : (x: number) => number
++>log1p : any
+ >0 : 0
+
+ const testMathExpm1 = Math.expm1(0);
+->testMathExpm1 : number
+->Math.expm1(0) : number
+->Math.expm1 : (x: number) => number
++>testMathExpm1 : any
++>Math.expm1(0) : any
++>Math.expm1 : any
+ >Math : Math
+->expm1 : (x: number) => number
++>expm1 : any
+ >0 : 0
+
+ const testMathCosh = Math.cosh(0);
+->testMathCosh : number
+->Math.cosh(0) : number
+->Math.cosh : (x: number) => number
++>testMathCosh : any
++>Math.cosh(0) : any
++>Math.cosh : any
+ >Math : Math
+->cosh : (x: number) => number
++>cosh : any
+ >0 : 0
+
+ const testMathSinh = Math.sinh(0);
+->testMathSinh : number
+->Math.sinh(0) : number
+->Math.sinh : (x: number) => number
++>testMathSinh : any
++>Math.sinh(0) : any
++>Math.sinh : any
+ >Math : Math
+->sinh : (x: number) => number
++>sinh : any
+ >0 : 0
+
+ const testMathTanh = Math.tanh(0);
+->testMathTanh : number
+->Math.tanh(0) : number
+->Math.tanh : (x: number) => number
++>testMathTanh : any
++>Math.tanh(0) : any
++>Math.tanh : any
+ >Math : Math
+->tanh : (x: number) => number
++>tanh : any
+ >0 : 0
+
+ const testMathAcosh = Math.acosh(0);
+->testMathAcosh : number
+->Math.acosh(0) : number
+->Math.acosh : (x: number) => number
++>testMathAcosh : any
++>Math.acosh(0) : any
++>Math.acosh : any
+ >Math : Math
+->acosh : (x: number) => number
++>acosh : any
+ >0 : 0
+
+ const testMathAsinh = Math.asinh(0);
+->testMathAsinh : number
+->Math.asinh(0) : number
+->Math.asinh : (x: number) => number
++>testMathAsinh : any
++>Math.asinh(0) : any
++>Math.asinh : any
+ >Math : Math
+->asinh : (x: number) => number
++>asinh : any
+ >0 : 0
+
+ const testMathAtanh = Math.atanh(0);
+->testMathAtanh : number
+->Math.atanh(0) : number
+->Math.atanh : (x: number) => number
++>testMathAtanh : any
++>Math.atanh(0) : any
++>Math.atanh : any
+ >Math : Math
+->atanh : (x: number) => number
++>atanh : any
+ >0 : 0
+
+ const testMathHypot = Math.hypot(0,0);
+->testMathHypot : number
+->Math.hypot(0,0) : number
+->Math.hypot : (...values: number[]) => number
++>testMathHypot : any
++>Math.hypot(0,0) : any
++>Math.hypot : any
+ >Math : Math
+->hypot : (...values: number[]) => number
++>hypot : any
+ >0 : 0
+ >0 : 0
+
+ const testMathTrunc = Math.trunc(0);
+->testMathTrunc : number
+->Math.trunc(0) : number
+->Math.trunc : (x: number) => number
++>testMathTrunc : any
++>Math.trunc(0) : any
++>Math.trunc : any
+ >Math : Math
+->trunc : (x: number) => number
++>trunc : any
+ >0 : 0
+
+ const testMathFround = Math.fround(0);
+->testMathFround : number
+->Math.fround(0) : number
+->Math.fround : (x: number) => number
++>testMathFround : any
++>Math.fround(0) : any
++>Math.fround : any
+ >Math : Math
+->fround : (x: number) => number
++>fround : any
+ >0 : 0
+
+ const testMathCbrt = Math.cbrt(0);
+->testMathCbrt : number
+->Math.cbrt(0) : number
+->Math.cbrt : (x: number) => number
++>testMathCbrt : any
++>Math.cbrt(0) : any
++>Math.cbrt : any
+ >Math : Math
+->cbrt : (x: number) => number
++>cbrt : any
+ >0 : 0
+
+ const testMap: Map<any, any> = null as any;
+@@= skipped -435, +435 lines =@@
+ >null as any : any
+
+ const testPromiseAll = Promise.all([]);
+->testPromiseAll : Promise<[]>
+->Promise.all([]) : Promise<[]>
+->Promise.all : { <T>(values: Iterable<T | PromiseLike<T>>): Promise<Awaited<T>[]>; <T extends readonly unknown[] | []>(values: T): Promise<{ -readonly [P in keyof T]: Awaited<T[P]>; }>; }
+->Promise : PromiseConstructor
+->all : { <T>(values: Iterable<T | PromiseLike<T>>): Promise<Awaited<T>[]>; <T extends readonly unknown[] | []>(values: T): Promise<{ -readonly [P in keyof T]: Awaited<T[P]>; }>; }
+->[] : []
++>testPromiseAll : any
++>Promise.all([]) : any
++>Promise.all : any
++>Promise : any
++>all : any
++>[] : undefined[]
+
+ const testPromiseRace = Promise.race([]);
+->testPromiseRace : Promise<never>
+->Promise.race([]) : Promise<never>
+->Promise.race : { <T>(values: Iterable<T | PromiseLike<T>>): Promise<Awaited<T>>; <T extends readonly unknown[] | []>(values: T): Promise<Awaited<T[number]>>; }
+->Promise : PromiseConstructor
+->race : { <T>(values: Iterable<T | PromiseLike<T>>): Promise<Awaited<T>>; <T extends readonly unknown[] | []>(values: T): Promise<Awaited<T[number]>>; }
+->[] : []
++>testPromiseRace : any
++>Promise.race([]) : any
++>Promise.race : any
++>Promise : any
++>race : any
++>[] : undefined[]
+
+ const testPromiseResolve = Promise.resolve();
+->testPromiseResolve : Promise<void>
+->Promise.resolve() : Promise<void>
+->Promise.resolve : { (): Promise<void>; <T>(value: T): Promise<Awaited<T>>; <T>(value: T | PromiseLike<T>): Promise<Awaited<T>>; }
+->Promise : PromiseConstructor
+->resolve : { (): Promise<void>; <T>(value: T): Promise<Awaited<T>>; <T>(value: T | PromiseLike<T>): Promise<Awaited<T>>; }
++>testPromiseResolve : any
++>Promise.resolve() : any
++>Promise.resolve : any
++>Promise : any
++>resolve : any
+
+ const testPromiseReject = Promise.reject();
+->testPromiseReject : Promise<never>
+->Promise.reject() : Promise<never>
+->Promise.reject : <T = never>(reason?: any) => Promise<T>
+->Promise : PromiseConstructor
+->reject : <T = never>(reason?: any) => Promise<T>
++>testPromiseReject : any
++>Promise.reject() : any
++>Promise.reject : any
++>Promise : any
++>reject : any
+
+ const testSymbolFor = Symbol.for('a');
+->testSymbolFor : unique symbol
+->Symbol.for('a') : unique symbol
+->Symbol.for : (key: string) => symbol
+->Symbol : SymbolConstructor
+->for : (key: string) => symbol
++>testSymbolFor : any
++>Symbol.for('a') : any
++>Symbol.for : any
++>Symbol : any
++>for : any
+ >'a' : "a"
+
+ const testSymbolKeyFor = Symbol.keyFor(testSymbolFor);
+->testSymbolKeyFor : string
+->Symbol.keyFor(testSymbolFor) : string
+->Symbol.keyFor : (sym: symbol) => string | undefined
+->Symbol : SymbolConstructor
+->keyFor : (sym: symbol) => string | undefined
+->testSymbolFor : unique symbol
++>testSymbolKeyFor : any
++>Symbol.keyFor(testSymbolFor) : any
++>Symbol.keyFor : any
++>Symbol : any
++>keyFor : any
++>testSymbolFor : any
+
+ const testWeakMap: WeakMap<any, any> = null as any;
+ >testWeakMap : WeakMap<any, any>
+@@= skipped -62, +62 lines =@@
+ >null as any : any
+
+ const testStringCodePointAt = "".codePointAt(0);
+->testStringCodePointAt : number
+->"".codePointAt(0) : number
+->"".codePointAt : (pos: number) => number | undefined
++>testStringCodePointAt : any
++>"".codePointAt(0) : any
++>"".codePointAt : any
+ >"" : ""
+->codePointAt : (pos: number) => number | undefined
++>codePointAt : any
+ >0 : 0
+
+ const testStringIncludes = "".includes("");
+->testStringIncludes : boolean
+->"".includes("") : boolean
+->"".includes : (searchString: string, position?: number) => boolean
++>testStringIncludes : any
++>"".includes("") : any
++>"".includes : any
+ >"" : ""
+->includes : (searchString: string, position?: number) => boolean
++>includes : any
+ >"" : ""
+
+ const testStringEndsWith = "".endsWith("");
+->testStringEndsWith : boolean
+->"".endsWith("") : boolean
+->"".endsWith : (searchString: string, endPosition?: number) => boolean
++>testStringEndsWith : any
++>"".endsWith("") : any
++>"".endsWith : any
+ >"" : ""
+->endsWith : (searchString: string, endPosition?: number) => boolean
++>endsWith : any
+ >"" : ""
+
+ const testStringNormalize = "".normalize();
+->testStringNormalize : string
+->"".normalize() : string
+->"".normalize : { (form: "NFC" | "NFD" | "NFKC" | "NFKD"): string; (form?: string): string; }
++>testStringNormalize : any
++>"".normalize() : any
++>"".normalize : any
+ >"" : ""
+->normalize : { (form: "NFC" | "NFD" | "NFKC" | "NFKD"): string; (form?: string): string; }
++>normalize : any
+
+ const testStringRepeat = "".repeat(0);
+->testStringRepeat : string
+->"".repeat(0) : string
+->"".repeat : (count: number) => string
++>testStringRepeat : any
++>"".repeat(0) : any
++>"".repeat : any
+ >"" : ""
+->repeat : (count: number) => string
++>repeat : any
+ >0 : 0
+
+ const testStringStartsWith = "".startsWith("");
+->testStringStartsWith : boolean
+->"".startsWith("") : boolean
+->"".startsWith : (searchString: string, position?: number) => boolean
++>testStringStartsWith : any
++>"".startsWith("") : any
++>"".startsWith : any
+ >"" : ""
+->startsWith : (searchString: string, position?: number) => boolean
++>startsWith : any
+ >"" : ""
+
+ const testStringAnchor = "".anchor("");
+->testStringAnchor : string
+->"".anchor("") : string
+->"".anchor : (name: string) => string
++>testStringAnchor : any
++>"".anchor("") : any
++>"".anchor : any
+ >"" : ""
+->anchor : (name: string) => string
++>anchor : any
+ >"" : ""
+
+ const testStringBig = "".big();
+->testStringBig : string
+->"".big() : string
+->"".big : () => string
++>testStringBig : any
++>"".big() : any
++>"".big : any
+ >"" : ""
+->big : () => string
++>big : any
+
+ const testStringBlink = "".blink();
+->testStringBlink : string
+->"".blink() : string
+->"".blink : () => string
++>testStringBlink : any
++>"".blink() : any
++>"".blink : any
+ >"" : ""
+->blink : () => string
++>blink : any
+
+ const testStringBold = "".bold();
+->testStringBold : string
+->"".bold() : string
+->"".bold : () => string
++>testStringBold : any
++>"".bold() : any
++>"".bold : any
+ >"" : ""
+->bold : () => string
++>bold : any
+
+ const testStringFixed = "".fixed();
+->testStringFixed : string
+->"".fixed() : string
+->"".fixed : () => string
++>testStringFixed : any
++>"".fixed() : any
++>"".fixed : any
+ >"" : ""
+->fixed : () => string
++>fixed : any
+
+ const testStringFontColor = "".fontcolor("blue");
+->testStringFontColor : string
+->"".fontcolor("blue") : string
+->"".fontcolor : (color: string) => string
++>testStringFontColor : any
++>"".fontcolor("blue") : any
++>"".fontcolor : any
+ >"" : ""
+->fontcolor : (color: string) => string
++>fontcolor : any
+ >"blue" : "blue"
+
+ const testStringFontSize = "".fontsize(0);
+->testStringFontSize : string
+->"".fontsize(0) : string
+->"".fontsize : { (size: number): string; (size: string): string; }
++>testStringFontSize : any
++>"".fontsize(0) : any
++>"".fontsize : any
+ >"" : ""
+->fontsize : { (size: number): string; (size: string): string; }
++>fontsize : any
+ >0 : 0
+
+ const testStringItalics = "".italics();
+->testStringItalics : string
+->"".italics() : string
+->"".italics : () => string
++>testStringItalics : any
++>"".italics() : any
++>"".italics : any
+ >"" : ""
+->italics : () => string
++>italics : any
+
+ const testStringLink = "".link("");
+->testStringLink : string
+->"".link("") : string
+->"".link : (url: string) => string
++>testStringLink : any
++>"".link("") : any
++>"".link : any
+ >"" : ""
+->link : (url: string) => string
++>link : any
+ >"" : ""
+
+ const testStringSmall = "".small();
+->testStringSmall : string
+->"".small() : string
+->"".small : () => string
++>testStringSmall : any
++>"".small() : any
++>"".small : any
+ >"" : ""
+->small : () => string
++>small : any
+
+ const testStringStrike = "".strike();
+->testStringStrike : string
+->"".strike() : string
+->"".strike : () => string
++>testStringStrike : any
++>"".strike() : any
++>"".strike : any
+ >"" : ""
+->strike : () => string
++>strike : any
+
+ const testStringSub = "".sub();
+->testStringSub : string
+->"".sub() : string
+->"".sub : () => string
++>testStringSub : any
++>"".sub() : any
++>"".sub : any
+ >"" : ""
+->sub : () => string
++>sub : any
+
+ const testStringSup = "".sup();
+->testStringSup : string
+->"".sup() : string
+->"".sup : () => string
++>testStringSup : any
++>"".sup() : any
++>"".sup : any
+ >"" : ""
+->sup : () => string
++>sup : any
+
+ const testStringConstructorFromCodePoint = String.fromCodePoint();
+->testStringConstructorFromCodePoint : string
+->String.fromCodePoint() : string
+->String.fromCodePoint : (...codePoints: number[]) => string
++>testStringConstructorFromCodePoint : any
++>String.fromCodePoint() : any
++>String.fromCodePoint : any
+ >String : StringConstructor
+->fromCodePoint : (...codePoints: number[]) => string
++>fromCodePoint : any
+
+ const testStringConstructorRaw = String.raw``;
+->testStringConstructorRaw : string
+->String.raw`` : string
+->String.raw : (template: { raw: readonly string[] | ArrayLike<string>; }, ...substitutions: any[]) => string
++>testStringConstructorRaw : any
++>String.raw`` : any
++>String.raw : any
+ >String : StringConstructor
+->raw : (template: { raw: readonly string[] | ArrayLike<string>; }, ...substitutions: any[]) => string
++>raw : any
+ >`` : ""
+
+ const testRegExpFlags = /abc/g.flags;
+->testRegExpFlags : string
+->/abc/g.flags : string
++>testRegExpFlags : any
++>/abc/g.flags : any
+ >/abc/g : RegExp
+->flags : string
++>flags : any
+
+ const testRegExpSticky = /abc/g.sticky;
+->testRegExpSticky : boolean
+->/abc/g.sticky : boolean
++>testRegExpSticky : any
++>/abc/g.sticky : any
+ >/abc/g : RegExp
+->sticky : boolean
++>sticky : any
+
+ const testRegExpUnicode = /abc/g.unicode;
+->testRegExpUnicode : boolean
+->/abc/g.unicode : boolean
++>testRegExpUnicode : any
++>/abc/g.unicode : any
+ >/abc/g : RegExp
+->unicode : boolean
++>unicode : any

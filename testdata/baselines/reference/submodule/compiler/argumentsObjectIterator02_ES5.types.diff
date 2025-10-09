@@ -1,0 +1,31 @@
+--- old.argumentsObjectIterator02_ES5.types
++++ new.argumentsObjectIterator02_ES5.types
+@@= skipped -7, +7 lines =@@
+ >z : number
+
+     let blah = arguments[Symbol.iterator];
+->blah : () => ArrayIterator<any>
+->arguments[Symbol.iterator] : () => ArrayIterator<any>
++>blah : any
++>arguments[Symbol.iterator] : any
+ >arguments : IArguments
+->Symbol.iterator : unique symbol
+->Symbol : SymbolConstructor
+->iterator : unique symbol
++>Symbol.iterator : any
++>Symbol : any
++>iterator : any
+
+     let result = [];
+ >result : any[]
+@@= skipped -13, +13 lines =@@
+
+     for (let arg of blah()) {
+ >arg : any
+->blah() : ArrayIterator<any>
+->blah : () => ArrayIterator<any>
++>blah() : any
++>blah : any
+
+         result.push(arg + arg);
+ >result.push(arg + arg) : number

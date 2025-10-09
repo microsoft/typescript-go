@@ -220,18 +220,18 @@
 
      z.f();
  >z.f() : void
-->z.f : (() => void) | ((x?: string) => void)
+->z.f : ((x?: string) => void) | (() => void)
 +>z.f : (() => void) | ((x?: string | undefined) => void)
  >z : A | B
-->f : (() => void) | ((x?: string) => void)
+->f : ((x?: string) => void) | (() => void)
 +>f : (() => void) | ((x?: string | undefined) => void)
 
      z.f('hello');
  >z.f('hello') : void
-->z.f : (() => void) | ((x?: string) => void)
+->z.f : ((x?: string) => void) | (() => void)
 +>z.f : (() => void) | ((x?: string | undefined) => void)
  >z : A | B
-->f : (() => void) | ((x?: string) => void)
+->f : ((x?: string) => void) | (() => void)
 +>f : (() => void) | ((x?: string | undefined) => void)
  >'hello' : "hello"
  }

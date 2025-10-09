@@ -1,6 +1,15 @@
 --- old.stringIndexerConstrainsPropertyDeclarations.symbols
 +++ new.stringIndexerConstrainsPropertyDeclarations.symbols
-@@= skipped -40, +40 lines =@@
+@@= skipped -4, +4 lines =@@
+
+ interface MyString extends String {
+ >MyString : Symbol(MyString, Decl(stringIndexerConstrainsPropertyDeclarations.ts, 0, 0))
+->String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --) ... and 1 more)
++>String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+     foo: number;
+ >foo : Symbol(MyString.foo, Decl(stringIndexerConstrainsPropertyDeclarations.ts, 2, 35))
+@@= skipped -36, +36 lines =@@
  >2.0 : Symbol(C[2.0], Decl(stringIndexerConstrainsPropertyDeclarations.ts, 16, 16))
 
      "3.0": string; // ok

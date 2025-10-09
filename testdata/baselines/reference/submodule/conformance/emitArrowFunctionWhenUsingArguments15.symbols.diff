@@ -1,0 +1,11 @@
+--- old.emitArrowFunctionWhenUsingArguments15.symbols
++++ new.emitArrowFunctionWhenUsingArguments15.symbols
+@@= skipped -8, +8 lines =@@
+
+     if (Math.random()) {
+ >Math.random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+->Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+
+         const arguments = 100;

@@ -5,16 +5,24 @@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var React = require("react");
-+const React = require("react");
- class TestObject {
--    constructor() {
+-var TestObject = /** @class */ (function () {
+-    function TestObject() {
 -        this.a = '';
 -        this.b = 1;
--        this.c = () => { };
+-        this.c = function () { };
 -    }
+-    return TestObject;
+-}());
++const React = require("react");
++class TestObject {
 +    a = '';
 +    b = 1;
 +    c = () => { };
- }
++}
  function Test(props) { return React.createElement(React.Fragment, null); }
- const model = new TestObject();
+-var model = new TestObject();
+-var el1 = React.createElement(Test, { model: model, foo: "c" });
+-var el2 = React.createElement(Test, { model: model, foo: "c" });
++const model = new TestObject();
++const el1 = React.createElement(Test, { model: model, foo: "c" });
++const el2 = React.createElement(Test, { model: model, foo: "c" });

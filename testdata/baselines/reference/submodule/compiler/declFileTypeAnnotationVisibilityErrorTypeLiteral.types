@@ -1,13 +1,13 @@
 //// [tests/cases/compiler/declFileTypeAnnotationVisibilityErrorTypeLiteral.ts] ////
 
 === declFileTypeAnnotationVisibilityErrorTypeLiteral.ts ===
-module m {
+namespace m {
 >m : typeof m
 
     class private1 {
 >private1 : private1
     }
-    module m2 {
+    namespace m2 {
 >m2 : typeof m2
 
         export class public1 {

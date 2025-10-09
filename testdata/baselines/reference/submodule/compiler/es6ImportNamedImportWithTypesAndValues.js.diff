@@ -1,21 +1,28 @@
 --- old.es6ImportNamedImportWithTypesAndValues.js
 +++ new.es6ImportNamedImportWithTypesAndValues.js
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
+ "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.C2 = exports.C = void 0;
- class C {
--    constructor() {
+-var C = /** @class */ (function () {
+-    function C() {
 -        this.prop = "hello";
 -    }
+-    return C;
+-}());
++class C {
 +    prop = "hello";
- }
++}
  exports.C = C;
- class C2 {
--    constructor() {
+-var C2 = /** @class */ (function () {
+-    function C2() {
 -        this.prop2 = "world";
 -    }
+-    return C2;
+-}());
++class C2 {
 +    prop2 = "world";
- }
++}
  exports.C2 = C2;
  //// [client.js]
  "use strict";

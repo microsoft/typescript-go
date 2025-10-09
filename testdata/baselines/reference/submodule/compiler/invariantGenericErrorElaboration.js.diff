@@ -6,5 +6,7 @@
  //// [invariantGenericErrorElaboration.js]
 -"use strict";
  // Repro from #19746
- const wat = Num;
- const Foo = Obj({ foo: Num });
+-var wat = Num;
+-var Foo = Obj({ foo: Num });
++const wat = Num;
++const Foo = Obj({ foo: Num });

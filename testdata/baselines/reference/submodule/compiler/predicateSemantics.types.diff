@@ -1,10 +1,36 @@
 --- old.predicateSemantics.types
 +++ new.predicateSemantics.types
-@@= skipped -253, +253 lines =@@
+@@= skipped -5, +5 lines =@@
+
+ // OK: One or other operand is possibly nullish
+ const test1 = (opt ? undefined : 32) ?? "possibly reached";
+->test1 : 32 | "possibly reached"
+->(opt ? undefined : 32) ?? "possibly reached" : 32 | "possibly reached"
++>test1 : "possibly reached" | 32
++>(opt ? undefined : 32) ?? "possibly reached" : "possibly reached" | 32
+ >(opt ? undefined : 32) : 32
+ >opt ? undefined : 32 : 32
+ >opt : number
+@@= skipped -21, +21 lines =@@
+
+ // Not OK: Both operands non-nullish
+ const test3 = (opt ? 132 : 17) ?? "unreachable";
+->test3 : 132 | 17 | "unreachable"
+->(opt ? 132 : 17) ?? "unreachable" : 132 | 17 | "unreachable"
+->(opt ? 132 : 17) : 132 | 17
+->opt ? 132 : 17 : 132 | 17
++>test3 : "unreachable" | 17 | 132
++>(opt ? 132 : 17) ?? "unreachable" : "unreachable" | 17 | 132
++>(opt ? 132 : 17) : 17 | 132
++>opt ? 132 : 17 : 17 | 132
+ >opt : number
+ >132 : 132
+ >17 : 17
+@@= skipped -227, +227 lines =@@
  >cond : any
 
  function foo(this: Object | undefined) {
-->foo : (this: Object | undefined) => 0 | Object
+->foo : (this: Object | undefined) => Object | 0
 +>foo : (this: Object) => 0 | Object
  >this : Object
 
@@ -26,4 +52,17 @@
 +>tag : <T>(strings: TemplateStringsArray, ...values: number[]) => T
  >`foo${1}` : string
  >1 : 1
+ >32 : 32
+
+ `foo${1}` ?? 32; // error
+->`foo${1}` ?? 32 : 32 | "foo1"
++>`foo${1}` ?? 32 : "foo1" | 32
+ >`foo${1}` : "foo1"
+ >1 : 1
+ >32 : 32
+
+ `foo` ?? 32; // error
+->`foo` ?? 32 : 32 | "foo"
++>`foo` ?? 32 : "foo" | 32
+ >`foo` : "foo"
  >32 : 32

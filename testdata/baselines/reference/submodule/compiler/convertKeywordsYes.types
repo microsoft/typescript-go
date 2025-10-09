@@ -918,7 +918,7 @@ enum bigEnum {
 >with : bigEnum.with
 }
 
-module bigModule {
+namespace bigModule {
 >bigModule : typeof bigModule
 
     class constructor { }

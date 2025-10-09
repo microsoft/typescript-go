@@ -1,0 +1,11 @@
+--- old.genericCallInferenceUsingThisTypeNoInvalidCacheReuseAfterMappedTypeApplication1.symbols
++++ new.genericCallInferenceUsingThisTypeNoInvalidCacheReuseAfterMappedTypeApplication1.symbols
+@@= skipped -115, +115 lines =@@
+ >implement : Symbol(implement, Decl(genericCallInferenceUsingThisTypeNoInvalidCacheReuseAfterMappedTypeApplication1.ts, 30, 13))
+ >T : Symbol(T, Decl(genericCallInferenceUsingThisTypeNoInvalidCacheReuseAfterMappedTypeApplication1.ts, 30, 26))
+ >I : Symbol(I, Decl(genericCallInferenceUsingThisTypeNoInvalidCacheReuseAfterMappedTypeApplication1.ts, 30, 35))
+->ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --))
+ >X : Symbol(X, Decl(genericCallInferenceUsingThisTypeNoInvalidCacheReuseAfterMappedTypeApplication1.ts, 30, 64))
+
+   x: (...i: I) => X,

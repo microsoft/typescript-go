@@ -1,6 +1,11 @@
 --- old.declarationEmitMappedTypeDistributivityPreservesConstraints.js
 +++ new.declarationEmitMappedTypeDistributivityPreservesConstraints.js
-@@= skipped -26, +26 lines =@@
+@@= skipped -22, +22 lines =@@
+ function fn(sliceIndex) {
+     return null;
+ }
+-exports.default = { fn: fn };
++exports.default = { fn };
  //// [reexport.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -9,7 +14,7 @@
  exports.default = { test: types_1.default };
 
 
-@@= skipped -28, +28 lines =@@
+@@= skipped -32, +32 lines =@@
              } ? { [K in keyof T_1]: T_1[K]; } : never;
          }>(sliceIndex: T) => T["x"] extends infer T_2 extends {
              [x: string]: (...params: unknown[]) => unknown;

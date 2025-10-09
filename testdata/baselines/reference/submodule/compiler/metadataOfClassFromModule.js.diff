@@ -16,19 +16,24 @@
  var MyModule;
  (function (MyModule) {
      function inject(target, key) { }
-@@= skipped -16, +7 lines =@@
-     class Leg {
-     }
+     MyModule.inject = inject;
+-    var Leg = /** @class */ (function () {
+-        function Leg() {
+-        }
+-        return Leg;
+-    }());
++    class Leg {
++    }
      MyModule.Leg = Leg;
--    let Person = (() => {
--        class Person {
+-    var Person = /** @class */ (function () {
+-        function Person() {
 -        }
 -        __decorate([
 -            inject,
 -            __metadata("design:type", Leg)
 -        ], Person.prototype, "leftLeg", void 0);
 -        return Person;
--    })();
+-    }());
 +    class Person {
 +        @inject
 +        leftLeg;

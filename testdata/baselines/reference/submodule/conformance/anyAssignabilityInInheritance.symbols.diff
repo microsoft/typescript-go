@@ -1,0 +1,24 @@
+--- old.anyAssignabilityInInheritance.symbols
++++ new.anyAssignabilityInInheritance.symbols
+@@= skipped -57, +57 lines =@@
+ declare function foo5(x: Date): Date;
+ >foo5 : Symbol(foo5, Decl(anyAssignabilityInInheritance.ts, 19, 17), Decl(anyAssignabilityInInheritance.ts, 21, 37))
+ >x : Symbol(x, Decl(anyAssignabilityInInheritance.ts, 21, 22))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+ declare function foo5(x: any): any;
+ >foo5 : Symbol(foo5, Decl(anyAssignabilityInInheritance.ts, 19, 17), Decl(anyAssignabilityInInheritance.ts, 21, 37))
+@@= skipped -15, +15 lines =@@
+ declare function foo6(x: RegExp): RegExp;
+ >foo6 : Symbol(foo6, Decl(anyAssignabilityInInheritance.ts, 23, 17), Decl(anyAssignabilityInInheritance.ts, 25, 41))
+ >x : Symbol(x, Decl(anyAssignabilityInInheritance.ts, 25, 22))
+->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
++>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+ declare function foo6(x: any): any;
+ >foo6 : Symbol(foo6, Decl(anyAssignabilityInInheritance.ts, 23, 17), Decl(anyAssignabilityInInheritance.ts, 25, 41))

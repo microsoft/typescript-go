@@ -9,7 +9,16 @@
 
      additionalFiles: {
  >additionalFiles : any
-@@= skipped -44, +44 lines =@@
+@@= skipped -14, +14 lines =@@
+
+ }: {
+   additionalFiles?: Partial<Record<"json" | "jsonc" | "json5", string[]>>;
+->additionalFiles : Partial<Record<"json" | "jsonc" | "json5", string[]>>
++>additionalFiles : Partial<Record<"json" | "json5" | "jsonc", string[]>>
+
+ } = {}) {
+ >{} : {}
+@@= skipped -30, +30 lines =@@
  }
 
  export const prepareConfigWithContextualSignature: (param:{
@@ -19,7 +28,8 @@
 +>param : { additionalFiles?: Partial<Record<"json" | "json5" | "jsonc", string[]>>; }
 
    additionalFiles?: Partial<Record<"json" | "jsonc" | "json5", string[]>>;
- >additionalFiles : Partial<Record<"json" | "json5" | "jsonc", string[]>>
+->additionalFiles : Partial<Record<"json" | "jsonc" | "json5", string[]>>
++>additionalFiles : Partial<Record<"json" | "json5" | "jsonc", string[]>>
 
  }) => void = ({
 ->({    additionalFiles: {        json = []    } = {}} = {}) => {    json // string[]} : ({ additionalFiles: { json } }?: { additionalFiles?: Partial<Record<"json" | "jsonc" | "json5", string[]>>; }) => void

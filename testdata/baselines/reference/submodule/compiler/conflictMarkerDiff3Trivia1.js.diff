@@ -1,11 +1,15 @@
 --- old.conflictMarkerDiff3Trivia1.js
 +++ new.conflictMarkerDiff3Trivia1.js
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
+ }
 
  //// [conflictMarkerDiff3Trivia1.js]
- class C {
--    constructor() {
+-var C = /** @class */ (function () {
+-    function C() {
 -        this.v = 1;
 -    }
+-    return C;
+-}());
++class C {
 +    v = 1;
- }
++}

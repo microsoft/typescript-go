@@ -1,0 +1,10 @@
+--- old.sourceMapValidationDestructuringVariableStatementArrayBindingPatternDefaultValues.types
++++ new.sourceMapValidationDestructuringVariableStatementArrayBindingPatternDefaultValues.types
+@@= skipped -25, +25 lines =@@
+ >"trimming" : "trimming"
+
+ let [, nameA = "noName"] = robotA;
+-> : undefined
+ >nameA : string
+ >"noName" : "noName"
+ >robotA : Robot

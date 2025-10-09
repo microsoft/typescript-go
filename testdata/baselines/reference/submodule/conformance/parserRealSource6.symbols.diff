@@ -1,0 +1,11 @@
+--- old.parserRealSource6.symbols
++++ new.parserRealSource6.symbols
+@@= skipped -285, +285 lines =@@
+     export function pushTypeCollectionScope(container: Symbol,
+ >pushTypeCollectionScope : Symbol(pushTypeCollectionScope, Decl(parserRealSource6.ts, 89, 5))
+ >container : Symbol(container, Decl(parserRealSource6.ts, 91, 44))
+->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --))
+
+         valueMembers: ScopedMembers,
+ >valueMembers : Symbol(valueMembers, Decl(parserRealSource6.ts, 91, 62))

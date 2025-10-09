@@ -1,0 +1,16 @@
+--- old.arraySigChecking.symbols
++++ new.arraySigChecking.symbols
+@@= skipped -66, +66 lines =@@
+
+ isEmpty(new Array(3));
+ >isEmpty : Symbol(isEmpty, Decl(arraySigChecking.ts, 21, 19))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+ isEmpty(new Array<string>(3));
+ >isEmpty : Symbol(isEmpty, Decl(arraySigChecking.ts, 21, 19))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+ isEmpty(['a']);
+ >isEmpty : Symbol(isEmpty, Decl(arraySigChecking.ts, 21, 19))

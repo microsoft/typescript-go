@@ -13,12 +13,12 @@ test/file1.ts(1,22): error TS2307: Cannot find module 'foo' or its corresponding
     }
     
 ==== test/foo.d.ts (0 errors) ====
-    export declare module M2 {
+    export declare namespace M2 {
     	export var x: boolean;
     }
     
 ==== test/other.d.ts (0 errors) ====
-    export declare module M2 {
+    export declare namespace M2 {
     	export var x: string;
     }
     

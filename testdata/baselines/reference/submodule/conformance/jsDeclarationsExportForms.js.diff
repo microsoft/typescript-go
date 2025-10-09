@@ -1,6 +1,20 @@
 --- old.jsDeclarationsExportForms.js
 +++ new.jsDeclarationsExportForms.js
-@@= skipped -110, +110 lines =@@
+@@= skipped -61, +61 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Foo = void 0;
+-var Foo = /** @class */ (function () {
+-    function Foo() {
+-    }
+-    return Foo;
+-}());
++class Foo {
++}
+ exports.Foo = Foo;
+ //// [func.js]
+ "use strict";
+@@= skipped -52, +49 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.Foo = void 0;
@@ -28,22 +42,27 @@
 +const ns = require("./cls");
  exports.classContainer = ns;
  //// [cjs.js]
- const ns = require("./cls");
- module.exports = { ns };
+-var ns = require("./cls");
+-module.exports = { ns: ns };
++const ns = require("./cls");
++module.exports = { ns };
  //// [cjs2.js]
- const ns = require("./cls");
+-var ns = require("./cls");
++const ns = require("./cls");
 +export = ns;
  module.exports = ns;
  //// [cjs3.js]
+-var ns = require("./cls");
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
- const ns = require("./cls");
++const ns = require("./cls");
 +export var ns = ns;
  module.exports.ns = ns;
  //// [cjs4.js]
+-var ns = require("./cls");
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
- const ns = require("./cls");
++const ns = require("./cls");
 +export var names = ns;
  module.exports.names = ns;
  //// [includeAll.js]

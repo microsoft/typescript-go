@@ -5,13 +5,18 @@
 
  //// [privateNameJsx.jsx]
 -var _Test_prop;
- class Test {
--    constructor() {
--        _Test_prop.set(this, () => <div />);
+-var Test = /** @class */ (function () {
+-    function Test() {
+-        _Test_prop.set(this, function () { return <div />; });
 -    }
+-    Test.prototype.render = function () {
++class Test {
 +    #prop = () => <div />;
-     render() {
++    render() {
          return <this. />;
-     }
- }
+-    };
+-    return Test;
+-}());
 -_Test_prop = new WeakMap();
++    }
++}

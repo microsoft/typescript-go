@@ -1,0 +1,38 @@
+--- old.intraExpressionInferences.symbols
++++ new.intraExpressionInferences.symbols
+@@= skipped -541, +541 lines =@@
+     map: (number) => String(number)
+ >map : Symbol(map, Decl(intraExpressionInferences.ts, 170, 35))
+ >number : Symbol(number, Decl(intraExpressionInferences.ts, 171, 10))
+->String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --) ... and 1 more)
++>String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >number : Symbol(number, Decl(intraExpressionInferences.ts, 171, 10))
+
+ });
+@@= skipped -17, +17 lines =@@
+     map: (number) => String(number)
+ >map : Symbol(map, Decl(intraExpressionInferences.ts, 175, 48))
+ >number : Symbol(number, Decl(intraExpressionInferences.ts, 176, 10))
+->String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --) ... and 1 more)
++>String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >number : Symbol(number, Decl(intraExpressionInferences.ts, 176, 10))
+
+ });
+@@= skipped -17, +17 lines =@@
+     map: (number) => String(number)
+ >map : Symbol(map, Decl(intraExpressionInferences.ts, 180, 40))
+ >number : Symbol(number, Decl(intraExpressionInferences.ts, 181, 10))
+->String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --) ... and 1 more)
++>String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >number : Symbol(number, Decl(intraExpressionInferences.ts, 181, 10))
+
+ });
+@@= skipped -277, +277 lines =@@
+   b: Math.random() ? (arg) => "first" as const : (arg) => "two" as const,
+ >b : Symbol(b, Decl(intraExpressionInferences.ts, 262, 20))
+ >Math.random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+->Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+ >arg : Symbol(arg, Decl(intraExpressionInferences.ts, 263, 22))
+ >const : Symbol(const)

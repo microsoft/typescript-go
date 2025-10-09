@@ -1,21 +1,26 @@
 --- old.declarationEmitShadowing.js
 +++ new.declarationEmitShadowing.js
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
+ Object.defineProperty(exports, "__esModule", { value: true });
  exports.A = void 0;
  exports.needsRenameForShadowing = needsRenameForShadowing;
- class A {
--    constructor() {
--        this.ShadowedButDoesNotRequireRenaming = () => {
+-var A = /** @class */ (function () {
+-    function A() {
+-        this.ShadowedButDoesNotRequireRenaming = function () {
 -            return null;
 -        };
 -    }
+-    return A;
+-}());
++class A {
 +    ShadowedButDoesNotRequireRenaming = () => {
 +        return null;
 +    };
- }
++}
  exports.A = A;
  function needsRenameForShadowing() {
-@@= skipped -17, +15 lines =@@
+     return function O(t, t2) {
+@@= skipped -19, +16 lines =@@
  export declare class A<T = any> {
      readonly ShadowedButDoesNotRequireRenaming: <T_1>() => T_1;
  }

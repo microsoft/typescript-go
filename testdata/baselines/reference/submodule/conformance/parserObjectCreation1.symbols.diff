@@ -1,0 +1,8 @@
+--- old.parserObjectCreation1.symbols
++++ new.parserObjectCreation1.symbols
+@@= skipped -2, +2 lines =@@
+ === parserObjectCreation1.ts ===
+ var autoToken: number[] = new Array<number[]>(1);
+ >autoToken : Symbol(autoToken, Decl(parserObjectCreation1.ts, 0, 3))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))

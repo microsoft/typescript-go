@@ -5,4 +5,5 @@
 
  //// [mappedTypeWithCombinedTypeMappers.js]
 -// Repro from #13351
- const shouldFail = output.x.children;
+-var shouldFail = output.x.children;
++const shouldFail = output.x.children;

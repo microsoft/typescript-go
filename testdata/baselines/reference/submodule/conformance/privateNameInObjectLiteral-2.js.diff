@@ -1,10 +1,12 @@
 --- old.privateNameInObjectLiteral-2.js
 +++ new.privateNameInObjectLiteral-2.js
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
+
 
  //// [privateNameInObjectLiteral-2.js]
- const obj = {
--    () {
+-var obj = {
+-    : function () {
++const obj = {
 +    #foo() {
      }
  };

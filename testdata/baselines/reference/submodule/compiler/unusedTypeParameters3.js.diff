@@ -1,10 +1,19 @@
 --- old.unusedTypeParameters3.js
 +++ new.unusedTypeParameters3.js
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
+ }
 
  //// [unusedTypeParameters3.js]
- class greeter {
+-var greeter = /** @class */ (function () {
+-    function greeter() {
+-    }
+-    greeter.prototype.function1 = function () {
++class greeter {
 +    x;
-     function1() {
++    function1() {
          this.x;
-     }
+-    };
+-    return greeter;
+-}());
++    }
++}

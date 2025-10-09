@@ -8,3 +8,14 @@
  var __assign = (this && this.__assign) || function () {
      __assign = Object.assign || function(t) {
          for (var s, i = 1, n = arguments.length; i < n; i++) {
+@@= skipped -12, +11 lines =@@
+     };
+     return __assign.apply(this, arguments);
+ };
+-var obj = { a: { x: 'hello', y: 2 }, c: 5 }; // Nested excess property
+-var weak = wrong; // Nested weak object type
++let obj = { a: { x: 'hello', y: 2 }, c: 5 }; // Nested excess property
++let weak = wrong; // Nested weak object type
+ function foo(x, y) {
+     x = y; // Mismatched property in source intersection
+ }

@@ -1,9 +1,15 @@
 --- old.unusedTypeParameters7.js
 +++ new.unusedTypeParameters7.js
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
+ interface C<T> { }
 
  //// [a.js]
- class C {
+-var C = /** @class */ (function () {
+-    function C() {
+-    }
+-    return C;
+-}());
++class C {
 +    a;
- }
++}
  //// [b.js]

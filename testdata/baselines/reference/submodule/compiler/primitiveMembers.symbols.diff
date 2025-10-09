@@ -1,0 +1,29 @@
+--- old.primitiveMembers.symbols
++++ new.primitiveMembers.symbols
+@@= skipped -40, +40 lines =@@
+
+ var f: Function = (x: string) => x.length;
+ >f : Symbol(f, Decl(primitiveMembers.ts, 14, 3))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >x : Symbol(x, Decl(primitiveMembers.ts, 14, 19))
+ >x.length : Symbol(String.length, Decl(lib.es5.d.ts, --, --))
+ >x : Symbol(x, Decl(primitiveMembers.ts, 14, 19))
+@@= skipped -8, +8 lines =@@
+
+ var r2: RegExp = /./g;
+ >r2 : Symbol(r2, Decl(primitiveMembers.ts, 15, 3))
+->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+ var n2: Number = 34;
+ >n2 : Symbol(n2, Decl(primitiveMembers.ts, 16, 3))
+@@= skipped -8, +8 lines =@@
+
+ var s: String = "yo";
+ >s : Symbol(s, Decl(primitiveMembers.ts, 17, 3))
+->String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --) ... and 1 more)
++>String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+ var b: Boolean = true;
+ >b : Symbol(b, Decl(primitiveMembers.ts, 18, 3))

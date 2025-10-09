@@ -1,24 +1,42 @@
 --- old.exportImportAlias.js
 +++ new.exportImportAlias.js
-@@= skipped -75, +75 lines =@@
+@@= skipped -74, +74 lines =@@
+ var A;
  (function (A) {
      A.x = 'hello world';
-     class Point {
+-    var Point = /** @class */ (function () {
+-        function Point(x, y) {
++    class Point {
 +        x;
 +        y;
-         constructor(x, y) {
++        constructor(x, y) {
              this.x = x;
              this.y = y;
-@@= skipped -23, +25 lines =@@
+         }
+-        return Point;
+-    }());
++    }
+     A.Point = Point;
+ })(A || (A = {}));
+ var C;
+@@= skipped -24, +25 lines =@@
+     }
      X.Y = Y;
      (function (Y) {
-         class Point {
+-        var Point = /** @class */ (function () {
+-            function Point(x, y) {
++        class Point {
 +            x;
 +            y;
-             constructor(x, y) {
++            constructor(x, y) {
                  this.x = x;
                  this.y = y;
-@@= skipped -10, +12 lines =@@
+             }
+-            return Point;
+-        }());
++        }
+         Y.Point = Point;
+     })(Y = X.Y || (X.Y = {}));
  })(X || (X = {}));
  var Z;
  (function (Z) {
@@ -26,11 +44,19 @@
      Z.y = X.Y;
  })(Z || (Z = {}));
  var m = Z.y();
-@@= skipped -8, +7 lines =@@
+ var n = new Z.y.Point(0, 0);
  var K;
  (function (K) {
-     class L {
+-    var L = /** @class */ (function () {
+-        function L(name) {
++    class L {
 +        name;
-         constructor(name) {
++        constructor(name) {
              this.name = name;
          }
+-        return L;
+-    }());
++    }
+     K.L = L;
+     (function (L) {
+         L.y = 12;

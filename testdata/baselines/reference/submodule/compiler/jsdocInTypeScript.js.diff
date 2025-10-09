@@ -1,23 +1,41 @@
 --- old.jsdocInTypeScript.js
 +++ new.jsdocInTypeScript.js
-@@= skipped -60, +60 lines =@@
+@@= skipped -59, +59 lines =@@
+
 
  //// [jsdocInTypeScript.js]
- class T {
+-var T = /** @class */ (function () {
+-    function T() {
+-    }
+-    return T;
+-}());
++class T {
 +    prop;
- }
++}
  x.prop;
  // @param type has no effect.
-@@= skipped -18, +19 lines =@@
+ /**
+@@= skipped -17, +15 lines =@@
+ f(true).length;
+ // @type has no effect either.
+ /** @type {{ x?: number }} */
+-var z = {};
++const z = {};
+ z.x = 1; // Error
  /** @template T */
  function tem(t) { return {}; }
- let i; // Should succeed thanks to type parameter default
+-var i; // Should succeed thanks to type parameter default
 -/** @typedef {string} N.Str */
 -var M = N; // Error: @typedef does not create namespaces in TypeScript code.
++let i; // Should succeed thanks to type parameter default
  // Not legal JSDoc, but that shouldn't matter in TypeScript.
  /**
   * @type {{foo: (function(string, string): string)}}
-@@= skipped -12, +10 lines =@@
+  */
+-var obj = { foo: function (a, b) { return a + b; } };
++const obj = { foo: (a, b) => a + b };
+ /** @enum {string} */
+ var E = {};
  E[""];
  // make sure import types in JSDoc are not resolved
  /** @type {import("should-not-be-resolved").Type} */

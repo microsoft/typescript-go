@@ -9,7 +9,13 @@
  >x : string
 
    a: T,
-@@= skipped -13, +13 lines =@@
+ >a : T
+
+   b: NoInfer<T> | (() => NoInfer<T>),
+->b : NoInfer<T> | (() => NoInfer<T>)
++>b : (() => NoInfer<T>) | NoInfer<T>
+
+ ): void;
 
  test1({ x: "foo" }, { x: "bar" }); // no error
  >test1({ x: "foo" }, { x: "bar" }) : void
@@ -18,7 +24,7 @@
  >{ x: "foo" } : { x: string; }
  >x : string
  >"foo" : "foo"
-@@= skipped -10, +10 lines =@@
+@@= skipped -23, +23 lines =@@
 
  test1({ x: "foo" }, { x: "bar", y: 42 }); // epc error
  >test1({ x: "foo" }, { x: "bar", y: 42 }) : void

@@ -1,0 +1,11 @@
+--- old.truthinessCallExpressionCoercion1.symbols
++++ new.truthinessCallExpressionCoercion1.symbols
+@@= skipped -44, +44 lines =@@
+     function test() { return Math.random() > 0.5; }
+ >test : Symbol(test, Decl(truthinessCallExpressionCoercion1.ts, 14, 39))
+ >Math.random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+->Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+
+     // error

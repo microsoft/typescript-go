@@ -53,7 +53,7 @@ class A {
 >a : any
     }
 }
-module M {
+namespace M {
 >M : typeof M
 
     export var n: any;

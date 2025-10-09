@@ -9,3 +9,15 @@
  var __rest = (this && this.__rest) || function (s, e) {
      var t = {};
      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+@@= skipped -13, +11 lines =@@
+         }
+     return t;
+ };
+-var removeF = function (_a) {
+-    var f = _a.f, rest = __rest(_a, ["f"]);
++const removeF = (_a) => {
++    var { f } = _a, rest = __rest(_a, ["f"]);
+     return rest;
+ };
+-var result = removeF({ f: '', g: 3 }).g;
++const result = removeF({ f: '', g: 3 }).g;

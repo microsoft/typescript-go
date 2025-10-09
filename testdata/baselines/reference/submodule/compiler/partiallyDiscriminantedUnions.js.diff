@@ -5,17 +5,38 @@
 
  //// [partiallyDiscriminantedUnions.js]
 -// Repro from #10586
- const ab = {};
+-var ab = {};
++const ab = {};
  if (ab.type === 'a') {
      if (ab.subtype === 2) {
-@@= skipped -9, +8 lines =@@
+         ab.foo;
+     }
  }
  // Repro from #11185
- class Square {
+-var Square = /** @class */ (function () {
+-    function Square() {
+-    }
+-    return Square;
+-}());
+-var Circle = /** @class */ (function () {
+-    function Circle() {
+-    }
+-    return Circle;
+-}());
++class Square {
 +    kind;
- }
- class Circle {
++}
++class Circle {
 +    kind;
- }
++}
  function isShape(s) {
      return !Array.isArray(s);
+ }
+ function fail(s) {
+     if (isShape(s)) {
+         if (s.kind === "circle") {
+-            var c = s;
++            let c = s;
+         }
+     }
+ }

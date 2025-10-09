@@ -1,0 +1,126 @@
+--- old.inferTypePredicates.symbols
++++ new.inferTypePredicates.symbols
+@@= skipped -183, +183 lines =@@
+ >map : Symbol(Array.map, Decl(lib.es5.d.ts, --, --))
+ >obj : Symbol(obj, Decl(inferTypePredicates.ts, 53, 9))
+ >JSON.parse : Symbol(JSON.parse, Decl(lib.es5.d.ts, --, --))
+->JSON : Symbol(JSON, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>JSON : Symbol(JSON, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >parse : Symbol(JSON.parse, Decl(lib.es5.d.ts, --, --))
+ >obj.data : Symbol(data, Decl(inferTypePredicates.ts, 44, 14))
+ >obj : Symbol(obj, Decl(inferTypePredicates.ts, 53, 9))
+@@= skipped -60, +60 lines =@@
+ >map : Symbol(Array.map, Decl(lib.es5.d.ts, --, --))
+ >obj : Symbol(obj, Decl(inferTypePredicates.ts, 64, 9))
+ >JSON.parse : Symbol(JSON.parse, Decl(lib.es5.d.ts, --, --))
+->JSON : Symbol(JSON, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>JSON : Symbol(JSON, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >parse : Symbol(JSON.parse, Decl(lib.es5.d.ts, --, --))
+ >obj.data : Symbol(data, Decl(inferTypePredicates.ts, 44, 14))
+ >obj : Symbol(obj, Decl(inferTypePredicates.ts, 64, 9))
+@@= skipped -117, +117 lines =@@
+   return typeof x === 'string' && Math.random() > 0.5;
+ >x : Symbol(x, Decl(inferTypePredicates.ts, 108, 23))
+ >Math.random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+->Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+ }
+ if (flakyIsString(strOrNum)) {
+@@= skipped -23, +23 lines =@@
+
+   return x instanceof Date;
+ >x : Symbol(x, Decl(inferTypePredicates.ts, 117, 16))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ }
+ function flakyIsDate(x: object) {
+ >flakyIsDate : Symbol(flakyIsDate, Decl(inferTypePredicates.ts, 119, 1))
+@@= skipped -8, +8 lines =@@
+
+   return x instanceof Date && Math.random() > 0.5;
+ >x : Symbol(x, Decl(inferTypePredicates.ts, 120, 21))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ >Math.random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+->Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+ }
+
+@@= skipped -15, +15 lines =@@
+
+   let t: Date = maybeDate;  // should ok
+ >t : Symbol(t, Decl(inferTypePredicates.ts, 126, 5))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ >maybeDate : Symbol(maybeDate, Decl(inferTypePredicates.ts, 124, 11))
+
+ } else {
+@@= skipped -15, +15 lines =@@
+
+   let t: Date = maybeDate;  // should error
+ >t : Symbol(t, Decl(inferTypePredicates.ts, 132, 5))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ >maybeDate : Symbol(maybeDate, Decl(inferTypePredicates.ts, 124, 11))
+
+ } else {
+@@= skipped -18, +18 lines =@@
+ 	x = Math.random() < 0.5 ? "string" : 123;
+ >x : Symbol(x, Decl(inferTypePredicates.ts, 139, 28))
+ >Math.random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+->Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+
+   return typeof x === 'string';
+@@= skipped -13, +13 lines =@@
+ 	[x] = [Math.random() < 0.5 ? "string" : 123];
+ >x : Symbol(x, Decl(inferTypePredicates.ts, 143, 41))
+ >Math.random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+->Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
+
+   return typeof x === 'string';
+@@= skipped -230, +230 lines =@@
+ function assertAndPredicate(x: string | number | Date) {
+ >assertAndPredicate : Symbol(assertAndPredicate, Decl(inferTypePredicates.ts, 239, 1))
+ >x : Symbol(x, Decl(inferTypePredicates.ts, 242, 28))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+   if (x instanceof Date) {
+ >x : Symbol(x, Decl(inferTypePredicates.ts, 242, 28))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+     throw new Error();
+ >Error : Symbol(Error, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+@@= skipped -15, +15 lines =@@
+
+ declare let snd: string | number | Date;
+ >snd : Symbol(snd, Decl(inferTypePredicates.ts, 249, 11))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+ if (assertAndPredicate(snd)) {
+ >assertAndPredicate : Symbol(assertAndPredicate, Decl(inferTypePredicates.ts, 239, 1))
+@@= skipped -14, +14 lines =@@
+ function isNumberWithThis(this: Date, x: number | string) {
+ >isNumberWithThis : Symbol(isNumberWithThis, Decl(inferTypePredicates.ts, 252, 1))
+ >this : Symbol(this, Decl(inferTypePredicates.ts, 254, 26))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ >x : Symbol(x, Decl(inferTypePredicates.ts, 254, 37))
+
+   return typeof x === 'number';
+@@= skipped -68, +68 lines =@@
+ // https://github.com/microsoft/TypeScript/issues/60778
+ const arrTest: Array<number> = [1, 2, null, 3].filter(
+ >arrTest : Symbol(arrTest, Decl(inferTypePredicates.ts, 280, 5))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >[1, 2, null, 3].filter : Symbol(Array.filter, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >filter : Symbol(Array.filter, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))

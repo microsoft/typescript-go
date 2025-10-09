@@ -5,8 +5,15 @@
 
  //// [declarationEmitTypeofThisInClass.js]
 -"use strict";
- class Foo {
+-var Foo = /** @class */ (function () {
+-    function Foo() {
+-    }
+-    return Foo;
+-}());
++class Foo {
 +    foo;
 +    bar; //Public property 'bar' of exported class has or is using private name 'this'.(4031)
- }
++}
 
+
+ //// [declarationEmitTypeofThisInClass.d.ts]

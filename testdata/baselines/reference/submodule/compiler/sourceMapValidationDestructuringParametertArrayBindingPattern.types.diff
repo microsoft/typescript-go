@@ -1,0 +1,10 @@
+--- old.sourceMapValidationDestructuringParametertArrayBindingPattern.types
++++ new.sourceMapValidationDestructuringParametertArrayBindingPattern.types
+@@= skipped -19, +19 lines =@@
+
+ function foo1([, nameA]: Robot) {
+ >foo1 : ([, nameA]: Robot) => void
+-> : undefined
+ >nameA : string
+
+     console.log(nameA);

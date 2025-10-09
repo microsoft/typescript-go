@@ -1,0 +1,13 @@
+--- old.parserES5SymbolProperty1.errors.txt
++++ new.parserES5SymbolProperty1.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++parserES5SymbolProperty1.ts(2,6): error TS2585: 'Symbol' only refers to a type, but is being used as a value here. Do you need to change your target library? Try changing the 'lib' compiler option to es2015 or later.
++
++
++==== parserES5SymbolProperty1.ts (1 errors) ====
++    interface I {
++        [Symbol.iterator]: string;
++         ~~~~~~
++!!! error TS2585: 'Symbol' only refers to a type, but is being used as a value here. Do you need to change your target library? Try changing the 'lib' compiler option to es2015 or later.
++    }

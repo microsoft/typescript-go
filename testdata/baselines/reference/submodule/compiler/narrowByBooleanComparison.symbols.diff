@@ -1,0 +1,20 @@
+--- old.narrowByBooleanComparison.symbols
++++ new.narrowByBooleanComparison.symbols
+@@= skipped -121, +121 lines =@@
+     if (typeof foo !== 'string' && Array.isArray(foo) === false) {
+ >foo : Symbol(foo, Decl(narrowByBooleanComparison.ts, 50, 15))
+ >Array.isArray : Symbol(ArrayConstructor.isArray, Decl(lib.es5.d.ts, --, --))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >isArray : Symbol(ArrayConstructor.isArray, Decl(lib.es5.d.ts, --, --))
+ >foo : Symbol(foo, Decl(narrowByBooleanComparison.ts, 50, 15))
+
+@@= skipped -114, +114 lines =@@
+ >isFunction : Symbol(isFunction, Decl(narrowByBooleanComparison.ts, 95, 1))
+ >x : Symbol(x, Decl(narrowByBooleanComparison.ts, 98, 20))
+ >x : Symbol(x, Decl(narrowByBooleanComparison.ts, 98, 20))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+     return typeof x === "function";
+ >x : Symbol(x, Decl(narrowByBooleanComparison.ts, 98, 20))

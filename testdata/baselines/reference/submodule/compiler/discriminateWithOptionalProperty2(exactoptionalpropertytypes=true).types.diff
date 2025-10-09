@@ -1,0 +1,29 @@
+--- old.discriminateWithOptionalProperty2(exactoptionalpropertytypes=true).types
++++ new.discriminateWithOptionalProperty2(exactoptionalpropertytypes=true).types
+@@= skipped -59, +59 lines =@@
+
+       if (typeof iterator.return === "function") {
+ >typeof iterator.return === "function" : boolean
+->typeof iterator.return : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof iterator.return : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >iterator.return : ((value?: R | PromiseLike<R> | undefined) => Promise<IteratorResult<T, R>>) | undefined
+ >iterator : AsyncIterator<T, R, undefined>
+ >return : ((value?: R | PromiseLike<R> | undefined) => Promise<IteratorResult<T, R>>) | undefined
+@@= skipped -45, +45 lines =@@
+       return typeof iterator.return === "function"
+ >typeof iterator.return === "function"        ? mapResult(await iterator.return(value))        : { value: undefined as any, done: true } : Promise<IteratorResult<U, R>> | { value: any; done: true; }
+ >typeof iterator.return === "function" : boolean
+->typeof iterator.return : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof iterator.return : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >iterator.return : ((value?: R | PromiseLike<R> | undefined) => Promise<IteratorResult<T, R>>) | undefined
+ >iterator : AsyncIterator<T, R, undefined>
+ >return : ((value?: R | PromiseLike<R> | undefined) => Promise<IteratorResult<T, R>>) | undefined
+@@= skipped -31, +31 lines =@@
+
+       if (typeof iterator.throw === "function") {
+ >typeof iterator.throw === "function" : boolean
+->typeof iterator.throw : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof iterator.throw : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >iterator.throw : ((e?: any) => Promise<IteratorResult<T, R>>) | undefined
+ >iterator : AsyncIterator<T, R, undefined>
+ >throw : ((e?: any) => Promise<IteratorResult<T, R>>) | undefined

@@ -1,0 +1,11 @@
+--- old.augmentedTypeBracketAccessIndexSignature.symbols
++++ new.augmentedTypeBracketAccessIndexSignature.symbols
+@@= skipped -17, +17 lines =@@
+ }
+
+ interface Function {
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(augmentedTypeBracketAccessIndexSignature.ts, 5, 1))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(augmentedTypeBracketAccessIndexSignature.ts, 5, 1))
+
+     [n: number]: Bar;
+ >n : Symbol(n, Decl(augmentedTypeBracketAccessIndexSignature.ts, 8, 5))

@@ -1,0 +1,49 @@
+--- old.sourceMapValidationDestructuringForArrayBindingPatternDefaultValues2.types
++++ new.sourceMapValidationDestructuringForArrayBindingPatternDefaultValues2.types
+@@= skipped -77, +77 lines =@@
+ >[, nameA = "name"] = robotA, i = 0 : 0
+ >[, nameA = "name"] = robotA : Robot
+ >[, nameA = "name"] : [undefined, string]
+-> : undefined
+ >nameA = "name" : "name"
+ >nameA : string
+ >"name" : "name"
+@@= skipped -25, +24 lines =@@
+ >[, nameA = "name"] = getRobot(), i = 0 : 0
+ >[, nameA = "name"] = getRobot() : Robot
+ >[, nameA = "name"] : [undefined, string]
+-> : undefined
+ >nameA = "name" : "name"
+ >nameA : string
+ >"name" : "name"
+@@= skipped -26, +25 lines =@@
+ >[, nameA = "name"] = [2, "trimmer", "trimming"], i = 0 : 0
+ >[, nameA = "name"] = [2, "trimmer", "trimming"] : [number, string, string]
+ >[, nameA = "name"] : [undefined, string]
+-> : undefined
+ >nameA = "name" : "name"
+ >nameA : string
+ >"name" : "name"
+@@= skipped -28, +27 lines =@@
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"]] = multiRobotA, i = 0 : 0
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"]] = multiRobotA : MultiSkilledRobot
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"]] : [undefined, [string, string]]
+-> : undefined
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"] : [string, string]
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] : [string, string]
+
+@@= skipped -39, +38 lines =@@
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"]] = getMultiRobot(), i = 0 : 0
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"]] = getMultiRobot() : MultiSkilledRobot
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"]] : [undefined, [string, string]]
+-> : undefined
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"] : [string, string]
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] : [string, string]
+
+@@= skipped -40, +39 lines =@@
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"]] = ["trimmer", ["trimming", "edging"]], i = 0 : 0
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"]] = ["trimmer", ["trimming", "edging"]] : [string, [string, string]]
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"]] : [undefined, [string, string]]
+-> : undefined
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["none", "none"] : [string, string]
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] : [string, string]

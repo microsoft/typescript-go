@@ -1,0 +1,20 @@
+--- old.classStaticBlock7.types
++++ new.classStaticBlock7.types
+@@= skipped -40, +40 lines =@@
+ }
+
+ function * f2 () {
+->f2 : () => Generator<number, void, unknown>
++>f2 : () => {}
+
+     class C {
+ >C : C
+@@= skipped -11, +11 lines =@@
+ >1 : 1
+
+             function * ff () {
+->ff : () => Generator<number, void, unknown>
++>ff : () => {}
+
+                 yield 1;
+ >yield 1 : any

@@ -106,7 +106,7 @@
 -                        ~~~~~~~~~~~~~
 -!!! error TS6053: File 'typescript.ts' not found.
      
-     module TypeScript {
+     namespace TypeScript {
          export class Continuation {
 @@= skipped -72, +70 lines =@@
              var fieldSymbol =

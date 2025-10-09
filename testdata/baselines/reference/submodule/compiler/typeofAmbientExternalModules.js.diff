@@ -1,20 +1,31 @@
 --- old.typeofAmbientExternalModules.js
 +++ new.typeofAmbientExternalModules.js
-@@= skipped -22, +22 lines =@@
+@@= skipped -21, +21 lines =@@
+ "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.C = void 0;
- class C {
+-var C = /** @class */ (function () {
+-    function C() {
+-    }
+-    return C;
+-}());
++class C {
 +    foo;
- }
++}
  exports.C = C;
  //// [typeofAmbientExternalModules_1.js]
  "use strict";
- class D {
+-var D = /** @class */ (function () {
+-    function D() {
+-    }
+-    return D;
+-}());
++class D {
 +    bar;
- }
++}
  module.exports = D;
  //// [typeofAmbientExternalModules_2.js]
-@@= skipped -12, +14 lines =@@
+ "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  ///<reference path='typeofAmbientExternalModules_0.ts'/>
  ///<reference path='typeofAmbientExternalModules_1.ts'/>

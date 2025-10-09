@@ -1,0 +1,10 @@
+--- old.superCallFromFunction1.symbols
++++ new.superCallFromFunction1.symbols
+@@= skipped -5, +5 lines =@@
+
+     super(value => String(value));
+ >value : Symbol(value, Decl(superCallFromFunction1.ts, 1, 10))
+->String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --) ... and 1 more)
++>String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >value : Symbol(value, Decl(superCallFromFunction1.ts, 1, 10))
+ }

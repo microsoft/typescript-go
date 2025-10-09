@@ -5,12 +5,13 @@
 
  //// [jsDeclarationsNonIdentifierInferredNames.d.ts]
 -export function ExampleFunctionalComponent({ "data-testid": dataTestId, [dynPropName]: dynProp }: {
+-    "data-testid": any;
 +declare const dynPropName = "data-dyn";
 +export declare const ExampleFunctionalComponent: ({ "data-testid": dataTestId, [dynPropName]: dynProp }: {
      "data-dyn": any;
-     "data-testid": any;
 -}): JSX.Element;
 -declare const dynPropName: "data-dyn";
++    "data-testid": any;
 +}) => JSX.Element;
  export {};
 
@@ -24,12 +25,13 @@
 
  ==== out/jsDeclarationsNonIdentifierInferredNames.d.ts (1 errors) ====
 -    export function ExampleFunctionalComponent({ "data-testid": dataTestId, [dynPropName]: dynProp }: {
+-        "data-testid": any;
 +    declare const dynPropName = "data-dyn";
 +    export declare const ExampleFunctionalComponent: ({ "data-testid": dataTestId, [dynPropName]: dynProp }: {
          "data-dyn": any;
-         "data-testid": any;
 -    }): JSX.Element;
 -        ~~~
++        "data-testid": any;
 +    }) => JSX.Element;
 +          ~~~
  !!! error TS2503: Cannot find namespace 'JSX'.

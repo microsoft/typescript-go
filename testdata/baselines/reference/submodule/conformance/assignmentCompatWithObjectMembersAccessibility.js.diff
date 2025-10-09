@@ -1,38 +1,72 @@
 --- old.assignmentCompatWithObjectMembersAccessibility.js
 +++ new.assignmentCompatWithObjectMembersAccessibility.js
-@@= skipped -116, +116 lines =@@
+@@= skipped -115, +115 lines =@@
+ var TargetIsPublic;
  (function (TargetIsPublic) {
      // targets
-     class Base {
+-    var Base = /** @class */ (function () {
+-        function Base() {
+-        }
+-        return Base;
+-    }());
++    class Base {
 +        foo;
-     }
++    }
      var a;
      var b;
      var i;
      // sources
-     class D {
+-    var D = /** @class */ (function () {
+-        function D() {
+-        }
+-        return D;
+-    }());
+-    var E = /** @class */ (function () {
+-        function E() {
+-        }
+-        return E;
+-    }());
++    class D {
 +        foo;
-     }
-     class E {
++    }
++    class E {
 +        foo;
-     }
++    }
      var d;
      var e;
-@@= skipped -36, +39 lines =@@
+     a = b;
+@@= skipped -45, +39 lines =@@
+ })(TargetIsPublic || (TargetIsPublic = {}));
  (function (TargetIsPublic) {
      // targets
-     class Base {
+-    var Base = /** @class */ (function () {
+-        function Base() {
+-        }
+-        return Base;
+-    }());
++    class Base {
 +        foo;
-     }
++    }
      var a;
      var b;
      var i;
      // sources
-     class D {
+-    var D = /** @class */ (function () {
+-        function D() {
+-        }
+-        return D;
+-    }());
+-    var E = /** @class */ (function () {
+-        function E() {
+-        }
+-        return E;
+-    }());
++    class D {
 +        foo;
-     }
-     class E {
++    }
++    class E {
 +        foo;
-     }
++    }
      var d;
      var e;
+     a = b; // error

@@ -1,0 +1,10 @@
+--- old.neverTypeErrors1.errors.txt
++++ new.neverTypeErrors1.errors.txt
+@@= skipped -59, +59 lines =@@
+     for (const n of f4()) {}
+                     ~~~~
+ !!! error TS2488: Type 'never' must have a '[Symbol.iterator]()' method that returns an iterator.
+-!!! related TS2773 neverTypeErrors1.ts:23:17: Did you forget to use 'await'?
+     for (const n in f4()) {}
+                     ~~~~
+ !!! error TS2407: The right-hand side of a 'for...in' statement must be of type 'any', an object type or a type parameter, but here has type 'never'.

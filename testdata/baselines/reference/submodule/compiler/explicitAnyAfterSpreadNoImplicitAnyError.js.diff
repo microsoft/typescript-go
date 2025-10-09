@@ -1,0 +1,8 @@
+--- old.explicitAnyAfterSpreadNoImplicitAnyError.js
++++ new.explicitAnyAfterSpreadNoImplicitAnyError.js
+@@= skipped -17, +17 lines =@@
+     return __assign.apply(this, arguments);
+ };
+ (__assign({ a: [] }, null));
+-var x;
++let x;

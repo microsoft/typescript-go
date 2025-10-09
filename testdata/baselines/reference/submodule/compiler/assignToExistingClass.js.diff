@@ -1,10 +1,29 @@
 --- old.assignToExistingClass.js
 +++ new.assignToExistingClass.js
-@@= skipped -20, +20 lines =@@
+@@= skipped -19, +19 lines =@@
+ //// [assignToExistingClass.js]
  var Test;
  (function (Test) {
-     class Mocked {
+-    var Mocked = /** @class */ (function () {
+-        function Mocked() {
+-        }
+-        return Mocked;
+-    }());
+-    var Tester = /** @class */ (function () {
+-        function Tester() {
+-        }
+-        Tester.prototype.willThrowError = function () {
++    class Mocked {
 +        myProp;
-     }
-     class Tester {
-         willThrowError() {
++    }
++    class Tester {
++        willThrowError() {
+             Mocked = Mocked || function () {
+                 return { myProp: "test" };
+             };
+-        };
+-        return Tester;
+-    }());
++        }
++    }
+ })(Test || (Test = {}));

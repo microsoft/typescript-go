@@ -1,7 +1,7 @@
 //// [tests/cases/conformance/internalModules/exportDeclarations/NonInitializedExportInInternalModule.ts] ////
 
 === NonInitializedExportInInternalModule.ts ===
-module Inner {
+namespace Inner {
 >Inner : typeof Inner
 
     var;
@@ -47,7 +47,7 @@ module Inner {
 >z : any
     }
     
-    module C {
+    namespace C {
 >C : typeof C
 
         export var a = 1, b, c = 2;

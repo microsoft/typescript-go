@@ -5,13 +5,27 @@
 
  //// [protectedAccessThroughContextualThis.js]
 -"use strict";
- class Foo {
+-var Foo = /** @class */ (function () {
+-    function Foo() {
+-        this.protec = 'bar';
+-        this.privat = '';
++class Foo {
 +    protec = 'bar';
 +    privat = '';
 +    copy;
-     constructor() {
--        this.protec = 'bar';
--        this.privat = '';
++    constructor() {
          bindCopy.call(this);
          bindCopy2.call(this);
      }
+-    return Foo;
+-}());
++}
+ function bindCopy() {
+     this.copy = this.protec; // Should OK
+     console.log(this.privat); // Should error
+ }
+-var bindCopy2 = function () {
++const bindCopy2 = function () {
+     this.copy = this.protec; // Should OK
+     console.log(this.privat); // Should error
+ };

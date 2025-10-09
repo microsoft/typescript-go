@@ -1,0 +1,11 @@
+--- old.for-inStatements.symbols
++++ new.for-inStatements.symbols
+@@= skipped -33, +33 lines =@@
+
+ for (var x in new Date()) { }
+ >x : Symbol(x, Decl(for-inStatements.ts, 6, 8), Decl(for-inStatements.ts, 7, 8), Decl(for-inStatements.ts, 8, 8), Decl(for-inStatements.ts, 11, 8), Decl(for-inStatements.ts, 13, 8) ... and 14 more)
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+ var c: any, d: any, e: any;
+ >c : Symbol(c, Decl(for-inStatements.ts, 16, 3))

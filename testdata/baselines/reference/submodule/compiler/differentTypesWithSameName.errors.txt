@@ -2,7 +2,7 @@ differentTypesWithSameName.ts(16,15): error TS2741: Property 's' is missing in t
 
 
 ==== differentTypesWithSameName.ts (1 errors) ====
-    module m {
+    namespace m {
       export class variable{
         s: string;
       }

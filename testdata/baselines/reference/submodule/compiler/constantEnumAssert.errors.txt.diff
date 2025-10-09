@@ -1,0 +1,15 @@
+--- old.constantEnumAssert.errors.txt
++++ new.constantEnumAssert.errors.txt
+@@= skipped -0, +0 lines =@@
+-constantEnumAssert.ts(49,20): error TS1355: A 'const' assertion can only be applied to references to enum members, or string, number, boolean, array, or object literals.
++constantEnumAssert.ts(49,20): error TS1355: A 'const' assertions can only be applied to references to enum members, or string, number, boolean, array, or object literals.
+
+
+ ==== constantEnumAssert.ts (1 errors) ====
+@@= skipped -51, +51 lines =@@
+     
+     const foo12 = { a: E5.a as const }
+                        ~~~~
+-!!! error TS1355: A 'const' assertion can only be applied to references to enum members, or string, number, boolean, array, or object literals.
++!!! error TS1355: A 'const' assertions can only be applied to references to enum members, or string, number, boolean, array, or object literals.
+     

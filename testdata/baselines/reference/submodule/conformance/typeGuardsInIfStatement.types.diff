@@ -9,6 +9,12 @@
  >x : string | number
 
      if (typeof x === "string") {
+ >typeof x === "string" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : string | number
+ >"string" : "string"
+
 @@= skipped -21, +21 lines =@@
      }
  }
@@ -18,6 +24,12 @@
  >x : string | number
 
      if (typeof x === "string") {
+ >typeof x === "string" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : string | number
+ >"string" : "string"
+
 @@= skipped -23, +23 lines =@@
      }
  }
@@ -27,6 +39,12 @@
  >x : string | number
 
      if (typeof x === "string") {
+ >typeof x === "string" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : string | number
+ >"string" : "string"
+
 @@= skipped -23, +23 lines =@@
      }
  }
@@ -36,6 +54,12 @@
  >x : string | number
 
      if (typeof x === "string") {
+ >typeof x === "string" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : string | number
+ >"string" : "string"
+
 @@= skipped -23, +23 lines =@@
      }
  }
@@ -45,6 +69,12 @@
  >x : string | number
 
      if (typeof x === "string") {
+ >typeof x === "string" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : string | number
+ >"string" : "string"
+
 @@= skipped -23, +23 lines =@@
      }
  }
@@ -54,6 +84,12 @@
  >x : string | number
 
      if (typeof x === "string") {
+ >typeof x === "string" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : string | number
+ >"string" : "string"
+
 @@= skipped -28, +28 lines =@@
      }
  }
@@ -63,7 +99,22 @@
  >x : string | number | boolean
 
      if (typeof x === "string") {
-@@= skipped -31, +31 lines =@@
+ >typeof x === "string" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : string | number | boolean
+ >"string" : "string"
+
+@@= skipped -16, +16 lines =@@
+     }
+     else if (typeof x === "boolean") {
+ >typeof x === "boolean" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : number | boolean
+ >"boolean" : "boolean"
+
+@@= skipped -15, +15 lines =@@
      }
  }
  function foo8(x: number | string | boolean) {
@@ -72,7 +123,22 @@
  >x : string | number | boolean
 
      if (typeof x === "string") {
-@@= skipped -37, +37 lines =@@
+ >typeof x === "string" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : string | number | boolean
+ >"string" : "string"
+
+@@= skipped -21, +21 lines =@@
+
+         if (typeof x === "boolean") {
+ >typeof x === "boolean" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : number | boolean
+ >"boolean" : "boolean"
+
+@@= skipped -16, +16 lines =@@
      }
  }
  function foo9(x: number | string) {
@@ -81,7 +147,16 @@
  >x : string | number
 
      var y = 10;
-@@= skipped -34, +34 lines =@@
+@@= skipped -9, +9 lines =@@
+
+     if (typeof x === "string") {
+ >typeof x === "string" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : string | number
+ >"string" : "string"
+
+@@= skipped -25, +25 lines =@@
      }
  }
  function foo10(x: number | string | boolean) {
@@ -90,7 +165,23 @@
  >x : string | number | boolean
 
      // Mixing typeguard narrowing in if statement with conditional expression typeguard
-@@= skipped -40, +40 lines =@@
+     if (typeof x === "string") {
+ >typeof x === "string" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : string | number | boolean
+ >"string" : "string"
+
+@@= skipped -26, +26 lines =@@
+         return typeof x === "number"
+ >typeof x === "number"            ? x === 10 // number            : x : boolean
+ >typeof x === "number" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : number | boolean
+ >"number" : "number"
+
+@@= skipped -14, +14 lines =@@
      }
  }
  function foo11(x: number | string | boolean) {
@@ -99,7 +190,24 @@
  >x : string | number | boolean
 
      // Mixing typeguard narrowing in if statement with conditional expression typeguard
-@@= skipped -62, +62 lines =@@
+     // Assigning value to x deep inside another guard stops narrowing of type too
+     if (typeof x === "string") {
+ >typeof x === "string" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : string | number | boolean
+ >"string" : "string"
+
+@@= skipped -25, +25 lines =@@
+         return typeof x === "number"
+ >typeof x === "number"            ? (            // change value of x            x = 10 && x.toString() // number | boolean | string            )            : (            // do not change value            y = x && x.toString() // number | boolean | string            ) : string
+ >typeof x === "number" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : number | boolean
+ >"number" : "number"
+
+@@= skipped -37, +37 lines =@@
      }
  }
  function foo12(x: number | string | boolean) {
@@ -108,3 +216,19 @@
  >x : string | number | boolean
 
      // Mixing typeguard narrowing in if statement with conditional expression typeguard
+     // Assigning value to x in outer guard shouldn't stop narrowing in the inner expression
+     if (typeof x === "string") {
+ >typeof x === "string" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : string | number | boolean
+ >"string" : "string"
+
+@@= skipped -30, +30 lines =@@
+         return typeof x === "number"
+ >typeof x === "number"            ? x.toString() // number            : x.toString() : any
+ >typeof x === "number" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : number
+ >"number" : "number"

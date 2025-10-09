@@ -1,0 +1,18 @@
+--- old.libMembers.errors.txt
++++ new.libMembers.errors.txt
+@@= skipped -0, +0 lines =@@
+-libMembers.ts(4,3): error TS2551: Property 'subby' does not exist on type 'string'. Did you mean 'sub'?
++libMembers.ts(4,3): error TS2339: Property 'subby' does not exist on type 'string'.
+ libMembers.ts(9,17): error TS1011: An element access expression should take an argument.
+ libMembers.ts(12,15): error TS2339: Property 'prototype' does not exist on type 'C'.
+
+@@= skipped -8, +8 lines =@@
+     s.substring(3,4);
+     s.subby(12);   // error unresolved
+       ~~~~~
+-!!! error TS2551: Property 'subby' does not exist on type 'string'. Did you mean 'sub'?
+-!!! related TS2728 lib.es2015.core.d.ts:--:--: 'sub' is declared here.
++!!! error TS2339: Property 'subby' does not exist on type 'string'.
+     String.fromCharCode(12);
+     namespace M {
+         export class C {

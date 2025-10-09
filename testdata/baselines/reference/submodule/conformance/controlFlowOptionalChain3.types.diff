@@ -1,6 +1,15 @@
 --- old.controlFlowOptionalChain3.types
 +++ new.controlFlowOptionalChain3.types
-@@= skipped -86, +86 lines =@@
+@@= skipped -63, +63 lines =@@
+ >div : any
+
+       {foo?.bar === false && "foo"}
+->foo?.bar === false && "foo" : false | "foo"
++>foo?.bar === false && "foo" : "foo" | false
+ >foo?.bar === false : boolean
+ >foo?.bar : boolean | undefined
+ >foo : Foo | undefined
+@@= skipped -23, +23 lines =@@
  }
 
  function test4(options?: { a?: boolean; b?: boolean }) {

@@ -1,0 +1,24 @@
+--- old.enumAssignabilityInInheritance.symbols
++++ new.enumAssignabilityInInheritance.symbols
+@@= skipped -86, +86 lines =@@
+ declare function foo4(x: Date): Date;
+ >foo4 : Symbol(foo4, Decl(enumAssignabilityInInheritance.ts, 26, 19), Decl(enumAssignabilityInInheritance.ts, 28, 37))
+ >x : Symbol(x, Decl(enumAssignabilityInInheritance.ts, 28, 22))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+ declare function foo4(x: E): E;
+ >foo4 : Symbol(foo4, Decl(enumAssignabilityInInheritance.ts, 26, 19), Decl(enumAssignabilityInInheritance.ts, 28, 37))
+@@= skipped -19, +19 lines =@@
+ declare function foo5(x: RegExp): RegExp;
+ >foo5 : Symbol(foo5, Decl(enumAssignabilityInInheritance.ts, 31, 19), Decl(enumAssignabilityInInheritance.ts, 33, 41))
+ >x : Symbol(x, Decl(enumAssignabilityInInheritance.ts, 33, 22))
+->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
++>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+ declare function foo5(x: E): E;
+ >foo5 : Symbol(foo5, Decl(enumAssignabilityInInheritance.ts, 31, 19), Decl(enumAssignabilityInInheritance.ts, 33, 41))

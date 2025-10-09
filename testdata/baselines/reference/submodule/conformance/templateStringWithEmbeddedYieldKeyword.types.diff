@@ -1,0 +1,11 @@
+--- old.templateStringWithEmbeddedYieldKeyword.types
++++ new.templateStringWithEmbeddedYieldKeyword.types
+@@= skipped -1, +1 lines =@@
+
+ === templateStringWithEmbeddedYieldKeyword.ts ===
+ function* gen {
+->gen : () => Generator<number, void, unknown>
++>gen : () => {}
+
+     // Once this is supported, yield *must* be parenthesized.
+     var x = `abc${ yield 10 }def`;

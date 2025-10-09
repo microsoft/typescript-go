@@ -1,6 +1,47 @@
 --- old.jsFileMethodOverloads.js
 +++ new.jsFileMethodOverloads.js
-@@= skipped -104, +104 lines =@@
+@@= skipped -52, +52 lines =@@
+ /**
+  * @template T
+  */
+-var Example = /** @class */ (function () {
++class Example {
+     /**
+      * @param {T} value
+      */
+-    function Example(value) {
++    constructor(value) {
+         this.value = value;
+     }
+     /**
+@@= skipped -20, +20 lines =@@
+     /**
+      * @returns {string}
+      */
+-    Example.prototype.getTypeName = function () {
++    getTypeName() {
+         return typeof this.value;
+-    };
++    }
+     /**
+      * @template U
+      * @overload
+@@= skipped -17, +17 lines =@@
+      * @param {(y: T) => unknown} [fn]
+      * @returns {unknown}
+      */
+-    Example.prototype.transform = function (fn) {
++    transform(fn) {
+         return fn ? fn(this.value) : this.value;
+-    };
+-    return Example;
+-}());
++    }
++}
+
+
+ //// [jsFileMethodOverloads.d.ts]
+@@= skipped -16, +15 lines =@@
       * @param {T} value
       */
      constructor(value: T);

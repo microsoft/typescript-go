@@ -1,6 +1,16 @@
 --- old.decoratorMetadata.js
 +++ new.decoratorMetadata.js
-@@= skipped -25, +25 lines =@@
+@@= skipped -20, +20 lines =@@
+ //// [service.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var Service = /** @class */ (function () {
+-    function Service() {
+-    }
+-    return Service;
+-}());
++class Service {
++}
  exports.default = Service;
  //// [component.js]
  "use strict";
@@ -15,13 +25,15 @@
 -};
  Object.defineProperty(exports, "__esModule", { value: true });
 -var service_1 = require("./service");
--let MyComponent = (() => {
--    let MyComponent = class MyComponent {
--        constructor(Service) {
--            this.Service = Service;
--        }
--        method(x) {
--        }
+-var MyComponent = /** @class */ (function () {
+-    function MyComponent(Service) {
++@decorator
++class MyComponent {
++    Service;
++    constructor(Service) {
+         this.Service = Service;
+     }
+-    MyComponent.prototype.method = function (x) {
 -    };
 -    __decorate([
 -        decorator,
@@ -34,13 +46,7 @@
 -        __metadata("design:paramtypes", [service_1.default])
 -    ], MyComponent);
 -    return MyComponent;
--})();
-+@decorator
-+class MyComponent {
-+    Service;
-+    constructor(Service) {
-+        this.Service = Service;
-+    }
+-}());
 +    @decorator
 +    method(x) {
 +    }

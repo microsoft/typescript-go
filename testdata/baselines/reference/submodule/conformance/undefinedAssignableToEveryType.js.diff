@@ -1,10 +1,17 @@
 --- old.undefinedAssignableToEveryType.js
 +++ new.undefinedAssignableToEveryType.js
-@@= skipped -45, +45 lines =@@
+@@= skipped -44, +44 lines =@@
+ //}
 
  //// [undefinedAssignableToEveryType.js]
- class C {
+-var C = /** @class */ (function () {
+-    function C() {
+-    }
+-    return C;
+-}());
++class C {
 +    foo;
- }
++}
  var ac;
  var ai;
+ var E;

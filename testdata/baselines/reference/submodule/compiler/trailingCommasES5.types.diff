@@ -1,0 +1,13 @@
+--- old.trailingCommasES5.types
++++ new.trailingCommasES5.types
+@@= skipped -51, +51 lines =@@
+ >a5 : number[]
+ >[1, , ] : number[]
+ >1 : 1
+-> : undefined
+
+ var a6 = [, , ];
+ >a6 : any[]
+ >[, , ] : undefined[]
+-> : undefined
+-> : undefined

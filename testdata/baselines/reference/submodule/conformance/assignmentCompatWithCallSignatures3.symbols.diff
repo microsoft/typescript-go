@@ -1,0 +1,74 @@
+--- old.assignmentCompatWithCallSignatures3.symbols
++++ new.assignmentCompatWithCallSignatures3.symbols
+@@= skipped -107, +107 lines =@@
+ var a12: (x: Array<Base>, y: Array<Derived2>) => Array<Derived>;
+ >a12 : Symbol(a12, Decl(assignmentCompatWithCallSignatures3.ts, 18, 3))
+ >x : Symbol(x, Decl(assignmentCompatWithCallSignatures3.ts, 18, 10))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >Base : Symbol(Base, Decl(assignmentCompatWithCallSignatures3.ts, 0, 0))
+ >y : Symbol(y, Decl(assignmentCompatWithCallSignatures3.ts, 18, 25))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >Derived2 : Symbol(Derived2, Decl(assignmentCompatWithCallSignatures3.ts, 3, 43))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >Derived : Symbol(Derived, Decl(assignmentCompatWithCallSignatures3.ts, 2, 27))
+
+ var a13: (x: Array<Base>, y: Array<Derived>) => Array<Derived>;
+ >a13 : Symbol(a13, Decl(assignmentCompatWithCallSignatures3.ts, 19, 3))
+ >x : Symbol(x, Decl(assignmentCompatWithCallSignatures3.ts, 19, 10))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >Base : Symbol(Base, Decl(assignmentCompatWithCallSignatures3.ts, 0, 0))
+ >y : Symbol(y, Decl(assignmentCompatWithCallSignatures3.ts, 19, 25))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >Derived : Symbol(Derived, Decl(assignmentCompatWithCallSignatures3.ts, 2, 27))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >Derived : Symbol(Derived, Decl(assignmentCompatWithCallSignatures3.ts, 2, 27))
+
+ var a14: (x: { a: string; b: number }) => Object;
+@@= skipped -83, +83 lines =@@
+
+         (a: Date): Date;
+ >a : Symbol(a, Decl(assignmentCompatWithCallSignatures3.ts, 40, 9))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+     }): any[];
+ }
+@@= skipped -218, +218 lines =@@
+ var b12: <T extends Array<Base>>(x: Array<Base>, y: T) => Array<Derived>; 
+ >b12 : Symbol(b12, Decl(assignmentCompatWithCallSignatures3.ts, 77, 3))
+ >T : Symbol(T, Decl(assignmentCompatWithCallSignatures3.ts, 77, 10))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >Base : Symbol(Base, Decl(assignmentCompatWithCallSignatures3.ts, 0, 0))
+ >x : Symbol(x, Decl(assignmentCompatWithCallSignatures3.ts, 77, 33))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >Base : Symbol(Base, Decl(assignmentCompatWithCallSignatures3.ts, 0, 0))
+ >y : Symbol(y, Decl(assignmentCompatWithCallSignatures3.ts, 77, 48))
+ >T : Symbol(T, Decl(assignmentCompatWithCallSignatures3.ts, 77, 10))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >Derived : Symbol(Derived, Decl(assignmentCompatWithCallSignatures3.ts, 2, 27))
+
+ a12 = b12; // ok
+@@= skipped -21, +21 lines =@@
+ var b13: <T extends Array<Derived>>(x: Array<Base>, y: T) => T; 
+ >b13 : Symbol(b13, Decl(assignmentCompatWithCallSignatures3.ts, 80, 3))
+ >T : Symbol(T, Decl(assignmentCompatWithCallSignatures3.ts, 80, 10))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >Derived : Symbol(Derived, Decl(assignmentCompatWithCallSignatures3.ts, 2, 27))
+ >x : Symbol(x, Decl(assignmentCompatWithCallSignatures3.ts, 80, 36))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >Base : Symbol(Base, Decl(assignmentCompatWithCallSignatures3.ts, 0, 0))
+ >y : Symbol(y, Decl(assignmentCompatWithCallSignatures3.ts, 80, 51))
+ >T : Symbol(T, Decl(assignmentCompatWithCallSignatures3.ts, 80, 10))

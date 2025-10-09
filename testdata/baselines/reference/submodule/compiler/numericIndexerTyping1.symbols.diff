@@ -1,0 +1,11 @@
+--- old.numericIndexerTyping1.symbols
++++ new.numericIndexerTyping1.symbols
+@@= skipped -5, +5 lines =@@
+
+     [x: string]: Date;
+ >x : Symbol(x, Decl(numericIndexerTyping1.ts, 1, 5))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ }
+
+ interface I2 extends I {

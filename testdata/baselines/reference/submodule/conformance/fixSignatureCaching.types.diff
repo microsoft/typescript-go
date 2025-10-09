@@ -67,7 +67,16 @@
  >maxPhoneWidth || this.maxPhoneWidth : any
  >maxPhoneWidth : any
  >this.maxPhoneWidth : any
-@@= skipped -65, +65 lines =@@
+@@= skipped -56, +56 lines =@@
+     if (typeof window !== 'undefined' && window.screen) {
+ >typeof window !== 'undefined' && window.screen : Screen
+ >typeof window !== 'undefined' : boolean
+->typeof window : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof window : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >window : Window & typeof globalThis
+ >'undefined' : "undefined"
+ >window.screen : Screen
+@@= skipped -9, +9 lines =@@
 
          MobileDetect.isPhoneSized = function (maxPhoneWidth) {
  >MobileDetect.isPhoneSized = function (maxPhoneWidth) {            return maxPhoneWidth < 0 ? undefined : impl.getDeviceSmallerSide() <= maxPhoneWidth;        } : (maxPhoneWidth: any) => any
@@ -116,3 +125,29 @@
 
  }); // end of call of define()
  })((function (undefined) {
+@@= skipped -24, +24 lines =@@
+     if (typeof module !== 'undefined' && module.exports) {
+ >typeof module !== 'undefined' && module.exports : any
+ >typeof module !== 'undefined' : boolean
+->typeof module : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof module : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >module : any
+ >'undefined' : "undefined"
+ >module.exports : any
+@@= skipped -20, +20 lines =@@
+     } else if (typeof define === 'function' && define.amd) {
+ >typeof define === 'function' && define.amd : any
+ >typeof define === 'function' : boolean
+->typeof define : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof define : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >define : any
+ >'function' : "function"
+ >define.amd : any
+@@= skipped -12, +12 lines =@@
+
+     } else if (typeof window !== 'undefined') {
+ >typeof window !== 'undefined' : boolean
+->typeof window : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof window : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >window : Window & typeof globalThis
+ >'undefined' : "undefined"

@@ -4,29 +4,42 @@
 
 
  //// [index.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
- class A {
--    constructor() {
+-var A = /** @class */ (function () {
+-    function A() {
 -        this.member = new Q();
 -    }
+-    return A;
+-}());
+-var Q = /** @class */ (function () {
+-    function Q() {
+-        this.x = 42;
+-    }
+-    return Q;
+-}());
+-module.exports = /** @class */ (function () {
+-    function Q() {
+-        this.x = new A();
+-    }
+-    return Q;
+-}());
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++class A {
 +    member = new Q();
- }
- class Q {
++}
++class Q {
 +    x = 42;
 +}
 +export = class Q {
-     constructor() {
--        this.x = 42;
++    constructor() {
 +        this.x = new A();
-     }
--}
++    }
 +};
- module.exports = class Q {
-     constructor() {
-         this.x = new A();
-     }
- };
++module.exports = class Q {
++    constructor() {
++        this.x = new A();
++    }
++};
 +export var Another = Q;
  module.exports.Another = Q;
 

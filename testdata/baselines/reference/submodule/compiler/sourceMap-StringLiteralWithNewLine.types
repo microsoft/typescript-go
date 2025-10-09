@@ -10,7 +10,7 @@ interface Window {
 declare var window: Window;
 >window : Window
 
-module Foo {
+namespace Foo {
 >Foo : typeof Foo
 
     var x = "test1";

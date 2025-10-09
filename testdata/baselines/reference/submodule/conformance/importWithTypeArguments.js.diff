@@ -4,5 +4,5 @@
 
  //// [importWithTypeArguments.js]
  import;
--const a = (import);
+-var a = (import);
 +const a = import;

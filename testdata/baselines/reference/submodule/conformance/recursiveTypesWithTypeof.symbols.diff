@@ -1,0 +1,20 @@
+--- old.recursiveTypesWithTypeof.symbols
++++ new.recursiveTypesWithTypeof.symbols
+@@= skipped -28, +28 lines =@@
+
+ var f: Array<typeof f>;
+ >f : Symbol(f, Decl(recursiveTypesWithTypeof.ts, 9, 3), Decl(recursiveTypesWithTypeof.ts, 10, 3))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >f : Symbol(f, Decl(recursiveTypesWithTypeof.ts, 9, 3), Decl(recursiveTypesWithTypeof.ts, 10, 3))
+
+ var f: any;
+@@= skipped -132, +132 lines =@@
+ var hy2: { x: Array<typeof hy2> };
+ >hy2 : Symbol(hy2, Decl(recursiveTypesWithTypeof.ts, 44, 3), Decl(recursiveTypesWithTypeof.ts, 45, 3))
+ >x : Symbol(x, Decl(recursiveTypesWithTypeof.ts, 44, 10))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >hy2 : Symbol(hy2, Decl(recursiveTypesWithTypeof.ts, 44, 3), Decl(recursiveTypesWithTypeof.ts, 45, 3))
+
+ var hy2 = hy2.x[0];

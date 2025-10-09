@@ -1,0 +1,29 @@
+--- old.untypedFunctionCallsWithTypeParameters1.symbols
++++ new.untypedFunctionCallsWithTypeParameters1.symbols
+@@= skipped -18, +18 lines =@@
+
+ var c: Function;
+ >c : Symbol(c, Decl(untypedFunctionCallsWithTypeParameters1.ts, 6, 3))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+ var r3 = c<number>(); // should be an error
+ >r3 : Symbol(r3, Decl(untypedFunctionCallsWithTypeParameters1.ts, 7, 3))
+@@= skipped -8, +8 lines =@@
+
+ class C implements Function {
+ >C : Symbol(C, Decl(untypedFunctionCallsWithTypeParameters1.ts, 7, 21))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+     prototype = null;
+ >prototype : Symbol(C.prototype, Decl(untypedFunctionCallsWithTypeParameters1.ts, 9, 29))
+@@= skipped -25, +25 lines =@@
+
+ class C2 extends Function { } // error
+ >C2 : Symbol(C2, Decl(untypedFunctionCallsWithTypeParameters1.ts, 17, 22))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+ var c3: C2;
+ >c3 : Symbol(c3, Decl(untypedFunctionCallsWithTypeParameters1.ts, 20, 3))

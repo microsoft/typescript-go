@@ -8,20 +8,65 @@
  super_covariant = sub_covariant;
  sub_covariant = super_covariant; // Error
  super_contravariant = sub_contravariant; // Error
-@@= skipped -8, +7 lines =@@
+ sub_contravariant = super_contravariant;
  super_invariant = sub_invariant; // Error
  sub_invariant = super_invariant; // Error
- class C {
--    constructor() {
+-var C = /** @class */ (function () {
+-    function C() {
 -        this.a = 0; // Error
 -        this.b = 0; // Error
 -    }
+-    return C;
+-}());
++class C {
 +    in a = 0; // Error
 +    out b = 0; // Error
- }
++}
  baz1 = baz2; // Error
  baz2 = baz1; // Error
-@@= skipped -135, +133 lines =@@
+ function fn(inp) {
+-    var a = inp;
++    const a = inp;
+ }
+-var pu = { child: { a: 0, b: 0, child: null, parent: null }, parent: null };
+-var notString = pu; // Error
+-var machine = createMachine({});
++const pu = { child: { a: 0, b: 0, child: null, parent: null }, parent: null };
++const notString = pu; // Error
++const machine = createMachine({});
+ interpret(machine);
+ createMachine(qq); // Error
+ // Repros from #48618
+-var Anon = /** @class */ (function () {
+-    function class_1() {
+-    }
+-    class_1.prototype.foo = function () {
+-        return this;
+-    };
+-    return class_1;
+-}());
+-var OuterC = /** @class */ (function () {
+-    function C() {
+-    }
+-    C.prototype.foo = function () {
+-        return this;
+-    };
+-    return C;
+-}());
++let Anon = class {
++    foo() {
++        return this;
++    }
++};
++let OuterC = class C {
++    foo() {
++        return this;
++    }
++};
+
+
+ //// [varianceAnnotations.d.ts]
+@@= skipped -150, +140 lines =@@
  }>;
  declare let Anon: {
      new <out T>(): {

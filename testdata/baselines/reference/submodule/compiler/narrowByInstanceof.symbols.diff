@@ -1,0 +1,22 @@
+--- old.narrowByInstanceof.symbols
++++ new.narrowByInstanceof.symbols
+@@= skipped -95, +95 lines =@@
+
+ class PersonMixin extends Function {
+ >PersonMixin : Symbol(PersonMixin, Decl(narrowByInstanceof.ts, 38, 1))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+     public check(o: any) {
+ >check : Symbol(PersonMixin.check, Decl(narrowByInstanceof.ts, 42, 36))
+@@= skipped -72, +72 lines =@@
+ >log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
+
+         o.sayHi();
+->o.sayHi : Symbol(sayHi, Decl(narrowByInstanceof.ts, 51, 40), Decl(narrowByInstanceof.ts, 55, 11))
++>o.sayHi : Symbol(sayHi, Decl(narrowByInstanceof.ts, 55, 11), Decl(narrowByInstanceof.ts, 51, 40))
+ >o : Symbol(o, Decl(narrowByInstanceof.ts, 59, 14))
+->sayHi : Symbol(sayHi, Decl(narrowByInstanceof.ts, 51, 40), Decl(narrowByInstanceof.ts, 55, 11))
++>sayHi : Symbol(sayHi, Decl(narrowByInstanceof.ts, 55, 11), Decl(narrowByInstanceof.ts, 51, 40))
+     }
+ }

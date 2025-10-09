@@ -1,0 +1,20 @@
+--- old.autolift4.symbols
++++ new.autolift4.symbols
+@@= skipped -13, +13 lines =@@
+
+         return Math.sqrt(this.x*this.x + this.y*this.y); 
+ >Math.sqrt : Symbol(Math.sqrt, Decl(lib.es5.d.ts, --, --))
+->Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >sqrt : Symbol(Math.sqrt, Decl(lib.es5.d.ts, --, --))
+ >this.x : Symbol(Point.x, Decl(autolift4.ts, 2, 16))
+ >this : Symbol(Point, Decl(autolift4.ts, 0, 0))
+@@= skipped -41, +41 lines =@@
+
+         return Math.sqrt(this.x*this.x + this.y*this.y + this.z*this.m);
+ >Math.sqrt : Symbol(Math.sqrt, Decl(lib.es5.d.ts, --, --))
+->Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >sqrt : Symbol(Math.sqrt, Decl(lib.es5.d.ts, --, --))
+ >this.x : Symbol(Point.x, Decl(autolift4.ts, 2, 16))
+ >this : Symbol(Point3D, Decl(autolift4.ts, 9, 1))

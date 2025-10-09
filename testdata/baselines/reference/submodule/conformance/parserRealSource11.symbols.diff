@@ -1,0 +1,125 @@
+--- old.parserRealSource11.symbols
++++ new.parserRealSource11.symbols
+@@= skipped -375, +375 lines =@@
+         public netFreeUses(container: Symbol, freeUses: StringHashTable) {
+ >netFreeUses : Symbol(AST.netFreeUses, Decl(parserRealSource11.ts, 148, 9))
+ >container : Symbol(container, Decl(parserRealSource11.ts, 150, 27))
+->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --))
+ >freeUses : Symbol(freeUses, Decl(parserRealSource11.ts, 150, 45))
+ >StringHashTable : Symbol(StringHashTable)
+         }
+@@= skipped -67, +67 lines =@@
+                     resolved += String.fromCharCode(charCode);
+ >resolved : Symbol(resolved, Decl(parserRealSource11.ts, 160, 15))
+ >String.fromCharCode : Symbol(StringConstructor.fromCharCode, Decl(lib.es5.d.ts, --, --))
+->String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --) ... and 1 more)
++>String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >fromCharCode : Symbol(StringConstructor.fromCharCode, Decl(lib.es5.d.ts, --, --))
+ >charCode : Symbol(charCode, Decl(parserRealSource11.ts, 166, 23))
+
+@@= skipped -267, +267 lines =@@
+
+         public sym: Symbol = null;
+ >sym : Symbol(Identifier.sym, Decl(parserRealSource11.ts, 249, 41))
+->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --))
+
+         public cloId = -1;
+ >cloId : Symbol(Identifier.cloId, Decl(parserRealSource11.ts, 250, 34))
+@@= skipped -1401, +1401 lines =@@
+
+             if (Math.floor(this.value) != this.value) {
+ >Math.floor : Symbol(Math.floor, Decl(lib.es5.d.ts, --, --))
+->Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >floor : Symbol(Math.floor, Decl(lib.es5.d.ts, --, --))
+ >this.value : Symbol(NumberLiteral.value, Decl(parserRealSource11.ts, 731, 21))
+ >this : Symbol(NumberLiteral, Decl(parserRealSource11.ts, 728, 5))
+@@= skipped -427, +427 lines =@@
+
+         public sym: Symbol = null;
+ >sym : Symbol(BoundDecl.sym, Decl(parserRealSource11.ts, 890, 40))
+->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --))
+
+         constructor (public id: Identifier, nodeType: NodeType, public nestingLevel: number) {
+ >id : Symbol(BoundDecl.id, Decl(parserRealSource11.ts, 893, 21))
+@@= skipped -236, +236 lines =@@
+
+         public freeVariables: Symbol[] = [];
+ >freeVariables : Symbol(FuncDecl.freeVariables, Decl(parserRealSource11.ts, 967, 45))
+->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --))
+
+         public unitIndex = -1;
+ >unitIndex : Symbol(FuncDecl.unitIndex, Decl(parserRealSource11.ts, 968, 44))
+@@= skipped -28, +28 lines =@@
+
+         public accessorSymbol: Symbol = null;
+ >accessorSymbol : Symbol(FuncDecl.accessorSymbol, Decl(parserRealSource11.ts, 975, 43))
+->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --))
+
+         public leftCurlyCount = 0;
+ >leftCurlyCount : Symbol(FuncDecl.leftCurlyCount, Decl(parserRealSource11.ts, 976, 45))
+@@= skipped -99, +99 lines =@@
+ >id : Symbol(id, Decl(parserRealSource11.ts, 1006, 25))
+ >Identifier : Symbol(Identifier, Decl(parserRealSource11.ts, 247, 5))
+ >sym : Symbol(sym, Decl(parserRealSource11.ts, 1006, 40))
+->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --))
+
+             if (this.envids == null) {
+ >this.envids : Symbol(FuncDecl.envids, Decl(parserRealSource11.ts, 962, 36))
+@@= skipped -64, +64 lines =@@
+         public addJumpRef(sym: Symbol): void {
+ >addJumpRef : Symbol(FuncDecl.addJumpRef, Decl(parserRealSource11.ts, 1019, 9))
+ >sym : Symbol(sym, Decl(parserRealSource11.ts, 1021, 26))
+->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --))
+
+             if (this.jumpRefs == null) {
+ >this.jumpRefs : Symbol(FuncDecl.jumpRefs, Decl(parserRealSource11.ts, 963, 36))
+@@= skipped -4315, +4315 lines =@@
+ >this.text : Symbol(Comment.text, Decl(parserRealSource11.ts, 2325, 38))
+ >this : Symbol(Comment, Decl(parserRealSource11.ts, 2323, 5))
+ >text : Symbol(Comment.text, Decl(parserRealSource11.ts, 2325, 38))
+->this.content.split : Symbol(String.split, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>this.content.split : Symbol(String.split, Decl(lib.es5.d.ts, --, --))
+ >this.content : Symbol(Comment.content, Decl(parserRealSource11.ts, 2329, 21))
+ >this : Symbol(Comment, Decl(parserRealSource11.ts, 2323, 5))
+ >content : Symbol(Comment.content, Decl(parserRealSource11.ts, 2329, 21))
+->split : Symbol(String.split, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>split : Symbol(String.split, Decl(lib.es5.d.ts, --, --))
+
+                     for (var i = 0; i < this.text.length; i++) {
+ >i : Symbol(i, Decl(parserRealSource11.ts, 2337, 28))
+@@= skipped -21, +21 lines =@@
+ >this : Symbol(Comment, Decl(parserRealSource11.ts, 2323, 5))
+ >text : Symbol(Comment.text, Decl(parserRealSource11.ts, 2325, 38))
+ >i : Symbol(i, Decl(parserRealSource11.ts, 2337, 28))
+->this.text[i].replace : Symbol(String.replace, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>this.text[i].replace : Symbol(String.replace, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >this.text : Symbol(Comment.text, Decl(parserRealSource11.ts, 2325, 38))
+ >this : Symbol(Comment, Decl(parserRealSource11.ts, 2323, 5))
+ >text : Symbol(Comment.text, Decl(parserRealSource11.ts, 2325, 38))
+ >i : Symbol(i, Decl(parserRealSource11.ts, 2337, 28))
+->replace : Symbol(String.replace, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>replace : Symbol(String.replace, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+                     }
+                 }
+                 else {
+@@= skipped -13, +13 lines =@@
+ >this.text : Symbol(Comment.text, Decl(parserRealSource11.ts, 2325, 38))
+ >this : Symbol(Comment, Decl(parserRealSource11.ts, 2323, 5))
+ >text : Symbol(Comment.text, Decl(parserRealSource11.ts, 2325, 38))
+->this.content.replace : Symbol(String.replace, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>this.content.replace : Symbol(String.replace, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >this.content : Symbol(Comment.content, Decl(parserRealSource11.ts, 2329, 21))
+ >this : Symbol(Comment, Decl(parserRealSource11.ts, 2323, 5))
+ >content : Symbol(Comment.content, Decl(parserRealSource11.ts, 2329, 21))
+->replace : Symbol(String.replace, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>replace : Symbol(String.replace, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+                 }
+             }

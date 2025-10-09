@@ -16,12 +16,21 @@
   * @typedef { A & { y: number } } B
   */
  /**
-@@= skipped -13, +13 lines =@@
+  * @param {A} a
   * @returns { asserts a is B }
   */
- const foo = (a) => {
+-var foo = function (a) {
 -    if ( /** @type { B } */(a).y !== 0)
++const foo = (a) => {
 +    if ( /** @type { B } */a.y !== 0)
          throw TypeError();
      return undefined;
  };
+-var main = function () {
++const main = () => {
+     /** @type { A } */
+-    var a = { x: 1 };
++    const a = { x: 1 };
+     foo(a);
+ };
+ exports.main = main;

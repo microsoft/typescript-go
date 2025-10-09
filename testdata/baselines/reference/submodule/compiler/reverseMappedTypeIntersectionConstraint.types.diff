@@ -43,7 +43,22 @@
 
      actors?: TActor;
  >actors : TActor | undefined
-@@= skipped -45, +45 lines =@@
+@@= skipped -36, +36 lines =@@
+ >config : { [K in keyof MachineConfig<any> & keyof TConfig]: TConfig[K]; }
+
+ const child = () => Promise.resolve("foo");
+->child : () => Promise<string>
+->() => Promise.resolve("foo") : () => Promise<string>
+->Promise.resolve("foo") : Promise<string>
+->Promise.resolve : { (): Promise<void>; <T>(value: T): Promise<Awaited<T>>; <T>(value: T | PromiseLike<T>): Promise<Awaited<T>>; }
+->Promise : PromiseConstructor
+->resolve : { (): Promise<void>; <T>(value: T): Promise<Awaited<T>>; <T>(value: T | PromiseLike<T>): Promise<Awaited<T>>; }
++>child : () => any
++>() => Promise.resolve("foo") : () => any
++>Promise.resolve("foo") : any
++>Promise.resolve : any
++>Promise : any
++>resolve : any
  >"foo" : "foo"
 
  const config = createXMachine({
@@ -68,3 +83,12 @@
 
        src: "str";
  >src : "str"
+
+       logic: typeof child;
+->logic : () => Promise<string>
+->child : () => Promise<string>
++>logic : () => any
++>child : () => any
+
+     };
+   },

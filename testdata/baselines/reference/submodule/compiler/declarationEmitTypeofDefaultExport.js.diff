@@ -1,6 +1,18 @@
 --- old.declarationEmitTypeofDefaultExport.js
 +++ new.declarationEmitTypeofDefaultExport.js
-@@= skipped -17, +17 lines =@@
+@@= skipped -10, +10 lines =@@
+ //// [a.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var C = /** @class */ (function () {
+-    function C() {
+-    }
+-    return C;
+-}());
++class C {
++}
+ exports.default = C;
+ ;
  //// [b.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });

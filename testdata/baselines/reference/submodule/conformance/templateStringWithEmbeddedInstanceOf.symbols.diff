@@ -1,0 +1,8 @@
+--- old.templateStringWithEmbeddedInstanceOf.symbols
++++ new.templateStringWithEmbeddedInstanceOf.symbols
+@@= skipped -2, +2 lines =@@
+ === templateStringWithEmbeddedInstanceOf.ts ===
+ var x = `abc${ "hello" instanceof String }def`;
+ >x : Symbol(x, Decl(templateStringWithEmbeddedInstanceOf.ts, 0, 3))
+->String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --) ... and 1 more)
++>String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))

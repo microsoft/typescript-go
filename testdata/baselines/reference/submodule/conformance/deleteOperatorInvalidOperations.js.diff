@@ -1,10 +1,17 @@
 --- old.deleteOperatorInvalidOperations.js
 +++ new.deleteOperatorInvalidOperations.js
-@@= skipped -26, +26 lines =@@
+@@= skipped -25, +25 lines =@@
+ // miss an operand
  var BOOLEAN2 = delete ;
  // delete global variable s
- class testADelx {
+-var testADelx = /** @class */ (function () {
+-    function testADelx(s) {
++class testADelx {
 +    s;
-     constructor(s) {
++    constructor(s) {
          this.s = s;
          delete s; //expect error
+     }
+-    return testADelx;
+-}());
++}

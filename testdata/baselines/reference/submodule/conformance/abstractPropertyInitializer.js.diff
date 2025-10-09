@@ -5,7 +5,14 @@
 
  //// [abstractPropertyInitializer.js]
 -"use strict";
- class C {
+-var C = /** @class */ (function () {
+-    function C() {
+-    }
+-    return C;
+-}());
++class C {
 +    prop = 1;
- }
++}
 
+
+ //// [abstractPropertyInitializer.d.ts]

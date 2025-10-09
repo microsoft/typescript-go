@@ -1,0 +1,10 @@
+--- old.declarationEmitInferredTypeAlias2.types
++++ new.declarationEmitInferredTypeAlias2.types
+@@= skipped -13, +13 lines =@@
+ === 1.ts ===
+ let v = "str" || true;
+ >v : string | boolean
+->"str" || true : true | "str"
++>"str" || true : "str" | true
+ >"str" : "str"
+ >true : true

@@ -1,10 +1,29 @@
 --- old.logicalNotOperatorWithAnyOtherType.js
 +++ new.logicalNotOperatorWithAnyOtherType.js
-@@= skipped -72, +72 lines =@@
+@@= skipped -66, +66 lines =@@
+ var ANY1;
+ var ANY2 = ["", ""];
+ var obj;
+-var obj1 = { x: "", y: function () { } };
++var obj1 = { x: "", y: () => { } };
+ function foo() {
+     var a;
      return a;
  }
- class A {
+-var A = /** @class */ (function () {
+-    function A() {
+-    }
+-    A.foo = function () {
++class A {
 +    a;
-     static foo() {
++    static foo() {
          var a;
          return a;
+-    };
+-    return A;
+-}());
++    }
++}
+ var M;
+ (function (M) {
+ })(M || (M = {}));

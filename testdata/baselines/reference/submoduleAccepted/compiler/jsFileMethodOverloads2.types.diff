@@ -1,6 +1,15 @@
 --- old.jsFileMethodOverloads2.types
 +++ new.jsFileMethodOverloads2.types
-@@= skipped -55, +55 lines =@@
+@@= skipped -36, +36 lines =@@
+ >getTypeName : { (this: Example<number>): "number"; (this: Example<string>): "string"; }
+
+     return typeof this.value;
+->typeof this.value : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof this.value : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >this.value : T
+ >this : this
+ >value : T
+@@= skipped -19, +19 lines =@@
     * @returns {unknown}
     */
    transform(fn) {

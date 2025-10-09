@@ -1,6 +1,16 @@
 --- old.emitDecoratorMetadata_isolatedModules(module=commonjs).js
 +++ new.emitDecoratorMetadata_isolatedModules(module=commonjs).js
-@@= skipped -52, +52 lines =@@
+@@= skipped -47, +47 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.C3 = void 0;
+-var C3 = /** @class */ (function () {
+-    function C3() {
+-    }
+-    return C3;
+-}());
++class C3 {
++}
  exports.C3 = C3;
  //// [index.js]
  "use strict";
@@ -16,12 +26,12 @@
  Object.defineProperty(exports, "__esModule", { value: true });
 -var t1 = require("./type1");
 -var class3_1 = require("./class3");
--let HelloWorld = (() => {
--    class HelloWorld {
--        handleEvent1(event) { } // Error
--        handleEvent2(event) { } // Ok
--        handleEvent3(event) { return undefined; } // Ok, Error
+-var HelloWorld = /** @class */ (function () {
+-    function HelloWorld() {
 -    }
+-    HelloWorld.prototype.handleEvent1 = function (event) { }; // Error
+-    HelloWorld.prototype.handleEvent2 = function (event) { }; // Ok
+-    HelloWorld.prototype.handleEvent3 = function (event) { return undefined; }; // Ok, Error
 -    __decorate([
 -        EventListener('1'),
 -        __metadata("design:type", Function),
@@ -53,7 +63,7 @@
 -        __metadata("design:returntype", Object)
 -    ], HelloWorld.prototype, "handleEvent3", null);
 -    return HelloWorld;
--})();
+-}());
 +class HelloWorld {
 +    @EventListener('1')
 +    handleEvent1(event) { } // Error

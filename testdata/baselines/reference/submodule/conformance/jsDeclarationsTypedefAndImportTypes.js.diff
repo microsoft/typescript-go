@@ -9,14 +9,18 @@
  /**
   * @typedef {string | number} Whatever
   */
- class Conn {
--    constructor() {
+-var Conn = /** @class */ (function () {
+-    function Conn() {
 -        this.item = 3;
 -    }
+-    Conn.prototype.method = function () { };
+-    return Conn;
+-}());
++class Conn {
 +    constructor() { }
 +    item = 3;
-     method() { }
- }
++    method() { }
++}
 +export = Conn;
  module.exports = Conn;
  //// [usage.js]
@@ -25,7 +29,24 @@
  /**
   * @typedef {import("./conn")} Conn
   */
-@@= skipped -30, +34 lines =@@
+-var Wrap = /** @class */ (function () {
++class Wrap {
+     /**
+      * @param {Conn} c
+      */
+-    function Wrap(c) {
++    constructor(c) {
+         this.connItem = c.item;
+         /** @type {import("./conn").Whatever} */
+         this.another = "";
+     }
+-    return Wrap;
+-}());
++}
+ module.exports = {
+-    Wrap: Wrap
++    Wrap
+ };
 
 
  //// [conn.d.ts]

@@ -6,4 +6,5 @@
  //// [functionAssignabilityWithArrayLike01.js]
 -"use strict";
  function func() { }
- const array = func;
+-var array = func;
++const array = func;

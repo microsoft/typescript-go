@@ -319,7 +319,7 @@
      }
      
 @@= skipped -62, +46 lines =@@
-     module TestOnDefaultExportedClass_1 {
+     namespace TestOnDefaultExportedClass_1 {
          class StaticName {
              static name: number; // error without useDefineForClassFields
 -                   ~~~~
@@ -335,7 +335,7 @@
          [FunctionPropertyNames.name]: string; // ok
      }
      
-     module TestOnDefaultExportedClass_2 {
+     namespace TestOnDefaultExportedClass_2 {
          class StaticNameFn {
              static name() {} // error without useDefineForClassFields
 -                   ~~~~

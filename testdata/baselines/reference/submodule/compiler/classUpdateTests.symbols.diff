@@ -1,0 +1,11 @@
+--- old.classUpdateTests.symbols
++++ new.classUpdateTests.symbols
+@@= skipped -85, +85 lines =@@
+ >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+ 	constructor() { super(); } // ERROR - no super call allowed
+->super : Symbol(ObjectConstructor, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --))
++>super : Symbol(ObjectConstructor, Decl(lib.es5.d.ts, --, --))
+ }
+
+ class J extends G {

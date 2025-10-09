@@ -1,0 +1,16 @@
+--- old.chainedAssignment2.symbols
++++ new.chainedAssignment2.symbols
+@@= skipped -11, +11 lines =@@
+
+ var d: Date;
+ >d : Symbol(d, Decl(chainedAssignment2.ts, 3, 3))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+ var e: RegExp;
+ >e : Symbol(e, Decl(chainedAssignment2.ts, 4, 3))
+->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+ a = b = c = d = e = null;
+ >a : Symbol(a, Decl(chainedAssignment2.ts, 0, 3))

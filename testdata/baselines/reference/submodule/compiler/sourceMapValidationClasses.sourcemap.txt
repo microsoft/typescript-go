@@ -14,7 +14,7 @@ sourceFile:sourceMapValidationClasses.ts
 3 >    ^^^
 4 >       ^^^^^^^^^^^->
 1 >
-2 >module 
+2 >namespace 
 3 >    Foo.Bar {
   >        "use strict";
   >    
@@ -52,7 +52,7 @@ sourceFile:sourceMapValidationClasses.ts
   >        }
   >    }
 1 >Emitted(1, 1) Source(1, 1) + SourceIndex(0)
-2 >Emitted(1, 5) Source(1, 8) + SourceIndex(0)
+2 >Emitted(1, 5) Source(1, 11) + SourceIndex(0)
 3 >Emitted(1, 8) Source(36, 2) + SourceIndex(0)
 ---
 >>>(function (Foo) {
@@ -61,12 +61,12 @@ sourceFile:sourceMapValidationClasses.ts
 3 >           ^^^
 4 >              ^^
 1->
-2 >module 
+2 >namespace 
 3 >           Foo
 4 >              
 1->Emitted(2, 1) Source(1, 1) + SourceIndex(0)
-2 >Emitted(2, 12) Source(1, 8) + SourceIndex(0)
-3 >Emitted(2, 15) Source(1, 11) + SourceIndex(0)
+2 >Emitted(2, 12) Source(1, 11) + SourceIndex(0)
+3 >Emitted(2, 15) Source(1, 14) + SourceIndex(0)
 4 >Emitted(2, 17) Source(1, 1) + SourceIndex(0)
 ---
 >>>    let Bar;
@@ -74,7 +74,7 @@ sourceFile:sourceMapValidationClasses.ts
 2 >    ^^^^
 3 >        ^^^
 4 >           ^^^^^^^^^^^->
-1 >module Foo.
+1 >namespace Foo.
 2 >    
 3 >        Bar {
   >            "use strict";
@@ -112,8 +112,8 @@ sourceFile:sourceMapValidationClasses.ts
   >                b[j].greet();
   >            }
   >        }
-1 >Emitted(3, 5) Source(1, 12) + SourceIndex(0)
-2 >Emitted(3, 9) Source(1, 12) + SourceIndex(0)
+1 >Emitted(3, 5) Source(1, 15) + SourceIndex(0)
+2 >Emitted(3, 9) Source(1, 15) + SourceIndex(0)
 3 >Emitted(3, 12) Source(36, 2) + SourceIndex(0)
 ---
 >>>    (function (Bar) {
@@ -126,10 +126,10 @@ sourceFile:sourceMapValidationClasses.ts
 2 >    
 3 >               Bar
 4 >                   
-1->Emitted(4, 5) Source(1, 12) + SourceIndex(0)
-2 >Emitted(4, 16) Source(1, 12) + SourceIndex(0)
-3 >Emitted(4, 19) Source(1, 15) + SourceIndex(0)
-4 >Emitted(4, 21) Source(1, 16) + SourceIndex(0)
+1->Emitted(4, 5) Source(1, 15) + SourceIndex(0)
+2 >Emitted(4, 16) Source(1, 15) + SourceIndex(0)
+3 >Emitted(4, 19) Source(1, 18) + SourceIndex(0)
+4 >Emitted(4, 21) Source(1, 19) + SourceIndex(0)
 ---
 >>>        "use strict";
 1->^^^^^^^^
@@ -853,14 +853,14 @@ sourceFile:sourceMapValidationClasses.ts
   >                                }
 1->Emitted(34, 5) Source(35, 6) + SourceIndex(0)
 2 >Emitted(34, 6) Source(36, 2) + SourceIndex(0)
-3 >Emitted(34, 8) Source(1, 12) + SourceIndex(0)
-4 >Emitted(34, 11) Source(1, 15) + SourceIndex(0)
-5 >Emitted(34, 14) Source(1, 12) + SourceIndex(0)
-6 >Emitted(34, 18) Source(1, 12) + SourceIndex(0)
-7 >Emitted(34, 21) Source(1, 15) + SourceIndex(0)
-8 >Emitted(34, 26) Source(1, 12) + SourceIndex(0)
-9 >Emitted(34, 30) Source(1, 12) + SourceIndex(0)
-10>Emitted(34, 33) Source(1, 15) + SourceIndex(0)
+3 >Emitted(34, 8) Source(1, 15) + SourceIndex(0)
+4 >Emitted(34, 11) Source(1, 18) + SourceIndex(0)
+5 >Emitted(34, 14) Source(1, 15) + SourceIndex(0)
+6 >Emitted(34, 18) Source(1, 15) + SourceIndex(0)
+7 >Emitted(34, 21) Source(1, 18) + SourceIndex(0)
+8 >Emitted(34, 26) Source(1, 15) + SourceIndex(0)
+9 >Emitted(34, 30) Source(1, 15) + SourceIndex(0)
+10>Emitted(34, 33) Source(1, 18) + SourceIndex(0)
 11>Emitted(34, 41) Source(36, 2) + SourceIndex(0)
 ---
 >>>})(Foo || (Foo = {}));
@@ -877,7 +877,7 @@ sourceFile:sourceMapValidationClasses.ts
 2 >
   >
 3 > 
-4 > module 
+4 > namespace 
 5 >   Foo
 6 >      
 7 >           Foo
@@ -920,10 +920,10 @@ sourceFile:sourceMapValidationClasses.ts
 1 >Emitted(35, 1) Source(35, 6) + SourceIndex(0)
 2 >Emitted(35, 2) Source(36, 1) + SourceIndex(0)
 3 >Emitted(35, 2) Source(1, 1) + SourceIndex(0)
-4 >Emitted(35, 4) Source(1, 8) + SourceIndex(0)
-5 >Emitted(35, 7) Source(1, 11) + SourceIndex(0)
-6 >Emitted(35, 12) Source(1, 8) + SourceIndex(0)
-7 >Emitted(35, 15) Source(1, 11) + SourceIndex(0)
+4 >Emitted(35, 4) Source(1, 11) + SourceIndex(0)
+5 >Emitted(35, 7) Source(1, 14) + SourceIndex(0)
+6 >Emitted(35, 12) Source(1, 11) + SourceIndex(0)
+7 >Emitted(35, 15) Source(1, 14) + SourceIndex(0)
 8 >Emitted(35, 23) Source(36, 2) + SourceIndex(0)
 ---
 >>>//# sourceMappingURL=sourceMapValidationClasses.js.map

@@ -1,0 +1,28 @@
+--- old.undefinedIsSubtypeOfEverything.symbols
++++ new.undefinedIsSubtypeOfEverything.symbols
+@@= skipped -41, +41 lines =@@
+
+     foo: String;
+ >foo : Symbol(D1A.foo, Decl(undefinedIsSubtypeOfEverything.ts, 18, 24))
+->String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --) ... and 1 more)
++>String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ }
+
+
+@@= skipped -46, +46 lines =@@
+
+     foo: RegExp;
+ >foo : Symbol(D4.foo, Decl(undefinedIsSubtypeOfEverything.ts, 41, 23))
+->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ }
+
+ class D5 extends Base {
+@@= skipped -9, +9 lines =@@
+
+     foo: Date;
+ >foo : Symbol(D5.foo, Decl(undefinedIsSubtypeOfEverything.ts, 45, 23))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ }
+

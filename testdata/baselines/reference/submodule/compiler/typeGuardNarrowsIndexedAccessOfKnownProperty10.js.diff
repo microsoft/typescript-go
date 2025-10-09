@@ -5,6 +5,12 @@
 
  //// [typeGuardNarrowsIndexedAccessOfKnownProperty10.js]
 -"use strict";
- const bar = {};
- (foo) => {
+-var bar = {};
+-(function (foo) {
++const bar = {};
++(foo) => {
      bar[id]++;
+-    var id = foo.bar;
+-});
++    const id = foo.bar;
++};

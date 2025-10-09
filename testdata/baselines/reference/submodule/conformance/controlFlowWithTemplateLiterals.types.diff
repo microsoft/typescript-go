@@ -1,6 +1,13 @@
 --- old.controlFlowWithTemplateLiterals.types
 +++ new.controlFlowWithTemplateLiterals.types
-@@= skipped -11, +11 lines =@@
+@@= skipped -5, +5 lines =@@
+
+ if (typeof envVar === `string`) {
+ >typeof envVar === `string` : boolean
+->typeof envVar : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof envVar : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >envVar : string | undefined
+ >`string` : "string"
 
    envVar.slice(0)
  >envVar.slice(0) : string
@@ -12,7 +19,16 @@
  >0 : 0
  }
 
-@@= skipped -17, +17 lines =@@
+ declare const obj: {test: string} | {}
+->obj : {} | { test: string; }
++>obj : { test: string; } | {}
+ >test : string
+
+ if (`test` in obj) {
+ >`test` in obj : boolean
+ >`test` : "test"
+->obj : {} | { test: string; }
++>obj : { test: string; } | {}
 
    obj.test.slice(0)
  >obj.test.slice(0) : string

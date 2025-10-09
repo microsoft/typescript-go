@@ -8,3 +8,13 @@
  var __rest = (this && this.__rest) || function (s, e) {
      var t = {};
      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+@@= skipped -30, +29 lines =@@
+     obj.a;
+     obj.c;
+ }
+-var modifier = function (targetProps) {
+-    var bar = targetProps.bar, rest = __rest(targetProps, ["bar"]);
++const modifier = (targetProps) => {
++    let { bar } = targetProps, rest = __rest(targetProps, ["bar"]);
+     rest.foo;
+ };

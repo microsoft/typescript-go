@@ -1,0 +1,20 @@
+--- old.throwStatements.symbols
++++ new.throwStatements.symbols
+@@= skipped -73, +73 lines =@@
+
+ var aDate = new Date(12);
+ >aDate : Symbol(aDate, Decl(throwStatements.ts, 30, 3))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+ throw aDate;
+ >aDate : Symbol(aDate, Decl(throwStatements.ts, 30, 3))
+@@= skipped -130, +130 lines =@@
+ throw ['a', ['b']];
+ throw /[a-z]/;
+ throw new Date();
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+ throw new C();
+ >C : Symbol(C, Decl(throwStatements.ts, 4, 1))

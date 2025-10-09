@@ -1,6 +1,15 @@
 --- old.unknownControlFlow.types
 +++ new.unknownControlFlow.types
-@@= skipped -334, +334 lines =@@
+@@= skipped -53, +53 lines =@@
+ >u : unknown
+
+     let x3: {} | { x: string } | null | undefined = u;
+->x3 : {} | { x: string; } | null | undefined
++>x3 : { x: string; } | {} | null | undefined
+ >x : string
+ >u : unknown
+
+@@= skipped -281, +281 lines =@@
  }
 
  function f23<T>(x: T | undefined | null) {
@@ -9,7 +18,117 @@
  >x : T | null | undefined
 
      if (x !== undefined) {
-@@= skipped -483, +483 lines =@@
+@@= skipped -41, +41 lines =@@
+
+     if (typeof x === "object") {
+ >typeof x === "object" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : {}
+ >"object" : "object"
+
+@@= skipped -15, +15 lines =@@
+
+     if (typeof x === "object") {
+ >typeof x === "object" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : T
+ >"object" : "object"
+
+         x;  // T & object | T & null
+->x : (T & object) | (T & null)
++>x : (T & null) | (T & object)
+     }
+     if (x && typeof x === "object") {
+ >x && typeof x === "object" : boolean
+ >x : T
+ >typeof x === "object" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : NonNullable<T>
+ >"object" : "object"
+
+@@= skipped -19, +19 lines =@@
+ >x : T & object
+     }
+     if (typeof x === "object" && x) {
+->typeof x === "object" && x : false | (T & object) | (T & null)
++>typeof x === "object" && x : false | (T & null) | (T & object)
+ >typeof x === "object" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : T
+ >"object" : "object"
+->x : (T & object) | (T & null)
++>x : (T & null) | (T & object)
+
+         x;  // T & object
+ >x : T & object
+@@= skipped -18, +18 lines =@@
+
+     if (typeof x === "object") {
+ >typeof x === "object" : boolean
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : T
+ >"object" : "object"
+
+@@= skipped -137, +137 lines =@@
+ >a : T
+
+     let a4 = ensureNotUndefined(ensureNotUndefined(a));  // T & {} | T & null
+->a4 : (T & {}) | (T & null)
+->ensureNotUndefined(ensureNotUndefined(a)) : (T & {}) | (T & null)
++>a4 : (T & null) | (T & {})
++>ensureNotUndefined(ensureNotUndefined(a)) : (T & null) | (T & {})
+ >ensureNotUndefined : <T_1>(x: T_1) => T_1 & ({} | null)
+ >ensureNotUndefined(a) : T & ({} | null)
+ >ensureNotUndefined : <T_1>(x: T_1) => T_1 & ({} | null)
+@@= skipped -60, +60 lines =@@
+ >typeof a !== 'object' || typeof b !== 'object' || !a : boolean
+ >typeof a !== 'object' || typeof b !== 'object' : boolean
+ >typeof a !== 'object' : boolean
+->typeof a : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof a : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >a : T
+ >'object' : "object"
+ >typeof b !== 'object' : boolean
+->typeof b : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof b : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >b : T
+ >'object' : "object"
+ >!a : boolean
+->a : (T & object) | (T & null)
++>a : (T & null) | (T & object)
+ >!b : boolean
+->b : (T & object) | (T & null)
++>b : (T & null) | (T & object)
+
+         return false;
+ >false : false
+@@= skipped -35, +35 lines =@@
+ >Object.keys(a).length !== Object.keys(b).length : boolean
+ >Object.keys(a).length : number
+ >Object.keys(a) : string[]
+->Object.keys : { (o: object): string[]; (o: {}): string[]; }
++>Object.keys : (o: object) => string[]
+ >Object : ObjectConstructor
+->keys : { (o: object): string[]; (o: {}): string[]; }
++>keys : (o: object) => string[]
+ >a : T & object
+ >length : number
+ >Object.keys(b).length : number
+ >Object.keys(b) : string[]
+->Object.keys : { (o: object): string[]; (o: {}): string[]; }
++>Object.keys : (o: object) => string[]
+ >Object : ObjectConstructor
+->keys : { (o: object): string[]; (o: {}): string[]; }
++>keys : (o: object) => string[]
+ >b : T & object
+ >length : number
+
+@@= skipped -158, +158 lines =@@
  }
 
  function fx2<T extends {}>(value: T & ({} | null)) {

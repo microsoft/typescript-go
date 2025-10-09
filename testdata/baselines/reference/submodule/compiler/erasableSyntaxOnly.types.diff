@@ -1,0 +1,11 @@
+--- old.erasableSyntaxOnly.types
++++ new.erasableSyntaxOnly.types
+@@= skipped -165, +165 lines =@@
+
+ // return and yield ASI
+ function *gen() {
+->gen : () => Generator<any, any, unknown>
++>gen : () => {}
+
+     yield <any>
+ >yield <any>        1 : any

@@ -5,4 +5,5 @@
 
  //// [unionRelationshipCheckPasses.js]
 -"use strict";
- const item = null;
+-var item = null;
++const item = null;

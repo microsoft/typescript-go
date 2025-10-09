@@ -1,0 +1,10 @@
+--- old.isArray.symbols
++++ new.isArray.symbols
+@@= skipped -6, +6 lines =@@
+
+ if (Array.isArray(maybeArray)) {
+ >Array.isArray : Symbol(ArrayConstructor.isArray, Decl(lib.es5.d.ts, --, --))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >isArray : Symbol(ArrayConstructor.isArray, Decl(lib.es5.d.ts, --, --))
+ >maybeArray : Symbol(maybeArray, Decl(isArray.ts, 0, 3))

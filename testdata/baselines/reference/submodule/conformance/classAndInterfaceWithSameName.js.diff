@@ -1,14 +1,25 @@
 --- old.classAndInterfaceWithSameName.js
 +++ new.classAndInterfaceWithSameName.js
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
+ }
 
  //// [classAndInterfaceWithSameName.js]
- class C {
+-var C = /** @class */ (function () {
+-    function C() {
+-    }
+-    return C;
+-}());
++class C {
 +    foo;
- }
++}
  var M;
  (function (M) {
-     class D {
+-    var D = /** @class */ (function () {
+-        function D() {
+-        }
+-        return D;
+-    }());
++    class D {
 +        bar;
-     }
++    }
  })(M || (M = {}));

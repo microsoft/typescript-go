@@ -1,21 +1,33 @@
 --- old.noCrashOnThisTypeUsage.js
 +++ new.noCrashOnThisTypeUsage.js
-@@= skipped -32, +32 lines =@@
+@@= skipped -31, +31 lines =@@
+ exports.ObservableValue = void 0;
  function notifyListeners(listenable, change) {
  }
- class ObservableValue {
+-var ObservableValue = /** @class */ (function () {
+-    function ObservableValue(value) {
++class ObservableValue {
 +    value;
-     constructor(value) {
++    constructor(value) {
          this.value = value;
 -        this.changeListeners = [];
-         const newValue = value;
-         const oldValue = null;
+-        var newValue = value;
+-        var oldValue = null;
++        const newValue = value;
++        const oldValue = null;
          notifyListeners(this, {
-@@= skipped -12, +12 lines =@@
-             oldValue
+             type: "update",
+             object: this,
+-            newValue: newValue,
+-            oldValue: oldValue
++            newValue,
++            oldValue
          });
      }
+-    ObservableValue.prototype.observe = function (handler, fireImmediately) { };
+-    return ObservableValue;
+-}());
 +    changeListeners = [];
-     observe(handler, fireImmediately) { }
- }
++    observe(handler, fireImmediately) { }
++}
  exports.ObservableValue = ObservableValue;

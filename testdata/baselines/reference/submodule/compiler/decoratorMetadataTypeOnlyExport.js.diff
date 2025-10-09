@@ -1,7 +1,16 @@
 --- old.decoratorMetadataTypeOnlyExport.js
 +++ new.decoratorMetadataTypeOnlyExport.js
-@@= skipped -21, +21 lines =@@
- }
+@@= skipped -17, +17 lines =@@
+ //// [a.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var Foo = /** @class */ (function () {
+-    function Foo() {
+-    }
+-    return Foo;
+-}());
++class Foo {
++}
  //// [b.js]
  "use strict";
 -var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -14,17 +23,17 @@
 -    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 -};
  Object.defineProperty(exports, "__esModule", { value: true });
- const Decorator = () => undefined;
--let Bar = (() => {
--    let Bar = class Bar {
--        constructor(par) { }
--    };
+-var Decorator = function () { return undefined; };
+-var Bar = /** @class */ (function () {
+-    function Bar(par) {
+-    }
 -    Bar = __decorate([
 -        Decorator,
 -        __metadata("design:paramtypes", [Function])
 -    ], Bar);
 -    return Bar;
--})();
+-}());
++const Decorator = () => undefined;
 +@Decorator
 +class Bar {
 +    constructor(par) { }

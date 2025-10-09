@@ -4,7 +4,7 @@
 class c {
 >c : c
 }
-module m {
+namespace m {
 >m : typeof m
 
     export class c {

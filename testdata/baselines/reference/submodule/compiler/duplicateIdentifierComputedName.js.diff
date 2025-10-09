@@ -1,9 +1,15 @@
 --- old.duplicateIdentifierComputedName.js
 +++ new.duplicateIdentifierComputedName.js
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
+
 
  //// [duplicateIdentifierComputedName.js]
- class C {
+-var C = /** @class */ (function () {
+-    function C() {
+-    }
+-    return C;
+-}());
++class C {
 +    ["a"];
 +    ["a"];
- }
++}

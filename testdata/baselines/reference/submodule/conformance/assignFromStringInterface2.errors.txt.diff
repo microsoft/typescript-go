@@ -1,0 +1,23 @@
+--- old.assignFromStringInterface2.errors.txt
++++ new.assignFromStringInterface2.errors.txt
+@@= skipped -0, +0 lines =@@
+-assignFromStringInterface2.ts(42,1): error TS2740: Type 'NotString' is missing the following properties from type 'String': codePointAt, includes, endsWith, normalize, and 16 more.
+ assignFromStringInterface2.ts(47,1): error TS2322: Type 'String' is not assignable to type 'string'.
+   'string' is a primitive, but 'String' is a wrapper object. Prefer using 'string' when possible.
+ assignFromStringInterface2.ts(48,1): error TS2322: Type 'NotString' is not assignable to type 'string'.
+
+
+-==== assignFromStringInterface2.ts (3 errors) ====
++==== assignFromStringInterface2.ts (2 errors) ====
+     interface String {
+         doStuff(): string;
+     }
+@@= skipped -46, +45 lines =@@
+     
+     a = x;
+     a = b;
+-    ~
+-!!! error TS2740: Type 'NotString' is missing the following properties from type 'String': codePointAt, includes, endsWith, normalize, and 16 more.
+     
+     b = a;
+     b = x;

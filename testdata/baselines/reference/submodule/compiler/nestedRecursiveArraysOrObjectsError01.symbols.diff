@@ -1,0 +1,11 @@
+--- old.nestedRecursiveArraysOrObjectsError01.symbols
++++ new.nestedRecursiveArraysOrObjectsError01.symbols
+@@= skipped -7, +7 lines =@@
+
+ interface StyleArray extends Array<Style> {}
+ >StyleArray : Symbol(StyleArray, Decl(nestedRecursiveArraysOrObjectsError01.ts, 0, 36))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >Style : Symbol(Style, Decl(nestedRecursiveArraysOrObjectsError01.ts, 0, 0))
+
+ interface StyleBase {

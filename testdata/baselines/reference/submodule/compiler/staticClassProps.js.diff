@@ -4,15 +4,15 @@
 
 
  //// [staticClassProps.js]
--let C = (() => {
--    class C {
--        foo() {
--        }
+-var C = /** @class */ (function () {
+-    function C() {
 +class C {
 +    foo() {
      }
+-    C.prototype.foo = function () {
+-    };
 -    C.z = 1;
 -    return C;
--})();
+-}());
 +    static z = 1;
 +}

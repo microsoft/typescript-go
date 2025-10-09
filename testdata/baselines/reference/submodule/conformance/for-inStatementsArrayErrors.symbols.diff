@@ -1,0 +1,11 @@
+--- old.for-inStatementsArrayErrors.symbols
++++ new.for-inStatementsArrayErrors.symbols
+@@= skipped -2, +2 lines =@@
+ === for-inStatementsArrayErrors.ts ===
+ let a: Date[];
+ >a : Symbol(a, Decl(for-inStatementsArrayErrors.ts, 0, 3))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+ for (let x in a) {
+ >x : Symbol(x, Decl(for-inStatementsArrayErrors.ts, 2, 8))

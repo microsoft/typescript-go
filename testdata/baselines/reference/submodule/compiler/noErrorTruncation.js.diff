@@ -5,4 +5,5 @@
 
  //// [noErrorTruncation.js]
 -// @noErrorTruncation
- const x = 42;
+-var x = 42;
++const x = 42;

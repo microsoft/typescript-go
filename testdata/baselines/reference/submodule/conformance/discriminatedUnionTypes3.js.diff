@@ -6,6 +6,8 @@
  //// [discriminatedUnionTypes3.js]
 -"use strict";
 -// Repro from #44435
- const example = {};
+-var example = {};
++const example = {};
  if (example.err === undefined) {
      example.property; // true
+ }

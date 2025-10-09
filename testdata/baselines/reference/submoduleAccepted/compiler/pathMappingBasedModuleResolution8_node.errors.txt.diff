@@ -1,32 +1,30 @@
 --- old.pathMappingBasedModuleResolution8_node.errors.txt
 +++ new.pathMappingBasedModuleResolution8_node.errors.txt
 @@= skipped -0, +0 lines =@@
--<no content>
+-c:/root/tsconfig.json(3,9): error TS5101: Option 'baseUrl' is deprecated and will stop functioning in TypeScript 7.0. Specify compilerOption '"ignoreDeprecations": "6.0"' to silence this error.
+-  Visit https://aka.ms/ts6 for migration information.
+-
+-
+-==== c:/root/tsconfig.json (1 errors) ====
 +c:/root/tsconfig.json(3,9): error TS5102: Option 'baseUrl' has been removed. Please remove it from your configuration.
 +  Use '"paths": {"*": ["./*"]}' instead.
 +c:/root/tsconfig.json(6,16): error TS5090: Non-relative paths are not allowed. Did you forget a leading './'?
 +
 +
 +==== c:/root/tsconfig.json (2 errors) ====
-+    {
-+        "compilerOptions": {
-+            "baseUrl": ".",
-+            ~~~~~~~~~
+     {
+         "compilerOptions": {
+             "baseUrl": ".",
+             ~~~~~~~~~
+-!!! error TS5101: Option 'baseUrl' is deprecated and will stop functioning in TypeScript 7.0. Specify compilerOption '"ignoreDeprecations": "6.0"' to silence this error.
+-!!! error TS5101:   Visit https://aka.ms/ts6 for migration information.
 +!!! error TS5102: Option 'baseUrl' has been removed. Please remove it from your configuration.
 +!!! error TS5102:   Use '"paths": {"*": ["./*"]}' instead.
-+            "paths": {
-+                "@speedy/*/testing": [
-+                   "*/dist/index.ts"
+             "paths": {
+                 "@speedy/*/testing": [
+                    "*/dist/index.ts"
 +                   ~~~~~~~~~~~~~~~~~
 +!!! error TS5090: Non-relative paths are not allowed. Did you forget a leading './'?
-+                ]
-+            }
-+        }
-+    }
-+    
-+==== c:/root/index.ts (0 errors) ====
-+    import {x} from "@speedy/folder1/testing"
-+    
-+==== c:/root/folder1/dist/index.ts (0 errors) ====
-+    export const x = 1 + 2;
-+    
+                 ]
+             }
+         }

@@ -9,3 +9,12 @@
 
      return 5;
  >5 : 5
+@@= skipped -13, +13 lines =@@
+ >f2 : () => string | number
+
+     return 5 || "hello";
+->5 || "hello" : 5 | "hello"
++>5 || "hello" : "hello" | 5
+ >5 : 5
+ >"hello" : "hello"
+ }

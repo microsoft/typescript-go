@@ -21,8 +21,11 @@
 -  Overload 2 of 3, '(strs: TemplateStringsArray, n: any, m: string): any', gave the following error.
 +  The last overload gave the following error.
      Argument of type 'boolean' is not assignable to parameter of type 'string'.
- taggedTemplateStringsWithOverloadResolution3.ts(69,18): error TS2339: Property 'toFixed' does not exist on type 'string'.
+-taggedTemplateStringsWithOverloadResolution3.ts(69,18): error TS2551: Property 'toFixed' does not exist on type 'string'. Did you mean 'fixed'?
++taggedTemplateStringsWithOverloadResolution3.ts(69,18): error TS2339: Property 'toFixed' does not exist on type 'string'.
 
+
+ ==== taggedTemplateStringsWithOverloadResolution3.ts (6 errors) ====
 @@= skipped -29, +23 lines =@@
      fn1 `${ {} }`; // Error
              ~~
@@ -58,3 +61,13 @@
      
      // Non - generic overloads where contextual typing of function arguments has errors
      function fn5(strs: TemplateStringsArray, f: (n: string) => void): string;
+@@= skipped -18, +16 lines =@@
+     function fn5() { return undefined; }
+     fn5 `${ (n) => n.toFixed() }`; // will error; 'n' should have type 'string'.
+                      ~~~~~~~
+-!!! error TS2551: Property 'toFixed' does not exist on type 'string'. Did you mean 'fixed'?
+-!!! related TS2728 lib.es2015.core.d.ts:--:--: 'fixed' is declared here.
++!!! error TS2339: Property 'toFixed' does not exist on type 'string'.
+     fn5 `${ (n) => n.substr(0) }`;
+     
+     

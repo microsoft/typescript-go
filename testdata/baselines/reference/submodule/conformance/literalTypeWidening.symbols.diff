@@ -1,0 +1,14 @@
+--- old.literalTypeWidening.symbols
++++ new.literalTypeWidening.symbols
+@@= skipped -367, +367 lines =@@
+ >K : Symbol(K, Decl(literalTypeWidening.ts, 118, 21))
+
+   return Object.keys(obj) as K[]
+->Object.keys : Symbol(ObjectConstructor.keys, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --))
++>Object.keys : Symbol(ObjectConstructor.keys, Decl(lib.es5.d.ts, --, --))
+ >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+->keys : Symbol(ObjectConstructor.keys, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --))
++>keys : Symbol(ObjectConstructor.keys, Decl(lib.es5.d.ts, --, --))
+ >obj : Symbol(obj, Decl(literalTypeWidening.ts, 118, 42))
+ >K : Symbol(K, Decl(literalTypeWidening.ts, 118, 21))
+ }

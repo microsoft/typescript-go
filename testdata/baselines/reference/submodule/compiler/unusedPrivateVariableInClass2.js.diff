@@ -1,9 +1,15 @@
 --- old.unusedPrivateVariableInClass2.js
 +++ new.unusedPrivateVariableInClass2.js
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
+ }
 
  //// [unusedPrivateVariableInClass2.js]
- class greeter {
+-var greeter = /** @class */ (function () {
+-    function greeter() {
+-    }
+-    return greeter;
+-}());
++class greeter {
 +    x;
 +    y;
- }
++}

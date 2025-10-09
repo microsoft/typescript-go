@@ -1,6 +1,24 @@
 --- old.jsxElementType.symbols
 +++ new.jsxElementType.symbols
-@@= skipped -63, +63 lines =@@
+@@= skipped -6, +6 lines =@@
+
+ type React18ReactFragment = ReadonlyArray<React18ReactNode>;
+ >React18ReactFragment : Symbol(React18ReactFragment, Decl(jsxElementType.tsx, 1, 31))
+->ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --))
+ >React18ReactNode : Symbol(React18ReactNode, Decl(jsxElementType.tsx, 3, 60))
+
+ type React18ReactNode =
+@@= skipped -23, +23 lines =@@
+   | null
+   | undefined
+   | Promise<React18ReactNode>;
+->Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --))
+ >React18ReactNode : Symbol(React18ReactNode, Decl(jsxElementType.tsx, 3, 60))
+
+ // // React.JSXElementConstructor but it now can return React nodes from function components.
+@@= skipped -34, +34 lines =@@
  >IntrinsicElements : Symbol(IntrinsicElements, Decl(react16.d.ts, 2514, 86), Decl(jsxElementType.tsx, 22, 67), Decl(jsxElementType.tsx, 101, 19))
 
        ['my-custom-element']: React.DOMAttributes<unknown>;

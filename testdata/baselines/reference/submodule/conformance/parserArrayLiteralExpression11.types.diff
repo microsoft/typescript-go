@@ -1,0 +1,8 @@
+--- old.parserArrayLiteralExpression11.types
++++ new.parserArrayLiteralExpression11.types
+@@= skipped -4, +4 lines =@@
+ >v : number[]
+ >[1,,1] : number[]
+ >1 : 1
+-> : undefined
+ >1 : 1

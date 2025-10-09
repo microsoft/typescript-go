@@ -1,10 +1,14 @@
 --- old.es2024SharedMemory.types
 +++ new.es2024SharedMemory.types
-@@= skipped -39, +39 lines =@@
+@@= skipped -37, +37 lines =@@
+ >sab64 : SharedArrayBuffer
+
  const waitValue = Atomics.wait(int32, 0, 0);
- >waitValue : "not-equal" | "ok" | "timed-out"
- >Atomics.wait(int32, 0, 0) : "not-equal" | "ok" | "timed-out"
+->waitValue : "ok" | "not-equal" | "timed-out"
+->Atomics.wait(int32, 0, 0) : "ok" | "not-equal" | "timed-out"
 ->Atomics.wait : { (typedArray: Int32Array<ArrayBufferLike>, index: number, value: number, timeout?: number): "ok" | "not-equal" | "timed-out"; (typedArray: BigInt64Array<ArrayBufferLike>, index: number, value: bigint, timeout?: number): "ok" | "not-equal" | "timed-out"; }
++>waitValue : "not-equal" | "ok" | "timed-out"
++>Atomics.wait(int32, 0, 0) : "not-equal" | "ok" | "timed-out"
 +>Atomics.wait : { (typedArray: Int32Array<ArrayBufferLike>, index: number, value: number, timeout?: number | undefined): "not-equal" | "ok" | "timed-out"; (typedArray: BigInt64Array<ArrayBufferLike>, index: number, value: bigint, timeout?: number | undefined): "not-equal" | "ok" | "timed-out"; }
  >Atomics : Atomics
 ->wait : { (typedArray: Int32Array<ArrayBufferLike>, index: number, value: number, timeout?: number): "ok" | "not-equal" | "timed-out"; (typedArray: BigInt64Array<ArrayBufferLike>, index: number, value: bigint, timeout?: number): "ok" | "not-equal" | "timed-out"; }

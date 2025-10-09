@@ -1,20 +1,42 @@
 --- old.ClassAndModuleThatMergeWithStaticFunctionAndNonExportedFunctionThatShareAName.js
 +++ new.ClassAndModuleThatMergeWithStaticFunctionAndNonExportedFunctionThatShareAName.js
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
+ }
 
  //// [ClassAndModuleThatMergeWithStaticFunctionAndNonExportedFunctionThatShareAName.js]
- class Point {
+-var Point = /** @class */ (function () {
+-    function Point(x, y) {
++class Point {
 +    x;
 +    y;
-     constructor(x, y) {
++    constructor(x, y) {
          this.x = x;
          this.y = y;
-@@= skipped -12, +14 lines =@@
+     }
+-    Point.Origin = function () { return { x: 0, y: 0 }; };
+-    return Point;
+-}());
++    static Origin() { return { x: 0, y: 0 }; }
++}
+ (function (Point) {
+     function Origin() { return ""; } // not an error, since not exported
+ })(Point || (Point = {}));
  var A;
  (function (A) {
-     class Point {
+-    var Point = /** @class */ (function () {
+-        function Point(x, y) {
++    class Point {
 +        x;
 +        y;
-         constructor(x, y) {
++        constructor(x, y) {
              this.x = x;
              this.y = y;
+         }
+-        Point.Origin = function () { return { x: 0, y: 0 }; };
+-        return Point;
+-    }());
++        static Origin() { return { x: 0, y: 0 }; }
++    }
+     A.Point = Point;
+     (function (Point) {
+         function Origin() { return ""; } // not an error since not exported

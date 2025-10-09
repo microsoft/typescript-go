@@ -1,9 +1,15 @@
 --- old.autoAsiForStaticsInClassDeclaration.js
 +++ new.autoAsiForStaticsInClassDeclaration.js
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
+ } 
 
  //// [autoAsiForStaticsInClassDeclaration.js]
- class C {
+-var C = /** @class */ (function () {
+-    function C() {
+-    }
+-    return C;
+-}());
++class C {
 +    static x;
 +    static y;
- }
++}

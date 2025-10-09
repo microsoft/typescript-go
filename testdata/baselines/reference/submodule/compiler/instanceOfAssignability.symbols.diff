@@ -1,0 +1,34 @@
+--- old.instanceOfAssignability.symbols
++++ new.instanceOfAssignability.symbols
+@@= skipped -49, +49 lines =@@
+ function fn1(x: Array<number>|Array<string>|boolean) {
+ >fn1 : Symbol(fn1, Decl(instanceOfAssignability.ts, 19, 38))
+ >x : Symbol(x, Decl(instanceOfAssignability.ts, 21, 13))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+ 	if(x instanceof Array) {
+ >x : Symbol(x, Decl(instanceOfAssignability.ts, 21, 13))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+ 		// 1.5: y: Array<number>|Array<string>
+ 		// Want: y: Array<number>|Array<string>
+@@= skipped -106, +106 lines =@@
+ function fn7(x: Array<number>|Array<string>) {
+ >fn7 : Symbol(fn7, Decl(instanceOfAssignability.ts, 67, 1))
+ >x : Symbol(x, Decl(instanceOfAssignability.ts, 69, 13))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+ 	if(x instanceof Array) {
+ >x : Symbol(x, Decl(instanceOfAssignability.ts, 69, 13))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+ 		// 1.5: y: Array<number>|Array<string>
+ 		// Want: y: Array<number>|Array<string>

@@ -6,16 +6,28 @@
  "use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
  var NS = {};
- NS.K = class {
-     values() {
+-NS.K = /** @class */ (function () {
+-    function K() {
+-    }
+-    K.prototype.values = function () {
++NS.K = class {
++    values() {
          return new NS.K();
-     }
- };
+-    };
+-    return K;
+-}());
++    }
++};
 +export var K = NS.K;
  exports.K = NS.K;
  //// [main.js]
  "use strict";
-@@= skipped -17, +19 lines =@@
+-var K = require("./mod1").K;
++const { K } = require("./mod1");
+ /** @param {K} k */
+ function f(k) {
+     k.values();
+@@= skipped -20, +19 lines =@@
 
 
  //// [mod1.d.ts]

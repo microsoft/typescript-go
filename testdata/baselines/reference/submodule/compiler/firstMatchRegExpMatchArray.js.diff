@@ -5,6 +5,11 @@
 
  //// [firstMatchRegExpMatchArray.js]
 -"use strict";
- const match = ''.match(/ /);
+-var match = ''.match(/ /);
++const match = ''.match(/ /);
  if (match !== null) {
-     const foo = match[0];
+-    var foo = match[0];
+-    var bar = match[1];
++    const foo = match[0];
++    const bar = match[1];
+ }

@@ -1,0 +1,19 @@
+--- old.subtypesOfAny.symbols
++++ new.subtypesOfAny.symbols
+@@= skipped -54, +54 lines =@@
+
+     foo: Date;
+ >foo : Symbol(I5.foo, Decl(subtypesOfAny.ts, 27, 21))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ }
+
+
+@@= skipped -12, +12 lines =@@
+
+     foo: RegExp;
+ >foo : Symbol(I6.foo, Decl(subtypesOfAny.ts, 33, 21))
+->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ }
+

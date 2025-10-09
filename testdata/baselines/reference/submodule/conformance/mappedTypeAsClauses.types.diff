@@ -1,6 +1,22 @@
 --- old.mappedTypeAsClauses.types
 +++ new.mappedTypeAsClauses.types
-@@= skipped -245, +245 lines =@@
+@@= skipped -62, +62 lines =@@
+ >b : number
+
+ type TD2 = keyof TD1;  // 'a1' | 'a2' | 'b1' | 'b2'
+->TD2 : "a1" | "b1" | "a2" | "b2"
++>TD2 : "a1" | "a2" | "b1" | "b2"
+
+ type TD3<U> = keyof DoubleProp<U>; // keyof DoubleProp<U>
+ >TD3 : keyof DoubleProp<U>
+
+ type TD4 = TD3<{ a: string, b: number }>;  // 'a1' | 'a2' | 'b1' | 'b2'
+->TD4 : "a1" | "b1" | "a2" | "b2"
++>TD4 : "a1" | "a2" | "b1" | "b2"
+ >a : string
+ >b : number
+
+@@= skipped -183, +183 lines =@@
  }
 
  function f(x: KeysExtendedBy<M, number>) {

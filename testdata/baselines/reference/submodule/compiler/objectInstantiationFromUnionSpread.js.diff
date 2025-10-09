@@ -8,3 +8,14 @@
  var __assign = (this && this.__assign) || function () {
      __assign = Object.assign || function(t) {
          for (var s, i = 1, n = arguments.length; i < n; i++) {
+@@= skipped -13, +12 lines =@@
+     return __assign.apply(this, arguments);
+ };
+ function f1(a) {
+-    a.map(function (item) { return (__assign({}, item)); }).filter(function (value) { });
++    a.map(item => (__assign({}, item))).filter(value => { });
+ }
+ function f2(a) {
+-    a.map(function (item) { return (__assign({}, item)); }).filter(function (value) { });
++    a.map(item => (__assign({}, item))).filter(value => { });
+ }

@@ -5,8 +5,8 @@
 
  //// [lateBoundClassMemberAssignmentJS2.d.ts]
 -export class MyClass {
--    "my-fake-sym": string;
 +export declare class MyClass {
 +    constructor();
      method(): void;
+-    "my-fake-sym": string;
  }

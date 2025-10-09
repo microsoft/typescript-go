@@ -1,0 +1,19 @@
+--- old.genericCallWithObjectTypeArgsAndIndexers.symbols
++++ new.genericCallWithObjectTypeArgsAndIndexers.symbols
+@@= skipped -21, +21 lines =@@
+
+     [x: number]: Date;
+ >x : Symbol(x, Decl(genericCallWithObjectTypeArgsAndIndexers.ts, 8, 5))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+ };
+ var r = foo(a);
+@@= skipped -11, +11 lines =@@
+ function other<T extends Date>(arg: T) {
+ >other : Symbol(other, Decl(genericCallWithObjectTypeArgsAndIndexers.ts, 10, 15))
+ >T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndIndexers.ts, 12, 15))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ >arg : Symbol(arg, Decl(genericCallWithObjectTypeArgsAndIndexers.ts, 12, 31))
+ >T : Symbol(T, Decl(genericCallWithObjectTypeArgsAndIndexers.ts, 12, 15))

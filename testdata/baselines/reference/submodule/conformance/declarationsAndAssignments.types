@@ -471,7 +471,7 @@ f14([2, ["abc", { y: false }]]);  // Error, no x
 >y : false
 >false : false
 
-module M {
+namespace M {
 >M : typeof M
 
     export var [a, b] = [1, 2];

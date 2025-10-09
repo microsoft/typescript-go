@@ -1,10 +1,29 @@
 --- old.bitwiseNotOperatorWithAnyOtherType.js
 +++ new.bitwiseNotOperatorWithAnyOtherType.js
-@@= skipped -75, +75 lines =@@
+@@= skipped -69, +69 lines =@@
+ var ANY1;
+ var ANY2 = ["", ""];
+ var obj;
+-var obj1 = { x: "", y: function () { } };
++var obj1 = { x: "", y: () => { } };
+ function foo() {
+     var a;
      return a;
  }
- class A {
+-var A = /** @class */ (function () {
+-    function A() {
+-    }
+-    A.foo = function () {
++class A {
 +    a;
-     static foo() {
++    static foo() {
          var a;
          return a;
+-    };
+-    return A;
+-}());
++    }
++}
+ var M;
+ (function (M) {
+ })(M || (M = {}));

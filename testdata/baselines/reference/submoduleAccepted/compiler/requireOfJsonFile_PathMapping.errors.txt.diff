@@ -1,7 +1,11 @@
 --- old.requireOfJsonFile_PathMapping.errors.txt
 +++ new.requireOfJsonFile_PathMapping.errors.txt
 @@= skipped -0, +0 lines =@@
--<no content>
+-/tsconfig.json(3,9): error TS5101: Option 'baseUrl' is deprecated and will stop functioning in TypeScript 7.0. Specify compilerOption '"ignoreDeprecations": "6.0"' to silence this error.
+-  Visit https://aka.ms/ts6 for migration information.
+-
+-
+-==== /tsconfig.json (1 errors) ====
 +/tsconfig.json(3,9): error TS5102: Option 'baseUrl' has been removed. Please remove it from your configuration.
 +  Use '"paths": {"*": ["./*"]}' instead.
 +/tsconfig.json(5,19): error TS5090: Non-relative paths are not allowed. Did you forget a leading './'?
@@ -9,27 +13,20 @@
 +
 +
 +==== /tsconfig.json (3 errors) ====
-+    {
-+        "compilerOptions": {
-+            "baseUrl": ".",
-+            ~~~~~~~~~
+     {
+         "compilerOptions": {
+             "baseUrl": ".",
+             ~~~~~~~~~
+-!!! error TS5101: Option 'baseUrl' is deprecated and will stop functioning in TypeScript 7.0. Specify compilerOption '"ignoreDeprecations": "6.0"' to silence this error.
+-!!! error TS5101:   Visit https://aka.ms/ts6 for migration information.
 +!!! error TS5102: Option 'baseUrl' has been removed. Please remove it from your configuration.
 +!!! error TS5102:   Use '"paths": {"*": ["./*"]}' instead.
-+            "paths": {
-+                "*": ["node_modules/*", "src/types"]
+             "paths": {
+                 "*": ["node_modules/*", "src/types"]
 +                      ~~~~~~~~~~~~~~~~
 +!!! error TS5090: Non-relative paths are not allowed. Did you forget a leading './'?
 +                                        ~~~~~~~~~~~
 +!!! error TS5090: Non-relative paths are not allowed. Did you forget a leading './'?
-+            },
-+            "allowJs": true,
-+            "outDir": "bin"
-+        }
-+    }
-+    
-+==== /a.ts (0 errors) ====
-+    import foobar from "foo/bar/foobar.json";
-+    
-+==== /node_modules/foo/bar/foobar.json (0 errors) ====
-+    { "a": 10 }
-+    
+             },
+             "allowJs": true,
+             "outDir": "bin"

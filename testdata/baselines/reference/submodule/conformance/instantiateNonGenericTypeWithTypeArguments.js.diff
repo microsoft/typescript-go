@@ -1,10 +1,17 @@
 --- old.instantiateNonGenericTypeWithTypeArguments.js
 +++ new.instantiateNonGenericTypeWithTypeArguments.js
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
+ //// [instantiateNonGenericTypeWithTypeArguments.js]
  // it is an error to provide type arguments to a non-generic call
  // all of these are errors
- class C {
+-var C = /** @class */ (function () {
+-    function C() {
+-    }
+-    return C;
+-}());
++class C {
 +    x;
- }
++}
  var c = new C();
  function Foo() { }
+ var r = new Foo();

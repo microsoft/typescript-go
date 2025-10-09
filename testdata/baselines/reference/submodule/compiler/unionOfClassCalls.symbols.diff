@@ -1,0 +1,20 @@
+--- old.unionOfClassCalls.symbols
++++ new.unionOfClassCalls.symbols
+@@= skipped -72, +72 lines =@@
+ >arr : Symbol(arr, Decl(unionOfClassCalls.ts, 18, 5))
+ >reduce : Symbol(Array.reduce, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --) ... and 1 more)
+ >acc : Symbol(acc, Decl(unionOfClassCalls.ts, 27, 12))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >a : Symbol(a, Decl(unionOfClassCalls.ts, 27, 31))
+ >index : Symbol(index, Decl(unionOfClassCalls.ts, 27, 51))
+
+@@= skipped -97, +97 lines =@@
+
+     doThing(): Promise<this>
+ >doThing : Symbol(Foo.doThing, Decl(unionOfClassCalls.ts, 60, 19))
+->Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --))
+ }
+
+ declare class Bar extends Foo {

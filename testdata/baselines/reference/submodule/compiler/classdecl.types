@@ -81,7 +81,7 @@ class b extends a {
 >a : a
 }
 
-module m1 {
+namespace m1 {
 >m1 : typeof m1
 
     export class b {
@@ -96,10 +96,10 @@ module m1 {
     }
 }
 
-module m2 {
+namespace m2 {
 >m2 : typeof m2
 
-    export module m3 {
+    export namespace m3 {
 >m3 : typeof m3
 
         export class c extends b {

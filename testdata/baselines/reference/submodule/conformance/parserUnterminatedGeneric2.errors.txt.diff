@@ -1,0 +1,12 @@
+--- old.parserUnterminatedGeneric2.errors.txt
++++ new.parserUnterminatedGeneric2.errors.txt
+@@= skipped -49, +49 lines =@@
+             all(promises: IPromise < any > []): IPromise<
+                           ~~~~~~~~
+ !!! error TS2552: Cannot find name 'IPromise'. Did you mean 'Promise'?
+-!!! related TS2728 lib.es2015.promise.d.ts:--:--: 'Promise' is declared here.
+                                                 ~~~~~~~~
+ !!! error TS2552: Cannot find name 'IPromise'. Did you mean 'Promise'?
+-!!! related TS2728 lib.es2015.promise.d.ts:--:--: 'Promise' is declared here.
+                                                          
+ !!! error TS1005: '>' expected.

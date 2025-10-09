@@ -26,7 +26,7 @@ import fs = module("fs");
 >"fs" : "fs"
 
 
-module TypeScriptAllInOne {
+namespace TypeScriptAllInOne {
 >TypeScriptAllInOne : typeof TypeScriptAllInOne
 
     export class Program {

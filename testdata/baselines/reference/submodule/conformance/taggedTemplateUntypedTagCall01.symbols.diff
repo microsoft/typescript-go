@@ -1,0 +1,11 @@
+--- old.taggedTemplateUntypedTagCall01.symbols
++++ new.taggedTemplateUntypedTagCall01.symbols
+@@= skipped -2, +2 lines =@@
+ === taggedTemplateUntypedTagCall01.ts ===
+ var tag: Function;
+ >tag : Symbol(tag, Decl(taggedTemplateUntypedTagCall01.ts, 0, 3))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+ tag `Hello world!`;
+ >tag : Symbol(tag, Decl(taggedTemplateUntypedTagCall01.ts, 0, 3))

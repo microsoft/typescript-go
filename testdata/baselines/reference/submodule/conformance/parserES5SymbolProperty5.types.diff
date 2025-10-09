@@ -1,0 +1,10 @@
+--- old.parserES5SymbolProperty5.types
++++ new.parserES5SymbolProperty5.types
+@@= skipped -6, +6 lines =@@
+     [Symbol.isRegExp]: string;
+ >[Symbol.isRegExp] : string
+ >Symbol.isRegExp : any
+->Symbol : SymbolConstructor
++>Symbol : any
+ >isRegExp : any
+ }

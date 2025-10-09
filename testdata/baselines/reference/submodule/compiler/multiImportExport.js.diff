@@ -1,6 +1,19 @@
 --- old.multiImportExport.js
 +++ new.multiImportExport.js
-@@= skipped -33, +33 lines =@@
+@@= skipped -26, +26 lines =@@
+
+ //// [Adder.js]
+ "use strict";
+-var Adder = /** @class */ (function () {
+-    function Adder() {
++class Adder {
++    add(a, b) {
+     }
+-    Adder.prototype.add = function (a, b) {
+-    };
+-    return Adder;
+-}());
++}
  module.exports = Adder;
  //// [Math.js]
  "use strict";
@@ -9,7 +22,7 @@
  var Math = {
      Adder: Adder
  };
-@@= skipped -12, +12 lines =@@
+@@= skipped -22, +19 lines =@@
  //// [consumer.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });

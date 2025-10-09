@@ -1,11 +1,17 @@
 --- old.multipleClassPropertyModifiers.js
 +++ new.multipleClassPropertyModifiers.js
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
+ }
 
  //// [multipleClassPropertyModifiers.js]
- class C {
+-var C = /** @class */ (function () {
+-    function C() {
+-    }
+-    return C;
+-}());
++class C {
 +    static p1;
 +    static p2;
 +    static p3;
 +    static p4;
- }
++}

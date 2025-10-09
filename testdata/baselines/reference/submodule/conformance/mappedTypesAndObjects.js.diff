@@ -1,12 +1,33 @@
 --- old.mappedTypesAndObjects.js
 +++ new.mappedTypesAndObjects.js
-@@= skipped -61, +61 lines =@@
+@@= skipped -46, +46 lines =@@
+
+ //// [mappedTypesAndObjects.js]
+ function f1(x, y) {
+-    var obj;
++    let obj;
+     obj = x;
+     obj = y;
+ }
+ function f2(x, y) {
+-    var obj;
++    let obj;
+     obj = x;
+     obj = y;
+ }
+@@= skipped -14, +14 lines =@@
+ }
  ;
  // Repro from #13747
- class Form {
--    constructor() {
+-var Form = /** @class */ (function () {
+-    function Form() {
 -        this.values = {};
 -    }
+-    return Form;
+-}());
++class Form {
 +    values = {};
- }
++}
 
+
+ //// [mappedTypesAndObjects.d.ts]

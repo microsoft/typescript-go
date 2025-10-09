@@ -9,3 +9,12 @@
 
      U,
      NewA extends Partial<ComponentProps<C> & U> & {
+@@= skipped -25, +25 lines =@@
+
+ interface BaseProps {
+   as?: "select" | "input";
+->as : "select" | "input" | undefined
++>as : "input" | "select" | undefined
+ }
+
+ declare const Flex: (props: BaseProps) => null;

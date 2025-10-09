@@ -1,0 +1,47 @@
+--- old.contextuallyTypedParametersWithInitializers1.symbols
++++ new.contextuallyTypedParametersWithInitializers1.symbols
+@@= skipped -107, +107 lines =@@
+
+ const f4: Function = (x = 1) => 0;  // number
+ >f4 : Symbol(f4, Decl(contextuallyTypedParametersWithInitializers1.ts, 20, 5))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >x : Symbol(x, Decl(contextuallyTypedParametersWithInitializers1.ts, 20, 22))
+
+ const f5: (...args: any[]) => any = (x = 1) => 0;  // any
+@@= skipped -44, +44 lines =@@
+ declare function g4<T extends Function>(x: T): T;
+ >g4 : Symbol(g4, Decl(contextuallyTypedParametersWithInitializers1.ts, 28, 48))
+ >T : Symbol(T, Decl(contextuallyTypedParametersWithInitializers1.ts, 29, 20))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >x : Symbol(x, Decl(contextuallyTypedParametersWithInitializers1.ts, 29, 40))
+ >T : Symbol(T, Decl(contextuallyTypedParametersWithInitializers1.ts, 29, 20))
+ >T : Symbol(T, Decl(contextuallyTypedParametersWithInitializers1.ts, 29, 20))
+@@= skipped -91, +91 lines =@@
+ declare function memoize<F extends Function>(func: F): F;
+ >memoize : Symbol(memoize, Decl(contextuallyTypedParametersWithInitializers1.ts, 53, 3))
+ >F : Symbol(F, Decl(contextuallyTypedParametersWithInitializers1.ts, 57, 25))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >func : Symbol(func, Decl(contextuallyTypedParametersWithInitializers1.ts, 57, 45))
+ >F : Symbol(F, Decl(contextuallyTypedParametersWithInitializers1.ts, 57, 25))
+ >F : Symbol(F, Decl(contextuallyTypedParametersWithInitializers1.ts, 57, 25))
+@@= skipped -44, +44 lines =@@
+ declare function execute(script: string | Function): Promise<string>;
+ >execute : Symbol(execute, Decl(contextuallyTypedParametersWithInitializers1.ts, 67, 66))
+ >script : Symbol(script, Decl(contextuallyTypedParametersWithInitializers1.ts, 71, 25))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+->Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
++>Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --))
+   
+ export function executeSomething() {
+ >executeSomething : Symbol(executeSomething, Decl(contextuallyTypedParametersWithInitializers1.ts, 71, 69))
+@@= skipped -29, +29 lines =@@
+
+ const fz2: Function = (debug = true) => false;
+ >fz2 : Symbol(fz2, Decl(contextuallyTypedParametersWithInitializers1.ts, 82, 5))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >debug : Symbol(debug, Decl(contextuallyTypedParametersWithInitializers1.ts, 82, 23))

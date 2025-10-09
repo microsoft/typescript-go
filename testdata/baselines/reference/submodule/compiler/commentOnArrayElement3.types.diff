@@ -1,0 +1,10 @@
+--- old.commentOnArrayElement3.types
++++ new.commentOnArrayElement3.types
+@@= skipped -13, +13 lines =@@
+ >2 : 2
+
+     /* end of element 2 */, ,
+-> : undefined
+-
+     /* extra comment */
+ ];

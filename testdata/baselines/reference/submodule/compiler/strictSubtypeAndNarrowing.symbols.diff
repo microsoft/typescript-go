@@ -1,0 +1,11 @@
+--- old.strictSubtypeAndNarrowing.symbols
++++ new.strictSubtypeAndNarrowing.symbols
+@@= skipped -469, +469 lines =@@
+
+     const DeepPathT extends ReadonlyArray<number | string>,
+ >DeepPathT : Symbol(DeepPathT, Decl(strictSubtypeAndNarrowing.ts, 184, 24))
+->ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --))
+
+     ValueT,
+ >ValueT : Symbol(ValueT, Decl(strictSubtypeAndNarrowing.ts, 185, 59))

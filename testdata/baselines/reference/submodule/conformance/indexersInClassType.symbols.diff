@@ -1,7 +1,20 @@
 --- old.indexersInClassType.symbols
 +++ new.indexersInClassType.symbols
-@@= skipped -16, +16 lines =@@
- >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+@@= skipped -5, +5 lines =@@
+
+     [x: number]: Date;
+ >x : Symbol(x, Decl(indexersInClassType.ts, 1, 5))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+     [x: string]: Object;
+ >x : Symbol(x, Decl(indexersInClassType.ts, 2, 5))
+@@= skipped -8, +8 lines =@@
+
+     1: Date;
+ >1 : Symbol(C[1], Decl(indexersInClassType.ts, 2, 24))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
 
      'a': {}
 ->'a' : Symbol(C['a'], Decl(indexersInClassType.ts, 3, 12))
@@ -9,7 +22,7 @@
 
      fn() {
  >fn : Symbol(C.fn, Decl(indexersInClassType.ts, 4, 11))
-@@= skipped -27, +27 lines =@@
+@@= skipped -30, +30 lines =@@
 
  var r3 = r.a
  >r3 : Symbol(r3, Decl(indexersInClassType.ts, 14, 3))

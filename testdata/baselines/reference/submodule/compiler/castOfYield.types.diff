@@ -1,0 +1,11 @@
+--- old.castOfYield.types
++++ new.castOfYield.types
+@@= skipped -1, +1 lines =@@
+
+ === castOfYield.ts ===
+ function* f() {
+->f : () => Generator<number, void, number>
++>f : () => {}
+
+     <number> (yield 0);
+ ><number> (yield 0) : number

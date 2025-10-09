@@ -9,3 +9,11 @@
  >aboo1 : Foo | undefined
 
      if (!aboo1) return;
+@@= skipped -48, +48 lines =@@
+
+ if (typeof c === 'string') {
+ >typeof c === 'string' : boolean
+->typeof c : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof c : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >c : string | number
+ >'string' : "string"

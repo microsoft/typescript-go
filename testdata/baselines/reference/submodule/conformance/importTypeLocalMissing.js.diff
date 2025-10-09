@@ -1,18 +1,34 @@
 --- old.importTypeLocalMissing.js
 +++ new.importTypeLocalMissing.js
-@@= skipped -50, +50 lines =@@
+@@= skipped -49, +49 lines =@@
+ "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.Bar = void 0;
- class Bar {
+-var Bar = /** @class */ (function () {
+-    function Bar(input) {
+-    }
+-    return Bar;
+-}());
++class Bar {
 +    item;
-     constructor(input) { }
- }
++    constructor(input) { }
++}
  exports.Bar = Bar;
-@@= skipped -11, +12 lines =@@
+ //// [usage.js]
+ "use strict";
+@@= skipped -13, +12 lines =@@
+ exports.x = { x: 0, y: 0 };
  exports.y = { a: "", b: 0 };
  exports.z = { a: "", b: 0 };
- class Bar2 {
+-var Bar2 = /** @class */ (function () {
+-    function Bar2(input) {
+-    }
+-    return Bar2;
+-}());
++class Bar2 {
 +    item;
-     constructor(input) { }
- }
++    constructor(input) { }
++}
  exports.Bar2 = Bar2;
+ exports.shim = {
+     Bar: Bar2

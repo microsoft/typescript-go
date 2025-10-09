@@ -1,0 +1,62 @@
+--- old.conditionalTypes1.symbols
++++ new.conditionalTypes1.symbols
+@@= skipped -11, +11 lines =@@
+ type T02 = Exclude<string | number | (() => void), Function>;  // string | number
+ >T02 : Symbol(T02, Decl(conditionalTypes1.ts, 1, 59))
+ >Exclude : Symbol(Exclude, Decl(lib.es5.d.ts, --, --))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+ type T03 = Extract<string | number | (() => void), Function>;  // () => void
+ >T03 : Symbol(T03, Decl(conditionalTypes1.ts, 3, 61))
+ >Extract : Symbol(Extract, Decl(lib.es5.d.ts, --, --))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+ type T04 = NonNullable<string | number | undefined>;  // string | number
+ >T04 : Symbol(T04, Decl(conditionalTypes1.ts, 4, 61))
+@@= skipped -221, +221 lines =@@
+
+     T extends Function ? "function" :
+ >T : Symbol(T, Decl(conditionalTypes1.ts, 55, 14))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+     "object";
+
+@@= skipped -96, +96 lines =@@
+ >T : Symbol(T, Decl(conditionalTypes1.ts, 92, 27))
+ >T : Symbol(T, Decl(conditionalTypes1.ts, 92, 27))
+ >K : Symbol(K, Decl(conditionalTypes1.ts, 92, 35))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >K : Symbol(K, Decl(conditionalTypes1.ts, 92, 35))
+ >T : Symbol(T, Decl(conditionalTypes1.ts, 92, 27))
+
+@@= skipped -19, +19 lines =@@
+ >T : Symbol(T, Decl(conditionalTypes1.ts, 95, 30))
+ >T : Symbol(T, Decl(conditionalTypes1.ts, 95, 30))
+ >K : Symbol(K, Decl(conditionalTypes1.ts, 95, 38))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >K : Symbol(K, Decl(conditionalTypes1.ts, 95, 38))
+ >T : Symbol(T, Decl(conditionalTypes1.ts, 95, 30))
+
+@@= skipped -116, +116 lines =@@
+ interface DeepReadonlyArray<T> extends ReadonlyArray<DeepReadonly<T>> {}
+ >DeepReadonlyArray : Symbol(DeepReadonlyArray, Decl(conditionalTypes1.ts, 122, 6))
+ >T : Symbol(T, Decl(conditionalTypes1.ts, 124, 28))
+->ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --))
+ >DeepReadonly : Symbol(DeepReadonly, Decl(conditionalTypes1.ts, 117, 1))
+ >T : Symbol(T, Decl(conditionalTypes1.ts, 124, 28))
+
+@@= skipped -866, +866 lines =@@
+ >T : Symbol(T, Decl(conditionalTypes1.ts, 343, 22))
+ >T : Symbol(T, Decl(conditionalTypes1.ts, 343, 22))
+ >P : Symbol(P, Decl(conditionalTypes1.ts, 344, 3))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >index : Symbol(index, Decl(conditionalTypes1.ts, 344, 47))
+ >RecursivePartial : Symbol(RecursivePartial, Decl(conditionalTypes1.ts, 339, 1))
+ >T : Symbol(T, Decl(conditionalTypes1.ts, 343, 22))

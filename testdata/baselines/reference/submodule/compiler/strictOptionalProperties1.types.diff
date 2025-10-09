@@ -1,0 +1,66 @@
+--- old.strictOptionalProperties1.types
++++ new.strictOptionalProperties1.types
+@@= skipped -331, +331 lines =@@
+ >t : [number, string?, boolean?]
+ >[42, ,] : [number, never?]
+ >42 : 42
+-> : undefined
+
+     t = [42, , ,];
+ >t = [42, , ,] : [number, never?, never?]
+ >t : [number, string?, boolean?]
+ >[42, , ,] : [number, never?, never?]
+ >42 : 42
+-> : undefined
+-> : undefined
+
+     t = [42, , , ,];  // Error
+ >t = [42, , , ,] : [number, never?, never?, never?]
+ >t : [number, string?, boolean?]
+ >[42, , , ,] : [number, never?, never?, never?]
+ >42 : 42
+-> : undefined
+-> : undefined
+-> : undefined
+
+     t = [, , true];  // Error
+ >t = [, , true] : [never?, never?, true?]
+ >t : [number, string?, boolean?]
+ >[, , true] : [never?, never?, true?]
+-> : undefined
+-> : undefined
+ >true : true
+
+     t = [42, undefined, true];  // Error
+@@= skipped -52, +44 lines =@@
+ >[1, 2, ,] : readonly [1, 2, never?]
+ >1 : 1
+ >2 : 2
+-> : undefined
+
+     const t3 = [1, 2, , ,] as const;
+ >t3 : readonly [1, 2, never?, never?]
+@@= skipped -8, +7 lines =@@
+ >[1, 2, , ,] : readonly [1, 2, never?, never?]
+ >1 : 1
+ >2 : 2
+-> : undefined
+-> : undefined
+
+     const t4 = [1, , 2] as const;
+ >t4 : readonly [1, never?, 2?]
+ >[1, , 2] as const : readonly [1, never?, 2?]
+ >[1, , 2] : readonly [1, never?, 2?]
+ >1 : 1
+-> : undefined
+ >2 : 2
+
+     const t5 = [1, , , 2] as const;
+@@= skipped -16, +13 lines =@@
+ >[1, , , 2] as const : readonly [1, never?, never?, 2?]
+ >[1, , , 2] : readonly [1, never?, never?, 2?]
+ >1 : 1
+-> : undefined
+-> : undefined
+ >2 : 2
+ }

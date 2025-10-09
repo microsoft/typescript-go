@@ -1,0 +1,11 @@
+--- old.checkJsxChildrenProperty8.types
++++ new.checkJsxChildrenProperty8.types
+@@= skipped -11, +11 lines =@@
+ >b : string
+
+     children: string | JSX.Element | (string | JSX.Element)[];
+->children : string | JSX.Element | (string | JSX.Element)[]
++>children : string | (string | JSX.Element)[] | JSX.Element
+ >JSX : any
+ >JSX : any
+ }

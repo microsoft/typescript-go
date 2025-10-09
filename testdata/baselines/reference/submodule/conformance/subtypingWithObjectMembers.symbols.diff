@@ -27,7 +27,7 @@
 +>'2.0' : Symbol(B3["20"], Decl(subtypingWithObjectMembers.ts, 32, 17))
  }
 
- module TwoLevels {
+ namespace TwoLevels {
 @@= skipped -62, +62 lines =@@
  >A3 : Symbol(A3, Decl(subtypingWithObjectMembers.ts, 55, 5))
 

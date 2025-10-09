@@ -1,0 +1,20 @@
+--- old.parserRealSource1.symbols
++++ new.parserRealSource1.symbols
+@@= skipped -289, +289 lines =@@
+
+         var start = +new Date();
+ >start : Symbol(start, Decl(parserRealSource1.ts, 97, 11))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+         var result = func();
+ >result : Symbol(result, Decl(parserRealSource1.ts, 98, 11))
+@@= skipped -8, +8 lines =@@
+
+         var end = +new Date();
+ >end : Symbol(end, Decl(parserRealSource1.ts, 99, 11))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+         logger.log(funcDescription + " completed in " + (end - start) + " msec");
+ >logger.log : Symbol(ILogger.log, Decl(parserRealSource1.ts, 43, 25))

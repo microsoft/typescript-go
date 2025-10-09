@@ -1,0 +1,11 @@
+--- old.errorHandlingInInstanceOf.symbols
++++ new.errorHandlingInInstanceOf.symbols
+@@= skipped -1, +1 lines =@@
+
+ === errorHandlingInInstanceOf.ts ===
+ if (x instanceof String) {
+->String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --) ... and 1 more)
++>String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ }
+
+ var y: any;

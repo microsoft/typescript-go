@@ -1,0 +1,8 @@
+--- old.parserConstructorAmbiguity4.symbols
++++ new.parserConstructorAmbiguity4.symbols
+@@= skipped -1, +1 lines =@@
+
+ === parserConstructorAmbiguity4.ts ===
+ new Date<A ? B : C
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))

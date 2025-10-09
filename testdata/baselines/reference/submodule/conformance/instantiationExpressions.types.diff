@@ -49,7 +49,18 @@
  >Array : ArrayConstructor
 
      const A1 = Array<string>;  // new (...) => string[]
-@@= skipped -31, +31 lines =@@
+->A1 : { (arrayLength: number): string[]; (...items: string[]): string[]; new (arrayLength: number): string[]; new (...items: string[]): string[]; isArray(arg: any): arg is any[]; readonly prototype: any[]; from<T>(arrayLike: ArrayLike<T>): T[]; from<T, U>(arrayLike: ArrayLike<T>, mapfn: (v: T, k: number) => U, thisArg?: any): U[]; from<T>(iterable: Iterable<T> | ArrayLike<T>): T[]; from<T, U>(iterable: Iterable<T> | ArrayLike<T>, mapfn: (v: T, k: number) => U, thisArg?: any): U[]; of<T>(...items: T[]): T[]; readonly [Symbol.species]: ArrayConstructor; }
+->Array<string> : { (arrayLength: number): string[]; (...items: string[]): string[]; new (arrayLength: number): string[]; new (...items: string[]): string[]; isArray(arg: any): arg is any[]; readonly prototype: any[]; from<T>(arrayLike: ArrayLike<T>): T[]; from<T, U>(arrayLike: ArrayLike<T>, mapfn: (v: T, k: number) => U, thisArg?: any): U[]; from<T>(iterable: Iterable<T> | ArrayLike<T>): T[]; from<T, U>(iterable: Iterable<T> | ArrayLike<T>, mapfn: (v: T, k: number) => U, thisArg?: any): U[]; of<T>(...items: T[]): T[]; readonly [Symbol.species]: ArrayConstructor; }
++>A1 : { (arrayLength: number): string[]; (...items: string[]): string[]; new (arrayLength: number): string[]; new (...items: string[]): string[]; isArray(arg: any): arg is any[]; readonly prototype: any[]; }
++>Array<string> : { (arrayLength: number): string[]; (...items: string[]): string[]; new (arrayLength: number): string[]; new (...items: string[]): string[]; isArray(arg: any): arg is any[]; readonly prototype: any[]; }
+ >Array : ArrayConstructor
+
+     const A2 = Array<string, number>;  // Error
+->A2 : { isArray(arg: any): arg is any[]; readonly prototype: any[]; from<T>(arrayLike: ArrayLike<T>): T[]; from<T, U>(arrayLike: ArrayLike<T>, mapfn: (v: T, k: number) => U, thisArg?: any): U[]; from<T>(iterable: Iterable<T> | ArrayLike<T>): T[]; from<T, U>(iterable: Iterable<T> | ArrayLike<T>, mapfn: (v: T, k: number) => U, thisArg?: any): U[]; of<T>(...items: T[]): T[]; readonly [Symbol.species]: ArrayConstructor; }
+->Array<string, number> : { isArray(arg: any): arg is any[]; readonly prototype: any[]; from<T>(arrayLike: ArrayLike<T>): T[]; from<T, U>(arrayLike: ArrayLike<T>, mapfn: (v: T, k: number) => U, thisArg?: any): U[]; from<T>(iterable: Iterable<T> | ArrayLike<T>): T[]; from<T, U>(iterable: Iterable<T> | ArrayLike<T>, mapfn: (v: T, k: number) => U, thisArg?: any): U[]; of<T>(...items: T[]): T[]; readonly [Symbol.species]: ArrayConstructor; }
++>A2 : { isArray(arg: any): arg is any[]; readonly prototype: any[]; }
++>Array<string, number> : { isArray(arg: any): arg is any[]; readonly prototype: any[]; }
+ >Array : ArrayConstructor
  }
 
  type T20 = typeof Array<>;  // Error
@@ -68,7 +79,18 @@
  >Array : ArrayConstructor
 
  declare class C<T> {
-@@= skipped -102, +102 lines =@@
+@@= skipped -57, +57 lines =@@
+ >f3 : () => void
+
+     let c1 = C<string>;  // { new (x: string): C<string>; f<U>(x: U): T[]; prototype: C<any>; }
+->c1 : { new (x: string): C<string>; prototype: C<any>; f<U>(x: U): U[]; }
+->C<string> : { new (x: string): C<string>; prototype: C<any>; f<U>(x: U): U[]; }
++>c1 : { new (x: string): C<string>; f<U>(x: U): U[]; prototype: C<any>; }
++>C<string> : { new (x: string): C<string>; f<U>(x: U): U[]; prototype: C<any>; }
+ >C : typeof C
+
+     let f1 = C.f<string>;  // (x: string) => string[]
+@@= skipped -76, +76 lines =@@
  }
 
  function f15(f: { new <T>(a: T): T, <U>(a: U, b: number): U[] }) {
@@ -86,7 +108,24 @@
  >f : { (a: string, b: number): string[]; new <T>(a: T): T; }
  >a : T
  >a : string
-@@= skipped -252, +252 lines =@@
+@@= skipped -155, +155 lines =@@
+
+ function f32(f: (<T>(a: T) => T) | { x: string }) {
+ >f32 : (f: (<T>(a: T) => T) | { x: string; }) => void
+->f : { x: string; } | (<T>(a: T) => T)
++>f : (<T>(a: T) => T) | { x: string; }
+ >a : T
+ >x : string
+
+     let fs = f<string>;  // ((a: string) => string) | { x: string }
+ >fs : { x: string; } | ((a: string) => string)
+ >f<string> : { x: string; } | ((a: string) => string)
+->f : { x: string; } | (<T>(a: T) => T)
++>f : (<T>(a: T) => T) | { x: string; }
+ }
+
+ function f33(f: { x: string } | { y: string }) {
+@@= skipped -97, +97 lines =@@
  }
 
  type BoxFunc<T> = typeof makeBox<T>;  // (value: T) => { value: T }

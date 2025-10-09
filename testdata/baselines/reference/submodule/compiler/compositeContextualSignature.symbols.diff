@@ -1,0 +1,11 @@
+--- old.compositeContextualSignature.symbols
++++ new.compositeContextualSignature.symbols
+@@= skipped -6, +6 lines =@@
+ >f : Symbol(f, Decl(compositeContextualSignature.ts, 0, 0))
+ >T : Symbol(T, Decl(compositeContextualSignature.ts, 2, 11))
+ >v : Symbol(v, Decl(compositeContextualSignature.ts, 2, 28))
+->ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --))
+ >T : Symbol(T, Decl(compositeContextualSignature.ts, 2, 11))
+
+ f([

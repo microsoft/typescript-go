@@ -1,28 +1,55 @@
 --- old.constructorWithAssignableReturnExpression.js
 +++ new.constructorWithAssignableReturnExpression.js
-@@= skipped -44, +44 lines =@@
+@@= skipped -38, +38 lines =@@
+
+ //// [constructorWithAssignableReturnExpression.js]
+ // a class constructor may return an expression, it must be assignable to the class instance type to be valid
+-var C = /** @class */ (function () {
+-    function C() {
++class C {
++    constructor() {
+         return 1;
      }
- }
- class D {
+-    return C;
+-}());
+-var D = /** @class */ (function () {
+-    function D() {
++}
++class D {
 +    x;
-     constructor() {
++    constructor() {
          return 1; // error
      }
- }
- class E {
+-    return D;
+-}());
+-var E = /** @class */ (function () {
+-    function E() {
++}
++class E {
 +    x;
-     constructor() {
++    constructor() {
          return { x: 1 };
      }
- }
- class F {
+-    return E;
+-}());
+-var F = /** @class */ (function () {
+-    function F() {
++}
++class F {
 +    x;
-     constructor() {
++    constructor() {
          return { x: 1 }; // error
      }
- }
- class G {
+-    return F;
+-}());
+-var G = /** @class */ (function () {
+-    function G() {
++}
++class G {
 +    x;
-     constructor() {
++    constructor() {
          return { x: null };
      }
+-    return G;
+-}());
++}

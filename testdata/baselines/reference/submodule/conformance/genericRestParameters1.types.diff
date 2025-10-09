@@ -42,3 +42,12 @@
  >42 : 42
 
  g21("hello", true);
+@@= skipped -112, +112 lines =@@
+ >move : [number, "left" | "right"]
+
+   jump: [number, 'up' | 'down'];
+->jump : [number, "up" | "down"]
++>jump : [number, "down" | "up"]
+
+   stop: string;
+ >stop : string

@@ -6,5 +6,6 @@
  //// [unionTypeWithIndexAndMethodSignature.js]
 -"use strict";
  f({
-     m(x) { },
+-    m: function (x) { },
++    m(x) { },
  });

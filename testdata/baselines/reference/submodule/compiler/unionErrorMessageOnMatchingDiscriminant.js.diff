@@ -6,5 +6,8 @@
  //// [unionErrorMessageOnMatchingDiscriminant.js]
 -"use strict";
  // error
- const foo = {
+-var foo = {
++const foo = {
      type: 'a',
+     data: null
+ };

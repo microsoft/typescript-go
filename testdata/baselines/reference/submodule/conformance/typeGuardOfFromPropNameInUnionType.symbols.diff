@@ -1,6 +1,24 @@
 --- old.typeGuardOfFromPropNameInUnionType.symbols
 +++ new.typeGuardOfFromPropNameInUnionType.symbols
-@@= skipped -307, +307 lines =@@
+@@= skipped -16, +16 lines =@@
+ class D { a: Date; }
+ >D : Symbol(D, Decl(typeGuardOfFromPropNameInUnionType.ts, 2, 22))
+ >a : Symbol(D.a, Decl(typeGuardOfFromPropNameInUnionType.ts, 3, 9))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+ function namedClasses(x: A | B) {
+ >namedClasses : Symbol(namedClasses, Decl(typeGuardOfFromPropNameInUnionType.ts, 3, 20))
+@@= skipped -37, +37 lines =@@
+
+         let y: string | Date = x.a;
+ >y : Symbol(y, Decl(typeGuardOfFromPropNameInUnionType.ts, 15, 11))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ >x.a : Symbol(a, Decl(typeGuardOfFromPropNameInUnionType.ts, 0, 9), Decl(typeGuardOfFromPropNameInUnionType.ts, 3, 9))
+ >x : Symbol(x, Decl(typeGuardOfFromPropNameInUnionType.ts, 13, 25))
+ >a : Symbol(a, Decl(typeGuardOfFromPropNameInUnionType.ts, 0, 9), Decl(typeGuardOfFromPropNameInUnionType.ts, 3, 9))
+@@= skipped -254, +254 lines =@@
  >i : Symbol(i, Decl(typeGuardOfFromPropNameInUnionType.ts, 96, 11))
 
          return i.a;

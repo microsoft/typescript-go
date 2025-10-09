@@ -1,0 +1,14 @@
+--- old.discriminantPropertyCheck.symbols
++++ new.discriminantPropertyCheck.symbols
+@@= skipped -276, +276 lines =@@
+
+     while (true) {
+         switch (inst.type) {
+->inst.type : Symbol(type, Decl(discriminantPropertyCheck.ts, 74, 19), Decl(discriminantPropertyCheck.ts, 80, 19))
++>inst.type : Symbol(type, Decl(discriminantPropertyCheck.ts, 80, 19), Decl(discriminantPropertyCheck.ts, 74, 19))
+ >inst : Symbol(inst, Decl(discriminantPropertyCheck.ts, 85, 15))
+->type : Symbol(type, Decl(discriminantPropertyCheck.ts, 74, 19), Decl(discriminantPropertyCheck.ts, 80, 19))
++>type : Symbol(type, Decl(discriminantPropertyCheck.ts, 80, 19), Decl(discriminantPropertyCheck.ts, 74, 19))
+
+             case Types.Str: {
+ >Types.Str : Symbol(Types.Str, Decl(discriminantPropertyCheck.ts, 70, 12))

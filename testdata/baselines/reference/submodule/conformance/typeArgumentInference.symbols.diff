@@ -1,0 +1,37 @@
+--- old.typeArgumentInference.symbols
++++ new.typeArgumentInference.symbols
+@@= skipped -113, +113 lines =@@
+
+ someGenerics3<Date>(() => undefined);
+ >someGenerics3 : Symbol(someGenerics3, Decl(typeArgumentInference.ts, 26, 58))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ >undefined : Symbol(undefined)
+
+ someGenerics3<number>(() => 3);
+@@= skipped -205, +205 lines =@@
+
+     z?: Date;
+ >z : Symbol(A92.z, Decl(typeArgumentInference.ts, 78, 14))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ }
+ var a9e = someGenerics9(undefined, { x: 6, z: new Date() }, { x: 6, y: '' });
+ >a9e : Symbol(a9e, Decl(typeArgumentInference.ts, 81, 3), Decl(typeArgumentInference.ts, 82, 3))
+@@= skipped -8, +8 lines =@@
+ >undefined : Symbol(undefined)
+ >x : Symbol(x, Decl(typeArgumentInference.ts, 81, 36))
+ >z : Symbol(z, Decl(typeArgumentInference.ts, 81, 42))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ >x : Symbol(x, Decl(typeArgumentInference.ts, 81, 61))
+ >y : Symbol(y, Decl(typeArgumentInference.ts, 81, 67))
+
+@@= skipped -14, +14 lines =@@
+ >undefined : Symbol(undefined)
+ >x : Symbol(x, Decl(typeArgumentInference.ts, 83, 41))
+ >z : Symbol(z, Decl(typeArgumentInference.ts, 83, 47))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ >x : Symbol(x, Decl(typeArgumentInference.ts, 83, 66))
+ >y : Symbol(y, Decl(typeArgumentInference.ts, 83, 72))

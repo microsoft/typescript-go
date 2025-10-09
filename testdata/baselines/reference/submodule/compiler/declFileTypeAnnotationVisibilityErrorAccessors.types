@@ -1,7 +1,7 @@
 //// [tests/cases/compiler/declFileTypeAnnotationVisibilityErrorAccessors.ts] ////
 
 === declFileTypeAnnotationVisibilityErrorAccessors.ts ===
-module m {
+namespace m {
 >m : typeof m
 
     class private1 {
@@ -12,7 +12,7 @@ module m {
 >public1 : public1
     }
 
-    module m2 {
+    namespace m2 {
 >m2 : typeof m2
 
         export class public2 {

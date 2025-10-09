@@ -1,0 +1,84 @@
+--- old.typeParameterAssignability2.symbols
++++ new.typeParameterAssignability2.symbols
+@@= skipped -86, +86 lines =@@
+ >U : Symbol(U, Decl(typeParameterAssignability2.ts, 23, 26))
+ >V : Symbol(V, Decl(typeParameterAssignability2.ts, 23, 39))
+ >V : Symbol(V, Decl(typeParameterAssignability2.ts, 23, 39))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ >t : Symbol(t, Decl(typeParameterAssignability2.ts, 23, 56))
+ >T : Symbol(T, Decl(typeParameterAssignability2.ts, 23, 14))
+ >u : Symbol(u, Decl(typeParameterAssignability2.ts, 23, 61))
+@@= skipped -18, +18 lines =@@
+
+     t = new Date(); // error
+ >t : Symbol(t, Decl(typeParameterAssignability2.ts, 23, 56))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+     u = t;
+ >u : Symbol(u, Decl(typeParameterAssignability2.ts, 23, 61))
+@@= skipped -12, +12 lines =@@
+
+     u = new Date(); // error
+ >u : Symbol(u, Decl(typeParameterAssignability2.ts, 23, 61))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+     v = t;
+ >v : Symbol(v, Decl(typeParameterAssignability2.ts, 23, 67))
+@@= skipped -12, +12 lines =@@
+
+     v = new Date(); // ok
+ >v : Symbol(v, Decl(typeParameterAssignability2.ts, 23, 67))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+     var d: Date;
+ >d : Symbol(d, Decl(typeParameterAssignability2.ts, 36, 7))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+     d = t; // ok
+ >d : Symbol(d, Decl(typeParameterAssignability2.ts, 36, 7))
+@@= skipped -23, +23 lines =@@
+ function foo5<V extends Date, U extends V, T extends U>(t: T, u: U, v: V) {
+ >foo5 : Symbol(foo5, Decl(typeParameterAssignability2.ts, 40, 1))
+ >V : Symbol(V, Decl(typeParameterAssignability2.ts, 43, 14))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ >U : Symbol(U, Decl(typeParameterAssignability2.ts, 43, 29))
+ >V : Symbol(V, Decl(typeParameterAssignability2.ts, 43, 14))
+ >T : Symbol(T, Decl(typeParameterAssignability2.ts, 43, 42))
+@@= skipped -22, +22 lines =@@
+
+     t = new Date(); // error
+ >t : Symbol(t, Decl(typeParameterAssignability2.ts, 43, 56))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+     u = t;
+ >u : Symbol(u, Decl(typeParameterAssignability2.ts, 43, 61))
+@@= skipped -12, +12 lines =@@
+
+     u = new Date(); // error
+ >u : Symbol(u, Decl(typeParameterAssignability2.ts, 43, 61))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+     v = t;
+ >v : Symbol(v, Decl(typeParameterAssignability2.ts, 43, 67))
+@@= skipped -12, +12 lines =@@
+
+     v = new Date(); // ok
+ >v : Symbol(v, Decl(typeParameterAssignability2.ts, 43, 67))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+     var d: Date;
+ >d : Symbol(d, Decl(typeParameterAssignability2.ts, 56, 7))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+     d = t; // ok
+ >d : Symbol(d, Decl(typeParameterAssignability2.ts, 56, 7))

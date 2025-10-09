@@ -1,0 +1,11 @@
+--- old.genericSignatureIdentity.symbols
++++ new.genericSignatureIdentity.symbols
+@@= skipped -10, +10 lines =@@
+
+     <T extends Date>(x: T): T;
+ >T : Symbol(T, Decl(genericSignatureIdentity.ts, 6, 5))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ >x : Symbol(x, Decl(genericSignatureIdentity.ts, 6, 21))
+ >T : Symbol(T, Decl(genericSignatureIdentity.ts, 6, 5))
+ >T : Symbol(T, Decl(genericSignatureIdentity.ts, 6, 5))

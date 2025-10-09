@@ -8,3 +8,12 @@
  function f1(x) {
      if (typeof x !== 'string') {
          switch (x.kind) {
+@@= skipped -33, +32 lines =@@
+         }
+     }
+ }
+-var n;
++let n;
+ if (n.type === "Disjunction") {
+     n.alternatives.slice();
+ }

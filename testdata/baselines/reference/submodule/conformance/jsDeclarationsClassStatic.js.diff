@@ -4,12 +4,32 @@
 
 
  //// [source.js]
+-var Handler = /** @class */ (function () {
+-    function Handler() {
+-    }
+-    Object.defineProperty(Handler, "OPTIONS", {
+-        get: function () {
+-            return 1;
+-        },
+-        enumerable: false,
+-        configurable: true
+-    });
+-    Handler.prototype.process = function () {
+-    };
+-    return Handler;
+-}());
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
- class Handler {
-     static get OPTIONS() {
-         return 1;
-@@= skipped -12, +14 lines =@@
++class Handler {
++    static get OPTIONS() {
++        return 1;
++    }
++    process() {
++    }
++}
+ Handler.statische = function () { };
+-var Strings = {
++const Strings = {
      a: "A",
      b: "B"
  };
@@ -19,7 +39,7 @@
  module.exports.Strings = Strings;
  /**
   * @typedef {Object} HandlerOptions
-@@= skipped -11, +13 lines =@@
+@@= skipped -30, +27 lines =@@
 
  //// [source.d.ts]
  export = Handler;

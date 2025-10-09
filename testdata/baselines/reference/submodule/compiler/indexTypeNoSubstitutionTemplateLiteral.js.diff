@@ -6,4 +6,5 @@
  //// [indexTypeNoSubstitutionTemplateLiteral.js]
 -"use strict";
  function Foo() { }
- Foo[`b`] = function () { };
+-Foo["b"] = function () { };
++Foo[`b`] = function () { };

@@ -1,0 +1,11 @@
+--- old.objectTypeWithCallSignatureHidingMembersOfExtendedFunction.symbols
++++ new.objectTypeWithCallSignatureHidingMembersOfExtendedFunction.symbols
+@@= skipped -4, +4 lines =@@
+ // no errors expected below 
+
+ interface Function {
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(objectTypeWithCallSignatureHidingMembersOfExtendedFunction.ts, 0, 0))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(objectTypeWithCallSignatureHidingMembersOfExtendedFunction.ts, 0, 0))
+
+     data: number;
+ >data : Symbol(Function.data, Decl(objectTypeWithCallSignatureHidingMembersOfExtendedFunction.ts, 3, 20))

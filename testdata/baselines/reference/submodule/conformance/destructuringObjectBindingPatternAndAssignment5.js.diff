@@ -1,0 +1,13 @@
+--- old.destructuringObjectBindingPatternAndAssignment5.js
++++ new.destructuringObjectBindingPatternAndAssignment5.js
+@@= skipped -21, +21 lines =@@
+ };
+ function a() {
+     var _a;
+-    var x;
+-    var y;
+-    (_a = {}, x = _a.x, y = __rest(_a, ["x"]));
++    let x;
++    let y;
++    (_a = {}, { x } = _a, y = __rest(_a, ["x"]));
+ }

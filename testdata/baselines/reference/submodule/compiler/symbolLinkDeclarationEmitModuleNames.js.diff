@@ -1,14 +1,26 @@
 --- old.symbolLinkDeclarationEmitModuleNames.js
 +++ new.symbolLinkDeclarationEmitModuleNames.js
-@@= skipped -31, +31 lines =@@
+@@= skipped -30, +30 lines =@@
+ "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.BindingKey = void 0;
- class BindingKey {
+-var BindingKey = /** @class */ (function () {
+-    function BindingKey() {
+-    }
+-    BindingKey.create = function (ctor) {
++class BindingKey {
 +    __type;
-     static create(ctor) {
++    static create(ctor) {
          return new BindingKey();
-     }
-@@= skipped -31, +32 lines =@@
+-    };
+-    return BindingKey;
+-}());
++    }
++}
+ exports.BindingKey = BindingKey;
+ //// [index.js]
+ "use strict";
+@@= skipped -35, +33 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.CONTROLLER_CLASS = void 0;

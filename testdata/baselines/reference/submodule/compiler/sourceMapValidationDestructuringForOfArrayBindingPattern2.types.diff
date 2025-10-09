@@ -1,0 +1,50 @@
+--- old.sourceMapValidationDestructuringForOfArrayBindingPattern2.types
++++ new.sourceMapValidationDestructuringForOfArrayBindingPattern2.types
+@@= skipped -91, +91 lines =@@
+
+ for ([, nameA] of robots) {
+ >[, nameA] : [undefined, string]
+-> : undefined
+ >nameA : string
+ >robots : Robot[]
+
+@@= skipped -13, +12 lines =@@
+ }
+ for ([, nameA] of getRobots()) {
+ >[, nameA] : [undefined, string]
+-> : undefined
+ >nameA : string
+ >getRobots() : Robot[]
+ >getRobots : () => Robot[]
+@@= skipped -14, +13 lines =@@
+ }
+ for ([, nameA] of [robotA, robotB]) {
+ >[, nameA] : [undefined, string]
+-> : undefined
+ >nameA : string
+ >[robotA, robotB] : Robot[]
+ >robotA : Robot
+@@= skipped -15, +14 lines =@@
+ }
+ for ([, [primarySkillA, secondarySkillA]] of multiRobots) {
+ >[, [primarySkillA, secondarySkillA]] : [undefined, [string, string]]
+-> : undefined
+ >[primarySkillA, secondarySkillA] : [string, string]
+ >primarySkillA : string
+ >secondarySkillA : string
+@@= skipped -15, +14 lines =@@
+ }
+ for ([, [primarySkillA, secondarySkillA]] of getMultiRobots()) {
+ >[, [primarySkillA, secondarySkillA]] : [undefined, [string, string]]
+-> : undefined
+ >[primarySkillA, secondarySkillA] : [string, string]
+ >primarySkillA : string
+ >secondarySkillA : string
+@@= skipped -16, +15 lines =@@
+ }
+ for ([, [primarySkillA, secondarySkillA]] of [multiRobotA, multiRobotB]) {
+ >[, [primarySkillA, secondarySkillA]] : [undefined, [string, string]]
+-> : undefined
+ >[primarySkillA, secondarySkillA] : [string, string]
+ >primarySkillA : string
+ >secondarySkillA : string

@@ -1,0 +1,10 @@
+--- old.arrayDestructuringInSwitch1.symbols
++++ new.arrayDestructuringInSwitch1.symbols
+@@= skipped -16, +16 lines =@@
+
+   if (Array.isArray(expression)) {
+ >Array.isArray : Symbol(ArrayConstructor.isArray, Decl(lib.es5.d.ts, --, --))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >isArray : Symbol(ArrayConstructor.isArray, Decl(lib.es5.d.ts, --, --))
+ >expression : Symbol(expression, Decl(arrayDestructuringInSwitch1.ts, 3, 25))

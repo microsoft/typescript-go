@@ -29,8 +29,9 @@
 
      if (typeof input === 'number') {
  >typeof input === 'number' : boolean
- >typeof input : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+->typeof input : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
 ->input : boolean | myTypes.typeC
++>typeof input : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
 +>input : testFnTypes.input
  >'number' : "number"
 

@@ -1,13 +1,30 @@
 --- old.functionOverloadsRecursiveGenericReturnType.js
 +++ new.functionOverloadsRecursiveGenericReturnType.js
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
+
 
  //// [functionOverloadsRecursiveGenericReturnType.js]
- class B {
+-var B = /** @class */ (function () {
+-    function B() {
+-    }
+-    return B;
+-}());
+-var A = /** @class */ (function () {
+-    function A() {
+-    }
+-    return A;
+-}());
+-function Choice() {
+-    var v_args = [];
+-    for (var _i = 0; _i < arguments.length; _i++) {
+-        v_args[_i] = arguments[_i];
+-    }
++class B {
 +    id;
- }
- class A {
++}
++class A {
 +    GetEnumerator;
- }
- function Choice(...v_args) {
++}
++function Choice(...v_args) {
      return new A();
+ }

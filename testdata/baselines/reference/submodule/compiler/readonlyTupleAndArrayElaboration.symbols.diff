@@ -1,0 +1,29 @@
+--- old.readonlyTupleAndArrayElaboration.symbols
++++ new.readonlyTupleAndArrayElaboration.symbols
+@@= skipped -14, +14 lines =@@
+
+     return Math.sqrt(x ** 2 + y ** 2);
+ >Math.sqrt : Symbol(Math.sqrt, Decl(lib.es5.d.ts, --, --))
+->Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >sqrt : Symbol(Math.sqrt, Decl(lib.es5.d.ts, --, --))
+ >x : Symbol(x, Decl(readonlyTupleAndArrayElaboration.ts, 5, 29))
+ >y : Symbol(y, Decl(readonlyTupleAndArrayElaboration.ts, 5, 31))
+@@= skipped -21, +21 lines =@@
+ declare function arryFn2(x: Array<number>): void;
+ >arryFn2 : Symbol(arryFn2, Decl(readonlyTupleAndArrayElaboration.ts, 12, 14))
+ >x : Symbol(x, Decl(readonlyTupleAndArrayElaboration.ts, 14, 25))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+ arryFn2(point);
+ >arryFn2 : Symbol(arryFn2, Decl(readonlyTupleAndArrayElaboration.ts, 12, 14))
+@@= skipped -15, +15 lines =@@
+
+ declare const c: ReadonlyArray<number>;
+ >c : Symbol(c, Decl(readonlyTupleAndArrayElaboration.ts, 19, 13))
+->ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --))
+
+ arryFn2(a);
+ >arryFn2 : Symbol(arryFn2, Decl(readonlyTupleAndArrayElaboration.ts, 12, 14))

@@ -1,6 +1,15 @@
 --- old.jsFileFunctionOverloads.types
 +++ new.jsFileFunctionOverloads.types
-@@= skipped -62, +62 lines =@@
+@@= skipped -24, +24 lines =@@
+ >x : unknown
+
+   return typeof x;
+->typeof x : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof x : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >x : unknown
+ }
+
+@@= skipped -38, +38 lines =@@
  >flatMap : { <T, U>(array: T[], iterable: (x: T) => U[]): U[]; <T>(array: T[][]): T[]; }
  >array : unknown[]
  >iterable : (x: unknown) => unknown

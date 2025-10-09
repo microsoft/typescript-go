@@ -3,7 +3,7 @@
 === assignmentCompatWithGenericCallSignaturesWithOptionalParameters.ts ===
 // call signatures in derived types must have the same or fewer optional parameters as the target for assignment
 
-module ClassTypeParam {
+namespace ClassTypeParam {
 >ClassTypeParam : typeof ClassTypeParam
 
     class Base<T> {
@@ -182,7 +182,7 @@ module ClassTypeParam {
     }
 }
 
-module GenericSignaturesInvalid {
+namespace GenericSignaturesInvalid {
 >GenericSignaturesInvalid : typeof GenericSignaturesInvalid
 
     class Base2 {
@@ -473,7 +473,7 @@ module GenericSignaturesInvalid {
     }
 }
 
-module GenericSignaturesValid {
+namespace GenericSignaturesValid {
 >GenericSignaturesValid : typeof GenericSignaturesValid
 
     class Base2 {

@@ -1,0 +1,10 @@
+--- old.functionType.symbols
++++ new.functionType.symbols
+@@= skipped -9, +9 lines =@@
+ >apply : Symbol(Function.apply, Decl(lib.es5.d.ts, --, --))
+
+ (new Function("return 5"))();
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+  
+  

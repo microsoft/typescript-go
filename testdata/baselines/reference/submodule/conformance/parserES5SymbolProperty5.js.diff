@@ -1,9 +1,15 @@
 --- old.parserES5SymbolProperty5.js
 +++ new.parserES5SymbolProperty5.js
-@@= skipped -6, +6 lines =@@
+@@= skipped -5, +5 lines =@@
+ }
 
  //// [parserES5SymbolProperty5.js]
- class C {
-+    [Symbol.isRegExp];
- }
+-var C = /** @class */ (function () {
+-    function C() {
+-    }
+-    return C;
+-}());
 -Symbol.isRegExp;
++class C {
++    [Symbol.isRegExp];
++}

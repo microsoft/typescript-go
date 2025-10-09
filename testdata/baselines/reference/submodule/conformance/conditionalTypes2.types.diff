@@ -1,6 +1,15 @@
 --- old.conditionalTypes2.types
 +++ new.conditionalTypes2.types
-@@= skipped -248, +248 lines =@@
+@@= skipped -70, +70 lines =@@
+
+     return typeof value === "function";
+ >typeof value === "function" : boolean
+->typeof value : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof value : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >value : T
+ >"function" : "function"
+ }
+@@= skipped -178, +178 lines =@@
  >x : T
 
      partition2<U extends T>(predicate:(v:T)=>boolean): [Vector<U>,Vector<any>] {

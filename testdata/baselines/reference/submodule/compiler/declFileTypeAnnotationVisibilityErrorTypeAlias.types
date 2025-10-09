@@ -6,13 +6,13 @@ interface Window {
 >someMethod : () => any
 }
 
-module M {
+namespace M {
 >M : typeof M
 
     type W = Window | string;
 >W : W
 
-    export module N {
+    export namespace N {
 >N : typeof N
 
         export class Window { }
@@ -23,13 +23,13 @@ module M {
     }
 }
 
-module M1 {
+namespace M1 {
 >M1 : typeof M1
 
     export type W = Window | string;
 >W : W
 
-    export module N {
+    export namespace N {
 >N : typeof N
 
         export class Window { }
@@ -40,7 +40,7 @@ module M1 {
     }
 }
 
-module M2 {
+namespace M2 {
 >M2 : typeof M2
 
     class private1 {
@@ -49,7 +49,7 @@ module M2 {
     class public1 {
 >public1 : public1
     }
-    module m3 {
+    namespace m3 {
 >m3 : typeof m3
 
         export class public1 {

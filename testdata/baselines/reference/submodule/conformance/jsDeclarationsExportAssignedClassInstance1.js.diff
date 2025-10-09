@@ -1,9 +1,16 @@
 --- old.jsDeclarationsExportAssignedClassInstance1.js
 +++ new.jsDeclarationsExportAssignedClassInstance1.js
-@@= skipped -7, +7 lines =@@
+@@= skipped -5, +5 lines =@@
+ module.exports = new Foo();
+
  //// [index.js]
- class Foo {
- }
+-var Foo = /** @class */ (function () {
+-    function Foo() {
+-    }
+-    return Foo;
+-}());
++class Foo {
++}
 +export = new Foo();
  module.exports = new Foo();
 

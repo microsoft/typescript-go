@@ -1,0 +1,49 @@
+--- old.sourceMapValidationDestructuringForOfArrayBindingPatternDefaultValues2.types
++++ new.sourceMapValidationDestructuringForOfArrayBindingPatternDefaultValues2.types
+@@= skipped -91, +91 lines =@@
+
+ for ([, nameA = "noName"] of robots) {
+ >[, nameA = "noName"] : [undefined, string]
+-> : undefined
+ >nameA = "noName" : "noName"
+ >nameA : string
+ >"noName" : "noName"
+@@= skipped -15, +14 lines =@@
+ }
+ for ([, nameA = "noName"] of getRobots()) {
+ >[, nameA = "noName"] : [undefined, string]
+-> : undefined
+ >nameA = "noName" : "noName"
+ >nameA : string
+ >"noName" : "noName"
+@@= skipped -16, +15 lines =@@
+ }
+ for ([, nameA = "noName"] of [robotA, robotB]) {
+ >[, nameA = "noName"] : [undefined, string]
+-> : undefined
+ >nameA = "noName" : "noName"
+ >nameA : string
+ >"noName" : "noName"
+@@= skipped -17, +16 lines =@@
+ }
+ for ([, [
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["skill1", "skill2"]] : [undefined, [string, string]]
+-> : undefined
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["skill1", "skill2"] : [string, string]
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] : [string, string]
+
+@@= skipped -29, +28 lines =@@
+ }
+ for ([, [
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["skill1", "skill2"]] : [undefined, [string, string]]
+-> : undefined
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["skill1", "skill2"] : [string, string]
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] : [string, string]
+
+@@= skipped -30, +29 lines =@@
+ }
+ for ([, [
+ >[, [    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["skill1", "skill2"]] : [undefined, [string, string]]
+-> : undefined
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] = ["skill1", "skill2"] : [string, string]
+ >[    primarySkillA = "primary",    secondarySkillA = "secondary"] : [string, string]

@@ -1,0 +1,25 @@
+--- old.parserRealSource7.symbols
++++ new.parserRealSource7.symbols
+@@= skipped -256, +256 lines =@@
+ >name : Symbol(name, Decl(parserRealSource7.ts, 87, 40))
+ >scopeChain : Symbol(scopeChain, Decl(parserRealSource7.ts, 87, 53))
+ >ScopeChain : Symbol(ScopeChain)
+->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --))
+
+         var symbol = scopeChain.scope.find(name, false, true);
+ >symbol : Symbol(symbol, Decl(parserRealSource7.ts, 88, 11))
+@@= skipped -28, +28 lines =@@
+ >AST : Symbol(AST)
+ >context : Symbol(context, Decl(parserRealSource7.ts, 97, 44))
+ >IAliasScopeContext : Symbol(IAliasScopeContext, Decl(parserRealSource7.ts, 79, 34))
+->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --))
+
+         var symbol: Symbol = null;
+ >symbol : Symbol(symbol, Decl(parserRealSource7.ts, 98, 11))
+->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --))
+
+         switch (alias.nodeType) {
+ >alias : Symbol(alias, Decl(parserRealSource7.ts, 97, 33))

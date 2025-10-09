@@ -1,0 +1,29 @@
+--- old.declFileTypeAnnotationUnionType.types
++++ new.declFileTypeAnnotationUnionType.types
+@@= skipped -52, +52 lines =@@
+ >c : typeof m.c
+
+ var x: g<string> | m.g<number> |  (() => c) = new g<string>() ||  new m.g<number>() || (() => new c());
+->x : g<string> | m.g<number> | (() => c)
++>x : m.g<number> | g<string> | (() => c)
+ >m : any
+->new g<string>() ||  new m.g<number>() || (() => new c()) : g<string> | m.g<number> | (() => c)
+->new g<string>() ||  new m.g<number>() : g<string> | m.g<number>
++>new g<string>() ||  new m.g<number>() || (() => new c()) : m.g<number> | g<string> | (() => c)
++>new g<string>() ||  new m.g<number>() : m.g<number> | g<string>
+ >new g<string>() : g<string>
+ >g : typeof g
+ >new m.g<number>() : m.g<number>
+@@= skipped -16, +16 lines =@@
+ >c : typeof c
+
+ var y = new g<string>() || new m.g<number>() || (() => new c());
+->y : g<string> | m.g<number> | (() => c)
+->new g<string>() || new m.g<number>() || (() => new c()) : g<string> | m.g<number> | (() => c)
+->new g<string>() || new m.g<number>() : g<string> | m.g<number>
++>y : m.g<number> | g<string> | (() => c)
++>new g<string>() || new m.g<number>() || (() => new c()) : m.g<number> | g<string> | (() => c)
++>new g<string>() || new m.g<number>() : m.g<number> | g<string>
+ >new g<string>() : g<string>
+ >g : typeof g
+ >new m.g<number>() : m.g<number>

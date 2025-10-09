@@ -5,8 +5,8 @@ let module = 10;
 >module : number
 >10 : 10
 
-module in {}
->module in {} : boolean
->module : number
+namespace in {}
+>namespace in {} : boolean
+>namespace : any
 >{} : {}
 

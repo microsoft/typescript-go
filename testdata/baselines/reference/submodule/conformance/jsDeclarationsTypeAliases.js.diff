@@ -9,25 +9,34 @@
  /**
   * @typedef {{x: string} | number | LocalThing | ExportedThing} SomeType
   */
-@@= skipped -11, +13 lines =@@
+@@= skipped -10, +12 lines =@@
+ function doTheThing(x) {
      return { x: "" + x };
  }
- class ExportedThing {
--    constructor() {
+-var ExportedThing = /** @class */ (function () {
+-    function ExportedThing() {
 -        this.z = "ok";
 -    }
+-    return ExportedThing;
+-}());
++class ExportedThing {
 +    z = "ok";
- }
++}
  module.exports = {
-     doTheThing,
-     ExportedThing,
+-    doTheThing: doTheThing,
+-    ExportedThing: ExportedThing,
++    doTheThing,
++    ExportedThing,
  };
- class LocalThing {
--    constructor() {
+-var LocalThing = /** @class */ (function () {
+-    function LocalThing() {
 -        this.y = "ok";
 -    }
+-    return LocalThing;
+-}());
++class LocalThing {
 +    y = "ok";
- }
++}
 
 
  //// [index.d.ts]
@@ -69,7 +78,7 @@
  //// [mixed.d.ts]
  export type SomeType = {
      x: string;
-@@= skipped -39, +52 lines =@@
+@@= skipped -42, +53 lines =@@
   * @param {number} x
   * @returns {SomeType}
   */

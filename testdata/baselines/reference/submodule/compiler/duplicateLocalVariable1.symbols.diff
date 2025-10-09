@@ -1,0 +1,11 @@
+--- old.duplicateLocalVariable1.symbols
++++ new.duplicateLocalVariable1.symbols
+@@= skipped -117, +117 lines =@@
+
+                         var regex = new RegExp(testcase.errorMessageRegEx);
+ >regex : Symbol(regex, Decl(duplicateLocalVariable1.ts, 38, 27))
+->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >testcase.errorMessageRegEx : Symbol(TestCase.errorMessageRegEx, Decl(duplicateLocalVariable1.ts, 9, 63))
+ >testcase : Symbol(testcase, Decl(duplicateLocalVariable1.ts, 26, 15))
+ >errorMessageRegEx : Symbol(TestCase.errorMessageRegEx, Decl(duplicateLocalVariable1.ts, 9, 63))

@@ -1,0 +1,50 @@
+--- old.discriminantsAndPrimitives.symbols
++++ new.discriminantsAndPrimitives.symbols
+@@= skipped -32, +32 lines =@@
+ >x : Symbol(x, Decl(discriminantsAndPrimitives.ts, 12, 12))
+
+         switch(x.kind) {
+->x.kind : Symbol(kind, Decl(discriminantsAndPrimitives.ts, 2, 15), Decl(discriminantsAndPrimitives.ts, 7, 15))
++>x.kind : Symbol(kind, Decl(discriminantsAndPrimitives.ts, 7, 15), Decl(discriminantsAndPrimitives.ts, 2, 15))
+ >x : Symbol(x, Decl(discriminantsAndPrimitives.ts, 12, 12))
+->kind : Symbol(kind, Decl(discriminantsAndPrimitives.ts, 2, 15), Decl(discriminantsAndPrimitives.ts, 7, 15))
++>kind : Symbol(kind, Decl(discriminantsAndPrimitives.ts, 7, 15), Decl(discriminantsAndPrimitives.ts, 2, 15))
+
+             case 'foo':
+                 x.name;
+@@= skipped -23, +23 lines =@@
+ >x : Symbol(x, Decl(discriminantsAndPrimitives.ts, 21, 12))
+
+         switch(x.kind) {
+->x.kind : Symbol(kind, Decl(discriminantsAndPrimitives.ts, 2, 15), Decl(discriminantsAndPrimitives.ts, 7, 15))
++>x.kind : Symbol(kind, Decl(discriminantsAndPrimitives.ts, 7, 15), Decl(discriminantsAndPrimitives.ts, 2, 15))
+ >x : Symbol(x, Decl(discriminantsAndPrimitives.ts, 21, 12))
+->kind : Symbol(kind, Decl(discriminantsAndPrimitives.ts, 2, 15), Decl(discriminantsAndPrimitives.ts, 7, 15))
++>kind : Symbol(kind, Decl(discriminantsAndPrimitives.ts, 7, 15), Decl(discriminantsAndPrimitives.ts, 2, 15))
+
+             case 'foo':
+                 x.name;
+@@= skipped -24, +24 lines =@@
+ >x : Symbol(x, Decl(discriminantsAndPrimitives.ts, 30, 12))
+
+         switch(x.kind) {
+->x.kind : Symbol(kind, Decl(discriminantsAndPrimitives.ts, 2, 15), Decl(discriminantsAndPrimitives.ts, 7, 15))
++>x.kind : Symbol(kind, Decl(discriminantsAndPrimitives.ts, 7, 15), Decl(discriminantsAndPrimitives.ts, 2, 15))
+ >x : Symbol(x, Decl(discriminantsAndPrimitives.ts, 30, 12))
+->kind : Symbol(kind, Decl(discriminantsAndPrimitives.ts, 2, 15), Decl(discriminantsAndPrimitives.ts, 7, 15))
++>kind : Symbol(kind, Decl(discriminantsAndPrimitives.ts, 7, 15), Decl(discriminantsAndPrimitives.ts, 2, 15))
+
+             case 'foo':
+                 x.name;
+@@= skipped -24, +24 lines =@@
+ >x : Symbol(x, Decl(discriminantsAndPrimitives.ts, 39, 12))
+
+         switch(x.kind) {
+->x.kind : Symbol(kind, Decl(discriminantsAndPrimitives.ts, 2, 15), Decl(discriminantsAndPrimitives.ts, 7, 15))
++>x.kind : Symbol(kind, Decl(discriminantsAndPrimitives.ts, 7, 15), Decl(discriminantsAndPrimitives.ts, 2, 15))
+ >x : Symbol(x, Decl(discriminantsAndPrimitives.ts, 39, 12))
+->kind : Symbol(kind, Decl(discriminantsAndPrimitives.ts, 2, 15), Decl(discriminantsAndPrimitives.ts, 7, 15))
++>kind : Symbol(kind, Decl(discriminantsAndPrimitives.ts, 7, 15), Decl(discriminantsAndPrimitives.ts, 2, 15))
+
+             case 'foo':
+                 x.name;

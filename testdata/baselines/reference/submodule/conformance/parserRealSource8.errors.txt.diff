@@ -49,7 +49,7 @@
 -                        ~~~~~~~~~~~~~
 -!!! error TS6053: File 'typescript.ts' not found.
      
-     module TypeScript {
+     namespace TypeScript {
      
 @@= skipped -252, +250 lines =@@
  !!! error TS2304: Cannot find name 'Type'.

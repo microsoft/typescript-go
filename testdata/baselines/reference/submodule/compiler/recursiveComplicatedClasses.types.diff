@@ -1,0 +1,11 @@
+--- old.recursiveComplicatedClasses.types
++++ new.recursiveComplicatedClasses.types
+@@= skipped -36, +36 lines =@@
+ }
+ class InferenceSymbol extends Symbol {
+ >InferenceSymbol : InferenceSymbol
+->Symbol : SymbolConstructor
++>Symbol : Symbol
+ }
+
+ class ParameterSymbol extends InferenceSymbol {

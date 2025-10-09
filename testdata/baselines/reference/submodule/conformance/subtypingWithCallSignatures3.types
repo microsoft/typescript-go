@@ -4,7 +4,7 @@
 // checking subtype relations for function types as it relates to contextual signature instantiation
 // error cases, so function calls will all result in 'any'
 
-module Errors {
+namespace Errors {
 >Errors : typeof Errors
 
     class Base { foo: string; }
@@ -463,7 +463,7 @@ module Errors {
 >r9arg : <T>(x: (a: T) => T) => any[]
 }
 
-module WithGenericSignaturesInBaseType {
+namespace WithGenericSignaturesInBaseType {
 >WithGenericSignaturesInBaseType : typeof WithGenericSignaturesInBaseType
 
     declare function foo2(a2: <T>(x: T) => T[]): typeof a2;

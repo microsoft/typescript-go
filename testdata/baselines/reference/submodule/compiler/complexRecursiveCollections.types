@@ -83,7 +83,7 @@ interface N2<T> extends N1<T> {
 // Test that complex recursive collections can pass the `extends` assignability check without
 // running out of memory. This bug was exposed in Typescript 2.4 when more generic signatures
 // started being checked.
-declare module Immutable {
+declare namespace Immutable {
 >Immutable : typeof Immutable
 
   export function fromJS(jsValue: any, reviver?: (key: string | number, sequence: Collection.Keyed<string, any> | Collection.Indexed<any>, path?: Array<string | number>) => any): any;
@@ -145,7 +145,7 @@ declare module Immutable {
     hashCode(): number;
 >hashCode : () => number
   }
-  export module List {
+  export namespace List {
 >List : typeof List
 
     function isList(maybeList: any): maybeList is List<any>;
@@ -341,7 +341,7 @@ declare module Immutable {
 >iter : this
 >context : any
   }
-  export module Map {
+  export namespace Map {
 >Map : typeof Map
 
     function isMap(maybeMap: any): maybeMap is Map<any, any>;
@@ -552,7 +552,7 @@ declare module Immutable {
 >iter : this
 >context : any
   }
-  export module OrderedMap {
+  export namespace OrderedMap {
 >OrderedMap : typeof OrderedMap
 
     function isOrderedMap(maybeOrderedMap: any): maybeOrderedMap is OrderedMap<any, any>;
@@ -637,7 +637,7 @@ declare module Immutable {
 >iter : this
 >context : any
   }
-  export module Set {
+  export namespace Set {
 >Set : typeof Set
 
     function isSet(maybeSet: any): maybeSet is Set<any>;
@@ -759,7 +759,7 @@ declare module Immutable {
 >iter : this
 >context : any
   }
-  export module OrderedSet {
+  export namespace OrderedSet {
 >OrderedSet : typeof OrderedSet
 
     function isOrderedSet(maybeOrderedSet: any): boolean;
@@ -853,7 +853,7 @@ declare module Immutable {
 >any : any[]
 >collections : Collection<any, any>[]
   }
-  export module Stack {
+  export namespace Stack {
 >Stack : typeof Stack
 
     function isStack(maybeStack: any): maybeStack is Stack<any>;
@@ -969,7 +969,7 @@ declare module Immutable {
 >times : number
 >Seq : any
 
-  export module Record {
+  export namespace Record {
 >Record : typeof Record
 
     export function isRecord(maybeRecord: any): maybeRecord is Record.Instance<any>;
@@ -1135,7 +1135,7 @@ declare module Immutable {
 >name : string
 >Record : any
 
-  export module Seq {
+  export namespace Seq {
 >Seq : typeof Seq
 
     function isSeq(maybeSeq: any): maybeSeq is Seq.Indexed<any> | Seq.Keyed<any, any>;
@@ -1149,7 +1149,7 @@ declare module Immutable {
 >values : T[]
 >Seq : any
 
-    export module Keyed {}
+    export namespace Keyed {}
     export function Keyed<K, V>(collection: Iterable<[K, V]>): Seq.Keyed<K, V>;
 >Keyed : { <K, V>(collection: Iterable<[K, V]>): Keyed<K, V>; <V>(obj: { [key: string]: V; }): Keyed<string, V>; <K_1, V_1>(): Keyed<K_1, V_1>; (): Keyed<any, any>; }
 >collection : Iterable<[K, V]>
@@ -1246,7 +1246,7 @@ declare module Immutable {
 >iter : this
 >context : any
     }
-    module Indexed {
+    namespace Indexed {
 >Indexed : typeof Indexed
 
       function of<T>(...values: Array<T>): Seq.Indexed<T>;
@@ -1319,7 +1319,7 @@ declare module Immutable {
 >iter : this
 >context : any
     }
-    export module Set {
+    export namespace Set {
 >Set : typeof Set
 
       function of<T>(...values: Array<T>): Seq.Set<T>;
@@ -1470,7 +1470,7 @@ declare module Immutable {
 >iter : this
 >context : any
   }
-  export module Collection {
+  export namespace Collection {
 >Collection : typeof Collection
 
     function isKeyed(maybeKeyed: any): maybeKeyed is Collection.Keyed<any, any>;
@@ -1493,7 +1493,7 @@ declare module Immutable {
 >isOrdered : (maybeOrdered: any) => boolean
 >maybeOrdered : any
 
-    export module Keyed {}
+    export namespace Keyed {}
     export function Keyed<K, V>(collection: Iterable<[K, V]>): Collection.Keyed<K, V>;
 >Keyed : { <K, V>(collection: Iterable<[K, V]>): Keyed<K, V>; <V>(obj: { [key: string]: V; }): Keyed<string, V>; }
 >collection : Iterable<[K, V]>
@@ -1591,7 +1591,7 @@ declare module Immutable {
 >Symbol : SymbolConstructor
 >iterator : unique symbol
     }
-    export module Indexed {}
+    export namespace Indexed {}
     export function Indexed<T>(collection: Iterable<T>): Collection.Indexed<T>;
 >Indexed : <T>(collection: Iterable<T>) => Indexed<T>
 >collection : Iterable<T>
@@ -1740,7 +1740,7 @@ declare module Immutable {
 >Symbol : SymbolConstructor
 >iterator : unique symbol
     }
-    export module Set {}
+    export namespace Set {}
     export function Set<T>(collection: Iterable<T>): Collection.Set<T>;
 >Set : <T>(collection: Iterable<T>) => Set<T>
 >collection : Iterable<T>

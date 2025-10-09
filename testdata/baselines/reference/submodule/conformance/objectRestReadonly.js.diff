@@ -1,0 +1,15 @@
+--- old.objectRestReadonly.js
++++ new.objectRestReadonly.js
+@@= skipped -30, +30 lines =@@
+         }
+     return t;
+ };
+-var obj = {
++const obj = {
+     foo: 'bar',
+     baz: 'qux',
+     quux: 'quuz',
+ };
+-var foo = obj.foo, rest = __rest(obj, ["foo"]);
++const { foo } = obj, rest = __rest(obj, ["foo"]);
+ delete rest.baz;

@@ -1,11 +1,17 @@
 --- old.moduleResolutionWithSymlinks.js
 +++ new.moduleResolutionWithSymlinks.js
-@@= skipped -40, +40 lines =@@
+@@= skipped -39, +39 lines =@@
+ "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.MyClass = void 0;
- class MyClass {
+-var MyClass = /** @class */ (function () {
+-    function MyClass() {
+-    }
+-    return MyClass;
+-}());
++class MyClass {
 +    x;
- }
++}
  exports.MyClass = MyClass;
  //// [/src/library-b/index.js]
  "use strict";
@@ -16,3 +22,11 @@
  Object.defineProperty(exports, "MyClass2", { enumerable: true, get: function () { return library_a_1.MyClass; } });
  //// [/src/app.js]
  "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var x;
+-var y;
++let x;
++let y;
+ x = y;
+ y = x;
+ /*

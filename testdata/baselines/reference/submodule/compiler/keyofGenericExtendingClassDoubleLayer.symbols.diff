@@ -1,0 +1,11 @@
+--- old.keyofGenericExtendingClassDoubleLayer.symbols
++++ new.keyofGenericExtendingClassDoubleLayer.symbols
+@@= skipped -6, +6 lines =@@
+
+     public createdAt: Date;
+ >createdAt : Symbol(Model.createdAt, Decl(keyofGenericExtendingClassDoubleLayer.ts, 0, 31))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ }
+
+ type ModelAttributes<T> = Omit<T, keyof Model>;

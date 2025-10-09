@@ -100,9 +100,17 @@
 
  function f4<K extends keyof ArgMap>(x: Funcs[keyof ArgMap], y: Funcs[K]) {
 ->f4 : <K extends keyof ArgMap>(x: Funcs[keyof ArgMap], y: Funcs[K]) => void
+->x : Func<"b"> | Func<"a">
 +>f4 : <K extends keyof ArgMap>(x: Func<"a"> | Func<"b">, y: Funcs[K]) => void
- >x : Func<"a"> | Func<"b">
++>x : Func<"a"> | Func<"b">
  >y : Funcs[K]
+
+     x = y;
+ >x = y : Funcs[K]
+->x : Func<"b"> | Func<"a">
++>x : Func<"a"> | Func<"b">
+ >y : Funcs[K]
+ }
 
 @@= skipped -89, +89 lines =@@
  }

@@ -1,0 +1,10 @@
+--- old.commentOnArrayElement12.types
++++ new.commentOnArrayElement12.types
+@@= skipped -5, +5 lines =@@
+ >[    ,, /* comment */] : undefined[]
+
+     ,, /* comment */
+-> : undefined
+-> : undefined
+-
+ ];

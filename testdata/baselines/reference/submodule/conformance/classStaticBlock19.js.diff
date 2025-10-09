@@ -1,13 +1,18 @@
 --- old.classStaticBlock19.js
 +++ new.classStaticBlock19.js
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
+
 
  //// [classStaticBlock19.js]
- class C {
+-var C = /** @class */ (function () {
+-    function C() {
++class C {
 +    static {
 +        // something
-+    }
- }
--(() => {
+     }
+-    return C;
+-}());
+-(function () {
 -    // something
 -})();
++}

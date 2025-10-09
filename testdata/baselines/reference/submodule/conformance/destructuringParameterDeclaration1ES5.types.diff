@@ -9,7 +9,19 @@
  >j : number
  >k : string
  >l : any
-@@= skipped -192, +192 lines =@@
+@@= skipped -83, +83 lines =@@
+
+ interface F1 {
+     b5(z, y, [, a, b], {p, m: { q, r}});
+->b5 : (z: any, y: any, [, a, b]: [any, any, any], { p, m: { q, r } }: { p: any; m: { q: any; r: any; }; }) => any
++>b5 : (z: any, y: any, [, a, b]: [any, any, any], { p, m: { q, r } }: { m: { q: any; r: any; }; p: any; }) => any
+ >z : any
+ >y : any
+-> : undefined
+ >a : any
+ >b : any
+ >p : any
+@@= skipped -110, +109 lines =@@
  >10 : 10
 
  function c3({b}: { b: number|string} = { b: "hello" }) { }

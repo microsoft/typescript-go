@@ -68,7 +68,7 @@ var r = true ? a : b;
 >a : { Foo?: Base; }
 >b : { Foo: Derived; }
 
-module TwoLevels {
+namespace TwoLevels {
 >TwoLevels : typeof TwoLevels
 
     interface T {

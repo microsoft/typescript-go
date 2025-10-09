@@ -1,0 +1,10 @@
+--- old.parserES5SymbolProperty7.symbols
++++ new.parserES5SymbolProperty7.symbols
+@@= skipped -5, +5 lines =@@
+
+     [Symbol.toStringTag](): void { }
+ >[Symbol.toStringTag] : Symbol(C[Symbol.toStringTag], Decl(parserES5SymbolProperty7.ts, 0, 9))
+->Symbol.toStringTag : Symbol(SymbolConstructor.toStringTag, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+->toStringTag : Symbol(SymbolConstructor.toStringTag, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+ }

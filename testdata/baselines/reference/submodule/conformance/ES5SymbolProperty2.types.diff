@@ -1,0 +1,19 @@
+--- old.ES5SymbolProperty2.types
++++ new.ES5SymbolProperty2.types
+@@= skipped -26, +26 lines =@@
+ }
+
+ (new M.C)[Symbol.iterator];
+->(new M.C)[Symbol.iterator] : error
++>(new M.C)[Symbol.iterator] : () => void
+ >(new M.C) : M.C
+ >new M.C : M.C
+ >M.C : typeof M.C
+ >M : typeof M
+ >C : typeof M.C
+->Symbol.iterator : unique symbol
+->Symbol : SymbolConstructor
+->iterator : unique symbol
++>Symbol.iterator : any
++>Symbol : any
++>iterator : any

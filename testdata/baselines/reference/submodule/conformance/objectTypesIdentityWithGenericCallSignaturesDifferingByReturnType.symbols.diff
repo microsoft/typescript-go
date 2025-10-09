@@ -1,0 +1,20 @@
+--- old.objectTypesIdentityWithGenericCallSignaturesDifferingByReturnType.symbols
++++ new.objectTypesIdentityWithGenericCallSignaturesDifferingByReturnType.symbols
+@@= skipped -42, +42 lines =@@
+ >foo : Symbol(I.foo, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByReturnType.ts, 16, 16))
+ >x : Symbol(x, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByReturnType.ts, 17, 8))
+ >T : Symbol(T, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByReturnType.ts, 16, 12))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ }
+
+ interface I2 {
+@@= skipped -11, +11 lines =@@
+ >T : Symbol(T, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByReturnType.ts, 21, 8))
+ >x : Symbol(x, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByReturnType.ts, 21, 11))
+ >T : Symbol(T, Decl(objectTypesIdentityWithGenericCallSignaturesDifferingByReturnType.ts, 21, 8))
+->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ }
+
+ var a: { foo<T>(x: T): T }

@@ -1,6 +1,15 @@
 --- old.noUncheckedIndexedAccessDestructuring.types
 +++ new.noUncheckedIndexedAccessDestructuring.types
-@@= skipped -86, +86 lines =@@
+@@= skipped -33, +33 lines =@@
+
+ // Destructuring a rest element -> do not include undefined
+ const [, , ...s3] = strArray;
+-> : undefined
+-> : undefined
+ >s3 : string[]
+ >strArray : string[]
+
+@@= skipped -55, +53 lines =@@
 
      x.toFixed(); // Should OK
  >x.toFixed() : string
@@ -97,3 +106,14 @@
 +>toFixed : (fractionDigits?: number | undefined) => string
  }
 
+
+@@= skipped -53, +53 lines =@@
+ [,,, ...target_string_arr] = strArray; // Should OK
+ >[,,, ...target_string_arr] = strArray : string[]
+ >[,,, ...target_string_arr] : [undefined, undefined, undefined, ...string[]]
+-> : undefined
+-> : undefined
+-> : undefined
+ >...target_string_arr : string
+ >target_string_arr : string[]
+ >strArray : string[]

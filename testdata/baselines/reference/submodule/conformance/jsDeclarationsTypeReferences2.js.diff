@@ -1,6 +1,20 @@
 --- old.jsDeclarationsTypeReferences2.js
 +++ new.jsDeclarationsTypeReferences2.js
-@@= skipped -37, +37 lines =@@
+@@= skipped -24, +24 lines =@@
+     m: 1
+ };
+ //// [index.js]
+-var _a = require("./something").o, a = _a.a, m = _a.m;
+-var thing = a + m;
++const { a, m } = require("./something").o;
++const thing = a + m;
+ module.exports = {
+-    thing: thing
++    thing
+ };
+
+
+@@= skipped -13, +13 lines =@@
      m: number;
  };
  //// [index.d.ts]

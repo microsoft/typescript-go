@@ -1,0 +1,17 @@
+--- old.parenthesizedJSDocCastDoesNotNarrow.errors.txt
++++ new.parenthesizedJSDocCastDoesNotNarrow.errors.txt
+@@= skipped -0, +0 lines =@@
+-index.js(12,8): error TS2678: Type '"invalid"' is not comparable to type '"foo" | "bar"'.
++index.js(12,8): error TS2678: Type '"invalid"' is not comparable to type '"bar" | "foo"'.
+
+
+ ==== index.js (1 errors) ====
+@@= skipped -14, +14 lines =@@
+     
+       case "invalid":
+            ~~~~~~~~~
+-!!! error TS2678: Type '"invalid"' is not comparable to type '"foo" | "bar"'.
++!!! error TS2678: Type '"invalid"' is not comparable to type '"bar" | "foo"'.
+         value;
+         break;
+     }

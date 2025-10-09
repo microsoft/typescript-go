@@ -4,15 +4,15 @@
  }
 
  //// [unqualifiedCallToClassStatic1.js]
--let Vector = (() => {
--    class Vector {
+-var Vector = /** @class */ (function () {
+-    function Vector() {
 -    }
--    Vector.foo = () => {
+-    Vector.foo = function () {
 +class Vector {
 +    static foo = () => {
          // 'foo' cannot be called in an unqualified manner.
          foo();
      };
 -    return Vector;
--})();
+-}());
 +}

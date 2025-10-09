@@ -1,0 +1,11 @@
+--- old.arrayTypeOfFunctionTypes.symbols
++++ new.arrayTypeOfFunctionTypes.symbols
+@@= skipped -34, +34 lines =@@
+
+ var x3: Array<() => string>;
+ >x3 : Symbol(x3, Decl(arrayTypeOfFunctionTypes.ts, 12, 3))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+ var r5 = x2[1];
+ >r5 : Symbol(r5, Decl(arrayTypeOfFunctionTypes.ts, 13, 3))

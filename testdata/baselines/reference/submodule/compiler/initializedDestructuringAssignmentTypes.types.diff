@@ -1,13 +1,18 @@
 --- old.initializedDestructuringAssignmentTypes.types
 +++ new.initializedDestructuringAssignmentTypes.types
-@@= skipped -5, +5 lines =@@
+@@= skipped -1, +1 lines =@@
+
+ === initializedDestructuringAssignmentTypes.ts ===
+ const [, a = ''] = ''.match('') || [];
+-> : undefined
+ >a : string
  >'' : ""
  >''.match('') || [] : RegExpMatchArray | []
  >''.match('') : RegExpMatchArray
-->''.match : (regexp: string | RegExp) => RegExpMatchArray | null
+->''.match : { (regexp: string | RegExp): RegExpMatchArray | null; (matcher: { [Symbol.match](string: string): RegExpMatchArray | null; }): RegExpMatchArray | null; }
 +>''.match : (regexp: string | RegExp) => RegExpMatchArray
  >'' : ""
-->match : (regexp: string | RegExp) => RegExpMatchArray | null
+->match : { (regexp: string | RegExp): RegExpMatchArray | null; (matcher: { [Symbol.match](string: string): RegExpMatchArray | null; }): RegExpMatchArray | null; }
 +>match : (regexp: string | RegExp) => RegExpMatchArray
  >'' : ""
  >[] : []

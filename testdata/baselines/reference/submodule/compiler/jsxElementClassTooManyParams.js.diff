@@ -5,8 +5,15 @@
 
  //// [jsxElementClassTooManyParams.jsx]
 -"use strict";
- class ElemClass {
+-var ElemClass = /** @class */ (function () {
+-    function ElemClass(props) {
++class ElemClass {
 +    props;
-     constructor(props) {
++    constructor(props) {
          this.props = props;
      }
+-    return ElemClass;
+-}());
+-var elem = <ElemClass x={12} y={24}/>;
++}
++const elem = <ElemClass x={12} y={24}/>;

@@ -1,10 +1,18 @@
 --- old.commentsOnJSXExpressionsArePreserved(jsx=react-jsx,module=commonjs,moduledetection=legacy).js
 +++ new.commentsOnJSXExpressionsArePreserved(jsx=react-jsx,module=commonjs,moduledetection=legacy).js
-@@= skipped -24, +24 lines =@@
+@@= skipped -22, +22 lines =@@
+ }
+
  //// [commentsOnJSXExpressionsArePreserved.js]
- class Component {
-     render() {
--        return (0, _a.jsx)("div", { children: null /* preserved */ });
+-var Component = /** @class */ (function () {
+-    function Component() {
++class Component {
++    render() {
 +        return _jsx("div", { children: null /* preserved */ });
      }
- }
+-    Component.prototype.render = function () {
+-        return (0, _a.jsx)("div", { children: null /* preserved */ });
+-    };
+-    return Component;
+-}());
++}

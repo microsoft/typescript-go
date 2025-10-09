@@ -8,7 +8,7 @@
 
 -==== symbolDeclarationEmit12.ts (2 errors) ====
 +==== symbolDeclarationEmit12.ts (3 errors) ====
-     module M {
+     namespace M {
          interface I { }
          export class C {
              [Symbol.iterator]: I;

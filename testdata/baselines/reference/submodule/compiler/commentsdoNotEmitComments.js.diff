@@ -10,23 +10,62 @@
  var fooVar;
  foo(50);
  fooVar();
- class c {
-     constructor() {
+-var c = (function () {
+-    function c() {
 -        this.b = 10;
-     }
+-    }
+-    c.prototype.myFoo = function () {
+-        return this.b;
+-    };
+-    Object.defineProperty(c.prototype, "prop1", {
+-        get: function () {
+-            return this.b;
+-        },
+-        set: function (val) {
+-            this.b = val;
+-        },
+-        enumerable: false,
+-        configurable: true
+-    });
+-    c.prototype.foo1 = function (aOrb) {
++class c {
++    constructor() {
++    }
 +    b = 10;
-     myFoo() {
-         return this.b;
-     }
-@@= skipped -27, +27 lines =@@
++    myFoo() {
++        return this.b;
++    }
++    get prop1() {
++        return this.b;
++    }
++    set prop1(val) {
++        this.b = val;
++    }
++    foo1(aOrb) {
+         return aOrb.toString();
+-    };
+-    return c;
+-}());
++    }
++}
+ var i = new c();
+ var i1_i;
  var m1;
  (function (m1) {
-     class b {
+-    var b = (function () {
+-        function b(x) {
++    class b {
 +        x;
-         constructor(x) {
++        constructor(x) {
              this.x = x;
          }
-@@= skipped -11, +12 lines =@@
+-        return b;
+-    }());
++    }
+     m1.b = b;
+ })(m1 || (m1 = {}));
+ var shade = 1;
+@@= skipped -44, +39 lines =@@
 
  //// [commentsdoNotEmitComments.d.ts]
  declare var myVariable: number;

@@ -1,0 +1,11 @@
+--- old.emitCompoundExponentiationAssignmentWithIndexingOnLHS4.js
++++ new.emitCompoundExponentiationAssignmentWithIndexingOnLHS4.js
+@@= skipped -20, +20 lines =@@
+ var globalCounter = 0;
+ function incrementIdx(max) {
+     globalCounter += 1;
+-    var idx = Math.floor(Math.random() * max);
++    let idx = Math.floor(Math.random() * max);
+     return idx;
+ }
+ var array1 = [1, 2, 3, 4, 5];

@@ -1,8 +1,23 @@
 --- old.staticPrototypeProperty.js
 +++ new.staticPrototypeProperty.js
-@@= skipped -13, +13 lines =@@
-     static prototype() { }
+@@= skipped -9, +9 lines =@@
  }
- class C2 {
+
+ //// [staticPrototypeProperty.js]
+-var C = /** @class */ (function () {
+-    function C() {
+-    }
+-    C.prototype = function () { };
+-    return C;
+-}());
+-var C2 = /** @class */ (function () {
+-    function C2() {
+-    }
+-    return C2;
+-}());
++class C {
++    static prototype() { }
++}
++class C2 {
 +    static prototype;
- }
++}

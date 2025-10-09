@@ -1,0 +1,94 @@
+--- old.discriminatedUnionTypes1.symbols
++++ new.discriminatedUnionTypes1.symbols
+@@= skipped -45, +45 lines =@@
+ >Shape : Symbol(Shape, Decl(discriminatedUnionTypes1.ts, 14, 1))
+
+     if (s.kind === "square") {
+->s.kind : Symbol(kind, Decl(discriminatedUnionTypes1.ts, 0, 18), Decl(discriminatedUnionTypes1.ts, 5, 21), Decl(discriminatedUnionTypes1.ts, 11, 18))
++>s.kind : Symbol(kind, Decl(discriminatedUnionTypes1.ts, 11, 18), Decl(discriminatedUnionTypes1.ts, 5, 21), Decl(discriminatedUnionTypes1.ts, 0, 18))
+ >s : Symbol(s, Decl(discriminatedUnionTypes1.ts, 18, 15))
+->kind : Symbol(kind, Decl(discriminatedUnionTypes1.ts, 0, 18), Decl(discriminatedUnionTypes1.ts, 5, 21), Decl(discriminatedUnionTypes1.ts, 11, 18))
++>kind : Symbol(kind, Decl(discriminatedUnionTypes1.ts, 11, 18), Decl(discriminatedUnionTypes1.ts, 5, 21), Decl(discriminatedUnionTypes1.ts, 0, 18))
+
+         return s.size * s.size;
+ >s.size : Symbol(Square.size, Decl(discriminatedUnionTypes1.ts, 1, 19))
+@@= skipped -13, +13 lines =@@
+ >size : Symbol(Square.size, Decl(discriminatedUnionTypes1.ts, 1, 19))
+     }
+     else if (s.kind === "circle") {
+->s.kind : Symbol(kind, Decl(discriminatedUnionTypes1.ts, 5, 21), Decl(discriminatedUnionTypes1.ts, 11, 18))
++>s.kind : Symbol(kind, Decl(discriminatedUnionTypes1.ts, 11, 18), Decl(discriminatedUnionTypes1.ts, 5, 21))
+ >s : Symbol(s, Decl(discriminatedUnionTypes1.ts, 18, 15))
+->kind : Symbol(kind, Decl(discriminatedUnionTypes1.ts, 5, 21), Decl(discriminatedUnionTypes1.ts, 11, 18))
++>kind : Symbol(kind, Decl(discriminatedUnionTypes1.ts, 11, 18), Decl(discriminatedUnionTypes1.ts, 5, 21))
+
+         return Math.PI * s.radius * s.radius;
+ >Math.PI : Symbol(Math.PI, Decl(lib.es5.d.ts, --, --))
+->Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >PI : Symbol(Math.PI, Decl(lib.es5.d.ts, --, --))
+ >s.radius : Symbol(Circle.radius, Decl(discriminatedUnionTypes1.ts, 12, 19))
+ >s : Symbol(s, Decl(discriminatedUnionTypes1.ts, 18, 15))
+@@= skipped -39, +39 lines =@@
+ >Shape : Symbol(Shape, Decl(discriminatedUnionTypes1.ts, 14, 1))
+
+     switch (s.kind) {
+->s.kind : Symbol(kind, Decl(discriminatedUnionTypes1.ts, 0, 18), Decl(discriminatedUnionTypes1.ts, 5, 21), Decl(discriminatedUnionTypes1.ts, 11, 18))
++>s.kind : Symbol(kind, Decl(discriminatedUnionTypes1.ts, 11, 18), Decl(discriminatedUnionTypes1.ts, 5, 21), Decl(discriminatedUnionTypes1.ts, 0, 18))
+ >s : Symbol(s, Decl(discriminatedUnionTypes1.ts, 33, 15))
+->kind : Symbol(kind, Decl(discriminatedUnionTypes1.ts, 0, 18), Decl(discriminatedUnionTypes1.ts, 5, 21), Decl(discriminatedUnionTypes1.ts, 11, 18))
++>kind : Symbol(kind, Decl(discriminatedUnionTypes1.ts, 11, 18), Decl(discriminatedUnionTypes1.ts, 5, 21), Decl(discriminatedUnionTypes1.ts, 0, 18))
+
+         case "square": return s.size * s.size;
+ >s.size : Symbol(Square.size, Decl(discriminatedUnionTypes1.ts, 1, 19))
+@@= skipped -22, +22 lines =@@
+
+         case "circle": return Math.PI * s.radius * s.radius;
+ >Math.PI : Symbol(Math.PI, Decl(lib.es5.d.ts, --, --))
+->Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >PI : Symbol(Math.PI, Decl(lib.es5.d.ts, --, --))
+ >s.radius : Symbol(Circle.radius, Decl(discriminatedUnionTypes1.ts, 12, 19))
+ >s : Symbol(s, Decl(discriminatedUnionTypes1.ts, 33, 15))
+@@= skipped -26, +26 lines =@@
+ >Shape : Symbol(Shape, Decl(discriminatedUnionTypes1.ts, 14, 1))
+
+     switch (s.kind) {
+->s.kind : Symbol(kind, Decl(discriminatedUnionTypes1.ts, 0, 18), Decl(discriminatedUnionTypes1.ts, 5, 21), Decl(discriminatedUnionTypes1.ts, 11, 18))
++>s.kind : Symbol(kind, Decl(discriminatedUnionTypes1.ts, 11, 18), Decl(discriminatedUnionTypes1.ts, 5, 21), Decl(discriminatedUnionTypes1.ts, 0, 18))
+ >s : Symbol(s, Decl(discriminatedUnionTypes1.ts, 45, 15))
+->kind : Symbol(kind, Decl(discriminatedUnionTypes1.ts, 0, 18), Decl(discriminatedUnionTypes1.ts, 5, 21), Decl(discriminatedUnionTypes1.ts, 11, 18))
++>kind : Symbol(kind, Decl(discriminatedUnionTypes1.ts, 11, 18), Decl(discriminatedUnionTypes1.ts, 5, 21), Decl(discriminatedUnionTypes1.ts, 0, 18))
+
+         case "square": return s.size * s.size;
+ >s.size : Symbol(Square.size, Decl(discriminatedUnionTypes1.ts, 1, 19))
+@@= skipped -22, +22 lines =@@
+
+         case "circle": return Math.PI * s.radius * s.radius;
+ >Math.PI : Symbol(Math.PI, Decl(lib.es5.d.ts, --, --))
+->Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >PI : Symbol(Math.PI, Decl(lib.es5.d.ts, --, --))
+ >s.radius : Symbol(Circle.radius, Decl(discriminatedUnionTypes1.ts, 12, 19))
+ >s : Symbol(s, Decl(discriminatedUnionTypes1.ts, 45, 15))
+@@= skipped -21, +21 lines =@@
+ >Shape : Symbol(Shape, Decl(discriminatedUnionTypes1.ts, 14, 1))
+
+     switch (s.kind) {
+->s.kind : Symbol(kind, Decl(discriminatedUnionTypes1.ts, 0, 18), Decl(discriminatedUnionTypes1.ts, 5, 21), Decl(discriminatedUnionTypes1.ts, 11, 18))
++>s.kind : Symbol(kind, Decl(discriminatedUnionTypes1.ts, 11, 18), Decl(discriminatedUnionTypes1.ts, 5, 21), Decl(discriminatedUnionTypes1.ts, 0, 18))
+ >s : Symbol(s, Decl(discriminatedUnionTypes1.ts, 54, 15))
+->kind : Symbol(kind, Decl(discriminatedUnionTypes1.ts, 0, 18), Decl(discriminatedUnionTypes1.ts, 5, 21), Decl(discriminatedUnionTypes1.ts, 11, 18))
++>kind : Symbol(kind, Decl(discriminatedUnionTypes1.ts, 11, 18), Decl(discriminatedUnionTypes1.ts, 5, 21), Decl(discriminatedUnionTypes1.ts, 0, 18))
+
+         case "square": return s.size * s.size;
+ >s.size : Symbol(Square.size, Decl(discriminatedUnionTypes1.ts, 1, 19))
+@@= skipped -22, +22 lines =@@
+
+         case "circle": return Math.PI * s.radius * s.radius;
+ >Math.PI : Symbol(Math.PI, Decl(lib.es5.d.ts, --, --))
+->Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >PI : Symbol(Math.PI, Decl(lib.es5.d.ts, --, --))
+ >s.radius : Symbol(Circle.radius, Decl(discriminatedUnionTypes1.ts, 12, 19))
+ >s : Symbol(s, Decl(discriminatedUnionTypes1.ts, 54, 15))

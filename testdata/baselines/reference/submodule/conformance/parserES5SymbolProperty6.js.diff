@@ -5,10 +5,13 @@
 
  //// [parserES5SymbolProperty6.js]
 -var _a;
- class C {
--    constructor() {
+-var C = /** @class */ (function () {
+-    function C() {
 -        this[_a] = "";
 -    }
-+    [Symbol.toStringTag] = "";
- }
+-    return C;
+-}());
 -_a = Symbol.toStringTag;
++class C {
++    [Symbol.toStringTag] = "";
++}

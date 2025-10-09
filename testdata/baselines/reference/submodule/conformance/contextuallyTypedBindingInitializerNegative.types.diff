@@ -1,0 +1,14 @@
+--- old.contextuallyTypedBindingInitializerNegative.types
++++ new.contextuallyTypedBindingInitializerNegative.types
+@@= skipped -74, +74 lines =@@
+
+ interface StringUnion {
+     prop: "foo" | "bar";
+->prop : "foo" | "bar"
++>prop : "bar" | "foo"
+ }
+ function h({ prop = "baz" }: StringUnion) {}
+ >h : ({ prop }: StringUnion) => void
+->prop : "foo" | "bar"
++>prop : "bar" | "foo"
+ >"baz" : "baz"

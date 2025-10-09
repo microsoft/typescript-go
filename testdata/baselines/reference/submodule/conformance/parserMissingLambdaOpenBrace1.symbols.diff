@@ -1,0 +1,11 @@
+--- old.parserMissingLambdaOpenBrace1.symbols
++++ new.parserMissingLambdaOpenBrace1.symbols
+@@= skipped -6, +6 lines =@@
+     where(filter: Iterator<T, boolean>): Query<T> {
+ >where : Symbol(C.where, Decl(parserMissingLambdaOpenBrace1.ts, 0, 9))
+ >filter : Symbol(filter, Decl(parserMissingLambdaOpenBrace1.ts, 1, 10))
+->Iterator : Symbol(Iterator, Decl(lib.es2015.iterable.d.ts, --, --))
++>Iterator : Symbol(Iterator)
+ >T : Symbol(T)
+ >Query : Symbol(Query)
+ >T : Symbol(T)

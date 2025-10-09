@@ -5,10 +5,10 @@
 
  //// [lateBoundClassMemberAssignmentJS.d.ts]
 -export class MyClass {
--    [_sym]: string;
 +export declare class MyClass {
 +    constructor();
      method(): void;
+-    [_sym]: string;
  }
 -declare const _sym: unique symbol;
 -export {};

@@ -25,15 +25,23 @@
 
      "1.0": Date;
 ->"1.0" : Symbol(C["1.0"], Decl(objectTypeWithStringNamedNumericProperty.ts, 9, 19))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 +>"1.0" : Symbol(C["10"], Decl(objectTypeWithStringNamedNumericProperty.ts, 9, 19))
- >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
 
      "-1.0": RegExp;
 ->"-1.0" : Symbol(C["-1.0"], Decl(objectTypeWithStringNamedNumericProperty.ts, 10, 16))
+->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 +>"-1.0" : Symbol(C["-10"], Decl(objectTypeWithStringNamedNumericProperty.ts, 10, 16))
- >RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
++>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
 
      "-1": Date;
+ >"-1" : Symbol(C["-1"], Decl(objectTypeWithStringNamedNumericProperty.ts, 11, 19))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ }
+
+ var c: C;
 @@= skipped -35, +35 lines =@@
  var r1 = c['0.1'];
  >r1 : Symbol(r1, Decl(objectTypeWithStringNamedNumericProperty.ts, 16, 3), Decl(objectTypeWithStringNamedNumericProperty.ts, 47, 3), Decl(objectTypeWithStringNamedNumericProperty.ts, 77, 3), Decl(objectTypeWithStringNamedNumericProperty.ts, 107, 3))
@@ -107,15 +115,23 @@
 
      "1.0": Date;
 ->"1.0" : Symbol(I["1.0"], Decl(objectTypeWithStringNamedNumericProperty.ts, 40, 19))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 +>"1.0" : Symbol(I["10"], Decl(objectTypeWithStringNamedNumericProperty.ts, 40, 19))
- >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
 
      "-1.0": RegExp;
 ->"-1.0" : Symbol(I["-1.0"], Decl(objectTypeWithStringNamedNumericProperty.ts, 41, 16))
+->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 +>"-1.0" : Symbol(I["-10"], Decl(objectTypeWithStringNamedNumericProperty.ts, 41, 16))
- >RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
++>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
 
      "-1": Date;
+ >"-1" : Symbol(I["-1"], Decl(objectTypeWithStringNamedNumericProperty.ts, 42, 19))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ }
+
+ var i: I;
 @@= skipped -35, +35 lines =@@
  var r1 = i['0.1'];
  >r1 : Symbol(r1, Decl(objectTypeWithStringNamedNumericProperty.ts, 16, 3), Decl(objectTypeWithStringNamedNumericProperty.ts, 47, 3), Decl(objectTypeWithStringNamedNumericProperty.ts, 77, 3), Decl(objectTypeWithStringNamedNumericProperty.ts, 107, 3))
@@ -164,7 +180,26 @@
 
  var r9 = i["-1"];
  >r9 : Symbol(r9, Decl(objectTypeWithStringNamedNumericProperty.ts, 29, 3), Decl(objectTypeWithStringNamedNumericProperty.ts, 60, 3), Decl(objectTypeWithStringNamedNumericProperty.ts, 90, 3), Decl(objectTypeWithStringNamedNumericProperty.ts, 120, 3))
-@@= skipped -114, +114 lines =@@
+@@= skipped -46, +46 lines =@@
+
+     "1.0": Date;
+ >"1.0" : Symbol("1.0", Decl(objectTypeWithStringNamedNumericProperty.ts, 71, 19))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+     "-1.0": RegExp;
+ >"-1.0" : Symbol("-1.0", Decl(objectTypeWithStringNamedNumericProperty.ts, 72, 16))
+->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+     "-1": Date;
+ >"-1" : Symbol("-1", Decl(objectTypeWithStringNamedNumericProperty.ts, 73, 19))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ }
+
+ var r1 = a['0.1'];
+@@= skipped -68, +68 lines =@@
  var r8 = i["-1.0"];
  >r8 : Symbol(r8, Decl(objectTypeWithStringNamedNumericProperty.ts, 28, 3), Decl(objectTypeWithStringNamedNumericProperty.ts, 59, 3), Decl(objectTypeWithStringNamedNumericProperty.ts, 89, 3), Decl(objectTypeWithStringNamedNumericProperty.ts, 119, 3))
  >i : Symbol(i, Decl(objectTypeWithStringNamedNumericProperty.ts, 46, 3))
@@ -173,7 +208,24 @@
 
  var r9 = i["-1"];
  >r9 : Symbol(r9, Decl(objectTypeWithStringNamedNumericProperty.ts, 29, 3), Decl(objectTypeWithStringNamedNumericProperty.ts, 60, 3), Decl(objectTypeWithStringNamedNumericProperty.ts, 90, 3), Decl(objectTypeWithStringNamedNumericProperty.ts, 120, 3))
-@@= skipped -114, +114 lines =@@
+@@= skipped -46, +46 lines =@@
+
+     "1.0": new Date(),
+ >"1.0" : Symbol("1.0", Decl(objectTypeWithStringNamedNumericProperty.ts, 101, 16))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+     "-1.0": /123/,
+ >"-1.0" : Symbol("-1.0", Decl(objectTypeWithStringNamedNumericProperty.ts, 102, 22))
+
+     "-1": Date
+ >"-1" : Symbol("-1", Decl(objectTypeWithStringNamedNumericProperty.ts, 103, 18))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+ };
+
+@@= skipped -68, +68 lines =@@
  var r8 = i["-1.0"];
  >r8 : Symbol(r8, Decl(objectTypeWithStringNamedNumericProperty.ts, 28, 3), Decl(objectTypeWithStringNamedNumericProperty.ts, 59, 3), Decl(objectTypeWithStringNamedNumericProperty.ts, 89, 3), Decl(objectTypeWithStringNamedNumericProperty.ts, 119, 3))
  >i : Symbol(i, Decl(objectTypeWithStringNamedNumericProperty.ts, 46, 3))

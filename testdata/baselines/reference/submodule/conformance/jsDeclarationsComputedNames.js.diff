@@ -1,9 +1,26 @@
 --- old.jsDeclarationsComputedNames.js
 +++ new.jsDeclarationsComputedNames.js
-@@= skipped -30, +30 lines =@@
+@@= skipped -28, +28 lines =@@
+
+
  //// [index.js]
- const TopLevelSym = Symbol();
- const InnerSym = Symbol();
+-var _a, _b;
+-var TopLevelSym = Symbol();
+-var InnerSym = Symbol();
+-module.exports = (_a = {},
+-    _a[TopLevelSym] = function (x) {
+-        if (x === void 0) { x = 12; }
+-        return x;
+-    },
+-    _a.items = (_b = {},
+-        _b[InnerSym] = function (arg) {
+-            if (arg === void 0) { arg = { x: 12 }; }
+-            return arg.x;
+-        },
+-        _b),
+-    _a);
++const TopLevelSym = Symbol();
++const InnerSym = Symbol();
 +export = {
 +    [TopLevelSym](x = 12) {
 +        return x;
@@ -12,36 +29,40 @@
 +        [InnerSym]: (arg = { x: 12 }) => arg.x
 +    }
 +};
- module.exports = {
-     [TopLevelSym](x = 12) {
-         return x;
-@@= skipped -14, +22 lines =@@
++module.exports = {
++    [TopLevelSym](x = 12) {
++        return x;
++    },
++    items: {
++        [InnerSym]: (arg = { x: 12 }) => arg.x
++    }
++};
+ //// [index2.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
  exports.MyClass = void 0;
- const TopLevelSym = Symbol();
- const InnerSym = Symbol();
--let MyClass = (() => {
--    var _a, _b;
--    class MyClass {
--        /**
--         * @param {typeof TopLevelSym | typeof InnerSym} _p
--         */
--        constructor(_p = InnerSym) {
--            this[_b] = "ok";
--            // switch on _p
--        }
+-var TopLevelSym = Symbol();
+-var InnerSym = Symbol();
+-var MyClass = /** @class */ (function () {
++const TopLevelSym = Symbol();
++const InnerSym = Symbol();
 +class MyClass {
 +    static [TopLevelSym] = 12;
 +    [InnerSym] = "ok";
-+    /**
-+     * @param {typeof TopLevelSym | typeof InnerSym} _p
-+     */
+     /**
+      * @param {typeof TopLevelSym | typeof InnerSym} _p
+      */
+-    function MyClass(_p) {
+-        if (_p === void 0) { _p = InnerSym; }
+-        this[_b] = "ok";
 +    constructor(_p = InnerSym) {
-+        // switch on _p
+         // switch on _p
      }
+-    var _a, _b;
 -    _a = TopLevelSym, _b = InnerSym;
 -    MyClass[_a] = 12;
 -    return MyClass;
--})();
+-}());
 +}
  exports.MyClass = MyClass;
 
@@ -54,7 +75,7 @@
      [TopLevelSym](x?: number): number;
      items: {
          [InnerSym]: (arg?: {
-@@= skipped -27, +24 lines =@@
+@@= skipped -47, +48 lines =@@
          }) => number;
      };
  };

@@ -1,0 +1,11 @@
+--- old.mixinClassesAnonymous.symbols
++++ new.mixinClassesAnonymous.symbols
+@@= skipped -182, +182 lines =@@
+
+         timestamp = new Date();
+ >timestamp : Symbol((Anonymous class).timestamp, Decl(mixinClassesAnonymous.ts, 60, 31))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+     };
+ }

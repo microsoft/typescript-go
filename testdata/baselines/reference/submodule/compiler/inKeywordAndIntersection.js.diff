@@ -5,17 +5,35 @@
 
  //// [inKeywordAndIntersection.js]
 -"use strict";
- class A {
--    constructor() {
+-var A = /** @class */ (function () {
+-    function A() {
 -        this.a = 0;
 -    }
-+    a = 0;
- }
- class B {
--    constructor() {
+-    return A;
+-}());
+-var B = /** @class */ (function () {
+-    function B() {
 -        this.b = 0;
 -    }
+-    return B;
+-}());
++class A {
++    a = 0;
++}
++class B {
 +    b = 0;
- }
++}
  function f10(obj) {
      if (obj instanceof Object) {
+         obj; // A & { x: string } | B
+@@= skipped -21, +14 lines =@@
+         obj; // Error
+     }
+ }
+-var instance = {};
+-var ClassOne = {};
++const instance = {};
++const ClassOne = {};
+ if (instance instanceof ClassOne) {
+     instance.one();
+ }

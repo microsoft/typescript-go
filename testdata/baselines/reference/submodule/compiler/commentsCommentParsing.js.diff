@@ -1,0 +1,16 @@
+--- old.commentsCommentParsing.js
++++ new.commentsCommentParsing.js
+@@= skipped -284, +284 lines =@@
+     return a + b + c + d;
+ }
+ /**/
+-var NoQuickInfoClass = /** @class */ (function () {
+-    function NoQuickInfoClass() {
+-    }
+-    return NoQuickInfoClass;
+-}());
++class NoQuickInfoClass {
++}
+
+
+ //// [commentsCommentParsing.d.ts]

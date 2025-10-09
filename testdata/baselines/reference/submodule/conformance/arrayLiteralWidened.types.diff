@@ -1,0 +1,19 @@
+--- old.arrayLiteralWidened.types
++++ new.arrayLiteralWidened.types
+@@= skipped -9, +9 lines =@@
+ var a = [,,];
+ >a : any[]
+ >[,,] : undefined[]
+-> : undefined
+-> : undefined
+
+ var a = [null, null];
+ >a : any[]
+@@= skipped -60, +58 lines =@@
+ var d = [, x];
+ >d : undefined[]
+ >[, x] : undefined[]
+-> : undefined
+ >x : undefined
+
+ var d = [undefined, x];

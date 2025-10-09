@@ -1,0 +1,20 @@
+--- old.anyAssignableToEveryType2.symbols
++++ new.anyAssignableToEveryType2.symbols
+@@= skipped -51, +51 lines =@@
+
+     [x: string]: Date;
+ >x : Symbol(x, Decl(anyAssignableToEveryType2.ts, 27, 5))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+     foo: any;
+ >foo : Symbol(I5.foo, Decl(anyAssignableToEveryType2.ts, 27, 22))
+@@= skipped -12, +12 lines =@@
+
+     [x: string]: RegExp;
+ >x : Symbol(x, Decl(anyAssignableToEveryType2.ts, 33, 5))
+->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+     foo: any;
+ >foo : Symbol(I6.foo, Decl(anyAssignableToEveryType2.ts, 33, 24))

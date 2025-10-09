@@ -1,6 +1,24 @@
 --- old.parserharness.types
 +++ new.parserharness.types
-@@= skipped -279, +279 lines =@@
+@@= skipped -115, +115 lines =@@
+
+ if (typeof ActiveXObject === "function") {
+ >typeof ActiveXObject === "function" : boolean
+->typeof ActiveXObject : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof ActiveXObject : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >ActiveXObject : any
+ >"function" : "function"
+
+@@= skipped -11, +11 lines =@@
+
+ } else if (typeof require === "function") {
+ >typeof require === "function" : boolean
+->typeof require : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof require : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >require : any
+ >"function" : "function"
+
+@@= skipped -153, +153 lines =@@
              var bugs = content.match(/\bbug (\d+)/i);
  >bugs : RegExpMatchArray
  >content.match(/\bbug (\d+)/i) : RegExpMatchArray
@@ -12,7 +30,30 @@
  >/\bbug (\d+)/i : RegExp
 
              if (bugs) {
-@@= skipped -1974, +1974 lines =@@
+@@= skipped -717, +717 lines =@@
+
+             if (typeof loggers[i][field] === 'function') {
+ >typeof loggers[i][field] === 'function' : boolean
+->typeof loggers[i][field] : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof loggers[i][field] : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >loggers[i][field] : any
+ >loggers[i] : ILogger
+ >loggers : ILogger[]
+@@= skipped -848, +848 lines =@@
+             if (typeof WScript !== "undefined" && typeof global['WScript'].InitializeProjection !== "undefined") {
+ >typeof WScript !== "undefined" && typeof global['WScript'].InitializeProjection !== "undefined" : boolean
+ >typeof WScript !== "undefined" : boolean
+->typeof WScript : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof WScript : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >WScript : typeof WScript
+ >"undefined" : "undefined"
+ >typeof global['WScript'].InitializeProjection !== "undefined" : boolean
+->typeof global['WScript'].InitializeProjection : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof global['WScript'].InitializeProjection : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >global['WScript'].InitializeProjection : any
+ >global['WScript'] : any
+ >global : any
+@@= skipped -409, +409 lines =@@
  >[] : undefined[]
 
          var timeFunction: (
@@ -77,7 +118,16 @@
  >b : Benchmark
 
                      b.afterEach();
-@@= skipped -693, +693 lines =@@
+@@= skipped -299, +299 lines =@@
+ >fileExists : (s: string) => boolean
+ >s : string
+ >typeof this.fileCollection[s] !== 'undefined' : boolean
+->typeof this.fileCollection[s] : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof this.fileCollection[s] : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >this.fileCollection[s] : any
+ >this.fileCollection : {}
+ >this : this
+@@= skipped -394, +394 lines =@@
 
                  compileString(testCode, 'test.ts', function (compilerResult) {
  >compileString(testCode, 'test.ts', function (compilerResult) {                    errors = compilerResult.errors;                }) : void
@@ -86,7 +136,36 @@
  >testCode : any
  >'test.ts' : "test.ts"
  >function (compilerResult) {                    errors = compilerResult.errors;                } : (compilerResult: CompilerResult) => void
-@@= skipped -617, +617 lines =@@
+@@= skipped -581, +581 lines =@@
+
+                 if (typeof target === "string") {
+ >typeof target === "string" : boolean
+->typeof target : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof target : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >target : any
+ >"string" : "string"
+
+@@= skipped -11, +11 lines =@@
+                 }
+                 else if (typeof target === "number") {
+ >typeof target === "number" : boolean
+->typeof target : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof target : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >target : any
+ >"number" : "number"
+
+@@= skipped -15, +15 lines =@@
+ >Error : ErrorConstructor
+ >"Expected string or number not " + (typeof target) : string
+ >"Expected string or number not " : "Expected string or number not "
+->(typeof target) : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
+->typeof target : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>(typeof target) : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
++>typeof target : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >target : any
+                 }
+
+@@= skipped -10, +10 lines =@@
 
                  compileString(code, 'test.ts', function (compilerResult) {
  >compileString(code, 'test.ts', function (compilerResult) {                    errors = compilerResult.errors;                }) : void
@@ -190,7 +269,18 @@
  >res : CompilerResult
  >Compiler : any
  >context : CompilationContext
-@@= skipped -127, +127 lines =@@
+@@= skipped -45, +45 lines =@@
+ >context ? unitName : ((isDeclareFile) ? '0.d.ts' : '0.ts') : string
+ >context : CompilationContext
+ >unitName : string
+->((isDeclareFile) ? '0.d.ts' : '0.ts') : "0.ts" | "0.d.ts"
+->(isDeclareFile) ? '0.d.ts' : '0.ts' : "0.ts" | "0.d.ts"
++>((isDeclareFile) ? '0.d.ts' : '0.ts') : "0.d.ts" | "0.ts"
++>(isDeclareFile) ? '0.d.ts' : '0.ts' : "0.d.ts" | "0.ts"
+ >(isDeclareFile) : boolean
+ >isDeclareFile : boolean
+ >'0.d.ts' : "0.d.ts"
+@@= skipped -82, +82 lines =@@
 
              callback(new CompilerResult(stdout.toArray(), errors, scripts));
  >callback(new CompilerResult(stdout.toArray(), errors, scripts)) : void
@@ -223,7 +313,16 @@
  >{ usePullLanguageService: usePull } : { usePullLanguageService: boolean; }
  >usePullLanguageService : boolean
  >usePull : boolean
-@@= skipped -147, +147 lines =@@
+@@= skipped -93, +93 lines =@@
+
+         if (typeof process !== "undefined") {
+ >typeof process !== "undefined" : boolean
+->typeof process : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof process : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >process : typeof process
+ >"undefined" : "undefined"
+
+@@= skipped -54, +54 lines =@@
  >path : string
  >path.match(/[^\/]*$/)[0] : string
  >path.match(/[^\/]*$/) : RegExpMatchArray

@@ -1,0 +1,56 @@
+--- old.nonIdenticalTypeConstraints.symbols
++++ new.nonIdenticalTypeConstraints.symbols
+@@= skipped -16, +16 lines =@@
+ class Foo<T extends Function> {
+ >Foo : Symbol(Foo, Decl(nonIdenticalTypeConstraints.ts, 4, 1), Decl(nonIdenticalTypeConstraints.ts, 8, 1))
+ >T : Symbol(T, Decl(nonIdenticalTypeConstraints.ts, 6, 10), Decl(nonIdenticalTypeConstraints.ts, 9, 14))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+     n: T;
+ >n : Symbol(Foo.n, Decl(nonIdenticalTypeConstraints.ts, 6, 31))
+@@= skipped -27, +27 lines =@@
+ class Qux<T extends Function> {
+ >Qux : Symbol(Qux, Decl(nonIdenticalTypeConstraints.ts, 11, 1), Decl(nonIdenticalTypeConstraints.ts, 14, 1))
+ >T : Symbol(T, Decl(nonIdenticalTypeConstraints.ts, 12, 14), Decl(nonIdenticalTypeConstraints.ts, 15, 10))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+     n: T;
+ >n : Symbol(Qux.n, Decl(nonIdenticalTypeConstraints.ts, 15, 31))
+@@= skipped -10, +10 lines =@@
+ class Bar<T extends Function> {
+ >Bar : Symbol(Bar, Decl(nonIdenticalTypeConstraints.ts, 17, 1), Decl(nonIdenticalTypeConstraints.ts, 21, 1))
+ >T : Symbol(T, Decl(nonIdenticalTypeConstraints.ts, 19, 10), Decl(nonIdenticalTypeConstraints.ts, 22, 14))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+     n: T;
+ >n : Symbol(Bar.n, Decl(nonIdenticalTypeConstraints.ts, 19, 31))
+@@= skipped -9, +9 lines =@@
+ interface Bar<T extends Function> {
+ >Bar : Symbol(Bar, Decl(nonIdenticalTypeConstraints.ts, 17, 1), Decl(nonIdenticalTypeConstraints.ts, 21, 1))
+ >T : Symbol(T, Decl(nonIdenticalTypeConstraints.ts, 19, 10), Decl(nonIdenticalTypeConstraints.ts, 22, 14))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+     y: T;
+ >y : Symbol(Bar.y, Decl(nonIdenticalTypeConstraints.ts, 22, 35))
+@@= skipped -9, +9 lines =@@
+ interface Baz<T extends Function> {
+ >Baz : Symbol(Baz, Decl(nonIdenticalTypeConstraints.ts, 24, 1), Decl(nonIdenticalTypeConstraints.ts, 27, 1))
+ >T : Symbol(T, Decl(nonIdenticalTypeConstraints.ts, 25, 14), Decl(nonIdenticalTypeConstraints.ts, 28, 10))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+     y: T;
+ >y : Symbol(Baz.y, Decl(nonIdenticalTypeConstraints.ts, 25, 35))
+@@= skipped -9, +9 lines =@@
+ class Baz<T extends Function> {
+ >Baz : Symbol(Baz, Decl(nonIdenticalTypeConstraints.ts, 24, 1), Decl(nonIdenticalTypeConstraints.ts, 27, 1))
+ >T : Symbol(T, Decl(nonIdenticalTypeConstraints.ts, 25, 14), Decl(nonIdenticalTypeConstraints.ts, 28, 10))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+     n: T;
+ >n : Symbol(Baz.n, Decl(nonIdenticalTypeConstraints.ts, 28, 31))

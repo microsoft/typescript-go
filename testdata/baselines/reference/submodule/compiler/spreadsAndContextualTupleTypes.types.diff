@@ -1,0 +1,38 @@
+--- old.spreadsAndContextualTupleTypes.types
++++ new.spreadsAndContextualTupleTypes.types
+@@= skipped -125, +125 lines =@@
+ >foo([...staticPath3Level, randomID, 'doc.pdf']) : readonly ["home", "user", "downloads", string, "doc.pdf"]
+ >foo : <const T>(path: T) => T
+ >[...staticPath3Level, randomID, 'doc.pdf'] : ["home", "user", "downloads", string, "doc.pdf"]
+->...staticPath3Level : "home" | "user" | "downloads"
++>...staticPath3Level : "downloads" | "home" | "user"
+ >staticPath3Level : readonly ["home", "user", "downloads"]
+ >randomID : string
+ >'doc.pdf' : "doc.pdf"
+@@= skipped -32, +32 lines =@@
+ >foo([...staticPath3Level, randomID, 'folder', 'doc.pdf']) : readonly ["home", "user", "downloads", string, "folder", "doc.pdf"]
+ >foo : <const T>(path: T) => T
+ >[...staticPath3Level, randomID, 'folder', 'doc.pdf'] : ["home", "user", "downloads", string, "folder", "doc.pdf"]
+->...staticPath3Level : "home" | "user" | "downloads"
++>...staticPath3Level : "downloads" | "home" | "user"
+ >staticPath3Level : readonly ["home", "user", "downloads"]
+ >randomID : string
+ >'folder' : "folder"
+@@= skipped -35, +35 lines =@@
+ >foo([...staticPath3Level, randomID, 'folder', 'subfolder', 'doc.pdf']) : readonly ["home", "user", "downloads", string, "folder", "subfolder", "doc.pdf"]
+ >foo : <const T>(path: T) => T
+ >[...staticPath3Level, randomID, 'folder', 'subfolder', 'doc.pdf'] : ["home", "user", "downloads", string, "folder", "subfolder", "doc.pdf"]
+->...staticPath3Level : "home" | "user" | "downloads"
++>...staticPath3Level : "downloads" | "home" | "user"
+ >staticPath3Level : readonly ["home", "user", "downloads"]
+ >randomID : string
+ >'folder' : "folder"
+@@= skipped -38, +38 lines =@@
+ >foo([...staticPath3Level, randomID, 'folder', 'subfolder', 'another-subfolder', 'doc.pdf']) : readonly ["home", "user", "downloads", string, "folder", "subfolder", "another-subfolder", "doc.pdf"]
+ >foo : <const T>(path: T) => T
+ >[...staticPath3Level, randomID, 'folder', 'subfolder', 'another-subfolder', 'doc.pdf'] : ["home", "user", "downloads", string, "folder", "subfolder", "another-subfolder", "doc.pdf"]
+->...staticPath3Level : "home" | "user" | "downloads"
++>...staticPath3Level : "downloads" | "home" | "user"
+ >staticPath3Level : readonly ["home", "user", "downloads"]
+ >randomID : string
+ >'folder' : "folder"

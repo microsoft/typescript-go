@@ -1,12 +1,17 @@
 --- old.destructuringWithNewExpression.js
 +++ new.destructuringWithNewExpression.js
-@@= skipped -8, +8 lines =@@
+@@= skipped -7, +7 lines =@@
+ var { x } = new C;
 
  //// [destructuringWithNewExpression.js]
- class C {
--    constructor() {
+-var C = /** @class */ (function () {
+-    function C() {
 -        this.x = 0;
 -    }
+-    return C;
+-}());
+-var x = (new C).x;
++class C {
 +    x = 0;
- }
- var { x } = new C;
++}
++var { x } = new C;

@@ -1,0 +1,8 @@
+--- old.destructuringFromUnionSpread.js
++++ new.destructuringFromUnionSpread.js
+@@= skipped -19, +19 lines =@@
+     };
+     return __assign.apply(this, arguments);
+ };
+-var a = __assign({}, x).a; // error
++const { a } = __assign({}, x); // error

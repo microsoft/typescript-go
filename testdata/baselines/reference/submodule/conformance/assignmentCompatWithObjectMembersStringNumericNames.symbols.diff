@@ -3,7 +3,7 @@
 @@= skipped -8, +8 lines =@@
 
      class S { '1': string; }
- >S : Symbol(S, Decl(assignmentCompatWithObjectMembersStringNumericNames.ts, 3, 20))
+ >S : Symbol(S, Decl(assignmentCompatWithObjectMembersStringNumericNames.ts, 3, 23))
 ->'1' : Symbol(S['1'], Decl(assignmentCompatWithObjectMembersStringNumericNames.ts, 4, 13))
 +>'1' : Symbol(S["1"], Decl(assignmentCompatWithObjectMembersStringNumericNames.ts, 4, 13))
 
@@ -32,7 +32,7 @@
 @@= skipped -116, +116 lines =@@
 
      class S { '1': string; }
- >S : Symbol(S, Decl(assignmentCompatWithObjectMembersStringNumericNames.ts, 44, 26))
+ >S : Symbol(S, Decl(assignmentCompatWithObjectMembersStringNumericNames.ts, 44, 29))
 ->'1' : Symbol(S['1'], Decl(assignmentCompatWithObjectMembersStringNumericNames.ts, 45, 13))
 +>'1' : Symbol(S["1"], Decl(assignmentCompatWithObjectMembersStringNumericNames.ts, 45, 13))
 

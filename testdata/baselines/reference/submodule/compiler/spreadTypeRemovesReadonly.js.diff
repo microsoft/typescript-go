@@ -1,0 +1,11 @@
+--- old.spreadTypeRemovesReadonly.js
++++ new.spreadTypeRemovesReadonly.js
+@@= skipped -21, +21 lines =@@
+     };
+     return __assign.apply(this, arguments);
+ };
+-var data = { value: 'foo' };
+-var clone = __assign({}, data);
++const data = { value: 'foo' };
++const clone = __assign({}, data);
+ clone.value = 'bar';

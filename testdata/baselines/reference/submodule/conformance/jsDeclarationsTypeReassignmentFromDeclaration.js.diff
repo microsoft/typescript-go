@@ -1,9 +1,11 @@
 --- old.jsDeclarationsTypeReassignmentFromDeclaration.js
 +++ new.jsDeclarationsTypeReassignmentFromDeclaration.js
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
+
  //// [index.js]
  /** @type {typeof import("/some-mod")} */
- const items = [];
+-var items = [];
++const items = [];
 +export = items;
  module.exports = items;
 

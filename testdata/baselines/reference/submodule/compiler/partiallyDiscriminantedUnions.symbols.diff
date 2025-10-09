@@ -1,0 +1,32 @@
+--- old.partiallyDiscriminantedUnions.symbols
++++ new.partiallyDiscriminantedUnions.symbols
+@@= skipped -78, +78 lines =@@
+ type Shapes = Shape | Array<Shape>;
+ >Shapes : Symbol(Shapes, Decl(partiallyDiscriminantedUnions.ts, 32, 29))
+ >Shape : Symbol(Shape, Decl(partiallyDiscriminantedUnions.ts, 30, 32))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >Shape : Symbol(Shape, Decl(partiallyDiscriminantedUnions.ts, 30, 32))
+
+ function isShape(s : Shapes): s is Shape {
+@@= skipped -12, +12 lines =@@
+
+     return !Array.isArray(s);
+ >Array.isArray : Symbol(ArrayConstructor.isArray, Decl(lib.es5.d.ts, --, --))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >isArray : Symbol(ArrayConstructor.isArray, Decl(lib.es5.d.ts, --, --))
+ >s : Symbol(s, Decl(partiallyDiscriminantedUnions.ts, 35, 17))
+ }
+@@= skipped -15, +15 lines =@@
+ >s : Symbol(s, Decl(partiallyDiscriminantedUnions.ts, 39, 14))
+
+         if (s.kind === "circle") {
+->s.kind : Symbol(kind, Decl(partiallyDiscriminantedUnions.ts, 29, 14), Decl(partiallyDiscriminantedUnions.ts, 30, 14))
++>s.kind : Symbol(kind, Decl(partiallyDiscriminantedUnions.ts, 30, 14), Decl(partiallyDiscriminantedUnions.ts, 29, 14))
+ >s : Symbol(s, Decl(partiallyDiscriminantedUnions.ts, 39, 14))
+->kind : Symbol(kind, Decl(partiallyDiscriminantedUnions.ts, 29, 14), Decl(partiallyDiscriminantedUnions.ts, 30, 14))
++>kind : Symbol(kind, Decl(partiallyDiscriminantedUnions.ts, 30, 14), Decl(partiallyDiscriminantedUnions.ts, 29, 14))
+
+             let c: Circle = s;
+ >c : Symbol(c, Decl(partiallyDiscriminantedUnions.ts, 42, 15))

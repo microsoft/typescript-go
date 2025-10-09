@@ -10,4 +10,19 @@
 -*/
  function foo(a) {
  }
- class c {
+-var c = /** @class */ (function () {
+-    function c(a) {
+-    }
+-    c.prototype.foo = function (a) {
+-    };
+-    return c;
+-}());
++class c {
++    constructor(a) {
++    }
++    foo(a) {
++    }
++}
+ //// [b.js]
+ ///<reference path='a.ts'/>
+ function foo2(a) {

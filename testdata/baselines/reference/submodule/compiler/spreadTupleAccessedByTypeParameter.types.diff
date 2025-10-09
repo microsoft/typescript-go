@@ -1,0 +1,9 @@
+--- old.spreadTupleAccessedByTypeParameter.types
++++ new.spreadTupleAccessedByTypeParameter.types
+@@= skipped -12, +12 lines =@@
+ >i : N
+
+   const [, ...rest] = singleton;
+-> : undefined
+ >rest : []
+ >singleton : ["a"][][N]

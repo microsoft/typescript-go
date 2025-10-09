@@ -1,0 +1,26 @@
+--- old.arrowFunctionExpressions.types
++++ new.arrowFunctionExpressions.types
+@@= skipped -68, +68 lines =@@
+ var p3 = ([, a]) => { };
+ >p3 : ([, a]: [any, any]) => void
+ >([, a]) => { } : ([, a]: [any, any]) => void
+-> : undefined
+ >a : any
+
+ var p4 = ([, ...a]) => { };
+ >p4 : ([, ...a]: [any?, ...any[]]) => void
+ >([, ...a]) => { } : ([, ...a]: [any?, ...any[]]) => void
+-> : undefined
+ >a : any[]
+
+ var p5 = ([a = 1]) => { };
+@@= skipped -43, +41 lines =@@
+ >1 : 1
+
+ var p10 = ([{ value, done }]) => { };
+->p10 : ([{ value, done }]: [{ value: any; done: any; }]) => void
+->([{ value, done }]) => { } : ([{ value, done }]: [{ value: any; done: any; }]) => void
++>p10 : ([{ value, done }]: [{ done: any; value: any; }]) => void
++>([{ value, done }]) => { } : ([{ value, done }]: [{ done: any; value: any; }]) => void
+ >value : any
+ >done : any

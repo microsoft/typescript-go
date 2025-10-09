@@ -1,0 +1,20 @@
+--- old.inferFromGenericFunctionReturnTypes3.types
++++ new.inferFromGenericFunctionReturnTypes3.types
+@@= skipped -98, +98 lines =@@
+
+ interface FolderContentItem {
+     type: 'folder' | 'file';
+->type : "folder" | "file"
++>type : "file" | "folder"
+ }
+
+ let a: FolderContentItem[] = [];
+@@= skipped -303, +303 lines =@@
+ >age : number
+
+     position: "STRIKER" | "GOALKEEPER",
+->position : "STRIKER" | "GOALKEEPER"
++>position : "GOALKEEPER" | "STRIKER"
+
+ };
+  

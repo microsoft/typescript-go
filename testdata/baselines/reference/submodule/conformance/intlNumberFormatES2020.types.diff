@@ -1,0 +1,38 @@
+--- old.intlNumberFormatES2020.types
++++ new.intlNumberFormatES2020.types
+@@= skipped -2, +2 lines =@@
+ === intlNumberFormatES2020.ts ===
+ // New/updated resolved options in ES2020
+ const { notation, style, signDisplay } = new Intl.NumberFormat('en-NZ').resolvedOptions();
+->notation : "standard" | "scientific" | "engineering" | "compact"
++>notation : "compact" | "engineering" | "scientific" | "standard"
+ >style : keyof Intl.NumberFormatOptionsStyleRegistry
+ >signDisplay : keyof Intl.NumberFormatOptionsSignDisplayRegistry
+ >new Intl.NumberFormat('en-NZ').resolvedOptions() : Intl.ResolvedNumberFormatOptions
+@@= skipped -35, +35 lines =@@
+ // Currency
+ const { currency, currencySign } = new Intl.NumberFormat('en-NZ', { style: 'currency', currency: 'NZD', currencySign: 'accounting' }).resolvedOptions();
+ >currency : string | undefined
+->currencySign : "standard" | "accounting" | undefined
++>currencySign : "accounting" | "standard" | undefined
+ >new Intl.NumberFormat('en-NZ', { style: 'currency', currency: 'NZD', currencySign: 'accounting' }).resolvedOptions() : Intl.ResolvedNumberFormatOptions
+ >new Intl.NumberFormat('en-NZ', { style: 'currency', currency: 'NZD', currencySign: 'accounting' }).resolvedOptions : () => Intl.ResolvedNumberFormatOptions
+ >new Intl.NumberFormat('en-NZ', { style: 'currency', currency: 'NZD', currencySign: 'accounting' }) : Intl.NumberFormat
+@@= skipped -20, +20 lines =@@
+ // Units
+ const { unit, unitDisplay } = new Intl.NumberFormat('en-NZ', { style: 'unit', unit: 'kilogram', unitDisplay: 'narrow' }).resolvedOptions();
+ >unit : string | undefined
+->unitDisplay : "short" | "long" | "narrow" | undefined
++>unitDisplay : "long" | "narrow" | "short" | undefined
+ >new Intl.NumberFormat('en-NZ', { style: 'unit', unit: 'kilogram', unitDisplay: 'narrow' }).resolvedOptions() : Intl.ResolvedNumberFormatOptions
+ >new Intl.NumberFormat('en-NZ', { style: 'unit', unit: 'kilogram', unitDisplay: 'narrow' }).resolvedOptions : () => Intl.ResolvedNumberFormatOptions
+ >new Intl.NumberFormat('en-NZ', { style: 'unit', unit: 'kilogram', unitDisplay: 'narrow' }) : Intl.NumberFormat
+@@= skipped -19, +19 lines =@@
+
+ // Compact
+ const { compactDisplay } = new Intl.NumberFormat('en-NZ', { notation: 'compact', compactDisplay: 'long' }).resolvedOptions();
+->compactDisplay : "short" | "long" | undefined
++>compactDisplay : "long" | "short" | undefined
+ >new Intl.NumberFormat('en-NZ', { notation: 'compact', compactDisplay: 'long' }).resolvedOptions() : Intl.ResolvedNumberFormatOptions
+ >new Intl.NumberFormat('en-NZ', { notation: 'compact', compactDisplay: 'long' }).resolvedOptions : () => Intl.ResolvedNumberFormatOptions
+ >new Intl.NumberFormat('en-NZ', { notation: 'compact', compactDisplay: 'long' }) : Intl.NumberFormat

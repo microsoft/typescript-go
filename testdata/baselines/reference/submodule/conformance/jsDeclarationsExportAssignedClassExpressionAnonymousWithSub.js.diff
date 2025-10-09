@@ -4,24 +4,36 @@
 
 
  //// [index.js]
+-module.exports = /** @class */ (function () {
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
- module.exports = class {
++module.exports = class {
      /**
       * @param {number} p
-@@= skipped -8, +10 lines =@@
+      */
+-    function exports(p) {
++    constructor(p) {
          this.t = 12 + p;
      }
- };
+-    return exports;
+-}());
+-module.exports.Sub = /** @class */ (function () {
+-    function Sub() {
+-        this.instance = new module.exports(10);
+-    }
+-    return Sub;
+-}());
++};
 +export var Sub = class {
 +    constructor() {
 +        this.instance = new module.exports(10);
 +    }
 +};
- module.exports.Sub = class {
-     constructor() {
-         this.instance = new module.exports(10);
-@@= skipped -8, +13 lines =@@
++module.exports.Sub = class {
++    constructor() {
++        this.instance = new module.exports(10);
++    }
++};
 
 
  //// [index.d.ts]

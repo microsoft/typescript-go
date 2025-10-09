@@ -7,7 +7,8 @@
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
  /// <reference types="node" />
- const Something = require("fs").Something;
+-var Something = require("fs").Something;
++const Something = require("fs").Something;
 +export var A = {};
  module.exports.A = {};
  module.exports.A.B = {

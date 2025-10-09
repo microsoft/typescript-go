@@ -1,0 +1,20 @@
+--- old.commaOperatorWithSecondOperandStringType.symbols
++++ new.commaOperatorWithSecondOperandStringType.symbols
+@@= skipped -72, +72 lines =@@
+
+ ANY = new Date(), STRING;
+ >ANY : Symbol(ANY, Decl(commaOperatorWithSecondOperandStringType.ts, 0, 3))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ >STRING : Symbol(STRING, Decl(commaOperatorWithSecondOperandStringType.ts, 3, 3))
+
+ true, "";
+@@= skipped -25, +25 lines =@@
+ var resultIsString7 = (ANY = new Date(), STRING);
+ >resultIsString7 : Symbol(resultIsString7, Decl(commaOperatorWithSecondOperandStringType.ts, 31, 3))
+ >ANY : Symbol(ANY, Decl(commaOperatorWithSecondOperandStringType.ts, 0, 3))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ >STRING : Symbol(STRING, Decl(commaOperatorWithSecondOperandStringType.ts, 3, 3))
+
+ var resultIsString8 = (true, "");

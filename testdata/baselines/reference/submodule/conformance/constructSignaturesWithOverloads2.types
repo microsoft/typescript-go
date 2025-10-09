@@ -18,7 +18,7 @@ class C {
     constructor(x: number) { }
 >x : number
 }
-module C {
+namespace C {
 >C : typeof C
 
     export var x = 1;
@@ -47,7 +47,7 @@ class C2<T> {
     constructor(x: T) { }
 >x : T
 }
-module C2 {
+namespace C2 {
 >C2 : typeof C2
 
     export var x = 1;

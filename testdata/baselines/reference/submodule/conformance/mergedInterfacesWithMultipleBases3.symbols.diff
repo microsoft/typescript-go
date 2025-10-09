@@ -1,0 +1,11 @@
+--- old.mergedInterfacesWithMultipleBases3.symbols
++++ new.mergedInterfacesWithMultipleBases3.symbols
+@@= skipped -70, +70 lines =@@
+
+     b: Date;
+ >b : Symbol(D.b, Decl(mergedInterfacesWithMultipleBases3.ts, 28, 14))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+     c: string;
+ >c : Symbol(D.c, Decl(mergedInterfacesWithMultipleBases3.ts, 29, 12))

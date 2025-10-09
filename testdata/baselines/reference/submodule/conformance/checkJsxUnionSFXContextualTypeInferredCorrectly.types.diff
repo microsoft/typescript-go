@@ -1,0 +1,11 @@
+--- old.checkJsxUnionSFXContextualTypeInferredCorrectly.types
++++ new.checkJsxUnionSFXContextualTypeInferredCorrectly.types
+@@= skipped -33, +33 lines =@@
+
+ export function ComponentWithUnion(props: PM | PS) {
+ >ComponentWithUnion : (props: PM | PS) => JSX.Element
+->props : PS | PM
++>props : PM | PS
+
+     return <h1></h1>;
+ ><h1></h1> : JSX.Element

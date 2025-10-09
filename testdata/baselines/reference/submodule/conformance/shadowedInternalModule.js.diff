@@ -8,9 +8,14 @@
  })(B || (B = {}));
  var X;
  (function (X) {
-     class Y {
+-    var Y = /** @class */ (function () {
+-        function Y() {
+-        }
+-        return Y;
+-    }());
++    class Y {
 +        name;
-     }
++    }
      X.Y = Y;
  })(X || (X = {}));
  var Z;
@@ -24,10 +29,11 @@
  })(b || (b = {}));
  //
  var q;
-@@= skipped -25, +29 lines =@@
+@@= skipped -28, +29 lines =@@
  })(r || (r = {}));
  var s;
  (function (s) {
+-    var Q = 0;
 +    var Q = r.Q;
-     const Q = 0;
++    const Q = 0;
  })(s || (s = {}));

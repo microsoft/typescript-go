@@ -1,0 +1,19 @@
+--- old.modularizeLibrary_Worker.asynciterable.types
++++ new.modularizeLibrary_Worker.asynciterable.types
+@@= skipped -15, +15 lines =@@
+
+     for await (const [key, handle] of directory) {
+ >key : string
+->handle : FileSystemDirectoryHandle | FileSystemFileHandle
++>handle : FileSystemHandle
+ >directory : FileSystemDirectoryHandle
+
+         handle.kind;
+->handle.kind : "directory" | "file"
+->handle : FileSystemDirectoryHandle | FileSystemFileHandle
+->kind : "directory" | "file"
++>handle.kind : FileSystemHandleKind
++>handle : FileSystemHandle
++>kind : FileSystemHandleKind
+     }
+ });

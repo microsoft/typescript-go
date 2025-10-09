@@ -5,7 +5,7 @@ b.ts(3,13): error TS1100: Invalid use of 'arguments' in strict mode.
 
 !!! error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
 ==== a.ts (1 errors) ====
-    module M {
+    namespace M {
         export function f() {
             var arguments = [];
                 ~~~~~~~~~
@@ -14,7 +14,7 @@ b.ts(3,13): error TS1100: Invalid use of 'arguments' in strict mode.
     }
     
 ==== b.ts (1 errors) ====
-    module M {
+    namespace M {
         export function f2() {
             var arguments = [];
                 ~~~~~~~~~

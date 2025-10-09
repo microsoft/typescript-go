@@ -4,7 +4,8 @@
          }
      return t;
  };
-+var _a;
- let bar;
+-var bar;
 -(bar = __rest({}, []));
++var _a;
++let bar;
 +(_a = {}, bar = __rest(_a, []));

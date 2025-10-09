@@ -1,10 +1,16 @@
 --- old.genericClasses1.js
 +++ new.genericClasses1.js
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
+ var y = v1.x; // should be 'string'
 
  //// [genericClasses1.js]
- class C {
+-var C = /** @class */ (function () {
+-    function C() {
+-    }
+-    return C;
+-}());
++class C {
 +    x;
- }
++}
  var v1 = new C();
  var y = v1.x; // should be 'string'

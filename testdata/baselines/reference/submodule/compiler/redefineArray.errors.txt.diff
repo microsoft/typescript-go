@@ -1,0 +1,13 @@
+--- old.redefineArray.errors.txt
++++ new.redefineArray.errors.txt
+@@= skipped -0, +0 lines =@@
+-redefineArray.ts(1,1): error TS2739: Type '<T>(n: number, s: string) => number' is missing the following properties from type 'ArrayConstructor': isArray, from, of, [Symbol.species]
++redefineArray.ts(1,1): error TS2741: Property 'isArray' is missing in type '<T>(n: number, s: string) => number' but required in type 'ArrayConstructor'.
+
+
+ ==== redefineArray.ts (1 errors) ====
+     Array = function (n:number, s:string) {return n;};
+     ~~~~~
+-!!! error TS2739: Type '<T>(n: number, s: string) => number' is missing the following properties from type 'ArrayConstructor': isArray, from, of, [Symbol.species]
++!!! error TS2741: Property 'isArray' is missing in type '<T>(n: number, s: string) => number' but required in type 'ArrayConstructor'.
++!!! related TS2728 lib.es5.d.ts:--:--: 'isArray' is declared here.

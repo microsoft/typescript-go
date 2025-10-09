@@ -29,7 +29,8 @@
 +>data : any
 +>typeof fetcherParams === 'function'        ? fetcherParams()        : fetcherParams : any
  >typeof fetcherParams === 'function' : boolean
- >typeof fetcherParams : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+->typeof fetcherParams : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof fetcherParams : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
  >fetcherParams : object | (() => object)
  >'function' : "function"
 

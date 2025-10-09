@@ -1,0 +1,11 @@
+--- old.instanceofNarrowReadonlyArray.symbols
++++ new.instanceofNarrowReadonlyArray.symbols
+@@= skipped -8, +8 lines =@@
+
+     if (x instanceof Array) {
+ >x : Symbol(x, Decl(instanceofNarrowReadonlyArray.ts, 2, 16))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+         return x;
+ >x : Symbol(x, Decl(instanceofNarrowReadonlyArray.ts, 2, 16))

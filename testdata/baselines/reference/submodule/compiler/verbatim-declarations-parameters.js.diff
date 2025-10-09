@@ -1,16 +1,41 @@
 --- old.verbatim-declarations-parameters.js
 +++ new.verbatim-declarations-parameters.js
-@@= skipped -29, +29 lines =@@
+@@= skipped -28, +28 lines =@@
+ Object.defineProperty(exports, "__esModule", { value: true });
  exports.Foo = void 0;
  exports.foo1 = foo1;
- class Foo {
+-var Foo = /** @class */ (function () {
+-    function Foo(
++class Foo {
 +    reuseTypeNode;
 +    reuseTypeNode2;
 +    resolveType;
-     constructor(
++    constructor(
      // Type node is accurate, preserve
      reuseTypeNode, reuseTypeNode2, 
-@@= skipped -27, +30 lines =@@
+     // Resolve type node, requires adding | undefined
+@@= skipped -10, +13 lines =@@
+         this.reuseTypeNode2 = reuseTypeNode2;
+         this.resolveType = resolveType;
+     }
+-    return Foo;
+-}());
++}
+ exports.Foo = Foo;
+ function foo1(
+ // Type node is accurate, preserve
+-reuseTypeNode, reuseTypeNode2, 
++reuseTypeNode = {}, reuseTypeNode2 = {}, 
+ // Resolve type node, requires adding | undefined
+-resolveType, requiredParam) {
+-    if (reuseTypeNode === void 0) { reuseTypeNode = {}; }
+-    if (reuseTypeNode2 === void 0) { reuseTypeNode2 = {}; }
+-    if (resolveType === void 0) { resolveType = {}; }
++resolveType = {}, requiredParam) {
+ }
+
+
+@@= skipped -22, +18 lines =@@
  export declare class Foo {
      reuseTypeNode?: Map | undefined;
      reuseTypeNode2?: Exclude<MapOrUndefined, "dummy">;

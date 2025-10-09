@@ -13,7 +13,10 @@
  exports.apply = a;
  exports.apply();
  //// [test.js]
-@@= skipped -12, +15 lines =@@
+ "use strict";
+-var apply = require('./moduleExportAliasDuplicateAlias').apply;
++const { apply } = require('./moduleExportAliasDuplicateAlias');
+ apply();
 
 
  //// [moduleExportAliasDuplicateAlias.d.ts]

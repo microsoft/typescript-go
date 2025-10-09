@@ -1,20 +1,31 @@
 --- old.TwoInternalModulesThatMergeEachWithExportedClassesOfTheSameName.js
 +++ new.TwoInternalModulesThatMergeEachWithExportedClassesOfTheSameName.js
-@@= skipped -37, +37 lines =@@
+@@= skipped -36, +36 lines =@@
+ //// [TwoInternalModulesThatMergeEachWithExportedClassesOfTheSameName.js]
  var A;
  (function (A) {
-     class Point {
+-    var Point = /** @class */ (function () {
+-        function Point() {
+-        }
+-        return Point;
+-    }());
++    class Point {
 +        x;
 +        y;
-     }
++    }
      A.Point = Point;
  })(A || (A = {}));
  (function (A) {
      // expected error
-     class Point {
+-    var Point = /** @class */ (function () {
+-        function Point() {
+-        }
+-        return Point;
+-    }());
++    class Point {
 +        origin;
 +        angle;
-     }
++    }
      A.Point = Point;
  })(A || (A = {}));
  var X;
@@ -25,16 +36,34 @@
 -        var Z;
 +        let Z;
          (function (Z) {
-             class Line {
+-            var Line = /** @class */ (function () {
+-                function Line() {
+-                }
+-                return Line;
+-            }());
++            class Line {
 +                length;
-             }
++            }
              Z.Line = Line;
          })(Z = Y.Z || (Y.Z = {}));
-@@= skipped -28, +33 lines =@@
+     })(Y = X.Y || (X.Y = {}));
+ })(X || (X = {}));
+ (function (X) {
+-    var Y;
++    let Y;
+     (function (Y) {
+-        var Z;
++        let Z;
          (function (Z) {
              // expected error
-             class Line {
+-            var Line = /** @class */ (function () {
+-                function Line() {
+-                }
+-                return Line;
+-            }());
++            class Line {
 +                name;
-             }
++            }
              Z.Line = Line;
          })(Z = Y.Z || (Y.Z = {}));
+     })(Y = X.Y || (X.Y = {}));

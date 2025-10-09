@@ -1,0 +1,38 @@
+--- old.typeGuardNarrowsIndexedAccessOfKnownProperty1.symbols
++++ new.typeGuardNarrowsIndexedAccessOfKnownProperty1.symbols
+@@= skipped -66, +66 lines =@@
+
+     switch(s['dash-ok']) {
+ >s : Symbol(s, Decl(typeGuardNarrowsIndexedAccessOfKnownProperty1.ts, 23, 14))
+->'dash-ok' : Symbol(["dash-ok"], Decl(typeGuardNarrowsIndexedAccessOfKnownProperty1.ts, 0, 18), Decl(typeGuardNarrowsIndexedAccessOfKnownProperty1.ts, 4, 22), Decl(typeGuardNarrowsIndexedAccessOfKnownProperty1.ts, 9, 19))
++>'dash-ok' : Symbol(["dash-ok"], Decl(typeGuardNarrowsIndexedAccessOfKnownProperty1.ts, 9, 19), Decl(typeGuardNarrowsIndexedAccessOfKnownProperty1.ts, 4, 22), Decl(typeGuardNarrowsIndexedAccessOfKnownProperty1.ts, 0, 18))
+
+         case "square": return s['square-size'] * s['square-size'];
+ >s : Symbol(s, Decl(typeGuardNarrowsIndexedAccessOfKnownProperty1.ts, 23, 14))
+@@= skipped -17, +17 lines =@@
+
+         case "circle": return Math.PI * s['radius'] * s.radius;
+ >Math.PI : Symbol(Math.PI, Decl(lib.es5.d.ts, --, --))
+->Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >PI : Symbol(Math.PI, Decl(lib.es5.d.ts, --, --))
+ >s : Symbol(s, Decl(typeGuardNarrowsIndexedAccessOfKnownProperty1.ts, 23, 14))
+ >'radius' : Symbol(Circle.radius, Decl(typeGuardNarrowsIndexedAccessOfKnownProperty1.ts, 10, 26))
+@@= skipped -21, +21 lines =@@
+ >"sub" : Symbol(sub, Decl(typeGuardNarrowsIndexedAccessOfKnownProperty1.ts, 15, 10))
+ >under : Symbol(under, Decl(typeGuardNarrowsIndexedAccessOfKnownProperty1.ts, 16, 14))
+ >"shape" : Symbol(shape, Decl(typeGuardNarrowsIndexedAccessOfKnownProperty1.ts, 17, 20))
+->"dash-ok" : Symbol(["dash-ok"], Decl(typeGuardNarrowsIndexedAccessOfKnownProperty1.ts, 0, 18), Decl(typeGuardNarrowsIndexedAccessOfKnownProperty1.ts, 4, 22), Decl(typeGuardNarrowsIndexedAccessOfKnownProperty1.ts, 9, 19))
++>"dash-ok" : Symbol(["dash-ok"], Decl(typeGuardNarrowsIndexedAccessOfKnownProperty1.ts, 9, 19), Decl(typeGuardNarrowsIndexedAccessOfKnownProperty1.ts, 4, 22), Decl(typeGuardNarrowsIndexedAccessOfKnownProperty1.ts, 0, 18))
+
+         case "square": return s[0].sub.under.shape["square-size"] * s[0].sub.under.shape["square-size"];
+ >s[0].sub.under.shape : Symbol(shape, Decl(typeGuardNarrowsIndexedAccessOfKnownProperty1.ts, 17, 20))
+@@= skipped -39, +39 lines =@@
+
+         case "circle": return Math.PI * s[0].sub.under["shape"].radius * s[0]["sub"].under.shape["radius"];
+ >Math.PI : Symbol(Math.PI, Decl(lib.es5.d.ts, --, --))
+->Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Math : Symbol(Math, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >PI : Symbol(Math.PI, Decl(lib.es5.d.ts, --, --))
+ >s[0].sub.under["shape"].radius : Symbol(Circle.radius, Decl(typeGuardNarrowsIndexedAccessOfKnownProperty1.ts, 10, 26))
+ >s[0].sub.under : Symbol(under, Decl(typeGuardNarrowsIndexedAccessOfKnownProperty1.ts, 16, 14))

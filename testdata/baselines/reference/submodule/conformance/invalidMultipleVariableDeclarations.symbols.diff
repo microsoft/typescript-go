@@ -1,0 +1,11 @@
+--- old.invalidMultipleVariableDeclarations.symbols
++++ new.invalidMultipleVariableDeclarations.symbols
+@@= skipped -128, +128 lines =@@
+
+ var arr2 = new Array<D<number>>();
+ >arr2 : Symbol(arr2, Decl(invalidMultipleVariableDeclarations.ts, 48, 3), Decl(invalidMultipleVariableDeclarations.ts, 49, 3))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >D : Symbol(D, Decl(invalidMultipleVariableDeclarations.ts, 11, 1))
+
+ var m: typeof M;

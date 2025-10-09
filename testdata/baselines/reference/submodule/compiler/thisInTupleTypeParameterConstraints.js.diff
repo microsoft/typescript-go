@@ -1,0 +1,9 @@
+--- old.thisInTupleTypeParameterConstraints.js
++++ new.thisInTupleTypeParameterConstraints.js
+@@= skipped -23, +23 lines =@@
+
+
+ //// [thisInTupleTypeParameterConstraints.js]
+-var x;
++let x;
+ f(x);

@@ -1,0 +1,11 @@
+--- old.divergentAccessorsTypes8.symbols
++++ new.divergentAccessorsTypes8.symbols
+@@= skipped -38, +38 lines =@@
+
+     get style(): CSSStyleDeclaration;
+ >style : Symbol(Element.style, Decl(divergentAccessorsTypes8.ts, 12, 19), Decl(divergentAccessorsTypes8.ts, 13, 37))
+->CSSStyleDeclaration : Symbol(CSSStyleDeclaration, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))
++>CSSStyleDeclaration : Symbol(CSSStyleDeclaration, Decl(lib.dom.d.ts, --, --), Decl(lib.dom.d.ts, --, --))
+
+     set style(cssText: string);
+ >style : Symbol(Element.style, Decl(divergentAccessorsTypes8.ts, 12, 19), Decl(divergentAccessorsTypes8.ts, 13, 37))

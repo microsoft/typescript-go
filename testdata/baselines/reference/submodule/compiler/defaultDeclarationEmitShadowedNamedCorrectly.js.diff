@@ -9,12 +9,23 @@
  function make(x) {
      return null;
  }
- class MyComponent {
+-var MyComponent = /** @class */ (function () {
+-    function MyComponent() {
+-    }
+-    return MyComponent;
+-}());
++class MyComponent {
 +    props;
- }
++}
  exports.default = MyComponent;
  var Something;
-@@= skipped -31, +32 lines =@@
+ (function (Something) {
+-    var MyComponent = 2; // Shadow declaration, so symbol is only usable via the self-import
++    let MyComponent = 2; // Shadow declaration, so symbol is only usable via the self-import
+     Something.create = make(me.default);
+ })(Something || (exports.Something = Something = {}));
+
+@@= skipped -34, +32 lines =@@
      props: Props;
  }
  export declare namespace Something {

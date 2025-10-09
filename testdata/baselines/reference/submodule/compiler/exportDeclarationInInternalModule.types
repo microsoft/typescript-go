@@ -9,14 +9,14 @@ class Aaa extends Bbb { }
 >Aaa : Aaa
 >Bbb : Bbb
 
-module Aaa {
+namespace Aaa {
 >Aaa : typeof Aaa
 
     export class SomeType { }
 >SomeType : SomeType
 }
 
-module Bbb {
+namespace Bbb {
 >Bbb : typeof Bbb
 
     export class SomeType { }

@@ -1,0 +1,18 @@
+--- old.renameAlias3.baseline.jsonc
++++ new.renameAlias3.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+ // === findRenameLocations ===
+ // === /renameAlias3.ts ===
+-// namespace SomeModule { export class /*RENAME*/[|SomeClassRENAME|] { } }
++// module SomeModule { export class /*RENAME*/[|SomeClassRENAME|] { } }
+ // import M = SomeModule;
+ // import C = M.[|SomeClassRENAME|];
+
+@@= skipped -7, +7 lines =@@
+
+ // === findRenameLocations ===
+ // === /renameAlias3.ts ===
+-// namespace SomeModule { export class [|SomeClassRENAME|] { } }
++// module SomeModule { export class [|SomeClassRENAME|] { } }
+ // import M = SomeModule;
+ // import C = M./*RENAME*/[|SomeClassRENAME|];

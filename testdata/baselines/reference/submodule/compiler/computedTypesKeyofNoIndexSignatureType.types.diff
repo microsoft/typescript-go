@@ -1,0 +1,8 @@
+--- old.computedTypesKeyofNoIndexSignatureType.types
++++ new.computedTypesKeyofNoIndexSignatureType.types
+@@= skipped -40, +40 lines =@@
+ >WithIndexKey : string | number
+
+ type WithoutIndexKey = keyof WithoutIndex; // number          <-- Expected: "foo" | "bar"
+->WithoutIndexKey : "foo" | "bar"
++>WithoutIndexKey : "bar" | "foo"

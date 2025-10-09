@@ -1,10 +1,23 @@
 --- old.indexerA.js
 +++ new.indexerA.js
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
+ jq[0].id;
 
  //// [indexerA.js]
- class JQueryElement {
+-var JQueryElement = /** @class */ (function () {
+-    function JQueryElement() {
+-    }
+-    return JQueryElement;
+-}());
+-var JQuery = /** @class */ (function () {
+-    function JQuery() {
+-    }
+-    return JQuery;
+-}());
++class JQueryElement {
 +    id;
- }
- class JQuery {
- }
++}
++class JQuery {
++}
+ var jq = { 0: { id: "a" }, 1: { id: "b" } };
+ jq[0].id;

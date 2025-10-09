@@ -6,7 +6,7 @@
 var s: string;
 >s : string
 
-module M1 {
+namespace M1 {
 >M1 : typeof M1
 
     export var s: number;
@@ -20,7 +20,7 @@ module M1 {
 >n : number
 }
 
-module M2 {
+namespace M2 {
 >M2 : typeof M2
 
     var s: number;
@@ -74,13 +74,13 @@ class C {
     }
 }
 
-module M3 {
+namespace M3 {
 >M3 : typeof M3
 
     var s: any;
 >s : any
 
-    module M4 {
+    namespace M4 {
 >M4 : typeof M4
 
         var n = s;

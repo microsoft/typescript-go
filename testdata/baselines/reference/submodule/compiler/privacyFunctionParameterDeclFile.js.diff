@@ -1,281 +1,996 @@
 --- old.privacyFunctionParameterDeclFile.js
 +++ new.privacyFunctionParameterDeclFile.js
-@@= skipped -697, +697 lines =@@
- }
+@@= skipped -691, +691 lines =@@
+ exports.publicFunctionWithPrivateParmeterTypes = publicFunctionWithPrivateParmeterTypes;
+ exports.publicFunctionWithPublicParmeterTypes = publicFunctionWithPublicParmeterTypes;
+ exports.publicFunctionWithPrivateModuleParameterTypes = publicFunctionWithPrivateModuleParameterTypes;
+-var privateClass = /** @class */ (function () {
+-    function privateClass() {
+-    }
+-    return privateClass;
+-}());
+-var publicClass = /** @class */ (function () {
+-    function publicClass() {
+-    }
+-    return publicClass;
+-}());
++class privateClass {
++}
++class publicClass {
++}
  exports.publicClass = publicClass;
- class publicClassWithWithPrivateParmeterTypes {
+-var publicClassWithWithPrivateParmeterTypes = /** @class */ (function () {
+-    function publicClassWithWithPrivateParmeterTypes(param, param1, param2) {
++class publicClassWithWithPrivateParmeterTypes {
 +    param1;
 +    param2;
-     static myPublicStaticMethod(param) {
++    static myPublicStaticMethod(param) {
++    }
++    static myPrivateStaticMethod(param) {
++    }
++    myPublicMethod(param) {
++    }
++    myPrivateMethod(param) {
++    }
++    constructor(param, param1, param2) {
+         this.param1 = param1;
+         this.param2 = param2;
      }
-     static myPrivateStaticMethod(param) {
-@@= skipped -15, +17 lines =@@
- }
+-    publicClassWithWithPrivateParmeterTypes.myPublicStaticMethod = function (param) {
+-    };
+-    publicClassWithWithPrivateParmeterTypes.myPrivateStaticMethod = function (param) {
+-    };
+-    publicClassWithWithPrivateParmeterTypes.prototype.myPublicMethod = function (param) {
+-    };
+-    publicClassWithWithPrivateParmeterTypes.prototype.myPrivateMethod = function (param) {
+-    };
+-    return publicClassWithWithPrivateParmeterTypes;
+-}());
++}
  exports.publicClassWithWithPrivateParmeterTypes = publicClassWithWithPrivateParmeterTypes;
- class publicClassWithWithPublicParmeterTypes {
+-var publicClassWithWithPublicParmeterTypes = /** @class */ (function () {
+-    function publicClassWithWithPublicParmeterTypes(param, param1, param2) {
++class publicClassWithWithPublicParmeterTypes {
 +    param1;
 +    param2;
-     static myPublicStaticMethod(param) {
++    static myPublicStaticMethod(param) {
++    }
++    static myPrivateStaticMethod(param) {
++    }
++    myPublicMethod(param) {
++    }
++    myPrivateMethod(param) {
++    }
++    constructor(param, param1, param2) {
+         this.param1 = param1;
+         this.param2 = param2;
      }
-     static myPrivateStaticMethod(param) {
-@@= skipped -15, +17 lines =@@
- }
+-    publicClassWithWithPublicParmeterTypes.myPublicStaticMethod = function (param) {
+-    };
+-    publicClassWithWithPublicParmeterTypes.myPrivateStaticMethod = function (param) {
+-    };
+-    publicClassWithWithPublicParmeterTypes.prototype.myPublicMethod = function (param) {
+-    };
+-    publicClassWithWithPublicParmeterTypes.prototype.myPrivateMethod = function (param) {
+-    };
+-    return publicClassWithWithPublicParmeterTypes;
+-}());
++}
  exports.publicClassWithWithPublicParmeterTypes = publicClassWithWithPublicParmeterTypes;
- class privateClassWithWithPrivateParmeterTypes {
+-var privateClassWithWithPrivateParmeterTypes = /** @class */ (function () {
+-    function privateClassWithWithPrivateParmeterTypes(param, param1, param2) {
+-        this.param1 = param1;
+-        this.param2 = param2;
+-    }
+-    privateClassWithWithPrivateParmeterTypes.myPublicStaticMethod = function (param) {
+-    };
+-    privateClassWithWithPrivateParmeterTypes.myPrivateStaticMethod = function (param) {
+-    };
+-    privateClassWithWithPrivateParmeterTypes.prototype.myPublicMethod = function (param) {
+-    };
+-    privateClassWithWithPrivateParmeterTypes.prototype.myPrivateMethod = function (param) {
+-    };
+-    return privateClassWithWithPrivateParmeterTypes;
+-}());
+-var privateClassWithWithPublicParmeterTypes = /** @class */ (function () {
+-    function privateClassWithWithPublicParmeterTypes(param, param1, param2) {
+-        this.param1 = param1;
+-        this.param2 = param2;
+-    }
+-    privateClassWithWithPublicParmeterTypes.myPublicStaticMethod = function (param) {
+-    };
+-    privateClassWithWithPublicParmeterTypes.myPrivateStaticMethod = function (param) {
+-    };
+-    privateClassWithWithPublicParmeterTypes.prototype.myPublicMethod = function (param) {
+-    };
+-    privateClassWithWithPublicParmeterTypes.prototype.myPrivateMethod = function (param) {
+-    };
+-    return privateClassWithWithPublicParmeterTypes;
+-}());
++class privateClassWithWithPrivateParmeterTypes {
 +    param1;
 +    param2;
-     static myPublicStaticMethod(param) {
-     }
-     static myPrivateStaticMethod(param) {
-@@= skipped -14, +16 lines =@@
-     }
++    static myPublicStaticMethod(param) {
++    }
++    static myPrivateStaticMethod(param) {
++    }
++    myPublicMethod(param) {
++    }
++    myPrivateMethod(param) {
++    }
++    constructor(param, param1, param2) {
++        this.param1 = param1;
++        this.param2 = param2;
++    }
++}
++class privateClassWithWithPublicParmeterTypes {
++    param1;
++    param2;
++    static myPublicStaticMethod(param) {
++    }
++    static myPrivateStaticMethod(param) {
++    }
++    myPublicMethod(param) {
++    }
++    myPrivateMethod(param) {
++    }
++    constructor(param, param1, param2) {
++        this.param1 = param1;
++        this.param2 = param2;
++    }
++}
+ function publicFunctionWithPrivateParmeterTypes(param) {
  }
- class privateClassWithWithPublicParmeterTypes {
-+    param1;
-+    param2;
-     static myPublicStaticMethod(param) {
-     }
-     static myPrivateStaticMethod(param) {
-@@= skipped -22, +24 lines =@@
+ function publicFunctionWithPublicParmeterTypes(param) {
+@@= skipped -81, +79 lines =@@
+ }
  function privateFunctionWithPublicParmeterTypes(param) {
  }
- class publicClassWithPrivateModuleParameterTypes {
+-var publicClassWithPrivateModuleParameterTypes = /** @class */ (function () {
+-    function publicClassWithPrivateModuleParameterTypes(param, param1, param2) {
++class publicClassWithPrivateModuleParameterTypes {
 +    param1;
 +    param2;
-     static myPublicStaticMethod(param) {
++    static myPublicStaticMethod(param) {
++    }
++    myPublicMethod(param) {
++    }
++    constructor(param, param1, param2) {
+         this.param1 = param1;
+         this.param2 = param2;
      }
-     myPublicMethod(param) {
-@@= skipped -13, +15 lines =@@
+-    publicClassWithPrivateModuleParameterTypes.myPublicStaticMethod = function (param) {
+-    };
+-    publicClassWithPrivateModuleParameterTypes.prototype.myPublicMethod = function (param) {
+-    };
+-    return publicClassWithPrivateModuleParameterTypes;
+-}());
++}
+ exports.publicClassWithPrivateModuleParameterTypes = publicClassWithPrivateModuleParameterTypes;
  function publicFunctionWithPrivateModuleParameterTypes(param) {
  }
- class privateClassWithPrivateModuleParameterTypes {
+-var privateClassWithPrivateModuleParameterTypes = /** @class */ (function () {
+-    function privateClassWithPrivateModuleParameterTypes(param, param1, param2) {
++class privateClassWithPrivateModuleParameterTypes {
 +    param1;
 +    param2;
-     static myPublicStaticMethod(param) {
++    static myPublicStaticMethod(param) {
++    }
++    myPublicMethod(param) {
++    }
++    constructor(param, param1, param2) {
+         this.param1 = param1;
+         this.param2 = param2;
      }
-     myPublicMethod(param) {
-@@= skipped -19, +21 lines =@@
-     }
+-    privateClassWithPrivateModuleParameterTypes.myPublicStaticMethod = function (param) {
+-    };
+-    privateClassWithPrivateModuleParameterTypes.prototype.myPublicMethod = function (param) {
+-    };
+-    return privateClassWithPrivateModuleParameterTypes;
+-}());
++}
+ function privateFunctionWithPrivateModuleParameterTypes(param) {
+ }
+ var publicModule;
+ (function (publicModule) {
+-    var privateClass = /** @class */ (function () {
+-        function privateClass() {
+-        }
+-        return privateClass;
+-    }());
+-    var publicClass = /** @class */ (function () {
+-        function publicClass() {
+-        }
+-        return publicClass;
+-    }());
++    class privateClass {
++    }
++    class publicClass {
++    }
      publicModule.publicClass = publicClass;
-     class publicClassWithWithPrivateParmeterTypes {
+-    var publicClassWithWithPrivateParmeterTypes = /** @class */ (function () {
+-        function publicClassWithWithPrivateParmeterTypes(param, param1, param2) {
++    class publicClassWithWithPrivateParmeterTypes {
 +        param1;
 +        param2;
-         static myPublicStaticMethod(param) {
++        static myPublicStaticMethod(param) {
++        }
++        static myPrivateStaticMethod(param) {
++        }
++        myPublicMethod(param) {
++        }
++        myPrivateMethod(param) {
++        }
++        constructor(param, param1, param2) {
+             this.param1 = param1;
+             this.param2 = param2;
          }
-         static myPrivateStaticMethod(param) {
-@@= skipped -15, +17 lines =@@
-     }
+-        publicClassWithWithPrivateParmeterTypes.myPublicStaticMethod = function (param) {
+-        };
+-        publicClassWithWithPrivateParmeterTypes.myPrivateStaticMethod = function (param) {
+-        };
+-        publicClassWithWithPrivateParmeterTypes.prototype.myPublicMethod = function (param) {
+-        };
+-        publicClassWithWithPrivateParmeterTypes.prototype.myPrivateMethod = function (param) {
+-        };
+-        return publicClassWithWithPrivateParmeterTypes;
+-    }());
++    }
      publicModule.publicClassWithWithPrivateParmeterTypes = publicClassWithWithPrivateParmeterTypes;
-     class publicClassWithWithPublicParmeterTypes {
+-    var publicClassWithWithPublicParmeterTypes = /** @class */ (function () {
+-        function publicClassWithWithPublicParmeterTypes(param, param1, param2) {
++    class publicClassWithWithPublicParmeterTypes {
 +        param1;
 +        param2;
-         static myPublicStaticMethod(param) {
++        static myPublicStaticMethod(param) {
++        }
++        static myPrivateStaticMethod(param) {
++        }
++        myPublicMethod(param) {
++        }
++        myPrivateMethod(param) {
++        }
++        constructor(param, param1, param2) {
+             this.param1 = param1;
+             this.param2 = param2;
          }
-         static myPrivateStaticMethod(param) {
-@@= skipped -15, +17 lines =@@
-     }
+-        publicClassWithWithPublicParmeterTypes.myPublicStaticMethod = function (param) {
+-        };
+-        publicClassWithWithPublicParmeterTypes.myPrivateStaticMethod = function (param) {
+-        };
+-        publicClassWithWithPublicParmeterTypes.prototype.myPublicMethod = function (param) {
+-        };
+-        publicClassWithWithPublicParmeterTypes.prototype.myPrivateMethod = function (param) {
+-        };
+-        return publicClassWithWithPublicParmeterTypes;
+-    }());
++    }
      publicModule.publicClassWithWithPublicParmeterTypes = publicClassWithWithPublicParmeterTypes;
-     class privateClassWithWithPrivateParmeterTypes {
+-    var privateClassWithWithPrivateParmeterTypes = /** @class */ (function () {
+-        function privateClassWithWithPrivateParmeterTypes(param, param1, param2) {
+-            this.param1 = param1;
+-            this.param2 = param2;
+-        }
+-        privateClassWithWithPrivateParmeterTypes.myPublicStaticMethod = function (param) {
+-        };
+-        privateClassWithWithPrivateParmeterTypes.myPrivateStaticMethod = function (param) {
+-        };
+-        privateClassWithWithPrivateParmeterTypes.prototype.myPublicMethod = function (param) {
+-        };
+-        privateClassWithWithPrivateParmeterTypes.prototype.myPrivateMethod = function (param) {
+-        };
+-        return privateClassWithWithPrivateParmeterTypes;
+-    }());
+-    var privateClassWithWithPublicParmeterTypes = /** @class */ (function () {
+-        function privateClassWithWithPublicParmeterTypes(param, param1, param2) {
+-            this.param1 = param1;
+-            this.param2 = param2;
+-        }
+-        privateClassWithWithPublicParmeterTypes.myPublicStaticMethod = function (param) {
+-        };
+-        privateClassWithWithPublicParmeterTypes.myPrivateStaticMethod = function (param) {
+-        };
+-        privateClassWithWithPublicParmeterTypes.prototype.myPublicMethod = function (param) {
+-        };
+-        privateClassWithWithPublicParmeterTypes.prototype.myPrivateMethod = function (param) {
+-        };
+-        return privateClassWithWithPublicParmeterTypes;
+-    }());
++    class privateClassWithWithPrivateParmeterTypes {
 +        param1;
 +        param2;
-         static myPublicStaticMethod(param) {
-         }
-         static myPrivateStaticMethod(param) {
-@@= skipped -14, +16 lines =@@
-         }
++        static myPublicStaticMethod(param) {
++        }
++        static myPrivateStaticMethod(param) {
++        }
++        myPublicMethod(param) {
++        }
++        myPrivateMethod(param) {
++        }
++        constructor(param, param1, param2) {
++            this.param1 = param1;
++            this.param2 = param2;
++        }
++    }
++    class privateClassWithWithPublicParmeterTypes {
++        param1;
++        param2;
++        static myPublicStaticMethod(param) {
++        }
++        static myPrivateStaticMethod(param) {
++        }
++        myPublicMethod(param) {
++        }
++        myPrivateMethod(param) {
++        }
++        constructor(param, param1, param2) {
++            this.param1 = param1;
++            this.param2 = param2;
++        }
++    }
+     function publicFunctionWithPrivateParmeterTypes(param) {
      }
-     class privateClassWithWithPublicParmeterTypes {
-+        param1;
-+        param2;
-         static myPublicStaticMethod(param) {
-         }
-         static myPrivateStaticMethod(param) {
-@@= skipped -24, +26 lines =@@
+     publicModule.publicFunctionWithPrivateParmeterTypes = publicFunctionWithPrivateParmeterTypes;
+@@= skipped -112, +112 lines =@@
+     }
      function privateFunctionWithPublicParmeterTypes(param) {
      }
-     class publicClassWithPrivateModuleParameterTypes {
+-    var publicClassWithPrivateModuleParameterTypes = /** @class */ (function () {
+-        function publicClassWithPrivateModuleParameterTypes(param, param1, param2) {
++    class publicClassWithPrivateModuleParameterTypes {
 +        param1;
 +        param2;
-         static myPublicStaticMethod(param) {
++        static myPublicStaticMethod(param) {
++        }
++        myPublicMethod(param) {
++        }
++        constructor(param, param1, param2) {
+             this.param1 = param1;
+             this.param2 = param2;
          }
-         myPublicMethod(param) {
-@@= skipped -14, +16 lines =@@
+-        publicClassWithPrivateModuleParameterTypes.myPublicStaticMethod = function (param) {
+-        };
+-        publicClassWithPrivateModuleParameterTypes.prototype.myPublicMethod = function (param) {
+-        };
+-        return publicClassWithPrivateModuleParameterTypes;
+-    }());
++    }
+     publicModule.publicClassWithPrivateModuleParameterTypes = publicClassWithPrivateModuleParameterTypes;
+     function publicFunctionWithPrivateModuleParameterTypes(param) {
      }
      publicModule.publicFunctionWithPrivateModuleParameterTypes = publicFunctionWithPrivateModuleParameterTypes;
-     class privateClassWithPrivateModuleParameterTypes {
+-    var privateClassWithPrivateModuleParameterTypes = /** @class */ (function () {
+-        function privateClassWithPrivateModuleParameterTypes(param, param1, param2) {
++    class privateClassWithPrivateModuleParameterTypes {
 +        param1;
 +        param2;
-         static myPublicStaticMethod(param) {
++        static myPublicStaticMethod(param) {
++        }
++        myPublicMethod(param) {
++        }
++        constructor(param, param1, param2) {
+             this.param1 = param1;
+             this.param2 = param2;
          }
-         myPublicMethod(param) {
-@@= skipped -20, +22 lines =@@
+-        privateClassWithPrivateModuleParameterTypes.myPublicStaticMethod = function (param) {
+-        };
+-        privateClassWithPrivateModuleParameterTypes.prototype.myPublicMethod = function (param) {
+-        };
+-        return privateClassWithPrivateModuleParameterTypes;
+-    }());
++    }
+     function privateFunctionWithPrivateModuleParameterTypes(param) {
      }
+ })(publicModule || (exports.publicModule = publicModule = {}));
+ var privateModule;
+ (function (privateModule) {
+-    var privateClass = /** @class */ (function () {
+-        function privateClass() {
+-        }
+-        return privateClass;
+-    }());
+-    var publicClass = /** @class */ (function () {
+-        function publicClass() {
+-        }
+-        return publicClass;
+-    }());
++    class privateClass {
++    }
++    class publicClass {
++    }
      privateModule.publicClass = publicClass;
-     class publicClassWithWithPrivateParmeterTypes {
+-    var publicClassWithWithPrivateParmeterTypes = /** @class */ (function () {
+-        function publicClassWithWithPrivateParmeterTypes(param, param1, param2) {
++    class publicClassWithWithPrivateParmeterTypes {
 +        param1;
 +        param2;
-         static myPublicStaticMethod(param) {
++        static myPublicStaticMethod(param) {
++        }
++        static myPrivateStaticMethod(param) {
++        }
++        myPublicMethod(param) {
++        }
++        myPrivateMethod(param) {
++        }
++        constructor(param, param1, param2) {
+             this.param1 = param1;
+             this.param2 = param2;
          }
-         static myPrivateStaticMethod(param) {
-@@= skipped -15, +17 lines =@@
-     }
+-        publicClassWithWithPrivateParmeterTypes.myPublicStaticMethod = function (param) {
+-        };
+-        publicClassWithWithPrivateParmeterTypes.myPrivateStaticMethod = function (param) {
+-        };
+-        publicClassWithWithPrivateParmeterTypes.prototype.myPublicMethod = function (param) {
+-        };
+-        publicClassWithWithPrivateParmeterTypes.prototype.myPrivateMethod = function (param) {
+-        };
+-        return publicClassWithWithPrivateParmeterTypes;
+-    }());
++    }
      privateModule.publicClassWithWithPrivateParmeterTypes = publicClassWithWithPrivateParmeterTypes;
-     class publicClassWithWithPublicParmeterTypes {
+-    var publicClassWithWithPublicParmeterTypes = /** @class */ (function () {
+-        function publicClassWithWithPublicParmeterTypes(param, param1, param2) {
++    class publicClassWithWithPublicParmeterTypes {
 +        param1;
 +        param2;
-         static myPublicStaticMethod(param) {
++        static myPublicStaticMethod(param) {
++        }
++        static myPrivateStaticMethod(param) {
++        }
++        myPublicMethod(param) {
++        }
++        myPrivateMethod(param) {
++        }
++        constructor(param, param1, param2) {
+             this.param1 = param1;
+             this.param2 = param2;
          }
-         static myPrivateStaticMethod(param) {
-@@= skipped -15, +17 lines =@@
-     }
+-        publicClassWithWithPublicParmeterTypes.myPublicStaticMethod = function (param) {
+-        };
+-        publicClassWithWithPublicParmeterTypes.myPrivateStaticMethod = function (param) {
+-        };
+-        publicClassWithWithPublicParmeterTypes.prototype.myPublicMethod = function (param) {
+-        };
+-        publicClassWithWithPublicParmeterTypes.prototype.myPrivateMethod = function (param) {
+-        };
+-        return publicClassWithWithPublicParmeterTypes;
+-    }());
++    }
      privateModule.publicClassWithWithPublicParmeterTypes = publicClassWithWithPublicParmeterTypes;
-     class privateClassWithWithPrivateParmeterTypes {
+-    var privateClassWithWithPrivateParmeterTypes = /** @class */ (function () {
+-        function privateClassWithWithPrivateParmeterTypes(param, param1, param2) {
+-            this.param1 = param1;
+-            this.param2 = param2;
+-        }
+-        privateClassWithWithPrivateParmeterTypes.myPublicStaticMethod = function (param) {
+-        };
+-        privateClassWithWithPrivateParmeterTypes.myPrivateStaticMethod = function (param) {
+-        };
+-        privateClassWithWithPrivateParmeterTypes.prototype.myPublicMethod = function (param) {
+-        };
+-        privateClassWithWithPrivateParmeterTypes.prototype.myPrivateMethod = function (param) {
+-        };
+-        return privateClassWithWithPrivateParmeterTypes;
+-    }());
+-    var privateClassWithWithPublicParmeterTypes = /** @class */ (function () {
+-        function privateClassWithWithPublicParmeterTypes(param, param1, param2) {
+-            this.param1 = param1;
+-            this.param2 = param2;
+-        }
+-        privateClassWithWithPublicParmeterTypes.myPublicStaticMethod = function (param) {
+-        };
+-        privateClassWithWithPublicParmeterTypes.myPrivateStaticMethod = function (param) {
+-        };
+-        privateClassWithWithPublicParmeterTypes.prototype.myPublicMethod = function (param) {
+-        };
+-        privateClassWithWithPublicParmeterTypes.prototype.myPrivateMethod = function (param) {
+-        };
+-        return privateClassWithWithPublicParmeterTypes;
+-    }());
++    class privateClassWithWithPrivateParmeterTypes {
 +        param1;
 +        param2;
-         static myPublicStaticMethod(param) {
-         }
-         static myPrivateStaticMethod(param) {
-@@= skipped -14, +16 lines =@@
-         }
++        static myPublicStaticMethod(param) {
++        }
++        static myPrivateStaticMethod(param) {
++        }
++        myPublicMethod(param) {
++        }
++        myPrivateMethod(param) {
++        }
++        constructor(param, param1, param2) {
++            this.param1 = param1;
++            this.param2 = param2;
++        }
++    }
++    class privateClassWithWithPublicParmeterTypes {
++        param1;
++        param2;
++        static myPublicStaticMethod(param) {
++        }
++        static myPrivateStaticMethod(param) {
++        }
++        myPublicMethod(param) {
++        }
++        myPrivateMethod(param) {
++        }
++        constructor(param, param1, param2) {
++            this.param1 = param1;
++            this.param2 = param2;
++        }
++    }
+     function publicFunctionWithPrivateParmeterTypes(param) {
      }
-     class privateClassWithWithPublicParmeterTypes {
-+        param1;
-+        param2;
-         static myPublicStaticMethod(param) {
-         }
-         static myPrivateStaticMethod(param) {
-@@= skipped -24, +26 lines =@@
+     privateModule.publicFunctionWithPrivateParmeterTypes = publicFunctionWithPrivateParmeterTypes;
+@@= skipped -114, +114 lines =@@
+     }
      function privateFunctionWithPublicParmeterTypes(param) {
      }
-     class publicClassWithPrivateModuleParameterTypes {
+-    var publicClassWithPrivateModuleParameterTypes = /** @class */ (function () {
+-        function publicClassWithPrivateModuleParameterTypes(param, param1, param2) {
++    class publicClassWithPrivateModuleParameterTypes {
 +        param1;
 +        param2;
-         static myPublicStaticMethod(param) {
++        static myPublicStaticMethod(param) {
++        }
++        myPublicMethod(param) {
++        }
++        constructor(param, param1, param2) {
+             this.param1 = param1;
+             this.param2 = param2;
          }
-         myPublicMethod(param) {
-@@= skipped -14, +16 lines =@@
+-        publicClassWithPrivateModuleParameterTypes.myPublicStaticMethod = function (param) {
+-        };
+-        publicClassWithPrivateModuleParameterTypes.prototype.myPublicMethod = function (param) {
+-        };
+-        return publicClassWithPrivateModuleParameterTypes;
+-    }());
++    }
+     privateModule.publicClassWithPrivateModuleParameterTypes = publicClassWithPrivateModuleParameterTypes;
+     function publicFunctionWithPrivateModuleParameterTypes(param) {
      }
      privateModule.publicFunctionWithPrivateModuleParameterTypes = publicFunctionWithPrivateModuleParameterTypes;
-     class privateClassWithPrivateModuleParameterTypes {
+-    var privateClassWithPrivateModuleParameterTypes = /** @class */ (function () {
+-        function privateClassWithPrivateModuleParameterTypes(param, param1, param2) {
++    class privateClassWithPrivateModuleParameterTypes {
 +        param1;
 +        param2;
-         static myPublicStaticMethod(param) {
++        static myPublicStaticMethod(param) {
++        }
++        myPublicMethod(param) {
++        }
++        constructor(param, param1, param2) {
+             this.param1 = param1;
+             this.param2 = param2;
          }
-         myPublicMethod(param) {
-@@= skipped -16, +18 lines =@@
- class publicClassInGlobal {
- }
- class publicClassWithWithPublicParmeterTypesInGlobal {
+-        privateClassWithPrivateModuleParameterTypes.myPublicStaticMethod = function (param) {
+-        };
+-        privateClassWithPrivateModuleParameterTypes.prototype.myPublicMethod = function (param) {
+-        };
+-        return privateClassWithPrivateModuleParameterTypes;
+-    }());
++    }
+     function privateFunctionWithPrivateModuleParameterTypes(param) {
+     }
+ })(privateModule || (privateModule = {}));
+ //// [privacyFunctionParameterDeclFile_GlobalFile.js]
+-var publicClassInGlobal = /** @class */ (function () {
+-    function publicClassInGlobal() {
+-    }
+-    return publicClassInGlobal;
+-}());
+-var publicClassWithWithPublicParmeterTypesInGlobal = /** @class */ (function () {
+-    function publicClassWithWithPublicParmeterTypesInGlobal(param, param1, param2) {
++class publicClassInGlobal {
++}
++class publicClassWithWithPublicParmeterTypesInGlobal {
 +    param1;
 +    param2;
-     static myPublicStaticMethod(param) {
++    static myPublicStaticMethod(param) {
++    }
++    static myPrivateStaticMethod(param) {
++    }
++    myPublicMethod(param) {
++    }
++    myPrivateMethod(param) {
++    }
++    constructor(param, param1, param2) {
+         this.param1 = param1;
+         this.param2 = param2;
      }
-     static myPrivateStaticMethod(param) {
-@@= skipped -30, +32 lines =@@
-         }
+-    publicClassWithWithPublicParmeterTypesInGlobal.myPublicStaticMethod = function (param) {
+-    };
+-    publicClassWithWithPublicParmeterTypesInGlobal.myPrivateStaticMethod = function (param) {
+-    };
+-    publicClassWithWithPublicParmeterTypesInGlobal.prototype.myPublicMethod = function (param) {
+-    };
+-    publicClassWithWithPublicParmeterTypesInGlobal.prototype.myPrivateMethod = function (param) {
+-    };
+-    return publicClassWithWithPublicParmeterTypesInGlobal;
+-}());
++}
+ function publicFunctionWithPublicParmeterTypesInGlobal(param) {
+ }
+ var publicModuleInGlobal;
+ (function (publicModuleInGlobal) {
+-    var privateClass = /** @class */ (function () {
+-        function privateClass() {
+-        }
+-        return privateClass;
+-    }());
+-    var publicClass = /** @class */ (function () {
+-        function publicClass() {
+-        }
+-        return publicClass;
+-    }());
++    class privateClass {
++    }
++    class publicClass {
++    }
+     publicModuleInGlobal.publicClass = publicClass;
+-    var privateModule;
++    let privateModule;
+     (function (privateModule) {
+-        var privateClass = /** @class */ (function () {
+-            function privateClass() {
+-            }
+-            return privateClass;
+-        }());
+-        var publicClass = /** @class */ (function () {
+-            function publicClass() {
+-            }
+-            return publicClass;
+-        }());
++        class privateClass {
++        }
++        class publicClass {
++        }
          privateModule.publicClass = publicClass;
-         class publicClassWithWithPrivateParmeterTypes {
+-        var publicClassWithWithPrivateParmeterTypes = /** @class */ (function () {
+-            function publicClassWithWithPrivateParmeterTypes(param, param1, param2) {
++        class publicClassWithWithPrivateParmeterTypes {
 +            param1;
 +            param2;
-             static myPublicStaticMethod(param) {
++            static myPublicStaticMethod(param) {
++            }
++            static myPrivateStaticMethod(param) {
++            }
++            myPublicMethod(param) {
++            }
++            myPrivateMethod(param) {
++            }
++            constructor(param, param1, param2) {
+                 this.param1 = param1;
+                 this.param2 = param2;
              }
-             static myPrivateStaticMethod(param) {
-@@= skipped -15, +17 lines =@@
-         }
+-            publicClassWithWithPrivateParmeterTypes.myPublicStaticMethod = function (param) {
+-            };
+-            publicClassWithWithPrivateParmeterTypes.myPrivateStaticMethod = function (param) {
+-            };
+-            publicClassWithWithPrivateParmeterTypes.prototype.myPublicMethod = function (param) {
+-            };
+-            publicClassWithWithPrivateParmeterTypes.prototype.myPrivateMethod = function (param) {
+-            };
+-            return publicClassWithWithPrivateParmeterTypes;
+-        }());
++        }
          privateModule.publicClassWithWithPrivateParmeterTypes = publicClassWithWithPrivateParmeterTypes;
-         class publicClassWithWithPublicParmeterTypes {
+-        var publicClassWithWithPublicParmeterTypes = /** @class */ (function () {
+-            function publicClassWithWithPublicParmeterTypes(param, param1, param2) {
++        class publicClassWithWithPublicParmeterTypes {
 +            param1;
 +            param2;
-             static myPublicStaticMethod(param) {
++            static myPublicStaticMethod(param) {
++            }
++            static myPrivateStaticMethod(param) {
++            }
++            myPublicMethod(param) {
++            }
++            myPrivateMethod(param) {
++            }
++            constructor(param, param1, param2) {
+                 this.param1 = param1;
+                 this.param2 = param2;
              }
-             static myPrivateStaticMethod(param) {
-@@= skipped -15, +17 lines =@@
-         }
+-            publicClassWithWithPublicParmeterTypes.myPublicStaticMethod = function (param) {
+-            };
+-            publicClassWithWithPublicParmeterTypes.myPrivateStaticMethod = function (param) {
+-            };
+-            publicClassWithWithPublicParmeterTypes.prototype.myPublicMethod = function (param) {
+-            };
+-            publicClassWithWithPublicParmeterTypes.prototype.myPrivateMethod = function (param) {
+-            };
+-            return publicClassWithWithPublicParmeterTypes;
+-        }());
++        }
          privateModule.publicClassWithWithPublicParmeterTypes = publicClassWithWithPublicParmeterTypes;
-         class privateClassWithWithPrivateParmeterTypes {
+-        var privateClassWithWithPrivateParmeterTypes = /** @class */ (function () {
+-            function privateClassWithWithPrivateParmeterTypes(param, param1, param2) {
+-                this.param1 = param1;
+-                this.param2 = param2;
+-            }
+-            privateClassWithWithPrivateParmeterTypes.myPublicStaticMethod = function (param) {
+-            };
+-            privateClassWithWithPrivateParmeterTypes.myPrivateStaticMethod = function (param) {
+-            };
+-            privateClassWithWithPrivateParmeterTypes.prototype.myPublicMethod = function (param) {
+-            };
+-            privateClassWithWithPrivateParmeterTypes.prototype.myPrivateMethod = function (param) {
+-            };
+-            return privateClassWithWithPrivateParmeterTypes;
+-        }());
+-        var privateClassWithWithPublicParmeterTypes = /** @class */ (function () {
+-            function privateClassWithWithPublicParmeterTypes(param, param1, param2) {
+-                this.param1 = param1;
+-                this.param2 = param2;
+-            }
+-            privateClassWithWithPublicParmeterTypes.myPublicStaticMethod = function (param) {
+-            };
+-            privateClassWithWithPublicParmeterTypes.myPrivateStaticMethod = function (param) {
+-            };
+-            privateClassWithWithPublicParmeterTypes.prototype.myPublicMethod = function (param) {
+-            };
+-            privateClassWithWithPublicParmeterTypes.prototype.myPrivateMethod = function (param) {
+-            };
+-            return privateClassWithWithPublicParmeterTypes;
+-        }());
++        class privateClassWithWithPrivateParmeterTypes {
 +            param1;
 +            param2;
-             static myPublicStaticMethod(param) {
-             }
-             static myPrivateStaticMethod(param) {
-@@= skipped -14, +16 lines =@@
-             }
++            static myPublicStaticMethod(param) {
++            }
++            static myPrivateStaticMethod(param) {
++            }
++            myPublicMethod(param) {
++            }
++            myPrivateMethod(param) {
++            }
++            constructor(param, param1, param2) {
++                this.param1 = param1;
++                this.param2 = param2;
++            }
++        }
++        class privateClassWithWithPublicParmeterTypes {
++            param1;
++            param2;
++            static myPublicStaticMethod(param) {
++            }
++            static myPrivateStaticMethod(param) {
++            }
++            myPublicMethod(param) {
++            }
++            myPrivateMethod(param) {
++            }
++            constructor(param, param1, param2) {
++                this.param1 = param1;
++                this.param2 = param2;
++            }
++        }
+         function publicFunctionWithPrivateParmeterTypes(param) {
          }
-         class privateClassWithWithPublicParmeterTypes {
-+            param1;
-+            param2;
-             static myPublicStaticMethod(param) {
-             }
-             static myPrivateStaticMethod(param) {
-@@= skipped -24, +26 lines =@@
+         privateModule.publicFunctionWithPrivateParmeterTypes = publicFunctionWithPrivateParmeterTypes;
+@@= skipped -150, +142 lines =@@
+         }
          function privateFunctionWithPublicParmeterTypes(param) {
          }
-         class publicClassWithPrivateModuleParameterTypes {
+-        var publicClassWithPrivateModuleParameterTypes = /** @class */ (function () {
+-            function publicClassWithPrivateModuleParameterTypes(param, param1, param2) {
++        class publicClassWithPrivateModuleParameterTypes {
 +            param1;
 +            param2;
-             static myPublicStaticMethod(param) {
++            static myPublicStaticMethod(param) {
++            }
++            myPublicMethod(param) {
++            }
++            constructor(param, param1, param2) {
+                 this.param1 = param1;
+                 this.param2 = param2;
              }
-             myPublicMethod(param) {
-@@= skipped -14, +16 lines =@@
+-            publicClassWithPrivateModuleParameterTypes.myPublicStaticMethod = function (param) {
+-            };
+-            publicClassWithPrivateModuleParameterTypes.prototype.myPublicMethod = function (param) {
+-            };
+-            return publicClassWithPrivateModuleParameterTypes;
+-        }());
++        }
+         privateModule.publicClassWithPrivateModuleParameterTypes = publicClassWithPrivateModuleParameterTypes;
+         function publicFunctionWithPrivateModuleParameterTypes(param) {
          }
          privateModule.publicFunctionWithPrivateModuleParameterTypes = publicFunctionWithPrivateModuleParameterTypes;
-         class privateClassWithPrivateModuleParameterTypes {
+-        var privateClassWithPrivateModuleParameterTypes = /** @class */ (function () {
+-            function privateClassWithPrivateModuleParameterTypes(param, param1, param2) {
++        class privateClassWithPrivateModuleParameterTypes {
 +            param1;
 +            param2;
-             static myPublicStaticMethod(param) {
++            static myPublicStaticMethod(param) {
++            }
++            myPublicMethod(param) {
++            }
++            constructor(param, param1, param2) {
+                 this.param1 = param1;
+                 this.param2 = param2;
              }
-             myPublicMethod(param) {
-@@= skipped -13, +15 lines =@@
+-            privateClassWithPrivateModuleParameterTypes.myPublicStaticMethod = function (param) {
+-            };
+-            privateClassWithPrivateModuleParameterTypes.prototype.myPublicMethod = function (param) {
+-            };
+-            return privateClassWithPrivateModuleParameterTypes;
+-        }());
++        }
+         function privateFunctionWithPrivateModuleParameterTypes(param) {
          }
      })(privateModule || (privateModule = {}));
-     class publicClassWithWithPrivateParmeterTypes {
+-    var publicClassWithWithPrivateParmeterTypes = /** @class */ (function () {
+-        function publicClassWithWithPrivateParmeterTypes(param, param1, param2) {
++    class publicClassWithWithPrivateParmeterTypes {
 +        param1;
 +        param2;
-         static myPublicStaticMethod(param) {
++        static myPublicStaticMethod(param) {
++        }
++        static myPrivateStaticMethod(param) {
++        }
++        myPublicMethod(param) {
++        }
++        myPrivateMethod(param) {
++        }
++        constructor(param, param1, param2) {
+             this.param1 = param1;
+             this.param2 = param2;
          }
-         static myPrivateStaticMethod(param) {
-@@= skipped -15, +17 lines =@@
-     }
+-        publicClassWithWithPrivateParmeterTypes.myPublicStaticMethod = function (param) {
+-        };
+-        publicClassWithWithPrivateParmeterTypes.myPrivateStaticMethod = function (param) {
+-        };
+-        publicClassWithWithPrivateParmeterTypes.prototype.myPublicMethod = function (param) {
+-        };
+-        publicClassWithWithPrivateParmeterTypes.prototype.myPrivateMethod = function (param) {
+-        };
+-        return publicClassWithWithPrivateParmeterTypes;
+-    }());
++    }
      publicModuleInGlobal.publicClassWithWithPrivateParmeterTypes = publicClassWithWithPrivateParmeterTypes;
-     class publicClassWithWithPublicParmeterTypes {
+-    var publicClassWithWithPublicParmeterTypes = /** @class */ (function () {
+-        function publicClassWithWithPublicParmeterTypes(param, param1, param2) {
++    class publicClassWithWithPublicParmeterTypes {
 +        param1;
 +        param2;
-         static myPublicStaticMethod(param) {
++        static myPublicStaticMethod(param) {
++        }
++        static myPrivateStaticMethod(param) {
++        }
++        myPublicMethod(param) {
++        }
++        myPrivateMethod(param) {
++        }
++        constructor(param, param1, param2) {
+             this.param1 = param1;
+             this.param2 = param2;
          }
-         static myPrivateStaticMethod(param) {
-@@= skipped -15, +17 lines =@@
-     }
+-        publicClassWithWithPublicParmeterTypes.myPublicStaticMethod = function (param) {
+-        };
+-        publicClassWithWithPublicParmeterTypes.myPrivateStaticMethod = function (param) {
+-        };
+-        publicClassWithWithPublicParmeterTypes.prototype.myPublicMethod = function (param) {
+-        };
+-        publicClassWithWithPublicParmeterTypes.prototype.myPrivateMethod = function (param) {
+-        };
+-        return publicClassWithWithPublicParmeterTypes;
+-    }());
++    }
      publicModuleInGlobal.publicClassWithWithPublicParmeterTypes = publicClassWithWithPublicParmeterTypes;
-     class privateClassWithWithPrivateParmeterTypes {
+-    var privateClassWithWithPrivateParmeterTypes = /** @class */ (function () {
+-        function privateClassWithWithPrivateParmeterTypes(param, param1, param2) {
+-            this.param1 = param1;
+-            this.param2 = param2;
+-        }
+-        privateClassWithWithPrivateParmeterTypes.myPublicStaticMethod = function (param) {
+-        };
+-        privateClassWithWithPrivateParmeterTypes.myPrivateStaticMethod = function (param) {
+-        };
+-        privateClassWithWithPrivateParmeterTypes.prototype.myPublicMethod = function (param) {
+-        };
+-        privateClassWithWithPrivateParmeterTypes.prototype.myPrivateMethod = function (param) {
+-        };
+-        return privateClassWithWithPrivateParmeterTypes;
+-    }());
+-    var privateClassWithWithPublicParmeterTypes = /** @class */ (function () {
+-        function privateClassWithWithPublicParmeterTypes(param, param1, param2) {
+-            this.param1 = param1;
+-            this.param2 = param2;
+-        }
+-        privateClassWithWithPublicParmeterTypes.myPublicStaticMethod = function (param) {
+-        };
+-        privateClassWithWithPublicParmeterTypes.myPrivateStaticMethod = function (param) {
+-        };
+-        privateClassWithWithPublicParmeterTypes.prototype.myPublicMethod = function (param) {
+-        };
+-        privateClassWithWithPublicParmeterTypes.prototype.myPrivateMethod = function (param) {
+-        };
+-        return privateClassWithWithPublicParmeterTypes;
+-    }());
++    class privateClassWithWithPrivateParmeterTypes {
 +        param1;
 +        param2;
-         static myPublicStaticMethod(param) {
-         }
-         static myPrivateStaticMethod(param) {
-@@= skipped -14, +16 lines =@@
-         }
++        static myPublicStaticMethod(param) {
++        }
++        static myPrivateStaticMethod(param) {
++        }
++        myPublicMethod(param) {
++        }
++        myPrivateMethod(param) {
++        }
++        constructor(param, param1, param2) {
++            this.param1 = param1;
++            this.param2 = param2;
++        }
++    }
++    class privateClassWithWithPublicParmeterTypes {
++        param1;
++        param2;
++        static myPublicStaticMethod(param) {
++        }
++        static myPrivateStaticMethod(param) {
++        }
++        myPublicMethod(param) {
++        }
++        myPrivateMethod(param) {
++        }
++        constructor(param, param1, param2) {
++            this.param1 = param1;
++            this.param2 = param2;
++        }
++    }
+     function publicFunctionWithPrivateParmeterTypes(param) {
      }
-     class privateClassWithWithPublicParmeterTypes {
-+        param1;
-+        param2;
-         static myPublicStaticMethod(param) {
-         }
-         static myPrivateStaticMethod(param) {
-@@= skipped -24, +26 lines =@@
+     publicModuleInGlobal.publicFunctionWithPrivateParmeterTypes = publicFunctionWithPrivateParmeterTypes;
+@@= skipped -101, +107 lines =@@
+     }
      function privateFunctionWithPublicParmeterTypes(param) {
      }
-     class publicClassWithPrivateModuleParameterTypes {
+-    var publicClassWithPrivateModuleParameterTypes = /** @class */ (function () {
+-        function publicClassWithPrivateModuleParameterTypes(param, param1, param2) {
++    class publicClassWithPrivateModuleParameterTypes {
 +        param1;
 +        param2;
-         static myPublicStaticMethod(param) {
++        static myPublicStaticMethod(param) {
++        }
++        myPublicMethod(param) {
++        }
++        constructor(param, param1, param2) {
+             this.param1 = param1;
+             this.param2 = param2;
          }
-         myPublicMethod(param) {
-@@= skipped -14, +16 lines =@@
+-        publicClassWithPrivateModuleParameterTypes.myPublicStaticMethod = function (param) {
+-        };
+-        publicClassWithPrivateModuleParameterTypes.prototype.myPublicMethod = function (param) {
+-        };
+-        return publicClassWithPrivateModuleParameterTypes;
+-    }());
++    }
+     publicModuleInGlobal.publicClassWithPrivateModuleParameterTypes = publicClassWithPrivateModuleParameterTypes;
+     function publicFunctionWithPrivateModuleParameterTypes(param) {
      }
      publicModuleInGlobal.publicFunctionWithPrivateModuleParameterTypes = publicFunctionWithPrivateModuleParameterTypes;
-     class privateClassWithPrivateModuleParameterTypes {
+-    var privateClassWithPrivateModuleParameterTypes = /** @class */ (function () {
+-        function privateClassWithPrivateModuleParameterTypes(param, param1, param2) {
++    class privateClassWithPrivateModuleParameterTypes {
 +        param1;
 +        param2;
-         static myPublicStaticMethod(param) {
++        static myPublicStaticMethod(param) {
++        }
++        myPublicMethod(param) {
++        }
++        constructor(param, param1, param2) {
+             this.param1 = param1;
+             this.param2 = param2;
          }
-         myPublicMethod(param) {
+-        privateClassWithPrivateModuleParameterTypes.myPublicStaticMethod = function (param) {
+-        };
+-        privateClassWithPrivateModuleParameterTypes.prototype.myPublicMethod = function (param) {
+-        };
+-        return privateClassWithPrivateModuleParameterTypes;
+-    }());
++    }
+     function privateFunctionWithPrivateModuleParameterTypes(param) {
+     }
+ })(publicModuleInGlobal || (publicModuleInGlobal = {}));

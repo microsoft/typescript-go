@@ -38,7 +38,7 @@ export const {a: bar4} = { a: 1 };
 >a : number
 >1 : 1
 
-export module M {
+export namespace M {
 >M : typeof M
 
     export let baz = 100;

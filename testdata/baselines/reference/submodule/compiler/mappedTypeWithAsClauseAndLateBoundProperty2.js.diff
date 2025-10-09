@@ -1,0 +1,36 @@
+--- old.mappedTypeWithAsClauseAndLateBoundProperty2.js
++++ new.mappedTypeWithAsClauseAndLateBoundProperty2.js
+@@= skipped -61, +61 lines =@@
+     findIndex: (predicate: (value: number, index: number, obj: number[]) => unknown, thisArg?: any) => number;
+     fill: (value: number, start?: number, end?: number) => number[];
+     copyWithin: (target: number, start: number, end?: number) => number[];
++    [Symbol.iterator]: () => ArrayIterator<number>;
+     entries: () => ArrayIterator<[number, number]>;
+     keys: () => ArrayIterator<number>;
+     values: () => ArrayIterator<number>;
+-    includes: (searchElement: number, fromIndex?: number) => boolean;
+-    flatMap: <U, This = undefined>(callback: (this: This, value: number, index: number, array: number[]) => U | readonly U[], thisArg?: This) => U[];
+-    flat: <A, D extends number = 1>(this: A, depth?: D) => FlatArray<A, D>[];
+-    [Symbol.iterator]: () => ArrayIterator<number>;
+     readonly [Symbol.unscopables]: {
+         [x: number]: boolean;
+         length?: boolean;
+@@= skipped -35, +32 lines =@@
+         findIndex?: boolean;
+         fill?: boolean;
+         copyWithin?: boolean;
++        [Symbol.iterator]?: boolean;
+         entries?: boolean;
+         keys?: boolean;
+         values?: boolean;
++        readonly [Symbol.unscopables]?: boolean;
+         includes?: boolean;
+         flatMap?: boolean;
+         flat?: boolean;
+-        [Symbol.iterator]?: boolean;
+-        readonly [Symbol.unscopables]?: boolean;
+     };
++    includes: (searchElement: number, fromIndex?: number) => boolean;
++    flatMap: <U, This = undefined>(callback: (this: This, value: number, index: number, array: number[]) => U | readonly U[], thisArg?: This) => U[];
++    flat: <A, D extends number = 1>(this: A, depth?: D) => FlatArray<A, D>[];
+ };

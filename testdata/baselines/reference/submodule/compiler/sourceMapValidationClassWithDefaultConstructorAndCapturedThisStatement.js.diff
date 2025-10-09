@@ -1,14 +1,19 @@
 --- old.sourceMapValidationClassWithDefaultConstructorAndCapturedThisStatement.js
 +++ new.sourceMapValidationClassWithDefaultConstructorAndCapturedThisStatement.js
-@@= skipped -7, +7 lines =@@
+@@= skipped -6, +6 lines =@@
+ }
 
  //// [sourceMapValidationClassWithDefaultConstructorAndCapturedThisStatement.js]
- class Greeter {
--    constructor() {
+-var Greeter = /** @class */ (function () {
+-    function Greeter() {
+-        var _this = this;
 -        this.a = 10;
--        this.returnA = () => this.a;
+-        this.returnA = function () { return _this.a; };
 -    }
+-    return Greeter;
+-}());
++class Greeter {
 +    a = 10;
 +    returnA = () => this.a;
- }
++}
  //# sourceMappingURL=sourceMapValidationClassWithDefaultConstructorAndCapturedThisStatement.js.map

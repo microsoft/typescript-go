@@ -1,6 +1,18 @@
 --- old.declarationEmitDefaultExportWithStaticAssignment.js
 +++ new.declarationEmitDefaultExportWithStaticAssignment.js
-@@= skipped -42, +42 lines =@@
+@@= skipped -35, +35 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Foo = void 0;
+-var Foo = /** @class */ (function () {
+-    function Foo() {
+-    }
+-    return Foo;
+-}());
++class Foo {
++}
+ exports.Foo = Foo;
+ //// [index1.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.default = Example;
@@ -9,7 +21,7 @@
  function Example() { }
  Example.Foo = foo_1.Foo;
  //// [index2.js]
-@@= skipped -8, +8 lines =@@
+@@= skipped -18, +15 lines =@@
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.Foo = void 0;
  exports.default = Example;
@@ -18,7 +30,21 @@
  Object.defineProperty(exports, "Foo", { enumerable: true, get: function () { return foo_1.Foo; } });
  function Example() { }
  Example.Foo = foo_1.Foo;
-@@= skipped -31, +31 lines =@@
+@@= skipped -9, +9 lines =@@
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Bar = void 0;
+ exports.default = Example;
+-var Bar = /** @class */ (function () {
+-    function Bar() {
+-    }
+-    return Bar;
+-}());
++class Bar {
++}
+ exports.Bar = Bar;
+ function Example() { }
+ Example.Bar = Bar;
+@@= skipped -25, +22 lines =@@
  export declare class Foo {
  }
  //// [index1.d.ts]

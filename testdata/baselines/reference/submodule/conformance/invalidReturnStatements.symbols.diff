@@ -1,0 +1,11 @@
+--- old.invalidReturnStatements.symbols
++++ new.invalidReturnStatements.symbols
+@@= skipped -12, +12 lines =@@
+
+ function fn4(): Date {  }
+ >fn4 : Symbol(fn4, Decl(invalidReturnStatements.ts, 3, 27))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+ function fn7(): any {  } // should be valid: any includes void
+ >fn7 : Symbol(fn7, Decl(invalidReturnStatements.ts, 4, 25))

@@ -16,7 +16,7 @@
      // operand to be of type Any or a subtype of the ‘Function’ interface type. The result is always of the 
 @@= skipped -8, +8 lines =@@
      
-     module test {
+     namespace test {
          class Object { }
 -              ~~~~~~
 -!!! error TS2725: Class name cannot be 'Object' when targeting ES5 and above with module CommonJS.

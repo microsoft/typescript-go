@@ -5,6 +5,11 @@
 
  //// [controlFlowFinallyNoCatchAssignments.js]
 -"use strict";
- let x;
+-var x;
++let x;
  x = Math.random();
- let a;
+-var a;
++let a;
+ try {
+     if (x) {
+         a = 1;

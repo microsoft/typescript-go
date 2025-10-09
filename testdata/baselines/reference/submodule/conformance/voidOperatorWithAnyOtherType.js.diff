@@ -1,10 +1,23 @@
 --- old.voidOperatorWithAnyOtherType.js
 +++ new.voidOperatorWithAnyOtherType.js
-@@= skipped -73, +73 lines =@@
+@@= skipped -72, +72 lines =@@
+     var a;
      return a;
  }
- class A {
+-var A = /** @class */ (function () {
+-    function A() {
+-    }
+-    A.foo = function () {
++class A {
 +    a;
-     static foo() {
++    static foo() {
          var a;
          return a;
+-    };
+-    return A;
+-}());
++    }
++}
+ var M;
+ (function (M) {
+ })(M || (M = {}));

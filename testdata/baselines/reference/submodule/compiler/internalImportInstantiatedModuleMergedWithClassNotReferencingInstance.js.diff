@@ -1,14 +1,20 @@
 --- old.internalImportInstantiatedModuleMergedWithClassNotReferencingInstance.js
 +++ new.internalImportInstantiatedModuleMergedWithClassNotReferencingInstance.js
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
+
 
  //// [internalImportInstantiatedModuleMergedWithClassNotReferencingInstance.js]
- class A {
+-var A = /** @class */ (function () {
+-    function A() {
+-    }
+-    return A;
+-}());
++class A {
 +    aProp;
- }
++}
  (function (A) {
      A.a = 10;
-@@= skipped -7, +8 lines =@@
+ })(A || (A = {}));
  var B;
  (function (B) {
      var A = 1;

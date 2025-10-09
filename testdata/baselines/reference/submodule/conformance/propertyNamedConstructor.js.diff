@@ -1,17 +1,24 @@
 --- old.propertyNamedConstructor.js
 +++ new.propertyNamedConstructor.js
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
+
 
  //// [propertyNamedConstructor.js]
- class X1 {
--    constructor() {
+-var X1 = /** @class */ (function () {
+-    function X1() {
 -        this["constructor"] = 3; // Error
 -    }
-+    "constructor" = 3; // Error
- }
- class X2 {
--    constructor() {
+-    return X1;
+-}());
+-var X2 = /** @class */ (function () {
+-    function X2() {
 -        this["constructor"] = 3;
 -    }
+-    return X2;
+-}());
++class X1 {
++    "constructor" = 3; // Error
++}
++class X2 {
 +    ["constructor"] = 3;
- }
++}

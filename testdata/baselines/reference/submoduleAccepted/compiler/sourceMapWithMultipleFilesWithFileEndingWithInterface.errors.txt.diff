@@ -7,7 +7,7 @@
 +
 +!!! error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
 +==== a.ts (0 errors) ====
-+    module M {
++    namespace M {
 +        export var X = 1;
 +    }
 +    interface Navigator {
@@ -18,7 +18,7 @@
 +    }
 +    
 +==== b.ts (0 errors) ====
-+    module m1 {
++    namespace m1 {
 +        export class c1 {
 +        }
 +    }

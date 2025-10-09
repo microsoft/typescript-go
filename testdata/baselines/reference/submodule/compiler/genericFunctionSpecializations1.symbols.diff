@@ -1,0 +1,10 @@
+--- old.genericFunctionSpecializations1.symbols
++++ new.genericFunctionSpecializations1.symbols
+@@= skipped -19, +19 lines =@@
+ function foo4<T extends String>(test: T) { }
+ >foo4 : Symbol(foo4, Decl(genericFunctionSpecializations1.ts, 1, 29), Decl(genericFunctionSpecializations1.ts, 3, 31))
+ >T : Symbol(T, Decl(genericFunctionSpecializations1.ts, 4, 14))
+->String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --) ... and 1 more)
++>String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >test : Symbol(test, Decl(genericFunctionSpecializations1.ts, 4, 32))
+ >T : Symbol(T, Decl(genericFunctionSpecializations1.ts, 4, 14))

@@ -343,7 +343,7 @@ function bar2() {
 >x : number
 }
 
-module M1 {
+namespace M1 {
 >M1 : typeof M1
 
     let x = 1;
@@ -378,7 +378,7 @@ module M1 {
 >z : number
 }
 
-module M2 {
+namespace M2 {
 >M2 : typeof M2
     {
         let x = 1;
@@ -418,7 +418,7 @@ module M2 {
 >x : number
 }
 
-module M3 {
+namespace M3 {
 >M3 : typeof M3
 
     const x = 1;
@@ -454,7 +454,7 @@ module M3 {
 
 }
 
-module M4 {
+namespace M4 {
 >M4 : typeof M4
     {
         const x = 1;

@@ -1,0 +1,16 @@
+--- old.thisTypeInInterfaces.symbols
++++ new.thisTypeInInterfaces.symbols
+@@= skipped -47, +47 lines =@@
+
+     c: this | Date;
+ >c : Symbol(I3.c, Decl(thisTypeInInterfaces.ts, 18, 20))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+     d: this & Date;
+ >d : Symbol(I3.d, Decl(thisTypeInInterfaces.ts, 19, 19))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+     e: (((this)));
+ >e : Symbol(I3.e, Decl(thisTypeInInterfaces.ts, 20, 19))

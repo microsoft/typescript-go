@@ -4,12 +4,12 @@
  }
 
  //// [staticsNotInScopeInClodule.js]
--let Clod = (() => {
--    class Clod {
+-var Clod = /** @class */ (function () {
+-    function Clod() {
 -    }
 -    Clod.x = 10;
 -    return Clod;
--})();
+-}());
 +class Clod {
 +    static x = 10;
 +}

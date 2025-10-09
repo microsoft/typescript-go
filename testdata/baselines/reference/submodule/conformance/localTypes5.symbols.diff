@@ -1,0 +1,11 @@
+--- old.localTypes5.symbols
++++ new.localTypes5.symbols
+@@= skipped -23, +23 lines =@@
+ >Y : Symbol(Y, Decl(localTypes5.ts, 3, 36))
+
+             })<Date>();
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+         }
+     }
+     var x = new X();

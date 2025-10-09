@@ -1,0 +1,12 @@
+--- old.argumentsObjectIterator02_ES5.symbols
++++ new.argumentsObjectIterator02_ES5.symbols
+@@= skipped -9, +9 lines =@@
+     let blah = arguments[Symbol.iterator];
+ >blah : Symbol(blah, Decl(argumentsObjectIterator02_ES5.ts, 1, 7))
+ >arguments : Symbol(arguments)
+->Symbol.iterator : Symbol(SymbolConstructor.iterator, Decl(lib.es2015.iterable.d.ts, --, --))
+->Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
+->iterator : Symbol(SymbolConstructor.iterator, Decl(lib.es2015.iterable.d.ts, --, --))
+
+     let result = [];
+ >result : Symbol(result, Decl(argumentsObjectIterator02_ES5.ts, 3, 7))

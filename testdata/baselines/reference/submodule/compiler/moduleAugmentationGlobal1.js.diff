@@ -1,10 +1,25 @@
 --- old.moduleAugmentationGlobal1.js
 +++ new.moduleAugmentationGlobal1.js
-@@= skipped -21, +21 lines =@@
+@@= skipped -20, +20 lines =@@
+ "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.A = void 0;
- class A {
+-var A = /** @class */ (function () {
+-    function A() {
+-    }
+-    return A;
+-}());
++class A {
 +    x;
- }
++}
  exports.A = A;
  //// [f2.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var x = [1];
+-var y = x.getA().x;
++let x = [1];
++let y = x.getA().x;
+
+
+ //// [f1.d.ts]

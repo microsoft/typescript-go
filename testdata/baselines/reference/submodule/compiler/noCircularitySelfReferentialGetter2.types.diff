@@ -1,6 +1,15 @@
 --- old.noCircularitySelfReferentialGetter2.types
 +++ new.noCircularitySelfReferentialGetter2.types
-@@= skipped -23, +23 lines =@@
+@@= skipped -2, +2 lines =@@
+ === noCircularitySelfReferentialGetter2.ts ===
+ interface ZodType {
+   optional: "true" | "false";
+->optional : "true" | "false"
++>optional : "false" | "true"
+
+   output: any;
+ >output : any
+@@= skipped -21, +21 lines =@@
  >Prettify : { [K in keyof T]: T[K]; }
 
  type InferObjectType<Shape extends ZodShape> = Prettify<
@@ -18,3 +27,29 @@
  }
 
  interface ZodOptional<T extends ZodType> extends ZodType {
+@@= skipped -47, +47 lines =@@
+ export const name = Category.output.parent?.parent?.parent?.parent?.name;
+ >name : string | undefined
+ >Category.output.parent?.parent?.parent?.parent?.name : string | undefined
+->Category.output.parent?.parent?.parent?.parent : { readonly parent?: any | undefined; name: string; } | undefined
+->Category.output.parent?.parent?.parent : { readonly parent?: any | undefined; name: string; } | undefined
+->Category.output.parent?.parent : { readonly parent?: any | undefined; name: string; } | undefined
+->Category.output.parent : { readonly parent?: any | undefined; name: string; } | undefined
+->Category.output : { readonly parent?: any | undefined; name: string; }
++>Category.output.parent?.parent?.parent?.parent : { name: string; readonly parent?: any | undefined; } | undefined
++>Category.output.parent?.parent?.parent : { name: string; readonly parent?: any | undefined; } | undefined
++>Category.output.parent?.parent : { name: string; readonly parent?: any | undefined; } | undefined
++>Category.output.parent : { name: string; readonly parent?: any | undefined; } | undefined
++>Category.output : { name: string; readonly parent?: any | undefined; }
+ >Category : ZodObject<{ name: ZodString; readonly parent: ZodOptional<ZodObject<any>>; }>
+->output : { readonly parent?: any | undefined; name: string; }
+->parent : { readonly parent?: any | undefined; name: string; } | undefined
+->parent : { readonly parent?: any | undefined; name: string; } | undefined
+->parent : { readonly parent?: any | undefined; name: string; } | undefined
+->parent : { readonly parent?: any | undefined; name: string; } | undefined
++>output : { name: string; readonly parent?: any | undefined; }
++>parent : { name: string; readonly parent?: any | undefined; } | undefined
++>parent : { name: string; readonly parent?: any | undefined; } | undefined
++>parent : { name: string; readonly parent?: any | undefined; } | undefined
++>parent : { name: string; readonly parent?: any | undefined; } | undefined
+ >name : string | undefined

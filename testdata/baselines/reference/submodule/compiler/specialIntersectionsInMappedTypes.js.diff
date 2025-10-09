@@ -6,6 +6,8 @@
  //// [specialIntersectionsInMappedTypes.js]
 -"use strict";
 -// Repro from #50683
- const a = {
+-var a = {
++const a = {
      left: "align-left",
      center: "align-center",
+     right: "align-right",

@@ -1,0 +1,20 @@
+--- old.mappedTypes2.symbols
++++ new.mappedTypes2.symbols
+@@= skipped -58, +58 lines =@@
+ }
+
+ type Proxy<T> = {
+->Proxy : Symbol(Proxy, Decl(lib.es2015.proxy.d.ts, --, --), Decl(mappedTypes2.ts, 9, 1))
++>Proxy : Symbol(Proxy, Decl(mappedTypes2.ts, 9, 1))
+ >T : Symbol(T, Decl(mappedTypes2.ts, 11, 11))
+
+     get(): T;
+@@= skipped -20, +20 lines =@@
+     [P in keyof T]: Proxy<T[P]>;
+ >P : Symbol(P, Decl(mappedTypes2.ts, 17, 5))
+ >T : Symbol(T, Decl(mappedTypes2.ts, 16, 13))
+->Proxy : Symbol(Proxy, Decl(lib.es2015.proxy.d.ts, --, --), Decl(mappedTypes2.ts, 9, 1))
++>Proxy : Symbol(Proxy, Decl(mappedTypes2.ts, 9, 1))
+ >T : Symbol(T, Decl(mappedTypes2.ts, 16, 13))
+ >P : Symbol(P, Decl(mappedTypes2.ts, 17, 5))
+ }

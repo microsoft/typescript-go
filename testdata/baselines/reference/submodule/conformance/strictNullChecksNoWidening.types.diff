@@ -1,0 +1,18 @@
+--- old.strictNullChecksNoWidening.types
++++ new.strictNullChecksNoWidening.types
+@@= skipped -19, +19 lines =@@
+ var b2 = [,];
+ >b2 : undefined[]
+ >[,] : undefined[]
+-> : undefined
+
+ var b3 = [undefined];
+ >b3 : undefined[]
+@@= skipped -18, +17 lines =@@
+ >[[], [,]] : undefined[][]
+ >[] : never[]
+ >[,] : undefined[]
+-> : undefined
+
+ declare function f<T>(x: T): T;
+ >f : <T>(x: T) => T

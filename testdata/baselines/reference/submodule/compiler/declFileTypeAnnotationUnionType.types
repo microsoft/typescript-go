@@ -7,7 +7,7 @@ class c {
     private p: string;
 >p : string
 }
-module m {
+namespace m {
 >m : typeof m
 
     export class c {

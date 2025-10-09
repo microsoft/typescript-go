@@ -1,0 +1,11 @@
+--- old.checkJsdocReturnTag2.types
++++ new.checkJsdocReturnTag2.types
+@@= skipped -18, +18 lines =@@
+ >f1 : () => string | number
+
+     return 5 || true;
+->5 || true : true | 5
++>5 || true : 5 | true
+ >5 : 5
+ >true : true
+ }

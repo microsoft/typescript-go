@@ -6,6 +6,11 @@
  //// [index.d.ts]
 -export const kBar: unique symbol;
 -export class foo0 {
+-    /**
+-     * @type {string}
+-     */
+-    set bar(value: string | null);
+-    get bar(): string | null;
 +export declare const kBar: unique symbol;
 +export declare class foo0 {
      /**
@@ -14,9 +19,8 @@
       */
      protected [kBar]: null | string;
 +    get bar(): string | null;
-     /**
-      * @type {string}
-      */
-     set bar(value: string | null);
--    get bar(): string | null;
++    /**
++     * @type {string}
++     */
++    set bar(value: string | null);
  }

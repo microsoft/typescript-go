@@ -1,0 +1,13 @@
+--- old.parserES5SymbolProperty1.types
++++ new.parserES5SymbolProperty1.types
+@@= skipped -3, +3 lines =@@
+ interface I {
+     [Symbol.iterator]: string;
+ >[Symbol.iterator] : string
+->Symbol.iterator : unique symbol
+->Symbol : SymbolConstructor
+->iterator : unique symbol
++>Symbol.iterator : any
++>Symbol : any
++>iterator : any
+ }

@@ -1,6 +1,18 @@
 --- old.jsDeclarationsReexportAliases.js
 +++ new.jsDeclarationsReexportAliases.js
-@@= skipped -20, +20 lines =@@
+@@= skipped -13, +13 lines =@@
+ //// [cls.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var Foo = /** @class */ (function () {
+-    function Foo() {
+-    }
+-    return Foo;
+-}());
++class Foo {
++}
+ exports.default = Foo;
+ //// [usage.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.Foob = exports.x = void 0;
@@ -12,7 +24,7 @@
  Object.defineProperty(exports, "Foob", { enumerable: true, get: function () { return cls_2.default; } });
 
 
-@@= skipped -10, +10 lines =@@
+@@= skipped -20, +17 lines =@@
  export default class Foo {
  }
  //// [usage.d.ts]

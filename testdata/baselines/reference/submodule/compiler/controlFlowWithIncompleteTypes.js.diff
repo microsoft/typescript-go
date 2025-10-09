@@ -6,5 +6,17 @@
  //// [controlFlowWithIncompleteTypes.js]
 -// Repro from #11000
  function foo1() {
-     let x = 0;
+-    var x = 0;
++    let x = 0;
      while (cond) {
+         if (typeof x === "string") {
+             x = x.slice();
+@@= skipped -13, +12 lines =@@
+     }
+ }
+ function foo2() {
+-    var x = 0;
++    let x = 0;
+     while (cond) {
+         if (typeof x === "number") {
+             x = "abc";

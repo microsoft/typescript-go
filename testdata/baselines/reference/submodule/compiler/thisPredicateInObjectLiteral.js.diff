@@ -6,5 +6,18 @@
  //// [thisPredicateInObjectLiteral.js]
 -"use strict";
  // Should be OK
- const foo2 = {
-     isNumber() {
+-var foo2 = {
+-    isNumber: function () {
++const foo2 = {
++    isNumber() {
+         return true;
+     },
+ };
+ // Still an error
+-var foo3 = {
+-    isNumber: function (x) {
++const foo3 = {
++    isNumber(x) {
+         return true;
+     },
+ };

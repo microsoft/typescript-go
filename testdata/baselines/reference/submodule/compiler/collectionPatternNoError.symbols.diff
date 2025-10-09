@@ -1,0 +1,11 @@
+--- old.collectionPatternNoError.symbols
++++ new.collectionPatternNoError.symbols
+@@= skipped -7, +7 lines =@@
+
+   new(data: Array<{}>): T;
+ >data : Symbol(data, Decl(collectionPatternNoError.ts, 1, 6))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >T : Symbol(T, Decl(collectionPatternNoError.ts, 0, 25))
+ }
+ class Message {

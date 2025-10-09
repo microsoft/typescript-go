@@ -1,0 +1,11 @@
+--- old.genericFunctionParameters.symbols
++++ new.genericFunctionParameters.symbols
+@@= skipped -25, +25 lines =@@
+ >T : Symbol(T, Decl(genericFunctionParameters.ts, 2, 20))
+ >cb : Symbol(cb, Decl(genericFunctionParameters.ts, 2, 23))
+ >S : Symbol(S, Decl(genericFunctionParameters.ts, 2, 28))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >S : Symbol(S, Decl(genericFunctionParameters.ts, 2, 28))
+ >x : Symbol(x, Decl(genericFunctionParameters.ts, 2, 48))
+ >S : Symbol(S, Decl(genericFunctionParameters.ts, 2, 28))

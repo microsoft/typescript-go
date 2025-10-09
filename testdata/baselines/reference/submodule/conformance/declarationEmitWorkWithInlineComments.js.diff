@@ -1,9 +1,12 @@
 --- old.declarationEmitWorkWithInlineComments.js
 +++ new.declarationEmitWorkWithInlineComments.js
-@@= skipped -40, +40 lines =@@
+@@= skipped -39, +39 lines =@@
+ "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.Baz = exports.Bar = exports.Foo = void 0;
- class Foo {
+-var Foo = /** @class */ (function () {
+-    function Foo(
++class Foo {
 +    isInternal1;
 +    isInternal2;
 +    isInternal3;
@@ -14,25 +17,41 @@
 +    notInternal1;
 +    notInternal2;
 +    notInternal3;
-     constructor(
++    constructor(
      /** @internal */
      isInternal1, 
-@@= skipped -34, +44 lines =@@
- }
+     /** @internal */ isInternal2, /** @internal */ isInternal3, 
+@@= skipped -32, +42 lines =@@
+         this.notInternal2 = notInternal2;
+         this.notInternal3 = notInternal3;
+     }
+-    return Foo;
+-}());
++}
  exports.Foo = Foo;
- class Bar {
+-var Bar = /** @class */ (function () {
+-    function Bar(/* @internal */ isInternal1) {
++class Bar {
 +    isInternal1;
-     constructor(/* @internal */ isInternal1) {
++    constructor(/* @internal */ isInternal1) {
          this.isInternal1 = isInternal1;
      }
- }
+-    return Bar;
+-}());
++}
  exports.Bar = Bar;
- class Baz {
+-var Baz = /** @class */ (function () {
+-    function Baz(/* @internal */ isInternal) {
++class Baz {
 +    isInternal;
-     constructor(/* @internal */ isInternal) {
++    constructor(/* @internal */ isInternal) {
          this.isInternal = isInternal;
      }
-@@= skipped -15, +17 lines =@@
+-    return Baz;
+-}());
++}
+ exports.Baz = Baz;
+
 
  //// [declarationEmitWorkWithInlineComments.d.ts]
  export declare class Foo {
@@ -46,7 +65,7 @@
      notInternal1: string;
      notInternal2: string;
      notInternal3: string;
-@@= skipped -11, +18 lines =@@
+@@= skipped -32, +38 lines =@@
      isInternal5: string, isInternal6: string, isInternal7: string, /** @internal */ notInternal1: string, notInternal2: string, notInternal3: string);
  }
  export declare class Bar {

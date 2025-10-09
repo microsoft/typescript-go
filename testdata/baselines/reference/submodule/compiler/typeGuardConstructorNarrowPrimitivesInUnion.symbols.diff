@@ -1,0 +1,20 @@
+--- old.typeGuardConstructorNarrowPrimitivesInUnion.symbols
++++ new.typeGuardConstructorNarrowPrimitivesInUnion.symbols
+@@= skipped -18, +18 lines =@@
+ >var1.constructor : Symbol(Object.constructor, Decl(lib.es5.d.ts, --, --))
+ >var1 : Symbol(var1, Decl(typeGuardConstructorNarrowPrimitivesInUnion.ts, 1, 3))
+ >constructor : Symbol(Object.constructor, Decl(lib.es5.d.ts, --, --))
+->String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --) ... and 1 more)
++>String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+     var1; // "hello" | "world"
+ >var1 : Symbol(var1, Decl(typeGuardConstructorNarrowPrimitivesInUnion.ts, 1, 3))
+@@= skipped -20, +20 lines =@@
+ >var1.constructor : Symbol(Object.constructor, Decl(lib.es5.d.ts, --, --))
+ >var1 : Symbol(var1, Decl(typeGuardConstructorNarrowPrimitivesInUnion.ts, 1, 3))
+ >constructor : Symbol(Object.constructor, Decl(lib.es5.d.ts, --, --))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+     var1; // number[] | string[]
+ >var1 : Symbol(var1, Decl(typeGuardConstructorNarrowPrimitivesInUnion.ts, 1, 3))

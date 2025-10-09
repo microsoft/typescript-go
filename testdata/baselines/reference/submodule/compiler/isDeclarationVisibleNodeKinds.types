@@ -2,7 +2,7 @@
 
 === isDeclarationVisibleNodeKinds.ts ===
 // Function types
-module schema {
+namespace schema {
 >schema : typeof schema
 
     export function createValidator1(schema: any): <T>(data: T) => T {
@@ -16,7 +16,7 @@ module schema {
 }
 
 // Constructor types
-module schema {
+namespace schema {
 >schema : typeof schema
 
     export function createValidator2(schema: any): new <T>(data: T) => T {
@@ -30,7 +30,7 @@ module schema {
 }
 
 // union types
-module schema {
+namespace schema {
 >schema : typeof schema
 
      export function createValidator3(schema: any): number | { new <T>(data: T): T; }  {
@@ -44,7 +44,7 @@ module schema {
 }
 
 // Array types
-module schema {
+namespace schema {
 >schema : typeof schema
 
      export function createValidator4(schema: any): { new <T>(data: T): T; }[] {
@@ -59,7 +59,7 @@ module schema {
 
 
 // TypeLiterals
-module schema {
+namespace schema {
 >schema : typeof schema
 
     export function createValidator5(schema: any): { new <T>(data: T): T } {
@@ -73,7 +73,7 @@ module schema {
 }
 
 // Tuple types
-module schema {
+namespace schema {
 >schema : typeof schema
 
     export function createValidator6(schema: any): [ new <T>(data: T) => T, number] {
@@ -87,7 +87,7 @@ module schema {
 }
 
 // Paren Types
-module schema {
+namespace schema {
 >schema : typeof schema
 
     export function createValidator7(schema: any): (new <T>(data: T)=>T )[] {
@@ -101,7 +101,7 @@ module schema {
 }
 
 // Type reference
-module schema {
+namespace schema {
 >schema : typeof schema
 
     export function createValidator8(schema: any): Array<{ <T>(data: T) : T}> {
@@ -115,7 +115,7 @@ module schema {
 }
 
 
-module schema {
+namespace schema {
 >schema : typeof schema
 
     export class T {

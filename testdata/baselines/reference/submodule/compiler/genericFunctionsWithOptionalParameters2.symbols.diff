@@ -1,0 +1,11 @@
+--- old.genericFunctionsWithOptionalParameters2.symbols
++++ new.genericFunctionsWithOptionalParameters2.symbols
+@@= skipped -8, +8 lines =@@
+ >T : Symbol(T, Decl(genericFunctionsWithOptionalParameters2.ts, 1, 8))
+ >S : Symbol(S, Decl(genericFunctionsWithOptionalParameters2.ts, 1, 10))
+ >c : Symbol(c, Decl(genericFunctionsWithOptionalParameters2.ts, 1, 14))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >T : Symbol(T, Decl(genericFunctionsWithOptionalParameters2.ts, 1, 8))
+ >folder : Symbol(folder, Decl(genericFunctionsWithOptionalParameters2.ts, 1, 26))
+ >s : Symbol(s, Decl(genericFunctionsWithOptionalParameters2.ts, 1, 37))

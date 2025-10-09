@@ -1,0 +1,9 @@
+--- old.functionOverloadsOnGenericArity2.symbols
++++ new.functionOverloadsOnGenericArity2.symbols
+@@= skipped -17, +17 lines =@@
+ >U : Symbol(U, Decl(functionOverloadsOnGenericArity2.ts, 3, 9))
+ >T : Symbol(T, Decl(functionOverloadsOnGenericArity2.ts, 3, 11))
+ >p : Symbol(p, Decl(functionOverloadsOnGenericArity2.ts, 3, 15))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+ }

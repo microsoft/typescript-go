@@ -4,14 +4,20 @@
  module.exports.Strings = Strings;
 
  //// [cls.js]
+-var Strings = {
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
- const Strings = {
++const Strings = {
      a: "A",
      b: "B"
  };
- class Foo {
- }
+-var Foo = /** @class */ (function () {
+-    function Foo() {
+-    }
+-    return Foo;
+-}());
++class Foo {
++}
 +export = Foo;
  module.exports = Foo;
 +export var Strings = Strings;

@@ -1,0 +1,9 @@
+--- old.contextualTypeObjectSpreadExpression.js
++++ new.contextualTypeObjectSpreadExpression.js
+@@= skipped -19, +19 lines =@@
+     };
+     return __assign.apply(this, arguments);
+ };
+-var i;
++let i;
+ i = __assign({ a: "a" });

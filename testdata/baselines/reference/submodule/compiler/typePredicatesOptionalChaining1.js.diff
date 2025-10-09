@@ -6,5 +6,8 @@
  //// [typePredicatesOptionalChaining1.js]
 -"use strict";
  var _a;
- const x = {
+-var x = {
++const x = {
      y: {},
+ };
+ // type guard

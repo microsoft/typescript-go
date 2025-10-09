@@ -1,0 +1,9 @@
+--- old.sourceMapValidationDestructuringVariableStatementArrayBindingPattern.types
++++ new.sourceMapValidationDestructuringVariableStatementArrayBindingPattern.types
+@@= skipped -26, +26 lines =@@
+
+
+ let [, nameA] = robotA;
+-> : undefined
+ >nameA : string
+ >robotA : Robot

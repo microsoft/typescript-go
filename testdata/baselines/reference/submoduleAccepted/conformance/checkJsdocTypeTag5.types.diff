@@ -39,10 +39,12 @@
  /** @type {Argle} */
  function blargle(s) {
 ->blargle : (x: "hi" | "bye") => 0 | 1 | 2
+->s : "hi" | "bye"
 +>blargle : (s: "bye" | "hi") => 0 | 1 | 2
- >s : "bye" | "hi"
++>s : "bye" | "hi"
 
      return 0;
+ >0 : 0
 @@= skipped -11, +11 lines =@@
  var zeroonetwo = blargle('hi')
  >zeroonetwo : 0 | 1 | 2
@@ -52,3 +54,12 @@
  >'hi' : "hi"
 
  /** @typedef {{(s: string): 0 | 1; (b: boolean): 2 | 3 }} Gioconda */
+@@= skipped -13, +13 lines =@@
+     return typeof sb === 'string' ? 1 : 2;
+ >typeof sb === 'string' ? 1 : 2 : 1 | 2
+ >typeof sb === 'string' : boolean
+->typeof sb : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
++>typeof sb : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
+ >sb : any
+ >'string' : "string"
+ >1 : 1

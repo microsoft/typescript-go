@@ -1,0 +1,9 @@
+--- old.undefinedTypeArgument1.symbols
++++ new.undefinedTypeArgument1.symbols
+@@= skipped -2, +2 lines =@@
+ === undefinedTypeArgument1.ts ===
+ var cats = new Array<WAWA>();
+ >cats : Symbol(cats, Decl(undefinedTypeArgument1.ts, 0, 3))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ >WAWA : Symbol(WAWA)

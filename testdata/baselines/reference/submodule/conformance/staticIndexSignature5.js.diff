@@ -5,5 +5,10 @@
 
  //// [staticIndexSignature5.js]
 -"use strict";
- class B {
- }
+-var B = /** @class */ (function () {
+-    function B() {
+-    }
+-    return B;
+-}());
++class B {
++}

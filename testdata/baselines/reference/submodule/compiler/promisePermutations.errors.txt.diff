@@ -1,6 +1,15 @@
 --- old.promisePermutations.errors.txt
 +++ new.promisePermutations.errors.txt
-@@= skipped -143, +143 lines =@@
+@@= skipped -124, +124 lines =@@
+ promisePermutations.ts(152,36): error TS2769: No overload matches this call.
+   The last overload gave the following error.
+     Argument of type '(x: any) => IPromise<string>' is not assignable to parameter of type '(error: any) => Promise<number>'.
+-      Type 'IPromise<string>' is missing the following properties from type 'Promise<number>': catch, [Symbol.toStringTag]
++      Property 'catch' is missing in type 'IPromise<string>' but required in type 'Promise<number>'.
+ promisePermutations.ts(156,21): error TS2769: No overload matches this call.
+   The last overload gave the following error.
+     Argument of type '{ (x: number): IPromise<number>; (x: string): IPromise<string>; }' is not assignable to parameter of type '(value: number) => IPromise<string>'.
+@@= skipped -19, +19 lines =@@
  promisePermutations.ts(160,21): error TS2769: No overload matches this call.
    The last overload gave the following error.
      Argument of type '{ (x: number): Promise<number>; (x: string): Promise<string>; }' is not assignable to parameter of type '(value: number) => IPromise<string>'.
@@ -11,7 +20,17 @@
            Type '{ <TResult1 = number, TResult2 = never>(onfulfilled?: (value: number) => TResult1 | PromiseLike<TResult1>, onrejected?: (reason: any) => TResult2 | PromiseLike<TResult2>): Promise<TResult1 | TResult2>; <U>(success?: (value: number) => Promise<U>, error?: (error: any) => Promise<U>, progress?: (progress: any) => void): Promise<U>; <U>(success?: (value: number) => Promise<U>, error?: (error: any) => U, progress?: (progress: any) => void): Promise<U>; <U>(success?: (value: number) => U, error?: (error: any) => Promise<U>, progress?: (progress: any) => void): Promise<U>; <U>(success?: (value: number) => U, error?: (error: any) => U, progress?: (progress: any) => void): Promise<U>; }' is not assignable to type '{ <U>(success?: (value: string) => IPromise<U>, error?: (error: any) => IPromise<U>, progress?: (progress: any) => void): IPromise<U>; <U>(success?: (value: string) => IPromise<U>, error?: (error: any) => U, progress?: (progress: any) => void): IPromise<U>; <U>(success?: (value: string) => U, error?: (error: any) => IPromise<U>, progress?: (progress: any) => void): IPromise<U>; <U>(success?: (value: string) => U, error?: (error: any) => U, progress?: (progress: any) => void): IPromise<U>; }'.
              Types of parameters 'onfulfilled' and 'success' are incompatible.
                Types of parameters 'value' and 'value' are incompatible.
-@@= skipped -381, +381 lines =@@
+@@= skipped -345, +345 lines =@@
+ !!! error TS2769: No overload matches this call.
+ !!! error TS2769:   The last overload gave the following error.
+ !!! error TS2769:     Argument of type '(x: any) => IPromise<string>' is not assignable to parameter of type '(error: any) => Promise<number>'.
+-!!! error TS2769:       Type 'IPromise<string>' is missing the following properties from type 'Promise<number>': catch, [Symbol.toStringTag]
++!!! error TS2769:       Property 'catch' is missing in type 'IPromise<string>' but required in type 'Promise<number>'.
++!!! related TS2728 lib.es5.d.ts:--:--: 'catch' is declared here.
+ !!! related TS2771 promisePermutations.ts:5:5: The last overload is declared here.
+     var s10g = s10.then(testFunctionP, nIPromise, sIPromise).then(sPromise, sIPromise, sIPromise); // ok
+     
+@@= skipped -35, +36 lines =@@
  !!! error TS2769: No overload matches this call.
  !!! error TS2769:   The last overload gave the following error.
  !!! error TS2769:     Argument of type '{ (x: number): Promise<number>; (x: string): Promise<string>; }' is not assignable to parameter of type '(value: number) => IPromise<string>'.

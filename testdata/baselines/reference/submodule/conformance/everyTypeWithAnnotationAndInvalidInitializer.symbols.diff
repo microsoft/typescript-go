@@ -1,0 +1,11 @@
+--- old.everyTypeWithAnnotationAndInvalidInitializer.symbols
++++ new.everyTypeWithAnnotationAndInvalidInitializer.symbols
+@@= skipped -88, +88 lines =@@
+
+ var aDate: Date = 9.9;
+ >aDate : Symbol(aDate, Decl(everyTypeWithAnnotationAndInvalidInitializer.ts, 35, 3))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+ var aVoid: void = 9.9;
+ >aVoid : Symbol(aVoid, Decl(everyTypeWithAnnotationAndInvalidInitializer.ts, 37, 3))

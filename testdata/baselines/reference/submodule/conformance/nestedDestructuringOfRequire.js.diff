@@ -4,16 +4,19 @@
 
 
  //// [mod1.js]
+-var chalk = {
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
- const chalk = {
++const chalk = {
      grey: {}
  };
 +export var chalk = chalk;
  module.exports.chalk = chalk;
  //// [main.js]
- const { chalk: { grey } } = require('./mod1');
-@@= skipped -11, +14 lines =@@
+-var grey = require('./mod1').chalk.grey;
++const { chalk: { grey } } = require('./mod1');
+ grey;
+ chalk;
 
 
  //// [mod1.d.ts]

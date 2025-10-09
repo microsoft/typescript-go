@@ -1,6 +1,20 @@
 --- old.exportsAndImports1.js
 +++ new.exportsAndImports1.js
-@@= skipped -52, +52 lines =@@
+@@= skipped -40, +40 lines =@@
+ var v = 1;
+ exports.v = v;
+ function f() { }
+-var C = /** @class */ (function () {
+-    function C() {
+-    }
+-    return C;
+-}());
++class C {
++}
+ exports.C = C;
+ var E;
+ (function (E) {
+@@= skipped -15, +12 lines =@@
  var M;
  (function (M) {
  })(M || (exports.M = M = {}));

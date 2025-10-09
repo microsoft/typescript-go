@@ -1,16 +1,37 @@
 --- old.thisBinding.js
 +++ new.thisBinding.js
-@@= skipped -26, +26 lines =@@
+@@= skipped -25, +25 lines =@@
+ //// [thisBinding.js]
  var M;
  (function (M) {
-     class C {
+-    var C = /** @class */ (function () {
+-        function C() {
+-            this.x = 0;
+-            ({ z: 10, f: this.f }).f(({}));
+-        }
+-        C.prototype.f = function (x) {
++    class C {
 +        x = 0;
-         f(x) {
++        f(x) {
              x.e; // e not found
              x.z; // ok 
-         }
-         constructor() {
--            this.x = 0;
-             ({ z: 10, f: this.f }).f(({}));
-         }
+-        };
+-        return C;
+-    }());
++        }
++        constructor() {
++            ({ z: 10, f: this.f }).f(({}));
++        }
++    }
+     M.C = C;
+ })(M || (M = {}));
+-var C = /** @class */ (function () {
+-    function C() {
++class C {
++    f(x) {
      }
+-    C.prototype.f = function (x) {
+-    };
+-    return C;
+-}());
++}

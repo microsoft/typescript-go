@@ -29,7 +29,7 @@ b1 = a; // error
 >b1 : { [x: string]: string; }
 >a : A
 
-module Generics {
+namespace Generics {
 >Generics : typeof Generics
 
     class A<T extends Derived> {

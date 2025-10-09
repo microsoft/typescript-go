@@ -1,0 +1,11 @@
+--- old.argumentsAsPropertyName.symbols
++++ new.argumentsAsPropertyName.symbols
+@@= skipped -6, +6 lines =@@
+
+     arguments: Array<string>
+ >arguments : Symbol(arguments, Decl(argumentsAsPropertyName.ts, 1, 15))
+->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+ }
+
+ declare function use(s: any);

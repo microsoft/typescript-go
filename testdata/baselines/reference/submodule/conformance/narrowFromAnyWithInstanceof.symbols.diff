@@ -1,0 +1,20 @@
+--- old.narrowFromAnyWithInstanceof.symbols
++++ new.narrowFromAnyWithInstanceof.symbols
+@@= skipped -5, +5 lines =@@
+
+ if (x instanceof Function) { // 'any' is not narrowed when target type is 'Function'
+ >x : Symbol(x, Decl(narrowFromAnyWithInstanceof.ts, 0, 11))
+->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+     x();
+ >x : Symbol(x, Decl(narrowFromAnyWithInstanceof.ts, 0, 11))
+@@= skipped -41, +41 lines =@@
+
+ if (x instanceof Date) {
+ >x : Symbol(x, Decl(narrowFromAnyWithInstanceof.ts, 0, 11))
+->Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
++>Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
+
+     x.getDate();
+ >x.getDate : Symbol(Date.getDate, Decl(lib.es5.d.ts, --, --))

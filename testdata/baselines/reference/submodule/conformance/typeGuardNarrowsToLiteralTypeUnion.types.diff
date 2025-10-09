@@ -10,10 +10,12 @@
 
  declare function doThis(value: "foo" | "bar"): void;
 ->doThis : (value: "foo" | "bar") => void
+->value : "foo" | "bar"
 +>doThis : (value: "bar" | "foo") => void
- >value : "bar" | "foo"
++>value : "bar" | "foo"
 
  declare function doThat(value: string) : void;
+ >doThat : (value: string) => void
 @@= skipped -16, +16 lines =@@
 
  if (isFoo(value)) {
@@ -25,7 +27,9 @@
      doThis(value);
  >doThis(value) : void
 ->doThis : (value: "foo" | "bar") => void
+->value : "foo" | "bar"
 +>doThis : (value: "bar" | "foo") => void
- >value : "bar" | "foo"
++>value : "bar" | "foo"
 
  } else {
+     doThat(value);
