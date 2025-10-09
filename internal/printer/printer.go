@@ -2964,12 +2964,155 @@ func (p *Printer) emitExpressionNoASI(node *ast.Expression, precedence ast.Opera
 	//	    a;
 	//	}
 	// Due to ASI, this would result in a `return` with no value followed by an unreachable expression statement.
-	if !p.commentsDisabled && node.Kind == ast.KindPartiallyEmittedExpression && p.willEmitLeadingNewLine(node) {
-		// !!! if there is an original parse tree node, restore it with location to preserve comments and source maps.
-		p.emitExpression(node, ast.OperatorPrecedenceParentheses)
-	} else {
-		p.emitExpression(node, precedence)
+	p.emitExpression(p.parenthesizeExpressionForNoAsi(node), precedence)
+}
+
+// parenthesizeExpressionForNoAsi walks down the left side of expressions to check if any
+// PartiallyEmittedExpression might introduce ASI, and returns an expression that ensures
+// proper parenthesization to prevent ASI issues.
+func (p *Printer) parenthesizeExpressionForNoAsi(node *ast.Expression) *ast.Expression {
+	if p.commentsDisabled {
+		return node
 	}
+
+	switch node.Kind {
+	case ast.KindPartiallyEmittedExpression:
+		pee := node.AsPartiallyEmittedExpression()
+		if p.willEmitLeadingNewLine(node) {
+			// !!! if there is an original parse tree node, restore it with location to preserve comments and source maps.
+			// Emit with parentheses precedence to force wrapping
+			return p.createParenthesizedExpressionForNoAsi(node)
+		}
+		// Recursively check the inner expression
+		innerParenthesized := p.parenthesizeExpressionForNoAsi(pee.Expression)
+		if innerParenthesized != pee.Expression {
+			// Need to create a new PartiallyEmittedExpression with the parenthesized inner expression
+			return p.updatePartiallyEmittedExpression(pee, innerParenthesized)
+		}
+
+	case ast.KindPropertyAccessExpression:
+		pae := node.AsPropertyAccessExpression()
+		exprParenthesized := p.parenthesizeExpressionForNoAsi(pae.Expression)
+		if exprParenthesized != pae.Expression {
+			return p.updatePropertyAccessExpression(pae, exprParenthesized)
+		}
+
+	case ast.KindElementAccessExpression:
+		eae := node.AsElementAccessExpression()
+		exprParenthesized := p.parenthesizeExpressionForNoAsi(eae.Expression)
+		if exprParenthesized != eae.Expression {
+			return p.updateElementAccessExpression(eae, exprParenthesized)
+		}
+
+	case ast.KindCallExpression:
+		ce := node.AsCallExpression()
+		exprParenthesized := p.parenthesizeExpressionForNoAsi(ce.Expression)
+		if exprParenthesized != ce.Expression {
+			return p.updateCallExpression(ce, exprParenthesized)
+		}
+
+	case ast.KindTaggedTemplateExpression:
+		tte := node.AsTaggedTemplateExpression()
+		tagParenthesized := p.parenthesizeExpressionForNoAsi(tte.Tag)
+		if tagParenthesized != tte.Tag {
+			return p.updateTaggedTemplateExpression(tte, tagParenthesized)
+		}
+
+	case ast.KindPostfixUnaryExpression:
+		pue := node.AsPostfixUnaryExpression()
+		operandParenthesized := p.parenthesizeExpressionForNoAsi(pue.Operand)
+		if operandParenthesized != pue.Operand {
+			return p.updatePostfixUnaryExpression(pue, operandParenthesized)
+		}
+
+	case ast.KindBinaryExpression:
+		be := node.AsBinaryExpression()
+		leftParenthesized := p.parenthesizeExpressionForNoAsi(be.Left)
+		if leftParenthesized != be.Left {
+			return p.updateBinaryExpression(be, leftParenthesized)
+		}
+
+	case ast.KindConditionalExpression:
+		ce := node.AsConditionalExpression()
+		conditionParenthesized := p.parenthesizeExpressionForNoAsi(ce.Condition)
+		if conditionParenthesized != ce.Condition {
+			return p.updateConditionalExpression(ce, conditionParenthesized)
+		}
+
+	case ast.KindAsExpression:
+		ae := node.AsAsExpression()
+		exprParenthesized := p.parenthesizeExpressionForNoAsi(ae.Expression)
+		if exprParenthesized != ae.Expression {
+			return p.updateAsExpression(ae, exprParenthesized)
+		}
+
+	case ast.KindSatisfiesExpression:
+		se := node.AsSatisfiesExpression()
+		exprParenthesized := p.parenthesizeExpressionForNoAsi(se.Expression)
+		if exprParenthesized != se.Expression {
+			return p.updateSatisfiesExpression(se, exprParenthesized)
+		}
+
+	case ast.KindNonNullExpression:
+		nne := node.AsNonNullExpression()
+		exprParenthesized := p.parenthesizeExpressionForNoAsi(nne.Expression)
+		if exprParenthesized != nne.Expression {
+			return p.updateNonNullExpression(nne, exprParenthesized)
+		}
+	}
+
+	return node
+}
+
+// Helper functions to create/update nodes with parenthesized sub-expressions
+
+func (p *Printer) createParenthesizedExpressionForNoAsi(node *ast.Expression) *ast.Expression {
+	// Create a parenthesized expression to force wrapping
+	return p.emitContext.Factory.NewParenthesizedExpression(node)
+}
+
+func (p *Printer) updatePartiallyEmittedExpression(node *ast.PartiallyEmittedExpression, expression *ast.Expression) *ast.Expression {
+	return p.emitContext.Factory.UpdatePartiallyEmittedExpression(node, expression)
+}
+
+func (p *Printer) updatePropertyAccessExpression(node *ast.PropertyAccessExpression, expression *ast.Expression) *ast.Expression {
+	return p.emitContext.Factory.UpdatePropertyAccessExpression(node, expression, node.QuestionDotToken, node.Name())
+}
+
+func (p *Printer) updateElementAccessExpression(node *ast.ElementAccessExpression, expression *ast.Expression) *ast.Expression {
+	return p.emitContext.Factory.UpdateElementAccessExpression(node, expression, node.QuestionDotToken, node.ArgumentExpression)
+}
+
+func (p *Printer) updateCallExpression(node *ast.CallExpression, expression *ast.Expression) *ast.Expression {
+	return p.emitContext.Factory.UpdateCallExpression(node, expression, node.QuestionDotToken, node.TypeArguments, node.Arguments)
+}
+
+func (p *Printer) updateTaggedTemplateExpression(node *ast.TaggedTemplateExpression, tag *ast.Expression) *ast.Expression {
+	return p.emitContext.Factory.UpdateTaggedTemplateExpression(node, tag, node.QuestionDotToken, node.TypeArguments, node.Template)
+}
+
+func (p *Printer) updatePostfixUnaryExpression(node *ast.PostfixUnaryExpression, operand *ast.Expression) *ast.Expression {
+	return p.emitContext.Factory.UpdatePostfixUnaryExpression(node, operand)
+}
+
+func (p *Printer) updateBinaryExpression(node *ast.BinaryExpression, left *ast.Expression) *ast.Expression {
+	return p.emitContext.Factory.UpdateBinaryExpression(node, node.Modifiers(), left, node.Type, node.OperatorToken, node.Right)
+}
+
+func (p *Printer) updateConditionalExpression(node *ast.ConditionalExpression, condition *ast.Expression) *ast.Expression {
+	return p.emitContext.Factory.UpdateConditionalExpression(node, condition, node.QuestionToken, node.WhenTrue, node.ColonToken, node.WhenFalse)
+}
+
+func (p *Printer) updateAsExpression(node *ast.AsExpression, expression *ast.Expression) *ast.Expression {
+	return p.emitContext.Factory.UpdateAsExpression(node, expression, node.Type)
+}
+
+func (p *Printer) updateSatisfiesExpression(node *ast.SatisfiesExpression, expression *ast.Expression) *ast.Expression {
+	return p.emitContext.Factory.UpdateSatisfiesExpression(node, expression, node.Type)
+}
+
+func (p *Printer) updateNonNullExpression(node *ast.NonNullExpression, expression *ast.Expression) *ast.Expression {
+	return p.emitContext.Factory.UpdateNonNullExpression(node, expression)
 }
 
 func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPrecedence) {
