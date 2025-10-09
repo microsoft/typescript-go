@@ -60,7 +60,10 @@ func getTokenAtPosition(
 	// only if `includePrecedingTokenAtEndPosition` is provided. Once set, the next
 	// iteration of the loop will test the rightmost token of `prevSubtree` to see
 	// if it should be returned.
-	var next, prevSubtree *ast.Node
+	// `reparsedNext` tracks a reparsed node that matches, used as a fallback if no
+	// non-reparsed node is found. This handles JSDoc type assertions where the
+	// reparsed AsExpression is the only path to the identifier.
+	var next, prevSubtree, reparsedNext *ast.Node
 	current := sourceFile.AsNode()
 	// `left` tracks the lower boundary of the node/token that could be returned,
 	// and is eventually the scanner's start position, if the scanner is used.
@@ -87,19 +90,29 @@ func getTokenAtPosition(
 	visitNode := func(node *ast.Node, _ *ast.NodeVisitor) *ast.Node {
 		// We can't abort visiting children, so once a match is found, we set `next`
 		// and do nothing on subsequent visits.
-		if node != nil && node.Flags&ast.NodeFlagsReparsed == 0 && next == nil {
+		if node != nil && next == nil {
 			result := testNode(node)
-			switch result {
-			case -1:
-				if !ast.IsJSDocKind(node.Kind) {
-					// We can't move the left boundary into or beyond JSDoc,
-					// because we may end up returning the token after this JSDoc,
-					// constructing it with the scanner, and we need to include
-					// all its leading trivia in its position.
-					left = node.End()
+			if node.Flags&ast.NodeFlagsReparsed != 0 {
+				// This is a reparsed node (from JSDoc). We prefer non-reparsed nodes,
+				// but track this as a fallback in case there are no non-reparsed matches.
+				// This handles JSDoc type assertions like /**@type {string}*/(x) where
+				// the AsExpression child is reparsed but is the only path to the identifier.
+				if result == 0 && reparsedNext == nil {
+					reparsedNext = node
 				}
-			case 0:
-				next = node
+			} else {
+				switch result {
+				case -1:
+					if !ast.IsJSDocKind(node.Kind) {
+						// We can't move the left boundary into or beyond JSDoc,
+						// because we may end up returning the token after this JSDoc,
+						// constructing it with the scanner, and we need to include
+						// all its leading trivia in its position.
+						left = node.End()
+					}
+				case 0:
+					next = node
+				}
 			}
 		}
 		return node
@@ -160,6 +173,14 @@ func getTokenAtPosition(
 			prevSubtree = nil
 		}
 
+		// If no non-reparsed node was found but we have a reparsed match, use it.
+		// This handles JSDoc type assertions where the only path to an identifier
+		// is through a reparsed AsExpression node.
+		if next == nil && reparsedNext != nil {
+			next = reparsedNext
+			reparsedNext = nil
+		}
+
 		// No node was found that contains the target position, so we've gone as deep as
 		// we can in the AST. We've either found a token, or we need to run the scanner
 		// to construct one that isn't stored in the AST.
@@ -175,11 +196,10 @@ func getTokenAtPosition(
 				tokenEnd := scanner.TokenEnd()
 				if tokenStart <= position && (position < tokenEnd) {
 					if token == ast.KindIdentifier || !ast.IsTokenKind(token) {
-						// If we encounter an identifier or complex node while scanning, it means
-						// the token is part of the current node's structure (even if not properly
-						// visited as a child). This can happen with JSDoc type assertions and
-						// other complex expressions. Return the current node as it contains the token.
-						return current
+						if ast.IsJSDocKind(current.Kind) {
+							return current
+						}
+						panic(fmt.Sprintf("did not expect %s to have %s in its trivia", current.Kind.String(), token.String()))
 					}
 					return sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current)
 				}
@@ -197,6 +217,7 @@ func getTokenAtPosition(
 		current = next
 		left = current.Pos()
 		next = nil
+		reparsedNext = nil
 	}
 }
 
