@@ -6,6 +6,8 @@ import (
 	"github.com/zeebo/xxh3"
 )
 
+const excessiveChangeThreshold = 1000
+
 type FileChangeKind int
 
 const (
@@ -42,4 +44,8 @@ type FileChangeSummary struct {
 
 func (f FileChangeSummary) IsEmpty() bool {
 	return f.Opened == "" && len(f.Closed) == 0 && f.Changed.Len() == 0 && f.Created.Len() == 0 && f.Deleted.Len() == 0
+}
+
+func (f FileChangeSummary) HasExcessiveWatchChanges() bool {
+	return f.Created.Len()+f.Deleted.Len()+f.Changed.Len() > excessiveChangeThreshold
 }

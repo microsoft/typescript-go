@@ -122,6 +122,15 @@ func (s *snapshotFSBuilder) GetFileByPath(fileName string, path tspath.Path) Fil
 	return entry.Value()
 }
 
+func (s *snapshotFSBuilder) invalidateCache() {
+	s.diskFiles.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) bool {
+		entry.Change(func(file *diskFile) {
+			file.needsReload = true
+		})
+		return true
+	})
+}
+
 func (s *snapshotFSBuilder) markDirtyFiles(change FileChangeSummary) {
 	for uri := range change.Changed.Keys() {
 		path := s.toPath(uri.FileName())

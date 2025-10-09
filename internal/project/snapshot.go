@@ -174,7 +174,13 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	start := time.Now()
 	fs := newSnapshotFSBuilder(session.fs.fs, overlays, s.fs.diskFiles, session.options.PositionEncoding, s.toPath)
-	fs.markDirtyFiles(change.fileChanges)
+	if change.fileChanges.HasExcessiveWatchChanges() {
+		invalidateStart := time.Now()
+		fs.invalidateCache()
+		logger.Logf("Excessive watch changes detected, invalidated file cache in %v", time.Since(invalidateStart))
+	} else {
+		fs.markDirtyFiles(change.fileChanges)
+	}
 
 	compilerOptionsForInferredProjects := s.compilerOptionsForInferredProjects
 	if change.compilerOptionsForInferredProjects != nil {
