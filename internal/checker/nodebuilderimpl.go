@@ -411,6 +411,13 @@ func (b *nodeBuilderImpl) tryReuseExistingNonParameterTypeNode(existing *ast.Typ
 	if annotationType == nil {
 		annotationType = b.getTypeFromTypeNode(existing, true)
 	}
+	if annotationType != nil && b.ch.isErrorType(annotationType) {
+		// allow "reusing" type nodes that resolve to error types
+		// those can't truly be reused but it prevents cascading errors in isolatedDeclarations
+		// for source with errors there is no guarantee to emit correct code anyway
+		// Since tryReuseExistingTypeNodeHelper is not yet implemented, directly return the existing node
+		return existing
+	}
 	if annotationType != nil && b.typeNodeIsEquivalentToType(host, t, annotationType) && b.existingTypeNodeIsNotReferenceOrIsReferenceWithCompatibleTypeArgumentCount(existing, t) {
 		result := b.tryReuseExistingTypeNodeHelper(existing)
 		if result != nil {
@@ -2004,6 +2011,15 @@ func (b *nodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 	addUndefinedForParameter := declaration != nil && (ast.IsParameter(declaration) /*|| ast.IsJSDocParameterTag(declaration)*/) && b.ch.GetEmitResolver().requiresAddingImplicitUndefined(declaration, symbol, b.ctx.enclosingDeclaration)
 	if addUndefinedForParameter {
 		t = b.ch.getOptionalType(t, false)
+	}
+
+	// Try to reuse existing type annotation if present
+	if declaration != nil && declaration.Type() != nil {
+		typeAnnotation := declaration.Type()
+		reused := b.tryReuseExistingTypeNode(typeAnnotation, t, declaration, addUndefinedForParameter)
+		if reused != nil {
+			return reused
+		}
 	}
 
 	restoreFlags := b.saveRestoreFlags()
