@@ -50,7 +50,7 @@ func (x Number) toUint32() uint32 {
 func (n Number) toInt32() int32 {
 	x := float64(n)
 
-	// Fast path: if the number is the range (-2^31, 2^32), i.e. an SMI,
+	// Fast path: if the number is in the range (-2^31, 2^32), i.e. an SMI,
 	// then we don't need to do any special mapping.
 	if smi := int32(x); float64(smi) == x {
 		return smi
