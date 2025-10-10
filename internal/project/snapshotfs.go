@@ -83,18 +83,8 @@ func (s *snapshotFSBuilder) FS() vfs.FS {
 	return s.fs
 }
 
-func (s *snapshotFSBuilder) Finalize() (*snapshotFS, bool) {
-	diskFiles, changed := s.diskFiles.Finalize()
-	return &snapshotFS{
-		fs:        s.fs,
-		overlays:  s.overlays,
-		diskFiles: diskFiles,
-		toPath:    s.toPath,
-	}, changed
-}
-
-func (s *snapshotFSBuilder) Finalize2() (*snapshotFS, bool, map[tspath.Path]*dirty.Change[*diskFile]) {
-	diskFiles, changed, changes := s.diskFiles.Finalize2()
+func (s *snapshotFSBuilder) Finalize() (*snapshotFS, bool, map[tspath.Path]*dirty.Change[*diskFile]) {
+	diskFiles, changed, changes := s.diskFiles.Finalize()
 	return &snapshotFS{
 		fs:        s.fs,
 		overlays:  s.overlays,

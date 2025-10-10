@@ -701,6 +701,10 @@ func (s *Session) GetLanguageServiceWithMappedFiles(ctx context.Context, uri lsp
 		return nil, fmt.Errorf("no project found for URI %s", uri)
 	}
 	snapshotWithFiles, changes := snapshot.CloneWithSourceMaps(files, s)
+	if s.options.LoggingEnabled {
+		s.logger.Write(snapshotWithFiles.builderLogs.String())
+		s.logger.Write("")
+	}
 	s.backgroundQueue.Enqueue(ctx, func(ctx context.Context) {
 		s.updateSnapshotWithDiskChanges(changes)
 	})
@@ -716,6 +720,10 @@ func (s *Session) updateSnapshotWithDiskChanges(changes map[tspath.Path]*dirty.C
 
 	// We don't need to dispose the old snapshot here because the new snapshot will have the same programs
 	// and config files as the old snapshot, so the reference counts will be the same.
+	if s.options.LoggingEnabled {
+		s.logger.Write(newSnapshot.builderLogs.String())
+		s.logger.Write("")
+	}
 
 	ctx := context.Background()
 	err := updateWatch(ctx, s, s.logger, oldSnapshot.extraDiskFilesWatch, newSnapshot.extraDiskFilesWatch)

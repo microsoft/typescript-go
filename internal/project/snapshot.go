@@ -281,7 +281,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 	}
 
-	snapshotFS, _ := fs.Finalize()
+	snapshotFS, _, _ := fs.Finalize()
 	newSnapshot := NewSnapshot(
 		newSnapshotID,
 		snapshotFS,
@@ -353,11 +353,18 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 // Returns the new snapshot and a patch of changes made to diskFiles.
 // The changes only include additional files that were read, or source map information added to existing files.
 func (s *Snapshot) CloneWithSourceMaps(genFiles []string, session *Session) (*Snapshot, map[tspath.Path]*dirty.Change[*diskFile]) {
+	var logger *logging.LogTree
+	if session.options.LoggingEnabled {
+		logger = logging.NewLogTree(fmt.Sprintf("Cloning snapshot %d with source maps for %v", s.id, genFiles))
+	}
+
+	start := time.Now()
 	fs := newSnapshotFSBuilder(s.fs.fs, s.fs.overlays, s.fs.diskFiles, s.sessionOptions.PositionEncoding, s.toPath)
 	for _, genFile := range genFiles {
 		fs.computeDocumentPositionMapper(genFile)
 	}
-	snapshotFS, _, changes := fs.Finalize2()
+	snapshotFS, _, changes := fs.Finalize()
+	logger.Logf(`New files due to source maps: %v`, slices.Collect(maps.Keys(changes)))
 	newId := session.snapshotID.Add(1)
 	newSnapshot := NewSnapshot(
 		newId,
@@ -369,28 +376,25 @@ func (s *Snapshot) CloneWithSourceMaps(genFiles []string, session *Session) (*Sn
 		s.compilerOptionsForInferredProjects,
 		s.toPath,
 	)
-	var logger *logging.LogTree
-	if session.options.LoggingEnabled {
-		logger = logging.NewLogTree(fmt.Sprintf("Cloning snapshot %d with source maps for %v", s.id, genFiles))
-	}
 	newSnapshot.parentId = s.id
 	newSnapshot.ProjectCollection = s.ProjectCollection
 	newSnapshot.builderLogs = logger
 	// We don't need to update the extra files watcher here because the resulting snapshot will be
 	// discarded after fulfilling the request.
+	logger.Logf(`Finished cloning snapshot %d into snapshot %d with source maps in %v`, s.id, newSnapshot.id, time.Since(start))
 	return newSnapshot, changes
 }
 
 func (s *Snapshot) CloneWithDiskChanges(changes map[tspath.Path]*dirty.Change[*diskFile], session *Session) *Snapshot {
 	var logger *logging.LogTree
 	if session.options.LoggingEnabled {
-		logger = logging.NewLogTree(fmt.Sprintf("Cloning snapshot %d with changes %v", s.id, slices.Collect(maps.Keys(changes))))
+		logger = logging.NewLogTree(fmt.Sprintf("Cloning snapshot %d with disk changes changes %v", s.id, slices.Collect(maps.Keys(changes))))
 	}
 
 	start := time.Now()
 	fs := newSnapshotFSBuilder(s.fs.fs, s.fs.overlays, s.fs.diskFiles, s.sessionOptions.PositionEncoding, s.toPath)
 	fs.applyDiskFileChanges(changes)
-	snapshotFS, _ := fs.Finalize()
+	snapshotFS, _, _ := fs.Finalize()
 	newId := session.snapshotID.Add(1)
 	newSnapshot := NewSnapshot(
 		newId,
