@@ -540,11 +540,14 @@ func mergeCompilerOptions(targetOptions, sourceOptions *core.CompilerOptions, ra
 	if sourceOptions == nil {
 		return targetOptions
 	}
+	if targetOptions == nil {
+		targetOptions = &core.CompilerOptions{}
+	}
 
 	// Collect explicitly null field names from raw JSON
 	var explicitNullFields collections.Set[string]
 	if rawSource != nil {
-		if rawMap, ok := rawSource.(*collections.OrderedMap[string, any]); ok {
+		if rawMap, ok := rawSource.(*collections.OrderedMap[string, any]); ok && rawMap != nil {
 			// For tsconfig.json, options are nested under "compilerOptions"
 			if compilerOptionsRaw, exists := rawMap.Get("compilerOptions"); exists {
 				if compilerOptionsMap, ok := compilerOptionsRaw.(*collections.OrderedMap[string, any]); ok {
