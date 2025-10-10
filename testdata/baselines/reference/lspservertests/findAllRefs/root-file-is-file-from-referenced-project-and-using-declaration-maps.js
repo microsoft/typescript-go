@@ -264,6 +264,10 @@ Projects::
   [/user/username/projects/project/src/common/tsconfig.json] *new*
     /user/username/projects/project/src/common/input/keyboard.ts
     /user/username/projects/project/src/common/input/keyboard.test.ts
+  [/user/username/projects/project/src/tsconfig.json] *new*
+    /user/username/projects/project/out/input/keyboard.d.ts
+    /user/username/projects/project/src/terminal.ts
+    /user/username/projects/project/out/input/keyboard.test.d.ts
 {
   "method": "textDocument/didOpen",
   "params": {
@@ -275,14 +279,6 @@ Projects::
     }
   }
 }
-Projects::
-  [/user/username/projects/project/src/common/tsconfig.json] 
-    /user/username/projects/project/src/common/input/keyboard.ts
-    /user/username/projects/project/src/common/input/keyboard.test.ts
-  [/user/username/projects/project/src/tsconfig.json] *new*
-    /user/username/projects/project/out/input/keyboard.d.ts
-    /user/username/projects/project/src/terminal.ts
-    /user/username/projects/project/out/input/keyboard.test.d.ts
 {
   "method": "textDocument/references",
   "params": {

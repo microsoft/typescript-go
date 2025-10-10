@@ -67,6 +67,7 @@ Projects::
   [/user/username/projects/container/compositeExec/tsconfig.json] *new*
     /user/username/projects/container/lib/index.ts
     /user/username/projects/container/compositeExec/index.ts
+  [/user/username/projects/container/tsconfig.json] *new*
 {
   "method": "textDocument/didOpen",
   "params": {
@@ -82,6 +83,7 @@ Projects::
   [/user/username/projects/container/compositeExec/tsconfig.json] 
     /user/username/projects/container/lib/index.ts
     /user/username/projects/container/compositeExec/index.ts
+  [/user/username/projects/container/tsconfig.json] *deleted*
   [/user/username/projects/temp/tsconfig.json] *new*
     /user/username/projects/temp/temp.ts
 {

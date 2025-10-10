@@ -61,6 +61,7 @@ Projects::
   [/user/username/projects/solution/compiler/tsconfig.json] *new*
     /user/username/projects/solution/compiler/types.ts
     /user/username/projects/solution/compiler/program.ts
+  [/user/username/projects/solution/tsconfig.json] *new*
 {
   "method": "textDocument/references",
   "params": {

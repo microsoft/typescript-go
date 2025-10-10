@@ -75,6 +75,7 @@ Projects::
   [/user/username/projects/solution/api/tsconfig.json] *new*
     /user/username/projects/solution/shared/src/index.ts
     /user/username/projects/solution/api/src/server.ts
+  [/user/username/projects/solution/tsconfig.json] *new*
 {
   "method": "textDocument/references",
   "params": {

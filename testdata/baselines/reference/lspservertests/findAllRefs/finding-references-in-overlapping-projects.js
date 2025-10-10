@@ -80,6 +80,7 @@ Projects::
   [/user/username/projects/solution/b/tsconfig.json] *new*
     /user/username/projects/solution/a/index.ts
     /user/username/projects/solution/b/index.ts
+  [/user/username/projects/solution/tsconfig.json] *new*
 {
   "method": "textDocument/references",
   "params": {
