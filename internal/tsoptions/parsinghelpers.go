@@ -545,12 +545,20 @@ func mergeCompilerOptions(targetOptions, sourceOptions *core.CompilerOptions, ra
 	var explicitNullFields collections.Set[string]
 	if rawSource != nil {
 		if rawMap, ok := rawSource.(*collections.OrderedMap[string, any]); ok {
+			// For tsconfig.json, options are nested under "compilerOptions"
 			if compilerOptionsRaw, exists := rawMap.Get("compilerOptions"); exists {
 				if compilerOptionsMap, ok := compilerOptionsRaw.(*collections.OrderedMap[string, any]); ok {
 					for key, value := range compilerOptionsMap.Entries() {
 						if value == nil {
 							explicitNullFields.Add(key)
 						}
+					}
+				}
+			} else {
+				// For command line options, the map IS the options directly
+				for key, value := range rawMap.Entries() {
+					if value == nil {
+						explicitNullFields.Add(key)
 					}
 				}
 			}
