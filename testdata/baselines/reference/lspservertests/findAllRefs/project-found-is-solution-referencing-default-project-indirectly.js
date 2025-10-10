@@ -107,6 +107,8 @@ Config::
 Config File Names::
   [/user/username/projects/myproject/src/main.ts] *new*
     NearestConfigFileName: /user/username/projects/myproject/tsconfig.json
+    Ancestors:
+      /user/username/projects/myproject/tsconfig-src.json   
 {
   "method": "textDocument/didOpen",
   "params": {
@@ -152,6 +154,8 @@ Config::
 Config File Names::
   [/user/username/projects/myproject/src/main.ts] 
     NearestConfigFileName: /user/username/projects/myproject/tsconfig.json
+    Ancestors:
+      /user/username/projects/myproject/tsconfig-src.json   
   [/user/username/workspaces/dummy/dummy.ts] *new*
     NearestConfigFileName: /user/username/workspaces/dummy/tsconfig.json
 {
@@ -259,6 +263,8 @@ Config::
 Config File Names::
   [/user/username/projects/myproject/src/main.ts] *new*
     NearestConfigFileName: /user/username/projects/myproject/tsconfig.json
+    Ancestors:
+      /user/username/projects/myproject/tsconfig-src.json   
   [/user/username/workspaces/dummy/dummy.ts] *deleted*
 {
   "method": "textDocument/references",

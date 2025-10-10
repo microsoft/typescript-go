@@ -264,6 +264,10 @@ Projects::
   [/user/username/projects/project/src/common/tsconfig.json] *new*
     /user/username/projects/project/src/common/input/keyboard.ts       
     /user/username/projects/project/src/common/input/keyboard.test.ts  
+  [/user/username/projects/project/src/tsconfig.json] *new*
+    /user/username/projects/project/out/input/keyboard.d.ts       
+    /user/username/projects/project/src/terminal.ts               
+    /user/username/projects/project/out/input/keyboard.test.d.ts  
 Open Files::
   [/user/username/projects/project/src/common/input/keyboard.ts] *new*
     /user/username/projects/project/src/common/tsconfig.json  (default) 
@@ -271,11 +275,18 @@ Config::
   [/user/username/projects/project/src/common/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/project/src/common/tsconfig.json  
+      /user/username/projects/project/src/tsconfig.json         
     RetainingOpenFiles:
       /user/username/projects/project/src/common/input/keyboard.ts  
+  [/user/username/projects/project/src/tsconfig.json] *new*
+    RetainingProjects:
+      /user/username/projects/project/src/tsconfig.json  
 Config File Names::
   [/user/username/projects/project/src/common/input/keyboard.ts] *new*
     NearestConfigFileName: /user/username/projects/project/src/common/tsconfig.json
+    Ancestors:
+      /user/username/projects/project/src/common/tsconfig.json  /user/username/projects/project/src/tsconfig.json 
+      /user/username/projects/project/src/tsconfig.json          
 {
   "method": "textDocument/didOpen",
   "params": {
@@ -287,36 +298,33 @@ Config File Names::
     }
   }
 }
-Projects::
-  [/user/username/projects/project/src/common/tsconfig.json] 
-    /user/username/projects/project/src/common/input/keyboard.ts       
-    /user/username/projects/project/src/common/input/keyboard.test.ts  
-  [/user/username/projects/project/src/tsconfig.json] *new*
-    /user/username/projects/project/out/input/keyboard.d.ts       
-    /user/username/projects/project/src/terminal.ts               
-    /user/username/projects/project/out/input/keyboard.test.d.ts  
 Open Files::
   [/user/username/projects/project/src/common/input/keyboard.ts] 
     /user/username/projects/project/src/common/tsconfig.json  (default) 
   [/user/username/projects/project/src/terminal.ts] *new*
     /user/username/projects/project/src/tsconfig.json  (default) 
 Config::
-  [/user/username/projects/project/src/common/tsconfig.json] *modified*
-    RetainingProjects: *modified*
+  [/user/username/projects/project/src/common/tsconfig.json] 
+    RetainingProjects:
       /user/username/projects/project/src/common/tsconfig.json  
-      /user/username/projects/project/src/tsconfig.json         *new*
+      /user/username/projects/project/src/tsconfig.json         
     RetainingOpenFiles:
       /user/username/projects/project/src/common/input/keyboard.ts  
-  [/user/username/projects/project/src/tsconfig.json] *new*
+  [/user/username/projects/project/src/tsconfig.json] *modified*
     RetainingProjects:
       /user/username/projects/project/src/tsconfig.json  
-    RetainingOpenFiles:
-      /user/username/projects/project/src/terminal.ts  
+    RetainingOpenFiles: *modified*
+      /user/username/projects/project/src/terminal.ts  *new*
 Config File Names::
   [/user/username/projects/project/src/common/input/keyboard.ts] 
     NearestConfigFileName: /user/username/projects/project/src/common/tsconfig.json
+    Ancestors:
+      /user/username/projects/project/src/common/tsconfig.json  /user/username/projects/project/src/tsconfig.json 
+      /user/username/projects/project/src/tsconfig.json          
   [/user/username/projects/project/src/terminal.ts] *new*
     NearestConfigFileName: /user/username/projects/project/src/tsconfig.json
+    Ancestors:
+      /user/username/projects/project/src/tsconfig.json   
 {
   "method": "textDocument/references",
   "params": {

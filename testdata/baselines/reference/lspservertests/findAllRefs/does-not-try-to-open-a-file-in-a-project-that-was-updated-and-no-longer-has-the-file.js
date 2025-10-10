@@ -73,6 +73,8 @@ Config::
 Config File Names::
   [/home/src/projects/project/packages/babel-loader/src/index.ts] *new*
     NearestConfigFileName: /home/src/projects/project/packages/babel-loader/tsconfig.json
+    Ancestors:
+      /home/src/projects/project/packages/babel-loader/tsconfig.json   
 {
   "method": "textDocument/didOpen",
   "params": {
@@ -113,8 +115,12 @@ Config::
 Config File Names::
   [/home/src/projects/project/packages/babel-loader/src/index.ts] 
     NearestConfigFileName: /home/src/projects/project/packages/babel-loader/tsconfig.json
+    Ancestors:
+      /home/src/projects/project/packages/babel-loader/tsconfig.json   
   [/home/src/projects/project/packages/core/src/index.ts] *new*
     NearestConfigFileName: /home/src/projects/project/packages/core/tsconfig.json
+    Ancestors:
+      /home/src/projects/project/packages/core/tsconfig.json   
 {
   "method": "textDocument/didChange",
   "params": {

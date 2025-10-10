@@ -61,6 +61,7 @@ Projects::
   [/user/username/projects/solution/compiler/tsconfig.json] *new*
     /user/username/projects/solution/compiler/types.ts    
     /user/username/projects/solution/compiler/program.ts  
+  [/user/username/projects/solution/tsconfig.json] *new*
 Open Files::
   [/user/username/projects/solution/compiler/program.ts] *new*
     /user/username/projects/solution/compiler/tsconfig.json  (default) 
@@ -68,11 +69,21 @@ Config::
   [/user/username/projects/solution/compiler/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/solution/compiler/tsconfig.json  
+      /user/username/projects/solution/tsconfig.json           
     RetainingOpenFiles:
       /user/username/projects/solution/compiler/program.ts  
+  [/user/username/projects/solution/services/tsconfig.json] *new*
+    RetainingProjects:
+      /user/username/projects/solution/tsconfig.json  
+  [/user/username/projects/solution/tsconfig.json] *new*
+    RetainingProjects:
+      /user/username/projects/solution/tsconfig.json  
 Config File Names::
   [/user/username/projects/solution/compiler/program.ts] *new*
     NearestConfigFileName: /user/username/projects/solution/compiler/tsconfig.json
+    Ancestors:
+      /user/username/projects/solution/compiler/tsconfig.json  /user/username/projects/solution/tsconfig.json 
+      /user/username/projects/solution/tsconfig.json            
 {
   "method": "textDocument/references",
   "params": {

@@ -63,18 +63,32 @@ export const a = 10;
 Projects::
   [/user/username/projects/myproject/dependency/tsconfig.json] *new*
     /user/username/projects/myproject/dependency/FnS.ts  
+  [/user/username/projects/myproject/tsconfig.json] *new*
+    /user/username/projects/myproject/dependency/FnS.ts  
+    /user/username/projects/myproject/main/main.ts       
 Open Files::
   [/user/username/projects/myproject/dependency/FnS.ts] *new*
     /user/username/projects/myproject/dependency/tsconfig.json  (default) 
+    /user/username/projects/myproject/tsconfig.json             
 Config::
   [/user/username/projects/myproject/dependency/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/myproject/dependency/tsconfig.json  
+      /user/username/projects/myproject/tsconfig.json             
     RetainingOpenFiles:
       /user/username/projects/myproject/dependency/fns.ts  
+  [/user/username/projects/myproject/main/tsconfig.json] *new*
+    RetainingProjects:
+      /user/username/projects/myproject/tsconfig.json  
+  [/user/username/projects/myproject/tsconfig.json] *new*
+    RetainingProjects:
+      /user/username/projects/myproject/tsconfig.json  
 Config File Names::
   [/user/username/projects/myproject/dependency/fns.ts] *new*
     NearestConfigFileName: /user/username/projects/myproject/dependency/tsconfig.json
+    Ancestors:
+      /user/username/projects/myproject/dependency/tsconfig.json  /user/username/projects/myproject/tsconfig.json 
+      /user/username/projects/myproject/tsconfig.json              
 {
   "method": "textDocument/didOpen",
   "params": {
@@ -89,19 +103,26 @@ Config File Names::
 Projects::
   [/user/username/projects/myproject/dependency/tsconfig.json] 
     /user/username/projects/myproject/dependency/FnS.ts  
+  [/user/username/projects/myproject/tsconfig.json] *deleted*
+    /user/username/projects/myproject/dependency/FnS.ts  
+    /user/username/projects/myproject/main/main.ts       
   [/user/username/projects/random/tsconfig.json] *new*
     /user/username/projects/random/random.ts  
 Open Files::
-  [/user/username/projects/myproject/dependency/FnS.ts] 
+  [/user/username/projects/myproject/dependency/FnS.ts] *modified*
     /user/username/projects/myproject/dependency/tsconfig.json  (default) 
+    /user/username/projects/myproject/tsconfig.json             *deleted*
   [/user/username/projects/random/random.ts] *new*
     /user/username/projects/random/tsconfig.json  (default) 
 Config::
-  [/user/username/projects/myproject/dependency/tsconfig.json] 
-    RetainingProjects:
+  [/user/username/projects/myproject/dependency/tsconfig.json] *modified*
+    RetainingProjects: *modified*
       /user/username/projects/myproject/dependency/tsconfig.json  
+      /user/username/projects/myproject/tsconfig.json             *deleted*
     RetainingOpenFiles:
       /user/username/projects/myproject/dependency/fns.ts  
+  [/user/username/projects/myproject/main/tsconfig.json] *deleted*
+  [/user/username/projects/myproject/tsconfig.json] *deleted*
   [/user/username/projects/random/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/random/tsconfig.json  
@@ -110,6 +131,9 @@ Config::
 Config File Names::
   [/user/username/projects/myproject/dependency/fns.ts] 
     NearestConfigFileName: /user/username/projects/myproject/dependency/tsconfig.json
+    Ancestors:
+      /user/username/projects/myproject/dependency/tsconfig.json  /user/username/projects/myproject/tsconfig.json 
+      /user/username/projects/myproject/tsconfig.json              
   [/user/username/projects/random/random.ts] *new*
     NearestConfigFileName: /user/username/projects/random/tsconfig.json
 {
