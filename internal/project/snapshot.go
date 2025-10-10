@@ -477,50 +477,6 @@ func getComputeGlobPatterns(workspaceDirectory string, useCaseSensitiveFileNames
 	}
 }
 
-func (s *Snapshot) computeGlobPatterns(files map[tspath.Path]string) patternsAndIgnored {
-	workspaceDirectory := s.sessionOptions.CurrentDirectory
-	comparePathsOptions := tspath.ComparePathsOptions{
-		CurrentDirectory:          workspaceDirectory,
-		UseCaseSensitiveFileNames: s.fs.fs.UseCaseSensitiveFileNames(),
-	}
-	externalDirectories := make(map[tspath.Path]string)
-	var seenDirs collections.Set[string]
-	var includeWorkspace bool
-	for path, fileName := range files {
-		if !seenDirs.AddIfAbsent(tspath.GetDirectoryPath(string(path))) {
-			continue
-		}
-		if tspath.ContainsPath(workspaceDirectory, string(path), comparePathsOptions) {
-			includeWorkspace = true
-		}
-		externalDirectories[path.GetDirectoryPath()] = fileName
-	}
-
-	var globs []string
-	var ignored map[string]struct{}
-	if includeWorkspace {
-		globs = append(globs, getRecursiveGlobPattern(workspaceDirectory))
-	}
-	if len(externalDirectories) > 0 {
-		externalDirectoryParents, ignoredExternalDirs := tspath.GetCommonParents(
-			slices.Collect(maps.Values(externalDirectories)),
-			minWatchLocationDepth,
-			getPathComponentsForWatching,
-			comparePathsOptions,
-		)
-		slices.Sort(externalDirectoryParents)
-		ignored = ignoredExternalDirs
-		for _, dir := range externalDirectoryParents {
-			globs = append(globs, getRecursiveGlobPattern(dir))
-		}
-	}
-
-	return patternsAndIgnored{
-		patterns: globs,
-		ignored:  ignored,
-	}
-}
-
 func (s *Snapshot) Ref() {
 	s.refCount.Add(1)
 }
