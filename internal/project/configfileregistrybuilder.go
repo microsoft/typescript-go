@@ -122,7 +122,7 @@ func (c *configFileRegistryBuilder) updateExtendingConfigs(extendingConfigPath t
 		for _, extendedConfig := range newCommandLine.ExtendedSourceFiles() {
 			extendedConfigPath := c.fs.toPath(extendedConfig)
 			newExtendedConfigPaths.Add(extendedConfigPath)
-			entry, loaded := c.configs.LoadOrStore(extendedConfigPath, newExtendedConfigFileEntry(extendingConfigPath))
+			entry, loaded := c.configs.LoadOrStore(extendedConfigPath, newExtendedConfigFileEntry(extendedConfig, extendingConfigPath))
 			if loaded {
 				entry.ChangeIf(
 					func(config *configFileEntry) bool {
@@ -320,6 +320,39 @@ func (r changeFileResult) IsEmpty() bool {
 func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, logger *logging.LogTree) changeFileResult {
 	var affectedProjects map[tspath.Path]struct{}
 	var affectedFiles map[tspath.Path]struct{}
+
+	if summary.HasExcessiveWatchChanges() {
+		logger.Log("Too many files changed; marking all configs for reload")
+		c.configFileNames.Range(func(entry *dirty.MapEntry[tspath.Path, *configFileNames]) bool {
+			if affectedFiles == nil {
+				affectedFiles = make(map[tspath.Path]struct{})
+			}
+			affectedFiles[entry.Key()] = struct{}{}
+			return true
+		})
+		c.configFileNames.Clear()
+
+		c.configs.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *configFileEntry]) bool {
+			entry.Change(func(entry *configFileEntry) {
+				affectedProjects = core.CopyMapInto(affectedProjects, entry.retainingProjects)
+				if entry.pendingReload != PendingReloadFull {
+					text, ok := c.FS().ReadFile(entry.fileName)
+					if !ok || text != entry.commandLine.ConfigFile.SourceFile.Text() {
+						entry.pendingReload = PendingReloadFull
+					} else {
+						entry.pendingReload = PendingReloadFileNames
+					}
+				}
+			})
+			return true
+		})
+
+		return changeFileResult{
+			affectedProjects: affectedProjects,
+			affectedFiles:    affectedFiles,
+		}
+	}
+
 	logger.Log("Summarizing file changes")
 	createdFiles := make(map[tspath.Path]string, summary.Created.Len())
 	createdOrDeletedFiles := make(map[tspath.Path]struct{}, summary.Created.Len()+summary.Deleted.Len())
@@ -465,17 +498,13 @@ func (c *configFileRegistryBuilder) computeConfigFileName(fileName string, skipS
 	return result
 }
 
-func (c *configFileRegistryBuilder) getConfigFileNameForFile(fileName string, path tspath.Path, loadKind projectLoadKind, logger *logging.LogTree) string {
+func (c *configFileRegistryBuilder) getConfigFileNameForFile(fileName string, path tspath.Path, logger *logging.LogTree) string {
 	if isDynamicFileName(fileName) {
 		return ""
 	}
 
 	if entry, ok := c.configFileNames.Get(path); ok {
 		return entry.Value().nearestConfigFileName
-	}
-
-	if loadKind == projectLoadKindFind {
-		return ""
 	}
 
 	configName := c.computeConfigFileName(fileName, false, logger)
@@ -488,7 +517,7 @@ func (c *configFileRegistryBuilder) getConfigFileNameForFile(fileName string, pa
 	return configName
 }
 
-func (c *configFileRegistryBuilder) getAncestorConfigFileName(fileName string, path tspath.Path, configFileName string, loadKind projectLoadKind, logger *logging.LogTree) string {
+func (c *configFileRegistryBuilder) getAncestorConfigFileName(fileName string, path tspath.Path, configFileName string, logger *logging.LogTree) string {
 	if isDynamicFileName(fileName) {
 		return ""
 	}
@@ -499,10 +528,6 @@ func (c *configFileRegistryBuilder) getAncestorConfigFileName(fileName string, p
 	}
 	if ancestorConfigName, found := entry.Value().ancestors[configFileName]; found {
 		return ancestorConfigName
-	}
-
-	if loadKind == projectLoadKindFind {
-		return ""
 	}
 
 	// Look for config in parent folders of config file
