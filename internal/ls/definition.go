@@ -12,7 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
-func (l *LanguageService) ProvideDefinition(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position) (lsproto.DefinitionResponse, error) {
+func (l *LanguageService) ProvideDefinition(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position, clientCapabilities *lsproto.DefinitionClientCapabilities) (lsproto.DefinitionResponse, error) {
 	program, file := l.getProgramAndFile(documentURI)
 	node := astnav.GetTouchingPropertyName(file, int(l.converters.LineAndCharacterToPosition(file, position)))
 	if node.Kind == ast.KindSourceFile {
@@ -24,13 +24,13 @@ func (l *LanguageService) ProvideDefinition(ctx context.Context, documentURI lsp
 
 	if node.Kind == ast.KindOverrideKeyword {
 		if sym := getSymbolForOverriddenMember(c, node); sym != nil {
-			return l.createLocationsFromDeclarations(sym.Declarations), nil
+			return l.createDefinitionResponse(sym.Declarations, node, file, clientCapabilities), nil
 		}
 	}
 
 	if ast.IsJumpStatementTarget(node) {
 		if label := getTargetLabel(node.Parent, node.Text()); label != nil {
-			return l.createLocationsFromDeclarations([]*ast.Node{label}), nil
+			return l.createDefinitionResponse([]*ast.Node{label}, node, file, clientCapabilities), nil
 		}
 	}
 
@@ -43,7 +43,7 @@ func (l *LanguageService) ProvideDefinition(ctx context.Context, documentURI lsp
 
 	if node.Kind == ast.KindReturnKeyword || node.Kind == ast.KindYieldKeyword || node.Kind == ast.KindAwaitKeyword {
 		if fn := ast.FindAncestor(node, ast.IsFunctionLikeDeclaration); fn != nil {
-			return l.createLocationsFromDeclarations([]*ast.Node{fn}), nil
+			return l.createDefinitionResponse([]*ast.Node{fn}, node, file, clientCapabilities), nil
 		}
 	}
 
@@ -54,7 +54,7 @@ func (l *LanguageService) ProvideDefinition(ctx context.Context, documentURI lsp
 		nonFunctionDeclarations := core.Filter(slices.Clip(declarations), func(node *ast.Node) bool { return !ast.IsFunctionLike(node) })
 		declarations = append(nonFunctionDeclarations, calledDeclaration)
 	}
-	return l.createLocationsFromDeclarations(declarations), nil
+	return l.createDefinitionResponse(declarations, node, file, clientCapabilities), nil
 }
 
 func (l *LanguageService) ProvideTypeDefinition(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position) (lsproto.DefinitionResponse, error) {
@@ -97,6 +97,51 @@ func getDeclarationNameForKeyword(node *ast.Node) *ast.Node {
 		}
 	}
 	return node
+}
+
+func (l *LanguageService) createDefinitionResponse(declarations []*ast.Node, originNode *ast.Node, originFile *ast.SourceFile, clientCapabilities *lsproto.DefinitionClientCapabilities) lsproto.DefinitionResponse {
+	// Check if client supports LocationLink
+	if clientCapabilities != nil && clientCapabilities.LinkSupport != nil && *clientCapabilities.LinkSupport {
+		return l.createLocationLinksFromDeclarations(declarations, originNode, originFile)
+	}
+	// Fall back to traditional Location response
+	return l.createLocationsFromDeclarations(declarations)
+}
+
+func (l *LanguageService) createLocationLinksFromDeclarations(declarations []*ast.Node, originNode *ast.Node, originFile *ast.SourceFile) lsproto.DefinitionResponse {
+	someHaveBody := core.Some(declarations, func(node *ast.Node) bool { return node.Body() != nil })
+	links := make([]*lsproto.LocationLink, 0, len(declarations))
+	
+	// Calculate origin selection range (the "bound span")
+	originSelectionRange := l.createLspRangeFromNode(originNode, originFile)
+	
+	for _, decl := range declarations {
+		if !someHaveBody || decl.Body() != nil {
+			file := ast.GetSourceFileOfNode(decl)
+			name := core.OrElse(ast.GetNameOfDeclaration(decl), decl)
+			
+			// For targetRange, use the full declaration range
+			var targetRange *lsproto.Range
+			if decl.Body() != nil {
+				// For declarations with body, include the full declaration
+				targetRange = l.createLspRangeFromBounds(scanner.GetTokenPosOfNode(decl, file, false), decl.End(), file)
+			} else {
+				// For declarations without body, use the declaration itself
+				targetRange = l.createLspRangeFromNode(decl, file)
+			}
+			
+			// For targetSelectionRange, use just the name/identifier part
+			targetSelectionRange := l.createLspRangeFromNode(name, file)
+			
+			links = append(links, &lsproto.LocationLink{
+				OriginSelectionRange: originSelectionRange,
+				TargetUri:            FileNameToDocumentURI(file.FileName()),
+				TargetRange:          *targetRange,
+				TargetSelectionRange: *targetSelectionRange,
+			})
+		}
+	}
+	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{DefinitionLinks: &links}
 }
 
 func (l *LanguageService) createLocationsFromDeclarations(declarations []*ast.Node) lsproto.DefinitionResponse {
