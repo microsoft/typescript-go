@@ -540,9 +540,6 @@ func mergeCompilerOptions(targetOptions, sourceOptions *core.CompilerOptions, ra
 	if sourceOptions == nil {
 		return targetOptions
 	}
-	if targetOptions == nil {
-		targetOptions = &core.CompilerOptions{}
-	}
 
 	// Collect explicitly null field names from raw JSON
 	var explicitNullFields collections.Set[string]
