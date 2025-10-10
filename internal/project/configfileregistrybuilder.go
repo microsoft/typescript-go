@@ -321,7 +321,7 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 	var affectedProjects map[tspath.Path]struct{}
 	var affectedFiles map[tspath.Path]struct{}
 
-	if summary.HasExcessiveWatchChanges() {
+	if summary.HasExcessiveWatchChanges() && summary.IncludesWatchChangeOutsideNodeModules {
 		logger.Log("Too many files changed; marking all configs for reload")
 		c.configFileNames.Range(func(entry *dirty.MapEntry[tspath.Path, *configFileNames]) bool {
 			if affectedFiles == nil {

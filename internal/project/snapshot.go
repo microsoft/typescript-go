@@ -176,8 +176,13 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 	fs := newSnapshotFSBuilder(session.fs.fs, overlays, s.fs.diskFiles, session.options.PositionEncoding, s.toPath)
 	if change.fileChanges.HasExcessiveWatchChanges() {
 		invalidateStart := time.Now()
-		fs.invalidateCache()
-		logger.Logf("Excessive watch changes detected, invalidated file cache in %v", time.Since(invalidateStart))
+		if change.fileChanges.IncludesWatchChangeOutsideNodeModules {
+			fs.invalidateCache()
+			logger.Logf("Excessive watch changes detected, invalidated file cache in %v", time.Since(invalidateStart))
+		} else {
+			fs.invalidateNodeModulesCache()
+			logger.Logf("npm install detected, invalidated node_modules cache in %v", time.Since(invalidateStart))
+		}
 	} else {
 		fs.markDirtyFiles(change.fileChanges)
 	}

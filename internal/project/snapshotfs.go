@@ -1,6 +1,7 @@
 package project
 
 import (
+	"strings"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -127,6 +128,17 @@ func (s *snapshotFSBuilder) invalidateCache() {
 		entry.Change(func(file *diskFile) {
 			file.needsReload = true
 		})
+		return true
+	})
+}
+
+func (s *snapshotFSBuilder) invalidateNodeModulesCache() {
+	s.diskFiles.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) bool {
+		if strings.Contains(string(entry.Key()), "/node_modules/") {
+			entry.Change(func(file *diskFile) {
+				file.needsReload = true
+			})
+		}
 		return true
 	})
 }

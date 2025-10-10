@@ -20,6 +20,10 @@ const (
 	FileChangeKindWatchDelete
 )
 
+func (k FileChangeKind) IsWatchKind() bool {
+	return k == FileChangeKindWatchCreate || k == FileChangeKindWatchChange || k == FileChangeKindWatchDelete
+}
+
 type FileChange struct {
 	Kind         FileChangeKind
 	URI          lsproto.DocumentUri
@@ -40,6 +44,10 @@ type FileChangeSummary struct {
 	Created collections.Set[lsproto.DocumentUri]
 	// Only set when file watching is enabled
 	Deleted collections.Set[lsproto.DocumentUri]
+
+	// IncludesWatchChangeOutsideNodeModules is true if the summary includes a create, change, or delete watch
+	// event of a file outside a node_modules directory.
+	IncludesWatchChangeOutsideNodeModules bool
 }
 
 func (f FileChangeSummary) IsEmpty() bool {
