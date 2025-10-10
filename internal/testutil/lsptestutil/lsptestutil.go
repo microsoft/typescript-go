@@ -11,6 +11,9 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
+	"github.com/microsoft/typescript-go/internal/project/ata"
+	"github.com/microsoft/typescript-go/internal/project/logging"
+	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"gotest.tools/v3/assert"
 )
@@ -71,16 +74,23 @@ type TestLspServer struct {
 	in     *lspWriter
 	out    *lspReader
 	id     int32
-	Vfs    vfs.FS
+	FS     vfs.FS
+
+	TypingsLocation string
 }
 
-func NewTestLspServer(
-	t *testing.T,
-	fs vfs.FS,
-	parseCache *project.ParseCache,
-	optionsForInferredProject *core.CompilerOptions,
-	capabilities *lsproto.ClientCapabilities,
-) *TestLspServer {
+type TestLspServerOptions struct {
+	FS                        vfs.FS
+	Client                    project.Client
+	Logger                    logging.Logger
+	NpmExecutor               ata.NpmExecutor
+	ParseCache                *project.ParseCache
+	OptionsForInferredProject *core.CompilerOptions
+	TypingsLocation           string
+	Capabilities              *lsproto.ClientCapabilities
+}
+
+func NewTestLspServer(t *testing.T, options *TestLspServerOptions) *TestLspServer {
 	t.Helper()
 
 	inputReader, inputWriter := newLSPPipe()
@@ -93,10 +103,14 @@ func NewTestLspServer(
 		Err: &err,
 
 		Cwd:                "/",
-		FS:                 fs,
+		FS:                 options.FS,
 		DefaultLibraryPath: bundled.LibPath(),
+		TypingsLocation:    options.TypingsLocation,
 
-		ParseCache: parseCache,
+		ParseCache:  options.ParseCache,
+		Client:      options.Client,
+		Logger:      options.Logger,
+		NpmExecutor: options.NpmExecutor,
 	})
 
 	go func() {
@@ -110,16 +124,19 @@ func NewTestLspServer(
 	}()
 
 	s := &TestLspServer{
-		Server: server,
-		in:     inputWriter,
-		out:    outputReader,
-		Vfs:    fs,
+		Server:          server,
+		in:              inputWriter,
+		out:             outputReader,
+		FS:              options.FS,
+		TypingsLocation: options.TypingsLocation,
 	}
 
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	// !!! replace with a proper request *after initialize*
-	s.Server.SetCompilerOptionsForInferredProjects(t.Context(), optionsForInferredProject)
-	s.initialize(t, capabilities)
+	if options.OptionsForInferredProject != nil {
+		s.Server.SetCompilerOptionsForInferredProjects(t.Context(), options.OptionsForInferredProject)
+	}
+	s.initialize(t, options.Capabilities)
 
 	t.Cleanup(func() {
 		inputWriter.Close()
@@ -201,6 +218,30 @@ func (s *TestLspServer) readMsg(t *testing.T) *lsproto.Message {
 	return msg
 }
 
+func (s *TestLspServer) Session() *project.Session { return s.Server.Session() }
+
 func ptrTo[T any](v T) *T {
 	return &v
+}
+
+func Setup(t *testing.T, files map[string]any) (*TestLspServer, *projecttestutil.SessionUtils) {
+	initOptions, sessionUtils := projecttestutil.GetSessionInitOptions(files, nil, &projecttestutil.TypingsInstallerOptions{})
+	initOptions.Options.TypingsLocation = "" // Disable ata
+	watchEnabledCapabilities := &lsproto.ClientCapabilities{
+		Workspace: &lsproto.WorkspaceClientCapabilities{
+			DidChangeWatchedFiles: &lsproto.DidChangeWatchedFilesClientCapabilities{
+				DynamicRegistration: ptrTo(true),
+			},
+		},
+	}
+	server := NewTestLspServer(t, &TestLspServerOptions{
+		FS:              initOptions.FS,
+		Client:          initOptions.Client,
+		Logger:          initOptions.Logger,
+		NpmExecutor:     initOptions.NpmExecutor,
+		ParseCache:      initOptions.ParseCache,
+		TypingsLocation: initOptions.Options.TypingsLocation,
+		Capabilities:    watchEnabledCapabilities,
+	})
+	return server, sessionUtils
 }

@@ -39,17 +39,28 @@ type ServerOptions struct {
 	DefaultLibraryPath string
 	TypingsLocation    string
 	ParseCache         *project.ParseCache
+
+	// Test options
+	Client      project.Client
+	Logger      logging.Logger
+	NpmExecutor ata.NpmExecutor
 }
 
 func NewServer(opts *ServerOptions) *Server {
 	if opts.Cwd == "" {
 		panic("Cwd is required")
 	}
+	var logger logging.Logger
+	if opts.Logger != nil {
+		logger = opts.Logger
+	} else {
+		logger = logging.NewLogger(opts.Err)
+	}
 	return &Server{
 		r:                     opts.In,
 		w:                     opts.Out,
 		stderr:                opts.Err,
-		logger:                logging.NewLogger(opts.Err),
+		logger:                logger,
 		requestQueue:          make(chan *lsproto.RequestMessage, 100),
 		outgoingQueue:         make(chan *lsproto.Message, 100),
 		pendingClientRequests: make(map[lsproto.ID]pendingClientRequest),
@@ -59,6 +70,8 @@ func NewServer(opts *ServerOptions) *Server {
 		defaultLibraryPath:    opts.DefaultLibraryPath,
 		typingsLocation:       opts.TypingsLocation,
 		parseCache:            opts.ParseCache,
+		client:                opts.Client,
+		npmExecutor:           opts.NpmExecutor,
 	}
 }
 
@@ -153,11 +166,17 @@ type Server struct {
 
 	session *project.Session
 
+	// Test options for initializing session
+	client      project.Client
+	npmExecutor ata.NpmExecutor
+
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	// parseCache can be passed in so separate tests can share ASTs
 	parseCache *project.ParseCache
 }
+
+func (s *Server) Session() *project.Session { return s.session }
 
 // WatchFiles implements project.Client.
 func (s *Server) WatchFiles(ctx context.Context, id project.WatcherID, watchers []*lsproto.FileSystemWatcher) error {
@@ -698,6 +717,20 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 		cwd = s.cwd
 	}
 
+	var client project.Client
+	if s.client != nil {
+		client = s.client
+	} else {
+		client = s
+	}
+
+	var npmExecutor ata.NpmExecutor
+	if s.npmExecutor != nil {
+		npmExecutor = s.npmExecutor
+	} else {
+		npmExecutor = s
+	}
+
 	s.session = project.NewSession(&project.SessionInit{
 		Options: &project.SessionOptions{
 			CurrentDirectory:   cwd,
@@ -710,8 +743,8 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 		},
 		FS:          s.fs,
 		Logger:      s.logger,
-		Client:      s,
-		NpmExecutor: s,
+		Client:      client,
+		NpmExecutor: npmExecutor,
 		ParseCache:  s.parseCache,
 	})
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
