@@ -1,0 +1,15 @@
+blockedScopeVariableNotUnused1.ts(3,13): error TS2448: Block-scoped variable 'numFilesSelected' used before its declaration.
+
+
+==== blockedScopeVariableNotUnused1.ts (1 errors) ====
+    export function foo() {
+      const _fn = () => {
+        ;(() => numFilesSelected)()
+                ~~~~~~~~~~~~~~~~
+!!! error TS2448: Block-scoped variable 'numFilesSelected' used before its declaration.
+!!! related TS2728 blockedScopeVariableNotUnused1.ts:6:9: 'numFilesSelected' is declared here.
+      }
+    
+      const numFilesSelected = 1
+    }
+    
