@@ -2,38 +2,31 @@ package fourslash
 
 import (
 	"fmt"
-	"io"
 	"maps"
 	"slices"
 	"strings"
 	"testing"
 	"unicode/utf8"
 
-	"github.com/go-json-experiment/json"
 	"github.com/google/go-cmp/cmp"
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
-	"github.com/microsoft/typescript-go/internal/lsp"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
+	"github.com/microsoft/typescript-go/internal/testutil/lsptestutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
-	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
 
 type FourslashTest struct {
-	server *lsp.Server
-	in     *lspWriter
-	out    *lspReader
-	id     int32
-	vfs    vfs.FS
+	lsptestutil.TestLspServer
 
 	testData     *TestData // !!! consolidate test files from test data and script info
 	baselines    map[string]*strings.Builder
@@ -78,41 +71,6 @@ func (s *scriptInfo) FileName() string {
 	return s.fileName
 }
 
-type lspReader struct {
-	c <-chan *lsproto.Message
-}
-
-func (r *lspReader) Read() (*lsproto.Message, error) {
-	msg, ok := <-r.c
-	if !ok {
-		return nil, io.EOF
-	}
-	return msg, nil
-}
-
-type lspWriter struct {
-	c chan<- *lsproto.Message
-}
-
-func (w *lspWriter) Write(msg *lsproto.Message) error {
-	w.c <- msg
-	return nil
-}
-
-func (r *lspWriter) Close() {
-	close(r.c)
-}
-
-var (
-	_ lsp.Reader = (*lspReader)(nil)
-	_ lsp.Writer = (*lspWriter)(nil)
-)
-
-func newLSPPipe() (*lspReader, *lspWriter) {
-	c := make(chan *lsproto.Message, 100)
-	return &lspReader{c: c}, &lspWriter{c: c}
-}
-
 const rootDir = "/"
 
 var parseCache = project.ParseCache{
@@ -142,33 +100,8 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		SkipDefaultLibCheck: core.TSTrue,
 	}
 	harnessutil.SetCompilerOptionsFromTestConfig(t, testData.GlobalOptions, compilerOptions, rootDir)
-
-	inputReader, inputWriter := newLSPPipe()
-	outputReader, outputWriter := newLSPPipe()
 	fs := bundled.WrapFS(vfstest.FromMap(testfs, true /*useCaseSensitiveFileNames*/))
-
-	var err strings.Builder
-	server := lsp.NewServer(&lsp.ServerOptions{
-		In:  inputReader,
-		Out: outputWriter,
-		Err: &err,
-
-		Cwd:                "/",
-		FS:                 fs,
-		DefaultLibraryPath: bundled.LibPath(),
-
-		ParseCache: &parseCache,
-	})
-
-	go func() {
-		defer func() {
-			outputWriter.Close()
-		}()
-		err := server.Run()
-		if err != nil {
-			t.Error("server error:", err)
-		}
-	}()
+	lspTestServer := lsptestutil.NewTestLspServer(t, fs, &parseCache, compilerOptions, capabilities)
 
 	converters := ls.NewConverters(lsproto.PositionEncodingKindUTF8, func(fileName string) *ls.LSPLineMap {
 		scriptInfo, ok := scriptInfos[fileName]
@@ -179,27 +112,19 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	})
 
 	f := &FourslashTest{
-		server:      server,
-		in:          inputWriter,
-		out:         outputReader,
-		testData:    &testData,
-		vfs:         fs,
-		scriptInfos: scriptInfos,
-		converters:  converters,
-		baselines:   make(map[string]*strings.Builder),
+		TestLspServer: *lspTestServer,
+		testData:      &testData,
+		scriptInfos:   scriptInfos,
+		converters:    converters,
+		baselines:     make(map[string]*strings.Builder),
 	}
 
-	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
-	// !!! replace with a proper request *after initialize*
-	f.server.SetCompilerOptionsForInferredProjects(t.Context(), compilerOptions)
-	f.initialize(t, capabilities)
 	for _, file := range testData.Files {
 		f.openFile(t, file.fileName)
 	}
 	f.activeFilename = f.testData.Files[0].fileName
 
 	t.Cleanup(func() {
-		inputWriter.Close()
 		f.verifyBaselines(t)
 	})
 	return f
@@ -210,94 +135,12 @@ func getBaseFileNameFromTest(t *testing.T) string {
 	return stringutil.LowerFirstChar(name)
 }
 
-func (f *FourslashTest) nextID() int32 {
-	id := f.id
-	f.id++
-	return id
-}
-
-func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCapabilities) {
-	params := &lsproto.InitializeParams{
-		Locale: ptrTo("en-US"),
-	}
-	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
-	// !!! check for errors?
-	sendRequest(t, f, lsproto.InitializeInfo, params)
-	sendNotification(t, f, lsproto.InitializedInfo, &lsproto.InitializedParams{})
-}
-
-var (
-	ptrTrue                       = ptrTo(true)
-	defaultCompletionCapabilities = &lsproto.CompletionClientCapabilities{
-		CompletionItem: &lsproto.ClientCompletionItemOptions{
-			SnippetSupport:          ptrTrue,
-			CommitCharactersSupport: ptrTrue,
-			PreselectSupport:        ptrTrue,
-			LabelDetailsSupport:     ptrTrue,
-			InsertReplaceSupport:    ptrTrue,
-		},
-		CompletionList: &lsproto.CompletionListCapabilities{
-			ItemDefaults: &[]string{"commitCharacters", "editRange"},
-		},
-	}
-)
-
-func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lsproto.ClientCapabilities {
-	var capabilitiesWithDefaults lsproto.ClientCapabilities
-	if capabilities != nil {
-		capabilitiesWithDefaults = *capabilities
-	}
-	capabilitiesWithDefaults.General = &lsproto.GeneralClientCapabilities{
-		PositionEncodings: &[]lsproto.PositionEncodingKind{lsproto.PositionEncodingKindUTF8},
-	}
-	if capabilitiesWithDefaults.TextDocument == nil {
-		capabilitiesWithDefaults.TextDocument = &lsproto.TextDocumentClientCapabilities{}
-	}
-	if capabilitiesWithDefaults.TextDocument.Completion == nil {
-		capabilitiesWithDefaults.TextDocument.Completion = defaultCompletionCapabilities
-	}
-	return &capabilitiesWithDefaults
-}
-
 func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.RequestInfo[Params, Resp], params Params) (*lsproto.Message, Resp, bool) {
-	id := f.nextID()
-	req := lsproto.NewRequestMessage(
-		info.Method,
-		lsproto.NewID(lsproto.IntegerOrString{Integer: &id}),
-		params,
-	)
-	f.writeMsg(t, req.Message())
-	resp := f.readMsg(t)
-	if resp == nil {
-		return nil, *new(Resp), false
-	}
-	result, ok := resp.AsResponse().Result.(Resp)
-	return resp, result, ok
+	return lsptestutil.SendRequest(t, &f.TestLspServer, info, params)
 }
 
 func sendNotification[Params any](t *testing.T, f *FourslashTest, info lsproto.NotificationInfo[Params], params Params) {
-	notification := lsproto.NewNotificationMessage(
-		info.Method,
-		params,
-	)
-	f.writeMsg(t, notification.Message())
-}
-
-func (f *FourslashTest) writeMsg(t *testing.T, msg *lsproto.Message) {
-	assert.NilError(t, json.MarshalWrite(io.Discard, msg), "failed to encode message as JSON")
-	if err := f.in.Write(msg); err != nil {
-		t.Fatalf("failed to write message: %v", err)
-	}
-}
-
-func (f *FourslashTest) readMsg(t *testing.T) *lsproto.Message {
-	// !!! filter out response by id etc
-	msg, err := f.out.Read()
-	if err != nil {
-		t.Fatalf("failed to read message: %v", err)
-	}
-	assert.NilError(t, json.MarshalWrite(io.Discard, msg), "failed to encode message as JSON")
-	return msg
+	lsptestutil.SendNotification(t, &f.TestLspServer, info, params)
 }
 
 func (f *FourslashTest) GoToMarkerOrRange(t *testing.T, markerOrRange MarkerOrRange) {
@@ -1321,7 +1164,7 @@ func (f *FourslashTest) editScript(t *testing.T, fileName string, start int, end
 	}
 
 	script.editContent(start, end, newText)
-	err := f.vfs.WriteFile(fileName, script.content, false)
+	err := f.Vfs.WriteFile(fileName, script.content, false)
 	if err != nil {
 		panic(fmt.Sprintf("Failed to write file %s: %v", fileName, err))
 	}
@@ -1519,7 +1362,7 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 
 		f.writeToBaseline("Auto Imports", "// === Auto Imports === \n")
 
-		fileContent, ok := f.vfs.ReadFile(f.activeFilename)
+		fileContent, ok := f.Vfs.ReadFile(f.activeFilename)
 		if !ok {
 			t.Fatalf(prefix+"Failed to read file %s for auto-import baseline", f.activeFilename)
 		}

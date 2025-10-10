@@ -149,7 +149,7 @@ func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedRa
 	foundMarker := false
 
 	baselineEntries := []string{}
-	err := f.vfs.WalkDir("/", func(path string, d vfs.DirEntry, e error) error {
+	err := f.Vfs.WalkDir("/", func(path string, d vfs.DirEntry, e error) error {
 		if e != nil {
 			return e
 		}
@@ -164,7 +164,7 @@ func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedRa
 			return nil
 		}
 
-		content, ok := f.vfs.ReadFile(path)
+		content, ok := f.Vfs.ReadFile(path)
 		if !ok {
 			// !!! error?
 			return nil
@@ -185,7 +185,7 @@ func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedRa
 	if !foundMarker && options.marker != nil {
 		// If we didn't find the marker in any file, we need to add it.
 		markerFileName := options.marker.FileName()
-		if content, ok := f.vfs.ReadFile(markerFileName); ok {
+		if content, ok := f.Vfs.ReadFile(markerFileName); ok {
 			baselineEntries = append(baselineEntries, f.getBaselineContentForFile(markerFileName, content, nil, nil, options))
 		}
 	}
