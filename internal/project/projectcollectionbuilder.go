@@ -506,23 +506,50 @@ func (b *ProjectCollectionBuilder) findDefaultConfiguredProject(fileName string,
 func (b *ProjectCollectionBuilder) ensureConfiguredProjectAndAncestorsForFile(fileName string, path tspath.Path, logger *logging.LogTree) searchResult {
 	result := b.findOrCreateDefaultConfiguredProjectForFile(fileName, path, projectLoadKindCreate, logger)
 	if result.project != nil && b.openedFiles.Has(path) {
-		// !!! sheetal todo this later
-		// // Create ancestor tree for findAllRefs (dont load them right away)
-		// forEachAncestorProjectLoad(
-		// 	info,
-		// 	tsconfigProject!,
-		// 	ancestor => {
-		// 		seenProjects.set(ancestor.project, kind);
-		// 	},
-		// 	kind,
-		// 	`Creating project possibly referencing default composite project ${defaultProject.getProjectName()} of open file ${info.fileName}`,
-		// 	allowDeferredClosed,
-		// 	reloadedProjects,
-		// 	/*searchOnlyPotentialSolution*/ true,
-		// 	delayReloadedConfiguredProjects,
-		// );
+		// TODO!!! sheetal - keep these alive as well along with default projects
+		// !!! sheetal we want to keep referenced projects if any as well alive so they can be used for FAR later
+		b.createAncestorTree(fileName, path, &result, logger)
 	}
 	return result
+}
+
+func (b *ProjectCollectionBuilder) createAncestorTree(fileName string, path tspath.Path, openResult *searchResult, logger *logging.LogTree) {
+	project := openResult.project.Value()
+	for {
+		// Skip if project is not composite and we are only looking for solution
+		if project.CommandLine != nil &&
+			(!project.CommandLine.CompilerOptions().Composite.IsTrue() ||
+				project.CommandLine.CompilerOptions().DisableSolutionSearching.IsTrue()) {
+			return
+		}
+
+		// Get config file name
+		ancestorConfigName := b.configFileRegistryBuilder.getAncestorConfigFileName(fileName, path, project.configFileName, logger)
+		if ancestorConfigName == "" {
+			return
+		}
+
+		// find or delay load the project
+		ancestorPath := b.toPath(ancestorConfigName)
+		ancestor := b.findOrCreateProject(ancestorConfigName, ancestorPath, projectLoadKindCreate, logger)
+		if ancestor == nil {
+			return
+		}
+
+		openResult.retain.Add(ancestorPath)
+
+		// If this ancestor is new and was not updated because we are just creating it for future loading
+		// eg when invoking find all references or rename that could span multiple projects
+		// we would make the current project as its potential project reference
+		if ancestor.Value().CommandLine == nil &&
+			(project.CommandLine == nil || project.CommandLine.CompilerOptions().Composite.IsTrue()) {
+			ancestor.Change(func(ancestorProject *Project) {
+				ancestorProject.setPotentialProjectReference(project.configFilePath)
+			})
+		}
+
+		project = ancestor.Value()
+	}
 }
 
 type searchNode struct {
@@ -830,6 +857,7 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 				entry.Change(func(p *Project) {
 					p.CommandLine = commandLine
 					p.commandLineWithTypingsFiles = nil
+					p.PotentialProjectReferences = nil
 				})
 			}
 		}

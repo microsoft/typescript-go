@@ -68,6 +68,9 @@ type Project struct {
 	ProgramUpdateKind ProgramUpdateKind
 	// The ID of the snapshot that created the program stored in this project.
 	ProgramLastUpdate uint64
+	// Set of projects that this project could be referencing.
+	// Only set before actually loading config file to get actual project references
+	PotentialProjectReferences *collections.Set[tspath.Path]
 
 	programFilesWatch       *WatchedFiles[PatternsAndIgnored]
 	failedLookupsWatch      *WatchedFiles[map[tspath.Path]string]
@@ -224,6 +227,7 @@ func (p *Project) Clone() *Project {
 		Program:                     p.Program,
 		ProgramUpdateKind:           ProgramUpdateKindNone,
 		ProgramLastUpdate:           p.ProgramLastUpdate,
+		PotentialProjectReferences:  p.PotentialProjectReferences,
 
 		programFilesWatch:       p.programFilesWatch,
 		failedLookupsWatch:      p.failedLookupsWatch,
@@ -269,6 +273,15 @@ func (p *Project) getCommandLineWithTypingsFiles() *tsoptions.ParsedCommandLine 
 		}
 	})
 	return p.commandLineWithTypingsFiles
+}
+
+func (p *Project) setPotentialProjectReference(configFilePath tspath.Path) {
+	if p.PotentialProjectReferences == nil {
+		p.PotentialProjectReferences = &collections.Set[tspath.Path]{}
+	} else {
+		p.PotentialProjectReferences = p.PotentialProjectReferences.Clone()
+	}
+	p.PotentialProjectReferences.Add(configFilePath)
 }
 
 type CreateProgramResult struct {

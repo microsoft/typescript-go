@@ -238,18 +238,32 @@ export const a = 10;
 Projects::
   [/user/username/projects/myproject/dependency/tsconfig.json] *new*
     /user/username/projects/myproject/dependency/FnS.ts  
+  [/user/username/projects/myproject/tsconfig.json] *new*
+    /user/username/projects/myproject/dependency/FnS.ts  
+    /user/username/projects/myproject/main/main.ts       
 Open Files::
   [/user/username/projects/myproject/dependency/FnS.ts] *new*
     /user/username/projects/myproject/dependency/tsconfig.json  (default) 
+    /user/username/projects/myproject/tsconfig.json             
 Config::
   [/user/username/projects/myproject/dependency/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/myproject/dependency/tsconfig.json  
+      /user/username/projects/myproject/tsconfig.json             
     RetainingOpenFiles:
       /user/username/projects/myproject/dependency/fns.ts  
+  [/user/username/projects/myproject/main/tsconfig.json] *new*
+    RetainingProjects:
+      /user/username/projects/myproject/tsconfig.json  
+  [/user/username/projects/myproject/tsconfig.json] *new*
+    RetainingProjects:
+      /user/username/projects/myproject/tsconfig.json  
 Config File Names::
   [/user/username/projects/myproject/dependency/fns.ts] *new*
     NearestConfigFileName: /user/username/projects/myproject/dependency/tsconfig.json
+    Ancestors:
+      /user/username/projects/myproject/dependency/tsconfig.json  /user/username/projects/myproject/tsconfig.json 
+      /user/username/projects/myproject/tsconfig.json              
 {
   "method": "textDocument/rename",
   "params": {
@@ -263,6 +277,37 @@ Config File Names::
     "newName": "?"
   }
 }
+Projects::
+  [/user/username/projects/myproject/dependency/tsconfig.json] 
+    /user/username/projects/myproject/dependency/FnS.ts  
+  [/user/username/projects/myproject/main/tsconfig.json] *new*
+    /user/username/projects/myproject/dependency/FnS.ts  
+    /user/username/projects/myproject/main/main.ts       
+  [/user/username/projects/myproject/tsconfig.json] 
+    /user/username/projects/myproject/dependency/FnS.ts  
+    /user/username/projects/myproject/main/main.ts       
+Open Files::
+  [/user/username/projects/myproject/dependency/FnS.ts] *modified*
+    /user/username/projects/myproject/dependency/tsconfig.json  (default) 
+    /user/username/projects/myproject/main/tsconfig.json        *new*
+    /user/username/projects/myproject/tsconfig.json             
+Config::
+  [/user/username/projects/myproject/dependency/tsconfig.json] *modified*
+    RetainingProjects: *modified*
+      /user/username/projects/myproject/dependency/tsconfig.json  
+      /user/username/projects/myproject/main/tsconfig.json        *new*
+      /user/username/projects/myproject/tsconfig.json             
+    RetainingOpenFiles:
+      /user/username/projects/myproject/dependency/fns.ts  
+  [/user/username/projects/myproject/main/tsconfig.json] *modified*
+    RetainingProjects: *modified*
+      /user/username/projects/myproject/main/tsconfig.json  *new*
+      /user/username/projects/myproject/tsconfig.json       
+    RetainingOpenFiles: *modified*
+      /user/username/projects/myproject/main/main.ts  *new*
+  [/user/username/projects/myproject/tsconfig.json] 
+    RetainingProjects:
+      /user/username/projects/myproject/tsconfig.json  
 // === /user/username/projects/myproject/dependency/FnS.ts ===
 // export function fn1() { }
 // export function fn2() { }
@@ -270,6 +315,21 @@ Config File Names::
 // export function fn4() { }
 // export function fn5() { }
 // 
+
+// === /user/username/projects/myproject/main/main.ts ===
+// import {
+//     fn1,
+//     fn2,
+//     /*START PREFIX*/fn3 as [|/*START PREFIX*/fn3 as [|fn3RENAME|]RENAME|],
+//     fn4,
+//     fn5
+// } from "../decls/FnS";
+// 
+// fn1();
+// fn2();
+// [|fn3RENAME|]();
+// fn4();
+// fn5();
 {
   "method": "textDocument/didChange",
   "params": {
@@ -310,6 +370,12 @@ Config File Names::
 Projects::
   [/user/username/projects/myproject/dependency/tsconfig.json] *modified*
     /user/username/projects/myproject/dependency/FnS.ts  *modified*
+  [/user/username/projects/myproject/main/tsconfig.json] *modified*
+    /user/username/projects/myproject/dependency/FnS.ts  *modified*
+    /user/username/projects/myproject/main/main.ts       
+  [/user/username/projects/myproject/tsconfig.json] *modified*
+    /user/username/projects/myproject/dependency/FnS.ts  *modified*
+    /user/username/projects/myproject/main/main.ts       
 // === /user/username/projects/myproject/dependency/FnS.ts ===
 // function fooBar() { }
 // export function fn1() { }
@@ -318,3 +384,18 @@ Projects::
 // export function fn4() { }
 // export function fn5() { }
 // 
+
+// === /user/username/projects/myproject/main/main.ts ===
+// import {
+//     fn1,
+//     fn2,
+//     [|fn3RENAME|],
+//     fn4,
+//     fn5
+// } from "../decls/FnS";
+// 
+// fn1();
+// fn2();
+// [|fn3RENAME|]();
+// fn4();
+// fn5();

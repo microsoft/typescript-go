@@ -235,18 +235,32 @@ export const a = 10;
 Projects::
   [/user/username/projects/myproject/dependency/tsconfig.json] *new*
     /user/username/projects/myproject/dependency/FnS.ts  
+  [/user/username/projects/myproject/tsconfig.json] *new*
+    /user/username/projects/myproject/decls/FnS.d.ts     
+    /user/username/projects/myproject/dependency/FnS.ts  
+    /user/username/projects/myproject/main/main.ts       
 Open Files::
   [/user/username/projects/myproject/dependency/FnS.ts] *new*
     /user/username/projects/myproject/dependency/tsconfig.json  (default) 
+    /user/username/projects/myproject/tsconfig.json             
 Config::
   [/user/username/projects/myproject/dependency/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/myproject/dependency/tsconfig.json  
     RetainingOpenFiles:
       /user/username/projects/myproject/dependency/fns.ts  
+  [/user/username/projects/myproject/main/tsconfig.json] *new*
+    RetainingProjects:
+      /user/username/projects/myproject/tsconfig.json  
+  [/user/username/projects/myproject/tsconfig.json] *new*
+    RetainingProjects:
+      /user/username/projects/myproject/tsconfig.json  
 Config File Names::
   [/user/username/projects/myproject/dependency/fns.ts] *new*
     NearestConfigFileName: /user/username/projects/myproject/dependency/tsconfig.json
+    Ancestors:
+      /user/username/projects/myproject/dependency/tsconfig.json  /user/username/projects/myproject/tsconfig.json 
+      /user/username/projects/myproject/tsconfig.json              
 {
   "method": "textDocument/rename",
   "params": {
@@ -307,6 +321,10 @@ Config File Names::
 Projects::
   [/user/username/projects/myproject/dependency/tsconfig.json] *modified*
     /user/username/projects/myproject/dependency/FnS.ts  *modified*
+  [/user/username/projects/myproject/tsconfig.json] *modified*
+    /user/username/projects/myproject/decls/FnS.d.ts     
+    /user/username/projects/myproject/dependency/FnS.ts  *modified*
+    /user/username/projects/myproject/main/main.ts       
 // === /user/username/projects/myproject/dependency/FnS.ts ===
 // function fooBar() { }
 // export function fn1() { }

@@ -109,6 +109,8 @@ Config::
 Config File Names::
   [/home/src/projects/project/a/a.ts] *new*
     NearestConfigFileName: /home/src/projects/project/a/tsconfig.json
+    Ancestors:
+      /home/src/projects/project/a/tsconfig.json   
   [/home/src/projects/project/user/user.ts] 
     NearestConfigFileName: 
 {
@@ -179,6 +181,8 @@ Config::
 Config File Names::
   [/home/src/projects/project/a/a.ts] 
     NearestConfigFileName: /home/src/projects/project/a/tsconfig.json
+    Ancestors:
+      /home/src/projects/project/a/tsconfig.json   
   [/home/src/projects/project/dummy/dummy.ts] *new*
     NearestConfigFileName: /home/src/projects/project/dummy/tsconfig.json
   [/home/src/projects/project/user/user.ts] *deleted*
