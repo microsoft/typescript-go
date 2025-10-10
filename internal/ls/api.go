@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
@@ -61,34 +60,27 @@ func getPosition(file *ast.SourceFile, position int, ls *LanguageService) Positi
 type DiagnosticId uint32
 
 type Diagnostic struct {
-	Id                 DiagnosticId   `json:"id"`
-	FileName           string         `json:"fileName"`
-	Start              Position       `json:"start"`
-	End                Position       `json:"end"`
-	StartPos           int            `json:"startPos"`
-	EndPos             int            `json:"endPos"`
-	Code               int32          `json:"code"`
-	Category           string         `json:"category"`
-	Message            string         `json:"message"`
-	MessageChain       []DiagnosticId `json:"messageChain"`
-	RelatedInformation []DiagnosticId `json:"relatedInformation"`
-	ReportsUnnecessary bool           `json:"reportsUnnecessary"`
-	ReportsDeprecated  bool           `json:"reportsDeprecated"`
-	SkippedOnNoEmit    bool           `json:"skippedOnNoEmit"`
-	SourceLine         string         `json:"sourceLine"`
+	FileName           string        `json:"fileName"`
+	Start              Position      `json:"start"`
+	End                Position      `json:"end"`
+	StartPos           int           `json:"startPos"`
+	EndPos             int           `json:"endPos"`
+	Code               int32         `json:"code"`
+	Category           string        `json:"category"`
+	Message            string        `json:"message"`
+	MessageChain       []*Diagnostic `json:"messageChain"`
+	RelatedInformation []*Diagnostic `json:"relatedInformation"`
+	ReportsUnnecessary bool          `json:"reportsUnnecessary"`
+	ReportsDeprecated  bool          `json:"reportsDeprecated"`
+	SkippedOnNoEmit    bool          `json:"skippedOnNoEmit"`
+	SourceLine         string        `json:"sourceLine"`
 }
 
-type diagnosticMaps struct {
-	diagnosticMapById    map[DiagnosticId]Diagnostic
-	diagnosticReverseMap map[*ast.Diagnostic]DiagnosticId
+type diagnosticList struct {
+	diagnostics []*Diagnostic
 }
 
-func (d *diagnosticMaps) addDiagnostic(diagnostic *ast.Diagnostic, ls *LanguageService) DiagnosticId {
-	if i, ok := d.diagnosticReverseMap[diagnostic]; ok {
-		return i
-	}
-	id := DiagnosticId(len(d.diagnosticMapById) + 1)
-
+func (d *diagnosticList) addDiagnostic(diagnostic *ast.Diagnostic, ls *LanguageService, shouldAdd bool) *Diagnostic {
 	startPos := diagnostic.Loc().Pos()
 	startPosLineCol := getPosition(diagnostic.File(), startPos, ls)
 	lineMap := ls.converters.getLineMap(diagnostic.File().FileName())
@@ -101,8 +93,7 @@ func (d *diagnosticMaps) addDiagnostic(diagnostic *ast.Diagnostic, ls *LanguageS
 	}
 	sourceLine := diagnostic.File().Text()[lineStartPos:lineEndPos]
 
-	diag := Diagnostic{
-		Id:                 id,
+	diag := &Diagnostic{
 		FileName:           diagnostic.File().FileName(),
 		Start:              startPosLineCol,
 		End:                getPosition(diagnostic.File(), diagnostic.Loc().End(), ls),
@@ -112,42 +103,32 @@ func (d *diagnosticMaps) addDiagnostic(diagnostic *ast.Diagnostic, ls *LanguageS
 		Code:               diagnostic.Code(),
 		Category:           diagnostic.Category().Name(),
 		Message:            diagnostic.Message(),
-		MessageChain:       make([]DiagnosticId, 0, len(diagnostic.MessageChain())),
-		RelatedInformation: make([]DiagnosticId, 0, len(diagnostic.RelatedInformation())),
+		MessageChain:       make([]*Diagnostic, 0, len(diagnostic.MessageChain())),
+		RelatedInformation: make([]*Diagnostic, 0, len(diagnostic.RelatedInformation())),
 	}
-
-	d.diagnosticReverseMap[diagnostic] = id
 
 	for _, messageChain := range diagnostic.MessageChain() {
-		diag.MessageChain = append(diag.MessageChain, d.addDiagnostic(messageChain, ls))
+		diag.MessageChain = append(diag.MessageChain, d.addDiagnostic(messageChain, ls, false))
 	}
-
 	for _, relatedInformation := range diagnostic.RelatedInformation() {
-		diag.RelatedInformation = append(diag.RelatedInformation, d.addDiagnostic(relatedInformation, ls))
+		diag.RelatedInformation = append(diag.RelatedInformation, d.addDiagnostic(relatedInformation, ls, false))
 	}
 
-	d.diagnosticMapById[id] = diag
-	return id
-}
-
-func (d *diagnosticMaps) getDiagnostics() []Diagnostic {
-	diagnostics := make([]Diagnostic, 0, len(d.diagnosticMapById))
-	for _, diagnostic := range d.diagnosticMapById {
-		diagnostics = append(diagnostics, diagnostic)
+	if shouldAdd {
+		d.diagnostics = append(d.diagnostics, diag)
 	}
-
-	slices.SortFunc(diagnostics, func(a, b Diagnostic) int {
-		return int(int64(a.Id) - int64(b.Id))
-	})
-	return diagnostics
+	return diag
 }
 
-func (l *LanguageService) GetDiagnostics(ctx context.Context) []Diagnostic {
+func (d *diagnosticList) getDiagnostics() []*Diagnostic {
+	return d.diagnostics
+}
+
+func (l *LanguageService) GetDiagnostics(ctx context.Context) []*Diagnostic {
 	program := l.GetProgram()
 	sourceFiles := program.GetSourceFiles()
-	diagnosticMaps := &diagnosticMaps{
-		diagnosticMapById:    make(map[DiagnosticId]Diagnostic),
-		diagnosticReverseMap: make(map[*ast.Diagnostic]DiagnosticId),
+	diagnosticList := &diagnosticList{
+		diagnostics: make([]*Diagnostic, 0),
 	}
 	diagnostics := make([]*ast.Diagnostic, 0, len(sourceFiles))
 	for _, sourceFile := range sourceFiles {
@@ -156,7 +137,7 @@ func (l *LanguageService) GetDiagnostics(ctx context.Context) []Diagnostic {
 	}
 	diagnostics = compiler.SortAndDeduplicateDiagnostics(diagnostics)
 	for _, diagnostic := range diagnostics {
-		diagnosticMaps.addDiagnostic(diagnostic, l)
+		diagnosticList.addDiagnostic(diagnostic, l, true)
 	}
-	return diagnosticMaps.getDiagnostics()
+	return diagnosticList.getDiagnostics()
 }
