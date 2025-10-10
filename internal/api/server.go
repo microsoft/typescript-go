@@ -6,6 +6,8 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"net/url"
+	"path/filepath"
 	"runtime/debug"
 	"strconv"
 	"strings"
@@ -668,6 +670,18 @@ func (s *Server) DirectoryExists(path string) bool {
 	return s.fs.DirectoryExists(path)
 }
 
+func fileURLToPath(rawURL string) (string, error) {
+	u, err := url.Parse(rawURL)
+	if err != nil {
+		return "", err
+	}
+	if u.Scheme != "file" {
+		return "", fmt.Errorf("not a file URL: %s", u.Scheme)
+	}
+	// On Windows, url.Path starts with "/", e.g. /C:/path/to/file
+	return filepath.FromSlash(u.Path), nil
+}
+
 // FileExists implements vfs.FS.
 func (s *Server) FileExists(path string) bool {
 	if s.enabledCallbacks&CallbackFileExists != 0 {
@@ -678,6 +692,13 @@ func (s *Server) FileExists(path string) bool {
 		if len(result) > 0 {
 			return string(result) == "true"
 		}
+	}
+	if strings.HasPrefix(path, "file://") {
+		path, err := fileURLToPath(path)
+		if err != nil {
+			panic(err)
+		}
+		return s.fs.FileExists(path)
 	}
 	return s.fs.FileExists(path)
 }
