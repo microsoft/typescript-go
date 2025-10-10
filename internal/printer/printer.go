@@ -2966,16 +2966,16 @@ func (p *Printer) willEmitLeadingNewLine(node *ast.Expression) bool {
 
 	// For PartiallyEmittedExpression, recursively check the inner expression
 	if node.Kind == ast.KindPartiallyEmittedExpression {
-		pee := node.AsPartiallyEmittedExpression()
-		if node.Pos() != pee.Expression.Pos() {
-			trailingCommentRanges := scanner.GetTrailingCommentRanges(p.emitContext.Factory.AsNodeFactory(), p.currentSourceFile.Text(), pee.Expression.Pos())
+		partiallyEmitted := node.AsPartiallyEmittedExpression()
+		if node.Pos() != partiallyEmitted.Expression.Pos() {
+			trailingCommentRanges := scanner.GetTrailingCommentRanges(p.emitContext.Factory.AsNodeFactory(), p.currentSourceFile.Text(), partiallyEmitted.Expression.Pos())
 			for comment := range trailingCommentRanges {
 				if p.commentWillEmitNewLine(comment) {
 					return true
 				}
 			}
 		}
-		return p.willEmitLeadingNewLine(pee.Expression)
+		return p.willEmitLeadingNewLine(partiallyEmitted.Expression)
 	}
 
 	return false
@@ -3007,87 +3007,87 @@ func (p *Printer) parenthesizeExpressionForNoAsi(node *ast.Expression) *ast.Expr
 
 	switch node.Kind {
 	case ast.KindPartiallyEmittedExpression:
-		pee := node.AsPartiallyEmittedExpression()
+		partiallyEmitted := node.AsPartiallyEmittedExpression()
 		if p.willEmitLeadingNewLine(node) {
 			// !!! if there is an original parse tree node, restore it with location to preserve comments and source maps.
 			// Emit with parentheses precedence to force wrapping
 			return p.createParenthesizedExpressionForNoAsi(node)
 		}
 		// Recursively check the inner expression
-		innerParenthesized := p.parenthesizeExpressionForNoAsi(pee.Expression)
-		if innerParenthesized != pee.Expression {
+		innerParenthesized := p.parenthesizeExpressionForNoAsi(partiallyEmitted.Expression)
+		if innerParenthesized != partiallyEmitted.Expression {
 			// Need to create a new PartiallyEmittedExpression with the parenthesized inner expression
-			return p.updatePartiallyEmittedExpression(pee, innerParenthesized)
+			return p.updatePartiallyEmittedExpression(partiallyEmitted, innerParenthesized)
 		}
 
 	case ast.KindPropertyAccessExpression:
-		pae := node.AsPropertyAccessExpression()
-		exprParenthesized := p.parenthesizeExpressionForNoAsi(pae.Expression)
-		if exprParenthesized != pae.Expression {
-			return p.updatePropertyAccessExpression(pae, exprParenthesized)
+		propertyAccess := node.AsPropertyAccessExpression()
+		exprParenthesized := p.parenthesizeExpressionForNoAsi(propertyAccess.Expression)
+		if exprParenthesized != propertyAccess.Expression {
+			return p.updatePropertyAccessExpression(propertyAccess, exprParenthesized)
 		}
 
 	case ast.KindElementAccessExpression:
-		eae := node.AsElementAccessExpression()
-		exprParenthesized := p.parenthesizeExpressionForNoAsi(eae.Expression)
-		if exprParenthesized != eae.Expression {
-			return p.updateElementAccessExpression(eae, exprParenthesized)
+		elementAccess := node.AsElementAccessExpression()
+		exprParenthesized := p.parenthesizeExpressionForNoAsi(elementAccess.Expression)
+		if exprParenthesized != elementAccess.Expression {
+			return p.updateElementAccessExpression(elementAccess, exprParenthesized)
 		}
 
 	case ast.KindCallExpression:
-		ce := node.AsCallExpression()
-		exprParenthesized := p.parenthesizeExpressionForNoAsi(ce.Expression)
-		if exprParenthesized != ce.Expression {
-			return p.updateCallExpression(ce, exprParenthesized)
+		callExpr := node.AsCallExpression()
+		exprParenthesized := p.parenthesizeExpressionForNoAsi(callExpr.Expression)
+		if exprParenthesized != callExpr.Expression {
+			return p.updateCallExpression(callExpr, exprParenthesized)
 		}
 
 	case ast.KindTaggedTemplateExpression:
-		tte := node.AsTaggedTemplateExpression()
-		tagParenthesized := p.parenthesizeExpressionForNoAsi(tte.Tag)
-		if tagParenthesized != tte.Tag {
-			return p.updateTaggedTemplateExpression(tte, tagParenthesized)
+		taggedTemplate := node.AsTaggedTemplateExpression()
+		tagParenthesized := p.parenthesizeExpressionForNoAsi(taggedTemplate.Tag)
+		if tagParenthesized != taggedTemplate.Tag {
+			return p.updateTaggedTemplateExpression(taggedTemplate, tagParenthesized)
 		}
 
 	case ast.KindPostfixUnaryExpression:
-		pue := node.AsPostfixUnaryExpression()
-		operandParenthesized := p.parenthesizeExpressionForNoAsi(pue.Operand)
-		if operandParenthesized != pue.Operand {
-			return p.updatePostfixUnaryExpression(pue, operandParenthesized)
+		postfixUnary := node.AsPostfixUnaryExpression()
+		operandParenthesized := p.parenthesizeExpressionForNoAsi(postfixUnary.Operand)
+		if operandParenthesized != postfixUnary.Operand {
+			return p.updatePostfixUnaryExpression(postfixUnary, operandParenthesized)
 		}
 
 	case ast.KindBinaryExpression:
-		be := node.AsBinaryExpression()
-		leftParenthesized := p.parenthesizeExpressionForNoAsi(be.Left)
-		if leftParenthesized != be.Left {
-			return p.updateBinaryExpression(be, leftParenthesized)
+		binaryExpr := node.AsBinaryExpression()
+		leftParenthesized := p.parenthesizeExpressionForNoAsi(binaryExpr.Left)
+		if leftParenthesized != binaryExpr.Left {
+			return p.updateBinaryExpression(binaryExpr, leftParenthesized)
 		}
 
 	case ast.KindConditionalExpression:
-		ce := node.AsConditionalExpression()
-		conditionParenthesized := p.parenthesizeExpressionForNoAsi(ce.Condition)
-		if conditionParenthesized != ce.Condition {
-			return p.updateConditionalExpression(ce, conditionParenthesized)
+		conditionalExpr := node.AsConditionalExpression()
+		conditionParenthesized := p.parenthesizeExpressionForNoAsi(conditionalExpr.Condition)
+		if conditionParenthesized != conditionalExpr.Condition {
+			return p.updateConditionalExpression(conditionalExpr, conditionParenthesized)
 		}
 
 	case ast.KindAsExpression:
-		ae := node.AsAsExpression()
-		exprParenthesized := p.parenthesizeExpressionForNoAsi(ae.Expression)
-		if exprParenthesized != ae.Expression {
-			return p.updateAsExpression(ae, exprParenthesized)
+		asExpr := node.AsAsExpression()
+		exprParenthesized := p.parenthesizeExpressionForNoAsi(asExpr.Expression)
+		if exprParenthesized != asExpr.Expression {
+			return p.updateAsExpression(asExpr, exprParenthesized)
 		}
 
 	case ast.KindSatisfiesExpression:
-		se := node.AsSatisfiesExpression()
-		exprParenthesized := p.parenthesizeExpressionForNoAsi(se.Expression)
-		if exprParenthesized != se.Expression {
-			return p.updateSatisfiesExpression(se, exprParenthesized)
+		satisfiesExpr := node.AsSatisfiesExpression()
+		exprParenthesized := p.parenthesizeExpressionForNoAsi(satisfiesExpr.Expression)
+		if exprParenthesized != satisfiesExpr.Expression {
+			return p.updateSatisfiesExpression(satisfiesExpr, exprParenthesized)
 		}
 
 	case ast.KindNonNullExpression:
-		nne := node.AsNonNullExpression()
-		exprParenthesized := p.parenthesizeExpressionForNoAsi(nne.Expression)
-		if exprParenthesized != nne.Expression {
-			return p.updateNonNullExpression(nne, exprParenthesized)
+		nonNullExpr := node.AsNonNullExpression()
+		exprParenthesized := p.parenthesizeExpressionForNoAsi(nonNullExpr.Expression)
+		if exprParenthesized != nonNullExpr.Expression {
+			return p.updateNonNullExpression(nonNullExpr, exprParenthesized)
 		}
 	}
 
