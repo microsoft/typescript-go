@@ -3,6 +3,7 @@ package build
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/module/pnp"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -37,4 +38,8 @@ func (h *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.Sourc
 
 func (h *compilerHost) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
 	return h.host.GetResolvedProjectReference(fileName, path)
+}
+
+func (h *compilerHost) GetPNPResolutionConfig() *pnp.ResolutionConfig {
+	return h.host.GetPNPResolutionConfig()
 }

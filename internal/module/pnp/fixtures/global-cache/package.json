@@ -1,0 +1,7 @@
+{
+  "name": "global-cache",
+  "dependencies": {
+    "source-map-support": "^0.5.21"
+  },
+  "packageManager": "yarn@4.10.0"
+}
