@@ -1,7 +1,6 @@
 package pnp
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -9,6 +8,8 @@ import (
 	"runtime"
 	"strings"
 	"testing"
+
+	"github.com/go-json-experiment/json"
 
 	"github.com/microsoft/typescript-go/internal/module/pnp/utils"
 )
@@ -88,7 +89,7 @@ func TestResolveUnqualified(t *testing.T) {
 	}
 
 	var suites []TestSuite
-	if err := json.Unmarshal(content, &suites); err != nil {
+	if err = json.Unmarshal(content, &suites); err != nil {
 		t.Fatalf("Assertion failed: Expected the expectations to be loaded: %v", err)
 	}
 
@@ -99,7 +100,10 @@ func TestResolveUnqualified(t *testing.T) {
 		testSuite := &suites[si]
 
 		manifest := &testSuite.Manifest
-		InitPNPManifest(manifest, "/path/to/project/.pnp.cjs")
+		err := InitPNPManifest(manifest, "/path/to/project/.pnp.cjs")
+		if err != nil {
+			t.Fatalf("failed to init pnp manifest: %v", err)
+		}
 
 		for _, tc := range testSuite.Tests {
 			parent := filepath.Join(tc.Importer, "fooo")

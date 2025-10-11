@@ -2,9 +2,11 @@ package pnp
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
 	"regexp"
+
+	"github.com/go-json-experiment/json"
+	"github.com/go-json-experiment/json/jsontext"
 
 	"github.com/microsoft/typescript-go/internal/module/pnp/utils"
 )
@@ -101,13 +103,13 @@ func (r *RegexDef) UnmarshalJSON(b []byte) error {
 }
 
 func (m *FallbackPool) UnmarshalJSON(data []byte) error {
-	var items []json.RawMessage
+	var items []jsontext.Value
 	if err := json.Unmarshal(data, &items); err != nil {
 		return err
 	}
 	res := make(FallbackPool, len(items))
 	for _, it := range items {
-		var pair []json.RawMessage
+		var pair []jsontext.Value
 		if err := json.Unmarshal(it, &pair); err != nil {
 			return err
 		}
@@ -138,13 +140,13 @@ func (m *FallbackPool) UnmarshalJSON(data []byte) error {
 type FallbackExclusionList map[string][]string
 
 func (m *FallbackExclusionList) UnmarshalJSON(data []byte) error {
-	var items []json.RawMessage
+	var items []jsontext.Value
 	if err := json.Unmarshal(data, &items); err != nil {
 		return err
 	}
 	res := make(FallbackExclusionList, len(items))
 	for _, it := range items {
-		var pair []json.RawMessage
+		var pair []jsontext.Value
 		if err := json.Unmarshal(it, &pair); err != nil {
 			return err
 		}
@@ -168,13 +170,13 @@ func (m *FallbackExclusionList) UnmarshalJSON(data []byte) error {
 type PackageRegistryData map[string]map[string]PackageInformation
 
 func (m *PackageRegistryData) UnmarshalJSON(data []byte) error {
-	var items []json.RawMessage
+	var items []jsontext.Value
 	if err := json.Unmarshal(data, &items); err != nil {
 		return err
 	}
 	res := make(PackageRegistryData, len(items))
 	for _, it := range items {
-		var pair []json.RawMessage
+		var pair []jsontext.Value
 		if err := json.Unmarshal(it, &pair); err != nil {
 			return err
 		}
@@ -191,13 +193,13 @@ func (m *PackageRegistryData) UnmarshalJSON(data []byte) error {
 			k1 = *key1
 		}
 
-		var inner []json.RawMessage
+		var inner []jsontext.Value
 		if err := json.Unmarshal(pair[1], &inner); err != nil {
 			return err
 		}
 		innerMap := make(map[string]PackageInformation, len(inner))
 		for _, e := range inner {
-			var p2 []json.RawMessage
+			var p2 []jsontext.Value
 			if err := json.Unmarshal(e, &p2); err != nil {
 				return err
 			}
