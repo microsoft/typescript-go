@@ -1951,6 +1951,48 @@ func (b *nodeBuilderImpl) serializeReturnTypeForSignature(signature *Signature) 
 	return returnTypeNode
 }
 
+func (b *nodeBuilderImpl) indexInfoToObjectComputedNamesOrSignatureDeclaration(indexInfo *IndexInfo, typeNode *ast.TypeNode) []*ast.TypeElement {
+	if len(indexInfo.components) != 0 {
+		// Index info is derived from object or class computed property names (plus explicit named members) - we can clone those instead of writing out the result computed index signature
+		allComponentComputedNamesSerializable := b.ctx.enclosingDeclaration != nil && core.Every(indexInfo.components, func(c *ast.Node) bool {
+			return c.Name() != nil &&
+				ast.IsComputedPropertyName(c.Name()) &&
+				ast.IsEntityNameExpression(c.Name().AsComputedPropertyName().Expression) &&
+				b.ch.GetEmitResolver().isEntityNameVisible(c.Name().AsComputedPropertyName().Expression, b.ctx.enclosingDeclaration, false).Accessibility == printer.SymbolAccessibilityAccessible
+		})
+		if allComponentComputedNamesSerializable {
+			// Only use computed name serialization form if all components are visible and take the `a.b.c` form
+			var newComponents []*ast.Node
+			for _, c := range indexInfo.components {
+				// skip late bound props that contribute to the index signature - they'll be created by property creation anyway
+				if !b.ch.hasLateBindableName(c) {
+					newComponents = append(newComponents, c)
+				}
+			}
+			result := make([]*ast.TypeElement, 0, len(newComponents))
+			for _, c := range newComponents {
+				// Still need to track visibility even if we've already checked it to paint references as used
+				b.trackComputedName(c.Name().AsComputedPropertyName().Expression, b.ctx.enclosingDeclaration)
+				var modifiers *ast.ModifierList
+				if indexInfo.isReadonly {
+					modifiers = b.f.NewModifierList([]*ast.Node{b.f.NewModifier(ast.KindReadonlyKeyword)})
+				}
+				var questionToken *ast.Node
+				if c.QuestionToken() != nil {
+					questionToken = b.f.NewToken(ast.KindQuestionToken)
+				}
+				if typeNode == nil {
+					typeNode = b.typeToTypeNode(b.ch.getTypeOfSymbol(c.Symbol()))
+				}
+				propertySignature := b.f.NewPropertySignatureDeclaration(modifiers, c.Name(), questionToken, typeNode, nil)
+				result = append(result, propertySignature)
+			}
+			return result
+		}
+	}
+	return []*ast.TypeElement{b.indexInfoToIndexSignatureDeclarationHelper(indexInfo, typeNode)}
+}
+
 func (b *nodeBuilderImpl) indexInfoToIndexSignatureDeclarationHelper(indexInfo *IndexInfo, typeNode *ast.TypeNode) *ast.Node {
 	name := getNameFromIndexInfo(indexInfo)
 	indexerTypeNode := b.typeToTypeNode(indexInfo.keyType)
@@ -2083,9 +2125,15 @@ func (b *nodeBuilderImpl) shouldUsePlaceholderForProperty(propertySymbol *ast.Sy
 func (b *nodeBuilderImpl) trackComputedName(accessExpression *ast.Node, enclosingDeclaration *ast.Node) {
 	// get symbol of the first identifier of the entityName
 	firstIdentifier := ast.GetFirstIdentifier(accessExpression)
-	name := b.ch.resolveName(firstIdentifier, firstIdentifier.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsExportValue, nil /*nameNotFoundMessage*/, true /*isUse*/, false)
+	name := b.ch.resolveName(enclosingDeclaration, firstIdentifier.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsExportValue, nil /*nameNotFoundMessage*/, true /*isUse*/, false)
 	if name != nil {
 		b.ctx.tracker.TrackSymbol(name, enclosingDeclaration, ast.SymbolFlagsValue)
+	} else {
+		// Name does not resolve at target location, track symbol at dest location (should be inaccessible)
+		fallback := b.ch.resolveName(firstIdentifier, firstIdentifier.Text(), ast.SymbolFlagsValue|ast.SymbolFlagsExportValue, nil /*nameNotFoundMessage*/, true /*isUse*/, false)
+		if fallback != nil {
+			b.ctx.tracker.TrackSymbol(fallback, enclosingDeclaration, ast.SymbolFlagsValue)
+		}
 	}
 }
 
@@ -2331,7 +2379,7 @@ func (b *nodeBuilderImpl) createTypeNodesFromResolvedType(resolvedType *Structur
 		typeElements = append(typeElements, b.signatureToSignatureDeclarationHelper(signature, ast.KindConstructSignature, nil))
 	}
 	for _, info := range resolvedType.indexInfos {
-		typeElements = append(typeElements, b.indexInfoToIndexSignatureDeclarationHelper(info, core.IfElse(resolvedType.objectFlags&ObjectFlagsReverseMapped != 0, b.createElidedInformationPlaceholder(), nil)))
+		typeElements = append(typeElements, b.indexInfoToObjectComputedNamesOrSignatureDeclaration(info, core.IfElse(resolvedType.objectFlags&ObjectFlagsReverseMapped != 0, b.createElidedInformationPlaceholder(), nil))...)
 	}
 
 	properties := resolvedType.properties
