@@ -617,7 +617,7 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 			return *fallback
 		}
 	}
-	if ancestorConfigName := b.configFileRegistryBuilder.getAncestorConfigFileName(fileName, path, configFileName, loadKind, logger); ancestorConfigName != "" {
+	if ancestorConfigName := b.configFileRegistryBuilder.getAncestorConfigFileName(fileName, path, configFileName, logger); ancestorConfigName != "" {
 		return b.findOrCreateDefaultConfiguredProjectWorker(
 			fileName,
 			path,
@@ -655,7 +655,7 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectForOpenSc
 		entry, _ := b.configuredProjects.Load(key)
 		return searchResult{project: entry}
 	}
-	if configFileName := b.configFileRegistryBuilder.getConfigFileNameForFile(fileName, path, loadKind, logger); configFileName != "" {
+	if configFileName := b.configFileRegistryBuilder.getConfigFileNameForFile(fileName, path, logger); configFileName != "" {
 		startTime := time.Now()
 		result := b.findOrCreateDefaultConfiguredProjectWorker(
 			fileName,
