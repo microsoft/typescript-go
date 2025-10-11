@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
@@ -173,7 +174,11 @@ func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, te
 	var compileTimes tsc.CompileTimes
 	if configFileName != "" {
 		configStart := sys.Now()
-		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(configFileName, compilerOptionsFromCommandLine, sys, extendedConfigCache)
+		var commandLineRaw *collections.OrderedMap[string, any]
+		if raw, ok := commandLine.Raw.(*collections.OrderedMap[string, any]); ok {
+			commandLineRaw = raw
+		}
+		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFileWithRaw(configFileName, compilerOptionsFromCommandLine, commandLineRaw, sys, extendedConfigCache)
 		compileTimes.ConfigTime = sys.Now().Sub(configStart)
 		if len(errors) != 0 {
 			// these are unrecoverable errors--exit to report them as diagnostics
