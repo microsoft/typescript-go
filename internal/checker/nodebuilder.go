@@ -162,6 +162,12 @@ func (b *NodeBuilder) TypeParameterToDeclaration(parameter *Type, enclosingDecla
 	return b.exitContext(b.impl.typeParameterToDeclaration(parameter))
 }
 
+// TrackExistingEntityName tracks an existing entity name and returns a potentially renamed version.
+func (b *NodeBuilder) TrackExistingEntityName(node *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
+	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
+	return b.exitContext(b.impl.trackExistingEntityName(node))
+}
+
 // TypePredicateToTypePredicateNode implements NodeBuilderInterface.
 func (b *NodeBuilder) TypePredicateToTypePredicateNode(predicate *TypePredicate, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
