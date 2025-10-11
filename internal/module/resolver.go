@@ -590,8 +590,7 @@ func (r *resolutionState) loadModuleFromExports(packageInfo *packagejson.InfoCac
 			}
 		}
 		if mainExport.Type != packagejson.JSONValueTypeNotPresent {
-			result := r.loadModuleFromTargetExportOrImport(ext, subpath, packageInfo, false /*isImports*/, mainExport, "", false /*isPattern*/, ".")
-			return result
+			return r.loadModuleFromTargetExportOrImport(ext, subpath, packageInfo, false /*isImports*/, mainExport, "", false /*isPattern*/, ".")
 		}
 	} else if packageInfo.Contents.Exports.Type == packagejson.JSONValueTypeObject && packageInfo.Contents.Exports.IsSubpaths() {
 		if result := r.loadModuleFromExportsOrImports(ext, subpath, packageInfo.Contents.Exports.AsObject(), packageInfo, false /*isImports*/); !result.shouldContinueSearching() {
