@@ -2,7 +2,6 @@ package compiler
 
 import (
 	"cmp"
-	"fmt"
 	"slices"
 	"strings"
 	"sync"
@@ -549,9 +548,6 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 			resolutionsTrace = append(resolutionsTrace, trace...)
 
 			if !resolvedModule.IsResolved() {
-				if moduleName == "@emotion/react" {
-					fmt.Println("resolveImportsAndModuleAugmentations", moduleName, fileName, mode)
-				}
 				continue
 			}
 
