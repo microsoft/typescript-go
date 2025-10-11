@@ -160,6 +160,6 @@ func BenchmarkGetAncestorValue(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		_, _ = tr.GetAncestorValue("key-123-extra")
 		_, _ = tr.GetAncestorValue("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaax")
-		_, _ = tr.GetAncestorValue("zzz") // 미스
+		_, _ = tr.GetAncestorValue("zzz")
 	}
 }

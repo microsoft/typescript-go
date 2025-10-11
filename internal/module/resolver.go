@@ -1549,7 +1549,6 @@ func (r *resolutionState) loadNodeModuleFromDirectoryWorker(ext extensions, cand
 				packageFile = file
 				onlyRecordFailuresForPackageFile = !r.resolver.host.FS().DirectoryExists(tspath.GetDirectoryPath(file))
 			}
-		} else {
 		}
 	}
 
