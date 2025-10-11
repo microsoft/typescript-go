@@ -790,7 +790,7 @@ func IsJSDocKind(kind Kind) bool {
 	return KindFirstJSDocNode <= kind && kind <= KindLastJSDocNode
 }
 
-func isJSDocTypeAssertion(_ *Node) bool {
+func IsJSDocTypeAssertion(_ *Node) bool {
 	return false // !!!
 }
 
@@ -817,7 +817,7 @@ const (
 func IsOuterExpression(node *Expression, kinds OuterExpressionKinds) bool {
 	switch node.Kind {
 	case KindParenthesizedExpression:
-		return kinds&OEKParentheses != 0 && !(kinds&OEKExcludeJSDocTypeAssertion != 0 && isJSDocTypeAssertion(node))
+		return kinds&OEKParentheses != 0 && !(kinds&OEKExcludeJSDocTypeAssertion != 0 && IsJSDocTypeAssertion(node))
 	case KindTypeAssertionExpression, KindAsExpression:
 		return kinds&OEKTypeAssertions != 0
 	case KindSatisfiesExpression:
