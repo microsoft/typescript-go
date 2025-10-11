@@ -63,7 +63,7 @@ func (c *configFileRegistryBuilder) Finalize() *ConfigFileRegistry {
 		}
 	}
 
-	if configs, changedConfigs := c.configs.Finalize(); changedConfigs {
+	if configs, changedConfigs, _ := c.configs.Finalize(); changedConfigs {
 		ensureCloned()
 		newRegistry.configs = configs
 	}

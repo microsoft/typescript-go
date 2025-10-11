@@ -53,7 +53,7 @@ x++;`
 	session.DidOpenFile(ctx, "file:///Untitled-2.ts", 1, testContent, lsproto.LanguageKindTypeScript)
 
 	// Get language service
-	languageService, err := session.GetLanguageService(ctx, "file:///Untitled-2.ts")
+	languageService, _, err := session.GetLanguageService(ctx, "file:///Untitled-2.ts")
 	assert.NilError(t, err)
 
 	// Test the filename that the source file reports
@@ -125,7 +125,7 @@ x++;`
 	assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
 
 	// Get language service for the untitled file
-	languageService, err := session.GetLanguageService(ctx, "untitled:Untitled-2")
+	languageService, _, err := session.GetLanguageService(ctx, "untitled:Untitled-2")
 	assert.NilError(t, err)
 
 	program := languageService.GetProgram()

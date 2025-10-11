@@ -83,7 +83,7 @@ func (b *projectCollectionBuilder) Finalize(logger *logging.LogTree) (*ProjectCo
 		}
 	}
 
-	if configuredProjects, configuredProjectsChanged := b.configuredProjects.Finalize(); configuredProjectsChanged {
+	if configuredProjects, configuredProjectsChanged, _ := b.configuredProjects.Finalize(); configuredProjectsChanged {
 		ensureCloned()
 		newProjectCollection.configuredProjects = configuredProjects
 	}

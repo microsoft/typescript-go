@@ -39,7 +39,7 @@ func TestATA(t *testing.T) {
 		// Open the file
 		session.DidOpenFile(context.Background(), uri, 1, content, lsproto.LanguageKindJavaScript)
 		session.WaitForBackgroundTasks()
-		ls, err := session.GetLanguageService(context.Background(), uri)
+		ls, _, err := session.GetLanguageService(context.Background(), uri)
 		assert.NilError(t, err)
 		// Verify the local config.js file is included in the program
 		program := ls.GetProgram()
@@ -117,7 +117,7 @@ func TestATA(t *testing.T) {
 		assert.Equal(t, calls[1].Args[2], "@types/jquery@latest")
 
 		// Verify the types file was installed
-		ls, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///user/username/projects/project/app.js"))
+		ls, _, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///user/username/projects/project/app.js"))
 		assert.NilError(t, err)
 		program := ls.GetProgram()
 		jqueryTypesFile := program.GetSourceFile(projecttestutil.TestTypingsLocation + "/node_modules/@types/jquery/index.d.ts")
@@ -306,7 +306,7 @@ func TestATA(t *testing.T) {
 		assert.Equal(t, calls[1].Args[2], "@types/jquery@latest")
 
 		// Verify the types file was installed
-		ls, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///user/username/projects/project/app.js"))
+		ls, _, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///user/username/projects/project/app.js"))
 		assert.NilError(t, err)
 		jqueryTypesFile := ls.GetProgram().GetSourceFile(projecttestutil.TestTypingsLocation + "/node_modules/@types/jquery/index.d.ts")
 		assert.Assert(t, jqueryTypesFile != nil, "jquery types should be installed")
@@ -343,7 +343,7 @@ func TestATA(t *testing.T) {
 		assert.Equal(t, calls[1].Args[2], "@types/jquery@latest")
 
 		// Verify the types file was installed
-		ls, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///user/username/projects/project/app.js"))
+		ls, _, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///user/username/projects/project/app.js"))
 		assert.NilError(t, err)
 		jqueryTypesFile := ls.GetProgram().GetSourceFile(projecttestutil.TestTypingsLocation + "/node_modules/@types/jquery/index.d.ts")
 		assert.Assert(t, jqueryTypesFile != nil, "jquery types should be installed")
@@ -383,7 +383,7 @@ func TestATA(t *testing.T) {
 			Uri:  lsproto.DocumentUri("file:///user/username/projects/project/package.json"),
 		}})
 		// diagnostics refresh triggered - simulate by getting the language service
-		_, _ = session.GetLanguageService(context.Background(), uri)
+		_, _, _ = session.GetLanguageService(context.Background(), uri)
 		session.WaitForBackgroundTasks()
 
 		calls = utils.NpmExecutor().NpmInstallCalls()
@@ -391,7 +391,7 @@ func TestATA(t *testing.T) {
 		assert.Assert(t, slices.Contains(calls[1].Args, "@types/commander@latest"))
 
 		// Verify types file present
-		ls, err := session.GetLanguageService(context.Background(), uri)
+		ls, _, err := session.GetLanguageService(context.Background(), uri)
 		assert.NilError(t, err)
 		program := ls.GetProgram()
 		assert.Assert(t, program.GetSourceFile(projecttestutil.TestTypingsLocation+"/node_modules/@types/commander/index.d.ts") != nil)
@@ -419,7 +419,7 @@ func TestATA(t *testing.T) {
 		assert.Equal(t, 2, len(calls))
 		assert.Assert(t, slices.Contains(calls[1].Args, "@types/commander@latest"))
 
-		ls, err := session.GetLanguageService(context.Background(), uri)
+		ls, _, err := session.GetLanguageService(context.Background(), uri)
 		assert.NilError(t, err)
 		program := ls.GetProgram()
 		// Types file present
@@ -449,7 +449,7 @@ func TestATA(t *testing.T) {
 		session.DidOpenFile(context.Background(), uri, 1, files["/user/username/projects/project/app.js"].(string), lsproto.LanguageKindJavaScript)
 		session.WaitForBackgroundTasks()
 
-		ls, err := session.GetLanguageService(context.Background(), uri)
+		ls, _, err := session.GetLanguageService(context.Background(), uri)
 		assert.NilError(t, err)
 		program := ls.GetProgram()
 		// Expect updated content from installed typings
@@ -475,7 +475,7 @@ func TestATA(t *testing.T) {
 		session.DidOpenFile(context.Background(), uri, 1, files["/user/username/projects/project/app.js"].(string), lsproto.LanguageKindJavaScript)
 		session.WaitForBackgroundTasks()
 
-		ls, err := session.GetLanguageService(context.Background(), uri)
+		ls, _, err := session.GetLanguageService(context.Background(), uri)
 		assert.NilError(t, err)
 		program := ls.GetProgram()
 		// Expect existing content unchanged
@@ -509,7 +509,7 @@ func TestATA(t *testing.T) {
 		assert.DeepEqual(t, npmCalls[0].Args, []string{"install", "--ignore-scripts", "types-registry@latest"})
 
 		// And the program should include the local @types/node declaration file
-		ls, err := session.GetLanguageService(context.Background(), uri)
+		ls, _, err := session.GetLanguageService(context.Background(), uri)
 		assert.NilError(t, err)
 		program := ls.GetProgram()
 		assert.Assert(t, program.GetSourceFile("/user/username/projects/project/node_modules/@types/node/index.d.ts") != nil)
@@ -536,7 +536,7 @@ func TestATA(t *testing.T) {
 		session.DidOpenFile(context.Background(), uri, 1, files["/user/username/projects/project/app.js"].(string), lsproto.LanguageKindJavaScript)
 		session.WaitForBackgroundTasks()
 
-		ls, err := session.GetLanguageService(context.Background(), uri)
+		ls, _, err := session.GetLanguageService(context.Background(), uri)
 		assert.NilError(t, err)
 		program := ls.GetProgram()
 		// Expect updated content from installed typings
@@ -562,7 +562,7 @@ func TestATA(t *testing.T) {
 		session.DidOpenFile(context.Background(), uri, 1, files["/user/username/projects/project/app.js"].(string), lsproto.LanguageKindJavaScript)
 		session.WaitForBackgroundTasks()
 
-		ls, err := session.GetLanguageService(context.Background(), uri)
+		ls, _, err := session.GetLanguageService(context.Background(), uri)
 		assert.NilError(t, err)
 		program := ls.GetProgram()
 		// Expect existing content unchanged
@@ -608,7 +608,7 @@ func TestATA(t *testing.T) {
 		assert.Assert(t, slices.Contains(installArgs, "@types/node@latest"))
 
 		// Verify the types files were installed
-		ls, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///user/username/projects/project/app.js"))
+		ls, _, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///user/username/projects/project/app.js"))
 		assert.NilError(t, err)
 		program := ls.GetProgram()
 		nodeTypesFile := program.GetSourceFile(projecttestutil.TestTypingsLocation + "/node_modules/@types/node/index.d.ts")

@@ -357,5 +357,5 @@ func getNonRootFileGlobs(workspaceDir string, libDirectory string, sourceFiles [
 }
 
 func getRecursiveGlobPattern(directory string) string {
-	return fmt.Sprintf("%s/%s", tspath.RemoveTrailingDirectorySeparator(directory), "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json}")
+	return fmt.Sprintf("%s/%s", tspath.RemoveTrailingDirectorySeparator(directory), "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json,d.ts,d.ts.map}")
 }
