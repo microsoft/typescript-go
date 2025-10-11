@@ -30,6 +30,10 @@ func (l *LanguageService) GetProgram() *compiler.Program {
 	return l.program
 }
 
+func (l *LanguageService) UserPreferences() *UserPreferences {
+	return l.host.UserPreferences()
+}
+
 func (l *LanguageService) tryGetProgramAndFile(fileName string) (*compiler.Program, *ast.SourceFile) {
 	program := l.GetProgram()
 	file := program.GetSourceFile(fileName)

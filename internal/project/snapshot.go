@@ -33,6 +33,7 @@ type Snapshot struct {
 	ProjectCollection                  *ProjectCollection
 	ConfigFileRegistry                 *ConfigFileRegistry
 	compilerOptionsForInferredProjects *core.CompilerOptions
+	userPreferences                    *ls.UserPreferences
 
 	builderLogs *logging.LogTree
 	apiError    error
@@ -47,6 +48,7 @@ func NewSnapshot(
 	extendedConfigCache *extendedConfigCache,
 	configFileRegistry *ConfigFileRegistry,
 	compilerOptionsForInferredProjects *core.CompilerOptions,
+	userPreferences *ls.UserPreferences,
 	toPath func(fileName string) tspath.Path,
 ) *Snapshot {
 	s := &Snapshot{
@@ -59,6 +61,7 @@ func NewSnapshot(
 		ConfigFileRegistry:                 configFileRegistry,
 		ProjectCollection:                  &ProjectCollection{toPath: toPath},
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
+		userPreferences:                    userPreferences.CopyOrDefault(),
 	}
 	s.converters = ls.NewConverters(s.sessionOptions.PositionEncoding, s.LSPLineMap)
 	s.refCount.Store(1)
@@ -87,6 +90,10 @@ func (s *Snapshot) GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo {
 		return file.ECMALineInfo()
 	}
 	return nil
+}
+
+func (s *Snapshot) UserPreferences() *ls.UserPreferences {
+	return s.userPreferences
 }
 
 func (s *Snapshot) Converters() *ls.Converters {
@@ -126,6 +133,7 @@ type SnapshotChange struct {
 	// It should only be set the value in the next snapshot should be changed. If nil, the
 	// value from the previous snapshot will be copied to the new snapshot.
 	compilerOptionsForInferredProjects *core.CompilerOptions
+	newConfig                          *ls.UserPreferences
 	// ataChanges contains ATA-related changes to apply to projects in the new snapshot.
 	ataChanges map[tspath.Path]*ATAStateChange
 	apiRequest *APISnapshotRequest
@@ -245,6 +253,11 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 	}
 
+	userPreferences := s.userPreferences
+	if change.newConfig != nil {
+		userPreferences = change.newConfig
+	}
+
 	snapshotFS, _ := fs.Finalize()
 	newSnapshot := NewSnapshot(
 		newSnapshotID,
@@ -254,6 +267,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		session.extendedConfigCache,
 		nil,
 		compilerOptionsForInferredProjects,
+		userPreferences,
 		s.toPath,
 	)
 	newSnapshot.parentId = s.id
