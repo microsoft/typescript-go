@@ -1,0 +1,13 @@
+--- old.argumentsSpreadRestIterables(target=es5).types
++++ new.argumentsSpreadRestIterables(target=es5).types
+@@= skipped -23, +23 lines =@@
+
+ ;(function(a, ...rest) {})('', true, ...itNum)
+ >(function(a, ...rest) {})('', true, ...itNum) : void
+->(function(a, ...rest) {}) : (a: string, rest_0: boolean, ...rest: Iterable<number>[]) => void
+->function(a, ...rest) {} : (a: string, rest_0: boolean, ...rest: Iterable<number>[]) => void
++>(function(a, ...rest) {}) : (a: string, ...rest: [boolean, ...Iterable<number>[]]) => void
++>function(a, ...rest) {} : (a: string, ...rest: [boolean, ...Iterable<number>[]]) => void
+ >a : string
+ >rest : [boolean, ...Iterable<number>[]]
+ >'' : ""

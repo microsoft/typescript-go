@@ -74,3 +74,12 @@
  >InferFunctionTypes : typeof InferFunctionTypes
  >[(foo) => "" + foo] : ((foo: number) => string)[]
  >(foo) => "" + foo : (foo: number) => string
+@@= skipped -171, +171 lines =@@
+ >assignPartial(obj, { foo(...args) {} }) : { foo(bar: string): void; }
+ >assignPartial : <T>(target: T, partial: Partial<T>) => T
+ >obj : { foo(bar: string): void; }
+->{ foo(...args) {} } : { foo(bar: string): void; }
+->foo : (bar: string) => void
++>{ foo(...args) {} } : { foo(...args: [bar: string]): void; }
++>foo : (...args: [bar: string]) => void
+ >args : [bar: string]

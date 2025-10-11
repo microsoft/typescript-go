@@ -1693,8 +1693,7 @@ type SignatureToSignatureDeclarationOptions struct {
 func (b *nodeBuilderImpl) signatureToSignatureDeclarationHelper(signature *Signature, kind ast.Kind, options *SignatureToSignatureDeclarationOptions) *ast.Node {
 	var typeParameters []*ast.Node
 
-	expandedParams := b.ch.getExpandedParameters(signature, true /*skipUnionExpanding*/)[0]
-	cleanup := b.enterNewScope(signature.declaration, expandedParams, signature.typeParameters, signature.parameters, signature.mapper)
+	cleanup := b.enterNewScope(signature.declaration, signature.parameters, signature.typeParameters, signature.parameters, signature.mapper)
 	b.ctx.approximateLength += 3
 	// Usually a signature contributes a few more characters than this, but 3 is the minimum
 
@@ -1710,10 +1709,7 @@ func (b *nodeBuilderImpl) signatureToSignatureDeclarationHelper(signature *Signa
 
 	restoreFlags := b.saveRestoreFlags()
 	b.ctx.flags &^= nodebuilder.FlagsSuppressAnyReturnType
-	// If the expanded parameter list had a variadic in a non-trailing position, don't expand it
-	parameters := core.Map(core.IfElse(core.Some(expandedParams, func(p *ast.Symbol) bool {
-		return p != expandedParams[len(expandedParams)-1] && p.CheckFlags&ast.CheckFlagsRestParameter != 0
-	}), signature.parameters, expandedParams), func(parameter *ast.Symbol) *ast.Node {
+	parameters := core.Map(signature.parameters, func(parameter *ast.Symbol) *ast.Node {
 		return b.symbolToParameterDeclaration(parameter, kind == ast.KindConstructor)
 	})
 	var thisParameter *ast.Node

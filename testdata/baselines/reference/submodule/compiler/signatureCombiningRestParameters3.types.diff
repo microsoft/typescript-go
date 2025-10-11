@@ -27,3 +27,27 @@
 
      | ((
          this: {
+@@= skipped -50, +50 lines =@@
+ ): RemoveThis<T>;
+
+ const extendMarkSchema = getExtensionField<AnyConfig["extendMarkSchema"]>(
+->extendMarkSchema : ((extension: Mark<any>) => Record<string, any>) | ((extension: Node<any>) => Record<string, any>) | ((extension: Mark<any>) => Record<string, any>) | null | undefined
+->getExtensionField<AnyConfig["extendMarkSchema"]>(  e,  "extendMarkSchema",) : ((extension: Mark<any>) => Record<string, any>) | ((extension: Node<any>) => Record<string, any>) | ((extension: Mark<any>) => Record<string, any>) | null | undefined
++>extendMarkSchema : ((...args: [extension: Mark<any>]) => Record<string, any>) | ((...args: [extension: Node<any>]) => Record<string, any>) | ((...args: [extension: Mark<any>]) => Record<string, any>) | null | undefined
++>getExtensionField<AnyConfig["extendMarkSchema"]>(  e,  "extendMarkSchema",) : ((...args: [extension: Mark<any>]) => Record<string, any>) | ((...args: [extension: Node<any>]) => Record<string, any>) | ((...args: [extension: Mark<any>]) => Record<string, any>) | null | undefined
+ >getExtensionField : <T = any>(extension: AnyExtension, field: string) => RemoveThis<T>
+
+   e,
+@@= skipped -16, +16 lines =@@
+ >extension : Mark<any>
+
+ if (extendMarkSchema) {
+->extendMarkSchema : ((extension: Mark<any>) => Record<string, any>) | ((extension: Node<any>) => Record<string, any>) | ((extension: Mark<any>) => Record<string, any>) | null | undefined
++>extendMarkSchema : ((...args: [extension: Mark<any>]) => Record<string, any>) | ((...args: [extension: Node<any>]) => Record<string, any>) | ((...args: [extension: Mark<any>]) => Record<string, any>) | null | undefined
+
+   extendMarkSchema(extension); // error
+ >extendMarkSchema(extension) : Record<string, any>
+->extendMarkSchema : ((extension: Mark<any>) => Record<string, any>) | ((extension: Node<any>) => Record<string, any>) | ((extension: Mark<any>) => Record<string, any>)
++>extendMarkSchema : ((...args: [extension: Mark<any>]) => Record<string, any>) | ((...args: [extension: Node<any>]) => Record<string, any>) | ((...args: [extension: Mark<any>]) => Record<string, any>)
+ >extension : Mark<any>
+ }

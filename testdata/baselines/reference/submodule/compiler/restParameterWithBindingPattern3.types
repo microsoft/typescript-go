@@ -14,18 +14,18 @@ function b(...[...foo = []]: string[]) { }
 >[] : undefined[]
 
 function c(...{0: a, length, 3: d}: [boolean, string, number]) { }
->c : (arg_0: boolean, arg_1: string, arg_2: number) => void
+>c : (...{ 0: a, length, 3: d }: [boolean, string, number]) => void
 >a : boolean
 >length : 3
 >d : undefined
 
 function d(...[a, , , d]: [boolean, string, number]) { }
->d : (a: boolean, arg_1: string, arg_2: number) => void
+>d : (...[a, , , d]: [boolean, string, number]) => void
 >a : boolean
 >d : undefined
 
 function e(...{0: a = 1, 1: b = true, ...rest: rest}: [boolean, string, number]) { }
->e : (arg_0: boolean, arg_1: string, arg_2: number) => void
+>e : (...{ 0: a, 1: b, ...rest: rest }: [boolean, string, number]) => void
 >a : boolean
 >1 : 1
 >b : string
