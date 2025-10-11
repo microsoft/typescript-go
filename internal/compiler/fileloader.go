@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"cmp"
+	"fmt"
 	"slices"
 	"strings"
 	"sync"
@@ -104,7 +105,7 @@ func processAllProgramFiles(
 		includeProcessor:    &includeProcessor{},
 	}
 	loader.addProjectReferenceTasks(singleThreaded)
-	loader.resolver = module.NewResolver(loader.projectReferenceFileMapper.host, compilerOptions, opts.TypingsLocation, opts.ProjectName)
+	loader.resolver = module.NewResolver(loader.projectReferenceFileMapper.host, compilerOptions, opts.TypingsLocation, opts.ProjectName, opts.Host.GetPNPResolutionConfig())
 	for index, rootFile := range rootFiles {
 		loader.addRootTask(rootFile, nil, &fileIncludeReason{kind: fileIncludeKindRootFile, data: index})
 	}
@@ -548,6 +549,9 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 			resolutionsTrace = append(resolutionsTrace, trace...)
 
 			if !resolvedModule.IsResolved() {
+				if moduleName == "@emotion/react" {
+					fmt.Println("resolveImportsAndModuleAugmentations", moduleName, fileName, mode)
+				}
 				continue
 			}
 

@@ -1,6 +1,7 @@
 package build
 
 import (
+	"github.com/gun-yu/pnp-go/pkg"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -37,4 +38,8 @@ func (h *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.Sourc
 
 func (h *compilerHost) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
 	return h.host.GetResolvedProjectReference(fileName, path)
+}
+
+func (h *compilerHost) GetPNPResolutionConfig() *pkg.ResolutionConfig {
+	return h.host.GetPNPResolutionConfig()
 }
