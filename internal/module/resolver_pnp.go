@@ -3,12 +3,12 @@ package module
 import (
 	"strings"
 
-	"github.com/gun-yu/pnp-go/pkg"
+	"github.com/microsoft/typescript-go/internal/module/pnp"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 func (r *resolutionState) loadPNPResolutionPath(moduleName string) (string, error) {
-	resolution, err := pkg.ResolveToUnqualified(moduleName, r.containingDirectory, r.resolver.pnpResolutionConfig)
+	resolution, err := pnp.ResolveToUnqualified(moduleName, r.containingDirectory, r.resolver.pnpResolutionConfig)
 	if err != nil {
 		return "", err
 	}

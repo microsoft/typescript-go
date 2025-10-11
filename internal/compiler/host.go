@@ -1,9 +1,9 @@
 package compiler
 
 import (
-	"github.com/gun-yu/pnp-go/pkg"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/module/pnp"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -19,7 +19,7 @@ type CompilerHost interface {
 	Trace(msg string)
 	GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile
 	GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine
-	GetPNPResolutionConfig() *pkg.ResolutionConfig
+	GetPNPResolutionConfig() *pnp.ResolutionConfig
 }
 
 var _ CompilerHost = (*compilerHost)(nil)
@@ -30,7 +30,7 @@ type compilerHost struct {
 	defaultLibraryPath  string
 	extendedConfigCache tsoptions.ExtendedConfigCache
 	trace               func(msg string)
-	pnpResolutionConfig *pkg.ResolutionConfig
+	pnpResolutionConfig *pnp.ResolutionConfig
 }
 
 func NewCachedFSCompilerHost(
@@ -99,6 +99,6 @@ func (h *compilerHost) GetResolvedProjectReference(fileName string, path tspath.
 	return commandLine
 }
 
-func (h *compilerHost) GetPNPResolutionConfig() *pkg.ResolutionConfig {
+func (h *compilerHost) GetPNPResolutionConfig() *pnp.ResolutionConfig {
 	return h.pnpResolutionConfig
 }

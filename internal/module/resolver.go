@@ -6,11 +6,11 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gun-yu/pnp-go/pkg"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/module/pnp"
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/semver"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -149,7 +149,7 @@ type Resolver struct {
 	compilerOptions     *core.CompilerOptions
 	typingsLocation     string
 	projectName         string
-	pnpResolutionConfig *pkg.ResolutionConfig
+	pnpResolutionConfig *pnp.ResolutionConfig
 }
 
 func NewResolver(
@@ -157,7 +157,7 @@ func NewResolver(
 	options *core.CompilerOptions,
 	typingsLocation string,
 	projectName string,
-	pnpResolutionConfig *pkg.ResolutionConfig,
+	pnpResolutionConfig *pnp.ResolutionConfig,
 ) *Resolver {
 	return &Resolver{
 		host:                host,

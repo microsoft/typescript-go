@@ -3,10 +3,10 @@ package project
 import (
 	"time"
 
-	"github.com/gun-yu/pnp-go/pkg"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/module/pnp"
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -28,7 +28,7 @@ type compilerHost struct {
 	project             *Project
 	builder             *projectCollectionBuilder
 	logger              *logging.LogTree
-	pnpResolutionConfig *pkg.ResolutionConfig
+	pnpResolutionConfig *pnp.ResolutionConfig
 }
 
 type builderFileSource struct {
@@ -111,7 +111,7 @@ func (c *compilerHost) GetCurrentDirectory() string {
 }
 
 // GetPNPResolutionConfig implements compiler.CompilerHost.
-func (c *compilerHost) GetPNPResolutionConfig() *pkg.ResolutionConfig {
+func (c *compilerHost) GetPNPResolutionConfig() *pnp.ResolutionConfig {
 	return c.pnpResolutionConfig
 }
 

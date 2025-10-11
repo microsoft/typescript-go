@@ -3,12 +3,12 @@ package build
 import (
 	"time"
 
-	"github.com/gun-yu/pnp-go/pkg"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
+	"github.com/microsoft/typescript-go/internal/module/pnp"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -26,7 +26,7 @@ type host struct {
 	// caches that stay as long as they are needed
 	resolvedReferences  parseCache[tspath.Path, *tsoptions.ParsedCommandLine]
 	mTimes              *collections.SyncMap[tspath.Path, time.Time]
-	pnpResolutionConfig *pkg.ResolutionConfig
+	pnpResolutionConfig *pnp.ResolutionConfig
 }
 
 var (
@@ -114,6 +114,6 @@ func (h *host) storeMTimeFromOldCache(file string, oldCache *collections.SyncMap
 	}
 }
 
-func (h *host) GetPNPResolutionConfig() *pkg.ResolutionConfig {
+func (h *host) GetPNPResolutionConfig() *pnp.ResolutionConfig {
 	return h.pnpResolutionConfig
 }
