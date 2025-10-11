@@ -158,4 +158,14 @@ export class Client {
         this.client.restart();
         return new vscode.Disposable(() => {});
     }
+
+    async executeCommand(command: string, ...args: any[]): Promise<any> {
+        if (!this.client) {
+            throw new Error("Language client is not initialized");
+        }
+        return this.client.sendRequest("workspace/executeCommand", {
+            command,
+            arguments: args,
+        });
+    }
 }

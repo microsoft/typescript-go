@@ -464,6 +464,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDocumentHighlightInfo, (*Server).handleDocumentHighlight)
 	registerRequestHandler(handlers, lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
 	registerRequestHandler(handlers, lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
+	registerRequestHandler(handlers, lsproto.WorkspaceExecuteCommandInfo, (*Server).handleExecuteCommand)
 
 	return handlers
 })
@@ -640,6 +641,11 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			},
 			DocumentHighlightProvider: &lsproto.BooleanOrDocumentHighlightOptions{
 				Boolean: ptrTo(true),
+			},
+			ExecuteCommandProvider: &lsproto.ExecuteCommandOptions{
+				Commands: []string{
+					"typescript-go.organizeImports",
+				},
 			},
 		},
 	}
@@ -861,6 +867,66 @@ func (s *Server) handleRename(ctx context.Context, ls *ls.LanguageService, param
 
 func (s *Server) handleDocumentHighlight(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentHighlightParams) (lsproto.DocumentHighlightResponse, error) {
 	return ls.ProvideDocumentHighlights(ctx, params.TextDocument.Uri, params.Position)
+}
+
+func (s *Server) handleExecuteCommand(ctx context.Context, params *lsproto.ExecuteCommandParams, _ *lsproto.RequestMessage) (lsproto.ExecuteCommandResponse, error) {
+	switch params.Command {
+	case "typescript-go.organizeImports":
+		return s.handleOrganizeImportsCommand(ctx, params)
+	default:
+		return lsproto.LSPAnyOrNull{}, fmt.Errorf("unknown command: %s", params.Command)
+	}
+}
+
+func (s *Server) handleOrganizeImportsCommand(ctx context.Context, params *lsproto.ExecuteCommandParams) (lsproto.ExecuteCommandResponse, error) {
+	if params.Arguments == nil || len(*params.Arguments) == 0 {
+		return lsproto.LSPAnyOrNull{}, errors.New("organizeImports command requires a document URI argument")
+	}
+
+	var documentURI lsproto.DocumentUri
+	argBytes, err := json.Marshal((*params.Arguments)[0])
+	if err != nil {
+		return lsproto.LSPAnyOrNull{}, fmt.Errorf("failed to marshal argument: %w", err)
+	}
+	err = json.Unmarshal(argBytes, &documentURI)
+	if err != nil {
+		return lsproto.LSPAnyOrNull{}, fmt.Errorf("invalid document URI: %w", err)
+	}
+
+	languageService, err := s.session.GetLanguageService(ctx, documentURI)
+	if err != nil {
+		return lsproto.LSPAnyOrNull{}, err
+	}
+
+	edits, err := languageService.OrganizeImports(ctx, documentURI, ls.OrganizeImportsModeAll)
+	if err != nil {
+		return lsproto.LSPAnyOrNull{}, err
+	}
+
+	if len(edits) == 0 {
+		return lsproto.LSPAnyOrNull{}, nil
+	}
+
+	editPtrs := make([]*lsproto.TextEdit, len(edits))
+	for i := range edits {
+		editPtrs[i] = &edits[i]
+	}
+
+	workspaceEdit := &lsproto.WorkspaceEdit{
+		Changes: &map[lsproto.DocumentUri][]*lsproto.TextEdit{
+			documentURI: editPtrs,
+		},
+	}
+
+	_, err = s.sendRequest(ctx, lsproto.MethodWorkspaceApplyEdit, &lsproto.ApplyWorkspaceEditParams{
+		Label: ptrTo("Organize Imports"),
+		Edit:  workspaceEdit,
+	})
+	if err != nil {
+		return lsproto.LSPAnyOrNull{}, fmt.Errorf("failed to apply workspace edit: %w", err)
+	}
+
+	return lsproto.LSPAnyOrNull{}, nil
 }
 
 func (s *Server) Log(msg ...any) {
