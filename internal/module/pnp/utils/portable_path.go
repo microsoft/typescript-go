@@ -5,10 +5,12 @@ import (
 	"runtime"
 )
 
-var reWindowsPath = regexp.MustCompile(`^([a-zA-Z]:.*)$`)
-var reUNCWindowsPath = regexp.MustCompile(`^[\/\\][\/\\](\.[\/\\])?(.*)$`)
-var rePortablePath = regexp.MustCompile(`^\/([a-zA-Z]:.*)$`)
-var reUNCPortablePath = regexp.MustCompile(`^\/unc\/(\.dot\/)?(.*)$`)
+var (
+	reWindowsPath     = regexp.MustCompile(`^([a-zA-Z]:.*)$`)
+	reUNCWindowsPath  = regexp.MustCompile(`^[\/\\][\/\\](\.[\/\\])?(.*)$`)
+	rePortablePath    = regexp.MustCompile(`^\/([a-zA-Z]:.*)$`)
+	reUNCPortablePath = regexp.MustCompile(`^\/unc\/(\.dot\/)?(.*)$`)
+)
 
 func toPortablePath(s string) string {
 	if runtime.GOOS != "windows" {
