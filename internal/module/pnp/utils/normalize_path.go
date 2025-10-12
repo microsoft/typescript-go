@@ -25,9 +25,11 @@ func NormalizePath(original string) string {
 	for _, comp := range parts {
 		switch comp {
 		case "", ".":
+			// do nothing
 		case "..":
 			switch {
 			case rooted && len(out) == 0:
+				// do nothing
 			case len(out) == 0 || out[len(out)-1] == "..":
 				out = append(out, "..")
 			default:

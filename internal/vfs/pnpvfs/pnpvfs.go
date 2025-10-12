@@ -2,7 +2,6 @@ package pnpvfs
 
 import (
 	"archive/zip"
-	"fmt"
 	"io"
 	"strconv"
 	"strings"
@@ -204,14 +203,9 @@ func (fs *PNPFS) FileExists(path string) bool {
 func (fs *PNPFS) ReadFile(path string) (contents string, ok bool) {
 	path = mangleYarnPnPVirtualPath(path)
 
-	isEmotion := strings.Contains(path, "@emotion/react")
-
 	contents, ok = fs.inner.ReadFile(path)
 	if ok {
-		if isEmotion {
-			fmt.Println("inner Read", path, len(contents))
-		}
-		return
+		return contents, ok
 	}
 
 	// If the file doesn't exist, try reading from an enclosing zip archive

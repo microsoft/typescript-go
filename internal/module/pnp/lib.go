@@ -1,7 +1,7 @@
 package pnp
 
 import (
-	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -9,6 +9,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/module/pnp/utils"
 )
 
@@ -33,7 +34,7 @@ type Resolution struct {
 	ModulePath *string
 }
 
-type UndeclaredDependency struct {
+type UndeclaredDependencyError struct {
 	Message        string
 	Request        string
 	DependencyName string
@@ -41,9 +42,9 @@ type UndeclaredDependency struct {
 	IssuerPath     string
 }
 
-func (e *UndeclaredDependency) Error() string { return e.Message }
+func (e *UndeclaredDependencyError) Error() string { return e.Message }
 
-type MissingPeerDependency struct {
+type MissingPeerDependencyError struct {
 	Message         string
 	Request         string
 	DependencyName  string
@@ -52,21 +53,21 @@ type MissingPeerDependency struct {
 	BrokenAncestors []PackageLocator
 }
 
-func (e *MissingPeerDependency) Error() string { return e.Message }
+func (e *MissingPeerDependencyError) Error() string { return e.Message }
 
-type FailedManifestHydration struct {
+type FailedManifestHydrationError struct {
 	Message      string
 	ManifestPath string
 	Err          error
 }
 
-func (e *FailedManifestHydration) Error() string {
+func (e *FailedManifestHydrationError) Error() string {
 	if e.Err != nil {
 		return fmt.Sprintf("%s\n\nOriginal error: %v", e.Message, e.Err)
 	}
 	return e.Message
 }
-func (e *FailedManifestHydration) Unwrap() error { return e.Err }
+func (e *FailedManifestHydrationError) Unwrap() error { return e.Err }
 
 func parseScopedPackageName(spec string) (pkg string, sub *string, ok bool) {
 	parts := strings.SplitN(spec, "/", 3)
@@ -110,7 +111,7 @@ func ParseBareIdentifier(spec string) (string, *string, error) {
 		pkg, sub, ok = parseGlobalPackageName(spec)
 	}
 	if !ok {
-		return "", nil, &FailedManifestHydration{
+		return "", nil, &FailedManifestHydrationError{
 			Message:      "Invalid specifier",
 			ManifestPath: spec,
 		}
@@ -171,11 +172,11 @@ func InitPNPManifest(m *Manifest, manifestPath string) error {
 
 	ranges, ok := m.PackageRegistryData[""]
 	if !ok {
-		return fmt.Errorf("assertion failed: should have a top-level name key")
+		return errors.New("assertion failed: should have a top-level name key")
 	}
 	top, ok := ranges[""]
 	if !ok {
-		return fmt.Errorf("assertion failed: should have a top-level range key")
+		return errors.New("assertion failed: should have a top-level range key")
 	}
 
 	if m.FallbackPool == nil {
@@ -193,7 +194,7 @@ func InitPNPManifest(m *Manifest, manifestPath string) error {
 func LoadPNPManifest(p string) (Manifest, error) {
 	content, err := os.ReadFile(p)
 	if err != nil {
-		return Manifest{}, &FailedManifestHydration{
+		return Manifest{}, &FailedManifestHydrationError{
 			Message: "We failed to read the content of the manifest.",
 			Err:     err,
 			ManifestPath: func() string {
@@ -207,7 +208,7 @@ func LoadPNPManifest(p string) (Manifest, error) {
 
 	loc := rePNP.FindIndex(content)
 	if loc == nil {
-		return Manifest{}, &FailedManifestHydration{
+		return Manifest{}, &FailedManifestHydrationError{
 			Message:      "We failed to locate the PnP data payload inside its manifest file. Did you manually edit the file?",
 			ManifestPath: p,
 		}
@@ -221,7 +222,6 @@ func LoadPNPManifest(p string) (Manifest, error) {
 		c := content[i]
 
 		if c == '\'' && !escaped {
-			i++
 			break
 		} else if c == '\\' && !escaped {
 			escaped = true
@@ -232,15 +232,22 @@ func LoadPNPManifest(p string) (Manifest, error) {
 	}
 
 	var manifest Manifest
-	if err := json.Unmarshal(jsonBuf, &manifest); err != nil {
-		return Manifest{}, &FailedManifestHydration{
+	if err = json.Unmarshal(jsonBuf, &manifest); err != nil {
+		return Manifest{}, &FailedManifestHydrationError{
 			Message:      "We failed to parse the PnP data payload as proper JSON; Did you manually edit the file?",
 			ManifestPath: p,
 			Err:          err,
 		}
 	}
 
-	InitPNPManifest(&manifest, p)
+	err = InitPNPManifest(&manifest, p)
+	if err != nil {
+		return Manifest{}, &FailedManifestHydrationError{
+			Message:      "We failed to init the PnP manifest",
+			ManifestPath: p,
+			Err:          err,
+		}
+	}
 	return manifest, nil
 }
 
@@ -266,7 +273,7 @@ func IsDependencyTreeRoot(m *Manifest, loc *PackageLocator) bool {
 func FindLocator(manifest *Manifest, absPath string) *PackageLocator {
 	rel, err := filepath.Rel(manifest.ManifestDir, absPath)
 	if err != nil {
-		panic(fmt.Sprintf("Assertion failed: Provided path should be absolute but received %s", absPath))
+		panic("Assertion failed: Provided path should be absolute but received" + absPath)
 	}
 
 	if manifest.IgnorePatternData != nil {
@@ -358,7 +365,7 @@ func ResolveToUnqualifiedViaManifest(
 					"Your application tried to access %s. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since %s isn't otherwise declared in your dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: %s%s\nRequired by: %s",
 					ident, ident, ident, viaSuffix(specifier, ident), parentPath,
 				)
-				return Resolution{}, &UndeclaredDependency{
+				return Resolution{}, &UndeclaredDependencyError{
 					Message:        msg,
 					Request:        specifier,
 					DependencyName: ident,
@@ -370,7 +377,7 @@ func ResolveToUnqualifiedViaManifest(
 				"%s tried to access %s. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since %s isn't otherwise declared in %s's dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: %s%s\nRequired by: %s",
 				parentLocator.Name, ident, ident, parentLocator.Name, ident, viaSuffix(specifier, ident), parentPath,
 			)
-			return Resolution{}, &UndeclaredDependency{
+			return Resolution{}, &UndeclaredDependencyError{
 				Message:        msg,
 				Request:        specifier,
 				DependencyName: ident,
@@ -384,7 +391,7 @@ func ResolveToUnqualifiedViaManifest(
 				"Your application tried to access %s, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: %s%s\nRequired by: %s",
 				ident, ident, viaSuffix(specifier, ident), parentPath,
 			)
-			return Resolution{}, &UndeclaredDependency{
+			return Resolution{}, &UndeclaredDependencyError{
 				Message:        msg,
 				Request:        specifier,
 				DependencyName: ident,
@@ -419,7 +426,7 @@ func ResolveToUnqualifiedViaManifest(
 			)
 		}
 
-		return Resolution{}, &MissingPeerDependency{
+		return Resolution{}, &MissingPeerDependencyError{
 			Message:         msg,
 			Request:         specifier,
 			DependencyName:  ident,
@@ -455,7 +462,7 @@ func ResolveToUnqualifiedViaManifest(
 
 func ResolveToUnqualified(specifier, parentPath string, cfg *ResolutionConfig) (Resolution, error) {
 	if cfg == nil || cfg.Host.FindPNPManifest == nil {
-		return Resolution{}, fmt.Errorf("no host configured")
+		return Resolution{}, errors.New("no host configured")
 	}
 	m, err := cfg.Host.FindPNPManifest(parentPath)
 	if err != nil {

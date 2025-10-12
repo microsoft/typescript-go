@@ -6,6 +6,7 @@ import (
 )
 
 func TestSetAndGet(t *testing.T) {
+	t.Parallel()
 	tr := New[string]()
 	tr.Set("foo", "A")
 	tr.Set("foobar", "B")
@@ -32,6 +33,7 @@ func TestSetAndGet(t *testing.T) {
 }
 
 func TestGetAncestorValue_Basic(t *testing.T) {
+	t.Parallel()
 	tr := New[string]()
 	tr.Set("foo", "A")
 	tr.Set("foobar", "B")
@@ -58,6 +60,7 @@ func TestGetAncestorValue_Basic(t *testing.T) {
 }
 
 func TestGetAncestorValue_Unicode(t *testing.T) {
+	t.Parallel()
 	tr := New[string]()
 	tr.Set("한", "H1")
 	tr.Set("한글", "H2")
@@ -85,6 +88,7 @@ func TestGetAncestorValue_Unicode(t *testing.T) {
 }
 
 func TestRootValue_AsAncestor(t *testing.T) {
+	t.Parallel()
 	tr := New[string]()
 	tr.Set("", "ROOT")
 	tr.Set("a", "A")
@@ -109,6 +113,7 @@ func TestRootValue_AsAncestor(t *testing.T) {
 }
 
 func TestZeroValue_Int(t *testing.T) {
+	t.Parallel()
 	tr := New[int]()
 	tr.Set("zero", 0)
 	tr.Set("one", 1)
@@ -125,6 +130,7 @@ func TestZeroValue_Int(t *testing.T) {
 }
 
 func TestGetAncestorValue_NoAncestor(t *testing.T) {
+	t.Parallel()
 	tr := New[string]()
 
 	if _, ok := tr.GetAncestorValue("anything"); ok {
@@ -133,10 +139,11 @@ func TestGetAncestorValue_NoAncestor(t *testing.T) {
 }
 
 func TestGetAncestorValue_LongestPrefixWins(t *testing.T) {
+	t.Parallel()
 	tr := New[string]()
 	// "a", "ab", "abc", ..., "abcdefghij"
 	prefix := ""
-	for i := 0; i < 10; i++ {
+	for i := range 10 {
 		prefix += "a"
 		tr.Set(prefix, "V"+strconv.Itoa(i))
 	}
@@ -151,13 +158,13 @@ func TestGetAncestorValue_LongestPrefixWins(t *testing.T) {
 
 func BenchmarkGetAncestorValue(b *testing.B) {
 	tr := New[string]()
-	for i := 0; i < 1000; i++ {
+	for i := range 1000 {
 		tr.Set("key-"+strconv.Itoa(i), "V"+strconv.Itoa(i))
 	}
 	tr.Set("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "LONG")
 
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		_, _ = tr.GetAncestorValue("key-123-extra")
 		_, _ = tr.GetAncestorValue("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaax")
 		_, _ = tr.GetAncestorValue("zzz")

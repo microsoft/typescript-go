@@ -3,6 +3,7 @@ package utils
 import "testing"
 
 func TestNormalizePath(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		in, want string
 	}{
