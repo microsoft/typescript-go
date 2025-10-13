@@ -139,12 +139,8 @@ func FindClosestPNPManifestPath(start string) (string, bool) {
 var rePNP = regexp.MustCompile(`(?s)(const[\ \r\n]+RAW_RUNTIME_STATE[\ \r\n]*=[\ \r\n]*|hydrateRuntimeState\(JSON\.parse\()'`)
 
 func InitPNPManifest(m *Manifest, manifestPath string) error {
-	if abs, err := filepath.Abs(manifestPath); err == nil {
-		m.ManifestPath = abs
-		m.ManifestDir = filepath.Dir(abs)
-	} else {
-		return fmt.Errorf("assertion failed: %w", err)
-	}
+	m.ManifestPath = manifestPath
+	m.ManifestDir = filepath.Dir(manifestPath)
 
 	m.LocationTrie = *utils.NewTrie[PackageLocator]()
 
@@ -197,12 +193,7 @@ func LoadPNPManifest(p string) (Manifest, error) {
 		return Manifest{}, &FailedManifestHydrationError{
 			Message: "We failed to read the content of the manifest.",
 			Err:     err,
-			ManifestPath: func() string {
-				if abs, e := filepath.Abs(p); e == nil {
-					return abs
-				}
-				return p
-			}(),
+			ManifestPath: p,
 		}
 	}
 
@@ -270,10 +261,10 @@ func IsDependencyTreeRoot(m *Manifest, loc *PackageLocator) bool {
 	})
 }
 
-func FindLocator(manifest *Manifest, absPath string) *PackageLocator {
-	rel, err := filepath.Rel(manifest.ManifestDir, absPath)
+func FindLocator(manifest *Manifest, path string) *PackageLocator {
+	rel, err := filepath.Rel(manifest.ManifestDir, path)
 	if err != nil {
-		panic("Assertion failed: Provided path should be absolute but received" + absPath)
+		panic("Assertion failed: Provided path should be absolute but received" + path)
 	}
 
 	if manifest.IgnorePatternData != nil {
@@ -285,7 +276,7 @@ func FindLocator(manifest *Manifest, absPath string) *PackageLocator {
 		}
 	}
 
-	normFull := utils.NormalizePath(absPath)
+	normFull := utils.NormalizePath(path)
 	if v, ok := manifest.LocationTrie.GetAncestorValue(normFull); ok && v != nil {
 		return v
 	}

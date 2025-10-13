@@ -42,9 +42,14 @@ func TestResolveToUnqualifiedExample(t *testing.T) {
 	}
 	cfg := &ResolutionConfig{Host: host}
 
+	parentPath, err := filepath.Abs("/path/to/file")
+	if err != nil {
+		log.Fatalf("failed to filepath.Abs: %v", err)
+	}
+
 	t.Run("Example", func(t *testing.T) {
 		t.Parallel()
-		res, resolutionErr := ResolveToUnqualified("lodash/cloneDeep", "/path/to/file", cfg)
+		res, resolutionErr := ResolveToUnqualified("lodash/cloneDeep", parentPath, cfg)
 		if resolutionErr != nil {
 			log.Printf("resolution error: %v", err)
 			return
@@ -175,7 +180,7 @@ func TestEdgeCase_OnePkgCachedAndUnplugged(t *testing.T) {
 		"@carbon",
 		"icons-react",
 		"es",
-	) + "/"
+	)
 
 	res, err := ResolveToUnqualifiedViaManifest(&manifest, "@carbon/icon-helpers", issuer)
 	if err != nil {

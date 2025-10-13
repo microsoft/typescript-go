@@ -8,11 +8,12 @@ import (
 func NormalizePath(original string) string {
 	origPortable := toPortablePath(original)
 
-	rooted := strings.HasPrefix(origPortable, "/")
+	rooted := strings.HasPrefix(origPortable, "/") || strings.HasPrefix(origPortable, "\\")
 
 	body := origPortable
 	if rooted {
 		body = strings.TrimPrefix(body, "/")
+		body = strings.TrimPrefix(body, "\\")
 	}
 
 	var parts []string
@@ -25,11 +26,11 @@ func NormalizePath(original string) string {
 	for _, comp := range parts {
 		switch comp {
 		case "", ".":
-			// do nothing
+			// Those components don't progress the path
 		case "..":
 			switch {
 			case rooted && len(out) == 0:
-				// do nothing
+				// No need to add a ".." since we're already at the root
 			case len(out) == 0 || out[len(out)-1] == "..":
 				out = append(out, "..")
 			default:
