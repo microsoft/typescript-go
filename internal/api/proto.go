@@ -177,7 +177,8 @@ func NewSymbolResponse(symbol *ast.Symbol) *SymbolResponse {
 }
 
 type GetDiagnosticsParams struct {
-	Project Handle[project.Project] `json:"project"`
+	Project   Handle[project.Project] `json:"project"`
+	FileNames []string                `json:"fileNames"`
 }
 
 type GetTypeOfSymbolParams struct {

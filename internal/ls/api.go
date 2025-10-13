@@ -124,9 +124,17 @@ func (d *diagnosticList) getDiagnostics() []*Diagnostic {
 	return d.diagnostics
 }
 
-func (l *LanguageService) GetDiagnostics(ctx context.Context) []*Diagnostic {
+func (l *LanguageService) GetDiagnostics(ctx context.Context, fileNames []string) []*Diagnostic {
 	program := l.GetProgram()
-	sourceFiles := program.GetSourceFiles()
+	var sourceFiles []*ast.SourceFile
+	if len(fileNames) > 0 {
+		sourceFiles = make([]*ast.SourceFile, 0, len(fileNames))
+		for _, fileName := range fileNames {
+			sourceFiles = append(sourceFiles, program.GetSourceFile(fileName))
+		}
+	} else {
+		sourceFiles = program.GetSourceFiles()
+	}
 	diagnosticList := &diagnosticList{
 		diagnostics: make([]*Diagnostic, 0),
 	}
