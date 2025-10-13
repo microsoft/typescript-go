@@ -146,6 +146,7 @@ func TestResolveUnqualified(t *testing.T) {
 		}
 	}
 }
+
 func TestEdgeCase_OnePkgCachedAndUnplugged(t *testing.T) {
 	t.Parallel()
 	manifestJSONPath := filepath.Join(repo.TestDataPath, "fixtures", "pnp", "edge_case_manifest_state.json")
