@@ -174,9 +174,12 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	start := time.Now()
 	fs := newSnapshotFSBuilder(session.fs.fs, overlays, s.fs.diskFiles, session.options.PositionEncoding, s.toPath)
-	if change.fileChanges.HasExcessiveWatchChanges() {
+	if change.fileChanges.HasExcessiveWatchEvents() {
 		invalidateStart := time.Now()
-		if change.fileChanges.IncludesWatchChangeOutsideNodeModules {
+		if !fs.watchChangesOverlapCache(change.fileChanges) {
+			change.fileChanges.Changed = collections.Set[lsproto.DocumentUri]{}
+			change.fileChanges.Deleted = collections.Set[lsproto.DocumentUri]{}
+		} else if change.fileChanges.IncludesWatchChangeOutsideNodeModules {
 			fs.invalidateCache()
 			logger.Logf("Excessive watch changes detected, invalidated file cache in %v", time.Since(invalidateStart))
 		} else {

@@ -186,6 +186,18 @@ func (b *projectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 	logChangeFileResult(configChangeResult, configChangeLogger)
 
 	b.forEachProject(func(entry dirty.Value[*Project]) bool {
+		// Only consider change/delete; creates are handled by the config file registry
+		if summary.HasExcessiveNonCreateWatchEvents() {
+			entry.Change(func(p *Project) {
+				p.dirty = true
+				p.dirtyFilePath = ""
+				if logger != nil {
+					logger.Logf("Marking project as dirty due to excessive watch changes: %s", p.configFilePath)
+				}
+			})
+			return true
+		}
+
 		// Handle closed and changed files
 		b.markFilesChanged(entry, changedFiles, lsproto.FileChangeTypeChanged, logger)
 		if entry.Value().Kind == KindInferred && len(summary.Closed) > 0 {

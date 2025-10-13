@@ -317,43 +317,48 @@ func (r changeFileResult) IsEmpty() bool {
 	return len(r.affectedProjects) == 0 && len(r.affectedFiles) == 0
 }
 
-func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, logger *logging.LogTree) changeFileResult {
+func (c *configFileRegistryBuilder) invalidateCache(logger *logging.LogTree) changeFileResult {
 	var affectedProjects map[tspath.Path]struct{}
 	var affectedFiles map[tspath.Path]struct{}
 
-	if summary.HasExcessiveWatchChanges() && summary.IncludesWatchChangeOutsideNodeModules {
-		logger.Log("Too many files changed; marking all configs for reload")
-		c.configFileNames.Range(func(entry *dirty.MapEntry[tspath.Path, *configFileNames]) bool {
-			if affectedFiles == nil {
-				affectedFiles = make(map[tspath.Path]struct{})
-			}
-			affectedFiles[entry.Key()] = struct{}{}
-			return true
-		})
-		c.configFileNames.Clear()
-
-		c.configs.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *configFileEntry]) bool {
-			entry.Change(func(entry *configFileEntry) {
-				affectedProjects = core.CopyMapInto(affectedProjects, entry.retainingProjects)
-				if entry.pendingReload != PendingReloadFull {
-					text, ok := c.FS().ReadFile(entry.fileName)
-					if !ok || text != entry.commandLine.ConfigFile.SourceFile.Text() {
-						entry.pendingReload = PendingReloadFull
-					} else {
-						entry.pendingReload = PendingReloadFileNames
-					}
-				}
-			})
-			return true
-		})
-
-		return changeFileResult{
-			affectedProjects: affectedProjects,
-			affectedFiles:    affectedFiles,
+	logger.Log("Too many files changed; marking all configs for reload")
+	c.configFileNames.Range(func(entry *dirty.MapEntry[tspath.Path, *configFileNames]) bool {
+		if affectedFiles == nil {
+			affectedFiles = make(map[tspath.Path]struct{})
 		}
+		affectedFiles[entry.Key()] = struct{}{}
+		return true
+	})
+	c.configFileNames.Clear()
+
+	c.configs.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *configFileEntry]) bool {
+		entry.Change(func(entry *configFileEntry) {
+			affectedProjects = core.CopyMapInto(affectedProjects, entry.retainingProjects)
+			if entry.pendingReload != PendingReloadFull {
+				text, ok := c.FS().ReadFile(entry.fileName)
+				if !ok || text != entry.commandLine.ConfigFile.SourceFile.Text() {
+					entry.pendingReload = PendingReloadFull
+				} else {
+					entry.pendingReload = PendingReloadFileNames
+				}
+			}
+		})
+		return true
+	})
+
+	return changeFileResult{
+		affectedProjects: affectedProjects,
+		affectedFiles:    affectedFiles,
 	}
+}
+
+func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, logger *logging.LogTree) changeFileResult {
+	var affectedProjects map[tspath.Path]struct{}
+	var affectedFiles map[tspath.Path]struct{}
+	var shouldInvalidateCache bool
 
 	logger.Log("Summarizing file changes")
+	hasExcessiveChanges := summary.HasExcessiveWatchEvents() && summary.IncludesWatchChangeOutsideNodeModules
 	createdFiles := make(map[tspath.Path]string, summary.Created.Len())
 	createdOrDeletedFiles := make(map[tspath.Path]struct{}, summary.Created.Len()+summary.Deleted.Len())
 	createdOrChangedOrDeletedFiles := make(map[tspath.Path]struct{}, summary.Changed.Len()+summary.Deleted.Len())
@@ -399,6 +404,10 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 	logger.Log("Checking if any changed files are config files")
 	for path := range createdOrChangedOrDeletedFiles {
 		if entry, ok := c.configs.Load(path); ok {
+			if hasExcessiveChanges {
+				return c.invalidateCache(logger)
+			}
+
 			affectedProjects = core.CopyMapInto(affectedProjects, c.handleConfigChange(entry, logger))
 			for extendingConfigPath := range entry.Value().retainingConfigs {
 				if extendingConfigEntry, ok := c.configs.Load(extendingConfigPath); ok {
@@ -407,6 +416,27 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 			}
 			// This was a config file, so assume it's not also a root file
 			delete(createdFiles, path)
+		}
+	}
+
+	// Handle created/deleted files named "tsconfig.json" or "jsconfig.json"
+	for path := range createdOrDeletedFiles {
+		baseName := tspath.GetBaseFileName(string(path))
+		if baseName == "tsconfig.json" || baseName == "jsconfig.json" {
+			if hasExcessiveChanges {
+				return c.invalidateCache(logger)
+			}
+			directoryPath := path.GetDirectoryPath()
+			c.configFileNames.Range(func(entry *dirty.MapEntry[tspath.Path, *configFileNames]) bool {
+				if directoryPath.ContainsPath(entry.Key()) {
+					if affectedFiles == nil {
+						affectedFiles = make(map[tspath.Path]struct{})
+					}
+					affectedFiles[entry.Key()] = struct{}{}
+					entry.Delete()
+				}
+				return true
+			})
 		}
 	}
 
@@ -433,27 +463,13 @@ func (c *configFileRegistryBuilder) DidChangeFiles(summary FileChangeSummary, lo
 					}
 					maps.Copy(affectedProjects, config.retainingProjects)
 					logger.Logf("Root files for config %s changed", entry.Key())
+					shouldInvalidateCache = hasExcessiveChanges
 				},
 			)
-			return true
+			return !shouldInvalidateCache
 		})
-	}
-
-	// Handle created/deleted files named "tsconfig.json" or "jsconfig.json"
-	for path := range createdOrDeletedFiles {
-		baseName := tspath.GetBaseFileName(string(path))
-		if baseName == "tsconfig.json" || baseName == "jsconfig.json" {
-			directoryPath := path.GetDirectoryPath()
-			c.configFileNames.Range(func(entry *dirty.MapEntry[tspath.Path, *configFileNames]) bool {
-				if directoryPath.ContainsPath(entry.Key()) {
-					if affectedFiles == nil {
-						affectedFiles = make(map[tspath.Path]struct{})
-					}
-					affectedFiles[entry.Key()] = struct{}{}
-					entry.Delete()
-				}
-				return true
-			})
+		if shouldInvalidateCache {
+			return c.invalidateCache(logger)
 		}
 	}
 

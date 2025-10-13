@@ -54,6 +54,10 @@ func (f FileChangeSummary) IsEmpty() bool {
 	return f.Opened == "" && len(f.Closed) == 0 && f.Changed.Len() == 0 && f.Created.Len() == 0 && f.Deleted.Len() == 0
 }
 
-func (f FileChangeSummary) HasExcessiveWatchChanges() bool {
+func (f FileChangeSummary) HasExcessiveWatchEvents() bool {
 	return f.Created.Len()+f.Deleted.Len()+f.Changed.Len() > excessiveChangeThreshold
+}
+
+func (f FileChangeSummary) HasExcessiveNonCreateWatchEvents() bool {
+	return f.Deleted.Len()+f.Changed.Len() > excessiveChangeThreshold
 }
