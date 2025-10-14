@@ -1,0 +1,24 @@
+--- old.goToDefinition_super.baseline.jsonc
++++ new.goToDefinition_super.baseline.jsonc
+@@= skipped -10, +10 lines =@@
+ //     }
+ //     method() {
+ //         super.x();
+-// --- (line: 12) skipped ---
++// // --- (line: 12) skipped ---
++
++
+
+ // === goToDefinition ===
+ // === /goToDefinition_super.ts ===
+@@= skipped -18, +20 lines =@@
+ //     }
+ // }
+ // class D {
+-// --- (line: 15) skipped ---
++// // --- (line: 15) skipped ---
++
++
+
+ // === goToDefinition ===
+ // === /goToDefinition_super.ts ===

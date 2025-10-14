@@ -4,7 +4,7 @@
 // function f(strs: TemplateStringsArray, x: boolean): void;
 // function f(strs: TemplateStringsArray, x: number | boolean) {}
 // 
-// /*GOTO DEF*/f`${0}`;
+// /*GOTO DEF*/[|f|]`${0}`;
 // f`${false}`;
 
 
@@ -16,4 +16,4 @@
 // function f(strs: TemplateStringsArray, x: number | boolean) {}
 // 
 // f`${0}`;
-// /*GOTO DEF*/f`${false}`;
+// /*GOTO DEF*/[|f|]`${false}`;

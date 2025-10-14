@@ -9,7 +9,7 @@
 //     public method(foo?: any) { return "foo" }
 // }
 // // static method
-// MethodOverload./*GOTO DEF*/method();
+// MethodOverload./*GOTO DEF*/[|method|]();
 // MethodOverload.method("123");
 // // instance method
 // var methodOverload = new MethodOverload();
@@ -30,7 +30,7 @@
 // }
 // // static method
 // MethodOverload.method();
-// MethodOverload./*GOTO DEF*/method("123");
+// MethodOverload./*GOTO DEF*/[|method|]("123");
 // // instance method
 // var methodOverload = new MethodOverload();
 // methodOverload.method();
@@ -53,7 +53,7 @@
 // MethodOverload.method("123");
 // // instance method
 // var methodOverload = new MethodOverload();
-// methodOverload./*GOTO DEF*/method();
+// methodOverload./*GOTO DEF*/[|method|]();
 // methodOverload.method("456");
 
 
@@ -74,14 +74,14 @@
 // // instance method
 // var methodOverload = new MethodOverload();
 // methodOverload.method();
-// methodOverload./*GOTO DEF*/method("456");
+// methodOverload./*GOTO DEF*/[|method|]("456");
 
 
 
 // === goToDefinition ===
 // === /goToDefinitionMethodOverloads.ts ===
 // class MethodOverload {
-//     static /*GOTO DEF*/[|method|]();
+//     static /*GOTO DEF*/[|[|method|]|]();
 //     static [|method|](foo: string);
 //     static [|method|](foo?: any) { }
 //     public method(): any;
@@ -97,7 +97,7 @@
 //     static method();
 //     static method(foo: string);
 //     static method(foo?: any) { }
-//     public /*GOTO DEF*/[|method|](): any;
+//     public /*GOTO DEF*/[|[|method|]|](): any;
 //     public [|method|](foo: string);
 //     public [|method|](foo?: any) { return "foo" }
 // }

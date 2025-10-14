@@ -5,4 +5,4 @@
 //     private method() { }
 // }
 // var [|RCComp|] = RC1 || RC2;
-// <RC/*GOTO DEF*/Comp />
+// <[|RC/*GOTO DEF*/Comp|] />

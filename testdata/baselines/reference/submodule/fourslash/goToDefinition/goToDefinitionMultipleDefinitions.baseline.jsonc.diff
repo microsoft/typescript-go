@@ -1,0 +1,31 @@
+--- old.goToDefinitionMultipleDefinitions.baseline.jsonc
++++ new.goToDefinitionMultipleDefinitions.baseline.jsonc
+@@= skipped -4, +4 lines =@@
+ // }
+
+ // === /b.ts ===
+-// interface [|IFoo|] {
++// interface IFoo {
+ //     instance2: number;
+ // }
+ // 
+@@= skipped -10, +10 lines =@@
+ // 
+ // var ifoo: IFo/*GOTO DEF*/o;
+
++
++
+ // === goToDefinition ===
+ // === /c.ts ===
+ // module [|Module|] {
+ //     export class c1 { }
+ // }
+
+-// === /d.ts ===
+-// module [|Module|] {
+-//     export class c2 { }
+-// }
+-
+ // === /e.ts ===
+-// [|Modul/*GOTO DEF*/e|];
++// Modul/*GOTO DEF*/e;

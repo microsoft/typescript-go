@@ -1,0 +1,11 @@
+--- old.javaScriptClass3.baseline.jsonc
++++ new.javaScriptClass3.baseline.jsonc
+@@= skipped -10, +10 lines =@@
+ // x.alpha/*GOTO DEF*/;
+ // x.beta;
+
++
++
+ // === goToDefinition ===
+ // === /Foo.js ===
+ // class Foo {

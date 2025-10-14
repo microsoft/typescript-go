@@ -5,7 +5,7 @@
 // let [|I|]: {
 //     [|new(): C2;|]
 // };
-// new /*GOTO DEF*/I();
+// new /*GOTO DEF*/[|I|]();
 // let I2: {
 // };
 // new I2();
@@ -20,4 +20,4 @@
 // new I();
 // let [|I2|]: {
 // };
-// new /*GOTO DEF*/I2();
+// new /*GOTO DEF*/[|I2|]();

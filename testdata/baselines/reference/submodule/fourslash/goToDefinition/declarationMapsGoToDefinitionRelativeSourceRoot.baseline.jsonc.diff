@@ -1,0 +1,25 @@
+--- old.declarationMapsGoToDefinitionRelativeSourceRoot.baseline.jsonc
++++ new.declarationMapsGoToDefinitionRelativeSourceRoot.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+ // === goToDefinition ===
+-// === /index.ts ===
+-// export class Foo {
++// === /out/indexdef.d.ts ===
++// export declare class Foo {
+ //     member: string;
+-//     [|methodName|](propName: SomeType): void {}
+-//     otherMethod() {
+-//         if (Math.random() > 0.5) {
+-//             return {x: 42};
+-// --- (line: 7) skipped ---
++//     [|methodName|](propName: SomeType): void;
++//     otherMethod(): {
++//         x: number;
++//         y?: undefined;
++// // --- (line: 7) skipped ---
+
+ // === /mymodule.ts ===
+ // import * as mod from "./out/indexdef";
+ // const instance = new mod.Foo();
+-// instance./*GOTO DEF*/[|methodName|]({member: 12});
++// instance./*GOTO DEF*/methodName({member: 12});

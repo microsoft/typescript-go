@@ -190,7 +190,7 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                     //  - `verify.baselineGoToDefinition(...)` called getDefinitionAndBoundSpan
                     //  - `verify.baselineGetDefinitionAtPosition(...)` called getDefinitionAtPosition
                     // LSP doesn't have two separate commands though. It's unclear how we would model bound spans though.
-                    return parseBaselineGoToDefinitionArgs(callExpression.arguments);
+                    return parseBaselineGoToDefinitionArgs(func.text, callExpression.arguments);
                 case "baselineRename":
                 case "baselineRenameAtRangesWithText":
                     // `verify.baselineRename...(...)`
@@ -817,7 +817,14 @@ function parseBaselineDocumentHighlightsArgs(args: readonly ts.Expression[]): [V
     }];
 }
 
-function parseBaselineGoToDefinitionArgs(args: readonly ts.Expression[]): [VerifyBaselineGoToDefinitionCmd] | undefined {
+function parseBaselineGoToDefinitionArgs(
+    funcName: "baselineGoToDefinition" | "baselineGetDefinitionAtPosition",
+    args: readonly ts.Expression[],
+): [VerifyBaselineGoToDefinitionCmd] | undefined {
+    let boundSpan: true | undefined;
+    if (funcName === "baselineGoToDefinition") {
+        boundSpan = true;
+    }
     const newArgs = [];
     for (const arg of args) {
         let strArg;
@@ -832,6 +839,7 @@ function parseBaselineGoToDefinitionArgs(args: readonly ts.Expression[]): [Verif
                 kind: "verifyBaselineGoToDefinition",
                 markers: [],
                 ranges: true,
+                boundSpan,
             }];
         }
         else {
@@ -843,6 +851,7 @@ function parseBaselineGoToDefinitionArgs(args: readonly ts.Expression[]): [Verif
     return [{
         kind: "verifyBaselineGoToDefinition",
         markers: newArgs,
+        boundSpan,
     }];
 }
 
@@ -1295,6 +1304,7 @@ interface VerifyBaselineFindAllReferencesCmd {
 interface VerifyBaselineGoToDefinitionCmd {
     kind: "verifyBaselineGoToDefinition";
     markers: string[];
+    boundSpan?: true;
     ranges?: boolean;
 }
 
@@ -1393,11 +1403,12 @@ function generateBaselineDocumentHighlights({ args, preferences }: VerifyBaselin
     return `f.VerifyBaselineDocumentHighlights(t, ${preferences}, ${args.join(", ")})`;
 }
 
-function generateBaselineGoToDefinition({ markers, ranges }: VerifyBaselineGoToDefinitionCmd): string {
+function generateBaselineGoToDefinition({ markers, ranges, boundSpan }: VerifyBaselineGoToDefinitionCmd): string {
+    const originalSelectionRange = boundSpan ? "true" : "false"; 
     if (ranges || markers.length === 0) {
-        return `f.VerifyBaselineGoToDefinition(t)`;
+        return `f.VerifyBaselineGoToDefinition(t, ${originalSelectionRange})`;
     }
-    return `f.VerifyBaselineGoToDefinition(t, ${markers.join(", ")})`;
+    return `f.VerifyBaselineGoToDefinition(t, ${originalSelectionRange}, ${markers.join(", ")})`;
 }
 
 function generateGoToCommand({ funcName, args }: GoToCmd): string {

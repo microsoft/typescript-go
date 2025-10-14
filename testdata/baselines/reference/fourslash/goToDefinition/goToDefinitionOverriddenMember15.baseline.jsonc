@@ -5,5 +5,5 @@
 // }
 // class B extends A {}
 // class C extends B {
-//     static /*GOTO DEF*/override m() {}
+//     static /*GOTO DEF*/[|override|] m() {}
 // }

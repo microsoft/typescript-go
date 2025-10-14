@@ -7,7 +7,7 @@
 // declare function [|MainButton|](buttonProps: ButtonProps): JSX.Element;
 // declare function MainButton(linkProps: LinkProps): JSX.Element;
 // declare function MainButton(props: ButtonProps | LinkProps): JSX.Element;
-// let opt = <Main/*GOTO DEF*/Button />;
+// let opt = <[|Main/*GOTO DEF*/Button|] />;
 // let opt = <MainButton children="chidlren" />;
 // let opt = <MainButton onClick={()=>{}} />;
 // let opt = <MainButton onClick={()=>{}} ignore-prop />;
@@ -26,7 +26,7 @@
 // declare function MainButton(linkProps: LinkProps): JSX.Element;
 // declare function MainButton(props: ButtonProps | LinkProps): JSX.Element;
 // let opt = <MainButton />;
-// let opt = <Main/*GOTO DEF*/Button children="chidlren" />;
+// let opt = <[|Main/*GOTO DEF*/Button|] children="chidlren" />;
 // let opt = <MainButton onClick={()=>{}} />;
 // let opt = <MainButton onClick={()=>{}} ignore-prop />;
 // let opt = <MainButton goTo="goTo" />;
@@ -45,7 +45,7 @@
 // declare function MainButton(props: ButtonProps | LinkProps): JSX.Element;
 // let opt = <MainButton />;
 // let opt = <MainButton children="chidlren" />;
-// let opt = <Main/*GOTO DEF*/Button onClick={()=>{}} />;
+// let opt = <[|Main/*GOTO DEF*/Button|] onClick={()=>{}} />;
 // let opt = <MainButton onClick={()=>{}} ignore-prop />;
 // let opt = <MainButton goTo="goTo" />;
 // let opt = <MainButton wrong />;
@@ -64,7 +64,7 @@
 // let opt = <MainButton />;
 // let opt = <MainButton children="chidlren" />;
 // let opt = <MainButton onClick={()=>{}} />;
-// let opt = <Main/*GOTO DEF*/Button onClick={()=>{}} ignore-prop />;
+// let opt = <[|Main/*GOTO DEF*/Button|] onClick={()=>{}} ignore-prop />;
 // let opt = <MainButton goTo="goTo" />;
 // let opt = <MainButton wrong />;
 
@@ -82,7 +82,7 @@
 // let opt = <MainButton children="chidlren" />;
 // let opt = <MainButton onClick={()=>{}} />;
 // let opt = <MainButton onClick={()=>{}} ignore-prop />;
-// let opt = <Main/*GOTO DEF*/Button goTo="goTo" />;
+// let opt = <[|Main/*GOTO DEF*/Button|] goTo="goTo" />;
 // let opt = <MainButton wrong />;
 
 
@@ -101,4 +101,4 @@
 // let opt = <MainButton onClick={()=>{}} />;
 // let opt = <MainButton onClick={()=>{}} ignore-prop />;
 // let opt = <MainButton goTo="goTo" />;
-// let opt = <Main/*GOTO DEF*/Button wrong />;
+// let opt = <[|Main/*GOTO DEF*/Button|] wrong />;

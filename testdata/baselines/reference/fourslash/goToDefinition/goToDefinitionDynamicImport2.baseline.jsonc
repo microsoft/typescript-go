@@ -3,5 +3,5 @@
 // export function [|bar|]() { return "bar"; }
 // var x = import("./foo");
 // x.then(foo => {
-//     foo.b/*GOTO DEF*/ar(); 
+//     foo.[|b/*GOTO DEF*/ar|](); 
 // })

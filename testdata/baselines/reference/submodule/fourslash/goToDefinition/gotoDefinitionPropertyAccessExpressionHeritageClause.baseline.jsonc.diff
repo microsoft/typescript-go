@@ -1,0 +1,11 @@
+--- old.gotoDefinitionPropertyAccessExpressionHeritageClause.baseline.jsonc
++++ new.gotoDefinitionPropertyAccessExpressionHeritageClause.baseline.jsonc
+@@= skipped -6, +6 lines =@@
+ // class C extends (foo())./*GOTO DEF*/B {}
+ // class C1 extends foo().B {}
+
++
++
+ // === goToDefinition ===
+ // === /gotoDefinitionPropertyAccessExpressionHeritageClause.ts ===
+ // class B {}

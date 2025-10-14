@@ -4,5 +4,5 @@
 // }
 // 
 // export class MySqlVarBinary extends MySqlColumn {
-//   /*GOTO DEF*/override readonly [|[entityKind]|]: string = "MySqlVarBinary";
+//   /*GOTO DEF*/[|override|] readonly [|[entityKind]|]: string = "MySqlVarBinary";
 // }

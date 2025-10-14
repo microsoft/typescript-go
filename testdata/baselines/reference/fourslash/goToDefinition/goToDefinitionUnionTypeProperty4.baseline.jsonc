@@ -16,4 +16,4 @@
 // var magnitude: Magnitude;
 // var snapcrackle: SnapCrackle;
 // 
-// var x = (snapcrackle || magnitude || art)./*GOTO DEF*/pop;
+// var x = (snapcrackle || magnitude || art)./*GOTO DEF*/[|pop|];

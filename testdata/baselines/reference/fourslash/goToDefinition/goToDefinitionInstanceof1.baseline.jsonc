@@ -3,4 +3,4 @@
 // class  [|C|] {
 // }
 // declare var obj: any;
-// obj /*GOTO DEF*/instanceof C;
+// obj /*GOTO DEF*/[|instanceof|] C;

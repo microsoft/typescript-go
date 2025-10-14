@@ -1,0 +1,8 @@
+--- old.goToDefinitionExternalModuleName8.baseline.jsonc
++++ new.goToDefinitionExternalModuleName8.baseline.jsonc
+@@= skipped -4, +4 lines =@@
+ // }
+
+ // === /b.ts ===
+-// export {Foo, Bar} from [|'e/*GOTO DEF*/'|];
++// export {Foo, Bar} from 'e/*GOTO DEF*/';

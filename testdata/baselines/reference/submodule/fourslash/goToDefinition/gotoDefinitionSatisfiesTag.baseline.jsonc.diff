@@ -1,0 +1,12 @@
+--- old.gotoDefinitionSatisfiesTag.baseline.jsonc
++++ new.gotoDefinitionSatisfiesTag.baseline.jsonc
+@@= skipped --1, +0 lines =@@
++// === goToDefinition ===
++// === /a.js ===
++// /**
++//  * @typedef {Object} [|T|]
++//  * @property {number} a
++//  */
++// 
++// /** @satisfies {/*GOTO DEF*/T} comment */
++// const foo = { a: 1 };

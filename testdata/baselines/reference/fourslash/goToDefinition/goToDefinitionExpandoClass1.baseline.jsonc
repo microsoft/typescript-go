@@ -6,4 +6,4 @@
 // 
 // Core.Test.prototype.foo = 10
 // 
-// new Core.Tes/*GOTO DEF*/t()
+// new Core.[|Tes/*GOTO DEF*/t|]()

@@ -1,0 +1,8 @@
+--- old.goToDefinitionOverriddenMember16.baseline.jsonc
++++ new.goToDefinitionOverriddenMember16.baseline.jsonc
+@@= skipped -5, +5 lines =@@
+ //      * @returns {{}}
+ //      */
+ //     static foo() {
+-// --- (line: 7) skipped ---
++// // --- (line: 7) skipped ---

@@ -1,0 +1,91 @@
+--- old.goToDefinitionInMemberDeclaration.baseline.jsonc
++++ new.goToDefinitionInMemberDeclaration.baseline.jsonc
+@@= skipped -12, +12 lines =@@
+ //     public _class: Foo = new Foo();
+ //     public _list: IFoo[]=[];
+ //     public _enum: Enum = Enum.value1;
+-// --- (line: 14) skipped ---
++// // --- (line: 14) skipped ---
++
++
+
+ // === goToDefinition ===
+ // === /goToDefinitionInMemberDeclaration.ts ===
+@@= skipped -8, +10 lines =@@
+ // 
+ // class Foo implements IFoo {
+ //     public method1(): number { return 0; }
+-// --- (line: 5) skipped ---
++// // --- (line: 5) skipped ---
+
+ // --- (line: 8) skipped ---
+ // class Bar {
+@@= skipped -10, +10 lines =@@
+ //     public _enum: Enum = Enum.value1;
+ //     public _self: Bar;
+ // 
+-// --- (line: 16) skipped ---
++// // --- (line: 16) skipped ---
++
++
+
+ // === goToDefinition ===
+ // === /goToDefinitionInMemberDeclaration.ts ===
+@@= skipped -8, +10 lines =@@
+ // 
+ // class Foo implements IFoo {
+ //     public method1(): number { return 0; }
+-// --- (line: 5) skipped ---
++// // --- (line: 5) skipped ---
+
+ // --- (line: 12) skipped ---
+ //     public _enum: Enum = Enum.value1;
+@@= skipped -10, +10 lines =@@
+ //     }
+ // }
+
++
++
+ // === goToDefinition ===
+ // === /goToDefinitionInMemberDeclaration.ts ===
+ // interface IFoo { method1(): number; }
+@@= skipped -16, +18 lines =@@
+ //     public _list: IFoo[]=[];
+ //     public _enum: Enum = Enum.value1;
+ //     public _self: Bar;
+-// --- (line: 15) skipped ---
++// // --- (line: 15) skipped ---
++
++
+
+ // === goToDefinition ===
+ // === /goToDefinitionInMemberDeclaration.ts ===
+@@= skipped -17, +19 lines =@@
+ //     public _class: Foo = new Foo();
+ //     public _list: IFoo[]=[];
+ //     public _enum: Enum = Enum.value1;
+-// --- (line: 14) skipped ---
++// // --- (line: 14) skipped ---
++
++
+
+ // === goToDefinition ===
+ // === /goToDefinitionInMemberDeclaration.ts ===
+@@= skipped -21, +23 lines =@@
+ //     }
+ // }
+
++
++
+ // === goToDefinition ===
+ // === /goToDefinitionInMemberDeclaration.ts ===
+ // --- (line: 3) skipped ---
+@@= skipped -18, +20 lines =@@
+ //     constructor(public _inConstructor: IFoo) {
+ //     }
+ // }
++
++
+
+ // === goToDefinition ===
+ // === /goToDefinitionInMemberDeclaration.ts ===

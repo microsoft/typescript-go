@@ -1,0 +1,49 @@
+--- old.goToDefinitionConstructorOverloads.baseline.jsonc
++++ new.goToDefinitionConstructorOverloads.baseline.jsonc
+@@= skipped -9, +9 lines =@@
+ // var constructorOverload = new ConstructorOverload("foo");
+ // 
+ // class Extended extends ConstructorOverload {
+-// --- (line: 11) skipped ---
++// // --- (line: 11) skipped ---
++
++
+
+ // === goToDefinition ===
+ // === /goToDefinitionConstructorOverloads.ts ===
+@@= skipped -15, +17 lines =@@
+ // 
+ // class Extended extends ConstructorOverload {
+ //     readonly name = "extended";
+-// --- (line: 12) skipped ---
++// // --- (line: 12) skipped ---
++
++
+
+ // === goToDefinition ===
+ // === /goToDefinitionConstructorOverloads.ts ===
+ // class ConstructorOverload {
+-//     /*GOTO DEF*/constructor();
+-//     constructor(foo: string);
++//     /*GOTO DEF*/[|constructor();|]
++//     [|constructor(foo: string);|]
+ //     [|constructor(foo: any)  { }|]
+ // }
+ // 
+ // var constructorOverload = new ConstructorOverload();
+-// --- (line: 8) skipped ---
++// // --- (line: 8) skipped ---
++
++
+
+ // === goToDefinition ===
+ // === /goToDefinitionConstructorOverloads.ts ===
+@@= skipped -29, +33 lines =@@
+ // }
+ // var extended1 = new /*GOTO DEF*/Extended();
+ // var extended2 = new Extended("foo");
++
++
+
+ // === goToDefinition ===
+ // === /goToDefinitionConstructorOverloads.ts ===

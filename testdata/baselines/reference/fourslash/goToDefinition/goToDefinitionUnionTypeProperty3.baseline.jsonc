@@ -7,4 +7,4 @@
 // var strings: string[];
 // var numbers: number[];
 // 
-// var x = (strings || numbers)./*GOTO DEF*/specialPop()
+// var x = (strings || numbers)./*GOTO DEF*/[|specialPop|]()

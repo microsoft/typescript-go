@@ -12,5 +12,5 @@
 //         x: number;
 //     }
 // 
-//     var x: /*GOTO DEF*/IA;
+//     var x: /*GOTO DEF*/[|IA|];
 // }

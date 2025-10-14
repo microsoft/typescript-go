@@ -1,0 +1,8 @@
+--- old.goToDefinitionTypeOnlyImport.baseline.jsonc
++++ new.goToDefinitionTypeOnlyImport.baseline.jsonc
+@@= skipped -4, +4 lines =@@
+
+ // === /c.ts ===
+ // import type { SyntaxKind } from './b';
+-// let kind: /*GOTO DEF*/[|SyntaxKind|];
++// let kind: /*GOTO DEF*/SyntaxKind;

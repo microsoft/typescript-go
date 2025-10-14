@@ -8,7 +8,7 @@
 //    method() { return this.alpha; }
 // }
 // var x = new Foo();
-// x.alpha/*GOTO DEF*/;
+// x.[|alpha|]/*GOTO DEF*/;
 // x.beta;
 
 
@@ -24,4 +24,4 @@
 // }
 // var x = new Foo();
 // x.alpha;
-// x.beta/*GOTO DEF*/;
+// x.[|beta|]/*GOTO DEF*/;

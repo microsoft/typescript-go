@@ -3,5 +3,5 @@
 // function foo(a: string, b: string): string;
 // function foo(a: number, b: number): number;
 // function [|foo|](a: any, b: any): any {
-//     /*GOTO DEF*/return a + b;
+//     /*GOTO DEF*/[|return|] a + b;
 // }

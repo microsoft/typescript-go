@@ -1,0 +1,36 @@
+--- old.goToDefinitionShorthandProperty01.baseline.jsonc
++++ new.goToDefinitionShorthandProperty01.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+ // === goToDefinition ===
+ // === /goToDefinitionShorthandProperty01.ts ===
+-// var [|name|] = "hello";
++// var name = "hello";
+ // var id = 100000;
+ // declare var id;
+ // var obj = {/*GOTO DEF*/name, id};
+ // obj.name;
+ // obj.id;
+
++
++
+ // === goToDefinition ===
+ // === /goToDefinitionShorthandProperty01.ts ===
+ // var name = "hello";
+@@= skipped -15, +17 lines =@@
+ // obj.name;
+ // obj.id;
+
++
++
+ // === goToDefinition ===
+ // === /goToDefinitionShorthandProperty01.ts ===
+ // var name = "hello";
+@@= skipped -8, +10 lines =@@
+ // var obj = {[|name|], id};
+ // obj./*GOTO DEF*/name;
+ // obj.id;
++
++
+
+ // === goToDefinition ===
+ // === /goToDefinitionShorthandProperty01.ts ===

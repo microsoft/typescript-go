@@ -15,4 +15,4 @@
 // 
 // var x : One | Two;
 // 
-// x.common./*GOTO DEF*/a;
+// x.common./*GOTO DEF*/[|a|];

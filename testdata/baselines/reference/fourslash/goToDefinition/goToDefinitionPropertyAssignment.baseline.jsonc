@@ -3,7 +3,7 @@
 // export const [|Component|] = () => { return "OK"}
 // Component.displayName = 'Component'
 // 
-// /*GOTO DEF*/Component
+// /*GOTO DEF*/[|Component|]
 // 
 // Component.displayName
 
@@ -16,4 +16,4 @@
 // 
 // Component
 // 
-// Component./*GOTO DEF*/displayName
+// Component./*GOTO DEF*/[|displayName|]

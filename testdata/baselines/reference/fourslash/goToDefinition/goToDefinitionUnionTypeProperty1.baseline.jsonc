@@ -12,5 +12,5 @@
 // 
 // var x : One | Two;
 // 
-// x./*GOTO DEF*/commonProperty;
+// x./*GOTO DEF*/[|commonProperty|];
 // x.commonFunction;

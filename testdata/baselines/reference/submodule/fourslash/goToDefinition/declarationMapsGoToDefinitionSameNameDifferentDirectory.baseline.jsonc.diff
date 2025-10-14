@@ -1,0 +1,58 @@
+--- old.declarationMapsGoToDefinitionSameNameDifferentDirectory.baseline.jsonc
++++ new.declarationMapsGoToDefinitionSameNameDifferentDirectory.baseline.jsonc
+@@= skipped -0, +0 lines =@@
+ // === goToDefinition ===
+-// === /BaseClass/Source.ts ===
+-// class [|Control|]{
+-//     constructor(){
+-//         return;
+-//     }
+-// --- (line: 5) skipped ---
++// === /BaseClass/Source.d.ts ===
++// declare class [|Control|] {
++//     constructor();
++//     /** this is a super var */
++//     myVar: boolean | 'yeah';
++// }
++// //# sourceMappingURL=Source.d.ts.map
+
+ // === /buttonClass/Source.ts ===
+ // // I cannot F12 navigate to Control
+ // //                   vvvvvvv
+-// class Button extends /*GOTO DEF*/[|Control|] {
++// class Button extends /*GOTO DEF*/Control {
+ //     public myFunction() {
+ //         // I cannot F12 navigate to myVar
+ //         //              vvvvv
+-// --- (line: 7) skipped ---
++// // --- (line: 7) skipped ---
++
++
+
+ // === goToDefinition ===
+-// === /BaseClass/Source.ts ===
+-// class Control{
+-//     constructor(){
+-//         return;
+-//     }
++// === /BaseClass/Source.d.ts ===
++// declare class Control {
++//     constructor();
+ //     /** this is a super var */
+-//     public [|myVar|]: boolean | 'yeah' = true;
++//     [|myVar|]: boolean | 'yeah';
+ // }
++// //# sourceMappingURL=Source.d.ts.map
+
+ // === /buttonClass/Source.ts ===
+ // --- (line: 3) skipped ---
+ //     public myFunction() {
+ //         // I cannot F12 navigate to myVar
+ //         //              vvvvv
+-//         if (typeof this./*GOTO DEF*/[|myVar|] === 'boolean') {
++//         if (typeof this./*GOTO DEF*/myVar === 'boolean') {
+ //             this.myVar;
+ //         } else {
+ //             this.myVar.toLocaleUpperCase();
+-// --- (line: 11) skipped ---
++// // --- (line: 11) skipped ---

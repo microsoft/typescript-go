@@ -1,0 +1,11 @@
+--- old.goToDefinitionPartialImplementation.baseline.jsonc
++++ new.goToDefinitionPartialImplementation.baseline.jsonc
+@@= skipped -7, +7 lines =@@
+
+ // === /goToDefinitionPartialImplementation_2.ts ===
+ // module A {
+-//     export interface [|IA|] {
++//     export interface IA {
+ //         x: number;
+ //     }
+ // 

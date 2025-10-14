@@ -2,7 +2,7 @@
 // === /goToDefinitionAwait3.ts ===
 // class C {
 //     [|notAsync|]() {
-//       /*GOTO DEF*/await Promise.resolve(0);
+//       /*GOTO DEF*/[|await|] Promise.resolve(0);
 //     }
 // 
 //     async foo() {
@@ -18,6 +18,6 @@
 //     }
 // 
 //     async [|foo|]() {
-//       /*GOTO DEF*/await Promise.resolve(0);
+//       /*GOTO DEF*/[|await|] Promise.resolve(0);
 //     }
 // }

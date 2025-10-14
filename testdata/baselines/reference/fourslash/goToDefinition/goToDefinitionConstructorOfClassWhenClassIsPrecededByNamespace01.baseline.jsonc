@@ -9,4 +9,4 @@
 //     }|]
 // }
 // 
-// var x = new /*GOTO DEF*/Foo();
+// var x = new /*GOTO DEF*/[|Foo|]();

@@ -1,0 +1,11 @@
+--- old.goToDefinitionDecoratorOverloads.baseline.jsonc
++++ new.goToDefinitionDecoratorOverloads.baseline.jsonc
+@@= skipped -11, +11 lines =@@
+ //     @dec [s]() {}
+ // }
+
++
++
+ // === goToDefinition ===
+ // === /goToDefinitionDecoratorOverloads.ts ===
+ // async function f() {}

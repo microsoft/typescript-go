@@ -1,0 +1,10 @@
+--- old.gotoDefinitionLinkTag5.baseline.jsonc
++++ new.gotoDefinitionLinkTag5.baseline.jsonc
+@@= skipped --1, +0 lines =@@
++// === goToDefinition ===
++// === /gotoDefinitionLinkTag5.ts ===
++// enum E {
++//     /** {@link /*GOTO DEF*/B} */
++//     A,
++//     [|B|]
++// }

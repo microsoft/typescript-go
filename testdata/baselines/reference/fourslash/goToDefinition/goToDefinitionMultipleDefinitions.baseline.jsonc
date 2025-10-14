@@ -13,7 +13,7 @@
 //     instance3: number;
 // }
 // 
-// var ifoo: IFo/*GOTO DEF*/o;
+// var ifoo: [|IFo/*GOTO DEF*/o|];
 
 
 
@@ -29,4 +29,4 @@
 // }
 
 // === /e.ts ===
-// Modul/*GOTO DEF*/e;
+// [|Modul/*GOTO DEF*/e|];

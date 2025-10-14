@@ -5,5 +5,5 @@
 // }
 // const [|foo|] = 1;
 // let x: Foo = {
-//     f/*GOTO DEF*/oo
+//     [|f/*GOTO DEF*/oo|]
 // }

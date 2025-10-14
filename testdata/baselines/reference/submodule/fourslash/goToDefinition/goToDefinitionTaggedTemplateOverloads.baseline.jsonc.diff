@@ -1,0 +1,11 @@
+--- old.goToDefinitionTaggedTemplateOverloads.baseline.jsonc
++++ new.goToDefinitionTaggedTemplateOverloads.baseline.jsonc
+@@= skipped -6, +6 lines =@@
+ // /*GOTO DEF*/f`${0}`;
+ // f`${false}`;
+
++
++
+ // === goToDefinition ===
+ // === /goToDefinitionTaggedTemplateOverloads.ts ===
+ // function f(strs: TemplateStringsArray, x: number): void;

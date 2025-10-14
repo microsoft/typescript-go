@@ -1,7 +1,7 @@
 // === goToDefinition ===
 // === /foo.ts ===
 // [|export function foo() { return "foo"; }
-// import("./f/*GOTO DEF*/oo")
+// import([|"./f/*GOTO DEF*/oo"|])
 // var x = import("./foo")|]
 
 
@@ -10,4 +10,4 @@
 // === /foo.ts ===
 // [|export function foo() { return "foo"; }
 // import("./foo")
-// var x = import("./fo/*GOTO DEF*/o")|]
+// var x = import([|"./fo/*GOTO DEF*/o"|])|]

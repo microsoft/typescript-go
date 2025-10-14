@@ -1,0 +1,26 @@
+--- old.goToDefinitionDecorator.baseline.jsonc
++++ new.goToDefinitionDecorator.baseline.jsonc
+@@= skipped -7, +7 lines =@@
+ // }
+
+ // === /b.ts ===
+-// @/*GOTO DEF*/[|decorator|]
++// @/*GOTO DEF*/decorator
+ // class C {
+ //     @decoratorFactory(a, "22", true)
+ //     method() {}
+ // }
+
++
++
+ // === goToDefinition ===
+ // === /a.ts ===
+ // function decorator(target) {
+@@= skipped -18, +20 lines =@@
+ // === /b.ts ===
+ // @decorator
+ // class C {
+-//     @[|decora/*GOTO DEF*/torFactory|](a, "22", true)
++//     @decora/*GOTO DEF*/torFactory(a, "22", true)
+ //     method() {}
+ // }

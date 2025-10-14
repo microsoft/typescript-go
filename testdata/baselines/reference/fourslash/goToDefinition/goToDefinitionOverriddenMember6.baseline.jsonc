@@ -4,5 +4,5 @@
 //     m() {}
 // }
 // class Bar extends Foo {
-//     /*GOTO DEF*/override [|m1|]() {}
+//     /*GOTO DEF*/[|override|] [|m1|]() {}
 // }

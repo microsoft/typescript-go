@@ -1,0 +1,11 @@
+--- old.goToDefinitionNewExpressionTargetNotClass.baseline.jsonc
++++ new.goToDefinitionNewExpressionTargetNotClass.baseline.jsonc
+@@= skipped -9, +9 lines =@@
+ // };
+ // new I2();
+
++
++
+ // === goToDefinition ===
+ // === /goToDefinitionNewExpressionTargetNotClass.ts ===
+ // --- (line: 3) skipped ---

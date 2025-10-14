@@ -1,0 +1,9 @@
+--- old.goToDefinitionJsDocImportTag4.baseline.jsonc
++++ new.goToDefinitionJsDocImportTag4.baseline.jsonc
+@@= skipped -3, +3 lines =@@
+
+ // === /a.js ===
+ // /**
+-//  * @import { [|A|]/*GOTO DEF*/ } from "./b";
++//  * @import { A/*GOTO DEF*/ } from "./b";
+ //  */

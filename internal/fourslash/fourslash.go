@@ -240,6 +240,9 @@ var (
 			ItemDefaults: &[]string{"commitCharacters", "editRange"},
 		},
 	}
+	defaultDefinitionCapabilities = &lsproto.DefinitionClientCapabilities{
+		LinkSupport: ptrTrue,
+	}
 )
 
 func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lsproto.ClientCapabilities {
@@ -255,6 +258,9 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	}
 	if capabilitiesWithDefaults.TextDocument.Completion == nil {
 		capabilitiesWithDefaults.TextDocument.Completion = defaultCompletionCapabilities
+	}
+	if capabilitiesWithDefaults.TextDocument.Definition == nil {
+		capabilitiesWithDefaults.TextDocument.Definition = defaultDefinitionCapabilities
 	}
 	return &capabilitiesWithDefaults
 }
@@ -805,6 +811,7 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 
 func (f *FourslashTest) VerifyBaselineGoToDefinition(
 	t *testing.T,
+	originalSelectionRange bool,
 	markers ...string,
 ) {
 	referenceLocations := f.lookupMarkersOrGetRanges(t, markers)
@@ -842,7 +849,20 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 		} else if result.Location != nil {
 			resultAsLocations = []lsproto.Location{*result.Location}
 		} else if result.DefinitionLinks != nil {
-			t.Fatalf("Unexpected definition response type at marker '%s': %T", *f.lastKnownMarkerName, result.DefinitionLinks)
+			var additionalSpan *lsproto.Range
+			resultAsLocations = core.Map(*result.DefinitionLinks, func(link *lsproto.LocationLink) lsproto.Location {
+				additionalSpan = link.OriginSelectionRange
+				return lsproto.Location{
+					Uri:   link.TargetUri,
+					Range: link.TargetSelectionRange,
+				}
+			})
+			if additionalSpan != nil && originalSelectionRange {
+				resultAsLocations = append(resultAsLocations, lsproto.Location{
+					Uri:   ls.FileNameToDocumentURI(f.activeFilename),
+					Range: *additionalSpan,
+				})
+			}
 		}
 
 		f.addResultToBaseline(t, "goToDefinition", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{

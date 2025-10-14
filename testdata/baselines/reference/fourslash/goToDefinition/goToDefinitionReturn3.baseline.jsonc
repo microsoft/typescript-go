@@ -2,6 +2,6 @@
 // === /goToDefinitionReturn3.ts ===
 // class C {
 //     [|m|]() {
-//         /*GOTO DEF*/return 1;
+//         /*GOTO DEF*/[|return|] 1;
 //     }
 // }

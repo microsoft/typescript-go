@@ -1,0 +1,9 @@
+--- old.goToDefinitionExternalModuleName3.baseline.jsonc
++++ new.goToDefinitionExternalModuleName3.baseline.jsonc
+@@= skipped -4, +4 lines =@@
+ // }
+
+ // === /b.ts ===
+-// import n = require([|'e/*GOTO DEF*/'|]);
++// import n = require('e/*GOTO DEF*/');
+ // var x = new n.Foo();

@@ -5,5 +5,5 @@
 // abstract class A {}
 // 
 // export class B extends A {
-//   /*GOTO DEF*/override readonly [|[prop]|] = "B";
+//   /*GOTO DEF*/[|override|] readonly [|[prop]|] = "B";
 // }

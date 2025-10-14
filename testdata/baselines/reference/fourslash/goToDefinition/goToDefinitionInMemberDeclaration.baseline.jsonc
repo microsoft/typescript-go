@@ -9,7 +9,7 @@
 // enum Enum { value1, value2 };
 // 
 // class Bar {
-//     public _interface: IFo/*GOTO DEF*/o = new Foo();
+//     public _interface: [|IFo/*GOTO DEF*/o|] = new Foo();
 //     public _class: Foo = new Foo();
 //     public _list: IFoo[]=[];
 //     public _enum: Enum = Enum.value1;
@@ -29,7 +29,7 @@
 // class Bar {
 //     public _interface: IFoo = new Foo();
 //     public _class: Foo = new Foo();
-//     public _list: IF/*GOTO DEF*/oo[]=[];
+//     public _list: [|IF/*GOTO DEF*/oo|][]=[];
 //     public _enum: Enum = Enum.value1;
 //     public _self: Bar;
 // 
@@ -49,7 +49,7 @@
 //     public _enum: Enum = Enum.value1;
 //     public _self: Bar;
 // 
-//     constructor(public _inConstructor: IFo/*GOTO DEF*/o) {
+//     constructor(public _inConstructor: [|IFo/*GOTO DEF*/o|]) {
 //     }
 // }
 
@@ -67,7 +67,7 @@
 // 
 // class Bar {
 //     public _interface: IFoo = new Foo();
-//     public _class: Fo/*GOTO DEF*/o = new Foo();
+//     public _class: [|Fo/*GOTO DEF*/o|] = new Foo();
 //     public _list: IFoo[]=[];
 //     public _enum: Enum = Enum.value1;
 //     public _self: Bar;
@@ -86,7 +86,7 @@
 // enum Enum { value1, value2 };
 // 
 // class Bar {
-//     public _interface: IFoo = new Fo/*GOTO DEF*/o();
+//     public _interface: IFoo = new [|Fo/*GOTO DEF*/o|]();
 //     public _class: Foo = new Foo();
 //     public _list: IFoo[]=[];
 //     public _enum: Enum = Enum.value1;
@@ -106,7 +106,7 @@
 //     public _interface: IFoo = new Foo();
 //     public _class: Foo = new Foo();
 //     public _list: IFoo[]=[];
-//     public _enum: E/*GOTO DEF*/num = Enum.value1;
+//     public _enum: [|E/*GOTO DEF*/num|] = Enum.value1;
 //     public _self: Bar;
 // 
 //     constructor(public _inConstructor: IFoo) {
@@ -127,7 +127,7 @@
 //     public _interface: IFoo = new Foo();
 //     public _class: Foo = new Foo();
 //     public _list: IFoo[]=[];
-//     public _enum: Enum = En/*GOTO DEF*/um.value1;
+//     public _enum: Enum = [|En/*GOTO DEF*/um|].value1;
 //     public _self: Bar;
 // 
 //     constructor(public _inConstructor: IFoo) {
@@ -147,7 +147,7 @@
 //     public _class: Foo = new Foo();
 //     public _list: IFoo[]=[];
 //     public _enum: Enum = Enum.value1;
-//     public _self: Ba/*GOTO DEF*/r;
+//     public _self: [|Ba/*GOTO DEF*/r|];
 // 
 //     constructor(public _inConstructor: IFoo) {
 //     }

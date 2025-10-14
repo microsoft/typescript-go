@@ -2,7 +2,7 @@
 // === /goToDefinitionYield2.ts ===
 // function* outerGen() {
 //     function* [|gen|]() {
-//         /*GOTO DEF*/yield 0;
+//         /*GOTO DEF*/[|yield|] 0;
 //     }
 //     return gen
 // }

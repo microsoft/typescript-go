@@ -1,0 +1,63 @@
+--- old.goToDefinitionClassStaticBlocks.baseline.jsonc
++++ new.goToDefinitionClassStaticBlocks.baseline.jsonc
+@@= skipped -1, +1 lines =@@
+ // === /goToDefinitionClassStaticBlocks.ts ===
+ // class ClassStaticBocks {
+ //     static x;
+-//     /*GOTO DEF*/[|{| textSpan: true, defId: 0 |}static|] {}
+-//     static y;
+-//     [|static|] {}
+-//     static y;
+-//     [|static|] {}
+-// }
+-
+-// === goToDefinition ===
+-// === /goToDefinitionClassStaticBlocks.ts ===
+-// class ClassStaticBocks {
+-//     static x;
+-//     [|static|] {}
+-//     static y;
+-//     /*GOTO DEF*/[|{| textSpan: true, defId: 1 |}static|] {}
+-//     static y;
+-//     [|static|] {}
+-// }
+-
+-// === goToDefinition ===
+-// === /goToDefinitionClassStaticBlocks.ts ===
+-// class ClassStaticBocks {
+-//     static x;
+-//     [|static|] {}
+-//     static y;
+-//     [|static|] {}
+-//     static y;
+-//     /*GOTO DEF*/[|{| textSpan: true, defId: 2 |}static|] {}
++//     /*GOTO DEF*/static {}
++//     static y;
++//     static {}
++//     static y;
++//     static {}
++// }
++
++
++
++// === goToDefinition ===
++// === /goToDefinitionClassStaticBlocks.ts ===
++// class ClassStaticBocks {
++//     static x;
++//     static {}
++//     static y;
++//     /*GOTO DEF*/static {}
++//     static y;
++//     static {}
++// }
++
++
++
++// === goToDefinition ===
++// === /goToDefinitionClassStaticBlocks.ts ===
++// --- (line: 3) skipped ---
++//     static y;
++//     static {}
++//     static y;
++//     /*GOTO DEF*/static {}
+ // }

@@ -5,4 +5,4 @@
 // }
 // 
 // const [|Thing|]: FC = (props) => <div></div>;
-// const HelloWorld = () => </*GOTO DEF*/Thing />;
+// const HelloWorld = () => </*GOTO DEF*/[|Thing|] />;

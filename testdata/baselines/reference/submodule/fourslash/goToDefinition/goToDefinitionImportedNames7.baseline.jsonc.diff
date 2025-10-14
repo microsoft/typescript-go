@@ -1,0 +1,8 @@
+--- old.goToDefinitionImportedNames7.baseline.jsonc
++++ new.goToDefinitionImportedNames7.baseline.jsonc
+@@= skipped -5, +5 lines =@@
+ // export default Class;
+
+ // === /b.ts ===
+-// import /*GOTO DEF*/[|defaultExport|] from "./a";
++// import /*GOTO DEF*/defaultExport from "./a";

@@ -1,0 +1,11 @@
+--- old.goToDefinitionMetaProperty.baseline.jsonc
++++ new.goToDefinitionMetaProperty.baseline.jsonc
+@@= skipped -23, +23 lines =@@
+ // import.meta;
+ // function [|f|]() { new.t/*GOTO DEF*/arget; }
+
++
++
+ // === goToDefinition ===
+ // === /b.ts ===
+ // im/*GOTO DEF*/port.m;

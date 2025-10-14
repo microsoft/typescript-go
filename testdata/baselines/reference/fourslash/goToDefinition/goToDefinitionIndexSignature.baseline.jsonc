@@ -11,7 +11,7 @@
 //     [x: `${string}b`]: string;
 // }
 // declare const i: I;
-// i./*GOTO DEF*/foo;
+// i./*GOTO DEF*/[|foo|];
 // declare const ij: I | J;
 // ij.foo;
 // declare const k: K;
@@ -34,7 +34,7 @@
 // declare const i: I;
 // i.foo;
 // declare const ij: I | J;
-// ij./*GOTO DEF*/foo;
+// ij./*GOTO DEF*/[|foo|];
 // declare const k: K;
 // k.a;
 // k.b;
@@ -56,7 +56,7 @@
 // declare const ij: I | J;
 // ij.foo;
 // declare const k: K;
-// k./*GOTO DEF*/a;
+// k./*GOTO DEF*/[|a|];
 // k.b;
 // k.ab;
 
@@ -76,7 +76,7 @@
 // ij.foo;
 // declare const k: K;
 // k.a;
-// k./*GOTO DEF*/b;
+// k./*GOTO DEF*/[|b|];
 // k.ab;
 
 
@@ -97,4 +97,4 @@
 // declare const k: K;
 // k.a;
 // k.b;
-// k./*GOTO DEF*/ab;
+// k./*GOTO DEF*/[|ab|];

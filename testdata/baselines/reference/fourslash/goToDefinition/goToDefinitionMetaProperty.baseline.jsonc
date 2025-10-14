@@ -22,7 +22,7 @@
 // === goToDefinition ===
 // === /a.ts ===
 // import.meta;
-// function [|f|]() { new.t/*GOTO DEF*/arget; }
+// function [|f|]() { new.[|t/*GOTO DEF*/arget|]; }
 
 
 
@@ -43,4 +43,4 @@
 // === goToDefinition ===
 // === /b.ts ===
 // import.m;
-// class [|c|] { constructor() { new.t/*GOTO DEF*/arget; } }
+// class [|c|] { constructor() { new.[|t/*GOTO DEF*/arget|]; } }

@@ -1,7 +1,7 @@
 // === goToDefinition ===
 // === /goToDefinitionSatisfiesExpression1.ts ===
 // const STRINGS = {
-//     /*GOTO DEF*/[|title|]: 'A Title',
+//     /*GOTO DEF*/[|[|title|]|]: 'A Title',
 // } satisfies Record<string,string>;
 // 
 // //somewhere in app
@@ -16,4 +16,4 @@
 // } satisfies Record<string,string>;
 // 
 // //somewhere in app
-// STRINGS./*GOTO DEF*/title
+// STRINGS./*GOTO DEF*/[|title|]
