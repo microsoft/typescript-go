@@ -709,15 +709,20 @@ func (s *Session) GetLanguageServiceWithMappedFiles(ctx context.Context, uri lsp
 		s.logger.Write("")
 	}
 	s.backgroundQueue.Enqueue(ctx, func(ctx context.Context) {
-		s.updateSnapshotWithDiskChanges(changes)
+		s.updateSnapshotWithDiskChanges(changes, snapshot, snapshotWithFiles)
 	})
 	return ls.NewLanguageService(project.GetProgram(), snapshotWithFiles), nil
 }
 
-func (s *Session) updateSnapshotWithDiskChanges(changes map[tspath.Path]*dirty.Change[*diskFile]) {
+func (s *Session) updateSnapshotWithDiskChanges(changes map[tspath.Path]*dirty.Change[*diskFile], snapshot, snapshotWithFiles *Snapshot) {
 	s.snapshotMu.Lock()
 	oldSnapshot := s.snapshot
-	newSnapshot := oldSnapshot.CloneWithDiskChanges(changes, s)
+	var newSnapshot *Snapshot
+	if oldSnapshot == snapshot {
+		newSnapshot = snapshotWithFiles
+	} else {
+		newSnapshot = oldSnapshot.CloneWithDiskChanges(changes, s)
+	}
 	s.snapshot = newSnapshot
 	s.snapshotMu.Unlock()
 

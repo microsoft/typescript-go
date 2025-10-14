@@ -358,22 +358,7 @@ func (s *Snapshot) CloneWithSourceMaps(genFiles []string, session *Session) (*Sn
 	}
 	snapshotFS, _, changes := fs.Finalize()
 	logger.Logf(`New files due to source maps: %v`, slices.Collect(maps.Keys(changes)))
-	newId := session.snapshotID.Add(1)
-	newSnapshot := NewSnapshot(
-		newId,
-		snapshotFS,
-		s.sessionOptions,
-		session.parseCache,
-		session.extendedConfigCache,
-		s.ConfigFileRegistry,
-		s.compilerOptionsForInferredProjects,
-		s.toPath,
-	)
-	newSnapshot.parentId = s.id
-	newSnapshot.ProjectCollection = s.ProjectCollection
-	newSnapshot.builderLogs = logger
-	// We don't need to update the extra files watcher here because the resulting snapshot will be
-	// discarded after fulfilling the request.
+	newSnapshot := s.cloneFromSnapshotFSChanges(snapshotFS, changes, session, logger)
 	logger.Logf(`Finished cloning snapshot %d into snapshot %d with source maps in %v`, s.id, newSnapshot.id, time.Since(start))
 	return newSnapshot, changes
 }
@@ -388,6 +373,17 @@ func (s *Snapshot) CloneWithDiskChanges(changes map[tspath.Path]*dirty.Change[*d
 	fs := newSnapshotFSBuilder(s.fs.fs, s.fs.overlays, s.fs.diskFiles, s.sessionOptions.PositionEncoding, s.toPath)
 	fs.applyDiskFileChanges(changes)
 	snapshotFS, _, _ := fs.Finalize()
+	newSnapshot := s.cloneFromSnapshotFSChanges(snapshotFS, changes, session, logger)
+	logger.Logf("Finished cloning snapshot %d into snapshot %d in %v", s.id, newSnapshot.id, time.Since(start))
+	return newSnapshot
+}
+
+func (s *Snapshot) cloneFromSnapshotFSChanges(
+	snapshotFS *snapshotFS,
+	changes map[tspath.Path]*dirty.Change[*diskFile],
+	session *Session,
+	logger *logging.LogTree,
+) *Snapshot {
 	newId := session.snapshotID.Add(1)
 	newSnapshot := NewSnapshot(
 		newId,
@@ -417,7 +413,6 @@ func (s *Snapshot) CloneWithDiskChanges(changes map[tspath.Path]*dirty.Change[*d
 		}
 	}
 	newSnapshot.extraDiskFilesWatch = s.extraDiskFilesWatch.Clone(newSnapshot.extraDiskFiles)
-	logger.Logf("Finished cloning snapshot %d into snapshot %d in %v", s.id, newSnapshot.id, time.Since(start))
 	return newSnapshot
 }
 
