@@ -210,6 +210,21 @@ func (s *testServer) baselineReferences(fileName string, position lsproto.Positi
 	}) + "\n")
 }
 
+func (s *testServer) baselineRename(fileName string, position lsproto.Position) {
+	s.t.Helper()
+	result := sendRequest(s.t, s, lsproto.TextDocumentRenameInfo, &lsproto.RenameParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsproto.DocumentUri("file://" + fileName),
+		},
+		Position: position,
+		NewName:  "?",
+	})
+	s.baseline.WriteString(lsptestutil.GetBaselineForRename(s.server.FS, result, lsptestutil.BaselineLocationsOptions{
+		Marker:    &marker{fileName, position},
+		OpenFiles: s.openFiles,
+	}) + "\n")
+}
+
 type marker struct {
 	fileName string
 	position lsproto.Position

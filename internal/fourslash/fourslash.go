@@ -1861,19 +1861,6 @@ func (f *FourslashTest) verifyBaselineRename(
 			t.Fatalf(prefix+"Unexpected rename response type: %T", resMsg.AsResponse().Result)
 		}
 
-		var changes map[lsproto.DocumentUri][]*lsproto.TextEdit
-		if result.WorkspaceEdit != nil && result.WorkspaceEdit.Changes != nil {
-			changes = *result.WorkspaceEdit.Changes
-		}
-		locationToText := map[lsproto.Location]string{}
-		fileToRange := collections.MultiMap[lsproto.DocumentUri, lsproto.Range]{}
-		for uri, edits := range changes {
-			for _, edit := range edits {
-				fileToRange.Add(uri, edit.Range)
-				locationToText[lsproto.Location{Uri: uri, Range: edit.Range}] = edit.NewText
-			}
-		}
-
 		var renameOptions strings.Builder
 		if preferences != nil {
 			if preferences.UseAliasesForRename != core.TSUnknown {
@@ -1884,29 +1871,10 @@ func (f *FourslashTest) verifyBaselineRename(
 			}
 		}
 
-		baselineFileContent := f.getBaselineForGroupedLocationsWithFileContents(
-			&fileToRange,
-			lsptestutil.BaselineLocationsOptions{
-				Marker:     markerOrRange,
-				MarkerName: "/*RENAME*/",
-				EndMarker:  "RENAME|]",
-				StartMarkerPrefix: func(span lsproto.Location) *string {
-					text := locationToText[span]
-					prefixAndSuffix := strings.Split(text, "?")
-					if prefixAndSuffix[0] != "" {
-						return ptrTo("/*START PREFIX*/" + prefixAndSuffix[0])
-					}
-					return nil
-				},
-				EndMarkerSuffix: func(span lsproto.Location) *string {
-					text := locationToText[span]
-					prefixAndSuffix := strings.Split(text, "?")
-					if prefixAndSuffix[1] != "" {
-						return ptrTo(prefixAndSuffix[1] + "/*END SUFFIX*/")
-					}
-					return nil
-				},
-			},
+		baselineFileContent := lsptestutil.GetBaselineForRename(
+			f.FS,
+			result,
+			lsptestutil.BaselineLocationsOptions{Marker: markerOrRange},
 		)
 
 		var baselineResult string
