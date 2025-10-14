@@ -422,6 +422,9 @@ func (s *Session) WaitForBackgroundTasks() {
 
 func updateWatch[T any](ctx context.Context, session *Session, logger logging.Logger, oldWatcher, newWatcher *WatchedFiles[T]) []error {
 	var errors []error
+	if oldWatcher == newWatcher {
+		return errors
+	}
 	session.watchesMu.Lock()
 	defer session.watchesMu.Unlock()
 	if newWatcher != nil {

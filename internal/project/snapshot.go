@@ -226,6 +226,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	projectCollection, configFileRegistry := projectCollectionBuilder.Finalize(logger)
 
+	extraDiskFiles := s.extraDiskFiles
+	extraDiskFilesWatch := s.extraDiskFilesWatch
 	// Clean cached disk files not touched by any open project. It's not important that we do this on
 	// file open specifically, but we don't need to do it on every snapshot clone.
 	if len(change.fileChanges.Opened) != 0 {
@@ -238,6 +240,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 		// The set of seen files can change only if a program was constructed (not cloned) during this snapshot.
 		if changedFiles {
+			extraDiskFiles = maps.Clone(s.extraDiskFiles)
 			cleanFilesStart := time.Now()
 			removedFiles := 0
 			// Files referenced by projects.
@@ -272,12 +275,14 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 					referenced = referencedToFile[referenced]
 				}
 				entry.Delete()
+				delete(extraDiskFiles, entry.Key())
 				removedFiles++
 				return true
 			})
 			if session.options.LoggingEnabled {
 				logger.Logf("Removed %d cached files in %v", removedFiles, time.Since(cleanFilesStart))
 			}
+			extraDiskFilesWatch = extraDiskFilesWatch.Clone(extraDiskFiles)
 		}
 	}
 
@@ -330,20 +335,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 	}
 
-	newSnapshot.extraDiskFiles = maps.Clone(s.extraDiskFiles)
-	core.DiffMapsFunc(
-		s.fs.diskFiles,
-		newSnapshot.fs.diskFiles,
-		func(a, b *diskFile) bool {
-			return a.Hash() == b.Hash()
-		},
-		func(path tspath.Path, addedFile *diskFile) {},
-		func(path tspath.Path, removedFile *diskFile) {
-			delete(newSnapshot.extraDiskFiles, path)
-		},
-		func(path tspath.Path, oldFile, newFile *diskFile) {},
-	)
-	newSnapshot.extraDiskFilesWatch = s.extraDiskFilesWatch.Clone(newSnapshot.extraDiskFiles)
+	newSnapshot.extraDiskFiles = extraDiskFiles
+	newSnapshot.extraDiskFilesWatch = extraDiskFilesWatch
 
 	logger.Logf("Finished cloning snapshot %d into snapshot %d in %v", s.id, newSnapshot.id, time.Since(start))
 	return newSnapshot
@@ -411,22 +404,18 @@ func (s *Snapshot) CloneWithDiskChanges(changes map[tspath.Path]*dirty.Change[*d
 	newSnapshot.ProjectCollection = s.ProjectCollection
 	newSnapshot.builderLogs = logger
 	newSnapshot.extraDiskFiles = maps.Clone(s.extraDiskFiles)
-	core.DiffMapsFunc(
-		s.fs.diskFiles,
-		newSnapshot.fs.diskFiles,
-		func(a, b *diskFile) bool {
-			return a.Hash() == b.Hash()
-		},
-		func(path tspath.Path, addedFile *diskFile) {
-			newSnapshot.extraDiskFiles[path] = addedFile.FileName()
-		},
-		func(path tspath.Path, removedFile *diskFile) {
-			delete(newSnapshot.extraDiskFiles, path)
-		},
-		func(path tspath.Path, oldFile, newFile *diskFile) {
-			// Shouldn't happen
-		},
-	)
+	for path, change := range changes {
+		if change.Deleted {
+			if change.Old != nil {
+				panic("Deleting files not supported")
+			}
+			continue
+		}
+		if change.Old == nil {
+			newSnapshot.extraDiskFiles[path] = change.New.FileName()
+			continue
+		}
+	}
 	newSnapshot.extraDiskFilesWatch = s.extraDiskFilesWatch.Clone(newSnapshot.extraDiskFiles)
 	logger.Logf("Finished cloning snapshot %d into snapshot %d in %v", s.id, newSnapshot.id, time.Since(start))
 	return newSnapshot

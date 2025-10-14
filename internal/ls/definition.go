@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 func (l *LanguageService) ProvideDefinition(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position) (lsproto.DefinitionResponse, error) {
@@ -61,18 +62,27 @@ func (l *LanguageService) GetFilesToMapFromDefinition(response lsproto.Definitio
 	var files []string
 
 	if response.Location != nil {
-		files = append(files, response.Location.Uri.FileName())
+		fileName := response.Location.Uri.FileName()
+		if tspath.IsDeclarationFileName(fileName) {
+			files = append(files, fileName)
+		}
 	}
 
 	if response.Locations != nil {
 		for _, location := range *response.Locations {
-			files = core.AppendIfUnique(files, location.Uri.FileName())
+			fileName := location.Uri.FileName()
+			if tspath.IsDeclarationFileName(fileName) {
+				files = core.AppendIfUnique(files, fileName)
+			}
 		}
 	}
 
 	if response.DefinitionLinks != nil {
 		for _, link := range *response.DefinitionLinks {
-			files = core.AppendIfUnique(files, link.TargetUri.FileName())
+			fileName := link.TargetUri.FileName()
+			if tspath.IsDeclarationFileName(fileName) {
+				files = core.AppendIfUnique(files, fileName)
+			}
 		}
 	}
 
