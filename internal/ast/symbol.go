@@ -294,90 +294,10 @@ func (c *CombinedSymbolTable) Values() iter.Seq[*Symbol] {
 
 var _ SymbolTable = (*CombinedSymbolTable)(nil)
 
-var NodeOnlyGlobalNames = collections.NewSetFromItems(
-	"__dirname",
-	"__filename",
-	"buffer",
-	"Buffer",
-	"BufferConstructor",
-	"BufferEncoding",
-	"clearImmediate",
-	"clearInterval",
-	"clearTimeout",
-	"console",
-	"Console",
-	"crypto",
-	"ErrorConstructor",
-	"gc",
-	"Global",
-	"localStorage",
-	"queueMicrotask",
-	"RequestInit",
-	"ResponseInit",
-	"sessionStorage",
-	"setImmediate",
-	"setInterval",
-	"setTimeout",
-)
-
-var TypesNodeIgnorableNames = collections.NewSetFromItems(
-	"AbortController",
-	"AbortSignal",
-	"AsyncIteratorObject",
-	"atob",
-	"Blob",
-	"BroadcastChannel",
-	"btoa",
-	"ByteLengthQueuingStrategy",
-	"CloseEvent",
-	"CompressionStream",
-	"CountQueuingStrategy",
-	"CustomEvent",
-	"DecompressionStream",
-	"Disposable",
-	"DOMException",
-	"Event",
-	"EventSource",
-	"EventTarget",
-	"fetch",
-	"File",
-	"Float32Array",
-	"Float64Array",
-	"FormData",
-	"Headers",
-	"ImportMeta",
-	"MessageChannel",
-	"MessageEvent",
-	"MessagePort",
-	"performance",
-	"PerformanceEntry",
-	"PerformanceMark",
-	"PerformanceMeasure",
-	"QueuingStrategy",
-	"ReadableByteStreamController",
-	"ReadableStream",
-	"ReadableStreamBYOBReader",
-	"ReadableStreamBYOBRequest",
-	"ReadableStreamDefaultController",
-	"ReadableStreamDefaultReader",
-	"ReadonlyArray",
-	"Request",
-	"Response",
-	"Storage",
-	"TextDecoder",
-	"TextDecoderStream",
-	"TextEncoder",
-	"TextEncoderStream",
-	"TransformStream",
-	"TransformStreamDefaultController",
-	"URL",
-	"URLPattern",
-	"URLSearchParams",
-	"WebSocket",
-	"WritableStream",
-	"WritableStreamDefaultController",
-	"WritableStreamDefaultWriter",
-)
+type DenoForkContextInfo struct {
+	TypesNodeIgnorableNames *collections.Set[string]
+	NodeOnlyGlobalNames     *collections.Set[string]
+}
 
 type DenoForkContext struct {
 	globals          SymbolTable
@@ -386,6 +306,7 @@ type DenoForkContext struct {
 	mergeSymbol      func(target *Symbol, source *Symbol, unidirectional bool) *Symbol
 	getMergedSymbol  func(source *Symbol) *Symbol
 	isNodeSourceFile func(path tspath.Path) bool
+	info             DenoForkContextInfo
 }
 
 func NewDenoForkContext(
@@ -394,6 +315,7 @@ func NewDenoForkContext(
 	mergeSymbol func(target *Symbol, source *Symbol, unidirectional bool) *Symbol,
 	getMergedSymbol func(source *Symbol) *Symbol,
 	isNodeSourceFile func(path tspath.Path) bool,
+	info DenoForkContextInfo,
 ) *DenoForkContext {
 	return &DenoForkContext{
 		globals:     globals,
@@ -405,11 +327,12 @@ func NewDenoForkContext(
 		mergeSymbol:      mergeSymbol,
 		getMergedSymbol:  getMergedSymbol,
 		isNodeSourceFile: isNodeSourceFile,
+		info:             info,
 	}
 }
 
 func (c *DenoForkContext) GetGlobalsForName(name string) SymbolTable {
-	if NodeOnlyGlobalNames.Has(name) {
+	if c.info.NodeOnlyGlobalNames.Has(name) {
 		return c.nodeGlobals
 	} else {
 		return c.globals
@@ -448,7 +371,7 @@ func (c *DenoForkContext) MergeGlobalSymbolTable(node *Node, source SymbolTable,
 		targetSymbol := target.Get(id)
 		if isTypesNodeSourceFile {
 		}
-		if isTypesNodeSourceFile && targetSymbol != nil && TypesNodeIgnorableNames.Has(id) && !symbolHasAnyTypesNodePkgDecl(targetSymbol, c.HasNodeSourceFile) {
+		if isTypesNodeSourceFile && targetSymbol != nil && c.info.TypesNodeIgnorableNames.Has(id) && !symbolHasAnyTypesNodePkgDecl(targetSymbol, c.HasNodeSourceFile) {
 			continue
 		}
 		var merged *Symbol

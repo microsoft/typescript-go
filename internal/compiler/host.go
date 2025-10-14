@@ -20,6 +20,7 @@ type CompilerHost interface {
 	GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine
 	MakeResolver(host module.ResolutionHost, options *core.CompilerOptions, typingsLocation string, projectName string) module.ResolverInterface
 	IsNodeSourceFile(path tspath.Path) bool
+	GetDenoForkContextInfo() ast.DenoForkContextInfo
 }
 
 var _ CompilerHost = (*compilerHost)(nil)
@@ -96,4 +97,8 @@ func (h *compilerHost) GetResolvedProjectReference(fileName string, path tspath.
 
 func (h *compilerHost) MakeResolver(host module.ResolutionHost, options *core.CompilerOptions, typingsLocation string, projectName string) module.ResolverInterface {
 	return module.NewResolver(host, options, typingsLocation, projectName)
+}
+
+func (h *compilerHost) GetDenoForkContextInfo() ast.DenoForkContextInfo {
+	return ast.DenoForkContextInfo{}
 }

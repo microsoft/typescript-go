@@ -549,6 +549,7 @@ type Host interface {
 	modulespecifiers.ModuleSpecifierGenerationHost
 
 	IsNodeSourceFile(path tspath.Path) bool
+	GetDenoForkContextInfo() ast.DenoForkContextInfo
 }
 
 // Checker
@@ -928,7 +929,7 @@ func NewChecker(program Program) *Checker {
 	c.denoGlobalThisSymbol = c.newSymbolEx(ast.SymbolFlagsModule, "globalThis", ast.CheckFlagsReadonly)
 	c.denoGlobalThisSymbol.Exports = c.denoGlobals
 	c.denoGlobals.Set(c.denoGlobalThisSymbol.Name, c.denoGlobalThisSymbol)
-	c.denoForkContext = ast.NewDenoForkContext(c.denoGlobals, c.nodeGlobals, c.mergeSymbol, c.getMergedSymbol, c.program.IsNodeSourceFile)
+	c.denoForkContext = ast.NewDenoForkContext(c.denoGlobals, c.nodeGlobals, c.mergeSymbol, c.getMergedSymbol, c.program.IsNodeSourceFile, c.program.GetDenoForkContextInfo())
 	c.nodeGlobalThisSymbol = c.newSymbolEx(ast.SymbolFlagsModule, "globalThis", ast.CheckFlagsReadonly)
 	c.nodeGlobalThisSymbol.Exports = c.denoForkContext.CombinedGlobals()
 	c.nodeGlobals.Set(c.nodeGlobalThisSymbol.Name, c.nodeGlobalThisSymbol)

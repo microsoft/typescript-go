@@ -48,6 +48,10 @@ func (h *host) IsNodeSourceFile(path tspath.Path) bool {
 	return h.host.IsNodeSourceFile(path)
 }
 
+func (h *host) GetDenoForkContextInfo() ast.DenoForkContextInfo {
+	return h.host.GetDenoForkContextInfo()
+}
+
 func (h *host) DefaultLibraryPath() string {
 	return h.host.DefaultLibraryPath()
 }

@@ -34,6 +34,11 @@ type emitHost struct {
 	emitResolver printer.EmitResolver
 }
 
+// TypesNodeIgnorableNames implements EmitHost.
+func (host *emitHost) GetDenoForkContextInfo() ast.DenoForkContextInfo {
+	return host.program.GetDenoForkContextInfo()
+}
+
 // IsNodeSourceFile implements EmitHost.
 func (host *emitHost) IsNodeSourceFile(path tspath.Path) bool {
 	return host.program.IsNodeSourceFile(path)

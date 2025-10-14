@@ -101,6 +101,8 @@ type Server struct {
 	logger           logging.Logger
 	api              *API
 
+	forkContextInfo ast.DenoForkContextInfo
+
 	requestId int
 }
 
@@ -172,6 +174,11 @@ func (h *hostWrapper) Builder() *project.ProjectCollectionBuilder {
 
 func (h *hostWrapper) SessionOptions() *project.SessionOptions {
 	return h.inner.SessionOptions()
+}
+
+// TypesNodeIgnorableNames implements project.ProjectHost.
+func (h *hostWrapper) GetDenoForkContextInfo() ast.DenoForkContextInfo {
+	return h.server.forkContextInfo
 }
 
 // IsNodeSourceFile implements project.ProjectHost.
@@ -570,6 +577,10 @@ func (s *Server) handleConfigure(payload []byte) error {
 		// s.logger.SetFile(params.LogFile)
 	} else {
 		// s.logger.SetFile("")
+	}
+	s.forkContextInfo = ast.DenoForkContextInfo{
+		TypesNodeIgnorableNames: collections.NewSetFromItems(params.Fork.TypesNodeIgnorableNames...),
+		NodeOnlyGlobalNames:     collections.NewSetFromItems(params.Fork.NodeOnlyGlobalNames...),
 	}
 	return nil
 }

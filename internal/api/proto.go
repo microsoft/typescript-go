@@ -104,9 +104,15 @@ var unmarshalers = map[Method]func([]byte) (any, error){
 	MethodGetDiagnostics:        unmarshallerFor[GetDiagnosticsParams],
 }
 
+type ForkContextInfo struct {
+	TypesNodeIgnorableNames []string `json:"typesNodeIgnorableNames"`
+	NodeOnlyGlobalNames     []string `json:"nodeOnlyGlobalNames"`
+}
+
 type ConfigureParams struct {
-	Callbacks []string `json:"callbacks"`
-	LogFile   string   `json:"logFile"`
+	Callbacks []string        `json:"callbacks"`
+	LogFile   string          `json:"logFile"`
+	Fork      ForkContextInfo `json:"forkContextInfo"`
 }
 
 type ParseConfigFileParams struct {

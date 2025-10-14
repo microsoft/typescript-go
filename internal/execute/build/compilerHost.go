@@ -29,6 +29,10 @@ func (h *compilerHost) GetCurrentDirectory() string {
 	return h.host.GetCurrentDirectory()
 }
 
+func (h *compilerHost) GetDenoForkContextInfo() ast.DenoForkContextInfo {
+	return h.host.GetDenoForkContextInfo()
+}
+
 func (h *compilerHost) IsNodeSourceFile(path tspath.Path) bool {
 	return h.host.IsNodeSourceFile(path)
 }

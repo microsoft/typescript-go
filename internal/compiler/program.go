@@ -163,6 +163,10 @@ func (p *Program) IsNodeSourceFile(path tspath.Path) bool {
 	return p.Host().IsNodeSourceFile(path)
 }
 
+func (p *Program) GetDenoForkContextInfo() ast.DenoForkContextInfo {
+	return p.Host().GetDenoForkContextInfo()
+}
+
 var _ checker.Program = (*Program)(nil)
 
 /** This should have similar behavior to 'processSourceFile' without diagnostics or mutation. */

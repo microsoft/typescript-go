@@ -169,6 +169,10 @@ func (p *fakeProgram) IsNodeSourceFile(path tspath.Path) bool {
 	return false
 }
 
+func (p *fakeProgram) GetDenoForkContextInfo() ast.DenoForkContextInfo {
+	return ast.DenoForkContextInfo{}
+}
+
 func TestImportElision(t *testing.T) {
 	t.Parallel()
 	data := []struct {

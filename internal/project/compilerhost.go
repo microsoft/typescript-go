@@ -44,6 +44,11 @@ type compilerHost struct {
 	logger  *logging.LogTree
 }
 
+// TypesNodeIgnorableNames implements compiler.CompilerHost.
+func (c *compilerHost) GetDenoForkContextInfo() ast.DenoForkContextInfo {
+	return ast.DenoForkContextInfo{}
+}
+
 // IsNodeSourceFile implements compiler.CompilerHost.
 func (c *compilerHost) IsNodeSourceFile(path tspath.Path) bool {
 	return false
