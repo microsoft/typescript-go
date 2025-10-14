@@ -34,6 +34,52 @@ type BaselineLocationsOptions struct {
 	OpenFiles map[string]string
 }
 
+func GetBaselineForRename(
+	fs vfs.FS,
+	result lsproto.WorkspaceEditOrNull,
+	options BaselineLocationsOptions,
+) string {
+	var changes map[lsproto.DocumentUri][]*lsproto.TextEdit
+	if result.WorkspaceEdit != nil && result.WorkspaceEdit.Changes != nil {
+		changes = *result.WorkspaceEdit.Changes
+	}
+	locationToText := map[lsproto.Location]string{}
+	fileToRange := collections.MultiMap[lsproto.DocumentUri, lsproto.Range]{}
+	for uri, edits := range changes {
+		for _, edit := range edits {
+			fileToRange.Add(uri, edit.Range)
+			locationToText[lsproto.Location{Uri: uri, Range: edit.Range}] = edit.NewText
+		}
+	}
+
+	return getBaselineForGroupedLocationsWithFileContents(
+		fs,
+		&fileToRange,
+		BaselineLocationsOptions{
+			Marker:     options.Marker,
+			MarkerName: "/*RENAME*/",
+			EndMarker:  "RENAME|]",
+			StartMarkerPrefix: func(span lsproto.Location) *string {
+				text := locationToText[span]
+				prefixAndSuffix := strings.Split(text, "?")
+				if prefixAndSuffix[0] != "" {
+					return ptrTo("/*START PREFIX*/" + prefixAndSuffix[0])
+				}
+				return nil
+			},
+			EndMarkerSuffix: func(span lsproto.Location) *string {
+				text := locationToText[span]
+				prefixAndSuffix := strings.Split(text, "?")
+				if prefixAndSuffix[1] != "" {
+					return ptrTo(prefixAndSuffix[1] + "/*END SUFFIX*/")
+				}
+				return nil
+			},
+			OpenFiles: options.OpenFiles,
+		},
+	)
+}
+
 func GetBaselineForLocationsWithFileContents(
 	fs vfs.FS,
 	spans []lsproto.Location,
@@ -46,14 +92,14 @@ func GetBaselineForLocationsWithFileContents(
 			rangesByFile.Add(file, loc.Range)
 		}
 	}
-	return GetBaselineForGroupedLocationsWithFileContents(
+	return getBaselineForGroupedLocationsWithFileContents(
 		fs,
 		&rangesByFile,
 		options,
 	)
 }
 
-func GetBaselineForGroupedLocationsWithFileContents(
+func getBaselineForGroupedLocationsWithFileContents(
 	f vfs.FS,
 	groupedRanges *collections.MultiMap[lsproto.DocumentUri, lsproto.Range],
 	options BaselineLocationsOptions,
