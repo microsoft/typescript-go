@@ -122,10 +122,6 @@ func (f *FourslashTest) getBaselineForLocationsWithFileContents(spans []lsproto.
 	return lsptestutil.GetBaselineForLocationsWithFileContents(f.FS, spans, options)
 }
 
-func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedRanges *collections.MultiMap[lsproto.DocumentUri, lsproto.Range], options lsptestutil.BaselineLocationsOptions) string {
-	return lsptestutil.GetBaselineForGroupedLocationsWithFileContents(f.FS, groupedRanges, options)
-}
-
 type markerAndItem[T any] struct {
 	Marker *Marker `json:"marker"`
 	Item   T       `json:"item"`
