@@ -347,14 +347,14 @@ func (b *ProjectCollectionBuilder) DidUpdateATAState(ataChanges map[tspath.Path]
 				// the set of typings files is actually different.
 				p.installedTypingsInfo = ataChange.TypingsInfo
 				p.typingsFiles = ataChange.TypingsFiles
-				fileWatchGlobs, directoryWatchGlobs := getTypingsLocationsGlobs(
+				typingsWatchGlobs := getTypingsLocationsGlobs(
 					ataChange.TypingsFilesToWatch,
 					b.sessionOptions.TypingsLocation,
+					b.sessionOptions.CurrentDirectory,
 					p.currentDirectory,
 					b.fs.fs.UseCaseSensitiveFileNames(),
 				)
-				p.typingsFilesWatch = p.typingsFilesWatch.Clone(fileWatchGlobs)
-				p.typingsDirectoryWatch = p.typingsDirectoryWatch.Clone(directoryWatchGlobs)
+				p.typingsWatch = p.typingsWatch.Clone(typingsWatchGlobs)
 				p.dirty = true
 				p.dirtyFilePath = ""
 			},
@@ -539,7 +539,7 @@ func (b *ProjectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 				// For composite projects, we can get an early negative result.
 				// !!! what about declaration files in node_modules? wouldn't it be better to
 				//     check project inclusion if the project is already loaded?
-				if !config.MatchesFileName(fileName) {
+				if _, ok := config.FileNamesByPath()[path]; !ok {
 					node.logger.Log("Project does not contain file (by composite config inclusion)")
 					return false, false
 				}
@@ -797,7 +797,8 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 				if result.UpdateKind == ProgramUpdateKindNewFiles {
 					filesChanged = true
 					if b.sessionOptions.WatchEnabled {
-						failedLookupsWatch, affectingLocationsWatch := project.CloneWatchers()
+						programFilesWatch, failedLookupsWatch, affectingLocationsWatch := project.CloneWatchers(b.sessionOptions.CurrentDirectory, b.sessionOptions.DefaultLibraryPath)
+						project.programFilesWatch = programFilesWatch
 						project.failedLookupsWatch = failedLookupsWatch
 						project.affectingLocationsWatch = affectingLocationsWatch
 					}
