@@ -1178,13 +1178,6 @@ func (l *LanguageService) getCompletionData(
 		}
 
 		// !!! timestamp
-		// Under `--moduleResolution nodenext` or `bundler`, we have to resolve module specifiers up front, because
-		// package.json exports can mean we *can't* resolve a module specifier (that doesn't include a
-		// relative path into node_modules), and we want to filter those completions out entirely.
-		// Import statement completions always need specifier resolution because the module specifier is
-		// part of their `insertText`, not the `codeActions` creating edits away from the cursor.
-		// Finally, `autoImportSpecifierExcludeRegexes` necessitates eagerly resolving module specifiers
-		// because completion items are being explcitly filtered out by module specifier.
 		isValidTypeOnlyUseSite := ast.IsValidTypeOnlyAliasUseSite(location)
 
 		// !!! moduleSpecifierCache := host.getModuleSpecifierCache();
@@ -1267,6 +1260,28 @@ func (l *LanguageService) getCompletionData(
 			symbols = append(symbols, symbol)
 			return nil
 		}
+
+		exports, err := l.getExportsForAutoImport(ctx)
+		if err == nil {
+			for _, exp := range exports.Trie.Search(lowerCaseTokenText) {
+				// 1. Filter out:
+				//    - exports from the same file
+				//    - files not reachable due to relative node_modules location
+				//      - redundant with package.json filter?
+				//    - files not reachable due to preferences filter
+				//    - module specifiers not reachable due to package.json `exports`
+				//      - if we find the set of input files by walking these, can we skip?
+				//    - module specifiers not allowed due to package.json dependency filter
+				//    - module specifiers not allowed due to preferences filter
+				targetFile := l.getAutoImportSourceFile(exp.Path)
+				// !!! get symlinks
+				if exp.ModuleDeclarationName == "" {
+					if isInUnreachableNodeModules(file.FileName(), targetFile.FileName()) {
+					}
+				}
+			}
+		}
+
 		l.searchExportInfosForCompletions(ctx,
 			typeChecker,
 			file,
