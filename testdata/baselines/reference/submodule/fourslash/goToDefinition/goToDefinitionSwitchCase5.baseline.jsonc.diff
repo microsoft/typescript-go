@@ -1,7 +1,0 @@
---- old.goToDefinitionSwitchCase5.baseline.jsonc
-+++ new.goToDefinitionSwitchCase5.baseline.jsonc
-@@= skipped -0, +0 lines =@@
- // === goToDefinition ===
- // === /goToDefinitionSwitchCase5.ts ===
--// [|export /*GOTO DEF*/default {}|]
-+// export /*GOTO DEF*/default {}

@@ -1,8 +1,0 @@
---- old.goToDefinitionImportedNames.baseline.jsonc
-+++ new.goToDefinitionImportedNames.baseline.jsonc
-@@= skipped -9, +9 lines =@@
- // }
-
- // === /b.ts ===
--// export {/*GOTO DEF*/[|Class|]} from "./a";
-+// export {/*GOTO DEF*/Class} from "./a";

@@ -1,8 +1,0 @@
---- old.goToDefinitionImportedNames6.baseline.jsonc
-+++ new.goToDefinitionImportedNames6.baseline.jsonc
-@@= skipped -9, +9 lines =@@
- // }|]
-
- // === /b.ts ===
--// import /*GOTO DEF*/[|alias|] = require("./a");
-+// import /*GOTO DEF*/alias = require("./a");

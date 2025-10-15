@@ -1,9 +1,0 @@
---- old.goToDefinitionExternalModuleName5.baseline.jsonc
-+++ new.goToDefinitionExternalModuleName5.baseline.jsonc
-@@= skipped -0, +0 lines =@@
- // === goToDefinition ===
- // === /a.ts ===
--// declare module [|{| textSpan: true |}"external/*GOTO DEF*/"|] {
-+// declare module [|"external/*GOTO DEF*/"|] {
- //     class Foo { }
- // }

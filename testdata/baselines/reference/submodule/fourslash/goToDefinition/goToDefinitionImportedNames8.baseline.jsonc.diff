@@ -1,8 +1,0 @@
---- old.goToDefinitionImportedNames8.baseline.jsonc
-+++ new.goToDefinitionImportedNames8.baseline.jsonc
-@@= skipped -5, +5 lines =@@
- //  export { Class };
-
- // === /b.js ===
--// import { /*GOTO DEF*/[|Class|] } from "./a";
-+// import { /*GOTO DEF*/Class } from "./a";

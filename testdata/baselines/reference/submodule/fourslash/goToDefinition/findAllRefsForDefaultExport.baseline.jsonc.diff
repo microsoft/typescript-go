@@ -1,8 +1,0 @@
---- old.findAllRefsForDefaultExport.baseline.jsonc
-+++ new.findAllRefsForDefaultExport.baseline.jsonc
-@@= skipped -3, +3 lines =@@
-
- // === /b.ts ===
- // import g from "./a";
--// /*GOTO DEF*/[|g|]();
-+// /*GOTO DEF*/g();
