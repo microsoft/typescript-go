@@ -1309,7 +1309,7 @@ interface VerifyBaselineFindAllReferencesCmd {
 }
 
 interface VerifyBaselineGoToDefinitionCmd {
-    kind: "verifyBaselineGoToDefinition" | "verifyBaselineGoToType"
+    kind: "verifyBaselineGoToDefinition" | "verifyBaselineGoToType";
     markers: string[];
     ranges?: boolean;
 }
