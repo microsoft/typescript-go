@@ -10,7 +10,7 @@
 //         span: { n: string; };
 //     }
 // }
-// var x = <[|di/*GOTO DEF*/v|] />;
+// var x = <di/*GOTO DEF*/v />;
 // var y = <span />;
 // var z = <div name='hello' />;
 
@@ -26,7 +26,7 @@
 //     }
 // }
 // var x = <div />;
-// var y = <[|s/*GOTO DEF*/pan|] />;
+// var y = <s/*GOTO DEF*/pan />;
 // var z = <div name='hello' />;
 
 
@@ -45,4 +45,4 @@
 // }
 // var x = <div />;
 // var y = <span />;
-// var z = <div [|na/*GOTO DEF*/me|]='hello' />;
+// var z = <div na/*GOTO DEF*/me='hello' />;

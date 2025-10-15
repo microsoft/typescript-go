@@ -2,6 +2,6 @@
 // === /goToDefinitionReturn2.ts ===
 // function foo() {
 //     return [|() => {
-//         /*GOTO DEF*/[|return|] 10;
+//         /*GOTO DEF*/return 10;
 //     }|]
 // }

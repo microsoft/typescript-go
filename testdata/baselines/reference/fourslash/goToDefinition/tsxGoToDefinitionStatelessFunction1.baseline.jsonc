@@ -5,7 +5,7 @@
 //     optional?: boolean
 // }
 // declare function [|Opt|](attributes: OptionPropBag): JSX.Element;
-// let opt = <[|O/*GOTO DEF*/pt|] />;
+// let opt = <O/*GOTO DEF*/pt />;
 // let opt1 = <Opt propx={100} />;
 // let opt2 = <Opt propx={100} optional />;
 // let opt3 = <Opt wrong />;
@@ -20,7 +20,7 @@
 // }
 // declare function [|Opt|](attributes: OptionPropBag): JSX.Element;
 // let opt = <Opt />;
-// let opt1 = <[|Op/*GOTO DEF*/t|] propx={100} />;
+// let opt1 = <Op/*GOTO DEF*/t propx={100} />;
 // let opt2 = <Opt propx={100} optional />;
 // let opt3 = <Opt wrong />;
 
@@ -35,7 +35,7 @@
 // declare function [|Opt|](attributes: OptionPropBag): JSX.Element;
 // let opt = <Opt />;
 // let opt1 = <Opt propx={100} />;
-// let opt2 = <[|Op/*GOTO DEF*/t|] propx={100} optional />;
+// let opt2 = <Op/*GOTO DEF*/t propx={100} optional />;
 // let opt3 = <Opt wrong />;
 
 
@@ -50,7 +50,7 @@
 // let opt = <Opt />;
 // let opt1 = <Opt propx={100} />;
 // let opt2 = <Opt propx={100} optional />;
-// let opt3 = <[|Op/*GOTO DEF*/t|] wrong />;
+// let opt3 = <Op/*GOTO DEF*/t wrong />;
 
 
 
@@ -66,7 +66,7 @@
 // }
 // declare function Opt(attributes: OptionPropBag): JSX.Element;
 // let opt = <Opt />;
-// let opt1 = <Opt [|pr/*GOTO DEF*/opx|]={100} />;
+// let opt1 = <Opt pr/*GOTO DEF*/opx={100} />;
 // let opt2 = <Opt propx={100} optional />;
 // let opt3 = <Opt wrong />;
 
@@ -83,5 +83,5 @@
 // declare function Opt(attributes: OptionPropBag): JSX.Element;
 // let opt = <Opt />;
 // let opt1 = <Opt propx={100} />;
-// let opt2 = <Opt propx={100} [|opt/*GOTO DEF*/ional|] />;
+// let opt2 = <Opt propx={100} opt/*GOTO DEF*/ional />;
 // let opt3 = <Opt wrong />;

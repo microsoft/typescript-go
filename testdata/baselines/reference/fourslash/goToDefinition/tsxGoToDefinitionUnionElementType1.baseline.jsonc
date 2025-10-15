@@ -11,4 +11,4 @@
 //     return <h1>World </h1>;
 // }
 // var [|SFCComp|] = SFC1 || SFC2;
-// <[|SFC/*GOTO DEF*/Comp|] x />
+// <SFC/*GOTO DEF*/Comp x />

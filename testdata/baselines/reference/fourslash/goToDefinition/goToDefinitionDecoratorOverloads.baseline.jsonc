@@ -8,7 +8,7 @@
 // 
 // declare const s: symbol;
 // class C {
-//     @/*GOTO DEF*/[|dec|] f() {}
+//     @/*GOTO DEF*/dec f() {}
 //     @dec [s]() {}
 // }
 
@@ -25,5 +25,5 @@
 // declare const s: symbol;
 // class C {
 //     @dec f() {}
-//     @/*GOTO DEF*/[|dec|] [s]() {}
+//     @/*GOTO DEF*/dec [s]() {}
 // }

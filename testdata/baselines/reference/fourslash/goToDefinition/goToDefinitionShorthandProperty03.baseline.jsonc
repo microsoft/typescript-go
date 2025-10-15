@@ -1,7 +1,7 @@
 // === goToDefinition ===
 // === /goToDefinitionShorthandProperty03.ts ===
 // var [|x|] = {
-//     /*GOTO DEF*/[|x|]
+//     /*GOTO DEF*/x
 // }
 // let y = {
 //     y
@@ -15,5 +15,5 @@
 //     x
 // }
 // let [|y|] = {
-//     /*GOTO DEF*/[|y|]
+//     /*GOTO DEF*/y
 // }

@@ -2,7 +2,7 @@
 // === /goToDefinitionYield3.ts ===
 // class C {
 //     [|notAGenerator|]() {
-//       /*GOTO DEF*/[|yield|] 0;
+//       /*GOTO DEF*/yield 0;
 //     }
 // 
 //     foo*() {
@@ -18,6 +18,6 @@
 //     }
 // 
 //     foo*[||]() {
-//       /*GOTO DEF*/[|yield|] 0;
+//       /*GOTO DEF*/yield 0;
 //     }
 // }

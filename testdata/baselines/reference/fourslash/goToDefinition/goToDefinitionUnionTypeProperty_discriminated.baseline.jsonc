@@ -13,7 +13,7 @@
 // }
 // 
 // const u: U = {
-//   /*GOTO DEF*/[|kind|]: "a",
+//   /*GOTO DEF*/kind: "a",
 //   prop: 0,
 // };
 // const u2: U = {
@@ -37,7 +37,7 @@
 // 
 // const u: U = {
 //   kind: "a",
-//   /*GOTO DEF*/[|prop|]: 0,
+//   /*GOTO DEF*/prop: 0,
 // };
 // const u2: U = {
 //   kind: "bogus",
@@ -65,7 +65,7 @@
 //   prop: 0,
 // };
 // const u2: U = {
-//   /*GOTO DEF*/[|kind|]: "bogus",
+//   /*GOTO DEF*/kind: "bogus",
 //   prop: 0,
 // };
 
@@ -91,5 +91,5 @@
 // };
 // const u2: U = {
 //   kind: "bogus",
-//   /*GOTO DEF*/[|prop|]: 0,
+//   /*GOTO DEF*/prop: 0,
 // };

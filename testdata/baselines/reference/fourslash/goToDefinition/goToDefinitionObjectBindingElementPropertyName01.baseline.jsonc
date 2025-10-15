@@ -6,4 +6,4 @@
 // }
 // 
 // var foo: I;
-// var { /*GOTO DEF*/[|property1|]: prop1 } = foo;
+// var { /*GOTO DEF*/property1: prop1 } = foo;

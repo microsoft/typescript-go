@@ -7,4 +7,4 @@
 // }
 // let t: Gen;
 // var { x, ...rest } = t;
-// rest./*GOTO DEF*/[|parent|];
+// rest./*GOTO DEF*/parent;

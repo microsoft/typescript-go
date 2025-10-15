@@ -5,7 +5,7 @@
 // }
 // function foo(arg: PropsBag) {}
 // foo({
-//    [|pr/*GOTO DEF*/opx|]: 10
+//    pr/*GOTO DEF*/opx: 10
 // })
 // function bar(firstarg: boolean, secondarg: PropsBag) {}
 // bar(true, {
@@ -25,5 +25,5 @@
 // })
 // function bar(firstarg: boolean, secondarg: PropsBag) {}
 // bar(true, {
-//    [|pr/*GOTO DEF*/opx|]: 10
+//    pr/*GOTO DEF*/opx: 10
 // })

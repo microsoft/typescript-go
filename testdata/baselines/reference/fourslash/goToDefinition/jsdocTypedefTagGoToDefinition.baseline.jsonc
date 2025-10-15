@@ -11,7 +11,7 @@
 //  */
 // 
 // /** @type {Person} */
-// var person; person.[|personName|]/*GOTO DEF*/
+// var person; person.personName/*GOTO DEF*/
 // 
 // /** @type {Animal} */
 // var animal; animal.animalName
@@ -31,4 +31,4 @@
 // var person; person.personName
 // 
 // /** @type {Animal} */
-// var animal; animal.[|animalName|]/*GOTO DEF*/
+// var animal; animal.animalName/*GOTO DEF*/

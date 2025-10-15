@@ -6,7 +6,7 @@
 //     constructor(foo: any)  { }
 // }
 // 
-// var constructorOverload = new /*GOTO DEF*/[|ConstructorOverload|]();
+// var constructorOverload = new /*GOTO DEF*/ConstructorOverload();
 // var constructorOverload = new ConstructorOverload("foo");
 // 
 // class Extended extends ConstructorOverload {
@@ -23,7 +23,7 @@
 // }
 // 
 // var constructorOverload = new ConstructorOverload();
-// var constructorOverload = new /*GOTO DEF*/[|ConstructorOverload|]("foo");
+// var constructorOverload = new /*GOTO DEF*/ConstructorOverload("foo");
 // 
 // class Extended extends ConstructorOverload {
 //     readonly name = "extended";
@@ -34,7 +34,7 @@
 // === goToDefinition ===
 // === /goToDefinitionConstructorOverloads.ts ===
 // class ConstructorOverload {
-//     /*GOTO DEF*/[|[|constructor|]();|]
+//     /*GOTO DEF*/[|constructor();|]
 //     [|constructor(foo: string);|]
 //     [|constructor(foo: any)  { }|]
 // }
@@ -58,7 +58,7 @@
 // class [|Extended|] extends ConstructorOverload {
 //     readonly name = "extended";
 // }
-// var extended1 = new /*GOTO DEF*/[|Extended|]();
+// var extended1 = new /*GOTO DEF*/Extended();
 // var extended2 = new Extended("foo");
 
 
@@ -78,4 +78,4 @@
 //     readonly name = "extended";
 // }
 // var extended1 = new Extended();
-// var extended2 = new /*GOTO DEF*/[|Extended|]("foo");
+// var extended2 = new /*GOTO DEF*/Extended("foo");

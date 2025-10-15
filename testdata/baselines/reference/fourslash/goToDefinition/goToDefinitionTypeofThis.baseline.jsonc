@@ -1,7 +1,7 @@
 // === goToDefinition ===
 // === /goToDefinitionTypeofThis.ts ===
 // function f([|this|]: number) {
-//     type X = typeof /*GOTO DEF*/[|this|];
+//     type X = typeof /*GOTO DEF*/this;
 // }
 // class C {
 //     constructor() { type X = typeof this; }
@@ -16,7 +16,7 @@
 //     type X = typeof this;
 // }
 // class [|C|] {
-//     constructor() { type X = typeof /*GOTO DEF*/[|this|]; }
+//     constructor() { type X = typeof /*GOTO DEF*/this; }
 //     get self(this: number) { type X = typeof this; }
 // }
 
@@ -29,5 +29,5 @@
 // }
 // class C {
 //     constructor() { type X = typeof this; }
-//     get self([|this|]: number) { type X = typeof /*GOTO DEF*/[|this|]; }
+//     get self([|this|]: number) { type X = typeof /*GOTO DEF*/this; }
 // }

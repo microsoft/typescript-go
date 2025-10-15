@@ -6,7 +6,7 @@
 //     get #prop() { return ""; }
 //     set #prop(value: string) {  }
 //     constructor() {
-//         this./*GOTO DEF*/[|#foo|]
+//         this./*GOTO DEF*/#foo
 //         this.#method
 //         this.#prop
 //     }
@@ -23,7 +23,7 @@
 //     set #prop(value: string) {  }
 //     constructor() {
 //         this.#foo
-//         this./*GOTO DEF*/[|#method|]
+//         this./*GOTO DEF*/#method
 //         this.#prop
 //     }
 // }
@@ -40,6 +40,6 @@
 //     constructor() {
 //         this.#foo
 //         this.#method
-//         this./*GOTO DEF*/[|#prop|]
+//         this./*GOTO DEF*/#prop
 //     }
 // }

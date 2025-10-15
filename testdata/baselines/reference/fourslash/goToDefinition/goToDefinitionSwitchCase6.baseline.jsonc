@@ -1,6 +1,6 @@
 // === goToDefinition ===
 // === /goToDefinitionSwitchCase6.ts ===
-// export default { /*GOTO DEF*/[|[|case|]|] };
+// export default { /*GOTO DEF*/[|case|] };
 // default;
 // case 42;
 

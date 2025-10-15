@@ -811,7 +811,7 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 
 func (f *FourslashTest) VerifyBaselineGoToDefinition(
 	t *testing.T,
-	originalSelectionRange bool,
+	includeOriginalSelectionRange bool,
 	markers ...string,
 ) {
 	referenceLocations := f.lookupMarkersOrGetRanges(t, markers)
@@ -844,30 +844,35 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 		}
 
 		var resultAsLocations []lsproto.Location
+		var additionalLocation *lsproto.Location
 		if result.Locations != nil {
 			resultAsLocations = *result.Locations
 		} else if result.Location != nil {
 			resultAsLocations = []lsproto.Location{*result.Location}
 		} else if result.DefinitionLinks != nil {
-			var additionalSpan *lsproto.Range
+			var originRange *lsproto.Range
 			resultAsLocations = core.Map(*result.DefinitionLinks, func(link *lsproto.LocationLink) lsproto.Location {
-				additionalSpan = link.OriginSelectionRange
+				if originRange != nil && originRange != link.OriginSelectionRange {
+					panic("multiple different origin ranges in definition links")
+				}
+				originRange = link.OriginSelectionRange
 				return lsproto.Location{
 					Uri:   link.TargetUri,
 					Range: link.TargetSelectionRange,
 				}
 			})
-			if additionalSpan != nil && originalSelectionRange {
-				resultAsLocations = append(resultAsLocations, lsproto.Location{
+			if originRange != nil && includeOriginalSelectionRange {
+				additionalLocation = &lsproto.Location{
 					Uri:   ls.FileNameToDocumentURI(f.activeFilename),
-					Range: *additionalSpan,
-				})
+					Range: *originRange,
+				}
 			}
 		}
 
 		f.addResultToBaseline(t, "goToDefinition", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
-			marker:     markerOrRange,
-			markerName: "/*GOTO DEF*/",
+			marker:             markerOrRange,
+			markerName:         "/*GOTO DEF*/",
+			additionalLocation: additionalLocation,
 		}))
 	}
 }
@@ -911,7 +916,12 @@ func (f *FourslashTest) VerifyBaselineGoToTypeDefinition(
 		} else if result.Location != nil {
 			resultAsLocations = []lsproto.Location{*result.Location}
 		} else if result.DefinitionLinks != nil {
-			t.Fatalf("Unexpected type definition response type at marker '%s': %T", *f.lastKnownMarkerName, result.DefinitionLinks)
+			resultAsLocations = core.Map(*result.DefinitionLinks, func(link *lsproto.LocationLink) lsproto.Location {
+				return lsproto.Location{
+					Uri:   link.TargetUri,
+					Range: link.TargetSelectionRange,
+				}
+			})
 		}
 
 		f.addResultToBaseline(t, "goToType", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{

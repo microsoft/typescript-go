@@ -4,5 +4,5 @@
 // 	static [|m|]() {}
 // }
 // class Bar extends Foo {
-// 	static /*GOTO DEF*/[|override|] m() {}
+// 	static /*GOTO DEF*/override m() {}
 // }

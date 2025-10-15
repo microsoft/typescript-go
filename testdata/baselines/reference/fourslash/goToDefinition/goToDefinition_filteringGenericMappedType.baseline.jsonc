@@ -11,4 +11,4 @@
 //   name: true,
 // });
 // 
-// obj2./*GOTO DEF*/[|id|];
+// obj2./*GOTO DEF*/id;

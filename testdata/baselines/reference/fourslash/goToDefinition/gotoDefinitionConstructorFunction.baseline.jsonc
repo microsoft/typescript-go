@@ -6,5 +6,5 @@
 // };
 // 
 // function runMode () {
-// new /*GOTO DEF*/[|StringStreamm|]()
+// new /*GOTO DEF*/StringStreamm()
 // };

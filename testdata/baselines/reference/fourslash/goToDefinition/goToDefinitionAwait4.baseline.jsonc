@@ -2,6 +2,6 @@
 // === /goToDefinitionAwait4.ts ===
 // async function outerAsyncFun() {
 //     let [|af|] = async () => {
-//       /*GOTO DEF*/[|await|] Promise.resolve(0);
+//       /*GOTO DEF*/await Promise.resolve(0);
 //     }
 // }

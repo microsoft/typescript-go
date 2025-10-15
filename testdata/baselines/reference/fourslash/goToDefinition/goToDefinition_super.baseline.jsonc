@@ -7,7 +7,7 @@
 // class [|B|] extends A {}
 // class C extends B {
 //     constructor() {
-//         /*GOTO DEF*/[|super|]();
+//         /*GOTO DEF*/super();
 //     }
 //     method() {
 //         super.x();
@@ -27,7 +27,7 @@
 //         super();
 //     }
 //     method() {
-//         /*GOTO DEF*/[|super|].x();
+//         /*GOTO DEF*/super.x();
 //     }
 // }
 // class D {

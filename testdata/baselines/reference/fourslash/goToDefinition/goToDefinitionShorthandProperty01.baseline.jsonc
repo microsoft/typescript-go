@@ -14,7 +14,7 @@
 // var name = "hello";
 // var [|id|] = 100000;
 // declare var [|id|];
-// var obj = {name, /*GOTO DEF*/[|id|]};
+// var obj = {name, /*GOTO DEF*/id};
 // obj.name;
 // obj.id;
 
@@ -26,7 +26,7 @@
 // var id = 100000;
 // declare var id;
 // var obj = {[|name|], id};
-// obj./*GOTO DEF*/[|name|];
+// obj./*GOTO DEF*/name;
 // obj.id;
 
 
@@ -38,4 +38,4 @@
 // declare var id;
 // var obj = {name, [|id|]};
 // obj.name;
-// obj./*GOTO DEF*/[|id|];
+// obj./*GOTO DEF*/id;

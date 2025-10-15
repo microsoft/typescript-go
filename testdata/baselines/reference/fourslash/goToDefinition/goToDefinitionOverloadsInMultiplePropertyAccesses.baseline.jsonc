@@ -7,4 +7,4 @@
 //         export function f(value: number | string) {}
 //     }
 // }
-// A.B./*GOTO DEF*/[|f|]("");
+// A.B./*GOTO DEF*/f("");

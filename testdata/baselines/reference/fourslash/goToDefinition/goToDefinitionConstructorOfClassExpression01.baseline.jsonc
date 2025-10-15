@@ -2,7 +2,7 @@
 // === /goToDefinitionConstructorOfClassExpression01.ts ===
 // var x = class [|C|] {
 //     [|constructor() {
-//         var other = new /*GOTO DEF*/[|C|];
+//         var other = new /*GOTO DEF*/C;
 //     }|]
 // }
 // 
@@ -20,7 +20,7 @@
 // var y = class [|C|] extends x {
 //     [|constructor() {
 //         super();
-//         var other = new /*GOTO DEF*/[|C|];
+//         var other = new /*GOTO DEF*/C;
 //     }|]
 // }
 // var z = class C extends x {
@@ -45,7 +45,7 @@
 // }
 // var z = class [|C|] extends x {
 //     m() {
-//         return new /*GOTO DEF*/[|C|];
+//         return new /*GOTO DEF*/C;
 //     }
 // }
 // 
@@ -81,7 +81,7 @@
 // }
 // 
 // var x1 = new C();
-// var x2 = new /*GOTO DEF*/[|x|]();
+// var x2 = new /*GOTO DEF*/x();
 // var y1 = new y();
 // var z1 = new z();
 
@@ -107,7 +107,7 @@
 // 
 // var x1 = new C();
 // var x2 = new x();
-// var y1 = new /*GOTO DEF*/[|y|]();
+// var y1 = new /*GOTO DEF*/y();
 // var z1 = new z();
 
 
@@ -135,4 +135,4 @@
 // var x1 = new C();
 // var x2 = new x();
 // var y1 = new y();
-// var z1 = new /*GOTO DEF*/[|z|]();
+// var z1 = new /*GOTO DEF*/z();

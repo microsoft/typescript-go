@@ -10,7 +10,7 @@
 //         foo: string;
 //     }
 // }
-// var x = <[|My/*GOTO DEF*/Class|] />;
+// var x = <My/*GOTO DEF*/Class />;
 // var y = <MyClass foo= 'hello' />;
 // var z = <MyClass wrong= 'hello' />;
 
@@ -26,7 +26,7 @@
 //     }
 // }
 // var x = <MyClass />;
-// var y = <MyClass [|f/*GOTO DEF*/oo|]= 'hello' />;
+// var y = <MyClass f/*GOTO DEF*/oo= 'hello' />;
 // var z = <MyClass wrong= 'hello' />;
 
 
@@ -45,4 +45,4 @@
 // }
 // var x = <MyClass />;
 // var y = <MyClass foo= 'hello' />;
-// var z = <[|MyCl/*GOTO DEF*/ass|] wrong= 'hello' />;
+// var z = <MyCl/*GOTO DEF*/ass wrong= 'hello' />;

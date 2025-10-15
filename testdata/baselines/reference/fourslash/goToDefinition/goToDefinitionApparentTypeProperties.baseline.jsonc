@@ -5,7 +5,7 @@
 // }
 // 
 // var o = 0;
-// o./*GOTO DEF*/[|myObjectMethod|]();
+// o./*GOTO DEF*/myObjectMethod();
 // o["myObjectMethod"]();
 
 
@@ -18,4 +18,4 @@
 // 
 // var o = 0;
 // o.myObjectMethod();
-// o[[|"/*GOTO DEF*/myObjectMethod"|]]();
+// o["/*GOTO DEF*/myObjectMethod"]();

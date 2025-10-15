@@ -4,4 +4,4 @@
 // interface Test {
 //   prop2: number
 // }
-// bar<Test>(({[|[|pr/*GOTO DEF*/op2|]|]})=>{});
+// bar<Test>(({[|pr/*GOTO DEF*/op2|]})=>{});

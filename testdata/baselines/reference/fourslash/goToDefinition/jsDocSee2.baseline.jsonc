@@ -55,7 +55,7 @@
 // const c = ""
 // /** @see @bar invalid tag without brace*/
 // const [|d|] = ""
-// /** @see {/*GOTO DEF*/[|d|]@fff} partial reference */
+// /** @see {/*GOTO DEF*/d@fff} partial reference */
 // const e = ""
 // /** @see @@@@@@ total invalid tag*/
 // const f = ""
