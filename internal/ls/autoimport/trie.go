@@ -2,6 +2,7 @@ package autoimport
 
 import (
 	"maps"
+	"slices"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -27,9 +28,7 @@ func (t *Trie[T]) Search(s string) []*T {
 	}
 
 	var results []*T
-	if node.value != nil {
-		results = append(results, node.value)
-	}
+	results = append(results, node.values...)
 	for _, child := range node.children {
 		results = append(results, child.collectValues()...)
 	}
@@ -38,22 +37,20 @@ func (t *Trie[T]) Search(s string) []*T {
 
 type trieNode[T any] struct {
 	children map[rune]*trieNode[T]
-	value    *T
+	values   []*T
 }
 
 func (n *trieNode[T]) clone() *trieNode[T] {
 	newNode := &trieNode[T]{
 		children: maps.Clone(n.children),
-		value:    n.value,
+		values:   slices.Clone(n.values),
 	}
 	return newNode
 }
 
 func (n *trieNode[T]) collectValues() []*T {
 	var results []*T
-	if n.value != nil {
-		results = append(results, n.value)
-	}
+	results = append(results, n.values...)
 	for _, child := range n.children {
 		results = append(results, child.collectValues()...)
 	}
@@ -107,7 +104,7 @@ func (t *TrieBuilder[T]) Insert(s string, value *T) {
 			node = t.cloneNode(node.children[r])
 		}
 	}
-	node.value = value
+	node.values = append(node.values, value)
 }
 
 func (t *TrieBuilder[T]) InsertAsWords(s string, value *T) {

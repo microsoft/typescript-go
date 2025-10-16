@@ -22,6 +22,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/jsnum"
+	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/lsutil"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
@@ -711,6 +712,7 @@ func (l *LanguageService) getCompletionData(
 	hasUnresolvedAutoImports := false
 	// This also gets mutated in nested-functions after the return
 	var symbols []*ast.Symbol
+	var autoImports []*autoimport.RawExport
 	symbolToOriginInfoMap := map[ast.SymbolId]*symbolOriginInfo{}
 	symbolToSortTextMap := map[ast.SymbolId]sortText{}
 	var seenPropertySymbols collections.Set[ast.SymbolId]
@@ -1178,120 +1180,112 @@ func (l *LanguageService) getCompletionData(
 		}
 
 		// !!! timestamp
-		isValidTypeOnlyUseSite := ast.IsValidTypeOnlyAliasUseSite(location)
+		// isValidTypeOnlyUseSite := ast.IsValidTypeOnlyAliasUseSite(location)
 
 		// !!! moduleSpecifierCache := host.getModuleSpecifierCache();
 		// !!! packageJsonAutoImportProvider := host.getPackageJsonAutoImportProvider();
-		addSymbolToList := func(info []*SymbolExportInfo, symbolName string, isFromAmbientModule bool, exportMapKey ExportInfoMapKey) []*SymbolExportInfo {
-			// Do a relatively cheap check to bail early if all re-exports are non-importable
-			// due to file location or package.json dependency filtering. For non-node16+
-			// module resolution modes, getting past this point guarantees that we'll be
-			// able to generate a suitable module specifier, so we can safely show a completion,
-			// even if we defer computing the module specifier.
-			info = core.Filter(info, func(i *SymbolExportInfo) bool {
-				var toFile *ast.SourceFile
-				if ast.IsSourceFile(i.moduleSymbol.ValueDeclaration) {
-					toFile = i.moduleSymbol.ValueDeclaration.AsSourceFile()
-				}
-				return l.isImportable(
-					file,
-					toFile,
-					i.moduleSymbol,
-					preferences,
-					importSpecifierResolver.packageJsonImportFilter(),
-				)
-			})
-			if len(info) == 0 {
-				return nil
-			}
+		// addSymbolToList := func(info []*SymbolExportInfo, symbolName string, isFromAmbientModule bool, exportMapKey ExportInfoMapKey) []*SymbolExportInfo {
+		// 	// Do a relatively cheap check to bail early if all re-exports are non-importable
+		// 	// due to file location or package.json dependency filtering. For non-node16+
+		// 	// module resolution modes, getting past this point guarantees that we'll be
+		// 	// able to generate a suitable module specifier, so we can safely show a completion,
+		// 	// even if we defer computing the module specifier.
+		// 	info = core.Filter(info, func(i *SymbolExportInfo) bool {
+		// 		var toFile *ast.SourceFile
+		// 		if ast.IsSourceFile(i.moduleSymbol.ValueDeclaration) {
+		// 			toFile = i.moduleSymbol.ValueDeclaration.AsSourceFile()
+		// 		}
+		// 		return l.isImportable(
+		// 			file,
+		// 			toFile,
+		// 			i.moduleSymbol,
+		// 			preferences,
+		// 			importSpecifierResolver.packageJsonImportFilter(),
+		// 		)
+		// 	})
+		// 	if len(info) == 0 {
+		// 		return nil
+		// 	}
 
-			// In node16+, module specifier resolution can fail due to modules being blocked
-			// by package.json `exports`. If that happens, don't show a completion item.
-			// N.B. We always try to resolve module specifiers here, because we have to know
-			// now if it's going to fail so we can omit the completion from the list.
-			result := importSpecifierResolver.getModuleSpecifierForBestExportInfo(typeChecker, info, position, isValidTypeOnlyUseSite)
-			if result == nil {
-				return nil
-			}
+		// 	// In node16+, module specifier resolution can fail due to modules being blocked
+		// 	// by package.json `exports`. If that happens, don't show a completion item.
+		// 	// N.B. We always try to resolve module specifiers here, because we have to know
+		// 	// now if it's going to fail so we can omit the completion from the list.
+		// 	result := importSpecifierResolver.getModuleSpecifierForBestExportInfo(typeChecker, info, position, isValidTypeOnlyUseSite)
+		// 	if result == nil {
+		// 		return nil
+		// 	}
 
-			// If we skipped resolving module specifiers, our selection of which ExportInfo
-			// to use here is arbitrary, since the info shown in the completion list derived from
-			// it should be identical regardless of which one is used. During the subsequent
-			// `CompletionEntryDetails` request, we'll get all the ExportInfos again and pick
-			// the best one based on the module specifier it produces.
-			moduleSpecifier := result.moduleSpecifier
-			exportInfo := info[0]
-			if result.exportInfo != nil {
-				exportInfo = result.exportInfo
-			}
+		// 	// If we skipped resolving module specifiers, our selection of which ExportInfo
+		// 	// to use here is arbitrary, since the info shown in the completion list derived from
+		// 	// it should be identical regardless of which one is used. During the subsequent
+		// 	// `CompletionEntryDetails` request, we'll get all the ExportInfos again and pick
+		// 	// the best one based on the module specifier it produces.
+		// 	moduleSpecifier := result.moduleSpecifier
+		// 	exportInfo := info[0]
+		// 	if result.exportInfo != nil {
+		// 		exportInfo = result.exportInfo
+		// 	}
 
-			isDefaultExport := exportInfo.exportKind == ExportKindDefault
-			if exportInfo.symbol == nil {
-				panic("should have handled `futureExportSymbolInfo` earlier")
-			}
-			symbol := exportInfo.symbol
-			if isDefaultExport {
-				if defaultSymbol := binder.GetLocalSymbolForExportDefault(symbol); defaultSymbol != nil {
-					symbol = defaultSymbol
-				}
-			}
+		// 	isDefaultExport := exportInfo.exportKind == ExportKindDefault
+		// 	if exportInfo.symbol == nil {
+		// 		panic("should have handled `futureExportSymbolInfo` earlier")
+		// 	}
+		// 	symbol := exportInfo.symbol
+		// 	if isDefaultExport {
+		// 		if defaultSymbol := binder.GetLocalSymbolForExportDefault(symbol); defaultSymbol != nil {
+		// 			symbol = defaultSymbol
+		// 		}
+		// 	}
 
-			// pushAutoImportSymbol
-			symbolId := ast.GetSymbolId(symbol)
-			if symbolToSortTextMap[symbolId] == SortTextGlobalsOrKeywords {
-				// If an auto-importable symbol is available as a global, don't push the auto import
-				return nil
-			}
-			originInfo := &symbolOriginInfo{
-				kind:              symbolOriginInfoKindExport,
-				isDefaultExport:   isDefaultExport,
-				isFromPackageJson: exportInfo.isFromPackageJson,
-				fileName:          exportInfo.moduleFileName,
-				data: &symbolOriginInfoExport{
-					symbolName:      symbolName,
-					moduleSymbol:    exportInfo.moduleSymbol,
-					exportName:      core.IfElse(exportInfo.exportKind == ExportKindExportEquals, ast.InternalSymbolNameExportEquals, exportInfo.symbol.Name),
-					exportMapKey:    exportMapKey,
-					moduleSpecifier: moduleSpecifier,
-				},
-			}
-			symbolToOriginInfoMap[symbolId] = originInfo
-			symbolToSortTextMap[symbolId] = core.IfElse(importStatementCompletion != nil, SortTextLocationPriority, SortTextAutoImportSuggestions)
-			symbols = append(symbols, symbol)
-			return nil
-		}
+		// 	// pushAutoImportSymbol
+		// 	symbolId := ast.GetSymbolId(symbol)
+		// 	if symbolToSortTextMap[symbolId] == SortTextGlobalsOrKeywords {
+		// 		// If an auto-importable symbol is available as a global, don't push the auto import
+		// 		return nil
+		// 	}
+		// 	originInfo := &symbolOriginInfo{
+		// 		kind:              symbolOriginInfoKindExport,
+		// 		isDefaultExport:   isDefaultExport,
+		// 		isFromPackageJson: exportInfo.isFromPackageJson,
+		// 		fileName:          exportInfo.moduleFileName,
+		// 		data: &symbolOriginInfoExport{
+		// 			symbolName:      symbolName,
+		// 			moduleSymbol:    exportInfo.moduleSymbol,
+		// 			exportName:      core.IfElse(exportInfo.exportKind == ExportKindExportEquals, ast.InternalSymbolNameExportEquals, exportInfo.symbol.Name),
+		// 			exportMapKey:    exportMapKey,
+		// 			moduleSpecifier: moduleSpecifier,
+		// 		},
+		// 	}
+		// 	symbolToOriginInfoMap[symbolId] = originInfo
+		// 	symbolToSortTextMap[symbolId] = core.IfElse(importStatementCompletion != nil, SortTextLocationPriority, SortTextAutoImportSuggestions)
+		// 	symbols = append(symbols, symbol)
+		// 	return nil
+		// }
 
-		exports, err := l.getExportsForAutoImport(ctx)
+		exports, err := l.getExportsForAutoImport(ctx, file)
 		if err == nil {
-			for _, exp := range exports.Trie.Search(lowerCaseTokenText) {
+			for _, exp := range exports.Search(lowerCaseTokenText) {
 				// 1. Filter out:
 				//    - exports from the same file
-				//    - files not reachable due to relative node_modules location
-				//      - redundant with package.json filter?
 				//    - files not reachable due to preferences filter
-				//    - module specifiers not reachable due to package.json `exports`
-				//      - if we find the set of input files by walking these, can we skip?
 				//    - module specifiers not allowed due to package.json dependency filter
+				//      - with method of discovery, only need to worry about this for ambient modules
 				//    - module specifiers not allowed due to preferences filter
-				targetFile := l.getAutoImportSourceFile(exp.Path)
-				// !!! get symlinks
-				if exp.ModuleDeclarationName == "" {
-					if isInUnreachableNodeModules(file.FileName(), targetFile.FileName()) {
-					}
-				}
+				autoImports = append(autoImports, exp)
 			}
 		}
 
-		l.searchExportInfosForCompletions(ctx,
-			typeChecker,
-			file,
-			preferences,
-			importStatementCompletion != nil,
-			isRightOfOpenTag,
-			isTypeOnlyLocation,
-			lowerCaseTokenText,
-			addSymbolToList,
-		)
+		// l.searchExportInfosForCompletions(ctx,
+		// 	typeChecker,
+		// 	file,
+		// 	preferences,
+		// 	importStatementCompletion != nil,
+		// 	isRightOfOpenTag,
+		// 	isTypeOnlyLocation,
+		// 	lowerCaseTokenText,
+		// 	addSymbolToList,
+		// )
 
 		// !!! completionInfoFlags
 		// !!! logging

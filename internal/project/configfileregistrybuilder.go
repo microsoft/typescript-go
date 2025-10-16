@@ -47,7 +47,7 @@ func newConfigFileRegistryBuilder(
 		extendedConfigCache: extendedConfigCache,
 
 		configs:         dirty.NewSyncMap(oldConfigFileRegistry.configs, nil),
-		configFileNames: dirty.NewMap(oldConfigFileRegistry.configFileNames, nil),
+		configFileNames: dirty.NewMap(oldConfigFileRegistry.configFileNames),
 	}
 }
 

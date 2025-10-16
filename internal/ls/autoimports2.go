@@ -2,27 +2,29 @@ package ls
 
 import (
 	"context"
-	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/ls/autoimport"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-func (l *LanguageService) getExportsForAutoImport(ctx context.Context) (*autoimport.Registry, error) {
+func (l *LanguageService) getExportsForAutoImport(ctx context.Context, fromFile *ast.SourceFile) (*autoimport.View, error) {
 	// !!! snapshot integration
-	return autoimport.Collect(ctx, l.GetProgram().GetSourceFiles())
+	registry, err := (&autoimport.Registry{}).Clone(ctx, autoimport.RegistryChange{
+		WithProject: &autoimport.Project{
+			Key:     "!!! TODO",
+			Program: l.GetProgram(),
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	view := autoimport.NewView(registry, fromFile, "!!! TODO")
+	return view, nil
 }
 
 func (l *LanguageService) getAutoImportSourceFile(path tspath.Path) *ast.SourceFile {
 	// !!! other sources
 	return l.GetProgram().GetSourceFileByPath(path)
-}
-
-func isInUnreachableNodeModules(from, to string) bool {
-	nodeModulesIndexTo := strings.Index(to, "/node_modules/")
-	if nodeModulesIndexTo == -1 {
-		return false
-	}
-
 }

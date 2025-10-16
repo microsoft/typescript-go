@@ -6,7 +6,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
@@ -14,7 +13,8 @@ import (
 )
 
 type Registry struct {
-	exports     map[tspath.Path][]*RawExport
+	exports map[tspath.Path][]*RawExport
+	// !!! may not need full tries, just indexes by first letter of each word
 	nodeModules map[tspath.Path]*Trie[RawExport]
 	projects    map[tspath.Path]*Trie[RawExport]
 }
@@ -34,16 +34,28 @@ type registryBuilder struct {
 	projects    *dirty.MapBuilder[tspath.Path, *Trie[RawExport], *TrieBuilder[RawExport]]
 }
 
-func newRegistryBuilder(corpus *Registry) *registryBuilder {
+func newRegistryBuilder(registry *Registry) *registryBuilder {
+	if registry == nil {
+		registry = &Registry{}
+	}
 	return &registryBuilder{
-		exports:     dirty.NewMapBuilder(corpus.exports, slices.Clone, core.Identity),
-		nodeModules: dirty.NewMapBuilder(corpus.nodeModules, NewTrieBuilder, (*TrieBuilder[RawExport]).Trie),
-		projects:    dirty.NewMapBuilder(corpus.projects, NewTrieBuilder, (*TrieBuilder[RawExport]).Trie),
+		exports:     dirty.NewMapBuilder(registry.exports, slices.Clone, core.Identity),
+		nodeModules: dirty.NewMapBuilder(registry.nodeModules, NewTrieBuilder, (*TrieBuilder[RawExport]).Trie),
+		projects:    dirty.NewMapBuilder(registry.projects, NewTrieBuilder, (*TrieBuilder[RawExport]).Trie),
+	}
+}
+
+func (b *registryBuilder) Build() *Registry {
+	return &Registry{
+		exports:     b.exports.Build(),
+		nodeModules: b.nodeModules.Build(),
+		projects:    b.projects.Build(),
 	}
 }
 
 // With what granularity will we perform updates? How do we remove stale entries?
 // Will we always rebuild full tries, or update them? If rebuild, do we need TrieBuilder?
+
 
 func (r *Registry) Clone(ctx context.Context, change RegistryChange) (*Registry, error) {
 	builder := newRegistryBuilder(r)
@@ -66,7 +78,7 @@ func (r *Registry) Clone(ctx context.Context, change RegistryChange) (*Registry,
 			})
 		}
 		wg.RunAndWait()
-		trie := NewTrieBuilder(nil)
+		trie := NewTrieBuilder[RawExport](nil)
 		for path, fileExports := range exports {
 			builder.exports.Set(path, fileExports)
 			for _, exp := range fileExports {
@@ -75,33 +87,4 @@ func (r *Registry) Clone(ctx context.Context, change RegistryChange) (*Registry,
 		}
 	}
 	return builder.Build(), nil
-}
-
-// Idea: one trie per package.json / node_modules directory?
-// - *RawExport lives in shared structure by realpath
-//   - could literally just live on SourceFile...
-// - solves package shadowing, unreachable node_modules, dependency filtering
-// - these tries should be shareable across different projects
-// - non-node_modules files form tries per project?
-
-func Collect(ctx context.Context, files []*ast.SourceFile) (*Registry, error) {
-	var exports []*RawExport
-	wg := core.NewWorkGroup(false)
-	for _, file := range files {
-		wg.Queue(func() {
-			if ctx.Err() == nil {
-				exports = append(exports, Parse(file)...)
-			}
-		})
-	}
-	wg.RunAndWait()
-
-	var trie *Trie[RawExport]
-	if ctx.Err() == nil {
-		trie = &Trie[RawExport]{}
-		for _, exp := range exports {
-			trie.InsertAsWords(exp.Name, exp)
-		}
-	}
-	return &Registry{Exports: exports, Trie: trie}, ctx.Err()
 }
