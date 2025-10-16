@@ -290,11 +290,9 @@ func FindLocator(manifest *Manifest, path string) *PackageLocator {
 	rel := tspath.GetRelativePathFromDirectory(manifest.ManifestDir, path, tspath.ComparePathsOptions{UseCaseSensitiveFileNames: true})
 
 	if manifest.IgnorePatternData != nil {
-		re, err := manifest.IgnorePatternData.compile()
-		if err == nil {
-			if re.MatchString(tspath.NormalizePath(rel)) {
-				return nil
-			}
+		_, err := manifest.IgnorePatternData.reg.MatchString(tspath.NormalizePath(rel))
+		if err != nil {
+			return nil
 		}
 	}
 

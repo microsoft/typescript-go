@@ -3,9 +3,9 @@ package pnp
 import (
 	"bytes"
 	"errors"
-	"regexp"
 	"strings"
 
+	"github.com/dlclark/regexp2"
 	"github.com/go-json-experiment/json"
 	"github.com/go-json-experiment/json/jsontext"
 
@@ -18,7 +18,7 @@ type LocationTrie[T any] struct {
 
 type RegexDef struct {
 	Source string `json:"source"`
-	Flags  string `json:"flags,omitempty"`
+	reg    *regexp2.Regexp
 }
 
 type Manifest struct {
@@ -93,15 +93,23 @@ func (r *RegexDef) UnmarshalJSON(b []byte) error {
 			return err
 		}
 		r.Source = s
-		r.Flags = ""
+		reg, err := regexp2.Compile(s, regexp2.ECMAScript)
+		if err != nil {
+			return err
+		}
+		r.reg = reg
 		return nil
 	}
-	type alias RegexDef
-	var a alias
+	var a RegexDef
 	if err := json.Unmarshal(b, &a); err != nil {
 		return err
 	}
 	*r = RegexDef(a)
+	reg, err := regexp2.Compile(a.Source, regexp2.ECMAScript)
+	if err != nil {
+		return err
+	}
+	r.reg = reg
 	return nil
 }
 
@@ -227,10 +235,6 @@ func (m *PackageRegistryData) UnmarshalJSON(data []byte) error {
 	}
 	*m = res
 	return nil
-}
-
-func (r *RegexDef) compile() (*regexp.Regexp, error) {
-	return regexp.Compile(r.Source)
 }
 
 func NewLocationTrie[T any]() *LocationTrie[T] {

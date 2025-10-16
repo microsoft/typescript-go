@@ -63,8 +63,6 @@ func (fs *PNPFS) checkForZip(path string, kind EntryKind) (*zipFile, string) {
 	var zipPath string
 	var pathTail string
 
-	// Do a quick check for a ".zip" in the path at all
-	path = strings.ReplaceAll(path, "\\", "/")
 	if i := strings.Index(path, ".zip/"); i != -1 {
 		zipPath = path[:i+len(".zip")]
 		pathTail = path[i+len(".zip/"):]
