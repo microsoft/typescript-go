@@ -87,25 +87,12 @@ func (r *RegexDef) UnmarshalJSON(b []byte) error {
 		*r = RegexDef{}
 		return nil
 	}
-	if len(b) > 0 && b[0] == '"' {
-		var s string
-		if err := json.Unmarshal(b, &s); err != nil {
-			return err
-		}
-		r.Source = s
-		reg, err := regexp2.Compile(s, regexp2.ECMAScript)
-		if err != nil {
-			return err
-		}
-		r.reg = reg
-		return nil
-	}
-	var a RegexDef
-	if err := json.Unmarshal(b, &a); err != nil {
+	var s string
+	if err := json.Unmarshal(b, &s); err != nil {
 		return err
 	}
-	*r = RegexDef(a)
-	reg, err := regexp2.Compile(a.Source, regexp2.ECMAScript)
+	r.Source = s
+	reg, err := regexp2.Compile(s, regexp2.ECMAScript)
 	if err != nil {
 		return err
 	}
