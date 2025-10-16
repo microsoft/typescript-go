@@ -416,16 +416,29 @@ func getSymbolScope(symbol *ast.Symbol) *ast.Node {
 
 // === functions on (*ls) ===
 
-func (l *LanguageService) ProvideReferences(ctx context.Context, params *lsproto.ReferenceParams) (lsproto.ReferencesResponse, error) {
+func (l *LanguageService) ProvideSymbolsAndEntries(ctx context.Context, uri lsproto.DocumentUri, documentPosition lsproto.Position, isRename bool) (*ast.Node, []*SymbolAndEntries, bool) {
 	// `findReferencedSymbols` except only computes the information needed to return reference locations
-	program, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
-	position := int(l.converters.LineAndCharacterToPosition(sourceFile, params.Position))
+	program, sourceFile := l.getProgramAndFile(uri)
+	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
 
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
-	options := refOptions{use: referenceUseReferences}
+	if isRename && node.Kind != ast.KindIdentifier {
+		return node, nil, false
+	}
 
-	symbolsAndEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil)
+	var options refOptions
+	if !isRename {
+		options.use = referenceUseReferences
+	} else {
+		options.use = referenceUseRename
+		options.useAliasesForRename = true
+	}
 
+	return node, l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil), true
+}
+
+func (l *LanguageService) ProvideReferencesFromSymbolAndEntries(ctx context.Context, params *lsproto.ReferenceParams, originalNode *ast.Node, symbolsAndEntries []*SymbolAndEntries) (lsproto.ReferencesResponse, error) {
+	// `findReferencedSymbols` except only computes the information needed to return reference locations
 	locations := core.FlatMap(symbolsAndEntries, l.convertSymbolAndEntriesToLocations)
 	return lsproto.LocationsOrNull{Locations: &locations}, nil
 }
@@ -466,15 +479,12 @@ func (l *LanguageService) getImplementationReferenceEntries(ctx context.Context,
 	return core.FlatMap(symbolsAndEntries, func(s *SymbolAndEntries) []*ReferenceEntry { return s.references })
 }
 
-func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.RenameParams) (lsproto.WorkspaceEditOrNull, error) {
-	program, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
-	position := int(l.converters.LineAndCharacterToPosition(sourceFile, params.Position))
-	node := astnav.GetTouchingPropertyName(sourceFile, position)
-	if node.Kind != ast.KindIdentifier {
+func (l *LanguageService) ProvideRenameFromSymbolAndEntries(ctx context.Context, params *lsproto.RenameParams, originalNode *ast.Node, symbolsAndEntries []*SymbolAndEntries) (lsproto.WorkspaceEditOrNull, error) {
+	if originalNode.Kind != ast.KindIdentifier {
 		return lsproto.WorkspaceEditOrNull{}, nil
 	}
-	options := refOptions{use: referenceUseRename, useAliasesForRename: true}
-	symbolsAndEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, program.GetSourceFiles(), options, nil)
+
+	program := l.GetProgram()
 	entries := core.FlatMap(symbolsAndEntries, func(s *SymbolAndEntries) []*ReferenceEntry { return s.references })
 	changes := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
 	checker, done := program.GetTypeChecker(ctx)
@@ -483,7 +493,7 @@ func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.Ren
 		uri := lsconv.FileNameToDocumentURI(l.getFileNameOfEntry(entry))
 		textEdit := &lsproto.TextEdit{
 			Range:   *l.getRangeOfEntry(entry),
-			NewText: l.getTextForRename(node, entry, params.NewName, checker),
+			NewText: l.getTextForRename(originalNode, entry, params.NewName, checker),
 		}
 		changes[uri] = append(changes[uri], textEdit)
 	}
@@ -903,7 +913,7 @@ func getReferencesForThisKeyword(thisOrSuperKeyword *ast.Node, sourceFiles []*as
 	if thisParameter == nil {
 		thisParameter = thisOrSuperKeyword
 	}
-	return []*SymbolAndEntries{NewSymbolAndEntries(definitionKindThis, thisParameter, nil, references)}
+	return []*SymbolAndEntries{NewSymbolAndEntries(definitionKindThis, thisParameter, searchSpaceNode.Symbol(), references)}
 }
 
 func getReferencesForSuperKeyword(superKeyword *ast.Node) []*SymbolAndEntries {

@@ -58,6 +58,11 @@ type HasTextDocumentURI interface {
 	TextDocumentURI() DocumentUri
 }
 
+type HasTextDocumentPosition interface {
+	HasTextDocumentURI
+	TextDocumentPosition() Position
+}
+
 type URI string // !!!
 
 type Method string

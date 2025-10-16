@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/go-json-experiment/json"
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -505,8 +506,8 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDocumentHighlightInfo, (*Server).handleDocumentHighlight)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSelectionRangeInfo, (*Server).handleSelectionRange)
 
-	registerMultiProjectDocumentRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*Server).handleReferences, combineReferences)
-	registerMultiProjectDocumentRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*Server).handleRename, combineRenameResponse)
+	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*Server).handleReferences, combineReferences)
+	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*Server).handleRename, combineRenameResponse)
 
 	registerRequestHandler(handlers, lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
 	registerRequestHandler(handlers, lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
@@ -583,11 +584,18 @@ func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentUR
 	}
 }
 
-func registerMultiProjectDocumentRequestHandler[Req lsproto.HasTextDocumentURI, Resp any](
+type projectAndTextDocumentPosition struct {
+	project  *project.Project
+	ls       *ls.LanguageService
+	Uri      lsproto.DocumentUri
+	Position lsproto.Position
+}
+
+func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosition, Resp any](
 	handlers handlerMap,
 	info lsproto.RequestInfo[Req, Resp],
-	fn func(*Server, context.Context, *ls.LanguageService, Req) (Resp, error),
-	combineResults func(*project.Project, *collections.SyncMap[tspath.Path, Resp]) Resp,
+	fn func(*Server, context.Context, *ls.LanguageService, Req, *ast.Node, []*ls.SymbolAndEntries) (Resp, error),
+	combineResults func(*project.Project, map[tspath.Path]Resp) Resp,
 ) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
 		var params Req
@@ -601,52 +609,107 @@ func registerMultiProjectDocumentRequestHandler[Req lsproto.HasTextDocumentURI, 
 			return err
 		}
 		defer s.recover(req)
-		var results collections.SyncMap[tspath.Path, Resp]
-		var workInProgress collections.SyncMap[tspath.Path, bool]
-		workInProgress.Store(defaultProject.Id(), true)
-		wg := core.NewWorkGroup(false)
-		enqueueWorkForNonDefaultProject := func(project *project.Project) {
-			if project == defaultProject {
-				return
-			}
-			wg.Queue(func() {
-				if ctx.Err() != nil {
-					return
-				}
-				if _, loaded := workInProgress.LoadOrStore(project.Id(), true); loaded {
-					return
-				}
-				defer s.recover(req)
-				ls := s.session.GetLanguageServiceForProjectWithFile(ctx, project, params.TextDocumentURI())
-				if ls != nil {
-					resp, err1 := fn(s, ctx, ls, params)
-					if err1 != nil {
-						return
+
+		var queue []projectAndTextDocumentPosition
+		results := make(map[tspath.Path]Resp)
+		defaultDefinitions := make([]*ls.SymbolAndEntries, 0) // Single location
+
+		searchPosition := func(project *project.Project, ls *ls.LanguageService, uri lsproto.DocumentUri, position lsproto.Position) (Resp, error) {
+			originalNode, symbolsAndEntries, ok := ls.ProvideSymbolsAndEntries(ctx, uri, position, info.Method == lsproto.MethodTextDocumentRename)
+			if ok {
+				for _, entry := range symbolsAndEntries {
+					if project == defaultProject {
+						// !!! TODO sheetal
+						// store default definition if it can be visible in other projects
+						// Use this to determine if we should load the projects from solution to find references
+
+						// 					definitionKindSymbol               Possible
+						// definitionKindThis                 Possible
+						// definitionKindTripleSlashReference  Yes - look for file names
+						defaultDefinitions = append(defaultDefinitions, entry)
 					}
-					results.Store(project.Id(), resp)
+
+					// TODOS: sheetal
+
+					// Original location:
+					// If file included was dts -> try toi see if we can use source map and find ts file
+					// If its ts file - if this is ts file for "d.ts" of referenced project use this location
+					// Get default configured project for this file
+
+					// Also get all the projects - existing for this file and add to queue this definition location
+					// including its symlinks
 				}
-			})
-		}
-
-		// Other projects
-		for _, project := range allProjects {
-			enqueueWorkForNonDefaultProject(project)
-		}
-
-		// Default projects
-		wg.Queue(func() {
-			resp, err1 := fn(s, ctx, defaultLs, params)
-			if err1 != nil {
-				return
 			}
-			results.Store(defaultProject.Id(), resp)
-			// TODO:: if default location needs to be add more projects to request
-		})
-		wg.RunAndWait()
-		if ctx.Err() != nil {
-			return ctx.Err()
+			return fn(s, ctx, ls, params, originalNode, symbolsAndEntries)
 		}
-		resp := combineResults(defaultProject, &results)
+
+		// Initial set of projects and locations in the queue, starting with default project
+		queue = append(queue, projectAndTextDocumentPosition{
+			project:  defaultProject,
+			ls:       defaultLs,
+			Uri:      params.TextDocumentURI(),
+			Position: params.TextDocumentPosition(),
+		})
+		for _, project := range allProjects {
+			if project != defaultProject {
+				queue = append(queue, projectAndTextDocumentPosition{
+					project: project,
+					// TODO!! symlinks need to change the URI
+					Uri:      params.TextDocumentURI(),
+					Position: params.TextDocumentPosition(),
+				})
+			}
+		}
+
+		// Outer loop - to complete work if more is added after completing existing queue
+		for len(queue) > 0 {
+			// Process existing known projects first
+			for len(queue) > 0 {
+				if ctx.Err() != nil {
+					return ctx.Err()
+				}
+
+				item := queue[0]
+				queue = queue[1:]
+
+				if _, ok := results[item.project.Id()]; ok {
+					continue
+				}
+
+				// Process the item
+				ls := item.ls
+				if ls == nil {
+					// Get it now
+					ls = s.session.GetLanguageServiceForProjectWithFile(ctx, item.project, item.Uri)
+					if ls == nil {
+						continue
+					}
+				}
+				if result, err := searchPosition(item.project, ls, item.Uri, item.Position); err == nil {
+					results[item.project.Id()] = result
+				} else {
+					return err
+				}
+			}
+
+			if defaultDefinitions != nil {
+				// !!! TODO: sheetal
+				// load ancestor projects for all the projects that can reference the ones already seen
+				// for all projects
+				// if this project is not seen add the project location to queue position can be in project
+				// either the d.ts or source definition or symlink
+			}
+		}
+
+		var resp Resp
+		if len(results) > 0 {
+			resp = combineResults(defaultProject, results)
+		} else {
+			for _, value := range results {
+				resp = value
+				break
+			}
+		}
 		s.sendResult(req.ID, resp)
 		return nil
 	}
@@ -923,15 +986,15 @@ func (s *Server) handleTypeDefinition(ctx context.Context, ls *ls.LanguageServic
 	return ls.ProvideTypeDefinition(ctx, params.TextDocument.Uri, params.Position, getTypeDefinitionClientSupportsLink(s.initializeParams))
 }
 
-func (s *Server) handleReferences(ctx context.Context, defaultLs *ls.LanguageService, params *lsproto.ReferenceParams) (lsproto.ReferencesResponse, error) {
+func (s *Server) handleReferences(ctx context.Context, ls *ls.LanguageService, params *lsproto.ReferenceParams, originalNode *ast.Node, symbolAndEntries []*ls.SymbolAndEntries) (lsproto.ReferencesResponse, error) {
 	// findAllReferences
-	return defaultLs.ProvideReferences(ctx, params)
+	return ls.ProvideReferencesFromSymbolAndEntries(ctx, params, originalNode, symbolAndEntries)
 }
 
-func combineReferences(defaultProject *project.Project, results *collections.SyncMap[tspath.Path, lsproto.ReferencesResponse]) lsproto.ReferencesResponse {
+func combineReferences(defaultProject *project.Project, results map[tspath.Path]lsproto.ReferencesResponse) lsproto.ReferencesResponse {
 	var combined []lsproto.Location
 	var seenLocations collections.Set[lsproto.Location]
-	if resp, ok := results.Load(defaultProject.Id()); ok {
+	if resp, ok := results[defaultProject.Id()]; ok {
 		if resp.Locations != nil {
 			for _, loc := range *resp.Locations {
 				seenLocations.Add(loc)
@@ -939,7 +1002,7 @@ func combineReferences(defaultProject *project.Project, results *collections.Syn
 			}
 		}
 	}
-	results.Range(func(projectID tspath.Path, resp lsproto.ReferencesResponse) bool {
+	for projectID, resp := range results {
 		if projectID != defaultProject.Id() {
 			if resp.Locations != nil {
 				for _, loc := range *resp.Locations {
@@ -950,8 +1013,7 @@ func combineReferences(defaultProject *project.Project, results *collections.Syn
 				}
 			}
 		}
-		return true
-	})
+	}
 	return lsproto.LocationsOrNull{Locations: &combined}
 }
 
@@ -1028,18 +1090,18 @@ func (s *Server) handleDocumentSymbol(ctx context.Context, ls *ls.LanguageServic
 	return ls.ProvideDocumentSymbols(ctx, params.TextDocument.Uri, getDocumentSymbolClientSupportsHierarchical(s.initializeParams))
 }
 
-func (s *Server) handleRename(ctx context.Context, ls *ls.LanguageService, params *lsproto.RenameParams) (lsproto.RenameResponse, error) {
-	return ls.ProvideRename(ctx, params)
+func (s *Server) handleRename(ctx context.Context, ls *ls.LanguageService, params *lsproto.RenameParams, originalNode *ast.Node, symbolAndEntries []*ls.SymbolAndEntries) (lsproto.RenameResponse, error) {
+	return ls.ProvideRenameFromSymbolAndEntries(ctx, params, originalNode, symbolAndEntries)
 }
 
-func combineRenameResponse(defaultProject *project.Project, results *collections.SyncMap[tspath.Path, lsproto.RenameResponse]) lsproto.RenameResponse {
+func combineRenameResponse(defaultProject *project.Project, results map[tspath.Path]lsproto.RenameResponse) lsproto.RenameResponse {
 	combined := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
 	seenChanges := make(map[lsproto.DocumentUri]*collections.Set[lsproto.TextEdit])
 	// !!! this is not used any more so we will skip this part of deduplication and combining
 	// 	DocumentChanges *[]TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile `json:"documentChanges,omitzero"`
 	// 	ChangeAnnotations *map[string]*ChangeAnnotation `json:"changeAnnotations,omitzero"`
 
-	if resp, ok := results.Load(defaultProject.Id()); ok {
+	if resp, ok := results[defaultProject.Id()]; ok {
 		if resp.WorkspaceEdit != nil {
 			for doc, changes := range *resp.WorkspaceEdit.Changes {
 				seenSet := collections.Set[lsproto.TextEdit]{}
@@ -1053,7 +1115,7 @@ func combineRenameResponse(defaultProject *project.Project, results *collections
 			}
 		}
 	}
-	results.Range(func(projectID tspath.Path, resp lsproto.RenameResponse) bool {
+	for projectID, resp := range results {
 		if projectID != defaultProject.Id() {
 			if resp.WorkspaceEdit != nil {
 				for doc, changes := range *resp.WorkspaceEdit.Changes {
@@ -1076,8 +1138,7 @@ func combineRenameResponse(defaultProject *project.Project, results *collections
 				}
 			}
 		}
-		return true
-	})
+	}
 	if len(combined) > 0 {
 		return lsproto.RenameResponse{
 			WorkspaceEdit: &lsproto.WorkspaceEdit{
