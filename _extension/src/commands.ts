@@ -36,7 +36,7 @@ export function registerLanguageCommands(context: vscode.ExtensionContext, clien
 
     disposables.push(vscode.commands.registerCommand("typescript.native-preview.reportIssue", () => {
         vscode.commands.executeCommand("workbench.action.openIssueReporter", {
-            extensionId: "TypeScriptTeam.native-preview"
+            extensionId: "TypeScriptTeam.native-preview",
         });
     }));
 
