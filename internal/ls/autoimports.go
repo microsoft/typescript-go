@@ -91,8 +91,8 @@ func (e *exportInfoMap) get(importingFile tspath.Path, ch *checker.Checker, key 
 	if e.usableByFileName != importingFile {
 		return nil
 	}
-	return core.MapFiltered(e.exportInfo.Get(key), func(info CachedSymbolExportInfo) (*SymbolExportInfo, bool) {
-		return e.rehydrateCachedInfo(ch, info)
+	return core.MapNonNil(e.exportInfo.Get(key), func(info CachedSymbolExportInfo) *SymbolExportInfo {
+		return e.tryRehydrateCachedInfo(ch, info)
 	})
 }
 
@@ -232,8 +232,8 @@ func (e *exportInfoMap) search(
 			// Rehydrate and filter in one pass to maintain correspondence between cached and rehydrated info
 			var rehydrated []*SymbolExportInfo
 			for i, cachedInfo := range info {
-				rehydratedInfo, ok := e.rehydrateCachedInfo(ch, cachedInfo)
-				if !ok {
+				rehydratedInfo := e.tryRehydrateCachedInfo(ch, cachedInfo)
+				if rehydratedInfo == nil {
 					// Symbol or module is no longer available, skip it
 					continue
 				}
@@ -264,10 +264,10 @@ func (e *exportInfoMap) isNotShadowedByDeeperNodeModulesPackage(info *SymbolExpo
 	return !ok || strings.HasPrefix(info.moduleFileName, packageDeepestNodeModulesPath)
 }
 
-// rehydrateCachedInfo attempts to restore a SymbolExportInfo from cached data.
-// Returns (info, true) if successful, or (nil, false) if the symbol or module
-// can no longer be found (e.g., due to module resolution changes or removed exports).
-func (e *exportInfoMap) rehydrateCachedInfo(ch *checker.Checker, info CachedSymbolExportInfo) (*SymbolExportInfo, bool) {
+// tryRehydrateCachedInfo attempts to restore a SymbolExportInfo from cached data.
+// Returns the info if successful, or nil if the symbol or module can no longer be found
+// (e.g., due to module resolution changes or removed exports).
+func (e *exportInfoMap) tryRehydrateCachedInfo(ch *checker.Checker, info CachedSymbolExportInfo) *SymbolExportInfo {
 	if info.symbol != nil && info.moduleSymbol != nil {
 		return &SymbolExportInfo{
 			symbol:            info.symbol,
@@ -276,7 +276,7 @@ func (e *exportInfoMap) rehydrateCachedInfo(ch *checker.Checker, info CachedSymb
 			exportKind:        info.exportKind,
 			targetFlags:       info.targetFlags,
 			isFromPackageJson: info.isFromPackageJson,
-		}, true
+		}
 	}
 	cached := e.symbols[info.id]
 	cachedSymbol, cachedModuleSymbol := cached.symbol, cached.moduleSymbol
@@ -288,7 +288,7 @@ func (e *exportInfoMap) rehydrateCachedInfo(ch *checker.Checker, info CachedSymb
 			exportKind:        info.exportKind,
 			targetFlags:       info.targetFlags,
 			isFromPackageJson: info.isFromPackageJson,
-		}, true
+		}
 	}
 
 	moduleSymbol := core.Coalesce(info.moduleSymbol, cachedModuleSymbol)
@@ -302,7 +302,7 @@ func (e *exportInfoMap) rehydrateCachedInfo(ch *checker.Checker, info CachedSymb
 	if moduleSymbol == nil {
 		// Module is no longer available - this can happen when module resolution changes
 		// or the module is removed. Just skip this cached entry.
-		return nil, false
+		return nil
 	}
 	symbol := core.Coalesce(info.symbol, cachedSymbol)
 	if symbol == nil {
@@ -316,7 +316,7 @@ func (e *exportInfoMap) rehydrateCachedInfo(ch *checker.Checker, info CachedSymb
 	if symbol == nil {
 		// Symbol is no longer available in the module - this can happen when exports change
 		// or the symbol is removed/renamed. Just skip this cached entry.
-		return nil, false
+		return nil
 	}
 	e.symbols[info.id] = symbolExportEntry{symbol, moduleSymbol}
 	return &SymbolExportInfo{
@@ -326,7 +326,7 @@ func (e *exportInfoMap) rehydrateCachedInfo(ch *checker.Checker, info CachedSymb
 		info.exportKind,
 		info.targetFlags,
 		info.isFromPackageJson,
-	}, true
+	}
 }
 
 func getNamesForExportedSymbol(defaultExport *ast.Symbol, ch *checker.Checker, scriptTarget core.ScriptTarget) []string {
