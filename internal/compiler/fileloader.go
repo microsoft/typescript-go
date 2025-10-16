@@ -542,8 +542,12 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 				continue
 			}
 
+			var kind *string = nil
+			if ast.IsStringLiteralLike(entry) {
+				kind = getModuleLiteralImportKind(entry)
+			}
 			mode := getModeForUsageLocation(file.FileName(), meta, entry, optionsForFile)
-			resolvedModule, trace := p.resolver.ResolveModuleName(moduleName, fileName, mode, redirect)
+			resolvedModule, trace := p.resolver.ResolveModuleName(moduleName, fileName, kind, mode, redirect)
 			resolutionsInFile[module.ModeAwareCacheKey{Name: moduleName, Mode: mode}] = resolvedModule
 			resolutionsTrace = append(resolutionsTrace, trace...)
 
@@ -625,7 +629,7 @@ func (p *fileLoader) pathForLibFile(name string) *LibFile {
 	if p.opts.Config.CompilerOptions().LibReplacement.IsTrue() && name != "lib.d.ts" {
 		libraryName := getLibraryNameFromLibFileName(name)
 		resolveFrom := getInferredLibraryNameResolveFrom(p.opts.Config.CompilerOptions(), p.opts.Host.GetCurrentDirectory(), name)
-		resolution, trace := p.resolver.ResolveModuleName(libraryName, resolveFrom, core.ModuleKindCommonJS, nil)
+		resolution, trace := p.resolver.ResolveModuleName(libraryName, resolveFrom, nil, core.ModuleKindCommonJS, nil)
 		if resolution.IsResolved() {
 			path = resolution.ResolvedFileName
 			replaced = true
@@ -750,3 +754,98 @@ func getEmitSyntaxForUsageLocationWorker(fileName string, meta ast.SourceFileMet
 	}
 	return core.ModuleKindNone
 }
+
+// start added for deno
+func isStrOrIdentWithText(node *ast.Node, text string) bool {
+	if ast.IsStringLiteral(node) {
+		return node.Text() == text
+	} else if ast.IsIdentifier(node) {
+		return node.AsIdentifier().Text == text
+	} else {
+		return false
+	}
+}
+
+func getRawImportAttributeValue(node *ast.ImportAttribute) *string {
+	if !isStrOrIdentWithText(node.Name(), "type") {
+		return nil
+	}
+	return getRawTypeValue(node.Value)
+}
+
+func getRawTypeValue(node *ast.Node) *string {
+	if ast.IsStringLiteral(node) {
+		text := node.Text()
+		if len(text) > 0 {
+			return &text
+		}
+	}
+	return nil
+}
+
+func getModuleLiteralImportKind(node *ast.StringLiteralLike) *string {
+	parent := node.Parent
+	if parent == nil {
+		return nil
+	}
+
+	if ast.IsImportDeclaration(parent) || ast.IsExportDeclaration(parent) {
+		var elements []*ast.Node
+		if ast.IsImportDeclaration(parent) {
+			elements = parent.AsImportDeclaration().Attributes.AsImportAttributes().Attributes.Nodes
+		} else {
+			elements = parent.AsExportDeclaration().Attributes.AsImportAttributes().Attributes.Nodes
+		}
+		if elements == nil {
+			return nil
+		}
+		for _, element := range elements {
+			value := getRawImportAttributeValue(element.AsImportAttribute())
+			if value != nil {
+				return value
+			}
+		}
+		return nil
+	} else if ast.IsCallExpression(parent) {
+		arguments := parent.Arguments()
+		if parent.Expression().Kind != ast.KindImportKeyword ||
+			len(arguments) <= 1 ||
+			!ast.IsStringLiteral(arguments[0]) ||
+			!ast.IsObjectLiteralExpression(arguments[1]) {
+			return nil
+		}
+
+		obj := arguments[1].AsObjectLiteralExpression()
+		withExpr := find(obj.Properties.Nodes, func(p *ast.Node) bool {
+			return ast.IsPropertyAssignment(p) && isStrOrIdentWithText(p.Name(), "with")
+		})
+		if withExpr == nil {
+			return nil
+		}
+		withInitializer := (*withExpr).Initializer()
+		if !ast.IsObjectLiteralExpression(withInitializer) {
+			return nil
+		}
+		typeProp := find(withInitializer.Properties(), func(p *ast.Node) bool {
+			return ast.IsPropertyAssignment(p) && isStrOrIdentWithText(p.Name(), "type")
+		})
+		if typeProp == nil {
+			return nil
+		}
+		typeInitializer := (*typeProp).Initializer()
+		return getRawTypeValue(typeInitializer)
+	} else {
+		return nil
+	}
+}
+
+func find[T any](list []T, predicate func(T) bool) *T {
+	for _, item := range list {
+		if predicate(item) {
+			return &item
+		}
+	}
+	return nil
+}
+
+// end added for deno
