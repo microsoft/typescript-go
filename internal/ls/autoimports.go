@@ -300,8 +300,7 @@ func (e *exportInfoMap) tryRehydrateCachedInfo(ch *checker.Checker, info CachedS
 		}
 	}
 	if moduleSymbol == nil {
-		// Module is no longer available - this can happen when module resolution changes
-		// or the module is removed. Just skip this cached entry.
+		// TODO(andrewbranch): panic(fmt.Sprintf("Could not find module symbol for %s in exportInfoMap", info.moduleName))
 		return nil
 	}
 	symbol := core.Coalesce(info.symbol, cachedSymbol)
@@ -314,8 +313,7 @@ func (e *exportInfoMap) tryRehydrateCachedInfo(ch *checker.Checker, info CachedS
 	}
 
 	if symbol == nil {
-		// Symbol is no longer available in the module - this can happen when exports change
-		// or the symbol is removed/renamed. Just skip this cached entry.
+		// TODO(andrewbranch): panic(fmt.Sprintf("Could not find symbol '%s' by key '%s' in module %s", info.symbolName, info.symbolTableKey, moduleSymbol.Name))
 		return nil
 	}
 	e.symbols[info.id] = symbolExportEntry{symbol, moduleSymbol}
