@@ -1,6 +1,6 @@
-package utils
+package pnp
 
-type TrieInternal[T any] struct {
+type Trie[T any] struct {
 	root *node[T]
 }
 
@@ -10,11 +10,11 @@ type node[T any] struct {
 	hasValue bool
 }
 
-func New[T any]() *TrieInternal[T] {
-	return &TrieInternal[T]{root: &node[T]{children: make(map[rune]*node[T])}}
+func New[T any]() *Trie[T] {
+	return &Trie[T]{root: &node[T]{children: make(map[rune]*node[T])}}
 }
 
-func (t *TrieInternal[T]) Set(key string, v T) {
+func (t *Trie[T]) Set(key string, v T) {
 	n := t.root
 	for _, r := range key {
 		child, ok := n.children[r]
@@ -28,7 +28,7 @@ func (t *TrieInternal[T]) Set(key string, v T) {
 	n.hasValue = true
 }
 
-func (t *TrieInternal[T]) Get(key string) (T, bool) {
+func (t *Trie[T]) Get(key string) (T, bool) {
 	n := t.root
 	for _, r := range key {
 		child, ok := n.children[r]
@@ -45,7 +45,7 @@ func (t *TrieInternal[T]) Get(key string) (T, bool) {
 	return zero, false
 }
 
-func (t *TrieInternal[T]) GetAncestorValue(key string) (T, bool) {
+func (t *Trie[T]) GetAncestorValue(key string) (T, bool) {
 	n := t.root
 
 	var best T

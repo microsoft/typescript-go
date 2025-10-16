@@ -10,9 +10,8 @@ import (
 	"testing"
 
 	"github.com/go-json-experiment/json"
-
-	"github.com/microsoft/typescript-go/internal/module/pnp/utils"
 	"github.com/microsoft/typescript-go/internal/repo"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type TestSuite struct {
@@ -301,8 +300,8 @@ func TestGlobalCache(t *testing.T) {
 		t.Fatalf("unexpected resolution kind: %v", res.Kind)
 	}
 
-	got := utils.NormalizePath(res.Path)
-	expected := utils.NormalizePath(filepath.Join(
+	got := tspath.NormalizePath(res.Path)
+	expected := tspath.NormalizePath(filepath.Join(
 		globalCache,
 		"source-map-npm-0.6.1-1a3621db16-10c0.zip",
 		"node_modules",

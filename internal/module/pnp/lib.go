@@ -29,13 +29,13 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"path/filepath"
 	"regexp"
 	"slices"
 	"strings"
 
 	"github.com/go-json-experiment/json"
-	"github.com/microsoft/typescript-go/internal/module/pnp/utils"
+	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type ResolutionKind int
@@ -94,6 +94,10 @@ func (e *FailedManifestHydrationError) Error() string {
 }
 func (e *FailedManifestHydrationError) Unwrap() error { return e.Err }
 
+func isNodeJSBuiltin(name string) bool {
+	return core.NodeCoreModules()[name]
+}
+
 func parseScopedPackageName(spec string) (pkg string, sub *string, ok bool) {
 	parts := strings.SplitN(spec, "/", 3)
 	if len(parts) < 2 {
@@ -145,14 +149,14 @@ func ParseBareIdentifier(spec string) (string, *string, error) {
 }
 
 func FindClosestPNPManifestPath(start string) (string, bool) {
-	dir := filepath.Clean(start)
+	dir := tspath.NormalizePath(start)
 
 	for {
-		candidate := filepath.Join(dir, ".pnp.cjs")
+		candidate := tspath.CombinePaths(dir, ".pnp.cjs")
 		if st, err := os.Stat(candidate); err == nil && !st.IsDir() {
 			return candidate, true
 		}
-		parent := filepath.Dir(dir)
+		parent := tspath.GetDirectoryPath(dir)
 		if parent == dir {
 			break
 		}
@@ -165,19 +169,15 @@ var rePNP = regexp.MustCompile(`(?s)(const[\ \r\n]+RAW_RUNTIME_STATE[\ \r\n]*=[\
 
 func InitPNPManifest(m *Manifest, manifestPath string) error {
 	m.ManifestPath = manifestPath
-	m.ManifestDir = filepath.Dir(manifestPath)
+	m.ManifestDir = tspath.GetDirectoryPath(manifestPath)
 
-	m.LocationTrie = *utils.NewTrie[PackageLocator]()
+	m.LocationTrie = *NewLocationTrie[PackageLocator]()
 
 	for name, ranges := range m.PackageRegistryData {
 		for reference, info := range ranges {
-			joined := filepath.Join(m.ManifestDir, info.PackageLocation)
+			joined := tspath.CombinePaths(m.ManifestDir, info.PackageLocation)
 
-			if strings.HasSuffix(info.PackageLocation, "/") {
-				joined = joined + "/"
-			}
-
-			norm := utils.NormalizePath(joined)
+			norm := tspath.NormalizePath(joined)
 
 			info.PackageLocation = norm
 			ranges[reference] = info
@@ -287,21 +287,18 @@ func IsDependencyTreeRoot(m *Manifest, loc *PackageLocator) bool {
 }
 
 func FindLocator(manifest *Manifest, path string) *PackageLocator {
-	rel, err := filepath.Rel(manifest.ManifestDir, path)
-	if err != nil {
-		panic("Assertion failed: Provided path should be absolute but received" + path)
-	}
+	rel := tspath.GetRelativePathFromDirectory(manifest.ManifestDir, path, tspath.ComparePathsOptions{UseCaseSensitiveFileNames: true})
 
 	if manifest.IgnorePatternData != nil {
 		re, err := manifest.IgnorePatternData.compile()
 		if err == nil {
-			if re.MatchString(utils.NormalizePath(rel)) {
+			if re.MatchString(tspath.NormalizePath(rel)) {
 				return nil
 			}
 		}
 	}
 
-	normFull := utils.NormalizePath(path)
+	normFull := tspath.NormalizePath(path)
 	if v, ok := manifest.LocationTrie.GetAncestorValue(normFull); ok && v != nil {
 		return v
 	}
@@ -375,7 +372,7 @@ func ResolveToUnqualifiedViaManifest(
 	}
 
 	if refOrAlias == nil {
-		if IsNodeJSBuiltin(specifier) {
+		if isNodeJSBuiltin(specifier) {
 			if IsDependencyTreeRoot(manifest, parentLocator) {
 				msg := fmt.Sprintf(
 					"Your application tried to access %s. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since %s isn't otherwise declared in your dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: %s%s\nRequired by: %s",

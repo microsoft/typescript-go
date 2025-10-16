@@ -4,14 +4,17 @@ import (
 	"bytes"
 	"errors"
 	"regexp"
+	"strings"
 
 	"github.com/go-json-experiment/json"
 	"github.com/go-json-experiment/json/jsontext"
 
-	"github.com/microsoft/typescript-go/internal/module/pnp/utils"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-type Trie[T any] = utils.Trie[T]
+type LocationTrie[T any] struct {
+	inner *Trie[T]
+}
 
 type RegexDef struct {
 	Source string `json:"source"`
@@ -19,9 +22,9 @@ type RegexDef struct {
 }
 
 type Manifest struct {
-	ManifestDir  string               `json:"-"`
-	ManifestPath string               `json:"-"`
-	LocationTrie Trie[PackageLocator] `json:"-"`
+	ManifestDir  string                       `json:"-"`
+	ManifestPath string                       `json:"-"`
+	LocationTrie LocationTrie[PackageLocator] `json:"-"`
 
 	EnableTopLevelFallback bool      `json:"enableTopLevelFallback"`
 	IgnorePatternData      *RegexDef `json:"ignorePatternData,omitempty"`
@@ -228,4 +231,27 @@ func (m *PackageRegistryData) UnmarshalJSON(data []byte) error {
 
 func (r *RegexDef) compile() (*regexp.Regexp, error) {
 	return regexp.Compile(r.Source)
+}
+
+func NewLocationTrie[T any]() *LocationTrie[T] {
+	return &LocationTrie[T]{inner: New[T]()}
+}
+
+func (t *LocationTrie[T]) key(key string) string {
+	p := tspath.NormalizePath(key)
+
+	if !strings.HasSuffix(p, "/") {
+		return p + "/"
+	}
+
+	return p
+}
+
+func (t *LocationTrie[T]) GetAncestorValue(p string) (*T, bool) {
+	v, ok := t.inner.GetAncestorValue(t.key(p))
+	return &v, ok
+}
+
+func (t *LocationTrie[T]) Insert(p string, v T) {
+	t.inner.Set(t.key(p), v)
 }
