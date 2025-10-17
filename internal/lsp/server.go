@@ -604,7 +604,7 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 			params = req.Params.(Req)
 		}
 		// !!! sheetal: multiple projects that contain the file through symlinks
-		defaultProject, defaultLs, allProjects, err := s.session.GetProjectsForFile(ctx, params.TextDocumentURI())
+		defaultProject, defaultLs, allProjects, err := s.session.GetLanguageServiceAndProjectsForFile(ctx, params.TextDocumentURI())
 		if err != nil {
 			return err
 		}
@@ -612,32 +612,34 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 
 		var queue []projectAndTextDocumentPosition
 		results := make(map[tspath.Path]Resp)
-		defaultDefinitions := make([]*ls.SymbolAndEntries, 0) // Single location
+		var defaultDefinition lsproto.HasTextDocumentPosition
 
 		searchPosition := func(project *project.Project, ls *ls.LanguageService, uri lsproto.DocumentUri, position lsproto.Position) (Resp, error) {
 			originalNode, symbolsAndEntries, ok := ls.ProvideSymbolsAndEntries(ctx, uri, position, info.Method == lsproto.MethodTextDocumentRename)
 			if ok {
 				for _, entry := range symbolsAndEntries {
-					if project == defaultProject {
-						// !!! TODO sheetal
-						// store default definition if it can be visible in other projects
-						// Use this to determine if we should load the projects from solution to find references
-
-						// 					definitionKindSymbol               Possible
-						// definitionKindThis                 Possible
-						// definitionKindTripleSlashReference  Yes - look for file names
-						defaultDefinitions = append(defaultDefinitions, entry)
+					// Find the default definition that can be in another project
+					// Later we will use this load ancestor tree that references this location and expand search
+					if project == defaultProject && defaultDefinition == nil {
+						defaultDefinition = ls.GetNonLocalDefinition(ctx, entry)
 					}
-
-					// TODOS: sheetal
-
-					// Original location:
-					// If file included was dts -> try toi see if we can use source map and find ts file
-					// If its ts file - if this is ts file for "d.ts" of referenced project use this location
-					// Get default configured project for this file
-
-					// Also get all the projects - existing for this file and add to queue this definition location
-					// including its symlinks
+					ls.ForEachOriginalDefinitionLocation(ctx, entry, func(uri lsproto.DocumentUri, position lsproto.Position) {
+						// Get default configured project for this file
+						defProjects, errProjects := s.session.GetProjectsForFile(ctx, uri)
+						if errProjects != nil {
+							return
+						}
+						for _, defProject := range defProjects {
+							// Optimization: don't enqueue if will be discarded
+							if _, alreadyDone := results[defProject.Id()]; !alreadyDone {
+								queue = append(queue, projectAndTextDocumentPosition{
+									project:  defProject,
+									Uri:      uri,
+									Position: position,
+								})
+							}
+						}
+					})
 				}
 			}
 			return fn(s, ctx, ls, params, originalNode, symbolsAndEntries)
@@ -692,7 +694,7 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 				}
 			}
 
-			if defaultDefinitions != nil {
+			if defaultDefinition != nil {
 				// !!! TODO: sheetal
 				// load ancestor projects for all the projects that can reference the ones already seen
 				// for all projects
@@ -1102,7 +1104,7 @@ func combineRenameResponse(defaultProject *project.Project, results map[tspath.P
 	// 	ChangeAnnotations *map[string]*ChangeAnnotation `json:"changeAnnotations,omitzero"`
 
 	if resp, ok := results[defaultProject.Id()]; ok {
-		if resp.WorkspaceEdit != nil {
+		if resp.WorkspaceEdit != nil && resp.WorkspaceEdit.Changes != nil {
 			for doc, changes := range *resp.WorkspaceEdit.Changes {
 				seenSet := collections.Set[lsproto.TextEdit]{}
 				seenChanges[doc] = &seenSet
@@ -1117,7 +1119,7 @@ func combineRenameResponse(defaultProject *project.Project, results map[tspath.P
 	}
 	for projectID, resp := range results {
 		if projectID != defaultProject.Id() {
-			if resp.WorkspaceEdit != nil {
+			if resp.WorkspaceEdit != nil && resp.WorkspaceEdit.Changes != nil {
 				for doc, changes := range *resp.WorkspaceEdit.Changes {
 					seenSet, ok := seenChanges[doc]
 					if !ok {

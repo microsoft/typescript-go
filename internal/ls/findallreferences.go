@@ -107,6 +107,24 @@ type ReferenceEntry struct {
 	textRange *lsproto.Range
 }
 
+func (entry *SymbolAndEntries) canUseDefinitionSymbol() bool {
+	if entry.definition == nil {
+		return false
+	}
+
+	switch entry.definition.Kind {
+	case definitionKindSymbol, definitionKindThis:
+		return entry.definition.symbol != nil
+	case definitionKindTripleSlashReference:
+		// !!! TODO : need to find file reference instead?
+		// May need to return true to indicate this to be file search instead and might need to do for import stuff as well
+		// For now
+		return false
+	default:
+		return false
+	}
+}
+
 func (l *LanguageService) getRangeOfEntry(entry *ReferenceEntry) *lsproto.Range {
 	return l.resolveEntry(entry).textRange
 }
@@ -415,6 +433,77 @@ func getSymbolScope(symbol *ast.Symbol) *ast.Node {
 }
 
 // === functions on (*ls) ===
+
+type position struct {
+	uri lsproto.DocumentUri
+	pos lsproto.Position
+}
+
+var _ lsproto.HasTextDocumentPosition = (*position)(nil)
+
+func (nld *position) TextDocumentURI() lsproto.DocumentUri   { return nld.uri }
+func (nld *position) TextDocumentPosition() lsproto.Position { return nld.pos }
+
+func getFileAndStartPosFromDeclaration(declaration *ast.Node) (*ast.SourceFile, core.TextPos) {
+	file := ast.GetSourceFileOfNode(declaration)
+	name := core.OrElse(ast.GetNameOfDeclaration(declaration), declaration)
+	startPos := getStartPosFromNode(name, file)
+
+	return file, startPos
+}
+
+func (l *LanguageService) GetNonLocalDefinition(ctx context.Context, entry *SymbolAndEntries) lsproto.HasTextDocumentPosition {
+	if !entry.canUseDefinitionSymbol() {
+		return nil
+	}
+
+	program := l.GetProgram()
+	checker, done := program.GetTypeChecker(ctx)
+	defer done()
+	emitResolver := checker.GetEmitResolver()
+	for _, d := range entry.definition.symbol.Declarations {
+		if emitResolver.IsDeclarationVisible(d) {
+			file, startPos := getFileAndStartPosFromDeclaration(d)
+			fileName := file.FileName()
+			return &position{
+				uri: lsconv.FileNameToDocumentURI(fileName),
+				pos: l.converters.PositionToLineAndCharacter(file, startPos),
+			}
+		}
+	}
+	return nil
+}
+
+func (l *LanguageService) ForEachOriginalDefinitionLocation(
+	ctx context.Context,
+	entry *SymbolAndEntries,
+	cb func(lsproto.DocumentUri, lsproto.Position),
+) {
+	if !entry.canUseDefinitionSymbol() {
+		return
+	}
+
+	program := l.GetProgram()
+	for _, d := range entry.definition.symbol.Declarations {
+		file, startPos := getFileAndStartPosFromDeclaration(d)
+		fileName := file.FileName()
+		if tspath.IsDeclarationFileName(fileName) {
+			// Map to ts position
+			mapped := l.tryGetSourcePosition(file.FileName(), startPos)
+			if mapped != nil {
+				cb(
+					lsconv.FileNameToDocumentURI(mapped.FileName),
+					l.converters.PositionToLineAndCharacter(l.getScript(mapped.FileName), core.TextPos(mapped.Pos)),
+				)
+			}
+		} else if program.IsSourceFromProjectReference(l.toPath(fileName)) {
+			cb(
+				lsconv.FileNameToDocumentURI(fileName),
+				l.converters.PositionToLineAndCharacter(file, startPos),
+			)
+		}
+	}
+}
 
 func (l *LanguageService) ProvideSymbolsAndEntries(ctx context.Context, uri lsproto.DocumentUri, documentPosition lsproto.Position, isRename bool) (*ast.Node, []*SymbolAndEntries, bool) {
 	// `findReferencedSymbols` except only computes the information needed to return reference locations

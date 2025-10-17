@@ -122,6 +122,15 @@ Config File Names::
 // import { [|B|] } from "../b/lib";
 // const b: /*FIND ALL REFS*/[|B|] = new [|B|]();
 
+// === /user/username/projects/myproject/b/helper.ts ===
+// import { [|B|] } from ".";
+// const b: [|B|] = new [|B|]();
+
+// === /user/username/projects/myproject/b/index.ts ===
+// export class [|B|] {
+//     M() {}
+// }
+
 // === /user/username/projects/myproject/b/lib/index.d.ts ===
 // export declare class [|B|] {
 //     M(): void;

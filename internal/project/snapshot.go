@@ -198,6 +198,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			logger.Logf("Reason: RequestedLanguageService (pending file changes) - %v, %v", change.requestedURIs, change.requestedProjectUpdates)
 		case UpdateReasonRequestedLanguageServiceProjectNotLoaded:
 			logger.Logf("Reason: RequestedLanguageService (project not loaded) - %v", change.requestedURIs)
+		case UpdateReasonRequestedLanguageServiceForFileNotOpen:
+			logger.Logf("Reason: RequestedLanguageService (file not open) - %v", change.requestedURIs)
 		case UpdateReasonRequestedLanguageServiceProjectDirty:
 			logger.Logf("Reason: RequestedLanguageService (project dirty) - %v, %v", change.requestedURIs, change.requestedProjectUpdates)
 		}

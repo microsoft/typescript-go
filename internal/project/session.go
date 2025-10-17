@@ -31,6 +31,7 @@ const (
 	UpdateReasonDidChangeCompilerOptionsForInferredProjects
 	UpdateReasonRequestedLanguageServicePendingChanges
 	UpdateReasonRequestedLanguageServiceProjectNotLoaded
+	UpdateReasonRequestedLanguageServiceForFileNotOpen
 	UpdateReasonRequestedLanguageServiceProjectDirty
 )
 
@@ -422,7 +423,7 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 	return languageService, nil
 }
 
-func (s *Session) GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) (*Project, *ls.LanguageService, []*Project, error) {
+func (s *Session) GetLanguageServiceAndProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) (*Project, *ls.LanguageService, []*Project, error) {
 	snapshot, project, defaultLs, err := s.getSnapshotAndDefaultProject(ctx, uri)
 	if err != nil {
 		return nil, nil, nil, err
@@ -430,6 +431,24 @@ func (s *Session) GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUr
 	// !!! TODO: sheetal:  Get other projects that contain the file with symlink
 	allProjects := snapshot.GetProjectsContainingFile(uri)
 	return project, defaultLs, allProjects, nil
+}
+
+func (s *Session) GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) ([]*Project, error) {
+	// !!! sheetal : should not retain this project? probably
+	snapshot, overlays, updatedSnapshot := s.getSnapshot(ctx, uri, "")
+	if !updatedSnapshot {
+		// The current snapshot does not have an up to date project for the URI,
+		// so we need to update the snapshot to ensure the project is loaded.
+		// !!! Allow multiple projects to update in parallel
+		snapshot = s.UpdateSnapshot(ctx, overlays, SnapshotChange{
+			reason:        UpdateReasonRequestedLanguageServiceForFileNotOpen,
+			requestedURIs: []lsproto.DocumentUri{uri},
+		})
+	}
+
+	// !!! TODO: sheetal:  Get other projects that contain the file with symlink
+	allProjects := snapshot.GetProjectsContainingFile(uri)
+	return allProjects, nil
 }
 
 func (s *Session) GetLanguageServiceForProjectWithFile(ctx context.Context, project *Project, uri lsproto.DocumentUri) *ls.LanguageService {
