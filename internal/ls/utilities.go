@@ -417,6 +417,10 @@ func createRangeFromNode(node *ast.Node, file *ast.SourceFile) core.TextRange {
 	return core.NewTextRange(scanner.GetTokenPosOfNode(node, file, false /*includeJSDoc*/), node.End())
 }
 
+func getStartPosFromNode(node *ast.Node, file *ast.SourceFile) core.TextPos {
+	return core.TextPos(scanner.GetTokenPosOfNode(node, file, false /*includeJSDoc*/))
+}
+
 func (l *LanguageService) createLspRangeFromBounds(start, end int, file *ast.SourceFile) *lsproto.Range {
 	lspRange := l.converters.ToLSPRange(file, core.NewTextRange(start, end))
 	return &lspRange
