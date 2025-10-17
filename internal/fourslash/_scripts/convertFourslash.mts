@@ -192,7 +192,6 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                     //  - `verify.baselineGoToDefinition(...)` called getDefinitionAndBoundSpan
                     //  - `verify.baselineGetDefinitionAtPosition(...)` called getDefinitionAtPosition
                     // LSP doesn't have two separate commands though.
-                    // It's unclear how we would model bound spans though.
                     return parseBaselineGoToDefinitionArgs(func.text, callExpression.arguments);
                 case "baselineRename":
                 case "baselineRenameAtRangesWithText":
@@ -824,6 +823,10 @@ function parseBaselineGoToDefinitionArgs(
     funcName: "baselineGoToDefinition" | "baselineGoToType" | "baselineGetDefinitionAtPosition",
     args: readonly ts.Expression[],
 ): [VerifyBaselineGoToDefinitionCmd] | undefined {
+    let boundSpan: true | undefined;
+    if (funcName === "baselineGoToDefinition") {
+        boundSpan = true;
+    }
     let kind: "verifyBaselineGoToDefinition" | "verifyBaselineGoToType";
     switch (funcName) {
         case "baselineGoToDefinition":
@@ -848,6 +851,7 @@ function parseBaselineGoToDefinitionArgs(
                 kind,
                 markers: [],
                 ranges: true,
+                boundSpan,
             }];
         }
         else {
@@ -859,6 +863,7 @@ function parseBaselineGoToDefinitionArgs(
     return [{
         kind,
         markers: newArgs,
+        boundSpan,
     }];
 }
 
@@ -1311,6 +1316,7 @@ interface VerifyBaselineFindAllReferencesCmd {
 interface VerifyBaselineGoToDefinitionCmd {
     kind: "verifyBaselineGoToDefinition" | "verifyBaselineGoToType";
     markers: string[];
+    boundSpan?: true;
     ranges?: boolean;
 }
 
@@ -1409,20 +1415,20 @@ function generateBaselineDocumentHighlights({ args, preferences }: VerifyBaselin
     return `f.VerifyBaselineDocumentHighlights(t, ${preferences}, ${args.join(", ")})`;
 }
 
-function generateBaselineGoToDefinition({ markers, ranges, kind }: VerifyBaselineGoToDefinitionCmd): string {
-    let goFunc;
+function generateBaselineGoToDefinition({ markers, ranges, kind, boundSpan }: VerifyBaselineGoToDefinitionCmd): string {
+    const originalSelectionRange = boundSpan ? "true" : "false";
     switch (kind) {
         case "verifyBaselineGoToDefinition":
-            goFunc = "VerifyBaselineGoToDefinition";
-            break;
+            if (ranges || markers.length === 0) {
+                return `f.VerifyBaselineGoToDefinition(t, ${originalSelectionRange})`;
+            }
+            return `f.VerifyBaselineGoToDefinition(t, ${originalSelectionRange}, ${markers.join(", ")})`;
         case "verifyBaselineGoToType":
-            goFunc = "VerifyBaselineGoToTypeDefinition";
-            break;
+            if (ranges || markers.length === 0) {
+                return `f.VerifyBaselineGoToTypeDefinition(t)`;
+            }
+            return `f.VerifyBaselineGoToTypeDefinition(t, ${markers.join(", ")})`;
     }
-    if (ranges || markers.length === 0) {
-        return `f.${goFunc}(t)`;
-    }
-    return `f.${goFunc}(t, ${markers.join(", ")})`;
 }
 
 function generateGoToCommand({ funcName, args }: GoToCmd): string {
