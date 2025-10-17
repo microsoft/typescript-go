@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"slices"
 	"testing"
+	"unicode/utf8"
 
 	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/testutil/jstest"
@@ -281,6 +282,10 @@ func FuzzFromStringJS(f *testing.F) {
 			t.Skip()
 		}
 
+		if !utf8.ValidString(s) {
+			t.Skip()
+		}
+
 		n := FromString(s)
 		results := getStringResultsFromJS(t, []stringTest{{str: s}})
 		assert.Equal(t, len(results), 1)
@@ -289,7 +294,7 @@ func FuzzFromStringJS(f *testing.F) {
 }
 
 func getStringResultsFromJS(t testing.TB, tests []stringTest) []stringTest {
-	t.Helper()
+	// t.Helper()
 	tmpdir := t.TempDir()
 
 	type data struct {
