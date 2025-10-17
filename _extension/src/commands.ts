@@ -34,6 +34,10 @@ export function registerLanguageCommands(context: vscode.ExtensionContext, clien
 
     disposables.push(vscode.commands.registerCommand("typescript.native-preview.showMenu", showCommands));
 
+    disposables.push(vscode.commands.registerCommand("typescript.native-preview.sortImports", async () => {
+        return sortImports(client);
+    }));
+
     return disposables;
 }
 
@@ -54,11 +58,42 @@ async function updateUseTsgoSetting(enable: boolean): Promise<void> {
     await restartExtHostOnChangeIfNeeded();
 }
 
-/**
- * Shows the quick pick menu for TypeScript Native Preview commands
- */
+async function sortImports(client: Client): Promise<void> {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        vscode.window.showErrorMessage("No active editor");
+        return;
+    }
+
+    const document = editor.document;
+    const languageId = document.languageId;
+
+    // Check if the file is TypeScript or JavaScript
+    if (!["typescript", "javascript", "typescriptreact", "javascriptreact"].includes(languageId)) {
+        vscode.window.showErrorMessage("Sort Imports is only available for TypeScript and JavaScript files");
+        return;
+    }
+
+    try {
+        // Execute the sort imports command on the server via LSP
+        await client.executeCommand(
+            "typescript-go.organizeImports",
+            document.uri.toString(),
+        );
+        vscode.window.showInformationMessage("Imports sorted successfully");
+    }
+    catch (error) {
+        vscode.window.showErrorMessage(`Failed to sort imports: ${error}`);
+    }
+}
+
 async function showCommands(): Promise<void> {
     const commands: readonly { label: string; description: string; command: string; }[] = [
+        {
+            label: "$(symbol-namespace) Sort Imports",
+            description: "Sort imports in the current file",
+            command: "typescript.native-preview.sortImports",
+        },
         {
             label: "$(refresh) Restart Server",
             description: "Restart the TypeScript Native Preview language server",
