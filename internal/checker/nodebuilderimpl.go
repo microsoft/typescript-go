@@ -1637,6 +1637,28 @@ func (b *nodeBuilderImpl) symbolTableToDeclarationStatements(symbolTable *ast.Sy
 	panic("unimplemented") // !!!
 }
 
+// getJSDocTypeAssertionType extracts the type node from a JSDoc type assertion.
+// Currently stubbed since ast.IsJSDocTypeAssertion always returns false.
+func getJSDocTypeAssertionType(node *ast.Node) *ast.TypeNode {
+	// !!! TODO: Implement when JSDoc type assertions are fully supported
+	return nil
+}
+
+// getTypeForDeclaration resolves the type for a declaration, considering various special cases.
+func (b *nodeBuilderImpl) getTypeForDeclaration(symbol *ast.Symbol, declaration *ast.Declaration) *Type {
+	t := b.ctx.enclosingSymbolTypes[ast.GetSymbolId(symbol)]
+	if t == nil {
+		if symbol.Flags&ast.SymbolFlagsAccessor != 0 && declaration != nil && declaration.Kind == ast.KindSetAccessor {
+			t = b.ch.instantiateType(b.ch.getWriteTypeOfSymbol(symbol), b.ctx.mapper)
+		} else if symbol != nil && (symbol.Flags&(ast.SymbolFlagsTypeLiteral|ast.SymbolFlagsSignature) == 0) {
+			t = b.ch.instantiateType(b.ch.getWidenedLiteralType(b.ch.getTypeOfSymbol(symbol)), b.ctx.mapper)
+		} else {
+			t = b.ch.errorType
+		}
+	}
+	return t
+}
+
 func (b *nodeBuilderImpl) serializeTypeForExpression(expr *ast.Node) *ast.Node {
 	// !!! TODO: shim, add node reuse
 	t := b.ch.instantiateType(b.ch.getWidenedType(b.ch.getRegularTypeOfExpression(expr)), b.ctx.mapper)
@@ -1987,17 +2009,39 @@ func (b *nodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 	if symbol == nil {
 		symbol = b.ch.getSymbolOfDeclaration(declaration)
 	}
-	if t == nil {
-		t = b.ctx.enclosingSymbolTypes[ast.GetSymbolId(symbol)]
-		if t == nil {
-			if symbol.Flags&ast.SymbolFlagsAccessor != 0 && declaration.Kind == ast.KindSetAccessor {
-				t = b.ch.instantiateType(b.ch.getWriteTypeOfSymbol(symbol), b.ctx.mapper)
-			} else if symbol != nil && (symbol.Flags&(ast.SymbolFlagsTypeLiteral|ast.SymbolFlagsSignature) == 0) {
-				t = b.ch.instantiateType(b.ch.getWidenedLiteralType(b.ch.getTypeOfSymbol(symbol)), b.ctx.mapper)
-			} else {
-				t = b.ch.errorType
+
+	// Check for PropertyAssignment with type assertion that can be reused (PR #60576)
+	if declaration != nil && declaration.Kind == ast.KindPropertyAssignment {
+		initializer := declaration.AsPropertyAssignment().Initializer
+		initializerKind := initializer.Kind
+		var assertionNode *ast.TypeNode
+
+		// Check if initializer is a JSDoc type assertion
+		if ast.IsJSDocTypeAssertion(initializer) {
+			assertionNode = getJSDocTypeAssertionType(initializer)
+		} else if initializerKind == ast.KindAsExpression || initializerKind == ast.KindTypeAssertionExpression {
+			// Extract the type node from AsExpression or TypeAssertion
+			assertionNode = getAssertedTypeNode(initializer)
+		}
+
+		// If we have an assertion node, check if we can reuse it
+		if assertionNode != nil && !isConstTypeReference(assertionNode) {
+			// Try to reuse the existing type node if it's equivalent
+			if t == nil {
+				t = b.getTypeForDeclaration(symbol, declaration)
+			}
+
+			if t != nil {
+				reusedNode := b.tryReuseExistingTypeNode(assertionNode, t, declaration, false)
+				if reusedNode != nil {
+					return reusedNode
+				}
 			}
 		}
+	}
+
+	if t == nil {
+		t = b.getTypeForDeclaration(symbol, declaration)
 	}
 
 	// !!! TODO: JSDoc, getEmitResolver call is unfortunate layering for the helper - hoist it into checker
