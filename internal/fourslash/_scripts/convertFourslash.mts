@@ -181,16 +181,19 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                 case "baselineDocumentHighlights":
                     return parseBaselineDocumentHighlightsArgs(callExpression.arguments);
                 case "baselineQuickInfo":
-                    return [parseBaselineQuickInfo(callExpression.arguments)];
+                    return parseBaselineQuickInfo(callExpression.arguments);
                 case "baselineSignatureHelp":
                     return [parseBaselineSignatureHelp(callExpression.arguments)];
                 case "baselineGoToDefinition":
                 case "baselineGetDefinitionAtPosition":
-                    // Both of these take the same arguments, but differ in that...
+                case "baselineGoToType":
+                    // Both `baselineGoToDefinition` and `baselineGetDefinitionAtPosition` take the same
+                    // arguments, but differ in that...
                     //  - `verify.baselineGoToDefinition(...)` called getDefinitionAndBoundSpan
                     //  - `verify.baselineGetDefinitionAtPosition(...)` called getDefinitionAtPosition
-                    // LSP doesn't have two separate commands though. It's unclear how we would model bound spans though.
-                    return parseBaselineGoToDefinitionArgs(callExpression.arguments);
+                    // LSP doesn't have two separate commands though.
+                    // It's unclear how we would model bound spans though.
+                    return parseBaselineGoToDefinitionArgs(func.text, callExpression.arguments);
                 case "baselineRename":
                 case "baselineRenameAtRangesWithText":
                     // `verify.baselineRename...(...)`
@@ -817,7 +820,20 @@ function parseBaselineDocumentHighlightsArgs(args: readonly ts.Expression[]): [V
     }];
 }
 
-function parseBaselineGoToDefinitionArgs(args: readonly ts.Expression[]): [VerifyBaselineGoToDefinitionCmd] | undefined {
+function parseBaselineGoToDefinitionArgs(
+    funcName: "baselineGoToDefinition" | "baselineGoToType" | "baselineGetDefinitionAtPosition",
+    args: readonly ts.Expression[],
+): [VerifyBaselineGoToDefinitionCmd] | undefined {
+    let kind: "verifyBaselineGoToDefinition" | "verifyBaselineGoToType";
+    switch (funcName) {
+        case "baselineGoToDefinition":
+        case "baselineGetDefinitionAtPosition":
+            kind = "verifyBaselineGoToDefinition";
+            break;
+        case "baselineGoToType":
+            kind = "verifyBaselineGoToType";
+            break;
+    }
     const newArgs = [];
     for (const arg of args) {
         let strArg;
@@ -829,19 +845,19 @@ function parseBaselineGoToDefinitionArgs(args: readonly ts.Expression[]): [Verif
         }
         else if (arg.getText() === "...test.ranges()") {
             return [{
-                kind: "verifyBaselineGoToDefinition",
+                kind,
                 markers: [],
                 ranges: true,
             }];
         }
         else {
-            console.error(`Unrecognized argument in verify.baselineGoToDefinition: ${arg.getText()}`);
+            console.error(`Unrecognized argument in verify.${funcName}: ${arg.getText()}`);
             return undefined;
         }
     }
 
     return [{
-        kind: "verifyBaselineGoToDefinition",
+        kind,
         markers: newArgs,
     }];
 }
@@ -911,6 +927,17 @@ function parseBaselineRenameArgs(funcName: string, args: readonly ts.Expression[
     }];
 }
 
+function stringToTristate(s: string): string {
+    switch (s) {
+        case "true":
+            return "core.TSTrue";
+        case "false":
+            return "core.TSFalse";
+        default:
+            return "core.TSUnknown";
+    }
+}
+
 function parseUserPreferences(arg: ts.ObjectLiteralExpression): string | undefined {
     const preferences: string[] = [];
     for (const prop of arg.properties) {
@@ -918,10 +945,10 @@ function parseUserPreferences(arg: ts.ObjectLiteralExpression): string | undefin
             switch (prop.name.getText()) {
                 // !!! other preferences
                 case "providePrefixAndSuffixTextForRename":
-                    preferences.push(`UseAliasesForRename: PtrTo(${prop.initializer.getText()})`);
+                    preferences.push(`UseAliasesForRename: ${stringToTristate(prop.initializer.getText())}`);
                     break;
                 case "quotePreference":
-                    preferences.push(`QuotePreference: PtrTo(ls.QuotePreference(${prop.initializer.getText()}))`);
+                    preferences.push(`QuotePreference: ls.QuotePreference(${prop.initializer.getText()})`);
                     break;
             }
         }
@@ -991,14 +1018,14 @@ function getRangesByTextArg(arg: ts.CallExpression): string | undefined {
     return undefined;
 }
 
-function parseBaselineQuickInfo(args: ts.NodeArray<ts.Expression>): VerifyBaselineQuickInfoCmd {
+function parseBaselineQuickInfo(args: ts.NodeArray<ts.Expression>): VerifyBaselineQuickInfoCmd[] | undefined {
     if (args.length !== 0) {
-        // All calls are currently empty!
-        throw new Error("Expected no arguments in verify.baselineQuickInfo");
+        // !!!
+        return undefined;
     }
-    return {
+    return [{
         kind: "verifyBaselineQuickInfo",
-    };
+    }];
 }
 
 function parseQuickInfoArgs(funcName: string, args: readonly ts.Expression[]): VerifyQuickInfoCmd[] | undefined {
@@ -1282,7 +1309,7 @@ interface VerifyBaselineFindAllReferencesCmd {
 }
 
 interface VerifyBaselineGoToDefinitionCmd {
-    kind: "verifyBaselineGoToDefinition";
+    kind: "verifyBaselineGoToDefinition" | "verifyBaselineGoToType";
     markers: string[];
     ranges?: boolean;
 }
@@ -1382,11 +1409,20 @@ function generateBaselineDocumentHighlights({ args, preferences }: VerifyBaselin
     return `f.VerifyBaselineDocumentHighlights(t, ${preferences}, ${args.join(", ")})`;
 }
 
-function generateBaselineGoToDefinition({ markers, ranges }: VerifyBaselineGoToDefinitionCmd): string {
-    if (ranges || markers.length === 0) {
-        return `f.VerifyBaselineGoToDefinition(t)`;
+function generateBaselineGoToDefinition({ markers, ranges, kind }: VerifyBaselineGoToDefinitionCmd): string {
+    let goFunc;
+    switch (kind) {
+        case "verifyBaselineGoToDefinition":
+            goFunc = "VerifyBaselineGoToDefinition";
+            break;
+        case "verifyBaselineGoToType":
+            goFunc = "VerifyBaselineGoToTypeDefinition";
+            break;
     }
-    return `f.VerifyBaselineGoToDefinition(t, ${markers.join(", ")})`;
+    if (ranges || markers.length === 0) {
+        return `f.${goFunc}(t)`;
+    }
+    return `f.${goFunc}(t, ${markers.join(", ")})`;
 }
 
 function generateGoToCommand({ funcName, args }: GoToCmd): string {
@@ -1425,6 +1461,7 @@ function generateCmd(cmd: Cmd): string {
         case "verifyBaselineDocumentHighlights":
             return generateBaselineDocumentHighlights(cmd);
         case "verifyBaselineGoToDefinition":
+        case "verifyBaselineGoToType":
             return generateBaselineGoToDefinition(cmd);
         case "verifyBaselineQuickInfo":
             // Quick Info -> Hover
@@ -1465,13 +1502,16 @@ function generateGoTest(failingTests: Set<string>, test: GoTest): string {
     const commands = test.commands.map(cmd => generateCmd(cmd)).join("\n");
     const imports = [`"github.com/microsoft/typescript-go/internal/fourslash"`];
     // Only include these imports if the commands use them to avoid unused import errors.
+    if (commands.includes("core.")) {
+        imports.unshift(`"github.com/microsoft/typescript-go/internal/core"`);
+    }
     if (commands.includes("ls.")) {
         imports.push(`"github.com/microsoft/typescript-go/internal/ls"`);
     }
     if (commands.includes("lsproto.")) {
         imports.push(`"github.com/microsoft/typescript-go/internal/lsp/lsproto"`);
     }
-    if (usesHelper(commands)) {
+    if (usesFourslashUtil(commands)) {
         imports.push(`. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"`);
     }
     imports.push(`"github.com/microsoft/typescript-go/internal/testutil"`);
@@ -1494,7 +1534,7 @@ func Test${testName}(t *testing.T) {
     return template;
 }
 
-function usesHelper(goTxt: string): boolean {
+function usesFourslashUtil(goTxt: string): boolean {
     for (const [_, constant] of completionConstants) {
         if (goTxt.includes(constant)) {
             return true;

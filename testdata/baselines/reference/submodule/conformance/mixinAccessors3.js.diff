@@ -1,0 +1,10 @@
+--- old.mixinAccessors3.js
++++ new.mixinAccessors3.js
+@@= skipped -21, +21 lines =@@
+
+
+ //// [mixinAccessors3.js]
+-"use strict";
+ function mixin(superclass) {
+     return class extends superclass {
+         get name() {

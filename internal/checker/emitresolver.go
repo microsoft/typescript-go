@@ -409,7 +409,14 @@ func (r *emitResolver) hasVisibleDeclarations(symbol *ast.Symbol, shouldComputeA
 					continue
 				}
 				if symbol.Flags&ast.SymbolFlagsBlockScopedVariable != 0 {
-					variableStatement := ast.FindAncestor(declaration, ast.IsVariableStatement)
+					rootDeclaration := ast.WalkUpBindingElementsAndPatterns(declaration)
+					if ast.IsParameter(rootDeclaration) {
+						return nil
+					}
+					variableStatement := rootDeclaration.Parent.Parent
+					if !ast.IsVariableStatement(variableStatement) {
+						return nil
+					}
 					if ast.HasSyntacticModifier(variableStatement, ast.ModifierFlagsExport) {
 						continue // no alias to add, already exported
 					}
@@ -818,6 +825,7 @@ func (r *emitResolver) getReferenceResolver() binder.ReferenceResolver {
 			GetSymbolOfDeclaration:                 r.checker.getSymbolOfDeclaration,
 			GetTypeOnlyAliasDeclaration:            r.checker.getTypeOnlyAliasDeclarationEx,
 			GetExportSymbolOfValueSymbolIfExported: r.checker.getExportSymbolOfValueSymbolIfExported,
+			GetElementAccessExpressionName:         r.checker.tryGetElementAccessExpressionName,
 		})
 	}
 	return r.referenceResolver
@@ -870,6 +878,17 @@ func (r *emitResolver) GetReferencedValueDeclarations(node *ast.IdentifierNode) 
 	defer r.checkerMu.Unlock()
 
 	return r.getReferenceResolver().GetReferencedValueDeclarations(node)
+}
+
+func (r *emitResolver) GetElementAccessExpressionName(expression *ast.ElementAccessExpression) string {
+	if !ast.IsParseTreeNode(expression.AsNode()) {
+		return ""
+	}
+
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+
+	return r.getReferenceResolver().GetElementAccessExpressionName(expression)
 }
 
 // TODO: the emit resolver being responsible for some amount of node construction is a very leaky abstraction,
