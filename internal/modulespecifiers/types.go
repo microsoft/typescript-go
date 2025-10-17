@@ -85,9 +85,20 @@ const (
 	ImportModuleSpecifierEndingPreferenceJs      ImportModuleSpecifierEndingPreference = "js"
 )
 
+type IncludePackageJsonAutoImports string
+
+const (
+	IncludePackageJsonAutoImportsNone IncludePackageJsonAutoImports = ""
+	IncludePackageJsonAutoImportsAuto IncludePackageJsonAutoImports = "auto"
+	IncludePackageJsonAutoImportsOn   IncludePackageJsonAutoImports = "on"
+	IncludePackageJsonAutoImportsOff  IncludePackageJsonAutoImports = "off"
+)
+
 type UserPreferences struct {
 	ImportModuleSpecifierPreference   ImportModuleSpecifierPreference
 	ImportModuleSpecifierEnding       ImportModuleSpecifierEndingPreference
+	IncludePackageJsonAutoImports     IncludePackageJsonAutoImports
+	allowRenameOfImportPath           core.Tristate
 	AutoImportSpecifierExcludeRegexes []string
 }
 
