@@ -151,14 +151,17 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
         }
         const namespace = callExpression.expression.expression;
         const func = callExpression.expression.name;
-        if (!(ts.isIdentifier(namespace) || namespace.getText() === "verify.not") || !ts.isIdentifier(func)) {
-            console.error(`Expected identifiers for namespace and function, got ${namespace.getText()} and ${func.getText()}`);
-            return undefined;
-        }
         if (!ts.isIdentifier(namespace)) {
             switch (func.text) {
                 case "quickInfoExists":
                     return parseQuickInfoArgs("notQuickInfoExists", callExpression.arguments);
+                case "andApplyCodeAction":
+                    // verify.completions({ ... }).andApplyCodeAction(...)
+                    if (!(ts.isCallExpression(namespace) && namespace.expression.getText() === "verify.completions")) {
+                        console.error(`Unrecognized fourslash statement: ${statement.getText()}`);
+                        return undefined;
+                    }
+                    return parseVerifyCompletionsArgs(namespace.arguments, callExpression.arguments);
             }
             console.error(`Unrecognized fourslash statement: ${statement.getText()}`);
             return undefined;
@@ -271,6 +274,13 @@ function parseEditStatement(funcName: string, args: readonly ts.Expression[]): E
     }
 }
 
+function getGoMultiLineStringLiteral(text: string): string {
+    if (!text.includes("`") && !text.includes("\\")) {
+        return "`" + text + "`";
+    }
+    return getGoStringLiteral(text);
+}
+
 function getGoStringLiteral(text: string): string {
     return `${JSON.stringify(text)}`;
 }
@@ -362,12 +372,16 @@ function parseGoToArgs(args: readonly ts.Expression[], funcName: string): GoToCm
     }
 }
 
-function parseVerifyCompletionsArgs(args: readonly ts.Expression[]): VerifyCompletionsCmd[] | undefined {
+function parseVerifyCompletionsArgs(args: readonly ts.Expression[], codeActionArgs?: readonly ts.Expression[]): VerifyCompletionsCmd[] | undefined {
     const cmds = [];
+    const codeAction = codeActionArgs?.[0] && parseAndApplyCodeActionArg(codeActionArgs[0]);
     for (const arg of args) {
-        const result = parseVerifyCompletionArg(arg);
+        const result = parseVerifyCompletionArg(arg, codeAction);
         if (!result) {
             return undefined;
+        }
+        if (codeActionArgs?.length) {
+            result.andApplyCodeActionArgs = parseAndApplyCodeActionArg(codeActionArgs[0]);
         }
         cmds.push(result);
     }
@@ -397,7 +411,7 @@ const completionPlus = new Map([
     ["completion.typeKeywordsPlus", "CompletionTypeKeywordsPlus"],
 ]);
 
-function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | undefined {
+function parseVerifyCompletionArg(arg: ts.Expression, codeActionArgs?: VerifyApplyCodeActionArgs): VerifyCompletionsCmd | undefined {
     let marker: string | undefined;
     let goArgs: VerifyCompletionsArgs | undefined;
     const obj = getObjectLiteralExpression(arg);
@@ -478,7 +492,7 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
                     }
                     expected = `${funcName}(\n[]fourslash.CompletionsExpectedItem{`;
                     for (const elem of items.elements) {
-                        const result = parseExpectedCompletionItem(elem);
+                        const result = parseExpectedCompletionItem(elem, codeActionArgs);
                         if (!result) {
                             return undefined;
                         }
@@ -589,7 +603,7 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
     };
 }
 
-function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
+function parseExpectedCompletionItem(expr: ts.Expression, codeActionArgs?: VerifyApplyCodeActionArgs): string | undefined {
     if (completionConstants.has(expr.getText())) {
         return completionConstants.get(expr.getText())!;
     }
@@ -600,6 +614,7 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
     if (strExpr = getObjectLiteralExpression(expr)) {
         let isDeprecated = false; // !!!
         let isOptional = false;
+        let sourceInit: ts.StringLiteralLike | undefined;
         let extensions: string[] = []; // !!!
         let itemProps: string[] = [];
         let name: string | undefined;
@@ -708,6 +723,26 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
                 }
                 case "isFromUncheckedFile":
                     break; // Ignored
+                case "hasAction":
+                    itemProps.push("AdditionalTextEdits: fourslash.AnyTextEdits,");
+                    break;
+                case "source":
+                case "sourceDisplay":
+                    if (sourceInit !== undefined) {
+                        break;
+                    }
+                    if (sourceInit = getStringLiteralLike(init)) {
+                        itemProps.push(`Data: PtrTo(any(&ls.CompletionItemData{
+                            AutoImport: &ls.AutoImportData{
+                                ModuleSpecifier: ${getGoStringLiteral(sourceInit.text)},
+                            },
+                        })),`);
+                    }
+                    else {
+                        console.error(`Expected string literal for source/sourceDisplay, got ${init.getText()}`);
+                        return undefined;
+                    }
+                    break;
                 case "commitCharacters":
                     // !!! support these later
                     break;
@@ -732,6 +767,11 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
         if (!name) {
             return undefined; // Shouldn't happen
         }
+        if (codeActionArgs && codeActionArgs.name === name && codeActionArgs.source === sourceInit?.text) {
+            itemProps.push(`LabelDetails: &lsproto.CompletionItemLabelDetails{
+                Description: PtrTo(${getGoStringLiteral(codeActionArgs.source)}),
+            },`);
+        }
         if (replacementSpanIdx) {
             itemProps.push(`TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
                 TextEdit: &lsproto.TextEdit{
@@ -752,6 +792,60 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
     }
     console.error(`Expected string literal or object literal for expected completion item, got ${expr.getText()}`);
     return undefined; // Unsupported expression type
+}
+
+function parseAndApplyCodeActionArg(arg: ts.Expression): VerifyApplyCodeActionArgs | undefined {
+    const obj = getObjectLiteralExpression(arg);
+    if (!obj) {
+        console.error(`Expected object literal for code action argument, got ${arg.getText()}`);
+        return undefined;
+    }
+    const nameProperty = obj.properties.find(prop =>
+        ts.isPropertyAssignment(prop) &&
+        ts.isIdentifier(prop.name) &&
+        prop.name.text === "name" &&
+        ts.isStringLiteralLike(prop.initializer)
+    ) as ts.PropertyAssignment | undefined;
+    if (!nameProperty) {
+        console.error(`Expected name property in code action argument, got ${obj.getText()}`);
+        return undefined;
+    }
+    const sourceProperty = obj.properties.find(prop =>
+        ts.isPropertyAssignment(prop) &&
+        ts.isIdentifier(prop.name) &&
+        prop.name.text === "source" &&
+        ts.isStringLiteralLike(prop.initializer)
+    ) as ts.PropertyAssignment | undefined;
+    if (!sourceProperty) {
+        console.error(`Expected source property in code action argument, got ${obj.getText()}`);
+        return undefined;
+    }
+    const descriptionProperty = obj.properties.find(prop =>
+        ts.isPropertyAssignment(prop) &&
+        ts.isIdentifier(prop.name) &&
+        prop.name.text === "description" &&
+        ts.isStringLiteralLike(prop.initializer)
+    ) as ts.PropertyAssignment | undefined;
+    if (!descriptionProperty) {
+        console.error(`Expected description property in code action argument, got ${obj.getText()}`);
+        return undefined;
+    }
+    const newFileContentProperty = obj.properties.find(prop =>
+        ts.isPropertyAssignment(prop) &&
+        ts.isIdentifier(prop.name) &&
+        prop.name.text === "newFileContent" &&
+        ts.isStringLiteralLike(prop.initializer)
+    ) as ts.PropertyAssignment | undefined;
+    if (!newFileContentProperty) {
+        console.error(`Expected newFileContent property in code action argument, got ${obj.getText()}`);
+        return undefined;
+    }
+    return {
+        name: (nameProperty.initializer as ts.StringLiteralLike).text,
+        source: (sourceProperty.initializer as ts.StringLiteralLike).text,
+        description: (descriptionProperty.initializer as ts.StringLiteralLike).text,
+        newFileContent: (newFileContentProperty.initializer as ts.StringLiteralLike).text,
+    };
 }
 
 function parseBaselineFindAllReferencesArgs(args: readonly ts.Expression[]): [VerifyBaselineFindAllReferencesCmd] | undefined {
@@ -1287,6 +1381,7 @@ interface VerifyCompletionsCmd {
     marker: string;
     isNewIdentifierLocation?: true;
     args?: VerifyCompletionsArgs | "nil";
+    andApplyCodeActionArgs?: VerifyApplyCodeActionArgs;
 }
 
 interface VerifyCompletionsArgs {
@@ -1294,6 +1389,13 @@ interface VerifyCompletionsArgs {
     excludes?: string;
     exact?: string;
     unsorted?: string;
+}
+
+interface VerifyApplyCodeActionArgs {
+    name: string;
+    source: string;
+    description: string;
+    newFileContent: string;
 }
 
 interface VerifyBaselineFindAllReferencesCmd {
@@ -1371,7 +1473,7 @@ type Cmd =
     | VerifyBaselineRenameCmd
     | VerifyRenameInfoCmd;
 
-function generateVerifyCompletions({ marker, args, isNewIdentifierLocation }: VerifyCompletionsCmd): string {
+function generateVerifyCompletions({ marker, args, isNewIdentifierLocation, andApplyCodeActionArgs }: VerifyCompletionsCmd): string {
     let expectedList: string;
     if (args === "nil") {
         expectedList = "nil";
@@ -1395,7 +1497,17 @@ function generateVerifyCompletions({ marker, args, isNewIdentifierLocation }: Ve
     },
 }`;
     }
-    return `f.VerifyCompletions(t, ${marker}, ${expectedList})`;
+
+    const call = `f.VerifyCompletions(t, ${marker}, ${expectedList})`;
+    if (andApplyCodeActionArgs) {
+        return `${call}.AndApplyCodeAction(t, &fourslash.CompletionsExpectedCodeAction{
+            Name: ${getGoStringLiteral(andApplyCodeActionArgs.name)},
+            Source: ${getGoStringLiteral(andApplyCodeActionArgs.source)},
+            Description: ${getGoStringLiteral(andApplyCodeActionArgs.description)},
+            NewFileContent: ${getGoMultiLineStringLiteral(andApplyCodeActionArgs.newFileContent)},
+        })`;
+    }
+    return call;
 }
 
 function generateBaselineFindAllReferences({ markers, ranges }: VerifyBaselineFindAllReferencesCmd): string {
@@ -1497,7 +1609,7 @@ interface GoTest {
 }
 
 function generateGoTest(failingTests: Set<string>, test: GoTest): string {
-    const testName = (test.name[0].toUpperCase() + test.name.substring(1)).replaceAll("-", "_");
+    const testName = (test.name[0].toUpperCase() + test.name.substring(1)).replaceAll("-", "_").replaceAll(/[^a-zA-Z0-9_]/g, "");
     const content = test.content;
     const commands = test.commands.map(cmd => generateCmd(cmd)).join("\n");
     const imports = [`"github.com/microsoft/typescript-go/internal/fourslash"`];

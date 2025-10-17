@@ -63,7 +63,7 @@ func ensureItemData(fileName string, pos int, list *lsproto.CompletionList) *lsp
 	}
 	for _, item := range list.Items {
 		if item.Data == nil {
-			var data any = &itemData{
+			var data any = &CompletionItemData{
 				FileName: fileName,
 				Position: pos,
 				Name:     item.Label,
@@ -246,7 +246,7 @@ func (origin *symbolOriginInfo) moduleSymbol() *ast.Symbol {
 	}
 }
 
-func (origin *symbolOriginInfo) toCompletionEntryData() *completionEntryData {
+func (origin *symbolOriginInfo) toCompletionEntryData() *AutoImportData {
 	debug.Assert(origin.kind&symbolOriginInfoKindExport != 0, fmt.Sprintf("completionEntryData is not generated for symbolOriginInfo of type %T", origin.data))
 	var ambientModuleName *string
 	if origin.fileName == "" {
@@ -258,7 +258,7 @@ func (origin *symbolOriginInfo) toCompletionEntryData() *completionEntryData {
 	}
 
 	data := origin.data.(*symbolOriginInfoExport)
-	return &completionEntryData{
+	return &AutoImportData{
 		ExportName:          data.exportName,
 		ExportMapKey:        data.exportMapKey,
 		ModuleSpecifier:     data.moduleSpecifier,
@@ -2294,7 +2294,7 @@ func (l *LanguageService) createCompletionItem(
 		}
 	}
 
-	var autoImportData *completionEntryData
+	var autoImportData *AutoImportData
 	if originIsExport(origin) {
 		autoImportData = origin.toCompletionEntryData()
 		hasAction = data.importStatementCompletion == nil
@@ -3300,8 +3300,8 @@ func compareCompletionEntries(entryInSlice *lsproto.CompletionItem, entryToInser
 		result = compareStrings(entryInSlice.Label, entryToInsert.Label)
 	}
 	if result == stringutil.ComparisonEqual && entryInSlice.Data != nil && entryToInsert.Data != nil {
-		sliceEntryData, ok1 := (*entryInSlice.Data).(*completionEntryData)
-		insertEntryData, ok2 := (*entryToInsert.Data).(*completionEntryData)
+		sliceEntryData, ok1 := (*entryInSlice.Data).(*AutoImportData)
+		insertEntryData, ok2 := (*entryToInsert.Data).(*AutoImportData)
 		if ok1 && ok2 && sliceEntryData.ModuleSpecifier != "" && insertEntryData.ModuleSpecifier != "" {
 			// Sort same-named auto-imports by module specifier
 			result = compareNumberOfDirectorySeparators(
@@ -4514,10 +4514,10 @@ func (l *LanguageService) createLSPCompletionItem(
 	hasAction bool,
 	preselect bool,
 	source string,
-	autoImportEntryData *completionEntryData,
+	autoImportEntryData *AutoImportData,
 ) *lsproto.CompletionItem {
 	kind := getCompletionsSymbolKind(elementKind)
-	var data any = &itemData{
+	var data any = &CompletionItemData{
 		FileName:   file.FileName(),
 		Position:   position,
 		Source:     source,
@@ -4949,15 +4949,15 @@ func getArgumentInfoForCompletions(node *ast.Node, position int, file *ast.Sourc
 	}
 }
 
-type itemData struct {
-	FileName   string               `json:"fileName"`
-	Position   int                  `json:"position"`
-	Source     string               `json:"source,omitempty"`
-	Name       string               `json:"name,omitempty"`
-	AutoImport *completionEntryData `json:"autoImport,omitempty"`
+type CompletionItemData struct {
+	FileName   string          `json:"fileName"`
+	Position   int             `json:"position"`
+	Source     string          `json:"source,omitempty"`
+	Name       string          `json:"name,omitempty"`
+	AutoImport *AutoImportData `json:"autoImport,omitempty"`
 }
 
-type completionEntryData struct {
+type AutoImportData struct {
 	/**
 	 * The name of the property or export in the module's symbol table. Differs from the completion name
 	 * in the case of InternalSymbolName.ExportEquals and InternalSymbolName.Default.
@@ -4975,7 +4975,7 @@ type completionEntryData struct {
 	IsPackageJsonImport core.Tristate `json:"isPackageJsonImport"`
 }
 
-func (d *completionEntryData) toSymbolOriginExport(symbolName string, moduleSymbol *ast.Symbol, isDefaultExport bool) *symbolOriginInfoExport {
+func (d *AutoImportData) toSymbolOriginExport(symbolName string, moduleSymbol *ast.Symbol, isDefaultExport bool) *symbolOriginInfoExport {
 	return &symbolOriginInfoExport{
 		symbolName:      symbolName,
 		moduleSymbol:    moduleSymbol,
@@ -5012,7 +5012,7 @@ const (
 func (l *LanguageService) ResolveCompletionItem(
 	ctx context.Context,
 	item *lsproto.CompletionItem,
-	data *itemData,
+	data *CompletionItemData,
 	clientOptions *lsproto.CompletionClientCapabilities,
 	preferences *UserPreferences,
 ) (*lsproto.CompletionItem, error) {
@@ -5028,12 +5028,12 @@ func (l *LanguageService) ResolveCompletionItem(
 	return l.getCompletionItemDetails(ctx, program, data.Position, file, item, data, clientOptions, preferences), nil
 }
 
-func GetCompletionItemData(item *lsproto.CompletionItem) (*itemData, error) {
+func GetCompletionItemData(item *lsproto.CompletionItem) (*CompletionItemData, error) {
 	bytes, err := json.Marshal(item.Data)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal completion item data: %w", err)
 	}
-	var itemData itemData
+	var itemData CompletionItemData
 	if err := json.Unmarshal(bytes, &itemData); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal completion item data: %w", err)
 	}
@@ -5046,7 +5046,7 @@ func (l *LanguageService) getCompletionItemDetails(
 	position int,
 	file *ast.SourceFile,
 	item *lsproto.CompletionItem,
-	itemData *itemData,
+	itemData *CompletionItemData,
 	clientOptions *lsproto.CompletionClientCapabilities,
 	preferences *UserPreferences,
 ) *lsproto.CompletionItem {
@@ -5145,7 +5145,7 @@ func (l *LanguageService) getSymbolCompletionFromItemData(
 	ch *checker.Checker,
 	file *ast.SourceFile,
 	position int,
-	itemData *itemData,
+	itemData *CompletionItemData,
 	clientOptions *lsproto.CompletionClientCapabilities,
 	preferences *UserPreferences,
 ) detailsData {
@@ -5219,7 +5219,7 @@ func (l *LanguageService) getSymbolCompletionFromItemData(
 	return detailsData{}
 }
 
-func (l *LanguageService) getAutoImportSymbolFromCompletionEntryData(ch *checker.Checker, name string, autoImportData *completionEntryData) *symbolDetails {
+func (l *LanguageService) getAutoImportSymbolFromCompletionEntryData(ch *checker.Checker, name string, autoImportData *AutoImportData) *symbolDetails {
 	containingProgram := l.GetProgram() // !!! isPackageJson ? packageJsonAutoimportProvider : program
 	var moduleSymbol *ast.Symbol
 	if autoImportData.AmbientModuleName != nil {
@@ -5318,7 +5318,7 @@ func createCompletionDetailsForSymbol(
 }
 
 // !!! snippets
-func (l *LanguageService) getCompletionItemActions(ctx context.Context, ch *checker.Checker, file *ast.SourceFile, position int, itemData *itemData, symbolDetails *symbolDetails, preferences *UserPreferences) []codeAction {
+func (l *LanguageService) getCompletionItemActions(ctx context.Context, ch *checker.Checker, file *ast.SourceFile, position int, itemData *CompletionItemData, symbolDetails *symbolDetails, preferences *UserPreferences) []codeAction {
 	if itemData.AutoImport != nil && itemData.AutoImport.ModuleSpecifier != "" && symbolDetails.previousToken != nil {
 		// Import statement completion: 'import c|'
 		if symbolDetails.contextToken != nil && l.getImportStatementCompletionInfo(symbolDetails.contextToken, file).replacementSpan != nil {
