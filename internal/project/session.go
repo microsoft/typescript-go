@@ -362,7 +362,7 @@ func (s *Session) getSnapshot(ctx context.Context, uri lsproto.DocumentUri, proj
 	return snapshot, overlays, updateSnapshot
 }
 
-func (s *Session) getSnapshotAndDefaultProject(ctx context.Context, uri lsproto.DocumentUri) (*Snapshot, *Project, error) {
+func (s *Session) getSnapshotAndDefaultProject(ctx context.Context, uri lsproto.DocumentUri, ignoreNoProject bool) (*Snapshot, *Project, error) {
 	snapshot, overlays, updatedSnapshot := s.getSnapshot(ctx, uri, "")
 	project := snapshot.GetDefaultProject(uri)
 	if project == nil && !updatedSnapshot || project != nil && project.dirty {
@@ -375,22 +375,22 @@ func (s *Session) getSnapshotAndDefaultProject(ctx context.Context, uri lsproto.
 		})
 		project = snapshot.GetDefaultProject(uri)
 	}
-	if project == nil {
+	if !ignoreNoProject && project == nil {
 		return nil, nil, fmt.Errorf("no project found for URI %s", uri)
 	}
 	return snapshot, project, nil
 }
 
 func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
-	snapshot, project, err := s.getSnapshotAndDefaultProject(ctx, uri)
+	snapshot, project, err := s.getSnapshotAndDefaultProject(ctx, uri, false)
 	if err != nil {
 		return nil, err
 	}
 	return ls.NewLanguageService(project.GetProgram(), snapshot), nil
 }
 
-func (s *Session) GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) (*Project, *ls.LanguageService, []*Project, error) {
-	snapshot, project, err := s.getSnapshotAndDefaultProject(ctx, uri)
+func (s *Session) GetLanguageServiceAndProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) (*Project, *ls.LanguageService, []*Project, error) {
+	snapshot, project, err := s.getSnapshotAndDefaultProject(ctx, uri, false)
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -398,6 +398,18 @@ func (s *Session) GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUr
 	// !!! TODO: sheetal:  Get other projects that contain the file with symlink
 	allProjects := snapshot.GetProjectsContainingFile(uri)
 	return project, defaultLs, allProjects, nil
+}
+
+func (s *Session) GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) ([]*Project, error) {
+	// !!! sheetal : should not retain this project? probably
+	snapshot, _, err := s.getSnapshotAndDefaultProject(ctx, uri, true)
+	if err != nil {
+		return nil, err
+	}
+
+	// !!! TODO: sheetal:  Get other projects that contain the file with symlink
+	allProjects := snapshot.GetProjectsContainingFile(uri)
+	return allProjects, nil
 }
 
 func (s *Session) GetLanguageServiceForProjectWithFile(ctx context.Context, project *Project, uri lsproto.DocumentUri) *ls.LanguageService {
