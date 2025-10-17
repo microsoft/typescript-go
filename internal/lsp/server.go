@@ -218,6 +218,28 @@ func (s *Server) RefreshDiagnostics(ctx context.Context) error {
 	return nil
 }
 
+func (s *Server) RequestConfiguration(ctx context.Context) (*ls.UserPreferences, error) {
+	result, err := s.sendRequest(ctx, lsproto.MethodWorkspaceConfiguration, &lsproto.ConfigurationParams{
+		Items: []*lsproto.ConfigurationItem{
+			{
+				Section: ptrTo("typescript"),
+			},
+		},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("configure request failed: %w", err)
+	}
+	configs := result.([]any)
+	s.Log(fmt.Sprintf("\n\nconfiguration: %+v, %T\n\n", configs, configs))
+	userPreferences := ls.NewDefaultUserPreferences()
+	for _, item := range configs {
+		if parsed := userPreferences.Parse(item); parsed != nil {
+			return parsed, nil
+		}
+	}
+	return userPreferences, nil
+}
+
 func (s *Server) Run() error {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
@@ -441,6 +463,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerRequestHandler(handlers, lsproto.ShutdownInfo, (*Server).handleShutdown)
 	registerNotificationHandler(handlers, lsproto.ExitInfo, (*Server).handleExit)
 
+	registerNotificationHandler(handlers, lsproto.WorkspaceDidChangeConfigurationInfo, (*Server).handleDidChangeWorkspaceConfiguration)
 	registerNotificationHandler(handlers, lsproto.TextDocumentDidOpenInfo, (*Server).handleDidOpen)
 	registerNotificationHandler(handlers, lsproto.TextDocumentDidChangeInfo, (*Server).handleDidChange)
 	registerNotificationHandler(handlers, lsproto.TextDocumentDidSaveInfo, (*Server).handleDidSave)
@@ -686,6 +709,18 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 		NpmExecutor: s,
 		ParseCache:  s.parseCache,
 	})
+
+	// request userPreferences if not provided at initialization
+	if s.initializeParams.InitializationOptions == nil {
+		userPreferences, err := s.RequestConfiguration(ctx)
+		if err != nil {
+			return err
+		}
+		s.session.Configure(userPreferences)
+	} else {
+		// !!! handle userPreferences from initialization
+	}
+
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	if s.compilerOptionsForInferredProjects != nil {
 		s.session.DidChangeCompilerOptionsForInferredProjects(ctx, s.compilerOptionsForInferredProjects)
@@ -701,6 +736,15 @@ func (s *Server) handleShutdown(ctx context.Context, params any, _ *lsproto.Requ
 
 func (s *Server) handleExit(ctx context.Context, params any) error {
 	return io.EOF
+}
+
+func (s *Server) handleDidChangeWorkspaceConfiguration(ctx context.Context, params *lsproto.DidChangeConfigurationParams) error {
+	userPreferences := s.session.UserPreferences().CopyOrDefault()
+	if parsed := userPreferences.Parse(params.Settings); parsed != nil {
+		userPreferences = parsed
+	}
+	s.session.Configure(userPreferences)
+	return nil
 }
 
 func (s *Server) handleDidOpen(ctx context.Context, params *lsproto.DidOpenTextDocumentParams) error {
@@ -788,10 +832,8 @@ func (s *Server) handleCompletion(ctx context.Context, languageService *ls.Langu
 		params.Position,
 		params.Context,
 		getCompletionClientCapabilities(s.initializeParams),
-		&ls.UserPreferences{
-			IncludeCompletionsForModuleExports:    core.TSTrue,
-			IncludeCompletionsForImportStatements: core.TSTrue,
-		})
+		languageService.UserPreferences(),
+	)
 }
 
 func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsproto.CompletionItem, reqMsg *lsproto.RequestMessage) (lsproto.CompletionResolveResponse, error) {
@@ -809,10 +851,7 @@ func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsprot
 		params,
 		data,
 		getCompletionClientCapabilities(s.initializeParams),
-		&ls.UserPreferences{
-			IncludeCompletionsForModuleExports:    core.TSTrue,
-			IncludeCompletionsForImportStatements: core.TSTrue,
-		},
+		languageService.UserPreferences(),
 	)
 }
 
@@ -890,7 +929,9 @@ func isBlockingMethod(method lsproto.Method) bool {
 		lsproto.MethodTextDocumentDidChange,
 		lsproto.MethodTextDocumentDidSave,
 		lsproto.MethodTextDocumentDidClose,
-		lsproto.MethodWorkspaceDidChangeWatchedFiles:
+		lsproto.MethodWorkspaceDidChangeWatchedFiles,
+		lsproto.MethodWorkspaceDidChangeConfiguration,
+		lsproto.MethodWorkspaceConfiguration:
 		return true
 	}
 	return false
