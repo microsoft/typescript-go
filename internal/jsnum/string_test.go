@@ -4,15 +4,17 @@ import (
 	"flag"
 	"fmt"
 	"math"
-	"os"
-	"path/filepath"
+	"runtime"
 	"slices"
+	"strings"
+	"sync"
 	"testing"
 	"unicode/utf8"
 
 	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/testutil/jstest"
 	"gotest.tools/v3/assert"
+	"modernc.org/quickjs"
 )
 
 type stringTest struct {
@@ -286,40 +288,30 @@ func FuzzFromStringJS(f *testing.F) {
 			t.Skip()
 		}
 
+		// https://gitlab.com/cznic/quickjs/-/issues/6
+		if strings.Contains(s, "0000000000.0000000000") {
+			t.Skip()
+		}
+
 		n := FromString(s)
 		results := getStringResultsFromJS(t, []stringTest{{str: s}})
 		assert.Equal(t, len(results), 1)
-		assertEqualNumber(t, n, results[0].number)
+		assertEqualNumber(t, n, results[0].number, "for input string "+s)
 	})
 }
 
-func getStringResultsFromJS(t testing.TB, tests []stringTest) []stringTest {
-	// t.Helper()
-	tmpdir := t.TempDir()
-
-	type data struct {
-		Bits [2]uint32 `json:"bits"`
-		Str  string    `json:"str"`
-	}
-
-	inputData := make([]data, len(tests))
-	for i, test := range tests {
-		inputData[i] = data{
-			Bits: numberToUint32Array(test.number),
-			Str:  test.str,
+var mvPool = sync.Pool{
+	New: func() any {
+		vm, err := quickjs.NewVM()
+		if err != nil {
+			panic(fmt.Sprintf("failed to create QuickJS VM: %v", err))
 		}
-	}
 
-	jsonInput, err := json.Marshal(inputData)
-	assert.NilError(t, err)
+		runtime.SetFinalizer(vm, func(vm *quickjs.VM) {
+			vm.Close()
+		})
 
-	jsonInputPath := filepath.Join(tmpdir, "input.json")
-	err = os.WriteFile(jsonInputPath, jsonInput, 0o644)
-	assert.NilError(t, err)
-
-	script := `
-		import fs from 'fs';
-
+		script := `
 		function fromBits(bits) {
 			const buffer = new ArrayBuffer(8);
 			(new Uint32Array(buffer))[0] = bits[0];
@@ -333,20 +325,47 @@ func getStringResultsFromJS(t testing.TB, tests []stringTest) []stringTest {
 			return [(new Uint32Array(buffer))[0], (new Uint32Array(buffer))[1]];
 		}
 
-		export default function(inputFile) {
-			const input = JSON.parse(fs.readFileSync(inputFile, 'utf8'));
-
+		function getResults(input) {
 			const output = input.map((input) => ({
 				str: ""+fromBits(input.bits),
-				bits: toBits(+input.str),	
+				bits: toBits(+input.str),
 			}));
-
-			return output;
+			return JSON.stringify(output);
 		};
 	`
 
-	outputData, err := jstest.EvalNodeScript[[]data](t, script, tmpdir, jsonInputPath)
+		_, err = vm.Eval(script, quickjs.EvalGlobal)
+		if err != nil {
+			panic(fmt.Sprintf("failed to eval QuickJS script: %v", err))
+		}
+
+		return vm
+	},
+}
+
+func getStringResultsFromJS(t testing.TB, tests []stringTest) []stringTest {
+	type data struct {
+		Bits [2]uint32 `json:"bits"`
+		Str  string    `json:"str"`
+	}
+
+	inputData := make([]data, len(tests))
+	for i, test := range tests {
+		inputData[i] = data{
+			Bits: numberToUint32Array(test.number),
+			Str:  test.str,
+		}
+	}
+
+	vm := mvPool.Get().(*quickjs.VM)
+
+	r, err := vm.Call("getResults", inputData)
 	assert.NilError(t, err)
+
+	var outputData []data
+	err = json.Unmarshal([]byte(r.(string)), &outputData)
+	assert.NilError(t, err)
+
 	assert.Equal(t, len(outputData), len(tests))
 
 	output := make([]stringTest, len(tests))

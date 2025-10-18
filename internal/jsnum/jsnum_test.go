@@ -8,13 +8,13 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-func assertEqualNumber(t *testing.T, got, want Number) {
+func assertEqualNumber(t *testing.T, got, want Number, msg ...string) {
 	t.Helper()
 
 	if got.IsNaN() || want.IsNaN() {
-		assert.Equal(t, got.IsNaN(), want.IsNaN(), "got: %v, want: %v", got, want)
+		assert.Equal(t, got.IsNaN(), want.IsNaN(), "got: %v, want: %v; %s", got, want, msg)
 	} else {
-		assert.Equal(t, got, want)
+		assert.Equal(t, got, want, "%s", msg)
 	}
 }
 
