@@ -27,7 +27,6 @@ package pnp
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"regexp"
 	"slices"
@@ -178,7 +177,7 @@ func InitPNPManifest(m *Manifest, manifestPath string) error {
 func LoadPNPManifest(p string) (Manifest, error) {
 	content, err := os.ReadFile(p)
 	if err != nil {
-		return Manifest{}, fmt.Errorf("%s: %w", diagnostics.We_failed_to_read_the_content_of_the_manifest.Format(), err)
+		return Manifest{}, errors.New(diagnostics.We_failed_to_read_the_content_of_the_manifest_Colon_0.Format(err.Error()))
 	}
 
 	loc := rePNP.FindIndex(content)
@@ -205,12 +204,12 @@ func LoadPNPManifest(p string) (Manifest, error) {
 
 	var manifest Manifest
 	if err = json.Unmarshal(jsonBuf, &manifest); err != nil {
-		return Manifest{}, fmt.Errorf("%s: %w", diagnostics.We_failed_to_parse_the_PnP_data_payload_as_proper_JSON_Did_you_manually_edit_the_file.Format(), err)
+		return Manifest{}, errors.New(diagnostics.We_failed_to_parse_the_PnP_data_payload_as_proper_JSON_Did_you_manually_edit_the_file_Colon_0.Format(err.Error()))
 	}
 
 	err = InitPNPManifest(&manifest, p)
 	if err != nil {
-		return Manifest{}, fmt.Errorf("%s: %w", diagnostics.We_failed_to_init_the_PnP_manifest.Format(), err)
+		return Manifest{}, errors.New(diagnostics.We_failed_to_init_the_PnP_manifest_Colon_0.Format(err.Error()))
 	}
 	return manifest, nil
 }

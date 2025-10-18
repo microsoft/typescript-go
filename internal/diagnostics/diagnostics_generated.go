@@ -4260,13 +4260,13 @@ var X_assertion_failed_Colon_should_have_a_top_level_name_key = &Message{code: 1
 
 var X_assertion_failed_Colon_should_have_a_top_level_range_key = &Message{code: 100012, category: CategoryError, key: "assertion_failed_Colon_should_have_a_top_level_range_key_100012", text: "assertion failed: should have a top-level range key"}
 
-var We_failed_to_read_the_content_of_the_manifest = &Message{code: 100013, category: CategoryError, key: "We_failed_to_read_the_content_of_the_manifest_100013", text: "We failed to read the content of the manifest."}
+var We_failed_to_read_the_content_of_the_manifest_Colon_0 = &Message{code: 100013, category: CategoryError, key: "We_failed_to_read_the_content_of_the_manifest_Colon_0_100013", text: "We failed to read the content of the manifest: {0}"}
 
 var We_failed_to_locate_the_PnP_data_payload_inside_its_manifest_file_Did_you_manually_edit_the_file = &Message{code: 100014, category: CategoryError, key: "We_failed_to_locate_the_PnP_data_payload_inside_its_manifest_file_Did_you_manually_edit_the_file_100014", text: "We failed to locate the PnP data payload inside its manifest file. Did you manually edit the file?"}
 
-var We_failed_to_parse_the_PnP_data_payload_as_proper_JSON_Did_you_manually_edit_the_file = &Message{code: 100015, category: CategoryError, key: "We_failed_to_parse_the_PnP_data_payload_as_proper_JSON_Did_you_manually_edit_the_file_100015", text: "We failed to parse the PnP data payload as proper JSON; Did you manually edit the file?"}
+var We_failed_to_parse_the_PnP_data_payload_as_proper_JSON_Did_you_manually_edit_the_file_Colon_0 = &Message{code: 100015, category: CategoryError, key: "We_failed_to_parse_the_PnP_data_payload_as_proper_JSON_Did_you_manually_edit_the_file_Colon_0_100015", text: "We failed to parse the PnP data payload as proper JSON; Did you manually edit the file?: {0}"}
 
-var We_failed_to_init_the_PnP_manifest = &Message{code: 100016, category: CategoryError, key: "We_failed_to_init_the_PnP_manifest_100016", text: "We failed to init the PnP manifest"}
+var We_failed_to_init_the_PnP_manifest_Colon_0 = &Message{code: 100016, category: CategoryError, key: "We_failed_to_init_the_PnP_manifest_Colon_0_100016", text: "We failed to init the PnP manifest: {0}"}
 
 var X_should_have_an_entry_in_the_package_registry_for_0 = &Message{code: 100017, category: CategoryError, key: "should_have_an_entry_in_the_package_registry_for_0_100017", text: "should have an entry in the package registry for {0}"}
 

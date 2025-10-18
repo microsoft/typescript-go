@@ -51,7 +51,7 @@
         "category": "Error",
         "code": 100012
     },
-    "We failed to read the content of the manifest.": {
+    "We failed to read the content of the manifest: {0}": {
         "category": "Error",
         "code": 100013
     },
@@ -59,11 +59,11 @@
         "category": "Error",
         "code": 100014
     },
-    "We failed to parse the PnP data payload as proper JSON; Did you manually edit the file?": {
+    "We failed to parse the PnP data payload as proper JSON; Did you manually edit the file?: {0}": {
         "category": "Error",
         "code": 100015
     },
-    "We failed to init the PnP manifest": {
+    "We failed to init the PnP manifest: {0}": {
         "category": "Error",
         "code": 100016
     },
