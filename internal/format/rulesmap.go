@@ -10,23 +10,29 @@ import (
 
 func getRules(context *formattingContext, rules []*ruleImpl) []*ruleImpl {
 	bucket := getRulesMap()[getRuleBucketIndex(context.currentTokenSpan.Kind, context.nextTokenSpan.Kind)]
-	if len(bucket) > 0 {
-		ruleActionMask := ruleActionNone
-	outer:
-		for _, rule := range bucket {
-			acceptRuleActions := ^getRuleActionExclusion(ruleActionMask)
-			if rule.Action()&acceptRuleActions != 0 {
-				preds := rule.Context()
-				for _, p := range preds {
-					if !p(context) {
-						continue outer
-					}
-				}
+	if len(bucket) == 0 {
+		return rules
+	}
+
+	ruleActionMask := ruleActionNone
+outer:
+	for _, rule := range bucket {
+		acceptRuleActions := ^getRuleActionExclusion(ruleActionMask)
+		if rule.Action()&acceptRuleActions != 0 {
+			preds := rule.Context()
+			if len(preds) == 0 {
 				rules = append(rules, rule)
 				ruleActionMask |= rule.Action()
+				continue
 			}
+			for _, p := range preds {
+				if !p(context) {
+					continue outer
+				}
+			}
+			rules = append(rules, rule)
+			ruleActionMask |= rule.Action()
 		}
-		return rules
 	}
 	return rules
 }

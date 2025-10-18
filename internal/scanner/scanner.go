@@ -2430,6 +2430,11 @@ func GetECMALineStarts(sourceFile ast.SourceFileLike) []core.TextPos {
 	return sourceFile.ECMALineMap()
 }
 
+func GetECMALineOfPosition(sourceFile ast.SourceFileLike, pos int) int {
+	lineMap := GetECMALineStarts(sourceFile)
+	return ComputeLineOfPosition(lineMap, pos)
+}
+
 func GetECMALineAndCharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, character int) {
 	lineMap := GetECMALineStarts(sourceFile)
 	line = ComputeLineOfPosition(lineMap, pos)

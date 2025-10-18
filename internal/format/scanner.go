@@ -48,10 +48,12 @@ func newFormattingScanner(text string, languageVariant core.LanguageVariant, sta
 	scan.SetText(text)
 
 	fmtScn := &formattingScanner{
-		s:          scan,
-		startPos:   startPos,
-		endPos:     endPos,
-		wasNewLine: true,
+		s:              scan,
+		startPos:       startPos,
+		endPos:         endPos,
+		wasNewLine:     true,
+		leadingTrivia:  make([]TextRangeWithKind, 0, 8),
+		trailingTrivia: make([]TextRangeWithKind, 0, 8),
 	}
 
 	res := worker.execute(fmtScn)
@@ -72,8 +74,8 @@ func (s *formattingScanner) advance() {
 		s.s.Scan()
 	}
 
-	s.leadingTrivia = nil
-	s.trailingTrivia = nil
+	s.leadingTrivia = s.leadingTrivia[:0]
+	s.trailingTrivia = s.trailingTrivia[:0]
 
 	pos := s.s.TokenFullStart()
 
@@ -240,10 +242,17 @@ func (s *formattingScanner) readTokenInfo(n *ast.Node) tokenInfo {
 	}
 
 	s.hasLastTokenInfo = true
+	var leadingTrivia, trailingTrivia []TextRangeWithKind
+	if len(s.leadingTrivia) > 0 {
+		leadingTrivia = slices.Clone(s.leadingTrivia)
+	}
+	if len(s.trailingTrivia) > 0 {
+		trailingTrivia = slices.Clone(s.trailingTrivia)
+	}
 	s.lastTokenInfo = tokenInfo{
-		leadingTrivia:  slices.Clone(s.leadingTrivia),
+		leadingTrivia:  leadingTrivia,
 		token:          token,
-		trailingTrivia: slices.Clone(s.trailingTrivia),
+		trailingTrivia: trailingTrivia,
 	}
 	s.lastTokenInfo = fixTokenKind(s.lastTokenInfo, n)
 
