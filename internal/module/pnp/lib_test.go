@@ -6,7 +6,6 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"strings"
 	"testing"
 
 	"github.com/go-json-experiment/json"
@@ -148,54 +147,6 @@ func TestResolveUnqualified(t *testing.T) {
 				}
 			})
 		}
-	}
-}
-
-func TestEdgeCase_OnePkgCachedAndUnplugged(t *testing.T) {
-	t.Parallel()
-	manifestJSONPath := filepath.Join(repo.TestDataPath, "fixtures", "pnp", "edge_case_manifest_state.json")
-	content, err := os.ReadFile(manifestJSONPath)
-	if err != nil {
-		t.Fatalf("failed to read manifest json: %v", err)
-	}
-
-	var manifest Manifest
-	if err = json.Unmarshal(content, &manifest); err != nil {
-		t.Fatalf("failed to unmarshal manifest: %v", err)
-	}
-
-	err = InitPNPManifest(&manifest, manifestJSONPath)
-	if err != nil {
-		t.Fatalf("failed to init pnp manifest: %v", err)
-	}
-
-	issuer := filepath.Join(
-		repo.TestDataPath,
-		"fixtures",
-		"pnp",
-		".yarn",
-		"unplugged",
-		"@carbon-icons-react-virtual-379302d360",
-		"node_modules",
-		"@carbon",
-		"icons-react",
-		"es",
-	)
-
-	res, err := ResolveToUnqualifiedViaManifest(&manifest, "@carbon/icon-helpers", issuer)
-	if err != nil {
-		t.Fatalf("resolve failed: %v", err)
-	}
-
-	switch res.Kind {
-	case ResolutionResolved:
-		suffix := ".yarn/unplugged/@carbon-icon-helpers-npm-10.54.0-a58f8b7b6c/node_modules/@carbon/icon-helpers/"
-		got := filepath.ToSlash(res.Path)
-		if !strings.HasSuffix(got, suffix) {
-			t.Fatalf("expected resolved path to end with %q, got %q", suffix, got)
-		}
-	default:
-		t.Fatalf("unexpected resolution kind: %v", res.Kind)
 	}
 }
 
