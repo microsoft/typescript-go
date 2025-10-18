@@ -29,6 +29,7 @@ type KnownSymlinks struct {
 	directoriesByRealpath     collections.MultiMap[tspath.Path, string]
 	files                     collections.SyncMap[tspath.Path, string]
 	HasProcessedResolutions   bool
+	populatedPackages         collections.SyncMap[string, struct{}]
 	cwd                       string
 	useCaseSensitiveFileNames bool
 }
@@ -122,4 +123,13 @@ func (cache *KnownSymlinks) guessDirectorySymlink(a string, b string, cwd string
 
 func (cache *KnownSymlinks) isNodeModulesOrScopedPackageDirectory(s string) bool {
 	return s != "" && (tspath.GetCanonicalFileName(s, cache.useCaseSensitiveFileNames) == "node_modules" || strings.HasPrefix(s, "@"))
+}
+
+func (cache *KnownSymlinks) IsPackagePopulated(packageJsonPath string) bool {
+	_, exists := cache.populatedPackages.Load(packageJsonPath)
+	return exists
+}
+
+func (cache *KnownSymlinks) MarkPackageAsPopulated(packageJsonPath string) {
+	cache.populatedPackages.Store(packageJsonPath, struct{}{})
 }

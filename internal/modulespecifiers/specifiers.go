@@ -178,6 +178,12 @@ func populateSymlinkCacheFromResolutions(importingFileName string, host ModuleSp
 	}
 
 	packageJsonPath := tspath.CombinePaths(packageJsonDir, "package.json")
+
+	// Check if we've already populated symlinks for this package.json
+	if links.IsPackagePopulated(packageJsonPath) {
+		return
+	}
+
 	pkgJsonInfo := host.GetPackageJsonInfo(packageJsonPath)
 	if pkgJsonInfo == nil {
 		return
@@ -188,43 +194,48 @@ func populateSymlinkCacheFromResolutions(importingFileName string, host ModuleSp
 		return
 	}
 
-	var allDeps []string
-	if deps, ok := pkgJson.Dependencies.GetValue(); ok {
+	// Mark this package as being processed to avoid redundant work
+	links.MarkPackageAsPopulated(packageJsonPath)
+
+	cwd := host.GetCurrentDirectory()
+	caseSensitive := host.UseCaseSensitiveFileNames()
+
+	// Helper to resolve dependencies without creating intermediate slices
+	resolveDeps := func(deps map[string]string) {
 		for depName := range deps {
-			allDeps = append(allDeps, depName)
-		}
-	}
-	if peerDeps, ok := pkgJson.PeerDependencies.GetValue(); ok {
-		for depName := range peerDeps {
-			allDeps = append(allDeps, depName)
-		}
-	}
-	if optionalDeps, ok := pkgJson.OptionalDependencies.GetValue(); ok {
-		for depName := range optionalDeps {
-			allDeps = append(allDeps, depName)
+			resolved := host.ResolveModuleName(depName, packageJsonPath, options.OverrideImportMode)
+			if resolved != nil && resolved.OriginalPath != "" && resolved.ResolvedFileName != "" {
+				processResolution(links, resolved.OriginalPath, resolved.ResolvedFileName, cwd, caseSensitive)
+			}
 		}
 	}
 
-	for _, depName := range allDeps {
-		resolved := host.ResolveModuleName(depName, packageJsonPath, options.OverrideImportMode)
-		if resolved != nil && resolved.OriginalPath != "" && resolved.ResolvedFileName != "" {
-			processResolution(links, resolved.OriginalPath, resolved.ResolvedFileName, host.GetCurrentDirectory(), host.UseCaseSensitiveFileNames())
-		}
+	if deps, ok := pkgJson.Dependencies.GetValue(); ok {
+		resolveDeps(deps)
+	}
+	if peerDeps, ok := pkgJson.PeerDependencies.GetValue(); ok {
+		resolveDeps(peerDeps)
+	}
+	if optionalDeps, ok := pkgJson.OptionalDependencies.GetValue(); ok {
+		resolveDeps(optionalDeps)
 	}
 }
 
 func processResolution(links *symlinks.KnownSymlinks, originalPath string, resolvedFileName string, cwd string, caseSensitive bool) {
-	links.SetFile(tspath.ToPath(originalPath, cwd, caseSensitive), resolvedFileName)
+	originalPathKey := tspath.ToPath(originalPath, cwd, caseSensitive)
+	links.SetFile(originalPathKey, resolvedFileName)
+
 	commonResolved, commonOriginal := guessDirectorySymlink(originalPath, resolvedFileName, cwd, caseSensitive)
 	if commonResolved != "" && commonOriginal != "" {
 		symlinkPath := tspath.ToPath(commonOriginal, cwd, caseSensitive)
 		if !tspath.ContainsIgnoredPath(string(symlinkPath)) {
+			realPath := tspath.ToPath(commonResolved, cwd, caseSensitive)
 			links.SetDirectory(
 				commonOriginal,
 				symlinkPath.EnsureTrailingDirectorySeparator(),
 				&symlinks.KnownDirectoryLink{
 					Real:     tspath.EnsureTrailingDirectorySeparator(commonResolved),
-					RealPath: tspath.ToPath(commonResolved, cwd, caseSensitive).EnsureTrailingDirectorySeparator(),
+					RealPath: realPath.EnsureTrailingDirectorySeparator(),
 				},
 			)
 		}
