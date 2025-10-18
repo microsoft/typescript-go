@@ -8,7 +8,3 @@
 +const pkg = require("package-b");
  exports.a = pkg.invoke();
 
-
- //// [index.d.ts]
--export declare const a: import("package-a").Foo;
-+export declare const a: import("../packageA").Foo;

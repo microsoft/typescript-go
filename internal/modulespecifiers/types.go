@@ -5,6 +5,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/packagejson"
+	"github.com/microsoft/typescript-go/internal/symlinks"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -45,7 +46,7 @@ type PackageJsonInfo interface {
 
 type ModuleSpecifierGenerationHost interface {
 	// GetModuleResolutionCache() any // !!! TODO: adapt new resolution cache model
-	// GetSymlinkCache() any // !!! TODO: adapt new resolution cache model
+	GetSymlinkCache() *symlinks.KnownSymlinks
 	// GetFileIncludeReasons() any // !!! TODO: adapt new resolution cache model
 	CommonSourceDirectory() string
 	GetGlobalTypingsCacheLocation() string
@@ -63,6 +64,7 @@ type ModuleSpecifierGenerationHost interface {
 	GetDefaultResolutionModeForFile(file ast.HasFileName) core.ResolutionMode
 	GetResolvedModuleFromModuleSpecifier(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) *module.ResolvedModule
 	GetModeForUsageLocation(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) core.ResolutionMode
+	ResolveModuleName(moduleName string, containingFile string, resolutionMode core.ResolutionMode) *module.ResolvedModule
 }
 
 type ImportModuleSpecifierPreference string

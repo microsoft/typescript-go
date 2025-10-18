@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/printer"
+	"github.com/microsoft/typescript-go/internal/symlinks"
 	"github.com/microsoft/typescript-go/internal/testutil/emittestutil"
 	"github.com/microsoft/typescript-go/internal/testutil/parsetestutil"
 	"github.com/microsoft/typescript-go/internal/transformers"
@@ -67,6 +68,14 @@ func (p *fakeProgram) GetGlobalTypingsCacheLocation() string {
 
 func (p *fakeProgram) GetNearestAncestorDirectoryWithPackageJson(dirname string) string {
 	return ""
+}
+
+func (p *fakeProgram) GetSymlinkCache() *symlinks.KnownSymlinks {
+	return nil
+}
+
+func (p *fakeProgram) ResolveModuleName(moduleName string, containingFile string, resolutionMode core.ResolutionMode) *module.ResolvedModule {
+	return nil
 }
 
 func (p *fakeProgram) GetPackageJsonInfo(pkgJsonPath string) modulespecifiers.PackageJsonInfo {
