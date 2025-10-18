@@ -4253,3 +4253,33 @@ var Do_not_print_diagnostics = &Message{code: 100000, category: CategoryMessage,
 var Run_in_single_threaded_mode = &Message{code: 100001, category: CategoryMessage, key: "Run_in_single_threaded_mode_100001", text: "Run in single threaded mode."}
 
 var Generate_pprof_CPU_Slashmemory_profiles_to_the_given_directory = &Message{code: 100002, category: CategoryMessage, key: "Generate_pprof_CPU_Slashmemory_profiles_to_the_given_directory_100002", text: "Generate pprof CPU/memory profiles to the given directory."}
+
+var Invalid_specifier = &Message{code: 100010, category: CategoryError, key: "Invalid_specifier_100010", text: "Invalid specifier"}
+
+var X_assertion_failed_Colon_should_have_a_top_level_name_key = &Message{code: 100011, category: CategoryError, key: "assertion_failed_Colon_should_have_a_top_level_name_key_100011", text: "assertion failed: should have a top-level name key"}
+
+var X_assertion_failed_Colon_should_have_a_top_level_range_key = &Message{code: 100012, category: CategoryError, key: "assertion_failed_Colon_should_have_a_top_level_range_key_100012", text: "assertion failed: should have a top-level range key"}
+
+var We_failed_to_read_the_content_of_the_manifest = &Message{code: 100013, category: CategoryError, key: "We_failed_to_read_the_content_of_the_manifest_100013", text: "We failed to read the content of the manifest."}
+
+var We_failed_to_locate_the_PnP_data_payload_inside_its_manifest_file_Did_you_manually_edit_the_file = &Message{code: 100014, category: CategoryError, key: "We_failed_to_locate_the_PnP_data_payload_inside_its_manifest_file_Did_you_manually_edit_the_file_100014", text: "We failed to locate the PnP data payload inside its manifest file. Did you manually edit the file?"}
+
+var We_failed_to_parse_the_PnP_data_payload_as_proper_JSON_Did_you_manually_edit_the_file = &Message{code: 100015, category: CategoryError, key: "We_failed_to_parse_the_PnP_data_payload_as_proper_JSON_Did_you_manually_edit_the_file_100015", text: "We failed to parse the PnP data payload as proper JSON; Did you manually edit the file?"}
+
+var We_failed_to_init_the_PnP_manifest = &Message{code: 100016, category: CategoryError, key: "We_failed_to_init_the_PnP_manifest_100016", text: "We failed to init the PnP manifest"}
+
+var X_should_have_an_entry_in_the_package_registry_for_0 = &Message{code: 100017, category: CategoryError, key: "should_have_an_entry_in_the_package_registry_for_0_100017", text: "should have an entry in the package registry for {0}"}
+
+var X_via_0 = &Message{code: 100018, category: CategoryError, key: "via_0_100018", text: " (via \"{0}\")"}
+
+var Your_application_tried_to_access_0_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_resolver_is_running_inside_a_non_Node_resolution_context_where_such_builtins_are_ignored_Since_0_isn_t_otherwise_declared_in_your_dependencies_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_0_1_Required_by_Colon_2 = &Message{code: 100019, category: CategoryError, key: "Your_application_tried_to_access_0_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_r_100019", text: "Your application tried to access {0}. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since {0} isn't otherwise declared in your dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: {0}{1}\nRequired by: {2}"}
+
+var X_0_tried_to_access_1_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_resolver_is_running_inside_a_non_Node_resolution_context_where_such_builtins_are_ignored_Since_1_isn_t_otherwise_declared_in_0_s_dependencies_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_1_2_Required_by_Colon_3 = &Message{code: 100020, category: CategoryError, key: "_0_tried_to_access_1_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_resolver_is_run_100020", text: "{0} tried to access {1}. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since {1} isn't otherwise declared in {0}'s dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: {1}{2}\nRequired by: {3}"}
+
+var Your_application_tried_to_access_0_but_it_isn_t_declared_in_your_dependencies_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_0_1_Required_by_Colon_2 = &Message{code: 100021, category: CategoryError, key: "Your_application_tried_to_access_0_but_it_isn_t_declared_in_your_dependencies_this_makes_the_require_100021", text: "Your application tried to access {0}, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: {0}{1}\nRequired by: {2}"}
+
+var X_0_tried_to_access_1_a_peer_dependency_but_it_isn_t_provided_by_your_application_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_1_2_Required_by_Colon_0_3_via_4 = &Message{code: 100022, category: CategoryError, key: "_0_tried_to_access_1_a_peer_dependency_but_it_isn_t_provided_by_your_application_this_makes_the_requ_100022", text: "{0} tried to access {1} (a peer dependency) but it isn't provided by your application; this makes the require call ambiguous and unsound.\n\nRequired package: {1}{2}\nRequired by: {0}@{3} (via {4})"}
+
+var X_0_tried_to_access_1_a_peer_dependency_but_it_isn_t_provided_by_its_ancestors_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_1_2_Required_by_Colon_0_3_via_4 = &Message{code: 100023, category: CategoryError, key: "_0_tried_to_access_1_a_peer_dependency_but_it_isn_t_provided_by_its_ancestors_this_makes_the_require_100023", text: "{0} tried to access {1} (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: {1}{2}\nRequired by: {0}@{3} (via {4})"}
+
+var X_no_host_configured = &Message{code: 100024, category: CategoryError, key: "no_host_configured_100024", text: "no host configured"}

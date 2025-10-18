@@ -38,5 +38,65 @@
     "Project '{0}' is out of date because it has errors.": {
         "category": "Message",
         "code": 6423
+    },
+    "Invalid specifier": {
+        "category": "Error",
+        "code": 100010
+    },
+    "assertion failed: should have a top-level name key": {
+        "category": "Error",
+        "code": 100011
+    },
+    "assertion failed: should have a top-level range key": {
+        "category": "Error",
+        "code": 100012
+    },
+    "We failed to read the content of the manifest.": {
+        "category": "Error",
+        "code": 100013
+    },
+    "We failed to locate the PnP data payload inside its manifest file. Did you manually edit the file?": {
+        "category": "Error",
+        "code": 100014
+    },
+    "We failed to parse the PnP data payload as proper JSON; Did you manually edit the file?": {
+        "category": "Error",
+        "code": 100015
+    },
+    "We failed to init the PnP manifest": {
+        "category": "Error",
+        "code": 100016
+    },
+    "should have an entry in the package registry for {0}": {
+        "category": "Error",
+        "code": 100017
+    },
+    " (via \"{0}\")": {
+        "category": "Error",
+        "code": 100018
+    },
+    "Your application tried to access {0}. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since {0} isn't otherwise declared in your dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: {0}{1}\nRequired by: {2}": {
+        "category": "Error",
+        "code": 100019
+    },
+    "{0} tried to access {1}. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since {1} isn't otherwise declared in {0}'s dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: {1}{2}\nRequired by: {3}": {
+        "category": "Error",
+        "code": 100020
+    },
+    "Your application tried to access {0}, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: {0}{1}\nRequired by: {2}": {
+        "category": "Error",
+        "code": 100021
+    },
+    "{0} tried to access {1} (a peer dependency) but it isn't provided by your application; this makes the require call ambiguous and unsound.\n\nRequired package: {1}{2}\nRequired by: {0}@{3} (via {4})": {
+        "category": "Error",
+        "code": 100022
+    },
+    "{0} tried to access {1} (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: {1}{2}\nRequired by: {0}@{3} (via {4})": {
+        "category": "Error",
+        "code": 100023
+    },
+    "no host configured": {
+        "category": "Error",
+        "code": 100024
     }
 }

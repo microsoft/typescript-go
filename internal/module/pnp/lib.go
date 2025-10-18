@@ -35,6 +35,7 @@ import (
 
 	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -45,12 +46,12 @@ const (
 	ResolutionResolved
 )
 
-type ResolutionHost struct {
+type PNPResolutionHost struct {
 	FindPNPManifest func(start string) (*Manifest, error)
 }
 
 type ResolutionConfig struct {
-	Host ResolutionHost
+	Host PNPResolutionHost
 }
 
 type Resolution struct {
@@ -58,41 +59,6 @@ type Resolution struct {
 	Path       string
 	ModulePath *string
 }
-
-type UndeclaredDependencyError struct {
-	Message        string
-	Request        string
-	DependencyName string
-	IssuerLocator  PackageLocator
-	IssuerPath     string
-}
-
-func (e *UndeclaredDependencyError) Error() string { return e.Message }
-
-type MissingPeerDependencyError struct {
-	Message         string
-	Request         string
-	DependencyName  string
-	IssuerLocator   PackageLocator
-	IssuerPath      string
-	BrokenAncestors []PackageLocator
-}
-
-func (e *MissingPeerDependencyError) Error() string { return e.Message }
-
-type FailedManifestHydrationError struct {
-	Message      string
-	ManifestPath string
-	Err          error
-}
-
-func (e *FailedManifestHydrationError) Error() string {
-	if e.Err != nil {
-		return fmt.Sprintf("%s\n\nOriginal error: %v", e.Message, e.Err)
-	}
-	return e.Message
-}
-func (e *FailedManifestHydrationError) Unwrap() error { return e.Err }
 
 func isNodeJSBuiltin(name string) bool {
 	return core.NodeCoreModules()[name]
@@ -140,10 +106,7 @@ func ParseBareIdentifier(spec string) (string, *string, error) {
 		pkg, sub, ok = parseGlobalPackageName(spec)
 	}
 	if !ok {
-		return "", nil, &FailedManifestHydrationError{
-			Message:      "Invalid specifier",
-			ManifestPath: spec,
-		}
+		return "", nil, errors.New(diagnostics.Invalid_specifier.Format())
 	}
 	return pkg, sub, nil
 }
@@ -193,11 +156,11 @@ func InitPNPManifest(m *Manifest, manifestPath string) error {
 
 	ranges, ok := m.PackageRegistryData[""]
 	if !ok {
-		return errors.New("assertion failed: should have a top-level name key")
+		return errors.New(diagnostics.X_assertion_failed_Colon_should_have_a_top_level_name_key.Format())
 	}
 	top, ok := ranges[""]
 	if !ok {
-		return errors.New("assertion failed: should have a top-level range key")
+		return errors.New(diagnostics.X_assertion_failed_Colon_should_have_a_top_level_range_key.Format())
 	}
 
 	if m.FallbackPool == nil {
@@ -215,19 +178,12 @@ func InitPNPManifest(m *Manifest, manifestPath string) error {
 func LoadPNPManifest(p string) (Manifest, error) {
 	content, err := os.ReadFile(p)
 	if err != nil {
-		return Manifest{}, &FailedManifestHydrationError{
-			Message:      "We failed to read the content of the manifest.",
-			Err:          err,
-			ManifestPath: p,
-		}
+		return Manifest{}, fmt.Errorf("%s: %w", diagnostics.We_failed_to_read_the_content_of_the_manifest.Format(), err)
 	}
 
 	loc := rePNP.FindIndex(content)
 	if loc == nil {
-		return Manifest{}, &FailedManifestHydrationError{
-			Message:      "We failed to locate the PnP data payload inside its manifest file. Did you manually edit the file?",
-			ManifestPath: p,
-		}
+		return Manifest{}, errors.New(diagnostics.We_failed_to_locate_the_PnP_data_payload_inside_its_manifest_file_Did_you_manually_edit_the_file.Format())
 	}
 
 	i := loc[1]
@@ -249,20 +205,12 @@ func LoadPNPManifest(p string) (Manifest, error) {
 
 	var manifest Manifest
 	if err = json.Unmarshal(jsonBuf, &manifest); err != nil {
-		return Manifest{}, &FailedManifestHydrationError{
-			Message:      "We failed to parse the PnP data payload as proper JSON; Did you manually edit the file?",
-			ManifestPath: p,
-			Err:          err,
-		}
+		return Manifest{}, fmt.Errorf("%s: %w", diagnostics.We_failed_to_parse_the_PnP_data_payload_as_proper_JSON_Did_you_manually_edit_the_file.Format(), err)
 	}
 
 	err = InitPNPManifest(&manifest, p)
 	if err != nil {
-		return Manifest{}, &FailedManifestHydrationError{
-			Message:      "We failed to init the PnP manifest",
-			ManifestPath: p,
-			Err:          err,
-		}
+		return Manifest{}, fmt.Errorf("%s: %w", diagnostics.We_failed_to_init_the_PnP_manifest.Format(), err)
 	}
 	return manifest, nil
 }
@@ -306,11 +254,11 @@ func FindLocator(manifest *Manifest, path string) *PackageLocator {
 func GetPackage(manifest *Manifest, locator *PackageLocator) (*PackageInformation, error) {
 	refs, ok := manifest.PackageRegistryData[locator.Name]
 	if !ok {
-		return nil, fmt.Errorf("should have an entry in the package registry for %s", locator.Name)
+		return nil, errors.New(diagnostics.X_should_have_an_entry_in_the_package_registry_for_0.Format(locator.Name))
 	}
 	info, ok := refs[locator.Reference]
 	if !ok {
-		return nil, fmt.Errorf("should have an entry in the package registry for %s", locator.Reference)
+		return nil, errors.New(diagnostics.X_should_have_an_entry_in_the_package_registry_for_0.Format(locator.Reference))
 	}
 	return &info, nil
 }
@@ -332,7 +280,7 @@ func FindBrokenPeerDependencies(specifier string, parent *PackageLocator) []Pack
 
 func viaSuffix(specifier string, ident string) string {
 	if ident != specifier {
-		return fmt.Sprintf(" (via \"%s\")", ident)
+		return diagnostics.X_via_0.Format(ident)
 	}
 	return ""
 }
@@ -372,43 +320,13 @@ func ResolveToUnqualifiedViaManifest(
 	if refOrAlias == nil {
 		if isNodeJSBuiltin(specifier) {
 			if IsDependencyTreeRoot(manifest, parentLocator) {
-				msg := fmt.Sprintf(
-					"Your application tried to access %s. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since %s isn't otherwise declared in your dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: %s%s\nRequired by: %s",
-					ident, ident, ident, viaSuffix(specifier, ident), parentPath,
-				)
-				return Resolution{}, &UndeclaredDependencyError{
-					Message:        msg,
-					Request:        specifier,
-					DependencyName: ident,
-					IssuerLocator:  *parentLocator,
-					IssuerPath:     parentPath,
-				}
+				return Resolution{}, errors.New(diagnostics.Your_application_tried_to_access_0_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_resolver_is_running_inside_a_non_Node_resolution_context_where_such_builtins_are_ignored_Since_0_isn_t_otherwise_declared_in_your_dependencies_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_0_1_Required_by_Colon_2.Format(ident, ident, viaSuffix(specifier, ident), parentPath))
 			}
-			msg := fmt.Sprintf(
-				"%s tried to access %s. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since %s isn't otherwise declared in %s's dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: %s%s\nRequired by: %s",
-				parentLocator.Name, ident, ident, parentLocator.Name, ident, viaSuffix(specifier, ident), parentPath,
-			)
-			return Resolution{}, &UndeclaredDependencyError{
-				Message:        msg,
-				Request:        specifier,
-				DependencyName: ident,
-				IssuerLocator:  *parentLocator,
-				IssuerPath:     parentPath,
-			}
+			return Resolution{}, errors.New(diagnostics.X_0_tried_to_access_1_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_resolver_is_running_inside_a_non_Node_resolution_context_where_such_builtins_are_ignored_Since_1_isn_t_otherwise_declared_in_0_s_dependencies_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_1_2_Required_by_Colon_3.Format(parentLocator.Name, ident, ident, parentLocator.Name, viaSuffix(specifier, ident), parentPath))
 		}
 
 		if IsDependencyTreeRoot(manifest, parentLocator) {
-			msg := fmt.Sprintf(
-				"Your application tried to access %s, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: %s%s\nRequired by: %s",
-				ident, ident, viaSuffix(specifier, ident), parentPath,
-			)
-			return Resolution{}, &UndeclaredDependencyError{
-				Message:        msg,
-				Request:        specifier,
-				DependencyName: ident,
-				IssuerLocator:  *parentLocator,
-				IssuerPath:     parentPath,
-			}
+			return Resolution{}, errors.New(diagnostics.Your_application_tried_to_access_0_but_it_isn_t_declared_in_your_dependencies_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_0_1_Required_by_Colon_2.Format(ident, viaSuffix(specifier, ident), parentPath))
 		}
 
 		brokenAncestors := FindBrokenPeerDependencies(specifier, parentLocator)
@@ -422,28 +340,10 @@ func ResolveToUnqualifiedViaManifest(
 			}
 		}
 
-		var msg string
 		if len(brokenAncestors) > 0 && allBrokenAreRoots {
-			msg = fmt.Sprintf(
-				"%s tried to access %s (a peer dependency) but it isn't provided by your application; this makes the require call ambiguous and unsound.\n\nRequired package: %s%s\nRequired by: %s@%s (via %s)",
-				parentLocator.Name, ident, ident, viaSuffix(specifier, ident),
-				parentLocator.Name, parentLocator.Reference, parentPath,
-			)
+			return Resolution{}, errors.New(diagnostics.X_0_tried_to_access_1_a_peer_dependency_but_it_isn_t_provided_by_your_application_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_1_2_Required_by_Colon_0_3_via_4.Format(parentLocator.Name, ident, viaSuffix(specifier, ident), parentLocator.Reference, parentPath))
 		} else {
-			msg = fmt.Sprintf(
-				"%s tried to access %s (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: %s%s\nRequired by: %s@%s (via %s)",
-				parentLocator.Name, ident, ident, viaSuffix(specifier, ident),
-				parentLocator.Name, parentLocator.Reference, parentPath,
-			)
-		}
-
-		return Resolution{}, &MissingPeerDependencyError{
-			Message:         msg,
-			Request:         specifier,
-			DependencyName:  ident,
-			IssuerLocator:   *parentLocator,
-			IssuerPath:      parentPath,
-			BrokenAncestors: brokenAncestors,
+			return Resolution{}, errors.New(diagnostics.X_0_tried_to_access_1_a_peer_dependency_but_it_isn_t_provided_by_its_ancestors_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_1_2_Required_by_Colon_0_3_via_4.Format(parentLocator.Name, ident, viaSuffix(specifier, ident), parentLocator.Reference, parentPath))
 		}
 	}
 
@@ -473,7 +373,7 @@ func ResolveToUnqualifiedViaManifest(
 
 func ResolveToUnqualified(specifier, parentPath string, cfg *ResolutionConfig) (Resolution, error) {
 	if cfg == nil || cfg.Host.FindPNPManifest == nil {
-		return Resolution{}, errors.New("no host configured")
+		return Resolution{}, errors.New(diagnostics.X_no_host_configured.Format())
 	}
 	m, err := cfg.Host.FindPNPManifest(parentPath)
 	if err != nil {

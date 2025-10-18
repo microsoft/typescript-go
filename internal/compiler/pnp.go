@@ -5,22 +5,22 @@ import (
 	"os"
 	"path/filepath"
 
-	module "github.com/microsoft/typescript-go/internal/module/pnp"
+	"github.com/microsoft/typescript-go/internal/module/pnp"
 )
 
-func TryGetPnpResolutionConfig(path string) *module.ResolutionConfig {
+func TryGetPnpResolutionConfig(path string) *pnp.ResolutionConfig {
 	pnpManifestPath, err := findNearestPNPPath(path)
 	if err != nil {
 		return nil
 	}
-	pnpManifest, err := module.LoadPNPManifest(pnpManifestPath)
+	pnpManifest, err := pnp.LoadPNPManifest(pnpManifestPath)
 	if err != nil {
 		return nil
 	}
 
-	return &module.ResolutionConfig{
-		Host: module.ResolutionHost{
-			FindPNPManifest: func(_ string) (*module.Manifest, error) {
+	return &pnp.ResolutionConfig{
+		Host: pnp.PNPResolutionHost{
+			FindPNPManifest: func(_ string) (*pnp.Manifest, error) {
 				return &pnpManifest, nil
 			},
 		},
