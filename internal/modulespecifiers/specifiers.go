@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/outputpaths"
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/stringutil"
+	"github.com/microsoft/typescript-go/internal/symlinks"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -64,8 +65,8 @@ func GetModuleSpecifiersWithInfo(
 		getInfo(host.GetSourceOfProjectReferenceIfOutputIncluded(importingSourceFile), host),
 		moduleSourceFile.FileName(),
 		host,
-		// compilerOptions,
-		// options,
+		compilerOptions,
+		options,
 	)
 
 	return computeModuleSpecifiers(
@@ -163,38 +164,117 @@ func getAllModulePaths(
 	//     cached := cache.get(importingFilePath, importedFilePath, preferences, options);
 	//     if (cached.modulePaths) {return cached.modulePaths;}
 	// }
-	modulePaths := getAllModulePathsWorker(info, importedFileName, host) // , compilerOptions, options);
+	modulePaths := getAllModulePathsWorker(info, importedFileName, host, compilerOptions, options)
 	// if (cache != nil) {
 	//     cache.setModulePaths(importingFilePath, importedFilePath, preferences, options, modulePaths);
 	// }
 	return modulePaths
 }
 
+func populateSymlinkCacheFromResolutions(importingFileName string, host ModuleSpecifierGenerationHost, compilerOptions *core.CompilerOptions, options ModuleSpecifierOptions, links *symlinks.KnownSymlinks) {
+	packageJsonDir := host.GetNearestAncestorDirectoryWithPackageJson(tspath.GetDirectoryPath(importingFileName))
+	if packageJsonDir == "" {
+		return
+	}
+
+	packageJsonPath := tspath.CombinePaths(packageJsonDir, "package.json")
+
+	// Check if we've already populated symlinks for this package.json
+	if links.IsPackagePopulated(packageJsonPath) {
+		return
+	}
+
+	pkgJsonInfo := host.GetPackageJsonInfo(packageJsonPath)
+	if pkgJsonInfo == nil {
+		return
+	}
+
+	pkgJson := pkgJsonInfo.GetContents()
+	if pkgJson == nil {
+		return
+	}
+
+	// Mark this package as being processed to avoid redundant work
+	links.MarkPackageAsPopulated(packageJsonPath)
+
+	cwd := host.GetCurrentDirectory()
+	caseSensitive := host.UseCaseSensitiveFileNames()
+
+	// Helper to resolve dependencies without creating intermediate slices
+	resolveDeps := func(deps map[string]string) {
+		for depName := range deps {
+			resolved := host.ResolveModuleName(depName, packageJsonPath, options.OverrideImportMode)
+			if resolved != nil && resolved.OriginalPath != "" && resolved.ResolvedFileName != "" {
+				processResolution(links, resolved.OriginalPath, resolved.ResolvedFileName, cwd, caseSensitive)
+			}
+		}
+	}
+
+	if deps, ok := pkgJson.Dependencies.GetValue(); ok {
+		resolveDeps(deps)
+	}
+	if peerDeps, ok := pkgJson.PeerDependencies.GetValue(); ok {
+		resolveDeps(peerDeps)
+	}
+	if optionalDeps, ok := pkgJson.OptionalDependencies.GetValue(); ok {
+		resolveDeps(optionalDeps)
+	}
+}
+
+func processResolution(links *symlinks.KnownSymlinks, originalPath string, resolvedFileName string, cwd string, caseSensitive bool) {
+	originalPathKey := tspath.ToPath(originalPath, cwd, caseSensitive)
+	links.SetFile(originalPathKey, resolvedFileName)
+
+	commonResolved, commonOriginal := guessDirectorySymlink(originalPath, resolvedFileName, cwd, caseSensitive)
+	if commonResolved != "" && commonOriginal != "" {
+		symlinkPath := tspath.ToPath(commonOriginal, cwd, caseSensitive)
+		if !tspath.ContainsIgnoredPath(string(symlinkPath)) {
+			realPath := tspath.ToPath(commonResolved, cwd, caseSensitive)
+			links.SetDirectory(
+				commonOriginal,
+				symlinkPath.EnsureTrailingDirectorySeparator(),
+				&symlinks.KnownDirectoryLink{
+					Real:     tspath.EnsureTrailingDirectorySeparator(commonResolved),
+					RealPath: realPath.EnsureTrailingDirectorySeparator(),
+				},
+			)
+		}
+	}
+}
+
+func guessDirectorySymlink(originalPath string, resolvedFileName string, cwd string, caseSensitive bool) (string, string) {
+	aParts := tspath.GetPathComponents(tspath.GetNormalizedAbsolutePath(resolvedFileName, cwd), "")
+	bParts := tspath.GetPathComponents(tspath.GetNormalizedAbsolutePath(originalPath, cwd), "")
+	isDirectory := false
+	for len(aParts) >= 2 && len(bParts) >= 2 &&
+		!isNodeModulesOrScopedPackageDirectory(aParts[len(aParts)-2], caseSensitive) &&
+		!isNodeModulesOrScopedPackageDirectory(bParts[len(bParts)-2], caseSensitive) &&
+		tspath.GetCanonicalFileName(aParts[len(aParts)-1], caseSensitive) == tspath.GetCanonicalFileName(bParts[len(bParts)-1], caseSensitive) {
+		aParts = aParts[:len(aParts)-1]
+		bParts = bParts[:len(bParts)-1]
+		isDirectory = true
+	}
+	if isDirectory {
+		return tspath.GetPathFromPathComponents(aParts), tspath.GetPathFromPathComponents(bParts)
+	}
+	return "", ""
+}
+
+func isNodeModulesOrScopedPackageDirectory(s string, caseSensitive bool) bool {
+	return s != "" && (tspath.GetCanonicalFileName(s, caseSensitive) == "node_modules" || strings.HasPrefix(s, "@"))
+}
+
 func getAllModulePathsWorker(
 	info Info,
 	importedFileName string,
 	host ModuleSpecifierGenerationHost,
-	// compilerOptions *core.CompilerOptions,
-	// options ModuleSpecifierOptions,
+	compilerOptions *core.CompilerOptions,
+	options ModuleSpecifierOptions,
 ) []ModulePath {
-	// !!! TODO: Caches and symlink cache chicanery to support pulling in non-explicit package.json dep names
-	// cache := host.GetModuleResolutionCache() // !!!
-	// links := host.GetSymlinkCache() // !!!
-	// if cache != nil && links != nil && !strings.Contains(info.ImportingSourceFileName, "/node_modules/") {
-	//     // Debug.type<ModuleResolutionHost>(host); // !!!
-	//     // Cache resolutions for all `dependencies` of the `package.json` context of the input file.
-	//     // This should populate all the relevant symlinks in the symlink cache, and most, if not all, of these resolutions
-	//     // should get (re)used.
-	//     // const state = getTemporaryModuleResolutionState(cache.getPackageJsonInfoCache(), host, {});
-	//     // const packageJson = getPackageScopeForPath(getDirectoryPath(info.importingSourceFileName), state);
-	//     // if (packageJson) {
-	//     //     const toResolve = getAllRuntimeDependencies(packageJson.contents.packageJsonContent);
-	//     //     for (const depName of (toResolve || emptyArray)) {
-	//     //         const resolved = resolveModuleName(depName, combinePaths(packageJson.packageDirectory, "package.json"), compilerOptions, host, cache, /*redirectedReference*/ undefined, options.overrideImportMode);
-	//     //         links.setSymlinksFromResolution(resolved.resolvedModule);
-	//     //     }
-	//     // }
-	// }
+	links := host.GetSymlinkCache()
+	if links != nil && !strings.Contains(info.ImportingSourceFileName, "/node_modules/") {
+		populateSymlinkCacheFromResolutions(info.ImportingSourceFileName, host, compilerOptions, options, links)
+	}
 
 	allFileNames := make(map[string]ModulePath)
 	paths := GetEachFileNameOfModule(info.ImportingSourceFileName, importedFileName, host, true)
@@ -231,16 +311,21 @@ func getAllModulePathsWorker(
 	return sortedPaths
 }
 
+// containsIgnoredPath checks if a path contains patterns that should be ignored.
+// This is a local helper that duplicates tspath.ContainsIgnoredPath for performance.
 func containsIgnoredPath(s string) bool {
 	return strings.Contains(s, "/node_modules/.") ||
 		strings.Contains(s, "/.git") ||
-		strings.Contains(s, "/.#")
+		strings.Contains(s, ".#")
 }
 
+// ContainsNodeModules checks if a path contains the node_modules directory.
 func ContainsNodeModules(s string) bool {
 	return strings.Contains(s, "/node_modules/")
 }
 
+// GetEachFileNameOfModule returns all possible file paths for a module, including symlink alternatives.
+// This function handles symlink resolution and provides multiple path options for module resolution.
 func GetEachFileNameOfModule(
 	importingFileName string,
 	importedFileName string,
@@ -267,8 +352,6 @@ func GetEachFileNameOfModule(
 
 	results := make([]ModulePath, 0, 2)
 	if !preferSymlinks {
-		// Symlinks inside ignored paths are already filtered out of the symlink cache,
-		// so we only need to remove them from the realpath filenames.
 		for _, p := range targets {
 			if !(shouldFilterIgnoredPaths && containsIgnoredPath(p)) {
 				results = append(results, ModulePath{
@@ -280,36 +363,51 @@ func GetEachFileNameOfModule(
 		}
 	}
 
-	// !!! TODO: Symlink directory handling
-	// const symlinkedDirectories = host.getSymlinkCache?.().getSymlinkedDirectoriesByRealpath();
-	// const fullImportedFileName = getNormalizedAbsolutePath(importedFileName, cwd);
-	// const result = symlinkedDirectories && forEachAncestorDirectoryStoppingAtGlobalCache(
-	//     host,
-	//     getDirectoryPath(fullImportedFileName),
-	//     realPathDirectory => {
-	//         const symlinkDirectories = symlinkedDirectories.get(ensureTrailingDirectorySeparator(toPath(realPathDirectory, cwd, getCanonicalFileName)));
-	//         if (!symlinkDirectories) return undefined; // Continue to ancestor directory
+	symlinkCache := host.GetSymlinkCache()
+	fullImportedFileName := tspath.GetNormalizedAbsolutePath(importedFileName, cwd)
+	if symlinkCache != nil {
+		tspath.ForEachAncestorDirectoryStoppingAtGlobalCache(
+			host.GetGlobalTypingsCacheLocation(),
+			tspath.GetDirectoryPath(fullImportedFileName),
+			func(realPathDirectory string) (bool, bool) {
+				symlinkSet, ok := symlinkCache.DirectoriesByRealpath().Load(tspath.ToPath(realPathDirectory, cwd, host.UseCaseSensitiveFileNames()).EnsureTrailingDirectorySeparator())
+				if !ok {
+					return false, false
+				} // Continue to ancestor directory
 
-	//         // Don't want to a package to globally import from itself (importNameCodeFix_symlink_own_package.ts)
-	//         if (startsWithDirectory(importingFileName, realPathDirectory, getCanonicalFileName)) {
-	//             return false; // Stop search, each ancestor directory will also hit this condition
-	//         }
+				// Don't want to a package to globally import from itself (importNameCodeFix_symlink_own_package.ts)
+				if tspath.StartsWithDirectory(importingFileName, realPathDirectory, host.UseCaseSensitiveFileNames()) {
+					return false, true // Stop search, each ancestor directory will also hit this condition
+				}
 
-	//         return forEach(targets, target => {
-	//             if (!startsWithDirectory(target, realPathDirectory, getCanonicalFileName)) {
-	//                 return;
-	//             }
+				for _, target := range targets {
+					if !tspath.StartsWithDirectory(target, realPathDirectory, host.UseCaseSensitiveFileNames()) {
+						continue
+					}
 
-	//             const relative = getRelativePathFromDirectory(realPathDirectory, target, getCanonicalFileName);
-	//             for (const symlinkDirectory of symlinkDirectories) {
-	//                 const option = resolvePath(symlinkDirectory, relative);
-	//                 const result = cb(option, target === referenceRedirect);
-	//                 shouldFilterIgnoredPaths = true; // We found a non-ignored path in symlinks, so we can reject ignored-path realpaths
-	//                 if (result) return result;
-	//             }
-	//         });
-	//     },
-	// );
+					relative := tspath.GetRelativePathFromDirectory(
+						realPathDirectory,
+						target,
+						tspath.ComparePathsOptions{
+							UseCaseSensitiveFileNames: host.UseCaseSensitiveFileNames(),
+							CurrentDirectory:          cwd,
+						})
+					symlinkSet.Range(func(symlinkDirectory string) bool {
+						option := tspath.ResolvePath(symlinkDirectory, relative)
+						results = append(results, ModulePath{
+							FileName:        option,
+							IsInNodeModules: ContainsNodeModules(option),
+							IsRedirect:      target == referenceRedirect,
+						})
+						shouldFilterIgnoredPaths = true // We found a non-ignored path in symlinks, so we can reject ignored-path realpaths
+						return true
+					})
+				}
+
+				return false, false
+			},
+		)
+	}
 
 	if preferSymlinks {
 		for _, p := range targets {

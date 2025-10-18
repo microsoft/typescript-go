@@ -164,7 +164,8 @@ func (e *exportInfoMap) add(
 	}
 
 	moduleName := stringutil.StripQuotes(moduleSymbol.Name)
-	id := e.exportInfoId + 1
+	id := e.exportInfoId
+	e.exportInfoId += 1
 	target := ch.SkipAlias(symbol)
 
 	if flagMatch != nil && !flagMatch(target.Flags) {
