@@ -3,6 +3,7 @@ package ast
 import (
 	"fmt"
 	"iter"
+	"slices"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -24,12 +25,7 @@ func visit(v Visitor, node *Node) bool {
 }
 
 func visitNodes(v Visitor, nodes []*Node) bool {
-	for _, node := range nodes {
-		if v(node) {
-			return true
-		}
-	}
-	return false
+	return slices.ContainsFunc(nodes, v)
 }
 
 func visitNodeList(v Visitor, nodeList *NodeList) bool {

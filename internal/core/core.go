@@ -159,12 +159,7 @@ func Same[T any](s1 []T, s2 []T) bool {
 }
 
 func Some[T any](slice []T, f func(T) bool) bool {
-	for _, value := range slice {
-		if f(value) {
-			return true
-		}
-	}
-	return false
+	return slices.ContainsFunc(slice, f)
 }
 
 func Every[T any](slice []T, f func(T) bool) bool {
@@ -406,12 +401,9 @@ func ComputeECMALineStartsSeq(text string) iter.Seq[TextPos] {
 }
 
 func PositionToLineAndCharacter(position int, lineStarts []TextPos) (line int, character int) {
-	line = sort.Search(len(lineStarts), func(i int) bool {
+	line = max(sort.Search(len(lineStarts), func(i int) bool {
 		return int(lineStarts[i]) > position
-	}) - 1
-	if line < 0 {
-		line = 0
-	}
+	})-1, 0)
 	return line, position - int(lineStarts[line])
 }
 

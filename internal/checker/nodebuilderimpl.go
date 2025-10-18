@@ -2034,10 +2034,8 @@ func (b *nodeBuilderImpl) shouldUsePlaceholderForProperty(propertySymbol *ast.Sy
 		return false
 	}
 	// (1)
-	for _, elem := range b.ctx.reverseMappedStack {
-		if elem == propertySymbol {
-			return true
-		}
+	if slices.Contains(b.ctx.reverseMappedStack, propertySymbol) {
+		return true
 	}
 	// (2)
 	if len(b.ctx.reverseMappedStack) > 0 {

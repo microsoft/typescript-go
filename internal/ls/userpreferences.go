@@ -199,7 +199,7 @@ const (
 	QuotePreferenceSingle  QuotePreference = "single"
 )
 
-func (p *UserPreferences) Parse(config map[string]interface{}) {
+func (p *UserPreferences) Parse(config map[string]any) {
 }
 
 func (p *UserPreferences) ModuleSpecifierPreferences() modulespecifiers.UserPreferences {

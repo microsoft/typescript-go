@@ -3,6 +3,7 @@ package ls
 import (
 	"context"
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -1106,12 +1107,7 @@ func getTokenFromNodeList(nodeList *ast.NodeList, nodeListParent *ast.Node, sour
 }
 
 func containsNode(nodes []*ast.Node, node *ast.Node) bool {
-	for i := range nodes {
-		if nodes[i] == node {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(nodes, node)
 }
 
 func getArgumentListInfoForTemplate(tagExpression *ast.TaggedTemplateExpression, argumentIndex int, sourceFile *ast.SourceFile) *argumentListInfo {

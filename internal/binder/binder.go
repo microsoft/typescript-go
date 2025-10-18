@@ -2640,10 +2640,8 @@ func isNarrowableReference(node *ast.Node) bool {
 
 func hasNarrowableArgument(expr *ast.Node) bool {
 	call := expr.AsCallExpression()
-	for _, argument := range call.Arguments.Nodes {
-		if containsNarrowableReference(argument) {
-			return true
-		}
+	if slices.ContainsFunc(call.Arguments.Nodes, containsNarrowableReference) {
+		return true
 	}
 	if ast.IsPropertyAccessExpression(call.Expression) {
 		if containsNarrowableReference(call.Expression.AsPropertyAccessExpression().Expression) {
