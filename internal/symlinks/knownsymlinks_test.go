@@ -50,12 +50,12 @@ func TestSetDirectory(t *testing.T) {
 	}
 
 	// Check that realpath mapping was created
-	realpaths := cache.DirectoriesByRealpath().Get(realDirectory.RealPath)
-	if len(realpaths) == 0 {
+	set, ok := cache.DirectoriesByRealpath().Load(realDirectory.RealPath)
+	if !ok || set.Size() == 0 {
 		t.Fatal("Expected realpath mapping to be created")
 	}
-	if realpaths[0] != "/test/symlink" {
-		t.Errorf("Expected symlink to be '/test/symlink', got '%s'", realpaths[0])
+	if !set.Has("/test/symlink") {
+		t.Error("Expected symlink '/test/symlink' to be in set")
 	}
 }
 

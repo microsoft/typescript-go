@@ -26,7 +26,7 @@ type KnownDirectoryLink struct {
 
 type KnownSymlinks struct {
 	directories               collections.SyncMap[tspath.Path, *KnownDirectoryLink]
-	directoriesByRealpath     collections.MultiMap[tspath.Path, string]
+	directoriesByRealpath     collections.SyncMap[tspath.Path, *collections.SyncSet[string]]
 	files                     collections.SyncMap[tspath.Path, string]
 	HasProcessedResolutions   bool
 	populatedPackages         collections.SyncMap[string, struct{}]
@@ -39,7 +39,7 @@ func (cache *KnownSymlinks) Directories() *collections.SyncMap[tspath.Path, *Kno
 	return &cache.directories
 }
 
-func (cache *KnownSymlinks) DirectoriesByRealpath() *collections.MultiMap[tspath.Path, string] {
+func (cache *KnownSymlinks) DirectoriesByRealpath() *collections.SyncMap[tspath.Path, *collections.SyncSet[string]] {
 	return &cache.directoriesByRealpath
 }
 
@@ -51,7 +51,8 @@ func (cache *KnownSymlinks) Files() *collections.SyncMap[tspath.Path, string] {
 func (cache *KnownSymlinks) SetDirectory(symlink string, symlinkPath tspath.Path, realDirectory *KnownDirectoryLink) {
 	if realDirectory != nil {
 		if _, ok := cache.directories.Load(symlinkPath); !ok {
-			cache.directoriesByRealpath.Add(realDirectory.RealPath, symlink)
+			set, _ := cache.directoriesByRealpath.LoadOrStore(realDirectory.RealPath, &collections.SyncSet[string]{})
+			set.Add(symlink)
 		}
 	}
 	cache.directories.Store(symlinkPath, realDirectory)

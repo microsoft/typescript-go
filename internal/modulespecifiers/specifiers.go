@@ -363,15 +363,15 @@ func GetEachFileNameOfModule(
 		}
 	}
 
-	symlinkedDirectories := host.GetSymlinkCache().DirectoriesByRealpath()
+	symlinkCache := host.GetSymlinkCache()
 	fullImportedFileName := tspath.GetNormalizedAbsolutePath(importedFileName, cwd)
-	if symlinkedDirectories != nil {
+	if symlinkCache != nil {
 		tspath.ForEachAncestorDirectoryStoppingAtGlobalCache(
 			host.GetGlobalTypingsCacheLocation(),
 			tspath.GetDirectoryPath(fullImportedFileName),
 			func(realPathDirectory string) (bool, bool) {
-				symlinkDirectories := symlinkedDirectories.Get(tspath.ToPath(realPathDirectory, cwd, host.UseCaseSensitiveFileNames()).EnsureTrailingDirectorySeparator())
-				if symlinkDirectories == nil {
+				symlinkSet, ok := symlinkCache.DirectoriesByRealpath().Load(tspath.ToPath(realPathDirectory, cwd, host.UseCaseSensitiveFileNames()).EnsureTrailingDirectorySeparator())
+				if !ok {
 					return false, false
 				} // Continue to ancestor directory
 
@@ -392,7 +392,7 @@ func GetEachFileNameOfModule(
 							UseCaseSensitiveFileNames: host.UseCaseSensitiveFileNames(),
 							CurrentDirectory:          cwd,
 						})
-					for _, symlinkDirectory := range symlinkDirectories {
+					symlinkSet.Range(func(symlinkDirectory string) bool {
 						option := tspath.ResolvePath(symlinkDirectory, relative)
 						results = append(results, ModulePath{
 							FileName:        option,
@@ -400,7 +400,8 @@ func GetEachFileNameOfModule(
 							IsRedirect:      target == referenceRedirect,
 						})
 						shouldFilterIgnoredPaths = true // We found a non-ignored path in symlinks, so we can reject ignored-path realpaths
-					}
+						return true
+					})
 				}
 
 				return false, false
