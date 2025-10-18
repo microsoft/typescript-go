@@ -28,13 +28,14 @@ package pnp
 import (
 	"errors"
 	"os"
-	"regexp"
 	"slices"
 	"strings"
 
 	"github.com/go-json-experiment/json"
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -127,7 +128,80 @@ func FindClosestPNPManifestPath(start string) (string, bool) {
 	return "", false
 }
 
-var rePNP = regexp.MustCompile(`(?s)(const[\ \r\n]+RAW_RUNTIME_STATE[\ \r\n]*=[\ \r\n]*|hydrateRuntimeState\(JSON\.parse\()'`)
+func extractJSONFromPnPFile(path string, content string) (string, error) {
+	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: tspath.NormalizePath(path),
+		Path:     tspath.Path(path),
+	}, content, core.ScriptKindJS)
+	if sourceFile == nil {
+		return "", errors.New(diagnostics.We_failed_to_locate_the_PnP_data_payload_inside_its_manifest_file_Did_you_manually_edit_the_file.Format())
+	}
+
+	var jsonData string
+	var found bool
+
+	var visitNode func(*ast.Node) bool
+	visitNode = func(node *ast.Node) bool {
+		if node == nil {
+			return false
+		}
+
+		// Look for variable declaration lists with RAW_RUNTIME_STATE (Yarn v4)
+		if node.Kind == ast.KindVariableDeclarationList {
+			declList := node.AsVariableDeclarationList()
+			if declList != nil && declList.Declarations != nil && len(declList.Declarations.Nodes) > 0 {
+				declarator := declList.Declarations.Nodes[0]
+				if declarator != nil && declarator.Name() != nil {
+					if name := declarator.Name().AsIdentifier(); name != nil && name.Text == "RAW_RUNTIME_STATE" {
+						if declarator.Initializer() != nil {
+							if init := declarator.Initializer().AsStringLiteral(); init != nil {
+								jsonData = init.Text
+								found = true
+								return true
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// Look for call expressions with hydrateRuntimeState(JSON.parse('...')) (Yarn v3)
+		if node.Kind == ast.KindCallExpression {
+			call := node.AsCallExpression()
+			if call != nil && call.Expression != nil {
+				if expr := call.Expression.AsIdentifier(); expr != nil && expr.Text == "hydrateRuntimeState" {
+					if call.Arguments != nil && len(call.Arguments.Nodes) > 0 && call.Arguments.Nodes[0] != nil {
+						if arg := call.Arguments.Nodes[0].AsCallExpression(); arg != nil && arg.Expression != nil {
+							if argExpr := arg.Expression.AsPropertyAccessExpression(); argExpr != nil {
+								if obj := argExpr.Expression.AsIdentifier(); obj != nil && obj.Text == "JSON" {
+									if prop := argExpr.Name().AsIdentifier(); prop != nil && prop.Text == "parse" {
+										if arg.Arguments != nil && len(arg.Arguments.Nodes) > 0 && arg.Arguments.Nodes[0] != nil {
+											if jsonArg := arg.Arguments.Nodes[0].AsStringLiteral(); jsonArg != nil {
+												jsonData = jsonArg.Text
+												found = true
+												return true
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return node.ForEachChild(visitNode)
+	}
+
+	sourceFile.ForEachChild(visitNode)
+
+	if !found {
+		return "", errors.New(diagnostics.We_failed_to_locate_the_PnP_data_payload_inside_its_manifest_file_Did_you_manually_edit_the_file.Format())
+	}
+
+	return jsonData, nil
+}
 
 func InitPNPManifest(m *Manifest, manifestPath string) error {
 	m.ManifestPath = manifestPath
@@ -180,30 +254,13 @@ func LoadPNPManifest(p string) (Manifest, error) {
 		return Manifest{}, errors.New(diagnostics.We_failed_to_read_the_content_of_the_manifest_Colon_0.Format(err.Error()))
 	}
 
-	loc := rePNP.FindIndex(content)
-	if loc == nil {
-		return Manifest{}, errors.New(diagnostics.We_failed_to_locate_the_PnP_data_payload_inside_its_manifest_file_Did_you_manually_edit_the_file.Format())
-	}
-
-	i := loc[1]
-	escaped := false
-	jsonBuf := make([]byte, 0)
-
-	for ; i < len(content); i++ {
-		c := content[i]
-
-		if c == '\'' && !escaped {
-			break
-		} else if c == '\\' && !escaped {
-			escaped = true
-		} else {
-			escaped = false
-			jsonBuf = append(jsonBuf, c)
-		}
+	jsonData, err := extractJSONFromPnPFile(p, string(content))
+	if err != nil {
+		return Manifest{}, err
 	}
 
 	var manifest Manifest
-	if err = json.Unmarshal(jsonBuf, &manifest); err != nil {
+	if err = json.Unmarshal([]byte(jsonData), &manifest); err != nil {
 		return Manifest{}, errors.New(diagnostics.We_failed_to_parse_the_PnP_data_payload_as_proper_JSON_Did_you_manually_edit_the_file_Colon_0.Format(err.Error()))
 	}
 
