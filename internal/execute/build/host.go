@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
+	"github.com/microsoft/typescript-go/internal/module/pnp"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -23,8 +24,9 @@ type host struct {
 	configTimes         collections.SyncMap[tspath.Path, time.Duration]
 
 	// caches that stay as long as they are needed
-	resolvedReferences parseCache[tspath.Path, *tsoptions.ParsedCommandLine]
-	mTimes             *collections.SyncMap[tspath.Path, time.Time]
+	resolvedReferences  parseCache[tspath.Path, *tsoptions.ParsedCommandLine]
+	mTimes              *collections.SyncMap[tspath.Path, time.Time]
+	pnpResolutionConfig *pnp.ResolutionConfig
 }
 
 var (
@@ -110,4 +112,8 @@ func (h *host) storeMTimeFromOldCache(file string, oldCache *collections.SyncMap
 	if mTime, found := oldCache.Load(path); found {
 		h.mTimes.Store(path, mTime)
 	}
+}
+
+func (h *host) GetPNPResolutionConfig() *pnp.ResolutionConfig {
+	return h.pnpResolutionConfig
 }
