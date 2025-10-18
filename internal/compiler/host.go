@@ -9,7 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
-	"github.com/microsoft/typescript-go/internal/vfs/pnpvfs"
+	"github.com/microsoft/typescript-go/internal/vfs/zipvfs"
 )
 
 type CompilerHost interface {
@@ -57,7 +57,7 @@ func NewCompilerHost(
 	pnpResolutionConfig := TryGetPnpResolutionConfig(currentDirectory)
 
 	if pnpResolutionConfig != nil {
-		fs = pnpvfs.From(fs)
+		fs = zipvfs.From(fs)
 	}
 
 	return &compilerHost{

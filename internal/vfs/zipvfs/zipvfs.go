@@ -1,4 +1,4 @@
-package pnpvfs
+package zipvfs
 
 import (
 	"archive/zip"
@@ -18,7 +18,7 @@ const (
 	FileEntry EntryKind = 2
 )
 
-type PNPFS struct {
+type ZipFS struct {
 	inner vfs.FS
 
 	zipFilesMutex sync.Mutex
@@ -31,7 +31,7 @@ type zipFile struct {
 
 	dirs  map[string]*compressedDir
 	files map[string]*compressedFile
-	wait  sync.WaitGroup
+	once  sync.Once
 }
 
 type compressedDir struct {
@@ -50,22 +50,20 @@ type compressedFile struct {
 	wasRead  bool
 }
 
-func From(baseFS vfs.FS) *PNPFS {
-	return &PNPFS{
-		inner: baseFS,
-
-		zipFilesMutex: sync.Mutex{},
-		zipFiles:      make(map[string]*zipFile),
+func From(baseFS vfs.FS) *ZipFS {
+	return &ZipFS{
+		inner:    baseFS,
+		zipFiles: make(map[string]*zipFile),
 	}
 }
 
-func (fs *PNPFS) checkForZip(path string, kind EntryKind) (*zipFile, string) {
+func (fs *ZipFS) checkForZip(path string, kind EntryKind) (*zipFile, string) {
 	var zipPath string
 	var pathTail string
 
-	if i := strings.Index(path, ".zip/"); i != -1 {
-		zipPath = path[:i+len(".zip")]
-		pathTail = path[i+len(".zip/"):]
+	if before, after, ok := strings.Cut(path, ".zip/"); ok {
+		zipPath = before + ".zip"
+		pathTail = after
 	} else if kind == DirEntry && strings.HasSuffix(path, ".zip") {
 		zipPath = path
 	} else {
@@ -77,16 +75,17 @@ func (fs *PNPFS) checkForZip(path string, kind EntryKind) (*zipFile, string) {
 	archive := fs.zipFiles[zipPath]
 	if archive != nil {
 		fs.zipFilesMutex.Unlock()
-		archive.wait.Wait()
+		archive.once.Do(func() {
+			// wait if another goroutine is initializing the archive
+		})
 	} else {
 		archive = &zipFile{}
-		archive.wait.Add(1)
-		fs.zipFiles[zipPath] = archive
-		fs.zipFilesMutex.Unlock()
-		defer archive.wait.Done()
+		archive.once.Do(func() {
+			fs.zipFiles[zipPath] = archive
+			fs.zipFilesMutex.Unlock()
 
-		// Try reading the zip archive if it's not in the cache
-		tryToReadZipArchive(zipPath, archive)
+			tryToReadZipArchive(zipPath, archive)
+		})
 	}
 
 	if archive.err != nil {
@@ -178,11 +177,11 @@ func tryToReadZipArchive(zipPath string, archive *zipFile) {
 	archive.reader = reader
 }
 
-func (fs *PNPFS) UseCaseSensitiveFileNames() bool {
+func (fs *ZipFS) UseCaseSensitiveFileNames() bool {
 	return fs.inner.UseCaseSensitiveFileNames()
 }
 
-func (fs *PNPFS) FileExists(path string) bool {
+func (fs *ZipFS) FileExists(path string) bool {
 	path = mangleYarnPnPVirtualPath(path)
 
 	if fs.inner.FileExists(path) {
@@ -198,7 +197,7 @@ func (fs *PNPFS) FileExists(path string) bool {
 	return ok
 }
 
-func (fs *PNPFS) ReadFile(path string) (contents string, ok bool) {
+func (fs *ZipFS) ReadFile(path string) (contents string, ok bool) {
 	path = mangleYarnPnPVirtualPath(path)
 
 	contents, ok = fs.inner.ReadFile(path)
@@ -247,19 +246,34 @@ func (fs *PNPFS) ReadFile(path string) (contents string, ok bool) {
 	return file.contents, true
 }
 
-func (fs *PNPFS) WriteFile(path string, data string, writeByteOrderMark bool) error {
-	return fs.inner.WriteFile(path, data, writeByteOrderMark)
+func (fs *ZipFS) WriteFile(path string, data string, writeByteOrderMark bool) error {
+	err := fs.inner.WriteFile(path, data, writeByteOrderMark)
+	if err != nil {
+		fs.tryZipFileAssertion(path)
+		return err
+	}
+	return nil
 }
 
-func (fs *PNPFS) Remove(path string) error {
-	return fs.inner.Remove(path)
+func (fs *ZipFS) Remove(path string) error {
+	err := fs.inner.Remove(path)
+	if err != nil {
+		fs.tryZipFileAssertion(path)
+		return err
+	}
+	return nil
 }
 
-func (fs *PNPFS) Chtimes(path string, aTime time.Time, mTime time.Time) error {
-	return fs.inner.Chtimes(path, aTime, mTime)
+func (fs *ZipFS) Chtimes(path string, aTime time.Time, mTime time.Time) error {
+	err := fs.inner.Chtimes(path, aTime, mTime)
+	if err != nil {
+		fs.tryZipFileAssertion(path)
+		return err
+	}
+	return nil
 }
 
-func (fs *PNPFS) DirectoryExists(path string) bool {
+func (fs *ZipFS) DirectoryExists(path string) bool {
 	path = mangleYarnPnPVirtualPath(path)
 
 	if fs.inner.DirectoryExists(path) {
@@ -275,7 +289,7 @@ func (fs *PNPFS) DirectoryExists(path string) bool {
 	return ok
 }
 
-func (fs *PNPFS) GetAccessibleEntries(path string) vfs.Entries {
+func (fs *ZipFS) GetAccessibleEntries(path string) vfs.Entries {
 	path = mangleYarnPnPVirtualPath(path)
 
 	entries := fs.inner.GetAccessibleEntries(path)
@@ -293,16 +307,17 @@ func (fs *PNPFS) GetAccessibleEntries(path string) vfs.Entries {
 		return entries
 	}
 
-	files := make([]string, 0)
-	dirs := make([]string, 0)
+	var files []string
+	var dirs []string
 
 	dir.mutex.Lock()
 	defer dir.mutex.Unlock()
 
 	for name, kind := range dir.entries {
-		if kind == FileEntry {
+		switch kind {
+		case FileEntry:
 			files = append(files, name)
-		} else if kind == DirEntry {
+		case DirEntry:
 			dirs = append(dirs, name)
 		}
 	}
@@ -313,17 +328,24 @@ func (fs *PNPFS) GetAccessibleEntries(path string) vfs.Entries {
 	}
 }
 
-func (fs *PNPFS) Stat(path string) vfs.FileInfo {
+func (fs *ZipFS) Stat(path string) vfs.FileInfo {
 	return fs.inner.Stat(path)
 }
 
-func (fs *PNPFS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
+func (fs *ZipFS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
 	return fs.inner.WalkDir(root, walkFn)
 }
 
-func (fs *PNPFS) Realpath(path string) string {
-	realPath := fs.inner.Realpath(path)
-	return realPath
+func (fs *ZipFS) Realpath(path string) string {
+	return fs.inner.Realpath(path)
+}
+
+func (fs *ZipFS) tryZipFileAssertion(path string) {
+	zip, _ := fs.checkForZip(path, FileEntry)
+	if zip == nil {
+		return
+	}
+	panic("do not use this method for zip file: " + path)
 }
 
 func ParseYarnPnPVirtualPath(path string) (string, string, bool) {
