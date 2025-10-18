@@ -38,7 +38,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/user/username/projects/myproject/tsconfig-src.json")) != nil)
 
 		// Ensure request can use existing snapshot
-		_, err := session.GetLanguageService(context.Background(), uri)
+		_, _, err := session.GetLanguageService(context.Background(), uri)
 		assert.NilError(t, err)
 		requestSnapshot, requestRelease := session.Snapshot()
 		defer requestRelease()

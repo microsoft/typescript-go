@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/project/background"
+	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -149,7 +150,10 @@ func NewSession(init *SessionInit) *Session {
 			init.Options,
 			parseCache,
 			extendedConfigCache,
-			&ConfigFileRegistry{},
+			&ConfigFileRegistry{
+				configs:         map[tspath.Path]*configFileEntry{},
+				configFileNames: map[tspath.Path]*configFileNames{},
+			},
 			nil,
 			toPath,
 		),
@@ -339,7 +343,7 @@ func (s *Session) Snapshot() (*Snapshot, func()) {
 	}
 }
 
-func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
+func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, *Snapshot, error) {
 	var snapshot *Snapshot
 	fileChanges, overlays, ataChanges := s.flushChanges(ctx)
 	updateSnapshot := !fileChanges.IsEmpty() || len(ataChanges) > 0
@@ -371,9 +375,9 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 		project = snapshot.GetDefaultProject(uri)
 	}
 	if project == nil {
-		return nil, fmt.Errorf("no project found for URI %s", uri)
+		return nil, nil, fmt.Errorf("no project found for URI %s", uri)
 	}
-	return ls.NewLanguageService(project.GetProgram(), snapshot), nil
+	return ls.NewLanguageService(project.GetProgram(), snapshot), snapshot, nil
 }
 
 func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*overlay, change SnapshotChange) *Snapshot {
@@ -418,6 +422,9 @@ func (s *Session) WaitForBackgroundTasks() {
 
 func updateWatch[T any](ctx context.Context, session *Session, logger logging.Logger, oldWatcher, newWatcher *WatchedFiles[T]) []error {
 	var errors []error
+	if oldWatcher == newWatcher {
+		return errors
+	}
 	session.watchesMu.Lock()
 	defer session.watchesMu.Unlock()
 	if newWatcher != nil {
@@ -686,5 +693,49 @@ func (s *Session) triggerATAForUpdatedProjects(newSnapshot *Snapshot) {
 				}
 			})
 		}
+	}
+}
+
+// Creates a new language service that is based on the input snapshot but has additional files loaded.
+func (s *Session) GetLanguageServiceWithMappedFiles(ctx context.Context, uri lsproto.DocumentUri, snapshot *Snapshot, files []string) (*ls.LanguageService, error) {
+	project := snapshot.GetDefaultProject(uri)
+	if project == nil {
+		// This should not happen, since we ensured the project was loaded the first time a language service was requested.
+		return nil, fmt.Errorf("no project found for URI %s", uri)
+	}
+	snapshotWithFiles, changes := snapshot.CloneWithSourceMaps(files, s)
+	if s.options.LoggingEnabled {
+		s.logger.Write(snapshotWithFiles.builderLogs.String())
+		s.logger.Write("")
+	}
+	s.backgroundQueue.Enqueue(ctx, func(ctx context.Context) {
+		s.updateSnapshotWithDiskChanges(changes, snapshot, snapshotWithFiles)
+	})
+	return ls.NewLanguageService(project.GetProgram(), snapshotWithFiles), nil
+}
+
+func (s *Session) updateSnapshotWithDiskChanges(changes map[tspath.Path]*dirty.Change[*diskFile], snapshot, snapshotWithFiles *Snapshot) {
+	s.snapshotMu.Lock()
+	oldSnapshot := s.snapshot
+	var newSnapshot *Snapshot
+	if oldSnapshot == snapshot {
+		newSnapshot = snapshotWithFiles
+	} else {
+		newSnapshot = oldSnapshot.CloneWithDiskChanges(changes, s)
+	}
+	s.snapshot = newSnapshot
+	s.snapshotMu.Unlock()
+
+	// We don't need to dispose the old snapshot here because the new snapshot will have the same programs
+	// and config files as the old snapshot, so the reference counts will be the same.
+	if s.options.LoggingEnabled {
+		s.logger.Write(newSnapshot.builderLogs.String())
+		s.logger.Write("")
+	}
+
+	ctx := context.Background()
+	err := updateWatch(ctx, s, s.logger, oldSnapshot.extraDiskFilesWatch, newSnapshot.extraDiskFilesWatch)
+	if err != nil && s.options.LoggingEnabled {
+		s.logger.Log(fmt.Errorf("error updating extra disk file watches: %v", err))
 	}
 }

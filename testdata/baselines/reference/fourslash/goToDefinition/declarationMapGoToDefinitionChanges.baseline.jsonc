@@ -1,0 +1,34 @@
+// === goToDefinition ===
+// === /index.ts ===
+// export class Foo {
+//     member: string;
+//     [|methodName|](propName: SomeType): void {}
+//     otherMethod() {
+//         if (Math.random() > 0.5) {
+//             return {x: 42};
+// // --- (line: 7) skipped ---
+
+// === /mymodule.ts ===
+// import * as mod from "./index";
+// const instance = new mod.Foo();
+// instance./*GOTO DEF*/methodName({member: 12});
+// instance.otherMethod();
+
+
+
+// === goToDefinition ===
+// === /index.ts ===
+// export class Foo {
+//     member: string;
+//     methodName(propName: SomeType): void {}
+//     [|otherMethod|]() {
+//         if (Math.random() > 0.5) {
+//             return {x: 42};
+//         }
+// // --- (line: 8) skipped ---
+
+// === /mymodule.ts ===
+// import * as mod from "./index";
+// const instance = new mod.Foo();
+// instance.methodName({member: 12});
+// instance./*GOTO DEF*/otherMethod();

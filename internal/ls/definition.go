@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 func (l *LanguageService) ProvideDefinition(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position) (lsproto.DefinitionResponse, error) {
@@ -55,6 +56,58 @@ func (l *LanguageService) ProvideDefinition(ctx context.Context, documentURI lsp
 		declarations = append(nonFunctionDeclarations, calledDeclaration)
 	}
 	return l.createLocationsFromDeclarations(declarations), nil
+}
+
+func (l *LanguageService) GetFilesToMapFromDefinition(response lsproto.DefinitionResponse) []string {
+	var files []string
+
+	if response.Location != nil {
+		fileName := response.Location.Uri.FileName()
+		if tspath.IsDeclarationFileName(fileName) {
+			files = append(files, fileName)
+		}
+	}
+
+	if response.Locations != nil {
+		for _, location := range *response.Locations {
+			fileName := location.Uri.FileName()
+			if tspath.IsDeclarationFileName(fileName) {
+				files = core.AppendIfUnique(files, fileName)
+			}
+		}
+	}
+
+	if response.DefinitionLinks != nil {
+		for _, link := range *response.DefinitionLinks {
+			fileName := link.TargetUri.FileName()
+			if tspath.IsDeclarationFileName(fileName) {
+				files = core.AppendIfUnique(files, fileName)
+			}
+		}
+	}
+
+	return files
+}
+
+func (l *LanguageService) GetMappedDefinition(definitions lsproto.DefinitionResponse) lsproto.DefinitionResponse {
+	if definitions.Location != nil {
+		definitions.Location = l.getMappedLocation(definitions.Location)
+	}
+	if definitions.Locations != nil {
+		for i, loc := range *definitions.Locations {
+			(*definitions.Locations)[i] = *l.getMappedLocation(&loc)
+		}
+	}
+	if definitions.DefinitionLinks != nil {
+		for i, link := range *definitions.DefinitionLinks {
+			mappedTarget := l.getMappedLocation(&lsproto.Location{Uri: link.TargetUri, Range: link.TargetRange})
+			mappedSelection := l.getMappedLocation(&lsproto.Location{Uri: link.TargetUri, Range: link.TargetSelectionRange})
+			(*definitions.DefinitionLinks)[i].TargetUri = mappedTarget.Uri
+			(*definitions.DefinitionLinks)[i].TargetRange = mappedTarget.Range
+			(*definitions.DefinitionLinks)[i].TargetSelectionRange = mappedSelection.Range
+		}
+	}
+	return definitions
 }
 
 func (l *LanguageService) ProvideTypeDefinition(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position) (lsproto.DefinitionResponse, error) {
@@ -104,17 +157,20 @@ func (l *LanguageService) createLocationsFromDeclarations(declarations []*ast.No
 	for _, decl := range declarations {
 		file := ast.GetSourceFileOfNode(decl)
 		name := core.OrElse(ast.GetNameOfDeclaration(decl), decl)
-		nodeRange := createRangeFromNode(name, file)
-		mappedLocation := l.getMappedLocation(file.FileName(), nodeRange)
-		locations = core.AppendIfUnique(locations, mappedLocation)
+		locations = core.AppendIfUnique(locations, lsproto.Location{
+			Uri:   FileNameToDocumentURI(file.FileName()),
+			Range: *l.createLspRangeFromNode(name, file),
+		})
 	}
 	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{Locations: &locations}
 }
 
 func (l *LanguageService) createLocationFromFileAndRange(file *ast.SourceFile, textRange core.TextRange) lsproto.DefinitionResponse {
-	mappedLocation := l.getMappedLocation(file.FileName(), textRange)
 	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{
-		Location: &mappedLocation,
+		Location: &lsproto.Location{
+			Uri:   FileNameToDocumentURI(file.FileName()),
+			Range: *l.createLspRangeFromBounds(textRange.Pos(), textRange.End(), file),
+		},
 	}
 }
 

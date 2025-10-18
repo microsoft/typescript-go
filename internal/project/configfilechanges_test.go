@@ -42,7 +42,7 @@ func TestConfigFileChanges(t *testing.T) {
 			},
 		})
 
-		ls, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		ls, _, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
 		assert.Equal(t, ls.GetProgram().Options().Target, core.ScriptTargetESNext)
 	})
@@ -61,7 +61,7 @@ func TestConfigFileChanges(t *testing.T) {
 			},
 		})
 
-		ls, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		ls, _, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
 		assert.Equal(t, ls.GetProgram().Options().Strict, core.TSFalse)
 	})
@@ -82,7 +82,7 @@ func TestConfigFileChanges(t *testing.T) {
 			},
 		})
 
-		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		_, _, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
 		snapshotAfter, release := session.Snapshot()
 		defer release()
@@ -103,7 +103,7 @@ func TestConfigFileChanges(t *testing.T) {
 			},
 		})
 
-		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		_, _, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
 		snapshot, release := session.Snapshot()
 		defer release()
@@ -125,7 +125,7 @@ func TestConfigFileChanges(t *testing.T) {
 			},
 		})
 
-		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/subfolder/foo.ts"))
+		_, _, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/subfolder/foo.ts"))
 		assert.NilError(t, err)
 		snapshot, release := session.Snapshot()
 		defer release()
@@ -141,7 +141,7 @@ func TestConfigFileChanges(t *testing.T) {
 			},
 		})
 
-		_, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/subfolder/foo.ts"))
+		_, _, err = session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/subfolder/foo.ts"))
 		assert.NilError(t, err)
 		snapshot, release = session.Snapshot()
 		defer release()
@@ -179,7 +179,7 @@ func TestConfigFileChanges(t *testing.T) {
 		})
 
 		// Accessing the language service should trigger project update
-		ls, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
+		ls, _, err := session.GetLanguageService(context.Background(), lsproto.DocumentUri("file:///src/index.ts"))
 		assert.NilError(t, err)
 		assert.Equal(t, ls.GetProgram().Options().Strict, core.TSTrue)
 	})
