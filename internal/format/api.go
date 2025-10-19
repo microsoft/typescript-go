@@ -146,7 +146,7 @@ func FormatOnSemicolon(ctx context.Context, sourceFile *ast.SourceFile, position
 }
 
 func FormatOnEnter(ctx context.Context, sourceFile *ast.SourceFile, position int) []core.TextChange {
-	line := scanner.GetECMALineOfPosition(sourceFile, position)
+	line := getLineOfPosition(sourceFile, position)
 	if line == 0 {
 		return nil
 	}

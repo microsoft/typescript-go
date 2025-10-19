@@ -131,7 +131,7 @@ func isArgumentAndStartLineOverlapsExpressionBeingCalled(parent *ast.Node, child
 		return false
 	}
 	expressionOfCallExpressionEnd := parent.Expression().End()
-	expressionOfCallExpressionEndLine := scanner.GetECMALineOfPosition(sourceFile, expressionOfCallExpressionEnd)
+	expressionOfCallExpressionEndLine := getLineOfPosition(sourceFile, expressionOfCallExpressionEnd)
 	return expressionOfCallExpressionEndLine == childStartLine
 }
 
@@ -185,7 +185,7 @@ func deriveActualIndentationFromList(list *ast.NodeList, index int, sourceFile *
 			continue
 		}
 		// skip list items that ends on the same line with the current list element
-		prevEndLine := scanner.GetECMALineOfPosition(sourceFile, list.Nodes[i].End())
+		prevEndLine := getLineOfPosition(sourceFile, list.Nodes[i].End())
 		if prevEndLine != line {
 			return findColumnForFirstNonWhitespaceCharacterInLine(line, char, sourceFile, options)
 		}
@@ -439,8 +439,8 @@ func NodeWillIndentChild(settings *FormatCodeSettings, parent *ast.Node, child *
 			return rangeIsOnOneLine(child.Loc, sourceFile)
 		}
 		if parent.Kind == ast.KindBinaryExpression && sourceFile != nil && childKind == ast.KindJsxElement {
-			parentStartLine := scanner.GetECMALineOfPosition(sourceFile, scanner.SkipTrivia(sourceFile.Text(), parent.Pos()))
-			childStartLine := scanner.GetECMALineOfPosition(sourceFile, scanner.SkipTrivia(sourceFile.Text(), child.Pos()))
+			parentStartLine := getLineOfPosition(sourceFile, scanner.SkipTrivia(sourceFile.Text(), parent.Pos()))
+			childStartLine := getLineOfPosition(sourceFile, scanner.SkipTrivia(sourceFile.Text(), child.Pos()))
 			return parentStartLine != childStartLine
 		}
 		if parent.Kind != ast.KindBinaryExpression {
@@ -516,7 +516,7 @@ func NodeWillIndentChild(settings *FormatCodeSettings, parent *ast.Node, child *
 // branch beginning on the line that the whenTrue branch ends.
 func childIsUnindentedBranchOfConditionalExpression(parent *ast.Node, child *ast.Node, childStartLine int, sourceFile *ast.SourceFile) bool {
 	if parent.Kind == ast.KindConditionalExpression && (child == parent.AsConditionalExpression().WhenTrue || child == parent.AsConditionalExpression().WhenFalse) {
-		conditionEndLine := scanner.GetECMALineOfPosition(sourceFile, parent.AsConditionalExpression().Condition.End())
+		conditionEndLine := getLineOfPosition(sourceFile, parent.AsConditionalExpression().Condition.End())
 		if child == parent.AsConditionalExpression().WhenTrue {
 			return childStartLine == conditionEndLine
 		} else {
@@ -528,7 +528,7 @@ func childIsUnindentedBranchOfConditionalExpression(parent *ast.Node, child *ast
 			//     0              L2: indented two stops, one because whenTrue was indented
 			//   );                   and one because of the parentheses spanning multiple lines
 			trueStartLine, _ := getStartLineAndCharacterForNode(parent.AsConditionalExpression().WhenTrue, sourceFile)
-			trueEndLine := scanner.GetECMALineOfPosition(sourceFile, parent.AsConditionalExpression().WhenTrue.End())
+			trueEndLine := getLineOfPosition(sourceFile, parent.AsConditionalExpression().WhenTrue.End())
 			return conditionEndLine == trueStartLine && trueEndLine == childStartLine
 		}
 	}
@@ -550,7 +550,7 @@ func argumentStartsOnSameLineAsPreviousArgument(parent *ast.Node, child *ast.Nod
 		}
 
 		previousNode := parent.Arguments()[currentIndex-1]
-		lineOfPreviousNode := scanner.GetECMALineOfPosition(sourceFile, previousNode.End())
+		lineOfPreviousNode := getLineOfPosition(sourceFile, previousNode.End())
 		if childStartLine == lineOfPreviousNode {
 			return true
 		}

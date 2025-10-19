@@ -9,9 +9,15 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
+// This is faster than GetECMALineAndCharacterOfPosition when only the line is needed.
+func getLineOfPosition(sourceFile *ast.SourceFile, pos int) int {
+	lineMap := scanner.GetECMALineStarts(sourceFile)
+	return scanner.ComputeLineOfPosition(lineMap, pos)
+}
+
 func rangeIsOnOneLine(node core.TextRange, file *ast.SourceFile) bool {
-	startLine := scanner.GetECMALineOfPosition(file, node.Pos())
-	endLine := scanner.GetECMALineOfPosition(file, node.End())
+	startLine := getLineOfPosition(file, node.Pos())
+	endLine := getLineOfPosition(file, node.End())
 	return startLine == endLine
 }
 
@@ -77,7 +83,7 @@ func getCloseTokenForOpenToken(kind ast.Kind) ast.Kind {
 
 func GetLineStartPositionForPosition(position int, sourceFile *ast.SourceFile) int {
 	lineStarts := scanner.GetECMALineStarts(sourceFile)
-	line := scanner.GetECMALineOfPosition(sourceFile, position)
+	line := getLineOfPosition(sourceFile, position)
 	return int(lineStarts[line])
 }
 
