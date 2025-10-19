@@ -910,6 +910,19 @@ func tryDirectoryWithPackageJson(
 		// use the actual directory name, so don't look at `packageJsonContent.name` here.
 		nodeModulesDirectoryName := packageRootPath[parts.TopLevelPackageNameIndex+1:]
 		packageName := GetPackageNameFromTypesPackageName(nodeModulesDirectoryName)
+
+		// Determine resolution mode for package.json exports condition matching.
+		// TypeScript's tryDirectoryWithPackageJson uses the importing file's mode (moduleSpecifiers.ts:1257),
+		// but this causes incorrect exports resolution. We fix this by checking the target file's extension
+		// using the logic from getImpliedNodeFormatForEmitWorker (program.ts:4827-4838).
+		// .cjs/.cts/.d.cts → CommonJS → "require" condition
+		// .mjs/.mts/.d.mts → ESM → "import" condition
+		if tspath.FileExtensionIsOneOf(pathObj.FileName, []string{tspath.ExtensionCjs, tspath.ExtensionCts, tspath.ExtensionDcts}) {
+			importMode = core.ResolutionModeCommonJS
+		} else if tspath.FileExtensionIsOneOf(pathObj.FileName, []string{tspath.ExtensionMjs, tspath.ExtensionMts, tspath.ExtensionDmts}) {
+			importMode = core.ResolutionModeESM
+		}
+
 		conditions := module.GetConditions(options, importMode)
 
 		var fromExports string
