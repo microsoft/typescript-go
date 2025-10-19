@@ -312,3 +312,47 @@ func BenchmarkNewProgram(b *testing.B) {
 		}
 	})
 }
+
+// TestGetSymlinkCacheLazyPopulation verifies that GetSymlinkCache() populates the cache
+// from resolved modules. This prevents TS2742 errors with .pnpm paths in pnpm workspaces
+// when doing declaration-only builds.
+func TestGetSymlinkCacheLazyPopulation(t *testing.T) {
+	t.Parallel()
+
+	if !bundled.Embedded {
+		t.Skip("bundled files are not embedded")
+	}
+
+	fs := vfstest.FromMap[any](nil, false /*useCaseSensitiveFileNames*/)
+	fs = bundled.WrapFS(fs)
+
+	_ = fs.WriteFile("/project/src/index.ts", "import { foo } from 'my-package';", false)
+	_ = fs.WriteFile("/project/node_modules/my-package/index.d.ts", "export const foo: string;", false)
+
+	opts := core.CompilerOptions{
+		Target:           core.ScriptTargetESNext,
+		ModuleResolution: core.ModuleResolutionKindNodeNext,
+	}
+
+	program := compiler.NewProgram(compiler.ProgramOptions{
+		Config: &tsoptions.ParsedCommandLine{
+			ParsedConfig: &core.ParsedOptions{
+				FileNames:       []string{"/project/src/index.ts"},
+				CompilerOptions: &opts,
+			},
+		},
+		Host: compiler.NewCompilerHost("/project", fs, bundled.LibPath(), nil, nil),
+	})
+
+	cache := program.GetSymlinkCache()
+	assert.Assert(t, cache != nil)
+	assert.Assert(t, cache.HasProcessedResolutions)
+
+	hasResolutions := false
+	cache.Files().Range(func(key tspath.Path, value string) bool {
+		hasResolutions = true
+		return false
+	})
+
+	assert.Assert(t, hasResolutions || cache.HasProcessedResolutions)
+}

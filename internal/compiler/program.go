@@ -1646,6 +1646,11 @@ func (p *Program) GetSymlinkCache() *symlinks.KnownSymlinks {
 	// }
 	if p.knownSymlinks == nil {
 		p.knownSymlinks = symlinks.NewKnownSymlink(p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
+		// In declaration-only builds, the symlink cache might not be populated yet
+		// because module resolution was skipped. Populate it now if we have resolutions.
+		if len(p.resolvedModules) > 0 || len(p.typeResolutionsInFile) > 0 {
+			p.knownSymlinks.SetSymlinksFromResolutions(p.ForEachResolvedModule, p.ForEachResolvedTypeReferenceDirective)
+		}
 	}
 	return p.knownSymlinks
 }
