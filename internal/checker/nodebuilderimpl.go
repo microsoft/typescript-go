@@ -568,6 +568,12 @@ func (b *nodeBuilderImpl) symbolToTypeNode(symbol *ast.Symbol, mask ast.SymbolFl
 			}
 
 			if attributes == nil {
+				// This avoids TS2742 errors for internal library types when skipLibCheck is enabled.
+				// TODO: Remove this workaround once syntacticNodeBuilder is implemented. The root cause is that
+				// tsgo deeply infers types while upstream reuses existing type nodes, avoiding internal library types.
+				if b.ch.compilerOptions.SkipLibCheck.IsTrue() && targetFile != nil && targetFile.IsDeclarationFile {
+					return nil
+				}
 				// If ultimately we can only name the symbol with a reference that dives into a `node_modules` folder, we should error
 				// since declaration files with these kinds of references are liable to fail when published :(
 				b.ctx.encounteredError = true
