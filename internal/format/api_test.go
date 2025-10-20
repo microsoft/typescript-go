@@ -41,7 +41,7 @@ func TestFormat(t *testing.T) {
 		settings := format.GetDefaultFormatCodeSettings("\n")
 		settings.BaseIndentSize = 0
 		ctx := format.WithFormatCodeSettings(t.Context(), settings, "\n")
-		
+
 		// Test with space after * (should be preserved)
 		text := `const a = {
 	b: function* () { }
@@ -55,7 +55,7 @@ function* bar() { }
 		}, text, core.ScriptKindTS)
 		edits := format.FormatDocument(ctx, sourceFile)
 		newText := applyBulkEdits(text, edits)
-		
+
 		// The space after * should be preserved for anonymous generator functions
 		assert.Assert(t, newText == text, "Expected formatting to preserve space after * in anonymous generator function, got:\n%s", newText)
 	})
