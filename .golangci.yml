@@ -80,6 +80,9 @@ linters:
         - pattern: '.*'
           msg: a host implementation should likely be used instead
           pkg: ^os$
+        - pattern: 'GOOS'
+          msg: a host implementation should likely be used instead
+          pkg: ^runtime$
 
   exclusions:
     rules:
