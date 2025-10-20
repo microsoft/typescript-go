@@ -71,7 +71,7 @@ func GetDefaultFormatCodeSettings(newLineCharacter string) *FormatCodeSettings {
 		InsertSpaceAfterSemicolonInForStatements:                    core.TSTrue,
 		InsertSpaceBeforeAndAfterBinaryOperators:                    core.TSTrue,
 		InsertSpaceAfterKeywordsInControlFlowStatements:             core.TSTrue,
-		InsertSpaceAfterFunctionKeywordForAnonymousFunctions:        core.TSFalse,
+		InsertSpaceAfterFunctionKeywordForAnonymousFunctions:        core.TSTrue,
 		InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis:  core.TSFalse,
 		InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets:     core.TSFalse,
 		InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces:       core.TSTrue,

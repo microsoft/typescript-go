@@ -38,17 +38,9 @@ func TestFormat(t *testing.T) {
 
 	t.Run("anonymous generator function", func(t *testing.T) {
 		t.Parallel()
-		ctx := format.WithFormatCodeSettings(t.Context(), &format.FormatCodeSettings{
-			EditorSettings: format.EditorSettings{
-				TabSize:                4,
-				IndentSize:             4,
-				BaseIndentSize:         0,
-				NewLineCharacter:       "\n",
-				ConvertTabsToSpaces:    true,
-				IndentStyle:            format.IndentStyleSmart,
-				TrimTrailingWhitespace: true,
-			},
-		}, "\n")
+		settings := format.GetDefaultFormatCodeSettings("\n")
+		settings.BaseIndentSize = 0
+		ctx := format.WithFormatCodeSettings(t.Context(), settings, "\n")
 		
 		// Test with space after * (should be preserved)
 		text := `const a = {
