@@ -156,7 +156,8 @@ type formatSpanWorker struct {
 	rangeContainsError func(r core.TextRange) bool
 	sourceFile         *ast.SourceFile
 
-	ctx context.Context
+	newLine            string
+	formatCodeSettings *FormatCodeSettings
 
 	formattingScanner *formattingScanner
 	formattingContext *formattingContext
@@ -191,7 +192,8 @@ func newFormatSpanWorker(
 	sourceFile *ast.SourceFile,
 ) *formatSpanWorker {
 	return &formatSpanWorker{
-		ctx:                ctx,
+		newLine:            GetNewLineOrDefaultFromContext(ctx),
+		formatCodeSettings: GetFormatCodeSettingsFromContext(ctx),
 		originalRange:      originalRange,
 		enclosingNode:      enclosingNode,
 		initialIndentation: initialIndentation,
@@ -220,7 +222,7 @@ func getNonDecoratorTokenPosOfNode(node *ast.Node, file *ast.SourceFile) int {
 func (w *formatSpanWorker) execute(s *formattingScanner) []core.TextChange {
 	w.formattingScanner = s
 	w.indentationOnLastIndentedLine = -1
-	opt := GetFormatCodeSettingsFromContext(w.ctx)
+	opt := w.formatCodeSettings
 	w.formattingContext = NewFormattingContext(w.sourceFile, w.requestKind, opt)
 	// formatting context is used by rules provider
 	w.visitor = ast.NewNodeVisitor(func(child *ast.Node) *ast.Node {
@@ -707,7 +709,7 @@ func (w *formatSpanWorker) applyRuleEdits(rule *ruleImpl, previousRange TextRang
 		// edit should not be applied if we have one line feed between elements
 		lineDelta := currentStartLine - previousStartLine
 		if lineDelta != 1 {
-			w.recordReplace(previousRange.Loc.End(), currentRange.Loc.Pos()-previousRange.Loc.End(), GetNewLineOrDefaultFromContext(w.ctx))
+			w.recordReplace(previousRange.Loc.End(), currentRange.Loc.Pos()-previousRange.Loc.End(), w.newLine)
 			if onLaterLine {
 				return LineActionNone
 			}
