@@ -19,7 +19,6 @@ type emitUpdate struct {
 }
 
 type emitFilesHandler struct {
-	ctx                   context.Context
 	program               *Program
 	isForDtsErrors        bool
 	signatures            collections.SyncMap[tspath.Path, string]
@@ -45,10 +44,10 @@ func (h *emitFilesHandler) getPendingEmitKindForEmitOptions(emitKind FileEmitKin
 // Emits the next affected file's emit result (EmitResult and sourceFiles emitted) or returns undefined if iteration is complete
 // The first of writeFile if provided, writeFile of BuilderProgramHost if provided, writeFile of compiler host
 // in that order would be used to write the files
-func (h *emitFilesHandler) emitAllAffectedFiles(options compiler.EmitOptions) *compiler.EmitResult {
+func (h *emitFilesHandler) emitAllAffectedFiles(ctx context.Context, options compiler.EmitOptions) *compiler.EmitResult {
 	// Emit all affected files
 	if h.program.snapshot.canUseIncrementalState() {
-		results := h.emitFilesIncremental(options)
+		results := h.emitFilesIncremental(ctx, options)
 		if h.isForDtsErrors {
 			if options.TargetSourceFile != nil {
 				// Result from cache
@@ -62,18 +61,18 @@ func (h *emitFilesHandler) emitAllAffectedFiles(options compiler.EmitOptions) *c
 		} else {
 			// Combine results and update buildInfo
 			result := compiler.CombineEmitResults(results)
-			h.emitBuildInfo(options, result)
+			h.emitBuildInfo(ctx, options, result)
 			return result
 		}
 	} else if !h.isForDtsErrors {
-		result := h.program.program.Emit(h.ctx, h.getEmitOptions(options))
+		result := h.program.program.Emit(ctx, h.getEmitOptions(options))
 		h.updateSnapshot()
-		h.emitBuildInfo(options, result)
+		h.emitBuildInfo(ctx, options, result)
 		return result
 	} else {
 		result := &compiler.EmitResult{
 			EmitSkipped: true,
-			Diagnostics: h.program.program.GetDeclarationDiagnostics(h.ctx, options.TargetSourceFile),
+			Diagnostics: h.program.program.GetDeclarationDiagnostics(ctx, options.TargetSourceFile),
 		}
 		if len(result.Diagnostics) != 0 {
 			h.program.snapshot.hasEmitDiagnostics = true
@@ -82,18 +81,18 @@ func (h *emitFilesHandler) emitAllAffectedFiles(options compiler.EmitOptions) *c
 	}
 }
 
-func (h *emitFilesHandler) emitBuildInfo(options compiler.EmitOptions, result *compiler.EmitResult) {
-	buildInfoResult := h.program.emitBuildInfo(h.ctx, options)
+func (h *emitFilesHandler) emitBuildInfo(ctx context.Context, options compiler.EmitOptions, result *compiler.EmitResult) {
+	buildInfoResult := h.program.emitBuildInfo(ctx, options)
 	if buildInfoResult != nil {
 		result.Diagnostics = append(result.Diagnostics, buildInfoResult.Diagnostics...)
 		result.EmittedFiles = append(result.EmittedFiles, buildInfoResult.EmittedFiles...)
 	}
 }
 
-func (h *emitFilesHandler) emitFilesIncremental(options compiler.EmitOptions) []*compiler.EmitResult {
+func (h *emitFilesHandler) emitFilesIncremental(ctx context.Context, options compiler.EmitOptions) []*compiler.EmitResult {
 	// Get all affected files
-	collectAllAffectedFiles(h.ctx, h.program)
-	if h.ctx.Err() != nil {
+	collectAllAffectedFiles(ctx, h.program)
+	if ctx.Err() != nil {
 		return nil
 	}
 
@@ -121,7 +120,7 @@ func (h *emitFilesHandler) emitFilesIncremental(options compiler.EmitOptions) []
 				}
 				var result *compiler.EmitResult
 				if !h.isForDtsErrors {
-					result = h.program.program.Emit(h.ctx, h.getEmitOptions(compiler.EmitOptions{
+					result = h.program.program.Emit(ctx, h.getEmitOptions(compiler.EmitOptions{
 						TargetSourceFile: affectedFile,
 						EmitOnly:         emitOnly,
 						WriteFile:        options.WriteFile,
@@ -129,7 +128,7 @@ func (h *emitFilesHandler) emitFilesIncremental(options compiler.EmitOptions) []
 				} else {
 					result = &compiler.EmitResult{
 						EmitSkipped: true,
-						Diagnostics: h.program.program.GetDeclarationDiagnostics(h.ctx, affectedFile),
+						Diagnostics: h.program.program.GetDeclarationDiagnostics(ctx, affectedFile),
 					}
 				}
 
@@ -140,7 +139,7 @@ func (h *emitFilesHandler) emitFilesIncremental(options compiler.EmitOptions) []
 		return true
 	})
 	wg.RunAndWait()
-	if h.ctx.Err() != nil {
+	if ctx.Err() != nil {
 		return nil
 	}
 
@@ -312,7 +311,7 @@ func (h *emitFilesHandler) updateSnapshot() []*compiler.EmitResult {
 }
 
 func emitFiles(ctx context.Context, program *Program, options compiler.EmitOptions, isForDtsErrors bool) *compiler.EmitResult {
-	emitHandler := &emitFilesHandler{ctx: ctx, program: program, isForDtsErrors: isForDtsErrors}
+	emitHandler := &emitFilesHandler{program: program, isForDtsErrors: isForDtsErrors}
 
 	// Single file emit - do direct from program
 	if !isForDtsErrors && options.TargetSourceFile != nil {
@@ -325,5 +324,5 @@ func emitFiles(ctx context.Context, program *Program, options compiler.EmitOptio
 	}
 
 	// Emit only affected files if using builder for emit
-	return emitHandler.emitAllAffectedFiles(options)
+	return emitHandler.emitAllAffectedFiles(ctx, options)
 }

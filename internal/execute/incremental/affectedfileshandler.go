@@ -28,7 +28,6 @@ type updatedSignature struct {
 }
 
 type affectedFilesHandler struct {
-	ctx                                    context.Context
 	program                                *Program
 	hasAllFilesExcludingDefaultLibraryFile atomic.Bool
 	updatedSignatures                      collections.SyncMap[tspath.Path, *updatedSignature]
@@ -66,9 +65,9 @@ func (h *affectedFilesHandler) removeDiagnosticsOfLibraryFiles() {
 	})
 }
 
-func (h *affectedFilesHandler) computeDtsSignature(file *ast.SourceFile) string {
+func (h *affectedFilesHandler) computeDtsSignature(ctx context.Context, file *ast.SourceFile) string {
 	var signature string
-	h.program.program.Emit(h.ctx, compiler.EmitOptions{
+	h.program.program.Emit(ctx, compiler.EmitOptions{
 		TargetSourceFile: file,
 		EmitOnly:         compiler.EmitOnlyForcedDts,
 		WriteFile: func(fileName string, text string, writeByteOrderMark bool, data *compiler.WriteFileData) error {
@@ -82,7 +81,7 @@ func (h *affectedFilesHandler) computeDtsSignature(file *ast.SourceFile) string 
 	return signature
 }
 
-func (h *affectedFilesHandler) updateShapeSignature(file *ast.SourceFile, useFileVersionAsSignature bool) bool {
+func (h *affectedFilesHandler) updateShapeSignature(ctx context.Context, file *ast.SourceFile, useFileVersionAsSignature bool) bool {
 	update := &updatedSignature{}
 	update.mu.Lock()
 	defer update.mu.Unlock()
@@ -97,7 +96,7 @@ func (h *affectedFilesHandler) updateShapeSignature(file *ast.SourceFile, useFil
 	info, _ := h.program.snapshot.fileInfos.Load(file.Path())
 	prevSignature := info.signature
 	if !file.IsDeclarationFile && !useFileVersionAsSignature {
-		update.signature = h.computeDtsSignature(file)
+		update.signature = h.computeDtsSignature(ctx, file)
 	}
 	// Default is to use file version as signature
 	if update.signature == "" {
@@ -107,13 +106,13 @@ func (h *affectedFilesHandler) updateShapeSignature(file *ast.SourceFile, useFil
 	return update.signature != prevSignature
 }
 
-func (h *affectedFilesHandler) getFilesAffectedBy(path tspath.Path) []*ast.SourceFile {
+func (h *affectedFilesHandler) getFilesAffectedBy(ctx context.Context, path tspath.Path) []*ast.SourceFile {
 	file := h.program.program.GetSourceFileByPath(path)
 	if file == nil {
 		return nil
 	}
 
-	if !h.updateShapeSignature(file, false) {
+	if !h.updateShapeSignature(ctx, file, false) {
 		return []*ast.SourceFile{file}
 	}
 
@@ -133,7 +132,7 @@ func (h *affectedFilesHandler) getFilesAffectedBy(path tspath.Path) []*ast.Sourc
 		file,
 		func(currentFile *ast.SourceFile, currentPath tspath.Path) (queueForFile bool, fastReturn bool) {
 			// If the current file is not nil and has a shape change, we need to queue it for processing
-			if currentFile != nil && h.updateShapeSignature(currentFile, false) {
+			if currentFile != nil && h.updateShapeSignature(ctx, currentFile, false) {
 				return true, false
 			}
 			return false, false
@@ -175,7 +174,7 @@ func (h *affectedFilesHandler) forEachFileReferencedBy(file *ast.SourceFile, fn 
 
 // Handles semantic diagnostics and dts emit for affectedFile and files, that are referencing modules that export entities from affected file
 // This is because even though js emit doesnt change, dts emit / type used can change resulting in need for dts emit and js change
-func (h *affectedFilesHandler) handleDtsMayChangeOfAffectedFile(dtsMayChange dtsMayChange, affectedFile *ast.SourceFile) {
+func (h *affectedFilesHandler) handleDtsMayChangeOfAffectedFile(ctx context.Context, dtsMayChange dtsMayChange, affectedFile *ast.SourceFile) {
 	h.removeSemanticDiagnosticsOf(affectedFile.Path())
 
 	// If affected files is everything except default library, then nothing more to do
@@ -184,7 +183,7 @@ func (h *affectedFilesHandler) handleDtsMayChangeOfAffectedFile(dtsMayChange dts
 		// When a change affects the global scope, all files are considered to be affected without updating their signature
 		// That means when affected file is handled, its signature can be out of date
 		// To avoid this, ensure that we update the signature for any affected file in this scenario.
-		h.updateShapeSignature(affectedFile, false)
+		h.updateShapeSignature(ctx, affectedFile, false)
 		return
 	}
 
@@ -206,10 +205,10 @@ func (h *affectedFilesHandler) handleDtsMayChangeOfAffectedFile(dtsMayChange dts
 		h.forEachFileReferencedBy(
 			affectedFile,
 			func(currentFile *ast.SourceFile, currentPath tspath.Path) (queueForFile bool, fastReturn bool) {
-				if h.handleDtsMayChangeOfGlobalScope(dtsMayChange, currentPath /*invalidateJsFiles*/, false) {
+				if h.handleDtsMayChangeOfGlobalScope(ctx, dtsMayChange, currentPath /*invalidateJsFiles*/, false) {
 					return false, true
 				}
-				h.handleDtsMayChangeOf(dtsMayChange, currentPath /*invalidateJsFiles*/, false)
+				h.handleDtsMayChangeOf(ctx, dtsMayChange, currentPath /*invalidateJsFiles*/, false)
 				if h.isChangedSignature(currentPath) {
 					return true, false
 				}
@@ -229,7 +228,7 @@ func (h *affectedFilesHandler) handleDtsMayChangeOfAffectedFile(dtsMayChange dts
 				break
 			}
 			if typeChecker == nil {
-				typeChecker, done = h.program.program.GetTypeCheckerForFile(h.ctx, affectedFile)
+				typeChecker, done = h.program.program.GetTypeCheckerForFile(ctx, affectedFile)
 			}
 			aliased := checker.SkipAlias(exported, typeChecker)
 			if aliased == exported {
@@ -251,42 +250,42 @@ func (h *affectedFilesHandler) handleDtsMayChangeOfAffectedFile(dtsMayChange dts
 
 	// Go through files that reference affected file and handle dts emit and semantic diagnostics for them and their references
 	for exportedFromPath := range h.program.snapshot.referencedMap.getReferencedBy(affectedFile.Path()) {
-		if h.handleDtsMayChangeOfGlobalScope(dtsMayChange, exportedFromPath, invalidateJsFiles) {
+		if h.handleDtsMayChangeOfGlobalScope(ctx, dtsMayChange, exportedFromPath, invalidateJsFiles) {
 			return
 		}
 		for filePath := range h.program.snapshot.referencedMap.getReferencedBy(exportedFromPath) {
-			if h.handleDtsMayChangeOfFileAndExportsOfFile(dtsMayChange, filePath, invalidateJsFiles) {
+			if h.handleDtsMayChangeOfFileAndExportsOfFile(ctx, dtsMayChange, filePath, invalidateJsFiles) {
 				return
 			}
 		}
 	}
 }
 
-func (h *affectedFilesHandler) handleDtsMayChangeOfFileAndExportsOfFile(dtsMayChange dtsMayChange, filePath tspath.Path, invalidateJsFiles bool) bool {
+func (h *affectedFilesHandler) handleDtsMayChangeOfFileAndExportsOfFile(ctx context.Context,dtsMayChange dtsMayChange, filePath tspath.Path, invalidateJsFiles bool) bool {
 	if existing, loaded := h.seenFileAndExportsOfFile.LoadOrStore(filePath, invalidateJsFiles); loaded && (existing || !invalidateJsFiles) {
 		return false
 	}
-	if h.handleDtsMayChangeOfGlobalScope(dtsMayChange, filePath, invalidateJsFiles) {
+	if h.handleDtsMayChangeOfGlobalScope(ctx, dtsMayChange, filePath, invalidateJsFiles) {
 		return true
 	}
-	h.handleDtsMayChangeOf(dtsMayChange, filePath, invalidateJsFiles)
+	h.handleDtsMayChangeOf(ctx, dtsMayChange, filePath, invalidateJsFiles)
 
 	// Remove the diagnostics of files that import this file and handle all its exports too
 	for referencingFilePath := range h.program.snapshot.referencedMap.getReferencedBy(filePath) {
-		if h.handleDtsMayChangeOfFileAndExportsOfFile(dtsMayChange, referencingFilePath, invalidateJsFiles) {
+		if h.handleDtsMayChangeOfFileAndExportsOfFile(ctx, dtsMayChange, referencingFilePath, invalidateJsFiles) {
 			return true
 		}
 	}
 	return false
 }
 
-func (h *affectedFilesHandler) handleDtsMayChangeOfGlobalScope(dtsMayChange dtsMayChange, filePath tspath.Path, invalidateJsFiles bool) bool {
+func (h *affectedFilesHandler) handleDtsMayChangeOfGlobalScope(ctx context.Context,dtsMayChange dtsMayChange, filePath tspath.Path, invalidateJsFiles bool) bool {
 	if info, ok := h.program.snapshot.fileInfos.Load(filePath); !ok || !info.affectsGlobalScope {
 		return false
 	}
 	// Every file needs to be handled
 	for _, file := range h.program.snapshot.getAllFilesExcludingDefaultLibraryFile(h.program.program, nil) {
-		h.handleDtsMayChangeOf(dtsMayChange, file.Path(), invalidateJsFiles)
+		h.handleDtsMayChangeOf(ctx, dtsMayChange, file.Path(), invalidateJsFiles)
 	}
 	h.removeDiagnosticsOfLibraryFiles()
 	return true
@@ -294,7 +293,7 @@ func (h *affectedFilesHandler) handleDtsMayChangeOfGlobalScope(dtsMayChange dtsM
 
 // Handle the dts may change, so they need to be added to pending emit if dts emit is enabled,
 // Also we need to make sure signature is updated for these files
-func (h *affectedFilesHandler) handleDtsMayChangeOf(dtsMayChange dtsMayChange, path tspath.Path, invalidateJsFiles bool) {
+func (h *affectedFilesHandler) handleDtsMayChangeOf(ctx context.Context,dtsMayChange dtsMayChange, path tspath.Path, invalidateJsFiles bool) {
 	if h.program.snapshot.changedFilesSet.Has(path) {
 		return
 	}
@@ -308,7 +307,7 @@ func (h *affectedFilesHandler) handleDtsMayChangeOf(dtsMayChange dtsMayChange, p
 	// This ensures that we dont later during incremental builds considering wrong signature.
 	// Eg where this also is needed to ensure that .tsbuildinfo generated by incremental build should be same as if it was first fresh build
 	// But we avoid expensive full shape computation, as using file version as shape is enough for correctness.
-	h.updateShapeSignature(file, true)
+	h.updateShapeSignature(ctx, file, true)
 	// If not dts emit, nothing more to do
 	if invalidateJsFiles {
 		dtsMayChange.addFileToAffectedFilesPendingEmit(path, GetFileEmitKind(h.program.snapshot.options))
@@ -317,8 +316,8 @@ func (h *affectedFilesHandler) handleDtsMayChangeOf(dtsMayChange dtsMayChange, p
 	}
 }
 
-func (h *affectedFilesHandler) updateSnapshot() {
-	if h.ctx.Err() != nil {
+func (h *affectedFilesHandler) updateSnapshot(ctx context.Context) {
+	if ctx.Err() != nil {
 		return
 	}
 	h.updatedSignatures.Range(func(filePath tspath.Path, update *updatedSignature) bool {
@@ -348,12 +347,12 @@ func collectAllAffectedFiles(ctx context.Context, program *Program) {
 		return
 	}
 
-	handler := affectedFilesHandler{ctx: ctx, program: program}
+	handler := affectedFilesHandler{program: program}
 	wg := core.NewWorkGroup(handler.program.program.SingleThreaded())
 	var result collections.SyncSet[*ast.SourceFile]
 	program.snapshot.changedFilesSet.Range(func(file tspath.Path) bool {
 		wg.Queue(func() {
-			for _, affectedFile := range handler.getFilesAffectedBy(file) {
+			for _, affectedFile := range handler.getFilesAffectedBy(ctx, file) {
 				result.Add(affectedFile)
 			}
 		})
@@ -373,12 +372,12 @@ func collectAllAffectedFiles(ctx context.Context, program *Program) {
 		// remove the cached semantic diagnostics and handle dts emit and js emit if needed
 		dtsMayChange := handler.getDtsMayChange(file.Path(), emitKind)
 		wg.Queue(func() {
-			handler.handleDtsMayChangeOfAffectedFile(dtsMayChange, file)
+			handler.handleDtsMayChangeOfAffectedFile(ctx, dtsMayChange, file)
 		})
 		return true
 	})
 	wg.RunAndWait()
 
 	// Update the snapshot with the new state
-	handler.updateSnapshot()
+	handler.updateSnapshot(ctx)
 }
