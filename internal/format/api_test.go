@@ -36,6 +36,38 @@ func applyBulkEdits(text string, edits []core.TextChange) string {
 func TestFormat(t *testing.T) {
 	t.Parallel()
 
+	t.Run("anonymous generator function", func(t *testing.T) {
+		t.Parallel()
+		ctx := format.WithFormatCodeSettings(t.Context(), &format.FormatCodeSettings{
+			EditorSettings: format.EditorSettings{
+				TabSize:                4,
+				IndentSize:             4,
+				BaseIndentSize:         0,
+				NewLineCharacter:       "\n",
+				ConvertTabsToSpaces:    true,
+				IndentStyle:            format.IndentStyleSmart,
+				TrimTrailingWhitespace: true,
+			},
+		}, "\n")
+		
+		// Test with space after * (should be preserved)
+		text := `const a = {
+	b: function* () { }
+}
+
+function* bar() { }
+`
+		sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+			FileName: "/test.ts",
+			Path:     "/test.ts",
+		}, text, core.ScriptKindTS)
+		edits := format.FormatDocument(ctx, sourceFile)
+		newText := applyBulkEdits(text, edits)
+		
+		// The space after * should be preserved for anonymous generator functions
+		assert.Assert(t, newText == text, "Expected formatting to preserve space after * in anonymous generator function, got:\n%s", newText)
+	})
+
 	t.Run("format checker.ts", func(t *testing.T) {
 		t.Parallel()
 		ctx := format.WithFormatCodeSettings(t.Context(), &format.FormatCodeSettings{
