@@ -1,10 +1,13 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"os"
+	"os/signal"
 	"runtime"
+	"syscall"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -51,7 +54,10 @@ func runLSP(args []string) int {
 		TypingsLocation:    typingsLocation,
 	})
 
-	if err := s.Run(); err != nil {
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	if err := s.Run(ctx); err != nil {
 		return 1
 	}
 	return 0
