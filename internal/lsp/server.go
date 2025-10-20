@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os/exec"
 	"runtime/debug"
 	"slices"
 	"sync"
@@ -36,6 +35,7 @@ type ServerOptions struct {
 	DefaultLibraryPath string
 	TypingsLocation    string
 	ParseCache         *project.ParseCache
+	NpmInstall         func(cwd string, args []string) ([]byte, error)
 }
 
 func NewServer(opts *ServerOptions) *Server {
@@ -56,6 +56,7 @@ func NewServer(opts *ServerOptions) *Server {
 		defaultLibraryPath:    opts.DefaultLibraryPath,
 		typingsLocation:       opts.TypingsLocation,
 		parseCache:            opts.ParseCache,
+		npmInstall:            opts.NpmInstall,
 	}
 }
 
@@ -154,6 +155,8 @@ type Server struct {
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	// parseCache can be passed in so separate tests can share ASTs
 	parseCache *project.ParseCache
+
+	npmInstall func(cwd string, args []string) ([]byte, error)
 }
 
 // WatchFiles implements project.Client.
@@ -871,9 +874,7 @@ func (s *Server) SetCompilerOptionsForInferredProjects(ctx context.Context, opti
 
 // NpmInstall implements ata.NpmExecutor
 func (s *Server) NpmInstall(cwd string, args []string) ([]byte, error) {
-	cmd := exec.Command("npm", args...)
-	cmd.Dir = cwd
-	return cmd.Output()
+	return s.npmInstall(cwd, args)
 }
 
 func isBlockingMethod(method lsproto.Method) bool {

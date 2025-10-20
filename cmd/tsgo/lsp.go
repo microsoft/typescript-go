@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/exec"
 	"os/signal"
 	"runtime"
 	"syscall"
@@ -52,6 +53,11 @@ func runLSP(args []string) int {
 		FS:                 fs,
 		DefaultLibraryPath: defaultLibraryPath,
 		TypingsLocation:    typingsLocation,
+		NpmInstall: func(cwd string, args []string) ([]byte, error) {
+			cmd := exec.Command("npm", args...)
+			cmd.Dir = cwd
+			return cmd.Output()
+		},
 	})
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
