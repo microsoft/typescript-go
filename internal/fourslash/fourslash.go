@@ -560,13 +560,20 @@ func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput,
 				t.Fatalf("Code action '%s' from source '%s' not found in completions.", expectedAction.Name, expectedAction.Source)
 			}
 			assert.Check(t, strings.Contains(*item.Detail, expectedAction.Description), "Completion item detail does not contain expected description.")
-			f.ApplyTextEdits(t, *item.AdditionalTextEdits)
+			f.applyTextEdits(t, *item.AdditionalTextEdits)
 			assert.Equal(t, f.getScriptInfo(f.activeFilename).content, expectedAction.NewFileContent, fmt.Sprintf("File content after applying code action '%s' did not match expected content.", expectedAction.Name))
 		},
 	}
 }
 
 func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *CompletionsExpectedList) *lsproto.CompletionList {
+	prefix := f.getCurrentPositionPrefix()
+	list := f.getCompletions(t)
+	f.verifyCompletionsResult(t, list, expected, prefix)
+	return list
+}
+
+func (f *FourslashTest) getCompletions(t *testing.T) *lsproto.CompletionList {
 	prefix := f.getCurrentPositionPrefix()
 	params := &lsproto.CompletionParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
@@ -582,7 +589,6 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *Completi
 	if !resultOk {
 		t.Fatalf(prefix+"Unexpected response type for completion request: %T", resMsg.AsResponse().Result)
 	}
-	f.verifyCompletionsResult(t, result.List, expected, prefix)
 	return result.List
 }
 
@@ -780,14 +786,7 @@ func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual
 	}
 
 	if expected.Detail != nil || expected.Documentation != nil || actualAutoImportData != nil {
-		resMsg, result, resultOk := sendRequest(t, f, lsproto.CompletionItemResolveInfo, actual)
-		if resMsg == nil {
-			t.Fatal(prefix + "Expected non-nil response for completion item resolve, got nil")
-		}
-		if !resultOk {
-			t.Fatalf(prefix+"Unexpected response type for completion item resolve: %T", resMsg.AsResponse().Result)
-		}
-		actual = result
+		actual = f.resolveCompletionItem(t, actual)
 	}
 
 	if actualAutoImportData != nil {
@@ -810,6 +809,18 @@ func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual
 	assertDeepEqual(t, actual.SortText, core.OrElse(expected.SortText, ptrTo(string(ls.SortTextLocationPriority))), prefix+" SortText mismatch")
 }
 
+func (f *FourslashTest) resolveCompletionItem(t *testing.T, item *lsproto.CompletionItem) *lsproto.CompletionItem {
+	prefix := f.getCurrentPositionPrefix()
+	resMsg, result, resultOk := sendRequest(t, f, lsproto.CompletionItemResolveInfo, item)
+	if resMsg == nil {
+		t.Fatal(prefix + "Expected non-nil response for completion item resolve, got nil")
+	}
+	if !resultOk {
+		t.Fatalf(prefix+"Unexpected response type for completion item resolve: %T", resMsg.AsResponse().Result)
+	}
+	return result
+}
+
 func getExpectedLabel(t *testing.T, item CompletionsExpectedItem) string {
 	switch item := item.(type) {
 	case string:
@@ -829,6 +840,53 @@ func assertDeepEqual(t *testing.T, actual any, expected any, prefix string, opts
 	if diff != "" {
 		t.Fatalf("%s:\n%s", prefix, diff)
 	}
+}
+
+type ApplyCodeActionFromCompletionOptions struct {
+	Name            string
+	Source          string
+	AutoImportData  *ls.AutoImportData
+	Description     string
+	NewFileContent  *string
+	NewRangeContent *string
+}
+
+func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, markerName *string, options *ApplyCodeActionFromCompletionOptions) {
+	f.GoToMarker(t, *markerName)
+	completionsList := f.getCompletions(t)
+	item := core.Find(completionsList.Items, func(item *lsproto.CompletionItem) bool {
+		if item.Label != options.Name || item.Data == nil {
+			return false
+		}
+		data, ok := (*item.Data).(*ls.CompletionItemData)
+		if !ok {
+			return false
+		}
+		if options.AutoImportData != nil {
+			return data.AutoImport != nil && data.AutoImport.ModuleSpecifier == options.AutoImportData.ModuleSpecifier &&
+				(options.AutoImportData.ExportName == "" || data.AutoImport.ExportName == options.AutoImportData.ExportName) &&
+				(options.AutoImportData.FileName == nil || data.AutoImport.FileName == options.AutoImportData.FileName) &&
+				(options.AutoImportData.AmbientModuleName == nil || data.AutoImport.AmbientModuleName == options.AutoImportData.AmbientModuleName) &&
+				(options.AutoImportData.IsPackageJsonImport == core.TSUnknown || data.AutoImport.IsPackageJsonImport == options.AutoImportData.IsPackageJsonImport)
+		}
+		if data.AutoImport == nil && data.Source != "" && data.Source == options.Source {
+			return true
+		}
+		if data.AutoImport != nil && data.AutoImport.ModuleSpecifier == options.Source {
+			return true
+		}
+		return false
+	})
+	if item == nil {
+		t.Fatalf("Code action '%s' from source '%s' not found in completions.", options.Name, options.Source)
+	}
+	item = f.resolveCompletionItem(t, item)
+	assert.Check(t, strings.Contains(*item.Detail, options.Description), "Completion item detail does not contain expected description.")
+	if item.AdditionalTextEdits == nil {
+		t.Fatalf("Expected non-nil AdditionalTextEdits for code action completion item.")
+	}
+	f.applyTextEdits(t, *item.AdditionalTextEdits)
+	assert.Equal(t, f.getScriptInfo(f.activeFilename).content, options.NewFileContent, "File content after applying code action did not match expected content.")
 }
 
 func (f *FourslashTest) VerifyBaselineFindAllReferences(
@@ -1315,7 +1373,7 @@ func (f *FourslashTest) getSelection() core.TextRange {
 	)
 }
 
-func (f *FourslashTest) ApplyTextEdits(t *testing.T, edits []*lsproto.TextEdit) {
+func (f *FourslashTest) applyTextEdits(t *testing.T, edits []*lsproto.TextEdit) {
 	script := f.getScriptInfo(f.activeFilename)
 	slices.SortFunc(edits, func(a, b *lsproto.TextEdit) int {
 		aStart := f.converters.LineAndCharacterToPosition(script, a.Range.Start)

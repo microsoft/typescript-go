@@ -172,6 +172,9 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                 case "completions":
                     // `verify.completions(...)`
                     return parseVerifyCompletionsArgs(callExpression.arguments);
+                case "applyCodeActionFromCompletion":
+                    // `verify.applyCodeActionFromCompletion(...)`
+                    return parseVerifyApplyCodeActionFromCompletionArgs(callExpression.arguments);
                 case "quickInfoAt":
                 case "quickInfoExists":
                 case "quickInfoIs":
@@ -388,6 +391,154 @@ function parseVerifyCompletionsArgs(args: readonly ts.Expression[], codeActionAr
     return cmds;
 }
 
+function parseVerifyApplyCodeActionFromCompletionArgs(args: readonly ts.Expression[]): VerifyApplyCodeActionFromCompletionCmd[] | undefined {
+    const cmds: VerifyApplyCodeActionFromCompletionCmd[] = [];
+    if (args.length !== 2) {
+        console.error(`Expected two arguments in verify.applyCodeActionFromCompletion, got ${args.map(arg => arg.getText()).join(", ")}`);
+        return undefined;
+    }
+    if (!ts.isStringLiteralLike(args[0]) && args[0].getText() !== "undefined") {
+        console.error(`Expected string literal or "undefined" in verify.applyCodeActionFromCompletion, got ${args[0].getText()}`);
+        return undefined;
+    }
+    const markerName = getStringLiteralLike(args[0])?.text;
+    const marker = markerName === undefined ? "nil" : `PtrTo(${getGoStringLiteral(markerName)})`;
+    const options = parseVerifyApplyCodeActionArgs(args[1]);
+    if (options === undefined) {
+        return undefined;
+    }
+
+    cmds.push({ kind: "verifyApplyCodeActionFromCompletion", marker, options });
+    return cmds;
+}
+
+function parseVerifyApplyCodeActionArgs(arg: ts.Expression): string | undefined {
+    const obj = getObjectLiteralExpression(arg);
+    if (!obj) {
+        console.error(`Expected object literal for verify.applyCodeActionFromCompletion options, got ${arg.getText()}`);
+        return undefined;
+    }
+    let nameInit, sourceInit, descInit, dataInit;
+    const props: string[] = [];
+    for (const prop of obj.properties) {
+        if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) {
+            if (ts.isShorthandPropertyAssignment(prop) && prop.name.text === "preferences") {
+                continue; // !!! parse once preferences are supported in fourslash
+            }
+            console.error(`Expected property assignment with identifier name in verify.applyCodeActionFromCompletion options, got ${prop.getText()}`);
+            return undefined;
+        }
+        const propName = prop.name.text;
+        const init = prop.initializer;
+        switch (propName) {
+            case "name":
+                nameInit = getStringLiteralLike(init);
+                if (!nameInit) {
+                    console.error(`Expected string literal for name in verify.applyCodeActionFromCompletion options, got ${init.getText()}`);
+                    return undefined;
+                }
+                props.push(`Name: ${getGoStringLiteral(nameInit.text)},`);
+                break;
+            case "source":
+                sourceInit = getStringLiteralLike(init);
+                if (!sourceInit) {
+                    console.error(`Expected string literal for source in verify.applyCodeActionFromCompletion options, got ${init.getText()}`);
+                    return undefined;
+                }
+                props.push(`Source: ${getGoStringLiteral(sourceInit.text)},`);
+                break;
+            case "data":
+                dataInit = getObjectLiteralExpression(init);
+                if (!dataInit) {
+                    console.error(`Expected object literal for data in verify.applyCodeActionFromCompletion options, got ${init.getText()}`);
+                    return undefined;
+                }
+                const dataProps: string[] = [];
+                for (const dataProp of dataInit.properties) {
+                    if (!ts.isPropertyAssignment(dataProp) || !ts.isIdentifier(dataProp.name)) {
+                        console.error(`Expected property assignment with identifier name in verify.applyCodeActionFromCompletion data, got ${dataProp.getText()}`);
+                        return undefined;
+                    }
+                    const dataPropName = dataProp.name.text;
+                    switch (dataPropName) {
+                        case "moduleSpecifier":
+                            const moduleSpecifierInit = getStringLiteralLike(dataProp.initializer);
+                            if (!moduleSpecifierInit) {
+                                console.error(`Expected string literal for moduleSpecifier in verify.applyCodeActionFromCompletion data, got ${dataProp.initializer.getText()}`);
+                                return undefined;
+                            }
+                            dataProps.push(`ModuleSpecifier: ${getGoStringLiteral(moduleSpecifierInit.text)},`);
+                            break;
+                        case "exportName":
+                            const exportNameInit = getStringLiteralLike(dataProp.initializer);
+                            if (!exportNameInit) {
+                                console.error(`Expected string literal for exportName in verify.applyCodeActionFromCompletion data, got ${dataProp.initializer.getText()}`);
+                                return undefined;
+                            }
+                            dataProps.push(`ExportName: ${getGoStringLiteral(exportNameInit.text)},`);
+                            break;
+                        case "fileName":
+                            const fileNameInit = getStringLiteralLike(dataProp.initializer);
+                            if (!fileNameInit) {
+                                console.error(`Expected string literal for fileName in verify.applyCodeActionFromCompletion data, got ${dataProp.initializer.getText()}`);
+                                return undefined;
+                            }
+                            dataProps.push(`FileName: PtrTo(${getGoStringLiteral(fileNameInit.text)}),`);
+                            break;
+                        default:
+                            console.error(`Unrecognized property in verify.applyCodeActionFromCompletion data: ${dataProp.getText()}`);
+                            return undefined;
+                    }
+                }
+                props.push(`AutoImportData: &ls.AutoImportData{\n${dataProps.join("\n")}\n},`);
+                break;
+            case "description":
+                descInit = getStringLiteralLike(init);
+                if (!descInit) {
+                    console.error(`Expected string literal for description in verify.applyCodeActionFromCompletion options, got ${init.getText()}`);
+                    return undefined;
+                }
+                props.push(`Description: ${getGoStringLiteral(descInit.text)},`);
+                break;
+            case "newFileContent":
+                const newFileContentInit = getStringLiteralLike(init);
+                if (!newFileContentInit) {
+                    console.error(`Expected string literal for newFileContent in verify.applyCodeActionFromCompletion options, got ${init.getText()}`);
+                    return undefined;
+                }
+                props.push(`NewFileContent: PtrTo(${getGoMultiLineStringLiteral(newFileContentInit.text)}),`);
+                break;
+            case "newRangeContent":
+                const newRangeContentInit = getStringLiteralLike(init);
+                if (!newRangeContentInit) {
+                    console.error(`Expected string literal for newRangeContent in verify.applyCodeActionFromCompletion options, got ${init.getText()}`);
+                    return undefined;
+                }
+                props.push(`NewRangeContent: PtrTo(${getGoMultiLineStringLiteral(newRangeContentInit.text)}),`);
+                break;
+            case "preferences":
+                // Few if any tests use non-default preferences
+                break;
+            default:
+                console.error(`Unrecognized property in verify.applyCodeActionFromCompletion options: ${prop.getText()}`);
+                return undefined;
+        }
+    }
+    if (!nameInit) {
+        console.error(`Expected name property in verify.applyCodeActionFromCompletion options`);
+        return undefined;
+    }
+    if (!sourceInit && !dataInit) {
+        console.error(`Expected source property in verify.applyCodeActionFromCompletion options`);
+        return undefined;
+    }
+    if (!descInit) {
+        console.error(`Expected description property in verify.applyCodeActionFromCompletion options`);
+        return undefined;
+    }
+    return `&fourslash.ApplyCodeActionFromCompletionOptions{\n${props.join("\n")}\n}`;
+}
+
 const completionConstants = new Map([
     ["completion.globals", "CompletionGlobals"],
     ["completion.globalTypes", "CompletionGlobalTypes"],
@@ -422,6 +573,9 @@ function parseVerifyCompletionArg(arg: ts.Expression, codeActionArgs?: VerifyApp
     let isNewIdentifierLocation: true | undefined;
     for (const prop of obj.properties) {
         if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) {
+            if (ts.isShorthandPropertyAssignment(prop) && prop.name.text === "preferences") {
+                continue; // !!! parse once preferences are supported in fourslash
+            }
             console.error(`Expected property assignment with identifier name, got ${prop.getText()}`);
             return undefined;
         }
@@ -732,6 +886,13 @@ function parseExpectedCompletionItem(expr: ts.Expression, codeActionArgs?: Verif
                         break;
                     }
                     if (sourceInit = getStringLiteralLike(init)) {
+                        if (propName === "source" && sourceInit.text.endsWith("/")) {
+                            // source: "ClassMemberSnippet/"
+                            itemProps.push(`Data: PtrTo(any(&ls.CompletionItemData{
+                                Source: ${getGoStringLiteral(sourceInit.text)},
+                            })),`);
+                            break;
+                        }
                         itemProps.push(`Data: PtrTo(any(&ls.CompletionItemData{
                             AutoImport: &ls.AutoImportData{
                                 ModuleSpecifier: ${getGoStringLiteral(sourceInit.text)},
@@ -1398,6 +1559,12 @@ interface VerifyApplyCodeActionArgs {
     newFileContent: string;
 }
 
+interface VerifyApplyCodeActionFromCompletionCmd {
+    kind: "verifyApplyCodeActionFromCompletion";
+    marker: string;
+    options: string;
+}
+
 interface VerifyBaselineFindAllReferencesCmd {
     kind: "verifyBaselineFindAllReferences";
     markers: string[];
@@ -1462,6 +1629,7 @@ interface VerifyRenameInfoCmd {
 
 type Cmd =
     | VerifyCompletionsCmd
+    | VerifyApplyCodeActionFromCompletionCmd
     | VerifyBaselineFindAllReferencesCmd
     | VerifyBaselineDocumentHighlightsCmd
     | VerifyBaselineGoToDefinitionCmd
@@ -1508,6 +1676,10 @@ function generateVerifyCompletions({ marker, args, isNewIdentifierLocation, andA
         })`;
     }
     return call;
+}
+
+function generateVerifyApplyCodeActionFromCompletion({ marker, options }: VerifyApplyCodeActionFromCompletionCmd): string {
+    return `f.VerifyApplyCodeActionFromCompletion(t, ${marker}, ${options})`;
 }
 
 function generateBaselineFindAllReferences({ markers, ranges }: VerifyBaselineFindAllReferencesCmd): string {
@@ -1568,6 +1740,8 @@ function generateCmd(cmd: Cmd): string {
     switch (cmd.kind) {
         case "verifyCompletions":
             return generateVerifyCompletions(cmd);
+        case "verifyApplyCodeActionFromCompletion":
+            return generateVerifyApplyCodeActionFromCompletion(cmd);
         case "verifyBaselineFindAllReferences":
             return generateBaselineFindAllReferences(cmd);
         case "verifyBaselineDocumentHighlights":
