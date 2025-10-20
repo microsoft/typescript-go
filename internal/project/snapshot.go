@@ -184,7 +184,6 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	newSnapshotID := session.snapshotID.Add(1)
 	projectCollectionBuilder := newProjectCollectionBuilder(
-		ctx,
 		newSnapshotID,
 		fs,
 		s.ProjectCollection,

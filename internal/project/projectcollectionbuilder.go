@@ -1,7 +1,6 @@
 package project
 
 import (
-	"context"
 	"fmt"
 	"maps"
 	"slices"
@@ -30,7 +29,6 @@ type projectCollectionBuilder struct {
 	parseCache          *ParseCache
 	extendedConfigCache *extendedConfigCache
 
-	ctx                                context.Context
 	fs                                 *snapshotFSBuilder
 	base                               *ProjectCollection
 	compilerOptionsForInferredProjects *core.CompilerOptions
@@ -46,7 +44,6 @@ type projectCollectionBuilder struct {
 }
 
 func newProjectCollectionBuilder(
-	ctx context.Context,
 	newSnapshotID uint64,
 	fs *snapshotFSBuilder,
 	oldProjectCollection *ProjectCollection,
@@ -58,7 +55,6 @@ func newProjectCollectionBuilder(
 	extendedConfigCache *extendedConfigCache,
 ) *projectCollectionBuilder {
 	return &projectCollectionBuilder{
-		ctx:                                ctx,
 		fs:                                 fs,
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
 		sessionOptions:                     sessionOptions,
