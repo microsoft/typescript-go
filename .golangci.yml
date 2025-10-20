@@ -77,18 +77,21 @@ linters:
         - pattern: '.*'
           msg: tspath should likely be used instead
           pkg: ^(path|path/filepath)$
+        - pattern: '.*'
+          msg: a host implementation should likely be used instead
+          pkg: ^os$
 
   exclusions:
     rules:
       - path: internal/fourslash/tests/gen/
         linters:
           - misspell
-      - path: 'internal/(repo|testutil|testrunner|vfs|pprof|execute/tsctests|bundled)'
-        text: tspath should likely be used instead
+      - path: 'internal/(repo|testutil|testrunner|vfs|pprof|execute/tsctests|bundled)|cmd/tsgo'
+        text: should likely be used instead
       - path: '(.+)_test\.go$'
-        text: tspath should likely be used instead
+        text: should likely be used instead
       - path: '_tools'
-        text: tspath should likely be used instead
+        text: should likely be used instead
 
     presets:
       - comments
