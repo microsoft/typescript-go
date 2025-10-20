@@ -37,7 +37,7 @@ declare module "./a" {
 					Detail: PtrTo("const foo: 0"),
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/a",
+							ModuleSpecifier: "./a",
 						},
 					})),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
@@ -48,7 +48,7 @@ declare module "./a" {
 					Detail: PtrTo("const bar: 0"),
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/a",
+							ModuleSpecifier: "./a",
 						},
 					})),
 					AdditionalTextEdits: fourslash.AnyTextEdits,

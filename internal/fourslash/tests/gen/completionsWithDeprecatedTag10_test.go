@@ -32,7 +32,7 @@ export const foo = 0;
 					Label: "foo",
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/foo",
+							ModuleSpecifier: "./foo",
 						},
 					})),
 					AdditionalTextEdits: fourslash.AnyTextEdits,

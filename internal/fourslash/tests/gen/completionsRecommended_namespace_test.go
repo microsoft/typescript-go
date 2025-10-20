@@ -60,7 +60,7 @@ alpha.f(new /*c1*/);`
 					Label: "Name",
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/a",
+							ModuleSpecifier: "./a",
 						},
 					})),
 					Detail:              PtrTo("namespace Name"),

@@ -33,7 +33,7 @@ Abcde/**/`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "Abcde",
-		Source:      "/test",
+		Source:      "./test",
 		Description: "Add import from \"./test\"",
 		NewFileContent: PtrTo(`import { Abcde } from "./test";
 

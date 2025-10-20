@@ -36,7 +36,7 @@ export const m = 0;
 					Label: "C",
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/a",
+							ModuleSpecifier: "./a",
 						},
 					})),
 					Detail:              PtrTo("class C"),
@@ -47,7 +47,7 @@ export const m = 0;
 					Label: "T",
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/a",
+							ModuleSpecifier: "./a",
 						},
 					})),
 					Detail:              PtrTo("type T = number"),
@@ -62,7 +62,7 @@ export const m = 0;
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo("0"), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "C",
-		Source:      "/a",
+		Source:      "./a",
 		Description: "Add import from \"./a\"",
 		NewFileContent: PtrTo(`import { C } from "./a";
 
@@ -72,7 +72,7 @@ export const m = 0;
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo("1"), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "T",
-		Source:      "/a",
+		Source:      "./a",
 		Description: "Change 'T' to 'import(\"./a\").T'",
 		NewFileContent: PtrTo(`import { C } from "./a";
 

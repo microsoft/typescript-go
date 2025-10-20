@@ -12,7 +12,7 @@ import (
 
 func TestAutoImportProvider6(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/tsconfig.json
 { "compilerOptions": { "module": "commonjs", "lib": ["es2019"] } }
@@ -39,7 +39,7 @@ Component/**/`
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/home/src/workspaces/project/node_modules/@types/react/index",
+							ModuleSpecifier: "react",
 						},
 					})),
 					SortText: PtrTo(string(ls.SortTextAutoImportSuggestions)),

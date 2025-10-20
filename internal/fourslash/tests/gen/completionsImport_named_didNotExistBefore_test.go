@@ -40,7 +40,7 @@ t/**/`
 						Label: "Test1",
 						Data: PtrTo(any(&ls.CompletionItemData{
 							AutoImport: &ls.AutoImportData{
-								ModuleSpecifier: "/a",
+								ModuleSpecifier: "./a",
 							},
 						})),
 						Detail:              PtrTo("function Test1(): void"),
@@ -48,14 +48,14 @@ t/**/`
 						AdditionalTextEdits: fourslash.AnyTextEdits,
 						SortText:            PtrTo(string(ls.SortTextAutoImportSuggestions)),
 						LabelDetails: &lsproto.CompletionItemLabelDetails{
-							Description: PtrTo("/a"),
+							Description: PtrTo("./a"),
 						},
 					},
 				}, true),
 		},
 	}).AndApplyCodeAction(t, &fourslash.CompletionsExpectedCodeAction{
 		Name:        "Test1",
-		Source:      "/a",
+		Source:      "./a",
 		Description: "Update import from \"./a\"",
 		NewFileContent: `import { Test1, Test2 } from "./a";
 t`,

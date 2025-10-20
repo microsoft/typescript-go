@@ -15,6 +15,8 @@ func TestCompletionsImport_default_symbolName(t *testing.T) {
 	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: commonjs
+// @esModuleInterop: false
+// @allowSyntheticDefaultImports: false
 // @Filename: /node_modules/@types/range-parser/index.d.ts
 declare function RangeParser(): string;
 declare namespace RangeParser {
@@ -39,7 +41,7 @@ R/*0*/`
 					Kind:  PtrTo(lsproto.CompletionItemKindFunction),
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/node_modules/@types/range-parser/index",
+							ModuleSpecifier: "range-parser",
 						},
 					})),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
@@ -51,7 +53,7 @@ R/*0*/`
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo("0"), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "RangeParser",
-		Source:      "/node_modules/@types/range-parser/index",
+		Source:      "range-parser",
 		Description: "Add import from \"range-parser\"",
 		NewFileContent: PtrTo(`import RangeParser = require("range-parser");
 

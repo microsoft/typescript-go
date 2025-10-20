@@ -21,7 +21,7 @@ const z = fo/**/`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "foo",
-		Source:      "/a",
+		Source:      "./a",
 		Description: "Add import from \"./a\"",
 		NewFileContent: PtrTo(`import { foo } from "./a"
 

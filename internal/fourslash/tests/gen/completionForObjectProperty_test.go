@@ -45,7 +45,7 @@ const test8: { foo: string } = { foo/*8*/ }`
 					Label: "foo",
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/a",
+							ModuleSpecifier: "./a",
 						},
 					})),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
@@ -66,7 +66,7 @@ const test8: { foo: string } = { foo/*8*/ }`
 					Label: "foo",
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/a",
+							ModuleSpecifier: "./a",
 						},
 					})),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
@@ -87,7 +87,7 @@ const test8: { foo: string } = { foo/*8*/ }`
 					Label: "foo",
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/a",
+							ModuleSpecifier: "./a",
 						},
 					})),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
@@ -108,7 +108,7 @@ const test8: { foo: string } = { foo/*8*/ }`
 					Label: "foo",
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/a",
+							ModuleSpecifier: "./a",
 						},
 					})),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
@@ -129,7 +129,7 @@ const test8: { foo: string } = { foo/*8*/ }`
 					Label: "foo",
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/a",
+							ModuleSpecifier: "./a",
 						},
 					})),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
@@ -150,7 +150,7 @@ const test8: { foo: string } = { foo/*8*/ }`
 					Label: "foo",
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/a",
+							ModuleSpecifier: "./a",
 						},
 					})),
 					AdditionalTextEdits: fourslash.AnyTextEdits,

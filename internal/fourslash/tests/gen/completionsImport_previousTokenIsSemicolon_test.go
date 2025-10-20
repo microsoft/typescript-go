@@ -12,7 +12,7 @@ import (
 
 func TestCompletionsImport_previousTokenIsSemicolon(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /a.ts
 export function foo() {}
@@ -32,7 +32,7 @@ import * as a from 'a';
 					Label: "foo",
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/a",
+							ModuleSpecifier: "./a",
 						},
 					})),
 					Detail:              PtrTo("function foo(): void"),

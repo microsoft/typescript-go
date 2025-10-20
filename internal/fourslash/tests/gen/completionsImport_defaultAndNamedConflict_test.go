@@ -34,7 +34,7 @@ someMo/**/`
 						Label: "someModule",
 						Data: PtrTo(any(&ls.CompletionItemData{
 							AutoImport: &ls.AutoImportData{
-								ModuleSpecifier: "/someModule",
+								ModuleSpecifier: "./someModule",
 							},
 						})),
 						Detail:              PtrTo("(property) default: 1"),
@@ -46,7 +46,7 @@ someMo/**/`
 						Label: "someModule",
 						Data: PtrTo(any(&ls.CompletionItemData{
 							AutoImport: &ls.AutoImportData{
-								ModuleSpecifier: "/someModule",
+								ModuleSpecifier: "./someModule",
 							},
 						})),
 						Detail:              PtrTo("const someModule: 0"),
@@ -59,7 +59,7 @@ someMo/**/`
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:   "someModule",
-		Source: "/someModule",
+		Source: "./someModule",
 		AutoImportData: &ls.AutoImportData{
 			ExportName: "default",
 			FileName:   PtrTo("/someModule.ts"),

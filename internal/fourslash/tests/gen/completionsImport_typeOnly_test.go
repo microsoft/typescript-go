@@ -13,6 +13,7 @@ func TestCompletionsImport_typeOnly(t *testing.T) {
 	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @target: esnext
+// @moduleResolution: bundler
 // @Filename: /a.ts
 export class A {}
 export class B {}
@@ -23,7 +24,7 @@ const b: B/**/`
 	f.GoToFile(t, "/b.ts")
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "B",
-		Source:      "/a",
+		Source:      "./a",
 		Description: "Update import from \"./a\"",
 		NewFileContent: PtrTo(`import type { A, B } from './a';
 const b: B`),

@@ -51,7 +51,7 @@ fo/*dts*/`
 					Label: "foo",
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/node_modules/a/index",
+							ModuleSpecifier: "a",
 						},
 					})),
 					Detail:              PtrTo("const foo: 0"),

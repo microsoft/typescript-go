@@ -23,7 +23,7 @@ acb/*2*/;`
 	f.GoToMarker(t, "1")
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo("1"), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "abc",
-		Source:      "/a",
+		Source:      "./a",
 		Description: "Add import from \"./a\"",
 		NewFileContent: PtrTo(`import { abc } from "./a";
 
@@ -32,10 +32,11 @@ acb;`),
 	f.GoToMarker(t, "2")
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo("2"), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:   "abc",
-		Source: "/a",
+		Source: "./a",
 		AutoImportData: &ls.AutoImportData{
-			ExportName: "abc",
-			FileName:   PtrTo("/a.ts"),
+			ExportName:      "abc",
+			FileName:        PtrTo("/a.ts"),
+			ModuleSpecifier: "./a",
 		},
 		Description: "Add import from \"./a\"",
 		NewFileContent: PtrTo(`import { abc } from "./a";

@@ -12,7 +12,10 @@ func TestCompletionsImport_weirdDefaultSynthesis(t *testing.T) {
 	t.Parallel()
 	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @Filename: /collection.ts
+	const content = `// @module: commonjs
+// @esModuleInterop: false
+// @allowSyntheticDefaultImports: false
+// @Filename: /collection.ts
 class Collection {
   public static readonly default: typeof Collection = Collection;
 }
@@ -22,7 +25,7 @@ Colle/**/`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "Collection",
-		Source:      "/collection",
+		Source:      "./collection",
 		Description: "Add import from \"./collection\"",
 		NewFileContent: PtrTo(`import Collection = require("./collection");
 

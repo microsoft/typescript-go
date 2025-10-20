@@ -33,7 +33,7 @@ f/**/;`
 					Label: "foo",
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/a",
+							ModuleSpecifier: "./a",
 						},
 					})),
 					Detail:              PtrTo("function foo(): void"),
@@ -46,7 +46,7 @@ f/**/;`
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "foo",
-		Source:      "/a",
+		Source:      "./a",
 		Description: "Update import from \"./a\"",
 		NewFileContent: PtrTo(`import { foo, x } from "./a";
 f;`),

@@ -15,7 +15,7 @@ func TestCompletionsImport_reExportDefault(t *testing.T) {
 	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: esnext
-// @moduleResolution: node
+// @moduleResolution: node10
 // @Filename: /a/b/impl.ts
 export default function foo() {}
 // @Filename: /a/index.ts

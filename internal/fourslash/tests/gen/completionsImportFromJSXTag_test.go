@@ -30,7 +30,7 @@ export function App() {
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "Box",
-		Source:      "/Box",
+		Source:      "./Box",
 		Description: "Add import from \"./Box\"",
 		NewFileContent: PtrTo(`import { Box } from "./Box";
 

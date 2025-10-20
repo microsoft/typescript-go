@@ -57,7 +57,7 @@ const x = Re/**/`
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/node_modules/react/index",
+							ModuleSpecifier: "react",
 						},
 					})),
 					SortText: PtrTo(string(ls.SortTextAutoImportSuggestions)),
@@ -78,7 +78,7 @@ const x = Re/**/`
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/dir/node_modules/redux/index",
+							ModuleSpecifier: "redux",
 						},
 					})),
 					SortText: PtrTo(string(ls.SortTextAutoImportSuggestions)),

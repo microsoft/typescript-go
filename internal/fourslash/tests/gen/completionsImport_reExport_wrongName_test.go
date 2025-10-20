@@ -14,7 +14,7 @@ func TestCompletionsImport_reExport_wrongName(t *testing.T) {
 	t.Parallel()
 	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @moduleResolution: node
+	const content = `// @moduleResolution: bundler
 // @Filename: /a.ts
 export const x = 0;
 // @Filename: /index.ts
@@ -35,7 +35,7 @@ export { x as y } from "./a";
 					Label: "x",
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/a",
+							ModuleSpecifier: "./a",
 						},
 					})),
 					Detail:              PtrTo("const x: 0"),
@@ -46,7 +46,7 @@ export { x as y } from "./a";
 					Label: "y",
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/index",
+							ModuleSpecifier: ".",
 						},
 					})),
 					Detail:              PtrTo("(alias) const y: 0\nexport y"),
@@ -58,7 +58,7 @@ export { x as y } from "./a";
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "x",
-		Source:      "/a",
+		Source:      "./a",
 		Description: "Add import from \"./a\"",
 		NewFileContent: PtrTo(`import { x } from "./a";
 
@@ -66,7 +66,7 @@ export { x as y } from "./a";
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "y",
-		Source:      "/index",
+		Source:      ".",
 		Description: "Add import from \".\"",
 		NewFileContent: PtrTo(`import { y } from ".";
 import { x } from "./a";

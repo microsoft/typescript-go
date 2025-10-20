@@ -35,7 +35,7 @@ conca/**/`
 					Label: "concat",
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/node_modules/bar/concat",
+							ModuleSpecifier: "bar/concat",
 						},
 					})),
 					Detail:              PtrTo("const concat: 0"),
@@ -48,7 +48,7 @@ conca/**/`
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "concat",
-		Source:      "/node_modules/bar/concat",
+		Source:      "bar/concat",
 		Description: "Add import from \"bar/concat\"",
 		NewFileContent: PtrTo(`import { concat } from "bar/concat";
 

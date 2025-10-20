@@ -12,7 +12,7 @@ import (
 
 func TestCompletionsImport_tsx(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noLib: true
 // @jsx: preserve
@@ -34,7 +34,7 @@ export default function Foo() {};
 					Label: "Foo",
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/a",
+							ModuleSpecifier: "./a",
 						},
 					})),
 					AdditionalTextEdits: fourslash.AnyTextEdits,

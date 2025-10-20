@@ -20,7 +20,7 @@ export { foo as default }
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "foo",
-		Source:      "/foo",
+		Source:      "./foo",
 		Description: "Add import from \"./foo\"",
 		NewFileContent: PtrTo(`import foo from "./foo";
 

@@ -14,7 +14,7 @@ func TestCompletionsImport_umdDefaultNoCrash1(t *testing.T) {
 	t.Parallel()
 	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @moduleResolution: node
+	const content = `// @moduleResolution: bundler
 // @allowJs: true
 // @checkJs: true
 // @Filename: /node_modules/dottie/package.json
@@ -59,7 +59,7 @@ func TestCompletionsImport_umdDefaultNoCrash1(t *testing.T) {
 					AdditionalTextEdits: fourslash.AnyTextEdits,
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/node_modules/dottie/dottie",
+							ModuleSpecifier: "dottie",
 						},
 					})),
 					SortText: PtrTo(string(ls.SortTextAutoImportSuggestions)),

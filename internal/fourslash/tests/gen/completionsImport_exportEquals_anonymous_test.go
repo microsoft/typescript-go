@@ -15,6 +15,9 @@ func TestCompletionsImport_exportEquals_anonymous(t *testing.T) {
 	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noLib: true
+// @module: commonjs
+// @esModuleInterop: false
+// @allowSyntheticDefaultImports: false
 // @Filename: /src/foo-bar.ts
 export = 0;
 // @Filename: /src/b.ts
@@ -46,7 +49,7 @@ fooB/*1*/`
 						Label: "fooBar",
 						Data: PtrTo(any(&ls.CompletionItemData{
 							AutoImport: &ls.AutoImportData{
-								ModuleSpecifier: "/src/foo-bar",
+								ModuleSpecifier: "./foo-bar",
 							},
 						})),
 						Detail:              PtrTo("(property) export=: 0"),
@@ -59,7 +62,7 @@ fooB/*1*/`
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo("0"), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "fooBar",
-		Source:      "/src/foo-bar",
+		Source:      "./foo-bar",
 		Description: "Add import from \"./foo-bar\"",
 		NewFileContent: PtrTo(`import fooBar = require("./foo-bar")
 

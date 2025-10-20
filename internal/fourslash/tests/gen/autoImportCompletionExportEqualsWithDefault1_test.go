@@ -16,6 +16,8 @@ func TestAutoImportCompletionExportEqualsWithDefault1(t *testing.T) {
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 // @module: commonjs
+// @esModuleInterop: false
+// @allowSyntheticDefaultImports: false
 // @filename: node.ts
 import Container from "./container.js";
 import Document from "./document.js";

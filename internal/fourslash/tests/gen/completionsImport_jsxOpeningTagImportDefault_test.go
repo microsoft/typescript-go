@@ -36,7 +36,7 @@ export function Index() {
 					Label: "Component",
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/component",
+							ModuleSpecifier: "./component",
 						},
 					})),
 					AdditionalTextEdits: fourslash.AnyTextEdits,
@@ -50,7 +50,7 @@ export function Index() {
 	})
 	f.VerifyApplyCodeActionFromCompletion(t, PtrTo(""), &fourslash.ApplyCodeActionFromCompletionOptions{
 		Name:        "Component",
-		Source:      "/component",
+		Source:      "./component",
 		Description: "Add import from \"./component\"",
 		NewFileContent: PtrTo(`import Component from "./component";
 

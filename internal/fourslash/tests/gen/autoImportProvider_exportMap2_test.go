@@ -18,6 +18,7 @@ func TestAutoImportProvider_exportMap2(t *testing.T) {
 {
   "compilerOptions": {
     "module": "commonjs"
+    "moduleResolution": "node10",
   }
 }
 // @Filename: /home/src/workspaces/project/package.json

@@ -51,7 +51,7 @@ C/**/`
 					Label: "Config",
 					Data: PtrTo(any(&ls.CompletionItemData{
 						AutoImport: &ls.AutoImportData{
-							ModuleSpecifier: "/home/src/workspaces/project/node_modules/@jest/types/index",
+							ModuleSpecifier: "@jest/types",
 						},
 					})),
 					AdditionalTextEdits: fourslash.AnyTextEdits,

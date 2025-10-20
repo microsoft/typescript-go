@@ -15,7 +15,7 @@ func TestCompletionsImport_46332(t *testing.T) {
 	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: esnext
-// @moduleResolution: node
+// @moduleResolution: bundler
 // @Filename: /node_modules/vue/package.json
 {
   "name": "vue",

@@ -14,7 +14,7 @@ func TestCompletionsImport_ofAlias_preferShortPath(t *testing.T) {
 	t.Parallel()
 	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @moduleResolution: node
+	const content = `// @moduleResolution: node10
 // @module: commonJs
 // @noLib: true
 // @Filename: /foo/index.ts
