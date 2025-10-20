@@ -851,7 +851,7 @@ type Checker struct {
 	_jsxNamespace                               string
 	_jsxFactoryEntity                           *ast.Node
 	skipDirectInferenceNodes                    collections.Set[*ast.Node]
-	ctx                                         context.Context
+	ctx                                         context.Context //nolint:containedctx
 	packagesMap                                 map[string]bool
 	activeMappers                               []*TypeMapper
 	activeTypeMappersCaches                     []map[string]*Type

@@ -13,6 +13,7 @@ linters:
     - bidichk
     - bodyclose
     - canonicalheader
+    - containedctx
     - copyloopvar
     - customlint
     - depguard
