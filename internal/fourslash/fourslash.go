@@ -673,9 +673,9 @@ func (f *FourslashTest) verifyCompletionsItems(t *testing.T, prefix string, actu
 		}
 		return
 	}
-	nameToActualItem := make(map[string]*lsproto.CompletionItem)
+	nameToActualItems := make(map[string][]*lsproto.CompletionItem)
 	for _, item := range actual {
-		nameToActualItem[item.Label] = item
+		nameToActualItems[item.Label] = append(nameToActualItems[item.Label], item)
 	}
 	if expected.Unsorted != nil {
 		if expected.Includes != nil {
@@ -687,24 +687,30 @@ func (f *FourslashTest) verifyCompletionsItems(t *testing.T, prefix string, actu
 		for _, item := range expected.Unsorted {
 			switch item := item.(type) {
 			case string:
-				_, ok := nameToActualItem[item]
+				_, ok := nameToActualItems[item]
 				if !ok {
 					t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item, cmp.Diff(actual, nil))
 				}
-				delete(nameToActualItem, item)
+				delete(nameToActualItems, item)
 			case *lsproto.CompletionItem:
-				actualItem, ok := nameToActualItem[item.Label]
+				actualItems, ok := nameToActualItems[item.Label]
 				if !ok {
 					t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item.Label, cmp.Diff(actual, nil))
 				}
-				delete(nameToActualItem, item.Label)
+				actualItem := actualItems[0]
+				actualItems = actualItems[1:]
+				if len(actualItems) == 0 {
+					delete(nameToActualItems, item.Label)
+				} else {
+					nameToActualItems[item.Label] = actualItems
+				}
 				f.verifyCompletionItem(t, prefix+"Includes completion item mismatch for label "+item.Label+": ", actualItem, item)
 			default:
 				t.Fatalf("%sExpected completion item to be a string or *lsproto.CompletionItem, got %T", prefix, item)
 			}
 		}
 		if len(expected.Unsorted) != len(actual) {
-			unmatched := slices.Collect(maps.Keys(nameToActualItem))
+			unmatched := slices.Collect(maps.Keys(nameToActualItems))
 			t.Fatalf("%sAdditional completions found but not included in 'unsorted': %s", prefix, strings.Join(unmatched, "\n"))
 		}
 		return
@@ -713,14 +719,21 @@ func (f *FourslashTest) verifyCompletionsItems(t *testing.T, prefix string, actu
 		for _, item := range expected.Includes {
 			switch item := item.(type) {
 			case string:
-				_, ok := nameToActualItem[item]
+				_, ok := nameToActualItems[item]
 				if !ok {
 					t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item, cmp.Diff(actual, nil))
 				}
 			case *lsproto.CompletionItem:
-				actualItem, ok := nameToActualItem[item.Label]
+				actualItems, ok := nameToActualItems[item.Label]
 				if !ok {
 					t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item.Label, cmp.Diff(actual, nil))
+				}
+				actualItem := actualItems[0]
+				actualItems = actualItems[1:]
+				if len(actualItems) == 0 {
+					delete(nameToActualItems, item.Label)
+				} else {
+					nameToActualItems[item.Label] = actualItems
 				}
 				f.verifyCompletionItem(t, prefix+"Includes completion item mismatch for label "+item.Label+": ", actualItem, item)
 			default:
@@ -729,7 +742,7 @@ func (f *FourslashTest) verifyCompletionsItems(t *testing.T, prefix string, actu
 		}
 	}
 	for _, exclude := range expected.Excludes {
-		if _, ok := nameToActualItem[exclude]; ok {
+		if _, ok := nameToActualItems[exclude]; ok {
 			t.Fatalf("%sLabel '%s' should not be in actual items but was found. Actual items: %s", prefix, exclude, cmp.Diff(actual, nil))
 		}
 	}

@@ -69,7 +69,7 @@ type CachedSymbolExportInfo struct {
 }
 
 type exportInfoMap struct {
-	exportInfo       collections.MultiMap[ExportInfoMapKey, CachedSymbolExportInfo]
+	exportInfo       collections.OrderedMap[ExportInfoMapKey, []*CachedSymbolExportInfo]
 	symbols          map[int]symbolExportEntry
 	exportInfoId     int
 	usableByFileName tspath.Path
@@ -83,7 +83,7 @@ type exportInfoMap struct {
 
 func (e *exportInfoMap) clear() {
 	e.symbols = map[int]symbolExportEntry{}
-	e.exportInfo = collections.MultiMap[ExportInfoMapKey, CachedSymbolExportInfo]{}
+	e.exportInfo = collections.OrderedMap[ExportInfoMapKey, []*CachedSymbolExportInfo]{}
 	e.usableByFileName = ""
 }
 
@@ -91,7 +91,7 @@ func (e *exportInfoMap) get(importingFile tspath.Path, ch *checker.Checker, key 
 	if e.usableByFileName != importingFile {
 		return nil
 	}
-	return core.Map(e.exportInfo.Get(key), func(info CachedSymbolExportInfo) *SymbolExportInfo { return e.rehydrateCachedInfo(ch, info) })
+	return core.Map(e.exportInfo.GetOrZero(key), func(info *CachedSymbolExportInfo) *SymbolExportInfo { return e.rehydrateCachedInfo(ch, info) })
 }
 
 func (e *exportInfoMap) add(
@@ -193,7 +193,9 @@ func (e *exportInfoMap) add(
 	if moduleFile != nil {
 		moduleFileName = moduleFile.FileName()
 	}
-	e.exportInfo.Add(newExportInfoMapKey(symbolName, symbol, moduleKey, ch), CachedSymbolExportInfo{
+	key := newExportInfoMapKey(symbolName, symbol, moduleKey, ch)
+	infos := e.exportInfo.GetOrZero(key)
+	infos = append(infos, &CachedSymbolExportInfo{
 		id:                    id,
 		symbolTableKey:        symbolTableKey,
 		symbolName:            symbolName,
@@ -209,6 +211,7 @@ func (e *exportInfoMap) add(
 		targetFlags:       target.Flags,
 		isFromPackageJson: isFromPackageJson,
 	})
+	e.exportInfo.Set(key, infos)
 }
 
 func (e *exportInfoMap) search(
@@ -221,13 +224,13 @@ func (e *exportInfoMap) search(
 	if importingFile != e.usableByFileName {
 		return nil
 	}
-	for key, info := range e.exportInfo.M {
+	for key, info := range e.exportInfo.Entries() {
 		symbolName, ambientModuleName := key.SymbolName, key.AmbientModuleName
 		if preferCapitalized && info[0].capitalizedSymbolName != "" {
 			symbolName = info[0].capitalizedSymbolName
 		}
 		if matches(symbolName, info[0].targetFlags) {
-			rehydrated := core.Map(info, func(info CachedSymbolExportInfo) *SymbolExportInfo {
+			rehydrated := core.Map(info, func(info *CachedSymbolExportInfo) *SymbolExportInfo {
 				return e.rehydrateCachedInfo(ch, info)
 			})
 			filtered := core.FilterIndex(rehydrated, func(r *SymbolExportInfo, i int, _ []*SymbolExportInfo) bool {
@@ -254,7 +257,7 @@ func (e *exportInfoMap) isNotShadowedByDeeperNodeModulesPackage(info *SymbolExpo
 	return !ok || strings.HasPrefix(info.moduleFileName, packageDeepestNodeModulesPath)
 }
 
-func (e *exportInfoMap) rehydrateCachedInfo(ch *checker.Checker, info CachedSymbolExportInfo) *SymbolExportInfo {
+func (e *exportInfoMap) rehydrateCachedInfo(ch *checker.Checker, info *CachedSymbolExportInfo) *SymbolExportInfo {
 	if info.symbol != nil && info.moduleSymbol != nil {
 		return &SymbolExportInfo{
 			symbol:            info.symbol,
@@ -400,7 +403,7 @@ func NewExportInfoMap(globalsTypingCacheLocation string) *exportInfoMap {
 	return &exportInfoMap{
 		packages:                   map[string]string{},
 		symbols:                    map[int]symbolExportEntry{},
-		exportInfo:                 collections.MultiMap[ExportInfoMapKey, CachedSymbolExportInfo]{},
+		exportInfo:                 collections.OrderedMap[ExportInfoMapKey, []*CachedSymbolExportInfo]{},
 		globalTypingsCacheLocation: globalsTypingCacheLocation,
 	}
 }
