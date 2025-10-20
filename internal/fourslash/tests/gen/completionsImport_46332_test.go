@@ -93,7 +93,7 @@ ref/**/`
 		Description: "Update import from \"vue\"",
 		AutoImportData: &ls.AutoImportData{
 			ExportName: "ref",
-			FileName:   PtrTo("/node_modules/vue/dist/vue.d.ts"),
+			FileName:   "/node_modules/vue/dist/vue.d.ts",
 		},
 		NewFileContent: PtrTo(`import { ref } from "vue";
 ref`),

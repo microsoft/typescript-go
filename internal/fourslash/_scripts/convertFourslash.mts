@@ -483,7 +483,7 @@ function parseVerifyApplyCodeActionArgs(arg: ts.Expression): string | undefined 
                                 console.error(`Expected string literal for fileName in verify.applyCodeActionFromCompletion data, got ${dataProp.initializer.getText()}`);
                                 return undefined;
                             }
-                            dataProps.push(`FileName: PtrTo(${getGoStringLiteral(fileNameInit.text)}),`);
+                            dataProps.push(`FileName: ${getGoStringLiteral(fileNameInit.text)},`);
                             break;
                         default:
                             console.error(`Unrecognized property in verify.applyCodeActionFromCompletion data: ${dataProp.getText()}`);

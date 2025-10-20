@@ -62,7 +62,7 @@ someMo/**/`
 		Source: "./someModule",
 		AutoImportData: &ls.AutoImportData{
 			ExportName: "default",
-			FileName:   PtrTo("/someModule.ts"),
+			FileName:   "/someModule.ts",
 		},
 		Description: "Add import from \"./someModule\"",
 		NewFileContent: PtrTo(`import someModule from "./someModule";

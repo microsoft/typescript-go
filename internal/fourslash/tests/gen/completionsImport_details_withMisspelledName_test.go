@@ -35,7 +35,7 @@ acb;`),
 		Source: "./a",
 		AutoImportData: &ls.AutoImportData{
 			ExportName:      "abc",
-			FileName:        PtrTo("/a.ts"),
+			FileName:        "/a.ts",
 			ModuleSpecifier: "./a",
 		},
 		Description: "Add import from \"./a\"",

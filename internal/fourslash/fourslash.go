@@ -829,7 +829,7 @@ func (f *FourslashTest) resolveCompletionItem(t *testing.T, item *lsproto.Comple
 		t.Fatal(prefix + "Expected non-nil response for completion item resolve, got nil")
 	}
 	if !resultOk {
-		t.Fatalf(prefix+"Unexpected response type for completion item resolve: %T", resMsg.AsResponse().Result)
+		t.Fatalf(prefix+"Unexpected response type for completion item resolve: %T, Error: %v", resMsg.AsResponse().Result, resMsg.AsResponse().Error)
 	}
 	return result
 }
@@ -878,7 +878,7 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 		if options.AutoImportData != nil {
 			return data.AutoImport != nil && data.AutoImport.ModuleSpecifier == options.AutoImportData.ModuleSpecifier &&
 				(options.AutoImportData.ExportName == "" || data.AutoImport.ExportName == options.AutoImportData.ExportName) &&
-				(options.AutoImportData.FileName == nil || data.AutoImport.FileName == options.AutoImportData.FileName) &&
+				(data.AutoImport.FileName == options.AutoImportData.FileName) &&
 				(options.AutoImportData.AmbientModuleName == nil || data.AutoImport.AmbientModuleName == options.AutoImportData.AmbientModuleName) &&
 				(options.AutoImportData.IsPackageJsonImport == core.TSUnknown || data.AutoImport.IsPackageJsonImport == options.AutoImportData.IsPackageJsonImport)
 		}
@@ -899,7 +899,11 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 		t.Fatalf("Expected non-nil AdditionalTextEdits for code action completion item.")
 	}
 	f.applyTextEdits(t, *item.AdditionalTextEdits)
-	assert.Equal(t, f.getScriptInfo(f.activeFilename).content, options.NewFileContent, "File content after applying code action did not match expected content.")
+	if options.NewFileContent != nil {
+		assert.Equal(t, f.getScriptInfo(f.activeFilename).content, *options.NewFileContent, "File content after applying code action did not match expected content.")
+	} else if options.NewRangeContent != nil {
+		t.Fatal("!!! TODO")
+	}
 }
 
 func (f *FourslashTest) VerifyBaselineFindAllReferences(

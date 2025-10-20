@@ -12,7 +12,7 @@ import (
 
 func TestAutoImportReExportFromAmbientModule(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /home/src/workspaces/project/tsconfig.json
 {
@@ -69,7 +69,7 @@ access/**/`
 access`),
 		AutoImportData: &ls.AutoImportData{
 			ExportName:      "accessSync",
-			FileName:        PtrTo("/home/src/workspaces/project/node_modules/@types/fs-extra/index.d.ts"),
+			FileName:        "/home/src/workspaces/project/node_modules/@types/fs-extra/index.d.ts",
 			ModuleSpecifier: "fs-extra",
 		},
 	})

@@ -28,7 +28,7 @@ const x: /**/`
 		Description: "Add import from \"./mod.js\"",
 		AutoImportData: &ls.AutoImportData{
 			ExportName:      "I",
-			FileName:        PtrTo("/mod.ts"),
+			FileName:        "/mod.ts",
 			ModuleSpecifier: "./mod.js",
 		},
 		NewFileContent: PtrTo(`import type { I } from "./mod.js";
@@ -42,7 +42,7 @@ const x: `),
 		Description: "Update import from \"./mod.js\"",
 		AutoImportData: &ls.AutoImportData{
 			ExportName:      "C",
-			FileName:        PtrTo("/mod.ts"),
+			FileName:        "/mod.ts",
 			ModuleSpecifier: "./mod.js",
 		},
 		NewFileContent: PtrTo(`import { C, type I } from "./mod.js";

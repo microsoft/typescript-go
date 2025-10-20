@@ -724,7 +724,7 @@ func (l *LanguageService) createPackageJsonImportFilter(fromFile *ast.SourceFile
 	}
 
 	allowsImportingAmbientModule := func(moduleSymbol *ast.Symbol, moduleSpecifierResolutionHost modulespecifiers.ModuleSpecifierGenerationHost) bool {
-		if len(packageJsons) > 0 || moduleSymbol.ValueDeclaration == nil {
+		if len(packageJsons) == 0 || moduleSymbol.ValueDeclaration == nil {
 			return true
 		}
 

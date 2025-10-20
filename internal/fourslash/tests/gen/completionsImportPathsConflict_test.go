@@ -12,7 +12,7 @@ import (
 
 func TestCompletionsImportPathsConflict(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /tsconfig.json
 {
@@ -58,7 +58,7 @@ import {} from "@reduxjs/toolkit";
 		Source: "@reduxjs/toolkit",
 		AutoImportData: &ls.AutoImportData{
 			ExportName:      "configureStore",
-			FileName:        PtrTo("/src/configureStore.ts"),
+			FileName:        "/src/configureStore.ts",
 			ModuleSpecifier: "@reduxjs/toolkit",
 		},
 		Description: "Update import from \"@reduxjs/toolkit\"",
