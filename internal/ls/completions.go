@@ -3288,10 +3288,7 @@ func getCompletionsSymbolKind(kind ScriptElementKind) lsproto.CompletionItemKind
 // Editors will use the `sortText` and then fall back to `name` for sorting, but leave ties in response order.
 // So, it's important that we sort those ties in the order we want them displayed if it matters. We don't
 // strictly need to sort by name or SortText here since clients are going to do it anyway, but we have to
-// do the work of comparing them so we can sort those ties appropriately; plus, it makes the order returned
-// by the language service consistent with what TS Server does and what editors typically do. This also makes
-// completions tests make more sense. We used to sort only alphabetically and only in the server layer, but
-// this made tests really weird, since most fourslash tests don't use the server.
+// do the work of comparing them so we can sort those ties appropriately.
 func compareCompletionEntries(entryInSlice *lsproto.CompletionItem, entryToInsert *lsproto.CompletionItem) int {
 	compareStrings := stringutil.CompareStringsCaseInsensitiveThenSensitive
 	result := compareStrings(*entryInSlice.SortText, *entryToInsert.SortText)
@@ -3299,14 +3296,22 @@ func compareCompletionEntries(entryInSlice *lsproto.CompletionItem, entryToInser
 		result = compareStrings(entryInSlice.Label, entryToInsert.Label)
 	}
 	if result == stringutil.ComparisonEqual && entryInSlice.Data != nil && entryToInsert.Data != nil {
-		sliceEntryData, ok1 := (*entryInSlice.Data).(*AutoImportData)
-		insertEntryData, ok2 := (*entryToInsert.Data).(*AutoImportData)
-		if ok1 && ok2 && sliceEntryData.ModuleSpecifier != "" && insertEntryData.ModuleSpecifier != "" {
+		sliceEntryData, ok1 := (*entryInSlice.Data).(*CompletionItemData)
+		insertEntryData, ok2 := (*entryToInsert.Data).(*CompletionItemData)
+		if ok1 && ok2 &&
+			sliceEntryData.AutoImport != nil && sliceEntryData.AutoImport.ModuleSpecifier != "" &&
+			insertEntryData.AutoImport != nil && insertEntryData.AutoImport.ModuleSpecifier != "" {
 			// Sort same-named auto-imports by module specifier
 			result = compareNumberOfDirectorySeparators(
-				sliceEntryData.ModuleSpecifier,
-				insertEntryData.ModuleSpecifier,
+				sliceEntryData.AutoImport.ModuleSpecifier,
+				insertEntryData.AutoImport.ModuleSpecifier,
 			)
+			if result == stringutil.ComparisonEqual {
+				result = compareStrings(
+					sliceEntryData.AutoImport.ModuleSpecifier,
+					insertEntryData.AutoImport.ModuleSpecifier,
+				)
+			}
 		}
 	}
 	if result == stringutil.ComparisonEqual {
