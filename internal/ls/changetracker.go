@@ -288,7 +288,7 @@ func (ct *changeTracker) insertAtTopOfFile(sourceFile *ast.SourceFile, insert []
 	if pos != 0 {
 		options.prefix = ct.newLine
 	}
-	if !stringutil.IsLineBreak(rune(sourceFile.Text()[pos])) {
+	if len(sourceFile.Text()) == 0 || !stringutil.IsLineBreak(rune(sourceFile.Text()[pos])) {
 		options.suffix = ct.newLine
 	}
 	if blankLineBetween {
