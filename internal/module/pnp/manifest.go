@@ -57,7 +57,11 @@ type PackageDependency struct {
 	IsAlias   bool
 }
 
-func (p *PackageDependency) UnmarshalJSON(data []byte) error {
+func (p *PackageDependency) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	// case 1: string
 	var s string
 	if err := json.Unmarshal(data, &s); err == nil {
@@ -82,13 +86,17 @@ func (p *PackageDependency) UnmarshalJSON(data []byte) error {
 
 type FallbackPool map[string]*PackageDependency
 
-func (r *RegexDef) UnmarshalJSON(b []byte) error {
-	if bytes.Equal(bytes.TrimSpace(b), []byte("null")) {
+func (r *RegexDef) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
+	if bytes.Equal(bytes.TrimSpace(data), []byte("null")) {
 		*r = RegexDef{}
 		return nil
 	}
 	var s string
-	if err := json.Unmarshal(b, &s); err != nil {
+	if err := json.Unmarshal(data, &s); err != nil {
 		return err
 	}
 	r.Source = s
@@ -100,7 +108,11 @@ func (r *RegexDef) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (m *FallbackPool) UnmarshalJSON(data []byte) error {
+func (m *FallbackPool) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var items []jsontext.Value
 	if err := json.Unmarshal(data, &items); err != nil {
 		return err
@@ -137,7 +149,11 @@ func (m *FallbackPool) UnmarshalJSON(data []byte) error {
 
 type FallbackExclusionList map[string][]string
 
-func (m *FallbackExclusionList) UnmarshalJSON(data []byte) error {
+func (m *FallbackExclusionList) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var items []jsontext.Value
 	if err := json.Unmarshal(data, &items); err != nil {
 		return err
@@ -167,7 +183,11 @@ func (m *FallbackExclusionList) UnmarshalJSON(data []byte) error {
 
 type PackageRegistryData map[string]map[string]PackageInformation
 
-func (m *PackageRegistryData) UnmarshalJSON(data []byte) error {
+func (m *PackageRegistryData) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	data, err := dec.ReadValue()
+	if err != nil {
+		return err
+	}
 	var items []jsontext.Value
 	if err := json.Unmarshal(data, &items); err != nil {
 		return err
