@@ -1446,8 +1446,7 @@ func (l *LanguageService) codeActionForFixWorker(
 		}
 
 		if fix.useRequire {
-			// !!! require
-			// declarations = getNewRequires(fixAddNew.moduleSpecifier, quotePreference, defaultImport, namedImports, namespaceLikeImport, l.GetProgram().Options(), preferences)
+			declarations = changeTracker.getNewRequires(fix.moduleSpecifier, defaultImport, namedImports, namespaceLikeImport, l.GetProgram().Options(), preferences)
 		} else {
 			declarations = changeTracker.getNewImports(fix.moduleSpecifier, defaultImport, namedImports, namespaceLikeImport, l.GetProgram().Options(), preferences)
 		}
@@ -1476,6 +1475,88 @@ func (l *LanguageService) codeActionForFixWorker(
 		panic(fmt.Sprintf(`Unexpected fix kind %v`, fix.kind))
 	}
 	return nil
+}
+
+func (c *changeTracker) getNewRequires(
+	moduleSpecifier string,
+	defaultImport *Import,
+	namedImports []*Import,
+	namespaceLikeImport *Import,
+	compilerOptions *core.CompilerOptions,
+	preferences *UserPreferences,
+) []*ast.Statement {
+	quotedModuleSpecifier := c.NodeFactory.NewStringLiteral(moduleSpecifier)
+	var statements []*ast.Statement
+
+	// const { default: foo, bar, etc } = require('./mod');
+	if defaultImport != nil || len(namedImports) > 0 {
+		bindingElements := []*ast.Node{}
+		for _, namedImport := range namedImports {
+			var propertyName *ast.Node
+			if namedImport.propertyName != "" {
+				propertyName = c.NodeFactory.NewIdentifier(namedImport.propertyName)
+			}
+			bindingElements = append(bindingElements, c.NodeFactory.NewBindingElement(
+				/*dotDotDotToken*/ nil,
+				propertyName,
+				c.NodeFactory.NewIdentifier(namedImport.name),
+				/*initializer*/ nil,
+			))
+		}
+		if defaultImport != nil {
+			bindingElements = append([]*ast.Node{
+				c.NodeFactory.NewBindingElement(
+					/*dotDotDotToken*/ nil,
+					c.NodeFactory.NewIdentifier("default"),
+					c.NodeFactory.NewIdentifier(defaultImport.name),
+					/*initializer*/ nil,
+				),
+			}, bindingElements...)
+		}
+		declaration := c.createConstEqualsRequireDeclaration(
+			c.NodeFactory.NewBindingPattern(
+				ast.KindObjectBindingPattern,
+				c.NodeFactory.NewNodeList(bindingElements),
+			),
+			quotedModuleSpecifier,
+		)
+		statements = append(statements, declaration)
+	}
+
+	// const foo = require('./mod');
+	if namespaceLikeImport != nil {
+		declaration := c.createConstEqualsRequireDeclaration(
+			c.NodeFactory.NewIdentifier(namespaceLikeImport.name),
+			quotedModuleSpecifier,
+		)
+		statements = append(statements, declaration)
+	}
+
+	debug.AssertIsDefined(statements)
+	return statements
+}
+
+func (c *changeTracker) createConstEqualsRequireDeclaration(name *ast.Node, quotedModuleSpecifier *ast.Node) *ast.Statement {
+	return c.NodeFactory.NewVariableStatement(
+		/*modifiers*/ nil,
+		c.NodeFactory.NewVariableDeclarationList(
+			ast.NodeFlagsConst,
+			c.NodeFactory.NewNodeList([]*ast.Node{
+				c.NodeFactory.NewVariableDeclaration(
+					name,
+					/*exclamationToken*/ nil,
+					/*type*/ nil,
+					c.NodeFactory.NewCallExpression(
+						c.NodeFactory.NewIdentifier("require"),
+						/*questionDotToken*/ nil,
+						/*typeArguments*/ nil,
+						c.NodeFactory.NewNodeList([]*ast.Node{quotedModuleSpecifier}),
+						ast.NodeFlagsNone,
+					),
+				),
+			}),
+		),
+	)
 }
 
 func getModuleSpecifierText(promotedDeclaration *ast.ImportDeclaration) string {
