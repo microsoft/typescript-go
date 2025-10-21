@@ -726,9 +726,9 @@ func (l *LanguageService) getCompletionData(
 	addSymbolOriginInfo := func(symbol *ast.Symbol, insertQuestionDot bool, insertAwait bool) {
 		symbolId := ast.GetSymbolId(symbol)
 		if insertAwait && seenPropertySymbols.AddIfAbsent(symbolId) {
-			symbolToOriginInfoMap[len(symbols)] = &symbolOriginInfo{kind: getNullableSymbolOriginInfoKind(symbolOriginInfoKindPromise, insertQuestionDot)}
+			symbolToOriginInfoMap[len(symbols)-1] = &symbolOriginInfo{kind: getNullableSymbolOriginInfoKind(symbolOriginInfoKindPromise, insertQuestionDot)}
 		} else if insertQuestionDot {
-			symbolToOriginInfoMap[len(symbols)] = &symbolOriginInfo{kind: symbolOriginInfoKindNullable}
+			symbolToOriginInfoMap[len(symbols)-1] = &symbolOriginInfo{kind: symbolOriginInfoKindNullable}
 		}
 	}
 

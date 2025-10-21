@@ -219,10 +219,10 @@ func (ct *changeTracker) insertNodeInListAfter(sourceFile *ast.SourceFile, after
 			// ###b,
 			//   c,
 			nextNode := containingList[index+1]
-			startPos := scanner.SkipTriviaEx(sourceFile.Text(), nextNode.Pos(), &scanner.SkipTriviaOptions{StopAfterLineBreak: true, StopAtComments: false})
+			startPos := scanner.SkipTriviaEx(sourceFile.Text(), nextNode.Pos(), &scanner.SkipTriviaOptions{StopAfterLineBreak: false, StopAtComments: true})
 
 			// write separator and leading trivia of the next element as suffix
-			suffix := scanner.TokenToString(nextToken.Kind) + sourceFile.Text()[nextNode.End():startPos]
+			suffix := scanner.TokenToString(nextToken.Kind) + sourceFile.Text()[nextToken.End():startPos]
 			ct.insertNodeAt(sourceFile, core.TextPos(startPos), newNode, changeNodeOptions{suffix: suffix})
 		}
 		return

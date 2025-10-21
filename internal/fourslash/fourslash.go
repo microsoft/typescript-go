@@ -1720,7 +1720,7 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 				t.Fatalf(prefix+"Nil response received for resolve completion", f.lastKnownMarkerName)
 			}
 			if !resultOk {
-				t.Fatalf(prefix+"Unexpected response type for resolve completion: %T", resMsg.AsResponse().Result)
+				t.Fatalf(prefix+"Unexpected response type for resolve completion: %T, Error: %v", resMsg.AsResponse().Result, resMsg.AsResponse().Error)
 			}
 			if details == nil || details.AdditionalTextEdits == nil || len(*details.AdditionalTextEdits) == 0 {
 				t.Fatalf(prefix+"Entry %s from %s returned no code changes from completion details request", item.Label, item.Detail)
