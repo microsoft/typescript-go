@@ -879,11 +879,11 @@ func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, marker
 			return false
 		}
 		if options.AutoImportData != nil {
-			return data.AutoImport != nil && data.AutoImport.ModuleSpecifier == options.AutoImportData.ModuleSpecifier &&
+			return data.AutoImport != nil && ((data.AutoImport.FileName == options.AutoImportData.FileName) &&
+				(options.AutoImportData.ModuleSpecifier == "" || data.AutoImport.ModuleSpecifier == options.AutoImportData.ModuleSpecifier) &&
 				(options.AutoImportData.ExportName == "" || data.AutoImport.ExportName == options.AutoImportData.ExportName) &&
-				(data.AutoImport.FileName == options.AutoImportData.FileName) &&
 				(options.AutoImportData.AmbientModuleName == nil || data.AutoImport.AmbientModuleName == options.AutoImportData.AmbientModuleName) &&
-				(options.AutoImportData.IsPackageJsonImport == core.TSUnknown || data.AutoImport.IsPackageJsonImport == options.AutoImportData.IsPackageJsonImport)
+				(options.AutoImportData.IsPackageJsonImport == core.TSUnknown || data.AutoImport.IsPackageJsonImport == options.AutoImportData.IsPackageJsonImport))
 		}
 		if data.AutoImport == nil && data.Source != "" && data.Source == options.Source {
 			return true

@@ -12,7 +12,7 @@ import (
 
 func TestCompletionsImport_defaultAndNamedConflict(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noLib: true
 // @Filename: /someModule.ts
