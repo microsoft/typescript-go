@@ -779,8 +779,10 @@ func ignorePaths(paths ...string) cmp.Option {
 	)
 }
 
-var completionIgnoreOpts = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data")
-var autoImportIgnoreOpts = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data", ".LabelDetails", ".Detail", ".AdditionalTextEdits")
+var (
+	completionIgnoreOpts = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data")
+	autoImportIgnoreOpts = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data", ".LabelDetails", ".Detail", ".AdditionalTextEdits")
+)
 
 func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual *lsproto.CompletionItem, expected *lsproto.CompletionItem) {
 	var actualAutoImportData, expectedAutoImportData *ls.AutoImportData
