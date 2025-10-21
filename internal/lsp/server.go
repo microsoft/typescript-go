@@ -800,7 +800,7 @@ func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsprot
 	if err != nil {
 		return nil, err
 	}
-	// defer s.recover(reqMsg)
+	defer s.recover(reqMsg)
 	return languageService.ResolveCompletionItem(
 		ctx,
 		params,

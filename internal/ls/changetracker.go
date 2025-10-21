@@ -166,9 +166,7 @@ func (ct *changeTracker) insertNodesAfter(sourceFile *ast.SourceFile, after *ast
 }
 
 func (ct *changeTracker) insertNodeBefore(sourceFile *ast.SourceFile, before *ast.Node, newNode *ast.Node, blankLineBetween bool) {
-	// TODO: use getAdjustedStartPosition when implemented
-	pos := astnav.GetStartOfNode(before, sourceFile, false)
-	ct.insertNodeAt(sourceFile, core.TextPos(pos), newNode, ct.getOptionsForInsertNodeBefore(before, newNode, blankLineBetween))
+	ct.insertNodeAt(sourceFile, core.TextPos(ct.getAdjustedStartPosition(sourceFile, before, leadingTriviaOptionNone, false)), newNode, ct.getOptionsForInsertNodeBefore(before, newNode, blankLineBetween))
 }
 
 func (ct *changeTracker) endPosForInsertNodeAfter(sourceFile *ast.SourceFile, after *ast.Node, newNode *ast.Node) core.TextPos {
