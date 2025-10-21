@@ -180,14 +180,15 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	})
 
 	f := &FourslashTest{
-		server:      server,
-		in:          inputWriter,
-		out:         outputReader,
-		testData:    &testData,
-		vfs:         fs,
-		scriptInfos: scriptInfos,
-		converters:  converters,
-		baselines:   make(map[string]*strings.Builder),
+		server:          server,
+		in:              inputWriter,
+		out:             outputReader,
+		testData:        &testData,
+		userPreferences: ls.NewDefaultUserPreferences(), // !!! parse default preferences for fourslash case?
+		vfs:             fs,
+		scriptInfos:     scriptInfos,
+		converters:      converters,
+		baselines:       make(map[string]*strings.Builder),
 	}
 
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
@@ -257,6 +258,12 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	if capabilitiesWithDefaults.TextDocument.Completion == nil {
 		capabilitiesWithDefaults.TextDocument.Completion = defaultCompletionCapabilities
 	}
+	if capabilitiesWithDefaults.Workspace == nil {
+		capabilitiesWithDefaults.Workspace = &lsproto.WorkspaceClientCapabilities{}
+	}
+	if capabilitiesWithDefaults.Workspace.Configuration == nil {
+		capabilitiesWithDefaults.Workspace.Configuration = ptrTrue
+	}
 	return &capabilitiesWithDefaults
 }
 
@@ -287,8 +294,8 @@ func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.
 			f.writeMsg(t, req.Message())
 			resp = f.readMsg(t)
 		default:
-			// other types of responses not yet used in fourslash; implement them if needed
-			t.Fatalf("Unexpected request received: %s", req)
+			// other types of requests not yet used in fourslash; implement them if needed
+			t.Fatalf("Unexpected request received: %s", req.Method)
 		}
 	}
 

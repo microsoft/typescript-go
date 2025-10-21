@@ -1,6 +1,7 @@
 package ls
 
 import (
+	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/core"
@@ -328,8 +329,8 @@ func (p *UserPreferences) Copy() *UserPreferences {
 		return nil
 	}
 	prefCopy := *p
-	copy(prefCopy.AutoImportSpecifierExcludeRegexes, p.AutoImportSpecifierExcludeRegexes)
-	copy(prefCopy.AutoImportFileExcludePatterns, p.AutoImportFileExcludePatterns)
+	prefCopy.AutoImportSpecifierExcludeRegexes = slices.Clone(p.AutoImportSpecifierExcludeRegexes)
+	prefCopy.AutoImportFileExcludePatterns = slices.Clone(p.AutoImportFileExcludePatterns)
 	return &prefCopy
 }
 

@@ -79,6 +79,8 @@ type Session struct {
 	// released from the parseCache.
 	programCounter *programCounter
 
+	// read-only after initialization
+	initialPreferences                 *ls.UserPreferences
 	userPreferences                    *ls.UserPreferences
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	typingsInstaller                   *ata.TypingsInstaller
@@ -186,6 +188,10 @@ func (s *Session) UserPreferences() *ls.UserPreferences {
 	return s.userPreferences
 }
 
+func (s *Session) NewUserPreferences() *ls.UserPreferences {
+	return s.initialPreferences.CopyOrDefault()
+}
+
 // Trace implements module.ResolutionHost
 func (s *Session) Trace(msg string) {
 	panic("ATA module resolution should not use tracing")
@@ -196,6 +202,11 @@ func (s *Session) Configure(userPreferences *ls.UserPreferences) {
 	defer s.pendingConfigChangesMu.Unlock()
 	s.pendingConfigChanges = true
 	s.userPreferences = userPreferences
+}
+
+func (s *Session) InitializeConfig(userPreferences *ls.UserPreferences) {
+	s.initialPreferences = userPreferences.CopyOrDefault()
+	s.Configure(s.initialPreferences)
 }
 
 func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, version int32, content string, languageKind lsproto.LanguageKind) {

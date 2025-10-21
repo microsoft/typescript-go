@@ -219,6 +219,11 @@ func (s *Server) RefreshDiagnostics(ctx context.Context) error {
 }
 
 func (s *Server) RequestConfiguration(ctx context.Context) (*ls.UserPreferences, error) {
+	if s.initializeParams.Capabilities == nil ||
+		s.initializeParams.Capabilities.Workspace == nil ||
+		!ptrIsTrue(s.initializeParams.Capabilities.Workspace.Configuration) {
+		return s.session.NewUserPreferences(), nil
+	}
 	result, err := s.sendRequest(ctx, lsproto.MethodWorkspaceConfiguration, &lsproto.ConfigurationParams{
 		Items: []*lsproto.ConfigurationItem{
 			{
@@ -231,7 +236,7 @@ func (s *Server) RequestConfiguration(ctx context.Context) (*ls.UserPreferences,
 	}
 	configs := result.([]any)
 	s.Log(fmt.Sprintf("\n\nconfiguration: %+v, %T\n\n", configs, configs))
-	userPreferences := ls.NewDefaultUserPreferences()
+	userPreferences := s.session.NewUserPreferences()
 	for _, item := range configs {
 		if parsed := userPreferences.Parse(item); parsed != nil {
 			return parsed, nil
@@ -710,15 +715,18 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 		ParseCache:  s.parseCache,
 	})
 
-	// request userPreferences if not provided at initialization
-	if s.initializeParams.InitializationOptions == nil {
+	if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil && *s.initializeParams.InitializationOptions != nil {
+		// handle userPreferences from initialization
+		userPreferences := s.session.NewUserPreferences()
+		userPreferences.Parse(*s.initializeParams.InitializationOptions)
+		s.session.InitializeConfig(userPreferences)
+	} else {
+		// request userPreferences if not provided at initialization
 		userPreferences, err := s.RequestConfiguration(ctx)
 		if err != nil {
 			return err
 		}
-		s.session.Configure(userPreferences)
-	} else {
-		// !!! handle userPreferences from initialization
+		s.session.InitializeConfig(userPreferences)
 	}
 
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
@@ -739,7 +747,8 @@ func (s *Server) handleExit(ctx context.Context, params any) error {
 }
 
 func (s *Server) handleDidChangeWorkspaceConfiguration(ctx context.Context, params *lsproto.DidChangeConfigurationParams) error {
-	userPreferences := s.session.UserPreferences().CopyOrDefault()
+	// !!! only implemented because needed for fourslash
+	userPreferences := s.session.UserPreferences().Copy()
 	if parsed := userPreferences.Parse(params.Settings); parsed != nil {
 		userPreferences = parsed
 	}
