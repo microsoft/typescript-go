@@ -779,8 +779,8 @@ func ignorePaths(paths ...string) cmp.Option {
 	)
 }
 
-var completionIgnoreOpts = ignorePaths(".Kind", ".SortText", ".Data")
-var autoImportIgnoreOpts = ignorePaths(".Kind", ".SortText", ".Data", ".LabelDetails", ".Detail", ".AdditionalTextEdits")
+var completionIgnoreOpts = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data")
+var autoImportIgnoreOpts = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data", ".LabelDetails", ".Detail", ".AdditionalTextEdits")
 
 func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual *lsproto.CompletionItem, expected *lsproto.CompletionItem) {
 	var actualAutoImportData, expectedAutoImportData *ls.AutoImportData
@@ -816,6 +816,9 @@ func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual
 		assertDeepEqual(t, actual, expected, prefix, completionIgnoreOpts)
 	}
 
+	if expected.FilterText != nil {
+		assertDeepEqual(t, actual.FilterText, expected.FilterText, prefix+" FilterText mismatch")
+	}
 	if expected.Kind != nil {
 		assertDeepEqual(t, actual.Kind, expected.Kind, prefix+" Kind mismatch")
 	}

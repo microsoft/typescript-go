@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
+	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -344,32 +345,6 @@ type packageJsonFilterResult struct {
 	importable  bool
 	packageName string
 }
-type projectPackageJsonInfo struct {
-	fileName             string
-	parseable            bool
-	dependencies         map[string]string
-	devDependencies      map[string]string
-	peerDependencies     map[string]string
-	optionalDependencies map[string]string
-}
-
-func (info *projectPackageJsonInfo) has(dependencyName string) bool {
-	if _, ok := info.dependencies[dependencyName]; ok {
-		return true
-	}
-	if _, ok := info.devDependencies[dependencyName]; ok {
-		return true
-	}
-
-	if _, ok := info.peerDependencies[dependencyName]; ok {
-		return true
-	}
-	if _, ok := info.optionalDependencies[dependencyName]; ok {
-		return true
-	}
-
-	return false
-}
 
 func (l *LanguageService) getImportCompletionAction(
 	ctx context.Context,
@@ -657,10 +632,23 @@ func (l *LanguageService) getImportFixes(
 }
 
 func (l *LanguageService) createPackageJsonImportFilter(fromFile *ast.SourceFile, preferences UserPreferences) *packageJsonImportFilter {
-	packageJsons := []*projectPackageJsonInfo{}
-	// packageJsons := (
-	//     (host.getPackageJsonsVisibleToFile && host.getPackageJsonsVisibleToFile(fromFile.fileName)) || getPackageJsonsVisibleToFile(fromFile.fileName, host)
-	// ).filter(p => p.parseable);
+	// !!! The program package.json cache may not have every relevant package.json.
+	//     This should eventually be integrated with the session.
+	var packageJsons []*packagejson.PackageJson
+	dir := tspath.GetDirectoryPath(fromFile.FileName())
+	for {
+		packageJsonDir := l.GetProgram().GetNearestAncestorDirectoryWithPackageJson(dir)
+		if packageJsonDir == "" {
+			break
+		}
+		if packageJson := l.GetProgram().GetPackageJsonInfo(tspath.CombinePaths(packageJsonDir, "package.json")).GetContents(); packageJson != nil && packageJson.Parseable {
+			packageJsons = append(packageJsons, packageJson)
+		}
+		dir = tspath.GetDirectoryPath(packageJsonDir)
+		if dir == packageJsonDir {
+			break
+		}
+	}
 
 	var usesNodeCoreModules *bool
 	ambientModuleCache := map[*ast.Symbol]bool{}
@@ -678,7 +666,7 @@ func (l *LanguageService) createPackageJsonImportFilter(fromFile *ast.SourceFile
 	moduleSpecifierIsCoveredByPackageJson := func(specifier string) bool {
 		packageName := getNodeModuleRootSpecifier(specifier)
 		for _, packageJson := range packageJsons {
-			if packageJson.has(packageName) || packageJson.has(module.GetTypesPackageName(packageName)) {
+			if packageJson.HasDependency(packageName) || packageJson.HasDependency(module.GetTypesPackageName(packageName)) {
 				return true
 			}
 		}
