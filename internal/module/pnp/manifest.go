@@ -1,8 +1,8 @@
 package pnp
 
 import (
-	"bytes"
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/dlclark/regexp2"
@@ -51,52 +51,118 @@ type PackageInformation struct {
 	PackageDependencies FallbackPool `json:"packageDependencies"`
 }
 
+type FallbackPool map[string]*PackageDependency
+
 type PackageDependency struct {
 	Reference string
 	Alias     [2]string
 	IsAlias   bool
 }
 
-func (p *PackageDependency) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	data, err := dec.ReadValue()
-	if err != nil {
+type PackageRegistryData map[string]map[string]PackageInformation
+
+var _ json.UnmarshalerFrom = (*Manifest)(nil)
+
+func (m *Manifest) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
-	// case 1: string
-	var s string
-	if err := json.Unmarshal(data, &s); err == nil {
+	for dec.PeekKind() != jsontext.EndObject.Kind() {
+		fieldName, err := dec.ReadValue()
+		if err != nil {
+			return err
+		}
+
+		switch string(fieldName) {
+		case `"enableTopLevelFallback"`:
+			if err := json.UnmarshalDecode(dec, &m.EnableTopLevelFallback); err != nil {
+				return err
+			}
+		case `"ignorePatternData"`:
+			if err := json.UnmarshalDecode(dec, &m.IgnorePatternData); err != nil {
+				return err
+			}
+		case `"dependencyTreeRoots"`:
+			if err := json.UnmarshalDecode(dec, &m.DependencyTreeRoots); err != nil {
+				return err
+			}
+		case `"fallbackPool"`:
+			if err := json.UnmarshalDecode(dec, &m.FallbackPool); err != nil {
+				return err
+			}
+		case `"fallbackExclusionList"`:
+			if err := json.UnmarshalDecode(dec, &m.FallbackExclusionList); err != nil {
+				fmt.Println("error", err)
+				return err
+			}
+		case `"packageRegistryData"`:
+			if err := json.UnmarshalDecode(dec, &m.PackageRegistryData); err != nil {
+				return err
+			}
+		default:
+			if _, err := dec.ReadValue(); err != nil {
+				return err
+			}
+		}
+	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var _ json.UnmarshalerFrom = (*PackageDependency)(nil)
+
+func (p *PackageDependency) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	switch dec.PeekKind() {
+	case '"': // string case
+		var s string
+		if err := json.UnmarshalDecode(dec, &s); err != nil {
+			return err
+		}
 		p.Reference = s
 		p.IsAlias = false
 		return nil
-	}
-
-	// case 2: [string, string]
-	var arr []string
-	if err := json.Unmarshal(data, &arr); err == nil {
+	case '[': // array case
+		if _, err := dec.ReadToken(); err != nil {
+			return err
+		}
+		var arr []string
+		for dec.PeekKind() != jsontext.EndArray.Kind() {
+			var s string
+			if err := json.UnmarshalDecode(dec, &s); err != nil {
+				return err
+			}
+			arr = append(arr, s)
+		}
+		if _, err := dec.ReadToken(); err != nil {
+			return err
+		}
 		if len(arr) != 2 {
 			return errors.New("PackageDependency: array must have length 2")
 		}
 		p.IsAlias = true
 		p.Alias = [2]string{arr[0], arr[1]}
 		return nil
+	default:
+		return errors.New("PackageDependency: unsupported JSON shape")
 	}
-
-	return errors.New("PackageDependency: unsupported JSON shape")
 }
 
-type FallbackPool map[string]*PackageDependency
+var _ json.UnmarshalerFrom = (*RegexDef)(nil)
 
 func (r *RegexDef) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	data, err := dec.ReadValue()
-	if err != nil {
-		return err
-	}
-	if bytes.Equal(bytes.TrimSpace(data), []byte("null")) {
+	if dec.PeekKind() == jsontext.Null.Kind() {
+		if _, err := dec.ReadToken(); err != nil {
+			return err
+		}
 		*r = RegexDef{}
 		return nil
 	}
+
 	var s string
-	if err := json.Unmarshal(data, &s); err != nil {
+	if err := json.UnmarshalDecode(dec, &s); err != nil {
 		return err
 	}
 	r.Source = s
@@ -108,138 +174,162 @@ func (r *RegexDef) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
 	return nil
 }
 
-func (m *FallbackPool) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	data, err := dec.ReadValue()
-	if err != nil {
+var _ json.UnmarshalerFrom = (*FallbackPool)(nil)
+
+func (f *FallbackPool) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
-	var items []jsontext.Value
-	if err := json.Unmarshal(data, &items); err != nil {
-		return err
-	}
-	res := make(FallbackPool, len(items))
-	for _, it := range items {
-		var pair []jsontext.Value
-		if err := json.Unmarshal(it, &pair); err != nil {
+
+	res := make(FallbackPool)
+
+	for dec.PeekKind() != jsontext.EndArray.Kind() {
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
-		if len(pair) != 2 {
-			return errors.New("fallbackPool: each item must have 2 elements")
-		}
+
 		var key string
-		if err := json.Unmarshal(pair[0], &key); err != nil {
+		if err := json.UnmarshalDecode(dec, &key); err != nil {
 			return err
 		}
 
-		raw := bytes.TrimSpace(pair[1])
-		if bytes.Equal(raw, []byte("null")) {
+		if dec.PeekKind() == jsontext.Null.Kind() {
+			if _, err := dec.ReadToken(); err != nil {
+				return err
+			}
 			res[key] = nil
-			continue
+		} else {
+			var dep PackageDependency
+			if err := json.UnmarshalDecode(dec, &dep); err != nil {
+				return err
+			}
+			res[key] = &dep
 		}
 
-		var dep PackageDependency
-		if err := json.Unmarshal(pair[1], &dep); err != nil {
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
-		res[key] = &dep
 	}
-	*m = res
+
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	*f = res
 	return nil
 }
 
 type FallbackExclusionList map[string][]string
 
-func (m *FallbackExclusionList) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	data, err := dec.ReadValue()
-	if err != nil {
+var _ json.UnmarshalerFrom = (*FallbackExclusionList)(nil)
+
+func (f *FallbackExclusionList) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
+	// start of array
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
-	var items []jsontext.Value
-	if err := json.Unmarshal(data, &items); err != nil {
-		return err
-	}
-	res := make(FallbackExclusionList, len(items))
-	for _, it := range items {
-		var pair []jsontext.Value
-		if err := json.Unmarshal(it, &pair); err != nil {
+
+	res := make(FallbackExclusionList)
+
+	for dec.PeekKind() != jsontext.EndArray.Kind() {
+		// start of array
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
-		if len(pair) != 2 {
-			return errors.New("fallbackExclusionList: each item must have 2 elements")
-		}
+
 		var key string
-		if err := json.Unmarshal(pair[0], &key); err != nil {
+		if err := json.UnmarshalDecode(dec, &key); err != nil {
 			return err
 		}
+
 		var arr []string
-		if err := json.Unmarshal(pair[1], &arr); err != nil {
+		if err := json.UnmarshalDecode(dec, &arr); err != nil {
 			return err
 		}
+
 		res[key] = arr
+
+		// end of array
+		if _, err := dec.ReadToken(); err != nil {
+			return err
+		}
 	}
-	*m = res
+
+	// end of array
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
+	*f = res
 	return nil
 }
 
-type PackageRegistryData map[string]map[string]PackageInformation
+var _ json.UnmarshalerFrom = (*PackageRegistryData)(nil)
 
 func (m *PackageRegistryData) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
-	data, err := dec.ReadValue()
-	if err != nil {
+	if _, err := dec.ReadToken(); err != nil {
 		return err
 	}
-	var items []jsontext.Value
-	if err := json.Unmarshal(data, &items); err != nil {
-		return err
-	}
-	res := make(PackageRegistryData, len(items))
-	for _, it := range items {
-		var pair []jsontext.Value
-		if err := json.Unmarshal(it, &pair); err != nil {
+	res := make(PackageRegistryData)
+
+	for dec.PeekKind() != jsontext.EndArray.Kind() {
+		// start of array1
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
-		if len(pair) != 2 {
-			return errors.New("packageRegistryData: each item must have 2 elements")
-		}
-
 		var key1 *string
-		if err := json.Unmarshal(pair[0], &key1); err != nil {
+		if err := json.UnmarshalDecode(dec, &key1); err != nil {
 			return err
 		}
 		k1 := ""
 		if key1 != nil {
 			k1 = *key1
 		}
-
-		var inner []jsontext.Value
-		if err := json.Unmarshal(pair[1], &inner); err != nil {
+		// start of array2
+		if _, err := dec.ReadToken(); err != nil {
 			return err
 		}
-		innerMap := make(map[string]PackageInformation, len(inner))
-		for _, e := range inner {
-			var p2 []jsontext.Value
-			if err := json.Unmarshal(e, &p2); err != nil {
+		innerMap := make(map[string]PackageInformation)
+		for dec.PeekKind() != jsontext.EndArray.Kind() {
+			if _, err := dec.ReadToken(); err != nil {
 				return err
 			}
-			if len(p2) != 2 {
-				return errors.New("packageRegistryData: inner item must have 2 elements")
-			}
+
 			var key2 *string
-			if err := json.Unmarshal(p2[0], &key2); err != nil {
+			if err := json.UnmarshalDecode(dec, &key2); err != nil {
 				return err
 			}
 			k2 := ""
 			if key2 != nil {
 				k2 = *key2
 			}
+
 			var info PackageInformation
-			if err := json.Unmarshal(p2[1], &info); err != nil {
+			if err := json.UnmarshalDecode(dec, &info); err != nil {
 				return err
 			}
+
 			innerMap[k2] = info
+
+			if _, err := dec.ReadToken(); err != nil {
+				return err
+			}
+		}
+		// end of array2
+		if _, err := dec.ReadToken(); err != nil {
+			return err
 		}
 		res[k1] = innerMap
+
+		// end of array1
+		if _, err := dec.ReadToken(); err != nil {
+			return err
+		}
 	}
+	if _, err := dec.ReadToken(); err != nil {
+		return err
+	}
+
 	*m = res
 	return nil
 }
