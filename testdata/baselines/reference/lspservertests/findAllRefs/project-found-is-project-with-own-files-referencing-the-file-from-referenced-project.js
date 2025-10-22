@@ -245,6 +245,20 @@ Config File Names::
     }
   }
 }
+Config::
+  [/user/username/projects/myproject/tsconfig-src.json] *modified*
+    RetainingProjects:
+      /user/username/projects/myproject/tsconfig-src.json  
+      /user/username/projects/myproject/tsconfig.json      
+    RetainingOpenFiles: *modified*
+      /user/username/projects/myproject/src/helpers/functions.ts  *new*
+      /user/username/projects/myproject/src/main.ts               
+  [/user/username/projects/myproject/tsconfig.json] *modified*
+    RetainingProjects:
+      /user/username/projects/myproject/tsconfig.json  
+    RetainingOpenFiles: *modified*
+      /user/username/projects/myproject/src/helpers/functions.ts  *new*
+      /user/username/projects/myproject/src/main.ts               
 // === /user/username/projects/myproject/src/helpers/functions.ts ===
 // export function [|foo|]() { return 1; }
 
@@ -291,8 +305,19 @@ Config::
       /user/username/projects/myproject/indirect3/tsconfig.json  
     RetainingOpenFiles:
       /user/username/projects/myproject/indirect3/main.ts  
-  [/user/username/projects/myproject/tsconfig-src.json] *deleted*
-  [/user/username/projects/myproject/tsconfig.json] *deleted*
+  [/user/username/projects/myproject/tsconfig-src.json] *modified*
+    RetainingProjects: *modified*
+      /user/username/projects/myproject/tsconfig-src.json  *deleted*
+      /user/username/projects/myproject/tsconfig.json      *deleted*
+    RetainingOpenFiles: *modified*
+      /user/username/projects/myproject/src/helpers/functions.ts  
+      /user/username/projects/myproject/src/main.ts               *deleted*
+  [/user/username/projects/myproject/tsconfig.json] *modified*
+    RetainingProjects: *modified*
+      /user/username/projects/myproject/tsconfig.json  *deleted*
+    RetainingOpenFiles: *modified*
+      /user/username/projects/myproject/src/helpers/functions.ts  
+      /user/username/projects/myproject/src/main.ts               *deleted*
 Config File Names::
   [/user/username/projects/myproject/indirect3/main.ts] *new*
     NearestConfigFileName: /user/username/projects/myproject/indirect3/tsconfig.json

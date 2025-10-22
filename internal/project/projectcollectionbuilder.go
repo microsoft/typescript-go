@@ -38,9 +38,11 @@ type ProjectCollectionBuilder struct {
 
 	newSnapshotID           uint64
 	programStructureChanged bool
-	fileDefaultProjects     map[tspath.Path]tspath.Path
-	configuredProjects      *dirty.SyncMap[tspath.Path, *Project]
-	inferredProject         *dirty.Box[*Project]
+
+	fileDefaultProjects map[tspath.Path]tspath.Path
+	configuredProjects  *dirty.SyncMap[tspath.Path, *Project]
+	inferredProject     *dirty.Box[*Project]
+	openedFiles         *dirty.Set[tspath.Path]
 
 	apiOpenedProjects map[tspath.Path]struct{}
 }
@@ -69,6 +71,7 @@ func newProjectCollectionBuilder(
 		newSnapshotID:                      newSnapshotID,
 		configuredProjects:                 dirty.NewSyncMap(oldProjectCollection.configuredProjects, nil),
 		inferredProject:                    dirty.NewBox(oldProjectCollection.inferredProject),
+		openedFiles:                        dirty.NewSet(oldProjectCollection.openedFiles),
 		apiOpenedProjects:                  maps.Clone(oldAPIOpenedProjects),
 	}
 }
@@ -96,6 +99,11 @@ func (b *ProjectCollectionBuilder) Finalize(logger *logging.LogTree) (*ProjectCo
 	if newInferredProject, inferredProjectChanged := b.inferredProject.Finalize(); inferredProjectChanged {
 		ensureCloned()
 		newProjectCollection.inferredProject = newInferredProject
+	}
+
+	if openedFiles, openedFilesChanged := b.openedFiles.Finalize(); openedFilesChanged {
+		ensureCloned()
+		newProjectCollection.openedFiles = openedFiles
 	}
 
 	configFileRegistry := b.configFileRegistryBuilder.Finalize()
@@ -174,6 +182,7 @@ func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 		if fh := b.fs.GetFileByPath(fileName, path); fh == nil || fh.Hash() != hash {
 			changedFiles = append(changedFiles, path)
 		}
+		b.openedFiles.Delete(path)
 	}
 	for uri := range summary.Changed.Keys() {
 		fileName := uri.FileName()
@@ -242,8 +251,9 @@ func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 	if summary.Opened != "" {
 		fileName := summary.Opened.FileName()
 		path := b.toPath(fileName)
+		b.openedFiles.Add(path)
 		var toRemoveProjects collections.Set[tspath.Path]
-		openFileResult := b.ensureConfiguredProjectAndAncestorsForOpenFile(fileName, path, logger)
+		openFileResult := b.ensureConfiguredProjectAndAncestorsForFile(fileName, path, logger)
 		b.configuredProjects.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *Project]) bool {
 			toRemoveProjects.Add(entry.Value().configFilePath)
 			b.updateProgram(entry, logger)
@@ -357,6 +367,23 @@ func (b *ProjectCollectionBuilder) DidRequestProject(projectId tspath.Path, logg
 	}
 }
 
+func (b *ProjectCollectionBuilder) DidRequestEnsureDefaultProject(uri lsproto.DocumentUri, logger *logging.LogTree) {
+	fileName := uri.FileName()
+	path := b.toPath(fileName)
+	if b.openedFiles.Has(path) {
+		b.DidRequestFile(uri, logger)
+		return
+	}
+
+	startTime := time.Now()
+	b.ensureConfiguredProjectAndAncestorsForFile(fileName, path, logger)
+
+	if logger != nil {
+		elapsed := time.Since(startTime)
+		logger.Log(fmt.Sprintf("Completed file request for %s in %v", fileName, elapsed))
+	}
+}
+
 func (b *ProjectCollectionBuilder) DidUpdateATAState(ataChanges map[tspath.Path]*ATAStateChange, logger *logging.LogTree) {
 	updateProject := func(project dirty.Value[*Project], ataChange *ATAStateChange) {
 		project.ChangeIf(
@@ -427,7 +454,7 @@ func (b *ProjectCollectionBuilder) markProjectsAffectedByConfigChanges(
 	var hasChanges bool
 	for path := range configChangeResult.affectedFiles {
 		fileName := b.fs.overlays[path].FileName()
-		_ = b.ensureConfiguredProjectAndAncestorsForOpenFile(fileName, path, logger)
+		_ = b.ensureConfiguredProjectAndAncestorsForFile(fileName, path, logger)
 		hasChanges = true
 	}
 
@@ -468,7 +495,7 @@ func (b *ProjectCollectionBuilder) findDefaultConfiguredProject(fileName string,
 	})
 
 	if multipleCandidates {
-		if p := b.findOrCreateDefaultConfiguredProjectForOpenScriptInfo(fileName, path, projectLoadKindFind, nil).project; p != nil {
+		if p := b.findOrCreateDefaultConfiguredProjectForFile(fileName, path, projectLoadKindFind, nil).project; p != nil {
 			return p
 		}
 	}
@@ -476,9 +503,9 @@ func (b *ProjectCollectionBuilder) findDefaultConfiguredProject(fileName string,
 	return configuredProjects[project]
 }
 
-func (b *ProjectCollectionBuilder) ensureConfiguredProjectAndAncestorsForOpenFile(fileName string, path tspath.Path, logger *logging.LogTree) searchResult {
-	result := b.findOrCreateDefaultConfiguredProjectForOpenScriptInfo(fileName, path, projectLoadKindCreate, logger)
-	if result.project != nil {
+func (b *ProjectCollectionBuilder) ensureConfiguredProjectAndAncestorsForFile(fileName string, path tspath.Path, logger *logging.LogTree) searchResult {
+	result := b.findOrCreateDefaultConfiguredProjectForFile(fileName, path, projectLoadKindCreate, logger)
+	if result.project != nil && b.openedFiles.Has(path) {
 		// !!! sheetal todo this later
 		// // Create ancestor tree for findAllRefs (dont load them right away)
 		// forEachAncestorProjectLoad(
@@ -672,7 +699,7 @@ func (b *ProjectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 	return searchResult{retain: retain}
 }
 
-func (b *ProjectCollectionBuilder) findOrCreateDefaultConfiguredProjectForOpenScriptInfo(
+func (b *ProjectCollectionBuilder) findOrCreateDefaultConfiguredProjectForFile(
 	fileName string,
 	path tspath.Path,
 	loadKind projectLoadKind,

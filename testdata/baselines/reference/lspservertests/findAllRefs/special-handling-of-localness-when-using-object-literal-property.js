@@ -90,6 +90,24 @@ Config File Names::
     }
   }
 }
+Projects::
+  [/user/username/projects/solution/api/tsconfig.json] 
+    /user/username/projects/solution/shared/src/index.ts  
+    /user/username/projects/solution/api/src/server.ts    
+  [/user/username/projects/solution/shared/tsconfig.json] *new*
+    /user/username/projects/solution/shared/src/index.ts  
+Config::
+  [/user/username/projects/solution/api/tsconfig.json] 
+    RetainingProjects:
+      /user/username/projects/solution/api/tsconfig.json  
+    RetainingOpenFiles:
+      /user/username/projects/solution/api/src/server.ts  
+  [/user/username/projects/solution/shared/tsconfig.json] *modified*
+    RetainingProjects: *modified*
+      /user/username/projects/solution/api/tsconfig.json     
+      /user/username/projects/solution/shared/tsconfig.json  *new*
+    RetainingOpenFiles: *modified*
+      /user/username/projects/solution/shared/src/index.ts  *new*
 // === /user/username/projects/solution/api/src/server.ts ===
 // import * as shared from "../../shared/dist"
 // shared.foo./*FIND ALL REFS*/[|baz|];

@@ -110,6 +110,24 @@ Config File Names::
     }
   }
 }
+Projects::
+  [/user/username/projects/solution/a/tsconfig.json] *new*
+    /user/username/projects/solution/a/index.ts  
+  [/user/username/projects/solution/b/tsconfig.json] 
+    /user/username/projects/solution/a/index.ts  
+    /user/username/projects/solution/b/index.ts  
+Config::
+  [/user/username/projects/solution/a/tsconfig.json] *modified*
+    RetainingProjects: *modified*
+      /user/username/projects/solution/a/tsconfig.json  *new*
+      /user/username/projects/solution/b/tsconfig.json  
+    RetainingOpenFiles: *modified*
+      /user/username/projects/solution/a/index.ts  *new*
+  [/user/username/projects/solution/b/tsconfig.json] 
+    RetainingProjects:
+      /user/username/projects/solution/b/tsconfig.json  
+    RetainingOpenFiles:
+      /user/username/projects/solution/b/index.ts  
 // === /user/username/projects/solution/a/index.ts ===
 // export interface [|I|] {
 //     M(): void;

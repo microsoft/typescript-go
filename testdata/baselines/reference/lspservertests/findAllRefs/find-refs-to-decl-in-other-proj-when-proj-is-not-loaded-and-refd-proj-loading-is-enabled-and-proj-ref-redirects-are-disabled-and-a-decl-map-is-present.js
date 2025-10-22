@@ -78,9 +78,37 @@ Config File Names::
     }
   }
 }
+Projects::
+  [/user/username/projects/myproject/a/tsconfig.json] 
+    /user/username/projects/myproject/b/lib/index.d.ts  
+    /user/username/projects/myproject/a/index.ts        
+  [/user/username/projects/myproject/b/tsconfig.json] *new*
+    /user/username/projects/myproject/b/index.ts        
+    /user/username/projects/myproject/b/helper.ts       
+    /user/username/projects/myproject/b/lib/index.d.ts  
+Config::
+  [/user/username/projects/myproject/a/tsconfig.json] 
+    RetainingProjects:
+      /user/username/projects/myproject/a/tsconfig.json  
+    RetainingOpenFiles:
+      /user/username/projects/myproject/a/index.ts  
+  [/user/username/projects/myproject/b/tsconfig.json] *new*
+    RetainingProjects:
+      /user/username/projects/myproject/b/tsconfig.json  
+    RetainingOpenFiles:
+      /user/username/projects/myproject/b/index.ts  
 // === /user/username/projects/myproject/a/index.ts ===
 // import { [|B|] } from "../b/lib";
 // const b: /*FIND ALL REFS*/[|B|] = new [|B|]();
+
+// === /user/username/projects/myproject/b/helper.ts ===
+// import { [|B|] } from ".";
+// const b: [|B|] = new [|B|]();
+
+// === /user/username/projects/myproject/b/index.ts ===
+// export class [|B|] {
+//     M() {}
+// }
 
 // === /user/username/projects/myproject/b/lib/index.d.ts ===
 // export declare class [|B|] {

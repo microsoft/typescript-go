@@ -74,10 +74,31 @@ Config File Names::
     }
   }
 }
+Projects::
+  [/user/username/projects/a/tsconfig.json] *new*
+    /user/username/projects/a/a.ts  
+  [/user/username/projects/b/tsconfig.json] 
+    /user/username/projects/a/a.d.ts  
+    /user/username/projects/b/b.ts    
+Config::
+  [/user/username/projects/a/tsconfig.json] *modified*
+    RetainingProjects: *modified*
+      /user/username/projects/a/tsconfig.json  *new*
+      /user/username/projects/b/tsconfig.json  
+    RetainingOpenFiles: *modified*
+      /user/username/projects/a/a.ts  *new*
+  [/user/username/projects/b/tsconfig.json] 
+    RetainingProjects:
+      /user/username/projects/b/tsconfig.json  
+    RetainingOpenFiles:
+      /user/username/projects/b/b.ts  
 // === /user/username/projects/a/a.d.ts ===
 // export declare class [|A|] {
 // }
 // //# sourceMappingURL=a.d.ts.map
+
+// === /user/username/projects/a/a.ts ===
+// export class [|A|] { }
 
 // === /user/username/projects/b/b.ts ===
 // import {[|A|]} from "../a/a";

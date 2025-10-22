@@ -90,6 +90,24 @@ Config File Names::
     "newName": "?"
   }
 }
+Projects::
+  [/dev/null/inferred] 
+    /home/src/projects/project/a/bin/a.d.ts  
+    /home/src/projects/project/b/bin/b.d.ts  
+    /home/src/projects/project/user/user.ts  
+  [/home/src/projects/project/a/tsconfig.json] *new*
+    /home/src/projects/project/a/a.ts  
+Config::
+  [/home/src/projects/project/a/tsconfig.json] *new*
+    RetainingProjects:
+      /home/src/projects/project/a/tsconfig.json  
+    RetainingOpenFiles:
+      /home/src/projects/project/a/a.ts  
+// === /home/src/projects/project/a/a.ts ===
+// export function [|fnARENAME|]() {}
+// export interface IfaceA {}
+// export const instanceA: IfaceA = {};
+
 // === /home/src/projects/project/a/bin/a.d.ts ===
 // export declare function [|fnARENAME|](): void;
 // export interface IfaceA {
@@ -127,12 +145,19 @@ Projects::
     /home/src/projects/project/a/bin/a.d.ts  
     /home/src/projects/project/b/bin/b.d.ts  
     /home/src/projects/project/user/user.ts  
+  [/home/src/projects/project/a/tsconfig.json] *deleted*
+    /home/src/projects/project/a/a.ts  
   [/home/src/projects/project/dummy/tsconfig.json] *new*
     /home/src/projects/project/dummy/dummy.ts  
 Open Files::
   [/home/src/projects/project/dummy/dummy.ts] *new*
     /home/src/projects/project/dummy/tsconfig.json  (default) 
 Config::
+  [/home/src/projects/project/a/tsconfig.json] *modified*
+    RetainingProjects: *modified*
+      /home/src/projects/project/a/tsconfig.json  *deleted*
+    RetainingOpenFiles:
+      /home/src/projects/project/a/a.ts  
   [/home/src/projects/project/dummy/tsconfig.json] *new*
     RetainingProjects:
       /home/src/projects/project/dummy/tsconfig.json  

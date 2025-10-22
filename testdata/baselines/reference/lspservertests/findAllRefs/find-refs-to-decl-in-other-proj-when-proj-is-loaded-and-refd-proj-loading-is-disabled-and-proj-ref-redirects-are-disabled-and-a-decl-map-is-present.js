@@ -118,6 +118,18 @@ Config File Names::
     }
   }
 }
+Config::
+  [/user/username/projects/myproject/a/tsconfig.json] 
+    RetainingProjects:
+      /user/username/projects/myproject/a/tsconfig.json  
+    RetainingOpenFiles:
+      /user/username/projects/myproject/a/index.ts  
+  [/user/username/projects/myproject/b/tsconfig.json] *modified*
+    RetainingProjects:
+      /user/username/projects/myproject/b/tsconfig.json  
+    RetainingOpenFiles: *modified*
+      /user/username/projects/myproject/b/helper.ts  
+      /user/username/projects/myproject/b/index.ts   *new*
 // === /user/username/projects/myproject/a/index.ts ===
 // import { [|B|] } from "../b/lib";
 // const b: /*FIND ALL REFS*/[|B|] = new [|B|]();
