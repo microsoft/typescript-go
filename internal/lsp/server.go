@@ -745,7 +745,7 @@ func (s *Server) handleExit(ctx context.Context, params any) error {
 
 func (s *Server) handleDidChangeWorkspaceConfiguration(ctx context.Context, params *lsproto.DidChangeConfigurationParams) error {
 	// !!! only implemented because needed for fourslash
-	userPreferences := s.session.UserPreferences().Copy()
+	userPreferences := s.session.UserPreferences()
 	if parsed := userPreferences.Parse(params.Settings); parsed != nil {
 		userPreferences = parsed
 	}

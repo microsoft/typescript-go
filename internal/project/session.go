@@ -95,8 +95,8 @@ type Session struct {
 	snapshot   *Snapshot
 	snapshotMu sync.RWMutex
 
-	pendingConfigChanges   bool
-	pendingConfigChangesMu sync.Mutex
+	pendingConfigChanges bool
+	configRWMu           sync.Mutex
 
 	// pendingFileChanges are accumulated from textDocument/* events delivered
 	// by the LSP server through DidOpenFile(), DidChangeFile(), etc. They are
@@ -184,9 +184,11 @@ func (s *Session) GetCurrentDirectory() string {
 	return s.options.CurrentDirectory
 }
 
-// Gets current UserPreferences
+// Gets current UserPreferences, always a copy
 func (s *Session) UserPreferences() *ls.UserPreferences {
-	return s.userPreferences
+	s.configRWMu.Lock()
+	defer s.configRWMu.Unlock()
+	return s.userPreferences.Copy()
 }
 
 // Gets original UserPreferences of the session
@@ -200,8 +202,8 @@ func (s *Session) Trace(msg string) {
 }
 
 func (s *Session) Configure(userPreferences *ls.UserPreferences) {
-	s.pendingConfigChangesMu.Lock()
-	defer s.pendingConfigChangesMu.Unlock()
+	s.configRWMu.Lock()
+	defer s.configRWMu.Unlock()
 	s.pendingConfigChanges = true
 	s.userPreferences = userPreferences
 }
@@ -592,7 +594,8 @@ func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspa
 	pendingATAChanges := s.pendingATAChanges
 	s.pendingATAChanges = make(map[tspath.Path]*ATAStateChange)
 	fileChanges, overlays := s.flushChangesLocked(ctx)
-	s.pendingConfigChangesMu.Lock()
+	s.configRWMu.Lock()
+	defer s.configRWMu.Unlock()
 	var newConfig *Config
 	if s.pendingConfigChanges {
 		newConfig = &Config{
@@ -600,7 +603,6 @@ func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspa
 		}
 	}
 	s.pendingConfigChanges = false
-	defer s.pendingConfigChangesMu.Unlock()
 	return fileChanges, overlays, pendingATAChanges, newConfig
 }
 
