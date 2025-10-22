@@ -64,6 +64,37 @@ func TestFormat(t *testing.T) {
 		assert.Assert(t, len(newText) > 0)
 		assert.Assert(t, text != newText)
 	})
+
+	t.Run("chained method call with comment", func(t *testing.T) {
+		t.Parallel()
+		ctx := format.WithFormatCodeSettings(t.Context(), &format.FormatCodeSettings{
+			EditorSettings: format.EditorSettings{
+				TabSize:                4,
+				IndentSize:             4,
+				BaseIndentSize:         0,
+				NewLineCharacter:       "\n",
+				ConvertTabsToSpaces:    true,
+				IndentStyle:            format.IndentStyleSmart,
+				TrimTrailingWhitespace: true,
+			},
+			InsertSpaceBeforeTypeAnnotation: core.TSTrue,
+		}, "\n")
+
+		text := `foo
+	.bar()
+	// A second call
+	.baz();
+`
+		sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+			FileName: "/test.ts",
+			Path:     "/test.ts",
+		}, text, core.ScriptKindTS)
+		
+		// This should not panic
+		edits := format.FormatDocument(ctx, sourceFile)
+		newText := applyBulkEdits(text, edits)
+		assert.Assert(t, len(newText) > 0)
+	})
 }
 
 func BenchmarkFormat(b *testing.B) {
