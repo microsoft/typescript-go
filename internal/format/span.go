@@ -979,7 +979,7 @@ func getIndentationString(indentation int, options *FormatCodeSettings) string {
 	if indentation < 0 {
 		return ""
 	}
-	
+
 	// go's `strings.Repeat` already has static, global caching for repeated tabs and spaces, so there's no need to cache here like in strada
 	if !options.ConvertTabsToSpaces {
 		tabs := int(math.Floor(float64(indentation) / float64(options.TabSize)))
