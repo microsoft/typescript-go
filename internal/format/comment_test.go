@@ -206,3 +206,42 @@ func TestCommentFormatting(t *testing.T) {
 func contains(s, substr string) bool {
 	return len(substr) > 0 && strings.Contains(s, substr)
 }
+
+func TestSliceBoundsPanic(t *testing.T) {
+	t.Parallel()
+
+	t.Run("format code with trailing semicolon should not panic", func(t *testing.T) {
+		t.Parallel()
+		ctx := format.WithFormatCodeSettings(t.Context(), &format.FormatCodeSettings{
+			EditorSettings: format.EditorSettings{
+				TabSize:                4,
+				IndentSize:             4,
+				BaseIndentSize:         4,
+				NewLineCharacter:       "\n",
+				ConvertTabsToSpaces:    true,
+				IndentStyle:            format.IndentStyleSmart,
+				TrimTrailingWhitespace: true,
+			},
+			InsertSpaceBeforeTypeAnnotation: core.TSTrue,
+		}, "\n")
+
+		// Code from the issue that causes slice bounds panic
+		originalText := `const _enableDisposeWithListenerWarning = false
+	// || Boolean("TRUE") // causes a linter warning so that it cannot be pushed
+	;
+`
+
+		sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+			FileName: "/test.ts",
+			Path:     "/test.ts",
+		}, originalText, core.ScriptKindTS)
+
+		// This should not panic
+		edits := format.FormatDocument(ctx, sourceFile)
+		formatted := applyBulkEdits(originalText, edits)
+
+		// Basic sanity checks
+		assert.Check(t, len(formatted) > 0, "formatted text should not be empty")
+		assert.Check(t, contains(formatted, "_enableDisposeWithListenerWarning"), "should preserve variable name")
+	})
+}
