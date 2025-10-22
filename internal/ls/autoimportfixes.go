@@ -83,7 +83,7 @@ func (ct *changeTracker) doAddExistingFix(
 		}
 
 		if len(namedImports) > 0 {
-			specifierComparer, isSorted := getNamedImportSpecifierComparerWithDetection(importClause.Parent, preferences, sourceFile)
+			specifierComparer, isSorted := ct.ls.getNamedImportSpecifierComparerWithDetection(importClause.Parent, sourceFile)
 			newSpecifiers := core.Map(namedImports, func(namedImport *Import) *ast.Node {
 				var identifier *ast.Node
 				if namedImport.propertyName != "" {
@@ -215,7 +215,7 @@ func (ct *changeTracker) insertImports(sourceFile *ast.SourceFile, imports []*as
 	} else {
 		existingImportStatements = core.Filter(sourceFile.Statements.Nodes, ast.IsAnyImportSyntax)
 	}
-	comparer, isSorted := getOrganizeImportsStringComparerWithDetection(existingImportStatements, preferences)
+	comparer, isSorted := ct.ls.getOrganizeImportsStringComparerWithDetection(existingImportStatements)
 	sortedNewImports := slices.Clone(imports)
 	slices.SortFunc(sortedNewImports, func(a, b *ast.Statement) int {
 		return compareImportsOrRequireStatements(a, b, comparer)

@@ -380,6 +380,8 @@ func (p *UserPreferences) parseWorker(config map[string]interface{}) {
 			p.parseSuggest(values)
 		case "preferences":
 			p.parsePreferences(values)
+		case "format":
+			// !!!
 		case "tsserver":
 			// !!!
 		case "tsc":

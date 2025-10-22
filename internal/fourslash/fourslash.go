@@ -614,12 +614,16 @@ func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput,
 
 func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *CompletionsExpectedList) *lsproto.CompletionList {
 	prefix := f.getCurrentPositionPrefix()
-	list := f.getCompletions(t)
+	var userPreferences *ls.UserPreferences
+	if expected != nil {
+		userPreferences = expected.UserPreferences
+	}
+	list := f.getCompletions(t, userPreferences)
 	f.verifyCompletionsResult(t, list, expected, prefix)
 	return list
 }
 
-func (f *FourslashTest) getCompletions(t *testing.T) *lsproto.CompletionList {
+func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *ls.UserPreferences) *lsproto.CompletionList {
 	prefix := f.getCurrentPositionPrefix()
 	params := &lsproto.CompletionParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
@@ -628,8 +632,8 @@ func (f *FourslashTest) getCompletions(t *testing.T) *lsproto.CompletionList {
 		Position: f.currentCaretPosition,
 		Context:  &lsproto.CompletionContext{},
 	}
-	if expected != nil && expected.UserPreferences != nil {
-		reset := f.ConfigureWithReset(t, expected.UserPreferences)
+	if userPreferences != nil {
+		reset := f.ConfigureWithReset(t, userPreferences)
 		defer reset()
 	}
 	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentCompletionInfo, params)
@@ -917,11 +921,22 @@ type ApplyCodeActionFromCompletionOptions struct {
 	Description     string
 	NewFileContent  *string
 	NewRangeContent *string
+	UserPreferences *ls.UserPreferences
 }
 
 func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, markerName *string, options *ApplyCodeActionFromCompletionOptions) {
 	f.GoToMarker(t, *markerName)
-	completionsList := f.getCompletions(t)
+	var userPreferences *ls.UserPreferences
+	if options != nil && options.UserPreferences != nil {
+		userPreferences = options.UserPreferences
+	} else {
+		// Default preferences: enables auto-imports
+		userPreferences = ls.NewDefaultUserPreferences()
+	}
+
+	reset := f.ConfigureWithReset(t, userPreferences)
+	defer reset()
+	completionsList := f.getCompletions(t, nil) // Already configured, so we do not need to pass it in again
 	item := core.Find(completionsList.Items, func(item *lsproto.CompletionItem) bool {
 		if item.Label != options.Name || item.Data == nil {
 			return false

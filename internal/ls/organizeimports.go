@@ -290,8 +290,8 @@ func getImportSpecifierInsertionIndex(sortedImports []*ast.Node, newImport *ast.
 }
 
 // getOrganizeImportsStringComparerWithDetection detects the string comparer to use based on existing imports
-func getOrganizeImportsStringComparerWithDetection(originalImportDecls []*ast.Statement, preferences *UserPreferences) (comparer func(a, b string) int, isSorted bool) {
-	result := detectModuleSpecifierCaseBySort([][]*ast.Statement{originalImportDecls}, getComparers(preferences))
+func (l *LanguageService) getOrganizeImportsStringComparerWithDetection(originalImportDecls []*ast.Statement) (comparer func(a, b string) int, isSorted bool) {
+	result := detectModuleSpecifierCaseBySort([][]*ast.Statement{originalImportDecls}, getComparers(l.UserPreferences()))
 	return result.comparer, result.isSorted
 }
 
@@ -371,7 +371,8 @@ func measureSortedness[T any](arr []T, comparer func(a, b T) int) int {
 }
 
 // getNamedImportSpecifierComparerWithDetection detects the appropriate comparer for named imports
-func getNamedImportSpecifierComparerWithDetection(importDecl *ast.Node, preferences *UserPreferences, sourceFile *ast.SourceFile) (specifierComparer func(s1, s2 *ast.Node) int, isSorted core.Tristate) {
+func (l *LanguageService) getNamedImportSpecifierComparerWithDetection(importDecl *ast.Node, sourceFile *ast.SourceFile) (specifierComparer func(s1, s2 *ast.Node) int, isSorted core.Tristate) {
+	preferences := l.UserPreferences()
 	specifierComparer = getNamedImportSpecifierComparer(preferences, getComparers(preferences)[0])
 	// Try to detect from the current import declaration
 	if (preferences == nil || preferences.OrganizeImportsIgnoreCase.IsUnknown() || preferences.OrganizeImportsTypeOrder == OrganizeImportsTypeOrderLast) &&

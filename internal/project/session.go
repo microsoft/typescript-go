@@ -157,7 +157,7 @@ func NewSession(init *SessionInit) *Session {
 			extendedConfigCache,
 			&ConfigFileRegistry{},
 			nil,
-			nil,
+			Config{},
 			toPath,
 		),
 		pendingATAChanges: make(map[tspath.Path]*ATAStateChange),
