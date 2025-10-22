@@ -13,12 +13,14 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-var caseInsensitiveOrganizeImportsComparer = []func(a, b string) int{getOrganizeImportsOrdinalStringComparer(true)}
-var caseSensitiveOrganizeImportsComparer = []func(a, b string) int{getOrganizeImportsOrdinalStringComparer(false)}
-var organizeImportsComparers = []func(a, b string) int{
-	caseInsensitiveOrganizeImportsComparer[0],
-	caseSensitiveOrganizeImportsComparer[0],
-}
+var (
+	caseInsensitiveOrganizeImportsComparer = []func(a, b string) int{getOrganizeImportsOrdinalStringComparer(true)}
+	caseSensitiveOrganizeImportsComparer   = []func(a, b string) int{getOrganizeImportsOrdinalStringComparer(false)}
+	organizeImportsComparers               = []func(a, b string) int{
+		caseInsensitiveOrganizeImportsComparer[0],
+		caseSensitiveOrganizeImportsComparer[0],
+	}
+)
 
 // statement = anyImportOrRequireStatement
 func getImportDeclarationInsertIndex(sortedImports []*ast.Statement, newImport *ast.Statement, comparer func(a, b *ast.Statement) int) int {
