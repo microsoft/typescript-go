@@ -81,7 +81,7 @@ type Session struct {
 
 	// read-only after initialization
 	initialPreferences                 *ls.UserPreferences
-	userPreferences                    *ls.UserPreferences
+	userPreferences                    *ls.UserPreferences // !!! update to Config
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	typingsInstaller                   *ata.TypingsInstaller
 	backgroundQueue                    *background.Queue
@@ -184,10 +184,12 @@ func (s *Session) GetCurrentDirectory() string {
 	return s.options.CurrentDirectory
 }
 
+// Gets current UserPreferences
 func (s *Session) UserPreferences() *ls.UserPreferences {
 	return s.userPreferences
 }
 
+// Gets original UserPreferences of the session
 func (s *Session) NewUserPreferences() *ls.UserPreferences {
 	return s.initialPreferences.CopyOrDefault()
 }
@@ -204,7 +206,7 @@ func (s *Session) Configure(userPreferences *ls.UserPreferences) {
 	s.userPreferences = userPreferences
 }
 
-func (s *Session) InitializeConfig(userPreferences *ls.UserPreferences) {
+func (s *Session) InitializeWithConfig(userPreferences *ls.UserPreferences) {
 	s.initialPreferences = userPreferences.CopyOrDefault()
 	s.Configure(s.initialPreferences)
 }
@@ -582,7 +584,7 @@ func (s *Session) Close() {
 	s.backgroundQueue.Close()
 }
 
-func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspath.Path]*overlay, map[tspath.Path]*ATAStateChange, *ls.UserPreferences) {
+func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspath.Path]*overlay, map[tspath.Path]*ATAStateChange, *Config) {
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
 	s.pendingATAChangesMu.Lock()
@@ -591,9 +593,11 @@ func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspa
 	s.pendingATAChanges = make(map[tspath.Path]*ATAStateChange)
 	fileChanges, overlays := s.flushChangesLocked(ctx)
 	s.pendingConfigChangesMu.Lock()
-	var newConfig *ls.UserPreferences
+	var newConfig *Config
 	if s.pendingConfigChanges {
-		newConfig = s.userPreferences.Copy()
+		newConfig = &Config{
+			tsUserPreferences: s.userPreferences.Copy(),
+		}
 	}
 	s.pendingConfigChanges = false
 	defer s.pendingConfigChangesMu.Unlock()

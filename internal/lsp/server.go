@@ -219,9 +219,9 @@ func (s *Server) RefreshDiagnostics(ctx context.Context) error {
 }
 
 func (s *Server) RequestConfiguration(ctx context.Context) (*ls.UserPreferences, error) {
-	if s.initializeParams.Capabilities == nil ||
-		s.initializeParams.Capabilities.Workspace == nil ||
+	if s.initializeParams.Capabilities == nil || s.initializeParams.Capabilities.Workspace == nil ||
 		!ptrIsTrue(s.initializeParams.Capabilities.Workspace.Configuration) {
+		// if no configuration request capapbility, return default preferences
 		return s.session.NewUserPreferences(), nil
 	}
 	result, err := s.sendRequest(ctx, lsproto.MethodWorkspaceConfiguration, &lsproto.ConfigurationParams{
@@ -716,17 +716,17 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 	})
 
 	if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil && *s.initializeParams.InitializationOptions != nil {
-		// handle userPreferences from initialization
+		// handle userPreferences from initializationOptions
 		userPreferences := s.session.NewUserPreferences()
 		userPreferences.Parse(*s.initializeParams.InitializationOptions)
-		s.session.InitializeConfig(userPreferences)
+		s.session.InitializeWithConfig(userPreferences)
 	} else {
 		// request userPreferences if not provided at initialization
 		userPreferences, err := s.RequestConfiguration(ctx)
 		if err != nil {
 			return err
 		}
-		s.session.InitializeConfig(userPreferences)
+		s.session.InitializeWithConfig(userPreferences)
 	}
 
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
