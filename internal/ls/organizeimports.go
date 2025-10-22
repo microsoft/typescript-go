@@ -13,6 +13,13 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
+var caseInsensitiveOrganizeImportsComparer = []func(a, b string) int{getOrganizeImportsOrdinalStringComparer(true)}
+var caseSensitiveOrganizeImportsComparer = []func(a, b string) int{getOrganizeImportsOrdinalStringComparer(false)}
+var organizeImportsComparers = []func(a, b string) int{
+	caseInsensitiveOrganizeImportsComparer[0],
+	caseSensitiveOrganizeImportsComparer[0],
+}
+
 // statement = anyImportOrRequireStatement
 func getImportDeclarationInsertIndex(sortedImports []*ast.Statement, newImport *ast.Statement, comparer func(a, b *ast.Statement) int) int {
 	// !!!
@@ -284,23 +291,21 @@ func getImportSpecifierInsertionIndex(sortedImports []*ast.Node, newImport *ast.
 
 // getOrganizeImportsStringComparerWithDetection detects the string comparer to use based on existing imports
 func getOrganizeImportsStringComparerWithDetection(originalImportDecls []*ast.Statement, preferences *UserPreferences) (comparer func(a, b string) int, isSorted bool) {
-	// Get the list of comparers to test based on preferences
-	var comparersToTest []func(a, b string) int
-	if preferences != nil && !preferences.OrganizeImportsIgnoreCase.IsUnknown() {
-		// If case sensitivity is explicitly specified, only test that one
-		comparersToTest = []func(a, b string) int{
-			getOrganizeImportsOrdinalStringComparer(preferences.OrganizeImportsIgnoreCase.IsTrue()),
-		}
-	} else {
-		// Otherwise, test both case-insensitive and case-sensitive
-		comparersToTest = []func(a, b string) int{
-			getOrganizeImportsOrdinalStringComparer(true),  // case-insensitive first (higher priority)
-			getOrganizeImportsOrdinalStringComparer(false), // case-sensitive second
+	result := detectModuleSpecifierCaseBySort([][]*ast.Statement{originalImportDecls}, getComparers(preferences))
+	return result.comparer, result.isSorted
+}
+
+func getComparers(preferences *UserPreferences) []func(a string, b string) int {
+	if preferences != nil {
+		switch preferences.OrganizeImportsIgnoreCase {
+		case core.TSTrue:
+			return caseInsensitiveOrganizeImportsComparer
+		case core.TSFalse:
+			return caseSensitiveOrganizeImportsComparer
 		}
 	}
 
-	result := detectModuleSpecifierCaseBySort([][]*ast.Statement{originalImportDecls}, comparersToTest)
-	return result.comparer, result.isSorted
+	return organizeImportsComparers
 }
 
 type caseSensitivityDetectionResult struct {
@@ -367,23 +372,7 @@ func measureSortedness[T any](arr []T, comparer func(a, b T) int) int {
 
 // getNamedImportSpecifierComparerWithDetection detects the appropriate comparer for named imports
 func getNamedImportSpecifierComparerWithDetection(importDecl *ast.Node, preferences *UserPreferences, sourceFile *ast.SourceFile) (specifierComparer func(s1, s2 *ast.Node) int, isSorted core.Tristate) {
-	// Get the list of comparers to test based on preferences
-	var comparersToTest []func(a, b string) int
-	if preferences != nil && !preferences.OrganizeImportsIgnoreCase.IsUnknown() {
-		// If case sensitivity is explicitly specified, only test that one
-		comparersToTest = []func(a, b string) int{
-			getOrganizeImportsOrdinalStringComparer(preferences.OrganizeImportsIgnoreCase.IsTrue()),
-		}
-	} else {
-		// Otherwise, test both
-		comparersToTest = []func(a, b string) int{
-			getOrganizeImportsOrdinalStringComparer(true),  // case-insensitive first
-			getOrganizeImportsOrdinalStringComparer(false), // case-sensitive second
-		}
-	}
-
-	specifierComparer = getNamedImportSpecifierComparer(preferences, comparersToTest[0])
-
+	specifierComparer = getNamedImportSpecifierComparer(preferences, getComparers(preferences)[0])
 	// Try to detect from the current import declaration
 	if (preferences == nil || preferences.OrganizeImportsIgnoreCase.IsUnknown() || preferences.OrganizeImportsTypeOrder == OrganizeImportsTypeOrderLast) &&
 		importDecl.Kind == ast.KindImportDeclaration {
