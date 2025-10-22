@@ -1294,6 +1294,10 @@ func (f *FourslashTest) VerifyBaselineSignatureHelp(t *testing.T) {
 	}
 }
 
+func (f *FourslashTest) VerifyBaselineSelectionRanges(t *testing.T) {
+	t.Error("TODO")
+}
+
 func (f *FourslashTest) VerifyBaselineDocumentHighlights(
 	t *testing.T,
 	preferences *ls.UserPreferences,
