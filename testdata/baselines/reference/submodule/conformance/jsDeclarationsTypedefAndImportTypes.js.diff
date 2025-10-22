@@ -5,10 +5,10 @@
 
  //// [conn.js]
 +"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
  /**
   * @typedef {string | number} Whatever
   */
++Object.defineProperty(exports, "__esModule", { value: true });
  class Conn {
 -    constructor() {
 -        this.item = 3;
@@ -21,10 +21,13 @@
  module.exports = Conn;
  //// [usage.js]
 +"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
  /**
   * @typedef {import("./conn")} Conn
   */
++Object.defineProperty(exports, "__esModule", { value: true });
+ class Wrap {
+     /**
+      * @param {Conn} c
 @@= skipped -30, +34 lines =@@
 
 

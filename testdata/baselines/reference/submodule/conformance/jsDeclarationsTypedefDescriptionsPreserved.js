@@ -20,13 +20,13 @@
 
 //// [index.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Options for Foo <------------
  * @typedef {Object} FooOptions
  * @property {boolean} bar - Marvin K Mooney
  * @property {string} baz - Sylvester McMonkey McBean
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Multiline
  * Options

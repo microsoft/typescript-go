@@ -8,11 +8,18 @@
  module.exports = Timer;
  //// [context.js]
 +"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
  /**
   * Imports
   *
-@@= skipped -45, +48 lines =@@
+@@= skipped -9, +11 lines =@@
+  * @typedef {import("./hook")} Hook
+  * @typedef {import("./hook").HookHandler} HookHandler
+  */
++Object.defineProperty(exports, "__esModule", { value: true });
+ /**
+  * Input type definition
+  *
+@@= skipped -36, +37 lines =@@
          return input;
      }
  };

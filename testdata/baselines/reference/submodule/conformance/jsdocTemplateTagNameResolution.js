@@ -14,12 +14,12 @@ const y = "a";
 
 //// [file.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @template T
  * @template {keyof T} K
  * @typedef {T[K]} Foo
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 const x = { a: 1 };
 /** @type {Foo<typeof x, "a">} */
 const y = "a";

@@ -56,8 +56,8 @@ module.exports = MainThreadTasks;
 
 //// [module.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /** @typedef {'parseHTML'|'styleLayout'} TaskGroupIds */
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @typedef TaskGroup
  * @property {TaskGroupIds} id

@@ -30,10 +30,10 @@ const p = {};
 
 //// [bug39372.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /** @typedef {ReadonlyArray<Json>} JsonArray */
 /** @typedef {{ readonly [key: string]: Json }} JsonRecord */
 /** @typedef {boolean | number | string | null | JsonRecord | JsonArray | readonly []} Json */
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @template T
  * @typedef {{

@@ -82,7 +82,6 @@ export = Timer;
 module.exports = Timer;
 //// [context.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Imports
  *
@@ -90,6 +89,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @typedef {import("./hook")} Hook
  * @typedef {import("./hook").HookHandler} HookHandler
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Input type definition
  *

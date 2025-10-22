@@ -5,10 +5,14 @@
 
  //// [file.js]
 +"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
  /**
   * @template {string | number} [T=string] - ok: defaults are permitted
   * @typedef {[T]} A
+  */
++Object.defineProperty(exports, "__esModule", { value: true });
+ /** @type {A} */ // ok, default for `T` in `A` is `string`
+ const aDefault1 = [""];
+ /** @type {A} */ // error: `number` is not assignable to string`
 @@= skipped -59, +61 lines =@@
 
 

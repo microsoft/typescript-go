@@ -20,11 +20,11 @@ inJsArrow(2); // no error gets linted as expected
 
 //// [typeTagOnFunctionReferencesGeneric.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.inJs = inJs;
 /**
  * @typedef {<T>(m : T) => T} IFn
  */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.inJs = inJs;
 /**@type {IFn}*/
 function inJs(l) {
     return l;

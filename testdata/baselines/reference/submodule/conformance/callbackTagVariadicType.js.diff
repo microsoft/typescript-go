@@ -1,25 +1,6 @@
 --- old.callbackTagVariadicType.js
 +++ new.callbackTagVariadicType.js
-@@= skipped -13, +13 lines =@@
-
- //// [callbackTagVariadicType.js]
- "use strict";
--/**
-- * @callback Foo
-- * @param {...string} args
-- * @returns {number}
-- */
- Object.defineProperty(exports, "__esModule", { value: true });
- exports.x = void 0;
-+/**
-+ * @callback Foo
-+ * @param {...string} args
-+ * @returns {number}
-+ */
- /** @type {Foo} */
- const x = () => 1;
- exports.x = x;
-@@= skipped -14, +14 lines =@@
+@@= skipped -27, +27 lines =@@
 
 
  //// [callbackTagVariadicType.d.ts]

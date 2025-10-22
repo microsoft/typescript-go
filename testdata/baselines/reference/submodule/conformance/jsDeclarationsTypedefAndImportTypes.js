@@ -36,10 +36,10 @@ module.exports = {
 
 //// [conn.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @typedef {string | number} Whatever
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 class Conn {
     constructor() { }
     item = 3;
@@ -49,10 +49,10 @@ export = Conn;
 module.exports = Conn;
 //// [usage.js]
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @typedef {import("./conn")} Conn
  */
+Object.defineProperty(exports, "__esModule", { value: true });
 class Wrap {
     /**
      * @param {Conn} c
