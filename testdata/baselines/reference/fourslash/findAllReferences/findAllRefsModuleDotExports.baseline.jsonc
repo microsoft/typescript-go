@@ -1,3 +1,0 @@
-// === findAllReferences ===
-// === /a.js ===
-// /*FIND ALL REFS*/const [|b|] = require("./b");
