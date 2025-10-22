@@ -70,7 +70,7 @@ type Project struct {
 	ProgramLastUpdate uint64
 	// Set of projects that this project could be referencing.
 	// Only set before actually loading config file to get actual project references
-	PotentialProjectReferences *collections.Set[tspath.Path]
+	potentialProjectReferences *collections.Set[tspath.Path]
 
 	programFilesWatch       *WatchedFiles[PatternsAndIgnored]
 	failedLookupsWatch      *WatchedFiles[map[tspath.Path]string]
@@ -227,7 +227,7 @@ func (p *Project) Clone() *Project {
 		Program:                     p.Program,
 		ProgramUpdateKind:           ProgramUpdateKindNone,
 		ProgramLastUpdate:           p.ProgramLastUpdate,
-		PotentialProjectReferences:  p.PotentialProjectReferences,
+		potentialProjectReferences:  p.potentialProjectReferences,
 
 		programFilesWatch:       p.programFilesWatch,
 		failedLookupsWatch:      p.failedLookupsWatch,
@@ -276,12 +276,29 @@ func (p *Project) getCommandLineWithTypingsFiles() *tsoptions.ParsedCommandLine 
 }
 
 func (p *Project) setPotentialProjectReference(configFilePath tspath.Path) {
-	if p.PotentialProjectReferences == nil {
-		p.PotentialProjectReferences = &collections.Set[tspath.Path]{}
+	if p.potentialProjectReferences == nil {
+		p.potentialProjectReferences = &collections.Set[tspath.Path]{}
 	} else {
-		p.PotentialProjectReferences = p.PotentialProjectReferences.Clone()
+		p.potentialProjectReferences = p.potentialProjectReferences.Clone()
 	}
-	p.PotentialProjectReferences.Add(configFilePath)
+	p.potentialProjectReferences.Add(configFilePath)
+}
+
+func (p *Project) forEachPotentialProjectReference(fn func(tspath.Path) bool) bool {
+	if p.CommandLine != nil {
+		for _, path := range p.CommandLine.ResolvedProjectReferencePaths() {
+			if fn(p.toPath(path)) {
+				return true
+			}
+		}
+	} else if p.potentialProjectReferences != nil {
+		for path := range p.potentialProjectReferences.Keys() {
+			if fn(path) {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 type CreateProgramResult struct {

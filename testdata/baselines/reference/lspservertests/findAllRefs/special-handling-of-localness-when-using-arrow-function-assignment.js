@@ -106,6 +106,9 @@ Projects::
   [/user/username/projects/solution/api/tsconfig.json] 
     /user/username/projects/solution/shared/src/index.ts  
     /user/username/projects/solution/api/src/server.ts    
+  [/user/username/projects/solution/app/tsconfig.json] *new*
+    /user/username/projects/solution/shared/src/index.ts  
+    /user/username/projects/solution/app/src/app.ts       
   [/user/username/projects/solution/shared/tsconfig.json] *new*
     /user/username/projects/solution/shared/src/index.ts  
   [/user/username/projects/solution/tsconfig.json] 
@@ -116,12 +119,14 @@ Config::
       /user/username/projects/solution/tsconfig.json      
     RetainingOpenFiles:
       /user/username/projects/solution/api/src/server.ts  
-  [/user/username/projects/solution/app/tsconfig.json] 
-    RetainingProjects:
-      /user/username/projects/solution/tsconfig.json  
+  [/user/username/projects/solution/app/tsconfig.json] *modified*
+    RetainingProjects: *modified*
+      /user/username/projects/solution/app/tsconfig.json  *new*
+      /user/username/projects/solution/tsconfig.json      
   [/user/username/projects/solution/shared/tsconfig.json] *modified*
     RetainingProjects: *modified*
       /user/username/projects/solution/api/tsconfig.json     
+      /user/username/projects/solution/app/tsconfig.json     *new*
       /user/username/projects/solution/shared/tsconfig.json  *new*
       /user/username/projects/solution/tsconfig.json         
     RetainingOpenFiles: *modified*
@@ -132,6 +137,10 @@ Config::
 // === /user/username/projects/solution/api/src/server.ts ===
 // import * as shared from "../../shared/dist"
 // shared./*FIND ALL REFS*/[|dog|]();
+
+// === /user/username/projects/solution/app/src/app.ts ===
+// import * as shared from "../../shared/dist"
+// shared.[|dog|]();
 
 // === /user/username/projects/solution/shared/src/index.ts ===
 // export const [|dog|] = () => { };

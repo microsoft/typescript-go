@@ -130,6 +130,11 @@ Config File Names::
 // export function /*RENAME*/[|fnARENAME|]() {}
 // export interface IfaceA {}
 // export const instanceA: IfaceA = {};
+
+// === /home/src/projects/project/user/user.ts ===
+// import * as a from "../a/bin/a";
+// import * as b from "../b/bin/b";
+// export function fnUser() { a.[|fnARENAME|](); b.fnB(); a.instanceA; }
 {
   "method": "textDocument/didClose",
   "params": {

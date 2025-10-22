@@ -121,6 +121,35 @@ Config File Names::
     }
   }
 }
+Projects::
+  [/user/username/projects/solution/compiler/tsconfig.json] 
+    /user/username/projects/solution/compiler/types.ts    
+    /user/username/projects/solution/compiler/program.ts  
+  [/user/username/projects/solution/services/tsconfig.json] *new*
+    /user/username/projects/solution/compiler/types.ts     
+    /user/username/projects/solution/compiler/program.ts   
+    /user/username/projects/solution/services/services.ts  
+  [/user/username/projects/solution/tsconfig.json] 
+Open Files::
+  [/user/username/projects/solution/compiler/program.ts] *modified*
+    /user/username/projects/solution/compiler/tsconfig.json  (default) 
+    /user/username/projects/solution/services/tsconfig.json  *new*
+Config::
+  [/user/username/projects/solution/compiler/tsconfig.json] *modified*
+    RetainingProjects: *modified*
+      /user/username/projects/solution/compiler/tsconfig.json  
+      /user/username/projects/solution/services/tsconfig.json  *new*
+      /user/username/projects/solution/tsconfig.json           
+    RetainingOpenFiles: *modified*
+      /user/username/projects/solution/compiler/program.ts  
+      /user/username/projects/solution/compiler/types.ts    *new*
+  [/user/username/projects/solution/services/tsconfig.json] *modified*
+    RetainingProjects: *modified*
+      /user/username/projects/solution/services/tsconfig.json  *new*
+      /user/username/projects/solution/tsconfig.json           
+  [/user/username/projects/solution/tsconfig.json] 
+    RetainingProjects:
+      /user/username/projects/solution/tsconfig.json  
 // === /user/username/projects/solution/compiler/program.ts ===
 // namespace ts {
 //     export const program: Program = {
@@ -134,4 +163,11 @@ Config File Names::
 //     export interface Program {
 //         [|getSourceFiles|](): string[];
 //     }
+// }
+
+// === /user/username/projects/solution/services/services.ts ===
+// /// <reference path="../compiler/types.ts" />
+// /// <reference path="../compiler/program.ts" />
+// namespace ts {
+//     const result = program.[|getSourceFiles|]();
 // }
