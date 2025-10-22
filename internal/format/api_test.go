@@ -91,12 +91,6 @@ func TestFormatNoTrailingNewline(t *testing.T) {
 			Path:     "/test.ts",
 		}, text, core.ScriptKindTS)
 		edits := format.FormatDocument(ctx, sourceFile)
-		
-		// Debug: print edits to understand what's happening
-		for i, edit := range edits {
-			t.Logf("Edit %d: pos=%d, end=%d, newText=%q", i, edit.Pos(), edit.End(), edit.NewText)
-		}
-		
 		newText := applyBulkEdits(text, edits)
 		
 		// The formatted text should be the same as the input - no extra space added
