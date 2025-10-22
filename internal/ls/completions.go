@@ -5103,7 +5103,7 @@ func (l *LanguageService) getCompletionItemDetails(
 	case symbolCompletion.symbol != nil:
 		symbolDetails := symbolCompletion.symbol
 		actions := l.getCompletionItemActions(ctx, checker, file, position, itemData, symbolDetails, preferences)
-		return createCompletionDetailsForSymbol(
+		return l.createCompletionDetailsForSymbol(
 			item,
 			symbolDetails.symbol,
 			checker,
@@ -5299,7 +5299,7 @@ type codeAction struct {
 	changes []*lsproto.TextEdit
 }
 
-func createCompletionDetailsForSymbol(
+func (l *LanguageService) createCompletionDetailsForSymbol(
 	item *lsproto.CompletionItem,
 	symbol *ast.Symbol,
 	checker *checker.Checker,
@@ -5312,7 +5312,7 @@ func createCompletionDetailsForSymbol(
 		details = append(details, action.description)
 		edits = append(edits, action.changes...)
 	}
-	quickInfo, documentation := getQuickInfoAndDocumentationForSymbol(checker, symbol, location)
+	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(checker, symbol, location)
 	details = append(details, quickInfo)
 	if len(edits) != 0 {
 		item.AdditionalTextEdits = &edits
