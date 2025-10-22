@@ -90,10 +90,11 @@ func TestFormat(t *testing.T) {
 			Path:     "/test.ts",
 		}, text, core.ScriptKindTS)
 		
-		// This should not panic
+		// This should not panic (was panic'ing before fix with "negative Repeat count")
 		edits := format.FormatDocument(ctx, sourceFile)
 		newText := applyBulkEdits(text, edits)
 		assert.Assert(t, len(newText) > 0)
+		// The exact formatting is not important for this test, just that it doesn't panic
 	})
 }
 
