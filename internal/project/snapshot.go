@@ -135,16 +135,24 @@ type APISnapshotRequest struct {
 	UpdateProjects *collections.Set[tspath.Path]
 }
 
-type SnapshotChange struct {
-	reason UpdateReason
-	// fileChanges are the changes that have occurred since the last snapshot.
-	fileChanges FileChangeSummary
+type snapshotChangeRequest struct {
 	// requestedURIs are URIs that were requested by the client.
 	// The new snapshot should ensure projects for these URIs have loaded programs.
 	requestedURIs []lsproto.DocumentUri
 	// Update requested projects.
 	// this is used when we want to get LS and from all the projects the file can be part of
 	requestedProjectUpdates []tspath.Path
+	// Ensure default project for these URIs
+	// These are documents that might not be open, but we need default project for them
+	// eg for Find all references when the definition is in a mapped location that is not yet open
+	ensureDefaultProjectForURIs []lsproto.DocumentUri
+}
+
+type SnapshotChange struct {
+	snapshotChangeRequest
+	reason UpdateReason
+	// fileChanges are the changes that have occurred since the last snapshot.
+	fileChanges FileChangeSummary
 	// compilerOptionsForInferredProjects is the compiler options to use for inferred projects.
 	// It should only be set the value in the next snapshot should be changed. If nil, the
 	// value from the previous snapshot will be copied to the new snapshot.
@@ -189,19 +197,32 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	if session.options.LoggingEnabled {
 		logger = logging.NewLogTree(fmt.Sprintf("Cloning snapshot %d", s.id))
+		getDetails := func() string {
+			details := ""
+			if len(change.requestedURIs) != 0 {
+				details += fmt.Sprintf(" requestedURIs: %v", change.requestedURIs)
+			}
+			if len(change.requestedProjectUpdates) != 0 {
+				details += fmt.Sprintf(" requestedProjectUpdates: %v", change.requestedProjectUpdates)
+			}
+			if len(change.ensureDefaultProjectForURIs) != 0 {
+				details += fmt.Sprintf(" ensureDefaultProjectForURIs: %v", change.ensureDefaultProjectForURIs)
+			}
+			return details
+		}
 		switch change.reason {
 		case UpdateReasonDidOpenFile:
 			logger.Logf("Reason: DidOpenFile - %s", change.fileChanges.Opened)
 		case UpdateReasonDidChangeCompilerOptionsForInferredProjects:
 			logger.Logf("Reason: DidChangeCompilerOptionsForInferredProjects")
 		case UpdateReasonRequestedLanguageServicePendingChanges:
-			logger.Logf("Reason: RequestedLanguageService (pending file changes) - %v, %v", change.requestedURIs, change.requestedProjectUpdates)
+			logger.Logf("Reason: RequestedLanguageService (pending file changes) - %v", getDetails())
 		case UpdateReasonRequestedLanguageServiceProjectNotLoaded:
-			logger.Logf("Reason: RequestedLanguageService (project not loaded) - %v", change.requestedURIs)
+			logger.Logf("Reason: RequestedLanguageService (project not loaded) - %v", getDetails())
 		case UpdateReasonRequestedLanguageServiceForFileNotOpen:
-			logger.Logf("Reason: RequestedLanguageService (file not open) - %v", change.requestedURIs)
+			logger.Logf("Reason: RequestedLanguageService (file not open) - %v", getDetails())
 		case UpdateReasonRequestedLanguageServiceProjectDirty:
-			logger.Logf("Reason: RequestedLanguageService (project dirty) - %v, %v", change.requestedURIs, change.requestedProjectUpdates)
+			logger.Logf("Reason: RequestedLanguageService (project dirty) - %v", getDetails())
 		}
 	}
 
@@ -262,6 +283,10 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	for _, projectId := range change.requestedProjectUpdates {
 		projectCollectionBuilder.DidRequestProject(projectId, logger.Fork("DidRequestProject"))
+	}
+
+	for _, uri := range change.ensureDefaultProjectForURIs {
+		projectCollectionBuilder.DidRequestEnsureDefaultProject(uri, logger.Fork("DidRequestFile"))
 	}
 
 	projectCollection, configFileRegistry := projectCollectionBuilder.Finalize(logger)

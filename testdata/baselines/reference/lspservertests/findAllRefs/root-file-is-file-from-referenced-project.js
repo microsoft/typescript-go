@@ -127,6 +127,19 @@ Config File Names::
     }
   }
 }
+Config::
+  [/user/username/projects/project/src/common/tsconfig.json] *modified*
+    RetainingProjects:
+      /user/username/projects/project/src/common/tsconfig.json  
+      /user/username/projects/project/src/tsconfig.json         
+    RetainingOpenFiles: *modified*
+      /user/username/projects/project/src/common/input/keyboard.test.ts  *new*
+      /user/username/projects/project/src/common/input/keyboard.ts       
+  [/user/username/projects/project/src/tsconfig.json] 
+    RetainingProjects:
+      /user/username/projects/project/src/tsconfig.json  
+    RetainingOpenFiles:
+      /user/username/projects/project/src/terminal.ts  
 // === /user/username/projects/project/src/common/input/keyboard.test.ts ===
 // import { [|evaluateKeyboardEvent|] } from 'common/input/keyboard';
 // function testEvaluateKeyboardEvent() {
