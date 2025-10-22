@@ -883,7 +883,12 @@ func (w *formatSpanWorker) characterToColumn(startLinePosition int, characterInL
 }
 
 func (w *formatSpanWorker) indentationIsDifferent(indentationString string, startLinePosition int) bool {
-	return indentationString != w.sourceFile.Text()[startLinePosition:startLinePosition+len(indentationString)]
+	// Check bounds to prevent slice panic
+	endPosition := startLinePosition + len(indentationString)
+	if endPosition > len(w.sourceFile.Text()) {
+		return true
+	}
+	return indentationString != w.sourceFile.Text()[startLinePosition:endPosition]
 }
 
 func (w *formatSpanWorker) indentTriviaItems(trivia []TextRangeWithKind, commentIndentation int, indentNextTokenOrTrivia bool, indentSingleLine func(item TextRangeWithKind)) bool {
@@ -969,6 +974,12 @@ func (w *formatSpanWorker) indentMultilineComment(commentRange core.TextRange, i
 }
 
 func getIndentationString(indentation int, options *FormatCodeSettings) string {
+	// Handle negative indentation (e.g., Constants.Unknown = -1)
+	// Return empty string like TypeScript's repeatString does when count is negative
+	if indentation < 0 {
+		return ""
+	}
+	
 	// go's `strings.Repeat` already has static, global caching for repeated tabs and spaces, so there's no need to cache here like in strada
 	if !options.ConvertTabsToSpaces {
 		tabs := int(math.Floor(float64(indentation) / float64(options.TabSize)))
