@@ -167,6 +167,40 @@ func TestCommentFormatting(t *testing.T) {
 		// The comment should not lose its indentation
 		assert.Check(t, !contains(formatted, "\n// A second call"), "comment should not lose indentation")
 	})
+
+	// Regression test for issue #1928 - panic when formatting chained method call with comment
+	t.Run("format chained method call with comment (issue #1928)", func(t *testing.T) {
+		t.Parallel()
+		ctx := format.WithFormatCodeSettings(t.Context(), &format.FormatCodeSettings{
+			EditorSettings: format.EditorSettings{
+				TabSize:                4,
+				IndentSize:             4,
+				BaseIndentSize:         0,
+				NewLineCharacter:       "\n",
+				ConvertTabsToSpaces:    false, // Use tabs
+				IndentStyle:            format.IndentStyleSmart,
+				TrimTrailingWhitespace: true,
+			},
+			InsertSpaceBeforeTypeAnnotation: core.TSTrue,
+		}, "\n")
+
+		// This code previously caused a panic with "strings: negative Repeat count"
+		// because tokenIndentation was -1 and was being used directly for indentation
+		originalText := "foo\n\t.bar()\n\t// A second call\n\t.baz();"
+
+		sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+			FileName: "/test.ts",
+			Path:     "/test.ts",
+		}, originalText, core.ScriptKindTS)
+
+		// Apply formatting - should not panic
+		edits := format.FormatDocument(ctx, sourceFile)
+		formatted := applyBulkEdits(originalText, edits)
+
+		// Verify the comment maintains proper indentation and doesn't lose it
+		assert.Check(t, contains(formatted, "\t// A second call") || contains(formatted, "   // A second call"), "comment should be indented")
+		assert.Check(t, !contains(formatted, "\n// A second call"), "comment should not be at column 0")
+	})
 }
 
 func contains(s, substr string) bool {
