@@ -483,12 +483,9 @@ func getQuotePreference(sourceFile *ast.SourceFile, preferences *UserPreferences
 		return quotePreferenceDouble
 	}
 	// ignore synthetic import added when importHelpers: true
-	var firstModuleSpecifier *ast.Node
-	if sourceFile.Imports != nil {
-		firstModuleSpecifier = core.Find(sourceFile.Imports(), func(n *ast.Node) bool {
-			return ast.IsStringLiteral(n) && !ast.NodeIsSynthesized(n.Parent)
-		})
-	}
+	firstModuleSpecifier := core.Find(sourceFile.Imports(), func(n *ast.Node) bool {
+		return ast.IsStringLiteral(n) && !ast.NodeIsSynthesized(n.Parent)
+	})
 	if firstModuleSpecifier != nil {
 		return quotePreferenceFromString(firstModuleSpecifier.AsStringLiteral())
 	}
