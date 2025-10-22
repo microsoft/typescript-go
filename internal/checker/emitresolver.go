@@ -787,25 +787,9 @@ func (r *emitResolver) GetExternalModuleFileFromDeclaration(declaration *ast.Nod
 		return nil
 	}
 
-	var specifier *ast.Node
-	if declaration.Kind == ast.KindModuleDeclaration {
-		if ast.IsStringLiteral(declaration.Name()) {
-			specifier = declaration.Name()
-		}
-	} else {
-		specifier = ast.GetExternalModuleName(declaration)
-	}
 	r.checkerMu.Lock()
 	defer r.checkerMu.Unlock()
-	moduleSymbol := r.checker.resolveExternalModuleNameWorker(specifier, specifier /*moduleNotFoundError*/, nil, false, false) // TODO: GH#18217
-	if moduleSymbol == nil {
-		return nil
-	}
-	decl := ast.GetDeclarationOfKind(moduleSymbol, ast.KindSourceFile)
-	if decl == nil {
-		return nil
-	}
-	return decl.AsSourceFile()
+	return r.checker.getExternalModuleFileFromDeclaration(declaration)
 }
 
 func (r *emitResolver) getReferenceResolver() binder.ReferenceResolver {

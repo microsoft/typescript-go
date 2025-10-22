@@ -410,7 +410,7 @@ func (b *nodeBuilderImpl) tryReuseExistingNonParameterTypeNode(existing *ast.Typ
 		annotationType = b.getTypeFromTypeNode(existing, true)
 	}
 	if annotationType != nil && b.typeNodeIsEquivalentToType(host, t, annotationType) && b.existingTypeNodeIsNotReferenceOrIsReferenceWithCompatibleTypeArgumentCount(existing, t) {
-		result := b.tryReuseExistingTypeNodeHelper(existing)
+		result := b.tryReuseExistingNodeHelper(existing)
 		if result != nil {
 			return result
 		}
@@ -1255,7 +1255,7 @@ func (b *nodeBuilderImpl) setTextRange(range_ *ast.Node, location *ast.Node) *as
 		return range_
 	}
 	if !ast.NodeIsSynthesized(range_) || (range_.Flags&ast.NodeFlagsSynthesized == 0) || b.ctx.enclosingFile == nil || b.ctx.enclosingFile != ast.GetSourceFileOfNode(b.e.MostOriginal(range_)) {
-		range_ = range_.Clone(b.f) // if `range` is synthesized or originates in another file, copy it so it definitely has synthetic positions
+		range_ = b.f.DeepCloneNode(range_) // if `range` is synthesized or originates in another file, copy it so it definitely has synthetic positions, deep clone so inner nodes have positions stripped
 	}
 	if range_ == location || location == nil {
 		return range_
@@ -1492,7 +1492,7 @@ func (b *nodeBuilderImpl) typeToTypeNodeHelperWithPossibleReusableTypeNode(t *Ty
 		return b.f.NewKeywordTypeNode(ast.KindAnyKeyword)
 	}
 	if typeNode != nil && b.getTypeFromTypeNode(typeNode, false) == t {
-		reused := b.tryReuseExistingTypeNodeHelper(typeNode)
+		reused := b.tryReuseExistingNodeHelper(typeNode)
 		if reused != nil {
 			return reused
 		}

@@ -13,7 +13,7 @@ func (b *nodeBuilderImpl) psuedoTypeToNode(t *psuedochecker.PsuedoType) *ast.Nod
 	debug.Assert(t != nil, "Attempted to serialize nil psuedotype")
 	switch t.Kind {
 	case psuedochecker.PsuedoTypeKindDirect:
-		return b.reuseNode(t.Data.(*psuedochecker.PsuedoTypeDirect).TypeNode)
+		return b.reuseTypeNode(t.Data.(*psuedochecker.PsuedoTypeDirect).TypeNode)
 	case psuedochecker.PsuedoTypeKindInferred:
 		node := t.Data.(*psuedochecker.PsuedoTypeInferred).Expression
 		b.ctx.tracker.ReportInferenceFallback(node)
@@ -25,10 +25,25 @@ func (b *nodeBuilderImpl) psuedoTypeToNode(t *psuedochecker.PsuedoType) *ast.Nod
 		return b.serializeTypeForDeclaration(node, nil, nil, false)
 	case psuedochecker.PsuedoTypeKindUnion:
 		var res []*ast.Node
+		var hasElidedType bool
 		members := t.Data.(*psuedochecker.PsuedoTypeUnion).Types
 		for _, m := range members {
-			// TODO: improvement - in non-strict-null-checks mode, elide `undefined` and `null` in unions, instead of mapping them to `any`
+			if !b.ch.strictNullChecks {
+				if m.Kind == psuedochecker.PsuedoTypeKindUndefined || m.Kind == psuedochecker.PsuedoTypeKindNull {
+					hasElidedType = true
+					continue
+				}
+			}
 			res = append(res, b.psuedoTypeToNode(m))
+		}
+		if len(res) == 1 {
+			return res[0]
+		}
+		if len(res) == 0 {
+			if hasElidedType {
+				return b.f.NewKeywordTypeNode(ast.KindAnyKeyword)
+			}
+			return b.f.NewKeywordTypeNode(ast.KindNeverKeyword)
 		}
 		return b.f.NewUnionTypeNode(b.f.NewNodeList(res))
 	case psuedochecker.PsuedoTypeKindUndefined:
