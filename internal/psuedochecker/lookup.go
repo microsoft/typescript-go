@@ -484,7 +484,7 @@ func (ch *PsuedoChecker) typeFromParameter(node *ast.ParameterDeclaration) *Psue
 	// This means ID won't let you write, say, `({elem}) => false` without an annotation, even though it's trivially of type
 	// `(p0: {elem: any}) => boolean` and error-free under `noImplicitAny: false`!
 	// That limitation is retained here.
-	return NewPsuedoTypeInferred(node.AsNode())
+	return NewPsuedoTypeNoResult(node.AsNode())
 }
 
 func (ch *PsuedoChecker) cloneParameters(nodes *ast.NodeList) []*PsuedoParameter {
