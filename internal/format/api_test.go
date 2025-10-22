@@ -71,7 +71,7 @@ func TestFormatNoTrailingNewline(t *testing.T) {
 	// Issue: Formatter adds extra space at end of line
 	// When formatting a file that has content "1;" with no trailing newline,
 	// an extra space should NOT be added at the end of the line
-	
+
 	t.Run("simple statement without trailing newline", func(t *testing.T) {
 		t.Parallel()
 		text := "1;"
@@ -92,7 +92,7 @@ func TestFormatNoTrailingNewline(t *testing.T) {
 		}, text, core.ScriptKindTS)
 		edits := format.FormatDocument(ctx, sourceFile)
 		newText := applyBulkEdits(text, edits)
-		
+
 		// The formatted text should be the same as the input - no extra space added
 		assert.Equal(t, text, newText, "Formatter should not add extra space at end of line")
 	})
