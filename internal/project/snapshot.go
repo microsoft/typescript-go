@@ -3,6 +3,8 @@ package project
 import (
 	"context"
 	"fmt"
+	"maps"
+	"slices"
 	"sync/atomic"
 	"time"
 
@@ -33,6 +35,9 @@ type Snapshot struct {
 	ProjectCollection                  *ProjectCollection
 	ConfigFileRegistry                 *ConfigFileRegistry
 	compilerOptionsForInferredProjects *core.CompilerOptions
+	// Disk files present in the snapshot due to source map references.
+	extraDiskFiles      map[tspath.Path]string
+	extraDiskFilesWatch *WatchedFiles[map[tspath.Path]string]
 
 	builderLogs *logging.LogTree
 	apiError    error
@@ -62,6 +67,12 @@ func NewSnapshot(
 	}
 	s.converters = ls.NewConverters(s.sessionOptions.PositionEncoding, s.LSPLineMap)
 	s.refCount.Store(1)
+	s.extraDiskFiles = make(map[tspath.Path]string)
+	s.extraDiskFilesWatch = NewWatchedFiles(
+		"extra snapshot files",
+		lsproto.WatchKindChange|lsproto.WatchKindDelete,
+		getComputeGlobPatterns(s.sessionOptions.CurrentDirectory, fs.fs.UseCaseSensitiveFileNames()),
+	)
 	return s
 }
 
@@ -97,16 +108,16 @@ func (s *Snapshot) ID() uint64 {
 	return s.id
 }
 
-func (s *Snapshot) UseCaseSensitiveFileNames() bool {
-	return s.fs.fs.UseCaseSensitiveFileNames()
-}
-
 func (s *Snapshot) ReadFile(fileName string) (string, bool) {
 	handle := s.GetFile(fileName)
 	if handle == nil {
 		return "", false
 	}
 	return handle.Content(), true
+}
+
+func (s *Snapshot) GetDocumentPositionMapper(fileName string) *sourcemap.DocumentPositionMapper {
+	return s.fs.GetDocumentPositionMapper(fileName)
 }
 
 type APISnapshotRequest struct {
@@ -215,6 +226,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	projectCollection, configFileRegistry := projectCollectionBuilder.Finalize(logger)
 
+	extraDiskFiles := s.extraDiskFiles
+	extraDiskFilesWatch := s.extraDiskFilesWatch
 	// Clean cached disk files not touched by any open project. It's not important that we do this on
 	// file open specifically, but we don't need to do it on every snapshot clone.
 	if len(change.fileChanges.Opened) != 0 {
@@ -227,25 +240,53 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 		// The set of seen files can change only if a program was constructed (not cloned) during this snapshot.
 		if changedFiles {
+			extraDiskFiles = maps.Clone(s.extraDiskFiles)
 			cleanFilesStart := time.Now()
 			removedFiles := 0
+			// Files referenced by projects.
+			rootFiles := collections.Set[tspath.Path]{}
+			// Map of file to the file that references it, e.g. `foo.d.ts.map` -> `foo.d.ts`
+			referencedToFile := map[tspath.Path]tspath.Path{}
 			fs.diskFiles.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) bool {
+				if sourceMapInfo := entry.Value().sourceMapInfo; sourceMapInfo != nil {
+					if sourceMapInfo.sourceMapPath != "" {
+						referencedToFile[s.toPath(sourceMapInfo.sourceMapPath)] = entry.Key()
+					} else if mapper := sourceMapInfo.documentMapper.m; mapper != nil {
+						for _, sourceFile := range mapper.GetSourceFiles() {
+							referencedToFile[s.toPath(sourceFile)] = entry.Key()
+						}
+					}
+				}
 				for _, project := range projectCollection.Projects() {
 					if project.host.seenFiles.Has(entry.Key()) {
+						rootFiles.Add(entry.Key())
 						return true
 					}
 				}
+				return true
+			})
+			// Delete files not transitively referenced by any project.
+			fs.diskFiles.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *diskFile]) bool {
+				referenced := entry.Key()
+				for referenced != "" {
+					if rootFiles.Has(referenced) {
+						return true
+					}
+					referenced = referencedToFile[referenced]
+				}
 				entry.Delete()
+				delete(extraDiskFiles, entry.Key())
 				removedFiles++
 				return true
 			})
 			if session.options.LoggingEnabled {
 				logger.Logf("Removed %d cached files in %v", removedFiles, time.Since(cleanFilesStart))
 			}
+			extraDiskFilesWatch = extraDiskFilesWatch.Clone(extraDiskFiles)
 		}
 	}
 
-	snapshotFS, _ := fs.Finalize()
+	snapshotFS, _, _ := fs.Finalize()
 	newSnapshot := NewSnapshot(
 		newSnapshotID,
 		snapshotFS,
@@ -294,8 +335,130 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 	}
 
+	newSnapshot.extraDiskFiles = extraDiskFiles
+	newSnapshot.extraDiskFilesWatch = extraDiskFilesWatch
+
 	logger.Logf("Finished cloning snapshot %d into snapshot %d in %v", s.id, newSnapshot.id, time.Since(start))
 	return newSnapshot
+}
+
+// Creates a clone of the snapshot that ensures source maps are computed for the given files.
+// Returns the new snapshot and a patch of changes made to diskFiles.
+// The changes only include additional files that were read, or source map information added to existing files.
+func (s *Snapshot) CloneWithSourceMaps(genFiles []string, session *Session) (*Snapshot, map[tspath.Path]*dirty.Change[*diskFile]) {
+	var logger *logging.LogTree
+	if session.options.LoggingEnabled {
+		logger = logging.NewLogTree(fmt.Sprintf("Cloning snapshot %d with source maps for %v", s.id, genFiles))
+	}
+
+	start := time.Now()
+	fs := newSnapshotFSBuilder(s.fs.fs, s.fs.overlays, s.fs.diskFiles, s.sessionOptions.PositionEncoding, s.toPath)
+	for _, genFile := range genFiles {
+		fs.computeDocumentPositionMapper(genFile)
+	}
+	snapshotFS, _, changes := fs.Finalize()
+	logger.Logf(`New files due to source maps: %v`, slices.Collect(maps.Keys(changes)))
+	newSnapshot := s.cloneFromSnapshotFSChanges(snapshotFS, changes, session, logger)
+	logger.Logf(`Finished cloning snapshot %d into snapshot %d with source maps in %v`, s.id, newSnapshot.id, time.Since(start))
+	return newSnapshot, changes
+}
+
+func (s *Snapshot) CloneWithDiskChanges(changes map[tspath.Path]*dirty.Change[*diskFile], session *Session) *Snapshot {
+	var logger *logging.LogTree
+	if session.options.LoggingEnabled {
+		logger = logging.NewLogTree(fmt.Sprintf("Cloning snapshot %d with disk changes changes %v", s.id, slices.Collect(maps.Keys(changes))))
+	}
+
+	start := time.Now()
+	fs := newSnapshotFSBuilder(s.fs.fs, s.fs.overlays, s.fs.diskFiles, s.sessionOptions.PositionEncoding, s.toPath)
+	fs.applyDiskFileChanges(changes)
+	snapshotFS, _, _ := fs.Finalize()
+	newSnapshot := s.cloneFromSnapshotFSChanges(snapshotFS, changes, session, logger)
+	logger.Logf("Finished cloning snapshot %d into snapshot %d in %v", s.id, newSnapshot.id, time.Since(start))
+	return newSnapshot
+}
+
+func (s *Snapshot) cloneFromSnapshotFSChanges(
+	snapshotFS *snapshotFS,
+	changes map[tspath.Path]*dirty.Change[*diskFile],
+	session *Session,
+	logger *logging.LogTree,
+) *Snapshot {
+	newId := session.snapshotID.Add(1)
+	newSnapshot := NewSnapshot(
+		newId,
+		snapshotFS,
+		s.sessionOptions,
+		session.parseCache,
+		session.extendedConfigCache,
+		s.ConfigFileRegistry,
+		s.compilerOptionsForInferredProjects,
+		s.toPath,
+	)
+
+	newSnapshot.parentId = s.id
+	newSnapshot.ProjectCollection = s.ProjectCollection
+	newSnapshot.builderLogs = logger
+	newSnapshot.extraDiskFiles = maps.Clone(s.extraDiskFiles)
+	for path, change := range changes {
+		if change.Deleted {
+			if change.Old != nil {
+				panic("Deleting files not supported")
+			}
+			continue
+		}
+		if change.Old == nil {
+			newSnapshot.extraDiskFiles[path] = change.New.FileName()
+			continue
+		}
+	}
+	newSnapshot.extraDiskFilesWatch = s.extraDiskFilesWatch.Clone(newSnapshot.extraDiskFiles)
+	return newSnapshot
+}
+
+func getComputeGlobPatterns(workspaceDirectory string, useCaseSensitiveFileNames bool) func(files map[tspath.Path]string) patternsAndIgnored {
+	return func(files map[tspath.Path]string) patternsAndIgnored {
+		comparePathsOptions := tspath.ComparePathsOptions{
+			CurrentDirectory:          workspaceDirectory,
+			UseCaseSensitiveFileNames: useCaseSensitiveFileNames,
+		}
+		externalDirectories := make(map[tspath.Path]string)
+		var seenDirs collections.Set[string]
+		var includeWorkspace bool
+		for path, fileName := range files {
+			if !seenDirs.AddIfAbsent(tspath.GetDirectoryPath(string(path))) {
+				continue
+			}
+			if tspath.ContainsPath(workspaceDirectory, string(path), comparePathsOptions) {
+				includeWorkspace = true
+			}
+			externalDirectories[path.GetDirectoryPath()] = fileName
+		}
+
+		var globs []string
+		var ignored map[string]struct{}
+		if includeWorkspace {
+			globs = append(globs, getRecursiveGlobPattern(workspaceDirectory))
+		}
+		if len(externalDirectories) > 0 {
+			externalDirectoryParents, ignoredExternalDirs := tspath.GetCommonParents(
+				slices.Collect(maps.Values(externalDirectories)),
+				minWatchLocationDepth,
+				getPathComponentsForWatching,
+				comparePathsOptions,
+			)
+			slices.Sort(externalDirectoryParents)
+			ignored = ignoredExternalDirs
+			for _, dir := range externalDirectoryParents {
+				globs = append(globs, getRecursiveGlobPattern(dir))
+			}
+		}
+
+		return patternsAndIgnored{
+			patterns: globs,
+			ignored:  ignored,
+		}
+	}
 }
 
 func (s *Snapshot) Ref() {

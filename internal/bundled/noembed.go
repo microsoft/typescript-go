@@ -44,3 +44,7 @@ var libPath = sync.OnceValue(func() string {
 
 	return tspath.NormalizeSlashes(dir)
 })
+
+func IsBundled(path string) bool {
+	return false
+}

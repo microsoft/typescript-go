@@ -49,6 +49,10 @@ type DocumentPositionMapper struct {
 	sourceMappings    map[SourceIndex][]*SourceMappedPosition
 }
 
+func (d *DocumentPositionMapper) GetSourceFiles() []string {
+	return d.sourceFileAbsolutePaths
+}
+
 func createDocumentPositionMapper(host Host, sourceMap *RawSourceMap, mapPath string) *DocumentPositionMapper {
 	mapDirectory := tspath.GetDirectoryPath(mapPath)
 	var sourceRoot string
@@ -226,20 +230,19 @@ func (d *DocumentPositionMapper) GetGeneratedPosition(loc *DocumentPosition) *Do
 	}
 }
 
-func GetDocumentPositionMapper(host Host, generatedFileName string) *DocumentPositionMapper {
+func GetSourceMapURL(host Host, generatedFileName string) (url string, isInline bool) {
 	mapFileName := tryGetSourceMappingURL(host, generatedFileName)
 	if mapFileName != "" {
 		if base64Object, matched := tryParseBase64Url(mapFileName); matched {
 			if base64Object != "" {
 				if decoded, err := base64.StdEncoding.DecodeString(base64Object); err == nil {
-					return convertDocumentToSourceMapper(host, string(decoded), generatedFileName)
+					return string(decoded), true
 				}
 			}
 			// Not a data URL we can parse, skip it
 			mapFileName = ""
 		}
 	}
-
 	var possibleMapLocations []string
 	if mapFileName != "" {
 		possibleMapLocations = append(possibleMapLocations, mapFileName)
@@ -247,14 +250,14 @@ func GetDocumentPositionMapper(host Host, generatedFileName string) *DocumentPos
 	possibleMapLocations = append(possibleMapLocations, generatedFileName+".map")
 	for _, location := range possibleMapLocations {
 		mapFileName := tspath.GetNormalizedAbsolutePath(location, tspath.GetDirectoryPath(generatedFileName))
-		if mapFileContents, ok := host.ReadFile(mapFileName); ok {
-			return convertDocumentToSourceMapper(host, mapFileContents, mapFileName)
+		if _, ok := host.ReadFile(mapFileName); ok {
+			return mapFileName, false
 		}
 	}
-	return nil
+	return "", false
 }
 
-func convertDocumentToSourceMapper(host Host, contents string, mapFileName string) *DocumentPositionMapper {
+func ConvertDocumentToSourceMapper(host Host, contents string, mapFileName string) *DocumentPositionMapper {
 	sourceMap := tryParseRawSourceMap(contents)
 	if sourceMap == nil || len(sourceMap.Sources) == 0 || sourceMap.File == "" || sourceMap.Mappings == "" {
 		// invalid map

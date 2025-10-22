@@ -69,7 +69,19 @@ func (f *fileBase) ECMALineInfo() *sourcemap.ECMALineInfo {
 
 type diskFile struct {
 	fileBase
-	needsReload bool
+	needsReload   bool
+	sourceMapInfo *sourceMapInfo
+}
+
+type sourceMapInfo struct {
+	// Path to external source map
+	sourceMapPath string
+	// Inline source map
+	documentMapper *documentMapper
+}
+
+type documentMapper struct {
+	m *sourcemap.DocumentPositionMapper
 }
 
 func newDiskFile(fileName string, content string) *diskFile {

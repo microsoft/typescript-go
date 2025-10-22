@@ -268,12 +268,19 @@ func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.
 		params,
 	)
 	f.writeMsg(t, req.Message())
-	resp := f.readMsg(t)
-	if resp == nil {
-		return nil, *new(Resp), false
+	for {
+		resp := f.readMsg(t)
+		if resp == nil {
+			return nil, *new(Resp), false
+		}
+		// Ignore file watching requests: fourslash client already sends a notification for every file changed.
+		if resp.Kind == lsproto.MessageKindRequest && (resp.AsRequest().Method == lsproto.MethodClientRegisterCapability ||
+			resp.AsRequest().Method == lsproto.MethodClientUnregisterCapability) {
+			continue
+		}
+		result, ok := resp.AsResponse().Result.(Resp)
+		return resp, result, ok
 	}
-	result, ok := resp.AsResponse().Result.(Resp)
-	return resp, result, ok
 }
 
 func sendNotification[Params any](t *testing.T, f *FourslashTest, info lsproto.NotificationInfo[Params], params Params) {
@@ -1245,6 +1252,11 @@ func (f *FourslashTest) getSelection() core.TextRange {
 		int(f.converters.LineAndCharacterToPosition(script, f.currentCaretPosition)),
 		int(f.converters.LineAndCharacterToPosition(script, *f.selectionEnd)),
 	)
+}
+
+func (f *FourslashTest) ReplaceAll(t *testing.T, text string) {
+	script := f.getScriptInfo(f.activeFilename)
+	f.editScriptAndUpdateMarkers(t, f.activeFilename, 0, len(script.content), text)
 }
 
 func (f *FourslashTest) Replace(t *testing.T, start int, length int, text string) {

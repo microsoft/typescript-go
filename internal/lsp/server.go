@@ -447,7 +447,6 @@ var handlers = sync.OnceValue(func() handlerMap {
 
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDiagnosticInfo, (*Server).handleDocumentDiagnostic)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentHoverInfo, (*Server).handleHover)
-	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDefinitionInfo, (*Server).handleDefinition)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentTypeDefinitionInfo, (*Server).handleTypeDefinition)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentCompletionInfo, (*Server).handleCompletion)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*Server).handleReferences)
@@ -461,6 +460,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDocumentHighlightInfo, (*Server).handleDocumentHighlight)
 	registerRequestHandler(handlers, lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
 	registerRequestHandler(handlers, lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
+	registerDefinitionHandler(handlers)
 
 	return handlers
 })
@@ -517,7 +517,7 @@ func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentUR
 		if req.Params != nil {
 			params = req.Params.(Req)
 		}
-		ls, err := s.session.GetLanguageService(ctx, params.TextDocumentURI())
+		ls, _, err := s.session.GetLanguageService(ctx, params.TextDocumentURI())
 		if err != nil {
 			return err
 		}
@@ -529,6 +529,36 @@ func registerLanguageServiceDocumentRequestHandler[Req lsproto.HasTextDocumentUR
 		if ctx.Err() != nil {
 			return ctx.Err()
 		}
+		s.sendResult(req.ID, resp)
+		return nil
+	}
+}
+
+func registerDefinitionHandler(handlers handlerMap) {
+	handlers[lsproto.MethodTextDocumentDefinition] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
+		var params *lsproto.DefinitionParams
+		// Ignore empty params.
+		if req.Params != nil {
+			params = req.Params.(*lsproto.DefinitionParams)
+		}
+		ls, snapshot, err := s.session.GetLanguageService(ctx, params.TextDocumentURI())
+		if err != nil {
+			return err
+		}
+		defer s.recover(req)
+		resp, err := s.handleDefinition(ctx, ls, params)
+		if err != nil {
+			return err
+		}
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		mappedFiles := ls.GetFilesToMapFromDefinition(resp)
+		ls, err = s.session.GetLanguageServiceWithMappedFiles(ctx, params.TextDocumentURI(), snapshot, mappedFiles)
+		if err != nil {
+			return err
+		}
+		resp = ls.GetMappedDefinition(resp)
 		s.sendResult(req.ID, resp)
 		return nil
 	}
@@ -796,7 +826,7 @@ func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsprot
 	if err != nil {
 		return nil, err
 	}
-	languageService, err := s.session.GetLanguageService(ctx, ls.FileNameToDocumentURI(data.FileName))
+	languageService, _, err := s.session.GetLanguageService(ctx, ls.FileNameToDocumentURI(data.FileName))
 	if err != nil {
 		return nil, err
 	}

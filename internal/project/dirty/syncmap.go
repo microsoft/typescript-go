@@ -303,7 +303,7 @@ func (m *SyncMap[K, V]) Range(fn func(*SyncMapEntry[K, V]) bool) {
 	}
 }
 
-func (m *SyncMap[K, V]) Finalize() (map[K]V, bool) {
+func (m *SyncMap[K, V]) Finalize() (map[K]V, bool, map[K]*Change[V]) {
 	var changed bool
 	result := m.base
 	ensureCloned := func() {
@@ -317,19 +317,32 @@ func (m *SyncMap[K, V]) Finalize() (map[K]V, bool) {
 		}
 	}
 
+	changes := make(map[K]*Change[V])
 	m.dirty.Range(func(key K, entry *SyncMapEntry[K, V]) bool {
+		var change *Change[V]
 		if entry.delete {
 			ensureCloned()
 			delete(result, key)
+			change = &Change[V]{Old: entry.original, Deleted: true}
 		} else if entry.dirty {
 			ensureCloned()
 			if m.finalizeValue != nil {
-				result[key] = m.finalizeValue(entry.value, entry.original)
+				value := m.finalizeValue(entry.value, entry.original)
+				result[key] = value
+				change = &Change[V]{Old: entry.original, New: value}
 			} else {
 				result[key] = entry.value
+				change = &Change[V]{Old: entry.original, New: entry.value}
 			}
 		}
+		changes[key] = change
 		return true
 	})
-	return result, changed
+	return result, changed, changes
+}
+
+type Change[V any] struct {
+	Old     V
+	New     V
+	Deleted bool
 }
