@@ -349,7 +349,7 @@ func getSymbolScope(symbol *ast.Symbol) *ast.Node {
 	// If this is private property or method, the scope is the containing class
 	if symbol.Flags&(ast.SymbolFlagsProperty|ast.SymbolFlagsMethod) != 0 {
 		privateDeclaration := core.Find(declarations, func(d *ast.Node) bool {
-			return checker.HasModifier(d, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(d)
+			return ast.HasModifier(d, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(d)
 		})
 		if privateDeclaration != nil {
 			return ast.FindAncestorKind(privateDeclaration, ast.KindClassDeclaration)
@@ -609,6 +609,10 @@ func (l *LanguageService) getReferencedSymbolsForNode(ctx context.Context, posit
 		for _, file := range sourceFiles {
 			sourceFilesSet.Add(file.FileName())
 		}
+	}
+
+	if options.use == referenceUseReferences || options.use == referenceUseRename {
+		node = getAdjustedLocation(node, options.use == referenceUseRename, ast.GetSourceFileOfNode(node))
 	}
 
 	checker, done := program.GetTypeChecker(ctx)

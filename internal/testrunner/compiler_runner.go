@@ -105,9 +105,6 @@ var skippedTests = []string{
 	"noImplicitUseStrict_amd.ts",
 	"noImplicitAnyIndexingSuppressed.ts",
 	"excessPropertyErrorsSuppressed.ts",
-
-	// Broken
-	"inferenceFromGenericClassNoCrash1.ts",
 }
 
 func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
@@ -340,11 +337,6 @@ func newCompilerTest(
 }
 
 var concurrentSkippedErrorBaselines = map[string]string{
-	"circular1.ts": "Circular error reported in an extra position.",
-	"circular3.ts": "Circular error reported in an extra position.",
-	"recursiveExportAssignmentAndFindAliasedType1.ts": "Circular error reported in an extra position.",
-	"recursiveExportAssignmentAndFindAliasedType2.ts": "Circular error reported in an extra position.",
-	"recursiveExportAssignmentAndFindAliasedType3.ts": "Circular error reported in an extra position.",
 	"typeOnlyMerge2.ts": "Type-only merging is not detected when files are checked on different checkers.",
 	"typeOnlyMerge3.ts": "Type-only merging is not detected when files are checked on different checkers.",
 }
