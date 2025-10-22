@@ -2438,31 +2438,14 @@ func GetECMALineAndCharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (
 }
 
 func GetECMAEndLinePosition(sourceFile *ast.SourceFile, line int) int {
-	lineStarts := GetECMALineStarts(sourceFile)
-	text := sourceFile.Text()
-
-	// If this is the last line, return the index of the last character (or -1 for empty file)
-	if line+1 == len(lineStarts) {
-		if len(text) == 0 {
-			return -1
+	pos := int(GetECMALineStarts(sourceFile)[line])
+	for {
+		ch, size := utf8.DecodeRuneInString(sourceFile.Text()[pos:])
+		if size == 0 || stringutil.IsLineBreak(ch) {
+			return pos
 		}
-		return len(text) - 1
+		pos += size
 	}
-
-	// For other lines, get the start of the next line and walk backwards to skip line breaks
-	start := int(lineStarts[line])
-	pos := int(lineStarts[line+1]) - 1
-
-	// Walk backwards while we're on line breaks, stopping at the beginning of the current line
-	for start <= pos {
-		ch, _ := utf8.DecodeLastRuneInString(text[:pos+1])
-		if !stringutil.IsLineBreak(ch) {
-			break
-		}
-		pos--
-	}
-
-	return pos
 }
 
 func GetECMAPositionOfLineAndCharacter(sourceFile *ast.SourceFile, line int, character int) int {
