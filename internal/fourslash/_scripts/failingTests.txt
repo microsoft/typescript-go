@@ -167,6 +167,7 @@ TestDoubleUnderscoreCompletions
 TestEditJsdocType
 TestExportDefaultClass
 TestExportDefaultFunction
+TestFindAllRefsForDefaultExport03
 TestFindAllRefsForModule
 TestFindAllRefsModuleDotExports
 TestFindReferencesBindingPatternInJsdocNoCrash1
