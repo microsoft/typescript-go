@@ -144,10 +144,19 @@ func (p *Program) GetParseFileRedirect(fileName string) string {
 	return p.projectReferenceFileMapper.getParseFileRedirect(ast.NewHasFileName(fileName, p.toPath(fileName)))
 }
 
-func (p *Program) ForEachResolvedProjectReference(
-	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int),
-) {
+func (p *Program) GetResolvedProjectReferences() []*tsoptions.ParsedCommandLine {
+	return p.projectReferenceFileMapper.getResolvedProjectReferences()
+}
+
+func (p *Program) ForEachResolvedProjectReference(fn func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int)) {
 	p.projectReferenceFileMapper.forEachResolvedProjectReference(fn)
+}
+
+func (p *Program) ForEachResolvedProjectReferenceInChildConfig(
+	childConfig *tsoptions.ParsedCommandLine,
+	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) bool,
+) bool {
+	return p.projectReferenceFileMapper.forEachResolvedProjectReferenceInChildConfig(childConfig, fn)
 }
 
 // UseCaseSensitiveFileNames implements checker.Program.

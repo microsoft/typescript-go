@@ -46,6 +46,9 @@ func (mapper *projectReferenceFileMapper) getParseFileRedirect(file ast.HasFileN
 }
 
 func (mapper *projectReferenceFileMapper) getResolvedProjectReferences() []*tsoptions.ParsedCommandLine {
+	if mapper.opts.Config.ConfigFile == nil {
+		return nil
+	}
 	refs, ok := mapper.referencesInConfigFile[mapper.opts.Config.ConfigFile.SourceFile.Path()]
 	var result []*tsoptions.ParsedCommandLine
 	if ok {
@@ -115,23 +118,44 @@ func (mapper *projectReferenceFileMapper) forEachResolvedProjectReference(
 	seenRef := collections.NewSetWithSizeHint[tspath.Path](len(mapper.referencesInConfigFile))
 	seenRef.Add(mapper.opts.Config.ConfigFile.SourceFile.Path())
 	refs := mapper.referencesInConfigFile[mapper.opts.Config.ConfigFile.SourceFile.Path()]
-	mapper.forEachResolvedReferenceWorker(refs, fn, mapper.opts.Config, seenRef)
+	mapper.forEachResolvedReferenceWorker(refs, func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) bool {
+		fn(path, config, parent, index)
+		return false
+	}, mapper.opts.Config, seenRef)
 }
 
 func (mapper *projectReferenceFileMapper) forEachResolvedReferenceWorker(
 	references []tspath.Path,
-	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int),
+	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) bool,
 	parent *tsoptions.ParsedCommandLine,
 	seenRef *collections.Set[tspath.Path],
-) {
+) bool {
 	for index, path := range references {
 		if !seenRef.AddIfAbsent(path) {
 			continue
 		}
 		config, _ := mapper.configToProjectReference[path]
-		fn(path, config, parent, index)
-		mapper.forEachResolvedReferenceWorker(mapper.referencesInConfigFile[path], fn, config, seenRef)
+		if fn(path, config, parent, index) {
+			return true
+		}
+		if mapper.forEachResolvedReferenceWorker(mapper.referencesInConfigFile[path], fn, config, seenRef) {
+			return true
+		}
 	}
+	return false
+}
+
+func (mapper *projectReferenceFileMapper) forEachResolvedProjectReferenceInChildConfig(
+	childConfig *tsoptions.ParsedCommandLine,
+	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) bool,
+) bool {
+	if childConfig == nil || childConfig.ConfigFile == nil {
+		return false
+	}
+	seenRef := collections.NewSetWithSizeHint[tspath.Path](len(mapper.referencesInConfigFile))
+	seenRef.Add(childConfig.ConfigFile.SourceFile.Path())
+	refs := mapper.referencesInConfigFile[childConfig.ConfigFile.SourceFile.Path()]
+	return mapper.forEachResolvedReferenceWorker(refs, fn, mapper.opts.Config, seenRef)
 }
 
 func (mapper *projectReferenceFileMapper) getSourceToDtsIfSymlink(file ast.HasFileName) *tsoptions.SourceOutputAndProjectReference {

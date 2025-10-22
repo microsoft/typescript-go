@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"maps"
 	"runtime/debug"
 	"slices"
 	"sync"
@@ -612,7 +613,7 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 
 		var queue []projectAndTextDocumentPosition
 		results := make(map[tspath.Path]Resp)
-		var defaultDefinition lsproto.HasTextDocumentPosition
+		var defaultDefinition *ls.NonLocalDefinition
 
 		searchPosition := func(project *project.Project, ls *ls.LanguageService, uri lsproto.DocumentUri, position lsproto.Position) (Resp, error) {
 			originalNode, symbolsAndEntries, ok := ls.ProvideSymbolsAndEntries(ctx, uri, position, info.Method == lsproto.MethodTextDocumentRename)
@@ -695,16 +696,31 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 			}
 
 			if defaultDefinition != nil {
-				// !!! TODO: sheetal
-				// load ancestor projects for all the projects that can reference the ones already seen
-				// for all projects
-				// if this project is not seen add the project location to queue position can be in project
-				// either the d.ts or source definition or symlink
+				if err := s.session.ForEachProjectLocationLoadingProjectTree(
+					ctx,
+					maps.Keys(results),
+					defaultDefinition,
+					// Can loop forever without this (enqueue here, dequeue above, repeat)
+					func(projectFromSnapshot *project.Project) bool {
+						_, ok := results[projectFromSnapshot.Id()]
+						return !ok
+					},
+					func(project *project.Project, uri lsproto.DocumentUri, position lsproto.Position) {
+						// Enqueue the project and location for further processing
+						queue = append(queue, projectAndTextDocumentPosition{
+							project:  project,
+							Uri:      uri,
+							Position: position,
+						})
+					},
+				); err != nil {
+					return err
+				}
 			}
 		}
 
 		var resp Resp
-		if len(results) > 0 {
+		if len(results) > 1 {
 			resp = combineResults(defaultProject, results)
 		} else {
 			for _, value := range results {

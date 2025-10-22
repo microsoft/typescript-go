@@ -384,6 +384,91 @@ func (b *ProjectCollectionBuilder) DidRequestEnsureDefaultProject(uri lsproto.Do
 	}
 }
 
+func (b *ProjectCollectionBuilder) DidRequestProjectTrees(projectsReferenced map[tspath.Path]struct{}, logger *logging.LogTree) {
+	startTime := time.Now()
+
+	var currentProjects []tspath.Path
+	b.configuredProjects.Range(func(sme *dirty.SyncMapEntry[tspath.Path, *Project]) bool {
+		currentProjects = append(currentProjects, sme.Key())
+		return true
+	})
+
+	var seenProjects collections.SyncSet[tspath.Path]
+	wg := core.NewWorkGroup(false)
+	for _, projectId := range currentProjects {
+		wg.Queue(func() {
+			if entry, ok := b.configuredProjects.Load(projectId); ok {
+				// If this project has potential project reference for any of the project we are loading ancestor tree for
+				// load this project first
+				if project := entry.Value(); project != nil && project.forEachPotentialProjectReference(func(p tspath.Path) bool {
+					_, isReferenced := projectsReferenced[p]
+					return isReferenced
+				}) {
+					b.updateProgram(entry, logger)
+				}
+				b.ensureProjectTree(wg, entry, projectsReferenced, &seenProjects, logger)
+			}
+		})
+	}
+	wg.RunAndWait()
+
+	if logger != nil {
+		elapsed := time.Since(startTime)
+		logger.Log(fmt.Sprintf("Completed project tree request for %v in %v", maps.Keys(projectsReferenced), elapsed))
+	}
+}
+
+func (b *ProjectCollectionBuilder) ensureProjectTree(
+	wg core.WorkGroup,
+	entry *dirty.SyncMapEntry[tspath.Path, *Project],
+	projectsReferenced map[tspath.Path]struct{},
+	seenProjects *collections.SyncSet[tspath.Path],
+	logger *logging.LogTree,
+) {
+	if !seenProjects.AddIfAbsent(entry.Key()) {
+		return
+	}
+
+	project := entry.Value()
+	if project == nil {
+		return
+	}
+
+	program := project.GetProgram()
+	if program == nil {
+		return
+	}
+
+	// If this project disables child load ignore it
+	if program.CommandLine().CompilerOptions().DisableReferencedProjectLoad.IsTrue() {
+		return
+	}
+
+	children := program.GetResolvedProjectReferences()
+	if children == nil {
+		return
+	}
+	for _, childConfig := range children {
+		wg.Queue(func() {
+			if !program.ForEachResolvedProjectReferenceInChildConfig(
+				childConfig,
+				func(referencePath tspath.Path, config *tsoptions.ParsedCommandLine, _ *tsoptions.ParsedCommandLine, _ int) bool {
+					_, ok := projectsReferenced[referencePath]
+					return ok
+				}) {
+				return
+			}
+
+			// Load this child project since this is referenced
+			childProjectEntry := b.findOrCreateProject(childConfig.ConfigName(), childConfig.ConfigFile.SourceFile.Path(), projectLoadKindCreate, logger)
+			b.updateProgram(childProjectEntry, logger)
+
+			// Ensure children for this project
+			b.ensureProjectTree(wg, childProjectEntry, projectsReferenced, seenProjects, logger)
+		})
+	}
+}
+
 func (b *ProjectCollectionBuilder) DidUpdateATAState(ataChanges map[tspath.Path]*ATAStateChange, logger *logging.LogTree) {
 	updateProject := func(project dirty.Value[*Project], ataChange *ATAStateChange) {
 		project.ChangeIf(
@@ -857,7 +942,7 @@ func (b *ProjectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 				entry.Change(func(p *Project) {
 					p.CommandLine = commandLine
 					p.commandLineWithTypingsFiles = nil
-					p.PotentialProjectReferences = nil
+					p.potentialProjectReferences = nil
 				})
 			}
 		}

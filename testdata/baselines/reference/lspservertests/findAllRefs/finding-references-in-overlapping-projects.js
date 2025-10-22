@@ -131,27 +131,50 @@ Projects::
   [/user/username/projects/solution/b/tsconfig.json] 
     /user/username/projects/solution/a/index.ts  
     /user/username/projects/solution/b/index.ts  
+  [/user/username/projects/solution/c/tsconfig.json] *new*
+    /user/username/projects/solution/a/index.ts  
+    /user/username/projects/solution/b/index.ts  
+    /user/username/projects/solution/c/index.ts  
+  [/user/username/projects/solution/d/tsconfig.json] *new*
+    /user/username/projects/solution/a/index.ts  
+    /user/username/projects/solution/b/index.ts  
+    /user/username/projects/solution/c/index.ts  
+    /user/username/projects/solution/d/index.ts  
   [/user/username/projects/solution/tsconfig.json] 
+Open Files::
+  [/user/username/projects/solution/b/index.ts] *modified*
+    /user/username/projects/solution/b/tsconfig.json  (default) 
+    /user/username/projects/solution/c/tsconfig.json  *new*
+    /user/username/projects/solution/d/tsconfig.json  *new*
 Config::
   [/user/username/projects/solution/a/tsconfig.json] *modified*
     RetainingProjects: *modified*
       /user/username/projects/solution/a/tsconfig.json  *new*
       /user/username/projects/solution/b/tsconfig.json  
+      /user/username/projects/solution/c/tsconfig.json  *new*
+      /user/username/projects/solution/d/tsconfig.json  *new*
       /user/username/projects/solution/tsconfig.json    
     RetainingOpenFiles: *modified*
       /user/username/projects/solution/a/index.ts  *new*
-  [/user/username/projects/solution/b/tsconfig.json] 
-    RetainingProjects:
+  [/user/username/projects/solution/b/tsconfig.json] *modified*
+    RetainingProjects: *modified*
       /user/username/projects/solution/b/tsconfig.json  
+      /user/username/projects/solution/c/tsconfig.json  *new*
+      /user/username/projects/solution/d/tsconfig.json  *new*
       /user/username/projects/solution/tsconfig.json    
     RetainingOpenFiles:
       /user/username/projects/solution/b/index.ts  
-  [/user/username/projects/solution/c/tsconfig.json] 
-    RetainingProjects:
-      /user/username/projects/solution/tsconfig.json  
-  [/user/username/projects/solution/d/tsconfig.json] 
-    RetainingProjects:
-      /user/username/projects/solution/tsconfig.json  
+  [/user/username/projects/solution/c/tsconfig.json] *modified*
+    RetainingProjects: *modified*
+      /user/username/projects/solution/c/tsconfig.json  *new*
+      /user/username/projects/solution/d/tsconfig.json  *new*
+      /user/username/projects/solution/tsconfig.json    
+    RetainingOpenFiles: *modified*
+      /user/username/projects/solution/c/index.ts  *new*
+  [/user/username/projects/solution/d/tsconfig.json] *modified*
+    RetainingProjects: *modified*
+      /user/username/projects/solution/d/tsconfig.json  *new*
+      /user/username/projects/solution/tsconfig.json    
   [/user/username/projects/solution/tsconfig.json] 
     RetainingProjects:
       /user/username/projects/solution/tsconfig.json  
@@ -165,6 +188,16 @@ Config::
 // export class B implements /*FIND ALL REFS*/[|I|] {
 //     M() {}
 // }
+
+// === /user/username/projects/solution/c/index.ts ===
+// import { [|I|] } from "../a";
+// import { B } from "../b";
+// export const C: [|I|] = new B();
+
+// === /user/username/projects/solution/d/index.ts ===
+// import { [|I|] } from "../a";
+// import { C } from "../c";
+// export const D: [|I|] = C;
 {
   "method": "textDocument/references",
   "params": {
@@ -190,3 +223,13 @@ Config::
 // export class B implements /*FIND ALL REFS*/[|I|] {
 //     M() {}
 // }
+
+// === /user/username/projects/solution/c/index.ts ===
+// import { [|I|] } from "../a";
+// import { B } from "../b";
+// export const C: [|I|] = new B();
+
+// === /user/username/projects/solution/d/index.ts ===
+// import { [|I|] } from "../a";
+// import { C } from "../c";
+// export const D: [|I|] = C;

@@ -3,6 +3,7 @@ package project
 import (
 	"context"
 	"fmt"
+	"maps"
 	"sync/atomic"
 	"time"
 
@@ -146,6 +147,10 @@ type snapshotChangeRequest struct {
 	// These are documents that might not be open, but we need default project for them
 	// eg for Find all references when the definition is in a mapped location that is not yet open
 	ensureDefaultProjectForURIs []lsproto.DocumentUri
+	// Update and ensure project trees that reference the projects
+	// This is used to compute the solution and project tree so that
+	// we can find references across all the projects in the solution irrespective of which project is open
+	requestedProjectTrees map[tspath.Path]struct{}
 }
 
 type SnapshotChange struct {
@@ -208,6 +213,9 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			if len(change.ensureDefaultProjectForURIs) != 0 {
 				details += fmt.Sprintf(" ensureDefaultProjectForURIs: %v", change.ensureDefaultProjectForURIs)
 			}
+			if len(change.requestedProjectTrees) != 0 {
+				details += fmt.Sprintf(" requestedProjectTrees: %v", maps.Keys(change.requestedProjectTrees))
+			}
 			return details
 		}
 		switch change.reason {
@@ -223,6 +231,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			logger.Logf("Reason: RequestedLanguageService (file not open) - %v", getDetails())
 		case UpdateReasonRequestedLanguageServiceProjectDirty:
 			logger.Logf("Reason: RequestedLanguageService (project dirty) - %v", getDetails())
+		case UpdateReasonRequestedLoadProjectTree:
+			logger.Logf("Reason: RequestedLoadProjectTree - %v", getDetails())
 		}
 	}
 
@@ -287,6 +297,10 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	for _, uri := range change.ensureDefaultProjectForURIs {
 		projectCollectionBuilder.DidRequestEnsureDefaultProject(uri, logger.Fork("DidRequestFile"))
+	}
+
+	if len(change.requestedProjectTrees) != 0 {
+		projectCollectionBuilder.DidRequestProjectTrees(change.requestedProjectTrees, logger.Fork("DidRequestProjectTrees"))
 	}
 
 	projectCollection, configFileRegistry := projectCollectionBuilder.Finalize(logger)

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"slices"
 	"strings"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
@@ -444,6 +445,12 @@ var _ lsproto.HasTextDocumentPosition = (*position)(nil)
 func (nld *position) TextDocumentURI() lsproto.DocumentUri   { return nld.uri }
 func (nld *position) TextDocumentPosition() lsproto.Position { return nld.pos }
 
+type NonLocalDefinition struct {
+	position
+	GetSourcePosition    func() lsproto.HasTextDocumentPosition
+	GetGeneratedPosition func() lsproto.HasTextDocumentPosition
+}
+
 func getFileAndStartPosFromDeclaration(declaration *ast.Node) (*ast.SourceFile, core.TextPos) {
 	file := ast.GetSourceFileOfNode(declaration)
 	name := core.OrElse(ast.GetNameOfDeclaration(declaration), declaration)
@@ -452,7 +459,7 @@ func getFileAndStartPosFromDeclaration(declaration *ast.Node) (*ast.SourceFile, 
 	return file, core.TextPos(textRange.Pos())
 }
 
-func (l *LanguageService) GetNonLocalDefinition(ctx context.Context, entry *SymbolAndEntries) lsproto.HasTextDocumentPosition {
+func (l *LanguageService) GetNonLocalDefinition(ctx context.Context, entry *SymbolAndEntries) *NonLocalDefinition {
 	if !entry.canUseDefinitionSymbol() {
 		return nil
 	}
@@ -465,9 +472,31 @@ func (l *LanguageService) GetNonLocalDefinition(ctx context.Context, entry *Symb
 		if emitResolver.IsDeclarationVisible(d) {
 			file, startPos := getFileAndStartPosFromDeclaration(d)
 			fileName := file.FileName()
-			return &position{
-				uri: lsconv.FileNameToDocumentURI(fileName),
-				pos: l.converters.PositionToLineAndCharacter(file, startPos),
+			return &NonLocalDefinition{
+				position: position{
+					uri: lsconv.FileNameToDocumentURI(fileName),
+					pos: l.converters.PositionToLineAndCharacter(file, startPos),
+				},
+				GetSourcePosition: sync.OnceValue(func() lsproto.HasTextDocumentPosition {
+					mapped := l.tryGetSourcePosition(fileName, startPos)
+					if mapped != nil {
+						return &position{
+							uri: lsconv.FileNameToDocumentURI(mapped.FileName),
+							pos: l.converters.PositionToLineAndCharacter(l.getScript(mapped.FileName), core.TextPos(mapped.Pos)),
+						}
+					}
+					return nil
+				}),
+				GetGeneratedPosition: sync.OnceValue(func() lsproto.HasTextDocumentPosition {
+					mapped := l.tryGetGeneratedPosition(fileName, startPos)
+					if mapped != nil {
+						return &position{
+							uri: lsconv.FileNameToDocumentURI(mapped.FileName),
+							pos: l.converters.PositionToLineAndCharacter(l.getScript(mapped.FileName), core.TextPos(mapped.Pos)),
+						}
+					}
+					return nil
+				}),
 			}
 		}
 	}

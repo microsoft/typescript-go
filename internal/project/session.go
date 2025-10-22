@@ -3,6 +3,7 @@ package project
 import (
 	"context"
 	"fmt"
+	"iter"
 	"slices"
 	"strings"
 	"sync"
@@ -33,6 +34,7 @@ const (
 	UpdateReasonRequestedLanguageServiceProjectNotLoaded
 	UpdateReasonRequestedLanguageServiceForFileNotOpen
 	UpdateReasonRequestedLanguageServiceProjectDirty
+	UpdateReasonRequestedLoadProjectTree
 )
 
 // SessionOptions are the immutable initialization options for a session.
@@ -476,10 +478,56 @@ func (s *Session) GetLanguageServiceForProjectWithFile(ctx context.Context, proj
 		return nil
 	}
 	// if program doesnt contain this file any more ignore it
-	if path := s.toPath(uri.FileName()); !project.containsFile(path) {
+	if !s.projectContainsFile(project, uri) {
 		return nil
 	}
 	return ls.NewLanguageService(project.GetProgram(), snapshot)
+}
+
+func (s *Session) projectContainsFile(project *Project, uri lsproto.DocumentUri) bool {
+	path := s.toPath(uri.FileName())
+	return project.containsFile(path)
+}
+
+func (s *Session) ForEachProjectLocationLoadingProjectTree(
+	ctx context.Context,
+	projectsReferenced iter.Seq[tspath.Path],
+	defaultDefinition *ls.NonLocalDefinition,
+	canIterateProject func(project *Project) bool,
+	handleLocation func(*Project, lsproto.DocumentUri, lsproto.Position),
+) error {
+	var requestedProjectTrees map[tspath.Path]struct{}
+	for path := range projectsReferenced {
+		if requestedProjectTrees == nil {
+			requestedProjectTrees = make(map[tspath.Path]struct{})
+		}
+		requestedProjectTrees[path] = struct{}{}
+	}
+	snapshot := s.getSnapshot(
+		ctx,
+		snapshotChangeRequest{requestedProjectTrees: requestedProjectTrees},
+		func(snapshot *Snapshot, updatedSnapshot bool) UpdateReason {
+			return core.IfElse(!updatedSnapshot, UpdateReasonRequestedLoadProjectTree, UpdateReasonUnknown)
+		},
+	)
+	for _, project := range snapshot.ProjectCollection.Projects() {
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+
+		if !canIterateProject(project) || project.GetProgram() == nil {
+			continue
+		}
+
+		if s.projectContainsFile(project, defaultDefinition.TextDocumentURI()) {
+			handleLocation(project, defaultDefinition.TextDocumentURI(), defaultDefinition.TextDocumentPosition())
+		} else if sourcePos := defaultDefinition.GetSourcePosition(); sourcePos != nil && s.projectContainsFile(project, sourcePos.TextDocumentURI()) {
+			handleLocation(project, sourcePos.TextDocumentURI(), sourcePos.TextDocumentPosition())
+		} else if generatedPos := defaultDefinition.GetGeneratedPosition(); generatedPos != nil && s.projectContainsFile(project, generatedPos.TextDocumentURI()) {
+			handleLocation(project, generatedPos.TextDocumentURI(), generatedPos.TextDocumentPosition())
+		}
+	}
+	return nil
 }
 
 func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*Overlay, change SnapshotChange) *Snapshot {
