@@ -117,7 +117,7 @@ func (l *LanguageService) getFileNameOfEntry(entry *referenceEntry) string {
 func (l *LanguageService) resolveEntry(entry *referenceEntry) *referenceEntry {
 	if entry.textRange == nil {
 		sourceFile := ast.GetSourceFileOfNode(entry.node)
-		entry.textRange = l.getRangeOfNode(entry.node, sourceFile, nil /*endNode*/)
+		entry.textRange = l.getLspRangeOfNode(entry.node, sourceFile, nil /*endNode*/)
 		entry.fileName = sourceFile.FileName()
 	}
 	return entry
@@ -260,7 +260,13 @@ func getContextNode(node *ast.Node) *ast.Node {
 }
 
 // utils
-func (l *LanguageService) getRangeOfNode(node *ast.Node, sourceFile *ast.SourceFile, endNode *ast.Node) *lsproto.Range {
+func (l *LanguageService) getLspRangeOfNode(node *ast.Node, sourceFile *ast.SourceFile, endNode *ast.Node) *lsproto.Range {
+	textRange := getRangeOfNode(node, sourceFile, endNode)
+	return l.createLspRangeFromRange(textRange, sourceFile)
+}
+
+// `getTextSpan`
+func getRangeOfNode(node *ast.Node, sourceFile *ast.SourceFile, endNode *ast.Node) core.TextRange {
 	if sourceFile == nil {
 		sourceFile = ast.GetSourceFileOfNode(node)
 	}
@@ -276,7 +282,7 @@ func (l *LanguageService) getRangeOfNode(node *ast.Node, sourceFile *ast.SourceF
 	if endNode != nil && endNode.Kind == ast.KindCaseBlock {
 		end = endNode.Pos()
 	}
-	return l.createLspRangeFromBounds(start, end, sourceFile)
+	return core.NewTextRange(start, end)
 }
 
 func isValidReferencePosition(node *ast.Node, searchSymbolName string) bool {
