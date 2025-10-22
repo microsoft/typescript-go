@@ -47,9 +47,9 @@ func TestCommentFormatting(t *testing.T) {
 		firstFormatted := applyBulkEdits(originalText, edits)
 
 		// Check that the asterisk is not corrupted
-		assert.Check(t, !contains(firstFormatted, "*/\n   /"), "should not corrupt */ to /")
-		assert.Check(t, contains(firstFormatted, "*/"), "should preserve */ token")
-		assert.Check(t, contains(firstFormatted, "async"), "should preserve async keyword")
+		assert.Check(t, !strings.Contains(firstFormatted, "*/\n   /"), "should not corrupt */ to /")
+		assert.Check(t, strings.Contains(firstFormatted, "*/"), "should preserve */ token")
+		assert.Check(t, strings.Contains(firstFormatted, "async"), "should preserve async keyword")
 
 		// Apply formatting a second time to test stability
 		sourceFile2 := parser.ParseSourceFile(ast.SourceFileParseOptions{
@@ -61,8 +61,8 @@ func TestCommentFormatting(t *testing.T) {
 		secondFormatted := applyBulkEdits(firstFormatted, edits2)
 
 		// Check that second formatting doesn't introduce corruption
-		assert.Check(t, !contains(secondFormatted, " sync x()"), "should not corrupt async to sync")
-		assert.Check(t, contains(secondFormatted, "async"), "should preserve async keyword on second pass")
+		assert.Check(t, !strings.Contains(secondFormatted, " sync x()"), "should not corrupt async to sync")
+		assert.Check(t, strings.Contains(secondFormatted, "async"), "should preserve async keyword on second pass")
 	})
 
 	t.Run("format JSDoc with tab indentation", func(t *testing.T) {
@@ -95,11 +95,11 @@ func TestCommentFormatting(t *testing.T) {
 		// Check that tabs come before spaces (not spaces before tabs)
 		// The comment lines should have format: tab followed by space and asterisk
 		// NOT: space followed by tab and asterisk
-		assert.Check(t, !contains(formatted, " \t*"), "should not have space before tab before asterisk")
-		assert.Check(t, contains(formatted, "\t *"), "should have tab before space before asterisk")
+		assert.Check(t, !strings.Contains(formatted, " \t*"), "should not have space before tab before asterisk")
+		assert.Check(t, strings.Contains(formatted, "\t *"), "should have tab before space before asterisk")
 
 		// Verify console.log is properly indented with tabs
-		assert.Check(t, contains(formatted, "\t\tconsole.log"), "console.log should be indented with two tabs")
+		assert.Check(t, strings.Contains(formatted, "\t\tconsole.log"), "console.log should be indented with two tabs")
 	})
 
 	t.Run("format comment inside multi-line argument list", func(t *testing.T) {
@@ -130,9 +130,9 @@ func TestCommentFormatting(t *testing.T) {
 		formatted := applyBulkEdits(originalText, edits)
 
 		// The comment should remain indented with a tab
-		assert.Check(t, contains(formatted, "\t// the second arg"), "comment should be indented with tab")
+		assert.Check(t, strings.Contains(formatted, "\t// the second arg"), "comment should be indented with tab")
 		// The comment should not lose its indentation
-		assert.Check(t, !contains(formatted, "\n// the second arg"), "comment should not lose indentation")
+		assert.Check(t, !strings.Contains(formatted, "\n// the second arg"), "comment should not lose indentation")
 	})
 
 	t.Run("format comment in chained method calls", func(t *testing.T) {
@@ -163,9 +163,9 @@ func TestCommentFormatting(t *testing.T) {
 		formatted := applyBulkEdits(originalText, edits)
 
 		// The comment should remain indented
-		assert.Check(t, contains(formatted, "\t// A second call") || contains(formatted, "   // A second call"), "comment should be indented")
+		assert.Check(t, strings.Contains(formatted, "\t// A second call") || strings.Contains(formatted, "   // A second call"), "comment should be indented")
 		// The comment should not lose its indentation
-		assert.Check(t, !contains(formatted, "\n// A second call"), "comment should not lose indentation")
+		assert.Check(t, !strings.Contains(formatted, "\n// A second call"), "comment should not lose indentation")
 	})
 
 	// Regression test for issue #1928 - panic when formatting chained method call with comment
@@ -198,13 +198,9 @@ func TestCommentFormatting(t *testing.T) {
 		formatted := applyBulkEdits(originalText, edits)
 
 		// Verify the comment maintains proper indentation and doesn't lose it
-		assert.Check(t, contains(formatted, "\t// A second call") || contains(formatted, "   // A second call"), "comment should be indented")
-		assert.Check(t, !contains(formatted, "\n// A second call"), "comment should not be at column 0")
+		assert.Check(t, strings.Contains(formatted, "\t// A second call") || strings.Contains(formatted, "   // A second call"), "comment should be indented")
+		assert.Check(t, !strings.Contains(formatted, "\n// A second call"), "comment should not be at column 0")
 	})
-}
-
-func contains(s, substr string) bool {
-	return len(substr) > 0 && strings.Contains(s, substr)
 }
 
 func TestSliceBoundsPanic(t *testing.T) {
@@ -242,6 +238,6 @@ func TestSliceBoundsPanic(t *testing.T) {
 
 		// Basic sanity checks
 		assert.Check(t, len(formatted) > 0, "formatted text should not be empty")
-		assert.Check(t, contains(formatted, "_enableDisposeWithListenerWarning"), "should preserve variable name")
+		assert.Check(t, strings.Contains(formatted, "_enableDisposeWithListenerWarning"), "should preserve variable name")
 	})
 }
