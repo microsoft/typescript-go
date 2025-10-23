@@ -63,19 +63,25 @@ func (ch *PsuedoChecker) typeFromPropertyAssignment(node *ast.Node) *PsuedoType 
 	if node.Kind == ast.KindPropertyAssignment {
 		init := node.Initializer()
 		if init != nil {
-			return ch.typeFromExpression(init)
+			expr := ch.typeFromExpression(init)
+			if expr != nil && expr.Kind != PsuedoTypeKindInferred {
+				return expr
+			}
+			// fallback to NoResult if PsuedoTypeKindInferred
 		}
 	}
 	return NewPsuedoTypeNoResult(node)
 }
 
-// TODO: Is this redundant with the reparser in place?
+// This is _not_ redundant with the reparser; see how expandoFunctionSymbolProperty.ts and similar behaves
 func (ch *PsuedoChecker) typeFromExpandoProperty(node *ast.Node) *PsuedoType {
 	declaredType := node.Type()
 	if declaredType != nil {
 		return NewPsuedoTypeDirect(declaredType)
 	}
-	return NewPsuedoTypeInferred(node)
+	// While `node` is an expression, as an expando, it should also always be a
+	// declaration with a `.Symbol()` which requires declaration fallback handling
+	return NewPsuedoTypeNoResult(node)
 }
 
 func (ch *PsuedoChecker) typeFromProperty(node *ast.Node) *PsuedoType {
