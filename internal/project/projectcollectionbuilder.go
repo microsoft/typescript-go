@@ -186,6 +186,18 @@ func (b *projectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 	logChangeFileResult(configChangeResult, configChangeLogger)
 
 	b.forEachProject(func(entry dirty.Value[*Project]) bool {
+		// Only consider change/delete; creates are handled by the config file registry
+		if summary.HasExcessiveNonCreateWatchEvents() {
+			entry.Change(func(p *Project) {
+				p.dirty = true
+				p.dirtyFilePath = ""
+				if logger != nil {
+					logger.Logf("Marking project as dirty due to excessive watch changes: %s", p.configFilePath)
+				}
+			})
+			return true
+		}
+
 		// Handle closed and changed files
 		b.markFilesChanged(entry, changedFiles, lsproto.FileChangeTypeChanged, logger)
 		if entry.Value().Kind == KindInferred && len(summary.Closed) > 0 {
@@ -343,14 +355,14 @@ func (b *projectCollectionBuilder) DidUpdateATAState(ataChanges map[tspath.Path]
 				// the set of typings files is actually different.
 				p.installedTypingsInfo = ataChange.TypingsInfo
 				p.typingsFiles = ataChange.TypingsFiles
-				fileWatchGlobs, directoryWatchGlobs := getTypingsLocationsGlobs(
+				typingsWatchGlobs := getTypingsLocationsGlobs(
 					ataChange.TypingsFilesToWatch,
 					b.sessionOptions.TypingsLocation,
+					b.sessionOptions.CurrentDirectory,
 					p.currentDirectory,
 					b.fs.fs.UseCaseSensitiveFileNames(),
 				)
-				p.typingsFilesWatch = p.typingsFilesWatch.Clone(fileWatchGlobs)
-				p.typingsDirectoryWatch = p.typingsDirectoryWatch.Clone(directoryWatchGlobs)
+				p.typingsWatch = p.typingsWatch.Clone(typingsWatchGlobs)
 				p.dirty = true
 				p.dirtyFilePath = ""
 			},
@@ -535,7 +547,7 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 				// For composite projects, we can get an early negative result.
 				// !!! what about declaration files in node_modules? wouldn't it be better to
 				//     check project inclusion if the project is already loaded?
-				if !config.MatchesFileName(fileName) {
+				if _, ok := config.FileNamesByPath()[path]; !ok {
 					node.logger.Log("Project does not contain file (by composite config inclusion)")
 					return false, false
 				}
@@ -617,7 +629,7 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 			return *fallback
 		}
 	}
-	if ancestorConfigName := b.configFileRegistryBuilder.getAncestorConfigFileName(fileName, path, configFileName, loadKind, logger); ancestorConfigName != "" {
+	if ancestorConfigName := b.configFileRegistryBuilder.getAncestorConfigFileName(fileName, path, configFileName, logger); ancestorConfigName != "" {
 		return b.findOrCreateDefaultConfiguredProjectWorker(
 			fileName,
 			path,
@@ -655,7 +667,7 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectForOpenSc
 		entry, _ := b.configuredProjects.Load(key)
 		return searchResult{project: entry}
 	}
-	if configFileName := b.configFileRegistryBuilder.getConfigFileNameForFile(fileName, path, loadKind, logger); configFileName != "" {
+	if configFileName := b.configFileRegistryBuilder.getConfigFileNameForFile(fileName, path, logger); configFileName != "" {
 		startTime := time.Now()
 		result := b.findOrCreateDefaultConfiguredProjectWorker(
 			fileName,
@@ -793,7 +805,8 @@ func (b *projectCollectionBuilder) updateProgram(entry dirty.Value[*Project], lo
 				if result.UpdateKind == ProgramUpdateKindNewFiles {
 					filesChanged = true
 					if b.sessionOptions.WatchEnabled {
-						failedLookupsWatch, affectingLocationsWatch := project.CloneWatchers()
+						programFilesWatch, failedLookupsWatch, affectingLocationsWatch := project.CloneWatchers(b.sessionOptions.CurrentDirectory, b.sessionOptions.DefaultLibraryPath)
+						project.programFilesWatch = programFilesWatch
 						project.failedLookupsWatch = failedLookupsWatch
 						project.affectingLocationsWatch = affectingLocationsWatch
 					}

@@ -530,7 +530,7 @@ func (b *nodeBuilderImpl) symbolToTypeNode(symbol *ast.Symbol, mask ast.SymbolFl
 				specifier = b.getSpecifierForModuleSymbol(chain[0], core.ModuleKindESNext)
 				attributes = b.f.NewImportAttributes(
 					ast.KindWithKeyword,
-					b.f.NewNodeList([]*ast.Node{b.f.NewImportAttribute(b.f.NewStringLiteral("resolution-mode"), b.f.NewStringLiteral("import"))}),
+					b.f.NewNodeList([]*ast.Node{b.f.NewImportAttribute(b.newStringLiteral("resolution-mode"), b.newStringLiteral("import"))}),
 					false,
 				)
 			}
@@ -559,7 +559,7 @@ func (b *nodeBuilderImpl) symbolToTypeNode(symbol *ast.Symbol, mask ast.SymbolFl
 					}
 					attributes = b.f.NewImportAttributes(
 						ast.KindWithKeyword,
-						b.f.NewNodeList([]*ast.Node{b.f.NewImportAttribute(b.f.NewStringLiteral("resolution-mode"), b.f.NewStringLiteral(modeStr))}),
+						b.f.NewNodeList([]*ast.Node{b.f.NewImportAttribute(b.newStringLiteral("resolution-mode"), b.newStringLiteral(modeStr))}),
 						false,
 					)
 				}
@@ -573,7 +573,7 @@ func (b *nodeBuilderImpl) symbolToTypeNode(symbol *ast.Symbol, mask ast.SymbolFl
 			}
 		}
 
-		lit := b.f.NewLiteralTypeNode(b.f.NewStringLiteral(specifier))
+		lit := b.f.NewLiteralTypeNode(b.newStringLiteral(specifier))
 		b.ctx.approximateLength += len(specifier) + 10 // specifier + import("")
 		if nonRootParts == nil || ast.IsEntityName(nonRootParts) {
 			if nonRootParts != nil {
@@ -690,12 +690,12 @@ func (b *nodeBuilderImpl) createAccessFromSymbolChain(chain []*ast.Symbol, index
 		if ast.IsIndexedAccessTypeNode(lhs) {
 			return b.f.NewIndexedAccessTypeNode(
 				lhs,
-				b.f.NewLiteralTypeNode(b.f.NewStringLiteral(symbolName)),
+				b.f.NewLiteralTypeNode(b.newStringLiteral(symbolName)),
 			)
 		}
 		return b.f.NewIndexedAccessTypeNode(
 			b.f.NewTypeReferenceNode(lhs, typeParameterNodes),
-			b.f.NewLiteralTypeNode(b.f.NewStringLiteral(symbolName)),
+			b.f.NewLiteralTypeNode(b.newStringLiteral(symbolName)),
 		)
 	}
 
@@ -734,7 +734,7 @@ func (b *nodeBuilderImpl) createExpressionFromSymbolChain(chain []*ast.Symbol, i
 	}
 
 	if startsWithSingleOrDoubleQuote(symbolName) && core.Some(symbol.Declarations, hasNonGlobalAugmentationExternalModuleSymbol) {
-		return b.f.NewStringLiteral(b.getSpecifierForModuleSymbol(symbol, core.ResolutionModeNone))
+		return b.newStringLiteral(b.getSpecifierForModuleSymbol(symbol, core.ResolutionModeNone))
 	}
 
 	if index == 0 || canUsePropertyAccess(symbolName) {
@@ -755,7 +755,7 @@ func (b *nodeBuilderImpl) createExpressionFromSymbolChain(chain []*ast.Symbol, i
 
 	var expression *ast.Expression
 	if startsWithSingleOrDoubleQuote(symbolName) && symbol.Flags&ast.SymbolFlagsEnumMember == 0 {
-		expression = b.f.NewStringLiteral(stringutil.UnquoteString(symbolName))
+		expression = b.newStringLiteral(stringutil.UnquoteString(symbolName))
 	} else if jsnum.FromString(symbolName).String() == symbolName {
 		// TODO: the follwing in strada would assert if the number is negative, but no such assertion exists here
 		// Moreover, what's even guaranteeing the name *isn't* -1 here anyway? Needs double-checking.
@@ -1205,8 +1205,8 @@ func (b *nodeBuilderImpl) getSpecifierForModuleSymbol(symbol *ast.Symbol, overri
 		contextFile,
 		host,
 		modulespecifiers.UserPreferences{
-			ImportModuleSpecifierPreference:       specifierPref,
-			ImportModuleSpecifierEndingPreference: endingPref,
+			ImportModuleSpecifierPreference: specifierPref,
+			ImportModuleSpecifierEnding:     endingPref,
 		},
 		modulespecifiers.ModuleSpecifierOptions{
 			OverrideImportMode: overrideImportMode,
@@ -1365,6 +1365,8 @@ func (b *nodeBuilderImpl) createMappedTypeNodeFromType(t *Type) *ast.TypeNode {
 	}
 	var appropriateConstraintTypeNode *ast.Node
 	var newTypeVariable *ast.Node
+	templateType := b.ch.getTemplateTypeFromMappedType(t)
+	typeParameter := b.ch.getTypeParameterFromMappedType(t)
 
 	// If the mapped type isn't `keyof` constraint-declared, _but_ still has modifiers preserved, and its naive instantiation won't preserve modifiers because its constraint isn't `keyof` constrained, we have work to do
 	needsModifierPreservingWrapper := !b.ch.isMappedTypeWithKeyofConstraintDeclaration(t) &&
@@ -1372,18 +1374,17 @@ func (b *nodeBuilderImpl) createMappedTypeNodeFromType(t *Type) *ast.TypeNode {
 		b.ctx.flags&nodebuilder.FlagsGenerateNamesForShadowedTypeParams != 0 &&
 		!(b.ch.getConstraintTypeFromMappedType(t).flags&TypeFlagsTypeParameter != 0 && b.ch.getConstraintOfTypeParameter(b.ch.getConstraintTypeFromMappedType(t)).flags&TypeFlagsIndex != 0)
 
-	cleanup := b.enterNewScope(mapped.declaration.AsNode(), nil, []*Type{b.ch.getTypeParameterFromMappedType(t)}, nil, nil)
-	defer cleanup()
-
 	if b.ch.isMappedTypeWithKeyofConstraintDeclaration(t) {
 		// We have a { [P in keyof T]: X }
 		// We do this to ensure we retain the toplevel keyof-ness of the type which may be lost due to keyof distribution during `getConstraintTypeFromMappedType`
 		if b.ctx.flags&nodebuilder.FlagsGenerateNamesForShadowedTypeParams != 0 && b.isHomomorphicMappedTypeWithNonHomomorphicInstantiation(mapped) {
-			newParam := b.ch.newTypeParameter(
+			newConstraintParam := b.ch.newTypeParameter(
 				b.ch.newSymbol(ast.SymbolFlagsTypeParameter, "T"),
 			)
-			name := b.typeParameterToName(newParam)
+			name := b.typeParameterToName(newConstraintParam)
+			target := t.Target()
 			newTypeVariable = b.f.NewTypeReferenceNode(name.AsNode(), nil)
+			templateType = b.ch.instantiateType(b.ch.getTemplateTypeFromMappedType(target), newTypeMapper([]*Type{b.ch.getTypeParameterFromMappedType(target), b.ch.getModifiersTypeFromMappedType(target)}, []*Type{typeParameter, newConstraintParam}))
 		}
 		indexTarget := newTypeVariable
 		if indexTarget == nil {
@@ -1403,15 +1404,18 @@ func (b *nodeBuilderImpl) createMappedTypeNodeFromType(t *Type) *ast.TypeNode {
 		appropriateConstraintTypeNode = b.typeToTypeNode(b.ch.getConstraintTypeFromMappedType(t))
 	}
 
-	typeParameterNode := b.typeParameterToDeclarationWithConstraint(b.ch.getTypeParameterFromMappedType(t), appropriateConstraintTypeNode)
+	// nameType and templateType nodes have to be in the new scope
+	cleanup := b.enterNewScope(mapped.declaration.AsNode(), nil, []*Type{b.ch.getTypeParameterFromMappedType(t)}, nil, nil)
+	typeParameterNode := b.typeParameterToDeclarationWithConstraint(typeParameter, appropriateConstraintTypeNode)
 	var nameTypeNode *ast.Node
 	if mapped.declaration.NameType != nil {
 		nameTypeNode = b.typeToTypeNode(b.ch.getNameTypeFromMappedType(t))
 	}
 	templateTypeNode := b.typeToTypeNode(b.ch.removeMissingType(
-		b.ch.getTemplateTypeFromMappedType(t),
+		templateType,
 		getMappedTypeModifiers(t)&MappedTypeModifiersIncludeOptional != 0,
 	))
+	cleanup()
 	result := b.f.NewMappedTypeNode(
 		readonlyToken,
 		typeParameterNode,
@@ -1438,7 +1442,7 @@ func (b *nodeBuilderImpl) createMappedTypeNodeFromType(t *Type) *ast.TypeNode {
 		originalConstraint := b.ch.instantiateType(rawConstraintTypeFromDeclaration, mapped.mapper)
 
 		var originalConstraintNode *ast.Node
-		if originalConstraint.flags&TypeFlagsUnknown != 0 {
+		if originalConstraint.flags&TypeFlagsUnknown == 0 {
 			originalConstraintNode = b.typeToTypeNode(originalConstraint)
 		}
 
@@ -2109,7 +2113,7 @@ func (b *nodeBuilderImpl) trackComputedName(accessExpression *ast.Node, enclosin
 	}
 }
 
-func (b *nodeBuilderImpl) createPropertyNameNodeForIdentifierOrLiteral(name string, _singleQuote bool, stringNamed bool, isMethod bool) *ast.Node {
+func (b *nodeBuilderImpl) createPropertyNameNodeForIdentifierOrLiteral(name string, singleQuote bool, stringNamed bool, isMethod bool) *ast.Node {
 	isMethodNamedNew := isMethod && name == "new"
 	if !isMethodNamedNew && scanner.IsIdentifierText(name, core.LanguageVariantStandard) {
 		return b.f.NewIdentifier(name)
@@ -2118,7 +2122,9 @@ func (b *nodeBuilderImpl) createPropertyNameNodeForIdentifierOrLiteral(name stri
 		return b.f.NewNumericLiteral(name)
 	}
 	result := b.f.NewStringLiteral(name)
-	// !!! TODO: set singleQuote
+	if singleQuote {
+		result.AsStringLiteral().TokenFlags |= ast.TokenFlagsSingleQuote
+	}
 	return result
 }
 
@@ -2139,10 +2145,8 @@ func (b *nodeBuilderImpl) isStringNamed(d *ast.Declaration) bool {
 }
 
 func (b *nodeBuilderImpl) isSingleQuotedStringNamed(d *ast.Declaration) bool {
-	return false // !!!
-	// TODO: actually support single-quote-style-maintenance
-	// name := ast.GetNameOfDeclaration(d)
-	// return name != nil && ast.IsStringLiteral(name) && (name.AsStringLiteral().SingleQuote || !nodeIsSynthesized(name) && startsWith(getTextOfNode(name, false /*includeTrivia*/), "'"))
+	name := ast.GetNameOfDeclaration(d)
+	return name != nil && ast.IsStringLiteral(name) && name.AsStringLiteral().TokenFlags&ast.TokenFlagsSingleQuote != 0
 }
 
 func (b *nodeBuilderImpl) getPropertyNameNodeForSymbol(symbol *ast.Symbol) *ast.Node {
@@ -2153,7 +2157,17 @@ func (b *nodeBuilderImpl) getPropertyNameNodeForSymbol(symbol *ast.Symbol) *ast.
 	if fromNameType != nil {
 		return fromNameType
 	}
-	return b.createPropertyNameNodeForIdentifierOrLiteral(symbol.Name, singleQuote, stringNamed, isMethod)
+
+	name := symbol.Name
+	const privateNamePrefix = ast.InternalSymbolNamePrefix + "#"
+	if strings.HasPrefix(name, privateNamePrefix) {
+		// symbol IDs are unstable - replace #nnn# with #private#
+		name = name[len(privateNamePrefix):]
+		name = strings.TrimLeftFunc(name, stringutil.IsDigit)
+		name = "__#private" + name
+	}
+
+	return b.createPropertyNameNodeForIdentifierOrLiteral(name, singleQuote, stringNamed, isMethod)
 }
 
 // See getNameForSymbolFromNameType for a stringy equivalent
@@ -2174,8 +2188,11 @@ func (b *nodeBuilderImpl) getPropertyNameNodeForSymbolFromNameType(symbol *ast.S
 			name = nameType.AsLiteralType().value.(string)
 		}
 		if !scanner.IsIdentifierText(name, core.LanguageVariantStandard) && (stringNamed || !isNumericLiteralName(name)) {
-			// !!! TODO: set singleQuote
-			return b.f.NewStringLiteral(name)
+			node := b.f.NewStringLiteral(name)
+			if singleQuote {
+				node.AsStringLiteral().TokenFlags |= ast.TokenFlagsSingleQuote
+			}
+			return node
 		}
 		if isNumericLiteralName(name) && name[0] == '-' {
 			return b.f.NewComputedPropertyName(b.f.NewPrefixUnaryExpression(ast.KindMinusToken, b.f.NewNumericLiteral(name[1:])))
@@ -2228,22 +2245,45 @@ func (b *nodeBuilderImpl) addPropertyToElementList(propertySymbol *ast.Symbol, t
 
 	if propertySymbol.Flags&ast.SymbolFlagsAccessor != 0 {
 		writeType := b.ch.getWriteTypeOfSymbol(propertySymbol)
-		if propertyType != writeType && !b.ch.isErrorType(propertyType) && !b.ch.isErrorType(writeType) {
-			getterDeclaration := ast.GetDeclarationOfKind(propertySymbol, ast.KindGetAccessor)
-			getterSignature := b.ch.getSignatureFromDeclaration(getterDeclaration)
-			getter := b.signatureToSignatureDeclarationHelper(getterSignature, ast.KindGetAccessor, &SignatureToSignatureDeclarationOptions{
-				name: propertyName,
-			})
-			b.setCommentRange(getter, getterDeclaration)
-			typeElements = append(typeElements, getter)
-			setterDeclaration := ast.GetDeclarationOfKind(propertySymbol, ast.KindSetAccessor)
-			setterSignature := b.ch.getSignatureFromDeclaration(setterDeclaration)
-			setter := b.signatureToSignatureDeclarationHelper(setterSignature, ast.KindSetAccessor, &SignatureToSignatureDeclarationOptions{
-				name: propertyName,
-			})
-			b.setCommentRange(setter, setterDeclaration)
-			typeElements = append(typeElements, setter)
-			return typeElements
+		if !b.ch.isErrorType(propertyType) && !b.ch.isErrorType(writeType) {
+			propDeclaration := ast.GetDeclarationOfKind(propertySymbol, ast.KindPropertyDeclaration)
+			if propertyType != writeType || propertySymbol.Parent.Flags&ast.SymbolFlagsClass != 0 && propDeclaration == nil {
+				if getterDeclaration := ast.GetDeclarationOfKind(propertySymbol, ast.KindGetAccessor); getterDeclaration != nil {
+					getterSignature := b.ch.getSignatureFromDeclaration(getterDeclaration)
+					getter := b.signatureToSignatureDeclarationHelper(getterSignature, ast.KindGetAccessor, &SignatureToSignatureDeclarationOptions{
+						name: propertyName,
+					})
+					b.setCommentRange(getter, getterDeclaration)
+					typeElements = append(typeElements, getter)
+				}
+				if setterDeclaration := ast.GetDeclarationOfKind(propertySymbol, ast.KindSetAccessor); setterDeclaration != nil {
+					setterSignature := b.ch.getSignatureFromDeclaration(setterDeclaration)
+					setter := b.signatureToSignatureDeclarationHelper(setterSignature, ast.KindSetAccessor, &SignatureToSignatureDeclarationOptions{
+						name: propertyName,
+					})
+					b.setCommentRange(setter, setterDeclaration)
+					typeElements = append(typeElements, setter)
+				}
+				return typeElements
+			} else if propertySymbol.Parent.Flags&ast.SymbolFlagsClass != 0 && propDeclaration != nil && core.Find(propDeclaration.ModifierNodes(), func(m *ast.Node) bool {
+				return m.Kind == ast.KindAccessorKeyword
+			}) != nil {
+				fakeGetterSignature := b.ch.newSignature(SignatureFlagsNone, nil, nil, nil, nil, propertyType, nil, 0)
+				fakeGetterDeclaration := b.signatureToSignatureDeclarationHelper(fakeGetterSignature, ast.KindGetAccessor, &SignatureToSignatureDeclarationOptions{
+					name: propertyName,
+				})
+				b.setCommentRange(fakeGetterDeclaration, propDeclaration)
+				typeElements = append(typeElements, fakeGetterDeclaration)
+
+				setterParam := b.ch.newSymbol(ast.SymbolFlagsFunctionScopedVariable, "arg")
+				b.ch.valueSymbolLinks.Get(setterParam).resolvedType = writeType
+				fakeSetterSignature := b.ch.newSignature(SignatureFlagsNone, nil, nil, nil, []*ast.Symbol{setterParam}, b.ch.voidType, nil, 0)
+				fakeSetterDeclaration := b.signatureToSignatureDeclarationHelper(fakeSetterSignature, ast.KindSetAccessor, &SignatureToSignatureDeclarationOptions{
+					name: propertyName,
+				})
+				typeElements = append(typeElements, fakeSetterDeclaration)
+				return typeElements
+			}
 		}
 	}
 
@@ -2390,7 +2430,7 @@ func (b *nodeBuilderImpl) createTypeNodeFromObjectType(t *Type) *ast.TypeNode {
 	})
 	if len(abstractSignatures) > 0 {
 		types := core.Map(abstractSignatures, func(s *Signature) *Type {
-			return b.ch.getOrCreateTypeFromSignature(s, nil)
+			return b.ch.getOrCreateTypeFromSignature(s)
 		})
 		// count the number of type elements excluding abstract constructors
 		typeElementCount := len(callSigs) + (len(ctorSigs) - len(abstractSignatures)) + len(resolved.indexInfos) + (core.IfElse(b.ctx.flags&nodebuilder.FlagsWriteClassExpressionAsTypeLiteral != 0, core.CountWhere(resolved.properties, func(p *ast.Symbol) bool {
@@ -2875,9 +2915,9 @@ func (b *nodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 			if ast.IsImportTypeNode(parentName) {
 				parentName.AsImportTypeNode().IsTypeOf = true
 				// mutably update, node is freshly manufactured anyhow
-				return b.f.NewIndexedAccessTypeNode(parentName, b.f.NewLiteralTypeNode(b.f.NewStringLiteral(memberName)))
+				return b.f.NewIndexedAccessTypeNode(parentName, b.f.NewLiteralTypeNode(b.newStringLiteral(memberName)))
 			} else if ast.IsTypeReferenceNode(parentName) {
-				return b.f.NewIndexedAccessTypeNode(b.f.NewTypeQueryNode(parentName.AsTypeReferenceNode().TypeName, nil), b.f.NewLiteralTypeNode(b.f.NewStringLiteral(memberName)))
+				return b.f.NewIndexedAccessTypeNode(b.f.NewTypeQueryNode(parentName.AsTypeReferenceNode().TypeName, nil), b.f.NewLiteralTypeNode(b.newStringLiteral(memberName)))
 			} else {
 				panic("Unhandled type node kind returned from `symbolToTypeNode`.")
 			}
@@ -2886,7 +2926,7 @@ func (b *nodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 	}
 	if t.flags&TypeFlagsStringLiteral != 0 {
 		b.ctx.approximateLength += len(t.AsLiteralType().value.(string)) + 2
-		lit := b.f.NewStringLiteral(t.AsLiteralType().value.(string) /*, b.flags&nodebuilder.FlagsUseSingleQuotesForStringLiteralType != 0*/)
+		lit := b.newStringLiteral(t.AsLiteralType().value.(string))
 		b.e.AddEmitFlags(lit, printer.EFNoAsciiEscaping)
 		return b.f.NewLiteralTypeNode(lit)
 	}
@@ -3097,6 +3137,14 @@ func (b *nodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 	}
 
 	panic("Should be unreachable.")
+}
+
+func (b *nodeBuilderImpl) newStringLiteral(text string) *ast.Node {
+	node := b.f.NewStringLiteral(text)
+	if b.ctx.flags&nodebuilder.FlagsUseSingleQuotesForStringLiteralType != 0 {
+		node.AsStringLiteral().TokenFlags |= ast.TokenFlagsSingleQuote
+	}
+	return node
 }
 
 // Direct serialization core functions for types, type aliases, and symbols

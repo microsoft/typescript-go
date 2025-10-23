@@ -1,6 +1,7 @@
 package fourslash
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"maps"
@@ -42,6 +43,7 @@ type FourslashTest struct {
 	scriptInfos map[string]*scriptInfo
 	converters  *ls.Converters
 
+	userPreferences      *ls.UserPreferences
 	currentCaretPosition lsproto.Position
 	lastKnownMarkerName  *string
 	activeFilename       string
@@ -51,7 +53,7 @@ type FourslashTest struct {
 type scriptInfo struct {
 	fileName string
 	content  string
-	lineMap  *ls.LineMap
+	lineMap  *ls.LSPLineMap
 	version  int32
 }
 
@@ -59,14 +61,14 @@ func newScriptInfo(fileName string, content string) *scriptInfo {
 	return &scriptInfo{
 		fileName: fileName,
 		content:  content,
-		lineMap:  ls.ComputeLineStarts(content),
+		lineMap:  ls.ComputeLSPLineStarts(content),
 		version:  1,
 	}
 }
 
 func (s *scriptInfo) editContent(start int, end int, newText string) {
 	s.content = s.content[:start] + newText + s.content[end:]
-	s.lineMap = ls.ComputeLineStarts(s.content)
+	s.lineMap = ls.ComputeLSPLineStarts(s.content)
 	s.version++
 }
 
@@ -164,13 +166,13 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		defer func() {
 			outputWriter.Close()
 		}()
-		err := server.Run()
+		err := server.Run(context.TODO())
 		if err != nil {
 			t.Error("server error:", err)
 		}
 	}()
 
-	converters := ls.NewConverters(lsproto.PositionEncodingKindUTF8, func(fileName string) *ls.LineMap {
+	converters := ls.NewConverters(lsproto.PositionEncodingKindUTF8, func(fileName string) *ls.LSPLineMap {
 		scriptInfo, ok := scriptInfos[fileName]
 		if !ok {
 			return nil
@@ -179,14 +181,15 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	})
 
 	f := &FourslashTest{
-		server:      server,
-		in:          inputWriter,
-		out:         outputReader,
-		testData:    &testData,
-		vfs:         fs,
-		scriptInfos: scriptInfos,
-		converters:  converters,
-		baselines:   make(map[string]*strings.Builder),
+		server:          server,
+		in:              inputWriter,
+		out:             outputReader,
+		testData:        &testData,
+		userPreferences: ls.NewDefaultUserPreferences(), // !!! parse default preferences for fourslash case?
+		vfs:             fs,
+		scriptInfos:     scriptInfos,
+		converters:      converters,
+		baselines:       make(map[string]*strings.Builder),
 	}
 
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
@@ -256,6 +259,12 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	if capabilitiesWithDefaults.TextDocument.Completion == nil {
 		capabilitiesWithDefaults.TextDocument.Completion = defaultCompletionCapabilities
 	}
+	if capabilitiesWithDefaults.Workspace == nil {
+		capabilitiesWithDefaults.Workspace = &lsproto.WorkspaceClientCapabilities{}
+	}
+	if capabilitiesWithDefaults.Workspace.Configuration == nil {
+		capabilitiesWithDefaults.Workspace.Configuration = ptrTrue
+	}
 	return &capabilitiesWithDefaults
 }
 
@@ -268,6 +277,29 @@ func sendRequest[Params, Resp any](t *testing.T, f *FourslashTest, info lsproto.
 	)
 	f.writeMsg(t, req.Message())
 	resp := f.readMsg(t)
+	if resp == nil {
+		return nil, *new(Resp), false
+	}
+
+	// currently, the only request that may be sent by the server during a client request is one `config` request
+	// !!! remove if `config` is handled in initialization and there are no other server-initiated requests
+	if resp.Kind == lsproto.MessageKindRequest {
+		req := resp.AsRequest()
+		switch req.Method {
+		case lsproto.MethodWorkspaceConfiguration:
+			req := lsproto.ResponseMessage{
+				ID:      req.ID,
+				JSONRPC: req.JSONRPC,
+				Result:  []any{f.userPreferences},
+			}
+			f.writeMsg(t, req.Message())
+			resp = f.readMsg(t)
+		default:
+			// other types of requests not yet used in fourslash; implement them if needed
+			t.Fatalf("Unexpected request received: %s", req.Method)
+		}
+	}
+
 	if resp == nil {
 		return nil, *new(Resp), false
 	}
@@ -298,6 +330,21 @@ func (f *FourslashTest) readMsg(t *testing.T) *lsproto.Message {
 	}
 	assert.NilError(t, json.MarshalWrite(io.Discard, msg), "failed to encode message as JSON")
 	return msg
+}
+
+func (f *FourslashTest) Configure(t *testing.T, config *ls.UserPreferences) {
+	f.userPreferences = config
+	sendNotification(t, f, lsproto.WorkspaceDidChangeConfigurationInfo, &lsproto.DidChangeConfigurationParams{
+		Settings: config,
+	})
+}
+
+func (f *FourslashTest) ConfigureWithReset(t *testing.T, config *ls.UserPreferences) (reset func()) {
+	originalConfig := f.userPreferences.Copy()
+	f.Configure(t, config)
+	return func() {
+		f.Configure(t, originalConfig)
+	}
 }
 
 func (f *FourslashTest) GoToMarkerOrRange(t *testing.T, markerOrRange MarkerOrRange) {
@@ -502,19 +549,31 @@ type CompletionsExpectedItems struct {
 	Unsorted []CompletionsExpectedItem
 }
 
+type CompletionsExpectedCodeAction struct {
+	Name           string
+	Source         string
+	Description    string
+	NewFileContent string
+}
+
+type VerifyCompletionsResult struct {
+	AndApplyCodeAction func(t *testing.T, expectedAction *CompletionsExpectedCodeAction)
+}
+
 // string | *Marker | []string | []*Marker
 type MarkerInput = any
 
 // !!! user preferences param
 // !!! completion context param
-func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput, expected *CompletionsExpectedList) {
+func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput, expected *CompletionsExpectedList) VerifyCompletionsResult {
+	var list *lsproto.CompletionList
 	switch marker := markerInput.(type) {
 	case string:
 		f.GoToMarker(t, marker)
-		f.verifyCompletionsWorker(t, expected)
+		list = f.verifyCompletionsWorker(t, expected)
 	case *Marker:
 		f.goToMarker(t, marker)
-		f.verifyCompletionsWorker(t, expected)
+		list = f.verifyCompletionsWorker(t, expected)
 	case []string:
 		for _, markerName := range marker {
 			f.GoToMarker(t, markerName)
@@ -526,13 +585,45 @@ func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput,
 			f.verifyCompletionsWorker(t, expected)
 		}
 	case nil:
-		f.verifyCompletionsWorker(t, expected)
+		list = f.verifyCompletionsWorker(t, expected)
 	default:
 		t.Fatalf("Invalid marker input type: %T. Expected string, *Marker, []string, or []*Marker.", markerInput)
 	}
+
+	return VerifyCompletionsResult{
+		AndApplyCodeAction: func(t *testing.T, expectedAction *CompletionsExpectedCodeAction) {
+			item := core.Find(list.Items, func(item *lsproto.CompletionItem) bool {
+				if item.Label != expectedAction.Name || item.Data == nil {
+					return false
+				}
+				data, ok := (*item.Data).(*ls.CompletionItemData)
+				if !ok || data.AutoImport == nil {
+					return false
+				}
+				return data.AutoImport.ModuleSpecifier == expectedAction.Source
+			})
+			if item == nil {
+				t.Fatalf("Code action '%s' from source '%s' not found in completions.", expectedAction.Name, expectedAction.Source)
+			}
+			assert.Check(t, strings.Contains(*item.Detail, expectedAction.Description), "Completion item detail does not contain expected description.")
+			f.applyTextEdits(t, *item.AdditionalTextEdits)
+			assert.Equal(t, f.getScriptInfo(f.activeFilename).content, expectedAction.NewFileContent, fmt.Sprintf("File content after applying code action '%s' did not match expected content.", expectedAction.Name))
+		},
+	}
 }
 
-func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *CompletionsExpectedList) {
+func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *CompletionsExpectedList) *lsproto.CompletionList {
+	prefix := f.getCurrentPositionPrefix()
+	var userPreferences *ls.UserPreferences
+	if expected != nil {
+		userPreferences = expected.UserPreferences
+	}
+	list := f.getCompletions(t, userPreferences)
+	f.verifyCompletionsResult(t, list, expected, prefix)
+	return list
+}
+
+func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *ls.UserPreferences) *lsproto.CompletionList {
 	prefix := f.getCurrentPositionPrefix()
 	params := &lsproto.CompletionParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
@@ -541,6 +632,10 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *Completi
 		Position: f.currentCaretPosition,
 		Context:  &lsproto.CompletionContext{},
 	}
+	if userPreferences != nil {
+		reset := f.ConfigureWithReset(t, userPreferences)
+		defer reset()
+	}
 	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentCompletionInfo, params)
 	if resMsg == nil {
 		t.Fatalf(prefix+"Nil response received for completion request", f.lastKnownMarkerName)
@@ -548,7 +643,7 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *Completi
 	if !resultOk {
 		t.Fatalf(prefix+"Unexpected response type for completion request: %T", resMsg.AsResponse().Result)
 	}
-	f.verifyCompletionsResult(t, result.List, expected, prefix)
+	return result.List
 }
 
 func (f *FourslashTest) verifyCompletionsResult(
@@ -632,9 +727,9 @@ func (f *FourslashTest) verifyCompletionsItems(t *testing.T, prefix string, actu
 		}
 		return
 	}
-	nameToActualItem := make(map[string]*lsproto.CompletionItem)
+	nameToActualItems := make(map[string][]*lsproto.CompletionItem)
 	for _, item := range actual {
-		nameToActualItem[item.Label] = item
+		nameToActualItems[item.Label] = append(nameToActualItems[item.Label], item)
 	}
 	if expected.Unsorted != nil {
 		if expected.Includes != nil {
@@ -646,24 +741,30 @@ func (f *FourslashTest) verifyCompletionsItems(t *testing.T, prefix string, actu
 		for _, item := range expected.Unsorted {
 			switch item := item.(type) {
 			case string:
-				_, ok := nameToActualItem[item]
+				_, ok := nameToActualItems[item]
 				if !ok {
 					t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item, cmp.Diff(actual, nil))
 				}
-				delete(nameToActualItem, item)
+				delete(nameToActualItems, item)
 			case *lsproto.CompletionItem:
-				actualItem, ok := nameToActualItem[item.Label]
+				actualItems, ok := nameToActualItems[item.Label]
 				if !ok {
 					t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item.Label, cmp.Diff(actual, nil))
 				}
-				delete(nameToActualItem, item.Label)
+				actualItem := actualItems[0]
+				actualItems = actualItems[1:]
+				if len(actualItems) == 0 {
+					delete(nameToActualItems, item.Label)
+				} else {
+					nameToActualItems[item.Label] = actualItems
+				}
 				f.verifyCompletionItem(t, prefix+"Includes completion item mismatch for label "+item.Label+": ", actualItem, item)
 			default:
 				t.Fatalf("%sExpected completion item to be a string or *lsproto.CompletionItem, got %T", prefix, item)
 			}
 		}
 		if len(expected.Unsorted) != len(actual) {
-			unmatched := slices.Collect(maps.Keys(nameToActualItem))
+			unmatched := slices.Collect(maps.Keys(nameToActualItems))
 			t.Fatalf("%sAdditional completions found but not included in 'unsorted': %s", prefix, strings.Join(unmatched, "\n"))
 		}
 		return
@@ -672,14 +773,21 @@ func (f *FourslashTest) verifyCompletionsItems(t *testing.T, prefix string, actu
 		for _, item := range expected.Includes {
 			switch item := item.(type) {
 			case string:
-				_, ok := nameToActualItem[item]
+				_, ok := nameToActualItems[item]
 				if !ok {
 					t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item, cmp.Diff(actual, nil))
 				}
 			case *lsproto.CompletionItem:
-				actualItem, ok := nameToActualItem[item.Label]
+				actualItems, ok := nameToActualItems[item.Label]
 				if !ok {
 					t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item.Label, cmp.Diff(actual, nil))
+				}
+				actualItem := actualItems[0]
+				actualItems = actualItems[1:]
+				if len(actualItems) == 0 {
+					delete(nameToActualItems, item.Label)
+				} else {
+					nameToActualItems[item.Label] = actualItems
 				}
 				f.verifyCompletionItem(t, prefix+"Includes completion item mismatch for label "+item.Label+": ", actualItem, item)
 			default:
@@ -688,7 +796,7 @@ func (f *FourslashTest) verifyCompletionsItems(t *testing.T, prefix string, actu
 		}
 	}
 	for _, exclude := range expected.Excludes {
-		if _, ok := nameToActualItem[exclude]; ok {
+		if _, ok := nameToActualItems[exclude]; ok {
 			t.Fatalf("%sLabel '%s' should not be in actual items but was found. Actual items: %s", prefix, exclude, cmp.Diff(actual, nil))
 		}
 	}
@@ -711,34 +819,78 @@ func (f *FourslashTest) verifyCompletionsAreExactly(t *testing.T, prefix string,
 	}
 }
 
-var completionIgnoreOpts = cmp.FilterPath(
-	func(p cmp.Path) bool {
-		switch p.Last().String() {
-		case ".Kind", ".SortText", ".Data":
-			return true
-		default:
+func ignorePaths(paths ...string) cmp.Option {
+	return cmp.FilterPath(
+		func(p cmp.Path) bool {
+			for _, path := range paths {
+				if p.Last().String() == path {
+					return true
+				}
+			}
 			return false
-		}
-	},
-	cmp.Ignore(),
+		},
+		cmp.Ignore(),
+	)
+}
+
+var (
+	completionIgnoreOpts = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data")
+	autoImportIgnoreOpts = ignorePaths(".Kind", ".SortText", ".FilterText", ".Data", ".LabelDetails", ".Detail", ".AdditionalTextEdits")
 )
 
 func (f *FourslashTest) verifyCompletionItem(t *testing.T, prefix string, actual *lsproto.CompletionItem, expected *lsproto.CompletionItem) {
-	if expected.Detail != nil || expected.Documentation != nil {
-		resMsg, result, resultOk := sendRequest(t, f, lsproto.CompletionItemResolveInfo, actual)
-		if resMsg == nil {
-			t.Fatal(prefix + "Expected non-nil response for completion item resolve, got nil")
+	var actualAutoImportData, expectedAutoImportData *ls.AutoImportData
+	if actual.Data != nil {
+		if data, ok := (*actual.Data).(*ls.CompletionItemData); ok {
+			actualAutoImportData = data.AutoImport
 		}
-		if !resultOk {
-			t.Fatalf(prefix+"Unexpected response type for completion item resolve: %T", resMsg.AsResponse().Result)
-		}
-		actual = result
 	}
-	assertDeepEqual(t, actual, expected, prefix, completionIgnoreOpts)
+	if expected.Data != nil {
+		if data, ok := (*expected.Data).(*ls.CompletionItemData); ok {
+			expectedAutoImportData = data.AutoImport
+		}
+	}
+	if (actualAutoImportData == nil) != (expectedAutoImportData == nil) {
+		t.Fatal(prefix + "Mismatch in auto-import data presence")
+	}
+
+	if expected.Detail != nil || expected.Documentation != nil || actualAutoImportData != nil {
+		actual = f.resolveCompletionItem(t, actual)
+	}
+
+	if actualAutoImportData != nil {
+		assertDeepEqual(t, actual, expected, prefix, autoImportIgnoreOpts)
+		if expected.AdditionalTextEdits == AnyTextEdits {
+			assert.Check(t, actual.AdditionalTextEdits != nil && len(*actual.AdditionalTextEdits) > 0, prefix+" Expected non-nil AdditionalTextEdits for auto-import completion item")
+		}
+		if expected.LabelDetails != nil {
+			assertDeepEqual(t, actual.LabelDetails, expected.LabelDetails, prefix+" LabelDetails mismatch")
+		}
+
+		assert.Equal(t, actualAutoImportData.ModuleSpecifier, expectedAutoImportData.ModuleSpecifier, prefix+" ModuleSpecifier mismatch")
+	} else {
+		assertDeepEqual(t, actual, expected, prefix, completionIgnoreOpts)
+	}
+
+	if expected.FilterText != nil {
+		assertDeepEqual(t, actual.FilterText, expected.FilterText, prefix+" FilterText mismatch")
+	}
 	if expected.Kind != nil {
 		assertDeepEqual(t, actual.Kind, expected.Kind, prefix+" Kind mismatch")
 	}
 	assertDeepEqual(t, actual.SortText, core.OrElse(expected.SortText, ptrTo(string(ls.SortTextLocationPriority))), prefix+" SortText mismatch")
+}
+
+func (f *FourslashTest) resolveCompletionItem(t *testing.T, item *lsproto.CompletionItem) *lsproto.CompletionItem {
+	prefix := f.getCurrentPositionPrefix()
+	resMsg, result, resultOk := sendRequest(t, f, lsproto.CompletionItemResolveInfo, item)
+	if resMsg == nil {
+		t.Fatal(prefix + "Expected non-nil response for completion item resolve, got nil")
+	}
+	if !resultOk {
+		t.Fatalf(prefix+"Unexpected response type for completion item resolve: %T, Error: %v", resMsg.AsResponse().Result, resMsg.AsResponse().Error)
+	}
+	return result
 }
 
 func getExpectedLabel(t *testing.T, item CompletionsExpectedItem) string {
@@ -759,6 +911,68 @@ func assertDeepEqual(t *testing.T, actual any, expected any, prefix string, opts
 	diff := cmp.Diff(actual, expected, opts...)
 	if diff != "" {
 		t.Fatalf("%s:\n%s", prefix, diff)
+	}
+}
+
+type ApplyCodeActionFromCompletionOptions struct {
+	Name            string
+	Source          string
+	AutoImportData  *ls.AutoImportData
+	Description     string
+	NewFileContent  *string
+	NewRangeContent *string
+	UserPreferences *ls.UserPreferences
+}
+
+func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, markerName *string, options *ApplyCodeActionFromCompletionOptions) {
+	f.GoToMarker(t, *markerName)
+	var userPreferences *ls.UserPreferences
+	if options != nil && options.UserPreferences != nil {
+		userPreferences = options.UserPreferences
+	} else {
+		// Default preferences: enables auto-imports
+		userPreferences = ls.NewDefaultUserPreferences()
+	}
+
+	reset := f.ConfigureWithReset(t, userPreferences)
+	defer reset()
+	completionsList := f.getCompletions(t, nil) // Already configured, so we do not need to pass it in again
+	item := core.Find(completionsList.Items, func(item *lsproto.CompletionItem) bool {
+		if item.Label != options.Name || item.Data == nil {
+			return false
+		}
+		data, ok := (*item.Data).(*ls.CompletionItemData)
+		if !ok {
+			return false
+		}
+		if options.AutoImportData != nil {
+			return data.AutoImport != nil && ((data.AutoImport.FileName == options.AutoImportData.FileName) &&
+				(options.AutoImportData.ModuleSpecifier == "" || data.AutoImport.ModuleSpecifier == options.AutoImportData.ModuleSpecifier) &&
+				(options.AutoImportData.ExportName == "" || data.AutoImport.ExportName == options.AutoImportData.ExportName) &&
+				(options.AutoImportData.AmbientModuleName == nil || data.AutoImport.AmbientModuleName == options.AutoImportData.AmbientModuleName) &&
+				(options.AutoImportData.IsPackageJsonImport == core.TSUnknown || data.AutoImport.IsPackageJsonImport == options.AutoImportData.IsPackageJsonImport))
+		}
+		if data.AutoImport == nil && data.Source != "" && data.Source == options.Source {
+			return true
+		}
+		if data.AutoImport != nil && data.AutoImport.ModuleSpecifier == options.Source {
+			return true
+		}
+		return false
+	})
+	if item == nil {
+		t.Fatalf("Code action '%s' from source '%s' not found in completions.", options.Name, options.Source)
+	}
+	item = f.resolveCompletionItem(t, item)
+	assert.Check(t, strings.Contains(*item.Detail, options.Description), "Completion item detail does not contain expected description.")
+	if item.AdditionalTextEdits == nil {
+		t.Fatalf("Expected non-nil AdditionalTextEdits for code action completion item.")
+	}
+	f.applyTextEdits(t, *item.AdditionalTextEdits)
+	if options.NewFileContent != nil {
+		assert.Equal(t, f.getScriptInfo(f.activeFilename).content, *options.NewFileContent, "File content after applying code action did not match expected content.")
+	} else if options.NewRangeContent != nil {
+		t.Fatal("!!! TODO")
 	}
 }
 
@@ -848,6 +1062,55 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 		f.addResultToBaseline(t, "goToDefinition", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
 			marker:     markerOrRange,
 			markerName: "/*GOTO DEF*/",
+		}))
+	}
+}
+
+func (f *FourslashTest) VerifyBaselineGoToTypeDefinition(
+	t *testing.T,
+	markers ...string,
+) {
+	referenceLocations := f.lookupMarkersOrGetRanges(t, markers)
+
+	for _, markerOrRange := range referenceLocations {
+		// worker in `baselineEachMarkerOrRange`
+		f.GoToMarkerOrRange(t, markerOrRange)
+
+		params := &lsproto.TypeDefinitionParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: ls.FileNameToDocumentURI(f.activeFilename),
+			},
+			Position: f.currentCaretPosition,
+		}
+
+		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentTypeDefinitionInfo, params)
+		if resMsg == nil {
+			if f.lastKnownMarkerName == nil {
+				t.Fatalf("Nil response received for type definition request at pos %v", f.currentCaretPosition)
+			} else {
+				t.Fatalf("Nil response received for type definition request at marker '%s'", *f.lastKnownMarkerName)
+			}
+		}
+		if !resultOk {
+			if f.lastKnownMarkerName == nil {
+				t.Fatalf("Unexpected type definition response type at pos %v: %T", f.currentCaretPosition, resMsg.AsResponse().Result)
+			} else {
+				t.Fatalf("Unexpected type definition response type at marker '%s': %T", *f.lastKnownMarkerName, resMsg.AsResponse().Result)
+			}
+		}
+
+		var resultAsLocations []lsproto.Location
+		if result.Locations != nil {
+			resultAsLocations = *result.Locations
+		} else if result.Location != nil {
+			resultAsLocations = []lsproto.Location{*result.Location}
+		} else if result.DefinitionLinks != nil {
+			t.Fatalf("Unexpected type definition response type at marker '%s': %T", *f.lastKnownMarkerName, result.DefinitionLinks)
+		}
+
+		f.addResultToBaseline(t, "goToType", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
+			marker:     markerOrRange,
+			markerName: "/*GOTO TYPE*/",
 		}))
 	}
 }
@@ -1031,6 +1294,83 @@ func (f *FourslashTest) VerifyBaselineSignatureHelp(t *testing.T) {
 	}
 }
 
+func (f *FourslashTest) VerifyBaselineDocumentHighlights(
+	t *testing.T,
+	preferences *ls.UserPreferences,
+	markerOrRangeOrNames ...MarkerOrRangeOrName,
+) {
+	var markerOrRanges []MarkerOrRange
+	for _, markerOrRangeOrName := range markerOrRangeOrNames {
+		switch markerOrNameOrRange := markerOrRangeOrName.(type) {
+		case string:
+			marker, ok := f.testData.MarkerPositions[markerOrNameOrRange]
+			if !ok {
+				t.Fatalf("Marker '%s' not found", markerOrNameOrRange)
+			}
+			markerOrRanges = append(markerOrRanges, marker)
+		case *Marker:
+			markerOrRanges = append(markerOrRanges, markerOrNameOrRange)
+		case *RangeMarker:
+			markerOrRanges = append(markerOrRanges, markerOrNameOrRange)
+		default:
+			t.Fatalf("Invalid marker or range type: %T. Expected string, *Marker, or *RangeMarker.", markerOrNameOrRange)
+		}
+	}
+
+	f.verifyBaselineDocumentHighlights(t, preferences, markerOrRanges)
+}
+
+func (f *FourslashTest) verifyBaselineDocumentHighlights(
+	t *testing.T,
+	preferences *ls.UserPreferences,
+	markerOrRanges []MarkerOrRange,
+) {
+	for _, markerOrRange := range markerOrRanges {
+		f.goToMarker(t, markerOrRange)
+
+		params := &lsproto.DocumentHighlightParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: ls.FileNameToDocumentURI(f.activeFilename),
+			},
+			Position: f.currentCaretPosition,
+		}
+		resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentDocumentHighlightInfo, params)
+		if resMsg == nil {
+			if f.lastKnownMarkerName == nil {
+				t.Fatalf("Nil response received for document highlights request at pos %v", f.currentCaretPosition)
+			} else {
+				t.Fatalf("Nil response received for document highlights request at marker '%s'", *f.lastKnownMarkerName)
+			}
+		}
+		if !resultOk {
+			if f.lastKnownMarkerName == nil {
+				t.Fatalf("Unexpected document highlights response type at pos %v: %T", f.currentCaretPosition, resMsg.AsResponse().Result)
+			} else {
+				t.Fatalf("Unexpected document highlights response type at marker '%s': %T", *f.lastKnownMarkerName, resMsg.AsResponse().Result)
+			}
+		}
+
+		highlights := result.DocumentHighlights
+		if highlights == nil {
+			highlights = &[]*lsproto.DocumentHighlight{}
+		}
+
+		var spans []lsproto.Location
+		for _, h := range *highlights {
+			spans = append(spans, lsproto.Location{
+				Uri:   ls.FileNameToDocumentURI(f.activeFilename),
+				Range: h.Range,
+			})
+		}
+
+		// Add result to baseline
+		f.addResultToBaseline(t, "documentHighlights", f.getBaselineForLocationsWithFileContents(spans, baselineFourslashLocationsOptions{
+			marker:     markerOrRange,
+			markerName: "/*HIGHLIGHTS*/",
+		}))
+	}
+}
+
 // Collects all named markers if provided, or defaults to anonymous ranges
 func (f *FourslashTest) lookupMarkersOrGetRanges(t *testing.T, markers []string) []MarkerOrRange {
 	var referenceLocations []MarkerOrRange
@@ -1118,6 +1458,22 @@ func (f *FourslashTest) getSelection() core.TextRange {
 		int(f.converters.LineAndCharacterToPosition(script, f.currentCaretPosition)),
 		int(f.converters.LineAndCharacterToPosition(script, *f.selectionEnd)),
 	)
+}
+
+func (f *FourslashTest) applyTextEdits(t *testing.T, edits []*lsproto.TextEdit) {
+	script := f.getScriptInfo(f.activeFilename)
+	slices.SortFunc(edits, func(a, b *lsproto.TextEdit) int {
+		aStart := f.converters.LineAndCharacterToPosition(script, a.Range.Start)
+		bStart := f.converters.LineAndCharacterToPosition(script, b.Range.Start)
+		return int(aStart) - int(bStart)
+	})
+	// Apply edits in reverse order to avoid affecting the positions of earlier edits.
+	for i := len(edits) - 1; i >= 0; i-- {
+		edit := edits[i]
+		start := int(f.converters.LineAndCharacterToPosition(script, edit.Range.Start))
+		end := int(f.converters.LineAndCharacterToPosition(script, edit.Range.End))
+		f.editScriptAndUpdateMarkers(t, f.activeFilename, start, end, edit.NewText)
+	}
 }
 
 func (f *FourslashTest) Replace(t *testing.T, start int, length int, text string) {
@@ -1372,6 +1728,12 @@ func (f *FourslashTest) getCurrentPositionPrefix() string {
 }
 
 func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames []string) {
+	reset := f.ConfigureWithReset(t, &ls.UserPreferences{
+		IncludeCompletionsForModuleExports:    core.TSTrue,
+		IncludeCompletionsForImportStatements: core.TSTrue,
+	})
+	defer reset()
+
 	for _, markerName := range markerNames {
 		f.GoToMarker(t, markerName)
 		params := &lsproto.CompletionParams{
@@ -1407,7 +1769,7 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 		)))
 
 		currentFile := newScriptInfo(f.activeFilename, fileContent)
-		converters := ls.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *ls.LineMap {
+		converters := ls.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *ls.LSPLineMap {
 			return currentFile.lineMap
 		})
 		var list []*lsproto.CompletionItem
@@ -1431,7 +1793,7 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 				t.Fatalf(prefix+"Nil response received for resolve completion", f.lastKnownMarkerName)
 			}
 			if !resultOk {
-				t.Fatalf(prefix+"Unexpected response type for resolve completion: %T", resMsg.AsResponse().Result)
+				t.Fatalf(prefix+"Unexpected response type for resolve completion: %T, Error: %v", resMsg.AsResponse().Result, resMsg.AsResponse().Error)
 			}
 			if details == nil || details.AdditionalTextEdits == nil || len(*details.AdditionalTextEdits) == 0 {
 				t.Fatalf(prefix+"Entry %s from %s returned no code changes from completion details request", item.Label, item.Detail)
@@ -1534,11 +1896,11 @@ func (f *FourslashTest) verifyBaselineRename(
 
 		var renameOptions strings.Builder
 		if preferences != nil {
-			if preferences.UseAliasesForRename != nil {
-				fmt.Fprintf(&renameOptions, "// @useAliasesForRename: %v\n", *preferences.UseAliasesForRename)
+			if preferences.UseAliasesForRename != core.TSUnknown {
+				fmt.Fprintf(&renameOptions, "// @useAliasesForRename: %v\n", preferences.UseAliasesForRename.IsTrue())
 			}
-			if preferences.QuotePreference != nil {
-				fmt.Fprintf(&renameOptions, "// @quotePreference: %v\n", *preferences.QuotePreference)
+			if preferences.QuotePreference != ls.QuotePreferenceUnknown {
+				fmt.Fprintf(&renameOptions, "// @quotePreference: %v\n", preferences.QuotePreference)
 			}
 		}
 
@@ -1665,3 +2027,7 @@ func (f *FourslashTest) verifyBaselines(t *testing.T) {
 		baseline.Run(t, getBaselineFileName(t, command), content.String(), getBaselineOptions(command))
 	}
 }
+
+type anyTextEdits *[]*lsproto.TextEdit
+
+var AnyTextEdits = anyTextEdits(nil)

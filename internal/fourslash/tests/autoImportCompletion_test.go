@@ -3,6 +3,7 @@ package fourslash_test
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	. "github.com/microsoft/typescript-go/internal/fourslash/tests/util"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -26,8 +27,8 @@ a/**/
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		UserPreferences: &ls.UserPreferences{
-			IncludeCompletionsForModuleExports:    PtrTo(true),
-			IncludeCompletionsForImportStatements: PtrTo(true),
+			IncludeCompletionsForModuleExports:    core.TSTrue,
+			IncludeCompletionsForImportStatements: core.TSTrue,
 		},
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -39,6 +40,21 @@ a/**/
 		},
 	})
 	f.BaselineAutoImportsCompletions(t, []string{""})
+	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
+		UserPreferences: &ls.UserPreferences{
+			// completion autoimport preferences off; this tests if fourslash server communication correctly registers changes in user preferences
+			IncludeCompletionsForModuleExports:    core.TSUnknown,
+			IncludeCompletionsForImportStatements: core.TSUnknown,
+		},
+		IsIncomplete: false,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &DefaultCommitCharacters,
+			EditRange:        Ignored,
+		},
+		Items: &fourslash.CompletionsExpectedItems{
+			Excludes: []string{"anotherVar"},
+		},
+	})
 }
 
 func TestAutoImportCompletion2(t *testing.T) {
@@ -56,8 +72,8 @@ a/**/
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		UserPreferences: &ls.UserPreferences{
-			IncludeCompletionsForModuleExports:    PtrTo(true),
-			IncludeCompletionsForImportStatements: PtrTo(true),
+			IncludeCompletionsForModuleExports:    core.TSTrue,
+			IncludeCompletionsForImportStatements: core.TSTrue,
 		},
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -87,8 +103,8 @@ b/**/
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		UserPreferences: &ls.UserPreferences{
-			IncludeCompletionsForModuleExports:    PtrTo(true),
-			IncludeCompletionsForImportStatements: PtrTo(true),
+			IncludeCompletionsForModuleExports:    core.TSTrue,
+			IncludeCompletionsForImportStatements: core.TSTrue,
 		},
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{

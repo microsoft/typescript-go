@@ -1427,7 +1427,7 @@ func (c *Checker) getCandidateDiscriminantPropertyAccess(f *FlowState, expr *ast
 		// parameter declared in the same parameter list is a candidate.
 		if ast.IsIdentifier(expr) {
 			symbol := c.getResolvedSymbol(expr)
-			declaration := symbol.ValueDeclaration
+			declaration := c.getExportSymbolOfValueSymbolIfExported(symbol).ValueDeclaration
 			if declaration != nil && (ast.IsBindingElement(declaration) || ast.IsParameter(declaration)) && f.reference == declaration.Parent && declaration.Initializer() == nil && !hasDotDotDotToken(declaration) {
 				return declaration
 			}
@@ -2160,7 +2160,17 @@ func (c *Checker) getExplicitTypeOfSymbol(symbol *ast.Symbol, diagnostic *ast.Di
 }
 
 func (c *Checker) isDeclarationWithExplicitTypeAnnotation(node *ast.Node) bool {
-	return (ast.IsVariableDeclaration(node) || ast.IsPropertyDeclaration(node) || ast.IsPropertySignatureDeclaration(node) || ast.IsParameter(node)) && node.Type() != nil
+	return (ast.IsVariableDeclaration(node) || ast.IsPropertyDeclaration(node) || ast.IsPropertySignatureDeclaration(node) || ast.IsParameter(node)) && node.Type() != nil ||
+		c.isExpandoPropertyFunctionWithReturnTypeAnnotation(node)
+}
+
+func (c *Checker) isExpandoPropertyFunctionWithReturnTypeAnnotation(node *ast.Node) bool {
+	if ast.IsBinaryExpression(node) {
+		if expr := node.AsBinaryExpression().Right; ast.IsFunctionLike(expr) && expr.Type() != nil {
+			return true
+		}
+	}
+	return false
 }
 
 func (c *Checker) hasTypePredicateOrNeverReturnType(sig *Signature) bool {

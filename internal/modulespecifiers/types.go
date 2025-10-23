@@ -68,7 +68,7 @@ type ModuleSpecifierGenerationHost interface {
 type ImportModuleSpecifierPreference string
 
 const (
-	ImportModuleSpecifierPreferenceNone            ImportModuleSpecifierPreference = ""
+	ImportModuleSpecifierPreferenceNone            ImportModuleSpecifierPreference = "" // !!!
 	ImportModuleSpecifierPreferenceShortest        ImportModuleSpecifierPreference = "shortest"
 	ImportModuleSpecifierPreferenceProjectRelative ImportModuleSpecifierPreference = "project-relative"
 	ImportModuleSpecifierPreferenceRelative        ImportModuleSpecifierPreference = "relative"
@@ -78,7 +78,7 @@ const (
 type ImportModuleSpecifierEndingPreference string
 
 const (
-	ImportModuleSpecifierEndingPreferenceNone    ImportModuleSpecifierEndingPreference = ""
+	ImportModuleSpecifierEndingPreferenceNone    ImportModuleSpecifierEndingPreference = "" // !!!
 	ImportModuleSpecifierEndingPreferenceAuto    ImportModuleSpecifierEndingPreference = "auto"
 	ImportModuleSpecifierEndingPreferenceMinimal ImportModuleSpecifierEndingPreference = "minimal"
 	ImportModuleSpecifierEndingPreferenceIndex   ImportModuleSpecifierEndingPreference = "index"
@@ -86,9 +86,9 @@ const (
 )
 
 type UserPreferences struct {
-	ImportModuleSpecifierPreference       ImportModuleSpecifierPreference
-	ImportModuleSpecifierEndingPreference ImportModuleSpecifierEndingPreference
-	AutoImportSpecifierExcludeRegexes     []string
+	ImportModuleSpecifierPreference   ImportModuleSpecifierPreference
+	ImportModuleSpecifierEnding       ImportModuleSpecifierEndingPreference
+	AutoImportSpecifierExcludeRegexes []string
 }
 
 type ModuleSpecifierOptions struct {
