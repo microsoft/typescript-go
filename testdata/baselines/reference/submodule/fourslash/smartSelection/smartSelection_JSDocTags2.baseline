@@ -1,0 +1,10 @@
+// === Smart Selection ===
+/**
+ * @type {/**/string}
+ */
+const foo;
+
+/**
+ * @type {string}
+ */
+const foo;

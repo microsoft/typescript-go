@@ -1,0 +1,14 @@
+// === Smart Selection ===
+/**
+ * @constructor
+ * @param {/**/number} data
+ */
+function Foo(data) {
+}
+
+/**
+ * @constructor
+ * @param {number} data
+ */
+function Foo(data) {
+}

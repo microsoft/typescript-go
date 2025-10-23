@@ -1,0 +1,30 @@
+// === Smart Selection ===
+/**
+ * @this {/**/Foo}
+ * @param {*} e
+ */
+function callback(e) {
+}
+
+/**
+ * @this {Foo}
+ * @param {*} e
+ */
+function callback(e) {
+}
+
+================================================================================
+
+/**
+ * @this {Foo}
+ * @param {/**/*} e
+ */
+function callback(e) {
+}
+
+/**
+ * @this {Foo}
+ * @param {*} e
+ */
+function callback(e) {
+}

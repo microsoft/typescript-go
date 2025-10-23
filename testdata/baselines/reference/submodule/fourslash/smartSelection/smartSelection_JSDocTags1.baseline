@@ -1,0 +1,10 @@
+// === Smart Selection ===
+/**
+ * @returns {Array<{ value: /**/string }>}
+ */
+function foo() { return [] }
+
+/**
+ * @returns {Array<{ value: string }>}
+ */
+function foo() { return [] }

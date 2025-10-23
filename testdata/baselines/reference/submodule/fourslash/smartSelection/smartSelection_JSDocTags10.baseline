@@ -1,0 +1,14 @@
+// === Smart Selection ===
+/**
+ * @template T
+ * @extends {/**/Set<T>}
+ */
+class A extends B {
+}
+
+/**
+ * @template T
+ * @extends {Set<T>}
+ */
+class A extends B {
+}

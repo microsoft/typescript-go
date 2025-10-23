@@ -1,0 +1,9 @@
+--- old.smartSelection_comment2.baseline
++++ new.smartSelection_comment2.baseline
+@@= skipped -0, +0 lines =@@
+ // === Smart Selection ===
+ const a = 1; //a b/**/c d
+
+-               a bc d
+-             //a bc d
+ const a = 1; //a bc d

@@ -1,0 +1,19 @@
+// === Smart Selection ===
+/**
+ * @typedef {object} Foo
+ * @property {string} a
+ * @property {number} b
+ * @property {/**/number} c
+ */
+
+/** @type {Foo} */
+const foo;
+
+/**
+ * @typedef {object} Foo
+ * @property {string} a
+ * @property {number} b
+ * @property {number} c
+ */
+/** @type {Foo} */
+const foo;

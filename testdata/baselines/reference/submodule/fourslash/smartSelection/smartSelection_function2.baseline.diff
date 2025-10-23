@@ -1,0 +1,14 @@
+--- old.smartSelection_function2.baseline
++++ new.smartSelection_function2.baseline
+@@= skipped -2, +2 lines =@@
+     /**/
+ }
+
+-
+               {
+     
+ }
+-
+ function f2() {
+     
+ }

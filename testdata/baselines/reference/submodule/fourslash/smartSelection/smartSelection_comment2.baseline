@@ -1,0 +1,4 @@
+// === Smart Selection ===
+const a = 1; //a b/**/c d
+
+const a = 1; //a bc d

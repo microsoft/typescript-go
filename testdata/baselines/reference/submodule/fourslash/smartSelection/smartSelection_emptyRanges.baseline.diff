@@ -1,0 +1,133 @@
+--- old.smartSelection_emptyRanges.baseline
++++ new.smartSelection_emptyRanges.baseline
+@@= skipped -6, +6 lines =@@
+   }
+ }
+
+-
+-                    )  
+-
+-
+   componentDidMount() {
+     if (this.props.username) {
+       return '';
+     }
+-  }
+-
+-
+-                ↲
+-••componentDidMount() {
+-    if (this.props.username) {
+-      return '';
+-    }
+   }↲
+-
+-
+ class HomePage {
+   componentDidMount() {
+     if (this.props.username) {
+@@= skipped -37, +23 lines =@@
+   }
+ }
+
+-
+-                   username   
+-
+-
+-        this.props.username   
+-
+-
+     if (this.props.username) {
+-      return '';
+-    }
+-
+-
+-                       ↲
+-••••if (this.props.username) {
+       return '';
+     }↲
+-•• 
+-
+-
+                       {
+     if (this.props.username) {
+       return '';
+     }
+-  }
+-
+-
++  }↲
+   componentDidMount() {
+     if (this.props.username) {
+       return '';
+     }
+-  }
+-
+-
+-                ↲
+-••componentDidMount() {
+-    if (this.props.username) {
+-      return '';
+-    }
+   }↲
+-
+-
+ class HomePage {
+   componentDidMount() {
+     if (this.props.username) {
+@@= skipped -59, +31 lines =@@
+   }
+ }
+
+-
+-             '' 
+-
+-
+-      return '';
+-
+-
+-                              ↲
+-••••••return '';↲
+-•••• 
+-
+-
++             '' ↲
++      return '';↲
+     if (this.props.username) {
+-      return '';
+-    }
+-
+-
+-                       ↲
+-••••if (this.props.username) {
+       return '';
+     }↲
+-•• 
+-
+-
+                       {
+     if (this.props.username) {
+       return '';
+     }
+-  }
+-
+-
++  }↲
+   componentDidMount() {
+     if (this.props.username) {
+       return '';
+     }
+-  }
+-
+-
+-                ↲
+-••componentDidMount() {
+-    if (this.props.username) {
+-      return '';
+-    }
+   }↲
+-
+-
+ class HomePage {
+   componentDidMount() {
+     if (this.props.username) {

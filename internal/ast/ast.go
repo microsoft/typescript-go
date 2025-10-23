@@ -8706,6 +8706,10 @@ func (node *TemplateHead) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewTemplateHead(node.Text, node.RawText, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsTemplateHead(node *Node) bool {
+	return node.Kind == KindTemplateHead
+}
+
 // TemplateMiddle
 
 type TemplateMiddle struct {
@@ -8726,6 +8730,10 @@ func (node *TemplateMiddle) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewTemplateMiddle(node.Text, node.RawText, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsTemplateMiddle(node *Node) bool {
+	return node.Kind == KindTemplateMiddle
+}
+
 // TemplateTail
 
 type TemplateTail struct {
@@ -8744,6 +8752,14 @@ func (f *NodeFactory) NewTemplateTail(text string, rawText string, templateFlags
 
 func (node *TemplateTail) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewTemplateTail(node.Text, node.RawText, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsTemplateTail(node *Node) bool {
+	return node.Kind == KindTemplateTail
+}
+
+func IsTemplateMiddleOrTemplateTail(node *Node) bool {
+	return node.Kind == KindTemplateMiddle || node.Kind == KindTemplateTail
 }
 
 // TemplateLiteralTypeNode
@@ -9428,6 +9444,10 @@ func (node *SyntaxList) ForEachChild(v Visitor) bool {
 
 func (node *SyntaxList) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewSyntaxList(node.Children), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsSyntaxList(node *Node) bool {
+	return node.Kind == KindSyntaxList
 }
 
 /// JSDoc ///
