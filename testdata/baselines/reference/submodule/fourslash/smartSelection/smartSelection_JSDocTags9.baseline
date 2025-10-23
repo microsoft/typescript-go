@@ -5,6 +5,9 @@ const Foo = {
     y: 1,
 };
 
+          {number}•  ↲
+    @enum {number}•  ↲
+/** @enum {number} */↲
 
 /** @enum {number} */
 const Foo = {

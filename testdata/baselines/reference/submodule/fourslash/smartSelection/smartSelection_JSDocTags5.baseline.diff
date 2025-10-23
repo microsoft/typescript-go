@@ -1,21 +1,15 @@
 --- old.smartSelection_JSDocTags5.baseline
 +++ new.smartSelection_JSDocTags5.baseline
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
+ /** @type {Foo} */
  const foo = s => !(s.length % 2);
 
-
+-
 -           number                   
 -
--
--   @param {number} [index] - comment
--
--
--/**
-- * @callback Foo
-- * @param {string} data
-- * @param {number} [index] - comment
-- * @return {boolean}
-- */
++           number                   ↲
+
+    @param {number} [index] - comment
 -
 -
 -/**
@@ -25,6 +19,33 @@
 - * @return {boolean}
 - */
 -
+-
+-/**
+- * @callback Foo
+- * @param {string} data
+- * @param {number} [index] - comment
+- * @return {boolean}
+- */
+-
++ *•                 ↲
++
++   @param {string} data
++ * @param {number} [index] - comment
++ *•                 ↲
++
++   @callback Foo
++ * @param {string} data
++ * @param {number} [index] - comment
++ * @return {boolean}↲
++•  ↲
++
++/**
++ * @callback Foo
++ * @param {string} data
++ * @param {number} [index] - comment
++ * @return {boolean}
++ */↲
++
 +/**
 + * @callback Foo
 + * @param {string} data

@@ -1,9 +1,10 @@
 --- old.smartSelection_JSDocTags1.baseline
 +++ new.smartSelection_JSDocTags1.baseline
-@@= skipped -4, +4 lines =@@
+@@= skipped -3, +3 lines =@@
+  */
  function foo() { return [] }
 
-
+-
 -                            string    
 -
 -
@@ -15,16 +16,21 @@
 -
 -             Array<{ value: string }> 
 -
--
--   @returns {Array<{ value: string }>}↲
++                            string    ↲
++                     value: string    ↲
++                   { value: string }  ↲
++             Array<{ value: string }> ↲
+
+    @returns {Array<{ value: string }>}↲
 -•  
 -
--
--/**
-- * @returns {Array<{ value: string }>}
-- */
--
--
++•  ↲
+
  /**
   * @returns {Array<{ value: string }>}
-  */
+- */
+-
++ */↲
+
+ /**
+  * @returns {Array<{ value: string }>}

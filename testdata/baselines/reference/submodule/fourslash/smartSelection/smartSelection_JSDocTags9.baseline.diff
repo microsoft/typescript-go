@@ -1,9 +1,10 @@
 --- old.smartSelection_JSDocTags9.baseline
 +++ new.smartSelection_JSDocTags9.baseline
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
+     y: 1,
  };
 
-
+-
 -           number    
 -
 -
@@ -12,7 +13,9 @@
 -
 -/** @enum {number} */
 -
--
++          {number}•  ↲
++    @enum {number}•  ↲
++/** @enum {number} */↲
+
  /** @enum {number} */
  const Foo = {
-     x: 0,

@@ -4,6 +4,14 @@
  */
 function foo(x) {}
 
+           string   ↲
+
+   @param {string} x↲
+•  ↲
+
+/**
+ * @param {string} x
+ */↲
 
 /**
  * @param {string} x

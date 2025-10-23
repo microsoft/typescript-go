@@ -4,6 +4,14 @@
  */
 const foo;
 
+          string ↲
+
+   @type {string}↲
+•  ↲
+
+/**
+ * @type {string}
+ */↲
 
 /**
  * @type {string}

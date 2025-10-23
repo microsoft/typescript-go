@@ -1,9 +1,10 @@
 --- old.smartSelection_JSDocTags4.baseline
 +++ new.smartSelection_JSDocTags4.baseline
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
+ /** @type {Foo} */
  const foo;
 
-
+-
 -              number   
 -
 -
@@ -25,6 +26,24 @@
 - * @property {number} c
 - */
 -
++              number   ↲
++
++   @property {number} c↲
++•  ↲
++
++   @typedef {object} Foo
++ * @property {string} a
++ * @property {number} b
++ * @property {number} c↲
++•  ↲
++
++/**
++ * @typedef {object} Foo
++ * @property {string} a
++ * @property {number} b
++ * @property {number} c
++ */↲
++
 +/**
 + * @typedef {object} Foo
 + * @property {string} a

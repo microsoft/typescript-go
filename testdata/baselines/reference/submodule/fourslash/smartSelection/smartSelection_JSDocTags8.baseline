@@ -6,6 +6,19 @@
 function callback(e) {
 }
 
+          Foo ↲
+
+   @this {Foo}
+ *•            ↲
+
+   @this {Foo}
+ * @param {*} e↲
+•  ↲
+
+/**
+ * @this {Foo}
+ * @param {*} e
+ */↲
 
 /**
  * @this {Foo}
@@ -23,6 +36,19 @@ function callback(e) {
 function callback(e) {
 }
 
+           *   ↲
+
+   @param {*} e↲
+•  ↲
+
+   @this {Foo}
+ * @param {*} e↲
+•  ↲
+
+/**
+ * @this {Foo}
+ * @param {*} e
+ */↲
 
 /**
  * @this {Foo}
