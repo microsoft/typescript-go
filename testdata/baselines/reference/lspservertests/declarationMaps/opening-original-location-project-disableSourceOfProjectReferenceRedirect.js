@@ -92,11 +92,6 @@ Config::
       /user/username/projects/b/tsconfig.json  
     RetainingOpenFiles:
       /user/username/projects/b/b.ts  
-// === /user/username/projects/a/a.d.ts ===
-// export declare class [|A|] {
-// }
-// //# sourceMappingURL=a.d.ts.map
-
 // === /user/username/projects/a/a.ts ===
 // export class [|A|] { }
 
