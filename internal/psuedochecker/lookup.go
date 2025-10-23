@@ -267,40 +267,20 @@ func (ch *PsuedoChecker) typeFromExpression(node *ast.Node) *PsuedoType {
 	case ast.KindClassExpression:
 		return NewPsuedoTypeInferred(node) // No possible annotation/directly mappable syntax
 	case ast.KindTemplateExpression:
-		if ch.isInConstContext(node) {
-			return NewPsuedoTypeInferred(node) // templateLitWithHoles as const, not supported
-		}
-		return PsuedoTypeString
+		// templateLitWithHoles as const, not supported
+		return NewPsuedoTypeMaybeConstLocation(node, NewPsuedoTypeInferred(node), PsuedoTypeString)
 	case ast.KindNumericLiteral:
-		if ch.isInConstContext(node) {
-			return NewPsuedoTypeNumericLiteral(node)
-		}
-		return PsuedoTypeNumber
+		return NewPsuedoTypeMaybeConstLocation(node, NewPsuedoTypeNumericLiteral(node), PsuedoTypeNumber)
 	case ast.KindNoSubstitutionTemplateLiteral:
-		if ch.isInConstContext(node) {
-			return NewPsuedoTypeStringLiteral(node)
-		}
-		return PsuedoTypeString
+		return NewPsuedoTypeMaybeConstLocation(node, NewPsuedoTypeStringLiteral(node), PsuedoTypeString)
 	case ast.KindStringLiteral:
-		if ch.isInConstContext(node) {
-			return NewPsuedoTypeStringLiteral(node)
-		}
-		return PsuedoTypeString
+		return NewPsuedoTypeMaybeConstLocation(node, NewPsuedoTypeStringLiteral(node), PsuedoTypeString)
 	case ast.KindBigIntLiteral:
-		if ch.isInConstContext(node) {
-			return NewPsuedoTypeBigIntLiteral(node)
-		}
-		return PsuedoTypeBigInt
+		return NewPsuedoTypeMaybeConstLocation(node, NewPsuedoTypeBigIntLiteral(node), PsuedoTypeBigInt)
 	case ast.KindTrueKeyword:
-		if ch.isInConstContext(node) {
-			return PsuedoTypeTrue
-		}
-		return PsuedoTypeBoolean
+		return NewPsuedoTypeMaybeConstLocation(node, PsuedoTypeTrue, PsuedoTypeBoolean)
 	case ast.KindFalseKeyword:
-		if ch.isInConstContext(node) {
-			return PsuedoTypeFalse
-		}
-		return PsuedoTypeBoolean
+		return NewPsuedoTypeMaybeConstLocation(node, PsuedoTypeFalse, PsuedoTypeBoolean)
 	}
 	return NewPsuedoTypeInferred(node)
 }
@@ -462,16 +442,10 @@ func (ch *PsuedoChecker) isInConstContext(node *ast.Node) bool {
 func (ch *PsuedoChecker) typeFromPrimitiveLiteralPrefix(node *ast.PrefixUnaryExpression) *PsuedoType {
 	inner := node.Operand
 	if inner.Kind == ast.KindBigIntLiteral {
-		if ch.isInConstContext(node.AsNode()) {
-			return NewPsuedoTypeBigIntLiteral(node.AsNode())
-		}
-		return PsuedoTypeBigInt
+		return NewPsuedoTypeMaybeConstLocation(node.AsNode(), NewPsuedoTypeBigIntLiteral(node.AsNode()), PsuedoTypeBigInt)
 	}
 	if inner.Kind == ast.KindNumericLiteral {
-		if ch.isInConstContext(node.AsNode()) {
-			return NewPsuedoTypeNumericLiteral(node.AsNode())
-		}
-		return PsuedoTypeNumber
+		return NewPsuedoTypeMaybeConstLocation(node.AsNode(), NewPsuedoTypeNumericLiteral(node.AsNode()), PsuedoTypeNumber)
 	}
 	debug.FailBadSyntaxKind(inner)
 	return nil

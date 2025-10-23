@@ -23,6 +23,23 @@ func (b *nodeBuilderImpl) psuedoTypeToNode(t *psuedochecker.PsuedoType) *ast.Nod
 		node := t.Data.(*psuedochecker.PsuedoTypeNoResult).Declaration
 		b.ctx.tracker.ReportInferenceFallback(node)
 		return b.serializeTypeForDeclaration(node, nil, nil, false)
+	case psuedochecker.PsuedoTypeKindMaybeConstLocation:
+		d := t.Data.(*psuedochecker.PsuedoTypeMaybeConstLocation)
+		// see checkExpressionWithContextualType for general literal widening rules which need to be emulated here, plus
+		// checkTemplateLiteralExpression for template literal widening rules if the psuedochecker ever supports literalized templates
+		isInConstContext := b.ch.isConstContext(d.Node)
+		if !isInConstContext {
+			contextualType := b.ch.getContextualType(d.Node, ContextFlagsNone)
+			t := b.psuedoTypeToType(d.ConstType)
+			if t != nil && b.ch.isLiteralOfContextualType(t, b.ch.instantiateContextualType(contextualType, d.Node, ContextFlagsNone)) {
+				isInConstContext = true
+			}
+		}
+		if isInConstContext {
+			return b.psuedoTypeToNode(d.ConstType)
+		} else {
+			return b.psuedoTypeToNode(d.RegularType)
+		}
 	case psuedochecker.PsuedoTypeKindUnion:
 		var res []*ast.Node
 		var hasElidedType bool
@@ -205,4 +222,73 @@ func (b *nodeBuilderImpl) psuedoParameterToNode(p *psuedochecker.PsuedoParameter
 		b.psuedoTypeToNode(p.Type),
 		nil,
 	)
+}
+
+func (b *nodeBuilderImpl) psuedoTypeToType(t *psuedochecker.PsuedoType) *Type {
+	// !!! TODO: only literal types currently mapped because this is only used to determine if literal contextual typing need apply to the psuedotype
+	// If this is used more broadly, the implementation needs to be filled out more to handle the structural psuedotypes - signatures, objects, tuples, etc
+	debug.Assert(t != nil, "Attempted to realize nil psuedotype")
+	switch t.Kind {
+	case psuedochecker.PsuedoTypeKindDirect:
+		return b.ch.getTypeFromTypeNode(t.Data.(*psuedochecker.PsuedoTypeDirect).TypeNode)
+	case psuedochecker.PsuedoTypeKindInferred:
+		node := t.Data.(*psuedochecker.PsuedoTypeInferred).Expression
+		ty := b.ch.getTypeOfExpression(node)
+		return ty
+	case psuedochecker.PsuedoTypeKindNoResult:
+		return nil // TODO: extract type selection logic from `serializeTypeForDeclaration`, not needed for current usecases but needed if completeness becomes required
+	case psuedochecker.PsuedoTypeKindMaybeConstLocation:
+		d := t.Data.(*psuedochecker.PsuedoTypeMaybeConstLocation)
+		return b.psuedoTypeToType(d.ConstType) // !!! TODO: not needed for const-checking usecases, but proper context switching behavior required if completeness is required
+	case psuedochecker.PsuedoTypeKindUnion:
+		var res []*Type
+		var hasElidedType bool
+		members := t.Data.(*psuedochecker.PsuedoTypeUnion).Types
+		for _, m := range members {
+			if !b.ch.strictNullChecks {
+				if m.Kind == psuedochecker.PsuedoTypeKindUndefined || m.Kind == psuedochecker.PsuedoTypeKindNull {
+					hasElidedType = true
+					continue
+				}
+			}
+			t := b.psuedoTypeToType(m)
+			if t == nil {
+				return nil // propagate failure
+			}
+			res = append(res, t)
+		}
+		if len(res) == 1 {
+			return res[0]
+		}
+		if len(res) == 0 {
+			if hasElidedType {
+				return b.ch.anyType
+			}
+			return b.ch.neverType
+		}
+		return b.ch.newUnionType(ObjectFlagsNone, res)
+	case psuedochecker.PsuedoTypeKindUndefined:
+		return b.ch.undefinedWideningType
+	case psuedochecker.PsuedoTypeKindNull:
+		return b.ch.nullWideningType
+	case psuedochecker.PsuedoTypeKindAny:
+		return b.ch.anyType
+	case psuedochecker.PsuedoTypeKindString:
+		return b.ch.stringType
+	case psuedochecker.PsuedoTypeKindNumber:
+		return b.ch.numberType
+	case psuedochecker.PsuedoTypeKindBigInt:
+		return b.ch.bigintType
+	case psuedochecker.PsuedoTypeKindBoolean:
+		return b.ch.booleanType
+	case psuedochecker.PsuedoTypeKindFalse:
+		return b.ch.falseType
+	case psuedochecker.PsuedoTypeKindTrue:
+		return b.ch.trueType
+	case psuedochecker.PsuedoTypeKindStringLiteral, psuedochecker.PsuedoTypeKindNumericLiteral, psuedochecker.PsuedoTypeKindBigIntLiteral:
+		source := t.Data.(*psuedochecker.PsuedoTypeLiteral).Node
+		return b.ch.getTypeOfExpression(source) // big shortcut, uses cached expression types where possible
+	default:
+		return nil
+	}
 }

@@ -2018,13 +2018,13 @@ func (b *nodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 	// !!! expandable hover support
 	if tryReuse && declaration != nil && (ast.IsAccessor(declaration) || (ast.HasInferredType(declaration) && !ast.NodeIsSynthesized(declaration) && (t.ObjectFlags()&ObjectFlagsRequiresWidening) == 0)) {
 		remove := b.addSymbolTypeToContext(symbol, t)
+		var pt *psuedochecker.PsuedoType
 		if ast.IsAccessor(declaration) {
-			pt := b.pc.GetTypeOfAccessor(declaration)
-			result = b.psuedoTypeToNode(pt)
+			pt = b.pc.GetTypeOfAccessor(declaration)
 		} else {
-			pt := b.pc.GetTypeOfDeclaration(declaration)
-			result = b.psuedoTypeToNode(pt)
+			pt = b.pc.GetTypeOfDeclaration(declaration)
 		}
+		result = b.psuedoTypeToNode(pt)
 		remove()
 	}
 	if result == nil {

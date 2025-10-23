@@ -22,6 +22,7 @@ const (
 	PsuedoTypeKindDirect PsuedoTypeKind = iota
 	PsuedoTypeKindInferred
 	PsuedoTypeKindNoResult
+	PsuedoTypeKindMaybeConstLocation
 	PsuedoTypeKindUnion
 	PsuedoTypeKindUndefined
 	PsuedoTypeKindNull
@@ -110,6 +111,27 @@ type PsuedoTypeNoResult struct {
 
 func NewPsuedoTypeNoResult(decl *ast.Node) *PsuedoType {
 	return NewPsuedoType(PsuedoTypeKindNoResult, &PsuedoTypeNoResult{Declaration: decl})
+}
+
+// PsuedoTypeMaybeConstLocation encodes the const/regular types of a location so the builder
+// can later select the appropriate psuedotype based on the location's context. This is used
+// to ensure accuracy in nested expressions without exposing type-based functionality to the psuedochecker.
+// A nodebuilder that doesn't do contextual typing would need to, as policy, reject these types if they
+// are in a contextually typed position! (Otherwise they could pick one, but either type could be wrong, depending on context!)
+// At the top-level, which is generally what ID is concerned with, nothing is contextually typed, so these cases don't generally
+// cause problems. Once you get into reused nodes in nested expressions, however, this becomes important.
+// In strada, checker `isConstContext` functionality exposed to the psuedochecker + type comparison sanity checking
+// on nested results masks the need for this abstraction, but with it present it clearly highlights a shortcoming
+// of the ID infernce model and how "standalone" it can(n't) truly be without substantial restrictions on expression inference.
+type PsuedoTypeMaybeConstLocation struct {
+	PsuedoTypeBase
+	Node        *ast.Node
+	ConstType   *PsuedoType
+	RegularType *PsuedoType
+}
+
+func NewPsuedoTypeMaybeConstLocation(loc *ast.Node, ct *PsuedoType, reg *PsuedoType) *PsuedoType {
+	return NewPsuedoType(PsuedoTypeKindMaybeConstLocation, &PsuedoTypeMaybeConstLocation{Node: loc, ConstType: ct, RegularType: reg})
 }
 
 // PsuedoTypeUnion is a collection of psudotypes joined into a union
