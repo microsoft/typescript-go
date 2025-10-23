@@ -1427,7 +1427,7 @@ function parseBaselineSignatureHelp(args: ts.NodeArray<ts.Expression>): Cmd {
 function parseBaselineSmartSelection(args: ts.NodeArray<ts.Expression>): Cmd {
     if (args.length !== 0) {
         // All calls are currently empty!
-        throw new Error("Expected no arguments in verify.baselineSignatureHelp");
+        throw new Error("Expected no arguments in verify.baselineSmartSelection");
     }
     return {
         kind: "verifyBaselineSmartSelection",
@@ -1789,7 +1789,6 @@ function generateCmd(cmd: Cmd): string {
             return `f.VerifyRenameSucceeded(t, ${cmd.preferences})`;
         case "renameInfoFailed":
             return `f.VerifyRenameFailed(t, ${cmd.preferences})`;
-
         default:
             let neverCommand: never = cmd;
             throw new Error(`Unknown command kind: ${neverCommand as Cmd["kind"]}`);
