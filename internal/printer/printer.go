@@ -4380,7 +4380,7 @@ func (p *Printer) emitHelpers(node *ast.Node) bool {
 func (p *Printer) emitPrologueDirectivesAndDetachedComments(node *ast.SourceFile, shouldEmitDetached bool) (index int, state *commentState) {
 	index = 0
 	state = nil
-	
+
 	// When there are prologue directives and the first is synthesized, emit them first,
 	// then emit detached comments, then emit helpers. This matches TypeScript's behavior
 	// where writeFile calls emitPrologueDirectivesIfNeeded before emitSourceFile.
@@ -4403,7 +4403,7 @@ func (p *Printer) emitPrologueDirectivesAndDetachedComments(node *ast.SourceFile
 		// No prologue directives, just emit detached comments normally
 		state = p.emitDetachedCommentsBeforeStatementList(node.AsNode(), node.Statements.Loc)
 	}
-	
+
 	return index, state
 }
 
@@ -4414,7 +4414,6 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 
 	p.writeLine()
 
-	// Determine if detached comments should be emitted before helpers
 	shouldEmitDetached := p.shouldEmitDetachedComments(node.AsNode())
 
 	p.pushNameGenerationScope(node.AsNode())
@@ -4424,14 +4423,14 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 	var state *commentState
 	if node.ScriptKind != core.ScriptKindJSON {
 		p.emitShebangIfNeeded(node)
-		
+
 		index, state = p.emitPrologueDirectivesAndDetachedComments(node, shouldEmitDetached)
 		p.emitHelpers(node.AsNode())
-		
+
 		if !shouldEmitDetached {
 			index = p.emitPrologueDirectives(node.Statements)
 		}
-		
+
 		if node.IsDeclarationFile {
 			p.emitTripleSlashDirectives(node)
 		}
