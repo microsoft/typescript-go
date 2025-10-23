@@ -110,13 +110,6 @@ Config::
 // export interface IfaceA {}
 // export const instanceA: IfaceA = {};
 
-// === /home/src/projects/project/a/bin/a.d.ts ===
-// export declare function [|fnA|](): void;
-// export interface IfaceA {
-// }
-// export declare const instanceA: IfaceA;
-// //# sourceMappingURL=a.d.ts.map
-
 // === /home/src/projects/project/user/user.ts ===
 // import * as a from "../a/bin/a";
 // import * as b from "../b/bin/b";

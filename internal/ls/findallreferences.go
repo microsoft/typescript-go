@@ -104,7 +104,8 @@ type ReferenceEntry struct {
 	node      *ast.Node
 	context   *ast.Node // !!! ContextWithStartAndEndNode, optional
 	fileName  string
-	textRange *lsproto.Range
+	textRange *core.TextRange
+	lspRange  *lsproto.Location
 }
 
 func (entry *SymbolAndEntries) canUseDefinitionSymbol() bool {
@@ -126,29 +127,29 @@ func (entry *SymbolAndEntries) canUseDefinitionSymbol() bool {
 }
 
 func (l *LanguageService) getRangeOfEntry(entry *ReferenceEntry) *lsproto.Range {
-	return l.resolveEntry(entry).textRange
+	return &l.resolveEntry(entry).lspRange.Range
 }
 
-func (l *LanguageService) getFileNameOfEntry(entry *ReferenceEntry) string {
-	return l.resolveEntry(entry).fileName
+func (l *LanguageService) getFileNameOfEntry(entry *ReferenceEntry) lsproto.DocumentUri {
+	return l.resolveEntry(entry).lspRange.Uri
+}
+
+func (l *LanguageService) getLocationOfEntry(entry *ReferenceEntry) *lsproto.Location {
+	return l.resolveEntry(entry).lspRange
 }
 
 func (l *LanguageService) resolveEntry(entry *ReferenceEntry) *ReferenceEntry {
 	if entry.textRange == nil {
 		sourceFile := ast.GetSourceFileOfNode(entry.node)
-		entry.textRange = l.getLspRangeOfNode(entry.node, sourceFile, nil /*endNode*/)
+		textRange := getRangeOfNode(entry.node, sourceFile, nil /*endNode*/)
+		entry.textRange = &textRange
 		entry.fileName = sourceFile.FileName()
 	}
-	return entry
-}
-
-func (l *LanguageService) newRangeEntry(file *ast.SourceFile, start, end int) *ReferenceEntry {
-	// !!! used in not-yet implemented features
-	return &ReferenceEntry{
-		kind:      entryKindRange,
-		fileName:  file.FileName(),
-		textRange: l.createLspRangeFromBounds(start, end, file),
+	if entry.lspRange == nil {
+		location := l.getMappedLocation(entry.fileName, *entry.textRange)
+		entry.lspRange = &location
 	}
+	return entry
 }
 
 func newNodeEntryWithKind(node *ast.Node, kind entryKind) *ReferenceEntry {
@@ -284,10 +285,9 @@ func (l *LanguageService) getLspRangeOfNode(node *ast.Node, sourceFile *ast.Sour
 		sourceFile = ast.GetSourceFileOfNode(node)
 	}
 	textRange := getRangeOfNode(node, sourceFile, endNode)
-	return l.createLspRangeFromRange(textRange, sourceFile)
+	return l.createLspRangeFromBounds(textRange.Pos(), textRange.End(), sourceFile)
 }
 
-// `getTextSpan`
 func getRangeOfNode(node *ast.Node, sourceFile *ast.SourceFile, endNode *ast.Node) core.TextRange {
 	if sourceFile == nil {
 		sourceFile = ast.GetSourceFileOfNode(node)
@@ -447,9 +447,9 @@ func (nld *position) TextDocumentPosition() lsproto.Position { return nld.pos }
 func getFileAndStartPosFromDeclaration(declaration *ast.Node) (*ast.SourceFile, core.TextPos) {
 	file := ast.GetSourceFileOfNode(declaration)
 	name := core.OrElse(ast.GetNameOfDeclaration(declaration), declaration)
-	startPos := getStartPosFromNode(name, file)
+	textRange := getRangeOfNode(name, file, nil /*endNode*/)
 
-	return file, startPos
+	return file, core.TextPos(textRange.Pos())
 }
 
 func (l *LanguageService) GetNonLocalDefinition(ctx context.Context, entry *SymbolAndEntries) lsproto.HasTextDocumentPosition {
@@ -575,7 +575,7 @@ func (l *LanguageService) ProvideRenameFromSymbolAndEntries(ctx context.Context,
 	checker, done := program.GetTypeChecker(ctx)
 	defer done()
 	for _, entry := range entries {
-		uri := lsconv.FileNameToDocumentURI(l.getFileNameOfEntry(entry))
+		uri := l.getFileNameOfEntry(entry)
 		textEdit := &lsproto.TextEdit{
 			Range:   *l.getRangeOfEntry(entry),
 			NewText: l.getTextForRename(originalNode, entry, params.NewName, checker),
@@ -645,10 +645,7 @@ func (l *LanguageService) convertSymbolAndEntriesToLocations(s *SymbolAndEntries
 func (l *LanguageService) convertEntriesToLocations(entries []*ReferenceEntry) []lsproto.Location {
 	locations := make([]lsproto.Location, len(entries))
 	for i, entry := range entries {
-		locations[i] = lsproto.Location{
-			Uri:   lsconv.FileNameToDocumentURI(l.getFileNameOfEntry(entry)),
-			Range: *l.getRangeOfEntry(entry),
-		}
+		locations[i] = *l.getLocationOfEntry(entry)
 	}
 	return locations
 }
@@ -1174,7 +1171,7 @@ func (l *LanguageService) getReferencedSymbolsForModule(ctx context.Context, pro
 			return &ReferenceEntry{
 				kind:      entryKindRange,
 				fileName:  reference.referencingFile.FileName(),
-				textRange: l.createLspRangeFromBounds(reference.ref.Pos(), reference.ref.End(), reference.referencingFile),
+				textRange: &reference.ref.TextRange,
 			}
 		}
 		return nil

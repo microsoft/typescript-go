@@ -109,9 +109,3 @@ Config::
 // export class [|B|] {
 //     M() {}
 // }
-
-// === /user/username/projects/myproject/b/lib/index.d.ts ===
-// export declare class [|B|] {
-//     M(): void;
-// }
-// //# sourceMappingURL=index.d.ts.map
