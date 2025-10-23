@@ -6,6 +6,7 @@
 class A extends B {
 }
 
+
 /**
  * @template T
  * @extends {Set<T>}

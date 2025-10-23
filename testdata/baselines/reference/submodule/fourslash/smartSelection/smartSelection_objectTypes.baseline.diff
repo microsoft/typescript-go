@@ -10,9 +10,9 @@
 -
 -  foo?         
 -
--
 +  foo          ↲
 +  foo?: string;↲
+
    foo?: string;
 -
 -
@@ -21,17 +21,10 @@
    readonly bar: { x: number };
    meh↲
 -
--
+
           {
    foo?: string;
-   readonly bar: { x: number };
-   meh
- }
--
- type X = {
-   foo?: string;
-   readonly bar: { x: number };
-@@= skipped -36, +24 lines =@@
+@@= skipped -36, +27 lines =@@
    meh
  }
 
@@ -49,21 +42,15 @@
 -••foo?: string;
 +  readonly                    ↲
 +  readonly bar: { x: number };↲
++
 +  foo?: string;
    readonly bar: { x: number };
    meh↲
 -
--
+
           {
    foo?: string;
-   readonly bar: { x: number };
-   meh
- }
--
- type X = {
-   foo?: string;
-   readonly bar: { x: number };
-@@= skipped -36, +24 lines =@@
+@@= skipped -36, +27 lines =@@
    meh
  }
 
@@ -81,21 +68,15 @@
 -••foo?: string;
 +           bar                ↲
 +  readonly bar: { x: number };↲
++
 +  foo?: string;
    readonly bar: { x: number };
    meh↲
 -
--
+
           {
    foo?: string;
-   readonly bar: { x: number };
-   meh
- }
--
- type X = {
-   foo?: string;
-   readonly bar: { x: number };
-@@= skipped -36, +24 lines =@@
+@@= skipped -36, +27 lines =@@
    meh
  }
 
@@ -118,21 +99,15 @@
 +                  x: number   ↲
 +                { x: number } ↲
 +  readonly bar: { x: number };↲
++
 +  foo?: string;
    readonly bar: { x: number };
    meh↲
 -
--
+
           {
    foo?: string;
-   readonly bar: { x: number };
-   meh
- }
--
- type X = {
-   foo?: string;
-   readonly bar: { x: number };
-@@= skipped -39, +26 lines =@@
+@@= skipped -39, +29 lines =@@
    /**/meh
  }
 
@@ -143,17 +118,11 @@
 -          ↲
 -••foo?: string;
 +  meh↲
++
 +  foo?: string;
    readonly bar: { x: number };
    meh↲
 -
--
+
           {
    foo?: string;
-   readonly bar: { x: number };
-   meh
- }
--
- type X = {
-   foo?: string;
-   readonly bar: { x: number };

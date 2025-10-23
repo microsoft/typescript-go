@@ -1,10 +1,9 @@
 --- old.smartSelection_JSDocTags3.baseline
 +++ new.smartSelection_JSDocTags3.baseline
-@@= skipped -3, +3 lines =@@
-  */
+@@= skipped -4, +4 lines =@@
  function foo(x) {}
 
--
+
 -           string   
 -
 -

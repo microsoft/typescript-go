@@ -5,6 +5,7 @@ const Foo = {
     y: 1,
 };
 
+
 /** @enum {number} */
 const Foo = {
     x: 0,

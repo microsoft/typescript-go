@@ -24,10 +24,11 @@
 +       host: number                           ↲
 +       host: number, data: any                ↲
 +  open(host: number, data: any): Promise<any>;↲
++
 +  _serviceBrand: any;
    open(host: number, data: any): Promise<any>;
    bar(): void↲
--
+
 -
  export interface IService {
    _serviceBrand: any;
@@ -35,11 +36,10 @@
    open(host: number, data: any): Promise<any>;
    bar(): void
  }
-@@= skipped -36, +22 lines =@@
-   bar(): void/**/
+@@= skipped -37, +25 lines =@@
  }
 
--
+
 -         void
 -
 -

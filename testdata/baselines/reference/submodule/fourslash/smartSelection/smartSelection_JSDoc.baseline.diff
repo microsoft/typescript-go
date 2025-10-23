@@ -15,14 +15,8 @@
 -/**
 - * @param {number} x The number to square
 - */
--function square(x) {
--  return x * x;
--}
--
 +         square     ↲
-+function square(x) {
-+  return x * x;
-+}
- // Not a JSDoc comment
- /**
-  * @param {number} x The number to square
++
+ function square(x) {
+   return x * x;
+ }

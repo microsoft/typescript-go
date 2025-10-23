@@ -4,6 +4,7 @@
  */
 function foo(x) {}
 
+
 /**
  * @param {string} x
  */

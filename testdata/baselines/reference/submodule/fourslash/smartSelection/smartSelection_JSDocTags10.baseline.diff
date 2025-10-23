@@ -1,10 +1,9 @@
 --- old.smartSelection_JSDocTags10.baseline
 +++ new.smartSelection_JSDocTags10.baseline
-@@= skipped -5, +5 lines =@@
- class A extends B {
+@@= skipped -6, +6 lines =@@
  }
 
--
+
 -             Set    
 -
 -

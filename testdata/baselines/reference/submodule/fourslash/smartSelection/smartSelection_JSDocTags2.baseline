@@ -4,6 +4,7 @@
  */
 const foo;
 
+
 /**
  * @type {string}
  */

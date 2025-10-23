@@ -7,14 +7,17 @@ type Foo = {
 
   readonly                ↲
   readonly status: number;↲
+
            {
   /** comment */
   readonly status: number;
 } 
+
 type Foo = {
   /** comment */
   readonly status: number;
 };
+
 const x = 1;
 type Foo = {
   /** comment */
@@ -31,14 +34,17 @@ type Foo = {
 
            status         ↲
   readonly status: number;↲
+
            {
   /** comment */
   readonly status: number;
 } 
+
 type Foo = {
   /** comment */
   readonly status: number;
 };
+
 const x = 1;
 type Foo = {
   /** comment */

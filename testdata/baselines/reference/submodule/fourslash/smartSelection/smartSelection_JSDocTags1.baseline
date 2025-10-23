@@ -4,6 +4,7 @@
  */
 function foo() { return [] }
 
+
 /**
  * @returns {Array<{ value: string }>}
  */

@@ -1,10 +1,9 @@
 --- old.smartSelection_JSDocTags4.baseline
 +++ new.smartSelection_JSDocTags4.baseline
-@@= skipped -8, +8 lines =@@
- /** @type {Foo} */
+@@= skipped -9, +9 lines =@@
  const foo;
 
--
+
 -              number   
 -
 -

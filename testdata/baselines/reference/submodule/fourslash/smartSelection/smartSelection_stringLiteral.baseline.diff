@@ -8,6 +8,5 @@
            'b' 
 -
  const b = 'b';
--
+
  const a = 'a';
- const b = 'b';

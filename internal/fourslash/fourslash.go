@@ -1339,7 +1339,7 @@ func (f *FourslashTest) VerifyBaselineSelectionRanges(t *testing.T) {
 
 		selectionRange := (*selectionRangeResult.SelectionRanges)[0]
 
-		// Add blank line before first range
+		// Add blank line after source code section
 		result.WriteString(newLine)
 
 		// Walk through the selection range chain
@@ -1350,7 +1350,6 @@ func (f *FourslashTest) VerifyBaselineSelectionRanges(t *testing.T) {
 			// Create a masked version of the file showing only this range
 			runes := []rune(fileContent)
 			masked := make([]rune, len(runes))
-
 			for i, ch := range runes {
 				if i >= start && i < end {
 					// Keep characters in the selection range
@@ -1422,6 +1421,11 @@ func (f *FourslashTest) VerifyBaselineSelectionRanges(t *testing.T) {
 				maskedStr = prefix + middle + suffix
 			}
 
+			// Add blank line before multi-line ranges
+			if strings.Contains(maskedStr, "\n") {
+				result.WriteString(newLine)
+			}
+
 			result.WriteString(maskedStr)
 			if !strings.HasSuffix(maskedStr, "\n") {
 				result.WriteString(newLine)
@@ -1430,7 +1434,6 @@ func (f *FourslashTest) VerifyBaselineSelectionRanges(t *testing.T) {
 			selectionRange = selectionRange.Parent
 		}
 	}
-
 	f.addResultToBaseline(t, "Smart Selection", strings.TrimSuffix(result.String(), "\n"))
 }
 

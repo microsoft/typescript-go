@@ -23,21 +23,10 @@
 +  readonly                ↲
    readonly status: number;↲
 -
--
+
             {
    /** comment */
-   readonly status: number;
- } 
--
- type Foo = {
-   /** comment */
-   readonly status: number;
- };
--
- const x = 1;
- type Foo = {
-   /** comment */
-@@= skipped -43, +24 lines =@@
+@@= skipped -43, +27 lines =@@
    readonly /**/status: number;
  };
 
@@ -60,17 +49,6 @@
 +           status         ↲
    readonly status: number;↲
 -
--
+
             {
-   /** comment */
-   readonly status: number;
- } 
--
- type Foo = {
-   /** comment */
-   readonly status: number;
- };
--
- const x = 1;
- type Foo = {
    /** comment */

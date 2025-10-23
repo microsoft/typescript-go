@@ -1,10 +1,9 @@
 --- old.smartSelection_emptyRanges.baseline
 +++ new.smartSelection_emptyRanges.baseline
-@@= skipped -6, +6 lines =@@
-   }
+@@= skipped -7, +7 lines =@@
  }
 
--
+
 -                    )  
 -
 -
@@ -22,15 +21,13 @@
 -    }
    }↲
 -
--
+
  class HomePage {
    componentDidMount() {
-     if (this.props.username) {
-@@= skipped -37, +23 lines =@@
-   }
+@@= skipped -37, +25 lines =@@
  }
 
--
+
 -                   username   
 -
 -
@@ -48,15 +45,15 @@
      }↲
 -•• 
 -
--
+
                        {
      if (this.props.username) {
        return '';
      }
 -  }
 -
--
 +  }↲
+
    componentDidMount() {
      if (this.props.username) {
        return '';
@@ -71,11 +68,10 @@
 -    }
    }↲
 -
--
+
  class HomePage {
    componentDidMount() {
-     if (this.props.username) {
-@@= skipped -59, +31 lines =@@
+@@= skipped -58, +34 lines =@@
    }
  }
 
@@ -90,9 +86,9 @@
 -••••••return '';↲
 -•••• 
 -
--
 +             '' ↲
 +      return '';↲
+
      if (this.props.username) {
 -      return '';
 -    }
@@ -104,15 +100,15 @@
      }↲
 -•• 
 -
--
+
                        {
      if (this.props.username) {
        return '';
      }
 -  }
 -
--
 +  }↲
+
    componentDidMount() {
      if (this.props.username) {
        return '';
@@ -127,7 +123,6 @@
 -    }
    }↲
 -
--
+
  class HomePage {
    componentDidMount() {
-     if (this.props.username) {

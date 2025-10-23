@@ -1,10 +1,9 @@
 --- old.smartSelection_JSDocTags6.baseline
 +++ new.smartSelection_JSDocTags6.baseline
-@@= skipped -7, +7 lines =@@
-     return x;
+@@= skipped -8, +8 lines =@@
  }
 
--
+
 -           T   
 -
 -

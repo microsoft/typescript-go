@@ -1,10 +1,9 @@
 --- old.smartSelection_JSDocTags9.baseline
 +++ new.smartSelection_JSDocTags9.baseline
-@@= skipped -4, +4 lines =@@
-     y: 1,
+@@= skipped -5, +5 lines =@@
  };
 
--
+
 -           number    
 -
 -

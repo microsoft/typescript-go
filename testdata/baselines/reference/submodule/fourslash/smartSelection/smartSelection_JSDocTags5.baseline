@@ -9,6 +9,7 @@
 /** @type {Foo} */
 const foo = s => !(s.length % 2);
 
+
 /**
  * @callback Foo
  * @param {string} data

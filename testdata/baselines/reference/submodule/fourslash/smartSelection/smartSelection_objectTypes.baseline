@@ -7,14 +7,17 @@ type X = {
 
   foo          ↲
   foo?: string;↲
+
   foo?: string;
   readonly bar: { x: number };
   meh↲
+
          {
   foo?: string;
   readonly bar: { x: number };
   meh
 }
+
 type X = {
   foo?: string;
   readonly bar: { x: number };
@@ -31,14 +34,17 @@ type X = {
 
   readonly                    ↲
   readonly bar: { x: number };↲
+
   foo?: string;
   readonly bar: { x: number };
   meh↲
+
          {
   foo?: string;
   readonly bar: { x: number };
   meh
 }
+
 type X = {
   foo?: string;
   readonly bar: { x: number };
@@ -55,14 +61,17 @@ type X = {
 
            bar                ↲
   readonly bar: { x: number };↲
+
   foo?: string;
   readonly bar: { x: number };
   meh↲
+
          {
   foo?: string;
   readonly bar: { x: number };
   meh
 }
+
 type X = {
   foo?: string;
   readonly bar: { x: number };
@@ -81,14 +90,17 @@ type X = {
                   x: number   ↲
                 { x: number } ↲
   readonly bar: { x: number };↲
+
   foo?: string;
   readonly bar: { x: number };
   meh↲
+
          {
   foo?: string;
   readonly bar: { x: number };
   meh
 }
+
 type X = {
   foo?: string;
   readonly bar: { x: number };
@@ -104,14 +116,17 @@ type X = {
 }
 
   meh↲
+
   foo?: string;
   readonly bar: { x: number };
   meh↲
+
          {
   foo?: string;
   readonly bar: { x: number };
   meh
 }
+
 type X = {
   foo?: string;
   readonly bar: { x: number };

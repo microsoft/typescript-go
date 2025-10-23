@@ -6,6 +6,7 @@
 function callback(e) {
 }
 
+
 /**
  * @this {Foo}
  * @param {*} e
@@ -21,6 +22,7 @@ function callback(e) {
  */
 function callback(e) {
 }
+
 
 /**
  * @this {Foo}

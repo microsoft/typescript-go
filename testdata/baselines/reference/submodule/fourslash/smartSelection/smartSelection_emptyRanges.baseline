@@ -7,11 +7,13 @@ class HomePage {
   }
 }
 
+
   componentDidMount() {
     if (this.props.username) {
       return '';
     }
   }↲
+
 class HomePage {
   componentDidMount() {
     if (this.props.username) {
@@ -30,19 +32,23 @@ class HomePage {
   }
 }
 
+
     if (this.props.username) {
       return '';
     }↲
+
                       {
     if (this.props.username) {
       return '';
     }
   }↲
+
   componentDidMount() {
     if (this.props.username) {
       return '';
     }
   }↲
+
 class HomePage {
   componentDidMount() {
     if (this.props.username) {
@@ -63,19 +69,23 @@ class HomePage {
 
              '' ↲
       return '';↲
+
     if (this.props.username) {
       return '';
     }↲
+
                       {
     if (this.props.username) {
       return '';
     }
   }↲
+
   componentDidMount() {
     if (this.props.username) {
       return '';
     }
   }↲
+
 class HomePage {
   componentDidMount() {
     if (this.props.username) {

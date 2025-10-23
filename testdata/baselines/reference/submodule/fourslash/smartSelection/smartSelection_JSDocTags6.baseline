@@ -8,6 +8,7 @@ function foo(x) {
     return x;
 }
 
+
 /**
  * @template T
  * @param {T} x

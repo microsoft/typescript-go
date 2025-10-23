@@ -7,9 +7,9 @@
 -
 -                   p0        
 -
--
 +                   p0        ↲
 +                   p0: number↲
+
                     p0: number
 -
 -
@@ -20,7 +20,7 @@
 -••••/** Comment */ p0: number
      /** Comment */ p1: number
      /** Comment */ p2: number↲
--
+
 -
         {
      /** Comment */ p0: number
@@ -28,20 +28,19 @@
      /** Comment */ p2: number
 -} 
 -
--
 +} ↲
+
  let b: {
      /** Comment */ p0: number
      /** Comment */ p1: number
      /** Comment */ p2: number
 -};
 -
--
 +};↲
+
  let a;
  let b: {
-     /** Comment */ p0: number
-@@= skipped -48, +33 lines =@@
+@@= skipped -48, +37 lines =@@
  };
  let c;
 
@@ -59,10 +58,11 @@
 -••••/** Comment */ p0: number
 +                   p1        ↲
 +                   p1: number↲
++
 +                   p0: number
      /** Comment */ p1: number
      /** Comment */ p2: number↲
--
+
 -
         {
      /** Comment */ p0: number
@@ -70,20 +70,19 @@
      /** Comment */ p2: number
 -} 
 -
--
 +} ↲
+
  let b: {
      /** Comment */ p0: number
      /** Comment */ p1: number
      /** Comment */ p2: number
 -};
 -
--
 +};↲
+
  let a;
  let b: {
-     /** Comment */ p0: number
-@@= skipped -48, +33 lines =@@
+@@= skipped -48, +37 lines =@@
  };
  let c;
 
@@ -101,10 +100,11 @@
 -••••/** Comment */ p0: number
 +                   p2        ↲
 +                   p2: number↲
++
 +                   p0: number
      /** Comment */ p1: number
      /** Comment */ p2: number↲
--
+
 -
         {
      /** Comment */ p0: number
@@ -112,16 +112,15 @@
      /** Comment */ p2: number
 -} 
 -
--
 +} ↲
+
  let b: {
      /** Comment */ p0: number
      /** Comment */ p1: number
      /** Comment */ p2: number
 -};
 -
--
 +};↲
+
  let a;
  let b: {
-     /** Comment */ p0: number

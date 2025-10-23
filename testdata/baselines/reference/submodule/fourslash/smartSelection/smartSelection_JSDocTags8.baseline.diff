@@ -1,10 +1,9 @@
 --- old.smartSelection_JSDocTags8.baseline
 +++ new.smartSelection_JSDocTags8.baseline
-@@= skipped -5, +5 lines =@@
- function callback(e) {
+@@= skipped -6, +6 lines =@@
  }
 
--
+
 -          Foo 
 -
 -
@@ -20,7 +19,7 @@
  /**
   * @this {Foo}
   * @param {*} e
-@@= skipped -28, +15 lines =@@
+@@= skipped -27, +15 lines =@@
   */
  function callback(e) {
  }
@@ -36,7 +35,6 @@
 - * @this {Foo}
 - * @param {*} e
 - */
--
+
 
  /**
-  * @this {Foo}

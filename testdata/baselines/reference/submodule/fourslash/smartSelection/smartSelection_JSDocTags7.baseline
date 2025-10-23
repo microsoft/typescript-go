@@ -6,6 +6,7 @@
 function Foo(data) {
 }
 
+
 /**
  * @constructor
  * @param {number} data

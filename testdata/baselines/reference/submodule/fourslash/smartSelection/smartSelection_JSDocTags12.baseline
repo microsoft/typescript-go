@@ -8,12 +8,15 @@ type A = {
                      p0: number                                                                ↲
                      p0: number, /** Comment */ p1: number, /** Comment */ p2: number          ↲
     a(/** Comment */ p0: number, /** Comment */ p1: number, /** Comment */ p2: number): string;↲
+
          {
     a(/** Comment */ p0: number, /** Comment */ p1: number, /** Comment */ p2: number): string;
 } 
+
 type A = {
     a(/** Comment */ p0: number, /** Comment */ p1: number, /** Comment */ p2: number): string;
 };
+
 type B = {};
 type A = {
     a(/** Comment */ p0: number, /** Comment */ p1: number, /** Comment */ p2: number): string;
@@ -30,12 +33,15 @@ type A = {
                                                 p1: number                                     ↲
                      p0: number, /** Comment */ p1: number, /** Comment */ p2: number          ↲
     a(/** Comment */ p0: number, /** Comment */ p1: number, /** Comment */ p2: number): string;↲
+
          {
     a(/** Comment */ p0: number, /** Comment */ p1: number, /** Comment */ p2: number): string;
 } 
+
 type A = {
     a(/** Comment */ p0: number, /** Comment */ p1: number, /** Comment */ p2: number): string;
 };
+
 type B = {};
 type A = {
     a(/** Comment */ p0: number, /** Comment */ p1: number, /** Comment */ p2: number): string;
@@ -52,12 +58,15 @@ type A = {
                                                                            p2: number          ↲
                      p0: number, /** Comment */ p1: number, /** Comment */ p2: number          ↲
     a(/** Comment */ p0: number, /** Comment */ p1: number, /** Comment */ p2: number): string;↲
+
          {
     a(/** Comment */ p0: number, /** Comment */ p1: number, /** Comment */ p2: number): string;
 } 
+
 type A = {
     a(/** Comment */ p0: number, /** Comment */ p1: number, /** Comment */ p2: number): string;
 };
+
 type B = {};
 type A = {
     a(/** Comment */ p0: number, /** Comment */ p1: number, /** Comment */ p2: number): string;

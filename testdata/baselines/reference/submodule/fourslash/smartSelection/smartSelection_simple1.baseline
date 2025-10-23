@@ -10,25 +10,30 @@ class Foo {
 
           a         ↲
           a === b   ↲
+
       if (a === b) {
           return true;
       }↲
+
       if (a === b) {
           return true;
       }
       return false;↲
+
             {
       if (a === b) {
           return true;
       }
       return false;
   }↲
+
   bar(a, b) {
       if (a === b) {
           return true;
       }
       return false;
   }↲
+
 class Foo {
   bar(a, b) {
       if (a === b) {
@@ -51,25 +56,30 @@ class Foo {
 
                  true ↲
           return true;↲
+
       if (a === b) {
           return true;
       }↲
+
       if (a === b) {
           return true;
       }
       return false;↲
+
             {
       if (a === b) {
           return true;
       }
       return false;
   }↲
+
   bar(a, b) {
       if (a === b) {
           return true;
       }
       return false;
   }↲
+
 class Foo {
   bar(a, b) {
       if (a === b) {
