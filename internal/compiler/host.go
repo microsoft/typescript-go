@@ -54,7 +54,7 @@ func NewCompilerHost(
 		trace = func(msg string) {}
 	}
 
-	pnpResolutionConfig := TryGetPnpResolutionConfig(currentDirectory)
+	pnpResolutionConfig := TryGetPnpResolutionConfig(currentDirectory, fs)
 
 	if pnpResolutionConfig != nil {
 		fs = zipvfs.From(fs)

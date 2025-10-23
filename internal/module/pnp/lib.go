@@ -27,7 +27,6 @@ package pnp
 
 import (
 	"errors"
-	"os"
 	"slices"
 	"strings"
 
@@ -37,6 +36,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type ResolutionKind int
@@ -111,12 +111,12 @@ func ParseBareIdentifier(spec string) (string, *string, error) {
 	return pkg, sub, nil
 }
 
-func FindClosestPNPManifestPath(start string) (string, bool) {
+func FindClosestPNPManifestPath(start string, fs vfs.FS) (string, bool) {
 	dir := tspath.NormalizePath(start)
 
 	for {
 		candidate := tspath.CombinePaths(dir, ".pnp.cjs")
-		if st, err := os.Stat(candidate); err == nil && !st.IsDir() {
+		if fs.FileExists(candidate) {
 			return candidate, true
 		}
 		parent := tspath.GetDirectoryPath(dir)
@@ -248,13 +248,13 @@ func InitPNPManifest(m *Manifest, manifestPath string) error {
 	return nil
 }
 
-func LoadPNPManifest(p string) (Manifest, error) {
-	content, err := os.ReadFile(p)
-	if err != nil {
-		return Manifest{}, errors.New(diagnostics.We_failed_to_read_the_content_of_the_manifest_Colon_0.Format(err.Error()))
+func LoadPNPManifest(p string, fs vfs.FS) (Manifest, error) {
+	content, ok := fs.ReadFile(p)
+	if !ok {
+		return Manifest{}, errors.New(diagnostics.We_failed_to_read_the_content_of_the_manifest_Colon_0.Format("failed to read file"))
 	}
 
-	jsonData, err := extractJSONFromPnPFile(p, string(content))
+	jsonData, err := extractJSONFromPnPFile(p, content)
 	if err != nil {
 		return Manifest{}, err
 	}
@@ -271,12 +271,12 @@ func LoadPNPManifest(p string) (Manifest, error) {
 	return manifest, nil
 }
 
-func FindPNPManifest(parent string) (*Manifest, error) {
-	path, ok := FindClosestPNPManifestPath(parent)
+func FindPNPManifest(parent string, fs vfs.FS) (*Manifest, error) {
+	path, ok := FindClosestPNPManifestPath(parent, fs)
 	if !ok {
 		return nil, nil
 	}
-	manifest, err := LoadPNPManifest(path)
+	manifest, err := LoadPNPManifest(path, fs)
 	if err != nil {
 		return nil, err
 	}
