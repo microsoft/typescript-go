@@ -4425,13 +4425,9 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 	if node.ScriptKind != core.ScriptKindJSON {
 		p.emitShebangIfNeeded(node)
 		
-		// Emit prologue directives and detached comments in the correct order
 		index, state = p.emitPrologueDirectivesAndDetachedComments(node, shouldEmitDetached)
-		
-		// Emit helpers after prologues and detached comments
 		p.emitHelpers(node.AsNode())
 		
-		// If we didn't emit prologue directives yet (non-synthesized case), emit them after helpers
 		if !shouldEmitDetached {
 			index = p.emitPrologueDirectives(node.Statements)
 		}
