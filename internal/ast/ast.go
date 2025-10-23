@@ -9647,6 +9647,10 @@ func (node *JSDocTypeExpression) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocTypeExpression(node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsJSDocTypeExpression(node *Node) bool {
+	return node.Kind == KindJSDocTypeExpression
+}
+
 // JSDocNonNullableType
 
 type JSDocNonNullableType struct {
@@ -10575,6 +10579,10 @@ func (node *JSDocTypeLiteral) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *JSDocTypeLiteral) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocTypeLiteral(node.JSDocPropertyTags, node.IsArrayType), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsJSDocTypeLiteral(node *Node) bool {
+	return node.Kind == KindJSDocTypeLiteral
 }
 
 // JSDocSignature

@@ -89,7 +89,7 @@ func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos 
 			}
 		}
 
-		if node.Kind == ast.KindJSDocTypeExpression || ast.IsJSDocSignature(node) || node.Kind == ast.KindJSDocTypeLiteral {
+		if ast.IsJSDocTypeExpression(node) || ast.IsJSDocSignature(node) || ast.IsJSDocTypeLiteral(node) {
 			return true
 		}
 
