@@ -49,7 +49,7 @@ func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos 
 
 		lspRange := l.converters.ToLSPRange(sourceFile, core.NewTextRange(start, end))
 
-		if current != nil && current.Range.Start == lspRange.Start && current.Range.End == lspRange.End {
+		if current != nil && current.Range == lspRange {
 			return current
 		}
 
