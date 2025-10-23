@@ -207,12 +207,14 @@ func NewPsuedoObjectMethod(name *ast.Node, optional bool, parameters []*PsuedoPa
 
 type PsuedoPropertyAssignment struct {
 	PsuedoObjectElement
-	Type *PsuedoType
+	Readonly bool
+	Type     *PsuedoType
 }
 
-func NewPsuedoPropertyAssignment(name *ast.Node, optional bool, t *PsuedoType) *PsuedoObjectElement {
+func NewPsuedoPropertyAssignment(readonly bool, name *ast.Node, optional bool, t *PsuedoType) *PsuedoObjectElement {
 	return NewPsuedoObjectElement(PsuedoObjectElementKindPropertyAssignment, name, optional, &PsuedoPropertyAssignment{
-		Type: t,
+		Readonly: readonly,
+		Type:     t,
 	})
 }
 

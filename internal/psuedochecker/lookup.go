@@ -306,6 +306,7 @@ func (ch *PsuedoChecker) typeFromObjectLiteral(node *ast.ObjectLiteralExpression
 			optional := e.AsMethodDeclaration().PostfixToken != nil && e.AsMethodDeclaration().PostfixToken.Kind == ast.KindQuestionToken
 			if e.FunctionLikeData().FullSignature != nil {
 				results = append(results, NewPsuedoPropertyAssignment(
+					false,
 					e.Name(),
 					optional,
 					NewPsuedoTypeDirect(e.FunctionLikeData().FullSignature),
@@ -320,25 +321,58 @@ func (ch *PsuedoChecker) typeFromObjectLiteral(node *ast.ObjectLiteralExpression
 			}
 		case ast.KindPropertyAssignment:
 			results = append(results, NewPsuedoPropertyAssignment(
+				false,
 				e.Name(),
 				e.AsPropertyAssignment().PostfixToken != nil && e.AsPropertyAssignment().PostfixToken.Kind == ast.KindQuestionToken,
 				ch.typeFromExpression(e.Initializer()),
 			))
-		case ast.KindSetAccessor:
-			results = append(results, NewPsuedoSetAccessor(
-				e.Name(),
-				false,
-				ch.cloneParameters(e.AsSetAccessorDeclaration().Parameters)[0],
-			))
-		case ast.KindGetAccessor:
-			results = append(results, NewPsuedoGetAccessor(
-				e.Name(),
-				false,
-				ch.typeFromAccessor(e),
-			))
+		case ast.KindSetAccessor, ast.KindGetAccessor:
+			member := ch.getAccessorMember(e, e.Name())
+			if member != nil {
+				results = append(results, member)
+			}
 		}
 	}
 	return NewPsuedoTypeObjectLiteral(results)
+}
+
+// rougly analogous to typeFromObjectLiteralAccessor in strada
+func (ch *PsuedoChecker) getAccessorMember(accessor *ast.Node, name *ast.Node) *PsuedoObjectElement {
+	allAccessors := ast.GetAllAccessorDeclarationsForDeclaration(accessor, accessor.Symbol()) // TODO: node preservation for late-bound accessor pairs?
+
+	// TODO: handle psuedo-annotations from get accessor return positions?
+	if allAccessors.GetAccessor != nil && allAccessors.GetAccessor.Type != nil &&
+		allAccessors.SetAccessor != nil && len(allAccessors.SetAccessor.Parameters.Nodes) > 0 && allAccessors.SetAccessor.Parameters.Nodes[0].AsParameterDeclaration().Type != nil {
+		// We have possible types for both accessors, we can't know if they are the same type so we keep both accessors
+
+		if ast.IsGetAccessorDeclaration(accessor) {
+			return NewPsuedoGetAccessor(
+				name,
+				false,
+				ch.typeFromAccessor(accessor),
+			)
+		} else {
+			return NewPsuedoSetAccessor(
+				name,
+				false,
+				ch.cloneParameters(accessor.AsSetAccessorDeclaration().Parameters)[0],
+			)
+		}
+	}
+
+	if accessor == allAccessors.FirstAccessor {
+		// only one annotated accessor; output a property - `readonly` for a single `get` accessor
+
+		accessorType := ch.typeFromAccessor(accessor)
+		readonly := ast.IsGetAccessorDeclaration(accessor) && allAccessors.SecondAccessor == nil
+		return NewPsuedoPropertyAssignment(
+			readonly,
+			name,
+			false,
+			accessorType,
+		)
+	}
+	return nil
 }
 
 func (ch *PsuedoChecker) canGetTypeFromObjectLiteral(node *ast.ObjectLiteralExpression) bool {

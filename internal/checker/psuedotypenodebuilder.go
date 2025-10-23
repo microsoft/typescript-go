@@ -114,7 +114,7 @@ func (b *nodeBuilderImpl) psuedoTypeToNode(t *psuedochecker.PsuedoType) *ast.Nod
 		// we should have a unified `reuseName` codepath that remaps keyword ID names to string literal names
 		for _, e := range elements {
 			var modifiers *ast.ModifierList
-			if isConst {
+			if isConst || (e.Kind == psuedochecker.PsuedoObjectElementKindPropertyAssignment && e.Data.(*psuedochecker.PsuedoPropertyAssignment).Readonly) {
 				modifiers = b.f.NewModifierList([]*ast.Node{b.f.NewModifier(ast.KindReadonlyKeyword)})
 			}
 			var newProp *ast.Node
