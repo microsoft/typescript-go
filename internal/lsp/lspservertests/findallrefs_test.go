@@ -276,6 +276,29 @@ func TestFindAllReferences(t *testing.T) {
 					server.baselineReferences(coreFile, lsptestutil.PositionToLineAndCharacter(coreFile, server.content(coreFile), "prop", 0))
 				},
 			},
+			{
+				subScenario: "references on file opened is in configured project that will be removed",
+				files: func() map[string]any {
+					return map[string]any{
+						"/user/username/projects/myproject/playground/tsconfig.json":               "{}",
+						"/user/username/projects/myproject/playground/tests.ts":                    "export function foo() {}",
+						"/user/username/projects/myproject/playground/tsconfig-json/tests/spec.ts": "export function bar() { }",
+						"/user/username/projects/myproject/playground/tsconfig-json/tsconfig.json": stringtestutil.Dedent(`
+							{
+								"include": ["./src"],
+							}`),
+						"/user/username/projects/myproject/playground/tsconfig-json/src/src.ts": "export function foobar() { }",
+					}
+				},
+				test: func(server *testServer) {
+					testsFile := "/user/username/projects/myproject/playground/tests.ts"
+					server.openFile(testsFile, lsproto.LanguageKindTypeScript)
+					server.closeFile(testsFile)
+					innerFile := "/user/username/projects/myproject/playground/tsconfig-json/tests/spec.ts"
+					server.openFile(innerFile, lsproto.LanguageKindTypeScript)
+					server.baselineReferences(innerFile, lsptestutil.PositionToLineAndCharacter(innerFile, server.content(innerFile), "bar", 0))
+				},
+			},
 			getFindAllRefsTestCaseForSpecialLocalnessHandling(
 				"when using arrow function assignment",
 				`export const dog = () => { };`,

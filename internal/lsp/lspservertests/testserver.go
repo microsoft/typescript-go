@@ -54,6 +54,9 @@ func newTestServer(t *testing.T, files map[string]any) *testServer {
 }
 
 func (s *testServer) content(fileName string) string {
+	if text, ok := s.openFiles[fileName]; ok {
+		return text
+	}
 	return s.files[fileName].(string)
 }
 
