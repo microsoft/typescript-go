@@ -29,6 +29,8 @@ func (l *LanguageService) ProvideSelectionRanges(ctx context.Context, params *ls
 }
 
 func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos int) *lsproto.SelectionRange {
+	factory := &ast.NodeFactory{}
+
 	nodeContainsPosition := func(node *ast.Node) bool {
 		if node == nil {
 			return false
@@ -57,6 +59,19 @@ func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos 
 			Range:  lspRange,
 			Parent: current,
 		}
+	}
+
+	pushSelectionCommentRange := func(current *lsproto.SelectionRange, start, end int) *lsproto.SelectionRange {
+		current = pushSelectionRange(current, start, end)
+
+		commentPos := start
+		text := sourceFile.Text()
+		for commentPos < end && commentPos < len(text) && text[commentPos] == '/' {
+			commentPos++
+		}
+		current = pushSelectionRange(current, commentPos, end)
+
+		return current
 	}
 
 	positionsAreOnSameLine := func(pos1, pos2 int) bool {
@@ -108,6 +123,15 @@ func getSmartSelectionRange(l *LanguageService, sourceFile *ast.SourceFile, pos 
 
 		visit := func(node *ast.Node) *ast.Node {
 			if node != nil && next == nil {
+				var foundComment *ast.CommentRange
+				for comment := range scanner.GetTrailingCommentRanges(factory, sourceFile.Text(), node.End()) {
+					foundComment = &comment
+					break
+				}
+				if foundComment != nil && foundComment.Kind == ast.KindSingleLineCommentTrivia {
+					result = pushSelectionCommentRange(result, foundComment.Pos(), foundComment.End())
+				}
+
 				if nodeContainsPosition(node) {
 					// Add range for multi-line function bodies before skipping the block
 					if ast.IsBlock(node) && ast.IsFunctionLikeDeclaration(parent) {
