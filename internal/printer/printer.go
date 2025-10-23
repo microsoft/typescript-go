@@ -4377,44 +4377,12 @@ func (p *Printer) emitHelpers(node *ast.Node) bool {
 	return helpersEmitted
 }
 
-func (p *Printer) emitPrologueDirectivesAndDetachedComments(node *ast.SourceFile, shouldEmitDetached bool) (index int, state *commentState) {
-	index = 0
-	state = nil
-
-	// When there are prologue directives and the first is synthesized, emit them first,
-	// then emit detached comments, then emit helpers. This matches TypeScript's behavior
-	// where writeFile calls emitPrologueDirectivesIfNeeded before emitSourceFile.
-	if shouldEmitDetached && len(node.Statements.Nodes) > 0 && ast.IsPrologueDirective(node.Statements.Nodes[0]) {
-		// Emit synthesized prologue directives first (without their comments since they're synthesized)
-		index = p.emitPrologueDirectives(node.Statements)
-		// Add a newline after prologue directives before detached comments
-		if !p.writer.IsAtStartOfLine() {
-			p.writeLine()
-		}
-		// Then emit detached comments (copyright headers) that come after prologues but before other code
-		// We need to save the state for emitting trailing comments later
-		emitFlags := p.emitContext.EmitFlags(node.AsNode())
-		containerPos := p.containerPos
-		containerEnd := p.containerEnd
-		declarationListContainerEnd := p.declarationListContainerEnd
-		p.emitDetachedCommentsAndUpdateCommentsInfo(node.Statements.Loc)
-		state = &commentState{emitFlags, node.Statements.Loc, containerPos, containerEnd, declarationListContainerEnd}
-	} else if shouldEmitDetached {
-		// No prologue directives, just emit detached comments normally
-		state = p.emitDetachedCommentsBeforeStatementList(node.AsNode(), node.Statements.Loc)
-	}
-
-	return index, state
-}
-
 func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 	savedCurrentSourceFile := p.currentSourceFile
 	savedCommentsDisabled := p.commentsDisabled
 	p.currentSourceFile = node
 
 	p.writeLine()
-
-	shouldEmitDetached := p.shouldEmitDetachedComments(node.AsNode())
 
 	p.pushNameGenerationScope(node.AsNode())
 	p.generateAllNames(node.Statements)
@@ -4423,14 +4391,15 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 	var state *commentState
 	if node.ScriptKind != core.ScriptKindJSON {
 		p.emitShebangIfNeeded(node)
-
-		index, state = p.emitPrologueDirectivesAndDetachedComments(node, shouldEmitDetached)
-		p.emitHelpers(node.AsNode())
-
-		if !shouldEmitDetached {
-			index = p.emitPrologueDirectives(node.Statements)
+		index = p.emitPrologueDirectives(node.Statements)
+		// Emit detached comments after prologue directives but before helpers
+		if !p.writer.IsAtStartOfLine() {
+			p.writeLine()
 		}
-
+		p.emitDetachedCommentsAndUpdateCommentsInfo(node.Statements.Loc)
+		emitFlags := p.emitContext.EmitFlags(node.AsNode())
+		state = &commentState{emitFlags, node.Statements.Loc, p.containerPos, p.containerEnd, p.declarationListContainerEnd}
+		p.emitHelpers(node.AsNode())
 		if node.IsDeclarationFile {
 			p.emitTripleSlashDirectives(node)
 		}
@@ -4446,9 +4415,7 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 		-1, /*count*/
 	)
 	p.popNameGenerationScope(node.AsNode())
-	if shouldEmitDetached {
-		p.emitDetachedCommentsAfterStatementList(node.AsNode(), node.Statements.Loc, state)
-	}
+	p.emitDetachedCommentsAfterStatementList(node.AsNode(), node.Statements.Loc, state)
 	p.currentSourceFile = savedCurrentSourceFile
 	p.commentsDisabled = savedCommentsDisabled
 }
