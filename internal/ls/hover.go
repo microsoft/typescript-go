@@ -11,7 +11,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
 const (
@@ -427,34 +426,44 @@ func (l *LanguageService) writeComments(b *strings.Builder, c *checker.Checker, 
 
 func (l *LanguageService) writeJSDocLink(b *strings.Builder, c *checker.Checker, link *ast.Node, quote bool) {
 	name := link.Name()
-	text := link.Text()
+	text := strings.Trim(link.Text(), " ")
 	if name == nil {
 		writeQuotedString(b, text, quote)
 		return
 	}
 	if ast.IsIdentifier(name) && (name.Text() == "http" || name.Text() == "https") && strings.HasPrefix(text, "://") {
-		commentPos := strings.Index(text, " ")
-		if commentPos >= 0 {
-			writeMarkdownLink(b, text[commentPos+1:], name.Text()+text[:commentPos], quote)
-		} else {
-			linkText := name.Text() + text
-			writeMarkdownLink(b, linkText, linkText, quote)
+		linkText := name.Text() + text
+		linkUri := linkText
+		if commentPos := strings.IndexFunc(linkText, func(ch rune) bool { return ch == ' ' || ch == '|' }); commentPos >= 0 {
+			linkUri = linkText[:commentPos]
+			linkText = trimCommentPrefix(linkText[commentPos:])
+			if linkText == "" {
+				linkText = linkUri
+			}
 		}
+		writeMarkdownLink(b, linkText, linkUri, quote)
 		return
 	}
 	declarations := getDeclarationsFromLocation(c, name)
 	if len(declarations) != 0 {
 		declaration := declarations[0]
 		file := ast.GetSourceFileOfNode(declaration)
-		pos := l.converters.PositionToLineAndCharacter(file, core.TextPos(scanner.GetTokenPosOfNode(declaration, file, false /*includeJSDoc*/)))
-		linkText := strings.Trim(text, " ")
+		node := core.OrElse(ast.GetNameOfDeclaration(declaration), declaration)
+		loc := l.getMappedLocation(file.FileName(), createRangeFromNode(node, file))
+		prefixLen := core.IfElse(strings.HasPrefix(text, "()"), 2, 0)
+		linkText := trimCommentPrefix(text[prefixLen:])
 		if linkText == "" {
-			linkText = getEntityNameString(name)
+			linkText = getEntityNameString(name) + text[:prefixLen]
 		}
-		writeMarkdownLink(b, linkText, fmt.Sprintf("%v#%v,%v", string(FileNameToDocumentURI(file.FileName())), pos.Line+1, pos.Character+1), quote)
+		linkUri := fmt.Sprintf("%v#%v,%v-%v,%v", loc.Uri, loc.Range.Start.Line+1, loc.Range.Start.Character+1, loc.Range.End.Line+1, loc.Range.End.Character+1)
+		writeMarkdownLink(b, linkText, linkUri, quote)
 		return
 	}
 	writeQuotedString(b, getEntityNameString(name)+" "+text, quote)
+}
+
+func trimCommentPrefix(text string) string {
+	return strings.TrimLeft(strings.TrimPrefix(strings.TrimLeft(text, " "), "|"), " ")
 }
 
 func writeMarkdownLink(b *strings.Builder, text string, uri string, quote bool) {
