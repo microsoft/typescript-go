@@ -455,7 +455,7 @@ func (l *LanguageService) writeJSDocLink(b *strings.Builder, c *checker.Checker,
 		if linkText == "" {
 			linkText = getEntityNameString(name) + text[:prefixLen]
 		}
-		linkUri := fmt.Sprintf("%v#%v,%v-%v,%v", loc.Uri, loc.Range.Start.Line+1, loc.Range.Start.Character+1, loc.Range.End.Line+1, loc.Range.End.Character+1)
+		linkUri := fmt.Sprintf("%s#%d,%d-%d,%d", loc.Uri, loc.Range.Start.Line+1, loc.Range.Start.Character+1, loc.Range.End.Line+1, loc.Range.End.Character+1)
 		writeMarkdownLink(b, linkText, linkUri, quote)
 		return
 	}
