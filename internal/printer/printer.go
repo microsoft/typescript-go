@@ -2108,12 +2108,14 @@ func (p *Printer) emitMappedType(node *ast.MappedTypeNode) {
 	p.emitTypeNodeOutsideExtends(node.Type)
 	p.writeTrailingSemicolon()
 	if node.Members != nil {
-		if singleLine {
-			p.writeSpace()
-		} else {
-			p.writeLine()
+		if len(node.Members.Nodes) > 0 {
+			if singleLine {
+				p.writeSpace()
+			} else {
+				p.writeLine()
+			}
+			p.emitList((*Printer).emitTypeElement, node.AsNode(), node.Members, LFPreserveLines)
 		}
-		p.emitList((*Printer).emitTypeElement, node.AsNode(), node.Members, LFPreserveLines)
 	}
 	if singleLine {
 		p.writeSpace()
