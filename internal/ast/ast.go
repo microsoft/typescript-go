@@ -8758,10 +8758,6 @@ func IsTemplateTail(node *Node) bool {
 	return node.Kind == KindTemplateTail
 }
 
-func IsTemplateMiddleOrTemplateTail(node *Node) bool {
-	return node.Kind == KindTemplateMiddle || node.Kind == KindTemplateTail
-}
-
 // TemplateLiteralTypeNode
 
 type TemplateLiteralTypeNode struct {
@@ -9444,10 +9440,6 @@ func (node *SyntaxList) ForEachChild(v Visitor) bool {
 
 func (node *SyntaxList) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewSyntaxList(node.Children), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func IsSyntaxList(node *Node) bool {
-	return node.Kind == KindSyntaxList
 }
 
 /// JSDoc ///
