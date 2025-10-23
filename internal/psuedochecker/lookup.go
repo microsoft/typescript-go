@@ -86,7 +86,11 @@ func (ch *PsuedoChecker) typeFromProperty(node *ast.Node) *PsuedoType {
 	if ast.IsPropertyDeclaration(node) {
 		init := node.Initializer()
 		if init != nil && !isContextuallyTyped(node) {
-			return ch.typeFromExpression(init)
+			expr := ch.typeFromExpression(init)
+			if expr != nil && expr.Kind != PsuedoTypeKindInferred {
+				return expr
+			}
+			// fallback to NoResult if PsuedoTypeKindInferred
 		}
 	}
 	return NewPsuedoTypeNoResult(node)
@@ -100,7 +104,11 @@ func (ch *PsuedoChecker) typeFromVariable(declaration *ast.VariableDeclaration) 
 	init := declaration.Initializer
 	if init != nil && (len(declaration.Symbol.Declarations) == 1 || core.CountWhere(declaration.Symbol.Declarations, ast.IsVariableDeclaration) == 1) {
 		if !isContextuallyTyped(declaration.AsNode()) { // TODO: also should bail on expando declarations; reuse syntactic expando check used in declaration emit
-			return ch.typeFromExpression(init)
+			expr := ch.typeFromExpression(init)
+			if expr != nil && expr.Kind != PsuedoTypeKindInferred {
+				return expr
+			}
+			// fallback to NoResult if PsuedoTypeKindInferred
 		}
 	}
 	return NewPsuedoTypeNoResult(declaration.AsNode())
