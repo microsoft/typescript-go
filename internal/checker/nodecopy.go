@@ -282,15 +282,15 @@ func getExistingNodeTreeVisitor(b *nodeBuilderImpl, bound *recoveryBoundary) *as
 				if ast.IsPartOfParameterDeclaration(sym.ValueDeclaration) || ast.IsJSDocParameterTag(sym.ValueDeclaration) {
 					return introducesError, node, nil // TODO: attachSymbolToLeftmostIdentifier on `node` to smuggle symbols for quick info?
 				}
-				if sym.Flags&ast.SymbolFlagsTypeParameter == 0 /* Type parameters are visible in the current context if they are are resolvable */ && !ast.IsDeclarationName(node) &&
-					b.ch.IsSymbolAccessible(sym, enclosingDeclaration, meaning, false).Accessibility != printer.SymbolAccessibilityAccessible {
-					b.ctx.tracker.ReportInferenceFallback(node)
-					introducesError = true
-				} else {
-					b.ctx.tracker.TrackSymbol(sym, enclosingDeclaration, meaning)
-				}
-				return introducesError, node, nil // TODO: attachSymbolToLeftmostIdentifier on `node` to smuggle symbols for quick info?
 			}
+			if sym.Flags&ast.SymbolFlagsTypeParameter == 0 /* Type parameters are visible in the current context if they are are resolvable */ && !ast.IsDeclarationName(node) &&
+				b.ch.IsSymbolAccessible(sym, enclosingDeclaration, meaning, false).Accessibility != printer.SymbolAccessibilityAccessible {
+				b.ctx.tracker.ReportInferenceFallback(node)
+				introducesError = true
+			} else {
+				b.ctx.tracker.TrackSymbol(sym, enclosingDeclaration, meaning)
+			}
+			return introducesError, node, nil // TODO: attachSymbolToLeftmostIdentifier on `node` to smuggle symbols for quick info?
 		}
 		return introducesError, node, nil
 	}
