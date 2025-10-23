@@ -4392,6 +4392,9 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 	if node.ScriptKind != core.ScriptKindJSON {
 		p.emitShebangIfNeeded(node)
 		index = p.emitPrologueDirectives(node.Statements)
+		if !p.writer.IsAtStartOfLine() {
+			p.writeLine()
+		}
 		state = p.emitDetachedCommentsBeforeStatementList(node.AsNode(), node.Statements.Loc)
 		p.emitHelpers(node.AsNode())
 		if node.IsDeclarationFile {
