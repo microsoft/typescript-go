@@ -4400,6 +4400,8 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 		if node.IsDeclarationFile {
 			p.emitTripleSlashDirectives(node)
 		}
+	} else {
+		state = p.emitDetachedCommentsBeforeStatementList(node.AsNode(), node.Statements.Loc)
 	}
 
 	// !!! Emit triple-slash directives
