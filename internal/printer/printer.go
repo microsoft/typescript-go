@@ -4377,6 +4377,36 @@ func (p *Printer) emitHelpers(node *ast.Node) bool {
 	return helpersEmitted
 }
 
+func (p *Printer) emitPrologueDirectivesAndDetachedComments(node *ast.SourceFile, shouldEmitDetached bool) (index int, state *commentState) {
+	index = 0
+	state = nil
+	
+	// When there are prologue directives and the first is synthesized, emit them first,
+	// then emit detached comments, then emit helpers. This matches TypeScript's behavior
+	// where writeFile calls emitPrologueDirectivesIfNeeded before emitSourceFile.
+	if shouldEmitDetached && len(node.Statements.Nodes) > 0 && ast.IsPrologueDirective(node.Statements.Nodes[0]) {
+		// Emit synthesized prologue directives first (without their comments since they're synthesized)
+		index = p.emitPrologueDirectives(node.Statements)
+		// Add a newline after prologue directives before detached comments
+		if !p.writer.IsAtStartOfLine() {
+			p.writeLine()
+		}
+		// Then emit detached comments (copyright headers) that come after prologues but before other code
+		// We need to save the state for emitting trailing comments later
+		emitFlags := p.emitContext.EmitFlags(node.AsNode())
+		containerPos := p.containerPos
+		containerEnd := p.containerEnd
+		declarationListContainerEnd := p.declarationListContainerEnd
+		p.emitDetachedCommentsAndUpdateCommentsInfo(node.Statements.Loc)
+		state = &commentState{emitFlags, node.Statements.Loc, containerPos, containerEnd, declarationListContainerEnd}
+	} else if shouldEmitDetached {
+		// No prologue directives, just emit detached comments normally
+		state = p.emitDetachedCommentsBeforeStatementList(node.AsNode(), node.Statements.Loc)
+	}
+	
+	return index, state
+}
+
 func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 	savedCurrentSourceFile := p.currentSourceFile
 	savedCommentsDisabled := p.commentsDisabled
@@ -4384,7 +4414,7 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 
 	p.writeLine()
 
-	// Emit detached comments only if there are no prologue directives or the first node is synthesized
+	// Determine if detached comments should be emitted before helpers
 	shouldEmitDetached := p.shouldEmitDetachedComments(node.AsNode())
 
 	p.pushNameGenerationScope(node.AsNode())
@@ -4395,28 +4425,8 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 	if node.ScriptKind != core.ScriptKindJSON {
 		p.emitShebangIfNeeded(node)
 		
-		// When there are prologue directives and the first is synthesized, emit them first,
-		// then emit detached comments, then emit helpers. This matches TypeScript's behavior
-		// where writeFile calls emitPrologueDirectivesIfNeeded before emitSourceFile.
-		if shouldEmitDetached && len(node.Statements.Nodes) > 0 && ast.IsPrologueDirective(node.Statements.Nodes[0]) {
-			// Emit synthesized prologue directives first (without their comments since they're synthesized)
-			index = p.emitPrologueDirectives(node.Statements)
-			// Add a newline after prologue directives before detached comments
-			if !p.writer.IsAtStartOfLine() {
-				p.writeLine()
-			}
-			// Then emit detached comments (copyright headers) that come after prologues but before other code
-			// We need to save the state for emitting trailing comments later
-			emitFlags := p.emitContext.EmitFlags(node.AsNode())
-			containerPos := p.containerPos
-			containerEnd := p.containerEnd
-			declarationListContainerEnd := p.declarationListContainerEnd
-			p.emitDetachedCommentsAndUpdateCommentsInfo(node.Statements.Loc)
-			state = &commentState{emitFlags, node.Statements.Loc, containerPos, containerEnd, declarationListContainerEnd}
-		} else if shouldEmitDetached {
-			// No prologue directives, just emit detached comments normally
-			state = p.emitDetachedCommentsBeforeStatementList(node.AsNode(), node.Statements.Loc)
-		}
+		// Emit prologue directives and detached comments in the correct order
+		index, state = p.emitPrologueDirectivesAndDetachedComments(node, shouldEmitDetached)
 		
 		// Emit helpers after prologues and detached comments
 		p.emitHelpers(node.AsNode())
