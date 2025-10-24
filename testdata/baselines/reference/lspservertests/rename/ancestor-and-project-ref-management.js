@@ -75,19 +75,11 @@ Config::
   [/user/username/projects/container/compositeExec/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/container/compositeexec/tsconfig.json  
-      /user/username/projects/container/tsconfig.json                
     RetainingOpenFiles:
       /user/username/projects/container/compositeexec/index.ts  
-  [/user/username/projects/container/exec/tsconfig.json] *new*
-    RetainingProjects:
-      /user/username/projects/container/tsconfig.json  
   [/user/username/projects/container/lib/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/container/compositeexec/tsconfig.json  
-      /user/username/projects/container/tsconfig.json                
-  [/user/username/projects/container/tsconfig.json] *new*
-    RetainingProjects:
-      /user/username/projects/container/tsconfig.json  
 Config File Names::
   [/user/username/projects/container/compositeexec/index.ts] *new*
     NearestConfigFileName: /user/username/projects/container/compositeExec/tsconfig.json
@@ -109,7 +101,7 @@ Projects::
   [/user/username/projects/container/compositeExec/tsconfig.json] 
     /user/username/projects/container/lib/index.ts            
     /user/username/projects/container/compositeExec/index.ts  
-  [/user/username/projects/container/tsconfig.json] *deleted*
+  [/user/username/projects/container/tsconfig.json] 
   [/user/username/projects/temp/tsconfig.json] *new*
     /user/username/projects/temp/temp.ts  
 Open Files::
@@ -118,18 +110,14 @@ Open Files::
   [/user/username/projects/temp/temp.ts] *new*
     /user/username/projects/temp/tsconfig.json  (default) 
 Config::
-  [/user/username/projects/container/compositeExec/tsconfig.json] *modified*
-    RetainingProjects: *modified*
+  [/user/username/projects/container/compositeExec/tsconfig.json] 
+    RetainingProjects:
       /user/username/projects/container/compositeexec/tsconfig.json  
-      /user/username/projects/container/tsconfig.json                *deleted*
     RetainingOpenFiles:
       /user/username/projects/container/compositeexec/index.ts  
-  [/user/username/projects/container/exec/tsconfig.json] *deleted*
-  [/user/username/projects/container/lib/tsconfig.json] *modified*
-    RetainingProjects: *modified*
+  [/user/username/projects/container/lib/tsconfig.json] 
+    RetainingProjects:
       /user/username/projects/container/compositeexec/tsconfig.json  
-      /user/username/projects/container/tsconfig.json                *deleted*
-  [/user/username/projects/container/tsconfig.json] *deleted*
   [/user/username/projects/temp/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/temp/tsconfig.json  
@@ -226,6 +214,7 @@ Projects::
   [/user/username/projects/container/compositeExec/tsconfig.json] *deleted*
     /user/username/projects/container/lib/index.ts            
     /user/username/projects/container/compositeExec/index.ts  
+  [/user/username/projects/container/tsconfig.json] *deleted*
   [/user/username/projects/temp/tsconfig.json] 
     /user/username/projects/temp/temp.ts  
 Open Files::

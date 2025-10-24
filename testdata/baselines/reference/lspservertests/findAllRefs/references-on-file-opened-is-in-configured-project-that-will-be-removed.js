@@ -61,11 +61,20 @@ Open Files::
     }
   }
 }
+Projects::
+  [/user/username/projects/myproject/playground/tsconfig-json/tsconfig.json] *new*
+    /user/username/projects/myproject/playground/tsconfig-json/src/src.ts  
+  [/user/username/projects/myproject/playground/tsconfig.json] 
+    /user/username/projects/myproject/playground/tests.ts                     
+    /user/username/projects/myproject/playground/tsconfig-json/src/src.ts     
+    /user/username/projects/myproject/playground/tsconfig-json/tests/spec.ts  
 Open Files::
   [/user/username/projects/myproject/playground/tsconfig-json/tests/spec.ts] *new*
     /user/username/projects/myproject/playground/tsconfig.json  (default) 
 Config::
   [/user/username/projects/myproject/playground/tsconfig-json/tsconfig.json] *new*
+    RetainingProjects:
+      /user/username/projects/myproject/playground/tsconfig-json/tsconfig.json  
     RetainingOpenFiles:
       /user/username/projects/myproject/playground/tsconfig-json/tests/spec.ts  
   [/user/username/projects/myproject/playground/tsconfig.json] *modified*

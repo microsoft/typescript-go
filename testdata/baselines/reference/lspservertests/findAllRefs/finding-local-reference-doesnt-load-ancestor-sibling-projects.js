@@ -69,15 +69,8 @@ Config::
   [/user/username/projects/solution/compiler/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/solution/compiler/tsconfig.json  
-      /user/username/projects/solution/tsconfig.json           
     RetainingOpenFiles:
       /user/username/projects/solution/compiler/program.ts  
-  [/user/username/projects/solution/services/tsconfig.json] *new*
-    RetainingProjects:
-      /user/username/projects/solution/tsconfig.json  
-  [/user/username/projects/solution/tsconfig.json] *new*
-    RetainingProjects:
-      /user/username/projects/solution/tsconfig.json  
 Config File Names::
   [/user/username/projects/solution/compiler/program.ts] *new*
     NearestConfigFileName: /user/username/projects/solution/compiler/tsconfig.json
@@ -129,7 +122,7 @@ Projects::
     /user/username/projects/solution/compiler/types.ts     
     /user/username/projects/solution/compiler/program.ts   
     /user/username/projects/solution/services/services.ts  
-  [/user/username/projects/solution/tsconfig.json] 
+  [/user/username/projects/solution/tsconfig.json] *modified*
 Open Files::
   [/user/username/projects/solution/compiler/program.ts] *modified*
     /user/username/projects/solution/compiler/tsconfig.json  (default) 
@@ -139,15 +132,15 @@ Config::
     RetainingProjects: *modified*
       /user/username/projects/solution/compiler/tsconfig.json  
       /user/username/projects/solution/services/tsconfig.json  *new*
-      /user/username/projects/solution/tsconfig.json           
+      /user/username/projects/solution/tsconfig.json           *new*
     RetainingOpenFiles: *modified*
       /user/username/projects/solution/compiler/program.ts  
       /user/username/projects/solution/compiler/types.ts    *new*
-  [/user/username/projects/solution/services/tsconfig.json] *modified*
-    RetainingProjects: *modified*
-      /user/username/projects/solution/services/tsconfig.json  *new*
+  [/user/username/projects/solution/services/tsconfig.json] *new*
+    RetainingProjects:
+      /user/username/projects/solution/services/tsconfig.json  
       /user/username/projects/solution/tsconfig.json           
-  [/user/username/projects/solution/tsconfig.json] 
+  [/user/username/projects/solution/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/solution/tsconfig.json  
 // === /user/username/projects/solution/compiler/program.ts ===
