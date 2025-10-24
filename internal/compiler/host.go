@@ -9,7 +9,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
-	"github.com/microsoft/typescript-go/internal/vfs/zipvfs"
 )
 
 type CompilerHost interface {
@@ -39,8 +38,9 @@ func NewCachedFSCompilerHost(
 	defaultLibraryPath string,
 	extendedConfigCache tsoptions.ExtendedConfigCache,
 	trace func(msg string),
+	pnpResolutionConfig *pnp.ResolutionConfig,
 ) CompilerHost {
-	return NewCompilerHost(currentDirectory, cachedvfs.From(fs), defaultLibraryPath, extendedConfigCache, trace)
+	return NewCompilerHost(currentDirectory, cachedvfs.From(fs), defaultLibraryPath, extendedConfigCache, trace, pnpResolutionConfig)
 }
 
 func NewCompilerHost(
@@ -49,15 +49,10 @@ func NewCompilerHost(
 	defaultLibraryPath string,
 	extendedConfigCache tsoptions.ExtendedConfigCache,
 	trace func(msg string),
+	pnpResolutionConfig *pnp.ResolutionConfig,
 ) CompilerHost {
 	if trace == nil {
 		trace = func(msg string) {}
-	}
-
-	pnpResolutionConfig := TryGetPnpResolutionConfig(currentDirectory, fs)
-
-	if pnpResolutionConfig != nil {
-		fs = zipvfs.From(fs)
 	}
 
 	return &compilerHost{

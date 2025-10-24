@@ -18,6 +18,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs/zipvfs"
 )
 
 func CommandLine(sys tsc.System, commandLineArgs []string, testing tsc.CommandLineTesting) tsc.CommandLineResult {
@@ -245,7 +246,12 @@ func performIncrementalCompilation(
 	compileTimes *tsc.CompileTimes,
 	testing tsc.CommandLineTesting,
 ) tsc.CommandLineResult {
-	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, testing))
+	pnpResolutionConfig := compiler.TryGetPnpResolutionConfig(sys.GetCurrentDirectory(), sys.FS())
+	fs := sys.FS()
+	if pnpResolutionConfig != nil {
+		fs = zipvfs.From(fs)
+	}
+	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), fs, sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, testing), pnpResolutionConfig)
 	buildInfoReadStart := sys.Now()
 	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host), host)
 	compileTimes.BuildInfoReadTime = sys.Now().Sub(buildInfoReadStart)
@@ -288,7 +294,12 @@ func performCompilation(
 	compileTimes *tsc.CompileTimes,
 	testing tsc.CommandLineTesting,
 ) tsc.CommandLineResult {
-	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, testing))
+	pnpResolutionConfig := compiler.TryGetPnpResolutionConfig(sys.GetCurrentDirectory(), sys.FS())
+	fs := sys.FS()
+	if pnpResolutionConfig != nil {
+		fs = zipvfs.From(fs)
+	}
+	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), fs, sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(sys, testing), pnpResolutionConfig)
 	// todo: cache, statistics, tracing
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{

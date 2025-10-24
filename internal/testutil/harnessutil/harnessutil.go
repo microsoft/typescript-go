@@ -30,6 +30,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
+	"github.com/microsoft/typescript-go/internal/vfs/zipvfs"
 )
 
 // Posix-style path to additional test libraries
@@ -606,8 +607,12 @@ func createCompilerHost(fs vfs.FS, defaultLibraryPath string, currentDirectory s
 		UseCaseSensitiveFileNames: fs.UseCaseSensitiveFileNames(),
 		CurrentDirectory:          currentDirectory,
 	}, &strings.Builder{})
+	pnpResolutionConfig := compiler.TryGetPnpResolutionConfig(currentDirectory, fs)
+	if pnpResolutionConfig != nil {
+		fs = zipvfs.From(fs)
+	}
 	return &cachedCompilerHost{
-		CompilerHost: compiler.NewCompilerHost(currentDirectory, fs, defaultLibraryPath, nil, tracer.Trace),
+		CompilerHost: compiler.NewCompilerHost(currentDirectory, fs, defaultLibraryPath, nil, tracer.Trace, pnpResolutionConfig),
 		tracer:       tracer,
 	}
 }
