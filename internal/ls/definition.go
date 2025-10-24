@@ -111,15 +111,15 @@ func (l *LanguageService) createDefinitionResponse(declarations []*ast.Node, ori
 func (l *LanguageService) createLocationLinksFromDeclarations(declarations []*ast.Node, originNode *ast.Node, originFile *ast.SourceFile) lsproto.DefinitionResponse {
 	someHaveBody := core.Some(declarations, func(node *ast.Node) bool { return node.Body() != nil })
 	links := make([]*lsproto.LocationLink, 0, len(declarations))
-	
+
 	// Calculate origin selection range (the "bound span")
 	originSelectionRange := l.createLspRangeFromNode(originNode, originFile)
-	
+
 	for _, decl := range declarations {
 		if !someHaveBody || decl.Body() != nil {
 			file := ast.GetSourceFileOfNode(decl)
 			name := core.OrElse(ast.GetNameOfDeclaration(decl), decl)
-			
+
 			// For targetRange, use the full declaration range
 			var targetRange *lsproto.Range
 			if decl.Body() != nil {
@@ -129,10 +129,10 @@ func (l *LanguageService) createLocationLinksFromDeclarations(declarations []*as
 				// For declarations without body, use the declaration itself
 				targetRange = l.createLspRangeFromNode(decl, file)
 			}
-			
+
 			// For targetSelectionRange, use just the name/identifier part
 			targetSelectionRange := l.createLspRangeFromNode(name, file)
-			
+
 			links = append(links, &lsproto.LocationLink{
 				OriginSelectionRange: originSelectionRange,
 				TargetUri:            FileNameToDocumentURI(file.FileName()),

@@ -978,7 +978,7 @@ func definitionCapabilities(params *lsproto.InitializeParams) *lsproto.Definitio
 			LinkSupport: ptrTo(true),
 		}
 	}
-	
+
 	capabilities := params.Capabilities.TextDocument.Definition
 	if capabilities == nil {
 		// Return default capabilities with LinkSupport enabled
@@ -986,7 +986,7 @@ func definitionCapabilities(params *lsproto.InitializeParams) *lsproto.Definitio
 			LinkSupport: ptrTo(true),
 		}
 	}
-	
+
 	// If capabilities exist but LinkSupport is not specified, default to true
 	if capabilities.LinkSupport == nil {
 		// Copy existing capabilities and override LinkSupport
@@ -994,6 +994,6 @@ func definitionCapabilities(params *lsproto.InitializeParams) *lsproto.Definitio
 		result.LinkSupport = ptrTo(true)
 		return &result
 	}
-	
+
 	return capabilities
 }
