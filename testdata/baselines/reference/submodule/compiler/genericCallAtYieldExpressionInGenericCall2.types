@@ -45,7 +45,7 @@ declare function fn<Eff extends Effect, AEff, Args extends Array<any>>(
 >args : Args
 
 fn(function* <T>(queue: Enqueue<T>, value: T) {
->fn(function* <T>(queue: Enqueue<T>, value: T) {  yield* offer(queue, value);}) : <T>(queue: Enqueue<T>, value: T) => any
+>fn(function* <T>(queue: Enqueue<T>, value: T) {  yield* offer(queue, value);}) : <T>(...args: [queue: Enqueue<T>, value: T]) => any
 >fn : <Eff extends Effect, AEff, Args extends any[]>(body: (...args: Args) => Generator<Eff, AEff, any>) => (...args: Args) => any
 >function* <T>(queue: Enqueue<T>, value: T) {  yield* offer(queue, value);} : <T>(queue: Enqueue<T>, value: T) => Generator<any, void, any>
 >queue : Enqueue<T>
@@ -61,7 +61,7 @@ fn(function* <T>(queue: Enqueue<T>, value: T) {
 });
 
 fn(function* <T>(queue: Enqueue<T>, value: T) {
->fn(function* <T>(queue: Enqueue<T>, value: T) {  const x = offer(queue, value);  yield* x;}) : <T>(queue: Enqueue<T>, value: T) => any
+>fn(function* <T>(queue: Enqueue<T>, value: T) {  const x = offer(queue, value);  yield* x;}) : <T>(...args: [queue: Enqueue<T>, value: T]) => any
 >fn : <Eff extends Effect, AEff, Args extends any[]>(body: (...args: Args) => Generator<Eff, AEff, any>) => (...args: Args) => any
 >function* <T>(queue: Enqueue<T>, value: T) {  const x = offer(queue, value);  yield* x;} : <T>(queue: Enqueue<T>, value: T) => Generator<any, void, any>
 >queue : Enqueue<T>
