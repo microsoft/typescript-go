@@ -27,15 +27,11 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 	}
 	c, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
-
-	// Calculate the applicable range for the hover
 	rangeNode := getNodeForQuickInfo(node)
 	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(c, c.GetSymbolAtLocation(node), rangeNode)
 	if quickInfo == "" {
 		return lsproto.HoverOrNull{}, nil
 	}
-
-	// Calculate range without leading trivia to avoid including whitespace
 	hoverRange := l.getRangeOfNode(rangeNode, nil, nil)
 
 	return lsproto.HoverOrNull{
