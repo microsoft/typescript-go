@@ -113,7 +113,8 @@ func tscCompilation(sys tsc.System, commandLine *tsoptions.ParsedCommandLine, te
 	}
 
 	if commandLine.CompilerOptions().Init.IsTrue() {
-		return tsc.CommandLineResult{Status: tsc.ExitStatusNotImplemented}
+		writeConfigFile(sys, reportDiagnostic, commandLine.CompilerOptions())
+		return tsc.CommandLineResult{Status: tsc.ExitStatusSuccess}
 	}
 
 	if commandLine.CompilerOptions().Version.IsTrue() {
@@ -316,4 +317,23 @@ func performCompilation(
 func showConfig(sys tsc.System, config *core.CompilerOptions) {
 	// !!!
 	_ = jsonutil.MarshalIndentWrite(sys.Writer(), config, "", "    ")
+}
+
+func writeConfigFile(sys tsc.System, reportDiagnostic tsc.DiagnosticReporter, options *core.CompilerOptions) {
+	currentDirectory := sys.GetCurrentDirectory()
+	file := tspath.NormalizePath(tspath.CombinePaths(currentDirectory, "tsconfig.json"))
+	
+	if sys.FS().FileExists(file) {
+		reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.A_tsconfig_json_file_is_already_defined_at_Colon_0, file))
+	} else {
+		content := tsoptions.GenerateTSConfig(options, "\n")
+		if err := sys.FS().WriteFile(file, content, false); err != nil {
+			fmt.Fprintf(sys.Writer(), "Error writing tsconfig.json: %v\n", err)
+			return
+		}
+		
+		fmt.Fprintf(sys.Writer(), "\n")
+		fmt.Fprintf(sys.Writer(), "Created a new tsconfig.json\n")
+		fmt.Fprintf(sys.Writer(), "You can learn more at https://aka.ms/tsconfig\n")
+	}
 }
