@@ -533,7 +533,7 @@ type Program interface {
 	GetEmitModuleFormatOfFile(sourceFile ast.HasFileName) core.ModuleKind
 	GetEmitSyntaxForUsageLocation(sourceFile ast.HasFileName, usageLocation *ast.StringLiteralLike) core.ResolutionMode
 	GetImpliedNodeFormatForEmit(sourceFile ast.HasFileName) core.ModuleKind
-	GetResolvedModule(currentSourceFile ast.HasFileName, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule
+	GetResolvedModule(currentSourceFile ast.HasFileName, moduleReference string, mode core.ResolutionMode, importAttributeType string) *module.ResolvedModule
 	GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
 	GetSourceFileMetaData(path tspath.Path) ast.SourceFileMetaData
 	GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReference string, specifier *ast.Node)
@@ -544,6 +544,8 @@ type Program interface {
 	GetProjectReferenceFromOutputDts(path tspath.Path) *tsoptions.SourceOutputAndProjectReference
 	GetRedirectForResolution(file ast.HasFileName) *tsoptions.ParsedCommandLine
 	CommonSourceDirectory() string
+
+	GetModuleLiteralImportAttributeType(node *ast.StringLiteralLike) string
 }
 
 type Host interface {
@@ -14731,7 +14733,7 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 		mode = c.program.GetDefaultResolutionModeForFile(importingSourceFile)
 	}
 
-	resolvedModule := c.program.GetResolvedModule(importingSourceFile, moduleReference, mode)
+	resolvedModule := c.program.GetResolvedModule(importingSourceFile, moduleReference, mode, c.program.GetModuleLiteralImportAttributeType(contextSpecifier))
 
 	var resolutionDiagnostic *diagnostics.Message
 	if errorNode != nil && resolvedModule.IsResolved() {

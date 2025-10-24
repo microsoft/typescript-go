@@ -544,11 +544,15 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 
 			var kind *string = nil
 			if ast.IsStringLiteralLike(entry) {
-				kind = getModuleLiteralImportKind(entry)
+				kind = getModuleLiteralImportAttributeType(entry)
+			}
+			importAttributeType := ""
+			if kind != nil {
+				importAttributeType = *kind
 			}
 			mode := getModeForUsageLocation(file.FileName(), meta, entry, optionsForFile)
 			resolvedModule, trace := p.resolver.ResolveModuleName(moduleName, fileName, kind, mode, redirect)
-			resolutionsInFile[module.ModeAwareCacheKey{Name: moduleName, Mode: mode}] = resolvedModule
+			resolutionsInFile[module.ModeAwareCacheKey{Name: moduleName, Mode: mode, ImportAttributeType: importAttributeType}] = resolvedModule
 			resolutionsTrace = append(resolutionsTrace, trace...)
 
 			if !resolvedModule.IsResolved() {
@@ -783,7 +787,7 @@ func getRawTypeValue(node *ast.Node) *string {
 	return nil
 }
 
-func getModuleLiteralImportKind(node *ast.StringLiteralLike) *string {
+func getModuleLiteralImportAttributeType(node *ast.StringLiteralLike) *string {
 	parent := node.Parent
 	if parent == nil {
 		return nil

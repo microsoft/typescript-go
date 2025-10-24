@@ -265,7 +265,7 @@ func doCall(t *testing.T, resolver *module.Resolver, call functionCall, skipLoca
 
 		errorMessageArgs := []any{call.args.Name, call.args.ContainingFile}
 		if call.call == "resolveModuleName" {
-			resolved, _ := resolver.ResolveModuleName(call.args.Name, call.args.ContainingFile, core.ModuleKind(call.args.ResolutionMode), redirectedReference)
+			resolved, _ := resolver.ResolveModuleName(call.args.Name, call.args.ContainingFile, nil, core.ModuleKind(call.args.ResolutionMode), redirectedReference)
 			assert.Check(t, resolved != nil, "ResolveModuleName should not return nil", errorMessageArgs)
 			if expectedResolvedModule, ok := call.returnValue["resolvedModule"].(map[string]any); ok {
 				assert.Check(t, resolved.IsResolved(), errorMessageArgs)

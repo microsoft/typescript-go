@@ -167,6 +167,14 @@ func (p *Program) GetDenoForkContextInfo() ast.DenoForkContextInfo {
 	return p.Host().GetDenoForkContextInfo()
 }
 
+func (p *Program) GetModuleLiteralImportAttributeType(node *ast.StringLiteralLike) string {
+	t := getModuleLiteralImportAttributeType(node)
+	if t != nil {
+		return *t
+	}
+	return ""
+}
+
 var _ checker.Program = (*Program)(nil)
 
 /** This should have similar behavior to 'processSourceFile' without diagnostics or mutation. */
@@ -385,9 +393,9 @@ func (p *Program) GetTypeCheckerForFile(ctx context.Context, file *ast.SourceFil
 	return p.checkerPool.GetCheckerForFile(ctx, file)
 }
 
-func (p *Program) GetResolvedModule(file ast.HasFileName, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule {
+func (p *Program) GetResolvedModule(file ast.HasFileName, moduleReference string, mode core.ResolutionMode, importAttributeType string) *module.ResolvedModule {
 	if resolutions, ok := p.resolvedModules[file.Path()]; ok {
-		if resolved, ok := resolutions[module.ModeAwareCacheKey{Name: moduleReference, Mode: mode}]; ok {
+		if resolved, ok := resolutions[module.ModeAwareCacheKey{Name: moduleReference, Mode: mode, ImportAttributeType: importAttributeType}]; ok {
 			return resolved
 		}
 	}
@@ -399,7 +407,7 @@ func (p *Program) GetResolvedModuleFromModuleSpecifier(file ast.HasFileName, mod
 		panic("moduleSpecifier must be a StringLiteralLike")
 	}
 	mode := p.GetModeForUsageLocation(file, moduleSpecifier)
-	return p.GetResolvedModule(file, moduleSpecifier.Text(), mode)
+	return p.GetResolvedModule(file, moduleSpecifier.Text(), mode, p.GetModuleLiteralImportAttributeType(moduleSpecifier))
 }
 
 func (p *Program) GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule] {
