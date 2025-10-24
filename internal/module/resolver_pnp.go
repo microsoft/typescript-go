@@ -13,9 +13,8 @@ func (r *resolutionState) loadPNPResolutionPath(moduleName string) (string, erro
 		return "", err
 	}
 
-	// trim trailing slash makes a bug in packageJsonInfoCache.Set
-	// like @emotion/react/ -> @emotion/react after packageJsonInfoCache.Set
-	// check why it's happening in packageJsonInfoCache and need to fix it
+	// Because the cache operates based on normalized paths with trailing slashes removed
+	// it always ensures that the paths are minimized.
 	return strings.TrimSuffix(resolution.Path, "/"), nil
 }
 
