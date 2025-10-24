@@ -628,7 +628,7 @@ func getContainingArgumentInfo(node *ast.Node, sourceFile *ast.SourceFile, check
 			if argumentInfo.invocation.contextualInvocation != nil {
 				return argumentInfo
 			}
-			
+
 			// For regular call expressions, check if the position is actually within the applicable span.
 			// This ensures that for nested calls, the outer call takes precedence
 			// when the position is outside the inner call's argument list.
@@ -916,14 +916,15 @@ func getArgumentOrParameterListInfo(node *ast.Node, sourceFile *ast.SourceFile, 
 }
 
 func getApplicableSpanForArguments(argumentList *ast.NodeList, node *ast.Node, sourceFile *ast.SourceFile) core.TextRange {
-	// We use full start and skip trivia on the end because we want to include trivia on
-	// both sides. For example,
+	// The applicable span starts at the beginning of the argument list (including leading trivia)
+	// and extends to the end of the argument list plus any trailing trivia.
+	// For example,
 	//
 	//    foo(   /*comment */     a, b, c      /*comment*/     )
 	//        |                                               |
 	//
 	// The applicable span is from the first bar to the second bar (inclusive,
-	// but not including parentheses)
+	// but not including parentheses).
 	if argumentList == nil && node != nil {
 		// If the user has just opened a list, and there are no arguments.
 		// For example, foo(    )
