@@ -7,10 +7,9 @@ blockScopedVariablesUseBeforeDef.ts(112,21): error TS2448: Block-scoped variable
 blockScopedVariablesUseBeforeDef.ts(122,22): error TS2448: Block-scoped variable 'a' used before its declaration.
 blockScopedVariablesUseBeforeDef.ts(128,9): error TS2448: Block-scoped variable 'foo' used before its declaration.
 blockScopedVariablesUseBeforeDef.ts(131,9): error TS2448: Block-scoped variable 'foo' used before its declaration.
-blockScopedVariablesUseBeforeDef.ts(153,20): error TS2450: Enum 'Enum' used before its declaration.
 
 
-==== blockScopedVariablesUseBeforeDef.ts (10 errors) ====
+==== blockScopedVariablesUseBeforeDef.ts (9 errors) ====
     function foo0() {
         let a = x;
                 ~
@@ -187,16 +186,5 @@ blockScopedVariablesUseBeforeDef.ts(153,20): error TS2450: Enum 'Enum' used befo
             iter;
             yield 1;
         })();
-    }
-    
-    function foo18() {
-        let a = (() => Enum.Yes)();
-                       ~~~~
-!!! error TS2450: Enum 'Enum' used before its declaration.
-!!! related TS2728 blockScopedVariablesUseBeforeDef.ts:154:10: 'Enum' is declared here.
-        enum Enum {
-            No = 0,
-            Yes = 1,
-        }
     }
     

@@ -64,17 +64,6 @@ function foo1 () {
     }
 }
 
-class foo2 {
-    static {
-        this.b  // should error
-        let b: typeof this.b;   // ok
-        if (1) {
-            this.b; // should error
-        }
-    }
-
-    static b = 1;
-}
 
 //// [classStaticBlock6.js]
 class B {
@@ -130,14 +119,4 @@ function foo1() {
             }
         }
     }
-}
-class foo2 {
-    static {
-        this.b; // should error
-        let b; // ok
-        if (1) {
-            this.b; // should error
-        }
-    }
-    static b = 1;
 }

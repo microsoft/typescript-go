@@ -1,0 +1,48 @@
+--- old.nodeModulesAllowJsPackagePatternExports(module=nodenext).errors.txt
++++ new.nodeModulesAllowJsPackagePatternExports(module=nodenext).errors.txt
+@@= skipped -0, +0 lines =@@
++node_modules/inner/index.d.cts(4,13): error TS2303: Circular definition of import alias 'type'.
++node_modules/inner/index.d.cts(7,10): error TS2303: Circular definition of import alias 'type'.
+ node_modules/inner/index.d.ts(2,13): error TS2303: Circular definition of import alias 'cjs'.
++node_modules/inner/index.d.ts(5,10): error TS2303: Circular definition of import alias 'cjs'.
+
+
+ ==== index.js (0 errors) ====
+@@= skipped -24, +27 lines =@@
+     cjsi;
+     mjsi;
+     typei;
+-==== node_modules/inner/index.d.ts (1 errors) ====
++==== node_modules/inner/index.d.ts (2 errors) ====
+     // cjs format file
+     import * as cjs from "inner/cjs/index";
+                 ~~~
+@@= skipped -8, +8 lines =@@
+     import * as mjs from "inner/mjs/index";
+     import * as type from "inner/js/index";
+     export { cjs };
++             ~~~
++!!! error TS2303: Circular definition of import alias 'cjs'.
+     export { mjs };
+     export { type };
+ ==== node_modules/inner/index.d.mts (0 errors) ====
+@@= skipped -10, +12 lines =@@
+     export { cjs };
+     export { mjs };
+     export { type };
+-==== node_modules/inner/index.d.cts (0 errors) ====
++==== node_modules/inner/index.d.cts (2 errors) ====
+     // cjs format file
+     import * as cjs from "inner/cjs/index";
+     import * as mjs from "inner/mjs/index";
+     import * as type from "inner/js/index";
++                ~~~~
++!!! error TS2303: Circular definition of import alias 'type'.
+     export { cjs };
+     export { mjs };
+     export { type };
++             ~~~~
++!!! error TS2303: Circular definition of import alias 'type'.
+ ==== package.json (0 errors) ====
+     {
+         "name": "package",
