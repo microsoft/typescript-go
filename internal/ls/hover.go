@@ -30,7 +30,7 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 
 	// Calculate the applicable range for the hover
 	rangeNode := getNodeForQuickInfo(node)
-	quickInfo, documentation := l.getQuickInfoAndDocumentation(c, node)
+	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(c, c.GetSymbolAtLocation(node), rangeNode)
 	if quickInfo == "" {
 		return lsproto.HoverOrNull{}, nil
 	}
@@ -49,10 +49,6 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 			Range: hoverRange,
 		},
 	}, nil
-}
-
-func (l *LanguageService) getQuickInfoAndDocumentation(c *checker.Checker, node *ast.Node) (string, string) {
-	return l.getQuickInfoAndDocumentationForSymbol(c, c.GetSymbolAtLocation(node), getNodeForQuickInfo(node))
 }
 
 func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Checker, symbol *ast.Symbol, node *ast.Node) (string, string) {
