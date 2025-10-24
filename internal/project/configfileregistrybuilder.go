@@ -533,6 +533,24 @@ func (c *configFileRegistryBuilder) getConfigFileNameForFile(fileName string, pa
 	return configName
 }
 
+func (c *configFileRegistryBuilder) forEachConfigFileNameFor(fileName string, path tspath.Path, cb func(configFileName string)) {
+	if isDynamicFileName(fileName) {
+		return
+	}
+
+	if entry, ok := c.configFileNames.Get(path); ok {
+		configFileName := entry.Value().nearestConfigFileName
+		for configFileName != "" {
+			cb(configFileName)
+			if ancestorConfigName, found := entry.Value().ancestors[configFileName]; found {
+				configFileName = ancestorConfigName
+			} else {
+				return
+			}
+		}
+	}
+}
+
 func (c *configFileRegistryBuilder) getAncestorConfigFileName(fileName string, path tspath.Path, configFileName string, logger *logging.LogTree) string {
 	if isDynamicFileName(fileName) {
 		return ""
@@ -542,6 +560,7 @@ func (c *configFileRegistryBuilder) getAncestorConfigFileName(fileName string, p
 	if !ok {
 		return ""
 	}
+
 	if ancestorConfigName, found := entry.Value().ancestors[configFileName]; found {
 		return ancestorConfigName
 	}

@@ -450,7 +450,6 @@ func (s *Session) GetLanguageServiceAndProjectsForFile(ctx context.Context, uri 
 }
 
 func (s *Session) GetProjectsForFile(ctx context.Context, uri lsproto.DocumentUri) ([]*Project, error) {
-	// !!! sheetal : should not retain this project? probably
 	snapshot := s.getSnapshot(
 		ctx,
 		snapshotChangeRequest{ensureDefaultProjectForURIs: []lsproto.DocumentUri{uri}},

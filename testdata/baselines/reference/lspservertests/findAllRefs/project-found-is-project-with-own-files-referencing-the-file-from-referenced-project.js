@@ -92,28 +92,28 @@ Projects::
   [/user/username/projects/myproject/tsconfig-src.json] 
     /user/username/projects/myproject/src/helpers/functions.ts  
     /user/username/projects/myproject/src/main.ts               
-  [/user/username/projects/myproject/tsconfig.json] *deleted*
+  [/user/username/projects/myproject/tsconfig.json] 
     /user/username/projects/myproject/src/helpers/functions.ts  
     /user/username/projects/myproject/src/main.ts               
     /user/username/projects/myproject/own/main.ts               
   [/user/username/workspaces/dummy/tsconfig.json] *new*
     /user/username/workspaces/dummy/dummy.ts  
 Open Files::
-  [/user/username/projects/myproject/src/main.ts] *modified*
+  [/user/username/projects/myproject/src/main.ts] 
     /user/username/projects/myproject/tsconfig-src.json  (default) 
-    /user/username/projects/myproject/tsconfig.json      *deleted*
+    /user/username/projects/myproject/tsconfig.json      
   [/user/username/workspaces/dummy/dummy.ts] *new*
     /user/username/workspaces/dummy/tsconfig.json  (default) 
 Config::
-  [/user/username/projects/myproject/tsconfig-src.json] *modified*
-    RetainingProjects: *modified*
+  [/user/username/projects/myproject/tsconfig-src.json] 
+    RetainingProjects:
       /user/username/projects/myproject/tsconfig-src.json  
-      /user/username/projects/myproject/tsconfig.json      *deleted*
+      /user/username/projects/myproject/tsconfig.json      
     RetainingOpenFiles:
       /user/username/projects/myproject/src/main.ts  
-  [/user/username/projects/myproject/tsconfig.json] *modified*
-    RetainingProjects: *modified*
-      /user/username/projects/myproject/tsconfig.json  *deleted*
+  [/user/username/projects/myproject/tsconfig.json] 
+    RetainingProjects:
+      /user/username/projects/myproject/tsconfig.json  
     RetainingOpenFiles:
       /user/username/projects/myproject/src/main.ts  
   [/user/username/workspaces/dummy/tsconfig.json] *new*
@@ -139,6 +139,7 @@ Config File Names::
 Open Files::
   [/user/username/projects/myproject/src/main.ts] 
     /user/username/projects/myproject/tsconfig-src.json  (default) 
+    /user/username/projects/myproject/tsconfig.json      
   [/user/username/workspaces/dummy/dummy.ts] *closed*
 {
   "method": "textDocument/didClose",
@@ -165,6 +166,10 @@ Projects::
   [/user/username/projects/myproject/tsconfig-src.json] *deleted*
     /user/username/projects/myproject/src/helpers/functions.ts  
     /user/username/projects/myproject/src/main.ts               
+  [/user/username/projects/myproject/tsconfig.json] *deleted*
+    /user/username/projects/myproject/src/helpers/functions.ts  
+    /user/username/projects/myproject/src/main.ts               
+    /user/username/projects/myproject/own/main.ts               
   [/user/username/workspaces/dummy/tsconfig.json] 
     /user/username/workspaces/dummy/dummy.ts  
 Open Files::

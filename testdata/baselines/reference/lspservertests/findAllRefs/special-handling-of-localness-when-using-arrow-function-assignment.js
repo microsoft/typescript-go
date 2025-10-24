@@ -68,19 +68,11 @@ Config::
   [/user/username/projects/solution/api/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/solution/api/tsconfig.json  
-      /user/username/projects/solution/tsconfig.json      
     RetainingOpenFiles:
       /user/username/projects/solution/api/src/server.ts  
-  [/user/username/projects/solution/app/tsconfig.json] *new*
-    RetainingProjects:
-      /user/username/projects/solution/tsconfig.json  
   [/user/username/projects/solution/shared/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/solution/api/tsconfig.json  
-      /user/username/projects/solution/tsconfig.json      
-  [/user/username/projects/solution/tsconfig.json] *new*
-    RetainingProjects:
-      /user/username/projects/solution/tsconfig.json  
 Config File Names::
   [/user/username/projects/solution/api/src/server.ts] *new*
     NearestConfigFileName: /user/username/projects/solution/api/tsconfig.json
@@ -111,27 +103,27 @@ Projects::
     /user/username/projects/solution/app/src/app.ts       
   [/user/username/projects/solution/shared/tsconfig.json] *new*
     /user/username/projects/solution/shared/src/index.ts  
-  [/user/username/projects/solution/tsconfig.json] 
+  [/user/username/projects/solution/tsconfig.json] *modified*
 Config::
-  [/user/username/projects/solution/api/tsconfig.json] 
-    RetainingProjects:
+  [/user/username/projects/solution/api/tsconfig.json] *modified*
+    RetainingProjects: *modified*
       /user/username/projects/solution/api/tsconfig.json  
-      /user/username/projects/solution/tsconfig.json      
+      /user/username/projects/solution/tsconfig.json      *new*
     RetainingOpenFiles:
       /user/username/projects/solution/api/src/server.ts  
-  [/user/username/projects/solution/app/tsconfig.json] *modified*
-    RetainingProjects: *modified*
-      /user/username/projects/solution/app/tsconfig.json  *new*
+  [/user/username/projects/solution/app/tsconfig.json] *new*
+    RetainingProjects:
+      /user/username/projects/solution/app/tsconfig.json  
       /user/username/projects/solution/tsconfig.json      
   [/user/username/projects/solution/shared/tsconfig.json] *modified*
     RetainingProjects: *modified*
       /user/username/projects/solution/api/tsconfig.json     
       /user/username/projects/solution/app/tsconfig.json     *new*
       /user/username/projects/solution/shared/tsconfig.json  *new*
-      /user/username/projects/solution/tsconfig.json         
+      /user/username/projects/solution/tsconfig.json         *new*
     RetainingOpenFiles: *modified*
       /user/username/projects/solution/shared/src/index.ts  *new*
-  [/user/username/projects/solution/tsconfig.json] 
+  [/user/username/projects/solution/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/solution/tsconfig.json  
 // === /user/username/projects/solution/api/src/server.ts ===

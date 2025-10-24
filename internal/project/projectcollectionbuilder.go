@@ -255,15 +255,65 @@ func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 		var toRemoveProjects collections.Set[tspath.Path]
 		openFileResult := b.ensureConfiguredProjectAndAncestorsForFile(fileName, path, logger)
 		b.configuredProjects.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *Project]) bool {
-			toRemoveProjects.Add(entry.Value().configFilePath)
-			b.updateProgram(entry, logger)
+			toRemoveProjects.Add(entry.Key())
 			return true
 		})
+		var isReferencedBy func(project *Project, refPath tspath.Path, seenProjects *collections.Set[*Project]) bool
+		isReferencedBy = func(project *Project, refPath tspath.Path, seenProjects *collections.Set[*Project]) bool {
+			if !seenProjects.AddIfAbsent(project) {
+				return false
+			}
+
+			if project.potentialProjectReferences != nil {
+				for potentialRef := range project.potentialProjectReferences.Keys() {
+					if potentialRef == refPath {
+						return true
+					}
+				}
+				for potentialRef := range project.potentialProjectReferences.Keys() {
+					if refProject, foundRef := b.configuredProjects.Load(potentialRef); foundRef && isReferencedBy(refProject.Value(), refPath, seenProjects) {
+						return true
+					}
+				}
+			} else if program := project.GetProgram(); program != nil && program.ForEachResolvedProjectReference(func(referencePath tspath.Path, _ *tsoptions.ParsedCommandLine, _ *tsoptions.ParsedCommandLine, _ int) bool {
+				return referencePath == refPath
+			}) {
+				return true
+			}
+			return false
+		}
+
+		retainProjectAndReferences := func(project *Project) {
+			// Retain project
+			toRemoveProjects.Delete(project.configFilePath)
+			if program := project.GetProgram(); program != nil {
+				program.ForEachResolvedProjectReference(func(referencePath tspath.Path, _ *tsoptions.ParsedCommandLine, _ *tsoptions.ParsedCommandLine, _ int) bool {
+					if _, ok := b.configuredProjects.Load(referencePath); ok {
+						toRemoveProjects.Delete(referencePath)
+					}
+					return false
+				})
+			}
+		}
+
+		retainDefaultConfiguredProject := func(openFile string, openFilePath tspath.Path, project *Project) {
+			// Retain project and its references
+			retainProjectAndReferences(project)
+
+			// Retain all the ancestor projects
+			b.configFileRegistryBuilder.forEachConfigFileNameFor(openFile, openFilePath, func(configFileName string) {
+				if ancestor := b.findOrCreateProject(configFileName, b.toPath(configFileName), projectLoadKindFind, logger); ancestor != nil {
+					retainProjectAndReferences(ancestor.Value())
+				}
+			})
+		}
 
 		var inferredProjectFiles []string
 		for _, overlay := range b.fs.overlays {
-			if p := b.findDefaultConfiguredProject(overlay.FileName(), b.toPath(overlay.FileName())); p != nil {
-				toRemoveProjects.Delete(p.Value().configFilePath)
+			openFile := overlay.FileName()
+			openFilePath := b.toPath(openFile)
+			if p := b.findDefaultConfiguredProject(openFile, openFilePath); p != nil {
+				retainDefaultConfiguredProject(openFile, openFilePath, p.Value())
 			} else {
 				inferredProjectFiles = append(inferredProjectFiles, overlay.FileName())
 			}
@@ -591,8 +641,6 @@ func (b *ProjectCollectionBuilder) findDefaultConfiguredProject(fileName string,
 func (b *ProjectCollectionBuilder) ensureConfiguredProjectAndAncestorsForFile(fileName string, path tspath.Path, logger *logging.LogTree) searchResult {
 	result := b.findOrCreateDefaultConfiguredProjectForFile(fileName, path, projectLoadKindCreate, logger)
 	if result.project != nil && b.openedFiles.Has(path) {
-		// TODO!!! sheetal - keep these alive as well along with default projects
-		// !!! sheetal we want to keep referenced projects if any as well alive so they can be used for FAR later
 		b.createAncestorTree(fileName, path, &result, logger)
 	}
 	return result
@@ -1040,8 +1088,9 @@ func (b *ProjectCollectionBuilder) deleteConfiguredProject(project dirty.Value[*
 		logger.Log("Deleting configured project: " + project.Value().configFileName)
 	}
 	if program := project.Value().Program; program != nil {
-		program.ForEachResolvedProjectReference(func(referencePath tspath.Path, config *tsoptions.ParsedCommandLine, _ *tsoptions.ParsedCommandLine, _ int) {
+		program.ForEachResolvedProjectReference(func(referencePath tspath.Path, config *tsoptions.ParsedCommandLine, _ *tsoptions.ParsedCommandLine, _ int) bool {
 			b.configFileRegistryBuilder.releaseConfigForProject(referencePath, projectPath)
+			return false
 		})
 	}
 	b.configFileRegistryBuilder.releaseConfigForProject(projectPath, projectPath)

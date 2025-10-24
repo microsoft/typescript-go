@@ -110,18 +110,15 @@ func (mapper *projectReferenceFileMapper) getResolvedReferenceFor(path tspath.Pa
 }
 
 func (mapper *projectReferenceFileMapper) forEachResolvedProjectReference(
-	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int),
-) {
+	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) bool,
+) bool {
 	if mapper.opts.Config.ConfigFile == nil {
-		return
+		return false
 	}
 	seenRef := collections.NewSetWithSizeHint[tspath.Path](len(mapper.referencesInConfigFile))
 	seenRef.Add(mapper.opts.Config.ConfigFile.SourceFile.Path())
 	refs := mapper.referencesInConfigFile[mapper.opts.Config.ConfigFile.SourceFile.Path()]
-	mapper.forEachResolvedReferenceWorker(refs, func(path tspath.Path, config *tsoptions.ParsedCommandLine, parent *tsoptions.ParsedCommandLine, index int) bool {
-		fn(path, config, parent, index)
-		return false
-	}, mapper.opts.Config, seenRef)
+	return mapper.forEachResolvedReferenceWorker(refs, fn, mapper.opts.Config, seenRef)
 }
 
 func (mapper *projectReferenceFileMapper) forEachResolvedReferenceWorker(

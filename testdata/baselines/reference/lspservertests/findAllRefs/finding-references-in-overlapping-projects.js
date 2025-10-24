@@ -88,22 +88,11 @@ Config::
   [/user/username/projects/solution/a/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/solution/b/tsconfig.json  
-      /user/username/projects/solution/tsconfig.json    
   [/user/username/projects/solution/b/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/solution/b/tsconfig.json  
-      /user/username/projects/solution/tsconfig.json    
     RetainingOpenFiles:
       /user/username/projects/solution/b/index.ts  
-  [/user/username/projects/solution/c/tsconfig.json] *new*
-    RetainingProjects:
-      /user/username/projects/solution/tsconfig.json  
-  [/user/username/projects/solution/d/tsconfig.json] *new*
-    RetainingProjects:
-      /user/username/projects/solution/tsconfig.json  
-  [/user/username/projects/solution/tsconfig.json] *new*
-    RetainingProjects:
-      /user/username/projects/solution/tsconfig.json  
 Config File Names::
   [/user/username/projects/solution/b/index.ts] *new*
     NearestConfigFileName: /user/username/projects/solution/b/tsconfig.json
@@ -140,7 +129,7 @@ Projects::
     /user/username/projects/solution/b/index.ts  
     /user/username/projects/solution/c/index.ts  
     /user/username/projects/solution/d/index.ts  
-  [/user/username/projects/solution/tsconfig.json] 
+  [/user/username/projects/solution/tsconfig.json] *modified*
 Open Files::
   [/user/username/projects/solution/b/index.ts] *modified*
     /user/username/projects/solution/b/tsconfig.json  (default) 
@@ -153,7 +142,7 @@ Config::
       /user/username/projects/solution/b/tsconfig.json  
       /user/username/projects/solution/c/tsconfig.json  *new*
       /user/username/projects/solution/d/tsconfig.json  *new*
-      /user/username/projects/solution/tsconfig.json    
+      /user/username/projects/solution/tsconfig.json    *new*
     RetainingOpenFiles: *modified*
       /user/username/projects/solution/a/index.ts  *new*
   [/user/username/projects/solution/b/tsconfig.json] *modified*
@@ -161,21 +150,21 @@ Config::
       /user/username/projects/solution/b/tsconfig.json  
       /user/username/projects/solution/c/tsconfig.json  *new*
       /user/username/projects/solution/d/tsconfig.json  *new*
-      /user/username/projects/solution/tsconfig.json    
+      /user/username/projects/solution/tsconfig.json    *new*
     RetainingOpenFiles:
       /user/username/projects/solution/b/index.ts  
-  [/user/username/projects/solution/c/tsconfig.json] *modified*
-    RetainingProjects: *modified*
-      /user/username/projects/solution/c/tsconfig.json  *new*
-      /user/username/projects/solution/d/tsconfig.json  *new*
+  [/user/username/projects/solution/c/tsconfig.json] *new*
+    RetainingProjects:
+      /user/username/projects/solution/c/tsconfig.json  
+      /user/username/projects/solution/d/tsconfig.json  
       /user/username/projects/solution/tsconfig.json    
-    RetainingOpenFiles: *modified*
-      /user/username/projects/solution/c/index.ts  *new*
-  [/user/username/projects/solution/d/tsconfig.json] *modified*
-    RetainingProjects: *modified*
-      /user/username/projects/solution/d/tsconfig.json  *new*
+    RetainingOpenFiles:
+      /user/username/projects/solution/c/index.ts  
+  [/user/username/projects/solution/d/tsconfig.json] *new*
+    RetainingProjects:
+      /user/username/projects/solution/d/tsconfig.json  
       /user/username/projects/solution/tsconfig.json    
-  [/user/username/projects/solution/tsconfig.json] 
+  [/user/username/projects/solution/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/solution/tsconfig.json  
 // === /user/username/projects/solution/a/index.ts ===

@@ -236,25 +236,15 @@ Projects::
   [/user/username/projects/myproject/dependency/tsconfig.json] *new*
     /user/username/projects/myproject/dependency/FnS.ts  
   [/user/username/projects/myproject/tsconfig.json] *new*
-    /user/username/projects/myproject/decls/FnS.d.ts     
-    /user/username/projects/myproject/dependency/FnS.ts  
-    /user/username/projects/myproject/main/main.ts       
 Open Files::
   [/user/username/projects/myproject/dependency/FnS.ts] *new*
     /user/username/projects/myproject/dependency/tsconfig.json  (default) 
-    /user/username/projects/myproject/tsconfig.json             
 Config::
   [/user/username/projects/myproject/dependency/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/myproject/dependency/tsconfig.json  
     RetainingOpenFiles:
       /user/username/projects/myproject/dependency/fns.ts  
-  [/user/username/projects/myproject/main/tsconfig.json] *new*
-    RetainingProjects:
-      /user/username/projects/myproject/tsconfig.json  
-  [/user/username/projects/myproject/tsconfig.json] *new*
-    RetainingProjects:
-      /user/username/projects/myproject/tsconfig.json  
 Config File Names::
   [/user/username/projects/myproject/dependency/fns.ts] *new*
     NearestConfigFileName: /user/username/projects/myproject/dependency/tsconfig.json
@@ -275,16 +265,12 @@ Config File Names::
 Projects::
   [/user/username/projects/myproject/dependency/tsconfig.json] 
     /user/username/projects/myproject/dependency/FnS.ts  
-  [/user/username/projects/myproject/tsconfig.json] *deleted*
-    /user/username/projects/myproject/decls/FnS.d.ts     
-    /user/username/projects/myproject/dependency/FnS.ts  
-    /user/username/projects/myproject/main/main.ts       
+  [/user/username/projects/myproject/tsconfig.json] 
   [/user/username/projects/random/tsconfig.json] *new*
     /user/username/projects/random/random.ts  
 Open Files::
-  [/user/username/projects/myproject/dependency/FnS.ts] *modified*
+  [/user/username/projects/myproject/dependency/FnS.ts] 
     /user/username/projects/myproject/dependency/tsconfig.json  (default) 
-    /user/username/projects/myproject/tsconfig.json             *deleted*
   [/user/username/projects/random/random.ts] *new*
     /user/username/projects/random/tsconfig.json  (default) 
 Config::
@@ -293,8 +279,6 @@ Config::
       /user/username/projects/myproject/dependency/tsconfig.json  
     RetainingOpenFiles:
       /user/username/projects/myproject/dependency/fns.ts  
-  [/user/username/projects/myproject/main/tsconfig.json] *deleted*
-  [/user/username/projects/myproject/tsconfig.json] *deleted*
   [/user/username/projects/random/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/random/tsconfig.json  
@@ -321,6 +305,38 @@ Config File Names::
     "newName": "?"
   }
 }
+Projects::
+  [/user/username/projects/myproject/dependency/tsconfig.json] 
+    /user/username/projects/myproject/dependency/FnS.ts  
+  [/user/username/projects/myproject/tsconfig.json] *modified*
+    /user/username/projects/myproject/decls/FnS.d.ts     *new*
+    /user/username/projects/myproject/dependency/FnS.ts  *new*
+    /user/username/projects/myproject/main/main.ts       *new*
+  [/user/username/projects/random/tsconfig.json] 
+    /user/username/projects/random/random.ts  
+Open Files::
+  [/user/username/projects/myproject/dependency/FnS.ts] *modified*
+    /user/username/projects/myproject/dependency/tsconfig.json  (default) 
+    /user/username/projects/myproject/tsconfig.json             *new*
+  [/user/username/projects/random/random.ts] 
+    /user/username/projects/random/tsconfig.json  (default) 
+Config::
+  [/user/username/projects/myproject/dependency/tsconfig.json] 
+    RetainingProjects:
+      /user/username/projects/myproject/dependency/tsconfig.json  
+    RetainingOpenFiles:
+      /user/username/projects/myproject/dependency/fns.ts  
+  [/user/username/projects/myproject/main/tsconfig.json] *new*
+    RetainingProjects:
+      /user/username/projects/myproject/tsconfig.json  
+  [/user/username/projects/myproject/tsconfig.json] *new*
+    RetainingProjects:
+      /user/username/projects/myproject/tsconfig.json  
+  [/user/username/projects/random/tsconfig.json] 
+    RetainingProjects:
+      /user/username/projects/random/tsconfig.json  
+    RetainingOpenFiles:
+      /user/username/projects/random/random.ts  
 // === /user/username/projects/myproject/dependency/FnS.ts ===
 // export function fn1() { }
 // export function fn2() { }
@@ -339,6 +355,7 @@ Config File Names::
 Open Files::
   [/user/username/projects/myproject/dependency/FnS.ts] 
     /user/username/projects/myproject/dependency/tsconfig.json  (default) 
+    /user/username/projects/myproject/tsconfig.json             
   [/user/username/projects/random/random.ts] *closed*
 {
   "method": "textDocument/didOpen",
@@ -354,6 +371,7 @@ Open Files::
 Open Files::
   [/user/username/projects/myproject/dependency/FnS.ts] 
     /user/username/projects/myproject/dependency/tsconfig.json  (default) 
+    /user/username/projects/myproject/tsconfig.json             
   [/user/username/projects/random/random.ts] *new*
     /user/username/projects/random/tsconfig.json  (default) 
 {
@@ -392,6 +410,10 @@ Open Files::
 Projects::
   [/user/username/projects/myproject/dependency/tsconfig.json] *deleted*
     /user/username/projects/myproject/dependency/FnS.ts  
+  [/user/username/projects/myproject/tsconfig.json] *deleted*
+    /user/username/projects/myproject/decls/FnS.d.ts     
+    /user/username/projects/myproject/dependency/FnS.ts  
+    /user/username/projects/myproject/main/main.ts       
   [/user/username/projects/random/tsconfig.json] 
     /user/username/projects/random/random.ts  
 Open Files::
@@ -399,6 +421,8 @@ Open Files::
     /user/username/projects/random/tsconfig.json  (default) 
 Config::
   [/user/username/projects/myproject/dependency/tsconfig.json] *deleted*
+  [/user/username/projects/myproject/main/tsconfig.json] *deleted*
+  [/user/username/projects/myproject/tsconfig.json] *deleted*
   [/user/username/projects/random/tsconfig.json] 
     RetainingProjects:
       /user/username/projects/random/tsconfig.json  
