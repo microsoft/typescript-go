@@ -790,12 +790,16 @@ func getModuleLiteralImportKind(node *ast.StringLiteralLike) *string {
 	}
 
 	if ast.IsImportDeclaration(parent) || ast.IsExportDeclaration(parent) {
-		var elements []*ast.Node
+		var attrs *ast.ImportAttributesNode
 		if ast.IsImportDeclaration(parent) {
-			elements = parent.AsImportDeclaration().Attributes.AsImportAttributes().Attributes.Nodes
+			attrs = parent.AsImportDeclaration().Attributes
 		} else {
-			elements = parent.AsExportDeclaration().Attributes.AsImportAttributes().Attributes.Nodes
+			attrs = parent.AsExportDeclaration().Attributes
 		}
+		if attrs == nil {
+			return nil
+		}
+		elements := attrs.AsImportAttributes().Attributes.Nodes
 		if elements == nil {
 			return nil
 		}
