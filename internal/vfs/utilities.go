@@ -2,7 +2,6 @@ package vfs
 
 import (
 	"fmt"
-	"regexp"
 	"sort"
 	"strings"
 	"sync"
@@ -75,18 +74,28 @@ func replaceWildcardCharacter(match string, singleAsteriskRegexFragment string) 
 	}
 }
 
+func escapeRegexMetacharacters(s string, replaceWildcard func(string) string) string {
+	var result strings.Builder
+	result.Grow(len(s))
+	for _, ch := range s {
+		switch ch {
+		case '\\', '.', '+', '*', '?', '(', ')', '[', ']', '{', '}', '^', '$', '|', '#':
+			result.WriteString(replaceWildcard(string(ch)))
+		default:
+			result.WriteRune(ch)
+		}
+	}
+	return result.String()
+}
+
 // An "includes" path "foo" is implicitly a glob "foo/** /*" (without the space) if its last component has no extension,
 // and does not contain any glob characters itself.
 func IsImplicitGlob(lastPathComponent string) bool {
 	return !strings.ContainsAny(lastPathComponent, ".*?")
 }
 
-// Reserved characters - only escape actual regex metacharacters.
-// Go's regexp doesn't support \x escape sequences for arbitrary characters,
-// so we only escape characters that have special meaning in regex.
 var (
-	reservedCharacterPattern *regexp.Regexp = regexp.MustCompile(`[\\.\+*?()\[\]{}^$|#]`)
-	wildcardCharCodes                       = []rune{'*', '?'}
+	wildcardCharCodes = []rune{'*', '?'}
 )
 
 var (
@@ -206,7 +215,7 @@ func getSubPatternFromSpec(
 					componentPattern.WriteString("[^./]")
 					component = component[1:]
 				}
-				componentPattern.WriteString(reservedCharacterPattern.ReplaceAllStringFunc(component, replaceWildcardCharacter))
+				componentPattern.WriteString(escapeRegexMetacharacters(component, replaceWildcardCharacter))
 
 				// Patterns should not include subfolders like node_modules unless they are
 				// explicitly included as part of the path.
@@ -219,7 +228,7 @@ func getSubPatternFromSpec(
 				}
 				subpattern.WriteString(componentPattern.String())
 			} else {
-				subpattern.WriteString(reservedCharacterPattern.ReplaceAllStringFunc(component, replaceWildcardCharacter))
+				subpattern.WriteString(escapeRegexMetacharacters(component, replaceWildcardCharacter))
 			}
 		}
 		hasWrittenComponent = true
