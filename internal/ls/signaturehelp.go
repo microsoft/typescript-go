@@ -614,16 +614,37 @@ func containsPrecedingToken(startingToken *ast.Node, sourceFile *ast.SourceFile,
 }
 
 func getContainingArgumentInfo(node *ast.Node, sourceFile *ast.SourceFile, checker *checker.Checker, isManuallyInvoked bool, position int) *argumentListInfo {
+	var lastArgumentInfo *argumentListInfo
 	for n := node; !ast.IsSourceFile(n) && (isManuallyInvoked || !ast.IsBlock(n)); n = n.Parent {
 		// If the node is not a subspan of its parent, this is a big problem.
 		// There have been crashes that might be caused by this violation.
 		debug.Assert(RangeContainsRange(n.Parent.Loc, n.Loc), fmt.Sprintf("Not a subspan. Child: %s, parent: %s", n.KindString(), n.Parent.KindString()))
 		argumentInfo := getImmediatelyContainingArgumentOrContextualParameterInfo(n, position, sourceFile, checker)
 		if argumentInfo != nil {
-			return argumentInfo
+			// For contextual invocations (e.g., arrow functions with contextual types),
+			// always return immediately without checking the position.
+			// This ensures that when inside a callback's parameter list, we show the callback's
+			// signature, not the outer call's signature.
+			if argumentInfo.invocation.contextualInvocation != nil {
+				return argumentInfo
+			}
+
+			// For regular call expressions, check if the position is actually within the applicable span.
+			// This ensures that for nested calls, the outer call takes precedence
+			// when the position is outside the inner call's argument list.
+			if argumentInfo.argumentsSpan.Contains(position) {
+				return argumentInfo
+			}
+			// Remember this argument info in case we don't find an outer call
+			if lastArgumentInfo == nil {
+				lastArgumentInfo = argumentInfo
+			}
+			// Continue looking for an outer call if position is outside this call's applicable span
 		}
 	}
-	return nil
+	// If we didn't find a call that contains the position, return the last call we found.
+	// This handles cases where the cursor is at the edge of a call (e.g., right after a parameter).
+	return lastArgumentInfo
 }
 
 func getImmediatelyContainingArgumentOrContextualParameterInfo(node *ast.Node, position int, sourceFile *ast.SourceFile, checker *checker.Checker) *argumentListInfo {
@@ -895,14 +916,15 @@ func getArgumentOrParameterListInfo(node *ast.Node, sourceFile *ast.SourceFile, 
 }
 
 func getApplicableSpanForArguments(argumentList *ast.NodeList, node *ast.Node, sourceFile *ast.SourceFile) core.TextRange {
-	// We use full start and skip trivia on the end because we want to include trivia on
-	// both sides. For example,
+	// The applicable span starts at the beginning of the argument list (including leading trivia)
+	// and extends to the end of the argument list plus any trailing trivia.
+	// For example,
 	//
 	//    foo(   /*comment */     a, b, c      /*comment*/     )
 	//        |                                               |
 	//
 	// The applicable span is from the first bar to the second bar (inclusive,
-	// but not including parentheses)
+	// but not including parentheses).
 	if argumentList == nil && node != nil {
 		// If the user has just opened a list, and there are no arguments.
 		// For example, foo(    )
