@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
@@ -84,7 +85,7 @@ func getOwnOrInheritedDelta(n *ast.Node, options *FormatCodeSettings, sourceFile
 	previousLine := -1
 	var child *ast.Node
 	for n != nil {
-		line, _ := scanner.GetLineAndCharacterOfPosition(sourceFile, withTokenStart(n, sourceFile).Pos())
+		line, _ := scanner.GetECMALineAndCharacterOfPosition(sourceFile, withTokenStart(n, sourceFile).Pos())
 		if previousLine != -1 && line != previousLine {
 			break
 		}
@@ -241,10 +242,10 @@ func (w *formatSpanWorker) execute(s *formattingScanner) []core.TextChange {
 	w.formattingScanner.advance()
 
 	if w.formattingScanner.isOnToken() {
-		startLine, _ := scanner.GetLineAndCharacterOfPosition(w.sourceFile, withTokenStart(w.enclosingNode, w.sourceFile).Pos())
+		startLine, _ := scanner.GetECMALineAndCharacterOfPosition(w.sourceFile, withTokenStart(w.enclosingNode, w.sourceFile).Pos())
 		undecoratedStartLine := startLine
 		if ast.HasDecorators(w.enclosingNode) {
-			undecoratedStartLine, _ = scanner.GetLineAndCharacterOfPosition(w.sourceFile, getNonDecoratorTokenPosOfNode(w.enclosingNode, w.sourceFile))
+			undecoratedStartLine, _ = scanner.GetECMALineAndCharacterOfPosition(w.sourceFile, getNonDecoratorTokenPosOfNode(w.enclosingNode, w.sourceFile))
 		}
 
 		w.processNode(w.enclosingNode, w.enclosingNode, startLine, undecoratedStartLine, w.initialIndentation, w.delta)
@@ -261,7 +262,7 @@ func (w *formatSpanWorker) execute(s *formattingScanner) []core.TextChange {
 		}
 
 		w.indentTriviaItems(remainingTrivia, indentation, true, func(item TextRangeWithKind) {
-			startLine, startChar := scanner.GetLineAndCharacterOfPosition(w.sourceFile, item.Loc.Pos())
+			startLine, startChar := scanner.GetECMALineAndCharacterOfPosition(w.sourceFile, item.Loc.Pos())
 			w.processRange(item, startLine, startChar, w.enclosingNode, w.enclosingNode, nil)
 			w.insertIndentation(item.Loc.Pos(), indentation, false)
 		})
@@ -304,7 +305,7 @@ func (w *formatSpanWorker) execute(s *formattingScanner) []core.TextChange {
 			if parent == nil {
 				parent = w.previousParent
 			}
-			line, _ := scanner.GetLineAndCharacterOfPosition(w.sourceFile, tokenInfo.Loc.Pos())
+			line, _ := scanner.GetECMALineAndCharacterOfPosition(w.sourceFile, tokenInfo.Loc.Pos())
 			w.processPair(
 				tokenInfo,
 				line,
@@ -335,18 +336,18 @@ func (w *formatSpanWorker) processChildNode(
 	isListItem bool,
 	isFirstListItem bool,
 ) int {
-	// Debug.assert(!nodeIsSynthesized(child)); // !!!
+	debug.Assert(!ast.NodeIsSynthesized(child))
 
 	if ast.NodeIsMissing(child) || isGrammarError(parent, child) {
 		return inheritedIndentation
 	}
 
 	childStartPos := scanner.GetTokenPosOfNode(child, w.sourceFile, false)
-	childStartLine, _ := scanner.GetLineAndCharacterOfPosition(w.sourceFile, childStartPos)
+	childStartLine, _ := scanner.GetECMALineAndCharacterOfPosition(w.sourceFile, childStartPos)
 
 	undecoratedChildStartLine := childStartLine
 	if ast.HasDecorators(child) {
-		undecoratedChildStartLine, _ = scanner.GetLineAndCharacterOfPosition(w.sourceFile, getNonDecoratorTokenPosOfNode(child, w.sourceFile))
+		undecoratedChildStartLine, _ = scanner.GetECMALineAndCharacterOfPosition(w.sourceFile, getNonDecoratorTokenPosOfNode(child, w.sourceFile))
 	}
 
 	// if child is a list item - try to get its indentation, only if parent is within the original range.
@@ -397,7 +398,7 @@ func (w *formatSpanWorker) processChildNode(
 		tokenInfo := w.formattingScanner.readTokenInfo(child)
 		// JSX text shouldn't affect indenting
 		if child.Kind != ast.KindJsxText {
-			// Debug.assert(tokenInfo.token.end === child.end, "Token end is child end"); // !!!
+			debug.Assert(tokenInfo.token.Loc.End() == child.Loc.End(), "Token end is child end")
 			w.consumeTokenAndAdvanceScanner(tokenInfo, node, parentDynamicIndentation, child, false)
 			return inheritedIndentation
 		}
@@ -430,8 +431,9 @@ func (w *formatSpanWorker) processChildNodes(
 	parentStartLine int,
 	parentDynamicIndentation *dynamicIndenter,
 ) {
-	// Debug.assert(isNodeArray(nodes)); // !!!
-	// Debug.assert(!nodeIsSynthesized(nodes)); // !!!
+	debug.AssertIsDefined(nodes)
+	debug.Assert(!ast.PositionIsSynthesized(nodes.Pos()))
+	debug.Assert(!ast.PositionIsSynthesized(nodes.End()))
 
 	listStartToken := getOpenTokenForList(parent, nodes)
 
@@ -455,7 +457,7 @@ func (w *formatSpanWorker) processChildNodes(
 				break
 			} else if tokenInfo.token.Kind == listStartToken {
 				// consume list start token
-				startLine, _ = scanner.GetLineAndCharacterOfPosition(w.sourceFile, tokenInfo.token.Loc.Pos())
+				startLine, _ = scanner.GetECMALineAndCharacterOfPosition(w.sourceFile, tokenInfo.token.Loc.Pos())
 
 				w.consumeTokenAndAdvanceScanner(tokenInfo, parent, parentDynamicIndentation, parent, false)
 
@@ -467,8 +469,8 @@ func (w *formatSpanWorker) processChildNodes(
 					// }: {};
 					indentationOnListStartToken = w.indentationOnLastIndentedLine
 				} else {
-					startLinePosition := getLineStartPositionForPosition(tokenInfo.token.Loc.Pos(), w.sourceFile)
-					indentationOnListStartToken = findFirstNonWhitespaceColumn(startLinePosition, tokenInfo.token.Loc.Pos(), w.sourceFile, w.formattingContext.Options)
+					startLinePosition := GetLineStartPositionForPosition(tokenInfo.token.Loc.Pos(), w.sourceFile)
+					indentationOnListStartToken = FindFirstNonWhitespaceColumn(startLinePosition, tokenInfo.token.Loc.Pos(), w.sourceFile, w.formattingContext.Options)
 				}
 
 				listDynamicIndentation = w.getDynamicIndentation(parent, parentStartLine, indentationOnListStartToken, w.formattingContext.Options.IndentSize)
@@ -576,9 +578,9 @@ func (w *formatSpanWorker) tryComputeIndentationForListItem(startPos int, endPos
 			return inheritedIndentation
 		}
 	} else {
-		startLine, _ := scanner.GetLineAndCharacterOfPosition(w.sourceFile, startPos)
-		startLinePosition := getLineStartPositionForPosition(startPos, w.sourceFile)
-		column := findFirstNonWhitespaceColumn(startLinePosition, startPos, w.sourceFile, w.formattingContext.Options)
+		startLine, _ := scanner.GetECMALineAndCharacterOfPosition(w.sourceFile, startPos)
+		startLinePosition := GetLineStartPositionForPosition(startPos, w.sourceFile)
+		column := FindFirstNonWhitespaceColumn(startLinePosition, startPos, w.sourceFile, w.formattingContext.Options)
 		if startLine != parentStartLine || startPos == column {
 			// Use the base indent size if it is greater than
 			// the indentation of the inherited predecessor.
@@ -658,7 +660,7 @@ func (w *formatSpanWorker) processPair(currentItem TextRangeWithKind, currentSta
 						dynamicIndentation.recomputeIndentation( /*lineAddedByFormatting*/ true, contextNode)
 					}
 				default:
-					// Debug.assert(lineAction === LineAction.None); // !!!
+					debug.Assert(lineAction == LineActionNone)
 				}
 			}
 
@@ -745,7 +747,7 @@ func (w *formatSpanWorker) processRange(r TextRangeWithKind, rangeStartLine int,
 	if !rangeHasError {
 		if w.previousRange == NewTextRangeWithKind(0, 0, 0) {
 			// trim whitespaces starting from the beginning of the span up to the current line
-			originalStartLine, _ := scanner.GetLineAndCharacterOfPosition(w.sourceFile, w.originalRange.Pos())
+			originalStartLine, _ := scanner.GetECMALineAndCharacterOfPosition(w.sourceFile, w.originalRange.Pos())
 			w.trimTrailingWhitespacesForLines(originalStartLine, rangeStartLine, NewTextRangeWithKind(0, 0, 0))
 		} else {
 			lineAction = w.processPair(r, rangeStartLine, parent, w.previousRange, w.previousRangeStartLine, w.previousParent, contextNode, dynamicIndentation)
@@ -763,7 +765,7 @@ func (w *formatSpanWorker) processRange(r TextRangeWithKind, rangeStartLine int,
 func (w *formatSpanWorker) processTrivia(trivia []TextRangeWithKind, parent *ast.Node, contextNode *ast.Node, dynamicIndentation *dynamicIndenter) {
 	for _, triviaItem := range trivia {
 		if isComment(triviaItem.Kind) && triviaItem.Loc.ContainedBy(w.originalRange) {
-			triviaItemStartLine, triviaItemStartCharacter := scanner.GetLineAndCharacterOfPosition(w.sourceFile, triviaItem.Loc.Pos())
+			triviaItemStartLine, triviaItemStartCharacter := scanner.GetECMALineAndCharacterOfPosition(w.sourceFile, triviaItem.Loc.Pos())
 			w.processRange(triviaItem, triviaItemStartLine, triviaItemStartCharacter, parent, contextNode, dynamicIndentation)
 		}
 	}
@@ -795,17 +797,17 @@ func (w *formatSpanWorker) trimTrailingWhitespacesForRemainingRange(trivias []Te
 }
 
 func (w *formatSpanWorker) trimTrailingWitespacesForPositions(startPos int, endPos int, previousRange TextRangeWithKind) {
-	startLine, _ := scanner.GetLineAndCharacterOfPosition(w.sourceFile, startPos)
-	endLine, _ := scanner.GetLineAndCharacterOfPosition(w.sourceFile, endPos)
+	startLine, _ := scanner.GetECMALineAndCharacterOfPosition(w.sourceFile, startPos)
+	endLine, _ := scanner.GetECMALineAndCharacterOfPosition(w.sourceFile, endPos)
 
 	w.trimTrailingWhitespacesForLines(startLine, endLine+1, previousRange)
 }
 
 func (w *formatSpanWorker) trimTrailingWhitespacesForLines(line1 int, line2 int, r TextRangeWithKind) {
-	lineStarts := scanner.GetLineStarts(w.sourceFile)
+	lineStarts := scanner.GetECMALineStarts(w.sourceFile)
 	for line := line1; line < line2; line++ {
 		lineStartPosition := int(lineStarts[line])
-		lineEndPosition := scanner.GetEndLinePosition(w.sourceFile, line)
+		lineEndPosition := scanner.GetECMAEndLinePosition(w.sourceFile, line)
 
 		// do not trim whitespaces in comments or template expression
 		if r != NewTextRangeWithKind(0, 0, 0) && (isComment(r.Kind) || isStringOrRegularExpressionOrTemplateLiteral(r.Kind)) && r.Loc.Pos() <= lineEndPosition && r.Loc.End() > lineEndPosition {
@@ -814,7 +816,8 @@ func (w *formatSpanWorker) trimTrailingWhitespacesForLines(line1 int, line2 int,
 
 		whitespaceStart := w.getTrailingWhitespaceStartPosition(lineStartPosition, lineEndPosition)
 		if whitespaceStart != -1 {
-			// Debug.assert(whitespaceStart === lineStartPosition || !isWhiteSpaceSingleLine(sourceFile.text.charCodeAt(whitespaceStart - 1))); // !!!
+			r, _ := utf8.DecodeRuneInString(w.sourceFile.Text()[whitespaceStart-1:])
+			debug.Assert(whitespaceStart == lineStartPosition || !stringutil.IsWhiteSpaceSingleLine(r))
 			w.recordDelete(whitespaceStart, lineEndPosition+1-whitespaceStart)
 		}
 	}
@@ -859,8 +862,8 @@ func (w *formatSpanWorker) insertIndentation(pos int, indentation int, lineAdded
 		// insert indentation string at the very beginning of the token
 		w.recordReplace(pos, 0, indentationString)
 	} else {
-		tokenStartLine, tokenStartCharacter := scanner.GetLineAndCharacterOfPosition(w.sourceFile, pos)
-		startLinePosition := int(scanner.GetLineStarts(w.sourceFile)[tokenStartLine])
+		tokenStartLine, tokenStartCharacter := scanner.GetECMALineAndCharacterOfPosition(w.sourceFile, pos)
+		startLinePosition := int(scanner.GetECMALineStarts(w.sourceFile)[tokenStartLine])
 		if indentation != w.characterToColumn(startLinePosition, tokenStartCharacter) || w.indentationIsDifferent(indentationString, startLinePosition) {
 			w.recordReplace(startLinePosition, tokenStartCharacter, indentationString)
 		}
@@ -906,8 +909,8 @@ func (w *formatSpanWorker) indentTriviaItems(trivia []TextRangeWithKind, comment
 
 func (w *formatSpanWorker) indentMultilineComment(commentRange core.TextRange, indentation int, firstLineIsIndented bool, indentFinalLine bool) {
 	// split comment in lines
-	startLine, _ := scanner.GetLineAndCharacterOfPosition(w.sourceFile, commentRange.Pos())
-	endLine, _ := scanner.GetLineAndCharacterOfPosition(w.sourceFile, commentRange.End())
+	startLine, _ := scanner.GetECMALineAndCharacterOfPosition(w.sourceFile, commentRange.Pos())
+	endLine, _ := scanner.GetECMALineAndCharacterOfPosition(w.sourceFile, commentRange.End())
 
 	if startLine == endLine {
 		if !firstLineIsIndented {
@@ -920,9 +923,9 @@ func (w *formatSpanWorker) indentMultilineComment(commentRange core.TextRange, i
 	parts := make([]core.TextRange, 0, strings.Count(w.sourceFile.Text()[commentRange.Pos():commentRange.End()], "\n"))
 	startPos := commentRange.Pos()
 	for line := startLine; line < endLine; line++ {
-		endOfLine := scanner.GetEndLinePosition(w.sourceFile, line)
+		endOfLine := scanner.GetECMAEndLinePosition(w.sourceFile, line)
 		parts = append(parts, core.NewTextRange(startPos, endOfLine))
-		startPos = int(scanner.GetLineStarts(w.sourceFile)[line+1])
+		startPos = int(scanner.GetECMALineStarts(w.sourceFile)[line+1])
 	}
 
 	if indentFinalLine {
@@ -933,7 +936,7 @@ func (w *formatSpanWorker) indentMultilineComment(commentRange core.TextRange, i
 		return
 	}
 
-	startLinePos := int(scanner.GetLineStarts(w.sourceFile)[startLine])
+	startLinePos := int(scanner.GetECMALineStarts(w.sourceFile)[startLine])
 
 	nonWhitespaceInFirstPartCharacter, nonWhitespaceInFirstPartColumn := findFirstNonWhitespaceCharacterAndColumn(startLinePos, parts[0].Pos(), w.sourceFile, w.formattingContext.Options)
 
@@ -947,7 +950,7 @@ func (w *formatSpanWorker) indentMultilineComment(commentRange core.TextRange, i
 	// shift all parts on the delta size
 	delta := indentation - nonWhitespaceInFirstPartColumn
 	for i := startIndex; i < len(parts); i++ {
-		startLinePos := int(scanner.GetLineStarts(w.sourceFile)[startLine])
+		startLinePos := int(scanner.GetECMALineStarts(w.sourceFile)[startLine])
 		nonWhitespaceCharacter := nonWhitespaceInFirstPartCharacter
 		nonWhitespaceColumn := nonWhitespaceInFirstPartColumn
 		if i != 0 {
@@ -972,7 +975,7 @@ func getIndentationString(indentation int, options *FormatCodeSettings) string {
 		spaces := indentation - (tabs * options.TabSize)
 		res := strings.Repeat("\t", tabs)
 		if spaces > 0 {
-			res = strings.Repeat(" ", spaces) + res
+			res = res + strings.Repeat(" ", spaces)
 		}
 
 		return res
@@ -1018,7 +1021,7 @@ func (w *formatSpanWorker) consumeTokenAndAdvanceScanner(currentTokenInfo tokenI
 	lineAction := LineActionNone
 	isTokenInRange := currentTokenInfo.token.Loc.ContainedBy(w.originalRange)
 
-	tokenStartLine, tokenStartChar := scanner.GetLineAndCharacterOfPosition(w.sourceFile, currentTokenInfo.token.Loc.Pos())
+	tokenStartLine, tokenStartChar := scanner.GetECMALineAndCharacterOfPosition(w.sourceFile, currentTokenInfo.token.Loc.Pos())
 
 	if isTokenInRange {
 		rangeHasError := w.rangeContainsError(currentTokenInfo.token.Loc)
@@ -1030,7 +1033,7 @@ func (w *formatSpanWorker) consumeTokenAndAdvanceScanner(currentTokenInfo tokenI
 			if lineAction == LineActionNone {
 				// indent token only if end line of previous range does not match start line of the token
 				if savePreviousRange != NewTextRangeWithKind(0, 0, 0) {
-					prevEndLine, _ := scanner.GetLineAndCharacterOfPosition(w.sourceFile, savePreviousRange.Loc.End())
+					prevEndLine, _ := scanner.GetECMALineAndCharacterOfPosition(w.sourceFile, savePreviousRange.Loc.End())
 					indentToken = lastTriviaWasNewLine && tokenStartLine != prevEndLine
 				}
 			} else {
@@ -1089,6 +1092,9 @@ func (i *dynamicIndenter) getIndentationForComment(kind ast.Kind, tokenIndentati
 	// }
 	case ast.KindCloseBraceToken, ast.KindCloseBracketToken, ast.KindCloseParenToken:
 		return i.indentation + i.getDelta(container)
+	}
+	if tokenIndentation != -1 {
+		return tokenIndentation
 	}
 	return i.indentation
 }

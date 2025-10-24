@@ -17,20 +17,18 @@
  module.exports = Handler;
 +export var Strings = Strings;
  module.exports.Strings = Strings;
--/**
-- * @typedef {Object} HandlerOptions
-- * @property {String} name
-- * Should be able to export a type alias at the same time.
-- */
+ /**
+  * @typedef {Object} HandlerOptions
+@@= skipped -10, +12 lines =@@
 
 
  //// [source.d.ts]
- export = Handler;
+-export = Handler;
 -declare class Handler {
 -    static get OPTIONS(): number;
 -    process(): void;
 -}
--declare namespace Handler {
+ declare namespace Handler {
 -    export { statische, Strings, HandlerOptions };
 -}
 -declare function statische(): void;
@@ -43,7 +41,15 @@
 -     * Should be able to export a type alias at the same time.
 -     */
 -    name: string;
++    var statische: () => void;
++}
++export = Handler;
 +export var Strings = Strings;
 +export type HandlerOptions = {
 +    name: String;
  };
++/**
++ * @typedef {Object} HandlerOptions
++ * @property {String} name
++ * Should be able to export a type alias at the same time.
++ */

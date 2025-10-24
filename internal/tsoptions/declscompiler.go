@@ -10,8 +10,8 @@ import (
 
 var OptionsDeclarations = slices.Concat(commonOptionsWithBuild, optionsForCompiler)
 
-var optionsForCompiler = []*CommandLineOption{
-	//******* commandOptionsWithoutBuild *******
+var commonOptionsWithBuild = []*CommandLineOption{
+	//******* commonOptionsWithBuild *******
 	{
 		Name:                     "help",
 		ShortName:                "h",
@@ -235,8 +235,8 @@ var optionsForCompiler = []*CommandLineOption{
 	},
 }
 
-var commonOptionsWithBuild = []*CommandLineOption{
-	//******* commandOptionsWithoutBuild *******
+var optionsForCompiler = []*CommandLineOption{
+	//******* compilerOptions not common with --build *******
 
 	// CommandLine only options
 	{
@@ -341,7 +341,7 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		AffectsBuildInfo:         true,
 		ShowInSimplifiedHelpView: true,
 		Category:                 diagnostics.JavaScript_Support,
-		Description:              diagnostics.Allow_JavaScript_files_to_be_a_part_of_your_program_Use_the_checkJS_option_to_get_errors_from_these_files,
+		Description:              diagnostics.Allow_JavaScript_files_to_be_a_part_of_your_program_Use_the_checkJs_option_to_get_errors_from_these_files,
 		DefaultValueDescription:  false,
 	},
 	{
@@ -498,7 +498,7 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		AffectsProgramStructure: true,
 		Category:                diagnostics.Language_and_Environment,
 		Description:             diagnostics.Enable_lib_replacement,
-		DefaultValueDescription: true,
+		DefaultValueDescription: false,
 	},
 
 	// Strict Type Checks
@@ -1187,7 +1187,15 @@ func optionsHaveChanges(oldOptions *core.CompilerOptions, newOptions *core.Compi
 	}
 	oldOptionsValue := reflect.ValueOf(oldOptions).Elem()
 	return ForEachCompilerOptionValue(newOptions, declFilter, func(option *CommandLineOption, value reflect.Value, i int) bool {
-		return !reflect.DeepEqual(value.Interface(), oldOptionsValue.Field(i).Interface())
+		newValue := value.Interface()
+		oldValue := oldOptionsValue.Field(i).Interface()
+		if option.strictFlag {
+			return oldOptions.GetStrictOptionValue(oldValue.(core.Tristate)) != newOptions.GetStrictOptionValue(newValue.(core.Tristate))
+		}
+		if option.allowJsFlag {
+			return oldOptions.GetAllowJS() != newOptions.GetAllowJS()
+		}
+		return !reflect.DeepEqual(newValue, oldValue)
 	})
 }
 

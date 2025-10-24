@@ -10,7 +10,7 @@ import (
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=SignatureKind -output=stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w stringer_generated.go
+//go:generate go tool mvdan.cc/gofumpt -w stringer_generated.go
 
 // ParseFlags
 
@@ -574,11 +574,10 @@ func (t *Type) ObjectFlags() ObjectFlags {
 
 // Casts for concrete struct types
 
-func (t *Type) AsIntrinsicType() *IntrinsicType             { return t.data.(*IntrinsicType) }
-func (t *Type) AsLiteralType() *LiteralType                 { return t.data.(*LiteralType) }
-func (t *Type) AsUniqueESSymbolType() *UniqueESSymbolType   { return t.data.(*UniqueESSymbolType) }
-func (t *Type) AsTupleType() *TupleType                     { return t.data.(*TupleType) }
-func (t *Type) AsSingleSignatureType() *SingleSignatureType { return t.data.(*SingleSignatureType) }
+func (t *Type) AsIntrinsicType() *IntrinsicType           { return t.data.(*IntrinsicType) }
+func (t *Type) AsLiteralType() *LiteralType               { return t.data.(*LiteralType) }
+func (t *Type) AsUniqueESSymbolType() *UniqueESSymbolType { return t.data.(*UniqueESSymbolType) }
+func (t *Type) AsTupleType() *TupleType                   { return t.data.(*TupleType) }
 func (t *Type) AsInstantiationExpressionType() *InstantiationExpressionType {
 	return t.data.(*InstantiationExpressionType)
 }
@@ -838,10 +837,6 @@ func (t *StructuredType) Properties() []*ast.Symbol {
 // ObjectFlagsAnonymous|ObjectFlagsInstantiationExpression: Originating instantiation expression type
 // ObjectFlagsAnonymous|ObjectFlagsInstantiated|ObjectFlagsInstantiationExpression: Instantiated instantiation expression type
 
-// SingleSignatureType:
-// ObjectFlagsAnonymous|ObjectFlagsSingleSignatureType: Originating single signature type
-// ObjectFlagsAnonymous|ObjectFlagsInstantiated|ObjectFlagsSingleSignatureType: Instantiated single signature type
-
 // ReverseMappedType:
 // ObjectFlagsAnonymous|ObjectFlagsReverseMapped: Reverse mapped type
 
@@ -946,13 +941,6 @@ func (t *TupleType) ElementFlags() []ElementFlags {
 		elementFlags[i] = info.flags
 	}
 	return elementFlags
-}
-
-// SingleSignatureType
-
-type SingleSignatureType struct {
-	ObjectType
-	outerTypeParameters []*Type
 }
 
 // InstantiationExpressionType
@@ -1198,7 +1186,8 @@ type IndexInfo struct {
 	keyType     *Type
 	valueType   *Type
 	isReadonly  bool
-	declaration *ast.Node // IndexSignatureDeclaration
+	declaration *ast.Node   // IndexSignatureDeclaration
+	components  []*ast.Node // ElementWithComputedPropertyName
 }
 
 /**

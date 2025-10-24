@@ -11,7 +11,7 @@ import (
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=ModuleKind -trimprefix=ModuleKind -output=modulekind_stringer_generated.go
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=ScriptTarget -trimprefix=ScriptTarget -output=scripttarget_stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w modulekind_stringer_generated.go scripttarget_stringer_generated.go
+//go:generate go tool mvdan.cc/gofumpt -w modulekind_stringer_generated.go scripttarget_stringer_generated.go
 
 type CompilerOptions struct {
 	_ noCopy
@@ -26,7 +26,6 @@ type CompilerOptions struct {
 	AllowUnusedLabels                         Tristate                                  `json:"allowUnusedLabels,omitzero"`
 	AssumeChangesOnlyAffectDirectDependencies Tristate                                  `json:"assumeChangesOnlyAffectDirectDependencies,omitzero"`
 	AlwaysStrict                              Tristate                                  `json:"alwaysStrict,omitzero"`
-	Build                                     Tristate                                  `json:"build,omitzero"`
 	CheckJs                                   Tristate                                  `json:"checkJs,omitzero"`
 	CustomConditions                          []string                                  `json:"customConditions,omitzero"`
 	Composite                                 Tristate                                  `json:"composite,omitzero"`
@@ -142,7 +141,7 @@ type CompilerOptions struct {
 	Version             Tristate `json:"version,omitzero"`
 	Watch               Tristate `json:"watch,omitzero"`
 	ShowConfig          Tristate `json:"showConfig,omitzero"`
-	TscBuild            Tristate `json:"tscBuild,omitzero"`
+	Build               Tristate `json:"build,omitzero"`
 	Help                Tristate `json:"help,omitzero"`
 	All                 Tristate `json:"all,omitzero"`
 
@@ -191,6 +190,8 @@ func (options *CompilerOptions) GetEmitScriptTarget() ScriptTarget {
 	switch options.GetEmitModuleKind() {
 	case ModuleKindNode16, ModuleKindNode18:
 		return ScriptTargetES2022
+	case ModuleKindNode20:
+		return ScriptTargetES2023
 	case ModuleKindNodeNext:
 		return ScriptTargetESNext
 	default:
@@ -213,7 +214,7 @@ func (options *CompilerOptions) GetModuleResolutionKind() ModuleResolutionKind {
 		return options.ModuleResolution
 	}
 	switch options.GetEmitModuleKind() {
-	case ModuleKindNode16, ModuleKindNode18:
+	case ModuleKindNode16, ModuleKindNode18, ModuleKindNode20:
 		return ModuleResolutionKindNode16
 	case ModuleKindNodeNext:
 		return ModuleResolutionKindNodeNext
@@ -227,7 +228,7 @@ func (options *CompilerOptions) GetEmitModuleDetectionKind() ModuleDetectionKind
 		return options.ModuleDetection
 	}
 	switch options.GetEmitModuleKind() {
-	case ModuleKindNode16, ModuleKindNodeNext:
+	case ModuleKindNode16, ModuleKindNode20, ModuleKindNodeNext:
 		return ModuleDetectionKindForce
 	default:
 		return ModuleDetectionKindAuto
@@ -255,7 +256,7 @@ func (options *CompilerOptions) GetESModuleInterop() bool {
 		return options.ESModuleInterop == TSTrue
 	}
 	switch options.GetEmitModuleKind() {
-	case ModuleKindNode16, ModuleKindNodeNext, ModuleKindPreserve:
+	case ModuleKindNode16, ModuleKindNode18, ModuleKindNode20, ModuleKindNodeNext, ModuleKindPreserve:
 		return true
 	}
 	return false
@@ -274,11 +275,16 @@ func (options *CompilerOptions) GetResolveJsonModule() bool {
 	if options.ResolveJsonModule != TSUnknown {
 		return options.ResolveJsonModule == TSTrue
 	}
+	switch options.GetEmitModuleKind() {
+	// TODO in 6.0: add Node16/Node18
+	case ModuleKindNode20, ModuleKindESNext:
+		return true
+	}
 	return options.GetModuleResolutionKind() == ModuleResolutionKindBundler
 }
 
 func (options *CompilerOptions) ShouldPreserveConstEnums() bool {
-	return options.PreserveConstEnums == TSTrue || options.IsolatedModules == TSTrue
+	return options.PreserveConstEnums == TSTrue || options.GetIsolatedModules()
 }
 
 func (options *CompilerOptions) GetAllowJS() bool {
@@ -291,6 +297,13 @@ func (options *CompilerOptions) GetAllowJS() bool {
 func (options *CompilerOptions) GetJSXTransformEnabled() bool {
 	jsx := options.Jsx
 	return jsx == JsxEmitReact || jsx == JsxEmitReactJSX || jsx == JsxEmitReactJSXDev
+}
+
+func (options *CompilerOptions) GetStrictOptionValue(value Tristate) bool {
+	if value != TSUnknown {
+		return value == TSTrue
+	}
+	return options.Strict == TSTrue
 }
 
 func (options *CompilerOptions) GetEffectiveTypeRoots(currentDirectory string) (result []string, fromConfig bool) {
@@ -406,6 +419,7 @@ const (
 	// Node16+ is an amalgam of commonjs (albeit updated) and es2022+, and represents a distinct module system from es2020/esnext
 	ModuleKindNode16   ModuleKind = 100
 	ModuleKindNode18   ModuleKind = 101
+	ModuleKindNode20   ModuleKind = 102
 	ModuleKindNodeNext ModuleKind = 199
 	// Emit as written
 	ModuleKindPreserve ModuleKind = 200
@@ -477,6 +491,17 @@ const (
 	NewLineKindCRLF NewLineKind = 1
 	NewLineKindLF   NewLineKind = 2
 )
+
+func GetNewLineKind(s string) NewLineKind {
+	switch s {
+	case "\r\n":
+		return NewLineKindCRLF
+	case "\n":
+		return NewLineKindLF
+	default:
+		return NewLineKindNone
+	}
+}
 
 func (newLine NewLineKind) GetNewLineCharacter() string {
 	switch newLine {

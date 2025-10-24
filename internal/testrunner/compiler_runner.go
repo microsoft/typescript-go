@@ -83,8 +83,8 @@ func (r *CompilerBaselineRunner) EnumerateTestFiles() []string {
 	return files
 }
 
-// These tests contain options that have been completely removed, so fail to parse.
-var deprecatedTests = []string{
+var skippedTests = []string{
+	// These tests contain options that have been completely removed, so fail to parse.
 	"preserveUnusedImports.ts",
 	"noCrashWithVerbatimModuleSyntaxAndImportsNotUsedAsValues.ts",
 	"verbatimModuleSyntaxCompat.ts",
@@ -112,7 +112,7 @@ func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
 	files := r.EnumerateTestFiles()
 
 	for _, filename := range files {
-		if slices.Contains(deprecatedTests, tspath.GetBaseFileName(filename)) {
+		if slices.Contains(skippedTests, tspath.GetBaseFileName(filename)) {
 			continue
 		}
 		r.runTest(t, filename)
@@ -192,6 +192,7 @@ func (r *CompilerBaselineRunner) runSingleConfigTest(t *testing.T, testName stri
 	compilerTest.verifySourceMapOutput(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifySourceMapRecord(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifyTypesAndSymbols(t, r.testSuitName, r.isSubmodule)
+	compilerTest.verifyModuleResolution(t, r.testSuitName, r.isSubmodule)
 	// !!! Verify all baselines
 
 	compilerTest.verifyUnionOrdering(t)
@@ -336,11 +337,6 @@ func newCompilerTest(
 }
 
 var concurrentSkippedErrorBaselines = map[string]string{
-	"circular1.ts": "Circular error reported in an extra position.",
-	"circular3.ts": "Circular error reported in an extra position.",
-	"recursiveExportAssignmentAndFindAliasedType1.ts": "Circular error reported in an extra position.",
-	"recursiveExportAssignmentAndFindAliasedType2.ts": "Circular error reported in an extra position.",
-	"recursiveExportAssignmentAndFindAliasedType3.ts": "Circular error reported in an extra position.",
 	"typeOnlyMerge2.ts": "Type-only merging is not detected when files are checked on different checkers.",
 	"typeOnlyMerge3.ts": "Type-only merging is not detected when files are checked on different checkers.",
 }
@@ -510,6 +506,21 @@ func (c *compilerTest) verifyTypesAndSymbols(t *testing.T, suiteName string, isS
 	)
 }
 
+func (c *compilerTest) verifyModuleResolution(t *testing.T, suiteName string, isSubmodule bool) {
+	if !c.options.TraceResolution.IsTrue() {
+		return
+	}
+
+	t.Run("module resolution", func(t *testing.T) {
+		defer testutil.RecoverAndFail(t, "Panic on creating module resolution baseline for test "+c.filename)
+		tsbaseline.DoModuleResolutionBaseline(t, c.configuredName, c.result.Trace, baseline.Options{
+			Subfolder:       suiteName,
+			IsSubmodule:     isSubmodule,
+			SkipDiffWithOld: true,
+		})
+	})
+}
+
 func createHarnessTestFile(unit *testUnit, currentDirectory string) *harnessutil.TestFile {
 	return &harnessutil.TestFile{
 		UnitName: tspath.GetNormalizedAbsolutePath(unit.name, currentDirectory),
@@ -580,9 +591,6 @@ func (c *compilerTest) containsUnsupportedOptionsForDiagnostics() bool {
 		return true
 	}
 	if c.options.BaseUrl != "" {
-		return true
-	}
-	if c.options.RootDirs != nil {
 		return true
 	}
 	if c.options.OutFile != "" {

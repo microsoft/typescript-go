@@ -14,7 +14,7 @@ import (
 )
 
 type Converters struct {
-	getLineMap       func(fileName string) *LineMap
+	getLineMap       func(fileName string) *LSPLineMap
 	positionEncoding lsproto.PositionEncodingKind
 }
 
@@ -23,7 +23,7 @@ type Script interface {
 	Text() string
 }
 
-func NewConverters(positionEncoding lsproto.PositionEncodingKind, getLineMap func(fileName string) *LineMap) *Converters {
+func NewConverters(positionEncoding lsproto.PositionEncodingKind, getLineMap func(fileName string) *LSPLineMap) *Converters {
 	return &Converters{
 		getLineMap:       getLineMap,
 		positionEncoding: positionEncoding,
@@ -58,13 +58,6 @@ func (c *Converters) ToLSPLocation(script Script, rng core.TextRange) lsproto.Lo
 	}
 }
 
-func (c *Converters) FromLSPLocation(script Script, rng lsproto.Range) Location {
-	return Location{
-		FileName: script.FileName(),
-		Range:    c.FromLSPRange(script, rng),
-	}
-}
-
 func LanguageKindToScriptKind(languageID lsproto.LanguageKind) core.ScriptKind {
 	switch languageID {
 	case "typescript":
@@ -80,49 +73,6 @@ func LanguageKindToScriptKind(languageID lsproto.LanguageKind) core.ScriptKind {
 	default:
 		return core.ScriptKindUnknown
 	}
-}
-
-func DocumentURIToFileName(uri lsproto.DocumentUri) string {
-	if strings.HasPrefix(string(uri), "file://") {
-		parsed := core.Must(url.Parse(string(uri)))
-		if parsed.Host != "" {
-			return "//" + parsed.Host + parsed.Path
-		}
-		return fixWindowsURIPath(parsed.Path)
-	}
-
-	// Leave all other URIs escaped so we can round-trip them.
-
-	scheme, path, ok := strings.Cut(string(uri), ":")
-	if !ok {
-		panic(fmt.Sprintf("invalid URI: %s", uri))
-	}
-
-	authority := "ts-nul-authority"
-	if rest, ok := strings.CutPrefix(path, "//"); ok {
-		authority, path, ok = strings.Cut(rest, "/")
-		if !ok {
-			panic(fmt.Sprintf("invalid URI: %s", uri))
-		}
-	}
-
-	return "^/" + scheme + "/" + authority + "/" + path
-}
-
-func fixWindowsURIPath(path string) string {
-	if rest, ok := strings.CutPrefix(path, "/"); ok {
-		if volume, rest, ok := splitVolumePath(rest); ok {
-			return volume + rest
-		}
-	}
-	return path
-}
-
-func splitVolumePath(path string) (volume string, rest string, ok bool) {
-	if len(path) >= 2 && tspath.IsVolumeCharacter(path[0]) && path[1] == ':' {
-		return strings.ToLower(path[0:2]), path[2:], true
-	}
-	return "", path, false
 }
 
 // https://github.com/microsoft/vscode-uri/blob/edfdccd976efaf4bb8fdeca87e97c47257721729/src/uri.ts#L455
@@ -166,7 +116,7 @@ func FileNameToDocumentURI(fileName string) lsproto.DocumentUri {
 		return lsproto.DocumentUri(scheme + "://" + authority + "/" + path)
 	}
 
-	volume, fileName, _ := splitVolumePath(fileName)
+	volume, fileName, _ := tspath.SplitVolumePath(fileName)
 	if volume != "" {
 		volume = "/" + extraEscapeReplacer.Replace(volume)
 	}
@@ -215,6 +165,8 @@ func (c *Converters) LineAndCharacterToPosition(script Script, lineAndCharacter 
 
 func (c *Converters) PositionToLineAndCharacter(script Script, position core.TextPos) lsproto.Position {
 	// UTF-8 offset to UTF-8/16 0-indexed line and character
+
+	position = min(position, core.TextPos(len(script.Text())))
 
 	lineMap := c.getLineMap(script.FileName())
 

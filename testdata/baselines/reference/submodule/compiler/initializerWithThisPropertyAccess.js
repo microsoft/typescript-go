@@ -68,7 +68,7 @@ class Bar {
 //// [initializerWithThisPropertyAccess.d.ts]
 declare class A {
     a: number;
-    b: number; // Error
+    b: number;
     c: () => number;
     d: number;
     constructor();
@@ -77,10 +77,9 @@ declare class B extends A {
     x: number;
 }
 declare class C {
-    a!: number;
+    a: number;
     b: number;
 }
-// Repro from #37979
 declare class Foo {
     private bar;
     readonly barProp: boolean;

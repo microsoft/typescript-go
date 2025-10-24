@@ -47,6 +47,7 @@ const onSomeEvent = <T extends keyof TypesMap>(p: P<T>) =>
 
 
 //// [mappedTypeGenericIndexedAccess.js]
+// Repro from #49242
 class Test {
     entries;
     constructor() {
@@ -71,7 +72,6 @@ const onSomeEvent = (p) => {
 
 
 //// [mappedTypeGenericIndexedAccess.d.ts]
-// Repro from #49242
 type Types = {
     first: {
         a1: true;
@@ -90,7 +90,6 @@ declare class Test {
     constructor();
     addEntry<T extends keyof Types>(name: T, entry: Types[T]): void;
 }
-// Repro from #49338
 type TypesMap = {
     [0]: {
         foo: 'bar';

@@ -8,8 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"golang.org/x/text/collate"
-	"golang.org/x/text/language"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
 func PtrTo[T any](v T) *T {
@@ -235,6 +234,11 @@ var CompletionGlobalVars = []fourslash.CompletionsExpectedItem{
 	},
 	&lsproto.CompletionItem{
 		Label:    "CDATASection",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CSPViolationReportBody",
 		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
@@ -610,6 +614,21 @@ var CompletionGlobalVars = []fourslash.CompletionsExpectedItem{
 	},
 	&lsproto.CompletionItem{
 		Label:    "ConvolverNode",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieChangeEvent",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieStore",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieStoreManager",
 		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
@@ -1464,6 +1483,11 @@ var CompletionGlobalVars = []fourslash.CompletionsExpectedItem{
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
+		Label:    "ImageCapture",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
 		Label:    "ImageData",
 		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
@@ -1790,6 +1814,11 @@ var CompletionGlobalVars = []fourslash.CompletionsExpectedItem{
 	},
 	&lsproto.CompletionItem{
 		Label:    "Navigator",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "NavigatorLogin",
 		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
@@ -3404,6 +3433,11 @@ var CompletionGlobalVars = []fourslash.CompletionsExpectedItem{
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
+		Label:    "cookieStore",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
 		Label:    "console",
 		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
@@ -3620,6 +3654,11 @@ var CompletionGlobalVars = []fourslash.CompletionsExpectedItem{
 	},
 	&lsproto.CompletionItem{
 		Label:    "onbeforeinput",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "onbeforematch",
 		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
@@ -3974,6 +4013,11 @@ var CompletionGlobalVars = []fourslash.CompletionsExpectedItem{
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
+		Label:    "onpointerrawupdate",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
 		Label:    "onpointermove",
 		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
@@ -4170,6 +4214,11 @@ var CompletionGlobalVars = []fourslash.CompletionsExpectedItem{
 	},
 	&lsproto.CompletionItem{
 		Label:    "origin",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "originAgentCluster",
 		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
@@ -4411,7 +4460,7 @@ var CompletionGlobalVars = []fourslash.CompletionsExpectedItem{
 	&lsproto.CompletionItem{
 		Label:    "HTMLDocument",
 		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
-		SortText: PtrTo(string(ls.DeprecateSortText(ls.SortTextGlobalsOrKeywords))),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
 		Label:    "HTMLFontElement",
@@ -5592,6 +5641,11 @@ var CompletionGlobalTypeDecls = []fourslash.CompletionsExpectedItem{
 	&lsproto.CompletionItem{
 		Label:    "COSEAlgorithmIdentifier",
 		Kind:     PtrTo(lsproto.CompletionItemKindClass),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CSPViolationReportBody",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
@@ -8217,6 +8271,11 @@ var CompletionGlobalTypeDecls = []fourslash.CompletionsExpectedItem{
 	&lsproto.CompletionItem{
 		Label:    "ImageBufferSource",
 		Kind:     PtrTo(lsproto.CompletionItemKindClass),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "ImageCapture",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
@@ -12997,7 +13056,7 @@ var CompletionGlobalTypeDecls = []fourslash.CompletionsExpectedItem{
 	&lsproto.CompletionItem{
 		Label:    "HTMLDocument",
 		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
-		SortText: PtrTo(string(ls.DeprecateSortText(ls.SortTextGlobalsOrKeywords))),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
 		Label:    "HTMLFontElement",
@@ -13083,6 +13142,166 @@ var CompletionGlobalTypeDecls = []fourslash.CompletionsExpectedItem{
 		Label:    "TextEvent",
 		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
 		SortText: PtrTo(string(ls.DeprecateSortText(ls.SortTextGlobalsOrKeywords))),
+	},
+	&lsproto.CompletionItem{
+		Label:    "AuthenticationExtensionsLargeBlobInputs",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "AuthenticationExtensionsLargeBlobInputsJSON",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "AuthenticationExtensionsLargeBlobOutputs",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "AuthenticationExtensionsPRFInputsJSON",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "AuthenticationExtensionsPRFValuesJSON",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieChangeEvent",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieChangeEventInit",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieInit",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieList",
+		Kind:     PtrTo(lsproto.CompletionItemKindClass),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieListItem",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieSameSite",
+		Kind:     PtrTo(lsproto.CompletionItemKindClass),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieStore",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieStoreDeleteOptions",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieStoreEventMap",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieStoreGetOptions",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "CookieStoreManager",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "FillLightMode",
+		Kind:     PtrTo(lsproto.CompletionItemKindClass),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "GetComposedRangesOptions",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "ImageDataArray",
+		Kind:     PtrTo(lsproto.CompletionItemKindClass),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "ImportNodeOptions",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "KeySystemTrackConfiguration",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "LoginStatus",
+		Kind:     PtrTo(lsproto.CompletionItemKindClass),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "MediaCapabilitiesKeySystemConfiguration",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "MediaSettingsRange",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "NavigatorLogin",
+		Kind:     PtrTo(lsproto.CompletionItemKindVariable),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "PhotoCapabilities",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "PhotoSettings",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "RedEyeReduction",
+		Kind:     PtrTo(lsproto.CompletionItemKindClass),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "RTCEncodedFrameMetadata",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "RTCLocalIceCandidateInit",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "StartViewTransitionOptions",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "WebTransportSendOptions",
+		Kind:     PtrTo(lsproto.CompletionItemKindInterface),
+		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
 }
 
@@ -13259,16 +13478,17 @@ var CompletionClassElementKeywords = []fourslash.CompletionsExpectedItem{
 
 var CompletionClassElementInJSKeywords = getInJSKeywords(CompletionClassElementKeywords)
 
-var CompletionGlobals = sortCompletionItems(append(
-	append(CompletionGlobalVars, CompletionGlobalKeywords...),
-	CompletionGlobalThisItem,
-	CompletionUndefinedVarItem,
+var CompletionGlobals = sortCompletionItems(slices.Concat(
+	CompletionGlobalVars,
+	CompletionGlobalKeywords,
+	[]fourslash.CompletionsExpectedItem{
+		CompletionGlobalThisItem,
+		CompletionUndefinedVarItem,
+	},
 ))
 
-var defaultLanguage = language.AmericanEnglish
-
 func sortCompletionItems(items []fourslash.CompletionsExpectedItem) []fourslash.CompletionsExpectedItem {
-	compareStringsUI := collate.New(defaultLanguage).CompareString
+	compareStrings := stringutil.CompareStringsCaseInsensitiveThenSensitive
 	items = slices.Clone(items)
 	slices.SortStableFunc(items, func(a fourslash.CompletionsExpectedItem, b fourslash.CompletionsExpectedItem) int {
 		defaultSortText := string(ls.SortTextLocationPriority)
@@ -13287,7 +13507,7 @@ func sortCompletionItems(items []fourslash.CompletionsExpectedItem) []fourslash.
 		}
 		aSortText = core.OrElse(aSortText, defaultSortText)
 		bSortText = core.OrElse(bSortText, defaultSortText)
-		bySortText := compareStringsUI(aSortText, bSortText)
+		bySortText := compareStrings(aSortText, bSortText)
 		if bySortText != 0 {
 			return bySortText
 		}
@@ -13308,7 +13528,7 @@ func sortCompletionItems(items []fourslash.CompletionsExpectedItem) []fourslash.
 		default:
 			panic(fmt.Sprintf("unexpected completion item type: %T", b))
 		}
-		return compareStringsUI(aLabel, bLabel)
+		return compareStrings(aLabel, bLabel)
 	})
 	return items
 }
@@ -13316,26 +13536,24 @@ func sortCompletionItems(items []fourslash.CompletionsExpectedItem) []fourslash.
 func CompletionGlobalsPlus(items []fourslash.CompletionsExpectedItem, noLib bool) []fourslash.CompletionsExpectedItem {
 	var all []fourslash.CompletionsExpectedItem
 	if noLib {
-		all = append(
-			append(items, CompletionGlobalThisItem, CompletionUndefinedVarItem),
-			CompletionGlobalKeywords...,
+		all = slices.Concat(
+			items,
+			[]fourslash.CompletionsExpectedItem{CompletionGlobalThisItem, CompletionUndefinedVarItem},
+			CompletionGlobalKeywords,
 		)
 	} else {
-		all = append(items, CompletionGlobals...)
+		all = slices.Concat(items, CompletionGlobals)
 	}
 	return sortCompletionItems(all)
 }
 
 func CompletionGlobalTypesPlus(items []fourslash.CompletionsExpectedItem) []fourslash.CompletionsExpectedItem {
-	return sortCompletionItems(
-		append(
-			append(
-				append(CompletionGlobalTypeDecls, CompletionGlobalThisItem),
-				CompletionTypeKeywords...,
-			),
-			items...,
-		),
-	)
+	return sortCompletionItems(slices.Concat(
+		CompletionGlobalTypeDecls,
+		[]fourslash.CompletionsExpectedItem{CompletionGlobalThisItem},
+		CompletionTypeKeywords,
+		items,
+	))
 }
 
 var CompletionGlobalTypes = CompletionGlobalTypesPlus(nil)
@@ -13367,10 +13585,10 @@ func getInJSKeywords(keywords []fourslash.CompletionsExpectedItem) []fourslash.C
 var CompletionGlobalInJSKeywords = getInJSKeywords(CompletionGlobalKeywords)
 
 func CompletionGlobalsInJSPlus(items []fourslash.CompletionsExpectedItem, noLib bool) []fourslash.CompletionsExpectedItem {
-	var all []fourslash.CompletionsExpectedItem
-	all = append(
-		append(items, CompletionGlobalThisItem, CompletionUndefinedVarItem),
-		CompletionGlobalInJSKeywords...,
+	all := slices.Concat(
+		items,
+		[]fourslash.CompletionsExpectedItem{CompletionGlobalThisItem, CompletionUndefinedVarItem},
+		CompletionGlobalInJSKeywords,
 	)
 	if !noLib {
 		all = append(all, CompletionGlobalVars...)
@@ -13439,35 +13657,37 @@ var CompletionFunctionMembers = []fourslash.CompletionsExpectedItem{
 
 func CompletionFunctionMembersPlus(items []fourslash.CompletionsExpectedItem) []fourslash.CompletionsExpectedItem {
 	return sortCompletionItems(
-		append(
+		slices.Concat(
 			CompletionFunctionMembers,
-			items...,
+			items,
 		),
 	)
 }
 
-var CompletionFunctionMembersWithPrototype = sortCompletionItems(append(
+var CompletionFunctionMembersWithPrototype = sortCompletionItems(slices.Concat(
 	CompletionFunctionMembers,
-	&lsproto.CompletionItem{
-		Label: "prototype",
-		Kind:  PtrTo(lsproto.CompletionItemKindField),
+	[]fourslash.CompletionsExpectedItem{
+		&lsproto.CompletionItem{
+			Label: "prototype",
+			Kind:  PtrTo(lsproto.CompletionItemKindField),
+		},
 	},
 ))
 
 func CompletionFunctionMembersWithPrototypePlus(items []fourslash.CompletionsExpectedItem) []fourslash.CompletionsExpectedItem {
 	return sortCompletionItems(
-		append(
+		slices.Concat(
 			CompletionFunctionMembersWithPrototype,
-			items...,
+			items,
 		),
 	)
 }
 
 func CompletionTypeKeywordsPlus(items []fourslash.CompletionsExpectedItem) []fourslash.CompletionsExpectedItem {
 	return sortCompletionItems(
-		append(
+		slices.Concat(
 			CompletionTypeKeywords,
-			items...,
+			items,
 		),
 	)
 }
@@ -13479,3 +13699,7 @@ var CompletionTypeAssertionKeywords = CompletionGlobalTypesPlus([]fourslash.Comp
 		SortText: PtrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
 })
+
+func ToAny[T any](items []T) []any {
+	return core.Map(items, func(item T) any { return item })
+}

@@ -1,7 +1,7 @@
 package ast
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=Kind -output=kind_stringer_generated.go
-//go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w kind_stringer_generated.go
+//go:generate go tool mvdan.cc/gofumpt -w kind_stringer_generated.go
 
 type Kind int16
 
@@ -180,7 +180,8 @@ const (
 	KindGlobalKeyword
 	KindBigIntKeyword
 	KindOverrideKeyword
-	KindOfKeyword // LastKeyword and LastToken and LastContextualKeyword
+	KindOfKeyword
+	KindDeferKeyword // LastKeyword and LastToken and LastContextualKeyword
 	// Parse tree nodes
 	// Names
 	KindQualifiedName
@@ -399,7 +400,7 @@ const (
 	KindFirstReservedWord       = KindBreakKeyword
 	KindLastReservedWord        = KindWithKeyword
 	KindFirstKeyword            = KindBreakKeyword
-	KindLastKeyword             = KindOfKeyword
+	KindLastKeyword             = KindDeferKeyword
 	KindFirstFutureReservedWord = KindImplementsKeyword
 	KindLastFutureReservedWord  = KindYieldKeyword
 	KindFirstTypeNode           = KindTypePredicate
@@ -422,7 +423,7 @@ const (
 	KindFirstJSDocTagNode       = KindJSDocTag
 	KindLastJSDocTagNode        = KindJSDocImportTag
 	KindFirstContextualKeyword  = KindAbstractKeyword
-	KindLastContextualKeyword   = KindOfKeyword
+	KindLastContextualKeyword   = KindDeferKeyword
 	KindComment                 = KindSingleLineCommentTrivia | KindMultiLineCommentTrivia
 	KindFirstTriviaToken        = KindSingleLineCommentTrivia
 	KindLastTriviaToken         = KindConflictMarkerTrivia

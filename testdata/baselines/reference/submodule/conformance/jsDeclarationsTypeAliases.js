@@ -54,6 +54,28 @@ class LocalThing {
 //// [index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @typedef {string | number | symbol} PropName
+ */
+/**
+ * Callback
+ *
+ * @callback NumberToStringCb
+ * @param {number} a
+ * @returns {string}
+ */
+/**
+ * @template T
+ * @typedef {T & {name: string}} MixinName
+ */
+/**
+ * Identity function
+ *
+ * @template T
+ * @callback Identity
+ * @param {T} x
+ * @returns {T}
+ */
 //// [mixed.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -80,13 +102,35 @@ class LocalThing {
 
 
 //// [index.d.ts]
-export {}; // flag file as module
+export {};
 export type PropName = string | number | symbol;
 export type NumberToStringCb = (a: number) => string;
 export type MixinName<T> = T & {
     name: string;
 };
 export type Identity<T> = (x: T) => T;
+/**
+ * @typedef {string | number | symbol} PropName
+ */
+/**
+ * Callback
+ *
+ * @callback NumberToStringCb
+ * @param {number} a
+ * @returns {string}
+ */
+/**
+ * @template T
+ * @typedef {T & {name: string}} MixinName
+ */
+/**
+ * Identity function
+ *
+ * @template T
+ * @callback Identity
+ * @param {T} x
+ * @returns {T}
+ */
 //// [mixed.d.ts]
 export type SomeType = {
     x: string;

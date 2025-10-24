@@ -49,22 +49,64 @@ func ParseCommandLine(
 	optionsWithAbsolutePaths := convertToOptionsWithAbsolutePaths(parser.options, CommandLineCompilerOptionsMap, host.GetCurrentDirectory())
 	compilerOptions := convertMapToOptions(optionsWithAbsolutePaths, &compilerOptionsParser{&core.CompilerOptions{}}).CompilerOptions
 	watchOptions := convertMapToOptions(optionsWithAbsolutePaths, &watchOptionsParser{&core.WatchOptions{}}).WatchOptions
-	return &ParsedCommandLine{
-		ParsedConfig: &core.ParsedOptions{
-			CompilerOptions: compilerOptions,
-			WatchOptions:    watchOptions,
-			FileNames:       parser.fileNames,
-		},
-		ConfigFile:    nil,
-		Errors:        parser.errors,
-		Raw:           parser.options, // !!! keep optionsBase incase needed later. todo: figure out if this is still needed
-		CompileOnSave: nil,
+	result := NewParsedCommandLine(compilerOptions, parser.fileNames, tspath.ComparePathsOptions{
+		UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
+		CurrentDirectory:          host.GetCurrentDirectory(),
+	})
+	result.ParsedConfig.WatchOptions = watchOptions
+	result.Errors = parser.errors
+	result.Raw = parser.options
+	return result
+}
+
+func ParseBuildCommandLine(
+	commandLine []string,
+	host ParseConfigHost,
+) *ParsedBuildCommandLine {
+	if commandLine == nil {
+		commandLine = []string{}
+	}
+	parser := parseCommandLineWorker(buildOptionsDidYouMeanDiagnostics, commandLine, host.FS())
+	compilerOptions := &core.CompilerOptions{}
+	for key, value := range parser.options.Entries() {
+		buildOption := BuildNameMap.Get(key)
+		if buildOption == &TscBuildOption || buildOption == CompilerNameMap.Get(key) {
+			ParseCompilerOptions(key, value, compilerOptions)
+		}
+	}
+	result := &ParsedBuildCommandLine{
+		BuildOptions:    convertMapToOptions(parser.options, &buildOptionsParser{&core.BuildOptions{}}).BuildOptions,
+		CompilerOptions: compilerOptions,
+		WatchOptions:    convertMapToOptions(parser.options, &watchOptionsParser{&core.WatchOptions{}}).WatchOptions,
+		Projects:        parser.fileNames,
+		Errors:          parser.errors,
 
 		comparePathsOptions: tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
 			CurrentDirectory:          host.GetCurrentDirectory(),
 		},
 	}
+
+	if len(result.Projects) == 0 {
+		// tsc -b invoked with no extra arguments; act as if invoked with "tsc -b ."
+		result.Projects = append(result.Projects, ".")
+	}
+
+	// Nonsensical combinations
+	if result.BuildOptions.Clean.IsTrue() && result.BuildOptions.Force.IsTrue() {
+		result.Errors = append(result.Errors, ast.NewCompilerDiagnostic(diagnostics.Options_0_and_1_cannot_be_combined, "clean", "force"))
+	}
+	if result.BuildOptions.Clean.IsTrue() && result.BuildOptions.Verbose.IsTrue() {
+		result.Errors = append(result.Errors, ast.NewCompilerDiagnostic(diagnostics.Options_0_and_1_cannot_be_combined, "clean", "verbose"))
+	}
+	if result.BuildOptions.Clean.IsTrue() && result.CompilerOptions.Watch.IsTrue() {
+		result.Errors = append(result.Errors, ast.NewCompilerDiagnostic(diagnostics.Options_0_and_1_cannot_be_combined, "clean", "watch"))
+	}
+	if result.CompilerOptions.Watch.IsTrue() && result.BuildOptions.Dry.IsTrue() {
+		result.Errors = append(result.Errors, ast.NewCompilerDiagnostic(diagnostics.Options_0_and_1_cannot_be_combined, "watch", "dry"))
+	}
+
+	return result
 }
 
 func parseCommandLineWorker(
@@ -116,7 +158,7 @@ func (p *commandLineParser) parseStrings(args []string) {
 
 func getInputOptionName(input string) string {
 	// removes at most two leading '-' from the input string
-	return strings.ToLower(strings.TrimPrefix(strings.TrimPrefix(input, "-"), "-"))
+	return strings.TrimPrefix(strings.TrimPrefix(input, "-"), "-")
 }
 
 func (p *commandLineParser) parseResponseFile(fileName string) {
@@ -282,57 +324,53 @@ func (p *commandLineParser) parseOptionValue(
 	return i
 }
 
-func (p *commandLineParser) parseListTypeOption(opt *CommandLineOption, value string) ([]string, []*ast.Diagnostic) {
+func (p *commandLineParser) parseListTypeOption(opt *CommandLineOption, value string) ([]any, []*ast.Diagnostic) {
 	return ParseListTypeOption(opt, value)
 }
 
-func ParseListTypeOption(opt *CommandLineOption, value string) ([]string, []*ast.Diagnostic) {
+func ParseListTypeOption(opt *CommandLineOption, value string) ([]any, []*ast.Diagnostic) {
 	value = strings.TrimSpace(value)
 	var errors []*ast.Diagnostic
 	if strings.HasPrefix(value, "-") {
-		return []string{}, errors
+		return []any{}, errors
 	}
 	if opt.Kind == "listOrElement" && !strings.ContainsRune(value, ',') {
 		val, err := validateJsonOptionValue(opt, value, nil, nil)
 		if err != nil {
-			return []string{}, err
+			return []any{}, err
 		}
-		return []string{val.(string)}, errors
+		return []any{val.(string)}, errors
 	}
 	if value == "" {
-		return []string{}, errors
+		return []any{}, errors
 	}
 	values := strings.Split(value, ",")
 	switch opt.Elements().Kind {
 	case "string":
-		elements := core.Filter(core.Map(values, func(v string) string {
+		elements := core.MapFiltered(values, func(v string) (any, bool) {
 			val, err := validateJsonOptionValue(opt.Elements(), v, nil, nil)
 			if s, ok := val.(string); ok && len(err) == 0 && s != "" {
-				return s
+				return s, true
 			}
 			errors = append(errors, err...)
-			return ""
-		}), isDefined)
+			return "", false
+		})
 		return elements, errors
 	case "boolean", "object", "number":
 		// do nothing: only string and enum/object types currently allowed as list entries
 		// 				!!! we don't actually have number list options, so I didn't implement number list parsing
 		panic("List of " + opt.Elements().Kind + " is not yet supported.")
 	default:
-		result := core.Filter(core.Map(values, func(v string) string {
+		result := core.MapFiltered(values, func(v string) (any, bool) {
 			val, err := convertJsonOptionOfEnumType(opt.Elements(), strings.TrimFunc(v, stringutil.IsWhiteSpaceLike), nil, nil)
 			if s, ok := val.(string); ok && len(err) == 0 && s != "" {
-				return s
+				return s, true
 			}
 			errors = append(errors, err...)
-			return ""
-		}), isDefined)
+			return "", false
+		})
 		return result, errors
 	}
-}
-
-func isDefined(s string) bool {
-	return s != ""
 }
 
 func convertJsonOptionOfEnumType(
