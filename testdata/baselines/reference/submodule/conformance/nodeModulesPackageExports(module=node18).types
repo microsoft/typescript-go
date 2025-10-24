@@ -3,22 +3,22 @@
 === index.ts ===
 // esm format file
 import * as cjs from "package/cjs";
->cjs : any
+>cjs : typeof cjs
 
 import * as mjs from "package/mjs";
->mjs : any
+>mjs : typeof mjs
 
 import * as type from "package";
->type : any
+>type : typeof type
 
 cjs;
->cjs : any
+>cjs : typeof cjs
 
 mjs;
->mjs : any
+>mjs : typeof mjs
 
 type;
->type : any
+>type : typeof type
 
 import * as cjsi from "inner/cjs";
 >cjsi : typeof cjsi
@@ -41,22 +41,22 @@ typei;
 === index.mts ===
 // esm format file
 import * as cjs from "package/cjs";
->cjs : any
+>cjs : typeof cjs
 
 import * as mjs from "package/mjs";
->mjs : any
+>mjs : typeof mjs
 
 import * as type from "package";
->type : any
+>type : typeof type
 
 cjs;
->cjs : any
+>cjs : typeof cjs
 
 mjs;
->mjs : any
+>mjs : typeof mjs
 
 type;
->type : any
+>type : typeof type
 
 import * as cjsi from "inner/cjs";
 >cjsi : typeof cjsi
@@ -79,22 +79,22 @@ typei;
 === index.cts ===
 // cjs format file
 import * as cjs from "package/cjs";
->cjs : any
+>cjs : typeof cjs
 
 import * as mjs from "package/mjs";
->mjs : any
+>mjs : typeof mjs
 
 import * as type from "package";
->type : any
+>type : typeof type
 
 cjs;
->cjs : any
+>cjs : typeof cjs
 
 mjs;
->mjs : any
+>mjs : typeof mjs
 
 type;
->type : any
+>type : typeof type
 
 import * as cjsi from "inner/cjs";
 >cjsi : typeof cjsi
@@ -116,8 +116,14 @@ typei;
 
 === node_modules/inner/index.d.ts ===
 // cjs format file
+export const implicitCjsSource = true;
+>implicitCjsSource : true
+>true : true
+
+=== node_modules/inner/test.d.ts ===
+// cjs format file
 import * as cjs from "inner/cjs";
->cjs : any
+>cjs : typeof cjs
 
 import * as mjs from "inner/mjs";
 >mjs : typeof mjs
@@ -126,7 +132,7 @@ import * as type from "inner";
 >type : typeof type
 
 export { cjs };
->cjs : any
+>cjs : typeof cjs
 
 export { mjs };
 >mjs : typeof mjs
@@ -136,31 +142,17 @@ export { type };
 
 === node_modules/inner/index.d.mts ===
 // esm format file
+export const mjsSource = true;
+>mjsSource : true
+>true : true
+
+=== node_modules/inner/test.d.mts ===
+// esm format file
 import * as cjs from "inner/cjs";
 >cjs : typeof cjs
 
 import * as mjs from "inner/mjs";
 >mjs : typeof mjs
-
-import * as type from "inner";
->type : any
-
-export { cjs };
->cjs : typeof cjs
-
-export { mjs };
->mjs : typeof mjs
-
-export { type };
->type : any
-
-=== node_modules/inner/index.d.cts ===
-// cjs format file
-import * as cjs from "inner/cjs";
->cjs : typeof cjs
-
-import * as mjs from "inner/mjs";
->mjs : any
 
 import * as type from "inner";
 >type : typeof type
@@ -169,7 +161,33 @@ export { cjs };
 >cjs : typeof cjs
 
 export { mjs };
->mjs : any
+>mjs : typeof mjs
+
+export { type };
+>type : typeof type
+
+=== node_modules/inner/index.d.cts ===
+// cjs format file
+export const cjsSource = true;
+>cjsSource : true
+>true : true
+
+=== node_modules/inner/test.d.cts ===
+// cjs format file
+import * as cjs from "inner/cjs";
+>cjs : typeof cjs
+
+import * as mjs from "inner/mjs";
+>mjs : typeof mjs
+
+import * as type from "inner";
+>type : typeof type
+
+export { cjs };
+>cjs : typeof cjs
+
+export { mjs };
+>mjs : typeof mjs
 
 export { type };
 >type : typeof type

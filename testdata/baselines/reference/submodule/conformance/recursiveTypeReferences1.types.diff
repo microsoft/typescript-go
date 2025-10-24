@@ -171,11 +171,4 @@
 +>join : (separator?: string | undefined) => string
  >'.' : "."
  >el.textContent! : string
-->el.textContent : string | null
-+>el.textContent : string
- >el : HTMLHeadingElement
-->textContent : string | null
-+>textContent : string
-
-       children.length > 0 ? parse(children, idx) : frag()
- >children.length > 0 ? parse(children, idx) : frag() : any
+ >el.textContent : string

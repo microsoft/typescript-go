@@ -116,6 +116,12 @@ typei2;
 
 === node_modules/inner/exclude/index.d.ts ===
 // cjs format file
+export const implicitCjsSource = true;
+>implicitCjsSource : true
+>true : true
+
+=== node_modules/inner/exclude/test.d.ts ===
+// cjs format file
 import * as cjs from "inner/cjs/exclude/index";
 >cjs : any
 
@@ -135,6 +141,12 @@ export { type };
 >type : any
 
 === node_modules/inner/exclude/index.d.mts ===
+// esm format file
+export const mjsSource = true;
+>mjsSource : true
+>true : true
+
+=== node_modules/inner/exclude/test.d.mts ===
 // esm format file
 import * as cjs from "inner/cjs/exclude/index";
 >cjs : any
@@ -156,6 +168,12 @@ export { type };
 
 === node_modules/inner/exclude/index.d.cts ===
 // cjs format file
+export const cjsSource = true;
+>cjsSource : true
+>true : true
+
+=== node_modules/inner/exclude/test.d.cts ===
+// cjs format file
 import * as cjs from "inner/cjs/exclude/index";
 >cjs : any
 
@@ -176,8 +194,14 @@ export { type };
 
 === node_modules/inner/index.d.ts ===
 // cjs format file
+export const implicitCjsSource = true;
+>implicitCjsSource : true
+>true : true
+
+=== node_modules/inner/test.d.ts ===
+// cjs format file
 import * as cjs from "inner/cjs/index";
->cjs : any
+>cjs : typeof cjs
 
 import * as mjs from "inner/mjs/index";
 >mjs : typeof mjs
@@ -186,7 +210,7 @@ import * as type from "inner/js/index";
 >type : typeof type
 
 export { cjs };
->cjs : any
+>cjs : typeof cjs
 
 export { mjs };
 >mjs : typeof mjs
@@ -196,31 +220,17 @@ export { type };
 
 === node_modules/inner/index.d.mts ===
 // esm format file
+export const mjsSource = true;
+>mjsSource : true
+>true : true
+
+=== node_modules/inner/test.d.mts ===
+// esm format file
 import * as cjs from "inner/cjs/index";
 >cjs : typeof cjs
 
 import * as mjs from "inner/mjs/index";
 >mjs : typeof mjs
-
-import * as type from "inner/js/index";
->type : any
-
-export { cjs };
->cjs : typeof cjs
-
-export { mjs };
->mjs : typeof mjs
-
-export { type };
->type : any
-
-=== node_modules/inner/index.d.cts ===
-// cjs format file
-import * as cjs from "inner/cjs/index";
->cjs : typeof cjs
-
-import * as mjs from "inner/mjs/index";
->mjs : any
 
 import * as type from "inner/js/index";
 >type : typeof type
@@ -229,7 +239,33 @@ export { cjs };
 >cjs : typeof cjs
 
 export { mjs };
->mjs : any
+>mjs : typeof mjs
+
+export { type };
+>type : typeof type
+
+=== node_modules/inner/index.d.cts ===
+// cjs format file
+export const cjsSource = true;
+>cjsSource : true
+>true : true
+
+=== node_modules/inner/test.d.cts ===
+// cjs format file
+import * as cjs from "inner/cjs/index";
+>cjs : typeof cjs
+
+import * as mjs from "inner/mjs/index";
+>mjs : typeof mjs
+
+import * as type from "inner/js/index";
+>type : typeof type
+
+export { cjs };
+>cjs : typeof cjs
+
+export { mjs };
+>mjs : typeof mjs
 
 export { type };
 >type : typeof type
