@@ -1,16 +1,13 @@
 package pnp
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
-	"runtime"
 	"testing"
 
 	"github.com/go-json-experiment/json"
 	"github.com/microsoft/typescript-go/internal/repo"
-	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 )
 
@@ -210,60 +207,5 @@ func TestParseScopedPackageWithLongSubpath(t *testing.T) {
 			t.Fatalf("expected subpath=%q, got nil", "a/b/c/index.js")
 		}
 		t.Fatalf("expected subpath=%q, got %q", "a/b/c/index.js", *sub)
-	}
-}
-
-// need fixtures to be yarn install and make global cache
-func TestGlobalCache(t *testing.T) {
-	t.Parallel()
-	t.Skip("skipping global cache test")
-
-	pnpPath := filepath.Join(repo.TestDataPath, "fixtures", "pnp", "global-cache", ".pnp.cjs")
-	manifest, err := LoadPNPManifest(pnpPath, osvfs.FS())
-	if err != nil {
-		t.Fatalf("failed to load pnp manifest: %v", err)
-	}
-
-	home, err := os.UserHomeDir()
-	if err != nil {
-		t.Fatalf("failed to get home dir: %v", err)
-	}
-
-	var globalCache string
-	if runtime.GOOS == "windows" {
-		globalCache = filepath.Join(home, "AppData", "Local", "Yarn", "Berry", "cache")
-	} else {
-		globalCache = filepath.Join(home, ".yarn", "berry", "cache")
-	}
-
-	issuer := filepath.Join(
-		globalCache,
-		"source-map-support-npm-0.5.21-09ca99e250-10c0.zip",
-		"node_modules",
-		"source-map-support",
-	)
-
-	res, err := ResolveToUnqualifiedViaManifest(&manifest, "source-map", issuer)
-	fmt.Println("res", res.Path)
-	if err != nil {
-		t.Fatalf("resolve failed: %v", err)
-	}
-	if res.Kind != ResolutionResolved {
-		t.Fatalf("unexpected resolution kind: %v", res.Kind)
-	}
-
-	got := tspath.NormalizePath(res.Path)
-	expected := tspath.NormalizePath(filepath.Join(
-		globalCache,
-		"source-map-npm-0.6.1-1a3621db16-10c0.zip",
-		"node_modules",
-		"source-map",
-	)) + "/"
-
-	if got != expected {
-		t.Fatalf("expected resolved path %q, got %q", expected, got)
-	}
-	if res.ModulePath != nil {
-		t.Fatalf("expected subpath=\"\", got %q", *res.ModulePath)
 	}
 }
