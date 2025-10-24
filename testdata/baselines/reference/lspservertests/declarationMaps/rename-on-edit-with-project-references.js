@@ -320,7 +320,7 @@ Config::
 // import {
 //     fn1,
 //     fn2,
-//     /*START PREFIX*/fn3 as [|/*START PREFIX*/fn3 as [|fn3RENAME|]RENAME|],
+//     [|fn3RENAME|],
 //     fn4,
 //     fn5
 // } from "../decls/FnS";

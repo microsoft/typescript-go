@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"maps"
+	"iter"
 	"runtime/debug"
 	"slices"
 	"sync"
@@ -596,7 +596,7 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 	handlers handlerMap,
 	info lsproto.RequestInfo[Req, Resp],
 	fn func(*Server, context.Context, *ls.LanguageService, Req, *ast.Node, []*ls.SymbolAndEntries) (Resp, error),
-	combineResults func(*project.Project, map[tspath.Path]Resp) Resp,
+	combineResults func(iter.Seq[Resp]) Resp,
 ) {
 	handlers[info.Method] = func(s *Server, ctx context.Context, req *lsproto.RequestMessage) error {
 		var params Req
@@ -612,7 +612,7 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 		defer s.recover(req)
 
 		var queue []projectAndTextDocumentPosition
-		results := make(map[tspath.Path]Resp)
+		var results collections.OrderedMap[tspath.Path, Resp]
 		var defaultDefinition *ls.NonLocalDefinition
 
 		searchPosition := func(project *project.Project, ls *ls.LanguageService, uri lsproto.DocumentUri, position lsproto.Position) (Resp, error) {
@@ -632,7 +632,7 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 						}
 						for _, defProject := range defProjects {
 							// Optimization: don't enqueue if will be discarded
-							if _, alreadyDone := results[defProject.Id()]; !alreadyDone {
+							if !results.Has(defProject.Id()) {
 								queue = append(queue, projectAndTextDocumentPosition{
 									project:  defProject,
 									Uri:      uri,
@@ -675,7 +675,7 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 				item := queue[0]
 				queue = queue[1:]
 
-				if _, ok := results[item.project.Id()]; ok {
+				if results.Has(item.project.Id()) {
 					continue
 				}
 
@@ -689,7 +689,7 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 					}
 				}
 				if result, err := searchPosition(item.project, ls, item.Uri, item.Position); err == nil {
-					results[item.project.Id()] = result
+					results.Set(item.project.Id(), result)
 				} else {
 					return err
 				}
@@ -698,12 +698,11 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 			if defaultDefinition != nil {
 				if err := s.session.ForEachProjectLocationLoadingProjectTree(
 					ctx,
-					maps.Keys(results),
+					results.Keys(),
 					defaultDefinition,
 					// Can loop forever without this (enqueue here, dequeue above, repeat)
 					func(projectFromSnapshot *project.Project) bool {
-						_, ok := results[projectFromSnapshot.Id()]
-						return !ok
+						return !results.Has(projectFromSnapshot.Id())
 					},
 					func(project *project.Project, uri lsproto.DocumentUri, position lsproto.Position) {
 						// Enqueue the project and location for further processing
@@ -720,10 +719,10 @@ func registerMultiProjectReferenceRequestHandler[Req lsproto.HasTextDocumentPosi
 		}
 
 		var resp Resp
-		if len(results) > 1 {
-			resp = combineResults(defaultProject, results)
+		if results.Size() > 1 {
+			resp = combineResults(results.Values())
 		} else {
-			for _, value := range results {
+			for value := range results.Values() {
 				resp = value
 				break
 			}
@@ -1009,25 +1008,15 @@ func (s *Server) handleReferences(ctx context.Context, ls *ls.LanguageService, p
 	return ls.ProvideReferencesFromSymbolAndEntries(ctx, params, originalNode, symbolAndEntries)
 }
 
-func combineReferences(defaultProject *project.Project, results map[tspath.Path]lsproto.ReferencesResponse) lsproto.ReferencesResponse {
+func combineReferences(results iter.Seq[lsproto.ReferencesResponse]) lsproto.ReferencesResponse {
 	var combined []lsproto.Location
 	var seenLocations collections.Set[lsproto.Location]
-	if resp, ok := results[defaultProject.Id()]; ok {
+	for resp := range results {
 		if resp.Locations != nil {
 			for _, loc := range *resp.Locations {
-				seenLocations.Add(loc)
-				combined = append(combined, loc)
-			}
-		}
-	}
-	for projectID, resp := range results {
-		if projectID != defaultProject.Id() {
-			if resp.Locations != nil {
-				for _, loc := range *resp.Locations {
-					if !seenLocations.Has(loc) {
-						seenLocations.Add(loc)
-						combined = append(combined, loc)
-					}
+				if !seenLocations.Has(loc) {
+					seenLocations.Add(loc)
+					combined = append(combined, loc)
 				}
 			}
 		}
@@ -1112,48 +1101,32 @@ func (s *Server) handleRename(ctx context.Context, ls *ls.LanguageService, param
 	return ls.ProvideRenameFromSymbolAndEntries(ctx, params, originalNode, symbolAndEntries)
 }
 
-func combineRenameResponse(defaultProject *project.Project, results map[tspath.Path]lsproto.RenameResponse) lsproto.RenameResponse {
+func combineRenameResponse(results iter.Seq[lsproto.RenameResponse]) lsproto.RenameResponse {
 	combined := make(map[lsproto.DocumentUri][]*lsproto.TextEdit)
-	seenChanges := make(map[lsproto.DocumentUri]*collections.Set[lsproto.TextEdit])
+	seenChanges := make(map[lsproto.DocumentUri]*collections.Set[lsproto.Range])
 	// !!! this is not used any more so we will skip this part of deduplication and combining
 	// 	DocumentChanges *[]TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile `json:"documentChanges,omitzero"`
 	// 	ChangeAnnotations *map[string]*ChangeAnnotation `json:"changeAnnotations,omitzero"`
 
-	if resp, ok := results[defaultProject.Id()]; ok {
+	for resp := range results {
 		if resp.WorkspaceEdit != nil && resp.WorkspaceEdit.Changes != nil {
 			for doc, changes := range *resp.WorkspaceEdit.Changes {
-				seenSet := collections.Set[lsproto.TextEdit]{}
-				seenChanges[doc] = &seenSet
-				var changesForDoc []*lsproto.TextEdit
+				seenSet, ok := seenChanges[doc]
+				if !ok {
+					seenSet = &collections.Set[lsproto.Range]{}
+					seenChanges[doc] = seenSet
+				}
+				changesForDoc, exists := combined[doc]
+				if !exists {
+					changesForDoc = []*lsproto.TextEdit{}
+				}
 				for _, change := range changes {
-					seenSet.Add(*change)
-					changesForDoc = append(changesForDoc, change)
+					if !seenSet.Has(change.Range) {
+						seenSet.Add(change.Range)
+						changesForDoc = append(changesForDoc, change)
+					}
 				}
 				combined[doc] = changesForDoc
-			}
-		}
-	}
-	for projectID, resp := range results {
-		if projectID != defaultProject.Id() {
-			if resp.WorkspaceEdit != nil && resp.WorkspaceEdit.Changes != nil {
-				for doc, changes := range *resp.WorkspaceEdit.Changes {
-					seenSet, ok := seenChanges[doc]
-					if !ok {
-						seenSet = &collections.Set[lsproto.TextEdit]{}
-						seenChanges[doc] = seenSet
-					}
-					changesForDoc, exists := combined[doc]
-					if !exists {
-						changesForDoc = []*lsproto.TextEdit{}
-					}
-					for _, change := range changes {
-						if !seenSet.Has(*change) {
-							seenSet.Add(*change)
-							changesForDoc = append(changesForDoc, change)
-						}
-					}
-					combined[doc] = changesForDoc
-				}
 			}
 		}
 	}
