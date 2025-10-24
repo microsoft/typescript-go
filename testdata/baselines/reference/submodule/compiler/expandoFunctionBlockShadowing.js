@@ -22,10 +22,10 @@ if (Math.random()) {
 
 //// [expandoFunctionBlockShadowing.js]
 "use strict";
+// https://github.com/microsoft/TypeScript/issues/56538
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.X = X;
 exports.Y = Y;
-// https://github.com/microsoft/TypeScript/issues/56538
 function X() { }
 if (Math.random()) {
     const X = {};
@@ -43,6 +43,8 @@ if (Math.random()) {
 
 
 //// [expandoFunctionBlockShadowing.d.ts]
-// https://github.com/microsoft/TypeScript/issues/56538
 export declare function X(): void;
 export declare function Y(): void;
+export declare namespace Y {
+    var test: string;
+}

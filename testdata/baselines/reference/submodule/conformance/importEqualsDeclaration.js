@@ -40,7 +40,7 @@ void type; // Ok
 
 //// [a.d.ts]
 declare class A {
-    a!: string;
+    a: string;
 }
 export = A;
 //// [b.d.ts]
@@ -48,5 +48,5 @@ declare class SomeClass {
 }
 export = SomeClass;
 //// [c.d.ts]
-import type A = require('./a'); // Ok
-export declare const AConstructor: typeof A; // Ok
+import type A = require('./a');
+export declare const AConstructor: typeof A;

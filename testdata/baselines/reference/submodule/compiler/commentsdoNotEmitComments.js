@@ -130,12 +130,6 @@ var m1;
     }
     m1.b = b;
 })(m1 || (m1 = {}));
-var color;
-(function (color) {
-    color[color["red"] = 0] = "red";
-    color[color["green"] = 1] = "green";
-    color[color["blue"] = 2] = "blue";
-})(color || (color = {}));
 var shade = 1;
 
 
@@ -157,7 +151,7 @@ interface i1 {
     (a: number): number;
     new (b: string): any;
     [a: number]: string;
-    myFoo(/*param prop*/ a: number): string;
+    myFoo(a: number): string;
     prop: string;
 }
 declare var i1_i: i1;

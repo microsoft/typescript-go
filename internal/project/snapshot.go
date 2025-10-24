@@ -8,11 +8,13 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/project/logging"
+	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -32,6 +34,7 @@ type Snapshot struct {
 	ProjectCollection                  *ProjectCollection
 	ConfigFileRegistry                 *ConfigFileRegistry
 	compilerOptionsForInferredProjects *core.CompilerOptions
+	config                             Config
 
 	builderLogs *logging.LogTree
 	apiError    error
@@ -46,6 +49,7 @@ func NewSnapshot(
 	extendedConfigCache *extendedConfigCache,
 	configFileRegistry *ConfigFileRegistry,
 	compilerOptionsForInferredProjects *core.CompilerOptions,
+	config Config,
 	toPath func(fileName string) tspath.Path,
 ) *Snapshot {
 	s := &Snapshot{
@@ -58,8 +62,9 @@ func NewSnapshot(
 		ConfigFileRegistry:                 configFileRegistry,
 		ProjectCollection:                  &ProjectCollection{toPath: toPath},
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
+		config:                             config,
 	}
-	s.converters = ls.NewConverters(s.sessionOptions.PositionEncoding, s.LineMap)
+	s.converters = ls.NewConverters(s.sessionOptions.PositionEncoding, s.LSPLineMap)
 	s.refCount.Store(1)
 	return s
 }
@@ -74,11 +79,26 @@ func (s *Snapshot) GetFile(fileName string) FileHandle {
 	return s.fs.GetFile(fileName)
 }
 
-func (s *Snapshot) LineMap(fileName string) *ls.LineMap {
+func (s *Snapshot) LSPLineMap(fileName string) *ls.LSPLineMap {
 	if file := s.fs.GetFile(fileName); file != nil {
-		return file.LineMap()
+		return file.LSPLineMap()
 	}
 	return nil
+}
+
+func (s *Snapshot) GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo {
+	if file := s.fs.GetFile(fileName); file != nil {
+		return file.ECMALineInfo()
+	}
+	return nil
+}
+
+func (s *Snapshot) UserPreferences() *ls.UserPreferences {
+	return s.config.tsUserPreferences
+}
+
+func (s *Snapshot) FormatOptions() *format.FormatCodeSettings {
+	return s.config.formatOptions
 }
 
 func (s *Snapshot) Converters() *ls.Converters {
@@ -87,6 +107,18 @@ func (s *Snapshot) Converters() *ls.Converters {
 
 func (s *Snapshot) ID() uint64 {
 	return s.id
+}
+
+func (s *Snapshot) UseCaseSensitiveFileNames() bool {
+	return s.fs.fs.UseCaseSensitiveFileNames()
+}
+
+func (s *Snapshot) ReadFile(fileName string) (string, bool) {
+	handle := s.GetFile(fileName)
+	if handle == nil {
+		return "", false
+	}
+	return handle.Content(), true
 }
 
 type APISnapshotRequest struct {
@@ -106,9 +138,17 @@ type SnapshotChange struct {
 	// It should only be set the value in the next snapshot should be changed. If nil, the
 	// value from the previous snapshot will be copied to the new snapshot.
 	compilerOptionsForInferredProjects *core.CompilerOptions
+	newConfig                          *Config
 	// ataChanges contains ATA-related changes to apply to projects in the new snapshot.
 	ataChanges map[tspath.Path]*ATAStateChange
 	apiRequest *APISnapshotRequest
+}
+
+type Config struct {
+	tsUserPreferences *ls.UserPreferences
+	// jsUserPreferences *ls.UserPreferences
+	formatOptions *format.FormatCodeSettings
+	// tsserverOptions
 }
 
 // ATAStateChange represents a change to a project's ATA state.
@@ -154,7 +194,21 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 
 	start := time.Now()
 	fs := newSnapshotFSBuilder(session.fs.fs, overlays, s.fs.diskFiles, session.options.PositionEncoding, s.toPath)
-	fs.markDirtyFiles(change.fileChanges)
+	if change.fileChanges.HasExcessiveWatchEvents() {
+		invalidateStart := time.Now()
+		if !fs.watchChangesOverlapCache(change.fileChanges) {
+			change.fileChanges.Changed = collections.Set[lsproto.DocumentUri]{}
+			change.fileChanges.Deleted = collections.Set[lsproto.DocumentUri]{}
+		} else if change.fileChanges.IncludesWatchChangeOutsideNodeModules {
+			fs.invalidateCache()
+			logger.Logf("Excessive watch changes detected, invalidated file cache in %v", time.Since(invalidateStart))
+		} else {
+			fs.invalidateNodeModulesCache()
+			logger.Logf("npm install detected, invalidated node_modules cache in %v", time.Since(invalidateStart))
+		}
+	} else {
+		fs.markDirtyFiles(change.fileChanges)
+	}
 
 	compilerOptionsForInferredProjects := s.compilerOptionsForInferredProjects
 	if change.compilerOptionsForInferredProjects != nil {
@@ -225,6 +279,16 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		}
 	}
 
+	config := s.config
+	if change.newConfig != nil {
+		if change.newConfig.tsUserPreferences != nil {
+			config.tsUserPreferences = change.newConfig.tsUserPreferences.CopyOrDefault()
+		}
+		if change.newConfig.formatOptions != nil {
+			config.formatOptions = change.newConfig.formatOptions
+		}
+	}
+
 	snapshotFS, _ := fs.Finalize()
 	newSnapshot := NewSnapshot(
 		newSnapshotID,
@@ -234,6 +298,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		session.extendedConfigCache,
 		nil,
 		compilerOptionsForInferredProjects,
+		config,
 		s.toPath,
 	)
 	newSnapshot.parentId = s.id

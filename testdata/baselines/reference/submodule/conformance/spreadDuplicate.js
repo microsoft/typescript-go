@@ -22,6 +22,7 @@ let d2 = { a: 123, ...(t ? d : {}) };  // string | number
 
 
 //// [spreadDuplicate.js]
+// Repro from #44438
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -44,7 +45,6 @@ let d2 = __assign({ a: 123 }, (t ? d : {})); // string | number
 
 
 //// [spreadDuplicate.d.ts]
-// Repro from #44438
 declare let a: {
     a: string;
 };
@@ -60,25 +60,25 @@ declare let d: {
 declare let t: boolean;
 declare let a1: {
     a: string;
-}; // string (Error)
+};
 declare let b1: {
     a: string | number;
-}; // string | number
+};
 declare let c1: {
     a: string | undefined;
-}; // string | undefined (Error)
+};
 declare let d1: {
     a: string | number;
-}; // string | number
+};
 declare let a2: {
     a: string | number;
-}; // string | number
+};
 declare let b2: {
     a: string | number;
-}; // string | number
+};
 declare let c2: {
     a: string | number;
-}; // string | number
+};
 declare let d2: {
     a: string | number;
-}; // string | number
+};

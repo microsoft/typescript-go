@@ -18,6 +18,7 @@ function foo<Entity>() {
 
 
 //// [noExcessiveStackDepthError.js]
+// Repro from #46631
 function foo() {
     var x;
     var x; // Excessive stack depth error not expected here
@@ -25,7 +26,6 @@ function foo() {
 
 
 //// [noExcessiveStackDepthError.d.ts]
-// Repro from #46631
 interface FindOperator<T> {
     foo: T;
 }

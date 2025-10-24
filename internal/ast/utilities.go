@@ -1015,8 +1015,6 @@ func ModifierToFlag(token Kind) ModifierFlags {
 		return ModifierFlagsIn
 	case KindOutKeyword:
 		return ModifierFlagsOut
-	case KindImmediateKeyword:
-		return ModifierFlagsImmediate
 	case KindDecorator:
 		return ModifierFlagsDecorator
 	}
@@ -1342,7 +1340,7 @@ func IsBindableStaticElementAccessExpression(node *Node, excludeThisKeyword bool
 	return IsLiteralLikeElementAccess(node) &&
 		((!excludeThisKeyword && node.Expression().Kind == KindThisKeyword) ||
 			IsEntityNameExpression(node.Expression()) ||
-			IsBindableStaticAccessExpression(node.Expression() /*excludeThisKeyword*/, true))
+			IsBindableStaticAccessExpression(node.Expression(), true /*excludeThisKeyword*/))
 }
 
 func IsLiteralLikeElementAccess(node *Node) bool {
@@ -1895,8 +1893,11 @@ func IsExpressionNode(node *Node) bool {
 		KindClassExpression, KindArrowFunction, KindVoidExpression, KindDeleteExpression, KindTypeOfExpression,
 		KindPrefixUnaryExpression, KindPostfixUnaryExpression, KindBinaryExpression, KindConditionalExpression,
 		KindSpreadElement, KindTemplateExpression, KindOmittedExpression, KindJsxElement, KindJsxSelfClosingElement,
-		KindJsxFragment, KindYieldExpression, KindAwaitExpression, KindMetaProperty:
+		KindJsxFragment, KindYieldExpression, KindAwaitExpression:
 		return true
+	case KindMetaProperty:
+		// `import.defer` in `import.defer(...)` is not an expression
+		return !IsImportCall(node.Parent) || node.Parent.AsCallExpression().Expression != node
 	case KindExpressionWithTypeArguments:
 		return !IsHeritageClause(node.Parent)
 	case KindQualifiedName:
@@ -2078,7 +2079,11 @@ func IsSuperCall(node *Node) bool {
 }
 
 func IsImportCall(node *Node) bool {
-	return IsCallExpression(node) && node.AsCallExpression().Expression.Kind == KindImportKeyword
+	if !IsCallExpression(node) {
+		return false
+	}
+	e := node.AsCallExpression().Expression
+	return e.Kind == KindImportKeyword || IsMetaProperty(e) && e.AsMetaProperty().KeywordToken == KindImportKeyword && e.Text() == "defer"
 }
 
 func IsComputedNonLiteralName(name *Node) bool {
@@ -2086,10 +2091,7 @@ func IsComputedNonLiteralName(name *Node) bool {
 }
 
 func IsQuestionToken(node *Node) bool {
-	if node == nil {
-		return false
-	}
-	return node.Kind == KindQuestionToken
+	return node != nil && node.Kind == KindQuestionToken
 }
 
 func GetTextOfPropertyName(name *Node) string {
@@ -2639,14 +2641,14 @@ func GetNodeAtPosition(file *SourceFile, position int, includeJSDoc bool) *Node 
 		}
 		if child == nil {
 			current.ForEachChild(func(node *Node) bool {
-				if nodeContainsPosition(node, position) {
+				if nodeContainsPosition(node, position) && node.Kind != KindJSExportAssignment && node.Kind != KindCommonJSExport {
 					child = node
 					return true
 				}
 				return false
 			})
 		}
-		if child == nil {
+		if child == nil || IsMetaProperty(child) {
 			return current
 		}
 		current = child
@@ -2820,10 +2822,6 @@ func IsModuleExportsAccessExpression(node *Node) bool {
 	return false
 }
 
-func isLiteralLikeElementAccess(node *Node) bool {
-	return node.Kind == KindElementAccessExpression && IsStringOrNumericLiteralLike(node.AsElementAccessExpression().ArgumentExpression)
-}
-
 func IsCheckJSEnabledForFile(sourceFile *SourceFile, compilerOptions *core.CompilerOptions) bool {
 	if sourceFile.CheckJsDirective != nil {
 		return sourceFile.CheckJsDirective.Enabled
@@ -2845,13 +2843,11 @@ func GetLeftmostAccessExpression(expr *Node) *Node {
 func IsTypeOnlyImportDeclaration(node *Node) bool {
 	switch node.Kind {
 	case KindImportSpecifier:
-		return node.AsImportSpecifier().IsTypeOnly || node.Parent.Parent.AsImportClause().IsTypeOnly
+		return node.IsTypeOnly() || node.Parent.Parent.IsTypeOnly()
 	case KindNamespaceImport:
-		return node.Parent.AsImportClause().IsTypeOnly
-	case KindImportClause:
-		return node.AsImportClause().IsTypeOnly
-	case KindImportEqualsDeclaration:
-		return node.AsImportEqualsDeclaration().IsTypeOnly
+		return node.Parent.IsTypeOnly()
+	case KindImportClause, KindImportEqualsDeclaration:
+		return node.IsTypeOnly()
 	}
 	return false
 }
@@ -2879,11 +2875,11 @@ func IsExclusivelyTypeOnlyImportOrExport(node *Node) bool {
 		return node.AsExportDeclaration().IsTypeOnly
 	case KindImportDeclaration, KindJSImportDeclaration:
 		if importClause := node.AsImportDeclaration().ImportClause; importClause != nil {
-			return importClause.AsImportClause().IsTypeOnly
+			return importClause.AsImportClause().IsTypeOnly()
 		}
 	case KindJSDocImportTag:
 		if importClause := node.AsJSDocImportTag().ImportClause; importClause != nil {
-			return importClause.AsImportClause().IsTypeOnly
+			return importClause.AsImportClause().IsTypeOnly()
 		}
 	}
 	return false
@@ -3514,9 +3510,9 @@ func IsTypeDeclaration(node *Node) bool {
 	case KindTypeParameter, KindClassDeclaration, KindInterfaceDeclaration, KindTypeAliasDeclaration, KindJSTypeAliasDeclaration, KindEnumDeclaration:
 		return true
 	case KindImportClause:
-		return node.AsImportClause().IsTypeOnly
+		return node.AsImportClause().PhaseModifier == KindTypeKeyword
 	case KindImportSpecifier:
-		return node.Parent.Parent.AsImportClause().IsTypeOnly
+		return node.Parent.Parent.AsImportClause().PhaseModifier == KindTypeKeyword
 	case KindExportSpecifier:
 		return node.Parent.Parent.AsExportDeclaration().IsTypeOnly
 	default:
@@ -3552,23 +3548,7 @@ func ShouldTransformImportCall(fileName string, options *core.CompilerOptions, i
 }
 
 func HasQuestionToken(node *Node) bool {
-	switch node.Kind {
-	case KindParameter:
-		return node.AsParameterDeclaration().QuestionToken != nil
-	case KindMethodDeclaration:
-		return IsQuestionToken(node.AsMethodDeclaration().PostfixToken)
-	case KindShorthandPropertyAssignment:
-		return IsQuestionToken(node.AsShorthandPropertyAssignment().PostfixToken)
-	case KindMethodSignature:
-		return IsQuestionToken(node.AsMethodSignatureDeclaration().PostfixToken)
-	case KindPropertySignature:
-		return IsQuestionToken(node.AsPropertySignatureDeclaration().PostfixToken)
-	case KindPropertyAssignment:
-		return IsQuestionToken(node.AsPropertyAssignment().PostfixToken)
-	case KindPropertyDeclaration:
-		return IsQuestionToken(node.AsPropertyDeclaration().PostfixToken)
-	}
-	return false
+	return IsQuestionToken(node.PostfixToken())
 }
 
 func IsJsxOpeningLikeElement(node *Node) bool {
@@ -3876,4 +3856,37 @@ func IsJSDocNameReferenceContext(node *Node) bool {
 	return node.Flags&NodeFlagsJSDoc != 0 && FindAncestor(node, func(node *Node) bool {
 		return IsJSDocNameReference(node) || IsJSDocLinkLike(node)
 	}) != nil
+}
+
+func IsImportOrImportEqualsDeclaration(node *Node) bool {
+	return IsImportDeclaration(node) || IsImportEqualsDeclaration(node)
+}
+
+func IsKeyword(token Kind) bool {
+	return KindFirstKeyword <= token && token <= KindLastKeyword
+}
+
+func IsNonContextualKeyword(token Kind) bool {
+	return IsKeyword(token) && !IsContextualKeyword(token)
+}
+
+func HasModifier(node *Node, flags ModifierFlags) bool {
+	return node.ModifierFlags()&flags != 0
+}
+
+func IsExpandoInitializer(initializer *Node) bool {
+	if initializer == nil {
+		return false
+	}
+	if IsFunctionExpressionOrArrowFunction(initializer) {
+		return true
+	}
+	if IsInJSFile(initializer) {
+		return IsClassExpression(initializer) || (IsObjectLiteralExpression(initializer) && len(initializer.AsObjectLiteralExpression().Properties.Nodes) == 0)
+	}
+	return false
+}
+
+func GetContainingFunction(node *Node) *Node {
+	return FindAncestor(node.Parent, IsFunctionLike)
 }

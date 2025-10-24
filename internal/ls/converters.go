@@ -14,7 +14,7 @@ import (
 )
 
 type Converters struct {
-	getLineMap       func(fileName string) *LineMap
+	getLineMap       func(fileName string) *LSPLineMap
 	positionEncoding lsproto.PositionEncodingKind
 }
 
@@ -23,7 +23,7 @@ type Script interface {
 	Text() string
 }
 
-func NewConverters(positionEncoding lsproto.PositionEncodingKind, getLineMap func(fileName string) *LineMap) *Converters {
+func NewConverters(positionEncoding lsproto.PositionEncodingKind, getLineMap func(fileName string) *LSPLineMap) *Converters {
 	return &Converters{
 		getLineMap:       getLineMap,
 		positionEncoding: positionEncoding,
@@ -165,6 +165,8 @@ func (c *Converters) LineAndCharacterToPosition(script Script, lineAndCharacter 
 
 func (c *Converters) PositionToLineAndCharacter(script Script, position core.TextPos) lsproto.Position {
 	// UTF-8 offset to UTF-8/16 0-indexed line and character
+
+	position = min(position, core.TextPos(len(script.Text())))
 
 	lineMap := c.getLineMap(script.FileName())
 

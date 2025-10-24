@@ -84,7 +84,7 @@ func (ct *changeTracker) computeNewText(change *trackerEdit, targetSourceFile *a
 	if !(change.options.indentation != nil && *change.options.indentation != 0 || format.GetLineStartPositionForPosition(pos, targetSourceFile) == pos) {
 		noIndent = strings.TrimLeftFunc(text, unicode.IsSpace)
 	}
-	return change.options.prefix + noIndent // !!!  +((!options.suffix || endsWith(noIndent, options.suffix)) ? "" : options.suffix);
+	return change.options.prefix + noIndent + core.IfElse(strings.HasSuffix(noIndent, change.options.suffix), "", change.options.suffix)
 }
 
 /** Note: this may mutate `nodeIn`. */
@@ -121,7 +121,6 @@ func getFormatCodeSettingsForWriting(options *format.FormatCodeSettings, sourceF
 	return options
 }
 
-/** Note: output node may be mutated input node. */
 func (ct *changeTracker) getNonformattedText(node *ast.Node, sourceFile *ast.SourceFile) (string, *ast.Node) {
 	nodeIn := node
 	eofToken := ct.Factory.NewToken(ast.KindEndOfFile)
@@ -146,6 +145,7 @@ func (ct *changeTracker) getNonformattedText(node *ast.Node, sourceFile *ast.Sou
 	).Write(nodeIn, sourceFile, writer, nil)
 
 	text := writer.String()
+	text = strings.TrimSuffix(text, ct.newLine) // Newline artifact from printing a SourceFile instead of a node
 
 	nodeOut := writer.AssignPositionsToNode(nodeIn, ct.NodeFactory)
 	var sourceFileLike *ast.Node
@@ -204,7 +204,7 @@ func (ct *changeTracker) getAdjustedStartPosition(sourceFile *ast.SourceFile, no
 	if fullStart == start {
 		return start
 	}
-	lineStarts := sourceFile.LineMap()
+	lineStarts := sourceFile.ECMALineMap()
 	fullStartLineIndex := scanner.ComputeLineOfPosition(lineStarts, fullStart)
 	fullStartLinePos := int(lineStarts[fullStartLineIndex])
 	if startOfLinePos == fullStartLinePos {
@@ -249,7 +249,7 @@ func (ct *changeTracker) getEndPositionOfMultilineTrailingComment(sourceFile *as
 	if trailingOpt == trailingTriviaOptionInclude {
 		// If the trailing comment is a multiline comment that extends to the next lines,
 		// return the end of the comment and track it for the next nodes to adjust.
-		lineStarts := sourceFile.LineMap()
+		lineStarts := sourceFile.ECMALineMap()
 		nodeEndLine := scanner.ComputeLineOfPosition(lineStarts, node.End())
 		for comment := range scanner.GetTrailingCommentRanges(ct.NodeFactory, sourceFile.Text(), node.End()) {
 			// Single line can break the loop as trivia will only be this line.
@@ -363,7 +363,7 @@ func (ct *changeTracker) getInsertionPositionAtSourceFileTop(sourceFile *ast.Sou
 	firstNodeLine := -1
 
 	lenStatements := len(sourceFile.Statements.Nodes)
-	lineMap := sourceFile.LineMap()
+	lineMap := sourceFile.ECMALineMap()
 	for _, r := range ranges {
 		if r.Kind == ast.KindMultiLineCommentTrivia {
 			if printer.IsPinnedComment(text, r) {

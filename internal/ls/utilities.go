@@ -433,8 +433,17 @@ func (l *LanguageService) createLspRangeFromNode(node *ast.Node, file *ast.Sourc
 	return l.createLspRangeFromBounds(scanner.GetTokenPosOfNode(node, file, false /*includeJSDoc*/), node.End(), file)
 }
 
+func createRangeFromNode(node *ast.Node, file *ast.SourceFile) core.TextRange {
+	return core.NewTextRange(scanner.GetTokenPosOfNode(node, file, false /*includeJSDoc*/), node.End())
+}
+
 func (l *LanguageService) createLspRangeFromBounds(start, end int, file *ast.SourceFile) *lsproto.Range {
 	lspRange := l.converters.ToLSPRange(file, core.NewTextRange(start, end))
+	return &lspRange
+}
+
+func (l *LanguageService) createLspRangeFromRange(textRange core.TextRange, script Script) *lsproto.Range {
+	lspRange := l.converters.ToLSPRange(script, textRange)
 	return &lspRange
 }
 
@@ -459,8 +468,27 @@ const (
 	quotePreferenceDouble
 )
 
-// !!!
-func getQuotePreference(file *ast.SourceFile, preferences *UserPreferences) quotePreference {
+func quotePreferenceFromString(str *ast.StringLiteral) quotePreference {
+	if str.TokenFlags&ast.TokenFlagsSingleQuote != 0 {
+		return quotePreferenceSingle
+	}
+	return quotePreferenceDouble
+}
+
+func getQuotePreference(sourceFile *ast.SourceFile, preferences *UserPreferences) quotePreference {
+	if preferences.QuotePreference != "" && preferences.QuotePreference != "auto" {
+		if preferences.QuotePreference == "single" {
+			return quotePreferenceSingle
+		}
+		return quotePreferenceDouble
+	}
+	// ignore synthetic import added when importHelpers: true
+	firstModuleSpecifier := core.Find(sourceFile.Imports(), func(n *ast.Node) bool {
+		return ast.IsStringLiteral(n) && !ast.NodeIsSynthesized(n.Parent)
+	})
+	if firstModuleSpecifier != nil {
+		return quotePreferenceFromString(firstModuleSpecifier.AsStringLiteral())
+	}
 	return quotePreferenceDouble
 }
 
@@ -490,10 +518,10 @@ func probablyUsesSemicolons(file *ast.SourceFile) bool {
 			if lastToken != nil && lastToken.Kind == ast.KindSemicolonToken {
 				withSemicolon++
 			} else if lastToken != nil && lastToken.Kind != ast.KindCommaToken {
-				lastTokenLine, _ := scanner.GetLineAndCharacterOfPosition(
+				lastTokenLine, _ := scanner.GetECMALineAndCharacterOfPosition(
 					file,
 					astnav.GetStartOfNode(lastToken, file, false /*includeJSDoc*/))
-				nextTokenLine, _ := scanner.GetLineAndCharacterOfPosition(
+				nextTokenLine, _ := scanner.GetECMALineAndCharacterOfPosition(
 					file,
 					scanner.GetRangeOfTokenAtPosition(file, lastToken.End()).Pos())
 				// Avoid counting missing semicolon in single-line objects:
@@ -669,32 +697,6 @@ func isImplementationExpression(node *ast.Node) bool {
 	default:
 		return false
 	}
-}
-
-func isArrayLiteralOrObjectLiteralDestructuringPattern(node *ast.Node) bool {
-	if node.Kind == ast.KindArrayLiteralExpression || node.Kind == ast.KindObjectLiteralExpression {
-		// [a,b,c] from:
-		// [a, b, c] = someExpression;
-		if node.Parent.Kind == ast.KindBinaryExpression && node.Parent.AsBinaryExpression().Left == node && node.Parent.AsBinaryExpression().OperatorToken.Kind == ast.KindEqualsToken {
-			return true
-		}
-
-		// [a, b, c] from:
-		// for([a, b, c] of expression)
-		if node.Parent.Kind == ast.KindForOfStatement && node.Parent.AsForInOrOfStatement().Initializer == node {
-			return true
-		}
-
-		// [a, b, c] of
-		// [x, [a, b, c] ] = someExpression
-		// or
-		// {x, a: {a, b, c} } = someExpression
-		if isArrayLiteralOrObjectLiteralDestructuringPattern(core.IfElse(node.Parent.Kind == ast.KindPropertyAssignment, node.Parent.Parent, node.Parent)) {
-			return true
-		}
-	}
-
-	return false
 }
 
 func isReadonlyTypeOperator(node *ast.Node) bool {
@@ -934,7 +936,7 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 	// specially by `getSymbolAtLocation`.
 	isModifier := func(node *ast.Node) bool {
 		if ast.IsModifier(node) && (forRename || node.Kind != ast.KindDefaultKeyword) {
-			return ast.CanHaveModifiers(parent) && slices.Contains(parent.Modifiers().NodeList.Nodes, node)
+			return ast.CanHaveModifiers(parent) && parent.Modifiers() != nil && slices.Contains(parent.Modifiers().NodeList.Nodes, node)
 		}
 		switch node.Kind {
 		case ast.KindClassKeyword:
@@ -1676,6 +1678,13 @@ func getChildrenFromNonJSDocNode(node *ast.Node, sourceFile *ast.SourceFile) []*
 		childNodes = append(childNodes, child)
 		return false
 	})
+
+	// If the node has no children, don't scan for tokens.
+	// This prevents creating tokens for leaf nodes' own text.
+	if len(childNodes) == 0 {
+		return nil
+	}
+
 	var children []*ast.Node
 	pos := node.Pos()
 	for _, child := range childNodes {

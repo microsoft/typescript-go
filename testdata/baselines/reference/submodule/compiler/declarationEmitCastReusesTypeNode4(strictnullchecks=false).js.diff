@@ -5,6 +5,9 @@
 
  //// [input.d.ts]
 -export function fn(p?: P): void;
++/**
++ * @typedef {{ } & { name?: string }} P
++ */
 +export type P = {} & {
 +    name?: string;
 +};
@@ -28,7 +31,7 @@
 +    };
 +    /** @optional */ optField: {
 +        name?: string;
-+    }; // not a thing
++    };
 +    /** @readonly */ readonly roFiled: {
 +        name?: string;
 +    };
@@ -53,7 +56,6 @@
 +    name?: string;
 +};
 +export default /** @type {P} */ _default;
-+// allows `undefined` on the input side, thanks to the initializer
  /**
   *
   * @param {P} x

@@ -47,7 +47,7 @@ func getBaselineFileName(t *testing.T, command string) string {
 
 func getBaselineExtension(command string) string {
 	switch command {
-	case "QuickInfo", "SignatureHelp":
+	case "QuickInfo", "SignatureHelp", "Smart Selection":
 		return "baseline"
 	case "Auto Imports":
 		return "baseline.md"
@@ -61,6 +61,11 @@ func getBaselineExtension(command string) string {
 func getBaselineOptions(command string) baseline.Options {
 	subfolder := "fourslash/" + normalizeCommandName(command)
 	switch command {
+	case "Smart Selection":
+		return baseline.Options{
+			Subfolder:   subfolder,
+			IsSubmodule: true,
+		}
 	case "findRenameLocations":
 		return baseline.Options{
 			Subfolder:   subfolder,
@@ -357,7 +362,7 @@ type textWithContext struct {
 	isLibFile  bool
 	fileName   string
 	content    string // content of the original file
-	lineStarts *ls.LineMap
+	lineStarts *ls.LSPLineMap
 	converters *ls.Converters
 
 	// posLineInfo
@@ -386,10 +391,10 @@ func newTextWithContext(fileName string, content string) *textWithContext {
 		pos:        lsproto.Position{Line: 0, Character: 0},
 		fileName:   fileName,
 		content:    content,
-		lineStarts: ls.ComputeLineStarts(content),
+		lineStarts: ls.ComputeLSPLineStarts(content),
 	}
 
-	t.converters = ls.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *ls.LineMap {
+	t.converters = ls.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *ls.LSPLineMap {
 		return t.lineStarts
 	})
 	t.readableContents.WriteString("// === " + fileName + " ===")
