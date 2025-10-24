@@ -60,12 +60,10 @@ func (l *LanguageService) getSemanticDocumentHighlights(ctx context.Context, pos
 	var highlights []*lsproto.DocumentHighlight
 	for _, entry := range referenceEntries {
 		for _, ref := range entry.references {
-			// if ref.node != nil {
 			fileName, highlight := l.toDocumentHighlight(ref)
 			if fileName == sourceFile.FileName() {
 				highlights = append(highlights, highlight)
 			}
-			// }
 		}
 	}
 	return highlights
