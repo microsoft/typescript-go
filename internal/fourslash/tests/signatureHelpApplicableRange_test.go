@@ -8,7 +8,11 @@ import (
 )
 
 // Test case 1: Basic applicable range test
-// This test verifies that signature help is NOT provided on whitespace after closing paren
+// This test verifies the applicable range for signature help
+// According to the issue, signature help should be provided:
+// - Inside the parentheses (markers 1, 2)
+// - NOT on the call target before the opening paren (marker a, b, c would test this)
+// - NOT after the closing paren including whitespace (markers 3, 4)
 func TestSignatureHelpApplicableRangeBasic(t *testing.T) {
 	t.Parallel()
 
@@ -19,7 +23,7 @@ func TestSignatureHelpApplicableRangeBasic(t *testing.T) {
     }
 };
 
-let s = obj.foo(/*1*/"Hello, world!"/*2*/)/*3*/  
+let s =/*a*/ /*b*/obj/*c*/./*d*/foo/*e*/(/*1*/"Hello, world!"/*2*/)/*3*/  
   /*4*/;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	

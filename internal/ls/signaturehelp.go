@@ -620,7 +620,13 @@ func getContainingArgumentInfo(node *ast.Node, sourceFile *ast.SourceFile, check
 		debug.Assert(RangeContainsRange(n.Parent.Loc, n.Loc), fmt.Sprintf("Not a subspan. Child: %s, parent: %s", n.KindString(), n.Parent.KindString()))
 		argumentInfo := getImmediatelyContainingArgumentOrContextualParameterInfo(n, position, sourceFile, checker)
 		if argumentInfo != nil {
-			return argumentInfo
+			// Check if the position is actually within the applicable span.
+			// This ensures that for nested calls, the outer call takes precedence
+			// when the position is outside the inner call's argument list.
+			if argumentInfo.argumentsSpan.Contains(position) {
+				return argumentInfo
+			}
+			// Continue looking for an outer call if position is outside this call's applicable span
 		}
 	}
 	return nil
@@ -895,14 +901,14 @@ func getArgumentOrParameterListInfo(node *ast.Node, sourceFile *ast.SourceFile, 
 }
 
 func getApplicableSpanForArguments(argumentList *ast.NodeList, node *ast.Node, sourceFile *ast.SourceFile) core.TextRange {
-	// We use full start and skip trivia on the end because we want to include trivia on
-	// both sides. For example,
+	// We use full start on the beginning but NOT skip trivia on the end.
+	// For example,
 	//
 	//    foo(   /*comment */     a, b, c      /*comment*/     )
-	//        |                                               |
+	//        |                              |
 	//
 	// The applicable span is from the first bar to the second bar (inclusive,
-	// but not including parentheses)
+	// but not including parentheses or trailing trivia)
 	if argumentList == nil && node != nil {
 		// If the user has just opened a list, and there are no arguments.
 		// For example, foo(    )
@@ -910,7 +916,7 @@ func getApplicableSpanForArguments(argumentList *ast.NodeList, node *ast.Node, s
 		return core.NewTextRange(node.End(), scanner.SkipTrivia(sourceFile.Text(), node.End()))
 	}
 	applicableSpanStart := argumentList.Pos()
-	applicableSpanEnd := scanner.SkipTrivia(sourceFile.Text(), argumentList.End())
+	applicableSpanEnd := argumentList.End()
 	return core.NewTextRange(applicableSpanStart, applicableSpanEnd)
 }
 
