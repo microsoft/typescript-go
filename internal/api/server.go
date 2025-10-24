@@ -290,11 +290,12 @@ func (r *resolverWrapper) GetPackageScopeForPath(directory string) *packagejson.
 }
 
 // ResolveModuleName implements module.ResolverInterface.
-func (r *resolverWrapper) ResolveModuleName(moduleName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference module.ResolvedProjectReference) (*module.ResolvedModule, []string) {
+func (r *resolverWrapper) ResolveModuleName(moduleName string, containingFile string, importAttributeType *string, resolutionMode core.ResolutionMode, redirectedReference module.ResolvedProjectReference) (*module.ResolvedModule, []string) {
 	if r.server.CallbackEnabled(CallbackResolveModuleName) {
 		result, err := r.server.call("resolveModuleName", map[string]any{
 			"moduleName":          moduleName,
 			"containingFile":      containingFile,
+			"importAttributeType": importAttributeType,
 			"resolutionMode":      resolutionMode,
 			"redirectedReference": redirectedReference,
 		})
@@ -309,7 +310,7 @@ func (r *resolverWrapper) ResolveModuleName(moduleName string, containingFile st
 			return &res, nil
 		}
 	}
-	return r.inner.ResolveModuleName(moduleName, containingFile, resolutionMode, redirectedReference)
+	return r.inner.ResolveModuleName(moduleName, containingFile, importAttributeType, resolutionMode, redirectedReference)
 }
 
 // ResolveTypeReferenceDirective implements module.ResolverInterface.

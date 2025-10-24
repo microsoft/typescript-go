@@ -143,7 +143,7 @@ func GetCompilerOptionsWithRedirect(compilerOptions *core.CompilerOptions, redir
 }
 
 type ResolverInterface interface {
-	ResolveModuleName(moduleName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference ResolvedProjectReference) (*ResolvedModule, []string)
+	ResolveModuleName(moduleName string, containingFile string, kind *string, resolutionMode core.ResolutionMode, redirectedReference ResolvedProjectReference) (*ResolvedModule, []string)
 	ResolveTypeReferenceDirective(typeReferenceDirectiveName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference ResolvedProjectReference) (*ResolvedTypeReferenceDirective, []string)
 	GetPackageJsonScopeIfApplicable(path string) *packagejson.InfoCacheEntry
 	GetPackageScopeForPath(directory string) *packagejson.InfoCacheEntry
@@ -232,7 +232,7 @@ func (r *Resolver) ResolveTypeReferenceDirective(
 	return result, traceBuilder.getTraces()
 }
 
-func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference ResolvedProjectReference) (*ResolvedModule, []string) {
+func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, kind *string, resolutionMode core.ResolutionMode, redirectedReference ResolvedProjectReference) (*ResolvedModule, []string) {
 	traceBuilder := r.newTraceBuilder()
 	compilerOptions := GetCompilerOptionsWithRedirect(r.compilerOptions, redirectedReference)
 	if traceBuilder != nil {
