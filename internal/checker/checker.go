@@ -2488,7 +2488,7 @@ func (c *Checker) checkParameter(node *ast.Node) {
 		paramName = node.Name().Text()
 	}
 	if ast.HasSyntacticModifier(node, ast.ModifierFlagsParameterPropertyModifier) {
-		if c.compilerOptions.ErasableSyntaxOnly.IsTrue() {
+		if c.compilerOptions.ErasableSyntaxOnly.IsTrue() && !ast.IsInJSFile(node) {
 			c.error(node, diagnostics.This_syntax_is_not_allowed_when_erasableSyntaxOnly_is_enabled)
 		}
 		if !(ast.IsConstructorDeclaration(fn) && ast.NodeIsPresent(fn.Body())) {
@@ -4843,7 +4843,7 @@ func (c *Checker) checkEnumDeclaration(node *ast.Node) {
 	c.checkExportsOnMergedDeclarations(node)
 	c.checkSourceElements(node.Members())
 
-	if c.compilerOptions.ErasableSyntaxOnly.IsTrue() && node.Flags&ast.NodeFlagsAmbient == 0 {
+	if c.compilerOptions.ErasableSyntaxOnly.IsTrue() && !ast.IsInJSFile(node) && node.Flags&ast.NodeFlagsAmbient == 0 {
 		c.error(node, diagnostics.This_syntax_is_not_allowed_when_erasableSyntaxOnly_is_enabled)
 	}
 
@@ -4933,7 +4933,7 @@ func (c *Checker) checkModuleDeclaration(node *ast.Node) {
 	symbol := c.getSymbolOfDeclaration(node)
 	// The following checks only apply on a non-ambient instantiated module declaration.
 	if symbol.Flags&ast.SymbolFlagsValueModule != 0 && !inAmbientContext && isInstantiatedModule(node, c.compilerOptions.ShouldPreserveConstEnums()) {
-		if c.compilerOptions.ErasableSyntaxOnly.IsTrue() {
+		if c.compilerOptions.ErasableSyntaxOnly.IsTrue() && !ast.IsInJSFile(node) {
 			c.error(node, diagnostics.This_syntax_is_not_allowed_when_erasableSyntaxOnly_is_enabled)
 		}
 		if c.compilerOptions.GetIsolatedModules() && ast.GetSourceFileOfNode(node).ExternalModuleIndicator == nil {
@@ -5232,7 +5232,7 @@ func (c *Checker) checkImportEqualsDeclaration(node *ast.Node) {
 		return // If we hit an import declaration in an illegal context, just bail out to avoid cascading errors.
 	}
 	c.checkGrammarModifiers(node)
-	if c.compilerOptions.ErasableSyntaxOnly.IsTrue() && node.Flags&ast.NodeFlagsAmbient == 0 {
+	if c.compilerOptions.ErasableSyntaxOnly.IsTrue() && !ast.IsInJSFile(node) && node.Flags&ast.NodeFlagsAmbient == 0 {
 		c.error(node, diagnostics.This_syntax_is_not_allowed_when_erasableSyntaxOnly_is_enabled)
 	}
 	if ast.IsInternalModuleImportEqualsDeclaration(node) || c.checkExternalImportOrExportDeclaration(node) {
@@ -5334,7 +5334,7 @@ func (c *Checker) checkExportAssignment(node *ast.Node) {
 	if c.checkGrammarModuleElementContext(node, illegalContextMessage) {
 		return // If we hit an export assignment in an illegal context, just bail out to avoid cascading errors.
 	}
-	if c.compilerOptions.ErasableSyntaxOnly.IsTrue() && node.AsExportAssignment().IsExportEquals && node.Flags&ast.NodeFlagsAmbient == 0 {
+	if c.compilerOptions.ErasableSyntaxOnly.IsTrue() && !ast.IsInJSFile(node) && node.AsExportAssignment().IsExportEquals && node.Flags&ast.NodeFlagsAmbient == 0 {
 		c.error(node, diagnostics.This_syntax_is_not_allowed_when_erasableSyntaxOnly_is_enabled)
 	}
 	container := node.Parent
@@ -11832,7 +11832,7 @@ func (c *Checker) classDeclarationExtendsNull(classDecl *ast.Node) bool {
 
 func (c *Checker) checkAssertion(node *ast.Node, checkMode CheckMode) *Type {
 	if node.Kind == ast.KindTypeAssertionExpression {
-		if c.compilerOptions.ErasableSyntaxOnly.IsTrue() {
+		if c.compilerOptions.ErasableSyntaxOnly.IsTrue() && !ast.IsInJSFile(node) {
 			c.diagnostics.Add(ast.NewDiagnostic(ast.GetSourceFileOfNode(node), core.NewTextRange(scanner.SkipTrivia(ast.GetSourceFileOfNode(node).Text(), node.Pos()), node.Expression().Pos()), diagnostics.This_syntax_is_not_allowed_when_erasableSyntaxOnly_is_enabled))
 		}
 	}
