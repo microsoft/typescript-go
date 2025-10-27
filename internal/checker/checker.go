@@ -19125,7 +19125,7 @@ func (c *Checker) getSignatureFromDeclaration(declaration *ast.Node) *Signature 
 		ast.IsInJSFile(declaration) &&
 		(ast.IsFunctionExpression(declaration) || ast.IsArrowFunction(declaration) || ast.IsMethodOrAccessor(declaration) || ast.IsFunctionDeclaration(declaration) || ast.IsConstructorDeclaration(declaration)) &&
 		core.Every(declaration.Parameters(), func(param *ast.Node) bool { return param.Type() == nil }) &&
-		c.getContextualSignatureForFunctionLikeDeclaration(declaration) == nil
+		c.getContextualType(declaration, ContextFlagsSignature) == nil
 	if isUntypedSignatureInJSFile {
 		flags |= SignatureFlagsIsUntypedSignatureInJSFile
 	}
