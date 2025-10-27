@@ -1,6 +1,0 @@
-// === goToDefinition ===
-// === /b.ts ===
-// enum E {
-//     /** {@link /*GOTO DEF*/Foo} */
-//     [|Foo|]
-// }

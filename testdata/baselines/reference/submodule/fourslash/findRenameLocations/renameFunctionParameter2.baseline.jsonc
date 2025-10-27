@@ -1,8 +1,0 @@
-// === findRenameLocations ===
-// === /renameFunctionParameter2.ts ===
-// /**
-//  * @param {number} p
-//  */
-// const foo = function foo([|pRENAME|]/*RENAME*/) {
-//     return [|pRENAME|];
-// }

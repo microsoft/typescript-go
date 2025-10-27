@@ -1,3 +1,0 @@
-// === findAllReferences ===
-// === /project/src/foo.ts ===
-// import * as x from /*FIND ALL REFS*/"[|tslib|]";

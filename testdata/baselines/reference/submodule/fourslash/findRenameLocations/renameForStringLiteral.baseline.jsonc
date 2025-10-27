@@ -1,8 +1,0 @@
-// === findRenameLocations ===
-// === /a.ts ===
-// interface Foo {
-//     property: /*RENAME*/"foo";
-// }
-// /**
-//  * @type {{ property: "foo"}}
-// // --- (line: 6) skipped ---

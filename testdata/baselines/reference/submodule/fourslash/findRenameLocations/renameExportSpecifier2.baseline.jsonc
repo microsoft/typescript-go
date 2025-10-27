@@ -1,6 +1,0 @@
-// === findRenameLocations ===
-// @useAliasesForRename: false
-
-// === /a.ts ===
-// const [|nameRENAME|] = {};
-// export { name/*RENAME*/ };

@@ -1,9 +1,0 @@
-// === goToDefinition ===
-// === /goToDefinitionSwitchCase4.ts ===
-//      switch (null) {
-//          case null: break;
-//      }
-// 
-//      [|switch|] (null) {
-//         /*GOTO DEF*/case null: break;
-//      }
