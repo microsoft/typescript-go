@@ -5,14 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
-	"os/exec"
-	"os/signal"
 	"runtime/debug"
 	"slices"
 	"sync"
 	"sync/atomic"
-	"syscall"
 	"time"
 
 	"github.com/go-json-experiment/json"
@@ -39,6 +35,7 @@ type ServerOptions struct {
 	DefaultLibraryPath string
 	TypingsLocation    string
 	ParseCache         *project.ParseCache
+	NpmInstall         func(cwd string, args []string) ([]byte, error)
 }
 
 func NewServer(opts *ServerOptions) *Server {
@@ -59,6 +56,7 @@ func NewServer(opts *ServerOptions) *Server {
 		defaultLibraryPath:    opts.DefaultLibraryPath,
 		typingsLocation:       opts.TypingsLocation,
 		parseCache:            opts.ParseCache,
+		npmInstall:            opts.NpmInstall,
 	}
 }
 
@@ -157,6 +155,8 @@ type Server struct {
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	// parseCache can be passed in so separate tests can share ASTs
 	parseCache *project.ParseCache
+
+	npmInstall func(cwd string, args []string) ([]byte, error)
 }
 
 // WatchFiles implements project.Client.
@@ -218,10 +218,34 @@ func (s *Server) RefreshDiagnostics(ctx context.Context) error {
 	return nil
 }
 
-func (s *Server) Run() error {
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-	defer stop()
+func (s *Server) RequestConfiguration(ctx context.Context) (*ls.UserPreferences, error) {
+	if s.initializeParams.Capabilities == nil || s.initializeParams.Capabilities.Workspace == nil ||
+		!ptrIsTrue(s.initializeParams.Capabilities.Workspace.Configuration) {
+		// if no configuration request capapbility, return default preferences
+		return s.session.NewUserPreferences(), nil
+	}
+	result, err := s.sendRequest(ctx, lsproto.MethodWorkspaceConfiguration, &lsproto.ConfigurationParams{
+		Items: []*lsproto.ConfigurationItem{
+			{
+				Section: ptrTo("typescript"),
+			},
+		},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("configure request failed: %w", err)
+	}
+	configs := result.([]any)
+	s.Log(fmt.Sprintf("\n\nconfiguration: %+v, %T\n\n", configs, configs))
+	userPreferences := s.session.NewUserPreferences()
+	for _, item := range configs {
+		if parsed := userPreferences.Parse(item); parsed != nil {
+			return parsed, nil
+		}
+	}
+	return userPreferences, nil
+}
 
+func (s *Server) Run(ctx context.Context) error {
 	g, ctx := errgroup.WithContext(ctx)
 	g.Go(func() error { return s.dispatchLoop(ctx) })
 	g.Go(func() error { return s.writeLoop(ctx) })
@@ -441,6 +465,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerRequestHandler(handlers, lsproto.ShutdownInfo, (*Server).handleShutdown)
 	registerNotificationHandler(handlers, lsproto.ExitInfo, (*Server).handleExit)
 
+	registerNotificationHandler(handlers, lsproto.WorkspaceDidChangeConfigurationInfo, (*Server).handleDidChangeWorkspaceConfiguration)
 	registerNotificationHandler(handlers, lsproto.TextDocumentDidOpenInfo, (*Server).handleDidOpen)
 	registerNotificationHandler(handlers, lsproto.TextDocumentDidChangeInfo, (*Server).handleDidChange)
 	registerNotificationHandler(handlers, lsproto.TextDocumentDidSaveInfo, (*Server).handleDidSave)
@@ -462,6 +487,7 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDocumentSymbolInfo, (*Server).handleDocumentSymbol)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentRenameInfo, (*Server).handleRename)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentDocumentHighlightInfo, (*Server).handleDocumentHighlight)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSelectionRangeInfo, (*Server).handleSelectionRange)
 	registerRequestHandler(handlers, lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
 	registerRequestHandler(handlers, lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
 
@@ -641,6 +667,9 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			DocumentHighlightProvider: &lsproto.BooleanOrDocumentHighlightOptions{
 				Boolean: ptrTo(true),
 			},
+			SelectionRangeProvider: &lsproto.BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions{
+				Boolean: ptrTo(true),
+			},
 		},
 	}
 
@@ -686,6 +715,21 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 		NpmExecutor: s,
 		ParseCache:  s.parseCache,
 	})
+
+	if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil && *s.initializeParams.InitializationOptions != nil {
+		// handle userPreferences from initializationOptions
+		userPreferences := s.session.NewUserPreferences()
+		userPreferences.Parse(*s.initializeParams.InitializationOptions)
+		s.session.InitializeWithConfig(userPreferences)
+	} else {
+		// request userPreferences if not provided at initialization
+		userPreferences, err := s.RequestConfiguration(ctx)
+		if err != nil {
+			return err
+		}
+		s.session.InitializeWithConfig(userPreferences)
+	}
+
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	if s.compilerOptionsForInferredProjects != nil {
 		s.session.DidChangeCompilerOptionsForInferredProjects(ctx, s.compilerOptionsForInferredProjects)
@@ -701,6 +745,16 @@ func (s *Server) handleShutdown(ctx context.Context, params any, _ *lsproto.Requ
 
 func (s *Server) handleExit(ctx context.Context, params any) error {
 	return io.EOF
+}
+
+func (s *Server) handleDidChangeWorkspaceConfiguration(ctx context.Context, params *lsproto.DidChangeConfigurationParams) error {
+	// !!! only implemented because needed for fourslash
+	userPreferences := s.session.UserPreferences()
+	if parsed := userPreferences.Parse(params.Settings); parsed != nil {
+		userPreferences = parsed
+	}
+	s.session.Configure(userPreferences)
+	return nil
 }
 
 func (s *Server) handleDidOpen(ctx context.Context, params *lsproto.DidOpenTextDocumentParams) error {
@@ -758,7 +812,6 @@ func (s *Server) handleSignatureHelp(ctx context.Context, languageService *ls.La
 		params.Position,
 		params.Context,
 		s.initializeParams.Capabilities.TextDocument.SignatureHelp,
-		&ls.UserPreferences{},
 	)
 }
 
@@ -781,17 +834,13 @@ func (s *Server) handleImplementations(ctx context.Context, ls *ls.LanguageServi
 }
 
 func (s *Server) handleCompletion(ctx context.Context, languageService *ls.LanguageService, params *lsproto.CompletionParams) (lsproto.CompletionResponse, error) {
-	// !!! get user preferences
 	return languageService.ProvideCompletion(
 		ctx,
 		params.TextDocument.Uri,
 		params.Position,
 		params.Context,
 		getCompletionClientCapabilities(s.initializeParams),
-		&ls.UserPreferences{
-			IncludeCompletionsForModuleExports:    core.TSTrue,
-			IncludeCompletionsForImportStatements: core.TSTrue,
-		})
+	)
 }
 
 func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsproto.CompletionItem, reqMsg *lsproto.RequestMessage) (lsproto.CompletionResolveResponse, error) {
@@ -809,10 +858,6 @@ func (s *Server) handleCompletionItemResolve(ctx context.Context, params *lsprot
 		params,
 		data,
 		getCompletionClientCapabilities(s.initializeParams),
-		&ls.UserPreferences{
-			IncludeCompletionsForModuleExports:    core.TSTrue,
-			IncludeCompletionsForImportStatements: core.TSTrue,
-		},
 	)
 }
 
@@ -863,6 +908,10 @@ func (s *Server) handleDocumentHighlight(ctx context.Context, ls *ls.LanguageSer
 	return ls.ProvideDocumentHighlights(ctx, params.TextDocument.Uri, params.Position)
 }
 
+func (s *Server) handleSelectionRange(ctx context.Context, ls *ls.LanguageService, params *lsproto.SelectionRangeParams) (lsproto.SelectionRangeResponse, error) {
+	return ls.ProvideSelectionRanges(ctx, params)
+}
+
 func (s *Server) Log(msg ...any) {
 	fmt.Fprintln(s.stderr, msg...)
 }
@@ -877,9 +926,7 @@ func (s *Server) SetCompilerOptionsForInferredProjects(ctx context.Context, opti
 
 // NpmInstall implements ata.NpmExecutor
 func (s *Server) NpmInstall(cwd string, args []string) ([]byte, error) {
-	cmd := exec.Command("npm", args...)
-	cmd.Dir = cwd
-	return cmd.Output()
+	return s.npmInstall(cwd, args)
 }
 
 func isBlockingMethod(method lsproto.Method) bool {
@@ -890,7 +937,9 @@ func isBlockingMethod(method lsproto.Method) bool {
 		lsproto.MethodTextDocumentDidChange,
 		lsproto.MethodTextDocumentDidSave,
 		lsproto.MethodTextDocumentDidClose,
-		lsproto.MethodWorkspaceDidChangeWatchedFiles:
+		lsproto.MethodWorkspaceDidChangeWatchedFiles,
+		lsproto.MethodWorkspaceDidChangeConfiguration,
+		lsproto.MethodWorkspaceConfiguration:
 		return true
 	}
 	return false

@@ -2326,7 +2326,7 @@ var Compiler_option_0_may_only_be_used_with_build = &Message{code: 5093, categor
 
 var Compiler_option_0_may_not_be_used_with_build = &Message{code: 5094, category: CategoryError, key: "Compiler_option_0_may_not_be_used_with_build_5094", text: "Compiler option '--{0}' may not be used with '--build'."}
 
-var Option_0_can_only_be_used_when_module_is_set_to_preserve_or_to_es2015_or_later = &Message{code: 5095, category: CategoryError, key: "Option_0_can_only_be_used_when_module_is_set_to_preserve_or_to_es2015_or_later_5095", text: "Option '{0}' can only be used when 'module' is set to 'preserve' or to 'es2015' or later."}
+var Option_0_can_only_be_used_when_module_is_set_to_preserve_commonjs_or_es2015_or_later = &Message{code: 5095, category: CategoryError, key: "Option_0_can_only_be_used_when_module_is_set_to_preserve_commonjs_or_es2015_or_later_5095", text: "Option '{0}' can only be used when 'module' is set to 'preserve', 'commonjs', or 'es2015' or later."}
 
 var Option_allowImportingTsExtensions_can_only_be_used_when_either_noEmit_or_emitDeclarationOnly_is_set = &Message{code: 5096, category: CategoryError, key: "Option_allowImportingTsExtensions_can_only_be_used_when_either_noEmit_or_emitDeclarationOnly_is_set_5096", text: "Option 'allowImportingTsExtensions' can only be used when either 'noEmit' or 'emitDeclarationOnly' is set."}
 
@@ -2353,6 +2353,8 @@ var Option_0_1_has_been_removed_Please_remove_it_from_your_configuration = &Mess
 var Option_moduleResolution_must_be_set_to_0_or_left_unspecified_when_option_module_is_set_to_1 = &Message{code: 5109, category: CategoryError, key: "Option_moduleResolution_must_be_set_to_0_or_left_unspecified_when_option_module_is_set_to_1_5109", text: "Option 'moduleResolution' must be set to '{0}' (or left unspecified) when option 'module' is set to '{1}'."}
 
 var Option_module_must_be_set_to_0_when_option_moduleResolution_is_set_to_1 = &Message{code: 5110, category: CategoryError, key: "Option_module_must_be_set_to_0_when_option_moduleResolution_is_set_to_1_5110", text: "Option 'module' must be set to '{0}' when option 'moduleResolution' is set to '{1}'."}
+
+var Visit_https_Colon_Slash_Slashaka_ms_Slashts6_for_migration_information = &Message{code: 5111, category: CategoryMessage, key: "Visit_https_Colon_Slash_Slashaka_ms_Slashts6_for_migration_information_5111", text: "Visit https://aka.ms/ts6 for migration information."}
 
 var Generates_a_sourcemap_for_each_corresponding_d_ts_file = &Message{code: 6000, category: CategoryMessage, key: "Generates_a_sourcemap_for_each_corresponding_d_ts_file_6000", text: "Generates a sourcemap for each corresponding '.d.ts' file."}
 
@@ -3732,7 +3734,7 @@ var Deferred_imports_are_only_supported_when_the_module_flag_is_set_to_esnext_or
 
 var X_0_is_not_a_valid_meta_property_for_keyword_import_Did_you_mean_meta_or_defer = &Message{code: 18061, category: CategoryError, key: "_0_is_not_a_valid_meta_property_for_keyword_import_Did_you_mean_meta_or_defer_18061", text: "'{0}' is not a valid meta-property for keyword 'import'. Did you mean 'meta' or 'defer'?"}
 
-var X_module_AMD_or_UMD_or_System_or_ES6_then_Classic_Otherwise_Node = &Message{code: 69010, category: CategoryMessage, key: "module_AMD_or_UMD_or_System_or_ES6_then_Classic_Otherwise_Node_69010", text: "module === `AMD` or `UMD` or `System` or `ES6`, then `Classic`, Otherwise `Node`"}
+var X_nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler = &Message{code: 69010, category: CategoryMessage, key: "nodenext_if_module_is_nodenext_node16_if_module_is_node16_or_node18_otherwise_bundler_69010", text: "`nodenext` if `module` is `nodenext`; `node16` if `module` is `node16` or `node18`; otherwise, `bundler`."}
 
 var File_is_a_CommonJS_module_it_may_be_converted_to_an_ES_module = &Message{code: 80001, category: CategorySuggestion, key: "File_is_a_CommonJS_module_it_may_be_converted_to_an_ES_module_80001", text: "File is a CommonJS module; it may be converted to an ES module."}
 

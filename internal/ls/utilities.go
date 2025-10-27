@@ -468,8 +468,27 @@ const (
 	quotePreferenceDouble
 )
 
-// !!!
-func getQuotePreference(file *ast.SourceFile, preferences *UserPreferences) quotePreference {
+func quotePreferenceFromString(str *ast.StringLiteral) quotePreference {
+	if str.TokenFlags&ast.TokenFlagsSingleQuote != 0 {
+		return quotePreferenceSingle
+	}
+	return quotePreferenceDouble
+}
+
+func getQuotePreference(sourceFile *ast.SourceFile, preferences *UserPreferences) quotePreference {
+	if preferences.QuotePreference != "" && preferences.QuotePreference != "auto" {
+		if preferences.QuotePreference == "single" {
+			return quotePreferenceSingle
+		}
+		return quotePreferenceDouble
+	}
+	// ignore synthetic import added when importHelpers: true
+	firstModuleSpecifier := core.Find(sourceFile.Imports(), func(n *ast.Node) bool {
+		return ast.IsStringLiteral(n) && !ast.NodeIsSynthesized(n.Parent)
+	})
+	if firstModuleSpecifier != nil {
+		return quotePreferenceFromString(firstModuleSpecifier.AsStringLiteral())
+	}
 	return quotePreferenceDouble
 }
 
@@ -917,7 +936,7 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 	// specially by `getSymbolAtLocation`.
 	isModifier := func(node *ast.Node) bool {
 		if ast.IsModifier(node) && (forRename || node.Kind != ast.KindDefaultKeyword) {
-			return ast.CanHaveModifiers(parent) && slices.Contains(parent.Modifiers().NodeList.Nodes, node)
+			return ast.CanHaveModifiers(parent) && parent.Modifiers() != nil && slices.Contains(parent.Modifiers().NodeList.Nodes, node)
 		}
 		switch node.Kind {
 		case ast.KindClassKeyword:
@@ -1659,6 +1678,13 @@ func getChildrenFromNonJSDocNode(node *ast.Node, sourceFile *ast.SourceFile) []*
 		childNodes = append(childNodes, child)
 		return false
 	})
+
+	// If the node has no children, don't scan for tokens.
+	// This prevents creating tokens for leaf nodes' own text.
+	if len(childNodes) == 0 {
+		return nil
+	}
+
 	var children []*ast.Node
 	pos := node.Pos()
 	for _, child := range childNodes {

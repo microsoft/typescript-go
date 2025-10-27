@@ -1,18 +1,15 @@
 --- old.jsxRuntimePragma(jsx=react-jsxdev).js
 +++ new.jsxRuntimePragma(jsx=react-jsxdev).js
-@@= skipped -39, +39 lines =@@
+@@= skipped -72, +72 lines =@@
  exports.selfClosing = exports.frag = exports.HelloWorld = void 0;
  /// <reference path="react16.d.ts" />
  /* @jsxRuntime classic */
--var React = require("react");
-+const React = require("react");
+-var React = __importStar(require("react"));
++const React = __importStar(require("react"));
  const HelloWorld = () => React.createElement("h1", null, "Hello world");
  exports.HelloWorld = HelloWorld;
--exports.frag = React.createElement(React.Fragment, null,
--    React.createElement("div", null));
-+exports.frag = React.createElement(React.Fragment, null, React.createElement("div", null));
- exports.selfClosing = React.createElement("img", { src: "./image.png" });
- //// [two.js]
+ exports.frag = React.createElement(React.Fragment, null,
+@@= skipped -10, +10 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.selfClosing = exports.frag = exports.HelloWorld = void 0;
@@ -47,18 +44,13 @@
 +exports.selfClosing = jsx_dev_runtime_1.jsxDEV("img", { src: "./image.png" });
  //// [four.js]
  "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
-@@= skipped -38, +35 lines =@@
+ var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+@@= skipped -61, +59 lines =@@
  /// <reference path="react16.d.ts" />
  /* @jsxRuntime automatic */
  /* @jsxRuntime classic */
--var React = require("react");
-+const React = require("react");
+-var React = __importStar(require("react"));
++const React = __importStar(require("react"));
  const HelloWorld = () => React.createElement("h1", null, "Hello world");
  exports.HelloWorld = HelloWorld;
--exports.frag = React.createElement(React.Fragment, null,
--    React.createElement("div", null));
-+exports.frag = React.createElement(React.Fragment, null, React.createElement("div", null));
- exports.selfClosing = React.createElement("img", { src: "./image.png" });
- //// [index.js]
- "use strict";
+ exports.frag = React.createElement(React.Fragment, null,
