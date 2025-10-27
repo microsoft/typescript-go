@@ -255,7 +255,7 @@ func (options *CompilerOptions) AllowImportingTsExtensionsFrom(fileName string) 
 	return options.GetAllowImportingTsExtensions() || tspath.IsDeclarationFileName(fileName)
 }
 
-// Deprecated: always returns truej
+// Deprecated: always returns true
 func (options *CompilerOptions) GetESModuleInterop() bool {
 	return true
 }
