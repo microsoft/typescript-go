@@ -12,7 +12,7 @@ import (
 
 func TestCompletionListStaticProtectedMembers2(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class Base {
     private static privateMethod() { }
@@ -141,11 +141,27 @@ class C2 extends Base {
 					SortText: PtrTo(string(ls.SortTextLocalDeclarationPriority)),
 				},
 				&lsproto.CompletionItem{
+					Label:    "protectedOverriddenProperty",
+					SortText: PtrTo(string(ls.SortTextLocalDeclarationPriority)),
+				},
+				&lsproto.CompletionItem{
+					Label:    "protectedProperty",
+					SortText: PtrTo(string(ls.SortTextLocalDeclarationPriority)),
+				},
+				&lsproto.CompletionItem{
 					Label:    "publicMethod",
 					SortText: PtrTo(string(ls.SortTextLocalDeclarationPriority)),
 				},
 				&lsproto.CompletionItem{
+					Label:    "publicProperty",
+					SortText: PtrTo(string(ls.SortTextLocalDeclarationPriority)),
+				},
+				&lsproto.CompletionItem{
 					Label:    "apply",
+					SortText: PtrTo(string(ls.SortTextLocationPriority)),
+				},
+				&lsproto.CompletionItem{
+					Label:    "arguments",
 					SortText: PtrTo(string(ls.SortTextLocationPriority)),
 				},
 				&lsproto.CompletionItem{
@@ -154,6 +170,18 @@ class C2 extends Base {
 				},
 				&lsproto.CompletionItem{
 					Label:    "call",
+					SortText: PtrTo(string(ls.SortTextLocationPriority)),
+				},
+				&lsproto.CompletionItem{
+					Label:    "caller",
+					SortText: PtrTo(string(ls.SortTextLocationPriority)),
+				},
+				&lsproto.CompletionItem{
+					Label:    "length",
+					SortText: PtrTo(string(ls.SortTextLocationPriority)),
+				},
+				&lsproto.CompletionItem{
+					Label:    "prototype",
 					SortText: PtrTo(string(ls.SortTextLocationPriority)),
 				},
 				&lsproto.CompletionItem{

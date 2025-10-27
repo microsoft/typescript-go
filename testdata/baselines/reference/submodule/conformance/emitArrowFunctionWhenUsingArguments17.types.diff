@@ -1,0 +1,24 @@
+--- old.emitArrowFunctionWhenUsingArguments17.types
++++ new.emitArrowFunctionWhenUsingArguments17.types
+@@= skipped -1, +1 lines =@@
+
+ === emitArrowFunctionWhenUsingArguments17.ts ===
+ function f() {
+->f : () => () => string
++>f : () => () => any
+
+     var { arguments } = { arguments: "hello" };
+ >arguments : string
+@@= skipped -15, +15 lines =@@
+ >random : () => number
+
+         return () => arguments[0];
+->() => arguments[0] : () => string
+->arguments[0] : string
+->arguments : string
++>() => arguments[0] : () => any
++>arguments[0] : any
++>arguments : IArguments
+ >0 : 0
+     }
+     var arguments = "world";

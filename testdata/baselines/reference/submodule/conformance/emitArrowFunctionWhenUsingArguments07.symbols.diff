@@ -1,0 +1,9 @@
+--- old.emitArrowFunctionWhenUsingArguments07.symbols
++++ new.emitArrowFunctionWhenUsingArguments07.symbols
+@@= skipped -7, +7 lines =@@
+     var a = (arguments) => () => arguments;
+ >a : Symbol(a, Decl(emitArrowFunctionWhenUsingArguments07.ts, 1, 7))
+ >arguments : Symbol(arguments, Decl(emitArrowFunctionWhenUsingArguments07.ts, 1, 13))
+->arguments : Symbol(arguments, Decl(emitArrowFunctionWhenUsingArguments07.ts, 1, 13))
++>arguments : Symbol(arguments)
+ }

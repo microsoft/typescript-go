@@ -1,0 +1,20 @@
+--- old.emitArrowFunctionWhenUsingArguments01.types
++++ new.emitArrowFunctionWhenUsingArguments01.types
+@@= skipped -7, +7 lines =@@
+     var arg = arguments[0];  // error
+ >arg : any
+ >arguments[0] : any
+->arguments : any
++>arguments : IArguments
+ >0 : 0
+ }
+
+@@= skipped -46, +46 lines =@@
+     var arg = arguments[0];  // error
+ >arg : any
+ >arguments[0] : any
+->arguments : any
++>arguments : IArguments
+ >0 : 0
+
+ });

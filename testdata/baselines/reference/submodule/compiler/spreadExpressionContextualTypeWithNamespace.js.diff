@@ -1,11 +1,29 @@
 --- old.spreadExpressionContextualTypeWithNamespace.js
 +++ new.spreadExpressionContextualTypeWithNamespace.js
-@@= skipped -94, +94 lines =@@
-     };
- })();
- Object.defineProperty(exports, "__esModule", { value: true });
--var stuff = __importStar(require("./spreadExpressionContextualTypeWithNamespace_0"));
-+const stuff = __importStar(require("./spreadExpressionContextualTypeWithNamespace_0"));
- stuff.func;
- stuff.klass;
+@@= skipped -49, +49 lines =@@
+ function exportedDirectly() { }
+ //// [spreadExpressionContextualTypeWithNamespace_1.js]
+ "use strict";
++var __assign = (this && this.__assign) || function () {
++    __assign = Object.assign || function(t) {
++        for (var s, i = 1, n = arguments.length; i < n; i++) {
++            s = arguments[i];
++            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
++                t[p] = s[p];
++        }
++        return t;
++    };
++    return __assign.apply(this, arguments);
++};
+ var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+     if (k2 === undefined) k2 = k;
+     var desc = Object.getOwnPropertyDescriptor(m, k);
+@@= skipped -40, +51 lines =@@
  stuff.obj;
+ stuff.exportedDirectly;
+ function getStuff() {
+-    const thing = Object.assign({}, stuff);
++    const thing = __assign({}, stuff);
+     thing.func;
+     thing.klass;
+     thing.obj;

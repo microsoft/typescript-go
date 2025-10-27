@@ -1,0 +1,13 @@
+--- old.emitArrowFunctionWhenUsingArguments05.types
++++ new.emitArrowFunctionWhenUsingArguments05.types
+@@= skipped -5, +5 lines =@@
+ >arguments : any
+
+     var a = () => arguments;
+->a : () => any
+->() => arguments : () => any
+->arguments : any
++>a : () => IArguments
++>() => arguments : () => IArguments
++>arguments : IArguments
+ }

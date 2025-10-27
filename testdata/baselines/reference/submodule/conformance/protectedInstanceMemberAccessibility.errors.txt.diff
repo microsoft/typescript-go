@@ -1,0 +1,18 @@
+--- old.protectedInstanceMemberAccessibility.errors.txt
++++ new.protectedInstanceMemberAccessibility.errors.txt
+@@= skipped -0, +0 lines =@@
+ protectedInstanceMemberAccessibility.ts(14,23): error TS2339: Property 'z' does not exist on type 'B'.
+-protectedInstanceMemberAccessibility.ts(16,24): error TS2855: Class field 'x' defined by the parent class is not accessible in the child class via super.
++protectedInstanceMemberAccessibility.ts(16,24): error TS2340: Only public and protected methods of the base class are accessible via the 'super' keyword.
+ protectedInstanceMemberAccessibility.ts(18,24): error TS2339: Property 'y' does not exist on type 'A'.
+ protectedInstanceMemberAccessibility.ts(19,24): error TS2339: Property 'z' does not exist on type 'A'.
+ protectedInstanceMemberAccessibility.ts(22,20): error TS2446: Property 'x' is protected and only accessible through an instance of class 'B'. This is an instance of class 'A'.
+@@= skipped -32, +32 lines =@@
+     
+             var s1 = super.x;    // error
+                            ~
+-!!! error TS2855: Class field 'x' defined by the parent class is not accessible in the child class via super.
++!!! error TS2340: Only public and protected methods of the base class are accessible via the 'super' keyword.
+             var s2 = super.f();
+             var s3 = super.y;    // error
+                            ~

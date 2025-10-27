@@ -1,0 +1,10 @@
+--- old.optionalParamReferencingOtherParams2.symbols
++++ new.optionalParamReferencingOtherParams2.symbols
+@@= skipped -8, +8 lines =@@
+ >x : Symbol(x, Decl(optionalParamReferencingOtherParams2.ts, 1, 17))
+ >a : Symbol(a, Decl(optionalParamReferencingOtherParams2.ts, 0, 3))
+ >y : Symbol(y, Decl(optionalParamReferencingOtherParams2.ts, 1, 23))
++>b : Symbol(b, Decl(optionalParamReferencingOtherParams2.ts, 2, 7))
+
+     var b = "";
+ >b : Symbol(b, Decl(optionalParamReferencingOtherParams2.ts, 2, 7))
