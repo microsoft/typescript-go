@@ -1,0 +1,9 @@
+// === documentHighlights ===
+// === /b.ts ===
+// import { x } from "/*HIGHLIGHTS*/[|./a|]";
+
+
+
+// === documentHighlights ===
+// === /c/sub.js ===
+// const a = require("/*HIGHLIGHTS*/[|../a|]");
