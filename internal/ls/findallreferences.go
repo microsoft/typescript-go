@@ -1062,9 +1062,6 @@ func (l *LanguageService) getReferencedSymbolsForModule(ctx context.Context, pro
 			}
 			return newNodeEntry(rangeNode)
 		case ModuleReferenceKindReference:
-			// <reference path> or <reference types>
-			// We can't easily create a proper range entry here without access to LanguageService,
-			// but we can create a node-based entry pointing to the source file which will be resolved later
 			return &referenceEntry{
 				kind:      entryKindRange,
 				fileName:  reference.referencingFile.FileName(),
