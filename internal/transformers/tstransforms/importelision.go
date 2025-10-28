@@ -27,8 +27,16 @@ func NewImportElisionTransformer(opt *transformers.TransformOptions) *transforme
 func (tx *ImportElisionTransformer) visit(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindImportEqualsDeclaration:
-		if !tx.isElisionBlocked(node) && !tx.shouldEmitImportEqualsDeclaration(node.AsImportEqualsDeclaration()) {
-			return nil
+		if !tx.isElisionBlocked(node) {
+			if ast.IsExternalModuleImportEqualsDeclaration(node) {
+				if !tx.shouldEmitAliasDeclaration(node) {
+					return nil
+				}
+			} else {
+				if !tx.shouldEmitImportEqualsDeclaration(node.AsImportEqualsDeclaration()) {
+					return nil
+				}
+			}
 		}
 		return tx.Visitor().VisitEachChild(node)
 	case ast.KindImportDeclaration:

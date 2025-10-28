@@ -762,7 +762,7 @@ func (r *emitResolver) IsTopLevelValueImportEqualsWithEntityName(node *ast.Node)
 		return false
 	}
 	if ast.IsImportEqualsDeclaration(node) &&
-		(ast.NodeIsMissing(node.AsImportEqualsDeclaration().ModuleReference) || node.AsImportEqualsDeclaration().ModuleReference.Kind != ast.KindExternalModuleReference) {
+		(ast.NodeIsMissing(node.AsImportEqualsDeclaration().ModuleReference) || node.AsImportEqualsDeclaration().ModuleReference.Kind == ast.KindExternalModuleReference) {
 		return false
 	}
 

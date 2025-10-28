@@ -49,10 +49,14 @@ var foo;
     })(bar = foo.bar || (foo.bar = {}));
 })(foo || (foo = {}));
 var provide = foo;
+var booz = foo.bar.baz;
 var beez = foo.bar;
+var m = no;
+var m2 = no.mod;
 5;
 "s";
 null;
+var r = undefined;
 var p = new provide.Provide();
 function use() {
     beez.baz.boo;
