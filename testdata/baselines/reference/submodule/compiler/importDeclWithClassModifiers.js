@@ -16,6 +16,6 @@ var b: a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.c = exports.b = exports.a = void 0;
 exports.a = x.c;
-b = x.c;
+exports.b = x.c;
 exports.c = x.c;
 var b;

@@ -39,7 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.a1 = exports.M1 = exports.E1 = exports.C1 = exports.v1 = exports.a = exports.M = exports.E = exports.C = exports.v = void 0;
 exports.f = f;
 exports.f1 = f;
-exports.v1 = exports.v = 1;
+exports.v = 1;
 exports.v1 = exports.v;
 function f() { }
 class C {
@@ -55,7 +55,7 @@ var E;
 var M;
 (function (M) {
 })(M || (exports.M1 = exports.M = M = {}));
-exports.a1 = exports.a = M.x;
+exports.a = M.x;
 exports.a1 = exports.a;
 //// [t2.js]
 "use strict";
