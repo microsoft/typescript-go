@@ -794,8 +794,11 @@ func (b *Binder) bindModuleDeclaration(node *ast.Node) {
 		state := b.declareModuleSymbol(node)
 		if state != ast.ModuleInstanceStateNonInstantiated {
 			symbol := node.AsModuleDeclaration().Symbol
-			if symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsClass|ast.SymbolFlagsRegularEnum) != 0 || state != ast.ModuleInstanceStateConstEnumOnly {
-				// if module was already merged with some function, class or non-const enum, treat it as non-const-enum-only
+			if (symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsClass|ast.SymbolFlagsRegularEnum) == 0) &&
+				state == ast.ModuleInstanceStateConstEnumOnly &&
+				symbol.Flags&ast.SymbolFlagsConstEnumOnlyModule == 0 {
+				symbol.Flags |= ast.SymbolFlagsConstEnumOnlyModule
+			} else {
 				symbol.Flags &^= ast.SymbolFlagsConstEnumOnlyModule
 			}
 		}
