@@ -5322,7 +5322,7 @@ func (l *LanguageService) getCompletionItemActions(ctx context.Context, ch *chec
 	// !!! origin.isTypeOnlyAlias
 	// entryId.source == CompletionSourceObjectLiteralMemberWithComma && contextToken
 
-	if symbolDetails.origin == nil {
+	if symbolDetails.origin == nil || symbolDetails.origin.data == nil {
 		return nil
 	}
 
