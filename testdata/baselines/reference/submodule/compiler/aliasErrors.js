@@ -48,6 +48,8 @@ var foo;
         })(baz = bar.baz || (bar.baz = {}));
     })(bar = foo.bar || (foo.bar = {}));
 })(foo || (foo = {}));
+var provide = foo;
+var beez = foo.bar;
 5;
 "s";
 null;

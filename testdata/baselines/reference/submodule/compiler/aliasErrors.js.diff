@@ -1,12 +1,11 @@
 --- old.aliasErrors.js
 +++ new.aliasErrors.js
-@@= skipped -47, +47 lines =@@
-         })(baz = bar.baz || (bar.baz = {}));
+@@= skipped -48, +48 lines =@@
      })(bar = foo.bar || (foo.bar = {}));
  })(foo || (foo = {}));
--var provide = foo;
+ var provide = foo;
 -var booz = foo.bar.baz;
--var beez = foo.bar;
+ var beez = foo.bar;
 -var m = no;
 -var m2 = no.mod;
  5;

@@ -1,10 +1,9 @@
 --- old.aliasBug.js
 +++ new.aliasBug.js
-@@= skipped -36, +36 lines =@@
-         })(baz = bar.baz || (bar.baz = {}));
+@@= skipped -37, +37 lines =@@
      })(bar = foo.bar || (foo.bar = {}));
  })(foo || (foo = {}));
--var provide = foo;
+ var provide = foo;
 -var booz = foo.bar.baz;
  var p = new provide.Provide();
  function use() {

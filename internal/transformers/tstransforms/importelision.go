@@ -124,16 +124,10 @@ func (tx *ImportElisionTransformer) shouldEmitAliasDeclaration(node *ast.Node) b
 }
 
 func (tx *ImportElisionTransformer) shouldEmitImportEqualsDeclaration(node *ast.ImportEqualsDeclaration) bool {
-	if !tx.shouldEmitAliasDeclaration(node.AsNode()) {
-		return false
-	}
-	if node.ModuleReference.Kind == ast.KindExternalModuleReference {
-		return true
-	}
 	// preserve old compiler's behavior: emit import declaration (even if we do not consider them referenced) when
 	// - current file is not external module
 	// - import declaration is top level and target is value imported by entity name
-	return tx.currentSourceFile != nil && ast.IsExternalModule(tx.currentSourceFile) && tx.isTopLevelValueImportEqualsWithEntityName(node.AsNode())
+	return tx.shouldEmitAliasDeclaration(node.AsNode()) || (!ast.IsExternalModule(tx.currentSourceFile) && tx.isTopLevelValueImportEqualsWithEntityName(node.AsNode()))
 }
 
 func (tx *ImportElisionTransformer) isReferencedAliasDeclaration(node *ast.Node) bool {
