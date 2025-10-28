@@ -18,4 +18,4 @@
  }
  let x;
 -(0, jsx_runtime_1.jsx)(TodoList, Object.assign({}, x));
-+jsx_runtime_1.jsx(TodoList, __assign({}, x));
++jsx_runtime_1.jsx(TodoList, Object.assign({}, x));
