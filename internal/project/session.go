@@ -3,7 +3,6 @@ package project
 import (
 	"context"
 	"fmt"
-	"iter"
 	"slices"
 	"strings"
 	"sync"
@@ -490,18 +489,11 @@ func (s *Session) projectContainsFile(project *Project, uri lsproto.DocumentUri)
 
 func (s *Session) ForEachProjectLocationLoadingProjectTree(
 	ctx context.Context,
-	projectsReferenced iter.Seq[tspath.Path],
+	requestedProjectTrees map[tspath.Path]struct{},
 	defaultDefinition *ls.NonLocalDefinition,
 	canIterateProject func(project *Project) bool,
 	handleLocation func(*Project, lsproto.DocumentUri, lsproto.Position),
 ) error {
-	var requestedProjectTrees map[tspath.Path]struct{}
-	for path := range projectsReferenced {
-		if requestedProjectTrees == nil {
-			requestedProjectTrees = make(map[tspath.Path]struct{})
-		}
-		requestedProjectTrees[path] = struct{}{}
-	}
 	snapshot := s.getSnapshot(
 		ctx,
 		snapshotChangeRequest{requestedProjectTrees: requestedProjectTrees},
