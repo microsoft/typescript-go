@@ -26,7 +26,6 @@ var unexportedAPIAnalyzer = &analysis.Analyzer{
 
 type unexportedAPIPass struct {
 	pass     *analysis.Pass
-	inspect  *inspector.Inspector
 	file     *ast.File
 	currDecl ast.Node
 	// Track which types/objects we've already checked to avoid duplicates
@@ -183,10 +182,8 @@ func (u *unexportedAPIPass) checkEmbeddedField(field *ast.Field) (stop bool) {
 	// Check exported fields in structs
 	if structType, ok := typ.Underlying().(*types.Struct); ok {
 		for field := range structType.Fields() {
-			if field.Exported() {
-				if u.checkObjectType(field) {
-					return true
-				}
+			if field.Exported() && u.checkObjectType(field) {
+				return true
 			}
 		}
 	}
@@ -194,10 +191,8 @@ func (u *unexportedAPIPass) checkEmbeddedField(field *ast.Field) (stop bool) {
 	// Check exported methods on the type
 	if named, ok := typ.(*types.Named); ok {
 		for method := range named.Methods() {
-			if method.Exported() {
-				if u.checkObjectType(method) {
-					return true
-				}
+			if method.Exported() && u.checkObjectType(method) {
+				return true
 			}
 		}
 	}
@@ -231,7 +226,6 @@ func (u *unexportedAPIPass) checkField(field *ast.Field) (stop bool) {
 	if field.Type == nil {
 		return false
 	}
-
 	return u.checkExpr(field.Type)
 }
 
