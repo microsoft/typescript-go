@@ -68,6 +68,21 @@ func (u *unexportedAPIPass) checkFuncDecl(fn *ast.FuncDecl) {
 	if !fn.Name.IsExported() {
 		return
 	}
+
+	// If this is a method on an unexported type, skip it
+	// Unexported types and their methods (even if exported) are not part of the public API
+	if fn.Recv != nil && len(fn.Recv.List) > 0 {
+		recvType := fn.Recv.List[0].Type
+		// Unwrap pointer receiver if needed
+		if star, ok := recvType.(*ast.StarExpr); ok {
+			recvType = star.X
+		}
+		// Check if the receiver type is unexported
+		if ident, ok := recvType.(*ast.Ident); ok && !ident.IsExported() {
+			return
+		}
+	}
+
 	u.checkExpr(fn.Type)
 }
 

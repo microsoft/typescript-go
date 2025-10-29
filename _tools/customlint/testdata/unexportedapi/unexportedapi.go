@@ -156,3 +156,18 @@ func OkayTypeAlias(s ExportedString) {}
 
 // Bad - exported function using unexported type alias
 func BadTypeAlias(s unexportedString) {}
+
+// Test unexported types with exported methods (for interface satisfaction)
+type unexportedImpl struct {
+	value int
+}
+
+// Okay - exported method on unexported type (not part of public API, often used for interface satisfaction)
+func (u *unexportedImpl) ExportedMethod() int {
+	return u.value
+}
+
+// Okay - exported method on unexported type can return unexported types
+func (u *unexportedImpl) AnotherMethod() unexported {
+	return unexported{}
+}
