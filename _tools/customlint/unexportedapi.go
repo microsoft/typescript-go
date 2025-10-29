@@ -445,7 +445,6 @@ func (u *unexportedAPIPass) checkType(typ types.Type) (stop bool) {
 	case *types.Struct:
 		// Check all fields
 		for field := range typ.Fields() {
-			field := field
 			// Only check exported fields
 			if field.Exported() {
 				if u.checkType(field.Type()) {
@@ -457,7 +456,6 @@ func (u *unexportedAPIPass) checkType(typ types.Type) (stop bool) {
 	case *types.Interface:
 		// Check all methods
 		for method := range typ.Methods() {
-			method := method
 			// Only check exported methods
 			if method.Exported() {
 				if u.checkType(method.Type()) {
