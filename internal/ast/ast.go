@@ -334,6 +334,10 @@ func (n *Node) Text() string {
 		return strings.Join(n.AsJSDocLinkCode().text, "")
 	case KindJSDocLinkPlain:
 		return strings.Join(n.AsJSDocLinkPlain().text, "")
+	case KindObjectBindingPattern, KindArrayBindingPattern:
+		// Binding patterns don't have a simple text representation
+		// Return empty string to avoid panics in comparisons
+		return ""
 	}
 	panic(fmt.Sprintf("Unhandled case in Node.Text: %T", n.data))
 }
