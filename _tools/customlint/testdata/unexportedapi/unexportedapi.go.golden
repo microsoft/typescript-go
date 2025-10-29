@@ -65,11 +65,21 @@
 	                ~
 !!! unexportedapi: exported API references unexported identifier unexported
 	
-	// Exported type with unexported embedded field
-	type BadEmbed struct {
+	// Exported type with unexported embedded field (OK since unexported has no exported members)
+	type OkayEmbed struct {
 		unexported
+	}
+	
+	// Unexported type with exported field
+	type unexportedWithExportedField struct {
+		ExportedField int
+	}
+	
+	// Bad - exported type embedding unexported type with exported members
+	type BadEmbed struct {
+		unexportedWithExportedField
 		~
-!!! unexportedapi: exported API references unexported identifier unexported
+!!! unexportedapi: exported API embeds unexported type unexportedWithExportedField which has exported members
 	}
 	
 	// Unexported type - should not trigger
@@ -174,13 +184,15 @@
 !!! unexportedapi: exported API references unexported identifier unexported
 	
 	// Test type aliases
-	type ExportedString string
-	type unexportedString string
+	type (
+		ExportedString   string
+		unexportedString string
+	)
 	
 	// Okay - exported function using exported type alias
 	func OkayTypeAlias(s ExportedString) {}
 	
-	// Bad - exported function using unexported type alias  
+	// Bad - exported function using unexported type alias
 	func BadTypeAlias(s unexportedString) {}
 	                    ~
 !!! unexportedapi: exported API references unexported identifier unexportedString

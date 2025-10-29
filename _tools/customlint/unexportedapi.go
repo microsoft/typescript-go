@@ -13,6 +13,12 @@ import (
 	"golang.org/x/tools/go/ast/inspector"
 )
 
+// allowEmbeddedUnexportedWithoutExportedMembers controls whether embedded unexported types
+// are allowed if they don't expose any exported fields or methods.
+// When true: embedded unexported types are OK if they have no exported members
+// When false: all embedded unexported types are flagged
+const allowEmbeddedUnexportedWithoutExportedMembers = true
+
 var unexportedAPIAnalyzer = &analysis.Analyzer{
 	Name: "unexportedapi",
 	Doc:  "finds exporrted APIs referencing unexported identifiers",
@@ -128,12 +134,51 @@ func (u *unexportedAPIPass) checkFieldIgnoringNames(field *ast.Field) (stop bool
 }
 
 func (u *unexportedAPIPass) checkFieldIfNamesExported(field *ast.Field) (stop bool) {
-	// For embedded fields (no names), we need to check them if the parent is exported
+	// For embedded fields (no names), handle specially
+	if len(field.Names) == 0 {
+		return u.checkEmbeddedField(field)
+	}
 	// For named fields, only check if at least one name is exported
-	if len(field.Names) == 0 || anyIdentExported(field.Names) {
+	if anyIdentExported(field.Names) {
 		return u.checkField(field)
 	}
 	return false
+}
+
+func (u *unexportedAPIPass) checkEmbeddedField(field *ast.Field) (stop bool) {
+	if field.Type == nil {
+		return false
+	}
+
+	// Get the type of the embedded field
+	typ := u.pass.TypesInfo.TypeOf(field.Type)
+	if typ == nil {
+		// Fallback to regular checking if we can't get type info
+		return u.checkField(field)
+	}
+
+	// If the configuration allows embedded unexported types without exported members,
+	// check if this type has any exported members
+	if allowEmbeddedUnexportedWithoutExportedMembers {
+		// Check if the embedded type is unexported and from the same package
+		if named, ok := typ.(*types.Named); ok {
+			obj := named.Obj()
+			if obj != nil && !obj.Exported() && obj.Pkg() == u.pass.Pkg {
+				// It's an unexported type from the same package
+				// Check if it has any exported members
+				if u.hasExportedMembers(typ) {
+					u.pass.Reportf(field.Pos(), "exported API embeds unexported type %s which has exported members", obj.Name())
+					return true
+				}
+				// No exported members, so embedding is OK
+				return false
+			}
+		}
+	}
+
+	// Either the config doesn't allow it, or it's an exported type, or from another package
+	// Use the regular checking
+	return u.checkField(field)
 }
 
 func (u *unexportedAPIPass) checkFieldsIgnoringNames(fields *ast.FieldList) (stop bool) {
@@ -264,6 +309,37 @@ func (u *unexportedAPIPass) checkExpr(expr ast.Expr) (stop bool) {
 		format.Node(&buf, u.pass.Fset, expr)
 		panic(fmt.Sprintf("%T, unhandled case %T: %s", u.currDecl, expr, buf.String()))
 	}
+}
+
+func (u *unexportedAPIPass) hasExportedMembers(typ types.Type) bool {
+	if typ == nil {
+		return false
+	}
+
+	// Dereference pointers
+	if ptr, ok := typ.(*types.Pointer); ok {
+		typ = ptr.Elem()
+	}
+
+	// Check for exported fields in structs
+	if structType, ok := typ.Underlying().(*types.Struct); ok {
+		for field := range structType.Fields() {
+			if field.Exported() {
+				return true
+			}
+		}
+	}
+
+	// Check for exported methods on the type
+	if named, ok := typ.(*types.Named); ok {
+		for method := range named.Methods() {
+			if method.Exported() {
+				return true
+			}
+		}
+	}
+
+	return false
 }
 
 func (u *unexportedAPIPass) checkType(typ types.Type) (stop bool) {

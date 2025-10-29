@@ -49,9 +49,19 @@ func ChanFunc(x chan unexported) {}
 // Exported type alias to unexported type
 type BadAlias = unexported
 
-// Exported type with unexported embedded field
-type BadEmbed struct {
+// Exported type with unexported embedded field (OK since unexported has no exported members)
+type OkayEmbed struct {
 	unexported
+}
+
+// Unexported type with exported field
+type unexportedWithExportedField struct {
+	ExportedField int
+}
+
+// Bad - exported type embedding unexported type with exported members
+type BadEmbed struct {
+	unexportedWithExportedField
 }
 
 // Unexported type - should not trigger
