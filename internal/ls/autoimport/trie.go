@@ -5,9 +5,6 @@ import (
 	"slices"
 	"strings"
 	"unicode"
-	"unicode/utf8"
-
-	"github.com/microsoft/typescript-go/internal/core"
 )
 
 type Trie[T any] struct {
@@ -63,6 +60,9 @@ type TrieBuilder[T any] struct {
 }
 
 func NewTrieBuilder[T any](trie *Trie[T]) *TrieBuilder[T] {
+	if trie == nil {
+		trie = &Trie[T]{}
+	}
 	return &TrieBuilder[T]{
 		t:      trie,
 		cloned: make(map[*trieNode[T]]struct{}),
@@ -112,42 +112,4 @@ func (t *TrieBuilder[T]) InsertAsWords(s string, value *T) {
 	for _, start := range indices {
 		t.Insert(s[start:], value)
 	}
-}
-
-// wordIndices splits an identifier into its constituent words based on camelCase and snake_case conventions
-// by returning the starting byte indices of each word.
-//   - CamelCase
-//     ^    ^
-//   - snake_case
-//     ^     ^
-//   - ParseURL
-//     ^    ^
-//   - __proto__
-//     ^
-func wordIndices(s string) []int {
-	var indices []int
-	for byteIndex, runeValue := range s {
-		if byteIndex == 0 {
-			indices = append(indices, byteIndex)
-			continue
-		}
-		if runeValue == '_' {
-			if byteIndex+1 < len(s) && s[byteIndex+1] != '_' {
-				indices = append(indices, byteIndex+1)
-			}
-			continue
-		}
-		if isUpper(runeValue) && isLower(core.FirstResult(utf8.DecodeLastRuneInString(s[:byteIndex]))) || (byteIndex+1 < len(s) && isLower(core.FirstResult(utf8.DecodeRuneInString(s[byteIndex+1:])))) {
-			indices = append(indices, byteIndex)
-		}
-	}
-	return indices
-}
-
-func isUpper(c rune) bool {
-	return c >= 'A' && c <= 'Z'
-}
-
-func isLower(c rune) bool {
-	return c >= 'a' && c <= 'z'
 }

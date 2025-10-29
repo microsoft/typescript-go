@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"maps"
 	"slices"
 	"strings"
 	"sync"
@@ -78,6 +77,7 @@ type completionData = any
 
 type completionDataData struct {
 	symbols          []*ast.Symbol
+	autoImports      []*autoimport.RawExport
 	completionKind   CompletionKind
 	isInSnippetScope bool
 	// Note that the presence of this alone doesn't mean that we need a conversion. Only do that if the completion is not an ordinary identifier.
@@ -1786,6 +1786,7 @@ func (l *LanguageService) getCompletionData(
 
 	return &completionDataData{
 		symbols:                      symbols,
+		autoImports:                  autoImports,
 		completionKind:               completionKind,
 		isInSnippetScope:             isInSnippetScope,
 		propertyAccessToConvert:      propertyAccessToConvert,
@@ -2019,9 +2020,43 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 		uniques[name] = shouldShadowLaterSymbols
 		sortedEntries = core.InsertSorted(sortedEntries, entry, compareCompletionEntries)
 	}
+	for _, exp := range data.autoImports {
+		// !!! flags filtering similar to shouldIncludeSymbol
+		// !!! check for type-only in JS
+		// !!! deprecation
+		fixes := autoimport.GetFixes(ctx, exp, file, l.GetProgram(), l.UserPreferences().ModuleSpecifierPreferences())
+		if len(fixes) == 0 {
+			continue
+		}
+		fix := fixes[0]
+		entry := l.createLSPCompletionItem(
+			exp.Name,
+			"",
+			"",
+			SortTextAutoImportSuggestions,
+			ScriptElementKindAlias, // !!!
+			collections.Set[ScriptElementKindModifier]{}, // !!!
+			nil,
+			nil,
+			&lsproto.CompletionItemLabelDetails{
+				Detail: ptrTo(fix.ModuleSpecifier),
+			},
+			file,
+			position,
+			clientOptions,
+			false, /*isMemberCompletion*/
+			false, /*isSnippet*/
+			true,  /*hasAction*/
+			false, /*preselect*/
+			fix.ModuleSpecifier,
+			fix,
+		)
+		uniques[exp.Name] = false
+		sortedEntries = core.InsertSorted(sortedEntries, entry, compareCompletionEntries)
+	}
 
 	uniqueSet := collections.NewSetWithSizeHint[string](len(uniques))
-	for name := range maps.Keys(uniques) {
+	for name := range uniques {
 		uniqueSet.Add(name)
 	}
 	return *uniqueSet, sortedEntries
@@ -2294,12 +2329,6 @@ func (l *LanguageService) createCompletionItem(
 		}
 	}
 
-	var autoImportData *AutoImportData
-	if originIsExport(origin) {
-		autoImportData = origin.toCompletionEntryData()
-		hasAction = data.importStatementCompletion == nil
-	}
-
 	parentNamedImportOrExport := ast.FindAncestor(data.location, isNamedImportsOrExports)
 	if parentNamedImportOrExport != nil {
 		if !scanner.IsIdentifierText(name, core.LanguageVariantStandard) {
@@ -2358,7 +2387,7 @@ func (l *LanguageService) createCompletionItem(
 		hasAction,
 		preselect,
 		source,
-		autoImportData,
+		nil,
 	)
 }
 
@@ -2815,7 +2844,7 @@ func isValidTrigger(file *ast.SourceFile, triggerCharacter CompletionsTriggerCha
 			return false
 		}
 		if ast.IsStringLiteralLike(contextToken) {
-			return tryGetImportFromModuleSpecifier(contextToken) != nil
+			return ast.TryGetImportFromModuleSpecifier(contextToken) != nil
 		}
 		return contextToken.Kind == ast.KindLessThanSlashToken && ast.IsJsxClosingElement(contextToken.Parent)
 	case " ":
@@ -4519,15 +4548,15 @@ func (l *LanguageService) createLSPCompletionItem(
 	hasAction bool,
 	preselect bool,
 	source string,
-	autoImportEntryData *AutoImportData,
+	autoImportFix *autoimport.Fix,
 ) *lsproto.CompletionItem {
 	kind := getCompletionsSymbolKind(elementKind)
 	var data any = &CompletionItemData{
-		FileName:   file.FileName(),
-		Position:   position,
-		Source:     source,
-		Name:       name,
-		AutoImport: autoImportEntryData,
+		FileName:    file.FileName(),
+		Position:    position,
+		Source:      source,
+		Name:        name,
+		AutoImport2: autoImportFix,
 	}
 
 	// Text edit
@@ -4955,11 +4984,12 @@ func getArgumentInfoForCompletions(node *ast.Node, position int, file *ast.Sourc
 }
 
 type CompletionItemData struct {
-	FileName   string          `json:"fileName"`
-	Position   int             `json:"position"`
-	Source     string          `json:"source,omitempty"`
-	Name       string          `json:"name,omitempty"`
-	AutoImport *AutoImportData `json:"autoImport,omitempty"`
+	FileName    string          `json:"fileName"`
+	Position    int             `json:"position"`
+	Source      string          `json:"source,omitempty"`
+	Name        string          `json:"name,omitempty"`
+	AutoImport  *AutoImportData `json:"autoImport,omitempty"`
+	AutoImport2 *autoimport.Fix `json:"autoImport2,omitempty"`
 }
 
 type AutoImportData struct {
@@ -5066,6 +5096,10 @@ func (l *LanguageService) getCompletionItemDetails(
 			position,
 			contextToken,
 		)
+	}
+
+	if itemData.AutoImport2 != nil {
+
 	}
 
 	// Compute all the completion symbols again.

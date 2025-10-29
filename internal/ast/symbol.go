@@ -23,6 +23,10 @@ type Symbol struct {
 	GlobalExports                SymbolTable            // Conditional global UMD exports
 }
 
+func (s *Symbol) IsExternalModule() bool {
+	return s.Flags&SymbolFlagsModule != 0 && len(s.Name) > 0 && s.Name[0] == '"'
+}
+
 // SymbolTable
 
 type SymbolTable map[string]*Symbol

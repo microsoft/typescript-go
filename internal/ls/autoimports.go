@@ -773,7 +773,7 @@ func consumesNodeCoreModules(sourceFile *ast.SourceFile) bool {
 func createExistingImportMap(importingFile *ast.SourceFile, program *compiler.Program, ch *checker.Checker) *importMap {
 	m := collections.MultiMap[ast.SymbolId, *ast.Statement]{}
 	for _, moduleSpecifier := range importingFile.Imports() {
-		i := tryGetImportFromModuleSpecifier(moduleSpecifier)
+		i := ast.TryGetImportFromModuleSpecifier(moduleSpecifier)
 		if i == nil {
 			panic("error: did not expect node kind " + moduleSpecifier.Kind.String())
 		} else if ast.IsVariableDeclarationInitializedToRequire(i.Parent) {

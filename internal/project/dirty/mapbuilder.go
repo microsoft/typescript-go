@@ -42,6 +42,9 @@ func (mb *MapBuilder[K, VBase, VBuilder]) Build() map[K]VBase {
 		return mb.base
 	}
 	result := maps.Clone(mb.base)
+	if result == nil {
+		result = make(map[K]VBase)
+	}
 	for key := range mb.deleted {
 		delete(result, key)
 	}

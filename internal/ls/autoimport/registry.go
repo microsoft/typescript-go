@@ -56,7 +56,6 @@ func (b *registryBuilder) Build() *Registry {
 // With what granularity will we perform updates? How do we remove stale entries?
 // Will we always rebuild full tries, or update them? If rebuild, do we need TrieBuilder?
 
-
 func (r *Registry) Clone(ctx context.Context, change RegistryChange) (*Registry, error) {
 	builder := newRegistryBuilder(r)
 	if change.WithProject != nil {
@@ -85,6 +84,7 @@ func (r *Registry) Clone(ctx context.Context, change RegistryChange) (*Registry,
 				trie.InsertAsWords(exp.Name, exp)
 			}
 		}
+		builder.projects.Set(change.WithProject.Key, trie)
 	}
 	return builder.Build(), nil
 }

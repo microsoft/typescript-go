@@ -87,7 +87,7 @@ func getDirectImportsMap(sourceFiles []*ast.SourceFile, checker *checker.Checker
 func forEachImport(sourceFile *ast.SourceFile, action func(importStatement *ast.Node, imported *ast.Node)) {
 	if sourceFile.ExternalModuleIndicator != nil || len(sourceFile.Imports()) != 0 {
 		for _, i := range sourceFile.Imports() {
-			action(importFromModuleSpecifier(i), i)
+			action(ast.ImportFromModuleSpecifier(i), i)
 		}
 	} else {
 		forEachPossibleImportOrExportStatement(sourceFile.AsNode(), func(node *ast.Node) bool {

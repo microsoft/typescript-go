@@ -8,7 +8,11 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
+//go:generate go tool golang.org/x/tools/cmd/stringer -type=ExportSyntax -output=parse_stringer_generated.go
+//go:generate go tool mvdan.cc/gofumpt -w parse_stringer_generated.go
+
 type ExportSyntax int
+type ModuleID string
 
 const (
 	// export const x = {}
@@ -26,9 +30,18 @@ const (
 type RawExport struct {
 	Syntax ExportSyntax
 	Name   string
+	Flags  ast.SymbolFlags
 	// !!! other kinds of names
-	Path                  tspath.Path
-	ModuleDeclarationName string
+
+	// The file where the export was found.
+	FileName string
+	Path     tspath.Path
+
+	// ModuleID uniquely identifies a module across multiple declarations.
+	// If the export is from an ambient module declaration, this is the module name.
+	// If the export is from a module augmentation, this is the Path() of the resolved module file.
+	// Otherwise this is the Path() of the exporting source file.
+	ModuleID ModuleID
 }
 
 func Parse(file *ast.SourceFile) []*RawExport {
@@ -62,10 +75,14 @@ func parseModule(file *ast.SourceFile) []*RawExport {
 		}
 
 		exports = append(exports, &RawExport{
-			Syntax: syntax,
-			Name:   name,
-			Path:   file.Path(),
+			Syntax:   syntax,
+			Name:     name,
+			Flags:    symbol.Flags,
+			FileName: file.FileName(),
+			Path:     file.Path(),
+			ModuleID: ModuleID(file.Path()),
 		})
 	}
+	// !!! handle module augmentations
 	return exports
 }

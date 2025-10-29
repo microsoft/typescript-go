@@ -64,37 +64,6 @@ func IsInString(sourceFile *ast.SourceFile, position int, previousToken *ast.Nod
 	return false
 }
 
-func importFromModuleSpecifier(node *ast.Node) *ast.Node {
-	if result := tryGetImportFromModuleSpecifier(node); result != nil {
-		return result
-	}
-	debug.FailBadSyntaxKind(node.Parent)
-	return nil
-}
-
-func tryGetImportFromModuleSpecifier(node *ast.StringLiteralLike) *ast.Node {
-	switch node.Parent.Kind {
-	case ast.KindImportDeclaration, ast.KindJSImportDeclaration, ast.KindExportDeclaration:
-		return node.Parent
-	case ast.KindExternalModuleReference:
-		return node.Parent.Parent
-	case ast.KindCallExpression:
-		if ast.IsImportCall(node.Parent) || ast.IsRequireCall(node.Parent, false /*requireStringLiteralLikeArgument*/) {
-			return node.Parent
-		}
-		return nil
-	case ast.KindLiteralType:
-		if !ast.IsStringLiteral(node) {
-			return nil
-		}
-		if ast.IsImportTypeNode(node.Parent.Parent) {
-			return node.Parent.Parent
-		}
-		return nil
-	}
-	return nil
-}
-
 func isModuleSpecifierLike(node *ast.Node) bool {
 	if !ast.IsStringLiteralLike(node) {
 		return false

@@ -60,9 +60,29 @@ func GetModuleSpecifiersWithInfo(
 		return nil, ResultKindNone
 	}
 
+	return GetModuleSpecifiersForFileWithInfo(
+		importingSourceFile,
+		moduleSourceFile.FileName(),
+		compilerOptions,
+		host,
+		userPreferences,
+		options,
+		forAutoImports,
+	)
+}
+
+func GetModuleSpecifiersForFileWithInfo(
+	importingSourceFile SourceFileForSpecifierGeneration,
+	moduleFileName string,
+	compilerOptions *core.CompilerOptions,
+	host ModuleSpecifierGenerationHost,
+	userPreferences UserPreferences,
+	options ModuleSpecifierOptions,
+	forAutoImports bool,
+) ([]string, ResultKind) {
 	modulePaths := getAllModulePathsWorker(
 		getInfo(host.GetSourceOfProjectReferenceIfOutputIncluded(importingSourceFile), host),
-		moduleSourceFile.FileName(),
+		moduleFileName,
 		host,
 		// compilerOptions,
 		// options,
