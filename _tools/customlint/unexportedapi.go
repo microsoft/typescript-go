@@ -88,14 +88,24 @@ func (u *unexportedAPIPass) checkValueSpec(vs *ast.ValueSpec) {
 		return
 	}
 
+	// If there's an explicit type annotation, check it
 	if vs.Type != nil {
 		u.checkExpr(vs.Type)
 		return
 	}
 
-	for _, value := range vs.Values {
-		if u.checkExpr(value) {
-			return
+	// If there's no explicit type, we need to check the inferred type, not the initialization expression
+	// The initialization expression is an implementation detail and not part of the API
+	// For example: var Foo = unexportedFunc() where unexportedFunc returns an exported type is OK
+	for _, name := range vs.Names {
+		if !name.IsExported() {
+			continue
+		}
+		obj := u.pass.TypesInfo.Defs[name]
+		if obj != nil {
+			if u.checkType(obj.Type()) {
+				return
+			}
 		}
 	}
 }
@@ -118,7 +128,9 @@ func (u *unexportedAPIPass) checkFieldIgnoringNames(field *ast.Field) (stop bool
 }
 
 func (u *unexportedAPIPass) checkFieldIfNamesExported(field *ast.Field) (stop bool) {
-	if anyIdentExported(field.Names) {
+	// For embedded fields (no names), we need to check them if the parent is exported
+	// For named fields, only check if at least one name is exported
+	if len(field.Names) == 0 || anyIdentExported(field.Names) {
 		return u.checkField(field)
 	}
 	return false
@@ -156,7 +168,11 @@ func (u *unexportedAPIPass) checkExpr(expr ast.Expr) (stop bool) {
 	case *ast.StarExpr:
 		return u.checkExpr(expr.X)
 	case *ast.Ident:
+		// First check Defs (for defining occurrences), then Uses (for referring occurrences)
 		obj := u.pass.TypesInfo.Defs[expr]
+		if obj == nil {
+			obj = u.pass.TypesInfo.Uses[expr]
+		}
 		if obj == nil {
 			return false
 		}
@@ -164,8 +180,11 @@ func (u *unexportedAPIPass) checkExpr(expr ast.Expr) (stop bool) {
 			if obj.Parent() == types.Universe {
 				return false
 			}
-			u.pass.Reportf(u.currDecl.Pos(), "exported API %s references unexported identifier %s", u.file.Name.Name, expr.Name)
-			return true
+			// Only report if the unexported identifier is from the same package
+			if obj.Pkg() != nil && obj.Pkg() == u.pass.Pkg {
+				u.pass.Reportf(expr.Pos(), "exported API references unexported identifier %s", expr.Name)
+				return true
+			}
 		}
 		return u.checkType(obj.Type())
 	case *ast.MapType:
@@ -230,7 +249,16 @@ func (u *unexportedAPIPass) checkExpr(expr ast.Expr) (stop bool) {
 		}
 		return u.checkExpr(expr.Y)
 	case *ast.BasicLit:
-		expr.Obj
+		return false
+	case *ast.CallExpr:
+		// For call expressions, check the function being called
+		// We don't check arguments since those are values, not types in the API
+		return u.checkExpr(expr.Fun)
+	case *ast.FuncLit:
+		// Function literals - check the function type
+		return u.checkExpr(expr.Type)
+	case *ast.ParenExpr:
+		return u.checkExpr(expr.X)
 	default:
 		var buf bytes.Buffer
 		format.Node(&buf, u.pass.Fset, expr)
@@ -239,5 +267,87 @@ func (u *unexportedAPIPass) checkExpr(expr ast.Expr) (stop bool) {
 }
 
 func (u *unexportedAPIPass) checkType(typ types.Type) (stop bool) {
-	return false
+	if typ == nil {
+		return false
+	}
+
+	switch typ := typ.(type) {
+	case *types.Named:
+		// Check if the named type itself is unexported
+		obj := typ.Obj()
+		if obj != nil && !obj.Exported() && obj.Pkg() == u.pass.Pkg {
+			u.pass.Reportf(u.currDecl.Pos(), "exported API references unexported type %s", obj.Name())
+			return true
+		}
+		// Check type arguments if any (for generics)
+		if typ.TypeArgs() != nil {
+			for i := 0; i < typ.TypeArgs().Len(); i++ {
+				if u.checkType(typ.TypeArgs().At(i)) {
+					return true
+				}
+			}
+		}
+		return false
+	case *types.Pointer:
+		return u.checkType(typ.Elem())
+	case *types.Slice:
+		return u.checkType(typ.Elem())
+	case *types.Array:
+		return u.checkType(typ.Elem())
+	case *types.Map:
+		if u.checkType(typ.Key()) {
+			return true
+		}
+		return u.checkType(typ.Elem())
+	case *types.Chan:
+		return u.checkType(typ.Elem())
+	case *types.Signature:
+		// Check parameters
+		if typ.Params() != nil {
+			for i := 0; i < typ.Params().Len(); i++ {
+				if u.checkType(typ.Params().At(i).Type()) {
+					return true
+				}
+			}
+		}
+		// Check results
+		if typ.Results() != nil {
+			for i := 0; i < typ.Results().Len(); i++ {
+				if u.checkType(typ.Results().At(i).Type()) {
+					return true
+				}
+			}
+		}
+		return false
+	case *types.Struct:
+		// Check all fields
+		for i := 0; i < typ.NumFields(); i++ {
+			field := typ.Field(i)
+			// Only check exported fields
+			if field.Exported() {
+				if u.checkType(field.Type()) {
+					return true
+				}
+			}
+		}
+		return false
+	case *types.Interface:
+		// Check all methods
+		for i := 0; i < typ.NumMethods(); i++ {
+			method := typ.Method(i)
+			// Only check exported methods
+			if method.Exported() {
+				if u.checkType(method.Type()) {
+					return true
+				}
+			}
+		}
+		return false
+	case *types.Basic, *types.TypeParam:
+		// Basic types and type parameters are always OK
+		return false
+	default:
+		// For any unhandled type, be conservative and don't report
+		return false
+	}
 }
