@@ -22,13 +22,13 @@ func NewView(registry *Registry, importingFile *ast.SourceFile, projectKey tspat
 func (v *View) Search(prefix string) []*RawExport {
 	// !!! deal with duplicates due to symlinks
 	var results []*RawExport
-	projectTrie, ok := v.registry.projects[v.projectKey]
+	projectIndex, ok := v.registry.projects[v.projectKey]
 	if ok {
-		results = append(results, projectTrie.Search(prefix)...)
+		results = append(results, projectIndex.Search(prefix)...)
 	}
-	for directoryPath, nodeModulesTrie := range v.registry.nodeModules {
+	for directoryPath, nodeModulesIndex := range v.registry.nodeModules {
 		if directoryPath.GetDirectoryPath().ContainsPath(v.importingFile.Path()) {
-			results = append(results, nodeModulesTrie.Search(prefix)...)
+			results = append(results, nodeModulesIndex.Search(prefix)...)
 		}
 	}
 	return results

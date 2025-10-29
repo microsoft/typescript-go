@@ -13,10 +13,9 @@ import (
 )
 
 type Registry struct {
-	exports map[tspath.Path][]*RawExport
-	// !!! may not need full tries, just indexes by first letter of each word
-	nodeModules map[tspath.Path]*Trie[RawExport]
-	projects    map[tspath.Path]*Trie[RawExport]
+	exports     map[tspath.Path][]*RawExport
+	nodeModules map[tspath.Path]*Index[*RawExport]
+	projects    map[tspath.Path]*Index[*RawExport]
 }
 
 type Project struct {
@@ -30,8 +29,8 @@ type RegistryChange struct {
 
 type registryBuilder struct {
 	exports     *dirty.MapBuilder[tspath.Path, []*RawExport, []*RawExport]
-	nodeModules *dirty.MapBuilder[tspath.Path, *Trie[RawExport], *TrieBuilder[RawExport]]
-	projects    *dirty.MapBuilder[tspath.Path, *Trie[RawExport], *TrieBuilder[RawExport]]
+	nodeModules *dirty.MapBuilder[tspath.Path, *Index[*RawExport], *IndexBuilder[*RawExport]]
+	projects    *dirty.MapBuilder[tspath.Path, *Index[*RawExport], *IndexBuilder[*RawExport]]
 }
 
 func newRegistryBuilder(registry *Registry) *registryBuilder {
@@ -40,8 +39,8 @@ func newRegistryBuilder(registry *Registry) *registryBuilder {
 	}
 	return &registryBuilder{
 		exports:     dirty.NewMapBuilder(registry.exports, slices.Clone, core.Identity),
-		nodeModules: dirty.NewMapBuilder(registry.nodeModules, NewTrieBuilder, (*TrieBuilder[RawExport]).Trie),
-		projects:    dirty.NewMapBuilder(registry.projects, NewTrieBuilder, (*TrieBuilder[RawExport]).Trie),
+		nodeModules: dirty.NewMapBuilder(registry.nodeModules, NewIndexBuilder, (*IndexBuilder[*RawExport]).Index),
+		projects:    dirty.NewMapBuilder(registry.projects, NewIndexBuilder, (*IndexBuilder[*RawExport]).Index),
 	}
 }
 
@@ -77,14 +76,14 @@ func (r *Registry) Clone(ctx context.Context, change RegistryChange) (*Registry,
 			})
 		}
 		wg.RunAndWait()
-		trie := NewTrieBuilder[RawExport](nil)
+		idx := NewIndexBuilder[*RawExport](nil)
 		for path, fileExports := range exports {
 			builder.exports.Set(path, fileExports)
 			for _, exp := range fileExports {
-				trie.InsertAsWords(exp.Name, exp)
+				idx.InsertAsWords(exp)
 			}
 		}
-		builder.projects.Set(change.WithProject.Key, trie)
+		builder.projects.Set(change.WithProject.Key, idx)
 	}
 	return builder.Build(), nil
 }

@@ -2030,7 +2030,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 		}
 		fix := fixes[0]
 		entry := l.createLSPCompletionItem(
-			exp.Name,
+			exp.ExportName,
 			"",
 			"",
 			SortTextAutoImportSuggestions,
@@ -2051,7 +2051,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			fix.ModuleSpecifier,
 			fix,
 		)
-		uniques[exp.Name] = false
+		uniques[exp.ExportName] = false
 		sortedEntries = core.InsertSorted(sortedEntries, entry, compareCompletionEntries)
 	}
 

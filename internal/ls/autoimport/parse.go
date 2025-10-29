@@ -28,9 +28,9 @@ const (
 )
 
 type RawExport struct {
-	Syntax ExportSyntax
-	Name   string
-	Flags  ast.SymbolFlags
+	Syntax     ExportSyntax
+	ExportName string
+	Flags      ast.SymbolFlags
 	// !!! other kinds of names
 
 	// The file where the export was found.
@@ -42,6 +42,10 @@ type RawExport struct {
 	// If the export is from a module augmentation, this is the Path() of the resolved module file.
 	// Otherwise this is the Path() of the exporting source file.
 	ModuleID ModuleID
+}
+
+func (e *RawExport) Name() string {
+	return e.ExportName
 }
 
 func Parse(file *ast.SourceFile) []*RawExport {
@@ -75,12 +79,12 @@ func parseModule(file *ast.SourceFile) []*RawExport {
 		}
 
 		exports = append(exports, &RawExport{
-			Syntax:   syntax,
-			Name:     name,
-			Flags:    symbol.Flags,
-			FileName: file.FileName(),
-			Path:     file.Path(),
-			ModuleID: ModuleID(file.Path()),
+			Syntax:     syntax,
+			ExportName: name,
+			Flags:      symbol.Flags,
+			FileName:   file.FileName(),
+			Path:       file.Path(),
+			ModuleID:   ModuleID(file.Path()),
 		})
 	}
 	// !!! handle module augmentations

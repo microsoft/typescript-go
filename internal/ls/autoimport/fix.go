@@ -486,7 +486,7 @@ func GetFixes(
 			Kind:            FixKindAddNew,
 			ImportKind:      importKind,
 			ModuleSpecifier: moduleSpecifier,
-			Name:            export.Name,
+			Name:            export.Name(),
 		},
 	}
 }
@@ -523,7 +523,7 @@ func tryAddToExistingImport(
 			if (importKind == ImportKindNamed || importKind == ImportKindDefault) && existingImport.node.Name().Kind == ast.KindObjectBindingPattern {
 				return &Fix{
 					Kind:            FixKindAddToExisting,
-					Name:            export.Name,
+					Name:            export.Name(),
 					ImportKind:      importKind,
 					ImportIndex:     existingImport.index,
 					ModuleSpecifier: existingImport.moduleSpecifier,
@@ -551,7 +551,7 @@ func tryAddToExistingImport(
 
 		return &Fix{
 			Kind:            FixKindAddToExisting,
-			Name:            export.Name,
+			Name:            export.Name(),
 			ImportKind:      importKind,
 			ImportIndex:     existingImport.index,
 			ModuleSpecifier: existingImport.moduleSpecifier,
