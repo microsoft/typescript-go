@@ -1,5 +1,7 @@
 package pnp
 
+import "strings"
+
 func InitPnpApi(fs PnpApiFS, filePath string) *PnpApi {
 	pnpApi := &PnpApi{fs: fs, url: filePath}
 
@@ -10,4 +12,8 @@ func InitPnpApi(fs PnpApiFS, filePath string) *PnpApi {
 	}
 
 	return nil
+}
+
+func IsPnpLoaderFile(path string) bool {
+	return strings.HasSuffix(path, ".pnp.cjs")
 }
