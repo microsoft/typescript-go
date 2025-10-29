@@ -143,8 +143,6 @@ Config::
       /user/username/projects/solution/c/tsconfig.json  *new*
       /user/username/projects/solution/d/tsconfig.json  *new*
       /user/username/projects/solution/tsconfig.json    *new*
-    RetainingOpenFiles: *modified*
-      /user/username/projects/solution/a/index.ts  *new*
   [/user/username/projects/solution/b/tsconfig.json] *modified*
     RetainingProjects: *modified*
       /user/username/projects/solution/b/tsconfig.json  
@@ -158,8 +156,6 @@ Config::
       /user/username/projects/solution/c/tsconfig.json  
       /user/username/projects/solution/d/tsconfig.json  
       /user/username/projects/solution/tsconfig.json    
-    RetainingOpenFiles:
-      /user/username/projects/solution/c/index.ts  
   [/user/username/projects/solution/d/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/solution/d/tsconfig.json  

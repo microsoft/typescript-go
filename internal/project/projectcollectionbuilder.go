@@ -42,7 +42,6 @@ type ProjectCollectionBuilder struct {
 	fileDefaultProjects map[tspath.Path]tspath.Path
 	configuredProjects  *dirty.SyncMap[tspath.Path, *Project]
 	inferredProject     *dirty.Box[*Project]
-	openedFiles         *dirty.Set[tspath.Path]
 
 	apiOpenedProjects map[tspath.Path]struct{}
 }
@@ -71,7 +70,6 @@ func newProjectCollectionBuilder(
 		newSnapshotID:                      newSnapshotID,
 		configuredProjects:                 dirty.NewSyncMap(oldProjectCollection.configuredProjects, nil),
 		inferredProject:                    dirty.NewBox(oldProjectCollection.inferredProject),
-		openedFiles:                        dirty.NewSet(oldProjectCollection.openedFiles),
 		apiOpenedProjects:                  maps.Clone(oldAPIOpenedProjects),
 	}
 }
@@ -99,11 +97,6 @@ func (b *ProjectCollectionBuilder) Finalize(logger *logging.LogTree) (*ProjectCo
 	if newInferredProject, inferredProjectChanged := b.inferredProject.Finalize(); inferredProjectChanged {
 		ensureCloned()
 		newProjectCollection.inferredProject = newInferredProject
-	}
-
-	if openedFiles, openedFilesChanged := b.openedFiles.Finalize(); openedFilesChanged {
-		ensureCloned()
-		newProjectCollection.openedFiles = openedFiles
 	}
 
 	configFileRegistry := b.configFileRegistryBuilder.Finalize()
@@ -182,7 +175,6 @@ func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 		if fh := b.fs.GetFileByPath(fileName, path); fh == nil || fh.Hash() != hash {
 			changedFiles = append(changedFiles, path)
 		}
-		b.openedFiles.Delete(path)
 	}
 	for uri := range summary.Changed.Keys() {
 		fileName := uri.FileName()
@@ -251,7 +243,6 @@ func (b *ProjectCollectionBuilder) DidChangeFiles(summary FileChangeSummary, log
 	if summary.Opened != "" {
 		fileName := summary.Opened.FileName()
 		path := b.toPath(fileName)
-		b.openedFiles.Add(path)
 		var toRemoveProjects collections.Set[tspath.Path]
 		openFileResult := b.ensureConfiguredProjectAndAncestorsForFile(fileName, path, logger)
 		b.configuredProjects.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *Project]) bool {
@@ -420,7 +411,7 @@ func (b *ProjectCollectionBuilder) DidRequestProject(projectId tspath.Path, logg
 func (b *ProjectCollectionBuilder) DidRequestEnsureDefaultProject(uri lsproto.DocumentUri, logger *logging.LogTree) {
 	fileName := uri.FileName()
 	path := b.toPath(fileName)
-	if b.openedFiles.Has(path) {
+	if b.fs.isOpenFile(path) {
 		b.DidRequestFile(uri, logger)
 		return
 	}
@@ -640,7 +631,7 @@ func (b *ProjectCollectionBuilder) findDefaultConfiguredProject(fileName string,
 
 func (b *ProjectCollectionBuilder) ensureConfiguredProjectAndAncestorsForFile(fileName string, path tspath.Path, logger *logging.LogTree) searchResult {
 	result := b.findOrCreateDefaultConfiguredProjectForFile(fileName, path, projectLoadKindCreate, logger)
-	if result.project != nil && b.openedFiles.Has(path) {
+	if result.project != nil && b.fs.isOpenFile(path) {
 		b.createAncestorTree(fileName, path, &result, logger)
 	}
 	return result
@@ -737,7 +728,7 @@ func (b *ProjectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 		},
 		func(node searchNode) (isResult bool, stop bool) {
 			configFilePath := b.toPath(node.configFileName)
-			config := b.configFileRegistryBuilder.findOrAcquireConfigForOpenFile(node.configFileName, configFilePath, path, node.loadKind, node.logger.Fork("Acquiring config for open file"))
+			config := b.configFileRegistryBuilder.findOrAcquireConfigForFile(node.configFileName, configFilePath, path, node.loadKind, node.logger.Fork("Acquiring config for open file"))
 			if config == nil {
 				node.logger.Log("Config file for project does not already exist")
 				return false, false

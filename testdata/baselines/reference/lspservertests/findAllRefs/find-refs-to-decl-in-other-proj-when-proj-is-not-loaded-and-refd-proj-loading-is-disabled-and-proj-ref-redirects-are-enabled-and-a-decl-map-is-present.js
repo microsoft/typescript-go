@@ -95,8 +95,6 @@ Config::
   [/user/username/projects/myproject/b/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/myproject/b/tsconfig.json  
-    RetainingOpenFiles:
-      /user/username/projects/myproject/b/index.ts  
 // === /user/username/projects/myproject/a/index.ts ===
 // import { [|B|] } from "../b/lib";
 // const b: /*FIND ALL REFS*/[|B|] = new [|B|]();

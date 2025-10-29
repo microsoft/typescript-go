@@ -103,8 +103,6 @@ Config::
   [/home/src/projects/project/a/tsconfig.json] *new*
     RetainingProjects:
       /home/src/projects/project/a/tsconfig.json  
-    RetainingOpenFiles:
-      /home/src/projects/project/a/a.ts  
 // === /home/src/projects/project/a/a.ts ===
 // export function [|fnA|]() {}
 // export interface IfaceA {}
@@ -148,11 +146,7 @@ Open Files::
   [/home/src/projects/project/dummy/dummy.ts] *new*
     /home/src/projects/project/dummy/tsconfig.json  (default) 
 Config::
-  [/home/src/projects/project/a/tsconfig.json] *modified*
-    RetainingProjects: *modified*
-      /home/src/projects/project/a/tsconfig.json  *deleted*
-    RetainingOpenFiles:
-      /home/src/projects/project/a/a.ts  
+  [/home/src/projects/project/a/tsconfig.json] *deleted*
   [/home/src/projects/project/dummy/tsconfig.json] *new*
     RetainingProjects:
       /home/src/projects/project/dummy/tsconfig.json  

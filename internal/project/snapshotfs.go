@@ -92,6 +92,11 @@ func (s *snapshotFSBuilder) Finalize() (*SnapshotFS, bool) {
 	}, changed
 }
 
+func (s *snapshotFSBuilder) isOpenFile(path tspath.Path) bool {
+	_, ok := s.overlays[path]
+	return ok
+}
+
 func (s *snapshotFSBuilder) GetFile(fileName string) FileHandle {
 	path := s.toPath(fileName)
 	return s.GetFileByPath(fileName, path)

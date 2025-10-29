@@ -133,9 +133,8 @@ Config::
       /user/username/projects/solution/compiler/tsconfig.json  
       /user/username/projects/solution/services/tsconfig.json  *new*
       /user/username/projects/solution/tsconfig.json           *new*
-    RetainingOpenFiles: *modified*
+    RetainingOpenFiles:
       /user/username/projects/solution/compiler/program.ts  
-      /user/username/projects/solution/compiler/types.ts    *new*
   [/user/username/projects/solution/services/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/solution/services/tsconfig.json  
