@@ -1,0 +1,7 @@
+// === findAllReferences ===
+// === /findAllRefsJSDocDestructuredParam.ts ===
+// /**
+//  * @param /*FIND ALL REFS*/obj - object destructured parameter
+//  */
+// function f({ x, y }) {}
+// 
