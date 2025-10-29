@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/testutil/emittestutil"
 	"github.com/microsoft/typescript-go/internal/testutil/parsetestutil"
@@ -59,6 +60,10 @@ func (p *fakeProgram) FileExists(path string) bool {
 
 func (p *fakeProgram) GetCurrentDirectory() string {
 	return ""
+}
+
+func (p *fakeProgram) PnpApi() *pnp.PnpApi {
+	return nil
 }
 
 func (p *fakeProgram) GetGlobalTypingsCacheLocation() string {

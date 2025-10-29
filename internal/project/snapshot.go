@@ -12,11 +12,13 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs/pnpvfs"
 )
 
 type Snapshot struct {
@@ -39,6 +41,8 @@ type Snapshot struct {
 
 	builderLogs *logging.LogTree
 	apiError    error
+
+	pnpApi *pnp.PnpApi
 }
 
 // NewSnapshot
@@ -53,6 +57,11 @@ func NewSnapshot(
 	config Config,
 	toPath func(fileName string) tspath.Path,
 ) *Snapshot {
+	pnpApi := pnp.InitPnpApi(fs.fs, sessionOptions.CurrentDirectory)
+	if pnpApi != nil {
+		fs.fs = pnpvfs.From(fs.fs)
+	}
+
 	s := &Snapshot{
 		id: id,
 
@@ -64,6 +73,8 @@ func NewSnapshot(
 		ProjectCollection:                  &ProjectCollection{toPath: toPath},
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
 		config:                             config,
+
+		pnpApi: pnpApi,
 	}
 	s.converters = lsconv.NewConverters(s.sessionOptions.PositionEncoding, s.LSPLineMap)
 	s.refCount.Store(1)
@@ -112,6 +123,10 @@ func (s *Snapshot) ID() uint64 {
 
 func (s *Snapshot) UseCaseSensitiveFileNames() bool {
 	return s.fs.fs.UseCaseSensitiveFileNames()
+}
+
+func (s *Snapshot) PnpApi() *pnp.PnpApi {
+	return s.pnpApi
 }
 
 func (s *Snapshot) ReadFile(fileName string) (string, bool) {
@@ -227,6 +242,7 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		s.ProjectCollection.apiOpenedProjects,
 		compilerOptionsForInferredProjects,
 		s.sessionOptions,
+		s.pnpApi,
 		session.parseCache,
 		session.extendedConfigCache,
 	)

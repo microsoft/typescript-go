@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
 	"github.com/microsoft/typescript-go/internal/project/logging"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -54,6 +55,7 @@ func newProjectCollectionBuilder(
 	oldAPIOpenedProjects map[tspath.Path]struct{},
 	compilerOptionsForInferredProjects *core.CompilerOptions,
 	sessionOptions *SessionOptions,
+	pnpApi *pnp.PnpApi,
 	parseCache *ParseCache,
 	extendedConfigCache *extendedConfigCache,
 ) *projectCollectionBuilder {
@@ -65,7 +67,7 @@ func newProjectCollectionBuilder(
 		parseCache:                         parseCache,
 		extendedConfigCache:                extendedConfigCache,
 		base:                               oldProjectCollection,
-		configFileRegistryBuilder:          newConfigFileRegistryBuilder(fs, oldConfigFileRegistry, extendedConfigCache, sessionOptions, nil),
+		configFileRegistryBuilder:          newConfigFileRegistryBuilder(fs, oldConfigFileRegistry, extendedConfigCache, sessionOptions, pnpApi, nil),
 		newSnapshotID:                      newSnapshotID,
 		configuredProjects:                 dirty.NewSyncMap(oldProjectCollection.configuredProjects, nil),
 		inferredProject:                    dirty.NewBox(oldProjectCollection.inferredProject),

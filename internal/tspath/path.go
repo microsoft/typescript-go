@@ -869,6 +869,17 @@ func IsExternalModuleNameRelative(moduleName string) bool {
 	return PathIsRelative(moduleName) || IsRootedDiskPath(moduleName)
 }
 
+func IsExternalLibraryImport(path string) bool {
+	// When PnP is enabled, some internal libraries can be resolved as virtual packages, which should be treated as external libraries
+	// Since these virtual pnp packages don't have a `/node_modules/` folder, we need to check for the presence of `/__virtual__/` in the path
+	// See https://yarnpkg.com/advanced/lexicon#virtual-package for more details
+	return strings.Contains(path, "/node_modules/") || isPnpVirtualPath(path)
+}
+
+func isPnpVirtualPath(path string) bool {
+	return strings.Contains(path, "/__virtual__/")
+}
+
 type ComparePathsOptions struct {
 	UseCaseSensitiveFileNames bool
 	CurrentDirectory          string
@@ -1016,6 +1027,10 @@ func ForEachAncestorDirectoryPath[T any](directory Path, callback func(directory
 
 func HasExtension(fileName string) bool {
 	return strings.Contains(GetBaseFileName(fileName), ".")
+}
+
+func IsZipPath(path string) bool {
+	return strings.Contains(path, ".zip/") || strings.HasSuffix(path, ".zip")
 }
 
 func SplitVolumePath(path string) (volume string, rest string, ok bool) {

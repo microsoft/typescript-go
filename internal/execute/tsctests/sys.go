@@ -16,12 +16,14 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/testutil/stringtestutil"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/iovfs"
+	"github.com/microsoft/typescript-go/internal/vfs/pnpvfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
 
@@ -86,13 +88,14 @@ func (t *TestClock) SinceStart() time.Duration {
 
 func NewTscSystem(files FileMap, useCaseSensitiveFileNames bool, cwd string) *testSys {
 	clock := &TestClock{start: time.Now()}
-	return &testSys{
-		fs: &testFs{
-			FS: vfstest.FromMapWithClock(files, useCaseSensitiveFileNames, clock),
-		},
-		cwd:   cwd,
-		clock: clock,
+	var fs vfs.FS = vfstest.FromMapWithClock(files, useCaseSensitiveFileNames, clock)
+
+	pnpApi := pnp.InitPnpApi(fs, tspath.NormalizePath(cwd))
+	if pnpApi != nil {
+		fs = pnpvfs.From(fs)
 	}
+
+	return &testSys{fs: &testFs{FS: fs}, cwd: cwd, clock: clock, pnpApi: pnpApi}
 }
 
 func newTestSys(tscInput *tscInput, forIncrementalCorrectness bool) *testSys {
@@ -151,6 +154,8 @@ type testSys struct {
 	cwd                string
 	env                map[string]string
 	clock              *TestClock
+
+	pnpApi *pnp.PnpApi
 }
 
 var (
@@ -198,6 +203,10 @@ func (s *testSys) DefaultLibraryPath() string {
 
 func (s *testSys) GetCurrentDirectory() string {
 	return s.cwd
+}
+
+func (s *testSys) PnpApi() *pnp.PnpApi {
+	return s.pnpApi
 }
 
 func (s *testSys) Writer() io.Writer {

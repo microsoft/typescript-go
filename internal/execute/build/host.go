@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -43,6 +44,10 @@ func (h *host) DefaultLibraryPath() string {
 
 func (h *host) GetCurrentDirectory() string {
 	return h.host.GetCurrentDirectory()
+}
+
+func (h *host) PnpApi() *pnp.PnpApi {
+	return h.host.PnpApi()
 }
 
 func (h *host) Trace(msg string) {
