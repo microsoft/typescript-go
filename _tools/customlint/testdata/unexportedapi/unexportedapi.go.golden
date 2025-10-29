@@ -78,8 +78,6 @@
 	// Bad - exported type embedding unexported type with exported members
 	type BadEmbed struct {
 		unexportedWithExportedField
-		~
-!!! unexportedapi: exported API embeds unexported type unexportedWithExportedField which has exported members
 	}
 	
 	// Unexported type - should not trigger
