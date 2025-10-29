@@ -73,7 +73,7 @@ type Session struct {
 	parseCache *ParseCache
 	// extendedConfigCache is the ref-counted cache of tsconfig ASTs
 	// that are used in the "extends" of another tsconfig.
-	extendedConfigCache *extendedConfigCache
+	extendedConfigCache *ExtendedConfigCache
 	// programCounter counts how many snapshots reference a program.
 	// When a program is no longer referenced, its source files are
 	// released from the parseCache.
@@ -127,12 +127,12 @@ func NewSession(init *SessionInit) *Session {
 	toPath := func(fileName string) tspath.Path {
 		return tspath.ToPath(fileName, currentDirectory, useCaseSensitiveFileNames)
 	}
-	overlayFS := newOverlayFS(init.FS, make(map[tspath.Path]*overlay), init.Options.PositionEncoding, toPath)
+	overlayFS := newOverlayFS(init.FS, make(map[tspath.Path]*Overlay), init.Options.PositionEncoding, toPath)
 	parseCache := init.ParseCache
 	if parseCache == nil {
 		parseCache = &ParseCache{}
 	}
-	extendedConfigCache := &extendedConfigCache{}
+	extendedConfigCache := &ExtendedConfigCache{}
 
 	session := &Session{
 		options:             init.Options,
@@ -148,7 +148,7 @@ func NewSession(init *SessionInit) *Session {
 		snapshotID:          atomic.Uint64{},
 		snapshot: NewSnapshot(
 			uint64(0),
-			&snapshotFS{
+			&SnapshotFS{
 				toPath: toPath,
 				fs:     init.FS,
 			},
@@ -408,7 +408,7 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 	return ls.NewLanguageService(project.GetProgram(), snapshot), nil
 }
 
-func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*overlay, change SnapshotChange) *Snapshot {
+func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*Overlay, change SnapshotChange) *Snapshot {
 	s.snapshotMu.Lock()
 	oldSnapshot := s.snapshot
 	newSnapshot := oldSnapshot.Clone(ctx, change, overlays, s)
@@ -586,7 +586,7 @@ func (s *Session) Close() {
 	s.backgroundQueue.Close()
 }
 
-func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspath.Path]*overlay, map[tspath.Path]*ATAStateChange, *Config) {
+func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspath.Path]*Overlay, map[tspath.Path]*ATAStateChange, *Config) {
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
 	s.pendingATAChangesMu.Lock()
@@ -607,7 +607,7 @@ func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspa
 }
 
 // flushChangesLocked should only be called with s.pendingFileChangesMu held.
-func (s *Session) flushChangesLocked(ctx context.Context) (FileChangeSummary, map[tspath.Path]*overlay) {
+func (s *Session) flushChangesLocked(ctx context.Context) (FileChangeSummary, map[tspath.Path]*Overlay) {
 	if len(s.pendingFileChanges) == 0 {
 		return FileChangeSummary{}, s.fs.Overlays()
 	}

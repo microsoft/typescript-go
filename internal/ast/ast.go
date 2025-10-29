@@ -265,7 +265,7 @@ func (n *Node) KindValue() int16   { return int16(n.Kind) }
 
 type mutableNode Node
 
-func (n *Node) AsMutable() *mutableNode                     { return (*mutableNode)(n) }
+func (n *Node) AsMutable() *mutableNode                     { return (*mutableNode)(n) } //nolint:customlint
 func (n *mutableNode) SetModifiers(modifiers *ModifierList) { n.data.setModifiers(modifiers) }
 
 func (n *Node) Symbol() *Symbol {

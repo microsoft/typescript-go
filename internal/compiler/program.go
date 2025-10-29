@@ -1538,7 +1538,7 @@ func (p *Program) GetSourceFiles() []*ast.SourceFile {
 }
 
 // Testing only
-func (p *Program) GetIncludeReasons() map[tspath.Path][]*fileIncludeReason {
+func (p *Program) GetIncludeReasons() map[tspath.Path][]*FileIncludeReason {
 	return p.includeProcessor.fileIncludeReasons
 }
 
