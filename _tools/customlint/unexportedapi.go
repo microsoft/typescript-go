@@ -13,15 +13,9 @@ import (
 	"golang.org/x/tools/go/ast/inspector"
 )
 
-// allowEmbeddedUnexportedWithoutExportedMembers controls whether embedded unexported types
-// are allowed if they don't expose any exported fields or methods.
-// When true: embedded unexported types are OK if they have no exported members
-// When false: all embedded unexported types are flagged
-const allowEmbeddedUnexportedWithoutExportedMembers = true
-
 var unexportedAPIAnalyzer = &analysis.Analyzer{
 	Name: "unexportedapi",
-	Doc:  "finds exporrted APIs referencing unexported identifiers",
+	Doc:  "finds exported APIs referencing unexported identifiers",
 	Requires: []*analysis.Analyzer{
 		inspect.Analyzer,
 	},
@@ -155,11 +149,7 @@ func anyIdentExported(idents []*ast.Ident) bool {
 }
 
 func (u *unexportedAPIPass) checkFieldIgnoringNames(field *ast.Field) (stop bool) {
-	if field.Type == nil {
-		return false
-	}
-
-	return u.checkExpr(field.Type)
+	return u.checkField(field)
 }
 
 func (u *unexportedAPIPass) checkFieldIfNamesExported(field *ast.Field) (stop bool) {
@@ -280,18 +270,9 @@ func (u *unexportedAPIPass) checkExpr(expr ast.Expr) (stop bool) {
 		}
 		return u.checkType(obj.Type())
 	case *ast.MapType:
-		if u.checkExpr(expr.Key) {
-			return true
-		}
-		if u.checkExpr(expr.Value) {
-			return true
-		}
-		return false
+		return u.checkExpr(expr.Key) || u.checkExpr(expr.Value)
 	case *ast.ArrayType:
-		if u.checkExpr(expr.Len) {
-			return true
-		}
-		return u.checkExpr(expr.Elt)
+		return u.checkExpr(expr.Len) || u.checkExpr(expr.Elt)
 	case *ast.SelectorExpr:
 		if !expr.Sel.IsExported() {
 			u.pass.Reportf(u.currDecl.Pos(), "exported API %s references unexported identifier %s", u.file.Name.Name, expr.Sel.Name)
@@ -303,19 +284,9 @@ func (u *unexportedAPIPass) checkExpr(expr ast.Expr) (stop bool) {
 	case *ast.ChanType:
 		return u.checkExpr(expr.Value)
 	case *ast.FuncType:
-		if u.checkFieldsIgnoringNames(expr.TypeParams) {
-			return true
-		}
-
-		if u.checkFieldsIgnoringNames(expr.Params) {
-			return true
-		}
-
-		if u.checkFieldsIgnoringNames(expr.Results) {
-			return true
-		}
-
-		return false
+		return u.checkFieldsIgnoringNames(expr.TypeParams) ||
+			u.checkFieldsIgnoringNames(expr.Params) ||
+			u.checkFieldsIgnoringNames(expr.Results)
 	case *ast.Ellipsis:
 		return u.checkExpr(expr.Elt)
 	case *ast.CompositeLit:
@@ -326,20 +297,11 @@ func (u *unexportedAPIPass) checkExpr(expr ast.Expr) (stop bool) {
 		}
 		return slices.ContainsFunc(expr.Indices, u.checkExpr)
 	case *ast.IndexExpr:
-		if u.checkExpr(expr.X) {
-			return true
-		}
-		if u.checkExpr(expr.Index) {
-			return true
-		}
-		return false
+		return u.checkExpr(expr.X) || u.checkExpr(expr.Index)
 	case *ast.UnaryExpr:
 		return u.checkExpr(expr.X)
 	case *ast.BinaryExpr:
-		if u.checkExpr(expr.X) {
-			return true
-		}
-		return u.checkExpr(expr.Y)
+		return u.checkExpr(expr.X) || u.checkExpr(expr.Y)
 	case *ast.BasicLit:
 		return false
 	case *ast.CallExpr:
@@ -356,37 +318,6 @@ func (u *unexportedAPIPass) checkExpr(expr ast.Expr) (stop bool) {
 		format.Node(&buf, u.pass.Fset, expr)
 		panic(fmt.Sprintf("%T, unhandled case %T: %s", u.currDecl, expr, buf.String()))
 	}
-}
-
-func (u *unexportedAPIPass) hasExportedMembers(typ types.Type) bool {
-	if typ == nil {
-		return false
-	}
-
-	// Dereference pointers
-	if ptr, ok := typ.(*types.Pointer); ok {
-		typ = ptr.Elem()
-	}
-
-	// Check for exported fields in structs
-	if structType, ok := typ.Underlying().(*types.Struct); ok {
-		for field := range structType.Fields() {
-			if field.Exported() {
-				return true
-			}
-		}
-	}
-
-	// Check for exported methods on the type
-	if named, ok := typ.(*types.Named); ok {
-		for method := range named.Methods() {
-			if method.Exported() {
-				return true
-			}
-		}
-	}
-
-	return false
 }
 
 func (u *unexportedAPIPass) checkType(typ types.Type) (stop bool) {
@@ -418,10 +349,7 @@ func (u *unexportedAPIPass) checkType(typ types.Type) (stop bool) {
 	case *types.Array:
 		return u.checkType(typ.Elem())
 	case *types.Map:
-		if u.checkType(typ.Key()) {
-			return true
-		}
-		return u.checkType(typ.Elem())
+		return u.checkType(typ.Key()) || u.checkType(typ.Elem())
 	case *types.Chan:
 		return u.checkType(typ.Elem())
 	case *types.Signature:
