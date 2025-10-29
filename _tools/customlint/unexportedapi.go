@@ -148,10 +148,6 @@ func anyIdentExported(idents []*ast.Ident) bool {
 	return false
 }
 
-func (u *unexportedAPIPass) checkFieldIgnoringNames(field *ast.Field) (stop bool) {
-	return u.checkField(field)
-}
-
 func (u *unexportedAPIPass) checkFieldIfNamesExported(field *ast.Field) (stop bool) {
 	// For embedded fields (no names), handle specially
 	if len(field.Names) == 0 {
@@ -228,7 +224,7 @@ func (u *unexportedAPIPass) checkFieldsIgnoringNames(fields *ast.FieldList) (sto
 	if fields == nil {
 		return false
 	}
-	return slices.ContainsFunc(fields.List, u.checkFieldIgnoringNames)
+	return slices.ContainsFunc(fields.List, u.checkField)
 }
 
 func (u *unexportedAPIPass) checkField(field *ast.Field) (stop bool) {
@@ -292,10 +288,7 @@ func (u *unexportedAPIPass) checkExpr(expr ast.Expr) (stop bool) {
 	case *ast.CompositeLit:
 		return u.checkExpr(expr.Type)
 	case *ast.IndexListExpr:
-		if u.checkExpr(expr.X) {
-			return true
-		}
-		return slices.ContainsFunc(expr.Indices, u.checkExpr)
+		return u.checkExpr(expr.X) || slices.ContainsFunc(expr.Indices, u.checkExpr)
 	case *ast.IndexExpr:
 		return u.checkExpr(expr.X) || u.checkExpr(expr.Index)
 	case *ast.UnaryExpr:
@@ -348,10 +341,10 @@ func (u *unexportedAPIPass) checkType(typ types.Type) (stop bool) {
 		return u.checkType(typ.Elem())
 	case *types.Array:
 		return u.checkType(typ.Elem())
-	case *types.Map:
-		return u.checkType(typ.Key()) || u.checkType(typ.Elem())
 	case *types.Chan:
 		return u.checkType(typ.Elem())
+	case *types.Map:
+		return u.checkType(typ.Key()) || u.checkType(typ.Elem())
 	case *types.Signature:
 		// Check parameters
 		if typ.Params() != nil {
