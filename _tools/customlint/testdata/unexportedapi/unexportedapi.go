@@ -171,3 +171,41 @@ func (u *unexportedImpl) ExportedMethod() int {
 func (u *unexportedImpl) AnotherMethod() unexported {
 	return unexported{}
 }
+
+// Test for avoiding duplicate errors on embedded types with methods
+
+type BaseWithBadMethod struct{}
+
+// This method has an unexported return type - should be flagged once
+func (b *BaseWithBadMethod) GetUnexported() *unexported {
+	return nil
+}
+
+// This type embeds BaseWithBadMethod - should NOT re-report the GetUnexported method issue
+type DerivedEmbedding struct {
+	BaseWithBadMethod
+}
+
+// Test embedding unexported type with exported method that references unexported type
+type unexportedBase struct{}
+
+// This exported method on unexported type won't be checked (unexported type methods are skipped)
+func (u *unexportedBase) MethodWithBadReturn() *unexported {
+	return nil
+}
+
+// This embeds an unexported type - what happens?
+// OK because methods on unexported types aren't checked
+type EmbeddingUnexportedBase struct {
+	unexportedBase
+}
+
+// Test embedding unexported type with exported field that references unexported type
+type unexportedBaseWithField struct {
+	ExportedField *unexported
+}
+
+// Bad - embeds unexported type with exported field that references unexported type
+type EmbeddingUnexportedBaseWithField struct {
+	unexportedBaseWithField
+}
