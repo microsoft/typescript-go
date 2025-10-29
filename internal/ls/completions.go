@@ -22,8 +22,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/jsnum"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"github.com/microsoft/typescript-go/internal/lsutil"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -1940,7 +1940,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 	clientOptions *lsproto.CompletionClientCapabilities,
 ) (uniqueNames collections.Set[string], sortedEntries []*lsproto.CompletionItem) {
 	closestSymbolDeclaration := getClosestSymbolDeclaration(data.contextToken, data.location)
-	useSemicolons := probablyUsesSemicolons(file)
+	useSemicolons := lsutil.ProbablyUsesSemicolons(file)
 	typeChecker, done := l.GetProgram().GetTypeCheckerForFile(ctx, file)
 	defer done()
 	isMemberCompletion := isMemberCompletionKind(data.completionKind)
