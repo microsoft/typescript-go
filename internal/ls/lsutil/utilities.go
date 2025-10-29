@@ -1,8 +1,12 @@
 package lsutil
 
 import (
+	"strings"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
+	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
@@ -62,4 +66,18 @@ func ProbablyUsesSemicolons(file *ast.SourceFile) bool {
 		return true
 	}
 	return withSemicolon/withoutSemicolon > 1/nStatementsToObserve
+}
+
+func ShouldUseUriStyleNodeCoreModules(file *ast.SourceFile, program *compiler.Program) bool {
+	for _, node := range file.Imports() {
+		if core.NodeCoreModules()[node.Text()] && !core.ExclusivelyPrefixedNodeCoreModules[node.Text()] {
+			if strings.HasPrefix(node.Text(), "node:") {
+				return true
+			} else {
+				return false
+			}
+		}
+	}
+
+	return program.UsesUriStyleNodeCoreModules()
 }

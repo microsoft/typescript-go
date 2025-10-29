@@ -9,8 +9,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/format"
-	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/project/dirty"
@@ -94,7 +94,7 @@ func (s *Snapshot) GetECMALineInfo(fileName string) *sourcemap.ECMALineInfo {
 	return nil
 }
 
-func (s *Snapshot) UserPreferences() *ls.UserPreferences {
+func (s *Snapshot) UserPreferences() *lsutil.UserPreferences {
 	return s.config.tsUserPreferences
 }
 
@@ -146,8 +146,8 @@ type SnapshotChange struct {
 }
 
 type Config struct {
-	tsUserPreferences *ls.UserPreferences
-	// jsUserPreferences *ls.UserPreferences
+	tsUserPreferences *lsutil.UserPreferences
+	// jsUserPreferences *lsutil.UserPreferences
 	formatOptions *format.FormatCodeSettings
 	// tsserverOptions
 }

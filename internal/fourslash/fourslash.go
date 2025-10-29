@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -44,7 +45,7 @@ type FourslashTest struct {
 	scriptInfos map[string]*scriptInfo
 	converters  *lsconv.Converters
 
-	userPreferences      *ls.UserPreferences
+	userPreferences      *lsutil.UserPreferences
 	currentCaretPosition lsproto.Position
 	lastKnownMarkerName  *string
 	activeFilename       string
@@ -186,7 +187,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		in:              inputWriter,
 		out:             outputReader,
 		testData:        &testData,
-		userPreferences: ls.NewDefaultUserPreferences(), // !!! parse default preferences for fourslash case?
+		userPreferences: lsutil.NewDefaultUserPreferences(), // !!! parse default preferences for fourslash case?
 		vfs:             fs,
 		scriptInfos:     scriptInfos,
 		converters:      converters,
@@ -333,14 +334,14 @@ func (f *FourslashTest) readMsg(t *testing.T) *lsproto.Message {
 	return msg
 }
 
-func (f *FourslashTest) Configure(t *testing.T, config *ls.UserPreferences) {
+func (f *FourslashTest) Configure(t *testing.T, config *lsutil.UserPreferences) {
 	f.userPreferences = config
 	sendNotification(t, f, lsproto.WorkspaceDidChangeConfigurationInfo, &lsproto.DidChangeConfigurationParams{
 		Settings: config,
 	})
 }
 
-func (f *FourslashTest) ConfigureWithReset(t *testing.T, config *ls.UserPreferences) (reset func()) {
+func (f *FourslashTest) ConfigureWithReset(t *testing.T, config *lsutil.UserPreferences) (reset func()) {
 	originalConfig := f.userPreferences.Copy()
 	f.Configure(t, config)
 	return func() {
@@ -522,7 +523,7 @@ type CompletionsExpectedList struct {
 	IsIncomplete    bool
 	ItemDefaults    *CompletionsExpectedItemDefaults
 	Items           *CompletionsExpectedItems
-	UserPreferences *ls.UserPreferences // !!! allow user preferences in fourslash
+	UserPreferences *lsutil.UserPreferences // !!! allow user preferences in fourslash
 }
 
 type Ignored = struct{}
@@ -615,7 +616,7 @@ func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput,
 
 func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *CompletionsExpectedList) *lsproto.CompletionList {
 	prefix := f.getCurrentPositionPrefix()
-	var userPreferences *ls.UserPreferences
+	var userPreferences *lsutil.UserPreferences
 	if expected != nil {
 		userPreferences = expected.UserPreferences
 	}
@@ -624,7 +625,7 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *Completi
 	return list
 }
 
-func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *ls.UserPreferences) *lsproto.CompletionList {
+func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *lsutil.UserPreferences) *lsproto.CompletionList {
 	prefix := f.getCurrentPositionPrefix()
 	params := &lsproto.CompletionParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
@@ -922,17 +923,17 @@ type ApplyCodeActionFromCompletionOptions struct {
 	Description     string
 	NewFileContent  *string
 	NewRangeContent *string
-	UserPreferences *ls.UserPreferences
+	UserPreferences *lsutil.UserPreferences
 }
 
 func (f *FourslashTest) VerifyApplyCodeActionFromCompletion(t *testing.T, markerName *string, options *ApplyCodeActionFromCompletionOptions) {
 	f.GoToMarker(t, *markerName)
-	var userPreferences *ls.UserPreferences
+	var userPreferences *lsutil.UserPreferences
 	if options != nil && options.UserPreferences != nil {
 		userPreferences = options.UserPreferences
 	} else {
 		// Default preferences: enables auto-imports
-		userPreferences = ls.NewDefaultUserPreferences()
+		userPreferences = lsutil.NewDefaultUserPreferences()
 	}
 
 	reset := f.ConfigureWithReset(t, userPreferences)
@@ -1440,7 +1441,7 @@ func (f *FourslashTest) VerifyBaselineSelectionRanges(t *testing.T) {
 
 func (f *FourslashTest) VerifyBaselineDocumentHighlights(
 	t *testing.T,
-	preferences *ls.UserPreferences,
+	preferences *lsutil.UserPreferences,
 	markerOrRangeOrNames ...MarkerOrRangeOrName,
 ) {
 	var markerOrRanges []MarkerOrRange
@@ -1466,7 +1467,7 @@ func (f *FourslashTest) VerifyBaselineDocumentHighlights(
 
 func (f *FourslashTest) verifyBaselineDocumentHighlights(
 	t *testing.T,
-	preferences *ls.UserPreferences,
+	preferences *lsutil.UserPreferences,
 	markerOrRanges []MarkerOrRange,
 ) {
 	for _, markerOrRange := range markerOrRanges {
@@ -1872,7 +1873,7 @@ func (f *FourslashTest) getCurrentPositionPrefix() string {
 }
 
 func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames []string) {
-	reset := f.ConfigureWithReset(t, &ls.UserPreferences{
+	reset := f.ConfigureWithReset(t, &lsutil.UserPreferences{
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
 	})
@@ -1975,7 +1976,7 @@ type MarkerOrRangeOrName = any
 
 func (f *FourslashTest) VerifyBaselineRename(
 	t *testing.T,
-	preferences *ls.UserPreferences,
+	preferences *lsutil.UserPreferences,
 	markerOrNameOrRanges ...MarkerOrRangeOrName,
 ) {
 	var markerOrRanges []MarkerOrRange
@@ -2001,7 +2002,7 @@ func (f *FourslashTest) VerifyBaselineRename(
 
 func (f *FourslashTest) verifyBaselineRename(
 	t *testing.T,
-	preferences *ls.UserPreferences,
+	preferences *lsutil.UserPreferences,
 	markerOrRanges []MarkerOrRange,
 ) {
 	for _, markerOrRange := range markerOrRanges {
@@ -2043,7 +2044,7 @@ func (f *FourslashTest) verifyBaselineRename(
 			if preferences.UseAliasesForRename != core.TSUnknown {
 				fmt.Fprintf(&renameOptions, "// @useAliasesForRename: %v\n", preferences.UseAliasesForRename.IsTrue())
 			}
-			if preferences.QuotePreference != ls.QuotePreferenceUnknown {
+			if preferences.QuotePreference != lsutil.QuotePreferenceUnknown {
 				fmt.Fprintf(&renameOptions, "// @quotePreference: %v\n", preferences.QuotePreference)
 			}
 		}
@@ -2087,7 +2088,7 @@ func (f *FourslashTest) verifyBaselineRename(
 	}
 }
 
-func (f *FourslashTest) VerifyRenameSucceeded(t *testing.T, preferences *ls.UserPreferences) {
+func (f *FourslashTest) VerifyRenameSucceeded(t *testing.T, preferences *lsutil.UserPreferences) {
 	// !!! set preferences
 	params := &lsproto.RenameParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
@@ -2111,7 +2112,7 @@ func (f *FourslashTest) VerifyRenameSucceeded(t *testing.T, preferences *ls.User
 	}
 }
 
-func (f *FourslashTest) VerifyRenameFailed(t *testing.T, preferences *ls.UserPreferences) {
+func (f *FourslashTest) VerifyRenameFailed(t *testing.T, preferences *lsutil.UserPreferences) {
 	// !!! set preferences
 	params := &lsproto.RenameParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
@@ -2137,7 +2138,7 @@ func (f *FourslashTest) VerifyRenameFailed(t *testing.T, preferences *ls.UserPre
 
 func (f *FourslashTest) VerifyBaselineRenameAtRangesWithText(
 	t *testing.T,
-	preferences *ls.UserPreferences,
+	preferences *lsutil.UserPreferences,
 	texts ...string,
 ) {
 	var markerOrRanges []MarkerOrRange
