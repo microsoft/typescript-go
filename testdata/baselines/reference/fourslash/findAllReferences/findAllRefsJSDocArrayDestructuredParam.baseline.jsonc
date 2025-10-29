@@ -1,0 +1,7 @@
+// === findAllReferences ===
+// === /findAllRefsJSDocArrayDestructuredParam.ts ===
+// /**
+//  * @param /*FIND ALL REFS*/arr - array destructured parameter
+//  */
+// function f([x, y]) {}
+// 
