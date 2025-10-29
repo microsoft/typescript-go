@@ -2171,6 +2171,4 @@ func (f *FourslashTest) verifyBaselines(t *testing.T) {
 	}
 }
 
-type anyTextEdits *[]*lsproto.TextEdit
-
-var AnyTextEdits = anyTextEdits(nil) //nolint:customlint
+var AnyTextEdits *[]*lsproto.TextEdit
