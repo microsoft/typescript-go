@@ -35,9 +35,12 @@ type unexportedAPIPass struct {
 	inspect  *inspector.Inspector
 	file     *ast.File
 	currDecl ast.Node
+	// Track which types/objects we've already checked to avoid duplicates
+	checked map[types.Object]bool
 }
 
 func (u *unexportedAPIPass) run() (any, error) {
+	u.checked = make(map[types.Object]bool)
 	inspect := u.pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 
 	nodeFilter := []ast.Node{
@@ -69,6 +72,12 @@ func (u *unexportedAPIPass) checkFuncDecl(fn *ast.FuncDecl) {
 		return
 	}
 
+	// Get the method object to mark it as checked
+	var methodObj types.Object
+	if fn.Name != nil {
+		methodObj = u.pass.TypesInfo.Defs[fn.Name]
+	}
+
 	// If this is a method on an unexported type, skip it
 	// Unexported types and their methods (even if exported) are not part of the public API
 	if fn.Recv != nil && len(fn.Recv.List) > 0 {
@@ -81,6 +90,11 @@ func (u *unexportedAPIPass) checkFuncDecl(fn *ast.FuncDecl) {
 		if ident, ok := recvType.(*ast.Ident); ok && !ident.IsExported() {
 			return
 		}
+	}
+
+	// Mark this method as checked so we don't check it again through embedding
+	if methodObj != nil {
+		u.checked[methodObj] = true
 	}
 
 	u.checkExpr(fn.Type)
@@ -172,30 +186,19 @@ func (u *unexportedAPIPass) checkEmbeddedField(field *ast.Field) (stop bool) {
 		return u.checkField(field)
 	}
 
-	// For embedded fields, don't check the type name itself.
-	// Instead, walk through the embedded type's exported members and check those.
+	// For embedded fields, walk through all exported members and check them.
+	// Use the checked map to avoid re-checking members we've already seen.
 
 	// Dereference pointers
 	if ptr, ok := typ.(*types.Pointer); ok {
 		typ = ptr.Elem()
 	}
 
-	// Determine if the embedded type is exported
-	var isEmbeddedTypeExported bool
-	if named, ok := typ.(*types.Named); ok {
-		obj := named.Obj()
-		isEmbeddedTypeExported = obj != nil && obj.Exported()
-	} else {
-		// For non-named types, consider them "exported" for this check
-		isEmbeddedTypeExported = true
-	}
-
 	// Check exported fields in structs
 	if structType, ok := typ.Underlying().(*types.Struct); ok {
 		for field := range structType.Fields() {
-			field := field
 			if field.Exported() {
-				if u.checkType(field.Type()) {
+				if u.checkObjectType(field) {
 					return true
 				}
 			}
@@ -203,23 +206,32 @@ func (u *unexportedAPIPass) checkEmbeddedField(field *ast.Field) (stop bool) {
 	}
 
 	// Check exported methods on the type
-	// We check methods if:
-	// 1. The embedded type is unexported (methods won't be checked elsewhere), OR
-	// 2. Never - if the type is exported, its methods are already checked when that type is analyzed
-	if !isEmbeddedTypeExported {
-		if named, ok := typ.(*types.Named); ok {
-			for method := range named.Methods() {
-				method := method
-				if method.Exported() {
-					if u.checkType(method.Type()) {
-						return true
-					}
+	if named, ok := typ.(*types.Named); ok {
+		for method := range named.Methods() {
+			if method.Exported() {
+				if u.checkObjectType(method) {
+					return true
 				}
 			}
 		}
 	}
 
 	return false
+}
+
+// checkObjectType checks a types.Object and memoizes it to avoid duplicate checks
+func (u *unexportedAPIPass) checkObjectType(obj types.Object) (stop bool) {
+	if obj == nil {
+		return false
+	}
+
+	// If we've already checked this object, skip it
+	if u.checked[obj] {
+		return false
+	}
+	u.checked[obj] = true
+
+	return u.checkType(obj.Type())
 }
 
 func (u *unexportedAPIPass) checkFieldsIgnoringNames(fields *ast.FieldList) (stop bool) {
