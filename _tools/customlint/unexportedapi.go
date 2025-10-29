@@ -385,8 +385,8 @@ func (u *unexportedAPIPass) checkType(typ types.Type) (stop bool) {
 		}
 		// Check type arguments if any (for generics)
 		if typ.TypeArgs() != nil {
-			for i := 0; i < typ.TypeArgs().Len(); i++ {
-				if u.checkType(typ.TypeArgs().At(i)) {
+			for t := range typ.TypeArgs().Types() {
+				if u.checkType(t) {
 					return true
 				}
 			}
@@ -408,16 +408,16 @@ func (u *unexportedAPIPass) checkType(typ types.Type) (stop bool) {
 	case *types.Signature:
 		// Check parameters
 		if typ.Params() != nil {
-			for i := 0; i < typ.Params().Len(); i++ {
-				if u.checkType(typ.Params().At(i).Type()) {
+			for v := range typ.Params().Variables() {
+				if u.checkType(v.Type()) {
 					return true
 				}
 			}
 		}
 		// Check results
 		if typ.Results() != nil {
-			for i := 0; i < typ.Results().Len(); i++ {
-				if u.checkType(typ.Results().At(i).Type()) {
+			for v := range typ.Results().Variables() {
+				if u.checkType(v.Type()) {
 					return true
 				}
 			}
@@ -425,8 +425,8 @@ func (u *unexportedAPIPass) checkType(typ types.Type) (stop bool) {
 		return false
 	case *types.Struct:
 		// Check all fields
-		for i := 0; i < typ.NumFields(); i++ {
-			field := typ.Field(i)
+		for field := range typ.Fields() {
+			field := field
 			// Only check exported fields
 			if field.Exported() {
 				if u.checkType(field.Type()) {
@@ -437,8 +437,8 @@ func (u *unexportedAPIPass) checkType(typ types.Type) (stop bool) {
 		return false
 	case *types.Interface:
 		// Check all methods
-		for i := 0; i < typ.NumMethods(); i++ {
-			method := typ.Method(i)
+		for method := range typ.Methods() {
+			method := method
 			// Only check exported methods
 			if method.Exported() {
 				if u.checkType(method.Type()) {
