@@ -302,7 +302,7 @@ func (u *unexportedAPIPass) checkExpr(expr ast.Expr) (stop bool) {
 		return u.checkExpr(expr.X)
 	default:
 		var buf bytes.Buffer
-		format.Node(&buf, u.pass.Fset, expr)
+		_ = format.Node(&buf, u.pass.Fset, expr)
 		panic(fmt.Sprintf("%T, unhandled case %T: %s", u.currDecl, expr, buf.String()))
 	}
 }
