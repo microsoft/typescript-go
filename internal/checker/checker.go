@@ -30398,7 +30398,8 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 		} else if ast.IsJSDocParameterTag(parent) && parent.Name() == node {
 			if fn := ast.GetNodeAtPosition(ast.GetSourceFileOfNode(node), node.Pos(), false); fn != nil && ast.IsFunctionLike(fn) {
 				for _, param := range fn.Parameters() {
-					if param.Name().Text() == node.Text() {
+					// Skip binding patterns - they don't have a simple name to compare
+					if !ast.IsBindingPattern(param.Name()) && param.Name().Text() == node.Text() {
 						return c.getSymbolOfNode(param)
 					}
 				}
