@@ -15,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/ls/change"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
@@ -399,7 +400,7 @@ func (l *LanguageService) isImportable(
 	if toFile == nil {
 		moduleName := stringutil.StripQuotes(toModule.Name)
 		if _, ok := core.NodeCoreModules()[moduleName]; ok {
-			if useNodePrefix := shouldUseUriStyleNodeCoreModules(fromFile, l.GetProgram()); useNodePrefix {
+			if useNodePrefix := lsutil.ShouldUseUriStyleNodeCoreModules(fromFile, l.GetProgram()); useNodePrefix {
 				return useNodePrefix == strings.HasPrefix(moduleName, "node:")
 			}
 		}
@@ -500,7 +501,7 @@ func getDefaultLikeExportInfo(moduleSymbol *ast.Symbol, ch *checker.Checker) *Ex
 
 type importSpecifierResolverForCompletions struct {
 	*ast.SourceFile // importingFile
-	*UserPreferences
+	*lsutil.UserPreferences
 	l      *LanguageService
 	filter *packageJsonImportFilter
 }
@@ -568,6 +569,86 @@ func (l *LanguageService) getBestFix(fixes []*ImportFix, sourceFile *ast.SourceF
 	}
 
 	return best
+}
+
+// returns `-1` if `a` is better than `b`
+//
+//	note: this sorts in descending order of preference; different than convention in other cmp-like functions
+func (l *LanguageService) compareModuleSpecifiers(
+	a *ImportFix, // !!! ImportFixWithModuleSpecifier
+	b *ImportFix, // !!! ImportFixWithModuleSpecifier
+	importingFile *ast.SourceFile, // | FutureSourceFile,
+	allowsImportingSpecifier func(specifier string) bool,
+	toPath func(fileName string) tspath.Path,
+) int {
+	if a.kind == ImportFixKindUseNamespace || b.kind == ImportFixKindUseNamespace {
+		return 0
+	}
+	if comparison := core.CompareBooleans(
+		b.moduleSpecifierKind != modulespecifiers.ResultKindNodeModules || allowsImportingSpecifier(b.moduleSpecifier),
+		a.moduleSpecifierKind != modulespecifiers.ResultKindNodeModules || allowsImportingSpecifier(a.moduleSpecifier),
+	); comparison != 0 {
+		return comparison
+	}
+	if comparison := compareModuleSpecifierRelativity(a, b, l.UserPreferences()); comparison != 0 {
+		return comparison
+	}
+	if comparison := compareNodeCoreModuleSpecifiers(a.moduleSpecifier, b.moduleSpecifier, importingFile, l.GetProgram()); comparison != 0 {
+		return comparison
+	}
+	if comparison := core.CompareBooleans(isFixPossiblyReExportingImportingFile(a, importingFile.Path(), toPath), isFixPossiblyReExportingImportingFile(b, importingFile.Path(), toPath)); comparison != 0 {
+		return comparison
+	}
+	if comparison := tspath.CompareNumberOfDirectorySeparators(a.moduleSpecifier, b.moduleSpecifier); comparison != 0 {
+		return comparison
+	}
+	return 0
+}
+
+func compareNodeCoreModuleSpecifiers(a, b string, importingFile *ast.SourceFile, program *compiler.Program) int {
+	if strings.HasPrefix(a, "node:") && !strings.HasPrefix(b, "node:") {
+		if lsutil.ShouldUseUriStyleNodeCoreModules(importingFile, program) {
+			return -1
+		}
+		return 1
+	}
+	if strings.HasPrefix(b, "node:") && !strings.HasPrefix(a, "node:") {
+		if lsutil.ShouldUseUriStyleNodeCoreModules(importingFile, program) {
+			return 1
+		}
+		return -1
+	}
+	return 0
+}
+
+// This is a simple heuristic to try to avoid creating an import cycle with a barrel re-export.
+// E.g., do not `import { Foo } from ".."` when you could `import { Foo } from "../Foo"`.
+// This can produce false positives or negatives if re-exports cross into sibling directories
+// (e.g. `export * from "../whatever"`) or are not named "index".
+func isFixPossiblyReExportingImportingFile(fix *ImportFix, importingFilePath tspath.Path, toPath func(fileName string) tspath.Path) bool {
+	if fix.isReExport != nil && *(fix.isReExport) &&
+		fix.exportInfo != nil && fix.exportInfo.moduleFileName != "" && isIndexFileName(fix.exportInfo.moduleFileName) {
+		reExportDir := toPath(tspath.GetDirectoryPath(fix.exportInfo.moduleFileName))
+		return strings.HasPrefix(string(importingFilePath), string(reExportDir))
+	}
+	return false
+}
+
+func isIndexFileName(fileName string) bool {
+	fileName = tspath.GetBaseFileName(fileName)
+	if tspath.FileExtensionIsOneOf(fileName, []string{".js", ".jsx", ".d.ts", ".ts", ".tsx"}) {
+		fileName = tspath.RemoveFileExtension(fileName)
+	}
+	return fileName == "index"
+}
+
+// returns `-1` if `a` is better than `b`
+func compareModuleSpecifierRelativity(a *ImportFix, b *ImportFix, preferences *lsutil.UserPreferences) int {
+	switch preferences.ImportModuleSpecifierPreference {
+	case modulespecifiers.ImportModuleSpecifierPreferenceNonRelative, modulespecifiers.ImportModuleSpecifierPreferenceProjectRelative:
+		return core.CompareBooleans(a.moduleSpecifierKind == modulespecifiers.ResultKindRelative, b.moduleSpecifierKind == modulespecifiers.ResultKindRelative)
+	}
+	return 0
 }
 
 func (l *LanguageService) getImportFixes(

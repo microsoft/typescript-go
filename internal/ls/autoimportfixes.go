@@ -8,6 +8,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/ls/change"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
+	"github.com/microsoft/typescript-go/internal/ls/organizeimports"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
@@ -85,7 +87,7 @@ func (ls *LanguageService) doAddExistingFix(
 		}
 
 		if len(namedImports) > 0 {
-			specifierComparer, isSorted := ls.getNamedImportSpecifierComparerWithDetection(importClause.Parent, sourceFile)
+			specifierComparer, isSorted := organizeimports.GetNamedImportSpecifierComparerWithDetection(importClause.Parent, sourceFile, ls.UserPreferences())
 			newSpecifiers := core.Map(namedImports, func(namedImport *Import) *ast.Node {
 				var identifier *ast.Node
 				if namedImport.propertyName != "" {
@@ -130,13 +132,13 @@ func (ls *LanguageService) doAddExistingFix(
 				// 		).elements
 				// 	}
 				for _, spec := range newSpecifiers {
-					insertionIndex := getImportSpecifierInsertionIndex(existingSpecifiers, spec, specifierComparer)
+					insertionIndex := organizeimports.GetImportSpecifierInsertionIndex(existingSpecifiers, spec, specifierComparer)
 					ct.InsertImportSpecifierAtIndex(sourceFile, spec, importClause.NamedBindings, insertionIndex)
 				}
 			} else if len(existingSpecifiers) > 0 && isSorted.IsTrue() {
 				// Existing specifiers are sorted, so insert each new specifier at the correct position
 				for _, spec := range newSpecifiers {
-					insertionIndex := getImportSpecifierInsertionIndex(existingSpecifiers, spec, specifierComparer)
+					insertionIndex := organizeimports.GetImportSpecifierInsertionIndex(existingSpecifiers, spec, specifierComparer)
 					if insertionIndex >= len(existingSpecifiers) {
 						// Insert at the end
 						ct.InsertNodeInListAfter(sourceFile, existingSpecifiers[len(existingSpecifiers)-1], spec.AsNode(), existingSpecifiers)
@@ -217,10 +219,10 @@ func (ls *LanguageService) insertImports(ct *change.Tracker, sourceFile *ast.Sou
 	} else {
 		existingImportStatements = core.Filter(sourceFile.Statements.Nodes, ast.IsAnyImportSyntax)
 	}
-	comparer, isSorted := ls.getOrganizeImportsStringComparerWithDetection(existingImportStatements)
+	comparer, isSorted := organizeimports.GetOrganizeImportsStringComparerWithDetection(existingImportStatements, ls.UserPreferences())
 	sortedNewImports := slices.Clone(imports)
 	slices.SortFunc(sortedNewImports, func(a, b *ast.Statement) int {
-		return compareImportsOrRequireStatements(a, b, comparer)
+		return organizeimports.CompareImportsOrRequireStatements(a, b, comparer)
 	})
 	// !!! FutureSourceFile
 	// if !isFullSourceFile(sourceFile) {
@@ -235,8 +237,8 @@ func (ls *LanguageService) insertImports(ct *change.Tracker, sourceFile *ast.Sou
 	if len(existingImportStatements) > 0 && isSorted {
 		// Existing imports are sorted, insert each new import at the correct position
 		for _, newImport := range sortedNewImports {
-			insertionIndex := getImportDeclarationInsertIndex(existingImportStatements, newImport, func(a, b *ast.Statement) stringutil.Comparison {
-				return compareImportsOrRequireStatements(a, b, comparer)
+			insertionIndex := organizeimports.GetImportDeclarationInsertIndex(existingImportStatements, newImport, func(a, b *ast.Statement) stringutil.Comparison {
+				return organizeimports.CompareImportsOrRequireStatements(a, b, comparer)
 			})
 			if insertionIndex == 0 {
 				// If the first import is top-of-file, insert after the leading comment which is likely the header
@@ -338,6 +340,6 @@ func needsTypeOnly(addAsTypeOnly AddAsTypeOnly) bool {
 	return addAsTypeOnly == AddAsTypeOnlyRequired
 }
 
-func shouldUseTypeOnly(addAsTypeOnly AddAsTypeOnly, preferences *UserPreferences) bool {
+func shouldUseTypeOnly(addAsTypeOnly AddAsTypeOnly, preferences *lsutil.UserPreferences) bool {
 	return needsTypeOnly(addAsTypeOnly) || addAsTypeOnly != AddAsTypeOnlyNotAllowed && preferences.PreferTypeOnlyAutoImports
 }

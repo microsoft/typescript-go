@@ -5,6 +5,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 )
@@ -32,7 +33,7 @@ func (l *LanguageService) GetProgram() *compiler.Program {
 	return l.program
 }
 
-func (l *LanguageService) UserPreferences() *UserPreferences {
+func (l *LanguageService) UserPreferences() *lsutil.UserPreferences {
 	return l.host.UserPreferences()
 }
 
