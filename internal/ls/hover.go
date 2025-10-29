@@ -27,10 +27,13 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 	}
 	c, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
-	quickInfo, documentation := getQuickInfoAndDocumentation(c, node)
+	rangeNode := getNodeForQuickInfo(node)
+	quickInfo, documentation := l.getQuickInfoAndDocumentationForSymbol(c, c.GetSymbolAtLocation(node), rangeNode)
 	if quickInfo == "" {
 		return lsproto.HoverOrNull{}, nil
 	}
+	hoverRange := l.getRangeOfNode(rangeNode, nil, nil)
+
 	return lsproto.HoverOrNull{
 		Hover: &lsproto.Hover{
 			Contents: lsproto.MarkupContentOrStringOrMarkedStringWithLanguageOrMarkedStrings{
@@ -39,15 +42,12 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 					Value: formatQuickInfo(quickInfo) + documentation,
 				},
 			},
+			Range: hoverRange,
 		},
 	}, nil
 }
 
-func getQuickInfoAndDocumentation(c *checker.Checker, node *ast.Node) (string, string) {
-	return getQuickInfoAndDocumentationForSymbol(c, c.GetSymbolAtLocation(node), getNodeForQuickInfo(node))
-}
-
-func getQuickInfoAndDocumentationForSymbol(c *checker.Checker, symbol *ast.Symbol, node *ast.Node) (string, string) {
+func (l *LanguageService) getQuickInfoAndDocumentationForSymbol(c *checker.Checker, symbol *ast.Symbol, node *ast.Node) (string, string) {
 	quickInfo, declaration := getQuickInfoAndDeclarationAtLocation(c, symbol, node)
 	if quickInfo == "" {
 		return "", ""
@@ -55,7 +55,7 @@ func getQuickInfoAndDocumentationForSymbol(c *checker.Checker, symbol *ast.Symbo
 	var b strings.Builder
 	if declaration != nil {
 		if jsdoc := getJSDocOrTag(declaration); jsdoc != nil && !containsTypedefTag(jsdoc) {
-			writeComments(&b, jsdoc.Comments())
+			l.writeComments(&b, c, jsdoc.Comments())
 			if jsdoc.Kind == ast.KindJSDoc {
 				if tags := jsdoc.AsJSDoc().Tags; tags != nil {
 					for _, tag := range tags.Nodes {
@@ -90,7 +90,7 @@ func getQuickInfoAndDocumentationForSymbol(c *checker.Checker, symbol *ast.Symbo
 									b.WriteString("— ")
 								}
 							}
-							writeComments(&b, comments)
+							l.writeComments(&b, c, comments)
 						}
 					}
 				}
@@ -108,6 +108,10 @@ func formatQuickInfo(quickInfo string) string {
 }
 
 func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol, node *ast.Node) (string, *ast.Node) {
+	container := getContainerNode(node)
+	if node.Kind == ast.KindThisKeyword && ast.IsInExpressionContext(node) {
+		return c.TypeToStringEx(c.GetTypeAtLocation(node), container, typeFormatFlags), nil
+	}
 	isAlias := symbol != nil && symbol.Flags&ast.SymbolFlagsAlias != 0
 	if isAlias {
 		symbol = c.GetAliasedSymbol(symbol)
@@ -125,11 +129,13 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 		}
 	}
 	flags := symbol.Flags
+	if flags&ast.SymbolFlagsProperty != 0 && declaration != nil && ast.IsMethodDeclaration(declaration) {
+		flags = ast.SymbolFlagsMethod
+	}
 	if flags&ast.SymbolFlagsType != 0 && (ast.IsPartOfTypeNode(node) || ast.IsTypeDeclarationName(node)) {
 		// If the symbol has a type meaning and we're in a type context, remove value-only meanings
 		flags &^= ast.SymbolFlagsVariable | ast.SymbolFlagsFunction
 	}
-	container := getContainerNode(node)
 	var b strings.Builder
 	if isAlias {
 		b.WriteString("(alias) ")
@@ -162,7 +168,11 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 		}
 		b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
 		b.WriteString(": ")
-		b.WriteString(c.TypeToStringEx(c.GetTypeOfSymbolAtLocation(symbol, node), container, typeFormatFlags))
+		if callNode := getCallOrNewExpression(node); callNode != nil {
+			b.WriteString(c.SignatureToStringEx(c.GetResolvedSignature(callNode), container, typeFormatFlags|checker.TypeFormatFlagsWriteCallStyleSignature|checker.TypeFormatFlagsWriteTypeArgumentsOfSignature|checker.TypeFormatFlagsWriteArrowStyleSignature))
+		} else {
+			b.WriteString(c.TypeToStringEx(c.GetTypeOfSymbolAtLocation(symbol, node), container, typeFormatFlags))
+		}
 	case flags&ast.SymbolFlagsEnumMember != 0:
 		b.WriteString("(enum member) ")
 		t := c.GetTypeOfSymbol(symbol)
@@ -173,22 +183,26 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 		}
 	case flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsMethod) != 0:
 		signatures := getSignaturesAtLocation(c, symbol, checker.SignatureKindCall, node)
-		if len(signatures) == 1 && signatures[0].Declaration() != nil {
-			declaration = signatures[0].Declaration()
+		if len(signatures) == 1 {
+			if d := signatures[0].Declaration(); d != nil && d.Flags&ast.NodeFlagsJSDoc == 0 {
+				declaration = d
+			}
 		}
-		prefix := core.IfElse(symbol.Flags&ast.SymbolFlagsMethod != 0, "(method) ", "function ")
+		prefix := core.IfElse(flags&ast.SymbolFlagsMethod != 0, "(method) ", "function ")
 		writeSignatures(&b, c, signatures, container, prefix, symbol)
 	case flags&ast.SymbolFlagsConstructor != 0:
 		signatures := getSignaturesAtLocation(c, symbol.Parent, checker.SignatureKindConstruct, node)
-		if len(signatures) == 1 && signatures[0].Declaration() != nil {
-			declaration = signatures[0].Declaration()
+		if len(signatures) == 1 {
+			if d := signatures[0].Declaration(); d != nil && d.Flags&ast.NodeFlagsJSDoc == 0 {
+				declaration = d
+			}
 		}
 		writeSignatures(&b, c, signatures, container, "constructor ", symbol.Parent)
 	case flags&(ast.SymbolFlagsClass|ast.SymbolFlagsInterface) != 0:
 		if node.Kind == ast.KindThisKeyword || ast.IsThisInTypeQuery(node) {
 			b.WriteString("this")
 		} else {
-			b.WriteString(core.IfElse(symbol.Flags&ast.SymbolFlagsClass != 0, "class ", "interface "))
+			b.WriteString(core.IfElse(flags&ast.SymbolFlagsClass != 0, "class ", "interface "))
 			b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
 			params := c.GetDeclaredTypeOfSymbol(symbol).AsInterfaceType().LocalTypeParameters()
 			writeTypeParams(&b, c, params)
@@ -285,7 +299,7 @@ func getCallOrNewExpression(node *ast.Node) *ast.Node {
 	if ast.IsPropertyAccessExpression(node.Parent) && node.Parent.Name() == node {
 		node = node.Parent
 	}
-	if ast.IsCallExpression(node.Parent) || ast.IsNewExpression(node.Parent) {
+	if (ast.IsCallExpression(node.Parent) || ast.IsNewExpression(node.Parent)) && node.Parent.Expression() == node {
 		return node.Parent
 	}
 	return nil
@@ -411,61 +425,90 @@ func writeCode(b *strings.Builder, lang string, code string) {
 	b.WriteByte('\n')
 }
 
-func writeComments(b *strings.Builder, comments []*ast.Node) {
+func (l *LanguageService) writeComments(b *strings.Builder, c *checker.Checker, comments []*ast.Node) {
 	for _, comment := range comments {
 		switch comment.Kind {
 		case ast.KindJSDocText:
 			b.WriteString(comment.Text())
-		case ast.KindJSDocLink:
-			name := comment.Name()
-			text := comment.AsJSDocLink().Text()
-			if name != nil {
-				if text == "" {
-					writeEntityName(b, name)
-				} else {
-					writeEntityNameParts(b, name)
-				}
-			}
-			b.WriteString(text)
+		case ast.KindJSDocLink, ast.KindJSDocLinkPlain:
+			l.writeJSDocLink(b, c, comment, false /*quote*/)
 		case ast.KindJSDocLinkCode:
-			// !!! TODO: This is a temporary placeholder implementation that needs to be updated later
-			name := comment.Name()
-			text := comment.AsJSDocLinkCode().Text()
-			if name != nil {
-				if text == "" {
-					writeEntityName(b, name)
-				} else {
-					writeEntityNameParts(b, name)
-				}
-			}
-			b.WriteString(text)
-		case ast.KindJSDocLinkPlain:
-			// !!! TODO: This is a temporary placeholder implementation that needs to be updated later
-			name := comment.Name()
-			text := comment.AsJSDocLinkPlain().Text()
-			if name != nil {
-				if text == "" {
-					writeEntityName(b, name)
-				} else {
-					writeEntityNameParts(b, name)
-				}
-			}
-			b.WriteString(text)
+			l.writeJSDocLink(b, c, comment, true /*quote*/)
 		}
 	}
+}
+
+func (l *LanguageService) writeJSDocLink(b *strings.Builder, c *checker.Checker, link *ast.Node, quote bool) {
+	name := link.Name()
+	text := strings.Trim(link.Text(), " ")
+	if name == nil {
+		writeQuotedString(b, text, quote)
+		return
+	}
+	if ast.IsIdentifier(name) && (name.Text() == "http" || name.Text() == "https") && strings.HasPrefix(text, "://") {
+		linkText := name.Text() + text
+		linkUri := linkText
+		if commentPos := strings.IndexFunc(linkText, func(ch rune) bool { return ch == ' ' || ch == '|' }); commentPos >= 0 {
+			linkUri = linkText[:commentPos]
+			linkText = trimCommentPrefix(linkText[commentPos:])
+			if linkText == "" {
+				linkText = linkUri
+			}
+		}
+		writeMarkdownLink(b, linkText, linkUri, quote)
+		return
+	}
+	declarations := getDeclarationsFromLocation(c, name)
+	if len(declarations) != 0 {
+		declaration := declarations[0]
+		file := ast.GetSourceFileOfNode(declaration)
+		node := core.OrElse(ast.GetNameOfDeclaration(declaration), declaration)
+		loc := l.getMappedLocation(file.FileName(), createRangeFromNode(node, file))
+		prefixLen := core.IfElse(strings.HasPrefix(text, "()"), 2, 0)
+		linkText := trimCommentPrefix(text[prefixLen:])
+		if linkText == "" {
+			linkText = getEntityNameString(name) + text[:prefixLen]
+		}
+		linkUri := fmt.Sprintf("%s#%d,%d-%d,%d", loc.Uri, loc.Range.Start.Line+1, loc.Range.Start.Character+1, loc.Range.End.Line+1, loc.Range.End.Character+1)
+		writeMarkdownLink(b, linkText, linkUri, quote)
+		return
+	}
+	writeQuotedString(b, getEntityNameString(name)+" "+text, quote)
+}
+
+func trimCommentPrefix(text string) string {
+	return strings.TrimLeft(strings.TrimPrefix(strings.TrimLeft(text, " "), "|"), " ")
+}
+
+func writeMarkdownLink(b *strings.Builder, text string, uri string, quote bool) {
+	b.WriteString("[")
+	writeQuotedString(b, text, quote)
+	b.WriteString("](")
+	b.WriteString(uri)
+	b.WriteString(")")
 }
 
 func writeOptionalEntityName(b *strings.Builder, name *ast.Node) {
 	if name != nil {
 		b.WriteString(" ")
-		writeEntityName(b, name)
+		writeQuotedString(b, getEntityNameString(name), true /*quote*/)
 	}
 }
 
-func writeEntityName(b *strings.Builder, name *ast.Node) {
-	b.WriteString("`")
-	writeEntityNameParts(b, name)
-	b.WriteString("`")
+func writeQuotedString(b *strings.Builder, str string, quote bool) {
+	if quote && !strings.Contains(str, "`") {
+		b.WriteString("`")
+		b.WriteString(str)
+		b.WriteString("`")
+	} else {
+		b.WriteString(str)
+	}
+}
+
+func getEntityNameString(name *ast.Node) string {
+	var b strings.Builder
+	writeEntityNameParts(&b, name)
+	return b.String()
 }
 
 func writeEntityNameParts(b *strings.Builder, node *ast.Node) {
