@@ -221,13 +221,7 @@ func (u *unexportedAPIPass) checkField(field *ast.Field) (stop bool) {
 		return false
 	}
 
-	if u.checkExpr(field.Type) {
-		return true
-	}
-
-	// TODO
-
-	return false
+	return u.checkExpr(field.Type)
 }
 
 func (u *unexportedAPIPass) checkExpr(expr ast.Expr) (stop bool) {
