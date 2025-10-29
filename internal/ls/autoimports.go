@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/ls/change"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
@@ -1362,14 +1363,14 @@ func (l *LanguageService) codeActionForFix(
 	fix *ImportFix,
 	includeSymbolNameInDescription bool,
 ) codeAction {
-	tracker := l.newChangeTracker(ctx) // !!! changetracker.with
+	tracker := change.NewTracker(ctx, l.GetProgram().Options(), l.FormatOptions(), l.converters) // !!! changetracker.with
 	diag := l.codeActionForFixWorker(tracker, sourceFile, symbolName, fix, includeSymbolNameInDescription)
-	changes := tracker.getChanges()[sourceFile.FileName()]
+	changes := tracker.GetChanges()[sourceFile.FileName()]
 	return codeAction{description: diag.Message(), changes: changes}
 }
 
 func (l *LanguageService) codeActionForFixWorker(
-	changeTracker *changeTracker,
+	changeTracker *change.Tracker,
 	sourceFile *ast.SourceFile,
 	symbolName string,
 	fix *ImportFix,
@@ -1377,14 +1378,15 @@ func (l *LanguageService) codeActionForFixWorker(
 ) *diagnostics.Message {
 	switch fix.kind {
 	case ImportFixKindUseNamespace:
-		changeTracker.addNamespaceQualifier(sourceFile, fix.qualification())
+		addNamespaceQualifier(changeTracker, sourceFile, fix.qualification())
 		return diagnostics.FormatMessage(diagnostics.Change_0_to_1, symbolName, `${fix.namespacePrefix}.${symbolName}`)
 	case ImportFixKindJsdocTypeImport:
 		// !!! not implemented
 		// changeTracker.addImportType(changeTracker, sourceFile, fix, quotePreference);
 		// return diagnostics.FormatMessage(diagnostics.Change_0_to_1, symbolName, getImportTypePrefix(fix.moduleSpecifier, quotePreference) + symbolName);
 	case ImportFixKindAddToExisting:
-		changeTracker.doAddExistingFix(
+		l.doAddExistingFix(
+			changeTracker,
 			sourceFile,
 			fix.importClauseOrBindingPattern,
 			core.IfElse(fix.importKind == ImportKindDefault, &Import{name: symbolName, addAsTypeOnly: fix.addAsTypeOnly}, nil),
@@ -1410,18 +1412,19 @@ func (l *LanguageService) codeActionForFixWorker(
 		}
 
 		if fix.useRequire {
-			declarations = changeTracker.getNewRequires(fix.moduleSpecifier, defaultImport, namedImports, namespaceLikeImport, l.GetProgram().Options())
+			declarations = getNewRequires(changeTracker, fix.moduleSpecifier, defaultImport, namedImports, namespaceLikeImport, l.GetProgram().Options())
 		} else {
-			declarations = changeTracker.getNewImports(fix.moduleSpecifier, getQuotePreference(sourceFile, l.UserPreferences()), defaultImport, namedImports, namespaceLikeImport, l.GetProgram().Options())
+			declarations = l.getNewImports(changeTracker, fix.moduleSpecifier, getQuotePreference(sourceFile, l.UserPreferences()), defaultImport, namedImports, namespaceLikeImport, l.GetProgram().Options())
 		}
 
-		changeTracker.insertImports(
+		l.insertImports(
+			changeTracker,
 			sourceFile,
 			declarations,
 			/*blankLineBetween*/ true,
 		)
 		if qualification != nil {
-			changeTracker.addNamespaceQualifier(sourceFile, qualification)
+			addNamespaceQualifier(changeTracker, sourceFile, qualification)
 		}
 		if includeSymbolNameInDescription {
 			return diagnostics.FormatMessage(diagnostics.Import_0_from_1, symbolName, fix.moduleSpecifier)
@@ -1440,14 +1443,15 @@ func (l *LanguageService) codeActionForFixWorker(
 	return nil
 }
 
-func (c *changeTracker) getNewRequires(
+func getNewRequires(
+	changeTracker *change.Tracker,
 	moduleSpecifier string,
 	defaultImport *Import,
 	namedImports []*Import,
 	namespaceLikeImport *Import,
 	compilerOptions *core.CompilerOptions,
 ) []*ast.Statement {
-	quotedModuleSpecifier := c.NodeFactory.NewStringLiteral(moduleSpecifier)
+	quotedModuleSpecifier := changeTracker.NodeFactory.NewStringLiteral(moduleSpecifier)
 	var statements []*ast.Statement
 
 	// const { default: foo, bar, etc } = require('./mod');
@@ -1456,29 +1460,30 @@ func (c *changeTracker) getNewRequires(
 		for _, namedImport := range namedImports {
 			var propertyName *ast.Node
 			if namedImport.propertyName != "" {
-				propertyName = c.NodeFactory.NewIdentifier(namedImport.propertyName)
+				propertyName = changeTracker.NodeFactory.NewIdentifier(namedImport.propertyName)
 			}
-			bindingElements = append(bindingElements, c.NodeFactory.NewBindingElement(
+			bindingElements = append(bindingElements, changeTracker.NodeFactory.NewBindingElement(
 				/*dotDotDotToken*/ nil,
 				propertyName,
-				c.NodeFactory.NewIdentifier(namedImport.name),
+				changeTracker.NodeFactory.NewIdentifier(namedImport.name),
 				/*initializer*/ nil,
 			))
 		}
 		if defaultImport != nil {
 			bindingElements = append([]*ast.Node{
-				c.NodeFactory.NewBindingElement(
+				changeTracker.NodeFactory.NewBindingElement(
 					/*dotDotDotToken*/ nil,
-					c.NodeFactory.NewIdentifier("default"),
-					c.NodeFactory.NewIdentifier(defaultImport.name),
+					changeTracker.NodeFactory.NewIdentifier("default"),
+					changeTracker.NodeFactory.NewIdentifier(defaultImport.name),
 					/*initializer*/ nil,
 				),
 			}, bindingElements...)
 		}
-		declaration := c.createConstEqualsRequireDeclaration(
-			c.NodeFactory.NewBindingPattern(
+		declaration := createConstEqualsRequireDeclaration(
+			changeTracker,
+			changeTracker.NodeFactory.NewBindingPattern(
 				ast.KindObjectBindingPattern,
-				c.NodeFactory.NewNodeList(bindingElements),
+				changeTracker.NodeFactory.NewNodeList(bindingElements),
 			),
 			quotedModuleSpecifier,
 		)
@@ -1487,8 +1492,9 @@ func (c *changeTracker) getNewRequires(
 
 	// const foo = require('./mod');
 	if namespaceLikeImport != nil {
-		declaration := c.createConstEqualsRequireDeclaration(
-			c.NodeFactory.NewIdentifier(namespaceLikeImport.name),
+		declaration := createConstEqualsRequireDeclaration(
+			changeTracker,
+			changeTracker.NodeFactory.NewIdentifier(namespaceLikeImport.name),
 			quotedModuleSpecifier,
 		)
 		statements = append(statements, declaration)
@@ -1498,21 +1504,21 @@ func (c *changeTracker) getNewRequires(
 	return statements
 }
 
-func (c *changeTracker) createConstEqualsRequireDeclaration(name *ast.Node, quotedModuleSpecifier *ast.Node) *ast.Statement {
-	return c.NodeFactory.NewVariableStatement(
+func createConstEqualsRequireDeclaration(changeTracker *change.Tracker, name *ast.Node, quotedModuleSpecifier *ast.Node) *ast.Statement {
+	return changeTracker.NodeFactory.NewVariableStatement(
 		/*modifiers*/ nil,
-		c.NodeFactory.NewVariableDeclarationList(
+		changeTracker.NodeFactory.NewVariableDeclarationList(
 			ast.NodeFlagsConst,
-			c.NodeFactory.NewNodeList([]*ast.Node{
-				c.NodeFactory.NewVariableDeclaration(
+			changeTracker.NodeFactory.NewNodeList([]*ast.Node{
+				changeTracker.NodeFactory.NewVariableDeclaration(
 					name,
 					/*exclamationToken*/ nil,
 					/*type*/ nil,
-					c.NodeFactory.NewCallExpression(
-						c.NodeFactory.NewIdentifier("require"),
+					changeTracker.NodeFactory.NewCallExpression(
+						changeTracker.NodeFactory.NewIdentifier("require"),
 						/*questionDotToken*/ nil,
 						/*typeArguments*/ nil,
-						c.NodeFactory.NewNodeList([]*ast.Node{quotedModuleSpecifier}),
+						changeTracker.NodeFactory.NewNodeList([]*ast.Node{quotedModuleSpecifier}),
 						ast.NodeFlagsNone,
 					),
 				),
@@ -1534,4 +1540,8 @@ func getModuleSpecifierText(promotedDeclaration *ast.ImportDeclaration) string {
 		return importEqualsDeclaration.ModuleReference.Text()
 	}
 	return promotedDeclaration.Parent.ModuleSpecifier().Text()
+}
+
+func ptrTo[T any](v T) *T {
+	return &v
 }

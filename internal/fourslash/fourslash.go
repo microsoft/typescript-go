@@ -16,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -41,7 +42,7 @@ type FourslashTest struct {
 	rangesByText *collections.MultiMap[string, *RangeMarker]
 
 	scriptInfos map[string]*scriptInfo
-	converters  *ls.Converters
+	converters  *lsconv.Converters
 
 	userPreferences      *ls.UserPreferences
 	currentCaretPosition lsproto.Position
@@ -53,7 +54,7 @@ type FourslashTest struct {
 type scriptInfo struct {
 	fileName string
 	content  string
-	lineMap  *ls.LSPLineMap
+	lineMap  *lsconv.LSPLineMap
 	version  int32
 }
 
@@ -61,14 +62,14 @@ func newScriptInfo(fileName string, content string) *scriptInfo {
 	return &scriptInfo{
 		fileName: fileName,
 		content:  content,
-		lineMap:  ls.ComputeLSPLineStarts(content),
+		lineMap:  lsconv.ComputeLSPLineStarts(content),
 		version:  1,
 	}
 }
 
 func (s *scriptInfo) editContent(start int, end int, newText string) {
 	s.content = s.content[:start] + newText + s.content[end:]
-	s.lineMap = ls.ComputeLSPLineStarts(s.content)
+	s.lineMap = lsconv.ComputeLSPLineStarts(s.content)
 	s.version++
 }
 
@@ -172,7 +173,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		}
 	}()
 
-	converters := ls.NewConverters(lsproto.PositionEncodingKindUTF8, func(fileName string) *ls.LSPLineMap {
+	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(fileName string) *lsconv.LSPLineMap {
 		scriptInfo, ok := scriptInfos[fileName]
 		if !ok {
 			return nil
@@ -486,7 +487,7 @@ func (f *FourslashTest) openFile(t *testing.T, filename string) {
 	f.activeFilename = filename
 	sendNotification(t, f, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
 		TextDocument: &lsproto.TextDocumentItem{
-			Uri:        ls.FileNameToDocumentURI(filename),
+			Uri:        lsconv.FileNameToDocumentURI(filename),
 			LanguageId: getLanguageKind(filename),
 			Text:       script.content,
 		},
@@ -627,7 +628,7 @@ func (f *FourslashTest) getCompletions(t *testing.T, userPreferences *ls.UserPre
 	prefix := f.getCurrentPositionPrefix()
 	params := &lsproto.CompletionParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
-			Uri: ls.FileNameToDocumentURI(f.activeFilename),
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 		},
 		Position: f.currentCaretPosition,
 		Context:  &lsproto.CompletionContext{},
@@ -988,7 +989,7 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 
 		params := &lsproto.ReferenceParams{
 			TextDocument: lsproto.TextDocumentIdentifier{
-				Uri: ls.FileNameToDocumentURI(f.activeFilename),
+				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 			},
 			Position: f.currentCaretPosition,
 			Context:  &lsproto.ReferenceContext{},
@@ -1029,7 +1030,7 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 
 		params := &lsproto.DefinitionParams{
 			TextDocument: lsproto.TextDocumentIdentifier{
-				Uri: ls.FileNameToDocumentURI(f.activeFilename),
+				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 			},
 			Position: f.currentCaretPosition,
 		}
@@ -1078,7 +1079,7 @@ func (f *FourslashTest) VerifyBaselineGoToTypeDefinition(
 
 		params := &lsproto.TypeDefinitionParams{
 			TextDocument: lsproto.TextDocumentIdentifier{
-				Uri: ls.FileNameToDocumentURI(f.activeFilename),
+				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 			},
 			Position: f.currentCaretPosition,
 		}
@@ -1123,7 +1124,7 @@ func (f *FourslashTest) VerifyBaselineHover(t *testing.T) {
 
 		params := &lsproto.HoverParams{
 			TextDocument: lsproto.TextDocumentIdentifier{
-				Uri: ls.FileNameToDocumentURI(f.activeFilename),
+				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 			},
 			Position: marker.LSPosition,
 		}
@@ -1194,7 +1195,7 @@ func (f *FourslashTest) VerifyBaselineSignatureHelp(t *testing.T) {
 
 		params := &lsproto.SignatureHelpParams{
 			TextDocument: lsproto.TextDocumentIdentifier{
-				Uri: ls.FileNameToDocumentURI(f.activeFilename),
+				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 			},
 			Position: marker.LSPosition,
 		}
@@ -1315,7 +1316,7 @@ func (f *FourslashTest) VerifyBaselineSelectionRanges(t *testing.T) {
 		// Get selection ranges at this marker
 		params := &lsproto.SelectionRangeParams{
 			TextDocument: lsproto.TextDocumentIdentifier{
-				Uri: ls.FileNameToDocumentURI(marker.FileName()),
+				Uri: lsconv.FileNameToDocumentURI(marker.FileName()),
 			},
 			Positions: []lsproto.Position{marker.LSPosition},
 		}
@@ -1473,7 +1474,7 @@ func (f *FourslashTest) verifyBaselineDocumentHighlights(
 
 		params := &lsproto.DocumentHighlightParams{
 			TextDocument: lsproto.TextDocumentIdentifier{
-				Uri: ls.FileNameToDocumentURI(f.activeFilename),
+				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 			},
 			Position: f.currentCaretPosition,
 		}
@@ -1501,7 +1502,7 @@ func (f *FourslashTest) verifyBaselineDocumentHighlights(
 		var spans []lsproto.Location
 		for _, h := range *highlights {
 			spans = append(spans, lsproto.Location{
-				Uri:   ls.FileNameToDocumentURI(f.activeFilename),
+				Uri:   lsconv.FileNameToDocumentURI(f.activeFilename),
 				Range: h.Range,
 			})
 		}
@@ -1700,7 +1701,7 @@ func (f *FourslashTest) editScript(t *testing.T, fileName string, start int, end
 	}
 	sendNotification(t, f, lsproto.TextDocumentDidChangeInfo, &lsproto.DidChangeTextDocumentParams{
 		TextDocument: lsproto.VersionedTextDocumentIdentifier{
-			Uri:     ls.FileNameToDocumentURI(fileName),
+			Uri:     lsconv.FileNameToDocumentURI(fileName),
 			Version: script.version,
 		},
 		ContentChanges: []lsproto.TextDocumentContentChangePartialOrWholeDocument{
@@ -1729,7 +1730,7 @@ func (f *FourslashTest) VerifyQuickInfoAt(t *testing.T, marker string, expectedT
 func (f *FourslashTest) getQuickInfoAtCurrentPosition(t *testing.T) *lsproto.Hover {
 	params := &lsproto.HoverParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
-			Uri: ls.FileNameToDocumentURI(f.activeFilename),
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 		},
 		Position: f.currentCaretPosition,
 	}
@@ -1839,7 +1840,7 @@ func (f *FourslashTest) verifySignatureHelp(
 	prefix := f.getCurrentPositionPrefix()
 	params := &lsproto.SignatureHelpParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
-			Uri: ls.FileNameToDocumentURI(f.activeFilename),
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 		},
 		Position: f.currentCaretPosition,
 		Context:  context,
@@ -1881,7 +1882,7 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 		f.GoToMarker(t, markerName)
 		params := &lsproto.CompletionParams{
 			TextDocument: lsproto.TextDocumentIdentifier{
-				Uri: ls.FileNameToDocumentURI(f.activeFilename),
+				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 			},
 			Position: f.currentCaretPosition,
 			Context:  &lsproto.CompletionContext{},
@@ -1912,7 +1913,7 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 		)))
 
 		currentFile := newScriptInfo(f.activeFilename, fileContent)
-		converters := ls.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *ls.LSPLineMap {
+		converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *lsconv.LSPLineMap {
 			return currentFile.lineMap
 		})
 		var list []*lsproto.CompletionItem
@@ -1959,7 +1960,7 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 			// }
 			// allChanges := append(allChanges, completionChange)
 			// sorted from back-of-file-most to front-of-file-most
-			slices.SortFunc(allChanges, func(a, b *lsproto.TextEdit) int { return ls.ComparePositions(b.Range.Start, a.Range.Start) })
+			slices.SortFunc(allChanges, func(a, b *lsproto.TextEdit) int { return lsproto.ComparePositions(b.Range.Start, a.Range.Start) })
 			newFileContent := fileContent
 			for _, change := range allChanges {
 				newFileContent = newFileContent[:converters.LineAndCharacterToPosition(currentFile, change.Range.Start)] + change.NewText + newFileContent[converters.LineAndCharacterToPosition(currentFile, change.Range.End):]
@@ -2009,7 +2010,7 @@ func (f *FourslashTest) verifyBaselineRename(
 		// !!! set preferences
 		params := &lsproto.RenameParams{
 			TextDocument: lsproto.TextDocumentIdentifier{
-				Uri: ls.FileNameToDocumentURI(f.activeFilename),
+				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 			},
 			Position: f.currentCaretPosition,
 			NewName:  "?",
@@ -2090,7 +2091,7 @@ func (f *FourslashTest) VerifyRenameSucceeded(t *testing.T, preferences *ls.User
 	// !!! set preferences
 	params := &lsproto.RenameParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
-			Uri: ls.FileNameToDocumentURI(f.activeFilename),
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 		},
 		Position: f.currentCaretPosition,
 		NewName:  "?",
@@ -2114,7 +2115,7 @@ func (f *FourslashTest) VerifyRenameFailed(t *testing.T, preferences *ls.UserPre
 	// !!! set preferences
 	params := &lsproto.RenameParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
-			Uri: ls.FileNameToDocumentURI(f.activeFilename),
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
 		},
 		Position: f.currentCaretPosition,
 		NewName:  "?",
