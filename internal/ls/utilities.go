@@ -402,43 +402,12 @@ func (l *LanguageService) createLspPosition(position int, file *ast.SourceFile) 
 
 func quote(file *ast.SourceFile, preferences *lsutil.UserPreferences, text string) string {
 	// Editors can pass in undefined or empty string - we want to infer the preference in those cases.
-	quotePreference := getQuotePreference(file, preferences)
+	quotePreference := lsutil.GetQuotePreference(file, preferences)
 	quoted, _ := core.StringifyJson(text, "" /*prefix*/, "" /*indent*/)
-	if quotePreference == quotePreferenceSingle {
+	if quotePreference == lsutil.QuotePreferenceSingle {
 		quoted = quoteReplacer.Replace(stringutil.StripQuotes(quoted))
 	}
 	return quoted
-}
-
-type quotePreference int
-
-const (
-	quotePreferenceSingle quotePreference = iota
-	quotePreferenceDouble
-)
-
-func quotePreferenceFromString(str *ast.StringLiteral) quotePreference {
-	if str.TokenFlags&ast.TokenFlagsSingleQuote != 0 {
-		return quotePreferenceSingle
-	}
-	return quotePreferenceDouble
-}
-
-func getQuotePreference(sourceFile *ast.SourceFile, preferences *lsutil.UserPreferences) quotePreference {
-	if preferences.QuotePreference != "" && preferences.QuotePreference != "auto" {
-		if preferences.QuotePreference == "single" {
-			return quotePreferenceSingle
-		}
-		return quotePreferenceDouble
-	}
-	// ignore synthetic import added when importHelpers: true
-	firstModuleSpecifier := core.Find(sourceFile.Imports(), func(n *ast.Node) bool {
-		return ast.IsStringLiteral(n) && !ast.NodeIsSynthesized(n.Parent)
-	})
-	if firstModuleSpecifier != nil {
-		return quotePreferenceFromString(firstModuleSpecifier.AsStringLiteral())
-	}
-	return quotePreferenceDouble
 }
 
 func isNonContextualKeyword(token ast.Kind) bool {

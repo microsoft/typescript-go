@@ -6,21 +6,19 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/stringutil"
-	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 func getModuleIDOfModuleSymbol(symbol *ast.Symbol) ModuleID {
 	if !symbol.IsExternalModule() {
 		panic("symbol is not an external module")
 	}
-	if !tspath.IsExternalModuleNameRelative(symbol.Name) {
+	if sourceFile := ast.GetSourceFileOfModule(symbol); sourceFile != nil {
+		return ModuleID(sourceFile.Path())
+	}
+	if ast.IsModuleWithStringLiteralName(symbol.ValueDeclaration) {
 		return ModuleID(stringutil.StripQuotes(symbol.Name))
 	}
-	sourceFile := ast.GetSourceFileOfModule(symbol)
-	if sourceFile == nil {
-		panic("could not get source file of module symbol. Did you mean to pass in a merged symbol?")
-	}
-	return ModuleID(sourceFile.Path())
+	panic("could not determine module ID of module symbol")
 }
 
 // wordIndices splits an identifier into its constituent words based on camelCase and snake_case conventions

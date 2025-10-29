@@ -5099,7 +5099,10 @@ func (l *LanguageService) getCompletionItemDetails(
 	}
 
 	if itemData.AutoImport2 != nil {
-
+		edits, description := itemData.AutoImport2.Edits(ctx, file, program.Options(), l.FormatOptions(), l.converters, l.UserPreferences())
+		item.AdditionalTextEdits = &edits
+		item.Detail = strPtrTo(description)
+		return item
 	}
 
 	// Compute all the completion symbols again.
@@ -5944,9 +5947,9 @@ func getJSDocParamAnnotation(
 				inferredType := typeChecker.GetTypeAtLocation(initializer.Parent)
 				if inferredType.Flags()&(checker.TypeFlagsAny|checker.TypeFlagsVoid) == 0 {
 					file := ast.GetSourceFileOfNode(initializer)
-					quotePreference := getQuotePreference(file, preferences)
+					quotePreference := lsutil.GetQuotePreference(file, preferences)
 					builderFlags := core.IfElse(
-						quotePreference == quotePreferenceSingle,
+						quotePreference == lsutil.QuotePreferenceSingle,
 						nodebuilder.FlagsUseSingleQuotesForStringLiteralType,
 						nodebuilder.FlagsNone,
 					)

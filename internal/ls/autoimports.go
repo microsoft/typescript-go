@@ -1495,7 +1495,7 @@ func (l *LanguageService) codeActionForFixWorker(
 		if fix.useRequire {
 			declarations = getNewRequires(changeTracker, fix.moduleSpecifier, defaultImport, namedImports, namespaceLikeImport, l.GetProgram().Options())
 		} else {
-			declarations = l.getNewImports(changeTracker, fix.moduleSpecifier, getQuotePreference(sourceFile, l.UserPreferences()), defaultImport, namedImports, namespaceLikeImport, l.GetProgram().Options())
+			declarations = l.getNewImports(changeTracker, fix.moduleSpecifier, lsutil.GetQuotePreference(sourceFile, l.UserPreferences()), defaultImport, namedImports, namespaceLikeImport, l.GetProgram().Options())
 		}
 
 		l.insertImports(

@@ -270,14 +270,14 @@ func makeImport(ct *change.Tracker, defaultImport *ast.IdentifierNode, namedImpo
 func (ls *LanguageService) getNewImports(
 	ct *change.Tracker,
 	moduleSpecifier string,
-	quotePreference quotePreference,
+	quotePreference lsutil.QuotePreference,
 	defaultImport *Import,
 	namedImports []*Import,
 	namespaceLikeImport *Import, // { importKind: ImportKind.CommonJS | ImportKind.Namespace; }
 	compilerOptions *core.CompilerOptions,
 ) []*ast.Statement {
 	moduleSpecifierStringLiteral := ct.NodeFactory.NewStringLiteral(moduleSpecifier)
-	if quotePreference == quotePreferenceSingle {
+	if quotePreference == lsutil.QuotePreferenceSingle {
 		moduleSpecifierStringLiteral.AsStringLiteral().TokenFlags |= ast.TokenFlagsSingleQuote
 	}
 	var statements []*ast.Statement // []AnyImportSyntax

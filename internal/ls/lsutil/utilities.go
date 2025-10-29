@@ -81,3 +81,27 @@ func ShouldUseUriStyleNodeCoreModules(file *ast.SourceFile, program *compiler.Pr
 
 	return program.UsesUriStyleNodeCoreModules()
 }
+
+func QuotePreferenceFromString(str *ast.StringLiteral) QuotePreference {
+	if str.TokenFlags&ast.TokenFlagsSingleQuote != 0 {
+		return QuotePreferenceSingle
+	}
+	return QuotePreferenceDouble
+}
+
+func GetQuotePreference(sourceFile *ast.SourceFile, preferences *UserPreferences) QuotePreference {
+	if preferences.QuotePreference != "" && preferences.QuotePreference != "auto" {
+		if preferences.QuotePreference == "single" {
+			return QuotePreferenceSingle
+		}
+		return QuotePreferenceDouble
+	}
+	// ignore synthetic import added when importHelpers: true
+	firstModuleSpecifier := core.Find(sourceFile.Imports(), func(n *ast.Node) bool {
+		return ast.IsStringLiteral(n) && !ast.NodeIsSynthesized(n.Parent)
+	})
+	if firstModuleSpecifier != nil {
+		return QuotePreferenceFromString(firstModuleSpecifier.AsStringLiteral())
+	}
+	return QuotePreferenceDouble
+}
