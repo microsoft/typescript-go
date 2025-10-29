@@ -27,8 +27,6 @@ type ProjectCollection struct {
 	// apiOpenedProjects is the set of projects that should be kept open for
 	// API clients.
 	apiOpenedProjects map[tspath.Path]struct{}
-	// Files that are open
-	openedFiles map[tspath.Path]struct{}
 }
 
 func (c *ProjectCollection) ConfigFileRegistry() *ConfigFileRegistry { return c.configFileRegistry }
@@ -231,7 +229,6 @@ func (c *ProjectCollection) clone() *ProjectCollection {
 		configuredProjects:  c.configuredProjects,
 		inferredProject:     c.inferredProject,
 		fileDefaultProjects: c.fileDefaultProjects,
-		openedFiles:         c.openedFiles,
 	}
 }
 

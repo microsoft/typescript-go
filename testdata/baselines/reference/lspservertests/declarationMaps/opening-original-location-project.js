@@ -85,8 +85,6 @@ Config::
     RetainingProjects: *modified*
       /user/username/projects/a/tsconfig.json  *new*
       /user/username/projects/b/tsconfig.json  
-    RetainingOpenFiles: *modified*
-      /user/username/projects/a/a.ts  *new*
   [/user/username/projects/b/tsconfig.json] 
     RetainingProjects:
       /user/username/projects/b/tsconfig.json  

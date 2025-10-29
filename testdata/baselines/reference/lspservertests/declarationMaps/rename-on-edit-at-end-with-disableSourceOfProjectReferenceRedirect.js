@@ -293,8 +293,6 @@ Config::
     RetainingProjects:
       /user/username/projects/myproject/main/tsconfig.json  
       /user/username/projects/myproject/tsconfig.json       
-    RetainingOpenFiles:
-      /user/username/projects/myproject/main/main.ts  
   [/user/username/projects/myproject/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/myproject/tsconfig.json  

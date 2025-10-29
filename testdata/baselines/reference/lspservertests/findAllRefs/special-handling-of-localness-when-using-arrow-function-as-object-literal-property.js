@@ -112,8 +112,6 @@ Config::
     RetainingProjects: *modified*
       /user/username/projects/solution/api/tsconfig.json     
       /user/username/projects/solution/shared/tsconfig.json  *new*
-    RetainingOpenFiles: *modified*
-      /user/username/projects/solution/shared/src/index.ts  *new*
 // === /user/username/projects/solution/api/src/server.ts ===
 // import * as shared from "../../shared/dist"
 // shared.foo./*FIND ALL REFS*/[|bar|]();

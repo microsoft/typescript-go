@@ -338,8 +338,6 @@ Config::
     RetainingProjects:
       /user/username/projects/myproject/main/tsconfig.json  
       /user/username/projects/myproject/tsconfig.json       
-    RetainingOpenFiles:
-      /user/username/projects/myproject/main/main.ts  
   [/user/username/projects/myproject/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/myproject/tsconfig.json  
@@ -449,12 +447,7 @@ Open Files::
     /user/username/projects/random/tsconfig.json  (default) 
 Config::
   [/user/username/projects/myproject/dependency/tsconfig.json] *deleted*
-  [/user/username/projects/myproject/main/tsconfig.json] *modified*
-    RetainingProjects: *modified*
-      /user/username/projects/myproject/main/tsconfig.json  *deleted*
-      /user/username/projects/myproject/tsconfig.json       *deleted*
-    RetainingOpenFiles:
-      /user/username/projects/myproject/main/main.ts  
+  [/user/username/projects/myproject/main/tsconfig.json] *deleted*
   [/user/username/projects/myproject/tsconfig.json] *deleted*
   [/user/username/projects/random/tsconfig.json] 
     RetainingProjects:

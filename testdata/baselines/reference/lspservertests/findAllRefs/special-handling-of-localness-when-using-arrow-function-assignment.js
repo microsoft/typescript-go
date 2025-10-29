@@ -121,8 +121,6 @@ Config::
       /user/username/projects/solution/app/tsconfig.json     *new*
       /user/username/projects/solution/shared/tsconfig.json  *new*
       /user/username/projects/solution/tsconfig.json         *new*
-    RetainingOpenFiles: *modified*
-      /user/username/projects/solution/shared/src/index.ts  *new*
   [/user/username/projects/solution/tsconfig.json] *new*
     RetainingProjects:
       /user/username/projects/solution/tsconfig.json  
