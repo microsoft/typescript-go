@@ -30,6 +30,7 @@ type BaselineLocationsOptions struct {
 
 	StartMarkerPrefix func(span lsproto.Location) *string
 	EndMarkerSuffix   func(span lsproto.Location) *string
+	GetLocationData   func(span lsproto.Location) string
 
 	AdditionalLocation *lsproto.Location
 
@@ -76,6 +77,94 @@ func GetBaselineForRename(
 					return ptrTo(prefixAndSuffix[1] + "/*END SUFFIX*/")
 				}
 				return nil
+			},
+			OpenFiles: options.OpenFiles,
+		},
+	)
+}
+
+func symbolKindToString(kind lsproto.SymbolKind) string {
+	switch kind {
+	case lsproto.SymbolKindFile:
+		return "file"
+	case lsproto.SymbolKindModule:
+		return "module"
+	case lsproto.SymbolKindNamespace:
+		return "namespace"
+	case lsproto.SymbolKindPackage:
+		return "package"
+	case lsproto.SymbolKindClass:
+		return "class"
+	case lsproto.SymbolKindMethod:
+		return "method"
+	case lsproto.SymbolKindProperty:
+		return "property"
+	case lsproto.SymbolKindField:
+		return "field"
+	case lsproto.SymbolKindConstructor:
+		return "constructor"
+	case lsproto.SymbolKindEnum:
+		return "enum"
+	case lsproto.SymbolKindInterface:
+		return "interface"
+	case lsproto.SymbolKindFunction:
+		return "function"
+	case lsproto.SymbolKindVariable:
+		return "variable"
+	case lsproto.SymbolKindConstant:
+		return "constant"
+	case lsproto.SymbolKindString:
+		return "string"
+	case lsproto.SymbolKindNumber:
+		return "number"
+	case lsproto.SymbolKindBoolean:
+		return "boolean"
+	case lsproto.SymbolKindArray:
+		return "array"
+	case lsproto.SymbolKindObject:
+		return "object"
+	case lsproto.SymbolKindKey:
+		return "key"
+	case lsproto.SymbolKindNull:
+		return "null"
+	case lsproto.SymbolKindEnumMember:
+		return "enumMember"
+	case lsproto.SymbolKindStruct:
+		return "struct"
+	case lsproto.SymbolKindEvent:
+		return "event"
+	case lsproto.SymbolKindOperator:
+		return "operator"
+	case lsproto.SymbolKindTypeParameter:
+		return "typeParameter"
+	default:
+		return "unknown"
+	}
+}
+
+func GetBaselineForWorkspaceSymbol(
+	fs vfs.FS,
+	result lsproto.SymbolInformationsOrWorkspaceSymbolsOrNull,
+	options BaselineLocationsOptions,
+) string {
+	locationToText := map[lsproto.Location]*lsproto.SymbolInformation{}
+	fileToRange := collections.MultiMap[lsproto.DocumentUri, lsproto.Range]{}
+	var symbolInformations []*lsproto.SymbolInformation
+	if result.SymbolInformations != nil {
+		symbolInformations = *result.SymbolInformations
+	}
+	for _, symbol := range symbolInformations {
+		uri := symbol.Location.Uri
+		fileToRange.Add(uri, symbol.Location.Range)
+		locationToText[symbol.Location] = symbol
+	}
+	return getBaselineForGroupedLocationsWithFileContents(
+		fs,
+		&fileToRange,
+		BaselineLocationsOptions{
+			GetLocationData: func(span lsproto.Location) string {
+				symbol := locationToText[span]
+				return fmt.Sprintf("{| name: %s, kind: %s |}", symbol.Name, symbolKindToString(symbol.Kind))
 			},
 			OpenFiles: options.OpenFiles,
 		},
@@ -211,8 +300,12 @@ func getBaselineContentForFile(
 
 	for _, span := range spansInFile {
 		textSpanIndex := len(details)
+		startMarker := "[|"
+		if options.GetLocationData != nil {
+			startMarker += options.GetLocationData(lsproto.Location{Uri: uri, Range: span})
+		}
 		details = append(details,
-			&baselineDetail{pos: span.Start, positionMarker: "[|", span: &span, kind: "textStart"},
+			&baselineDetail{pos: span.Start, positionMarker: startMarker, span: &span, kind: "textStart"},
 			&baselineDetail{pos: span.End, positionMarker: core.OrElse(options.EndMarker, "|]"), span: &span, kind: "textEnd"},
 		)
 
