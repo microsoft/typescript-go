@@ -469,7 +469,7 @@ func (l *LanguageService) GetNonLocalDefinition(ctx context.Context, entry *Symb
 	defer done()
 	emitResolver := checker.GetEmitResolver()
 	for _, d := range entry.definition.symbol.Declarations {
-		if emitResolver.IsDeclarationVisible(d) {
+		if isDefinitionVisible(emitResolver, d) {
 			file, startPos := getFileAndStartPosFromDeclaration(d)
 			fileName := file.FileName()
 			return &NonLocalDefinition{
@@ -501,6 +501,48 @@ func (l *LanguageService) GetNonLocalDefinition(ctx context.Context, entry *Symb
 		}
 	}
 	return nil
+}
+
+// This is special handling to determine if we should load up more projects and find location in other projects
+// By default arrows (and such other ast kinds) are not visible as declaration emitter doesnt need them
+// But we want to handle them specially so that they are visible if their parent is visible
+func isDefinitionVisible(emitResolver *checker.EmitResolver, declaration *ast.Node) bool {
+	if emitResolver.IsDeclarationVisible(declaration) {
+		return true
+	}
+	if declaration.Parent == nil {
+		return false
+	}
+
+	// Variable initializers are visible if variable is visible
+	if ast.HasInitializer(declaration.Parent) && declaration.Parent.Initializer() == declaration {
+		return isDefinitionVisible(emitResolver, declaration.Parent)
+	}
+
+	// Handle some exceptions here like arrow function, members of class and object literal expression which are technically not visible but we want the definition to be determined by its parent
+	switch declaration.Kind {
+	case ast.KindPropertyDeclaration,
+		ast.KindGetAccessor,
+		ast.KindSetAccessor,
+		ast.KindMethodDeclaration:
+		// Private/protected properties/methods are not visible
+		if ast.HasModifier(declaration, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifier(declaration.Name()) {
+			return false
+		}
+		// Public properties/methods are visible if its parents are visible, so:
+		// falls through
+		fallthrough
+	case ast.KindConstructor,
+		ast.KindPropertyAssignment,
+		ast.KindShorthandPropertyAssignment,
+		ast.KindObjectLiteralExpression,
+		ast.KindClassExpression,
+		ast.KindArrowFunction,
+		ast.KindFunctionExpression:
+		return isDefinitionVisible(emitResolver, declaration.Parent)
+	default:
+		return false
+	}
 }
 
 func (l *LanguageService) ForEachOriginalDefinitionLocation(
