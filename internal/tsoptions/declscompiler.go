@@ -237,7 +237,7 @@ var commonOptionsWithBuild = []*CommandLineOption{
 		Name:                    "checkers",
 		Kind:                    CommandLineOptionTypeNumber,
 		Category:                diagnostics.Command_line_Options,
-		Description:             diagnostics.Set_the_number_of_checkers_per_program,
+		Description:             diagnostics.Set_the_number_of_checkers_per_project,
 		DefaultValueDescription: diagnostics.X_4_unless_singleThreaded_is_passed,
 	},
 }

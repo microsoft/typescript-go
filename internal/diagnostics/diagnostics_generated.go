@@ -4256,6 +4256,6 @@ var Run_in_single_threaded_mode = &Message{code: 100001, category: CategoryMessa
 
 var Generate_pprof_CPU_Slashmemory_profiles_to_the_given_directory = &Message{code: 100002, category: CategoryMessage, key: "Generate_pprof_CPU_Slashmemory_profiles_to_the_given_directory_100002", text: "Generate pprof CPU/memory profiles to the given directory."}
 
-var Set_the_number_of_checkers_per_program = &Message{code: 100003, category: CategoryMessage, key: "Set_the_number_of_checkers_per_program_100003", text: "Set the number of checkers per program."}
+var Set_the_number_of_checkers_per_project = &Message{code: 100003, category: CategoryMessage, key: "Set_the_number_of_checkers_per_project_100003", text: "Set the number of checkers per project."}
 
 var X_4_unless_singleThreaded_is_passed = &Message{code: 100004, category: CategoryMessage, key: "4_unless_singleThreaded_is_passed_100004", text: "4, unless --singleThreaded is passed."}
