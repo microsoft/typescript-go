@@ -18,7 +18,7 @@ Show all compiler options.
 Build one or more projects and their dependencies, if out of date
 
 [94m--checkers[39m
-Set the number of checkers per program.
+Set the number of checkers per project.
 
 [94m--help, -h[39m
 Print this message.
