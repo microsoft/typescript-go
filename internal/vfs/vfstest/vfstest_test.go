@@ -285,6 +285,7 @@ func TestStress(t *testing.T) {
 			}
 		})
 	}
+	wg.Wait()
 }
 
 func TestParentDirFile(t *testing.T) {
