@@ -251,7 +251,7 @@ func (p *Program) initCheckerPool() {
 		if p.SingleThreaded() {
 			checkers = 1
 		} else if p.Options().Checkers != nil {
-			checkers = max(*p.Options().Checkers, 1)
+			checkers = min(max(*p.Options().Checkers, 1), 256)
 		}
 		p.checkerPool = newCheckerPool(checkers, p)
 	}
