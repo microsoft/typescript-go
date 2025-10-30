@@ -224,6 +224,37 @@ func getDeclarationMapTestCasesForMaps() []*lspServerTest {
 				server.openFile("/home/src/projects/project/dummy/dummy.ts", lsproto.LanguageKindTypeScript)
 			},
 		},
+		{
+			subScenario: "workspace symbols",
+			files: func() map[string]any {
+				allFiles := files()
+				allFiles["/home/src/projects/project/user/user.ts"] = stringtestutil.Dedent(`
+					import * as a from "../a/a";
+					import * as b from "../b/b";
+					export function fnUser() {
+						a.fnA();
+						b.fnB();
+						a.instanceA;
+					}`)
+				allFiles["/home/src/projects/project/user/tsconfig.json"] = stringtestutil.Dedent(`
+					{
+						"references": [{ "path": "../a" }, { "path": "../b" }]
+					}`)
+				allFiles["/home/src/projects/project/b/b.ts"] = stringtestutil.Dedent(`
+					export function fnB() {}`)
+				allFiles["/home/src/projects/project/b/c.ts"] = stringtestutil.Dedent(`
+					export function fnC() {}`)
+				return allFiles
+			},
+			test: func(server *testServer) {
+				userTs := "/home/src/projects/project/user/user.ts"
+				server.openFile(userTs, lsproto.LanguageKindTypeScript)
+				server.baselineWorkspaceSymbol("fn")
+				// Open temp file and verify all projects alive
+				server.closeFile(userTs)
+				server.openFile("/home/src/projects/project/dummy/dummy.ts", lsproto.LanguageKindTypeScript)
+			},
+		},
 	}
 }
 

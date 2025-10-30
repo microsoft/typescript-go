@@ -228,6 +228,16 @@ func (s *testServer) baselineRename(fileName string, position lsproto.Position) 
 	}) + "\n")
 }
 
+func (s *testServer) baselineWorkspaceSymbol(query string) {
+	s.t.Helper()
+	result := sendRequest(s.t, s, lsproto.WorkspaceSymbolInfo, &lsproto.WorkspaceSymbolParams{
+		Query: query,
+	})
+	s.baseline.WriteString(lsptestutil.GetBaselineForWorkspaceSymbol(s.server.FS, result, lsptestutil.BaselineLocationsOptions{
+		OpenFiles: s.openFiles,
+	}) + "\n")
+}
+
 type marker struct {
 	fileName string
 	position lsproto.Position
