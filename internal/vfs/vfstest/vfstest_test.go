@@ -274,10 +274,7 @@ func TestStress(t *testing.T) {
 
 	var wg sync.WaitGroup
 	for range runtime.GOMAXPROCS(0) {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-
+		wg.Go(func() {
 			randomOps := slices.Clone(ops)
 			rand.Shuffle(len(randomOps), func(i, j int) {
 				randomOps[i], randomOps[j] = randomOps[j], randomOps[i]
@@ -286,7 +283,7 @@ func TestStress(t *testing.T) {
 			for i := range 10000 {
 				randomOps[i%len(randomOps)]()
 			}
-		}()
+		})
 	}
 }
 
