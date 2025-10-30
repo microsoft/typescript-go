@@ -2176,3 +2176,28 @@ func (f *FourslashTest) verifyBaselines(t *testing.T) {
 type anyTextEdits *[]*lsproto.TextEdit
 
 var AnyTextEdits = anyTextEdits(nil)
+
+// SendDefinitionRequestAtPosition sends a textDocument/definition request
+// with the specified line and character position without bounds checking.
+// This is useful for testing error handling when the client sends invalid positions.
+// Returns the response message, error code, and error message if the request resulted in an error.
+func (f *FourslashTest) SendDefinitionRequestAtPosition(t *testing.T, line uint32, character uint32) (*lsproto.Message, int32, string) {
+	params := &lsproto.DefinitionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: lsproto.Position{
+			Line:      line,
+			Character: character,
+		},
+	}
+
+	resMsg, _, _ := sendRequest(t, f, lsproto.TextDocumentDefinitionInfo, params)
+	if resMsg != nil && resMsg.Kind == lsproto.MessageKindResponse {
+		resp := resMsg.AsResponse()
+		if resp.Error != nil {
+			return resMsg, resp.Error.Code, resp.Error.Message
+		}
+	}
+	return resMsg, 0, ""
+}
