@@ -27,12 +27,12 @@ func (l *LanguageService) ProvideDiagnostics(ctx context.Context, uri lsproto.Do
 
 	return lsproto.RelatedFullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{
 		FullDocumentDiagnosticReport: &lsproto.RelatedFullDocumentDiagnosticReport{
-			Items: toLSPDiagnostics(l.converters, clientOptions, diagnostics...),
+			Items: l.toLSPDiagnostics(clientOptions, diagnostics...),
 		},
 	}, nil
 }
 
-func toLSPDiagnostics(converters *lsconv.Converters, clientOptions *lsproto.DiagnosticClientCapabilities, diagnostics ...[]*ast.Diagnostic) []*lsproto.Diagnostic {
+func (l *LanguageService) toLSPDiagnostics(clientOptions *lsproto.DiagnosticClientCapabilities, diagnostics ...[]*ast.Diagnostic) []*lsproto.Diagnostic {
 	size := 0
 	for _, diagSlice := range diagnostics {
 		size += len(diagSlice)
@@ -40,13 +40,13 @@ func toLSPDiagnostics(converters *lsconv.Converters, clientOptions *lsproto.Diag
 	lspDiagnostics := make([]*lsproto.Diagnostic, 0, size)
 	for _, diagSlice := range diagnostics {
 		for _, diag := range diagSlice {
-			lspDiagnostics = append(lspDiagnostics, toLSPDiagnostic(converters, clientOptions, diag))
+			lspDiagnostics = append(lspDiagnostics, l.toLSPDiagnostic(clientOptions, diag))
 		}
 	}
 	return lspDiagnostics
 }
 
-func toLSPDiagnostic(converters *lsconv.Converters, clientOptions *lsproto.DiagnosticClientCapabilities, diagnostic *ast.Diagnostic) *lsproto.Diagnostic {
+func (l *LanguageService) toLSPDiagnostic(clientOptions *lsproto.DiagnosticClientCapabilities, diagnostic *ast.Diagnostic) *lsproto.Diagnostic {
 	var severity lsproto.DiagnosticSeverity
 	switch diagnostic.Category() {
 	case diagnostics.CategorySuggestion:
@@ -66,7 +66,7 @@ func toLSPDiagnostic(converters *lsconv.Converters, clientOptions *lsproto.Diagn
 			relatedInformation = append(relatedInformation, &lsproto.DiagnosticRelatedInformation{
 				Location: lsproto.Location{
 					Uri:   lsconv.FileNameToDocumentURI(related.File().FileName()),
-					Range: converters.ToLSPRange(related.File(), related.Loc()),
+					Range: l.converters.ToLSPRange(related.File(), related.Loc()),
 				},
 				Message: related.Message(),
 			})
@@ -85,7 +85,7 @@ func toLSPDiagnostic(converters *lsconv.Converters, clientOptions *lsproto.Diagn
 	}
 
 	return &lsproto.Diagnostic{
-		Range: converters.ToLSPRange(diagnostic.File(), diagnostic.Loc()),
+		Range: l.converters.ToLSPRange(diagnostic.File(), diagnostic.Loc()),
 		Code: &lsproto.IntegerOrString{
 			Integer: ptrTo(diagnostic.Code()),
 		},
@@ -111,13 +111,4 @@ func ptrToSliceIfNonEmpty[T any](s []T) *[]T {
 		return nil
 	}
 	return &s
-}
-
-func sliceContains(slice []lsproto.DiagnosticTag, value lsproto.DiagnosticTag) bool {
-	for _, v := range slice {
-		if v == value {
-			return true
-		}
-	}
-	return false
 }
