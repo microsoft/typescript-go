@@ -15,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
+	"github.com/microsoft/typescript-go/internal/vfs/zipvfs"
 )
 
 type Options struct {
@@ -380,14 +381,20 @@ func NewOrchestrator(opts Options) *Orchestrator {
 		},
 		tasks: &collections.SyncMap[tspath.Path, *buildTask]{},
 	}
+	pnpResolutionConfig := compiler.TryGetPnpResolutionConfig(orchestrator.opts.Sys.GetCurrentDirectory(), orchestrator.opts.Sys.FS())
+	fs := orchestrator.opts.Sys.FS()
+	if pnpResolutionConfig != nil {
+		fs = zipvfs.From(fs)
+	}
 	orchestrator.host = &host{
 		orchestrator: orchestrator,
 		host: compiler.NewCachedFSCompilerHost(
 			orchestrator.opts.Sys.GetCurrentDirectory(),
-			orchestrator.opts.Sys.FS(),
+			fs,
 			orchestrator.opts.Sys.DefaultLibraryPath(),
 			nil,
 			nil,
+			pnpResolutionConfig,
 		),
 		mTimes: &collections.SyncMap[tspath.Path, time.Time]{},
 	}

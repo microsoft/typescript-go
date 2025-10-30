@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/execute/incremental"
 	"github.com/microsoft/typescript-go/internal/execute/tsc"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
+	"github.com/microsoft/typescript-go/internal/vfs/zipvfs"
 )
 
 type Watcher struct {
@@ -45,7 +46,12 @@ func createWatcher(sys tsc.System, configParseResult *tsoptions.ParsedCommandLin
 }
 
 func (w *Watcher) start() {
-	w.host = compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), nil, getTraceFromSys(w.sys, w.testing))
+	pnpResolutionConfig := compiler.TryGetPnpResolutionConfig(w.sys.GetCurrentDirectory(), w.sys.FS())
+	fs := w.sys.FS()
+	if pnpResolutionConfig != nil {
+		fs = zipvfs.From(fs)
+	}
+	w.host = compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), fs, w.sys.DefaultLibraryPath(), nil, getTraceFromSys(w.sys, w.testing), pnpResolutionConfig)
 	w.program = incremental.ReadBuildInfoProgram(w.config, incremental.NewBuildInfoReader(w.host), w.host)
 
 	if w.testing == nil {
@@ -122,7 +128,12 @@ func (w *Watcher) hasErrorsInTsConfig() bool {
 		}
 		w.config = configParseResult
 	}
-	w.host = compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(w.sys, w.testing))
+	pnpResolutionConfig := compiler.TryGetPnpResolutionConfig(w.sys.GetCurrentDirectory(), w.sys.FS())
+	fs := w.sys.FS()
+	if pnpResolutionConfig != nil {
+		fs = zipvfs.From(fs)
+	}
+	w.host = compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), fs, w.sys.DefaultLibraryPath(), extendedConfigCache, getTraceFromSys(w.sys, w.testing), pnpResolutionConfig)
 	return false
 }
 
