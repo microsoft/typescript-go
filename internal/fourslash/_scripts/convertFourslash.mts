@@ -96,6 +96,10 @@ function parseFileContent(filename: string, content: string): GoTest | undefined
         }
         goTest.commands.push(...result);
     }
+    // Skip tests that have no commands (e.g., only syntactic classifications)
+    if (goTest.commands.length === 0) {
+        return undefined;
+    }
     return goTest;
 }
 
@@ -225,6 +229,8 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | SkipStatement
                     return parseRenameInfo(func.text, callExpression.arguments);
                 case "semanticClassificationsAre":
                     return parseSemanticClassificationsAre(callExpression.arguments);
+                case "syntacticClassificationsAre":
+                    return SKIP_STATEMENT;
             }
         }
         // `goTo....`
@@ -1843,8 +1849,9 @@ function generateBaselineRename({ kind, args, preferences }: VerifyBaselineRenam
 
 function generateSemanticClassifications({ format, tokens }: VerifySemanticClassificationsCmd): string {
     const tokensStr = tokens.map(t => `{Type: ${getGoStringLiteral(t.type)}, Text: ${getGoStringLiteral(t.text)}}`).join(",\n\t\t");
+    const maybeComma = tokens.length > 0 ? "," : "";
     return `f.VerifySemanticTokens(t, []fourslash.SemanticToken{
-		${tokensStr},
+		${tokensStr}${maybeComma}
 	})`;
 }
 
