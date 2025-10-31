@@ -29,6 +29,8 @@ type ProjectCollection struct {
 	apiOpenedProjects map[tspath.Path]struct{}
 }
 
+func (c *ProjectCollection) ConfigFileRegistry() *ConfigFileRegistry { return c.configFileRegistry }
+
 func (c *ProjectCollection) ConfiguredProject(path tspath.Path) *Project {
 	return c.configuredProjects[path]
 }

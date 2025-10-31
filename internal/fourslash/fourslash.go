@@ -103,7 +103,12 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	}
 	harnessutil.SetCompilerOptionsFromTestConfig(t, testData.GlobalOptions, compilerOptions, rootDir)
 	fs := bundled.WrapFS(vfstest.FromMap(testfs, true /*useCaseSensitiveFileNames*/))
-	lspTestServer := lsptestutil.NewTestLspServer(t, fs, &parseCache, compilerOptions, capabilities)
+	lspTestServer := lsptestutil.NewTestLspServer(t, &lsptestutil.TestLspServerOptions{
+		FS:                        fs,
+		ParseCache:                &parseCache,
+		OptionsForInferredProject: compilerOptions,
+		Capabilities:              capabilities,
+	})
 
 	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(fileName string) *lsconv.LSPLineMap {
 		scriptInfo, ok := scriptInfos[fileName]
@@ -297,7 +302,7 @@ func (f *FourslashTest) openFile(t *testing.T, filename string) {
 		t.Fatalf("File %s not found in test data", filename)
 	}
 	f.activeFilename = filename
-	sendNotification(t, f, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
+	lsptestutil.SendNotification(t, &f.TestLspServer, lsproto.TextDocumentDidOpenInfo, &lsproto.DidOpenTextDocumentParams{
 		TextDocument: &lsproto.TextDocumentItem{
 			Uri:        lsconv.FileNameToDocumentURI(filename),
 			LanguageId: getLanguageKind(filename),
@@ -817,9 +822,9 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 			}
 		}
 
-		f.addResultToBaseline(t, "findAllReferences", f.getBaselineForLocationsWithFileContents(*result.Locations, baselineFourslashLocationsOptions{
-			marker:     markerOrRange,
-			markerName: "/*FIND ALL REFS*/",
+		f.addResultToBaseline(t, "findAllReferences", f.getBaselineForLocationsWithFileContents(*result.Locations, lsptestutil.BaselineLocationsOptions{
+			Marker:     markerOrRange,
+			MarkerName: "/*FIND ALL REFS*/",
 		}))
 
 	}
@@ -885,10 +890,10 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 			}
 		}
 
-		f.addResultToBaseline(t, "goToDefinition", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
-			marker:             markerOrRange,
-			markerName:         "/*GOTO DEF*/",
-			additionalLocation: additionalLocation,
+		f.addResultToBaseline(t, "goToDefinition", f.getBaselineForLocationsWithFileContents(resultAsLocations, lsptestutil.BaselineLocationsOptions{
+			Marker:             markerOrRange,
+			MarkerName:         "/*GOTO DEF*/",
+			AdditionalLocation: additionalLocation,
 		}))
 	}
 }
@@ -940,9 +945,9 @@ func (f *FourslashTest) VerifyBaselineGoToTypeDefinition(
 			})
 		}
 
-		f.addResultToBaseline(t, "goToType", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
-			marker:     markerOrRange,
-			markerName: "/*GOTO TYPE*/",
+		f.addResultToBaseline(t, "goToType", f.getBaselineForLocationsWithFileContents(resultAsLocations, lsptestutil.BaselineLocationsOptions{
+			Marker:     markerOrRange,
+			MarkerName: "/*GOTO TYPE*/",
 		}))
 	}
 }
@@ -1339,9 +1344,9 @@ func (f *FourslashTest) verifyBaselineDocumentHighlights(
 		}
 
 		// Add result to baseline
-		f.addResultToBaseline(t, "documentHighlights", f.getBaselineForLocationsWithFileContents(spans, baselineFourslashLocationsOptions{
-			marker:     markerOrRange,
-			markerName: "/*HIGHLIGHTS*/",
+		f.addResultToBaseline(t, "documentHighlights", f.getBaselineForLocationsWithFileContents(spans, lsptestutil.BaselineLocationsOptions{
+			Marker:     markerOrRange,
+			MarkerName: "/*HIGHLIGHTS*/",
 		}))
 	}
 }
@@ -1526,7 +1531,7 @@ func (f *FourslashTest) editScript(t *testing.T, fileName string, start int, end
 	}
 
 	script.editContent(start, end, newText)
-	err := f.Vfs.WriteFile(fileName, script.content, false)
+	err := f.FS.WriteFile(fileName, script.content, false)
 	if err != nil {
 		panic(fmt.Sprintf("Failed to write file %s: %v", fileName, err))
 	}
@@ -1730,7 +1735,7 @@ func (f *FourslashTest) BaselineAutoImportsCompletions(t *testing.T, markerNames
 
 		f.writeToBaseline("Auto Imports", "// === Auto Imports === \n")
 
-		fileContent, ok := f.Vfs.ReadFile(f.activeFilename)
+		fileContent, ok := f.FS.ReadFile(f.activeFilename)
 		if !ok {
 			t.Fatalf(prefix+"Failed to read file %s for auto-import baseline", f.activeFilename)
 		}
@@ -1881,11 +1886,11 @@ func (f *FourslashTest) verifyBaselineRename(
 
 		baselineFileContent := f.getBaselineForGroupedLocationsWithFileContents(
 			&fileToRange,
-			baselineFourslashLocationsOptions{
-				marker:     markerOrRange,
-				markerName: "/*RENAME*/",
-				endMarker:  "RENAME|]",
-				startMarkerPrefix: func(span lsproto.Location) *string {
+			lsptestutil.BaselineLocationsOptions{
+				Marker:     markerOrRange,
+				MarkerName: "/*RENAME*/",
+				EndMarker:  "RENAME|]",
+				StartMarkerPrefix: func(span lsproto.Location) *string {
 					text := locationToText[span]
 					prefixAndSuffix := strings.Split(text, "?")
 					if prefixAndSuffix[0] != "" {
@@ -1893,7 +1898,7 @@ func (f *FourslashTest) verifyBaselineRename(
 					}
 					return nil
 				},
-				endMarkerSuffix: func(span lsproto.Location) *string {
+				EndMarkerSuffix: func(span lsproto.Location) *string {
 					text := locationToText[span]
 					prefixAndSuffix := strings.Split(text, "?")
 					if prefixAndSuffix[1] != "" {
