@@ -17,22 +17,6 @@ type SemanticToken struct {
 func (f *FourslashTest) VerifySemanticTokens(t *testing.T, expected []SemanticToken) {
 	t.Helper()
 
-	// Get capabilities for semantic tokens
-	tokenTypes := defaultTokenTypes()
-	tokenModifiers := defaultTokenModifiers()
-
-	trueVal := true
-	caps := &lsproto.SemanticTokensClientCapabilities{
-		Requests: &lsproto.ClientSemanticTokensRequestOptions{
-			Full: &lsproto.BooleanOrClientSemanticTokensRequestFullDelta{
-				Boolean: &trueVal,
-			},
-		},
-		TokenTypes:     tokenTypes,
-		TokenModifiers: tokenModifiers,
-		Formats:        []lsproto.TokenFormat{lsproto.TokenFormatRelative},
-	}
-
 	params := &lsproto.SemanticTokensParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
 			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
@@ -54,8 +38,8 @@ func (f *FourslashTest) VerifySemanticTokens(t *testing.T, expected []SemanticTo
 		t.Fatal("Expected semantic tokens but got nil")
 	}
 
-	// Decode the semantic tokens
-	actual := decodeSemanticTokens(f, result.SemanticTokens.Data, caps)
+	// Decode the semantic tokens using token types/modifiers from the test configuration
+	actual := decodeSemanticTokens(f, result.SemanticTokens.Data, f.semanticTokenTypes, f.semanticTokenModifiers)
 
 	// Compare with expected
 	if len(actual) != len(expected) {
@@ -74,7 +58,7 @@ func (f *FourslashTest) VerifySemanticTokens(t *testing.T, expected []SemanticTo
 	}
 }
 
-func decodeSemanticTokens(f *FourslashTest, data []uint32, caps *lsproto.SemanticTokensClientCapabilities) []SemanticToken {
+func decodeSemanticTokens(f *FourslashTest, data []uint32, tokenTypes, tokenModifiers []string) []SemanticToken {
 	if len(data)%5 != 0 {
 		panic(fmt.Sprintf("Invalid semantic tokens data length: %d", len(data)))
 	}
@@ -93,7 +77,7 @@ func decodeSemanticTokens(f *FourslashTest, data []uint32, caps *lsproto.Semanti
 		deltaChar := data[i+1]
 		length := data[i+2]
 		tokenTypeIdx := data[i+3]
-		tokenModifiers := data[i+4]
+		tokenModifierMask := data[i+4]
 
 		// Calculate absolute position
 		line := prevLine + deltaLine
@@ -105,21 +89,21 @@ func decodeSemanticTokens(f *FourslashTest, data []uint32, caps *lsproto.Semanti
 		}
 
 		// Get token type
-		if int(tokenTypeIdx) >= len(caps.TokenTypes) {
+		if int(tokenTypeIdx) >= len(tokenTypes) {
 			panic(fmt.Sprintf("Token type index out of range: %d", tokenTypeIdx))
 		}
-		tokenType := caps.TokenTypes[tokenTypeIdx]
+		tokenType := tokenTypes[tokenTypeIdx]
 
 		// Get modifiers
 		var modifiers []string
-		for i, mod := range caps.TokenModifiers {
-			if tokenModifiers&(1<<i) != 0 {
-				modifiers = append(modifiers, string(mod))
+		for i, mod := range tokenModifiers {
+			if tokenModifierMask&(1<<i) != 0 {
+				modifiers = append(modifiers, mod)
 			}
 		}
 
 		// Build full type string (type.modifier1.modifier2)
-		typeStr := string(tokenType)
+		typeStr := tokenType
 		if len(modifiers) > 0 {
 			typeStr = typeStr + "." + strings.Join(modifiers, ".")
 		}
@@ -149,47 +133,4 @@ func formatSemanticTokens(tokens []SemanticToken) string {
 		lines = append(lines, fmt.Sprintf("  [%d] {Type: %q, Text: %q}", i, tok.Type, tok.Text))
 	}
 	return strings.Join(lines, "\n")
-}
-
-func defaultTokenTypes() []string {
-	return []string{
-		string(lsproto.SemanticTokenTypesnamespace),
-		string(lsproto.SemanticTokenTypesclass),
-		string(lsproto.SemanticTokenTypesenum),
-		string(lsproto.SemanticTokenTypesinterface),
-		string(lsproto.SemanticTokenTypesstruct),
-		string(lsproto.SemanticTokenTypestypeParameter),
-		string(lsproto.SemanticTokenTypestype),
-		string(lsproto.SemanticTokenTypesparameter),
-		string(lsproto.SemanticTokenTypesvariable),
-		string(lsproto.SemanticTokenTypesproperty),
-		string(lsproto.SemanticTokenTypesenumMember),
-		string(lsproto.SemanticTokenTypesdecorator),
-		string(lsproto.SemanticTokenTypesevent),
-		string(lsproto.SemanticTokenTypesfunction),
-		string(lsproto.SemanticTokenTypesmethod),
-		string(lsproto.SemanticTokenTypesmacro),
-		string(lsproto.SemanticTokenTypeslabel),
-		string(lsproto.SemanticTokenTypescomment),
-		string(lsproto.SemanticTokenTypesstring),
-		string(lsproto.SemanticTokenTypeskeyword),
-		string(lsproto.SemanticTokenTypesnumber),
-		string(lsproto.SemanticTokenTypesregexp),
-		string(lsproto.SemanticTokenTypesoperator),
-	}
-}
-
-func defaultTokenModifiers() []string {
-	return []string{
-		string(lsproto.SemanticTokenModifiersdeclaration),
-		string(lsproto.SemanticTokenModifiersdefinition),
-		string(lsproto.SemanticTokenModifiersreadonly),
-		string(lsproto.SemanticTokenModifiersstatic),
-		string(lsproto.SemanticTokenModifiersdeprecated),
-		string(lsproto.SemanticTokenModifiersabstract),
-		string(lsproto.SemanticTokenModifiersasync),
-		string(lsproto.SemanticTokenModifiersmodification),
-		string(lsproto.SemanticTokenModifiersdocumentation),
-		string(lsproto.SemanticTokenModifiersdefaultLibrary),
-	}
 }
