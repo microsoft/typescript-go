@@ -470,12 +470,12 @@ func isInfinityOrNaNString(text string) bool {
 // It filters tokens based on client capabilities, only including types and modifiers that the client supports.
 func encodeSemanticTokens(tokens []semanticToken, file *ast.SourceFile, converters *lsconv.Converters, clientCapabilities *lsproto.SemanticTokensClientCapabilities) []uint32 {
 	// Build mapping from server token types/modifiers to client indices
-	typeMapping := make(map[tokenType]int)
-	modifierMapping := make(map[lsproto.SemanticTokenModifiers]int)
+	typeMapping := make(map[tokenType]uint32)
+	modifierMapping := make(map[lsproto.SemanticTokenModifiers]uint32)
 
 	if clientCapabilities != nil {
 		// Map server token types to client-supported indices
-		clientIdx := 0
+		clientIdx := uint32(0)
 		for _, serverType := range tokenTypes {
 			if slices.Contains(clientCapabilities.TokenTypes, string(serverType)) {
 				// Find the server index for this type
@@ -490,7 +490,7 @@ func encodeSemanticTokens(tokens []semanticToken, file *ast.SourceFile, converte
 		}
 
 		// Map server token modifiers to client-supported bit positions
-		clientBit := 0
+		clientBit := uint32(0)
 		for _, serverModifier := range tokenModifiers {
 			if slices.Contains(clientCapabilities.TokenModifiers, string(serverModifier)) {
 				modifierMapping[serverModifier] = clientBit
@@ -500,10 +500,10 @@ func encodeSemanticTokens(tokens []semanticToken, file *ast.SourceFile, converte
 	} else {
 		// No filtering - use direct mapping
 		for i := range tokenTypes {
-			typeMapping[tokenType(i)] = i
+			typeMapping[tokenType(i)] = uint32(i)
 		}
 		for i, mod := range tokenModifiers {
-			modifierMapping[mod] = i
+			modifierMapping[mod] = uint32(i)
 		}
 	}
 
@@ -567,7 +567,7 @@ func encodeSemanticTokens(tokens []semanticToken, file *ast.SourceFile, converte
 			deltaLine,
 			deltaChar,
 			tokenLength,
-			uint32(clientTypeIdx),
+			clientTypeIdx,
 			clientModifierMask,
 		)
 
