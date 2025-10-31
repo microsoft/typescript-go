@@ -231,9 +231,8 @@ func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, r
 	}
 	containingDirectory := tspath.GetDirectoryPath(containingFile)
 
-	moduleResolution := compilerOptions.ModuleResolution
-	if moduleResolution == core.ModuleResolutionKindUnknown {
-		moduleResolution = compilerOptions.GetModuleResolutionKind()
+	moduleResolution := compilerOptions.GetModuleResolutionKind()
+	if compilerOptions.ModuleResolution != moduleResolution {
 		if traceBuilder != nil {
 			traceBuilder.write(diagnostics.Module_resolution_kind_is_not_specified_using_0.Format(moduleResolution.String()))
 		}
@@ -1675,7 +1674,7 @@ func (r *resolutionState) getPackageJsonInfo(packageDirectory string, onlyRecord
 	if directoryExists && r.resolver.host.FS().FileExists(packageJsonPath) {
 		// Ignore error
 		contents, _ := r.resolver.host.FS().ReadFile(packageJsonPath)
-		packageJsonContent, _ := packagejson.Parse([]byte(contents))
+		packageJsonContent, err := packagejson.Parse([]byte(contents))
 		if r.tracer != nil {
 			r.tracer.write(diagnostics.Found_package_json_at_0.Format(packageJsonPath))
 		}
@@ -1683,7 +1682,8 @@ func (r *resolutionState) getPackageJsonInfo(packageDirectory string, onlyRecord
 			PackageDirectory: packageDirectory,
 			DirectoryExists:  true,
 			Contents: &packagejson.PackageJson{
-				Fields: packageJsonContent,
+				Fields:    packageJsonContent,
+				Parseable: err == nil,
 			},
 		}
 		result = r.resolver.packageJsonInfoCache.Set(packageJsonPath, result)
