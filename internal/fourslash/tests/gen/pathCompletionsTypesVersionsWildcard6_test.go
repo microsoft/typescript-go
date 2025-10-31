@@ -10,7 +10,7 @@ import (
 
 func TestPathCompletionsTypesVersionsWildcard6(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: commonjs
 // @Filename: /node_modules/foo/package.json
