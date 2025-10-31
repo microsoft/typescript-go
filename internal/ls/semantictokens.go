@@ -212,7 +212,7 @@ func (l *LanguageService) collectSemanticTokensInRange(ctx context.Context, c *c
 			inJSXElement = false
 		}
 
-		if ast.IsIdentifier(node) && !inJSXElement && !isInImportClause(node) && !isInfinityOrNaNString(node.Text()) {
+		if ast.IsIdentifier(node) && node.Text() != "" && !inJSXElement && !isInImportClause(node) && !isInfinityOrNaNString(node.Text()) {
 			symbol := c.GetSymbolAtLocation(node)
 			if symbol != nil {
 				// Resolve aliases
