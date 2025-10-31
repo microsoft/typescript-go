@@ -509,7 +509,8 @@ func encodeSemanticTokens(tokens []semanticToken, file *ast.SourceFile, converte
 		}
 	}
 
-	encoded := []uint32{}
+	// Each token encodes 5 uint32 values: deltaLine, deltaChar, length, tokenType, tokenModifiers
+	encoded := make([]uint32, 0, len(tokens)*5)
 	prevLine := uint32(0)
 	prevChar := uint32(0)
 
