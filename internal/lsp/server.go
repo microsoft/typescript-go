@@ -986,8 +986,7 @@ func (s *Server) handleInlayHint(
 	languageService *ls.LanguageService,
 	params *lsproto.InlayHintParams,
 ) (lsproto.InlayHintResponse, error) {
-	// !!! get user preferences
-	return languageService.ProvideInlayHint(ctx, params, &lsutil.UserPreferences{})
+	return languageService.ProvideInlayHint(ctx, params)
 }
 
 func getDefinitionClientSupportsLink(params *lsproto.InitializeParams) bool {

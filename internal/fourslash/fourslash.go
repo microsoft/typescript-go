@@ -2224,7 +2224,7 @@ func (f *FourslashTest) verifyBaselines(t *testing.T) {
 func (f *FourslashTest) VerifyBaselineInlayHints(
 	t *testing.T,
 	span *lsproto.Range,
-	preferences *ls.UserPreferences,
+	userPreferences *lsutil.UserPreferences,
 ) {
 	fileName := f.activeFilename
 	var lspRange lsproto.Range
@@ -2239,7 +2239,11 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 		Range:        lspRange,
 	}
 
-	// !!! here: set preferences
+	if userPreferences != nil {
+		reset := f.ConfigureWithReset(t, userPreferences)
+		defer reset()
+	}
+
 	prefix := fmt.Sprintf("At position (Ln %d, Col %d): ", lspRange.Start.Line, lspRange.Start.Character)
 	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentInlayHintInfo, params)
 	if resMsg == nil {

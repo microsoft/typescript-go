@@ -24,17 +24,16 @@ import (
 func (l *LanguageService) ProvideInlayHint(
 	ctx context.Context,
 	params *lsproto.InlayHintParams,
-	preferences *lsutil.UserPreferences,
 ) (lsproto.InlayHintResponse, error) {
 	program, file := l.getProgramAndFile(params.TextDocument.Uri)
-	quotePreference := getQuotePreference(file, preferences)
+	quotePreference := getQuotePreference(file, l.UserPreferences())
 
 	checker, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
 	inlayHintState := &inlayHintState{
 		ctx:             ctx,
 		span:            l.converters.FromLSPRange(file, params.Range),
-		preferences:     preferences,
+		preferences:     l.UserPreferences(),
 		quotePreference: quotePreference,
 		file:            file,
 		checker:         checker,
