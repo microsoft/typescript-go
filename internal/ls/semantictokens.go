@@ -53,6 +53,7 @@ var tokenModifiers = []lsproto.SemanticTokenModifiers{
 	lsproto.SemanticTokenModifiersmodification,
 	lsproto.SemanticTokenModifiersdocumentation,
 	lsproto.SemanticTokenModifiersdefaultLibrary,
+	"local",
 }
 
 // tokenType represents a semantic token type index
@@ -100,6 +101,7 @@ const (
 	tokenModifierModification
 	tokenModifierDocumentation
 	tokenModifierDefaultLibrary
+	tokenModifierLocal
 )
 
 // SemanticTokensLegend returns the legend describing the token types and modifiers.
@@ -255,7 +257,7 @@ func (l *LanguageService) collectSemanticTokensInRange(ctx context.Context, c *c
 							}
 						}
 						if (tokenType == tokenTypeVariable || tokenType == tokenTypeFunction) && isLocalDeclaration(decl, file) {
-							// Local variables get no special modifier in LSP, but we track it internally
+							tokenModifier |= tokenModifierLocal
 						}
 						declSourceFile := ast.GetSourceFileOfNode(decl)
 						if declSourceFile != nil && program.IsSourceFileDefaultLibrary(tspath.Path(declSourceFile.FileName())) {

@@ -277,6 +277,7 @@ func defaultSemanticTokenModifiers() []string {
 		string(lsproto.SemanticTokenModifiersmodification),
 		string(lsproto.SemanticTokenModifiersdocumentation),
 		string(lsproto.SemanticTokenModifiersdefaultLibrary),
+		"local",
 	}
 }
 
