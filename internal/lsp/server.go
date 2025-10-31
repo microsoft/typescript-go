@@ -492,6 +492,8 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSelectionRangeInfo, (*Server).handleSelectionRange)
 	registerRequestHandler(handlers, lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
 	registerRequestHandler(handlers, lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSemanticTokensFullInfo, (*Server).handleSemanticTokensFull)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSemanticTokensRangeInfo, (*Server).handleSemanticTokensRange)
 
 	return handlers
 })
@@ -671,6 +673,17 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			},
 			SelectionRangeProvider: &lsproto.BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions{
 				Boolean: ptrTo(true),
+			},
+			SemanticTokensProvider: &lsproto.SemanticTokensOptionsOrRegistrationOptions{
+				Options: &lsproto.SemanticTokensOptions{
+					Legend: ls.SemanticTokensLegend(),
+					Full: &lsproto.BooleanOrSemanticTokensFullDelta{
+						Boolean: ptrTo(true),
+					},
+					Range: &lsproto.BooleanOrEmptyObject{
+						Boolean: ptrTo(true),
+					},
+				},
 			},
 		},
 	}
@@ -916,6 +929,14 @@ func (s *Server) handleDocumentHighlight(ctx context.Context, ls *ls.LanguageSer
 
 func (s *Server) handleSelectionRange(ctx context.Context, ls *ls.LanguageService, params *lsproto.SelectionRangeParams) (lsproto.SelectionRangeResponse, error) {
 	return ls.ProvideSelectionRanges(ctx, params)
+}
+
+func (s *Server) handleSemanticTokensFull(ctx context.Context, ls *ls.LanguageService, params *lsproto.SemanticTokensParams) (lsproto.SemanticTokensResponse, error) {
+	return ls.ProvideSemanticTokens(ctx, params.TextDocument.Uri)
+}
+
+func (s *Server) handleSemanticTokensRange(ctx context.Context, ls *ls.LanguageService, params *lsproto.SemanticTokensRangeParams) (lsproto.SemanticTokensRangeResponse, error) {
+	return ls.ProvideSemanticTokensRange(ctx, params.TextDocument.Uri, params.Range)
 }
 
 func (s *Server) Log(msg ...any) {
