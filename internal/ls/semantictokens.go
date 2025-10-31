@@ -2,6 +2,7 @@ package ls
 
 import (
 	"context"
+	"fmt"
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -429,7 +430,8 @@ func isLocalDeclaration(decl *ast.Node, sourceFile *ast.SourceFile) bool {
 		if parent != nil && ast.IsVariableDeclarationList(parent) {
 			grandparent := parent.Parent
 			if grandparent != nil {
-				return (!ast.IsSourceFile(grandparent) || ast.IsCatchClause(grandparent)) &&
+				greatGrandparent := grandparent.Parent
+				return (!ast.IsSourceFile(greatGrandparent) || ast.IsCatchClause(grandparent)) &&
 					ast.GetSourceFileOfNode(decl) == sourceFile
 			}
 		}
@@ -561,8 +563,11 @@ func encodeSemanticTokens(tokens []semanticToken, file *ast.SourceFile, converte
 		char := startPos.Character
 
 		// Verify that positions are strictly increasing (visitor walks in order)
-		if line < prevLine || (line == prevLine && char <= prevChar) {
-			panic("semantic tokens: positions must be strictly increasing")
+		// We need to skip the first token (when prevLine == 0 && prevChar == 0 && line == 0 && char == 0)
+		if (prevLine != 0 || prevChar != 0) && (line < prevLine || (line == prevLine && char < prevChar)) {
+			// Debug info to understand the issue
+			panic(fmt.Sprintf("semantic tokens: positions must be strictly increasing: prev=(%d,%d) current=(%d,%d) for token at offset %d",
+				prevLine, prevChar, line, char, tokenStart))
 		}
 
 		// Encode as: [deltaLine, deltaChar, length, tokenType, tokenModifiers]

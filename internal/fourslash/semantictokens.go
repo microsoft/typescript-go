@@ -28,7 +28,11 @@ func (f *FourslashTest) VerifySemanticTokens(t *testing.T, expected []SemanticTo
 		t.Fatal("Nil response received for semantic tokens request")
 	}
 	if !resultOk {
-		t.Fatalf("Unexpected response type for semantic tokens request: %T", resMsg.AsResponse().Result)
+		resp := resMsg.AsResponse()
+		if resp.Error != nil {
+			t.Fatalf("Semantic tokens request returned error: code=%d, message=%s", resp.Error.Code, resp.Error.Message)
+		}
+		t.Fatalf("Unexpected response type for semantic tokens request: %T", resp.Result)
 	}
 
 	if result.SemanticTokens == nil {
