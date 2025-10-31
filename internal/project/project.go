@@ -69,12 +69,12 @@ type Project struct {
 	// The ID of the snapshot that created the program stored in this project.
 	ProgramLastUpdate uint64
 
+	programFilesWatch       *WatchedFiles[PatternsAndIgnored]
 	failedLookupsWatch      *WatchedFiles[map[tspath.Path]string]
 	affectingLocationsWatch *WatchedFiles[map[tspath.Path]string]
-	typingsFilesWatch       *WatchedFiles[map[tspath.Path]string]
-	typingsDirectoryWatch   *WatchedFiles[map[tspath.Path]string]
+	typingsWatch            *WatchedFiles[PatternsAndIgnored]
 
-	checkerPool *checkerPool
+	checkerPool *CheckerPool
 
 	// installedTypingsInfo is the value of `project.ComputeTypingsInfo()` that was
 	// used during the most recently completed typings installation.
@@ -86,7 +86,7 @@ type Project struct {
 func NewConfiguredProject(
 	configFileName string,
 	configFilePath tspath.Path,
-	builder *projectCollectionBuilder,
+	builder *ProjectCollectionBuilder,
 	logger *logging.LogTree,
 ) *Project {
 	return NewProject(configFileName, KindConfigured, tspath.GetDirectoryPath(configFileName), builder, logger)
@@ -96,7 +96,7 @@ func NewInferredProject(
 	currentDirectory string,
 	compilerOptions *core.CompilerOptions,
 	rootFileNames []string,
-	builder *projectCollectionBuilder,
+	builder *ProjectCollectionBuilder,
 	logger *logging.LogTree,
 ) *Project {
 	p := NewProject(inferredProjectName, KindInferred, currentDirectory, builder, logger)
@@ -131,7 +131,7 @@ func NewProject(
 	configFileName string,
 	kind Kind,
 	currentDirectory string,
-	builder *projectCollectionBuilder,
+	builder *ProjectCollectionBuilder,
 	logger *logging.LogTree,
 ) *Project {
 	if logger != nil {
@@ -146,26 +146,26 @@ func NewProject(
 
 	project.configFilePath = tspath.ToPath(configFileName, currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames())
 	if builder.sessionOptions.WatchEnabled {
+		project.programFilesWatch = NewWatchedFiles(
+			"non-root program files for "+configFileName,
+			lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
+			core.Identity,
+		)
 		project.failedLookupsWatch = NewWatchedFiles(
 			"failed lookups for "+configFileName,
 			lsproto.WatchKindCreate,
-			createResolutionLookupGlobMapper(project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
+			createResolutionLookupGlobMapper(builder.sessionOptions.CurrentDirectory, builder.sessionOptions.DefaultLibraryPath, project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
 		)
 		project.affectingLocationsWatch = NewWatchedFiles(
 			"affecting locations for "+configFileName,
 			lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
-			createResolutionLookupGlobMapper(project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
+			createResolutionLookupGlobMapper(builder.sessionOptions.CurrentDirectory, builder.sessionOptions.DefaultLibraryPath, project.currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames()),
 		)
 		if builder.sessionOptions.TypingsLocation != "" {
-			project.typingsFilesWatch = NewWatchedFiles(
+			project.typingsWatch = NewWatchedFiles(
 				"typings installer files",
 				lsproto.WatchKindCreate|lsproto.WatchKindChange|lsproto.WatchKindDelete,
-				globMapperForTypingsInstaller,
-			)
-			project.typingsDirectoryWatch = NewWatchedFiles(
-				"typings installer directories",
-				lsproto.WatchKindCreate|lsproto.WatchKindDelete,
-				globMapperForTypingsInstaller,
+				core.Identity,
 			)
 		}
 	}
@@ -221,10 +221,10 @@ func (p *Project) Clone() *Project {
 		ProgramUpdateKind:           ProgramUpdateKindNone,
 		ProgramLastUpdate:           p.ProgramLastUpdate,
 
+		programFilesWatch:       p.programFilesWatch,
 		failedLookupsWatch:      p.failedLookupsWatch,
 		affectingLocationsWatch: p.affectingLocationsWatch,
-		typingsFilesWatch:       p.typingsFilesWatch,
-		typingsDirectoryWatch:   p.typingsDirectoryWatch,
+		typingsWatch:            p.typingsWatch,
 
 		checkerPool: p.checkerPool,
 
@@ -270,13 +270,13 @@ func (p *Project) getCommandLineWithTypingsFiles() *tsoptions.ParsedCommandLine 
 type CreateProgramResult struct {
 	Program     *compiler.Program
 	UpdateKind  ProgramUpdateKind
-	CheckerPool *checkerPool
+	CheckerPool *CheckerPool
 }
 
 func (p *Project) CreateProgram() CreateProgramResult {
 	updateKind := ProgramUpdateKindNewFiles
 	var programCloned bool
-	var checkerPool *checkerPool
+	var checkerPool *CheckerPool
 	var newProgram *compiler.Program
 
 	// Create the command line, potentially augmented with typing files
@@ -327,14 +327,19 @@ func (p *Project) CreateProgram() CreateProgramResult {
 	}
 }
 
-func (p *Project) CloneWatchers() (failedLookupsWatch *WatchedFiles[map[tspath.Path]string], affectingLocationsWatch *WatchedFiles[map[tspath.Path]string]) {
+func (p *Project) CloneWatchers(workspaceDir string, libDir string) (programFilesWatch *WatchedFiles[PatternsAndIgnored], failedLookupsWatch *WatchedFiles[map[tspath.Path]string], affectingLocationsWatch *WatchedFiles[map[tspath.Path]string]) {
 	failedLookups := make(map[tspath.Path]string)
 	affectingLocations := make(map[tspath.Path]string)
+	programFiles := getNonRootFileGlobs(workspaceDir, libDir, p.Program.GetSourceFiles(), p.CommandLine.FileNamesByPath(), tspath.ComparePathsOptions{
+		UseCaseSensitiveFileNames: p.host.FS().UseCaseSensitiveFileNames(),
+		CurrentDirectory:          p.currentDirectory,
+	})
 	extractLookups(p.toPath, failedLookups, affectingLocations, p.Program.GetResolvedModules())
 	extractLookups(p.toPath, failedLookups, affectingLocations, p.Program.GetResolvedTypeReferenceDirectives())
+	programFilesWatch = p.programFilesWatch.Clone(programFiles)
 	failedLookupsWatch = p.failedLookupsWatch.Clone(failedLookups)
 	affectingLocationsWatch = p.affectingLocationsWatch.Clone(affectingLocations)
-	return failedLookupsWatch, affectingLocationsWatch
+	return programFilesWatch, failedLookupsWatch, affectingLocationsWatch
 }
 
 func (p *Project) log(msg string) {

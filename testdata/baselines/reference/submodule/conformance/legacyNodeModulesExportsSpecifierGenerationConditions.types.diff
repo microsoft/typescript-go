@@ -8,9 +8,9 @@
 ->async () => (await import("inner")).x() : () => Promise<import("node_modules/inner/private").Thing>
 ->(await import("inner")).x() : import("node_modules/inner/private").Thing
 ->(await import("inner")).x : () => import("node_modules/inner/private").Thing
-->(await import("inner")) : typeof import("node_modules/inner/index")
-->await import("inner") : typeof import("node_modules/inner/index")
-->import("inner") : Promise<typeof import("node_modules/inner/index")>
+->(await import("inner")) : { x: () => import("node_modules/inner/private").Thing; default: typeof import("node_modules/inner/index"); }
+->await import("inner") : { x: () => import("node_modules/inner/private").Thing; default: typeof import("node_modules/inner/index"); }
+->import("inner") : Promise<{ x: () => import("node_modules/inner/private").Thing; default: typeof import("node_modules/inner/index"); }>
 +>a : () => Promise<import("./node_modules/inner/private").Thing>
 +>async () => (await import("inner")).x() : () => Promise<import("./node_modules/inner/private").Thing>
 +>(await import("inner")).x() : import("./node_modules/inner/private").Thing

@@ -20,7 +20,7 @@
  /** @type {import('./types').M} */
  export function f2() {
 ->f2 : (this: import("/types").Foo) => void
-+>f2 : () => void
++>f2 : (this: import("./types").Foo) => void
 
      this.test();
  >this.test() : any
@@ -39,11 +39,7 @@
  >test : any
  }
 
- /** @type {(this: import('./types').Foo) => void} */
- export function f4() {
-->f4 : (this: import("./types").Foo) => void
-+>f4 : () => void
-
+@@= skipped -11, +11 lines =@@
      this.test();
  >this.test() : any
  >this.test : any

@@ -7,6 +7,7 @@ import (
 	"slices"
 	"sort"
 	"strings"
+	"sync"
 	"unicode"
 	"unicode/utf8"
 
@@ -476,6 +477,8 @@ func GetSpellingSuggestion[T any](name string, candidates []T, getName func(T) s
 	maximumLengthDifference := max(2, int(float64(len(name))*0.34))
 	bestDistance := math.Floor(float64(len(name))*0.4) + 1 // If the best result is worse than this, don't bother.
 	runeName := []rune(name)
+	buffers := levenshteinBuffersPool.Get().(*levenshteinBuffers)
+	defer levenshteinBuffersPool.Put(buffers)
 	var bestCandidate T
 	for _, candidate := range candidates {
 		candidateName := getName(candidate)
@@ -490,7 +493,7 @@ func GetSpellingSuggestion[T any](name string, candidates []T, getName func(T) s
 			if len(candidateName) < 3 && !strings.EqualFold(candidateName, name) {
 				continue
 			}
-			distance := levenshteinWithMax(runeName, []rune(candidateName), bestDistance-0.1)
+			distance := levenshteinWithMax(buffers, runeName, []rune(candidateName), bestDistance-0.1)
 			if distance < 0 {
 				continue
 			}
@@ -502,9 +505,25 @@ func GetSpellingSuggestion[T any](name string, candidates []T, getName func(T) s
 	return bestCandidate
 }
 
-func levenshteinWithMax(s1 []rune, s2 []rune, maxValue float64) float64 {
-	previous := make([]float64, len(s2)+1)
-	current := make([]float64, len(s2)+1)
+type levenshteinBuffers struct {
+	previous []float64
+	current  []float64
+}
+
+var levenshteinBuffersPool = sync.Pool{
+	New: func() any {
+		return &levenshteinBuffers{}
+	},
+}
+
+func levenshteinWithMax(buffers *levenshteinBuffers, s1 []rune, s2 []rune, maxValue float64) float64 {
+	bufferSize := len(s2) + 1
+	buffers.previous = slices.Grow(buffers.previous[:0], bufferSize)[:bufferSize]
+	buffers.current = slices.Grow(buffers.current[:0], bufferSize)[:bufferSize]
+
+	previous := buffers.previous
+	current := buffers.current
+
 	big := maxValue + 0.01
 	for i := range previous {
 		previous[i] = float64(i)
@@ -606,6 +625,11 @@ func DiffMaps[K comparable, V comparable](m1 map[K]V, m2 map[K]V, onAdded func(K
 }
 
 func DiffMapsFunc[K comparable, V any](m1 map[K]V, m2 map[K]V, equalValues func(V, V) bool, onAdded func(K, V), onRemoved func(K, V), onChanged func(K, V, V)) {
+	for k, v2 := range m2 {
+		if _, ok := m1[k]; !ok {
+			onAdded(k, v2)
+		}
+	}
 	for k, v1 := range m1 {
 		if v2, ok := m2[k]; ok {
 			if !equalValues(v1, v2) {
@@ -613,12 +637,6 @@ func DiffMapsFunc[K comparable, V any](m1 map[K]V, m2 map[K]V, equalValues func(
 			}
 		} else {
 			onRemoved(k, v1)
-		}
-	}
-
-	for k, v2 := range m2 {
-		if _, ok := m1[k]; !ok {
-			onAdded(k, v2)
 		}
 	}
 }
@@ -668,4 +686,14 @@ func DeduplicateSorted[T any](slice []T, isEqual func(a, b T) bool) []T {
 	}
 
 	return deduplicated
+}
+
+// CompareBooleans treats true as greater than false.
+func CompareBooleans(a, b bool) int {
+	if a && !b {
+		return -1
+	} else if !a && b {
+		return 1
+	}
+	return 0
 }

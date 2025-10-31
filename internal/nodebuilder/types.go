@@ -23,7 +23,7 @@ type SymbolTracker interface {
 }
 
 // NOTE: If modifying this enum, must modify `TypeFormatFlags` too!
-type Flags int32
+type Flags uint32
 
 const (
 	FlagsNone Flags = 0

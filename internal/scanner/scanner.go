@@ -51,6 +51,7 @@ var textToKeyword = map[string]ast.Kind{
 	"debugger":    ast.KindDebuggerKeyword,
 	"declare":     ast.KindDeclareKeyword,
 	"default":     ast.KindDefaultKeyword,
+	"defer":       ast.KindDeferKeyword,
 	"delete":      ast.KindDeleteKeyword,
 	"do":          ast.KindDoKeyword,
 	"else":        ast.KindElseKeyword,
@@ -1454,6 +1455,9 @@ func (s *Scanner) scanIdentifierParts() string {
 
 func (s *Scanner) scanString(jsxAttributeString bool) string {
 	quote := s.char()
+	if quote == '\'' {
+		s.tokenFlags |= ast.TokenFlagsSingleQuote
+	}
 	s.pos++
 	// Fast path for simple strings without escape sequences.
 	strLen := strings.IndexRune(s.text[s.pos:], quote)

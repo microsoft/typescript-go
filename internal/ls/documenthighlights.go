@@ -7,7 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/lsutil"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 
@@ -51,26 +51,25 @@ func (l *LanguageService) ProvideDocumentHighlights(ctx context.Context, documen
 }
 
 func (l *LanguageService) getSemanticDocumentHighlights(ctx context.Context, position int, node *ast.Node, program *compiler.Program, sourceFile *ast.SourceFile) []*lsproto.DocumentHighlight {
-	options := refOptions{use: referenceUseReferences}
+	options := refOptions{use: referenceUseNone}
 	referenceEntries := l.getReferencedSymbolsForNode(ctx, position, node, program, []*ast.SourceFile{sourceFile}, options, &collections.Set[string]{})
 	if referenceEntries == nil {
 		return nil
 	}
+
 	var highlights []*lsproto.DocumentHighlight
 	for _, entry := range referenceEntries {
 		for _, ref := range entry.references {
-			if ref.node != nil {
-				fileName, highlight := l.toDocumentHighlight(ref)
-				if fileName == sourceFile.FileName() {
-					highlights = append(highlights, highlight)
-				}
+			fileName, highlight := l.toDocumentHighlight(ref)
+			if fileName == sourceFile.FileName() {
+				highlights = append(highlights, highlight)
 			}
 		}
 	}
 	return highlights
 }
 
-func (l *LanguageService) toDocumentHighlight(entry *referenceEntry) (string, *lsproto.DocumentHighlight) {
+func (l *LanguageService) toDocumentHighlight(entry *ReferenceEntry) (string, *lsproto.DocumentHighlight) {
 	entry = l.resolveEntry(entry)
 
 	kind := lsproto.DocumentHighlightKindRead
@@ -550,14 +549,14 @@ func getLoopBreakContinueOccurrences(node *ast.Node, sourceFile *ast.SourceFile)
 }
 
 func getAsyncAndAwaitOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
-	parent := ast.FindAncestor(node.Parent, ast.IsFunctionLike)
-	if parent == nil {
+	fun := ast.GetContainingFunction(node)
+	if fun == nil {
 		return nil
 	}
-	parentFunc := parent.AsFunctionDeclaration()
+
 	var keywords []*ast.Node
 
-	modifiers := parentFunc.Modifiers()
+	modifiers := fun.Modifiers()
 	if modifiers != nil {
 		for _, modifier := range modifiers.Nodes {
 			if modifier.Kind == ast.KindAsyncKeyword {
@@ -566,7 +565,7 @@ func getAsyncAndAwaitOccurrences(node *ast.Node, sourceFile *ast.SourceFile) []*
 		}
 	}
 
-	parentFunc.ForEachChild(func(child *ast.Node) bool {
+	fun.ForEachChild(func(child *ast.Node) bool {
 		traverseWithoutCrossingFunction(child, sourceFile, func(child *ast.Node) {
 			if ast.IsAwaitExpression(child) {
 				token := lsutil.GetFirstToken(child, sourceFile)

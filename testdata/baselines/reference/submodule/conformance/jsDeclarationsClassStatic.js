@@ -52,8 +52,14 @@ module.exports.Strings = Strings;
 
 
 //// [source.d.ts]
+declare namespace Handler {
+    var statische: () => void;
+}
 export = Handler;
-export var Strings = Strings;
+export declare var Strings: {
+    a: string;
+    b: string;
+};
 export type HandlerOptions = {
     name: String;
 };

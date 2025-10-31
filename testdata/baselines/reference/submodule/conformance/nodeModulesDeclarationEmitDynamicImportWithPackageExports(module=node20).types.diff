@@ -7,27 +7,27 @@
 ->a : { default: typeof import("index"); }
 ->await import("package/cjs") : { default: typeof import("index"); }
 ->import("package/cjs") : Promise<{ default: typeof import("index"); }>
-+>a : { default: typeof import("./index.cts"); }
-+>await import("package/cjs") : { default: typeof import("./index.cts"); }
-+>import("package/cjs") : Promise<{ default: typeof import("./index.cts"); }>
++>a : { default: typeof import("package/cjs"); }
++>await import("package/cjs") : { default: typeof import("package/cjs"); }
++>import("package/cjs") : Promise<{ default: typeof import("package/cjs"); }>
  >"package/cjs" : "package/cjs"
 
  export const b = await import("package/mjs");
 ->b : typeof import("index")
 ->await import("package/mjs") : typeof import("index")
 ->import("package/mjs") : Promise<typeof import("index")>
-+>b : typeof import("./index.mts")
-+>await import("package/mjs") : typeof import("./index.mts")
-+>import("package/mjs") : Promise<typeof import("./index.mts")>
++>b : typeof import("package/mjs")
++>await import("package/mjs") : typeof import("package/mjs")
++>import("package/mjs") : Promise<typeof import("package/mjs")>
  >"package/mjs" : "package/mjs"
 
  export const c = await import("package");
 ->c : typeof import("index")
 ->await import("package") : typeof import("index")
 ->import("package") : Promise<typeof import("index")>
-+>c : { default: typeof import("."); }
-+>await import("package") : { default: typeof import("."); }
-+>import("package") : Promise<{ default: typeof import("."); }>
++>c : typeof import("package")
++>await import("package") : typeof import("package")
++>import("package") : Promise<typeof import("package")>
  >"package" : "package"
 
  export const f = await import("inner");
@@ -83,9 +83,9 @@
 ->c : typeof import("index")
 ->await import("package") : typeof import("index")
 ->import("package") : Promise<typeof import("index")>
-+>c : { default: typeof import("package"); }
-+>await import("package") : { default: typeof import("package"); }
-+>import("package") : Promise<{ default: typeof import("package"); }>
++>c : typeof import("package")
++>await import("package") : typeof import("package")
++>import("package") : Promise<typeof import("package")>
  >"package" : "package"
 
  export const f = await import("inner");
@@ -129,15 +129,15 @@
  export const b = import("package/mjs");
 ->b : Promise<typeof import("index", { with: { "resolution-mode": "import" } })>
 ->import("package/mjs") : Promise<typeof import("index", { with: { "resolution-mode": "import" } })>
-+>b : Promise<typeof import("./index.mts")>
-+>import("package/mjs") : Promise<typeof import("./index.mts")>
++>b : Promise<typeof import("package/mjs", { with: { "resolution-mode": "import" } })>
++>import("package/mjs") : Promise<typeof import("package/mjs", { with: { "resolution-mode": "import" } })>
  >"package/mjs" : "package/mjs"
 
  export const c = import("package");
 ->c : Promise<typeof import("index", { with: { "resolution-mode": "import" } })>
 ->import("package") : Promise<typeof import("index", { with: { "resolution-mode": "import" } })>
-+>c : Promise<{ default: typeof import("."); }>
-+>import("package") : Promise<{ default: typeof import("."); }>
++>c : Promise<typeof import("package", { with: { "resolution-mode": "import" } })>
++>import("package") : Promise<typeof import("package", { with: { "resolution-mode": "import" } })>
  >"package" : "package"
 
  export const f = import("inner");
@@ -159,8 +159,8 @@
  export const e = import("inner/mjs");
 ->e : Promise<typeof import("node_modules/inner/index", { with: { "resolution-mode": "import" } })>
 ->import("inner/mjs") : Promise<typeof import("node_modules/inner/index", { with: { "resolution-mode": "import" } })>
-+>e : Promise<typeof import("inner/mjs")>
-+>import("inner/mjs") : Promise<typeof import("inner/mjs")>
++>e : Promise<typeof import("inner/mjs", { with: { "resolution-mode": "import" } })>
++>import("inner/mjs") : Promise<typeof import("inner/mjs", { with: { "resolution-mode": "import" } })>
  >"inner/mjs" : "inner/mjs"
 
  === node_modules/inner/index.d.ts ===

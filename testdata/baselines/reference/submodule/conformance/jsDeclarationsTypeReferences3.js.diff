@@ -5,8 +5,8 @@
 
  //// [index.js]
 +"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
  /// <reference types="node" />
++Object.defineProperty(exports, "__esModule", { value: true });
  const Something = require("fs").Something;
 +export var A = {};
  module.exports.A = {};
@@ -23,5 +23,4 @@
 -}
 -import Something_1 = require("fs");
 -import Something = Something_1.Something;
-+export var A = {};
-+export {};
++export declare var A: {};

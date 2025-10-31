@@ -5,7 +5,7 @@
  === node_modules/umd.d.ts ===
  export as namespace UMD;
 ->UMD : typeof import("node_modules/umd")
-+>UMD : typeof import("umd.d.ts")
++>UMD : typeof import("umd")
 
  export type Thing = {
  >Thing : Thing

@@ -24,12 +24,12 @@ func cloneNodeBuilderContext(context *NodeBuilderContext) func() {
 	// export const y: <T_1>(x: T_1) => T_1
 	oldMustCreateTypeParameterSymbolList := context.hasCreatedTypeParameterSymbolList
 	oldMustCreateTypeParametersNamesLookups := context.hasCreatedTypeParametersNamesLookups
-	context.hasCreatedTypeParameterSymbolList = false
-	context.hasCreatedTypeParametersNamesLookups = false
 	oldTypeParameterNames := context.typeParameterNames
 	oldTypeParameterNamesByText := context.typeParameterNamesByText
 	oldTypeParameterNamesByTextNextNameCount := context.typeParameterNamesByTextNextNameCount
 	oldTypeParameterSymbolList := context.typeParameterSymbolList
+	context.hasCreatedTypeParameterSymbolList = oldTypeParameterSymbolList != nil
+	context.hasCreatedTypeParametersNamesLookups = oldTypeParameterNames != nil
 	context.typeParameterNames = maps.Clone(context.typeParameterNames)
 	context.typeParameterNamesByText = maps.Clone(context.typeParameterNamesByText)
 	context.typeParameterNamesByTextNextNameCount = maps.Clone(context.typeParameterNamesByTextNextNameCount)
@@ -49,7 +49,7 @@ type localsRecord struct {
 	oldSymbol *ast.Symbol
 }
 
-func (b *nodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []*ast.Symbol, typeParameters []*Type, originalParameters []*ast.Symbol, mapper *TypeMapper) func() {
+func (b *NodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []*ast.Symbol, typeParameters []*Type, originalParameters []*ast.Symbol, mapper *TypeMapper) func() {
 	cleanupContext := cloneNodeBuilderContext(b.ctx)
 	// For regular function/method declarations, the enclosing declaration will already be signature.declaration,
 	// so this is a no-op, but for arrow functions and function expressions, the enclosing declaration will be

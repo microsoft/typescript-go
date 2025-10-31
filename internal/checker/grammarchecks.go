@@ -1240,7 +1240,7 @@ func (c *Checker) checkGrammarForInOrForOfStatement(forInOrOfStatement *ast.ForI
 						c.diagnostics.Add(createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.X_for_await_loops_are_only_allowed_at_the_top_level_of_a_file_when_that_file_is_a_module_but_this_file_has_no_imports_or_exports_Consider_adding_an_empty_export_to_make_this_file_a_module))
 					}
 					switch c.moduleKind {
-					case core.ModuleKindNode16, core.ModuleKindNode18, core.ModuleKindNodeNext:
+					case core.ModuleKindNode16, core.ModuleKindNode18, core.ModuleKindNode20, core.ModuleKindNodeNext:
 						sourceFileMetaData := c.program.GetSourceFileMetaData(sourceFile.Path())
 						if sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS {
 							c.diagnostics.Add(createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.The_current_file_is_a_CommonJS_module_and_cannot_use_await_at_the_top_level))
@@ -1263,7 +1263,7 @@ func (c *Checker) checkGrammarForInOrForOfStatement(forInOrOfStatement *ast.ForI
 				// use of 'for-await-of' in non-async function
 				if !c.hasParseDiagnostics(sourceFile) {
 					diagnostic := createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.X_for_await_loops_are_only_allowed_within_async_functions_and_at_the_top_levels_of_modules)
-					containingFunc := getContainingFunction(forInOrOfStatement.AsNode())
+					containingFunc := ast.GetContainingFunction(forInOrOfStatement.AsNode())
 					if containingFunc != nil && containingFunc.Kind != ast.KindConstructor {
 						debug.Assert((getFunctionFlags(containingFunc)&FunctionFlagsAsync) == 0, "Enclosing function should never be an async function.")
 						if hasAsyncModifier(containingFunc) {
@@ -1338,9 +1338,6 @@ func (c *Checker) checkGrammarForInOrForOfStatement(forInOrOfStatement *ast.ForI
 func (c *Checker) checkGrammarAccessor(accessor *ast.AccessorDeclaration) bool {
 	body := accessor.Body()
 	if accessor.Flags&ast.NodeFlagsAmbient == 0 && (accessor.Parent.Kind != ast.KindTypeLiteral) && (accessor.Parent.Kind != ast.KindInterfaceDeclaration) {
-		if c.languageVersion < core.ScriptTargetES2015 && ast.IsPrivateIdentifier(accessor.Name()) {
-			return c.grammarErrorOnNode(accessor.Name(), diagnostics.Private_identifiers_are_only_available_when_targeting_ECMAScript_2015_and_higher)
-		}
 		if body == nil && !ast.HasSyntacticModifier(accessor, ast.ModifierFlagsAbstract) {
 			return c.grammarErrorAtPos(accessor, accessor.End()-1, len(";"), diagnostics.X_0_expected, "{")
 		}
@@ -1492,9 +1489,6 @@ func (c *Checker) checkGrammarMethod(node *ast.Node /*Union[MethodDeclaration, M
 	}
 
 	if ast.IsClassLike(node.Parent) {
-		if c.languageVersion < core.ScriptTargetES2015 && ast.IsPrivateIdentifier(node.Name()) {
-			return c.grammarErrorOnNode(node.Name(), diagnostics.Private_identifiers_are_only_available_when_targeting_ECMAScript_2015_and_higher)
-		}
 		// Technically, computed properties in ambient contexts is disallowed
 		// for property declarations and accessors too, not just methods.
 		// However, property declarations disallow computed names in general,
@@ -1752,6 +1746,7 @@ func (c *Checker) checkGrammarAwaitOrAwaitUsing(node *ast.Node) bool {
 				switch c.moduleKind {
 				case core.ModuleKindNode16,
 					core.ModuleKindNode18,
+					core.ModuleKindNode20,
 					core.ModuleKindNodeNext:
 					sourceFileMetaData := c.program.GetSourceFileMetaData(sourceFile.Path())
 					if sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS {
@@ -1881,7 +1876,17 @@ func (c *Checker) checkGrammarMetaProperty(node *ast.MetaProperty) bool {
 		}
 	case ast.KindImportKeyword:
 		if nameText != "meta" {
-			return c.grammarErrorOnNode(nodeName, diagnostics.X_0_is_not_a_valid_meta_property_for_keyword_1_Did_you_mean_2, nameText, scanner.TokenToString(node.KeywordToken), "meta")
+			isCallee := ast.IsCallExpression(node.Parent) && node.Parent.AsCallExpression().Expression == node.AsNode()
+			if nameText == "defer" {
+				if !isCallee {
+					return c.grammarErrorAtPos(node.AsNode(), node.AsNode().End(), 0, diagnostics.X_0_expected, "(")
+				}
+			} else {
+				if isCallee {
+					return c.grammarErrorOnNode(nodeName, diagnostics.X_0_is_not_a_valid_meta_property_for_keyword_import_Did_you_mean_meta_or_defer, nameText)
+				}
+				return c.grammarErrorOnNode(nodeName, diagnostics.X_0_is_not_a_valid_meta_property_for_keyword_1_Did_you_mean_2, nameText, scanner.TokenToString(node.KeywordToken), "meta")
+			}
 		}
 	}
 
@@ -1922,12 +1927,6 @@ func (c *Checker) checkGrammarProperty(node *ast.Node /*Union[PropertyDeclaratio
 		}
 		if c.checkGrammarForInvalidDynamicName(propertyName, diagnostics.A_computed_property_name_in_a_class_property_declaration_must_have_a_simple_literal_type_or_a_unique_symbol_type) {
 			return true
-		}
-		if c.languageVersion < core.ScriptTargetES2015 && ast.IsPrivateIdentifier(propertyName) {
-			return c.grammarErrorOnNode(propertyName, diagnostics.Private_identifiers_are_only_available_when_targeting_ECMAScript_2015_and_higher)
-		}
-		if c.languageVersion < core.ScriptTargetES2015 && ast.IsAutoAccessorPropertyDeclaration(node) && node.Flags&ast.NodeFlagsAmbient == 0 {
-			return c.grammarErrorOnNode(propertyName, diagnostics.Properties_with_the_accessor_modifier_are_only_available_when_targeting_ECMAScript_2015_and_higher)
 		}
 		if ast.IsAutoAccessorPropertyDeclaration(node) && c.checkGrammarForInvalidQuestionMark(node.AsPropertyDeclaration().PostfixToken, diagnostics.An_accessor_property_cannot_be_declared_optional) {
 			return true
@@ -2156,11 +2155,24 @@ func (c *Checker) checkGrammarBigIntLiteral(node *ast.BigIntLiteral) bool {
 }
 
 func (c *Checker) checkGrammarImportClause(node *ast.ImportClause) bool {
-	if node.Flags&ast.NodeFlagsJSDoc == 0 && node.IsTypeOnly && node.Name() != nil && node.NamedBindings != nil {
-		return c.grammarErrorOnNode(&node.Node, diagnostics.A_type_only_import_can_specify_a_default_import_or_named_bindings_but_not_both)
-	}
-	if node.IsTypeOnly && node.NamedBindings != nil && node.NamedBindings.Kind == ast.KindNamedImports {
-		return c.checkGrammarTypeOnlyNamedImportsOrExports(node.NamedBindings)
+	switch node.PhaseModifier {
+	case ast.KindTypeKeyword:
+		if node.Flags&ast.NodeFlagsJSDoc == 0 && node.Name() != nil && node.NamedBindings != nil {
+			return c.grammarErrorOnNode(&node.Node, diagnostics.A_type_only_import_can_specify_a_default_import_or_named_bindings_but_not_both)
+		}
+		if node.NamedBindings != nil && node.NamedBindings.Kind == ast.KindNamedImports {
+			return c.checkGrammarTypeOnlyNamedImportsOrExports(node.NamedBindings)
+		}
+	case ast.KindDeferKeyword:
+		if node.Name() != nil {
+			return c.grammarErrorOnNode(&node.Node, diagnostics.Default_imports_are_not_allowed_in_a_deferred_import)
+		}
+		if node.NamedBindings != nil && node.NamedBindings.Kind == ast.KindNamedImports {
+			return c.grammarErrorOnNode(&node.Node, diagnostics.Named_imports_are_not_allowed_in_a_deferred_import)
+		}
+		if c.moduleKind != core.ModuleKindESNext && c.moduleKind != core.ModuleKindPreserve {
+			return c.grammarErrorOnNode(&node.Node, diagnostics.Deferred_imports_are_only_supported_when_the_module_flag_is_set_to_esnext_or_preserve)
+		}
 	}
 	return false
 }
@@ -2197,7 +2209,11 @@ func (c *Checker) checkGrammarImportCallExpression(node *ast.Node) bool {
 		return c.grammarErrorOnNode(node, getVerbatimModuleSyntaxErrorMessage(node))
 	}
 
-	if c.moduleKind == core.ModuleKindES2015 {
+	if node.Expression().Kind == ast.KindMetaProperty {
+		if c.moduleKind != core.ModuleKindESNext && c.moduleKind != core.ModuleKindPreserve {
+			return c.grammarErrorOnNode(node, diagnostics.Deferred_imports_are_only_supported_when_the_module_flag_is_set_to_esnext_or_preserve)
+		}
+	} else if c.moduleKind == core.ModuleKindES2015 {
 		return c.grammarErrorOnNode(node, diagnostics.Dynamic_imports_are_only_supported_when_the_module_flag_is_set_to_es2020_es2022_esnext_commonjs_amd_system_umd_node16_node18_node20_or_nodenext)
 	}
 

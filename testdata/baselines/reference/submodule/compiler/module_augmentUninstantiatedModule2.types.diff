@@ -1,11 +1,11 @@
 --- old.module_augmentUninstantiatedModule2.types
 +++ new.module_augmentUninstantiatedModule2.types
-@@= skipped -1, +1 lines =@@
+@@= skipped -27, +27 lines =@@
 
- === module_augmentUninstantiatedModule2.ts ===
+ === node_modules/angular/index.d.ts ===
  declare var ng: ng.IAngularStatic;
-->ng : ng.IAngularStatic
-+>ng : import("./module_augmentUninstantiatedModule2").IAngularStatic
+->ng : import("node_modules/angular/index.d.ts").IAngularStatic
++>ng : import("angular").IAngularStatic
  >ng : any
 
  declare module ng {
@@ -13,6 +13,6 @@
  }
 
  export = ng;
-->ng : ng.IAngularStatic
-+>ng : import("./module_augmentUninstantiatedModule2").IAngularStatic
+->ng : import("node_modules/angular/index.d.ts").IAngularStatic
++>ng : import("angular").IAngularStatic
 

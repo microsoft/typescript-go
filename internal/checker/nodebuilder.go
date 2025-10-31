@@ -9,7 +9,7 @@ import (
 type NodeBuilder struct {
 	ctxStack []*NodeBuilderContext
 	host     Host
-	impl     *nodeBuilderImpl
+	impl     *NodeBuilderImpl
 }
 
 // EmitContext implements NodeBuilderInterface.

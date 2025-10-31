@@ -13,14 +13,10 @@ export function foo() {
 }
 
 === b.ts ===
-import defer { foo } from "a";
->defer : any
-> : any
->foo : any
->from : any
->"a" : "a"
+import defer { foo } from "./a";
+>foo : () => void
 
 foo();
->foo() : any
->foo : any
+>foo() : void
+>foo : () => void
 
