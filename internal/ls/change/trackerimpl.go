@@ -26,7 +26,7 @@ func (t *Tracker) getTextChangesFromChanges() map[string][]*lsproto.TextEdit {
 		slices.SortStableFunc(changesInFile, func(a, b *trackerEdit) int { return lsproto.CompareRanges(ptrTo(a.Range), ptrTo(b.Range)) })
 		// verify that change intervals do not overlap, except possibly at end points.
 		for i := range len(changesInFile) - 1 {
-			if lsproto.ComparePositions(changesInFile[i].Range.End, changesInFile[i+1].Range.Start) > 0 {
+			if lsproto.ComparePositions(changesInFile[i].Range.End, changesInFile[i+1].Start) > 0 {
 				// assert change[i].End <= change[i + 1].Start
 				panic(fmt.Sprintf("changes overlap: %v and %v", changesInFile[i].Range, changesInFile[i+1].Range))
 			}
@@ -62,7 +62,7 @@ func (t *Tracker) computeNewText(change *trackerEdit, targetSourceFile *ast.Sour
 		return change.NewText
 	}
 
-	pos := int(t.converters.LineAndCharacterToPosition(sourceFile, change.Range.Start))
+	pos := int(t.converters.LineAndCharacterToPosition(sourceFile, change.Start))
 	formatNode := func(n *ast.Node) string {
 		return t.getFormattedTextOfNode(n, targetSourceFile, sourceFile, pos, change.options)
 	}
