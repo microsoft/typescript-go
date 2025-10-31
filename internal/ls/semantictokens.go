@@ -13,87 +13,107 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-// Token types according to LSP specification
+// tokenTypes defines the order of token types for encoding
+var tokenTypes = []lsproto.SemanticTokenTypes{
+	lsproto.SemanticTokenTypesnamespace,
+	lsproto.SemanticTokenTypesclass,
+	lsproto.SemanticTokenTypesenum,
+	lsproto.SemanticTokenTypesinterface,
+	lsproto.SemanticTokenTypesstruct,
+	lsproto.SemanticTokenTypestypeParameter,
+	lsproto.SemanticTokenTypestype,
+	lsproto.SemanticTokenTypesparameter,
+	lsproto.SemanticTokenTypesvariable,
+	lsproto.SemanticTokenTypesproperty,
+	lsproto.SemanticTokenTypesenumMember,
+	lsproto.SemanticTokenTypesdecorator,
+	lsproto.SemanticTokenTypesevent,
+	lsproto.SemanticTokenTypesfunction,
+	lsproto.SemanticTokenTypesmethod,
+	lsproto.SemanticTokenTypesmacro,
+	lsproto.SemanticTokenTypeslabel,
+	lsproto.SemanticTokenTypescomment,
+	lsproto.SemanticTokenTypesstring,
+	lsproto.SemanticTokenTypeskeyword,
+	lsproto.SemanticTokenTypesnumber,
+	lsproto.SemanticTokenTypesregexp,
+	lsproto.SemanticTokenTypesoperator,
+}
+
+// tokenModifiers defines the order of token modifiers for encoding
+var tokenModifiers = []lsproto.SemanticTokenModifiers{
+	lsproto.SemanticTokenModifiersdeclaration,
+	lsproto.SemanticTokenModifiersdefinition,
+	lsproto.SemanticTokenModifiersreadonly,
+	lsproto.SemanticTokenModifiersstatic,
+	lsproto.SemanticTokenModifiersdeprecated,
+	lsproto.SemanticTokenModifiersabstract,
+	lsproto.SemanticTokenModifiersasync,
+	lsproto.SemanticTokenModifiersmodification,
+	lsproto.SemanticTokenModifiersdocumentation,
+	lsproto.SemanticTokenModifiersdefaultLibrary,
+}
+
+// tokenType represents a semantic token type index
+type tokenType int
+
+// Token type indices
 const (
-	TokenTypeNamespace = iota
-	TokenTypeClass
-	TokenTypeEnum
-	TokenTypeInterface
-	TokenTypeStruct
-	TokenTypeTypeParameter
-	TokenTypeType
-	TokenTypeParameter
-	TokenTypeVariable
-	TokenTypeProperty
-	TokenTypeEnumMember
-	TokenTypeDecorator
-	TokenTypeEvent
-	TokenTypeFunction
-	TokenTypeMethod
-	TokenTypeMacro
-	TokenTypeLabel
-	TokenTypeComment
-	TokenTypeString
-	TokenTypeKeyword
-	TokenTypeNumber
-	TokenTypeRegexp
-	TokenTypeOperator
+	tokenTypeNamespace tokenType = iota
+	tokenTypeClass
+	tokenTypeEnum
+	tokenTypeInterface
+	tokenTypeStruct
+	tokenTypeTypeParameter
+	tokenTypeType
+	tokenTypeParameter
+	tokenTypeVariable
+	tokenTypeProperty
+	tokenTypeEnumMember
+	tokenTypeDecorator
+	tokenTypeEvent
+	tokenTypeFunction
+	tokenTypeMethod
+	tokenTypeMacro
+	tokenTypeLabel
+	tokenTypeComment
+	tokenTypeString
+	tokenTypeKeyword
+	tokenTypeNumber
+	tokenTypeRegexp
+	tokenTypeOperator
 )
 
-// Token modifiers according to LSP specification
+// tokenModifier represents a semantic token modifier bit mask
+type tokenModifier int
+
+// Token modifier bit masks
 const (
-	TokenModifierDeclaration = 1 << iota
-	TokenModifierDefinition
-	TokenModifierReadonly
-	TokenModifierStatic
-	TokenModifierDeprecated
-	TokenModifierAbstract
-	TokenModifierAsync
-	TokenModifierModification
-	TokenModifierDocumentation
-	TokenModifierDefaultLibrary
+	tokenModifierDeclaration tokenModifier = 1 << iota
+	tokenModifierDefinition
+	tokenModifierReadonly
+	tokenModifierStatic
+	tokenModifierDeprecated
+	tokenModifierAbstract
+	tokenModifierAsync
+	tokenModifierModification
+	tokenModifierDocumentation
+	tokenModifierDefaultLibrary
 )
 
 // SemanticTokensLegend returns the legend describing the token types and modifiers
 func SemanticTokensLegend() *lsproto.SemanticTokensLegend {
+	types := make([]string, len(tokenTypes))
+	for i, t := range tokenTypes {
+		types[i] = string(t)
+	}
+	modifiers := make([]string, len(tokenModifiers))
+	for i, m := range tokenModifiers {
+		modifiers[i] = string(m)
+	}
 	return &lsproto.SemanticTokensLegend{
-		TokenTypes: []string{
-			"namespace",
-			"class",
-			"enum",
-			"interface",
-			"struct",
-			"typeParameter",
-			"type",
-			"parameter",
-			"variable",
-			"property",
-			"enumMember",
-			"decorator",
-			"event",
-			"function",
-			"method",
-			"macro",
-			"label",
-			"comment",
-			"string",
-			"keyword",
-			"number",
-			"regexp",
-			"operator",
-		},
-		TokenModifiers: []string{
-			"declaration",
-			"definition",
-			"readonly",
-			"static",
-			"deprecated",
-			"abstract",
-			"async",
-			"modification",
-			"documentation",
-			"defaultLibrary",
-		},
+		TokenTypes:     types,
+		TokenModifiers: modifiers,
 	}
 }
 
@@ -147,8 +167,8 @@ func (l *LanguageService) ProvideSemanticTokensRange(ctx context.Context, docume
 type semanticToken struct {
 	pos           int
 	length        int
-	tokenType     int
-	tokenModifier int
+	tokenType     tokenType
+	tokenModifier tokenModifier
 }
 
 func (l *LanguageService) collectSemanticTokens(c *checker.Checker, file *ast.SourceFile, program *compiler.Program) []semanticToken {
@@ -190,20 +210,20 @@ func (l *LanguageService) collectSemanticTokensInRange(c *checker.Checker, file 
 
 				tokenType, ok := classifySymbol(symbol, getMeaningFromLocation(node))
 				if ok {
-					tokenModifier := 0
+					tokenModifier := tokenModifier(0)
 
 					// Check if this is a declaration
 					parent := node.Parent
 					if parent != nil {
 						parentIsDeclaration := ast.IsBindingElement(parent) || tokenFromDeclarationMapping(parent.Kind) == tokenType
 						if parentIsDeclaration && parent.Name() == node {
-							tokenModifier |= TokenModifierDeclaration
+							tokenModifier |= tokenModifierDeclaration
 						}
 					}
 
 					// Reclassify parameters as properties in property access context
-					if tokenType == TokenTypeParameter && ast.IsRightSideOfQualifiedNameOrPropertyAccess(node) {
-						tokenType = TokenTypeProperty
+					if tokenType == tokenTypeParameter && ast.IsRightSideOfQualifiedNameOrPropertyAccess(node) {
+						tokenType = tokenTypeProperty
 					}
 
 					// Reclassify based on type information
@@ -215,28 +235,28 @@ func (l *LanguageService) collectSemanticTokensInRange(c *checker.Checker, file 
 						nodeFlags := ast.GetCombinedNodeFlags(decl)
 
 						if modifiers&ast.ModifierFlagsStatic != 0 {
-							tokenModifier |= TokenModifierStatic
+							tokenModifier |= tokenModifierStatic
 						}
 						if modifiers&ast.ModifierFlagsAsync != 0 {
-							tokenModifier |= TokenModifierAsync
+							tokenModifier |= tokenModifierAsync
 						}
-						if tokenType != TokenTypeClass && tokenType != TokenTypeInterface {
+						if tokenType != tokenTypeClass && tokenType != tokenTypeInterface {
 							if (modifiers&ast.ModifierFlagsReadonly != 0) || (nodeFlags&ast.NodeFlagsConst != 0) || (symbol.Flags&ast.SymbolFlagsEnumMember != 0) {
-								tokenModifier |= TokenModifierReadonly
+								tokenModifier |= tokenModifierReadonly
 							}
 						}
-						if (tokenType == TokenTypeVariable || tokenType == TokenTypeFunction) && isLocalDeclaration(decl, file) {
+						if (tokenType == tokenTypeVariable || tokenType == tokenTypeFunction) && isLocalDeclaration(decl, file) {
 							// Local variables get no special modifier in LSP, but we track it internally
 						}
 						declSourceFile := ast.GetSourceFileOfNode(decl)
 						if declSourceFile != nil && program.IsSourceFileDefaultLibrary(tspath.Path(declSourceFile.FileName())) {
-							tokenModifier |= TokenModifierDefaultLibrary
+							tokenModifier |= tokenModifierDefaultLibrary
 						}
 					} else if symbol.Declarations != nil {
 						for _, decl := range symbol.Declarations {
 							declSourceFile := ast.GetSourceFileOfNode(decl)
 							if declSourceFile != nil && program.IsSourceFileDefaultLibrary(tspath.Path(declSourceFile.FileName())) {
-								tokenModifier |= TokenModifierDefaultLibrary
+								tokenModifier |= tokenModifierDefaultLibrary
 								break
 							}
 						}
@@ -261,24 +281,24 @@ func (l *LanguageService) collectSemanticTokensInRange(c *checker.Checker, file 
 	return tokens
 }
 
-func classifySymbol(symbol *ast.Symbol, meaning ast.SemanticMeaning) (int, bool) {
+func classifySymbol(symbol *ast.Symbol, meaning ast.SemanticMeaning) (tokenType, bool) {
 	flags := symbol.Flags
 	if flags&ast.SymbolFlagsClass != 0 {
-		return TokenTypeClass, true
+		return tokenTypeClass, true
 	}
 	if flags&ast.SymbolFlagsEnum != 0 {
-		return TokenTypeEnum, true
+		return tokenTypeEnum, true
 	}
 	if flags&ast.SymbolFlagsTypeAlias != 0 {
-		return TokenTypeType, true
+		return tokenTypeType, true
 	}
 	if flags&ast.SymbolFlagsInterface != 0 {
 		if meaning&ast.SemanticMeaningType != 0 {
-			return TokenTypeInterface, true
+			return tokenTypeInterface, true
 		}
 	}
 	if flags&ast.SymbolFlagsTypeParameter != 0 {
-		return TokenTypeTypeParameter, true
+		return tokenTypeTypeParameter, true
 	}
 
 	// Check the value declaration
@@ -298,48 +318,48 @@ func classifySymbol(symbol *ast.Symbol, meaning ast.SemanticMeaning) (int, bool)
 	return 0, false
 }
 
-func tokenFromDeclarationMapping(kind ast.Kind) int {
+func tokenFromDeclarationMapping(kind ast.Kind) tokenType {
 	switch kind {
 	case ast.KindVariableDeclaration:
-		return TokenTypeVariable
+		return tokenTypeVariable
 	case ast.KindParameter:
-		return TokenTypeParameter
+		return tokenTypeParameter
 	case ast.KindPropertyDeclaration:
-		return TokenTypeProperty
+		return tokenTypeProperty
 	case ast.KindModuleDeclaration:
-		return TokenTypeNamespace
+		return tokenTypeNamespace
 	case ast.KindEnumDeclaration:
-		return TokenTypeEnum
+		return tokenTypeEnum
 	case ast.KindEnumMember:
-		return TokenTypeEnumMember
+		return tokenTypeEnumMember
 	case ast.KindClassDeclaration:
-		return TokenTypeClass
+		return tokenTypeClass
 	case ast.KindMethodDeclaration:
-		return TokenTypeMethod
+		return tokenTypeMethod
 	case ast.KindFunctionDeclaration, ast.KindFunctionExpression:
-		return TokenTypeFunction
+		return tokenTypeFunction
 	case ast.KindMethodSignature:
-		return TokenTypeMethod
+		return tokenTypeMethod
 	case ast.KindGetAccessor, ast.KindSetAccessor:
-		return TokenTypeProperty
+		return tokenTypeProperty
 	case ast.KindPropertySignature:
-		return TokenTypeProperty
+		return tokenTypeProperty
 	case ast.KindInterfaceDeclaration:
-		return TokenTypeInterface
+		return tokenTypeInterface
 	case ast.KindTypeAliasDeclaration:
-		return TokenTypeType
+		return tokenTypeType
 	case ast.KindTypeParameter:
-		return TokenTypeTypeParameter
+		return tokenTypeTypeParameter
 	case ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment:
-		return TokenTypeProperty
+		return tokenTypeProperty
 	default:
 		return -1
 	}
 }
 
-func reclassifyByType(c *checker.Checker, node *ast.Node, tokenType int) int {
+func reclassifyByType(c *checker.Checker, node *ast.Node, tt tokenType) tokenType {
 	// Type-based reclassification for variables, properties, and parameters
-	if tokenType == TokenTypeVariable || tokenType == TokenTypeProperty || tokenType == TokenTypeParameter {
+	if tt == tokenTypeVariable || tt == tokenTypeProperty || tt == tokenTypeParameter {
 		typ := c.GetTypeAtLocation(node)
 		if typ != nil {
 			test := func(condition func(*checker.Type) bool) bool {
@@ -357,10 +377,10 @@ func reclassifyByType(c *checker.Checker, node *ast.Node, tokenType int) int {
 			}
 
 			// Check for constructor signatures (class-like)
-			if tokenType != TokenTypeParameter && test(func(t *checker.Type) bool {
+			if tt != tokenTypeParameter && test(func(t *checker.Type) bool {
 				return len(c.GetSignaturesOfType(t, checker.SignatureKindConstruct)) > 0
 			}) {
-				return TokenTypeClass
+				return tokenTypeClass
 			}
 
 			// Check for call signatures (function-like)
@@ -372,14 +392,14 @@ func reclassifyByType(c *checker.Checker, node *ast.Node, tokenType int) int {
 				// Must have call signatures and no properties (or be used in call context)
 				return len(t.AsObjectType().Properties()) == 0 || isExpressionInCallExpression(node)
 			}) {
-				if tokenType == TokenTypeProperty {
-					return TokenTypeMethod
+				if tt == tokenTypeProperty {
+					return tokenTypeMethod
 				}
-				return TokenTypeFunction
+				return tokenTypeFunction
 			}
 		}
 	}
-	return tokenType
+	return tt
 }
 
 func isLocalDeclaration(decl *ast.Node, sourceFile *ast.SourceFile) bool {
