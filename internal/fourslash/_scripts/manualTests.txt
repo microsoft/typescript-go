@@ -4,4 +4,5 @@ completionsSelfDeclaring1
 completionsWithDeprecatedTag4
 renameDefaultKeyword
 renameForDefaultExport01
+semanticModernClassificationFunctions
 tsxCompletion12

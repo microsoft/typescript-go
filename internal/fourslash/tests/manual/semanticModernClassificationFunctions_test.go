@@ -23,6 +23,8 @@ func TestSemanticModernClassificationFunctions(t *testing.T) {
 		{Type: "variable.defaultLibrary", Text: "Math"},
 		{Type: "method.defaultLibrary", Text: "abs"},
 		{Type: "parameter", Text: "p1"},
+		{Type: "variable.defaultLibrary", Text: "window"},
+		{Type: "property.defaultLibrary", Text: "location"},
 		{Type: "method.defaultLibrary", Text: "split"},
 		{Type: "method.defaultLibrary", Text: "forEach"},
 		{Type: "parameter.declaration", Text: "s"},
