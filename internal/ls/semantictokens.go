@@ -130,7 +130,7 @@ func (l *LanguageService) ProvideSemanticTokens(ctx context.Context, documentURI
 	c, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
 
-	tokens := l.collectSemanticTokens(c, file, program)
+	tokens := l.collectSemanticTokens(ctx, c, file, program)
 
 	if len(tokens) == 0 {
 		return lsproto.SemanticTokensOrNull{}, nil
@@ -155,7 +155,7 @@ func (l *LanguageService) ProvideSemanticTokensRange(ctx context.Context, docume
 	start := int(l.converters.LineAndCharacterToPosition(file, rang.Start))
 	end := int(l.converters.LineAndCharacterToPosition(file, rang.End))
 
-	tokens := l.collectSemanticTokensInRange(c, file, program, start, end)
+	tokens := l.collectSemanticTokensInRange(ctx, c, file, program, start, end)
 
 	if len(tokens) == 0 {
 		return lsproto.SemanticTokensOrNull{}, nil
@@ -177,18 +177,21 @@ type semanticToken struct {
 	tokenModifier tokenModifier
 }
 
-func (l *LanguageService) collectSemanticTokens(c *checker.Checker, file *ast.SourceFile, program *compiler.Program) []semanticToken {
-	return l.collectSemanticTokensInRange(c, file, program, file.Pos(), file.End())
+func (l *LanguageService) collectSemanticTokens(ctx context.Context, c *checker.Checker, file *ast.SourceFile, program *compiler.Program) []semanticToken {
+	return l.collectSemanticTokensInRange(ctx, c, file, program, file.Pos(), file.End())
 }
 
-func (l *LanguageService) collectSemanticTokensInRange(c *checker.Checker, file *ast.SourceFile, program *compiler.Program, spanStart, spanEnd int) []semanticToken {
+func (l *LanguageService) collectSemanticTokensInRange(ctx context.Context, c *checker.Checker, file *ast.SourceFile, program *compiler.Program, spanStart, spanEnd int) []semanticToken {
 	tokens := []semanticToken{}
 
 	inJSXElement := false
 
 	var visit func(*ast.Node) bool
 	visit = func(node *ast.Node) bool {
-		// Note: cancellation is handled at the handler level, not here
+		// Check for cancellation
+		if ctx.Err() != nil {
+			return false
+		}
 
 		if node == nil {
 			return false
@@ -282,7 +285,13 @@ func (l *LanguageService) collectSemanticTokensInRange(c *checker.Checker, file 
 		return false
 	}
 
-	visit(&file.Node)
+	visit(file.AsNode())
+
+	// Check for cancellation after collection
+	if ctx.Err() != nil {
+		return nil
+	}
+
 	return tokens
 }
 
