@@ -1,0 +1,14 @@
+// === formatDocument ===
+// Original (/basicFormatDocument.ts):
+// const   x    =     1   ;
+// function      foo  (  a  ,   b  )   {
+// return    a  +   b  ;
+// }
+// const  y =   foo(  2  ,   3  )  ;
+
+// Formatted:
+// const x = 1;
+// function foo(a, b) {
+//     return a + b;
+// }
+// const y = foo(2, 3);

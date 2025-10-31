@@ -2221,3 +2221,164 @@ func (f *FourslashTest) verifyBaselines(t *testing.T) {
 }
 
 var AnyTextEdits *[]*lsproto.TextEdit
+
+// VerifyFormatDocument verifies formatting of the entire document.
+// It sends a textDocument/formatting request and compares the result with a baseline.
+func (f *FourslashTest) VerifyFormatDocument(t *testing.T, options *lsproto.FormattingOptions) {
+	if options == nil {
+		options = &lsproto.FormattingOptions{
+			TabSize:      4,
+			InsertSpaces: true,
+		}
+	}
+
+	params := &lsproto.DocumentFormattingParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Options: options,
+	}
+
+	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentFormattingInfo, params)
+	if resMsg == nil {
+		t.Fatal("Nil response received for document formatting request")
+	}
+	if !resultOk {
+		t.Fatalf("Unexpected response type for document formatting request: %T", resMsg.AsResponse().Result)
+	}
+
+	f.addFormattingResultToBaseline(t, "formatDocument", result.TextEdits)
+}
+
+// VerifyFormatSelection verifies formatting of a selected range.
+// It sends a textDocument/rangeFormatting request and compares the result with a baseline.
+func (f *FourslashTest) VerifyFormatSelection(t *testing.T, markerOrRange MarkerOrRange, options *lsproto.FormattingOptions) {
+	if options == nil {
+		options = &lsproto.FormattingOptions{
+			TabSize:      4,
+			InsertSpaces: true,
+		}
+	}
+
+	f.goToMarker(t, markerOrRange)
+	var formatRange lsproto.Range
+	if rangeMarker, ok := markerOrRange.(*RangeMarker); ok {
+		formatRange = rangeMarker.LSRange
+	} else {
+		// If it's just a marker position, format from that position to the end of the line
+		formatRange = lsproto.Range{
+			Start: f.currentCaretPosition,
+			End:   f.currentCaretPosition,
+		}
+	}
+
+	params := &lsproto.DocumentRangeFormattingParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Range:   formatRange,
+		Options: options,
+	}
+
+	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentRangeFormattingInfo, params)
+	if resMsg == nil {
+		t.Fatal("Nil response received for range formatting request")
+	}
+	if !resultOk {
+		t.Fatalf("Unexpected response type for range formatting request: %T", resMsg.AsResponse().Result)
+	}
+
+	f.addFormattingResultToBaseline(t, "formatSelection", result.TextEdits)
+}
+
+// VerifyFormatOnType verifies on-type formatting (e.g., after typing `;`, `}`, or newline).
+// It sends a textDocument/onTypeFormatting request and compares the result with a baseline.
+func (f *FourslashTest) VerifyFormatOnType(t *testing.T, marker string, character string, options *lsproto.FormattingOptions) {
+	if options == nil {
+		options = &lsproto.FormattingOptions{
+			TabSize:      4,
+			InsertSpaces: true,
+		}
+	}
+
+	f.GoToMarker(t, marker)
+
+	params := &lsproto.DocumentOnTypeFormattingParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+		Ch:       character,
+		Options:  options,
+	}
+
+	resMsg, result, resultOk := sendRequest(t, f, lsproto.TextDocumentOnTypeFormattingInfo, params)
+	if resMsg == nil {
+		t.Fatal("Nil response received for on-type formatting request")
+	}
+	if !resultOk {
+		// Check if result is nil - this is valid, just means no formatting needed
+		resp := resMsg.AsResponse()
+		if resp.Result == nil {
+			// No formatting edits needed
+			f.addFormattingResultToBaseline(t, "formatOnType", nil)
+			return
+		}
+		t.Fatalf("Unexpected response type for on-type formatting request: %T", resp.Result)
+	}
+
+	f.addFormattingResultToBaseline(t, "formatOnType", result.TextEdits)
+}
+
+// addFormattingResultToBaseline adds formatting results to the baseline.
+// It shows the original file content and the formatted content side by side.
+func (f *FourslashTest) addFormattingResultToBaseline(t *testing.T, command string, edits *[]*lsproto.TextEdit) {
+	script := f.getScriptInfo(f.activeFilename)
+	originalContent := script.content
+
+	var formattedContent string
+	if edits == nil || len(*edits) == 0 {
+		formattedContent = originalContent
+	} else {
+		// Apply edits to get formatted content
+		formattedContent = f.applyEditsToString(originalContent, *edits)
+	}
+
+	var result strings.Builder
+	result.WriteString(fmt.Sprintf("// Original (%s):\n", f.activeFilename))
+	for _, line := range strings.Split(originalContent, "\n") {
+		result.WriteString("// " + line + "\n")
+	}
+	result.WriteString("\n")
+	result.WriteString("// Formatted:\n")
+	for _, line := range strings.Split(formattedContent, "\n") {
+		result.WriteString("// " + line + "\n")
+	}
+
+	f.addResultToBaseline(t, command, result.String())
+}
+
+// applyEditsToString applies text edits to a string and returns the result.
+func (f *FourslashTest) applyEditsToString(content string, edits []*lsproto.TextEdit) string {
+	script := newScriptInfo(f.activeFilename, content)
+	converters := lsconv.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *lsconv.LSPLineMap {
+		return script.lineMap
+	})
+
+	// Sort edits in reverse order to avoid affecting positions
+	sortedEdits := slices.Clone(edits)
+	slices.SortFunc(sortedEdits, func(a, b *lsproto.TextEdit) int {
+		aStart := converters.LineAndCharacterToPosition(script, a.Range.Start)
+		bStart := converters.LineAndCharacterToPosition(script, b.Range.Start)
+		return int(bStart) - int(aStart)
+	})
+
+	result := content
+	for _, edit := range sortedEdits {
+		start := int(converters.LineAndCharacterToPosition(script, edit.Range.Start))
+		end := int(converters.LineAndCharacterToPosition(script, edit.Range.End))
+		result = result[:start] + edit.NewText + result[end:]
+	}
+
+	return result
+}

@@ -1,0 +1,10 @@
+// === formatOnType ===
+// Original (/basicFormatOnType.ts):
+// function foo()  {
+// const x=1;
+// }
+
+// Formatted:
+// function foo() {
+// const x=1;
+// }
