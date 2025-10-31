@@ -2244,7 +2244,13 @@ func (f *FourslashTest) VerifyFormatDocument(t *testing.T, options *lsproto.Form
 		t.Fatal("Nil response received for document formatting request")
 	}
 	if !resultOk {
-		t.Fatalf("Unexpected response type for document formatting request: %T", resMsg.AsResponse().Result)
+		// Check if result is nil - this is valid, just means no formatting needed
+		resp := resMsg.AsResponse()
+		if resp.Result == nil {
+			f.addFormattingResultToBaseline(t, "formatDocument", nil)
+			return
+		}
+		t.Fatalf("Unexpected response type for document formatting request: %T", resp.Result)
 	}
 
 	f.addFormattingResultToBaseline(t, "formatDocument", result.TextEdits)
@@ -2261,7 +2267,7 @@ func (f *FourslashTest) VerifyFormatSelection(t *testing.T, rangeMarker *RangeMa
 		}
 	}
 
-	f.goToMarker(t, rangeMarker)
+	f.ensureActiveFile(t, rangeMarker.FileName())
 	formatRange := rangeMarker.LSRange
 
 	params := &lsproto.DocumentRangeFormattingParams{
@@ -2277,7 +2283,13 @@ func (f *FourslashTest) VerifyFormatSelection(t *testing.T, rangeMarker *RangeMa
 		t.Fatal("Nil response received for range formatting request")
 	}
 	if !resultOk {
-		t.Fatalf("Unexpected response type for range formatting request: %T", resMsg.AsResponse().Result)
+		// Check if result is nil - this is valid, just means no formatting needed
+		resp := resMsg.AsResponse()
+		if resp.Result == nil {
+			f.addFormattingResultToBaseline(t, "formatSelection", nil)
+			return
+		}
+		t.Fatalf("Unexpected response type for range formatting request: %T", resp.Result)
 	}
 
 	f.addFormattingResultToBaseline(t, "formatSelection", result.TextEdits)
@@ -2359,18 +2371,27 @@ func (f *FourslashTest) applyEditsToString(content string, edits []*lsproto.Text
 	})
 
 	// Sort edits in reverse order to avoid affecting positions
-	sortedEdits := slices.Clone(edits)
-	slices.SortFunc(sortedEdits, func(a, b *lsproto.TextEdit) int {
-		aStart := converters.LineAndCharacterToPosition(script, a.Range.Start)
-		bStart := converters.LineAndCharacterToPosition(script, b.Range.Start)
-		return int(bStart) - int(aStart)
+	// Create a slice with cached position conversions for efficient sorting
+	type editWithPosition struct {
+		edit *lsproto.TextEdit
+		pos  core.TextPos
+	}
+	editsWithPositions := make([]editWithPosition, len(edits))
+	for i, edit := range edits {
+		editsWithPositions[i] = editWithPosition{
+			edit: edit,
+			pos:  converters.LineAndCharacterToPosition(script, edit.Range.Start),
+		}
+	}
+	slices.SortFunc(editsWithPositions, func(a, b editWithPosition) int {
+		return int(b.pos) - int(a.pos)
 	})
 
 	result := content
-	for _, edit := range sortedEdits {
-		start := int(converters.LineAndCharacterToPosition(script, edit.Range.Start))
-		end := int(converters.LineAndCharacterToPosition(script, edit.Range.End))
-		result = result[:start] + edit.NewText + result[end:]
+	for _, editWithPos := range editsWithPositions {
+		start := int(editWithPos.pos)
+		end := int(converters.LineAndCharacterToPosition(script, editWithPos.edit.Range.End))
+		result = result[:start] + editWithPos.edit.NewText + result[end:]
 	}
 
 	return result
