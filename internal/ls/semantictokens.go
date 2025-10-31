@@ -396,7 +396,11 @@ func reclassifyByType(c *checker.Checker, node *ast.Node, tt tokenType) tokenTyp
 					return false
 				}
 				// Must have call signatures and no properties (or be used in call context)
-				return len(t.AsObjectType().Properties()) == 0 || isExpressionInCallExpression(node)
+				objType := t.AsObjectType()
+				if objType == nil {
+					return true
+				}
+				return len(objType.Properties()) == 0 || isExpressionInCallExpression(node)
 			}) {
 				if tt == tokenTypeProperty {
 					return tokenTypeMethod
