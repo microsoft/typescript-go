@@ -396,22 +396,21 @@ func reclassifyByType(c *checker.Checker, node *ast.Node, tt tokenType) tokenTyp
 			}
 
 			// Check for call signatures (function-like)
-			if test(func(t *checker.Type) bool {
-				callSigs := c.GetSignaturesOfType(t, checker.SignatureKindCall)
-				if len(callSigs) == 0 {
-					return false
+			// Must have call signatures AND (no properties OR be used in call context)
+			hasCallSignatures := test(func(t *checker.Type) bool {
+				return len(c.GetSignaturesOfType(t, checker.SignatureKindCall)) > 0
+			})
+			if hasCallSignatures {
+				hasNoProperties := !test(func(t *checker.Type) bool {
+					objType := t.AsObjectType()
+					return objType != nil && len(objType.Properties()) > 0
+				})
+				if hasNoProperties || isExpressionInCallExpression(node) {
+					if tt == tokenTypeProperty {
+						return tokenTypeMethod
+					}
+					return tokenTypeFunction
 				}
-				// Must have call signatures and no properties (or be used in call context)
-				objType := t.AsObjectType()
-				if objType == nil {
-					return true
-				}
-				return len(objType.Properties()) == 0 || isExpressionInCallExpression(node)
-			}) {
-				if tt == tokenTypeProperty {
-					return tokenTypeMethod
-				}
-				return tokenTypeFunction
 			}
 		}
 	}
