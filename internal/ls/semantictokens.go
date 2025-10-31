@@ -542,8 +542,8 @@ func encodeSemanticTokens(tokens []semanticToken, file *ast.SourceFile, converte
 		if startPos.Line == endPos.Line {
 			tokenLength = endPos.Character - startPos.Character
 		} else {
-			// Multi-line tokens shouldn't happen for identifiers, but handle it
-			tokenLength = endPos.Character
+			panic(fmt.Sprintf("semantic tokens: token spans multiple lines: start=(%d,%d) end=(%d,%d) for token at offset %d",
+				startPos.Line, startPos.Character, endPos.Line, endPos.Character, tokenStart))
 		}
 
 		line := startPos.Line
