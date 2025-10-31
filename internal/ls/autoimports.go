@@ -120,7 +120,7 @@ func (e *exportInfoMap) add(
 			topLevelNodeModulesIndex := nodeModulesPathParts.TopLevelNodeModulesIndex
 			topLevelPackageNameIndex := nodeModulesPathParts.TopLevelPackageNameIndex
 			packageRootIndex := nodeModulesPathParts.PackageRootIndex
-			packageName = module.UnmangleScopedPackageName(modulespecifiers.GetPackageNameFromTypesPackageName(moduleFile.FileName()[topLevelPackageNameIndex+1 : packageRootIndex]))
+			packageName = module.UnmangleScopedPackageName(module.GetPackageNameFromTypesPackageName(moduleFile.FileName()[topLevelPackageNameIndex+1 : packageRootIndex]))
 			if strings.HasPrefix(string(importingFile), string(moduleFile.Path())[0:topLevelNodeModulesIndex]) {
 				nodeModulesPath := moduleFile.FileName()[0 : topLevelPackageNameIndex+1]
 				if prevDeepestNodeModulesPath, ok := e.packages[packageName]; ok {

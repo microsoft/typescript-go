@@ -154,8 +154,6 @@ func NewSession(init *SessionInit) *Session {
 				fs:     init.FS,
 			},
 			init.Options,
-			parseCache,
-			extendedConfigCache,
 			&ConfigFileRegistry{},
 			nil,
 			Config{},

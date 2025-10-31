@@ -14,6 +14,17 @@ var typeScriptVersion = semver.MustParse(core.Version())
 
 const InferredTypesContainingFile = "__inferred type names__.ts"
 
+func IsApplicableVersionedTypesKey(key string) bool {
+	if !strings.HasPrefix(key, "types@") {
+		return false
+	}
+	range_, ok := semver.TryParseVersionRange(key[len("types@"):])
+	if !ok {
+		return false
+	}
+	return range_.Test(&typeScriptVersion)
+}
+
 func ParseNodeModuleFromPath(resolved string, isFolder bool) string {
 	path := tspath.NormalizePath(resolved)
 	idx := strings.LastIndex(path, "/node_modules/")
@@ -65,6 +76,14 @@ func UnmangleScopedPackageName(packageName string) string {
 
 func GetTypesPackageName(packageName string) string {
 	return "@types/" + MangleScopedPackageName(packageName)
+}
+
+func GetPackageNameFromTypesPackageName(mangledName string) string {
+	withoutAtTypePrefix := strings.TrimPrefix(mangledName, "@types/")
+	if withoutAtTypePrefix != mangledName {
+		return UnmangleScopedPackageName(withoutAtTypePrefix)
+	}
+	return mangledName
 }
 
 func ComparePatternKeys(a, b string) int {

@@ -624,15 +624,20 @@ func DiffMaps[K comparable, V comparable](m1 map[K]V, m2 map[K]V, onAdded func(K
 	DiffMapsFunc(m1, m2, comparableValuesEqual, onAdded, onRemoved, onChanged)
 }
 
-func DiffMapsFunc[K comparable, V any](m1 map[K]V, m2 map[K]V, equalValues func(V, V) bool, onAdded func(K, V), onRemoved func(K, V), onChanged func(K, V, V)) {
-	for k, v2 := range m2 {
-		if _, ok := m1[k]; !ok {
-			onAdded(k, v2)
+func DiffMapsFunc[K comparable, V1 any, V2 any](m1 map[K]V1, m2 map[K]V2, equalValues func(V1, V2) bool, onAdded func(K, V2), onRemoved func(K, V1), onChanged func(K, V1, V2)) {
+	if onAdded != nil {
+		for k, v2 := range m2 {
+			if _, ok := m1[k]; !ok {
+				onAdded(k, v2)
+			}
 		}
+	}
+	if onChanged == nil && onRemoved == nil {
+		return
 	}
 	for k, v1 := range m1 {
 		if v2, ok := m2[k]; ok {
-			if !equalValues(v1, v2) {
+			if onChanged != nil && !equalValues(v1, v2) {
 				onChanged(k, v1, v2)
 			}
 		} else {

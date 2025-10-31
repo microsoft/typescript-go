@@ -55,6 +55,37 @@ func (df *DependencyFields) HasDependency(name string) bool {
 	return false
 }
 
+func (df *DependencyFields) RangeDependencies(f func(name, version, dependencyField string) bool) {
+	if deps, ok := df.Dependencies.GetValue(); ok {
+		for name, version := range deps {
+			if !f(name, version, "dependencies") {
+				return
+			}
+		}
+	}
+	if devDeps, ok := df.DevDependencies.GetValue(); ok {
+		for name, version := range devDeps {
+			if !f(name, version, "devDependencies") {
+				return
+			}
+		}
+	}
+	if peerDeps, ok := df.PeerDependencies.GetValue(); ok {
+		for name, version := range peerDeps {
+			if !f(name, version, "peerDependencies") {
+				return
+			}
+		}
+	}
+	if optDeps, ok := df.OptionalDependencies.GetValue(); ok {
+		for name, version := range optDeps {
+			if !f(name, version, "optionalDependencies") {
+				return
+			}
+		}
+	}
+}
+
 type Fields struct {
 	HeaderFields
 	PathFields

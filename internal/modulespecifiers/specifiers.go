@@ -780,7 +780,7 @@ func tryGetModuleNameAsNodeModule(
 
 	// If the module was found in @types, get the actual Node package name
 	nodeModulesDirectoryName := moduleSpecifier[parts.TopLevelPackageNameIndex+1:]
-	return GetPackageNameFromTypesPackageName(nodeModulesDirectoryName)
+	return module.GetPackageNameFromTypesPackageName(nodeModulesDirectoryName)
 }
 
 type pkgJsonDirAttemptResult struct {
@@ -829,7 +829,7 @@ func tryDirectoryWithPackageJson(
 		// name in the package.json content via url/filepath dependency specifiers. We need to
 		// use the actual directory name, so don't look at `packageJsonContent.name` here.
 		nodeModulesDirectoryName := packageRootPath[parts.TopLevelPackageNameIndex+1:]
-		packageName := GetPackageNameFromTypesPackageName(nodeModulesDirectoryName)
+		packageName := module.GetPackageNameFromTypesPackageName(nodeModulesDirectoryName)
 		conditions := module.GetConditions(options, importMode)
 
 		var fromExports string
@@ -1255,7 +1255,7 @@ func tryGetModuleNameFromExportsOrImports(
 		// conditional mapping
 		obj := exports.AsObject()
 		for key, value := range obj.Entries() {
-			if key == "default" || slices.Contains(conditions, key) || isApplicableVersionedTypesKey(conditions, key) {
+			if key == "default" || slices.Contains(conditions, key) || slices.Contains(conditions, "types") && module.IsApplicableVersionedTypesKey(key) {
 				result := tryGetModuleNameFromExportsOrImports(options, host, targetFilePath, packageDirectory, packageName, value, conditions, mode, isImports, preferTsExtension)
 				if len(result) > 0 {
 					return result

@@ -9,9 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/packagejson"
-	"github.com/microsoft/typescript-go/internal/semver"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -198,22 +196,6 @@ func prefersTsExtension(allowedEndings []ModuleSpecifierEnding) bool {
 	return false
 }
 
-var typeScriptVersion = semver.MustParse(core.Version()) // TODO: unify with clone inside module resolver?
-
-func isApplicableVersionedTypesKey(conditions []string, key string) bool {
-	if !slices.Contains(conditions, "types") {
-		return false // only apply versioned types conditions if the types condition is applied
-	}
-	if !strings.HasPrefix(key, "types@") {
-		return false
-	}
-	range_, ok := semver.TryParseVersionRange(key[len("types@"):])
-	if !ok {
-		return false
-	}
-	return range_.Test(&typeScriptVersion)
-}
-
 func replaceFirstStar(s string, replacement string) string {
 	return strings.Replace(s, "*", replacement, 1)
 }
@@ -303,14 +285,6 @@ func GetNodeModulesPackageName(
 		}
 	}
 	return ""
-}
-
-func GetPackageNameFromTypesPackageName(mangledName string) string {
-	withoutAtTypePrefix := strings.TrimPrefix(mangledName, "@types/")
-	if withoutAtTypePrefix != mangledName {
-		return module.UnmangleScopedPackageName(withoutAtTypePrefix)
-	}
-	return mangledName
 }
 
 func allKeysStartWithDot(obj *collections.OrderedMap[string, packagejson.ExportsOrImports]) bool {

@@ -2,6 +2,7 @@ package module
 
 import (
 	"fmt"
+	"maps"
 	"slices"
 	"strings"
 	"sync"
@@ -11,8 +12,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/packagejson"
-	"github.com/microsoft/typescript-go/internal/semver"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type resolved struct {
@@ -1804,13 +1805,7 @@ func (r *resolutionState) conditionMatches(condition string) bool {
 	if !slices.Contains(r.conditions, "types") {
 		return false // only apply versioned types conditions if the types condition is applied
 	}
-	if !strings.HasPrefix(condition, "types@") {
-		return false
-	}
-	if versionRange, ok := semver.TryParseVersionRange(condition[len("types@"):]); ok {
-		return versionRange.Test(&typeScriptVersion)
-	}
-	return false
+	return IsApplicableVersionedTypesKey(condition)
 }
 
 func (r *resolutionState) getTraceFunc() func(string) {
@@ -2007,4 +2002,130 @@ func GetAutomaticTypeDirectiveNames(options *core.CompilerOptions, host Resoluti
 		}
 	}
 	return result
+}
+
+type ResolvedEntrypoint struct {
+	ResolvedFileName  string
+	ModuleSpecifier   string
+	IncludeConditions map[string]struct{}
+	ExcludeConditions map[string]struct{}
+}
+
+func (r *Resolver) GetEntrypointsFromPackageJsonInfo(packageDirectory string, packageJson *packagejson.PackageJson) []*ResolvedEntrypoint {
+	extensions := extensionsTypeScript | extensionsDeclaration
+	features := NodeResolutionFeaturesAll
+	packageName := GetTypesPackageName(tspath.GetBaseFileName(packageDirectory))
+
+	if packageJson.Exports.IsPresent() {
+		state := &resolutionState{resolver: r, extensions: extensions, features: features, compilerOptions: &core.CompilerOptions{}}
+		return state.loadEntrypointsFromExportMap(packageDirectory, packageName, packageJson, packageJson.Exports)
+	} else {
+		// !!!
+		return nil
+	}
+}
+
+func (r *resolutionState) loadEntrypointsFromExportMap(
+	packageDirectory string,
+	packageName string,
+	packageJson *packagejson.PackageJson,
+	exports packagejson.ExportsOrImports,
+) []*ResolvedEntrypoint {
+	var loadEntrypointsFromTargetExports func(subpath string, includeConditions map[string]struct{}, excludeConditions map[string]struct{}, exports packagejson.ExportsOrImports)
+	var entrypoints []*ResolvedEntrypoint
+
+	loadEntrypointsFromTargetExports = func(subpath string, includeConditions map[string]struct{}, excludeConditions map[string]struct{}, exports packagejson.ExportsOrImports) {
+		if exports.Type == packagejson.JSONValueTypeString && strings.HasPrefix(exports.AsString(), "./") {
+			if strings.ContainsRune(exports.AsString(), '*') {
+				if strings.IndexByte(exports.AsString(), '*') != strings.LastIndexByte(exports.AsString(), '*') {
+					return
+				}
+				files := vfs.ReadDirectory(
+					r.resolver.host.FS(),
+					r.resolver.host.GetCurrentDirectory(),
+					packageDirectory,
+					r.extensions.Array(),
+					nil,
+					[]string{
+						tspath.ChangeFullExtension(strings.Replace(exports.AsString(), "*", "**/*", 1), ".*"),
+					},
+					nil,
+				)
+				for _, file := range files {
+					entrypoints = append(entrypoints, &ResolvedEntrypoint{
+						ResolvedFileName:  file,
+						ModuleSpecifier:   "", // !!!
+						IncludeConditions: includeConditions,
+						ExcludeConditions: excludeConditions,
+					})
+				}
+			} else {
+				partsAfterFirst := tspath.GetPathComponents(exports.AsString(), "")[2:]
+				if slices.Contains(partsAfterFirst, "..") || slices.Contains(partsAfterFirst, ".") || slices.Contains(partsAfterFirst, "node_modules") {
+					return
+				}
+				resolvedTarget := tspath.CombinePaths(packageDirectory, exports.AsString())
+				if result := r.loadFileNameFromPackageJSONField(r.extensions, resolvedTarget, exports.AsString(), false /*onlyRecordFailures*/); result.isResolved() {
+					entrypoints = append(entrypoints, &ResolvedEntrypoint{
+						ResolvedFileName:  result.path,
+						ModuleSpecifier:   packageName + subpath,
+						IncludeConditions: includeConditions,
+						ExcludeConditions: excludeConditions,
+					})
+				}
+			}
+		} else if exports.Type == packagejson.JSONValueTypeArray {
+			for _, element := range exports.AsArray() {
+				loadEntrypointsFromTargetExports(subpath, includeConditions, excludeConditions, element)
+			}
+		} else if exports.Type == packagejson.JSONValueTypeObject {
+			var prevConditions []string
+			for condition, export := range exports.AsObject().Entries() {
+				if _, ok := excludeConditions[condition]; ok {
+					continue
+				}
+
+				conditionAlwaysMatches := condition == "default" || condition == "types" || IsApplicableVersionedTypesKey(condition)
+				if !(conditionAlwaysMatches) {
+					includeConditions = maps.Clone(includeConditions)
+					excludeConditions = maps.Clone(excludeConditions)
+					if includeConditions == nil {
+						includeConditions = make(map[string]struct{})
+					}
+					includeConditions[condition] = struct{}{}
+					for _, prevCondition := range prevConditions {
+						if excludeConditions == nil {
+							excludeConditions = make(map[string]struct{})
+						}
+						excludeConditions[prevCondition] = struct{}{}
+					}
+				}
+
+				prevConditions = append(prevConditions, condition)
+				loadEntrypointsFromTargetExports(subpath, includeConditions, excludeConditions, export)
+				if conditionAlwaysMatches {
+					break
+				}
+			}
+		}
+	}
+
+	switch exports.Type {
+	case packagejson.JSONValueTypeArray:
+		for _, element := range exports.AsArray() {
+			loadEntrypointsFromTargetExports(".", nil, nil, element)
+		}
+	case packagejson.JSONValueTypeObject:
+		if exports.IsSubpaths() {
+			for subpath, export := range exports.AsObject().Entries() {
+				loadEntrypointsFromTargetExports(subpath, nil, nil, export)
+			}
+		} else {
+			loadEntrypointsFromTargetExports(".", nil, nil, exports)
+		}
+	default:
+		loadEntrypointsFromTargetExports(".", nil, nil, exports)
+	}
+
+	return entrypoints
 }
