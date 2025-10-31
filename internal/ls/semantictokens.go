@@ -550,6 +550,11 @@ func encodeSemanticTokens(tokens []semanticToken, file *ast.SourceFile, converte
 		line := startPos.Line
 		char := startPos.Character
 
+		// Verify that positions are strictly increasing (visitor walks in order)
+		if line < prevLine || (line == prevLine && char <= prevChar) {
+			panic("semantic tokens: positions must be strictly increasing")
+		}
+
 		// Encode as: [deltaLine, deltaChar, length, tokenType, tokenModifiers]
 		deltaLine := line - prevLine
 		var deltaChar uint32
