@@ -2,7 +2,6 @@ package pnpvfs_test
 
 import (
 	"archive/zip"
-	"fmt"
 	"os"
 	"strings"
 	"testing"
@@ -16,7 +15,7 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-func createTestZip(t *testing.T, files map[string]string) string {
+func createTestZip(t *testing.T, files map[string]string) (string, vfs.FS) {
 	t.Helper()
 
 	tmpDir := t.TempDir()
@@ -36,7 +35,14 @@ func createTestZip(t *testing.T, files map[string]string) string {
 		assert.NilError(t, err)
 	}
 
-	return zipPath
+	fs := pnpvfs.From(osvfs.FS())
+
+	t.Cleanup(func() {
+		errClear := fs.ClearCache()
+		assert.NilError(t, errClear)
+	})
+
+	return zipPath, fs
 }
 
 func TestPnpVfs_BasicFileOperations(t *testing.T) {
@@ -85,15 +91,8 @@ func TestPnpVfs_ZipFileDetection(t *testing.T) {
 		"package.json": `{"name": "test-project"}`,
 	}
 
-	zipPath := createTestZip(t, zipFiles)
+	zipPath, fs := createTestZip(t, zipFiles)
 
-	underlyingFS := vfstest.FromMap(map[string]string{
-		zipPath: "zip content placeholder",
-	}, true)
-
-	fs := pnpvfs.From(underlyingFS)
-
-	fmt.Println(zipPath)
 	assert.Assert(t, fs.FileExists(zipPath))
 
 	zipInternalPath := zipPath + "/src/index.ts"
@@ -137,10 +136,10 @@ func TestPnpVfs_ErrorHandling(t *testing.T) {
 		zipFiles := map[string]string{
 			"src/index.ts": "export const hello = 'world';",
 		}
-		zipPath := createTestZip(t, zipFiles)
+		zipPath, zipFS := createTestZip(t, zipFiles)
 
 		testutil.AssertPanics(t, func() {
-			_ = fs.WriteFile(zipPath+"/src/index.ts", "hello, world", false)
+			_ = zipFS.WriteFile(zipPath+"/src/index.ts", "hello, world", false)
 		}, "cannot write to zip file")
 	})
 }
@@ -249,8 +248,7 @@ func TestPnpVfs_RealZipIntegration(t *testing.T) {
 		"tsconfig.json":        `{"compilerOptions": {"target": "es2020"}}`,
 	}
 
-	zipPath := createTestZip(t, zipFiles)
-	fs := pnpvfs.From(osvfs.FS())
+	zipPath, fs := createTestZip(t, zipFiles)
 
 	assert.Assert(t, fs.FileExists(zipPath))
 

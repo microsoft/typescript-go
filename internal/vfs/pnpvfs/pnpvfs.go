@@ -233,3 +233,19 @@ func makeVirtualPath(basePath string, hash string, targetPath string) string {
 
 	return path.Join(basePath, hash, strconv.Itoa(depth), subPath)
 }
+
+func (pnpFS *pnpFS) ClearCache() error {
+	pnpFS.cacheReaderMutex.Lock()
+	defer pnpFS.cacheReaderMutex.Unlock()
+
+	for _, reader := range pnpFS.cachedZipReadersMap {
+		err := reader.Close()
+		if err != nil {
+			return err
+		}
+	}
+
+	pnpFS.cachedZipReadersMap = make(map[string]*zip.ReadCloser)
+
+	return nil
+}
