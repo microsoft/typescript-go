@@ -427,6 +427,10 @@ func isLocalDeclaration(decl *ast.Node, sourceFile *ast.SourceFile) bool {
 	}
 	if ast.IsVariableDeclaration(decl) {
 		parent := decl.Parent
+		// Check if this is a catch clause parameter
+		if parent != nil && ast.IsCatchClause(parent) {
+			return ast.GetSourceFileOfNode(decl) == sourceFile
+		}
 		if parent != nil && ast.IsVariableDeclarationList(parent) {
 			grandparent := parent.Parent
 			if grandparent != nil {
