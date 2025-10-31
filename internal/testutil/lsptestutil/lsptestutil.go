@@ -286,8 +286,8 @@ func ptrTo[T any](v T) *T {
 	return &v
 }
 
-func Setup(t *testing.T, files map[string]any) (*TestLspServer, *projecttestutil.SessionUtils) {
-	initOptions, sessionUtils := projecttestutil.GetSessionInitOptions(files, nil, &projecttestutil.TypingsInstallerOptions{})
+func Setup(t *testing.T, files map[string]any) (*TestLspServer, *projecttestutil.SessionUtils, vfs.FS) {
+	initOptions, sessionUtils, fsFromMap := projecttestutil.GetSessionInitOptions(files, nil, &projecttestutil.TypingsInstallerOptions{})
 	initOptions.Options.TypingsLocation = "" // Disable ata
 	watchEnabledCapabilities := &lsproto.ClientCapabilities{
 		Workspace: &lsproto.WorkspaceClientCapabilities{
@@ -305,5 +305,5 @@ func Setup(t *testing.T, files map[string]any) (*TestLspServer, *projecttestutil
 		TypingsLocation: initOptions.Options.TypingsLocation,
 		Capabilities:    watchEnabledCapabilities,
 	})
-	return server, sessionUtils
+	return server, sessionUtils, fsFromMap
 }

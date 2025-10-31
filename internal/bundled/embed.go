@@ -31,22 +31,10 @@ type wrappedFS struct {
 	fs vfs.FS
 }
 
-type WrappedFS interface {
-	vfs.FS
-	InternalFS() vfs.FS
-}
-
-var (
-	_ vfs.FS    = (*wrappedFS)(nil)
-	_ WrappedFS = (*wrappedFS)(nil)
-)
+var _ vfs.FS = (*wrappedFS)(nil)
 
 func wrapFS(fs vfs.FS) vfs.FS {
 	return &wrappedFS{fs: fs}
-}
-
-func (vfs *wrappedFS) InternalFS() vfs.FS {
-	return vfs.fs
 }
 
 func (vfs *wrappedFS) UseCaseSensitiveFileNames() bool {

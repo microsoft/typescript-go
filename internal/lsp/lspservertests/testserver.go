@@ -37,7 +37,7 @@ type testServer struct {
 
 func newTestServer(t *testing.T, files map[string]any) *testServer {
 	t.Helper()
-	server, utils := lsptestutil.Setup(t, files)
+	server, utils, fsFromMap := lsptestutil.Setup(t, files)
 	testServer := &testServer{
 		t:         t,
 		files:     files,
@@ -45,12 +45,11 @@ func newTestServer(t *testing.T, files map[string]any) *testServer {
 		utils:     utils,
 		openFiles: make(map[string]string),
 	}
-	wrappedFs := testServer.server.FS.(bundled.WrappedFS)
 	testServer.fsDiffer = &fsbaselineutil.FSDiffer{
-		FS:           wrappedFs.InternalFS().(iovfs.FsWithSys),
+		FS:           fsFromMap.(iovfs.FsWithSys),
 		WrittenFiles: &testServer.writtenFiles,
 	}
-	fmt.Fprintf(&testServer.baseline, "UseCaseSensitiveFileNames: %v\n", wrappedFs.UseCaseSensitiveFileNames())
+	fmt.Fprintf(&testServer.baseline, "UseCaseSensitiveFileNames: %v\n", fsFromMap.UseCaseSensitiveFileNames())
 	testServer.fsDiffer.BaselineFSwithDiff(&testServer.baseline)
 	return testServer
 }

@@ -192,7 +192,7 @@ func SetupWithTypingsInstaller(files map[string]any, tiOptions *TypingsInstaller
 }
 
 func SetupWithOptionsAndTypingsInstaller(files map[string]any, options *project.SessionOptions, tiOptions *TypingsInstallerOptions) (*project.Session, *SessionUtils) {
-	init, sessionUtils := GetSessionInitOptions(files, options, tiOptions)
+	init, sessionUtils, _ := GetSessionInitOptions(files, options, tiOptions)
 	session := project.NewSession(init)
 
 	return session, sessionUtils
@@ -202,8 +202,9 @@ func WithRequestID(ctx context.Context) context.Context {
 	return core.WithRequestID(ctx, "0")
 }
 
-func GetSessionInitOptions(files map[string]any, options *project.SessionOptions, tiOptions *TypingsInstallerOptions) (*project.SessionInit, *SessionUtils) {
-	fs := bundled.WrapFS(vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/))
+func GetSessionInitOptions(files map[string]any, options *project.SessionOptions, tiOptions *TypingsInstallerOptions) (*project.SessionInit, *SessionUtils, vfs.FS) {
+	fsFromMap := vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/)
+	fs := bundled.WrapFS(fsFromMap)
 	clientMock := &ClientMock{}
 	npmExecutorMock := &NpmExecutorMock{}
 	sessionUtils := &SessionUtils{
@@ -235,5 +236,5 @@ func GetSessionInitOptions(files map[string]any, options *project.SessionOptions
 		Client:      clientMock,
 		NpmExecutor: npmExecutorMock,
 		Logger:      sessionUtils.logger,
-	}, sessionUtils
+	}, sessionUtils, fsFromMap
 }
