@@ -932,18 +932,12 @@ func (s *Server) handleSelectionRange(ctx context.Context, ls *ls.LanguageServic
 }
 
 func (s *Server) handleSemanticTokensFull(ctx context.Context, ls *ls.LanguageService, params *lsproto.SemanticTokensParams) (lsproto.SemanticTokensResponse, error) {
-	var clientCapabilities *lsproto.SemanticTokensClientCapabilities
-	if s.initializeParams.Capabilities != nil && s.initializeParams.Capabilities.TextDocument != nil {
-		clientCapabilities = s.initializeParams.Capabilities.TextDocument.SemanticTokens
-	}
+	clientCapabilities := getSemanticTokensClientCapabilities(s.initializeParams)
 	return ls.ProvideSemanticTokens(ctx, params.TextDocument.Uri, clientCapabilities)
 }
 
 func (s *Server) handleSemanticTokensRange(ctx context.Context, ls *ls.LanguageService, params *lsproto.SemanticTokensRangeParams) (lsproto.SemanticTokensRangeResponse, error) {
-	var clientCapabilities *lsproto.SemanticTokensClientCapabilities
-	if s.initializeParams.Capabilities != nil && s.initializeParams.Capabilities.TextDocument != nil {
-		clientCapabilities = s.initializeParams.Capabilities.TextDocument.SemanticTokens
-	}
+	clientCapabilities := getSemanticTokensClientCapabilities(s.initializeParams)
 	return ls.ProvideSemanticTokensRange(ctx, params.TextDocument.Uri, params.Range, clientCapabilities)
 }
 
