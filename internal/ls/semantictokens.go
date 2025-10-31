@@ -204,11 +204,9 @@ func (l *LanguageService) collectSemanticTokensInRange(ctx context.Context, c *c
 			return false
 		}
 
-		prevInJSXElement := inJSXElement
 		if ast.IsJsxElement(node) || ast.IsJsxSelfClosingElement(node) {
 			inJSXElement = true
-		}
-		if ast.IsJsxExpression(node) {
+		} else if ast.IsJsxExpression(node) {
 			inJSXElement = false
 		}
 
@@ -284,7 +282,6 @@ func (l *LanguageService) collectSemanticTokensInRange(ctx context.Context, c *c
 		}
 
 		node.ForEachChild(visit)
-		inJSXElement = prevInJSXElement
 		return false
 	}
 
@@ -320,13 +317,13 @@ func classifySymbol(symbol *ast.Symbol, meaning ast.SemanticMeaning) (tokenType,
 
 	// Check the value declaration
 	decl := symbol.ValueDeclaration
-	if decl == nil && symbol.Declarations != nil && len(symbol.Declarations) > 0 {
+	if decl == nil && len(symbol.Declarations) > 0 {
 		decl = symbol.Declarations[0]
 	}
-	if decl != nil && ast.IsBindingElement(decl) {
-		decl = getDeclarationForBindingElement(decl)
-	}
 	if decl != nil {
+		if ast.IsBindingElement(decl) {
+			decl = getDeclarationForBindingElement(decl)
+		}
 		if tokenType := tokenFromDeclarationMapping(decl.Kind); tokenType >= 0 {
 			return tokenType, true
 		}
@@ -455,8 +452,6 @@ func getDeclarationForBindingElement(element *ast.Node) *ast.Node {
 				element = grandparent
 				continue
 			}
-		}
-		if parent != nil && ast.IsBindingPattern(parent) {
 			return parent.Parent
 		}
 		return element
@@ -465,10 +460,7 @@ func getDeclarationForBindingElement(element *ast.Node) *ast.Node {
 
 func isInImportClause(node *ast.Node) bool {
 	parent := node.Parent
-	if parent == nil {
-		return false
-	}
-	return ast.IsImportClause(parent) || ast.IsImportSpecifier(parent) || ast.IsNamespaceImport(parent)
+	return parent != nil && (ast.IsImportClause(parent) || ast.IsImportSpecifier(parent) || ast.IsNamespaceImport(parent))
 }
 
 func isExpressionInCallExpression(node *ast.Node) bool {
@@ -493,15 +485,9 @@ func encodeSemanticTokens(tokens []semanticToken, file *ast.SourceFile, converte
 	if clientCapabilities != nil {
 		// Map server token types to client-supported indices
 		clientIdx := uint32(0)
-		for _, serverType := range tokenTypes {
+		for i, serverType := range tokenTypes {
 			if slices.Contains(clientCapabilities.TokenTypes, string(serverType)) {
-				// Find the server index for this type
-				for i, t := range tokenTypes {
-					if t == serverType {
-						typeMapping[tokenType(i)] = clientIdx
-						break
-					}
-				}
+				typeMapping[tokenType(i)] = clientIdx
 				clientIdx++
 			}
 		}
