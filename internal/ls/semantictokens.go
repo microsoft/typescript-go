@@ -57,10 +57,8 @@ var tokenModifiers = []lsproto.SemanticTokenModifiers{
 	"local",
 }
 
-// tokenType represents a semantic token type index
 type tokenType int
 
-// Token type indices
 const (
 	tokenTypeNamespace tokenType = iota
 	tokenTypeClass
@@ -76,7 +74,7 @@ const (
 	tokenTypeDecorator
 	tokenTypeEvent
 	tokenTypeFunction
-	tokenTypeMethod
+	tokenTypeMethod // Previously called "member" in TypeScript
 	tokenTypeMacro
 	tokenTypeLabel
 	tokenTypeComment
@@ -87,10 +85,8 @@ const (
 	tokenTypeOperator
 )
 
-// tokenModifier represents a semantic token modifier bit mask
 type tokenModifier int
 
-// Token modifier bit masks
 const (
 	tokenModifierDeclaration tokenModifier = 1 << iota
 	tokenModifierDefinition
@@ -231,12 +227,12 @@ func (l *LanguageService) collectSemanticTokensInRange(ctx context.Context, c *c
 						}
 					}
 
-					// Reclassify parameters as properties in property access context
+					// Property declaration in constructor: reclassify parameters as properties in property access context
 					if tokenType == tokenTypeParameter && ast.IsRightSideOfQualifiedNameOrPropertyAccess(node) {
 						tokenType = tokenTypeProperty
 					}
 
-					// Reclassify based on type information
+					// Type-based reclassification
 					tokenType = reclassifyByType(c, node, tokenType)
 
 					// Get the value declaration to check modifiers
