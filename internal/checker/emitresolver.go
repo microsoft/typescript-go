@@ -458,13 +458,20 @@ func (r *emitResolver) IsImplementationOfOverload(node *ast.SignatureDeclaration
 		//       function foo(a: any) { // This is implementation of the overloads
 		//           return a;
 		//       }
-		return len(signaturesOfSymbol) > 1 ||
-			// If there is single signature for the symbol, it is overload if that signature isn't coming from the node
-			// e.g.: function foo(a: string): string;
-			//       function foo(a: any) { // This is implementation of the overloads
-			//           return a;
-			//       }
-			(len(signaturesOfSymbol) == 1 && signaturesOfSymbol[0].declaration != node)
+		if len(signaturesOfSymbol) > 1 {
+			return true
+		}
+		// If there is single signature for the symbol, it is overload if that signature isn't coming from the node
+		// e.g.: function foo(a: string): string;
+		//       function foo(a: any) { // This is implementation of the overloads
+		//           return a;
+		//       }
+		if len(signaturesOfSymbol) == 1 {
+			declaration := signaturesOfSymbol[0].declaration
+			if declaration != node && declaration.Flags&ast.NodeFlagsJSDoc == 0 {
+				return true
+			}
+		}
 	}
 	return false
 }
@@ -825,6 +832,7 @@ func (r *emitResolver) getReferenceResolver() binder.ReferenceResolver {
 			GetSymbolOfDeclaration:                 r.checker.getSymbolOfDeclaration,
 			GetTypeOnlyAliasDeclaration:            r.checker.getTypeOnlyAliasDeclarationEx,
 			GetExportSymbolOfValueSymbolIfExported: r.checker.getExportSymbolOfValueSymbolIfExported,
+			GetElementAccessExpressionName:         r.checker.tryGetElementAccessExpressionName,
 		})
 	}
 	return r.referenceResolver
@@ -877,6 +885,17 @@ func (r *emitResolver) GetReferencedValueDeclarations(node *ast.IdentifierNode) 
 	defer r.checkerMu.Unlock()
 
 	return r.getReferenceResolver().GetReferencedValueDeclarations(node)
+}
+
+func (r *emitResolver) GetElementAccessExpressionName(expression *ast.ElementAccessExpression) string {
+	if !ast.IsParseTreeNode(expression.AsNode()) {
+		return ""
+	}
+
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+
+	return r.getReferenceResolver().GetElementAccessExpressionName(expression)
 }
 
 // TODO: the emit resolver being responsible for some amount of node construction is a very leaky abstraction,

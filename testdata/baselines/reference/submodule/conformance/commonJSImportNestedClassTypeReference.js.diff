@@ -20,11 +20,14 @@
 
  //// [mod1.d.ts]
 -export var K: {
--    new (): {
--        values(): /*elided*/ any;
--    };
--};
-+export var K = NS.K;
-+export {};
- //// [main.d.ts]
- export {};
++declare namespace NS {
++    var K: {
++        new (): {
++            values(): /*elided*/ any;
++        };
++    };
++}
++export declare var K: {
+     new (): {
+         values(): /*elided*/ any;
+     };

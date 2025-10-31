@@ -16,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
@@ -350,7 +351,7 @@ func getSymbolScope(symbol *ast.Symbol) *ast.Node {
 	// If this is private property or method, the scope is the containing class
 	if symbol.Flags&(ast.SymbolFlagsProperty|ast.SymbolFlagsMethod) != 0 {
 		privateDeclaration := core.Find(declarations, func(d *ast.Node) bool {
-			return checker.HasModifier(d, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(d)
+			return ast.HasModifier(d, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(d)
 		})
 		if privateDeclaration != nil {
 			return ast.FindAncestorKind(privateDeclaration, ast.KindClassDeclaration)
@@ -467,7 +468,7 @@ func (l *LanguageService) ProvideRename(ctx context.Context, params *lsproto.Ren
 	checker, done := program.GetTypeChecker(ctx)
 	defer done()
 	for _, entry := range entries {
-		uri := FileNameToDocumentURI(l.getFileNameOfEntry(entry))
+		uri := lsconv.FileNameToDocumentURI(l.getFileNameOfEntry(entry))
 		if !prefs.AllowRenameOfImportPath && entry.node != nil && ast.IsStringLiteralLike(entry.node) && tryGetImportFromModuleSpecifier(entry.node) != nil {
 			continue
 		}
@@ -541,7 +542,7 @@ func (l *LanguageService) convertEntriesToLocations(entries []*referenceEntry) [
 	locations := make([]lsproto.Location, len(entries))
 	for i, entry := range entries {
 		locations[i] = lsproto.Location{
-			Uri:   FileNameToDocumentURI(l.getFileNameOfEntry(entry)),
+			Uri:   lsconv.FileNameToDocumentURI(l.getFileNameOfEntry(entry)),
 			Range: *l.getRangeOfEntry(entry),
 		}
 	}
@@ -593,7 +594,7 @@ func (l *LanguageService) mergeReferences(program *compiler.Program, referencesT
 					return cmp.Compare(entry1File, entry2File)
 				}
 
-				return CompareRanges(l.getRangeOfEntry(entry1), l.getRangeOfEntry(entry2))
+				return lsproto.CompareRanges(l.getRangeOfEntry(entry1), l.getRangeOfEntry(entry2))
 			})
 			result[refIndex] = &SymbolAndEntries{
 				definition: reference.definition,
@@ -615,6 +616,10 @@ func (l *LanguageService) getReferencedSymbolsForNode(ctx context.Context, posit
 		}
 	}
 
+	if options.use == referenceUseReferences || options.use == referenceUseRename {
+		node = getAdjustedLocation(node, options.use == referenceUseRename, ast.GetSourceFileOfNode(node))
+	}
+
 	checker, done := program.GetTypeChecker(ctx)
 	defer done()
 
@@ -625,7 +630,7 @@ func (l *LanguageService) getReferencedSymbolsForNode(ctx context.Context, posit
 		}
 
 		if moduleSymbol := checker.GetMergedSymbol(resolvedRef.file.Symbol); moduleSymbol != nil {
-			return getReferencedSymbolsForModule(ctx, program, moduleSymbol /*excludeImportTypeOfExportEquals*/, false, sourceFiles, sourceFilesSet)
+			return l.getReferencedSymbolsForModule(ctx, program, moduleSymbol /*excludeImportTypeOfExportEquals*/, false, sourceFiles, sourceFilesSet)
 		}
 
 		// !!! not implemented
@@ -673,7 +678,7 @@ func (l *LanguageService) getReferencedSymbolsForNode(ctx context.Context, posit
 	}
 
 	if symbol.Name == ast.InternalSymbolNameExportEquals {
-		return getReferencedSymbolsForModule(ctx, program, symbol.Parent, false /*excludeImportTypeOfExportEquals*/, sourceFiles, sourceFilesSet)
+		return l.getReferencedSymbolsForModule(ctx, program, symbol.Parent, false /*excludeImportTypeOfExportEquals*/, sourceFiles, sourceFilesSet)
 	}
 
 	moduleReferences := l.getReferencedSymbolsForModuleIfDeclaredBySourceFile(ctx, symbol, program, sourceFiles, checker, options, sourceFilesSet) // !!! cancellationToken
@@ -700,7 +705,7 @@ func (l *LanguageService) getReferencedSymbolsForModuleIfDeclaredBySourceFile(ct
 	}
 	exportEquals := symbol.Exports[ast.InternalSymbolNameExportEquals]
 	// If exportEquals != nil, we're about to add references to `import("mod")` anyway, so don't double-count them.
-	moduleReferences := getReferencedSymbolsForModule(ctx, program, symbol, exportEquals != nil, sourceFiles, sourceFilesSet)
+	moduleReferences := l.getReferencedSymbolsForModule(ctx, program, symbol, exportEquals != nil, sourceFiles, sourceFilesSet)
 	if exportEquals == nil || !sourceFilesSet.Has(moduleSourceFileName) {
 		return moduleReferences
 	}
@@ -1021,7 +1026,7 @@ func getMergedAliasedSymbolOfNamespaceExportDeclaration(node *ast.Node, symbol *
 	return nil
 }
 
-func getReferencedSymbolsForModule(ctx context.Context, program *compiler.Program, symbol *ast.Symbol, excludeImportTypeOfExportEquals bool, sourceFiles []*ast.SourceFile, sourceFilesSet *collections.Set[string]) []*SymbolAndEntries {
+func (l *LanguageService) getReferencedSymbolsForModule(ctx context.Context, program *compiler.Program, symbol *ast.Symbol, excludeImportTypeOfExportEquals bool, sourceFiles []*ast.SourceFile, sourceFilesSet *collections.Set[string]) []*SymbolAndEntries {
 	debug.Assert(symbol.ValueDeclaration != nil)
 
 	checker, done := program.GetTypeChecker(ctx)
@@ -1062,10 +1067,11 @@ func getReferencedSymbolsForModule(ctx context.Context, program *compiler.Progra
 			}
 			return newNodeEntry(rangeNode)
 		case ModuleReferenceKindReference:
-			// <reference path> or <reference types>
-			// We can't easily create a proper range entry here without access to LanguageService,
-			// but we can create a node-based entry pointing to the source file which will be resolved later
-			return newNodeEntry(reference.referencingFile.AsNode())
+			return &referenceEntry{
+				kind:      entryKindRange,
+				fileName:  reference.referencingFile.FileName(),
+				textRange: l.createLspRangeFromBounds(reference.ref.Pos(), reference.ref.End(), reference.referencingFile),
+			}
 		}
 		return nil
 	})
@@ -1357,7 +1363,7 @@ func getReferenceEntriesForShorthandPropertyAssignment(node *ast.Node, checker *
 	shorthandSymbol := checker.GetShorthandAssignmentValueSymbol(refSymbol.ValueDeclaration)
 	if shorthandSymbol != nil && len(shorthandSymbol.Declarations) > 0 {
 		for _, declaration := range shorthandSymbol.Declarations {
-			if getMeaningFromDeclaration(declaration)&ast.SemanticMeaningValue != 0 {
+			if ast.GetMeaningFromDeclaration(declaration)&ast.SemanticMeaningValue != 0 {
 				addReference(declaration)
 			}
 		}
@@ -1365,7 +1371,7 @@ func getReferenceEntriesForShorthandPropertyAssignment(node *ast.Node, checker *
 }
 
 func climbPastPropertyAccess(node *ast.Node) *ast.Node {
-	if isRightSideOfPropertyAccess(node) {
+	if ast.IsRightSideOfPropertyAccess(node) {
 		return node.Parent
 	}
 	return node

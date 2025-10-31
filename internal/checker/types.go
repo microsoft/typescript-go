@@ -82,7 +82,7 @@ const TypeFormatFlagsNodeBuilderFlagsMask = TypeFormatFlagsNoTruncation | TypeFo
 	TypeFormatFlagsUseTypeOfFunction | TypeFormatFlagsOmitParameterModifiers | TypeFormatFlagsUseAliasDefinedOutsideCurrentScope | TypeFormatFlagsAllowUniqueESSymbolType | TypeFormatFlagsInTypeAlias |
 	TypeFormatFlagsUseSingleQuotesForStringLiteralType | TypeFormatFlagsNoTypeReduction | TypeFormatFlagsOmitThisParameter
 
-type SymbolFormatFlags int32
+type SymbolFormatFlags uint32
 
 const (
 	SymbolFormatFlagsNone SymbolFormatFlags = 0
@@ -574,11 +574,10 @@ func (t *Type) ObjectFlags() ObjectFlags {
 
 // Casts for concrete struct types
 
-func (t *Type) AsIntrinsicType() *IntrinsicType             { return t.data.(*IntrinsicType) }
-func (t *Type) AsLiteralType() *LiteralType                 { return t.data.(*LiteralType) }
-func (t *Type) AsUniqueESSymbolType() *UniqueESSymbolType   { return t.data.(*UniqueESSymbolType) }
-func (t *Type) AsTupleType() *TupleType                     { return t.data.(*TupleType) }
-func (t *Type) AsSingleSignatureType() *SingleSignatureType { return t.data.(*SingleSignatureType) }
+func (t *Type) AsIntrinsicType() *IntrinsicType           { return t.data.(*IntrinsicType) }
+func (t *Type) AsLiteralType() *LiteralType               { return t.data.(*LiteralType) }
+func (t *Type) AsUniqueESSymbolType() *UniqueESSymbolType { return t.data.(*UniqueESSymbolType) }
+func (t *Type) AsTupleType() *TupleType                   { return t.data.(*TupleType) }
 func (t *Type) AsInstantiationExpressionType() *InstantiationExpressionType {
 	return t.data.(*InstantiationExpressionType)
 }
@@ -838,10 +837,6 @@ func (t *StructuredType) Properties() []*ast.Symbol {
 // ObjectFlagsAnonymous|ObjectFlagsInstantiationExpression: Originating instantiation expression type
 // ObjectFlagsAnonymous|ObjectFlagsInstantiated|ObjectFlagsInstantiationExpression: Instantiated instantiation expression type
 
-// SingleSignatureType:
-// ObjectFlagsAnonymous|ObjectFlagsSingleSignatureType: Originating single signature type
-// ObjectFlagsAnonymous|ObjectFlagsInstantiated|ObjectFlagsSingleSignatureType: Instantiated single signature type
-
 // ReverseMappedType:
 // ObjectFlagsAnonymous|ObjectFlagsReverseMapped: Reverse mapped type
 
@@ -946,13 +941,6 @@ func (t *TupleType) ElementFlags() []ElementFlags {
 		elementFlags[i] = info.flags
 	}
 	return elementFlags
-}
-
-// SingleSignatureType
-
-type SingleSignatureType struct {
-	ObjectType
-	outerTypeParameters []*Type
 }
 
 // InstantiationExpressionType
@@ -1222,20 +1210,6 @@ const (
 type TypeComparer func(s *Type, t *Type, reportErrors bool) Ternary
 
 type LanguageFeatureMinimumTargetMap struct {
-	Classes                           core.ScriptTarget
-	ForOf                             core.ScriptTarget
-	Generators                        core.ScriptTarget
-	Iteration                         core.ScriptTarget
-	SpreadElements                    core.ScriptTarget
-	RestElements                      core.ScriptTarget
-	TaggedTemplates                   core.ScriptTarget
-	DestructuringAssignment           core.ScriptTarget
-	BindingPatterns                   core.ScriptTarget
-	ArrowFunctions                    core.ScriptTarget
-	BlockScopedVariables              core.ScriptTarget
-	ObjectAssign                      core.ScriptTarget
-	RegularExpressionFlagsUnicode     core.ScriptTarget
-	RegularExpressionFlagsSticky      core.ScriptTarget
 	Exponentiation                    core.ScriptTarget
 	AsyncFunctions                    core.ScriptTarget
 	ForAwaitOf                        core.ScriptTarget
@@ -1259,20 +1233,6 @@ type LanguageFeatureMinimumTargetMap struct {
 }
 
 var LanguageFeatureMinimumTarget = LanguageFeatureMinimumTargetMap{
-	Classes:                           core.ScriptTargetES2015,
-	ForOf:                             core.ScriptTargetES2015,
-	Generators:                        core.ScriptTargetES2015,
-	Iteration:                         core.ScriptTargetES2015,
-	SpreadElements:                    core.ScriptTargetES2015,
-	RestElements:                      core.ScriptTargetES2015,
-	TaggedTemplates:                   core.ScriptTargetES2015,
-	DestructuringAssignment:           core.ScriptTargetES2015,
-	BindingPatterns:                   core.ScriptTargetES2015,
-	ArrowFunctions:                    core.ScriptTargetES2015,
-	BlockScopedVariables:              core.ScriptTargetES2015,
-	ObjectAssign:                      core.ScriptTargetES2015,
-	RegularExpressionFlagsUnicode:     core.ScriptTargetES2015,
-	RegularExpressionFlagsSticky:      core.ScriptTargetES2015,
 	Exponentiation:                    core.ScriptTargetES2016,
 	AsyncFunctions:                    core.ScriptTargetES2017,
 	ForAwaitOf:                        core.ScriptTargetES2018,

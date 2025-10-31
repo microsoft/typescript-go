@@ -571,7 +571,7 @@ func IsClassElement(node *Node) bool {
 	return false
 }
 
-func isMethodOrAccessor(node *Node) bool {
+func IsMethodOrAccessor(node *Node) bool {
 	switch node.Kind {
 	case KindMethodDeclaration, KindGetAccessor, KindSetAccessor:
 		return true
@@ -580,7 +580,7 @@ func isMethodOrAccessor(node *Node) bool {
 }
 
 func IsPrivateIdentifierClassElementDeclaration(node *Node) bool {
-	return (IsPropertyDeclaration(node) || isMethodOrAccessor(node)) && IsPrivateIdentifier(node.Name())
+	return (IsPropertyDeclaration(node) || IsMethodOrAccessor(node)) && IsPrivateIdentifier(node.Name())
 }
 
 func IsObjectLiteralOrClassExpressionMethodOrAccessor(node *Node) bool {
@@ -1340,7 +1340,7 @@ func IsBindableStaticElementAccessExpression(node *Node, excludeThisKeyword bool
 	return IsLiteralLikeElementAccess(node) &&
 		((!excludeThisKeyword && node.Expression().Kind == KindThisKeyword) ||
 			IsEntityNameExpression(node.Expression()) ||
-			IsBindableStaticAccessExpression(node.Expression() /*excludeThisKeyword*/, true))
+			IsBindableStaticAccessExpression(node.Expression(), true /*excludeThisKeyword*/))
 }
 
 func IsLiteralLikeElementAccess(node *Node) bool {
@@ -2641,7 +2641,7 @@ func GetNodeAtPosition(file *SourceFile, position int, includeJSDoc bool) *Node 
 		}
 		if child == nil {
 			current.ForEachChild(func(node *Node) bool {
-				if nodeContainsPosition(node, position) {
+				if nodeContainsPosition(node, position) && node.Kind != KindJSExportAssignment && node.Kind != KindCommonJSExport {
 					child = node
 					return true
 				}
@@ -2820,10 +2820,6 @@ func IsModuleExportsAccessExpression(node *Node) bool {
 		}
 	}
 	return false
-}
-
-func isLiteralLikeElementAccess(node *Node) bool {
-	return node.Kind == KindElementAccessExpression && IsStringOrNumericLiteralLike(node.AsElementAccessExpression().ArgumentExpression)
 }
 
 func IsCheckJSEnabledForFile(sourceFile *SourceFile, compilerOptions *core.CompilerOptions) bool {
@@ -3530,6 +3526,10 @@ func IsTypeDeclarationName(name *Node) bool {
 		GetNameOfDeclaration(name.Parent) == name
 }
 
+func IsRightSideOfPropertyAccess(node *Node) bool {
+	return node.Parent.Kind == KindPropertyAccessExpression && node.Parent.Name() == node
+}
+
 func IsRightSideOfQualifiedNameOrPropertyAccess(node *Node) bool {
 	parent := node.Parent
 	switch parent.Kind {
@@ -3864,6 +3864,31 @@ func IsJSDocNameReferenceContext(node *Node) bool {
 
 func IsImportOrImportEqualsDeclaration(node *Node) bool {
 	return IsImportDeclaration(node) || IsImportEqualsDeclaration(node)
+}
+
+func IsKeyword(token Kind) bool {
+	return KindFirstKeyword <= token && token <= KindLastKeyword
+}
+
+func IsNonContextualKeyword(token Kind) bool {
+	return IsKeyword(token) && !IsContextualKeyword(token)
+}
+
+func HasModifier(node *Node, flags ModifierFlags) bool {
+	return node.ModifierFlags()&flags != 0
+}
+
+func IsExpandoInitializer(initializer *Node) bool {
+	if initializer == nil {
+		return false
+	}
+	if IsFunctionExpressionOrArrowFunction(initializer) {
+		return true
+	}
+	if IsInJSFile(initializer) {
+		return IsClassExpression(initializer) || (IsObjectLiteralExpression(initializer) && len(initializer.AsObjectLiteralExpression().Properties.Nodes) == 0)
+	}
+	return false
 }
 
 func GetContainingFunction(node *Node) *Node {
