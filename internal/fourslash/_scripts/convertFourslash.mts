@@ -1498,8 +1498,12 @@ function parseSemanticClassificationsAre(args: readonly ts.Expression[]): [Verif
             return undefined;
         }
 
+        // Map TypeScript's internal "member" type to LSP's "method" type
+        let tokenType = typeArg.text;
+        tokenType = tokenType.replace(/\bmember\b/g, "method");
+
         tokens.push({
-            type: typeArg.text,
+            type: tokenType,
             text: textArg.text,
         });
     }

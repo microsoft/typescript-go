@@ -16,5 +16,5 @@ func TestSemanticModernClassificationFunctions(t *testing.T) {
 }
 ` + "`" + `/${window.location}` + "`" + `.split("/").forEach(s => foo(s));`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifySemanticTokens(t, []fourslash.SemanticToken{{Type: "function.declaration", Text: "foo"}, {Type: "parameter.declaration", Text: "p1"}, {Type: "function", Text: "foo"}, {Type: "variable.defaultLibrary", Text: "Math"}, {Type: "member.defaultLibrary", Text: "abs"}, {Type: "parameter", Text: "p1"}, {Type: "member.defaultLibrary", Text: "split"}, {Type: "member.defaultLibrary", Text: "forEach"}, {Type: "parameter.declaration", Text: "s"}, {Type: "function", Text: "foo"}, {Type: "parameter", Text: "s"}})
+	f.VerifySemanticTokens(t, []fourslash.SemanticToken{{Type: "function.declaration", Text: "foo"}, {Type: "parameter.declaration", Text: "p1"}, {Type: "function", Text: "foo"}, {Type: "variable.defaultLibrary", Text: "Math"}, {Type: "method.defaultLibrary", Text: "abs"}, {Type: "parameter", Text: "p1"}, {Type: "method.defaultLibrary", Text: "split"}, {Type: "method.defaultLibrary", Text: "forEach"}, {Type: "parameter.declaration", Text: "s"}, {Type: "function", Text: "foo"}, {Type: "parameter", Text: "s"}})
 }
