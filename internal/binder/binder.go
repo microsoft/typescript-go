@@ -443,9 +443,9 @@ func (b *Binder) declareSymbolAndAddToSymbolTable(node *ast.Node, symbolFlags as
 		return b.declareClassMember(node, symbolFlags, symbolExcludes)
 	case ast.KindEnumDeclaration:
 		return b.declareSymbol(ast.GetExports(b.container.Symbol()), b.container.Symbol(), node, symbolFlags, symbolExcludes)
-	case ast.KindTypeLiteral, ast.KindJSDocTypeLiteral, ast.KindObjectLiteralExpression, ast.KindInterfaceDeclaration, ast.KindJsxAttributes:
+	case ast.KindTypeLiteral, ast.KindObjectLiteralExpression, ast.KindInterfaceDeclaration, ast.KindJsxAttributes:
 		return b.declareSymbol(ast.GetMembers(b.container.Symbol()), b.container.Symbol(), node, symbolFlags, symbolExcludes)
-	case ast.KindFunctionType, ast.KindConstructorType, ast.KindCallSignature, ast.KindConstructSignature, ast.KindJSDocSignature,
+	case ast.KindFunctionType, ast.KindConstructorType, ast.KindCallSignature, ast.KindConstructSignature,
 		ast.KindIndexSignature, ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindConstructor, ast.KindGetAccessor,
 		ast.KindSetAccessor, ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction,
 		ast.KindClassStaticBlockDeclaration, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindMappedType:
@@ -672,10 +672,8 @@ func (b *Binder) bind(node *ast.Node) bool {
 	case ast.KindSetAccessor:
 		b.bindPropertyOrMethodOrAccessor(node, ast.SymbolFlagsSetAccessor, ast.SymbolFlagsSetAccessorExcludes)
 	case ast.KindFunctionType, ast.KindConstructorType:
-		// !!! KindJSDocSignature
 		b.bindFunctionOrConstructorType(node)
 	case ast.KindTypeLiteral, ast.KindMappedType:
-		// !!! KindJSDocTypeLiteral
 		b.bindAnonymousDeclaration(node, ast.SymbolFlagsTypeLiteral, ast.InternalSymbolNameType)
 	case ast.KindObjectLiteralExpression:
 		b.bindAnonymousDeclaration(node, ast.SymbolFlagsObjectLiteral, ast.InternalSymbolNameObject)
@@ -1020,28 +1018,16 @@ func getInitializerSymbol(symbol *ast.Symbol) *ast.Symbol {
 	case ast.IsVariableDeclaration(declaration) &&
 		(declaration.Parent.Flags&ast.NodeFlagsConst != 0 || ast.IsInJSFile(declaration)):
 		initializer := declaration.Initializer()
-		if isExpandoInitializer(initializer) {
+		if ast.IsExpandoInitializer(initializer) {
 			return initializer.Symbol()
 		}
 	case ast.IsBinaryExpression(declaration) && ast.IsInJSFile(declaration):
 		initializer := declaration.AsBinaryExpression().Right
-		if isExpandoInitializer(initializer) {
+		if ast.IsExpandoInitializer(initializer) {
 			return initializer.Symbol()
 		}
 	}
 	return nil
-}
-
-func isExpandoInitializer(initializer *ast.Node) bool {
-	if initializer == nil {
-		return false
-	}
-	if ast.IsFunctionExpressionOrArrowFunction(initializer) {
-		return true
-	} else if ast.IsInJSFile(initializer) {
-		return ast.IsClassExpression(initializer) || (ast.IsObjectLiteralExpression(initializer) && len(initializer.AsObjectLiteralExpression().Properties.Nodes) == 0)
-	}
-	return false
 }
 
 func (b *Binder) bindThisPropertyAssignment(node *ast.Node) {
@@ -1121,10 +1107,6 @@ func (b *Binder) bindVariableDeclarationOrBindingElement(node *ast.Node) {
 }
 
 func (b *Binder) bindParameter(node *ast.Node) {
-	// !!!
-	// if node.kind == KindJSDocParameterTag && b.container.kind != KindJSDocSignature {
-	// 	return
-	// }
 	decl := node.AsParameterDeclaration()
 	if b.inStrictMode && node.Flags&ast.NodeFlagsAmbient == 0 {
 		// It is a SyntaxError if the identifier eval or arguments appears within a FormalParameterList of a
@@ -1190,17 +1172,6 @@ func (b *Binder) bindBlockScopedDeclaration(node *ast.Node, symbolFlags ast.Symb
 }
 
 func (b *Binder) bindTypeParameter(node *ast.Node) {
-	// !!!
-	// if isJSDocTemplateTag(node.parent) {
-	// 	var container *HasLocals = getEffectiveContainerForJSDocTemplateTag(node.parent)
-	// 	if container {
-	// 		Debug.assertNode(container, canHaveLocals)
-	// 		/* TODO(TS-TO-GO) QuestionQuestionEqualsToken BinaryExpression: container.locals ??= createSymbolTable() */ TODO
-	// 		b.declareSymbol(container.locals /*parent*/, nil, node, SymbolFlagsTypeParameter, SymbolFlagsTypeParameterExcludes)
-	// 	} else {
-	// 		b.declareSymbolAndAddToSymbolTable(node, SymbolFlagsTypeParameter, SymbolFlagsTypeParameterExcludes)
-	// 	}
-	// }
 	if node.Parent.Kind == ast.KindInferType {
 		container := b.getInferTypeContainer(node.Parent)
 		if container != nil {
@@ -1633,10 +1604,6 @@ func (b *Binder) bindChildren(node *ast.Node) {
 		b.bindCallExpressionFlow(node)
 	case ast.KindNonNullExpression:
 		b.bindNonNullExpressionFlow(node)
-	// case *JSDocTypedefTag, *JSDocCallbackTag, *JSDocEnumTag:
-	// 	b.bindJSDocTypeAlias(node)
-	// case *JSDocImportTag:
-	// 	b.bindJSDocImportTag(node)
 	case ast.KindSourceFile:
 		sourceFile := node.AsSourceFile()
 		b.bindEachStatementFunctionsFirst(sourceFile.Statements)
@@ -2565,7 +2532,7 @@ func SetValueDeclaration(symbol *ast.Symbol, node *ast.Node) {
 func GetContainerFlags(node *ast.Node) ContainerFlags {
 	switch node.Kind {
 	case ast.KindClassExpression, ast.KindClassDeclaration, ast.KindEnumDeclaration, ast.KindObjectLiteralExpression, ast.KindTypeLiteral,
-		ast.KindJSDocTypeLiteral, ast.KindJsxAttributes:
+		ast.KindJsxAttributes:
 		return ContainerFlagsIsContainer
 	case ast.KindInterfaceDeclaration:
 		return ContainerFlagsIsContainer | ContainerFlagsIsInterface
@@ -2580,7 +2547,7 @@ func GetContainerFlags(node *ast.Node) ContainerFlags {
 		fallthrough
 	case ast.KindConstructor, ast.KindClassStaticBlockDeclaration:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsThisContainer
-	case ast.KindMethodSignature, ast.KindCallSignature, ast.KindJSDocSignature, ast.KindFunctionType, ast.KindConstructSignature, ast.KindConstructorType:
+	case ast.KindMethodSignature, ast.KindCallSignature, ast.KindFunctionType, ast.KindConstructSignature, ast.KindConstructorType:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike
 	case ast.KindFunctionDeclaration:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsThisContainer
@@ -2617,9 +2584,6 @@ func isNarrowingExpression(expr *ast.Node) bool {
 	case ast.KindCallExpression:
 		return hasNarrowableArgument(expr)
 	case ast.KindParenthesizedExpression:
-		// if isJSDocTypeAssertion(expr) {
-		// 	return false
-		// }
 		return isNarrowingExpression(expr.AsParenthesizedExpression().Expression)
 	case ast.KindNonNullExpression:
 		return isNarrowingExpression(expr.AsNonNullExpression().Expression)

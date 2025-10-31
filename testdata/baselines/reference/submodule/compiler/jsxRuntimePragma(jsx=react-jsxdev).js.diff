@@ -1,24 +1,10 @@
 --- old.jsxRuntimePragma(jsx=react-jsxdev).js
 +++ new.jsxRuntimePragma(jsx=react-jsxdev).js
-@@= skipped -39, +39 lines =@@
- exports.selfClosing = exports.frag = exports.HelloWorld = void 0;
- /// <reference path="react16.d.ts" />
- /* @jsxRuntime classic */
--var React = require("react");
-+const React = require("react");
- const HelloWorld = () => React.createElement("h1", null, "Hello world");
- exports.HelloWorld = HelloWorld;
--exports.frag = React.createElement(React.Fragment, null,
--    React.createElement("div", null));
-+exports.frag = React.createElement(React.Fragment, null, React.createElement("div", null));
- exports.selfClosing = React.createElement("img", { src: "./image.png" });
- //// [two.js]
- "use strict";
+@@= skipped -83, +83 lines =@@
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.selfClosing = exports.frag = exports.HelloWorld = void 0;
--var jsx_dev_runtime_1 = require("react/jsx-dev-runtime");
+ const jsx_dev_runtime_1 = require("react/jsx-dev-runtime");
 -const _jsxFileName = "two.tsx";
-+const jsx_dev_runtime_1 = require("react/jsx-dev-runtime");
  /// <reference path="react16.d.ts" />
  /* @jsxRuntime automatic */
 -const HelloWorld = () => (0, jsx_dev_runtime_1.jsxDEV)("h1", { children: "Hello world" }, void 0, false, { fileName: _jsxFileName, lineNumber: 3, columnNumber: 32 }, this);
@@ -32,9 +18,8 @@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.selfClosing = exports.frag = exports.HelloWorld = void 0;
--var jsx_dev_runtime_1 = require("react/jsx-dev-runtime");
+ const jsx_dev_runtime_1 = require("react/jsx-dev-runtime");
 -const _jsxFileName = "three.tsx";
-+const jsx_dev_runtime_1 = require("react/jsx-dev-runtime");
  /// <reference path="react16.d.ts" />
  /* @jsxRuntime classic */
  /* @jsxRuntime automatic */
@@ -47,18 +32,4 @@
 +exports.selfClosing = jsx_dev_runtime_1.jsxDEV("img", { src: "./image.png" });
  //// [four.js]
  "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
-@@= skipped -38, +35 lines =@@
- /// <reference path="react16.d.ts" />
- /* @jsxRuntime automatic */
- /* @jsxRuntime classic */
--var React = require("react");
-+const React = require("react");
- const HelloWorld = () => React.createElement("h1", null, "Hello world");
- exports.HelloWorld = HelloWorld;
--exports.frag = React.createElement(React.Fragment, null,
--    React.createElement("div", null));
-+exports.frag = React.createElement(React.Fragment, null, React.createElement("div", null));
- exports.selfClosing = React.createElement("img", { src: "./image.png" });
- //// [index.js]
- "use strict";
+ var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
