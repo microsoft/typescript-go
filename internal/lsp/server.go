@@ -1147,11 +1147,10 @@ func (s *Server) handleDocumentOnTypeFormat(ctx context.Context, ls *ls.Language
 }
 
 func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.WorkspaceSymbolParams, reqMsg *lsproto.RequestMessage) (lsproto.WorkspaceSymbolResponse, error) {
-	snapshot, release := s.session.Snapshot()
-	defer release()
+	snapshot := s.session.GetSnapshotLoadingProjectTree(ctx, nil)
 	defer s.recover(reqMsg)
+
 	programs := core.Map(snapshot.ProjectCollection.Projects(), (*project.Project).GetProgram)
-	// !!! sheetal: additional projects that can be loaded but were delayed
 	return ls.ProvideWorkspaceSymbols(ctx, programs, snapshot.Converters(), params.Query)
 }
 

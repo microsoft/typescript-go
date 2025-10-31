@@ -107,6 +107,30 @@ Config File Names::
     "query": "fn"
   }
 }
+Projects::
+  [/home/src/projects/project/a/tsconfig.json] *new*
+    /home/src/projects/project/a/a.ts  
+  [/home/src/projects/project/b/tsconfig.json] *new*
+    /home/src/projects/project/b/b.ts  
+    /home/src/projects/project/b/c.ts  
+  [/home/src/projects/project/user/tsconfig.json] 
+    /home/src/projects/project/a/a.ts        
+    /home/src/projects/project/b/b.ts        
+    /home/src/projects/project/user/user.ts  
+Config::
+  [/home/src/projects/project/a/tsconfig.json] *modified*
+    RetainingProjects: *modified*
+      /home/src/projects/project/a/tsconfig.json     *new*
+      /home/src/projects/project/user/tsconfig.json  
+  [/home/src/projects/project/b/tsconfig.json] *modified*
+    RetainingProjects: *modified*
+      /home/src/projects/project/b/tsconfig.json     *new*
+      /home/src/projects/project/user/tsconfig.json  
+  [/home/src/projects/project/user/tsconfig.json] 
+    RetainingProjects:
+      /home/src/projects/project/user/tsconfig.json  
+    RetainingOpenFiles:
+      /home/src/projects/project/user/user.ts  
 // === /home/src/projects/project/a/a.ts ===
 // export function [|{| name: fnA, kind: function |}fnA|]() {}
 // export interface IfaceA {}
@@ -114,6 +138,9 @@ Config File Names::
 
 // === /home/src/projects/project/b/b.ts ===
 // export function [|{| name: fnB, kind: function |}fnB|]() {}
+
+// === /home/src/projects/project/b/c.ts ===
+// export function [|{| name: fnC, kind: function |}fnC|]() {}
 
 // === /home/src/projects/project/user/user.ts ===
 // import * as a from "../a/a";
@@ -145,6 +172,11 @@ Open Files::
   }
 }
 Projects::
+  [/home/src/projects/project/a/tsconfig.json] *deleted*
+    /home/src/projects/project/a/a.ts  
+  [/home/src/projects/project/b/tsconfig.json] *deleted*
+    /home/src/projects/project/b/b.ts  
+    /home/src/projects/project/b/c.ts  
   [/home/src/projects/project/dummy/tsconfig.json] *new*
     /home/src/projects/project/dummy/dummy.ts  
   [/home/src/projects/project/user/tsconfig.json] *deleted*

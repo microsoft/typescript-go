@@ -136,6 +136,11 @@ type APISnapshotRequest struct {
 	UpdateProjects *collections.Set[tspath.Path]
 }
 
+type projectTreeRequest struct {
+	// If null, all project trees need to be loaded, otherwise only those that are referenced
+	referencedProjects map[tspath.Path]struct{}
+}
+
 type snapshotChangeRequest struct {
 	// requestedURIs are URIs that were requested by the client.
 	// The new snapshot should ensure projects for these URIs have loaded programs.
@@ -150,7 +155,7 @@ type snapshotChangeRequest struct {
 	// Update and ensure project trees that reference the projects
 	// This is used to compute the solution and project tree so that
 	// we can find references across all the projects in the solution irrespective of which project is open
-	requestedProjectTrees map[tspath.Path]struct{}
+	requestedProjectTrees *projectTreeRequest
 }
 
 type SnapshotChange struct {
@@ -213,8 +218,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 			if len(change.ensureDefaultProjectForURIs) != 0 {
 				details += fmt.Sprintf(" ensureDefaultProjectForURIs: %v", change.ensureDefaultProjectForURIs)
 			}
-			if len(change.requestedProjectTrees) != 0 {
-				details += fmt.Sprintf(" requestedProjectTrees: %v", maps.Keys(change.requestedProjectTrees))
+			if change.requestedProjectTrees != nil {
+				details += fmt.Sprintf(" requestedProjectTrees: %v", maps.Keys(change.requestedProjectTrees.referencedProjects))
 			}
 			return details
 		}
@@ -299,8 +304,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, overlays ma
 		projectCollectionBuilder.DidRequestEnsureDefaultProject(uri, logger.Fork("DidRequestFile"))
 	}
 
-	if len(change.requestedProjectTrees) != 0 {
-		projectCollectionBuilder.DidRequestProjectTrees(change.requestedProjectTrees, logger.Fork("DidRequestProjectTrees"))
+	if change.requestedProjectTrees != nil {
+		projectCollectionBuilder.DidRequestProjectTrees(change.requestedProjectTrees.referencedProjects, logger.Fork("DidRequestProjectTrees"))
 	}
 
 	projectCollection, configFileRegistry := projectCollectionBuilder.Finalize(logger)
