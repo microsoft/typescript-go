@@ -14,7 +14,7 @@ import (
 type DocumentUri string // !!!
 
 func (uri DocumentUri) FileName() string {
-	if strings.HasPrefix(string(uri), "file://") {
+	if strings.HasPrefix(string(uri), "file://") || strings.HasPrefix(string(uri), "zip:") {
 		parsed := core.Must(url.Parse(string(uri)))
 		if parsed.Host != "" {
 			return "//" + parsed.Host + parsed.Path

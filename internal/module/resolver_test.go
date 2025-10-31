@@ -14,10 +14,12 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsonutil"
 	"github.com/microsoft/typescript-go/internal/module"
+	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/pnpvfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 	"gotest.tools/v3/assert/cmp"
@@ -144,6 +146,7 @@ type vfsModuleResolutionHost struct {
 	fs               vfs.FS
 	currentDirectory string
 	traces           []string
+	pnpApi           *pnp.PnpApi
 }
 
 func fixRoot(path string) string {
@@ -164,9 +167,17 @@ func newVFSModuleResolutionHost(files map[string]string, currentDirectory string
 	} else if currentDirectory[0] != '/' {
 		currentDirectory = "/.src/" + currentDirectory
 	}
+
+	var mapFS vfs.FS = vfstest.FromMap(fs, true /*useCaseSensitiveFileNames*/)
+	pnpApi := pnp.InitPnpApi(mapFS, tspath.NormalizePath(currentDirectory))
+	if pnpApi != nil {
+		mapFS = pnpvfs.From(mapFS)
+	}
+
 	return &vfsModuleResolutionHost{
-		fs:               vfstest.FromMap(fs, true /*useCaseSensitiveFileNames*/),
+		fs:               mapFS,
 		currentDirectory: currentDirectory,
+		pnpApi:           pnpApi,
 	}
 }
 
@@ -177,6 +188,11 @@ func (v *vfsModuleResolutionHost) FS() vfs.FS {
 // GetCurrentDirectory implements ModuleResolutionHost.
 func (v *vfsModuleResolutionHost) GetCurrentDirectory() string {
 	return v.currentDirectory
+}
+
+// PnpApi implements ModuleResolutionHost.
+func (v *vfsModuleResolutionHost) PnpApi() *pnp.PnpApi {
+	return v.pnpApi
 }
 
 // Trace implements ModuleResolutionHost.
