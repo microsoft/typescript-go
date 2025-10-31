@@ -159,7 +159,7 @@ type formatSpanWorker struct {
 	ctx context.Context
 
 	formattingScanner *formattingScanner
-	formattingContext *formattingContext
+	formattingContext *FormattingContext
 
 	edits                  []core.TextChange
 	previousRange          TextRangeWithKind
@@ -975,7 +975,7 @@ func getIndentationString(indentation int, options *FormatCodeSettings) string {
 		spaces := indentation - (tabs * options.TabSize)
 		res := strings.Repeat("\t", tabs)
 		if spaces > 0 {
-			res = strings.Repeat(" ", spaces) + res
+			res = res + strings.Repeat(" ", spaces)
 		}
 
 		return res
@@ -1092,6 +1092,9 @@ func (i *dynamicIndenter) getIndentationForComment(kind ast.Kind, tokenIndentati
 	// }
 	case ast.KindCloseBraceToken, ast.KindCloseBracketToken, ast.KindCloseParenToken:
 		return i.indentation + i.getDelta(container)
+	}
+	if tokenIndentation != -1 {
+		return tokenIndentation
 	}
 	return i.indentation
 }

@@ -2,11 +2,13 @@ package project
 
 import (
 	"maps"
+	"strings"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/zeebo/xxh3"
@@ -23,7 +25,8 @@ type FileHandle interface {
 	Version() int32
 	MatchesDiskText() bool
 	IsOverlay() bool
-	LSPLineMap() *ls.LSPLineMap
+	LSPLineMap() *lsconv.LSPLineMap
+	ECMALineInfo() *sourcemap.ECMALineInfo
 	Kind() core.ScriptKind
 }
 
@@ -32,8 +35,10 @@ type fileBase struct {
 	content  string
 	hash     xxh3.Uint128
 
-	lineMapOnce sync.Once
-	lineMap     *ls.LSPLineMap
+	lineMapOnce  sync.Once
+	lineMap      *lsconv.LSPLineMap
+	lineInfoOnce sync.Once
+	lineInfo     *sourcemap.ECMALineInfo
 }
 
 func (f *fileBase) FileName() string {
@@ -48,11 +53,19 @@ func (f *fileBase) Content() string {
 	return f.content
 }
 
-func (f *fileBase) LSPLineMap() *ls.LSPLineMap {
+func (f *fileBase) LSPLineMap() *lsconv.LSPLineMap {
 	f.lineMapOnce.Do(func() {
-		f.lineMap = ls.ComputeLSPLineStarts(f.content)
+		f.lineMap = lsconv.ComputeLSPLineStarts(f.content)
 	})
 	return f.lineMap
+}
+
+func (f *fileBase) ECMALineInfo() *sourcemap.ECMALineInfo {
+	f.lineInfoOnce.Do(func() {
+		lineStarts := core.ComputeECMALineStarts(f.content)
+		f.lineInfo = sourcemap.CreateECMALineInfo(f.content, lineStarts)
+	})
+	return f.lineInfo
 }
 
 type diskFile struct {
@@ -98,17 +111,17 @@ func (f *diskFile) Clone() *diskFile {
 	}
 }
 
-var _ FileHandle = (*overlay)(nil)
+var _ FileHandle = (*Overlay)(nil)
 
-type overlay struct {
+type Overlay struct {
 	fileBase
 	version         int32
 	kind            core.ScriptKind
 	matchesDiskText bool
 }
 
-func newOverlay(fileName string, content string, version int32, kind core.ScriptKind) *overlay {
-	return &overlay{
+func newOverlay(fileName string, content string, version int32, kind core.ScriptKind) *Overlay {
+	return &Overlay{
 		fileBase: fileBase{
 			fileName: fileName,
 			content:  content,
@@ -119,21 +132,21 @@ func newOverlay(fileName string, content string, version int32, kind core.Script
 	}
 }
 
-func (o *overlay) Version() int32 {
+func (o *Overlay) Version() int32 {
 	return o.version
 }
 
-func (o *overlay) Text() string {
+func (o *Overlay) Text() string {
 	return o.content
 }
 
 // MatchesDiskText may return false negatives, but never false positives.
-func (o *overlay) MatchesDiskText() bool {
+func (o *Overlay) MatchesDiskText() bool {
 	return o.matchesDiskText
 }
 
 // !!! optimization: incorporate mtime
-func (o *overlay) computeMatchesDiskText(fs vfs.FS) bool {
+func (o *Overlay) computeMatchesDiskText(fs vfs.FS) bool {
 	if isDynamicFileName(o.fileName) {
 		return false
 	}
@@ -144,11 +157,11 @@ func (o *overlay) computeMatchesDiskText(fs vfs.FS) bool {
 	return xxh3.Hash128([]byte(diskContent)) == o.hash
 }
 
-func (o *overlay) IsOverlay() bool {
+func (o *Overlay) IsOverlay() bool {
 	return true
 }
 
-func (o *overlay) Kind() core.ScriptKind {
+func (o *Overlay) Kind() core.ScriptKind {
 	return o.kind
 }
 
@@ -158,10 +171,10 @@ type overlayFS struct {
 	positionEncoding lsproto.PositionEncodingKind
 
 	mu       sync.RWMutex
-	overlays map[tspath.Path]*overlay
+	overlays map[tspath.Path]*Overlay
 }
 
-func newOverlayFS(fs vfs.FS, overlays map[tspath.Path]*overlay, positionEncoding lsproto.PositionEncodingKind, toPath func(string) tspath.Path) *overlayFS {
+func newOverlayFS(fs vfs.FS, overlays map[tspath.Path]*Overlay, positionEncoding lsproto.PositionEncodingKind, toPath func(string) tspath.Path) *overlayFS {
 	return &overlayFS{
 		fs:               fs,
 		positionEncoding: positionEncoding,
@@ -170,7 +183,7 @@ func newOverlayFS(fs vfs.FS, overlays map[tspath.Path]*overlay, positionEncoding
 	}
 }
 
-func (fs *overlayFS) Overlays() map[tspath.Path]*overlay {
+func (fs *overlayFS) Overlays() map[tspath.Path]*Overlay {
 	fs.mu.RLock()
 	defer fs.mu.RUnlock()
 	return fs.overlays
@@ -193,7 +206,7 @@ func (fs *overlayFS) getFile(fileName string) FileHandle {
 	return newDiskFile(fileName, content)
 }
 
-func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, map[tspath.Path]*overlay) {
+func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, map[tspath.Path]*Overlay) {
 	fs.mu.Lock()
 	defer fs.mu.Unlock()
 
@@ -223,6 +236,10 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 		} else {
 			events = &fileEvents{}
 			fileEventMap[uri] = events
+		}
+
+		if !result.IncludesWatchChangeOutsideNodeModules && change.Kind.IsWatchKind() && !strings.Contains(string(uri), "/node_modules/") {
+			result.IncludesWatchChangeOutsideNodeModules = true
 		}
 
 		switch change.Kind {
@@ -287,7 +304,7 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 				uri.FileName(),
 				events.openChange.Content,
 				events.openChange.Version,
-				ls.LanguageKindToScriptKind(events.openChange.LanguageKind),
+				lsconv.LanguageKindToScriptKind(events.openChange.LanguageKind),
 			)
 			continue
 		}
@@ -318,7 +335,7 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 				panic("overlay not found for changed file: " + uri)
 			}
 			for _, change := range events.changes {
-				converters := ls.NewConverters(fs.positionEncoding, func(fileName string) *ls.LSPLineMap {
+				converters := lsconv.NewConverters(fs.positionEncoding, func(fileName string) *lsconv.LSPLineMap {
 					return o.LSPLineMap()
 				})
 				for _, textChange := range change.Changes {

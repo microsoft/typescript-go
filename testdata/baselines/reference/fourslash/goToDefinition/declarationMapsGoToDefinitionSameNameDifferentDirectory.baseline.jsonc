@@ -1,16 +1,15 @@
 // === goToDefinition ===
-// === /BaseClass/Source.d.ts ===
-// declare class [|Control|] {
-//     constructor();
-//     /** this is a super var */
-//     myVar: boolean | 'yeah';
-// }
-// //# sourceMappingURL=Source.d.ts.map
+// === /BaseClass/Source.ts ===
+// class [|Control|]{
+//     constructor(){
+//         return;
+//     }
+// // --- (line: 5) skipped ---
 
 // === /buttonClass/Source.ts ===
 // // I cannot F12 navigate to Control
 // //                   vvvvvvv
-// class Button extends /*GOTO DEF*/Control {
+// class Button extends /*GOTO DEF*/[|Control|] {
 //     public myFunction() {
 //         // I cannot F12 navigate to myVar
 //         //              vvvvv
@@ -19,20 +18,21 @@
 
 
 // === goToDefinition ===
-// === /BaseClass/Source.d.ts ===
-// declare class Control {
-//     constructor();
+// === /BaseClass/Source.ts ===
+// class Control{
+//     constructor(){
+//         return;
+//     }
 //     /** this is a super var */
-//     [|myVar|]: boolean | 'yeah';
+//     public [|myVar|]: boolean | 'yeah' = true;
 // }
-// //# sourceMappingURL=Source.d.ts.map
 
 // === /buttonClass/Source.ts ===
 // --- (line: 3) skipped ---
 //     public myFunction() {
 //         // I cannot F12 navigate to myVar
 //         //              vvvvv
-//         if (typeof this./*GOTO DEF*/myVar === 'boolean') {
+//         if (typeof this./*GOTO DEF*/[|myVar|] === 'boolean') {
 //             this.myVar;
 //         } else {
 //             this.myVar.toLocaleUpperCase();

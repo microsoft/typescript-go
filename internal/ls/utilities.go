@@ -1,7 +1,6 @@
 package ls
 
 import (
-	"cmp"
 	"fmt"
 	"iter"
 	"slices"
@@ -15,32 +14,13 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/jsnum"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"github.com/microsoft/typescript-go/internal/lsutil"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
-
-// Implements a cmp.Compare like function for two lsproto.Position
-// ComparePositions(pos, other) == cmp.Compare(pos, other)
-func ComparePositions(pos, other lsproto.Position) int {
-	if lineComp := cmp.Compare(pos.Line, other.Line); lineComp != 0 {
-		return lineComp
-	}
-	return cmp.Compare(pos.Character, other.Character)
-}
-
-// Implements a cmp.Compare like function for two *lsproto.Range
-// CompareRanges(lsRange, other) == cmp.Compare(lsrange, other)
-//
-//	Range.Start is compared before Range.End
-func CompareRanges(lsRange, other *lsproto.Range) int {
-	if startComp := ComparePositions(lsRange.Start, other.Start); startComp != 0 {
-		return startComp
-	}
-	return ComparePositions(lsRange.End, other.End)
-}
 
 var quoteReplacer = strings.NewReplacer("'", `\'`, `\"`, `"`)
 
@@ -433,8 +413,17 @@ func (l *LanguageService) createLspRangeFromNode(node *ast.Node, file *ast.Sourc
 	return l.createLspRangeFromBounds(scanner.GetTokenPosOfNode(node, file, false /*includeJSDoc*/), node.End(), file)
 }
 
+func createRangeFromNode(node *ast.Node, file *ast.SourceFile) core.TextRange {
+	return core.NewTextRange(scanner.GetTokenPosOfNode(node, file, false /*includeJSDoc*/), node.End())
+}
+
 func (l *LanguageService) createLspRangeFromBounds(start, end int, file *ast.SourceFile) *lsproto.Range {
 	lspRange := l.converters.ToLSPRange(file, core.NewTextRange(start, end))
+	return &lspRange
+}
+
+func (l *LanguageService) createLspRangeFromRange(textRange core.TextRange, script lsconv.Script) *lsproto.Range {
+	lspRange := l.converters.ToLSPRange(script, textRange)
 	return &lspRange
 }
 
@@ -442,7 +431,7 @@ func (l *LanguageService) createLspPosition(position int, file *ast.SourceFile) 
 	return l.converters.PositionToLineAndCharacter(file, core.TextPos(position))
 }
 
-func quote(file *ast.SourceFile, preferences *UserPreferences, text string) string {
+func quote(file *ast.SourceFile, preferences *lsutil.UserPreferences, text string) string {
 	// Editors can pass in undefined or empty string - we want to infer the preference in those cases.
 	quotePreference := getQuotePreference(file, preferences)
 	quoted, _ := core.StringifyJson(text, "" /*prefix*/, "" /*indent*/)
@@ -459,71 +448,32 @@ const (
 	quotePreferenceDouble
 )
 
-// !!!
-func getQuotePreference(file *ast.SourceFile, preferences *UserPreferences) quotePreference {
+func quotePreferenceFromString(str *ast.StringLiteral) quotePreference {
+	if str.TokenFlags&ast.TokenFlagsSingleQuote != 0 {
+		return quotePreferenceSingle
+	}
+	return quotePreferenceDouble
+}
+
+func getQuotePreference(sourceFile *ast.SourceFile, preferences *lsutil.UserPreferences) quotePreference {
+	if preferences.QuotePreference != "" && preferences.QuotePreference != "auto" {
+		if preferences.QuotePreference == "single" {
+			return quotePreferenceSingle
+		}
+		return quotePreferenceDouble
+	}
+	// ignore synthetic import added when importHelpers: true
+	firstModuleSpecifier := core.Find(sourceFile.Imports(), func(n *ast.Node) bool {
+		return ast.IsStringLiteral(n) && !ast.NodeIsSynthesized(n.Parent)
+	})
+	if firstModuleSpecifier != nil {
+		return quotePreferenceFromString(firstModuleSpecifier.AsStringLiteral())
+	}
 	return quotePreferenceDouble
 }
 
 func isNonContextualKeyword(token ast.Kind) bool {
 	return ast.IsKeywordKind(token) && !ast.IsContextualKeyword(token)
-}
-
-func probablyUsesSemicolons(file *ast.SourceFile) bool {
-	withSemicolon := 0
-	withoutSemicolon := 0
-	nStatementsToObserve := 5
-
-	var visit func(node *ast.Node) bool
-	visit = func(node *ast.Node) bool {
-		if node.Flags&ast.NodeFlagsReparsed != 0 {
-			return false
-		}
-		if lsutil.SyntaxRequiresTrailingSemicolonOrASI(node.Kind) {
-			lastToken := lsutil.GetLastToken(node, file)
-			if lastToken != nil && lastToken.Kind == ast.KindSemicolonToken {
-				withSemicolon++
-			} else {
-				withoutSemicolon++
-			}
-		} else if lsutil.SyntaxRequiresTrailingCommaOrSemicolonOrASI(node.Kind) {
-			lastToken := lsutil.GetLastToken(node, file)
-			if lastToken != nil && lastToken.Kind == ast.KindSemicolonToken {
-				withSemicolon++
-			} else if lastToken != nil && lastToken.Kind != ast.KindCommaToken {
-				lastTokenLine, _ := scanner.GetECMALineAndCharacterOfPosition(
-					file,
-					astnav.GetStartOfNode(lastToken, file, false /*includeJSDoc*/))
-				nextTokenLine, _ := scanner.GetECMALineAndCharacterOfPosition(
-					file,
-					scanner.GetRangeOfTokenAtPosition(file, lastToken.End()).Pos())
-				// Avoid counting missing semicolon in single-line objects:
-				// `function f(p: { x: string /*no semicolon here is insignificant*/ }) {`
-				if lastTokenLine != nextTokenLine {
-					withoutSemicolon++
-				}
-			}
-		}
-
-		if withSemicolon+withoutSemicolon >= nStatementsToObserve {
-			return true
-		}
-
-		return node.ForEachChild(visit)
-	}
-
-	file.ForEachChild(visit)
-
-	// One statement missing a semicolon isn't sufficient evidence to say the user
-	// doesn't want semicolons, because they may not even be done writing that statement.
-	if withSemicolon == 0 && withoutSemicolon <= 1 {
-		return true
-	}
-
-	// If even 2/5 places have a semicolon, the user probably wants semicolons
-	if withoutSemicolon == 0 {
-		return true
-	}
-	return withSemicolon/withoutSemicolon > 1/nStatementsToObserve
 }
 
 var typeKeywords *collections.Set[ast.Kind] = collections.NewSetFromItems(
@@ -908,7 +858,7 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 	// specially by `getSymbolAtLocation`.
 	isModifier := func(node *ast.Node) bool {
 		if ast.IsModifier(node) && (forRename || node.Kind != ast.KindDefaultKeyword) {
-			return ast.CanHaveModifiers(parent) && slices.Contains(parent.Modifiers().NodeList.Nodes, node)
+			return ast.CanHaveModifiers(parent) && parent.Modifiers() != nil && slices.Contains(parent.Modifiers().NodeList.Nodes, node)
 		}
 		switch node.Kind {
 		case ast.KindClassKeyword:
@@ -1650,6 +1600,13 @@ func getChildrenFromNonJSDocNode(node *ast.Node, sourceFile *ast.SourceFile) []*
 		childNodes = append(childNodes, child)
 		return false
 	})
+
+	// If the node has no children, don't scan for tokens.
+	// This prevents creating tokens for leaf nodes' own text.
+	if len(childNodes) == 0 {
+		return nil
+	}
+
 	var children []*ast.Node
 	pos := node.Pos()
 	for _, child := range childNodes {
@@ -1710,4 +1667,17 @@ func nodeSeenTracker() func(*ast.Node) bool {
 	return func(node *ast.Node) bool {
 		return seen.AddIfAbsent(node)
 	}
+}
+
+// FindAllReferences.toContextSpan
+func toContextRange(textRange *core.TextRange, contextFile *ast.SourceFile, context *ast.Node) *core.TextRange {
+	if context == nil {
+		return textRange
+	}
+	// !!! isContextWithStartAndEndNode
+	contextRange := getRangeOfNode(context, contextFile, nil /*endNode*/)
+	if contextRange.Pos() != textRange.Pos() || contextRange.End() != textRange.End() {
+		return &contextRange
+	}
+	return nil
 }

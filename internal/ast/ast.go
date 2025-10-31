@@ -263,10 +263,10 @@ func (n *Node) TemplateLiteralLikeData() *TemplateLiteralLikeBase {
 func (n *Node) KindString() string { return n.Kind.String() }
 func (n *Node) KindValue() int16   { return int16(n.Kind) }
 
-type mutableNode Node
+type MutableNode Node
 
-func (n *Node) AsMutable() *mutableNode                     { return (*mutableNode)(n) }
-func (n *mutableNode) SetModifiers(modifiers *ModifierList) { n.data.setModifiers(modifiers) }
+func (n *Node) AsMutable() *MutableNode                     { return (*MutableNode)(n) }
+func (n *MutableNode) SetModifiers(modifiers *ModifierList) { n.data.setModifiers(modifiers) }
 
 func (n *Node) Symbol() *Symbol {
 	data := n.DeclarationData()
@@ -312,6 +312,8 @@ func (n *Node) Text() string {
 		return n.AsNumericLiteral().Text
 	case KindBigIntLiteral:
 		return n.AsBigIntLiteral().Text
+	case KindMetaProperty:
+		return n.AsMetaProperty().Name().Text()
 	case KindNoSubstitutionTemplateLiteral:
 		return n.AsNoSubstitutionTemplateLiteral().Text
 	case KindTemplateHead:
@@ -412,7 +414,7 @@ func (n *Node) Expression() *Node {
 	panic("Unhandled case in Node.Expression: " + n.Kind.String())
 }
 
-func (m *mutableNode) SetExpression(expr *Node) {
+func (m *MutableNode) SetExpression(expr *Node) {
 	n := (*Node)(m)
 	switch n.Kind {
 	case KindPropertyAccessExpression:
@@ -693,7 +695,7 @@ func (n *Node) Type() *Node {
 	return nil
 }
 
-func (m *mutableNode) SetType(t *Node) {
+func (m *MutableNode) SetType(t *Node) {
 	n := (*Node)(m)
 	switch m.Kind {
 	case KindVariableDeclaration:
@@ -785,7 +787,7 @@ func (n *Node) Initializer() *Node {
 	panic("Unhandled case in Node.Initializer")
 }
 
-func (m *mutableNode) SetInitializer(initializer *Node) {
+func (m *MutableNode) SetInitializer(initializer *Node) {
 	n := (*Node)(m)
 	switch n.Kind {
 	case KindVariableDeclaration:
@@ -894,7 +896,7 @@ func (n *Node) IsTypeOnly() bool {
 	case KindImportSpecifier:
 		return n.AsImportSpecifier().IsTypeOnly
 	case KindImportClause:
-		return n.AsImportClause().IsTypeOnly
+		return n.AsImportClause().PhaseModifier == KindTypeKeyword
 	case KindExportDeclaration:
 		return n.AsExportDeclaration().IsTypeOnly
 	case KindExportSpecifier:
@@ -2351,6 +2353,9 @@ func IsArrayLiteralOrObjectLiteralDestructuringPattern(node *Node) bool {
 
 func accessKind(node *Node) AccessKind {
 	parent := node.Parent
+	if parent == nil {
+		return AccessKindRead
+	}
 	switch parent.Kind {
 	case KindParenthesizedExpression:
 		return accessKind(parent)
@@ -2402,8 +2407,9 @@ func accessKind(node *Node) AccessKind {
 			return AccessKindWrite
 		}
 		return AccessKindRead
+	default:
+		return AccessKindRead
 	}
-	return AccessKindRead
 }
 
 func reverseAccessKind(a AccessKind) AccessKind {
@@ -4945,22 +4951,22 @@ type ImportClause struct {
 	DeclarationBase
 	ExportableBase
 	compositeNodeBase
-	IsTypeOnly    bool
+	PhaseModifier Kind                 // KindTypeKeyword | KindDeferKeyword
 	NamedBindings *NamedImportBindings // NamedImportBindings. Optional, named bindings
 	name          *IdentifierNode      // IdentifierNode. Optional, default binding
 }
 
-func (f *NodeFactory) NewImportClause(isTypeOnly bool, name *IdentifierNode, namedBindings *NamedImportBindings) *Node {
+func (f *NodeFactory) NewImportClause(phaseModifier Kind, name *IdentifierNode, namedBindings *NamedImportBindings) *Node {
 	data := &ImportClause{}
-	data.IsTypeOnly = isTypeOnly
+	data.PhaseModifier = phaseModifier
 	data.name = name
 	data.NamedBindings = namedBindings
 	return f.newNode(KindImportClause, data)
 }
 
-func (f *NodeFactory) UpdateImportClause(node *ImportClause, isTypeOnly bool, name *IdentifierNode, namedBindings *NamedImportBindings) *Node {
-	if isTypeOnly != node.IsTypeOnly || name != node.name || namedBindings != node.NamedBindings {
-		return updateNode(f.NewImportClause(isTypeOnly, name, namedBindings), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateImportClause(node *ImportClause, phaseModifier Kind, name *IdentifierNode, namedBindings *NamedImportBindings) *Node {
+	if phaseModifier != node.PhaseModifier || name != node.name || namedBindings != node.NamedBindings {
+		return updateNode(f.NewImportClause(phaseModifier, name, namedBindings), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -4970,11 +4976,11 @@ func (node *ImportClause) ForEachChild(v Visitor) bool {
 }
 
 func (node *ImportClause) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateImportClause(node, node.IsTypeOnly, v.visitNode(node.name), v.visitNode(node.NamedBindings))
+	return v.Factory.UpdateImportClause(node, node.PhaseModifier, v.visitNode(node.name), v.visitNode(node.NamedBindings))
 }
 
 func (node *ImportClause) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewImportClause(node.IsTypeOnly, node.Name(), node.NamedBindings), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewImportClause(node.PhaseModifier, node.Name(), node.NamedBindings), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ImportClause) Name() *DeclarationName {
@@ -4982,7 +4988,7 @@ func (node *ImportClause) Name() *DeclarationName {
 }
 
 func (node *ImportClause) computeSubtreeFacts() SubtreeFacts {
-	if node.IsTypeOnly {
+	if node.PhaseModifier == KindTypeKeyword {
 		return SubtreeContainsTypeScript
 	} else {
 		return propagateSubtreeFacts(node.name) |
@@ -8704,6 +8710,10 @@ func (node *TemplateHead) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewTemplateHead(node.Text, node.RawText, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsTemplateHead(node *Node) bool {
+	return node.Kind == KindTemplateHead
+}
+
 // TemplateMiddle
 
 type TemplateMiddle struct {
@@ -8724,6 +8734,10 @@ func (node *TemplateMiddle) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewTemplateMiddle(node.Text, node.RawText, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsTemplateMiddle(node *Node) bool {
+	return node.Kind == KindTemplateMiddle
+}
+
 // TemplateTail
 
 type TemplateTail struct {
@@ -8742,6 +8756,10 @@ func (f *NodeFactory) NewTemplateTail(text string, rawText string, templateFlags
 
 func (node *TemplateTail) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewTemplateTail(node.Text, node.RawText, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsTemplateTail(node *Node) bool {
+	return node.Kind == KindTemplateTail
 }
 
 // TemplateLiteralTypeNode
@@ -9631,6 +9649,10 @@ func (node *JSDocTypeExpression) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *JSDocTypeExpression) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocTypeExpression(node.Type), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsJSDocTypeExpression(node *Node) bool {
+	return node.Kind == KindJSDocTypeExpression
 }
 
 // JSDocNonNullableType
@@ -10561,6 +10583,10 @@ func (node *JSDocTypeLiteral) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *JSDocTypeLiteral) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocTypeLiteral(node.JSDocPropertyTags, node.IsArrayType), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsJSDocTypeLiteral(node *Node) bool {
+	return node.Kind == KindJSDocTypeLiteral
 }
 
 // JSDocSignature
