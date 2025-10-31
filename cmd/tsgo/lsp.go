@@ -5,7 +5,10 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/exec"
+	"os/signal"
 	"runtime"
+	"syscall"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -50,7 +53,15 @@ func runLSP(ctx context.Context, args []string) int {
 		FS:                 fs,
 		DefaultLibraryPath: defaultLibraryPath,
 		TypingsLocation:    typingsLocation,
+		NpmInstall: func(cwd string, args []string) ([]byte, error) {
+			cmd := exec.Command("npm", args...)
+			cmd.Dir = cwd
+			return cmd.Output()
+		},
 	})
+
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
 
 	if err := s.Run(ctx); err != nil {
 		return 1

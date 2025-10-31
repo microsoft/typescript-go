@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/project/background"
@@ -73,12 +74,15 @@ type Session struct {
 	parseCache *ParseCache
 	// extendedConfigCache is the ref-counted cache of tsconfig ASTs
 	// that are used in the "extends" of another tsconfig.
-	extendedConfigCache *extendedConfigCache
+	extendedConfigCache *ExtendedConfigCache
 	// programCounter counts how many snapshots reference a program.
 	// When a program is no longer referenced, its source files are
 	// released from the parseCache.
 	programCounter *programCounter
 
+	// read-only after initialization
+	initialPreferences                 *lsutil.UserPreferences
+	userPreferences                    *lsutil.UserPreferences // !!! update to Config
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	typingsInstaller                   *ata.TypingsInstaller
 	backgroundQueue                    *background.Queue
@@ -91,6 +95,9 @@ type Session struct {
 	// snapshot is the current immutable state of all projects.
 	snapshot   *Snapshot
 	snapshotMu sync.RWMutex
+
+	pendingConfigChanges bool
+	configRWMu           sync.Mutex
 
 	// pendingFileChanges are accumulated from textDocument/* events delivered
 	// by the LSP server through DidOpenFile(), DidChangeFile(), etc. They are
@@ -108,6 +115,11 @@ type Session struct {
 	// after file watch changes and ATA updates.
 	diagnosticsRefreshCancel context.CancelFunc
 	diagnosticsRefreshMu     sync.Mutex
+
+	// watches tracks the current watch globs and how many individual WatchedFiles
+	// are using each glob.
+	watches   map[fileSystemWatcherKey]*fileSystemWatcherValue
+	watchesMu sync.Mutex
 }
 
 func NewSession(init *SessionInit) *Session {
@@ -116,12 +128,12 @@ func NewSession(init *SessionInit) *Session {
 	toPath := func(fileName string) tspath.Path {
 		return tspath.ToPath(fileName, currentDirectory, useCaseSensitiveFileNames)
 	}
-	overlayFS := newOverlayFS(init.FS, make(map[tspath.Path]*overlay), init.Options.PositionEncoding, toPath)
+	overlayFS := newOverlayFS(init.FS, make(map[tspath.Path]*Overlay), init.Options.PositionEncoding, toPath)
 	parseCache := init.ParseCache
 	if parseCache == nil {
 		parseCache = &ParseCache{}
 	}
-	extendedConfigCache := &extendedConfigCache{}
+	extendedConfigCache := &ExtendedConfigCache{}
 
 	session := &Session{
 		options:             init.Options,
@@ -137,7 +149,7 @@ func NewSession(init *SessionInit) *Session {
 		snapshotID:          atomic.Uint64{},
 		snapshot: NewSnapshot(
 			uint64(0),
-			&snapshotFS{
+			&SnapshotFS{
 				toPath: toPath,
 				fs:     init.FS,
 			},
@@ -146,9 +158,11 @@ func NewSession(init *SessionInit) *Session {
 			extendedConfigCache,
 			&ConfigFileRegistry{},
 			nil,
+			Config{},
 			toPath,
 		),
 		pendingATAChanges: make(map[tspath.Path]*ATAStateChange),
+		watches:           make(map[fileSystemWatcherKey]*fileSystemWatcherValue),
 	}
 
 	if init.Options.TypingsLocation != "" && init.NpmExecutor != nil {
@@ -171,9 +185,33 @@ func (s *Session) GetCurrentDirectory() string {
 	return s.options.CurrentDirectory
 }
 
+// Gets current UserPreferences, always a copy
+func (s *Session) UserPreferences() *lsutil.UserPreferences {
+	s.configRWMu.Lock()
+	defer s.configRWMu.Unlock()
+	return s.userPreferences.Copy()
+}
+
+// Gets original UserPreferences of the session
+func (s *Session) NewUserPreferences() *lsutil.UserPreferences {
+	return s.initialPreferences.CopyOrDefault()
+}
+
 // Trace implements module.ResolutionHost
 func (s *Session) Trace(msg string) {
 	panic("ATA module resolution should not use tracing")
+}
+
+func (s *Session) Configure(userPreferences *lsutil.UserPreferences) {
+	s.configRWMu.Lock()
+	defer s.configRWMu.Unlock()
+	s.pendingConfigChanges = true
+	s.userPreferences = userPreferences
+}
+
+func (s *Session) InitializeWithConfig(userPreferences *lsutil.UserPreferences) {
+	s.initialPreferences = userPreferences.CopyOrDefault()
+	s.Configure(s.initialPreferences)
 }
 
 func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, version int32, content string, languageKind lsproto.LanguageKind) {
@@ -335,8 +373,8 @@ func (s *Session) Snapshot() (*Snapshot, func()) {
 
 func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
 	var snapshot *Snapshot
-	fileChanges, overlays, ataChanges := s.flushChanges(ctx)
-	updateSnapshot := !fileChanges.IsEmpty() || len(ataChanges) > 0
+	fileChanges, overlays, ataChanges, newConfig := s.flushChanges(ctx)
+	updateSnapshot := !fileChanges.IsEmpty() || len(ataChanges) > 0 || newConfig != nil
 	if updateSnapshot {
 		// If there are pending file changes, we need to update the snapshot.
 		// Sending the requested URI ensures that the project for this URI is loaded.
@@ -344,6 +382,7 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 			reason:        UpdateReasonRequestedLanguageServicePendingChanges,
 			fileChanges:   fileChanges,
 			ataChanges:    ataChanges,
+			newConfig:     newConfig,
 			requestedURIs: []lsproto.DocumentUri{uri},
 		})
 	} else {
@@ -367,10 +406,10 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 	if project == nil {
 		return nil, fmt.Errorf("no project found for URI %s", uri)
 	}
-	return ls.NewLanguageService(project, snapshot.Converters()), nil
+	return ls.NewLanguageService(project.GetProgram(), snapshot), nil
 }
 
-func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*overlay, change SnapshotChange) *Snapshot {
+func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*Overlay, change SnapshotChange) *Snapshot {
 	s.snapshotMu.Lock()
 	oldSnapshot := s.snapshot
 	newSnapshot := oldSnapshot.Clone(ctx, change, overlays, s)
@@ -388,6 +427,7 @@ func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 	}
 
 	// Enqueue logging, watch updates, and diagnostic refresh tasks
+	// !!! userPreferences/configuration updates
 	s.backgroundQueue.Enqueue(context.Background(), func(ctx context.Context) {
 		if s.options.LoggingEnabled {
 			s.logger.Write(newSnapshot.builderLogs.String())
@@ -410,33 +450,71 @@ func (s *Session) WaitForBackgroundTasks() {
 	s.backgroundQueue.Wait()
 }
 
-func updateWatch[T any](ctx context.Context, client Client, logger logging.Logger, oldWatcher, newWatcher *WatchedFiles[T]) []error {
+func updateWatch[T any](ctx context.Context, session *Session, logger logging.Logger, oldWatcher, newWatcher *WatchedFiles[T]) []error {
 	var errors []error
+	session.watchesMu.Lock()
+	defer session.watchesMu.Unlock()
 	if newWatcher != nil {
-		if id, watchers := newWatcher.Watchers(); len(watchers) > 0 {
-			if err := client.WatchFiles(ctx, id, watchers); err != nil {
-				errors = append(errors, err)
+		if id, watchers, ignored := newWatcher.Watchers(); len(watchers) > 0 {
+			var newWatchers collections.OrderedMap[WatcherID, *lsproto.FileSystemWatcher]
+			for i, watcher := range watchers {
+				key := toFileSystemWatcherKey(watcher)
+				value := session.watches[key]
+				globId := WatcherID(fmt.Sprintf("%s.%d", id, i))
+				if value == nil {
+					value = &fileSystemWatcherValue{id: globId}
+					session.watches[key] = value
+				}
+				value.count++
+				if value.count == 1 {
+					newWatchers.Set(globId, watcher)
+				}
 			}
-			if logger != nil {
-				if oldWatcher == nil {
-					logger.Log(fmt.Sprintf("Added new watch: %s", id))
-				} else {
-					logger.Log(fmt.Sprintf("Updated watch: %s", id))
-				}
-				for _, watcher := range watchers {
+			for id, watcher := range newWatchers.Entries() {
+				if err := session.client.WatchFiles(ctx, id, []*lsproto.FileSystemWatcher{watcher}); err != nil {
+					errors = append(errors, err)
+				} else if logger != nil {
+					if oldWatcher == nil {
+						logger.Log(fmt.Sprintf("Added new watch: %s", id))
+					} else {
+						logger.Log(fmt.Sprintf("Updated watch: %s", id))
+					}
 					logger.Log("\t" + *watcher.GlobPattern.Pattern)
+					logger.Log("")
 				}
-				logger.Log("")
+			}
+			if len(ignored) > 0 {
+				logger.Logf("%d paths ineligible for watching", len(ignored))
+				if logger.IsVerbose() {
+					for path := range ignored {
+						logger.Log("\t" + path)
+					}
+				}
 			}
 		}
 	}
 	if oldWatcher != nil {
-		if id, watchers := oldWatcher.Watchers(); len(watchers) > 0 {
-			if err := client.UnwatchFiles(ctx, id); err != nil {
-				errors = append(errors, err)
+		if _, watchers, _ := oldWatcher.Watchers(); len(watchers) > 0 {
+			var removedWatchers []WatcherID
+			for _, watcher := range watchers {
+				key := toFileSystemWatcherKey(watcher)
+				value := session.watches[key]
+				if value == nil {
+					continue
+				}
+				if value.count <= 1 {
+					delete(session.watches, key)
+					removedWatchers = append(removedWatchers, value.id)
+				} else {
+					value.count--
+				}
 			}
-			if logger != nil && newWatcher == nil {
-				logger.Log(fmt.Sprintf("Removed watch: %s", id))
+			for _, id := range removedWatchers {
+				if err := session.client.UnwatchFiles(ctx, id); err != nil {
+					errors = append(errors, err)
+				} else if logger != nil && newWatcher == nil {
+					logger.Log(fmt.Sprintf("Removed watch: %s", id))
+				}
 			}
 		}
 	}
@@ -445,6 +523,7 @@ func updateWatch[T any](ctx context.Context, client Client, logger logging.Logge
 
 func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) error {
 	var errors []error
+	start := time.Now()
 	ctx := context.Background()
 	core.DiffMapsFunc(
 		oldSnapshot.ConfigFileRegistry.configs,
@@ -453,13 +532,13 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 			return a.rootFilesWatch.ID() == b.rootFilesWatch.ID()
 		},
 		func(_ tspath.Path, addedEntry *configFileEntry) {
-			errors = append(errors, updateWatch(ctx, s.client, s.logger, nil, addedEntry.rootFilesWatch)...)
+			errors = append(errors, updateWatch(ctx, s, s.logger, nil, addedEntry.rootFilesWatch)...)
 		},
 		func(_ tspath.Path, removedEntry *configFileEntry) {
-			errors = append(errors, updateWatch(ctx, s.client, s.logger, removedEntry.rootFilesWatch, nil)...)
+			errors = append(errors, updateWatch(ctx, s, s.logger, removedEntry.rootFilesWatch, nil)...)
 		},
 		func(_ tspath.Path, oldEntry, newEntry *configFileEntry) {
-			errors = append(errors, updateWatch(ctx, s.client, s.logger, oldEntry.rootFilesWatch, newEntry.rootFilesWatch)...)
+			errors = append(errors, updateWatch(ctx, s, s.logger, oldEntry.rootFilesWatch, newEntry.rootFilesWatch)...)
 		},
 	)
 
@@ -467,35 +546,37 @@ func (s *Session) updateWatches(oldSnapshot *Snapshot, newSnapshot *Snapshot) er
 		oldSnapshot.ProjectCollection.ProjectsByPath(),
 		newSnapshot.ProjectCollection.ProjectsByPath(),
 		func(_ tspath.Path, addedProject *Project) {
-			errors = append(errors, updateWatch(ctx, s.client, s.logger, nil, addedProject.affectingLocationsWatch)...)
-			errors = append(errors, updateWatch(ctx, s.client, s.logger, nil, addedProject.failedLookupsWatch)...)
-			errors = append(errors, updateWatch(ctx, s.client, s.logger, nil, addedProject.typingsFilesWatch)...)
-			errors = append(errors, updateWatch(ctx, s.client, s.logger, nil, addedProject.typingsDirectoryWatch)...)
+			errors = append(errors, updateWatch(ctx, s, s.logger, nil, addedProject.programFilesWatch)...)
+			errors = append(errors, updateWatch(ctx, s, s.logger, nil, addedProject.affectingLocationsWatch)...)
+			errors = append(errors, updateWatch(ctx, s, s.logger, nil, addedProject.failedLookupsWatch)...)
+			errors = append(errors, updateWatch(ctx, s, s.logger, nil, addedProject.typingsWatch)...)
 		},
 		func(_ tspath.Path, removedProject *Project) {
-			errors = append(errors, updateWatch(ctx, s.client, s.logger, removedProject.affectingLocationsWatch, nil)...)
-			errors = append(errors, updateWatch(ctx, s.client, s.logger, removedProject.failedLookupsWatch, nil)...)
-			errors = append(errors, updateWatch(ctx, s.client, s.logger, removedProject.typingsFilesWatch, nil)...)
-			errors = append(errors, updateWatch(ctx, s.client, s.logger, removedProject.typingsDirectoryWatch, nil)...)
+			errors = append(errors, updateWatch(ctx, s, s.logger, removedProject.programFilesWatch, nil)...)
+			errors = append(errors, updateWatch(ctx, s, s.logger, removedProject.affectingLocationsWatch, nil)...)
+			errors = append(errors, updateWatch(ctx, s, s.logger, removedProject.failedLookupsWatch, nil)...)
+			errors = append(errors, updateWatch(ctx, s, s.logger, removedProject.typingsWatch, nil)...)
 		},
 		func(_ tspath.Path, oldProject, newProject *Project) {
+			if oldProject.programFilesWatch.ID() != newProject.programFilesWatch.ID() {
+				errors = append(errors, updateWatch(ctx, s, s.logger, oldProject.programFilesWatch, newProject.programFilesWatch)...)
+			}
 			if oldProject.affectingLocationsWatch.ID() != newProject.affectingLocationsWatch.ID() {
-				errors = append(errors, updateWatch(ctx, s.client, s.logger, oldProject.affectingLocationsWatch, newProject.affectingLocationsWatch)...)
+				errors = append(errors, updateWatch(ctx, s, s.logger, oldProject.affectingLocationsWatch, newProject.affectingLocationsWatch)...)
 			}
 			if oldProject.failedLookupsWatch.ID() != newProject.failedLookupsWatch.ID() {
-				errors = append(errors, updateWatch(ctx, s.client, s.logger, oldProject.failedLookupsWatch, newProject.failedLookupsWatch)...)
+				errors = append(errors, updateWatch(ctx, s, s.logger, oldProject.failedLookupsWatch, newProject.failedLookupsWatch)...)
 			}
-			if oldProject.typingsFilesWatch.ID() != newProject.typingsFilesWatch.ID() {
-				errors = append(errors, updateWatch(ctx, s.client, s.logger, oldProject.typingsFilesWatch, newProject.typingsFilesWatch)...)
-			}
-			if oldProject.typingsDirectoryWatch.ID() != newProject.typingsDirectoryWatch.ID() {
-				errors = append(errors, updateWatch(ctx, s.client, s.logger, oldProject.typingsDirectoryWatch, newProject.typingsDirectoryWatch)...)
+			if oldProject.typingsWatch.ID() != newProject.typingsWatch.ID() {
+				errors = append(errors, updateWatch(ctx, s, s.logger, oldProject.typingsWatch, newProject.typingsWatch)...)
 			}
 		},
 	)
 
 	if len(errors) > 0 {
 		return fmt.Errorf("errors updating watches: %v", errors)
+	} else if s.options.LoggingEnabled {
+		s.logger.Log(fmt.Sprintf("Updated watches in %v", time.Since(start)))
 	}
 	return nil
 }
@@ -506,7 +587,7 @@ func (s *Session) Close() {
 	s.backgroundQueue.Close()
 }
 
-func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspath.Path]*overlay, map[tspath.Path]*ATAStateChange) {
+func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspath.Path]*Overlay, map[tspath.Path]*ATAStateChange, *Config) {
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
 	s.pendingATAChangesMu.Lock()
@@ -514,11 +595,20 @@ func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspa
 	pendingATAChanges := s.pendingATAChanges
 	s.pendingATAChanges = make(map[tspath.Path]*ATAStateChange)
 	fileChanges, overlays := s.flushChangesLocked(ctx)
-	return fileChanges, overlays, pendingATAChanges
+	s.configRWMu.Lock()
+	defer s.configRWMu.Unlock()
+	var newConfig *Config
+	if s.pendingConfigChanges {
+		newConfig = &Config{
+			tsUserPreferences: s.userPreferences.Copy(),
+		}
+	}
+	s.pendingConfigChanges = false
+	return fileChanges, overlays, pendingATAChanges, newConfig
 }
 
 // flushChangesLocked should only be called with s.pendingFileChangesMu held.
-func (s *Session) flushChangesLocked(ctx context.Context) (FileChangeSummary, map[tspath.Path]*overlay) {
+func (s *Session) flushChangesLocked(ctx context.Context) (FileChangeSummary, map[tspath.Path]*Overlay) {
 	if len(s.pendingFileChanges) == 0 {
 		return FileChangeSummary{}, s.fs.Overlays()
 	}

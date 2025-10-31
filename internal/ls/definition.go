@@ -104,20 +104,17 @@ func (l *LanguageService) createLocationsFromDeclarations(declarations []*ast.No
 	for _, decl := range declarations {
 		file := ast.GetSourceFileOfNode(decl)
 		name := core.OrElse(ast.GetNameOfDeclaration(decl), decl)
-		locations = core.AppendIfUnique(locations, lsproto.Location{
-			Uri:   FileNameToDocumentURI(file.FileName()),
-			Range: *l.createLspRangeFromNode(name, file),
-		})
+		nodeRange := createRangeFromNode(name, file)
+		mappedLocation := l.getMappedLocation(file.FileName(), nodeRange)
+		locations = core.AppendIfUnique(locations, mappedLocation)
 	}
 	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{Locations: &locations}
 }
 
 func (l *LanguageService) createLocationFromFileAndRange(file *ast.SourceFile, textRange core.TextRange) lsproto.DefinitionResponse {
+	mappedLocation := l.getMappedLocation(file.FileName(), textRange)
 	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{
-		Location: &lsproto.Location{
-			Uri:   FileNameToDocumentURI(file.FileName()),
-			Range: *l.createLspRangeFromBounds(textRange.Pos(), textRange.End(), file),
-		},
+		Location: &mappedLocation,
 	}
 }
 
@@ -155,7 +152,7 @@ func getDeclarationsFromLocation(c *checker.Checker, node *ast.Node) []*ast.Node
 // Returns a CallLikeExpression where `node` is the target being invoked.
 func getAncestorCallLikeExpression(node *ast.Node) *ast.Node {
 	target := ast.FindAncestor(node, func(n *ast.Node) bool {
-		return !isRightSideOfPropertyAccess(n)
+		return !ast.IsRightSideOfPropertyAccess(n)
 	})
 	callLike := target.Parent
 	if callLike != nil && ast.IsCallLikeExpression(callLike) && ast.GetInvokedExpression(callLike) == target {

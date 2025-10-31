@@ -76,12 +76,8 @@ func getSelectedModifierFlags(node *ast.Node, flags ast.ModifierFlags) ast.Modif
 	return node.ModifierFlags() & flags
 }
 
-func HasModifier(node *ast.Node, flags ast.ModifierFlags) bool {
-	return node.ModifierFlags()&flags != 0
-}
-
 func hasReadonlyModifier(node *ast.Node) bool {
-	return HasModifier(node, ast.ModifierFlagsReadonly)
+	return ast.HasModifier(node, ast.ModifierFlagsReadonly)
 }
 
 func isStaticPrivateIdentifierProperty(s *ast.Symbol) bool {
@@ -405,7 +401,7 @@ func declarationBelongsToPrivateAmbientMember(declaration *ast.Node) bool {
 }
 
 func isPrivateWithinAmbient(node *ast.Node) bool {
-	return (HasModifier(node, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(node)) && node.Flags&ast.NodeFlagsAmbient != 0
+	return (ast.HasModifier(node, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(node)) && node.Flags&ast.NodeFlagsAmbient != 0
 }
 
 func isTypeAssertion(node *ast.Node) bool {
@@ -909,10 +905,6 @@ func (s *orderedSet[T]) add(value T) {
 	}
 	s.valuesByKey[value] = struct{}{}
 	s.values = append(s.values, value)
-}
-
-func getContainingFunction(node *ast.Node) *ast.Node {
-	return ast.FindAncestor(node.Parent, ast.IsFunctionLike)
 }
 
 func getContainingFunctionOrClassStaticBlock(node *ast.Node) *ast.Node {

@@ -13,7 +13,7 @@ func TestCompletionsPathsJsonModule(t *testing.T) {
 	t.Parallel()
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @moduleResolution: node
+	const content = `// @moduleResolution: bundler
 // @resolveJsonModule: true
 // @Filename: /project/node_modules/test.json
 not read

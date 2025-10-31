@@ -783,10 +783,9 @@ func (p *Printer) shouldEmitBlockFunctionBodyOnSingleLine(body *ast.Block) bool 
 }
 
 func (p *Printer) shouldEmitOnNewLine(node *ast.Node, format ListFormat) bool {
-	// !!! TODO: enable multiline emit
-	// if p.emitContext.EmitFlags(node)&EFStartOnNewLine != 0 {
-	// 	return true
-	// }
+	if p.emitContext.EmitFlags(node)&EFStartOnNewLine != 0 {
+		return true
+	}
 	return format&LFPreferNewLine != 0
 }
 
@@ -2716,14 +2715,6 @@ func (p *Printer) getBinaryExpressionPrecedence(node *ast.BinaryExpression) (lef
 	case ast.OperatorPrecedenceAssignment:
 		// assignment is right-associative
 		leftPrec = ast.OperatorPrecedenceLeftHandSide
-	case ast.OperatorPrecedenceCoalesce:
-		// allow coalesce on the left, but short circuit to BitwiseOR
-		if isBinaryOperation(node.Left, ast.KindQuestionQuestionToken) {
-			leftPrec = ast.OperatorPrecedenceCoalesce
-		} else {
-			leftPrec = ast.OperatorPrecedenceBitwiseOR
-		}
-		rightPrec = ast.OperatorPrecedenceBitwiseOR
 	case ast.OperatorPrecedenceLogicalOR:
 		rightPrec = ast.OperatorPrecedenceLogicalAND
 	case ast.OperatorPrecedenceLogicalAND:
@@ -3661,8 +3652,8 @@ func (p *Printer) emitImportDeclaration(node *ast.ImportDeclaration) {
 
 func (p *Printer) emitImportClause(node *ast.ImportClause) {
 	state := p.enterNode(node.AsNode())
-	if node.IsTypeOnly {
-		p.emitToken(ast.KindTypeKeyword, node.Pos(), WriteKindKeyword, node.AsNode())
+	if node.PhaseModifier != ast.KindUnknown {
+		p.emitToken(node.PhaseModifier, node.Pos(), WriteKindKeyword, node.AsNode())
 		p.writeSpace()
 	}
 	if name := node.Name(); name != nil {
@@ -4393,18 +4384,24 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 
 	p.writeLine()
 
-	state := p.emitDetachedCommentsBeforeStatementList(node.AsNode(), node.Statements.Loc)
 	p.pushNameGenerationScope(node.AsNode())
 	p.generateAllNames(node.Statements)
 
 	index := 0
+	var state *commentState
 	if node.ScriptKind != core.ScriptKindJSON {
 		p.emitShebangIfNeeded(node)
 		index = p.emitPrologueDirectives(node.Statements)
+		if !p.writer.IsAtStartOfLine() {
+			p.writeLine()
+		}
+		state = p.emitDetachedCommentsBeforeStatementList(node.AsNode(), node.Statements.Loc)
 		p.emitHelpers(node.AsNode())
 		if node.IsDeclarationFile {
 			p.emitTripleSlashDirectives(node)
 		}
+	} else {
+		state = p.emitDetachedCommentsBeforeStatementList(node.AsNode(), node.Statements.Loc)
 	}
 
 	// !!! Emit triple-slash directives
@@ -5092,7 +5089,7 @@ func (p *Printer) emitDetachedCommentsBeforeStatementList(node *ast.Node, detach
 	containerPos := p.containerPos
 	containerEnd := p.containerEnd
 	declarationListContainerEnd := p.declarationListContainerEnd
-	skipLeadingComments := emitFlags&EFNoLeadingComments == 0 && !ast.PositionIsSynthesized(detachedRange.Pos())
+	skipLeadingComments := ast.PositionIsSynthesized(detachedRange.Pos()) || emitFlags&EFNoLeadingComments != 0
 
 	if !skipLeadingComments {
 		p.emitDetachedCommentsAndUpdateCommentsInfo(detachedRange)

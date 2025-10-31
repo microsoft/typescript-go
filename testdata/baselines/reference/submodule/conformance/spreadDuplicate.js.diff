@@ -5,7 +5,6 @@
 
  //// [spreadDuplicate.js]
 -"use strict";
--// Repro from #44438
- var __assign = (this && this.__assign) || function () {
-     __assign = Object.assign || function(t) {
-         for (var s, i = 1, n = arguments.length; i < n; i++) {
+ // Repro from #44438
+ let a1 = Object.assign({ a: 123 }, a); // string (Error)
+ let b1 = Object.assign({ a: 123 }, b); // string | number
