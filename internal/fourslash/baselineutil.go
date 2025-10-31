@@ -296,6 +296,8 @@ func (f *FourslashTest) getBaselineContentForFile(
 	for index, detail := range details {
 		if detail.span == nil && deferredMarkerIndex == nil {
 			// If this is marker position and its same as textEnd and/or contextEnd we want to write marker after those
+			// TODO: unsilence lint and check against original implementation
+			//nolint:staticcheck
 			for matchingEndPosIndex := index + 1; matchingEndPosIndex < len(details); matchingEndPosIndex++ {
 				// Defer after the location if its same as rangeEnd
 				if details[matchingEndPosIndex].pos == detail.pos && strings.HasSuffix(details[matchingEndPosIndex].kind, "End") {
