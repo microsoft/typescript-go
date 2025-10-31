@@ -7,7 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/lsutil"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 
@@ -56,21 +56,20 @@ func (l *LanguageService) getSemanticDocumentHighlights(ctx context.Context, pos
 	if referenceEntries == nil {
 		return nil
 	}
+
 	var highlights []*lsproto.DocumentHighlight
 	for _, entry := range referenceEntries {
 		for _, ref := range entry.references {
-			if ref.node != nil {
-				fileName, highlight := l.toDocumentHighlight(ref)
-				if fileName == sourceFile.FileName() {
-					highlights = append(highlights, highlight)
-				}
+			fileName, highlight := l.toDocumentHighlight(ref)
+			if fileName == sourceFile.FileName() {
+				highlights = append(highlights, highlight)
 			}
 		}
 	}
 	return highlights
 }
 
-func (l *LanguageService) toDocumentHighlight(entry *referenceEntry) (string, *lsproto.DocumentHighlight) {
+func (l *LanguageService) toDocumentHighlight(entry *ReferenceEntry) (string, *lsproto.DocumentHighlight) {
 	entry = l.resolveEntry(entry)
 
 	kind := lsproto.DocumentHighlightKindRead

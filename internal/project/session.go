@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project/ata"
 	"github.com/microsoft/typescript-go/internal/project/background"
@@ -73,12 +74,15 @@ type Session struct {
 	parseCache *ParseCache
 	// extendedConfigCache is the ref-counted cache of tsconfig ASTs
 	// that are used in the "extends" of another tsconfig.
-	extendedConfigCache *extendedConfigCache
+	extendedConfigCache *ExtendedConfigCache
 	// programCounter counts how many snapshots reference a program.
 	// When a program is no longer referenced, its source files are
 	// released from the parseCache.
 	programCounter *programCounter
 
+	// read-only after initialization
+	initialPreferences                 *lsutil.UserPreferences
+	userPreferences                    *lsutil.UserPreferences // !!! update to Config
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	typingsInstaller                   *ata.TypingsInstaller
 	backgroundQueue                    *background.Queue
@@ -91,6 +95,9 @@ type Session struct {
 	// snapshot is the current immutable state of all projects.
 	snapshot   *Snapshot
 	snapshotMu sync.RWMutex
+
+	pendingConfigChanges bool
+	configRWMu           sync.Mutex
 
 	// pendingFileChanges are accumulated from textDocument/* events delivered
 	// by the LSP server through DidOpenFile(), DidChangeFile(), etc. They are
@@ -121,12 +128,12 @@ func NewSession(init *SessionInit) *Session {
 	toPath := func(fileName string) tspath.Path {
 		return tspath.ToPath(fileName, currentDirectory, useCaseSensitiveFileNames)
 	}
-	overlayFS := newOverlayFS(init.FS, make(map[tspath.Path]*overlay), init.Options.PositionEncoding, toPath)
+	overlayFS := newOverlayFS(init.FS, make(map[tspath.Path]*Overlay), init.Options.PositionEncoding, toPath)
 	parseCache := init.ParseCache
 	if parseCache == nil {
 		parseCache = &ParseCache{}
 	}
-	extendedConfigCache := &extendedConfigCache{}
+	extendedConfigCache := &ExtendedConfigCache{}
 
 	session := &Session{
 		options:             init.Options,
@@ -142,7 +149,7 @@ func NewSession(init *SessionInit) *Session {
 		snapshotID:          atomic.Uint64{},
 		snapshot: NewSnapshot(
 			uint64(0),
-			&snapshotFS{
+			&SnapshotFS{
 				toPath: toPath,
 				fs:     init.FS,
 			},
@@ -151,6 +158,7 @@ func NewSession(init *SessionInit) *Session {
 			extendedConfigCache,
 			&ConfigFileRegistry{},
 			nil,
+			Config{},
 			toPath,
 		),
 		pendingATAChanges: make(map[tspath.Path]*ATAStateChange),
@@ -177,9 +185,33 @@ func (s *Session) GetCurrentDirectory() string {
 	return s.options.CurrentDirectory
 }
 
+// Gets current UserPreferences, always a copy
+func (s *Session) UserPreferences() *lsutil.UserPreferences {
+	s.configRWMu.Lock()
+	defer s.configRWMu.Unlock()
+	return s.userPreferences.Copy()
+}
+
+// Gets original UserPreferences of the session
+func (s *Session) NewUserPreferences() *lsutil.UserPreferences {
+	return s.initialPreferences.CopyOrDefault()
+}
+
 // Trace implements module.ResolutionHost
 func (s *Session) Trace(msg string) {
 	panic("ATA module resolution should not use tracing")
+}
+
+func (s *Session) Configure(userPreferences *lsutil.UserPreferences) {
+	s.configRWMu.Lock()
+	defer s.configRWMu.Unlock()
+	s.pendingConfigChanges = true
+	s.userPreferences = userPreferences
+}
+
+func (s *Session) InitializeWithConfig(userPreferences *lsutil.UserPreferences) {
+	s.initialPreferences = userPreferences.CopyOrDefault()
+	s.Configure(s.initialPreferences)
 }
 
 func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, version int32, content string, languageKind lsproto.LanguageKind) {
@@ -341,8 +373,8 @@ func (s *Session) Snapshot() (*Snapshot, func()) {
 
 func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
 	var snapshot *Snapshot
-	fileChanges, overlays, ataChanges := s.flushChanges(ctx)
-	updateSnapshot := !fileChanges.IsEmpty() || len(ataChanges) > 0
+	fileChanges, overlays, ataChanges, newConfig := s.flushChanges(ctx)
+	updateSnapshot := !fileChanges.IsEmpty() || len(ataChanges) > 0 || newConfig != nil
 	if updateSnapshot {
 		// If there are pending file changes, we need to update the snapshot.
 		// Sending the requested URI ensures that the project for this URI is loaded.
@@ -350,6 +382,7 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 			reason:        UpdateReasonRequestedLanguageServicePendingChanges,
 			fileChanges:   fileChanges,
 			ataChanges:    ataChanges,
+			newConfig:     newConfig,
 			requestedURIs: []lsproto.DocumentUri{uri},
 		})
 	} else {
@@ -376,7 +409,7 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 	return ls.NewLanguageService(project.GetProgram(), snapshot), nil
 }
 
-func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*overlay, change SnapshotChange) *Snapshot {
+func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*Overlay, change SnapshotChange) *Snapshot {
 	s.snapshotMu.Lock()
 	oldSnapshot := s.snapshot
 	newSnapshot := oldSnapshot.Clone(ctx, change, overlays, s)
@@ -394,6 +427,7 @@ func (s *Session) UpdateSnapshot(ctx context.Context, overlays map[tspath.Path]*
 	}
 
 	// Enqueue logging, watch updates, and diagnostic refresh tasks
+	// !!! userPreferences/configuration updates
 	s.backgroundQueue.Enqueue(context.Background(), func(ctx context.Context) {
 		if s.options.LoggingEnabled {
 			s.logger.Write(newSnapshot.builderLogs.String())
@@ -553,7 +587,7 @@ func (s *Session) Close() {
 	s.backgroundQueue.Close()
 }
 
-func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspath.Path]*overlay, map[tspath.Path]*ATAStateChange) {
+func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspath.Path]*Overlay, map[tspath.Path]*ATAStateChange, *Config) {
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
 	s.pendingATAChangesMu.Lock()
@@ -561,11 +595,20 @@ func (s *Session) flushChanges(ctx context.Context) (FileChangeSummary, map[tspa
 	pendingATAChanges := s.pendingATAChanges
 	s.pendingATAChanges = make(map[tspath.Path]*ATAStateChange)
 	fileChanges, overlays := s.flushChangesLocked(ctx)
-	return fileChanges, overlays, pendingATAChanges
+	s.configRWMu.Lock()
+	defer s.configRWMu.Unlock()
+	var newConfig *Config
+	if s.pendingConfigChanges {
+		newConfig = &Config{
+			tsUserPreferences: s.userPreferences.Copy(),
+		}
+	}
+	s.pendingConfigChanges = false
+	return fileChanges, overlays, pendingATAChanges, newConfig
 }
 
 // flushChangesLocked should only be called with s.pendingFileChangesMu held.
-func (s *Session) flushChangesLocked(ctx context.Context) (FileChangeSummary, map[tspath.Path]*overlay) {
+func (s *Session) flushChangesLocked(ctx context.Context) (FileChangeSummary, map[tspath.Path]*Overlay) {
 	if len(s.pendingFileChanges) == 0 {
 		return FileChangeSummary{}, s.fs.Overlays()
 	}
