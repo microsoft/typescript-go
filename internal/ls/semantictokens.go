@@ -200,6 +200,7 @@ func (l *LanguageService) collectSemanticTokensInRange(ctx context.Context, c *c
 			return false
 		}
 
+		prevInJSXElement := inJSXElement
 		if ast.IsJsxElement(node) || ast.IsJsxSelfClosingElement(node) {
 			inJSXElement = true
 		} else if ast.IsJsxExpression(node) {
@@ -278,6 +279,7 @@ func (l *LanguageService) collectSemanticTokensInRange(ctx context.Context, c *c
 		}
 
 		node.ForEachChild(visit)
+		inJSXElement = prevInJSXElement
 		return false
 	}
 
