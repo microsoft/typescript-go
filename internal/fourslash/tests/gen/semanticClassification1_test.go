@@ -17,5 +17,11 @@ func TestSemanticClassification1(t *testing.T) {
 }
 interface /*2*/X extends /*3*/M./*4*/I { }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifySemanticTokens(t, []fourslash.SemanticToken{{Type: "namespace.declaration", Text: "M"}, {Type: "interface.declaration", Text: "I"}, {Type: "interface.declaration", Text: "X"}, {Type: "namespace", Text: "M"}, {Type: "interface", Text: "I"}})
+	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
+		{Type: "namespace.declaration", Text: "M"},
+		{Type: "interface.declaration", Text: "I"},
+		{Type: "interface.declaration", Text: "X"},
+		{Type: "namespace", Text: "M"},
+		{Type: "interface", Text: "I"},
+	})
 }

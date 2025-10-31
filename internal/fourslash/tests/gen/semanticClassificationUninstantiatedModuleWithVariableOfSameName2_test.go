@@ -25,5 +25,16 @@ var v: /*3*/M./*4*/I;
 
 var x = /*5*/M;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifySemanticTokens(t, []fourslash.SemanticToken{{Type: "variable", Text: "M"}, {Type: "interface.declaration", Text: "I"}, {Type: "variable.declaration", Text: "M"}, {Type: "property.declaration", Text: "foo"}, {Type: "property.declaration", Text: "bar"}, {Type: "variable.declaration", Text: "v"}, {Type: "variable", Text: "M"}, {Type: "interface", Text: "I"}, {Type: "variable.declaration", Text: "x"}, {Type: "variable", Text: "M"}})
+	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
+		{Type: "variable", Text: "M"},
+		{Type: "interface.declaration", Text: "I"},
+		{Type: "variable.declaration", Text: "M"},
+		{Type: "property.declaration", Text: "foo"},
+		{Type: "property.declaration", Text: "bar"},
+		{Type: "variable.declaration", Text: "v"},
+		{Type: "variable", Text: "M"},
+		{Type: "interface", Text: "I"},
+		{Type: "variable.declaration", Text: "x"},
+		{Type: "variable", Text: "M"},
+	})
 }

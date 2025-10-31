@@ -15,5 +15,11 @@ func TestSemanticClassificationClassExpression(t *testing.T) {
 class /*1*/C {}
 class /*2*/D extends class /*3*/B{} { }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifySemanticTokens(t, []fourslash.SemanticToken{{Type: "class.declaration", Text: "x"}, {Type: "class", Text: "C"}, {Type: "class.declaration", Text: "C"}, {Type: "class.declaration", Text: "D"}, {Type: "class", Text: "B"}})
+	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
+		{Type: "class.declaration", Text: "x"},
+		{Type: "class", Text: "C"},
+		{Type: "class.declaration", Text: "C"},
+		{Type: "class.declaration", Text: "D"},
+		{Type: "class", Text: "B"},
+	})
 }

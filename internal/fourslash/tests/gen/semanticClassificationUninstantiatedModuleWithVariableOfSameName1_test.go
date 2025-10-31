@@ -19,5 +19,10 @@ func TestSemanticClassificationUninstantiatedModuleWithVariableOfSameName1(t *te
 
 var M = { I: 10 };`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifySemanticTokens(t, []fourslash.SemanticToken{{Type: "variable", Text: "M"}, {Type: "interface.declaration", Text: "I"}, {Type: "variable.declaration", Text: "M"}, {Type: "property.declaration", Text: "I"}})
+	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
+		{Type: "variable", Text: "M"},
+		{Type: "interface.declaration", Text: "I"},
+		{Type: "variable.declaration", Text: "M"},
+		{Type: "property.declaration", Text: "I"},
+	})
 }

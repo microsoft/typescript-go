@@ -20,5 +20,18 @@ func TestSemanticModernClassificationMembers(t *testing.T) {
   constructor() {}
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifySemanticTokens(t, []fourslash.SemanticToken{{Type: "class.declaration", Text: "A"}, {Type: "property.declaration.static", Text: "x"}, {Type: "property.declaration", Text: "f"}, {Type: "method.declaration.async", Text: "m"}, {Type: "class", Text: "A"}, {Type: "property.static", Text: "x"}, {Type: "method.async", Text: "m"}, {Type: "property.declaration", Text: "s"}, {Type: "property", Text: "f"}, {Type: "method.declaration.static", Text: "t"}, {Type: "class", Text: "A"}, {Type: "property", Text: "f"}})
+	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
+		{Type: "class.declaration", Text: "A"},
+		{Type: "property.declaration.static", Text: "x"},
+		{Type: "property.declaration", Text: "f"},
+		{Type: "method.declaration.async", Text: "m"},
+		{Type: "class", Text: "A"},
+		{Type: "property.static", Text: "x"},
+		{Type: "method.async", Text: "m"},
+		{Type: "property.declaration", Text: "s"},
+		{Type: "property", Text: "f"},
+		{Type: "method.declaration.static", Text: "t"},
+		{Type: "class", Text: "A"},
+		{Type: "property", Text: "f"},
+	})
 }

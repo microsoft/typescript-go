@@ -36,5 +36,13 @@ const obj2 = {
 obj2.Infinity;
 obj2.NaN;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifySemanticTokens(t, []fourslash.SemanticToken{{Type: "variable.declaration.readonly", Text: "obj1"}, {Type: "variable.readonly", Text: "obj1"}, {Type: "variable.readonly", Text: "obj1"}, {Type: "variable.readonly", Text: "obj1"}, {Type: "variable.declaration.readonly", Text: "obj2"}, {Type: "variable.readonly", Text: "obj2"}, {Type: "variable.readonly", Text: "obj2"}})
+	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
+		{Type: "variable.declaration.readonly", Text: "obj1"},
+		{Type: "variable.readonly", Text: "obj1"},
+		{Type: "variable.readonly", Text: "obj1"},
+		{Type: "variable.readonly", Text: "obj1"},
+		{Type: "variable.declaration.readonly", Text: "obj2"},
+		{Type: "variable.readonly", Text: "obj2"},
+		{Type: "variable.readonly", Text: "obj2"},
+	})
 }

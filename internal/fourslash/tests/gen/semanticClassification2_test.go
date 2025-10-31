@@ -18,5 +18,11 @@ func TestSemanticClassification2(t *testing.T) {
 var Thing = 0;
 Thing.toExponential();`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifySemanticTokens(t, []fourslash.SemanticToken{{Type: "interface.declaration", Text: "Thing"}, {Type: "method.declaration", Text: "toExponential"}, {Type: "variable.declaration", Text: "Thing"}, {Type: "variable", Text: "Thing"}, {Type: "method.defaultLibrary", Text: "toExponential"}})
+	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
+		{Type: "interface.declaration", Text: "Thing"},
+		{Type: "method.declaration", Text: "toExponential"},
+		{Type: "variable.declaration", Text: "Thing"},
+		{Type: "variable", Text: "Thing"},
+		{Type: "method.defaultLibrary", Text: "toExponential"},
+	})
 }

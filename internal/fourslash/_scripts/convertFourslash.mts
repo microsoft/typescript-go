@@ -1842,8 +1842,10 @@ function generateBaselineRename({ kind, args, preferences }: VerifyBaselineRenam
 }
 
 function generateSemanticClassifications({ format, tokens }: VerifySemanticClassificationsCmd): string {
-    const tokensStr = tokens.map(t => `{Type: ${getGoStringLiteral(t.type)}, Text: ${getGoStringLiteral(t.text)}}`).join(", ");
-    return `f.VerifySemanticTokens(t, []fourslash.SemanticToken{${tokensStr}})`;
+    const tokensStr = tokens.map(t => `{Type: ${getGoStringLiteral(t.type)}, Text: ${getGoStringLiteral(t.text)}}`).join(",\n\t\t");
+    return `f.VerifySemanticTokens(t, []fourslash.SemanticToken{
+		${tokensStr},
+	})`;
 }
 
 function generateCmd(cmd: Cmd): string {

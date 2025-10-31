@@ -19,5 +19,20 @@ interface LanguageMode { getFoldingRanges?: (d: string) => number[]; };
 function (mode: LanguageMode | undefined) { if (mode && mode.getFoldingRanges) { return mode.getFoldingRanges('a'); }};
 function b(a: () => void) { a(); };`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifySemanticTokens(t, []fourslash.SemanticToken{{Type: "variable.declaration", Text: "fs"}, {Type: "interface.declaration", Text: "LanguageMode"}, {Type: "method.declaration", Text: "getFoldingRanges"}, {Type: "parameter.declaration", Text: "d"}, {Type: "parameter.declaration", Text: "mode"}, {Type: "interface", Text: "LanguageMode"}, {Type: "parameter", Text: "mode"}, {Type: "parameter", Text: "mode"}, {Type: "method", Text: "getFoldingRanges"}, {Type: "parameter", Text: "mode"}, {Type: "method", Text: "getFoldingRanges"}, {Type: "function.declaration", Text: "b"}, {Type: "function.declaration", Text: "a"}, {Type: "function", Text: "a"}})
+	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
+		{Type: "variable.declaration", Text: "fs"},
+		{Type: "interface.declaration", Text: "LanguageMode"},
+		{Type: "method.declaration", Text: "getFoldingRanges"},
+		{Type: "parameter.declaration", Text: "d"},
+		{Type: "parameter.declaration", Text: "mode"},
+		{Type: "interface", Text: "LanguageMode"},
+		{Type: "parameter", Text: "mode"},
+		{Type: "parameter", Text: "mode"},
+		{Type: "method", Text: "getFoldingRanges"},
+		{Type: "parameter", Text: "mode"},
+		{Type: "method", Text: "getFoldingRanges"},
+		{Type: "function.declaration", Text: "b"},
+		{Type: "function.declaration", Text: "a"},
+		{Type: "function", Text: "a"},
+	})
 }

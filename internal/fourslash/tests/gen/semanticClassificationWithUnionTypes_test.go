@@ -24,5 +24,18 @@ class /*3*/C {
 var M: /*4*/M./*5*/I | /*6*/I | /*7*/C;
 var I: typeof M | typeof /*8*/C;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifySemanticTokens(t, []fourslash.SemanticToken{{Type: "variable", Text: "M"}, {Type: "interface.declaration", Text: "I"}, {Type: "interface.declaration", Text: "I"}, {Type: "class.declaration", Text: "C"}, {Type: "variable.declaration", Text: "M"}, {Type: "variable", Text: "M"}, {Type: "interface", Text: "I"}, {Type: "interface", Text: "I"}, {Type: "class", Text: "C"}, {Type: "class.declaration", Text: "I"}, {Type: "variable", Text: "M"}, {Type: "class", Text: "C"}})
+	f.VerifySemanticTokens(t, []fourslash.SemanticToken{
+		{Type: "variable", Text: "M"},
+		{Type: "interface.declaration", Text: "I"},
+		{Type: "interface.declaration", Text: "I"},
+		{Type: "class.declaration", Text: "C"},
+		{Type: "variable.declaration", Text: "M"},
+		{Type: "variable", Text: "M"},
+		{Type: "interface", Text: "I"},
+		{Type: "interface", Text: "I"},
+		{Type: "class", Text: "C"},
+		{Type: "class.declaration", Text: "I"},
+		{Type: "variable", Text: "M"},
+		{Type: "class", Text: "C"},
+	})
 }
