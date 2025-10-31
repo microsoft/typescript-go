@@ -312,6 +312,8 @@ func (n *Node) Text() string {
 		return n.AsNumericLiteral().Text
 	case KindBigIntLiteral:
 		return n.AsBigIntLiteral().Text
+	case KindMetaProperty:
+		return n.AsMetaProperty().Name().Text()
 	case KindNoSubstitutionTemplateLiteral:
 		return n.AsNoSubstitutionTemplateLiteral().Text
 	case KindTemplateHead:
@@ -906,7 +908,7 @@ func (n *Node) IsTypeOnly() bool {
 	case KindImportSpecifier:
 		return n.AsImportSpecifier().IsTypeOnly
 	case KindImportClause:
-		return n.AsImportClause().IsTypeOnly
+		return n.AsImportClause().PhaseModifier == KindTypeKeyword
 	case KindExportDeclaration:
 		return n.AsExportDeclaration().IsTypeOnly
 	case KindExportSpecifier:
@@ -2205,6 +2207,248 @@ type (
 	JsxAttributeList                = NodeList // NodeList[*JsxAttributeLike]
 )
 
+func IsWriteOnlyAccess(node *Node) bool {
+	return accessKind(node) == AccessKindWrite
+}
+
+func IsWriteAccess(node *Node) bool {
+	return accessKind(node) != AccessKindRead
+}
+
+func IsWriteAccessForReference(node *Node) bool {
+	decl := getDeclarationFromName(node)
+	return (decl != nil && declarationIsWriteAccess(decl)) || node.Kind == KindDefaultKeyword || IsWriteAccess(node)
+}
+
+func getDeclarationFromName(name *Node) *Declaration {
+	if name == nil || name.Parent == nil {
+		return nil
+	}
+	parent := name.Parent
+	switch name.Kind {
+	case KindStringLiteral, KindNoSubstitutionTemplateLiteral, KindNumericLiteral:
+		if IsComputedPropertyName(parent) {
+			return parent.Parent
+		}
+		fallthrough
+	case KindIdentifier:
+		if IsDeclaration(parent) {
+			if parent.Name() == name {
+				return parent
+			}
+			return nil
+		}
+		if IsQualifiedName(parent) {
+			tag := parent.Parent
+			if IsJSDocParameterTag(tag) && tag.Name() == parent {
+				return tag
+			}
+			return nil
+		}
+		binExp := parent.Parent
+		if IsBinaryExpression(binExp) && GetAssignmentDeclarationKind(binExp.AsBinaryExpression()) != JSDeclarationKindNone {
+			// (binExp.left as BindableStaticNameExpression).symbol || binExp.symbol
+			leftHasSymbol := false
+			if binExp.AsBinaryExpression().Left != nil && binExp.AsBinaryExpression().Left.Symbol() != nil {
+				leftHasSymbol = true
+			}
+			if leftHasSymbol || binExp.Symbol() != nil {
+				if GetNameOfDeclaration(binExp.AsNode()) == name {
+					return binExp.AsNode()
+				}
+			}
+		}
+	case KindPrivateIdentifier:
+		if IsDeclaration(parent) && parent.Name() == name {
+			return parent
+		}
+	}
+	return nil
+}
+
+func declarationIsWriteAccess(decl *Node) bool {
+	if decl == nil {
+		return false
+	}
+	// Consider anything in an ambient declaration to be a write access since it may be coming from JS.
+	if decl.Flags&NodeFlagsAmbient != 0 {
+		return true
+	}
+
+	switch decl.Kind {
+	case KindBinaryExpression,
+		KindBindingElement,
+		KindClassDeclaration,
+		KindClassExpression,
+		KindDefaultKeyword,
+		KindEnumDeclaration,
+		KindEnumMember,
+		KindExportSpecifier,
+		KindImportClause, // default import
+		KindImportEqualsDeclaration,
+		KindImportSpecifier,
+		KindInterfaceDeclaration,
+		KindJSDocCallbackTag,
+		KindJSDocTypedefTag,
+		KindJsxAttribute,
+		KindModuleDeclaration,
+		KindNamespaceExportDeclaration,
+		KindNamespaceImport,
+		KindNamespaceExport,
+		KindParameter,
+		KindShorthandPropertyAssignment,
+		KindTypeAliasDeclaration,
+		KindTypeParameter:
+		return true
+
+	case KindPropertyAssignment:
+		// In `({ x: y } = 0);`, `x` is not a write access.
+		return !IsArrayLiteralOrObjectLiteralDestructuringPattern(decl.Parent)
+
+	case KindFunctionDeclaration, KindFunctionExpression, KindConstructor, KindMethodDeclaration, KindGetAccessor, KindSetAccessor:
+		// functions considered write if they provide a value (have a body)
+		switch decl.Kind {
+		case KindFunctionDeclaration:
+			return decl.AsFunctionDeclaration().Body != nil
+		case KindFunctionExpression:
+			return decl.AsFunctionExpression().Body != nil
+		case KindConstructor:
+			// constructor node stores body on the parent? treat same as others
+			return decl.AsConstructorDeclaration().Body != nil
+		case KindMethodDeclaration:
+			return decl.AsMethodDeclaration().Body != nil
+		case KindGetAccessor:
+			return decl.AsGetAccessorDeclaration().Body != nil
+		case KindSetAccessor:
+			return decl.AsSetAccessorDeclaration().Body != nil
+		}
+		return false
+
+	case KindVariableDeclaration, KindPropertyDeclaration:
+		// variable/property write if initializer present or is in catch clause
+		var hasInit bool
+		switch decl.Kind {
+		case KindVariableDeclaration:
+			hasInit = decl.AsVariableDeclaration().Initializer != nil
+		case KindPropertyDeclaration:
+			hasInit = decl.AsPropertyDeclaration().Initializer != nil
+		}
+		return hasInit || IsCatchClause(decl.Parent)
+
+	case KindMethodSignature, KindPropertySignature, KindJSDocPropertyTag, KindJSDocParameterTag:
+		return false
+
+	default:
+		// preserve TS behavior: crash on unexpected kinds
+		panic("Unhandled case in declarationIsWriteAccess")
+	}
+}
+
+func IsArrayLiteralOrObjectLiteralDestructuringPattern(node *Node) bool {
+	if !(IsArrayLiteralExpression(node) || IsObjectLiteralExpression(node)) {
+		return false
+	}
+	parent := node.Parent
+	// [a,b,c] from:
+	// [a, b, c] = someExpression;
+	if IsBinaryExpression(parent) && parent.AsBinaryExpression().Left == node && parent.AsBinaryExpression().OperatorToken.Kind == KindEqualsToken {
+		return true
+	}
+	// [a, b, c] from:
+	// for([a, b, c] of expression)
+	if IsForOfStatement(parent) && parent.Initializer() == node {
+		return true
+	}
+	// {x, a: {a, b, c} } = someExpression
+	if IsPropertyAssignment(parent) {
+		return IsArrayLiteralOrObjectLiteralDestructuringPattern(parent.Parent)
+	}
+	// [a, b, c] of
+	// [x, [a, b, c] ] = someExpression
+	return IsArrayLiteralOrObjectLiteralDestructuringPattern(parent)
+}
+
+func accessKind(node *Node) AccessKind {
+	parent := node.Parent
+	if parent == nil {
+		return AccessKindRead
+	}
+	switch parent.Kind {
+	case KindParenthesizedExpression:
+		return accessKind(parent)
+	case KindPrefixUnaryExpression:
+		operator := parent.AsPrefixUnaryExpression().Operator
+		if operator == KindPlusPlusToken || operator == KindMinusMinusToken {
+			return AccessKindReadWrite
+		}
+		return AccessKindRead
+	case KindPostfixUnaryExpression:
+		operator := parent.AsPostfixUnaryExpression().Operator
+		if operator == KindPlusPlusToken || operator == KindMinusMinusToken {
+			return AccessKindReadWrite
+		}
+		return AccessKindRead
+	case KindBinaryExpression:
+		if parent.AsBinaryExpression().Left == node {
+			operator := parent.AsBinaryExpression().OperatorToken
+			if IsAssignmentOperator(operator.Kind) {
+				if operator.Kind == KindEqualsToken {
+					return AccessKindWrite
+				}
+				return AccessKindReadWrite
+			}
+		}
+		return AccessKindRead
+	case KindPropertyAccessExpression:
+		if parent.AsPropertyAccessExpression().Name() != node {
+			return AccessKindRead
+		}
+		return accessKind(parent)
+	case KindPropertyAssignment:
+		parentAccess := accessKind(parent.Parent)
+		// In `({ x: varname }) = { x: 1 }`, the left `x` is a read, the right `x` is a write.
+		if node == parent.AsPropertyAssignment().Name() {
+			return reverseAccessKind(parentAccess)
+		}
+		return parentAccess
+	case KindShorthandPropertyAssignment:
+		// Assume it's the local variable being accessed, since we don't check public properties for --noUnusedLocals.
+		if node == parent.AsShorthandPropertyAssignment().ObjectAssignmentInitializer {
+			return AccessKindRead
+		}
+		return accessKind(parent.Parent)
+	case KindArrayLiteralExpression:
+		return accessKind(parent)
+	case KindForInStatement, KindForOfStatement:
+		if node == parent.AsForInOrOfStatement().Initializer {
+			return AccessKindWrite
+		}
+		return AccessKindRead
+	default:
+		return AccessKindRead
+	}
+}
+
+func reverseAccessKind(a AccessKind) AccessKind {
+	switch a {
+	case AccessKindRead:
+		return AccessKindWrite
+	case AccessKindWrite:
+		return AccessKindRead
+	case AccessKindReadWrite:
+		return AccessKindReadWrite
+	}
+	panic("Unhandled case in reverseAccessKind")
+}
+
+type AccessKind int32
+
+const (
+	AccessKindRead      AccessKind = iota // Only reads from a variable
+	AccessKindWrite                       // Only writes to a variable without ever reading it. E.g.: `x=1;`.
+	AccessKindReadWrite                   // Reads from and writes to a variable. E.g.: `f(x++);`, `x/=1`.
+)
+
 // DeclarationBase
 
 type DeclarationBase struct {
@@ -3206,6 +3450,10 @@ func (node *ThrowStatement) Clone(f NodeFactoryCoercible) *Node {
 
 func (node *ThrowStatement) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression)
+}
+
+func IsThrowStatement(node *Node) bool {
+	return node.Kind == KindThrowStatement
 }
 
 // TryStatement
@@ -4720,22 +4968,22 @@ type ImportClause struct {
 	DeclarationBase
 	ExportableBase
 	compositeNodeBase
-	IsTypeOnly    bool
+	PhaseModifier Kind                 // KindTypeKeyword | KindDeferKeyword
 	NamedBindings *NamedImportBindings // NamedImportBindings. Optional, named bindings
 	name          *IdentifierNode      // IdentifierNode. Optional, default binding
 }
 
-func (f *NodeFactory) NewImportClause(isTypeOnly bool, name *IdentifierNode, namedBindings *NamedImportBindings) *Node {
+func (f *NodeFactory) NewImportClause(phaseModifier Kind, name *IdentifierNode, namedBindings *NamedImportBindings) *Node {
 	data := &ImportClause{}
-	data.IsTypeOnly = isTypeOnly
+	data.PhaseModifier = phaseModifier
 	data.name = name
 	data.NamedBindings = namedBindings
 	return f.newNode(KindImportClause, data)
 }
 
-func (f *NodeFactory) UpdateImportClause(node *ImportClause, isTypeOnly bool, name *IdentifierNode, namedBindings *NamedImportBindings) *Node {
-	if isTypeOnly != node.IsTypeOnly || name != node.name || namedBindings != node.NamedBindings {
-		return updateNode(f.NewImportClause(isTypeOnly, name, namedBindings), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateImportClause(node *ImportClause, phaseModifier Kind, name *IdentifierNode, namedBindings *NamedImportBindings) *Node {
+	if phaseModifier != node.PhaseModifier || name != node.name || namedBindings != node.NamedBindings {
+		return updateNode(f.NewImportClause(phaseModifier, name, namedBindings), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -4745,11 +4993,11 @@ func (node *ImportClause) ForEachChild(v Visitor) bool {
 }
 
 func (node *ImportClause) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateImportClause(node, node.IsTypeOnly, v.visitNode(node.name), v.visitNode(node.NamedBindings))
+	return v.Factory.UpdateImportClause(node, node.PhaseModifier, v.visitNode(node.name), v.visitNode(node.NamedBindings))
 }
 
 func (node *ImportClause) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewImportClause(node.IsTypeOnly, node.Name(), node.NamedBindings), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewImportClause(node.PhaseModifier, node.Name(), node.NamedBindings), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ImportClause) Name() *DeclarationName {
@@ -4757,7 +5005,7 @@ func (node *ImportClause) Name() *DeclarationName {
 }
 
 func (node *ImportClause) computeSubtreeFacts() SubtreeFacts {
-	if node.IsTypeOnly {
+	if node.PhaseModifier == KindTypeKeyword {
 		return SubtreeContainsTypeScript
 	} else {
 		return propagateSubtreeFacts(node.name) |
@@ -6168,6 +6416,10 @@ func (node *YieldExpression) Clone(f NodeFactoryCoercible) *Node {
 
 func (node *YieldExpression) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) | SubtreeContainsForAwaitOrAsyncGenerator
+}
+
+func IsYieldExpression(node *Node) bool {
+	return node.Kind == KindYieldExpression
 }
 
 // ArrowFunction
@@ -8475,6 +8727,10 @@ func (node *TemplateHead) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewTemplateHead(node.Text, node.RawText, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsTemplateHead(node *Node) bool {
+	return node.Kind == KindTemplateHead
+}
+
 // TemplateMiddle
 
 type TemplateMiddle struct {
@@ -8495,6 +8751,10 @@ func (node *TemplateMiddle) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewTemplateMiddle(node.Text, node.RawText, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsTemplateMiddle(node *Node) bool {
+	return node.Kind == KindTemplateMiddle
+}
+
 // TemplateTail
 
 type TemplateTail struct {
@@ -8513,6 +8773,10 @@ func (f *NodeFactory) NewTemplateTail(text string, rawText string, templateFlags
 
 func (node *TemplateTail) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewTemplateTail(node.Text, node.RawText, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsTemplateTail(node *Node) bool {
+	return node.Kind == KindTemplateTail
 }
 
 // TemplateLiteralTypeNode
@@ -9402,6 +9666,10 @@ func (node *JSDocTypeExpression) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *JSDocTypeExpression) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocTypeExpression(node.Type), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsJSDocTypeExpression(node *Node) bool {
+	return node.Kind == KindJSDocTypeExpression
 }
 
 // JSDocNonNullableType
@@ -10334,6 +10602,10 @@ func (node *JSDocTypeLiteral) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocTypeLiteral(node.JSDocPropertyTags, node.IsArrayType), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsJSDocTypeLiteral(node *Node) bool {
+	return node.Kind == KindJSDocTypeLiteral
+}
+
 // JSDocSignature
 type JSDocSignature struct {
 	TypeNodeBase
@@ -10495,10 +10767,10 @@ type SourceFile struct {
 	ClassifiableNames         collections.Set[string]
 	PatternAmbientModules     []*PatternAmbientModule
 
-	// Fields set by LineMap
+	// Fields set by ECMALineMap
 
-	lineMapMu sync.RWMutex
-	lineMap   []core.TextPos
+	ecmaLineMapMu sync.RWMutex
+	ecmaLineMap   []core.TextPos
 
 	// Fields set by language service
 
@@ -10633,17 +10905,17 @@ func (f *NodeFactory) UpdateSourceFile(node *SourceFile, statements *StatementLi
 	return node.AsNode()
 }
 
-func (node *SourceFile) LineMap() []core.TextPos {
-	node.lineMapMu.RLock()
-	lineMap := node.lineMap
-	node.lineMapMu.RUnlock()
+func (node *SourceFile) ECMALineMap() []core.TextPos {
+	node.ecmaLineMapMu.RLock()
+	lineMap := node.ecmaLineMap
+	node.ecmaLineMapMu.RUnlock()
 	if lineMap == nil {
-		node.lineMapMu.Lock()
-		defer node.lineMapMu.Unlock()
-		lineMap = node.lineMap
+		node.ecmaLineMapMu.Lock()
+		defer node.ecmaLineMapMu.Unlock()
+		lineMap = node.ecmaLineMap
 		if lineMap == nil {
-			lineMap = core.ComputeLineStarts(node.Text())
-			node.lineMap = lineMap
+			lineMap = core.ComputeECMALineStarts(node.Text())
+			node.ecmaLineMap = lineMap
 		}
 	}
 	return lineMap
@@ -10825,7 +11097,7 @@ func getDeclarationName(declaration *Node) string {
 
 type SourceFileLike interface {
 	Text() string
-	LineMap() []core.TextPos
+	ECMALineMap() []core.TextPos
 }
 
 type CommentRange struct {

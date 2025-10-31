@@ -12,6 +12,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/debug"
 	"github.com/microsoft/typescript-go/internal/evaluator"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
+	"github.com/microsoft/typescript-go/internal/ls/lsutil"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
@@ -22,7 +24,7 @@ import (
 func (l *LanguageService) ProvideInlayHint(
 	ctx context.Context,
 	params *lsproto.InlayHintParams,
-	preferences *UserPreferences,
+	preferences *lsutil.UserPreferences,
 ) (lsproto.InlayHintResponse, error) {
 	program, file := l.getProgramAndFile(params.TextDocument.Uri)
 	quotePreference := getQuotePreference(file, preferences)
@@ -45,11 +47,11 @@ func (l *LanguageService) ProvideInlayHint(
 type inlayHintState struct {
 	ctx             context.Context
 	span            core.TextRange
-	preferences     *UserPreferences
+	preferences     *lsutil.UserPreferences
 	quotePreference quotePreference
 	file            *ast.SourceFile
 	checker         *checker.Checker
-	converters      *Converters
+	converters      *lsconv.Converters
 	result          []*lsproto.InlayHint
 }
 
@@ -75,21 +77,21 @@ func (s *inlayHintState) visit(node *ast.Node) bool {
 		return false
 	}
 
-	if ptrIsTrue(s.preferences.IncludeInlayVariableTypeHints) && ast.IsVariableDeclaration(node) {
+	if s.preferences.IncludeInlayVariableTypeHints && ast.IsVariableDeclaration(node) {
 		s.visitVariableLikeDeclaration(node)
-	} else if ptrIsTrue(s.preferences.IncludeInlayPropertyDeclarationTypeHints) && ast.IsPropertyDeclaration(node) {
+	} else if s.preferences.IncludeInlayPropertyDeclarationTypeHints && ast.IsPropertyDeclaration(node) {
 		s.visitVariableLikeDeclaration(node)
-	} else if ptrIsTrue(s.preferences.IncludeInlayEnumMemberValueHints) && ast.IsEnumMember(node) {
+	} else if s.preferences.IncludeInlayEnumMemberValueHints && ast.IsEnumMember(node) {
 		s.visitEnumMember(node)
 	} else if shouldShowParameterNameHints(s.preferences) && (ast.IsCallExpression(node) || ast.IsNewExpression(node)) {
 		s.visitCallOrNewExpression(node)
 	} else {
-		if ptrIsTrue(s.preferences.IncludeInlayFunctionParameterTypeHints) &&
+		if s.preferences.IncludeInlayFunctionParameterTypeHints &&
 			ast.IsFunctionLikeDeclaration(node) &&
 			ast.HasContextSensitiveParameters(node) {
 			s.visitFunctionLikeForParameterType(node)
 		}
-		if ptrIsTrue(s.preferences.IncludeInlayFunctionLikeReturnTypeHints) &&
+		if s.preferences.IncludeInlayFunctionLikeReturnTypeHints &&
 			isSignatureSupportingReturnAnnotation(node) {
 			s.visitFunctionDeclarationLikeForReturnType(node)
 		}
@@ -179,7 +181,7 @@ func (s *inlayHintState) visitCallOrNewExpression(expr *ast.CallOrNewExpression)
 		parameter := identifierInfo.parameter
 		parameterName := identifierInfo.name
 		isFirstVariadicArgument := identifierInfo.isRestParameter
-		parameterNameNotSameAsArgument := ptrIsTrue(s.preferences.IncludeInlayParameterNameHintsWhenArgumentMatchesName) ||
+		parameterNameNotSameAsArgument := s.preferences.IncludeInlayParameterNameHintsWhenArgumentMatchesName ||
 			!identifierOrAccessExpressionPostfixMatchesParameterName(arg, parameterName)
 		if !parameterNameNotSameAsArgument && !isFirstVariadicArgument {
 			continue
@@ -237,7 +239,7 @@ func (s *inlayHintState) visitVariableLikeDeclaration(decl *ast.VariableOrProper
 		}
 		hintText = b.String()
 	}
-	if ptrIsFalse(s.preferences.IncludeInlayVariableTypeHintsWhenTypeMatchesName) &&
+	if s.preferences.IncludeInlayVariableTypeHintsWhenTypeMatchesName &&
 		stringutil.EquateStringCaseInsensitive(decl.Name().Text(), hintText) {
 		return
 	}
@@ -399,19 +401,17 @@ func (s *inlayHintState) addParameterHints(text string, parameter *ast.Identifie
 	})
 }
 
-func shouldShowParameterNameHints(preferences *UserPreferences) bool {
-	return preferences.IncludeInlayParameterNameHints != nil &&
-		(*preferences.IncludeInlayParameterNameHints == InlayHintParameterNameHintsLiterals ||
-			*preferences.IncludeInlayParameterNameHints == InlayHintParameterNameHintsAll)
+func shouldShowParameterNameHints(preferences *lsutil.UserPreferences) bool {
+	return (preferences.IncludeInlayParameterNameHints == lsutil.IncludeInlayParameterNameHintsLiterals ||
+		preferences.IncludeInlayParameterNameHints == lsutil.IncludeInlayParameterNameHintsAll)
 }
 
-func shouldShowLiteralParameterNameHintsOnly(preferences *UserPreferences) bool {
-	return preferences.IncludeInlayParameterNameHints != nil &&
-		*preferences.IncludeInlayParameterNameHints == InlayHintParameterNameHintsLiterals
+func shouldShowLiteralParameterNameHintsOnly(preferences *lsutil.UserPreferences) bool {
+	return preferences.IncludeInlayParameterNameHints == lsutil.IncludeInlayParameterNameHintsLiterals
 }
 
-func shouldUseInteractiveInlayHints(preferences *UserPreferences) bool {
-	return ptrIsTrue(preferences.InteractiveInlayHints)
+func shouldUseInteractiveInlayHints(preferences *lsutil.UserPreferences) bool {
+	return preferences.InteractiveInlayHints
 }
 
 // node is FunctionDeclaration | ArrowFunction | FunctionExpression | MethodDeclaration | GetAccessorDeclaration
@@ -779,7 +779,7 @@ func (s *inlayHintState) getNodeDisplayPart(text string, node *ast.Node) *lsprot
 	return &lsproto.InlayHintLabelPart{
 		Value: text,
 		Location: &lsproto.Location{
-			Uri:   FileNameToDocumentURI(file.FileName()),
+			Uri:   lsconv.FileNameToDocumentURI(file.FileName()),
 			Range: s.converters.ToLSPRange(file, node.Loc),
 		},
 	}

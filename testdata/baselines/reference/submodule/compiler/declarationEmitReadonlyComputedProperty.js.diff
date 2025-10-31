@@ -1,19 +1,7 @@
 --- old.declarationEmitReadonlyComputedProperty.js
 +++ new.declarationEmitReadonlyComputedProperty.js
-@@= skipped -45, +45 lines =@@
- };
- Object.defineProperty(exports, "__esModule", { value: true });
- exports.spread = void 0;
--var bug_1 = require("./bug");
-+const bug_1 = require("./bug");
- exports.spread = __assign({}, (0, bug_1.createInstance)());
-
-
- //// [bug.d.ts]
- export declare const SYMBOL: unique symbol;
- export interface Interface {
--    readonly [SYMBOL]: string;
-+    readonly [SYMBOL]: string; // remove readonly and @showEmit to see the expected error
+@@= skipped -44, +44 lines =@@
+     readonly [SYMBOL]: string;
  }
  export declare function createInstance(): Interface;
 +//// [index.d.ts]

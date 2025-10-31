@@ -76,12 +76,8 @@ func getSelectedModifierFlags(node *ast.Node, flags ast.ModifierFlags) ast.Modif
 	return node.ModifierFlags() & flags
 }
 
-func HasModifier(node *ast.Node, flags ast.ModifierFlags) bool {
-	return node.ModifierFlags()&flags != 0
-}
-
 func hasReadonlyModifier(node *ast.Node) bool {
-	return HasModifier(node, ast.ModifierFlagsReadonly)
+	return ast.HasModifier(node, ast.ModifierFlagsReadonly)
 }
 
 func isStaticPrivateIdentifierProperty(s *ast.Symbol) bool {
@@ -405,7 +401,7 @@ func declarationBelongsToPrivateAmbientMember(declaration *ast.Node) bool {
 }
 
 func isPrivateWithinAmbient(node *ast.Node) bool {
-	return (HasModifier(node, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(node)) && node.Flags&ast.NodeFlagsAmbient != 0
+	return (ast.HasModifier(node, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(node)) && node.Flags&ast.NodeFlagsAmbient != 0
 }
 
 func isTypeAssertion(node *ast.Node) bool {
@@ -911,10 +907,6 @@ func (s *orderedSet[T]) add(value T) {
 	s.values = append(s.values, value)
 }
 
-func getContainingFunction(node *ast.Node) *ast.Node {
-	return ast.FindAncestor(node.Parent, ast.IsFunctionLike)
-}
-
 func getContainingFunctionOrClassStaticBlock(node *ast.Node) *ast.Node {
 	return ast.FindAncestor(node.Parent, ast.IsFunctionLikeOrClassStaticBlockDeclaration)
 }
@@ -1074,89 +1066,8 @@ func isThisInitializedDeclaration(node *ast.Node) bool {
 	return node != nil && ast.IsVariableDeclaration(node) && node.AsVariableDeclaration().Initializer != nil && node.AsVariableDeclaration().Initializer.Kind == ast.KindThisKeyword
 }
 
-func isWriteOnlyAccess(node *ast.Node) bool {
-	return accessKind(node) == AccessKindWrite
-}
-
-func isWriteAccess(node *ast.Node) bool {
-	return accessKind(node) != AccessKindRead
-}
-
-type AccessKind int32
-
-const (
-	AccessKindRead      AccessKind = iota // Only reads from a variable
-	AccessKindWrite                       // Only writes to a variable without ever reading it. E.g.: `x=1;`.
-	AccessKindReadWrite                   // Reads from and writes to a variable. E.g.: `f(x++);`, `x/=1`.
-)
-
-func accessKind(node *ast.Node) AccessKind {
-	parent := node.Parent
-	switch parent.Kind {
-	case ast.KindParenthesizedExpression:
-		return accessKind(parent)
-	case ast.KindPrefixUnaryExpression:
-		operator := parent.AsPrefixUnaryExpression().Operator
-		if operator == ast.KindPlusPlusToken || operator == ast.KindMinusMinusToken {
-			return AccessKindReadWrite
-		}
-		return AccessKindRead
-	case ast.KindPostfixUnaryExpression:
-		operator := parent.AsPostfixUnaryExpression().Operator
-		if operator == ast.KindPlusPlusToken || operator == ast.KindMinusMinusToken {
-			return AccessKindReadWrite
-		}
-		return AccessKindRead
-	case ast.KindBinaryExpression:
-		if parent.AsBinaryExpression().Left == node {
-			operator := parent.AsBinaryExpression().OperatorToken
-			if ast.IsAssignmentOperator(operator.Kind) {
-				if operator.Kind == ast.KindEqualsToken {
-					return AccessKindWrite
-				}
-				return AccessKindReadWrite
-			}
-		}
-		return AccessKindRead
-	case ast.KindPropertyAccessExpression:
-		if parent.AsPropertyAccessExpression().Name() != node {
-			return AccessKindRead
-		}
-		return accessKind(parent)
-	case ast.KindPropertyAssignment:
-		parentAccess := accessKind(parent.Parent)
-		// In `({ x: varname }) = { x: 1 }`, the left `x` is a read, the right `x` is a write.
-		if node == parent.AsPropertyAssignment().Name() {
-			return reverseAccessKind(parentAccess)
-		}
-		return parentAccess
-	case ast.KindShorthandPropertyAssignment:
-		// Assume it's the local variable being accessed, since we don't check public properties for --noUnusedLocals.
-		if node == parent.AsShorthandPropertyAssignment().ObjectAssignmentInitializer {
-			return AccessKindRead
-		}
-		return accessKind(parent.Parent)
-	case ast.KindArrayLiteralExpression:
-		return accessKind(parent)
-	case ast.KindForInStatement, ast.KindForOfStatement:
-		if node == parent.AsForInOrOfStatement().Initializer {
-			return AccessKindWrite
-		}
-		return AccessKindRead
-	}
-	return AccessKindRead
-}
-
-func reverseAccessKind(a AccessKind) AccessKind {
-	switch a {
-	case AccessKindRead:
-		return AccessKindWrite
-	case AccessKindWrite:
-		return AccessKindRead
-	case AccessKindReadWrite:
-		return AccessKindReadWrite
-	}
-	panic("Unhandled case in reverseAccessKind")
+func isInfinityOrNaNString(name string) bool {
+	return name == "Infinity" || name == "-Infinity" || name == "NaN"
 }
 
 func (c *Checker) isConstantVariable(symbol *ast.Symbol) bool {

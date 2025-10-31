@@ -24,6 +24,7 @@ class Derived1 extends class extends Base1 {
 
 
 //// [recursiveClassBaseType.js]
+// Repro from #44281
 class C extends Base({ x: p(() => []) }) {
 }
 // Repro from #44359
@@ -38,7 +39,6 @@ class Derived1 extends class extends Base1 {
 
 
 //// [recursiveClassBaseType.d.ts]
-// Repro from #44281
 declare const p: <T>(fn: () => T) => T;
 declare const Base: <T>(val: T) => {
     new (): T;
@@ -48,7 +48,6 @@ declare const C_base: new () => {
 };
 declare class C extends C_base {
 }
-// Repro from #44359
 declare abstract class Base1 {
     abstract root(): Derived1;
 }

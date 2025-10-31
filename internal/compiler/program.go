@@ -247,7 +247,13 @@ func (p *Program) initCheckerPool() {
 	if p.opts.CreateCheckerPool != nil {
 		p.checkerPool = p.opts.CreateCheckerPool(p)
 	} else {
-		p.checkerPool = newCheckerPool(core.IfElse(p.SingleThreaded(), 1, 4), p)
+		checkers := 4
+		if p.SingleThreaded() {
+			checkers = 1
+		} else if p.Options().Checkers != nil {
+			checkers = min(max(*p.Options().Checkers, 1), 256)
+		}
+		p.checkerPool = newCheckerPool(checkers, p)
 	}
 }
 
@@ -725,20 +731,10 @@ func (p *Program) verifyCompilerOptions() {
 		createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_with_option_1, "lib", "noLib")
 	}
 
-	languageVersion := options.GetEmitScriptTarget()
-
-	firstNonAmbientExternalModuleSourceFile := core.Find(p.files, func(f *ast.SourceFile) bool { return ast.IsExternalModule(f) && !f.IsDeclarationFile })
 	if options.IsolatedModules.IsTrue() || options.VerbatimModuleSyntax.IsTrue() {
-		if options.Module == core.ModuleKindNone && languageVersion < core.ScriptTargetES2015 && options.IsolatedModules.IsTrue() {
-			// !!!
-			// createDiagnosticForOptionName(diagnostics.Option_isolatedModules_can_only_be_used_when_either_option_module_is_provided_or_option_target_is_ES2015_or_higher, "isolatedModules", "target")
-		}
-
 		if options.PreserveConstEnums.IsFalse() {
 			createDiagnosticForOptionName(diagnostics.Option_preserveConstEnums_cannot_be_disabled_when_0_is_enabled, core.IfElse(options.VerbatimModuleSyntax.IsTrue(), "verbatimModuleSyntax", "isolatedModules"), "preserveConstEnums")
 		}
-	} else if firstNonAmbientExternalModuleSourceFile != nil && languageVersion < core.ScriptTargetES2015 && options.Module == core.ModuleKindNone {
-		// !!!
 	}
 
 	if options.OutDir != "" ||
@@ -1056,6 +1052,12 @@ func (p *Program) getSemanticDiagnosticsForFileNotFilter(ctx context.Context, so
 		})
 	}
 
+	isJS := sourceFile.ScriptKind == core.ScriptKindJS || sourceFile.ScriptKind == core.ScriptKindJSX
+	isCheckJS := isJS && ast.IsCheckJSEnabledForFile(sourceFile, compilerOptions)
+	if isCheckJS {
+		diags = append(diags, sourceFile.JSDocDiagnostics()...)
+	}
+
 	filtered, directivesByLine := p.getDiagnosticsWithPrecedingDirectives(sourceFile, diags)
 	for _, directive := range directivesByLine {
 		// Above we changed all used directive kinds to @ts-ignore, so any @ts-expect-error directives that
@@ -1074,10 +1076,10 @@ func (p *Program) getDiagnosticsWithPrecedingDirectives(sourceFile *ast.SourceFi
 	// Build map of directives by line number
 	directivesByLine := make(map[int]ast.CommentDirective)
 	for _, directive := range sourceFile.CommentDirectives {
-		line, _ := scanner.GetLineAndCharacterOfPosition(sourceFile, directive.Loc.Pos())
+		line, _ := scanner.GetECMALineAndCharacterOfPosition(sourceFile, directive.Loc.Pos())
 		directivesByLine[line] = directive
 	}
-	lineStarts := scanner.GetLineStarts(sourceFile)
+	lineStarts := scanner.GetECMALineStarts(sourceFile)
 	filtered := make([]*ast.Diagnostic, 0, len(diags))
 	for _, diagnostic := range diags {
 		ignoreDiagnostic := false
@@ -1225,7 +1227,7 @@ func (p *Program) getDiagnosticsHelper(ctx context.Context, sourceFile *ast.Sour
 func (p *Program) LineCount() int {
 	var count int
 	for _, file := range p.files {
-		count += len(file.LineMap())
+		count += len(file.ECMALineMap())
 	}
 	return count
 }

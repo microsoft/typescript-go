@@ -83,7 +83,6 @@ export declare var circularReference: {
         tags(c: any): any;
     };
 };
-// repro from #15066
 export declare class FooItem {
     foo(): void;
     name?: string;
@@ -91,17 +90,17 @@ export declare class FooItem {
 export type Constructor<T> = new (...args: any[]) => T;
 export declare function WithTags<T extends Constructor<FooItem>>(Base: T): {
     new (...args: any[]): {
+        tags(): void;
         foo(): void;
         name?: string;
-        tags(): void;
     };
     getTags(): void;
 } & T;
 declare const Test_base: {
     new (...args: any[]): {
+        tags(): void;
         foo(): void;
         name?: string;
-        tags(): void;
     };
     getTags(): void;
 } & typeof FooItem;

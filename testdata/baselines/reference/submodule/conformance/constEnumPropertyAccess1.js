@@ -33,6 +33,9 @@ class C {
 
 
 //// [constEnumPropertyAccess1.js]
+// constant enum declarations are completely erased in the emitted JavaScript code.
+// it is an error to reference a constant enum object in any other context
+// than a property access that selects one of the enum's members
 var o = {
     1: true
 };
@@ -49,9 +52,6 @@ class C {
 
 
 //// [constEnumPropertyAccess1.d.ts]
-// constant enum declarations are completely erased in the emitted JavaScript code.
-// it is an error to reference a constant enum object in any other context
-// than a property access that selects one of the enum's members
 declare const enum G {
     A = 1,
     B = 2,

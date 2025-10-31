@@ -11,11 +11,11 @@ const result = getInterfaceFromString({ type: 'two' });
 
 
 //// [primitiveUnionDetection.js]
+// Repro from #46624
 const result = getInterfaceFromString({ type: 'two' });
 
 
 //// [primitiveUnionDetection.d.ts]
-// Repro from #46624
 type Kind = "one" | "two" | "three";
 declare function getInterfaceFromString<T extends Kind>(options?: {
     type?: T;

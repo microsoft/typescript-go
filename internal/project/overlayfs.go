@@ -2,11 +2,13 @@ package project
 
 import (
 	"maps"
+	"strings"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/zeebo/xxh3"
@@ -23,7 +25,8 @@ type FileHandle interface {
 	Version() int32
 	MatchesDiskText() bool
 	IsOverlay() bool
-	LineMap() *ls.LineMap
+	LSPLineMap() *lsconv.LSPLineMap
+	ECMALineInfo() *sourcemap.ECMALineInfo
 	Kind() core.ScriptKind
 }
 
@@ -32,8 +35,10 @@ type fileBase struct {
 	content  string
 	hash     xxh3.Uint128
 
-	lineMapOnce sync.Once
-	lineMap     *ls.LineMap
+	lineMapOnce  sync.Once
+	lineMap      *lsconv.LSPLineMap
+	lineInfoOnce sync.Once
+	lineInfo     *sourcemap.ECMALineInfo
 }
 
 func (f *fileBase) FileName() string {
@@ -48,11 +53,19 @@ func (f *fileBase) Content() string {
 	return f.content
 }
 
-func (f *fileBase) LineMap() *ls.LineMap {
+func (f *fileBase) LSPLineMap() *lsconv.LSPLineMap {
 	f.lineMapOnce.Do(func() {
-		f.lineMap = ls.ComputeLineStarts(f.content)
+		f.lineMap = lsconv.ComputeLSPLineStarts(f.content)
 	})
 	return f.lineMap
+}
+
+func (f *fileBase) ECMALineInfo() *sourcemap.ECMALineInfo {
+	f.lineInfoOnce.Do(func() {
+		lineStarts := core.ComputeECMALineStarts(f.content)
+		f.lineInfo = sourcemap.CreateECMALineInfo(f.content, lineStarts)
+	})
+	return f.lineInfo
 }
 
 type diskFile struct {
@@ -225,6 +238,10 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 			fileEventMap[uri] = events
 		}
 
+		if !result.IncludesWatchChangeOutsideNodeModules && change.Kind.IsWatchKind() && !strings.Contains(string(uri), "/node_modules/") {
+			result.IncludesWatchChangeOutsideNodeModules = true
+		}
+
 		switch change.Kind {
 		case FileChangeKindOpen:
 			events.openChange = &change
@@ -287,7 +304,7 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 				uri.FileName(),
 				events.openChange.Content,
 				events.openChange.Version,
-				ls.LanguageKindToScriptKind(events.openChange.LanguageKind),
+				lsconv.LanguageKindToScriptKind(events.openChange.LanguageKind),
 			)
 			continue
 		}
@@ -318,8 +335,8 @@ func (fs *overlayFS) processChanges(changes []FileChange) (FileChangeSummary, ma
 				panic("overlay not found for changed file: " + uri)
 			}
 			for _, change := range events.changes {
-				converters := ls.NewConverters(fs.positionEncoding, func(fileName string) *ls.LineMap {
-					return o.LineMap()
+				converters := lsconv.NewConverters(fs.positionEncoding, func(fileName string) *lsconv.LSPLineMap {
+					return o.LSPLineMap()
 				})
 				for _, textChange := range change.Changes {
 					if partialChange := textChange.Partial; partialChange != nil {

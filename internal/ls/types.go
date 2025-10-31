@@ -78,8 +78,8 @@ type UserPreferences struct {
 
 func (p *UserPreferences) ModuleSpecifierPreferences() modulespecifiers.UserPreferences {
 	return modulespecifiers.UserPreferences{
-		ImportModuleSpecifierPreference:       p.ImportModuleSpecifierPreference,
-		ImportModuleSpecifierEndingPreference: p.ImportModuleSpecifierEndingPreference,
-		AutoImportSpecifierExcludeRegexes:     p.AutoImportSpecifierExcludeRegexes,
+		ImportModuleSpecifierPreference:   p.ImportModuleSpecifierPreference,
+		ImportModuleSpecifierEnding:       p.ImportModuleSpecifierEndingPreference,
+		AutoImportSpecifierExcludeRegexes: p.AutoImportSpecifierExcludeRegexes,
 	}
 }
