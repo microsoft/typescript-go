@@ -38,17 +38,27 @@ type ServerOptions struct {
 	TypingsLocation    string
 	ParseCache         *project.ParseCache
 	NpmInstall         func(cwd string, args []string) ([]byte, error)
+
+	// Test options
+	Client project.Client
+	Logger logging.Logger
 }
 
 func NewServer(opts *ServerOptions) *Server {
 	if opts.Cwd == "" {
 		panic("Cwd is required")
 	}
+	var logger logging.Logger
+	if opts.Logger != nil {
+		logger = opts.Logger
+	} else {
+		logger = logging.NewLogger(opts.Err)
+	}
 	return &Server{
 		r:                     opts.In,
 		w:                     opts.Out,
 		stderr:                opts.Err,
-		logger:                logging.NewLogger(opts.Err),
+		logger:                logger,
 		requestQueue:          make(chan *lsproto.RequestMessage, 100),
 		outgoingQueue:         make(chan *lsproto.Message, 100),
 		pendingClientRequests: make(map[lsproto.ID]pendingClientRequest),
@@ -59,6 +69,7 @@ func NewServer(opts *ServerOptions) *Server {
 		typingsLocation:       opts.TypingsLocation,
 		parseCache:            opts.ParseCache,
 		npmInstall:            opts.NpmInstall,
+		client:                opts.Client,
 	}
 }
 
@@ -153,6 +164,9 @@ type Server struct {
 
 	session *project.Session
 
+	// Test options for initializing session
+	client project.Client
+
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	// parseCache can be passed in so separate tests can share ASTs
@@ -160,6 +174,8 @@ type Server struct {
 
 	npmInstall func(cwd string, args []string) ([]byte, error)
 }
+
+func (s *Server) Session() *project.Session { return s.session }
 
 // WatchFiles implements project.Client.
 func (s *Server) WatchFiles(ctx context.Context, id project.WatcherID, watchers []*lsproto.FileSystemWatcher) error {
@@ -701,6 +717,13 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 		cwd = s.cwd
 	}
 
+	var client project.Client
+	if s.client != nil {
+		client = s.client
+	} else {
+		client = s
+	}
+
 	s.session = project.NewSession(&project.SessionInit{
 		Options: &project.SessionOptions{
 			CurrentDirectory:   cwd,
@@ -711,11 +734,10 @@ func (s *Server) handleInitialized(ctx context.Context, params *lsproto.Initiali
 			LoggingEnabled:     true,
 			DebounceDelay:      500 * time.Millisecond,
 		},
-		FS:          s.fs,
-		Logger:      s.logger,
-		Client:      s,
-		NpmExecutor: s,
-		ParseCache:  s.parseCache,
+		FS:         s.fs,
+		Logger:     s.logger,
+		Client:     client,
+		ParseCache: s.parseCache,
 	})
 
 	if s.initializeParams != nil && s.initializeParams.InitializationOptions != nil && *s.initializeParams.InitializationOptions != nil {
