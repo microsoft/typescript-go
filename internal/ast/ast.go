@@ -263,10 +263,10 @@ func (n *Node) TemplateLiteralLikeData() *TemplateLiteralLikeBase {
 func (n *Node) KindString() string { return n.Kind.String() }
 func (n *Node) KindValue() int16   { return int16(n.Kind) }
 
-type mutableNode Node
+type MutableNode Node
 
-func (n *Node) AsMutable() *mutableNode                     { return (*mutableNode)(n) }
-func (n *mutableNode) SetModifiers(modifiers *ModifierList) { n.data.setModifiers(modifiers) }
+func (n *Node) AsMutable() *MutableNode                     { return (*MutableNode)(n) }
+func (n *MutableNode) SetModifiers(modifiers *ModifierList) { n.data.setModifiers(modifiers) }
 
 func (n *Node) Symbol() *Symbol {
 	data := n.DeclarationData()
@@ -426,7 +426,7 @@ func (n *Node) RawText() string {
 	panic("Unhandled case in Node.RawText: " + n.Kind.String())
 }
 
-func (m *mutableNode) SetExpression(expr *Node) {
+func (m *MutableNode) SetExpression(expr *Node) {
 	n := (*Node)(m)
 	switch n.Kind {
 	case KindPropertyAccessExpression:
@@ -707,7 +707,7 @@ func (n *Node) Type() *Node {
 	return nil
 }
 
-func (m *mutableNode) SetType(t *Node) {
+func (m *MutableNode) SetType(t *Node) {
 	n := (*Node)(m)
 	switch m.Kind {
 	case KindVariableDeclaration:
@@ -799,7 +799,7 @@ func (n *Node) Initializer() *Node {
 	panic("Unhandled case in Node.Initializer")
 }
 
-func (m *mutableNode) SetInitializer(initializer *Node) {
+func (m *MutableNode) SetInitializer(initializer *Node) {
 	n := (*Node)(m)
 	switch n.Kind {
 	case KindVariableDeclaration:
