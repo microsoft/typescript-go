@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls/lsconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -171,8 +172,7 @@ func (l *LanguageService) ProvideSemanticTokensRange(ctx context.Context, docume
 }
 
 type semanticToken struct {
-	pos           int
-	length        int
+	node          *ast.Node
 	tokenType     tokenType
 	tokenModifier tokenModifier
 }
@@ -269,8 +269,7 @@ func (l *LanguageService) collectSemanticTokensInRange(c *checker.Checker, file 
 					}
 
 					tokens = append(tokens, semanticToken{
-						pos:           node.Pos(),
-						length:        node.End() - node.Pos(),
+						node:          node,
 						tokenType:     tokenType,
 						tokenModifier: tokenModifier,
 					})
@@ -510,11 +509,6 @@ func encodeSemanticTokens(tokens []semanticToken, file *ast.SourceFile, converte
 		}
 	}
 
-	// Sort tokens by position
-	slices.SortFunc(tokens, func(a, b semanticToken) int {
-		return a.pos - b.pos
-	})
-
 	encoded := []uint32{}
 	prevLine := uint32(0)
 	prevChar := uint32(0)
@@ -536,9 +530,25 @@ func encodeSemanticTokens(tokens []semanticToken, file *ast.SourceFile, converte
 			}
 		}
 
-		pos := converters.PositionToLineAndCharacter(file, core.TextPos(token.pos))
-		line := pos.Line
-		char := pos.Character
+		// Use GetTokenPosOfNode to skip trivia (comments, whitespace) before the identifier
+		tokenStart := scanner.GetTokenPosOfNode(token.node, file, false)
+		tokenEnd := token.node.End()
+
+		// Convert both start and end positions to LSP coordinates, then compute length
+		startPos := converters.PositionToLineAndCharacter(file, core.TextPos(tokenStart))
+		endPos := converters.PositionToLineAndCharacter(file, core.TextPos(tokenEnd))
+
+		// Length is the character difference when on the same line
+		var tokenLength uint32
+		if startPos.Line == endPos.Line {
+			tokenLength = endPos.Character - startPos.Character
+		} else {
+			// Multi-line tokens shouldn't happen for identifiers, but handle it
+			tokenLength = endPos.Character
+		}
+
+		line := startPos.Line
+		char := startPos.Character
 
 		// Encode as: [deltaLine, deltaChar, length, tokenType, tokenModifiers]
 		deltaLine := line - prevLine
@@ -552,7 +562,7 @@ func encodeSemanticTokens(tokens []semanticToken, file *ast.SourceFile, converte
 		encoded = append(encoded,
 			deltaLine,
 			deltaChar,
-			uint32(token.length),
+			tokenLength,
 			uint32(clientTypeIdx),
 			clientModifierMask,
 		)
