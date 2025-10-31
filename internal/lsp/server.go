@@ -676,7 +676,7 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			},
 			SemanticTokensProvider: &lsproto.SemanticTokensOptionsOrRegistrationOptions{
 				Options: &lsproto.SemanticTokensOptions{
-					Legend: ls.SemanticTokensLegend(),
+					Legend: ls.SemanticTokensLegend(getSemanticTokensClientCapabilities(params)),
 					Full: &lsproto.BooleanOrSemanticTokensFullDelta{
 						Boolean: ptrTo(true),
 					},
@@ -932,11 +932,19 @@ func (s *Server) handleSelectionRange(ctx context.Context, ls *ls.LanguageServic
 }
 
 func (s *Server) handleSemanticTokensFull(ctx context.Context, ls *ls.LanguageService, params *lsproto.SemanticTokensParams) (lsproto.SemanticTokensResponse, error) {
-	return ls.ProvideSemanticTokens(ctx, params.TextDocument.Uri)
+	var clientCapabilities *lsproto.SemanticTokensClientCapabilities
+	if s.initializeParams.Capabilities != nil && s.initializeParams.Capabilities.TextDocument != nil {
+		clientCapabilities = s.initializeParams.Capabilities.TextDocument.SemanticTokens
+	}
+	return ls.ProvideSemanticTokens(ctx, params.TextDocument.Uri, clientCapabilities)
 }
 
 func (s *Server) handleSemanticTokensRange(ctx context.Context, ls *ls.LanguageService, params *lsproto.SemanticTokensRangeParams) (lsproto.SemanticTokensRangeResponse, error) {
-	return ls.ProvideSemanticTokensRange(ctx, params.TextDocument.Uri, params.Range)
+	var clientCapabilities *lsproto.SemanticTokensClientCapabilities
+	if s.initializeParams.Capabilities != nil && s.initializeParams.Capabilities.TextDocument != nil {
+		clientCapabilities = s.initializeParams.Capabilities.TextDocument.SemanticTokens
+	}
+	return ls.ProvideSemanticTokensRange(ctx, params.TextDocument.Uri, params.Range, clientCapabilities)
 }
 
 func (s *Server) Log(msg ...any) {
@@ -992,8 +1000,15 @@ func shouldEnableWatch(params *lsproto.InitializeParams) bool {
 }
 
 func getCompletionClientCapabilities(params *lsproto.InitializeParams) *lsproto.CompletionClientCapabilities {
-	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil {
+	if params.Capabilities == nil || params.Capabilities.TextDocument == nil {
 		return nil
 	}
 	return params.Capabilities.TextDocument.Completion
+}
+
+func getSemanticTokensClientCapabilities(params *lsproto.InitializeParams) *lsproto.SemanticTokensClientCapabilities {
+	if params.Capabilities == nil || params.Capabilities.TextDocument == nil {
+		return nil
+	}
+	return params.Capabilities.TextDocument.SemanticTokens
 }
