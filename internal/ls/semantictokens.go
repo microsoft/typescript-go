@@ -372,10 +372,8 @@ func reclassifyByType(c *checker.Checker, node *ast.Node, tt tokenType) tokenTyp
 					return true
 				}
 				if typ.Flags()&checker.TypeFlagsUnion != 0 {
-					for _, t := range typ.AsUnionType().Types() {
-						if condition(t) {
-							return true
-						}
+					if slices.ContainsFunc(typ.AsUnionType().Types(), condition) {
+						return true
 					}
 				}
 				return false
