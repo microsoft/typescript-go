@@ -295,6 +295,12 @@ var (
 			ItemDefaults: &[]string{"commitCharacters", "editRange"},
 		},
 	}
+	defaultDefinitionCapabilities = &lsproto.DefinitionClientCapabilities{
+		LinkSupport: ptrTrue,
+	}
+	defaultTypeDefinitionCapabilities = &lsproto.TypeDefinitionClientCapabilities{
+		LinkSupport: ptrTrue,
+	}
 )
 
 func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lsproto.ClientCapabilities {
@@ -339,6 +345,12 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 	}
 	if capabilitiesWithDefaults.Workspace.Configuration == nil {
 		capabilitiesWithDefaults.Workspace.Configuration = ptrTrue
+	}
+	if capabilitiesWithDefaults.TextDocument.Definition == nil {
+		capabilitiesWithDefaults.TextDocument.Definition = defaultDefinitionCapabilities
+	}
+	if capabilitiesWithDefaults.TextDocument.TypeDefinition == nil {
+		capabilitiesWithDefaults.TextDocument.TypeDefinition = defaultTypeDefinitionCapabilities
 	}
 	return &capabilitiesWithDefaults
 }
@@ -1094,6 +1106,7 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 
 func (f *FourslashTest) VerifyBaselineGoToDefinition(
 	t *testing.T,
+	includeOriginalSelectionRange bool,
 	markers ...string,
 ) {
 	referenceLocations := f.lookupMarkersOrGetRanges(t, markers)
@@ -1126,17 +1139,35 @@ func (f *FourslashTest) VerifyBaselineGoToDefinition(
 		}
 
 		var resultAsLocations []lsproto.Location
+		var additionalLocation *lsproto.Location
 		if result.Locations != nil {
 			resultAsLocations = *result.Locations
 		} else if result.Location != nil {
 			resultAsLocations = []lsproto.Location{*result.Location}
 		} else if result.DefinitionLinks != nil {
-			t.Fatalf("Unexpected definition response type at marker '%s': %T", *f.lastKnownMarkerName, result.DefinitionLinks)
+			var originRange *lsproto.Range
+			resultAsLocations = core.Map(*result.DefinitionLinks, func(link *lsproto.LocationLink) lsproto.Location {
+				if originRange != nil && originRange != link.OriginSelectionRange {
+					panic("multiple different origin ranges in definition links")
+				}
+				originRange = link.OriginSelectionRange
+				return lsproto.Location{
+					Uri:   link.TargetUri,
+					Range: link.TargetSelectionRange,
+				}
+			})
+			if originRange != nil && includeOriginalSelectionRange {
+				additionalLocation = &lsproto.Location{
+					Uri:   lsconv.FileNameToDocumentURI(f.activeFilename),
+					Range: *originRange,
+				}
+			}
 		}
 
 		f.addResultToBaseline(t, "goToDefinition", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
-			marker:     markerOrRange,
-			markerName: "/*GOTO DEF*/",
+			marker:             markerOrRange,
+			markerName:         "/*GOTO DEF*/",
+			additionalLocation: additionalLocation,
 		}))
 	}
 }
@@ -1180,7 +1211,12 @@ func (f *FourslashTest) VerifyBaselineGoToTypeDefinition(
 		} else if result.Location != nil {
 			resultAsLocations = []lsproto.Location{*result.Location}
 		} else if result.DefinitionLinks != nil {
-			t.Fatalf("Unexpected type definition response type at marker '%s': %T", *f.lastKnownMarkerName, result.DefinitionLinks)
+			resultAsLocations = core.Map(*result.DefinitionLinks, func(link *lsproto.LocationLink) lsproto.Location {
+				return lsproto.Location{
+					Uri:   link.TargetUri,
+					Range: link.TargetSelectionRange,
+				}
+			})
 		}
 
 		f.addResultToBaseline(t, "goToType", f.getBaselineForLocationsWithFileContents(resultAsLocations, baselineFourslashLocationsOptions{
@@ -2246,6 +2282,4 @@ func (f *FourslashTest) verifyBaselines(t *testing.T) {
 	}
 }
 
-type anyTextEdits *[]*lsproto.TextEdit
-
-var AnyTextEdits = anyTextEdits(nil)
+var AnyTextEdits *[]*lsproto.TextEdit
