@@ -550,9 +550,7 @@ func encodeSemanticTokens(tokens []semanticToken, file *ast.SourceFile, converte
 		char := startPos.Character
 
 		// Verify that positions are strictly increasing (visitor walks in order)
-		// We need to skip the first token (when prevLine == 0 && prevChar == 0 && line == 0 && char == 0)
-		if (prevLine != 0 || prevChar != 0) && (line < prevLine || (line == prevLine && char < prevChar)) {
-			// Debug info to understand the issue
+		if len(encoded) > 0 && (line < prevLine || (line == prevLine && char <= prevChar)) {
 			panic(fmt.Sprintf("semantic tokens: positions must be strictly increasing: prev=(%d,%d) current=(%d,%d) for token at offset %d",
 				prevLine, prevChar, line, char, tokenStart))
 		}
