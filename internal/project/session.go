@@ -487,6 +487,21 @@ func (s *Session) projectContainsFile(project *Project, uri lsproto.DocumentUri)
 	return project.containsFile(path)
 }
 
+func (s *Session) GetSnapshotLoadingProjectTree(
+	ctx context.Context,
+	// If null, all project trees need to be loaded, otherwise only those that are referenced
+	requestedProjectTrees map[tspath.Path]struct{},
+) *Snapshot {
+	snapshot := s.getSnapshot(
+		ctx,
+		snapshotChangeRequest{requestedProjectTrees: &projectTreeRequest{requestedProjectTrees}},
+		func(snapshot *Snapshot, updatedSnapshot bool) UpdateReason {
+			return core.IfElse(!updatedSnapshot, UpdateReasonRequestedLoadProjectTree, UpdateReasonUnknown)
+		},
+	)
+	return snapshot
+}
+
 func (s *Session) ForEachProjectLocationLoadingProjectTree(
 	ctx context.Context,
 	requestedProjectTrees map[tspath.Path]struct{},
@@ -494,14 +509,7 @@ func (s *Session) ForEachProjectLocationLoadingProjectTree(
 	canIterateProject func(project *Project) bool,
 	handleLocation func(*Project, lsproto.DocumentUri, lsproto.Position),
 ) error {
-	snapshot := s.getSnapshot(
-		ctx,
-		snapshotChangeRequest{requestedProjectTrees: requestedProjectTrees},
-		func(snapshot *Snapshot, updatedSnapshot bool) UpdateReason {
-			return core.IfElse(!updatedSnapshot, UpdateReasonRequestedLoadProjectTree, UpdateReasonUnknown)
-		},
-	)
-	for _, project := range snapshot.ProjectCollection.Projects() {
+	for _, project := range s.GetSnapshotLoadingProjectTree(ctx, requestedProjectTrees).ProjectCollection.Projects() {
 		if ctx.Err() != nil {
 			return ctx.Err()
 		}

@@ -442,6 +442,9 @@ func (b *ProjectCollectionBuilder) DidRequestProjectTrees(projectsReferenced map
 				// If this project has potential project reference for any of the project we are loading ancestor tree for
 				// load this project first
 				if project := entry.Value(); project != nil && project.forEachPotentialProjectReference(func(p tspath.Path) bool {
+					if projectsReferenced == nil {
+						return true
+					}
 					_, isReferenced := projectsReferenced[p]
 					return isReferenced
 				}) {
@@ -491,11 +494,11 @@ func (b *ProjectCollectionBuilder) ensureProjectTree(
 	}
 	for _, childConfig := range children {
 		wg.Queue(func() {
-			if !program.ForEachResolvedProjectReferenceInChildConfig(
+			if projectsReferenced != nil && !program.ForEachResolvedProjectReferenceInChildConfig(
 				childConfig,
 				func(referencePath tspath.Path, config *tsoptions.ParsedCommandLine, _ *tsoptions.ParsedCommandLine, _ int) bool {
-					_, ok := projectsReferenced[referencePath]
-					return ok
+					_, isReferenced := projectsReferenced[referencePath]
+					return isReferenced
 				}) {
 				return
 			}
