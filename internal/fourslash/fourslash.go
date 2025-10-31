@@ -2252,7 +2252,8 @@ func (f *FourslashTest) VerifyFormatDocument(t *testing.T, options *lsproto.Form
 
 // VerifyFormatSelection verifies formatting of a selected range.
 // It sends a textDocument/rangeFormatting request and compares the result with a baseline.
-func (f *FourslashTest) VerifyFormatSelection(t *testing.T, markerOrRange MarkerOrRange, options *lsproto.FormattingOptions) {
+// rangeMarker should be obtained from f.Ranges()[index].
+func (f *FourslashTest) VerifyFormatSelection(t *testing.T, rangeMarker *RangeMarker, options *lsproto.FormattingOptions) {
 	if options == nil {
 		options = &lsproto.FormattingOptions{
 			TabSize:      4,
@@ -2260,17 +2261,8 @@ func (f *FourslashTest) VerifyFormatSelection(t *testing.T, markerOrRange Marker
 		}
 	}
 
-	f.goToMarker(t, markerOrRange)
-	var formatRange lsproto.Range
-	if rangeMarker, ok := markerOrRange.(*RangeMarker); ok {
-		formatRange = rangeMarker.LSRange
-	} else {
-		// If it's just a marker position, format from that position to the end of the line
-		formatRange = lsproto.Range{
-			Start: f.currentCaretPosition,
-			End:   f.currentCaretPosition,
-		}
-	}
+	f.goToMarker(t, rangeMarker)
+	formatRange := rangeMarker.LSRange
 
 	params := &lsproto.DocumentRangeFormattingParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
@@ -2293,7 +2285,8 @@ func (f *FourslashTest) VerifyFormatSelection(t *testing.T, markerOrRange Marker
 
 // VerifyFormatOnType verifies on-type formatting (e.g., after typing `;`, `}`, or newline).
 // It sends a textDocument/onTypeFormatting request and compares the result with a baseline.
-func (f *FourslashTest) VerifyFormatOnType(t *testing.T, marker string, character string, options *lsproto.FormattingOptions) {
+// markerName should be the name of a marker in the test file (e.g., "a" for /*a*/).
+func (f *FourslashTest) VerifyFormatOnType(t *testing.T, markerName string, character string, options *lsproto.FormattingOptions) {
 	if options == nil {
 		options = &lsproto.FormattingOptions{
 			TabSize:      4,
@@ -2301,7 +2294,7 @@ func (f *FourslashTest) VerifyFormatOnType(t *testing.T, marker string, characte
 		}
 	}
 
-	f.GoToMarker(t, marker)
+	f.GoToMarker(t, markerName)
 
 	params := &lsproto.DocumentOnTypeFormattingParams{
 		TextDocument: lsproto.TextDocumentIdentifier{
