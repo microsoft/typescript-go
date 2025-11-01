@@ -19,3 +19,10 @@
 
  === /node_modules/foo/index.js ===
  exports.default = { bar() { return 0; } }
+ >exports.default = { bar() { return 0; } } : { bar(): number; }
+ >exports.default : { bar(): number; }
+->exports : typeof import("/node_modules/foo/index")
++>exports : typeof import("foo")
+ >default : { bar(): number; }
+ >{ bar() { return 0; } } : { bar(): number; }
+ >bar : () => number
