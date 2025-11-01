@@ -454,11 +454,7 @@ func (l *LanguageService) ProvideImplementations(ctx context.Context, params *ls
 
 	if clientSupportsLink {
 		links := l.convertEntriesToLocationLinks(entries)
-		linkPtrs := make([]*lsproto.LocationLink, len(links))
-		for i := range links {
-			linkPtrs[i] = &links[i]
-		}
-		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{DefinitionLinks: &linkPtrs}, nil
+		return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{DefinitionLinks: &links}, nil
 	}
 	locations := l.convertEntriesToLocations(entries)
 	return lsproto.LocationOrLocationsOrDefinitionLinksOrNull{Locations: &locations}, nil
@@ -562,8 +558,8 @@ func (l *LanguageService) convertEntriesToLocations(entries []*ReferenceEntry) [
 	return locations
 }
 
-func (l *LanguageService) convertEntriesToLocationLinks(entries []*ReferenceEntry) []lsproto.LocationLink {
-	links := make([]lsproto.LocationLink, len(entries))
+func (l *LanguageService) convertEntriesToLocationLinks(entries []*ReferenceEntry) []*lsproto.LocationLink {
+	links := make([]*lsproto.LocationLink, len(entries))
 	for i, entry := range entries {
 		var targetSelectionRange, targetRange *lsproto.Range
 
@@ -591,7 +587,7 @@ func (l *LanguageService) convertEntriesToLocationLinks(entries []*ReferenceEntr
 			targetRange = targetSelectionRange
 		}
 
-		links[i] = lsproto.LocationLink{
+		links[i] = &lsproto.LocationLink{
 			TargetUri:            lsconv.FileNameToDocumentURI(entry.fileName),
 			TargetRange:          *targetRange,
 			TargetSelectionRange: *targetSelectionRange,
