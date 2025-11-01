@@ -1080,7 +1080,14 @@ func (tx *CommonJSModuleTransformer) visitTopLevelVariableStatement(node *ast.Va
 					propertyAccess,
 					v.Name().Clone(tx.Factory()),
 				))
+			} else if ast.IsIdentifier(v.Name()) {
+				expression := tx.transformInitializedVariable(v)
+				if expression != nil {
+					pushExpression(tx.Visitor().VisitNode(expression))
+				}
 			} else {
+				// For binding patterns, we can't do exports.{pattern} = value
+				// Just emit the assignment and let appendExportsOfVariableStatement handle the exports
 				expression := transformers.ConvertVariableDeclarationToAssignmentExpression(tx.EmitContext(), v)
 				if expression != nil {
 					pushExpression(tx.Visitor().VisitNode(expression))
@@ -1094,6 +1101,21 @@ func (tx *CommonJSModuleTransformer) visitTopLevelVariableStatement(node *ast.Va
 		return transformers.SingleOrMany(statements, tx.Factory())
 	}
 	return tx.visitTopLevelNestedVariableStatement(node)
+}
+
+func (tx *CommonJSModuleTransformer) transformInitializedVariable(node *ast.VariableDeclaration) *ast.Expression {
+	if node.Initializer == nil {
+		return nil
+	}
+	name := node.Name()
+	propertyAccess := tx.Factory().NewPropertyAccessExpression(
+		tx.Factory().NewIdentifier("exports"),
+		nil, /*questionDotToken*/
+		name,
+		ast.NodeFlagsNone,
+	)
+	tx.EmitContext().AssignCommentAndSourceMapRanges(propertyAccess, name)
+	return tx.Factory().NewAssignmentExpression(propertyAccess, node.Initializer)
 }
 
 // Visits a top-level nested variable statement as it may contain `var` declarations that are hoisted and may still be
