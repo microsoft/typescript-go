@@ -1010,7 +1010,7 @@ func getDocumentSymbolClientSupportsHierarchical(params *lsproto.InitializeParam
 }
 
 func getHoverContentFormat(params *lsproto.InitializeParams) lsproto.MarkupKind {
-	if params == nil || params.Capabilities.TextDocument == nil || params.Capabilities.TextDocument.Hover == nil || params.Capabilities.TextDocument.Hover.ContentFormat == nil {
+	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil || params.Capabilities.TextDocument.Hover == nil || params.Capabilities.TextDocument.Hover.ContentFormat == nil {
 		// Default to plaintext if no preference specified
 		return lsproto.MarkupKindPlainText
 	}
