@@ -10,12 +10,13 @@ import (
 func TestFormatDocumentInPlace(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `/*1*/for (;;) { }
-/*2*/for (var x;x<0;x++) { }
-/*3*/for (var x ;x<0 ;x++) { }`
+	const content = `for (;;) { }
+for (var x;x<0;x++) { }
+for (var x ;x<0 ;x++) { }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.FormatDocument(t)
 	// After formatting, verify the formatted content
+	// Note: trailing space on last line is a known issue (see https://github.com/microsoft/typescript-go/issues/1997)
 	f.CurrentFileContentIs(t, `for (; ;) { }
 for (var x; x < 0; x++) { }
 for (var x; x < 0; x++) { } `)
