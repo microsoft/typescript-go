@@ -1519,7 +1519,7 @@ func (c *Checker) checkGrammarBreakOrContinueStatement(node *ast.Node) bool {
 		panic(fmt.Sprintf("Unexpected node kind %q", node.Kind))
 	}
 
-	var current *ast.Node = node
+	current := node
 	for current != nil {
 		if ast.IsFunctionLikeOrClassStaticBlockDeclaration(current) {
 			return c.grammarErrorOnNode(node, diagnostics.Jump_target_cannot_cross_function_boundary)
@@ -1829,14 +1829,14 @@ func (c *Checker) checkGrammarForDisallowedBlockScopedVariableStatement(node *as
 		blockScopeKind := c.getCombinedNodeFlagsCached(node.DeclarationList) & ast.NodeFlagsBlockScoped
 		if blockScopeKind != 0 {
 			var keyword string
-			switch {
-			case blockScopeKind == ast.NodeFlagsLet:
+			switch blockScopeKind {
+			case ast.NodeFlagsLet:
 				keyword = "let"
-			case blockScopeKind == ast.NodeFlagsConst:
+			case ast.NodeFlagsConst:
 				keyword = "const"
-			case blockScopeKind == ast.NodeFlagsUsing:
+			case ast.NodeFlagsUsing:
 				keyword = "using"
-			case blockScopeKind == ast.NodeFlagsAwaitUsing:
+			case ast.NodeFlagsAwaitUsing:
 				keyword = "await using"
 			default:
 				panic("Unknown BlockScope flag")

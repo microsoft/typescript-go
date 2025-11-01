@@ -634,7 +634,7 @@ func isLabelOfLabeledStatement(node *ast.Node) bool {
 }
 
 func findReferenceInPosition(refs []*ast.FileReference, pos int) *ast.FileReference {
-	return core.Find(refs, func(ref *ast.FileReference) bool { return ref.TextRange.ContainsInclusive(pos) })
+	return core.Find(refs, func(ref *ast.FileReference) bool { return ref.ContainsInclusive(pos) })
 }
 
 func isTagName(node *ast.Node) bool {
@@ -858,7 +858,7 @@ func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceF
 	// specially by `getSymbolAtLocation`.
 	isModifier := func(node *ast.Node) bool {
 		if ast.IsModifier(node) && (forRename || node.Kind != ast.KindDefaultKeyword) {
-			return ast.CanHaveModifiers(parent) && parent.Modifiers() != nil && slices.Contains(parent.Modifiers().NodeList.Nodes, node)
+			return ast.CanHaveModifiers(parent) && parent.Modifiers() != nil && slices.Contains(parent.Modifiers().Nodes, node)
 		}
 		switch node.Kind {
 		case ast.KindClassKeyword:
@@ -1096,7 +1096,7 @@ func getAdjustedLocationForDeclaration(node *ast.Node, forRename bool, sourceFil
 		// for class and function declarations, use the `default` modifier
 		// when the declaration is unnamed.
 		if node.Modifiers() != nil {
-			return core.Find(node.Modifiers().NodeList.Nodes, func(*ast.Node) bool { return node.Kind == ast.KindDefaultKeyword })
+			return core.Find(node.Modifiers().Nodes, func(*ast.Node) bool { return node.Kind == ast.KindDefaultKeyword })
 		}
 	case ast.KindClassExpression:
 		// for class expressions, use the `class` keyword when the class is unnamed

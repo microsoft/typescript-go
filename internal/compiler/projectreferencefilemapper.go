@@ -51,7 +51,7 @@ func (mapper *projectReferenceFileMapper) getResolvedProjectReferences() []*tsop
 	if ok {
 		result = make([]*tsoptions.ParsedCommandLine, 0, len(refs))
 		for _, refPath := range refs {
-			refConfig, _ := mapper.configToProjectReference[refPath]
+			refConfig := mapper.configToProjectReference[refPath]
 			result = append(result, refConfig)
 		}
 	}
@@ -128,7 +128,7 @@ func (mapper *projectReferenceFileMapper) forEachResolvedReferenceWorker(
 		if !seenRef.AddIfAbsent(path) {
 			continue
 		}
-		config, _ := mapper.configToProjectReference[path]
+		config := mapper.configToProjectReference[path]
 		fn(path, config, parent, index)
 		mapper.forEachResolvedReferenceWorker(mapper.referencesInConfigFile[path], fn, config, seenRef)
 	}
