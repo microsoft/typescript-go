@@ -39,6 +39,15 @@ func (s *Symbol) IsStatic() bool {
 
 type SymbolTable map[string]*Symbol
 
+// GetOrInit returns the symbol table, or initializes it if it's nil.
+// This will modify whatever holds the SymbolTable, so is not safe for concurrent use.
+func (s *SymbolTable) GetOrInit() SymbolTable {
+	if *s == nil {
+		*s = make(SymbolTable)
+	}
+	return *s
+}
+
 const InternalSymbolNamePrefix = "\xFE" // Invalid UTF8 sequence, will never occur as IdentifierName
 
 const (
