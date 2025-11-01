@@ -699,21 +699,21 @@ func (l *LanguageService) stringLiteralCompletionDetails(
 		pathCompletions := completion.fromPaths
 		for _, pathCompletion := range pathCompletions {
 			if pathCompletion.name == name {
-				return createCompletionDetails(item, name, "" /*documentation*/)
+				return createCompletionDetails(item, name, "" /*documentation*/, lsproto.MarkupKindPlainText)
 			}
 		}
 	case completion.fromProperties != nil:
 		properties := completion.fromProperties
 		for _, symbol := range properties.symbols {
 			if symbol.Name == name {
-				return l.createCompletionDetailsForSymbol(item, symbol, checker, location, nil /*actions*/)
+				return l.createCompletionDetailsForSymbol(item, symbol, checker, location, nil /*actions*/, lsproto.MarkupKindPlainText)
 			}
 		}
 	case completion.fromTypes != nil:
 		types := completion.fromTypes
 		for _, t := range types.types {
 			if t.AsLiteralType().Value().(string) == name {
-				return createCompletionDetails(item, name, "" /*documentation*/)
+				return createCompletionDetails(item, name, "" /*documentation*/, lsproto.MarkupKindPlainText)
 			}
 		}
 	}

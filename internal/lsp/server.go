@@ -808,7 +808,7 @@ func (s *Server) handleDocumentDiagnostic(ctx context.Context, ls *ls.LanguageSe
 }
 
 func (s *Server) handleHover(ctx context.Context, ls *ls.LanguageService, params *lsproto.HoverParams) (lsproto.HoverResponse, error) {
-	return ls.ProvideHover(ctx, params.TextDocument.Uri, params.Position)
+	return ls.ProvideHover(ctx, params.TextDocument.Uri, params.Position, getHoverContentFormat(s.initializeParams))
 }
 
 func (s *Server) handleSignatureHelp(ctx context.Context, languageService *ls.LanguageService, params *lsproto.SignatureHelpParams) (lsproto.SignatureHelpResponse, error) {
@@ -1007,4 +1007,17 @@ func getDocumentSymbolClientSupportsHierarchical(params *lsproto.InitializeParam
 		return false
 	}
 	return ptrIsTrue(params.Capabilities.TextDocument.DocumentSymbol.HierarchicalDocumentSymbolSupport)
+}
+
+func getHoverContentFormat(params *lsproto.InitializeParams) lsproto.MarkupKind {
+	if params == nil || params.Capabilities.TextDocument == nil || params.Capabilities.TextDocument.Hover == nil || params.Capabilities.TextDocument.Hover.ContentFormat == nil {
+		// Default to plaintext if no preference specified
+		return lsproto.MarkupKindPlainText
+	}
+	formats := *params.Capabilities.TextDocument.Hover.ContentFormat
+	if len(formats) == 0 {
+		return lsproto.MarkupKindPlainText
+	}
+	// Return the first (most preferred) format
+	return formats[0]
 }
