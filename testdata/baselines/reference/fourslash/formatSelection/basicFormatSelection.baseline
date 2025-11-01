@@ -1,0 +1,10 @@
+// === formatSelection ===
+// Original (/basicFormatSelection.ts):
+// const x = 1;
+// function foo(a,b){return a+b;}
+// const y = 2;
+
+// Formatted:
+// const x = 1;
+// function foo(a, b) { return a + b; }
+// const y = 2;
