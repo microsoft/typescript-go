@@ -836,7 +836,7 @@ func (s *Server) handleReferences(ctx context.Context, ls *ls.LanguageService, p
 
 func (s *Server) handleImplementations(ctx context.Context, ls *ls.LanguageService, params *lsproto.ImplementationParams) (lsproto.ImplementationResponse, error) {
 	// goToImplementation
-	return ls.ProvideImplementations(ctx, params)
+	return ls.ProvideImplementations(ctx, params, getImplementationClientSupportsLink(s.initializeParams))
 }
 
 func (s *Server) handleCompletion(ctx context.Context, languageService *ls.LanguageService, params *lsproto.CompletionParams) (lsproto.CompletionResponse, error) {
@@ -903,7 +903,7 @@ func (s *Server) handleWorkspaceSymbol(ctx context.Context, params *lsproto.Work
 }
 
 func (s *Server) handleDocumentSymbol(ctx context.Context, ls *ls.LanguageService, params *lsproto.DocumentSymbolParams) (lsproto.DocumentSymbolResponse, error) {
-	return ls.ProvideDocumentSymbols(ctx, params.TextDocument.Uri)
+	return ls.ProvideDocumentSymbols(ctx, params.TextDocument.Uri, getDocumentSymbolClientSupportsHierarchical(s.initializeParams))
 }
 
 func (s *Server) handleRename(ctx context.Context, ls *ls.LanguageService, params *lsproto.RenameParams) (lsproto.RenameResponse, error) {
@@ -991,4 +991,20 @@ func getTypeDefinitionClientSupportsLink(params *lsproto.InitializeParams) bool 
 		return false
 	}
 	return ptrIsTrue(params.Capabilities.TextDocument.TypeDefinition.LinkSupport)
+}
+
+func getImplementationClientSupportsLink(params *lsproto.InitializeParams) bool {
+	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil ||
+		params.Capabilities.TextDocument.Implementation == nil {
+		return false
+	}
+	return ptrIsTrue(params.Capabilities.TextDocument.Implementation.LinkSupport)
+}
+
+func getDocumentSymbolClientSupportsHierarchical(params *lsproto.InitializeParams) bool {
+	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil ||
+		params.Capabilities.TextDocument.DocumentSymbol == nil {
+		return false
+	}
+	return ptrIsTrue(params.Capabilities.TextDocument.DocumentSymbol.HierarchicalDocumentSymbolSupport)
 }

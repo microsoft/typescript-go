@@ -18,10 +18,59 @@ import (
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
-func (l *LanguageService) ProvideDocumentSymbols(ctx context.Context, documentURI lsproto.DocumentUri) (lsproto.DocumentSymbolResponse, error) {
+func (l *LanguageService) ProvideDocumentSymbols(ctx context.Context, documentURI lsproto.DocumentUri, hierarchicalSupport bool) (lsproto.DocumentSymbolResponse, error) {
 	_, file := l.getProgramAndFile(documentURI)
-	symbols := l.getDocumentSymbolsForChildren(ctx, file.AsNode())
-	return lsproto.SymbolInformationsOrDocumentSymbolsOrNull{DocumentSymbols: &symbols}, nil
+	if hierarchicalSupport {
+		symbols := l.getDocumentSymbolsForChildren(ctx, file.AsNode())
+		return lsproto.SymbolInformationsOrDocumentSymbolsOrNull{DocumentSymbols: &symbols}, nil
+	}
+	// Client doesn't support hierarchical document symbols, return flat SymbolInformation array
+	symbolInfos := l.getDocumentSymbolInformations(ctx, file, documentURI)
+	symbolInfoPtrs := make([]*lsproto.SymbolInformation, len(symbolInfos))
+	for i := range symbolInfos {
+		symbolInfoPtrs[i] = &symbolInfos[i]
+	}
+	return lsproto.SymbolInformationsOrDocumentSymbolsOrNull{SymbolInformations: &symbolInfoPtrs}, nil
+}
+
+// getDocumentSymbolInformations converts hierarchical DocumentSymbols to a flat SymbolInformation array
+func (l *LanguageService) getDocumentSymbolInformations(ctx context.Context, file *ast.SourceFile, documentURI lsproto.DocumentUri) []lsproto.SymbolInformation {
+	// First get hierarchical symbols
+	docSymbols := l.getDocumentSymbolsForChildren(ctx, file.AsNode())
+
+	// Flatten the hierarchy
+	var result []lsproto.SymbolInformation
+	var flatten func(symbols []*lsproto.DocumentSymbol, containerName string)
+	flatten = func(symbols []*lsproto.DocumentSymbol, containerName string) {
+		for _, symbol := range symbols {
+			info := lsproto.SymbolInformation{
+				Name: symbol.Name,
+				Kind: symbol.Kind,
+				Location: lsproto.Location{
+					Uri:   documentURI,
+					Range: symbol.Range,
+				},
+			}
+			if containerName != "" {
+				info.ContainerName = &containerName
+			}
+			if symbol.Tags != nil && len(*symbol.Tags) > 0 {
+				info.Tags = symbol.Tags
+			}
+			if symbol.Deprecated != nil && *symbol.Deprecated {
+				deprecated := true
+				info.Deprecated = &deprecated
+			}
+			result = append(result, info)
+
+			// Recursively flatten children with this symbol as container
+			if symbol.Children != nil && len(*symbol.Children) > 0 {
+				flatten(*symbol.Children, symbol.Name)
+			}
+		}
+	}
+	flatten(docSymbols, "")
+	return result
 }
 
 func (l *LanguageService) getDocumentSymbolsForChildren(ctx context.Context, node *ast.Node) []*lsproto.DocumentSymbol {
