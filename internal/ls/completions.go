@@ -5068,6 +5068,7 @@ func (l *LanguageService) getCompletionItemDetails(
 			file,
 			position,
 			contextToken,
+			docFormat,
 		)
 	}
 
