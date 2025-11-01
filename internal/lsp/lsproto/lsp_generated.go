@@ -32,6 +32,10 @@ func (s *ImplementationParams) TextDocumentURI() DocumentUri {
 	return s.TextDocument.Uri
 }
 
+func (s *ImplementationParams) TextDocumentPosition() Position {
+	return s.Position
+}
+
 var _ json.UnmarshalerFrom = (*ImplementationParams)(nil)
 
 func (s *ImplementationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
@@ -224,6 +228,10 @@ type TypeDefinitionParams struct {
 
 func (s *TypeDefinitionParams) TextDocumentURI() DocumentUri {
 	return s.TextDocument.Uri
+}
+
+func (s *TypeDefinitionParams) TextDocumentPosition() Position {
+	return s.Position
 }
 
 var _ json.UnmarshalerFrom = (*TypeDefinitionParams)(nil)
@@ -1115,6 +1123,10 @@ func (s *DeclarationParams) TextDocumentURI() DocumentUri {
 	return s.TextDocument.Uri
 }
 
+func (s *DeclarationParams) TextDocumentPosition() Position {
+	return s.Position
+}
+
 var _ json.UnmarshalerFrom = (*DeclarationParams)(nil)
 
 func (s *DeclarationParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
@@ -1526,6 +1538,10 @@ type CallHierarchyPrepareParams struct {
 
 func (s *CallHierarchyPrepareParams) TextDocumentURI() DocumentUri {
 	return s.TextDocument.Uri
+}
+
+func (s *CallHierarchyPrepareParams) TextDocumentPosition() Position {
+	return s.Position
 }
 
 var _ json.UnmarshalerFrom = (*CallHierarchyPrepareParams)(nil)
@@ -2654,6 +2670,10 @@ func (s *LinkedEditingRangeParams) TextDocumentURI() DocumentUri {
 	return s.TextDocument.Uri
 }
 
+func (s *LinkedEditingRangeParams) TextDocumentPosition() Position {
+	return s.Position
+}
+
 var _ json.UnmarshalerFrom = (*LinkedEditingRangeParams)(nil)
 
 func (s *LinkedEditingRangeParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
@@ -3072,6 +3092,10 @@ func (s *MonikerParams) TextDocumentURI() DocumentUri {
 	return s.TextDocument.Uri
 }
 
+func (s *MonikerParams) TextDocumentPosition() Position {
+	return s.Position
+}
+
 var _ json.UnmarshalerFrom = (*MonikerParams)(nil)
 
 func (s *MonikerParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
@@ -3278,6 +3302,10 @@ type TypeHierarchyPrepareParams struct {
 
 func (s *TypeHierarchyPrepareParams) TextDocumentURI() DocumentUri {
 	return s.TextDocument.Uri
+}
+
+func (s *TypeHierarchyPrepareParams) TextDocumentPosition() Position {
+	return s.Position
 }
 
 var _ json.UnmarshalerFrom = (*TypeHierarchyPrepareParams)(nil)
@@ -4817,6 +4845,10 @@ type InlineCompletionParams struct {
 
 func (s *InlineCompletionParams) TextDocumentURI() DocumentUri {
 	return s.TextDocument.Uri
+}
+
+func (s *InlineCompletionParams) TextDocumentPosition() Position {
+	return s.Position
 }
 
 var _ json.UnmarshalerFrom = (*InlineCompletionParams)(nil)
@@ -6525,6 +6557,10 @@ func (s *CompletionParams) TextDocumentURI() DocumentUri {
 	return s.TextDocument.Uri
 }
 
+func (s *CompletionParams) TextDocumentPosition() Position {
+	return s.Position
+}
+
 var _ json.UnmarshalerFrom = (*CompletionParams)(nil)
 
 func (s *CompletionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
@@ -7060,6 +7096,10 @@ func (s *HoverParams) TextDocumentURI() DocumentUri {
 	return s.TextDocument.Uri
 }
 
+func (s *HoverParams) TextDocumentPosition() Position {
+	return s.Position
+}
+
 var _ json.UnmarshalerFrom = (*HoverParams)(nil)
 
 func (s *HoverParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
@@ -7239,6 +7279,10 @@ type SignatureHelpParams struct {
 
 func (s *SignatureHelpParams) TextDocumentURI() DocumentUri {
 	return s.TextDocument.Uri
+}
+
+func (s *SignatureHelpParams) TextDocumentPosition() Position {
+	return s.Position
 }
 
 var _ json.UnmarshalerFrom = (*SignatureHelpParams)(nil)
@@ -7474,6 +7518,10 @@ func (s *DefinitionParams) TextDocumentURI() DocumentUri {
 	return s.TextDocument.Uri
 }
 
+func (s *DefinitionParams) TextDocumentPosition() Position {
+	return s.Position
+}
+
 var _ json.UnmarshalerFrom = (*DefinitionParams)(nil)
 
 func (s *DefinitionParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
@@ -7604,6 +7652,10 @@ type ReferenceParams struct {
 
 func (s *ReferenceParams) TextDocumentURI() DocumentUri {
 	return s.TextDocument.Uri
+}
+
+func (s *ReferenceParams) TextDocumentPosition() Position {
+	return s.Position
 }
 
 var _ json.UnmarshalerFrom = (*ReferenceParams)(nil)
@@ -7743,6 +7795,10 @@ type DocumentHighlightParams struct {
 
 func (s *DocumentHighlightParams) TextDocumentURI() DocumentUri {
 	return s.TextDocument.Uri
+}
+
+func (s *DocumentHighlightParams) TextDocumentPosition() Position {
+	return s.Position
 }
 
 var _ json.UnmarshalerFrom = (*DocumentHighlightParams)(nil)
@@ -9608,6 +9664,10 @@ func (s *DocumentOnTypeFormattingParams) TextDocumentURI() DocumentUri {
 	return s.TextDocument.Uri
 }
 
+func (s *DocumentOnTypeFormattingParams) TextDocumentPosition() Position {
+	return s.Position
+}
+
 var _ json.UnmarshalerFrom = (*DocumentOnTypeFormattingParams)(nil)
 
 func (s *DocumentOnTypeFormattingParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
@@ -9764,6 +9824,10 @@ func (s *RenameParams) TextDocumentURI() DocumentUri {
 	return s.TextDocument.Uri
 }
 
+func (s *RenameParams) TextDocumentPosition() Position {
+	return s.Position
+}
+
 var _ json.UnmarshalerFrom = (*RenameParams)(nil)
 
 func (s *RenameParams) UnmarshalJSONFrom(dec *jsontext.Decoder) error {
@@ -9901,6 +9965,10 @@ type PrepareRenameParams struct {
 
 func (s *PrepareRenameParams) TextDocumentURI() DocumentUri {
 	return s.TextDocument.Uri
+}
+
+func (s *PrepareRenameParams) TextDocumentPosition() Position {
+	return s.Position
 }
 
 var _ json.UnmarshalerFrom = (*PrepareRenameParams)(nil)
@@ -10622,6 +10690,10 @@ type TextDocumentPositionParams struct {
 
 func (s *TextDocumentPositionParams) TextDocumentURI() DocumentUri {
 	return s.TextDocument.Uri
+}
+
+func (s *TextDocumentPositionParams) TextDocumentPosition() Position {
+	return s.Position
 }
 
 var _ json.UnmarshalerFrom = (*TextDocumentPositionParams)(nil)
