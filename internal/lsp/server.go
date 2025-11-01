@@ -492,6 +492,8 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSelectionRangeInfo, (*Server).handleSelectionRange)
 	registerRequestHandler(handlers, lsproto.WorkspaceSymbolInfo, (*Server).handleWorkspaceSymbol)
 	registerRequestHandler(handlers, lsproto.CompletionItemResolveInfo, (*Server).handleCompletionItemResolve)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSemanticTokensFullInfo, (*Server).handleSemanticTokensFull)
+	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentSemanticTokensRangeInfo, (*Server).handleSemanticTokensRange)
 
 	return handlers
 })
@@ -671,6 +673,17 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			},
 			SelectionRangeProvider: &lsproto.BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions{
 				Boolean: ptrTo(true),
+			},
+			SemanticTokensProvider: &lsproto.SemanticTokensOptionsOrRegistrationOptions{
+				Options: &lsproto.SemanticTokensOptions{
+					Legend: ls.SemanticTokensLegend(getSemanticTokensClientCapabilities(params)),
+					Full: &lsproto.BooleanOrSemanticTokensFullDelta{
+						Boolean: ptrTo(true),
+					},
+					Range: &lsproto.BooleanOrEmptyObject{
+						Boolean: ptrTo(true),
+					},
+				},
 			},
 		},
 	}
@@ -918,6 +931,16 @@ func (s *Server) handleSelectionRange(ctx context.Context, ls *ls.LanguageServic
 	return ls.ProvideSelectionRanges(ctx, params)
 }
 
+func (s *Server) handleSemanticTokensFull(ctx context.Context, ls *ls.LanguageService, params *lsproto.SemanticTokensParams) (lsproto.SemanticTokensResponse, error) {
+	clientCapabilities := getSemanticTokensClientCapabilities(s.initializeParams)
+	return ls.ProvideSemanticTokens(ctx, params.TextDocument.Uri, clientCapabilities)
+}
+
+func (s *Server) handleSemanticTokensRange(ctx context.Context, ls *ls.LanguageService, params *lsproto.SemanticTokensRangeParams) (lsproto.SemanticTokensRangeResponse, error) {
+	clientCapabilities := getSemanticTokensClientCapabilities(s.initializeParams)
+	return ls.ProvideSemanticTokensRange(ctx, params.TextDocument.Uri, params.Range, clientCapabilities)
+}
+
 func (s *Server) Log(msg ...any) {
 	fmt.Fprintln(s.stderr, msg...)
 }
@@ -971,7 +994,7 @@ func shouldEnableWatch(params *lsproto.InitializeParams) bool {
 }
 
 func getCompletionClientCapabilities(params *lsproto.InitializeParams) *lsproto.CompletionClientCapabilities {
-	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil {
+	if params.Capabilities == nil || params.Capabilities.TextDocument == nil {
 		return nil
 	}
 	return params.Capabilities.TextDocument.Completion
@@ -991,4 +1014,11 @@ func getTypeDefinitionClientSupportsLink(params *lsproto.InitializeParams) bool 
 		return false
 	}
 	return ptrIsTrue(params.Capabilities.TextDocument.TypeDefinition.LinkSupport)
+}
+
+func getSemanticTokensClientCapabilities(params *lsproto.InitializeParams) *lsproto.SemanticTokensClientCapabilities {
+	if params.Capabilities == nil || params.Capabilities.TextDocument == nil {
+		return nil
+	}
+	return params.Capabilities.TextDocument.SemanticTokens
 }
