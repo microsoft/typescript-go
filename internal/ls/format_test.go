@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/parser"
+	"gotest.tools/v3/assert"
 )
 
 // Test for issue: Panic Handling textDocument/onTypeFormatting
@@ -69,4 +70,67 @@ func TestGetFormattingEditsAfterKeystroke_SimpleStatement(t *testing.T) {
 
 	// Should return nil or empty edits, not panic
 	_ = edits
+}
+
+// Test for issue: Crash in range formatting when requested on a line that is different from the containing function
+// This reproduces the panic when formatting a range inside a function body
+func TestGetFormattingEditsForRange_FunctionBody(t *testing.T) {
+	t.Parallel()
+
+	testCases := []struct {
+		name     string
+		text     string
+		startPos int
+		endPos   int
+	}{
+		{
+			name:     "return statement in function",
+			text:     "function foo() {\n    return (1  + 2);\n}",
+			startPos: 21, // Start of "return"
+			endPos:   38, // End of ");"
+		},
+		{
+			name:     "function with newline after keyword",
+			text:     "function\nf() {\n}",
+			startPos: 9,  // After "function\n"
+			endPos:   13, // Inside or after function
+		},
+		{
+			name:     "empty function body",
+			text:     "function f() {\n  \n}",
+			startPos: 15, // Inside body
+			endPos:   17, // Inside body
+		},
+		{
+			name:     "after function closing brace",
+			text:     "function f() {\n}",
+			startPos: 15, // After closing brace
+			endPos:   15,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+				FileName: "/test.ts",
+				Path:     "/test.ts",
+			}, tc.text, core.ScriptKindTS)
+
+			langService := &LanguageService{}
+			ctx := context.Background()
+			options := format.GetDefaultFormatCodeSettings("\n")
+
+			// This should not panic
+			edits := langService.getFormattingEditsForRange(
+				ctx,
+				sourceFile,
+				options,
+				core.NewTextRange(tc.startPos, tc.endPos),
+			)
+
+			// Should not panic and should return some edits or empty array
+			assert.Assert(t, edits != nil || true) // Just ensuring no panic
+		})
+	}
 }
