@@ -40,8 +40,8 @@ func (l *LanguageService) getDocumentSymbolInformations(ctx context.Context, fil
 
 	// Flatten the hierarchy
 	var result []lsproto.SymbolInformation
-	var flatten func(symbols []*lsproto.DocumentSymbol, containerName string)
-	flatten = func(symbols []*lsproto.DocumentSymbol, containerName string) {
+	var flatten func(symbols []*lsproto.DocumentSymbol, containerName *string)
+	flatten = func(symbols []*lsproto.DocumentSymbol, containerName *string) {
 		for _, symbol := range symbols {
 			info := lsproto.SymbolInformation{
 				Name: symbol.Name,
@@ -50,26 +50,19 @@ func (l *LanguageService) getDocumentSymbolInformations(ctx context.Context, fil
 					Uri:   documentURI,
 					Range: symbol.Range,
 				},
-			}
-			if containerName != "" {
-				info.ContainerName = &containerName
-			}
-			if symbol.Tags != nil && len(*symbol.Tags) > 0 {
-				info.Tags = symbol.Tags
-			}
-			if symbol.Deprecated != nil && *symbol.Deprecated {
-				deprecated := true
-				info.Deprecated = &deprecated
+				ContainerName: containerName,
+				Tags:          symbol.Tags,
+				Deprecated:    symbol.Deprecated,
 			}
 			result = append(result, info)
 
 			// Recursively flatten children with this symbol as container
 			if symbol.Children != nil && len(*symbol.Children) > 0 {
-				flatten(*symbol.Children, symbol.Name)
+				flatten(*symbol.Children, &symbol.Name)
 			}
 		}
 	}
-	flatten(docSymbols, "")
+	flatten(docSymbols, nil)
 	return result
 }
 
