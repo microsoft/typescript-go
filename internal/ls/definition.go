@@ -167,7 +167,12 @@ func (l *LanguageService) createLocationFromFileAndRange(file *ast.SourceFile, t
 
 func getDeclarationsFromLocation(c *checker.Checker, node *ast.Node) []*ast.Node {
 	if ast.IsIdentifier(node) && ast.IsShorthandPropertyAssignment(node.Parent) {
-		return c.GetResolvedSymbol(node).Declarations
+		// For shorthand property assignments, return both the value symbol's declarations
+		// and the contextual type's property declarations
+		shorthandSymbol := c.GetResolvedSymbol(node)
+		declarations := shorthandSymbol.Declarations
+		contextualDeclarations := getDeclarationsFromObjectLiteralElement(c, node)
+		return core.Concatenate(declarations, contextualDeclarations)
 	}
 	node = getDeclarationNameForKeyword(node)
 	if symbol := c.GetSymbolAtLocation(node); symbol != nil {
@@ -194,6 +199,29 @@ func getDeclarationsFromLocation(c *checker.Checker, node *ast.Node) []*ast.Node
 		return indexInfos
 	}
 	return nil
+}
+
+// getDeclarationsFromObjectLiteralElement returns declarations from the contextual type
+// of an object literal element, if available.
+func getDeclarationsFromObjectLiteralElement(c *checker.Checker, node *ast.Node) []*ast.Node {
+	element := getContainingObjectLiteralElement(node)
+	if element == nil {
+		return nil
+	}
+
+	// Get the contextual type of the object literal
+	objectLiteral := element.Parent
+	if objectLiteral == nil || !ast.IsObjectLiteralExpression(objectLiteral) {
+		return nil
+	}
+
+	// Get the name of the property
+	name := ast.GetTextOfPropertyName(element.Name())
+	if name == "" {
+		return nil
+	}
+
+	return c.GetContextualDeclarationsForObjectLiteralElement(objectLiteral, name)
 }
 
 // Returns a CallLikeExpression where `node` is the target being invoked.

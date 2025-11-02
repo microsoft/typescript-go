@@ -1,7 +1,7 @@
 // === goToDefinition ===
 // === /goToDefinitionShorthandObjectLiteralWithInterface.ts ===
 // interface Something {
-//     foo: string;
+//     [|foo|]: string;
 // }
 // 
 // function makeSomething([|foo|]: string): Something {
