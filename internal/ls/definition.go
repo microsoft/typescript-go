@@ -170,7 +170,10 @@ func getDeclarationsFromLocation(c *checker.Checker, node *ast.Node) []*ast.Node
 		// For shorthand property assignments, return both the value symbol's declarations
 		// and the contextual type's property declarations
 		shorthandSymbol := c.GetResolvedSymbol(node)
-		declarations := shorthandSymbol.Declarations
+		var declarations []*ast.Node
+		if shorthandSymbol != nil {
+			declarations = shorthandSymbol.Declarations
+		}
 		contextualDeclarations := getDeclarationsFromObjectLiteralElement(c, node)
 		return core.Concatenate(declarations, contextualDeclarations)
 	}
