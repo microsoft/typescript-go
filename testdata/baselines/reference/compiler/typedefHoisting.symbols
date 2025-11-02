@@ -1,0 +1,12 @@
+//// [tests/cases/compiler/typedefHoisting.ts] ////
+
+=== x.js ===
+class C {
+>C : Symbol(C, Decl(x.js, 0, 0))
+
+    /** @typedef {string} Foo */
+    /** @type {Foo} */
+    foo = "abc"
+>foo : Symbol(C.foo, Decl(x.js, 0, 9))
+}
+
