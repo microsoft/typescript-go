@@ -6,7 +6,6 @@ import (
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/collections"
-	"github.com/microsoft/typescript-go/internal/pnp"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -301,10 +300,17 @@ func (options *CompilerOptions) GetStrictOptionValue(value Tristate) bool {
 	return options.Strict == TSTrue
 }
 
-func (options *CompilerOptions) GetEffectiveTypeRoots(currentDirectory string, pnpApi *pnp.PnpApi) (result []string, fromConfig bool) {
+func (options *CompilerOptions) GetEffectiveTypeRoots(currentDirectory string) (result []string, fromConfig bool) {
 	if options.TypeRoots != nil {
 		return options.TypeRoots, true
 	}
+	baseDir := options.GetBaseDirFromOptions(currentDirectory)
+
+	nmTypes, nmFromConfig := options.GetNodeModulesTypeRoots(baseDir)
+	return nmTypes, nmFromConfig
+}
+
+func (options *CompilerOptions) GetBaseDirFromOptions(currentDirectory string) string {
 	var baseDir string
 	if options.ConfigFilePath != "" {
 		baseDir = tspath.GetDirectoryPath(options.ConfigFilePath)
@@ -316,15 +322,7 @@ func (options *CompilerOptions) GetEffectiveTypeRoots(currentDirectory string, p
 			panic("cannot get effective type roots without a config file path or current directory")
 		}
 	}
-
-	nmTypes, nmFromConfig := options.GetNodeModulesTypeRoots(baseDir)
-
-	if pnpApi != nil {
-		typeRoots, fromConfig := pnpApi.AppendPnpTypeRoots(nmTypes, baseDir, nmFromConfig)
-		return typeRoots, fromConfig
-	}
-
-	return nmTypes, nmFromConfig
+	return baseDir
 }
 
 func (options *CompilerOptions) GetNodeModulesTypeRoots(baseDir string) (result []string, fromConfig bool) {

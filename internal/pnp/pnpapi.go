@@ -8,26 +8,42 @@ package pnp
  *
  * The full specification is available at https://yarnpkg.com/advanced/pnp-spec
  */
-
 import (
 	"errors"
-	"fmt"
+	"slices"
 	"strings"
 
+	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type PnpApi struct {
-	fs       PnpApiFS
+	fs       vfs.FS
 	url      string
 	manifest *PnpManifestData
 }
 
-// FS abstraction used by the PnpApi to access the file system
-// We can't use the vfs.FS interface because it creates an import cycle: core -> pnp -> vfs -> core
-type PnpApiFS interface {
-	FileExists(path string) bool
-	ReadFile(path string) (contents string, ok bool)
+func isNodeJSBuiltin(name string) bool {
+	return core.NodeCoreModules()[name]
+}
+
+func isDependencyTreeRoot(m *PnpManifestData, loc *Locator) bool {
+	return slices.Contains(m.dependencyTreeRoots, *loc)
+}
+
+func viaSuffix(specifier string, ident string) string {
+	if ident != specifier {
+		return ident + " (via \"" + specifier + "\")"
+	}
+	return ""
+}
+
+// TODO: implement this from yarn sourcecode
+// https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-pnp/sources/loader/makeApi.ts#L458
+func findBrokenPeerDependencies(specifier string, parent *Locator) []Locator {
+	return []Locator{}
 }
 
 func (p *PnpApi) RefreshManifest() error {
@@ -56,13 +72,13 @@ func (p *PnpApi) ResolveToUnqualified(specifier string, parentPath string) (stri
 	ident, modulePath, err := p.ParseBareIdentifier(specifier)
 	if err != nil {
 		// Skipping resolution
-		return "", nil
+		return "", err
 	}
 
 	parentLocator, err := p.FindLocator(parentPath)
 	if err != nil || parentLocator == nil {
 		// Skipping resolution
-		return "", nil
+		return "", err
 	}
 
 	parentPkg := p.GetPackage(parentLocator)
@@ -96,20 +112,34 @@ func (p *PnpApi) ResolveToUnqualified(specifier string, parentPath string) (stri
 		}
 	}
 
-	// undeclared dependency
 	if referenceOrAlias == nil {
-		if parentLocator.Name == "" {
-			return "", fmt.Errorf("Your application tried to access %s, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: %s\nRequired by: %s", ident, ident, parentPath)
+		if isNodeJSBuiltin(specifier) {
+			if isDependencyTreeRoot(p.manifest, parentLocator) {
+				return "", errors.New(diagnostics.Your_application_tried_to_access_0_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_resolver_is_running_inside_a_non_Node_resolution_context_where_such_builtins_are_ignored_Since_0_isn_t_otherwise_declared_in_your_dependencies_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_0_1_Required_by_Colon_2.Format(ident, ident, viaSuffix(specifier, ident), parentPath))
+			}
+			return "", errors.New(diagnostics.X_0_tried_to_access_1_While_this_module_is_usually_interpreted_as_a_Node_builtin_your_resolver_is_running_inside_a_non_Node_resolution_context_where_such_builtins_are_ignored_Since_1_isn_t_otherwise_declared_in_0_s_dependencies_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_1_2_Required_by_Colon_3.Format(parentLocator.Name, ident, ident, parentLocator.Name, ident, viaSuffix(specifier, ident), parentPath))
 		}
-		return "", fmt.Errorf("%s tried to access %s, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: %s\nRequired by: %s", parentLocator.Name, ident, ident, parentPath)
-	}
 
-	// unfulfilled peer dependency
-	if !referenceOrAlias.IsAlias() && referenceOrAlias.Reference == "" {
-		if parentLocator.Name == "" {
-			return "", fmt.Errorf("Your application tried to access %s (a peer dependency); this isn't allowed as there is no ancestor to satisfy the requirement. Use a devDependency if needed.\n\nRequired package: %s\nRequired by: %s", ident, ident, parentPath)
+		if isDependencyTreeRoot(p.manifest, parentLocator) {
+			return "", errors.New(diagnostics.Your_application_tried_to_access_0_but_it_isn_t_declared_in_your_dependencies_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_0_1_Required_by_Colon_2.Format(ident, ident, viaSuffix(specifier, ident), parentPath))
 		}
-		return "", fmt.Errorf("%s tried to access %s (a peer dependency) but it isn't provided by its ancestors/your application; this makes the require call ambiguous and unsound.\n\nRequired package: %s\nRequired by: %s", parentLocator.Name, ident, ident, parentPath)
+
+		brokenAncestors := findBrokenPeerDependencies(specifier, parentLocator)
+		allBrokenAreRoots := len(brokenAncestors) > 0
+		if allBrokenAreRoots {
+			for _, brokenAncestor := range brokenAncestors {
+				if !isDependencyTreeRoot(p.manifest, &brokenAncestor) {
+					allBrokenAreRoots = false
+					break
+				}
+			}
+		}
+
+		if len(brokenAncestors) > 0 && allBrokenAreRoots {
+			return "", errors.New(diagnostics.Your_application_tried_to_access_0_a_peer_dependency_this_isn_t_allowed_as_there_is_no_ancestor_to_satisfy_the_requirement_Use_a_devDependency_if_needed_Required_package_Colon_0_Required_by_Colon_1.Format(ident, ident, parentPath))
+		} else {
+			return "", errors.New(diagnostics.X_0_tried_to_access_1_a_peer_dependency_but_it_isn_t_provided_by_its_ancestors_Slashyour_application_this_makes_the_require_call_ambiguous_and_unsound_Required_package_Colon_1_Required_by_Colon_2.Format(parentLocator.Name, ident, ident, parentPath))
+		}
 	}
 
 	var dependencyPkg *PackageInfo
@@ -132,7 +162,7 @@ func (p *PnpApi) findClosestPnpManifest() (*PnpManifestData, error) {
 		}
 
 		if tspath.IsDiskPathRoot(directoryPath) {
-			return nil, errors.New("no PnP manifest found")
+			return nil, errors.New(diagnostics.X_no_PnP_manifest_found.Format())
 		}
 
 		directoryPath = tspath.GetDirectoryPath(directoryPath)
@@ -191,7 +221,7 @@ func (p *PnpApi) FindLocator(parentPath string) (*Locator, error) {
 	}
 
 	if bestLocator == nil {
-		return nil, fmt.Errorf("no package found for path %s", relativePath)
+		return nil, errors.New(diagnostics.X_no_package_found_for_path_0.Format(relativePath))
 	}
 
 	return bestLocator, nil
@@ -223,14 +253,14 @@ func (p *PnpApi) ResolveViaFallback(name string) *PackageDependency {
 
 func (p *PnpApi) ParseBareIdentifier(specifier string) (ident string, modulePath string, err error) {
 	if len(specifier) == 0 {
-		return "", "", fmt.Errorf("Empty specifier: %s", specifier)
+		return "", "", errors.New(diagnostics.Empty_specifier_Colon_0.Format(specifier))
 	}
 
 	firstSlash := strings.Index(specifier, "/")
 
 	if specifier[0] == '@' {
 		if firstSlash == -1 {
-			return "", "", fmt.Errorf("Invalid specifier: %s", specifier)
+			return "", "", errors.New(diagnostics.Invalid_specifier_Colon_0.Format(specifier))
 		}
 
 		secondSlash := strings.Index(specifier[firstSlash+1:], "/")
@@ -326,7 +356,8 @@ func (p *PnpApi) IsInPnpModule(fromFileName string, toFileName string) bool {
 	return fromLocator != nil && toLocator != nil && fromLocator.Name != toLocator.Name
 }
 
-func (p *PnpApi) AppendPnpTypeRoots(nmTypes []string, baseDir string, nmFromConfig bool) ([]string, bool) {
+func (p *PnpApi) AppendPnpTypeRoots(nmTypes []string, currentDirectory string, compilerOptions *core.CompilerOptions, nmFromConfig bool) ([]string, bool) {
+	baseDir := compilerOptions.GetBaseDirFromOptions(currentDirectory)
 	pnpTypes := p.GetPnpTypeRoots(baseDir)
 
 	if len(nmTypes) > 0 {

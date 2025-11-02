@@ -207,7 +207,10 @@ func (r *Resolver) ResolveTypeReferenceDirective(
 	compilerOptions := GetCompilerOptionsWithRedirect(r.compilerOptions, redirectedReference)
 	containingDirectory := tspath.GetDirectoryPath(containingFile)
 
-	typeRoots, fromConfig := compilerOptions.GetEffectiveTypeRoots(r.host.GetCurrentDirectory(), r.host.PnpApi())
+	typeRoots, fromConfig := compilerOptions.GetEffectiveTypeRoots(r.host.GetCurrentDirectory())
+	if pnpApi := r.host.PnpApi(); pnpApi != nil {
+		typeRoots, fromConfig = pnpApi.AppendPnpTypeRoots(typeRoots, r.host.GetCurrentDirectory(), compilerOptions, fromConfig)
+	}
 	if traceBuilder != nil {
 		traceBuilder.write(diagnostics.Resolving_type_reference_directive_0_containing_file_1_root_directory_2.Format(typeReferenceDirectiveName, containingFile, strings.Join(typeRoots, ",")))
 		traceBuilder.traceResolutionUsingProjectReference(redirectedReference)
@@ -983,8 +986,13 @@ func (r *resolutionState) loadModuleFromPnpResolution(ext extensions, moduleName
 
 	if pnpApi != nil {
 		packageName, rest := ParsePackageName(moduleName)
-		// TODO: bubble up yarn resolution errors, instead of _
-		packageDirectory, _ := pnpApi.ResolveToUnqualified(packageName, issuer)
+		packageDirectory, err := pnpApi.ResolveToUnqualified(packageName, issuer)
+		if err != nil {
+			if r.tracer != nil {
+				r.tracer.write(err.Error())
+			}
+			return nil
+		}
 		if packageDirectory != "" {
 			candidate := tspath.NormalizePath(tspath.CombinePaths(packageDirectory, rest))
 			return r.loadModuleFromSpecificNodeModulesDirectoryImpl(ext, true /* nodeModulesDirectoryExists */, candidate, rest, packageDirectory)
@@ -1790,7 +1798,14 @@ func (r *resolutionState) readPackageJsonPeerDependencies(packageJsonInfo *packa
 		var peerDependencyPath string
 
 		if pnpApi != nil {
-			peerDependencyPath, _ = pnpApi.ResolveToUnqualified(name, packageDirectory)
+			var err error
+			peerDependencyPath, err = pnpApi.ResolveToUnqualified(name, packageDirectory)
+			if err != nil {
+				if r.tracer != nil {
+					r.tracer.write(err.Error())
+				}
+				continue
+			}
 		}
 
 		if peerDependencyPath == "" {
@@ -2040,7 +2055,10 @@ func GetAutomaticTypeDirectiveNames(options *core.CompilerOptions, host Resoluti
 	}
 
 	var result []string
-	typeRoots, _ := options.GetEffectiveTypeRoots(host.GetCurrentDirectory(), host.PnpApi())
+	typeRoots, fromConfig := options.GetEffectiveTypeRoots(host.GetCurrentDirectory())
+	if pnpApi := host.PnpApi(); pnpApi != nil {
+		typeRoots, fromConfig = pnpApi.AppendPnpTypeRoots(typeRoots, host.GetCurrentDirectory(), options, fromConfig)
+	}
 	for _, root := range typeRoots {
 		if host.FS().DirectoryExists(root) {
 			for _, typeDirectivePath := range host.FS().GetAccessibleEntries(root).Directories {

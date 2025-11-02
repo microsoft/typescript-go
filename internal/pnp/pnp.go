@@ -1,8 +1,12 @@
 package pnp
 
-import "strings"
+import (
+	"strings"
 
-func InitPnpApi(fs PnpApiFS, filePath string) *PnpApi {
+	"github.com/microsoft/typescript-go/internal/vfs"
+)
+
+func InitPnpApi(fs vfs.FS, filePath string) *PnpApi {
 	pnpApi := &PnpApi{fs: fs, url: filePath}
 
 	manifestData, err := pnpApi.findClosestPnpManifest()

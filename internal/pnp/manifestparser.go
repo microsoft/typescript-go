@@ -9,6 +9,7 @@ import (
 
 	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type LinkType string
@@ -74,40 +75,47 @@ type PnpManifestData struct {
 	packageRegistryTrie *PackageRegistryTrie
 }
 
-func parseManifestFromPath(fs PnpApiFS, manifestDir string) (*PnpManifestData, error) {
+func parseManifestFromPath(fs vfs.FS, manifestDir string) (*PnpManifestData, error) {
 	pnpDataString := ""
 
 	data, ok := fs.ReadFile(tspath.CombinePaths(manifestDir, ".pnp.data.json"))
 	if ok {
 		pnpDataString = data
 	} else {
-		pnpScriptString, ok := fs.ReadFile(tspath.CombinePaths(manifestDir, ".pnp.cjs"))
-		if !ok {
-			return nil, errors.New("failed to read .pnp.cjs file")
+		dataString, err := extractPnpDataStringFromPath(fs, tspath.CombinePaths(manifestDir, ".pnp.cjs"))
+		if err != nil {
+			return nil, err
 		}
-
-		manifestRegex := regexp2.MustCompile(`(const[ \r\n]+RAW_RUNTIME_STATE[ \r\n]*=[ \r\n]*|hydrateRuntimeState\(JSON\.parse\()'`, regexp2.None)
-		matches, err := manifestRegex.FindStringMatch(pnpScriptString)
-		if err != nil || matches == nil {
-			return nil, errors.New("We failed to locate the PnP data payload inside its manifest file. Did you manually edit the file?")
-		}
-
-		start := matches.Index + matches.Length
-		var b strings.Builder
-		b.Grow(len(pnpScriptString))
-		for i := start; i < len(pnpScriptString); i++ {
-			if pnpScriptString[i] == '\'' {
-				break
-			}
-
-			if pnpScriptString[i] != '\\' {
-				b.WriteByte(pnpScriptString[i])
-			}
-		}
-		pnpDataString = b.String()
+		pnpDataString = dataString
 	}
 
 	return parseManifestFromData(pnpDataString, manifestDir)
+}
+
+func extractPnpDataStringFromPath(fs vfs.FS, path string) (string, error) {
+	pnpScriptString, ok := fs.ReadFile(path)
+	if !ok {
+		return "", errors.New("failed to read file: " + path)
+	}
+	manifestRegex := regexp2.MustCompile(`(const[ \r\n]+RAW_RUNTIME_STATE[ \r\n]*=[ \r\n]*|hydrateRuntimeState\(JSON\.parse\()'`, regexp2.None)
+	matches, err := manifestRegex.FindStringMatch(pnpScriptString)
+	if err != nil || matches == nil {
+		return "", errors.New("we failed to locate the PnP data payload inside its manifest file. Did you manually edit the file?")
+	}
+
+	start := matches.Index + matches.Length
+	var b strings.Builder
+	b.Grow(len(pnpScriptString))
+	for i := start; i < len(pnpScriptString); i++ {
+		if pnpScriptString[i] == '\'' {
+			break
+		}
+
+		if pnpScriptString[i] != '\\' {
+			b.WriteByte(pnpScriptString[i])
+		}
+	}
+	return b.String(), nil
 }
 
 func parseManifestFromData(pnpDataString string, manifestDir string) (*PnpManifestData, error) {
