@@ -155,15 +155,12 @@ func (r *emitResolver) determineIfDeclarationIsVisible(node *ast.Node) bool {
 			}
 			// falls through
 		}
-		// external module augmentation is always visible
-		if ast.IsExternalModuleAugmentation(node) {
+		// External module augmentation is always visible
+		// A @typedef at top-level in an external module is always visible
+		if ast.IsExternalModuleAugmentation(node) || ast.IsImplicitlyExportedJSTypeAlias(node) {
 			return true
 		}
 		parent := ast.GetDeclarationContainer(node)
-		// An @typedef at top-level in an external module is always visible
-		if ast.IsJSTypeAliasDeclaration(node) && ast.IsSourceFile(parent) && ast.IsExternalOrCommonJSModule(parent.AsSourceFile()) {
-			return true
-		}
 		// If the node is not exported or it is not ambient module element (except import declaration)
 		if r.checker.getCombinedModifierFlagsCached(node)&ast.ModifierFlagsExport == 0 &&
 			!(node.Kind != ast.KindImportEqualsDeclaration && parent.Kind != ast.KindSourceFile && parent.Flags&ast.NodeFlagsAmbient != 0) {

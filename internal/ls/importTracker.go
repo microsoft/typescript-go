@@ -502,7 +502,7 @@ func getImportOrExportSymbol(node *ast.Node, symbol *ast.Symbol, checker *checke
 		} else {
 			exportNode := getExportNode(parent, node)
 			switch {
-			case exportNode != nil && isExportedNode(exportNode):
+			case exportNode != nil && (ast.HasSyntacticModifier(exportNode, ast.ModifierFlagsExport) || ast.IsImplicitlyExportedJSTypeAlias(exportNode)):
 				if ast.IsImportEqualsDeclaration(exportNode) && exportNode.AsImportEqualsDeclaration().ModuleReference == node {
 					// We're at `Y` in `export import X = Y`. This is not the exported symbol, the left-hand-side is. So treat this as an import statement.
 					if comingFromExport {
@@ -568,11 +568,6 @@ func getImportOrExportSymbol(node *ast.Node, symbol *ast.Symbol, checker *checke
 		result = getImport()
 	}
 	return result
-}
-
-func isExportedNode(node *ast.Node) bool {
-	return ast.HasSyntacticModifier(node, ast.ModifierFlagsExport) ||
-		ast.IsJSTypeAliasDeclaration(node) && ast.IsSourceFile(node.Parent) && ast.IsExternalOrCommonJSModule(node.Parent.AsSourceFile())
 }
 
 func getExportInfo(exportSymbol *ast.Symbol, exportKind ExportKind, c *checker.Checker) *ExportInfo {
