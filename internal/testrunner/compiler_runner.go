@@ -603,9 +603,6 @@ func (c *compilerTest) verifyParentPointers(t *testing.T) {
 }
 
 func (c *compilerTest) containsUnsupportedOptionsForDiagnostics() bool {
-	if len(c.result.Program.UnsupportedExtensions()) != 0 {
-		return true
-	}
 	if c.options.BaseUrl != "" {
 		return true
 	}
