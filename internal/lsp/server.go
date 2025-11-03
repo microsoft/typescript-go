@@ -1024,7 +1024,7 @@ func getHoverContentFormat(params *lsproto.InitializeParams) lsproto.MarkupKind 
 }
 
 func getSignatureHelpDocumentationFormat(params *lsproto.InitializeParams) lsproto.MarkupKind {
-	if params == nil || params.Capabilities.TextDocument == nil || params.Capabilities.TextDocument.SignatureHelp == nil ||
+	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil || params.Capabilities.TextDocument.SignatureHelp == nil ||
 		params.Capabilities.TextDocument.SignatureHelp.SignatureInformation == nil ||
 		params.Capabilities.TextDocument.SignatureHelp.SignatureInformation.DocumentationFormat == nil {
 		// Default to plaintext if no preference specified
