@@ -272,6 +272,11 @@ func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lspr
 			RelatedInformation: ptrTrue,
 		}
 	}
+	if capabilitiesWithDefaults.TextDocument.PublishDiagnostics == nil {
+		capabilitiesWithDefaults.TextDocument.PublishDiagnostics = &lsproto.PublishDiagnosticsClientCapabilities{
+			RelatedInformation: ptrTrue,
+		}
+	}
 	if capabilitiesWithDefaults.Workspace == nil {
 		capabilitiesWithDefaults.Workspace = &lsproto.WorkspaceClientCapabilities{}
 	}
